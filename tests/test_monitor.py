@@ -41,6 +41,13 @@ class TestDiscovery(unittest.TestCase):
     def test_canonical_removes_tracking_but_preserves_semantic_query(self):
         self.assertEqual(canonical("HTTPS://WWW.EBA.EUROPA.EU/a/?phase=consolidated&utm_source=x&version=2015#x"),"https://www.eba.europa.eu/a?phase=consolidated&version=2015")
 
+    def test_legacy_query_order_resolves_same_identity(self):
+        from regmon.engine import resolve_previous
+        previous={"legacy-id":{"canonical_url":"https://www.eba.europa.eu/a?version=2015&phase=consultation"}}
+        uid,record=resolve_previous("https://www.eba.europa.eu/a?phase=consultation&version=2015",previous)
+        self.assertEqual(uid,"legacy-id")
+        self.assertIsNotNone(record)
+
     def test_scope_filters_external_and_duplicates(self):
         output="\n".join([
             "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a?x=1&utm_source=x",
