@@ -1,7 +1,31 @@
-name: EBA Regulatory Monitor
+name: Regulatory Monitor
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "regmon/**"
+      - "config/**"
+      - "requirements.txt"
+      - ".github/workflows/regulatory-monitor.yml"
   workflow_dispatch:
+    inputs:
+      source_id:
+        description: Source to monitor (all = every configured source)
+        required: false
+        default: all
+        type: string
+      test_notification:
+        description: Send controlled ntfy delivery test without changing monitoring state
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    - cron: "0 */6 * * *"
+
+concurrency:
+  group: regulatory-monitor
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -9,33 +33,68 @@ permissions:
 jobs:
   monitor:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
+    env:
+      REGMON_SOURCE: ${{ inputs.source_id || 'all' }}
+      DASHBOARD_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.13"
+          cache: pip
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: python -m pip install -r requirements.txt
 
-      - name: Run monitoring pipeline
+      - name: Run test suite
+        run: python -m unittest discover -s tests -p "test*.py"
+
+      - name: Compile Python
+        run: python -m compileall -q regmon
+
+      - name: EBA HTTP smoke test
+        run: |
+          python - <<'PY'
+          import requests
+          r = requests.get(
+              "https://www.eba.europa.eu/",
+              timeout=30,
+              headers={"User-Agent": "regulatory-monitoring-poc/2.0"},
+          )
+          print("EBA status:", r.status_code)
+          print("EBA content-type:", r.headers.get("content-type"))
+          PY
+
+      - name: Run monitoring engine
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: python -m regmon.monitor
+        run: python -m regmon.monitor --source "$REGMON_SOURCE"
 
-      - name: Show report
-        run: cat data/report.md
+      - name: Publish notifications
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'RegMonitoringWebCrawlerNTFY' }}
+          NTFY_SERVER: https://ntfy.sh
+          DASHBOARD_URL: ${{ env.DASHBOARD_URL }}
+        run: python -m regmon.notify
 
-      - name: Save monitoring state
+      - name: Controlled notification test
+        if: ${{ inputs.test_notification == true }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'RegMonitoringWebCrawlerNTFY' }}
+          NTFY_SERVER: https://ntfy.sh
+          DASHBOARD_URL: ${{ env.DASHBOARD_URL }}
+        run: python -m regmon.notify --test
+
+      - name: Commit monitoring state
         run: |
           git config user.name "regulatory-monitor-bot"
           git config user.email "actions@users.noreply.github.com"
           git add data
-          git diff --cached --quiet || git commit -m "Update EBA monitoring state"
+          git diff --cached --quiet || git commit -m "Update regulatory monitoring state"
           git push

@@ -1,0 +1,53 @@
+Guidelines on internet payments security
+Status:
+The Guidelines on the security of internet payments are based on the recommendations of the European Forum on the Security of Retail Payments (SecuRe Pay), a voluntary cooperative initiative set up by the ECB and comprising relevant authorities from the European Economic Area (EEA) with the aim of facilitating understanding of issues related to the security of electronic retail payment services.
+Links
+EBA repeals its Guidelines on the security of internet payments under the former Payments Services Directive (PSD1)
+Summary of document history
+Previous versions
+Current version
+Ongoing versions
+Consultation on guidelines on internet payments security
+Status:
+Closed
+Deadline:
+14 NOVEMBER 2014
+Documents
+BSG Response to Consultation Paper (EBA-CP-2014-31) 14 November 2014
+(127.83 KB - PDF)
+Last update
+18 November 2014
+Download
+Consultation paper
+(313.5 KB - PDF)
+Last update
+20 October 2014
+Download
+Responses
+The form is now closed.
+Received responses to the EBA
+1.
+Association française des Sociétés Financières - ASF
+2.
+Edebex SA
+3.
+The UK Cards Association
+4.
+Tha Bank Association of Slovenia
+5.
+Atos Worldline
+6.
+Currence iDEAL B.V.
+7.
+Nordea Bank Finland Plc. Group Legal
+8.
+on behalf of the German Banking Industry Committee National Association of German Cooperative Banks
+9.
+iSignthis B.V.
+10.
+Smart Payments Association
+See all responses
+Press contacts
+Franca Rosa Congiu
+press@eba.europa.eu
++33 1 86 52 7052

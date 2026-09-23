@@ -1,179 +1,47 @@
 {
-  "generated_at": "2026-09-23T12:31:46.558156+00:00",
+  "generated_at": "2026-09-23T14:48:08.514758+00:00",
   "seed": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consolidated",
   "base": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/",
   "crawler": "stealth-crawler",
+  "change_detector": {
+    "raw_hash": "SHA-256 of retrieved HTTP bytes",
+    "normalized_hash": "SHA-256 of extracted and normalized regulatory content",
+    "classification_hash": "normalized_hash"
+  },
+  "evidence": {
+    "snapshot_directory": "data/snapshots/",
+    "event_directory": "data/evidence/",
+    "diff_format": "unified_diff",
+    "max_diff_lines": 200
+  },
+  "relevance_gate": {
+    "mode": "high_recall",
+    "ai_final_semantic_decision": true
+  },
+  "ai_contract": {
+    "required_keys": [
+      "reason",
+      "relevant",
+      "summary",
+      "topic"
+    ],
+    "strict": true
+  },
   "counts": {
     "discovered": 16,
     "new": 0,
-    "changed": 7,
+    "changed": 0,
     "removed": 0,
-    "unchanged": 9
+    "unchanged": 16,
+    "baseline_migration": 0,
+    "fetch_error": 0,
+    "relevance_candidates": 0,
+    "relevance_excluded": 0
   },
   "new_urls": [],
-  "changed_urls": [
-    {
-      "before": {
-        "url_id": "212f4e79f515e78c7854f8bbb2000c03ad3d7b09b68b9e9f77ffb099f3d0f289",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-internet-payments-security?phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "72ff699218b61e804477b3a30001227d7baf9aabc79b3229027a6b828b31c146"
-      },
-      "after": {
-        "url_id": "212f4e79f515e78c7854f8bbb2000c03ad3d7b09b68b9e9f77ffb099f3d0f289",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-internet-payments-security?phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "f5b51163e067016dda93835ad14b9497cc101c7859e7be33e6619d318ce2752e"
-      }
-    },
-    {
-      "before": {
-        "url_id": "c09461e62cdb1f04bbea967ac16fbac45dee8b13e8de814922228059c9558198",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-national-lists-or-registers-credit-services?phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "5159ce9b425fe10af6ae0852f2959f353cd7db0365576bb6c19e3bd06055c8a1"
-      },
-      "after": {
-        "url_id": "c09461e62cdb1f04bbea967ac16fbac45dee8b13e8de814922228059c9558198",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-national-lists-or-registers-credit-services?phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "4076abf2454f84c45ed575d85fc53cb1e67e76656a343f65dff27096581da3af"
-      }
-    },
-    {
-      "before": {
-        "url_id": "72a2af5966ab4ba3316f5bff8df21d56af306586b47b30b529e3bbfadb7a4eac",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "4c74f57a60ec9ac01cd4ed56cba923eb41eb858478c47ff5d9832cc6e3ed4660"
-      },
-      "after": {
-        "url_id": "72a2af5966ab4ba3316f5bff8df21d56af306586b47b30b529e3bbfadb7a4eac",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "05d2dd196f2ba087a46ac4aa118ae2598af14dc19a4a1b6403cbc498c0a90093"
-      }
-    },
-    {
-      "before": {
-        "url_id": "82cfdcfda46f7634f7450d1f03d6383bd9351286c2f9489a8626af328b5152e7",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?version=2015&phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "4eb5d27a86bfef1fe7bd903cc8c01a27c7e0fe80fcb99c58c9674dce542ecefd"
-      },
-      "after": {
-        "url_id": "82cfdcfda46f7634f7450d1f03d6383bd9351286c2f9489a8626af328b5152e7",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?version=2015&phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "75658273b1b0f8f7495086fc81660edf25f858e7403e6176c3ebfc96c61f5b52"
-      }
-    },
-    {
-      "before": {
-        "url_id": "d31d766f260aecaeaa0c04c5b32302ea394a33535b79b503feebefe1d20ca724",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/regulatory-technical-standards-complaints-handling-procedures-issuers-arts?phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "2a7d20c992bb34d64492d76c49173af34b7b85b5221edd17ad3b1f119e78799a"
-      },
-      "after": {
-        "url_id": "d31d766f260aecaeaa0c04c5b32302ea394a33535b79b503feebefe1d20ca724",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/regulatory-technical-standards-complaints-handling-procedures-issuers-arts?phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "0438dc2075e6f6a00bfc65e02941b4d738f49401864dc5cc0916c9638a7365d7"
-      }
-    },
-    {
-      "before": {
-        "url_id": "9efdc7f1712422176b171913ca8f4a4d0a670a3a4f1876418d3768863ddfa4dd",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/regulatory-technical-standards-credit-scoring-and-loan-pricing-disclosure-credit-risk-assessment-and?phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "08d0c304bf5a432be6d9b060a2a9b8bf74c47bdec4b16cd7b2c9d4bf97ac3ac4"
-      },
-      "after": {
-        "url_id": "9efdc7f1712422176b171913ca8f4a4d0a670a3a4f1876418d3768863ddfa4dd",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/regulatory-technical-standards-credit-scoring-and-loan-pricing-disclosure-credit-risk-assessment-and?phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "265fe9fdfdda55321ce70482ab0c752ac3bfcaf5c209a60e445948e296a46d3a"
-      }
-    },
-    {
-      "before": {
-        "url_id": "1975892c278c5745ba68c06dc45091787318ddeb69546850fb1a0a5ef90cafe2",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/technical-standards-standardised-terminology-and-disclosure-documents-under-pad?phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "670fa8b77804e28bbf4d22ae1aa98d48cd82fea387d893ea27da9cb73eebff7f"
-      },
-      "after": {
-        "url_id": "1975892c278c5745ba68c06dc45091787318ddeb69546850fb1a0a5ef90cafe2",
-        "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/technical-standards-standardised-terminology-and-disclosure-documents-under-pad?phase=consultation",
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_hash": "ebd7cbdaf776e1c73e37d9bdc6bf32af259414b1e12cb311416ac0d550d7a35f"
-      }
-    }
-  ],
+  "changed_urls": [],
   "removed_urls": [],
-  "ai_results": [
-    {
-      "event": "CHANGED_URL",
-      "url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-internet-payments-security?phase=consultation",
-      "ai": {
-        "status": "ok",
-        "analysis": {
-          "relevant": true,
-          "topic": "EBA Guidelines on Internet Payments Security \u2013 Repeal and Supersession",
-          "summary": "The EBA has repealed its Guidelines on the security of internet payments (originally issued under PSD1) as of 14 October 2021. These guidelines were the first output of joint EBA-ECB work on payment services security, based on recommendations from the European Forum on the Security of Retail Payments (SecuRe Pay). A prior consultation on implementation ran from 29 October 2014 with a deadline of 14 November 2014. The guidelines were issued before PSD2 came into force in 2016 and have since been superseded by PSD2 and related EBA instruments developed in support of PSD2.",
-          "reason": "The page confirms the formal repeal of the Guidelines on 14 October 2021, explicitly stating they were superseded by PSD2 and related EBA instruments. The original consultation (2014) and the SecuRe Pay foundation are documented as historical context."
-        }
-      }
-    },
-    {
-      "event": "CHANGED_URL",
-      "url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-national-lists-or-registers-credit-services?phase=consultation",
-      "ai": {
-        "status": "ok",
-        "analysis": {
-          "relevant": true,
-          "topic": "Consumer protection: national lists or registers of credit servicers",
-          "summary": "The EBA consulted on draft Guidelines for establishing and maintaining national lists or registers of credit servicers under Directive 2021/2167. The consultation closed on 26 October 2023, and the Guidelines are now final and translated into EU official languages.",
-          "reason": "The page concerns an EBA regulatory consultation intended to enhance transparency for credit purchasers and borrowers and promote a level playing field across the Union."
-        }
-      }
-    },
-    {
-      "event": "CHANGED_URL",
-      "url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consultation",
-      "ai": {
-        "status": "ok",
-        "analysis_raw": "User Safety: safe"
-      }
-    }
-  ]
+  "baseline_migrations": [],
+  "events": [],
+  "ai_results": []
 }
