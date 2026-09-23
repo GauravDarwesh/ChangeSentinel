@@ -23,6 +23,7 @@ on:
   schedule:
     - cron: "0 */6 * * *" # scheduled regulatory scan
 
+# Full-site baseline/monitor validation trigger.
 concurrency:
   group: regulatory-monitor
   cancel-in-progress: false
