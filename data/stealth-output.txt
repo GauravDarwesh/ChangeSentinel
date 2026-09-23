@@ -3,7 +3,7 @@ SEED=https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/
 ATTEMPT=1
 EXIT_CODE=0
 STDOUT:
- Discovered URLs from https://www.eba.euro...5&phase=consultation 100%   • … • …
+ Discovered URLs from https://www.eba.euro...tail-risk-indicators 100%   • … • …
 https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-internet-payments-security
 https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-internet-payments-security?phase=consultation
 https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-national-lists-or-registers-credit-services

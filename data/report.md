@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20260923T163335Z-01108233
-Generated: 2026-09-23T16:33:35.145573+00:00
+Run: 20260923T163635Z-5935739c
+Generated: 2026-09-23T16:36:35.318075+00:00
 
 ## Aggregate counts
 
@@ -10,16 +10,16 @@ Generated: 2026-09-23T16:33:35.145573+00:00
 | ai_deferred | 0 |
 | ai_error | 0 |
 | ai_invalid | 0 |
-| ai_ok | 1 |
+| ai_ok | 0 |
 | baseline_migration | 0 |
 | changed | 0 |
 | discovered | 16 |
 | extraction_error | 0 |
 | fetch_error | 0 |
-| new | 1 |
-| relevance_candidates | 1 |
-| removed | 1 |
-| unchanged | 15 |
+| new | 0 |
+| relevance_candidates | 0 |
+| removed | 0 |
+| unchanged | 16 |
 
 ## Sources
 
@@ -28,6 +28,6 @@ Generated: 2026-09-23T16:33:35.145573+00:00
 - Regulator: European Banking Authority
 - Discovered: 16
 - Changed: 0
-- New: 1
-- Removed: 1
+- New: 0
+- Removed: 0
 - Fetch errors: 0
