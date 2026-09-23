@@ -17,8 +17,11 @@ class SourceConfig:
     seed_urls: tuple[str, ...]
     allowed_prefixes: tuple[str, ...]
     allowed_domains: tuple[str, ...]
-    max_urls: int = 250
+    max_urls: int = 0
     crawler: str = "stealth-crawler"
+    active: bool = True
+    baseline_on_first_run: bool = False
+    excluded_prefixes: tuple[str, ...] = ()
     discovery_attempts: int = 3
     discovery_timeout_seconds: int = 180
     discovery_retry_delay_seconds: int = 5
@@ -36,8 +39,11 @@ class SourceConfig:
             seed_urls=tuple(str(x) for x in value["seed_urls"]),
             allowed_prefixes=tuple(str(x).rstrip("/") + "/" for x in value["allowed_prefixes"]),
             allowed_domains=tuple(str(x).lower() for x in value["allowed_domains"]),
-            max_urls=int(value.get("max_urls", 250)),
+            max_urls=int(value.get("max_urls", 0)),
             crawler=str(value.get("crawler", "stealth-crawler")),
+            active=bool(value.get("active", True)),
+            baseline_on_first_run=bool(value.get("baseline_on_first_run", False)),
+            excluded_prefixes=tuple(str(x).rstrip("/") + "/" for x in value.get("excluded_prefixes", [])),
             discovery_attempts=int(value.get("discovery_attempts", 3)),
             discovery_timeout_seconds=int(value.get("discovery_timeout_seconds", 180)),
             discovery_retry_delay_seconds=int(value.get("discovery_retry_delay_seconds", 5)),
