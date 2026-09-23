@@ -259,7 +259,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
             "change_detector":{"raw_hash":"SHA-256 retrieved bytes","normalized_hash":"SHA-256 extracted normalized content","classification_hash":"normalized_hash"},
             "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
             "ai_contract":{"required_keys":["relevant","topic","change_type","summary","impact","effective_date","affected_scope","actions","reason"],"strict":True},
-            "counts":counts,"events":events,"new_urls":new_items,"changed_urls":changed_items,"removed_urls":removed_items,"baseline_migrations":migration_items,"ai_results":sorted(ai_results,key=lambda x:x.get("event_id",""))
+            "counts":counts,"events":events,"new_urls":[] if initial_baseline else new_items,"changed_urls":changed_items,"removed_urls":removed_items,"baseline_migrations":migration_items,"ai_results":sorted(ai_results,key=lambda x:x.get("event_id",""))
         },
         "inventory":current
     }
@@ -316,7 +316,9 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
 
 def run(source_id: str="all", dry_run: bool=False) -> dict:
     _, sources = load_config()
-    selected = list(sources.values()) if source_id in {"all","*"} else [sources[source_id]]
+    selected = [source for source in sources.values() if source.active] if source_id in {"all","*"} else [sources[source_id]]
+    if not selected:
+        raise ValueError("No active monitoring sources are configured")
     run_id = f"{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:8]}"
     results = [process_source(source,run_id,dry_run=dry_run) for source in selected]
     return {"run_id":run_id,"results":results,"outcome":save_outputs(results,run_id,dry_run=dry_run)}
