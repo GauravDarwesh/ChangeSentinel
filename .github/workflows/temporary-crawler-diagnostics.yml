@@ -1,0 +1,39 @@
+name: Temporary Crawler Diagnostics
+
+on:
+  push:
+    branches:
+      - fix/normalized-content-change-detection
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Capture Stealth Crawler output
+        run: |
+          set +e
+          stealth-crawler crawl "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consolidated" --base "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/" --urls-only > stealth-stdout.txt 2> stealth-stderr.txt
+          status=$?
+          echo "STEALTH_EXIT_CODE=$status"
+          echo "===== STDOUT ====="
+          cat stealth-stdout.txt
+          echo "===== STDERR ====="
+          cat stealth-stderr.txt
+          echo "===== FILE SIZES ====="
+          wc -c stealth-stdout.txt stealth-stderr.txt
+          exit $status
