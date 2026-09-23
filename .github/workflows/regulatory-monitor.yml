@@ -9,18 +9,34 @@ permissions:
 jobs:
   monitor:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - run: python -m pip install --upgrade pip && pip install -r requirements.txt
-      - name: Run Stealth Crawler
-        run: stealth-crawler crawl https://www.eba.europa.eu/ --urls-only
-      - name: Save crawl output
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Crawl a small real EBA section
         run: |
           mkdir -p data
-          stealth-crawler crawl https://www.eba.europa.eu/ --urls-only > data/eba-urls.txt 2>&1 || true
+          stealth-crawler crawl             "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consolidated"             --base "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/"             --urls-only             > data/eba-urls.txt
+
+      - name: Show discovered URLs
+        run: |
+          echo "Discovered URLs:"
+          cat data/eba-urls.txt
+          echo
+          echo "Count:"
+          wc -l data/eba-urls.txt
+
+      - name: Save crawl output
+        run: |
           git config user.name "regulatory-monitor-bot"
           git config user.email "actions@users.noreply.github.com"
           git add data
