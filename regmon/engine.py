@@ -133,6 +133,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
 def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> dict:
     now = datetime.now(timezone.utc).isoformat()
     previous = load_previous(source.id)
+    initial_baseline = source.baseline_on_first_run and not previous
     urls = discover(source, DATA)
     current, texts, old_texts = {}, {}, {uid: read_snapshot(old) for uid, old in previous.items()}
     events, new_items, changed_items, migration_items, unchanged_items = [], [], [], [], []
@@ -182,14 +183,16 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
                 current[uid] = item
 
             if event_type != "UNCHANGED_URL" or migrated:
-                before_hash = (old or {}).get("normalized_hash") or (old or {}).get("raw_hash") or (old or {}).get("content_hash")
-                event_id = build_event_id(event_type, uid, before_hash, item.get("normalized_hash"))
-                evidence = None
-                if event_type in {"NEW_URL","CHANGED_URL"}:
-                    evidence = write_evidence(ROOT, event_type, event_id, url, now, old, item, old_text, text) if not dry_run else None
-                    item["evidence_location"] = evidence
-                    current[uid] = item
-                events.append({"event_id":event_id,"event_type":event_type,"url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":item}})
+                suppress_baseline_event = initial_baseline and event_type == "NEW_URL"
+                if not suppress_baseline_event:
+                    before_hash = (old or {}).get("normalized_hash") or (old or {}).get("raw_hash") or (old or {}).get("content_hash")
+                    event_id = build_event_id(event_type, uid, before_hash, item.get("normalized_hash"))
+                    evidence = None
+                    if event_type in {"NEW_URL","CHANGED_URL"}:
+                        evidence = write_evidence(ROOT, event_type, event_id, url, now, old, item, old_text, text) if not dry_run else None
+                        item["evidence_location"] = evidence
+                        current[uid] = item
+                    events.append({"event_id":event_id,"event_type":event_type,"url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":item}})
 
     removed_items = []
     for uid, old in previous.items():
@@ -200,7 +203,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
             evidence = write_evidence(ROOT, "REMOVED_URL", event_id, url, now, old, None, read_snapshot(old), None)
             events.append({"event_id":event_id,"event_type":"REMOVED_URL","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":None}})
 
-    candidates = [x for x in new_items + [c["after"] for c in changed_items] if x.get("relevance",{}).get("candidate",True)]
+    candidates = [] if initial_baseline else [x for x in new_items + [c["after"] for c in changed_items] if x.get("relevance",{}).get("candidate",True)]
     ai_cfg = AIConfig(
         timeout_seconds=int(DEFAULTS.get("ai_timeout_seconds",60)),
         attempts=int(DEFAULTS.get("ai_attempts",2)),
@@ -252,7 +255,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
     return {
         "report":{
             "schema_version":2,"run_id":run_id,"generated_at":now,
-            "source":{"id":source.id,"name":source.name,"regulator":source.regulator,"seeds":list(source.seed_urls),"allowed_prefixes":list(source.allowed_prefixes)},
+            "source":{"id":source.id,"name":source.name,"regulator":source.regulator,"seeds":list(source.seed_urls),"allowed_prefixes":list(source.allowed_prefixes),"initial_baseline":initial_baseline},
             "change_detector":{"raw_hash":"SHA-256 retrieved bytes","normalized_hash":"SHA-256 extracted normalized content","classification_hash":"normalized_hash"},
             "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
             "ai_contract":{"required_keys":["relevant","topic","change_type","summary","impact","effective_date","affected_scope","actions","reason"],"strict":True},
