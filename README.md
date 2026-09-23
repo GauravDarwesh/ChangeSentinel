@@ -47,7 +47,7 @@ The notifier keeps an event-ID ledger so the same deterministic event is not rep
 
 ## Dashboard
 
-A dependency-free static dashboard lives in dashboard/index.html.
+The GitHub Pages homepage is the live monitoring console in index.html.
 
 The workflow prepares a GitHub Pages artifact containing the dashboard, monitoring report, URL inventory, notification ledger, and evidence files. The dashboard auto-refreshes every 15 seconds.
 
