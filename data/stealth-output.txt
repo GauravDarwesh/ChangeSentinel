@@ -1,18 +1,14 @@
- Discovered URLs from https://www.eba.euro...d?phase=consultation 100%   • … • …
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-internet-payments-security
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-internet-payments-security?phase=consultation
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-national-lists-or-registers-credit-services
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-national-lists-or-registers-credit-services?phase=consultation
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consolidated
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consultation
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?version=2015
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?version=2015&phase=consultation
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/regulatory-technical-standards-complaints-handling-procedures-issuers-arts
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/regulatory-technical-standards-complaints-handling-procedures-issuers-arts?phase=consultation
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/regulatory-technical-standards-credit-scoring-and-loan-pricing-disclosure-credit-risk-assessment-and
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/regulatory-technical-standards-credit-scoring-and-loan-pricing-disclosure-credit-risk-assessment-and?phase=consultation
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/retail-risk-indicators
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/technical-standards-standardised-terminology-and-disclosure-documents-under-pad
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/technical-standards-standardised-terminology-and-disclosure-documents-under-pad?phase=consultation
+ATTEMPT 1
+EXIT_CODE=0
+STDOUT:
+progress only
 
+STDERR:
+
+
+ATTEMPT 2
+EXIT_CODE=0
+STDOUT:
+https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-example
+
+STDERR:
