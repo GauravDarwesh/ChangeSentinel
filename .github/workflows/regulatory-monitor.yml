@@ -1,6 +1,13 @@
 name: Regulatory Monitor
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "regmon/**"
+      - "config/**"
+      - "requirements.txt"
+      - ".github/workflows/regulatory-monitor.yml"
   workflow_dispatch:
     inputs:
       source_id:
