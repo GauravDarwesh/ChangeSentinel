@@ -16,7 +16,7 @@ from regmon.ai import AIConfig, analyze
 from regmon.change import build_event_id, classify_change, make_diff, make_id, write_evidence
 from regmon.config import DEFAULT_CONFIG_PATH, SourceConfig, load_config
 from regmon.content import extract_content
-from regmon.discovery import discover
+from regmon.discovery import canonical, discover
 from regmon.fetch import fetch
 from regmon.relevance import triage
 
