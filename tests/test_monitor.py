@@ -133,7 +133,7 @@ class TestEngineFlow(unittest.TestCase):
         old_file=mod.ROOT/"data"/"snapshots"/f"{uid}.txt"
         old_file.parent.mkdir(parents=True,exist_ok=True)
         old_file.write_text("old text",encoding="utf-8")
-        result=process_source(SOURCE,"run-test",dry_run=True)
+        result=process_source(SOURCE,"run-test",dry_run=False)
         args=mock_evidence.call_args.args
         self.assertIn("old text",args)
         self.assertIn("new text",args)
