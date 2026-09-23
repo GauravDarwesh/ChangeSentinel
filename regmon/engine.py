@@ -287,6 +287,7 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
         "ai_results":[x for r in source_results for x in r["report"]["ai_results"]],
     }
     (DATA / "report.json").write_text(json.dumps(aggregate,indent=2),encoding="utf-8")
+    (HISTORY / f"{run_id}.json").write_text(json.dumps(aggregate,indent=2),encoding="utf-8")
     md = ["# Regulatory Monitoring Report","",f"Run: {run_id}",f"Generated: {aggregate['generated_at']}","","## Aggregate counts","","| Metric | Value |","| --- | ---: |"]
     md += [f"| {k} | {v} |" for k,v in aggregate_counts.items()]
     md += ["","## Sources",""]
