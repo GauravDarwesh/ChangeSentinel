@@ -82,16 +82,8 @@ jobs:
       - name: Prepare dashboard site
         run: |
           rm -rf _site
-          mkdir -p _site/data
+          mkdir -p _site
           cp -R dashboard/. _site/
-          cp data/report.json _site/data/report.json
-          cp data/latest.json _site/data/latest.json
-          if [ -f data/notifications.json ]; then
-            cp data/notifications.json _site/data/notifications.json
-          fi
-          if [ -d data/evidence ]; then
-            cp -R data/evidence _site/data/evidence
-          fi
           touch _site/.nojekyll
 
       - uses: actions/configure-pages@v5
