@@ -37,8 +37,11 @@ def in_scope(url: str, source: SourceConfig) -> bool:
         return False
     if not any(value.startswith(prefix) for prefix in source.allowed_prefixes):
         return False
-    if any(value == prefix.rstrip("/") or value.startswith(prefix) for prefix in source.excluded_prefixes):
-        return False
+    value_path = urlparse(value).path.rstrip("/") or "/"
+    for prefix in source.excluded_prefixes:
+        excluded_path = urlparse(prefix).path.rstrip("/") or "/"
+        if value_path == excluded_path or value_path.startswith(excluded_path + "/"):
+            return False
     return True
 
 def parse_discovered_urls(output: str, source: SourceConfig) -> list[str]:
