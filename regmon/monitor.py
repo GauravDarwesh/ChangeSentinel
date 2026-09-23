@@ -200,17 +200,15 @@ def classify_change(old, current):
     return "BASELINE_MIGRATION", True
 
 
-def discover():
-    cmd = ["stealth-crawler", "crawl", SEED, "--base", BASE, "--urls-only"]
-    result = subprocess.run(cmd, text=True, capture_output=True, check=False)
-    (DATA / "stealth-output.txt").write_text(
-        result.stdout + "\n" + result.stderr,
-        encoding="utf-8",
-    )
+DISCOVERY_ATTEMPTS = 3
+DISCOVERY_RETRY_DELAY_SECONDS = 5
+DISCOVERY_TIMEOUT_SECONDS = 180
 
+
+def parse_discovered_urls(output):
     urls = []
     seen = set()
-    for line in result.stdout.splitlines():
+    for line in output.splitlines():
         value = line.strip()
         if not value.startswith("http"):
             continue
@@ -220,10 +218,71 @@ def discover():
             urls.append(value)
         if len(urls) >= LIMIT:
             break
-
-    if not urls:
-        raise RuntimeError("No EBA URLs were discovered by Stealth Crawler.")
     return urls
+
+
+def discover():
+    cmd = ["stealth-crawler", "crawl", SEED, "--base", BASE, "--urls-only"]
+    attempts_log = []
+
+    for attempt in range(1, DISCOVERY_ATTEMPTS + 1):
+        try:
+            result = subprocess.run(
+                cmd,
+                text=True,
+                capture_output=True,
+                check=False,
+                timeout=DISCOVERY_TIMEOUT_SECONDS,
+            )
+            stdout = result.stdout or ""
+            stderr = result.stderr or ""
+            urls = parse_discovered_urls(stdout)
+            attempts_log.append(
+                "\n".join(
+                    [
+                        f"ATTEMPT {attempt}",
+                        f"EXIT_CODE={result.returncode}",
+                        "STDOUT:",
+                        stdout,
+                        "STDERR:",
+                        stderr,
+                    ]
+                )
+            )
+            if urls:
+                (DATA / "stealth-output.txt").write_text(
+                    "\n\n".join(attempts_log),
+                    encoding="utf-8",
+                )
+                return urls
+        except subprocess.TimeoutExpired as exc:
+            stdout = exc.stdout or ""
+            stderr = exc.stderr or ""
+            attempts_log.append(
+                "\n".join(
+                    [
+                        f"ATTEMPT {attempt}",
+                        f"TIMEOUT_AFTER_SECONDS={DISCOVERY_TIMEOUT_SECONDS}",
+                        "STDOUT:",
+                        stdout if isinstance(stdout, str) else stdout.decode("utf-8", "replace"),
+                        "STDERR:",
+                        stderr if isinstance(stderr, str) else stderr.decode("utf-8", "replace"),
+                    ]
+                )
+            )
+
+        if attempt < DISCOVERY_ATTEMPTS:
+            import time
+            time.sleep(DISCOVERY_RETRY_DELAY_SECONDS)
+
+    (DATA / "stealth-output.txt").write_text(
+        "\n\n".join(attempts_log),
+        encoding="utf-8",
+    )
+    raise RuntimeError(
+        f"No EBA URLs were discovered by Stealth Crawler after {DISCOVERY_ATTEMPTS} attempts. "
+        "The crawl returned no parseable in-scope URLs; monitoring state was not updated."
+    )
 
 
 def load_previous():
