@@ -1,0 +1,23 @@
+Retail risk indicators
+Article 9(1) of Regulation (EU) no 1093/2010 (“EBA Regulation”) requires the EBA to develop
+retail risk indicators (RRIs) for the timely identification of potential consumer harm
+. For this purpose, the EBA is publishing a
+list of 11 RRIs that cover a wide variety of different types of products in the EBA’s remit (e.g., mortgage credit, consumer credit, or payment accounts)
+.
+These indicators aim to facilitate the monitoring of the banking markets across the EU by measuring the risk of detriment arising to consumers from the misconduct of the institutions, and from wider economic conditions.
+They provide information that help the EBA and national competent authorities to prioritise their regulatory and supervisory work in the area of consumer protection but may be of interest to other, external stakeholders as well. The RRI are summarized in a table below, which is accompanied by a set of charts showing results at Member State-level, and a methodological note explaining the interpretation of the results, which should be read alongside it.
+The data used to calculate the indicators has a number of limitations that have an impact on how these indicators should be interpreted. Amongst those that apply more generally across several of said indicators is the limitation that some indicators do not cover all EU and other EEA countries. Further, in the absence of comprehensive consumer protection data being available for the EU, some indicators are calculated based on data collected by the EBA primarily for the purpose of prudential supervision rather than consumer protection requirements, and thus should be understood as mere proxies for potential consumer detriment, not precise metrics. Finally, many of these indicators are published for the first time, and any potential trends will only emerge in the coming years.
+These limitations are particularly important when comparing Member States against one another, where the aforementioned limitations are more likely to make it difficult to arrive at robust conclusions as results may reflect market and/or business model specificities. For that reason, direct comparison of results between specific Member States should be done very cautiously and should be done in the wider context of a given banking market and the Member State’s economic circumstances. The main purpose of showing Member State level data is to demonstrate the divergence across all EU Member States. These divergences can be significant and are an interesting observation in their own right for the purpose of future prioritization of tasks. Future improvements in the comprehensiveness and quality of the data will gradually improve the robustness of these indicators over time.
+Following its initial publication in Q1 of 2023, the indicators will subsequently be updated and refined on an annual basis and published as part of the EBA’s annual
+Risk Assessment Report
+.
+Documents
+Retail risk indicators - methodological note
+Links
+Risk Assessment Reports -
+December 2025
+|
+November 2024
+|
+2023
+Risk reports and other thematic work

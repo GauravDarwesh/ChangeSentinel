@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-23T12:53:12.480270+00:00",
+  "generated_at": "2026-09-23T14:48:08.514758+00:00",
   "seed": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consolidated",
   "base": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/",
   "crawler": "stealth-crawler",
@@ -8,6 +8,25 @@
     "normalized_hash": "SHA-256 of extracted and normalized regulatory content",
     "classification_hash": "normalized_hash"
   },
+  "evidence": {
+    "snapshot_directory": "data/snapshots/",
+    "event_directory": "data/evidence/",
+    "diff_format": "unified_diff",
+    "max_diff_lines": 200
+  },
+  "relevance_gate": {
+    "mode": "high_recall",
+    "ai_final_semantic_decision": true
+  },
+  "ai_contract": {
+    "required_keys": [
+      "reason",
+      "relevant",
+      "summary",
+      "topic"
+    ],
+    "strict": true
+  },
   "counts": {
     "discovered": 16,
     "new": 0,
@@ -15,7 +34,9 @@
     "removed": 0,
     "unchanged": 16,
     "baseline_migration": 0,
-    "fetch_error": 0
+    "fetch_error": 0,
+    "relevance_candidates": 0,
+    "relevance_excluded": 0
   },
   "new_urls": [],
   "changed_urls": [],

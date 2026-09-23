@@ -15,6 +15,8 @@ Removed: 0
 Unchanged: 16
 Baseline migration: 0
 Fetch errors: 0
+Relevance candidates: 0
+Relevance excluded: 0
 
 ## Explicit events
 

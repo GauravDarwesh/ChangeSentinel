@@ -10,13 +10,27 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "e19b0771f6c86b3b4acab66a360ed3085e6b98332b033e63bb40ee1615348d27",
+    "raw_hash": "ab6796f873e89c8c5cf32007468ea2a1c09868295968fa7f139dc878f2505e5e",
     "normalized_hash": "162def79472b3fb3470acc4826b4e1902b40575f7c8f92d143be547db0bfe9f3",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/48bb58c55307e880052cd70dac53c5081184bb92d746ff04b8ca2dc3e22f5fd5.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consumer-protection",
+        "directive",
+        "guideline",
+        "recommendation",
+        "regulatory",
+        "report",
+        "rule"
+      ]
+    }
   },
   "212f4e79f515e78c7854f8bbb2000c03ad3d7b09b68b9e9f77ffb099f3d0f289": {
     "url_id": "212f4e79f515e78c7854f8bbb2000c03ad3d7b09b68b9e9f77ffb099f3d0f289",
@@ -29,13 +43,27 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "73699c3739128757c4544d8238febbccaa2c636ea61eb7f875cf4da15803fae3",
+    "raw_hash": "23999e51669b25c70f817177f61ff0aa197fbb625215fd0282a488744e223aa3",
     "normalized_hash": "6cf2ef5a7e1550e7dc519c3a31b45117b47b9184749242f8bdf5c2acd5c528fd",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/212f4e79f515e78c7854f8bbb2000c03ad3d7b09b68b9e9f77ffb099f3d0f289.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consultation",
+        "consumer-protection",
+        "directive",
+        "guideline",
+        "recommendation",
+        "regulatory",
+        "rule"
+      ]
+    }
   },
   "0962e177c8009799cc8c5fbe1dc95343787c48c46b5983b23590c7c267f86eb8": {
     "url_id": "0962e177c8009799cc8c5fbe1dc95343787c48c46b5983b23590c7c267f86eb8",
@@ -48,13 +76,26 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "b80e0b67b08d0fb5550b760d94cb2932a11e098ef7106b5feb4d8012ec4f77ef",
+    "raw_hash": "d864bd1eced79ec96e4be408d1fc7a74aad82c7e12a184197f4f01993d235c08",
     "normalized_hash": "be3494308532c6ca7892c79097f0863f0a8d9465dc74c78ec92d25125145e0f9",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/0962e177c8009799cc8c5fbe1dc95343787c48c46b5983b23590c7c267f86eb8.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consumer-protection",
+        "directive",
+        "guideline",
+        "regulatory",
+        "report",
+        "rule"
+      ]
+    }
   },
   "c09461e62cdb1f04bbea967ac16fbac45dee8b13e8de814922228059c9558198": {
     "url_id": "c09461e62cdb1f04bbea967ac16fbac45dee8b13e8de814922228059c9558198",
@@ -67,13 +108,26 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "a5c9a1395b9ed8a0ffcd87a9e8bcb4ff66efab3bb0b5d7e6cd46d149945b286d",
+    "raw_hash": "a6675b307a693e184e735482573efc3c4850ef6a52746070862b5949c6bcb210",
     "normalized_hash": "9562b6911b1ed0c10c01cb00a65293d5c76884abca2eea12bc413fcd98b3e1c7",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/c09461e62cdb1f04bbea967ac16fbac45dee8b13e8de814922228059c9558198.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consultation",
+        "consumer-protection",
+        "directive",
+        "guideline",
+        "regulatory",
+        "rule"
+      ]
+    }
   },
   "d766668dba00add68dd5289ad165fa152a9195036bb3060aa76e3c7b0ca68f5f": {
     "url_id": "d766668dba00add68dd5289ad165fa152a9195036bb3060aa76e3c7b0ca68f5f",
@@ -86,13 +140,27 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "9c228dfc1ed238650e24f0f82c80778b202e527ff06eaff346b25c24568ff2a0",
+    "raw_hash": "30815247b35abb26c33a49575b69b5fd46bc5ee481c410324bf2e46c7c707454",
     "normalized_hash": "712913cefcbbbaad810c9c6fa3b13c9688961f4484bc62566f3dd11ae3c3730b",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/d766668dba00add68dd5289ad165fa152a9195036bb3060aa76e3c7b0ca68f5f.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consumer-protection",
+        "governance",
+        "guideline",
+        "regulatory",
+        "report",
+        "risk",
+        "rule"
+      ]
+    }
   },
   "3b8c1c553286a083dbce1bd40db516855403eaaa14f9124cf02f059093cf149b": {
     "url_id": "3b8c1c553286a083dbce1bd40db516855403eaaa14f9124cf02f059093cf149b",
@@ -105,13 +173,26 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "48481c9a90f215857fa23e78fc60961d2b2f8a487eedfc4fb060e32af429ab8b",
+    "raw_hash": "f1d4d9cc7899031d94475b68826b0995e45de4a427c93fc47093aae73bf8d386",
     "normalized_hash": "6399b3c2960030c75033f42fe31eb7decb857dda3ed9c8f8e8860afe46e106cb",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/3b8c1c553286a083dbce1bd40db516855403eaaa14f9124cf02f059093cf149b.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consumer-protection",
+        "governance",
+        "guideline",
+        "regulatory",
+        "risk",
+        "rule"
+      ]
+    }
   },
   "72a2af5966ab4ba3316f5bff8df21d56af306586b47b30b529e3bbfadb7a4eac": {
     "url_id": "72a2af5966ab4ba3316f5bff8df21d56af306586b47b30b529e3bbfadb7a4eac",
@@ -124,13 +205,27 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "5301eb3676686eb4f8641841b0a13a93d26932805431f3b2db8327793e303133",
+    "raw_hash": "85502424b567cbe6142f4d6ca93dff609c8e43036a86fc58593d4f1201e6a930",
     "normalized_hash": "c294a79ce241b2a23dc4ccb1aed202f9bcc6b18ceeedb15f62bda8a73cd501e1",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/72a2af5966ab4ba3316f5bff8df21d56af306586b47b30b529e3bbfadb7a4eac.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consultation",
+        "consumer-protection",
+        "governance",
+        "guideline",
+        "regulatory",
+        "risk",
+        "rule"
+      ]
+    }
   },
   "652ba59e3ba9f22cea599c70a46240a1202624fe31590720c54cc7f846df5bbe": {
     "url_id": "652ba59e3ba9f22cea599c70a46240a1202624fe31590720c54cc7f846df5bbe",
@@ -143,13 +238,27 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "50e14a823b53e35f7705399890d42b7fbd1d7c4ca84d9557af18ae795717ad88",
+    "raw_hash": "e1a58d5095a864a4fa7dbc7dbe9323abbed94fa0706106f831567d686b0dc208",
     "normalized_hash": "cd83ea4c480e42185f6cad0f6eafee29ccec3650f6c1fd77c0806f3a64d1bfeb",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/652ba59e3ba9f22cea599c70a46240a1202624fe31590720c54cc7f846df5bbe.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consumer-protection",
+        "governance",
+        "guideline",
+        "regulatory",
+        "report",
+        "risk",
+        "rule"
+      ]
+    }
   },
   "82cfdcfda46f7634f7450d1f03d6383bd9351286c2f9489a8626af328b5152e7": {
     "url_id": "82cfdcfda46f7634f7450d1f03d6383bd9351286c2f9489a8626af328b5152e7",
@@ -162,13 +271,27 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "b6cf902f3dd41da8395df9cda7753daa8baeedebc20ea02c77cc9bd570c15ecb",
+    "raw_hash": "f9d2040c185a2e10f7cb5508ab3eb31a72f2bec16a90d833b0854a77cd70d3dd",
     "normalized_hash": "0767b7fb672a59c71bb2e42d78f4e9f83fb80146de0691c898d21533e12e4491",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/82cfdcfda46f7634f7450d1f03d6383bd9351286c2f9489a8626af328b5152e7.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consultation",
+        "consumer-protection",
+        "governance",
+        "guideline",
+        "regulatory",
+        "risk",
+        "rule"
+      ]
+    }
   },
   "bb6521e35067d93b1f37e32aa5b72d186917fdf596c58802b3a2f3c4d4223af0": {
     "url_id": "bb6521e35067d93b1f37e32aa5b72d186917fdf596c58802b3a2f3c4d4223af0",
@@ -181,13 +304,27 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "24b34a640397d0d37b86b84d335c8c8f4aecef22b61e3eedc9f42ed88cee1656",
+    "raw_hash": "2a1ea473aca208d9f47c3a834bf9f2221ad5aa0ed05be0e540bb39497e849a6a",
     "normalized_hash": "190f4e233c0425460dfebd0b0a5b0db05656499c1637ac62d208dd30103c18ac",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/bb6521e35067d93b1f37e32aa5b72d186917fdf596c58802b3a2f3c4d4223af0.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consumer-protection",
+        "regulation",
+        "regulatory",
+        "requirement",
+        "rule",
+        "standard",
+        "technical-standard"
+      ]
+    }
   },
   "d31d766f260aecaeaa0c04c5b32302ea394a33535b79b503feebefe1d20ca724": {
     "url_id": "d31d766f260aecaeaa0c04c5b32302ea394a33535b79b503feebefe1d20ca724",
@@ -200,13 +337,28 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "2a6042269cb9e17241549885930c041d16204450ee556a1df0cbcbfc5d2bdf7f",
+    "raw_hash": "f73d27ec1e7cb26f93e8b2ba940cc25fdfdf318760dea048973a637fd6a3eccc",
     "normalized_hash": "5e8a187c614277688ddab69a22478bcd54c9b673c43f4c324ed15e6426032ece",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/d31d766f260aecaeaa0c04c5b32302ea394a33535b79b503feebefe1d20ca724.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consultation",
+        "consumer-protection",
+        "regulation",
+        "regulatory",
+        "requirement",
+        "rule",
+        "standard",
+        "technical-standard"
+      ]
+    }
   },
   "c825194022999e6ec26c89eaf3f0b647fd9743ed9d6ceeea726ff7e306df9f95": {
     "url_id": "c825194022999e6ec26c89eaf3f0b647fd9743ed9d6ceeea726ff7e306df9f95",
@@ -219,13 +371,30 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "4069f5f54fec66a6ca76158eebda0cb9023f53e4e59ce3b90d73b92737d1afb7",
+    "raw_hash": "548e7d83ad530a56f2aa4ed0ece70e41cc8b4712a1b80ec8e1e52c7e84ca3a25",
     "normalized_hash": "5e55d176c0a2bddd0cf5f2d147bbb3aa48eba22e6cb9cc2122771a4f09a5786d",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/c825194022999e6ec26c89eaf3f0b647fd9743ed9d6ceeea726ff7e306df9f95.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consumer-protection",
+        "disclosure",
+        "governance",
+        "opinion",
+        "regulatory",
+        "requirement",
+        "risk",
+        "rule",
+        "standard",
+        "technical-standard"
+      ]
+    }
   },
   "9efdc7f1712422176b171913ca8f4a4d0a670a3a4f1876418d3768863ddfa4dd": {
     "url_id": "9efdc7f1712422176b171913ca8f4a4d0a670a3a4f1876418d3768863ddfa4dd",
@@ -238,13 +407,31 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "24cf5565f8a480d03111db279af7625e99866fd4603220079b56014d09f084b6",
+    "raw_hash": "f2cbee43abd0daf80ab17ae25258ffae5921a6854318f3d10ba414f453af61be",
     "normalized_hash": "be574a0fe8b0281f44d595283a9354780a1aadc0c58c5936129010b698d2f45d",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/9efdc7f1712422176b171913ca8f4a4d0a670a3a4f1876418d3768863ddfa4dd.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consultation",
+        "consumer-protection",
+        "disclosure",
+        "governance",
+        "opinion",
+        "regulatory",
+        "requirement",
+        "risk",
+        "rule",
+        "standard",
+        "technical-standard"
+      ]
+    }
   },
   "e0878d46c11f69f895827961ad27ea90ab38a9f5b29e9682bf7c7fe52dd464fe": {
     "url_id": "e0878d46c11f69f895827961ad27ea90ab38a9f5b29e9682bf7c7fe52dd464fe",
@@ -257,13 +444,28 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "9c94aedb35d89fdabee39af399b932e369f1afdbddaf1d41b60fac56b36716d1",
+    "raw_hash": "21d907ccc3b5b2f9e423692bbf5dea5ba4bee7ba6c8530acdf9a93938a821dbd",
     "normalized_hash": "fcadba288f4b62257440db096637f3898b40da317a0fad4496afe04271ab698d",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/e0878d46c11f69f895827961ad27ea90ab38a9f5b29e9682bf7c7fe52dd464fe.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consumer-protection",
+        "regulation",
+        "regulatory",
+        "report",
+        "requirement",
+        "risk",
+        "rule",
+        "supervisory"
+      ]
+    }
   },
   "abf2a176a14eecdeb4aca0790ce24b7bd9d8174d927a624d3b7f5d03d82ce7f6": {
     "url_id": "abf2a176a14eecdeb4aca0790ce24b7bd9d8174d927a624d3b7f5d03d82ce7f6",
@@ -276,13 +478,28 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "b46c4236e9e6f47f5a4c8f0ec8f1d9f513ef81a5c7a01d6c185e3c0235dbb99a",
+    "raw_hash": "c9899992679e7619f1c07782c152034da28e477a824aff83ed80c1175926b89a",
     "normalized_hash": "85f71da5c04eaf8d88b1d2dda89a8e4314f746b131c546493f54d9954c462e51",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/abf2a176a14eecdeb4aca0790ce24b7bd9d8174d927a624d3b7f5d03d82ce7f6.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consumer-protection",
+        "decision",
+        "directive",
+        "disclosure",
+        "regulatory",
+        "rule",
+        "standard",
+        "technical-standard"
+      ]
+    }
   },
   "1975892c278c5745ba68c06dc45091787318ddeb69546850fb1a0a5ef90cafe2": {
     "url_id": "1975892c278c5745ba68c06dc45091787318ddeb69546850fb1a0a5ef90cafe2",
@@ -295,12 +512,27 @@
     "content_length": null,
     "etag": null,
     "last_modified": null,
-    "raw_hash": "e47c3d0d9b24ea7ee8304982f1eebc3fb2530ca4296dc9f9e26929f93f847a9a",
+    "raw_hash": "eb48656463fe49cb93ab70ccc770bdfe07c6568f8ac280327560cfc6b06e8b86",
     "normalized_hash": "2a8c1c0e55a85c25106e9ca4a4c5624ea5a987eb7a19a68e0d14d0cfc314af9b",
     "first_seen": "2026-09-23T12:50:55.168057+00:00",
-    "last_seen": "2026-09-23T12:53:12.480270+00:00",
-    "last_checked": "2026-09-23T12:53:12.480270+00:00",
+    "last_seen": "2026-09-23T14:48:08.514758+00:00",
+    "last_checked": "2026-09-23T14:48:08.514758+00:00",
     "active": true,
-    "evidence_location": null
+    "evidence_location": null,
+    "snapshot_location": "data/snapshots/1975892c278c5745ba68c06dc45091787318ddeb69546850fb1a0a5ef90cafe2.txt",
+    "relevance": {
+      "candidate": true,
+      "reason": "Regulatory signal detected",
+      "signals": [
+        "consultation",
+        "consumer-protection",
+        "decision",
+        "disclosure",
+        "regulatory",
+        "rule",
+        "standard",
+        "technical-standard"
+      ]
+    }
   }
 }
