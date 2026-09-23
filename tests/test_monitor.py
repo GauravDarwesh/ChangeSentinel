@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from regmon.monitor import build_event_id, classify_change, fetch, make_diff, normalize_html, validate_ai_analysis
+from regmon.relevance import triage
 
 
 class TestNormalization(unittest.TestCase):
