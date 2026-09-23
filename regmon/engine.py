@@ -37,6 +37,19 @@ def load_previous(source_id: str) -> dict[str, dict]:
         return payload["sources"].get(source_id, {})
     return payload if all(isinstance(v, dict) for v in payload.values()) else {}
 
+def resolve_previous(url: str, previous: dict[str, dict]) -> tuple[str, dict | None]:
+    """Resolve prior state by URL id, then by canonicalized URL for legacy/query-order compatibility."""
+    uid = make_id(url)
+    direct = previous.get(uid)
+    if direct is not None:
+        return uid, direct
+    target = canonical(url)
+    for previous_uid, record in previous.items():
+        prior_url = record.get("canonical_url")
+        if prior_url and canonical(prior_url) == target:
+            return previous_uid, record
+    return uid, None
+
 def read_snapshot(record: dict | None) -> str | None:
     if not record or not record.get("snapshot_location"):
         return None
@@ -123,18 +136,19 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
     urls = discover(source, DATA)
     current, texts, old_texts = {}, {}, {uid: read_snapshot(old) for uid, old in previous.items()}
     events, new_items, changed_items, migration_items, unchanged_items = [], [], [], [], []
+    resolved = {url: resolve_previous(url, previous) for url in urls}
 
     workers = min(16, max(1, len(urls)))
     with ThreadPoolExecutor(max_workers=workers) as pool:
         futures = {
-            pool.submit(make_current_item, url, previous.get(make_id(url)), source, now):
-            (url, previous.get(make_id(url)), old_texts.get(make_id(url)))
+            pool.submit(make_current_item, url, resolved[url][1], source, now):
+            (url, resolved[url][0], resolved[url][1], old_texts.get(resolved[url][0]))
             for url in urls
         }
         for future in as_completed(futures):
-            url, old, old_text = futures[future]
+            url, uid, old, old_text = futures[future]
             item, text = future.result()
-            uid = item["url_id"]
+            item["url_id"] = uid
             current[uid] = item
             if text is not None:
                 texts[uid] = text
