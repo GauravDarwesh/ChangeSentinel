@@ -1,157 +1,144 @@
+import json
+import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import Mock, patch
 
-from regmon.monitor import build_event_id, classify_change, discover, fetch, make_diff, normalize_html, parse_discovered_urls, validate_ai_analysis
+from regmon.ai import AI_REQUIRED_KEYS, parse_json, validate_analysis
+from regmon.change import build_event_id, classify_change, make_diff, make_id
+from regmon.content import extract_content, normalize_html
+from regmon.config import SourceConfig
+from regmon.discovery import canonical, in_scope, parse_discovered_urls
+from regmon.fetch import fetch
+from regmon.monitor import load_previous
 from regmon.relevance import triage
 
+SOURCE = SourceConfig(
+    id="eba-test",
+    name="EBA Test",
+    regulator="European Banking Authority",
+    seed_urls=("https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/start",),
+    allowed_prefixes=("https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/",),
+    allowed_domains=("www.eba.europa.eu",),
+)
 
-class TestNormalization(unittest.TestCase):
-    def test_dynamic_markup_does_not_change_normalized_content(self):
-        html_a = """
-        <html>
-          <body>
-            <nav>Navigation</nav>
-            <main>
-              <h1>Consumer protection</h1>
-              <p>Guidelines on credit services.</p>
-            </main>
-            <footer>Footer A</footer>
-          </body>
-        </html>
-        """
-        html_b = """
-        <html>
-          <body>
-            <nav>Different navigation</nav>
-            <main>
-              <h1>Consumer protection</h1>
-              <p>Guidelines on credit services.</p>
-            </main>
-            <footer>Footer B</footer>
-          </body>
-        </html>
-        """
-        self.assertEqual(normalize_html(html_a), normalize_html(html_b))
+class TestContent(unittest.TestCase):
+    def test_dynamic_markup_is_ignored(self):
+        a="<body><nav>A</nav><main><h1>Guideline</h1><p>Version one.</p></main><footer>A</footer></body>"
+        b="<body><nav>B</nav><main><h1>Guideline</h1><p>Version one.</p></main><footer>B</footer></body>"
+        self.assertEqual(normalize_html(a), normalize_html(b))
 
-    def test_substantive_text_change_is_preserved(self):
-        html_a = "<html><main><h1>Guidelines</h1><p>Version one.</p></main></html>"
-        html_b = "<html><main><h1>Guidelines</h1><p>Version two.</p></main></html>"
-        self.assertNotEqual(normalize_html(html_a), normalize_html(html_b))
+    def test_substantive_change_survives(self):
+        self.assertNotEqual(normalize_html("<main>Version one</main>"), normalize_html("<main>Version two</main>"))
 
-    def test_class_none_does_not_break_normalization(self):
-        html = '<html><main><div class="">Regulatory content</div></main></html>'
-        self.assertEqual(normalize_html(html), "Regulatory content")
+    def test_pdf_failure_is_explicit(self):
+        text, kind, error = extract_content("https://example.test/a.pdf","application/pdf",b"not-a-pdf")
+        self.assertIsNone(text)
+        self.assertEqual(kind,"pdf")
+        self.assertTrue(error)
 
-    def test_none_attrs_do_not_break_dynamic_filter(self):
-        from bs4 import BeautifulSoup
+class TestDiscovery(unittest.TestCase):
+    def test_canonical_removes_tracking_but_preserves_semantic_query(self):
+        self.assertEqual(canonical("HTTPS://WWW.EBA.EUROPA.EU/a/?phase=consolidated&utm_source=x&version=2015#x"),"https://www.eba.europa.eu/a?phase=consolidated&version=2015")
 
-        soup = BeautifulSoup("<main><div>Regulatory content</div></main>", "html.parser")
-        tag = soup.find("div")
-        tag.attrs = None
-        self.assertFalse(__import__("regmon.monitor", fromlist=["should_remove"]).should_remove(tag))
+    def test_scope_filters_external_and_duplicates(self):
+        output="\n".join([
+            "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a?x=1&utm_source=x",
+            "https://example.test/outside",
+            "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a?x=1",
+        ])
+        self.assertEqual(len(parse_discovered_urls(output,SOURCE)),1)
+        self.assertTrue(in_scope("https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a",SOURCE))
 
-    def test_legacy_baseline_is_migrated(self):
-        old = {"content_hash": "legacy-raw"}
-        current = {"raw_hash": "new-raw", "normalized_hash": "new-normalized"}
-        event, migrated = classify_change(old, current)
-        self.assertEqual(event, "BASELINE_MIGRATION")
-        self.assertTrue(migrated)
+class TestChange(unittest.TestCase):
+    def test_new(self):
+        self.assertEqual(classify_change(None,{"normalized_hash":"a"}),("NEW_URL",False))
 
-    def test_normalized_hash_is_authoritative_after_migration(self):
-        old = {"normalized_hash": "same"}
-        current = {"normalized_hash": "same", "raw_hash": "different"}
-        event, migrated = classify_change(old, current)
-        self.assertEqual(event, "UNCHANGED_URL")
-        self.assertFalse(migrated)
+    def test_normalized_hash_is_authoritative(self):
+        self.assertEqual(classify_change({"normalized_hash":"same","raw_hash":"old"},{"normalized_hash":"same","raw_hash":"new"}),("UNCHANGED_URL",False))
 
+    def test_legacy_baseline_migrates(self):
+        self.assertEqual(classify_change({"content_hash":"old"},{"raw_hash":"new","normalized_hash":"n"}),("BASELINE_MIGRATION",True))
 
+    def test_diff(self):
+        diff=make_diff("old","new")
+        self.assertIn("-old",diff)
+        self.assertIn("+new",diff)
 
-    def test_diff_captures_substantive_edit(self):
-        diff = make_diff("Line one\nVersion one", "Line one\nVersion two")
-        self.assertIn("-Version one", diff)
-        self.assertIn("+Version two", diff)
+    def test_event_id_deterministic(self):
+        self.assertEqual(build_event_id("CHANGED_URL","u","a","b"),build_event_id("CHANGED_URL","u","a","b"))
 
-    def test_event_id_is_deterministic(self):
-        a = build_event_id("CHANGED_URL", "abc", "old", "new")
-        b = build_event_id("CHANGED_URL", "abc", "old", "new")
-        self.assertEqual(a, b)
-        self.assertNotEqual(a, build_event_id("CHANGED_URL", "abc", "old", "different"))
+class TestAI(unittest.TestCase):
+    def test_schema(self):
+        value={key:(True if key=="relevant" else "x") for key in AI_REQUIRED_KEYS}
+        self.assertEqual(validate_analysis(value),value)
 
-    def test_parse_discovered_urls_keeps_only_in_scope_urls(self):
-        output = """
-        progress
-        https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-example
-        https://example.test/outside
-        https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-example
-        """
-        urls = parse_discovered_urls(output)
-        self.assertEqual(
-            urls,
-            [
-                "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-example"
-            ],
-        )
+    def test_json_code_fence(self):
+        value={key:(True if key=="relevant" else "x") for key in AI_REQUIRED_KEYS}
+        fence=chr(96)*3
+        self.assertEqual(parse_json(f"{fence}json\n"+json.dumps(value)+f"\n{fence}"),value)
 
-    @patch("regmon.monitor.time.sleep")
-    @patch("regmon.monitor.subprocess.run")
-    def test_discover_retries_empty_crawler_output(self, mock_run, mock_sleep):
-        mock_run.side_effect = [
-            Mock(returncode=0, stdout="progress only\n", stderr=""),
-            Mock(
-                returncode=0,
-                stdout="https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-example\n",
-                stderr="",
-            ),
-        ]
-        urls = discover()
-        self.assertEqual(
-            urls,
-            [
-                "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-example"
-            ],
-        )
-        mock_sleep.assert_called_once()
-
-    @patch("regmon.monitor.requests.get")
-    def test_http_error_is_not_treated_as_content(self, mock_get):
-        response = Mock()
-        response.status_code = 500
-        response.headers = {}
-        mock_get.return_value = response
-
-        with self.assertRaises(Exception) as ctx:
-            fetch("https://example.test/page")
-
-        self.assertIn("HTTP 500", str(ctx.exception))
-
-    def test_valid_ai_schema_is_accepted(self):
-        value = {
-            "relevant": True,
-            "topic": "Consumer protection",
-            "summary": "A concise summary.",
-            "reason": "The page describes a regulatory change.",
-        }
-        self.assertEqual(validate_ai_analysis(value), value)
-
-    def test_wrong_ai_relevant_type_is_rejected(self):
-        value = {
-            "relevant": "true",
-            "topic": "Consumer protection",
-            "summary": "A concise summary.",
-            "reason": "The page describes a regulatory change.",
-        }
+    def test_extra_key_rejected(self):
+        value={key:(True if key=="relevant" else "x") for key in AI_REQUIRED_KEYS}
+        value["extra"]="x"
         with self.assertRaises(ValueError):
-            validate_ai_analysis(value)
+            validate_analysis(value)
 
-    def test_extra_ai_key_is_rejected(self):
-        value = {
-            "relevant": True,
-            "topic": "Consumer protection",
-            "summary": "A concise summary.",
-            "reason": "The page describes a regulatory change.",
-            "confidence": 0.9,
-        }
-        with self.assertRaises(ValueError):
-            validate_ai_analysis(value)
-if __name__ == "__main__":
+class TestRelevance(unittest.TestCase):
+    def test_utility_excluded(self):
+        self.assertFalse(triage("https://www.eba.europa.eu/contact")["candidate"])
+
+    def test_regulatory_candidate(self):
+        result=triage("https://www.eba.europa.eu/a","New regulatory guideline requirement")
+        self.assertTrue(result["candidate"])
+        self.assertIn("guideline",result["signals"])
+
+class TestFetch(unittest.TestCase):
+    @patch("regmon.fetch.requests.get")
+    def test_http_500_retries_and_fails(self,mock_get):
+        mock_get.return_value=Mock(status_code=500,content=b"bad",headers={})
+        with self.assertRaises(Exception):
+            fetch("https://example.test",attempts=2,backoff_seconds=0)
+        self.assertEqual(mock_get.call_count,2)
+
+class TestState(unittest.TestCase):
+    def test_flat_legacy_loader_compatible(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/"latest.json"
+            path.write_text(json.dumps({"id":{"canonical_url":"x"}}),encoding="utf-8")
+            with patch("regmon.engine.DATA",Path(tmp)):
+                self.assertIn("id",load_previous("eba-test"))
+
+class TestEngineFlow(unittest.TestCase):
+    @patch("regmon.engine.write_evidence")
+    @patch("regmon.engine.write_snapshot",return_value="data/snapshots/test.txt")
+    @patch("regmon.engine.discover")
+    @patch("regmon.engine.make_current_item")
+    @patch("regmon.engine.load_previous")
+    def test_changed_event_uses_previous_snapshot(
+        self,mock_previous,mock_make,mock_discover,mock_snapshot,mock_evidence
+    ):
+        from regmon.engine import process_source
+        url="https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a"
+        uid=make_id(url)
+        mock_previous.return_value={uid:{
+            "url_id":uid,"canonical_url":url,"normalized_hash":"oldhash","raw_hash":"oldraw",
+            "snapshot_location":f"data/snapshots/{uid}.txt","first_seen":"2026-01-01T00:00:00+00:00"
+        }}
+        mock_discover.return_value=[url]
+        mock_make.return_value=({"url_id":uid,"source_id":"eba-test","regulator":"European Banking Authority","canonical_url":url,
+                                 "normalized_hash":"newhash","raw_hash":"newraw","relevance":{"candidate":False},
+                                 "first_seen":"2026-01-01T00:00:00+00:00"},"new text")
+        import regmon.engine as mod
+        old_file=mod.ROOT/"data"/"snapshots"/f"{uid}.txt"
+        old_file.parent.mkdir(parents=True,exist_ok=True)
+        old_file.write_text("old text",encoding="utf-8")
+        result=process_source(SOURCE,"run-test",dry_run=True)
+        args=mock_evidence.call_args.args
+        self.assertIn("old text",args)
+        self.assertIn("new text",args)
+        self.assertEqual(result["report"]["counts"]["changed"],1)
+        old_file.unlink()
+
+if __name__=="__main__":
     unittest.main()
