@@ -273,6 +273,13 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
     payload = json.loads(latest_path.read_text(encoding="utf-8")) if latest_path.exists() else {"schema_version":2,"sources":{}}
     if payload.get("schema_version") != 2 or not isinstance(payload.get("sources"),dict):
         payload = {"schema_version":2,"sources":{}}
+    _, configured_sources = load_config()
+    active_source_ids = {source.id for source in configured_sources.values() if source.active}
+    payload["sources"] = {
+        source_id: inventory
+        for source_id, inventory in payload["sources"].items()
+        if source_id in active_source_ids
+    }
     history_path = HISTORY / "index.json"
     history = json.loads(history_path.read_text(encoding="utf-8")) if history_path.exists() else []
     for result in source_results:
