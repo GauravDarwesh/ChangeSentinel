@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock, patch
 
-from regmon.monitor import build_event_id, classify_change, fetch, make_diff, normalize_html, validate_ai_analysis
+from regmon.monitor import build_event_id, classify_change, discover, fetch, make_diff, normalize_html, parse_discovered_urls, validate_ai_analysis
 from regmon.relevance import triage
 
 
@@ -76,6 +76,41 @@ class TestNormalization(unittest.TestCase):
         b = build_event_id("CHANGED_URL", "abc", "old", "new")
         self.assertEqual(a, b)
         self.assertNotEqual(a, build_event_id("CHANGED_URL", "abc", "old", "different"))
+
+    def test_parse_discovered_urls_keeps_only_in_scope_urls(self):
+        output = """
+        progress
+        https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-example
+        https://example.test/outside
+        https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-example
+        """
+        urls = parse_discovered_urls(output)
+        self.assertEqual(
+            urls,
+            [
+                "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-example"
+            ],
+        )
+
+    @patch("regmon.monitor.time.sleep")
+    @patch("regmon.monitor.subprocess.run")
+    def test_discover_retries_empty_crawler_output(self, mock_run, mock_sleep):
+        mock_run.side_effect = [
+            Mock(returncode=0, stdout="progress only\n", stderr=""),
+            Mock(
+                returncode=0,
+                stdout="https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-example\n",
+                stderr="",
+            ),
+        ]
+        urls = discover()
+        self.assertEqual(
+            urls,
+            [
+                "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-example"
+            ],
+        )
+        mock_sleep.assert_called_once()
 
     @patch("regmon.monitor.requests.get")
     def test_http_error_is_not_treated_as_content(self, mock_get):
