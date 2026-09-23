@@ -1,58 +1,68 @@
-# Regulatory Monitoring Crawler POC
+# Regulatory Monitoring Engine
 
-Real regulator: European Banking Authority
+A scalable regulatory monitoring pipeline using the European Banking Authority as the first live source.
 
-Flow:
+## End-to-end flow
 
-EBA -> Stealth Crawler -> URL manifest -> normalized change detection -> evidence -> relevance triage -> OpenRouter AI -> ntfy -> dashboard
+Source configuration
+-> URL discovery and canonicalization
+-> concurrent HTTP fetching
+-> HTML/PDF/DOCX/XLSX/PPTX/CSV/text extraction
+-> deterministic normalization
+-> normalized SHA-256 comparison
+-> NEW / CHANGED / UNCHANGED / REMOVED / FETCH_ERROR / EXTRACTION_ERROR
+-> immutable evidence and unified diff
+-> high-recall relevance triage
+-> structured OpenRouter analysis
+-> ntfy notifications
+-> Git state
+-> GitHub Pages operations console
 
-This is a test POC, not a production compliance system.
+AI is downstream intelligence. It does not determine whether a page technically changed.
 
-## Monitoring
+## Current source
 
-The monitoring workflow is currently manual (workflow_dispatch) so changes can be validated before scheduling.
+The first configured source is EBA Consumer Protection. The source definition lives in config/sources.json, so additional regulators can be added without rewriting the orchestration layer.
 
-The workflow is capped at 50 discovered URLs and stores:
+The EBA scope is configured at 250 discovered URLs per source.
 
-- data/latest.json — current URL inventory
-- data/report.json — latest monitoring report
-- data/report.md — human-readable report
-- data/snapshots/ — normalized page snapshots
-- data/evidence/ — event evidence and diffs
-- data/notifications.json — deterministic ntfy delivery ledger
+## State
+
+- data/latest.json: current inventory grouped by source
+- data/reports/: latest per-source reports
+- data/report.json: aggregate latest report
+- data/report.md: aggregate human-readable report
+- data/snapshots/: latest normalized snapshots
+- data/evidence/: immutable event evidence and diffs
+- data/history/: run history
+- data/notifications.json: notification idempotency ledger
 
 ## AI
 
-Required GitHub Actions secret:
+Required GitHub Actions secret: OPENROUTER_API_KEY
 
-OPENROUTER_API_KEY
+The strict nine-field contract is:
+relevant, topic, change_type, summary, impact, effective_date, affected_scope, actions, reason
 
-AI output is strictly validated to:
-
-relevant, topic, summary, reason
+Changed pages send the actual before/after unified diff to the model. New URLs send their normalized content.
 
 ## Notifications
 
-The workflow publishes only validated relevant AI results, URL removals, and fetch-error alerts to ntfy.
+Default ntfy topic: RegMonitoringWebCrawlerNTFY
 
-Default topic:
+Optional secret: NTFY_TOPIC
 
-RegMonitoringWebCrawlerNTFY
+The manual workflow includes a controlled delivery-test switch that does not modify the monitoring baseline.
 
-You can optionally override it with the GitHub Actions secret:
+## Automation
 
-NTFY_TOPIC
+The monitoring workflow runs every six hours and supports manual source selection. A concurrency lock prevents overlapping state writers.
 
-The notifier keeps an event-ID ledger so the same deterministic event is not repeatedly published on subsequent runs.
+GitHub Pages uses a dedicated deployment workflow and the dashboard reads state from the main branch.
 
-## Dashboard
+## Validation
 
-The GitHub Pages homepage is the live monitoring console in index.html.
+Run locally:
 
-The workflow prepares a GitHub Pages artifact containing the dashboard, monitoring report, URL inventory, notification ledger, and evidence files. The dashboard auto-refreshes every 15 seconds.
-
-GitHub Pages must be configured to use GitHub Actions as the publishing source before the deployment job can publish the site. The dashboard deployment is isolated with continue-on-error so a Pages configuration issue cannot fail the monitoring job.
-
-## Current validation state
-
-The latest validated monitoring run discovered 16 URLs with 0 new, 0 changed, 0 removed, 16 unchanged, and 0 fetch errors.
+python -m unittest discover -s tests -p "test*.py"
+python -m compileall -q regmon
