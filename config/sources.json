@@ -7,7 +7,7 @@
     "ai_concurrency": 4,
     "ai_timeout_seconds": 60,
     "ai_attempts": 2,
-    "max_ai_candidates": 100,
+    "max_ai_candidates": 250,
     "max_diff_lines": 200,
     "max_ai_chars": 14000,
     "history_runs": 90
