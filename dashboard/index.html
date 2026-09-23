@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="European Banking Authority regulatory monitoring dashboard">
+  <title>EBA Regulatory Monitor</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #071019;
+      --panel: rgba(16, 26, 38, 0.82);
+      --panel-strong: rgba(18, 31, 46, 0.96);
+      --text: #eef4f8;
+      --muted: #95a8b7;
+      --line: rgba(255, 255, 255, 0.09);
+      --accent: #7dd3fc;
+      --good: #86efac;
+      --warn: #fde68a;
+      --bad: #fca5a5;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(61, 128, 176, 0.16), transparent 36%),
+        radial-gradient(circle at bottom right, rgba(65, 87, 146, 0.12), transparent 34%),
+        var(--bg);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { width: min(1400px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 48px; }
+    .topbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+    .eyebrow { color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: 6px 0 6px; font-size: clamp(28px, 5vw, 48px); line-height: 1; }
+    .sub { margin: 0; color: var(--muted); max-width: 840px; }
+    .status { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); box-shadow: var(--shadow); white-space: nowrap; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--good); box-shadow: 0 0 14px rgba(134, 239, 172, .35); }
+    .grid { display: grid; gap: 14px; }
+    .metrics { grid-template-columns: repeat(6, minmax(0, 1fr)); margin-bottom: 14px; }
+    .two { grid-template-columns: 1.3fr .7fr; margin-bottom: 14px; }
+    .panel { border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(180deg, rgba(255,255,255,.025), transparent), var(--panel); box-shadow: var(--shadow); overflow: hidden; }
+    .metric { padding: 17px 18px; min-height: 108px; }
+    .metric-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    .metric-value { margin-top: 12px; font-size: 30px; font-weight: 750; letter-spacing: -.03em; }
+    .metric-note { margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+    .panel-head h2 { margin: 0; font-size: 15px; }
+    .panel-body { padding: 18px; }
+    .meta { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .meta-block { padding: 13px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.015); }
+    .meta-k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+    .meta-v { margin-top: 6px; font-size: 13px; word-break: break-word; }
+    .events { display: grid; gap: 11px; }
+    .event { padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.018); }
+    .event-top { display:flex; justify-content:space-between; gap: 16px; align-items:flex-start; }
+    .event-kind { font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+    .event-time { color: var(--muted); font-size: 11px; }
+    .event-title { margin-top: 8px; font-weight: 700; }
+    .event-url { margin-top: 5px; font-size: 12px; line-height: 1.5; word-break: break-word; }
+    .event-summary { margin-top: 8px; color: #d8e2e8; line-height: 1.55; font-size: 13px; }
+    .event-reason { margin-top: 6px; color: var(--muted); line-height: 1.55; font-size: 12px; }
+    .event-actions { margin-top: 10px; display:flex; gap:12px; flex-wrap:wrap; font-size:12px; }
+    table { width:100%; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 11px 8px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top; }
+    th { color: var(--muted); font-size: 10px; text-transform:uppercase; letter-spacing:.08em; }
+    td.url { max-width: 540px; word-break: break-word; }
+    .pill { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); padding:4px 8px; border-radius:999px; color:var(--muted); }
+    .empty { color:var(--muted); text-align:center; padding: 28px 12px; border: 1px dashed var(--line); border-radius: 14px; }
+    .footer-note { margin-top: 16px; color: var(--muted); font-size: 11px; text-align:center; }
+    .error { color: var(--bad); }
+    @media (max-width: 1100px) { .metrics { grid-template-columns: repeat(3, minmax(0,1fr)); } .two { grid-template-columns: 1fr; } }
+    @media (max-width: 650px) { .wrap { width: min(100% - 20px, 1400px); padding-top: 18px; } .topbar { align-items:flex-start; flex-direction:column; } .metrics { grid-template-columns: repeat(2, minmax(0,1fr)); } .meta { grid-template-columns: 1fr; } .metric-value { font-size: 24px; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">European Banking Authority</div>
+        <h1>Regulatory Monitor</h1>
+        <p class="sub">Change detection, relevance triage, AI analysis and audit evidence from the monitoring pipeline.</p>
+      </div>
+      <div class="status"><span id="statusDot" class="dot"></span><span id="statusText">Loading state…</span></div>
+    </header>
+
+    <section class="grid metrics">
+      <div class="panel metric"><div class="metric-label">URLs discovered</div><div id="mDiscovered" class="metric-value">—</div><div class="metric-note">Current crawl</div></div>
+      <div class="panel metric"><div class="metric-label">Changed</div><div id="mChanged" class="metric-value">—</div><div class="metric-note">Content changes</div></div>
+      <div class="panel metric"><div class="metric-label">New</div><div id="mNew" class="metric-value">—</div><div class="metric-note">Newly discovered</div></div>
+      <div class="panel metric"><div class="metric-label">Removed</div><div id="mRemoved" class="metric-value">—</div><div class="metric-note">No longer discovered</div></div>
+      <div class="panel metric"><div class="metric-label">Fetch errors</div><div id="mErrors" class="metric-value">—</div><div class="metric-note">Operational health</div></div>
+      <div class="panel metric"><div class="metric-label">AI candidates</div><div id="mCandidates" class="metric-value">—</div><div class="metric-note">Eligible for analysis</div></div>
+    </section>
+
+    <section class="grid two">
+      <div class="panel">
+        <div class="panel-head"><h2>Run status</h2><span id="refreshText" class="pill">Auto-refresh: 15s</span></div>
+        <div class="panel-body">
+          <div class="meta">
+            <div class="meta-block"><div class="meta-k">Last generated</div><div id="generatedAt" class="meta-v">—</div></div>
+            <div class="meta-block"><div class="meta-k">Crawler</div><div id="crawler" class="meta-v">—</div></div>
+            <div class="meta-block"><div class="meta-k">Seed</div><div id="seed" class="meta-v">—</div></div>
+            <div class="meta-block"><div class="meta-k">Change detector</div><div id="detector" class="meta-v">—</div></div>
+            <div class="meta-block"><div class="meta-k">Relevance mode</div><div id="relevance" class="meta-v">—</div></div>
+            <div class="meta-block"><div class="meta-k">AI contract</div><div id="aiContract" class="meta-v">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>Notification state</h2><span class="pill">ntfy</span></div>
+        <div class="panel-body">
+          <div class="meta">
+            <div class="meta-block"><div class="meta-k">Events recorded as sent</div><div id="nSent" class="meta-v">—</div></div>
+            <div class="meta-block"><div class="meta-k">State updated</div><div id="nUpdated" class="meta-v">—</div></div>
+          </div>
+          <div id="notificationHint" class="footer-note"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-bottom:14px;">
+      <div class="panel-head"><h2>Recent events</h2><span class="pill">Evidence-backed</span></div>
+      <div class="panel-body"><div id="events" class="events"></div></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Monitored URL inventory</h2><span id="inventoryCount" class="pill">—</span></div>
+      <div class="panel-body">
+        <div style="overflow:auto;">
+          <table>
+            <thead><tr><th>Status</th><th>URL</th><th>HTTP</th><th>Last checked</th><th>Last modified</th></tr></thead>
+            <tbody id="inventory"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">Dashboard data is loaded directly from the committed monitoring state. The page refreshes every 15 seconds.</div>
+  </main>
+
+  <script>
+    const REPORT_URL = "data/report.json";
+    const INVENTORY_URL = "data/latest.json";
+    const NOTIFICATION_URL = "data/notifications.json";
+
+    const $ = (id) => document.getElementById(id);
+    const bust = (url) => url + (url.includes("?") ? "&" : "?") + "t=" + Date.now();
+
+    function fmtTime(value) {
+      if (!value) return "—";
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+    }
+
+    function esc(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+      }[char]));
+    }
+
+    function setMetric(id, value) {
+      $(id).textContent = Number.isFinite(Number(value)) ? String(value) : "—";
+    }
+
+    function eventVisual(kind) {
+      if (kind === "CHANGED_URL") return "Changed";
+      if (kind === "NEW_URL") return "New";
+      if (kind === "REMOVED_URL") return "Removed";
+      if (kind === "FETCH_ERROR") return "Fetch error";
+      return kind || "Event";
+    }
+
+    function aiForEvent(report, eventId) {
+      return (report.ai_results || []).find((item) => item.event_id === eventId) || null;
+    }
+
+    function renderEvents(report) {
+      const container = $("events");
+      const events = report.events || [];
+      const results = report.ai_results || [];
+      const material = [];
+
+      for (const event of events) {
+        const ai = aiForEvent(report, event.event_id);
+        const analysis = ai && ai.ai && ai.ai.status === "ok" ? ai.ai.analysis : null;
+        material.push({
+          id: event.event_id,
+          kind: event.event_type,
+          url: event.url,
+          timestamp: event.timestamp,
+          topic: analysis?.topic || (event.event_type === "REMOVED_URL" ? "Monitored URL removed" : event.event_type),
+          summary: analysis?.summary || "",
+          reason: analysis?.reason || ((event.evidence || {}).error || ""),
+          evidence: event.evidence_location
+        });
+      }
+
+      // Preserve useful AI-only failures/records even when the corresponding
+      // event record was not present in the compact event list.
+      for (const result of results) {
+        if (!material.some((event) => event.id === result.event_id)) {
+          const analysis = result.ai && result.ai.status === "ok" ? result.ai.analysis : null;
+          material.push({
+            id: result.event_id,
+            kind: result.event,
+            url: result.url,
+            timestamp: report.generated_at,
+            topic: analysis?.topic || "AI analysis",
+            summary: analysis?.summary || "",
+            reason: analysis?.reason || result.ai?.reason || "",
+            evidence: result.evidence_location
+          });
+        }
+      }
+
+      material.sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+
+      if (!material.length) {
+        container.innerHTML = '<div class="empty">No events detected in the latest monitoring run.</div>';
+        return;
+      }
+
+      container.innerHTML = material.slice(0, 20).map((event) => {
+        const links = [];
+        if (event.url) links.push('<a href="' + esc(event.url) + '" target="_blank" rel="noopener">Open regulator page</a>');
+        if (event.evidence) {
+          const evidencePath = event.evidence.startsWith("data/") ? event.evidence : "data/" + event.evidence;
+          links.push('<a href="' + esc(evidencePath) + '" target="_blank" rel="noopener">View evidence</a>');
+        }
+        return '<article class="event">' +
+          '<div class="event-top"><div class="event-kind">' + esc(eventVisual(event.kind)) + '</div><div class="event-time">' + esc(fmtTime(event.timestamp)) + '</div></div>' +
+          '<div class="event-title">' + esc(event.topic) + '</div>' +
+          '<div class="event-url">' + esc(event.url || "(no URL)") + '</div>' +
+          (event.summary ? '<div class="event-summary">' + esc(event.summary) + '</div>' : '') +
+          (event.reason ? '<div class="event-reason">Why: ' + esc(event.reason) + '</div>' : '') +
+          '<div class="event-actions">' + links.join("") + (event.id ? '<span class="pill">ID ' + esc(event.id.slice(0, 12)) + '…</span>' : '') + '</div>' +
+        '</article>';
+      }).join("");
+    }
+
+    function renderInventory(latest) {
+      const rows = Object.values(latest || {}).sort((a,b) => (a.canonical_url || "").localeCompare(b.canonical_url || ""));
+      $("inventoryCount").textContent = rows.length + " URLs";
+      $("inventory").innerHTML = rows.map((item) => {
+        const status = item.fetch_error ? "Error" : (item.active ? "Active" : "Inactive");
+        return '<tr>' +
+          '<td><span class="pill">' + esc(status) + '</span></td>' +
+          '<td class="url"><a href="' + esc(item.canonical_url) + '" target="_blank" rel="noopener">' + esc(item.canonical_url) + '</a></td>' +
+          '<td>' + esc(item.http_status ?? "—") + '</td>' +
+          '<td>' + esc(fmtTime(item.last_checked)) + '</td>' +
+          '<td>' + esc(item.last_modified || "—") + '</td>' +
+        '</tr>';
+      }).join("");
+    }
+
+    async function load() {
+      try {
+        const [reportRes, inventoryRes, notificationRes] = await Promise.all([
+          fetch(bust(REPORT_URL), {cache:"no-store"}),
+          fetch(bust(INVENTORY_URL), {cache:"no-store"}),
+          fetch(bust(NOTIFICATION_URL), {cache:"no-store"}).catch(() => null)
+        ]);
+        if (!reportRes.ok) throw new Error("report.json returned " + reportRes.status);
+        if (!inventoryRes.ok) throw new Error("latest.json returned " + inventoryRes.status);
+
+        const report = await reportRes.json();
+        const inventory = await inventoryRes.json();
+        const notifications = notificationRes && notificationRes.ok ? await notificationRes.json() : null;
+        const counts = report.counts || {};
+
+        setMetric("mDiscovered", counts.discovered);
+        setMetric("mChanged", counts.changed);
+        setMetric("mNew", counts.new);
+        setMetric("mRemoved", counts.removed);
+        setMetric("mErrors", counts.fetch_error);
+        setMetric("mCandidates", counts.relevance_candidates);
+
+        $("generatedAt").textContent = fmtTime(report.generated_at);
+        $("crawler").textContent = report.crawler || "—";
+        $("seed").textContent = report.seed || "—";
+        $("detector").textContent = report.change_detector?.classification_hash || "—";
+        $("relevance").textContent = report.relevance_gate?.mode || "—";
+        $("aiContract").textContent = report.ai_contract?.strict ? "Strict schema validation" : "—";
+
+        const healthy = Number(counts.fetch_error || 0) === 0;
+        $("statusDot").style.background = healthy ? "var(--good)" : "var(--warn)";
+        $("statusText").textContent = healthy ? "Last run healthy" : "Last run has fetch errors";
+
+        $("nSent").textContent = notifications ? Object.keys(notifications.sent_events || {}).length : "—";
+        $("nUpdated").textContent = notifications ? fmtTime(notifications.updated_at) : "No state file yet";
+        $("notificationHint").textContent = "The ntfy ledger prevents the same deterministic event ID from being re-sent on repeated runs.";
+
+        renderEvents(report);
+        renderInventory(inventory);
+      } catch (error) {
+        $("statusDot").style.background = "var(--bad)";
+        $("statusText").textContent = "Dashboard data error";
+        $("events").innerHTML = '<div class="empty error">' + esc(error.message || error) + '</div>';
+      }
+    }
+
+    load();
+    setInterval(load, 15000);
+  </script>
+</body>
+</html>
