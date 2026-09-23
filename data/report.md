@@ -5,41 +5,46 @@ Seed: https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities
 ## Event counts
 
 Discovered: 16
-New: 16
-Changed: 0
+New: 0
+Changed: 7
 Removed: 0
-Unchanged: 0
+Unchanged: 9
 
 ## AI results
 
-### NEW_URL
-
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-internet-payments-security
-
-{
-  "status": "ok",
-  "analysis": {
-    "relevant": true,
-    "topic": "Consumer protection / Payment services security",
-    "summary": "The page documents the EBA's repealed Guidelines on the security of internet payments, originally published in December 2014 and applicable from 1 August 2015 under the former Payment Services Directive (PSD1). The guidelines set minimum security requirements for Payment Services Providers across the EU, based on recommendations from the European Forum on the Security of Retail Payments (SecuRe Pay). The EBA has since repealed these guidelines following the introduction of the revised Payment Services Directive (PSD2). The page provides access to the final guidelines, compliance tables, translations, and related press releases.",
-    "reason": "This page is relevant for regulatory monitoring as it records a historical EBA regulatory instrument that has been superseded, illustrating the evolution of EU payment security requirements from PSD1 to PSD2."
-  }
-}
-
-### NEW_URL
+### CHANGED_URL
 
 https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-internet-payments-security?phase=consultation
 
 {
   "status": "ok",
-  "analysis_raw": "User Safety: safe"
+  "analysis": {
+    "relevant": false,
+    "topic": "Guidelines on internet payments security (repealed)",
+    "summary": "The page describes EBA Guidelines on the security of internet payments, originally based on recommendations from the European Forum on the Security of Retail Payments (SecuRe Pay). A consultation on the guidelines closed on 14 November 2014. The EBA repealed these guidelines on 14 October 2021 because they were superseded by the revised Payments Services Directive (PSD2) and related EBA instruments developed under PSD2.",
+    "reason": "The guidelines have been repealed and the consultation is closed; the page provides only historical information with no current regulatory activity or open consultation."
+  }
 }
 
-### NEW_URL
+### CHANGED_URL
 
-https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-national-lists-or-registers-credit-services
+https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-national-lists-or-registers-credit-services?phase=consultation
 
 {
   "status": "ok",
-  "analysis_raw": "```json\n{\n  \"relevant\": true,\n  \"topic\": \"EBA final guidelines on national lists or registers of credit servicers\",\n  \"summary\": \"The EBA published final Guidelines on 5 March 2024 (application date 30/12/2024, compliance deadline 28/08/2024) specifying the content, accessibility, and update deadlines for national lists or registers of credit servicers under the Credit Servicers Directive (CSRD). The guidelines aim to enhance transparency for credit purchasers and borrowers and ensure a level playing field across the EU. They are addressed to Competent Authorities and also facilitate borrowers' access to complaint handling information.\",\n  \"reason\": \"The page contains the official final consolidated guidelines and related documents directly from the EBA, including the regulatory requirements for national registers of credit services, which is core to consumer protection and credit servicers regulation in the EU.\"\n}\n```"
+  "analysis": {
+    "relevant": true,
+    "topic": "Guidelines on national lists or registers of credit servicers under the Credit Servicers Directive",
+    "summary": "The closed consultation set out required information for national lists or registers of credit servicers to improve transparency for credit purchasers and borrowers and support a level playing field across the EU. The guidelines are now final and translated into EU official languages.",
+    "reason": "This is an EBA consumer-protection and single-rulebook regulatory guideline, with consultation closed on 26 October 2023."
+  }
+}
+
+### CHANGED_URL
+
+https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consultation
+
+{
+  "status": "ok",
+  "analysis_raw": "User Safety: safe"
 }
