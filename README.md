@@ -48,10 +48,6 @@ Changed pages send the actual before/after unified diff to the model. New URLs s
 
 ## Notifications
 
-Default ntfy topic: RegMonitoringWebCrawlerNTFY
-
-Optional secret: NTFY_TOPIC
-
 The manual workflow includes a controlled delivery-test switch that does not modify the monitoring baseline.
 
 ## Automation
