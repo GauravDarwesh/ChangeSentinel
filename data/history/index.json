@@ -1,0 +1,23 @@
+[
+  {
+    "run_id": "20260923T163335Z-01108233",
+    "generated_at": "2026-09-23T16:33:35.145573+00:00",
+    "source_id": "eba-consumer-protection",
+    "regulator": "European Banking Authority",
+    "counts": {
+      "discovered": 16,
+      "new": 1,
+      "changed": 0,
+      "removed": 1,
+      "unchanged": 15,
+      "baseline_migration": 0,
+      "fetch_error": 0,
+      "extraction_error": 0,
+      "relevance_candidates": 1,
+      "ai_ok": 1,
+      "ai_invalid": 0,
+      "ai_error": 0,
+      "ai_deferred": 0
+    }
+  }
+]

@@ -2,35 +2,20 @@
   "schema_version": 2,
   "run_id": "20260923T163335Z-01108233",
   "generated_at": "2026-09-23T16:33:35.145573+00:00",
-  "sources": [
-    {
-      "id": "eba-consumer-protection",
-      "name": "EBA Consumer Protection",
-      "regulator": "European Banking Authority",
-      "seeds": [
-        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consolidated"
-      ],
-      "allowed_prefixes": [
-        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/"
-      ]
-    }
-  ],
-  "counts": {
-    "ai_deferred": 0,
-    "ai_error": 0,
-    "ai_invalid": 0,
-    "ai_ok": 1,
-    "baseline_migration": 0,
-    "changed": 0,
-    "discovered": 16,
-    "extraction_error": 0,
-    "fetch_error": 0,
-    "new": 1,
-    "relevance_candidates": 1,
-    "removed": 1,
-    "unchanged": 15
+  "source": {
+    "id": "eba-consumer-protection",
+    "name": "EBA Consumer Protection",
+    "regulator": "European Banking Authority",
+    "seeds": [
+      "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consolidated"
+    ],
+    "allowed_prefixes": [
+      "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/"
+    ]
   },
   "change_detector": {
+    "raw_hash": "SHA-256 retrieved bytes",
+    "normalized_hash": "SHA-256 extracted normalized content",
     "classification_hash": "normalized_hash"
   },
   "relevance_gate": {
@@ -51,78 +36,21 @@
     ],
     "strict": true
   },
-  "new_urls": [
-    {
-      "schema_version": 2,
-      "url_id": "3d48e8a16dcca274038f8e32aff3faf5d8dcc068e79b81ffa2f37e61d835c209",
-      "source_id": "eba-consumer-protection",
-      "regulator": "European Banking Authority",
-      "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consultation&version=2015",
-      "first_seen": "2026-09-23T16:33:35.145573+00:00",
-      "last_seen": "2026-09-23T16:33:35.145573+00:00",
-      "last_checked": "2026-09-23T16:33:35.145573+00:00",
-      "active": true,
-      "terminal_file": false,
-      "http_status": 200,
-      "content_type": "text/html; charset=UTF-8",
-      "content_length": null,
-      "etag": null,
-      "last_modified": null,
-      "raw_hash": "dfe6957e7968381078234721f901a603b0bf64c80098ec6e8038cbfb8c744c89",
-      "normalized_hash": "0767b7fb672a59c71bb2e42d78f4e9f83fb80146de0691c898d21533e12e4491",
-      "extraction_type": "html",
-      "extraction_error": null,
-      "fetch_error": null,
-      "snapshot_location": "data/snapshots/3d48e8a16dcca274038f8e32aff3faf5d8dcc068e79b81ffa2f37e61d835c209.txt",
-      "evidence_location": "data/evidence/a431099f2de955a79fffe1262db8da5099eb7821cfed11a784dd53fc8994a42e.json",
-      "relevance": {
-        "candidate": true,
-        "reason": "Regulatory signal detected",
-        "signals": [
-          "consultation",
-          "consumer-protection",
-          "governance"
-        ]
-      }
-    }
-  ],
-  "changed_urls": [],
-  "removed_urls": [
-    {
-      "url_id": "82cfdcfda46f7634f7450d1f03d6383bd9351286c2f9489a8626af328b5152e7",
-      "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?version=2015&phase=consultation",
-      "parent_url_id": null,
-      "depth": null,
-      "terminal_file": false,
-      "http_status": 200,
-      "content_type": "text/html; charset=UTF-8",
-      "content_length": null,
-      "etag": null,
-      "last_modified": null,
-      "raw_hash": "f9d2040c185a2e10f7cb5508ab3eb31a72f2bec16a90d833b0854a77cd70d3dd",
-      "normalized_hash": "0767b7fb672a59c71bb2e42d78f4e9f83fb80146de0691c898d21533e12e4491",
-      "first_seen": "2026-09-23T12:50:55.168057+00:00",
-      "last_seen": "2026-09-23T14:48:08.514758+00:00",
-      "last_checked": "2026-09-23T14:48:08.514758+00:00",
-      "active": true,
-      "evidence_location": null,
-      "snapshot_location": "data/snapshots/82cfdcfda46f7634f7450d1f03d6383bd9351286c2f9489a8626af328b5152e7.txt",
-      "relevance": {
-        "candidate": true,
-        "reason": "Regulatory signal detected",
-        "signals": [
-          "consultation",
-          "consumer-protection",
-          "governance",
-          "guideline",
-          "regulatory",
-          "risk",
-          "rule"
-        ]
-      }
-    }
-  ],
-  "baseline_migrations": [],
+  "counts": {
+    "discovered": 16,
+    "new": 1,
+    "changed": 0,
+    "removed": 1,
+    "unchanged": 15,
+    "baseline_migration": 0,
+    "fetch_error": 0,
+    "extraction_error": 0,
+    "relevance_candidates": 1,
+    "ai_ok": 1,
+    "ai_invalid": 0,
+    "ai_error": 0,
+    "ai_deferred": 0
+  },
   "events": [
     {
       "event_id": "a431099f2de955a79fffe1262db8da5099eb7821cfed11a784dd53fc8994a42e",
@@ -215,6 +143,78 @@
       }
     }
   ],
+  "new_urls": [
+    {
+      "schema_version": 2,
+      "url_id": "3d48e8a16dcca274038f8e32aff3faf5d8dcc068e79b81ffa2f37e61d835c209",
+      "source_id": "eba-consumer-protection",
+      "regulator": "European Banking Authority",
+      "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consultation&version=2015",
+      "first_seen": "2026-09-23T16:33:35.145573+00:00",
+      "last_seen": "2026-09-23T16:33:35.145573+00:00",
+      "last_checked": "2026-09-23T16:33:35.145573+00:00",
+      "active": true,
+      "terminal_file": false,
+      "http_status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "content_length": null,
+      "etag": null,
+      "last_modified": null,
+      "raw_hash": "dfe6957e7968381078234721f901a603b0bf64c80098ec6e8038cbfb8c744c89",
+      "normalized_hash": "0767b7fb672a59c71bb2e42d78f4e9f83fb80146de0691c898d21533e12e4491",
+      "extraction_type": "html",
+      "extraction_error": null,
+      "fetch_error": null,
+      "snapshot_location": "data/snapshots/3d48e8a16dcca274038f8e32aff3faf5d8dcc068e79b81ffa2f37e61d835c209.txt",
+      "evidence_location": "data/evidence/a431099f2de955a79fffe1262db8da5099eb7821cfed11a784dd53fc8994a42e.json",
+      "relevance": {
+        "candidate": true,
+        "reason": "Regulatory signal detected",
+        "signals": [
+          "consultation",
+          "consumer-protection",
+          "governance"
+        ]
+      }
+    }
+  ],
+  "changed_urls": [],
+  "removed_urls": [
+    {
+      "url_id": "82cfdcfda46f7634f7450d1f03d6383bd9351286c2f9489a8626af328b5152e7",
+      "canonical_url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?version=2015&phase=consultation",
+      "parent_url_id": null,
+      "depth": null,
+      "terminal_file": false,
+      "http_status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "content_length": null,
+      "etag": null,
+      "last_modified": null,
+      "raw_hash": "f9d2040c185a2e10f7cb5508ab3eb31a72f2bec16a90d833b0854a77cd70d3dd",
+      "normalized_hash": "0767b7fb672a59c71bb2e42d78f4e9f83fb80146de0691c898d21533e12e4491",
+      "first_seen": "2026-09-23T12:50:55.168057+00:00",
+      "last_seen": "2026-09-23T14:48:08.514758+00:00",
+      "last_checked": "2026-09-23T14:48:08.514758+00:00",
+      "active": true,
+      "evidence_location": null,
+      "snapshot_location": "data/snapshots/82cfdcfda46f7634f7450d1f03d6383bd9351286c2f9489a8626af328b5152e7.txt",
+      "relevance": {
+        "candidate": true,
+        "reason": "Regulatory signal detected",
+        "signals": [
+          "consultation",
+          "consumer-protection",
+          "governance",
+          "guideline",
+          "regulatory",
+          "risk",
+          "rule"
+        ]
+      }
+    }
+  ],
+  "baseline_migrations": [],
   "ai_results": [
     {
       "event": "NEW_URL",

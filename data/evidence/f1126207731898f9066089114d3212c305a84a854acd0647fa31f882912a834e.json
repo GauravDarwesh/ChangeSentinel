@@ -1,0 +1,17 @@
+{
+  "event_id": "f1126207731898f9066089114d3212c305a84a854acd0647fa31f882912a834e",
+  "event_type": "REMOVED_URL",
+  "url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?version=2015&phase=consultation",
+  "timestamp": "2026-09-23T16:33:35.145573+00:00",
+  "before": {
+    "normalized_hash": "0767b7fb672a59c71bb2e42d78f4e9f83fb80146de0691c898d21533e12e4491",
+    "raw_hash": "f9d2040c185a2e10f7cb5508ab3eb31a72f2bec16a90d833b0854a77cd70d3dd",
+    "snapshot_location": "data/snapshots/82cfdcfda46f7634f7450d1f03d6383bd9351286c2f9489a8626af328b5152e7.txt"
+  },
+  "after": {
+    "normalized_hash": null,
+    "raw_hash": null,
+    "snapshot_location": null
+  },
+  "diff": "--- before\n+++ after\n@@ -1,55 +0,0 @@\n-Guidelines on product oversight and governance arrangements for retail banking products\n-Status:\n-Final and translated into the EU official languages\n-The mis-conduct of financial institutions can cause significant consumer detriment, undermine market confidence, threaten the integrity of the financial system, and incur large costs to wider society. In order to address some of these conduct risks, the EBA has developed detailed Guidelines on product oversight and governance arrangements for the retail banking products that fall into its consumer protection remit, which are: mortgages, personal loans, deposits, payment accounts, payment services, and electronic money. The Guidelines provide a framework for robust and responsible product design and distribution by manufacturers and distributors.\n-Summary of document history\n-Previous versions\n-2015\n-Current version\n-Ongoing versions\n-Consultation on Guidelines on product oversight and governance arrangements for retail banking products\n-Status:\n-Closed\n-Deadline:\n-10 FEBRUARY 2015\n-Documents\n-Consultation paper\n-(280.67 KB - PDF)\n-Last update\n-10 February 2015\n-Download\n-BSG response to Consultation Paper (EBA-CP-2014-37) - 10 February 2015\n-(360.12 KB - PDF)\n-Last update\n-12 May 2015\n-Download\n-Responses\n-The form is now closed.\n-Received responses to the EBA\n-1.\n-CUDA (Credit Union Development Association)\n-2.\n-BEUC, The European Consumer Organisation\n-3.\n-BIPAR\n-4.\n-Financial Services Consumer Panel\n-5.\n-Eurofinas\n-6.\n-German Banking Industry Committee\n-7.\n-EUROPEAN MORTGAGE FEDERATION\n-8.\n-Federation of the Finnish Financial Services\n-9.\n-Prudentiz\n-10.\n-Council of Mortgage Lenders\n-See all responses\n-Public hearings\n-Public Hearing on Product Oversight and Governance Guidelines\n-Press contacts\n-Franca Rosa Congiu\n-press@eba.europa.eu\n-+33 1 86 52 7052"
+}
