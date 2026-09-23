@@ -68,6 +68,8 @@ class TestDiscovery(unittest.TestCase):
             excluded_prefixes=("https://www.eba.europa.eu/search/",),
         )
         self.assertFalse(in_scope("https://www.eba.europa.eu/search?query=rules", source))
+        self.assertFalse(in_scope("https://www.eba.europa.eu/search/results", source))
+        self.assertTrue(in_scope("https://www.eba.europa.eu/searching/rules", source))
 
 class TestChange(unittest.TestCase):
     def test_new(self):
