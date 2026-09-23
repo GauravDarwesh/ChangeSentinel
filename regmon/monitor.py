@@ -272,7 +272,6 @@ def discover():
             )
 
         if attempt < DISCOVERY_ATTEMPTS:
-            import time
             time.sleep(DISCOVERY_RETRY_DELAY_SECONDS)
 
     (DATA / "stealth-output.txt").write_text(
@@ -798,16 +797,3 @@ def main():
                     "",
                 ]
             )
-    else:
-        markdown.append("No new or changed HTML pages were sent to AI.")
-
-    (DATA / "report.md").write_text(
-        "\n".join(markdown),
-        encoding="utf-8",
-    )
-
-    print(json.dumps(report["counts"], indent=2))
-
-
-if __name__ == "__main__":
-    main()
