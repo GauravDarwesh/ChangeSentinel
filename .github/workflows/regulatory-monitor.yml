@@ -5,6 +5,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   monitor:
@@ -49,6 +51,13 @@ jobs:
       - name: Show report
         run: cat data/report.md
 
+      - name: Publish ntfy notifications
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'RegMonitoringWebCrawlerNTFY' }}
+          NTFY_SERVER: https://ntfy.sh
+          DASHBOARD_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+        run: python -m regmon.notify
+
       - name: Save monitoring state
         run: |
           git config user.name "regulatory-monitor-bot"
@@ -56,3 +65,41 @@ jobs:
           git add data
           git diff --cached --quiet || git commit -m "Update EBA monitoring state"
           git push
+
+  dashboard:
+    needs: monitor
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Prepare dashboard site
+        run: |
+          rm -rf _site
+          mkdir -p _site/data
+          cp -R dashboard/. _site/
+          cp data/report.json _site/data/report.json
+          cp data/latest.json _site/data/latest.json
+          if [ -f data/notifications.json ]; then
+            cp data/notifications.json _site/data/notifications.json
+          fi
+          if [ -d data/evidence ]; then
+            cp -R data/evidence _site/data/evidence
+          fi
+          touch _site/.nojekyll
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy dashboard
+        id: deployment
+        uses: actions/deploy-pages@v4
