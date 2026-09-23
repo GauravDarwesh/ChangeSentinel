@@ -1,2 +1,3 @@
+pydoll-python==1.3.3
 stealth-crawler
 requests
