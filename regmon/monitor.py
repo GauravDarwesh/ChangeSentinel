@@ -13,6 +13,8 @@ from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
 
+from regmon.relevance import triage
+
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 SNAPSHOTS = DATA / "snapshots"
@@ -505,6 +507,12 @@ def main():
             continue
 
         event_type, migrated = classify_change(old, item)
+        relevance = triage(
+            url,
+            fetched_text.get(uid, ""),
+            item.get("content_type", ""),
+        )
+        item["relevance"] = relevance
 
         if event_type == "NEW_URL":
             new_items.append(item)
@@ -571,7 +579,8 @@ def main():
         )
 
     ai_results = []
-    candidates = new_items + [change["after"] for change in changed_items]
+    all_candidates = new_items + [change["after"] for change in changed_items]
+    candidates = [item for item in all_candidates if item.get("relevance", {}).get("candidate", True)]
 
     for item in candidates[:AI_MAX]:
         if item.get("terminal_file"):
@@ -633,6 +642,10 @@ def main():
             "event_directory": "data/evidence/",
             "diff_format": "unified_diff",
             "max_diff_lines": MAX_DIFF_LINES,
+        },
+        "relevance_gate": {
+            "mode": "high_recall",
+            "ai_final_semantic_decision": True,
         },
         "ai_contract": {
             "required_keys": sorted(AI_REQUIRED_KEYS),
