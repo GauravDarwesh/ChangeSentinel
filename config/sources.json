@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "defaults": {
     "fetch_timeout_seconds": 30,
     "fetch_attempts": 3,
@@ -8,27 +8,35 @@
     "ai_timeout_seconds": 60,
     "ai_attempts": 2,
     "max_ai_candidates": 250,
-    "max_diff_lines": 200,
+    "max_diff_lines": 250,
     "max_ai_chars": 14000,
     "history_runs": 90
   },
   "sources": [
     {
-      "id": "eba-consumer-protection",
-      "name": "EBA Consumer Protection",
+      "id": "eba-full-site",
+      "name": "European Banking Authority — Full Public Site",
       "regulator": "European Banking Authority",
+      "active": true,
+      "baseline_on_first_run": true,
       "seed_urls": [
-        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consolidated"
+        "https://www.eba.europa.eu/homepage"
       ],
       "allowed_prefixes": [
-        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/"
+        "https://www.eba.europa.eu/"
       ],
-      "allowed_domains": ["www.eba.europa.eu", "eba.europa.eu"],
-      "max_urls": 250,
+      "allowed_domains": [
+        "www.eba.europa.eu"
+      ],
+      "excluded_prefixes": [
+        "https://www.eba.europa.eu/user/",
+        "https://www.eba.europa.eu/search"
+      ],
+      "max_urls": 0,
       "crawler": "stealth-crawler",
-      "discovery_attempts": 3,
-      "discovery_timeout_seconds": 180,
-      "discovery_retry_delay_seconds": 5
+      "discovery_attempts": 2,
+      "discovery_timeout_seconds": 900,
+      "discovery_retry_delay_seconds": 10
     }
   ]
 }
