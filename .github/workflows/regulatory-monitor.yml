@@ -12,6 +12,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -22,23 +24,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Crawl a small real EBA section
-        run: |
-          mkdir -p data
-          stealth-crawler crawl             "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products?phase=consolidated"             --base "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/"             --urls-only             > data/eba-urls.txt
+      - name: Run monitoring pipeline
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m regmon.monitor
 
-      - name: Show discovered URLs
-        run: |
-          echo "Discovered URLs:"
-          cat data/eba-urls.txt
-          echo
-          echo "Count:"
-          wc -l data/eba-urls.txt
+      - name: Show report
+        run: cat data/report.md
 
-      - name: Save crawl output
+      - name: Save monitoring state
         run: |
           git config user.name "regulatory-monitor-bot"
           git config user.email "actions@users.noreply.github.com"
           git add data
-          git diff --cached --quiet || git commit -m "Save EBA crawl output"
+          git diff --cached --quiet || git commit -m "Update EBA monitoring state"
           git push
