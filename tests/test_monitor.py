@@ -57,6 +57,18 @@ class TestDiscovery(unittest.TestCase):
         self.assertEqual(len(parse_discovered_urls(output,SOURCE)),1)
         self.assertTrue(in_scope("https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a",SOURCE))
 
+    def test_excluded_exact_path_is_not_in_scope(self):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            excluded_prefixes=("https://www.eba.europa.eu/search/",),
+        )
+        self.assertFalse(in_scope("https://www.eba.europa.eu/search?query=rules", source))
+
 class TestChange(unittest.TestCase):
     def test_new(self):
         self.assertEqual(classify_change(None,{"normalized_hash":"a"}),("NEW_URL",False))
