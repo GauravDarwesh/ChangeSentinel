@@ -24,6 +24,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -p "test*.py"
+
+      - name: HTTP smoke test
+        run: |
+          python - <<'PY'
+          import requests
+          response = requests.get(
+              "https://www.eba.europa.eu/",
+              timeout=30,
+              headers={"User-Agent": "regulatory-monitoring-poc/1.2"},
+          )
+          print("EBA HTTP status:", response.status_code)
+          print("EBA content-type:", response.headers.get("content-type"))
+          print("EBA body bytes:", len(response.content))
+          PY
+
       - name: Run monitoring pipeline
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
