@@ -59,7 +59,6 @@ def build_notifications(report):
                 }
             )
 
-    # URL removals are structural events and do not require an AI decision.
     for event in report.get("events", []):
         if event.get("event_type") != "REMOVED_URL":
             continue
@@ -78,7 +77,6 @@ def build_notifications(report):
             }
         )
 
-    # Fetch failures are operational alerts rather than regulatory-change alerts.
     for event in report.get("events", []):
         if event.get("event_type") != "FETCH_ERROR":
             continue
@@ -141,13 +139,20 @@ def main():
 
     sent = []
     skipped = []
+    failed = []
+
     for notification in candidates:
         event_id = notification["event_id"]
         if event_id in state["sent_events"]:
             skipped.append({"event_id": event_id, "reason": "already sent"})
             continue
 
-        publish(notification, topic, server, dashboard_url)
+        try:
+            publish(notification, topic, server, dashboard_url)
+        except Exception as exc:
+            failed.append({"event_id": event_id, "reason": str(exc)})
+            continue
+
         state["sent_events"][event_id] = {
             "kind": notification["kind"],
             "sent_at": datetime.now(timezone.utc).isoformat(),
@@ -163,10 +168,14 @@ def main():
                 "candidate_notifications": len(candidates),
                 "sent": len(sent),
                 "skipped": len(skipped),
+                "failed": len(failed),
             },
             indent=2,
         )
     )
+
+    if failed:
+        raise RuntimeError(f"{len(failed)} ntfy notification(s) failed; successful deliveries were saved.")
 
 
 if __name__ == "__main__":
