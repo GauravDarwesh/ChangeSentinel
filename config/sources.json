@@ -10,7 +10,9 @@
     "max_ai_candidates": 250,
     "max_diff_lines": 250,
     "max_ai_chars": 14000,
-    "history_runs": 90
+    "history_runs": 90,
+    "fetch_workers": 8,
+    "conditional_refresh_interval_hours": 24
   },
   "sources": [
     {
@@ -20,6 +22,7 @@
       "active": true,
       "baseline_on_first_run": true,
       "seed_urls": [
+        "https://www.eba.europa.eu/",
         "https://www.eba.europa.eu/homepage"
       ],
       "allowed_prefixes": [
@@ -39,7 +42,8 @@
       "discovery_retry_delay_seconds": 5,
       "use_http_discovery": true,
       "discovery_http_timeout_seconds": 20,
-      "discovery_http_workers": 12
+      "discovery_http_workers": 6,
+      "discovery_http_attempts": 2
     }
   ]
 }

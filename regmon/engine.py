@@ -25,6 +25,7 @@ DATA = ROOT / "data"
 SNAPSHOTS = DATA / "snapshots"
 HISTORY = DATA / "history"
 REPORTS = DATA / "reports"
+DISCOVERY = DATA / "discovery"
 CONFIG_PAYLOAD = json.loads(DEFAULT_CONFIG_PATH.read_text(encoding="utf-8"))
 DEFAULTS = CONFIG_PAYLOAD.get("defaults", {})
 
@@ -50,6 +51,18 @@ def resolve_previous(url: str, previous: dict[str, dict]) -> tuple[str, dict | N
             return previous_uid, record
     return uid, None
 
+def should_force_full_fetch(old: dict | None, now: str, interval_hours: float) -> bool:
+    if not old or not old.get("last_full_fetch"):
+        return True
+    try:
+        last_full = datetime.fromisoformat(str(old["last_full_fetch"]))
+        current = datetime.fromisoformat(now)
+        age_hours = (current - last_full).total_seconds() / 3600
+    except (TypeError, ValueError):
+        return True
+    return age_hours >= max(0.0, interval_hours)
+
+
 def read_snapshot(record: dict | None) -> str | None:
     if not record or not record.get("snapshot_location"):
         return None
@@ -57,6 +70,31 @@ def read_snapshot(record: dict | None) -> str | None:
         return (ROOT / record["snapshot_location"]).read_text(encoding="utf-8")
     except FileNotFoundError:
         return None
+
+
+def load_discovery_metadata(source_id: str) -> dict[str, Any]:
+    path = DISCOVERY / f"{source_id}.json"
+    if not path.exists():
+        return {
+            "source_id": source_id,
+            "method": "unknown",
+            "state": "FAILED",
+            "reason": "discovery metadata missing",
+        }
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        return {
+            "source_id": source_id,
+            "method": "unknown",
+            "state": "FAILED",
+            "reason": f"invalid discovery metadata: {exc}",
+        }
+    if payload.get("source_id") != source_id:
+        payload["state"] = "FAILED"
+        payload["reason"] = "discovery metadata source mismatch"
+    return payload
+
 
 def write_snapshot(uid: str, text: str) -> str:
     SNAPSHOTS.mkdir(parents=True, exist_ok=True)
@@ -74,6 +112,7 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         "first_seen": old.get("first_seen", now) if old else now,
         "last_seen": now,
         "last_checked": now,
+        "last_full_fetch": old.get("last_full_fetch") if old else None,
         "active": True,
         "terminal_file": False,
         "http_status": None,
@@ -89,16 +128,22 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         "snapshot_location": old.get("snapshot_location") if old else None,
         "evidence_location": old.get("evidence_location") if old else None,
         "relevance": old.get("relevance") if old else None,
+        "not_modified": False,
     }
 
 def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str):
     item = base_item(url, old, now, source)
     try:
+        refresh_interval = float(DEFAULTS.get("conditional_refresh_interval_hours", 24))
+        force_full_fetch = should_force_full_fetch(old, now, refresh_interval)
+        item["full_fetch_forced"] = force_full_fetch
         result = fetch(
             url,
             timeout=int(DEFAULTS.get("fetch_timeout_seconds", 30)),
             attempts=int(DEFAULTS.get("fetch_attempts", 3)),
             backoff_seconds=float(DEFAULTS.get("fetch_backoff_seconds", 2)),
+            etag=None if force_full_fetch else (old or {}).get("etag"),
+            last_modified=None if force_full_fetch else (old or {}).get("last_modified"),
         )
         item.update({
             "http_status": result.status_code,
@@ -106,8 +151,21 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             "content_length": result.content_length,
             "etag": result.etag,
             "last_modified": result.last_modified,
-            "raw_hash": result.raw_hash,
+            "raw_hash": result.raw_hash or (old or {}).get("raw_hash"),
+            "not_modified": result.not_modified,
         })
+        if not result.not_modified:
+            item["last_full_fetch"] = now
+        if result.not_modified:
+            if old:
+                for key in (
+                    "raw_hash", "normalized_hash", "extraction_type",
+                    "snapshot_location", "evidence_location", "relevance"
+                ):
+                    if key in old:
+                        item[key] = old[key]
+            return item, None
+
         text, extraction_type, extraction_error = extract_content(url, result.content_type, result.body)
         item["extraction_type"] = extraction_type
         if extraction_error:
@@ -135,11 +193,12 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
     previous = load_previous(source.id)
     initial_baseline = source.baseline_on_first_run and not previous
     urls = discover(source, DATA)
+    discovery = load_discovery_metadata(source.id)
     current, texts, old_texts = {}, {}, {uid: read_snapshot(old) for uid, old in previous.items()}
     events, new_items, changed_items, migration_items, unchanged_items = [], [], [], [], []
     resolved = {url: resolve_previous(url, previous) for url in urls}
 
-    workers = min(16, max(1, len(urls)))
+    workers = min(int(DEFAULTS.get("fetch_workers", 8)), max(1, len(urls)))
     with ThreadPoolExecutor(max_workers=workers) as pool:
         futures = {
             pool.submit(make_current_item, url, resolved[url][1], source, now):
@@ -195,13 +254,14 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
                     events.append({"event_id":event_id,"event_type":event_type,"url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":item}})
 
     removed_items = []
-    for uid, old in previous.items():
-        if uid not in current:
-            removed_items.append(old)
-            url = old.get("canonical_url","")
-            event_id = build_event_id("REMOVED_URL", uid, old.get("normalized_hash") or old.get("raw_hash") or old.get("content_hash"))
-            evidence = write_evidence(ROOT, "REMOVED_URL", event_id, url, now, old, None, read_snapshot(old), None)
-            events.append({"event_id":event_id,"event_type":"REMOVED_URL","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":None}})
+    if discovery.get("state") == "COMPLETE":
+        for uid, old in previous.items():
+            if uid not in current:
+                removed_items.append(old)
+                url = old.get("canonical_url","")
+                event_id = build_event_id("REMOVED_URL", uid, old.get("normalized_hash") or old.get("raw_hash") or old.get("content_hash"))
+                evidence = write_evidence(ROOT, "REMOVED_URL", event_id, url, now, old, None, read_snapshot(old), None)
+                events.append({"event_id":event_id,"event_type":"REMOVED_URL","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":None}})
 
     candidates = [] if initial_baseline else [x for x in new_items + [c["after"] for c in changed_items] if x.get("relevance",{}).get("candidate",True)]
     ai_cfg = AIConfig(
@@ -246,6 +306,8 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
         "baseline_migration":len(migration_items),
         "fetch_error":sum(1 for x in current.values() if x.get("fetch_error")),
         "extraction_error":sum(1 for x in current.values() if x.get("extraction_error")),
+        "not_modified":sum(1 for x in current.values() if x.get("not_modified")),
+        "forced_full_fetch":sum(1 for x in current.values() if x.get("full_fetch_forced")),
         "relevance_candidates":len([x for x in new_items + [c["after"] for c in changed_items] if x.get("relevance",{}).get("candidate",True)]),
         "ai_ok":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="ok"),
         "ai_invalid":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="invalid"),
@@ -256,7 +318,9 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
         "report":{
             "schema_version":2,"run_id":run_id,"generated_at":now,
             "source":{"id":source.id,"name":source.name,"regulator":source.regulator,"seeds":list(source.seed_urls),"allowed_prefixes":list(source.allowed_prefixes),"initial_baseline":initial_baseline},
-            "change_detector":{"raw_hash":"SHA-256 retrieved bytes","normalized_hash":"SHA-256 extracted normalized content","classification_hash":"normalized_hash"},
+            "discovery":discovery,
+            "baseline_update_allowed":discovery.get("state") == "COMPLETE",
+            "change_detector":{"raw_hash":"SHA-256 retrieved bytes","normalized_hash":"SHA-256 extracted normalized content","classification_hash":"normalized_hash","http_validators":"ETag/Last-Modified used only for conditional fetch optimization"},
             "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
             "ai_contract":{"required_keys":["relevant","topic","change_type","summary","impact","effective_date","affected_scope","actions","reason"],"strict":True},
             "counts":counts,"events":events,"new_urls":[] if initial_baseline else new_items,"changed_urls":changed_items,"removed_urls":removed_items,"baseline_migrations":migration_items,"ai_results":sorted(ai_results,key=lambda x:x.get("event_id",""))
@@ -273,19 +337,16 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
     payload = json.loads(latest_path.read_text(encoding="utf-8")) if latest_path.exists() else {"schema_version":2,"sources":{}}
     if payload.get("schema_version") != 2 or not isinstance(payload.get("sources"),dict):
         payload = {"schema_version":2,"sources":{}}
-    _, configured_sources = load_config()
-    active_source_ids = {source.id for source in configured_sources.values() if source.active}
-    payload["sources"] = {
-        source_id: inventory
-        for source_id, inventory in payload["sources"].items()
-        if source_id in active_source_ids
-    }
+    # Never prune a previously trusted source inventory merely because the
+    # current configuration changed or the new crawl is degraded. Explicit
+    # cleanup can be performed later after a successful migration.
     history_path = HISTORY / "index.json"
     history = json.loads(history_path.read_text(encoding="utf-8")) if history_path.exists() else []
     for result in source_results:
         report = result["report"]
         sid = report["source"]["id"]
-        payload["sources"][sid] = result["inventory"]
+        if report.get("baseline_update_allowed"):
+            payload["sources"][sid] = result["inventory"]
         (REPORTS / f"{sid}.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
         history.append({"run_id":report["run_id"],"generated_at":report["generated_at"],"source_id":sid,"regulator":report["source"]["regulator"],"counts":report["counts"]})
     history.sort(key=lambda x:x.get("generated_at",""),reverse=True)
@@ -300,7 +361,9 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
         "generated_at":max(r["report"]["generated_at"] for r in source_results),
         "sources":[r["report"]["source"] for r in source_results],
         "counts":aggregate_counts,
-        "change_detector":{"classification_hash":"normalized_hash"},
+        "discovery":[r["report"].get("discovery",{}) for r in source_results],
+        "baseline_update_allowed":all(r["report"].get("baseline_update_allowed",False) for r in source_results),
+        "change_detector":{"classification_hash":"normalized_hash","http_validators":"ETag/Last-Modified are optimization hints only"},
         "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
         "ai_contract":source_results[0]["report"]["ai_contract"],
         "new_urls":[x for r in source_results for x in r["report"]["new_urls"]],
