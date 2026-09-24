@@ -167,6 +167,53 @@ class TestDiscovery(unittest.TestCase):
 
     @patch("regmon.discovery._stealth_discover")
     @patch("regmon.discovery.http_discover")
+    def test_discover_enriches_degraded_http(self, mock_http, mock_stealth):
+        from regmon.discovery import discover
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+        )
+        mock_http.return_value = ["https://www.eba.europa.eu/homepage"]
+        mock_stealth.return_value = [
+            "https://www.eba.europa.eu/homepage",
+            "https://www.eba.europa.eu/dynamic-page",
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            discovery_dir = Path(tmp) / "discovery"
+            discovery_dir.mkdir()
+            (discovery_dir / "eba-test.json").write_text(
+                json.dumps({
+                    "source_id": "eba-test",
+                    "method": "http",
+                    "state": "DEGRADED",
+                    "discovered": 1,
+                    "successful_pages": 1,
+                    "failed_pages": 1,
+                    "capped": False,
+                }),
+                encoding="utf-8",
+            )
+            urls = discover(source, Path(tmp))
+            metadata = json.loads(
+                (discovery_dir / "eba-test.json").read_text(encoding="utf-8")
+            )
+        self.assertEqual(
+            urls,
+            [
+                "https://www.eba.europa.eu/homepage",
+                "https://www.eba.europa.eu/dynamic-page",
+            ],
+        )
+        mock_stealth.assert_called_once()
+        self.assertEqual(metadata["method"], "http+stealth-enrichment")
+        self.assertEqual(metadata["state"], "DEGRADED")
+
+    @patch("regmon.discovery._stealth_discover")
+    @patch("regmon.discovery.http_discover")
     def test_discover_prefers_http_path(self, mock_http, mock_stealth):
         from regmon.discovery import discover
         mock_http.return_value = ["https://www.eba.europa.eu/homepage"]
