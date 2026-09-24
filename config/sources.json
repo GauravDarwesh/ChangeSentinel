@@ -11,7 +11,8 @@
     "max_diff_lines": 250,
     "max_ai_chars": 14000,
     "history_runs": 90,
-    "fetch_workers": 8
+    "fetch_workers": 8,
+    "conditional_refresh_interval_hours": 24
   },
   "sources": [
     {
