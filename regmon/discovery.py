@@ -141,6 +141,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
     processed: set[str] = set()
     pending: deque[str] = deque()
     errors: list[str] = []
+    successful_pages = 0
 
     for seed in source.seed_urls:
         value = canonical(seed)
@@ -152,12 +153,12 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             pending.append(value)
             queued.add(value)
 
-    while pending:
-        batch: list[str] = []
-        while pending and len(batch) < worker_count:
-            batch.append(pending.popleft())
+    with ThreadPoolExecutor(max_workers=worker_count) as pool:
+        while pending:
+            batch: list[str] = []
+            while pending and len(batch) < worker_count:
+                batch.append(pending.popleft())
 
-        with ThreadPoolExecutor(max_workers=worker_count) as pool:
             futures = {
                 pool.submit(_fetch_links, url, source, timeout): url
                 for url in batch
@@ -172,6 +173,8 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
 
                 if error:
                     errors.append(f"{url}\t{error}")
+                else:
+                    successful_pages += 1
 
                 for link in links:
                     if source.max_urls > 0 and len(discovered) >= source.max_urls:
@@ -187,13 +190,14 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                         pending.append(link)
                         queued.add(link)
 
-        print(
-            f"HTTP discovery: processed={len(processed)} "
-            f"discovered={len(discovered)} pending={len(pending)}"
-        )
+            print(
+                f"HTTP discovery: processed={len(processed)} "
+                f"successful={successful_pages} discovered={len(discovered)} "
+                f"pending={len(pending)}"
+            )
 
-        if source.max_urls > 0 and len(discovered) >= source.max_urls:
-            break
+            if source.max_urls > 0 and len(discovered) >= source.max_urls:
+                break
 
     data_dir.mkdir(parents=True, exist_ok=True)
     (data_dir / "http-discovery-output.txt").write_text(
@@ -201,11 +205,14 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             f"SOURCE={source.id}",
             f"DISCOVERED={len(discovered)}",
             f"HTML_PROCESSED={len(processed)}",
+            f"SUCCESSFUL_PAGES={successful_pages}",
             f"ERRORS={len(errors)}",
             *errors[:250],
         ]),
         encoding="utf-8",
     )
+    if successful_pages == 0:
+        return []
     return discovered
 
 
