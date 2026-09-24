@@ -34,9 +34,12 @@
       ],
       "max_urls": 0,
       "crawler": "stealth-crawler",
-      "discovery_attempts": 2,
-      "discovery_timeout_seconds": 900,
-      "discovery_retry_delay_seconds": 10
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 180,
+      "discovery_retry_delay_seconds": 5,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 12
     }
   ]
 }
