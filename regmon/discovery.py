@@ -371,24 +371,25 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 pending=pending,
                 processed=processed,
                 errors=errors,
+                failed_pages=failed_pages,
                 successful_pages=successful_pages,
                 started_at=started_at,
             )
             _write_http_metadata(
                 source, data_dir,
                 state="PAUSED", discovered=len(discovered), processed=len(processed),
-                successful_pages=successful_pages, failed_pages=len(errors),
+                successful_pages=successful_pages, failed_pages=failed_pages,
                 capped=False, pending=len(pending),
             )
             print(f"HTTP discovery paused: pending={len(pending)} discovered={len(discovered)}")
             return discovered
 
     _remove_http_checkpoint(source, data_dir)
-    state = "DEGRADED" if errors else "COMPLETE"
+    state = "DEGRADED" if failed_pages else "COMPLETE"
     _write_http_metadata(
         source, data_dir,
         state=state, discovered=len(discovered), processed=len(processed),
-        successful_pages=successful_pages, failed_pages=len(errors),
+        successful_pages=successful_pages, failed_pages=failed_pages,
         capped=False, pending=0,
     )
     if successful_pages == 0:
