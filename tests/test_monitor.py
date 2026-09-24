@@ -252,6 +252,35 @@ class TestEngineFlow(unittest.TestCase):
     @patch("regmon.engine.make_current_item")
     @patch("regmon.engine.load_previous")
     @patch("regmon.engine.load_discovery_metadata",return_value={"source_id":"eba-test","state":"COMPLETE","method":"test"})
+    @patch("regmon.engine.load_discovery_metadata", return_value={"source_id":"eba-test","state":"DEGRADED","method":"test"})
+    @patch("regmon.engine.write_evidence")
+    @patch("regmon.engine.write_snapshot", return_value="data/snapshots/test.txt")
+    @patch("regmon.engine.discover")
+    @patch("regmon.engine.make_current_item")
+    @patch("regmon.engine.load_previous")
+    def test_degraded_discovery_never_emits_removal(
+        self,mock_previous,mock_make,mock_discover,mock_snapshot,mock_evidence,mock_discovery_metadata
+    ):
+        from regmon.engine import process_source
+        present="https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a"
+        missing="https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/b"
+        present_uid=make_id(present)
+        missing_uid=make_id(missing)
+        mock_previous.return_value={
+            present_uid: {"url_id":present_uid,"canonical_url":present,"normalized_hash":"same","raw_hash":"raw"},
+            missing_uid: {"url_id":missing_uid,"canonical_url":missing,"normalized_hash":"old","raw_hash":"old"},
+        }
+        mock_discover.return_value=[present]
+        mock_make.return_value=(
+            {"url_id":present_uid,"source_id":"eba-test","regulator":"European Banking Authority",
+             "canonical_url":present,"normalized_hash":"same","raw_hash":"new",
+             "relevance":{"candidate":False}},
+            "same text",
+        )
+        result=process_source(SOURCE,"run-degraded",dry_run=True)
+        self.assertEqual(result["report"]["counts"]["removed"],0)
+        self.assertFalse(result["report"]["baseline_update_allowed"])
+
     def test_changed_event_uses_previous_snapshot(
         self,mock_discovery_metadata,mock_previous,mock_make,mock_discover,mock_snapshot,mock_evidence
     ):
