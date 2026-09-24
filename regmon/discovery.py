@@ -25,6 +25,7 @@ NON_HTML_SUFFIXES = {
     ".xml", ".zip", ".pdf",
 }
 URL_RE = re.compile(r"https?://[^\\s<>\"']+", re.IGNORECASE)
+DISCOVERY_RETRYABLE = {408, 425, 429, 500, 502, 503, 504}
 
 
 def canonical(url: str) -> str:
