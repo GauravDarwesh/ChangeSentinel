@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 import time
@@ -113,21 +114,39 @@ def _is_probably_html_url(url: str) -> bool:
 
 
 def _fetch_links(url: str, source: SourceConfig, timeout: int) -> tuple[str, list[str], str | None]:
-    try:
-        response = requests.get(
-            url,
-            timeout=timeout,
-            allow_redirects=True,
-            headers={"User-Agent": "regulatory-monitoring-poc/3.0"},
-        )
-        content_type = (response.headers.get("content-type") or "").lower()
-        if response.status_code >= 400:
-            return url, [], f"HTTP {response.status_code}"
-        if not ("html" in content_type or _is_probably_html_url(url)):
-            return url, [], None
-        return url, extract_html_links(response.url or url, response.text, source), None
-    except Exception as exc:
-        return url, [], f"{type(exc).__name__}: {exc}"
+    last_error: str | None = None
+    for attempt in range(1, source.discovery_http_attempts + 1):
+        try:
+            response = requests.get(
+                url,
+                timeout=timeout,
+                allow_redirects=True,
+                headers={
+                    "User-Agent": (
+                        "Mozilla/5.0 (compatible; ChangeSentinel/0.3; "
+                        "+https://github.com/GauravDarwesh/ChangeSentinel)"
+                    )
+                },
+            )
+            content_type = (response.headers.get("content-type") or "").lower()
+            if response.status_code in {404, 410}:
+                return url, [], None
+            if response.status_code >= 400:
+                last_error = f"HTTP {response.status_code}"
+                if response.status_code not in DISCOVERY_RETRYABLE or attempt == source.discovery_http_attempts:
+                    return url, [], last_error
+                time.sleep(2 * attempt)
+                continue
+            if not ("html" in content_type or _is_probably_html_url(url)):
+                return url, [], None
+            return url, extract_html_links(response.url or url, response.text, source), None
+        except Exception as exc:
+            last_error = f"{type(exc).__name__}: {exc}"
+            if attempt < source.discovery_http_attempts:
+                time.sleep(2 * attempt)
+                continue
+            return url, [], last_error
+    return url, [], last_error or "unknown discovery error"
 
 
 def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
