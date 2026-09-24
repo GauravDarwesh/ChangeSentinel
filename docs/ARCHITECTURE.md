@@ -2,7 +2,7 @@
 
 ## Pipeline
 
-Source configuration -> discovery -> URL registry -> concurrent fetch -> content extraction -> normalization -> SHA-256 change detection -> evidence -> high-recall relevance -> structured AI analysis -> ntfy -> Git state -> GitHub Pages console.
+Source configuration -> resilient discovery -> URL registry -> concurrent fetch -> content extraction -> normalization -> SHA-256 change detection -> evidence -> high-recall relevance -> structured AI analysis -> ntfy -> Git state -> GitHub Pages console.
 
 The monitoring layer is deterministic. It emits NEW_URL, CHANGED_URL, UNCHANGED_URL, REMOVED_URL, FETCH_ERROR, EXTRACTION_ERROR, and BASELINE_MIGRATION. AI is downstream intelligence and cannot change the deterministic change classification.
 
@@ -15,10 +15,11 @@ The monitoring layer is deterministic. It emits NEW_URL, CHANGED_URL, UNCHANGED_
 - data/history/index.json: compact run history.
 - data/history/<run_id>.json: full run report.
 - data/notifications.json: notification idempotency ledger.
+- data/http-discovery-output.txt: primary discovery run summary and sampled errors.
 
 ## Scale
 
-Fetching is concurrent and AI analysis uses bounded concurrency. Source definitions are configuration-driven. PDF, DOCX, XLSX, PPTX, CSV and text resources are extracted before comparison.
+HTTP discovery resolves both absolute and relative links and runs with bounded concurrency; stealth-crawler is retained as a browser fallback when the HTTP path cannot establish a usable inventory. Fetching is concurrent and AI analysis uses bounded concurrency. Source definitions are configuration-driven. PDF, DOCX, XLSX, PPTX, CSV and text resources are extracted before comparison.
 
 ## AI
 

@@ -8,7 +8,7 @@ from regmon.ai import AI_REQUIRED_KEYS, parse_json, validate_analysis
 from regmon.change import build_event_id, classify_change, make_diff, make_id
 from regmon.content import extract_content, normalize_html
 from regmon.config import SourceConfig
-from regmon.discovery import canonical, in_scope, parse_discovered_urls
+from regmon.discovery import canonical, extract_html_links, http_discover, in_scope, parse_discovered_urls
 from regmon.fetch import fetch
 from regmon.monitor import load_previous
 from regmon.relevance import triage
@@ -56,6 +56,99 @@ class TestDiscovery(unittest.TestCase):
         ])
         self.assertEqual(len(parse_discovered_urls(output,SOURCE)),1)
         self.assertTrue(in_scope("https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a",SOURCE))
+
+
+    def test_html_links_handle_absolute_relative_and_excluded_urls(self):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            excluded_prefixes=("https://www.eba.europa.eu/search/",),
+        )
+        html = """<a href="/a">relative</a>
+        <a href="https://www.eba.europa.eu/b?phase=consultation">absolute</a>
+        <a href="https://www.eba.europa.eu/search?query=rules">excluded</a>
+        <a href="https://example.test/outside">external</a>
+        <a href="mailto:test@example.test">mail</a>"""
+        links = extract_html_links("https://www.eba.europa.eu/homepage", html, source)
+        self.assertEqual(
+            links,
+            [
+                "https://www.eba.europa.eu/a",
+                "https://www.eba.europa.eu/b?phase=consultation",
+            ],
+        )
+
+    @patch("regmon.discovery.requests.get")
+    def test_http_discovery_recurses_and_keeps_document_links(self, mock_get):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            excluded_prefixes=("https://www.eba.europa.eu/search/",),
+            discovery_http_workers=2,
+        )
+
+        pages = {
+            "https://www.eba.europa.eu/homepage": """
+                <a href="/a">A</a>
+                <a href="https://www.eba.europa.eu/b">B</a>
+                <a href="/documents/example.pdf">PDF</a>
+                <a href="/search?query=rules">Search</a>
+            """,
+            "https://www.eba.europa.eu/a": '<a href="/c">C</a>',
+            "https://www.eba.europa.eu/b": '<p>No new links</p>',
+            "https://www.eba.europa.eu/c": '<p>Done</p>',
+        }
+
+        def response_for(url, **kwargs):
+            return Mock(
+                status_code=200,
+                headers={"content-type": "text/html; charset=UTF-8"},
+                text=pages[url],
+                url=url,
+            )
+
+        mock_get.side_effect = response_for
+
+        with tempfile.TemporaryDirectory() as tmp:
+            urls = http_discover(source, Path(tmp))
+
+        self.assertEqual(
+            urls,
+            [
+                "https://www.eba.europa.eu/homepage",
+                "https://www.eba.europa.eu/a",
+                "https://www.eba.europa.eu/b",
+                "https://www.eba.europa.eu/documents/example.pdf",
+                "https://www.eba.europa.eu/c",
+            ],
+        )
+        self.assertEqual(mock_get.call_count, 4)
+
+    @patch("regmon.discovery._stealth_discover")
+    @patch("regmon.discovery.http_discover")
+    def test_discover_prefers_http_path(self, mock_http, mock_stealth):
+        from regmon.discovery import discover
+        mock_http.return_value = ["https://www.eba.europa.eu/homepage"]
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            urls = discover(source, Path(tmp))
+        self.assertEqual(urls, ["https://www.eba.europa.eu/homepage"])
+        mock_stealth.assert_not_called()
 
     def test_excluded_exact_path_is_not_in_scope(self):
         source = SourceConfig(
