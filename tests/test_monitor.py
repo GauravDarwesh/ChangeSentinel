@@ -119,6 +119,7 @@ class TestDiscovery(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as tmp:
             urls = http_discover(source, Path(tmp))
+            metadata = json.loads((Path(tmp) / "discovery" / "eba-test.json").read_text(encoding="utf-8"))
 
         self.assertEqual(
             urls,
@@ -131,7 +132,6 @@ class TestDiscovery(unittest.TestCase):
             ],
         )
         self.assertEqual(mock_get.call_count, 4)
-        metadata = json.loads((Path(tmp) / "discovery" / "eba-test.json").read_text(encoding="utf-8"))
         self.assertEqual(metadata["state"], "COMPLETE")
         self.assertEqual(metadata["failed_pages"], 0)
 
