@@ -100,15 +100,22 @@ class TestDiscovery(unittest.TestCase):
             text="<a href='/a'>A</a>",
             url="https://www.eba.europa.eu/homepage",
         )
+        success_child = Mock(
+            status_code=200,
+            headers={"content-type": "text/html; charset=UTF-8"},
+            text="<p>Done</p>",
+            url="https://www.eba.europa.eu/a",
+        )
         mock_get.side_effect = [
             Mock(status_code=503, headers={}, text="", url="https://www.eba.europa.eu/homepage"),
             success,
+            success_child,
         ]
         with tempfile.TemporaryDirectory() as tmp:
             urls = http_discover(source, Path(tmp))
             metadata = json.loads((Path(tmp) / "discovery" / "eba-test.json").read_text(encoding="utf-8"))
         self.assertIn("https://www.eba.europa.eu/homepage", urls)
-        self.assertEqual(mock_get.call_count, 2)
+        self.assertEqual(mock_get.call_count, 3)
         self.assertEqual(metadata["state"], "COMPLETE")
         self.assertEqual(metadata["failed_pages"], 0)
 
