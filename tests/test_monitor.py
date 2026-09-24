@@ -233,6 +233,20 @@ class TestDiscovery(unittest.TestCase):
             allowed_domains=("www.eba.europa.eu",),
         )
         with tempfile.TemporaryDirectory() as tmp:
+            discovery_dir = Path(tmp) / "discovery"
+            discovery_dir.mkdir()
+            (discovery_dir / "eba-test.json").write_text(
+                json.dumps({
+                    "source_id": "eba-test",
+                    "method": "http",
+                    "state": "COMPLETE",
+                    "discovered": 1,
+                    "successful_pages": 1,
+                    "failed_pages": 0,
+                    "capped": False,
+                }),
+                encoding="utf-8",
+            )
             urls = discover(source, Path(tmp))
         self.assertEqual(urls, ["https://www.eba.europa.eu/homepage"])
         mock_stealth.assert_not_called()
