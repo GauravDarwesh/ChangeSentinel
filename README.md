@@ -1,4 +1,4 @@
-# Regulatory Monitoring Crawler
+# ChangeSentinel - Intelligent Web Crawler
 
 A configuration-driven web monitoring system that discovers public web pages, fetches their content, detects changes, uses AI to explain meaningful changes, sends notifications, and keeps a searchable monitoring history.
 
