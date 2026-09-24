@@ -51,6 +51,18 @@ def resolve_previous(url: str, previous: dict[str, dict]) -> tuple[str, dict | N
             return previous_uid, record
     return uid, None
 
+def should_force_full_fetch(old: dict | None, now: str, interval_hours: float) -> bool:
+    if not old or not old.get("last_full_fetch"):
+        return True
+    try:
+        last_full = datetime.fromisoformat(str(old["last_full_fetch"]))
+        current = datetime.fromisoformat(now)
+        age_hours = (current - last_full).total_seconds() / 3600
+    except (TypeError, ValueError):
+        return True
+    return age_hours >= max(0.0, interval_hours)
+
+
 def read_snapshot(record: dict | None) -> str | None:
     if not record or not record.get("snapshot_location"):
         return None
@@ -100,6 +112,7 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         "first_seen": old.get("first_seen", now) if old else now,
         "last_seen": now,
         "last_checked": now,
+        "last_full_fetch": old.get("last_full_fetch") if old else None,
         "active": True,
         "terminal_file": False,
         "http_status": None,
@@ -121,13 +134,16 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
 def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str):
     item = base_item(url, old, now, source)
     try:
+        refresh_interval = float(DEFAULTS.get("conditional_refresh_interval_hours", 24))
+        force_full_fetch = should_force_full_fetch(old, now, refresh_interval)
+        item["full_fetch_forced"] = force_full_fetch
         result = fetch(
             url,
             timeout=int(DEFAULTS.get("fetch_timeout_seconds", 30)),
             attempts=int(DEFAULTS.get("fetch_attempts", 3)),
             backoff_seconds=float(DEFAULTS.get("fetch_backoff_seconds", 2)),
-            etag=(old or {}).get("etag"),
-            last_modified=(old or {}).get("last_modified"),
+            etag=None if force_full_fetch else (old or {}).get("etag"),
+            last_modified=None if force_full_fetch else (old or {}).get("last_modified"),
         )
         item.update({
             "http_status": result.status_code,
@@ -138,6 +154,8 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             "raw_hash": result.raw_hash or (old or {}).get("raw_hash"),
             "not_modified": result.not_modified,
         })
+        if not result.not_modified:
+            item["last_full_fetch"] = now
         if result.not_modified:
             if old:
                 for key in (
@@ -289,6 +307,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
         "fetch_error":sum(1 for x in current.values() if x.get("fetch_error")),
         "extraction_error":sum(1 for x in current.values() if x.get("extraction_error")),
         "not_modified":sum(1 for x in current.values() if x.get("not_modified")),
+        "forced_full_fetch":sum(1 for x in current.values() if x.get("full_fetch_forced")),
         "relevance_candidates":len([x for x in new_items + [c["after"] for c in changed_items] if x.get("relevance",{}).get("candidate",True)]),
         "ai_ok":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="ok"),
         "ai_invalid":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="invalid"),
