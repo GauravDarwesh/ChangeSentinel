@@ -246,65 +246,49 @@ class TestState(unittest.TestCase):
                 self.assertIn("id",load_previous("eba-test"))
 
 class TestEngineFlow(unittest.TestCase):
-    @patch("regmon.engine.write_evidence")
-    @patch("regmon.engine.write_snapshot",return_value="data/snapshots/test.txt")
-    @patch("regmon.engine.discover")
-    @patch("regmon.engine.make_current_item")
-    @patch("regmon.engine.load_previous")
-    @patch("regmon.engine.load_discovery_metadata",return_value={"source_id":"eba-test","state":"COMPLETE","method":"test"})
-    @patch("regmon.engine.load_discovery_metadata", return_value={"source_id":"eba-test","state":"DEGRADED","method":"test"})
-    @patch("regmon.engine.write_evidence")
-    @patch("regmon.engine.write_snapshot", return_value="data/snapshots/test.txt")
-    @patch("regmon.engine.discover")
-    @patch("regmon.engine.make_current_item")
-    @patch("regmon.engine.load_previous")
-    def test_degraded_discovery_never_emits_removal(
-        self,mock_previous,mock_make,mock_discover,mock_snapshot,mock_evidence,mock_discovery_metadata
-    ):
+    def test_changed_event_uses_previous_snapshot(self):
+        from regmon.engine import process_source
+        url="https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a"
+        uid=make_id(url)
+        import regmon.engine as mod
+        with patch("regmon.engine.load_discovery_metadata", return_value={"source_id":"eba-test","state":"COMPLETE","method":"test"}),              patch("regmon.engine.load_previous", return_value={uid:{
+                 "url_id":uid,"canonical_url":url,"normalized_hash":"oldhash","raw_hash":"oldraw",
+                 "snapshot_location":f"data/snapshots/{uid}.txt","first_seen":"2026-01-01T00:00:00+00:00"
+             }}),              patch("regmon.engine.discover", return_value=[url]),              patch("regmon.engine.make_current_item", return_value=(
+                 {"url_id":uid,"source_id":"eba-test","regulator":"European Banking Authority","canonical_url":url,
+                  "normalized_hash":"newhash","raw_hash":"newraw","relevance":{"candidate":False},
+                  "first_seen":"2026-01-01T00:00:00+00:00"},"new text"
+             )),              patch("regmon.engine.write_snapshot", return_value="data/snapshots/test.txt"),              patch("regmon.engine.write_evidence") as mock_evidence:
+            old_file=mod.ROOT/"data"/"snapshots"/f"{uid}.txt"
+            old_file.parent.mkdir(parents=True,exist_ok=True)
+            old_file.write_text("old text",encoding="utf-8")
+            try:
+                result=process_source(SOURCE,"run-test",dry_run=False)
+                args=mock_evidence.call_args.args
+                self.assertIn("old text",args)
+                self.assertIn("new text",args)
+                self.assertEqual(result["report"]["counts"]["changed"],1)
+            finally:
+                old_file.unlink(missing_ok=True)
+
+    def test_degraded_discovery_never_emits_removal(self):
         from regmon.engine import process_source
         present="https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a"
         missing="https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/b"
         present_uid=make_id(present)
         missing_uid=make_id(missing)
-        mock_previous.return_value={
+        previous={
             present_uid: {"url_id":present_uid,"canonical_url":present,"normalized_hash":"same","raw_hash":"raw"},
             missing_uid: {"url_id":missing_uid,"canonical_url":missing,"normalized_hash":"old","raw_hash":"old"},
         }
-        mock_discover.return_value=[present]
-        mock_make.return_value=(
-            {"url_id":present_uid,"source_id":"eba-test","regulator":"European Banking Authority",
-             "canonical_url":present,"normalized_hash":"same","raw_hash":"new",
-             "relevance":{"candidate":False}},
-            "same text",
-        )
-        result=process_source(SOURCE,"run-degraded",dry_run=True)
-        self.assertEqual(result["report"]["counts"]["removed"],0)
-        self.assertFalse(result["report"]["baseline_update_allowed"])
-
-    def test_changed_event_uses_previous_snapshot(
-        self,mock_discovery_metadata,mock_previous,mock_make,mock_discover,mock_snapshot,mock_evidence
-    ):
-        from regmon.engine import process_source
-        url="https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a"
-        uid=make_id(url)
-        mock_previous.return_value={uid:{
-            "url_id":uid,"canonical_url":url,"normalized_hash":"oldhash","raw_hash":"oldraw",
-            "snapshot_location":f"data/snapshots/{uid}.txt","first_seen":"2026-01-01T00:00:00+00:00"
-        }}
-        mock_discover.return_value=[url]
-        mock_make.return_value=({"url_id":uid,"source_id":"eba-test","regulator":"European Banking Authority","canonical_url":url,
-                                 "normalized_hash":"newhash","raw_hash":"newraw","relevance":{"candidate":False},
-                                 "first_seen":"2026-01-01T00:00:00+00:00"},"new text")
-        import regmon.engine as mod
-        old_file=mod.ROOT/"data"/"snapshots"/f"{uid}.txt"
-        old_file.parent.mkdir(parents=True,exist_ok=True)
-        old_file.write_text("old text",encoding="utf-8")
-        result=process_source(SOURCE,"run-test",dry_run=False)
-        args=mock_evidence.call_args.args
-        self.assertIn("old text",args)
-        self.assertIn("new text",args)
-        self.assertEqual(result["report"]["counts"]["changed"],1)
-        old_file.unlink()
+        with patch("regmon.engine.load_discovery_metadata", return_value={"source_id":"eba-test","state":"DEGRADED","method":"test"}),              patch("regmon.engine.load_previous", return_value=previous),              patch("regmon.engine.discover", return_value=[present]),              patch("regmon.engine.make_current_item", return_value=(
+                 {"url_id":present_uid,"source_id":"eba-test","regulator":"European Banking Authority",
+                  "canonical_url":present,"normalized_hash":"same","raw_hash":"new",
+                  "relevance":{"candidate":False}},"same text"
+             )):
+            result=process_source(SOURCE,"run-degraded",dry_run=True)
+            self.assertEqual(result["report"]["counts"]["removed"],0)
+            self.assertFalse(result["report"]["baseline_update_allowed"])
 
 if __name__=="__main__":
     unittest.main()
