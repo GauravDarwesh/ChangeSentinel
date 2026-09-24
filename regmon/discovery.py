@@ -220,6 +220,10 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             if source.max_urls > 0 and len(discovered) >= source.max_urls:
                 break
 
+    state = "FAILED"
+    if successful_pages > 0:
+        state = "DEGRADED" if errors else "COMPLETE"
+
     data_dir.mkdir(parents=True, exist_ok=True)
     (data_dir / "http-discovery-output.txt").write_text(
         "\n".join([
@@ -228,8 +232,22 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             f"HTML_PROCESSED={len(processed)}",
             f"SUCCESSFUL_PAGES={successful_pages}",
             f"ERRORS={len(errors)}",
+            f"STATE={state}",
             *errors[:250],
         ]),
+        encoding="utf-8",
+    )
+    discovery_dir = data_dir / "discovery"
+    discovery_dir.mkdir(parents=True, exist_ok=True)
+    (discovery_dir / f"{source.id}.json").write_text(
+        json.dumps({
+            "source_id": source.id,
+            "method": "http",
+            "state": state,
+            "discovered": len(discovered),
+            "successful_pages": successful_pages,
+            "failed_pages": len(errors),
+        }, indent=2),
         encoding="utf-8",
     )
     if successful_pages == 0:
@@ -310,6 +328,19 @@ def _stealth_discover(source: SourceConfig, data_dir: Path) -> list[str]:
     data_dir.mkdir(parents=True, exist_ok=True)
     (data_dir / "stealth-output.txt").write_text(
         "\n\n".join(attempts_log),
+        encoding="utf-8",
+    )
+    discovery_dir = data_dir / "discovery"
+    discovery_dir.mkdir(parents=True, exist_ok=True)
+    (discovery_dir / f"{source.id}.json").write_text(
+        json.dumps({
+            "source_id": source.id,
+            "method": "stealth-fallback",
+            "state": "DEGRADED" if discovered else "FAILED",
+            "discovered": len(discovered),
+            "successful_pages": len(discovered),
+            "failed_pages": 0 if discovered else 1,
+        }, indent=2),
         encoding="utf-8",
     )
     return discovered
