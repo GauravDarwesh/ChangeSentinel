@@ -131,6 +131,9 @@ class TestDiscovery(unittest.TestCase):
             ],
         )
         self.assertEqual(mock_get.call_count, 4)
+        metadata = json.loads((Path(tmp) / "discovery" / "eba-test.json").read_text(encoding="utf-8"))
+        self.assertEqual(metadata["state"], "COMPLETE")
+        self.assertEqual(metadata["failed_pages"], 0)
 
     @patch("regmon.discovery._stealth_discover")
     @patch("regmon.discovery.http_discover")
@@ -215,6 +218,25 @@ class TestFetch(unittest.TestCase):
             fetch("https://example.test",attempts=2,backoff_seconds=0)
         self.assertEqual(mock_get.call_count,2)
 
+    @patch("regmon.fetch.requests.get")
+    def test_304_uses_validators_without_download(self,mock_get):
+        mock_get.return_value=Mock(
+            status_code=304,
+            content=b"",
+            headers={"etag": "new-etag", "last-modified": "Thu, 24 Sep 2026 04:00:00 GMT"},
+        )
+        result=fetch(
+            "https://example.test",
+            attempts=1,
+            etag="old-etag",
+            last_modified="Wed, 23 Sep 2026 04:00:00 GMT",
+        )
+        self.assertTrue(result.not_modified)
+        self.assertEqual(result.status_code,304)
+        headers=mock_get.call_args.kwargs["headers"]
+        self.assertEqual(headers["If-None-Match"],"old-etag")
+        self.assertEqual(headers["If-Modified-Since"],"Wed, 23 Sep 2026 04:00:00 GMT")
+
 class TestState(unittest.TestCase):
     def test_flat_legacy_loader_compatible(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -229,8 +251,9 @@ class TestEngineFlow(unittest.TestCase):
     @patch("regmon.engine.discover")
     @patch("regmon.engine.make_current_item")
     @patch("regmon.engine.load_previous")
+    @patch("regmon.engine.load_discovery_metadata",return_value={"source_id":"eba-test","state":"COMPLETE","method":"test"})
     def test_changed_event_uses_previous_snapshot(
-        self,mock_previous,mock_make,mock_discover,mock_snapshot,mock_evidence
+        self,mock_discovery_metadata,mock_previous,mock_make,mock_discover,mock_snapshot,mock_evidence
     ):
         from regmon.engine import process_source
         url="https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a"
