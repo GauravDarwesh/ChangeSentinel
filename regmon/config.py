@@ -9,6 +9,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_CONFIG_PATH = ROOT / "config" / "sources.json"
 
+
 @dataclass(frozen=True)
 class SourceConfig:
     id: str
@@ -22,9 +23,12 @@ class SourceConfig:
     active: bool = True
     baseline_on_first_run: bool = False
     excluded_prefixes: tuple[str, ...] = ()
-    discovery_attempts: int = 3
+    discovery_attempts: int = 1
     discovery_timeout_seconds: int = 180
     discovery_retry_delay_seconds: int = 5
+    use_http_discovery: bool = True
+    discovery_http_timeout_seconds: int = 20
+    discovery_http_workers: int = 12
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "SourceConfig":
@@ -43,11 +47,17 @@ class SourceConfig:
             crawler=str(value.get("crawler", "stealth-crawler")),
             active=bool(value.get("active", True)),
             baseline_on_first_run=bool(value.get("baseline_on_first_run", False)),
-            excluded_prefixes=tuple(str(x).rstrip("/") + "/" for x in value.get("excluded_prefixes", [])),
-            discovery_attempts=int(value.get("discovery_attempts", 3)),
-            discovery_timeout_seconds=int(value.get("discovery_timeout_seconds", 180)),
-            discovery_retry_delay_seconds=int(value.get("discovery_retry_delay_seconds", 5)),
+            excluded_prefixes=tuple(
+                str(x).rstrip("/") + "/" for x in value.get("excluded_prefixes", [])
+            ),
+            discovery_attempts=max(1, int(value.get("discovery_attempts", 1))),
+            discovery_timeout_seconds=max(30, int(value.get("discovery_timeout_seconds", 180))),
+            discovery_retry_delay_seconds=max(0, int(value.get("discovery_retry_delay_seconds", 5))),
+            use_http_discovery=bool(value.get("use_http_discovery", True)),
+            discovery_http_timeout_seconds=max(5, int(value.get("discovery_http_timeout_seconds", 20))),
+            discovery_http_workers=max(1, int(value.get("discovery_http_workers", 12))),
         )
+
 
 def load_config(path: Path = DEFAULT_CONFIG_PATH) -> tuple[dict[str, Any], dict[str, SourceConfig]]:
     payload = json.loads(path.read_text(encoding="utf-8"))
@@ -55,6 +65,7 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> tuple[dict[str, Any], dict[
     if not sources:
         raise ValueError("At least one monitoring source must be configured")
     return payload, sources
+
 
 def get_source(source_id: str, path: Path = DEFAULT_CONFIG_PATH) -> SourceConfig | None:
     _, sources = load_config(path)
