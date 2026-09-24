@@ -96,7 +96,7 @@ jobs:
       - name: Determine crawl status
         id: crawl-status
         run: |
-          python - <<'PY' >> "$GITHUB_OUTPUT"
+          result="$(python - <<'PY'
           import json
           import os
           from pathlib import Path
@@ -116,11 +116,13 @@ jobs:
           if requested not in {"all", "*"}:
               paused = [sid for sid in paused if sid == requested]
 
-          print("Paused sources:", paused)
-          print("paused=" + ("true" if paused else "false"))
-          print("paused_source=" + (paused[0] if paused else ""))
+          print(("true" if paused else "false") + "|" + (paused[0] if paused else ""))
           PY
-
+          )"
+          IFS="|" read -r paused paused_source <<< "$result"
+          echo "paused=$paused" >> "$GITHUB_OUTPUT"
+          echo "paused_source=$paused_source" >> "$GITHUB_OUTPUT"
+          echo "Crawl paused: $paused_source" >&2
       - name: Publish notifications
         if: ${{ steps.crawl-status.outputs.paused != 'true' }}
         env:
