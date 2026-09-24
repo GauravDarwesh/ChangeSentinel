@@ -221,9 +221,10 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             if source.max_urls > 0 and len(discovered) >= source.max_urls:
                 break
 
+    capped = source.max_urls > 0 and len(discovered) >= source.max_urls
     state = "FAILED"
     if successful_pages > 0:
-        state = "DEGRADED" if errors else "COMPLETE"
+        state = "DEGRADED" if errors or capped else "COMPLETE"
 
     data_dir.mkdir(parents=True, exist_ok=True)
     (data_dir / "http-discovery-output.txt").write_text(
@@ -248,6 +249,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             "discovered": len(discovered),
             "successful_pages": successful_pages,
             "failed_pages": len(errors),
+            "capped": capped,
         }, indent=2),
         encoding="utf-8",
     )
@@ -347,16 +349,67 @@ def _stealth_discover(source: SourceConfig, data_dir: Path) -> list[str]:
     return discovered
 
 
-def discover(source: SourceConfig, data_dir: Path) -> list[str]:
-    """Discover a source safely without allowing browser failures to block monitoring."""
-    if source.use_http_discovery:
-        discovered = http_discover(source, data_dir)
-        if discovered:
-            return discovered
+def _read_discovery_metadata(source_id: str, data_dir: Path) -> dict:
+    path = data_dir / "discovery" / f"{source_id}.json"
+    if not path.exists():
+        return {"source_id": source_id, "state": "FAILED", "method": "unknown"}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        return {"source_id": source_id, "state": "FAILED", "method": "unknown", "reason": str(exc)}
 
-    discovered = _stealth_discover(source, data_dir)
-    if discovered:
-        return discovered
+
+def _write_combined_discovery_metadata(
+    source: SourceConfig,
+    data_dir: Path,
+    http_meta: dict,
+    http_urls: list[str],
+    stealth_urls: list[str],
+) -> None:
+    state = http_meta.get("state", "FAILED")
+    if state == "COMPLETE":
+        final_state = "COMPLETE"
+    elif http_urls or stealth_urls:
+        final_state = "DEGRADED"
+    else:
+        final_state = "FAILED"
+    payload = {
+        "source_id": source.id,
+        "method": "http+stealth-enrichment",
+        "state": final_state,
+        "discovered": len(dict.fromkeys(http_urls + stealth_urls)),
+        "http_discovered": len(http_urls),
+        "stealth_discovered": len(stealth_urls),
+        "http_state": http_meta.get("state"),
+        "http_successful_pages": http_meta.get("successful_pages", 0),
+        "http_failed_pages": http_meta.get("failed_pages", 0),
+        "http_capped": http_meta.get("capped", False),
+    }
+    discovery_dir = data_dir / "discovery"
+    discovery_dir.mkdir(parents=True, exist_ok=True)
+    (discovery_dir / f"{source.id}.json").write_text(
+        json.dumps(payload, indent=2),
+        encoding="utf-8",
+    )
+
+
+def discover(source: SourceConfig, data_dir: Path) -> list[str]:
+    """Discover using HTTP first, enriching degraded crawls with the browser path."""
+    http_urls: list[str] = []
+    http_meta: dict = {"state": "FAILED", "method": "unknown"}
+
+    if source.use_http_discovery:
+        http_urls = http_discover(source, data_dir)
+        http_meta = _read_discovery_metadata(source.id, data_dir)
+        if http_meta.get("state") == "COMPLETE":
+            return http_urls
+
+    stealth_urls = _stealth_discover(source, data_dir)
+    combined = list(dict.fromkeys(http_urls + stealth_urls))
+    _write_combined_discovery_metadata(source, data_dir, http_meta, http_urls, stealth_urls)
+
+    if combined:
+        return combined
 
     raise RuntimeError(
         f"No in-scope URLs discovered for {source.id}; state was not updated."
