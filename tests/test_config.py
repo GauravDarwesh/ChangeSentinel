@@ -10,6 +10,11 @@ class TestConfig(unittest.TestCase):
         self.assertTrue(source.baseline_on_first_run)
         self.assertEqual(source.seed_urls, ("https://www.eba.europa.eu/homepage",))
         self.assertEqual(source.max_urls, 0)
+        self.assertEqual(source.discovery_attempts, 1)
+        self.assertEqual(source.discovery_timeout_seconds, 180)
+        self.assertTrue(source.use_http_discovery)
+        self.assertEqual(source.discovery_http_timeout_seconds, 20)
+        self.assertEqual(source.discovery_http_workers, 12)
         self.assertIn("https://www.eba.europa.eu/", source.allowed_prefixes)
 
 if __name__=="__main__":
