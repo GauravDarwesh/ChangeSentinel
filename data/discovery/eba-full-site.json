@@ -2,10 +2,10 @@
   "source_id": "eba-full-site",
   "method": "http-resumable",
   "state": "PAUSED",
-  "discovered": 26894,
-  "html_processed": 6188,
-  "successful_pages": 6134,
-  "failed_pages": 54,
+  "discovered": 36498,
+  "html_processed": 12806,
+  "successful_pages": 12714,
+  "failed_pages": 92,
   "capped": false,
-  "pending": 6581
+  "pending": 6017
 }
