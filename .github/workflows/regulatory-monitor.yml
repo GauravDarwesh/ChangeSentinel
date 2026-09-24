@@ -122,7 +122,8 @@ jobs:
           PY
 
       - name: Publish notifications
-        if: ${{ steps.crawl-status.outputs.paused != 'true' }}        env:
+        if: ${{ steps.crawl-status.outputs.paused != 'true' }}
+        env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'RegMonitoringWebCrawlerNTFY' }}
           NTFY_SERVER: https://ntfy.sh
           DASHBOARD_URL: ${{ env.DASHBOARD_URL }}
