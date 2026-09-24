@@ -109,6 +109,11 @@ jobs:
 
       - name: Commit monitoring state
         run: |
+          git fetch origin main --quiet
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+            echo "Stale monitoring runner detected; refusing to publish state."
+            exit 1
+          fi
           git config user.name "regulatory-monitor-bot"
           git config user.email "actions@users.noreply.github.com"
           git add data
