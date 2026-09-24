@@ -218,6 +218,7 @@ def _write_http_checkpoint(
     pending: deque[str],
     processed: set[str],
     errors: list[str],
+    failed_pages: int,
     successful_pages: int,
     started_at: str,
 ) -> None:
@@ -233,6 +234,7 @@ def _write_http_checkpoint(
             "pending": list(pending),
             "processed": sorted(processed),
             "errors": errors[:250],
+            "failed_pages": failed_pages,
             "successful_pages": successful_pages,
         },
     )
@@ -254,6 +256,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
         processed = set(str(url) for url in checkpoint.get("processed", []))
         queued = set(pending)
         errors = [str(error) for error in checkpoint.get("errors", [])]
+        failed_pages = int(checkpoint.get("failed_pages", len(errors)))
         successful_pages = int(checkpoint.get("successful_pages", 0))
         started_at = str(checkpoint.get("started_at") or started_at)
         print(
@@ -267,6 +270,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
         processed: set[str] = set()
         pending: deque[str] = deque()
         errors: list[str] = []
+        failed_pages = 0
         successful_pages = 0
 
         for seed in source.seed_urls:
@@ -287,13 +291,14 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 pending=pending,
                 processed=processed,
                 errors=errors,
+                failed_pages=failed_pages,
                 successful_pages=successful_pages,
                 started_at=started_at,
             )
             _write_http_metadata(
                 source, data_dir,
                 state="PAUSED", discovered=len(discovered), processed=len(processed),
-                successful_pages=successful_pages, failed_pages=len(errors),
+                successful_pages=successful_pages, failed_pages=failed_pages,
                 capped=False, pending=len(pending),
             )
             print(f"HTTP discovery paused: pending={len(pending)} discovered={len(discovered)}")
@@ -318,7 +323,9 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                     links, error = [], f"{type(exc).__name__}: {exc}"
 
                 if error:
-                    errors.append(f"{url}\t{error}")
+                    failed_pages += 1
+                    if len(errors) < 250:
+                        errors.append(f"{url}\t{error}")
                 else:
                     successful_pages += 1
                 batch_links.update(links)
@@ -345,12 +352,12 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
 
         capped = source.max_urls > 0 and len(discovered) >= source.max_urls
         if capped or not pending:
-            state = "DEGRADED" if errors or capped else "COMPLETE"
+            state = "DEGRADED" if failed_pages or capped else "COMPLETE"
             _remove_http_checkpoint(source, data_dir)
             _write_http_metadata(
                 source, data_dir,
                 state=state, discovered=len(discovered), processed=len(processed),
-                successful_pages=successful_pages, failed_pages=len(errors),
+                successful_pages=successful_pages, failed_pages=failed_pages,
                 capped=capped, pending=len(pending),
             )
             if successful_pages == 0:
