@@ -150,35 +150,160 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int) -> tuple[str, lis
     return url, [], last_error or "unknown discovery error"
 
 
+def _checkpoint_path(source: SourceConfig, data_dir: Path) -> Path:
+    return data_dir / "discovery" / f"{source.id}-checkpoint.json"
+
+
+def _atomic_write_json(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp = path.with_suffix(path.suffix + ".tmp")
+    temp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    temp.replace(path)
+
+
+def _load_http_checkpoint(source: SourceConfig, data_dir: Path) -> dict | None:
+    path = _checkpoint_path(source, data_dir)
+    if not path.exists():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    if payload.get("source_id") != source.id or payload.get("state") != "PAUSED":
+        return None
+    if not isinstance(payload.get("pending"), list) or not isinstance(payload.get("discovered"), list):
+        return None
+    return payload
+
+
+def _remove_http_checkpoint(source: SourceConfig, data_dir: Path) -> None:
+    _checkpoint_path(source, data_dir).unlink(missing_ok=True)
+
+
+def _write_http_metadata(
+    source: SourceConfig,
+    data_dir: Path,
+    *,
+    state: str,
+    discovered: int,
+    processed: int,
+    successful_pages: int,
+    failed_pages: int,
+    capped: bool,
+    pending: int,
+) -> None:
+    discovery_dir = data_dir / "discovery"
+    discovery_dir.mkdir(parents=True, exist_ok=True)
+    _atomic_write_json(
+        discovery_dir / f"{source.id}.json",
+        {
+            "source_id": source.id,
+            "method": "http-resumable",
+            "state": state,
+            "discovered": discovered,
+            "html_processed": processed,
+            "successful_pages": successful_pages,
+            "failed_pages": failed_pages,
+            "capped": capped,
+            "pending": pending,
+        },
+    )
+
+
+def _write_http_checkpoint(
+    source: SourceConfig,
+    data_dir: Path,
+    *,
+    discovered: list[str],
+    pending: deque[str],
+    processed: set[str],
+    errors: list[str],
+    successful_pages: int,
+    started_at: str,
+) -> None:
+    _atomic_write_json(
+        _checkpoint_path(source, data_dir),
+        {
+            "schema_version": 1,
+            "source_id": source.id,
+            "state": "PAUSED",
+            "started_at": started_at,
+            "updated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "discovered": discovered,
+            "pending": list(pending),
+            "processed": sorted(processed),
+            "errors": errors[:250],
+            "successful_pages": successful_pages,
+        },
+    )
+
+
 def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
-    """Recursively discover same-host links using direct HTTP as the reliable path."""
+    """Recursively discover same-host links, checkpointing before the job budget is exhausted."""
     worker_count = max(1, min(int(source.discovery_http_workers), 32))
     timeout = max(5, int(source.discovery_http_timeout_seconds))
+    slice_seconds = max(0, int(source.discovery_slice_seconds))
+    deadline = time.monotonic() + slice_seconds if slice_seconds else None
+    started_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
-    discovered: list[str] = []
-    discovered_set: set[str] = set()
-    queued: set[str] = set()
-    processed: set[str] = set()
-    pending: deque[str] = deque()
-    errors: list[str] = []
-    successful_pages = 0
+    checkpoint = _load_http_checkpoint(source, data_dir)
+    if checkpoint:
+        discovered = list(dict.fromkeys(str(url) for url in checkpoint.get("discovered", [])))
+        discovered_set = set(discovered)
+        pending = deque(str(url) for url in checkpoint.get("pending", []))
+        processed = set(str(url) for url in checkpoint.get("processed", []))
+        queued = set(pending)
+        errors = [str(error) for error in checkpoint.get("errors", [])]
+        successful_pages = int(checkpoint.get("successful_pages", 0))
+        started_at = str(checkpoint.get("started_at") or started_at)
+        print(
+            f"HTTP discovery resume: discovered={len(discovered)} "
+            f"processed={len(processed)} pending={len(pending)}"
+        )
+    else:
+        discovered = []
+        discovered_set: set[str] = set()
+        queued: set[str] = set()
+        processed: set[str] = set()
+        pending: deque[str] = deque()
+        errors: list[str] = []
+        successful_pages = 0
 
-    for seed in source.seed_urls:
-        value = canonical(seed)
-        if not in_scope(value, source) or value in discovered_set:
-            continue
-        discovered_set.add(value)
-        discovered.append(value)
-        if _is_probably_html_url(value):
-            pending.append(value)
-            queued.add(value)
+        for seed in source.seed_urls:
+            value = canonical(seed)
+            if not in_scope(value, source) or value in discovered_set:
+                continue
+            discovered_set.add(value)
+            discovered.append(value)
+            if _is_probably_html_url(value):
+                pending.append(value)
+                queued.add(value)
 
-    with ThreadPoolExecutor(max_workers=worker_count) as pool:
-        while pending:
-            batch: list[str] = []
-            while pending and len(batch) < worker_count:
-                batch.append(pending.popleft())
+    while pending:
+        if deadline is not None and time.monotonic() >= deadline:
+            _write_http_checkpoint(
+                source, data_dir,
+                discovered=discovered,
+                pending=pending,
+                processed=processed,
+                errors=errors,
+                successful_pages=successful_pages,
+                started_at=started_at,
+            )
+            _write_http_metadata(
+                source, data_dir,
+                state="PAUSED", discovered=len(discovered), processed=len(processed),
+                successful_pages=successful_pages, failed_pages=len(errors),
+                capped=False, pending=len(pending),
+            )
+            print(f"HTTP discovery paused: pending={len(pending)} discovered={len(discovered)}")
+            return discovered
 
+        batch: list[str] = []
+        while pending and len(batch) < worker_count:
+            batch.append(pending.popleft())
+
+        with ThreadPoolExecutor(max_workers=worker_count) as pool:
             futures = {
                 pool.submit(_fetch_links, url, source, timeout): url
                 for url in batch
@@ -198,60 +323,66 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                     successful_pages += 1
                 batch_links.update(links)
 
-            for link in sorted(batch_links):
-                if source.max_urls > 0 and len(discovered) >= source.max_urls:
-                    break
-                if link not in discovered_set:
-                    discovered_set.add(link)
-                    discovered.append(link)
-                if (
-                    link not in processed
-                    and link not in queued
-                    and _is_probably_html_url(link)
-                ):
-                    pending.append(link)
-                    queued.add(link)
-
-            print(
-                f"HTTP discovery: processed={len(processed)} "
-                f"successful={successful_pages} discovered={len(discovered)} "
-                f"pending={len(pending)}"
-            )
-
+        for link in sorted(batch_links):
             if source.max_urls > 0 and len(discovered) >= source.max_urls:
                 break
+            if link not in discovered_set:
+                discovered_set.add(link)
+                discovered.append(link)
+            if (
+                link not in processed
+                and link not in queued
+                and _is_probably_html_url(link)
+            ):
+                pending.append(link)
+                queued.add(link)
 
-    capped = source.max_urls > 0 and len(discovered) >= source.max_urls
-    state = "FAILED"
-    if successful_pages > 0:
-        state = "DEGRADED" if errors or capped else "COMPLETE"
+        print(
+            f"HTTP discovery: processed={len(processed)} "
+            f"successful={successful_pages} discovered={len(discovered)} "
+            f"pending={len(pending)}"
+        )
 
-    data_dir.mkdir(parents=True, exist_ok=True)
-    (data_dir / "http-discovery-output.txt").write_text(
-        "\n".join([
-            f"SOURCE={source.id}",
-            f"DISCOVERED={len(discovered)}",
-            f"HTML_PROCESSED={len(processed)}",
-            f"SUCCESSFUL_PAGES={successful_pages}",
-            f"ERRORS={len(errors)}",
-            f"STATE={state}",
-            *errors[:250],
-        ]),
-        encoding="utf-8",
-    )
-    discovery_dir = data_dir / "discovery"
-    discovery_dir.mkdir(parents=True, exist_ok=True)
-    (discovery_dir / f"{source.id}.json").write_text(
-        json.dumps({
-            "source_id": source.id,
-            "method": "http",
-            "state": state,
-            "discovered": len(discovered),
-            "successful_pages": successful_pages,
-            "failed_pages": len(errors),
-            "capped": capped,
-        }, indent=2),
-        encoding="utf-8",
+        capped = source.max_urls > 0 and len(discovered) >= source.max_urls
+        if capped or not pending:
+            state = "DEGRADED" if errors or capped else "COMPLETE"
+            _remove_http_checkpoint(source, data_dir)
+            _write_http_metadata(
+                source, data_dir,
+                state=state, discovered=len(discovered), processed=len(processed),
+                successful_pages=successful_pages, failed_pages=len(errors),
+                capped=capped, pending=len(pending),
+            )
+            if successful_pages == 0:
+                return []
+            return discovered
+
+        if deadline is not None and time.monotonic() >= deadline:
+            _write_http_checkpoint(
+                source, data_dir,
+                discovered=discovered,
+                pending=pending,
+                processed=processed,
+                errors=errors,
+                successful_pages=successful_pages,
+                started_at=started_at,
+            )
+            _write_http_metadata(
+                source, data_dir,
+                state="PAUSED", discovered=len(discovered), processed=len(processed),
+                successful_pages=successful_pages, failed_pages=len(errors),
+                capped=False, pending=len(pending),
+            )
+            print(f"HTTP discovery paused: pending={len(pending)} discovered={len(discovered)}")
+            return discovered
+
+    _remove_http_checkpoint(source, data_dir)
+    state = "DEGRADED" if errors else "COMPLETE"
+    _write_http_metadata(
+        source, data_dir,
+        state=state, discovered=len(discovered), processed=len(processed),
+        successful_pages=successful_pages, failed_pages=len(errors),
+        capped=False, pending=0,
     )
     if successful_pages == 0:
         return []
@@ -401,7 +532,7 @@ def discover(source: SourceConfig, data_dir: Path) -> list[str]:
     if source.use_http_discovery:
         http_urls = http_discover(source, data_dir)
         http_meta = _read_discovery_metadata(source.id, data_dir)
-        if http_meta.get("state") == "COMPLETE":
+        if http_meta.get("state") in {"COMPLETE", "PAUSED"}:
             return http_urls
 
     stealth_urls = _stealth_discover(source, data_dir)

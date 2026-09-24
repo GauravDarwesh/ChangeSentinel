@@ -30,11 +30,12 @@ concurrency:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   monitor:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 360
     env:
       REGMON_SOURCE: ${{ inputs.source_id || 'all' }}
       DASHBOARD_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
@@ -92,8 +93,36 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: python -u -m regmon.monitor --source "$REGMON_SOURCE"
 
+      - name: Determine crawl status
+        id: crawl-status
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          import os
+          from pathlib import Path
+
+          requested = os.environ.get("REGMON_SOURCE", "all")
+          paused = []
+          for path in sorted((Path("data") / "discovery").glob("*.json")):
+              if path.name.endswith("-checkpoint.json"):
+                  continue
+              try:
+                  payload = json.loads(path.read_text(encoding="utf-8"))
+              except Exception:
+                  continue
+              if payload.get("state") == "PAUSED":
+                  paused.append(str(payload.get("source_id") or path.stem))
+
+          if requested not in {"all", "*"}:
+              paused = [sid for sid in paused if sid == requested]
+
+          print("Paused sources:", paused)
+          print("paused=" + ("true" if paused else "false"))
+          print("paused_source=" + (paused[0] if paused else ""))
+          PY
+
       - name: Publish notifications
-        env:
+        if: ${{ steps.crawl-status.outputs.paused != 'true' }}        env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'RegMonitoringWebCrawlerNTFY' }}
           NTFY_SERVER: https://ntfy.sh
           DASHBOARD_URL: ${{ env.DASHBOARD_URL }}
@@ -119,3 +148,17 @@ jobs:
           git add data
           git diff --cached --quiet || git commit -m "Update regulatory monitoring state"
           git push
+      - name: Continue paused crawl
+        if: ${{ steps.crawl-status.outputs.paused == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          source_id="${{ steps.crawl-status.outputs.paused_source }}"
+          test -n "$source_id"
+          echo "Dispatching next discovery slice for $source_id"
+          gh workflow run regulatory-monitor.yml \
+            --repo "${{ github.repository }}" \
+            --ref main \
+            -f source_id="$source_id" \
+            -f test_notification=false

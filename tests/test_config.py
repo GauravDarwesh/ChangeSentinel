@@ -16,6 +16,7 @@ class TestConfig(unittest.TestCase):
         self.assertTrue(source.use_http_discovery)
         self.assertEqual(source.discovery_http_timeout_seconds, 20)
         self.assertEqual(source.discovery_http_workers, 6)
+        self.assertEqual(source.discovery_slice_seconds, 2700)
         self.assertIn("https://www.eba.europa.eu/", source.allowed_prefixes)
 
 if __name__=="__main__":

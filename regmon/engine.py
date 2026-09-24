@@ -194,8 +194,43 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
     initial_baseline = source.baseline_on_first_run and not previous
     urls = discover(source, DATA)
     discovery = load_discovery_metadata(source.id)
-    current, texts, old_texts = {}, {}, {uid: read_snapshot(old) for uid, old in previous.items()}
-    events, new_items, changed_items, migration_items, unchanged_items = [], [], [], [], []
+    if discovery.get("state") == "PAUSED":
+        counts = {
+            "discovered": int(discovery.get("discovered", 0)),
+            "new": 0, "changed": 0, "removed": 0, "unchanged": 0,
+            "baseline_migration": 0, "fetch_error": 0, "extraction_error": 0,
+            "not_modified": 0, "forced_full_fetch": 0, "relevance_candidates": 0,
+            "ai_ok": 0, "ai_invalid": 0, "ai_error": 0, "ai_deferred": 0,
+            "crawl_paused": 1,
+        }
+        return {
+            "report": {
+                "schema_version": 2, "run_id": run_id, "generated_at": now,
+                "source": {
+                    "id": source.id, "name": source.name, "regulator": source.regulator,
+                    "seeds": list(source.seed_urls), "allowed_prefixes": list(source.allowed_prefixes),
+                    "initial_baseline": initial_baseline,
+                },
+                "discovery": discovery,
+                "baseline_update_allowed": False,
+                "change_detector": {
+                    "raw_hash": "SHA-256 retrieved bytes",
+                    "normalized_hash": "SHA-256 extracted normalized content",
+                    "classification_hash": "normalized_hash",
+                    "http_validators": "ETag/Last-Modified used only for conditional fetch optimization",
+                },
+                "relevance_gate": {"mode": "high_recall", "ai_final_semantic_decision": True},
+                "ai_contract": {
+                    "required_keys": ["relevant", "topic", "change_type", "summary", "impact", "effective_date", "affected_scope", "actions", "reason"],
+                    "strict": True,
+                },
+                "counts": counts,
+                "events": [], "new_urls": [], "changed_urls": [], "removed_urls": [],
+                "baseline_migrations": [], "ai_results": [],
+            },
+            "inventory": {},
+        }
+    current, texts, old_texts = {}, {}, {uid: read_snapshot(old) for uid, old in previous.items()}    events, new_items, changed_items, migration_items, unchanged_items = [], [], [], [], []
     resolved = {url: resolve_previous(url, previous) for url in urls}
 
     workers = min(int(DEFAULTS.get("fetch_workers", 8)), max(1, len(urls)))
@@ -313,6 +348,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
         "ai_invalid":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="invalid"),
         "ai_error":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="error"),
         "ai_deferred":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="deferred"),
+        "crawl_paused":0,
     }
     return {
         "report":{
