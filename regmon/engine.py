@@ -230,7 +230,8 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
             },
             "inventory": {},
         }
-    current, texts, old_texts = {}, {}, {uid: read_snapshot(old) for uid, old in previous.items()}    events, new_items, changed_items, migration_items, unchanged_items = [], [], [], [], []
+    current, texts, old_texts = {}, {}, {uid: read_snapshot(old) for uid, old in previous.items()}
+    events, new_items, changed_items, migration_items, unchanged_items = [], [], [], [], []
     resolved = {url: resolve_previous(url, previous) for url in urls}
 
     workers = min(int(DEFAULTS.get("fetch_workers", 8)), max(1, len(urls)))
