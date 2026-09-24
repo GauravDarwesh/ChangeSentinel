@@ -1,14 +1,30 @@
-"""URL discovery and canonicalization."""
+"""URL discovery, canonicalization, and resilient crawling."""
+
 from __future__ import annotations
 
+import re
 import subprocess
 import time
+from collections import deque
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
+from urllib.parse import parse_qsl, urlencode, urljoin, urlparse, urlunparse
+
+import requests
+from bs4 import BeautifulSoup
 
 from regmon.config import SourceConfig
 
 TRACKING_PARAMS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
+NON_HTML_SUFFIXES = {
+    ".7z", ".avi", ".bin", ".css", ".doc", ".docx", ".gif", ".gz", ".ico",
+    ".jpeg", ".jpg", ".js", ".m3u8", ".mov", ".mp3", ".mp4", ".mpeg",
+    ".png", ".ppt", ".pptx", ".rar", ".svg", ".tar", ".tgz", ".ttf",
+    ".wav", ".webm", ".webp", ".woff", ".woff2", ".xls", ".xlsx",
+    ".xml", ".zip", ".pdf",
+}
+URL_RE = re.compile(r"https?://[^\\s<>\"']+", re.IGNORECASE)
+
 
 def canonical(url: str) -> str:
     url = str(url).split("#", 1)[0].strip()
@@ -30,36 +46,173 @@ def canonical(url: str) -> str:
         "",
     ))
 
+
 def in_scope(url: str, source: SourceConfig) -> bool:
     value = canonical(url)
-    host = urlparse(value).netloc.lower()
+    parsed = urlparse(value)
+    host = parsed.netloc.lower()
     if host not in source.allowed_domains:
         return False
     if not any(value.startswith(prefix) for prefix in source.allowed_prefixes):
         return False
-    value_path = urlparse(value).path.rstrip("/") or "/"
+
+    value_path = parsed.path.rstrip("/") or "/"
     for prefix in source.excluded_prefixes:
         excluded_path = urlparse(prefix).path.rstrip("/") or "/"
         if value_path == excluded_path or value_path.startswith(excluded_path + "/"):
             return False
     return True
 
+
 def parse_discovered_urls(output: str, source: SourceConfig) -> list[str]:
+    """Extract URLs even when the crawler surrounds output with progress diagnostics."""
     urls, seen = [], set()
     for line in output.splitlines():
+        candidates = []
         value = line.strip()
-        if not value.startswith(("http://", "https://")):
-            continue
-        value = canonical(value)
-        if in_scope(value, source) and value not in seen:
-            seen.add(value)
-            urls.append(value)
-        if source.max_urls > 0 and len(urls) >= source.max_urls:
-            break
+        if value.startswith(("http://", "https://")):
+            candidates.append(value)
+        else:
+            candidates.extend(URL_RE.findall(value))
+
+        for candidate in candidates:
+            candidate = candidate.rstrip(".,;:)]}>\\\"'")
+            if "…" in candidate or "..." in candidate:
+                continue
+            normalized = canonical(candidate)
+            if in_scope(normalized, source) and normalized not in seen:
+                seen.add(normalized)
+                urls.append(normalized)
+            if source.max_urls > 0 and len(urls) >= source.max_urls:
+                return urls
     return urls
 
-def discover(source: SourceConfig, data_dir: Path) -> list[str]:
+
+def extract_html_links(page_url: str, html: str, source: SourceConfig) -> list[str]:
+    """Extract both relative and absolute HTTP(S) links from an HTML document."""
+    soup = BeautifulSoup(html, "html.parser")
+    links, seen = [], set()
+    for tag in soup.find_all("a", href=True):
+        href = str(tag.get("href") or "").strip()
+        if not href:
+            continue
+        absolute = urljoin(page_url, href)
+        parsed = urlparse(absolute)
+        if parsed.scheme.lower() not in {"http", "https"} or not parsed.netloc:
+            continue
+        normalized = canonical(absolute)
+        if in_scope(normalized, source) and normalized not in seen:
+            seen.add(normalized)
+            links.append(normalized)
+    return links
+
+
+def _is_probably_html_url(url: str) -> bool:
+    suffix = Path(urlparse(url).path.lower()).suffix
+    return suffix not in NON_HTML_SUFFIXES
+
+
+def _fetch_links(url: str, source: SourceConfig, timeout: int) -> tuple[str, list[str], str | None]:
+    try:
+        response = requests.get(
+            url,
+            timeout=timeout,
+            allow_redirects=True,
+            headers={"User-Agent": "regulatory-monitoring-poc/3.0"},
+        )
+        content_type = (response.headers.get("content-type") or "").lower()
+        if response.status_code >= 400:
+            return url, [], f"HTTP {response.status_code}"
+        if not ("html" in content_type or _is_probably_html_url(url)):
+            return url, [], None
+        return url, extract_html_links(response.url or url, response.text, source), None
+    except Exception as exc:
+        return url, [], f"{type(exc).__name__}: {exc}"
+
+
+def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
+    """Recursively discover same-host links using direct HTTP as the reliable path."""
+    worker_count = max(1, min(int(source.discovery_http_workers), 32))
+    timeout = max(5, int(source.discovery_http_timeout_seconds))
+
+    discovered: list[str] = []
+    discovered_set: set[str] = set()
+    queued: set[str] = set()
+    processed: set[str] = set()
+    pending: deque[str] = deque()
+    errors: list[str] = []
+
+    for seed in source.seed_urls:
+        value = canonical(seed)
+        if not in_scope(value, source) or value in discovered_set:
+            continue
+        discovered_set.add(value)
+        discovered.append(value)
+        if _is_probably_html_url(value):
+            pending.append(value)
+            queued.add(value)
+
+    while pending:
+        batch: list[str] = []
+        while pending and len(batch) < worker_count:
+            batch.append(pending.popleft())
+
+        with ThreadPoolExecutor(max_workers=worker_count) as pool:
+            futures = {
+                pool.submit(_fetch_links, url, source, timeout): url
+                for url in batch
+            }
+            for future in as_completed(futures):
+                url = futures[future]
+                processed.add(url)
+                try:
+                    _, links, error = future.result()
+                except Exception as exc:
+                    links, error = [], f"{type(exc).__name__}: {exc}"
+
+                if error:
+                    errors.append(f"{url}\t{error}")
+
+                for link in links:
+                    if source.max_urls > 0 and len(discovered) >= source.max_urls:
+                        break
+                    if link not in discovered_set:
+                        discovered_set.add(link)
+                        discovered.append(link)
+                    if (
+                        link not in processed
+                        and link not in queued
+                        and _is_probably_html_url(link)
+                    ):
+                        pending.append(link)
+                        queued.add(link)
+
+        print(
+            f"HTTP discovery: processed={len(processed)} "
+            f"discovered={len(discovered)} pending={len(pending)}"
+        )
+
+        if source.max_urls > 0 and len(discovered) >= source.max_urls:
+            break
+
+    data_dir.mkdir(parents=True, exist_ok=True)
+    (data_dir / "http-discovery-output.txt").write_text(
+        "\n".join([
+            f"SOURCE={source.id}",
+            f"DISCOVERED={len(discovered)}",
+            f"HTML_PROCESSED={len(processed)}",
+            f"ERRORS={len(errors)}",
+            *errors[:250],
+        ]),
+        encoding="utf-8",
+    )
+    return discovered
+
+
+def _stealth_discover(source: SourceConfig, data_dir: Path) -> list[str]:
+    """Run stealth-crawler as an optional browser fallback/enrichment path."""
     attempts_log, discovered, seen = [], [], set()
+
     for seed in source.seed_urls:
         cmd = [
             source.crawler,
@@ -72,7 +225,10 @@ def discover(source: SourceConfig, data_dir: Path) -> list[str]:
         if source.excluded_prefixes:
             cmd.extend([
                 "--exclude",
-                ",".join(urlparse(prefix).path.rstrip("/") or "/" for prefix in source.excluded_prefixes),
+                ",".join(
+                    canonical(prefix).rstrip("/")
+                    for prefix in source.excluded_prefixes
+                ),
             ])
 
         seed_urls = []
@@ -96,7 +252,7 @@ def discover(source: SourceConfig, data_dir: Path) -> list[str]:
                     "STDERR:",
                     stderr,
                 ]))
-                seed_urls = parse_discovered_urls(stdout, source)
+                seed_urls = parse_discovered_urls(stdout + "\n" + stderr, source)
                 if seed_urls:
                     break
             except subprocess.TimeoutExpired as exc:
@@ -124,10 +280,24 @@ def discover(source: SourceConfig, data_dir: Path) -> list[str]:
             break
 
     data_dir.mkdir(parents=True, exist_ok=True)
-    (data_dir / "stealth-output.txt").write_text("\n\n".join(attempts_log), encoding="utf-8")
-    if not discovered:
-        raise RuntimeError(
-            f"No in-scope URLs discovered for {source.id} after {source.discovery_attempts} attempts; "
-            "state was not updated."
-        )
+    (data_dir / "stealth-output.txt").write_text(
+        "\n\n".join(attempts_log),
+        encoding="utf-8",
+    )
     return discovered
+
+
+def discover(source: SourceConfig, data_dir: Path) -> list[str]:
+    """Discover a source safely without allowing browser failures to block monitoring."""
+    if source.use_http_discovery:
+        discovered = http_discover(source, data_dir)
+        if discovered:
+            return discovered
+
+    discovered = _stealth_discover(source, data_dir)
+    if discovered:
+        return discovered
+
+    raise RuntimeError(
+        f"No in-scope URLs discovered for {source.id}; state was not updated."
+    )
