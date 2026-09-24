@@ -26,7 +26,7 @@ on:
 # Full-site baseline/monitor validation trigger.
 concurrency:
   group: regulatory-monitor
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 permissions:
   contents: write
