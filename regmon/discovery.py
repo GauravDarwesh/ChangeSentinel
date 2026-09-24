@@ -163,6 +163,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 pool.submit(_fetch_links, url, source, timeout): url
                 for url in batch
             }
+            batch_links: set[str] = set()
             for future in as_completed(futures):
                 url = futures[future]
                 processed.add(url)
@@ -175,20 +176,21 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                     errors.append(f"{url}\t{error}")
                 else:
                     successful_pages += 1
+                batch_links.update(links)
 
-                for link in links:
-                    if source.max_urls > 0 and len(discovered) >= source.max_urls:
-                        break
-                    if link not in discovered_set:
-                        discovered_set.add(link)
-                        discovered.append(link)
-                    if (
-                        link not in processed
-                        and link not in queued
-                        and _is_probably_html_url(link)
-                    ):
-                        pending.append(link)
-                        queued.add(link)
+            for link in sorted(batch_links):
+                if source.max_urls > 0 and len(discovered) >= source.max_urls:
+                    break
+                if link not in discovered_set:
+                    discovered_set.add(link)
+                    discovered.append(link)
+                if (
+                    link not in processed
+                    and link not in queued
+                    and _is_probably_html_url(link)
+                ):
+                    pending.append(link)
+                    queued.add(link)
 
             print(
                 f"HTTP discovery: processed={len(processed)} "
