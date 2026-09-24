@@ -38,6 +38,7 @@ jobs:
     env:
       REGMON_SOURCE: ${{ inputs.source_id || 'all' }}
       DASHBOARD_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+      PYTHONUNBUFFERED: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -59,23 +60,37 @@ jobs:
       - name: Compile Python
         run: python -m compileall -q regmon
 
-      - name: EBA HTTP smoke test
+      - name: EBA discovery seed smoke test
         run: |
           python - <<'PY'
           import requests
-          r = requests.get(
+          urls = [
               "https://www.eba.europa.eu/",
-              timeout=30,
-              headers={"User-Agent": "regulatory-monitoring-poc/2.0"},
-          )
-          print("EBA status:", r.status_code)
-          print("EBA content-type:", r.headers.get("content-type"))
+              "https://www.eba.europa.eu/homepage",
+          ]
+          headers = {
+              "User-Agent": (
+                  "Mozilla/5.0 (compatible; ChangeSentinel/0.3; "
+                  "+https://github.com/GauravDarwesh/ChangeSentinel)"
+              )
+          }
+          reachable = 0
+          for url in urls:
+              try:
+                  r = requests.get(url, timeout=30, headers=headers)
+                  print(url, "status=", r.status_code, "type=", r.headers.get("content-type"))
+                  if r.status_code < 400:
+                      reachable += 1
+              except Exception as exc:
+                  print(url, "ERROR", type(exc).__name__, exc)
+          if reachable == 0:
+              raise SystemExit("No EBA discovery seed was reachable")
           PY
 
       - name: Run monitoring engine
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: python -m regmon.monitor --source "$REGMON_SOURCE"
+        run: python -u -m regmon.monitor --source "$REGMON_SOURCE"
 
       - name: Publish notifications
         env:
