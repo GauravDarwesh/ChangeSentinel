@@ -30,6 +30,7 @@ class SourceConfig:
     discovery_http_timeout_seconds: int = 20
     discovery_http_workers: int = 6
     discovery_http_attempts: int = 2
+    discovery_slice_seconds: int = 2700
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "SourceConfig":
@@ -58,6 +59,7 @@ class SourceConfig:
             discovery_http_timeout_seconds=max(5, int(value.get("discovery_http_timeout_seconds", 20))),
             discovery_http_workers=max(1, int(value.get("discovery_http_workers", 6))),
             discovery_http_attempts=max(1, int(value.get("discovery_http_attempts", 2))),
+            discovery_slice_seconds=max(0, int(value.get("discovery_slice_seconds", 2700))),
         )
 
 

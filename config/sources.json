@@ -43,7 +43,8 @@
       "use_http_discovery": true,
       "discovery_http_timeout_seconds": 20,
       "discovery_http_workers": 6,
-      "discovery_http_attempts": 2
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 2700
     }
   ]
 }

@@ -120,6 +120,44 @@ class TestDiscovery(unittest.TestCase):
         self.assertEqual(metadata["failed_pages"], 0)
 
     @patch("regmon.discovery.requests.get")
+    def test_http_discovery_pauses_and_resumes(self, mock_get):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            discovery_http_workers=1,
+            discovery_slice_seconds=1,
+        )
+        first = Mock(status_code=200, headers={"content-type": "text/html; charset=UTF-8"},
+                     text="<a href='/a'>A</a>", url="https://www.eba.europa.eu/homepage")
+        child = Mock(status_code=200, headers={"content-type": "text/html; charset=UTF-8"},
+                     text="<a href='/b'>B</a>", url="https://www.eba.europa.eu/a")
+        done = Mock(status_code=200, headers={"content-type": "text/html; charset=UTF-8"},
+                    text="<p>Done</p>", url="https://www.eba.europa.eu/b")
+        mock_get.side_effect = [first, child, done]
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch("regmon.discovery.time.monotonic", side_effect=[0, 0, 9999]):
+                paused_urls = http_discover(source, Path(tmp))
+            metadata = json.loads((Path(tmp) / "discovery" / "eba-test.json").read_text(encoding="utf-8"))
+            self.assertEqual(metadata["state"], "PAUSED")
+            self.assertEqual(paused_urls, ["https://www.eba.europa.eu/homepage", "https://www.eba.europa.eu/a"])
+            self.assertTrue((Path(tmp) / "discovery" / "eba-test-checkpoint.json").exists())
+
+            completed_urls = http_discover(source, Path(tmp))
+            metadata = json.loads((Path(tmp) / "discovery" / "eba-test.json").read_text(encoding="utf-8"))
+            checkpoint_path = Path(tmp) / "discovery" / "eba-test-checkpoint.json"
+
+        self.assertEqual(completed_urls, [
+            "https://www.eba.europa.eu/homepage",
+            "https://www.eba.europa.eu/a",
+            "https://www.eba.europa.eu/b",
+        ])
+        self.assertEqual(metadata["state"], "COMPLETE")
+        self.assertFalse(checkpoint_path.exists())
+    @patch("regmon.discovery.requests.get")
     def test_http_discovery_recurses_and_keeps_document_links(self, mock_get):
         source = SourceConfig(
             id="eba-test",
