@@ -230,7 +230,10 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
             },
             "inventory": {},
         }
-    current, texts, old_texts = {}, {}, {uid: read_snapshot(old) for uid, old in previous.items()}
+    # Do not preload every historical snapshot into RAM. A full-site source can
+    # contain tens of thousands of URLs; snapshots are read only for events that
+    # actually need before/after evidence or AI context.
+    current = {}
     events, new_items, changed_items, migration_items, unchanged_items = [], [], [], [], []
     resolved = {url: resolve_previous(url, previous) for url in urls}
 
@@ -238,27 +241,36 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
     with ThreadPoolExecutor(max_workers=workers) as pool:
         futures = {
             pool.submit(make_current_item, url, resolved[url][1], source, now):
-            (url, resolved[url][0], resolved[url][1], old_texts.get(resolved[url][0]))
+            (url, resolved[url][0], resolved[url][1])
             for url in urls
         }
         for future in as_completed(futures):
-            url, uid, old, old_text = futures[future]
+            url, uid, old = futures[future]
             item, text = future.result()
             item["url_id"] = uid
             current[uid] = item
-            if text is not None:
-                texts[uid] = text
+            old_text = None
 
             if item.get("fetch_error"):
                 event_id = build_event_id("FETCH_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), error=item["fetch_error"])
-                evidence = write_evidence(ROOT, "FETCH_ERROR", event_id, url, now, old, item, old_text, None, item["fetch_error"])
+                evidence = write_evidence(
+                    ROOT, "FETCH_ERROR", event_id, url, now, old, item,
+                    old_text if old_text is not None else read_snapshot(old),
+                    None,
+                    item["fetch_error"],
+                )
                 item["evidence_location"] = evidence
                 events.append({"event_id":event_id,"event_type":"FETCH_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"error":item["fetch_error"]}})
                 continue
 
             if item.get("extraction_error"):
                 event_id = build_event_id("EXTRACTION_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), error=item["extraction_error"])
-                evidence = write_evidence(ROOT, "EXTRACTION_ERROR", event_id, url, now, old, item, old_text, None, item["extraction_error"])
+                evidence = write_evidence(
+                    ROOT, "EXTRACTION_ERROR", event_id, url, now, old, item,
+                    old_text if old_text is not None else read_snapshot(old),
+                    None,
+                    item["extraction_error"],
+                )
                 item["evidence_location"] = evidence
                 events.append({"event_id":event_id,"event_type":"EXTRACTION_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"error":item["extraction_error"]}})
                 continue
@@ -284,7 +296,15 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
                     event_id = build_event_id(event_type, uid, before_hash, item.get("normalized_hash"))
                     evidence = None
                     if event_type in {"NEW_URL","CHANGED_URL"}:
-                        evidence = write_evidence(ROOT, event_type, event_id, url, now, old, item, old_text, text) if not dry_run else None
+                        evidence = (
+                            write_evidence(
+                                ROOT, event_type, event_id, url, now, old, item,
+                                old_text if old_text is not None else read_snapshot(old),
+                                text,
+                            )
+                            if not dry_run
+                            else None
+                        )
                         item["evidence_location"] = evidence
                         current[uid] = item
                     events.append({"event_id":event_id,"event_type":event_type,"url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":item}})
@@ -299,7 +319,13 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
                 evidence = write_evidence(ROOT, "REMOVED_URL", event_id, url, now, old, None, read_snapshot(old), None)
                 events.append({"event_id":event_id,"event_type":"REMOVED_URL","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":None}})
 
-    candidates = [] if initial_baseline else [x for x in new_items + [c["after"] for c in changed_items] if x.get("relevance",{}).get("candidate",True)]
+    candidate_pool = [] if initial_baseline else (
+        list(new_items) + [c["after"] for c in changed_items]
+    )
+    candidate_pool = sorted(
+        [x for x in candidate_pool if x.get("relevance", {}).get("candidate", True)],
+        key=lambda x: x["url_id"],
+    )
     ai_cfg = AIConfig(
         timeout_seconds=int(DEFAULTS.get("ai_timeout_seconds",60)),
         attempts=int(DEFAULTS.get("ai_attempts",2)),
@@ -308,18 +334,64 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
     max_candidates = int(DEFAULTS.get("max_ai_candidates",100))
     ai_results = []
 
-    deferred = candidates[max_candidates:]
-    candidates = candidates[:max_candidates]
+    candidates = candidate_pool[:max_candidates]
+    deferred = candidate_pool[max_candidates:]
     for item in deferred:
         event = "NEW_URL" if any(x["url_id"] == item["url_id"] for x in new_items) else "CHANGED_URL"
         event_id = build_event_id("AI_DEFERRED", item["url_id"], item.get("normalized_hash"))
-        ai_results.append({"event":"AI_DEFERRED","event_id":event_id,"url":item["canonical_url"],"source_id":source.id,"evidence_location":item.get("evidence_location"),"ai":{"status":"deferred","reason":f"Exceeded per-run AI limit of {max_candidates}"}})
+        ai_results.append({
+            "event":"AI_DEFERRED",
+            "event_id":event_id,
+            "url":item["canonical_url"],
+            "source_id":source.id,
+            "evidence_location":item.get("evidence_location"),
+            "ai":{
+                "status":"deferred",
+                "reason":f"Exceeded per-run AI limit of {max_candidates}",
+            },
+        })
+
+    # Only materialize the current/previous text for the bounded AI set.
+    # Ordinary unchanged pages never enter this structure.
+    ai_inputs = {}
+    for item in candidates:
+        event = "NEW_URL" if any(x["url_id"] == item["url_id"] for x in new_items) else "CHANGED_URL"
+        current_text = read_snapshot(item) or ""
+        old_text = read_snapshot(previous.get(item["url_id"])) if event == "CHANGED_URL" else None
+        ai_inputs[item["url_id"]] = {
+            "event": event,
+            "current_text": current_text[:ai_cfg.max_chars],
+            "diff": make_diff(
+                old_text,
+                current_text,
+                int(DEFAULTS.get("max_diff_lines", 200)),
+            ) if event == "CHANGED_URL" else "",
+        }
 
     def analyze_item(item: dict) -> dict:
-        event = "NEW_URL" if any(x["url_id"] == item["url_id"] for x in new_items) else "CHANGED_URL"
-        event_id = build_event_id(event, item["url_id"], (previous.get(item["url_id"]) or {}).get("normalized_hash"), item.get("normalized_hash"))
-        diff = make_diff(old_texts.get(item["url_id"]), texts.get(item["url_id"]), int(DEFAULTS.get("max_diff_lines",200))) if event == "CHANGED_URL" else ""
-        return {"event":event,"event_id":event_id,"url":item["canonical_url"],"source_id":source.id,"evidence_location":item.get("evidence_location"),"ai":analyze(source.regulator,item["canonical_url"],event,diff,texts.get(item["url_id"],""),ai_cfg)}
+        context = ai_inputs[item["url_id"]]
+        event = context["event"]
+        event_id = build_event_id(
+            event,
+            item["url_id"],
+            (previous.get(item["url_id"]) or {}).get("normalized_hash"),
+            item.get("normalized_hash"),
+        )
+        return {
+            "event": event,
+            "event_id": event_id,
+            "url": item["canonical_url"],
+            "source_id": source.id,
+            "evidence_location": item.get("evidence_location"),
+            "ai": analyze(
+                source.regulator,
+                item["canonical_url"],
+                event,
+                context["diff"],
+                context["current_text"],
+                ai_cfg,
+            ),
+        }
 
     if not dry_run and candidates:
         with ThreadPoolExecutor(max_workers=int(DEFAULTS.get("ai_concurrency",4))) as pool:
