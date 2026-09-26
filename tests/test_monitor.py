@@ -157,6 +157,71 @@ class TestDiscovery(unittest.TestCase):
         ])
         self.assertEqual(metadata["state"], "COMPLETE")
         self.assertFalse(checkpoint_path.exists())
+
+
+    @patch("regmon.discovery.requests.get")
+    def test_compact_checkpoint_uses_sharded_inventory(self, mock_get):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            discovery_http_workers=1,
+            discovery_slice_seconds=1,
+        )
+        mock_get.return_value = Mock(
+            status_code=200,
+            headers={"content-type": "text/html; charset=UTF-8"},
+            text="<a href='/a'>A</a>",
+            url="https://www.eba.europa.eu/homepage",
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch("regmon.discovery.time.monotonic", side_effect=[0, 0, 9999]):
+                http_discover(source, Path(tmp))
+            checkpoint = json.loads(
+                (Path(tmp) / "discovery" / "eba-test-checkpoint.json").read_text(encoding="utf-8")
+            )
+            inventory_files = sorted((Path(tmp) / "discovery").glob("eba-test-inventory-*.txt"))
+        self.assertEqual(checkpoint["schema_version"], 2)
+        self.assertNotIn("discovered", checkpoint)
+        self.assertNotIn("processed", checkpoint)
+        self.assertTrue(inventory_files)
+        self.assertIn("https://www.eba.europa.eu/homepage", inventory_files[0].read_text(encoding="utf-8"))
+
+    @patch("regmon.discovery.time.sleep", return_value=None)
+    @patch("regmon.discovery.requests.get")
+    def test_failure_ledger_records_structured_retry_failure(self, mock_get, _sleep):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            discovery_http_workers=1,
+            discovery_http_attempts=2,
+            discovery_slice_seconds=0,
+        )
+        mock_get.return_value = Mock(
+            status_code=503,
+            headers={},
+            text="",
+            url="https://www.eba.europa.eu/homepage",
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            urls = http_discover(source, Path(tmp))
+            metadata = json.loads(
+                (Path(tmp) / "discovery" / "eba-test.json").read_text(encoding="utf-8")
+            )
+            ledger = (Path(tmp) / "discovery" / "eba-test-failures.jsonl").read_text(encoding="utf-8").splitlines()
+        record = json.loads(ledger[0])
+        self.assertIn("https://www.eba.europa.eu/homepage", urls)
+        self.assertEqual(metadata["state"], "DEGRADED")
+        self.assertEqual(record["status_code"], 503)
+        self.assertEqual(record["attempts"], 2)
+        self.assertEqual(record["retry_classification"], "retryable_exhausted")
     @patch("regmon.discovery.requests.get")
     def test_http_discovery_recurses_and_keeps_document_links(self, mock_get):
         source = SourceConfig(
