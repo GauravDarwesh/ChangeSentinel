@@ -12,7 +12,7 @@ import requests
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 STATE_PATH = DATA / "notifications.json"
-DEFAULT_TOPIC = "RegMonitoringWebCrawlerNTFY"
+DEFAULT_TOPIC = ""
 DEFAULT_SERVER = "https://ntfy.sh"
 
 def load_state(path: Path=STATE_PATH) -> dict:
@@ -72,6 +72,12 @@ def main() -> None:
     args=parser.parse_args()
     topic=os.getenv("NTFY_TOPIC",DEFAULT_TOPIC).strip()
     server=os.getenv("NTFY_SERVER",DEFAULT_SERVER).strip()
+    require_delivery=os.getenv("REQUIRE_NTFY","0").strip() == "1"
+    if not topic:
+        print(json.dumps({"enabled":False,"reason":"NTFY_TOPIC is not configured"},indent=2))
+        if require_delivery:
+            raise RuntimeError("NTFY_TOPIC is required for this notification test")
+        return
     dashboard_url=os.getenv("DASHBOARD_URL","").strip()
     if args.test:
         notification={"event_id":f"test-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}","kind":"TEST","url":dashboard_url,"topic":"Controlled notification test","summary":"This is a controlled end-to-end ntfy delivery test. No monitoring baseline is changed.","reason":"Manual GitHub Actions test requested.","impact":"None","priority":3,"tags":["white_check_mark","test"]}
@@ -99,7 +105,7 @@ def main() -> None:
             print(f"notification failed for {eid}: {exc}")
     save_state(state)
     print(json.dumps({"candidate_notifications":len(candidates),"sent":sent,"skipped":skipped,"failed":failed},indent=2))
-    if failed:
+    if failed and require_delivery:
         raise RuntimeError(f"{failed} notification(s) failed")
 
 if __name__=="__main__":
