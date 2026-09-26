@@ -275,6 +275,7 @@ def _retryable_failure_urls(source: SourceConfig, data_dir: Path) -> list[str]:
     return sorted(
         url for url, record in latest.items()
         if not record.get("resolved")
+        and int(record.get("retry_round", 0)) == 0
         and record.get("retry_classification") in {"retryable_exhausted", "transport_error"}
     )
 
@@ -614,7 +615,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 for future in as_completed(futures):
                     url = futures[future]
                     try:
-                        _, _, failure = future.result()
+                        _, links, failure = future.result()
                     except Exception as exc:
                         failure = {
                             "url": url,
@@ -625,10 +626,37 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                         }
                     if failure:
                         failed_pages += 1
-                        _record_failure(source, data_dir, failure)
+                        _record_failure(
+                            source,
+                            data_dir,
+                            {
+                                **failure,
+                                "retry_round": 1,
+                            },
+                        )
                     else:
                         successful_pages += 1
                         _record_retry_resolution(source, data_dir, url, 200)
+                        # A recovered page may contain links that the failed first
+                        # attempt never exposed. Keep those links in the same
+                        # resumable work queue so recursive discovery remains complete.
+                        links = links
+                        new_links = []
+                        for link in sorted(links):
+                            if source.max_urls > 0 and len(discovered) >= source.max_urls:
+                                break
+                            if link not in discovered_set:
+                                discovered_set.add(link)
+                                discovered.append(link)
+                                new_links.append(link)
+                                if _is_probably_html_url(link):
+                                    retry_pending.append(link)
+                        _append_inventory(
+                            source,
+                            data_dir,
+                            new_links,
+                            len(discovered) - len(new_links),
+                        )
 
             if _DISCOVERY_STOP_REQUESTED or (deadline is not None and time.monotonic() >= deadline):
                 _write_http_checkpoint(
