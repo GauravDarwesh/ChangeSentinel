@@ -4,11 +4,11 @@ A configuration-driven web monitoring system that discovers public web pages, fe
 
 The repository currently ships with the **European Banking Authority (EBA)** as the example/live source.
 
-[![RegMonitor CI](https://github.com/GauravDarwesh/WEB-MONITORING-CRAWLER/actions/workflows/ci.yml/badge.svg)](https://github.com/GauravDarwesh/WEB-MONITORING-CRAWLER/actions/workflows/ci.yml)
-[![Regulatory Monitor](https://github.com/GauravDarwesh/WEB-MONITORING-CRAWLER/actions/workflows/regulatory-monitor.yml/badge.svg)](https://github.com/GauravDarwesh/WEB-MONITORING-CRAWLER/actions/workflows/regulatory-monitor.yml)
+[![RegMonitor CI](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/ci.yml)
+[![Regulatory Monitor](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/regulatory-monitor.yml/badge.svg)](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/regulatory-monitor.yml)
 
 **Live operations dashboard:**  
-https://gauravdarwesh.github.io/WEB-MONITORING-CRAWLER/
+https://gauravdarwesh.github.io/ChangeSentinel/
 
 ---
 
@@ -457,7 +457,7 @@ The dashboard reads the monitoring JSON from the repository and exposes things s
 
 Live dashboard:
 
-https://gauravdarwesh.github.io/WEB-MONITORING-CRAWLER/
+https://gauravdarwesh.github.io/ChangeSentinel/
 
 ---
 
