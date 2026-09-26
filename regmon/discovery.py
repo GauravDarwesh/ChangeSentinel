@@ -112,7 +112,9 @@ def _is_probably_html_url(url: str) -> bool:
 def _fetch_links(url: str, source: SourceConfig, timeout: int):
     last_error = None
     last_status = None
+    attempts_used = 0
     for attempt in range(1, source.discovery_http_attempts + 1):
+        attempts_used = attempt
         try:
             response = requests.get(
                 url,
@@ -153,7 +155,7 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
     return url, [], {
         "url": url,
         "status_code": last_status,
-        "attempts": source.discovery_http_attempts,
+        "attempts": attempts_used,
         "error": last_error or "unknown discovery error",
         "retry_classification": classification,
     }
