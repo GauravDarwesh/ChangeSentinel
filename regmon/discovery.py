@@ -360,6 +360,7 @@ def _write_http_metadata(
             "failed_pages": failed_pages,
             "capped": capped,
             "pending": pending,
+            "unresolved_failures": _unresolved_failure_count(source, data_dir),
             "checkpoint_schema_version": CHECKPOINT_SCHEMA_VERSION,
             "config_fingerprint": _config_fingerprint(source),
             "inventory": f"data/discovery/{_inventory_prefix(source)}*.txt",
