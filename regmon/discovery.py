@@ -358,6 +358,7 @@ def _restore_signal_handlers(previous) -> None:
 
 
 def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
+    """Recursively discover same-host links with durable, compact pause/resume state."""
     worker_count = max(1, min(int(source.discovery_http_workers), 32))
     timeout = max(5, int(source.discovery_http_timeout_seconds))
     slice_seconds = max(0, int(source.discovery_slice_seconds))
@@ -375,23 +376,32 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 _reset_inventory(source, data_dir)
                 _append_inventory(source, data_dir, discovered, 0)
                 pending = deque(str(x) for x in checkpoint.get("pending", []))
-                processed = set(discovered) - set(pending)
+                processed_count = int(
+                    checkpoint.get("processed_count", len(checkpoint.get("processed", [])))
+                )
                 failed_pages = int(checkpoint.get("failed_pages", 0))
                 successful_pages = int(checkpoint.get("successful_pages", 0))
                 started_at = str(checkpoint.get("started_at") or started_at)
-                print(f"HTTP discovery migrated legacy checkpoint: discovered={len(discovered)} pending={len(pending)}")
+                print(
+                    f"HTTP discovery migrated legacy checkpoint: discovered={len(discovered)} "
+                    f"processed={processed_count} pending={len(pending)}"
+                )
             else:
                 discovered = _load_inventory(source, data_dir)
                 pending = deque(str(x) for x in checkpoint.get("pending", []))
-                processed = set(discovered) - set(pending)
+                processed_count = int(checkpoint.get("processed_count", 0))
                 failed_pages = int(checkpoint.get("failed_pages", 0))
                 successful_pages = int(checkpoint.get("successful_pages", 0))
                 started_at = str(checkpoint.get("started_at") or started_at)
-                print(f"HTTP discovery resume: discovered={len(discovered)} processed={len(processed)} pending={len(pending)}")
+                print(
+                    f"HTTP discovery resume: discovered={len(discovered)} "
+                    f"processed={processed_count} pending={len(pending)}"
+                )
         else:
             _reset_inventory(source, data_dir)
             _reset_failure_ledger(source, data_dir)
-            discovered, processed, pending = [], set(), deque()
+            discovered, pending = [], deque()
+            processed_count = 0
             failed_pages = successful_pages = 0
             for seed in source.seed_urls:
                 value = canonical(seed)
@@ -409,24 +419,27 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             if _DISCOVERY_STOP_REQUESTED or (deadline is not None and time.monotonic() >= deadline):
                 _write_http_checkpoint(
                     source, data_dir, pending=pending, discovered_count=len(discovered),
-                    processed_count=len(processed), failed_pages=failed_pages,
+                    processed_count=processed_count, failed_pages=failed_pages,
                     successful_pages=successful_pages, started_at=started_at,
                 )
                 _write_http_metadata(
                     source, data_dir, state="PAUSED", discovered=len(discovered),
-                    processed=len(processed), successful_pages=successful_pages,
+                    processed=processed_count, successful_pages=successful_pages,
                     failed_pages=failed_pages, capped=False, pending=len(pending),
                 )
                 print(f"HTTP discovery paused: pending={len(pending)} discovered={len(discovered)}")
                 return discovered
 
             batch = [pending.popleft() for _ in range(min(worker_count, len(pending)))]
+            for url in batch:
+                queued.discard(url)
+
             with ThreadPoolExecutor(max_workers=worker_count) as pool:
                 futures = {pool.submit(_fetch_links, url, source, timeout): url for url in batch}
                 batch_links: set[str] = set()
                 for future in as_completed(futures):
+                    processed_count += 1
                     url = futures[future]
-                    processed.add(url)
                     try:
                         _, links, failure = future.result()
                     except Exception as exc:
@@ -452,13 +465,13 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                     discovered_set.add(link)
                     discovered.append(link)
                     new_links.append(link)
-                if link not in processed and link not in queued and _is_probably_html_url(link):
-                    pending.append(link)
-                    queued.add(link)
+                    if _is_probably_html_url(link):
+                        pending.append(link)
+                        queued.add(link)
 
             _append_inventory(source, data_dir, new_links, len(discovered) - len(new_links))
             print(
-                f"HTTP discovery: processed={len(processed)} successful={successful_pages} "
+                f"HTTP discovery: processed={processed_count} successful={successful_pages} "
                 f"discovered={len(discovered)} pending={len(pending)} failures={failed_pages}"
             )
 
@@ -468,7 +481,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 _remove_http_checkpoint(source, data_dir)
                 _write_http_metadata(
                     source, data_dir, state=state, discovered=len(discovered),
-                    processed=len(processed), successful_pages=successful_pages,
+                    processed=processed_count, successful_pages=successful_pages,
                     failed_pages=failed_pages, capped=capped, pending=len(pending),
                 )
                 return [] if successful_pages == 0 else discovered
@@ -476,12 +489,12 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             if _DISCOVERY_STOP_REQUESTED or (deadline is not None and time.monotonic() >= deadline):
                 _write_http_checkpoint(
                     source, data_dir, pending=pending, discovered_count=len(discovered),
-                    processed_count=len(processed), failed_pages=failed_pages,
+                    processed_count=processed_count, failed_pages=failed_pages,
                     successful_pages=successful_pages, started_at=started_at,
                 )
                 _write_http_metadata(
                     source, data_dir, state="PAUSED", discovered=len(discovered),
-                    processed=len(processed), successful_pages=successful_pages,
+                    processed=processed_count, successful_pages=successful_pages,
                     failed_pages=failed_pages, capped=False, pending=len(pending),
                 )
                 print(f"HTTP discovery paused: pending={len(pending)} discovered={len(discovered)}")
@@ -491,14 +504,12 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
         state = "DEGRADED" if failed_pages else "COMPLETE"
         _write_http_metadata(
             source, data_dir, state=state, discovered=len(discovered),
-            processed=len(processed), successful_pages=successful_pages,
+            processed=processed_count, successful_pages=successful_pages,
             failed_pages=failed_pages, capped=False, pending=0,
         )
         return [] if successful_pages == 0 else discovered
     finally:
         _restore_signal_handlers(previous_signals)
-
-
 def _read_discovery_metadata(source_id: str, data_dir: Path) -> dict:
     path = data_dir / "discovery" / f"{source_id}.json"
     if not path.exists():
