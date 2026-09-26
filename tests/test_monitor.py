@@ -190,10 +190,8 @@ class TestDiscovery(unittest.TestCase):
             self.assertTrue(inventory_files)
             self.assertIn("https://www.eba.europa.eu/homepage", inventory_files[0].read_text(encoding="utf-8"))
 
-    @patch("regmon.discovery.time.sleep", return_value=None)
     @patch("regmon.discovery.requests.get")
     def test_scope_change_invalidates_checkpoint(self, mock_get):
-        from regmon.discovery import _config_fingerprint
         source = SourceConfig(
             id="eba-test",
             name="EBA Test",
@@ -236,6 +234,7 @@ class TestDiscovery(unittest.TestCase):
             self.assertFalse((discovery_dir / "eba-test-checkpoint.json").exists())
             self.assertNotIn("old", (discovery_dir / "eba-test-inventory-0000.txt").read_text(encoding="utf-8"))
 
+    @patch("regmon.discovery.time.sleep", return_value=None)
     @patch("regmon.discovery.requests.get")
     def test_failure_ledger_records_structured_retry_failure(self, mock_get, _sleep):
         source = SourceConfig(
