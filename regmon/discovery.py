@@ -249,6 +249,56 @@ def _record_failure(source: SourceConfig, data_dir: Path, failure: dict) -> None
         handle.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 
+def _load_latest_failure_records(source: SourceConfig, data_dir: Path) -> dict[str, dict]:
+    path = _failure_ledger_path(source, data_dir)
+    if not path.exists():
+        return {}
+    latest = {}
+    try:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            url = str(record.get("url") or "").strip()
+            if url:
+                latest[url] = record
+    except OSError:
+        return {}
+    return latest
+
+
+def _retryable_failure_urls(source: SourceConfig, data_dir: Path) -> list[str]:
+    latest = _load_latest_failure_records(source, data_dir)
+    return sorted(
+        url for url, record in latest.items()
+        if not record.get("resolved")
+        and record.get("retry_classification") in {"retryable_exhausted", "transport_error"}
+    )
+
+
+def _record_retry_resolution(source: SourceConfig, data_dir: Path, url: str, status_code: int | None) -> None:
+    _record_failure(
+        source,
+        data_dir,
+        {
+            "url": url,
+            "status_code": status_code,
+            "attempts": 1,
+            "error": None,
+            "retry_classification": "retry_resolved",
+            "resolved": True,
+        },
+    )
+
+
+def _unresolved_failure_count(source: SourceConfig, data_dir: Path) -> int:
+    latest = _load_latest_failure_records(source, data_dir)
+    return sum(1 for record in latest.values() if not record.get("resolved"))
+
+
 def _atomic_write_json(path: Path, payload: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.with_suffix(path.suffix + ".tmp")
@@ -267,6 +317,8 @@ def _load_http_checkpoint(source: SourceConfig, data_dir: Path) -> dict | None:
     if payload.get("source_id") != source.id or payload.get("state") != "PAUSED":
         return None
     if not isinstance(payload.get("pending"), list):
+        return None
+    if "retry_pending" in payload and not isinstance(payload.get("retry_pending"), list):
         return None
     if payload.get("schema_version") == CHECKPOINT_SCHEMA_VERSION:
         if payload.get("config_fingerprint") != _config_fingerprint(source):
@@ -308,6 +360,7 @@ def _write_http_metadata(
             "failed_pages": failed_pages,
             "capped": capped,
             "pending": pending,
+            "unresolved_failures": _unresolved_failure_count(source, data_dir),
             "checkpoint_schema_version": CHECKPOINT_SCHEMA_VERSION,
             "config_fingerprint": _config_fingerprint(source),
             "inventory": f"data/discovery/{_inventory_prefix(source)}*.txt",
@@ -321,6 +374,7 @@ def _write_http_checkpoint(
     data_dir: Path,
     *,
     pending: deque[str],
+    retry_pending: deque[str],
     discovered_count: int,
     processed_count: int,
     failed_pages: int,
@@ -339,6 +393,7 @@ def _write_http_checkpoint(
             "discovered_count": discovered_count,
             "processed_count": processed_count,
             "pending": list(pending),
+            "retry_pending": list(retry_pending),
             "failed_pages": failed_pages,
             "successful_pages": successful_pages,
             "inventory_glob": f"data/discovery/{_inventory_prefix(source)}*.txt",
@@ -396,6 +451,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 _reset_inventory(source, data_dir)
                 _append_inventory(source, data_dir, discovered, 0)
                 pending = deque(str(x) for x in checkpoint.get("pending", []))
+                retry_pending = deque(str(x) for x in checkpoint.get("retry_pending", []))
                 processed_count = int(
                     checkpoint.get("processed_count", len(checkpoint.get("processed", [])))
                 )
@@ -413,6 +469,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 failed_pages = int(checkpoint.get("failed_pages", 0))
                 successful_pages = int(checkpoint.get("successful_pages", 0))
                 started_at = str(checkpoint.get("started_at") or started_at)
+                retry_pending = deque(str(x) for x in checkpoint.get("retry_pending", []))
                 print(
                     f"HTTP discovery resume: discovered={len(discovered)} "
                     f"processed={processed_count} pending={len(pending)}"
@@ -420,7 +477,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
         else:
             _reset_inventory(source, data_dir)
             _reset_failure_ledger(source, data_dir)
-            discovered, pending = [], deque()
+            discovered, pending, retry_pending = [], deque(), deque()
             processed_count = 0
             failed_pages = successful_pages = 0
             for seed in source.seed_urls:
@@ -438,7 +495,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
         while pending:
             if _DISCOVERY_STOP_REQUESTED or (deadline is not None and time.monotonic() >= deadline):
                 _write_http_checkpoint(
-                    source, data_dir, pending=pending, discovered_count=len(discovered),
+                    source, data_dir, pending=pending, retry_pending=retry_pending, discovered_count=len(discovered),
                     processed_count=processed_count, failed_pages=failed_pages,
                     successful_pages=successful_pages, started_at=started_at,
                 )
@@ -496,19 +553,21 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             )
 
             capped = source.max_urls > 0 and len(discovered) >= source.max_urls
-            if capped or not pending:
-                state = "DEGRADED" if failed_pages or capped else "COMPLETE"
+            if capped:
                 _remove_http_checkpoint(source, data_dir)
                 _write_http_metadata(
-                    source, data_dir, state=state, discovered=len(discovered),
-                    processed=processed_count, successful_pages=successful_pages,
-                    failed_pages=failed_pages, capped=capped, pending=len(pending),
+                    source, data_dir, state="DEGRADED" if _unresolved_failure_count(source, data_dir) else "COMPLETE",
+                    discovered=len(discovered), processed=processed_count,
+                    successful_pages=successful_pages, failed_pages=failed_pages,
+                    capped=True, pending=0,
                 )
                 return [] if successful_pages == 0 else discovered
+            if not pending:
+                break
 
             if _DISCOVERY_STOP_REQUESTED or (deadline is not None and time.monotonic() >= deadline):
                 _write_http_checkpoint(
-                    source, data_dir, pending=pending, discovered_count=len(discovered),
+                    source, data_dir, pending=pending, retry_pending=retry_pending, discovered_count=len(discovered),
                     processed_count=processed_count, failed_pages=failed_pages,
                     successful_pages=successful_pages, started_at=started_at,
                 )
@@ -520,14 +579,89 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 print(f"HTTP discovery paused: pending={len(pending)} discovered={len(discovered)}")
                 return discovered
 
+        if not retry_pending:
+            retry_pending = deque(_retryable_failure_urls(source, data_dir))
+
+        while retry_pending:
+            if _DISCOVERY_STOP_REQUESTED or (deadline is not None and time.monotonic() >= deadline):
+                _write_http_checkpoint(
+                    source, data_dir,
+                    pending=deque(),
+                    retry_pending=retry_pending,
+                    discovered_count=len(discovered),
+                    processed_count=processed_count,
+                    failed_pages=failed_pages,
+                    successful_pages=successful_pages,
+                    started_at=started_at,
+                )
+                _write_http_metadata(
+                    source, data_dir, state="PAUSED", discovered=len(discovered),
+                    processed=processed_count, successful_pages=successful_pages,
+                    failed_pages=failed_pages, capped=False, pending=0,
+                )
+                print(
+                    f"HTTP discovery paused during failure retry: "
+                    f"retry_pending={len(retry_pending)} discovered={len(discovered)}"
+                )
+                return discovered
+
+            batch = [retry_pending.popleft() for _ in range(min(worker_count, len(retry_pending)))]
+            with ThreadPoolExecutor(max_workers=worker_count) as pool:
+                futures = {
+                    pool.submit(_fetch_links, url, source, timeout): url
+                    for url in batch
+                }
+                for future in as_completed(futures):
+                    url = futures[future]
+                    try:
+                        _, _, failure = future.result()
+                    except Exception as exc:
+                        failure = {
+                            "url": url,
+                            "status_code": None,
+                            "attempts": source.discovery_http_attempts,
+                            "error": f"{type(exc).__name__}: {exc}",
+                            "retry_classification": "transport_error",
+                        }
+                    if failure:
+                        failed_pages += 1
+                        _record_failure(source, data_dir, failure)
+                    else:
+                        successful_pages += 1
+                        _record_retry_resolution(source, data_dir, url, 200)
+
+            if _DISCOVERY_STOP_REQUESTED or (deadline is not None and time.monotonic() >= deadline):
+                _write_http_checkpoint(
+                    source, data_dir,
+                    pending=deque(),
+                    retry_pending=retry_pending,
+                    discovered_count=len(discovered),
+                    processed_count=processed_count,
+                    failed_pages=failed_pages,
+                    successful_pages=successful_pages,
+                    started_at=started_at,
+                )
+                _write_http_metadata(
+                    source, data_dir, state="PAUSED", discovered=len(discovered),
+                    processed=processed_count, successful_pages=successful_pages,
+                    failed_pages=failed_pages, capped=False, pending=0,
+                )
+                print(
+                    f"HTTP discovery paused during failure retry: "
+                    f"retry_pending={len(retry_pending)} discovered={len(discovered)}"
+                )
+                return discovered
+
         _remove_http_checkpoint(source, data_dir)
-        state = "DEGRADED" if failed_pages else "COMPLETE"
+        unresolved_failures = _unresolved_failure_count(source, data_dir)
+        state = "DEGRADED" if unresolved_failures else "COMPLETE"
         _write_http_metadata(
             source, data_dir, state=state, discovered=len(discovered),
             processed=processed_count, successful_pages=successful_pages,
             failed_pages=failed_pages, capped=False, pending=0,
         )
         return [] if successful_pages == 0 else discovered
+
     finally:
         _restore_signal_handlers(previous_signals)
 def _read_discovery_metadata(source_id: str, data_dir: Path) -> dict:

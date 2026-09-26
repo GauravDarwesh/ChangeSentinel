@@ -236,6 +236,44 @@ class TestDiscovery(unittest.TestCase):
 
     @patch("regmon.discovery.time.sleep", return_value=None)
     @patch("regmon.discovery.requests.get")
+    def test_retryable_discovery_failure_is_retried_before_complete(self, mock_get, _sleep):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            discovery_http_workers=1,
+            discovery_http_attempts=2,
+            discovery_slice_seconds=0,
+        )
+        mock_get.side_effect = [
+            Mock(status_code=503, headers={}, text="", url="https://www.eba.europa.eu/homepage"),
+            Mock(status_code=503, headers={}, text="", url="https://www.eba.europa.eu/homepage"),
+            Mock(status_code=200, headers={"content-type": "text/html; charset=UTF-8"},
+                 text="<p>Recovered</p>", url="https://www.eba.europa.eu/homepage"),
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            urls = http_discover(source, Path(tmp))
+            metadata = json.loads(
+                (Path(tmp) / "discovery" / "eba-test.json").read_text(encoding="utf-8")
+            )
+            ledger = [
+                json.loads(line)
+                for line in (Path(tmp) / "discovery" / "eba-test-failures.jsonl")
+                .read_text(encoding="utf-8").splitlines()
+                if line.strip()
+            ]
+        self.assertEqual(urls, ["https://www.eba.europa.eu/homepage"])
+        self.assertEqual(mock_get.call_count, 3)
+        self.assertEqual(metadata["state"], "COMPLETE")
+        self.assertEqual(metadata["unresolved_failures"], 0)
+        self.assertEqual(ledger[-1]["retry_classification"], "retry_resolved")
+        self.assertTrue(ledger[-1]["resolved"])
+
+    @patch("regmon.discovery.time.sleep", return_value=None)
+    @patch("regmon.discovery.requests.get")
     def test_failure_ledger_records_structured_retry_failure(self, mock_get, _sleep):
         source = SourceConfig(
             id="eba-test",
