@@ -566,7 +566,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
 
             if _DISCOVERY_STOP_REQUESTED or (deadline is not None and time.monotonic() >= deadline):
                 _write_http_checkpoint(
-                    source, data_dir, pending=pending, discovered_count=len(discovered),
+                    source, data_dir, pending=pending, retry_pending=retry_pending, discovered_count=len(discovered),
                     processed_count=processed_count, failed_pages=failed_pages,
                     successful_pages=successful_pages, started_at=started_at,
                 )
@@ -578,14 +578,6 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 print(f"HTTP discovery paused: pending={len(pending)} discovered={len(discovered)}")
                 return discovered
 
-        _remove_http_checkpoint(source, data_dir)
-        state = "DEGRADED" if failed_pages else "COMPLETE"
-        _write_http_metadata(
-            source, data_dir, state=state, discovered=len(discovered),
-            processed=processed_count, successful_pages=successful_pages,
-            failed_pages=failed_pages, capped=False, pending=0,
-        )
-        return [] if successful_pages == 0 else discovered
         if not retry_pending:
             retry_pending = deque(_retryable_failure_urls(source, data_dir))
 
