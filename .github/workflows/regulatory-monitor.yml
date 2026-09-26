@@ -126,7 +126,8 @@ jobs:
       - name: Publish notifications
         if: ${{ steps.crawl-status.outputs.paused != 'true' }}
         env:
-          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'RegMonitoringWebCrawlerNTFY' }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          REQUIRE_NTFY: "0"
           NTFY_SERVER: https://ntfy.sh
           DASHBOARD_URL: ${{ env.DASHBOARD_URL }}
         run: python -m regmon.notify
@@ -134,7 +135,8 @@ jobs:
       - name: Controlled notification test
         if: ${{ inputs.test_notification == true }}
         env:
-          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC || 'RegMonitoringWebCrawlerNTFY' }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          REQUIRE_NTFY: "1"
           NTFY_SERVER: https://ntfy.sh
           DASHBOARD_URL: ${{ env.DASHBOARD_URL }}
         run: python -m regmon.notify --test
