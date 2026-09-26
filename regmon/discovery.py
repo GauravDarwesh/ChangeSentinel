@@ -163,6 +163,18 @@ def _checkpoint_path(source: SourceConfig, data_dir: Path) -> Path:
     return data_dir / "discovery" / f"{source.id}-checkpoint.json"
 
 
+def _config_fingerprint(source: SourceConfig) -> str:
+    payload = {
+        "seed_urls": list(source.seed_urls),
+        "allowed_prefixes": list(source.allowed_prefixes),
+        "allowed_domains": list(source.allowed_domains),
+        "excluded_prefixes": list(source.excluded_prefixes),
+        "max_urls": source.max_urls,
+    }
+    material = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(material).hexdigest()
+
+
 def _inventory_prefix(source: SourceConfig) -> str:
     return f"{source.id}-inventory-"
 
@@ -254,6 +266,9 @@ def _load_http_checkpoint(source: SourceConfig, data_dir: Path) -> dict | None:
     if not isinstance(payload.get("pending"), list):
         return None
     if payload.get("schema_version") == CHECKPOINT_SCHEMA_VERSION:
+        if payload.get("config_fingerprint") != _config_fingerprint(source):
+            path.unlink(missing_ok=True)
+            return None
         return payload
     discovered = payload.get("discovered")
     if not isinstance(discovered, list):
@@ -291,6 +306,7 @@ def _write_http_metadata(
             "capped": capped,
             "pending": pending,
             "checkpoint_schema_version": CHECKPOINT_SCHEMA_VERSION,
+            "config_fingerprint": _config_fingerprint(source),
             "inventory": f"data/discovery/{_inventory_prefix(source)}*.txt",
             "failure_ledger": f"data/discovery/{source.id}-failures.jsonl",
         },
@@ -314,6 +330,7 @@ def _write_http_checkpoint(
             "schema_version": CHECKPOINT_SCHEMA_VERSION,
             "source_id": source.id,
             "state": "PAUSED",
+            "config_fingerprint": _config_fingerprint(source),
             "started_at": started_at,
             "updated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "discovered_count": discovered_count,
