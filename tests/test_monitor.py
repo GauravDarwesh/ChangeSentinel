@@ -192,6 +192,51 @@ class TestDiscovery(unittest.TestCase):
 
     @patch("regmon.discovery.time.sleep", return_value=None)
     @patch("regmon.discovery.requests.get")
+    def test_scope_change_invalidates_checkpoint(self, mock_get):
+        from regmon.discovery import _config_fingerprint
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            discovery_http_workers=1,
+            discovery_slice_seconds=0,
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            discovery_dir = Path(tmp) / "discovery"
+            discovery_dir.mkdir(parents=True)
+            (discovery_dir / "eba-test-inventory-0000.txt").write_text(
+                "https://www.eba.europa.eu/old\n", encoding="utf-8"
+            )
+            (discovery_dir / "eba-test-checkpoint.json").write_text(
+                json.dumps({
+                    "schema_version": 2,
+                    "source_id": "eba-test",
+                    "state": "PAUSED",
+                    "config_fingerprint": "stale",
+                    "pending": ["https://www.eba.europa.eu/old"],
+                    "discovered_count": 1,
+                    "processed_count": 0,
+                    "failed_pages": 0,
+                    "successful_pages": 0,
+                }),
+                encoding="utf-8",
+            )
+            mock_get.return_value = Mock(
+                status_code=200,
+                headers={"content-type": "text/html; charset=UTF-8"},
+                text="<p>Done</p>",
+                url="https://www.eba.europa.eu/homepage",
+            )
+            urls = http_discover(source, Path(tmp))
+            self.assertEqual(urls, ["https://www.eba.europa.eu/homepage"])
+            self.assertTrue((discovery_dir / "eba-test.json").exists())
+            self.assertFalse((discovery_dir / "eba-test-checkpoint.json").exists())
+            self.assertNotIn("old", (discovery_dir / "eba-test-inventory-0000.txt").read_text(encoding="utf-8"))
+
+    @patch("regmon.discovery.requests.get")
     def test_failure_ledger_records_structured_retry_failure(self, mock_get, _sleep):
         source = SourceConfig(
             id="eba-test",
