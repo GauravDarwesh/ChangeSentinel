@@ -1,6 +1,7 @@
 """HTTP-first, resumable URL discovery."""
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import signal
@@ -539,6 +540,12 @@ def _read_discovery_metadata(source_id: str, data_dir: Path) -> dict:
         return {"source_id": source_id, "state": "FAILED", "method": "unknown", "reason": str(exc)}
 
 
+def _stealth_discover(source: SourceConfig, data_dir: Path) -> list[str]:
+    """Compatibility hook for callers/tests; implementation lives in discovery_browser."""
+    from regmon.discovery_browser import _stealth_discover as browser_discover
+    return browser_discover(source, data_dir)
+
+
 def discover(source: SourceConfig, data_dir: Path) -> list[str]:
     """Discover HTTP-first, preserving stealth fallback for degraded HTTP discovery."""
     http_urls = http_discover(source, data_dir) if source.use_http_discovery else []
@@ -546,7 +553,7 @@ def discover(source: SourceConfig, data_dir: Path) -> list[str]:
     if http_meta.get("state") in {"COMPLETE", "PAUSED"}:
         return http_urls
 
-    from regmon.discovery_browser import _stealth_discover, write_combined_discovery_metadata
+    from regmon.discovery_browser import write_combined_discovery_metadata
     stealth_urls = _stealth_discover(source, data_dir)
     combined = list(dict.fromkeys(http_urls + stealth_urls))
     write_combined_discovery_metadata(source, data_dir, http_meta, http_urls, stealth_urls)
