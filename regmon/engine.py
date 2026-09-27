@@ -192,23 +192,48 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
     now = datetime.now(timezone.utc).isoformat()
     previous = load_previous(source.id)
     initial_baseline = source.baseline_on_first_run and not previous
+
     urls = discover(source, DATA)
     discovery = load_discovery_metadata(source.id)
-    if discovery.get("state") == "PAUSED":
+
+    # Discovery integrity is a hard gate. A PAUSED, DEGRADED, or FAILED
+    # inventory is never fed into the expensive content-processing stage.
+    # Doing so would turn partial discovery into a huge pseudo-complete crawl
+    # and was a major source of long/cancelled Actions runs.
+    if discovery.get("state") != "COMPLETE":
+        state = str(discovery.get("state") or "FAILED")
         counts = {
-            "discovered": int(discovery.get("discovered", 0)),
-            "new": 0, "changed": 0, "removed": 0, "unchanged": 0,
-            "baseline_migration": 0, "fetch_error": 0, "extraction_error": 0,
-            "not_modified": 0, "forced_full_fetch": 0, "relevance_candidates": 0,
-            "ai_ok": 0, "ai_invalid": 0, "ai_error": 0, "ai_deferred": 0,
-            "crawl_paused": 1,
+            "discovered": int(discovery.get("discovered", len(urls))),
+            "new": 0,
+            "changed": 0,
+            "removed": 0,
+            "unchanged": 0,
+            "baseline_migration": 0,
+            "fetch_error": 0,
+            "extraction_error": 0,
+            "not_modified": 0,
+            "forced_full_fetch": 0,
+            "relevance_candidates": 0,
+            "ai_ok": 0,
+            "ai_invalid": 0,
+            "ai_error": 0,
+            "ai_deferred": 0,
+            "crawl_paused": 1 if state == "PAUSED" else 0,
+            "crawl_degraded": 1 if state == "DEGRADED" else 0,
+            "crawl_failed": 1 if state == "FAILED" else 0,
+            "discovery_incomplete": 1,
         }
         return {
             "report": {
-                "schema_version": 2, "run_id": run_id, "generated_at": now,
+                "schema_version": 2,
+                "run_id": run_id,
+                "generated_at": now,
                 "source": {
-                    "id": source.id, "name": source.name, "regulator": source.regulator,
-                    "seeds": list(source.seed_urls), "allowed_prefixes": list(source.allowed_prefixes),
+                    "id": source.id,
+                    "name": source.name,
+                    "regulator": source.regulator,
+                    "seeds": list(source.seed_urls),
+                    "allowed_prefixes": list(source.allowed_prefixes),
                     "initial_baseline": initial_baseline,
                 },
                 "discovery": discovery,
@@ -221,15 +246,30 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
                 },
                 "relevance_gate": {"mode": "high_recall", "ai_final_semantic_decision": True},
                 "ai_contract": {
-                    "required_keys": ["relevant", "topic", "change_type", "summary", "impact", "effective_date", "affected_scope", "actions", "reason"],
+                    "required_keys": [
+                        "relevant",
+                        "topic",
+                        "change_type",
+                        "summary",
+                        "impact",
+                        "effective_date",
+                        "affected_scope",
+                        "actions",
+                        "reason",
+                    ],
                     "strict": True,
                 },
                 "counts": counts,
-                "events": [], "new_urls": [], "changed_urls": [], "removed_urls": [],
-                "baseline_migrations": [], "ai_results": [],
+                "events": [],
+                "new_urls": [],
+                "changed_urls": [],
+                "removed_urls": [],
+                "baseline_migrations": [],
+                "ai_results": [],
             },
             "inventory": {},
         }
+
     # Do not preload every historical snapshot into RAM. A full-site source can
     # contain tens of thousands of URLs; snapshots are read only for events that
     # actually need before/after evidence or AI context.
