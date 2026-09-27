@@ -308,30 +308,79 @@ def _atomic_write_json(path: Path, payload: dict) -> None:
 
 
 def _load_http_checkpoint(source: SourceConfig, data_dir: Path) -> dict | None:
-    path = _checkpoint_path(source, data_dir)
-    if not path.exists():
-        return None
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return None
-    if payload.get("source_id") != source.id or payload.get("state") != "PAUSED":
-        return None
-    if not isinstance(payload.get("pending"), list):
-        return None
-    if "retry_pending" in payload and not isinstance(payload.get("retry_pending"), list):
-        return None
-    if payload.get("schema_version") == CHECKPOINT_SCHEMA_VERSION:
-        if payload.get("config_fingerprint") != _config_fingerprint(source):
-            path.unlink(missing_ok=True)
-            return None
-        return payload
-    discovered = payload.get("discovered")
-    if not isinstance(discovered, list):
-        return None
-    payload["_legacy_discovered"] = discovered
-    return payload
+    """Load a valid checkpoint, or recover a PAUSED inventory after corruption.
 
+    A cancelled runner can leave the metadata commit behind while the large
+    checkpoint is missing/empty. We must not reset a 50k+ discovered inventory
+    back to the seeds. Re-queuing known HTML URLs is slower than a normal resume,
+    but preserves discovered progress safely.
+    """
+    path = _checkpoint_path(source, data_dir)
+    invalid_checkpoint = not path.exists() or path.stat().st_size == 0
+
+    if path.exists() and path.stat().st_size > 0:
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            payload = None
+            invalid_checkpoint = True
+
+        if isinstance(payload, dict):
+            if payload.get("source_id") != source.id or payload.get("state") != "PAUSED":
+                return None
+            if not isinstance(payload.get("pending"), list):
+                return None
+            if "retry_pending" in payload and not isinstance(payload.get("retry_pending"), list):
+                return None
+            if payload.get("schema_version") == CHECKPOINT_SCHEMA_VERSION:
+                if payload.get("config_fingerprint") != _config_fingerprint(source):
+                    path.unlink(missing_ok=True)
+                    return None
+                return payload
+
+            discovered = payload.get("discovered")
+            if not isinstance(discovered, list):
+                return None
+            payload["_legacy_discovered"] = discovered
+            return payload
+
+    if invalid_checkpoint:
+        metadata_path = data_dir / "discovery" / f"{source.id}.json"
+        try:
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        except Exception:
+            metadata = {}
+
+        if metadata.get("source_id") == source.id and metadata.get("state") == "PAUSED":
+            discovered = _load_inventory(source, data_dir)
+            if discovered:
+                retry_pending = deque(_retryable_failure_urls(source, data_dir))
+                pending = deque(url for url in discovered if _is_probably_html_url(url))
+                print(
+                    "HTTP discovery recovered from PAUSED inventory because the "
+                    f"checkpoint at {path} was missing/invalid: "
+                    f"known={len(discovered)} requeued_html={len(pending)} "
+                    f"retry_pending={len(retry_pending)}"
+                )
+                return {
+                    "schema_version": CHECKPOINT_SCHEMA_VERSION,
+                    "source_id": source.id,
+                    "state": "PAUSED",
+                    "config_fingerprint": _config_fingerprint(source),
+                    "started_at": str(
+                        metadata.get("started_at")
+                        or time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+                    ),
+                    "updated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                    "pending": list(pending),
+                    "retry_pending": list(retry_pending),
+                    "processed_count": 0,
+                    "failed_pages": 0,
+                    "successful_pages": 0,
+                    "recovered_from_inventory": True,
+                }
+
+    return None
 
 def _remove_http_checkpoint(source: SourceConfig, data_dir: Path) -> None:
     _checkpoint_path(source, data_dir).unlink(missing_ok=True)
@@ -709,10 +758,16 @@ def _stealth_discover(source: SourceConfig, data_dir: Path) -> list[str]:
 
 
 def discover(source: SourceConfig, data_dir: Path) -> list[str]:
-    """Discover HTTP-first, preserving stealth fallback for degraded HTTP discovery."""
+    """Discover URLs without turning degraded coverage into a content crawl.
+
+    PAUSED and DEGRADED inventories are intentionally returned to the engine as
+    incomplete state. The engine will not fetch the full inventory until the
+    discovery integrity gate reports COMPLETE.
+    """
     http_urls = http_discover(source, data_dir) if source.use_http_discovery else []
     http_meta = _read_discovery_metadata(source.id, data_dir)
-    if http_meta.get("state") in {"COMPLETE", "PAUSED"}:
+
+    if http_meta.get("state") in {"COMPLETE", "PAUSED", "DEGRADED"}:
         return http_urls
 
     from regmon.discovery_browser import write_combined_discovery_metadata
