@@ -21,12 +21,16 @@ on:
         default: false
         type: boolean
   schedule:
-    - cron: "0 */6 * * *" # scheduled regulatory scan
+    - cron: "0 */6 * * *"
 
-# Full-site baseline/monitor validation trigger.
+# One logical monitoring chain at a time.
+# "queue: max" is important: with the default queue mode GitHub cancels an
+# older pending run whenever a newer run enters the same concurrency group.
+# Continuation runs must never disappear while the current slice is running.
 concurrency:
   group: regulatory-monitor
   cancel-in-progress: false
+  queue: max
 
 permissions:
   contents: write
@@ -35,7 +39,7 @@ permissions:
 jobs:
   monitor:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 75
     env:
       REGMON_SOURCE: ${{ inputs.source_id || 'all' }}
       DASHBOARD_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
@@ -71,7 +75,7 @@ jobs:
           ]
           headers = {
               "User-Agent": (
-                  "Mozilla/5.0 (compatible; ChangeSentinel/0.3; "
+                  "Mozilla/5.0 (compatible; ChangeSentinel/0.5; "
                   "+https://github.com/GauravDarwesh/ChangeSentinel)"
               )
           }
@@ -93,36 +97,62 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: python -u -m regmon.monitor --source "$REGMON_SOURCE"
 
-      - name: Determine crawl status
+      - name: Validate monitoring state
         id: crawl-status
         run: |
-          result="$(python - <<'PY'
+          python - <<'PY'
           import json
           import os
           from pathlib import Path
 
           requested = os.environ.get("REGMON_SOURCE", "all")
-          paused = []
-          for path in sorted((Path("data") / "discovery").glob("*.json")):
+          discovery_dir = Path("data") / "discovery"
+          states = []
+
+          for path in sorted(discovery_dir.glob("*.json")):
               if path.name.endswith("-checkpoint.json"):
                   continue
-              try:
-                  payload = json.loads(path.read_text(encoding="utf-8"))
-              except Exception:
+              payload = json.loads(path.read_text(encoding="utf-8"))
+              source_id = str(payload.get("source_id") or path.stem)
+              state = str(payload.get("state") or "FAILED")
+              if requested not in {"all", "*"} and source_id != requested:
                   continue
-              if payload.get("state") == "PAUSED":
-                  paused.append(str(payload.get("source_id") or path.stem))
+              states.append((source_id, state))
 
-          if requested not in {"all", "*"}:
-              paused = [sid for sid in paused if sid == requested]
+          if not states:
+              raise SystemExit("No discovery metadata found after monitoring engine")
 
-          print(("true" if paused else "false") + "|" + (paused[0] if paused else ""))
+          paused_source = ""
+          for source_id, state in states:
+              checkpoint = discovery_dir / f"{source_id}-checkpoint.json"
+              if state == "PAUSED":
+                  if not checkpoint.exists():
+                      raise SystemExit(
+                          f"{source_id} is PAUSED but its checkpoint is missing; refusing to continue blindly"
+                      )
+                  if checkpoint.stat().st_size == 0:
+                      raise SystemExit(
+                          f"{source_id} is PAUSED but its checkpoint is empty; refusing to commit an invalid continuation"
+                      )
+                  payload = json.loads(checkpoint.read_text(encoding="utf-8"))
+                  if payload.get("state") != "PAUSED" or payload.get("source_id") != source_id:
+                      raise SystemExit(
+                          f"{source_id} has an invalid PAUSED checkpoint; refusing to continue"
+                      )
+                  if not payload.get("pending") and not payload.get("retry_pending"):
+                      raise SystemExit(
+                          f"{source_id} is PAUSED with no resumable work in its checkpoint"
+                      )
+                  if not paused_source:
+                      paused_source = source_id
+
+          print(f"states={states}")
+          print(f"paused_source={paused_source}")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as handle:
+              handle.write(f"paused={'true' if paused_source else 'false'}\n")
+              handle.write(f"paused_source={paused_source}\n")
           PY
-          )"
-          IFS="|" read -r paused paused_source <<< "$result"
-          echo "paused=$paused" >> "$GITHUB_OUTPUT"
-          echo "paused_source=$paused_source" >> "$GITHUB_OUTPUT"
-          echo "Crawl paused: $paused_source" >&2
+
       - name: Publish notifications
         if: ${{ steps.crawl-status.outputs.paused != 'true' }}
         env:
@@ -143,16 +173,42 @@ jobs:
 
       - name: Commit monitoring state
         run: |
-          git fetch origin main --quiet
-          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
-            echo "Stale monitoring runner detected; refusing to publish state."
-            exit 1
-          fi
+          set -euo pipefail
           git config user.name "regulatory-monitor-bot"
           git config user.email "actions@users.noreply.github.com"
           git add data
-          git diff --cached --quiet || git commit -m "Update regulatory monitoring state"
-          git push
+
+          if git diff --cached --quiet; then
+            echo "No monitoring data changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Update regulatory monitoring state"
+
+          # A human/code push can happen while the long crawl is running.
+          # Rebase the data-only state commit when that is a clean fast-forward
+          # opportunity; never overwrite a newer main branch.
+          for attempt in 1 2 3; do
+            git fetch origin main --quiet
+            if git merge-base --is-ancestor HEAD origin/main; then
+              git push origin HEAD:main
+              exit 0
+            fi
+
+            if git merge-base --is-ancestor origin/main HEAD; then
+              echo "Remote main advanced independently; rebasing state commit."
+              git rebase origin/main
+            else
+              echo "Remote main diverged; refusing to overwrite newer history."
+              exit 1
+            fi
+
+            sleep 3
+          done
+
+          echo "Could not publish monitoring state after retries."
+          exit 1
+
       - name: Continue paused crawl
         if: ${{ steps.crawl-status.outputs.paused == 'true' }}
         env:
