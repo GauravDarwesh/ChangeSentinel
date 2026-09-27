@@ -191,6 +191,48 @@ class TestDiscovery(unittest.TestCase):
             self.assertIn("https://www.eba.europa.eu/homepage", inventory_files[0].read_text(encoding="utf-8"))
 
     @patch("regmon.discovery.requests.get")
+    @patch("regmon.discovery.requests.get")
+    def test_paused_inventory_recovers_when_checkpoint_is_empty(self, mock_get):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            discovery_http_workers=1,
+            discovery_slice_seconds=1,
+        )
+        mock_get.return_value = Mock(
+            status_code=200,
+            headers={"content-type": "text/html; charset=UTF-8"},
+            text="<p>Recovered</p>",
+            url="https://www.eba.europa.eu/homepage",
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            discovery_dir = Path(tmp) / "discovery"
+            discovery_dir.mkdir(parents=True)
+            (discovery_dir / "eba-test-inventory-0000.txt").write_text(
+                "https://www.eba.europa.eu/homepage\nhttps://www.eba.europa.eu/a\n",
+                encoding="utf-8",
+            )
+            (discovery_dir / "eba-test-checkpoint.json").write_text("", encoding="utf-8")
+            (discovery_dir / "eba-test.json").write_text(
+                json.dumps({
+                    "source_id": "eba-test",
+                    "state": "PAUSED",
+                    "discovered": 2,
+                    "html_processed": 1,
+                    "failed_pages": 0,
+                    "successful_pages": 1,
+                }),
+                encoding="utf-8",
+            )
+            urls = http_discover(source, Path(tmp))
+        self.assertIn("https://www.eba.europa.eu/homepage", urls)
+        self.assertIn("https://www.eba.europa.eu/a", urls)
+        self.assertNotEqual(mock_get.call_count, 0)
+
     def test_scope_change_invalidates_checkpoint(self, mock_get):
         source = SourceConfig(
             id="eba-test",
@@ -405,7 +447,7 @@ class TestDiscovery(unittest.TestCase):
 
     @patch("regmon.discovery._stealth_discover")
     @patch("regmon.discovery.http_discover")
-    def test_discover_enriches_degraded_http(self, mock_http, mock_stealth):
+    def test_discover_does_not_fallback_on_degraded_http(self, mock_http, mock_stealth):
         from regmon.discovery import discover
         source = SourceConfig(
             id="eba-test",
@@ -416,10 +458,6 @@ class TestDiscovery(unittest.TestCase):
             allowed_domains=("www.eba.europa.eu",),
         )
         mock_http.return_value = ["https://www.eba.europa.eu/homepage"]
-        mock_stealth.return_value = [
-            "https://www.eba.europa.eu/homepage",
-            "https://www.eba.europa.eu/dynamic-page",
-        ]
         with tempfile.TemporaryDirectory() as tmp:
             discovery_dir = Path(tmp) / "discovery"
             discovery_dir.mkdir()
@@ -436,19 +474,8 @@ class TestDiscovery(unittest.TestCase):
                 encoding="utf-8",
             )
             urls = discover(source, Path(tmp))
-            metadata = json.loads(
-                (discovery_dir / "eba-test.json").read_text(encoding="utf-8")
-            )
-        self.assertEqual(
-            urls,
-            [
-                "https://www.eba.europa.eu/homepage",
-                "https://www.eba.europa.eu/dynamic-page",
-            ],
-        )
-        mock_stealth.assert_called_once()
-        self.assertEqual(metadata["method"], "http+stealth-enrichment")
-        self.assertEqual(metadata["state"], "DEGRADED")
+        self.assertEqual(urls, ["https://www.eba.europa.eu/homepage"])
+        mock_stealth.assert_not_called()
 
     @patch("regmon.discovery._stealth_discover")
     @patch("regmon.discovery.http_discover")
@@ -599,6 +626,27 @@ class TestEngineFlow(unittest.TestCase):
                 self.assertEqual(result["report"]["counts"]["changed"],1)
             finally:
                 old_file.unlink(missing_ok=True)
+
+    def test_degraded_discovery_skips_content_fetch(self):
+        from regmon.engine import process_source
+        previous = {
+            make_id("https://www.eba.europa.eu/a"): {
+                "url_id": make_id("https://www.eba.europa.eu/a"),
+                "canonical_url": "https://www.eba.europa.eu/a",
+                "normalized_hash": "old",
+            }
+        }
+        with patch("regmon.engine.load_discovery_metadata", return_value={
+            "source_id": "eba-test",
+            "state": "DEGRADED",
+            "method": "test",
+            "discovered": 10,
+        }), patch("regmon.engine.load_previous", return_value=previous), patch("regmon.engine.discover", return_value=["https://www.eba.europa.eu/a"]), patch("regmon.engine.make_current_item") as mock_current:
+            result = process_source(SOURCE, "run-degraded-gate", dry_run=True)
+        mock_current.assert_not_called()
+        self.assertEqual(result["report"]["counts"]["discovery_incomplete"], 1)
+        self.assertEqual(result["report"]["counts"]["crawl_degraded"], 1)
+        self.assertFalse(result["report"]["baseline_update_allowed"])
 
     def test_degraded_discovery_never_emits_removal(self):
         from regmon.engine import process_source
