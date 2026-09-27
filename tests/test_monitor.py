@@ -191,7 +191,6 @@ class TestDiscovery(unittest.TestCase):
             self.assertIn("https://www.eba.europa.eu/homepage", inventory_files[0].read_text(encoding="utf-8"))
 
     @patch("regmon.discovery.requests.get")
-    @patch("regmon.discovery.requests.get")
     def test_paused_inventory_recovers_when_checkpoint_is_empty(self, mock_get):
         source = SourceConfig(
             id="eba-test",
@@ -233,6 +232,7 @@ class TestDiscovery(unittest.TestCase):
         self.assertIn("https://www.eba.europa.eu/a", urls)
         self.assertNotEqual(mock_get.call_count, 0)
 
+    @patch("regmon.discovery.requests.get")
     def test_scope_change_invalidates_checkpoint(self, mock_get):
         source = SourceConfig(
             id="eba-test",
