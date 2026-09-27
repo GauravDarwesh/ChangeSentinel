@@ -47,6 +47,18 @@ def build_notifications(report: dict) -> list[dict]:
             continue
         if kind=="REMOVED_URL":
             output.append({"event_id":eid,"kind":kind,"url":event.get("url"),"topic":"Monitored URL removed","summary":"A previously monitored regulator URL is no longer discoverable.","reason":"The URL was absent from the current successful crawl.","impact":"Review whether the regulator moved, retired, or reorganized the material.","priority":4,"tags":["warning","link","regulatory"]})
+        elif kind in {"CHANGED_URL","NEW_URL"}:
+            output.append({
+                "event_id":eid,
+                "kind":kind,
+                "url":event.get("url"),
+                "topic":"Technical change detected",
+                "summary":"A monitored regulator resource changed and was detected by deterministic content comparison.",
+                "reason":"The change remains visible even when semantic AI review is unavailable, invalid, or deferred.",
+                "impact":"Review the evidence and diff to determine regulatory significance.",
+                "priority":3,
+                "tags":["warning","change","regulatory"],
+            })
         elif kind in {"FETCH_ERROR","EXTRACTION_ERROR"}:
             error=(event.get("evidence") or {}).get("error","Unknown operational error")
             output.append({"event_id":eid,"kind":kind,"url":event.get("url"),"topic":"Monitoring operational alert","summary":"The current run could not fully process a monitored regulator resource.","reason":error,"impact":"The previous known-good baseline was preserved.","priority":3,"tags":["warning","monitoring"]})
