@@ -374,9 +374,9 @@ def _load_http_checkpoint(source: SourceConfig, data_dir: Path) -> dict | None:
                     "updated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                     "pending": list(pending),
                     "retry_pending": list(retry_pending),
-                    "processed_count": 0,
-                    "failed_pages": 0,
-                    "successful_pages": 0,
+                    "processed_count": int(metadata.get("html_processed", 0)),
+                    "failed_pages": int(metadata.get("failed_pages", 0)),
+                    "successful_pages": int(metadata.get("successful_pages", 0)),
                     "recovered_from_inventory": True,
                 }
 
