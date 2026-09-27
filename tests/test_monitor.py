@@ -11,6 +11,7 @@ from regmon.config import SourceConfig
 from regmon.discovery import canonical, extract_html_links, http_discover, in_scope, parse_discovered_urls
 from regmon.fetch import fetch
 from regmon.monitor import load_previous
+from regmon.notify import build_notifications
 from regmon.relevance import triage
 
 SOURCE = SourceConfig(
@@ -556,6 +557,27 @@ class TestAI(unittest.TestCase):
         value["extra"]="x"
         with self.assertRaises(ValueError):
             validate_analysis(value)
+
+class TestNotifications(unittest.TestCase):
+    def test_technical_change_remains_visible_when_ai_is_unavailable(self):
+        event = {
+            "event_id": build_event_id("CHANGED_URL", make_id("https://www.eba.europa.eu/a"), "old", "new"),
+            "event_type": "CHANGED_URL",
+            "url": "https://www.eba.europa.eu/a",
+        }
+        report = {
+            "events": [event],
+            "ai_results": [{
+                "event": "CHANGED_URL",
+                "event_id": event["event_id"],
+                "url": event["url"],
+                "ai": {"status": "error", "reason": "provider timeout"},
+            }],
+        }
+        notifications = build_notifications(report)
+        self.assertEqual(len(notifications), 1)
+        self.assertEqual(notifications[0]["kind"], "CHANGED_URL")
+        self.assertEqual(notifications[0]["topic"], "Technical change detected")
 
 class TestRelevance(unittest.TestCase):
     def test_utility_excluded(self):
