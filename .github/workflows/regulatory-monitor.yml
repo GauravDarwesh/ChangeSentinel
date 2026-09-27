@@ -54,7 +54,7 @@ jobs:
           path="data/discovery/eba-full-site.json"
           checkpoint="data/discovery/eba-full-site-checkpoint.json"
           if [ -s "$path" ]; then
-            state="$(python -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8")).get("state","FAILED"))' "$path")"
+            state="$(jq -r '.state // "FAILED"' "$path")"
             if [ "$state" = "PAUSED" ] && [ -s "$checkpoint" ]; then
               skip=true
               echo "Scheduled scan sees an active/resumable continuation; leaving it alone."
