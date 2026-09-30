@@ -22,6 +22,11 @@ on:
 # "queue: max" is important: with the default queue mode GitHub cancels an
 # older pending run whenever a newer run enters the same concurrency group.
 # Continuation runs must never disappear while the current slice is running.
+#
+# IMPORTANT: do not gate scheduled runs on persisted PAUSED state. PAUSED is a
+# durable checkpoint, not proof that another run is active. A scheduled/manual
+# run is itself able to resume that checkpoint. Skipping it would strand the
+# crawl forever unless a separate continuation dispatch happened first.
 concurrency:
   group: regulatory-monitor
   cancel-in-progress: false
@@ -45,44 +50,23 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Detect active continuation before scheduled scan
-        id: schedule-guard
-        if: ${{ github.event_name == 'schedule' }}
-        run: |
-          set -euo pipefail
-          skip=false
-          path="data/discovery/eba-full-site.json"
-          checkpoint="data/discovery/eba-full-site-checkpoint.json"
-          if [ -s "$path" ]; then
-            state="$(jq -r '.state // "FAILED"' "$path")"
-            if [ "$state" = "PAUSED" ] && [ -s "$checkpoint" ]; then
-              skip=true
-              echo "Scheduled scan sees an active/resumable continuation; leaving it alone."
-            fi
-          fi
-          echo "skip=$skip" >> "$GITHUB_OUTPUT"
 
       - name: Setup Python
-        if: ${{ steps.schedule-guard.outputs.skip != 'true' }}
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
           cache: pip
 
       - name: Install dependencies
-        if: ${{ steps.schedule-guard.outputs.skip != 'true' }}
         run: python -m pip install -r requirements.txt
 
       - name: Run test suite
-        if: ${{ steps.schedule-guard.outputs.skip != 'true' }}
         run: python -m unittest discover -s tests -p "test*.py"
 
       - name: Compile Python
-        if: ${{ steps.schedule-guard.outputs.skip != 'true' }}
         run: python -m compileall -q regmon
 
       - name: EBA discovery seed smoke test
-        if: ${{ steps.schedule-guard.outputs.skip != 'true' }}
         run: |
           python - <<'PY'
           import requests
@@ -110,13 +94,11 @@ jobs:
           PY
 
       - name: Run monitoring engine
-        if: ${{ steps.schedule-guard.outputs.skip != 'true' }}
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: python -u -m regmon.monitor --source "$REGMON_SOURCE"
 
       - name: Validate monitoring state
-        if: ${{ steps.schedule-guard.outputs.skip != 'true' }}
         id: crawl-status
         run: |
           python - <<'PY'
@@ -173,7 +155,7 @@ jobs:
           PY
 
       - name: Publish notifications
-        if: ${{ steps.schedule-guard.outputs.skip != 'true' && steps.crawl-status.outputs.paused != 'true' }}
+        if: ${{ steps.crawl-status.outputs.paused != 'true' }}
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           REQUIRE_NTFY: "0"
@@ -182,7 +164,7 @@ jobs:
         run: python -m regmon.notify
 
       - name: Controlled notification test
-        if: ${{ steps.schedule-guard.outputs.skip != 'true' && inputs.test_notification == true }}
+        if: ${{ inputs.test_notification == true }}
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           REQUIRE_NTFY: "1"
@@ -191,7 +173,6 @@ jobs:
         run: python -m regmon.notify --test
 
       - name: Commit monitoring state
-        if: ${{ steps.schedule-guard.outputs.skip != 'true' }}
         run: |
           set -euo pipefail
           git config user.name "regulatory-monitor-bot"
@@ -230,7 +211,7 @@ jobs:
           exit 1
 
       - name: Continue paused crawl
-        if: ${{ steps.schedule-guard.outputs.skip != 'true' && steps.crawl-status.outputs.paused == 'true' }}
+        if: ${{ steps.crawl-status.outputs.paused == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
