@@ -741,6 +741,9 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 f"failures={failed_pages} slice_pages={slice_processed}/{max_pages_per_slice}"
             )
 
+            if not retry_pending:
+                break
+
             if (
                 _DISCOVERY_STOP_REQUESTED
                 or (deadline is not None and time.monotonic() >= deadline)
