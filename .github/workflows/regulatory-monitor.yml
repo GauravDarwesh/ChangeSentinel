@@ -187,24 +187,27 @@ jobs:
           git commit -m "Update regulatory monitoring state"
 
           # A human/code push can happen while the long crawl is running.
-          # Rebase the data-only state commit when that is a clean fast-forward
-          # opportunity; never overwrite a newer main branch.
+          # Publish our data-only commit when it already contains remote main.
+          # If remote main advanced after our checkout, rebase once and retry.
+          # Never overwrite a genuinely diverged history.
           for attempt in 1 2 3; do
             git fetch origin main --quiet
-            if git merge-base --is-ancestor HEAD origin/main; then
+
+            if git merge-base --is-ancestor origin/main HEAD; then
+              echo "Remote main is an ancestor of the state commit; pushing state."
               git push origin HEAD:main
               exit 0
             fi
 
-            if git merge-base --is-ancestor origin/main HEAD; then
-              echo "Remote main advanced independently; rebasing state commit."
+            if git merge-base --is-ancestor HEAD origin/main; then
+              echo "Remote main advanced after this state commit; rebasing."
               git rebase origin/main
-            else
-              echo "Remote main diverged; refusing to overwrite newer history."
-              exit 1
+              sleep 3
+              continue
             fi
 
-            sleep 3
+            echo "Remote main diverged; refusing to overwrite newer history."
+            exit 1
           done
 
           echo "Could not publish monitoring state after retries."
