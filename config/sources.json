@@ -45,7 +45,7 @@
       "discovery_http_workers": 6,
       "discovery_http_attempts": 2,
       "discovery_slice_seconds": 2700,
-      "discovery_max_pages_per_slice": 3000
+      "discovery_max_pages_per_slice": 2000
     }
   ]
 }
