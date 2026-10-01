@@ -31,6 +31,7 @@ class SourceConfig:
     discovery_http_workers: int = 6
     discovery_http_attempts: int = 2
     discovery_slice_seconds: int = 2700
+    discovery_max_pages_per_slice: int = 3000
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "SourceConfig":
@@ -60,6 +61,7 @@ class SourceConfig:
             discovery_http_workers=max(1, int(value.get("discovery_http_workers", 6))),
             discovery_http_attempts=max(1, int(value.get("discovery_http_attempts", 2))),
             discovery_slice_seconds=max(0, int(value.get("discovery_slice_seconds", 2700))),
+            discovery_max_pages_per_slice=max(1, int(value.get("discovery_max_pages_per_slice", 3000))),
         )
 
 
