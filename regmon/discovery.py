@@ -487,6 +487,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
     worker_count = max(1, min(int(source.discovery_http_workers), 32))
     timeout = max(5, int(source.discovery_http_timeout_seconds))
     slice_seconds = max(0, int(source.discovery_slice_seconds))
+    max_pages_per_slice = max(1, int(source.discovery_max_pages_per_slice))
     grace_seconds = 60 if slice_seconds >= 120 else 0
     budget_seconds = max(1, slice_seconds - grace_seconds) if slice_seconds else 0
     deadline = time.monotonic() + budget_seconds if budget_seconds else None
@@ -497,20 +498,30 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
         checkpoint = _load_http_checkpoint(source, data_dir)
         if checkpoint:
             if "_legacy_discovered" in checkpoint:
+                # Legacy checkpoints stored the entire frontier plus only a capped
+                # sample of errors. They cannot prove which historical processed
+                # pages succeeded. Re-validating every known HTML URL is the only
+                # safe migration that can eventually establish COMPLETE.
                 discovered = list(dict.fromkeys(str(x) for x in checkpoint["_legacy_discovered"]))
                 _reset_inventory(source, data_dir)
+                _reset_failure_ledger(source, data_dir)
                 _append_inventory(source, data_dir, discovered, 0)
-                pending = deque(str(x) for x in checkpoint.get("pending", []))
-                retry_pending = deque(str(x) for x in checkpoint.get("retry_pending", []))
-                processed_count = int(
-                    checkpoint.get("processed_count", len(checkpoint.get("processed", [])))
-                )
-                failed_pages = int(checkpoint.get("failed_pages", 0))
-                successful_pages = int(checkpoint.get("successful_pages", 0))
+                pending = deque(url for url in discovered if _is_probably_html_url(url))
+                retry_pending = deque()
+                processed_count = 0
+                failed_pages = 0
+                successful_pages = 0
                 started_at = str(checkpoint.get("started_at") or started_at)
+                legacy_failed = int(checkpoint.get("failed_pages", 0))
+                legacy_error_sample = (
+                    len(checkpoint.get("errors", []))
+                    if isinstance(checkpoint.get("errors"), list)
+                    else 0
+                )
                 print(
-                    f"HTTP discovery migrated legacy checkpoint: discovered={len(discovered)} "
-                    f"processed={processed_count} pending={len(pending)}"
+                    "HTTP discovery migrated legacy checkpoint: "
+                    f"discovered={len(discovered)} revalidation_html={len(pending)} "
+                    f"legacy_failed={legacy_failed} legacy_error_sample={legacy_error_sample}"
                 )
             else:
                 discovered = _load_inventory(source, data_dir)
@@ -541,9 +552,14 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
 
         discovered_set = set(discovered)
         queued = set(pending)
+        slice_processed = 0
 
         while pending:
-            if _DISCOVERY_STOP_REQUESTED or (deadline is not None and time.monotonic() >= deadline):
+            if (
+                _DISCOVERY_STOP_REQUESTED
+                or (deadline is not None and time.monotonic() >= deadline)
+                or slice_processed >= max_pages_per_slice
+            ):
                 _write_http_checkpoint(
                     source, data_dir, pending=pending, retry_pending=retry_pending, discovered_count=len(discovered),
                     processed_count=processed_count, failed_pages=failed_pages,
@@ -597,9 +613,11 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                         queued.add(link)
 
             _append_inventory(source, data_dir, new_links, len(discovered) - len(new_links))
+            slice_processed += len(batch)
             print(
                 f"HTTP discovery: processed={processed_count} successful={successful_pages} "
-                f"discovered={len(discovered)} pending={len(pending)} failures={failed_pages}"
+                f"discovered={len(discovered)} pending={len(pending)} failures={failed_pages} "
+                f"slice_pages={slice_processed}/{max_pages_per_slice}"
             )
 
             capped = source.max_urls > 0 and len(discovered) >= source.max_urls
@@ -615,7 +633,11 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             if not pending:
                 break
 
-            if _DISCOVERY_STOP_REQUESTED or (deadline is not None and time.monotonic() >= deadline):
+            if (
+                _DISCOVERY_STOP_REQUESTED
+                or (deadline is not None and time.monotonic() >= deadline)
+                or slice_processed >= max_pages_per_slice
+            ):
                 _write_http_checkpoint(
                     source, data_dir, pending=pending, retry_pending=retry_pending, discovered_count=len(discovered),
                     processed_count=processed_count, failed_pages=failed_pages,
@@ -633,7 +655,11 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             retry_pending = deque(_retryable_failure_urls(source, data_dir))
 
         while retry_pending:
-            if _DISCOVERY_STOP_REQUESTED or (deadline is not None and time.monotonic() >= deadline):
+            if (
+                _DISCOVERY_STOP_REQUESTED
+                or (deadline is not None and time.monotonic() >= deadline)
+                or slice_processed >= max_pages_per_slice
+            ):
                 _write_http_checkpoint(
                     source, data_dir,
                     pending=deque(),
@@ -663,6 +689,8 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 }
                 for future in as_completed(futures):
                     url = futures[future]
+                    processed_count += 1
+                    slice_processed += 1
                     try:
                         _, links, failure = future.result()
                     except Exception as exc:
@@ -707,7 +735,17 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                             len(discovered) - len(new_links),
                         )
 
-            if _DISCOVERY_STOP_REQUESTED or (deadline is not None and time.monotonic() >= deadline):
+            print(
+                f"HTTP discovery retry: processed={processed_count} "
+                f"retry_remaining={len(retry_pending)} discovered={len(discovered)} "
+                f"failures={failed_pages} slice_pages={slice_processed}/{max_pages_per_slice}"
+            )
+
+            if (
+                _DISCOVERY_STOP_REQUESTED
+                or (deadline is not None and time.monotonic() >= deadline)
+                or slice_processed >= max_pages_per_slice
+            ):
                 _write_http_checkpoint(
                     source, data_dir,
                     pending=deque(),
