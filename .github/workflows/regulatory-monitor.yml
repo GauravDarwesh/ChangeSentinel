@@ -1,9 +1,6 @@
 name: Regulatory Monitor
 
 on:
-  push:
-    paths:
-      - ".github/workflows/regulatory-monitor.yml"
   # Monitoring is deliberately decoupled from code pushes. CI validates pushes;
   # this workflow is only for scheduled/manual production scans.
   workflow_dispatch:
