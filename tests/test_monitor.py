@@ -192,6 +192,100 @@ class TestDiscovery(unittest.TestCase):
             self.assertIn("https://www.eba.europa.eu/homepage", inventory_files[0].read_text(encoding="utf-8"))
 
     @patch("regmon.discovery.requests.get")
+    def test_legacy_checkpoint_migrates_to_full_revalidation(self, mock_get):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            discovery_http_workers=1,
+            discovery_slice_seconds=0,
+            discovery_max_pages_per_slice=1,
+        )
+        mock_get.return_value = Mock(
+            status_code=200,
+            headers={"content-type": "text/html; charset=UTF-8"},
+            text="<p>Verified</p>",
+            url="https://www.eba.europa.eu/homepage",
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            discovery_dir = Path(tmp) / "discovery"
+            discovery_dir.mkdir(parents=True)
+            (discovery_dir / "eba-test-checkpoint.json").write_text(
+                json.dumps({
+                    "schema_version": 1,
+                    "source_id": "eba-test",
+                    "state": "PAUSED",
+                    "started_at": "2026-09-24T00:00:00Z",
+                    "updated_at": "2026-09-24T01:00:00Z",
+                    "discovered": [
+                        "https://www.eba.europa.eu/homepage",
+                        "https://www.eba.europa.eu/a",
+                        "https://www.eba.europa.eu/documents/a.pdf",
+                    ],
+                    "pending": ["https://www.eba.europa.eu/a"],
+                    "processed": ["https://www.eba.europa.eu/homepage"],
+                    "errors": ["https://www.eba.europa.eu/a\\tHTTP 500"],
+                    "failed_pages": 1,
+                    "successful_pages": 0,
+                }),
+                encoding="utf-8",
+            )
+            urls = http_discover(source, Path(tmp))
+            metadata = json.loads((discovery_dir / "eba-test.json").read_text(encoding="utf-8"))
+            checkpoint = json.loads((discovery_dir / "eba-test-checkpoint.json").read_text(encoding="utf-8"))
+            inventory = "\n".join(
+                p.read_text(encoding="utf-8") for p in sorted(discovery_dir.glob("eba-test-inventory-*.txt"))
+            )
+        self.assertEqual(urls, [
+            "https://www.eba.europa.eu/homepage",
+            "https://www.eba.europa.eu/a",
+            "https://www.eba.europa.eu/documents/a.pdf",
+        ])
+        self.assertEqual(metadata["state"], "PAUSED")
+        self.assertEqual(metadata["html_processed"], 1)
+        self.assertEqual(metadata["failed_pages"], 0)
+        self.assertEqual(checkpoint["schema_version"], 2)
+        self.assertEqual(checkpoint["processed_count"], 1)
+        self.assertEqual(checkpoint["pending"], ["https://www.eba.europa.eu/a"])
+        self.assertIn("https://www.eba.europa.eu/documents/a.pdf", inventory)
+
+    @patch("regmon.discovery.time.sleep", return_value=None)
+    @patch("regmon.discovery.requests.get")
+    def test_retry_work_is_bounded_by_page_budget(self, mock_get, _sleep):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            discovery_http_workers=1,
+            discovery_http_attempts=1,
+            discovery_slice_seconds=0,
+            discovery_max_pages_per_slice=1,
+        )
+        mock_get.side_effect = [
+            Mock(status_code=503, headers={}, text="", url="https://www.eba.europa.eu/homepage"),
+            Mock(status_code=200, headers={"content-type": "text/html; charset=UTF-8"},
+                 text="<p>Recovered</p>", url="https://www.eba.europa.eu/homepage"),
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            first_urls = http_discover(source, tmp_path)
+            first_meta = json.loads((tmp_path / "discovery" / "eba-test.json").read_text(encoding="utf-8"))
+            first_checkpoint = json.loads((tmp_path / "discovery" / "eba-test-checkpoint.json").read_text(encoding="utf-8"))
+            second_urls = http_discover(source, tmp_path)
+            second_meta = json.loads((tmp_path / "discovery" / "eba-test.json").read_text(encoding="utf-8"))
+        self.assertEqual(first_urls, ["https://www.eba.europa.eu/homepage"])
+        self.assertEqual(first_meta["state"], "PAUSED")
+        self.assertEqual(first_checkpoint["retry_pending"], ["https://www.eba.europa.eu/homepage"])
+        self.assertEqual(second_urls, ["https://www.eba.europa.eu/homepage"])
+        self.assertEqual(second_meta["state"], "COMPLETE")
+
+    @patch("regmon.discovery.requests.get")
     def test_paused_inventory_recovers_when_checkpoint_is_empty(self, mock_get):
         source = SourceConfig(
             id="eba-test",
