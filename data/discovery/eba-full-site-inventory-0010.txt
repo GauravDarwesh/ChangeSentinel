@@ -2484,3 +2484,5 @@ https://www.eba.europa.eu/guidelines-credit-risk-mitigation-institutions-applyin
 https://www.eba.europa.eu/single-rule-book-qa/all?field_article=&field_date_of_submission%5Bdate%5D=&field_date_of_submission_1%5Bdate%5D=&field_legal_act%5B0%5D=513&field_legal_act%5B1%5D=513&field_qa_com%5B0%5D=857&field_qa_com%5B1%5D=857&field_qa_pub_as_final%5Bdate%5D=&field_qa_pub_as_final_1%5Bdate%5D=&field_question_id=&field_type_of_submitter=All&items_per_page=20&page=219&search_api_views_fulltext=
 https://www.eba.europa.eu/guidelines-recovery-plans-indicators
 https://www.eba.europa.eu/publications-and-media/events/consultation-supervisory-reporting-changes-related-crr2-and-backstop
+https://www.eba.europa.eu/single-rule-book-qa/all?field_isrb_q_a_review_resp=All&field_question_id=1352%2C2042%2C2094%2C2095%2C2392%2C3174%2C3277%2C3568&items_per_page=20&page=219
+https://www.eba.europa.eu/recommendations-coverage-entities-group-recovery-plan
