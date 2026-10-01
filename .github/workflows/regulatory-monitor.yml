@@ -1,6 +1,9 @@
 name: Regulatory Monitor
 
 on:
+  push:
+    paths:
+      - ".github/workflows/regulatory-monitor.yml"
   # Monitoring is deliberately decoupled from code pushes. CI validates pushes;
   # this workflow is only for scheduled/manual production scans.
   workflow_dispatch:
@@ -187,9 +190,9 @@ jobs:
           git commit -m "Update regulatory monitoring state"
 
           # A human/code push can happen while the long crawl is running.
-          # Publish our data-only commit when it already contains remote main.
-          # If remote main advanced after our checkout, rebase once and retry.
-          # Never overwrite a genuinely diverged history.
+          # The monitor only creates a data-only state commit after checkout.
+          # If remote main advanced, rebase that state commit onto the newer main
+          # and retry. If the histories are unrelated, refuse to publish.
           for attempt in 1 2 3; do
             git fetch origin main --quiet
 
@@ -199,15 +202,18 @@ jobs:
               exit 0
             fi
 
-            if git merge-base --is-ancestor HEAD origin/main; then
-              echo "Remote main advanced after this state commit; rebasing."
-              git rebase origin/main
-              sleep 3
-              continue
+            if ! git merge-base HEAD origin/main >/dev/null; then
+              echo "Remote main has no common ancestor with the state commit; refusing to publish."
+              exit 1
             fi
 
-            echo "Remote main diverged; refusing to overwrite newer history."
-            exit 1
+            echo "Remote main advanced while the state commit was being built; rebasing state commit."
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              echo "State commit could not be rebased cleanly; refusing to publish."
+              exit 1
+            fi
+            sleep 3
           done
 
           echo "Could not publish monitoring state after retries."
