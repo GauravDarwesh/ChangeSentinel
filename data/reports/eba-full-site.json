@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261001T235037Z-adc9d314",
-  "generated_at": "2026-10-01T23:50:37.396475+00:00",
+  "run_id": "20261002T000429Z-c876057a",
+  "generated_at": "2026-10-02T00:04:29.105723+00:00",
   "source": {
     "id": "eba-full-site",
     "name": "European Banking Authority \u2014 Full Public Site",
@@ -19,12 +19,12 @@
     "source_id": "eba-full-site",
     "method": "http-resumable",
     "state": "PAUSED",
-    "discovered": 40201,
-    "html_processed": 16028,
-    "successful_pages": 15978,
+    "discovered": 41365,
+    "html_processed": 18032,
+    "successful_pages": 17982,
     "failed_pages": 50,
     "capped": false,
-    "pending": 5607,
+    "pending": 4416,
     "unresolved_failures": 50,
     "checkpoint_schema_version": 2,
     "config_fingerprint": "5d6f22783987407cd455a6f17fe4c41011d1b9c83a0125741f644aff1cdf80b2",
@@ -57,7 +57,7 @@
     "strict": true
   },
   "counts": {
-    "discovered": 40201,
+    "discovered": 41365,
     "new": 0,
     "changed": 0,
     "removed": 0,
