@@ -4407,10 +4407,6 @@ https://www.eba.europa.eu/sites/default/files/documents/10180/1443055/8333261f-d
 https://www.eba.europa.eu/sites/default/files/documents/10180/1701905/b52bf8e9-a1fe-43f7-b9d0-08934b8db874/Report%20on%20the%20Cyclicality%20of%20Capital%20Requirements%20%28EBA-Op-2016-24%29.pdf?retry=1
 https://www.eba.europa.eu/sites/default/files/documents/10180/657547/0e8efdbf-9cb3-4178-890a-9d27b1351486/EBA-Op-2014-06%20-%20EBA%20opinion%20on%20macroprudential%20rules%20in%20CRR-CRD.pdf
 https://www.eba.europa.eu/sites/default/files/documents/10180/657547/cdedbfe1-b9d8-4089-833e-0c21da9bb0de/EBA-Op-2014-02%20Opinion%20on%20measures%20to%20address%20macroprudential%20or%20systemic%20risk.pdf
-https://www.eba.europa.eu/about-us/careers/expert-positions?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_publication_date%3A2025-07&f%5B2%5D=vacancy_status%3Aopen
-https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=contract_type%3A51
-https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_publication_date%3A2025-07&f%5B2%5D=vacancy_status%3Aopen
-https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=vacancy_status%3Aopen
 https://www.eba.europa.eu/publications-and-media/press-releases/banks-exposed-downside-risks-residential-real-estate-markets
 https://www.eba.europa.eu/publications-and-media/press-releases/eba-publishes-list-third-country-groups-and-third-country
 https://www.eba.europa.eu/publications-and-media/press-releases/eba-updates-list-third-country-groups-and-branches-operating-european-union-and-european-economic
@@ -4454,8 +4450,6 @@ https://www.eba.europa.eu/ad-hoc-analysis-bank-bonds-holdings
 https://www.eba.europa.eu/regulation-and-policy/supervisory-review-and-evaluation-process-srep-and-pillar-2/guidelines-irrbb-and-csrbb
 https://www.eba.europa.eu/sites/default/files/documents/10180/2908903/6aff00ca-2481-4013-9f7e-e18e198fa3da/EBA%202019%20Report%20on%20Funding%20Plans.pdf
 https://www.eba.europa.eu/sites/default/files/documents/10180/2908911/925a57dc-0299-46dc-a791-f683ffdf36a5/EBA%202019%20Report%20on%20Asset%20Encumbrance_for%20publication.pdf
-https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=vacancy_publication_date%3A2025-07
-https://www.eba.europa.eu/about-us/legal-and-policy-framework/compliance-eba-regulatory-products?page=3
 https://www.eba.europa.eu/single-rule-book-qa/all?page=1
 https://www.eba.europa.eu/single-rule-book-qa/all?page=2
 https://www.eba.europa.eu/single-rule-book-qa/all?page=219
@@ -4489,6 +4483,8 @@ https://www.eba.europa.eu/single-rule-book-qa/qna/view/publicId/2026_7994
 https://www.eba.europa.eu/single-rule-book-qa/rejected
 https://www.eba.europa.eu/single-rule-book-qa/search
 https://www.eba.europa.eu/single-rule-book-qa/under-review
+https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_publication_date%3A2025-07&f%5B2%5D=vacancy_status%3Aopen
+https://www.eba.europa.eu/about-us/legal-and-policy-framework/compliance-eba-regulatory-products?page=3
 https://www.eba.europa.eu/sites/default/files/2024-03/4b3ecafc-3343-422f-8642-47bba045c596/EBA_2013_00500000_BG_COR2.docx
 https://www.eba.europa.eu/sites/default/files/2024-03/4b3ecafc-3343-422f-8642-47bba045c596/EBA_2013_00500000_CS_COR.docx
 https://www.eba.europa.eu/sites/default/files/2024-03/4b3ecafc-3343-422f-8642-47bba045c596/EBA_2013_00500000_DA_TRA.docx
@@ -4998,3 +4994,7 @@ https://www.eba.europa.eu/sites/default/files/document_library/Publications/Guid
 https://www.eba.europa.eu/sites/default/files/document_library/Publications/Guidelines/2023/EBA-GL-2023-02/Translations%20consolidated/1061417/MODIFICATION%20-%20Consolidated%20version%20-%20GLs%20AFMs%20%28EBA%20GL%202021%2017%29_SL.pdf
 https://www.eba.europa.eu/sites/default/files/document_library/Publications/Guidelines/2023/EBA-GL-2023-02/Translations%20consolidated/1061418/MODIFICATION%20-%20Consolidated%20version%20-%20GLs%20AFMs%20%28EBA%20GL%202021%2017%29_SV.pdf
 https://www.eba.europa.eu/sites/default/files/document_library/Publications/Guidelines/2023/EBA-GL-2023-02/Translations%20consolidated/1061419/MODIFICATION%20-%20Consolidated%20version%20-%20GLs%20AFMs%20%28EBA%20GL%202021%2017%29_LV.pdf
+https://www.eba.europa.eu/sites/default/files/document_library/Publications/Guidelines/2023/EBA-GL-2023-02/Translations%20consolidated/1061420/MODIFICATION%20-%20Consolidated%20version%20-%20GLs%20AFMs%20%28EBA%20GL%202021%2017%29_MT.pdf
+https://www.eba.europa.eu/sites/default/files/document_library/Publications/Guidelines/2023/EBA-GL-2023-02/Translations%20consolidated/1061421/MODIFICATION%20-%20Consolidated%20version%20-%20GLs%20AFMs%20%28EBA%20GL%202021%2017%29_NL.pdf
+https://www.eba.europa.eu/sites/default/files/document_library/Publications/Guidelines/2023/EBA-GL-2023-02/Translations%20consolidated/1061422/MODIFICATION%20-%20Consolidated%20version%20-%20GLs%20AFMs%20%28EBA%20GL%202021%2017%29_PL.pdf
+https://www.eba.europa.eu/sites/default/files/document_library/Publications/Guidelines/2023/EBA-GL-2023-02/Translations%20consolidated/1061423/MODIFICATION%20-%20Consolidated%20version%20-%20GLs%20AFMs%20%28EBA%20GL%202021%2017%29_PT.pdf

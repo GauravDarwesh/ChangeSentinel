@@ -126,10 +126,10 @@ https://www.eba.europa.eu/single-rule-book-qa
 https://www.eba.europa.eu/subscribe-to-email-alerts
 https://www.eba.europa.eu/about-us/budget/archive
 https://www.eba.europa.eu/about-us/careers/expert-positions
-https://www.eba.europa.eu/about-us/careers/expert-positions?f%5B0%5D=contract_type%3A51
-https://www.eba.europa.eu/about-us/careers/expert-positions?f%5B0%5D=vacancy_publication_date%3A2025-07
-https://www.eba.europa.eu/about-us/careers/expert-positions?f%5B0%5D=vacancy_status%3Aopen
 https://www.eba.europa.eu/about-us/careers/vacancies/seconded-national-experts
+https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=contract_type%3A51
+https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=vacancy_publication_date%3A2025-07
+https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=vacancy_status%3Aopen
 https://www.eba.europa.eu/about-us/careers/young-talents-programme
 https://www.eba.europa.eu/guidelines-internal-governance-second-revision
 https://www.eba.europa.eu/joint-esma-and-eba-guidelines-assessment-suitability-members-management-body-revised
@@ -2126,8 +2126,6 @@ https://www.eba.europa.eu/sites/default/files/2026-07/8acd6f25-2fd2-49ba-b086-db
 https://www.eba.europa.eu/sites/default/files/document_library//EBA%20Risk%20Reduction%20Package%20Roadmaps.docx.pdf
 https://www.eba.europa.eu/sites/default/files/documents/10180/2141905/3173de85-57fb-490d-8332-22292b0e3995/The%20DPM%20metamodel%20detail.pdf
 https://www.eba.europa.eu/sites/default/files/styles/large/public/2024-06/DPM%202.0%20timeline_1.png?itok=_23H0Rxm
-https://www.eba.europa.eu/about-us/careers/expert-positions?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_publication_date%3A2025-07
-https://www.eba.europa.eu/about-us/careers/expert-positions?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_status%3Aopen
 https://www.eba.europa.eu/about-us/organisation/joint-committee/q-and-s
 https://www.eba.europa.eu/assets/adhoc23/bank_individual_results/EBA_Bond_AC_AT_9ZHRYM6F437SQJ6OUG95.pdf
 https://www.eba.europa.eu/assets/adhoc23/bank_individual_results/EBA_Bond_AC_AT_PQOH26KWDF7CG10L6792.pdf
@@ -2353,7 +2351,9 @@ https://www.eba.europa.eu/sites/default/files/documents/10180/210008/214fdc20-71
 https://www.eba.europa.eu/sites/default/files/documents/10180/2357155/ba64a064-7836-4d47-801b-66e56331430c/EBA%20Report%20on%20Asset%20Encumbrance.pdf
 https://www.eba.europa.eu/sites/default/files/documents/10180/2357155/d20e3b5b-dca8-457f-b838-b3717977a6d6/EBA%20Report%20on%20Funding%20Plans.pdf
 https://www.eba.europa.eu/sites/default/files/documents/10180/974844/e6e2a6ee-6708-4430-a506-5f68ff70736d/EBA%20Report%20on%20Asset%20Encumbrance-%20September%202015.pdf
-https://www.eba.europa.eu/about-us/careers/expert-positions?f%5B0%5D=vacancy_publication_date%3A2025-07&f%5B1%5D=vacancy_status%3Aopen
+https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_publication_date%3A2025-07
+https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_status%3Aopen
+https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=vacancy_publication_date%3A2025-07&f%5B1%5D=vacancy_status%3Aopen
 https://www.eba.europa.eu/sites/default/files/2026-02/677f0afd-9d86-4351-9760-5de15fe1f58e/EBA%20OD%2013%20-%20Policy%20Young%20talents%20programmes.pdf
 https://www.eba.europa.eu/sites/default/files/2026-02/cc91f17d-dbe1-45a8-9554-d63e6b9852bc/DPN%20-%20Data%20Protection%20Notice%20-%20Traineeship%20programme%20%281%29.pdf
 https://www.eba.europa.eu/sites/default/files/2026-02/ef1cc51d-2632-44cb-982a-5b5104609e58/DPN%20-%20Data%20Protection%20Notice%20-%20Studentship%20programme%20%281%29.pdf
