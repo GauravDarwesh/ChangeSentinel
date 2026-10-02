@@ -1,5 +1,32 @@
 [
   {
+    "run_id": "20261002T122006Z-d878a2be",
+    "generated_at": "2026-10-02T12:20:06.977524+00:00",
+    "source_id": "eba-full-site",
+    "regulator": "European Banking Authority",
+    "counts": {
+      "discovered": 19792,
+      "new": 0,
+      "changed": 0,
+      "removed": 0,
+      "unchanged": 0,
+      "baseline_migration": 0,
+      "fetch_error": 0,
+      "extraction_error": 0,
+      "not_modified": 0,
+      "forced_full_fetch": 0,
+      "relevance_candidates": 0,
+      "ai_ok": 0,
+      "ai_invalid": 0,
+      "ai_error": 0,
+      "ai_deferred": 0,
+      "crawl_paused": 1,
+      "crawl_degraded": 0,
+      "crawl_failed": 0,
+      "discovery_incomplete": 1
+    }
+  },
+  {
     "run_id": "20261002T092752Z-ce9a05ac",
     "generated_at": "2026-10-02T09:27:52.901815+00:00",
     "source_id": "eba-full-site",
