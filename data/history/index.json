@@ -1,5 +1,32 @@
 [
   {
+    "run_id": "20261003T071031Z-96ce09fe",
+    "generated_at": "2026-10-03T07:10:31.288580+00:00",
+    "source_id": "eba-full-site",
+    "regulator": "European Banking Authority",
+    "counts": {
+      "discovered": 52045,
+      "new": 0,
+      "changed": 0,
+      "removed": 0,
+      "unchanged": 0,
+      "baseline_migration": 0,
+      "fetch_error": 0,
+      "extraction_error": 0,
+      "not_modified": 0,
+      "forced_full_fetch": 0,
+      "relevance_candidates": 0,
+      "ai_ok": 0,
+      "ai_invalid": 0,
+      "ai_error": 0,
+      "ai_deferred": 0,
+      "crawl_paused": 1,
+      "crawl_degraded": 0,
+      "crawl_failed": 0,
+      "discovery_incomplete": 1
+    }
+  },
+  {
     "run_id": "20261003T065456Z-6c9051a5",
     "generated_at": "2026-10-03T06:54:56.038184+00:00",
     "source_id": "eba-full-site",
@@ -2382,33 +2409,6 @@
     "regulator": "European Banking Authority",
     "counts": {
       "discovered": 42752,
-      "new": 0,
-      "changed": 0,
-      "removed": 0,
-      "unchanged": 0,
-      "baseline_migration": 0,
-      "fetch_error": 0,
-      "extraction_error": 0,
-      "not_modified": 0,
-      "forced_full_fetch": 0,
-      "relevance_candidates": 0,
-      "ai_ok": 0,
-      "ai_invalid": 0,
-      "ai_error": 0,
-      "ai_deferred": 0,
-      "crawl_paused": 1,
-      "crawl_degraded": 0,
-      "crawl_failed": 0,
-      "discovery_incomplete": 1
-    }
-  },
-  {
-    "run_id": "20261002T000429Z-c876057a",
-    "generated_at": "2026-10-02T00:04:29.105723+00:00",
-    "source_id": "eba-full-site",
-    "regulator": "European Banking Authority",
-    "counts": {
-      "discovered": 41365,
       "new": 0,
       "changed": 0,
       "removed": 0,
