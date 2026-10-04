@@ -1,0 +1,88 @@
+{
+  "schema_version": 2,
+  "run_id": "20261004T060801Z-c9103386",
+  "generated_at": "2026-10-04T06:08:01.500156+00:00",
+  "sources": [
+    {
+      "id": "eba-full-site",
+      "name": "European Banking Authority \u2014 Full Public Site",
+      "regulator": "European Banking Authority",
+      "seeds": [
+        "https://www.eba.europa.eu/",
+        "https://www.eba.europa.eu/homepage"
+      ],
+      "allowed_prefixes": [
+        "https://www.eba.europa.eu/"
+      ],
+      "initial_baseline": true
+    }
+  ],
+  "counts": {
+    "ai_deferred": 0,
+    "ai_error": 0,
+    "ai_invalid": 0,
+    "ai_ok": 0,
+    "baseline_migration": 0,
+    "changed": 0,
+    "crawl_degraded": 0,
+    "crawl_failed": 0,
+    "crawl_paused": 1,
+    "discovered": 46095,
+    "discovery_incomplete": 1,
+    "extraction_error": 0,
+    "fetch_error": 0,
+    "forced_full_fetch": 0,
+    "new": 0,
+    "not_modified": 0,
+    "relevance_candidates": 0,
+    "removed": 0,
+    "unchanged": 0
+  },
+  "discovery": [
+    {
+      "source_id": "eba-full-site",
+      "method": "http-resumable",
+      "state": "PAUSED",
+      "discovered": 46095,
+      "html_processed": 24044,
+      "successful_pages": 23988,
+      "failed_pages": 56,
+      "capped": false,
+      "pending": 2193,
+      "unresolved_failures": 56,
+      "checkpoint_schema_version": 2,
+      "config_fingerprint": "5d6f22783987407cd455a6f17fe4c41011d1b9c83a0125741f644aff1cdf80b2",
+      "inventory": "data/discovery/eba-full-site-inventory-*.txt",
+      "failure_ledger": "data/discovery/eba-full-site-failures.jsonl"
+    }
+  ],
+  "baseline_update_allowed": false,
+  "change_detector": {
+    "classification_hash": "normalized_hash",
+    "http_validators": "ETag/Last-Modified are optimization hints only"
+  },
+  "relevance_gate": {
+    "mode": "high_recall",
+    "ai_final_semantic_decision": true
+  },
+  "ai_contract": {
+    "required_keys": [
+      "relevant",
+      "topic",
+      "change_type",
+      "summary",
+      "impact",
+      "effective_date",
+      "affected_scope",
+      "actions",
+      "reason"
+    ],
+    "strict": true
+  },
+  "new_urls": [],
+  "changed_urls": [],
+  "removed_urls": [],
+  "baseline_migrations": [],
+  "events": [],
+  "ai_results": []
+}
