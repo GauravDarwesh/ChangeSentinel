@@ -2126,9 +2126,6 @@ https://www.eba.europa.eu/sites/default/files/2026-07/8acd6f25-2fd2-49ba-b086-db
 https://www.eba.europa.eu/sites/default/files/document_library//EBA%20Risk%20Reduction%20Package%20Roadmaps.docx.pdf
 https://www.eba.europa.eu/sites/default/files/documents/10180/2141905/3173de85-57fb-490d-8332-22292b0e3995/The%20DPM%20metamodel%20detail.pdf
 https://www.eba.europa.eu/sites/default/files/styles/large/public/2024-06/DPM%202.0%20timeline_1.png?itok=_23H0Rxm
-https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=contract_type%3A51
-https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=vacancy_publication_date%3A2025-07
-https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=vacancy_status%3Aopen
 https://www.eba.europa.eu/about-us/organisation/joint-committee/q-and-s
 https://www.eba.europa.eu/assets/adhoc23/bank_individual_results/EBA_Bond_AC_AT_9ZHRYM6F437SQJ6OUG95.pdf
 https://www.eba.europa.eu/assets/adhoc23/bank_individual_results/EBA_Bond_AC_AT_PQOH26KWDF7CG10L6792.pdf
@@ -4998,3 +4995,6 @@ https://www.eba.europa.eu/publications-and-media/press-releases/eba-sets-out-how
 https://www.eba.europa.eu/publications-and-media/press-releases/eba-strengthens-amlcft-supervision-eu-through-revised
 https://www.eba.europa.eu/publications-and-media/press-releases/eba-supports-eu-commissions-call-more-efficient-and-effective
 https://www.eba.europa.eu/publications-and-media/press-releases/eba-updates-impact-ifrs-9-banks-across-eu-and-highlights-current-implementation-issues
+https://www.eba.europa.eu/publications-and-media/press-releases/eba-welcomes-entry-force-framework-establishing-anti-money-laundering-and-countering-financing
+https://www.eba.europa.eu/publications-and-media/press-releases/ebas-monitoring-ifrs-9-implementation-eu-institutions
+https://www.eba.europa.eu/publications-and-media/press-releases/esas-highlight-money-laundering-and-terrorist-financing-risks-eu-financial-sector

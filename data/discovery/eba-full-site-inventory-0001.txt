@@ -1,6 +1,3 @@
-https://www.eba.europa.eu/publications-and-media/press-releases/eba-welcomes-entry-force-framework-establishing-anti-money-laundering-and-countering-financing
-https://www.eba.europa.eu/publications-and-media/press-releases/ebas-monitoring-ifrs-9-implementation-eu-institutions
-https://www.eba.europa.eu/publications-and-media/press-releases/esas-highlight-money-laundering-and-terrorist-financing-risks-eu-financial-sector
 https://www.eba.europa.eu/publications-and-media/press-releases/esas-strengthen-supervisory-cooperation-anti-money-laundering-supervision-payment-institutions
 https://www.eba.europa.eu/publications-and-media/press-releases/esma-and-eba-warn-investors-about-contracts-difference
 https://www.eba.europa.eu/publications-and-media/press-releases/reviewed-supervisors-overall-applied-ebas-recommendations-tax-integrity-and-dividend-arbitrage
@@ -4998,3 +4995,6 @@ https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_IT_815600E4
 https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_IT_J4CP7MHCXR8DAQMKIL78.pdf
 https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_IT_PSNL19R2RXX5U3QWHI44.pdf
 https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_529900GGYMNGRQTDOO93.pdf
+https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_549300NYKK9MWM7GGW15.pdf
+https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_BFXS5XCH7N0Y05NIXW11.pdf
+https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_DG3RU1DBUFHT4ZF9WN62.pdf
