@@ -1524,9 +1524,9 @@ https://www.eba.europa.eu/sites/default/files/2026-09/a0587412-3fc1-441f-8372-33
 https://www.eba.europa.eu/sites/default/files/2026-09/a4d48128-7a49-4219-994c-528e7603b4f5/cs.zip
 https://www.eba.europa.eu/sites/default/files/2026-09/afb8b0d1-179d-4d31-ac52-16c0ecd59314/Data%20Annex%20InteractiveRiskDashboard%20Q2%202026%20.xlsx
 https://www.eba.europa.eu/sites/default/files/2026-09/b4ebf81a-e0d3-4802-b849-38d1f985d71c/C_2024_8373_1_ANNEX_EN_V3_P1_3628534.XLSX
-https://www.eba.europa.eu/sites/default/files/2026-09/bbd4d90d-aa57-455f-b94a-e3c376a445cb/fi.zip
 https://www.eba.europa.eu/sites/default/files/2026-09/e5844aca-5785-449a-8874-1e91e7da7dff/3_-_eu_banking_sector_profitability_metrics_and_cost_of_risk.xlsx
 https://www.eba.europa.eu/sites/default/files/2026-09/e6b2f23f-bee1-485c-9683-fab5acd33a24/Credit%20Risk%20parameters%20annex%20-%20Q2%202026.xlsx
+https://www.eba.europa.eu/sites/default/files/2026-10/0263984d-aa62-4419-99eb-93b5d89842a5/SoCs%20-%20EFIF%20Meeting%2019%20May%202026.pdf
 https://www.eba.europa.eu/sites/default/files/2026-10/4f346169-4290-4970-8fa0-ea4c5dc81693/2026%2009%2030%20PMR%20Francois-Louis%20Michaud.pdf
 https://www.eba.europa.eu/sites/default/files/document_library/About%20Us/Annual%20Reports/2020/1013723/EBA%202020%20Annual%20Report.pdf
 https://www.eba.europa.eu/sites/default/files/document_library/About%20Us/Annual%20Reports/2021/1035237/EBA%202021%20Annual%20Report.pdf
@@ -2351,7 +2351,7 @@ https://www.eba.europa.eu/sites/default/files/documents/10180/210008/214fdc20-71
 https://www.eba.europa.eu/sites/default/files/documents/10180/2357155/ba64a064-7836-4d47-801b-66e56331430c/EBA%20Report%20on%20Asset%20Encumbrance.pdf
 https://www.eba.europa.eu/sites/default/files/documents/10180/2357155/d20e3b5b-dca8-457f-b838-b3717977a6d6/EBA%20Report%20on%20Funding%20Plans.pdf
 https://www.eba.europa.eu/sites/default/files/documents/10180/974844/e6e2a6ee-6708-4430-a506-5f68ff70736d/EBA%20Report%20on%20Asset%20Encumbrance-%20September%202015.pdf
-https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_status%3Aopen
+https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_publication_date%3A2025-07
 https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=vacancy_publication_date%3A2025-07&f%5B1%5D=vacancy_status%3Aopen
 https://www.eba.europa.eu/about-us/careers?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_publication_date%3A2025-07
 https://www.eba.europa.eu/about-us/careers?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_status%3Aopen

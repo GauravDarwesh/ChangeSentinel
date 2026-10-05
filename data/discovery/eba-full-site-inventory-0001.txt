@@ -2347,6 +2347,7 @@ https://www.eba.europa.eu/sites/default/files/2026-09/9682b8d4-4a24-44dd-a7ba-18
 https://www.eba.europa.eu/sites/default/files/2026-09/96e084c8-0a06-45e3-963c-73f94ae7c1a2/C_2025_8378_1_EN_annexe_acte_autonome_cp_part1_v7.pdf
 https://www.eba.europa.eu/sites/default/files/2026-09/a7e8eca9-0199-4eba-9674-262f128f5e1d/boa_2026_02_declaration_of_interest_2026_gerben_everts.pdf
 https://www.eba.europa.eu/sites/default/files/2026-09/acca9b2b-7742-49d2-9761-dc6fa926723c/it.zip
+https://www.eba.europa.eu/sites/default/files/2026-09/bbd4d90d-aa57-455f-b94a-e3c376a445cb/fi.zip
 https://www.eba.europa.eu/sites/default/files/2026-09/c0bba5ee-49d3-4d87-bc60-bb32a3496706/boa_2026_02_declaration_of_interest_2026_konstantions_sergakis_redacted.pdf
 https://www.eba.europa.eu/sites/default/files/2026-09/c4dc4ad6-e439-46fb-ac99-a6eddf3fcbde/boa_doi_2026_rudiger_veil_redacted.pdf
 https://www.eba.europa.eu/sites/default/files/2026-09/cb1f8df1-8bad-4bef-87b1-1c5b7318f469/sl.zip
@@ -2361,6 +2362,7 @@ https://www.eba.europa.eu/sites/default/files/document_library/Publications/Draf
 https://www.eba.europa.eu/sites/default/files/eba_legal_act_imports/1028350/Bank%20Recovery%20and%20Resolution%20Directive%20%28BRRD%29_17032022.txt
 https://www.eba.europa.eu/sites/default/files/eba_legal_act_imports/1028352/Capital%20Requirements%20Regulation%20%28CRR%29_17032022.txt
 https://www.eba.europa.eu/sites/default/files/eba_legal_act_imports/1028355/Capital%20Requirements%20Directive%20%28CRD%29_17032022.txt
+https://www.eba.europa.eu/sites/default/files/webform/documents/ddm-fileupload/898072/EBA%20Consultation%20-%20G-SIIs%20Methodology%20-%20August%202020.pdf
 https://www.eba.europa.eu/sites/default/files/webform/documents/ddm-fileupload/898102/2020-08-03_GLEIF-EBA-GSIIs-Submission_v1.3_final.pdf
 https://www.eba.europa.eu/sites/default/files/webform/documents/ddm-fileupload/898220/20200805_EBA_Consultation_GSIIs_identification_methodology_FBF_General%20Comments_uploaded.pdf
 https://www.eba.europa.eu/sites/default/files/webform/documents/ddm-fileupload/923641/BSG%20on%20EBA%20Discussion%20paper%20on%20the%20changes%20to%20the%20stress%20test-%20June%202020.pdf
@@ -2517,7 +2519,6 @@ https://www.eba.europa.eu/sites/default/files/2026-07/6ce57e21-1560-43db-aaf4-a5
 https://www.eba.europa.eu/sites/default/files/2026-07/8798241a-76da-4782-8b99-95ca0e22fd17/annex_xl_-_instructions_for_esg_disclsoures.docx
 https://www.eba.europa.eu/sites/default/files/2026-07/97607d83-3ceb-4309-b073-f8d39299aaf7/annex_xxx_-_disclosure_of_use_of_standardized_approach_and_internal_model_for_market_risk_instructions.docx
 https://www.eba.europa.eu/sites/default/files/2026-07/ac59dac0-b8ee-455c-80ac-5d119f2f16a2/P3DH%20IT%20solutions%20in%20all%20EU%20languages.zip
-https://www.eba.europa.eu/sites/default/files/2026-07/b0f0fe9d-d78d-4374-8e6a-ec878cef1a4f/annex_iv_-_annex_vi_disclosures_instructions_-_clean_2.docx
 https://www.eba.europa.eu/sites/default/files/2026-07/c81379ec-2742-4298-935b-71c7d402d70a/annex_i_-_templates_for_esg_prudential_disclosures_27.xlsx
 https://www.eba.europa.eu/sites/default/files/2026-07/ea8811e5-50f0-47d4-ba17-2331d62554f1/it_solutions_-_instructions_its_eu_2024_-3177_in_all_eu_languages.zip
 https://www.eba.europa.eu/sites/default/files/2026-07/eae6b153-c4b4-4ae8-91f4-57b204b9b97e/it_solutions_-_templates_in_all_eu_languages_zip_file.zip
@@ -4997,4 +4998,3 @@ https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_IT_PSNL19R2
 https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_529900GGYMNGRQTDOO93.pdf
 https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_549300NYKK9MWM7GGW15.pdf
 https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_BFXS5XCH7N0Y05NIXW11.pdf
-https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_DG3RU1DBUFHT4ZF9WN62.pdf
