@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261006T002541Z-a21f7643
-Generated: 2026-10-06T00:25:41.367555+00:00
+Run: 20261006T003812Z-f49c74ca
+Generated: 2026-10-06T00:38:12.932987+00:00
 
 ## Aggregate counts
 
@@ -16,7 +16,7 @@ Generated: 2026-10-06T00:25:41.367555+00:00
 | crawl_degraded | 0 |
 | crawl_failed | 0 |
 | crawl_paused | 1 |
-| discovered | 30388 |
+| discovered | 35465 |
 | discovery_incomplete | 1 |
 | extraction_error | 0 |
 | fetch_error | 0 |
@@ -32,7 +32,7 @@ Generated: 2026-10-06T00:25:41.367555+00:00
 ### European Banking Authority — Full Public Site
 
 - Regulator: European Banking Authority
-- Discovered: 30388
+- Discovered: 35465
 - Changed: 0
 - New: 0
 - Removed: 0
