@@ -1,4 +1,3 @@
-https://www.eba.europa.eu/publications-and-media/press-releases/esas-strengthen-supervisory-cooperation-anti-money-laundering-supervision-payment-institutions
 https://www.eba.europa.eu/publications-and-media/press-releases/esma-and-eba-warn-investors-about-contracts-difference
 https://www.eba.europa.eu/publications-and-media/press-releases/reviewed-supervisors-overall-applied-ebas-recommendations-tax-integrity-and-dividend-arbitrage
 https://www.eba.europa.eu/publications-and-media/press-releases/supervisors-should-learn-recent-cases-prevent-financial-crime-crypto-firms-eba-says
@@ -2337,6 +2336,7 @@ https://www.eba.europa.eu/sites/default/files/2026-09/47356031-7300-4e24-b798-ee
 https://www.eba.europa.eu/sites/default/files/2026-09/4ee5eb2f-331a-4649-99c3-8fdf77abf5ea/ga.zip
 https://www.eba.europa.eu/sites/default/files/2026-09/5ceb1c1f-3982-4157-a570-b9c8a1489c41/Notification%20on%20compensation%20case%20relating%20to%20Directive%202014_49_EU%20on%20deposit%20guarantee%20schemes%20%281%29.pdf
 https://www.eba.europa.eu/sites/default/files/2026-09/5fd8e009-e80c-46cb-9f06-a29912ffecd5/pt.zip
+https://www.eba.europa.eu/sites/default/files/2026-09/618b5588-e193-4fa8-b48f-ca9324d92f86/et.zip
 https://www.eba.europa.eu/sites/default/files/2026-09/69840388-40fb-4c85-a992-7580fcdb07c3/boa_2026_02_declaration_of_interest_2026_signed_david_ramos.pdf
 https://www.eba.europa.eu/sites/default/files/2026-09/69f2029d-e4c8-4e1f-b315-51677c402a29/hr.zip
 https://www.eba.europa.eu/sites/default/files/2026-09/817dfb05-780b-48e2-844e-dc3ca865db25/boa_-_declaration_marta_bozina_beros_16.6.2026_redacted.pdf
@@ -2345,7 +2345,6 @@ https://www.eba.europa.eu/sites/default/files/2026-09/8a921187-d83b-4b80-9862-83
 https://www.eba.europa.eu/sites/default/files/2026-09/92163c32-a50f-4733-b36f-216cd3e67837/lv.zip
 https://www.eba.europa.eu/sites/default/files/2026-09/9682b8d4-4a24-44dd-a7ba-18cab0493f00/boa_2026_02_declaration_of_interest_2026_czsc_redacted.pdf
 https://www.eba.europa.eu/sites/default/files/2026-09/96e084c8-0a06-45e3-963c-73f94ae7c1a2/C_2025_8378_1_EN_annexe_acte_autonome_cp_part1_v7.pdf
-https://www.eba.europa.eu/sites/default/files/2026-09/a7e8eca9-0199-4eba-9674-262f128f5e1d/boa_2026_02_declaration_of_interest_2026_gerben_everts.pdf
 https://www.eba.europa.eu/sites/default/files/2026-09/acca9b2b-7742-49d2-9761-dc6fa926723c/it.zip
 https://www.eba.europa.eu/sites/default/files/2026-09/bbd4d90d-aa57-455f-b94a-e3c376a445cb/fi.zip
 https://www.eba.europa.eu/sites/default/files/2026-09/c0bba5ee-49d3-4d87-bc60-bb32a3496706/boa_2026_02_declaration_of_interest_2026_konstantions_sergakis_redacted.pdf
@@ -2362,6 +2361,7 @@ https://www.eba.europa.eu/sites/default/files/document_library/Publications/Draf
 https://www.eba.europa.eu/sites/default/files/eba_legal_act_imports/1028350/Bank%20Recovery%20and%20Resolution%20Directive%20%28BRRD%29_17032022.txt
 https://www.eba.europa.eu/sites/default/files/eba_legal_act_imports/1028352/Capital%20Requirements%20Regulation%20%28CRR%29_17032022.txt
 https://www.eba.europa.eu/sites/default/files/eba_legal_act_imports/1028355/Capital%20Requirements%20Directive%20%28CRD%29_17032022.txt
+https://www.eba.europa.eu/sites/default/files/webform/documents/ddm-fileupload/898066/CFO%20NW_Response%20to%20EBA%20Consultation%20on%20GSII%20Methodology_200727_Final%20Draft.pdf
 https://www.eba.europa.eu/sites/default/files/webform/documents/ddm-fileupload/898072/EBA%20Consultation%20-%20G-SIIs%20Methodology%20-%20August%202020.pdf
 https://www.eba.europa.eu/sites/default/files/webform/documents/ddm-fileupload/898102/2020-08-03_GLEIF-EBA-GSIIs-Submission_v1.3_final.pdf
 https://www.eba.europa.eu/sites/default/files/webform/documents/ddm-fileupload/898220/20200805_EBA_Consultation_GSIIs_identification_methodology_FBF_General%20Comments_uploaded.pdf
@@ -2514,7 +2514,6 @@ https://www.eba.europa.eu/sites/default/files/2026-07/497a3f5f-1ebe-4385-8244-03
 https://www.eba.europa.eu/sites/default/files/2026-07/4cd139a0-6ff2-4b3e-98cf-5cb0dc844c3d/Table_layout_release%204.4%20%28re-uploaded%20on%2029%2007%202026%29.zip
 https://www.eba.europa.eu/sites/default/files/2026-07/4ff92546-1d0e-460d-8014-eb7f6c64bd2a/legal_act_its_in_all_eu_languages.zip
 https://www.eba.europa.eu/sites/default/files/2026-07/593b0443-35b4-4d43-9aa5-1709a397d80b/annex_xxix_-_disclosure_of_use_of_standardized_approach_and_internal_model_for_market_risk.xlsx
-https://www.eba.europa.eu/sites/default/files/2026-07/5e9aea8c-a257-44a9-99bd-f05c8491fc16/annex_iii_-_annex_v_disclosures_templates_-_clean_1.xlsx
 https://www.eba.europa.eu/sites/default/files/2026-07/6ce57e21-1560-43db-aaf4-a56b07650acc/IT%20solutions%20%28%20instructions%29%20until%20June%202026.DOCX
 https://www.eba.europa.eu/sites/default/files/2026-07/8798241a-76da-4782-8b99-95ca0e22fd17/annex_xl_-_instructions_for_esg_disclsoures.docx
 https://www.eba.europa.eu/sites/default/files/2026-07/97607d83-3ceb-4309-b073-f8d39299aaf7/annex_xxx_-_disclosure_of_use_of_standardized_approach_and_internal_model_for_market_risk_instructions.docx
@@ -2534,6 +2533,7 @@ https://www.eba.europa.eu/sites/default/files/2026-09/2dd4c137-d3db-4bd6-af91-f9
 https://www.eba.europa.eu/sites/default/files/2026-09/3c2e8bbb-2000-4868-855c-bca5a5a60da3/EBA%20MB%202026%20115%20rev.%201%20%28Final%20Minutes%20MB%20meeting%20on%2013%20May%202026%29-signed-ts.pdf
 https://www.eba.europa.eu/sites/default/files/2026-09/4440bfad-03b7-4e28-baea-7d1c751a8e37/boa_2026_02_declaration_of_interest_2026_signed_michele_siri.pdf
 https://www.eba.europa.eu/sites/default/files/2026-09/8d1a269e-c866-4893-b06b-fdae57732601/EBA%20BS%20BSG%202026%20006%20rev.%201%20%28Final%20Minutes%20of%20Joint%20BoS%20BSG%20meeting%20on%2021%20April%202026%29.pdf
+https://www.eba.europa.eu/sites/default/files/2026-09/a7e8eca9-0199-4eba-9674-262f128f5e1d/boa_2026_02_declaration_of_interest_2026_gerben_everts.pdf
 https://www.eba.europa.eu/sites/default/files/2026-09/b39346c3-8a83-4692-9839-104ca1612914/Micro_taxonomy_package.zip
 https://www.eba.europa.eu/sites/default/files/2026-09/b76b9462-6c49-43c0-92a3-57f46fd02211/%28up%20to%203.5%29%20EBA_validation_rules_2026-09-14.xlsx
 https://www.eba.europa.eu/sites/default/files/2026-09/f11bc628-1610-4ca6-add4-a47eab07b2d5/%28from%204.0%29%20EBA_validation_rules_2026-09-14.xlsx
@@ -2896,10 +2896,10 @@ https://www.eba.europa.eu/sites/default/files/documents/10180/2259345/44e3f7a7-3
 https://www.eba.europa.eu/sites/default/files/documents/10180/2259345/8a69aed9-3e58-4f81-bc4c-80a48e4c3779/Identification%20of%20EU%20bank%20business%20models%20-%20Marina%20Cernov%2C%20Teresa%20Urbano%20-%20June%202018.pdf
 https://www.eba.europa.eu/sites/default/files/documents/10180/2259345/deeabc6e-8ed5-49f2-a8e2-59b45c588903/Sharing%2520the%2520Pain%2520Credit%2520Supply%2520%2526%2520Real%2520Effects%2520of%2520Bank%2520Bail-ins%2520-%2520Thorsten%2520Beck%252C%2520Samuel%2520Da-Rocha-Lopes%252C%2520Andr%25C3%25A9%2520Silva%2520-%2520June%25202018.pdf
 https://www.eba.europa.eu/sites/default/files/2024-10/4b2319e6-2ddf-44b5-9c02-a47447653f1b/EBA%20remarks%20-%20ECON%20hearing%20October%202024.pdf
-https://www.eba.europa.eu/sites/default/files/2024-10/6fa9e46c-0ca0-4ad9-89e2-8b4229931850/XIV%20ENCUENTRO%20FINANCIERO%20Speech.pdf
 https://www.eba.europa.eu/sites/default/files/2025-02/1e4b0848-e9f0-40c4-bb0a-125a4c6ee0d2/keynote%20speech%20-%209th%20Annual%20Afore%20Consulting%20FinTech%20Conference.pdf
 https://www.eba.europa.eu/sites/default/files/2025-04/d60cb93d-70cf-41ff-ba36-68bfea3354ec/St%C3%A4rken%2C%20Herausforderungen%20und%20regulatorische%20Perspektiven.pdf
 https://www.eba.europa.eu/sites/default/files/2025-09/f2a45cc0-e5ce-4539-a55c-af379e34eb7c/Innovation%2C%20competition%20and%20security%20-%20Payments%20Tomorrow.pdf
+https://www.eba.europa.eu/sites/default/files/2025-11/9c6ba9c0-cc5a-4244-8fa4-1a021d706d07/JM%20Campa%20introductory%20remarks%20at%20the%20ECON%20hearing%20November%202025.pdf
 https://www.eba.europa.eu/publications-and-media/speeches/adam-farkas-speech-annual-conference-banking-union
 https://www.eba.europa.eu/publications-and-media/speeches/adam-farkas-speech-deutsche-bundesbank-conference-bank-business
 https://www.eba.europa.eu/publications-and-media/speeches/andrea-enria-hearing-italian-senate
@@ -2913,7 +2913,6 @@ https://www.eba.europa.eu/publications-and-media/speeches/andrea-enria-speech-ps
 https://www.eba.europa.eu/publications-and-media/speeches/andrea-enria-speech-regents-university-brrd
 https://www.eba.europa.eu/publications-and-media/speeches/andrea-enrias-introductory-remarks-imf-eba-colloquium-stress
 https://www.eba.europa.eu/publications-and-media/speeches/andrea-enrias-introductory-remarks-joint-esas-consumers-protection
-https://www.eba.europa.eu/publications-and-media/speeches/andrea-enrias-lectio-magistralis-university-padova-single-rulebook
 https://www.eba.europa.eu/publications-and-media/speeches/andrea-enrias-omfif-city-lecture
 https://www.eba.europa.eu/publications-and-media/speeches/andrea-enrias-opening-remarks-ebas-5th-anniversary-conference
 https://www.eba.europa.eu/publications-and-media/speeches/andrea-enrias-speech-3rd-iif-banking-union-conference
@@ -2990,6 +2989,7 @@ https://www.eba.europa.eu/publications-and-media/speeches/slavka-eley-speech-reg
 https://www.eba.europa.eu/publications-and-media/speeches/slavka-eleys-keynote-speech-ebf-cloud-banking-conference
 https://www.eba.europa.eu/publications-and-media/speeches/statement-jose-manuel-campa-chairperson-joint-committee-esas-annual
 https://www.eba.europa.eu/publications-and-media/speeches/strengthening-bank-capital-standards-eu-final-phase-basel-iii-implementation
+https://www.eba.europa.eu/publications-and-media/speeches/strengthening-supervisory-framework-healthy-strong-and-competitive-financial-sector
 https://www.eba.europa.eu/publications-and-media/speeches?page=0
 https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/internal-governance/joint-esma-and-eba-guidelines-assessment-suitability-members-management-body?phase=consultation
 https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/internal-governance/joint-esma-and-eba-guidelines-assessment-suitability-members-management-body?version=2012
@@ -3012,6 +3012,7 @@ https://www.eba.europa.eu/publications-and-media/press-releases/eba-and-esma-pub
 https://www.eba.europa.eu/publications-and-media/speeches/andrea-enrias-address-roubini-global-economics-breakfast-event
 https://www.eba.europa.eu/publications-and-media/speeches/andrea-enrias-intervention-ec-public-hearing-financial-supervision
 https://www.eba.europa.eu/publications-and-media/speeches/andrea-enrias-introductory-statement-italian-senate
+https://www.eba.europa.eu/publications-and-media/speeches/andrea-enrias-lectio-magistralis-university-padova-single-rulebook
 https://www.eba.europa.eu/publications-and-media/speeches/andrea-enrias-lectio-magistralis-university-trento-crisis-europe
 https://www.eba.europa.eu/publications-and-media/speeches/andrea-enrias-opening-remarks-joint-esas-consumer-protection-day
 https://www.eba.europa.eu/publications-and-media/speeches/andrea-enrias-opening-remarks-proportionality-workshop
@@ -4997,4 +4998,3 @@ https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_IT_J4CP7MHC
 https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_IT_PSNL19R2RXX5U3QWHI44.pdf
 https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_529900GGYMNGRQTDOO93.pdf
 https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_549300NYKK9MWM7GGW15.pdf
-https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_BFXS5XCH7N0Y05NIXW11.pdf

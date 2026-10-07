@@ -97,7 +97,7 @@ https://www.eba.europa.eu/publications-and-media/publications?document_type=5294
 https://www.eba.europa.eu/publications-and-media/speeches
 https://www.eba.europa.eu/publications-and-media/speeches/building-strong-simple-and-efficient-financial-system-europe
 https://www.eba.europa.eu/publications-and-media/speeches/efficiency-banking-regulation-and-supervision-ebas-mission
-https://www.eba.europa.eu/publications-and-media/speeches/introductory-statement-eba-chairperson-jose-manuel-campa-annual-hearing-committee-economic-and-0
+https://www.eba.europa.eu/publications-and-media/speeches/sense-urgency-commitment-and-hope-europes-banking-sector
 https://www.eba.europa.eu/publications-and-media/speeches/statement-eba-chair-francois-louis-michaud-ordinary-meeting-committee-economic-and-monetary-affairs
 https://www.eba.europa.eu/publications-and-media/speeches/vision-implementation-simplifying-eu-regulatory-and-supervisory-framework-banks
 https://www.eba.europa.eu/publications?document_type=250&media_topics=All&text=
@@ -127,10 +127,10 @@ https://www.eba.europa.eu/subscribe-to-email-alerts
 https://www.eba.europa.eu/about-us/budget/archive
 https://www.eba.europa.eu/about-us/careers/expert-positions
 https://www.eba.europa.eu/about-us/careers/vacancies/seconded-national-experts
-https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=contract_type%3A51
-https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=vacancy_publication_date%3A2025-07
-https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=vacancy_status%3Aopen
 https://www.eba.europa.eu/about-us/careers/young-talents-programme
+https://www.eba.europa.eu/about-us/careers?f%5B0%5D=contract_type%3A51
+https://www.eba.europa.eu/about-us/careers?f%5B0%5D=vacancy_publication_date%3A2025-07
+https://www.eba.europa.eu/about-us/careers?f%5B0%5D=vacancy_status%3Aopen
 https://www.eba.europa.eu/guidelines-internal-governance-second-revision
 https://www.eba.europa.eu/joint-esma-and-eba-guidelines-assessment-suitability-members-management-body-revised
 https://www.eba.europa.eu/publications-and-media/press-releases/eba-adopts-charter-diversity-and-inclusion
@@ -1515,7 +1515,6 @@ https://www.eba.europa.eu/sites/default/files/2026-09/4b1a588b-6782-4953-b0b3-39
 https://www.eba.europa.eu/sites/default/files/2026-09/4ea10809-5c95-478c-8559-f2fbf4445012/OJ_L_202601872_EN_TXT.pdf
 https://www.eba.europa.eu/sites/default/files/2026-09/4ea51481-815f-4b22-b1bb-dcf6da71c884/es.zip
 https://www.eba.europa.eu/sites/default/files/2026-09/60d72e9c-520d-4ba8-8b3d-a08f3148edab/1_-_eu_banking_sector_capital_ratios.xlsx
-https://www.eba.europa.eu/sites/default/files/2026-09/618b5588-e193-4fa8-b48f-ca9324d92f86/et.zip
 https://www.eba.europa.eu/sites/default/files/2026-09/7460856d-3ba5-4cc0-bed4-f67f79bd6133/da.zip
 https://www.eba.europa.eu/sites/default/files/2026-09/7797dc22-6354-4a58-b6b0-79bf2401ca05/C_2024_8373_F1_COMMISSION_IMPLEMENTING_REGULATION_EN_V4_P1_3628514.PDF
 https://www.eba.europa.eu/sites/default/files/2026-09/7b3bed28-1234-4b6b-92fe-4cc1b46720a2/Instructions.zip
@@ -1528,6 +1527,7 @@ https://www.eba.europa.eu/sites/default/files/2026-09/e5844aca-5785-449a-8874-1e
 https://www.eba.europa.eu/sites/default/files/2026-09/e6b2f23f-bee1-485c-9683-fab5acd33a24/Credit%20Risk%20parameters%20annex%20-%20Q2%202026.xlsx
 https://www.eba.europa.eu/sites/default/files/2026-10/0263984d-aa62-4419-99eb-93b5d89842a5/SoCs%20-%20EFIF%20Meeting%2019%20May%202026.pdf
 https://www.eba.europa.eu/sites/default/files/2026-10/4f346169-4290-4970-8fa0-ea4c5dc81693/2026%2009%2030%20PMR%20Francois-Louis%20Michaud.pdf
+https://www.eba.europa.eu/sites/default/files/2026-10/a979be24-c981-4f2c-8ba9-e6201022e81c/A%20sense%20of%20urgency%2C%20commitment%20and%20hope%20for%20Europe%E2%80%99s%20banking%20sector.pdf
 https://www.eba.europa.eu/sites/default/files/document_library/About%20Us/Annual%20Reports/2020/1013723/EBA%202020%20Annual%20Report.pdf
 https://www.eba.europa.eu/sites/default/files/document_library/About%20Us/Annual%20Reports/2021/1035237/EBA%202021%20Annual%20Report.pdf
 https://www.eba.europa.eu/sites/default/files/document_library/About%20Us/Annual%20Reports/2021/1045306/Executive%20Summary%20of%20the%202021%20Annual%20Report.pdf
@@ -1582,8 +1582,8 @@ https://www.eba.europa.eu/publications-and-media/speeches/europaische-banken-sta
 https://www.eba.europa.eu/publications-and-media/speeches/francois-louis-michauds-opening-speech-13th-eba-annual-policy-research-workshop
 https://www.eba.europa.eu/publications-and-media/speeches/innovation-competition-and-security-how-regulation-continues-shape-eu-payments-market
 https://www.eba.europa.eu/publications-and-media/speeches/introductory-statement-eba-chairperson-jose-manuel-campa-annual-hearing-committee-economic-and
+https://www.eba.europa.eu/publications-and-media/speeches/introductory-statement-eba-chairperson-jose-manuel-campa-annual-hearing-committee-economic-and-0
 https://www.eba.europa.eu/publications-and-media/speeches/new-frontier-financial-data-access-sharing-and-reporting-benefits-and-challenges
-https://www.eba.europa.eu/publications-and-media/speeches/strengthening-supervisory-framework-healthy-strong-and-competitive-financial-sector
 https://www.eba.europa.eu/publications-and-media/speeches?page=1
 https://www.eba.europa.eu/publications-and-media/speeches?page=2
 https://www.eba.europa.eu/publications-and-media/speeches?page=3
@@ -1684,7 +1684,6 @@ https://www.eba.europa.eu/publications-and-media/publications?document_type=257&
 https://www.eba.europa.eu/sites/default/files/2025-06/f0129d86-1428-48c1-8ed0-b9620f3157f4/JM%20Campa%20keynote%20speech%20at%20BCBS-BSCEE-FSI%20high-level%20meeting%20for%20European%20Supervisors%20.pdf
 https://www.eba.europa.eu/sites/default/files/2025-10/113fc2b0-46d6-4ea6-a8bd-13eff1ea0e1e/Jose%20Manuel%20Campa%20introdcutory%20remarks%20at%20the%20EBA%26SUERF%20conference.pdf
 https://www.eba.europa.eu/sites/default/files/2025-11/170da4c8-9b56-4fb0-ad60-94d433b7e866/Guidelines%20on%20environmental%20scenario%20analysis.pdf
-https://www.eba.europa.eu/sites/default/files/2025-11/9c6ba9c0-cc5a-4244-8fa4-1a021d706d07/JM%20Campa%20introductory%20remarks%20at%20the%20ECON%20hearing%20November%202025.pdf
 https://www.eba.europa.eu/sites/default/files/2025-12/28a8651c-3e1f-4e38-88aa-959185dd1043/Guidelines%20amending%20Guidelines%20on%20equivalence%20of%20confidentiality%20regimes.pdf
 https://www.eba.europa.eu/sites/default/files/2025-12/8862fcc9-c95c-4b83-91c3-a8ad36a1535f/Update%20on%20EBA%20Equivalence%20Monitoring.pdf
 https://www.eba.europa.eu/sites/default/files/2026-01/60ba0389-2d7a-46b7-96e8-9072c481d8ce/EIOPA-BoS-25-602%20-%20ESAs%20Final%20Report%20-%20Joint%20Guidelines%20on%20ESG%20Stress%20Testing.pdf
@@ -2352,8 +2351,8 @@ https://www.eba.europa.eu/sites/default/files/documents/10180/2357155/ba64a064-7
 https://www.eba.europa.eu/sites/default/files/documents/10180/2357155/d20e3b5b-dca8-457f-b838-b3717977a6d6/EBA%20Report%20on%20Funding%20Plans.pdf
 https://www.eba.europa.eu/sites/default/files/documents/10180/974844/e6e2a6ee-6708-4430-a506-5f68ff70736d/EBA%20Report%20on%20Asset%20Encumbrance-%20September%202015.pdf
 https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_publication_date%3A2025-07
-https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_status%3Aopen
 https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=vacancy_publication_date%3A2025-07&f%5B1%5D=vacancy_status%3Aopen
+https://www.eba.europa.eu/about-us/careers?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_publication_date%3A2025-07
 https://www.eba.europa.eu/about-us/careers?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_status%3Aopen
 https://www.eba.europa.eu/about-us/careers?f%5B0%5D=vacancy_publication_date%3A2025-07&f%5B1%5D=vacancy_status%3Aopen
 https://www.eba.europa.eu/sites/default/files/2026-02/677f0afd-9d86-4351-9760-5de15fe1f58e/EBA%20OD%2013%20-%20Policy%20Young%20talents%20programmes.pdf
@@ -4998,3 +4997,4 @@ https://www.eba.europa.eu/publications-and-media/press-releases/eba-updates-impa
 https://www.eba.europa.eu/publications-and-media/press-releases/eba-welcomes-entry-force-framework-establishing-anti-money-laundering-and-countering-financing
 https://www.eba.europa.eu/publications-and-media/press-releases/ebas-monitoring-ifrs-9-implementation-eu-institutions
 https://www.eba.europa.eu/publications-and-media/press-releases/esas-highlight-money-laundering-and-terrorist-financing-risks-eu-financial-sector
+https://www.eba.europa.eu/publications-and-media/press-releases/esas-strengthen-supervisory-cooperation-anti-money-laundering-supervision-payment-institutions

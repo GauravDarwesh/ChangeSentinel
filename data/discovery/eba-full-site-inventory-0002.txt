@@ -1,3 +1,4 @@
+https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_BFXS5XCH7N0Y05NIXW11.pdf
 https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_DG3RU1DBUFHT4ZF9WN62.pdf
 https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NL_JLP5FSPH9WPSHY3NIM24.pdf
 https://www.eba.europa.eu/assets/st21/bank_individual_results/EBA_ST_NO_549300GKFG0RYRRQ1414.pdf
@@ -4486,7 +4487,7 @@ https://www.eba.europa.eu/single-rule-book-qa/qna/view/publicId/2026_7994
 https://www.eba.europa.eu/single-rule-book-qa/rejected
 https://www.eba.europa.eu/single-rule-book-qa/search
 https://www.eba.europa.eu/single-rule-book-qa/under-review
-https://www.eba.europa.eu/about-us/careers/vacancies?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_publication_date%3A2025-07&f%5B2%5D=vacancy_status%3Aopen
+https://www.eba.europa.eu/about-us/careers?f%5B0%5D=contract_type%3A51&f%5B1%5D=vacancy_publication_date%3A2025-07&f%5B2%5D=vacancy_status%3Aopen
 https://www.eba.europa.eu/about-us/legal-and-policy-framework/compliance-eba-regulatory-products?page=3
 https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/anti-money-laundering-and-countering-financing-1?phase=consultation
 https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/anti-money-laundering-and-countering-financing-terrorism/guidelines-cooperation-and-information-exchange-between-prudential-supervisors-amlcft-supervisors?phase=consultation
@@ -4997,4 +4998,3 @@ https://www.eba.europa.eu/sites/default/files/2024-07/9fd4f7ea-1aaa-432d-a7dd-f5
 https://www.eba.europa.eu/sites/default/files/2024-07/9fd4f7ea-1aaa-432d-a7dd-f575e6c14f31/GL%20GCT%20for%20investment%20firms%20%28EBA%20GL%202024%2003%29_IT_COR.pdf
 https://www.eba.europa.eu/sites/default/files/2024-07/9fd4f7ea-1aaa-432d-a7dd-f575e6c14f31/GL%20GCT%20for%20investment%20firms%20%28EBA%20GL%202024%2003%29_LT_COR.pdf
 https://www.eba.europa.eu/sites/default/files/2024-07/9fd4f7ea-1aaa-432d-a7dd-f575e6c14f31/GL%20GCT%20for%20investment%20firms%20%28EBA%20GL%202024%2003%29_LV_COR.pdf
-https://www.eba.europa.eu/sites/default/files/2024-07/9fd4f7ea-1aaa-432d-a7dd-f575e6c14f31/GL%20GCT%20for%20investment%20firms%20%28EBA%20GL%202024%2003%29_MT.pdf
