@@ -1,82 +1,406 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- Force a fresh GitHub Pages publish after repository visibility change. -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Live regulatory monitoring operations console">
-<title>RegMonitor · Operations Console</title>
+<meta name="theme-color" content="#f4f7fb">
+<meta name="description" content="ChangeSentinel — monitored pages, stored snapshots and change history">
+<title>ChangeSentinel · Monitoring</title>
 <style>
-:root{color-scheme:dark;--bg:#071018;--panel:#0d1722;--line:#203040;--text:#eef6fb;--muted:#8195a7;--accent:#70ddff;--good:#65e5a3;--warn:#f3cd70;--bad:#ff8796}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 15% 0%,#173a4d55,transparent 30%),radial-gradient(circle at 100% 85%,#34305833,transparent 28%),var(--bg);color:var(--text);font:14px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:inherit;text-decoration:none}button,input,select{font:inherit}
-.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}.side{position:sticky;top:0;height:100vh;padding:18px 14px;border-right:1px solid var(--line);background:#08111bf2;backdrop-filter:blur(20px)}.brand{display:flex;gap:10px;align-items:center;padding:8px 8px 24px}.mark{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);border-radius:11px;color:var(--accent);font-weight:850}.brand-title{font-weight:820}.sub,.muted{color:var(--muted);font-size:11px}.navtitle{padding:9px;color:#607586;font-size:10px;text-transform:uppercase;letter-spacing:.13em}.nav{display:grid;gap:3px}.nav a{padding:10px;border-radius:10px;color:var(--muted)}.nav a:hover,.nav a.active{background:#fff1;color:var(--text)}.sidecard{position:absolute;left:14px;right:14px;bottom:16px;padding:12px;border:1px solid var(--line);border-radius:13px;background:#fff1;font-size:11px}
-.top{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 25px;min-height:68px;border-bottom:1px solid var(--line);background:#071018dd;backdrop-filter:blur(18px)}.crumb{font-size:12px;color:var(--muted)}.crumb strong{color:var(--text)}.actions{display:flex;gap:8px;align-items:center}.select,.btn,.input{border:1px solid var(--line);background:#fff1;color:var(--text);border-radius:10px;padding:8px 10px;outline:none}.select{min-width:190px}.btn{cursor:pointer;color:var(--muted)}.btn:hover{color:var(--text);background:#fff2}.status{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:7px 10px;color:var(--muted);font-size:11px}.dot{width:8px;height:8px;border-radius:50%;background:var(--good)}.dot.warn{background:var(--warn)}.dot.bad{background:var(--bad)}
-.wrap{width:min(1540px,calc(100% - 50px));margin:auto;padding:26px 0 42px}.hero{display:flex;justify-content:space-between;gap:25px;align-items:flex-end;margin-bottom:17px}.eyebrow{color:var(--accent);font-size:11px;text-transform:uppercase;letter-spacing:.14em;font-weight:800}h1{margin:6px 0 8px;font-size:clamp(31px,5vw,52px);line-height:.95;letter-spacing:-.055em}.hero p{margin:0;max-width:820px;color:var(--muted)}.tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.tag{border:1px solid var(--line);border-radius:999px;padding:7px 10px;color:var(--muted);font-size:11px}
-.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.card{border:1px solid var(--line);border-radius:17px;background:linear-gradient(180deg,#fff4,#fff1),var(--panel);overflow:hidden}.metric{padding:15px;min-height:113px}.metriclabel{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.09em}.metricvalue{margin-top:12px;font-size:29px;font-weight:850;letter-spacing:-.05em}.metricfoot{margin-top:5px;color:#607586;font-size:10px}.accent{color:var(--accent)}.good{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}
-.row2{display:grid;grid-template-columns:1.4fr .8fr;gap:10px;margin-top:10px}.head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid var(--line)}.title{font-weight:780}.body{padding:15px}.bars{display:grid;gap:12px}.bar{display:grid;grid-template-columns:90px 1fr 42px;gap:9px;align-items:center;font-size:10px}.track{height:9px;border-radius:99px;background:#fff1;overflow:hidden}.fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#4bbad544,#70ddffee);transition:width .35s}.stategrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.state{padding:10px;border:1px solid var(--line);border-radius:11px;background:#fff1}.state b{display:block;margin-top:4px;font-size:11px}.tiny{font-size:9px;color:#607586;text-transform:uppercase;letter-spacing:.08em}
-.section{margin-top:10px}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 15px;border-bottom:1px solid var(--line)}.grow{flex:1 1 280px}.count{margin-left:auto;color:var(--muted);font-size:10px}.events{display:grid;gap:8px;padding:11px 15px 15px}.event{border:1px solid var(--line);border-radius:13px;background:#fff1;overflow:hidden}.eventmain{display:grid;grid-template-columns:105px minmax(0,1fr) auto;gap:12px;padding:12px}.etype{font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.08em}.changed{color:var(--accent)}.new{color:var(--good)}.removed{color:var(--warn)}.error{color:var(--bad)}.topic{font-weight:760}.url{margin-top:2px;color:var(--muted);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.summary{margin-top:7px;font-size:12px}.reason{margin-top:4px;color:var(--muted);font-size:10px}.sideinfo{text-align:right;color:#607586;font-size:10px}.links{display:flex;gap:7px;justify-content:flex-end;margin-top:6px}.links a{color:var(--accent)}.details{display:none;border-top:1px solid var(--line);padding:11px 12px}.event.open .details{display:block}.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.dbox{padding:9px;border:1px solid var(--line);border-radius:10px;background:#fff1}.dbox b{display:block;color:#607586;font-size:9px;text-transform:uppercase;letter-spacing:.08em}.dbox div{margin-top:3px;font-size:11px;white-space:pre-wrap}.toggle{border:0;background:none;color:var(--muted);cursor:pointer;padding:4px 0}
-.tablewrap{overflow:auto}table{width:100%;min-width:930px;border-collapse:collapse;font-size:11px}th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:9px;color:#607586;text-transform:uppercase;letter-spacing:.08em}td.urlcell{max-width:520px;word-break:break-word;color:var(--muted)}.pill{display:inline-flex;padding:3px 7px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:9px}
-.history{display:grid;grid-template-columns:1fr 1fr;gap:8px}.run{padding:11px;border:1px solid var(--line);border-radius:11px;background:#fff1}.runtop{display:flex;justify-content:space-between;gap:10px}.runname{font-weight:750;font-size:12px}.runmeta{color:var(--muted);font-size:9px}.counts{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.cp{padding:4px 6px;border-radius:7px;border:1px solid var(--line);font-size:9px;color:var(--muted)}.empty{padding:23px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:11px}.footer{display:flex;justify-content:space-between;gap:10px;padding-top:14px;color:#607586;font-size:10px}
-@media(max-width:1150px){.app{grid-template-columns:70px 1fr}.side{padding:14px 8px}.brand{justify-content:center}.brandcopy,.navtitle,.navtext,.sidecard{display:none}.nav a{text-align:center}.grid{grid-template-columns:repeat(3,1fr)}.row2{grid-template-columns:1fr}.wrap{width:calc(100% - 30px)}}@media(max-width:700px){.app{display:block}.side{display:none}.top{padding:10px 12px}.wrap{width:calc(100% - 16px);padding-top:16px}.hero{flex-direction:column;align-items:flex-start}.tags{justify-content:flex-start}.grid{grid-template-columns:repeat(2,1fr)}.eventmain{grid-template-columns:1fr}.sideinfo{text-align:left}.links{justify-content:flex-start}.dgrid,.stategrid,.history{grid-template-columns:1fr}}
+:root{color-scheme:light;--bg:#f3f6fb;--surface:#fff;--surface-2:#f8fafc;--ink:#17243a;--muted:#697891;--muted-2:#8a96a9;--line:#e3e9f1;--blue:#3369e8;--blue-2:#eaf0ff;--blue-3:#244fc0;--green:#16845d;--green-bg:#e8f8f0;--amber:#a85a0b;--amber-bg:#fff3df;--red:#b42334;--red-bg:#fff0f1;--shadow:0 8px 28px rgba(26,44,75,.055);--radius:16px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}.hidden{display:none!important}.app{min-height:100vh;display:grid;grid-template-columns:236px minmax(0,1fr)}.sidebar{position:sticky;top:0;height:100vh;background:#14233c;color:#e9eef9;padding:23px 14px 16px;display:flex;flex-direction:column;gap:20px}.brand{display:flex;align-items:center;gap:11px;padding:0 9px 14px}.brand-mark{width:35px;height:35px;border-radius:11px;background:#4f7df1;display:grid;place-items:center;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 15px #0b153755}.brand-name{font-size:16px;font-weight:850;letter-spacing:-.03em}.brand-sub{font-size:10px;color:#9eacc5;margin-top:1px;letter-spacing:.025em}.side-label{padding:0 11px;color:#8798b6;text-transform:uppercase;font-size:10px;font-weight:800;letter-spacing:.12em;margin-bottom:6px}.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:#c1cde0;border-radius:10px;padding:10px 11px;display:flex;align-items:center;gap:12px;text-align:left;width:100%;transition:background .15s,color .15s}.nav button:hover{background:#ffffff0c;color:#fff}.nav button.active{background:#ffffff18;color:#fff;font-weight:750;box-shadow:inset 3px 0 #8db0ff}.nav-icon{width:18px;text-align:center;font-size:16px}.nav-count{margin-left:auto;color:#aebfdd;font-size:11px}.side-spacer{flex:1}.scope-card{border:1px solid #ffffff1a;background:#ffffff08;border-radius:13px;padding:13px}.scope-top{display:flex;gap:8px;align-items:center;color:#eaf1ff;font-weight:700;font-size:12px}.live-dot{width:7px;height:7px;background:#48d7a0;box-shadow:0 0 0 4px #48d7a01c;border-radius:50%;flex:none}.scope-card p{margin:8px 0 0;color:#9dabc5;font-size:11px;line-height:1.55}.side-foot{font-size:10px;color:#8798b6;padding:0 9px}.main{min-width:0}.topbar{height:67px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 30px;background:#ffffffd9;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;backdrop-filter:blur(16px)}.crumb{color:var(--muted);font-size:12px}.crumb b{color:var(--ink);font-weight:750}.top-actions{display:flex;align-items:center;gap:10px}.system-status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;white-space:nowrap}.system-status .live-dot{width:7px;height:7px;box-shadow:none}.refresh-btn,.outline-btn,.primary-btn{border:1px solid var(--line);background:white;color:var(--ink);border-radius:10px;padding:8px 11px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:.15s}.refresh-btn:hover,.outline-btn:hover{border-color:#b7c6e0;background:#f8faff}.primary-btn{border-color:var(--blue);background:var(--blue);color:#fff}.primary-btn:hover{background:var(--blue-3);text-decoration:none}.page{max-width:1640px;margin:0 auto;padding:29px 30px 42px}.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:22px;margin-bottom:22px}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--blue);font-weight:850}.page h1{font-size:30px;letter-spacing:-.055em;line-height:1.15;margin:5px 0 8px}.page-head p{margin:0;color:var(--muted);max-width:660px;font-size:13px}.source-chip{background:var(--blue-2);color:var(--blue-3);border:1px solid #d8e3ff;border-radius:999px;padding:8px 11px;font-size:11px;font-weight:750;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}.source-chip:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--blue)}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}.metric{padding:15px 17px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0}.metric-top{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--muted);font-size:11px;font-weight:650}.metric-icon{width:28px;height:28px;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;color:#526786;font-size:14px}.metric-value{font-size:27px;line-height:1.2;letter-spacing:-.05em;font-weight:850;margin-top:11px}.metric-note{font-size:10px;color:var(--muted-2);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.workspace{display:grid;grid-template-columns:minmax(285px,355px) minmax(0,1fr);gap:15px;align-items:stretch;min-height:640px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0;overflow:hidden}.monitor-panel{display:flex;flex-direction:column}.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:17px 17px 13px;border-bottom:1px solid var(--line)}.panel-title{font-size:14px;font-weight:850;letter-spacing:-.02em}.panel-subtitle{font-size:11px;color:var(--muted);margin-top:3px}.small-count{color:var(--muted);background:var(--surface-2);border:1px solid var(--line);padding:4px 7px;border-radius:7px;font-size:10px;font-weight:750;white-space:nowrap}.search-wrap{position:relative;padding:13px 14px 10px}.search-icon{position:absolute;left:27px;top:23px;color:#8996aa;font-size:14px}.search-input{width:100%;border:1px solid var(--line);background:#f9fbfd;border-radius:10px;padding:10px 12px 10px 34px;outline:none;color:var(--ink);font-size:12px}.search-input:focus{border-color:#9cb5fb;box-shadow:0 0 0 3px #3369e814}.filter-row{display:flex;gap:6px;padding:0 14px 11px;flex-wrap:wrap}.filter-btn{border:1px solid transparent;background:transparent;padding:5px 9px;border-radius:8px;color:var(--muted);font-size:10px;font-weight:750}.filter-btn:hover{background:#f2f5fa}.filter-btn.active{background:var(--blue-2);color:var(--blue-3);border-color:#d8e3ff}.monitor-list{display:grid;align-content:start;gap:5px;padding:0 9px 12px;overflow:auto;max-height:700px}.monitor-row{width:100%;border:1px solid transparent;background:transparent;border-radius:12px;padding:12px 11px;text-align:left;color:var(--ink);display:block;transition:background .15s,border-color .15s}.monitor-row:hover{background:#f7f9fd}.monitor-row.selected{background:#eff4ff;border-color:#d8e4ff}.monitor-row-top{display:flex;align-items:flex-start;gap:9px}.status-icon{width:26px;height:26px;border-radius:9px;background:var(--green-bg);color:var(--green);display:grid;place-items:center;flex:none;font-size:13px;font-weight:900}.status-icon.warning{background:var(--amber-bg);color:var(--amber)}.status-icon.error{background:var(--red-bg);color:var(--red)}.monitor-row-info{min-width:0;flex:1}.monitor-name{font-size:12px;font-weight:800;line-height:1.35;letter-spacing:-.01em}.monitor-url{color:var(--muted);font-size:10px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.monitor-row-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 0 35px}.status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 7px;border-radius:999px;background:var(--green-bg);color:var(--green);font-size:9px;font-weight:800;white-space:nowrap}.status-pill:before{content:"";width:5px;height:5px;background:currentColor;border-radius:50%}.status-pill.warning{background:var(--amber-bg);color:var(--amber)}.status-pill.error{background:var(--red-bg);color:var(--red)}.row-time{font-size:9px;color:var(--muted-2);white-space:nowrap}.detail-panel{display:flex;flex-direction:column;min-height:640px}.detail-header{padding:20px 22px 16px;border-bottom:1px solid var(--line)}.detail-topline{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.detail-title-wrap{min-width:0}.detail-kicker{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:800}.detail-title{margin:5px 0 6px;font-size:20px;line-height:1.25;letter-spacing:-.04em;overflow-wrap:anywhere}.detail-url{font-size:11px;color:var(--muted);overflow-wrap:anywhere}.detail-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}.detail-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:14px}.meta-chip{font-size:10px;color:#596983;background:#f6f8fb;border:1px solid var(--line);padding:5px 8px;border-radius:7px}.tabs{display:flex;align-items:center;gap:5px;padding:0 19px;border-bottom:1px solid var(--line);background:#fcfdff;overflow:auto}.tab-btn{position:relative;border:0;background:none;color:var(--muted);font-size:11px;font-weight:800;padding:13px 10px;white-space:nowrap}.tab-btn.active{color:var(--blue)}.tab-btn.active:after{content:"";height:2px;position:absolute;left:9px;right:9px;bottom:-1px;background:var(--blue);border-radius:99px}.detail-body{flex:1;min-height:400px;padding:0}.snapshot-toolbar{padding:12px 22px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fbfcfe;border-bottom:1px solid var(--line)}.snapshot-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800}.file-icon{width:25px;height:29px;background:white;border:1px solid #dbe3ef;border-radius:5px;display:grid;place-items:center;color:var(--blue);font-size:12px}.snapshot-sub{color:var(--muted);font-size:10px;margin-top:2px;font-weight:500}.snapshot-notice{margin:15px 22px 0;background:#f3f7ff;border:1px solid #dce7ff;border-radius:10px;padding:10px 12px;color:#53678c;font-size:10px;display:flex;gap:8px;align-items:flex-start}.snapshot-content{padding:23px 27px 34px;max-width:1000px;margin:0 auto;color:#2b374b;font-size:13px;line-height:1.85;white-space:pre-wrap;overflow-wrap:anywhere;min-height:340px}.snapshot-content.loading{color:var(--muted)}.snapshot-content .doc-line{margin:0 0 9px}.snapshot-content .doc-line:first-child{font-size:18px;font-weight:850;color:#1d2b42;line-height:1.4;margin-bottom:15px}.snapshot-content .doc-line.section-line{font-weight:800;color:#2c3f5e;margin-top:14px}.snapshot-content .doc-line.date-line{font-weight:800;color:#344c70;margin-top:19px;border-top:1px solid #e9eef5;padding-top:12px}.empty-state{display:grid;place-items:center;min-height:320px;padding:35px;text-align:center;color:var(--muted)}.empty-icon{width:48px;height:48px;border:1px solid var(--line);background:var(--surface-2);border-radius:15px;display:grid;place-items:center;font-size:21px;color:#7c8da9;margin:0 auto 13px}.empty-title{font-weight:850;color:var(--ink);font-size:13px;margin-bottom:5px}.empty-copy{font-size:11px;max-width:350px;line-height:1.65}.change-list{display:grid;gap:10px;padding:18px 20px}.change-card{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}.change-card-top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.change-type{font-size:10px;font-weight:900;letter-spacing:.05em;color:var(--blue)}.change-summary{margin-top:6px;font-size:12px;line-height:1.55}.change-time{font-size:10px;color:var(--muted);white-space:nowrap}.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:20px}.detail-cell{border:1px solid var(--line);background:#fafbfd;border-radius:11px;padding:12px;min-width:0}.detail-cell label{display:block;font-size:9px;font-weight:850;color:var(--muted);text-transform:uppercase;letter-spacing:.09em}.detail-cell div{font-size:11px;margin-top:6px;overflow-wrap:anywhere;word-break:break-word;color:#2b3b54}.hash{font:10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}.route-view{min-width:0}.route-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.route-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}.route-title{font-weight:850;font-size:14px}.route-sub{font-size:11px;color:var(--muted);margin-top:3px}.route-items{padding:9px 14px;display:grid;gap:6px}.route-event{width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:11px;padding:13px;display:flex;gap:12px;align-items:flex-start}.route-event:hover{background:#f8faff;border-color:#cad8f8}.route-event-main{flex:1;min-width:0}.route-event-title{font-size:12px;font-weight:800}.route-event-url{font-size:10px;color:var(--muted);overflow-wrap:anywhere;margin-top:4px}.route-event-meta{font-size:10px;color:var(--muted-2);margin-top:6px}.run-row{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--line);border-radius:11px;background:#fff}.run-mark{width:35px;height:35px;display:grid;place-items:center;border-radius:10px;background:#edf3ff;color:var(--blue);font-size:15px;flex:none}.run-main{min-width:0;flex:1}.run-title{font-size:12px;font-weight:800;overflow-wrap:anywhere}.run-sub{font-size:10px;color:var(--muted);margin-top:4px}.run-counts{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.run-count{font-size:9px;color:#5c6e88;border:1px solid var(--line);background:#fafbfd;border-radius:6px;padding:3px 6px}.run-source{font-size:9px;background:#f2f4f8;color:#66748a;padding:4px 7px;border-radius:999px;white-space:nowrap}.page-footer{margin-top:18px;display:flex;justify-content:space-between;gap:15px;color:var(--muted-2);font-size:10px}.error-banner{padding:12px 14px;border:1px solid #ffd6d9;background:var(--red-bg);color:var(--red);border-radius:10px;font-size:11px;margin-bottom:13px}
+@media(min-width:1500px){.workspace{grid-template-columns:365px minmax(0,1fr)}}@media(max-width:1100px){.app{grid-template-columns:76px minmax(0,1fr)}.sidebar{padding:20px 9px}.brand{padding:0 10px 12px;justify-content:center}.brand-copy,.side-label,.nav-label,.nav-count,.scope-card,.side-foot{display:none}.nav button{justify-content:center;padding:12px 8px}.nav button.active{box-shadow:inset 0 -3px #8db0ff}.page{padding:23px 18px 35px}.topbar{padding:0 18px}.workspace{grid-template-columns:minmax(260px,310px) minmax(0,1fr)}.detail-actions{max-width:180px}}@media(max-width:780px){.app{display:block}.sidebar{position:sticky;height:auto;top:0;z-index:20;flex-direction:row;align-items:center;padding:8px 10px;gap:12px;border-bottom:1px solid #263854}.brand{padding:0 4px;justify-content:flex-start}.brand-mark{width:29px;height:29px;border-radius:9px;font-size:15px}.brand-name{font-size:13px}.brand-sub{display:none}.nav{display:flex;flex:1;justify-content:flex-end}.nav button{width:auto;padding:8px 10px;gap:6px}.nav-label{display:inline;font-size:10px}.nav-icon{font-size:14px;width:auto}.nav-count,.side-spacer,.scope-card,.side-foot,.side-label{display:none}.topbar{height:52px;padding:0 13px}.page{padding:18px 12px 28px}.page-head{align-items:flex-start;flex-direction:column;gap:12px;margin-bottom:17px}.page h1{font-size:25px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.metric{padding:12px}.metric-value{font-size:23px}.workspace{grid-template-columns:minmax(0,1fr);min-height:0}.monitor-panel{max-height:none}.monitor-list{max-height:320px}.detail-panel{min-height:500px}.detail-header{padding:16px}.detail-topline{flex-direction:column}.detail-actions{max-width:none;justify-content:flex-start}.detail-title{font-size:18px}.snapshot-content{padding:18px;font-size:12px}.snapshot-notice{margin:12px}.detail-grid{grid-template-columns:1fr;padding:14px}.system-status{display:none}.page-footer{flex-direction:column}.run-row{align-items:flex-start}.run-source{display:none}}@media(max-width:430px){.nav button{padding:8px 7px}.nav-label{font-size:9px}.brand{gap:7px}.page h1{font-size:23px}.metric-note{white-space:normal}.source-chip{font-size:10px}.top-actions{gap:6px}.refresh-btn{padding:7px 9px}.route-event{padding:10px}}
 </style>
 </head>
 <body>
 <div class="app">
-<aside class="side">
-  <div class="brand"><div class="mark">RM</div><div class="brandcopy"><div class="brand-title">RegMonitor</div><div class="sub">Regulatory intelligence</div></div></div>
-  <div class="navtitle">Console</div><nav class="nav"><a class="active" href="#overview">⌂ <span class="navtext">Overview</span></a><a href="#events">◈ <span class="navtext">Events</span></a><a href="#inventory">☷ <span class="navtext">Inventory</span></a><a href="#history">◷ <span class="navtext">History</span></a></nav>
-  <div class="navtitle">External</div><nav class="nav"><a href="https://github.com/GauravDarwesh/ChangeSentinel" target="_blank" rel="noopener">◉ <span class="navtext">Repository</span></a><a href="https://www.eba.europa.eu/" target="_blank" rel="noopener">↗ <span class="navtext">Regulator</span></a></nav>
-  <div class="sidecard"><div class="tiny">Engine model</div><strong style="display:block;margin-top:5px">Deterministic first</strong><div class="sub" style="margin-top:4px">AI analyzes evidence after technical change detection.</div></div>
-</aside>
-<section class="main">
-<header class="top"><div class="crumb"><strong>Regulatory Monitoring</strong> / Operations console</div><div class="actions"><select id="source" class="select"><option value="ALL">All sources</option></select><div class="status"><span id="dot" class="dot"></span><span id="status">Connecting…</span></div><button class="btn" id="refresh">Refresh</button></div></header>
-<main class="wrap" id="overview">
-<section class="hero"><div><div class="eyebrow">Monitoring engine v2</div><h1>Change intelligence,<br>not a report.</h1><p>Live crawler state, normalized diffs, audit evidence, AI interpretation and operational history in one console.</p></div><div class="tags"><span id="checked" class="tag">Checked —</span><span id="run" class="tag">Run —</span></div></section>
-<section class="grid">
-<div class="card metric"><div class="metriclabel">URLs discovered</div><div id="m0" class="metricvalue">—</div><div class="metricfoot">Current inventory</div></div>
-<div class="card metric"><div class="metriclabel">Changed</div><div id="m1" class="metricvalue accent">—</div><div class="metricfoot">Normalized content diff</div></div>
-<div class="card metric"><div class="metriclabel">New</div><div id="m2" class="metricvalue good">—</div><div class="metricfoot">Newly discovered</div></div>
-<div class="card metric"><div class="metriclabel">Removed</div><div id="m3" class="metricvalue warn">—</div><div class="metricfoot">No longer discoverable</div></div>
-<div class="card metric"><div class="metriclabel">Errors</div><div id="m4" class="metricvalue bad">—</div><div class="metricfoot">Fetch + extraction</div></div>
-<div class="card metric"><div class="metriclabel">AI reviewed</div><div id="m5" class="metricvalue">—</div><div class="metricfoot">Structured analysis</div></div>
-</section>
-<section class="row2">
-<article class="card"><div class="head"><div class="title">Latest run composition</div><div class="muted" id="composition">—</div></div><div class="body"><div class="bars">
-<div class="bar"><span>Unchanged</span><div class="track"><div id="b0" class="fill"></div></div><b id="v0">—</b></div>
-<div class="bar"><span>Changed</span><div class="track"><div id="b1" class="fill"></div></div><b id="v1">—</b></div>
-<div class="bar"><span>New</span><div class="track"><div id="b2" class="fill"></div></div><b id="v2">—</b></div>
-<div class="bar"><span>Removed</span><div class="track"><div id="b3" class="fill"></div></div><b id="v3">—</b></div>
-<div class="bar"><span>Errors</span><div class="track"><div id="b4" class="fill"></div></div><b id="v4">—</b></div>
-</div></div></article>
-<article class="card"><div class="head"><div class="title">System state</div><div class="muted">Live metadata</div></div><div class="body"><div class="stategrid">
-<div class="state"><div class="tiny">Sources</div><b id="s0">—</b></div><div class="state"><div class="tiny">Detector</div><b id="s1">—</b></div>
-<div class="state"><div class="tiny">AI contract</div><b id="s2">—</b></div><div class="state"><div class="tiny">Notifications</div><b id="s3">—</b></div>
-<div class="state"><div class="tiny">Snapshots</div><b>Normalized latest</b></div><div class="state"><div class="tiny">Evidence</div><b>Immutable event files</b></div>
-</div></div></article>
-</section>
-<section class="card section" id="events"><div class="head"><div class="title">Events & intelligence</div><div class="muted" id="eventCount">0 events</div></div><div class="toolbar"><input id="eventSearch" class="input grow" placeholder="Search event, topic, URL or event ID…"><select id="eventFilter" class="select"><option value="ALL">All event types</option><option value="CHANGED_URL">Changed</option><option value="NEW_URL">New</option><option value="REMOVED_URL">Removed</option><option value="FETCH_ERROR">Fetch error</option><option value="EXTRACTION_ERROR">Extraction error</option></select></div><div id="eventsList" class="events"><div class="empty">Loading…</div></div></section>
-<section class="card section" id="inventory"><div class="head"><div class="title">Monitored URL inventory</div><div class="muted" id="inventoryCount">0 URLs</div></div><div class="toolbar"><input id="inventorySearch" class="input grow" placeholder="Search URLs, status, type or hash…"><select id="inventoryFilter" class="select"><option value="ALL">All</option><option value="ACTIVE">Active</option><option value="ERROR">Errors</option></select></div><div class="tablewrap"><table><thead><tr><th>Status</th><th>Source</th><th>URL</th><th>HTTP</th><th>Type</th><th>Last checked</th><th>Hash</th></tr></thead><tbody id="rows"><tr><td colspan="7"><div class="empty">Loading…</div></td></tr></tbody></table></div></section>
-<section class="card section" id="history"><div class="head"><div class="title">Run history</div><div class="muted">Latest stored runs</div></div><div class="body"><div id="historyList" class="history"><div class="empty">Loading…</div></div></div></section>
-<footer class="footer"><span>Live state is fetched from main branch JSON and refreshes every 30 seconds.</span><span id="footer">—</span></footer>
-</main></section></div>
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">↗</div><div class="brand-copy"><div class="brand-name">ChangeSentinel</div><div class="brand-sub">Website change intelligence</div></div></div>
+    <div><div class="side-label">Workspace</div><nav class="nav">
+      <button class="active" data-view="monitors"><span class="nav-icon">▤</span><span class="nav-label">Monitored pages</span><span class="nav-count" id="navMonitorCount">—</span></button>
+      <button data-view="changes"><span class="nav-icon">◈</span><span class="nav-label">Change log</span><span class="nav-count" id="navChangeCount">—</span></button>
+      <button data-view="runs"><span class="nav-icon">◷</span><span class="nav-label">Run history</span></button>
+    </nav></div>
+    <div class="side-spacer"></div>
+    <div class="scope-card"><div class="scope-top"><span class="live-dot"></span><span id="sideSourceName">Loading source</span></div><p>Exact URL allowlist enabled. Only configured pages are monitored; saved text snapshots are retained in the repository.</p></div>
+    <div class="side-foot">ChangeSentinel · Evidence-first monitoring</div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div class="crumb"><span>Workspace</span> &nbsp;/&nbsp; <b id="breadcrumb">Monitored pages</b></div>
+      <div class="top-actions"><div class="system-status"><span class="live-dot" id="headerDot"></span><span id="connectionStatus">Connecting to stored data…</span></div><button class="refresh-btn" id="refreshBtn"><span>↻</span> Refresh</button></div>
+    </header>
+    <main class="page">
+      <div id="loadError" class="error-banner hidden"></div>
+      <section id="monitorsView">
+        <div class="page-head"><div><div class="eyebrow">Monitoring workspace</div><h1>Monitored pages</h1><p>Choose a page to open the saved document snapshot captured by the crawler. Live websites open separately, so you can always distinguish stored evidence from the current site.</p></div><div class="source-chip" id="sourceChip">Loading active source</div></div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-top"><span>Monitored pages</span><span class="metric-icon">▤</span></div><div class="metric-value" id="metricMonitors">—</div><div class="metric-note">Pages in the active allowlist</div></div>
+          <div class="metric"><div class="metric-top"><span>Changes this run</span><span class="metric-icon">↗</span></div><div class="metric-value" id="metricChanges">—</div><div class="metric-note">Detected change events</div></div>
+          <div class="metric"><div class="metric-top"><span>Fetch errors</span><span class="metric-icon">!</span></div><div class="metric-value" id="metricErrors">—</div><div class="metric-note">Pages requiring attention</div></div>
+          <div class="metric"><div class="metric-top"><span>Last completed scan</span><span class="metric-icon">◷</span></div><div class="metric-value" id="metricLast" style="font-size:17px;letter-spacing:-.025em">—</div><div class="metric-note" id="metricRunId">Latest stored report</div></div>
+        </div>
+        <div class="workspace">
+          <section class="panel monitor-panel">
+            <div class="panel-head"><div><div class="panel-title">Your monitors</div><div class="panel-subtitle">Select a URL to inspect its saved snapshot</div></div><div class="small-count" id="monitorCount">— pages</div></div>
+            <div class="search-wrap"><span class="search-icon">⌕</span><input id="monitorSearch" class="search-input" type="search" placeholder="Search monitored URLs…" autocomplete="off"></div>
+            <div class="filter-row"><button class="filter-btn active" data-filter="ALL">All pages</button><button class="filter-btn" data-filter="CHANGES">Changes</button><button class="filter-btn" data-filter="ERRORS">Errors</button></div>
+            <div id="monitorList" class="monitor-list"><div class="empty-state"><div><div class="empty-icon">↻</div><div class="empty-title">Loading monitors</div><div class="empty-copy">Fetching your saved monitoring state.</div></div></div></div>
+          </section>
+          <section class="panel detail-panel" id="detailPanel">
+            <div id="detailHeader" class="detail-header"><div class="empty-title">Choose a monitor</div><div class="empty-copy">Select a monitored page on the left to open its saved snapshot.</div></div>
+            <div id="detailTabs" class="tabs hidden">
+              <button class="tab-btn active" data-detail-tab="snapshot">Saved snapshot</button>
+              <button class="tab-btn" data-detail-tab="changes">Changes</button>
+              <button class="tab-btn" data-detail-tab="details">Page details</button>
+            </div>
+            <div id="detailBody" class="detail-body"><div class="empty-state"><div><div class="empty-icon">▧</div><div class="empty-title">Your document preview lives here</div><div class="empty-copy">Click one of the monitored pages to inspect its stored text snapshot without making another request to the regulator's website.</div></div></div></div>
+          </section>
+        </div>
+      </section>
+      <section id="changesView" class="route-view hidden">
+        <div class="page-head"><div><div class="eyebrow">Audit trail</div><h1>Change log</h1><p>Inspect changes and errors recorded by the latest monitoring run. A first baseline does not generate change alerts.</p></div><div class="source-chip" id="changeSourceChip">Active source</div></div>
+        <div class="route-card"><div class="route-head"><div><div class="route-title">Events from the latest run</div><div class="route-sub" id="changeSubtitle">Loading event records…</div></div><span class="small-count" id="changeCount">— events</span></div><div id="changeItems" class="route-items"><div class="empty-state">Loading events…</div></div></div>
+      </section>
+      <section id="runsView" class="route-view hidden">
+        <div class="page-head"><div><div class="eyebrow">Monitoring audit trail</div><h1>Run history</h1><p>Previous checks and their stored counts. The inactive EBA runs remain visible as historical records.</p></div><div class="source-chip" id="runSourceChip">Active source</div></div>
+        <div class="route-card"><div class="route-head"><div><div class="route-title">Recent runs</div><div class="route-sub">Newest first · historic EBA records are retained</div></div><span class="small-count" id="runCount">— runs</span></div><div id="runItems" class="route-items"><div class="empty-state">Loading history…</div></div></div>
+      </section>
+      <footer class="page-footer"><span>This interface opens stored crawler snapshots, not live documents. Use “Open live page” when you explicitly need the regulator’s current site.</span><span id="footerStamp">Data source: GitHub repository JSON</span></footer>
+    </main>
+  </div>
+</div>
 <script>
-const RAW="https://raw.githubusercontent.com/GauravDarwesh/ChangeSentinel/main";
-const END={report:RAW+"/data/report.json",inventory:RAW+"/data/latest.json",history:RAW+"/data/history/index.json",notifications:RAW+"/data/notifications.json"};
-let report={},inventory={},history=[],notifications={};
-const $=id=>document.getElementById(id), esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])), bust=u=>u+"?t="+Date.now();
-const rel=t=>{if(!t)return"—";const d=new Date(t);if(Number.isNaN(d.getTime()))return"—";const m=Math.floor(Math.max(0,Date.now()-d)/60000);return m<1?"just now":m<60?m+"m ago":Math.floor(m/60)<24?Math.floor(m/60)+"h ago":Math.floor(m/1440)+"d ago"};
-const fmt=t=>{if(!t)return"—";const d=new Date(t);return Number.isNaN(d.getTime())?t:d.toLocaleString()};
-const source=()=>$("source").value;
-function events(){return(report.events||[]).map(e=>{const r=(report.ai_results||[]).find(x=>x.event_id===e.event_id),a=r?.ai?.status==="ok"?r.ai.analysis:null;return{e,a,r}})}
-function renderKpis(c){$("m0").textContent=c.discovered??0;$("m1").textContent=c.changed??0;$("m2").textContent=c.new??0;$("m3").textContent=c.removed??0;$("m4").textContent=Number(c.fetch_error||0)+Number(c.extraction_error||0);$("m5").textContent=Number(c.ai_ok||0)+" / "+(Number(c.ai_ok||0)+Number(c.ai_invalid||0)+Number(c.ai_error||0)+Number(c.ai_deferred||0))}
-function renderBars(c){const t=Math.max(1,Number(c.discovered||0));[["Unchanged","unchanged"],["Changed","changed"],["New","new"],["Removed","removed"],["Errors","fetch_error"]].forEach((x,i)=>{$("b"+i).style.width=Math.min(100,Number(c[x[1]]||0)/t*100)+"%";$("v"+i).textContent=c[x[1]]??0});$("composition").textContent=(c.discovered||0)+" discovered"}
-function renderSystem(){const src=report.sources||[];$("s0").textContent=src.length+" configured";$("s1").textContent=report.change_detector?.classification_hash||"—";$("s2").textContent=report.ai_contract?.strict?"Strict 9-field schema":"—";$("s3").textContent=Object.keys(notifications.sent_events||{}).length+" sent";$("run").textContent="Run "+fmt(report.generated_at);$("footer").textContent="Generated "+fmt(report.generated_at)}
-function renderEvents(){const q=$("eventSearch").value.trim().toLowerCase(),f=$("eventFilter").value,s=source();let list=events().filter(x=>(f==="ALL"||x.e.event_type===f)&&(s==="ALL"||x.e.source_id===s));list=list.filter(x=>!q||JSON.stringify(x).toLowerCase().includes(q)).sort((a,b)=>new Date(b.e.timestamp)-new Date(a.e.timestamp));$("eventCount").textContent=list.length+" shown / "+events().length+" total";$("eventsList").innerHTML=list.length?list.map(x=>{const e=x.e,a=x.a||{},r=x.r||{};const k=({"CHANGED_URL":"changed","NEW_URL":"new","REMOVED_URL":"removed","FETCH_ERROR":"error","EXTRACTION_ERROR":"error"})[e.event_type]||"";const ev=e.evidence_location?'<a href="'+esc("https://github.com/GauravDarwesh/ChangeSentinel/blob/main/"+e.evidence_location)+'" target="_blank">Evidence ↗</a>':"";const link=e.url?'<a href="'+esc(e.url)+'" target="_blank">Regulator ↗</a>':"";const details=a&&a.topic?'<div class="dgrid"><div class="dbox"><b>Change type</b><div>'+esc(a.change_type)+'</div></div><div class="dbox"><b>Impact</b><div>'+esc(a.impact)+'</div></div><div class="dbox"><b>Effective date</b><div>'+esc(a.effective_date)+'</div></div><div class="dbox"><b>Affected scope</b><div>'+esc(a.affected_scope)+'</div></div><div class="dbox"><b>Actions</b><div>'+esc(a.actions)+'</div></div><div class="dbox"><b>AI reason</b><div>'+esc(a.reason)+'</div></div></div>':"";return'<article class="event"><div class="eventmain"><div class="etype '+k+'">'+esc(e.event_type)+'</div><div><div class="topic">'+esc(a.topic||e.event_type)+'</div><div class="url" title="'+esc(e.url||"")+'">'+esc(e.url||"(no URL)")+'</div><div class="summary">'+esc(a.summary||e.evidence?.error||"Event recorded by the monitoring engine.")+'</div><div class="reason">'+esc(a.reason||e.evidence?.error||"")+'</div></div><div class="sideinfo">'+esc(rel(e.timestamp))+'<div class="links">'+link+ev+'</div><button class="toggle" onclick="this.closest(\'.event\').classList.toggle(\'open\')">Details</button></div></div><div class="details">'+details+'</div></article>'}).join(""):'<div class="empty">No matching events.</div>'}
-function allInventory(){const groups=inventory.sources||{};if(Object.keys(groups).length)return Object.values(groups).flatMap(v=>Object.values(v));return Object.entries(inventory).filter(x=>x[0]!=="schema_version").map(x=>x[1])}
-function renderInventory(){const q=$("inventorySearch").value.trim().toLowerCase(),f=$("inventoryFilter").value,s=source();let list=allInventory().filter(x=>(s==="ALL"||x.source_id===s||!x.source_id)&& (f==="ALL"||(f==="ACTIVE"&&x.active!==false)||(f==="ERROR"&&(x.fetch_error||x.extraction_error)))&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$("inventoryCount").textContent=list.length+" shown / "+allInventory().length+" URLs";$("rows").innerHTML=list.length?list.sort((a,b)=>(a.canonical_url||"").localeCompare(b.canonical_url||"")).map(i=>'<tr><td><span class="pill">'+esc(i.fetch_error||i.extraction_error?"Error":"Active")+'</span></td><td>'+esc(i.source_id||"EBA")+'</td><td class="urlcell"><a href="'+esc(i.canonical_url)+'" target="_blank">'+esc(i.canonical_url)+'</a></td><td>'+esc(i.http_status??"—")+'</td><td>'+esc(i.extraction_type||i.content_type||"—")+'</td><td>'+esc(rel(i.last_checked))+'</td><td title="'+esc(i.normalized_hash||"")+'">'+esc(i.normalized_hash?i.normalized_hash.slice(0,12)+"…":"—")+'</td></tr>').join(""):'<tr><td colspan="7"><div class="empty">No matching URLs.</div></td></tr>'}
-function renderHistory(){const s=source(),list=history.filter(x=>s==="ALL"||x.source_id===s).slice(0,20);$("historyList").innerHTML=list.length?list.map(r=>'<div class="run"><div class="runtop"><div class="runname">'+esc(r.source_id)+'</div><div class="runmeta">'+esc(rel(r.generated_at))+'</div></div><div class="runmeta" style="margin-top:4px">'+esc(fmt(r.generated_at))+'</div><div class="counts">'+["discovered","changed","new","removed","fetch_error","ai_ok"].map(k=>'<span class="cp">'+k+': '+esc(r.counts?.[k]??0)+'</span>').join("")+"</div></div>").join(""):'<div class="empty">No history available.</div>'}
-function fillSources(){const ids=[...new Set((report.sources||[]).map(x=>x.id).concat(Object.keys(inventory.sources||{})))];$("source").innerHTML='<option value="ALL">All sources</option>'+ids.map(id=>'<option value="'+esc(id)+'">'+esc(id)+'</option>').join("")}
-async function load(){ $("dot").className="dot warn";$("status").textContent="Refreshing…";const t=new Date();try{const[r,i,h,n]=await Promise.all([fetch(bust(END.report),{cache:"no-store"}),fetch(bust(END.inventory),{cache:"no-store"}),fetch(bust(END.history),{cache:"no-store"}),fetch(bust(END.notifications),{cache:"no-store"}).catch(()=>null)]);if(!r.ok||!i.ok)throw Error("Monitoring state unavailable");report=await r.json();inventory=await i.json();history=h.ok?await h.json():[];notifications=n&&n.ok?await n.json():{};fillSources();renderKpis(report.counts||{});renderBars(report.counts||{});renderSystem();renderEvents();renderInventory();renderHistory();$("checked").textContent="Checked "+t.toLocaleTimeString();$("dot").className="dot";$("status").textContent="Live state connected"}catch(e){$("dot").className="dot bad";$("status").textContent="State unavailable";$("footer").textContent=e.message||String(e)}}
-$("refresh").onclick=load;$("source").onchange=()=>{renderEvents();renderInventory();renderHistory()};$("eventSearch").oninput=renderEvents;$("eventFilter").onchange=renderEvents;$("inventorySearch").oninput=renderInventory;$("inventoryFilter").onchange=renderInventory;load();setInterval(load,30000);
+"use strict";
+const RAW = "https://raw.githubusercontent.com/GauravDarwesh/ChangeSentinel/main";
+const REPO = "https://github.com/GauravDarwesh/ChangeSentinel";
+const ENDPOINTS = {
+  report: RAW + "/data/report.json",
+  inventory: RAW + "/data/latest.json",
+  history: RAW + "/data/history/index.json",
+  notifications: RAW + "/data/notifications.json"
+};
+const $ = id => document.getElementById(id);
+const state = { report: {}, inventory: {}, history: [], notifications: {}, items: [], selectedId: "", view: "monitors", filter: "ALL", detailTab: "snapshot", snapshotCache: {} };
+function esc(value) {
+  return String(value == null ? "" : value).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]);
+}
+function bust(url) { return url + (url.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now(); }
+function fmt(value) {
+  if (!value) return "—";
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? String(value) : d.toLocaleString([], { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+function shortTime(value) {
+  if (!value) return "Not checked";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "—";
+  const mins = Math.max(0, Math.floor((Date.now() - d.getTime()) / 60000));
+  if (mins < 1) return "Just now";
+  if (mins < 60) return mins + "m ago";
+  if (mins < 1440) return Math.floor(mins / 60) + "h ago";
+  return Math.floor(mins / 1440) + "d ago";
+}
+function displayDate(value) {
+  if (!value) return "—";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString([], { month: "short", day: "numeric" });
+}
+function allEvents() { return Array.isArray(state.report.events) ? state.report.events : []; }
+function sourceRows() { return Array.isArray(state.report.sources) ? state.report.sources : []; }
+function activeSourceIds() { return sourceRows().map(x => x.id).filter(Boolean); }
+function activeSourceName() { const row = sourceRows()[0]; return row ? (row.name || row.regulator || row.id) : "No active source report"; }
+function itemTitle(item) {
+  const url = String(item.canonical_url || "");
+  if (url.indexOf("/apps/reportingforms/review") >= 0) return "Information collections under review";
+  if (url.indexOf("/apps/reportingforms/recentupdates") >= 0) return "Recent reporting form updates";
+  const path = url.split("?")[0].split("#")[0].replace(//+$/, "");
+  const last = path.split("/").pop() || new URL(url).hostname;
+  return last.replace(/.(html?|pdf)$/i, "").replace(/[-_]+/g, " ").replace(/w/g, ch => ch.toUpperCase());
+}
+function urlHost(item) {
+  try { const u = new URL(item.canonical_url); return u.hostname + (u.pathname === "/" ? "" : u.pathname); }
+  catch (_) { return item.canonical_url || "Unknown URL"; }
+}
+function matchingEvents(item) {
+  const url = item.canonical_url || "";
+  return allEvents().filter(e => e.url === url || e.canonical_url === url || (e.url_id && e.url_id === item.url_id));
+}
+function itemStatus(item) {
+  if (item.fetch_error || item.extraction_error || (item.http_status && Number(item.http_status) >= 400)) return { label: "Needs attention", cls: "error", icon: "!" };
+  const events = matchingEvents(item);
+  const newest = events[0];
+  if (newest && newest.event_type === "CHANGED_URL") return { label: "Change detected", cls: "warning", icon: "↗" };
+  if (newest && newest.event_type === "FETCH_ERROR") return { label: "Fetch error", cls: "error", icon: "!" };
+  if (newest && newest.event_type === "EXTRACTION_ERROR") return { label: "Extraction error", cls: "error", icon: "!" };
+  if (item.first_seen && item.last_checked && new Date(item.first_seen).getTime() === new Date(item.last_checked).getTime()) return { label: "Baseline saved", cls: "", icon: "✓" };
+  return { label: "Monitoring", cls: "", icon: "✓" };
+}
+function makeItems() {
+  const groups = state.inventory.sources || {};
+  const ids = activeSourceIds();
+  let items = [];
+  Object.keys(groups).forEach(sourceId => {
+    if (ids.length && ids.indexOf(sourceId) < 0) return;
+    const group = groups[sourceId] || {};
+    Object.values(group).forEach(item => {
+      if (item && item.canonical_url && item.active !== false) items.push(item);
+    });
+  });
+  items.sort((a,b) => itemTitle(a).localeCompare(itemTitle(b)));
+  return items;
+}
+function selectedItem() { return state.items.find(x => x.url_id === state.selectedId) || null; }
+function setStatus(text, failed) {
+  $("connectionStatus").textContent = text;
+  $("headerDot").style.background = failed ? "#d83f52" : "#26a879";
+  $("headerDot").style.boxShadow = failed ? "none" : "0 0 0 4px #26a87920";
+}
+function renderMetrics() {
+  const counts = state.report.counts || {};
+  const events = allEvents();
+  const errors = Number(counts.fetch_error || 0) + Number(counts.extraction_error || 0);
+  $("metricMonitors").textContent = state.items.length;
+  $("metricChanges").textContent = events.filter(e => ["CHANGED_URL","NEW_URL","REMOVED_URL"].indexOf(e.event_type) >= 0).length;
+  $("metricErrors").textContent = errors;
+  $("metricLast").textContent = state.report.generated_at ? displayDate(state.report.generated_at) : "No scan yet";
+  $("metricRunId").textContent = state.report.run_id ? "Run " + state.report.run_id : "Latest stored report";
+  $("navMonitorCount").textContent = state.items.length;
+  $("navChangeCount").textContent = events.length;
+  $("monitorCount").textContent = state.items.length + (state.items.length === 1 ? " page" : " pages");
+  $("sourceChip").textContent = activeSourceName();
+  $("changeSourceChip").textContent = activeSourceName();
+  $("runSourceChip").textContent = activeSourceName();
+  $("sideSourceName").textContent = state.report.sources && state.report.sources[0] ? (state.report.sources[0].regulator || state.report.sources[0].name || "Active source") : "No active source";
+  $("footerStamp").textContent = "Updated " + fmt(state.report.generated_at);
+}
+function renderMonitorList() {
+  const q = $("monitorSearch").value.trim().toLowerCase();
+  const all = state.items.filter(item => {
+    const status = itemStatus(item);
+    if (state.filter === "CHANGES" && status.label !== "Change detected") return false;
+    if (state.filter === "ERRORS" && status.cls !== "error") return false;
+    return !q || (itemTitle(item) + " " + (item.canonical_url || "") + " " + (item.source_id || "")).toLowerCase().includes(q);
+  });
+  $("monitorList").innerHTML = all.length ? all.map(item => {
+    const s = itemStatus(item);
+    return '<button class="monitor-row ' + (item.url_id === state.selectedId ? "selected" : "") + '" data-monitor-id="' + esc(item.url_id) + '" aria-pressed="' + (item.url_id === state.selectedId ? "true" : "false") + '">' +
+      '<div class="monitor-row-top"><span class="status-icon ' + esc(s.cls) + '">' + esc(s.icon) + '</span><div class="monitor-row-info"><div class="monitor-name">' + esc(itemTitle(item)) + '</div><div class="monitor-url">' + esc(item.canonical_url) + '</div></div></div>' +
+      '<div class="monitor-row-bottom"><span class="status-pill ' + esc(s.cls) + '">' + esc(s.label) + '</span><span class="row-time">' + esc(shortTime(item.last_checked)) + '</span></div></button>';
+  }).join("") : '<div class="empty-state"><div><div class="empty-icon">⌕</div><div class="empty-title">No matching pages</div><div class="empty-copy">Try another search or change the filter to see more monitors.</div></div></div>';
+}
+function renderDetailHeader(item) {
+  const status = itemStatus(item);
+  const latestHash = item.normalized_hash || item.raw_hash || "";
+  $("detailHeader").innerHTML = '<div class="detail-topline"><div class="detail-title-wrap"><div class="detail-kicker">Monitored document</div><h2 class="detail-title">' + esc(itemTitle(item)) + '</h2><div class="detail-url">' + esc(item.canonical_url) + '</div></div><div class="detail-actions"><a class="outline-btn" href="' + esc(item.canonical_url) + '" target="_blank" rel="noopener noreferrer">↗ Open live page</a><a class="outline-btn" href="' + esc(REPO + "/blob/main/" + (item.snapshot_location || "")) + '" target="_blank" rel="noopener noreferrer">▧ Snapshot file</a></div></div><div class="detail-meta"><span class="status-pill ' + esc(status.cls) + '">' + esc(status.label) + '</span><span class="meta-chip">HTTP ' + esc(item.http_status == null ? "—" : item.http_status) + '</span><span class="meta-chip">Last checked ' + esc(fmt(item.last_checked)) + '</span><span class="meta-chip">Stored snapshot</span></div>';
+  $("detailTabs").classList.remove("hidden");
+  document.querySelectorAll("[data-detail-tab]").forEach(btn => btn.classList.toggle("active", btn.dataset.detailTab === state.detailTab));
+}
+function emptyState(title, copy, icon) {
+  return '<div class="empty-state"><div><div class="empty-icon">' + esc(icon || "▧") + '</div><div class="empty-title">' + esc(title) + '</div><div class="empty-copy">' + esc(copy) + '</div></div></div>';
+}
+function renderSnapshotText(text) {
+  const lines = String(text || "").split(/?
+/);
+  if (!lines.some(x => x.trim())) return emptyState("Snapshot is empty", "The crawler saved a snapshot file, but no readable text was extracted from it.", "▧");
+  const dateRe = /^(January|February|March|April|May|June|July|August|September|October|November|December)s+d{1,2},s+d{4}$/i;
+  const likelySection = /^(Information Collections|Pending Review|Reporting Forms|Recent Reporting Form Updates|Information Collections Out for Public Comment|Collection Identifier|Questions regarding|Note:|Last Update:)/i;
+  return lines.map((line, idx) => {
+    const trimmed = line.trim();
+    if (!trimmed) return '<div style="height:7px"></div>';
+    let cls = "doc-line";
+    if (dateRe.test(trimmed)) cls += " date-line";
+    else if (idx > 0 && (likelySection.test(trimmed) || (trimmed.length < 72 && !/[.!?]$/.test(trimmed) && trimmed.split(/s+/).length < 9))) cls += " section-line";
+    return '<p class="' + cls + '">' + esc(trimmed) + '</p>';
+  }).join("");
+}
+async function loadSnapshot(item) {
+  const body = $("detailBody");
+  const key = item.snapshot_location || "";
+  body.innerHTML = '<div class="snapshot-toolbar"><div class="snapshot-label"><span class="file-icon">▧</span><div><div>Saved text snapshot</div><div class="snapshot-sub">Captured ' + esc(fmt(item.last_full_fetch || item.last_checked)) + '</div></div></div><span class="meta-chip">SHA-256 ' + esc((item.normalized_hash || "").slice(0,12)) + '…</span></div><div class="snapshot-notice"><span>ⓘ</span><span>This is the stored text snapshot used for comparison — not a live page and not a screenshot of the original layout.</span></div><div class="snapshot-content loading">Loading stored document text…</div>';
+  if (!key) {
+    body.querySelector(".snapshot-content").innerHTML = emptyState("No snapshot location", "This record does not contain a path to a stored snapshot.", "!");
+    return;
+  }
+  let text = state.snapshotCache[key];
+  if (text == null) {
+    try {
+      const response = await fetch(bust(RAW + "/" + key), { cache: "no-store" });
+      if (!response.ok) throw new Error("Snapshot request returned HTTP " + response.status);
+      text = await response.text();
+      state.snapshotCache[key] = text;
+    } catch (error) {
+      const node = body.querySelector(".snapshot-content");
+      if (node) node.innerHTML = emptyState("Could not load saved snapshot", String(error.message || error) + ". The snapshot file link above remains available.", "!");
+      return;
+    }
+  }
+  const current = selectedItem();
+  if (!current || current.url_id !== item.url_id || state.detailTab !== "snapshot") return;
+  const node = body.querySelector(".snapshot-content");
+  if (node) {
+    node.classList.remove("loading");
+    node.innerHTML = renderSnapshotText(text);
+  }
+}
+function renderChangesForItem(item) {
+  const events = matchingEvents(item).slice().sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+  if (!events.length) {
+    const baseline = item.first_seen && item.last_checked && new Date(item.first_seen).getTime() === new Date(item.last_checked).getTime();
+    return emptyState(baseline ? "Baseline captured" : "No changes recorded in the latest run", baseline ? "This page's first successful snapshot established its baseline. On later runs, changed text will appear here when detected." : "The latest report contains no change event for this page. Earlier snapshots are not presented as current changes.", "✓");
+  }
+  return '<div class="change-list">' + events.map(e => '<article class="change-card"><div class="change-card-top"><div class="change-type">' + esc(e.event_type || "EVENT") + '</div><div class="change-time">' + esc(fmt(e.timestamp)) + '</div></div><div class="change-summary">' + esc((e.ai && e.ai.analysis && e.ai.analysis.summary) || (e.evidence && e.evidence.error) || e.summary || "A monitoring event was recorded for this URL.") + '</div>' + (e.evidence_location ? '<div style="margin-top:9px"><a href="' + esc(REPO + "/blob/main/" + e.evidence_location) + '" target="_blank" rel="noopener noreferrer">View evidence file ↗</a></div>' : "") + '</article>').join("") + '</div>';
+}
+function renderDetails(item) {
+  const fields = [
+    ["Source", item.source_id],
+    ["Regulator", item.regulator],
+    ["HTTP status", item.http_status],
+    ["Content type", item.content_type],
+    ["Extraction type", item.extraction_type],
+    ["First seen", fmt(item.first_seen)],
+    ["Last checked", fmt(item.last_checked)],
+    ["Last full fetch", fmt(item.last_full_fetch)],
+    ["ETag", item.etag || "Not supplied"],
+    ["Last-Modified", item.last_modified || "Not supplied"],
+    ["Normalized SHA-256", item.normalized_hash || "Not available"],
+    ["Raw SHA-256", item.raw_hash || "Not available"],
+    ["Snapshot file", item.snapshot_location || "Not available"],
+    ["Fetch error", item.fetch_error || "None"],
+    ["Extraction error", item.extraction_error || "None"]
+  ];
+  $("detailBody").innerHTML = '<div class="detail-grid">' + fields.map(([k,v]) => '<div class="detail-cell"><label>' + esc(k) + '</label><div class="' + (String(k).indexOf("SHA-256") >= 0 ? "hash" : "") + '">' + esc(v == null ? "—" : v) + '</div></div>').join("") + '</div>';
+}
+function renderDetailBody() {
+  const item = selectedItem();
+  if (!item) {
+    $("detailTabs").classList.add("hidden");
+    $("detailHeader").innerHTML = emptyState("Choose a monitor", "Select a page on the left to open its stored snapshot.", "▧");
+    $("detailBody").innerHTML = "";
+    return;
+  }
+  renderDetailHeader(item);
+  if (state.detailTab === "snapshot") loadSnapshot(item);
+  else if (state.detailTab === "changes") $("detailBody").innerHTML = renderChangesForItem(item);
+  else renderDetails(item);
+}
+function setSelected(id) {
+  state.selectedId = id;
+  state.detailTab = "snapshot";
+  renderMonitorList();
+  renderDetailBody();
+  const item = selectedItem();
+  if (item) {
+    try { history.replaceState(null, "", "#monitor=" + encodeURIComponent(item.url_id)); } catch (_) {}
+  }
+}
+function setView(view) {
+  state.view = view;
+  document.querySelectorAll("[data-view]").forEach(btn => btn.classList.toggle("active", btn.dataset.view === view));
+  $("monitorsView").classList.toggle("hidden", view !== "monitors");
+  $("changesView").classList.toggle("hidden", view !== "changes");
+  $("runsView").classList.toggle("hidden", view !== "runs");
+  $("breadcrumb").textContent = view === "monitors" ? "Monitored pages" : view === "changes" ? "Change log" : "Run history";
+}
+function renderChangeRoute() {
+  const events = allEvents().slice().sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+  $("changeSubtitle").textContent = state.report.run_id ? "Run " + state.report.run_id + " · " + fmt(state.report.generated_at) : "No report metadata available";
+  $("changeCount").textContent = events.length + (events.length === 1 ? " event" : " events");
+  $("changeItems").innerHTML = events.length ? events.map(e => {
+    const item = state.items.find(x => x.canonical_url === e.url || x.url_id === e.url_id);
+    const title = item ? itemTitle(item) : (e.url || e.event_type || "Monitoring event");
+    return '<button class="route-event" data-event-url="' + esc(e.url || "") + '"><span class="status-icon ' + (/ERROR/.test(e.event_type || "") ? "error" : e.event_type === "CHANGED_URL" ? "warning" : "") + '">' + esc(e.event_type === "CHANGED_URL" ? "↗" : /ERROR/.test(e.event_type || "") ? "!" : "✓") + '</span><span class="route-event-main"><span class="route-event-title">' + esc(title) + ' · ' + esc(e.event_type || "Event") + '</span><div class="route-event-url">' + esc(e.url || "") + '</div><div class="route-event-meta">' + esc(fmt(e.timestamp)) + '</div></span></button>';
+  }).join("") : emptyState("No change events in this run", "The most recent Federal Reserve run established the initial baseline, so it recorded the pages without sending new-change alerts.", "✓");
+}
+function renderRuns() {
+  const runs = state.history.slice(0,35);
+  $("runCount").textContent = runs.length + (runs.length === 1 ? " run" : " runs");
+  $("runItems").innerHTML = runs.length ? runs.map(run => {
+    const c = run.counts || {};
+    const isInactive = activeSourceIds().indexOf(run.source_id) < 0;
+    const counts = [["Checked", c.discovered],["Changed", c.changed],["New", c.new],["Errors", Number(c.fetch_error || 0) + Number(c.extraction_error || 0)]];
+    return '<div class="run-row"><span class="run-mark">◷</span><div class="run-main"><div class="run-title">' + esc(run.regulator || run.source_id || "Monitoring run") + '</div><div class="run-sub">' + esc(fmt(run.generated_at)) + ' · ' + esc(run.run_id || "") + '</div><div class="run-counts">' + counts.map(([k,v]) => '<span class="run-count">' + esc(k) + ': ' + esc(v == null ? 0 : v) + '</span>').join("") + '</div></div><span class="run-source">' + (isInactive ? "Historical / inactive" : "Active source") + '</span></div>';
+  }).join("") : emptyState("No history available", "The history index has no stored monitoring runs yet.", "◷");
+}
+function renderAll() {
+  state.items = makeItems();
+  if (!state.items.some(x => x.url_id === state.selectedId)) state.selectedId = state.items[0] ? state.items[0].url_id : "";
+  renderMetrics();
+  renderMonitorList();
+  renderDetailBody();
+  renderChangeRoute();
+  renderRuns();
+}
+async function loadData() {
+  setStatus("Refreshing stored state…", false);
+  $("loadError").classList.add("hidden");
+  try {
+    const responses = await Promise.all([
+      fetch(bust(ENDPOINTS.report), { cache: "no-store" }),
+      fetch(bust(ENDPOINTS.inventory), { cache: "no-store" }),
+      fetch(bust(ENDPOINTS.history), { cache: "no-store" }),
+      fetch(bust(ENDPOINTS.notifications), { cache: "no-store" }).catch(() => null)
+    ]);
+    if (!responses[0].ok) throw new Error("Latest report is unavailable (HTTP " + responses[0].status + ")");
+    if (!responses[1].ok) throw new Error("Latest monitored URL inventory is unavailable (HTTP " + responses[1].status + ")");
+    state.report = await responses[0].json();
+    state.inventory = await responses[1].json();
+    state.history = responses[2] && responses[2].ok ? await responses[2].json() : [];
+    state.notifications = responses[3] && responses[3].ok ? await responses[3].json() : {};
+    const hash = location.hash.match(/monitor=([^&]+)/);
+    if (hash) {
+      const id = decodeURIComponent(hash[1]);
+      const groups = state.inventory.sources || {};
+      const ids = Object.keys(groups);
+      for (const sourceId of ids) {
+        const group = groups[sourceId] || {};
+        const item = group[id];
+        if (item && activeSourceIds().indexOf(sourceId) >= 0) state.selectedId = id;
+      }
+    }
+    renderAll();
+    setStatus("Stored state connected", false);
+  } catch (error) {
+    setStatus("Stored state unavailable", true);
+    $("loadError").textContent = "Could not load dashboard data: " + String(error.message || error) + ". Try Refresh in a moment.";
+    $("loadError").classList.remove("hidden");
+    if (!state.items.length) {
+      $("monitorList").innerHTML = emptyState("Stored monitoring data unavailable", "The page is online, but the latest report or inventory could not be fetched from GitHub.", "!");
+    }
+  }
+}
+$("monitorList").addEventListener("click", event => {
+  const button = event.target.closest("[data-monitor-id]");
+  if (button) setSelected(button.dataset.monitorId);
+});
+$("monitorSearch").addEventListener("input", renderMonitorList);
+document.querySelectorAll("[data-filter]").forEach(button => button.addEventListener("click", () => {
+  state.filter = button.dataset.filter;
+  document.querySelectorAll("[data-filter]").forEach(b => b.classList.toggle("active", b === button));
+  renderMonitorList();
+}));
+document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
+$("detailTabs").addEventListener("click", event => {
+  const button = event.target.closest("[data-detail-tab]");
+  if (!button) return;
+  state.detailTab = button.dataset.detailTab;
+  renderDetailBody();
+});
+$("changeItems").addEventListener("click", event => {
+  const button = event.target.closest("[data-event-url]");
+  if (!button) return;
+  const item = state.items.find(x => x.canonical_url === button.dataset.eventUrl);
+  if (item) {
+    setSelected(item.url_id);
+    state.detailTab = "changes";
+    setView("monitors");
+    renderDetailBody();
+  }
+});
+$("refreshBtn").addEventListener("click", loadData);
+loadData();
+setInterval(loadData, 60000);
 </script>
-</body></html>
+</body>
+</html>
