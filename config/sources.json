@@ -49,9 +49,9 @@
     },
     {
       "id": "eba-regulatory-pilot",
-      "name": "European Banking Authority — Bounded Regulatory Pilot",
+      "name": "European Banking Authority — Regulatory Pilot (Inactive; Access Block Test)",
       "regulator": "European Banking Authority",
-      "active": true,
+      "active": false,
       "baseline_on_first_run": true,
       "seed_urls": [
         "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-internet-payments-security",
@@ -92,6 +92,39 @@
       "discovery_http_attempts": 2,
       "discovery_slice_seconds": 0,
       "discovery_max_pages_per_slice": 50
+    },
+    {
+      "id": "fed-reporting-forms-pilot",
+      "name": "Federal Reserve — Reporting Forms Pilot (Exact URL Allowlist)",
+      "regulator": "Board of Governors of the Federal Reserve System",
+      "active": true,
+      "baseline_on_first_run": true,
+      "seed_urls": [
+        "https://www.federalreserve.gov/apps/reportingforms/review",
+        "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+      ],
+      "allowed_prefixes": [
+        "https://www.federalreserve.gov/apps/reportingforms/"
+      ],
+      "allowed_urls": [
+        "https://www.federalreserve.gov/apps/reportingforms/review",
+        "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+      ],
+      "allowed_domains": [
+        "www.federalreserve.gov"
+      ],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 2,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 10
     }
   ]
 }
