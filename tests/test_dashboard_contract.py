@@ -105,5 +105,38 @@ class TestDashboardNotificationContract(unittest.TestCase):
         self.assertIn('data-view="notifications"', source)
 
 
+    def test_dashboard_uses_a_new_command_center_layout(self):
+        required = (
+            'class="app-shell command-shell"',
+            'class="topbar command-topbar"',
+            'class="nav-list command-nav"',
+            'class="page-heading dashboard-hero"',
+            'class="monitor-layout"',
+            'class="signal-panel"',
+            'color-scheme: dark;',
+            '--blue: #c8f36a;',
+            'position: fixed; inset: auto 14px calc(10px + env(safe-area-inset-bottom)) 14px',
+        )
+        for filename in ("index.html", "dashboard-v2.html"):
+            with self.subTest(filename=filename):
+                source = (ROOT / filename).read_text(encoding="utf-8")
+                for token in required:
+                    self.assertIn(token, source)
+                self.assertNotIn('<aside class="sidebar"', source)
+                for view_id in ("monitorsView", "detailView", "changesView", "runsView", "notificationsView"):
+                    self.assertIn('id="' + view_id + '"', source)
+
+    def test_monitor_inventory_uses_compact_metadata_rows(self):
+        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        for token in (
+            'class="monitor-number"',
+            'class="monitor-meta-key"',
+            'data-status-kind=',
+            'data-monitor-id=',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+
+
 if __name__ == "__main__":
     unittest.main()
