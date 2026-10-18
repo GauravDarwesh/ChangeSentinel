@@ -181,6 +181,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             allowed_domains=source.allowed_domains,
             allowed_prefixes=source.allowed_prefixes,
             allowed_urls=source.allowed_urls,
+            allowed_resource_prefixes=source.allowed_resource_prefixes,
         )
         item.update({
             "http_status": result.status_code,
