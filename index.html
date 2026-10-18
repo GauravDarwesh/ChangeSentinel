@@ -115,9 +115,12 @@ function itemTitle(item) {
   const url = String(item.canonical_url || "");
   if (url.indexOf("/apps/reportingforms/review") >= 0) return "Information collections under review";
   if (url.indexOf("/apps/reportingforms/recentupdates") >= 0) return "Recent reporting form updates";
-  const path = url.split("?")[0].split("#")[0].replace(//+$/, "");
-  const last = path.split("/").pop() || new URL(url).hostname;
-  return last.replace(/.(html?|pdf)$/i, "").replace(/[-_]+/g, " ").replace(/w/g, ch => ch.toUpperCase());
+  const path = url.split("?")[0].split("#")[0].replace(/\/+$/, "");
+  let last = path.split("/").pop();
+  if (!last) {
+    try { last = new URL(url).hostname; } catch (_) { last = url || "Monitored page"; }
+  }
+  return last.replace(/\.(html?|pdf)$/i, "").replace(/[-_]+/g, " ").replace(/\b\w/g, ch => ch.toUpperCase());
 }
 function urlHost(item) {
   try { const u = new URL(item.canonical_url); return u.hostname + (u.pathname === "/" ? "" : u.pathname); }
@@ -201,17 +204,16 @@ function emptyState(title, copy, icon) {
   return '<div class="empty-state"><div><div class="empty-icon">' + esc(icon || "▧") + '</div><div class="empty-title">' + esc(title) + '</div><div class="empty-copy">' + esc(copy) + '</div></div></div>';
 }
 function renderSnapshotText(text) {
-  const lines = String(text || "").split(/?
-/);
+  const lines = String(text || "").split(/\r?\n/);
   if (!lines.some(x => x.trim())) return emptyState("Snapshot is empty", "The crawler saved a snapshot file, but no readable text was extracted from it.", "▧");
-  const dateRe = /^(January|February|March|April|May|June|July|August|September|October|November|December)s+d{1,2},s+d{4}$/i;
+  const dateRe = /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}$/i;
   const likelySection = /^(Information Collections|Pending Review|Reporting Forms|Recent Reporting Form Updates|Information Collections Out for Public Comment|Collection Identifier|Questions regarding|Note:|Last Update:)/i;
   return lines.map((line, idx) => {
     const trimmed = line.trim();
     if (!trimmed) return '<div style="height:7px"></div>';
     let cls = "doc-line";
     if (dateRe.test(trimmed)) cls += " date-line";
-    else if (idx > 0 && (likelySection.test(trimmed) || (trimmed.length < 72 && !/[.!?]$/.test(trimmed) && trimmed.split(/s+/).length < 9))) cls += " section-line";
+    else if (idx > 0 && (likelySection.test(trimmed) || (trimmed.length < 72 && !/[.!?]$/.test(trimmed) && trimmed.split(/\s+/).length < 9))) cls += " section-line";
     return '<p class="' + cls + '">' + esc(trimmed) + '</p>';
   }).join("");
 }
