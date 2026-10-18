@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from regmon.ai import AIConfig, AI_REQUIRED_KEYS, parse_json, run_smoke_test, validate_analysis
+from regmon.ai import AIConfig, AI_REQUIRED_KEYS, analyze, parse_json, run_smoke_test, validate_analysis
 from regmon.change import build_event_id, classify_change, html_comparison_hash, make_diff, make_id, write_evidence
 from regmon.content import extract_content, normalize_html
 from regmon.config import SourceConfig
