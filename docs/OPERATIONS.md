@@ -9,10 +9,10 @@ The active production source is the bounded Federal Reserve reporting-forms pilo
 
 ## Workflow behavior
 
-- **RegMonitor CI** tests code pushes to main and pull requests. Pushes affecting only data/** are intentionally excluded from CI.
+- **RegMonitor CI** tests code pushes to main and pull requests. Pushes affecting only monitoring data are intentionally excluded from CI.
 - **Regulatory Monitor** runs every six hours or on manual dispatch. Post-run validation considers only active sources selected for that run; inactive historical metadata must not block an active run.
 - A paused discovery source must have a valid, non-empty resumable checkpoint. The workflow queues continuation runs for every selected source that is paused.
-- Monitoring state, snapshots, history, notification delivery state, and pending notifications are committed under data/.
+- Monitoring state, snapshots, history, notification delivery state, and pending notifications are committed under the data directory.
 - **Deploy Monitoring Console** publishes index.html, dashboard-v2.html, and dashboard.js. The dashboard reads monitoring JSON from the repository's raw-content endpoints.
 
 ## Alert reliability
