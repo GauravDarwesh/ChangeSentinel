@@ -1,0 +1,16 @@
+{
+  "source_id": "fed-reporting-forms-detail-pilot",
+  "method": "http-resumable",
+  "state": "COMPLETE",
+  "discovered": 14,
+  "html_processed": 5,
+  "successful_pages": 5,
+  "failed_pages": 0,
+  "capped": false,
+  "pending": 0,
+  "unresolved_failures": 0,
+  "checkpoint_schema_version": 2,
+  "config_fingerprint": "f81e97345dd1ff8946cf711f9b5b2c157d89f26bac24feca2686c4a7bbaa7bb4",
+  "inventory": "data/discovery/fed-reporting-forms-detail-pilot-inventory-*.txt",
+  "failure_ledger": "data/discovery/fed-reporting-forms-detail-pilot-failures.jsonl"
+}

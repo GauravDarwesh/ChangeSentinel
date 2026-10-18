@@ -1,0 +1,105 @@
+Reporting Forms
+Information collections under review
+Recent Reporting Form Updates
+Application filing information
+Micro Data Reference Manual
+Savings and Loan Holding Company Reporting Forms
+Incorporating FASB Accounting
+Standards Codification References into Federal Reserve Report (16 KB PDF)
+FR Y-14M
+Capital Assessments and Stress Testing
+Form:
+Current (2.2 MB .ZIP)
+Instructions:
+Included with forms
+Y-14 Questions and Answers
+Description:
+The FR Y-14M report collects monthly detailed data on bank holding companies' (BHCs), savings and loan holding companies' (SLHCs), and intermediate holding companies' (IHCs) loan portfolios. The report is comprised of three loan- and portfolio-level collections and one detailed address matching collection. These consist of Domestic First Lien Closed-end 1-4 Family Residential Loan, Domestic Home Equity Loan and Home Equity Line, Address Matching, and Domestic Credit Card data collections. The number of schedules a firm must complete is subject to materiality thresholds and certain other criteria.
+OMB Control Number:
+7100-0341
+Purpose:
+The data are used to assess the capital adequacy of large firms using forward-looking projections of revenue and losses, to support supervisory stress test models and continuous monitoring efforts, and to inform the Federal Reserve's operational decision-making as it continues to implement the Dodd-Frank Wall Street Reform and Consumer Protection Act of 2010. The monthly data collection improves the Federal Reserve's ability to perform its continuous risk-monitoring function by providing more timely data.
+Background:
+In June 2009, the Federal Reserve conducted the Supervisory Capital Assessment Program (SCAP), a "stress test" that focused on identifying whether large domestic BHCs had capital sufficient to weather a more-adverse-than-anticipated economic environment while maintaining their capacity to lend. In 2011, the Federal Reserve continued its supervisory evaluation of the resiliency and capital adequacy processes through the Comprehensive Capital Analysis and Review (CCAR) 2011. The CCAR 2011 involved the Federal Reserve's forward-looking evaluation of the internal capital planning processes of the BHCs and their anticipated capital actions in 2011, such as increasing dividend payments or repurchasing or redeeming stock; evaluating whether these BHCs had satisfactory processes for identifying capital needs; and evaluating whether these BHCs held adequate capital to maintain ready access to funding, continue operations, and meet their obligations to creditors and counterparties, and continue to serve as credit intermediaries, even under stressful conditions. The Federal Reserve implemented the FR Y-14A/Q during the fall of 2011, and it implemented the FR Y-14M in June 2012. In 2016, the Federal Reserve published a final notice in the Federal Register (81 FR 35016) requiring intermediate holding companies of foreign banking organizations to file certain regulatory reports and comply with the information collection requirements associated with regulatory capital requirements, including the FR Y-14 reports with submissions as of December 31, 2016. In the fall of 2019, the Federal Reserve published final notices in the Federal Register (84 FR 59230 and 84 FR 59032) that tailored the requirements for FR Y-14 respondents, and required SLHCs to file the FR Y-14M report beginning with submissions as of June 30, 2020.
+Respondent Panel:
+The respondent panel is comprised of U.S. BHCs, U.S. IHCs of foreign banking organizations (FBOs), and covered SLHCs with $100 billion or more in total consolidated assets, as based on: (i) the average of the firm's total consolidated assets in the four most recent quarters as reported quarterly on the firm's Consolidated Financial Statements for Holding Companies (FR Y-9C); or (ii) if the firm has not filed an FR Y-9C for each of the most recent four quarters, then the average of the firm's total consolidated assets in the most recent consecutive quarters as reported quarterly on the firm's FR Y-9C filings. Participation is mandatory.
+Frequency:
+For these retail portfolio collections, the Federal Reserve collects month-end data on the last business day of each calendar month.
+Public Release:
+The Federal Reserve publishes a summary of results from the latest Dodd-Frank Act stress test (DFAST) and the related results from the Comprehensive Capital Analysis and Review (CCAR). The instructions, scenarios, and further information regarding DFAST and CCAR are available on the Federal Reserve's website.
+Historical
+Forms and Instructions
+Form:
+March 2026 (2.2 MB .ZIP)
+| Instructions: Included in Form
+Form:
+September 2025 (2.2 MB .ZIP)
+| Instructions: Included in Form
+Form:
+March 2024 (2.1 MB .ZIP)
+| Instructions: Included in Form
+Form:
+September 2022 (2.1 MB .ZIP)
+| Instructions: Included in Form
+Form:
+September 2021 (2.1 MB .ZIP)
+| Instructions:
+September 2021 (2.1 MB .ZIP)
+Form:
+April 2021 (2.1 MB .ZIP)
+| Instructions: Included in Form
+Form:
+January 2021 (2.8 MB .ZIP)
+| Instructions: Included in Form
+Form:
+December 2020 (1.6 MB .ZIP)
+| Instructions: Included in Form
+Form:
+September 2020 (2.3 MB .ZIP)
+| Instructions: Included in Form
+Form:
+April 2020 (2.2 MB .ZIP)
+| Instructions: Included in Form
+Form:
+March 2020 (2.2 MB .ZIP)
+| Instructions: Included in Form
+Form:
+December 2019 (1.7 MB .ZIP)
+| Instructions: Included in Form
+Form:
+March 2018 (2.2 MB .ZIP)
+| Instructions: Included in Form
+Form:
+December 2017 (1.5 MB .ZIP)
+| Instructions: Included in Form
+Form:
+December 2016 (1.6 MB .ZIP)
+| Instructions: Included in Form
+Form:
+June 2016 (1.6 MB .PDF)
+| Instructions: Included in Form
+Form:
+December 2015 (1.8 MB .PDF)
+| Instructions: Included in Form
+Form:
+September 2014 (2.3 MB .PDF)
+| Instructions: Included in Form
+Form:
+March 2014 (1.5 MB .PDF)
+| Instructions: Included in Form
+Form:
+September 2013 (2.3 MB .PDF)
+| Instructions: Included in Form
+Form:
+June 2013 (2.2 MB .ZIP)
+| Instructions: Included in Form
+Form:
+March 2013 (2.2 MB .ZIP)
+| Instructions: Included in Form
+Form:
+September 2012 (1.1 MB .ZIP)
+| Instructions: Included in Form
+Form:
+June 2012 (1.5 MB .ZIP)
+| Instructions: Included in Form
+Last Update: September 22, 2026

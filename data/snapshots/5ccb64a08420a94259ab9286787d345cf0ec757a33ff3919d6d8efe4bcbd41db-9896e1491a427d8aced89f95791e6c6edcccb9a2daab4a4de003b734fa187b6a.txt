@@ -1,0 +1,566 @@
+FR 2028D
+OMB Number 7100-0061
+Approval expires January 31, 2027
+Page 1 of 7
+Board of Governors of the Federal Reserve System
+Small Business Lending Survey—FR 2028D
+This report is authorized by law (12 U.S.C. § 248(a)(2)). Your
+voluntary cooperation in submitting this report is needed to make
+the results comprehensive, accurate, and timely.
+The Federal Reserve may not conduct or sponsor, and an organi-
+zation is not required to respond to, a collection of information
+unless it displays a currently valid OMB Number.
+For the quarter ending,
+Month / Day / Year (QSBL 9999)
+The ongoing public reporting burden for this information collection is estimated to average 3 hours per response, including time to gather and maintain data in the required form and to
+review instructions and complete the information collection. Comments regarding this burden estimate or any other aspect of this information collection, including suggestions for reducing
+the burden, may be sent to Secretary, Board of Governors of the Federal Reserve System, 20th and C Streets, NW, Washington, DC 20551, and to the Office of Management and Budget,
+Paperwork Reduction Project (7100-0061), Washington, DC 20503.
+09/2026
+Loan Volumes and Terms
+Other rate .............................................................................................................................
+Federal Home Loan Bank rate ..................................................................................................
+U.S. Treasury rate ..................................................................................................................
+Proprietary rate......................................................................................................................
+SOFR ..................................................................................................................................
+Prime rate.............................................................................................................................
+QSBL HP49
+3. What is your base rate? (check only one)
+3.
+2. Does your bank use more than one base rate for Commercial & Industrial (C&I) loans to U.S. small
+businesses? If "Yes", skip to question 4. If "No", complete question 3. ...................................... 2.
+QSBL
+HP48
+Yes No
+Bank Name (QSBL 9017)
+Address (QSBL 9028)
+City (QSBL 9130)
+State (QSBL 9200) Zip Code (QSBL 9220)
+Person to be Contacted Concerning This Report (QSBL 8901)
+Area Code / Phone Number (QSBL 8902)
+E-mail Address of Contact (QSBL 4086)
+Internal Small Business Definition:
+Item 1 is to be completed annually in the March reports only or if a change is made to your internal small business definition. Institutions
+reporting survey data for the first time should also complete this item regardless of the report date.
+QSBL
+PQ99
+Yes No
+1. Does your institution use the preferred classification for what constitutes a U.S. nonfarm small
+business loan when filing this report? (Nonfarm businesses domiciled in the U.S. with no more
+than $5 million in total annual revenue.).............................................................................
+If "No", please provide your institution's definition of a small business loan that was used for com-
+pleting this survey (QSBL PR00):
+1.
+HQ13
+HQ14 HQ26
+HQ25
+HQ10
+HQ11
+HQ09
+HQ22
+HQ23
+HQ21
+HQ33
+LB26
+HQ36
+d. Weighted average maturity (in months)..........................................
+e. Maximum maturity (in months) ..................................................... 7.e.
+7.d.
+7. New Term C&I Loans
+a. Number...................................................................................
+c. Weighted average interest rate ....................................................
+b. Outstanding dollar amount .......................................................... 7.b.
+7.c.
+7.a.
+7.h.h. Weighted average interest rate floor .............................................
+g. Dollar amount with interest rate floor ............................................. 7.g.
+7.f.f. Number with interest rate floor .....................................................
+8. New C&I Loans Made Under Commitment (Formal or Informal)
+a. Number...................................................................................
+c. Outstanding dollar amount ..........................................................
+b. Commitment dollar amount .........................................................
+d. Weighted average interest rate ....................................................
+e. Number with interest rate floor .....................................................
+f. Dollar amount with interest rate floor .............................................
+g. Weighted average interest rate floor..............................................
+LB27
+HQ69
+HQ66
+HQ44
+HQ45
+HQ46
+HQ47
+HQ55
+HQ56
+HQ57
+HQ58
+8.g.
+8.f.
+8.e.
+8.b.
+8.c.
+8.d.
+8.a.
+U.S. Dollar Amounts in Thousands QSBL Variable RateQSBL Fixed Rate
+HQ06
+HQ03
+LB25
+HP82
+HP83
+HP84
+HP81
+HP80
+HP93
+HP94
+HP95
+HP92
+HP77
+LB24
+HP70
+HP69HP57
+HP58
+HP66
+HP67
+HP65
+HP54
+HP55
+HP53
+c. Weighted average interest rate ....................................................
+b. Outstanding dollar amount ..........................................................
+d. Weighted average maturity (in months)..........................................
+e. Maximum maturity (in months) .....................................................
+g. Dollar amount with interest rate floor .............................................
+f. Number with interest rate floor .....................................................
+h. Weighted average interest rate floor..............................................
+QSBL Variable RateQSBL Fixed Rate
+g. Weighted average interest rate floor.............................................. 6.g.
+U.S. Dollar Amounts in Thousands
+To U.S. small businesses during the most recent calendar quarter.
+e. Number with interest rate floor .....................................................
+f. Dollar amount with interest rate floor .............................................
+6.e.
+6.f.
+6. Outstanding C&I Loans Made Under Commitment (Formal or Informal)
+a. Number...................................................................................
+c. Outstanding dollar amount ..........................................................
+d. Weighted average interest rate ....................................................
+b. Commitment dollar amount .........................................................
+5.h.
+6.b.
+6.c.
+6.d.
+6.a.
+5.f.
+5.g.
+5.e.
+5.d.
+a. Number...................................................................................
+5. Outstanding Term C&I Loans
+5.b.
+5.c.
+5.a.
+09/2023
+FR 2028D
+Page 2 of 7
+Loan Volumes and Terms—Continued
+To U.S. small businesses as of the last calendar day of the most recent calendar quarter.
+4. Select and rank the three most common base rates by dollar volume of C&I loans.
+If only two rates are used, leave "Third Most Common" empty.
+If multiple "Other" rates are used, consider all of these as "Other Rate" when determining the most common rates.
+Prime
+Rate
+Federal Home
+Loan Bank
+Rate
+U.S.
+Treasury
+Rate
+Proprietary
+Rate SOFR
+Other
+Rate
+HP52
+HP51
+HP50
+QSBL
+c. Third most common....................
+a. Most common ...........................
+b. Second most common ................
+4.a.
+4.b.
+4.c.
+9. In your opinion, apart from normal seasonal variation, how has U.S. small business C&I credit line usage changed during
+the most recent calendar quarter? (check only one)
+QSBL HQ70
+Remained basically unchanged................................................................................................
+Decreased somewhat ............................................................................................................
+Increased substantially ...........................................................................................................
+Increased somewhat..............................................................................................................
+Decreased substantially..........................................................................................................
+HQ74
+HQ73
+HQ72
+HQ71
+Somewhat
+Important
+Very
+Important
+Not
+ImportantQSBL
+c. Change in local or national economic conditions ..............
+d. Change in borrower's business revenue or other
+business specific conditions ........................................
+a. Change in terms of lending .........................................
+b. Change in pricing (rates, fees, etc.)...............................
+10. If credit line usage has changed during the most recent calendar quarter (as described in question 9), how important have
+been the following possible reasons for the change?
+11. In your opinion, apart from normal seasonal variation, how has demand for U.S. small business C&I loans changed during
+the most recent calendar quarter? (check only one)
+QSBL HQ75
+Remained basically unchanged................................................................................................
+Moderately weaker ................................................................................................................
+Substantially stronger.............................................................................................................
+Moderately stronger...............................................................................................................
+Substantially weaker ..............................................................................................................
+For U.S. small business C&I loans during the most recent calendar quarter.
+QSBL
+Applications
+ApprovedQSBL
+Applications
+Received
+HQ78HQ76
+HQ79HQ77
+a. Number...................................................................................
+b. Dollar amount........................................................................... 12.b.
+12.a.
+U.S. Dollar Amounts in Thousands
+12. Applications Received and Approved
+Loan Demand and Applications
+10.a.
+10.b.
+10.c.
+10.d.
+Credit Line Usage
+9.
+11.
+FR 2028D
+Page 3 of 7
+09/2023
+FR 2028D
+Page 4 of 7
+13. Select and rank the top three reasons for denying a U.S. small business C&I loan during the most recent calendar quarter.
+09/2023
+Credit History
+HQ87
+HQ86
+HQ85
+c. Third most common ............
+a. Most common....................
+b. Second most common.........
+QSBL
+Owner Equity
+Investment
+Management
+Experience
+Concerns About
+Business PlanFinancials Collateral
+13.a.
+13.b.
+13.c.
+Supervisory or
+Regulatory
+Requirements;
+Did Not Meet
+SBA Guidelines
+Reduced Risk
+Tolerance
+of Bank
+Management
+Concentration
+Limits; Industry
+Exposure
+Credit Standards and Terms
+14. In your opinion, how have your credit standards for C&I loans to U.S. small businesses changed over the
+most recent calendar quarter? (check one only)
+15. In your opinion, how have your terms of C&I loans to U.S. small businesses changed over the
+most recent calendar quarter?
+Tightened
+Somewhat
+HQ97 15.i.
+HQ96 15.h.
+HQ94
+HQ93
+HQ92
+HQ95
+f. Loan covenants ......................................................................................................
+g. Collateral requirements ............................................................................................
+h. Use of interest rate floors (more use=tightened, less use=eased)......................................
+i. Level of interest rate floors (higher=tightened, lower=eased)............................................
+15.d.
+15.e.
+15.f.
+15.g.
+HQ91
+HQ90
+HQ89
+Remained
+Basically
+Unchanged
+Tightened
+Considerably
+Eased
+Somewhat
+Eased
+ConsiderablyQSBL
+c. Costs of credit lines .................................................................................................
+d. Spreads of loan rates over the bank's cost of funds
+(wider spreads=tightened, narrower spreads=eased)......................................................
+a. Maximum size of credit lines......................................................................................
+b. Maximum maturity of loans and credit lines ..................................................................
+15.a.
+15.b.
+15.c.
+QSBL HQ88
+Remained basically unchanged.............................................................................................................................................................
+Eased somewhat ...............................................................................................................................................................................
+Tightened considerably........................................................................................................................................................................
+Tightened somewhat...........................................................................................................................................................................
+Eased considerably ............................................................................................................................................................................
+14.
+e. Premiums charged on riskier loans .............................................................................
+Loan Demand and Applications—Continued
+HR00
+HQ99
+HQ98
+HR05
+HR04
+HR06
+HR01
+HR02
+HR03
+Possible reasons for tightening credit standards or loan terms
+a. Deterioration in your bank's current or expected
+capital position...........................................................
+d. Less aggressive competition from other banks .................
+b. Less favorable or more uncertain economic outlook ..........
+c. Worsening of industry-specific problems .........................
+e. Less aggressive competition from nonbank lenders ...........
+f. Reduced tolerance for risk............................................
+g. Decreased liquidity in the secondary market for
+these loans ...............................................................
+h. Deterioration in your bank's current or expected
+liquidity position .........................................................
+i. Increased concerns about the effects of legislative changes,
+supervisory actions, or changes in accounting standards,
+both past and expected ...............................................
+16.a.
+16.b.
+16.c.
+16.d.
+16.e.
+16.f.
+16.g.
+16.h.
+16.i.
+QSBL
+Not
+Important
+16. If your bank has tightened its credit standards or its terms for C&I loans to U.S. small businesses over the most
+recent calendar quarter (as described in questions 14 and 15), how important have been the following possible reasons
+for the change?
+FR 2028D
+Page 5 of 7
+09/2023
+Somewhat
+Important
+Very
+Important
+HR07
+HR08
+HR09
+HR10
+HR11
+HR12
+17.a.
+17.b.
+17.c.
+17.d.
+17.e.
+17.f.
+a. Improvement in your bank's current or expected
+capital position...........................................................
+d. More aggressive competition from other banks.................
+b. More favorable or less uncertain economic outlook ...........
+c. Improvement in industry-specific problems ......................
+e. More aggressive competition from nonbank lenders ..........
+f. Increased tolerance for risk ..........................................
+Possible reasons for easing credit standards or loan terms
+g. Increased liquidity in the secondary market for
+these loans ...............................................................
+h. Improvement in your bank's current or expected
+liquidity position .........................................................
+i. Reduced concerns about the effects of legislative
+changes, supervisory actions, or changes in
+accounting standards, both past and expected .................
+HR13
+HR14
+HR15
+17.g.
+17.h.
+17.i.
+Very
+Important
+Somewhat
+Important
+Not
+ImportantQSBL
+17. If your bank has eased its credit standards or its terms for C&I loans to U.S. small businesses over
+the most recent calendar quarter (as described in questions 14 and 15), how important have been the following
+possible reasons for the change?
+Credit Standards and Terms—Continued
+j. Other ....................................................................... 16.j.
+Please provide specific reason (QSBL PR01):
+j. Other ....................................................................... 17.j.
+Please provide specific reason (QSBL PR02):
+09/2026
+FR 2028D
+Page 6 of 7
+Somewhat
+Important
+Very
+Important
+HR21
+HR20
+HR19
+HR24
+HR23
+HR22
+HR27
+HR26
+HR25
+c. Quality of personal collateral.........................................
+a. Credit scores.............................................................
+b. Quality of business collateral ........................................
+f. Debt-to-income level of business owners ........................
+d. Willingness to pledge personal assets ............................
+e. Personal wealth of business owners ..............................
+i. Prospects for business growth or enterprise values ...........
+g. Liquidity position of business owners..............................
+h. Recent business income growth....................................
+Not
+ImportantQSBL
+19. If the credit quality of small business applicants has changed over the most recent calendar quarter (as described in
+question 18), how important have been the following possible factors for the change?
+19.a.
+19.b.
+19.c.
+19.d.
+19.e.
+19.f.
+19.g.
+19.h.
+19.i.
+Special Questions
+QSBL HR18
+Remained basically unchanged.................................................................................................
+Declined somewhat ................................................................................................................
+Improved substantially.............................................................................................................
+Improved somewhat...............................................................................................................
+Declined substantially .............................................................................................................
+Credit Quality of Applicants
+18. In your opinion, how has the credit quality of U.S. small business applicants changed over the most recent
+calendar quarter? (check only one)
+18.
+j. Other ....................................................................... 19.j.
+Please provide specific reason (QSBL PR03):
+1. Over the next 12 months, what impact do you expect each of the following factors to have on small business loan demand?
+(Please indicate whether you anticipate a very negative impact, a somewhat negative impact, no impact, a somewhat
+positive impact, or a very positive impact for each factor.)
+Somewhat
+Negative
+Impact
+QB04 1.i.
+QB03 1.h.
+QB01
+QB00
+QN64
+QB02
+1.d.
+1.e.
+1.f.
+1.g.
+QA98
+QA97
+QN63
+No
+Impact
+Very
+Negative
+Impact
+Somewhat
+Positive
+Impact
+Very
+Positive
+ImpactQSBL
+1.a.
+1.b.
+1.c.
+a. Regulatory policy .......................................
+b. Trade policy ..............................................
+c. Interest rates .............................................
+d. Consumer demand.....................................
+e. Inflation....................................................
+f. Cost of labor ..............................................
+g. Tax policy.................................................
+h. Supply chains............................................
+i. Technology ................................................
+j. Other ........................................................ QB05 1.j.
+Please provide specific reason (QSBL QB06):
+09/2026
+FR 2028D
+Page 7 of 7
+Special Questions—Continued
+2. Over the next 12 months, what impact do you expect each of the following factors to have on your credit standards for C&I
+loans to U.S. small businesses? (Please indicate whether you anticipate significant tightening, modest tightening, no impact,
+modest easing, or significant easing for each factor.)
+Please provide specific reason (QSBL QN77):
+l. Other ........................................................ QN76 2.l.
+Modest
+Tightening
+QN73 2.i.
+QN72 2.h.
+QN70
+QN69
+QN68
+QN71
+2.d.
+2.e.
+2.f.
+2.g.
+QN67
+QN66
+QN65
+No
+Impact
+Significant
+Tightening
+Modest
+Easing
+Significant
+EasingQSBL
+2.a.
+2.b.
+2.c.
+a. Expected economic conditions......................
+b. Certainty of economic outlook.......................
+c. Regulatory policy .......................................
+d. Government policy .....................................
+e. Competition from other banks .......................
+f. Competition from nonbank lenders..................
+g. Your bank's risk tolerance............................
+h. Your bank's capital position..........................
+i. Your bank's liquidity position..........................
+QN75 2.k.
+QN74 2.j. j. Borrower creditworthiness............................
+k. Technology ...............................................
