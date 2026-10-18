@@ -1252,5 +1252,76 @@ class TestEngineFlow(unittest.TestCase):
             self.assertEqual(result["report"]["counts"]["removed"],0)
             self.assertFalse(result["report"]["baseline_update_allowed"])
 
+    def test_synthetic_change_flows_through_ai_to_durable_notification_outbox(self):
+        from regmon.engine import process_source
+        from regmon.notify import enqueue_notifications, load_outbox, save_outbox
+
+        url = "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/synthetic-update"
+        uid = make_id(url)
+        old = {
+            "url_id": uid,
+            "canonical_url": url,
+            "normalized_hash": "old-normalized-hash",
+            "raw_hash": "old-raw-hash",
+            "snapshot_location": "data/snapshots/old.txt",
+            "first_seen": "2026-01-01T00:00:00+00:00",
+        }
+        current_item = {
+            "url_id": uid,
+            "source_id": SOURCE.id,
+            "regulator": SOURCE.regulator,
+            "canonical_url": url,
+            "normalized_hash": "new-normalized-hash",
+            "raw_hash": "new-raw-hash",
+            "relevance": {"candidate": True, "reason": "synthetic test candidate"},
+            "first_seen": "2026-01-01T00:00:00+00:00",
+        }
+        analysis = {
+            "relevant": True,
+            "topic": "Synthetic reporting requirement",
+            "change_type": "amendment",
+            "summary": "The synthetic reporting requirement changed.",
+            "impact": "Review the changed reporting requirement.",
+            "effective_date": "Not stated",
+            "affected_scope": "Not stated",
+            "actions": "Review the evidence.",
+            "reason": "The synthetic diff identifies a reporting change.",
+        }
+
+        with patch("regmon.engine.load_discovery_metadata", return_value={
+            "source_id": SOURCE.id, "state": "COMPLETE", "method": "synthetic-test"
+        }), patch("regmon.engine.load_previous", return_value={uid: old}), \
+             patch("regmon.engine.discover", return_value=[url]), \
+             patch("regmon.engine.make_current_item", return_value=(current_item, "new regulation text")), \
+             patch("regmon.engine.read_snapshot", side_effect=lambda record:
+                   "new regulation text" if record and record.get("normalized_hash") == "new-normalized-hash"
+                   else "old regulation text"), \
+             patch("regmon.engine.write_snapshot", return_value="data/snapshots/synthetic.txt"), \
+             patch("regmon.engine.write_evidence", return_value="data/evidence/synthetic.json"), \
+             patch("regmon.engine.analyze", return_value={"status": "ok", "analysis": analysis}):
+            result = process_source(SOURCE, "synthetic-ai-notification-pipeline", dry_run=False)
+
+        report = result["report"]
+        self.assertEqual(report["counts"]["changed"], 1)
+        self.assertEqual(report["counts"]["ai_ok"], 1)
+        event = next(item for item in report["events"] if item["event_type"] == "CHANGED_URL")
+        ai_result = report["ai_results"][0]
+        self.assertEqual(event["event_id"], ai_result["event_id"])
+
+        notifications = build_notifications(report)
+        self.assertEqual(len(notifications), 1)
+        self.assertEqual(notifications[0]["event_id"], event["event_id"])
+        self.assertEqual(notifications[0]["topic"], "Synthetic reporting requirement")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            outbox_path = Path(tmp) / "notification-outbox.json"
+            outbox = {"pending_events": {}, "updated_at": None}
+            enqueue_notifications(outbox, notifications, {})
+            save_outbox(outbox, outbox_path)
+            restored = load_outbox(outbox_path)
+            self.assertIn(event["event_id"], restored["pending_events"])
+            self.assertEqual(restored["pending_events"][event["event_id"]]["summary"],
+                             "The synthetic reporting requirement changed.")
+
 if __name__=="__main__":
     unittest.main()
