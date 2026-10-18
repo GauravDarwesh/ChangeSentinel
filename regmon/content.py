@@ -524,6 +524,21 @@ def _extract_pdfplumber_page(page, fast_text: str) -> str:
     tables = _find_pdf_tables(page)
     if tables:
         tables.sort(key=lambda entry: (entry[0][1], entry[0][0]))
+
+        # The vertical-crop strategy below is safe for page-wide tables, but it
+        # can discard prose to the left/right of a narrow table that shares the
+        # same vertical band (for example, the FR 2028S prime-rate grid). Keep
+        # the complete fast-path text in that case and add a structured table
+        # view, accepting stable duplication rather than losing source content.
+        narrow_tables = [
+            entry for entry in tables
+            if float(entry[0][2]) - float(entry[0][0]) < float(page.width) * 0.90
+        ]
+        if narrow_tables:
+            parts = [normalize_pdf_prose(fast_text)]
+            parts.extend(_table_to_markdown(rows) for _bbox, rows, _score in tables)
+            return "\n\n".join(part for part in parts if part.strip())
+
         blocks = []
         cursor = 0.0
         for bbox, rows, _score in tables:
