@@ -1236,6 +1236,26 @@ class TestFetch(unittest.TestCase):
         self.assertEqual(result.body, b"%PDF-synthetic")
         mock_get.assert_called_once()
 
+    @patch("regmon.fetch.validate_public_http_url")
+    @patch("regmon.fetch.requests.get")
+    def test_resource_redirect_cannot_escape_the_allowed_download_route(self, mock_get, _validate_url):
+        url = "https://example.test/Download/DownloadAttachment?guid=current"
+        mock_get.return_value = Mock(
+            status_code=302,
+            content=b"",
+            headers={"location": "https://evil.test/DownloadAttachment?guid=external"},
+        )
+        with self.assertRaisesRegex(ValueError, "outside allowed domains"):
+            fetch(
+                url,
+                attempts=1,
+                allowed_domains=("example.test",),
+                allowed_prefixes=("https://example.test/Report/Index/",),
+                allowed_urls=("https://example.test/Report/Index/FR-Y-14M",),
+                allowed_resource_prefixes=("https://example.test/Download/",),
+            )
+        mock_get.assert_called_once()
+
     @patch("regmon.fetch.requests.get")
     def test_http_500_retries_and_fails(self,mock_get):
         mock_get.return_value=Mock(status_code=500,content=b"bad",headers={})
