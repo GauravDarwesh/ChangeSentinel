@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import csv
 import io
+import json
 import re
 import unicodedata
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
@@ -49,8 +51,32 @@ def _extension(url: str) -> str:
 
 def extract_content(url: str, content_type: str, body: bytes):
     ctype, suffix = (content_type or "").lower(), _extension(url)
-    if "html" in ctype or suffix in {"", ".html", ".htm"}:
+    decoded = body.decode("utf-8-sig", "replace")
+    if "html" in ctype or suffix in {".html", ".htm"} or (not ctype and suffix == ""):
         return normalize_html(body.decode("utf-8", "replace")), "html", None
+    if "json" in ctype or suffix == ".json":
+        try:
+            payload = json.loads(decoded)
+            # Ignore inconsequential object-key order; array order remains meaningful.
+            normalized_json = json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2)
+            return normalized_json, "json", None
+        except (json.JSONDecodeError, UnicodeError) as exc:
+            return None, "json", f"{type(exc).__name__}: {exc}"
+    if "xml" in ctype or suffix == ".xml":
+        try:
+            # Canonicalization stabilizes attribute ordering; remove formatting-only
+            # whitespace between elements, then pretty-print for a readable diff.
+            canonical_xml = ET.canonicalize(xml_data=decoded)
+            root = ET.fromstring(canonical_xml)
+            for node in root.iter():
+                if node.text is not None and not node.text.strip():
+                    node.text = None
+                if node.tail is not None and not node.tail.strip():
+                    node.tail = None
+            ET.indent(root, space="  ")
+            return ET.tostring(root, encoding="unicode"), "xml", None
+        except (ET.ParseError, ValueError) as exc:
+            return None, "xml", f"{type(exc).__name__}: {exc}"
     if "pdf" in ctype or suffix == ".pdf":
         try:
             from pypdf import PdfReader

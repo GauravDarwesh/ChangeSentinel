@@ -73,7 +73,7 @@ function itemTitle(item) {
   if (!last) {
     try { last = new URL(url).hostname; } catch (_) { last = url || "Monitored page"; }
   }
-  return last.replace(/\.(html?|pdf)$/i, "").replace(/[-_]+/g, " ").replace(/\b\w/g, ch => ch.toUpperCase());
+  return last.replace(/\.(html?|pdf|json|xml|csv|txt)$/i, "").replace(/[-_]+/g, " ").replace(/\b\w/g, ch => ch.toUpperCase());
 }
 function urlHost(item) {
   try { return new URL(item.canonical_url).hostname; }
@@ -292,7 +292,7 @@ function renderDetailHeader(item) {
     '</div></div><div class="detail-meta"><span class="status-pill ' + esc(status.cls) + '">' + esc(status.label) + '</span>' +
     '<span class="meta-chip">HTTP ' + esc(item.http_status == null ? "—" : item.http_status) + '</span>' +
     '<span class="meta-chip">Last checked ' + esc(fmt(item.last_checked)) + '</span>' +
-    '<span class="meta-chip">' + (htmlPath ? 'HTML response saved' : 'HTML snapshot not captured') + '</span>' +
+    '<span class="meta-chip">' + (htmlPath ? 'HTML response saved' : (item.extraction_type ? esc(String(item.extraction_type).toUpperCase()) + ' snapshot' : 'Snapshot pending')) + '</span>' +
     (item.content_type ? '<span class="meta-chip">' + esc(item.content_type) + '</span>' : '') + '</div></div>';
   document.querySelectorAll("[data-detail-tab]").forEach(button => {
     button.classList.toggle("active", button.dataset.detailTab === state.detailTab);
@@ -326,7 +326,16 @@ async function loadSnapshot(item) {
     return;
   }
   if (!item.html_snapshot_location) {
-    canvas.outerHTML = emptyState("HTML snapshot not captured yet", "The first successful full fetch creates the saved preview and preserves a separate source file. This page can still be opened live above.", "⌁");
+    if (item.snapshot_location) {
+      const typeLabel = item.extraction_type ? String(item.extraction_type).toUpperCase() : "text";
+      canvas.outerHTML = emptyState(
+        typeLabel + " snapshot captured",
+        "This URL returns structured or text content rather than an HTML page. The stable extracted snapshot is available under Extracted text; use the page details tab for response metadata.",
+        "▧"
+      ) + '<div style="display:flex;justify-content:center;margin-top:12px"><button class="btn" type="button" data-snapshot-mode="text">View extracted snapshot →</button></div>';
+    } else {
+      canvas.outerHTML = emptyState("HTML snapshot not captured yet", "The first successful full fetch creates the saved preview and preserves a separate source file. This page can still be opened live above.", "⌁");
+    }
     return;
   }
   try {

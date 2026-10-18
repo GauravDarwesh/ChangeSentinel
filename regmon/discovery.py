@@ -18,9 +18,9 @@ from regmon.config import SourceConfig
 
 TRACKING_PARAMS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
 NON_HTML_SUFFIXES = {
-    ".7z", ".avi", ".bin", ".css", ".doc", ".docx", ".gif", ".gz", ".ico",
+    ".7z", ".avi", ".bin", ".css", ".csv", ".doc", ".docx", ".gif", ".gz", ".ico",
     ".jpeg", ".jpg", ".js", ".m3u8", ".mov", ".mp3", ".mp4", ".mpeg",
-    ".png", ".ppt", ".pptx", ".rar", ".svg", ".tar", ".tgz", ".ttf",
+    ".json", ".md", ".png", ".ppt", ".pptx", ".rar", ".svg", ".tar", ".tgz", ".ttf", ".txt",
     ".wav", ".webm", ".webp", ".woff", ".woff2", ".xls", ".xlsx",
     ".xml", ".zip", ".pdf",
 }
@@ -142,7 +142,9 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
                     break
                 time.sleep(2 * attempt)
                 continue
-            if not ("html" in content_type or _is_probably_html_url(url)):
+            # Do not parse a known non-HTML response as markup for link discovery.
+            # Extensionless application/json endpoints otherwise looked like HTML pages.
+            if "html" not in content_type and (content_type or not _is_probably_html_url(url)):
                 return url, [], None
             return url, extract_html_links(response.url or url, response.text, source), None
         except Exception as exc:

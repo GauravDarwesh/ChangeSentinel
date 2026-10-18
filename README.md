@@ -165,6 +165,8 @@ The fetch layer is intentionally separate from discovery. Discovering a URL and 
 
 ## 5. Content extraction
 
+JSON responses are parsed and serialized with stable, sorted object keys before comparison, so property-order-only changes do not trigger alerts. XML responses are canonicalized and deterministically formatted before comparison, reducing noise from attribute ordering and indentation while preserving meaningful element and value changes.
+
 \`regmon/content.py\` converts different resource types into normalized text.
 
 Currently supported:

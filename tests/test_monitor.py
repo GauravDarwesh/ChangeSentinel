@@ -8,7 +8,7 @@ from regmon.ai import AI_REQUIRED_KEYS, parse_json, validate_analysis
 from regmon.change import build_event_id, classify_change, make_diff, make_id, write_evidence
 from regmon.content import extract_content, normalize_html
 from regmon.config import SourceConfig
-from regmon.discovery import canonical, extract_html_links, http_discover, in_scope, parse_discovered_urls
+from regmon.discovery import _fetch_links, canonical, extract_html_links, http_discover, in_scope, parse_discovered_urls
 from regmon.fetch import fetch
 from regmon.monitor import load_previous
 from regmon.notify import build_notifications
@@ -31,6 +31,59 @@ class TestContent(unittest.TestCase):
 
     def test_substantive_change_survives(self):
         self.assertNotEqual(normalize_html("<main>Version one</main>"), normalize_html("<main>Version two</main>"))
+
+    def test_json_is_stably_formatted_and_object_key_order_is_ignored(self):
+        first = extract_content(
+            "https://example.test/api", "application/json",
+            b'{"z": 3, "a": {"y": 2, "x": 1}}',
+        )
+        reordered = extract_content(
+            "https://example.test/api", "application/json",
+            b'{ "a": {"x": 1, "y": 2}, "z": 3 }',
+        )
+        changed = extract_content(
+            "https://example.test/api", "application/json",
+            b'{"a": {"x": 9, "y": 2}, "z": 3}',
+        )
+        self.assertEqual(first[1:], ("json", None))
+        self.assertEqual(reordered[1:], ("json", None))
+        self.assertEqual(first[0], reordered[0])
+        self.assertNotEqual(first[0], changed[0])
+        self.assertIn('"x": 1', first[0])
+
+    def test_json_parse_failure_is_explicit(self):
+        text, kind, error = extract_content(
+            "https://example.test/api", "application/json", b'{"missing": ',
+        )
+        self.assertIsNone(text)
+        self.assertEqual(kind, "json")
+        self.assertTrue(error)
+
+    def test_xml_is_stably_formatted_across_attribute_and_indentation_changes(self):
+        first = extract_content(
+            "https://example.test/policy.xml", "application/xml",
+            b'<policy z="2" a="1">\n  <title>Rule 1</title>\n  <status>active</status>\n</policy>',
+        )
+        reordered = extract_content(
+            "https://example.test/policy.xml", "application/xml",
+            b'<policy a="1" z="2"><title>Rule 1</title><status>active</status></policy>',
+        )
+        changed = extract_content(
+            "https://example.test/policy.xml", "application/xml",
+            b'<policy a="1" z="2"><title>Rule 2</title><status>active</status></policy>',
+        )
+        self.assertEqual(first[1:], ("xml", None))
+        self.assertEqual(first[0], reordered[0])
+        self.assertNotEqual(first[0], changed[0])
+        self.assertIn("<title>Rule 1</title>", first[0])
+
+    def test_xml_parse_failure_is_explicit(self):
+        text, kind, error = extract_content(
+            "https://example.test/policy.xml", "application/xml", b"<policy>",
+        )
+        self.assertIsNone(text)
+        self.assertEqual(kind, "xml")
+        self.assertTrue(error)
 
     def test_pdf_failure_is_explicit(self):
         text, kind, error = extract_content("https://example.test/a.pdf","application/pdf",b"not-a-pdf")
@@ -98,6 +151,23 @@ class TestDiscovery(unittest.TestCase):
                 "https://www.eba.europa.eu/b?phase=consultation",
             ],
         )
+
+    @patch("regmon.discovery.requests.get")
+    def test_json_endpoint_is_not_parsed_as_html_links(self, mock_get):
+        mock_get.return_value = Mock(
+            status_code=200,
+            headers={"content-type": "application/json"},
+            text='{"next": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/other"}',
+            url="https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/api",
+        )
+        url, links, failure = _fetch_links(
+            "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/api",
+            SOURCE,
+            10,
+        )
+        self.assertEqual(url, mock_get.return_value.url)
+        self.assertEqual(links, [])
+        self.assertIsNone(failure)
 
     @patch("regmon.discovery.requests.get")
     def test_http_discovery_retries_transient_errors(self, mock_get):
