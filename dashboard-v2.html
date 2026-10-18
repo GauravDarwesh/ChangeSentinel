@@ -257,6 +257,7 @@
     .field-label span { margin-left: 5px; color: var(--muted-2); font-weight: 500; }
     .field-input { display: block; width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid var(--line-strong); border-radius: 12px; background: #fff; color: var(--ink); outline: none; font-size: 13px; }
     .field-input::placeholder { color: #a0aaba; }
+    textarea.field-input { min-height: 84px; resize: vertical; line-height: 1.7; }
     .field-input:focus { border-color: #8aa9f2; box-shadow: 0 0 0 4px rgba(55,104,216,.09); }
     .field-help { margin-top: 8px; color: var(--muted-2); font-size: 11px; line-height: 1.7; }
     .modal-info { display: flex; gap: 11px; align-items: flex-start; margin-top: 24px; padding: 14px 15px; border: 1px solid #e0e8fa; border-radius: 12px; background: #f6f8ff; color: #596e91; font-size: 11px; line-height: 1.8; }
@@ -489,6 +490,16 @@
         <label class="field-label" for="newMonitorName">Display name <span>Optional</span></label>
         <input class="field-input" id="newMonitorName" name="name" type="text" maxlength="100" placeholder="e.g. Consultation on capital requirements" autocomplete="off">
         <div class="field-help">A short name makes it easier to recognize the page in the dashboard.</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="newMonitorIncludeSelector">CSS selector to include <span>Optional</span></label>
+        <input class="field-input" id="newMonitorIncludeSelector" name="includeSelector" type="text" maxlength="500" placeholder="main .consultation-content" autocomplete="off">
+        <div class="field-help">Monitor only matching content. The selector must match at least one element on every successful fetch; there is no whole-page fallback.</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="newMonitorIgnoreSelectors">CSS selectors to ignore <span>Optional · one per line</span></label>
+        <textarea class="field-input" id="newMonitorIgnoreSelectors" name="ignoreSelectors" rows="3" maxlength="10000" placeholder=".cookie-banner&#10;.breadcrumb&#10;.last-visited"></textarea>
+        <div class="field-help">Remove matching elements before comparing text. Rules apply inside the inclusion region when one is provided; otherwise they apply to the page before main-content detection. Up to 20 selectors.</div>
       </div>
       <div class="modal-info"><span class="modal-info-symbol" aria-hidden="true">↗</span><span>Only the repository owner can register a monitor. This opens a prefilled GitHub request; after you submit it, ChangeSentinel Actions writes the URL to the shared source configuration, commits it, and starts the first scan. No access token is stored in this dashboard.</span></div>
       <div class="modal-actions">

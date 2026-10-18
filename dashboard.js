@@ -433,8 +433,10 @@ function renderDetails(item) {
     ["ETag", item.etag || "Not supplied"], ["Last-Modified", item.last_modified || "Not supplied"],
     ["Normalized text SHA-256", item.normalized_hash || "Not available"], ["HTML source SHA-256", item.html_hash || "Not available"],
     ["Raw response SHA-256", item.raw_hash || "Not available"], ["HTML snapshot file", item.html_snapshot_location || "Not captured"],
-    ["Text snapshot file", item.snapshot_location || "Not available"], ["Fetch error", item.fetch_error || "None"],
-    ["Extraction error", item.extraction_error || "None"]
+    ["Text snapshot file", item.snapshot_location || "Not available"],
+    ["Include CSS selector", sourceForItem(item).include_selector || "Default main-content detection"],
+    ["Ignore CSS selectors", (sourceForItem(item).ignore_selectors || []).join(", ") || "None"],
+    ["Fetch error", item.fetch_error || "None"], ["Extraction error", item.extraction_error || "None"]
   ];
   $("detailBody").innerHTML = '<div class="detail-grid">' + fields.map(([key, value]) =>
     '<div class="detail-cell"><label>' + esc(key) + '</label><div class="' + (String(key).indexOf("SHA-256") >= 0 ? "hash" : "") + '">' +
@@ -592,26 +594,34 @@ function openAddMonitor() {
     showToast("This browser does not support the add-monitor dialog. Please use a current browser.");
   }
 }
-function makeGitHubIssueUrl(url, name) {
-  const body = [
+function makeGitHubIssueUrl(url, name, includeSelector, ignoreSelectors) {
+  const bodyLines = [
     "<!-- changesentinel:add-monitor:v1 -->",
     "",
     "Please register this URL as a ChangeSentinel monitor.",
     "",
     "URL: " + url,
     "Name: " + (name || ""),
-    "",
-    "This request was created from the ChangeSentinel dashboard."
-  ].join("\n");
+    "Include selector: " + (includeSelector || ""),
+    "Ignore selectors:"
+  ];
+  if (ignoreSelectors.length) {
+    ignoreSelectors.forEach(selector => bodyLines.push("- " + selector));
+  } else {
+    bodyLines.push("(none)");
+  }
+  bodyLines.push("", "This request was created from the ChangeSentinel dashboard.");
   const params = new URLSearchParams();
   params.set("title", "[ChangeSentinel] Add monitor request");
-  params.set("body", body);
+  params.set("body", bodyLines.join("\n"));
   return REPO + "/issues/new?" + params.toString();
 }
 function submitAddMonitor(event) {
   event.preventDefault();
   const rawUrl = $("newMonitorUrl").value.trim();
   const name = $("newMonitorName").value.replace(/[\r\n]+/g, " ").trim().slice(0, 100);
+  const includeSelector = $("newMonitorIncludeSelector").value.replace(/[\r\n]+/g, " ").trim();
+  const ignoreSelectors = $("newMonitorIgnoreSelectors").value.split(/\r?\n/).map(value => value.trim()).filter(Boolean);
   let parsed;
   try { parsed = new URL(rawUrl); }
   catch (_) {
@@ -625,12 +635,18 @@ function submitAddMonitor(event) {
     return;
   }
   $("newMonitorUrl").setCustomValidity("");
+  if (includeSelector.length > 500 || ignoreSelectors.length > 20 || ignoreSelectors.some(selector => selector.length > 500)) {
+    showToast("Use an inclusion selector of at most 500 characters and up to 20 ignore selectors, each at most 500 characters.");
+    return;
+  }
   parsed.hash = "";
   const url = parsed.toString();
-  const target = makeGitHubIssueUrl(url, name);
+  const target = makeGitHubIssueUrl(url, name, includeSelector, ignoreSelectors);
   $("addMonitorDialog").close();
   $("newMonitorUrl").value = "";
   $("newMonitorName").value = "";
+  $("newMonitorIncludeSelector").value = "";
+  $("newMonitorIgnoreSelectors").value = "";
   showToast("Submit the prefilled request on GitHub. The URL is added to configuration and scanned after that request is accepted.");
   const githubWindow = window.open(target, "_blank");
   if (githubWindow) {

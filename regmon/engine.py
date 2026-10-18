@@ -197,10 +197,23 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
                         item[key] = old[key]
             return item, None, None
 
-        text, extraction_type, extraction_error = extract_content(url, result.content_type, result.body)
+        text, extraction_type, extraction_error = extract_content(
+            url,
+            result.content_type,
+            result.body,
+            include_selector=source.include_selector,
+            ignore_selectors=source.ignore_selectors,
+        )
         item["extraction_type"] = extraction_type
         if extraction_error:
             item["extraction_error"] = extraction_error
+            if old:
+                for key in ("normalized_hash", "snapshot_location", "first_seen", "evidence_location", "relevance"):
+                    if old.get(key) is not None:
+                        item[key] = old[key]
+            if extraction_type == "html":
+                item["html_hash"] = result.raw_hash
+                return item, None, result.body
             return item, None, None
 
         normalized = text or ""
@@ -348,14 +361,19 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
                 continue
 
             if item.get("extraction_error"):
+                if html_body is not None and item.get("html_hash") and not dry_run:
+                    item["html_snapshot_location"] = write_html_snapshot(uid, html_body, item["html_hash"])
                 event_id = build_event_id("EXTRACTION_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), error=item["extraction_error"])
                 evidence = write_evidence(
                     ROOT, "EXTRACTION_ERROR", event_id, url, now, old, item,
                     old_text if old_text is not None else read_snapshot(old),
                     None,
                     item["extraction_error"],
+                    before_html=read_html_snapshot(old),
+                    after_html=html_body.decode("utf-8", "replace") if html_body is not None else None,
                 )
                 item["evidence_location"] = evidence
+                current[uid] = item
                 events.append({"event_id":event_id,"event_type":"EXTRACTION_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"error":item["extraction_error"]}})
                 continue
 

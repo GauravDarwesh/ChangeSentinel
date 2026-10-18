@@ -12,11 +12,30 @@ from regmon.register_monitor import (
 )
 
 
-def issue_event(url, name="Policy updates", login="GauravDarwesh", title="[ChangeSentinel] Add monitor request"):
+def issue_event(
+    url,
+    name="Policy updates",
+    login="GauravDarwesh",
+    title="[ChangeSentinel] Add monitor request",
+    include_selector="",
+    ignore_selectors=(),
+):
+    body = [
+        REQUEST_MARKER,
+        "",
+        "URL: " + url,
+        "Name: " + name,
+        "Include selector: " + include_selector,
+        "Ignore selectors:",
+    ]
+    body.extend("- " + selector for selector in ignore_selectors)
+    if not ignore_selectors:
+        body.append("(none)")
+    body.extend(["", "This request was created from the ChangeSentinel dashboard."])
     return {
         "issue": {
             "title": title,
-            "body": REQUEST_MARKER + "\n\nURL: " + url + "\nName: " + name + "\n",
+            "body": "\n".join(body),
             "user": {"login": login},
         }
     }
@@ -51,7 +70,36 @@ class TestRegisterMonitor(unittest.TestCase):
         self.assertEqual(source["max_urls"], 0)
         self.assertTrue(source["active"])
         self.assertTrue(source["baseline_on_first_run"])
+        self.assertEqual(source["include_selector"], "")
+        self.assertEqual(source["ignore_selectors"], [])
         self.assertTrue(source["id"].startswith("manual-"))
+
+    def test_registers_include_and_ignore_css_selectors(self):
+        url = "https://www.example.com/policy"
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            event = issue_event(
+                url,
+                include_selector="main .policy-content",
+                ignore_selectors=[".cookie-banner", ".last-visited"],
+            )
+            result = register_request(event, path, "GauravDarwesh/ChangeSentinel")
+            saved = json.loads(path.read_text(encoding="utf-8"))["sources"][0]
+        self.assertTrue(result["created"])
+        self.assertEqual(saved["include_selector"], "main .policy-content")
+        self.assertEqual(saved["ignore_selectors"], [".cookie-banner", ".last-visited"])
+
+    def test_rejects_invalid_css_selector(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Invalid include CSS selector"):
+                register_request(
+                    issue_event("https://www.example.com/policy", include_selector="["),
+                    path,
+                    "GauravDarwesh/ChangeSentinel",
+                )
 
     def test_only_repository_owner_can_register(self):
         event = issue_event("https://www.example.com/policy", login="someone-else")

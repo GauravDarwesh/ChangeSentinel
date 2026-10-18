@@ -1,9 +1,23 @@
 import unittest
 
-from regmon.config import DEFAULT_CONFIG_PATH, load_config
+from regmon.config import DEFAULT_CONFIG_PATH, SourceConfig, load_config
 
 
 class TestConfig(unittest.TestCase):
+    def test_source_config_parses_css_selection_options(self):
+        source = SourceConfig.from_dict({
+            "id": "manual-test",
+            "name": "Example policy",
+            "regulator": "example.com",
+            "seed_urls": ["https://example.com/policy"],
+            "allowed_prefixes": ["https://example.com/"],
+            "allowed_domains": ["example.com"],
+            "include_selector": "main .policy",
+            "ignore_selectors": [".cookie-banner", ".breadcrumb"],
+        })
+        self.assertEqual(source.include_selector, "main .policy")
+        self.assertEqual(source.ignore_selectors, (".cookie-banner", ".breadcrumb"))
+
     def test_eba_sources_are_inactive_and_federal_reserve_pilot_is_bounded(self):
         _, sources = load_config(DEFAULT_CONFIG_PATH)
 

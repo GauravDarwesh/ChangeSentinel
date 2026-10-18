@@ -171,7 +171,9 @@ JSON responses are parsed and serialized with stable, sorted object keys before 
 
 Currently supported:
 
-- HTML
+- HTML, including per-source CSS inclusion and ignore selectors
+- JSON with stable object-key ordering
+- XML with canonicalized formatting
 - PDF
 - DOCX
 - XLSX
@@ -543,9 +545,20 @@ A new source can define its own:
 - allowed domain(s)
 - allowed URL prefix(es)
 - excluded paths
+- optional include_selector to restrict HTML comparison to a CSS-selected region
+- optional ignore_selectors list to remove page elements before text comparison
 - discovery behavior
 - URL limit
 - AI limits
+
+Example configuration:
+
+{
+  "include_selector": "main .consultation-content",
+  "ignore_selectors": [".cookie-banner", ".breadcrumb", ".last-visited"]
+}
+
+Selectors are validated when registered. If an inclusion selector stops matching during a later fetch, ChangeSentinel records an extraction error rather than silently monitoring the entire page. The original fetched HTML response is still preserved as evidence.
 
 The rest of the pipeline is intentionally shared.
 

@@ -85,6 +85,51 @@ class TestContent(unittest.TestCase):
         self.assertEqual(kind, "xml")
         self.assertTrue(error)
 
+    def test_html_include_selector_and_ignore_selectors_scope_comparison(self):
+        html = """<html><body>
+        <header><p>Site navigation noise</p></header>
+        <main>
+          <section class="policy-content">
+            <h1>Capital requirements draft</h1>
+            <p>Minimum ratio rises to 12%.</p>
+            <p class="last-visited">Visited today</p>
+            <div class="cookie-banner">Accept all cookies</div>
+          </section>
+          <section class="related"><p>Unrelated article changes often</p></section>
+        </main>
+        <footer>Footer noise</footer>
+        </body></html>"""
+        result = normalize_html(
+            html,
+            include_selector="main .policy-content",
+            ignore_selectors=(".last-visited", ".cookie-banner"),
+        )
+        self.assertEqual(result, "Capital requirements draft\nMinimum ratio rises to 12%")
+        self.assertNotIn("navigation", result)
+        self.assertNotIn("Unrelated article", result)
+
+    def test_html_include_selector_mismatch_is_an_extraction_error(self):
+        result, kind, error = extract_content(
+            "https://example.test/policy",
+            "text/html",
+            b"<main><p>Regulatory content</p></main>",
+            include_selector="main .does-not-exist",
+        )
+        self.assertIsNone(result)
+        self.assertEqual(kind, "html")
+        self.assertIn("include selector matched no elements", error)
+
+    def test_invalid_html_selector_is_an_extraction_error(self):
+        result, kind, error = extract_content(
+            "https://example.test/policy",
+            "text/html",
+            b"<main><p>Regulatory content</p></main>",
+            include_selector="[",
+        )
+        self.assertIsNone(result)
+        self.assertEqual(kind, "html")
+        self.assertIn("Invalid", error)
+
     def test_pdf_failure_is_explicit(self):
         text, kind, error = extract_content("https://example.test/a.pdf","application/pdf",b"not-a-pdf")
         self.assertIsNone(text)

@@ -9,12 +9,16 @@ import re
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
+from bs4 import BeautifulSoup
+
 REQUEST_MARKER = "<!-- changesentinel:add-monitor:v1 -->"
 ISSUE_TITLE_PREFIX = "[ChangeSentinel] Add monitor"
 TRACKING_PARAMS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
 DEFAULT_SOURCE_SETTINGS = {
     "active": True,
     "baseline_on_first_run": True,
+    "include_selector": "",
+    "ignore_selectors": [],
     "excluded_prefixes": [],
     "max_urls": 0,
     "crawler": "stealth-crawler",
@@ -83,15 +87,34 @@ def _display_name(name: str, url: str) -> str:
     return fallback[:100].title() if fallback else (parsed.hostname or "Monitored page")
 
 
-def source_for_url(url: str, name: str = "") -> dict:
+def _validate_css_selector(selector: str, label: str) -> None:
+    if not selector:
+        return
+    if len(selector) > 500:
+        raise ValueError(f"{label} CSS selector exceeds the 500-character limit.")
+    try:
+        BeautifulSoup("", "html.parser").select(selector)
+    except Exception as exc:
+        raise ValueError(f"Invalid {label} CSS selector: {exc}") from exc
+
+
+def source_for_url(
+    url: str,
+    name: str = "",
+    include_selector: str = "",
+    ignore_selectors: tuple[str, ...] | list[str] = (),
+) -> dict:
     parsed = urlparse(url)
     source_id = "manual-" + hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
     host = parsed.netloc.lower()
+    settings = dict(DEFAULT_SOURCE_SETTINGS)
+    settings["include_selector"] = str(include_selector or "").strip()
+    settings["ignore_selectors"] = list(ignore_selectors or [])
     return {
         "id": source_id,
         "name": _display_name(name, url),
         "regulator": parsed.hostname or host,
-        **DEFAULT_SOURCE_SETTINGS,
+        **settings,
         "seed_urls": [url],
         "allowed_prefixes": [parsed.scheme + "://" + host + "/"],
         "allowed_urls": [url],
@@ -99,7 +122,7 @@ def source_for_url(url: str, name: str = "") -> dict:
     }
 
 
-def request_from_issue(event: dict, repository: str) -> tuple[str, str]:
+def request_from_issue(event: dict, repository: str) -> tuple[str, str, str, tuple[str, ...]]:
     issue = event.get("issue") or {}
     title = str(issue.get("title") or "")
     if not title.startswith(ISSUE_TITLE_PREFIX):
@@ -115,13 +138,32 @@ def request_from_issue(event: dict, repository: str) -> tuple[str, str]:
     if not url_match:
         raise ValueError("No URL field was found in the request body.")
     name_match = re.search(r"(?m)^Name:\s*(.*?)\s*$", body)
+    include_match = re.search(r"(?m)^Include selector:\s*(.*?)\s*$", body)
+    ignore_match = re.search(
+        r"(?ms)^Ignore selectors:\s*\n(.*?)(?=\n\nThis request was created from the ChangeSentinel dashboard\.|\Z)",
+        body,
+    )
     url = canonicalize_url(url_match.group(1))
     name = re.sub(r"[\r\n]+", " ", name_match.group(1)).strip()[:100] if name_match else ""
-    return url, name
+    include_selector = str(include_match.group(1) if include_match else "").strip()
+    _validate_css_selector(include_selector, "include")
+    raw_ignored = ignore_match.group(1) if ignore_match else ""
+    ignored = []
+    for line in raw_ignored.splitlines():
+        selector = re.sub(r"^\s*(?:-\s*|\*\s*)", "", line).strip()
+        if not selector or selector.lower() in {"(none)", "none"}:
+            continue
+        if selector not in ignored:
+            ignored.append(selector)
+    if len(ignored) > 20:
+        raise ValueError("At most 20 ignore CSS selectors can be configured per monitor.")
+    for selector in ignored:
+        _validate_css_selector(selector, "ignore")
+    return url, name, include_selector, tuple(ignored)
 
 
 def register_request(event: dict, config_path: Path, repository: str) -> dict:
-    url, requested_name = request_from_issue(event, repository)
+    url, requested_name, include_selector, ignore_selectors = request_from_issue(event, repository)
     config = json.loads(config_path.read_text(encoding="utf-8"))
     sources = config.setdefault("sources", [])
     if not isinstance(sources, list):
@@ -145,7 +187,7 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
             except (ValueError, KeyError):
                 continue
 
-    new_source = source_for_url(url, requested_name)
+    new_source = source_for_url(url, requested_name, include_selector, ignore_selectors)
     source_ids = {str(source.get("id")) for source in sources}
     if new_source["id"] in source_ids:
         existing = next(source for source in sources if str(source.get("id")) == new_source["id"])
