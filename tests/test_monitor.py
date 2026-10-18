@@ -172,6 +172,21 @@ class TestDiscovery(unittest.TestCase):
         self.assertTrue(in_scope("https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a",SOURCE))
 
 
+    def test_scope_handles_custom_ports_and_legacy_port_domains(self):
+        url = "https://www.example.com:8443/policy"
+        for configured_domain in ("www.example.com", "www.example.com:8443"):
+            source = SourceConfig(
+                id="port-test",
+                name="Port Test",
+                regulator="example.com",
+                seed_urls=(url,),
+                allowed_prefixes=("https://www.example.com:8443/",),
+                allowed_domains=(configured_domain,),
+                allowed_urls=(url,),
+            )
+            self.assertTrue(in_scope(url, source))
+            self.assertFalse(in_scope("https://www.example.com:8444/policy", source))
+
     def test_exact_url_allowlist_rejects_nearby_pages_and_query_variants(self):
         allowed = "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/operational-risk/regulatory-technical-standards-operational-risk-management-framework"
         source = SourceConfig(
@@ -548,6 +563,24 @@ class TestDiscovery(unittest.TestCase):
         self.assertIn("https://www.eba.europa.eu/a", urls)
         self.assertEqual(metadata["state"], "COMPLETE")
         self.assertEqual(mock_get.call_count, 2)
+
+    @patch("regmon.discovery.requests.get")
+    def test_discovery_rejects_private_initial_target_before_request(self, mock_get):
+        url = "http://127.0.0.1/admin"
+        source = SourceConfig(
+            id="private-target-test",
+            name="Private target test",
+            regulator="localhost",
+            seed_urls=(url,),
+            allowed_prefixes=("http://127.0.0.1/",),
+            allowed_domains=("127.0.0.1",),
+            allowed_urls=(url,),
+        )
+        requested_url, links, failure = _fetch_links(url, source, timeout=1)
+        self.assertEqual(requested_url, url)
+        self.assertEqual(links, [])
+        self.assertIn("Private", failure["error"])
+        mock_get.assert_not_called()
 
     @patch("regmon.discovery.requests.get")
     def test_discovery_rejects_out_of_scope_redirect(self, mock_get):
@@ -1026,7 +1059,7 @@ class TestAI(unittest.TestCase):
         self.assertEqual(result["status"], "ok")
         self.assertEqual(arguments["url"], "https://example.invalid/change-sentinel-ai-smoke-test")
         self.assertIn("Synthetic", arguments["regulator"])
-        self.assertIn("Periodic Reporting", arguments["diff"])
+        self.assertIn("Periodic Reporting\n+Synthetic fixture heading: Quarterly Reporting", arguments["diff"])
         self.assertEqual(arguments["config"], config)
 
 class TestNotifications(unittest.TestCase):
@@ -1251,6 +1284,72 @@ class TestEngineFlow(unittest.TestCase):
             result=process_source(SOURCE,"run-degraded",dry_run=True)
             self.assertEqual(result["report"]["counts"]["removed"],0)
             self.assertFalse(result["report"]["baseline_update_allowed"])
+
+    def test_dry_run_does_not_write_error_or_removal_evidence(self):
+        from regmon.engine import process_source
+
+        failing_url = "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/fetch-failure"
+        extraction_url = "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/extraction-failure"
+        removed_url = "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/removed"
+        failing_id, extraction_id, removed_id = map(make_id, (failing_url, extraction_url, removed_url))
+        previous = {
+            failing_id: {"url_id": failing_id, "canonical_url": failing_url, "normalized_hash": "old-fetch"},
+            extraction_id: {"url_id": extraction_id, "canonical_url": extraction_url, "normalized_hash": "old-extraction"},
+            removed_id: {"url_id": removed_id, "canonical_url": removed_url, "normalized_hash": "old-removed"},
+        }
+
+        def current_item(url, old, source, now):
+            uid = make_id(url)
+            if url == failing_url:
+                return ({"url_id": uid, "canonical_url": url, "fetch_error": "synthetic timeout"}, None, None)
+            return ({"url_id": uid, "canonical_url": url, "raw_hash": "bad-payload", "extraction_error": "synthetic parse failure"}, None, None)
+
+        with patch("regmon.engine.load_discovery_metadata", return_value={"source_id": SOURCE.id, "state": "COMPLETE"}), \
+             patch("regmon.engine.load_previous", return_value=previous), \
+             patch("regmon.engine.discover", return_value=[failing_url, extraction_url]), \
+             patch("regmon.engine.make_current_item", side_effect=current_item), \
+             patch("regmon.engine.write_evidence") as write_evidence:
+            result = process_source(SOURCE, "dry-run-evidence-test", dry_run=True)
+
+        self.assertEqual(result["report"]["counts"]["fetch_error"], 1)
+        self.assertEqual(result["report"]["counts"]["extraction_error"], 1)
+        self.assertEqual(result["report"]["counts"]["removed"], 1)
+        write_evidence.assert_not_called()
+
+    def test_dry_run_uses_temporary_discovery_copy(self):
+        from regmon.engine import run
+        import regmon.engine as mod
+
+        with tempfile.TemporaryDirectory() as tmp:
+            persistent_discovery = Path(tmp) / "persisted-discovery"
+            persistent_discovery.mkdir()
+            marker = persistent_discovery / "marker.json"
+            marker.write_text("original", encoding="utf-8")
+            captured = {}
+
+            def fake_process(source, run_id, dry_run=False, discovery_data_dir=None):
+                captured["path"] = str(discovery_data_dir)
+                marker_copy = discovery_data_dir / "discovery" / "marker.json"
+                self.assertEqual(marker_copy.read_text(encoding="utf-8"), "original")
+                marker_copy.write_text("mutated in dry-run", encoding="utf-8")
+                return {
+                    "report": {
+                        "source": {"id": source.id, "regulator": source.regulator},
+                        "baseline_update_allowed": False,
+                        "counts": {},
+                    },
+                    "inventory": {},
+                }
+
+            with patch("regmon.engine.DISCOVERY", persistent_discovery), \
+                 patch("regmon.engine.load_config", return_value=({}, {SOURCE.id: SOURCE})), \
+                 patch("regmon.engine.process_source", side_effect=fake_process), \
+                 patch("regmon.engine.save_outputs", return_value={"dry_run": True}):
+                result = run(SOURCE.id, dry_run=True)
+
+            self.assertTrue(result["outcome"]["dry_run"])
+            self.assertEqual(marker.read_text(encoding="utf-8"), "original")
+            self.assertFalse(Path(captured["path"]).exists())
 
 if __name__=="__main__":
     unittest.main()

@@ -64,23 +64,25 @@ jobs:
       - name: Selected source URL preflight
         run: |
           python - <<'PY'
-          import json
           import os
           import requests
           from pathlib import Path
+          from urllib.parse import urljoin
+
+          from regmon.config import SourceConfig
+          from regmon.discovery import in_scope
+          from regmon.security import REDIRECT_STATUSES, validate_public_http_url
 
           requested = os.environ.get("REGMON_SOURCE", "all").strip()
+          import json
           config = json.loads(Path("config/sources.json").read_text(encoding="utf-8"))
           sources = [
-              source for source in config.get("sources", [])
+              SourceConfig.from_dict(source)
+              for source in config.get("sources", [])
               if source.get("active", False)
               and (requested in {"all", "*"} or source.get("id") == requested)
           ]
-          urls = []
-          for source in sources:
-              urls.extend(source.get("seed_urls", []))
-          urls = list(dict.fromkeys(urls))
-          if not urls:
+          if not sources:
               raise SystemExit(f"No active seed URLs configured for source selection: {requested}")
 
           headers = {
@@ -90,24 +92,62 @@ jobs:
               )
           }
           reachable = 0
-          for url in urls:
-              try:
-                  response = requests.get(url, timeout=30, headers=headers)
-                  print(
-                      url,
-                      "status=", response.status_code,
-                      "type=", response.headers.get("content-type")
-                  )
-                  if response.status_code < 400:
-                      reachable += 1
-              except Exception as exc:
-                  print(url, "ERROR", type(exc).__name__, exc)
+          total = sum(len(source.seed_urls) for source in sources)
+          for source in sources:
+              for url in source.seed_urls:
+                  try:
+                      current_url = url
+                      visited = {current_url}
+                      validate_public_http_url(current_url, resolve_dns=True)
+                      response = None
+                      for redirect_count in range(6):
+                          if not in_scope(current_url, source):
+                              raise ValueError(
+                                  f"Target is outside configured monitor scope: {current_url}"
+                              )
+                          response = requests.get(
+                              current_url,
+                              timeout=30,
+                              headers=headers,
+                              allow_redirects=False,
+                          )
+                          if response.status_code not in REDIRECT_STATUSES:
+                              break
+                          location = response.headers.get("location")
+                          if not location:
+                              raise ValueError(
+                                  f"Redirect from {current_url} did not include a Location header"
+                              )
+                          target = urljoin(current_url, location)
+                          validate_public_http_url(target, resolve_dns=True)
+                          if not in_scope(target, source):
+                              raise ValueError(
+                                  f"Redirect target is outside configured monitor scope: {target}"
+                              )
+                          if target in visited:
+                              raise ValueError(f"Redirect loop detected at {target}")
+                          if redirect_count >= 5:
+                              raise ValueError("Exceeded 5 redirects during preflight")
+                          visited.add(target)
+                          current_url = target
 
-          print(f"reachable_seed_urls={reachable}/{len(urls)}")
+                      if response is None:
+                          raise RuntimeError("No response received during preflight")
+                      print(
+                          url,
+                          "final_url=", current_url,
+                          "status=", response.status_code,
+                          "type=", response.headers.get("content-type"),
+                      )
+                      if response.status_code < 400:
+                          reachable += 1
+                  except Exception as exc:
+                      print(url, "ERROR", type(exc).__name__, exc)
+
+          print(f"reachable_seed_urls={reachable}/{total}")
           if reachable == 0:
               raise SystemExit(
-                  "No selected source seed URL was reachable. "
-                  "The homepage is not used as a proxy for pilot availability."
+                  "No selected source seed URL was reachable within its configured scope."
               )
           PY
 

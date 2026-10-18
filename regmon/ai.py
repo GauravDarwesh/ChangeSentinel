@@ -100,7 +100,7 @@ def run_smoke_test(config: AIConfig | None = None) -> dict:
         event_type="CHANGED_URL",
         diff=(
             "--- before\n+++ after\n"
-            "-Synthetic fixture heading: Periodic Reporting\\n"
+            "-Synthetic fixture heading: Periodic Reporting\n"
             "+Synthetic fixture heading: Quarterly Reporting"
         ),
         current_text=(

@@ -56,7 +56,12 @@ def canonical(url: str) -> str:
 def in_scope(url: str, source: SourceConfig) -> bool:
     value = canonical(url)
     parsed = urlparse(value)
-    if parsed.netloc.lower() not in source.allowed_domains:
+    hostname = (parsed.hostname or "").rstrip(".").lower()
+    allowed_hosts = {
+        (urlparse(f"//{domain}").hostname or str(domain)).rstrip(".").lower()
+        for domain in source.allowed_domains
+    }
+    if hostname not in allowed_hosts:
         return False
     if not any(value.startswith(prefix) for prefix in source.allowed_prefixes):
         return False
@@ -122,6 +127,11 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
     for attempt in range(1, source.discovery_http_attempts + 1):
         attempts_used = attempt
         try:
+            # Validate the initial target before making the first outbound request.
+            # Redirect destinations are validated again before they are followed.
+            validate_public_http_url(url, resolve_dns=True)
+            if not in_scope(url, source):
+                raise ValueError(f"Discovery target is outside the configured monitor scope: {url}")
             current_url = url
             visited = {canonical(url)}
             response = None
