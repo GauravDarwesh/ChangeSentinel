@@ -234,6 +234,22 @@
     .event-time { flex: none; color: var(--muted-2); font-size: 10px; line-height: 1.6; text-align: right; }
     .event-url { margin-top: 8px; color: var(--muted); font-size: 11px; line-height: 1.7; overflow-wrap: anywhere; }
     .event-summary { margin-top: 12px; color: var(--ink-soft); font-size: 12px; line-height: 1.8; }
+    .ai-review { margin: 14px 0 4px; padding: 15px 17px; border: 1px solid var(--line); border-radius: 13px; background: #f8faff; }
+    .ai-review.is-relevant { border-color: #cfe6dc; background: #f7fbf9; }
+    .ai-review.is-irrelevant { border-color: #e0e5ed; background: #f8f9fb; }
+    .ai-review.is-unavailable { border-color: #eadfca; background: #fffaf1; }
+    .ai-review-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+    .ai-review-title { margin: 0; color: var(--ink); font-size: 12px; font-weight: 850; }
+    .ai-review-status { display: inline-flex; border-radius: 999px; padding: 5px 8px; background: #edf1f7; color: #576985; font-size: 10px; font-weight: 800; }
+    .ai-review.is-relevant .ai-review-status { background: #e4f4ec; color: #267352; }
+    .ai-review.is-irrelevant .ai-review-status { background: #eef0f4; color: #637188; }
+    .ai-review.is-unavailable .ai-review-status { background: #fff0d8; color: #8a611a; }
+    .ai-review-message { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.7; overflow-wrap: anywhere; }
+    .ai-review-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+    .ai-review-field { min-width: 0; padding: 10px 11px; border: 1px solid #e8ecf3; border-radius: 9px; background: rgba(255,255,255,.75); }
+    .ai-review-field-wide { grid-column: 1 / -1; }
+    .ai-review-field label { display: block; margin-bottom: 5px; color: var(--muted-2); font-size: 9px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+    .ai-review-field p { margin: 0; color: var(--ink-soft); font-size: 11px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
     .event-footer { margin-top: 14px; }
     .run-card { display: flex; align-items: flex-start; gap: 18px; padding: 23px 24px; border: 1px solid var(--line); border-radius: 17px; background: white; box-shadow: var(--shadow-soft); }
     .run-symbol { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border: 1px solid #e1e8f6; border-radius: 14px; background: #f1f5fd; color: #6079ac; font-size: 18px; }

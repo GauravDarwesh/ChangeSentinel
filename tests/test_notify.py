@@ -16,6 +16,40 @@ class TestNotifications(unittest.TestCase):
         }]}
         self.assertEqual(build_notifications(report)[0]["event_id"],"1")
 
+    def test_explicit_ai_irrelevance_suppresses_generic_change_alert(self):
+        event_id = "reviewed-irrelevant"
+        report = {
+            "ai_results": [{
+                "event_id": event_id,
+                "event": "CHANGED_URL",
+                "ai": {"status": "ok", "analysis": {"relevant": False}},
+            }],
+            "events": [{
+                "event_id": event_id,
+                "event_type": "CHANGED_URL",
+                "url": "https://example.test/policy",
+            }],
+        }
+        self.assertEqual(build_notifications(report), [])
+
+    def test_ai_error_keeps_generic_change_alert(self):
+        event_id = "review-failed"
+        report = {
+            "ai_results": [{
+                "event_id": event_id,
+                "event": "CHANGED_URL",
+                "ai": {"status": "error", "reason": "provider unavailable"},
+            }],
+            "events": [{
+                "event_id": event_id,
+                "event_type": "CHANGED_URL",
+                "url": "https://example.test/policy",
+            }],
+        }
+        notifications = build_notifications(report)
+        self.assertEqual(len(notifications), 1)
+        self.assertEqual(notifications[0]["topic"], "Technical change detected")
+
     def test_removed_and_error(self):
         report={"events":[
             {"event_id":"2","event_type":"REMOVED_URL","url":"https://example.test/x"},
