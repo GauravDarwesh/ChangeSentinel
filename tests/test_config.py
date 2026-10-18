@@ -41,6 +41,11 @@ class TestConfig(unittest.TestCase):
             ("https://www.federalreserve.gov/apps/reportingforms/Report/Index/",),
         )
         self.assertEqual(source.allowed_domains, ("www.federalreserve.gov",))
+        self.assertEqual(
+            source.allowed_resource_prefixes,
+            ("https://www.federalreserve.gov/apps/reportingforms/Download/",),
+        )
+        self.assertEqual(source.resource_link_text_patterns, ("^Current",))
 
     def test_eba_sources_are_inactive_and_federal_reserve_pilot_is_bounded(self):
         _, sources = load_config(DEFAULT_CONFIG_PATH)
