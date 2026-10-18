@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261018T093901Z-b081d551",
-  "generated_at": "2026-10-18T09:39:01.716009+00:00",
+  "run_id": "20261018T154429Z-3040b283",
+  "generated_at": "2026-10-18T15:44:29.628746+00:00",
   "source": {
     "id": "fed-reporting-forms-pilot",
     "name": "Federal Reserve \u2014 Reporting Forms Pilot (Exact URL Allowlist)",
@@ -27,7 +27,7 @@
     "pending": 0,
     "unresolved_failures": 0,
     "checkpoint_schema_version": 2,
-    "config_fingerprint": "19223209f8386130c813e6a70d0be21662e5e3185d336f62d14b6b00cb32fec2",
+    "config_fingerprint": "654eded76ded5c892c0ef7b6170548a39b8184d15524ecb5beda76e366370265",
     "inventory": "data/discovery/fed-reporting-forms-pilot-inventory-*.txt",
     "failure_ledger": "data/discovery/fed-reporting-forms-pilot-failures.jsonl"
   },

@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261018T104948Z-7024abaf
-Generated: 2026-10-18T10:49:48.776828+00:00
+Run: 20261018T154429Z-3040b283
+Generated: 2026-10-18T15:44:30.209915+00:00
 
 ## Aggregate counts
 
@@ -15,18 +15,28 @@ Generated: 2026-10-18T10:49:48.776828+00:00
 | baseline_migration | 0 |
 | changed | 0 |
 | crawl_paused | 0 |
-| discovered | 14 |
+| discovered | 16 |
 | extraction_error | 0 |
 | fetch_error | 0 |
-| forced_full_fetch | 14 |
-| new | 14 |
+| forced_full_fetch | 9 |
+| new | 0 |
 | not_modified | 0 |
-| relevance_candidates | 14 |
+| relevance_candidates | 0 |
 | removed | 0 |
 | source_changed | 0 |
-| unchanged | 0 |
+| unchanged | 16 |
 
 ## Sources
+
+### Federal Reserve — Reporting Forms Pilot (Exact URL Allowlist)
+
+- Regulator: Board of Governors of the Federal Reserve System
+- Discovered: 2
+- Changed content: 0
+- HTML source-only changes: 0
+- New: 0
+- Removed: 0
+- Fetch errors: 0
 
 ### Federal Reserve — Recently Updated Forms Detail Pilot (Exact URL Allowlist)
 
@@ -34,6 +44,6 @@ Generated: 2026-10-18T10:49:48.776828+00:00
 - Discovered: 14
 - Changed content: 0
 - HTML source-only changes: 0
-- New: 14
+- New: 0
 - Removed: 0
 - Fetch errors: 0
