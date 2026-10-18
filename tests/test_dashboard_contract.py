@@ -74,5 +74,36 @@ class TestDashboardNotificationContract(unittest.TestCase):
         self.assertIn("overflow-x:auto", source)
 
 
+
+    def test_premium_responsive_system_is_published_in_both_dashboard_entries(self):
+        required = (
+            'id="premium-responsive-redesign"',
+            'class="mobile-wordmark"',
+            'class="topbar-context"',
+            "@media (max-width: 900px)",
+            "@media (max-width: 650px)",
+            "env(safe-area-inset-bottom)",
+            "prefers-reduced-motion: reduce",
+            ".nav-list",
+            "overflow-wrap: anywhere",
+        )
+        for filename in ("index.html", "dashboard-v2.html"):
+            source = (ROOT / filename).read_text(encoding="utf-8")
+            with self.subTest(filename=filename):
+                for token in required:
+                    self.assertIn(token, source)
+        dashboard_source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        self.assertIn("function splitMarkdownTableRow(line)", dashboard_source)
+
+    def test_mobile_navigation_has_four_equal_destinations_and_is_not_side_scroll_only(self):
+        source = (ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn("position: fixed; inset: auto 14px calc(10px + env(safe-area-inset-bottom)) 14px", source)
+        self.assertIn("grid-template-columns: repeat(4, minmax(0, 1fr))", source)
+        self.assertIn('class="nav-button active" data-view="monitors"', source)
+        self.assertIn('data-view="changes"', source)
+        self.assertIn('data-view="runs"', source)
+        self.assertIn('data-view="notifications"', source)
+
+
 if __name__ == "__main__":
     unittest.main()
