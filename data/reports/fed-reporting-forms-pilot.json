@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261018T082714Z-2c2b029f",
-  "generated_at": "2026-10-18T08:27:14.746534+00:00",
+  "run_id": "20261018T093901Z-b081d551",
+  "generated_at": "2026-10-18T09:39:01.716009+00:00",
   "source": {
     "id": "fed-reporting-forms-pilot",
     "name": "Federal Reserve \u2014 Reporting Forms Pilot (Exact URL Allowlist)",
@@ -74,6 +74,7 @@
     "ai_ok": 0,
     "ai_invalid": 0,
     "ai_error": 0,
+    "ai_skipped": 0,
     "ai_deferred": 0,
     "crawl_paused": 0
   },

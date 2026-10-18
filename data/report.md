@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261018T082714Z-2c2b029f
-Generated: 2026-10-18T08:27:14.746534+00:00
+Run: 20261018T093901Z-b081d551
+Generated: 2026-10-18T09:39:01.716009+00:00
 
 ## Aggregate counts
 
@@ -11,6 +11,7 @@ Generated: 2026-10-18T08:27:14.746534+00:00
 | ai_error | 0 |
 | ai_invalid | 0 |
 | ai_ok | 0 |
+| ai_skipped | 0 |
 | baseline_migration | 0 |
 | changed | 0 |
 | crawl_paused | 0 |
