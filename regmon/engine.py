@@ -159,8 +159,15 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
     item = base_item(url, old, now, source)
     try:
         refresh_interval = float(DEFAULTS.get("conditional_refresh_interval_hours", 24))
-        force_full_fetch = should_force_full_fetch(old, now, refresh_interval)
+        refresh_required = should_force_full_fetch(old, now, refresh_interval)
+        html_baseline_missing = bool(
+            old
+            and "html" in str(old.get("content_type") or "").lower()
+            and not old.get("html_snapshot_location")
+        )
+        force_full_fetch = refresh_required or html_baseline_missing
         item["full_fetch_forced"] = force_full_fetch
+        item["html_baseline_forced"] = html_baseline_missing and not refresh_required
         result = fetch(
             url,
             timeout=int(DEFAULTS.get("fetch_timeout_seconds", 30)),
