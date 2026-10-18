@@ -108,7 +108,8 @@ def source_for_url(
 ) -> dict:
     parsed = urlparse(url)
     source_id = "manual-" + hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
-    host = parsed.netloc.lower()
+    host = (parsed.hostname or "").rstrip(".").lower()
+    authority = parsed.netloc.lower()
     settings = dict(DEFAULT_SOURCE_SETTINGS)
     settings["include_selector"] = str(include_selector or "").strip()
     settings["ignore_selectors"] = list(ignore_selectors or [])
@@ -118,7 +119,7 @@ def source_for_url(
         "regulator": parsed.hostname or host,
         **settings,
         "seed_urls": [url],
-        "allowed_prefixes": [parsed.scheme + "://" + host + "/"],
+        "allowed_prefixes": [parsed.scheme + "://" + authority + "/"],
         "allowed_urls": [url],
         "allowed_domains": [host],
     }
