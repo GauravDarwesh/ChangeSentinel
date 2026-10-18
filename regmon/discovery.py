@@ -59,6 +59,10 @@ def in_scope(url: str, source: SourceConfig) -> bool:
         return False
     if not any(value.startswith(prefix) for prefix in source.allowed_prefixes):
         return False
+    # An exact URL allowlist can bound a pilot to a known finite set of pages.
+    # Canonicalize both sides so fragments/tracking parameters do not create duplicates.
+    if source.allowed_urls and value not in {canonical(url) for url in source.allowed_urls}:
+        return False
     value_path = parsed.path.rstrip("/") or "/"
     for prefix in source.excluded_prefixes:
         excluded_path = urlparse(prefix).path.rstrip("/") or "/"
@@ -622,12 +626,15 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
 
             capped = source.max_urls > 0 and len(discovered) >= source.max_urls
             if capped:
+                # Reaching max_urls stops before the in-scope frontier is exhausted.
+                # A capped crawl is incomplete even if every fetched page succeeded,
+                # so it must never be allowed to replace the trusted baseline.
                 _remove_http_checkpoint(source, data_dir)
                 _write_http_metadata(
-                    source, data_dir, state="DEGRADED" if _unresolved_failure_count(source, data_dir) else "COMPLETE",
+                    source, data_dir, state="DEGRADED",
                     discovered=len(discovered), processed=processed_count,
                     successful_pages=successful_pages, failed_pages=failed_pages,
-                    capped=True, pending=0,
+                    capped=True, pending=len(pending),
                 )
                 return [] if successful_pages == 0 else discovered
             if not pending:
