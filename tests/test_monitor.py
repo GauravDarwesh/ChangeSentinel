@@ -1630,5 +1630,93 @@ class TestEngineFlow(unittest.TestCase):
         analyze.assert_not_called()
         self.assertEqual(build_notifications(report), [])
 
+    def test_original_file_snapshot_preserves_pdf_bytes(self):
+        from regmon.engine import write_file_snapshot
+
+        body = b"%PDF-1.7\\noriginal pdf bytes\\n%%EOF"
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with patch("regmon.engine.ROOT", root), patch("regmon.engine.SNAPSHOTS", root / "data" / "snapshots"):
+                relative = write_file_snapshot("url-id", body, "pdf-sha256", "pdf")
+            self.assertEqual(relative, "data/snapshots/files/url-id-pdf-sha256.pdf")
+            self.assertEqual((root / relative).read_bytes(), body)
+
+    def test_pdf_without_saved_original_forces_full_fetch_for_backfill(self):
+        from regmon.engine import make_current_item
+
+        url = "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=pdf-test"
+        old = {
+            "content_type": "application/pdf",
+            "extraction_type": "pdf",
+            "last_full_fetch": "2026-10-18T10:00:00+00:00",
+            "etag": '"old-etag"',
+            "last_modified": "Sat, 17 Oct 2026 12:00:00 GMT",
+            "normalized_hash": "old-text-hash",
+            "snapshot_location": "data/snapshots/old.txt",
+        }
+        body = b"%PDF-1.7\\nvalid-by-test-fixture\\n%%EOF"
+        response = Mock(
+            status_code=200,
+            content_type="application/pdf",
+            content_length=len(body),
+            etag='"new-etag"',
+            last_modified="Sun, 18 Oct 2026 10:00:00 GMT",
+            raw_hash="new-pdf-hash",
+            not_modified=False,
+            body=body,
+        )
+        with patch("regmon.engine.should_force_full_fetch", return_value=False), \
+             patch("regmon.engine.fetch", return_value=response) as mock_fetch, \
+             patch("regmon.engine.extract_content", return_value=("Extracted PDF text", "pdf", None)):
+            item, text, html_body, file_body = make_current_item(
+                url, old, SOURCE, "2026-10-18T10:10:00+00:00"
+            )
+
+        self.assertTrue(item["file_baseline_forced"])
+        self.assertTrue(item["full_fetch_forced"])
+        self.assertIsNone(mock_fetch.call_args.kwargs["etag"])
+        self.assertIsNone(mock_fetch.call_args.kwargs["last_modified"])
+        self.assertEqual(text, "Extracted PDF text")
+        self.assertIsNone(html_body)
+        self.assertEqual(file_body, body)
+
+    def test_pdf_snapshot_path_is_added_to_inventory(self):
+        from regmon.engine import process_source
+
+        url = "https://example.test/regulatory/form.pdf"
+        uid = make_id(url)
+        source = SourceConfig(
+            id="pdf-snapshot-test",
+            name="PDF snapshot test",
+            regulator="Example Regulator",
+            seed_urls=(url,),
+            allowed_prefixes=("https://example.test/regulatory/",),
+            allowed_domains=("example.test",),
+            allowed_urls=(url,),
+            baseline_on_first_run=True,
+        )
+        body = b"%PDF-1.7\\noriginal bytes\\n%%EOF"
+        item = {
+            "url_id": uid,
+            "source_id": source.id,
+            "regulator": source.regulator,
+            "canonical_url": url,
+            "extraction_type": "pdf",
+            "raw_hash": "pdf-content-hash",
+            "normalized_hash": "extracted-text-hash",
+            "relevance": {"candidate": True, "reason": "synthetic PDF fixture"},
+        }
+        with patch("regmon.engine.load_discovery_metadata", return_value={
+            "source_id": source.id, "state": "COMPLETE", "method": "synthetic-test"
+        }), patch("regmon.engine.load_previous", return_value={}), \
+             patch("regmon.engine.discover", return_value=[url]), \
+             patch("regmon.engine.make_current_item", return_value=(item, "PDF extracted text", None, body)), \
+             patch("regmon.engine.write_snapshot", return_value="data/snapshots/text.txt"), \
+             patch("regmon.engine.write_file_snapshot", return_value="data/snapshots/files/file.pdf") as write_file:
+            result = process_source(source, "synthetic-pdf-snapshot", dry_run=False)
+
+        self.assertEqual(result["inventory"][uid]["file_snapshot_location"], "data/snapshots/files/file.pdf")
+        write_file.assert_called_once_with(uid, body, "pdf-content-hash", "pdf")
+
 if __name__=="__main__":
     unittest.main()

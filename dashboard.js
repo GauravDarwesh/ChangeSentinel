@@ -202,7 +202,8 @@ function makeItems() {
         fetch_error: null,
         extraction_error: null,
         snapshot_location: null,
-        html_snapshot_location: null
+        html_snapshot_location: null,
+        file_snapshot_location: null
       });
     });
   });
@@ -325,19 +326,22 @@ function renderSourceCode(source) {
 function renderDetailHeader(item) {
   const status = itemStatus(item);
   const source = sourceForItem(item);
+  const filePath = item.file_snapshot_location || "";
   const htmlPath = item.html_snapshot_location || "";
   const textPath = item.snapshot_location || "";
-  const snapshotPath = htmlPath || textPath;
+  const snapshotPath = filePath || htmlPath || textPath;
+  const savedFileLabel = filePath && item.extraction_type === "pdf" ? "Open saved PDF ↗" :
+    filePath && item.extraction_type === "zip" ? "Open saved ZIP ↗" : "Open saved file ↗";
   $("detailHeader").innerHTML =
     '<div class="detail-hero"><div class="detail-hero-top"><div class="detail-title-wrap">' +
     '<div class="detail-kicker">' + esc(source.name || source.regulator || "Monitored page") + '</div>' +
     '<h2 class="detail-title">' + esc(itemTitle(item)) + '</h2><div class="detail-url">' + esc(item.canonical_url) + '</div>' +
     '</div><div class="detail-actions"><a class="btn" href="' + esc(item.canonical_url) + '" target="_blank" rel="noopener noreferrer">Open live page ↗</a>' +
-    (snapshotPath ? '<a class="btn" href="' + esc(REPO + "/blob/main/" + snapshotPath) + '" target="_blank" rel="noopener noreferrer">Open saved file ↗</a>' : '') +
+    (snapshotPath ? '<a class="btn" href="' + esc(REPO + "/blob/main/" + snapshotPath) + '" target="_blank" rel="noopener noreferrer">' + esc(savedFileLabel) + '</a>' : '') +
     '</div></div><div class="detail-meta"><span class="status-pill ' + esc(status.cls) + '">' + esc(status.label) + '</span>' +
     '<span class="meta-chip">HTTP ' + esc(item.http_status == null ? "—" : item.http_status) + '</span>' +
     '<span class="meta-chip">Last checked ' + esc(fmt(item.last_checked)) + '</span>' +
-    '<span class="meta-chip">' + (htmlPath ? 'HTML response saved' : (item.extraction_type ? esc(String(item.extraction_type).toUpperCase()) + ' snapshot' : 'Snapshot pending')) + '</span>' +
+    '<span class="meta-chip">' + (filePath ? (item.extraction_type === "pdf" ? 'PDF file saved' : 'ZIP archive saved') : htmlPath ? 'HTML response saved' : (item.extraction_type ? esc(String(item.extraction_type).toUpperCase()) + ' snapshot' : 'Snapshot pending')) + '</span>' +
     (item.content_type ? '<span class="meta-chip">' + esc(item.content_type) + '</span>' : '') + '</div></div>';
   document.querySelectorAll("[data-detail-tab]").forEach(button => {
     button.classList.toggle("active", button.dataset.detailTab === state.detailTab);
@@ -346,6 +350,40 @@ function renderDetailHeader(item) {
 }
 async function loadSnapshot(item) {
   const body = $("detailBody");
+  const filePath = item.file_snapshot_location || "";
+  const fileType = String(item.extraction_type || "").toLowerCase();
+  if (filePath && (fileType === "pdf" || fileType === "zip")) {
+    const isPdf = fileType === "pdf";
+    body.innerHTML =
+      '<div class="snapshot-panel"><div class="snapshot-toolbar"><div class="snapshot-label"><span class="file-icon" aria-hidden="true">' +
+      (isPdf ? "▤" : "ZIP") + '</span><div><div class="snapshot-label-title">' + (isPdf ? "Saved PDF snapshot" : "Saved ZIP archive") + '</div><div class="snapshot-sub">Captured ' + esc(fmt(item.last_full_fetch || item.last_checked)) + '<br>' + esc(filePath) + '</div></div></div>' +
+      '<a class="btn" href="' + esc(REPO + "/blob/main/" + filePath) + '" target="_blank" rel="noopener noreferrer">Open original file ↗</a></div>' +
+      '<div class="snapshot-main"><div class="snapshot-notice"><span aria-hidden="true">ⓘ</span><span>' +
+      (isPdf ? "This is the preserved original PDF response. The extracted text remains available for searching and comparison." : "This is the preserved original ZIP response. Its supported document contents are extracted separately for comparison.") +
+      '</span></div><div class="snapshot-mode" role="group" aria-label="Original document snapshot mode">' +
+      '<button class="mode-button ' + (state.snapshotMode === "preview" ? "active" : "") + '" data-snapshot-mode="preview" type="button">' + (isPdf ? "PDF preview" : "Original archive") + '</button>' +
+      '<button class="mode-button ' + (state.snapshotMode === "text" ? "active" : "") + '" data-snapshot-mode="text" type="button">Extracted text</button></div>' +
+      '<div id="snapshotCanvas" class="loading-text">Loading saved document…</div></div></div>';
+    const canvas = $("snapshotCanvas");
+    if (state.snapshotMode === "text") {
+      if (!item.snapshot_location) {
+        canvas.outerHTML = emptyState("Extracted text unavailable", "No normalized-text snapshot is linked to this original file.", "!");
+        return;
+      }
+      try {
+        const text = await readSnapshotFile(item.snapshot_location, state.snapshotCache, true);
+        if (selectedItem()?.url_id !== item.url_id || state.detailTab !== "snapshot") return;
+        canvas.outerHTML = renderSnapshotText(text);
+      } catch (error) {
+        canvas.outerHTML = emptyState("Could not load extracted text", String(error.message || error), "!");
+      }
+    } else if (isPdf) {
+      canvas.outerHTML = '<iframe class="snapshot-frame" title="Saved PDF snapshot" src="' + esc(snapshotURL(filePath)) + '" loading="lazy"></iframe>';
+    } else {
+      canvas.outerHTML = emptyState("Original ZIP snapshot saved", "Use Open original file to inspect or download the archive, or switch to Extracted text to review its contents.", "ZIP");
+    }
+    return;
+  }
   body.innerHTML =
     '<div class="snapshot-panel"><div class="snapshot-toolbar"><div class="snapshot-label"><span class="file-icon" aria-hidden="true">▧</span>' +
     '<div><div class="snapshot-label-title">Saved page snapshot</div><div class="snapshot-sub">Captured ' + esc(fmt(item.last_full_fetch || item.last_checked)) + '</div></div></div>' +
@@ -478,7 +516,7 @@ function renderDetails(item) {
     ["ETag", item.etag || "Not supplied"], ["Last-Modified", item.last_modified || "Not supplied"],
     ["Normalized text SHA-256", item.normalized_hash || "Not available"], ["HTML source SHA-256", item.html_hash || "Not available"],
     ["Raw response SHA-256", item.raw_hash || "Not available"], ["HTML snapshot file", item.html_snapshot_location || "Not captured"],
-    ["Text snapshot file", item.snapshot_location || "Not available"],
+    ["Text snapshot file", item.snapshot_location || "Not available"], ["Original file snapshot", item.file_snapshot_location || "Not captured"],
     ["Include CSS selector", sourceForItem(item).include_selector || "Default main-content detection"],
     ["Ignore CSS selectors", (sourceForItem(item).ignore_selectors || []).join(", ") || "None"],
     ["Fetch error", item.fetch_error || "None"], ["Extraction error", item.extraction_error || "None"]

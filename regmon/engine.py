@@ -126,6 +126,20 @@ def write_html_snapshot(uid: str, body: bytes, html_hash: str) -> str:
         path.write_bytes(body)
     return str(path.relative_to(ROOT))
 
+
+def write_file_snapshot(uid: str, body: bytes, content_hash: str | None, extraction_type: str) -> str:
+    """Persist original PDF/ZIP bytes so the dashboard can preview or download the exact file."""
+    suffix = {"pdf": "pdf", "zip": "zip"}.get(str(extraction_type or "").lower())
+    if suffix is None:
+        raise ValueError(f"Unsupported original-file snapshot type: {extraction_type!r}")
+    directory = SNAPSHOTS / "files"
+    directory.mkdir(parents=True, exist_ok=True)
+    digest = content_hash or hashlib.sha256(body).hexdigest()
+    path = directory / f"{uid}-{digest}.{suffix}"
+    if not path.exists():
+        path.write_bytes(body)
+    return str(path.relative_to(ROOT))
+
 def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dict[str, Any]:
     return {
         "schema_version": 2,
@@ -149,6 +163,7 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         "html_hash": old.get("html_hash") if old else None,
         "html_comparison_hash": old.get("html_comparison_hash") if old else None,
         "html_snapshot_location": old.get("html_snapshot_location") if old else None,
+        "file_snapshot_location": old.get("file_snapshot_location") if old else None,
         "extraction_type": None,
         "extraction_error": None,
         "fetch_error": None,
@@ -168,9 +183,17 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             and "html" in str(old.get("content_type") or "").lower()
             and not old.get("html_snapshot_location")
         )
-        force_full_fetch = refresh_required or html_baseline_missing
+        old_type = str((old or {}).get("extraction_type") or "").lower()
+        old_content_type = str((old or {}).get("content_type") or "").lower()
+        file_baseline_missing = bool(
+            old
+            and (old_type in {"pdf", "zip"} or "pdf" in old_content_type or "zip" in old_content_type)
+            and not old.get("file_snapshot_location")
+        )
+        force_full_fetch = refresh_required or html_baseline_missing or file_baseline_missing
         item["full_fetch_forced"] = force_full_fetch
         item["html_baseline_forced"] = html_baseline_missing and not refresh_required
+        item["file_baseline_forced"] = file_baseline_missing
         result = fetch(
             url,
             timeout=int(DEFAULTS.get("fetch_timeout_seconds", 30)),
@@ -198,7 +221,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             if old:
                 for key in (
                     "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_snapshot_location",
-                    "extraction_type", "snapshot_location", "evidence_location", "relevance"
+                    "file_snapshot_location", "extraction_type", "snapshot_location", "evidence_location", "relevance"
                 ):
                     if key in old:
                         item[key] = old[key]
@@ -212,6 +235,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             ignore_selectors=source.ignore_selectors,
         )
         item["extraction_type"] = extraction_type
+        file_body = result.body if extraction_type in {"pdf", "zip"} else None
         if extraction_error:
             item["extraction_error"] = extraction_error
             if old:
@@ -222,6 +246,8 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
                 item["html_hash"] = result.raw_hash
                 item["html_comparison_hash"] = html_comparison_hash(result.body)
                 return item, None, result.body
+            if file_body is not None:
+                return item, None, None, file_body
             return item, None, None
 
         normalized = text or ""
@@ -231,7 +257,11 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         item["html_comparison_hash"] = html_comparison_hash(html_body)
         if html_body is None:
             item["html_snapshot_location"] = None
+        if file_body is None:
+            item["file_snapshot_location"] = None
         item["relevance"] = triage(url, normalized, result.content_type)
+        if file_body is not None:
+            return item, normalized, html_body, file_body
         return item, normalized, html_body
     except Exception as exc:
         item["fetch_error"] = f"{type(exc).__name__}: {exc}"
@@ -358,9 +388,17 @@ def process_source(
             if len(result) == 2:
                 item, text = result
                 html_body = None
-            else:
+                file_body = None
+            elif len(result) == 3:
                 item, text, html_body = result
+                file_body = None
+            else:
+                item, text, html_body, file_body = result
             item["url_id"] = uid
+            if file_body is not None and not dry_run:
+                item["file_snapshot_location"] = write_file_snapshot(
+                    uid, file_body, item.get("raw_hash"), item.get("extraction_type")
+                )
             current[uid] = item
             old_text = None
 
