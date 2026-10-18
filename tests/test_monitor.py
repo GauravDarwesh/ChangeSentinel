@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from regmon.ai import AI_REQUIRED_KEYS, parse_json, validate_analysis
+from regmon.ai import AIConfig, AI_REQUIRED_KEYS, parse_json, run_smoke_test, validate_analysis
 from regmon.change import build_event_id, classify_change, html_comparison_hash, make_diff, make_id, write_evidence
 from regmon.content import extract_content, normalize_html
 from regmon.config import SourceConfig
@@ -991,6 +991,22 @@ class TestAI(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_analysis(value)
 
+    @patch("regmon.ai.analyze")
+    def test_smoke_test_uses_only_synthetic_evidence(self, mock_analyze):
+        mock_analyze.return_value = {
+            "status": "ok",
+            "analysis": {key: (True if key == "relevant" else "validated")
+                         for key in AI_REQUIRED_KEYS},
+        }
+        config = AIConfig(timeout_seconds=5, attempts=1, model="test/model")
+        result = run_smoke_test(config)
+        arguments = mock_analyze.call_args.kwargs
+        self.assertEqual(result["status"], "ok")
+        self.assertEqual(arguments["url"], "https://example.invalid/change-sentinel-ai-smoke-test")
+        self.assertIn("Synthetic", arguments["regulator"])
+        self.assertIn("Periodic Reporting", arguments["diff"])
+        self.assertEqual(arguments["config"], config)
+
 class TestNotifications(unittest.TestCase):
     def test_technical_change_remains_visible_when_ai_is_unavailable(self):
         event = {
@@ -1107,6 +1123,42 @@ class TestEngineFlow(unittest.TestCase):
                 self.assertEqual(result["report"]["counts"]["changed"],1)
             finally:
                 old_file.unlink(missing_ok=True)
+
+    @patch("regmon.engine.analyze", return_value={"status": "skipped", "reason": "API key missing"})
+    def test_skipped_ai_analysis_is_counted(self, mock_analyze):
+        from regmon.engine import process_source
+        import regmon.engine as mod
+        url = "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a"
+        uid = make_id(url)
+        old = {
+            "url_id": uid,
+            "canonical_url": url,
+            "normalized_hash": "oldhash",
+            "raw_hash": "oldraw",
+            "snapshot_location": "data/snapshots/old.txt",
+            "first_seen": "2026-01-01T00:00:00+00:00",
+        }
+        current_item = {
+            "url_id": uid,
+            "source_id": "eba-test",
+            "regulator": "European Banking Authority",
+            "canonical_url": url,
+            "normalized_hash": "newhash",
+            "raw_hash": "newraw",
+            "relevance": {"candidate": True, "reason": "test"},
+            "first_seen": "2026-01-01T00:00:00+00:00",
+        }
+        with patch("regmon.engine.load_discovery_metadata", return_value={"source_id": "eba-test", "state": "COMPLETE", "method": "test"}), \
+             patch("regmon.engine.load_previous", return_value={uid: old}), \
+             patch("regmon.engine.discover", return_value=[url]), \
+             patch("regmon.engine.make_current_item", return_value=(current_item, "new text")), \
+             patch("regmon.engine.read_snapshot", side_effect=lambda record: "new text" if record.get("normalized_hash") == "newhash" else "old text"), \
+             patch("regmon.engine.write_snapshot", return_value="data/snapshots/new.txt"), \
+             patch("regmon.engine.write_evidence", return_value="data/evidence/test.json"):
+            result = process_source(SOURCE, "run-ai-skipped-test", dry_run=False)
+        self.assertEqual(result["report"]["counts"]["ai_skipped"], 1)
+        self.assertEqual(mock_analyze.call_count, 1)
+
 
     def test_missing_html_baseline_forces_full_fetch(self):
         from regmon.engine import make_current_item
