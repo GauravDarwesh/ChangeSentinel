@@ -18,6 +18,7 @@ class SourceConfig:
     seed_urls: tuple[str, ...]
     allowed_prefixes: tuple[str, ...]
     allowed_domains: tuple[str, ...]
+    allowed_urls: tuple[str, ...] = ()
     max_urls: int = 0
     crawler: str = "stealth-crawler"
     active: bool = True
@@ -46,6 +47,7 @@ class SourceConfig:
             seed_urls=tuple(str(x) for x in value["seed_urls"]),
             allowed_prefixes=tuple(str(x).rstrip("/") + "/" for x in value["allowed_prefixes"]),
             allowed_domains=tuple(str(x).lower() for x in value["allowed_domains"]),
+            allowed_urls=tuple(str(x) for x in value.get("allowed_urls", [])),
             max_urls=int(value.get("max_urls", 0)),
             crawler=str(value.get("crawler", "stealth-crawler")),
             active=bool(value.get("active", True)),
