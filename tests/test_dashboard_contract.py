@@ -86,13 +86,14 @@ class TestDashboardNotificationContract(unittest.TestCase):
             "prefers-reduced-motion: reduce",
             ".nav-list",
             "overflow-wrap: anywhere",
-            "function splitMarkdownTableRow(line)",
         )
         for filename in ("index.html", "dashboard-v2.html"):
             source = (ROOT / filename).read_text(encoding="utf-8")
             with self.subTest(filename=filename):
                 for token in required:
                     self.assertIn(token, source)
+        dashboard_source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        self.assertIn("function splitMarkdownTableRow(line)", dashboard_source)
 
     def test_mobile_navigation_has_four_equal_destinations_and_is_not_side_scroll_only(self):
         source = (ROOT / "index.html").read_text(encoding="utf-8")
