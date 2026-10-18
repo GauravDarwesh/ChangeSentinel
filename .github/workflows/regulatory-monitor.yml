@@ -118,59 +118,7 @@ jobs:
 
       - name: Validate monitoring state
         id: crawl-status
-        run: |
-          python - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-
-          requested = os.environ.get("REGMON_SOURCE", "all")
-          discovery_dir = Path("data") / "discovery"
-          states = []
-
-          for path in sorted(discovery_dir.glob("*.json")):
-              if path.name.endswith("-checkpoint.json"):
-                  continue
-              payload = json.loads(path.read_text(encoding="utf-8"))
-              source_id = str(payload.get("source_id") or path.stem)
-              state = str(payload.get("state") or "FAILED")
-              if requested not in {"all", "*"} and source_id != requested:
-                  continue
-              states.append((source_id, state))
-
-          if not states:
-              raise SystemExit("No discovery metadata found after monitoring engine")
-
-          paused_source = ""
-          for source_id, state in states:
-              checkpoint = discovery_dir / f"{source_id}-checkpoint.json"
-              if state == "PAUSED":
-                  if not checkpoint.exists():
-                      raise SystemExit(
-                          f"{source_id} is PAUSED but its checkpoint is missing; refusing to continue blindly"
-                      )
-                  if checkpoint.stat().st_size == 0:
-                      raise SystemExit(
-                          f"{source_id} is PAUSED but its checkpoint is empty; refusing to commit an invalid continuation"
-                      )
-                  payload = json.loads(checkpoint.read_text(encoding="utf-8"))
-                  if payload.get("state") != "PAUSED" or payload.get("source_id") != source_id:
-                      raise SystemExit(
-                          f"{source_id} has an invalid PAUSED checkpoint; refusing to continue"
-                      )
-                  if not payload.get("pending") and not payload.get("retry_pending"):
-                      raise SystemExit(
-                          f"{source_id} is PAUSED with no resumable work in its checkpoint"
-                      )
-                  if not paused_source:
-                      paused_source = source_id
-
-          print(f"states={states}")
-          print(f"paused_source={paused_source}")
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as handle:
-              handle.write(f"paused={'true' if paused_source else 'false'}\n")
-              handle.write(f"paused_source={paused_source}\n")
-          PY
+        run: python -m regmon.validate_state --source "$REGMON_SOURCE" --data-dir data --config config/sources.json --github-output "$GITHUB_OUTPUT"
 
       - name: Publish notifications
         if: ${{ steps.crawl-status.outputs.paused != 'true' }}
@@ -240,11 +188,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          source_id="${{ steps.crawl-status.outputs.paused_source }}"
-          test -n "$source_id"
-          echo "Dispatching next discovery slice for $source_id"
-          gh workflow run regulatory-monitor.yml \
-            --repo "${{ github.repository }}" \
-            --ref main \
-            -f source_id="$source_id" \
-            -f test_notification=false
+          source_ids="${{ steps.crawl-status.outputs.paused_sources }}"
+          test -n "$source_ids"
+          IFS=',' read -r -a paused_ids <<< "$source_ids"
+          for source_id in "${paused_ids[@]}"; do
+            test -n "$source_id"
+            echo "Dispatching next discovery slice for $source_id"
+            gh workflow run regulatory-monitor.yml \
+              --repo "${{ github.repository }}" \
+              --ref main \
+              -f source_id="$source_id" \
+              -f test_notification=false
+          done

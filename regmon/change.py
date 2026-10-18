@@ -39,8 +39,19 @@ def _format_html_for_diff(value: str | None) -> str:
     except Exception:
         return value
 
-def build_event_id(event_type: str, url_id: str, before_hash: str | None = None, after_hash: str | None = None, error: str | None = None) -> str:
-    material = "|".join([event_type, url_id, before_hash or "", after_hash or "", error or ""])
+def build_event_id(
+    event_type: str,
+    url_id: str,
+    before_hash: str | None = None,
+    after_hash: str | None = None,
+    error: str | None = None,
+    observation_id: str | None = None,
+) -> str:
+    """Use stable IDs for change events and unique IDs for repeat observations."""
+    material = "|".join([
+        event_type, url_id, before_hash or "", after_hash or "", error or "",
+        observation_id or "",
+    ])
     return hashlib.sha256(material.encode("utf-8")).hexdigest()
 
 def write_evidence(
@@ -59,6 +70,9 @@ def write_evidence(
 ) -> str:
     path = root / "data" / "evidence" / f"{event_id}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
+    # Evidence is append-only. Repeated operational observations use unique IDs.
+    if path.exists():
+        return str(path.relative_to(root))
     payload = {
         "event_id": event_id,
         "event_type": event_type,

@@ -349,7 +349,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
             old_text = None
 
             if item.get("fetch_error"):
-                event_id = build_event_id("FETCH_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), error=item["fetch_error"])
+                event_id = build_event_id("FETCH_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), error=item["fetch_error"], observation_id=now)
                 evidence = write_evidence(
                     ROOT, "FETCH_ERROR", event_id, url, now, old, item,
                     old_text if old_text is not None else read_snapshot(old),
@@ -363,7 +363,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
             if item.get("extraction_error"):
                 if html_body is not None and item.get("html_hash") and not dry_run:
                     item["html_snapshot_location"] = write_html_snapshot(uid, html_body, item["html_hash"])
-                event_id = build_event_id("EXTRACTION_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), error=item["extraction_error"])
+                event_id = build_event_id("EXTRACTION_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), after_hash=item.get("raw_hash"), error=item["extraction_error"], observation_id=now)
                 evidence = write_evidence(
                     ROOT, "EXTRACTION_ERROR", event_id, url, now, old, item,
                     old_text if old_text is not None else read_snapshot(old),

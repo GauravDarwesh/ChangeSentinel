@@ -6,8 +6,12 @@ import time
 from dataclasses import dataclass
 
 import requests
+from urllib.parse import urljoin
+
+from regmon.security import REDIRECT_STATUSES, validate_public_http_url
 
 RETRYABLE = {408, 425, 429, 500, 502, 503, 504}
+MAX_REDIRECTS = 5
 
 
 @dataclass(frozen=True)
@@ -47,13 +51,37 @@ def fetch(
     if last_modified:
         headers["If-Modified-Since"] = last_modified
 
+    validate_public_http_url(url, resolve_dns=True)
     for attempt in range(1, attempts + 1):
         try:
-            response = requests.get(
-                url,
-                timeout=timeout,
-                headers=headers,
-            )
+            current_url = url
+            request_headers = dict(headers)
+            visited = {current_url}
+            response = None
+            for redirect_count in range(MAX_REDIRECTS + 1):
+                response = requests.get(
+                    current_url,
+                    timeout=timeout,
+                    headers=request_headers,
+                    allow_redirects=False,
+                )
+                if response.status_code not in REDIRECT_STATUSES:
+                    break
+                location = response.headers.get("location")
+                if not location:
+                    raise ValueError(f"Redirect from {current_url} did not include a Location header")
+                target = urljoin(current_url, location)
+                validate_public_http_url(target, resolve_dns=True)
+                if target in visited:
+                    raise ValueError(f"Redirect loop detected at {target}")
+                if redirect_count >= MAX_REDIRECTS:
+                    raise ValueError(f"Exceeded {MAX_REDIRECTS} redirects for {url}")
+                visited.add(target)
+                current_url = target
+                # Validators apply to the original response, not an unrelated redirect.
+                request_headers = {"User-Agent": headers["User-Agent"]}
+        except ValueError:
+            raise
         except Exception as exc:
             last_error = exc
             if attempt == attempts:
@@ -61,6 +89,8 @@ def fetch(
             time.sleep(backoff_seconds * attempt)
             continue
 
+        if response is None:
+            raise RuntimeError(f"No response received for {url}")
         if response.status_code == 304:
             return FetchResult(
                 status_code=304,
@@ -74,7 +104,7 @@ def fetch(
             )
 
         if response.status_code >= 400:
-            exc = requests.HTTPError(f"HTTP {response.status_code} for {url}")
+            exc = requests.HTTPError(f"HTTP {response.status_code} for {current_url}")
             last_error = exc
             if response.status_code not in RETRYABLE or attempt == attempts:
                 raise exc

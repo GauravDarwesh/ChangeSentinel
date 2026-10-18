@@ -15,6 +15,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from regmon.config import SourceConfig
+from regmon.security import validate_public_http_url
 
 TRACKING_PARAMS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
 NON_HTML_SUFFIXES = {
@@ -121,17 +122,38 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
     for attempt in range(1, source.discovery_http_attempts + 1):
         attempts_used = attempt
         try:
-            response = requests.get(
-                url,
-                timeout=timeout,
-                allow_redirects=True,
-                headers={
-                    "User-Agent": (
-                        "Mozilla/5.0 (compatible; ChangeSentinel/0.4; "
-                        "+https://github.com/GauravDarwesh/ChangeSentinel)"
-                    )
-                },
-            )
+            current_url = url
+            visited = {canonical(url)}
+            response = None
+            for redirect_count in range(6):
+                response = requests.get(
+                    current_url,
+                    timeout=timeout,
+                    allow_redirects=False,
+                    headers={
+                        "User-Agent": (
+                            "Mozilla/5.0 (compatible; ChangeSentinel/0.5; "
+                            "+https://github.com/GauravDarwesh/ChangeSentinel)"
+                        )
+                    },
+                )
+                if response.status_code not in {301, 302, 303, 307, 308}:
+                    break
+                location = response.headers.get("location")
+                if not location:
+                    raise ValueError(f"Redirect from {current_url} did not include a Location header")
+                target = canonical(urljoin(current_url, location))
+                validate_public_http_url(target, resolve_dns=True)
+                if not in_scope(target, source):
+                    raise ValueError(f"Redirect target is outside the configured monitor scope: {target}")
+                if target in visited:
+                    raise ValueError(f"Redirect loop detected at {target}")
+                if redirect_count == 5:
+                    raise ValueError("Too many redirects during discovery")
+                visited.add(target)
+                current_url = target
+            if response is None:
+                raise RuntimeError("No response received during discovery")
             last_status = response.status_code
             content_type = (response.headers.get("content-type") or "").lower()
             if response.status_code in {404, 410}:
@@ -177,6 +199,7 @@ def _config_fingerprint(source: SourceConfig) -> str:
         "seed_urls": list(source.seed_urls),
         "allowed_prefixes": list(source.allowed_prefixes),
         "allowed_domains": list(source.allowed_domains),
+        "allowed_urls": sorted(canonical(url) for url in source.allowed_urls),
         "excluded_prefixes": list(source.excluded_prefixes),
         "max_urls": source.max_urls,
     }
@@ -206,7 +229,11 @@ def _load_inventory(source: SourceConfig, data_dir: Path) -> list[str]:
             continue
         for value in lines:
             value = value.strip()
-            if value and value not in seen:
+            if not value:
+                continue
+            value = canonical(value)
+            # Recovery must not resurrect URLs outside a changed exact allowlist.
+            if in_scope(value, source) and value not in seen:
                 seen.add(value)
                 urls.append(value)
     return urls
@@ -280,7 +307,8 @@ def _retryable_failure_urls(source: SourceConfig, data_dir: Path) -> list[str]:
     latest = _load_latest_failure_records(source, data_dir)
     return sorted(
         url for url, record in latest.items()
-        if not record.get("resolved")
+        if in_scope(url, source)
+        and not record.get("resolved")
         and int(record.get("retry_round", 0)) == 0
         and record.get("retry_classification") in {"retryable_exhausted", "transport_error"}
     )
