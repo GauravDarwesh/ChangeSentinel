@@ -6,6 +6,7 @@ import io
 import json
 import re
 import stat
+import time
 import unicodedata
 import zipfile
 import xml.etree.ElementTree as ET
@@ -335,6 +336,7 @@ CONTENT_EXTRACTOR_VERSION = "layout-pdf-html-v2"
 LOW_TEXT_PAGE_CHARS = 40
 MAX_OCR_PAGES = 100
 OCR_PAGE_TIMEOUT_SECONDS = 15
+MAX_OCR_TOTAL_SECONDS = 120
 
 
 def normalize_pdf_prose(text: str) -> str:
@@ -576,13 +578,12 @@ def _page_has_image_xobject(page) -> bool:
                     obj = reference.get_object()
                     if str(obj.get("/Subtype")) == "/Image":
                         return True
-        # Some scanned or outlined PDFs wrap their page artwork in Form XObjects
-        # or vector drawing commands. A non-trivial content stream with almost
-        # no extractable text is also a good OCR candidate; truly blank pages
-        # usually have no content stream or only a few drawing operators.
+        # Some outlined/vector PDFs have no Image XObjects. Because this helper
+        # is called only for low-text pages, inspecting their content stream is
+        # acceptable; do not decompress every page in an ordinary text PDF.
         contents = page.get_contents()
         if contents is not None:
-            return len(contents.get_data()) > 20
+            return len(contents.get_data()) > 2048
     except Exception:
         return False
     return False
@@ -595,8 +596,14 @@ def _ocr_pdf_pages(body: bytes, page_indexes: list[int]) -> dict[int, str]:
 
     document = pdfium.PdfDocument(body)
     results = {}
+    deadline = time.monotonic() + MAX_OCR_TOTAL_SECONDS
     try:
         for index in page_indexes:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0.5:
+                raise TimeoutError(
+                    f"PDF OCR exceeded its total time budget of {MAX_OCR_TOTAL_SECONDS} seconds"
+                )
             page = None
             bitmap = None
             try:
@@ -607,7 +614,7 @@ def _ocr_pdf_pages(body: bytes, page_indexes: list[int]) -> dict[int, str]:
                     text = pytesseract.image_to_string(
                         image,
                         config="--psm 3",
-                        timeout=OCR_PAGE_TIMEOUT_SECONDS,
+                        timeout=min(OCR_PAGE_TIMEOUT_SECONDS, remaining),
                     )
                 finally:
                     image.close()
@@ -645,7 +652,6 @@ def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
         page_texts = []
         raw_page_texts = []
         low_text_indexes = []
-        page_images = []
         for index, page in enumerate(pages):
             try:
                 raw_text = page.extract_text() or ""
@@ -653,9 +659,11 @@ def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
                 raw_text = ""
             raw_page_texts.append(raw_text)
             page_texts.append(normalize_pdf_prose(raw_text))
-            has_image = _page_has_image_xobject(page)
-            page_images.append(has_image)
-            if len((raw_text or "").strip()) < LOW_TEXT_PAGE_CHARS and has_image:
+            is_low_text = len((raw_text or "").strip()) < LOW_TEXT_PAGE_CHARS
+            # Keep the common digital-PDF path cheap: only inspect resources and
+            # content streams on pages that actually need OCR triage.
+            has_image = _page_has_image_xobject(page) if is_low_text else False
+            if is_low_text and has_image:
                 low_text_indexes.append(index)
 
         # Run geometry-aware parsing only on pages whose fast text is highly
@@ -705,11 +713,9 @@ def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
                     # real text; otherwise retain an existing sparse text stream.
                     if _pdf_text_quality(ocr_text) > _pdf_text_quality(page_texts[index]):
                         page_texts[index] = ocr_text
-                elif page_images[index] and not page_texts[index].strip():
-                    return None, (
-                        f"OCR returned no readable text for image-based page {index + 1}; "
-                        "trusted baseline was left unchanged."
-                    )
+                # Individual image pages may be decorative covers or blank
+                # scanned inserts. Ignore empty OCR for that page; fail safely
+                # only if the document as a whole contains no usable text.
 
         text = normalize_text("\n\n".join(page_texts))
         if not text.strip():
@@ -750,6 +756,12 @@ def extract_content(
         else:
             return _extract_zip_bundle(body)
 
+    # Route binary formats before decoding bytes as UTF-8. Decoding a large
+    # PDF into a replacement-filled string wastes CPU and can double peak memory.
+    if "pdf" in ctype or suffix == ".pdf" or body.startswith(b"%PDF-"):
+        text, error = _extract_pdf(body)
+        return text, "pdf", error
+
     decoded = body.decode("utf-8-sig", "replace")
 
     if "json" in ctype or suffix == ".json":
@@ -786,9 +798,6 @@ def extract_content(
         except Exception as exc:
             return None, "html", f"HTML normalization failed: {type(exc).__name__}: {exc}"
 
-    if "pdf" in ctype or suffix == ".pdf" or body.startswith(b"%PDF-"):
-        text, error = _extract_pdf(body)
-        return text, "pdf", error
     if "wordprocessingml.document" in ctype or suffix == ".docx":
         try:
             from docx import Document
