@@ -67,9 +67,17 @@ def enqueue_notifications(outbox: dict, candidates: list[dict], sent_events: dic
 def build_notifications(report: dict) -> list[dict]:
     output = []
     seen = set()
+    explicitly_irrelevant = set()
     for result in report.get("ai_results", []):
         ai = result.get("ai", {})
         analysis = ai.get("analysis", {}) if isinstance(ai, dict) else {}
+        if (
+            ai.get("status") == "ok"
+            and isinstance(analysis, dict)
+            and analysis.get("relevant") is False
+            and result.get("event_id")
+        ):
+            explicitly_irrelevant.add(result["event_id"])
         if ai.get("status") == "ok" and analysis.get("relevant") is True:
             item = {
                 "event_id": result["event_id"], "kind": result.get("event", "CHANGED_URL"),
@@ -85,6 +93,10 @@ def build_notifications(report: dict) -> list[dict]:
         event_id = event.get("event_id")
         kind = event.get("event_type")
         if event_id in seen:
+            continue
+        if event_id in explicitly_irrelevant and kind in {"CHANGED_URL", "NEW_URL"}:
+            # AI completed successfully and explicitly classified this change as
+            # irrelevant. Keep generic alerts for unavailable/failed AI results.
             continue
         if kind == "REMOVED_URL":
             output.append({
