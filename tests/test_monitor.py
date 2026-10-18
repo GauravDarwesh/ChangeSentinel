@@ -1822,6 +1822,94 @@ class TestAdaptiveContentExtraction(unittest.TestCase):
 
 
 
+
+
+    def test_pdf_binary_is_routed_before_utf8_decode(self):
+        class NoUtf8DecodeBytes(bytes):
+            def decode(self, *args, **kwargs):
+                raise AssertionError("Binary PDF bytes must not be decoded as UTF-8")
+
+        body = NoUtf8DecodeBytes(b"%PDF-1.7 binary payload")
+        with patch("regmon.content._extract_pdf", return_value=("Readable PDF text", None)) as extract_pdf:
+            result = extract_content("https://example.test/large.pdf", "application/pdf", body)
+
+        self.assertEqual(result, ("Readable PDF text", "pdf", None))
+        extract_pdf.assert_called_once_with(body)
+
+    def test_normal_text_pdf_does_not_inspect_visual_content_streams(self):
+        from pypdf import PdfReader
+
+        page = Mock()
+        page.extract_text.return_value = (
+            "This is a normal digital PDF page with enough meaningful text to stay on the fast path."
+        )
+        reader = Mock()
+        reader.is_encrypted = False
+        reader.pages = [page]
+
+        with patch("pypdf.PdfReader", return_value=reader), \
+             patch("regmon.content._page_has_image_xobject") as inspect_visual_content:
+            text, kind, error = extract_content(
+                "https://example.test/ordinary.pdf",
+                "application/pdf",
+                b"%PDF-1.7 synthetic body",
+            )
+
+        self.assertIsNone(error)
+        self.assertEqual(kind, "pdf")
+        self.assertIn("normal digital PDF page", text)
+        inspect_visual_content.assert_not_called()
+
+    def test_ocr_total_time_budget_stops_before_next_page(self):
+        import sys
+        from types import SimpleNamespace
+
+        from regmon.content import _ocr_pdf_pages
+
+        class FakeImage:
+            def close(self):
+                pass
+
+        class FakeBitmap:
+            def to_pil(self):
+                return FakeImage()
+
+            def close(self):
+                pass
+
+        class FakePage:
+            def render(self, scale):
+                return FakeBitmap()
+
+            def close(self):
+                pass
+
+        class FakeDocument:
+            def __init__(self):
+                self.pages = [FakePage(), FakePage()]
+
+            def __getitem__(self, index):
+                return self.pages[index]
+
+            def close(self):
+                pass
+
+        image_to_string = Mock(return_value="Recognized page text.")
+        pytesseract_module = SimpleNamespace(image_to_string=image_to_string)
+        pdfium_module = SimpleNamespace(PdfDocument=lambda body: FakeDocument())
+        monotonic_values = iter([0.0, 0.0, 121.0])
+
+        with patch.dict(sys.modules, {
+            "pytesseract": pytesseract_module,
+            "pypdfium2": pdfium_module,
+        }), patch("regmon.content.time.monotonic", side_effect=lambda: next(monotonic_values)):
+            with self.assertRaisesRegex(TimeoutError, "total time budget"):
+                _ocr_pdf_pages(b"%PDF-1.7", [0, 1])
+
+        self.assertEqual(image_to_string.call_count, 1)
+        self.assertEqual(image_to_string.call_args.kwargs["timeout"], 15)
+
+
 class TestExtractorVersionMigration(unittest.TestCase):
     def test_pdf_parser_upgrade_forces_unconditional_refetch(self):
         from regmon.content import CONTENT_EXTRACTOR_VERSION
