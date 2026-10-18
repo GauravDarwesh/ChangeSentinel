@@ -1756,6 +1756,27 @@ class TestAdaptiveContentExtraction(unittest.TestCase):
         self.assertIn("| FR 2028B | Quarterly |", extracted)
         self.assertIn("| FR 2028S | Weekly |", extracted)
 
+
+    def test_configured_html_selector_keeps_inline_sentences_and_tables(self):
+        from regmon.content import normalize_html
+
+        html = """
+        <html><body>
+          <aside>Ignore this content.</aside>
+          <main id="regulatory-content">
+            <p>Data from <strong>this survey</strong> measures costs.</p>
+            <table><tr><th>Form</th><th>Period</th></tr>
+              <tr><td>FR 2028B</td><td>Quarterly</td></tr></table>
+          </main>
+        </body></html>
+        """
+        extracted = normalize_html(html, include_selector="#regulatory-content")
+        self.assertIn("Data from this survey measures costs.", extracted)
+        self.assertIn("| Form | Period |", extracted)
+        self.assertIn("| FR 2028B | Quarterly |", extracted)
+        self.assertNotIn("Ignore this content.", extracted)
+
+
     def test_pdf_wrapped_sentences_and_split_words_are_repaired(self):
         from regmon.content import normalize_pdf_prose
 
