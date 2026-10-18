@@ -5,11 +5,39 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f4f7fb">
 <meta name="description" content="ChangeSentinel — monitored pages, stored snapshots and change history">
+<!-- Fresh dashboard route: dashboard-v2.html; this comment also retriggers Pages publishing. -->
 <title>ChangeSentinel · Monitoring</title>
 <style>
 :root{color-scheme:light;--bg:#f3f6fb;--surface:#fff;--surface-2:#f8fafc;--ink:#17243a;--muted:#697891;--muted-2:#8a96a9;--line:#e3e9f1;--blue:#3369e8;--blue-2:#eaf0ff;--blue-3:#244fc0;--green:#16845d;--green-bg:#e8f8f0;--amber:#a85a0b;--amber-bg:#fff3df;--red:#b42334;--red-bg:#fff0f1;--shadow:0 8px 28px rgba(26,44,75,.055);--radius:16px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}.hidden{display:none!important}.app{min-height:100vh;display:grid;grid-template-columns:236px minmax(0,1fr)}.sidebar{position:sticky;top:0;height:100vh;background:#14233c;color:#e9eef9;padding:23px 14px 16px;display:flex;flex-direction:column;gap:20px}.brand{display:flex;align-items:center;gap:11px;padding:0 9px 14px}.brand-mark{width:35px;height:35px;border-radius:11px;background:#4f7df1;display:grid;place-items:center;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px 15px #0b153755}.brand-name{font-size:16px;font-weight:850;letter-spacing:-.03em}.brand-sub{font-size:10px;color:#9eacc5;margin-top:1px;letter-spacing:.025em}.side-label{padding:0 11px;color:#8798b6;text-transform:uppercase;font-size:10px;font-weight:800;letter-spacing:.12em;margin-bottom:6px}.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:#c1cde0;border-radius:10px;padding:10px 11px;display:flex;align-items:center;gap:12px;text-align:left;width:100%;transition:background .15s,color .15s}.nav button:hover{background:#ffffff0c;color:#fff}.nav button.active{background:#ffffff18;color:#fff;font-weight:750;box-shadow:inset 3px 0 #8db0ff}.nav-icon{width:18px;text-align:center;font-size:16px}.nav-count{margin-left:auto;color:#aebfdd;font-size:11px}.side-spacer{flex:1}.scope-card{border:1px solid #ffffff1a;background:#ffffff08;border-radius:13px;padding:13px}.scope-top{display:flex;gap:8px;align-items:center;color:#eaf1ff;font-weight:700;font-size:12px}.live-dot{width:7px;height:7px;background:#48d7a0;box-shadow:0 0 0 4px #48d7a01c;border-radius:50%;flex:none}.scope-card p{margin:8px 0 0;color:#9dabc5;font-size:11px;line-height:1.55}.side-foot{font-size:10px;color:#8798b6;padding:0 9px}.main{min-width:0}.topbar{height:67px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 30px;background:#ffffffd9;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;backdrop-filter:blur(16px)}.crumb{color:var(--muted);font-size:12px}.crumb b{color:var(--ink);font-weight:750}.top-actions{display:flex;align-items:center;gap:10px}.system-status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;white-space:nowrap}.system-status .live-dot{width:7px;height:7px;box-shadow:none}.refresh-btn,.outline-btn,.primary-btn{border:1px solid var(--line);background:white;color:var(--ink);border-radius:10px;padding:8px 11px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:.15s}.refresh-btn:hover,.outline-btn:hover{border-color:#b7c6e0;background:#f8faff}.primary-btn{border-color:var(--blue);background:var(--blue);color:#fff}.primary-btn:hover{background:var(--blue-3);text-decoration:none}.page{max-width:1640px;margin:0 auto;padding:29px 30px 42px}.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:22px;margin-bottom:22px}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--blue);font-weight:850}.page h1{font-size:30px;letter-spacing:-.055em;line-height:1.15;margin:5px 0 8px}.page-head p{margin:0;color:var(--muted);max-width:660px;font-size:13px}.source-chip{background:var(--blue-2);color:var(--blue-3);border:1px solid #d8e3ff;border-radius:999px;padding:8px 11px;font-size:11px;font-weight:750;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}.source-chip:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--blue)}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}.metric{padding:15px 17px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0}.metric-top{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--muted);font-size:11px;font-weight:650}.metric-icon{width:28px;height:28px;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;color:#526786;font-size:14px}.metric-value{font-size:27px;line-height:1.2;letter-spacing:-.05em;font-weight:850;margin-top:11px}.metric-note{font-size:10px;color:var(--muted-2);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.workspace{display:grid;grid-template-columns:minmax(285px,355px) minmax(0,1fr);gap:15px;align-items:stretch;min-height:640px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0;overflow:hidden}.monitor-panel{display:flex;flex-direction:column}.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:17px 17px 13px;border-bottom:1px solid var(--line)}.panel-title{font-size:14px;font-weight:850;letter-spacing:-.02em}.panel-subtitle{font-size:11px;color:var(--muted);margin-top:3px}.small-count{color:var(--muted);background:var(--surface-2);border:1px solid var(--line);padding:4px 7px;border-radius:7px;font-size:10px;font-weight:750;white-space:nowrap}.search-wrap{position:relative;padding:13px 14px 10px}.search-icon{position:absolute;left:27px;top:23px;color:#8996aa;font-size:14px}.search-input{width:100%;border:1px solid var(--line);background:#f9fbfd;border-radius:10px;padding:10px 12px 10px 34px;outline:none;color:var(--ink);font-size:12px}.search-input:focus{border-color:#9cb5fb;box-shadow:0 0 0 3px #3369e814}.filter-row{display:flex;gap:6px;padding:0 14px 11px;flex-wrap:wrap}.filter-btn{border:1px solid transparent;background:transparent;padding:5px 9px;border-radius:8px;color:var(--muted);font-size:10px;font-weight:750}.filter-btn:hover{background:#f2f5fa}.filter-btn.active{background:var(--blue-2);color:var(--blue-3);border-color:#d8e3ff}.monitor-list{display:grid;align-content:start;gap:5px;padding:0 9px 12px;overflow:auto;max-height:700px}.monitor-row{width:100%;border:1px solid transparent;background:transparent;border-radius:12px;padding:12px 11px;text-align:left;color:var(--ink);display:block;transition:background .15s,border-color .15s}.monitor-row:hover{background:#f7f9fd}.monitor-row.selected{background:#eff4ff;border-color:#d8e4ff}.monitor-row-top{display:flex;align-items:flex-start;gap:9px}.status-icon{width:26px;height:26px;border-radius:9px;background:var(--green-bg);color:var(--green);display:grid;place-items:center;flex:none;font-size:13px;font-weight:900}.status-icon.warning{background:var(--amber-bg);color:var(--amber)}.status-icon.error{background:var(--red-bg);color:var(--red)}.monitor-row-info{min-width:0;flex:1}.monitor-name{font-size:12px;font-weight:800;line-height:1.35;letter-spacing:-.01em}.monitor-url{color:var(--muted);font-size:10px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.monitor-row-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 0 35px}.status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 7px;border-radius:999px;background:var(--green-bg);color:var(--green);font-size:9px;font-weight:800;white-space:nowrap}.status-pill:before{content:"";width:5px;height:5px;background:currentColor;border-radius:50%}.status-pill.warning{background:var(--amber-bg);color:var(--amber)}.status-pill.error{background:var(--red-bg);color:var(--red)}.row-time{font-size:9px;color:var(--muted-2);white-space:nowrap}.detail-panel{display:flex;flex-direction:column;min-height:640px}.detail-header{padding:20px 22px 16px;border-bottom:1px solid var(--line)}.detail-topline{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.detail-title-wrap{min-width:0}.detail-kicker{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:800}.detail-title{margin:5px 0 6px;font-size:20px;line-height:1.25;letter-spacing:-.04em;overflow-wrap:anywhere}.detail-url{font-size:11px;color:var(--muted);overflow-wrap:anywhere}.detail-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}.detail-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:14px}.meta-chip{font-size:10px;color:#596983;background:#f6f8fb;border:1px solid var(--line);padding:5px 8px;border-radius:7px}.tabs{display:flex;align-items:center;gap:5px;padding:0 19px;border-bottom:1px solid var(--line);background:#fcfdff;overflow:auto}.tab-btn{position:relative;border:0;background:none;color:var(--muted);font-size:11px;font-weight:800;padding:13px 10px;white-space:nowrap}.tab-btn.active{color:var(--blue)}.tab-btn.active:after{content:"";height:2px;position:absolute;left:9px;right:9px;bottom:-1px;background:var(--blue);border-radius:99px}.detail-body{flex:1;min-height:400px;padding:0}.snapshot-toolbar{padding:12px 22px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fbfcfe;border-bottom:1px solid var(--line)}.snapshot-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800}.file-icon{width:25px;height:29px;background:white;border:1px solid #dbe3ef;border-radius:5px;display:grid;place-items:center;color:var(--blue);font-size:12px}.snapshot-sub{color:var(--muted);font-size:10px;margin-top:2px;font-weight:500}.snapshot-notice{margin:15px 22px 0;background:#f3f7ff;border:1px solid #dce7ff;border-radius:10px;padding:10px 12px;color:#53678c;font-size:10px;display:flex;gap:8px;align-items:flex-start}.snapshot-content{padding:23px 27px 34px;max-width:1000px;margin:0 auto;color:#2b374b;font-size:13px;line-height:1.85;white-space:pre-wrap;overflow-wrap:anywhere;min-height:340px}.snapshot-content.loading{color:var(--muted)}.snapshot-content .doc-line{margin:0 0 9px}.snapshot-content .doc-line:first-child{font-size:18px;font-weight:850;color:#1d2b42;line-height:1.4;margin-bottom:15px}.snapshot-content .doc-line.section-line{font-weight:800;color:#2c3f5e;margin-top:14px}.snapshot-content .doc-line.date-line{font-weight:800;color:#344c70;margin-top:19px;border-top:1px solid #e9eef5;padding-top:12px}.empty-state{display:grid;place-items:center;min-height:320px;padding:35px;text-align:center;color:var(--muted)}.empty-icon{width:48px;height:48px;border:1px solid var(--line);background:var(--surface-2);border-radius:15px;display:grid;place-items:center;font-size:21px;color:#7c8da9;margin:0 auto 13px}.empty-title{font-weight:850;color:var(--ink);font-size:13px;margin-bottom:5px}.empty-copy{font-size:11px;max-width:350px;line-height:1.65}.change-list{display:grid;gap:10px;padding:18px 20px}.change-card{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}.change-card-top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.change-type{font-size:10px;font-weight:900;letter-spacing:.05em;color:var(--blue)}.change-summary{margin-top:6px;font-size:12px;line-height:1.55}.change-time{font-size:10px;color:var(--muted);white-space:nowrap}.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:20px}.detail-cell{border:1px solid var(--line);background:#fafbfd;border-radius:11px;padding:12px;min-width:0}.detail-cell label{display:block;font-size:9px;font-weight:850;color:var(--muted);text-transform:uppercase;letter-spacing:.09em}.detail-cell div{font-size:11px;margin-top:6px;overflow-wrap:anywhere;word-break:break-word;color:#2b3b54}.hash{font:10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}.route-view{min-width:0}.route-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.route-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}.route-title{font-weight:850;font-size:14px}.route-sub{font-size:11px;color:var(--muted);margin-top:3px}.route-items{padding:9px 14px;display:grid;gap:6px}.route-event{width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:11px;padding:13px;display:flex;gap:12px;align-items:flex-start}.route-event:hover{background:#f8faff;border-color:#cad8f8}.route-event-main{flex:1;min-width:0}.route-event-title{font-size:12px;font-weight:800}.route-event-url{font-size:10px;color:var(--muted);overflow-wrap:anywhere;margin-top:4px}.route-event-meta{font-size:10px;color:var(--muted-2);margin-top:6px}.run-row{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--line);border-radius:11px;background:#fff}.run-mark{width:35px;height:35px;display:grid;place-items:center;border-radius:10px;background:#edf3ff;color:var(--blue);font-size:15px;flex:none}.run-main{min-width:0;flex:1}.run-title{font-size:12px;font-weight:800;overflow-wrap:anywhere}.run-sub{font-size:10px;color:var(--muted);margin-top:4px}.run-counts{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.run-count{font-size:9px;color:#5c6e88;border:1px solid var(--line);background:#fafbfd;border-radius:6px;padding:3px 6px}.run-source{font-size:9px;background:#f2f4f8;color:#66748a;padding:4px 7px;border-radius:999px;white-space:nowrap}.page-footer{margin-top:18px;display:flex;justify-content:space-between;gap:15px;color:var(--muted-2);font-size:10px}.error-banner{padding:12px 14px;border:1px solid #ffd6d9;background:var(--red-bg);color:var(--red);border-radius:10px;font-size:11px;margin-bottom:13px}
 @media(min-width:1500px){.workspace{grid-template-columns:365px minmax(0,1fr)}}@media(max-width:1100px){.app{grid-template-columns:76px minmax(0,1fr)}.sidebar{padding:20px 9px}.brand{padding:0 10px 12px;justify-content:center}.brand-copy,.side-label,.nav-label,.nav-count,.scope-card,.side-foot{display:none}.nav button{justify-content:center;padding:12px 8px}.nav button.active{box-shadow:inset 0 -3px #8db0ff}.page{padding:23px 18px 35px}.topbar{padding:0 18px}.workspace{grid-template-columns:minmax(260px,310px) minmax(0,1fr)}.detail-actions{max-width:180px}}@media(max-width:780px){.app{display:block}.sidebar{position:sticky;height:auto;top:0;z-index:20;flex-direction:row;align-items:center;padding:8px 10px;gap:12px;border-bottom:1px solid #263854}.brand{padding:0 4px;justify-content:flex-start}.brand-mark{width:29px;height:29px;border-radius:9px;font-size:15px}.brand-name{font-size:13px}.brand-sub{display:none}.nav{display:flex;flex:1;justify-content:flex-end}.nav button{width:auto;padding:8px 10px;gap:6px}.nav-label{display:inline;font-size:10px}.nav-icon{font-size:14px;width:auto}.nav-count,.side-spacer,.scope-card,.side-foot,.side-label{display:none}.topbar{height:52px;padding:0 13px}.page{padding:18px 12px 28px}.page-head{align-items:flex-start;flex-direction:column;gap:12px;margin-bottom:17px}.page h1{font-size:25px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.metric{padding:12px}.metric-value{font-size:23px}.workspace{grid-template-columns:minmax(0,1fr);min-height:0}.monitor-panel{max-height:none}.monitor-list{max-height:320px}.detail-panel{min-height:500px}.detail-header{padding:16px}.detail-topline{flex-direction:column}.detail-actions{max-width:none;justify-content:flex-start}.detail-title{font-size:18px}.snapshot-content{padding:18px;font-size:12px}.snapshot-notice{margin:12px}.detail-grid{grid-template-columns:1fr;padding:14px}.system-status{display:none}.page-footer{flex-direction:column}.run-row{align-items:flex-start}.run-source{display:none}}@media(max-width:430px){.nav button{padding:8px 7px}.nav-label{font-size:9px}.brand{gap:7px}.page h1{font-size:23px}.metric-note{white-space:normal}.source-chip{font-size:10px}.top-actions{gap:6px}.refresh-btn{padding:7px 9px}.route-event{padding:10px}}
+
+.snapshot-mode{display:flex;gap:6px;margin:0 0 14px;padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);width:max-content;max-width:100%}
+.mode-btn{border:0;background:transparent;color:var(--muted);padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700}
+.mode-btn.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 4px rgba(15,23,42,.09)}
+.snapshot-frame{display:block;width:100%;height:min(74vh,900px);min-height:520px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.source-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.source-code{max-height:75vh;overflow:auto;border:1px solid #273548;border-radius:12px;background:#101a2a;color:#e2e8f0}
+.source-code-inner{min-width:max-content;padding:12px 0;font:12px/1.65 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+.source-line{display:flex;min-height:20px;padding-right:18px;white-space:pre}
+.line-no{position:sticky;left:0;display:inline-block;min-width:52px;padding:0 12px 0 10px;margin-right:14px;background:#152236;color:#72829a;text-align:right;user-select:none;border-right:1px solid #29384c}
+.source-line code{font:inherit;color:inherit}
+.evidence-link{margin-top:10px;font-size:12px}
+.evidence-diffs{margin-top:14px;display:grid;gap:10px}
+.diff-details{min-width:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.diff-details summary{cursor:pointer;list-style:none;padding:11px 13px;font-size:12px;font-weight:750;color:var(--ink);background:var(--surface-2)}
+.diff-details summary::-webkit-details-marker{display:none}
+.diff-note{padding:8px 12px;color:var(--muted);font-size:11px;border-top:1px solid var(--line)}
+.diff-code{max-height:520px;overflow:auto;background:#101a2a;padding:8px 0;color:#d7e0ed;font:11px/1.65 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+.diff-line{padding:0 12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.diff-add{background:rgba(22,132,93,.18);color:#9ce2c3}
+.diff-del{background:rgba(180,35,52,.18);color:#ffb5bf}
+.diff-hunk{color:#90baff;background:rgba(51,105,232,.12)}
+.diff-file{color:#a6b7cc;font-weight:700}
+.diff-empty,.diff-loading{padding:12px;color:var(--muted);font-size:12px}
+.tabs{flex-wrap:wrap}
+@media(max-width:720px){.snapshot-frame{min-height:420px;height:64vh}.snapshot-mode{width:100%}.mode-btn{flex:1;padding:9px 6px}.source-toolbar{align-items:flex-start}}
+
 </style>
 </head>
 <body>
@@ -50,11 +78,12 @@
           <section class="panel detail-panel" id="detailPanel">
             <div id="detailHeader" class="detail-header"><div class="empty-title">Choose a monitor</div><div class="empty-copy">Select a monitored page on the left to open its saved snapshot.</div></div>
             <div id="detailTabs" class="tabs hidden">
-              <button class="tab-btn active" data-detail-tab="snapshot">Saved snapshot</button>
-              <button class="tab-btn" data-detail-tab="changes">Changes</button>
+              <button class="tab-btn active" data-detail-tab="snapshot">Page snapshot</button>
+              <button class="tab-btn" data-detail-tab="source">HTML source</button>
+              <button class="tab-btn" data-detail-tab="changes">Changes &amp; diffs</button>
               <button class="tab-btn" data-detail-tab="details">Page details</button>
             </div>
-            <div id="detailBody" class="detail-body"><div class="empty-state"><div><div class="empty-icon">▧</div><div class="empty-title">Your document preview lives here</div><div class="empty-copy">Click one of the monitored pages to inspect its stored text snapshot without making another request to the regulator's website.</div></div></div></div>
+            <div id="detailBody" class="detail-body"><div class="empty-state"><div><div class="empty-icon">▧</div><div class="empty-title">Your saved page preview lives here</div><div class="empty-copy">Choose a monitored page to inspect the saved HTML response, source, and diffs without fetching the live page.</div></div></div></div>
           </section>
         </div>
       </section>
@@ -81,7 +110,7 @@ const ENDPOINTS = {
   notifications: RAW + "/data/notifications.json"
 };
 const $ = id => document.getElementById(id);
-const state = { report: {}, inventory: {}, history: [], notifications: {}, items: [], selectedId: "", view: "monitors", filter: "ALL", detailTab: "snapshot", snapshotCache: {} };
+const state = { report: {}, inventory: {}, history: [], notifications: {}, items: [], selectedId: "", view: "monitors", filter: "ALL", detailTab: "snapshot", snapshotMode: "preview", snapshotCache: {}, htmlCache: {}, evidenceCache: {} };
 function esc(value) {
   return String(value == null ? "" : value).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]);
 }
@@ -194,9 +223,15 @@ function renderMonitorList() {
   }).join("") : '<div class="empty-state"><div><div class="empty-icon">⌕</div><div class="empty-title">No matching pages</div><div class="empty-copy">Try another search or change the filter to see more monitors.</div></div></div>';
 }
 function renderDetailHeader(item) {
-  const status = itemStatus(item);
-  const latestHash = item.normalized_hash || item.raw_hash || "";
-  $("detailHeader").innerHTML = '<div class="detail-topline"><div class="detail-title-wrap"><div class="detail-kicker">Monitored document</div><h2 class="detail-title">' + esc(itemTitle(item)) + '</h2><div class="detail-url">' + esc(item.canonical_url) + '</div></div><div class="detail-actions"><a class="outline-btn" href="' + esc(item.canonical_url) + '" target="_blank" rel="noopener noreferrer">↗ Open live page</a><a class="outline-btn" href="' + esc(REPO + "/blob/main/" + (item.snapshot_location || "")) + '" target="_blank" rel="noopener noreferrer">▧ Snapshot file</a></div></div><div class="detail-meta"><span class="status-pill ' + esc(status.cls) + '">' + esc(status.label) + '</span><span class="meta-chip">HTTP ' + esc(item.http_status == null ? "—" : item.http_status) + '</span><span class="meta-chip">Last checked ' + esc(fmt(item.last_checked)) + '</span><span class="meta-chip">Stored snapshot</span></div>';
+  const status = item.fetch_error || item.extraction_error
+    ? { label: "Error", cls: "status-error" }
+    : item.not_modified
+      ? { label: "Unchanged", cls: "status-ok" }
+      : { label: (item.normalized_hash ? "Monitored" : "Pending"), cls: "status-ok" };
+  const htmlPath = item.html_snapshot_location || "";
+  const textPath = item.snapshot_location || "";
+  const snapshotPath = htmlPath || textPath;
+  $("detailHeader").innerHTML = '<div class="detail-topline"><div class="detail-title-wrap"><div class="detail-kicker">Monitored page</div><h2 class="detail-title">' + esc(itemTitle(item)) + '</h2><div class="detail-url">' + esc(item.canonical_url) + '</div></div><div class="detail-actions"><a class="outline-btn" href="' + esc(item.canonical_url) + '" target="_blank" rel="noopener noreferrer">↗ Open live page</a>' + (snapshotPath ? '<a class="outline-btn" href="' + esc(REPO + "/blob/main/" + snapshotPath) + '" target="_blank" rel="noopener noreferrer">↗ Saved snapshot file</a>' : '') + '</div></div><div class="detail-meta"><span class="status-pill ' + esc(status.cls) + '">' + esc(status.label) + '</span><span class="meta-chip">HTTP ' + esc(item.http_status == null ? "—" : item.http_status) + '</span><span class="meta-chip">Last checked ' + esc(fmt(item.last_checked)) + '</span><span class="meta-chip">' + (htmlPath ? 'HTML response saved' : 'HTML snapshot pending') + '</span></div>';
   $("detailTabs").classList.remove("hidden");
   document.querySelectorAll("[data-detail-tab]").forEach(btn => btn.classList.toggle("active", btn.dataset.detailTab === state.detailTab));
 }
@@ -217,60 +252,143 @@ function renderSnapshotText(text) {
     return '<p class="' + cls + '">' + esc(trimmed) + '</p>';
   }).join("");
 }
+function snapshotURL(path) {
+  return path ? bust(RAW + "/" + path) : "";
+}
+async function readSnapshotFile(path, cache) {
+  if (!path) throw new Error("Snapshot path is not available");
+  if (cache[path] != null) return cache[path];
+  const response = await fetch(snapshotURL(path), { cache: "no-store" });
+  if (!response.ok) throw new Error("Snapshot request returned HTTP " + response.status);
+  const content = await response.text();
+  cache[path] = content;
+  return content;
+}
+function previewSource(source, url) {
+  const baseTag = '<base href="' + esc(url) + '">';
+  if (/<head\b[^>]*>/i.test(source)) return source.replace(/<head\b[^>]*>/i, match => match + baseTag);
+  return '<!doctype html><html><head><meta charset="utf-8">' + baseTag + '</head><body>' + source + '</body></html>';
+}
+function renderSourceCode(source) {
+  const lines = String(source || "").split(/\r?\n/);
+  return '<div class="source-code" role="region" aria-label="Saved HTML source"><div class="source-code-inner">' + lines.map((line, i) => '<div class="source-line"><span class="line-no">' + (i + 1) + '</span><code>' + esc(line || " ") + '</code></div>').join("") + '</div></div>';
+}
 async function loadSnapshot(item) {
   const body = $("detailBody");
-  const key = item.snapshot_location || "";
-  body.innerHTML = '<div class="snapshot-toolbar"><div class="snapshot-label"><span class="file-icon">▧</span><div><div>Saved text snapshot</div><div class="snapshot-sub">Captured ' + esc(fmt(item.last_full_fetch || item.last_checked)) + '</div></div></div><span class="meta-chip">SHA-256 ' + esc((item.normalized_hash || "").slice(0,12)) + '…</span></div><div class="snapshot-notice"><span>ⓘ</span><span>This is the stored text snapshot used for comparison — not a live page and not a screenshot of the original layout.</span></div><div class="snapshot-content loading">Loading stored document text…</div>';
-  if (!key) {
-    body.querySelector(".snapshot-content").innerHTML = emptyState("No snapshot location", "This record does not contain a path to a stored snapshot.", "!");
-    return;
-  }
-  let text = state.snapshotCache[key];
-  if (text == null) {
-    try {
-      const response = await fetch(bust(RAW + "/" + key), { cache: "no-store" });
-      if (!response.ok) throw new Error("Snapshot request returned HTTP " + response.status);
-      text = await response.text();
-      state.snapshotCache[key] = text;
-    } catch (error) {
-      const node = body.querySelector(".snapshot-content");
-      if (node) node.innerHTML = emptyState("Could not load saved snapshot", String(error.message || error) + ". The snapshot file link above remains available.", "!");
+  body.innerHTML = '<div class="snapshot-toolbar"><div class="snapshot-label"><span class="file-icon">▧</span><div><div>Saved page snapshot</div><div class="snapshot-sub">Captured ' + esc(fmt(item.last_full_fetch || item.last_checked)) + '</div></div></div><span class="meta-chip">Source SHA-256 ' + esc((item.html_hash || "").slice(0,12) || "pending") + '</span></div><div class="snapshot-notice"><span>ⓘ</span><span>This is the stored HTML response. Scripts are disabled in the preview; linked CSS and images may still load from the original site. The original response body is preserved separately in HTML source.</span></div><div class="snapshot-mode"><button class="mode-btn ' + (state.snapshotMode === "preview" ? "active" : "") + '" data-snapshot-mode="preview">Rendered preview</button><button class="mode-btn ' + (state.snapshotMode === "text" ? "active" : "") + '" data-snapshot-mode="text">Extracted text</button></div><div class="snapshot-content loading" id="snapshotCanvas">Loading saved snapshot…</div>';
+  const canvas = $("snapshotCanvas");
+  if (state.snapshotMode === "text") {
+    if (!item.snapshot_location) {
+      canvas.classList.remove("loading");
+      canvas.innerHTML = emptyState("Text snapshot unavailable", "This older record has no normalized-text snapshot path.", "!");
       return;
     }
+    try {
+      const text = await readSnapshotFile(item.snapshot_location, state.snapshotCache);
+      if (selectedItem()?.url_id !== item.url_id || state.detailTab !== "snapshot") return;
+      canvas.classList.remove("loading");
+      canvas.innerHTML = renderSnapshotText(text);
+    } catch (error) {
+      canvas.classList.remove("loading");
+      canvas.innerHTML = emptyState("Could not load text snapshot", String(error.message || error), "!");
+    }
+    return;
   }
-  const current = selectedItem();
-  if (!current || current.url_id !== item.url_id || state.detailTab !== "snapshot") return;
-  const node = body.querySelector(".snapshot-content");
-  if (node) {
-    node.classList.remove("loading");
-    node.innerHTML = renderSnapshotText(text);
+  if (!item.html_snapshot_location) {
+    canvas.classList.remove("loading");
+    canvas.innerHTML = emptyState("HTML snapshot not captured yet", "The monitor must complete one successful full fetch after this update. Then the dashboard will show the saved HTML page here and preserve a separate source file.", "⌁");
+    return;
   }
+  try {
+    const source = await readSnapshotFile(item.html_snapshot_location, state.htmlCache);
+    if (selectedItem()?.url_id !== item.url_id || state.detailTab !== "snapshot") return;
+    canvas.classList.remove("loading");
+    canvas.innerHTML = '<iframe class="snapshot-frame" title="Saved HTML page preview" sandbox="" loading="lazy"></iframe>';
+    canvas.querySelector("iframe").srcdoc = previewSource(source, item.canonical_url || "");
+  } catch (error) {
+    canvas.classList.remove("loading");
+    canvas.innerHTML = emptyState("Could not load HTML snapshot", String(error.message || error), "!");
+  }
+}
+async function loadHtmlSource(item) {
+  const body = $("detailBody");
+  const path = item.html_snapshot_location || "";
+  body.innerHTML = '<div class="source-toolbar"><div><div class="snapshot-label">Saved HTML source</div><div class="snapshot-sub">Original response body · ' + esc(path || "not captured") + '</div></div><span class="meta-chip">SHA-256 ' + esc((item.html_hash || "").slice(0,12) || "pending") + '</span></div><div class="snapshot-notice"><span>ⓘ</span><span>This shows the stored response HTML, not JavaScript-generated DOM after the browser runs the page.</span></div><div id="htmlSourceCanvas" class="loading">Loading source code…</div>';
+  const canvas = $("htmlSourceCanvas");
+  if (!path) {
+    canvas.classList.remove("loading");
+    canvas.innerHTML = emptyState("HTML source not captured yet", "A successful full fetch is needed to create the first HTML response snapshot.", "⌁");
+    return;
+  }
+  try {
+    const source = await readSnapshotFile(path, state.htmlCache);
+    if (selectedItem()?.url_id !== item.url_id || state.detailTab !== "source") return;
+    canvas.classList.remove("loading");
+    canvas.innerHTML = renderSourceCode(source);
+  } catch (error) {
+    canvas.classList.remove("loading");
+    canvas.innerHTML = emptyState("Could not load HTML source", String(error.message || error), "!");
+  }
+}
+function renderDiffMarkup(diff) {
+  if (!diff) return '<div class="diff-empty">No line-level differences in this evidence file.</div>';
+  return '<div class="diff-code">' + String(diff).split(/\r?\n/).map(line => {
+    const cls = line.startsWith("+++") || line.startsWith("---") ? "diff-file" : line.startsWith("+") ? "diff-add" : line.startsWith("-") ? "diff-del" : line.startsWith("@@") ? "diff-hunk" : "";
+    return '<div class="diff-line ' + cls + '">' + esc(line || " ") + '</div>';
+  }).join("") + '</div>';
 }
 function renderChangesForItem(item) {
   const events = matchingEvents(item).slice().sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
   if (!events.length) {
     const baseline = item.first_seen && item.last_checked && new Date(item.first_seen).getTime() === new Date(item.last_checked).getTime();
-    return emptyState(baseline ? "Baseline captured" : "No changes recorded in the latest run", baseline ? "This page's first successful snapshot established its baseline. On later runs, changed text will appear here when detected." : "The latest report contains no change event for this page. Earlier snapshots are not presented as current changes.", "✓");
+    return emptyState(baseline ? "Baseline captured" : "No changes recorded", baseline ? "This successful fetch established a baseline. Later runs compare extracted content and, separately, the fetched HTML source." : "No content, HTML-source, or operational event for this page is present in the latest report.", "✓");
   }
-  return '<div class="change-list">' + events.map(e => '<article class="change-card"><div class="change-card-top"><div class="change-type">' + esc(e.event_type || "EVENT") + '</div><div class="change-time">' + esc(fmt(e.timestamp)) + '</div></div><div class="change-summary">' + esc((e.ai && e.ai.analysis && e.ai.analysis.summary) || (e.evidence && e.evidence.error) || e.summary || "A monitoring event was recorded for this URL.") + '</div>' + (e.evidence_location ? '<div style="margin-top:9px"><a href="' + esc(REPO + "/blob/main/" + e.evidence_location) + '" target="_blank" rel="noopener noreferrer">View evidence file ↗</a></div>' : "") + '</article>').join("") + '</div>';
+  return '<div class="change-list">' + events.slice(0, 20).map(e => {
+    const summary = (e.ai && e.ai.analysis && e.ai.analysis.summary) || (e.evidence && e.evidence.error) || e.summary || (e.event_type === "HTML_SOURCE_CHANGED" ? "The HTML markup changed while extracted text remained the same." : "A monitoring event was recorded for this URL.");
+    const boxId = "evidence-" + String(e.event_id || "").replace(/[^a-zA-Z0-9_-]/g, "");
+    return '<article class="change-card"><div class="change-card-top"><div class="change-type">' + esc(e.event_type || "EVENT") + '</div><div class="change-time">' + esc(fmt(e.timestamp)) + '</div></div><div class="change-summary">' + esc(summary) + '</div>' + (e.evidence_location ? '<div class="evidence-link"><a href="' + esc(REPO + "/blob/main/" + e.evidence_location) + '" target="_blank" rel="noopener noreferrer">Open evidence JSON ↗</a></div><div class="evidence-diffs" id="' + esc(boxId) + '"><div class="diff-loading">Loading text and HTML source diffs…</div></div>' : '<div class="diff-empty">No evidence file is attached to this event.</div>') + '</article>';
+  }).join("") + (events.length > 20 ? '<div class="diff-empty">Showing the 20 most recent events for this page.</div>' : '') + '</div>';
 }
+async function loadChanges(item) {
+  const body = $("detailBody");
+  body.innerHTML = renderChangesForItem(item);
+  const events = matchingEvents(item).slice().sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0)).slice(0, 20);
+  for (const event of events) {
+    if (!event.evidence_location) continue;
+    try {
+      let evidence = state.evidenceCache[event.evidence_location];
+      if (!evidence) {
+        const response = await fetch(bust(RAW + "/" + event.evidence_location), { cache: "no-store" });
+        if (!response.ok) throw new Error("Evidence request returned HTTP " + response.status);
+        evidence = await response.json();
+        state.evidenceCache[event.evidence_location] = evidence;
+      }
+      if (selectedItem()?.url_id !== item.url_id || state.detailTab !== "changes") return;
+      const boxId = "evidence-" + String(event.event_id || "").replace(/[^a-zA-Z0-9_-]/g, "");
+      const box = document.getElementById(boxId);
+      if (!box) continue;
+      box.innerHTML = '<details class="diff-details" open><summary>HTML source diff</summary><div class="diff-note">Formatted markup diff · raw HTML snapshot files remain available separately</div>' + renderDiffMarkup(evidence.html_diff || "") + '</details><details class="diff-details"><summary>Extracted content diff</summary>' + renderDiffMarkup(evidence.diff || "") + '</details>';
+    } catch (error) {
+      const boxId = "evidence-" + String(event.event_id || "").replace(/[^a-zA-Z0-9_-]/g, "");
+      const box = document.getElementById(boxId);
+      if (box) box.innerHTML = '<div class="diff-empty">Could not load event evidence: ' + esc(String(error.message || error)) + '</div>';
+    }
+  }
+}
+
 function renderDetails(item) {
   const fields = [
-    ["Source", item.source_id],
-    ["Regulator", item.regulator],
-    ["HTTP status", item.http_status],
-    ["Content type", item.content_type],
-    ["Extraction type", item.extraction_type],
-    ["First seen", fmt(item.first_seen)],
-    ["Last checked", fmt(item.last_checked)],
-    ["Last full fetch", fmt(item.last_full_fetch)],
-    ["ETag", item.etag || "Not supplied"],
+    ["Source", item.source_id], ["Regulator", item.regulator], ["HTTP status", item.http_status],
+    ["Content type", item.content_type], ["Extraction type", item.extraction_type],
+    ["First seen", fmt(item.first_seen)], ["Last checked", fmt(item.last_checked)],
+    ["Last full fetch", fmt(item.last_full_fetch)], ["ETag", item.etag || "Not supplied"],
     ["Last-Modified", item.last_modified || "Not supplied"],
-    ["Normalized SHA-256", item.normalized_hash || "Not available"],
-    ["Raw SHA-256", item.raw_hash || "Not available"],
-    ["Snapshot file", item.snapshot_location || "Not available"],
-    ["Fetch error", item.fetch_error || "None"],
-    ["Extraction error", item.extraction_error || "None"]
+    ["Normalized text SHA-256", item.normalized_hash || "Not available"],
+    ["HTML source SHA-256", item.html_hash || "Not available"],
+    ["Raw response SHA-256", item.raw_hash || "Not available"],
+    ["HTML snapshot file", item.html_snapshot_location || "Not captured"],
+    ["Text snapshot file", item.snapshot_location || "Not available"],
+    ["Fetch error", item.fetch_error || "None"], ["Extraction error", item.extraction_error || "None"]
   ];
   $("detailBody").innerHTML = '<div class="detail-grid">' + fields.map(([k,v]) => '<div class="detail-cell"><label>' + esc(k) + '</label><div class="' + (String(k).indexOf("SHA-256") >= 0 ? "hash" : "") + '">' + esc(v == null ? "—" : v) + '</div></div>').join("") + '</div>';
 }
@@ -278,13 +396,14 @@ function renderDetailBody() {
   const item = selectedItem();
   if (!item) {
     $("detailTabs").classList.add("hidden");
-    $("detailHeader").innerHTML = emptyState("Choose a monitor", "Select a page on the left to open its stored snapshot.", "▧");
+    $("detailHeader").innerHTML = emptyState("Choose a monitor", "Select a page on the left to open its saved HTML snapshot.", "▧");
     $("detailBody").innerHTML = "";
     return;
   }
   renderDetailHeader(item);
   if (state.detailTab === "snapshot") loadSnapshot(item);
-  else if (state.detailTab === "changes") $("detailBody").innerHTML = renderChangesForItem(item);
+  else if (state.detailTab === "source") loadHtmlSource(item);
+  else if (state.detailTab === "changes") loadChanges(item);
   else renderDetails(item);
 }
 function setSelected(id) {
@@ -388,6 +507,13 @@ $("detailTabs").addEventListener("click", event => {
   if (!button) return;
   state.detailTab = button.dataset.detailTab;
   renderDetailBody();
+});
+$("detailBody").addEventListener("click", event => {
+  const button = event.target.closest("[data-snapshot-mode]");
+  if (!button) return;
+  state.snapshotMode = button.dataset.snapshotMode;
+  const item = selectedItem();
+  if (item && state.detailTab === "snapshot") loadSnapshot(item);
 });
 $("changeItems").addEventListener("click", event => {
   const button = event.target.closest("[data-event-url]");
