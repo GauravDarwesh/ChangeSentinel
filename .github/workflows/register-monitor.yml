@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   register:
-    if: ${{ github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, '[ChangeSentinel] Add monitor')
+    if: ${{ github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, '[ChangeSentinel] Add monitor') }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
