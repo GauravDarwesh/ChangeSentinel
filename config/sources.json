@@ -17,9 +17,9 @@
   "sources": [
     {
       "id": "eba-full-site",
-      "name": "European Banking Authority — Full Public Site",
+      "name": "European Banking Authority — Archived Full-Site Scope (Inactive)",
       "regulator": "European Banking Authority",
-      "active": true,
+      "active": false,
       "baseline_on_first_run": true,
       "seed_urls": [
         "https://www.eba.europa.eu/",
@@ -46,6 +46,52 @@
       "discovery_http_attempts": 2,
       "discovery_slice_seconds": 2700,
       "discovery_max_pages_per_slice": 2000
+    },
+    {
+      "id": "eba-regulatory-pilot",
+      "name": "European Banking Authority — Bounded Regulatory Pilot",
+      "regulator": "European Banking Authority",
+      "active": true,
+      "baseline_on_first_run": true,
+      "seed_urls": [
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-internet-payments-security",
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/retail-risk-indicators",
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/regulatory-technical-standards-complaints-handling-procedures-issuers-arts",
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/operational-resilience/regulatory-technical-standards-policy-ict-services-supporting-critical-or-important-functions",
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/operational-resilience/regulatory-technical-standards-ict-risk-management-framework-and-simplified-ict-risk-management",
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/operational-risk/regulatory-technical-standards-operational-risk-management-framework",
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/investment-firms/regulatory-technical-standards-prudential-requirements-investment-firms"
+      ],
+      "allowed_prefixes": [
+        "https://www.eba.europa.eu/"
+      ],
+      "allowed_urls": [
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/guidelines-internet-payments-security",
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/retail-risk-indicators",
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/regulatory-technical-standards-complaints-handling-procedures-issuers-arts",
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/operational-resilience/regulatory-technical-standards-policy-ict-services-supporting-critical-or-important-functions",
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/operational-resilience/regulatory-technical-standards-ict-risk-management-framework-and-simplified-ict-risk-management",
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/operational-risk/regulatory-technical-standards-operational-risk-management-framework",
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/investment-firms/regulatory-technical-standards-prudential-requirements-investment-firms"
+      ],
+      "allowed_domains": [
+        "www.eba.europa.eu"
+      ],
+      "excluded_prefixes": [
+        "https://www.eba.europa.eu/user/",
+        "https://www.eba.europa.eu/search"
+      ],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 3,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 50
     }
   ]
 }
