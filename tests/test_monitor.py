@@ -8,7 +8,7 @@ from regmon.ai import AI_REQUIRED_KEYS, parse_json, validate_analysis
 from regmon.change import build_event_id, classify_change, make_diff, make_id, write_evidence
 from regmon.content import extract_content, normalize_html
 from regmon.config import SourceConfig
-from regmon.discovery import _fetch_links, canonical, extract_html_links, http_discover, in_scope, parse_discovered_urls
+from regmon.discovery import _config_fingerprint, _fetch_links, _load_inventory, canonical, extract_html_links, http_discover, in_scope, parse_discovered_urls
 from regmon.fetch import fetch
 from regmon.monitor import load_previous
 from regmon.notify import build_notifications
@@ -535,7 +535,37 @@ class TestDiscovery(unittest.TestCase):
         self.assertEqual(mock_get.call_count, 2)
 
     @patch("regmon.discovery.requests.get")
+    def test_discovery_rejects_out_of_scope_redirect(self, mock_get):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/activities/single-rulebook/start",),
+            allowed_prefixes=("https://www.eba.europa.eu/activities/single-rulebook/",),
+            allowed_domains=("www.eba.europa.eu",),
+            discovery_http_attempts=3,
+        )
+        response = Mock(status_code=302, headers={"location": "https://evil.test/landing"})
+        mock_get.return_value = response
+        url, links, failure = _fetch_links(source.seed_urls[0], source, timeout=5)
+        self.assertEqual(url, source.seed_urls[0])
+        self.assertEqual(links, [])
+        self.assertIn("outside the configured monitor scope", failure["error"])
+        self.assertEqual(failure["retry_classification"], "permanent_http")
+        mock_get.assert_called_once()
+
+    @patch("regmon.discovery.requests.get")
     def test_scope_change_invalidates_checkpoint(self, mock_get):
+        previous_scope = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            discovery_http_workers=1,
+            discovery_slice_seconds=0,
+        )
         source = SourceConfig(
             id="eba-test",
             name="EBA Test",
@@ -543,6 +573,7 @@ class TestDiscovery(unittest.TestCase):
             seed_urls=("https://www.eba.europa.eu/homepage",),
             allowed_prefixes=("https://www.eba.europa.eu/",),
             allowed_domains=("www.eba.europa.eu",),
+            allowed_urls=("https://www.eba.europa.eu/homepage",),
             discovery_http_workers=1,
             discovery_slice_seconds=0,
         )
@@ -557,7 +588,7 @@ class TestDiscovery(unittest.TestCase):
                     "schema_version": 2,
                     "source_id": "eba-test",
                     "state": "PAUSED",
-                    "config_fingerprint": "stale",
+                    "config_fingerprint": _config_fingerprint(previous_scope),
                     "pending": ["https://www.eba.europa.eu/old"],
                     "discovered_count": 1,
                     "processed_count": 0,
@@ -826,6 +857,26 @@ class TestDiscovery(unittest.TestCase):
         self.assertTrue(in_scope("https://www.eba.europa.eu/searching/rules", source))
 
 class TestChange(unittest.TestCase):
+    def test_evidence_for_an_existing_event_is_never_overwritten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            relative = write_evidence(
+                root, "EXTRACTION_ERROR", "immutable-id", "https://example.test/a",
+                "2026-10-18T00:00:00+00:00", None, None, "before", None, "selector mismatch"
+            )
+            evidence_file = root / relative
+            original = evidence_file.read_text(encoding="utf-8")
+            write_evidence(
+                root, "EXTRACTION_ERROR", "immutable-id", "https://example.test/a",
+                "2026-10-18T01:00:00+00:00", None, None, "different before", None, "changed error"
+            )
+            self.assertEqual(evidence_file.read_text(encoding="utf-8"), original)
+
+    def test_observation_id_makes_operational_event_ids_unique(self):
+        first = build_event_id("FETCH_ERROR", "url-id", error="HTTP 503", observation_id="run-1")
+        second = build_event_id("FETCH_ERROR", "url-id", error="HTTP 503", observation_id="run-2")
+        self.assertNotEqual(first, second)
+
     def test_new(self):
         self.assertEqual(classify_change(None,{"normalized_hash":"a"}),("NEW_URL",False))
 
@@ -943,6 +994,32 @@ class TestFetch(unittest.TestCase):
         with self.assertRaises(Exception):
             fetch("https://example.test",attempts=2,backoff_seconds=0)
         self.assertEqual(mock_get.call_count,2)
+
+    @patch("regmon.fetch.requests.get")
+    def test_redirect_to_private_address_is_rejected(self, mock_get):
+        response = Mock()
+        response.status_code = 302
+        response.headers = {"location": "http://127.0.0.1/admin"}
+        mock_get.return_value = response
+        with self.assertRaises(ValueError):
+            fetch("https://example.test/page")
+        mock_get.assert_called_once()
+
+    @patch("regmon.fetch.requests.get")
+    def test_redirect_outside_configured_source_scope_is_rejected(self, mock_get):
+        response = Mock()
+        response.status_code = 302
+        response.headers = {"location": "https://evil.test/landing"}
+        mock_get.return_value = response
+        with self.assertRaisesRegex(ValueError, "outside allowed domains"):
+            fetch(
+                "https://example.test/page",
+                attempts=2,
+                allowed_domains=("example.test",),
+                allowed_prefixes=("https://example.test/",),
+                allowed_urls=("https://example.test/page",),
+            )
+        mock_get.assert_called_once()
 
     @patch("regmon.fetch.requests.get")
     def test_304_uses_validators_without_download(self,mock_get):

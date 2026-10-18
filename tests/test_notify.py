@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from regmon.notify import build_notifications, load_state, publish, save_state
+from regmon.notify import build_notifications, enqueue_notifications, load_outbox, load_state, publish, save_outbox, save_state
 
 class TestNotifications(unittest.TestCase):
     def test_relevant_ai_result_becomes_notification(self):
@@ -36,6 +36,32 @@ class TestNotifications(unittest.TestCase):
         kwargs=mock_post.call_args.kwargs
         self.assertEqual(kwargs["json"]["click"],"https://dash")
         self.assertIn("Impact: I",kwargs["json"]["message"])
+
+    def test_discovery_degraded_becomes_operational_alert(self):
+        report = {"discovery": [{"source_id": "fed-pilot", "state": "DEGRADED", "unresolved_failures": 3}]}
+        notification = build_notifications(report)[0]
+        self.assertEqual(notification["kind"], "DISCOVERY_DEGRADED")
+        self.assertIn("not authoritative", notification["impact"])
+
+    def test_failed_delivery_stays_in_durable_outbox(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "notification-outbox.json"
+            outbox = {"pending_events": {}, "updated_at": None}
+            event = {"event_id": "retry-me", "kind": "CHANGED_URL", "summary": "x"}
+            enqueue_notifications(outbox, [event], {})
+            save_outbox(outbox, path)
+            restored = load_outbox(path)
+            self.assertIn("retry-me", restored["pending_events"])
+            enqueue_notifications(restored, [event], {})
+            self.assertEqual(len(restored["pending_events"]), 1)
+            restored["pending_events"].pop("retry-me")
+            save_outbox(restored, path)
+            self.assertEqual(load_outbox(path)["pending_events"], {})
+
+    def test_outbox_does_not_requeue_already_sent_event(self):
+        outbox = {"pending_events": {}, "updated_at": None}
+        enqueue_notifications(outbox, [{"event_id": "done"}], {"done": {"sent_at": "now"}})
+        self.assertEqual(outbox["pending_events"], {})
 
     def test_state_round_trip(self):
         with tempfile.TemporaryDirectory() as tmp:

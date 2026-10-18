@@ -126,6 +126,15 @@ class TestRegisterMonitor(unittest.TestCase):
             self.assertEqual(len(payload["sources"]), 1)
             self.assertEqual(payload["sources"][0]["seed_urls"], ["https://www.example.com/policy"])
 
+    def test_duplicate_url_with_different_selectors_is_not_silently_ignored(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            source = source_for_url("https://example.test/page", include_selector="main")
+            path.write_text(json.dumps({"sources": [source]}), encoding="utf-8")
+            event = issue_event("https://example.test/page", include_selector="article")
+            with self.assertRaisesRegex(ValueError, "different CSS selectors"):
+                register_request(event, path, "GauravDarwesh/ChangeSentinel")
+
     def test_active_exact_duplicate_reuses_existing_source(self):
         url = "https://www.example.com/policy"
         existing = source_for_url(url, "Existing policy")

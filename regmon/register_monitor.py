@@ -10,6 +10,7 @@ from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 from bs4 import BeautifulSoup
+from regmon.security import validate_public_http_url
 
 REQUEST_MARKER = "<!-- changesentinel:add-monitor:v1 -->"
 ISSUE_TITLE_PREFIX = "[ChangeSentinel] Add monitor"
@@ -39,6 +40,7 @@ def canonicalize_url(value: str) -> str:
     raw = str(value or "").strip()
     if not raw or any(char.isspace() for char in raw):
         raise ValueError("The URL must be a complete URL without whitespace.")
+    validate_public_http_url(raw)
     parsed = urlparse(raw)
     scheme = parsed.scheme.lower()
     if scheme not in {"http", "https"}:
@@ -176,16 +178,29 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
         candidates = list(source.get("seed_urls") or []) + list(source.get("allowed_urls") or [])
         for candidate in candidates:
             try:
-                if canonicalize_url(str(candidate)) == url:
-                    return {
-                        "source_id": str(source["id"]),
-                        "url": url,
-                        "name": str(source.get("name") or requested_name or url),
-                        "created": False,
-                        "message": "The URL is already present in an active source.",
-                    }
+                candidate_url = canonicalize_url(str(candidate))
             except (ValueError, KeyError):
                 continue
+            if candidate_url != url:
+                continue
+            existing_include = str(source.get("include_selector") or "").strip()
+            existing_ignore = tuple(
+                str(value).strip()
+                for value in (source.get("ignore_selectors") or [])
+                if str(value).strip()
+            )
+            if existing_include != include_selector or existing_ignore != ignore_selectors:
+                raise ValueError(
+                    "This URL is already monitored with different CSS selectors. "
+                    "The existing monitor was not changed; update it through an explicit edit flow."
+                )
+            return {
+                "source_id": str(source["id"]),
+                "url": url,
+                "name": str(source.get("name") or requested_name or url),
+                "created": False,
+                "message": "The URL is already present in an active source.",
+            }
 
     new_source = source_for_url(url, requested_name, include_selector, ignore_selectors)
     source_ids = {str(source.get("id")) for source in sources}
