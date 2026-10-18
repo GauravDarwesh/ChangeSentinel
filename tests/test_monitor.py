@@ -976,6 +976,27 @@ class TestSourceOnlyNotifications(unittest.TestCase):
 
 
 class TestAI(unittest.TestCase):
+    @patch("regmon.ai.requests.post")
+    def test_openrouter_401_returns_actionable_auth_diagnostic(self, mock_post):
+        from regmon.ai import analyze
+        response = Mock()
+        response.status_code = 401
+        response.json.return_value = {"error": {"message": "Invalid API key"}}
+        mock_post.return_value = response
+        result = analyze(
+            "Synthetic regulator",
+            "https://example.invalid/test",
+            "CHANGED_URL",
+            "- old\\n+ new",
+            "new",
+            AIConfig(timeout_seconds=5, attempts=2),
+        )
+        self.assertEqual(result["status"], "error")
+        self.assertIn("HTTP 401", result["reason"])
+        self.assertIn("OPENROUTER_API_KEY", result["reason"])
+        self.assertIn("Invalid API key", result["reason"])
+        self.assertEqual(mock_post.call_count, 1)
+
     def test_schema(self):
         value={key:(True if key=="relevant" else "x") for key in AI_REQUIRED_KEYS}
         self.assertEqual(validate_analysis(value),value)
