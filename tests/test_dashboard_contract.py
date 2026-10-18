@@ -75,47 +75,26 @@ class TestDashboardNotificationContract(unittest.TestCase):
 
 
 
-    def test_premium_responsive_system_is_published_in_both_dashboard_entries(self):
+    def test_professional_responsive_workspace_is_published_in_both_entries(self):
         required = (
-            'id="premium-responsive-redesign"',
-            'class="mobile-wordmark"',
-            'class="topbar-context"',
-            "@media (max-width: 900px)",
-            "@media (max-width: 650px)",
-            "env(safe-area-inset-bottom)",
-            "prefers-reduced-motion: reduce",
-            ".nav-list",
-            "overflow-wrap: anywhere",
-        )
-        for filename in ("index.html", "dashboard-v2.html"):
-            source = (ROOT / filename).read_text(encoding="utf-8")
-            with self.subTest(filename=filename):
-                for token in required:
-                    self.assertIn(token, source)
-        dashboard_source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
-        self.assertIn("function splitMarkdownTableRow(line)", dashboard_source)
-
-    def test_mobile_navigation_has_four_equal_destinations_and_is_not_side_scroll_only(self):
-        source = (ROOT / "index.html").read_text(encoding="utf-8")
-        self.assertIn("position: fixed; inset: auto 14px calc(10px + env(safe-area-inset-bottom)) 14px", source)
-        self.assertIn("grid-template-columns: repeat(4, minmax(0, 1fr))", source)
-        self.assertIn('class="nav-button active" data-view="monitors"', source)
-        self.assertIn('data-view="changes"', source)
-        self.assertIn('data-view="runs"', source)
-        self.assertIn('data-view="notifications"', source)
-
-
-    def test_dashboard_uses_a_new_command_center_layout(self):
-        required = (
+            'id="professional-ux-rebuild"',
             'class="app-shell command-shell"',
             'class="topbar command-topbar"',
             'class="nav-list command-nav"',
             'class="page-heading dashboard-hero"',
-            'class="monitor-layout"',
-            'class="signal-panel"',
-            'color-scheme: dark;',
-            '--blue: #c8f36a;',
-            'position: fixed; inset: auto 14px calc(10px + env(safe-area-inset-bottom)) 14px',
+            'class="inventory-panel"',
+            'id="signalVisual"',
+            'id="signalChangedCount"',
+            'id="signalLinksCount"',
+            'id="nextRunTime"',
+            'id="nextRunCountdown"',
+            'color-scheme: light;',
+            '--blue: #2d6a50;',
+            '@media (max-width:1020px)',
+            '@media (max-width:760px)',
+            'viewport-fit=cover',
+            'position:fixed; inset:auto 12px calc(9px + env(safe-area-inset-bottom)) 12px',
+            '.pdf-viewer-shell.is-expanded',
         )
         for filename in ("index.html", "dashboard-v2.html"):
             with self.subTest(filename=filename):
@@ -123,8 +102,12 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 for token in required:
                     self.assertIn(token, source)
                 self.assertNotIn('<aside class="sidebar"', source)
+                self.assertNotIn('class="hero-radar"', source)
+                self.assertNotIn('class="signal-panel"', source)
                 for view_id in ("monitorsView", "detailView", "changesView", "runsView", "notificationsView"):
                     self.assertIn('id="' + view_id + '"', source)
+                for signal_id in ("signalStableCount", "signalChangedCount", "signalIssueCount", "signalWaitingCount"):
+                    self.assertIn('id="' + signal_id + '"', source)
 
     def test_monitor_inventory_uses_compact_metadata_rows(self):
         source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
@@ -136,6 +119,48 @@ class TestDashboardNotificationContract(unittest.TestCase):
         ):
             with self.subTest(token=token):
                 self.assertIn(token, source)
+
+    def test_monitor_signal_uses_real_inventory_statuses_and_utc_schedule(self):
+        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        for token in (
+            'function nextScheduledScan(reference = new Date())',
+            '0 */6 * * * (UTC)',
+            'function updateNextRunCountdown()',
+            'function renderMonitoringSignal()',
+            'const statuses = items.map(item => ({ item, status: itemStatus(item) }))',
+            'statuses.slice(0, maxDots)',
+            'signalLinksCount',
+            'signalChangedCount',
+            'signalIssueCount',
+            'window.setInterval(updateNextRunCountdown, 60000)',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+
+    def test_mobile_pdf_reader_can_expand_and_close_without_losing_text_mode(self):
+        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        for token in (
+            'class="pdf-viewer-shell" id="pdfViewerShell"',
+            'data-pdf-action="expand"',
+            'data-pdf-action="close"',
+            'function setPdfViewerExpanded(expanded)',
+            'document.body.classList.toggle("pdf-viewer-open", expanded)',
+            'event.key === "Escape"',
+            'new Blob([bytes], { type: "application/pdf" })',
+            'data-snapshot-mode="text"',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn('height:min(76dvh,940px)', html)
+        self.assertIn('.pdf-viewer-shell.is-expanded .pdf-snapshot-frame', html)
+        self.assertIn('@media (max-width:760px)', html)
+        self.assertIn('height:64svh', html)
+
+    def test_dashboard_navigation_resets_scroll_when_changing_view_or_opening_a_monitor(self):
+        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        self.assertGreaterEqual(source.count('window.scrollTo({ top: 0, behavior: "auto" })'), 2)
+        self.assertIn('document.addEventListener("keydown"', source)
 
 
 if __name__ == "__main__":
