@@ -245,8 +245,10 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             if extraction_type == "html":
                 item["html_hash"] = result.raw_hash
                 item["html_comparison_hash"] = html_comparison_hash(result.body)
-                return item, None, result.body, None
-            return item, None, None, file_body
+                return item, None, result.body
+            if file_body is not None:
+                return item, None, None, file_body
+            return item, None, None
 
         normalized = text or ""
         item["normalized_hash"] = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
@@ -258,7 +260,9 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         if file_body is None:
             item["file_snapshot_location"] = None
         item["relevance"] = triage(url, normalized, result.content_type)
-        return item, normalized, html_body, file_body
+        if file_body is not None:
+            return item, normalized, html_body, file_body
+        return item, normalized, html_body
     except Exception as exc:
         item["fetch_error"] = f"{type(exc).__name__}: {exc}"
         item["fetch_traceback"] = traceback.format_exc()
