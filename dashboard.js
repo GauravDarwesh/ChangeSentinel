@@ -289,7 +289,6 @@ function renderMonitorList() {
   }).join("");
 }
 function snapshotURL(path) { return path ? bust(RAW + "/" + path) : ""; }
-function snapshotPageURL(path) { return path ? "https://GauravDarwesh.github.io/ChangeSentinel/" + path : ""; }
 async function readSnapshotFile(path, cache, asText) {
   if (!path) throw new Error("Snapshot path is not available");
   if (cache[path] != null) return cache[path];
@@ -379,7 +378,7 @@ async function loadSnapshot(item) {
         canvas.outerHTML = emptyState("Could not load extracted text", String(error.message || error), "!");
       }
     } else if (isPdf) {
-      canvas.outerHTML = '<iframe class="snapshot-frame" title="Saved PDF snapshot" src="' + esc(bust(snapshotPageURL(filePath))) + '" loading="lazy"></iframe>';
+      canvas.outerHTML = '<iframe class="snapshot-frame" title="Saved PDF snapshot" src="' + esc(snapshotURL(filePath)) + '" loading="lazy"></iframe>';
     } else {
       canvas.outerHTML = emptyState("Original ZIP snapshot saved", "Use Open original file to inspect or download the archive, or switch to Extracted text to review its contents.", "ZIP");
     }
