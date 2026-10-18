@@ -334,7 +334,7 @@ def _extract_zip_bundle(body: bytes):
 # original response bytes are identical.
 CONTENT_EXTRACTOR_VERSION = "layout-pdf-html-v2"
 LOW_TEXT_PAGE_CHARS = 40
-MAX_OCR_PAGES = 100
+MAX_OCR_PAGES = 1000
 OCR_PAGE_TIMEOUT_SECONDS = 15
 MAX_OCR_TOTAL_SECONDS = 120
 
