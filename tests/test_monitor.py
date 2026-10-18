@@ -1422,5 +1422,50 @@ class TestEngineFlow(unittest.TestCase):
             self.assertEqual(restored["pending_events"][event["event_id"]]["summary"],
                              "The synthetic reporting requirement changed.")
 
+    def test_first_successful_baseline_creates_snapshot_without_ai_or_alerts(self):
+        from regmon.engine import process_source
+
+        url = "https://example.test/regulatory/initial-page"
+        source = SourceConfig(
+            id="new-baseline-test",
+            name="New source baseline test",
+            regulator="Example Regulator",
+            seed_urls=(url,),
+            allowed_prefixes=("https://example.test/regulatory/",),
+            allowed_domains=("example.test",),
+            allowed_urls=(url,),
+            baseline_on_first_run=True,
+        )
+        item = {
+            "source_id": source.id,
+            "regulator": source.regulator,
+            "canonical_url": url,
+            "normalized_hash": "initial-baseline-hash",
+            "raw_hash": "initial-raw-hash",
+            "first_seen": "2026-10-18T00:00:00+00:00",
+            "relevance": {"candidate": True, "reason": "synthetic baseline fixture"},
+        }
+
+        with patch("regmon.engine.load_discovery_metadata", return_value={
+            "source_id": source.id, "state": "COMPLETE", "method": "synthetic-test"
+        }), patch("regmon.engine.load_previous", return_value={}), \
+             patch("regmon.engine.discover", return_value=[url]), \
+             patch("regmon.engine.make_current_item", return_value=(item, "Initial regulatory text", None)), \
+             patch("regmon.engine.write_snapshot", return_value="data/snapshots/initial-baseline.txt") as write_snapshot, \
+             patch("regmon.engine.write_evidence") as write_evidence, \
+             patch("regmon.engine.analyze") as analyze:
+            result = process_source(source, "synthetic-first-baseline", dry_run=False)
+
+        report = result["report"]
+        self.assertTrue(report["source"]["initial_baseline"])
+        self.assertEqual(report["counts"]["new"], 1)
+        self.assertEqual(report["events"], [])
+        self.assertEqual(report["new_urls"], [])
+        self.assertEqual(report["ai_results"], [])
+        write_snapshot.assert_called_once()
+        write_evidence.assert_not_called()
+        analyze.assert_not_called()
+        self.assertEqual(build_notifications(report), [])
+
 if __name__=="__main__":
     unittest.main()
