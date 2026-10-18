@@ -14,7 +14,7 @@ const $ = id => document.getElementById(id);
 const state = {
   report: {}, inventory: {}, history: [], notifications: {}, outbox: {}, config: {},
   items: [], selectedId: "", view: "monitors", filter: "ALL", detailTab: "snapshot",
-  snapshotMode: "preview", snapshotCache: {}, htmlCache: {}, evidenceCache: {},
+  snapshotMode: "preview", snapshotCache: {}, htmlCache: {}, evidenceCache: {}, pdfPreviewUrl: "",
   toastTimer: null
 };
 
@@ -288,14 +288,7 @@ function renderMonitorList() {
       '</article>';
   }).join("");
 }
-function snapshotURL(path) {
-  if (!path) return "";
-  // GitHub raw-content URLs force PDF downloads in many browsers. Serve PDF
-  // previews from the dashboard's GitHub Pages origin so the iframe can render
-  // the document inline; keep raw-content fetching for HTML/text snapshots.
-  if (/\.pdf$/i.test(path)) return bust(new URL(path, window.location.href).toString());
-  return bust(RAW + "/" + path);
-}
+function snapshotURL(path) { return path ? bust(RAW + "/" + path) : ""; }
 async function readSnapshotFile(path, cache, asText) {
   if (!path) throw new Error("Snapshot path is not available");
   if (cache[path] != null) return cache[path];
@@ -357,6 +350,10 @@ function renderDetailHeader(item) {
 }
 async function loadSnapshot(item) {
   const body = $("detailBody");
+  if (state.pdfPreviewUrl) {
+    URL.revokeObjectURL(state.pdfPreviewUrl);
+    state.pdfPreviewUrl = "";
+  }
   const filePath = item.file_snapshot_location || "";
   const fileType = String(item.extraction_type || "").toLowerCase();
   if (filePath && (fileType === "pdf" || fileType === "zip")) {
@@ -385,7 +382,21 @@ async function loadSnapshot(item) {
         canvas.outerHTML = emptyState("Could not load extracted text", String(error.message || error), "!");
       }
     } else if (isPdf) {
-      canvas.outerHTML = '<iframe class="snapshot-frame" title="Saved PDF snapshot" src="' + esc(snapshotURL(filePath)) + '" loading="lazy"></iframe>';
+      try {
+        // Fetch the original bytes (raw GitHub permits CORS) and render them
+        // through an application/pdf Blob URL. Navigating directly to the raw
+        // URL triggers GitHub's attachment download behavior; Pages does not
+        // publish the data/ directory because its deploy artifact contains UI only.
+        const response = await fetch(snapshotURL(filePath), { cache: "no-store" });
+        if (!response.ok) throw new Error("PDF snapshot request returned HTTP " + response.status);
+        const bytes = await response.arrayBuffer();
+        if (selectedItem()?.url_id !== item.url_id || state.detailTab !== "snapshot" || state.snapshotMode !== "preview") return;
+        state.pdfPreviewUrl = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+        canvas.outerHTML = '<iframe class="snapshot-frame" title="Saved PDF snapshot" src="' + esc(state.pdfPreviewUrl) + '" loading="lazy"></iframe>';
+      } catch (error) {
+        if (selectedItem()?.url_id !== item.url_id || state.detailTab !== "snapshot") return;
+        canvas.outerHTML = emptyState("Could not load saved PDF preview", String(error.message || error), "!");
+      }
     } else {
       canvas.outerHTML = emptyState("Original ZIP snapshot saved", "Use Open original file to inspect or download the archive, or switch to Extracted text to review its contents.", "ZIP");
     }
