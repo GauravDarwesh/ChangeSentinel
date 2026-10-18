@@ -83,7 +83,7 @@ def run_smoke_test(config: AIConfig | None = None) -> dict:
         url="https://example.invalid/change-sentinel-ai-smoke-test",
         event_type="CHANGED_URL",
         diff=(
-            "--- before\\n+++ after\\n"
+            "--- before\n+++ after\n"
             "-Synthetic fixture heading: Periodic Reporting\\n"
             "+Synthetic fixture heading: Quarterly Reporting"
         ),
