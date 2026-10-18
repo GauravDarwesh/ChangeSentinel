@@ -5,7 +5,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from regmon.ai import AI_REQUIRED_KEYS, parse_json, validate_analysis
-from regmon.change import build_event_id, classify_change, make_diff, make_id
+from regmon.change import build_event_id, classify_change, make_diff, make_id, write_evidence
 from regmon.content import extract_content, normalize_html
 from regmon.config import SourceConfig
 from regmon.discovery import canonical, extract_html_links, http_discover, in_scope, parse_discovered_urls
@@ -717,6 +717,30 @@ class TestChange(unittest.TestCase):
     def test_normalized_hash_is_authoritative(self):
         self.assertEqual(classify_change({"normalized_hash":"same","raw_hash":"old"},{"normalized_hash":"same","raw_hash":"new"}),("UNCHANGED_URL",False))
 
+    def test_html_source_change_is_distinct_from_text_change(self):
+        self.assertEqual(
+            classify_change(
+                {"normalized_hash":"same-text","html_hash":"old-html"},
+                {"normalized_hash":"same-text","html_hash":"new-html"},
+            ),
+            ("HTML_SOURCE_CHANGED", False),
+        )
+
+    def test_html_evidence_contains_source_diff_and_snapshot_paths(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            before = {"normalized_hash":"same","html_hash":"old","html_snapshot_location":"data/snapshots/html/old.html","snapshot_location":"data/snapshots/old.txt"}
+            after = {"normalized_hash":"same","html_hash":"new","html_snapshot_location":"data/snapshots/html/new.html","snapshot_location":"data/snapshots/new.txt"}
+            path = write_evidence(
+                Path(tmp), "HTML_SOURCE_CHANGED", "event-id", "https://example.test/page", "now",
+                before, after, "same text", "same text",
+                before_html="<html><body><p>Old markup</p></body></html>",
+                after_html="<html><body><p>New markup</p></body></html>",
+            )
+            evidence = json.loads((Path(tmp) / path).read_text(encoding="utf-8"))
+            self.assertEqual(evidence["before"]["html_snapshot_location"], before["html_snapshot_location"])
+            self.assertIn("Old markup", evidence["html_diff"])
+            self.assertIn("New markup", evidence["html_diff"])
+
     def test_legacy_baseline_migrates(self):
         self.assertEqual(classify_change({"content_hash":"old"},{"raw_hash":"new","normalized_hash":"n"}),("BASELINE_MIGRATION",True))
 
@@ -727,6 +751,29 @@ class TestChange(unittest.TestCase):
 
     def test_event_id_deterministic(self):
         self.assertEqual(build_event_id("CHANGED_URL","u","a","b"),build_event_id("CHANGED_URL","u","a","b"))
+
+    def test_snapshot_paths_are_immutable_by_content_hash(self):
+        from regmon import engine
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with patch.object(engine, "ROOT", root), patch.object(engine, "SNAPSHOTS", root / "data" / "snapshots"), patch.object(engine, "HTML_SNAPSHOTS", root / "data" / "snapshots" / "html"):
+                old_text_path = engine.write_snapshot("url-id", "old", "hash-old")
+                new_text_path = engine.write_snapshot("url-id", "new", "hash-new")
+                old_html_path = engine.write_html_snapshot("url-id", b"<html>old</html>", "html-old")
+                new_html_path = engine.write_html_snapshot("url-id", b"<html>new</html>", "html-new")
+                self.assertNotEqual(old_text_path, new_text_path)
+                self.assertNotEqual(old_html_path, new_html_path)
+                self.assertEqual((root / old_text_path).read_text(encoding="utf-8"), "old")
+                self.assertEqual((root / old_html_path).read_bytes(), b"<html>old</html>")
+
+class TestSourceOnlyNotifications(unittest.TestCase):
+    def test_source_only_html_changes_do_not_trigger_notifications(self):
+        notifications = build_notifications({
+            "events": [{"event_id":"source-event","event_type":"HTML_SOURCE_CHANGED","url":"https://example.test/page"}],
+            "ai_results": [],
+        })
+        self.assertEqual(notifications, [])
+
 
 class TestAI(unittest.TestCase):
     def test_schema(self):

@@ -4,8 +4,10 @@ import difflib
 import hashlib
 import json
 from pathlib import Path
+from bs4 import BeautifulSoup
 
 MAX_DIFF_LINES = 200
+MAX_HTML_DIFF_LINES = 1000
 
 def make_id(url: str) -> str:
     return hashlib.sha256(url.encode("utf-8")).hexdigest()
@@ -14,7 +16,12 @@ def classify_change(old: dict | None, current: dict) -> tuple[str, bool]:
     if old is None:
         return "NEW_URL", False
     if old.get("normalized_hash"):
-        return ("CHANGED_URL", False) if old["normalized_hash"] != current.get("normalized_hash") else ("UNCHANGED_URL", False)
+        if old["normalized_hash"] != current.get("normalized_hash"):
+            return "CHANGED_URL", False
+        old_html, new_html = old.get("html_hash"), current.get("html_hash")
+        if old_html and new_html and old_html != new_html:
+            return "HTML_SOURCE_CHANGED", False
+        return "UNCHANGED_URL", False
     legacy = old.get("raw_hash") or old.get("content_hash")
     return ("UNCHANGED_URL", True) if legacy == current.get("raw_hash") else ("BASELINE_MIGRATION", True)
 
@@ -24,11 +31,32 @@ def make_diff(before_text: str | None, after_text: str | None, max_lines: int = 
         lines = lines[:max_lines] + [f"... diff truncated after {max_lines} lines"]
     return "\n".join(lines)
 
+def _format_html_for_diff(value: str | None) -> str:
+    if not value:
+        return ""
+    try:
+        return BeautifulSoup(value, "html.parser").prettify()
+    except Exception:
+        return value
+
 def build_event_id(event_type: str, url_id: str, before_hash: str | None = None, after_hash: str | None = None, error: str | None = None) -> str:
     material = "|".join([event_type, url_id, before_hash or "", after_hash or "", error or ""])
     return hashlib.sha256(material.encode("utf-8")).hexdigest()
 
-def write_evidence(root: Path, event_type: str, event_id: str, url: str, timestamp: str, before_record: dict | None, after_record: dict | None, before_text: str | None, after_text: str | None, error: str | None = None) -> str:
+def write_evidence(
+    root: Path,
+    event_type: str,
+    event_id: str,
+    url: str,
+    timestamp: str,
+    before_record: dict | None,
+    after_record: dict | None,
+    before_text: str | None,
+    after_text: str | None,
+    error: str | None = None,
+    before_html: str | None = None,
+    after_html: str | None = None,
+) -> str:
     path = root / "data" / "evidence" / f"{event_id}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
@@ -39,14 +67,21 @@ def write_evidence(root: Path, event_type: str, event_id: str, url: str, timesta
         "before": {
             "normalized_hash": (before_record or {}).get("normalized_hash"),
             "raw_hash": (before_record or {}).get("raw_hash") or (before_record or {}).get("content_hash"),
+            "html_hash": (before_record or {}).get("html_hash"),
             "snapshot_location": (before_record or {}).get("snapshot_location"),
+            "html_snapshot_location": (before_record or {}).get("html_snapshot_location"),
         },
         "after": {
             "normalized_hash": (after_record or {}).get("normalized_hash"),
             "raw_hash": (after_record or {}).get("raw_hash") or (after_record or {}).get("content_hash"),
+            "html_hash": (after_record or {}).get("html_hash"),
             "snapshot_location": (after_record or {}).get("snapshot_location"),
+            "html_snapshot_location": (after_record or {}).get("html_snapshot_location"),
         },
         "diff": make_diff(before_text, after_text),
+        "html_diff": make_diff(_format_html_for_diff(before_html), _format_html_for_diff(after_html), MAX_HTML_DIFF_LINES)
+            if before_html is not None or after_html is not None else "",
+        "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
     }
     if error:
         payload["error"] = error

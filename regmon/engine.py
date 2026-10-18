@@ -23,6 +23,7 @@ from regmon.relevance import triage
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 SNAPSHOTS = DATA / "snapshots"
+HTML_SNAPSHOTS = SNAPSHOTS / "html"
 HISTORY = DATA / "history"
 REPORTS = DATA / "reports"
 DISCOVERY = DATA / "discovery"
@@ -72,6 +73,15 @@ def read_snapshot(record: dict | None) -> str | None:
         return None
 
 
+def read_html_snapshot(record: dict | None) -> str | None:
+    if not record or not record.get("html_snapshot_location"):
+        return None
+    try:
+        return (ROOT / record["html_snapshot_location"]).read_bytes().decode("utf-8", "replace")
+    except FileNotFoundError:
+        return None
+
+
 def load_discovery_metadata(source_id: str) -> dict[str, Any]:
     path = DISCOVERY / f"{source_id}.json"
     if not path.exists():
@@ -96,10 +106,22 @@ def load_discovery_metadata(source_id: str) -> dict[str, Any]:
     return payload
 
 
-def write_snapshot(uid: str, text: str) -> str:
+def write_snapshot(uid: str, text: str, content_hash: str | None = None) -> str:
+    """Persist an immutable normalized-text snapshot keyed by content hash."""
     SNAPSHOTS.mkdir(parents=True, exist_ok=True)
-    path = SNAPSHOTS / f"{uid}.txt"
-    path.write_text(text, encoding="utf-8")
+    digest = content_hash or hashlib.sha256(text.encode("utf-8")).hexdigest()
+    path = SNAPSHOTS / f"{uid}-{digest}.txt"
+    if not path.exists():
+        path.write_text(text, encoding="utf-8")
+    return str(path.relative_to(ROOT))
+
+
+def write_html_snapshot(uid: str, body: bytes, html_hash: str) -> str:
+    """Persist the complete fetched HTML response body without replacing older versions."""
+    HTML_SNAPSHOTS.mkdir(parents=True, exist_ok=True)
+    path = HTML_SNAPSHOTS / f"{uid}-{html_hash}.html"
+    if not path.exists():
+        path.write_bytes(body)
     return str(path.relative_to(ROOT))
 
 def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dict[str, Any]:
@@ -122,6 +144,8 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         "last_modified": None,
         "raw_hash": None,
         "normalized_hash": None,
+        "html_hash": old.get("html_hash") if old else None,
+        "html_snapshot_location": old.get("html_snapshot_location") if old else None,
         "extraction_type": None,
         "extraction_error": None,
         "fetch_error": None,
@@ -159,34 +183,40 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         if result.not_modified:
             if old:
                 for key in (
-                    "raw_hash", "normalized_hash", "extraction_type",
-                    "snapshot_location", "evidence_location", "relevance"
+                    "raw_hash", "normalized_hash", "html_hash", "html_snapshot_location",
+                    "extraction_type", "snapshot_location", "evidence_location", "relevance"
                 ):
                     if key in old:
                         item[key] = old[key]
-            return item, None
+            return item, None, None
 
         text, extraction_type, extraction_error = extract_content(url, result.content_type, result.body)
         item["extraction_type"] = extraction_type
         if extraction_error:
             item["extraction_error"] = extraction_error
-            return item, None
+            return item, None, None
+
         normalized = text or ""
         item["normalized_hash"] = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+        html_body = result.body if extraction_type == "html" else None
+        item["html_hash"] = result.raw_hash if html_body is not None else None
+        if html_body is None:
+            item["html_snapshot_location"] = None
         item["relevance"] = triage(url, normalized, result.content_type)
-        return item, normalized
+        return item, normalized, html_body
     except Exception as exc:
         item["fetch_error"] = f"{type(exc).__name__}: {exc}"
         item["fetch_traceback"] = traceback.format_exc()
         if old:
             for key in (
-                "http_status","content_type","content_length","etag","last_modified",
-                "raw_hash","normalized_hash","first_seen","snapshot_location",
-                "evidence_location","relevance","extraction_type"
+                "http_status", "content_type", "content_length", "etag", "last_modified",
+                "raw_hash", "normalized_hash", "html_hash", "html_snapshot_location",
+                "first_seen", "snapshot_location", "evidence_location", "relevance", "extraction_type"
             ):
                 if key in old:
                     item[key] = old[key]
-        return item, None
+        return item, None, None
+
 
 def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> dict:
     now = datetime.now(timezone.utc).isoformat()
@@ -206,6 +236,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
             "discovered": int(discovery.get("discovered", len(urls))),
             "new": 0,
             "changed": 0,
+            "source_changed": 0,
             "removed": 0,
             "unchanged": 0,
             "baseline_migration": 0,
@@ -274,7 +305,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
     # contain tens of thousands of URLs; snapshots are read only for events that
     # actually need before/after evidence or AI context.
     current = {}
-    events, new_items, changed_items, migration_items, unchanged_items = [], [], [], [], []
+    events, new_items, changed_items, source_changed_items, migration_items, unchanged_items = [], [], [], [], [], []
     resolved = {url: resolve_previous(url, previous) for url in urls}
 
     workers = min(int(DEFAULTS.get("fetch_workers", 8)), max(1, len(urls)))
@@ -286,7 +317,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
         }
         for future in as_completed(futures):
             url, uid, old = futures[future]
-            item, text = future.result()
+            item, text, html_body = future.result()
             item["url_id"] = uid
             current[uid] = item
             old_text = None
@@ -320,27 +351,39 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
                 new_items.append(item)
             elif event_type == "CHANGED_URL":
                 changed_items.append({"before":old,"after":item})
+            elif event_type == "HTML_SOURCE_CHANGED":
+                source_changed_items.append({"before":old,"after":item})
             elif event_type == "BASELINE_MIGRATION":
                 migration_items.append({"before":old,"after":item})
             else:
                 unchanged_items.append(item)
 
             if text is not None:
-                item["snapshot_location"] = write_snapshot(uid, text) if not dry_run else item.get("snapshot_location")
+                if not dry_run:
+                    item["snapshot_location"] = write_snapshot(uid, text, item["normalized_hash"])
+                    if html_body is not None and item.get("html_hash"):
+                        item["html_snapshot_location"] = write_html_snapshot(uid, html_body, item["html_hash"])
                 current[uid] = item
 
             if event_type != "UNCHANGED_URL" or migrated:
                 suppress_baseline_event = initial_baseline and event_type == "NEW_URL"
                 if not suppress_baseline_event:
-                    before_hash = (old or {}).get("normalized_hash") or (old or {}).get("raw_hash") or (old or {}).get("content_hash")
-                    event_id = build_event_id(event_type, uid, before_hash, item.get("normalized_hash"))
+                    if event_type == "HTML_SOURCE_CHANGED":
+                        before_hash = (old or {}).get("html_hash") or (old or {}).get("raw_hash")
+                        after_hash = item.get("html_hash") or item.get("raw_hash")
+                    else:
+                        before_hash = (old or {}).get("normalized_hash") or (old or {}).get("raw_hash") or (old or {}).get("content_hash")
+                        after_hash = item.get("normalized_hash")
+                    event_id = build_event_id(event_type, uid, before_hash, after_hash)
                     evidence = None
-                    if event_type in {"NEW_URL","CHANGED_URL"}:
+                    if event_type in {"NEW_URL","CHANGED_URL","HTML_SOURCE_CHANGED"}:
                         evidence = (
                             write_evidence(
                                 ROOT, event_type, event_id, url, now, old, item,
                                 old_text if old_text is not None else read_snapshot(old),
                                 text,
+                                before_html=read_html_snapshot(old),
+                                after_html=html_body.decode("utf-8", "replace") if html_body is not None else None,
                             )
                             if not dry_run
                             else None
@@ -449,6 +492,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
         "discovered":len(current),
         "new":len(new_items),
         "changed":len(changed_items),
+        "source_changed":len(source_changed_items),
         "removed":len(removed_items),
         "unchanged":len(unchanged_items),
         "baseline_migration":len(migration_items),
@@ -469,10 +513,10 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
             "source":{"id":source.id,"name":source.name,"regulator":source.regulator,"seeds":list(source.seed_urls),"allowed_prefixes":list(source.allowed_prefixes),"initial_baseline":initial_baseline},
             "discovery":discovery,
             "baseline_update_allowed":discovery.get("state") == "COMPLETE",
-            "change_detector":{"raw_hash":"SHA-256 retrieved bytes","normalized_hash":"SHA-256 extracted normalized content","classification_hash":"normalized_hash","http_validators":"ETag/Last-Modified used only for conditional fetch optimization"},
+            "change_detector":{"raw_hash":"SHA-256 retrieved response bytes","html_hash":"SHA-256 HTML response body; markup-only diffs are recorded separately","normalized_hash":"SHA-256 extracted normalized content","classification_hash":"normalized_hash with separate HTML_SOURCE_CHANGED events","http_validators":"ETag/Last-Modified used only for conditional fetch optimization"},
             "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
             "ai_contract":{"required_keys":["relevant","topic","change_type","summary","impact","effective_date","affected_scope","actions","reason"],"strict":True},
-            "counts":counts,"events":events,"new_urls":[] if initial_baseline else new_items,"changed_urls":changed_items,"removed_urls":removed_items,"baseline_migrations":migration_items,"ai_results":sorted(ai_results,key=lambda x:x.get("event_id",""))
+            "counts":counts,"events":events,"new_urls":[] if initial_baseline else new_items,"changed_urls":changed_items,"source_changed_urls":source_changed_items,"removed_urls":removed_items,"baseline_migrations":migration_items,"ai_results":sorted(ai_results,key=lambda x:x.get("event_id",""))
         },
         "inventory":current
     }
@@ -512,11 +556,12 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
         "counts":aggregate_counts,
         "discovery":[r["report"].get("discovery",{}) for r in source_results],
         "baseline_update_allowed":all(r["report"].get("baseline_update_allowed",False) for r in source_results),
-        "change_detector":{"classification_hash":"normalized_hash","http_validators":"ETag/Last-Modified are optimization hints only"},
+        "change_detector":{"classification_hash":"normalized_hash","html_hash":"stored full HTML response body with source-only events","http_validators":"ETag/Last-Modified are optimization hints only"},
         "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
         "ai_contract":source_results[0]["report"]["ai_contract"],
         "new_urls":[x for r in source_results for x in r["report"]["new_urls"]],
         "changed_urls":[x for r in source_results for x in r["report"]["changed_urls"]],
+        "source_changed_urls":[x for r in source_results for x in r["report"].get("source_changed_urls",[])],
         "removed_urls":[x for r in source_results for x in r["report"]["removed_urls"]],
         "baseline_migrations":[x for r in source_results for x in r["report"]["baseline_migrations"]],
         "events":[x for r in source_results for x in r["report"]["events"]],
@@ -529,7 +574,7 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
     md += ["","## Sources",""]
     for r in source_results:
         c=r["report"]["counts"]; s=r["report"]["source"]
-        md += [f"### {s['name']}","",f"- Regulator: {s['regulator']}",f"- Discovered: {c['discovered']}",f"- Changed: {c['changed']}",f"- New: {c['new']}",f"- Removed: {c['removed']}",f"- Fetch errors: {c['fetch_error']}", ""]
+        md += [f"### {s['name']}","",f"- Regulator: {s['regulator']}",f"- Discovered: {c['discovered']}",f"- Changed content: {c['changed']}",f"- HTML source-only changes: {c.get('source_changed',0)},f"- New: {c['new']}",f"- Removed: {c['removed']}",f"- Fetch errors: {c['fetch_error']}", ""]
     (DATA / "report.md").write_text("\n".join(md),encoding="utf-8")
     return {"dry_run":False,"sources":[r["report"]["source"]["id"] for r in source_results],"run_id":run_id}
 
