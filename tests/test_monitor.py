@@ -145,6 +145,92 @@ class TestContent(unittest.TestCase):
         self.assertEqual(kind, "html")
         self.assertIn("SelectorSyntaxError", error)
 
+    def test_zip_attachment_extracts_supported_members_deterministically(self):
+        import io
+        import zipfile
+
+        def bundle(entries):
+            stream = io.BytesIO()
+            with zipfile.ZipFile(stream, "w", zipfile.ZIP_DEFLATED) as archive:
+                for name, value in entries:
+                    archive.writestr(name, value)
+            return stream.getvalue()
+
+        entries = [
+            ("CurrentForm/form.txt", "Capital requirement: 12 percent"),
+            ("CurrentForm/fields.csv", "field,value\nminimum_ratio,0.12\n"),
+        ]
+        first = bundle(entries)
+        reordered = bundle(list(reversed(entries)))
+        modified = bundle([
+            ("CurrentForm/form.txt", "Capital requirement: 15 percent"),
+            ("CurrentForm/fields.csv", "field,value\nminimum_ratio,0.12\n"),
+        ])
+
+        first_text, first_kind, first_error = extract_content(
+            "https://example.test/DownloadAttachment?guid=synthetic",
+            "application/octet-stream",
+            first,
+        )
+        reordered_text, reordered_kind, reordered_error = extract_content(
+            "https://example.test/DownloadAttachment?guid=synthetic",
+            "application/zip",
+            reordered,
+        )
+        modified_text, modified_kind, modified_error = extract_content(
+            "https://example.test/DownloadAttachment?guid=synthetic",
+            "",
+            modified,
+        )
+
+        self.assertEqual(first_kind, "zip")
+        self.assertEqual(reordered_kind, "zip")
+        self.assertEqual(modified_kind, "zip")
+        self.assertIsNone(first_error)
+        self.assertIsNone(reordered_error)
+        self.assertIsNone(modified_error)
+        self.assertEqual(first_text, reordered_text)
+        self.assertNotEqual(first_text, modified_text)
+        self.assertIn("[FILE] CurrentForm/fields.csv (csv)", first_text)
+        self.assertIn("Capital requirement: 12 percent", first_text)
+
+    def test_zip_extraction_rejects_unsafe_or_unsupported_members(self):
+        import io
+        import zipfile
+
+        def bundle(name, value):
+            stream = io.BytesIO()
+            with zipfile.ZipFile(stream, "w", zipfile.ZIP_DEFLATED) as archive:
+                archive.writestr(name, value)
+            return stream.getvalue()
+
+        traversal_text, traversal_kind, traversal_error = extract_content(
+            "https://example.test/download?guid=unsafe",
+            "application/zip",
+            bundle("../escape.txt", "must not be accepted"),
+        )
+        unknown_text, unknown_kind, unknown_error = extract_content(
+            "https://example.test/download?guid=unknown",
+            "application/zip",
+            bundle("CurrentForm/opaque.bin", b"opaque bytes"),
+        )
+        self.assertIsNone(traversal_text)
+        self.assertEqual(traversal_kind, "zip")
+        self.assertIn("Unsafe ZIP member path", traversal_error)
+        self.assertIsNone(unknown_text)
+        self.assertEqual(unknown_kind, "zip")
+        self.assertIn("Unsupported file type", unknown_error)
+
+    def test_extensionless_pdf_response_uses_pdf_extraction(self):
+        text, kind, error = extract_content(
+            "https://example.test/DownloadAttachment?guid=pdf",
+            "",
+            b"%PDF-not-a-real-file",
+        )
+        self.assertIsNone(text)
+        self.assertEqual(kind, "pdf")
+        self.assertTrue(error)
+
     def test_pdf_failure_is_explicit(self):
         text, kind, error = extract_content("https://example.test/a.pdf","application/pdf",b"not-a-pdf")
         self.assertIsNone(text)
@@ -186,6 +272,37 @@ class TestDiscovery(unittest.TestCase):
             )
             self.assertTrue(in_scope(url, source))
             self.assertFalse(in_scope("https://www.example.com:8444/policy", source))
+
+    def test_current_attachment_scope_does_not_open_the_form_catalogue(self):
+        page = "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M"
+        current_file = "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=current"
+        history_file = "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=historical"
+        source = SourceConfig(
+            id="fed-current-files-test",
+            name="Federal Reserve Current Files Test",
+            regulator="Federal Reserve",
+            seed_urls=(page,),
+            allowed_prefixes=("https://www.federalreserve.gov/apps/reportingforms/Report/Index/",),
+            allowed_domains=("www.federalreserve.gov",),
+            allowed_urls=(page,),
+            allowed_resource_prefixes=("https://www.federalreserve.gov/apps/reportingforms/Download/",),
+            resource_link_text_patterns=("^Current",),
+        )
+        self.assertTrue(in_scope(page, source))
+        self.assertTrue(in_scope(current_file, source))
+        self.assertFalse(in_scope(
+            "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR-Y-14A",
+            source,
+        ))
+        html = """
+          <a href="/apps/reportingforms/Download/DownloadAttachment?guid=current">Current (2 MB .ZIP)</a>
+          <a href="/apps/reportingforms/Download/DownloadAttachment?guid=historical">Historical (1 MB .ZIP)</a>
+          <a href="/apps/reportingforms/Report/Index/FR-Y-14A">Related form</a>
+        """
+        self.assertEqual(
+            extract_html_links(page, html, source),
+            [current_file],
+        )
 
     def test_exact_url_allowlist_rejects_nearby_pages_and_query_variants(self):
         allowed = "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/operational-risk/regulatory-technical-standards-operational-risk-management-framework"
@@ -1093,6 +1210,52 @@ class TestRelevance(unittest.TestCase):
         self.assertIn("guideline",result["signals"])
 
 class TestFetch(unittest.TestCase):
+    @patch("regmon.fetch.validate_public_http_url")
+    @patch("regmon.fetch.requests.get")
+    def test_fetch_allows_scoped_attachment_outside_page_prefix(self, mock_get, _validate_url):
+        url = "https://example.test/Download/DownloadAttachment?guid=current"
+        mock_get.return_value = Mock(
+            status_code=200,
+            content=b"%PDF-synthetic",
+            headers={
+                "content-type": "application/pdf",
+                "content-length": "14",
+                "etag": None,
+                "last-modified": None,
+            },
+        )
+        result = fetch(
+            url,
+            attempts=1,
+            allowed_domains=("example.test",),
+            allowed_prefixes=("https://example.test/Report/Index/",),
+            allowed_urls=("https://example.test/Report/Index/FR-Y-14M",),
+            allowed_resource_prefixes=("https://example.test/Download/",),
+        )
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result.body, b"%PDF-synthetic")
+        mock_get.assert_called_once()
+
+    @patch("regmon.fetch.validate_public_http_url")
+    @patch("regmon.fetch.requests.get")
+    def test_resource_redirect_cannot_escape_the_allowed_download_route(self, mock_get, _validate_url):
+        url = "https://example.test/Download/DownloadAttachment?guid=current"
+        mock_get.return_value = Mock(
+            status_code=302,
+            content=b"",
+            headers={"location": "https://evil.test/DownloadAttachment?guid=external"},
+        )
+        with self.assertRaisesRegex(ValueError, "outside allowed domains"):
+            fetch(
+                url,
+                attempts=1,
+                allowed_domains=("example.test",),
+                allowed_prefixes=("https://example.test/Report/Index/",),
+                allowed_urls=("https://example.test/Report/Index/FR-Y-14M",),
+                allowed_resource_prefixes=("https://example.test/Download/",),
+            )
+        mock_get.assert_called_once()
+
     @patch("regmon.fetch.requests.get")
     def test_http_500_retries_and_fails(self,mock_get):
         mock_get.return_value=Mock(status_code=500,content=b"bad",headers={})

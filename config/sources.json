@@ -163,7 +163,13 @@
       "discovery_http_workers": 3,
       "discovery_http_attempts": 2,
       "discovery_slice_seconds": 0,
-      "discovery_max_pages_per_slice": 10
+      "discovery_max_pages_per_slice": 10,
+      "allowed_resource_prefixes": [
+        "https://www.federalreserve.gov/apps/reportingforms/Download/"
+      ],
+      "resource_link_text_patterns": [
+        "^Current"
+      ]
     }
   ]
 }

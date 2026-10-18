@@ -5,9 +5,11 @@ import csv
 import io
 import json
 import re
+import stat
 import unicodedata
+import zipfile
 import xml.etree.ElementTree as ET
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
@@ -133,6 +135,132 @@ def _extension(url: str) -> str:
     return Path(urlparse(url).path.lower()).suffix
 
 
+MAX_ZIP_MEMBERS = 256
+MAX_ZIP_MEMBER_BYTES = 32 * 1024 * 1024
+MAX_ZIP_TOTAL_BYTES = 128 * 1024 * 1024
+MAX_ZIP_COMPRESSION_RATIO = 1000
+ZIP_IGNORED_EXTENSIONS = {
+    ".bmp", ".css", ".gif", ".ico", ".jpeg", ".jpg", ".js",
+    ".png", ".svg", ".webp",
+}
+ZIP_MEMBER_MEDIA_TYPES = {
+    ".csv": "text/csv",
+    ".htm": "text/html",
+    ".html": "text/html",
+    ".json": "application/json",
+    ".xml": "application/xml",
+    ".xsd": "application/xml",
+    ".txt": "text/plain",
+}
+
+
+def _validated_zip_infos(body: bytes):
+    """Return validated archive metadata without extracting members to disk."""
+    try:
+        archive = zipfile.ZipFile(io.BytesIO(body))
+    except (OSError, zipfile.BadZipFile, zipfile.LargeZipFile) as exc:
+        raise ValueError(f"Invalid ZIP archive: {type(exc).__name__}: {exc}") from exc
+
+    try:
+        infos = archive.infolist()
+        if not infos:
+            raise ValueError("ZIP archive contains no entries")
+        if len(infos) > MAX_ZIP_MEMBERS:
+            raise ValueError(f"ZIP archive contains more than {MAX_ZIP_MEMBERS} entries")
+
+        seen_names = set()
+        total_uncompressed = 0
+        for info in infos:
+            name = info.filename.replace(chr(92), "/")
+            path = PurePosixPath(name)
+            if (
+                not name
+                or path.is_absolute()
+                or name.startswith("/")
+                or re.match(r"^[A-Za-z]:", name)
+                or ".." in path.parts
+            ):
+                raise ValueError(f"Unsafe ZIP member path: {info.filename!r}")
+            if name in seen_names:
+                raise ValueError(f"Duplicate ZIP member path: {name!r}")
+            seen_names.add(name)
+
+            mode = (info.external_attr >> 16) & 0o170000
+            if mode == stat.S_IFLNK:
+                raise ValueError(f"Symbolic links are not supported in ZIP archives: {name}")
+            if info.flag_bits & 0x1:
+                raise ValueError(f"Encrypted ZIP members are not supported: {name}")
+            if info.is_dir():
+                continue
+            if info.file_size > MAX_ZIP_MEMBER_BYTES:
+                raise ValueError(f"ZIP member exceeds {MAX_ZIP_MEMBER_BYTES} bytes: {name}")
+            total_uncompressed += info.file_size
+            if total_uncompressed > MAX_ZIP_TOTAL_BYTES:
+                raise ValueError(f"ZIP contents exceed {MAX_ZIP_TOTAL_BYTES} uncompressed bytes")
+            if info.file_size and info.file_size / max(1, info.compress_size) > MAX_ZIP_COMPRESSION_RATIO:
+                raise ValueError(f"ZIP member has an unsafe compression ratio: {name}")
+        return archive, infos
+    except Exception:
+        archive.close()
+        raise
+
+
+def _office_open_xml_suffix(names: set[str]) -> str | None:
+    if "word/document.xml" in names and "[Content_Types].xml" in names:
+        return ".docx"
+    if "xl/workbook.xml" in names and "[Content_Types].xml" in names:
+        return ".xlsx"
+    if "ppt/presentation.xml" in names and "[Content_Types].xml" in names:
+        return ".pptx"
+    return None
+
+
+def _extract_zip_bundle(body: bytes):
+    archive, infos = _validated_zip_infos(body)
+    try:
+        extracted = []
+        skipped_assets = []
+        for info in sorted(infos, key=lambda entry: (entry.filename.casefold(), entry.filename)):
+            if info.is_dir():
+                continue
+            name = info.filename.replace(chr(92), "/")
+            lowered_name = name.casefold()
+            if lowered_name.startswith("__macosx/") or PurePosixPath(name).name.casefold() in {
+                ".ds_store", "thumbs.db", "desktop.ini"
+            }:
+                continue
+            suffix = PurePosixPath(name).suffix.lower()
+            if suffix in ZIP_IGNORED_EXTENSIONS:
+                skipped_assets.append(name)
+                continue
+            if suffix not in {
+                ".csv", ".docx", ".htm", ".html", ".json", ".pdf",
+                ".pptx", ".txt", ".xlsm", ".xlsx", ".xml", ".xsd",
+            }:
+                raise ValueError(f"Unsupported file type inside ZIP archive: {name}")
+
+            member_bytes = archive.read(info)
+            media_type = ZIP_MEMBER_MEDIA_TYPES.get(suffix, "")
+            text, kind, error = extract_content(name, media_type, member_bytes)
+            if error:
+                raise ValueError(f"Could not extract ZIP member {name}: {error}")
+            if text is not None and text.strip():
+                extracted.append((name, kind, text))
+
+        if not extracted:
+            suffix_note = f" (ignored {len(skipped_assets)} media/style assets)" if skipped_assets else ""
+            raise ValueError("ZIP archive contains no supported extractable documents" + suffix_note)
+
+        parts = []
+        for name, kind, text in extracted:
+            parts.append(f"[FILE] {name} ({kind})\n{text}")
+        return normalize_text("\n\n".join(parts)), "zip", None
+    except Exception as exc:
+        return None, "zip", f"ZIP extraction failed: {type(exc).__name__}: {exc}"
+    finally:
+        archive.close()
+
+
 def extract_content(
     url: str,
     content_type: str,
@@ -141,6 +269,27 @@ def extract_content(
     ignore_selectors: tuple[str, ...] | list[str] | None = None,
 ):
     ctype, suffix = (content_type or "").lower(), _extension(url)
+    zip_signature = body.startswith(b"PK")
+    if "zip" in ctype or suffix == ".zip" or zip_signature:
+        try:
+            archive, infos = _validated_zip_infos(body)
+            try:
+                names = {info.filename.replace(chr(92), "/") for info in infos}
+                office_suffix = _office_open_xml_suffix(names)
+            finally:
+                archive.close()
+        except Exception as exc:
+            return None, "zip", f"ZIP validation failed: {type(exc).__name__}: {exc}"
+        if office_suffix is not None:
+            suffix = office_suffix
+            ctype = {
+                ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            }[office_suffix]
+        else:
+            return _extract_zip_bundle(body)
+
     decoded = body.decode("utf-8-sig", "replace")
 
     if "json" in ctype or suffix == ".json":
@@ -165,7 +314,9 @@ def extract_content(
         except (ET.ParseError, ValueError) as exc:
             return None, "xml", f"{type(exc).__name__}: {exc}"
 
-    if "html" in ctype or suffix in {".html", ".htm"} or (not ctype and suffix == ""):
+    if "html" in ctype or suffix in {".html", ".htm"} or (
+        not ctype and suffix == "" and not body.startswith(b"%PDF-")
+    ):
         try:
             return normalize_html(
                 body.decode("utf-8", "replace"),
@@ -175,7 +326,7 @@ def extract_content(
         except Exception as exc:
             return None, "html", f"HTML normalization failed: {type(exc).__name__}: {exc}"
 
-    if "pdf" in ctype or suffix == ".pdf":
+    if "pdf" in ctype or suffix == ".pdf" or body.startswith(b"%PDF-"):
         try:
             from pypdf import PdfReader
             reader = PdfReader(io.BytesIO(body))
@@ -188,7 +339,7 @@ def extract_content(
             return normalize_text("\n".join(p.text for p in Document(io.BytesIO(body)).paragraphs)), "docx", None
         except Exception as exc:
             return None, "docx", f"{type(exc).__name__}: {exc}"
-    if "spreadsheetml.sheet" in ctype or suffix == ".xlsx":
+    if "spreadsheetml.sheet" in ctype or suffix in {".xlsx", ".xlsm"}:
         try:
             from openpyxl import load_workbook
             wb = load_workbook(io.BytesIO(body), read_only=True, data_only=True)

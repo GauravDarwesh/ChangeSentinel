@@ -43,6 +43,7 @@ def fetch(
     allowed_domains: tuple[str, ...] | list[str] | None = None,
     allowed_prefixes: tuple[str, ...] | list[str] | None = None,
     allowed_urls: tuple[str, ...] | list[str] | None = None,
+    allowed_resource_prefixes: tuple[str, ...] | list[str] | None = None,
 ) -> FetchResult:
     last_error = None
     headers = {
@@ -61,6 +62,7 @@ def fetch(
         for value in (allowed_domains or [])
     }
     scoped_prefixes = tuple(str(value) for value in (allowed_prefixes or []))
+    scoped_resource_prefixes = tuple(str(value) for value in (allowed_resource_prefixes or []))
     scoped_urls = {canonical(str(value)) for value in (allowed_urls or [])}
 
     def enforce_scope(target: str) -> None:
@@ -68,9 +70,13 @@ def fetch(
         if scoped_domains and str(parsed_target.hostname or "").lower() not in scoped_domains:
             raise ValueError(f"Fetch redirect target is outside allowed domains: {target}")
         normalized_target = canonical(target)
-        if scoped_prefixes and not any(normalized_target.startswith(prefix) for prefix in scoped_prefixes):
+        if (scoped_prefixes or scoped_resource_prefixes) and not any(
+            normalized_target.startswith(prefix)
+            for prefix in (*scoped_prefixes, *scoped_resource_prefixes)
+        ):
             raise ValueError(f"Fetch redirect target is outside allowed URL prefixes: {target}")
-        if scoped_urls and normalized_target not in scoped_urls:
+        resource_target = any(normalized_target.startswith(prefix) for prefix in scoped_resource_prefixes)
+        if scoped_urls and normalized_target not in scoped_urls and not resource_target:
             raise ValueError(f"Fetch redirect target is outside the exact URL allowlist: {target}")
 
     enforce_scope(url)
