@@ -61,14 +61,28 @@ jobs:
         run: python -m pip install -r requirements.txt
 
       # CI validates code changes and pull requests. Keep per-scan work focused on monitoring.
-      - name: EBA discovery seed smoke test
+      - name: EBA pilot URL preflight
         run: |
           python - <<'PY'
+          import json
+          import os
           import requests
-          urls = [
-              "https://www.eba.europa.eu/",
-              "https://www.eba.europa.eu/homepage",
+          from pathlib import Path
+
+          requested = os.environ.get("REGMON_SOURCE", "all").strip()
+          config = json.loads(Path("config/sources.json").read_text(encoding="utf-8"))
+          sources = [
+              source for source in config.get("sources", [])
+              if source.get("active", False)
+              and (requested in {"all", "*"} or source.get("id") == requested)
           ]
+          urls = []
+          for source in sources:
+              urls.extend(source.get("seed_urls", []))
+          urls = list(dict.fromkeys(urls))
+          if not urls:
+              raise SystemExit(f"No active seed URLs configured for source selection: {requested}")
+
           headers = {
               "User-Agent": (
                   "Mozilla/5.0 (compatible; ChangeSentinel/0.5; "
@@ -78,14 +92,23 @@ jobs:
           reachable = 0
           for url in urls:
               try:
-                  r = requests.get(url, timeout=30, headers=headers)
-                  print(url, "status=", r.status_code, "type=", r.headers.get("content-type"))
-                  if r.status_code < 400:
+                  response = requests.get(url, timeout=30, headers=headers)
+                  print(
+                      url,
+                      "status=", response.status_code,
+                      "type=", response.headers.get("content-type")
+                  )
+                  if response.status_code < 400:
                       reachable += 1
               except Exception as exc:
                   print(url, "ERROR", type(exc).__name__, exc)
+
+          print(f"reachable_seed_urls={reachable}/{len(urls)}")
           if reachable == 0:
-              raise SystemExit("No EBA discovery seed was reachable")
+              raise SystemExit(
+                  "No selected source seed URL was reachable. "
+                  "The homepage is not used as a proxy for pilot availability."
+              )
           PY
 
       - name: Run monitoring engine
