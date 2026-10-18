@@ -86,6 +86,7 @@ function matchingEvents(item) {
   );
 }
 function itemStatus(item) {
+  if (item.pending_registration) return { label: "Awaiting first scan", cls: "is-neutral", icon: "◷", kind: "pending" };
   if (item.fetch_error || item.extraction_error || (item.http_status && Number(item.http_status) >= 400)) {
     return { label: "Needs attention", cls: "is-error", icon: "!", kind: "error" };
   }
@@ -101,15 +102,63 @@ function itemStatus(item) {
   }
   return { label: "Monitoring", cls: "", icon: "✓", kind: "ok" };
 }
+function canonicalForDashboard(value) {
+  try {
+    const url = new URL(value);
+    url.hash = "";
+    if (url.pathname !== "/") url.pathname = url.pathname.replace(/\/+$/, "");
+    const tracking = ["fbclid", "gclid", "mc_cid", "mc_eid"];
+    const params = Array.from(url.searchParams.entries()).filter(([key]) => {
+      const lower = key.toLowerCase();
+      return !lower.startsWith("utm_") && tracking.indexOf(lower) < 0;
+    });
+    params.sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0);
+    url.search = "";
+    params.forEach(([key, val]) => url.searchParams.append(key, val));
+    return url.toString();
+  } catch (_) {
+    return String(value || "");
+  }
+}
 function makeItems() {
   const groups = state.inventory.sources || {};
-  const ids = activeSourceIds();
+  const activeIds = new Set(activeSourceIds());
   const items = [];
   Object.keys(groups).forEach(sourceId => {
-    if (ids.length && ids.indexOf(sourceId) < 0) return;
+    if (!activeIds.has(sourceId)) return;
     const group = groups[sourceId] || {};
     Object.values(group).forEach(item => {
       if (item && item.canonical_url && item.active !== false) items.push(item);
+    });
+  });
+  const knownUrls = new Set(items.map(item => canonicalForDashboard(item.canonical_url)));
+  activeSources().forEach(source => {
+    (source.seed_urls || []).forEach((seedUrl, index) => {
+      const url = canonicalForDashboard(seedUrl);
+      if (!url || knownUrls.has(url)) return;
+      knownUrls.add(url);
+      let hostname = "";
+      try { hostname = new URL(url).hostname; } catch (_) {}
+      items.push({
+        schema_version: 2,
+        url_id: "pending-" + String(source.id || "source") + "-" + index,
+        source_id: source.id,
+        regulator: source.regulator || hostname,
+        canonical_url: url,
+        active: true,
+        pending_registration: true,
+        first_seen: null,
+        last_seen: null,
+        last_checked: null,
+        last_full_fetch: null,
+        http_status: null,
+        content_type: null,
+        extraction_type: null,
+        fetch_error: null,
+        extraction_error: null,
+        snapshot_location: null,
+        html_snapshot_location: null
+      });
     });
   });
   items.sort((a, b) => itemTitle(a).localeCompare(itemTitle(b)));
