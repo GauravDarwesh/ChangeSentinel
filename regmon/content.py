@@ -171,7 +171,7 @@ def _validated_zip_infos(body: bytes):
         seen_names = set()
         total_uncompressed = 0
         for info in infos:
-            name = info.filename.replace("\\\\", "/")
+            name = info.filename.replace(chr(92), "/")
             path = PurePosixPath(name)
             if (
                 not name
@@ -223,7 +223,7 @@ def _extract_zip_bundle(body: bytes):
         for info in sorted(infos, key=lambda entry: (entry.filename.casefold(), entry.filename)):
             if info.is_dir():
                 continue
-            name = info.filename.replace("\\\\", "/")
+            name = info.filename.replace(chr(92), "/")
             lowered_name = name.casefold()
             if lowered_name.startswith("__macosx/") or PurePosixPath(name).name.casefold() in {
                 ".ds_store", "thumbs.db", "desktop.ini"
@@ -235,7 +235,7 @@ def _extract_zip_bundle(body: bytes):
                 continue
             if suffix not in {
                 ".csv", ".docx", ".htm", ".html", ".json", ".pdf",
-                ".pptx", ".txt", ".xlsx", ".xml", ".xsd",
+                ".pptx", ".txt", ".xlsm", ".xlsx", ".xml", ".xsd",
             }:
                 raise ValueError(f"Unsupported file type inside ZIP archive: {name}")
 
@@ -274,7 +274,7 @@ def extract_content(
         try:
             archive, infos = _validated_zip_infos(body)
             try:
-                names = {info.filename.replace("\\\\", "/") for info in infos}
+                names = {info.filename.replace(chr(92), "/") for info in infos}
                 office_suffix = _office_open_xml_suffix(names)
             finally:
                 archive.close()
@@ -337,7 +337,7 @@ def extract_content(
             return normalize_text("\n".join(p.text for p in Document(io.BytesIO(body)).paragraphs)), "docx", None
         except Exception as exc:
             return None, "docx", f"{type(exc).__name__}: {exc}"
-    if "spreadsheetml.sheet" in ctype or suffix == ".xlsx":
+    if "spreadsheetml.sheet" in ctype or suffix in {".xlsx", ".xlsm"}:
         try:
             from openpyxl import load_workbook
             wb = load_workbook(io.BytesIO(body), read_only=True, data_only=True)
