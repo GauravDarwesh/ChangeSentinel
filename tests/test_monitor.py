@@ -882,6 +882,36 @@ class TestEngineFlow(unittest.TestCase):
             finally:
                 old_file.unlink(missing_ok=True)
 
+    def test_missing_html_baseline_forces_full_fetch(self):
+        from regmon.engine import make_current_item
+        url = "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a"
+        old = {
+            "content_type": "text/html; charset=UTF-8",
+            "last_full_fetch": "2026-10-18T06:30:00+00:00",
+            "etag": '"old-etag"',
+            "last_modified": "Sat, 17 Oct 2026 12:00:00 GMT",
+            "normalized_hash": "old-text-hash",
+        }
+        response = Mock(
+            status_code=200,
+            content_type="text/html; charset=UTF-8",
+            content_length=61,
+            etag='"new-etag"',
+            last_modified="Sun, 18 Oct 2026 06:30:00 GMT",
+            raw_hash="new-html-hash",
+            not_modified=False,
+            body=b"<html><body><main>Reporting update</main></body></html>",
+        )
+        with patch("regmon.engine.should_force_full_fetch", return_value=False), \
+             patch("regmon.engine.fetch", return_value=response) as mock_fetch:
+            item, text, html_body = make_current_item(url, old, SOURCE, "2026-10-18T06:35:00+00:00")
+        self.assertIsNone(mock_fetch.call_args.kwargs["etag"])
+        self.assertIsNone(mock_fetch.call_args.kwargs["last_modified"])
+        self.assertTrue(item["html_baseline_forced"])
+        self.assertEqual(item["html_hash"], "new-html-hash")
+        self.assertIn("Reporting update", text)
+        self.assertTrue(html_body.startswith(b"<html>"))
+
     def test_degraded_discovery_skips_content_fetch(self):
         from regmon.engine import process_source
         previous = {
