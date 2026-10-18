@@ -98,7 +98,7 @@ class TestDashboardNotificationContract(unittest.TestCase):
         source = (ROOT / "index.html").read_text(encoding="utf-8")
         self.assertIn("position: fixed; inset: auto 14px calc(10px + env(safe-area-inset-bottom)) 14px", source)
         self.assertIn("grid-template-columns: repeat(4, minmax(0, 1fr))", source)
-        self.assertIn("class=\\"nav-button active\\" data-view=\\"monitors\\"", source)
+        self.assertIn('class="nav-button active" data-view="monitors"', source)
         self.assertIn('data-view="changes"', source)
         self.assertIn('data-view="runs"', source)
         self.assertIn('data-view="notifications"', source)
