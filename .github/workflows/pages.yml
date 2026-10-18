@@ -3,12 +3,10 @@ name: Deploy Monitoring Console
 on:
   push:
     branches: [main]
+    # The dashboard fetches monitoring JSON directly from raw.githubusercontent.com.
+    # Data-only commits do not change the deployed HTML and do not need a redeploy.
     paths:
       - "index.html"
-      - "data/report.json"
-      - "data/latest.json"
-      - "data/history/**"
-      - "data/notifications.json"
   workflow_dispatch:
 
 permissions:

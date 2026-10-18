@@ -4,6 +4,10 @@ on:
   pull_request:
   push:
     branches: [main]
+    # Monitoring state is data-only; it does not require a source-code test run.
+    # If a push contains code and data changes, CI still runs.
+    paths-ignore:
+      - "data/**"
 
 permissions:
   contents: read
