@@ -59,6 +59,22 @@ class TestDiscovery(unittest.TestCase):
         self.assertTrue(in_scope("https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a",SOURCE))
 
 
+    def test_exact_url_allowlist_rejects_nearby_pages_and_query_variants(self):
+        allowed = "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/operational-risk/regulatory-technical-standards-operational-risk-management-framework"
+        source = SourceConfig(
+            id="eba-pilot-test",
+            name="EBA Pilot Test",
+            regulator="European Banking Authority",
+            seed_urls=(allowed,),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            allowed_urls=(allowed,),
+        )
+        self.assertTrue(in_scope(allowed, source))
+        self.assertFalse(in_scope(allowed + "?phase=consultation", source))
+        self.assertFalse(in_scope(allowed + "-nearby-page", source))
+        self.assertFalse(in_scope("https://www.eba.europa.eu/homepage", source))
+
     def test_html_links_handle_absolute_relative_and_excluded_urls(self):
         source = SourceConfig(
             id="eba-test",
@@ -284,6 +300,34 @@ class TestDiscovery(unittest.TestCase):
         self.assertEqual(first_checkpoint["retry_pending"], ["https://www.eba.europa.eu/homepage"])
         self.assertEqual(second_urls, ["https://www.eba.europa.eu/homepage"])
         self.assertEqual(second_meta["state"], "COMPLETE")
+
+    @patch("regmon.discovery.requests.get")
+    def test_url_cap_is_always_degraded_and_never_complete(self, mock_get):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            max_urls=1,
+            discovery_http_workers=1,
+            discovery_slice_seconds=0,
+        )
+        mock_get.return_value = Mock(
+            status_code=200,
+            headers={"content-type": "text/html; charset=UTF-8"},
+            text='<a href="/a">A</a>',
+            url="https://www.eba.europa.eu/homepage",
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            urls = http_discover(source, Path(tmp))
+            metadata = json.loads(
+                (Path(tmp) / "discovery" / "eba-test.json").read_text(encoding="utf-8")
+            )
+        self.assertEqual(urls, ["https://www.eba.europa.eu/homepage"])
+        self.assertTrue(metadata["capped"])
+        self.assertEqual(metadata["state"], "DEGRADED")
 
     @patch("regmon.discovery.requests.get")
     def test_paused_inventory_recovers_when_checkpoint_is_empty(self, mock_get):
