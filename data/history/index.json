@@ -1,5 +1,30 @@
 [
   {
+    "run_id": "20261018T081524Z-58e96757",
+    "generated_at": "2026-10-18T08:15:24.672419+00:00",
+    "source_id": "fed-reporting-forms-pilot",
+    "regulator": "Board of Governors of the Federal Reserve System",
+    "counts": {
+      "discovered": 2,
+      "new": 0,
+      "changed": 0,
+      "source_changed": 2,
+      "removed": 0,
+      "unchanged": 0,
+      "baseline_migration": 0,
+      "fetch_error": 0,
+      "extraction_error": 0,
+      "not_modified": 0,
+      "forced_full_fetch": 0,
+      "relevance_candidates": 0,
+      "ai_ok": 0,
+      "ai_invalid": 0,
+      "ai_error": 0,
+      "ai_deferred": 0,
+      "crawl_paused": 0
+    }
+  },
+  {
     "run_id": "20261018T063836Z-a6ec70fd",
     "generated_at": "2026-10-18T06:38:36.127708+00:00",
     "source_id": "fed-reporting-forms-pilot",
@@ -2374,33 +2399,6 @@
     "regulator": "European Banking Authority",
     "counts": {
       "discovered": 65108,
-      "new": 0,
-      "changed": 0,
-      "removed": 0,
-      "unchanged": 0,
-      "baseline_migration": 0,
-      "fetch_error": 0,
-      "extraction_error": 0,
-      "not_modified": 0,
-      "forced_full_fetch": 0,
-      "relevance_candidates": 0,
-      "ai_ok": 0,
-      "ai_invalid": 0,
-      "ai_error": 0,
-      "ai_deferred": 0,
-      "crawl_paused": 1,
-      "crawl_degraded": 0,
-      "crawl_failed": 0,
-      "discovery_incomplete": 1
-    }
-  },
-  {
-    "run_id": "20261006T030225Z-e1cde52d",
-    "generated_at": "2026-10-06T03:02:25.896416+00:00",
-    "source_id": "eba-full-site",
-    "regulator": "European Banking Authority",
-    "counts": {
-      "discovered": 59484,
       "new": 0,
       "changed": 0,
       "removed": 0,

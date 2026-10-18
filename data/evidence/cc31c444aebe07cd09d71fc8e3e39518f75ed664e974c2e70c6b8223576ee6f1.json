@@ -1,0 +1,23 @@
+{
+  "event_id": "cc31c444aebe07cd09d71fc8e3e39518f75ed664e974c2e70c6b8223576ee6f1",
+  "event_type": "HTML_SOURCE_CHANGED",
+  "url": "https://www.federalreserve.gov/apps/reportingforms/review",
+  "timestamp": "2026-10-18T08:15:24.672419+00:00",
+  "before": {
+    "normalized_hash": "8efac2a56f9222b17c322e941aefe96182ca1eb5a994e9bc929f800979da424a",
+    "raw_hash": "a0ca07bb62e3cbe12ecf19408df1027a81a33b6be97fdcb49821ccb2ad9a40a2",
+    "html_hash": "a0ca07bb62e3cbe12ecf19408df1027a81a33b6be97fdcb49821ccb2ad9a40a2",
+    "snapshot_location": "data/snapshots/c1c1ed502814bc1bdf564f9d28b921e0fb795953747b534aa729ee519b02102a-8efac2a56f9222b17c322e941aefe96182ca1eb5a994e9bc929f800979da424a.txt",
+    "html_snapshot_location": "data/snapshots/html/c1c1ed502814bc1bdf564f9d28b921e0fb795953747b534aa729ee519b02102a-a0ca07bb62e3cbe12ecf19408df1027a81a33b6be97fdcb49821ccb2ad9a40a2.html"
+  },
+  "after": {
+    "normalized_hash": "8efac2a56f9222b17c322e941aefe96182ca1eb5a994e9bc929f800979da424a",
+    "raw_hash": "6199efe3cf3b66f9aa677b3cc5f2ab6435bb0bbd22b52a1c2bfe5fc1a372dd48",
+    "html_hash": "6199efe3cf3b66f9aa677b3cc5f2ab6435bb0bbd22b52a1c2bfe5fc1a372dd48",
+    "snapshot_location": "data/snapshots/c1c1ed502814bc1bdf564f9d28b921e0fb795953747b534aa729ee519b02102a-8efac2a56f9222b17c322e941aefe96182ca1eb5a994e9bc929f800979da424a.txt",
+    "html_snapshot_location": "data/snapshots/html/c1c1ed502814bc1bdf564f9d28b921e0fb795953747b534aa729ee519b02102a-6199efe3cf3b66f9aa677b3cc5f2ab6435bb0bbd22b52a1c2bfe5fc1a372dd48.html"
+  },
+  "diff": "",
+  "html_diff": "--- before\n+++ after\n@@ -4259,7 +4259,7 @@\n         });\n   </script>\n   <script>\n-   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a4c58a85ee8ba20f',t:'MTc5MjMwNTUxNg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n+   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a4c61854dc796a65',t:'MTc5MjMxMTMyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n   </script>\n  </body>\n </html>",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body."
+}

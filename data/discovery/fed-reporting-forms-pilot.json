@@ -10,7 +10,7 @@
   "pending": 0,
   "unresolved_failures": 0,
   "checkpoint_schema_version": 2,
-  "config_fingerprint": "6271cfc9d69c14f48594981ef9bc0be321137b99f529b04ed8238dd390ec641d",
+  "config_fingerprint": "19223209f8386130c813e6a70d0be21662e5e3185d336f62d14b6b00cb32fec2",
   "inventory": "data/discovery/fed-reporting-forms-pilot-inventory-*.txt",
   "failure_ledger": "data/discovery/fed-reporting-forms-pilot-failures.jsonl"
 }

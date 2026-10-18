@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261018T063836Z-a6ec70fd
-Generated: 2026-10-18T06:38:36.127708+00:00
+Run: 20261018T081524Z-58e96757
+Generated: 2026-10-18T08:15:24.672419+00:00
 
 ## Aggregate counts
 
@@ -17,13 +17,13 @@ Generated: 2026-10-18T06:38:36.127708+00:00
 | discovered | 2 |
 | extraction_error | 0 |
 | fetch_error | 0 |
-| forced_full_fetch | 2 |
+| forced_full_fetch | 0 |
 | new | 0 |
 | not_modified | 0 |
 | relevance_candidates | 0 |
 | removed | 0 |
-| source_changed | 0 |
-| unchanged | 2 |
+| source_changed | 2 |
+| unchanged | 0 |
 
 ## Sources
 
@@ -32,7 +32,7 @@ Generated: 2026-10-18T06:38:36.127708+00:00
 - Regulator: Board of Governors of the Federal Reserve System
 - Discovered: 2
 - Changed content: 0
-- HTML source-only changes: 0
+- HTML source-only changes: 2
 - New: 0
 - Removed: 0
 - Fetch errors: 0
