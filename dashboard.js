@@ -7,11 +7,12 @@ const ENDPOINTS = {
   inventory: RAW + "/data/latest.json",
   history: RAW + "/data/history/index.json",
   notifications: RAW + "/data/notifications.json",
+  outbox: RAW + "/data/notification-outbox.json",
   config: RAW + "/config/sources.json"
 };
 const $ = id => document.getElementById(id);
 const state = {
-  report: {}, inventory: {}, history: [], notifications: {}, config: {},
+  report: {}, inventory: {}, history: [], notifications: {}, outbox: {}, config: {},
   items: [], selectedId: "", view: "monitors", filter: "ALL", detailTab: "snapshot",
   snapshotMode: "preview", snapshotCache: {}, htmlCache: {}, evidenceCache: {},
   toastTimer: null
@@ -550,17 +551,83 @@ function renderRuns() {
       '</span>').join("") + '</div></div><span class="run-source">' + (isActive ? "Active source" : "Historical / inactive") + '</span></article>';
   }).join("");
 }
+function safeHttpUrl(value) {
+  try {
+    const parsed = new URL(String(value || ""));
+    return ["http:", "https:"].includes(parsed.protocol) ? parsed.toString() : "";
+  } catch (_) {
+    return "";
+  }
+}
+function notificationMap(value, key) {
+  const items = value && typeof value === "object" ? value[key] : null;
+  return items && typeof items === "object" && !Array.isArray(items) ? items : {};
+}
+function renderNotifications() {
+  const pending = Object.entries(notificationMap(state.outbox, "pending_events"))
+    .map(([eventId, item]) => ({...(item && typeof item === "object" ? item : {}), eventId}))
+    .sort((a, b) => String(b.eventId).localeCompare(String(a.eventId)));
+  const sent = Object.entries(notificationMap(state.notifications, "sent_events"))
+    .map(([eventId, item]) => ({...(item && typeof item === "object" ? item : {}), eventId}))
+    .sort((a, b) => new Date(b.sent_at || 0) - new Date(a.sent_at || 0));
+
+  $("navNotificationCount").textContent = pending.length;
+  $("notificationPendingCount").textContent = pending.length;
+  $("notificationSentCount").textContent = sent.length;
+  $("notificationUpdatedAt").textContent =
+    "Outbox updated " + fmt(state.outbox.updated_at) +
+    " · Delivery ledger updated " + fmt(state.notifications.updated_at);
+
+  $("notificationPendingItems").innerHTML = pending.length ? pending.map(item => {
+    const url = safeHttpUrl(item.url);
+    const urlMarkup = url
+      ? '<a class="notification-url" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(url) + ' ↗</a>'
+      : '<div class="notification-url">No source URL recorded</div>';
+    return '<article class="notification-card">' +
+      '<div class="notification-card-head"><div><h3 class="notification-title">' +
+      esc(item.topic || "Notification awaiting delivery") + '</h3><div class="notification-kind">' +
+      esc(item.kind || "UNKNOWN EVENT") + '</div></div><span class="notification-status is-pending">Queued</span></div>' +
+      '<p class="notification-summary">' + esc(item.summary || "No summary was stored for this notification.") + '</p>' +
+      '<div class="notification-field"><label>Why this is queued</label><p>' +
+      esc(item.reason || "The notification remains in the durable outbox until delivery succeeds.") + '</p></div>' +
+      (item.impact ? '<div class="notification-field"><label>Potential impact</label><p>' + esc(item.impact) + '</p></div>' : '') +
+      urlMarkup +
+      '<div class="notification-id">Event ID · ' + esc(item.eventId) + '</div>' +
+      '</article>';
+  }).join("") : emptyState(
+    "No notifications waiting",
+    "The durable outbox is empty. Failed deliveries remain queued for the next scheduled or manual monitoring run.",
+    "✓"
+  );
+
+  $("notificationSentItems").innerHTML = sent.length ? sent.slice(0, 100).map(item =>
+    '<article class="notification-card notification-card-compact">' +
+    '<div class="notification-card-head"><div><h3 class="notification-title">' +
+    esc(item.kind || "Notification") + '</h3><div class="notification-kind">Sent ' +
+    esc(fmt(item.sent_at)) + '</div></div><span class="notification-status is-sent">Delivered</span></div>' +
+    '<div class="notification-id">Event ID · ' + esc(item.eventId) + '</div>' +
+    '</article>'
+  ).join("") : emptyState(
+    "No delivery history recorded",
+    "The delivery ledger contains no successfully sent events yet.",
+    "◷"
+  );
+  if (sent.length > 100) {
+    $("notificationSentItems").innerHTML += '<div class="notification-footnote">Showing the 100 most recent delivery records.</div>';
+  }
+}
 function renderViews() {
   const isMonitor = state.view === "monitors";
   $("monitorsView").hidden = !isMonitor || !!state.selectedId;
   $("detailView").hidden = !isMonitor || !state.selectedId;
   $("changesView").hidden = state.view !== "changes";
   $("runsView").hidden = state.view !== "runs";
+  $("notificationsView").hidden = state.view !== "notifications";
   document.querySelectorAll("[data-view]").forEach(button => {
     button.classList.toggle("active", button.dataset.view === state.view);
     button.setAttribute("aria-current", button.dataset.view === state.view ? "page" : "false");
   });
-  const labels = { monitors: "Monitored pages", changes: "Change log", runs: "Run history" };
+  const labels = { monitors: "Monitored pages", changes: "Change log", runs: "Run history", notifications: "Notifications" };
   $("breadcrumb").textContent = "Workspace / " + (isMonitor && state.selectedId ? "Page details" : labels[state.view]);
 }
 function renderAll() {
@@ -571,6 +638,7 @@ function renderAll() {
   if (state.selectedId) renderDetailBody();
   renderChangeRoute();
   renderRuns();
+  renderNotifications();
   renderViews();
 }
 function setSelected(id) {
@@ -593,6 +661,7 @@ function setView(view) {
   renderViews();
   if (view === "changes") renderChangeRoute();
   if (view === "runs") renderRuns();
+  if (view === "notifications") renderNotifications();
   if (view === "monitors") renderMonitorList();
   try { history.replaceState(null, "", location.pathname + location.search); } catch (_) {}
 }
@@ -600,16 +669,17 @@ async function loadData(showErrors) {
   setStatus("Refreshing stored state…", false);
   if (showErrors !== false) $("loadError").hidden = true;
   try {
-    const urls = [ENDPOINTS.report, ENDPOINTS.inventory, ENDPOINTS.history, ENDPOINTS.notifications, ENDPOINTS.config];
+    const urls = [ENDPOINTS.report, ENDPOINTS.inventory, ENDPOINTS.history, ENDPOINTS.notifications, ENDPOINTS.outbox, ENDPOINTS.config];
     const responses = await Promise.all(urls.map(url => fetch(bust(url), { cache: "no-store" }).catch(() => null)));
     if (!responses[0] || !responses[0].ok) throw new Error("Latest report is unavailable");
     if (!responses[1] || !responses[1].ok) throw new Error("Latest monitored URL inventory is unavailable");
-    if (!responses[4] || !responses[4].ok) throw new Error("Source configuration is unavailable");
+    if (!responses[5] || !responses[5].ok) throw new Error("Source configuration is unavailable");
     state.report = await responses[0].json();
     state.inventory = await responses[1].json();
     state.history = responses[2] && responses[2].ok ? await responses[2].json() : [];
     state.notifications = responses[3] && responses[3].ok ? await responses[3].json() : {};
-    state.config = await responses[4].json();
+    state.outbox = responses[4] && responses[4].ok ? await responses[4].json() : {};
+    state.config = await responses[5].json();
     const hash = location.hash.match(/monitor=([^&]+)/);
     if (hash && !state.selectedId) {
       const id = decodeURIComponent(hash[1]);

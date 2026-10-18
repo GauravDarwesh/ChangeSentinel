@@ -234,6 +234,27 @@
     .event-time { flex: none; color: var(--muted-2); font-size: 10px; line-height: 1.6; text-align: right; }
     .event-url { margin-top: 8px; color: var(--muted); font-size: 11px; line-height: 1.7; overflow-wrap: anywhere; }
     .event-summary { margin-top: 12px; color: var(--ink-soft); font-size: 12px; line-height: 1.8; }
+    .notification-layout { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: start; gap: 20px; margin-top: 26px; }
+    .notification-section { min-width: 0; }
+    .notification-section-heading { margin-bottom: 14px; }
+    .notification-section-title { margin: 0; color: var(--ink); font-size: 16px; font-weight: 800; letter-spacing: -.025em; }
+    .notification-section-copy { margin: 6px 0 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+    .notification-list { display: grid; gap: 12px; }
+    .notification-card { min-width: 0; padding: 18px 19px; border: 1px solid var(--line); border-radius: 15px; background: white; box-shadow: var(--shadow-soft); }
+    .notification-card-head { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .notification-title { margin: 0; color: var(--ink); font-size: 13px; line-height: 1.5; font-weight: 800; overflow-wrap: anywhere; }
+    .notification-kind { margin-top: 5px; color: var(--muted-2); font-size: 10px; line-height: 1.6; font-weight: 750; overflow-wrap: anywhere; }
+    .notification-status { display: inline-flex; align-items: center; border-radius: 999px; padding: 5px 8px; font-size: 9px; line-height: 1.3; font-weight: 850; white-space: nowrap; }
+    .notification-status.is-pending { background: #fff0d8; color: #8a611a; }
+    .notification-status.is-sent { background: #e4f4ec; color: #267352; }
+    .notification-summary { margin: 12px 0; color: var(--ink-soft); font-size: 11px; line-height: 1.75; overflow-wrap: anywhere; }
+    .notification-field { margin-top: 10px; padding: 10px 11px; border: 1px solid #e8ecf3; border-radius: 9px; background: #fafbfe; }
+    .notification-field label { display: block; margin-bottom: 4px; color: var(--muted-2); font-size: 9px; line-height: 1.4; font-weight: 850; text-transform: uppercase; letter-spacing: .07em; }
+    .notification-field p { margin: 0; color: var(--ink-soft); font-size: 11px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .notification-url { display: block; margin-top: 12px; color: var(--blue); font-size: 10px; line-height: 1.7; overflow-wrap: anywhere; }
+    .notification-id { margin-top: 12px; padding-top: 10px; border-top: 1px solid #edf0f5; color: var(--muted-2); font: 9px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+    .notification-card-compact { padding: 14px 16px; }
+    .notification-footnote { color: var(--muted-2); font-size: 10px; line-height: 1.7; }
     .ai-review { margin: 14px 0 4px; padding: 15px 17px; border: 1px solid var(--line); border-radius: 13px; background: #f8faff; }
     .ai-review.is-relevant { border-color: #cfe6dc; background: #f7fbf9; }
     .ai-review.is-irrelevant { border-color: #e0e5ed; background: #f8f9fb; }
@@ -351,6 +372,7 @@
       .run-symbol { width: 36px; height: 36px; border-radius: 11px; }
       .run-source { display: none; }
       .detail-grid { grid-template-columns: minmax(0,1fr); gap: 10px; }
+      .notification-layout { grid-template-columns: minmax(0,1fr); }
       .list-footer, .page-footer { flex-direction: column; align-items: flex-start; }
       .view-header-note { align-items: flex-start; flex-direction: column; }
       .modal-head { padding: 23px 21px 17px; }
@@ -381,6 +403,7 @@
           <button class="nav-button active" data-view="monitors" type="button"><span class="nav-symbol" aria-hidden="true">◫</span><span class="nav-label">Monitored pages</span><span class="nav-count" id="navMonitorCount">—</span></button>
           <button class="nav-button" data-view="changes" type="button"><span class="nav-symbol" aria-hidden="true">⌁</span><span class="nav-label">Change log</span><span class="nav-count" id="navChangeCount">—</span></button>
           <button class="nav-button" data-view="runs" type="button"><span class="nav-symbol" aria-hidden="true">◷</span><span class="nav-label">Run history</span></button>
+          <button class="nav-button" data-view="notifications" type="button"><span class="nav-symbol" aria-hidden="true">↗</span><span class="nav-label">Notifications</span><span class="nav-count" id="navNotificationCount">—</span></button>
         </nav>
       </div>
       <div class="side-spacer"></div>
@@ -476,6 +499,36 @@
           </div>
           <div class="view-header-note"><span id="changeSubtitle">Loading event report…</span><span id="changeCount">—</span></div>
           <div id="changeItems" class="event-feed"></div>
+        </section>
+
+        <section id="notificationsView" class="view" hidden aria-labelledby="notificationsHeading">
+          <div class="page-heading">
+            <div>
+              <div class="eyebrow">Delivery reliability</div>
+              <h1 id="notificationsHeading">Notifications</h1>
+              <p>See which alerts are waiting for delivery and which events were recorded as successfully sent. Details shown here come from the repository’s durable outbox and delivery ledger.</p>
+            </div>
+          </div>
+          <div class="view-header-note">
+            <span id="notificationUpdatedAt">Loading notification state…</span>
+            <span><strong id="notificationPendingCount">—</strong> queued · <strong id="notificationSentCount">—</strong> delivered</span>
+          </div>
+          <div class="notification-layout">
+            <section class="notification-section" aria-labelledby="notificationPendingHeading">
+              <div class="notification-section-heading">
+                <h2 class="notification-section-title" id="notificationPendingHeading">Awaiting delivery</h2>
+                <p class="notification-section-copy">Failed deliveries remain in the outbox for a later monitoring run. This view is read-only; it does not send or retry messages itself.</p>
+              </div>
+              <div id="notificationPendingItems" class="notification-list" aria-live="polite"><div class="loading-text">Loading queued notifications…</div></div>
+            </section>
+            <section class="notification-section" aria-labelledby="notificationSentHeading">
+              <div class="notification-section-heading">
+                <h2 class="notification-section-title" id="notificationSentHeading">Delivery history</h2>
+                <p class="notification-section-copy">The delivery ledger stores event type and send time. It does not retain the full notification message or original URL.</p>
+              </div>
+              <div id="notificationSentItems" class="notification-list" aria-live="polite"><div class="loading-text">Loading delivery history…</div></div>
+            </section>
+          </div>
         </section>
 
         <section id="runsView" class="view" hidden aria-labelledby="runsHeading">
