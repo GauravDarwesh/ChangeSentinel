@@ -1006,6 +1006,22 @@ class TestFetch(unittest.TestCase):
         mock_get.assert_called_once()
 
     @patch("regmon.fetch.requests.get")
+    def test_redirect_outside_configured_source_scope_is_rejected(self, mock_get):
+        response = Mock()
+        response.status_code = 302
+        response.headers = {"location": "https://evil.test/landing"}
+        mock_get.return_value = response
+        with self.assertRaisesRegex(ValueError, "outside allowed domains"):
+            fetch(
+                "https://example.test/page",
+                attempts=2,
+                allowed_domains=("example.test",),
+                allowed_prefixes=("https://example.test/",),
+                allowed_urls=("https://example.test/page",),
+            )
+        mock_get.assert_called_once()
+
+    @patch("regmon.fetch.requests.get")
     def test_304_uses_validators_without_download(self,mock_get):
         mock_get.return_value=Mock(
             status_code=304,
