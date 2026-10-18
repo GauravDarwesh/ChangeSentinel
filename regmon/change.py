@@ -35,13 +35,13 @@ def html_comparison_hash(value: str | bytes | None) -> str | None:
     def stabilize_params(match: re.Match[str]) -> str:
         block = match.group(0)
         block = re.sub(
-            r"(?<![\w$])r\s*:\s*(['"])[^'"]*\1",
+            r"""(?<![\w$])r\s*:\s*(['"])[^'"]*\1""",
             lambda item: "r:'<volatile-ray-id>'",
             block,
             count=1,
         )
         block = re.sub(
-            r"(?<![\w$])t\s*:\s*(['"])[^'"]*\1",
+            r"""(?<![\w$])t\s*:\s*(['"])[^'"]*\1""",
             lambda item: "t:'<volatile-timestamp>'",
             block,
             count=1,
