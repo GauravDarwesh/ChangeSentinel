@@ -350,7 +350,7 @@ class TestDiscovery(unittest.TestCase):
             discovery_dir.mkdir(parents=True)
             inventory_file = discovery_dir / "eba-test-inventory-0000.txt"
             inventory_file.write_text(
-                "https://www.eba.europa.eu/homepage\\nhttps://www.eba.europa.eu/a\\n",
+                "https://www.eba.europa.eu/homepage\nhttps://www.eba.europa.eu/a\n",
                 encoding="utf-8",
             )
             (discovery_dir / "eba-test.json").write_text(
