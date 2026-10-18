@@ -1794,6 +1794,38 @@ class TestAdaptiveContentExtraction(unittest.TestCase):
         )
         self.assertIn("banks.\nA separate paragraph follows.", extracted)
 
+
+    def test_narrow_pdf_table_preserves_prose_in_same_vertical_band(self):
+        from regmon.content import _extract_pdfplumber_page
+
+        page = Mock()
+        page.width = 1000
+        page.height = 1000
+        fast_text = (
+            "The form explains the purpose of reporting before the small table.\n"
+            "Please enter the daily prime rate in the table at right."
+        )
+        detected_tables = [
+            (
+                (700.0, 400.0, 930.0, 650.0),
+                [
+                    ["Day", "Prime Rate"],
+                    ["Monday", "8.500"],
+                    ["Tuesday", "8.375"],
+                ],
+                6,
+            )
+        ]
+        with patch("regmon.content._find_pdf_tables", return_value=detected_tables):
+            extracted = _extract_pdfplumber_page(page, fast_text)
+
+        self.assertIn("purpose of reporting", extracted)
+        self.assertIn("daily prime rate in the table at right", extracted)
+        self.assertIn("| Day | Prime Rate |", extracted)
+        self.assertIn("| Monday | 8.500 |", extracted)
+        page.crop.assert_not_called()
+
+
     def test_fragmented_regulatory_form_is_routed_to_layout_fallback(self):
         from regmon.content import _looks_like_fragmented_pdf_page
 
@@ -1964,6 +1996,14 @@ class TestAdaptiveContentExtraction(unittest.TestCase):
         self.assertEqual(kind, "pdf")
         self.assertIn("normal digital PDF page", text)
         inspect_visual_content.assert_not_called()
+
+
+    def test_large_scanned_pdfs_use_time_budget_not_a_low_page_cap(self):
+        from regmon.content import MAX_OCR_PAGES, MAX_OCR_TOTAL_SECONDS
+
+        self.assertGreaterEqual(MAX_OCR_PAGES, 1000)
+        self.assertEqual(MAX_OCR_TOTAL_SECONDS, 120)
+
 
     def test_ocr_total_time_budget_stops_before_next_page(self):
         import sys
