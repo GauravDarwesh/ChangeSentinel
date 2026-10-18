@@ -177,7 +177,9 @@ Currently supported:
 - CSV
 - plain text
 
-For HTML, the extractor removes common non-content material such as:
+The monitor preserves the complete fetched HTML response body as an immutable `.html` snapshot, while separately extracting normalized text for regulatory-content comparison. The dashboard can render the stored HTML response, show its source code, and display a formatted HTML source diff alongside an extracted-text diff.
+
+For text comparison, the extractor removes common non-content material such as:
 
 - scripts
 - styles
@@ -217,12 +219,15 @@ The comparison is therefore:
 
 **previous normalized hash vs current normalized hash**
 
+If extracted text stays the same but the fetched markup changes, the monitor records an `HTML_SOURCE_CHANGED` event. These markup-only changes appear in the dashboard but are not sent to AI or notifications by default, which helps avoid noisy alerts for cosmetic markup changes.
+
 Possible technical events include:
 
 | Event | Meaning |
 | --- | --- |
 | \`NEW_URL\` | URL is newly discovered |
 | \`CHANGED_URL\` | Normalized content changed |
+| `HTML_SOURCE_CHANGED` | HTML response markup changed while extracted text stayed the same |
 | \`UNCHANGED_URL\` | Normalized content is unchanged |
 | \`REMOVED_URL\` | Previously monitored URL is no longer discovered |
 | \`FETCH_ERROR\` | URL could not be fetched successfully |
@@ -239,7 +244,7 @@ When a meaningful technical event occurs, the project stores evidence under:
 
 \`data/evidence/\`
 
-For changes, the evidence includes a unified before/after diff.
+For changes, evidence includes a unified extracted-text diff and a formatted HTML source diff. HTML snapshots use content-addressed paths, so later runs do not overwrite older snapshots referenced by evidence.
 
 This gives the monitoring result an audit trail instead of only saying:
 
@@ -345,7 +350,7 @@ The important files are:
 | \`data/report.json\` | Latest aggregate report |
 | \`data/report.md\` | Human-readable latest report |
 | \`data/reports/\` | Per-source reports |
-| \`data/snapshots/\` | Latest normalized page snapshots |
+| \`data/snapshots/\` | Immutable content-addressed normalized-text snapshots and full HTML response snapshots under `html/` |
 | \`data/evidence/\` | Immutable event evidence and diffs |
 | \`data/history/index.json\` | Compact run history |
 | \`data/history/<run_id>.json\` | Full historical run report |
