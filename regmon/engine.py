@@ -317,7 +317,13 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
         }
         for future in as_completed(futures):
             url, uid, old = futures[future]
-            item, text, html_body = future.result()
+            result = future.result()
+            # Preserve compatibility with tests/extensions that return the legacy two-item tuple.
+            if len(result) == 2:
+                item, text = result
+                html_body = None
+            else:
+                item, text, html_body = result
             item["url_id"] = uid
             current[uid] = item
             old_text = None
