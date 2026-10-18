@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from regmon.ai import AIConfig, AI_REQUIRED_KEYS, parse_json, run_smoke_test, validate_analysis
+from regmon.ai import AIConfig, AI_REQUIRED_KEYS, analyze, parse_json, run_smoke_test, validate_analysis
 from regmon.change import build_event_id, classify_change, html_comparison_hash, make_diff, make_id, write_evidence
 from regmon.content import extract_content, normalize_html
 from regmon.config import SourceConfig
@@ -976,6 +976,28 @@ class TestSourceOnlyNotifications(unittest.TestCase):
 
 
 class TestAI(unittest.TestCase):
+    @patch("regmon.ai.requests.post")
+    @patch.dict("os.environ", {"OPENROUTER_API_KEY": "test-key"})
+    def test_openrouter_401_returns_actionable_auth_diagnostic(self, mock_post):
+        from regmon.ai import analyze
+        response = Mock()
+        response.status_code = 401
+        response.json.return_value = {"error": {"message": "Invalid API key"}}
+        mock_post.return_value = response
+        result = analyze(
+            "Synthetic regulator",
+            "https://example.invalid/test",
+            "CHANGED_URL",
+            "- old\\n+ new",
+            "new",
+            AIConfig(timeout_seconds=5, attempts=2),
+        )
+        self.assertEqual(result["status"], "error")
+        self.assertIn("HTTP 401", result["reason"])
+        self.assertIn("OPENROUTER_API_KEY", result["reason"])
+        self.assertIn("Invalid API key", result["reason"])
+        self.assertEqual(mock_post.call_count, 1)
+
     def test_schema(self):
         value={key:(True if key=="relevant" else "x") for key in AI_REQUIRED_KEYS}
         self.assertEqual(validate_analysis(value),value)

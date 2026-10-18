@@ -59,6 +59,22 @@ def analyze(regulator: str, url: str, event_type: str, diff: str, current_text: 
     for attempt in range(1, config.attempts + 1):
         try:
             response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=config.timeout_seconds)
+            # Report actionable provider diagnostics without printing the API key
+            # or echoing the authorization header. OpenRouter's 401/403 response
+            # means credentials/account authorization must be checked before
+            # interpreting it as a model or schema issue.
+            if response.status_code in {401, 403}:
+                detail = ""
+                try:
+                    body = response.json()
+                    error = body.get("error", {}) if isinstance(body, dict) else {}
+                    detail = str(error.get("message") or error.get("code") or "")[:240]
+                except (ValueError, TypeError):
+                    detail = ""
+                message = f"OpenRouter authentication/authorization failed (HTTP {response.status_code}). Check that OPENROUTER_API_KEY is a valid, active OpenRouter API key and that its account/key has permission to use the selected model."
+                if detail:
+                    message += f" Provider detail: {detail}"
+                return {"status": "error", "reason": message}
             response.raise_for_status()
             content = response.json()["choices"][0]["message"]["content"]
             try:
