@@ -44,6 +44,19 @@ class TestDashboardNotificationContract(unittest.TestCase):
         self.assertNotIn("item.topic", sent_renderer)
         self.assertNotIn("item.url", sent_renderer)
 
+    def test_original_pdf_snapshot_is_previewed_and_text_remains_available(self):
+        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        for token in (
+            "file_snapshot_location",
+            "function snapshotPageURL(path)",
+            'title="Saved PDF snapshot"',
+            'data-snapshot-mode="preview"',
+            'data-snapshot-mode="text"',
+            "item.file_snapshot_location || item.html_snapshot_location",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+
 
 if __name__ == "__main__":
     unittest.main()
