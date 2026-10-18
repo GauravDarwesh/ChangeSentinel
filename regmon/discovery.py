@@ -351,13 +351,13 @@ def _load_http_checkpoint(source: SourceConfig, data_dir: Path) -> dict | None:
         except Exception:
             metadata = {}
 
-        if metadata.get("source_id") == source.id and metadata.get("state") == "PAUSED":
+        if metadata.get("source_id") == source.id and metadata.get("state") in {"PAUSED", "DEGRADED"}:
             discovered = _load_inventory(source, data_dir)
             if discovered:
                 retry_pending = deque(_retryable_failure_urls(source, data_dir))
                 pending = deque(url for url in discovered if _is_probably_html_url(url))
                 print(
-                    "HTTP discovery recovered from PAUSED inventory because the "
+                    "HTTP discovery recovered from incomplete inventory because the "
                     f"checkpoint at {path} was missing/invalid: "
                     f"known={len(discovered)} requeued_html={len(pending)} "
                     f"retry_pending={len(retry_pending)}"
