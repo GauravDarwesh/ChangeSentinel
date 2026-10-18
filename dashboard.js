@@ -565,10 +565,10 @@ function notificationMap(value, key) {
 }
 function renderNotifications() {
   const pending = Object.entries(notificationMap(state.outbox, "pending_events"))
-    .map(([eventId, item]) => ({eventId, ...(item && typeof item === "object" ? item : {})}))
+    .map(([eventId, item]) => ({...(item && typeof item === "object" ? item : {}), eventId}))
     .sort((a, b) => String(b.eventId).localeCompare(String(a.eventId)));
   const sent = Object.entries(notificationMap(state.notifications, "sent_events"))
-    .map(([eventId, item]) => ({eventId, ...(item && typeof item === "object" ? item : {})}))
+    .map(([eventId, item]) => ({...(item && typeof item === "object" ? item : {}), eventId}))
     .sort((a, b) => new Date(b.sent_at || 0) - new Date(a.sent_at || 0));
 
   $("navNotificationCount").textContent = pending.length;
