@@ -223,7 +223,7 @@ The comparison is therefore:
 
 **previous normalized hash vs current normalized hash**
 
-If extracted text stays the same but the fetched markup changes, the monitor records an `HTML_SOURCE_CHANGED` event. These markup-only changes appear in the dashboard but are not sent to AI or notifications by default, which helps avoid noisy alerts for cosmetic markup changes.
+If extracted text stays the same but the stable HTML comparison signature changes, the monitor records an `HTML_SOURCE_CHANGED` event. The signature normalizes Cloudflare's rotating JavaScript-detection Ray ID and timestamp fields, which are request metadata rather than page content. The raw HTML body and raw hash are still preserved for audit evidence. Other markup-only changes remain visible in the dashboard but are not sent to AI or notifications by default.
 
 Possible technical events include:
 
@@ -359,6 +359,7 @@ The important files are:
 | \`data/history/index.json\` | Compact run history |
 | \`data/history/<run_id>.json\` | Full historical run report |
 | \`data/notifications.json\` | Notification idempotency state |
+| \`data/notification-outbox.json\` | Durable queue for notifications not yet delivered |
 | \`data/http-discovery-output.txt\` | Latest HTTP discovery diagnostics |
 | \`data/stealth-output.txt\` | Browser crawler diagnostics |
 
@@ -748,11 +749,10 @@ exists in the GitHub Actions secrets.
 
 ### Notifications are not arriving
 
-Check:
+- Confirm the GitHub Actions secret named \`NTFY_TOPIC\` is set to the exact topic name (for example, \`RegMonitoringWebCrawlerNTFY\`).
+- Check ntfy availability and the delivery ledger in \`data/notifications.json\`.
+- Check \`data/notification-outbox.json\` for failed or undelivered candidates. Source-only HTML noise is intentionally not queued.
 
-- \`NTFY_TOPIC\`
-- ntfy availability
-- the notification ledger in \`data/notifications.json\`
 
 ### The dashboard looks stale
 

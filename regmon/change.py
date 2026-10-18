@@ -3,6 +3,7 @@ from __future__ import annotations
 import difflib
 import hashlib
 import json
+import re
 from pathlib import Path
 from bs4 import BeautifulSoup
 
@@ -12,13 +13,52 @@ MAX_HTML_DIFF_LINES = 1000
 def make_id(url: str) -> str:
     return hashlib.sha256(url.encode("utf-8")).hexdigest()
 
+
+# Cloudflare's JavaScript-detection challenge injects per-response Ray IDs and
+# encoded timestamps into an inline script. They change on virtually every
+# request but carry no page-content meaning. Stabilize only those two fields;
+# retain the rest of the HTML signature so real source/DOM changes are visible.
+_CF_CV_PARAMS = re.compile(r"window\.__CF\$cv\$params\s*=\s*\{[^}]*\}", re.DOTALL)
+
+
+def html_comparison_hash(value: str | bytes | None) -> str | None:
+    """Hash HTML after stabilizing Cloudflare's per-response challenge tokens.
+
+    Raw HTML remains preserved for snapshots and evidence. This comparison
+    signature prevents rotating Ray IDs/timestamps from creating false
+    HTML_SOURCE_CHANGED events while retaining other source differences.
+    """
+    if value is None:
+        return None
+    html = value.decode("utf-8", "replace") if isinstance(value, bytes) else str(value)
+
+    def stabilize_params(match: re.Match[str]) -> str:
+        block = match.group(0)
+        block = re.sub(
+            r"""(?<![\w$])r\s*:\s*(['"])[^'"]*\1""",
+            lambda item: "r:'<volatile-ray-id>'",
+            block,
+            count=1,
+        )
+        block = re.sub(
+            r"""(?<![\w$])t\s*:\s*(['"])[^'"]*\1""",
+            lambda item: "t:'<volatile-timestamp>'",
+            block,
+            count=1,
+        )
+        return block
+
+    stable_html = _CF_CV_PARAMS.sub(stabilize_params, html)
+    return hashlib.sha256(stable_html.encode("utf-8")).hexdigest()
+
 def classify_change(old: dict | None, current: dict) -> tuple[str, bool]:
     if old is None:
         return "NEW_URL", False
     if old.get("normalized_hash"):
         if old["normalized_hash"] != current.get("normalized_hash"):
             return "CHANGED_URL", False
-        old_html, new_html = old.get("html_hash"), current.get("html_hash")
+        old_html = old.get("html_comparison_hash") or old.get("html_hash")
+        new_html = current.get("html_comparison_hash") or current.get("html_hash")
         if old_html and new_html and old_html != new_html:
             return "HTML_SOURCE_CHANGED", False
         return "UNCHANGED_URL", False
@@ -82,6 +122,7 @@ def write_evidence(
             "normalized_hash": (before_record or {}).get("normalized_hash"),
             "raw_hash": (before_record or {}).get("raw_hash") or (before_record or {}).get("content_hash"),
             "html_hash": (before_record or {}).get("html_hash"),
+            "html_comparison_hash": (before_record or {}).get("html_comparison_hash"),
             "snapshot_location": (before_record or {}).get("snapshot_location"),
             "html_snapshot_location": (before_record or {}).get("html_snapshot_location"),
         },
@@ -89,6 +130,7 @@ def write_evidence(
             "normalized_hash": (after_record or {}).get("normalized_hash"),
             "raw_hash": (after_record or {}).get("raw_hash") or (after_record or {}).get("content_hash"),
             "html_hash": (after_record or {}).get("html_hash"),
+            "html_comparison_hash": (after_record or {}).get("html_comparison_hash"),
             "snapshot_location": (after_record or {}).get("snapshot_location"),
             "html_snapshot_location": (after_record or {}).get("html_snapshot_location"),
         },

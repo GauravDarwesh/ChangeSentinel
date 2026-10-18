@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from regmon.ai import AIConfig, analyze
-from regmon.change import build_event_id, classify_change, make_diff, make_id, write_evidence
+from regmon.change import build_event_id, classify_change, html_comparison_hash, make_diff, make_id, write_evidence
 from regmon.config import DEFAULT_CONFIG_PATH, SourceConfig, load_config
 from regmon.content import extract_content
 from regmon.discovery import canonical, discover
@@ -145,6 +145,7 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         "raw_hash": None,
         "normalized_hash": None,
         "html_hash": old.get("html_hash") if old else None,
+        "html_comparison_hash": old.get("html_comparison_hash") if old else None,
         "html_snapshot_location": old.get("html_snapshot_location") if old else None,
         "extraction_type": None,
         "extraction_error": None,
@@ -193,7 +194,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         if result.not_modified:
             if old:
                 for key in (
-                    "raw_hash", "normalized_hash", "html_hash", "html_snapshot_location",
+                    "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_snapshot_location",
                     "extraction_type", "snapshot_location", "evidence_location", "relevance"
                 ):
                     if key in old:
@@ -216,6 +217,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
                         item[key] = old[key]
             if extraction_type == "html":
                 item["html_hash"] = result.raw_hash
+                item["html_comparison_hash"] = html_comparison_hash(result.body)
                 return item, None, result.body
             return item, None, None
 
@@ -223,6 +225,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         item["normalized_hash"] = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
         html_body = result.body if extraction_type == "html" else None
         item["html_hash"] = result.raw_hash if html_body is not None else None
+        item["html_comparison_hash"] = html_comparison_hash(html_body)
         if html_body is None:
             item["html_snapshot_location"] = None
         item["relevance"] = triage(url, normalized, result.content_type)
@@ -233,7 +236,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         if old:
             for key in (
                 "http_status", "content_type", "content_length", "etag", "last_modified",
-                "raw_hash", "normalized_hash", "html_hash", "html_snapshot_location",
+                "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_snapshot_location",
                 "first_seen", "snapshot_location", "evidence_location", "relevance", "extraction_type"
             ):
                 if key in old:
@@ -379,6 +382,15 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
                 current[uid] = item
                 events.append({"event_id":event_id,"event_type":"EXTRACTION_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"error":item["extraction_error"]}})
                 continue
+
+            # Migrate older HTML inventory records lazily from their immutable
+            # snapshot so the first run with comparison signatures does not
+            # mistake a rotating Cloudflare challenge token for a source change.
+            if old and item.get("html_comparison_hash") and not old.get("html_comparison_hash"):
+                old_html = read_html_snapshot(old)
+                if old_html is not None:
+                    old = dict(old)
+                    old["html_comparison_hash"] = html_comparison_hash(old_html)
 
             event_type, migrated = classify_change(old, item)
             if event_type == "NEW_URL":
@@ -547,7 +559,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
             "source":{"id":source.id,"name":source.name,"regulator":source.regulator,"seeds":list(source.seed_urls),"allowed_prefixes":list(source.allowed_prefixes),"initial_baseline":initial_baseline},
             "discovery":discovery,
             "baseline_update_allowed":discovery.get("state") == "COMPLETE",
-            "change_detector":{"raw_hash":"SHA-256 retrieved response bytes","html_hash":"SHA-256 HTML response body; markup-only diffs are recorded separately","normalized_hash":"SHA-256 extracted normalized content","classification_hash":"normalized_hash with separate HTML_SOURCE_CHANGED events","http_validators":"ETag/Last-Modified used only for conditional fetch optimization"},
+            "change_detector":{"raw_hash":"SHA-256 retrieved response bytes","html_hash":"SHA-256 full HTML response body; retained for raw snapshots and evidence", "html_comparison_hash":"HTML comparison signature with volatile Cloudflare challenge IDs/timestamps stabilized","normalized_hash":"SHA-256 extracted normalized content","classification_hash":"normalized_hash with separate HTML_SOURCE_CHANGED events","http_validators":"ETag/Last-Modified used only for conditional fetch optimization"},
             "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
             "ai_contract":{"required_keys":["relevant","topic","change_type","summary","impact","effective_date","affected_scope","actions","reason"],"strict":True},
             "counts":counts,"events":events,"new_urls":[] if initial_baseline else new_items,"changed_urls":changed_items,"source_changed_urls":source_changed_items,"removed_urls":removed_items,"baseline_migrations":migration_items,"ai_results":sorted(ai_results,key=lambda x:x.get("event_id",""))
@@ -590,7 +602,7 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
         "counts":aggregate_counts,
         "discovery":[r["report"].get("discovery",{}) for r in source_results],
         "baseline_update_allowed":all(r["report"].get("baseline_update_allowed",False) for r in source_results),
-        "change_detector":{"classification_hash":"normalized_hash","html_hash":"stored full HTML response body with source-only events","http_validators":"ETag/Last-Modified are optimization hints only"},
+        "change_detector":{"classification_hash":"normalized_hash","html_hash":"stored full HTML response body", "html_comparison_hash":"volatile Cloudflare challenge IDs/timestamps stabilized before markup-only classification","http_validators":"ETag/Last-Modified are optimization hints only"},
         "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
         "ai_contract":source_results[0]["report"]["ai_contract"],
         "new_urls":[x for r in source_results for x in r["report"]["new_urls"]],
