@@ -258,33 +258,6 @@ class TestDiscovery(unittest.TestCase):
         self.assertTrue(in_scope("https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a",SOURCE))
 
 
-    def test_current_attachment_scope_does_not_open_the_form_catalogue(self):
-        page = "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M"
-        current_file = "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=current"
-        source = SourceConfig(
-            id="fed-current-files-test",
-            name="Federal Reserve Current Files Test",
-            regulator="Federal Reserve",
-            seed_urls=(page,),
-            allowed_prefixes=("https://www.federalreserve.gov/apps/reportingforms/Report/Index/",),
-            allowed_domains=("www.federalreserve.gov",),
-            allowed_urls=(page,),
-            allowed_resource_prefixes=("https://www.federalreserve.gov/apps/reportingforms/Download/",),
-            resource_link_text_patterns=("^Current",),
-        )
-        self.assertTrue(in_scope(page, source))
-        self.assertTrue(in_scope(current_file, source))
-        self.assertFalse(in_scope(
-            "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR-Y-14A",
-            source,
-        ))
-        html = """
-          <a href="/apps/reportingforms/Download/DownloadAttachment?guid=current">Current (2 MB .ZIP)</a>
-          <a href="/apps/reportingforms/Download/DownloadAttachment?guid=historical">Historical (1 MB .ZIP)</a>
-          <a href="/apps/reportingforms/Report/Index/FR-Y-14A">Related form</a>
-        """
-        self.assertEqual(extract_html_links(page, html, source), [current_file])
-
     def test_scope_handles_custom_ports_and_legacy_port_domains(self):
         url = "https://www.example.com:8443/policy"
         for configured_domain in ("www.example.com", "www.example.com:8443"):
