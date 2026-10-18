@@ -527,7 +527,7 @@ The live workflow expects:
 
 \`NTFY_TOPIC\`
 
-If no topic secret is supplied, the workflow uses its configured default topic.
+If no topic secret is supplied, alerts remain queued in the notification outbox and are not delivered until a topic is configured.
 
 The repository should never contain actual API keys or other credentials.
 
@@ -764,13 +764,21 @@ The dashboard is backed by files committed to the repository. Check the most rec
 
 This repository is an actively evolving monitoring engine rather than a generic drop-in crawler library.
 
-The current implementation is configured around EBA monitoring, but the architecture is intentionally source-driven so additional public regulatory or policy websites can be added through configuration.
+The current active source is a tightly bounded Federal Reserve reporting-forms pilot. Older EBA configurations and the large historical inventory remain preserved but inactive. The architecture is source-driven so additional public regulatory or policy websites can be added through configuration.
 
 The main components are:
 
 **discovery → fetching → extraction → deterministic comparison → evidence → relevance → AI → notifications → history → dashboard**
 
 ---
+
+# Notification delivery and operational safeguards
+
+Notification candidates are persisted in the repository's notification outbox. Successful ntfy sends are recorded in the delivery ledger; failed sends stay queued for later runs. Delivery is at-least-once, so a crash after remote acceptance but before committing state can produce a duplicate alert.
+
+The production workflow validates discovery metadata only for active sources selected in the current run. Historical inactive-source state must not block the active Federal Reserve pilot. Exact URL allowlists are included in checkpoint fingerprints and recovered inventories are filtered to the current scope.
+
+Manually registered URLs are bounded to one exact URL. Redirects are validated, and duplicate monitor registrations with different CSS selectors are rejected rather than silently ignored. DNS preflight reduces SSRF risk but does not fully prevent deliberate DNS rebinding; high-assurance deployments should add outbound network egress controls.
 
 ## License
 
