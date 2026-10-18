@@ -1059,7 +1059,7 @@ class TestAI(unittest.TestCase):
         self.assertEqual(result["status"], "ok")
         self.assertEqual(arguments["url"], "https://example.invalid/change-sentinel-ai-smoke-test")
         self.assertIn("Synthetic", arguments["regulator"])
-        self.assertIn("Periodic Reporting", arguments["diff"])
+        self.assertIn("Periodic Reporting\n+Synthetic fixture heading: Quarterly Reporting", arguments["diff"])
         self.assertEqual(arguments["config"], config)
 
 class TestNotifications(unittest.TestCase):
