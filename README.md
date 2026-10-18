@@ -371,7 +371,7 @@ The monitoring workflow commits this state back to the repository so each run le
 
 The project is designed to run without a permanently running server.
 
-There are two main workflows.
+There are four main workflows: CI, scheduled monitoring, AI integration testing, and dashboard deployment.
 
 ## \`RegMonitor CI\`
 
@@ -404,12 +404,14 @@ It:
 2. installs dependencies
 3. runs the tests
 4. compiles the Python code
-5. checks EBA reachability
-6. discovers the monitored site
-7. fetches and analyzes the discovered resources
-8. writes reports and evidence
-9. publishes notifications
-10. commits the updated monitoring state
+5. checks reachability of the selected active source's seed URLs
+6. discovers the monitored site within its configured allowlist
+7. fetches resources and extracts normalized content
+8. compares the content with the previous baseline
+9. runs structured AI analysis for new/substantively changed candidates (when configured)
+10. writes reports and evidence
+11. publishes notifications and preserves failed deliveries in the outbox
+12. commits the updated monitoring state
 
 ### Schedule
 
@@ -418,6 +420,24 @@ The default schedule is every six hours:
 \`0 */6 * * *\`
 
 The workflow also supports manual execution.
+
+## `AI Smoke Test`
+
+File:
+
+`.github/workflows/ai-smoke-test.yml`
+
+This manual, non-mutating workflow calls the configured OpenRouter model using a synthetic example and checks the same strict nine-field JSON contract used by the monitor. It does not crawl the regulator, change the baseline, write monitoring data, or send ntfy messages. It fails clearly if `OPENROUTER_API_KEY` is missing, the provider fails, or the model response is not valid against the schema.
+
+Use it after changing the AI provider/model or when you need to verify that AI interpretation is working independently of whether a real regulatory change happened. Set the repository secret `OPENROUTER_API_KEY` first.
+
+## `Deploy Monitoring Console`
+
+File:
+
+`.github/workflows/pages.yml`
+
+Publishes `index.html`, `dashboard-v2.html`, and `dashboard.js` to GitHub Pages when the dashboard code changes, or when manually dispatched. Monitoring JSON is fetched from the repository at runtime, so data-only monitoring commits update the dashboard without requiring a static-site rebuild.
 
 ---
 

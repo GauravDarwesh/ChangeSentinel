@@ -1,5 +1,6 @@
 """Structured AI analysis of regulatory changes."""
 from __future__ import annotations
+import argparse
 import json
 import os
 import time
@@ -69,3 +70,69 @@ def analyze(regulator: str, url: str, event_type: str, diff: str, current_text: 
             if attempt < config.attempts:
                 time.sleep(attempt)
     return {"status":"error","reason":str(last_error)}
+
+def run_smoke_test(config: AIConfig | None = None) -> dict:
+    """Exercise the configured model against synthetic, non-regulatory evidence."""
+    config = config or AIConfig(
+        timeout_seconds=int(os.getenv("AI_TIMEOUT_SECONDS", "60")),
+        attempts=int(os.getenv("AI_ATTEMPTS", "2")),
+        model=os.getenv("OPENROUTER_MODEL", "openrouter/free"),
+    )
+    return analyze(
+        regulator="Synthetic test fixture (not a real regulator)",
+        url="https://example.invalid/change-sentinel-ai-smoke-test",
+        event_type="CHANGED_URL",
+        diff=(
+            "--- before\n+++ after\n"
+            "-Synthetic fixture heading: Periodic Reporting\\n"
+            "+Synthetic fixture heading: Quarterly Reporting"
+        ),
+        current_text=(
+            "Synthetic test fixture only. No real regulator or regulatory obligation "
+            "is represented. The heading changed from Periodic Reporting to "
+            "Quarterly Reporting."
+        ),
+        config=config,
+    )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="ChangeSentinel AI validation tools")
+    parser.add_argument(
+        "--smoke-test",
+        action="store_true",
+        help="Call the configured OpenRouter model with synthetic evidence and validate the output schema",
+    )
+    args = parser.parse_args()
+    if not args.smoke_test:
+        parser.error("Use --smoke-test to run the non-mutating AI integration check")
+
+    config = AIConfig(
+        timeout_seconds=int(os.getenv("AI_TIMEOUT_SECONDS", "60")),
+        attempts=int(os.getenv("AI_ATTEMPTS", "2")),
+        model=os.getenv("OPENROUTER_MODEL", "openrouter/free"),
+    )
+    result = run_smoke_test(config)
+    if result.get("status") != "ok":
+        print(json.dumps({
+            "smoke_test": "failed",
+            "model": config.model,
+            "ai_status": result.get("status", "unknown"),
+            "reason": result.get("reason", "The model did not return a valid structured response"),
+        }, indent=2))
+        raise SystemExit(1)
+
+    analysis = result["analysis"]
+    print(json.dumps({
+        "smoke_test": "passed",
+        "model": config.model,
+        "schema_validated": True,
+        "relevant": analysis["relevant"],
+        "topic": analysis["topic"],
+        "summary": analysis["summary"],
+        "reason": analysis["reason"],
+    }, indent=2))
+
+
+if __name__ == "__main__":
+    main()

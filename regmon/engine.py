@@ -274,6 +274,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
             "ai_ok": 0,
             "ai_invalid": 0,
             "ai_error": 0,
+            "ai_skipped": 0,
             "ai_deferred": 0,
             "crawl_paused": 1 if state == "PAUSED" else 0,
             "crawl_degraded": 1 if state == "DEGRADED" else 0,
@@ -550,6 +551,7 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
         "ai_ok":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="ok"),
         "ai_invalid":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="invalid"),
         "ai_error":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="error"),
+        "ai_skipped":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="skipped"),
         "ai_deferred":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="deferred"),
         "crawl_paused":0,
     }
