@@ -2,7 +2,7 @@
 
 A configuration-driven web monitoring system that discovers public web pages, fetches their content, detects changes, uses AI to explain meaningful changes, sends notifications, and keeps a searchable monitoring history.
 
-The repository currently ships with the **European Banking Authority (EBA)** as the example/live source.
+The active bounded source is the **Federal Reserve reporting-forms pilot**. The previous EBA configurations and historical monitoring data are retained but inactive.
 
 [![RegMonitor CI](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/ci.yml)
 [![Regulatory Monitor](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/regulatory-monitor.yml/badge.svg)](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/regulatory-monitor.yml)
@@ -66,17 +66,12 @@ Each source can define:
 - fetch settings
 - AI limits
 
-The current EBA source starts at:
+The active source is deliberately limited to these two Federal Reserve pages:
 
-\`https://www.eba.europa.eu/homepage\`
+- https://www.federalreserve.gov/apps/reportingforms/review
+- https://www.federalreserve.gov/apps/reportingforms/recentupdates
 
-The current configuration uses:
-
-- same-host discovery
-- unlimited URL discovery (\`max_urls: 0\`)
-- \`/user/\` and \`/search\` exclusions
-- direct HTTP recursive discovery as the primary path
-- \`stealth-crawler\` as a browser fallback
+An exact URL allowlist prevents the crawler from expanding beyond those pages. The previous EBA full-site scope and seven-page pilot are inactive; their saved inventory and history are retained.
 
 Adding another monitored source is intended to be a configuration task rather than a rewrite of the monitoring engine.
 
@@ -420,11 +415,11 @@ The workflow also supports manual execution.
 
 The first run is special.
 
-The EBA source is configured with:
+The active Federal Reserve reporting-forms source is configured with:
 
 \`baseline_on_first_run: true\`
 
-That means the first successful inventory establishes the baseline.
+That means the first successful Federal Reserve inventory establishes the baseline.
 
 The purpose is to avoid generating hundreds or thousands of "new page" notifications simply because the system has never seen the site before.
 
