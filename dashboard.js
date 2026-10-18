@@ -247,6 +247,7 @@ function renderMetrics() {
   $("navChangeCount").textContent = events.length;
   $("monitorCount").textContent = state.items.length + (state.items.length === 1 ? " page" : " pages");
   $("footerStamp").textContent = "Latest stored report · " + fmt(state.report.generated_at);
+  renderMonitoringSignal();
 }
 function renderMonitorList() {
   const query = $("monitorSearch").value.trim().toLowerCase();
@@ -291,6 +292,100 @@ function renderMonitorList() {
       '<button class="monitor-open" data-monitor-id="' + esc(item.url_id) + '" type="button" aria-label="Open details for ' + esc(itemTitle(item)) + '"><span>Inspect</span><span aria-hidden="true">↗</span></button>' +
       '</article>';
   }).join("");
+}
+function nextScheduledScan(reference = new Date()) {
+  // The GitHub Actions schedule is 0 */6 * * * (UTC).
+  const next = new Date(Date.UTC(
+    reference.getUTCFullYear(),
+    reference.getUTCMonth(),
+    reference.getUTCDate(),
+    Math.floor(reference.getUTCHours() / 6) * 6,
+    0, 0, 0
+  ));
+  while (next.getTime() <= reference.getTime()) next.setUTCHours(next.getUTCHours() + 6);
+  return next;
+}
+function updateNextRunCountdown() {
+  const timeNode = $("nextRunTime");
+  const countdownNode = $("nextRunCountdown");
+  if (!timeNode || !countdownNode) return;
+  const next = nextScheduledScan();
+  const remainingMinutes = Math.max(0, Math.ceil((next.getTime() - Date.now()) / 60000));
+  timeNode.textContent = next.toLocaleString([], {
+    weekday: "short", month: "short", day: "numeric",
+    hour: "numeric", minute: "2-digit", timeZoneName: "short"
+  });
+  if (remainingMinutes >= 60) {
+    const hours = Math.floor(remainingMinutes / 60);
+    const minutes = remainingMinutes % 60;
+    countdownNode.textContent = "In " + hours + "h " + minutes + "m · schedule runs on UTC";
+  } else {
+    countdownNode.textContent = "In " + remainingMinutes + "m · schedule runs on UTC";
+  }
+}
+function renderMonitoringSignal() {
+  const items = state.items || [];
+  const statuses = items.map(item => ({ item, status: itemStatus(item) }));
+  const totals = {
+    stable: statuses.filter(entry => entry.status.kind === "ok").length,
+    changed: statuses.filter(entry => entry.status.kind === "change").length,
+    issue: statuses.filter(entry => entry.status.kind === "error").length,
+    waiting: statuses.filter(entry => entry.status.kind === "pending").length
+  };
+  $("signalStableCount").textContent = totals.stable;
+  $("signalChangedCount").textContent = totals.changed;
+  $("signalIssueCount").textContent = totals.issue;
+  $("signalWaitingCount").textContent = totals.waiting;
+  $("signalLinksCount").textContent = items.length;
+  $("signalReportLabel").textContent = state.report.run_id
+    ? "Latest stored run · " + String(state.report.run_id)
+    : (state.report.generated_at ? "Report updated " + relativeTime(state.report.generated_at) : "No stored report yet");
+
+  const maxDots = 64;
+  const visible = statuses.slice(0, maxDots);
+  const centerX = 150, centerY = 82;
+  const dots = visible.map((entry, index) => {
+    const angle = index * 2.399963229728653;
+    const radius = 25 + 40 * Math.sqrt((index + 1) / Math.max(visible.length, 1));
+    const x = (centerX + Math.cos(angle) * radius).toFixed(2);
+    const y = (centerY + Math.sin(angle) * radius * 0.78).toFixed(2);
+    const kind = entry.status.kind === "change" ? "changed"
+      : entry.status.kind === "error" ? "issue"
+      : entry.status.kind === "pending" ? "pending" : "stable";
+    const dotRadius = items.length > 48 ? 2.4 : items.length > 24 ? 3.2 : 4.2;
+    return '<circle class="signal-dot status-' + kind + '" cx="' + x + '" cy="' + y + '" r="' + dotRadius + '">' +
+      '<title>' + esc(itemTitle(entry.item) + " — " + entry.status.label) + '</title></circle>';
+  }).join("");
+  const dotsSummary = items.length > maxDots
+    ? "Showing " + maxDots + " representative markers for " + items.length + " monitored URLs."
+    : "One marker per monitored URL: " + totals.changed + " changed, " + totals.issue + " with issues, " + totals.waiting + " waiting.";
+  const ariaLabel = items.length + " monitored URLs. " + totals.changed + " links show changes, " +
+    totals.issue + " have issues, and " + totals.waiting + " are waiting for their first scan.";
+  $("signalVisual").innerHTML =
+    '<svg class="signal-svg" viewBox="0 0 300 166" role="img" aria-label="' + esc(ariaLabel) + '">' +
+      '<circle class="signal-ring" cx="150" cy="82" r="69"></circle>' +
+      '<circle class="signal-ring" cx="150" cy="82" r="47"></circle>' +
+      '<circle class="signal-ring" cx="150" cy="82" r="25"></circle>' +
+      '<path class="signal-crosshair" d="M150 8V156 M76 82H224"></path>' +
+      '<path class="signal-sweep" d="M150 82 L150 13 A69 69 0 0 1 198.8 33.2 Z"></path>' +
+      dots +
+      '<text class="signal-center-count" x="150" y="80">' + items.length + '</text>' +
+      '<text class="signal-center-label" x="150" y="95">URLS WATCHED</text>' +
+    '</svg>' +
+    '<span class="visually-hidden">' + esc(dotsSummary) + '</span>';
+  updateNextRunCountdown();
+}
+function setPdfViewerExpanded(expanded) {
+  const shell = $("pdfViewerShell");
+  if (!shell) return;
+  shell.classList.toggle("is-expanded", expanded);
+  document.body.classList.toggle("pdf-viewer-open", expanded);
+  const expandButton = shell.querySelector('[data-pdf-action="expand"]');
+  const closeButton = shell.querySelector('[data-pdf-action="close"]');
+  if (expandButton) expandButton.hidden = expanded;
+  if (closeButton) closeButton.hidden = !expanded;
+  if (expanded && closeButton) closeButton.focus();
+  if (!expanded && expandButton) expandButton.focus();
 }
 function snapshotURL(path) { return path ? bust(RAW + "/" + path) : ""; }
 async function readSnapshotFile(path, cache, asText) {
@@ -420,6 +515,7 @@ function renderDetailHeader(item) {
   });
 }
 async function loadSnapshot(item) {
+  document.body.classList.remove("pdf-viewer-open");
   const body = $("detailBody");
   if (state.pdfPreviewUrl) {
     URL.revokeObjectURL(state.pdfPreviewUrl);
@@ -463,7 +559,16 @@ async function loadSnapshot(item) {
         const bytes = await response.arrayBuffer();
         if (selectedItem()?.url_id !== item.url_id || state.detailTab !== "snapshot" || state.snapshotMode !== "preview") return;
         state.pdfPreviewUrl = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
-        canvas.outerHTML = '<iframe class="snapshot-frame" title="Saved PDF snapshot" src="' + esc(state.pdfPreviewUrl) + '" loading="lazy"></iframe>';
+        canvas.outerHTML =
+          '<div class="pdf-viewer-shell" id="pdfViewerShell">' +
+          '<div class="pdf-viewer-toolbar">' +
+          '<div class="pdf-viewer-toolbar-copy"><strong>Saved PDF document</strong><span>Use the document controls to zoom and scroll. Expand the reader for more room on smaller screens.</span></div>' +
+          '<div class="pdf-viewer-actions">' +
+          '<button class="btn pdf-expand" data-pdf-action="expand" type="button" aria-label="Expand PDF reader">Expand reader ↗</button>' +
+          '<button class="btn pdf-close" data-pdf-action="close" type="button" aria-label="Close expanded PDF reader" hidden>Close reader ×</button>' +
+          '</div></div>' +
+          '<iframe class="snapshot-frame pdf-snapshot-frame" title="Saved PDF snapshot" src="' + esc(state.pdfPreviewUrl) + '" loading="lazy"></iframe>' +
+          '</div>';
       } catch (error) {
         if (selectedItem()?.url_id !== item.url_id || state.detailTab !== "snapshot") return;
         canvas.outerHTML = emptyState("Could not load saved PDF preview", String(error.message || error), "!");
@@ -775,6 +880,7 @@ function setSelected(id) {
   renderMonitorList();
   renderDetailBody();
   renderViews();
+  window.scrollTo({ top: 0, behavior: "auto" });
   const item = selectedItem();
   try {
     if (item) history.replaceState(null, "", "#monitor=" + encodeURIComponent(item.url_id));
@@ -786,6 +892,7 @@ function setView(view) {
   if (view !== "monitors") state.selectedId = "";
   else state.selectedId = "";
   renderViews();
+  window.scrollTo({ top: 0, behavior: "auto" });
   if (view === "changes") renderChangeRoute();
   if (view === "runs") renderRuns();
   if (view === "notifications") renderNotifications();
@@ -918,11 +1025,21 @@ $("detailTabs").addEventListener("click", event => {
   renderDetailBody();
 });
 $("detailBody").addEventListener("click", event => {
+  const pdfAction = event.target.closest("[data-pdf-action]");
+  if (pdfAction) {
+    setPdfViewerExpanded(pdfAction.dataset.pdfAction === "expand");
+    return;
+  }
   const button = event.target.closest("[data-snapshot-mode]");
   if (!button) return;
   state.snapshotMode = button.dataset.snapshotMode;
   const item = selectedItem();
   if (item && state.detailTab === "snapshot") loadSnapshot(item);
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && document.body.classList.contains("pdf-viewer-open")) {
+    setPdfViewerExpanded(false);
+  }
 });
 $("changeItems").addEventListener("click", event => {
   const button = event.target.closest("[data-event-url]");
@@ -948,3 +1065,4 @@ $("addMonitorForm").addEventListener("submit", submitAddMonitor);
 
 loadData(true);
 window.setInterval(() => loadData(false), 120000);
+window.setInterval(updateNextRunCountdown, 60000);
