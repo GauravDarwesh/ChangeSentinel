@@ -63,11 +63,13 @@ def in_scope(url: str, source: SourceConfig) -> bool:
     }
     if hostname not in allowed_hosts:
         return False
-    if not any(value.startswith(prefix) for prefix in source.allowed_prefixes):
+    resource_match = any(value.startswith(prefix) for prefix in source.allowed_resource_prefixes)
+    if not resource_match and not any(value.startswith(prefix) for prefix in source.allowed_prefixes):
         return False
-    # An exact URL allowlist can bound a pilot to a known finite set of pages.
-    # Canonicalize both sides so fragments/tracking parameters do not create duplicates.
-    if source.allowed_urls and value not in {canonical(url) for url in source.allowed_urls}:
+    # Exact URL allowlists still bound page crawling. A separately configured
+    # resource prefix permits only linked attachments under that narrow path;
+    # the link-text filter below decides which document links are admitted.
+    if source.allowed_urls and value not in {canonical(url) for url in source.allowed_urls} and not resource_match:
         return False
     value_path = parsed.path.rstrip("/") or "/"
     for prefix in source.excluded_prefixes:
@@ -110,10 +112,33 @@ def extract_html_links(page_url: str, html: str, source: SourceConfig) -> list[s
         if parsed.scheme.lower() not in {"http", "https"} or not parsed.netloc:
             continue
         normalized = canonical(absolute)
+        is_resource = any(normalized.startswith(prefix) for prefix in source.allowed_resource_prefixes)
+        if is_resource and source.resource_link_text_patterns:
+            link_text = tag.get_text(" ", strip=True)
+            try:
+                matches_resource_label = any(
+                    re.search(pattern, link_text, flags=re.IGNORECASE) is not None
+                    for pattern in source.resource_link_text_patterns
+                )
+            except re.error as exc:
+                raise ValueError(f"Invalid resource link-text pattern in source {source.id}: {exc}") from exc
+            if not matches_resource_label:
+                continue
         if in_scope(normalized, source) and normalized not in seen:
             seen.add(normalized)
             links.append(normalized)
     return links
+
+
+def _is_resource_url(url: str, source: SourceConfig) -> bool:
+    value = canonical(url)
+    return any(value.startswith(prefix) for prefix in source.allowed_resource_prefixes)
+
+
+def _needs_link_discovery(url: str, source: SourceConfig) -> bool:
+    # Resource links are part of the monitoring inventory, but are not HTML
+    # pages to recurse into even when the download endpoint has no file suffix.
+    return _is_probably_html_url(url) and not _is_resource_url(url, source)
 
 
 def _is_probably_html_url(url: str) -> bool:
@@ -219,6 +244,8 @@ def _config_fingerprint(source: SourceConfig) -> str:
     payload = {
         "seed_urls": list(source.seed_urls),
         "allowed_prefixes": list(source.allowed_prefixes),
+        "allowed_resource_prefixes": list(source.allowed_resource_prefixes),
+        "resource_link_text_patterns": list(source.resource_link_text_patterns),
         "allowed_domains": list(source.allowed_domains),
         "allowed_urls": sorted(canonical(url) for url in source.allowed_urls),
         "excluded_prefixes": list(source.excluded_prefixes),
@@ -410,7 +437,7 @@ def _load_http_checkpoint(source: SourceConfig, data_dir: Path) -> dict | None:
             discovered = _load_inventory(source, data_dir)
             if discovered:
                 retry_pending = deque(_retryable_failure_urls(source, data_dir))
-                pending = deque(url for url in discovered if _is_probably_html_url(url))
+                pending = deque(url for url in discovered if _needs_link_discovery(url, source))
                 print(
                     "HTTP discovery recovered from incomplete inventory because the "
                     f"checkpoint at {path} was missing/invalid: "
@@ -561,7 +588,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 _reset_inventory(source, data_dir)
                 _reset_failure_ledger(source, data_dir)
                 _append_inventory(source, data_dir, discovered, 0)
-                pending = deque(url for url in discovered if _is_probably_html_url(url))
+                pending = deque(url for url in discovered if _needs_link_discovery(url, source))
                 retry_pending = deque()
                 processed_count = 0
                 failed_pages = 0
@@ -601,7 +628,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 if not in_scope(value, source) or value in discovered:
                     continue
                 discovered.append(value)
-                if _is_probably_html_url(value):
+                if _needs_link_discovery(value, source):
                     pending.append(value)
             _append_inventory(source, data_dir, discovered, 0)
 
@@ -663,7 +690,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                     discovered_set.add(link)
                     discovered.append(link)
                     new_links.append(link)
-                    if _is_probably_html_url(link):
+                    if _needs_link_discovery(link, source):
                         pending.append(link)
                         queued.add(link)
 
@@ -784,7 +811,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                                 discovered_set.add(link)
                                 discovered.append(link)
                                 new_links.append(link)
-                                if _is_probably_html_url(link):
+                                if _needs_link_discovery(link, source):
                                     retry_pending.append(link)
                         _append_inventory(
                             source,
