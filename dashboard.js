@@ -270,21 +270,25 @@ function renderMonitorList() {
     );
     return;
   }
-  $("monitorList").innerHTML = all.map(item => {
+  $("monitorList").innerHTML = all.map((item, index) => {
     const status = itemStatus(item);
     const source = sourceForItem(item);
-    const initial = (urlHost(item).replace(/^www\./i, "").charAt(0) || "W").toUpperCase();
+    const initial = (urlHost(item).replace(/^www\\./i, "").charAt(0) || "W").toUpperCase();
     const host = urlHost(item);
-    return '<article class="monitor-card">' +
+    const httpStatus = item.http_status == null ? "—" : item.http_status;
+    return '<article class="monitor-card" data-status-kind="' + esc(status.kind) + '">' +
+      '<div class="monitor-number" aria-hidden="true">' + String(index + 1).padStart(2, "0") + '</div>' +
       '<div class="monitor-main"><div class="site-badge" aria-hidden="true">' + esc(initial) + '</div>' +
       '<div class="monitor-copy"><div class="monitor-title-row"><h3 class="monitor-title">' + esc(itemTitle(item)) + '</h3>' +
       '<span class="status-pill ' + esc(status.cls) + '">' + esc(status.label) + '</span></div>' +
       '<div class="monitor-url">' + esc(item.canonical_url) + '</div>' +
-      '<div class="monitor-bottom"><span>◉ ' + esc(host) + '</span><span>◷ Checked ' + esc(relativeTime(item.last_checked)) + '</span>' +
-      '<span>HTTP ' + esc(item.http_status == null ? "—" : item.http_status) + '</span>' +
-      (source.name ? '<span>' + esc(source.name) + '</span>' : '') +
+      '<div class="monitor-bottom">' +
+      '<span><span class="monitor-meta-key">HOST</span>' + esc(host) + '</span>' +
+      '<span><span class="monitor-meta-key">LAST CHECK</span>' + esc(relativeTime(item.last_checked)) + '</span>' +
+      '<span><span class="monitor-meta-key">HTTP</span>' + esc(httpStatus) + '</span>' +
+      (source.name ? '<span><span class="monitor-meta-key">SOURCE</span>' + esc(source.name) + '</span>' : '') +
       '</div></div></div>' +
-      '<button class="monitor-open" data-monitor-id="' + esc(item.url_id) + '" type="button" aria-label="Open details for ' + esc(itemTitle(item)) + '">View page details <span aria-hidden="true">→</span></button>' +
+      '<button class="monitor-open" data-monitor-id="' + esc(item.url_id) + '" type="button" aria-label="Open details for ' + esc(itemTitle(item)) + '"><span>Inspect</span><span aria-hidden="true">↗</span></button>' +
       '</article>';
   }).join("");
 }
