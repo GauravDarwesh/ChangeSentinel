@@ -7,11 +7,12 @@ const ENDPOINTS = {
   inventory: RAW + "/data/latest.json",
   history: RAW + "/data/history/index.json",
   notifications: RAW + "/data/notifications.json",
+  outbox: RAW + "/data/notification-outbox.json",
   config: RAW + "/config/sources.json"
 };
 const $ = id => document.getElementById(id);
 const state = {
-  report: {}, inventory: {}, history: [], notifications: {}, config: {},
+  report: {}, inventory: {}, history: [], notifications: {}, outbox: {}, config: {},
   items: [], selectedId: "", view: "monitors", filter: "ALL", detailTab: "snapshot",
   snapshotMode: "preview", snapshotCache: {}, htmlCache: {}, evidenceCache: {},
   toastTimer: null
