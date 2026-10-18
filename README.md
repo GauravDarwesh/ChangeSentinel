@@ -223,7 +223,7 @@ The comparison is therefore:
 
 **previous normalized hash vs current normalized hash**
 
-If extracted text stays the same but the fetched markup changes, the monitor records an `HTML_SOURCE_CHANGED` event. These markup-only changes appear in the dashboard but are not sent to AI or notifications by default, which helps avoid noisy alerts for cosmetic markup changes.
+If extracted text stays the same but the stable HTML comparison signature changes, the monitor records an `HTML_SOURCE_CHANGED` event. The signature normalizes Cloudflare's rotating JavaScript-detection Ray ID and timestamp fields, which are request metadata rather than page content. The raw HTML body and raw hash are still preserved for audit evidence. Other markup-only changes remain visible in the dashboard but are not sent to AI or notifications by default.
 
 Possible technical events include:
 
