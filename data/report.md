@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261008T001939Z-7ee2a591
-Generated: 2026-10-08T00:19:39.127665+00:00
+Run: 20261018T055344Z-f77fcf6f
+Generated: 2026-10-18T05:53:44.029019+00:00
 
 ## Aggregate counts
 
@@ -13,27 +13,24 @@ Generated: 2026-10-08T00:19:39.127665+00:00
 | ai_ok | 0 |
 | baseline_migration | 0 |
 | changed | 0 |
-| crawl_degraded | 1 |
-| crawl_failed | 0 |
 | crawl_paused | 0 |
-| discovered | 68557 |
-| discovery_incomplete | 1 |
+| discovered | 7 |
 | extraction_error | 0 |
 | fetch_error | 0 |
-| forced_full_fetch | 0 |
-| new | 0 |
+| forced_full_fetch | 7 |
+| new | 7 |
 | not_modified | 0 |
-| relevance_candidates | 0 |
+| relevance_candidates | 7 |
 | removed | 0 |
 | unchanged | 0 |
 
 ## Sources
 
-### European Banking Authority — Full Public Site
+### European Banking Authority — Bounded Regulatory Pilot
 
 - Regulator: European Banking Authority
-- Discovered: 68557
+- Discovered: 7
 - Changed: 0
-- New: 0
+- New: 7
 - Removed: 0
 - Fetch errors: 0

@@ -1,0 +1,16 @@
+{
+  "source_id": "eba-regulatory-pilot",
+  "method": "http-resumable",
+  "state": "COMPLETE",
+  "discovered": 7,
+  "html_processed": 7,
+  "successful_pages": 7,
+  "failed_pages": 0,
+  "capped": false,
+  "pending": 0,
+  "unresolved_failures": 0,
+  "checkpoint_schema_version": 2,
+  "config_fingerprint": "b65500a0b80b2e97245a0d07daceabaa672722a5f2f0c6cac223a5a044c460c0",
+  "inventory": "data/discovery/eba-regulatory-pilot-inventory-*.txt",
+  "failure_ledger": "data/discovery/eba-regulatory-pilot-failures.jsonl"
+}
