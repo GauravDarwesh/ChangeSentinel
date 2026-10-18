@@ -52,7 +52,8 @@ class TestDashboardNotificationContract(unittest.TestCase):
             'title="Saved PDF snapshot"',
             'data-snapshot-mode="preview"',
             'data-snapshot-mode="text"',
-            "item.file_snapshot_location || item.html_snapshot_location",
+            'const filePath = item.file_snapshot_location || "";',
+            "const snapshotPath = filePath || htmlPath || textPath;",
         ):
             with self.subTest(token=token):
                 self.assertIn(token, source)
