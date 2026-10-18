@@ -85,6 +85,50 @@ function matchingEvents(item) {
     event.url === url || event.canonical_url === url || (event.url_id && event.url_id === item.url_id)
   );
 }
+function aiResultForEvent(event) {
+  const results = Array.isArray(state.report.ai_results) ? state.report.ai_results : [];
+  if (!event || !event.event_id) return null;
+  return results.find(result => result && result.event_id === event.event_id) || null;
+}
+function renderAIReview(event) {
+  const result = aiResultForEvent(event);
+  if (!result) return "";
+
+  const ai = result.ai && typeof result.ai === "object" ? result.ai : {};
+  const status = String(ai.status || "unknown").toLowerCase();
+  const analysis = ai.analysis && typeof ai.analysis === "object" ? ai.analysis : null;
+  if (status !== "ok" || !analysis) {
+    const labels = {
+      skipped: "AI analysis skipped",
+      error: "AI analysis failed",
+      invalid: "AI response invalid",
+      deferred: "AI analysis deferred"
+    };
+    return '<section class="ai-review is-unavailable" aria-label="AI assessment status">' +
+      '<div class="ai-review-head"><h4 class="ai-review-title">AI assessment</h4>' +
+      '<span class="ai-review-status">' + esc(labels[status] || ("AI status: " + status)) + '</span></div>' +
+      '<p class="ai-review-message">' + esc(ai.reason || "No diagnostic was recorded for this result.") + '</p></section>';
+  }
+
+  const relevant = analysis.relevant === true;
+  const fields = [
+    {label: "Topic", value: analysis.topic},
+    {label: "Change type", value: analysis.change_type},
+    {label: "Summary", value: analysis.summary, wide: true},
+    {label: "Impact", value: analysis.impact, wide: true},
+    {label: "Effective date", value: analysis.effective_date},
+    {label: "Affected scope", value: analysis.affected_scope},
+    {label: "Suggested actions", value: analysis.actions, wide: true},
+    {label: "Reason", value: analysis.reason, wide: true}
+  ];
+  return '<section class="ai-review ' + (relevant ? "is-relevant" : "is-irrelevant") + '" aria-label="AI assessment">' +
+    '<div class="ai-review-head"><h4 class="ai-review-title">AI assessment</h4>' +
+    '<span class="ai-review-status">' + (relevant ? "Relevant" : "Not flagged as relevant") + '</span></div>' +
+    '<div class="ai-review-grid">' + fields.map(field =>
+      '<div class="ai-review-field' + (field.wide ? " ai-review-field-wide" : "") + '">' +
+      '<label>' + esc(field.label) + '</label><p>' + esc(field.value || "Not stated") + '</p></div>'
+    ).join("") + '</div></section>';
+}
 function itemStatus(item) {
   if (item.pending_registration) return { label: "Awaiting first scan", cls: "is-neutral", icon: "◷", kind: "pending" };
   if (item.fetch_error || item.extraction_error || (item.http_status && Number(item.http_status) >= 400)) {
@@ -393,7 +437,7 @@ function renderChangesForItem(item) {
     const boxId = "evidence-" + String(event.event_id || "").replace(/[^a-zA-Z0-9_-]/g, "");
     return '<article class="event-card"><div class="event-symbol ' + (/ERROR/.test(event.event_type || "") ? "is-error" : ["CHANGED_URL","HTML_SOURCE_CHANGED","NEW_URL","REMOVED_URL"].includes(event.event_type) ? "is-warning" : "") + '">' +
       esc(event.event_type === "HTML_SOURCE_CHANGED" ? "⌁" : event.event_type === "NEW_URL" ? "+" : event.event_type === "CHANGED_URL" ? "↗" : /ERROR/.test(event.event_type || "") ? "!" : event.event_type === "REMOVED_URL" ? "−" : "✓") +
-      '</div><div><div class="event-top"><div><h3 class="event-title">' + esc(summary) + '</h3><div class="event-type">' + esc(event.event_type || "EVENT") + '</div></div><div class="event-time">' + esc(fmt(event.timestamp)) + '</div></div>' +
+      '</div><div><div class="event-top"><div><h3 class="event-title">' + esc(summary) + '</h3><div class="event-type">' + esc(event.event_type || "EVENT") + '</div></div><div class="event-time">' + esc(fmt(event.timestamp)) + '</div></div>' + renderAIReview(event) +
       (event.evidence_location ? '<div class="event-footer"><a href="' + esc(REPO + "/blob/main/" + event.evidence_location) + '" target="_blank" rel="noopener noreferrer">Open evidence JSON ↗</a></div><div class="diff-list" id="' + esc(boxId) + '"><div class="diff-loading">Loading text and HTML source diffs…</div></div>' :
       '<div class="event-summary">No evidence file is attached to this event.</div>') + '</div></article>';
   }).join("") + (events.length > 20 ? '<div class="diff-empty">Showing the 20 most recent events for this page.</div>' : '') + '</div>';
@@ -479,7 +523,7 @@ function renderChangeRoute() {
       '</div></div><div class="event-time">' + esc(fmt(event.timestamp)) + '</div></div><div class="event-url">' + esc(event.url || "") +
       '</div><div class="event-summary">' + esc((event.ai && event.ai.analysis && event.ai.analysis.summary) || event.summary ||
         (event.event_type === "HTML_SOURCE_CHANGED" ? "The HTML markup changed while extracted text remained the same." : "A monitoring event was recorded for this URL.")) +
-      '</div><div class="event-footer"><button class="btn" data-event-url="' + esc(event.url || event.canonical_url || "") + '" type="button">Inspect this page →</button>' +
+      '</div>' + renderAIReview(event) + '<div class="event-footer"><button class="btn" data-event-url="' + esc(event.url || event.canonical_url || "") + '" type="button">Inspect this page →</button>' +
       (event.evidence_location ? ' <a class="btn btn-quiet" href="' + esc(REPO + "/blob/main/" + event.evidence_location) + '" target="_blank" rel="noopener noreferrer">Open evidence file ↗</a>' : '') +
       '</div></div></article>';
   }).join("");
