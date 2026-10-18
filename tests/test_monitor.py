@@ -977,6 +977,7 @@ class TestSourceOnlyNotifications(unittest.TestCase):
 
 class TestAI(unittest.TestCase):
     @patch("regmon.ai.requests.post")
+    @patch.dict("os.environ", {"OPENROUTER_API_KEY": "test-key"})
     def test_openrouter_401_returns_actionable_auth_diagnostic(self, mock_post):
         from regmon.ai import analyze
         response = Mock()
