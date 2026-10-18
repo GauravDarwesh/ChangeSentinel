@@ -61,7 +61,7 @@ jobs:
         run: python -m pip install -r requirements.txt
 
       # CI validates code changes and pull requests. Keep per-scan work focused on monitoring.
-      - name: EBA pilot URL preflight
+      - name: Selected source URL preflight
         run: |
           python - <<'PY'
           import json
