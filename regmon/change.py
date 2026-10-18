@@ -18,15 +18,15 @@ def make_id(url: str) -> str:
 # encoded timestamps into an inline script. They change on virtually every
 # request but carry no page-content meaning. Stabilize only those two fields;
 # retain the rest of the HTML signature so real source/DOM changes are visible.
-_CF_CV_PARAMS = re.compile(r"window\\.__CF\\$cv\\$params\\s*=\\s*\\{[^}]*\\}", re.DOTALL)
+_CF_CV_PARAMS = re.compile(r"window\.__CF\$cv\$params\s*=\s*\{[^}]*\}", re.DOTALL)
 
 
 def html_comparison_hash(value: str | bytes | None) -> str | None:
-    """Hash HTML after removing known volatile Cloudflare challenge metadata.
+    """Hash HTML after stabilizing Cloudflare's per-response challenge tokens.
 
-    The raw HTML body and raw HTML hash are still retained separately for
-    evidence. This signature is only for deciding whether markup-only changes
-    are real enough to classify as HTML_SOURCE_CHANGED.
+    Raw HTML remains preserved for snapshots and evidence. This comparison
+    signature prevents rotating Ray IDs/timestamps from creating false
+    HTML_SOURCE_CHANGED events while retaining other source differences.
     """
     if value is None:
         return None
@@ -35,13 +35,13 @@ def html_comparison_hash(value: str | bytes | None) -> str | None:
     def stabilize_params(match: re.Match[str]) -> str:
         block = match.group(0)
         block = re.sub(
-            r"(?<![\\w$])r\\s*:\\s*(['\\"])[^'\\"]*\\1",
+            r"(?<![\w$])r\s*:\s*(['"])[^'"]*\1",
             lambda item: "r:'<volatile-ray-id>'",
             block,
             count=1,
         )
         block = re.sub(
-            r"(?<![\\w$])t\\s*:\\s*(['\\"])[^'\\"]*\\1",
+            r"(?<![\w$])t\s*:\s*(['"])[^'"]*\1",
             lambda item: "t:'<volatile-timestamp>'",
             block,
             count=1,
@@ -50,7 +50,6 @@ def html_comparison_hash(value: str | bytes | None) -> str | None:
 
     stable_html = _CF_CV_PARAMS.sub(stabilize_params, html)
     return hashlib.sha256(stable_html.encode("utf-8")).hexdigest()
-
 
 def classify_change(old: dict | None, current: dict) -> tuple[str, bool]:
     if old is None:
@@ -124,7 +123,7 @@ def write_evidence(
             "raw_hash": (before_record or {}).get("raw_hash") or (before_record or {}).get("content_hash"),
             "html_hash": (before_record or {}).get("html_hash"),
             "html_comparison_hash": (before_record or {}).get("html_comparison_hash"),
-            "snapshot_location: (before_record or {}).get("snapshot_location"),
+            "snapshot_location": (before_record or {}).get("snapshot_location"),
             "html_snapshot_location": (before_record or {}).get("html_snapshot_location"),
         },
         "after": {
@@ -132,7 +131,7 @@ def write_evidence(
             "raw_hash": (after_record or {}).get("raw_hash") or (after_record or {}).get("content_hash"),
             "html_hash": (after_record or {}).get("html_hash"),
             "html_comparison_hash": (after_record or {}).get("html_comparison_hash"),
-            "snapshot_location: (after_record or {}).get("snapshot_location"),
+            "snapshot_location": (after_record or {}).get("snapshot_location"),
             "html_snapshot_location": (after_record or {}).get("html_snapshot_location"),
         },
         "diff": make_diff(before_text, after_text),
