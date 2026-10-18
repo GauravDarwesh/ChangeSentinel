@@ -652,7 +652,6 @@ def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
         page_texts = []
         raw_page_texts = []
         low_text_indexes = []
-        page_images = []
         for index, page in enumerate(pages):
             try:
                 raw_text = page.extract_text() or ""
@@ -664,7 +663,6 @@ def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
             # Keep the common digital-PDF path cheap: only inspect resources and
             # content streams on pages that actually need OCR triage.
             has_image = _page_has_image_xobject(page) if is_low_text else False
-            page_images.append(has_image)
             if is_low_text and has_image:
                 low_text_indexes.append(index)
 
