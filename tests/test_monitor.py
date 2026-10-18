@@ -1820,5 +1820,53 @@ class TestAdaptiveContentExtraction(unittest.TestCase):
         )
 
 
+
+
+class TestExtractorVersionMigration(unittest.TestCase):
+    def test_pdf_parser_upgrade_forces_unconditional_refetch(self):
+        from regmon.content import CONTENT_EXTRACTOR_VERSION
+        from regmon.engine import make_current_item
+
+        url = "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=version-test"
+        body = b"%PDF-1.7 synthetic bytes"
+        old = {
+            "content_type": "application/pdf",
+            "extraction_type": "pdf",
+            "extractor_version": "legacy",
+            "raw_hash": "same-pdf-hash",
+            "normalized_hash": "old-layout-text",
+            "snapshot_location": "data/snapshots/old.txt",
+            "file_snapshot_location": "data/snapshots/files/old.pdf",
+            "last_full_fetch": "2026-10-18T10:00:00+00:00",
+            "etag": '"old-etag"',
+            "last_modified": "Sat, 17 Oct 2026 12:00:00 GMT",
+        }
+        response = Mock(
+            status_code=200,
+            content_type="application/pdf",
+            content_length=len(body),
+            etag='"same-etag"',
+            last_modified="Sun, 18 Oct 2026 10:00:00 GMT",
+            raw_hash="same-pdf-hash",
+            not_modified=False,
+            body=body,
+        )
+        with patch("regmon.engine.should_force_full_fetch", return_value=False), \
+             patch("regmon.engine.fetch", return_value=response) as mock_fetch, \
+             patch("regmon.engine.extract_content", return_value=("Reflowed text", "pdf", None)):
+            item, text, html_body, file_body = make_current_item(
+                url, old, SOURCE, "2026-10-18T10:10:00+00:00"
+            )
+
+        self.assertTrue(item["extractor_baseline_forced"])
+        self.assertTrue(item["full_fetch_forced"])
+        self.assertIsNone(mock_fetch.call_args.kwargs["etag"])
+        self.assertIsNone(mock_fetch.call_args.kwargs["last_modified"])
+        self.assertEqual(item["extractor_version"], CONTENT_EXTRACTOR_VERSION)
+        self.assertEqual(text, "Reflowed text")
+        self.assertEqual(file_body, body)
+        self.assertIsNone(html_body)
+
+
 if __name__=="__main__":
     unittest.main()
