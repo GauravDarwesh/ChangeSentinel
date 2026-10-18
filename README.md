@@ -2,7 +2,7 @@
 
 A configuration-driven web monitoring system that discovers public web pages, fetches their content, detects changes, uses AI to explain meaningful changes, sends notifications, and keeps a searchable monitoring history.
 
-The active monitoring scope has two bounded Federal Reserve sources: a two-page reporting-forms overview pilot and a five-page selected-detail pilot based on recent form updates. The previous EBA configurations and historical monitoring data are retained but inactive.
+The active monitoring scope has two bounded Federal Reserve sources: a two-page reporting-forms overview pilot and a five-page selected-detail pilot based on recent form updates. For those five detail pages, the second pilot also follows only links labelled "Current" under the Federal Reserve reporting-forms download route, so the monitor compares their current forms/instructions as well as the landing-page text. The previous EBA configurations and historical monitoring data are retained but inactive.
 
 [![RegMonitor CI](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/ci.yml)
 [![Regulatory Monitor](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/regulatory-monitor.yml/badge.svg)](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/regulatory-monitor.yml)
@@ -79,7 +79,7 @@ A separate selected-detail pilot adds only these five form pages that the Federa
 - https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M
 - https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q
 
-Both sources use exact URL allowlists, so the detail pilot will not recursively expand into the full catalogue. Its first successful run establishes a quiet baseline rather than treating the five already-existing pages as new changes. The previous EBA full-site scope and seven-page pilot are inactive; their saved inventory and history are retained.
+The detail pilot's landing pages remain restricted to the five exact URLs above. Only their links whose visible text begins with "Current" are admitted from the separate `/apps/reportingforms/Download/` path; historical downloads and links to other form pages are excluded. Current PDFs and ZIP bundles can therefore be compared without crawling the full catalogue. Its first successful run establishes a quiet baseline rather than treating these pre-existing pages and documents as changes. The previous EBA full-site scope and seven-page pilot are inactive; their saved inventory and history are retained.
 
 Adding another monitored source is intended to be a configuration task rather than a rewrite of the monitoring engine.
 
@@ -188,6 +188,9 @@ Currently supported:
 - PPTX
 - CSV
 - plain text
+- ZIP bundles containing supported PDF, Office Open XML, CSV, JSON, XML, and text files (validated in memory with member-count, path, and uncompressed-size limits)
+
+ZIP members are never extracted to the filesystem. Unsupported or unsafe archive contents become explicit extraction errors, preserving the prior trusted baseline instead of silently comparing partial content.
 
 The monitor preserves the complete fetched HTML response body as an immutable `.html` snapshot, while separately extracting normalized text for regulatory-content comparison. The dashboard can render the stored HTML response, show its source code, and display a formatted HTML source diff alongside an extracted-text diff.
 
