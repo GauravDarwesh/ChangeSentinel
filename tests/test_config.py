@@ -18,6 +18,30 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(source.include_selector, "main .policy")
         self.assertEqual(source.ignore_selectors, (".cookie-banner", ".breadcrumb"))
 
+    def test_selected_reporting_forms_detail_pilot_is_bounded(self):
+        _, sources = load_config(DEFAULT_CONFIG_PATH)
+        source_id = "fed-reporting-forms-detail-pilot"
+        self.assertIn(source_id, sources)
+        source = sources[source_id]
+        expected_urls = (
+            "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C",
+            "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028bs",
+            "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D",
+            "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M",
+            "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q",
+        )
+        self.assertTrue(source.active)
+        self.assertTrue(source.baseline_on_first_run)
+        self.assertEqual(source.seed_urls, expected_urls)
+        self.assertEqual(set(source.allowed_urls), set(expected_urls))
+        self.assertEqual(len(source.allowed_urls), 5)
+        self.assertEqual(source.max_urls, 0)
+        self.assertEqual(
+            source.allowed_prefixes,
+            ("https://www.federalreserve.gov/apps/reportingforms/Report/Index/",),
+        )
+        self.assertEqual(source.allowed_domains, ("www.federalreserve.gov",))
+
     def test_eba_sources_are_inactive_and_federal_reserve_pilot_is_bounded(self):
         _, sources = load_config(DEFAULT_CONFIG_PATH)
 

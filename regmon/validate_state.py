@@ -8,6 +8,50 @@ from pathlib import Path
 from typing import Any
 
 
+def _has_prior_source_state(source_id: str, discovery_dir: Path) -> bool:
+    """Return whether any durable state proves this source has run before."""
+    data_dir = discovery_dir.parent
+
+    latest_path = data_dir / "latest.json"
+    if latest_path.exists():
+        try:
+            latest = json.loads(latest_path.read_text(encoding="utf-8"))
+            source_groups = latest.get("sources")
+            if isinstance(source_groups, dict) and source_id in source_groups:
+                return True
+            # Compatibility with an older flat inventory.
+            if isinstance(latest, dict) and any(
+                isinstance(record, dict) and record.get("source_id") == source_id
+                for record in latest.values()
+            ):
+                return True
+        except (OSError, json.JSONDecodeError):
+            # Invalid persisted inventory is not treated as evidence of a clean bootstrap.
+            return True
+
+    report_path = data_dir / "reports" / f"{source_id}.json"
+    if report_path.exists():
+        return True
+
+    history_path = data_dir / "history" / "index.json"
+    if history_path.exists():
+        try:
+            history = json.loads(history_path.read_text(encoding="utf-8"))
+            if isinstance(history, list) and any(
+                isinstance(row, dict) and row.get("source_id") == source_id
+                for row in history
+            ):
+                return True
+        except (OSError, json.JSONDecodeError):
+            return True
+
+    # A checkpoint, shard, or failure ledger means discovery has started and must
+    # not be silently treated as a never-run source if its main metadata vanished.
+    if any(discovery_dir.glob(f"{source_id}*")):
+        return True
+    return False
+
+
 def validate_selected_state(
     requested: str,
     config_path: Path,
@@ -34,7 +78,13 @@ def validate_selected_state(
     for source_id in selected_ids:
         metadata_path = discovery_dir / f"{source_id}.json"
         if not metadata_path.exists():
-            raise ValueError(f"Discovery metadata missing for selected source {source_id}")
+            if _has_prior_source_state(source_id, discovery_dir):
+                raise ValueError(f"Discovery metadata missing for previously monitored source {source_id}")
+            # A source added to configuration has no state until its first monitoring
+            # run. It is safe to bootstrap it; the production workflow will perform
+            # discovery before its post-run state validation.
+            states.append((source_id, "UNINITIALIZED"))
+            continue
         payload = json.loads(metadata_path.read_text(encoding="utf-8"))
         if str(payload.get("source_id") or source_id) != source_id:
             raise ValueError(f"Discovery metadata source mismatch for {source_id}")

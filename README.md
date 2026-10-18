@@ -2,7 +2,7 @@
 
 A configuration-driven web monitoring system that discovers public web pages, fetches their content, detects changes, uses AI to explain meaningful changes, sends notifications, and keeps a searchable monitoring history.
 
-The active bounded source is the **Federal Reserve reporting-forms pilot**. The previous EBA configurations and historical monitoring data are retained but inactive.
+The active monitoring scope has two bounded Federal Reserve sources: a two-page reporting-forms overview pilot and a five-page selected-detail pilot based on recent form updates. The previous EBA configurations and historical monitoring data are retained but inactive.
 
 [![RegMonitor CI](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/ci.yml)
 [![Regulatory Monitor](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/regulatory-monitor.yml/badge.svg)](https://github.com/GauravDarwesh/ChangeSentinel/actions/workflows/regulatory-monitor.yml)
@@ -66,12 +66,20 @@ Each source can define:
 - fetch settings
 - AI limits
 
-The active source is deliberately limited to these two Federal Reserve pages:
+The core reporting-forms pilot is deliberately limited to these two overview pages:
 
 - https://www.federalreserve.gov/apps/reportingforms/review
 - https://www.federalreserve.gov/apps/reportingforms/recentupdates
 
-An exact URL allowlist prevents the crawler from expanding beyond those pages. The previous EBA full-site scope and seven-page pilot are inactive; their saved inventory and history are retained.
+A separate selected-detail pilot adds only these five form pages that the Federal Reserve's recent-updates page identifies as recently updated:
+
+- https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C
+- https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028bs
+- https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D
+- https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M
+- https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q
+
+Both sources use exact URL allowlists, so the detail pilot will not recursively expand into the full catalogue. Its first successful run establishes a quiet baseline rather than treating the five already-existing pages as new changes. The previous EBA full-site scope and seven-page pilot are inactive; their saved inventory and history are retained.
 
 Adding another monitored source is intended to be a configuration task rather than a rewrite of the monitoring engine.
 
@@ -710,7 +718,7 @@ Monitoring state, history, and evidence remain inspectable through normal Git hi
 
 # Current scope and limitations
 
-The current EBA setup represents the **reachable public site from the configured seed within the configured scope**.
+For recursive sources, the inventory represents the **reachable public site from the configured seed within the configured scope**. The current Federal Reserve sources are deliberately exact-URL pilots rather than recursive whole-site crawls.
 
 That means:
 
