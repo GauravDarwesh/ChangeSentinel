@@ -273,7 +273,7 @@ function renderMonitorList() {
   $("monitorList").innerHTML = all.map((item, index) => {
     const status = itemStatus(item);
     const source = sourceForItem(item);
-    const initial = (urlHost(item).replace(/^www\\./i, "").charAt(0) || "W").toUpperCase();
+    const initial = (urlHost(item).replace(/^www\./i, "").charAt(0) || "W").toUpperCase();
     const host = urlHost(item);
     const httpStatus = item.http_status == null ? "—" : item.http_status;
     return '<article class="monitor-card" data-status-kind="' + esc(status.kind) + '">' +
