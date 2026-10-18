@@ -1,0 +1,253 @@
+Board of Governors of the Federal Reserve System Instructions for Preparation of Survey of Terms of Bank Lending to Farmers Reporting Form FR 2028B Effective August 2012
+General Instructions
+Purpose The Federal Reserve System uses data from this survey to measure the cost of agricultural borrowing from banks for the analysis of developments in farm credit markets.
+Survey Scope This survey covers loans to farmers when funds are advanced to borrowers during the report period. The report period covers the first full business week of February, May, August, and November.
+Loans to farmers comprises ‘‘Loans to finance agricultural production and other loans to farmers’’ in item 3 and ‘‘Loans secured by farmland’’ in item 1.b of Schedule RC-C, Part I, of the quarterly Report of Condition (Call Report; FFIEC 031 and 041). For banks with foreign offices, the reference is to Column B of Schedule RC-C.
+Include loans to farmers made at all offices of your institution in the fifty states of the United States and the District of Columbia.
+‘‘U.S. addressee’’ encompasses borrowers domiciled in the fifty states of the Unites States, the District of Columbia, or U.S. territories and possessions, including U.S. offices or subsidiaries of non-U.S. (foreign) businesses.
+Include:
+• New loans, takedowns under revolving credit agreements, notes written under credit lines, and renewals.
+Renewals include new loans under revolving credit agreements that roll over earlier loans, including conversions of revolving credits into term loans.
+• Loans disbursed during the report period, even if the loans are not entered onto your institution’s books or loan record system until after the report period.
+• Your institution’s portion of loan participations and syndications (See the glossary entry for syndications in the instructions for the Call Report).
+Exclude:
+• Loans denominated in non-U.S. currencies.
+• Loans of less than $3,000.
+• Loans disbursed before the report period that are entered onto your institution’s books or loan record system during the report period.
+• Purchased loans and factored loans (that is, purchased accounts receivable).
+• Loans made by an international division or an international operations subsidiary, or Edge or Agreement subsidiary of your institution.
+• Loans made to non-U.S. addressees (farmers domiciled outside of the fifty states of the United States, the District of Columbia, or U.S. territories and possessions).
+• Loans resulting from unplanned overdrafts to deposit accounts. Note, however, that loans extended as part of a cash management program that would be classified as ‘‘Loans to finance agricultural production and other loans to farmers’’ or ‘‘Loans secured by farmland’’ on the Call Report should be reported on the survey.
+• Existing variable-rate loans, on which the rate changes during the survey week reflecting a change in the base rate. For example, an outstanding loan advance that has an interest rate tied to prime should not be reported when the prime rate changes during the survey week.
+FR 2028B GEN-1
+General Instructions August 2012
+Line Item Instructions
+Column number:
+1. Date made. Enter the calendar date the funds reported in column 2 were disbursed, also known as the effective date of the loan. For example, for a loan made on May 3, enter ‘‘0503.’’ For a renewal of an existing loan, enter the date of the renewal, not the date of the original loan.
+Do not report the date the loan was entered onto your institution’s books or loan record system if that date differs from the date of disbursement.
+2. Face amount of loan. Enter the face amount of the loan in dollars.
+If the note represents the first advance of a loan agreement or an addition to an existing loan, enter only the amount advanced on the date shown in column 1. A loan advance or takedown refers to the actual drawing of funds by a borrower under a loan commitment agreement.
+If the loan represents a renewal or renegotiation of an existing loan, enter only the amount renewed or renegotiated on the date in column 1.
+If the loan is a participation or syndication (as defined in column 12), enter only your institution’s portion of the loan in this column.
+3. Nominal rate of interest. Enter the stated nominal rate of interest—not the effective rate or APR—on the date that the loan was disbursed (reported in column 1). The stated nominal rate usually is shown in the note or agreement. If the loan amount reported in column 2 is an advance, takedown, or renewal under an existing loan commitment, enter the rate of interest for this advance only. For example, if the stated rate of interest is 50 basis points over prime, the nominal rate of interest reported here should be the prime rate for the day of the takedown plus 50 basis points.
+Report the rate in percent to three decimal places; for example, for a loan made at 8-1/4 percent, enter ‘‘8.250.’’
+4. Frequency with which interest is compounded or paid. Enter the frequency with which interest is compounded, or the frequency with which interest is paid to the lender, whichever is greater.
+Enter if interest is compounded or paid: 0 Only at maturity 1 Annually 2 Semiannually 4 Quarterly 12 Monthly 24 Semimonthly 52 Weekly 360 or 365 Daily For example, if interest is calculated on a simple basis (with no compounding over the period of repayment) and is paid monthly, enter ‘‘12’’ for monthly. Similarly, if interest is calculated on a simple basis and paid quarterly, enter ‘‘4’’ for quarterly.
+5. Next date on which the loan rate may be recalculated.
+Enter the first date in YYYY/MM/DD format on which the rate on the loan will be recalculated to reflect changes in the base rate, if any.
+For a loan rate that can be recalculated at any time (as with many prime-based loans), enter the date made, as reported in column 1.
+If the interest rate on the loan is fixed for a period less than the maturity of the loan (for example, a loan that matures in 90 days but has a rate that is FR 2028B LI-1 Line Item Instructions August 2012
+recalculated every 30 days relative to the prime rate), enter the date on which the interest rate can first be recalculated.
+If the interest rate is fixed for the life of the loan, enter the loan’s date of maturity, as reported in column 6.
+If the interest rate is fixed and the loan has no stated date of maturity, enter ‘‘0.’’
+6. Maturity date. Enter either the date in YYYY/ MM/DD format of maturity or the date of the final repayment of the loan amount. Enter the year, month, and day on which the loan matures.
+For loans made under a revolving loan facility or other types of commitments, enter the maturity date of the takedown advanced on the date reported in column 1, not the date of termination of the commitment.
+For renewals, enter the maturity date of the renewal made on the date reported in column 1, not the maturity date of the original loan.
+If a revolving credit is converted to a term loan during the survey week, enter the maturity date of the new term loan.
+For loans with no stated maturity, enter ‘‘0’’ in columns 6 and 8.
+7. Termination options.
+(a) Check ‘‘yes’’ under ‘‘Callable’’ when, according to the terms of the agreement, the lender can call or renegotiate the terms of the loan before maturity. Otherwise, check ‘‘no’’ under ‘‘Callable.’’ Check ‘‘no’’ if the lender’s ability to call or renegotiate the loan is contingent on a change in the status of the borrower (for example, an increase in the borrower’s debt/equity ratio).
+(b) Check ‘‘yes’’ under ‘‘Prepayment penalty’’ when the borrower must pay a penalty or fee (sometimes called a breakage fee) in order to repay or reprice the loan before its scheduled maturity or the next scheduled date on which the rate is recalculated (if any). If there is no such fee or penalty, check ‘‘no’’ under ‘‘Prepayment penalty.’’
+8. Number of scheduled repayments over term of loan. Include the number of scheduled repayments of principal over the term of the loan. Exclude interest-only payments.
+For loans made under a revolving loan facility, enter the number of repayments scheduled for the takedown advanced on the date reported in column 1. Do not include any payments scheduled for the facility prior to the date reported in column 1.
+For loans with a single scheduled repayment of principal, enter ‘‘1.’’ If repayments are not explicitly scheduled, enter ‘‘0.’’ For loans with no stated maturity, enter ‘‘0’’ in columns 6 and 8.
+9. Commitment status. Commitments are broadly defined to include all official promises to lend that are expressly conveyed, orally or in writing, to the borrower. Commitments generally fall into two categories: formal commitments and informal lines of credit.
+A commitment is defined as a formal agreement, usually evidenced by a binding contract, to lend a specified amount, frequently at a predetermined spread over a specific base rate. It requires that the borrower meet covenants in the contract and pay a fee on the unused credit available. These include revolving credits under which the borrower may draw and repay loans for the duration of the contract.
+A line of credit is defined as an informal arrangement under which the lender agrees to lend within a set credit limit and to quote a rate on demand for a takedown amount and maturity requested by the borrower.
+Authorizations or internal guidance lines, where the customer is not informed of the amount, arenot to be considered as commitments.
+If the loan was made under a formal or informal commitment so defined, check ‘‘yes.’’ If the loan was not made under a formal or informal commitment, check ‘‘no.’’
+10. Federal insurance status. Check whether the loan was fully or partially insured or guaranteed by the Consolidated Farm Service Agency (column 10.a) or any other agency or department of the U.S. government including wholly-owned government corporations (column 10.b). If the loan was not insured by an Line Item Instructions LI-2 FR 2028B Line Item Instructions August 2012
+agency or department of the U.S. government, check ‘‘Not insured by U.S. agencies or departments (column 10.c).’’
+11. Security status. Check the appropriate space.
+(a) ‘‘Farm real estate’’ applies when the loan would be classified in Schedule RC-C of the Call Report as item 1.b.
+(b) ‘‘Other collateral’’ applies when the loan is secured by collateral other than farm real estate.
+(c) ‘‘Not secured’’ applies when the loan is not secured by collateral of any kind.
+12. Syndication or participation status. The terms ‘‘syndication’’ and ‘‘participation’’ encompasses a variety of arrangements among institutions to make loans. When each participating lender agrees in advance to fund and be at risk only up to a specified percentage of the total credit and the contract is executed by all participants and the borrower, the arrangement is often referred to as a syndication.
+When a lead lender originates the transaction and is the only party to the contract with the borrower and sells shares as prearranged with others, the arrangement is referred to as a participation. If the loan amount reported represents your institution’s portion of a participation or syndication, check whether it was originated by your institution or by other lenders. If the loan does not represent a participation or syndication with other lenders, check ‘‘Not Syndicated or Participated.’’
+13. Primary purpose of loan. Check the appropriate space to indicate the one classification which best describes the borrower’s primary use of the loan funds.
+(a) ‘‘Feeder livestock’’ applies when a loan is used primarily to purchase feeder cattle, feeder pigs, or feeder lambs to be fattened for slaughter.
+(b) ‘‘Other livestock’’ applies when a loan is used primarily to purchase poultry and livestock other than feeder livestock.
+(c) ‘‘Other current operating expenses’’ applies when a loan is used primarily to finance such items as current crop production expenses and the care and feeding of livestock (including poultry).
+(d) ‘‘Farm machinery and equipment’’ applies when a loan is used primarily to finance purchase of tractors, trucks, machinery, and other farm equipment, such as irrigation equipment and equipment for structural facilities (for example, automated feeding equipment).
+(e) ‘‘Farm real estate’’ applies when a loan is used primarily to purchase or improve farm real estate.
+(f) ‘‘ All other loans’’ applies when a loan is used for purposes not listed above as well as loans for which the primary purpose is unknown.
+14. Risk rating. If your institution assigns internal risk ratings to farm loans, enter the numerical designation from the list provided below that most closely matches the definition of the internal rating assigned to this loan. Do not enter your institution’s own internal risk rating.
+If your institution rates loans, but a particular loan is unrated, or not yet rated, enter ‘‘0’’ for that loan.
+If your institution does not assign internal risk ratings to farm loans, either (a) leave this column blank or (b) use the categories presented below to make the assignment.
+The definitions provided here take account of both the characteristics of the borrower and the protections provided in the loan contract. Note that the definitions are intended to characterize ranges of risk; hence the definition of your institution’s internal rating for a loan probably will not exactly match any of the provided definitions. Enter the numerical designation that corresponds most closely to the internal rating of your institution.
+The risk rating categories provided here are not intended to establish a supervisory standard for the maintenance or reporting of internal risk rating systems.
+Minimal risk (enter ‘‘1’’). Loans in this category have virtually no chance of resulting in a loss. They would have a level of risk similar to a loan with the following characteristics:  The customer has been with your institution for many years and has an excellent credit history.
+ The customer’s cash flow is steady and well in excess of required debt repayments plus other fixed charges.
+Line Item Instructions
+FR 2028B LI-3
+Line Item Instructions August 2012
+ The customer has an AA or higher public debt rating.
+ The customer has excellent access to alternative sources of finance at favorable terms.
+ The customer has excellent access to alternative sources of finance at favorable terms.
+ The management is of uniformly high quality and has unquestioned character.
+ The collateral, if required, is cash or cash equivalent and is equal to or exceeds the value of the loan.
+ The guarantor, if required, would achieve approximately this rating if borrowing from your institution.
+Low risk (enter ‘‘2’’). Loans in this category are very unlikely to result in a loss. They would have a level of risk similar to a loan with the following characteristics:  The customer has an excellent credit history.
+ The customer’s cash flow is steady and comfortably exceeds required debt repayments plus other fixed charges.
+ The customer has a BBB or higher public debt rating.
+ The customer has good access to alternative sources of finance at favorable terms.
+ The management is of high quality and has unquestioned character.
+ The collateral, if required, is sufficiently liquid and has a large enough margin to make very likely the recovery of the full amount of the loan in the event of default.
+ The guarantor, if required, would achieve approximately this rating if borrowing from your institution.
+Moderate risk (enter ‘‘3’’). Loans in this category have little chance of resulting in a loss. This category should include the average loan, under average economic conditions, at the typical lender. Loans in this category would have a level of risk similar to a loan with the following characteristics:  The customer has a good credit history.
+ The customer’s cash flow may be subject to cyclical conditions, but is adequate to meet required debt repayments plus other fixed charges even after a limited period of losses or in the event of a somewhat lower trend in earnings.
+ The customer has limited access to the capital markets.
+ The customer has some access to alternative sources of finance at reasonable terms.
+ The firm has good management in important positions.
+ Collateral, which would usually be required, is sufficiently liquid and has a large enough margin to make likely the recovery of the value of the loan in the event of default.
+ The guarantor, if required, would achieve approximately this rating if borrowing from your institution.
+Acceptable risk (enter ‘‘4’’). Loans in this category have a limited chance of resulting in a loss. They would have a level of risk similar to a loan with the following characteristics:  The customer has only a fair credit rating but no recent credit problems.
+ The customer’s cash flow is currently adequate to meet required debt repayments, but it may not be sufficient in the event of significant adverse developments.
+ The customer does not have access to the capital markets.
+ The customer has some limited access to alternative sources of finance possibly at unfavorable terms.
+ Some management weakness exists.
+ Collateral, which would generally be required, is sufficient to make likely the recovery of the value of the loan in the event of default, but liquidating the collateral may be difficult or expensive.
+ The guarantor, if required, would achieve this rating or lower if borrowing from your institution.
+Special mention or classified asset (enter ‘‘5’’).
+Loans in this category would generally fall into the examination categories: ‘‘special mention,’’ ‘‘substandard,’’ ‘‘doubtful,’’ or ‘‘loss.’’ They would primarily be work-out loans, as it is highly unlikely that new loans would fall into this category.
+15. Location of Borrower. Enter the two character state abbreviation where the borrower is located.
+For a complete list of state abbreviations, please see the Federal Information Processing Standards Publication 5-2 (FIPS 5-2) at www.itl.nist.gov/fipspubs/fip5-2.htm. If the location Line Item Instructions LI-4 FR 2028B Line Item Instructions August 2012
+of the borrower is unknown or the loan was made under syndication or participation, leave as blank.
+Line Item Instructions
+FR 2028B LI-5
+Line Item Instructions August 2012
+Questions and Answers
+Survey Scope
+(1) The survey covers the first full business weeks of February, May, August, and November. Do we report loans made each day?
+A. Report loans made only on the days your Federal Reserve Bank asks you to report; depending on the size of your institution, it may negotiate the number of days on which loans made should be reported. Once this determination is made, loans should be reported on consistent days each quarter.
+(2) It is burdensome to eliminate loans of less than $3,000 from our report. May we include them?
+A. Yes, you may include loans of less than $3,000 if it is easier for you to do so.
+(3) When is a drawdown under a line of credit a rollover? When should we report such loans on the FR 2028B?
+A. A new drawdown under a line of credit that is used to pay off a previous drawdown is a rollover and should be reported. Many drawdowns priced off of the prime rate have no stated maturity, and so they do not need to be rolled over. Note: Outstanding prime-based loans should not be reported when the prime rate changes. Similarly, term loans that reprice from time to time are not new loans, and so such loans should not be reported when they reprice.
+(4) Should we report farm loans disbursed under overdraft facilities?
+A. On the Call Report, loans resulting from unintentional overdrafts are excluded from ‘‘Loans to finance agricultural production and other loans to farmers,’’ and ‘‘Loans secured by farmland’’ (they are reported in other loans), so they should not be reported here. However, loans extended under cash management arrangements that would be included in these items on the Call Report should be reported if they exceed the $3,000 threshold for inclusion on the FR 2028B.
+(5) Loans are posted to our computerized record system with a lag of a few days. Can we report the loans that are posted to our computerized record system during the survey week rather than loans that are disbursed during the survey week?
+A. No. The lag between the date of disbursement and the date the loan is posted would lead to errors since some of the reported loans would not have been extended during the survey week. As a result, their terms would not necessarily be similar to those on loans that were extended during the survey week.
+Column 1: Date made
+(6) Can we report the date the loan is posted rather than the date the loan was disbursed?
+A. No, because then the Federal Reserve would compare the rates charged on the loans to market rates on the days the loans were posted rather than the days the loans were disbursed. Because market rates can move significantly from day to day, this reporting error could lead to errors in the measurement of loan spreads. In addition, for loans with short maturities, this type of misreporting can lead to loans having reported dates of maturity before the reported date that they were made.
+Column 3: Nominal rate of interest
+(7) Our institution calculates an effective loan rate for internal purposes. Should we simply report that rate?
+FR 2028B Q&A-1
+Questions and Answers August 2012
+A. No, report the stated nominal rate on the loan.
+The Federal Reserve will calculate effective rates on a consistent basis for all respondents based on the nominal rate and compounding frequency reported on the FR 2028B.
+Column 4: Frequency with which interest is compounded or paid
+(8) At our institution interest is sometimes calculated and accrued in an interest receivables account more frequently than the balance of that account is paid off by the borrower. Should the frequency of compounding be reported as the frequency with which interest is accrued in the interest receivables account or the frequency with which the borrower pays the accrued interest?
+A. In this case the frequency to report depends on whether interest is charged on the account balance in the interest receivables account. If interest is charged on the account balance, then you should report the frequency with which interest is accrued in the receivables account. If interest is not charged on the account balance, then report the frequency with which the borrower pays the accrued interest.
+Column 5: Next date on which the loan rate may be recalculated
+(9) Rates on some loans at our institution adjust in ways not covered in the instructions. For example, the rates on some loans are tied to the prime rate as of the first day of each month. How should we report the next date on which the loan rate may be recalculated in this case?
+A. Generally, report the first date on which the rate to be charged is subject to change. In the example, this date would be the first of the next month after the loan was made.
+Column 7: Termination options
+(10) If our institution can call the loan, but only on certain prespecified dates, such as at the end of the year, should the loan be reported as ‘‘callable’’?
+A. Yes, for the purposes of the survey, a loan is callable if the lender can call or renegotiate the terms of the loan at its discretion, even if that discretion can only be exercised from time to time.
+(11) The terms on some loans made by our institution automatically reset based on changes in the characteristics of the borrower, such as its interest coverage ratio. Should such loans be reported as ‘‘callable’’?
+A. No, such automatic resetting of loan terms does not constitute calling or renegotiating the loan.
+(12) Loans at our institution can be called or renegotiated if the borrower violates a loan covenant.
+Should such loans be reported as ‘‘callable’’?
+A. No, only loans that can be called or renegotiated solely at the discretion of the lender (although perhaps only at prespecified dates, as discussed in question 10) should be reported as ‘‘callable.’’
+(13) At our institution, fixed-rate loans can be prepaid at the borrower’s discretion, but the borrower has to make up the difference between the interest that would have been paid on the loan over its remaining term and the interest that our institution can earn over the same period by investing the amount of the prepayment. Does this arrangement constitute a prepayment fee?
+A. Yes, such a loan should be reported as having a prepayment fee.
+Column 9: Commitment status
+(14) Sometimes our institution makes loans as part of a participation, and we do not know the commitment status. In such cases, what should we report as the status of the commitment?
+A. In this case, enter ‘‘no.’’.
+Column 11: Security status
+(15) On farm loans our institution often requires the principals of the business borrowing the money to provide personal guarantees for repayment.
+Should these loans be classified as secured?
+A. No, the loan should be classified as secured only if it is backed by specific assets.
+(16) Our institution does not consider a loan to be collateralized if the collateral is very small relative to the size of the loan, or if we believe that Questions and Answers Q&A-2 FR 2028B Questions and Answers August 2012
+the collateral is unlikely to be collected in the event of default. Should such loans be classified as secured when reported on the FR 2028B?
+A. No, you may use your institution’s definition of whether or not a loan is collateralized.
+Column 14: Risk rating
+(17) Our institution does not rate loans. Should we nevertheless report risk ratings based on the definitions provided in the instructions?
+A. If your institution does not find it excessively burdensome, such ratings would be valued by the Federal Reserve. However, respondents that do not have internal ratings need not provide risk ratings on the FR 2028B.
+(18) Our institutions’ internal rating system does not match the ratings provided in the instructions.
+Can we report our institutions’ internal ratings?
+A. No. Please use the definitions provided in the instructions. The reported ratings have to be based on a common set of definitions so that the Federal Reserve can understand the meaning of the ratings assigned, calculate average ratings across institutions, and make comparisons of ratings over time.
+(19) The definition of our institution’s internal ratings do not line up with the definitions provided in the instructions. How should we translate the ratings?
+A. It is inevitable that there be some slippage between the internal ratings of individual lenders and the common definitions used on the FR 2028B.
+For each internal rating at your institution, report on the FR 2028B the rating provided in the instructions with the definition that matches most closely.
+(20) Our institution reports hundreds of loans each quarter, how can we take the time to judge the riskiness of each of them when preparing our report?
+A. It should not be necessary to exercise any judgment when preparing the report. An employee of your institution familiar with your internal riskrating system should prepare a correspondence, or mapping, from your internal risk ratings to the ratings defined in the instructions. With that correspondence, you can convert the internal ratings into the common ratings without any additional judgment. Of course, if your institution changes the definitions of its internal risk ratings, the correspondence will have to be adjusted. Please check before each survey week to see if the definitions of your internal ratings have changed.
+A worksheet is provided for your institution’s use in mapping your internal risk ratings to the ratings defined for the FR 2028B.
+(21) Our institution does not rate loans until after they have been made, hence we cannot include this information on the FR 2028B. How should we report risk ratings?
+A. If your institution does not have loan risk ratings available at the time of the survey, then it should follow the instructions for institutions that do not rate loans (see the survey instructions and question 17).
+(22) The risk ratings on our loans change over time, reflecting changes in customers’ balance sheets and business prospects. Do we need to provide updates?
+A. The survey only collects information on ratings when loans are disbursed. Do not provide updated information on loan risk ratings unless the original data reported were in error.
+(23) Our institution’s ratings are limited to pass or not pass. How should we map these ratings into the common ratings?
+A. In this case, follow the instructions for institutions that do not rate loans (see the survey instructions and question 17).
+(24) How should we rate a loan that is quite risky in terms of the probability of default, but has excellent collateral?
+A. The risk rating reported on the FR 2028B should take into account all protections provided in the loan contract. In this case, the loan should be reported as not very risky because the excellent collateral makes it very unlikely that your institution will sustain a loss.
+(25) Our institution’s internal risk ratings are for borrowers rather than for loans, and so do not Questions and Answers FR 2028B Q&A-3 Questions and Answers August 2012
+[TABLE]
+| | the collateral is unlikely to be collected in the | | spondence,youcanconverttheinternalratingsinto |
+| --- | --- | --- | --- |
+| | event of default. Should such loans be classified | | the common ratings without any additional judg- |
+| | assecuredwhenreportedontheFR2028B? | | ment. Of course, if your institution changes the |
+| | | | definitionsofitsinternalriskratings,thecorrespon- |
+| | A. No, you may use your institution’s definition of | | |
+| | whetherornotaloaniscollateralized. | | dencewillhavetobeadjusted.Pleasecheckbefore |
+| | | | each survey week to see if the definitions of your |
+| | | | internalratingshavechanged. |
+| Colu | mn 14: Risk rating | | A worksheet is provided for your institution’s use |
+| (17) | Our institution does not rate loans. Should we | | in mapping your internal risk ratings to the ratings |
+| | nevertheless report risk ratings based on the | | definedfortheFR2028B. |
+| | definitionsprovidedintheinstructions? | (21) | Our institution does not rate loans until after |
+| | A. If your institution does not find it excessively | | they have been made, hence we cannot include |
+| | burdensome, such ratings would be valued by the | | this information on the FR 2028B. How should |
+| | FederalReserve.However,respondentsthatdonot | | wereportriskratings? |
+| | have internal ratings need not provide risk ratings | | A.Ifyourinstitutiondoesnothaveloanriskratings |
+| | ontheFR2028B. | | available at the time of the survey, then it should |
+| (18) | Ourinstitutions’internalratingsystemdoesnot | | follow the instructions for institutions that do not |
+| | match the ratings provided in the instructions. | | rateloans(seethesurveyinstructionsandquestion |
+| | Canwereportourinstitutions’internalratings? | | 17). |
+| | A. No. Please use the definitions provided in the | (22) | The risk ratings on our loans change over time, |
+| | instructions. The reported ratings have to be based | | reflecting changes in customers’ balance sheets |
+| | on a common set of definitions so that the Federal | | and business prospects. Do we need to provide |
+| | Reserve can understand the meaning of the ratings | | updates? |
+| | assigned, calculate average ratings across institu- | | A. The survey only collects information on ratings |
+| | tions,andmakecomparisonsofratingsovertime. | | when loans are disbursed. Do not provide updated |
+| (19) | The definition of our institution’s internal rat- | | information on loan risk ratings unless the original |
+| | ingsdonotlineupwiththedefinitionsprovided | | datareportedwereinerror. |
+| | intheinstructions.Howshouldwetranslatethe | (23) | Our institution’s ratings are limited to pass or |
+| | ratings? | | not pass. How should we map these ratings into |
+| | A. It is inevitable that there be some slippage | | thecommonratings? |
+| | between the internal ratings of individual lenders | | |
+| | | | A. In this case, follow the instructions for institu- |
+| | andthecommondefinitionsusedontheFR2028B. | | tions that do not rate loans (see the survey instruc- |
+| | For each internal rating at your institution, report | | tionsandquestion17). |
+| | ontheFR2028Btheratingprovidedintheinstruc- | | |
+| | tionswiththedefinitionthatmatchesmostclosely. | (24) | How should we rate a loan that is quite risky in |
+| | | | terms of the probability of default, but has |
+| (20) | Our institution reports hundreds of loans each | | excellentcollateral? |
+| | quarter, how can we take the time to judge the | | |
+| | riskiness of each of them when preparing our | | A.TheriskratingreportedontheFR2028Bshould |
+| | report? | | take into account all protections provided in the |
+| | | | loan contract. In this case, the loan should be |
+| | A. It should not be necessary to exercise any | | reported as not very risky because the excellent |
+| | judgment when preparing the report. An employee | | collateral makes it very unlikely that your institu- |
+| | of your institution familiar with your internal risk- | | tionwillsustainaloss. |
+| | rating system should prepare a correspondence, or | | |
+| | mapping, from your internal risk ratings to the | (25) | Our institution’s internal risk ratings are for |
+| | ratings defined in the instructions. With that corre- | | borrowers rather than for loans, and so do not |
+take into account the protections provided by the loan contract. Should we still try to report loan risk ratings?
+A. Yes. Since the rating of the customer will generally have a significant effect on the rating of the loan, please report the loan risk rating that most closely corresponds to your institution’s internal rating of the borrower. Although this information may not be as precise as it is for institutions that rate loans, it is preferable to having no information at all.
+(26) Our institution occasionally makes loans that have more than one risk rating, for example a better rating for that part of the loan that is secured. How should we report the rating on such a loan?
+A. In this case, choose the rating that applies to the largest part of the loan. If the ratings are split evenly, choose the highest-risk rating.
+Questions and Answers
+Q&A-4 FR 2028B
+Questions and Answers August 2012
+Risk Rating Worksheet Risk Rating Worksheet This worksheet is for a respondent’s internal use in mapping its own internal risk ratings to the ratings defined for the FR 2028B. It should be revised if the institution changes its risk ratings. This worksheet should not be submitted to the Federal Reserve Bank.
+Respondent Rating(s) Equivalent FR 2028B Rating 1 1 Minimal Risk - Loans in this category have virtually no change of resulting in a loss.
+2 Low risk - Loans in this category are very unlikely to result in a loss.
+3 Moderate risk - Loans in this category have little chance of resulting in a loss. This category should include the average loan, under average economic conditions, at the typical lender.
+4 Acceptable risk - Loans in this category have a limited chance of resulting in a loss.
+5 Special mention or classified asset - Loans in this category would generally fall into the examination categories: ‘‘special mention,’’ ‘‘substandard,’’ ‘‘doubtful,’’ or ‘‘loss.’’ They would primarily be work-out loans, as it is highly unlikely that new loans would fall into this category.
+1. The complete definitions of the rating categories are provided in the instructions.
+FR 2028B RRW-1
+Risk Rating Worksheet August 2012
