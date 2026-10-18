@@ -5,7 +5,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from regmon.ai import AI_REQUIRED_KEYS, parse_json, validate_analysis
-from regmon.change import build_event_id, classify_change, make_diff, make_id, write_evidence
+from regmon.change import build_event_id, classify_change, html_comparison_hash, make_diff, make_id, write_evidence
 from regmon.content import extract_content, normalize_html
 from regmon.config import SourceConfig
 from regmon.discovery import _config_fingerprint, _fetch_links, _load_inventory, canonical, extract_html_links, http_discover, in_scope, parse_discovered_urls
@@ -31,6 +31,21 @@ class TestContent(unittest.TestCase):
 
     def test_substantive_change_survives(self):
         self.assertNotEqual(normalize_html("<main>Version one</main>"), normalize_html("<main>Version two</main>"))
+
+    def test_cloudflare_rotating_challenge_tokens_do_not_change_html_signature(self):
+        before = """<html><body><a href="/forms/a">Reporting form</a>
+        <script>window.__CF$cv$params={r:'a4c58a85e859511c',t:'MTc5MjMwNTUxNg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';</script>
+        </body></html>"""
+        after = before.replace("a4c58a85e859511c", "a4c61854dad2b091").replace(
+            "MTc5MjMwNTUxNg==", "MTc5MjMxMTMyNA=="
+        )
+        self.assertNotEqual(before, after)
+        self.assertEqual(html_comparison_hash(before), html_comparison_hash(after))
+
+    def test_real_html_link_change_remains_detectable(self):
+        before = '<html><body><a href="/forms/a">Reporting form</a></body></html>'
+        after = before.replace('/forms/a', '/forms/b')
+        self.assertNotEqual(html_comparison_hash(before), html_comparison_hash(after))
 
     def test_json_is_stably_formatted_and_object_key_order_is_ignored(self):
         first = extract_content(
@@ -890,6 +905,25 @@ class TestChange(unittest.TestCase):
                 {"normalized_hash":"same-text","html_hash":"new-html"},
             ),
             ("HTML_SOURCE_CHANGED", False),
+        )
+
+    def test_cloudflare_only_html_variation_is_classified_unchanged(self):
+        before = "<script>window.__CF$cv$params={r:'ray-one',t:'time-one'};</script>"
+        after = "<script>window.__CF$cv$params={r:'ray-two',t:'time-two'};</script>"
+        self.assertEqual(
+            classify_change(
+                {
+                    "normalized_hash": "same-text",
+                    "html_hash": "raw-before",
+                    "html_comparison_hash": html_comparison_hash(before),
+                },
+                {
+                    "normalized_hash": "same-text",
+                    "html_hash": "raw-after",
+                    "html_comparison_hash": html_comparison_hash(after),
+                },
+            ),
+            ("UNCHANGED_URL", False),
         )
 
     def test_html_evidence_contains_source_diff_and_snapshot_paths(self):
