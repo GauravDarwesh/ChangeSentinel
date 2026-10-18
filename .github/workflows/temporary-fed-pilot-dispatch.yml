@@ -1,0 +1,26 @@
+name: One-time Federal Reserve Pilot Dispatch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/temporary-fed-pilot-dispatch.yml"
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Dispatch only the Federal Reserve reporting-forms pilot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run regulatory-monitor.yml \
+            --repo "${GITHUB_REPOSITORY}" \
+            --ref main \
+            -f source_id=fed-reporting-forms-pilot \
+            -f test_notification=false
