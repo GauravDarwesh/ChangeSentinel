@@ -371,7 +371,7 @@ The monitoring workflow commits this state back to the repository so each run le
 
 The project is designed to run without a permanently running server.
 
-There are four main workflows.
+There are four main workflows: CI, scheduled monitoring, AI integration testing, and dashboard deployment.
 
 ## \`RegMonitor CI\`
 
@@ -430,6 +430,14 @@ File:
 This manual, non-mutating workflow calls the configured OpenRouter model using a synthetic example and checks the same strict nine-field JSON contract used by the monitor. It does not crawl the regulator, change the baseline, write monitoring data, or send ntfy messages. It fails clearly if `OPENROUTER_API_KEY` is missing, the provider fails, or the model response is not valid against the schema.
 
 Use it after changing the AI provider/model or when you need to verify that AI interpretation is working independently of whether a real regulatory change happened. Set the repository secret `OPENROUTER_API_KEY` first.
+
+## `Deploy Monitoring Console`
+
+File:
+
+`.github/workflows/pages.yml`
+
+Publishes `index.html`, `dashboard-v2.html`, and `dashboard.js` to GitHub Pages when the dashboard code changes, or when manually dispatched. Monitoring JSON is fetched from the repository at runtime, so data-only monitoring commits update the dashboard without requiring a static-site rebuild.
 
 ---
 
