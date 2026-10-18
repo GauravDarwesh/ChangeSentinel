@@ -64,5 +64,15 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 self.assertIn(token, source)
 
 
+
+    def test_extracted_markdown_tables_are_rendered_as_html_tables(self):
+        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        self.assertIn("function splitMarkdownTableRow(line)", source)
+        self.assertIn("function isMarkdownTableSeparator(cells)", source)
+        self.assertIn("<table style=", source)
+        self.assertIn('renderCells(header, "th")', source)
+        self.assertIn("overflow-x:auto", source)
+
+
 if __name__ == "__main__":
     unittest.main()

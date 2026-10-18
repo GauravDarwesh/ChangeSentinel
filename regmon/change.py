@@ -51,9 +51,18 @@ def html_comparison_hash(value: str | bytes | None) -> str | None:
     stable_html = _CF_CV_PARAMS.sub(stabilize_params, html)
     return hashlib.sha256(stable_html.encode("utf-8")).hexdigest()
 
-def classify_change(old: dict | None, current: dict) -> tuple[str, bool]:
+def classify_change(
+    old: dict | None,
+    current: dict,
+    *,
+    force_baseline_migration: bool = False,
+) -> tuple[str, bool]:
     if old is None:
         return "NEW_URL", False
+    # A parser upgrade can change normalized text without changing the source
+    # bytes. Rebaseline that output without reporting a regulatory change.
+    if force_baseline_migration:
+        return "BASELINE_MIGRATION", True
     if old.get("normalized_hash"):
         if old["normalized_hash"] != current.get("normalized_hash"):
             return "CHANGED_URL", False

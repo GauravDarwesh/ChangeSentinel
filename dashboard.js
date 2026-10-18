@@ -303,19 +303,86 @@ function previewSource(source, url) {
   if (/<head\b[^>]*>/i.test(source)) return source.replace(/<head\b[^>]*>/i, match => match + baseTag);
   return '<!doctype html><html><head><meta charset="utf-8">' + baseTag + '</head><body>' + source + '</body></html>';
 }
+function splitMarkdownTableRow(line) {
+  let value = String(line || "").trim();
+  if (value.startsWith("|")) value = value.slice(1);
+  if (value.endsWith("|")) value = value.slice(0, -1);
+  const cells = [];
+  let cell = "";
+  let escaped = false;
+  for (const ch of value) {
+    if (ch === "|" && !escaped) {
+      cells.push(cell.trim());
+      cell = "";
+      continue;
+    }
+    cell += ch;
+    if (ch === "\\" && !escaped) escaped = true;
+    else escaped = false;
+  }
+  cells.push(cell.trim());
+  return cells.map(value => value.replace(/\\\|/g, "|"));
+}
+function isMarkdownTableSeparator(cells) {
+  return cells.length > 0 && cells.every(cell => /^:?-{3,}:?$/.test(String(cell || "").trim()));
+}
 function renderSnapshotText(text) {
   const lines = String(text || "").split(/\r?\n/);
   if (!lines.some(line => line.trim())) return emptyState("Snapshot is empty", "The repository contains a snapshot record, but no readable text was extracted from it.", "▧");
   const dateRe = /^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}$/i;
   const likelySection = /^(Information Collections|Pending Review|Reporting Forms|Recent Reporting Form Updates|Information Collections Out for Public Comment|Collection Identifier|Questions regarding|Note:|Last Update:)/i;
-  return '<div class="snapshot-text">' + lines.map((line, index) => {
-    const trimmed = line.trim();
-    if (!trimmed) return '<div style="height:8px"></div>';
+  const output = [];
+  let index = 0;
+  while (index < lines.length) {
+    const trimmed = lines[index].trim();
+    if (!trimmed) {
+      output.push('<div style="height:8px"></div>');
+      index += 1;
+      continue;
+    }
+    if (trimmed === "[TABLE]") {
+      index += 1;
+      continue;
+    }
+    if (trimmed.startsWith("|")) {
+      const parsedRows = [];
+      while (index < lines.length && lines[index].trim().startsWith("|")) {
+        const cells = splitMarkdownTableRow(lines[index].trim());
+        if (!isMarkdownTableSeparator(cells) && cells.some(Boolean)) parsedRows.push(cells);
+        index += 1;
+      }
+      if (parsedRows.length >= 2) {
+        const columnCount = Math.max(...parsedRows.map(row => row.length));
+        const tableMinWidth = Math.min(1500, Math.max(520, columnCount * 100));
+        const renderCells = (cells, tag) => {
+          const padded = cells.concat(Array(Math.max(0, columnCount - cells.length)).fill(""));
+          return "<tr>" + padded.map(cell =>
+            "<" + tag + ' style="border:1px solid #dce3ed;padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:anywhere;' +
+            (tag === "th" ? "background:#f1f5fb;color:#24344d;font-weight:750;" : "background:#fff;color:#354259;") +
+            '">' + esc(cell || "") + "</" + tag + ">"
+          ).join("") + "</tr>";
+        };
+        const header = parsedRows[0];
+        const bodyRows = parsedRows.slice(1);
+        output.push(
+          '<div style="max-width:100%;overflow-x:auto;margin:14px 0 22px;border:1px solid #dce3ed;border-radius:8px;">' +
+          '<table style="border-collapse:collapse;min-width:' + tableMinWidth + 'px;width:100%;font-size:11px;line-height:1.55;white-space:normal;">' +
+          "<thead>" + renderCells(header, "th") + "</thead><tbody>" +
+          bodyRows.map(row => renderCells(row, "td")).join("") +
+          "</tbody></table></div>"
+        );
+      } else {
+        output.push(parsedRows.map(row => '<p class="doc-line">' + esc(row.join(" · ")) + "</p>").join(""));
+      }
+      continue;
+    }
     let cls = "doc-line";
     if (dateRe.test(trimmed)) cls += " date-line";
     else if (index > 0 && (likelySection.test(trimmed) || (trimmed.length < 72 && !/[.!?]$/.test(trimmed) && trimmed.split(/\s+/).length < 9))) cls += " section-line";
-    return '<p class="' + cls + '">' + esc(trimmed) + '</p>';
-  }).join("") + '</div>';
+    output.push('<p class="' + cls + '">' + esc(trimmed) + "</p>");
+    index += 1;
+  }
+  return '<div class="snapshot-text">' + output.join("") + "</div>";
 }
 function renderSourceCode(source) {
   const lines = String(source || "").split(/\r?\n/);

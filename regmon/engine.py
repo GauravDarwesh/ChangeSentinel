@@ -17,7 +17,7 @@ from typing import Any
 from regmon.ai import AIConfig, analyze
 from regmon.change import build_event_id, classify_change, html_comparison_hash, make_diff, make_id, write_evidence
 from regmon.config import DEFAULT_CONFIG_PATH, SourceConfig, load_config
-from regmon.content import extract_content
+from regmon.content import CONTENT_EXTRACTOR_VERSION, extract_content
 from regmon.discovery import canonical, discover
 from regmon.fetch import fetch
 from regmon.relevance import triage
@@ -165,6 +165,7 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         "html_snapshot_location": old.get("html_snapshot_location") if old else None,
         "file_snapshot_location": old.get("file_snapshot_location") if old else None,
         "extraction_type": None,
+        "extractor_version": old.get("extractor_version") if old else None,
         "extraction_error": None,
         "fetch_error": None,
         "snapshot_location": old.get("snapshot_location") if old else None,
@@ -190,10 +191,21 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             and (old_type in {"pdf", "zip"} or "pdf" in old_content_type or "zip" in old_content_type)
             and not old.get("file_snapshot_location")
         )
-        force_full_fetch = refresh_required or html_baseline_missing or file_baseline_missing
+        extractor_baseline_missing = bool(
+            old
+            and old_type in {"html", "pdf", "zip"}
+            and old.get("extractor_version") != CONTENT_EXTRACTOR_VERSION
+        )
+        force_full_fetch = (
+            refresh_required
+            or html_baseline_missing
+            or file_baseline_missing
+            or extractor_baseline_missing
+        )
         item["full_fetch_forced"] = force_full_fetch
         item["html_baseline_forced"] = html_baseline_missing and not refresh_required
         item["file_baseline_forced"] = file_baseline_missing
+        item["extractor_baseline_forced"] = extractor_baseline_missing
         result = fetch(
             url,
             timeout=int(DEFAULTS.get("fetch_timeout_seconds", 30)),
@@ -221,7 +233,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             if old:
                 for key in (
                     "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_snapshot_location",
-                    "file_snapshot_location", "extraction_type", "snapshot_location", "evidence_location", "relevance"
+                    "file_snapshot_location", "extraction_type", "extractor_version", "snapshot_location", "evidence_location", "relevance"
                 ):
                     if key in old:
                         item[key] = old[key]
@@ -235,11 +247,13 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             ignore_selectors=source.ignore_selectors,
         )
         item["extraction_type"] = extraction_type
+        if extraction_type in {"html", "pdf", "zip"}:
+            item["extractor_version"] = CONTENT_EXTRACTOR_VERSION
         file_body = result.body if extraction_type in {"pdf", "zip"} else None
         if extraction_error:
             item["extraction_error"] = extraction_error
             if old:
-                for key in ("normalized_hash", "snapshot_location", "first_seen", "evidence_location", "relevance"):
+                for key in ("normalized_hash", "snapshot_location", "first_seen", "evidence_location", "relevance", "extractor_version"):
                     if old.get(key) is not None:
                         item[key] = old[key]
             if extraction_type == "html":
@@ -270,7 +284,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             for key in (
                 "http_status", "content_type", "content_length", "etag", "last_modified",
                 "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_snapshot_location",
-                "first_seen", "snapshot_location", "evidence_location", "relevance", "extraction_type"
+                "first_seen", "snapshot_location", "evidence_location", "relevance", "extraction_type", "extractor_version"
             ):
                 if key in old:
                     item[key] = old[key]
@@ -444,7 +458,16 @@ def process_source(
                     old = dict(old)
                     old["html_comparison_hash"] = html_comparison_hash(old_html)
 
-            event_type, migrated = classify_change(old, item)
+            extractor_rebaseline = bool(
+                old
+                and old.get("extractor_version") != item.get("extractor_version")
+                and item.get("extractor_version") == CONTENT_EXTRACTOR_VERSION
+                and old.get("raw_hash")
+                and old.get("raw_hash") == item.get("raw_hash")
+            )
+            event_type, migrated = classify_change(
+                old, item, force_baseline_migration=extractor_rebaseline
+            )
             if event_type == "NEW_URL":
                 new_items.append(item)
             elif event_type == "CHANGED_URL":
