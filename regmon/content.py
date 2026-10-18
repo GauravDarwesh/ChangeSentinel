@@ -83,7 +83,12 @@ def _html_inline_text(node) -> str:
     from bs4 import NavigableString
 
     if isinstance(node, NavigableString):
-        return str(node)
+        value = str(node)
+        # HTML source formatting newlines/spaces collapse in normal browser
+        # layout. Preserve literal whitespace only inside preformatted blocks.
+        if getattr(getattr(node, "parent", None), "name", None) == "pre":
+            return value
+        return re.sub(r"\s+", " ", value)
     name = getattr(node, "name", None)
     if not name:
         return ""
@@ -560,18 +565,24 @@ def _extract_pdfplumber_page(page, fast_text: str) -> str:
 
 
 def _page_has_image_xobject(page) -> bool:
+    """Recognize image scans and vector-rendered pages that need OCR."""
     try:
         resources = page.get("/Resources")
-        if resources is None:
-            return False
-        resources = resources.get_object()
-        xobjects = resources.get("/XObject")
-        if xobjects is None:
-            return False
-        for reference in xobjects.get_object().values():
-            obj = reference.get_object()
-            if str(obj.get("/Subtype")) == "/Image":
-                return True
+        if resources is not None:
+            resources = resources.get_object()
+            xobjects = resources.get("/XObject")
+            if xobjects is not None:
+                for reference in xobjects.get_object().values():
+                    obj = reference.get_object()
+                    if str(obj.get("/Subtype")) == "/Image":
+                        return True
+        # Some scanned or outlined PDFs wrap their page artwork in Form XObjects
+        # or vector drawing commands. A non-trivial content stream with almost
+        # no extractable text is also a good OCR candidate; truly blank pages
+        # usually have no content stream or only a few drawing operators.
+        contents = page.get_contents()
+        if contents is not None:
+            return len(contents.get_data()) > 20
     except Exception:
         return False
     return False
