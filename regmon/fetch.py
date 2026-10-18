@@ -56,7 +56,10 @@ def fetch(
     if last_modified:
         headers["If-Modified-Since"] = last_modified
 
-    scoped_domains = {str(value).lower() for value in (allowed_domains or [])}
+    scoped_domains = {
+        (urlsplit(f"//{value}").hostname or str(value)).rstrip(".").lower()
+        for value in (allowed_domains or [])
+    }
     scoped_prefixes = tuple(str(value) for value in (allowed_prefixes or []))
     scoped_urls = {canonical(str(value)) for value in (allowed_urls or [])}
 
