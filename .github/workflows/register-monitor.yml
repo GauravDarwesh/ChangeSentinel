@@ -35,8 +35,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_EVENT_PATH: ${{ github.event_path }}
         run: |
           set -euo pipefail
           git config user.name "changesentinel-bot"
@@ -78,7 +76,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           SOURCE_ID: ${{ steps.register.outputs.source_id }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
           gh workflow run regulatory-monitor.yml \
@@ -95,7 +92,6 @@ jobs:
           SOURCE_ID: ${{ steps.register.outputs.source_id }}
           MONITOR_URL: ${{ steps.register.outputs.monitor_url }}
           CREATED: ${{ steps.register.outputs.created }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
           if [ "$CREATED" = "true" ]; then
@@ -111,6 +107,5 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "Automatic registration failed. Check the Register Dashboard Monitor run logs, correct the URL if needed, and reopen a new request. Only the repository owner can register URLs."
