@@ -74,6 +74,13 @@ class TestRegisterMonitor(unittest.TestCase):
         self.assertEqual(source["ignore_selectors"], [])
         self.assertTrue(source["id"].startswith("manual-"))
 
+    def test_custom_port_is_kept_in_url_scope_but_not_domain(self):
+        url = "https://www.example.com:8443/policy"
+        source = source_for_url(url, "Custom port policy")
+        self.assertEqual(source["allowed_urls"], [url])
+        self.assertEqual(source["allowed_domains"], ["www.example.com"])
+        self.assertEqual(source["allowed_prefixes"], ["https://www.example.com:8443/"])
+
     def test_registers_include_and_ignore_css_selectors(self):
         url = "https://www.example.com/policy"
         with tempfile.TemporaryDirectory() as tmp:
