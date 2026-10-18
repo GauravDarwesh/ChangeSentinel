@@ -566,18 +566,29 @@ def _extract_pdfplumber_page(page, fast_text: str) -> str:
     return max(candidates, key=_pdf_text_quality)
 
 
+def _resources_have_image_xobject(resources, depth: int = 0) -> bool:
+    """Find image objects, including images nested inside PDF Form XObjects."""
+    if resources is None or depth > 5:
+        return False
+    resources = resources.get_object()
+    xobjects = resources.get("/XObject")
+    if xobjects is None:
+        return False
+    for reference in xobjects.get_object().values():
+        obj = reference.get_object()
+        subtype = str(obj.get("/Subtype"))
+        if subtype == "/Image":
+            return True
+        if subtype == "/Form" and _resources_have_image_xobject(obj.get("/Resources"), depth + 1):
+            return True
+    return False
+
+
 def _page_has_image_xobject(page) -> bool:
-    """Recognize image scans and vector-rendered pages that need OCR."""
+    """Recognize image scans, including nested images, on low-text pages."""
     try:
-        resources = page.get("/Resources")
-        if resources is not None:
-            resources = resources.get_object()
-            xobjects = resources.get("/XObject")
-            if xobjects is not None:
-                for reference in xobjects.get_object().values():
-                    obj = reference.get_object()
-                    if str(obj.get("/Subtype")) == "/Image":
-                        return True
+        if _resources_have_image_xobject(page.get("/Resources")):
+            return True
         # Some outlined/vector PDFs have no Image XObjects. Because this helper
         # is called only for low-text pages, inspecting their content stream is
         # acceptable; do not decompress every page in an ordinary text PDF.
@@ -618,7 +629,10 @@ def _ocr_pdf_pages(body: bytes, page_indexes: list[int]) -> dict[int, str]:
                     )
                 finally:
                     image.close()
-                results[index] = normalize_pdf_prose(text or "")
+                # OCR engines already return geometric line groups; joining them as if
+                # they were paragraph-wrapped digital text can collapse form
+                # fields and table rows into false sentences.
+                results[index] = normalize_text(text or "")
             finally:
                 if bitmap is not None:
                     try:
