@@ -328,6 +328,54 @@ class TestDiscovery(unittest.TestCase):
         self.assertNotEqual(mock_get.call_count, 0)
 
     @patch("regmon.discovery.requests.get")
+    def test_degraded_inventory_recovers_when_checkpoint_is_missing(self, mock_get):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/homepage",),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            discovery_http_workers=1,
+            discovery_slice_seconds=0,
+        )
+        mock_get.return_value = Mock(
+            status_code=200,
+            headers={"content-type": "text/html; charset=UTF-8"},
+            text="<p>Recovered</p>",
+            url="https://www.eba.europa.eu/homepage",
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            discovery_dir = Path(tmp) / "discovery"
+            discovery_dir.mkdir(parents=True)
+            inventory_file = discovery_dir / "eba-test-inventory-0000.txt"
+            inventory_file.write_text(
+                "https://www.eba.europa.eu/homepage\\nhttps://www.eba.europa.eu/a\\n",
+                encoding="utf-8",
+            )
+            (discovery_dir / "eba-test.json").write_text(
+                json.dumps({
+                    "source_id": "eba-test",
+                    "state": "DEGRADED",
+                    "discovered": 2,
+                    "html_processed": 1,
+                    "failed_pages": 1,
+                    "successful_pages": 0,
+                }),
+                encoding="utf-8",
+            )
+
+            urls = http_discover(source, Path(tmp))
+            metadata = json.loads(
+                (discovery_dir / "eba-test.json").read_text(encoding="utf-8")
+            )
+
+        self.assertIn("https://www.eba.europa.eu/homepage", urls)
+        self.assertIn("https://www.eba.europa.eu/a", urls)
+        self.assertEqual(metadata["state"], "COMPLETE")
+        self.assertEqual(mock_get.call_count, 2)
+
+    @patch("regmon.discovery.requests.get")
     def test_scope_change_invalidates_checkpoint(self, mock_get):
         source = SourceConfig(
             id="eba-test",
