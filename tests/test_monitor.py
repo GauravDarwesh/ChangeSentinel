@@ -1818,6 +1818,90 @@ class TestAdaptiveContentExtraction(unittest.TestCase):
         self.assertIn("| 08/24 | 8.500 | Monday |", output)
         self.assertIn("| 08/25 | 8.375 | Tuesday |", output)
 
+
+    def test_nested_form_xobject_image_triggers_ocr_detection(self):
+        from regmon.content import _page_has_image_xobject
+
+        class PdfObject(dict):
+            def get_object(self):
+                return self
+
+        class PdfReference:
+            def __init__(self, target):
+                self.target = target
+
+            def get_object(self):
+                return self.target
+
+        image = PdfObject({"/Subtype": "/Image"})
+        image_map = PdfObject({"Image1": PdfReference(image)})
+        inner_resources = PdfObject({"/XObject": PdfReference(image_map)})
+        form = PdfObject({
+            "/Subtype": "/Form",
+            "/Resources": PdfReference(inner_resources),
+        })
+        outer_map = PdfObject({"Form1": PdfReference(form)})
+        root_resources = PdfObject({"/XObject": PdfReference(outer_map)})
+        page = Mock()
+        page.get.return_value = PdfReference(root_resources)
+
+        self.assertTrue(_page_has_image_xobject(page))
+        page.get_contents.assert_not_called()
+
+    def test_ocr_result_keeps_form_fields_on_separate_lines(self):
+        import sys
+        from types import SimpleNamespace
+
+        from regmon.content import _ocr_pdf_pages
+
+        class FakeImage:
+            def close(self):
+                pass
+
+        class FakeBitmap:
+            def to_pil(self):
+                return FakeImage()
+
+            def close(self):
+                pass
+
+        class FakePage:
+            def render(self, scale):
+                return FakeBitmap()
+
+            def close(self):
+                pass
+
+        class FakeDocument:
+            def __getitem__(self, index):
+                return FakePage()
+
+            def close(self):
+                pass
+
+        recognized = (
+            "Insured or Guaranteed\n"
+            "Farm Service Agency\n"
+            "Nominal\n"
+            "Rate of Interest"
+        )
+        image_to_string = Mock(return_value=recognized)
+        pytesseract_module = SimpleNamespace(image_to_string=image_to_string)
+        pdfium_module = SimpleNamespace(PdfDocument=lambda body: FakeDocument())
+        monotonic_values = iter([0.0, 0.0])
+
+        with patch.dict(sys.modules, {
+            "pytesseract": pytesseract_module,
+            "pypdfium2": pdfium_module,
+        }), patch("regmon.content.time.monotonic", side_effect=lambda: next(monotonic_values)):
+            result = _ocr_pdf_pages(b"%PDF-1.7", [0])
+
+        self.assertEqual(
+            result[0],
+            "Insured or Guaranteed\nFarm Service Agency\nNominal\nRate of Interest",
+        )
+
+
     def test_parser_upgrade_can_rebaseline_without_false_change(self):
         from regmon.change import classify_change
 
