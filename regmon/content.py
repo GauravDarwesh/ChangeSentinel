@@ -314,7 +314,9 @@ def extract_content(
         except (ET.ParseError, ValueError) as exc:
             return None, "xml", f"{type(exc).__name__}: {exc}"
 
-    if "html" in ctype or suffix in {".html", ".htm"} or (not ctype and suffix == ""):
+    if "html" in ctype or suffix in {".html", ".htm"} or (
+        not ctype and suffix == "" and not body.startswith(b"%PDF-")
+    ):
         try:
             return normalize_html(
                 body.decode("utf-8", "replace"),
