@@ -137,6 +137,7 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
                         )
                     },
                 )
+                last_status = response.status_code
                 if response.status_code not in {301, 302, 303, 307, 308}:
                     break
                 location = response.headers.get("location")
@@ -169,6 +170,16 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
             if "html" not in content_type and (content_type or not _is_probably_html_url(url)):
                 return url, [], None
             return url, extract_html_links(response.url or url, response.text, source), None
+        except ValueError as exc:
+            # Safety violations (such as an out-of-scope redirect) are not
+            # transient fetch failures and must not be followed/retried.
+            return url, [], {
+                "url": url,
+                "status_code": last_status,
+                "attempts": attempts_used,
+                "error": f"{type(exc).__name__}: {exc}",
+                "retry_classification": "permanent_http",
+            }
         except Exception as exc:
             last_error = f"{type(exc).__name__}: {exc}"
             if attempt == source.discovery_http_attempts:
