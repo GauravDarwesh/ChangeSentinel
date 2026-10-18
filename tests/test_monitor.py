@@ -1997,6 +1997,14 @@ class TestAdaptiveContentExtraction(unittest.TestCase):
         self.assertIn("normal digital PDF page", text)
         inspect_visual_content.assert_not_called()
 
+
+    def test_large_scanned_pdfs_use_time_budget_not_a_low_page_cap(self):
+        from regmon.content import MAX_OCR_PAGES, MAX_OCR_TOTAL_SECONDS
+
+        self.assertGreaterEqual(MAX_OCR_PAGES, 1000)
+        self.assertEqual(MAX_OCR_TOTAL_SECONDS, 120)
+
+
     def test_ocr_total_time_budget_stops_before_next_page(self):
         import sys
         from types import SimpleNamespace
