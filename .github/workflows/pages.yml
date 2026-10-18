@@ -3,10 +3,11 @@ name: Deploy Monitoring Console
 on:
   push:
     branches: [main]
-    # The dashboard fetches monitoring JSON directly from raw.githubusercontent.com.
-    # Data-only commits do not change the deployed HTML and do not need a redeploy.
     paths:
       - "index.html"
+      - "dashboard-v2.html"
+      - "dashboard.js"
+      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -33,6 +34,7 @@ jobs:
           mkdir -p site
           cp index.html site/index.html
           cp dashboard-v2.html site/dashboard-v2.html
+          cp dashboard.js site/dashboard.js
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

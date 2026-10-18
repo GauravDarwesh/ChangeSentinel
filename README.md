@@ -461,6 +461,8 @@ https://gauravdarwesh.github.io/ChangeSentinel/
 
 ---
 
+The dashboard now provides an **Add a monitor** flow. It creates a prefilled GitHub issue rather than writing repository credentials into the browser. After the repository owner submits the request, the \`Register Dashboard Monitor\` workflow validates the public URL, adds a one-page bounded source to \`config/sources.json\`, commits the configuration, and dispatches the first scan. The dashboard then reads the new source from the shared configuration and displays its stored inventory once the scan has committed.
+
 # Running it locally
 
 ## Requirements
@@ -619,6 +621,8 @@ history + dashboard
 │   └── test_notify.py
 │
 ├── index.html
+├── dashboard-v2.html
+├── dashboard.js
 ├── requirements.txt
 └── README.md
 \`\`\`

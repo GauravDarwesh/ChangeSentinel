@@ -1,0 +1,116 @@
+name: Register Dashboard Monitor
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: register-dashboard-monitor
+  cancel-in-progress: false
+
+jobs:
+  register:
+    if: ${{ github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, '[ChangeSentinel] Add monitor')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Register URL and commit source configuration
+        id: register
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+        run: |
+          set -euo pipefail
+          git config user.name "changesentinel-bot"
+          git config user.email "actions@users.noreply.github.com"
+          success=false
+          for attempt in 1 2 3; do
+            git fetch origin main --quiet
+            git checkout -B main origin/main
+            python -m regmon.register_monitor \
+              --event "$GITHUB_EVENT_PATH" \
+              --config config/sources.json \
+              --output "$RUNNER_TEMP/monitor-registration.json"
+            SOURCE_ID="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json"))["source_id"])')"
+            URL="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json"))["url"])')"
+            CREATED="$(python -c 'import json,os; print(str(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json"))["created"]).lower())')"
+            if git diff --quiet -- config/sources.json; then
+              echo "This URL is already configured; continuing with its existing source."
+              success=true
+              break
+            fi
+            git add config/sources.json
+            git commit -m "Register manually requested monitor $SOURCE_ID"
+            if git push origin HEAD:main; then
+              success=true
+              break
+            fi
+            echo "Push attempt $attempt did not publish; refreshing main and retrying."
+            sleep 2
+          done
+          if [ "$success" != true ]; then
+            echo "Could not publish monitor configuration after three attempts."
+            exit 1
+          fi
+          echo "source_id=$SOURCE_ID" >> "$GITHUB_OUTPUT"
+          echo "monitor_url=$URL" >> "$GITHUB_OUTPUT"
+          echo "created=$CREATED" >> "$GITHUB_OUTPUT"
+
+      - name: Start first monitoring scan
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_ID: ${{ steps.register.outputs.source_id }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          gh workflow run regulatory-monitor.yml \
+            --repo "$GITHUB_REPOSITORY" \
+            --ref main \
+            -f source_id="$SOURCE_ID" \
+            -f test_notification=false
+
+      - name: Confirm registration on the request
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          SOURCE_ID: ${{ steps.register.outputs.source_id }}
+          MONITOR_URL: ${{ steps.register.outputs.monitor_url }}
+          CREATED: ${{ steps.register.outputs.created }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [ "$CREATED" = "true" ]; then
+            message="Registered $MONITOR_URL as source $SOURCE_ID in config/sources.json. The first monitoring scan has been queued."
+          else
+            message="$MONITOR_URL is already configured under source $SOURCE_ID. A monitoring scan has been queued."
+          fi
+          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$message"
+          gh issue close "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY"
+
+      - name: Explain registration failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "Automatic registration failed. Check the Register Dashboard Monitor run logs, correct the URL if needed, and reopen a new request. Only the repository owner can register URLs."

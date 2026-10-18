@@ -1,0 +1,95 @@
+import json
+import tempfile
+import unittest
+from pathlib import Path
+
+from regmon.register_monitor import (
+    REQUEST_MARKER,
+    canonicalize_url,
+    register_request,
+    request_from_issue,
+    source_for_url,
+)
+
+
+def issue_event(url, name="Policy updates", login="GauravDarwesh", title="[ChangeSentinel] Add monitor request"):
+    return {
+        "issue": {
+            "title": title,
+            "body": REQUEST_MARKER + "\n\nURL: " + url + "\nName: " + name + "\n",
+            "user": {"login": login},
+        }
+    }
+
+
+class TestRegisterMonitor(unittest.TestCase):
+    def test_canonicalize_public_url_and_remove_tracking(self):
+        self.assertEqual(
+            canonicalize_url("HTTPS://WWW.Example.com/policy/?version=2&utm_source=news&fbclid=x#section"),
+            "https://www.example.com/policy?version=2",
+        )
+
+    def test_rejects_non_http_local_and_private_urls(self):
+        for value in [
+            "file:///etc/passwd",
+            "https://localhost/admin",
+            "http://127.0.0.1/status",
+            "http://10.0.0.8/internal",
+            "https://user:pass@example.com/path",
+            "https://host-only/path",
+        ]:
+            with self.subTest(value=value):
+                with self.assertRaises(ValueError):
+                    canonicalize_url(value)
+
+    def test_source_is_bounded_to_one_exact_url(self):
+        source = source_for_url("https://www.example.com/policy", "Policy updates")
+        self.assertEqual(source["seed_urls"], ["https://www.example.com/policy"])
+        self.assertEqual(source["allowed_urls"], ["https://www.example.com/policy"])
+        self.assertEqual(source["allowed_domains"], ["www.example.com"])
+        self.assertEqual(source["allowed_prefixes"], ["https://www.example.com/"])
+        self.assertEqual(source["max_urls"], 0)
+        self.assertTrue(source["active"])
+        self.assertTrue(source["baseline_on_first_run"])
+        self.assertTrue(source["id"].startswith("manual-"))
+
+    def test_only_repository_owner_can_register(self):
+        event = issue_event("https://www.example.com/policy", login="someone-else")
+        with self.assertRaisesRegex(ValueError, "Only the repository owner"):
+            request_from_issue(event, "GauravDarwesh/ChangeSentinel")
+
+    def test_rejects_issue_without_request_marker(self):
+        event = issue_event("https://www.example.com/policy")
+        event["issue"]["body"] = "URL: https://www.example.com/policy"
+        with self.assertRaisesRegex(ValueError, "marker"):
+            request_from_issue(event, "GauravDarwesh/ChangeSentinel")
+
+    def test_registers_new_source_and_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            config_path = Path(tmp) / "sources.json"
+            config_path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            event = issue_event("https://www.example.com/policy?utm_campaign=x", "Policy updates")
+            first = register_request(event, config_path, "GauravDarwesh/ChangeSentinel")
+            payload = json.loads(config_path.read_text(encoding="utf-8"))
+            second = register_request(event, config_path, "GauravDarwesh/ChangeSentinel")
+            self.assertTrue(first["created"])
+            self.assertFalse(second["created"])
+            self.assertEqual(first["source_id"], second["source_id"])
+            self.assertEqual(len(payload["sources"]), 1)
+            self.assertEqual(payload["sources"][0]["seed_urls"], ["https://www.example.com/policy"])
+
+    def test_active_exact_duplicate_reuses_existing_source(self):
+        url = "https://www.example.com/policy"
+        existing = source_for_url(url, "Existing policy")
+        config = {"version": 4, "defaults": {}, "sources": [existing]}
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps(config), encoding="utf-8")
+            result = register_request(issue_event(url, "Another name"), path, "GauravDarwesh/ChangeSentinel")
+            self.assertFalse(result["created"])
+            self.assertEqual(result["source_id"], existing["id"])
+            self.assertEqual(len(json.loads(path.read_text(encoding="utf-8"))["sources"]), 1)
+
+
+if __name__ == "__main__":
+    unittest.main()
