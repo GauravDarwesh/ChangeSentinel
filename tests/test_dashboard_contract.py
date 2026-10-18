@@ -48,7 +48,8 @@ class TestDashboardNotificationContract(unittest.TestCase):
         source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
         for token in (
             "file_snapshot_location",
-            "function snapshotPageURL(path)",
+            "function snapshotURL(path)",
+            "snapshotURL(filePath)",
             'title="Saved PDF snapshot"',
             'data-snapshot-mode="preview"',
             'data-snapshot-mode="text"',
