@@ -104,7 +104,7 @@ class TestContent(unittest.TestCase):
             include_selector="main .policy-content",
             ignore_selectors=(".last-visited", ".cookie-banner"),
         )
-        self.assertEqual(result, "Capital requirements draft\nMinimum ratio rises to 12%")
+        self.assertEqual(result, "Capital requirements draft\nMinimum ratio rises to 12%.")
         self.assertNotIn("navigation", result)
         self.assertNotIn("Unrelated article", result)
 
@@ -128,7 +128,7 @@ class TestContent(unittest.TestCase):
         )
         self.assertIsNone(result)
         self.assertEqual(kind, "html")
-        self.assertIn("Invalid", error)
+        self.assertIn("SelectorSyntaxError", error)
 
     def test_pdf_failure_is_explicit(self):
         text, kind, error = extract_content("https://example.test/a.pdf","application/pdf",b"not-a-pdf")

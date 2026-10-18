@@ -134,11 +134,11 @@ def request_from_issue(event: dict, repository: str) -> tuple[str, str, str, tup
     body = str(issue.get("body") or "")
     if REQUEST_MARKER not in body:
         raise ValueError("The issue is missing the ChangeSentinel request marker.")
-    url_match = re.search(r"(?m)^URL:\s*(\S+)\s*$", body)
+    url_match = re.search(r"(?m)^URL:[ \t]*(\S+)[ \t]*$", body)
     if not url_match:
         raise ValueError("No URL field was found in the request body.")
-    name_match = re.search(r"(?m)^Name:\s*(.*?)\s*$", body)
-    include_match = re.search(r"(?m)^Include selector:\s*(.*?)\s*$", body)
+    name_match = re.search(r"(?m)^Name:[ \t]*(.*?)[ \t]*$", body)
+    include_match = re.search(r"(?m)^Include selector:[ \t]*(.*?)[ \t]*$", body)
     ignore_match = re.search(
         r"(?ms)^Ignore selectors:\s*\n(.*?)(?=\n\nThis request was created from the ChangeSentinel dashboard\.|\Z)",
         body,
