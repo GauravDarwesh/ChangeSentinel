@@ -70,12 +70,77 @@ def _remove_ignored_nodes(root, ignore_selectors: tuple[str, ...]) -> None:
                 node.decompose()
 
 
+HTML_BLOCK_TAGS = {
+    "address", "article", "blockquote", "dd", "details", "dialog", "div", "dl",
+    "dt", "fieldset", "figcaption", "figure", "h1", "h2", "h3", "h4", "h5",
+    "h6", "header", "hr", "li", "main", "ol", "p", "pre", "section", "summary",
+    "ul",
+}
+
+
+def _html_inline_text(node) -> str:
+    """Collect inline HTML text without inserting separators inside sentences."""
+    from bs4 import NavigableString
+
+    if isinstance(node, NavigableString):
+        return str(node)
+    name = getattr(node, "name", None)
+    if not name:
+        return ""
+    if name == "br":
+        return "\n"
+    if name == "table":
+        return "\n" + _html_table_markdown(node) + "\n"
+    if name == "li":
+        value = "".join(_html_inline_text(child) for child in node.children).strip()
+        return "\n- " + value + "\n"
+    value = "".join(_html_inline_text(child) for child in node.children)
+    if name in HTML_BLOCK_TAGS:
+        return "\n" + value.strip() + "\n"
+    return value
+
+
+def _html_cell_text(cell) -> str:
+    value = "".join(
+        _html_inline_text(child)
+        for child in cell.children
+        if getattr(child, "name", None) != "table"
+    )
+    value = re.sub(r"\s+", " ", value).strip()
+    return value.replace("|", r"\|")
+
+
+def _html_table_markdown(table) -> str:
+    """Render a DOM table as row/column-preserving Markdown."""
+    rows = []
+    for row in table.find_all("tr"):
+        # Do not accidentally absorb rows from nested tables.
+        if row.find_parent("table") is not table:
+            continue
+        cells = [
+            _html_cell_text(cell)
+            for cell in row.find_all(["th", "td"], recursive=False)
+        ]
+        if any(cells):
+            rows.append((cells, bool(row.find("th", recursive=False))))
+    if not rows:
+        return ""
+    width = max(len(cells) for cells, _ in rows)
+    rendered = []
+    for index, (cells, has_header) in enumerate(rows):
+        cells = cells + [""] * (width - len(cells))
+        rendered.append("| " + " | ".join(cells) + " |")
+        if index == 0:
+            rendered.append("| " + " | ".join(["---"] * width) + " |")
+    return "\n".join(rendered)
+
+
 def normalize_html(
     html: str,
     include_selector: str | None = None,
     ignore_selectors: tuple[str, ...] | list[str] | None = None,
 ) -> str:
-    """Extract stable text from a page or a configured CSS-selected region.
+    """Extract stable, block-aware text while preserving inline sentences and tables.
 
     A configured inclusion selector that matches nothing raises an explicit
     error instead of silently falling back to whole-page monitoring. Ignore
@@ -90,8 +155,6 @@ def normalize_html(
         if str(selector).strip()
     )
 
-    # Validate CSS syntax before noise removal. Ignore selectors are allowed
-    # not to match; malformed selectors are reported as extraction errors.
     if include_selector:
         soup.select(include_selector)
     for selector in ignored:
@@ -115,10 +178,10 @@ def normalize_html(
             fragment = BeautifulSoup(str(node), "html.parser")
             _remove_default_noise(fragment)
             _remove_ignored_nodes(fragment, ignored)
-            value = normalize_text(fragment.get_text("\n", strip=True))
+            value = normalize_text(_html_inline_text(fragment))
             if value:
                 fragments.append(value)
-        return normalize_text("\n".join(fragments))
+        return normalize_text("\n\n".join(fragments))
 
     _remove_ignored_nodes(soup, ignored)
     candidates = []
@@ -128,8 +191,7 @@ def normalize_html(
             if length:
                 candidates.append((length, node))
     content = max(candidates, key=lambda item: item[0])[1] if candidates else (soup.body or soup)
-    return normalize_text(content.get_text("\n", strip=True))
-
+    return normalize_text(_html_inline_text(content))
 
 def _extension(url: str) -> str:
     return Path(urlparse(url).path.lower()).suffix
@@ -261,6 +323,391 @@ def _extract_zip_bundle(body: bytes):
         archive.close()
 
 
+# Bump this when PDF/HTML normalized output changes. The engine re-fetches these
+# records and records a baseline migration (not a regulatory change) if the
+# original response bytes are identical.
+CONTENT_EXTRACTOR_VERSION = "layout-pdf-html-v2"
+LOW_TEXT_PAGE_CHARS = 40
+MAX_OCR_PAGES = 100
+OCR_PAGE_TIMEOUT_SECONDS = 15
+
+
+def normalize_pdf_prose(text: str) -> str:
+    """Join ordinary PDF line wraps while preserving paragraph and heading boundaries."""
+    raw_lines = []
+    for source_line in str(text or "").replace("\r", "\n").splitlines():
+        line = unicodedata.normalize("NFKC", source_line).replace("\u00a0", " ")
+        line = re.sub(r"[ \t]+", " ", line).strip()
+        if line:
+            raw_lines.append(line)
+        elif raw_lines and raw_lines[-1] != "":
+            raw_lines.append("")
+
+    paragraphs = []
+    current = ""
+
+    def flush():
+        nonlocal current
+        if current.strip():
+            paragraphs.append(current.strip())
+        current = ""
+
+    for line in raw_lines:
+        if not line:
+            flush()
+            continue
+        if not current:
+            current = line
+            continue
+
+        # Wrapped words split by a PDF line-end hyphen are usually hyphenation,
+        # not a true word boundary. Keep the normalized word as one token.
+        if current.endswith("-") and line[:1].islower():
+            current = current[:-1] + line
+            continue
+
+        # Preserve numbered items, bullets, all-caps section headings and
+        # explicit paragraph endings. Other hard line breaks are usually layout
+        # wraps, so join them with a space.
+        starts_new_item = bool(re.match(r"^(?:[-•▪◦]|\(?\d{1,3}[.)])\s+", line))
+        current_is_heading = bool(
+            re.fullmatch(r"[A-Z][A-Z0-9 /&()’'–—:.-]{3,}", current)
+            or re.match(r"^(?:GENERAL INSTRUCTIONS|LINE ITEM INSTRUCTIONS|QUESTIONS AND ANSWERS)\b", current, re.I)
+        )
+        if current.endswith((".", "!", "?", ";")) or starts_new_item or current_is_heading:
+            flush()
+            current = line
+        else:
+            current += " " + line
+    flush()
+    return "\n".join(paragraphs)
+
+
+def _looks_like_fragmented_pdf_page(text: str) -> bool:
+    """Fast heuristic to route likely forms/tables to geometry-aware extraction."""
+    lines = [re.sub(r"\s+", " ", line).strip() for line in str(text or "").splitlines()]
+    lines = [line for line in lines if line]
+    if len(lines) < 18:
+        return False
+    short_lines = sum(len(line) <= 32 for line in lines)
+    fragment_lines = sum(
+        len(line.split()) <= 3 and len(line) <= 45
+        for line in lines
+    )
+    coded_fields = len(re.findall(r"\b[A-Z]{2,5}\s+[A-Z0-9]{3,5}\b", text))
+    return (
+        (short_lines / len(lines) >= 0.62 and fragment_lines / len(lines) >= 0.38)
+        or coded_fields >= 4
+    )
+
+
+def _pdf_text_quality(text: str) -> float:
+    """Rank text candidates by useful content versus excessive fragmentation."""
+    value = str(text or "").strip()
+    if not value:
+        return 0.0
+    lines = [line.strip() for line in value.splitlines() if line.strip()]
+    if not lines:
+        return 0.0
+    fragments = sum(
+        1 for line in lines
+        if len(line) <= 18 and len(line.split()) <= 2
+    )
+    replacement_chars = value.count("\ufffd")
+    return (
+        min(len(value), 12000)
+        + min(len(lines), 300) * 1.5
+        - fragments * 7
+        - replacement_chars * 20
+    )
+
+
+def _table_to_markdown(rows) -> str:
+    """Render extracted PDF table cells as an explicit grid."""
+    cleaned = []
+    for row in rows or []:
+        cells = [
+            re.sub(r"\s+", " ", str(cell or "")).strip().replace("|", r"\|")
+            for cell in (row or [])
+        ]
+        while cells and not cells[-1]:
+            cells.pop()
+        if any(cells):
+            cleaned.append(cells)
+    if not cleaned:
+        return ""
+    width = max(len(row) for row in cleaned)
+    output = ["[TABLE]"]
+    for row_index, row in enumerate(cleaned):
+        row = row + [""] * (width - len(row))
+        output.append("| " + " | ".join(row) + " |")
+        if row_index == 0:
+            output.append("| " + " | ".join(["---"] * width) + " |")
+    return "\n".join(output)
+
+
+def _table_score(rows) -> int:
+    cleaned = [
+        [str(cell or "").strip() for cell in (row or [])]
+        for row in (rows or [])
+    ]
+    cleaned = [row for row in cleaned if any(row)]
+    if len(cleaned) < 2:
+        return 0
+    width = max((len(row) for row in cleaned), default=0)
+    filled = sum(bool(cell) for row in cleaned for cell in row)
+    if width < 2 or filled < 4:
+        return 0
+    # Avoid interpreting body paragraphs as tables merely because text-based
+    # table detection returned a two-column guess.
+    nonempty_ratio = filled / max(1, sum(len(row) for row in cleaned))
+    return filled if nonempty_ratio >= 0.20 else 0
+
+
+def _find_pdf_tables(page):
+    """Try ruled-table detection first, then alignment-based detection."""
+    candidates = []
+    settings_list = (
+        {
+            "vertical_strategy": "lines",
+            "horizontal_strategy": "lines",
+            "snap_tolerance": 4,
+            "join_tolerance": 4,
+            "intersection_tolerance": 5,
+        },
+        {
+            "vertical_strategy": "text",
+            "horizontal_strategy": "text",
+            "min_words_vertical": 3,
+            "min_words_horizontal": 1,
+            "intersection_tolerance": 5,
+            "text_x_tolerance": 3,
+            "text_y_tolerance": 3,
+        },
+    )
+    for settings in settings_list:
+        try:
+            tables = page.find_tables(table_settings=settings)
+        except Exception:
+            continue
+        chosen = []
+        total_score = 0
+        for table in tables:
+            try:
+                rows = table.extract()
+                score = _table_score(rows)
+                bbox = tuple(float(value) for value in table.bbox)
+            except Exception:
+                continue
+            if not score:
+                continue
+            if any(
+                all(abs(left - right) < 4 for left, right in zip(bbox, existing[0]))
+                for existing in chosen
+            ):
+                continue
+            chosen.append((bbox, rows, score))
+            total_score += score
+        candidates.append((total_score, chosen))
+    return max(candidates, key=lambda item: item[0])[1] if candidates else []
+
+
+def _extract_pdfplumber_page(page, fast_text: str) -> str:
+    """Recover page text and table cells while retaining their vertical order."""
+    tables = _find_pdf_tables(page)
+    if tables:
+        tables.sort(key=lambda entry: (entry[0][1], entry[0][0]))
+        blocks = []
+        cursor = 0.0
+        for bbox, rows, _score in tables:
+            top = max(cursor, max(0.0, min(float(page.height), bbox[1])))
+            bottom = max(top, max(0.0, min(float(page.height), bbox[3])))
+            if top - cursor >= 2:
+                try:
+                    region_text = page.crop((0, cursor, page.width, top)).extract_text()
+                except Exception:
+                    region_text = ""
+                region_text = normalize_pdf_prose(region_text or "")
+                if region_text:
+                    blocks.append(region_text)
+            table_text = _table_to_markdown(rows)
+            if table_text:
+                blocks.append(table_text)
+            cursor = max(cursor, bottom)
+        if cursor < float(page.height) - 2:
+            try:
+                region_text = page.crop((0, cursor, page.width, page.height)).extract_text()
+            except Exception:
+                region_text = ""
+            region_text = normalize_pdf_prose(region_text or "")
+            if region_text:
+                blocks.append(region_text)
+        if blocks:
+            return "\n\n".join(blocks)
+
+    candidates = [normalize_pdf_prose(fast_text)]
+    for kwargs in (
+        {"layout": False, "x_tolerance": 2.5, "y_tolerance": 3},
+        {"layout": True, "x_tolerance": 2.5, "y_tolerance": 3},
+    ):
+        try:
+            candidate = page.extract_text(**kwargs)
+        except Exception:
+            continue
+        if candidate:
+            candidates.append(normalize_pdf_prose(candidate))
+    return max(candidates, key=_pdf_text_quality)
+
+
+def _page_has_image_xobject(page) -> bool:
+    try:
+        resources = page.get("/Resources")
+        if resources is None:
+            return False
+        resources = resources.get_object()
+        xobjects = resources.get("/XObject")
+        if xobjects is None:
+            return False
+        for reference in xobjects.get_object().values():
+            obj = reference.get_object()
+            if str(obj.get("/Subtype")) == "/Image":
+                return True
+    except Exception:
+        return False
+    return False
+
+
+def _ocr_pdf_pages(body: bytes, page_indexes: list[int]) -> dict[int, str]:
+    """OCR only pages that appear image-based; native-text pages stay on the fast path."""
+    import pytesseract
+    import pypdfium2 as pdfium
+
+    document = pdfium.PdfDocument(body)
+    results = {}
+    try:
+        for index in page_indexes:
+            page = None
+            bitmap = None
+            try:
+                page = document[index]
+                bitmap = page.render(scale=1.8)
+                image = bitmap.to_pil()
+                try:
+                    text = pytesseract.image_to_string(
+                        image,
+                        config="--psm 3",
+                        timeout=OCR_PAGE_TIMEOUT_SECONDS,
+                    )
+                finally:
+                    image.close()
+                results[index] = normalize_pdf_prose(text or "")
+            finally:
+                if bitmap is not None:
+                    try:
+                        bitmap.close()
+                    except Exception:
+                        pass
+                if page is not None:
+                    try:
+                        page.close()
+                    except Exception:
+                        pass
+    finally:
+        document.close()
+    return results
+
+
+def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
+    """Fast-first PDF extraction with layout/table and selective OCR fallbacks."""
+    from pypdf import PdfReader
+
+    try:
+        reader = PdfReader(io.BytesIO(body), strict=False)
+        if reader.is_encrypted:
+            decrypted = reader.decrypt("")
+            if not decrypted:
+                return None, "PDF is encrypted and requires a password; refusing to replace the trusted baseline."
+        pages = list(reader.pages)
+        if not pages:
+            return None, "PDF contains no readable pages."
+
+        page_texts = []
+        low_text_indexes = []
+        page_images = []
+        for index, page in enumerate(pages):
+            try:
+                raw_text = page.extract_text() or ""
+            except Exception:
+                raw_text = ""
+            page_texts.append(normalize_pdf_prose(raw_text))
+            has_image = _page_has_image_xobject(page)
+            page_images.append(has_image)
+            if len((raw_text or "").strip()) < LOW_TEXT_PAGE_CHARS and has_image:
+                low_text_indexes.append(index)
+
+        # Run geometry-aware parsing only on pages whose fast text is highly
+        # fragmented (common for forms, multi-column PDFs and table-heavy pages).
+        suspicious_indexes = [
+            index for index, raw in enumerate(page_texts)
+            if _looks_like_fragmented_pdf_page(raw)
+        ]
+        if suspicious_indexes:
+            try:
+                import pdfplumber
+
+                with pdfplumber.open(io.BytesIO(body)) as document:
+                    for index in suspicious_indexes:
+                        if index >= len(document.pages):
+                            continue
+                        try:
+                            candidate = _extract_pdfplumber_page(document.pages[index], page_texts[index])
+                            # Successful table reconstruction wins even if it is
+                            # shorter than the linear text stream: the cell grid
+                            # is the useful semantic structure, not text length.
+                            if "[TABLE]" in candidate or _pdf_text_quality(candidate) > _pdf_text_quality(page_texts[index]) * 1.03:
+                                page_texts[index] = candidate
+                        except Exception:
+                            # Keep the fast extraction if a malformed page defeats
+                            # table reconstruction. OCR/quality logic still applies.
+                            pass
+            except Exception:
+                pass
+
+        if low_text_indexes:
+            if len(low_text_indexes) > MAX_OCR_PAGES:
+                return None, (
+                    f"PDF has {len(low_text_indexes)} image-only/low-text pages; "
+                    f"OCR safety limit is {MAX_OCR_PAGES}. Increase MAX_OCR_PAGES for this workload."
+                )
+            try:
+                ocr_results = _ocr_pdf_pages(body, low_text_indexes)
+            except Exception as exc:
+                return None, (
+                    "PDF contains image-based pages with no usable text layer, but the OCR fallback failed: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+            for index, ocr_text in ocr_results.items():
+                if ocr_text.strip():
+                    # Preserve the PDFium-rendered/OCR result only when it yields
+                    # real text; otherwise retain an existing sparse text stream.
+                    if _pdf_text_quality(ocr_text) > _pdf_text_quality(page_texts[index]):
+                        page_texts[index] = ocr_text
+                elif page_images[index] and not page_texts[index].strip():
+                    return None, (
+                        f"OCR returned no readable text for image-based page {index + 1}; "
+                        "trusted baseline was left unchanged."
+                    )
+
+        text = normalize_text("\n\n".join(page_texts))
+        if not text.strip():
+            return None, (
+                "PDF produced no usable text. It may contain outlines, damaged text, or scans that OCR could not read."
+            )
+        return text, None
+    except Exception as exc:
+        return None, f"PDF extraction failed: {type(exc).__name__}: {exc}"
+
+
 def extract_content(
     url: str,
     content_type: str,
@@ -327,12 +774,8 @@ def extract_content(
             return None, "html", f"HTML normalization failed: {type(exc).__name__}: {exc}"
 
     if "pdf" in ctype or suffix == ".pdf" or body.startswith(b"%PDF-"):
-        try:
-            from pypdf import PdfReader
-            reader = PdfReader(io.BytesIO(body))
-            return normalize_text("\n".join(page.extract_text() or "" for page in reader.pages)), "pdf", None
-        except Exception as exc:
-            return None, "pdf", f"{type(exc).__name__}: {exc}"
+        text, error = _extract_pdf(body)
+        return text, "pdf", error
     if "wordprocessingml.document" in ctype or suffix == ".docx":
         try:
             from docx import Document
