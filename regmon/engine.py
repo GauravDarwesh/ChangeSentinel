@@ -175,6 +175,9 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             backoff_seconds=float(DEFAULTS.get("fetch_backoff_seconds", 2)),
             etag=None if force_full_fetch else (old or {}).get("etag"),
             last_modified=None if force_full_fetch else (old or {}).get("last_modified"),
+            allowed_domains=source.allowed_domains,
+            allowed_prefixes=source.allowed_prefixes,
+            allowed_urls=source.allowed_urls,
         )
         item.update({
             "http_status": result.status_code,
