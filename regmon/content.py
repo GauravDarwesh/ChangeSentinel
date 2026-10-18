@@ -632,6 +632,7 @@ def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
             return None, "PDF contains no readable pages."
 
         page_texts = []
+        raw_page_texts = []
         low_text_indexes = []
         page_images = []
         for index, page in enumerate(pages):
@@ -639,6 +640,7 @@ def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
                 raw_text = page.extract_text() or ""
             except Exception:
                 raw_text = ""
+            raw_page_texts.append(raw_text)
             page_texts.append(normalize_pdf_prose(raw_text))
             has_image = _page_has_image_xobject(page)
             page_images.append(has_image)
@@ -648,7 +650,7 @@ def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
         # Run geometry-aware parsing only on pages whose fast text is highly
         # fragmented (common for forms, multi-column PDFs and table-heavy pages).
         suspicious_indexes = [
-            index for index, raw in enumerate(page_texts)
+            index for index, raw in enumerate(raw_page_texts)
             if _looks_like_fragmented_pdf_page(raw)
         ]
         if suspicious_indexes:
