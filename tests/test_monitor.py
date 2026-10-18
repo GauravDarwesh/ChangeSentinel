@@ -1665,8 +1665,8 @@ class TestEngineFlow(unittest.TestCase):
             not_modified=False,
             body=body,
         )
-        with patch("regmon.engine.should_force_full_fetch", return_value=False), \\
-             patch("regmon.engine.fetch", return_value=response) as mock_fetch, \\
+        with patch("regmon.engine.should_force_full_fetch", return_value=False), \
+             patch("regmon.engine.fetch", return_value=response) as mock_fetch, \
              patch("regmon.engine.extract_content", return_value=("Extracted PDF text", "pdf", None)):
             item, text, html_body, file_body = make_current_item(
                 url, old, SOURCE, "2026-10-18T10:10:00+00:00"
@@ -1708,10 +1708,10 @@ class TestEngineFlow(unittest.TestCase):
         }
         with patch("regmon.engine.load_discovery_metadata", return_value={
             "source_id": source.id, "state": "COMPLETE", "method": "synthetic-test"
-        }), patch("regmon.engine.load_previous", return_value={}), \\
-             patch("regmon.engine.discover", return_value=[url]), \\
-             patch("regmon.engine.make_current_item", return_value=(item, "PDF extracted text", None, body)), \\
-             patch("regmon.engine.write_snapshot", return_value="data/snapshots/text.txt"), \\
+        }), patch("regmon.engine.load_previous", return_value={}), \
+             patch("regmon.engine.discover", return_value=[url]), \
+             patch("regmon.engine.make_current_item", return_value=(item, "PDF extracted text", None, body)), \
+             patch("regmon.engine.write_snapshot", return_value="data/snapshots/text.txt"), \
              patch("regmon.engine.write_file_snapshot", return_value="data/snapshots/files/file.pdf") as write_file:
             result = process_source(source, "synthetic-pdf-snapshot", dry_run=False)
 
