@@ -5,6 +5,8 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
+import tempfile
 import traceback
 import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -82,8 +84,8 @@ def read_html_snapshot(record: dict | None) -> str | None:
         return None
 
 
-def load_discovery_metadata(source_id: str) -> dict[str, Any]:
-    path = DISCOVERY / f"{source_id}.json"
+def load_discovery_metadata(source_id: str, data_dir: Path = DATA) -> dict[str, Any]:
+    path = data_dir / "discovery" / f"{source_id}.json"
     if not path.exists():
         return {
             "source_id": source_id,
@@ -244,13 +246,19 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         return item, None, None
 
 
-def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> dict:
+def process_source(
+    source: SourceConfig,
+    run_id: str,
+    dry_run: bool = False,
+    discovery_data_dir: Path | None = None,
+) -> dict:
     now = datetime.now(timezone.utc).isoformat()
     previous = load_previous(source.id)
     initial_baseline = source.baseline_on_first_run and not previous
 
-    urls = discover(source, DATA)
-    discovery = load_discovery_metadata(source.id)
+    discovery_root = discovery_data_dir or DATA
+    urls = discover(source, discovery_root)
+    discovery = load_discovery_metadata(source.id, discovery_root)
 
     # Discovery integrity is a hard gate. A PAUSED, DEGRADED, or FAILED
     # inventory is never fed into the expensive content-processing stage.
@@ -357,12 +365,14 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
 
             if item.get("fetch_error"):
                 event_id = build_event_id("FETCH_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), error=item["fetch_error"], observation_id=now)
-                evidence = write_evidence(
-                    ROOT, "FETCH_ERROR", event_id, url, now, old, item,
-                    old_text if old_text is not None else read_snapshot(old),
-                    None,
-                    item["fetch_error"],
-                )
+                evidence = None
+                if not dry_run:
+                    evidence = write_evidence(
+                        ROOT, "FETCH_ERROR", event_id, url, now, old, item,
+                        old_text if old_text is not None else read_snapshot(old),
+                        None,
+                        item["fetch_error"],
+                    )
                 item["evidence_location"] = evidence
                 events.append({"event_id":event_id,"event_type":"FETCH_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"error":item["fetch_error"]}})
                 continue
@@ -371,14 +381,16 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
                 if html_body is not None and item.get("html_hash") and not dry_run:
                     item["html_snapshot_location"] = write_html_snapshot(uid, html_body, item["html_hash"])
                 event_id = build_event_id("EXTRACTION_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), after_hash=item.get("raw_hash"), error=item["extraction_error"], observation_id=now)
-                evidence = write_evidence(
-                    ROOT, "EXTRACTION_ERROR", event_id, url, now, old, item,
-                    old_text if old_text is not None else read_snapshot(old),
-                    None,
-                    item["extraction_error"],
-                    before_html=read_html_snapshot(old),
-                    after_html=html_body.decode("utf-8", "replace") if html_body is not None else None,
-                )
+                evidence = None
+                if not dry_run:
+                    evidence = write_evidence(
+                        ROOT, "EXTRACTION_ERROR", event_id, url, now, old, item,
+                        old_text if old_text is not None else read_snapshot(old),
+                        None,
+                        item["extraction_error"],
+                        before_html=read_html_snapshot(old),
+                        after_html=html_body.decode("utf-8", "replace") if html_body is not None else None,
+                    )
                 item["evidence_location"] = evidence
                 current[uid] = item
                 events.append({"event_id":event_id,"event_type":"EXTRACTION_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"error":item["extraction_error"]}})
@@ -446,7 +458,11 @@ def process_source(source: SourceConfig, run_id: str, dry_run: bool = False) -> 
                 removed_items.append(old)
                 url = old.get("canonical_url","")
                 event_id = build_event_id("REMOVED_URL", uid, old.get("normalized_hash") or old.get("raw_hash") or old.get("content_hash"))
-                evidence = write_evidence(ROOT, "REMOVED_URL", event_id, url, now, old, None, read_snapshot(old), None)
+                evidence = (
+                    write_evidence(ROOT, "REMOVED_URL", event_id, url, now, old, None, read_snapshot(old), None)
+                    if not dry_run
+                    else None
+                )
                 events.append({"event_id":event_id,"event_type":"REMOVED_URL","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":None}})
 
     candidate_pool = [] if initial_baseline else (
@@ -632,7 +648,22 @@ def run(source_id: str="all", dry_run: bool=False) -> dict:
     if not selected:
         raise ValueError("No active monitoring sources are configured")
     run_id = f"{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:8]}"
-    results = [process_source(source,run_id,dry_run=dry_run) for source in selected]
+
+    if dry_run:
+        # Discovery writes checkpoints, inventories, and failure ledgers. Work on
+        # a temporary copy so even discovery side effects disappear after the run.
+        with tempfile.TemporaryDirectory(prefix="changesentinel-dry-run-") as temporary:
+            discovery_data_dir = Path(temporary) / "data"
+            discovery_data_dir.mkdir(parents=True, exist_ok=True)
+            if DISCOVERY.is_dir():
+                shutil.copytree(DISCOVERY, discovery_data_dir / "discovery", dirs_exist_ok=True)
+            results = [
+                process_source(source, run_id, dry_run=True, discovery_data_dir=discovery_data_dir)
+                for source in selected
+            ]
+    else:
+        results = [process_source(source, run_id, dry_run=False) for source in selected]
+
     return {"run_id":run_id,"results":results,"outcome":save_outputs(results,run_id,dry_run=dry_run)}
 
 def main() -> None:
