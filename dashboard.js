@@ -288,7 +288,14 @@ function renderMonitorList() {
       '</article>';
   }).join("");
 }
-function snapshotURL(path) { return path ? bust(RAW + "/" + path) : ""; }
+function snapshotURL(path) {
+  if (!path) return "";
+  // GitHub raw-content URLs force PDF downloads in many browsers. Serve PDF
+  // previews from the dashboard's GitHub Pages origin so the iframe can render
+  // the document inline; keep raw-content fetching for HTML/text snapshots.
+  if (/\.pdf$/i.test(path)) return bust(new URL(path, window.location.href).toString());
+  return bust(RAW + "/" + path);
+}
 async function readSnapshotFile(path, cache, asText) {
   if (!path) throw new Error("Snapshot path is not available");
   if (cache[path] != null) return cache[path];
