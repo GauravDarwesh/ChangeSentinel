@@ -269,7 +269,7 @@ def extract_content(
     ignore_selectors: tuple[str, ...] | list[str] | None = None,
 ):
     ctype, suffix = (content_type or "").lower(), _extension(url)
-    zip_signature = body.startswith((b"PK\\x03\\x04", b"PK\\x05\\x06", b"PK\\x07\\x08"))
+    zip_signature = body.startswith(b"PK")
     if "zip" in ctype or suffix == ".zip" or zip_signature:
         try:
             archive, infos = _validated_zip_infos(body)
@@ -324,7 +324,7 @@ def extract_content(
         except Exception as exc:
             return None, "html", f"HTML normalization failed: {type(exc).__name__}: {exc}"
 
-    if "pdf" in ctype or suffix == ".pdf":
+    if "pdf" in ctype or suffix == ".pdf" or body.startswith(b"%PDF-"):
         try:
             from pypdf import PdfReader
             reader = PdfReader(io.BytesIO(body))
