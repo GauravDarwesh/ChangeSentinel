@@ -330,8 +330,8 @@ function renderDetailHeader(item) {
   const htmlPath = item.html_snapshot_location || "";
   const textPath = item.snapshot_location || "";
   const snapshotPath = filePath || htmlPath || textPath;
-  const savedFileLabel = item.extraction_type === "pdf" ? "Open saved PDF ↗" :
-    item.extraction_type === "zip" ? "Open saved ZIP ↗" : "Open saved file ↗";
+  const savedFileLabel = filePath && item.extraction_type === "pdf" ? "Open saved PDF ↗" :
+    filePath && item.extraction_type === "zip" ? "Open saved ZIP ↗" : "Open saved file ↗";
   $("detailHeader").innerHTML =
     '<div class="detail-hero"><div class="detail-hero-top"><div class="detail-title-wrap">' +
     '<div class="detail-kicker">' + esc(source.name || source.regulator || "Monitored page") + '</div>' +
