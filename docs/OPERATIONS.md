@@ -6,6 +6,7 @@ The active production source is the bounded Federal Reserve reporting-forms pilo
 
 - **OPENROUTER_API_KEY** enables AI analysis. Deterministic comparison and evidence collection can still run if AI is unavailable.
 - **NTFY_TOPIC** is the optional destination for ntfy alerts. If it is not configured, notification candidates are retained in the notification outbox and can be delivered after a topic is configured.
+- **AI smoke test**: run `.github/workflows/ai-smoke-test.yml` manually to call the configured OpenRouter model with synthetic evidence and validate its nine-field output contract. This test does not change monitoring state or send ntfy notifications.
 
 ## Workflow behavior
 
@@ -28,7 +29,9 @@ Redirect targets are checked and discovery redirects must stay within the curren
 ## Manual verification checklist
 
 1. Require RegMonitor CI to pass before merging code changes.
-2. Dispatch Regulatory Monitor for fed-reporting-forms-pilot; confirm the state commit and dashboard refresh.
-3. Configure NTFY_TOPIC and dispatch test_notification=true to verify delivery.
-4. Keep regression coverage for transient delivery failures, confirming queued events persist and are retried.
-5. Do not reactivate eba-full-site to clear stale metadata. Select and bound the intended source explicitly.
+2. Run AI Smoke Test after changing AI configuration and confirm it reports `smoke_test: passed`.
+3. Verify a genuine changed-content run yields an AI status of `ok`, `invalid`, `error`, or `skipped` in the report counts before concluding the AI path is healthy.
+4. Dispatch Regulatory Monitor for fed-reporting-forms-pilot; confirm the state commit and dashboard refresh.
+5. Configure NTFY_TOPIC and dispatch test_notification=true to verify delivery.
+6. Keep regression coverage for transient delivery failures, confirming queued events persist and are retried.
+7. Do not reactivate eba-full-site to clear stale metadata. Select and bound the intended source explicitly.
