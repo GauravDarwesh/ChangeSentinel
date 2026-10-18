@@ -255,6 +255,8 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         item["html_comparison_hash"] = html_comparison_hash(html_body)
         if html_body is None:
             item["html_snapshot_location"] = None
+        if file_body is None:
+            item["file_snapshot_location"] = None
         item["relevance"] = triage(url, normalized, result.content_type)
         return item, normalized, html_body, file_body
     except Exception as exc:
