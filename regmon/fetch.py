@@ -6,7 +6,9 @@ import time
 from dataclasses import dataclass
 
 import requests
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlsplit
+
+from regmon.discovery import canonical
 
 from regmon.security import REDIRECT_STATUSES, validate_public_http_url
 
@@ -38,6 +40,9 @@ def fetch(
     backoff_seconds: float = 2,
     etag: str | None = None,
     last_modified: str | None = None,
+    allowed_domains: tuple[str, ...] | list[str] | None = None,
+    allowed_prefixes: tuple[str, ...] | list[str] | None = None,
+    allowed_urls: tuple[str, ...] | list[str] | None = None,
 ) -> FetchResult:
     last_error = None
     headers = {
@@ -51,6 +56,21 @@ def fetch(
     if last_modified:
         headers["If-Modified-Since"] = last_modified
 
+    scoped_domains = {str(value).lower() for value in (allowed_domains or [])}
+    scoped_prefixes = tuple(str(value) for value in (allowed_prefixes or []))
+    scoped_urls = {canonical(str(value)) for value in (allowed_urls or [])}
+
+    def enforce_scope(target: str) -> None:
+        parsed_target = urlsplit(target)
+        if scoped_domains and str(parsed_target.hostname or "").lower() not in scoped_domains:
+            raise ValueError(f"Fetch redirect target is outside allowed domains: {target}")
+        normalized_target = canonical(target)
+        if scoped_prefixes and not any(normalized_target.startswith(prefix) for prefix in scoped_prefixes):
+            raise ValueError(f"Fetch redirect target is outside allowed URL prefixes: {target}")
+        if scoped_urls and normalized_target not in scoped_urls:
+            raise ValueError(f"Fetch redirect target is outside the exact URL allowlist: {target}")
+
+    enforce_scope(url)
     validate_public_http_url(url, resolve_dns=True)
     for attempt in range(1, attempts + 1):
         try:
@@ -71,6 +91,7 @@ def fetch(
                 if not location:
                     raise ValueError(f"Redirect from {current_url} did not include a Location header")
                 target = urljoin(current_url, location)
+                enforce_scope(target)
                 validate_public_http_url(target, resolve_dns=True)
                 if target in visited:
                     raise ValueError(f"Redirect loop detected at {target}")
