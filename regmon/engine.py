@@ -574,7 +574,7 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
     md += ["","## Sources",""]
     for r in source_results:
         c=r["report"]["counts"]; s=r["report"]["source"]
-        md += [f"### {s['name']}","",f"- Regulator: {s['regulator']}",f"- Discovered: {c['discovered']}",f"- Changed content: {c['changed']}",f"- HTML source-only changes: {c.get('source_changed',0)},f"- New: {c['new']}",f"- Removed: {c['removed']}",f"- Fetch errors: {c['fetch_error']}", ""]
+        md += [f"### {s['name']}","",f"- Regulator: {s['regulator']}",f"- Discovered: {c['discovered']}",f"- Changed content: {c['changed']}",f"- HTML source-only changes: {c.get('source_changed',0)}",f"- New: {c['new']}",f"- Removed: {c['removed']}",f"- Fetch errors: {c['fetch_error']}", ""]
     (DATA / "report.md").write_text("\n".join(md),encoding="utf-8")
     return {"dry_run":False,"sources":[r["report"]["source"]["id"] for r in source_results],"run_id":run_id}
 
