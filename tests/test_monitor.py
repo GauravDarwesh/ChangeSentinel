@@ -535,6 +535,26 @@ class TestDiscovery(unittest.TestCase):
         self.assertEqual(mock_get.call_count, 2)
 
     @patch("regmon.discovery.requests.get")
+    def test_discovery_rejects_out_of_scope_redirect(self, mock_get):
+        source = SourceConfig(
+            id="eba-test",
+            name="EBA Test",
+            regulator="European Banking Authority",
+            seed_urls=("https://www.eba.europa.eu/activities/single-rulebook/start",),
+            allowed_prefixes=("https://www.eba.europa.eu/activities/single-rulebook/",),
+            allowed_domains=("www.eba.europa.eu",),
+            discovery_http_attempts=3,
+        )
+        response = Mock(status_code=302, headers={"location": "https://evil.test/landing"})
+        mock_get.return_value = response
+        url, links, failure = _fetch_links(source.seed_urls[0], source, timeout=5)
+        self.assertEqual(url, source.seed_urls[0])
+        self.assertEqual(links, [])
+        self.assertIn("outside the configured monitor scope", failure["error"])
+        self.assertEqual(failure["retry_classification"], "permanent_http")
+        mock_get.assert_called_once()
+
+    @patch("regmon.discovery.requests.get")
     def test_scope_change_invalidates_checkpoint(self, mock_get):
         previous_scope = SourceConfig(
             id="eba-test",
