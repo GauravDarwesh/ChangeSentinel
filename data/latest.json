@@ -810,9 +810,9 @@
         "regulator": "Board of Governors of the Federal Reserve System",
         "canonical_url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
         "first_seen": "2026-10-18T06:09:31.008124+00:00",
-        "last_seen": "2026-10-18T06:09:31.008124+00:00",
-        "last_checked": "2026-10-18T06:09:31.008124+00:00",
-        "last_full_fetch": "2026-10-18T06:09:31.008124+00:00",
+        "last_seen": "2026-10-18T06:38:36.127708+00:00",
+        "last_checked": "2026-10-18T06:38:36.127708+00:00",
+        "last_full_fetch": "2026-10-18T06:38:36.127708+00:00",
         "active": true,
         "terminal_file": false,
         "http_status": 200,
@@ -820,12 +820,14 @@
         "content_length": null,
         "etag": null,
         "last_modified": null,
-        "raw_hash": "7a219bd5949a863f75b79850d722c2345045801b1f1a1b7bdfc4187dba0287f7",
+        "raw_hash": "22e9c8327469fe8aeb7be8db260cf5feb9d69d9039977e4adbff935194031888",
         "normalized_hash": "41ad0228b54db65d1e5739488381406e0e71bd4d9c5972ca46695fc52fdd35ab",
+        "html_hash": "22e9c8327469fe8aeb7be8db260cf5feb9d69d9039977e4adbff935194031888",
+        "html_snapshot_location": "data/snapshots/html/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-22e9c8327469fe8aeb7be8db260cf5feb9d69d9039977e4adbff935194031888.html",
         "extraction_type": "html",
         "extraction_error": null,
         "fetch_error": null,
-        "snapshot_location": "data/snapshots/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49.txt",
+        "snapshot_location": "data/snapshots/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-41ad0228b54db65d1e5739488381406e0e71bd4d9c5972ca46695fc52fdd35ab.txt",
         "evidence_location": null,
         "relevance": {
           "candidate": true,
@@ -835,7 +837,8 @@
           ]
         },
         "not_modified": false,
-        "full_fetch_forced": true
+        "full_fetch_forced": true,
+        "html_baseline_forced": true
       },
       "c1c1ed502814bc1bdf564f9d28b921e0fb795953747b534aa729ee519b02102a": {
         "schema_version": 2,
@@ -844,9 +847,9 @@
         "regulator": "Board of Governors of the Federal Reserve System",
         "canonical_url": "https://www.federalreserve.gov/apps/reportingforms/review",
         "first_seen": "2026-10-18T06:09:31.008124+00:00",
-        "last_seen": "2026-10-18T06:09:31.008124+00:00",
-        "last_checked": "2026-10-18T06:09:31.008124+00:00",
-        "last_full_fetch": "2026-10-18T06:09:31.008124+00:00",
+        "last_seen": "2026-10-18T06:38:36.127708+00:00",
+        "last_checked": "2026-10-18T06:38:36.127708+00:00",
+        "last_full_fetch": "2026-10-18T06:38:36.127708+00:00",
         "active": true,
         "terminal_file": false,
         "http_status": 200,
@@ -854,12 +857,14 @@
         "content_length": null,
         "etag": null,
         "last_modified": null,
-        "raw_hash": "0253815035f1616def98b465c7316dc824ce4d32ee53dfbdb04a9b258ddaf880",
+        "raw_hash": "a0ca07bb62e3cbe12ecf19408df1027a81a33b6be97fdcb49821ccb2ad9a40a2",
         "normalized_hash": "8efac2a56f9222b17c322e941aefe96182ca1eb5a994e9bc929f800979da424a",
+        "html_hash": "a0ca07bb62e3cbe12ecf19408df1027a81a33b6be97fdcb49821ccb2ad9a40a2",
+        "html_snapshot_location": "data/snapshots/html/c1c1ed502814bc1bdf564f9d28b921e0fb795953747b534aa729ee519b02102a-a0ca07bb62e3cbe12ecf19408df1027a81a33b6be97fdcb49821ccb2ad9a40a2.html",
         "extraction_type": "html",
         "extraction_error": null,
         "fetch_error": null,
-        "snapshot_location": "data/snapshots/c1c1ed502814bc1bdf564f9d28b921e0fb795953747b534aa729ee519b02102a.txt",
+        "snapshot_location": "data/snapshots/c1c1ed502814bc1bdf564f9d28b921e0fb795953747b534aa729ee519b02102a-8efac2a56f9222b17c322e941aefe96182ca1eb5a994e9bc929f800979da424a.txt",
         "evidence_location": null,
         "relevance": {
           "candidate": true,
@@ -870,7 +875,8 @@
           ]
         },
         "not_modified": false,
-        "full_fetch_forced": true
+        "full_fetch_forced": true,
+        "html_baseline_forced": true
       }
     }
   }
