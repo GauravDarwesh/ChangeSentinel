@@ -161,9 +161,11 @@ function matchingEvents(item) {
 }
 function itemStatus(item) {
   if (item.fetch_error || item.extraction_error || (item.http_status && Number(item.http_status) >= 400)) return { label: "Needs attention", cls: "error", icon: "!" };
-  const events = matchingEvents(item);
+  const events = matchingEvents(item).slice().sort((a,b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
   const newest = events[0];
-  if (newest && newest.event_type === "CHANGED_URL") return { label: "Change detected", cls: "warning", icon: "↗" };
+  if (newest && newest.event_type === "CHANGED_URL") return { label: "Content changed", cls: "warning", icon: "↗" };
+  if (newest && newest.event_type === "HTML_SOURCE_CHANGED") return { label: "HTML source changed", cls: "warning", icon: "⌁" };
+  if (newest && newest.event_type === "NEW_URL") return { label: "New page", cls: "warning", icon: "+" };
   if (newest && newest.event_type === "FETCH_ERROR") return { label: "Fetch error", cls: "error", icon: "!" };
   if (newest && newest.event_type === "EXTRACTION_ERROR") return { label: "Extraction error", cls: "error", icon: "!" };
   if (item.first_seen && item.last_checked && new Date(item.first_seen).getTime() === new Date(item.last_checked).getTime()) return { label: "Baseline saved", cls: "", icon: "✓" };
@@ -194,7 +196,7 @@ function renderMetrics() {
   const events = allEvents();
   const errors = Number(counts.fetch_error || 0) + Number(counts.extraction_error || 0);
   $("metricMonitors").textContent = state.items.length;
-  $("metricChanges").textContent = events.filter(e => ["CHANGED_URL","NEW_URL","REMOVED_URL"].indexOf(e.event_type) >= 0).length;
+  $("metricChanges").textContent = events.filter(e => ["CHANGED_URL","HTML_SOURCE_CHANGED","NEW_URL","REMOVED_URL"].indexOf(e.event_type) >= 0).length;
   $("metricErrors").textContent = errors;
   $("metricLast").textContent = state.report.generated_at ? displayDate(state.report.generated_at) : "No scan yet";
   $("metricRunId").textContent = state.report.run_id ? "Run " + state.report.run_id : "Latest stored report";
@@ -211,7 +213,7 @@ function renderMonitorList() {
   const q = $("monitorSearch").value.trim().toLowerCase();
   const all = state.items.filter(item => {
     const status = itemStatus(item);
-    if (state.filter === "CHANGES" && status.label !== "Change detected") return false;
+    if (state.filter === "CHANGES" && !["Content changed", "HTML source changed", "New page"].includes(status.label)) return false;
     if (state.filter === "ERRORS" && status.cls !== "error") return false;
     return !q || (itemTitle(item) + " " + (item.canonical_url || "") + " " + (item.source_id || "")).toLowerCase().includes(q);
   });
@@ -431,7 +433,7 @@ function renderChangeRoute() {
   $("changeItems").innerHTML = events.length ? events.map(e => {
     const item = state.items.find(x => x.canonical_url === e.url || x.url_id === e.url_id);
     const title = item ? itemTitle(item) : (e.url || e.event_type || "Monitoring event");
-    return '<button class="route-event" data-event-url="' + esc(e.url || "") + '"><span class="status-icon ' + (/ERROR/.test(e.event_type || "") ? "error" : e.event_type === "CHANGED_URL" ? "warning" : "") + '">' + esc(e.event_type === "CHANGED_URL" ? "↗" : /ERROR/.test(e.event_type || "") ? "!" : "✓") + '</span><span class="route-event-main"><span class="route-event-title">' + esc(title) + ' · ' + esc(e.event_type || "Event") + '</span><div class="route-event-url">' + esc(e.url || "") + '</div><div class="route-event-meta">' + esc(fmt(e.timestamp)) + '</div></span></button>';
+    return '<button class="route-event" data-event-url="' + esc(e.url || "") + '"><span class="status-icon ' + (/ERROR/.test(e.event_type || "") ? "error" : ["CHANGED_URL","HTML_SOURCE_CHANGED","NEW_URL","REMOVED_URL"].includes(e.event_type) ? "warning" : "") + '">' + esc(e.event_type === "HTML_SOURCE_CHANGED" ? "⌁" : e.event_type === "NEW_URL" ? "+" : e.event_type === "CHANGED_URL" ? "↗" : /ERROR/.test(e.event_type || "") ? "!" : e.event_type === "REMOVED_URL" ? "−" : "✓") + '</span><span class="route-event-main"><span class="route-event-title">' + esc(title) + ' · ' + esc(e.event_type || "Event") + '</span><div class="route-event-url">' + esc(e.url || "") + '</div><div class="route-event-meta">' + esc(fmt(e.timestamp)) + '</div></span></button>';
   }).join("") : emptyState("No change events in this run", "The most recent Federal Reserve run established the initial baseline, so it recorded the pages without sending new-change alerts.", "✓");
 }
 function renderRuns() {
