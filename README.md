@@ -192,6 +192,21 @@ Currently supported:
 
 ZIP members are never extracted to the filesystem. Unsupported or unsafe archive contents become explicit extraction errors, preserving the prior trusted baseline instead of silently comparing partial content.
 
+### Adaptive PDF extraction
+
+PDFs use a fast-first cascade rather than a heavyweight document model on every scan:
+
+1. **Native text first:** pypdf extracts ordinary text-layer PDFs, with conservative joining of wrapped lines and split words.
+2. **Layout/table fallback:** only pages whose native extraction looks highly fragmented are reprocessed with pdfplumber. It tries ruled-table and alignment-based table detection, emits row/cell structure, and compares layout-aware text candidates.
+3. **OCR only when needed:** pages with little extractable text and visual content are rendered by PDFium and passed to Tesseract. Text-based pages do not pay the OCR cost. The scheduled GitHub Actions workflow installs Tesseract only if the runner does not already have it.
+4. **Fail safely:** password-protected PDFs, unusable scans, OCR failures, and oversized OCR workloads become explicit extraction errors. The monitor retains the previous trusted normalized snapshot instead of silently treating missing text as a document change.
+
+The OCR fallback is capped at 100 image/low-text pages per PDF and 15 seconds per page by default. These guardrails prevent one unusually large scan from consuming the entire scheduled-run budget; they can be raised for a known workload. OCR is best-effort and cannot guarantee perfect recovery from handwriting, damaged files, very low-resolution scans, or every unusual PDF structure.
+
+HTML extraction is block-aware: inline elements no longer introduce artificial sentence breaks, and HTML tables are serialized with their row and column boundaries. The dashboard also renders extracted Markdown tables as actual tables.
+
+The normalized output for HTML, PDF, and ZIP resources carries an extractor version. During the first successful run after this upgrade, if the original response bytes are unchanged, the engine records a baseline migration instead of a regulatory change. Real source-byte changes continue through the normal change detector. This prevents extraction improvements from generating false change alerts.
+
 The monitor preserves the complete fetched HTML response body as an immutable `.html` snapshot, while separately extracting normalized text for regulatory-content comparison. The dashboard can render the stored HTML response, show its source code, and display a formatted HTML source diff alongside an extracted-text diff.
 
 For text comparison, the extractor removes common non-content material such as:
