@@ -1718,5 +1718,107 @@ class TestEngineFlow(unittest.TestCase):
         self.assertEqual(result["inventory"][uid]["file_snapshot_location"], "data/snapshots/files/file.pdf")
         write_file.assert_called_once_with(uid, body, "pdf-content-hash", "pdf")
 
+
+
+class TestAdaptiveContentExtraction(unittest.TestCase):
+    def test_html_inline_elements_do_not_break_sentences(self):
+        from regmon.content import normalize_html
+
+        html = """
+        <html><body><main>
+          <p>The Federal <strong>Reserve</strong> uses data from
+          <em>this survey</em> to measure the cost of borrowing.</p>
+          <p>Second paragraph stays separate.</p>
+        </main></body></html>
+        """
+        extracted = normalize_html(html)
+        self.assertIn(
+            "The Federal Reserve uses data from this survey to measure the cost of borrowing.",
+            extracted,
+        )
+        self.assertIn("borrowing.\nSecond paragraph stays separate.", extracted)
+
+    def test_html_table_preserves_row_and_column_relationships(self):
+        from regmon.content import normalize_html
+
+        html = """
+        <html><body><main>
+          <p>Reporting schedule</p>
+          <table>
+            <tr><th>Form</th><th>Frequency</th></tr>
+            <tr><td>FR 2028B</td><td>Quarterly</td></tr>
+            <tr><td>FR 2028S</td><td>Weekly</td></tr>
+          </table>
+        </main></body></html>
+        """
+        extracted = normalize_html(html)
+        self.assertIn("| Form | Frequency |", extracted)
+        self.assertIn("| FR 2028B | Quarterly |", extracted)
+        self.assertIn("| FR 2028S | Weekly |", extracted)
+
+    def test_pdf_wrapped_sentences_and_split_words_are_repaired(self):
+        from regmon.content import normalize_pdf_prose
+
+        raw = (
+            "The Federal Reserve System uses data from this survey\n"
+            "to measure the cost of agricul-\n"
+            "tural borrowing from banks.\n"
+            "\n"
+            "A separate paragraph follows."
+        )
+        extracted = normalize_pdf_prose(raw)
+        self.assertIn(
+            "The Federal Reserve System uses data from this survey to measure the cost of agricultural borrowing from banks.",
+            extracted,
+        )
+        self.assertIn("banks.\nA separate paragraph follows.", extracted)
+
+    def test_fragmented_regulatory_form_is_routed_to_layout_fallback(self):
+        from regmon.content import _looks_like_fragmented_pdf_page
+
+        lines = [
+            "QTFL", "9912", "Insured or Guaranteed", "by Consolidated",
+            "Farm Service Agency", "Nominal", "Rate of", "Interest",
+            "QTFL", "7924", "Percent", "Frequency", "with which",
+            "Interest is", "Compounded", "or Paid", "QTFL", "1917",
+            "Next Date", "Loan Rate", "Recalculated", "QTFL", "A341",
+        ]
+        self.assertTrue(_looks_like_fragmented_pdf_page("\n".join(lines)))
+
+    def test_pdf_table_renderer_keeps_values_in_cells(self):
+        from regmon.content import _table_to_markdown
+
+        output = _table_to_markdown([
+            ["Date", "Prime rate", "Day"],
+            ["08/24", "8.500", "Monday"],
+            ["08/25", "8.375", "Tuesday"],
+        ])
+        self.assertIn("| Date | Prime rate | Day |", output)
+        self.assertIn("| 08/24 | 8.500 | Monday |", output)
+        self.assertIn("| 08/25 | 8.375 | Tuesday |", output)
+
+    def test_parser_upgrade_can_rebaseline_without_false_change(self):
+        from regmon.change import classify_change
+
+        old = {
+            "normalized_hash": "old-layout-hash",
+            "raw_hash": "same-original-pdf-bytes",
+            "extractor_version": "legacy",
+        }
+        current = {
+            "normalized_hash": "new-layout-hash",
+            "raw_hash": "same-original-pdf-bytes",
+            "extractor_version": "layout-pdf-html-v2",
+        }
+        self.assertEqual(
+            classify_change(old, current, force_baseline_migration=True),
+            ("BASELINE_MIGRATION", True),
+        )
+        self.assertEqual(
+            classify_change(old, current),
+            ("CHANGED_URL", False),
+        )
+
+
 if __name__=="__main__":
     unittest.main()
