@@ -1569,6 +1569,10 @@
   @media (max-width:760px) {
     .command-topbar {
       display:flex !important;
+      /* backdrop-filter on this ancestor creates a fixed-position containing block.
+         Disable it on mobile so the nested bottom nav anchors to the viewport. */
+      backdrop-filter:none !important;
+      -webkit-backdrop-filter:none !important;
       align-items:center;
       justify-content:space-between;
       gap:12px;
