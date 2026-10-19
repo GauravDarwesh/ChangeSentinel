@@ -15,7 +15,16 @@ from pathlib import Path
 from typing import Any
 
 from regmon.ai import AIConfig, analyze
-from regmon.change import build_event_id, classify_change, html_comparison_hash, make_diff, make_id, write_evidence
+from regmon.change import (
+    build_event_id,
+    classify_change,
+    error_signature,
+    html_comparison_hash,
+    make_diff,
+    make_id,
+    operational_notification_id,
+    write_evidence,
+)
 from regmon.config import DEFAULT_CONFIG_PATH, SourceConfig, load_config
 from regmon.content import CONTENT_EXTRACTOR_VERSION, extract_content
 from regmon.discovery import canonical, discover
@@ -215,6 +224,23 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         "ai_pending": old.get("ai_pending") if old else None,
         "not_modified": False,
     }
+
+
+def mark_error_episode(kind: str, item: dict, old: dict | None, now: str) -> str:
+    """Track when an operational error began; return its notification identity.
+
+    A persistent failure keeps the onset recorded by the first failing run, so
+    the notifier alerts once per episode. A different failure class, or a
+    failure after a successful run, starts a new episode.
+    """
+    message = item.get("fetch_error") if kind == "FETCH_ERROR" else item.get("extraction_error")
+    signature = error_signature(kind, message)
+    since = now
+    if old and old.get("error_signature") == signature and old.get("error_since"):
+        since = str(old["error_since"])
+    item["error_signature"] = signature
+    item["error_since"] = since
+    return operational_notification_id(item["url_id"], signature, since)
 
 
 def build_ai_candidate_pool(
@@ -532,7 +558,8 @@ def process_source(
                         item["fetch_error"],
                     )
                 item["evidence_location"] = evidence
-                events.append({"event_id":event_id,"event_type":"FETCH_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"error":item["fetch_error"]}})
+                notification_id = mark_error_episode("FETCH_ERROR", item, old, now)
+                events.append({"event_id":event_id,"event_type":"FETCH_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"notification_id":notification_id,"error_since":item["error_since"],"evidence":{"error":item["fetch_error"]}})
                 continue
 
             if item.get("extraction_error"):
@@ -550,8 +577,9 @@ def process_source(
                         after_html=html_body.decode("utf-8", "replace") if html_body is not None else None,
                     )
                 item["evidence_location"] = evidence
+                notification_id = mark_error_episode("EXTRACTION_ERROR", item, old, now)
                 current[uid] = item
-                events.append({"event_id":event_id,"event_type":"EXTRACTION_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"error":item["extraction_error"]}})
+                events.append({"event_id":event_id,"event_type":"EXTRACTION_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"notification_id":notification_id,"error_since":item["error_since"],"evidence":{"error":item["extraction_error"]}})
                 continue
 
             # Migrate older HTML inventory records lazily from their immutable

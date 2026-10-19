@@ -1,0 +1,57 @@
+name: Monitor Freshness Check
+
+# Independent of the scan workflow: if scans stop committing (failures,
+# cancellations, a disabled schedule), this raises an alert. It cannot fire when
+# GitHub Actions itself refuses to start jobs (for example a billing block);
+# configure HEALTHCHECK_PING_URL with an external service for that case.
+on:
+  schedule:
+    - cron: "37 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  freshness:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: main
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Check age of the latest saved scan
+        id: age
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          report = json.load(open("data/report.json", encoding="utf-8"))
+          generated = datetime.fromisoformat(report["generated_at"])
+          age_hours = (datetime.now(timezone.utc) - generated).total_seconds() / 3600
+          print(f"latest scan {report.get('run_id')} is {age_hours:.1f} h old")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
+              out.write(f"hours={age_hours:.1f}\n")
+              out.write(f"stale={'true' if age_hours > 8 else 'false'}\n")
+          PY
+
+      - name: Alert on stale monitoring data
+        if: ${{ steps.age.outputs.stale == 'true' }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          ACTIONS_URL: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/regulatory-monitor.yml
+        run: |
+          message="No monitoring scan has been saved for ${{ steps.age.outputs.hours }} hours. Check the Regulatory Monitor runs: $ACTIONS_URL"
+          echo "$message"
+          if [ -n "${NTFY_TOPIC:-}" ]; then
+            curl -fsS -m 20 --retry 3 \
+              -H "Title: Regulatory monitoring is stale" \
+              -H "Priority: 4" \
+              -H "Tags: hourglass,monitoring" \
+              -H "Click: $ACTIONS_URL" \
+              -d "$message" "https://ntfy.sh/$NTFY_TOPIC" > /dev/null
+          fi
+          exit 1

@@ -6,6 +6,7 @@ The active production scope consists of two bounded Federal Reserve sources: the
 
 - **OPENROUTER_API_KEY** enables AI analysis. Deterministic comparison and evidence collection can still run if AI is unavailable.
 - **NTFY_TOPIC** is the optional destination for ntfy alerts. If it is not configured, notification candidates are retained in the notification outbox and can be delivered after a topic is configured.
+- **HEALTHCHECK_PING_URL** (optional) is pinged after every successful scan. Point it at an external dead-man's-switch service (for example a healthchecks.io check with an 8-hour grace period) so you are alerted even when GitHub Actions cannot start jobs at all.
 - **AI smoke test**: run `.github/workflows/ai-smoke-test.yml` manually to call the configured OpenRouter model with synthetic evidence and validate its nine-field output contract. This test does not change monitoring state or send ntfy notifications.
 
 ## Workflow behavior
@@ -18,7 +19,11 @@ The active production scope consists of two bounded Federal Reserve sources: the
 
 ## Alert reliability
 
-Notification events are persisted to an outbox before delivery. Successful deliveries are removed from the outbox and recorded in the notification ledger; failures remain queued for the next scheduled or manual run. Delivery is at-least-once: interruption after remote acceptance but before the state commit can cause a duplicate.
+Every run queues its notification candidates in the durable outbox and commits the monitoring state **before** anything is sent; delivery happens only after that commit succeeds, and the delivery ledger is committed afterwards. If the state commit cannot be published, nothing has been sent and the next run re-detects the same events. The commit helper (`scripts/commit_state.sh`) rebases the data-only commit when `main` advanced with code-only commits, and refuses when another run committed `data/` in the meantime.
+
+The ledger is saved after each successful delivery, so a cancelled or crashed job can re-send at most one message. Delivery is at-least-once: interruption after ntfy accepts a message but before the ledger commit can still cause a duplicate.
+
+Persistent fetch or extraction errors alert once per episode (URL + error class + onset), not on every run; each observation still writes its own evidence. A failed workflow run sends a "Regulatory Monitor run failed" ntfy alert, and the **Monitor Freshness Check** workflow alerts when no scan has been saved for 8 hours.
 
 ## Safe monitor registration
 
