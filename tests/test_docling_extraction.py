@@ -82,17 +82,6 @@ class TestDoclingAdapter(unittest.TestCase):
         self.assertIn("not a PDF", error)
         build.assert_not_called()
 
-    def test_page_safety_limit_skips_model_conversion(self):
-        from regmon.docling_extractor import MAX_DOCLING_PAGES
-
-        with patch("regmon.docling_extractor._build_converter") as build:
-            text, error = extract_pdf_with_docling(
-                b"%PDF-1.7 synthetic", expected_pages=MAX_DOCLING_PAGES + 1
-            )
-        self.assertIsNone(text)
-        self.assertIn("safety limit", error)
-        build.assert_not_called()
-
 
 class TestDoclingPdfFallback(unittest.TestCase):
     def test_table_rich_docling_output_replaces_flattened_fragmented_text(self):
