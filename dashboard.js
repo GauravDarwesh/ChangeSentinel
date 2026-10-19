@@ -14,6 +14,7 @@ const $ = id => document.getElementById(id);
 const state = {
   report: {}, inventory: {}, history: [], notifications: {}, outbox: {}, config: {},
   items: [], selectedId: "", view: "monitors", filter: "ALL", detailTab: "snapshot",
+  docInfo: {}, titleQueue: [], titleWorkers: 0, titleTimer: null,
   snapshotMode: "preview", snapshotCache: {}, htmlCache: {}, evidenceCache: {}, pdfPreviewUrl: "",
   toastTimer: null
 };
@@ -63,24 +64,108 @@ function activeSourceName() {
   if (active.length === 1) return active[0].name || active[0].regulator || active[0].id;
   return active.length + " active sources";
 }
-function itemTitle(item) {
+function baseTitle(item) {
   const source = sourceForItem(item);
   if (String(item.source_id || "").startsWith("manual-") && source.name) return source.name;
   const url = String(item.canonical_url || "");
   if (url.indexOf("/apps/reportingforms/review") >= 0) return "Information collections under review";
   if (url.indexOf("/apps/reportingforms/recentupdates") >= 0) return "Recent reporting form updates";
-  const kind = itemKind(item);
-  if (/\/Download\/DownloadAttachment/i.test(url) || /[?&]guid=/i.test(url)) {
-    const generic = kind === "zip" ? "ZIP archive" : kind === "pdf" ? "PDF document" : "Downloaded file";
-    const guid = url.match(/[?&]guid=([0-9a-f-]{8,})/i);
-    return generic + (guid ? " · " + guid[1].slice(0, 8).toUpperCase() : "");
-  }
   const path = url.split("?")[0].split("#")[0].replace(/\/+$/, "");
   let last = path.split("/").pop();
   if (!last) {
     try { last = new URL(url).hostname; } catch (_) { last = url || "Monitored page"; }
   }
   return last.replace(/\.(html?|pdf|json|xml|csv|txt)$/i, "").replace(/[-_]+/g, " ").replace(/\b\w/g, ch => ch.toUpperCase());
+}
+function itemTitle(item) { return (state.docInfo[item.url_id] && state.docInfo[item.url_id].title) || baseTitle(item); }
+function itemKind(item) {
+  const type = String(item.extraction_type || "").toLowerCase();
+  if (type === "pdf" || /pdf/i.test(String(item.content_type || ""))) return "pdf";
+  if (type === "zip" || /zip/i.test(String(item.content_type || ""))) return "zip";
+  return "page";
+}
+function normalizeHeadText(text) { return String(text || "").replace(/\r/g, "").replace(/\s+/g, " ").trim(); }
+function normalizeFormCode(raw) {
+  const code = String(raw || "").replace(/_/g, " ").replace(/\s+/g, " ").trim();
+  const match = code.match(/^FR\s+([A-Z])-?\s?(\d.*)$/i);
+  return match ? "FR " + match[1].toUpperCase() + "-" + match[2].replace(/\s+/g, "") : code.replace(/^FR\s*/i, "FR ");
+}
+function extractFormCodes(text) {
+  const codes = [];
+  String(text || "").replace(/\bFR[ _]([A-Z])-?[_ ]?(\d{1,3})([A-Z]?)(?![A-Za-z0-9])/g, (_,a,b,c) => { codes.push("FR " + a.toUpperCase() + "-" + b + c.toUpperCase()); return _; });
+  String(text || "").replace(/\bFR[ _](\d{3,4}[A-Za-z]?)(?![A-Za-z0-9])/g, (_,a) => { codes.push("FR " + a.toUpperCase()); return _; });
+  return codes;
+}
+function deriveDocumentTitle(text, type) {
+  try {
+    const kind = String(type || "").toLowerCase();
+    const raw = String(text || "");
+    if (kind === "zip") {
+      const files = raw.split(/\r?\n/).filter(line => line.startsWith("[FILE]")).map(line => line.slice(6).replace(/\s*\([a-z0-9]+\)\s*$/i, "").trim());
+      if (!files.length) return null;
+      const counts = {};
+      files.forEach(name => extractFormCodes(name).forEach(code => counts[code] = (counts[code] || 0) + 1));
+      const top = Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
+      const joined = files.join(" ").toLowerCase();
+      const noun = /instruction/.test(joined) ? "Instructions" : /form/.test(joined) ? "Report forms" : "Documents";
+      return { title: top ? top + " — " + noun : files[0].replace(/\.[a-z0-9]+$/i,"").replace(/[_]+/g," "), subtitle: files.length + (files.length===1 ? " file in this archive" : " files in this archive") };
+    }
+    const head = normalizeHeadText(raw).slice(0,2400);
+    const stripped = head.replace(/Board of Governors of the Federal Reserve System/gi," ");
+    const isInstructions = /\bInstructions for\b/i.test(head.slice(0,700));
+    let code="", name="", m;
+    if (isInstructions) {
+      m = stripped.match(/Instructions for (?:the )?(?:Preparation of )?(.+?)\s*\(?\s*Reporting Form\s+(FR\s+[A-Z]?-?\d[A-Za-z0-9\/-]*)/i);
+      if(m){name=m[1];code=m[2];}
+    }
+    if(!code){m=stripped.match(/\b(FR\s+[A-Z]?-?\d[A-Za-z0-9\/-]*)/); if(m)code=m[1];}
+    if(!name){m=stripped.match(/([A-Z][A-Za-z,&'’ ]{8,90}?)\s*[—–-]\s*FR\s+[A-Z]?-?\d/);if(m)name=m[1];}
+    if(code) {
+      name=name.replace(/\s+information collection$/i,"").replace(/\s+/g," ").trim();
+      return {title:normalizeFormCode(code)+" — "+(isInstructions?"Instructions":"Report form"),subtitle:name};
+    }
+    const lines=raw.split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
+    for(let i=0;i<Math.min(lines.length-1,10);i++) {
+      if(/^FR\s+[A-Z]?-?\d[A-Za-z0-9\/-]*$/.test(lines[i])) return {title:normalizeFormCode(lines[i])+" — "+(isInstructions?"Instructions":"Report form"),subtitle:lines[i+1]||""};
+    }
+    return null;
+  } catch (_) { return null; }
+}
+function titleCacheKey(item) { return "cs-title:v2:" + (item.normalized_hash || item.url_id); }
+function hydrateDocumentTitles() {
+  state.items.forEach(item => {
+    if(state.docInfo[item.url_id] || !item.snapshot_location || item.pending_registration || !["pdf","zip"].includes(itemKind(item))) return;
+    try { const cached=localStorage.getItem(titleCacheKey(item)); if(cached){state.docInfo[item.url_id]=JSON.parse(cached);return;} } catch (_) {}
+    if(!state.titleQueue.some(entry=>entry.url_id===item.url_id)) state.titleQueue.push(item);
+  });
+  pumpTitleQueue();
+}
+function pumpTitleQueue() {
+  while(state.titleWorkers<3&&state.titleQueue.length) {
+    const item=state.titleQueue.shift(); state.titleWorkers++;
+    readSnapshotTextHead(item.snapshot_location,9000).then(text=>{
+      const info=deriveDocumentTitle(text,itemKind(item));
+      if(info&&info.title){state.docInfo[item.url_id]=info;try{localStorage.setItem(titleCacheKey(item),JSON.stringify(info));}catch(_){}}
+    }).catch(()=>{}).finally(()=>{
+      state.titleWorkers--;
+      if(!state.titleTimer)state.titleTimer=setTimeout(()=>{
+        state.titleTimer=null;renderMonitorList();renderChangeRoute();
+        const itemNow=selectedItem();if(itemNow)renderDetailHeader(itemNow);
+      },120);
+      pumpTitleQueue();
+    });
+  }
+}
+async function readSnapshotTextHead(path,maxBytes) {
+  const response=await fetch(snapshotURL(path),{cache:"no-store"});
+  if(!response.ok)throw new Error("Snapshot title read failed with HTTP "+response.status);
+  if(!response.body||!response.body.getReader)return (await response.text()).slice(0,maxBytes);
+  const reader=response.body.getReader(),chunks=[];let count=0;
+  while(count<maxBytes){const part=await reader.read();if(part.done)break;chunks.push(part.value);count+=part.value.length;}
+  try{await reader.cancel();}catch(_){}
+  const merged=new Uint8Array(Math.min(count,maxBytes));let offset=0;
+  chunks.forEach(chunk=>{const take=Math.min(chunk.length,merged.length-offset);if(take>0){merged.set(chunk.subarray(0,take),offset);offset+=take;}});
+  return new TextDecoder("utf-8").decode(merged);
 }
 function urlHost(item) {
   try { return new URL(item.canonical_url).hostname; }
@@ -213,7 +298,13 @@ function makeItems() {
       });
     });
   });
-  items.sort((a, b) => itemTitle(a).localeCompare(itemTitle(b)));
+  items.sort((a,b) => {
+    const priority = item => {
+      const status = itemStatus(item);
+      return status.kind === "error" ? 0 : status.kind === "change" ? 1 : status.kind === "pending" ? 2 : 3;
+    };
+    return priority(a)-priority(b) || itemTitle(a).localeCompare(itemTitle(b));
+  });
   return items;
 }
 function selectedItem() { return state.items.find(item => item.url_id === state.selectedId) || null; }
@@ -870,6 +961,7 @@ function renderViews() {
 }
 function renderAll() {
   state.items = makeItems();
+  hydrateDocumentTitles();
   if (state.selectedId && !state.items.some(item => item.url_id === state.selectedId)) state.selectedId = "";
   renderMetrics();
   renderMonitorList();
