@@ -237,7 +237,18 @@ class TestContent(unittest.TestCase):
         self.assertEqual(kind,"pdf")
         self.assertTrue(error)
 
+PUBLIC_TEST_ADDRESS = [(2, 1, 6, "", ("8.8.8.8", 443))]
+
+
 class TestDiscovery(unittest.TestCase):
+    def setUp(self):
+        # Discovery validates every target with a DNS preflight. Tests must not
+        # depend on the runner's resolver (they failed offline before), so
+        # resolution is stubbed to a public address; IP-literal checks still run.
+        patcher = patch("regmon.security.socket.getaddrinfo", return_value=PUBLIC_TEST_ADDRESS)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def test_canonical_removes_tracking_but_preserves_semantic_query(self):
         self.assertEqual(canonical("HTTPS://WWW.EBA.EUROPA.EU/a/?phase=consolidated&utm_source=x&version=2015#x"),"https://www.eba.europa.eu/a?phase=consolidated&version=2015")
 

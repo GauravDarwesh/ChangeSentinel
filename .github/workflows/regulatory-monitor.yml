@@ -32,7 +32,7 @@ permissions:
 
 jobs:
   monitor:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 75
     env:
       REGMON_SOURCE: ${{ inputs.source_id || 'all' }}
@@ -40,7 +40,7 @@ jobs:
       PYTHONUNBUFFERED: "1"
     steps:
       - name: Checkout current main after concurrency queueing
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           # Workflow runs may wait in the concurrency queue while another scan
           # commits state. Check out the current durable main, not the event's
@@ -49,13 +49,13 @@ jobs:
           fetch-depth: 1
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.13"
           cache: pip
 
       - name: Cache Docling model artifacts
-        uses: actions/cache@v4
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
         with:
           path: |
             ~/.cache/docling
@@ -164,6 +164,10 @@ jobs:
           fi
           tesseract --version | head -n 1
 
+      - name: Record base commit
+        id: base
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Run monitoring engine
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -173,14 +177,39 @@ jobs:
         id: crawl-status
         run: python -m regmon.validate_state --source "$REGMON_SOURCE" --data-dir data --config config/sources.json --github-output "$GITHUB_OUTPUT"
 
+      # Queue alerts in the durable outbox BEFORE committing, for every run
+      # (including paused continuations). The outbox is part of the state commit,
+      # so an alert is never lost when a later run overwrites data/report.json.
+      - name: Queue notifications
+        run: python -m regmon.notify --enqueue-only
+
+      # Commit generated state before anything is delivered. If the commit cannot
+      # be published, nothing has been sent, so the next run re-detects the same
+      # events without duplicate deliveries.
+      - name: Commit monitoring state
+        id: state-commit
+        run: |
+          set -euo pipefail
+          git config user.name "regulatory-monitor-bot"
+          git config user.email "actions@users.noreply.github.com"
+          bash scripts/commit_state.sh "Update regulatory monitoring state" "${{ steps.base.outputs.sha }}"
+
       - name: Publish notifications
-        if: ${{ steps.crawl-status.outputs.paused != 'true' }}
+        id: delivery
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           REQUIRE_NTFY: "0"
           NTFY_SERVER: https://ntfy.sh
           DASHBOARD_URL: ${{ env.DASHBOARD_URL }}
-        run: python -m regmon.notify
+        run: |
+          set -euo pipefail
+          echo "base=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          python -m regmon.notify --deliver-only
+
+      - name: Commit notification delivery state
+        id: delivery-commit
+        if: ${{ always() && steps.state-commit.outcome == 'success' && steps.delivery.outputs.base != '' }}
+        run: bash scripts/commit_state.sh "Record notification deliveries" "${{ steps.delivery.outputs.base }}"
 
       - name: Controlled notification test
         if: ${{ inputs.test_notification == true }}
@@ -191,52 +220,8 @@ jobs:
           DASHBOARD_URL: ${{ env.DASHBOARD_URL }}
         run: python -m regmon.notify --test
 
-      - name: Commit monitoring state
-        run: |
-          set -euo pipefail
-          git config user.name "regulatory-monitor-bot"
-          git config user.email "actions@users.noreply.github.com"
-          git add data
-
-          if git diff --cached --quiet; then
-            echo "No monitoring data changes to commit."
-            exit 0
-          fi
-
-          git commit -m "Update regulatory monitoring state"
-
-          # This workflow's concurrency group serializes production scans, but a
-          # code/state push may still advance main during a long crawl. State files
-          # are generated as a consistent snapshot; replaying that commit on newer
-          # state can conflict (and can also overwrite a newer notification outbox).
-          # Refuse rather than merge inconsistent generated state. The next scheduled
-          # run will start from the latest durable main state and reconcile safely.
-          for attempt in 1 2 3; do
-            git fetch origin main --quiet
-
-            if git merge-base --is-ancestor origin/main HEAD; then
-              echo "Remote main is an ancestor of the state commit; pushing state."
-              if git push origin HEAD:main; then
-                exit 0
-              fi
-              echo "Push raced with another main update; refreshing before retry."
-            else
-              echo "Remote main advanced while the scan was running; refusing to rebase a generated state snapshot."
-              git log -1 --oneline origin/main
-              git log -1 --oneline HEAD
-            fi
-
-            sleep 3
-            git fetch origin main --quiet
-            if git merge-base --is-ancestor origin/main HEAD; then
-              continue
-            fi
-          done
-
-          echo "Monitoring state could not be published safely. No conflict resolution was attempted."
-          exit 1
-
       - name: Publish latest monitoring data to Pages
+        if: ${{ steps.state-commit.outputs.committed == 'true' || steps.delivery-commit.outputs.committed == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -263,3 +248,37 @@ jobs:
               -f source_id="$source_id" \
               -f test_notification=false
           done
+
+      # Optional out-of-band liveness signal (for example a healthchecks.io check
+      # that alerts when no ping arrives for 14 hours). This also catches runs that
+      # never start, which no in-workflow step can report.
+      - name: Heartbeat ping
+        if: ${{ success() }}
+        env:
+          HEALTHCHECK_PING_URL: ${{ secrets.HEALTHCHECK_PING_URL }}
+        run: |
+          if [ -n "${HEALTHCHECK_PING_URL:-}" ]; then
+            curl -fsS -m 10 --retry 3 "$HEALTHCHECK_PING_URL" > /dev/null && echo "Heartbeat sent."
+          else
+            echo "HEALTHCHECK_PING_URL is not configured; skipping heartbeat."
+          fi
+
+      # A failed scan must never be silent. Uses curl only, so it works even when
+      # dependency installation was the step that failed.
+      - name: Alert on workflow failure
+        if: ${{ failure() }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "${NTFY_TOPIC:-}" ]; then
+            echo "NTFY_TOPIC is not configured; cannot send the failure alert."
+            exit 0
+          fi
+          curl -fsS -m 20 --retry 3 \
+            -H "Title: Regulatory Monitor run failed" \
+            -H "Priority: 4" \
+            -H "Tags: rotating_light,monitoring" \
+            -H "Click: $RUN_URL" \
+            -d "Monitoring run ${{ github.run_number }} for source '${REGMON_SOURCE}' failed. Changes may not be detected until it is fixed. Logs: $RUN_URL" \
+            "https://ntfy.sh/$NTFY_TOPIC" > /dev/null && echo "Failure alert sent."

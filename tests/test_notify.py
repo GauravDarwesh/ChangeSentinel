@@ -104,5 +104,53 @@ class TestNotifications(unittest.TestCase):
             save_state(state,path)
             self.assertIn("x",load_state(path)["sent_events"])
 
-if __name__=="__main__":
+class TestOperationalAlertsAndDelivery(unittest.TestCase):
+    def test_persistent_error_alerts_once_per_episode(self):
+        from regmon.notify import enqueue_notifications
+
+        def report(observation):
+            return {"events": [{
+                "event_id": f"fetch-error-{observation}",
+                "notification_id": "op-episode-1",
+                "event_type": "FETCH_ERROR",
+                "url": "https://example.test/blocked",
+                "evidence": {"error": "HTTPError: HTTP 403 for https://example.test/blocked"},
+            }]}
+
+        ledger, delivered = {}, []
+        for observation in range(4):
+            outbox = {"pending_events": {}}
+            enqueue_notifications(outbox, build_notifications(report(observation)), ledger)
+            for key, item in outbox["pending_events"].items():
+                ledger[key] = {"kind": item["kind"]}
+                delivered.append(item)
+        self.assertEqual(len(delivered), 1)
+        self.assertEqual(delivered[0]["event_id"], "op-episode-1")
+        self.assertEqual(delivered[0]["source_event_id"], "fetch-error-0")
+
+    @patch("regmon.notify.publish")
+    def test_state_is_persisted_after_every_delivery(self, mock_publish):
+        from regmon.notify import deliver_pending
+
+        outbox = {"pending_events": {
+            "a": {"event_id": "a", "kind": "CHANGED_URL", "url": "https://example.test/a", "topic": "T", "summary": "S"},
+            "b": {"event_id": "b", "kind": "CHANGED_URL"},
+            "c": {"event_id": "c", "kind": "CHANGED_URL"},
+        }}
+        state = {"sent_events": {}}
+        snapshots = []
+        mock_publish.side_effect = [None, RuntimeError("ntfy unavailable"), None]
+        result = deliver_pending(
+            outbox, state, "topic", "https://ntfy.sh",
+            persist=lambda: snapshots.append(sorted(state["sent_events"])),
+        )
+        self.assertEqual(result, {"sent": 2, "skipped": 0, "failed": 1, "pending": 1})
+        # One durable save per successful send: a crash after "a" can no longer re-send it.
+        self.assertEqual(snapshots, [["a"], ["a", "c"]])
+        self.assertIn("b", outbox["pending_events"])
+        self.assertEqual(state["sent_events"]["a"]["url"], "https://example.test/a")
+        self.assertEqual(state["sent_events"]["a"]["topic"], "T")
+
+
+if __name__ == "__main__":
     unittest.main()

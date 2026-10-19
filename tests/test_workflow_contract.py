@@ -1,13 +1,27 @@
+import os
+import re
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+WORKFLOWS = ROOT / ".github" / "workflows"
+COMMIT_SCRIPT = ROOT / "scripts" / "commit_state.sh"
+
+
+def monitor_workflow() -> str:
+    return (WORKFLOWS / "regulatory-monitor.yml").read_text(encoding="utf-8")
+
+
+def step_index(workflow: str, name: str) -> int:
+    return workflow.index(f"- name: {name}")
 
 
 class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
     def test_queued_production_run_checks_out_latest_main(self):
-        workflow = (ROOT / ".github" / "workflows" / "regulatory-monitor.yml").read_text(encoding="utf-8")
+        workflow = monitor_workflow()
         start = workflow.index("- name: Checkout current main after concurrency queueing")
         end = workflow.index("- name: Setup Python", start)
         checkout = workflow[start:end]
@@ -16,14 +30,124 @@ class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
         self.assertIn("ref: main", checkout)
         self.assertIn("possibly stale GITHUB_SHA", checkout)
 
-    def test_state_commit_does_not_rebase_generated_snapshot(self):
-        workflow = (ROOT / ".github" / "workflows" / "regulatory-monitor.yml").read_text(encoding="utf-8")
-        start = workflow.index("- name: Commit monitoring state")
-        end = workflow.index("- name: Continue paused crawl", start)
-        commit_step = workflow[start:end]
+    def test_alerts_are_queued_then_state_committed_before_any_delivery(self):
+        workflow = monitor_workflow()
+        queue = step_index(workflow, "Queue notifications")
+        commit = step_index(workflow, "Commit monitoring state")
+        deliver = step_index(workflow, "Publish notifications")
+        record = step_index(workflow, "Commit notification delivery state")
+        self.assertLess(step_index(workflow, "Validate monitoring state"), queue)
+        self.assertLess(queue, commit)
+        self.assertLess(commit, deliver)
+        self.assertLess(deliver, record)
 
-        self.assertIn("refusing to rebase a generated state snapshot", commit_step.lower())
-        self.assertNotIn("git rebase origin/main", commit_step)
+        queue_step = workflow[queue:commit]
+        self.assertIn("python -m regmon.notify --enqueue-only", queue_step)
+        # Paused continuations must still queue alerts for the sources that finished.
+        self.assertNotIn("paused", queue_step)
+        deliver_step = workflow[deliver:record]
+        self.assertIn("python -m regmon.notify --deliver-only", deliver_step)
+        self.assertNotIn("if:", deliver_step.split("run:", 1)[0])
+
+    def test_state_commit_uses_the_guarded_data_only_helper(self):
+        workflow = monitor_workflow()
+        commit_step = workflow[step_index(workflow, "Commit monitoring state"):step_index(workflow, "Publish notifications")]
+        self.assertIn("bash scripts/commit_state.sh", commit_step)
+        self.assertIn("steps.base.outputs.sha", commit_step)
+        script = COMMIT_SCRIPT.read_text(encoding="utf-8")
+        self.assertIn("refusing to rebase a generated state snapshot", script.lower())
+        self.assertIn('git diff --name-only "$base_sha" origin/main -- data', script)
+
+    def test_failures_are_alerted_and_liveness_is_pinged(self):
+        workflow = monitor_workflow()
+        failure_step = workflow[step_index(workflow, "Alert on workflow failure"):]
+        self.assertIn("if: ${{ failure() }}", failure_step)
+        self.assertIn("https://ntfy.sh/$NTFY_TOPIC", failure_step)
+        heartbeat = workflow[step_index(workflow, "Heartbeat ping"):step_index(workflow, "Alert on workflow failure")]
+        self.assertIn("HEALTHCHECK_PING_URL", heartbeat)
+
+    def test_pages_publish_only_after_a_commit(self):
+        workflow = monitor_workflow()
+        pages = workflow[step_index(workflow, "Publish latest monitoring data to Pages"):step_index(workflow, "Continue paused crawl")]
+        self.assertIn("steps.state-commit.outputs.committed == 'true'", pages)
+
+    def test_workflows_pin_runner_image_and_action_commits(self):
+        for path in sorted(WORKFLOWS.glob("*.yml")):
+            text = path.read_text(encoding="utf-8")
+            with self.subTest(workflow=path.name):
+                self.assertNotIn("ubuntu-latest", text)
+                for action in re.findall(r"uses:\s*(\S+)", text):
+                    self.assertRegex(action, r"@[0-9a-f]{40}$", f"{action} must be pinned to a commit SHA")
+
+
+@unittest.skipIf(os.name == "nt", "bash helper")
+class TestCommitStateHelper(unittest.TestCase):
+    def git(self, cwd, *args):
+        return subprocess.run(["git", *args], cwd=cwd, check=True, capture_output=True, text=True).stdout.strip()
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        root = Path(self.tmp.name)
+        self.origin = root / "origin.git"
+        self.seed = root / "seed"
+        subprocess.run(["git", "init", "-q", "--bare", "-b", "main", str(self.origin)], check=True)
+        subprocess.run(["git", "clone", "-q", str(self.origin), str(self.seed)], check=True, capture_output=True)
+        for repo in (self.seed,):
+            self.git(repo, "config", "user.email", "seed@example.test")
+            self.git(repo, "config", "user.name", "seed")
+        (self.seed / "data").mkdir()
+        (self.seed / "data" / "state.json").write_text("1\n", encoding="utf-8")
+        (self.seed / "app.py").write_text("code\n", encoding="utf-8")
+        self.git(self.seed, "add", ".")
+        self.git(self.seed, "commit", "-q", "-m", "init")
+        self.git(self.seed, "push", "-q", "origin", "main")
+
+    def job_clone(self):
+        job = Path(self.tmp.name) / "job"
+        subprocess.run(["git", "clone", "-q", "--depth", "1", self.origin.as_uri(), str(job)], check=True, capture_output=True)
+        self.git(job, "config", "user.email", "bot@example.test")
+        self.git(job, "config", "user.name", "bot")
+        return job, self.git(job, "rev-parse", "HEAD")
+
+    def advance_origin(self, path, content):
+        self.git(self.seed, "pull", "-q")
+        (self.seed / path).write_text(content, encoding="utf-8")
+        self.git(self.seed, "commit", "-q", "-am", f"change {path}")
+        self.git(self.seed, "push", "-q", "origin", "main")
+
+    def run_helper(self, job, base):
+        output = Path(self.tmp.name) / "github-output"
+        output.write_text("", encoding="utf-8")
+        env = dict(os.environ, GITHUB_OUTPUT=str(output))
+        result = subprocess.run(["bash", str(COMMIT_SCRIPT), "state", base], cwd=job, env=env, capture_output=True, text=True)
+        return result, output.read_text(encoding="utf-8")
+
+    def test_code_only_advance_is_rebased_and_pushed(self):
+        job, base = self.job_clone()
+        (job / "data" / "state.json").write_text("2\n", encoding="utf-8")
+        self.advance_origin("app.py", "code v2\n")
+        result, output = self.run_helper(job, base)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("committed=true", output)
+        self.git(self.seed, "pull", "-q")
+        self.assertEqual((self.seed / "data" / "state.json").read_text(encoding="utf-8"), "2\n")
+        self.assertEqual((self.seed / "app.py").read_text(encoding="utf-8"), "code v2\n")
+
+    def test_competing_state_commit_is_refused(self):
+        job, base = self.job_clone()
+        (job / "data" / "state.json").write_text("2\n", encoding="utf-8")
+        self.advance_origin("data/state.json", "from another run\n")
+        result, output = self.run_helper(job, base)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("refusing to rebase a generated state snapshot", result.stdout)
+        self.assertIn("committed=false", output)
+
+    def test_no_changes_is_a_successful_no_op(self):
+        job, base = self.job_clone()
+        result, output = self.run_helper(job, base)
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("committed=false", output)
 
 
 if __name__ == "__main__":

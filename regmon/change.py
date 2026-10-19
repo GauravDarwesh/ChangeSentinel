@@ -103,6 +103,28 @@ def build_event_id(
     ])
     return hashlib.sha256(material.encode("utf-8")).hexdigest()
 
+_HTTP_STATUS = re.compile(r"\bHTTP (\d{3})\b")
+
+
+def error_signature(kind: str, message: str | None) -> str:
+    """Reduce an operational error to a stable class for alert de-duplication.
+
+    Messages often embed volatile detail (object addresses, retry counts), so
+    only the exception class and any HTTP status are kept. Two runs failing for
+    the same reason produce the same signature; a different failure does not.
+    """
+    text = str(message or "")
+    exception = text.split(":", 1)[0].strip() if ":" in text else text.strip()[:80]
+    status = _HTTP_STATUS.search(text)
+    return "|".join([kind, exception, status.group(1) if status else ""])
+
+
+def operational_notification_id(url_id: str, signature: str, since: str) -> str:
+    """One notification identity per error episode (URL + error class + onset)."""
+    material = "|".join(["OPERATIONAL_ALERT", url_id, signature, since])
+    return "op-" + hashlib.sha256(material.encode("utf-8")).hexdigest()
+
+
 def write_evidence(
     root: Path,
     event_type: str,

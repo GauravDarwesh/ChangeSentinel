@@ -168,8 +168,17 @@ def build_notifications(report: dict) -> list[dict]:
             })
         elif kind in {"FETCH_ERROR", "EXTRACTION_ERROR"}:
             error = (event.get("evidence") or {}).get("error", "Unknown operational error")
+            # Operational events get a unique ID per observation (so evidence is
+            # never overwritten), but an unchanged, persistent error must alert
+            # once per episode, not on every scheduled run. The engine supplies an
+            # onset-based notification ID; older reports fall back to the event ID.
+            notification_id = str(event.get("notification_id") or event_id)
+            if notification_id in seen:
+                continue
+            seen.add(notification_id)
             output.append({
-                "event_id": event_id, "kind": kind, "url": event.get("url"),
+                "event_id": notification_id, "source_event_id": event_id,
+                "kind": kind, "url": event.get("url"),
                 "topic": "Monitoring operational alert",
                 "summary": "The current run could not fully process a monitored regulator resource.",
                 "reason": error, "impact": "The previous known-good baseline was preserved.",
@@ -223,9 +232,67 @@ def publish(notification: dict, topic: str, server: str, dashboard_url: str = ""
     response.raise_for_status()
 
 
+def ledger_record(notification: dict) -> dict:
+    """Keep enough of a delivered notification to trace it back to its page."""
+    return {
+        "kind": notification.get("kind"),
+        "sent_at": datetime.now(timezone.utc).isoformat(),
+        "url": notification.get("url"),
+        "topic": notification.get("topic"),
+        "summary": notification.get("summary"),
+        "source_event_id": notification.get("source_event_id"),
+    }
+
+
+def deliver_pending(
+    outbox: dict,
+    state: dict,
+    topic: str,
+    server: str,
+    dashboard_url: str = "",
+    persist=None,
+) -> dict:
+    """Deliver queued notifications, persisting state after every success.
+
+    Saving after each delivery bounds the duplicate window to one message if
+    the job is cancelled or crashes mid-loop (previously every message already
+    delivered in that loop would be sent again on the next run).
+    """
+    sent = skipped = failed = 0
+    pending = outbox["pending_events"]
+    for event_id, notification in list(pending.items()):
+        if event_id in state["sent_events"]:
+            pending.pop(event_id, None)
+            skipped += 1
+            if persist:
+                persist()
+            continue
+        try:
+            publish(notification, topic, server, dashboard_url)
+        except Exception as exc:
+            failed += 1
+            print(f"notification failed for {event_id}; retained in outbox: {exc}")
+            continue
+        state["sent_events"][event_id] = ledger_record(notification)
+        pending.pop(event_id, None)
+        sent += 1
+        if persist:
+            persist()
+    return {"sent": sent, "skipped": skipped, "failed": failed, "pending": len(pending)}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--test", action="store_true")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
+        "--enqueue-only", action="store_true",
+        help="Add the current report's notification candidates to the durable outbox without sending",
+    )
+    mode.add_argument(
+        "--deliver-only", action="store_true",
+        help="Send already-queued notifications without reading the current report",
+    )
     args = parser.parse_args()
     topic = os.getenv("NTFY_TOPIC", DEFAULT_TOPIC).strip()
     server = os.getenv("NTFY_SERVER", DEFAULT_SERVER).strip()
@@ -249,16 +316,26 @@ def main() -> None:
         print(json.dumps({"test": True, "sent": True, "event_id": notification["event_id"]}, indent=2))
         return
 
-    report_path = DATA / "report.json"
-    if not report_path.exists():
-        raise FileNotFoundError("data/report.json does not exist")
-    report = json.loads(report_path.read_text(encoding="utf-8"))
     state = load_state()
     outbox = load_outbox()
-    enqueue_notifications(outbox, build_notifications(report), state["sent_events"])
+    candidates = []
+    if not args.deliver_only:
+        report_path = DATA / "report.json"
+        if not report_path.exists():
+            raise FileNotFoundError("data/report.json does not exist")
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        candidates = build_notifications(report)
+        enqueue_notifications(outbox, candidates, state["sent_events"])
+        save_outbox(outbox)
+
+    if args.enqueue_only:
+        print(json.dumps({
+            "candidate_notifications": len(candidates),
+            "pending": len(outbox["pending_events"]),
+        }, indent=2))
+        return
 
     if not topic:
-        save_state(state)
         save_outbox(outbox)
         print(json.dumps({
             "enabled": False,
@@ -269,33 +346,15 @@ def main() -> None:
             raise RuntimeError("NTFY_TOPIC is required for delivery")
         return
 
-    sent = skipped = failed = 0
-    pending = outbox["pending_events"]
-    for event_id, notification in list(pending.items()):
-        if event_id in state["sent_events"]:
-            pending.pop(event_id, None)
-            skipped += 1
-            continue
-        try:
-            publish(notification, topic, server, dashboard_url)
-            state["sent_events"][event_id] = {
-                "kind": notification.get("kind"),
-                "sent_at": datetime.now(timezone.utc).isoformat(),
-            }
-            pending.pop(event_id, None)
-            sent += 1
-        except Exception as exc:
-            failed += 1
-            print(f"notification failed for {event_id}; retained in outbox: {exc}")
+    def persist() -> None:
+        save_state(state)
+        save_outbox(outbox)
 
-    save_state(state)
-    save_outbox(outbox)
-    print(json.dumps({
-        "candidate_notifications": len(build_notifications(report)),
-        "sent": sent, "skipped": skipped, "failed": failed, "pending": len(pending),
-    }, indent=2))
-    if failed and require_delivery:
-        raise RuntimeError(f"{failed} notification(s) failed; failed events remain queued")
+    result = deliver_pending(outbox, state, topic, server, dashboard_url, persist=persist)
+    persist()
+    print(json.dumps({"candidate_notifications": len(candidates), **result}, indent=2))
+    if result["failed"] and require_delivery:
+        raise RuntimeError(f"{result['failed']} notification(s) failed; failed events remain queued")
 
 
 if __name__ == "__main__":
