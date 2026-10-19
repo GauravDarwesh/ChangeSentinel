@@ -1194,6 +1194,7 @@ $("changeItems").addEventListener("click", event => {
 $("refreshBtn").addEventListener("click", () => loadData(true));
 $("backToMonitors").addEventListener("click", () => setSelected(""));
 $("addMonitorBtn").addEventListener("click", openAddMonitor);
+$("watchlistAddMonitorBtn").addEventListener("click", openAddMonitor);
 $("closeAddMonitor").addEventListener("click", () => $("addMonitorDialog").close());
 $("cancelAddMonitor").addEventListener("click", () => $("addMonitorDialog").close());
 $("addMonitorDialog").addEventListener("click", event => {
