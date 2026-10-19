@@ -10,7 +10,10 @@ here, in CI, instead of becoming a false change alert (assessment H-01, E-01).
 Records from an older extractor version are skipped: they are re-baselined by
 the next scheduled scan. Records whose parser profile differs (for example,
 Docling fell back on a slow runner) are reported but not failed, because the
-engine records such transitions as baseline migrations.
+engine records such transitions as baseline migrations. Docling (layout model)
+output is not guaranteed bit-identical across CPUs, so a mismatch on a Docling
+or ZIP-profile record is a warning; native, fallback and HTML extraction is
+deterministic and must reproduce exactly.
 
 Usage: python scripts/golden_corpus_check.py [--data-dir data] [--config config/sources.json]
 Exit status 1 when any same-profile record no longer reproduces its baseline.
@@ -43,7 +46,7 @@ def profile_version(extraction_type: str, profile: str) -> str:
 def check(data_dir: Path, config_path: Path) -> dict:
     _payload, sources = load_config(config_path)
     latest = json.loads((data_dir / "latest.json").read_text(encoding="utf-8"))
-    results = {"checked": 0, "matched": 0, "mismatched": [], "profile_changed": [], "skipped_old_version": 0}
+    results = {"checked": 0, "matched": 0, "mismatched": [], "model_variance": [], "profile_changed": [], "skipped_old_version": 0}
     for source_id, records in (latest.get("sources") or {}).items():
         source = sources.get(source_id)
         if source is None or not source.active:
@@ -69,7 +72,8 @@ def check(data_dir: Path, config_path: Path) -> dict:
                 _extraction_profile=profile,
             )
             results["checked"] += 1
-            produced_version = profile_version(extracted_kind, str(profile.get("profile") or "native"))
+            produced_profile = str(profile.get("profile") or "native")
+            produced_version = profile_version(extracted_kind, produced_profile)
             digest = hashlib.sha256((text or "").encode("utf-8")).hexdigest() if not error else None
             if digest == record["normalized_hash"]:
                 results["matched"] += 1
@@ -78,6 +82,11 @@ def check(data_dir: Path, config_path: Path) -> dict:
                     "url": record["canonical_url"],
                     "baseline_version": record.get("extractor_version"),
                     "produced_version": produced_version,
+                })
+            elif not error and (produced_profile == "docling" or produced_profile.startswith("zipprofile-")):
+                results["model_variance"].append({
+                    "url": record["canonical_url"],
+                    "extractor_version": record.get("extractor_version"),
                 })
             else:
                 results["mismatched"].append({

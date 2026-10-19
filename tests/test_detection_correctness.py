@@ -400,3 +400,31 @@ class TestGoldenCorpusCheck(unittest.TestCase):
             next(iter(inventory.values()))["normalized_hash"] = "0" * 64
             sandbox.write_inventory(inventory)
             self.assertEqual(len(self.run_check(sandbox)["mismatched"]), 1)
+
+    def test_docling_variance_warns_instead_of_failing(self):
+        with Sandbox() as sandbox:
+            sandbox.scan(lambda *a, **k: ok(html("<p>Rule text.</p>")))
+
+            def docling_variant(url, content_type, body, _extraction_profile=None, **kwargs):
+                if _extraction_profile is not None:
+                    _extraction_profile["profile"] = "docling"
+                return "slightly different layout output", "html", None
+
+            with patch("regmon.content.extract_content", side_effect=docling_variant):
+                import importlib.util
+
+                spec = importlib.util.spec_from_file_location(
+                    "golden_corpus_check", Path(__file__).resolve().parents[1] / "scripts" / "golden_corpus_check.py"
+                )
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+                config = sandbox.root / "sources.json"
+                config.write_text(json.dumps({"sources": [{
+                    "id": sandbox.source.id, "name": "s", "regulator": "r", "seed_urls": list(sandbox.source.seed_urls),
+                    "allowed_prefixes": list(sandbox.source.allowed_prefixes),
+                    "allowed_domains": list(sandbox.source.allowed_domains), "allowed_urls": list(sandbox.source.allowed_urls),
+                }]}), encoding="utf-8")
+                with patch.object(module, "extract_content", side_effect=docling_variant):
+                    results = module.check(sandbox.data, config)
+            self.assertEqual(results["mismatched"], [])
+            self.assertEqual(len(results["model_variance"]), 1)
