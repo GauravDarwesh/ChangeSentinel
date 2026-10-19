@@ -801,8 +801,38 @@ def process_source(
                         current[item["url_id"]] = item
                 except Exception as exc:
                     event = candidate_event_type(item, new_ids, changed_ids)
-                    event_id = build_event_id(event,item["url_id"],(previous.get(item["url_id"]) or {}).get("normalized_hash"),item.get("normalized_hash"))
-                    ai_results.append({"event":"AI_ERROR","event_id":event_id,"url":item["canonical_url"],"source_id":source.id,"evidence_location":item.get("evidence_location"),"ai":{"status":"error","reason":str(exc)}})
+                    pending = item.get("ai_pending")
+                    if (
+                        isinstance(pending, dict)
+                        and pending.get("event_type") == event
+                        and pending.get("after_hash") == item.get("normalized_hash")
+                        and pending.get("event_id")
+                    ):
+                        event_id = pending["event_id"]
+                        updated_pending = dict(pending)
+                        updated_pending["attempt_count"] = int(updated_pending.get("attempt_count", 0)) + 1
+                        updated_pending["last_attempt_at"] = now
+                        item["ai_pending"] = updated_pending
+                        current[item["url_id"]] = item
+                    else:
+                        event_record = next(
+                            (
+                                value for value in events
+                                if value.get("url_id") == item["url_id"]
+                                and value.get("event_type") == event
+                            ),
+                            None,
+                        )
+                        event_id = (
+                            event_record.get("event_id")
+                            if event_record
+                            else build_event_id(
+                                event, item["url_id"],
+                                (previous.get(item["url_id"]) or {}).get("normalized_hash"),
+                                item.get("normalized_hash"),
+                            )
+                        )
+                    ai_results.append({"event":event,"event_id":event_id,"url":item["canonical_url"],"source_id":source.id,"evidence_location":item.get("evidence_location"),"ai":{"status":"error","reason":str(exc)}})
 
     counts = {
         "discovered":len(current),
