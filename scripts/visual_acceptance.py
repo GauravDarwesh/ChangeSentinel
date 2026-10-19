@@ -157,7 +157,7 @@ def run_browser_checks() -> None:
                     }""",
                     timeout=45000,
                 )
-                page.wait_for_timeout(700)
+                page.wait_for_timeout(1800)
                 check["dashboard_status"] = page.locator("#connectionStatus").inner_text().strip()
                 if "Stored data unavailable" in check["dashboard_status"]:
                     record_error(f"{name}: dashboard reports unavailable data: {check['dashboard_status']}")
@@ -171,19 +171,44 @@ def run_browser_checks() -> None:
                     check["mobile_wordmark_visible"] = wordmark.count() > 0 and wordmark.is_visible()
                     if not check["mobile_wordmark_visible"]:
                         record_error(f"{name}: mobile ChangeSentinel wordmark is missing or hidden")
-                dims = page.evaluate("""() => ({
-                  viewport: window.innerWidth,
-                  document: document.documentElement.scrollWidth,
-                  body: document.body.scrollWidth,
-                  headingVisible: (() => {
-                    const node = document.querySelector('#monitorsHeading');
-                    if (!node) return false;
+                dims = page.evaluate("""() => {
+                  const box = (selector) => {
+                    const node = document.querySelector(selector);
+                    if (!node) return null;
                     const r = node.getBoundingClientRect();
                     const s = getComputedStyle(node);
-                    return s.display !== 'none' && s.visibility !== 'hidden' &&
-                      r.width > 0 && r.height > 0 && r.right > 0 && r.left < innerWidth;
-                  })()
-                })""")
+                    return {
+                      top: Math.round(r.top), bottom: Math.round(r.bottom),
+                      left: Math.round(r.left), right: Math.round(r.right),
+                      width: Math.round(r.width), height: Math.round(r.height),
+                      position: s.position, display: s.display,
+                      visibility: s.visibility, opacity: s.opacity,
+                      zIndex: s.zIndex, inset: s.inset
+                    };
+                  };
+                  const cards = Array.from(document.querySelectorAll('.monitor-card')).slice(0, 3).map(node => {
+                    const r = node.getBoundingClientRect();
+                    const s = getComputedStyle(node);
+                    return {top: Math.round(r.top), bottom: Math.round(r.bottom), opacity: s.opacity,
+                      visibility: s.visibility, display: s.display};
+                  });
+                  const heading = document.querySelector('#monitorsHeading');
+                  const r = heading?.getBoundingClientRect();
+                  const s = heading ? getComputedStyle(heading) : null;
+                  return {
+                    viewport: window.innerWidth,
+                    document: document.documentElement.scrollWidth,
+                    body: document.body.scrollWidth,
+                    scrollY: window.scrollY,
+                    topbar: box('.command-topbar'),
+                    wordmark: box('.mobile-wordmark'),
+                    nav: box('.command-nav'),
+                    headingBox: r ? {top:Math.round(r.top), bottom:Math.round(r.bottom),display:s.display,visibility:s.visibility,opacity:s.opacity} : null,
+                    headingVisible: !!(r && s && s.display !== 'none' && s.visibility !== 'hidden' &&
+                      r.width > 0 && r.height > 0 && r.right > 0 && r.left < innerWidth),
+                    monitorCardStyles: cards
+                  };
+                }""")
                 check["document_width"] = dims["document"]
                 check["horizontal_overflow"] = dims["document"] > width + 2
                 check["dimensions"] = dims
