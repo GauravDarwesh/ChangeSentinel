@@ -214,8 +214,7 @@ class TestDashboardNotificationContract(unittest.TestCase):
         ):
             with self.subTest(token=token):
                 self.assertIn(token, workflow)
-
-            for workflow_path in (
+        for workflow_path in (
             ".github/workflows/regulatory-monitor.yml",
             ".github/workflows/register-monitor.yml",
         ):
@@ -223,7 +222,7 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 workflow_source = (ROOT / workflow_path).read_text(encoding="utf-8")
                 self.assertIn("gh workflow run pages.yml", workflow_source)
 
-def test_mobile_monitor_rows_use_three_direct_columns_and_readable_type(self):
+    def test_mobile_monitor_rows_use_three_direct_columns_and_readable_type(self):
         for filename in ("index.html", "dashboard-v2.html"):
             with self.subTest(filename=filename):
                 source = (ROOT / filename).read_text(encoding="utf-8")
