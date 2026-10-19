@@ -30,7 +30,12 @@ class TestNotifications(unittest.TestCase):
                 "url": "https://example.test/policy",
             }],
         }
-        self.assertEqual(build_notifications(report), [])
+        # The irrelevant verdict is carried only as a possible follow-up; with no
+        # generic alert delivered earlier, nothing is queued.
+        outbox = {"pending_events": {}}
+        enqueue_notifications(outbox, build_notifications(report), {})
+        self.assertEqual(outbox["pending_events"], {})
+        self.assertNotIn("generic", [n.get("variant") for n in build_notifications(report)])
 
     def test_ai_error_keeps_generic_change_alert(self):
         event_id = "review-failed"

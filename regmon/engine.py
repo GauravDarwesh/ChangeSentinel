@@ -762,8 +762,26 @@ def process_source(
 
     new_ids = {item["url_id"] for item in new_items}
     changed_ids = {entry["after"]["url_id"] for entry in changed_items}
+    # A parser-only re-baseline (extractor upgrade or extraction drift) changes
+    # the normalized text of a page whose AI work is still pending. The pending
+    # change is the same; re-key it to the new text so it is resumed with its
+    # original event instead of going stale and later re-emitting a CHANGED_URL
+    # for unchanged content.
+    for entry in migration_items:
+        item = entry["after"]
+        pending = item.get("ai_pending")
+        if isinstance(pending, dict) and pending.get("after_hash") != item.get("normalized_hash"):
+            pending = dict(pending)
+            pending["after_hash"] = item.get("normalized_hash")
+            pending["rekeyed_at"] = now
+            item["ai_pending"] = pending
+            current[item["url_id"]] = item
+    backlog_items = unchanged_items + [
+        entry["after"] for entry in migration_items + source_changed_items
+        if isinstance(entry["after"].get("ai_pending"), dict)
+    ]
     candidate_pool = build_ai_candidate_pool(
-        new_items, changed_items, unchanged_items, initial_baseline=initial_baseline
+        new_items, changed_items, backlog_items, initial_baseline=initial_baseline
     )
 
     # A resumed AI item needs its original change event in the current report so
@@ -840,6 +858,7 @@ def process_source(
                     if event_record else item.get("evidence_location")
                 ),
                 "before_hash": before_hash,
+                "before_snapshot_location": old_item.get("snapshot_location") if event == "CHANGED_URL" else None,
                 "after_hash": item.get("normalized_hash"),
                 "first_deferred_at": now,
                 "attempt_count": 0,
@@ -868,7 +887,21 @@ def process_source(
     for item in candidates:
         event = candidate_event_type(item, new_ids, changed_ids)
         current_text = read_snapshot(item) or ""
-        old_text = read_snapshot(previous.get(item["url_id"])) if event == "CHANGED_URL" else None
+        old_text = None
+        if event == "CHANGED_URL":
+            # A change resumed from the backlog must be diffed against the text
+            # from BEFORE the change. The previous inventory record already holds
+            # the changed text, so diffing against it gave the AI an empty diff
+            # and only the current document (it never saw what changed).
+            pending = item.get("ai_pending")
+            resumed = isinstance(pending, dict) and item["url_id"] not in changed_ids
+            if resumed:
+                before_location = pending.get("before_snapshot_location")
+                if not before_location and pending.get("before_hash"):
+                    before_location = f"data/snapshots/{item['url_id']}-{pending['before_hash']}.txt"
+                old_text = read_snapshot({"snapshot_location": before_location}) if before_location else None
+            else:
+                old_text = read_snapshot(previous.get(item["url_id"]))
         ai_inputs[item["url_id"]] = {
             "event": event,
             "current_text": current_text[:ai_cfg.max_chars],
@@ -979,6 +1012,7 @@ def process_source(
                                     or item.get("evidence_location")
                                 ),
                                 "before_hash": old_item.get("normalized_hash") or old_item.get("raw_hash") or old_item.get("content_hash"),
+                                "before_snapshot_location": old_item.get("snapshot_location") if event == "CHANGED_URL" else None,
                                 "after_hash": item.get("normalized_hash"),
                                 "first_deferred_at": now,
                                 "attempt_count": 1,
