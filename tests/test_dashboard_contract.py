@@ -322,6 +322,44 @@ class TestDashboardNotificationContract(unittest.TestCase):
         walk_references(latest, "latest")
         walk_references(report, "report")
 
+        # Integrity alone is not enough if a required pointer is absent. Check
+        # completeness for active sources while leaving old/inactive inventories
+        # with legacy snapshot gaps readable and non-blocking.
+        config = json.loads((ROOT / "config" / "sources.json").read_text(encoding="utf-8"))
+        active_source_ids = {
+            source.get("id")
+            for source in (config.get("sources") or [])
+            if source.get("id") and source.get("active") is not False
+        }
+        inventories = latest.get("sources") or {}
+        for source_id in sorted(active_source_ids):
+            records = inventories.get(source_id) or {}
+            self.assertIsInstance(records, dict, f"inventory for active source {source_id} must be an object")
+            for url_id, item in records.items():
+                self.assertIsInstance(item, dict, f"inventory record {source_id}/{url_id} must be an object")
+                label = f"active source {source_id}/{url_id}"
+                if item.get("normalized_hash"):
+                    self.assertTrue(
+                        item.get("snapshot_location"),
+                        f"{label} has normalized content but no snapshot_location",
+                    )
+                # Fetch failures may legitimately prevent creation of a first
+                # snapshot. Every successful full/conditional fetch of a known
+                # HTML/PDF/ZIP item must retain its source asset pointer.
+                if item.get("fetch_error"):
+                    continue
+                extraction_type = str(item.get("extraction_type") or "").lower()
+                if extraction_type == "html":
+                    self.assertTrue(
+                        item.get("html_snapshot_location"),
+                        f"{label} is HTML but has no html_snapshot_location",
+                    )
+                elif extraction_type in {"pdf", "zip"}:
+                    self.assertTrue(
+                        item.get("file_snapshot_location"),
+                        f"{label} is {extraction_type.upper()} but has no file_snapshot_location",
+                    )
+
         self.assertTrue(checked, "The test fixture should exercise at least one persisted reference")
         # Make the remote asset origin an explicit part of the client contract:
         # Pages ships the UI/core JSON, while snapshot bytes and evidence use raw GitHub.
