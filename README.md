@@ -53,7 +53,7 @@ This project separates those two jobs.
 
 The monitoring scope lives in:
 
-\`config/sources.json\`
+`config/sources.json`
 
 Each source can define:
 
@@ -89,7 +89,7 @@ Adding another monitored source is intended to be a configuration task rather th
 
 The discovery layer is implemented in:
 
-\`regmon/discovery.py\`
+`regmon/discovery.py`
 
 The current system uses two discovery paths.
 
@@ -97,9 +97,9 @@ The current system uses two discovery paths.
 
 The crawler fetches HTML pages and extracts links using:
 
-- \`requests\`
-- \`BeautifulSoup\`
-- \`urljoin\`
+- `requests`
+- `BeautifulSoup`
+- `urljoin`
 - URL canonicalization
 - bounded concurrency
 
@@ -109,7 +109,7 @@ This path is fast and predictable for normal public HTML sites.
 
 ### Fallback: stealth-crawler
 
-\`stealth-crawler\` uses a headless browser and is retained for sites where browser-rendered navigation is necessary.
+`stealth-crawler` uses a headless browser and is retained for sites where browser-rendered navigation is necessary.
 
 The project originally depended on this path alone. The production flow now attempts the direct HTTP route first so a browser failure does not automatically kill the monitoring run.
 
@@ -123,14 +123,14 @@ For example, a discovered PDF URL is kept in the inventory so the later fetch/ex
 
 ## 3. URL canonicalization and scope filtering
 
-Before URLs are stored, \`regmon/discovery.py\` normalizes them.
+Before URLs are stored, `regmon/discovery.py` normalizes them.
 
 Canonicalization currently:
 
-- removes fragments such as \`#section\`
+- removes fragments such as `#section`
 - normalizes scheme and host casing
 - removes trailing slashes where appropriate
-- removes common tracking parameters such as \`utm_*\`, \`fbclid\`, and \`gclid\`
+- removes common tracking parameters such as `utm_*`, `fbclid`, and `gclid`
 - preserves semantic query parameters
 - sorts query parameters for stable identity
 
@@ -146,7 +146,7 @@ This prevents the crawler from wandering onto unrelated websites or utility area
 
 ## 4. Fetching
 
-\`regmon/fetch.py\` is responsible for retrieving individual resources.
+`regmon/fetch.py` is responsible for retrieving individual resources.
 
 It handles:
 
@@ -175,7 +175,7 @@ The fetch layer is intentionally separate from discovery. Discovering a URL and 
 
 JSON responses are parsed and serialized with stable, sorted object keys before comparison, so property-order-only changes do not trigger alerts. XML responses are canonicalized and deterministically formatted before comparison, reducing noise from attribute ordering and indentation while preserving meaningful element and value changes.
 
-\`regmon/content.py\` converts different resource types into normalized text.
+`regmon/content.py` converts different resource types into normalized text.
 
 Currently supported:
 
@@ -244,7 +244,7 @@ The result is the text that the change detector actually compares.
 
 ## 7. Deterministic change detection
 
-\`regmon/change.py\` handles technical change classification.
+`regmon/change.py` handles technical change classification.
 
 The primary identity is a SHA-256 hash of normalized content.
 
@@ -258,14 +258,14 @@ Possible technical events include:
 
 | Event | Meaning |
 | --- | --- |
-| \`NEW_URL\` | URL is newly discovered |
-| \`CHANGED_URL\` | Normalized content changed |
+| `NEW_URL` | URL is newly discovered |
+| `CHANGED_URL` | Normalized content changed |
 | `HTML_SOURCE_CHANGED` | HTML response markup changed while extracted text stayed the same |
-| \`UNCHANGED_URL\` | Normalized content is unchanged |
-| \`REMOVED_URL\` | Previously monitored URL is no longer discovered |
-| \`FETCH_ERROR\` | URL could not be fetched successfully |
-| \`EXTRACTION_ERROR\` | Resource was fetched but could not be converted into usable text |
-| \`BASELINE_MIGRATION\` | Older state is being migrated to the current hashing model |
+| `UNCHANGED_URL` | Normalized content is unchanged |
+| `REMOVED_URL` | Previously monitored URL is no longer discovered. If more than half of a source (at least 3 URLs) disappears in one run, the removals are held and one `REMOVAL_HELD` alert is sent instead; confirm with `REGMON_ALLOW_MASS_REMOVAL=<source id>` |
+| `FETCH_ERROR` | URL could not be fetched successfully |
+| `EXTRACTION_ERROR` | Resource was fetched but could not be converted into usable text |
+| `BASELINE_MIGRATION` | Extracted text changed but the source did not (`migration_reason`: `extractor_version` after a parser upgrade, `extraction_drift` when identical bytes extract differently). Never alerted, never sent to AI |
 
 The change detector is deterministic. AI is not involved in this decision.
 
@@ -275,7 +275,7 @@ The change detector is deterministic. AI is not involved in this decision.
 
 When a meaningful technical event occurs, the project stores evidence under:
 
-\`data/evidence/\`
+`data/evidence/`
 
 For changes, evidence includes a unified extracted-text diff and a formatted HTML source diff. HTML snapshots use content-addressed paths, so later runs do not overwrite older snapshots referenced by evidence.
 
@@ -295,7 +295,7 @@ The system can instead preserve:
 
 ## 9. Relevance triage
 
-\`regmon/relevance.py\` performs a high-recall first pass.
+`regmon/relevance.py` performs a high-recall first pass.
 
 The goal here is **not** to make the final semantic decision.
 
@@ -314,21 +314,21 @@ The philosophy is intentionally conservative:
 
 ## 10. AI analysis
 
-\`regmon/ai.py\` is the interpretation layer.
+`regmon/ai.py` is the interpretation layer.
 
 The AI receives the evidence for a detected change and must return exactly nine fields:
 
-1. \`relevant\`
-2. \`topic\`
-3. \`change_type\`
-4. \`summary\`
-5. \`impact\`
-6. \`effective_date\`
-7. \`affected_scope\`
-8. \`actions\`
-9. \`reason\`
+1. `relevant`
+2. `topic`
+3. `change_type`
+4. `summary`
+5. `impact`
+6. `effective_date`
+7. `affected_scope`
+8. `actions`
+9. `reason`
 
-The prompt also instructs the model to use only the supplied evidence and to use \`Not stated\` when the evidence does not establish a value.
+The prompt also instructs the model to use only the supplied evidence and to use `Not stated` when the evidence does not establish a value.
 
 ### What AI does
 
@@ -352,7 +352,7 @@ If a page changed, the deterministic layer records that first.
 
 ## 11. Notifications
 
-\`regmon/notify.py\` sends notifications through [ntfy](https://ntfy.sh/).
+`regmon/notify.py` sends notifications through [ntfy](https://ntfy.sh/).
 
 Notifications are generated for:
 
@@ -363,7 +363,7 @@ Notifications are generated for:
 
 The notification state is stored in:
 
-\`data/notifications.json\`
+`data/notifications.json`
 
 Each event has an ID, allowing the notifier to avoid sending the same event repeatedly.
 
@@ -373,24 +373,23 @@ Each event has an ID, allowing the notifier to avoid sending the same event repe
 
 Runtime state is stored under:
 
-\`data/\`
+`data/`
 
 The important files are:
 
 | Path | Purpose |
 | --- | --- |
-| \`data/latest.json\` | Current monitored URL inventory |
-| \`data/report.json\` | Latest aggregate report |
-| \`data/report.md\` | Human-readable latest report |
-| \`data/reports/\` | Per-source reports |
-| \`data/snapshots/\` | Immutable content-addressed normalized-text snapshots and full HTML response snapshots under `html/` |
-| \`data/evidence/\` | Immutable event evidence and diffs |
-| \`data/history/index.json\` | Compact run history |
-| \`data/history/<run_id>.json\` | Full historical run report |
-| \`data/notifications.json\` | Notification idempotency state |
-| \`data/notification-outbox.json\` | Durable queue for notifications not yet delivered |
-| \`data/http-discovery-output.txt\` | Latest HTTP discovery diagnostics |
-| \`data/stealth-output.txt\` | Browser crawler diagnostics |
+| `data/latest.json` | Current monitored URL inventory |
+| `data/report.json` | Latest aggregate report |
+| `data/report.md` | Human-readable latest report |
+| `data/reports/` | Per-source reports |
+| `data/snapshots/` | Immutable content-addressed normalized-text snapshots and full HTML response snapshots under `html/` |
+| `data/evidence/` | Immutable event evidence and diffs |
+| `data/history/index.json` | Compact run history |
+| `data/history/<run_id>.json` | Full historical run report |
+| `data/notifications.json` | Notification idempotency state |
+| `data/notification-outbox.json` | Durable queue for notifications not yet delivered |
+| `data/stealth-output.txt` | Browser crawler diagnostics |
 
 The monitoring workflow commits this state back to the repository so each run leaves a Git-backed record.
 
@@ -402,11 +401,11 @@ The project is designed to run without a permanently running server.
 
 There are four main workflows: CI, scheduled monitoring, AI integration testing, and dashboard deployment.
 
-## \`RegMonitor CI\`
+## `RegMonitor CI`
 
 File:
 
-\`.github/workflows/ci.yml\`
+`.github/workflows/ci.yml`
 
 Runs on pushes and pull requests.
 
@@ -419,34 +418,36 @@ It checks:
 
 This is the safety net for code changes.
 
-## \`Regulatory Monitor\`
+## `Regulatory Monitor`
 
 File:
 
-\`.github/workflows/regulatory-monitor.yml\`
+`.github/workflows/regulatory-monitor.yml`
 
 This is the actual monitoring pipeline.
 
 It:
 
-1. checks out the repository
-2. installs dependencies
-3. runs the tests
-4. compiles the Python code
-5. checks reachability of the selected active source's seed URLs
-6. discovers the monitored site within its configured allowlist
-7. fetches resources and extracts normalized content
-8. compares the content with the previous baseline
-9. runs structured AI analysis for new/substantively changed candidates (when configured)
-10. writes reports and evidence
-11. publishes notifications and preserves failed deliveries in the outbox
-12. commits the updated monitoring state
+1. checks out the current `main` (without persisting the write token)
+2. installs the exactly pinned dependencies
+3. checks reachability of the selected active source's seed URLs
+4. discovers the monitored site within its configured allowlist
+5. fetches resources and extracts normalized content
+6. compares the content with the previous baseline (identical source bytes can only produce a quiet `BASELINE_MIGRATION`)
+7. runs structured AI analysis for new/substantively changed candidates (when configured)
+8. writes reports, evidence and the per-URL change timeline
+9. validates all persisted state and queues notifications in the durable outbox
+10. commits the monitoring state (`scripts/commit_state.sh`)
+11. only then delivers notifications, and commits the delivery ledger
+12. sends an ntfy alert if any step failed, and pings the optional heartbeat URL on success
+
+Tests and compilation run in **RegMonitor CI**, not in the monitoring workflow.
 
 ### Schedule
 
 The default schedule is every six hours:
 
-\`0 */6 * * *\`
+`0 */6 * * *`
 
 The workflow also supports manual execution.
 
@@ -476,7 +477,7 @@ The first run is special.
 
 The active Federal Reserve reporting-forms source is configured with:
 
-\`baseline_on_first_run: true\`
+`baseline_on_first_run: true`
 
 That means the first successful Federal Reserve inventory establishes the baseline.
 
@@ -494,7 +495,7 @@ That is when actual changes become interesting.
 
 The repository includes a dependency-free operations console:
 
-\`index.html\`
+`index.html`
 
 GitHub Pages publishes it.
 
@@ -515,7 +516,7 @@ https://gauravdarwesh.github.io/ChangeSentinel/
 
 ---
 
-The dashboard now provides an **Add a monitor** flow. It creates a prefilled GitHub issue rather than writing repository credentials into the browser. After the repository owner submits the request, the \`Register Dashboard Monitor\` workflow validates the public URL, adds a one-page bounded source to \`config/sources.json\`, commits the configuration, and dispatches the first scan. The dashboard then reads the new source from the shared configuration and displays its stored inventory once the scan has committed.
+The dashboard now provides an **Add a monitor** flow. It creates a prefilled GitHub issue rather than writing repository credentials into the browser. After the repository owner submits the request, the `Register Dashboard Monitor` workflow validates the public URL, adds a one-page bounded source to `config/sources.json`, commits the configuration, and dispatches the first scan. The dashboard then reads the new source from the shared configuration and displays its stored inventory once the scan has committed.
 
 # Running it locally
 
@@ -529,39 +530,39 @@ The dashboard now provides an **Add a monitor** flow. It creates a prefilled Git
 
 Install dependencies:
 
-\`\`\`bash
+```bash
 python -m pip install -r requirements.txt
-\`\`\`
+```
 
 Run the tests:
 
-\`\`\`bash
+```bash
 python -m unittest discover -s tests -p "test*.py" -v
-\`\`\`
+```
 
 Compile the code:
 
-\`\`\`bash
+```bash
 python -m compileall -q regmon
-\`\`\`
+```
 
 Run a monitoring pass:
 
-\`\`\`bash
+```bash
 python -m regmon.monitor --source all
-\`\`\`
+```
 
 Run a specific source:
 
-\`\`\`bash
-python -m regmon.monitor --source eba-full-site
-\`\`\`
+```bash
+python -m regmon.monitor --source fed-reporting-forms-pilot
+```
 
-Run without writing monitoring state:
+Run without writing monitoring state (still makes network requests):
 
-\`\`\`bash
-python -m regmon.monitor --source eba-full-site --dry-run
-\`\`\`
+```bash
+python -m regmon.monitor --source fed-reporting-forms-detail-pilot --dry-run
+```
 
 ---
 
@@ -571,11 +572,11 @@ The live workflow expects:
 
 ### Required for AI
 
-\`OPENROUTER_API_KEY\`
+`OPENROUTER_API_KEY`
 
 ### Optional for notifications
 
-\`NTFY_TOPIC\`
+`NTFY_TOPIC`
 
 If no topic secret is supplied, alerts remain queued in the notification outbox and are not delivered until a topic is configured.
 
@@ -587,7 +588,7 @@ The repository should never contain actual API keys or other credentials.
 
 The main extension point is:
 
-\`config/sources.json\`
+`config/sources.json`
 
 A new source can define its own:
 
@@ -614,7 +615,7 @@ The rest of the pipeline is intentionally shared.
 
 Conceptually:
 
-\`\`\`text
+```text
 Your website
      ↓
 source configuration
@@ -636,13 +637,13 @@ AI interpretation
 notifications
      ↓
 history + dashboard
-\`\`\`
+```
 
 ---
 
 # Project structure
 
-\`\`\`text
+```text
 .
 ├── .github/
 │   └── workflows/
@@ -690,22 +691,22 @@ history + dashboard
 ├── dashboard.js
 ├── requirements.txt
 └── README.md
-\`\`\`
+```
 
 ### What each Python module owns
 
 | Module | Responsibility |
 | --- | --- |
-| \`config.py\` | Load and validate source configuration |
-| \`discovery.py\` | Discover URLs, canonicalize them, apply scope rules |
-| \`fetch.py\` | Retrieve resources with retries and metadata |
-| \`content.py\` | Extract normalized text from supported formats |
-| \`change.py\` | Hashes, event classification, diffs, evidence |
-| \`relevance.py\` | High-recall candidate triage |
-| \`ai.py\` | Structured AI interpretation |
-| \`notify.py\` | Idempotent ntfy notifications |
-| \`engine.py\` | End-to-end orchestration and persistence |
-| \`monitor.py\` | Compatibility CLI entry point |
+| `config.py` | Load and validate source configuration |
+| `discovery.py` | Discover URLs, canonicalize them, apply scope rules |
+| `fetch.py` | Retrieve resources with retries and metadata |
+| `content.py` | Extract normalized text from supported formats |
+| `change.py` | Hashes, event classification, diffs, evidence |
+| `relevance.py` | High-recall candidate triage |
+| `ai.py` | Structured AI interpretation |
+| `notify.py` | Idempotent ntfy notifications |
+| `engine.py` | End-to-end orchestration and persistence |
+| `monitor.py` | Compatibility CLI entry point |
 
 ---
 
@@ -777,14 +778,14 @@ Check:
 - the source seed URL
 - the allowed domain
 - the allowed prefix
-- \`data/http-discovery-output.txt\`
-- \`data/stealth-output.txt\`
+- `data/http-discovery-output.txt`
+- `data/stealth-output.txt`
 
 ### Pages are being reported as changed too often
 
 Check the normalization rules in:
 
-\`regmon/content.py\`
+`regmon/content.py`
 
 A changing navigation/banner/footer should generally not affect normalized content.
 
@@ -792,15 +793,15 @@ A changing navigation/banner/footer should generally not affect normalized conte
 
 Check that:
 
-\`OPENROUTER_API_KEY\`
+`OPENROUTER_API_KEY`
 
 exists in the GitHub Actions secrets.
 
 ### Notifications are not arriving
 
-- Confirm the GitHub Actions secret named \`NTFY_TOPIC\` is set to the exact topic name (for example, \`RegMonitoringWebCrawlerNTFY\`).
-- Check ntfy availability and the delivery ledger in \`data/notifications.json\`.
-- Check \`data/notification-outbox.json\` for failed or undelivered candidates. Source-only HTML noise is intentionally not queued.
+- Confirm the GitHub Actions secret named `NTFY_TOPIC` is set to the exact topic name (for example, `RegMonitoringWebCrawlerNTFY`).
+- Check ntfy availability and the delivery ledger in `data/notifications.json`.
+- Check `data/notification-outbox.json` for failed or undelivered candidates. Source-only HTML noise is intentionally not queued.
 
 
 ### The dashboard looks stale

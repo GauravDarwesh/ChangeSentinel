@@ -1,7 +1,21 @@
 "use strict";
 
-const RAW = "https://raw.githubusercontent.com/GauravDarwesh/ChangeSentinel/main";
-const REPO = "https://github.com/GauravDarwesh/ChangeSentinel";
+// Derive the repository from the Pages address (<owner>.github.io/<repo>/) so a
+// fork reads its own data; fall back to the upstream repository elsewhere.
+function repositoryFromLocation() {
+  try {
+    const host = String(location.hostname || "");
+    const repo = String(location.pathname || "").split("/").filter(Boolean)[0];
+    if (/\.github\.io$/i.test(host) && repo) return { owner: host.split(".")[0], repo };
+  } catch (_) {}
+  return { owner: "GauravDarwesh", repo: "ChangeSentinel" };
+}
+const REPOSITORY = repositoryFromLocation();
+const RAW = "https://raw.githubusercontent.com/" + REPOSITORY.owner + "/" + REPOSITORY.repo + "/main";
+const REPO = "https://github.com/" + REPOSITORY.owner + "/" + REPOSITORY.repo;
+const CHANGE_EVENT_TYPES = ["CHANGED_URL", "NEW_URL", "REMOVED_URL", "HTML_SOURCE_CHANGED"];
+const ALERT_EVENT_TYPES = ["REMOVED_URL", "FETCH_ERROR", "EXTRACTION_ERROR"];
+const RECENT_CHANGE_MS = 7 * 24 * 60 * 60 * 1000;
 const DATA_PATHS = {
   report: "data/report.json",
   inventory: "data/latest.json",
@@ -262,6 +276,53 @@ function matchingEvents(item) {
     event.url === url || event.canonical_url === url || (event.url_id && event.url_id === item.url_id)
   );
 }
+// The change log spans runs: each inventory record keeps its own timeline
+// (change_history), and the latest report adds removals and errors. Parser-only
+// BASELINE_MIGRATION events are not changes and are counted separately.
+function itemChangeEntries(item) {
+  const entries = [];
+  const seen = new Set();
+  matchingEvents(item).forEach(event => {
+    if (event.event_type === "BASELINE_MIGRATION" || seen.has(event.event_id)) return;
+    seen.add(event.event_id);
+    entries.push(event);
+  });
+  (Array.isArray(item.change_history) ? item.change_history : []).forEach(entry => {
+    if (!entry || seen.has(entry.event_id)) return;
+    seen.add(entry.event_id);
+    entries.push(Object.assign({ url: item.canonical_url, url_id: item.url_id, fromHistory: true }, entry));
+  });
+  return entries.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+}
+function changeLogEntries() {
+  const entries = [];
+  const seen = new Set();
+  state.items.forEach(item => itemChangeEntries(item).forEach(entry => {
+    if (seen.has(entry.event_id)) return;
+    if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0 && ALERT_EVENT_TYPES.indexOf(entry.event_type) < 0) return;
+    seen.add(entry.event_id);
+    entries.push(entry);
+  }));
+  allEvents().forEach(event => {
+    if (seen.has(event.event_id) || ALERT_EVENT_TYPES.indexOf(event.event_type) < 0) return;
+    seen.add(event.event_id);
+    entries.push(event);
+  });
+  return entries.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+}
+function migrationCount() {
+  return allEvents().filter(event => event.event_type === "BASELINE_MIGRATION").length;
+}
+function eventHeadline(event) {
+  const result = aiResultForEvent(event);
+  const analysis = result && result.ai && result.ai.status === "ok" ? result.ai.analysis : null;
+  if (analysis && analysis.summary) return analysis.summary;
+  if (event.ai_summary) return event.ai_summary;
+  if (event.evidence && event.evidence.error) return event.evidence.error;
+  if (event.event_type === "HTML_SOURCE_CHANGED") return "The HTML markup changed while extracted text remained the same.";
+  if (event.event_type === "REMOVED_URL") return "This URL was no longer discovered.";
+  return "A monitoring event was recorded for this URL.";
+}
 function aiResultForEvent(event) {
   const results = Array.isArray(state.report.ai_results) ? state.report.ai_results : [];
   if (!event || !event.event_id) return null;
@@ -311,7 +372,17 @@ function itemStatus(item) {
   if (item.fetch_error || item.extraction_error || (item.http_status && Number(item.http_status) >= 400)) {
     return { label: "Needs attention", cls: "is-error", icon: "!", kind: "error" };
   }
-  const events = matchingEvents(item).slice().sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+  const latestChange = (Array.isArray(item.change_history) ? item.change_history : [])
+    .find(entry => entry && (entry.event_type === "CHANGED_URL" || entry.event_type === "NEW_URL"));
+  if (latestChange && Date.now() - new Date(latestChange.timestamp || 0).getTime() < RECENT_CHANGE_MS) {
+    const when = dateShort(latestChange.timestamp);
+    return latestChange.event_type === "NEW_URL"
+      ? { label: "New page · " + when, cls: "is-warning", icon: "+", kind: "change" }
+      : { label: "Content changed · " + when, cls: "is-warning", icon: "↗", kind: "change" };
+  }
+  const events = matchingEvents(item)
+    .filter(event => event.event_type !== "BASELINE_MIGRATION")
+    .sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
   const newest = events[0];
   if (newest && newest.event_type === "CHANGED_URL") return { label: "Content changed", cls: "is-warning", icon: "↗", kind: "change" };
   if (newest && newest.event_type === "HTML_SOURCE_CHANGED") return { label: "HTML source changed", cls: "is-warning", icon: "⌁", kind: "change" };
@@ -417,10 +488,8 @@ function emptyState(title, copy, icon) {
 }
 function renderMetrics() {
   const counts = state.report.counts || {};
-  const events = allEvents();
-  const changes = events.filter(event =>
-    ["CHANGED_URL", "HTML_SOURCE_CHANGED", "NEW_URL", "REMOVED_URL"].indexOf(event.event_type) >= 0
-  ).length;
+  // One definition of "change" for every counter: the cross-run change log.
+  const changes = changeLogEntries().filter(entry => CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0).length;
   const errors = Number(counts.fetch_error || 0) + Number(counts.extraction_error || 0);
   $("metricMonitors").textContent = state.items.length;
   $("metricChanges").textContent = changes;
@@ -428,7 +497,7 @@ function renderMetrics() {
   $("metricLast").textContent = state.report.generated_at ? dateShort(state.report.generated_at) : "—";
   $("metricRunId").textContent = state.report.run_id ? "Latest run " + state.report.run_id : "No saved scan report";
   $("navMonitorCount").textContent = state.items.length;
-  $("navChangeCount").textContent = events.length;
+  $("navChangeCount").textContent = changes;
   $("monitorCount").textContent = state.items.length + (state.items.length === 1 ? " page" : " pages");
   $("footerStamp").textContent = "Latest stored report · " + fmt(state.report.generated_at);
   renderMonitoringSignal();
@@ -786,7 +855,7 @@ async function loadSnapshot(item) {
     '<div class="snapshot-panel"><div class="snapshot-toolbar"><div class="snapshot-label"><span class="file-icon" aria-hidden="true">▧</span>' +
     '<div><div class="snapshot-label-title">Saved page snapshot</div><div class="snapshot-sub">Captured ' + esc(fmt(item.last_full_fetch || item.last_checked)) + '</div></div></div>' +
     '<span class="meta-chip">HTML SHA-256 ' + esc((item.html_hash || "").slice(0, 14) || "pending") + '</span></div>' +
-    '<div class="snapshot-main"><div class="snapshot-notice"><span aria-hidden="true">ⓘ</span><span>This preview uses the stored HTML response. Scripts are disabled in the preview; the original response is preserved separately in HTML source.</span></div>' +
+    '<div class="snapshot-main"><div class="snapshot-notice"><span aria-hidden="true">ⓘ</span><span>This preview uses the stored HTML response with scripts disabled. Images and styles load from the live site, so they can differ from what was captured; the original response is preserved separately in HTML source.</span></div>' +
     '<div class="snapshot-mode" role="group" aria-label="Snapshot display mode">' +
     '<button class="mode-button ' + (state.snapshotMode === "preview" ? "active" : "") + '" data-snapshot-mode="preview" type="button">Rendered preview</button>' +
     '<button class="mode-button ' + (state.snapshotMode === "text" ? "active" : "") + '" data-snapshot-mode="text" type="button">Extracted text</button></div>' +
@@ -860,7 +929,7 @@ function renderDiffMarkup(diff) {
   }).join("") + '</div>';
 }
 function renderChangesForItem(item) {
-  const events = matchingEvents(item).slice().sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+  const events = itemChangeEntries(item);
   if (!events.length) {
     const baseline = item.first_seen && item.last_checked && new Date(item.first_seen).getTime() === new Date(item.last_checked).getTime();
     return emptyState(baseline ? "Baseline captured" : "No recent change events", baseline
@@ -868,9 +937,7 @@ function renderChangesForItem(item) {
       : "There are no events for this URL in the latest report. Use Run history to inspect earlier scans.", "✓");
   }
   return '<div class="diff-list">' + events.slice(0, 20).map(event => {
-    const summary = (event.ai && event.ai.analysis && event.ai.analysis.summary) ||
-      (event.evidence && event.evidence.error) || event.summary ||
-      (event.event_type === "HTML_SOURCE_CHANGED" ? "The HTML markup changed while extracted text remained the same." : "A monitoring event was recorded for this URL.");
+    const summary = eventHeadline(event);
     const boxId = "evidence-" + String(event.event_id || "").replace(/[^a-zA-Z0-9_-]/g, "");
     return '<article class="event-card"><div class="event-symbol ' + (/ERROR/.test(event.event_type || "") ? "is-error" : ["CHANGED_URL","HTML_SOURCE_CHANGED","NEW_URL","REMOVED_URL"].includes(event.event_type) ? "is-warning" : "") + '">' +
       esc(event.event_type === "HTML_SOURCE_CHANGED" ? "⌁" : event.event_type === "NEW_URL" ? "+" : event.event_type === "CHANGED_URL" ? "↗" : /ERROR/.test(event.event_type || "") ? "!" : event.event_type === "REMOVED_URL" ? "−" : "✓") +
@@ -881,7 +948,7 @@ function renderChangesForItem(item) {
 }
 async function loadChangesForItem(item) {
   $("detailBody").innerHTML = renderChangesForItem(item);
-  const events = matchingEvents(item).slice().sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0)).slice(0, 20);
+  const events = itemChangeEntries(item).slice(0, 20);
   for (const event of events) {
     if (!event.evidence_location) continue;
     try {
@@ -938,28 +1005,27 @@ function renderDetailBody() {
   else renderDetails(item);
 }
 function renderChangeRoute() {
-  const events = allEvents().slice().sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
-  $("changeSubtitle").textContent = state.report.run_id
-    ? "Run " + state.report.run_id + " · " + fmt(state.report.generated_at)
-    : "No report metadata available";
+  const events = changeLogEntries();
+  const migrations = migrationCount();
+  $("changeSubtitle").textContent = "All runs · latest run " + (state.report.run_id || "unknown") + " · " + fmt(state.report.generated_at) +
+    (migrations ? " · " + migrations + " parser re-baseline" + (migrations === 1 ? "" : "s") + " in the latest run not shown" : "");
   $("changeCount").textContent = events.length + (events.length === 1 ? " event" : " events");
   if (!events.length) {
-    $("changeItems").innerHTML = emptyState("No change events in the latest report",
-      "A scan can establish a baseline without raising a change event. Earlier scan summaries remain available in Run history.", "✓");
+    $("changeItems").innerHTML = emptyState("No changes recorded yet",
+      "Changes appear here across runs once a monitored page changes after its baseline. Scan summaries remain available in Run history.", "✓");
     return;
   }
   $("changeItems").innerHTML = events.map(event => {
     const item = state.items.find(candidate => candidate.canonical_url === event.url || candidate.url_id === event.url_id);
     const title = item ? itemTitle(item) : (event.url || event.event_type || "Monitoring event");
     const isError = /ERROR/.test(event.event_type || "");
-    const isChange = ["CHANGED_URL", "HTML_SOURCE_CHANGED", "NEW_URL", "REMOVED_URL"].includes(event.event_type);
+    const isChange = CHANGE_EVENT_TYPES.includes(event.event_type);
     const symbol = event.event_type === "HTML_SOURCE_CHANGED" ? "⌁" : event.event_type === "NEW_URL" ? "+" :
       event.event_type === "CHANGED_URL" ? "↗" : isError ? "!" : event.event_type === "REMOVED_URL" ? "−" : "✓";
     return '<article class="event-card"><div class="event-symbol ' + (isError ? "is-error" : isChange ? "is-warning" : "") + '">' + esc(symbol) +
       '</div><div><div class="event-top"><div><h3 class="event-title">' + esc(title) + '</h3><div class="event-type">' + esc(event.event_type || "EVENT") +
       '</div></div><div class="event-time">' + esc(fmt(event.timestamp)) + '</div></div><div class="event-url">' + esc(event.url || "") +
-      '</div><div class="event-summary">' + esc((event.ai && event.ai.analysis && event.ai.analysis.summary) || event.summary ||
-        (event.event_type === "HTML_SOURCE_CHANGED" ? "The HTML markup changed while extracted text remained the same." : "A monitoring event was recorded for this URL.")) +
+      '</div><div class="event-summary">' + esc(eventHeadline(event)) +
       '</div>' + renderAIReview(event) + '<div class="event-footer"><button class="btn" data-event-url="' + esc(event.url || event.canonical_url || "") + '" type="button">Inspect this page →</button>' +
       (event.evidence_location ? ' <a class="btn btn-quiet" href="' + esc(REPO + "/blob/main/" + event.evidence_location) + '" target="_blank" rel="noopener noreferrer">Open evidence file ↗</a>' : '') +
       '</div></div></article>';
@@ -1052,6 +1118,8 @@ function renderNotifications() {
       '<div class="notification-card-head"><div><h3 class="notification-title">' +
       esc(item.kind || "Notification") + '</h3><div class="notification-kind">Sent ' +
       esc(fmt(item.sent_at)) + '</div></div><span class="notification-status ' + statusClass + '">' + statusLabel + '</span></div>' +
+      (item.topic ? '<p class="notification-summary">' + esc(item.topic) + '</p>' : '') +
+      (safeHttpUrl(item.url) ? '<a class="notification-url" href="' + esc(safeHttpUrl(item.url)) + '" target="_blank" rel="noopener noreferrer">' + esc(item.url) + ' ↗</a>' : '') +
       reviewNote +
       '<div class="notification-id">Event ID · ' + esc(item.eventId) + '</div>' +
       '</article>';

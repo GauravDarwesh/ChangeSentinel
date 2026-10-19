@@ -15,7 +15,7 @@ class TestDashboardNotificationContract(unittest.TestCase):
             'id="notificationSentItems"',
             'id="navNotificationCount"',
         )
-        for filename in ("index.html", "dashboard-v2.html"):
+        for filename in ("index.html",):
             with self.subTest(filename=filename):
                 source = (ROOT / filename).read_text(encoding="utf-8")
                 for token in required:
@@ -42,8 +42,9 @@ class TestDashboardNotificationContract(unittest.TestCase):
         self.assertIn("item.kind", sent_renderer)
         self.assertIn("item.sent_at", sent_renderer)
         self.assertIn("item.eventId", sent_renderer)
-        self.assertNotIn("item.topic", sent_renderer)
-        self.assertNotIn("item.url", sent_renderer)
+        # The ledger now stores topic/url; older entries without them must still render.
+        self.assertIn("item.topic ?", sent_renderer)
+        self.assertIn("safeHttpUrl(item.url) ?", sent_renderer)
 
     def test_original_pdf_snapshot_is_previewed_and_text_remains_available(self):
         source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
@@ -97,7 +98,7 @@ class TestDashboardNotificationContract(unittest.TestCase):
             'position:fixed; inset:auto 12px calc(9px + env(safe-area-inset-bottom)) 12px',
             '.pdf-viewer-shell.is-expanded',
         )
-        for filename in ("index.html", "dashboard-v2.html"):
+        for filename in ("index.html",):
             with self.subTest(filename=filename):
                 source = (ROOT / filename).read_text(encoding="utf-8")
                 for token in required:
@@ -165,7 +166,7 @@ class TestDashboardNotificationContract(unittest.TestCase):
 
 
     def test_dashboard_restores_the_intentional_style_cascade_and_versions_the_script(self):
-        for filename in ("index.html", "dashboard-v2.html"):
+        for filename in ("index.html",):
             with self.subTest(filename=filename):
                 source = (ROOT / filename).read_text(encoding="utf-8")
                 self.assertIn('id="premium-responsive-redesign"', source)
@@ -258,7 +259,7 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 self.assertIn("gh workflow run pages.yml", workflow_source)
 
     def test_mobile_header_brand_stays_visible_and_monitor_rows_have_breathing_room(self):
-        for filename in ("index.html", "dashboard-v2.html"):
+        for filename in ("index.html",):
             with self.subTest(filename=filename):
                 source = (ROOT / filename).read_text(encoding="utf-8")
                 self.assertIn('@media (max-width:760px)', source)
@@ -364,14 +365,36 @@ class TestDashboardNotificationContract(unittest.TestCase):
         # Make the remote asset origin an explicit part of the client contract:
         # Pages ships the UI/core JSON, while snapshot bytes and evidence use raw GitHub.
         self.assertIn(
-            'const RAW = "https://raw.githubusercontent.com/GauravDarwesh/ChangeSentinel/main";',
+            'const RAW = "https://raw.githubusercontent.com/" + REPOSITORY.owner + "/" + REPOSITORY.repo + "/main";',
             dashboard,
         )
+        self.assertIn('return { owner: "GauravDarwesh", repo: "ChangeSentinel" };', dashboard)
         self.assertIn(
             'function snapshotURL(path) { return path ? bust(RAW + "/" + path) : ""; }',
             dashboard,
         )
         self.assertIn('fetch(bust(RAW + "/" + event.evidence_location)', dashboard)
+
+
+class TestSingleDashboardEntry(unittest.TestCase):
+    def test_legacy_entry_redirects_to_the_main_dashboard(self):
+        legacy = (ROOT / "dashboard-v2.html").read_text(encoding="utf-8")
+        self.assertIn('http-equiv="refresh" content="0; url=./"', legacy)
+        self.assertLess(len(legacy.splitlines()), 30)
+
+
+class TestCrossRunChangeLog(unittest.TestCase):
+    def test_change_log_and_counters_share_one_definition_and_span_runs(self):
+        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        self.assertIn("function changeLogEntries()", source)
+        self.assertIn("item.change_history", source)
+        self.assertIn('$("navChangeCount").textContent = changes;', source)
+        route = source[source.index("function renderChangeRoute()"):source.index("function renderRuns()")]
+        self.assertIn("changeLogEntries()", route)
+        self.assertIn("parser re-baseline", route)
+        status = source[source.index("function itemStatus(item)"):source.index("function canonicalForDashboard")]
+        self.assertIn("RECENT_CHANGE_MS", status)
+        self.assertIn('event.event_type !== "BASELINE_MIGRATION"', status)
 
 
 if __name__ == "__main__":
