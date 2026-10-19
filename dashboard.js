@@ -1104,14 +1104,40 @@ async function loadData(showErrors) {
     const incompleteDiscovery = discoveryEntries.some(entry =>
       !entry || String(entry.state || "UNKNOWN").toUpperCase() !== "COMPLETE"
     );
+    const activeIds = activeSourceIds();
+    const sourcesInReport = new Set(
+      reportSources().map(source => source && source.id).filter(Boolean)
+    );
+    const missingActiveSources = activeIds.filter(id => !sourcesInReport.has(id));
+    const coveredSourceCount = activeIds.length - missingActiveSources.length;
+    const lastSavedScan = hasValidTimestamp ? relativeTime(generatedAt.toISOString()) : "timestamp unavailable";
+    const isStale = hasValidTimestamp &&
+      Date.now() - generatedAt.getTime() > 8 * 60 * 60 * 1000;
+    const incompleteScan = state.report.baseline_update_allowed === false || incompleteDiscovery;
+    const coverageNote = missingActiveSources.length
+      ? " · " + coveredSourceCount + "/" + activeIds.length + " active sources represented"
+      : "";
     if (!hasValidTimestamp) {
       setStatus("Monitoring report timestamp unavailable", false, true);
-    } else if (state.report.baseline_update_allowed === false || incompleteDiscovery) {
-      setStatus("Latest scan incomplete · " + relativeTime(generatedAt.toISOString()), false, true);
-    } else if (Date.now() - generatedAt.getTime() > 8 * 60 * 60 * 1000) {
-      setStatus("Monitoring data stale · last saved scan " + relativeTime(generatedAt.toISOString()), false, true);
+    } else if (incompleteScan) {
+      setStatus(
+        "Latest scan incomplete" + coverageNote + (isStale ? " · data stale" : "") +
+          " · last saved scan " + lastSavedScan,
+        false,
+        true
+      );
+    } else if (missingActiveSources.length) {
+      setStatus(
+        (isStale ? "Monitoring data stale" : "Latest scan partial") +
+          " · " + coveredSourceCount + "/" + activeIds.length + " active sources represented" +
+          " · last saved scan " + lastSavedScan,
+        false,
+        true
+      );
+    } else if (isStale) {
+      setStatus("Monitoring data stale · last saved scan " + lastSavedScan, false, true);
     } else {
-      setStatus("Latest saved scan · " + relativeTime(generatedAt.toISOString()), false, false);
+      setStatus("Latest saved scan · " + lastSavedScan, false, false);
     }
   } catch (error) {
     setStatus("Stored data unavailable", true);
