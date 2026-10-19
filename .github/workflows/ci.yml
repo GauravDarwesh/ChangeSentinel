@@ -27,4 +27,4 @@ jobs:
       - run: python -m compileall -q regmon
       - name: Dashboard JavaScript syntax checks
         run: |
-          node -e "const fs=require('fs'); for (const f of ['dashboard.js']) { const s=fs.readFileSync(f,'utf8'); new Function(s); console.log(f + ' syntax OK'); } const h=fs.readFileSync('index.html','utf8'); if (!h.includes('src=\"dashboard.js\"')) throw new Error('dashboard JS reference missing');"
+          node -e "const fs=require('fs'); for (const f of ['dashboard.js']) { const s=fs.readFileSync(f,'utf8'); new Function(s); console.log(f + ' syntax OK'); } const h=fs.readFileSync('index.html','utf8'); if (!h.includes('src=\"dashboard.js')) throw new Error('dashboard JS reference missing');"
