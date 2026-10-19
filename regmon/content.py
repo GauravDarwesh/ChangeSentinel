@@ -4,6 +4,7 @@ from __future__ import annotations
 import csv
 import io
 import json
+import logging
 import re
 import stat
 import time
@@ -454,7 +455,7 @@ def _prefer_docling_candidate(existing: str, candidate: str) -> bool:
     old_quality = _pdf_text_quality(existing)
     new_quality = _pdf_text_quality(candidate)
     if new_tables > old_tables:
-        return new_quality >= max(40, int(old_quality * 0.80))
+        return new_quality >= max(40, int(old_quality * 0.90))
     return new_tables >= old_tables and new_quality > max(40, int(old_quality * 1.12))
 
 
@@ -852,11 +853,27 @@ def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
         # structured tables without discarding most of the extracted text.
         text = normalize_text("\n\n".join(page_texts))
         if suspicious_indexes:
-            docling_text, _docling_error = extract_pdf_with_docling(
+            docling_text, docling_error = extract_pdf_with_docling(
                 body, expected_pages=len(pages)
             )
             if docling_text and _prefer_docling_candidate(text, docling_text):
                 text = normalize_text(docling_text)
+            elif docling_error:
+                logging.getLogger(__name__).warning(
+                    "Docling fallback unavailable for SHA-256 %s: %s",
+                    hashlib.sha256(body).hexdigest(),
+                    docling_error,
+                )
+            elif docling_text:
+                logging.getLogger(__name__).info(
+                    "Docling candidate rejected by conservative content-quality gate "
+                    "(baseline score=%s, Docling score=%s, baseline tables=%s, "
+                    "Docling tables=%s)",
+                    _pdf_text_quality(text),
+                    _pdf_text_quality(docling_text),
+                    _markdown_table_count(text),
+                    _markdown_table_count(docling_text),
+                )
         if not text.strip():
             return None, (
                 "PDF produced no usable text. It may contain outlines, damaged text, or scans that OCR could not read."
