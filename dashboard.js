@@ -1007,6 +1007,8 @@ function setSelected(id) {
   renderDetailBody();
   renderViews();
   window.scrollTo({ top: 0, behavior: "auto" });
+  const detail = $("detailView");
+  if (detail) detail.scrollIntoView({ block: "start", behavior: "auto" });
   const item = selectedItem();
   try {
     if (item) history.replaceState(null, "", "#monitor=" + encodeURIComponent(item.url_id));
