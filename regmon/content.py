@@ -454,7 +454,7 @@ def _prefer_docling_candidate(existing: str, candidate: str) -> bool:
     old_quality = _pdf_text_quality(existing)
     new_quality = _pdf_text_quality(candidate)
     if new_tables > old_tables:
-        return new_quality >= max(40, int(old_quality * 0.60))
+        return new_quality >= max(40, int(old_quality * 0.80))
     return new_tables >= old_tables and new_quality > max(40, int(old_quality * 1.12))
 
 
