@@ -163,5 +163,29 @@ class TestDashboardNotificationContract(unittest.TestCase):
         self.assertIn('document.addEventListener("keydown"', source)
 
 
+    def test_dashboard_restores_the_intentional_style_cascade_and_versions_the_script(self):
+        for filename in ("index.html", "dashboard-v2.html"):
+            with self.subTest(filename=filename):
+                source = (ROOT / filename).read_text(encoding="utf-8")
+                self.assertIn('id="premium-responsive-redesign"', source)
+                self.assertIn('id="professional-ux-rebuild"', source)
+                self.assertIn('id="dashboard-ux-followup"', source)
+                self.assertIn('dashboard.js?v=20261019-mobile-ux-1', source)
+                self.assertIn('id="monitorListControls"', source)
+
+    def test_mobile_inventory_progressively_discloses_the_full_watchlist(self):
+        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        for token in (
+            'state.showAllMonitorsMobile',
+            'data-monitor-list-toggle=',
+            'all.slice(0, 6)',
+            'Show all " + all.length + " monitors',
+            'Federal Reserve " + label',
+            'cs-title:v3:',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+
+
 if __name__ == "__main__":
     unittest.main()
