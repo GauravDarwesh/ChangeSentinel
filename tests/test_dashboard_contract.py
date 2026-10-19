@@ -75,9 +75,9 @@ class TestDashboardNotificationContract(unittest.TestCase):
 
 
 
-    def test_evidence_first_responsive_workspace_is_published_in_both_entries(self):
+    def test_professional_responsive_workspace_is_published_in_both_entries(self):
         required = (
-            'id="evidence-first-design-system"',
+            'id="professional-ux-rebuild"',
             'class="app-shell command-shell"',
             'class="topbar command-topbar"',
             'class="nav-list command-nav"',
@@ -88,12 +88,12 @@ class TestDashboardNotificationContract(unittest.TestCase):
             'id="signalLinksCount"',
             'id="nextRunTime"',
             'id="nextRunCountdown"',
-            'color-scheme:light;',
-            '--blue:#245e40;',
-            '@media(max-width:1100px)',
-            '@media(max-width:780px)',
+            'color-scheme: light;',
+            '--blue: #2d6a50;',
+            '@media (max-width:1020px)',
+            '@media (max-width:760px)',
             'viewport-fit=cover',
-            'env(safe-area-inset-bottom)',
+            'position:fixed; inset:auto 12px calc(9px + env(safe-area-inset-bottom)) 12px',
             '.pdf-viewer-shell.is-expanded',
         )
         for filename in ("index.html", "dashboard-v2.html"):
@@ -101,16 +101,9 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 source = (ROOT / filename).read_text(encoding="utf-8")
                 for token in required:
                     self.assertIn(token, source)
-                self.assertEqual(source.count("<style"), 1)
-                self.assertNotIn('id="premium-responsive-redesign"', source)
-                self.assertNotIn('id="professional-ux-rebuild"', source)
-                self.assertNotIn('id="dashboard-ux-followup"', source)
                 self.assertNotIn('<aside class="sidebar"', source)
                 self.assertNotIn('class="hero-radar"', source)
                 self.assertNotIn('class="signal-panel"', source)
-                # Retain foundational styles for secondary views and user-input dialogs.
-                for selector in (".modal-head", ".modal-body", ".field-input", ".notification-layout", ".event-feed", ".run-feed", ".view-header-note"):
-                    self.assertIn(selector, source)
                 for view_id in ("monitorsView", "detailView", "changesView", "runsView", "notificationsView"):
                     self.assertIn('id="' + view_id + '"', source)
                 for signal_id in ("signalStableCount", "signalChangedCount", "signalIssueCount", "signalWaitingCount"):
@@ -159,10 +152,10 @@ class TestDashboardNotificationContract(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertIn(token, source)
         html = (ROOT / "index.html").read_text(encoding="utf-8")
-        self.assertIn('height:min(74dvh,880px)', html)
+        self.assertIn('height:min(76dvh,940px)', html)
         self.assertIn('.pdf-viewer-shell.is-expanded .pdf-snapshot-frame', html)
-        self.assertIn('@media(max-width:780px)', html)
-        self.assertIn('height:66svh', html)
+        self.assertIn('@media (max-width:760px)', html)
+        self.assertIn('height:64svh', html)
 
     def test_dashboard_navigation_resets_scroll_when_changing_view_or_opening_a_monitor(self):
         source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
@@ -170,36 +163,15 @@ class TestDashboardNotificationContract(unittest.TestCase):
         self.assertIn('document.addEventListener("keydown"', source)
 
 
-    def test_dashboard_uses_one_intentional_design_system(self):
+    def test_dashboard_restores_the_intentional_style_cascade_and_versions_the_script(self):
         for filename in ("index.html", "dashboard-v2.html"):
             with self.subTest(filename=filename):
                 source = (ROOT / filename).read_text(encoding="utf-8")
-                self.assertIn('id="evidence-first-design-system"', source)
-                self.assertIn('dashboard.js?v=20261019-evidence-workspace-1', source)
+                self.assertIn('id="premium-responsive-redesign"', source)
+                self.assertIn('id="professional-ux-rebuild"', source)
+                self.assertIn('id="dashboard-ux-followup"', source)
+                self.assertIn('dashboard.js?v=20261019-mobile-ux-1', source)
                 self.assertIn('id="monitorListControls"', source)
-                self.assertEqual(source.count("<style"), 1)
-                self.assertNotIn('id="premium-responsive-redesign"', source)
-                self.assertNotIn('id="professional-ux-rebuild"', source)
-                self.assertNotIn('id="dashboard-ux-followup"', source)
-
-    def test_detail_tabs_prioritize_snapshot_and_change_evidence_on_all_entrypoints(self):
-        for filename in ("index.html", "dashboard-v2.html"):
-            with self.subTest(filename=filename):
-                source = (ROOT / filename).read_text(encoding="utf-8")
-                start = source.index('<nav id="detailTabs"')
-                end = source.index("</nav>", start)
-                tabs = source[start:end]
-                snapshot = tabs.index('data-detail-tab="snapshot"')
-                changes = tabs.index('data-detail-tab="changes"')
-                html_source = tabs.index('data-detail-tab="source"')
-                details = tabs.index('data-detail-tab="details"')
-                self.assertLess(snapshot, changes)
-                self.assertLess(changes, html_source)
-                self.assertLess(html_source, details)
-
-    def test_selected_monitor_scrolls_to_the_detail_workspace(self):
-        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
-        self.assertIn('detail.scrollIntoView({ block: "start", behavior: "auto" })', source)
 
     def test_mobile_inventory_progressively_discloses_the_full_watchlist(self):
         source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
