@@ -23,8 +23,8 @@ class TestDashboardNotificationContract(unittest.TestCase):
     def test_dashboard_loads_durable_outbox_and_sent_ledger(self):
         source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
         for token in (
-            'outbox: RAW + "/data/notification-outbox.json"',
-            'notifications: RAW + "/data/notifications.json"',
+            'outbox: "data/notification-outbox.json"',
+            'notifications: "data/notifications.json"',
             'function renderNotifications()',
             'notificationMap(state.outbox, "pending_events")',
             'notificationMap(state.notifications, "sent_events")',
