@@ -100,7 +100,8 @@ class TestDoclingPdfFallback(unittest.TestCase):
         pdfplumber_module.open = Mock(return_value=document_context)
         docling_markdown = (
             "# Reporting schedule\n\n"
-            "| Field | Threshold |\n| --- | --- |\n| Required reporting | 15% |"
+            + "Recovered fields: " + " ".join("field" + str(index) for index in range(24))
+            + "\n\n| Field | Threshold |\n| --- | --- |\n| Required reporting | 15% |"
         )
 
         with patch("pypdf.PdfReader", return_value=reader), patch(
