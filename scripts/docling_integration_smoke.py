@@ -67,6 +67,60 @@ def build_synthetic_pdf() -> bytes:
     return stream.getvalue()
 
 
+def markdown_tables(text: str) -> list[list[list[str]]]:
+    """Parse Markdown tables while respecting escaped literal pipe characters."""
+    lines = str(text or "").splitlines()
+    tables: list[list[list[str]]] = []
+    index = 0
+
+    def split_row(line: str) -> list[str]:
+        value = line.strip()
+        if not (value.startswith("|") and value.endswith("|")):
+            return []
+        cells: list[str] = []
+        cell: list[str] = []
+        escaped = False
+        for char in value[1:-1]:
+            if char == "|" and not escaped:
+                cells.append("".join(cell).replace(r"\\|", "|").strip())
+                cell = []
+                continue
+            cell.append(char)
+            if char == "\\\\" and not escaped:
+                escaped = True
+            else:
+                escaped = False
+        cells.append("".join(cell).replace(r"\\|", "|").strip())
+        return cells
+
+    def is_separator(cells: list[str]) -> bool:
+        return len(cells) >= 2 and all(
+            re.fullmatch(r":?-{3,}:?", cell.replace(" ", "")) for cell in cells
+        )
+
+    while index < len(lines) - 1:
+        header = split_row(lines[index])
+        separator = split_row(lines[index + 1])
+        if not header or not is_separator(separator):
+            index += 1
+            continue
+        table = [header]
+        index += 2
+        while index < len(lines):
+            row = split_row(lines[index])
+            if not row:
+                break
+            if not is_separator(row):
+                table.append(row)
+            index += 1
+        tables.append(table)
+    return tables
+
+
+def normalize_label_text(value: str) -> str:
+    return re.sub(r"\\s+", " ", str(value or "")).strip().casefold()
+
+
 def main() -> None:
     pdf_bytes = build_synthetic_pdf()
     markdown, error = extract_pdf_with_docling(pdf_bytes, expected_pages=1)
@@ -113,10 +167,46 @@ def main() -> None:
         raise SystemExit(f"Hybrid FR 2028B extraction failed: {corpus_error}")
     if corpus_kind != "pdf" or not corpus_markdown:
         raise SystemExit("Hybrid FR 2028B extraction failed: no normalized PDF text returned")
-    if _markdown_table_count(corpus_markdown) < 1:
+    tables = markdown_tables(corpus_markdown)
+    if len(tables) < 1:
         raise SystemExit(
             "Hybrid FR 2028B extraction failed: no structured Markdown table was preserved"
         )
+
+    # Key reporting fields must survive inside table cells, not merely appear
+    # somewhere in body text. This guards against a superficially successful
+    # extraction that flattens the form's actual row/column relationships.
+    table_cell_text = normalize_label_text(
+        " ".join(cell for table in tables for row in table for cell in row)
+    )
+    expected_table_labels = (
+        "Date Made",
+        "Face Amount of Loan",
+        "Rate of Interest",
+        "Next Date",
+        "Maturity Date",
+        "Risk Rating",
+    )
+    missing_table_labels = [
+        label for label in expected_table_labels
+        if normalize_label_text(label) not in table_cell_text
+    ]
+    if missing_table_labels:
+        raise SystemExit(
+            "Hybrid FR 2028B extraction failed: critical field labels are not present "
+            "inside structured table cells: " + ", ".join(missing_table_labels)
+        )
+
+    nonempty_cells = [
+        cell for table in tables for row in table for cell in row if cell.strip()
+    ]
+    widest_table = max((max((len(row) for row in table), default=0) for table in tables), default=0)
+    if len(nonempty_cells) < 30 or widest_table < 5:
+        raise SystemExit(
+            "Hybrid FR 2028B extraction failed: the detected table grid is unexpectedly "
+            f"sparse (non-empty cells={len(nonempty_cells)}, widest table={widest_table} columns)"
+        )
+
     for expected in ("FR 2028B", "Rate of Interest", "Next Date"):
         if expected.casefold() not in corpus_markdown.casefold():
             raise SystemExit(
@@ -152,7 +242,10 @@ def main() -> None:
         "input_bytes": len(saved_pdf),
         "selected_extractor_profile": extraction_profile.get("profile", "unknown"),
         "markdown_characters": len(corpus_markdown),
-        "markdown_tables": _markdown_table_count(corpus_markdown),
+        "markdown_tables": len(tables),
+        "structured_nonempty_cells": len(nonempty_cells),
+        "widest_table_columns": widest_table,
+        "critical_table_labels_verified": list(expected_table_labels),
         "trusted_token_coverage": round(token_coverage, 4),
         "missing_trusted_token_sample": missing_tokens[:10],
         "values_verified": 3,
