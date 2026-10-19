@@ -6,6 +6,7 @@ unit tests that do not exercise layout conversion never download model weights.
 from __future__ import annotations
 
 import io
+import os
 import threading
 from typing import Any
 
@@ -14,6 +15,7 @@ _CONVERTER_LOCK = threading.Lock()
 MAX_DOCLING_PAGES = 100
 DOCUMENT_TIMEOUT_SECONDS = 120
 MODEL_THREADS = 2
+os.environ.setdefault("OMP_NUM_THREADS", str(MODEL_THREADS))
 
 
 def _build_converter():
