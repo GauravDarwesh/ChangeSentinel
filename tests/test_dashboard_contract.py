@@ -170,7 +170,7 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 self.assertIn('id="premium-responsive-redesign"', source)
                 self.assertIn('id="professional-ux-rebuild"', source)
                 self.assertIn('id="dashboard-ux-followup"', source)
-                self.assertIn('dashboard.js?v=20261019-data-origin-1', source)
+                self.assertIn('dashboard.js?v=20261019-mobile-header-2', source)
                 self.assertIn('id="monitorListControls"', source)
 
     def test_mobile_inventory_progressively_discloses_the_full_watchlist(self):
@@ -222,14 +222,17 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 workflow_source = (ROOT / workflow_path).read_text(encoding="utf-8")
                 self.assertIn("gh workflow run pages.yml", workflow_source)
 
-    def test_mobile_monitor_rows_use_three_direct_columns_and_readable_type(self):
+    def test_mobile_header_brand_stays_visible_and_monitor_rows_have_breathing_room(self):
         for filename in ("index.html", "dashboard-v2.html"):
             with self.subTest(filename=filename):
                 source = (ROOT / filename).read_text(encoding="utf-8")
                 self.assertIn('@media (max-width:760px)', source)
-                self.assertIn('.monitor-card { grid-template-columns:20px minmax(0,1fr) auto !important;', source)
+                self.assertIn('.mobile-wordmark {\n      display:flex !important;', source)
+                self.assertIn('.mobile-wordmark .brand-name {\n      display:block !important;', source)
+                self.assertIn('.monitor-card {\n      grid-template-columns:20px minmax(0,1fr) !important;', source)
                 self.assertIn('.dashboard-hero { grid-template-columns:minmax(0,1fr);', source)
-                self.assertIn('.dashboard-hero .hero-copy > p { font-size:12px;', source)
+                self.assertIn('.dashboard-hero .hero-copy > p { margin-top:9px; font-size:13px;', source)
+                self.assertIn('.monitor-bottom { display:grid; grid-template-columns:repeat(2,minmax(0,1fr));', source)
 
 
 if __name__ == "__main__":
