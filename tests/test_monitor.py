@@ -1180,6 +1180,44 @@ class TestAI(unittest.TestCase):
         self.assertEqual(arguments["config"], config)
 
 class TestNotifications(unittest.TestCase):
+    def test_deterministically_excluded_utility_change_does_not_notify(self):
+        url = "https://www.eba.europa.eu/contact"
+        event_id = build_event_id("CHANGED_URL", make_id(url), "old", "new")
+        event = {
+            "event_id": event_id,
+            "event_type": "CHANGED_URL",
+            "url": url,
+            "evidence": {
+                "current": {
+                    "relevance": {
+                        "candidate": False,
+                        "reason": "Obvious site utility page",
+                        "signals": ["contact"],
+                    }
+                }
+            },
+        }
+        report = {
+            "events": [event],
+            # Even a stale/erroneous AI result must not override deterministic exclusion.
+            "ai_results": [{
+                "event": "CHANGED_URL",
+                "event_id": event_id,
+                "url": url,
+                "ai": {
+                    "status": "ok",
+                    "analysis": {
+                        "relevant": True,
+                        "topic": "Should not escape deterministic exclusion",
+                        "summary": "Synthetic test only",
+                        "reason": "Synthetic test only",
+                        "impact": "Synthetic test only",
+                    },
+                },
+            }],
+        }
+        self.assertEqual(build_notifications(report), [])
+
     def test_technical_change_remains_visible_when_ai_is_unavailable(self):
         event = {
             "event_id": build_event_id("CHANGED_URL", make_id("https://www.eba.europa.eu/a"), "old", "new"),
