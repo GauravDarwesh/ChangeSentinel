@@ -65,10 +65,28 @@ def enqueue_notifications(outbox: dict, candidates: list[dict], sent_events: dic
 
 
 def build_notifications(report: dict) -> list[dict]:
+    # Deterministic high-confidence exclusions (such as /contact or /careers)
+    # must be excluded from delivery as well as AI analysis. Otherwise the
+    # generic CHANGED_URL fallback would still alert even though triage rejected
+    # the page before any model call.
+    deterministically_excluded_events = set()
+    for event in report.get("events", []):
+        if event.get("event_type") not in {"CHANGED_URL", "NEW_URL"}:
+            continue
+        evidence = event.get("evidence")
+        current = evidence.get("current") if isinstance(evidence, dict) else None
+        relevance = current.get("relevance") if isinstance(current, dict) else None
+        if isinstance(relevance, dict) and relevance.get("candidate") is False:
+            event_id = event.get("event_id")
+            if event_id:
+                deterministically_excluded_events.add(event_id)
+
     output = []
     seen = set()
     explicitly_irrelevant = set()
     for result in report.get("ai_results", []):
+        if result.get("event_id") in deterministically_excluded_events:
+            continue
         ai = result.get("ai", {})
         analysis = ai.get("analysis", {}) if isinstance(ai, dict) else {}
         if (
@@ -92,6 +110,8 @@ def build_notifications(report: dict) -> list[dict]:
     for event in report.get("events", []):
         event_id = event.get("event_id")
         kind = event.get("event_type")
+        if event_id in deterministically_excluded_events:
+            continue
         if event_id in seen:
             continue
         if event_id in explicitly_irrelevant and kind in {"CHANGED_URL", "NEW_URL"}:
