@@ -37,3 +37,19 @@ jobs:
       - name: Dashboard JavaScript syntax checks
         run: |
           node -e "const fs=require('fs'); for (const f of ['dashboard.js']) { const s=fs.readFileSync(f,'utf8'); new Function(s); console.log(f + ' syntax OK'); } const h=fs.readFileSync('index.html','utf8'); if (!h.includes('src=\"dashboard.js')) throw new Error('dashboard JS reference missing');"
+      - name: Install browser QA dependencies
+        run: |
+          python -m pip install playwright pymupdf
+          python -m playwright install --with-deps chromium
+      - name: Run visual acceptance against the deployed dashboard
+        env:
+          CHANGESENTINEL_DASHBOARD_URL: https://gauravdarwesh.github.io/ChangeSentinel/
+        run: python scripts/visual_acceptance.py
+      - name: Upload dashboard and PDF visual artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: changesentinel-visual-acceptance
+          path: qa-artifacts/
+          if-no-files-found: warn
+          retention-days: 7
