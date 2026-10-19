@@ -11,8 +11,6 @@ from typing import Any
 
 _CONVERTER: Any | None = None
 _CONVERTER_LOCK = threading.Lock()
-_CONVERSION_ATTEMPTS = 0
-MAX_DOCLING_CONVERSIONS_PER_PROCESS = 8
 MAX_DOCLING_PAGES = 100
 DOCUMENT_TIMEOUT_SECONDS = 120
 MODEL_THREADS = 2
@@ -53,7 +51,7 @@ def extract_pdf_with_docling(
     result. No remote AI services are enabled; model artifacts may be downloaded
     by Docling on first use and can be cached by the CI runner.
     """
-    global _CONVERTER, _CONVERSION_ATTEMPTS
+    global _CONVERTER
     if not body or not body.startswith(b"%PDF-"):
         return None, "Docling input is not a PDF response."
     if expected_pages < 1:
@@ -71,12 +69,6 @@ def extract_pdf_with_docling(
         # processes resources concurrently; concurrent Docling model instances
         # would increase memory use and risk exhausting the hosted runner.
         with _CONVERTER_LOCK:
-            if _CONVERSION_ATTEMPTS >= MAX_DOCLING_CONVERSIONS_PER_PROCESS:
-                return None, (
-                    "Docling per-process conversion budget exhausted; "
-                    "the existing extraction result will be retained."
-                )
-            _CONVERSION_ATTEMPTS += 1
             if _CONVERTER is None:
                 _CONVERTER = _build_converter()
             source = DocumentStream(
