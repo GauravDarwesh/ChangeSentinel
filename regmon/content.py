@@ -286,7 +286,9 @@ def _office_open_xml_suffix(names: set[str]) -> str | None:
     return None
 
 
-def _extract_zip_bundle(body: bytes):
+def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
+    if extraction_profile is not None:
+        extraction_profile["profile"] = "native"
     archive, infos = _validated_zip_infos(body)
     try:
         extracted = []
@@ -312,7 +314,16 @@ def _extract_zip_bundle(body: bytes):
 
             member_bytes = archive.read(info)
             media_type = ZIP_MEMBER_MEDIA_TYPES.get(suffix, "")
-            text, kind, error = extract_content(name, media_type, member_bytes)
+            member_profile = {}
+            text, kind, error = extract_content(
+                name, media_type, member_bytes, _extraction_profile=member_profile
+            )
+            if extraction_profile is not None:
+                member_kind = member_profile.get("profile", "native")
+                if member_kind == "fallback":
+                    extraction_profile["profile"] = "fallback"
+                elif member_kind == "docling" and extraction_profile.get("profile") != "fallback":
+                    extraction_profile["profile"] = "docling"
             if error:
                 raise ValueError(f"Could not extract ZIP member {name}: {error}")
             if text is not None and text.strip():
@@ -767,7 +778,11 @@ def _ocr_pdf_pages(body: bytes, page_indexes: list[int]) -> dict[int, str]:
     return results
 
 
-def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
+def _extract_pdf(
+    body: bytes, extraction_profile: dict | None = None
+) -> tuple[str | None, str | None]:
+    if extraction_profile is not None:
+        extraction_profile["profile"] = "native"
     """Fast-first PDF extraction with layout/table and selective OCR fallbacks."""
     from pypdf import PdfReader
 
@@ -859,15 +874,20 @@ def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
             )
             if docling_text and _prefer_docling_candidate(text, docling_text):
                 text = normalize_text(docling_text)
-            elif docling_error:
-                logging.getLogger(__name__).warning(
-                    "Docling fallback unavailable for SHA-256 %s: %s",
-                    hashlib.sha256(body).hexdigest(),
-                    docling_error,
-                )
-            elif docling_text:
-                logging.getLogger(__name__).info(
-                    "Docling candidate rejected by conservative content-quality gate "
+                if extraction_profile is not None:
+                    extraction_profile["profile"] = "docling"
+            else:
+                if extraction_profile is not None:
+                    extraction_profile["profile"] = "fallback"
+                if docling_error:
+                    logging.getLogger(__name__).warning(
+                        "Docling fallback unavailable for SHA-256 %s: %s",
+                        hashlib.sha256(body).hexdigest(),
+                        docling_error,
+                    )
+                elif docling_text:
+                    logging.getLogger(__name__).info(
+                        "Docling candidate rejected by conservative content-quality gate "
                     "(baseline score=%s, Docling score=%s, baseline tables=%s, "
                     "Docling tables=%s)",
                     _pdf_text_quality(text),
@@ -890,7 +910,10 @@ def extract_content(
     body: bytes,
     include_selector: str | None = None,
     ignore_selectors: tuple[str, ...] | list[str] | None = None,
+    _extraction_profile: dict | None = None,
 ):
+    if _extraction_profile is not None:
+        _extraction_profile["profile"] = "native"
     ctype, suffix = (content_type or "").lower(), _extension(url)
     zip_signature = body.startswith(b"PK")
     if "zip" in ctype or suffix == ".zip" or zip_signature:
@@ -911,12 +934,15 @@ def extract_content(
                 ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
             }[office_suffix]
         else:
-            return _extract_zip_bundle(body)
+            return _extract_zip_bundle(body, _extraction_profile)
 
     # Route binary formats before decoding bytes as UTF-8. Decoding a large
     # PDF into a replacement-filled string wastes CPU and can double peak memory.
     if "pdf" in ctype or suffix == ".pdf" or body.startswith(b"%PDF-"):
-        text, error = _extract_pdf(body)
+        if _extraction_profile is None:
+            text, error = _extract_pdf(body)
+        else:
+            text, error = _extract_pdf(body, _extraction_profile)
         return text, "pdf", error
 
     decoded = body.decode("utf-8-sig", "replace")
