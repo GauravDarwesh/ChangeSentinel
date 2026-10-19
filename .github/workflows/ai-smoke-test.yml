@@ -29,3 +29,12 @@ jobs:
           AI_TIMEOUT_SECONDS: "60"
           AI_ATTEMPTS: "2"
         run: python -m regmon.ai --smoke-test
+
+      # Scores relevance on 15 known parser-artifact diffs plus synthetic real
+      # changes. Fails below 80% accuracy; rerun after any prompt or model change.
+      - name: Score AI relevance on the evaluation set
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          AI_TIMEOUT_SECONDS: "60"
+          AI_ATTEMPTS: "2"
+        run: python scripts/ai_eval.py --min-accuracy 0.8

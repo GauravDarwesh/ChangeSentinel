@@ -84,13 +84,56 @@ def save_outbox(outbox: dict, path: Path = OUTBOX_PATH) -> None:
     _atomic_write_json(path, outbox)
 
 
+AI_VARIANTS = {"ai", "ai_irrelevant"}
+
+
+def _follow_up(notification: dict, key: str) -> dict:
+    """An AI assessment for a change whose generic alert was already delivered."""
+    relevant = notification.get("variant") == "ai"
+    return {
+        **notification,
+        "event_id": key + "#ai",
+        "source_event_id": key,
+        "kind": "AI_ASSESSMENT",
+        "topic": ("AI assessment: " + str(notification.get("topic") or "change reviewed")) if relevant
+        else "AI assessment: not relevant",
+        "priority": 4 if relevant else 2,
+    }
+
+
 def enqueue_notifications(outbox: dict, candidates: list[dict], sent_events: dict) -> dict:
-    """Add new candidates without dropping previously failed deliveries."""
+    """Add new candidates without dropping previously failed deliveries.
+
+    When AI analysis completes after a generic "Technical change detected" alert
+    for the same event was already delivered (because AI was deferred, invalid
+    or unavailable at the time), the assessment is queued as a follow-up instead
+    of being dropped as a duplicate. A generic alert still waiting in the outbox
+    is replaced by the AI version.
+    """
     pending = outbox.setdefault("pending_events", {})
     for notification in candidates:
         event_id = str(notification.get("event_id") or "").strip()
-        if event_id and event_id not in sent_events:
-            pending.setdefault(event_id, notification)
+        if not event_id:
+            continue
+        variant = notification.get("variant")
+        if event_id in sent_events:
+            delivered = sent_events[event_id]
+            if variant in AI_VARIANTS and isinstance(delivered, dict) and delivered.get("variant") == "generic":
+                follow_up = _follow_up(notification, event_id)
+                if follow_up["event_id"] not in sent_events:
+                    pending.setdefault(follow_up["event_id"], follow_up)
+            continue
+        if variant == "ai_irrelevant":
+            # Only meaningful as a follow-up to a delivered generic alert.
+            queued = pending.get(event_id)
+            if isinstance(queued, dict) and queued.get("variant") == "generic":
+                pending.pop(event_id, None)
+            continue
+        queued = pending.get(event_id)
+        if variant == "ai" and isinstance(queued, dict) and queued.get("variant") == "generic":
+            pending[event_id] = notification
+            continue
+        pending.setdefault(event_id, notification)
     return outbox
 
 
@@ -126,10 +169,19 @@ def build_notifications(report: dict) -> list[dict]:
             and result.get("event_id")
         ):
             explicitly_irrelevant.add(result["event_id"])
+            output.append({
+                "event_id": result["event_id"], "kind": result.get("event", "CHANGED_URL"),
+                "variant": "ai_irrelevant", "url": result.get("url"),
+                "topic": str(analysis.get("topic") or "Change reviewed"),
+                "summary": str(analysis.get("summary") or ""),
+                "reason": str(analysis.get("reason") or "AI assessed this change as not relevant."),
+                "impact": "No action suggested by the AI review; the evidence remains available.",
+                "priority": 2, "tags": ["information_source", "regulatory"],
+            })
         if ai.get("status") == "ok" and analysis.get("relevant") is True:
             item = {
                 "event_id": result["event_id"], "kind": result.get("event", "CHANGED_URL"),
-                "url": result.get("url"), "topic": analysis["topic"],
+                "variant": "ai", "url": result.get("url"), "topic": analysis["topic"],
                 "summary": analysis["summary"], "reason": analysis["reason"],
                 "impact": analysis["impact"], "priority": 4,
                 "tags": ["warning", "bank", "regulatory"],
@@ -159,7 +211,7 @@ def build_notifications(report: dict) -> list[dict]:
             })
         elif kind in {"CHANGED_URL", "NEW_URL"}:
             output.append({
-                "event_id": event_id, "kind": kind, "url": event.get("url"),
+                "event_id": event_id, "kind": kind, "variant": "generic", "url": event.get("url"),
                 "topic": "Technical change detected",
                 "summary": "A monitored regulator resource changed and was detected by deterministic content comparison.",
                 "reason": "The change remains visible even when semantic AI review is unavailable, invalid, or deferred.",
@@ -213,7 +265,10 @@ def build_notifications(report: dict) -> list[dict]:
             continue
         source_id = str(item.get("source_id") or "unknown-source")
         reason = str(item.get("reason") or item.get("unresolved_failures") or "Discovery did not complete cleanly")
-        identity = json.dumps({"source_id": source_id, "state": state, "reason": reason}, sort_keys=True)
+        # The reason text alone is not an episode: a later degradation with the
+        # same failure count was suppressed forever. Re-alert at most once a day.
+        day = str(report.get("generated_at") or "")[:10]
+        identity = json.dumps({"source_id": source_id, "state": state, "reason": reason, "day": day}, sort_keys=True)
         output.append({
             "event_id": "discovery-" + hashlib.sha256(identity.encode("utf-8")).hexdigest(),
             "kind": "DISCOVERY_" + state, "url": None,
@@ -258,6 +313,7 @@ def ledger_record(notification: dict) -> dict:
         "topic": notification.get("topic"),
         "summary": notification.get("summary"),
         "source_event_id": notification.get("source_event_id"),
+        "variant": notification.get("variant"),
     }
 
 
