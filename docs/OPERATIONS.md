@@ -16,7 +16,7 @@ The active production scope consists of two bounded Federal Reserve sources: the
 - A paused discovery source must have a valid, non-empty resumable checkpoint. The workflow queues continuation runs for every selected source that is paused.
 - Monitoring state, snapshots, history, notification delivery state, and pending notifications are committed under the data directory.
 - **Deploy Monitoring Console** publishes index.html, dashboard.js and the core JSON files (`dashboard-v2.html` now only redirects to the main page). Snapshot and evidence files are read from the repository's raw-content endpoints.
-- **Monitor Freshness Check** runs every three hours and alerts (ntfy) when no scan has been saved for 8 hours.
+- **Monitor Freshness Check** runs every three hours and alerts (ntfy) when no scan has been saved for 14 hours.
 - **RegMonitor CI** also runs the golden extraction corpus check and full persisted-state validation.
 
 ## Alert reliability
