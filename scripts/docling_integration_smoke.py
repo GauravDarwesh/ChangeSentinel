@@ -169,8 +169,14 @@ def main() -> None:
         raise SystemExit("Hybrid FR 2028B extraction failed: no normalized PDF text returned")
     tables = markdown_tables(corpus_markdown)
     if len(tables) < 1:
+        table_lines = [
+            line.strip() for line in corpus_markdown.splitlines()
+            if line.strip().startswith("|") and line.strip().endswith("|")
+        ]
         raise SystemExit(
-            "Hybrid FR 2028B extraction failed: no structured Markdown table was preserved"
+            "Hybrid FR 2028B extraction failed: no structured Markdown table was recognized "
+            f"(detected_separator_rows={_markdown_table_count(corpus_markdown)}, "
+            f"candidate_table_lines={len(table_lines)}, sample={table_lines[:8]!r})"
         )
 
     # Key reporting fields must survive inside table cells, not merely appear
