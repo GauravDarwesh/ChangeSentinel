@@ -68,10 +68,11 @@ def should_force_full_fetch(old: dict | None, now: str, interval_hours: float) -
 
 def is_current_extractor_version(version: object) -> bool:
     """Recognize stable variants of the current hybrid PDF extraction pipeline."""
-    return str(version or "") in {
-        CONTENT_EXTRACTOR_VERSION,
-        CONTENT_EXTRACTOR_VERSION + "-fallback",
-    }
+    value = str(version or "")
+    return (
+        value in {CONTENT_EXTRACTOR_VERSION, CONTENT_EXTRACTOR_VERSION + "-fallback"}
+        or value.startswith(CONTENT_EXTRACTOR_VERSION + "-zipprofile-")
+    )
 
 
 def should_rebaseline_extractor(old: dict | None, current: dict) -> bool:
@@ -288,15 +289,13 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         )
         item["extraction_type"] = extraction_type
         if extraction_type in {"html", "pdf", "zip"}:
-            fallback_profile = (
-                extraction_type in {"pdf", "zip"}
-                and extraction_profile.get("profile") == "fallback"
-            )
-            item["extractor_version"] = (
-                CONTENT_EXTRACTOR_VERSION + "-fallback"
-                if fallback_profile
-                else CONTENT_EXTRACTOR_VERSION
-            )
+            parser_profile = str(extraction_profile.get("profile") or "native")
+            if extraction_type == "zip" and parser_profile.startswith("zipprofile-"):
+                item["extractor_version"] = CONTENT_EXTRACTOR_VERSION + "-" + parser_profile
+            elif extraction_type in {"pdf", "zip"} and parser_profile == "fallback":
+                item["extractor_version"] = CONTENT_EXTRACTOR_VERSION + "-fallback"
+            else:
+                item["extractor_version"] = CONTENT_EXTRACTOR_VERSION
         file_body = result.body if extraction_type in {"pdf", "zip"} else None
         if extraction_error:
             item["extraction_error"] = extraction_error
