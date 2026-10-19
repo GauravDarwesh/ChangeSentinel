@@ -187,5 +187,21 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 self.assertIn(token, source)
 
 
+    def test_inventory_is_the_first_home_section_and_has_a_top_level_add_action(self):
+        for filename in ("index.html", "dashboard-v2.html"):
+            with self.subTest(filename=filename):
+                source = (ROOT / filename).read_text(encoding="utf-8")
+                inventory = source.index('<section class="inventory-panel"')
+                metrics = source.index('<div class="metrics"')
+                hero = source.index('<div class="page-heading dashboard-hero"')
+                self.assertLess(inventory, metrics)
+                self.assertLess(metrics, hero)
+                self.assertIn('id="watchlistAddMonitorBtn"', source)
+                self.assertIn('.inventory-tools', source)
+        script = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        self.assertIn('$("watchlistAddMonitorBtn").addEventListener("click", openAddMonitor);', script)
+
+
+
 if __name__ == "__main__":
     unittest.main()
