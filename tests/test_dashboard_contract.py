@@ -292,26 +292,35 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 self.assertGreater(target.stat().st_size, 0, f"{label} points to an empty original file: {value}")
             checked.add(str(relative))
 
+        # Keep the inventory shape check, then walk both JSON documents recursively.
+        # Aggregate report events embed before/after inventory records inside
+        # event.evidence.previous/current; those references must be checked too.
         for source_id, records in (latest.get("sources") or {}).items():
             self.assertIsInstance(records, dict, f"inventory for {source_id} must be an object")
-            for url_id, item in records.items():
-                for field in (
-                    "snapshot_location",
-                    "html_snapshot_location",
-                    "evidence_location",
-                ):
-                    check_reference(item.get(field), f"{source_id}/{url_id}/{field}")
-                check_reference(
-                    item.get("file_snapshot_location"),
-                    f"{source_id}/{url_id}/file_snapshot_location",
-                    non_empty=True,
-                )
 
-        for event in report.get("events") or []:
-            check_reference(
-                event.get("evidence_location"),
-                f"report event {event.get('event_id', '<unknown>')}/evidence_location",
-            )
+        def walk_references(value, label):
+            if isinstance(value, dict):
+                for key, child in value.items():
+                    child_label = f"{label}.{key}"
+                    if key in (
+                        "snapshot_location",
+                        "html_snapshot_location",
+                        "file_snapshot_location",
+                        "evidence_location",
+                    ):
+                        check_reference(
+                            child,
+                            child_label,
+                            non_empty=(key == "file_snapshot_location"),
+                        )
+                    else:
+                        walk_references(child, child_label)
+            elif isinstance(value, list):
+                for index, child in enumerate(value):
+                    walk_references(child, f"{label}[{index}]")
+
+        walk_references(latest, "latest")
+        walk_references(report, "report")
 
         self.assertTrue(checked, "The test fixture should exercise at least one persisted reference")
         # Make the remote asset origin an explicit part of the client contract:
