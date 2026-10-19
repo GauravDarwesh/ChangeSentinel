@@ -4,8 +4,10 @@ from __future__ import annotations
 import argparse
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
+
+POINTER_KEYS = ("snapshot_location", "html_snapshot_location", "file_snapshot_location", "evidence_location")
 
 
 def _has_prior_source_state(source_id: str, discovery_dir: Path) -> bool:
@@ -110,6 +112,87 @@ def validate_selected_state(
     return states, paused_sources
 
 
+def _load_json(path: Path, label: str, errors: list[str]):
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        errors.append(f"{label} is missing")
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"{label} is unreadable or invalid JSON: {exc}")
+    return None
+
+
+def _check_pointer(value, label: str, repo_root: Path, errors: list[str], non_empty: bool = False) -> None:
+    if not value:
+        return
+    relative = PurePosixPath(str(value))
+    if relative.is_absolute() or ".." in relative.parts or not relative.parts or relative.parts[0] != "data":
+        errors.append(f"{label} must be a repository-relative path inside data/: {value}")
+        return
+    target = repo_root.joinpath(*relative.parts)
+    if not target.is_file():
+        errors.append(f"{label} points to a missing file: {value}")
+    elif non_empty and target.stat().st_size == 0:
+        errors.append(f"{label} points to an empty file: {value}")
+
+
+def _walk_pointers(value, label: str, repo_root: Path, errors: list[str]) -> None:
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if key in POINTER_KEYS:
+                _check_pointer(child, f"{label}.{key}", repo_root, errors, non_empty=(key == "file_snapshot_location"))
+            else:
+                _walk_pointers(child, f"{label}.{key}", repo_root, errors)
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            _walk_pointers(child, f"{label}[{index}]", repo_root, errors)
+
+
+def validate_persisted_state(data_dir: Path, active_ids: set[str]) -> list[str]:
+    """Check every state file a commit would publish, not only discovery metadata.
+
+    Run before the state commit so a corrupt or dangling state is never pushed.
+    Returns a list of problems; an empty list means the state is consistent.
+    """
+    errors: list[str] = []
+    repo_root = data_dir.parent
+    latest = _load_json(data_dir / "latest.json", "data/latest.json", errors)
+    if latest is not None and (latest.get("schema_version") != 2 or not isinstance(latest.get("sources"), dict)):
+        errors.append("data/latest.json must be schema_version 2 with a sources object")
+        latest = None
+    report = _load_json(data_dir / "report.json", "data/report.json", errors)
+    if report is not None and (report.get("schema_version") != 2 or not isinstance(report.get("events"), list)):
+        errors.append("data/report.json must be schema_version 2 with an events list")
+        report = None
+    try:
+        from regmon.notify import load_outbox, load_state
+
+        load_state(data_dir / "notifications.json")
+        load_outbox(data_dir / "notification-outbox.json")
+    except RuntimeError as exc:
+        errors.append(str(exc))
+    if latest is not None:
+        _walk_pointers(latest, "latest", repo_root, errors)
+        for source_id in sorted(active_ids):
+            for url_id, item in (latest["sources"].get(source_id) or {}).items():
+                label = f"active source {source_id}/{url_id}"
+                if not isinstance(item, dict):
+                    errors.append(f"{label} must be an object")
+                    continue
+                if item.get("normalized_hash") and not item.get("snapshot_location"):
+                    errors.append(f"{label} has normalized content but no snapshot_location")
+                if item.get("fetch_error"):
+                    continue
+                kind = str(item.get("extraction_type") or "").lower()
+                if kind == "html" and not item.get("html_snapshot_location"):
+                    errors.append(f"{label} is HTML but has no html_snapshot_location")
+                if kind in {"pdf", "zip"} and not item.get("file_snapshot_location"):
+                    errors.append(f"{label} is {kind.upper()} but has no file_snapshot_location")
+    if report is not None:
+        _walk_pointers(report, "report", repo_root, errors)
+    return errors
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", default=os.getenv("REGMON_SOURCE", "all"))
@@ -126,6 +209,17 @@ def main() -> None:
     paused = bool(paused_sources)
     print(f"states={states}")
     print(f"paused_sources={paused_sources}")
+    for source_id, state in states:
+        if state in {"FAILED", "DEGRADED"}:
+            print(f"warning: {source_id} discovery is {state}; its baseline was not updated")
+    config = json.loads(args.config.read_text(encoding="utf-8"))
+    active_ids = {str(item.get("id")) for item in config.get("sources", []) if item.get("id") and item.get("active", True)}
+    problems = validate_persisted_state(args.data_dir, active_ids)
+    if problems:
+        for problem in problems[:50]:
+            print(f"state error: {problem}")
+        raise SystemExit(f"{len(problems)} persisted state problem(s) found; refusing to treat this state as valid")
+    print("persisted state: ok")
     if args.github_output:
         with args.github_output.open("a", encoding="utf-8") as handle:
             handle.write(f"paused={'true' if paused else 'false'}\n")

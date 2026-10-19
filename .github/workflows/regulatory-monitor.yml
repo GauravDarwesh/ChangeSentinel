@@ -47,6 +47,10 @@ jobs:
           # possibly stale GITHUB_SHA pinned before the queued run began.
           ref: main
           fetch-depth: 1
+          # The scan parses untrusted PDFs/HTML with third-party libraries; do not
+          # leave a write-scoped token in .git/config while it runs. Only the
+          # commit steps receive the token, through GH_TOKEN.
+          persist-credentials: false
 
       - name: Setup Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
@@ -76,7 +80,7 @@ jobs:
 
           from regmon.config import SourceConfig
           from regmon.discovery import in_scope
-          from regmon.security import REDIRECT_STATUSES, validate_public_http_url
+          from regmon.security import REDIRECT_STATUSES, USER_AGENT, validate_public_http_url
 
           requested = os.environ.get("REGMON_SOURCE", "all").strip()
           import json
@@ -90,12 +94,7 @@ jobs:
           if not sources:
               raise SystemExit(f"No active seed URLs configured for source selection: {requested}")
 
-          headers = {
-              "User-Agent": (
-                  "Mozilla/5.0 (compatible; ChangeSentinel/0.5; "
-                  "+https://github.com/GauravDarwesh/ChangeSentinel)"
-              )
-          }
+          headers = {"User-Agent": USER_AGENT}
           reachable = 0
           total = sum(len(source.seed_urls) for source in sources)
           for source in sources:
@@ -188,6 +187,8 @@ jobs:
       # events without duplicate deliveries.
       - name: Commit monitoring state
         id: state-commit
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           git config user.name "regulatory-monitor-bot"
@@ -209,6 +210,8 @@ jobs:
       - name: Commit notification delivery state
         id: delivery-commit
         if: ${{ always() && steps.state-commit.outcome == 'success' && steps.delivery.outputs.base != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: bash scripts/commit_state.sh "Record notification deliveries" "${{ steps.delivery.outputs.base }}"
 
       - name: Controlled notification test

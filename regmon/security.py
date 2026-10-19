@@ -6,6 +6,25 @@ import socket
 from urllib.parse import urlsplit
 
 REDIRECT_STATUSES = {301, 302, 303, 307, 308}
+USER_AGENT = "Mozilla/5.0 (compatible; ChangeSentinel/0.6; +https://github.com/GauravDarwesh/ChangeSentinel)"
+
+
+class DNSResolutionError(ValueError):
+    """A hostname could not be resolved right now.
+
+    Subclasses ValueError for backward compatibility, but callers must treat it
+    as transient: a resolver hiccup is not proof that a URL is unsafe or gone.
+    """
+
+
+def retry_delay(response, default: float, cap: float = 60.0) -> float:
+    """Honour a numeric Retry-After header (seconds), bounded by cap."""
+    headers = getattr(response, "headers", None) or {}
+    try:
+        value = float(headers.get("retry-after"))
+    except (TypeError, ValueError):
+        return default
+    return max(0.0, min(cap, value))
 BLOCKED_SUFFIXES = (".localhost", ".local", ".internal", ".lan", ".home", ".arpa")
 RESERVED_TEST_SUFFIXES = (".test", ".example", ".invalid")
 
@@ -51,7 +70,7 @@ def validate_public_http_url(value: str, *, resolve_dns: bool = False) -> str:
                 type=socket.SOCK_STREAM,
             )
         except OSError as exc:
-            raise ValueError(f"Could not resolve public hostname {host}: {exc}") from exc
+            raise DNSResolutionError(f"Could not resolve public hostname {host}: {exc}") from exc
         addresses = {answer[4][0].split("%", 1)[0] for answer in answers}
         if not addresses:
             raise ValueError(f"Hostname {host} did not resolve to an address.")

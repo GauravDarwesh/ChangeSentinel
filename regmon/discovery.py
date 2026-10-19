@@ -15,7 +15,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from regmon.config import SourceConfig
-from regmon.security import validate_public_http_url
+from regmon.security import USER_AGENT, DNSResolutionError, retry_delay, validate_public_http_url
 
 TRACKING_PARAMS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
 NON_HTML_SUFFIXES = {
@@ -165,12 +165,7 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
                     current_url,
                     timeout=timeout,
                     allow_redirects=False,
-                    headers={
-                        "User-Agent": (
-                            "Mozilla/5.0 (compatible; ChangeSentinel/0.5; "
-                            "+https://github.com/GauravDarwesh/ChangeSentinel)"
-                        )
-                    },
+                    headers={"User-Agent": USER_AGENT},
                 )
                 last_status = response.status_code
                 if response.status_code not in {301, 302, 303, 307, 308}:
@@ -198,13 +193,22 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
                 last_error = f"HTTP {response.status_code}"
                 if response.status_code not in DISCOVERY_RETRYABLE or attempt == source.discovery_http_attempts:
                     break
-                time.sleep(2 * attempt)
+                time.sleep(retry_delay(response, 2 * attempt))
                 continue
             # Do not parse a known non-HTML response as markup for link discovery.
             # Extensionless application/json endpoints otherwise looked like HTML pages.
             if "html" not in content_type and (content_type or not _is_probably_html_url(url)):
                 return url, [], None
             return url, extract_html_links(response.url or url, response.text, source), None
+        except DNSResolutionError as exc:
+            # A resolver hiccup is transient: retry, and if it persists record a
+            # retryable failure (it used to be classified permanent_http, which
+            # skipped the retry round and left the source DEGRADED).
+            last_error = f"{type(exc).__name__}: {exc}"
+            last_status = None
+            if attempt == source.discovery_http_attempts:
+                break
+            time.sleep(2 * attempt)
         except ValueError as exc:
             # Safety violations (such as an out-of-scope redirect) are not
             # transient fetch failures and must not be followed/retried.
@@ -802,7 +806,6 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                         # A recovered page may contain links that the failed first
                         # attempt never exposed. Keep those links in the same
                         # resumable work queue so recursive discovery remains complete.
-                        links = links
                         new_links = []
                         for link in sorted(links):
                             if source.max_urls > 0 and len(discovered) >= source.max_urls:
