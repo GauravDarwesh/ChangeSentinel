@@ -75,9 +75,9 @@ class TestDashboardNotificationContract(unittest.TestCase):
 
 
 
-    def test_professional_responsive_workspace_is_published_in_both_entries(self):
+    def test_evidence_first_responsive_workspace_is_published_in_both_entries(self):
         required = (
-            'id="professional-ux-rebuild"',
+            'id="evidence-first-design-system"',
             'class="app-shell command-shell"',
             'class="topbar command-topbar"',
             'class="nav-list command-nav"',
@@ -88,12 +88,12 @@ class TestDashboardNotificationContract(unittest.TestCase):
             'id="signalLinksCount"',
             'id="nextRunTime"',
             'id="nextRunCountdown"',
-            'color-scheme: light;',
-            '--blue: #2d6a50;',
-            '@media (max-width:1020px)',
-            '@media (max-width:760px)',
+            'color-scheme:light;',
+            '--blue:#245e40;',
+            '@media(max-width:1100px)',
+            '@media(max-width:780px)',
             'viewport-fit=cover',
-            'position:fixed; inset:auto 12px calc(9px + env(safe-area-inset-bottom)) 12px',
+            'env(safe-area-inset-bottom)',
             '.pdf-viewer-shell.is-expanded',
         )
         for filename in ("index.html", "dashboard-v2.html"):
@@ -101,6 +101,10 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 source = (ROOT / filename).read_text(encoding="utf-8")
                 for token in required:
                     self.assertIn(token, source)
+                self.assertEqual(source.count("<style"), 1)
+                self.assertNotIn('id="premium-responsive-redesign"', source)
+                self.assertNotIn('id="professional-ux-rebuild"', source)
+                self.assertNotIn('id="dashboard-ux-followup"', source)
                 self.assertNotIn('<aside class="sidebar"', source)
                 self.assertNotIn('class="hero-radar"', source)
                 self.assertNotIn('class="signal-panel"', source)
