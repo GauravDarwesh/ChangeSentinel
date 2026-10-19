@@ -170,7 +170,7 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 self.assertIn('id="premium-responsive-redesign"', source)
                 self.assertIn('id="professional-ux-rebuild"', source)
                 self.assertIn('id="dashboard-ux-followup"', source)
-                self.assertIn('dashboard.js?v=20261019-mobile-ux-1', source)
+                self.assertIn('dashboard.js?v=20261019-data-origin-1', source)
                 self.assertIn('id="monitorListControls"', source)
 
     def test_mobile_inventory_progressively_discloses_the_full_watchlist(self):
@@ -185,6 +185,44 @@ class TestDashboardNotificationContract(unittest.TestCase):
         ):
             with self.subTest(token=token):
                 self.assertIn(token, source)
+
+
+
+    def test_dashboard_data_is_published_same_origin_with_raw_fallback(self):
+        script = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        for token in (
+            'const DATA_PATHS = {',
+            'report: new URL("./data/report.json", document.baseURI).href',
+            'inventory: new URL("./data/latest.json", document.baseURI).href',
+            'async function fetchDataAsset(key, required)',
+            'RAW + "/" + path',
+            'Dashboard data loaded',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, script)
+        workflow = (ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
+        for token in (
+            'cp data/report.json site/data/report.json',
+            'cp data/latest.json site/data/latest.json',
+            'cp data/history/index.json site/data/history/index.json',
+            'cp data/notifications.json site/data/notifications.json',
+            'cp data/notification-outbox.json site/data/notification-outbox.json',
+            'cp config/sources.json site/config/sources.json',
+            '"data/report.json"',
+            '"data/latest.json"',
+            '"config/sources.json"',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, workflow)
+
+    def test_mobile_monitor_rows_use_three_direct_columns_and_readable_type(self):
+        for filename in ("index.html", "dashboard-v2.html"):
+            with self.subTest(filename=filename):
+                source = (ROOT / filename).read_text(encoding="utf-8")
+                self.assertIn('@media (max-width:760px)', source)
+                self.assertIn('.monitor-card { grid-template-columns:20px minmax(0,1fr) auto !important;', source)
+                self.assertIn('.dashboard-hero { grid-template-columns:minmax(0,1fr);', source)
+                self.assertIn('.dashboard-hero .hero-copy > p { font-size:12px;', source)
 
 
 if __name__ == "__main__":
