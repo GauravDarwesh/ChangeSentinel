@@ -15,7 +15,9 @@ The active production scope consists of two bounded Federal Reserve sources: the
 - **Regulatory Monitor** runs every six hours or on manual dispatch. Post-run validation considers only active sources selected for that run; inactive historical metadata must not block an active run.
 - A paused discovery source must have a valid, non-empty resumable checkpoint. The workflow queues continuation runs for every selected source that is paused.
 - Monitoring state, snapshots, history, notification delivery state, and pending notifications are committed under the data directory.
-- **Deploy Monitoring Console** publishes index.html, dashboard-v2.html, and dashboard.js. The dashboard reads monitoring JSON from the repository's raw-content endpoints.
+- **Deploy Monitoring Console** publishes index.html, dashboard.js and the core JSON files (`dashboard-v2.html` now only redirects to the main page). Snapshot and evidence files are read from the repository's raw-content endpoints.
+- **Monitor Freshness Check** runs every three hours and alerts (ntfy) when no scan has been saved for 8 hours.
+- **RegMonitor CI** also runs the golden extraction corpus check and full persisted-state validation.
 
 ## Alert reliability
 
@@ -40,3 +42,6 @@ Redirect targets are checked and discovery redirects must stay within the curren
 5. Configure NTFY_TOPIC and dispatch test_notification=true to verify delivery.
 6. Keep regression coverage for transient delivery failures, confirming queued events persist and are retried.
 7. Do not reactivate eba-full-site to clear stale metadata. Select and bound the intended source explicitly.
+8. If a REMOVAL_HELD alert arrives, inspect the source first. Only when the pages were really retired, dispatch **Regulatory Monitor** with `source_id` and `allow_mass_removal` both set to that source ID.
+9. After any prompt or model change, run AI Smoke Test; its evaluation step must stay at or above 80% accuracy.
+10. Dependencies are pinned exactly. To upgrade one, change `requirements.txt` in a PR; if the golden corpus check fails, either pin back or bump `CONTENT_EXTRACTOR_VERSION` deliberately.

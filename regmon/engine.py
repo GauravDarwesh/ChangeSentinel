@@ -270,8 +270,46 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         # Keep deferred AI work in the durable URL inventory so a later scan can
         # resume it even when the source content itself no longer changes.
         "ai_pending": old.get("ai_pending") if old else None,
+        # Durable per-URL change timeline: reports only hold the latest run, so
+        # without this a change vanished from the dashboard within six hours.
+        "last_changed_at": old.get("last_changed_at") if old else None,
+        "change_history": list(old.get("change_history") or []) if old else [],
         "not_modified": False,
     }
+
+
+CHANGE_HISTORY_LIMIT = 20
+CONTENT_CHANGE_EVENTS = {"NEW_URL", "CHANGED_URL"}
+
+
+def record_change(item: dict, event: dict) -> None:
+    """Prepend an event to the URL's durable change timeline (newest first)."""
+    entry = {
+        "event_id": event["event_id"],
+        "event_type": event["event_type"],
+        "timestamp": event["timestamp"],
+        "evidence_location": event.get("evidence_location"),
+    }
+    history = [old for old in (item.get("change_history") or []) if old.get("event_id") != entry["event_id"]]
+    item["change_history"] = [entry, *history][:CHANGE_HISTORY_LIMIT]
+    if event["event_type"] in CONTENT_CHANGE_EVENTS:
+        item["last_changed_at"] = event["timestamp"]
+
+
+def attach_ai_to_history(current: dict[str, dict], ai_results: list[dict]) -> None:
+    """Keep the AI verdict next to its change in the timeline."""
+    by_url = {item.get("canonical_url"): item for item in current.values()}
+    for result in ai_results:
+        ai = result.get("ai") or {}
+        analysis = ai.get("analysis") if ai.get("status") == "ok" else None
+        item = by_url.get(result.get("url"))
+        if not isinstance(analysis, dict) or not item:
+            continue
+        for entry in item.get("change_history") or []:
+            if entry.get("event_id") == result.get("event_id"):
+                entry["ai_relevant"] = analysis.get("relevant")
+                entry["ai_topic"] = analysis.get("topic")
+                entry["ai_summary"] = analysis.get("summary")
 
 
 def mark_error_episode(kind: str, item: dict, old: dict | None, now: str) -> str:
@@ -715,6 +753,9 @@ def process_source(
                     event = {"event_id":event_id,"event_type":event_type,"url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":item}}
                     if item.get("migration_reason"):
                         event["migration_reason"] = item["migration_reason"]
+                    if event_type in {"NEW_URL", "CHANGED_URL", "HTML_SOURCE_CHANGED"}:
+                        record_change(item, event)
+                        current[uid] = item
                     events.append(event)
 
     removed_items = []
@@ -1058,6 +1099,8 @@ def process_source(
                             )
                         )
                     ai_results.append({"event":event,"event_id":event_id,"url":item["canonical_url"],"source_id":source.id,"evidence_location":item.get("evidence_location"),"ai":{"status":"error","reason":str(exc)}})
+
+    attach_ai_to_history(current, ai_results)
 
     counts = {
         "discovered":len(current),

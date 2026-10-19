@@ -10,6 +10,11 @@ on:
         required: false
         default: all
         type: string
+      allow_mass_removal:
+        description: Source ID whose held mass removal you have confirmed (leave empty normally)
+        required: false
+        default: ""
+        type: string
       test_notification:
         description: Send controlled ntfy delivery test without changing monitoring state
         required: false
@@ -170,6 +175,7 @@ jobs:
       - name: Run monitoring engine
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          REGMON_ALLOW_MASS_REMOVAL: ${{ inputs.allow_mass_removal || '' }}
         run: python -u -m regmon.monitor --source "$REGMON_SOURCE"
 
       - name: Validate monitoring state
