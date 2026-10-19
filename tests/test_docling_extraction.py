@@ -1,4 +1,6 @@
+import io
 import sys
+import zipfile
 import tempfile
 import types
 import unittest
@@ -81,6 +83,71 @@ class TestDoclingAdapter(unittest.TestCase):
         self.assertIsNone(text)
         self.assertIn("not a PDF", error)
         build.assert_not_called()
+
+
+class TestZipExtractionProfile(unittest.TestCase):
+    @staticmethod
+    def _archive_bytes() -> bytes:
+        stream = io.BytesIO()
+        with zipfile.ZipFile(stream, "w", zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr("a-form.pdf", b"%PDF-fake-a")
+            archive.writestr("b-instructions.pdf", b"%PDF-fake-b")
+        return stream.getvalue()
+
+    def _extract_with_profiles(self, body: bytes, profiles: dict[str, str]):
+        from regmon.content import _extract_zip_bundle
+
+        def fake_extract(name, content_type, member_bytes, _extraction_profile=None, **kwargs):
+            _extraction_profile["profile"] = profiles[name]
+            return f"stable content for {name}", "pdf", None
+
+        profile = {}
+        with patch("regmon.content.extract_content", side_effect=fake_extract):
+            text, kind, error = _extract_zip_bundle(body, profile)
+        self.assertIsNone(error)
+        self.assertEqual(kind, "zip")
+        self.assertIn("stable content for a-form.pdf", text)
+        return profile["profile"]
+
+    def test_zip_profile_fingerprint_tracks_each_member_deterministically(self):
+        body = self._archive_bytes()
+        mixed = {
+            "a-form.pdf": "fallback",
+            "b-instructions.pdf": "docling",
+        }
+        all_docling = {
+            "a-form.pdf": "docling",
+            "b-instructions.pdf": "docling",
+        }
+
+        first = self._extract_with_profiles(body, mixed)
+        repeat = self._extract_with_profiles(body, mixed)
+        changed = self._extract_with_profiles(body, all_docling)
+
+        self.assertTrue(first.startswith("zipprofile-"))
+        self.assertEqual(first, repeat)
+        self.assertNotEqual(first, changed)
+
+    def test_zip_profile_change_on_identical_bytes_is_a_baseline_migration(self):
+        from regmon.content import CONTENT_EXTRACTOR_VERSION
+        from regmon.engine import should_rebaseline_extractor
+
+        old = {
+            "extraction_type": "zip",
+            "extractor_version": CONTENT_EXTRACTOR_VERSION + "-zipprofile-aaaaaaaaaaaaaaaa",
+            "raw_hash": "identical-zip-bytes",
+            "normalized_hash": "old-member-parser-output",
+        }
+        current = {
+            "extraction_type": "zip",
+            "extractor_version": CONTENT_EXTRACTOR_VERSION + "-zipprofile-bbbbbbbbbbbbbbbb",
+            "raw_hash": "identical-zip-bytes",
+            "normalized_hash": "new-member-parser-output",
+        }
+        self.assertTrue(should_rebaseline_extractor(old, current))
+
+        current["raw_hash"] = "different-zip-bytes"
+        self.assertFalse(should_rebaseline_extractor(old, current))
 
 
 class TestDoclingPdfFallback(unittest.TestCase):
