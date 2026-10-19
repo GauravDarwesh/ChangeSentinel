@@ -199,6 +199,9 @@ class TestDashboardNotificationContract(unittest.TestCase):
             'Latest saved scan',
             'Monitoring data stale',
             'Latest scan incomplete',
+            'Latest scan partial',
+            'const missingActiveSources = activeIds.filter',
+            'active sources represented',
         ):
             with self.subTest(token=token):
                 self.assertIn(token, script)
