@@ -932,11 +932,17 @@ function renderRuns() {
       ["Checked", counts.discovered], ["Changed", counts.changed], ["New", counts.new],
       ["Source changes", counts.source_changed], ["Errors", Number(counts.fetch_error || 0) + Number(counts.extraction_error || 0)]
     ];
-    return '<article class="run-card"><div class="run-symbol" aria-hidden="true">◷</div><div class="run-main"><div class="run-title">' +
+    const supersededNote = run.superseded
+      ? '<div class="run-superseded-note">Superseded: ' +
+        esc(run.superseded_reason || "An extractor-only false positive was corrected by a later baseline migration.") +
+        ' · Corrected by run ' + esc(run.superseded_by_run_id || "—") + '</div>'
+      : "";
+    return '<article class="run-card' + (run.superseded ? ' is-superseded' : '') + '"><div class="run-symbol" aria-hidden="true">◷</div><div class="run-main"><div class="run-title">' +
       esc(run.regulator || (source && source.name) || run.source_id || "Monitoring run") + '</div><div class="run-sub">' +
       esc(fmt(run.generated_at)) + ' · ' + esc(run.run_id || "") + '</div><div class="run-sub">Source ID: ' + esc(run.source_id || "—") +
       '</div><div class="run-counts">' + pills.map(([label, value]) => '<span class="run-count">' + esc(label) + ': ' + esc(value == null ? 0 : value) +
-      '</span>').join("") + '</div></div><span class="run-source">' + (isActive ? "Active source" : "Historical / inactive") + '</span></article>';
+      '</span>').join("") + '</div>' + supersededNote + '</div><span class="run-source">' +
+      (run.superseded ? "Superseded run" : (isActive ? "Active source" : "Historical / inactive")) + '</span></article>';
   }).join("");
 }
 function safeHttpUrl(value) {
@@ -988,14 +994,20 @@ function renderNotifications() {
     "✓"
   );
 
-  $("notificationSentItems").innerHTML = sent.length ? sent.slice(0, 100).map(item =>
-    '<article class="notification-card notification-card-compact">' +
-    '<div class="notification-card-head"><div><h3 class="notification-title">' +
-    esc(item.kind || "Notification") + '</h3><div class="notification-kind">Sent ' +
-    esc(fmt(item.sent_at)) + '</div></div><span class="notification-status is-sent">Delivered</span></div>' +
-    '<div class="notification-id">Event ID · ' + esc(item.eventId) + '</div>' +
-    '</article>'
-  ).join("") : emptyState(
+  $("notificationSentItems").innerHTML = sent.length ? sent.slice(0, 100).map(item => {
+    const statusClass = item.superseded ? "is-superseded" : "is-sent";
+    const statusLabel = item.superseded ? "Superseded" : "Delivered";
+    const reviewNote = item.superseded_reason
+      ? '<div class="notification-field"><label>Delivery review</label><p>' + esc(item.superseded_reason) + '</p></div>'
+      : "";
+    return '<article class="notification-card notification-card-compact">' +
+      '<div class="notification-card-head"><div><h3 class="notification-title">' +
+      esc(item.kind || "Notification") + '</h3><div class="notification-kind">Sent ' +
+      esc(fmt(item.sent_at)) + '</div></div><span class="notification-status ' + statusClass + '">' + statusLabel + '</span></div>' +
+      reviewNote +
+      '<div class="notification-id">Event ID · ' + esc(item.eventId) + '</div>' +
+      '</article>';
+  }).join("") : emptyState(
     "No delivery history recorded",
     "The delivery ledger contains no successfully sent events yet.",
     "◷"
