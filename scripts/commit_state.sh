@@ -16,6 +16,18 @@ set -euo pipefail
 message="${1:?commit message required}"
 base_sha="${2:?base commit SHA required}"
 
+# The checkout does not persist credentials (the scan runs third-party parsers
+# on untrusted documents). Authenticate only the git commands that need it.
+git_remote() {
+  if [ -n "${GH_TOKEN:-}" ]; then
+    local auth
+    auth="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
+    git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $auth" "$@"
+  else
+    git "$@"
+  fi
+}
+
 emit() {
   if [ -n "${GITHUB_OUTPUT:-}" ]; then
     echo "committed=$1" >> "$GITHUB_OUTPUT"
@@ -31,9 +43,9 @@ fi
 git commit -q -m "$message"
 
 for attempt in 1 2 3 4 5; do
-  git fetch -q origin main
+  git_remote fetch -q origin main
   if git merge-base --is-ancestor origin/main HEAD; then
-    if git push -q origin HEAD:main; then
+    if git_remote push -q origin HEAD:main; then
       echo "Pushed state commit (attempt $attempt)."
       emit true
       exit 0

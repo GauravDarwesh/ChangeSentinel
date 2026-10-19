@@ -10,7 +10,7 @@ from urllib.parse import urljoin, urlsplit
 
 from regmon.discovery import canonical
 
-from regmon.security import REDIRECT_STATUSES, validate_public_http_url
+from regmon.security import REDIRECT_STATUSES, USER_AGENT, DNSResolutionError, retry_delay, validate_public_http_url
 
 RETRYABLE = {408, 425, 429, 500, 502, 503, 504}
 MAX_REDIRECTS = 5
@@ -44,14 +44,11 @@ def fetch(
     allowed_prefixes: tuple[str, ...] | list[str] | None = None,
     allowed_urls: tuple[str, ...] | list[str] | None = None,
     allowed_resource_prefixes: tuple[str, ...] | list[str] | None = None,
+    excluded_prefixes: tuple[str, ...] | list[str] | None = None,
+    max_bytes: int | None = None,
 ) -> FetchResult:
     last_error = None
-    headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (compatible; ChangeSentinel/0.3; "
-            "+https://github.com/GauravDarwesh/ChangeSentinel)"
-        ),
-    }
+    headers = {"User-Agent": USER_AGENT}
     if etag:
         headers["If-None-Match"] = etag
     if last_modified:
@@ -64,6 +61,9 @@ def fetch(
     scoped_prefixes = tuple(str(value) for value in (allowed_prefixes or []))
     scoped_resource_prefixes = tuple(str(value) for value in (allowed_resource_prefixes or []))
     scoped_urls = {canonical(str(value)) for value in (allowed_urls or [])}
+    excluded_paths = tuple(
+        (urlsplit(str(value)).path.rstrip("/") or "/") for value in (excluded_prefixes or [])
+    )
 
     def enforce_scope(target: str) -> None:
         parsed_target = urlsplit(target)
@@ -78,11 +78,19 @@ def fetch(
         resource_target = any(normalized_target.startswith(prefix) for prefix in scoped_resource_prefixes)
         if scoped_urls and normalized_target not in scoped_urls and not resource_target:
             raise ValueError(f"Fetch redirect target is outside the exact URL allowlist: {target}")
+        # Same exclusion rule as discovery.in_scope: a redirect into an excluded
+        # area (for example a login page) must not be fetched and compared.
+        target_path = urlsplit(normalized_target).path.rstrip("/") or "/"
+        for excluded in excluded_paths:
+            if target_path == excluded or target_path.startswith(excluded.rstrip("/") + "/"):
+                raise ValueError(f"Fetch redirect target is in an excluded area: {target}")
 
     enforce_scope(url)
-    validate_public_http_url(url, resolve_dns=True)
     for attempt in range(1, attempts + 1):
         try:
+            # Resolve inside the retry loop: a transient resolver failure used to
+            # fail the fetch immediately with no retry.
+            validate_public_http_url(url, resolve_dns=True)
             current_url = url
             request_headers = dict(headers)
             visited = {current_url}
@@ -110,6 +118,12 @@ def fetch(
                 current_url = target
                 # Validators apply to the original response, not an unrelated redirect.
                 request_headers = {"User-Agent": headers["User-Agent"]}
+        except DNSResolutionError as exc:
+            last_error = exc
+            if attempt == attempts:
+                raise
+            time.sleep(backoff_seconds * attempt)
+            continue
         except ValueError:
             raise
         except Exception as exc:
@@ -138,17 +152,23 @@ def fetch(
             last_error = exc
             if response.status_code not in RETRYABLE or attempt == attempts:
                 raise exc
-            time.sleep(backoff_seconds * attempt)
+            time.sleep(retry_delay(response, backoff_seconds * attempt))
             continue
 
+        declared = _content_length(response.headers)
+        if max_bytes and declared and declared > max_bytes:
+            raise ValueError(f"Response for {current_url} declares {declared} bytes; limit is {max_bytes}")
+        body = response.content
+        if max_bytes and len(body) > max_bytes:
+            raise ValueError(f"Response for {current_url} is {len(body)} bytes; limit is {max_bytes}")
         return FetchResult(
             status_code=response.status_code,
             content_type=response.headers.get("content-type", ""),
             content_length=_content_length(response.headers),
             etag=response.headers.get("etag"),
             last_modified=response.headers.get("last-modified"),
-            raw_hash=hashlib.sha256(response.content).hexdigest(),
-            body=response.content,
+            raw_hash=hashlib.sha256(body).hexdigest(),
+            body=body,
             not_modified=False,
         )
 

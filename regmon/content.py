@@ -951,12 +951,17 @@ def _extract_pdf(
                             # is the useful semantic structure, not text length.
                             if "[TABLE]" in candidate or _pdf_text_quality(candidate) > _pdf_text_quality(page_texts[index]) * 1.03:
                                 page_texts[index] = candidate
-                        except Exception:
+                        except Exception as exc:
                             # Keep the fast extraction if a malformed page defeats
                             # table reconstruction. OCR/quality logic still applies.
-                            pass
-            except Exception:
-                pass
+                            logging.getLogger(__name__).warning(
+                                "pdfplumber table reconstruction failed on page %s: %s: %s",
+                                index + 1, type(exc).__name__, exc,
+                            )
+            except Exception as exc:
+                logging.getLogger(__name__).warning(
+                    "pdfplumber could not open the PDF for layout recovery: %s: %s", type(exc).__name__, exc
+                )
 
         if low_text_indexes:
             if len(low_text_indexes) > MAX_OCR_PAGES:

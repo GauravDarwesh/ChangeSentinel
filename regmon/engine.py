@@ -29,6 +29,7 @@ from regmon.config import DEFAULT_CONFIG_PATH, SourceConfig, load_config
 from regmon.content import CONTENT_EXTRACTOR_VERSION, extract_content
 from regmon.discovery import canonical, discover
 from regmon.fetch import fetch
+from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -188,7 +189,7 @@ def write_snapshot(uid: str, text: str, content_hash: str | None = None) -> str:
     digest = content_hash or hashlib.sha256(text.encode("utf-8")).hexdigest()
     path = SNAPSHOTS / f"{uid}-{digest}.txt"
     if not path.exists():
-        path.write_text(text, encoding="utf-8")
+        atomic_write_text(path, text)
     return str(path.relative_to(ROOT))
 
 
@@ -197,7 +198,7 @@ def write_html_snapshot(uid: str, body: bytes, html_hash: str) -> str:
     HTML_SNAPSHOTS.mkdir(parents=True, exist_ok=True)
     path = HTML_SNAPSHOTS / f"{uid}-{html_hash}.html"
     if not path.exists():
-        path.write_bytes(body)
+        atomic_write_bytes(path, body)
     return str(path.relative_to(ROOT))
 
 
@@ -232,7 +233,7 @@ def write_file_snapshot(uid: str, body: bytes, content_hash: str | None, extract
     digest = content_hash or hashlib.sha256(body).hexdigest()
     path = directory / f"{uid}-{digest}.{suffix}"
     if not path.exists():
-        path.write_bytes(body)
+        atomic_write_bytes(path, body)
     return str(path.relative_to(ROOT))
 
 def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dict[str, Any]:
@@ -392,6 +393,8 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             allowed_prefixes=source.allowed_prefixes,
             allowed_urls=source.allowed_urls,
             allowed_resource_prefixes=source.allowed_resource_prefixes,
+            excluded_prefixes=source.excluded_prefixes,
+            max_bytes=int(DEFAULTS.get("max_response_bytes", 200 * 1024 * 1024)),
         )
         item.update({
             "http_status": result.status_code,
@@ -1097,6 +1100,57 @@ def process_source(
         "inventory":current
     }
 
+def _active_source_reports(exclude: set[str]) -> list[dict]:
+    """Latest saved per-source reports for active sources not run this time."""
+    try:
+        _payload, sources = load_config()
+    except Exception:
+        return []
+    reports = []
+    for sid, source in sources.items():
+        if not source.active or sid in exclude:
+            continue
+        path = REPORTS / f"{sid}.json"
+        if not path.exists():
+            continue
+        try:
+            report = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if isinstance(report, dict) and report.get("source", {}).get("id") == sid:
+            reports.append(report)
+    return reports
+
+
+def _sort_events(events: list[dict]) -> list[dict]:
+    # Thread completion order made identical runs reorder their reports.
+    return sorted(events, key=lambda e: (str(e.get("url") or ""), str(e.get("event_type") or ""), str(e.get("event_id") or "")))
+
+
+def _aggregate_report(reports: list[dict], run_id: str, generated_at: str | None = None) -> dict:
+    count_keys = set().union(*(report["counts"].keys() for report in reports))
+    return {
+        "schema_version":2,"run_id":run_id,
+        "generated_at":generated_at or max(report["generated_at"] for report in reports),
+        "sources":[report["source"] for report in reports],
+        "source_runs":{report["source"]["id"]: {"run_id": report.get("run_id"), "generated_at": report.get("generated_at")} for report in reports},
+        "counts":{k:sum(int(report["counts"].get(k,0)) for report in reports) for k in sorted(count_keys)},
+        "discovery":[report.get("discovery",{}) for report in reports],
+        "removal_guards":[report["removal_guard"] for report in reports if report.get("removal_guard") and report.get("run_id") == run_id],
+        "baseline_update_allowed":all(report.get("baseline_update_allowed",False) for report in reports),
+        "change_detector":{"classification_hash":"normalized_hash","html_hash":"stored full HTML response body", "html_comparison_hash":"volatile Cloudflare challenge IDs/timestamps stabilized before markup-only classification","http_validators":"ETag/Last-Modified are optimization hints only"},
+        "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
+        "ai_contract":reports[0]["ai_contract"],
+        "new_urls":[x for report in reports for x in report.get("new_urls",[])],
+        "changed_urls":[x for report in reports for x in report.get("changed_urls",[])],
+        "source_changed_urls":[x for report in reports for x in report.get("source_changed_urls",[])],
+        "removed_urls":[x for report in reports for x in report.get("removed_urls",[])],
+        "baseline_migrations":[x for report in reports for x in report.get("baseline_migrations",[])],
+        "events":_sort_events([x for report in reports for x in report.get("events",[])]),
+        "ai_results":[x for report in reports for x in report.get("ai_results",[])],
+    }
+
+
 def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -> dict:
     if dry_run:
         return {"dry_run":True}
@@ -1113,46 +1167,43 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
     history = json.loads(history_path.read_text(encoding="utf-8")) if history_path.exists() else []
     for result in source_results:
         report = result["report"]
+        report["events"] = _sort_events(report.get("events", []))
         sid = report["source"]["id"]
         if report.get("baseline_update_allowed"):
             payload["sources"][sid] = result["inventory"]
-        (REPORTS / f"{sid}.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
+        atomic_write_text(REPORTS / f"{sid}.json", json.dumps(report,indent=2))
         history.append({"run_id":report["run_id"],"generated_at":report["generated_at"],"source_id":sid,"regulator":report["source"]["regulator"],"counts":report["counts"]})
+    # Keep the newest N entries PER SOURCE. A global cap of N x (sources in this
+    # run) truncated the other sources' history on every single-source run.
     history.sort(key=lambda x:x.get("generated_at",""),reverse=True)
-    history = history[:int(DEFAULTS.get("history_runs",90))*max(1,len(source_results))]
-    history_path.write_text(json.dumps(history,indent=2),encoding="utf-8")
-    latest_path.write_text(json.dumps(payload,indent=2),encoding="utf-8")
+    per_source_limit = int(DEFAULTS.get("history_runs",90))
+    kept, seen_per_source = [], {}
+    for entry in history:
+        sid = str(entry.get("source_id"))
+        seen_per_source[sid] = seen_per_source.get(sid, 0) + 1
+        if seen_per_source[sid] <= per_source_limit:
+            kept.append(entry)
+    atomic_write_text(history_path, json.dumps(kept,indent=2))
+    atomic_write_text(latest_path, json.dumps(payload,indent=2))
 
-    count_keys = set().union(*(r["report"]["counts"].keys() for r in source_results))
-    aggregate_counts = {k:sum(int(r["report"]["counts"].get(k,0)) for r in source_results) for k in sorted(count_keys)}
-    aggregate = {
-        "schema_version":2,"run_id":run_id,
-        "generated_at":max(r["report"]["generated_at"] for r in source_results),
-        "sources":[r["report"]["source"] for r in source_results],
-        "counts":aggregate_counts,
-        "discovery":[r["report"].get("discovery",{}) for r in source_results],
-        "removal_guards":[r["report"]["removal_guard"] for r in source_results if r["report"].get("removal_guard")],
-        "baseline_update_allowed":all(r["report"].get("baseline_update_allowed",False) for r in source_results),
-        "change_detector":{"classification_hash":"normalized_hash","html_hash":"stored full HTML response body", "html_comparison_hash":"volatile Cloudflare challenge IDs/timestamps stabilized before markup-only classification","http_validators":"ETag/Last-Modified are optimization hints only"},
-        "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
-        "ai_contract":source_results[0]["report"]["ai_contract"],
-        "new_urls":[x for r in source_results for x in r["report"]["new_urls"]],
-        "changed_urls":[x for r in source_results for x in r["report"]["changed_urls"]],
-        "source_changed_urls":[x for r in source_results for x in r["report"].get("source_changed_urls",[])],
-        "removed_urls":[x for r in source_results for x in r["report"]["removed_urls"]],
-        "baseline_migrations":[x for r in source_results for x in r["report"]["baseline_migrations"]],
-        "events":[x for r in source_results for x in r["report"]["events"]],
-        "ai_results":[x for r in source_results for x in r["report"]["ai_results"]],
-    }
-    (DATA / "report.json").write_text(json.dumps(aggregate,indent=2),encoding="utf-8")
-    (HISTORY / f"{run_id}.json").write_text(json.dumps(aggregate,indent=2),encoding="utf-8")
+    # report.json is the latest state of EVERY active source: sources not run
+    # this time contribute their last saved report, so a single-source run no
+    # longer makes the dashboard report the other sources as missing. The
+    # per-run history file keeps only what this run produced.
+    reports = [r["report"] for r in source_results]
+    carried = _active_source_reports({report["source"]["id"] for report in reports})
+    all_reports = reports + carried
+    aggregate = _aggregate_report(all_reports, run_id, generated_at=max(report["generated_at"] for report in reports))
+    atomic_write_text(DATA / "report.json", json.dumps(aggregate,indent=2))
+    atomic_write_text(HISTORY / f"{run_id}.json", json.dumps(_aggregate_report(reports, run_id), indent=2))
+    aggregate_counts = aggregate["counts"]
     md = ["# Regulatory Monitoring Report","",f"Run: {run_id}",f"Generated: {aggregate['generated_at']}","","## Aggregate counts","","| Metric | Value |","| --- | ---: |"]
     md += [f"| {k} | {v} |" for k,v in aggregate_counts.items()]
     md += ["","## Sources",""]
-    for r in source_results:
-        c=r["report"]["counts"]; s=r["report"]["source"]
-        md += [f"### {s['name']}","",f"- Regulator: {s['regulator']}",f"- Discovered: {c['discovered']}",f"- Changed content: {c['changed']}",f"- HTML source-only changes: {c.get('source_changed',0)}",f"- New: {c['new']}",f"- Removed: {c['removed']}",f"- Fetch errors: {c['fetch_error']}", ""]
-    (DATA / "report.md").write_text("\n".join(md),encoding="utf-8")
+    for report in all_reports:
+        c=report["counts"]; src=report["source"]
+        md += [f"### {src['name']}","",f"- Regulator: {src['regulator']}",f"- Report run: {report.get('run_id')} ({report.get('generated_at')})",f"- Discovered: {c.get('discovered',0)}",f"- Changed content: {c.get('changed',0)}",f"- HTML source-only changes: {c.get('source_changed',0)}",f"- New: {c.get('new',0)}",f"- Removed: {c.get('removed',0)}",f"- Fetch errors: {c.get('fetch_error',0)}", ""]
+    atomic_write_text(DATA / "report.md", "\n".join(md))
     return {"dry_run":False,"sources":[r["report"]["source"]["id"] for r in source_results],"run_id":run_id}
 
 def run(source_id: str="all", dry_run: bool=False) -> dict:

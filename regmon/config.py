@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+import re
+from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import Any
 
@@ -40,10 +41,13 @@ class SourceConfig:
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "SourceConfig":
+        if not isinstance(value, dict):
+            raise ValueError("Each source configuration must be an object")
         required = ("id", "name", "regulator", "seed_urls", "allowed_prefixes", "allowed_domains")
         missing = [key for key in required if not value.get(key)]
         if missing:
             raise ValueError(f"Source configuration missing: {', '.join(missing)}")
+        _validate_source_types(value)
         return cls(
             id=str(value["id"]),
             name=str(value["name"]),
@@ -81,9 +85,84 @@ class SourceConfig:
         )
 
 
+SOURCE_KEYS = {field.name for field in fields(SourceConfig)}
+BOOL_KEYS = {"active", "baseline_on_first_run", "use_http_discovery"}
+INT_KEYS = {
+    "max_urls", "discovery_attempts", "discovery_timeout_seconds", "discovery_retry_delay_seconds",
+    "discovery_http_timeout_seconds", "discovery_http_workers", "discovery_http_attempts",
+    "discovery_slice_seconds", "discovery_max_pages_per_slice",
+}
+LIST_KEYS = {
+    "seed_urls", "allowed_prefixes", "allowed_domains", "allowed_urls", "allowed_resource_prefixes",
+    "resource_link_text_patterns", "ignore_selectors", "excluded_prefixes",
+}
+TOP_LEVEL_KEYS = {"version", "defaults", "sources"}
+DEFAULT_KEYS = {
+    "fetch_timeout_seconds", "fetch_attempts", "fetch_backoff_seconds", "ai_concurrency",
+    "ai_timeout_seconds", "ai_attempts", "max_ai_candidates", "max_diff_lines", "max_ai_chars",
+    "history_runs", "fetch_workers", "conditional_refresh_interval_hours", "max_removal_ratio",
+    "max_response_bytes",
+}
+
+
+def _validate_source_types(value: dict[str, Any]) -> None:
+    """Reject configuration that would otherwise be silently misread.
+
+    Unknown keys (typos such as "allowed_url") used to be ignored, the string
+    "false" parsed as active, and bad link-text regexes only failed mid-crawl.
+    """
+    sid = value.get("id", "<unknown>")
+    unknown = sorted(set(value) - SOURCE_KEYS)
+    if unknown:
+        raise ValueError(f"Source {sid}: unknown configuration keys: {', '.join(unknown)}")
+    for key in BOOL_KEYS & set(value):
+        if not isinstance(value[key], bool):
+            raise ValueError(f"Source {sid}: {key} must be true or false, not {value[key]!r}")
+    for key in INT_KEYS & set(value):
+        if isinstance(value[key], bool) or not isinstance(value[key], int):
+            raise ValueError(f"Source {sid}: {key} must be an integer, not {value[key]!r}")
+    for key in LIST_KEYS & set(value):
+        if not isinstance(value[key], list) or not all(isinstance(item, str) for item in value[key]):
+            raise ValueError(f"Source {sid}: {key} must be a list of strings")
+    for pattern in value.get("resource_link_text_patterns", []):
+        try:
+            re.compile(pattern)
+        except re.error as exc:
+            raise ValueError(f"Source {sid}: invalid resource_link_text_patterns entry {pattern!r}: {exc}") from exc
+
+
+def validate_config(payload: dict[str, Any], sources: list[SourceConfig]) -> None:
+    unknown = sorted(set(payload) - TOP_LEVEL_KEYS)
+    if unknown:
+        raise ValueError(f"Unknown top-level configuration keys: {', '.join(unknown)}")
+    defaults = payload.get("defaults", {})
+    if not isinstance(defaults, dict):
+        raise ValueError("defaults must be an object")
+    unknown_defaults = sorted(set(defaults) - DEFAULT_KEYS)
+    if unknown_defaults:
+        raise ValueError(f"Unknown defaults keys: {', '.join(unknown_defaults)}")
+    seen: set[str] = set()
+    for source in sources:
+        if source.id in seen:
+            raise ValueError(f"Duplicate source id: {source.id}")
+        seen.add(source.id)
+    from regmon.discovery import canonical, in_scope
+
+    for source in sources:
+        if not source.active:
+            continue
+        outside = [url for url in source.seed_urls if not in_scope(canonical(url), source)]
+        if outside:
+            raise ValueError(f"Source {source.id}: seed URLs outside its own scope: {', '.join(outside)}")
+
+
 def load_config(path: Path = DEFAULT_CONFIG_PATH) -> tuple[dict[str, Any], dict[str, SourceConfig]]:
     payload = json.loads(path.read_text(encoding="utf-8"))
-    sources = {item.id: item for item in (SourceConfig.from_dict(v) for v in payload.get("sources", []))}
+    if not isinstance(payload, dict) or not isinstance(payload.get("sources", []), list):
+        raise ValueError("Configuration must be an object with a sources list")
+    items = [SourceConfig.from_dict(value) for value in payload.get("sources", [])]
+    validate_config(payload, items)
+    sources = {item.id: item for item in items}
     if not sources:
         raise ValueError("At least one monitoring source must be configured")
     return payload, sources
