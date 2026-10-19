@@ -69,14 +69,6 @@ function itemTitle(item) {
   const url = String(item.canonical_url || "");
   if (url.indexOf("/apps/reportingforms/review") >= 0) return "Information collections under review";
   if (url.indexOf("/apps/reportingforms/recentupdates") >= 0) return "Recent reporting form updates";
-  const kind = itemKind(item);
-  // Attachment URLs use opaque GUIDs rather than descriptive file names. Keep every
-  // row identifiable while the extracted document title is loaded from its snapshot.
-  if (/\/Download\/DownloadAttachment/i.test(url) || /[?&]guid=/i.test(url)) {
-    const generic = kind === "zip" ? "ZIP archive" : kind === "pdf" ? "PDF document" : "Downloaded file";
-    const guid = url.match(/[?&]guid=([0-9a-f-]{8,})/i);
-    return generic + (guid ? " · " + guid[1].slice(0, 8).toUpperCase() : "");
-  }
   const path = url.split("?")[0].split("#")[0].replace(/\/+$/, "");
   let last = path.split("/").pop();
   if (!last) {
