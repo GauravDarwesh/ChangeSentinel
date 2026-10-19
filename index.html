@@ -1504,6 +1504,39 @@
   @media (prefers-reduced-motion:reduce) {
     .monitor-expand-list { transition:none !important; }
   }
+
+  /* Inventory-first workspace: make the work visible before the decorative overview. */
+  .inventory-panel { margin-top:0; margin-bottom:26px; }
+  .inventory-panel .section-heading { align-items:center; gap:18px; }
+  .inventory-tools {
+    display:flex; align-items:center; justify-content:flex-end; gap:10px;
+    width:min(100%, 610px); min-width:0;
+  }
+  .inventory-tools .search-field { flex:1 1 290px; width:auto; min-width:0; }
+  .inventory-tools > .btn { flex:0 0 auto; min-height:44px; }
+  @media (min-width:761px) {
+    .inventory-panel { padding:23px; border-radius:18px; }
+    .inventory-panel .section-heading { margin-bottom:16px; }
+    .inventory-panel .section-title { font-size:22px; }
+    .inventory-panel .section-copy { font-size:12px; }
+    .monitor-list { gap:0; border:1px solid #e1e9e2; border-radius:13px; overflow:hidden; background:#fff; }
+    .monitor-card { border-bottom:1px solid #e8ede8; }
+    .monitor-card:last-child { border-bottom:0; }
+  }
+  @media (max-width:1020px) {
+    .inventory-panel { padding:18px; }
+    .inventory-panel .section-heading { align-items:stretch; }
+    .inventory-tools { width:100%; max-width:560px; }
+  }
+  @media (max-width:760px) {
+    .inventory-panel { margin-bottom:14px; padding:13px 10px; }
+    .inventory-panel .section-heading { gap:9px; }
+    .inventory-tools { display:grid; grid-template-columns:minmax(0,1fr); gap:8px; width:100%; max-width:none; }
+    .inventory-tools > .btn, .inventory-tools .search-field { width:100%; }
+    .inventory-tools > .btn { min-height:40px; }
+    .inventory-panel .section-copy { max-width:34ch; }
+  }
+
 </style>
 
 </head>
@@ -1537,6 +1570,53 @@
         <div id="loadError" class="error-banner" hidden role="alert"></div>
 
         <section id="monitorsView" class="view" aria-labelledby="monitorsHeading">
+          <section class="inventory-panel" aria-label="Monitored URL inventory">
+          <div class="section-heading">
+            <div>
+              <h2 class="section-title">The watchlist</h2>
+              <p class="section-copy">A live inventory of monitored URLs, latest signals, and available evidence.</p>
+            </div>
+            <div class="inventory-tools">
+              <button class="btn btn-primary" id="watchlistAddMonitorBtn" type="button"><span class="btn-symbol" aria-hidden="true">＋</span> Add monitor</button>
+                          <label class="search-field" for="monitorSearch"><span class="search-symbol" aria-hidden="true">⌕</span><input id="monitorSearch" type="search" placeholder="Search by page name, URL, or source…" autocomplete="off"></label>
+            </div>
+          </div>
+          <div class="monitor-toolbar">
+            <div class="filters" role="group" aria-label="Filter monitored pages">
+              <button class="filter-button active" data-filter="ALL" type="button" aria-pressed="true">All pages</button>
+              <button class="filter-button" data-filter="CHANGES" type="button" aria-pressed="false">Changes</button>
+              <button class="filter-button" data-filter="ERRORS" type="button" aria-pressed="false">Needs attention</button>
+            </div>
+            <div class="loading-text" id="monitorCount">Loading URL inventory…</div>
+          </div>
+          <div id="monitorList" class="monitor-list" aria-live="polite"><div class="empty-state"><div class="empty-state-inner"><div class="empty-icon">◫</div><div class="empty-title">Loading your monitors</div><div class="empty-copy">Reading the latest URL inventory and source configuration from GitHub.</div></div></div></div>
+          <div id="monitorListControls" class="monitor-list-controls" hidden></div>
+          <div class="list-footer"><span id="footerStamp">Monitoring data is stored in GitHub.</span><span>Automatic monitoring runs every six hours.</span></div>
+            </section>
+
+          <div class="metrics" aria-label="Monitoring overview">
+            <article class="metric-card">
+              <div class="metric-card-top"><span>Pages monitored</span><span class="metric-symbol" aria-hidden="true">◫</span></div>
+              <div class="metric-value" id="metricMonitors">—</div>
+              <div class="metric-note">URLs in the active configuration</div>
+            </article>
+            <article class="metric-card">
+              <div class="metric-card-top"><span>Changes surfaced</span><span class="metric-symbol" aria-hidden="true">⌁</span></div>
+              <div class="metric-value" id="metricChanges">—</div>
+              <div class="metric-note">Events recorded in the latest report</div>
+            </article>
+            <article class="metric-card">
+              <div class="metric-card-top"><span>Needs attention</span><span class="metric-symbol" aria-hidden="true">!</span></div>
+              <div class="metric-value" id="metricErrors">—</div>
+              <div class="metric-note">Fetch or extraction issues recorded</div>
+            </article>
+            <article class="metric-card">
+              <div class="metric-card-top"><span>Latest scan</span><span class="metric-symbol" aria-hidden="true">◷</span></div>
+              <div class="metric-value" id="metricLast">—</div>
+              <div class="metric-note" id="metricRunId">Most recent stored run</div>
+            </article>
+          </div>
+
           <div class="page-heading dashboard-hero">
             <div class="hero-copy">
               <div class="eyebrow"><span class="hero-eyebrow-dot" aria-hidden="true"></span> MONITORING COMMAND CENTER <span class="eyebrow-divider">/</span> REGULATORY WEB</div>
@@ -1575,49 +1655,7 @@
             </div>
           </div>
 
-          <div class="metrics" aria-label="Monitoring overview">
-            <article class="metric-card">
-              <div class="metric-card-top"><span>Pages monitored</span><span class="metric-symbol" aria-hidden="true">◫</span></div>
-              <div class="metric-value" id="metricMonitors">—</div>
-              <div class="metric-note">URLs in the active configuration</div>
-            </article>
-            <article class="metric-card">
-              <div class="metric-card-top"><span>Changes surfaced</span><span class="metric-symbol" aria-hidden="true">⌁</span></div>
-              <div class="metric-value" id="metricChanges">—</div>
-              <div class="metric-note">Events recorded in the latest report</div>
-            </article>
-            <article class="metric-card">
-              <div class="metric-card-top"><span>Needs attention</span><span class="metric-symbol" aria-hidden="true">!</span></div>
-              <div class="metric-value" id="metricErrors">—</div>
-              <div class="metric-note">Fetch or extraction issues recorded</div>
-            </article>
-            <article class="metric-card">
-              <div class="metric-card-top"><span>Latest scan</span><span class="metric-symbol" aria-hidden="true">◷</span></div>
-              <div class="metric-value" id="metricLast">—</div>
-              <div class="metric-note" id="metricRunId">Most recent stored run</div>
-            </article>
-          </div>
 
-          <section class="inventory-panel" aria-label="Monitored URL inventory">
-          <div class="section-heading">
-            <div>
-              <h2 class="section-title">The watchlist</h2>
-              <p class="section-copy">A live inventory of monitored URLs, latest signals, and available evidence.</p>
-            </div>
-            <label class="search-field" for="monitorSearch"><span class="search-symbol" aria-hidden="true">⌕</span><input id="monitorSearch" type="search" placeholder="Search by page name, URL, or source…" autocomplete="off"></label>
-          </div>
-          <div class="monitor-toolbar">
-            <div class="filters" role="group" aria-label="Filter monitored pages">
-              <button class="filter-button active" data-filter="ALL" type="button" aria-pressed="true">All pages</button>
-              <button class="filter-button" data-filter="CHANGES" type="button" aria-pressed="false">Changes</button>
-              <button class="filter-button" data-filter="ERRORS" type="button" aria-pressed="false">Needs attention</button>
-            </div>
-            <div class="loading-text" id="monitorCount">Loading URL inventory…</div>
-          </div>
-          <div id="monitorList" class="monitor-list" aria-live="polite"><div class="empty-state"><div class="empty-state-inner"><div class="empty-icon">◫</div><div class="empty-title">Loading your monitors</div><div class="empty-copy">Reading the latest URL inventory and source configuration from GitHub.</div></div></div></div>
-          <div id="monitorListControls" class="monitor-list-controls" hidden></div>
-          <div class="list-footer"><span id="footerStamp">Monitoring data is stored in GitHub.</span><span>Automatic monitoring runs every six hours.</span></div>
-            </section>
 
         </section>
 
