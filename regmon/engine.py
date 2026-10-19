@@ -210,8 +210,66 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         "snapshot_location": old.get("snapshot_location") if old else None,
         "evidence_location": old.get("evidence_location") if old else None,
         "relevance": old.get("relevance") if old else None,
+        # Keep deferred AI work in the durable URL inventory so a later scan can
+        # resume it even when the source content itself no longer changes.
+        "ai_pending": old.get("ai_pending") if old else None,
         "not_modified": False,
     }
+
+
+def build_ai_candidate_pool(
+    new_items: list[dict],
+    changed_items: list[dict],
+    unchanged_items: list[dict],
+    *,
+    initial_baseline: bool = False,
+) -> list[dict]:
+    """Select new/changed pages plus unchanged pages with deferred AI work."""
+    if initial_baseline:
+        return []
+    candidates: dict[str, dict] = {}
+    for item in new_items:
+        candidates[item["url_id"]] = item
+    for entry in changed_items:
+        item = entry["after"]
+        candidates[item["url_id"]] = item
+    for item in unchanged_items:
+        if item.get("ai_pending") and item["url_id"] not in candidates:
+            candidates[item["url_id"]] = item
+    eligible = [
+        item for item in candidates.values()
+        if item.get("relevance", {}).get("candidate", True)
+    ]
+
+    def scheduling_key(item: dict) -> tuple[int, str, str]:
+        pending = item.get("ai_pending")
+        if isinstance(pending, dict) and pending.get("after_hash") == item.get("normalized_hash"):
+            # Resume oldest/least-recently-attempted backlog first. A stable URL
+            # tie-breaker keeps the ordering deterministic without starving later work.
+            last_attempt = str(
+                pending.get("last_attempt_at")
+                or pending.get("first_deferred_at")
+                or pending.get("timestamp")
+                or ""
+            )
+            return (0, last_attempt, item["url_id"])
+        return (1, "", item["url_id"])
+
+    return sorted(eligible, key=scheduling_key)
+
+
+def candidate_event_type(item: dict, new_ids: set[str], changed_ids: set[str]) -> str:
+    """Retain the original event type when retrying deferred work on unchanged content."""
+    uid = item["url_id"]
+    if uid in new_ids:
+        return "NEW_URL"
+    if uid in changed_ids:
+        return "CHANGED_URL"
+    pending = item.get("ai_pending")
+    if isinstance(pending, dict) and pending.get("event_type") in {"NEW_URL", "CHANGED_URL"}:
+        return pending["event_type"]
+    return "CHANGED_URL"
+
 
 def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str):
     item = base_item(url, old, now, source)
@@ -568,13 +626,39 @@ def process_source(
                 )
                 events.append({"event_id":event_id,"event_type":"REMOVED_URL","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":None}})
 
-    candidate_pool = [] if initial_baseline else (
-        list(new_items) + [c["after"] for c in changed_items]
+    new_ids = {item["url_id"] for item in new_items}
+    changed_ids = {entry["after"]["url_id"] for entry in changed_items}
+    candidate_pool = build_ai_candidate_pool(
+        new_items, changed_items, unchanged_items, initial_baseline=initial_baseline
     )
-    candidate_pool = sorted(
-        [x for x in candidate_pool if x.get("relevance", {}).get("candidate", True)],
-        key=lambda x: x["url_id"],
-    )
+
+    # A resumed AI item needs its original change event in the current report so
+    # the dashboard can attach the eventual assessment to the page and evidence.
+    existing_event_ids = {event.get("event_id") for event in events}
+    for item in candidate_pool:
+        pending = item.get("ai_pending")
+        if (
+            not isinstance(pending, dict)
+            or item["url_id"] in new_ids
+            or item["url_id"] in changed_ids
+            or pending.get("event_id") in existing_event_ids
+        ):
+            continue
+        event_type = candidate_event_type(item, new_ids, changed_ids)
+        event_id = str(pending.get("event_id") or "")
+        if not event_id:
+            continue
+        events.append({
+            "event_id": event_id,
+            "event_type": event_type,
+            "url": item["canonical_url"],
+            "url_id": item["url_id"],
+            "source_id": source.id,
+            "timestamp": pending.get("timestamp") or pending.get("first_deferred_at") or now,
+            "evidence_location": pending.get("evidence_location") or item.get("evidence_location"),
+            "evidence": {"ai_backlog_retry": True},
+        })
+        existing_event_ids.add(event_id)
     ai_cfg = AIConfig(
         timeout_seconds=int(DEFAULTS.get("ai_timeout_seconds",60)),
         attempts=int(DEFAULTS.get("ai_attempts",2)),
@@ -586,14 +670,58 @@ def process_source(
     candidates = candidate_pool[:max_candidates]
     deferred = candidate_pool[max_candidates:]
     for item in deferred:
-        event = "NEW_URL" if any(x["url_id"] == item["url_id"] for x in new_items) else "CHANGED_URL"
-        event_id = build_event_id("AI_DEFERRED", item["url_id"], item.get("normalized_hash"))
+        event = candidate_event_type(item, new_ids, changed_ids)
+        prior_pending = item.get("ai_pending")
+        prior_pending = prior_pending if isinstance(prior_pending, dict) else {}
+        event_record = next(
+            (
+                value for value in events
+                if value.get("url_id") == item["url_id"]
+                and value.get("event_type") == event
+            ),
+            None,
+        )
+        is_resumed = (
+            item["url_id"] not in new_ids
+            and item["url_id"] not in changed_ids
+            and prior_pending.get("after_hash") == item.get("normalized_hash")
+            and prior_pending.get("event_type") == event
+        )
+        if is_resumed and prior_pending.get("event_id"):
+            pending = dict(prior_pending)
+        else:
+            old_item = previous.get(item["url_id"]) or {}
+            before_hash = old_item.get("normalized_hash") or old_item.get("raw_hash") or old_item.get("content_hash")
+            event_id = (
+                event_record.get("event_id")
+                if event_record
+                else build_event_id(event, item["url_id"], before_hash, item.get("normalized_hash"))
+            )
+            pending = {
+                "event_type": event,
+                "event_id": event_id,
+                "timestamp": event_record.get("timestamp") if event_record else now,
+                "evidence_location": (
+                    event_record.get("evidence_location")
+                    if event_record else item.get("evidence_location")
+                ),
+                "before_hash": before_hash,
+                "after_hash": item.get("normalized_hash"),
+                "first_deferred_at": now,
+                "attempt_count": 0,
+                "deferral_count": 0,
+            }
+        pending["last_deferred_at"] = now
+        pending["deferral_count"] = int(pending.get("deferral_count", 0)) + 1
+        pending["after_hash"] = item.get("normalized_hash")
+        item["ai_pending"] = pending
+        current[item["url_id"]] = item
         ai_results.append({
-            "event":"AI_DEFERRED",
-            "event_id":event_id,
-            "url":item["canonical_url"],
-            "source_id":source.id,
-            "evidence_location":item.get("evidence_location"),
+            "event": event,
+            "event_id": pending["event_id"],
+            "url": item["canonical_url"],
+            "source_id": source.id,
+            "evidence_location": pending.get("evidence_location") or item.get("evidence_location"),
             "ai":{
                 "status":"deferred",
                 "reason":f"Exceeded per-run AI limit of {max_candidates}",
@@ -604,7 +732,7 @@ def process_source(
     # Ordinary unchanged pages never enter this structure.
     ai_inputs = {}
     for item in candidates:
-        event = "NEW_URL" if any(x["url_id"] == item["url_id"] for x in new_items) else "CHANGED_URL"
+        event = candidate_event_type(item, new_ids, changed_ids)
         current_text = read_snapshot(item) or ""
         old_text = read_snapshot(previous.get(item["url_id"])) if event == "CHANGED_URL" else None
         ai_inputs[item["url_id"]] = {
@@ -620,12 +748,33 @@ def process_source(
     def analyze_item(item: dict) -> dict:
         context = ai_inputs[item["url_id"]]
         event = context["event"]
-        event_id = build_event_id(
-            event,
-            item["url_id"],
-            (previous.get(item["url_id"]) or {}).get("normalized_hash"),
-            item.get("normalized_hash"),
-        )
+        pending = item.get("ai_pending")
+        if (
+            isinstance(pending, dict)
+            and pending.get("event_type") == event
+            and pending.get("after_hash") == item.get("normalized_hash")
+            and pending.get("event_id")
+        ):
+            event_id = pending["event_id"]
+        else:
+            event_record = next(
+                (
+                    value for value in events
+                    if value.get("url_id") == item["url_id"]
+                    and value.get("event_type") == event
+                ),
+                None,
+            )
+            event_id = (
+                event_record.get("event_id")
+                if event_record
+                else build_event_id(
+                    event,
+                    item["url_id"],
+                    (previous.get(item["url_id"]) or {}).get("normalized_hash"),
+                    item.get("normalized_hash"),
+                )
+            )
         return {
             "event": event,
             "event_id": event_id,
@@ -648,11 +797,96 @@ def process_source(
             for future in as_completed(future_map):
                 item = future_map[future]
                 try:
-                    ai_results.append(future.result())
+                    result = future.result()
+                    ai_results.append(result)
+                    # Once the model returns a valid structured answer, the item
+                    # is no longer pending. Provider/schema failures retain the
+                    # marker so a later run can retry within the normal scan budget.
+                    ai = result.get("ai", {}) if isinstance(result, dict) else {}
+                    if ai.get("status") == "ok":
+                        item.pop("ai_pending", None)
+                        current[item["url_id"]] = item
+                    else:
+                        event = candidate_event_type(item, new_ids, changed_ids)
+                        prior = item.get("ai_pending")
+                        if (
+                            isinstance(prior, dict)
+                            and prior.get("event_type") == event
+                            and prior.get("after_hash") == item.get("normalized_hash")
+                            and prior.get("event_id") == result.get("event_id")
+                        ):
+                            pending = dict(prior)
+                            pending["attempt_count"] = int(pending.get("attempt_count", 0)) + 1
+                            pending["last_attempt_at"] = now
+                        else:
+                            event_record = next(
+                                (
+                                    value for value in events
+                                    if value.get("url_id") == item["url_id"]
+                                    and value.get("event_type") == event
+                                ),
+                                None,
+                            )
+                            old_item = previous.get(item["url_id"]) or {}
+                            pending = {
+                                "event_type": event,
+                                "event_id": result.get("event_id") or (
+                                    event_record.get("event_id") if event_record else
+                                    build_event_id(
+                                        event, item["url_id"],
+                                        old_item.get("normalized_hash") or old_item.get("raw_hash") or old_item.get("content_hash"),
+                                        item.get("normalized_hash"),
+                                    )
+                                ),
+                                "timestamp": event_record.get("timestamp") if event_record else now,
+                                "evidence_location": (
+                                    result.get("evidence_location")
+                                    or (event_record.get("evidence_location") if event_record else None)
+                                    or item.get("evidence_location")
+                                ),
+                                "before_hash": old_item.get("normalized_hash") or old_item.get("raw_hash") or old_item.get("content_hash"),
+                                "after_hash": item.get("normalized_hash"),
+                                "first_deferred_at": now,
+                                "attempt_count": 1,
+                                "deferral_count": 0,
+                                "last_attempt_at": now,
+                            }
+                        item["ai_pending"] = pending
+                        current[item["url_id"]] = item
                 except Exception as exc:
-                    event = "CHANGED_URL" if any(x["url_id"] == item["url_id"] for x in changed_items) else "NEW_URL"
-                    event_id = build_event_id(event,item["url_id"],(previous.get(item["url_id"]) or {}).get("normalized_hash"),item.get("normalized_hash"))
-                    ai_results.append({"event":"AI_ERROR","event_id":event_id,"url":item["canonical_url"],"source_id":source.id,"evidence_location":item.get("evidence_location"),"ai":{"status":"error","reason":str(exc)}})
+                    event = candidate_event_type(item, new_ids, changed_ids)
+                    pending = item.get("ai_pending")
+                    if (
+                        isinstance(pending, dict)
+                        and pending.get("event_type") == event
+                        and pending.get("after_hash") == item.get("normalized_hash")
+                        and pending.get("event_id")
+                    ):
+                        event_id = pending["event_id"]
+                        updated_pending = dict(pending)
+                        updated_pending["attempt_count"] = int(updated_pending.get("attempt_count", 0)) + 1
+                        updated_pending["last_attempt_at"] = now
+                        item["ai_pending"] = updated_pending
+                        current[item["url_id"]] = item
+                    else:
+                        event_record = next(
+                            (
+                                value for value in events
+                                if value.get("url_id") == item["url_id"]
+                                and value.get("event_type") == event
+                            ),
+                            None,
+                        )
+                        event_id = (
+                            event_record.get("event_id")
+                            if event_record
+                            else build_event_id(
+                                event, item["url_id"],
+                                (previous.get(item["url_id"]) or {}).get("normalized_hash"),
+                                item.get("normalized_hash"),
+                            )
+                        )
+                    ai_results.append({"event":event,"event_id":event_id,"url":item["canonical_url"],"source_id":source.id,"evidence_location":item.get("evidence_location"),"ai":{"status":"error","reason":str(exc)}})
 
     counts = {
         "discovered":len(current),
@@ -672,6 +906,10 @@ def process_source(
         "ai_error":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="error"),
         "ai_skipped":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="skipped"),
         "ai_deferred":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="deferred"),
+        "ai_backlog_pending":sum(
+            1 for item in current.values()
+            if isinstance(item.get("ai_pending"), dict)
+        ),
         "crawl_paused":0,
     }
     return {
