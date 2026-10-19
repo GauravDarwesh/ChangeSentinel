@@ -425,7 +425,11 @@ class TestDiscovery(unittest.TestCase):
             self.assertEqual(paused_urls, ["https://www.eba.europa.eu/homepage", "https://www.eba.europa.eu/a"])
             self.assertTrue((Path(tmp) / "discovery" / "eba-test-checkpoint.json").exists())
 
-            completed_urls = http_discover(source, Path(tmp))
+            # Keep the resume pass inside its discovery time budget. The first
+            # pass above deliberately advances the mocked clock to force PAUSED;
+            # the resumed scan should not depend on real CI-runner speed.
+            with patch("regmon.discovery.time.monotonic", return_value=0):
+                completed_urls = http_discover(source, Path(tmp))
             metadata = json.loads((Path(tmp) / "discovery" / "eba-test.json").read_text(encoding="utf-8"))
             checkpoint_path = Path(tmp) / "discovery" / "eba-test-checkpoint.json"
 
