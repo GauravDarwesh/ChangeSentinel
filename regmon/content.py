@@ -332,7 +332,7 @@ def _extract_zip_bundle(body: bytes):
 # Bump this when PDF/HTML normalized output changes. The engine re-fetches these
 # records and records a baseline migration (not a regulatory change) if the
 # original response bytes are identical.
-CONTENT_EXTRACTOR_VERSION = "layout-pdf-html-v2"
+CONTENT_EXTRACTOR_VERSION = "layout-pdf-html-v3"
 LOW_TEXT_PAGE_CHARS = 40
 MAX_OCR_PAGES = 1000
 OCR_PAGE_TIMEOUT_SECONDS = 15
