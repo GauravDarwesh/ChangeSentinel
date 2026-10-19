@@ -1,0 +1,165 @@
+Board of Governors of the Federal Reserve System Instructions for the Preparation of Small Business Lending Survey Reporting Form FR 2028D Effective September 2023
+INSTRUCTIONS FOR PREPARATION OF
+Small Business Lending Survey General Instructions Purpose of the Survey The Federal Reserve System uses data from this survey on United States (U.S.) chartered commercial bank nonfarm small business lending, including costs, terms, standards, and reasons for their changes, to assess and analyze developments in small business credit markets.
+Aggregate information on small business loans is published in a quarterly statistical release on the Federal Reserve Bank of Kansas City’s website and through a link on the Federal Reserve Board’s website.
+Survey Scope This survey covers commercial and industrial (C&I) loans made to U.S. nonfarm small businesses. The survey period covers the most recent calendar quarter.
+For the purpose of this survey, U.S. nonfarm small businesses are those nonfarm businesses domiciled in the U.S. with no more than $5 million in total annual revenues.1 Domiciled U.S. businesses encompass borrowers domiciled in the fifty states of the U.S., the District of Columbia, or U.S. territories and possessions, including U.S. offices or subsidiaries of non-U.S. (foreign) businesses. For further detail, please refer to the Glossary entry for “domicile” in the Instructions for the quarterly condition report (FFIEC 031 & 041, https://www.ffiec.gov/ffiec_report_forms.htm).
+The definition of C&I loans corresponds to that used for Item 4 of Schedule RC-C, Part I, of the quarterly condition report (FFIEC 031, 041, & 051). For FFIEC 031 and 041 reporters, C&I loans to U.S. small businesses are included in Item 4.a of Schedule RC-C, Part I excluding items noted below. For FFIEC 051 reporters, C&I loans to U.S. small businesses in U.S.
+domiciled addresses included in item 4 of RC-C, Part I excluding items noted below. For banks with foreign offices (FFIEC 031 reporters), include all such loans that are booked at U.S. (domestic) offices of the reporting bank (Column B of the FFIEC 031).
+Include:
+• Overnight loans.
+• Construction and land development loans that are not secured by real estate.
+• Credit card loans Exclude:
+• Loans denominated in non-U.S. currencies.
+• Loans made by an international division, international operations subsidiary, or Edge or Agreement subsidiary of your institution.
+• Loans made to non-U.S. addressees (business firms domiciled outside of the fifty states of the United States, the District of Columbia, or U.S. territories and possessions).
+• Loans secured by real estate, even if for commercial and industrial purposes.
+• Intercompany loans.
+• Loans to financial institutions.
+• Loans resulting from unplanned overdrafts to deposit accounts.
+• Loans held for trading purposes.
+1. Commercial banks that do not track small business lending based on annual revenue may utilize their internal criteria to define small business lending for purposes of responding to survey items. For example, some small commercial banks may consider all of their lending small business lending.
+GEN-1
+FR 2028D December 2020
+Preparation of Survey The survey will be submitted quarterly. The submission period will begin the day after the calendar quarter end and will conclude 14 days after the first business day in February, May, August, and November. Data provided on the survey would be based on loan activity over the previous quarter. All dollar amounts should be reported in thousands. In general, negative entries are not appropriate for this report. Respondents should notify their Reserve Bank for guidance if negative entries are warranted.
+For additional information, please see FAQs on page 11.
+General Instructions
+GEN-2
+September 2023 FR 2028D
+INSTRUCTIONS FOR PREPARATION OF
+Small Business Lending Survey Line Item Instructions Item 1 Internal Small Business Definition Item 1 is to be completed annually in the March reports only or if a change is made to your internal small business definition. Institutions reporting survey data for the first time should also complete this item regardless of the report date.
+Check “Yes” if your institution defines a small business loan as a loan made to a nonfarm business domiciled in the U.S. with no more than $5 million in total revenue.
+Check “No” if your institution does not use the preferred classification for what constitutes a U.S. nonfarm small business loan when filing this survey. (Nonfarm business domiciled in the U.S. with no more than $5 million in total revenue.) If “No” is checked, please describe your institution's definition of a small business for purposes of classifying a small business loan for this survey.
+Loan Volumes and Terms Item 2 Check “No” if your institution does not use more than one base rate for C&I loans to U.S. small businesses. If “No” is checked, complete question 3.
+Check “Yes” if your institution uses more than one base rate for C&I loans to U.S. small businesses. If “Yes” is checked, complete question 4.
+Item 3 Enter the base rate your institution uses (i.e., prime rate, Federal Home Loan Bank rate, U.S. Treasury rate, Proprietary rate, SOFR, Other rate).
+Item 4 Indicate the three most commonly used base rates, ranked by the total dollar value of outstanding loans to small businesses based on each base rate as of the end of the most recent calendar quarter.
+Item 5 Outstanding term C&I loans to U.S. small businesses broken out by fixed rate and variable rate as of the last calendar day of the most recent calendar quarter.
+(Note: New term C&I loans reported in Item 7 should also be included in Item 5.) 5a. Number. The total number of term loans.
+5b. Outstanding dollar amount. The total face amount of term loans in thousands of dollars even if held at fair value.
+5c. Weighted average interest rate. Sum the outstanding face amount of each term loan multiplied by its stated nominal rate of interest – not the effective rate or Annual Percentage Rate (APR). Divide the sum by the outstanding dollar amount (column 5b.). Report the rate in percent to three decimal places; for example, if the average interest rate is 21⁄4 percent, enter “2.250.” See appendix for example.
+5d. Weighted average maturity. Sum the outstanding face amount of each term loan multiplied by its remaining maturity (in months). Divide the sum by the outstanding dollar amount (column 5b.). Report the weighted average maturity in months to two decimal places; for example, if the average maturity is 181⁄2 months, enter “18.50.” See appendix for example.
+5e. Maximum Maturity. Report the maximum remaining maturity (in months).
+LI-1
+FR 2028D September 2023
+5f. Number with interest rate floor. The total number of term loans that utilize interest rate floors in the loan terms.
+5g. Dollar amount with interest rate floor. The outstanding face amount of term loans in thousands of dollars, even if held at fair value, for term loans that utilize interest rate floors in the loan terms.
+5h. Weighted average interest rate floor. Sum the outstanding face amount of each term loan with an interest rate floor multiplied by its floor. Divide the sum by the total outstanding face amount of loans with an interest rate floor (column 5g). Report the rate in percent to three decimal places; for example, if the average interest rate is 21⁄4 percent, enter “2.250.” See appendix for example.
+Item 6 Outstanding C&I loans made under a commitment (formal or informal) to U.S. small businesses broken out by fixed rate and variable rate as of the last calendar day of the most recent calendar quarter.
+(Note: New C&I loans made under commitment reported in Item 8 should also be included in Item 6.) Commitments are broadly defined to include all promises to lend that are expressly conveyed, orally or in writing, to the borrower. Commitments generally fall into two types of arrangements: formal commitments and informal lines of credit. Authorizations or internal guidance lines, where the customer is not informed of the amount, are not to be considered as commitments.
+6a. Number. The total number of commitments.
+6b. Commitment dollar amount. The total face amount of unused and usedcommitments in thousands of dollars.
+6c. Outstanding dollar amount. The total face amount of used commitments in thousands of dollars.
+6d. Weighted average interest rate. Sum the face amount of each used loan commitment multiplied by its stated nominal rate of interest – not the effective rate or APR. Divide the sum by the outstanding dollar amount (column 6c). Report the rate in percent to three decimal places; for example, if the average interest rate is 21⁄4 percent, enter “2.250.” See appendix for example.
+6e. Number with interest rate floor. The total number of commitments that utilize interest rate floors in the loan terms.
+6f. Dollar amount with interest rate floor. The outstanding face amount of used commitments in thousands of dollars for loans that utilize interest rate floors in the loan terms.
+6g. Weighted average interest rate floor. Sum the outstanding face amount of each used loan commitment with an interest rate floor multiplied by its floor.
+Divide the sum by the total outstanding face amount of used loan commitments with an interest rate floor (column 6f). Report the rate in percent to three decimal places; for example, if the average interest rate is 21⁄4 percent, enter “2.250.” See appendix for example.
+Item 7 New term C&I loans broken out by fixed rate and variable rate to U.S. small business made during the most recent calendar quarter.
+(Note: New term C&I loans reported in Item 7 should also be included in line Item 5.) Enter the amount of loans in thousands of dollars.
+Include all term C&I loans to U.S. small businesses entered into your books or loan system during the most recent calendar quarter, even if the loans were approved or disbursed in the prior calendar quarter.
+Exclude loans approved or disbursed but not entered into your institution’s books or loan system during the most recent calendar quarter.
+Also include:
+• Renewals of term loans.
+• Conversions of commitment into term loans.
+Exclude:
+• Loans purchased in the secondary loan market.
+• Purchased factored loans (that is, purchased accounts receivable).
+7a. Number. The total number of term loans.
+7b. Outstanding dollar amount.The total face amount of term loans in thousands of dollars even if held at fair value.
+7c. Weighted average interest rate. Sum the outstanding face amount of each term loan multiplied by its stated nominal rate of interest – not the effective rate or APR.
+Line Item Instructions
+LI-2
+September 2023 FR 2028D
+Divide the sum by the outstanding dollar amount (column 7b.). Report the rate in percent to three decimal places; for example, if the average interest rate is 21⁄4 percent, enter “2.250.” See appendix for example.
+7d. Weighted average maturity. Sum the outstanding face amount of each term loan multiplied by its remaining maturity (in months). Divide the sum by the outstanding dollar amount (column 7b.). Report the weighted average maturity in months to two decimal places; for example, if the average maturity is 181⁄2 months, enter “18.50.” See appendix for example.
+7e. Maximum Maturity. Report the maximum remaining maturity (in months).
+7f. Number with interest rate floor. The total number of term loans that utilize interest rate floors in the loan terms.
+7g. Dollar amount with interest rate floor. The outstanding face amount of term loans in thousands of dollars, even if held at fair value, for term loans that utilize interest rate floors in the loan terms.
+7h. Weighted average interest rate floor. Sum the outstanding face amount of each term loan with an interest rate floor multiplied by its floor. Divide the sum by the total outstanding face amount of loans with an interest rate floor (column 7g.). Report the rate in percent to three decimal places; for example, if the average interest rate is 21⁄4 percent, enter “2.250.” See appendix for example.
+Item 8 New C&I loans made under a commitment (formal or informal) broken out by fixed rate and variable rate to U.S. small businesses during the most recent calendar quarter.
+(Note: New C&I loans made under commitment reported in line Item 8 should also be included in Item 6) Enter the amount of loans in thousands of dollars.
+Include all C&I commitments to U.S. small businesses entered into your books or loan system during the most recent calendar quarter, even if the loans were approved or disbursed in the prior calendar quarter.
+Exclude loans approved or disbursed but not entered into your institution’s books or loan system during the most recent calendar quarter.
+Also include:
+• Renewals of or increases in commitments.
+Exclude:
+• Drawdowns on existing commitments.
+8a. Number. The total number of commitments.
+8b. Commitment dollar amount. The total face amount of unused and usedcommitments in thousands of dollars.
+8c. Outstanding dollar amount. The total face amount of used commitments in thousands of dollars.
+8d. Weighted average interest rate. Sum the face amount of each used loan commitment multiplied by its stated nominal rate of interest – not the effective rate or APR. Divide the sum by the outstanding dollar amount (column 8c.). Report the rate in percent to three decimal places; for example, if the average interest rate is 21⁄4 percent, enter “2.250.” See appendix for example.
+8e. Number with interest rate floor. The total number of commitments that utilize interest rate floors in the loan terms.
+8f. Dollar amount with interest rate floor. The outstanding face amount of used commitments in thousands of dollars for loans that utilize interest rate floors in the loan terms.
+8g. Weighted average interest rate floor. Sum the outstanding face amount of each used loan commitment with an interest rate floor multiplied by its floor.
+Divide the sum by the total outstanding face amount of used loan commitments with an interest rate floor (column 8f.). Report the rate in percent to three decimal places; for example, if the average interest rate is 21⁄4 percent, enter “2.250.” See appendix for example.
+Item 9 Select one answer to indicate how credit line usage has changed during the most recent calendar quarter.
+No quantitative analysis is necessary in answering this question.
+Item 10 Select one answer per row to indicate the importance of each reason for the change in credit line usage during the most recent calendar quarter.
+No quantitative analysis is necessary in answering this question.
+Line Item Instructions
+LI-3
+FR 2028D September 2023
+Item 11 Select one answer to indicate how loan demand for U.S. small business C&I loans has changed during the most recent calendar quarter.
+Loan demand is defined as the amount of inquires via loan applications or informal walk-in inquiries. No quantitative analysis is necessary in answering this question.
+Item 12 Include all C&I loan applications received from U.S. small businesses during the most recent calendar quarter.
+An application is defined as a formal document outlining the essential attributes regarding the financial position of the borrower on which the lender bases the decision to lend. Exclude informal walk-in inquires (these should be considered in the response to question 10). Applications approved include all loans that your bank intends to make whether or not the loan terms have been finalized, funds have been disbursed, or the loan has been entered into your institution’s books or loan system.
+It is possible for the number of applications approved to exceed the number of applications received for a given period if an application was received in a prior period and not considered until the current period.
+12a. Number. The total number.
+12b. Dollar amount. The total amount in thousands of dollars.
+Item 13 Select one answer per column to rank the most common reasons for denying U.S. small businesses C&I loans during the most recent calendar quarter.
+No quantitative analysis is necessary in answering this question.
+Item 14 Select one answer to indicate how credit standards for loans to U.S. small businesses have changed during the most recent calendar quarter.
+Credit standards are the internal policies and guidelines an institution uses to determine whether a borrower meets desired credit quality criteria. No quantitative analysis is necessary in answering this question.
+Item 15 Select one answer per row to indicate how C&I loan terms have changed during the most recent calendar quarter.
+No quantitative analysis is necessary in answering this question.
+Item 16 Select one answer per row to indicate the importance of each reason for tightening credit standards or terms during the most recent calendar quarter. Note: “Other” should be selected for “Very Important” reasons only.
+No quantitative analysis is necessary in answering this question.
+Item 17 Select one answer per row to indicate the importance of each reason for easing credit standards or terms during the most recent calendar quarter. Note: “Other” should be selected for “Very Important” reasons only.
+No quantitative analysis is necessary in answering this question.
+Item 18 Select one answer to indicate how the credit quality of applicants has changed during the most recent calendar quarter.
+Credit quality is defined as the attributes a bank uses to assess a borrower’s credit quality and probability of default. The criteria includes, but is not limited to, credit scores, quality of collateral, personal wealth, debt to income ratio, and forecasted business growth.
+No quantitative analysis is necessary in answering this question.
+Item 19 Select one answer per row to indicate how credit quality has changed during the most recent calendar quarter. Note: “Other” should be selected for “Very Important” reasons only.
+No quantitative analysis is necessary in answering this question.
+Line Item Instructions
+LI-4
+September 2023 FR 2028D
+Appendix: Weighted Average Calculation Examples Outstanding dollar amount (thousands) Interest rate Interest rate floor Remaining maturity (months) 500 4.25 3.5 18 420 4.1 n.a. 4 290 4.3 3.75 10 If your institution is unable to calculate the weighted average interest rate, a simple average interest rate calculation may be used.
+Line Item Instructions
+LI-5
+FR 2028D December 2020
+FAQS FOR INSTITUTIONS
+Small Business Lending Survey FR 2028D Reporting Questions and Answers General Questions Question: Can the definition of a small business loan for this survey be the same as that for Call Report section RC-C part II which states: “Report the number and amount currently outstanding as of the report date of business loans with “original amounts” of $1,000,000 or less and farm loans with “original amounts” of $500,000 or less.”?
+Answer: The Call Report uses loan size to approximate small business due to the correlation between loan size and business size. One of the drivers of developing the FR 2028D survey was that while small business loans will be generally small, not all small loans are loans to small businesses. So a key aspect of the FR 2028D survey is for the size of the borrower to drive our pool of respondents.
+The Survey Scope section of instructions states: “For the purpose of this survey, U.S. nonfarm small businesses are those nonfarm businesses domiciled in the U.S. with no more than $5 million in total annual revenues.” Commercial banks that do not track small business lending based on annual revenue may utilize their internal criteria to define small business lending for purposes of responding to survey items. For example, some small commercial banks may consider all of their lending small business lending.
+Question: What is the universe of loans that should be included in loan amounts? Is it all C&I? All C&I made to a small business?
+Answer: It is all C&I loans made to a small business, which is defined in the survey as a U.S. nonfarm small businesses domiciled in the U.S. with no more than $5 million in total annual revenues. The definition of C&I loans, which can be found in the FR 2028D instructions—General Instructions, Survey Scope section, is the same for FFIEC 031, 041 reporters, C&I loans to U.S.
+small businesses are included in Item 4.a of Schedule RC-C, Part I. For FFIEC 051 reporters, C&I loans to U.S. small businesses in U.S. domiciled addresses included in item 4 of RC-C, Part I.
+Question: Should CRE or agricultural loans to small businesses be included in the survey?
+Answer: No, only loans that are reported as C&I loans in Schedule RC-C (FFIEC 031, 041, 051), line Item 4 should be included in the survey.
+Question: Should matured and charged off accounts be included in outstanding or new loans amounts?
+Answer: No, matured and charged off loans should not be included.
+Question: When reporting the outstanding balance, is it the contractual balance owed or the accounting book balance, i.e., net of charge-offs, interest payments received applied to principal, and deferred FASB fees?
+Answer: Accounting book balance should be used.
+Question: Should revolving lines of credit be reported in this survey or just term loans?
+Answer: Revolving lines should be included in commitments (line items 6 and 8).
+Question: Can an institution submit comments to explain any assumptions, caveats, etc. regarding its data submission?
+Answer: No, there are currently no sections in the FR 2028D survey to submit comments to explain any assumptions or caveats. If an institution has any questions or comments, please contact or provide the information to your FRB analyst via email.
+Line Item 5 Questions Question: For outstanding dollar amount, the instructions ask for the total face value. Should the net or FAQ-1 FR 2028D September 2023
+gross balance of the loan be reported? If net, should purchased participations be included?
+Answer: The outstanding dollar amount should be reported as it is reported in line Item 5 of Schedule RC-C, Part I (FFIEC 031, 041, 051). Purchased participations should be included if the loan is a small business loan as defined in the FR 2028D survey instructions.
+Question: For line item 5b on the outstanding face amount of term loans, does face amount mean the original amount of the loans as detailed in the loan contract? For example, if a loan that was originally for $1,000,000 had paid down to $600,000, should $1,000,000 still be reported for item 5b as that was the face amount?
+Answer:The face value of the loan when it was originated was $1,000,000. But since line item 5 is asking for outstanding balance face amounts and $400,000 has been paid down, then the outstanding face amount for this question is $600,000.
+Line Item 6 Questions Question: For line item 6, what is the definition of a formal and informal commitment?
+Answer: A formal commitment is a commitment for which a bank has charged a fee or other consideration or otherwise has a legally binding commitment. It is usually evidenced by a binding contract, to lend a specified amount, frequently at a predetermined spread over a specific base rate. It requires that the borrower meet covenants in the contract and pay a fee on the unused credit available. These include revolving credits under which the borrower may draw and repay loans for the duration of the contract. A line of credit is defined as an informal arrangement under which the lender agrees to lend within a set credit limit and to quote a rate on demand for a take down amount and maturity requested by the borrower.
+These arrangements may not be legally binding.
+Line Item 12 Questions Question: For line item 12 (Applications Received and Approved): Should loan renewals be counted as an application received/approved by the DI for this item?
+Answer:Yes.
+Question: Concerning the applications received and approved item 12a. and 12b., if an institution tracks only applications approved, what should be reported on these line items?
+Answer: If an institution does not have a value to report for applications received, they should report nothing for item 12. We are only interested in the data if it contains values for both applications received and approved.
+Question: Concerning the applications received and approved item 12a. and 12b., if an institution tracks only the number of applications received and approved and not the dollar amount, what should be reported?
+Answer: If an institution does not have values to report for the dollar amount of applications received and approved, they should report the number of applications received and approved in line 12a. and leave the dollar amount received and approved in line 12b. blank.
+Line Items 16 and 17 Questions Question: What is meant by “nonbank lenders” in questions 16e. and 17e.?
+Answer:The term “nonbank lenders” intends to encompass a wide variety of nonbanking institutions, including but not limited to fintech lenders, credit unions, savings and loans associations, and non-traditional lending organizations.
+FAQs for Institutions FAQ-2 September 2023 FR 2028D
