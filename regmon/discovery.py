@@ -863,7 +863,12 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             processed=processed_count, successful_pages=successful_pages,
             failed_pages=failed_pages, capped=False, pending=0,
         )
-        return [] if successful_pages == 0 else discovered
+        # Seeds that are documents (a monitored PDF or ZIP URL) need no link
+        # discovery, so no page is "processed". They are still the inventory;
+        # returning [] here made such monitors permanently empty.
+        if processed_count and not successful_pages:
+            return []
+        return discovered
 
     finally:
         _restore_signal_handlers(previous_signals)
@@ -890,7 +895,17 @@ def discover(source: SourceConfig, data_dir: Path) -> list[str]:
     incomplete state. The engine will not fetch the full inventory until the
     discovery integrity gate reports COMPLETE.
     """
-    http_urls = http_discover(source, data_dir) if source.use_http_discovery else []
+    if not source.use_http_discovery:
+        # Never consult HTTP discovery metadata that this run did not produce: a
+        # stale COMPLETE file used to skip the browser path and return no URLs.
+        from regmon.discovery_browser import write_combined_discovery_metadata
+        stealth_urls = _stealth_discover(source, data_dir)
+        write_combined_discovery_metadata(source, data_dir, {"state": "SKIPPED"}, [], stealth_urls)
+        if stealth_urls:
+            return stealth_urls
+        raise RuntimeError(f"No in-scope URLs discovered for {source.id}; state was not updated.")
+
+    http_urls = http_discover(source, data_dir)
     http_meta = _read_discovery_metadata(source.id, data_dir)
 
     if http_meta.get("state") in {"COMPLETE", "PAUSED", "DEGRADED"}:
