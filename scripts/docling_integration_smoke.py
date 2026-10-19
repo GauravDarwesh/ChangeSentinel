@@ -210,9 +210,23 @@ def main() -> None:
         if normalize_label_text(label) not in table_cell_text
     ]
     if missing_table_labels:
+        table_preview = [
+            line.strip()[:260]
+            for line in corpus_markdown.splitlines()
+            if line.strip().startswith("|") and line.strip().endswith("|")
+        ][:50]
+        field_context = {}
+        for label in missing_table_labels:
+            found_at = corpus_markdown.casefold().find(label.casefold())
+            if found_at >= 0:
+                field_context[label] = corpus_markdown[
+                    max(0, found_at - 160):found_at + 260
+                ].replace("\\n", " ")
         raise SystemExit(
             "Hybrid FR 2028B extraction failed: critical field labels are not present "
-            "inside structured table cells: " + ", ".join(missing_table_labels)
+            "inside structured table cells: " + ", ".join(missing_table_labels) +
+            f"; selected_profile={extraction_profile.get('profile', 'unknown')}; "
+            f"table_preview={table_preview!r}; field_context={field_context!r}"
         )
 
     nonempty_cells = [
