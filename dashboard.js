@@ -1077,9 +1077,9 @@ async function loadData(showErrors) {
     const [report, inventory, historyData, notifications, outbox, config] = await Promise.all([
       fetchDataAsset("report", true),
       fetchDataAsset("inventory", true),
-      fetchDataAsset("history", false),
-      fetchDataAsset("notifications", false),
-      fetchDataAsset("outbox", false),
+      fetchDataAsset("history", true),
+      fetchDataAsset("notifications", true),
+      fetchDataAsset("outbox", true),
       fetchDataAsset("config", true)
     ]);
     state.report = report && typeof report === "object" ? report : {};
