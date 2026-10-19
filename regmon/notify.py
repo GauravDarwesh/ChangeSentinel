@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
+import tempfile
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -18,40 +19,69 @@ DEFAULT_TOPIC = ""
 DEFAULT_SERVER = "https://ntfy.sh"
 
 
-def load_state(path: Path = STATE_PATH) -> dict:
+def _load_state_mapping(path: Path, key: str) -> dict:
+    """Load durable notification state without silently resetting corrupted files."""
     if not path.exists():
-        return {"sent_events": {}, "updated_at": None}
+        return {key: {}, "updated_at": None}
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
-        if isinstance(value, dict) and isinstance(value.get("sent_events", {}), dict):
-            return value
-    except (json.JSONDecodeError, OSError):
-        pass
-    return {"sent_events": {}, "updated_at": None}
+    except (json.JSONDecodeError, OSError, UnicodeError) as exc:
+        raise RuntimeError(
+            f"Refusing to reset notification state at {path}: file is unreadable or invalid JSON"
+        ) from exc
+    if not isinstance(value, dict) or not isinstance(value.get(key), dict):
+        raise RuntimeError(
+            f"Refusing to reset notification state at {path}: expected an object containing '{key}'"
+        )
+    for event_id, payload in value[key].items():
+        if not isinstance(event_id, str) or not event_id.strip() or not isinstance(payload, dict):
+            raise RuntimeError(
+                f"Refusing to reset notification state at {path}: invalid entry in '{key}'"
+            )
+        if key == "pending_events" and payload.get("event_id") != event_id:
+            raise RuntimeError(
+                f"Refusing to process notification outbox at {path}: event ID does not match its key"
+            )
+    return value
+
+
+def _atomic_write_json(path: Path, value: dict) -> None:
+    """Durably write JSON via a same-directory temporary file and atomic replace."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="utf-8", dir=path.parent,
+            prefix=f".{path.name}.", suffix=".tmp", delete=False
+        ) as handle:
+            temporary_path = Path(handle.name)
+            json.dump(value, handle, indent=2)
+            handle.write("\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary_path, path)
+    except Exception:
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
+        raise
+
+
+def load_state(path: Path = STATE_PATH) -> dict:
+    return _load_state_mapping(path, "sent_events")
 
 
 def save_state(state: dict, path: Path = STATE_PATH) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
     state["updated_at"] = datetime.now(timezone.utc).isoformat()
-    path.write_text(json.dumps(state, indent=2), encoding="utf-8")
+    _atomic_write_json(path, state)
 
 
 def load_outbox(path: Path = OUTBOX_PATH) -> dict:
-    if not path.exists():
-        return {"pending_events": {}, "updated_at": None}
-    try:
-        value = json.loads(path.read_text(encoding="utf-8"))
-        if isinstance(value, dict) and isinstance(value.get("pending_events"), dict):
-            return value
-    except (json.JSONDecodeError, OSError):
-        pass
-    return {"pending_events": {}, "updated_at": None}
+    return _load_state_mapping(path, "pending_events")
 
 
 def save_outbox(outbox: dict, path: Path = OUTBOX_PATH) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
     outbox["updated_at"] = datetime.now(timezone.utc).isoformat()
-    path.write_text(json.dumps(outbox, indent=2), encoding="utf-8")
+    _atomic_write_json(path, outbox)
 
 
 def enqueue_notifications(outbox: dict, candidates: list[dict], sent_events: dict) -> dict:
