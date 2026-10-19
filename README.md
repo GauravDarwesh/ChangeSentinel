@@ -194,12 +194,15 @@ ZIP members are never extracted to the filesystem. Unsupported or unsafe archive
 
 ### Adaptive PDF extraction
 
-PDFs use a fast-first cascade rather than a heavyweight document model on every scan:
+PDFs use a fast-first cascade so ordinary text-layer documents do not pay the cost of a layout model on every scan:
 
 1. **Native text first:** pypdf extracts ordinary text-layer PDFs, with conservative joining of wrapped lines and split words.
-2. **Layout/table fallback:** only pages whose native extraction looks highly fragmented are reprocessed with pdfplumber. It tries ruled-table and alignment-based table detection, emits row/cell structure, and compares layout-aware text candidates.
-3. **OCR only when needed:** pages with little extractable text and visual content are rendered by PDFium and passed to Tesseract. Text-based pages do not pay the OCR cost. The scheduled GitHub Actions workflow installs Tesseract only if the runner does not already have it.
-4. **Fail safely:** password-protected PDFs, unusable scans, OCR failures, and oversized OCR workloads become explicit extraction errors. The monitor retains the previous trusted normalized snapshot instead of silently treating missing text as a document change.
+2. **Layout/table fallback:** pages whose native extraction looks highly fragmented are reprocessed with pdfplumber. It tries ruled-table and alignment-based table detection and emits row/cell structure.
+3. **Docling for difficult table layouts:** when a PDF has fragmented page text, the full document is offered to Docling's accurate table-structure pipeline. Docling output replaces the existing candidate only when it contains structured Markdown tables and passes a conservative text-quality comparison. Conversion must report success and preserve the expected page count; partial results are rejected. Converter initialization and inference are serialized to limit concurrent model memory on GitHub-hosted runners.
+4. **OCR only when needed:** pages with little extractable text and visual content are rendered by PDFium and passed to Tesseract. Docling's OCR is disabled in this path so the existing selective OCR fallback remains responsible for scanned pages.
+5. **Fail safely:** password-protected PDFs, unusable scans, OCR failures, Docling failures, and oversized OCR workloads do not replace the trusted normalized snapshot with missing or partial text.
+
+Docling is pinned and its model artifacts are cached by the scheduled GitHub Actions workflow. The converter has a 120-second per-document timeout and constrained CPU concurrency. These settings reduce risk but do not guarantee correct interpretation of every complex form; representative real-document regression tests remain necessary.
 
 The OCR fallback is capped at 1,000 image/low-text pages per PDF, 15 seconds per page, and 120 seconds total per PDF by default. These guardrails prevent one unusually large scan from consuming the entire scheduled-run budget; they can be raised for a known workload. OCR is best-effort and cannot guarantee perfect recovery from handwriting, damaged files, very low-resolution scans, or every unusual PDF structure.
 
