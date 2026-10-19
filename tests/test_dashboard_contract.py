@@ -1,5 +1,6 @@
+import json
 import unittest
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -269,6 +270,61 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 self.assertIn('.dashboard-hero { grid-template-columns:minmax(0,1fr);', source)
                 self.assertIn('.dashboard-hero .hero-copy > p { margin-top:9px; font-size:13px;', source)
                 self.assertIn('.monitor-bottom { display:grid; grid-template-columns:repeat(2,minmax(0,1fr));', source)
+
+
+    def test_snapshot_and_evidence_references_exist_in_repository_data(self):
+        """Raw GitHub is the snapshot/evidence origin; every persisted pointer must resolve."""
+        latest = json.loads((ROOT / "data" / "latest.json").read_text(encoding="utf-8"))
+        report = json.loads((ROOT / "data" / "report.json").read_text(encoding="utf-8"))
+        dashboard = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        checked = set()
+
+        def check_reference(value, label, *, non_empty=False):
+            if not value:
+                return
+            relative = PurePosixPath(str(value))
+            self.assertFalse(relative.is_absolute(), f"{label} must be repository-relative: {value}")
+            self.assertNotIn("..", relative.parts, f"{label} must not traverse directories: {value}")
+            self.assertTrue(relative.parts and relative.parts[0] == "data", f"{label} must stay in data/: {value}")
+            target = ROOT.joinpath(*relative.parts)
+            self.assertTrue(target.is_file(), f"{label} points to a missing repository file: {value}")
+            if non_empty:
+                self.assertGreater(target.stat().st_size, 0, f"{label} points to an empty original file: {value}")
+            checked.add(str(relative))
+
+        for source_id, records in (latest.get("sources") or {}).items():
+            self.assertIsInstance(records, dict, f"inventory for {source_id} must be an object")
+            for url_id, item in records.items():
+                for field in (
+                    "snapshot_location",
+                    "html_snapshot_location",
+                    "evidence_location",
+                ):
+                    check_reference(item.get(field), f"{source_id}/{url_id}/{field}")
+                check_reference(
+                    item.get("file_snapshot_location"),
+                    f"{source_id}/{url_id}/file_snapshot_location",
+                    non_empty=True,
+                )
+
+        for event in report.get("events") or []:
+            check_reference(
+                event.get("evidence_location"),
+                f"report event {event.get('event_id', '<unknown>')}/evidence_location",
+            )
+
+        self.assertTrue(checked, "The test fixture should exercise at least one persisted reference")
+        # Make the remote asset origin an explicit part of the client contract:
+        # Pages ships the UI/core JSON, while snapshot bytes and evidence use raw GitHub.
+        self.assertIn(
+            'const RAW = "https://raw.githubusercontent.com/GauravDarwesh/ChangeSentinel/main";',
+            dashboard,
+        )
+        self.assertIn(
+            'function snapshotURL(path) { return path ? bust(RAW + "/" + path) : ""; }',
+            dashboard,
+        )
+        self.assertIn('fetch(bust(RAW + "/" + event.evidence_location)', dashboard)
 
 
 if __name__ == "__main__":
