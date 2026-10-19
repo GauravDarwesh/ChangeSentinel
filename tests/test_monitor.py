@@ -1838,6 +1838,26 @@ class TestAdaptiveContentExtraction(unittest.TestCase):
         ]
         self.assertTrue(_looks_like_fragmented_pdf_page("\n".join(lines)))
 
+
+    def test_pdf_table_detector_rejects_layout_cells_that_split_words(self):
+        from regmon.content import _table_score
+
+        fragmented_rows = [
+            ["PLEASE READ INSTR", "UCTIONS BEFORE CO", "MPLETING", "THIS FORM."],
+            ["Board of Gover", "rnor", "s of the Federal", "Reserve System"],
+            ["Small Business L", "endi", "ng Su", "rvey"],
+            ["INSTRUCTIONS FOR PREPARA", "TION O", "F", "Small Business Lending"],
+        ]
+        self.assertEqual(_table_score(fragmented_rows), 0)
+
+        coherent_rows = [
+            ["Form", "Period", "Status"],
+            ["FR 2028D", "Quarterly", "Current"],
+            ["FR 2028B", "Quarterly", "Current"],
+        ]
+        self.assertGreater(_table_score(coherent_rows), 0)
+
+
     def test_pdf_table_renderer_keeps_values_in_cells(self):
         from regmon.content import _table_to_markdown
 
