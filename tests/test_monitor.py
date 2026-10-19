@@ -2134,6 +2134,75 @@ class TestExtractorVersionMigration(unittest.TestCase):
         }
         self.assertTrue(should_rebaseline_extractor(old, current))
 
+    def test_docling_profile_transition_on_identical_bytes_is_a_migration(self):
+        from regmon.content import CONTENT_EXTRACTOR_VERSION
+        from regmon.engine import should_rebaseline_extractor
+
+        old = {
+            "extraction_type": "pdf",
+            "extractor_version": CONTENT_EXTRACTOR_VERSION + "-fallback",
+            "raw_hash": "same-pdf-bytes",
+            "normalized_hash": "fallback-layout-text",
+        }
+        current = {
+            "extraction_type": "pdf",
+            "extractor_version": CONTENT_EXTRACTOR_VERSION,
+            "raw_hash": "same-pdf-bytes",
+            "normalized_hash": "docling-layout-text",
+        }
+        self.assertTrue(should_rebaseline_extractor(old, current))
+
+        reverse = dict(old)
+        reverse["raw_hash"] = "different-pdf-bytes"
+        self.assertFalse(should_rebaseline_extractor(current, reverse))
+
+    def test_fallback_profile_is_persisted_in_extractor_version(self):
+        from regmon.content import CONTENT_EXTRACTOR_VERSION
+        from regmon.engine import make_current_item, should_rebaseline_extractor
+
+        url = "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=fallback-profile"
+        body = b"%PDF-1.7 synthetic bytes"
+        response = Mock(
+            status_code=200,
+            content_type="application/pdf",
+            content_length=len(body),
+            etag=None,
+            last_modified=None,
+            raw_hash="same-pdf-hash",
+            not_modified=False,
+            body=body,
+        )
+
+        def fallback_extract(*args, **kwargs):
+            kwargs["_extraction_profile"]["profile"] = "fallback"
+            return "Flattened text", "pdf", None
+
+        with patch("regmon.engine.should_force_full_fetch", return_value=False), \\
+             patch("regmon.engine.fetch", return_value=response), \\
+             patch("regmon.engine.extract_content", side_effect=fallback_extract):
+            item, text, html_body, file_body = make_current_item(
+                url, None, SOURCE, "2026-10-19T10:10:00+00:00"
+            )
+
+        self.assertEqual(
+            item["extractor_version"], CONTENT_EXTRACTOR_VERSION + "-fallback"
+        )
+        self.assertEqual(text, "Flattened text")
+        self.assertEqual(file_body, body)
+        self.assertIsNone(html_body)
+
+        old = {
+            "extractor_type": "pdf",
+            "extraction_type": "pdf",
+            "extractor_version": CONTENT_EXTRACTOR_VERSION + "-fallback",
+            "raw_hash": "same-pdf-hash",
+            "normalized_hash": "Flattened text",
+        }
+        current = dict(old)
+        current["extractor_version"] = CONTENT_EXTRACTOR_VERSION
+        current["normalized_hash"] = "Structured Docling text"
+        self.assertTrue(should_rebaseline_extractor(old, current))
+
 
     def test_pdf_parser_upgrade_forces_unconditional_refetch(self):
         from regmon.content import CONTENT_EXTRACTOR_VERSION
