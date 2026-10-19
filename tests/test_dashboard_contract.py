@@ -188,6 +188,17 @@ class TestDashboardNotificationContract(unittest.TestCase):
 
 
 
+    def test_missing_scan_completeness_metadata_fails_closed(self):
+        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        self.assertIn(
+            "const incompleteDiscovery = discoveryEntries.length === 0 || discoveryEntries.some",
+            source,
+        )
+        self.assertIn(
+            "const incompleteScan = state.report.baseline_update_allowed !== true || incompleteDiscovery",
+            source,
+        )
+
     def test_dashboard_data_is_published_same_origin_with_raw_fallback(self):
         script = (ROOT / "dashboard.js").read_text(encoding="utf-8")
         for token in (
