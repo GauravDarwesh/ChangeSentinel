@@ -250,7 +250,7 @@ jobs:
           done
 
       # Optional out-of-band liveness signal (for example a healthchecks.io check
-      # that alerts when no ping arrives for 8 hours). This also catches runs that
+      # that alerts when no ping arrives for 14 hours). This also catches runs that
       # never start, which no in-workflow step can report.
       - name: Heartbeat ping
         if: ${{ success() }}
