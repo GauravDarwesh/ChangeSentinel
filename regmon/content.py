@@ -14,6 +14,7 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
+from regmon.docling_extractor import extract_pdf_with_docling
 
 REMOVE_TAGS = {
     "script", "style", "noscript", "template", "svg", "canvas", "iframe",
@@ -332,7 +333,7 @@ def _extract_zip_bundle(body: bytes):
 # Bump this when PDF/HTML normalized output changes. The engine re-fetches these
 # records and records a baseline migration (not a regulatory change) if the
 # original response bytes are identical.
-CONTENT_EXTRACTOR_VERSION = "layout-pdf-html-v3"
+CONTENT_EXTRACTOR_VERSION = "docling-pdf-layout-v4"
 LOW_TEXT_PAGE_CHARS = 40
 MAX_OCR_PAGES = 1000
 OCR_PAGE_TIMEOUT_SECONDS = 15
@@ -427,6 +428,34 @@ def _pdf_text_quality(text: str) -> float:
         - fragments * 7
         - replacement_chars * 20
     )
+
+
+def _markdown_table_count(text: str) -> int:
+    """Count Markdown table separator rows as evidence of reconstructed grids."""
+    count = 0
+    for line in str(text or "").splitlines():
+        value = line.strip()
+        if not (value.startswith("|") and value.endswith("|")):
+            continue
+        cells = [cell.strip() for cell in value[1:-1].split("|")]
+        if len(cells) >= 2 and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells):
+            count += 1
+    return count
+
+
+def _prefer_docling_candidate(existing: str, candidate: str) -> bool:
+    """Use Docling when it yields more table structure without losing most text."""
+    if not str(candidate or "").strip():
+        return False
+    old_tables = _markdown_table_count(existing)
+    new_tables = _markdown_table_count(candidate)
+    if new_tables == 0:
+        return False
+    old_quality = _pdf_text_quality(existing)
+    new_quality = _pdf_text_quality(candidate)
+    if new_tables > old_tables:
+        return new_quality >= max(40, int(old_quality * 0.60))
+    return new_tables >= old_tables and new_quality > max(40, int(old_quality * 1.12))
 
 
 def _table_to_markdown(rows) -> str:
@@ -818,7 +847,16 @@ def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
                 # scanned inserts. Ignore empty OCR for that page; fail safely
                 # only if the document as a whole contains no usable text.
 
+        # Keep the established page-by-page extraction as the safe default. For
+        # difficult PDFs only, Docling can replace it when it demonstrably recovers
+        # structured tables without discarding most of the extracted text.
         text = normalize_text("\n\n".join(page_texts))
+        if suspicious_indexes:
+            docling_text, _docling_error = extract_pdf_with_docling(
+                body, expected_pages=len(pages)
+            )
+            if docling_text and _prefer_docling_candidate(text, docling_text):
+                text = normalize_text(docling_text)
         if not text.strip():
             return None, (
                 "PDF produced no usable text. It may contain outlines, damaged text, or scans that OCR could not read."
