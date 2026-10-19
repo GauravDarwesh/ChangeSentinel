@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import io
 import json
+from pathlib import Path
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
@@ -77,14 +78,51 @@ def main() -> None:
             raise SystemExit(
                 f"Docling integration smoke test failed: missing expected table value {expected!r}"
             )
-    print(json.dumps({
-        "ok": True,
+    results = [{
         "fixture": "synthetic-one-page-regulatory-table",
         "input_bytes": len(pdf_bytes),
         "markdown_characters": len(markdown),
         "markdown_tables": _markdown_table_count(markdown),
         "values_verified": 5,
-    }, indent=2))
+    }]
+
+    # Test a real, already-saved Federal Reserve PDF from the repository's
+    # evidence corpus. This is local extraction only: no HTTP request is made,
+    # no monitoring state is read or written, and no notifications are sent.
+    corpus_pdf = Path(
+        "data/snapshots/files/"
+        "b6f72f741a1c310ad512e3f1482069fbd7f08af4b0e35d12535f15804e72c7e0-"
+        "4ccc5bb26f325b80df4fc87d6e84f047b9a2124a3ca59f5cd595473420134b4a.pdf"
+    )
+    if not corpus_pdf.is_file():
+        raise SystemExit(f"Saved PDF corpus fixture is missing: {corpus_pdf}")
+    from pypdf import PdfReader
+    saved_pdf = corpus_pdf.read_bytes()
+    expected_pages = len(PdfReader(io.BytesIO(saved_pdf), strict=False).pages)
+    corpus_markdown, corpus_error = extract_pdf_with_docling(
+        saved_pdf, expected_pages=expected_pages
+    )
+    if corpus_error:
+        raise SystemExit(f"Docling saved-PDF smoke test failed: {corpus_error}")
+    if not corpus_markdown or _markdown_table_count(corpus_markdown) < 1:
+        raise SystemExit(
+            "Docling saved-PDF smoke test failed: FR 2028B output has no structured Markdown table"
+        )
+    for expected in ("FR 2028B", "Rate of Interest", "Next Date"):
+        if expected.casefold() not in corpus_markdown.casefold():
+            raise SystemExit(
+                f"Docling saved-PDF smoke test failed: missing expected source text {expected!r}"
+            )
+    results.append({
+        "fixture": "saved-federal-reserve-fr-2028b-pdf",
+        "input_bytes": len(saved_pdf),
+        "pages": expected_pages,
+        "markdown_characters": len(corpus_markdown),
+        "markdown_tables": _markdown_table_count(corpus_markdown),
+        "values_verified": 3,
+    })
+
+    print(json.dumps({"ok": True, "results": results}, indent=2))
 
 
 if __name__ == "__main__":
