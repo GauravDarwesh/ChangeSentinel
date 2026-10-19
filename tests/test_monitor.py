@@ -2101,5 +2101,84 @@ class TestExtractorVersionMigration(unittest.TestCase):
         self.assertIsNone(html_body)
 
 
+    def test_html_parser_upgrade_rebaselines_when_only_volatile_html_bytes_differ(self):
+        from regmon.content import CONTENT_EXTRACTOR_VERSION
+        from regmon.engine import should_rebaseline_extractor
+
+        before_html = (
+            "<html><body><main><h1>Reporting form</h1></main>"
+            "<script>window.__CF$cv$params={r:'ray-before',t:'time-before'};</script>"
+            "</body></html>"
+        )
+        after_html = before_html.replace("ray-before", "ray-after").replace(
+            "time-before", "time-after"
+        )
+        old = {
+            "extraction_type": "html",
+            "extractor_version": None,
+            "raw_hash": "raw-before",
+            "normalized_hash": "old-parser-output",
+            "html_comparison_hash": html_comparison_hash(before_html),
+        }
+        current = {
+            "extraction_type": "html",
+            "extractor_version": CONTENT_EXTRACTOR_VERSION,
+            "raw_hash": "raw-after",
+            "normalized_hash": "new-parser-output",
+            "html_comparison_hash": html_comparison_hash(after_html),
+        }
+
+        self.assertNotEqual(old["raw_hash"], current["raw_hash"])
+        self.assertEqual(old["html_comparison_hash"], current["html_comparison_hash"])
+        self.assertTrue(should_rebaseline_extractor(old, current))
+        self.assertEqual(
+            classify_change(old, current, force_baseline_migration=True),
+            ("BASELINE_MIGRATION", True),
+        )
+
+    def test_real_html_content_change_is_not_hidden_by_extractor_rebaseline(self):
+        from regmon.content import CONTENT_EXTRACTOR_VERSION
+        from regmon.engine import should_rebaseline_extractor
+
+        before_html = "<html><body><main><p>Reporting threshold is 10 percent.</p></main></body></html>"
+        after_html = "<html><body><main><p>Reporting threshold is 15 percent.</p></main></body></html>"
+        old = {
+            "extraction_type": "html",
+            "extractor_version": None,
+            "raw_hash": "raw-before",
+            "normalized_hash": "old-parser-output",
+            "html_comparison_hash": html_comparison_hash(before_html),
+        }
+        current = {
+            "extraction_type": "html",
+            "extractor_version": CONTENT_EXTRACTOR_VERSION,
+            "raw_hash": "raw-after",
+            "normalized_hash": "new-parser-output",
+            "html_comparison_hash": html_comparison_hash(after_html),
+        }
+
+        self.assertNotEqual(old["html_comparison_hash"], current["html_comparison_hash"])
+        self.assertFalse(should_rebaseline_extractor(old, current))
+        self.assertEqual(classify_change(old, current), ("CHANGED_URL", False))
+
+    def test_pdf_parser_upgrade_still_rebaselines_on_identical_file_bytes(self):
+        from regmon.content import CONTENT_EXTRACTOR_VERSION
+        from regmon.engine import should_rebaseline_extractor
+
+        old = {
+            "extraction_type": "pdf",
+            "extractor_version": "legacy",
+            "raw_hash": "same-pdf-bytes",
+            "normalized_hash": "old-layout-output",
+        }
+        current = {
+            "extraction_type": "pdf",
+            "extractor_version": CONTENT_EXTRACTOR_VERSION,
+            "raw_hash": "same-pdf-bytes",
+            "normalized_hash": "new-layout-output",
+        }
+        self.assertTrue(should_rebaseline_extractor(old, current))
+
+
 if __name__=="__main__":
     unittest.main()
