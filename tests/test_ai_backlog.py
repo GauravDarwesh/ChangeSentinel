@@ -82,6 +82,33 @@ class TestAIDeferredBacklog(unittest.TestCase):
         self.assertEqual(candidate_event_type(item, {"c"}, set()), "NEW_URL")
         self.assertEqual(candidate_event_type(item, set(), {"c"}), "CHANGED_URL")
 
+    def test_backlog_candidates_are_scheduled_by_oldest_attempt(self):
+        older = {
+            "url_id": "z-later-url",
+            "normalized_hash": "hash-z",
+            "relevance": {"candidate": True},
+            "ai_pending": {
+                "event_type": "CHANGED_URL",
+                "event_id": "event-z",
+                "after_hash": "hash-z",
+                "last_attempt_at": "2026-10-18T00:00:00+00:00",
+            },
+        }
+        newer = {
+            "url_id": "a-earlier-url",
+            "normalized_hash": "hash-a",
+            "relevance": {"candidate": True},
+            "ai_pending": {
+                "event_type": "CHANGED_URL",
+                "event_id": "event-a",
+                "after_hash": "hash-a",
+                "last_attempt_at": "2026-10-19T00:00:00+00:00",
+            },
+        }
+        fresh = {"url_id": "0-new", "relevance": {"candidate": True}}
+        pool = build_ai_candidate_pool([], [], [newer, fresh, older])
+        self.assertEqual([item["url_id"] for item in pool], ["z-later-url", "a-earlier-url", "0-new"])
+
     def test_first_baseline_does_not_create_ai_backlog(self):
         queued = {
             "url_id": "c",
