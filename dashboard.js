@@ -56,6 +56,42 @@ async function fetchDataAsset(key, required) {
   if (!required) return null;
   throw new Error(path + " could not be loaded (" + failures.join("; ") + ")");
 }
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+function validateDataAssets(assets) {
+  const invalid = [];
+  const report = assets.report;
+  const inventory = assets.inventory;
+  const historyData = assets.historyData;
+  const notifications = assets.notifications;
+  const outbox = assets.outbox;
+  const config = assets.config;
+
+  if (!isPlainObject(report) || report.schema_version !== 2 ||
+      !isPlainObject(report.counts) || !Array.isArray(report.sources) ||
+      !Array.isArray(report.discovery) || typeof report.baseline_update_allowed !== "boolean") {
+    invalid.push(DATA_PATHS.report);
+  }
+  if (!isPlainObject(inventory) || inventory.schema_version !== 2 ||
+      !isPlainObject(inventory.sources)) {
+    invalid.push(DATA_PATHS.inventory);
+  }
+  if (!Array.isArray(historyData)) invalid.push(DATA_PATHS.history);
+  if (!isPlainObject(notifications) || !isPlainObject(notifications.sent_events)) {
+    invalid.push(DATA_PATHS.notifications);
+  }
+  if (!isPlainObject(outbox) || !isPlainObject(outbox.pending_events)) {
+    invalid.push(DATA_PATHS.outbox);
+  }
+  if (!isPlainObject(config) || !Array.isArray(config.sources)) {
+    invalid.push(DATA_PATHS.config);
+  }
+  if (invalid.length) {
+    throw new Error("Invalid monitoring data schema: " + invalid.join(", "));
+  }
+}
+
 function fmt(value) {
   if (!value) return "—";
   const d = new Date(value);
@@ -1082,12 +1118,13 @@ async function loadData(showErrors) {
       fetchDataAsset("outbox", true),
       fetchDataAsset("config", true)
     ]);
-    state.report = report && typeof report === "object" ? report : {};
-    state.inventory = inventory && typeof inventory === "object" ? inventory : {};
-    state.history = Array.isArray(historyData) ? historyData : [];
-    state.notifications = notifications && typeof notifications === "object" ? notifications : {};
-    state.outbox = outbox && typeof outbox === "object" ? outbox : {};
-    state.config = config && typeof config === "object" ? config : {};
+    validateDataAssets({ report, inventory, historyData, notifications, outbox, config });
+    state.report = report;
+    state.inventory = inventory;
+    state.history = historyData;
+    state.notifications = notifications;
+    state.outbox = outbox;
+    state.config = config;
     const hash = location.hash.match(/monitor=([^&]+)/);
     if (hash && !state.selectedId) {
       const id = decodeURIComponent(hash[1]);
@@ -1114,10 +1151,14 @@ async function loadData(showErrors) {
     const lastSavedScan = hasValidTimestamp ? relativeTime(generatedAt.toISOString()) : "timestamp unavailable";
     const isStale = hasValidTimestamp &&
       Date.now() - generatedAt.getTime() > 8 * 60 * 60 * 1000;
-    const incompleteScan = state.report.baseline_update_allowed !== true || incompleteDiscovery;
-    const coverageNote = missingActiveSources.length
-      ? " · " + coveredSourceCount + "/" + activeIds.length + " active sources represented"
-      : "";
+    const noActiveSources = activeIds.length === 0;
+    const incompleteScan = noActiveSources ||
+      state.report.baseline_update_allowed !== true || incompleteDiscovery;
+    const coverageNote = noActiveSources
+      ? " · no active sources configured"
+      : missingActiveSources.length
+        ? " · " + coveredSourceCount + "/" + activeIds.length + " active sources represented"
+        : "";
     if (!hasValidTimestamp) {
       setStatus("Monitoring report timestamp unavailable", false, true);
     } else if (incompleteScan) {
