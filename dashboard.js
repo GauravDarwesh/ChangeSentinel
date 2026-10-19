@@ -1101,7 +1101,8 @@ async function loadData(showErrors) {
       ? state.report.discovery
       : state.report.discovery && typeof state.report.discovery === "object"
         ? [state.report.discovery] : [];
-    const incompleteDiscovery = discoveryEntries.some(entry =>
+    // Missing scan coverage metadata is not evidence of a healthy scan.
+    const incompleteDiscovery = discoveryEntries.length === 0 || discoveryEntries.some(entry =>
       !entry || String(entry.state || "UNKNOWN").toUpperCase() !== "COMPLETE"
     );
     const activeIds = activeSourceIds();
@@ -1113,7 +1114,7 @@ async function loadData(showErrors) {
     const lastSavedScan = hasValidTimestamp ? relativeTime(generatedAt.toISOString()) : "timestamp unavailable";
     const isStale = hasValidTimestamp &&
       Date.now() - generatedAt.getTime() > 8 * 60 * 60 * 1000;
-    const incompleteScan = state.report.baseline_update_allowed === false || incompleteDiscovery;
+    const incompleteScan = state.report.baseline_update_allowed !== true || incompleteDiscovery;
     const coverageNote = missingActiveSources.length
       ? " · " + coveredSourceCount + "/" + activeIds.length + " active sources represented"
       : "";
