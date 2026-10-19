@@ -190,14 +190,30 @@ class TestDashboardNotificationContract(unittest.TestCase):
 
     def test_missing_scan_completeness_metadata_fails_closed(self):
         source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
-        self.assertIn(
+        for token in (
             "const incompleteDiscovery = discoveryEntries.length === 0 || discoveryEntries.some",
-            source,
-        )
-        self.assertIn(
-            "const incompleteScan = state.report.baseline_update_allowed !== true || incompleteDiscovery",
-            source,
-        )
+            "const noActiveSources = activeIds.length === 0",
+            "state.report.baseline_update_allowed !== true || incompleteDiscovery",
+            '" · no active sources configured"',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+
+    def test_parseable_but_malformed_dashboard_assets_are_rejected(self):
+        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        for token in (
+            "function validateDataAssets(assets)",
+            "report.schema_version !== 2",
+            "inventory.schema_version !== 2",
+            "if (!Array.isArray(historyData)) invalid.push(DATA_PATHS.history)",
+            "!isPlainObject(notifications.sent_events)",
+            "!isPlainObject(outbox.pending_events)",
+            "!Array.isArray(config.sources)",
+            'throw new Error("Invalid monitoring data schema: " + invalid.join(", "))',
+            "validateDataAssets({ report, inventory, historyData, notifications, outbox, config })",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
 
     def test_dashboard_data_is_published_same_origin_with_raw_fallback(self):
         script = (ROOT / "dashboard.js").read_text(encoding="utf-8")
