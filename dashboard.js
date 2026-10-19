@@ -48,7 +48,12 @@ async function fetchDataAsset(key, required) {
         failures.push(host + " returned HTTP " + response.status);
         continue;
       }
-      return await response.json();
+      const value = await response.json();
+      if (!isValidDataAssetShape(key, value)) {
+        failures.push(host + " returned JSON with invalid schema");
+        continue;
+      }
+      return value;
     } catch (error) {
       failures.push(host + " request failed: " + String(error.message || error));
     }
@@ -59,34 +64,39 @@ async function fetchDataAsset(key, required) {
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
+function isValidDataAssetShape(key, value) {
+  switch (key) {
+    case "report":
+      return isPlainObject(value) && value.schema_version === 2 &&
+        isPlainObject(value.counts) && Array.isArray(value.sources) &&
+        Array.isArray(value.discovery) && typeof value.baseline_update_allowed === "boolean";
+    case "inventory":
+      return isPlainObject(value) && value.schema_version === 2 &&
+        isPlainObject(value.sources);
+    case "history":
+      return Array.isArray(value);
+    case "notifications":
+      return isPlainObject(value) && isPlainObject(value.sent_events);
+    case "outbox":
+      return isPlainObject(value) && isPlainObject(value.pending_events);
+    case "config":
+      return isPlainObject(value) && Array.isArray(value.sources);
+    default:
+      return false;
+  }
+}
 function validateDataAssets(assets) {
-  const invalid = [];
-  const report = assets.report;
-  const inventory = assets.inventory;
-  const historyData = assets.historyData;
-  const notifications = assets.notifications;
-  const outbox = assets.outbox;
-  const config = assets.config;
-
-  if (!isPlainObject(report) || report.schema_version !== 2 ||
-      !isPlainObject(report.counts) || !Array.isArray(report.sources) ||
-      !Array.isArray(report.discovery) || typeof report.baseline_update_allowed !== "boolean") {
-    invalid.push(DATA_PATHS.report);
-  }
-  if (!isPlainObject(inventory) || inventory.schema_version !== 2 ||
-      !isPlainObject(inventory.sources)) {
-    invalid.push(DATA_PATHS.inventory);
-  }
-  if (!Array.isArray(historyData)) invalid.push(DATA_PATHS.history);
-  if (!isPlainObject(notifications) || !isPlainObject(notifications.sent_events)) {
-    invalid.push(DATA_PATHS.notifications);
-  }
-  if (!isPlainObject(outbox) || !isPlainObject(outbox.pending_events)) {
-    invalid.push(DATA_PATHS.outbox);
-  }
-  if (!isPlainObject(config) || !Array.isArray(config.sources)) {
-    invalid.push(DATA_PATHS.config);
-  }
+  const values = {
+    report: assets.report,
+    inventory: assets.inventory,
+    history: assets.historyData,
+    notifications: assets.notifications,
+    outbox: assets.outbox,
+    config: assets.config
+  };
+  const invalid = Object.entries(values)
+    .filter(([key, value]) => !isValidDataAssetShape(key, value))
+    .map(([key]) => DATA_PATHS[key]);
   if (invalid.length) {
     throw new Error("Invalid monitoring data schema: " + invalid.join(", "));
   }
