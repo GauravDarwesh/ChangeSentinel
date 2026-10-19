@@ -35,7 +35,9 @@ jobs:
           print(f"latest scan {report.get('run_id')} is {age_hours:.1f} h old")
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
               out.write(f"hours={age_hours:.1f}\n")
-              out.write(f"stale={'true' if age_hours > 8 else 'false'}\n")
+              # GitHub delays scheduled runs (gaps of 8.5 h were observed on
+              # 19 Oct 2026 for a 6-hourly cron); alert after two missed slots.
+              out.write(f"stale={'true' if age_hours > 14 else 'false'}\n")
           PY
 
       - name: Alert on stale monitoring data
