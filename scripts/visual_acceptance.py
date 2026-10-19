@@ -191,6 +191,7 @@ def run_browser_checks() -> None:
                     record_error(f"{name}: document overflows horizontally ({dims['document']}px > {width}px)")
                 if not dims["headingVisible"]:
                     record_error(f"{name}: primary dashboard heading is not visible")
+                page.screenshot(path=str(OUT / f"dashboard-{name}-viewport.png"), full_page=False)
                 page.screenshot(path=str(OUT / f"dashboard-{name}.png"), full_page=True)
                 if js_errors:
                     record_error(f"{name}: JavaScript page errors: {js_errors}")
@@ -240,9 +241,14 @@ def run_browser_checks() -> None:
                 shell = page.locator("#pdfViewerShell")
                 frame = page.locator("#pdfViewerShell iframe[title='Saved PDF snapshot']")
                 pdf_check["preview_opened"] = shell.is_visible() and frame.is_visible()
+                pdf_check["iframe_src_prefix"] = (frame.get_attribute("src") or "")[:20]
                 if not pdf_check["preview_opened"]:
                     record_error("PDF preview QA: saved PDF iframe is not visible")
+                frame.scroll_into_view_if_needed()
+                page.wait_for_timeout(1800)  # Trigger loading=lazy and allow the PDF viewer to paint.
+                page.screenshot(path=str(OUT / "dashboard-pdf-preview-desktop-viewport.png"), full_page=False)
                 page.screenshot(path=str(OUT / "dashboard-pdf-preview-desktop.png"), full_page=True)
+                frame.screenshot(path=str(OUT / "dashboard-pdf-frame-desktop.png"))
 
                 page.set_viewport_size({"width": 390, "height": 844})
                 page.wait_for_timeout(500)
@@ -258,13 +264,18 @@ def run_browser_checks() -> None:
                     record_error(f"PDF preview QA: mobile detail page overflows horizontally: {width_state}")
                 if width_state["frameWidth"] < 250 or width_state["frameHeight"] < 250:
                     record_error(f"PDF preview QA: mobile PDF frame is too small: {width_state}")
+                frame.scroll_into_view_if_needed()
+                page.wait_for_timeout(1200)
+                page.screenshot(path=str(OUT / "dashboard-pdf-preview-mobile-viewport.png"), full_page=False)
                 page.screenshot(path=str(OUT / "dashboard-pdf-preview-mobile.png"), full_page=True)
+                frame.screenshot(path=str(OUT / "dashboard-pdf-frame-mobile.png"))
                 page.locator('[data-pdf-action="expand"]').click()
                 page.wait_for_function(
                     "() => document.querySelector('#pdfViewerShell')?.classList.contains('is-expanded')",
                     timeout=10000,
                 )
                 pdf_check["expanded_reader_opened"] = True
+                page.screenshot(path=str(OUT / "dashboard-pdf-preview-mobile-expanded-viewport.png"), full_page=False)
                 page.screenshot(path=str(OUT / "dashboard-pdf-preview-mobile-expanded.png"), full_page=True)
         except Exception as exc:
             record_error(f"PDF preview QA: {type(exc).__name__}: {exc}")
