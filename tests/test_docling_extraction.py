@@ -3,7 +3,7 @@ import tempfile
 import types
 import unittest
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from regmon.docling_extractor import extract_pdf_with_docling
 
@@ -95,7 +95,7 @@ class TestDoclingPdfFallback(unittest.TestCase):
         reader.pages = [page]
 
         pdfplumber_module = types.ModuleType("pdfplumber")
-        document_context = Mock()
+        document_context = MagicMock()
         document_context.__enter__.return_value.pages = [Mock()]
         pdfplumber_module.open = Mock(return_value=document_context)
         docling_markdown = (
