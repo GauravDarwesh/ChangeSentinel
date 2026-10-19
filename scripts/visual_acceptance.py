@@ -212,6 +212,22 @@ def run_browser_checks() -> None:
                 check["document_width"] = dims["document"]
                 check["horizontal_overflow"] = dims["document"] > width + 2
                 check["dimensions"] = dims
+                if width <= 650:
+                    nav_box = dims.get("nav") or {}
+                    brand_box = dims.get("wordmark") or {}
+                    nav_top = nav_box.get("top")
+                    nav_bottom = nav_box.get("bottom")
+                    brand_bottom = brand_box.get("bottom")
+                    if (nav_top is None or brand_bottom is None or nav_top <= brand_bottom + 100):
+                        record_error(
+                            f"{name}: bottom navigation overlaps the mobile brand/header: "
+                            f"nav={nav_box}, brand={brand_box}"
+                        )
+                    if nav_bottom is None or nav_bottom < height - 80:
+                        record_error(
+                            f"{name}: bottom navigation is not anchored near the viewport bottom: "
+                            f"nav={nav_box}, viewport_height={height}"
+                        )
                 if check["horizontal_overflow"]:
                     record_error(f"{name}: document overflows horizontally ({dims['document']}px > {width}px)")
                 if not dims["headingVisible"]:
