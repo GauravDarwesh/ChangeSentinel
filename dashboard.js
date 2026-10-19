@@ -14,7 +14,7 @@ const $ = id => document.getElementById(id);
 const state = {
   report: {}, inventory: {}, history: [], notifications: {}, outbox: {}, config: {},
   items: [], selectedId: "", view: "monitors", filter: "ALL", detailTab: "snapshot",
-  docInfo: {}, titleQueue: [], titleWorkers: 0, titleTimer: null,
+  docInfo: {}, titleQueue: [], titleWorkers: 0, titleTimer: null, showAllMonitorsMobile: false,
   snapshotMode: "preview", snapshotCache: {}, htmlCache: {}, evidenceCache: {}, pdfPreviewUrl: "",
   toastTimer: null
 };
@@ -75,6 +75,14 @@ function baseTitle(item) {
   if (!last) {
     try { last = new URL(url).hostname; } catch (_) { last = url || "Monitored page"; }
   }
+  if (/^DownloadAttachment$/i.test(last)) {
+    let guid = "";
+    try { guid = new URL(url).searchParams.get("guid") || ""; } catch (_) {}
+    const token = String(guid || item.url_id || "").replace(/[^a-z0-9]/gi, "").slice(0, 8).toUpperCase();
+    const kind = itemKind(item);
+    const label = kind === "zip" ? "archive" : kind === "pdf" ? "PDF attachment" : "attachment";
+    return "Federal Reserve " + label + (token ? " · " + token : "");
+  }
   return last.replace(/\.(html?|pdf|json|xml|csv|txt)$/i, "").replace(/[-_]+/g, " ").replace(/\b\w/g, ch => ch.toUpperCase());
 }
 function itemTitle(item) { return (state.docInfo[item.url_id] && state.docInfo[item.url_id].title) || baseTitle(item); }
@@ -131,7 +139,7 @@ function deriveDocumentTitle(text, type) {
     return null;
   } catch (_) { return null; }
 }
-function titleCacheKey(item) { return "cs-title:v2:" + (item.normalized_hash || item.url_id); }
+function titleCacheKey(item) { return "cs-title:v3:" + (item.normalized_hash || item.url_id); }
 function hydrateDocumentTitles() {
   state.items.forEach(item => {
     if(state.docInfo[item.url_id] || !item.snapshot_location || item.pending_registration || !["pdf","zip"].includes(itemKind(item))) return;
@@ -363,8 +371,21 @@ function renderMonitorList() {
     };
     return priority(a) - priority(b) || itemTitle(a).localeCompare(itemTitle(b));
   });
+  const isMobile = typeof window.matchMedia === "function" && window.matchMedia("(max-width: 760px)").matches;
+  const canToggle = isMobile && !query && state.filter === "ALL" && all.length > 6;
+  const collapsed = canToggle && !state.showAllMonitorsMobile;
+  const visible = collapsed ? all.slice(0, 6) : all;
+  const controls = $("monitorListControls");
   $("monitorCount").textContent = all.length + (all.length === 1 ? " page" : " pages") +
-    (all.length === state.items.length ? "" : " shown");
+    (collapsed ? " · 6 priority monitors shown" : all.length === state.items.length ? "" : " shown");
+  if (controls) {
+    controls.hidden = !canToggle;
+    controls.innerHTML = canToggle
+      ? '<button class="monitor-expand-list" data-monitor-list-toggle="' + (collapsed ? "expand" : "collapse") + '" type="button" aria-controls="monitorList" aria-expanded="' + String(!collapsed) + '">' +
+        (collapsed ? "Show all " + all.length + " monitors" : "Show fewer monitors") +
+        '<span aria-hidden="true">' + (collapsed ? "↓" : "↑") + '</span></button>'
+      : "";
+  }
   if (!all.length) {
     $("monitorList").innerHTML = emptyState(
       state.items.length ? "No pages match this view" : "No active monitors yet",
@@ -375,7 +396,7 @@ function renderMonitorList() {
     );
     return;
   }
-  $("monitorList").innerHTML = all.map((item, index) => {
+  $("monitorList").innerHTML = visible.map((item, index) => {
     const status = itemStatus(item);
     const source = sourceForItem(item);
     const initial = (urlHost(item).replace(/^www\./i, "").charAt(0) || "W").toUpperCase();
@@ -386,7 +407,7 @@ function renderMonitorList() {
       '<div class="monitor-main"><div class="site-badge" aria-hidden="true">' + esc(initial) + '</div>' +
       '<div class="monitor-copy"><div class="monitor-title-row"><h3 class="monitor-title">' + esc(itemTitle(item)) + '</h3>' +
       '<span class="status-pill ' + esc(status.cls) + '">' + esc(status.label) + '</span></div>' +
-      '<div class="monitor-url">' + esc(item.canonical_url) + '</div>' +
+      '<div class="monitor-url" title="' + esc(item.canonical_url) + '">' + esc(item.canonical_url) + '</div>' +
       '<div class="monitor-bottom">' +
       '<span><span class="monitor-meta-key">HOST</span>' + esc(host) + '</span>' +
       '<span><span class="monitor-meta-key">LAST CHECK</span>' + esc(relativeTime(item.last_checked)) + '</span>' +
@@ -1109,10 +1130,23 @@ function submitAddMonitor(event) {
   }
 }
 
+$("monitorListControls").addEventListener("click", event => {
+  const toggle = event.target.closest("[data-monitor-list-toggle]");
+  if (!toggle) return;
+  state.showAllMonitorsMobile = toggle.dataset.monitorListToggle === "expand";
+  renderMonitorList();
+});
 $("monitorList").addEventListener("click", event => {
   const button = event.target.closest("[data-monitor-id]");
   if (button) setSelected(button.dataset.monitorId);
 });
+const compactMonitorQuery = window.matchMedia ? window.matchMedia("(max-width: 760px)") : null;
+if (compactMonitorQuery && typeof compactMonitorQuery.addEventListener === "function") {
+  compactMonitorQuery.addEventListener("change", () => {
+    state.showAllMonitorsMobile = false;
+    renderMonitorList();
+  });
+}
 $("monitorSearch").addEventListener("input", renderMonitorList);
 document.querySelectorAll("[data-filter]").forEach(button => button.addEventListener("click", () => {
   state.filter = button.dataset.filter;
