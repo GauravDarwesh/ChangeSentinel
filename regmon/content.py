@@ -453,6 +453,77 @@ def _table_to_markdown(rows) -> str:
     return "\n".join(output)
 
 
+
+def _has_split_word_boundaries(rows) -> bool:
+    """Reject layout guesses that split ordinary words across table cells."""
+    common_words = {
+        "a", "an", "and", "are", "as", "at", "be", "been", "being", "by",
+        "can", "could", "did", "do", "does", "for", "from", "had", "has",
+        "have", "he", "her", "here", "his", "how", "if", "in", "into", "is",
+        "it", "its", "may", "might", "more", "most", "much", "must", "no",
+        "not", "of", "off", "on", "one", "or", "other", "our", "out", "over",
+        "per", "same", "she", "so", "some", "such", "than", "that", "the",
+        "their", "them", "then", "there", "these", "they", "this", "those",
+        "through", "to", "too", "under", "up", "us", "was", "we", "were",
+        "what", "when", "where", "which", "who", "will", "with", "would",
+        "you", "your", "about", "above", "after", "before", "between",
+        "below", "during", "within", "without", "because", "while", "each",
+        "every", "all", "any", "both", "few", "many", "several", "therefore",
+        "form", "forms", "report", "reports", "reported", "reporting", "date",
+        "dates", "month", "months", "year", "years", "day", "days", "name",
+        "address", "city", "state", "zip", "code", "number", "status", "page",
+        "item", "items", "type", "value", "values", "amount", "total", "rate",
+        "rates", "period", "periods", "table", "field", "fields", "current",
+        "federal", "reserve", "system", "board", "general", "instructions",
+        "instruction", "survey", "small", "business", "loan", "loans", "farm",
+        "farmers", "lending", "bank", "banks", "please", "read", "completing",
+        "effective", "purpose", "include", "exclude", "information", "person",
+        "contact", "phone", "telephone", "monday", "tuesday", "wednesday",
+        "thursday", "friday", "january", "february", "march", "april", "june",
+        "july", "august", "september", "october", "november", "december",
+        "approval", "expires",
+    }
+    continuation_fragments = {
+        "tion", "tions", "sion", "sions", "ing", "ings", "ment", "ments",
+        "ness", "less", "able", "ible", "ance", "ence", "ity", "ities",
+        "ies", "ous", "ive", "ally", "edly", "ed", "ers", "ure", "ary",
+        "ory", "ship", "ization", "izations", "ically", "ially", "ative",
+    }
+
+    compared_boundaries = 0
+    suspicious_boundaries = 0
+    for row in rows or []:
+        cells = [
+            re.sub(r"\s+", " ", str(cell or "")).strip()
+            for cell in (row or [])
+        ]
+        cells = [cell for cell in cells if cell]
+        for left, right in zip(cells, cells[1:]):
+            left_words = re.findall(r"[A-Za-z]+", left)
+            right_words = re.findall(r"[A-Za-z]+", right)
+            if not left_words or not right_words:
+                continue
+            left_word = left_words[-1].casefold()
+            right_word = right_words[0].casefold()
+            compared_boundaries += 1
+
+            right_is_suffix = right_word in continuation_fragments
+            both_look_fragmentary = (
+                2 <= len(left_word) <= 7
+                and 2 <= len(right_word) <= 7
+                and left_word not in common_words
+                and right_word not in common_words
+                and (len(left_word) <= 5 or len(right_word) <= 5)
+            )
+            if right_is_suffix or both_look_fragmentary:
+                suspicious_boundaries += 1
+
+    return (
+        suspicious_boundaries >= 3
+        and suspicious_boundaries / max(1, compared_boundaries) >= 0.12
+    )
+
+
 def _table_score(rows) -> int:
     cleaned = [
         [str(cell or "").strip() for cell in (row or [])]
@@ -465,11 +536,12 @@ def _table_score(rows) -> int:
     filled = sum(bool(cell) for row in cleaned for cell in row)
     if width < 2 or filled < 4:
         return 0
-    # Avoid interpreting body paragraphs as tables merely because text-based
-    # table detection returned a two-column guess.
+    # Reject text-layout guesses that cut ordinary words across cells. The
+    # linear extraction path is safer than injecting a malformed table grid.
+    if _has_split_word_boundaries(cleaned):
+        return 0
     nonempty_ratio = filled / max(1, sum(len(row) for row in cleaned))
     return filled if nonempty_ratio >= 0.20 else 0
-
 
 def _find_pdf_tables(page):
     """Try ruled-table detection first, then alignment-based detection."""
