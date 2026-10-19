@@ -185,6 +185,23 @@ def build_notifications(report: dict) -> list[dict]:
                 "priority": 3, "tags": ["warning", "monitoring"],
             })
 
+    for guard in report.get("removal_guards") or []:
+        if not isinstance(guard, dict):
+            continue
+        source_id = str(guard.get("source_id") or "unknown-source")
+        output.append({
+            "event_id": str(guard.get("notification_id") or f"removal-guard-{source_id}"),
+            "kind": "REMOVAL_HELD", "url": None,
+            "topic": f"Mass removal held for review in {source_id}",
+            "summary": (
+                f"{guard.get('held_removals')} of {guard.get('previous_count')} monitored URLs were not "
+                "discovered in this run. They were kept in the baseline instead of being reported as removed."
+            ),
+            "reason": "More than the allowed share of a source disappeared at once; this usually means a crawler, scope or site-layout problem.",
+            "impact": "Check the source. If the pages really were retired, re-run with REGMON_ALLOW_MASS_REMOVAL set to this source ID.",
+            "priority": 4, "tags": ["warning", "monitoring", "discovery"],
+        })
+
     discovery = report.get("discovery", [])
     if isinstance(discovery, dict):
         discovery = [discovery]

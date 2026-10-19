@@ -31,6 +31,8 @@ jobs:
       - run: python -m unittest discover -s tests -p "test*.py" -v
       - name: Exercise real Docling table reconstruction on a synthetic PDF
         run: python scripts/docling_integration_smoke.py
+      - name: Golden extraction corpus (saved originals reproduce their baselines)
+        run: python scripts/golden_corpus_check.py
       - name: Validate active-source state against committed history
         run: python -m regmon.validate_state --source all --data-dir data --config config/sources.json
       - run: python -m compileall -q regmon

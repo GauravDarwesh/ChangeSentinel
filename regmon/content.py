@@ -22,10 +22,28 @@ REMOVE_TAGS = {
     "script", "style", "noscript", "template", "svg", "canvas", "iframe",
     "object", "embed", "nav", "footer", "aside",
 }
-DYNAMIC_MARKERS = {
-    "cookie", "consent", "breadcrumb", "social", "share", "pagination",
-    "pager", "toolbar", "modal", "popup", "banner",
+# Recurring site chrome is recognised from whole id/class *tokens*, split on
+# separators ("cookie-banner" -> {"cookie", "banner"}). Substring matching used to
+# delete regulatory content: "shareholder-reporting" matched "share",
+# "consent-orders" matched "consent", "alert-banner" notices matched "banner", and
+# a <body class="has-cookie-banner"> emptied the whole page.
+NOISE_PARTS = {
+    "cookie", "cookies", "gdpr", "breadcrumb", "breadcrumbs", "pagination",
+    "pager", "toolbar", "modal", "popup", "popover", "sharethis", "addthis",
 }
+# Parts that are chrome only alongside a qualifier ("social-share", "share-buttons",
+# "consent-banner"); alone they name real content (social security, share classes,
+# consent orders, alert banners).
+QUALIFIED_NOISE_PARTS = {
+    "social": {"share", "sharing", "links", "media", "icons", "buttons", "follow", "networks", "bar", "nav"},
+    "share": {"buttons", "button", "links", "bar", "tools", "toolbar", "icons", "widget", "social", "menu", "this"},
+    "sharing": {"buttons", "button", "links", "bar", "tools", "icons", "widget", "social"},
+    "consent": {"banner", "bar", "cookie", "cookies", "dialog", "manager", "modal", "popup", "notice", "gdpr", "prompt"},
+    "banner": {"cookie", "cookies", "consent", "gdpr"},
+}
+# Structural containers are never removed by a class/id marker: their classes
+# describe page state ("has-cookie-banner", "modal-open"), not their content.
+PROTECTED_TAGS = {"html", "body", "main", "article"}
 CONTENT_SELECTORS = (
     "main", "[role='main']", "article", "#main-content", "#main",
     ".main-content", ".region-content",
@@ -36,13 +54,27 @@ def _attrs(tag):
     return getattr(tag, "attrs", None) or {}
 
 
-def _should_remove(tag) -> bool:
-    attrs = _attrs(tag)
+def _marker_tokens(attrs) -> list[str]:
     classes = attrs.get("class") or []
-    marker = " ".join(
-        [str(attrs.get("id") or ""), *[str(value) for value in classes]]
-    ).lower()
-    return any(term in marker for term in DYNAMIC_MARKERS)
+    if isinstance(classes, str):
+        classes = classes.split()
+    return [str(value).lower() for value in [attrs.get("id") or "", *classes] if str(value).strip()]
+
+
+def _should_remove(tag) -> bool:
+    if getattr(tag, "name", None) in PROTECTED_TAGS:
+        return False
+    attrs = _attrs(tag)
+    if str(attrs.get("role") or "").lower() == "main":
+        return False
+    for token in _marker_tokens(attrs):
+        parts = {part for part in re.split(r"[^a-z0-9]+", token) if part}
+        if parts & NOISE_PARTS:
+            return True
+        for part, qualifiers in QUALIFIED_NOISE_PARTS.items():
+            if part in parts and parts & qualifiers:
+                return True
+    return False
 
 
 def normalize_text(text: str) -> str:
@@ -85,7 +117,13 @@ HTML_BLOCK_TAGS = {
 def _html_inline_text(node) -> str:
     """Collect inline HTML text without inserting separators inside sentences."""
     from bs4 import NavigableString
+    from bs4.element import PreformattedString
 
+    # Comments, CDATA, processing instructions and doctypes are markup, not page
+    # text. They used to leak in ("<!--row-->" became a line of every Fed page)
+    # and a rotating "<!-- generated ... -->" comment caused false changes.
+    if isinstance(node, PreformattedString):
+        return ""
     if isinstance(node, NavigableString):
         value = str(node)
         # HTML source formatting newlines/spaces collapse in normal browser
@@ -109,14 +147,35 @@ def _html_inline_text(node) -> str:
     return value
 
 
-def _html_cell_text(cell) -> str:
-    value = "".join(
-        _html_inline_text(child)
-        for child in cell.children
-        if getattr(child, "name", None) != "table"
-    )
-    value = re.sub(r"\s+", " ", value).strip()
-    return value.replace("|", r"\|")
+def _nested_table_text(table) -> str:
+    """Flatten a table nested inside a cell, keeping its row/cell boundaries."""
+    rows = []
+    for row in table.find_all("tr"):
+        if row.find_parent("table") is not table:
+            continue
+        cells = [
+            _html_cell_text(cell, escape=False)
+            for cell in row.find_all(["th", "td"], recursive=False)
+        ]
+        cells = [cell for cell in cells if cell]
+        if cells:
+            rows.append(" ; ".join(cells))
+    return " / ".join(rows)
+
+
+def _html_cell_text(cell, escape: bool = True) -> str:
+    # Nested tables (common in older government layouts) used to be dropped
+    # entirely; their content is now rendered inline within the outer cell.
+    parts = []
+    for child in cell.children:
+        if getattr(child, "name", None) == "table":
+            nested = _nested_table_text(child)
+            if nested:
+                parts.append(" [" + nested + "] ")
+        else:
+            parts.append(_html_inline_text(child))
+    value = re.sub(r"\s+", " ", "".join(parts)).strip()
+    return value.replace("|", r"\|") if escape else value
 
 
 def _html_table_markdown(table) -> str:
@@ -204,6 +263,56 @@ def normalize_html(
 
 def _extension(url: str) -> str:
     return Path(urlparse(url).path.lower()).suffix
+
+
+_CHARSET_PARAM = re.compile(r"charset\s*=\s*[\"']?([A-Za-z0-9._:-]+)", re.IGNORECASE)
+_META_CHARSET = re.compile(rb"<meta[^>]+charset\s*=\s*[\"']?([A-Za-z0-9._:-]+)", re.IGNORECASE)
+
+
+def decode_text(body: bytes, content_type: str = "", *, sniff_html: bool = False) -> str:
+    """Decode text using the declared charset (header, then <meta>), else UTF-8.
+
+    Decoding every response as UTF-8 turned windows-1252/ISO-8859-1 pages into
+    replacement characters. Unknown or invalid charsets fall back to UTF-8 with
+    replacement, so decoding itself never fails.
+    """
+    candidates = []
+    header = _CHARSET_PARAM.search(content_type or "")
+    if header:
+        candidates.append(header.group(1))
+    if sniff_html:
+        meta = _META_CHARSET.search(body[:4096])
+        if meta:
+            candidates.append(meta.group(1).decode("ascii", "ignore"))
+    for charset in candidates:
+        try:
+            return body.decode(charset)
+        except (LookupError, UnicodeDecodeError):
+            continue
+    return body.decode("utf-8-sig", "replace")
+
+
+OFFICE_MEDIA_TYPES = {
+    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ".xlsm": "application/vnd.ms-excel.sheet.macroenabled.12",
+    ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+}
+
+
+def _office_kind(ctype: str, suffix: str) -> str | None:
+    """Recognise Office Open XML before the generic XML/JSON branches.
+
+    Their MIME types contain "openxmlformats", which the XML branch used to claim,
+    so every DOCX/XLSX/PPTX was parsed as XML and failed.
+    """
+    if "wordprocessingml" in ctype or suffix == ".docx":
+        return "docx"
+    if "spreadsheetml" in ctype or "ms-excel.sheet.macroenabled" in ctype or suffix in {".xlsx", ".xlsm"}:
+        return "xlsx"
+    if "presentationml" in ctype or suffix == ".pptx":
+        return "pptx"
+    return None
 
 
 MAX_ZIP_MEMBERS = 256
@@ -354,7 +463,7 @@ def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
 # Bump this when PDF/HTML normalized output changes. The engine re-fetches these
 # records and records a baseline migration (not a regulatory change) if the
 # original response bytes are identical.
-CONTENT_EXTRACTOR_VERSION = "docling-pdf-layout-v4"
+CONTENT_EXTRACTOR_VERSION = "content-extractor-v5"
 LOW_TEXT_PAGE_CHARS = 40
 MAX_OCR_PAGES = 1000
 OCR_PAGE_TIMEOUT_SECONDS = 15
@@ -953,19 +1062,27 @@ def extract_content(
             text, error = _extract_pdf(body, _extraction_profile)
         return text, "pdf", error
 
-    decoded = body.decode("utf-8-sig", "replace")
+    office = _office_kind(ctype, suffix)
+    if office == "docx":
+        return _extract_docx(body)
+    if office == "xlsx":
+        return _extract_xlsx(body)
+    if office == "pptx":
+        return _extract_pptx(body)
 
     if "json" in ctype or suffix == ".json":
         try:
-            payload = json.loads(decoded)
+            payload = json.loads(decode_text(body, ctype))
             normalized_json = json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2)
             return normalized_json, "json", None
         except (json.JSONDecodeError, UnicodeError) as exc:
             return None, "json", f"{type(exc).__name__}: {exc}"
 
-    if "xml" in ctype or suffix == ".xml":
+    if "xhtml" in ctype:
+        ctype = ctype.replace("xhtml+xml", "html")
+    if "xml" in ctype or suffix in {".xml", ".xsd"}:
         try:
-            canonical_xml = ET.canonicalize(xml_data=decoded)
+            canonical_xml = ET.canonicalize(xml_data=decode_text(body, ctype))
             root = ET.fromstring(canonical_xml)
             for node in root.iter():
                 if node.text is not None and not node.text.strip():
@@ -982,53 +1099,121 @@ def extract_content(
     ):
         try:
             return normalize_html(
-                body.decode("utf-8", "replace"),
+                decode_text(body, ctype, sniff_html=True),
                 include_selector=include_selector,
                 ignore_selectors=ignore_selectors,
             ), "html", None
         except Exception as exc:
             return None, "html", f"HTML normalization failed: {type(exc).__name__}: {exc}"
 
-    if "wordprocessingml.document" in ctype or suffix == ".docx":
-        try:
-            from docx import Document
-            return normalize_text("\n".join(p.text for p in Document(io.BytesIO(body)).paragraphs)), "docx", None
-        except Exception as exc:
-            return None, "docx", f"{type(exc).__name__}: {exc}"
-    if "spreadsheetml.sheet" in ctype or suffix in {".xlsx", ".xlsm"}:
-        try:
-            from openpyxl import load_workbook
-            wb = load_workbook(io.BytesIO(body), read_only=True, data_only=True)
-            rows = []
-            for sheet in wb.worksheets:
-                rows.append(f"[SHEET] {sheet.title}")
-                for row in sheet.iter_rows(values_only=True):
-                    line = " | ".join("" if value is None else str(value) for value in row).strip()
-                    if line:
-                        rows.append(line)
-            return normalize_text("\n".join(rows)), "xlsx", None
-        except Exception as exc:
-            return None, "xlsx", f"{type(exc).__name__}: {exc}"
-    if "presentationml.presentation" in ctype or suffix == ".pptx":
-        try:
-            from pptx import Presentation
-            parts = []
-            for index, slide in enumerate(Presentation(io.BytesIO(body)).slides, start=1):
-                parts.append(f"[SLIDE] {index}")
-                parts.extend(
-                    getattr(shape, "text", "")
-                    for shape in slide.shapes
-                    if getattr(shape, "text", "")
-                )
-            return normalize_text("\n".join(parts)), "pptx", None
-        except Exception as exc:
-            return None, "pptx", f"{type(exc).__name__}: {exc}"
     if "csv" in ctype or suffix == ".csv":
         try:
-            rows = [" | ".join(row) for row in csv.reader(io.StringIO(body.decode("utf-8-sig", "replace")))]
+            rows = [
+                " | ".join(cell.replace("|", r"\|") for cell in row)
+                for row in csv.reader(io.StringIO(decode_text(body, ctype)))
+            ]
             return normalize_text("\n".join(rows)), "csv", None
         except Exception as exc:
             return None, "csv", f"{type(exc).__name__}: {exc}"
     if ctype.startswith("text/") or suffix == ".txt":
-        return normalize_text(body.decode("utf-8", "replace")), "text", None
+        return normalize_text(decode_text(body, ctype)), "text", None
     return None, "binary", "Unsupported content type for text extraction"
+
+
+def _docx_table_rows(table) -> list[list[str]]:
+    rows = []
+    for row in table.rows:
+        cells, seen = [], set()
+        for cell in row.cells:
+            # Horizontally merged cells are returned once per grid column.
+            if id(cell._tc) in seen:
+                continue
+            seen.add(id(cell._tc))
+            cells.append(cell.text)
+        rows.append(cells)
+    return rows
+
+
+def _extract_docx(body: bytes):
+    """Body paragraphs AND tables in document order, plus headers and footers."""
+    try:
+        from docx import Document
+        from docx.table import Table
+        from docx.text.paragraph import Paragraph
+
+        document = Document(io.BytesIO(body))
+        parts = []
+        for child in document.element.body.iterchildren():
+            tag = child.tag.rsplit("}", 1)[-1]
+            if tag == "p":
+                parts.append(Paragraph(child, document).text)
+            elif tag == "tbl":
+                parts.append(_table_to_markdown(_docx_table_rows(Table(child, document))))
+        seen_margins = set()
+        for section in document.sections:
+            for label, part in (("HEADER", section.header), ("FOOTER", section.footer)):
+                text = "\n".join(paragraph.text for paragraph in part.paragraphs).strip()
+                if text and (label, text) not in seen_margins:
+                    seen_margins.add((label, text))
+                    parts.append(f"[{label}] {text}")
+        return normalize_text("\n".join(parts)), "docx", None
+    except Exception as exc:
+        return None, "docx", f"{type(exc).__name__}: {exc}"
+
+
+def _extract_xlsx(body: bytes):
+    """Cached cell values; a formula is shown when no cached value was saved."""
+    try:
+        from openpyxl import load_workbook
+
+        values = load_workbook(io.BytesIO(body), read_only=True, data_only=True)
+        formulas = load_workbook(io.BytesIO(body), read_only=True, data_only=False)
+        rows = []
+        for sheet, formula_sheet in zip(values.worksheets, formulas.worksheets):
+            rows.append(f"[SHEET] {sheet.title}")
+            for value_row, formula_row in zip(
+                sheet.iter_rows(values_only=True), formula_sheet.iter_rows(values_only=True)
+            ):
+                cells = []
+                for value, formula in zip(value_row, formula_row):
+                    if value is None and isinstance(formula, str) and formula.startswith("="):
+                        value = formula
+                    cells.append("" if value is None else str(value))
+                line = " | ".join(cells).strip()
+                if line.strip(" |"):
+                    rows.append(line)
+        return normalize_text("\n".join(rows)), "xlsx", None
+    except Exception as exc:
+        return None, "xlsx", f"{type(exc).__name__}: {exc}"
+
+
+def _pptx_shape_text(shape) -> list[str]:
+    from pptx.enum.shapes import MSO_SHAPE_TYPE
+
+    if shape.shape_type == MSO_SHAPE_TYPE.GROUP:
+        return [text for child in shape.shapes for text in _pptx_shape_text(child)]
+    if getattr(shape, "has_table", False) and shape.has_table:
+        rows = [[cell.text for cell in row.cells] for row in shape.table.rows]
+        return [_table_to_markdown(rows)]
+    if getattr(shape, "has_text_frame", False) and shape.has_text_frame:
+        return [shape.text_frame.text]
+    return []
+
+
+def _extract_pptx(body: bytes):
+    """Slide text including grouped shapes, tables and speaker notes."""
+    try:
+        from pptx import Presentation
+
+        parts = []
+        for index, slide in enumerate(Presentation(io.BytesIO(body)).slides, start=1):
+            parts.append(f"[SLIDE] {index}")
+            for shape in slide.shapes:
+                parts.extend(text for text in _pptx_shape_text(shape) if text.strip())
+            if slide.has_notes_slide:
+                notes = slide.notes_slide.notes_text_frame
+                if notes is not None and notes.text.strip():
+                    parts.append(f"[NOTES] {notes.text}")
+        return normalize_text("\n".join(parts)), "pptx", None
+    except Exception as exc:
+        return None, "pptx", f"{type(exc).__name__}: {exc}"

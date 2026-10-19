@@ -84,23 +84,16 @@ def is_current_extractor_version(version: object) -> bool:
     )
 
 
-def should_rebaseline_extractor(old: dict | None, current: dict) -> bool:
-    """Avoid treating extractor upgrades as content changes when source content is stable.
+def source_unchanged(old: dict | None, current: dict) -> bool:
+    """True when the fetched source is provably identical to the trusted baseline.
 
-    Exact raw-byte equality remains the strongest signal and covers PDFs/ZIPs.
-    For HTML, the response may contain rotating request metadata (for example,
-    Cloudflare challenge IDs/timestamps). If the stable HTML comparison signature
-    is unchanged, differing raw bytes do not mean the regulator's page changed.
+    Exact raw-byte equality is the strongest signal and covers PDFs/ZIPs. For
+    HTML the response may carry rotating request metadata (Cloudflare challenge
+    IDs/timestamps), so an unchanged comparison signature also counts. A baseline
+    recorded during an extraction error is not comparable: its raw hash belongs
+    to the failed response while its text belongs to an older one.
     """
-    if not old or old.get("extractor_version") == current.get("extractor_version"):
-        return False
-    # Docling can be unavailable temporarily (for example, on a cold model cache).
-    # Mark that parser profile explicitly so a same-bytes transition between
-    # Docling and the deterministic PDF fallback is a baseline migration, not a
-    # regulatory change. Never hide a source-byte change behind this rule.
-    if not is_current_extractor_version(current.get("extractor_version")):
-        return False
-    if not old.get("raw_hash"):
+    if not old or old.get("extraction_error") or not old.get("raw_hash"):
         return False
     if old.get("raw_hash") == current.get("raw_hash"):
         return True
@@ -112,6 +105,39 @@ def should_rebaseline_extractor(old: dict | None, current: dict) -> bool:
         current_signature = current.get("html_comparison_hash")
         return bool(old_signature and current_signature and old_signature == current_signature)
     return False
+
+
+def should_rebaseline_extractor(old: dict | None, current: dict) -> bool:
+    """Avoid treating extractor upgrades as content changes when source content is stable."""
+    if not old or old.get("extractor_version") == current.get("extractor_version"):
+        return False
+    # Docling can be unavailable temporarily (for example, on a cold model cache).
+    # Mark that parser profile explicitly so a same-bytes transition between
+    # Docling and the deterministic PDF fallback is a baseline migration, not a
+    # regulatory change. Never hide a source-byte change behind this rule.
+    if not is_current_extractor_version(current.get("extractor_version")):
+        return False
+    return source_unchanged(old, current)
+
+
+def is_extraction_drift(old: dict | None, current: dict) -> bool:
+    """Same source, different extracted text, no extractor version change.
+
+    Library upgrades, OCR engine builds and wall-clock-limited Docling runs can
+    change extracted text for byte-identical sources. That is a parser event,
+    not a regulatory change: 15 false CHANGED_URL alerts (18-19 Oct 2026) came
+    from exactly this. It is recorded as a baseline migration with its reason.
+    """
+    if not old or not old.get("normalized_hash") or not current.get("normalized_hash"):
+        return False
+    if old["normalized_hash"] == current["normalized_hash"]:
+        return False
+    return source_unchanged(old, current)
+
+
+def _write_evidence(*args, **kwargs) -> str:
+    """Evidence diffs use the configured line budget (the same one the AI sees)."""
+    return write_evidence(*args, max_diff_lines=int(DEFAULTS.get("max_diff_lines", 250)), **kwargs)
 
 
 def read_snapshot(record: dict | None) -> str | None:
@@ -173,6 +199,27 @@ def write_html_snapshot(uid: str, body: bytes, html_hash: str) -> str:
     if not path.exists():
         path.write_bytes(body)
     return str(path.relative_to(ROOT))
+
+
+def store_html_snapshot(uid: str, body: bytes, item: dict, old: dict | None) -> str:
+    """Save the fetched HTML, reusing the previous file when only volatile tokens differ.
+
+    Pages behind Cloudflare return different bytes on every request, so a new
+    ~100 KB snapshot used to be committed per page per run. When the comparison
+    signature is unchanged the previous snapshot is equivalent evidence; the
+    record then points at it (and its hash) instead of adding a new file.
+    """
+    if (
+        old
+        and old.get("html_snapshot_location")
+        and old.get("html_hash")
+        and old.get("html_comparison_hash")
+        and old.get("html_comparison_hash") == item.get("html_comparison_hash")
+        and (ROOT / str(old["html_snapshot_location"])).is_file()
+    ):
+        item["html_hash"] = old["html_hash"]
+        return str(old["html_snapshot_location"])
+    return write_html_snapshot(uid, body, item["html_hash"])
 
 
 def write_file_snapshot(uid: str, body: bytes, content_hash: str | None, extraction_type: str) -> str:
@@ -319,11 +366,16 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             and old_type in {"html", "pdf", "zip"}
             and not is_current_extractor_version(old.get("extractor_version"))
         )
+        # A record that failed extraction must be re-fetched and re-extracted on
+        # every run: a 304 would otherwise report the unextractable response as
+        # unchanged and hide the error until the next full refresh.
+        error_retry_required = bool(old and old.get("extraction_error"))
         force_full_fetch = (
             refresh_required
             or html_baseline_missing
             or file_baseline_missing
             or extractor_baseline_missing
+            or error_retry_required
         )
         item["full_fetch_forced"] = force_full_fetch
         item["html_baseline_forced"] = html_baseline_missing and not refresh_required
@@ -356,10 +408,16 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             if old:
                 for key in (
                     "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_snapshot_location",
-                    "file_snapshot_location", "extraction_type", "extractor_version", "snapshot_location", "evidence_location", "relevance"
+                    "file_snapshot_location", "extraction_type", "extractor_version", "snapshot_location", "evidence_location", "relevance",
+                    "extraction_error", "error_signature", "error_since",
                 ):
                     if key in old:
                         item[key] = old[key]
+                # 304 responses usually omit entity headers; keep the known ones.
+                if not item.get("content_type"):
+                    item["content_type"] = old.get("content_type")
+                if item.get("content_length") is None:
+                    item["content_length"] = old.get("content_length")
             return item, None, None
 
         extraction_profile = {}
@@ -435,6 +493,13 @@ def process_source(
     discovery_root = discovery_data_dir or DATA
     urls = discover(source, discovery_root)
     discovery = load_discovery_metadata(source.id, discovery_root)
+    if discovery.get("state") == "COMPLETE" and not urls:
+        # A "complete" crawl that found nothing is a discovery failure, never
+        # proof that every monitored URL was removed. Treating it as complete
+        # used to wipe the whole baseline and alert REMOVED_URL for every page.
+        discovery = dict(discovery)
+        discovery["state"] = "FAILED"
+        discovery["reason"] = "discovery reported COMPLETE but returned no in-scope URLs"
 
     # Discovery integrity is a hard gate. A PAUSED, DEGRADED, or FAILED
     # inventory is never fed into the expensive content-processing stage.
@@ -450,6 +515,7 @@ def process_source(
             "removed": 0,
             "unchanged": 0,
             "baseline_migration": 0,
+            "extraction_drift": 0,
             "fetch_error": 0,
             "extraction_error": 0,
             "not_modified": 0,
@@ -551,7 +617,7 @@ def process_source(
                 event_id = build_event_id("FETCH_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), error=item["fetch_error"], observation_id=now)
                 evidence = None
                 if not dry_run:
-                    evidence = write_evidence(
+                    evidence = _write_evidence(
                         ROOT, "FETCH_ERROR", event_id, url, now, old, item,
                         old_text if old_text is not None else read_snapshot(old),
                         None,
@@ -564,11 +630,11 @@ def process_source(
 
             if item.get("extraction_error"):
                 if html_body is not None and item.get("html_hash") and not dry_run:
-                    item["html_snapshot_location"] = write_html_snapshot(uid, html_body, item["html_hash"])
+                    item["html_snapshot_location"] = store_html_snapshot(uid, html_body, item, old)
                 event_id = build_event_id("EXTRACTION_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), after_hash=item.get("raw_hash"), error=item["extraction_error"], observation_id=now)
                 evidence = None
                 if not dry_run:
-                    evidence = write_evidence(
+                    evidence = _write_evidence(
                         ROOT, "EXTRACTION_ERROR", event_id, url, now, old, item,
                         old_text if old_text is not None else read_snapshot(old),
                         None,
@@ -592,8 +658,13 @@ def process_source(
                     old["html_comparison_hash"] = html_comparison_hash(old_html)
 
             extractor_rebaseline = should_rebaseline_extractor(old, item)
+            extraction_drift = not extractor_rebaseline and is_extraction_drift(old, item)
+            if extractor_rebaseline:
+                item["migration_reason"] = "extractor_version"
+            elif extraction_drift:
+                item["migration_reason"] = "extraction_drift"
             event_type, migrated = classify_change(
-                old, item, force_baseline_migration=extractor_rebaseline
+                old, item, force_baseline_migration=extractor_rebaseline or extraction_drift
             )
             if event_type == "NEW_URL":
                 new_items.append(item)
@@ -610,7 +681,7 @@ def process_source(
                 if not dry_run:
                     item["snapshot_location"] = write_snapshot(uid, text, item["normalized_hash"])
                     if html_body is not None and item.get("html_hash"):
-                        item["html_snapshot_location"] = write_html_snapshot(uid, html_body, item["html_hash"])
+                        item["html_snapshot_location"] = store_html_snapshot(uid, html_body, item, old)
                 current[uid] = item
 
             if event_type != "UNCHANGED_URL" or migrated:
@@ -626,7 +697,7 @@ def process_source(
                     evidence = None
                     if event_type in {"NEW_URL","CHANGED_URL","HTML_SOURCE_CHANGED"}:
                         evidence = (
-                            write_evidence(
+                            _write_evidence(
                                 ROOT, event_type, event_id, url, now, old, item,
                                 old_text if old_text is not None else read_snapshot(old),
                                 text,
@@ -638,21 +709,56 @@ def process_source(
                         )
                         item["evidence_location"] = evidence
                         current[uid] = item
-                    events.append({"event_id":event_id,"event_type":event_type,"url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":item}})
+                    event = {"event_id":event_id,"event_type":event_type,"url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":item}}
+                    if item.get("migration_reason"):
+                        event["migration_reason"] = item["migration_reason"]
+                    events.append(event)
 
     removed_items = []
+    removal_guard = None
     if discovery.get("state") == "COMPLETE":
-        for uid, old in previous.items():
-            if uid not in current:
-                removed_items.append(old)
-                url = old.get("canonical_url","")
-                event_id = build_event_id("REMOVED_URL", uid, old.get("normalized_hash") or old.get("raw_hash") or old.get("content_hash"))
-                evidence = (
-                    write_evidence(ROOT, "REMOVED_URL", event_id, url, now, old, None, read_snapshot(old), None)
-                    if not dry_run
-                    else None
-                )
-                events.append({"event_id":event_id,"event_type":"REMOVED_URL","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":None}})
+        missing = [(uid, old) for uid, old in previous.items() if uid not in current]
+        max_ratio = float(DEFAULTS.get("max_removal_ratio", 0.5))
+        allow_mass_removal = source.id in {
+            value.strip() for value in os.getenv("REGMON_ALLOW_MASS_REMOVAL", "").split(",") if value.strip()
+        }
+        if (
+            missing
+            and not allow_mass_removal
+            and len(missing) >= 3
+            and len(missing) / max(1, len(previous)) > max_ratio
+        ):
+            # Losing most of a source in one run is far more often a crawler,
+            # scope or site-layout problem than a regulator retiring pages. Hold
+            # the removals: keep the records, mark them missing, alert once, and
+            # let an operator confirm with REGMON_ALLOW_MASS_REMOVAL=<source id>.
+            since = min(str(old.get("missing_since") or now) for _uid, old in missing)
+            for uid, old in missing:
+                held = dict(old)
+                held["missing_since"] = old.get("missing_since") or now
+                current[uid] = held
+            removal_guard = {
+                "source_id": source.id,
+                "held_removals": len(missing),
+                "previous_count": len(previous),
+                "ratio": round(len(missing) / max(1, len(previous)), 3),
+                "max_ratio": max_ratio,
+                "missing_since": since,
+                "notification_id": "removal-guard-" + hashlib.sha256(
+                    "|".join([source.id, since, *sorted(uid for uid, _old in missing)]).encode("utf-8")
+                ).hexdigest(),
+            }
+            missing = []
+        for uid, old in missing:
+            removed_items.append(old)
+            url = old.get("canonical_url","")
+            event_id = build_event_id("REMOVED_URL", uid, old.get("normalized_hash") or old.get("raw_hash") or old.get("content_hash"))
+            evidence = (
+                _write_evidence(ROOT, "REMOVED_URL", event_id, url, now, old, None, read_snapshot(old), None)
+                if not dry_run
+                else None
+            )
+            events.append({"event_id":event_id,"event_type":"REMOVED_URL","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":None}})
 
     new_ids = {item["url_id"] for item in new_items}
     changed_ids = {entry["after"]["url_id"] for entry in changed_items}
@@ -922,8 +1028,10 @@ def process_source(
         "changed":len(changed_items),
         "source_changed":len(source_changed_items),
         "removed":len(removed_items),
+        "removal_held":removal_guard["held_removals"] if removal_guard else 0,
         "unchanged":len(unchanged_items),
         "baseline_migration":len(migration_items),
+        "extraction_drift":sum(1 for entry in migration_items if entry["after"].get("migration_reason") == "extraction_drift"),
         "fetch_error":sum(1 for x in current.values() if x.get("fetch_error")),
         "extraction_error":sum(1 for x in current.values() if x.get("extraction_error")),
         "not_modified":sum(1 for x in current.values() if x.get("not_modified")),
@@ -945,6 +1053,7 @@ def process_source(
             "schema_version":2,"run_id":run_id,"generated_at":now,
             "source":{"id":source.id,"name":source.name,"regulator":source.regulator,"seeds":list(source.seed_urls),"allowed_prefixes":list(source.allowed_prefixes),"initial_baseline":initial_baseline},
             "discovery":discovery,
+            "removal_guard":removal_guard,
             "baseline_update_allowed":discovery.get("state") == "COMPLETE",
             "change_detector":{"raw_hash":"SHA-256 retrieved response bytes","html_hash":"SHA-256 full HTML response body; retained for raw snapshots and evidence", "html_comparison_hash":"HTML comparison signature with volatile Cloudflare challenge IDs/timestamps stabilized","normalized_hash":"SHA-256 extracted normalized content","classification_hash":"normalized_hash with separate HTML_SOURCE_CHANGED events","http_validators":"ETag/Last-Modified used only for conditional fetch optimization"},
             "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
@@ -988,6 +1097,7 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
         "sources":[r["report"]["source"] for r in source_results],
         "counts":aggregate_counts,
         "discovery":[r["report"].get("discovery",{}) for r in source_results],
+        "removal_guards":[r["report"]["removal_guard"] for r in source_results if r["report"].get("removal_guard")],
         "baseline_update_allowed":all(r["report"].get("baseline_update_allowed",False) for r in source_results),
         "change_detector":{"classification_hash":"normalized_hash","html_hash":"stored full HTML response body", "html_comparison_hash":"volatile Cloudflare challenge IDs/timestamps stabilized before markup-only classification","http_validators":"ETag/Last-Modified are optimization hints only"},
         "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},

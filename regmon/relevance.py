@@ -9,7 +9,10 @@ REGULATORY_SIGNALS = (
     "policy","requirement","rule","directive","regulation","mandate","disclosure",
     "governance","risk","consumer-protection",
 )
-UTILITY_PATH_SEGMENTS = {"about","contact","careers","jobs","privacy","accessibility","cookies","login","sitemap"}
+# Only segments that are site utilities on any regulator site. Words such as
+# "privacy", "about" or "accessibility" are also regulatory subjects
+# (/rules/privacy, /about/regulations) and used to suppress AI and alerts.
+UTILITY_PATH_SEGMENTS = {"contact","contact-us","careers","jobs","login","logout","sign-in","sitemap","cookies","cookie-policy"}
 DOCUMENT_SUFFIXES = (".pdf",".doc",".docx",".xls",".xlsx",".ppt",".pptx",".zip",".csv")
 
 def triage(url: str, page_text: str="", content_type: str="") -> dict:
