@@ -292,6 +292,7 @@ def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
     archive, infos = _validated_zip_infos(body)
     try:
         extracted = []
+        member_profiles = []
         skipped_assets = []
         for info in sorted(infos, key=lambda entry: (entry.filename.casefold(), entry.filename)):
             if info.is_dir():
@@ -318,20 +319,27 @@ def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
             text, kind, error = extract_content(
                 name, media_type, member_bytes, _extraction_profile=member_profile
             )
-            if extraction_profile is not None:
-                member_kind = member_profile.get("profile", "native")
-                if member_kind == "fallback":
-                    extraction_profile["profile"] = "fallback"
-                elif member_kind == "docling" and extraction_profile.get("profile") != "fallback":
-                    extraction_profile["profile"] = "docling"
             if error:
                 raise ValueError(f"Could not extract ZIP member {name}: {error}")
+            member_profiles.append((name, member_profile.get("profile", "native")))
             if text is not None and text.strip():
                 extracted.append((name, kind, text))
 
         if not extracted:
             suffix_note = f" (ignored {len(skipped_assets)} media/style assets)" if skipped_assets else ""
             raise ValueError("ZIP archive contains no supported extractable documents" + suffix_note)
+
+        # A ZIP may contain several PDFs and only some may use Docling.
+        # Record a deterministic per-member profile fingerprint; a single
+        # aggregate label like "fallback" could otherwise hide one member's
+        # Docling<->fallback transition and cause a false change alert.
+        if extraction_profile is not None and any(profile != "native" for _, profile in member_profiles):
+            profile_material = json.dumps(
+                member_profiles, ensure_ascii=False, separators=(",", ":")
+            ).encode("utf-8")
+            extraction_profile["profile"] = (
+                "zipprofile-" + hashlib.sha256(profile_material).hexdigest()[:16]
+            )
 
         parts = []
         for name, kind, text in extracted:
