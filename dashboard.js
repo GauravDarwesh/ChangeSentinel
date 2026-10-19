@@ -347,13 +347,15 @@ function makeItems() {
   return items;
 }
 function selectedItem() { return state.items.find(item => item.url_id === state.selectedId) || null; }
-function setStatus(value, failed) {
+function setStatus(value, failed, warning) {
+  const headerColor = failed ? "#d34d5b" : warning ? "#c18a23" : "#26a879";
+  const sideColor = failed ? "#d34d5b" : warning ? "#d7a23e" : "#4ed3a0";
   $("connectionStatus").textContent = value;
-  $("sideStatus").textContent = failed ? "GitHub data unavailable" : value;
-  $("headerDot").style.background = failed ? "#d34d5b" : "#26a879";
-  $("headerDot").style.boxShadow = failed ? "none" : "0 0 0 4px #26a87920";
-  $("sideDot").style.background = failed ? "#d34d5b" : "#4ed3a0";
-  $("sideDot").style.boxShadow = failed ? "none" : "0 0 0 4px rgba(78,211,160,.12)";
+  $("sideStatus").textContent = failed ? "GitHub data unavailable" : warning ? "Monitoring needs attention" : value;
+  $("headerDot").style.background = headerColor;
+  $("headerDot").style.boxShadow = failed || warning ? "none" : "0 0 0 4px #26a87920";
+  $("sideDot").style.background = sideColor;
+  $("sideDot").style.boxShadow = failed || warning ? "none" : "0 0 0 4px rgba(78,211,160,.12)";
 }
 function showToast(message) {
   const toast = $("toast");
@@ -1093,7 +1095,24 @@ async function loadData(showErrors) {
       if (exists) state.selectedId = id;
     }
     renderAll();
-    setStatus("Dashboard data loaded", false);
+    const generatedAt = state.report.generated_at ? new Date(state.report.generated_at) : null;
+    const hasValidTimestamp = generatedAt && !Number.isNaN(generatedAt.getTime());
+    const discoveryEntries = Array.isArray(state.report.discovery)
+      ? state.report.discovery
+      : state.report.discovery && typeof state.report.discovery === "object"
+        ? [state.report.discovery] : [];
+    const incompleteDiscovery = discoveryEntries.some(entry =>
+      !entry || String(entry.state || "UNKNOWN").toUpperCase() !== "COMPLETE"
+    );
+    if (!hasValidTimestamp) {
+      setStatus("Monitoring report timestamp unavailable", false, true);
+    } else if (state.report.baseline_update_allowed === false || incompleteDiscovery) {
+      setStatus("Latest scan incomplete · " + relativeTime(generatedAt.toISOString()), false, true);
+    } else if (Date.now() - generatedAt.getTime() > 8 * 60 * 60 * 1000) {
+      setStatus("Monitoring data stale · last saved scan " + relativeTime(generatedAt.toISOString()), false, true);
+    } else {
+      setStatus("Latest saved scan · " + relativeTime(generatedAt.toISOString()), false, false);
+    }
   } catch (error) {
     setStatus("Stored data unavailable", true);
     $("loadError").textContent = "Could not load dashboard data: " + String(error.message || error) +
