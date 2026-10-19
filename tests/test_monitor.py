@@ -2076,6 +2076,27 @@ class TestAdaptiveContentExtraction(unittest.TestCase):
 
 
 class TestExtractorVersionMigration(unittest.TestCase):
+
+    def test_layout_pdf_v3_rebaselines_existing_pdf_bytes_after_table_fix(self):
+        from regmon.content import CONTENT_EXTRACTOR_VERSION
+        from regmon.engine import should_rebaseline_extractor
+
+        self.assertEqual(CONTENT_EXTRACTOR_VERSION, "layout-pdf-html-v3")
+        old = {
+            "extraction_type": "pdf",
+            "extractor_version": "layout-pdf-html-v2",
+            "raw_hash": "same-pdf-bytes",
+            "normalized_hash": "fragmented-table-text",
+        }
+        current = {
+            "extraction_type": "pdf",
+            "extractor_version": CONTENT_EXTRACTOR_VERSION,
+            "raw_hash": "same-pdf-bytes",
+            "normalized_hash": "corrected-table-text",
+        }
+        self.assertTrue(should_rebaseline_extractor(old, current))
+
+
     def test_pdf_parser_upgrade_forces_unconditional_refetch(self):
         from regmon.content import CONTENT_EXTRACTOR_VERSION
         from regmon.engine import make_current_item
