@@ -68,10 +68,8 @@ def build_synthetic_pdf() -> bytes:
 
 
 def markdown_tables(text: str) -> list[list[list[str]]]:
-    """Parse Markdown tables while respecting escaped literal pipe characters."""
+    """Parse pipe tables from Markdown with tolerant blank-line handling."""
     lines = str(text or "").splitlines()
-    tables: list[list[list[str]]] = []
-    index = 0
 
     def split_row(line: str) -> list[str]:
         value = line.strip()
@@ -98,22 +96,36 @@ def markdown_tables(text: str) -> list[list[list[str]]]:
             re.fullmatch(r":?-{3,}:?", cell.replace(" ", "")) for cell in cells
         )
 
-    while index < len(lines) - 1:
-        header = split_row(lines[index])
-        separator = split_row(lines[index + 1])
-        if not header or not is_separator(separator):
+    tables: list[list[list[str]]] = []
+    index = 0
+    while index < len(lines):
+        separator = split_row(lines[index])
+        if not is_separator(separator):
             index += 1
             continue
+
+        # Docling may emit a blank line or a [TABLE] marker around a table.
+        # Find the closest preceding pipe row as its header.
+        header_index = index - 1
+        while header_index >= 0 and not split_row(lines[header_index]):
+            header_index -= 1
+        if header_index < 0:
+            index += 1
+            continue
+
+        header = split_row(lines[header_index])
         table = [header]
-        index += 2
-        while index < len(lines):
-            row = split_row(lines[index])
+        data_index = index + 1
+        while data_index < len(lines):
+            row = split_row(lines[data_index])
             if not row:
                 break
             if not is_separator(row):
                 table.append(row)
-            index += 1
-        tables.append(table)
+            data_index += 1
+        if len(table) > 1:
+            tables.append(table)
+        index = max(data_index, index + 1)
     return tables
 
 
