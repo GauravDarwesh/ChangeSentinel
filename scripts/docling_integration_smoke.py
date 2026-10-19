@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import io
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -18,7 +19,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
-from regmon.content import _markdown_table_count
+from regmon.content import _markdown_table_count, extract_content
 from regmon.docling_extractor import extract_pdf_with_docling
 
 
@@ -100,29 +101,60 @@ def main() -> None:
     )
     if not corpus_pdf.is_file():
         raise SystemExit(f"Saved PDF corpus fixture is missing: {corpus_pdf}")
-    from pypdf import PdfReader
     saved_pdf = corpus_pdf.read_bytes()
-    expected_pages = len(PdfReader(io.BytesIO(saved_pdf), strict=False).pages)
-    corpus_markdown, corpus_error = extract_pdf_with_docling(
-        saved_pdf, expected_pages=expected_pages
+    extraction_profile = {}
+    corpus_markdown, corpus_kind, corpus_error = extract_content(
+        "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=58f18be6-92e4-497c-ad0d-db006caa2e03",
+        "application/pdf",
+        saved_pdf,
+        _extraction_profile=extraction_profile,
     )
     if corpus_error:
-        raise SystemExit(f"Docling saved-PDF smoke test failed: {corpus_error}")
-    if not corpus_markdown or _markdown_table_count(corpus_markdown) < 1:
+        raise SystemExit(f"Hybrid FR 2028B extraction failed: {corpus_error}")
+    if corpus_kind != "pdf" or not corpus_markdown:
+        raise SystemExit("Hybrid FR 2028B extraction failed: no normalized PDF text returned")
+    if _markdown_table_count(corpus_markdown) < 1:
         raise SystemExit(
-            "Docling saved-PDF smoke test failed: FR 2028B output has no structured Markdown table"
+            "Hybrid FR 2028B extraction failed: no structured Markdown table was preserved"
         )
     for expected in ("FR 2028B", "Rate of Interest", "Next Date"):
         if expected.casefold() not in corpus_markdown.casefold():
             raise SystemExit(
-                f"Docling saved-PDF smoke test failed: missing expected source text {expected!r}"
+                f"Hybrid FR 2028B extraction failed: missing expected source text {expected!r}"
             )
+
+    # Compare the hybrid output against the previously trusted extraction of the
+    # same original PDF bytes. This catches severe content loss from any table
+    # reconstruction model even when the resulting Markdown looks structured.
+    prior_text_path = Path(
+        "data/snapshots/"
+        "b6f72f741a1c310ad512e3f1482069fbd7f08af4b0e35d12535f15804e72c7e0-"
+        "ded2cc403a02db9d5b29e4baa14ce4f8a4bee3da548b793d440bab8aa4ed6f41.txt"
+    )
+    if not prior_text_path.is_file():
+        raise SystemExit(f"Trusted FR 2028B comparison text is missing: {prior_text_path}")
+    prior_text = prior_text_path.read_text(encoding="utf-8")
+    token_pattern = re.compile(r"[a-z0-9]+(?:[/%._-][a-z0-9]+)*", re.IGNORECASE)
+    prior_tokens = {token.casefold() for token in token_pattern.findall(prior_text) if len(token) >= 3}
+    candidate_tokens = {token.casefold() for token in token_pattern.findall(corpus_markdown) if len(token) >= 3}
+    missing_tokens = sorted(prior_tokens - candidate_tokens)
+    token_coverage = (
+        (len(prior_tokens) - len(missing_tokens)) / len(prior_tokens)
+        if prior_tokens else 1.0
+    )
+    if token_coverage < 0.90:
+        raise SystemExit(
+            "Hybrid FR 2028B extraction lost too much previously trusted text: "
+            f"token coverage={token_coverage:.1%}; missing sample={missing_tokens[:30]}"
+        )
     results.append({
-        "fixture": "saved-federal-reserve-fr-2028b-pdf",
+        "fixture": "saved-federal-reserve-fr-2028b-pdf-through-hybrid-pipeline",
         "input_bytes": len(saved_pdf),
-        "pages": expected_pages,
+        "selected_extractor_profile": extraction_profile.get("profile", "unknown"),
         "markdown_characters": len(corpus_markdown),
         "markdown_tables": _markdown_table_count(corpus_markdown),
+        "trusted_token_coverage": round(token_coverage, 4),
+        "missing_trusted_token_sample": missing_tokens[:10],
         "values_verified": 3,
     })
 
