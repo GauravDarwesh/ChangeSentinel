@@ -1,0 +1,37 @@
+Reporting Forms
+Information collections under review Recent Reporting Form Updates Application filing information Micro Data Reference Manual Savings and Loan Holding Company Reporting Forms Incorporating FASB Accounting Standards Codification References into Federal Reserve Report (16 KB PDF)
+FR 2028b/s
+Survey of Terms of Bank Lending to Farmers/Prime Rate Supplement
+Form:
+Current (384.5 KB .PDF)
+Instructions:
+Current (46.4 KB .PDF)
+Description:
+The FR 2028B collects information on farm loans made by commercial banks during a representative week. The collected data include price and nonprice terms. The respondents provide information on the stated rate of interest on the loan and the frequency with which interest is compounded, and other important loan terms, including loan size, commitment status, maturity, collateralization, the purpose of the loan and loan risk ratings. The FR 2028S, a companion report, collects institutions' prime interest rate for the days reported. Together with the Survey of Terms of Business Lending (FR 2028A), these reports constitute the Survey of Terms of Lending (STBL) report series.
+OMB Control Number:
+7100-0061
+Purpose:
+The data provide measures of the cost of credit and lending terms of commercial banks. Respondents use their data to assess their loan pricing policies, and the U.S. Department of Agriculture (USDA) derives two quarterly interest rate series from the data. Aggregate burden for the report is quite low because of the small sample size and the relatively infrequent (quarterly) reporting; however, individual banks view reporting the detailed loan data as costly. While the complex and detailed nature of these data makes responding to the report demanding, it also makes the survey an invaluable source of information for analysis of the banking industry.
+Background:
+The Federal Reserve has collected information on lending practices since 1939. In 1977 the FR 2028A/B reports replaced the earlier Quarterly Interest Rate Survey (QIRS) and supplemental Interest Rates Charged on Selected Types of Loans (FR 835a) reports. The FR 2028B expanded the data collection to a representative sample of commercial banks reporting all farm loans over $1,000. Since that time, the report has been revised to accommodate changing lending practices. With the May 1997 survey, interest rate adjustment and maturity items were added and redefined, a risk-rating item was added, and all respondents began to report the FR 2028S. With the May 2006 survey, the minimum size of loans reported was increased to $3,000.
+Respondent Panel:
+The panel consists of a stratified sample of insured commercial banks that generate a significant volume of farm loans. Participation is voluntary.
+Frequency:
+Quarterly, as of the first full business week of February, May, August, and November.
+Public Release:
+Aggregate data are published in the quarterly Survey of Terms of Bank Lending (E.2) statistical release (http://www.federalreserve.gov/releases/) and in the Federal Reserve Bulletin. Survey of Terms of Bank Lending to Farmers data are published in the Agricultural Finance Databook - Quarterly Series (E.15). In addition, this report may be used to help meet provisions of Sections 122 and 477 of the FDIC Corporation Improvement Act (FDICIA) of 1991, which require collection and publication of information on commercial bank lending to small businesses and small farms.
+Historical
+Forms and Instructions
+Form: September 2023 (383.6 KB .PDF) | Instructions: September 2023 (46.4 KB .PDF)
+Form: December 2020 (363.1 KB .PDF) | Instructions: December 2020 (46.6 KB .PDF)
+Form: July 2017 (363.4 KB .PDF) | Instructions: July 2017 (46.6 KB .PDF)
+Form: August 2015 (367.1 KB .PDF) | Instructions: August 2015 (46.6 KB .PDF)
+Form: August 2012 (367.6 KB .PDF) | Instructions: August 2012 (46.6 KB .PDF)
+Form: December 2011 (17.7 KB .PDF) | Instructions: December 2011 (72.1 KB .PDF)
+Form: February 2009 (19.6 KB .PDF) | Instructions: February 2009 (89.0 KB .PDF)
+Form: May 2006 (21.7 KB .PDF) | Instructions: May 2006 (89.5 KB .PDF)
+Form: March 2003 (14.7 KB .PDF) | Instructions: March 2003 (29.6 KB .PDF)
+Form: March 2001 (13.5 KB .PDF) | Instructions: March 2001 (27.8 KB .PDF)
+Form: January 2000 (11.7 KB .PDF) | Instructions: January 2000 (38.1 KB .PDF)
+Form: May 1997 (14.8 KB .PDF) | Instructions: May 1997 (38.1 KB .PDF)
+Last Update: September 29, 2026

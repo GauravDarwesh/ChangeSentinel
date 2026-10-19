@@ -1,0 +1,32 @@
+Reporting Forms
+Information collections under review Recent Reporting Form Updates Application filing information Micro Data Reference Manual Savings and Loan Holding Company Reporting Forms Incorporating FASB Accounting Standards Codification References into Federal Reserve Report (16 KB PDF)
+FR 2028D
+Small Business Lending Survey
+Form:
+Current (526.7 KB .PDF)
+Instructions:
+Current (256.2 KB .PDF)
+Description:
+The FR 2028D collects information on the availability and cost of loans to small businesses from domestically chartered commercial banks during each quarter. The survey provides unique quantitative and qualitative information on small business commercial and industrial (C&I) loans, including amounts, interest rates, terms, bank credit standards, applications and quality of applicants, and loan demand. Together with the Survey of Terms of Bank Lending to Farmers (FR 2028B) and the Prime Rate Supplement of the Survey of Terms of Lending (FR 2028S), these reports constitute the Survey of Small Business and Farm Lending (SSBFL) report series.
+OMB Control Number:
+7100-0061
+Purpose:
+The data provide information that the Federal Reserve can use to monitor developments in the availability and cost of bank loans to small businesses. Bank lending to small businesses is critical for employment and economic growth at the local, regional, and national levels because it is a primary source of funding for these businesses. It also contributes to a better understanding of the role of community banks in providing loans to small businesses and on small business access to credit in local communities.
+Background:
+The Federal Reserve has collected information on lending practices since 1939. In 1977 the FR 2028A/B replaced the earlier Quarterly Interest Rate Survey (QIRS) and supplemental Interest Rates Charged on Selected Types of Loans (FR 835a). The FR 2028A had been periodically revised to accommodate changes in lending practices. However the data were found to be insufficient for addressing questions about small business lending during the 2007-8 financial crisis, the accompanying recession, and subsequent recovery. For this reason the FR 2028A was discontinued and replaced with the FR 2028D, which combined with other Federal Reserve data collections on large business loans will provide a better understanding of overall business lending conditions.
+Respondent Panel:
+The panel consists of a stratified sample of domestically chartered commercial banks. Participation is voluntary.
+Frequency:
+Quarterly, distributed during the second month of each quarter with responses based on loan activity over the previous quarter.
+Public Release:
+Aggregate data are published in the quarterly Small Business Lending statistical release and are available on the Federal Reserve Bank of Kansas City website. In addition, data may be used to help meet provisions of sections 122 and 477 of the FDIC Improvement Act (FDICIA) of 1991, which require collection and publication of information on commercial bank lending to small businesses and small farms.
+Historical
+Forms and Instructions
+Form: June 2025 (458.3 KB .PDF) | Instructions: June 2025 (256.2 KB .PDF)
+Form: December 2024 (405.5 KB .PDF) | Instructions: December 2024 (255.7 KB .PDF)
+Form: September 2023 (405.8 KB .PDF) | Instructions: September 2023 (255.7 KB .PDF)
+Form: March 2023 (419.0 KB .PDF) | Instructions: March 2023 (260.8 KB .PDF)
+Form: December 2020 (388.8 KB .PDF) | Instructions: December 2020 (265.0 KB .PDF)
+Form: August 2018 (414.1 KB .PDF) | Instructions: August 2018 (126.2 KB .PDF)
+Form: December 2017 (414.1 KB .PDF) | Instructions: December 2017 (101.4 KB .PDF)
+Last Update: September 29, 2026
