@@ -196,7 +196,9 @@ class TestDashboardNotificationContract(unittest.TestCase):
             'inventory: new URL("./data/latest.json", document.baseURI).href',
             'async function fetchDataAsset(key, required)',
             'RAW + "/" + path',
-            'Dashboard data loaded',
+            'Latest saved scan',
+            'Monitoring data stale',
+            'Latest scan incomplete',
         ):
             with self.subTest(token=token):
                 self.assertIn(token, script)
