@@ -286,6 +286,109 @@ def main() -> None:
         "values_verified": 3,
     })
 
+    # A second saved regulator form covers a different layout: FR 2028D is a
+    # seven-page survey with both binary selection grids and a multi-row rating
+    # grid. This guards against overfitting the table fallback to FR 2028B/S.
+    second_pdf = Path(
+        "data/snapshots/files/"
+        "5ccb64a08420a94259ab9286787d345cf0ec757a33ff3919d6d8efe4bcbd41db-"
+        "db4bcb7b0f68a4208041e61f6fb6800f8e82ded8b26e1f7cfc461ebd06bb9cf4.pdf"
+    )
+    if not second_pdf.is_file():
+        raise SystemExit(f"Saved FR 2028D PDF fixture is missing: {second_pdf}")
+    second_bytes = second_pdf.read_bytes()
+    second_profile = {}
+    second_markdown, second_kind, second_error = extract_content(
+        "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=f59446fb-8250-4fbe-9db3-411d107bda3a",
+        "application/pdf",
+        second_bytes,
+        _extraction_profile=second_profile,
+    )
+    if second_error:
+        raise SystemExit(f"Hybrid FR 2028D extraction failed: {second_error}")
+    if second_kind != "pdf" or not second_markdown:
+        raise SystemExit("Hybrid FR 2028D extraction failed: no normalized PDF text returned")
+
+    second_tables = markdown_tables(second_markdown)
+    if not second_tables:
+        raise SystemExit(
+            "Hybrid FR 2028D extraction failed: no structured Markdown table was preserved"
+        )
+    second_cell_text = normalize_label_text(
+        " ".join(cell for table in second_tables for row in table for cell in row)
+    )
+    second_expected_labels = ("QSBL", "Not Important", "Very Important", "HR19")
+    second_missing_labels = [
+        label for label in second_expected_labels
+        if normalize_label_text(label) not in second_cell_text
+    ]
+    if second_missing_labels:
+        raise SystemExit(
+            "Hybrid FR 2028D extraction failed: expected rating-grid labels are not "
+            "inside structured table cells: " + ", ".join(second_missing_labels)
+        )
+
+    second_nonempty_cells = [
+        cell for table in second_tables for row in table for cell in row if cell.strip()
+    ]
+    second_widest_table = max(
+        (max((len(row) for row in table), default=0) for table in second_tables),
+        default=0,
+    )
+    if len(second_nonempty_cells) < 12 or second_widest_table < 4:
+        raise SystemExit(
+            "Hybrid FR 2028D extraction failed: rating-grid structure is unexpectedly "
+            f"sparse (non-empty cells={len(second_nonempty_cells)}, "
+            f"widest table={second_widest_table} columns)"
+        )
+    for expected in ("FR 2028D", "Regulatory policy", "Interest rates"):
+        if expected.casefold() not in second_markdown.casefold():
+            raise SystemExit(
+                f"Hybrid FR 2028D extraction failed: missing expected source text {expected!r}"
+            )
+
+    second_prior_path = Path(
+        "data/snapshots/"
+        "5ccb64a08420a94259ab9286787d345cf0ec757a33ff3919d6d8efe4bcbd41db-"
+        "c18a579e49c192f6fa2fcb43d3dd6d796ada1c10dbaf119937aff0d455774f47.txt"
+    )
+    if not second_prior_path.is_file():
+        raise SystemExit(f"Trusted FR 2028D comparison text is missing: {second_prior_path}")
+    second_prior_text = second_prior_path.read_text(encoding="utf-8")
+    second_prior_tokens = {
+        token.casefold()
+        for token in token_pattern.findall(second_prior_text)
+        if len(token) >= 3
+    }
+    second_candidate_tokens = {
+        token.casefold()
+        for token in token_pattern.findall(second_markdown)
+        if len(token) >= 3
+    }
+    second_missing_tokens = sorted(second_prior_tokens - second_candidate_tokens)
+    second_token_coverage = (
+        (len(second_prior_tokens) - len(second_missing_tokens)) / len(second_prior_tokens)
+        if second_prior_tokens else 1.0
+    )
+    if second_token_coverage < 0.90:
+        raise SystemExit(
+            "Hybrid FR 2028D extraction lost too much previously trusted text: "
+            f"token coverage={second_token_coverage:.1%}; "
+            f"missing sample={second_missing_tokens[:30]}"
+        )
+    results.append({
+        "fixture": "saved-federal-reserve-fr-2028d-pdf-through-hybrid-pipeline",
+        "input_bytes": len(second_bytes),
+        "selected_extractor_profile": second_profile.get("profile", "unknown"),
+        "markdown_characters": len(second_markdown),
+        "markdown_tables": len(second_tables),
+        "structured_nonempty_cells": len(second_nonempty_cells),
+        "widest_table_columns": second_widest_table,
+        "critical_table_labels_verified": list(second_expected_labels),
+        "trusted_token_coverage": round(second_token_coverage, 4),
+        "missing_trusted_token_sample": second_missing_tokens[:10],
+    })
+
     print(json.dumps({"ok": True, "results": results}, indent=2))
 
 
