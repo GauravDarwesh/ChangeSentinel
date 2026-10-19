@@ -353,8 +353,15 @@ function renderMonitorList() {
     if (state.filter === "CHANGES" && status.kind !== "change") return false;
     if (state.filter === "ERRORS" && status.kind !== "error") return false;
     const source = sourceForItem(item);
-    const haystack = [itemTitle(item), item.canonical_url, item.source_id, source.name, source.regulator].join(" ").toLowerCase();
+    const info = state.docInfo[item.url_id] || {};
+    const haystack = [itemTitle(item), info.subtitle, item.canonical_url, item.source_id, source.name, source.regulator].join(" ").toLowerCase();
     return !query || haystack.includes(query);
+  }).slice().sort((a, b) => {
+    const priority = item => {
+      const status = itemStatus(item);
+      return status.kind === "error" ? 0 : status.kind === "change" ? 1 : status.kind === "pending" ? 2 : 3;
+    };
+    return priority(a) - priority(b) || itemTitle(a).localeCompare(itemTitle(b));
   });
   $("monitorCount").textContent = all.length + (all.length === 1 ? " page" : " pages") +
     (all.length === state.items.length ? "" : " shown");
