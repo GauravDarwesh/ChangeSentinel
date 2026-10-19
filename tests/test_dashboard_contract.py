@@ -202,13 +202,15 @@ class TestDashboardNotificationContract(unittest.TestCase):
     def test_parseable_but_malformed_dashboard_assets_are_rejected(self):
         source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
         for token in (
-            "function validateDataAssets(assets)",
-            "report.schema_version !== 2",
-            "inventory.schema_version !== 2",
-            "if (!Array.isArray(historyData)) invalid.push(DATA_PATHS.history)",
-            "!isPlainObject(notifications.sent_events)",
-            "!isPlainObject(outbox.pending_events)",
-            "!Array.isArray(config.sources)",
+            "function isValidDataAssetShape(key, value)",
+            'case "report":',
+            'case "inventory":',
+            'case "history":',
+            'case "notifications":',
+            'case "outbox":',
+            'case "config":',
+            "if (!isValidDataAssetShape(key, value))",
+            'failures.push(host + " returned JSON with invalid schema")',
             'throw new Error("Invalid monitoring data schema: " + invalid.join(", "))',
             "validateDataAssets({ report, inventory, historyData, notifications, outbox, config })",
         ):
