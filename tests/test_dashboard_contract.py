@@ -108,6 +108,9 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 self.assertNotIn('<aside class="sidebar"', source)
                 self.assertNotIn('class="hero-radar"', source)
                 self.assertNotIn('class="signal-panel"', source)
+                # Retain foundational styles for secondary views and user-input dialogs.
+                for selector in (".modal-head", ".modal-body", ".field-input", ".notification-layout", ".event-feed", ".run-feed", ".view-header-note"):
+                    self.assertIn(selector, source)
                 for view_id in ("monitorsView", "detailView", "changesView", "runsView", "notificationsView"):
                     self.assertIn('id="' + view_id + '"', source)
                 for signal_id in ("signalStableCount", "signalChangedCount", "signalIssueCount", "signalWaitingCount"):
