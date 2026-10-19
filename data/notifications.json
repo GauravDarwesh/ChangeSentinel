@@ -101,5 +101,5 @@
       "superseded_reason": "Extraction-only false positive: the PDF/ZIP bytes were identical before and after table-text extraction changed. Corrected baseline run 20261019T060232Z-47ff22d4 migrated 16 records with 0 content changes and 0 AI candidates. This delivery was sent, but it must not be treated as a verified regulatory change."
     }
   },
-  "updated_at": "2026-10-19T06:06:37.764Z"
+  "updated_at": "2026-10-19T13:08:21.046781+00:00"
 }

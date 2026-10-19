@@ -1,12 +1,13 @@
 # Regulatory Monitoring Report
 
-Run: 20261019T060232Z-47ff22d4
-Generated: 2026-10-19T06:02:34.387024+00:00
+Run: 20261019T125308Z-2e8488a5
+Generated: 2026-10-19T12:53:09.322882+00:00
 
 ## Aggregate counts
 
 | Metric | Value |
 | --- | ---: |
+| ai_backlog_pending | 0 |
 | ai_deferred | 0 |
 | ai_error | 0 |
 | ai_invalid | 0 |
