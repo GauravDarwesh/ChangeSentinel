@@ -236,13 +236,26 @@ def build_ai_candidate_pool(
     for item in unchanged_items:
         if item.get("ai_pending") and item["url_id"] not in candidates:
             candidates[item["url_id"]] = item
-    return sorted(
-        (
-            item for item in candidates.values()
-            if item.get("relevance", {}).get("candidate", True)
-        ),
-        key=lambda item: item["url_id"],
-    )
+    eligible = [
+        item for item in candidates.values()
+        if item.get("relevance", {}).get("candidate", True)
+    ]
+
+    def scheduling_key(item: dict) -> tuple[int, str, str]:
+        pending = item.get("ai_pending")
+        if isinstance(pending, dict) and pending.get("after_hash") == item.get("normalized_hash"):
+            # Resume oldest/least-recently-attempted backlog first. A stable URL
+            # tie-breaker keeps the ordering deterministic without starving later work.
+            last_attempt = str(
+                pending.get("last_attempt_at")
+                or pending.get("first_deferred_at")
+                or pending.get("timestamp")
+                or ""
+            )
+            return (0, last_attempt, item["url_id"])
+        return (1, "", item["url_id"])
+
+    return sorted(eligible, key=scheduling_key)
 
 
 def candidate_event_type(item: dict, new_ids: set[str], changed_ids: set[str]) -> str:
@@ -793,10 +806,51 @@ def process_source(
                     if ai.get("status") == "ok":
                         item.pop("ai_pending", None)
                         current[item["url_id"]] = item
-                    elif isinstance(item.get("ai_pending"), dict):
-                        pending = dict(item["ai_pending"])
-                        pending["attempt_count"] = int(pending.get("attempt_count", 0)) + 1
-                        pending["last_attempt_at"] = now
+                    else:
+                        event = candidate_event_type(item, new_ids, changed_ids)
+                        prior = item.get("ai_pending")
+                        if (
+                            isinstance(prior, dict)
+                            and prior.get("event_type") == event
+                            and prior.get("after_hash") == item.get("normalized_hash")
+                            and prior.get("event_id") == result.get("event_id")
+                        ):
+                            pending = dict(prior)
+                            pending["attempt_count"] = int(pending.get("attempt_count", 0)) + 1
+                            pending["last_attempt_at"] = now
+                        else:
+                            event_record = next(
+                                (
+                                    value for value in events
+                                    if value.get("url_id") == item["url_id"]
+                                    and value.get("event_type") == event
+                                ),
+                                None,
+                            )
+                            old_item = previous.get(item["url_id"]) or {}
+                            pending = {
+                                "event_type": event,
+                                "event_id": result.get("event_id") or (
+                                    event_record.get("event_id") if event_record else
+                                    build_event_id(
+                                        event, item["url_id"],
+                                        old_item.get("normalized_hash") or old_item.get("raw_hash") or old_item.get("content_hash"),
+                                        item.get("normalized_hash"),
+                                    )
+                                ),
+                                "timestamp": event_record.get("timestamp") if event_record else now,
+                                "evidence_location": (
+                                    result.get("evidence_location")
+                                    or (event_record.get("evidence_location") if event_record else None)
+                                    or item.get("evidence_location")
+                                ),
+                                "before_hash": old_item.get("normalized_hash") or old_item.get("raw_hash") or old_item.get("content_hash"),
+                                "after_hash": item.get("normalized_hash"),
+                                "first_deferred_at": now,
+                                "attempt_count": 1,
+                                "deferral_count": 0,
+                                "last_attempt_at": now,
+                            }
                         item["ai_pending"] = pending
                         current[item["url_id"]] = item
                 except Exception as exc:
