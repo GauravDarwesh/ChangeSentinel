@@ -152,10 +152,10 @@ class TestDashboardNotificationContract(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertIn(token, source)
         html = (ROOT / "index.html").read_text(encoding="utf-8")
-        self.assertIn('height:min(76dvh,940px)', html)
+        self.assertIn('height:min(74dvh,880px)', html)
         self.assertIn('.pdf-viewer-shell.is-expanded .pdf-snapshot-frame', html)
-        self.assertIn('@media (max-width:760px)', html)
-        self.assertIn('height:64svh', html)
+        self.assertIn('@media(max-width:780px)', html)
+        self.assertIn('height:66svh', html)
 
     def test_dashboard_navigation_resets_scroll_when_changing_view_or_opening_a_monitor(self):
         source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
@@ -174,6 +174,25 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 self.assertNotIn('id="premium-responsive-redesign"', source)
                 self.assertNotIn('id="professional-ux-rebuild"', source)
                 self.assertNotIn('id="dashboard-ux-followup"', source)
+
+    def test_detail_tabs_prioritize_snapshot_and_change_evidence_on_all_entrypoints(self):
+        for filename in ("index.html", "dashboard-v2.html"):
+            with self.subTest(filename=filename):
+                source = (ROOT / filename).read_text(encoding="utf-8")
+                start = source.index('<nav id="detailTabs"')
+                end = source.index("</nav>", start)
+                tabs = source[start:end]
+                snapshot = tabs.index('data-detail-tab="snapshot"')
+                changes = tabs.index('data-detail-tab="changes"')
+                html_source = tabs.index('data-detail-tab="source"')
+                details = tabs.index('data-detail-tab="details"')
+                self.assertLess(snapshot, changes)
+                self.assertLess(changes, html_source)
+                self.assertLess(html_source, details)
+
+    def test_selected_monitor_scrolls_to_the_detail_workspace(self):
+        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        self.assertIn('detail.scrollIntoView({ block: "start", behavior: "auto" })', source)
 
     def test_mobile_inventory_progressively_discloses_the_full_watchlist(self):
         source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
