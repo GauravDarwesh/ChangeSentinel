@@ -81,16 +81,16 @@ def markdown_tables(text: str) -> list[list[list[str]]]:
         cell: list[str] = []
         escaped = False
         for char in value[1:-1]:
-            if char == "|" and not escaped:
-                cells.append("".join(cell).replace(r"\\|", "|").strip())
+            if char == "\\":
+                cells.append("".join(cell).replace(r"\|", "|").strip())
                 cell = []
                 continue
             cell.append(char)
-            if char == "\\\\" and not escaped:
+            if char == "\\":
                 escaped = True
             else:
                 escaped = False
-        cells.append("".join(cell).replace(r"\\|", "|").strip())
+                cells.append("".join(cell).replace(r"\|", "|").strip())
         return cells
 
     def is_separator(cells: list[str]) -> bool:
@@ -118,7 +118,7 @@ def markdown_tables(text: str) -> list[list[list[str]]]:
 
 
 def normalize_label_text(value: str) -> str:
-    return re.sub(r"\\s+", " ", str(value or "")).strip().casefold()
+    return re.sub(r"\s+", " ", str(value or "")).strip().casefold()
 
 
 def main() -> None:
