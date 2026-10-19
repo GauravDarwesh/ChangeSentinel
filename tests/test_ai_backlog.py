@@ -106,7 +106,7 @@ class TestAIDeferredBacklog(unittest.TestCase):
             },
         }
         fresh = {"url_id": "0-new", "relevance": {"candidate": True}}
-        pool = build_ai_candidate_pool([], [], [newer, fresh, older])
+        pool = build_ai_candidate_pool([fresh], [], [newer, older])
         self.assertEqual([item["url_id"] for item in pool], ["z-later-url", "a-earlier-url", "0-new"])
 
     def test_first_baseline_does_not_create_ai_backlog(self):
