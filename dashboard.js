@@ -2,13 +2,23 @@
 
 const RAW = "https://raw.githubusercontent.com/GauravDarwesh/ChangeSentinel/main";
 const REPO = "https://github.com/GauravDarwesh/ChangeSentinel";
+const DATA_PATHS = {
+  report: "data/report.json",
+  inventory: "data/latest.json",
+  history: "data/history/index.json",
+  notifications: "data/notifications.json",
+  outbox: "data/notification-outbox.json",
+  config: "config/sources.json"
+};
+// Load core state from the same origin as GitHub Pages first. Keep the raw GitHub
+// URL as a fallback so older deployments can still recover while Pages publishes.
 const ENDPOINTS = {
-  report: RAW + "/data/report.json",
-  inventory: RAW + "/data/latest.json",
-  history: RAW + "/data/history/index.json",
-  notifications: RAW + "/data/notifications.json",
-  outbox: RAW + "/data/notification-outbox.json",
-  config: RAW + "/config/sources.json"
+  report: new URL("./data/report.json", document.baseURI).href,
+  inventory: new URL("./data/latest.json", document.baseURI).href,
+  history: new URL("./data/history/index.json", document.baseURI).href,
+  notifications: new URL("./data/notifications.json", document.baseURI).href,
+  outbox: new URL("./data/notification-outbox.json", document.baseURI).href,
+  config: new URL("./config/sources.json", document.baseURI).href
 };
 const $ = id => document.getElementById(id);
 const state = {
@@ -25,6 +35,27 @@ function esc(value) {
   })[ch]);
 }
 function bust(url) { return url + (url.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now(); }
+async function fetchDataAsset(key, required) {
+  const path = DATA_PATHS[key];
+  const candidates = Array.from(new Set([ENDPOINTS[key], RAW + "/" + path].filter(Boolean)));
+  const failures = [];
+  for (const url of candidates) {
+    let host = url;
+    try { host = new URL(url).host; } catch (_) {}
+    try {
+      const response = await fetch(bust(url), { cache: "no-store" });
+      if (!response.ok) {
+        failures.push(host + " returned HTTP " + response.status);
+        continue;
+      }
+      return await response.json();
+    } catch (error) {
+      failures.push(host + " request failed: " + String(error.message || error));
+    }
+  }
+  if (!required) return null;
+  throw new Error(path + " could not be loaded (" + failures.join("; ") + ")");
+}
 function fmt(value) {
   if (!value) return "—";
   const d = new Date(value);
@@ -1029,17 +1060,20 @@ async function loadData(showErrors) {
   setStatus("Refreshing stored state…", false);
   if (showErrors !== false) $("loadError").hidden = true;
   try {
-    const urls = [ENDPOINTS.report, ENDPOINTS.inventory, ENDPOINTS.history, ENDPOINTS.notifications, ENDPOINTS.outbox, ENDPOINTS.config];
-    const responses = await Promise.all(urls.map(url => fetch(bust(url), { cache: "no-store" }).catch(() => null)));
-    if (!responses[0] || !responses[0].ok) throw new Error("Latest report is unavailable");
-    if (!responses[1] || !responses[1].ok) throw new Error("Latest monitored URL inventory is unavailable");
-    if (!responses[5] || !responses[5].ok) throw new Error("Source configuration is unavailable");
-    state.report = await responses[0].json();
-    state.inventory = await responses[1].json();
-    state.history = responses[2] && responses[2].ok ? await responses[2].json() : [];
-    state.notifications = responses[3] && responses[3].ok ? await responses[3].json() : {};
-    state.outbox = responses[4] && responses[4].ok ? await responses[4].json() : {};
-    state.config = await responses[5].json();
+    const [report, inventory, historyData, notifications, outbox, config] = await Promise.all([
+      fetchDataAsset("report", true),
+      fetchDataAsset("inventory", true),
+      fetchDataAsset("history", false),
+      fetchDataAsset("notifications", false),
+      fetchDataAsset("outbox", false),
+      fetchDataAsset("config", true)
+    ]);
+    state.report = report && typeof report === "object" ? report : {};
+    state.inventory = inventory && typeof inventory === "object" ? inventory : {};
+    state.history = Array.isArray(historyData) ? historyData : [];
+    state.notifications = notifications && typeof notifications === "object" ? notifications : {};
+    state.outbox = outbox && typeof outbox === "object" ? outbox : {};
+    state.config = config && typeof config === "object" ? config : {};
     const hash = location.hash.match(/monitor=([^&]+)/);
     if (hash && !state.selectedId) {
       const id = decodeURIComponent(hash[1]);
@@ -1047,15 +1081,15 @@ async function loadData(showErrors) {
       if (exists) state.selectedId = id;
     }
     renderAll();
-    setStatus("Connected to GitHub", false);
+    setStatus("Dashboard data loaded", false);
   } catch (error) {
     setStatus("Stored data unavailable", true);
     $("loadError").textContent = "Could not load dashboard data: " + String(error.message || error) +
-      ". Check the GitHub Pages deployment or press Refresh data to retry.";
+      ". The dashboard tried the published Pages data and the GitHub raw-data fallback. Press Refresh to retry.";
     $("loadError").hidden = false;
     if (!state.items.length) {
       $("monitorList").innerHTML = emptyState("Stored monitoring data unavailable",
-        "The dashboard is online, but the report, source configuration, or URL inventory could not be fetched from GitHub.", "!");
+        "The dashboard is online, but the report, source configuration, or URL inventory could not be fetched. Check the error details above.", "!");
     }
   }
 }

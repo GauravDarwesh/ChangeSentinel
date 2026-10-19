@@ -228,6 +228,15 @@ jobs:
           echo "Monitoring state could not be published safely. No conflict resolution was attempted."
           exit 1
 
+      - name: Publish latest monitoring data to Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # Workflow commits created with GITHUB_TOKEN do not trigger the normal push
+          # workflow chain, so explicitly publish the updated JSON data files.
+          gh workflow run pages.yml --repo "${{ github.repository }}" --ref main
+
       - name: Continue paused crawl
         if: ${{ steps.crawl-status.outputs.paused == 'true' }}
         env:
