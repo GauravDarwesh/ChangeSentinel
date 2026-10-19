@@ -9,3 +9,5 @@ python-pptx>=1.0,<2
 pdfplumber>=0.11.7,<0.12
 pypdfium2>=5.0,<6
 pytesseract>=0.3.13,<0.4
+docling-slim[convert-core,format-pdf,models-local]==2.140.0
+docling-ibm-models[opencv-python-headless]>=4.0.2,<5

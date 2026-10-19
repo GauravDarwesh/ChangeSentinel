@@ -66,6 +66,15 @@ def should_force_full_fetch(old: dict | None, now: str, interval_hours: float) -
     return age_hours >= max(0.0, interval_hours)
 
 
+def is_current_extractor_version(version: object) -> bool:
+    """Recognize stable variants of the current hybrid PDF extraction pipeline."""
+    value = str(version or "")
+    return (
+        value in {CONTENT_EXTRACTOR_VERSION, CONTENT_EXTRACTOR_VERSION + "-fallback"}
+        or value.startswith(CONTENT_EXTRACTOR_VERSION + "-zipprofile-")
+    )
+
+
 def should_rebaseline_extractor(old: dict | None, current: dict) -> bool:
     """Avoid treating extractor upgrades as content changes when source content is stable.
 
@@ -76,7 +85,11 @@ def should_rebaseline_extractor(old: dict | None, current: dict) -> bool:
     """
     if not old or old.get("extractor_version") == current.get("extractor_version"):
         return False
-    if current.get("extractor_version") != CONTENT_EXTRACTOR_VERSION:
+    # Docling can be unavailable temporarily (for example, on a cold model cache).
+    # Mark that parser profile explicitly so a same-bytes transition between
+    # Docling and the deterministic PDF fallback is a baseline migration, not a
+    # regulatory change. Never hide a source-byte change behind this rule.
+    if not is_current_extractor_version(current.get("extractor_version")):
         return False
     if not old.get("raw_hash"):
         return False
@@ -220,7 +233,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         extractor_baseline_missing = bool(
             old
             and old_type in {"html", "pdf", "zip"}
-            and old.get("extractor_version") != CONTENT_EXTRACTOR_VERSION
+            and not is_current_extractor_version(old.get("extractor_version"))
         )
         force_full_fetch = (
             refresh_required
@@ -265,16 +278,24 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
                         item[key] = old[key]
             return item, None, None
 
+        extraction_profile = {}
         text, extraction_type, extraction_error = extract_content(
             url,
             result.content_type,
             result.body,
             include_selector=source.include_selector,
             ignore_selectors=source.ignore_selectors,
+            _extraction_profile=extraction_profile,
         )
         item["extraction_type"] = extraction_type
         if extraction_type in {"html", "pdf", "zip"}:
-            item["extractor_version"] = CONTENT_EXTRACTOR_VERSION
+            parser_profile = str(extraction_profile.get("profile") or "native")
+            if extraction_type == "zip" and parser_profile.startswith("zipprofile-"):
+                item["extractor_version"] = CONTENT_EXTRACTOR_VERSION + "-" + parser_profile
+            elif extraction_type in {"pdf", "zip"} and parser_profile == "fallback":
+                item["extractor_version"] = CONTENT_EXTRACTOR_VERSION + "-fallback"
+            else:
+                item["extractor_version"] = CONTENT_EXTRACTOR_VERSION
         file_body = result.body if extraction_type in {"pdf", "zip"} else None
         if extraction_error:
             item["extraction_error"] = extraction_error

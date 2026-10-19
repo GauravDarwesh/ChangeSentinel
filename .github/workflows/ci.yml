@@ -20,8 +20,17 @@ jobs:
         with:
           python-version: "3.13"
           cache: pip
-      - run: python -m pip install -r requirements.txt
+      - name: Cache Docling model artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/docling
+            ~/.cache/huggingface
+          key: docling-models-v2.140.0-${{ runner.os }}-py313-layout-table-v1
+      - run: python -m pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt reportlab==4.4.4
       - run: python -m unittest discover -s tests -p "test*.py" -v
+      - name: Exercise real Docling table reconstruction on a synthetic PDF
+        run: python scripts/docling_integration_smoke.py
       - name: Validate active-source state against committed history
         run: python -m regmon.validate_state --source all --data-dir data --config config/sources.json
       - run: python -m compileall -q regmon

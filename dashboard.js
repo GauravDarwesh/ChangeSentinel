@@ -48,7 +48,12 @@ async function fetchDataAsset(key, required) {
         failures.push(host + " returned HTTP " + response.status);
         continue;
       }
-      return await response.json();
+      const value = await response.json();
+      if (!isValidDataAssetShape(key, value)) {
+        failures.push(host + " returned JSON with invalid schema");
+        continue;
+      }
+      return value;
     } catch (error) {
       failures.push(host + " request failed: " + String(error.message || error));
     }
@@ -56,6 +61,47 @@ async function fetchDataAsset(key, required) {
   if (!required) return null;
   throw new Error(path + " could not be loaded (" + failures.join("; ") + ")");
 }
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+function isValidDataAssetShape(key, value) {
+  switch (key) {
+    case "report":
+      return isPlainObject(value) && value.schema_version === 2 &&
+        isPlainObject(value.counts) && Array.isArray(value.sources) &&
+        Array.isArray(value.discovery) && typeof value.baseline_update_allowed === "boolean";
+    case "inventory":
+      return isPlainObject(value) && value.schema_version === 2 &&
+        isPlainObject(value.sources);
+    case "history":
+      return Array.isArray(value);
+    case "notifications":
+      return isPlainObject(value) && isPlainObject(value.sent_events);
+    case "outbox":
+      return isPlainObject(value) && isPlainObject(value.pending_events);
+    case "config":
+      return isPlainObject(value) && Array.isArray(value.sources);
+    default:
+      return false;
+  }
+}
+function validateDataAssets(assets) {
+  const values = {
+    report: assets.report,
+    inventory: assets.inventory,
+    history: assets.historyData,
+    notifications: assets.notifications,
+    outbox: assets.outbox,
+    config: assets.config
+  };
+  const invalid = Object.entries(values)
+    .filter(([key, value]) => !isValidDataAssetShape(key, value))
+    .map(([key]) => DATA_PATHS[key]);
+  if (invalid.length) {
+    throw new Error("Invalid monitoring data schema: " + invalid.join(", "));
+  }
+}
+
 function fmt(value) {
   if (!value) return "—";
   const d = new Date(value);
@@ -347,13 +393,15 @@ function makeItems() {
   return items;
 }
 function selectedItem() { return state.items.find(item => item.url_id === state.selectedId) || null; }
-function setStatus(value, failed) {
+function setStatus(value, failed, warning) {
+  const headerColor = failed ? "#d34d5b" : warning ? "#c18a23" : "#26a879";
+  const sideColor = failed ? "#d34d5b" : warning ? "#d7a23e" : "#4ed3a0";
   $("connectionStatus").textContent = value;
-  $("sideStatus").textContent = failed ? "GitHub data unavailable" : value;
-  $("headerDot").style.background = failed ? "#d34d5b" : "#26a879";
-  $("headerDot").style.boxShadow = failed ? "none" : "0 0 0 4px #26a87920";
-  $("sideDot").style.background = failed ? "#d34d5b" : "#4ed3a0";
-  $("sideDot").style.boxShadow = failed ? "none" : "0 0 0 4px rgba(78,211,160,.12)";
+  $("sideStatus").textContent = failed ? "GitHub data unavailable" : warning ? "Monitoring needs attention" : value;
+  $("headerDot").style.background = headerColor;
+  $("headerDot").style.boxShadow = failed || warning ? "none" : "0 0 0 4px #26a87920";
+  $("sideDot").style.background = sideColor;
+  $("sideDot").style.boxShadow = failed || warning ? "none" : "0 0 0 4px rgba(78,211,160,.12)";
 }
 function showToast(message) {
   const toast = $("toast");
@@ -1075,17 +1123,18 @@ async function loadData(showErrors) {
     const [report, inventory, historyData, notifications, outbox, config] = await Promise.all([
       fetchDataAsset("report", true),
       fetchDataAsset("inventory", true),
-      fetchDataAsset("history", false),
-      fetchDataAsset("notifications", false),
-      fetchDataAsset("outbox", false),
+      fetchDataAsset("history", true),
+      fetchDataAsset("notifications", true),
+      fetchDataAsset("outbox", true),
       fetchDataAsset("config", true)
     ]);
-    state.report = report && typeof report === "object" ? report : {};
-    state.inventory = inventory && typeof inventory === "object" ? inventory : {};
-    state.history = Array.isArray(historyData) ? historyData : [];
-    state.notifications = notifications && typeof notifications === "object" ? notifications : {};
-    state.outbox = outbox && typeof outbox === "object" ? outbox : {};
-    state.config = config && typeof config === "object" ? config : {};
+    validateDataAssets({ report, inventory, historyData, notifications, outbox, config });
+    state.report = report;
+    state.inventory = inventory;
+    state.history = historyData;
+    state.notifications = notifications;
+    state.outbox = outbox;
+    state.config = config;
     const hash = location.hash.match(/monitor=([^&]+)/);
     if (hash && !state.selectedId) {
       const id = decodeURIComponent(hash[1]);
@@ -1093,7 +1142,55 @@ async function loadData(showErrors) {
       if (exists) state.selectedId = id;
     }
     renderAll();
-    setStatus("Dashboard data loaded", false);
+    const generatedAt = state.report.generated_at ? new Date(state.report.generated_at) : null;
+    const hasValidTimestamp = generatedAt && !Number.isNaN(generatedAt.getTime());
+    const discoveryEntries = Array.isArray(state.report.discovery)
+      ? state.report.discovery
+      : state.report.discovery && typeof state.report.discovery === "object"
+        ? [state.report.discovery] : [];
+    // Missing scan coverage metadata is not evidence of a healthy scan.
+    const incompleteDiscovery = discoveryEntries.length === 0 || discoveryEntries.some(entry =>
+      !entry || String(entry.state || "UNKNOWN").toUpperCase() !== "COMPLETE"
+    );
+    const activeIds = activeSourceIds();
+    const sourcesInReport = new Set(
+      reportSources().map(source => source && source.id).filter(Boolean)
+    );
+    const missingActiveSources = activeIds.filter(id => !sourcesInReport.has(id));
+    const coveredSourceCount = activeIds.length - missingActiveSources.length;
+    const lastSavedScan = hasValidTimestamp ? relativeTime(generatedAt.toISOString()) : "timestamp unavailable";
+    const isStale = hasValidTimestamp &&
+      Date.now() - generatedAt.getTime() > 8 * 60 * 60 * 1000;
+    const noActiveSources = activeIds.length === 0;
+    const incompleteScan = noActiveSources ||
+      state.report.baseline_update_allowed !== true || incompleteDiscovery;
+    const coverageNote = noActiveSources
+      ? " · no active sources configured"
+      : missingActiveSources.length
+        ? " · " + coveredSourceCount + "/" + activeIds.length + " active sources represented"
+        : "";
+    if (!hasValidTimestamp) {
+      setStatus("Monitoring report timestamp unavailable", false, true);
+    } else if (incompleteScan) {
+      setStatus(
+        "Latest scan incomplete" + coverageNote + (isStale ? " · data stale" : "") +
+          " · last saved scan " + lastSavedScan,
+        false,
+        true
+      );
+    } else if (missingActiveSources.length) {
+      setStatus(
+        (isStale ? "Monitoring data stale" : "Latest scan partial") +
+          " · " + coveredSourceCount + "/" + activeIds.length + " active sources represented" +
+          " · last saved scan " + lastSavedScan,
+        false,
+        true
+      );
+    } else if (isStale) {
+      setStatus("Monitoring data stale · last saved scan " + lastSavedScan, false, true);
+    } else {
+      setStatus("Latest saved scan · " + lastSavedScan, false, false);
+    }
   } catch (error) {
     setStatus("Stored data unavailable", true);
     $("loadError").textContent = "Could not load dashboard data: " + String(error.message || error) +

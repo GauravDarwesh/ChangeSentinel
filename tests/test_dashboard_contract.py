@@ -188,6 +188,35 @@ class TestDashboardNotificationContract(unittest.TestCase):
 
 
 
+    def test_missing_scan_completeness_metadata_fails_closed(self):
+        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        for token in (
+            "const incompleteDiscovery = discoveryEntries.length === 0 || discoveryEntries.some",
+            "const noActiveSources = activeIds.length === 0",
+            "state.report.baseline_update_allowed !== true || incompleteDiscovery",
+            '" · no active sources configured"',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+
+    def test_parseable_but_malformed_dashboard_assets_are_rejected(self):
+        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        for token in (
+            "function isValidDataAssetShape(key, value)",
+            'case "report":',
+            'case "inventory":',
+            'case "history":',
+            'case "notifications":',
+            'case "outbox":',
+            'case "config":',
+            "if (!isValidDataAssetShape(key, value))",
+            'failures.push(host + " returned JSON with invalid schema")',
+            'throw new Error("Invalid monitoring data schema: " + invalid.join(", "))',
+            "validateDataAssets({ report, inventory, historyData, notifications, outbox, config })",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+
     def test_dashboard_data_is_published_same_origin_with_raw_fallback(self):
         script = (ROOT / "dashboard.js").read_text(encoding="utf-8")
         for token in (
@@ -196,7 +225,12 @@ class TestDashboardNotificationContract(unittest.TestCase):
             'inventory: new URL("./data/latest.json", document.baseURI).href',
             'async function fetchDataAsset(key, required)',
             'RAW + "/" + path',
-            'Dashboard data loaded',
+            'Latest saved scan',
+            'Monitoring data stale',
+            'Latest scan incomplete',
+            'Latest scan partial',
+            'const missingActiveSources = activeIds.filter',
+            'active sources represented',
         ):
             with self.subTest(token=token):
                 self.assertIn(token, script)

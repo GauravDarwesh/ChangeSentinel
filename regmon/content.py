@@ -2,8 +2,10 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import io
 import json
+import logging
 import re
 import stat
 import time
@@ -14,6 +16,7 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
+from regmon.docling_extractor import extract_pdf_with_docling
 
 REMOVE_TAGS = {
     "script", "style", "noscript", "template", "svg", "canvas", "iframe",
@@ -283,10 +286,13 @@ def _office_open_xml_suffix(names: set[str]) -> str | None:
     return None
 
 
-def _extract_zip_bundle(body: bytes):
+def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
+    if extraction_profile is not None:
+        extraction_profile["profile"] = "native"
     archive, infos = _validated_zip_infos(body)
     try:
         extracted = []
+        member_profiles = []
         skipped_assets = []
         for info in sorted(infos, key=lambda entry: (entry.filename.casefold(), entry.filename)):
             if info.is_dir():
@@ -309,15 +315,31 @@ def _extract_zip_bundle(body: bytes):
 
             member_bytes = archive.read(info)
             media_type = ZIP_MEMBER_MEDIA_TYPES.get(suffix, "")
-            text, kind, error = extract_content(name, media_type, member_bytes)
+            member_profile = {}
+            text, kind, error = extract_content(
+                name, media_type, member_bytes, _extraction_profile=member_profile
+            )
             if error:
                 raise ValueError(f"Could not extract ZIP member {name}: {error}")
+            member_profiles.append((name, member_profile.get("profile", "native")))
             if text is not None and text.strip():
                 extracted.append((name, kind, text))
 
         if not extracted:
             suffix_note = f" (ignored {len(skipped_assets)} media/style assets)" if skipped_assets else ""
             raise ValueError("ZIP archive contains no supported extractable documents" + suffix_note)
+
+        # A ZIP may contain several PDFs and only some may use Docling.
+        # Record a deterministic per-member profile fingerprint; a single
+        # aggregate label like "fallback" could otherwise hide one member's
+        # Docling<->fallback transition and cause a false change alert.
+        if extraction_profile is not None and any(profile != "native" for _, profile in member_profiles):
+            profile_material = json.dumps(
+                member_profiles, ensure_ascii=False, separators=(",", ":")
+            ).encode("utf-8")
+            extraction_profile["profile"] = (
+                "zipprofile-" + hashlib.sha256(profile_material).hexdigest()[:16]
+            )
 
         parts = []
         for name, kind, text in extracted:
@@ -332,7 +354,7 @@ def _extract_zip_bundle(body: bytes):
 # Bump this when PDF/HTML normalized output changes. The engine re-fetches these
 # records and records a baseline migration (not a regulatory change) if the
 # original response bytes are identical.
-CONTENT_EXTRACTOR_VERSION = "layout-pdf-html-v3"
+CONTENT_EXTRACTOR_VERSION = "docling-pdf-layout-v4"
 LOW_TEXT_PAGE_CHARS = 40
 MAX_OCR_PAGES = 1000
 OCR_PAGE_TIMEOUT_SECONDS = 15
@@ -427,6 +449,34 @@ def _pdf_text_quality(text: str) -> float:
         - fragments * 7
         - replacement_chars * 20
     )
+
+
+def _markdown_table_count(text: str) -> int:
+    """Count Markdown table separator rows as evidence of reconstructed grids."""
+    count = 0
+    for line in str(text or "").splitlines():
+        value = line.strip()
+        if not (value.startswith("|") and value.endswith("|")):
+            continue
+        cells = [cell.strip() for cell in value[1:-1].split("|")]
+        if len(cells) >= 2 and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells):
+            count += 1
+    return count
+
+
+def _prefer_docling_candidate(existing: str, candidate: str) -> bool:
+    """Use Docling when it yields more table structure without losing most text."""
+    if not str(candidate or "").strip():
+        return False
+    old_tables = _markdown_table_count(existing)
+    new_tables = _markdown_table_count(candidate)
+    if new_tables == 0:
+        return False
+    old_quality = _pdf_text_quality(existing)
+    new_quality = _pdf_text_quality(candidate)
+    if new_tables > old_tables:
+        return new_quality >= max(40, int(old_quality * 0.90))
+    return new_tables >= old_tables and new_quality > max(40, int(old_quality * 1.12))
 
 
 def _table_to_markdown(rows) -> str:
@@ -736,7 +786,11 @@ def _ocr_pdf_pages(body: bytes, page_indexes: list[int]) -> dict[int, str]:
     return results
 
 
-def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
+def _extract_pdf(
+    body: bytes, extraction_profile: dict | None = None
+) -> tuple[str | None, str | None]:
+    if extraction_profile is not None:
+        extraction_profile["profile"] = "native"
     """Fast-first PDF extraction with layout/table and selective OCR fallbacks."""
     from pypdf import PdfReader
 
@@ -818,7 +872,37 @@ def _extract_pdf(body: bytes) -> tuple[str | None, str | None]:
                 # scanned inserts. Ignore empty OCR for that page; fail safely
                 # only if the document as a whole contains no usable text.
 
+        # Keep the established page-by-page extraction as the safe default. For
+        # difficult PDFs only, Docling can replace it when it demonstrably recovers
+        # structured tables without discarding most of the extracted text.
         text = normalize_text("\n\n".join(page_texts))
+        if suspicious_indexes:
+            docling_text, docling_error = extract_pdf_with_docling(
+                body, expected_pages=len(pages)
+            )
+            if docling_text and _prefer_docling_candidate(text, docling_text):
+                text = normalize_text(docling_text)
+                if extraction_profile is not None:
+                    extraction_profile["profile"] = "docling"
+            else:
+                if extraction_profile is not None:
+                    extraction_profile["profile"] = "fallback"
+                if docling_error:
+                    logging.getLogger(__name__).warning(
+                        "Docling fallback unavailable for SHA-256 %s: %s",
+                        hashlib.sha256(body).hexdigest(),
+                        docling_error,
+                    )
+                elif docling_text:
+                    logging.getLogger(__name__).info(
+                        "Docling candidate rejected by conservative content-quality gate "
+                    "(baseline score=%s, Docling score=%s, baseline tables=%s, "
+                    "Docling tables=%s)",
+                    _pdf_text_quality(text),
+                    _pdf_text_quality(docling_text),
+                    _markdown_table_count(text),
+                    _markdown_table_count(docling_text),
+                )
         if not text.strip():
             return None, (
                 "PDF produced no usable text. It may contain outlines, damaged text, or scans that OCR could not read."
@@ -834,7 +918,10 @@ def extract_content(
     body: bytes,
     include_selector: str | None = None,
     ignore_selectors: tuple[str, ...] | list[str] | None = None,
+    _extraction_profile: dict | None = None,
 ):
+    if _extraction_profile is not None:
+        _extraction_profile["profile"] = "native"
     ctype, suffix = (content_type or "").lower(), _extension(url)
     zip_signature = body.startswith(b"PK")
     if "zip" in ctype or suffix == ".zip" or zip_signature:
@@ -855,12 +942,15 @@ def extract_content(
                 ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
             }[office_suffix]
         else:
-            return _extract_zip_bundle(body)
+            return _extract_zip_bundle(body, _extraction_profile)
 
     # Route binary formats before decoding bytes as UTF-8. Decoding a large
     # PDF into a replacement-filled string wastes CPU and can double peak memory.
     if "pdf" in ctype or suffix == ".pdf" or body.startswith(b"%PDF-"):
-        text, error = _extract_pdf(body)
+        if _extraction_profile is None:
+            text, error = _extract_pdf(body)
+        else:
+            text, error = _extract_pdf(body, _extraction_profile)
         return text, "pdf", error
 
     decoded = body.decode("utf-8-sig", "replace")
