@@ -2177,9 +2177,11 @@ class TestExtractorVersionMigration(unittest.TestCase):
             kwargs["_extraction_profile"]["profile"] = "fallback"
             return "Flattened text", "pdf", None
 
-        with patch("regmon.engine.should_force_full_fetch", return_value=False), \\
-             patch("regmon.engine.fetch", return_value=response), \\
-             patch("regmon.engine.extract_content", side_effect=fallback_extract):
+        with (
+            patch("regmon.engine.should_force_full_fetch", return_value=False),
+            patch("regmon.engine.fetch", return_value=response),
+            patch("regmon.engine.extract_content", side_effect=fallback_extract),
+        ):
             item, text, html_body, file_body = make_current_item(
                 url, None, SOURCE, "2026-10-19T10:10:00+00:00"
             )
