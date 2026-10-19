@@ -263,6 +263,8 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 self.assertIn('@media (max-width:760px)', source)
                 self.assertIn('.mobile-wordmark {\n      display:flex !important;', source)
                 self.assertIn('.mobile-wordmark .brand-name {\n      display:block !important;', source)
+                self.assertIn('backdrop-filter:none !important;', source)
+                self.assertIn('-webkit-backdrop-filter:none !important;', source)
                 self.assertIn('.monitor-card {\n      grid-template-columns:20px minmax(0,1fr) !important;', source)
                 self.assertIn('.dashboard-hero { grid-template-columns:minmax(0,1fr);', source)
                 self.assertIn('.dashboard-hero .hero-copy > p { margin-top:9px; font-size:13px;', source)
