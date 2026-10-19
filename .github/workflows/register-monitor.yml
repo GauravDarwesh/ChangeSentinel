@@ -72,6 +72,15 @@ jobs:
           echo "monitor_url=$URL" >> "$GITHUB_OUTPUT"
           echo "created=$CREATED" >> "$GITHUB_OUTPUT"
 
+      - name: Publish updated source configuration to Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # The registration commit uses GITHUB_TOKEN; explicitly refresh the Pages
+          # artifact so the current source configuration is available immediately.
+          gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main
+
       - name: Start first monitoring scan
         env:
           GH_TOKEN: ${{ github.token }}
