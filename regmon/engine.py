@@ -66,6 +66,32 @@ def should_force_full_fetch(old: dict | None, now: str, interval_hours: float) -
     return age_hours >= max(0.0, interval_hours)
 
 
+def should_rebaseline_extractor(old: dict | None, current: dict) -> bool:
+    """Avoid treating extractor upgrades as content changes when source content is stable.
+
+    Exact raw-byte equality remains the strongest signal and covers PDFs/ZIPs.
+    For HTML, the response may contain rotating request metadata (for example,
+    Cloudflare challenge IDs/timestamps). If the stable HTML comparison signature
+    is unchanged, differing raw bytes do not mean the regulator's page changed.
+    """
+    if not old or old.get("extractor_version") == current.get("extractor_version"):
+        return False
+    if current.get("extractor_version") != CONTENT_EXTRACTOR_VERSION:
+        return False
+    if not old.get("raw_hash"):
+        return False
+    if old.get("raw_hash") == current.get("raw_hash"):
+        return True
+    if (
+        str(old.get("extraction_type") or "").lower() == "html"
+        and str(current.get("extraction_type") or "").lower() == "html"
+    ):
+        old_signature = old.get("html_comparison_hash")
+        current_signature = current.get("html_comparison_hash")
+        return bool(old_signature and current_signature and old_signature == current_signature)
+    return False
+
+
 def read_snapshot(record: dict | None) -> str | None:
     if not record or not record.get("snapshot_location"):
         return None
@@ -458,13 +484,7 @@ def process_source(
                     old = dict(old)
                     old["html_comparison_hash"] = html_comparison_hash(old_html)
 
-            extractor_rebaseline = bool(
-                old
-                and old.get("extractor_version") != item.get("extractor_version")
-                and item.get("extractor_version") == CONTENT_EXTRACTOR_VERSION
-                and old.get("raw_hash")
-                and old.get("raw_hash") == item.get("raw_hash")
-            )
+            extractor_rebaseline = should_rebaseline_extractor(old, item)
             event_type, migrated = classify_change(
                 old, item, force_baseline_migration=extractor_rebaseline
             )
