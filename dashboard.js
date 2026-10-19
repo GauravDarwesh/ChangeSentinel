@@ -1007,8 +1007,6 @@ function setSelected(id) {
   renderDetailBody();
   renderViews();
   window.scrollTo({ top: 0, behavior: "auto" });
-  const detail = $("detailView");
-  if (detail) detail.scrollIntoView({ block: "start", behavior: "auto" });
   const item = selectedItem();
   try {
     if (item) history.replaceState(null, "", "#monitor=" + encodeURIComponent(item.url_id));
@@ -1196,7 +1194,6 @@ $("changeItems").addEventListener("click", event => {
 $("refreshBtn").addEventListener("click", () => loadData(true));
 $("backToMonitors").addEventListener("click", () => setSelected(""));
 $("addMonitorBtn").addEventListener("click", openAddMonitor);
-$("watchlistAddMonitorBtn").addEventListener("click", openAddMonitor);
 $("closeAddMonitor").addEventListener("click", () => $("addMonitorDialog").close());
 $("cancelAddMonitor").addEventListener("click", () => $("addMonitorDialog").close());
 $("addMonitorDialog").addEventListener("click", event => {
