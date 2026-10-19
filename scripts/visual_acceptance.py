@@ -234,7 +234,7 @@ def run_browser_checks() -> None:
                 record_error("PDF preview QA: the FR 2028B/S saved-PDF monitor card was not rendered")
             else:
                 pdf_check["found_matching_monitor"] = True
-                card.click()
+                card.locator('[data-monitor-id]').click()
                 page.locator('[data-detail-tab="snapshot"]').click()
                 page.wait_for_selector("#pdfViewerShell", timeout=45000)
                 shell = page.locator("#pdfViewerShell")
