@@ -170,7 +170,7 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 self.assertIn('id="premium-responsive-redesign"', source)
                 self.assertIn('id="professional-ux-rebuild"', source)
                 self.assertIn('id="dashboard-ux-followup"', source)
-                self.assertIn('dashboard.js?v=20261019-data-origin-1', source)
+                self.assertIn('dashboard.js?v=20261019-mobile-header-2', source)
                 self.assertIn('id="monitorListControls"', source)
 
     def test_mobile_inventory_progressively_discloses_the_full_watchlist(self):
