@@ -54,14 +54,15 @@ class TestAskSentinelContract(unittest.TestCase):
 
     def test_sidebar_and_chat_use_existing_theme_and_preserve_mobile_navigation(self):
         html = (ROOT / "index.html").read_text(encoding="utf-8")
+        js = (ROOT / "dashboard.js").read_text(encoding="utf-8")
         for token in ("var(--pane)", "var(--accent)", "var(--ink)", "var(--line)", "@media (max-width:980px)", ".rail-ask { display:none; }"):
             with self.subTest(token=token):
                 self.assertIn(token, html)
         self.assertIn("grid-template-columns:repeat(6,minmax(0,1fr))", html)
         self.assertIn('data-view="askSentinel"', html)
         self.assertIn('$("askSentinelMessages").addEventListener("click"', js)
-        self.assertIn("pages: pages.slice(0, 80)", read("dashboard.js"))
-        self.assertIn('askLauncher.classList.toggle("active", state.view === "askSentinel")', read("dashboard.js"))
+        self.assertIn("pages: pages.slice(0, 80)", js)
+        self.assertIn('askLauncher.classList.toggle("active", state.view === "askSentinel")', js)
         self.assertIn(".ask-sentinel-launch.active", html)
 
 
