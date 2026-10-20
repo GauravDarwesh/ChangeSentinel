@@ -475,6 +475,82 @@
     .toast { position: fixed; left: 50%; bottom: 32px; z-index: 90; max-width: min(520px, calc(100vw - 32px)); transform: translateX(-50%); padding: 10px 14px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--raise-2); color: var(--ink); font-size: 13.5px; }
 
     /* ---------- Responsive ---------- */
+    /* ---------- Motion ---------- */
+    .led-frame { position: fixed; inset: 0; z-index: 0; width: 100vw; height: 100vh; pointer-events: none; }
+    .app { z-index: 1; }
+    .scan-now { color: var(--accent) !important; }
+    .scan-now::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 6px; vertical-align: 1px; background: var(--accent); box-shadow: var(--glow); animation: pulse 2.4s var(--ease) infinite; }
+    @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .detail-inner > *, #detailHeader > *, #detailBody > * { animation: rise .38s var(--ease) both; }
+    .detail-inner > *:nth-child(2), #detailBody > * { animation-delay: .05s; }
+    .detail-inner > *:nth-child(3) { animation-delay: .1s; }
+    .list-body .row { animation: rise .32s var(--ease) both; }
+    .list-body .row:nth-child(2) { animation-delay: .02s; } .list-body .row:nth-child(3) { animation-delay: .04s; }
+    .list-body .row:nth-child(4) { animation-delay: .06s; } .list-body .row:nth-child(5) { animation-delay: .08s; }
+    .list-body .row:nth-child(n+6) { animation-delay: .1s; }
+    .row-mark { transition: transform .2s var(--ease), box-shadow .2s var(--ease); }
+    .row:hover .row-mark { transform: scale(1.35); }
+    .row:hover .row-mark.tone-change { box-shadow: 0 0 14px var(--accent); }
+    .btn { transition: border-color .15s var(--ease), background-color .15s var(--ease), transform .15s var(--ease); }
+    .btn:active { transform: translateY(1px); }
+    @media (max-width: 980px) { .led-frame { display: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .led-frame { display: none; }
+      .detail-inner > *, #detailHeader > *, #detailBody > *, .list-body .row, .scan-now::before { animation: none !important; }
+    }
+
+    /* ---------- Before / after comparison ---------- */
+    .cmp { --cmp-before: var(--del); --cmp-after: var(--ins); }
+    .cmp-bar { position: sticky; top: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; padding: 10px 18px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--pane) 88%, transparent); backdrop-filter: blur(6px); }
+    .cmp-label { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-2); font: 500 11px var(--font-code); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+    .cmp-label i { width: 7px; height: 7px; background: var(--cmp-before); box-shadow: 0 0 8px var(--cmp-before); }
+    .cmp-label.is-after i { background: var(--cmp-after); box-shadow: 0 0 8px var(--cmp-after); }
+    .cmp-meta { display: inline-flex; align-items: center; gap: 14px; color: var(--ink-3); font-size: 12px; flex-wrap: wrap; justify-content: center; }
+    .cmp-toggle { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); cursor: pointer; }
+    .cmp-toggle input { accent-color: var(--accent); }
+    .cmp-presets { display: inline-flex; border: 1px solid var(--line-2); }
+    .cmp-presets button { padding: 3px 9px; border: 0; background: none; color: var(--ink-2); font-size: 12px; }
+    .cmp-presets button + button { border-left: 1px solid var(--line-2); }
+    .cmp-presets button:hover { background: var(--raise-2); color: var(--ink); }
+    .cmp-stage { position: relative; display: grid; overflow: hidden; background: var(--bg); cursor: ew-resize; user-select: none; touch-action: pan-y; }
+    .cmp-layer { grid-area: 1 / 1; min-width: 0; }
+    .cmp-after { clip-path: inset(0 0 0 var(--pos)); }
+    .cmp-stage.is-animating .cmp-after { transition: clip-path .35s var(--ease); }
+    .cmp-stage.is-animating .cmp-handle { transition: left .35s var(--ease); }
+    .cmp-handle { position: absolute; top: 0; bottom: 0; left: var(--pos); z-index: 2; width: 2px; margin-left: -1px; background: var(--accent); box-shadow: var(--glow); outline: none; }
+    .cmp-grip { position: sticky; top: 42vh; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; place-items: center; width: 30px; height: 30px; margin-left: -14px; border: 1px solid var(--accent); background: var(--pane); box-shadow: var(--glow); cursor: ew-resize; transition: transform .15s var(--ease); }
+    .cmp-grip i { width: 2px; height: 12px; background: var(--accent); }
+    .cmp-handle:focus-visible .cmp-grip, .cmp-stage.is-dragging .cmp-grip, .cmp-grip:hover { transform: scale(1.12); }
+    .cmp-page { position: relative; display: grid; place-items: center; margin-bottom: 14px; background: #fff; }
+    .cmp-page canvas { display: block; }
+    .cmp-page .cmp-diff { position: absolute; top: 0; left: 0; opacity: .36; mix-blend-mode: multiply; pointer-events: none; }
+    .cmp.hide-diff .cmp-diff { display: none; }
+    .cmp-page.is-missing { background: repeating-linear-gradient(45deg, var(--raise) 0 10px, var(--pane) 10px 20px); color: var(--ink-3); font-size: 13px; }
+    .cmp-frame { display: block; width: 100%; border: 0; background: #fff; pointer-events: none; }
+    .cmp-doc { min-height: 100%; background: var(--pane); }
+    .cmp-after .cmp-doc { background: var(--raise); }
+    .cmp-status { padding: 9px 18px 12px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 12.5px; }
+    @media (max-width: 980px) {
+      .cmp-bar { padding: 8px 12px; }
+      .cmp-meta { order: 3; width: 100%; justify-content: space-between; }
+    }
+
+    /* Wide screens: the panes grow with the window instead of stopping at 940px.
+       Prose keeps its ch-based measure; diffs, tables and comparisons take the width. */
+    @media (min-width: 1500px) {
+      :root { --rail-w: 264px; --list-w: clamp(360px, 22vw, 440px); }
+      .detail-inner { max-width: min(100%, 1320px); padding-inline: clamp(28px, 2.6vw, 56px); }
+      .view-overview { grid-template-columns: minmax(340px, 26vw) minmax(0, 1fr); }
+    }
+    @media (min-width: 1900px) {
+      :root { --rail-w: 288px; }
+      .detail-inner { max-width: min(100%, 1680px); }
+      .overview-statement { font-size: 23px; }
+      .detail-title { font-size: 27px; }
+    }
+    @media (min-width: 2400px) {
+      .detail-inner { max-width: 100%; }
+    }
     @media (max-width: 1240px) {
       :root { --rail-w: 214px; --list-w: 300px; }
       .view-overview { grid-template-columns: minmax(280px, 330px) minmax(0, 1fr); }
@@ -625,6 +701,7 @@
     </defs>
   </svg>
 
+  <canvas class="led-frame" id="ledFrame" aria-hidden="true"></canvas>
   <div class="app" id="app">
     <nav class="rail" aria-label="Workspace">
       <a class="brand" href="./" aria-label="ChangeSentinel overview">
@@ -647,7 +724,8 @@
           <span id="connectionStatus" role="status">Loading monitoring data…</span>
         </div>
         <div class="rail-links">
-          <button class="text-button" id="refreshBtn" type="button">Refresh</button>
+          <button class="text-button" id="refreshBtn" type="button" title="Reload the latest committed monitoring data">Reload</button>
+          <button class="text-button scan-now" type="button" data-run-scan="all" title="Start a scan of every active source on GitHub Actions">Scan now</button>
           <button class="text-button" type="button" data-theme-toggle>Light theme</button>
           <a id="repoLink" href="https://github.com/GauravDarwesh/ChangeSentinel" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
@@ -661,7 +739,7 @@
         <div class="overview-text">
           <div class="mobile-head">
             <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i></span>ChangeSentinel</a>
-            <span class="rail-links"><button class="text-button" type="button" data-theme-toggle>Light theme</button><button class="text-button" type="button" data-refresh>Refresh</button></span>
+            <span class="rail-links"><button class="text-button" type="button" data-theme-toggle>Light theme</button><button class="text-button" type="button" data-refresh>Reload</button><button class="text-button scan-now" type="button" data-run-scan="all">Scan now</button></span>
           </div>
           <h1 class="visually-hidden">Overview</h1>
           <p class="overview-statement" id="overviewLede">Reading the latest stored scan…</p>
@@ -844,7 +922,7 @@
     window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV";
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.121.0/dist/umd/supabase.js"></script>
-  <script src="dashboard-lib.js?v=20261020-ask-sentinel-5"></script>
-  <script src="dashboard.js?v=20261020-ask-sentinel-5"></script>
+  <script src="dashboard-lib.js?v=20261020-compare-1"></script>
+  <script src="dashboard.js?v=20261020-compare-1"></script>
 </body>
 </html>

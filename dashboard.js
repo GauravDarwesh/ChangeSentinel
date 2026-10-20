@@ -59,7 +59,7 @@ const state = {
   items: [], view: "overview", loaded: false,
   selectedId: "", selectedChangeId: "", selectedRunId: "", selectedNotificationId: "",
   mobileDetail: false,
-  filter: "ALL", changeFilter: "ALL", detailTab: "", diffMode: "redline", snapshotMode: "preview",
+  filter: "ALL", changeFilter: "ALL", detailTab: "", diffMode: "compare", snapshotMode: "preview",
   docInfo: {}, titleQueue: [], titleWorkers: 0, titleTimer: null,
   snapshotCache: {}, htmlCache: {}, evidenceCache: {}, pdfPreviewUrl: "", toastTimer: null
 };
@@ -992,6 +992,7 @@ function renderVerdict(event) {
 }
 function diffModes(event) {
   const modes = [["redline", "Redline"], ["text", "Text diff"]];
+  if (event.event_type === "CHANGED_URL" || event.event_type === "HTML_SOURCE_CHANGED") modes.unshift(["compare", "Compare"]);
   if (event.event_type !== "REMOVED_URL") modes.push(["html", "HTML diff"]);
   return '<div class="segmented" role="group" aria-label="Diff view">' + modes.map(([key, label]) =>
     '<button type="button" data-diff-mode="' + key + '" aria-pressed="' + String(state.diffMode === key) + '">' + label + "</button>"
@@ -1018,10 +1019,23 @@ async function fillEvidence(event, boxId, stillCurrent) {
     const target = document.getElementById(boxId);
     const summary = document.getElementById(boxId + "-summary");
     if (!target) return;
-    if (state.diffMode === "html") {
+    const mode = state.diffMode === "compare" && !compareSources(evidence) ? "redline" : state.diffMode;
+    if (mode !== state.diffMode) {
+      // Older evidence has no saved versions to overlay: drop the Compare option for it.
+      const group = target.parentElement && target.parentElement.querySelector('[data-diff-mode="compare"]');
+      const scope = group ? group.parentElement : document;
+      scope.querySelectorAll("[data-diff-mode]").forEach(button => {
+        if (button.dataset.diffMode === "compare") button.remove();
+        else button.setAttribute("aria-pressed", String(button.dataset.diffMode === mode));
+      });
+    }
+    if (mode === "compare") {
+      if (summary) summary.textContent = "Drag the divider to move between the previous and new version.";
+      renderCompare(target, evidence, event, stillCurrent);
+    } else if (mode === "html") {
       target.innerHTML = L.renderUnifiedDiff(evidence.html_diff || "");
       if (summary) summary.textContent = "Formatted HTML markup diff. The fetched response is saved separately.";
-    } else if (state.diffMode === "text") {
+    } else if (mode === "text") {
       target.innerHTML = L.renderUnifiedDiff(evidence.diff || "");
       if (summary) summary.textContent = "Unified diff of the extracted text.";
     } else {
@@ -1132,7 +1146,8 @@ function renderDetailHeader(item) {
   const meta = '<span class="tag tone-' + esc(status.tone) + '">' + esc(status.label) + "</span>" +
     "<span>Checked " + esc(relativeTime(item.last_checked).toLowerCase()) + "</span>" + urlMeta(item.canonical_url);
   const actions = externalLink(item.canonical_url, "Open live page") +
-    (snapshotPath ? externalLink(REPO + "/blob/main/" + snapshotPath, savedFileLabel) : "");
+    (snapshotPath ? externalLink(REPO + "/blob/main/" + snapshotPath, savedFileLabel) : "") +
+    (item.source_id ? '<button class="btn" type="button" data-run-scan="' + esc(item.source_id) + '" title="Scan this page\'s source now">Scan this source</button>' : "");
   $("detailHeader").innerHTML = detailHeading({
     back: true, source: sourceLabel(source), title: itemTitle(item), subtitle, meta, actions
   });
@@ -1724,6 +1739,360 @@ if (compactQuery && typeof compactQuery.addEventListener === "function") {
 }
 
 
+
+/* ================= Ambient LED frame =================
+ * The unlit LED tiles around the console come alive: sparse cells twinkle, and a
+ * scan comet circles the frame every 30 seconds (red while scans are failing).
+ * Desktop only, paused in background tabs, off for reduced motion.
+ */
+(function ambientFrame() {
+  const canvas = document.getElementById("ledFrame");
+  const motion = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  if (!canvas || !canvas.getContext) return;
+  const ctx = canvas.getContext("2d");
+  let cells = [], cell = 20, width = 0, height = 0, ratio = 1;
+  const twinkles = new Map();
+  const LAP_MS = 30000, COMET_MS = 6500, TRAIL = 16;
+  const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  function layout() {
+    ratio = Math.min(2, window.devicePixelRatio || 1);
+    width = window.innerWidth; height = window.innerHeight;
+    canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio);
+    cell = parseFloat(css("--cell")) || 20;
+    const cols = Math.ceil(width / cell), rows = Math.ceil(height / cell);
+    cells = [];
+    for (let x = 0; x < cols; x += 1) cells.push([x, 0]);
+    for (let y = 1; y < rows; y += 1) cells.push([cols - 1, y]);
+    for (let x = cols - 2; x >= 0; x -= 1) cells.push([x, rows - 1]);
+    for (let y = rows - 2; y > 0; y -= 1) cells.push([0, y]);
+  }
+  function light(x, y, color, alpha) {
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.fillRect((x * cell + 1) * ratio, (y * cell + 1) * ratio, (cell - 1) * ratio, (cell - 1) * ratio);
+  }
+  function frame(now) {
+    window.requestAnimationFrame(frame);
+    if (document.hidden || (motion && motion.matches) || width <= 980) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const failing = !!document.querySelector("#statusDot.is-error");
+    const on = failing ? css("--led-bad") : css("--led-on");
+    const dim = css("--led-dim");
+    if (Math.random() < 0.035 && cells.length) twinkles.set(Math.floor(Math.random() * cells.length), now);
+    twinkles.forEach((start, index) => {
+      const t = (now - start) / 1800;
+      if (t >= 1) { twinkles.delete(index); return; }
+      const [x, y] = cells[index];
+      light(x, y, dim, Math.sin(Math.PI * t) * 0.9);
+    });
+    const phase = now % LAP_MS;
+    if (phase < COMET_MS && cells.length) {
+      const head = Math.floor((phase / COMET_MS) * cells.length);
+      ctx.shadowColor = on;
+      for (let k = 0; k < TRAIL; k += 1) {
+        const index = head - k;
+        if (index < 0) break;
+        const [x, y] = cells[index];
+        ctx.shadowBlur = k === 0 ? 14 * ratio : 0;
+        light(x, y, on, (1 - k / TRAIL) * 0.95);
+      }
+      ctx.shadowBlur = 0;
+    }
+    ctx.globalAlpha = 1;
+  }
+  layout();
+  window.addEventListener("resize", layout);
+  window.requestAnimationFrame(frame);
+})();
+
+/* ================= Manual scans =================
+ * Scans run on GitHub Actions. The dashboard is a static page with no write access,
+ * so "Scan now" opens the Regulatory Monitor workflow, where the owner presses
+ * "Run workflow"; the source to scan is copied for the source_id field.
+ */
+const MONITOR_WORKFLOW_URL = REPO + "/actions/workflows/regulatory-monitor.yml";
+document.addEventListener("click", event => {
+  const button = event.target.closest("[data-run-scan]");
+  if (!button) return;
+  const sourceId = button.dataset.runScan || "all";
+  window.open(MONITOR_WORKFLOW_URL, "_blank", "noopener");
+  const copy = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(sourceId).catch(() => {}) : Promise.resolve();
+  copy.then(() => showToast(sourceId === "all"
+    ? "Opened the Regulatory Monitor workflow. Press “Run workflow” to scan every active source."
+    : "Opened the Regulatory Monitor workflow. Press “Run workflow” and paste “" + sourceId + "” (copied) as source_id."));
+});
+
+/* ================= Before / after comparison =================
+ * Visualping-style overlay of the previous and new saved versions with a draggable
+ * divider. Everything renders in the browser from files already committed: PDFs via
+ * pdf.js (with a pixel-difference highlight), HTML in script-less sandboxed frames,
+ * and older events without saved originals as their two text snapshots.
+ */
+const PDFJS_VERSION = "3.11.174";
+const PDFJS_BASE = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/" + PDFJS_VERSION + "/";
+const COMPARE_PAGE_LIMIT = 400;
+let pdfjsPromise = null;
+let compareSerial = 0;
+
+function loadPdfJs() {
+  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  if (!pdfjsPromise) {
+    pdfjsPromise = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = PDFJS_BASE + "pdf.min.js";
+      script.crossOrigin = "anonymous";
+      script.onload = () => {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_BASE + "pdf.worker.min.js";
+        resolve(window.pdfjsLib);
+      };
+      script.onerror = () => { pdfjsPromise = null; reject(new Error("The PDF renderer could not load")); };
+      document.head.append(script);
+    });
+  }
+  return pdfjsPromise;
+}
+function compareSources(evidence) {
+  const before = (evidence && evidence.before) || {};
+  const after = (evidence && evidence.after) || {};
+  if (before.file_snapshot_location && after.file_snapshot_location && /\.pdf$/i.test(after.file_snapshot_location)) {
+    return { kind: "pdf", before: before.file_snapshot_location, after: after.file_snapshot_location };
+  }
+  if (before.html_snapshot_location && after.html_snapshot_location) {
+    return { kind: "html", before: before.html_snapshot_location, after: after.html_snapshot_location };
+  }
+  if (before.snapshot_location && after.snapshot_location) {
+    return { kind: "text", before: before.snapshot_location, after: after.snapshot_location };
+  }
+  return null;
+}
+async function fetchSnapshotBytes(path) {
+  const response = await fetch(snapshotURL(path), { cache: "no-store" });
+  if (!response.ok) throw new Error("Saved file request returned HTTP " + response.status);
+  return new Uint8Array(await response.arrayBuffer());
+}
+function compareShell(kind, event) {
+  const kindLabel = { pdf: "Saved PDFs", html: "Saved pages", text: "Extracted text" }[kind];
+  const highlight = kind === "pdf"
+    ? '<label class="cmp-toggle"><input type="checkbox" data-cmp-highlight checked> Highlight differences</label>' : "";
+  return '<div class="cmp" data-kind="' + kind + '">' +
+    '<div class="cmp-bar"><span class="cmp-label is-before"><i></i>Previous version</span>' +
+    '<span class="cmp-meta">' + esc(kindLabel) + highlight + '<span class="cmp-presets" role="group" aria-label="Divider position">' +
+    '<button type="button" data-cmp-pos="0">Before</button><button type="button" data-cmp-pos="50">Split</button><button type="button" data-cmp-pos="100">After</button></span></span>' +
+    '<span class="cmp-label is-after">New · ' + esc(fmt(event.timestamp)) + "<i></i></span></div>" +
+    '<div class="cmp-stage" style="--pos:50%"><div class="cmp-layer cmp-before"></div><div class="cmp-layer cmp-after"></div>' +
+    '<div class="cmp-handle" role="slider" tabindex="0" aria-label="Divider between previous and new version" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">' +
+    '<span class="cmp-grip" aria-hidden="true"><i></i><i></i></span></div></div>' +
+    '<p class="cmp-status" role="status"></p></div>';
+}
+function wireCompareSlider(root) {
+  const stage = root.querySelector(".cmp-stage");
+  const handle = root.querySelector(".cmp-handle");
+  const set = value => {
+    const pos = Math.max(0, Math.min(100, value));
+    stage.style.setProperty("--pos", pos + "%");
+    handle.setAttribute("aria-valuenow", String(Math.round(pos)));
+  };
+  const fromPointer = clientX => {
+    const rect = stage.getBoundingClientRect();
+    set(((clientX - rect.left) / rect.width) * 100);
+  };
+  let dragging = false;
+  stage.addEventListener("pointerdown", event => {
+    if (event.button !== 0) return;
+    // On touch, only the handle drags so the page still scrolls vertically.
+    if (event.pointerType !== "mouse" && !event.target.closest(".cmp-handle")) return;
+    dragging = true;
+    stage.setPointerCapture(event.pointerId);
+    stage.classList.add("is-dragging");
+    fromPointer(event.clientX);
+  });
+  stage.addEventListener("pointermove", event => { if (dragging) fromPointer(event.clientX); });
+  const stop = () => { dragging = false; stage.classList.remove("is-dragging"); };
+  stage.addEventListener("pointerup", stop);
+  stage.addEventListener("pointercancel", stop);
+  handle.addEventListener("keydown", event => {
+    const now = Number(handle.getAttribute("aria-valuenow"));
+    const step = event.shiftKey ? 10 : 2;
+    if (event.key === "ArrowLeft") { set(now - step); event.preventDefault(); }
+    if (event.key === "ArrowRight") { set(now + step); event.preventDefault(); }
+    if (event.key === "Home") { set(0); event.preventDefault(); }
+    if (event.key === "End") { set(100); event.preventDefault(); }
+  });
+  root.querySelectorAll("[data-cmp-pos]").forEach(button => button.addEventListener("click", () => {
+    stage.classList.add("is-animating");
+    set(Number(button.dataset.cmpPos));
+    window.setTimeout(() => stage.classList.remove("is-animating"), 380);
+  }));
+}
+async function renderCompare(target, evidence, event, stillCurrent) {
+  const sources = compareSources(evidence);
+  const serial = ++compareSerial;
+  const alive = () => serial === compareSerial && stillCurrent() && target.isConnected;
+  target.innerHTML = compareShell(sources.kind, event);
+  const root = target.querySelector(".cmp");
+  const before = root.querySelector(".cmp-before");
+  const after = root.querySelector(".cmp-after");
+  const status = root.querySelector(".cmp-status");
+  wireCompareSlider(root);
+  status.textContent = "Loading both versions…";
+  try {
+    if (sources.kind === "pdf") await compareFillPdf(root, before, after, status, sources, alive);
+    else if (sources.kind === "html") await compareFillHtml(before, after, status, sources, event, alive);
+    else await compareFillText(before, after, status, sources, alive);
+  } catch (error) {
+    if (alive()) status.textContent = "Couldn't load both versions: " + String(error.message || error);
+  }
+}
+async function compareFillText(before, after, status, sources, alive) {
+  const [a, b] = await Promise.all([
+    readSnapshotFile(sources.before, state.snapshotCache),
+    readSnapshotFile(sources.after, state.snapshotCache)
+  ]);
+  if (!alive()) return;
+  before.innerHTML = '<div class="cmp-doc">' + renderSnapshotText(a) + "</div>";
+  after.innerHTML = '<div class="cmp-doc">' + renderSnapshotText(b) + "</div>";
+  status.textContent = "These versions predate saved originals, so their extracted text is compared. The redline marks each edit.";
+}
+async function compareFillHtml(before, after, status, sources, event, alive) {
+  const [a, b] = await Promise.all([
+    readSnapshotFile(sources.before, state.htmlCache),
+    readSnapshotFile(sources.after, state.htmlCache)
+  ]);
+  if (!alive()) return;
+  const frame = (layer, html) => new Promise(resolve => {
+    const node = document.createElement("iframe");
+    node.className = "cmp-frame";
+    node.title = layer === before ? "Previous saved page" : "New saved page";
+    // Same-origin without allow-scripts: the saved page cannot run code, but its
+    // height can be measured so both versions scroll together under the divider.
+    node.setAttribute("sandbox", "allow-same-origin");
+    node.addEventListener("load", () => {
+      try {
+        const doc = node.contentDocument;
+        node.style.height = Math.min(30000, Math.max(600, doc.documentElement.scrollHeight, doc.body ? doc.body.scrollHeight : 0)) + "px";
+      } catch (_) { node.style.height = "1600px"; }
+      resolve(node);
+    });
+    node.srcdoc = previewSource(html, event.url || "");
+    layer.append(node);
+  });
+  await Promise.all([frame(before, a), frame(after, b)]);
+  if (!alive()) return;
+  const height = Math.max(before.scrollHeight, after.scrollHeight);
+  before.querySelector("iframe").style.height = after.querySelector("iframe").style.height = height + "px";
+  status.textContent = "Scripts are disabled. Images and styles load from the live site, so they can differ from what was captured.";
+}
+async function compareFillPdf(root, before, after, status, sources, alive) {
+  const [lib, bytesA, bytesB] = await Promise.all([loadPdfJs(), fetchSnapshotBytes(sources.before), fetchSnapshotBytes(sources.after)]);
+  if (!alive()) return;
+  const [docA, docB] = await Promise.all([lib.getDocument({ data: bytesA }).promise, lib.getDocument({ data: bytesB }).promise]);
+  const total = Math.min(COMPARE_PAGE_LIMIT, Math.max(docA.numPages, docB.numPages));
+  const stage = root.querySelector(".cmp-stage");
+  const width = Math.max(320, stage.clientWidth);
+  const ratio = Math.min(2, window.devicePixelRatio || 1);
+  const highlight = root.querySelector("[data-cmp-highlight]");
+  const changedPages = new Set();
+  let checked = 0;
+  const updateStatus = () => {
+    status.textContent = (docA.numPages === docB.numPages ? docA.numPages + " pages" : "Previous " + docA.numPages + " pages · new " + docB.numPages + " pages") +
+      (checked ? " · " + changedPages.size + " of " + checked + " checked " + (checked === 1 ? "page differs" : "pages differ") : "") +
+      (total < Math.max(docA.numPages, docB.numPages) ? " · showing the first " + total : "") + ". Scroll to render more.";
+  };
+  const pageSize = async (doc, number) => {
+    if (number > doc.numPages) return null;
+    const page = await doc.getPage(number);
+    const viewport = page.getViewport({ scale: 1 });
+    return { page, scale: width / viewport.width, height: Math.round(viewport.height * width / viewport.width) };
+  };
+  const slots = [];
+  for (let number = 1; number <= total; number += 1) {
+    const [sa, sb] = await Promise.all([pageSize(docA, number), pageSize(docB, number)]);
+    if (!alive()) return;
+    const height = Math.max(sa ? sa.height : 0, sb ? sb.height : 0);
+    const make = (layer, size, label) => {
+      const slot = document.createElement("div");
+      slot.className = "cmp-page" + (size ? "" : " is-missing");
+      slot.style.height = height + "px";
+      slot.innerHTML = size ? "" : '<span>' + label + "</span>";
+      layer.append(slot);
+      return slot;
+    };
+    slots.push({ number, sa, sb, a: make(before, sa, "Not in the previous version"), b: make(after, sb, "Not in the new version") });
+  }
+  updateStatus();
+  const draw = async (size, slot) => {
+    const canvas = document.createElement("canvas");
+    const viewport = size.page.getViewport({ scale: size.scale * ratio });
+    canvas.width = Math.round(viewport.width);
+    canvas.height = Math.round(viewport.height);
+    canvas.style.width = width + "px";
+    await size.page.render({ canvasContext: canvas.getContext("2d", { willReadFrequently: true }), viewport }).promise;
+    slot.append(canvas);
+    return canvas;
+  };
+  const markDifferences = (slot, ca, cb) => {
+    if (!ca || !cb || ca.width !== cb.width || ca.height !== cb.height) return;
+    const ctxA = ca.getContext("2d", { willReadFrequently: true });
+    const ctxB = cb.getContext("2d", { willReadFrequently: true });
+    const da = ctxA.getImageData(0, 0, ca.width, ca.height).data;
+    const db = ctxB.getImageData(0, 0, cb.width, cb.height).data;
+    // Mark changed regions, not changed pixels: a changed glyph is black on both
+    // versions' strokes, so pixel tints would be invisible. Blocks tint the paper.
+    const w = ca.width, h = ca.height, block = Math.round(10 * ratio);
+    const bw = Math.ceil(w / block), bh = Math.ceil(h / block);
+    const marks = new Uint8Array(bw * bh);
+    let differing = 0;
+    for (let y = 0; y < h; y += 1) {
+      const row = (y / block) | 0;
+      for (let x = 0; x < w; x += 1) {
+        const i = (y * w + x) * 4;
+        if (Math.abs(da[i] - db[i]) + Math.abs(da[i + 1] - db[i + 1]) + Math.abs(da[i + 2] - db[i + 2]) > 90) {
+          differing += 1;
+          marks[row * bw + ((x / block) | 0)] = 1;
+        }
+      }
+    }
+    checked += 1;
+    if (differing > 12) {
+      const overA = document.createElement("canvas"), overB = document.createElement("canvas");
+      [[overA, "rgb(255, 106, 82)"], [overB, "rgb(255, 159, 28)"]].forEach(([c, color]) => {
+        c.width = w; c.height = h; c.className = "cmp-diff"; c.style.width = width + "px";
+        const g = c.getContext("2d");
+        g.fillStyle = color;
+        for (let by = 0; by < bh; by += 1) {
+          for (let bx = 0; bx < bw; bx += 1) {
+            if (!marks[by * bw + bx]) continue;
+            // Pad each marked block by one block so a changed word reads as one region.
+            g.fillRect((bx - 1) * block, (by - 1) * block, block * 3, block * 3);
+          }
+        }
+      });
+      changedPages.add(slot.number);
+      slot.a.append(overA);
+      slot.b.append(overB);
+      slot.a.classList.add("has-diff");
+      slot.b.classList.add("has-diff");
+    }
+    updateStatus();
+  };
+  const renderSlot = async slot => {
+    if (slot.rendered) return;
+    slot.rendered = true;
+    const [ca, cb] = await Promise.all([slot.sa ? draw(slot.sa, slot.a) : null, slot.sb ? draw(slot.sb, slot.b) : null]);
+    if (alive()) markDifferences(slot, ca, cb);
+  };
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const slot = slots.find(candidate => candidate.a === entry.target);
+      if (slot) { observer.unobserve(entry.target); renderSlot(slot); }
+    });
+  }, { root: root.closest(".detail-pane"), rootMargin: "800px 0px" });
+  slots.forEach(slot => observer.observe(slot.a));
+  if (highlight) {
+    highlight.addEventListener("change", () => root.classList.toggle("hide-diff", !highlight.checked));
+  }
+}
 
 /* ================= Ask Sentinel =================
  * This UI deliberately talks only to a same-origin server endpoint.

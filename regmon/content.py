@@ -463,7 +463,7 @@ def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
 # Bump this when PDF/HTML normalized output changes. The engine re-fetches these
 # records and records a baseline migration (not a regulatory change) if the
 # original response bytes are identical.
-CONTENT_EXTRACTOR_VERSION = "content-extractor-v5"
+CONTENT_EXTRACTOR_VERSION = "content-extractor-v6"
 LOW_TEXT_PAGE_CHARS = 40
 MAX_OCR_PAGES = 1000
 OCR_PAGE_TIMEOUT_SECONDS = 15
@@ -571,6 +571,87 @@ def _markdown_table_count(text: str) -> int:
         if len(cells) >= 2 and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells):
             count += 1
     return count
+
+
+_ROW_NUMBER = re.compile(r"^\(?\d{1,3}[.)]?$")
+_SEPARATOR_CELL = re.compile(r":?-{3,}:?")
+
+
+def _split_markdown_row(line: str) -> list[str] | None:
+    value = line.strip()
+    if not (value.startswith("|") and value.endswith("|") and len(value) > 1):
+        return None
+    return [cell.strip() for cell in re.split(r"(?<!\\)\|", value[1:-1])]
+
+
+def _tidy_markdown_table(rows: list[list[str]]) -> list[str]:
+    """Make a Docling form grid readable and diff-stable.
+
+    Blank fill-in rows (empty apart from a row number) are dropped and counted;
+    empty and duplicated columns are removed. A wide grid that is only headers
+    (typical of regulatory report forms) becomes one line per form column, so a
+    renamed column or changed item code is a one-line diff instead of a reflowed grid.
+    """
+    width = max(len(r) for r in rows)
+    rows = [r + [""] * (width - len(r)) for r in rows]
+    header, body = rows[0], rows[1:]
+    kept, blank = [], 0
+    for row in body:
+        if all(not c or _ROW_NUMBER.match(c) for c in row):
+            blank += 1
+        else:
+            kept.append(row)
+    grid = [header] + kept
+    columns = [list(col) for col in zip(*grid)]
+    columns = [col for col in columns if any(col)]
+    deduped: list[list[str]] = []
+    for col in columns:
+        if not deduped or col != deduped[-1]:
+            deduped.append(col)
+    columns = deduped
+    if not columns:
+        return [f"({blank} blank entry rows)"] if blank else []
+    grid = [list(row) for row in zip(*columns)]
+    out: list[str] = []
+    if len(columns) >= 8 and len(grid) <= 6:
+        for col in columns:
+            parts: list[str] = []
+            for cell in col:
+                if cell and cell not in parts:
+                    parts.append(cell)
+            if parts:
+                out.append("- " + " · ".join(parts))
+    else:
+        out.append("| " + " | ".join(grid[0]) + " |")
+        out.append("|" + "|".join(" --- " for _ in grid[0]) + "|")
+        out.extend("| " + " | ".join(row) + " |" for row in grid[1:])
+    if blank:
+        out.append(f"({blank} blank entry rows)")
+    return out
+
+
+def tidy_docling_markdown(markdown: str) -> str:
+    """Clean Docling's Markdown tables; all non-table text is kept unchanged."""
+    lines = str(markdown or "").splitlines()
+    out: list[str] = []
+    index = 0
+    while index < len(lines):
+        header = _split_markdown_row(lines[index])
+        separator = _split_markdown_row(lines[index + 1]) if index + 1 < len(lines) else None
+        if header is not None and separator and all(_SEPARATOR_CELL.fullmatch(c) for c in separator):
+            rows = [header]
+            index += 2
+            while index < len(lines):
+                row = _split_markdown_row(lines[index])
+                if row is None:
+                    break
+                rows.append(row)
+                index += 1
+            out.extend(_tidy_markdown_table(rows))
+            continue
+        out.append(lines[index])
+        index += 1
+    return "\n".join(out)
 
 
 def _prefer_docling_candidate(existing: str, candidate: str) -> bool:
@@ -995,7 +1076,7 @@ def _extract_pdf(
                 body, expected_pages=len(pages)
             )
             if docling_text and _prefer_docling_candidate(text, docling_text):
-                text = normalize_text(docling_text)
+                text = normalize_text(tidy_docling_markdown(docling_text))
                 if extraction_profile is not None:
                     extraction_profile["profile"] = "docling"
             else:
