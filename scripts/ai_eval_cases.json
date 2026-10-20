@@ -5,67 +5,78 @@
       "id": "09f05cb5c2dab699",
       "evidence": "data/evidence/09f05cb5c2dab6991e455bb4d5f23e86b879c3abbb5e5e472536b51a88aaea26.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18"
+      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "695c946b9b743948",
       "evidence": "data/evidence/695c946b9b7439482053a0050b6c41ab1864b0e9dfe7e2e4c01d5e82885aef1f.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18"
+      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "2575660832692bfe",
       "evidence": "data/evidence/2575660832692bfec6fce1da70af34ec08da327cb0bd598c2bb6d9ec6d02a418.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18"
+      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "30d10f03b57a928f",
       "evidence": "data/evidence/30d10f03b57a928f839b2718532775a61fabb85b30e98f348aa3f2bb7c23369c.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18"
+      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "7bf01c584347d158",
       "evidence": "data/evidence/7bf01c584347d158fb07ededd1aa6957e00b11ff806c451ef69bd75968911acb.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18"
+      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "aca0300bf2db88d7",
       "evidence": "data/evidence/aca0300bf2db88d7f4c8d90058b4cc81e6ee866b7edfb6e7c1bd7850073d8c4f.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18"
+      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "d67c461dc764614a",
       "evidence": "data/evidence/d67c461dc764614a0b1fdec2e9c9183ce6b15b15e036348dbae8a34b73a4fe60.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18"
+      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-18",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "0259741aab372c48",
       "evidence": "data/evidence/0259741aab372c486a138e87e485cfa10b2ce8c4eee40ce3c4f19bad0c915a8f.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19"
+      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "50b008eb2ae1f444",
       "evidence": "data/evidence/50b008eb2ae1f4448e23376f388b8f6d684a54745c6bb2dfd8d735595029add2.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19"
+      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "750e75b31da1971d",
       "evidence": "data/evidence/750e75b31da1971d71dd936c702181ce977230706a479e4cba8eecfe2091d07e.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19"
+      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "b1c1bf4b5044c643",
       "evidence": "data/evidence/b1c1bf4b5044c6432e7c26591f0ca3999af309ab58a82d90de7d9cf69dd652b5.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19"
+      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "d63f24035c41c768",
@@ -85,13 +96,15 @@
       "id": "0c9cb7869d0a905f",
       "evidence": "data/evidence/0c9cb7869d0a905f0197518bed2501c0eecd573b0c048002db1196ebea04dc0e.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19"
+      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "6f080f1161178961",
       "evidence": "data/evidence/6f080f1161178961144a36431c8453eded773ccaabc29b7e9b4b4f923784a467.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19"
+      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "synthetic-threshold",
