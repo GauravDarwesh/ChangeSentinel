@@ -144,6 +144,7 @@
     .brand-mark i.on { background: var(--accent); box-shadow: var(--glow); }
     .rail-intro { margin-top: 14px; color: var(--ink-2); font-size: 13.5px; line-height: 1.55; }
     .rail-nav { display: grid; gap: 1px; margin: 22px 0 0; padding: 0; list-style: none; }
+    .nav-ask-mobile { display: none; }
     .nav-button {
       position: relative; display: flex; align-items: baseline; gap: 10px; width: 100%;
       padding: 3px 0 3px 16px; border: 0; background: none; color: var(--link);
@@ -471,7 +472,8 @@
         padding: 0 4px env(safe-area-inset-bottom); border-top: 1px solid var(--line); background: var(--pane); overflow: visible;
       }
       .rail .brand, .rail-intro, .rail-foot { display: none; }
-      .rail-nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); height: 54px; margin: 0; }
+      .rail-nav { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 54px; margin: 0; }
+      .nav-ask-mobile { display: list-item; }
       .nav-button { flex-direction: column; align-items: center; justify-content: center; gap: 0; height: 100%; padding: 8px 0 0; font-size: 12.5px; text-align: center; }
       .nav-button::before { left: 50%; top: 9px; width: 18px; height: 3px; margin: 0 0 0 -9px; }
       .nav-count { display: none; }
@@ -504,6 +506,69 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
     }
+  
+/* ---------- Ask Sentinel (isolated addition) ---------- */
+.rail-ask { margin-top: 16px; }
+.ask-sentinel-launch {
+  display:flex; align-items:center; gap:10px; width:100%; padding:10px 11px;
+  border:1px solid var(--line-2); border-radius:var(--radius); background:var(--raise);
+  color:var(--ink); text-align:left; transition:border-color .15s var(--ease), background .15s var(--ease);
+}
+.ask-sentinel-launch:hover, .ask-sentinel-launch.active { border-color:var(--accent); background:var(--raise-2); }
+.ask-sentinel-mark { display:grid; place-items:center; flex:none; width:28px; height:28px; border:1px solid var(--line-2); color:var(--accent); font:500 11px var(--font-code); }
+.ask-sentinel-copy { display:grid; gap:1px; min-width:0; }
+.ask-sentinel-copy strong { font-size:13px; font-weight:500; }
+.ask-sentinel-copy small { color:var(--ink-3); font-size:11.5px; }
+.ask-sentinel-arrow { margin-left:auto; color:var(--ink-3); }
+.ask-sentinel-view { display:flex; flex-direction:column; height:100%; min-height:0; }
+.ask-sentinel-header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 24px; border-bottom:1px solid var(--line); }
+.ask-sentinel-title { display:flex; align-items:center; gap:10px; min-width:0; }
+.ask-sentinel-title h1 { font-size:15px; font-weight:500; }
+.ask-sentinel-title p { margin-top:2px; color:var(--ink-3); font-size:12px; }
+.ask-sentinel-state { flex:none; color:var(--ink-3); font-size:12px; font-variant-numeric:tabular-nums; }
+.ask-sentinel-state strong { color:var(--accent); font-weight:500; }
+.ask-sentinel-messages { flex:1; min-height:0; overflow-y:auto; padding:24px clamp(18px, 4vw, 56px); scrollbar-width:thin; scrollbar-color:var(--line-2) transparent; }
+.ask-sentinel-welcome { max-width:690px; margin:8vh auto 30px; }
+.ask-sentinel-eyebrow { color:var(--accent); font:500 11px var(--font-code); letter-spacing:.12em; text-transform:uppercase; }
+.ask-sentinel-welcome h2 { margin-top:12px; font-size:clamp(25px, 3.4vw, 38px); font-weight:400; line-height:1.2; letter-spacing:-.035em; }
+.ask-sentinel-welcome p { margin-top:12px; max-width:56ch; color:var(--ink-2); font-size:14px; }
+.ask-sentinel-prompts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:25px; }
+.ask-sentinel-prompt { min-height:68px; padding:11px 13px; border:1px solid var(--line); background:var(--raise); color:var(--ink-2); text-align:left; font-size:12.5px; line-height:1.45; }
+.ask-sentinel-prompt:hover { border-color:var(--line-2); background:var(--raise-2); color:var(--ink); }
+.ask-sentinel-prompt span { display:block; margin-bottom:5px; color:var(--accent); font-size:11px; }
+.ask-sentinel-message { display:grid; grid-template-columns:28px minmax(0,1fr); gap:11px; max-width:820px; margin:0 auto 22px; }
+.ask-sentinel-avatar { display:grid; place-items:center; width:27px; height:27px; border:1px solid var(--line-2); color:var(--accent); font:500 10px var(--font-code); }
+.ask-sentinel-message.user .ask-sentinel-avatar { color:var(--ink-2); }
+.ask-sentinel-message-body { min-width:0; padding-top:3px; }
+.ask-sentinel-role { margin-bottom:5px; color:var(--ink-3); font-size:11.5px; }
+.ask-sentinel-text { color:var(--ink); white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.7; font-size:13.5px; }
+.ask-sentinel-message.assistant .ask-sentinel-text { color:var(--ink-2); }
+.ask-sentinel-composer { flex:none; padding:14px clamp(16px, 4vw, 56px) max(14px, env(safe-area-inset-bottom)); border-top:1px solid var(--line); background:var(--pane); }
+.ask-sentinel-form { display:flex; align-items:flex-end; gap:10px; max-width:850px; margin:0 auto; padding:7px; border:1px solid var(--line-2); background:var(--bg); }
+.ask-sentinel-form:focus-within { border-color:var(--accent); }
+.ask-sentinel-input { flex:1; min-width:0; max-height:150px; resize:vertical; border:0; outline:0 !important; background:transparent; color:var(--ink); padding:8px; font-size:13.5px; line-height:1.5; }
+.ask-sentinel-input::placeholder { color:var(--ink-3); }
+.ask-sentinel-send { display:flex; align-items:center; justify-content:center; flex:none; width:36px; height:36px; border:1px solid var(--accent); background:var(--accent); color:#140c08; }
+.ask-sentinel-send:hover { background:var(--link); border-color:var(--link); }
+.ask-sentinel-send:disabled { opacity:.4; cursor:not-allowed; }
+.ask-sentinel-footnote { max-width:850px; margin:8px auto 0; display:flex; justify-content:space-between; gap:10px; color:var(--ink-3); font-size:11px; }
+.ask-sentinel-back { border:1px solid var(--line); background:transparent; color:var(--ink-2); padding:6px 9px; font-size:12px; }
+.ask-sentinel-back:hover { color:var(--ink); border-color:var(--line-2); }
+.ask-sentinel-error { color:var(--problem); }
+.ask-sentinel-typing { color:var(--ink-3); font-size:12px; }
+@media (max-width:980px) {
+  .rail-ask { display:none; }
+  .rail-nav { grid-template-columns:repeat(6,minmax(0,1fr)); }
+  .nav-ask-mobile { display:list-item; }
+  .ask-sentinel-header { padding:13px 16px; }
+  .ask-sentinel-messages { padding:18px 16px; }
+  .ask-sentinel-welcome { margin:5vh auto 24px; }
+  .ask-sentinel-prompts { grid-template-columns:1fr; }
+  .ask-sentinel-prompt { min-height:0; }
+  .ask-sentinel-composer { padding:10px 12px max(10px, env(safe-area-inset-bottom)); }
+  .ask-sentinel-footnote { font-size:10.5px; }
+}
+
   </style>
 </head>
 <body>
@@ -526,7 +591,9 @@
         <li><button class="nav-button" data-view="monitors" type="button">Pages<span class="nav-count" id="navMonitorCount"></span></button></li>
         <li><button class="nav-button" data-view="runs" type="button">Runs<span class="nav-count" id="navRunCount"></span></button></li>
         <li><button class="nav-button" data-view="notifications" type="button">Alerts<span class="nav-count" id="navNotificationCount"></span></button></li>
+        <li class="nav-ask-mobile"><button class="nav-button" data-view="askSentinel" aria-label="Ask Sentinel" type="button">Ask</button></li>
       </ul>
+
       <div class="rail-foot">
         <div class="scan-status">
           <span class="status-dot" id="statusDot" aria-hidden="true"></span>
@@ -537,6 +604,13 @@
           <button class="text-button" type="button" data-theme-toggle>Light theme</button>
           <a id="repoLink" href="https://github.com/GauravDarwesh/ChangeSentinel" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
+      </div>
+      <div class="rail-ask">
+        <button class="ask-sentinel-launch" id="askSentinelLaunch" type="button" aria-controls="askSentinelView">
+          <span class="ask-sentinel-mark" aria-hidden="true">S/AI</span>
+          <span class="ask-sentinel-copy"><strong>Ask Sentinel</strong><small>Ask about monitoring history</small></span>
+          <span class="ask-sentinel-arrow" aria-hidden="true">↗</span>
+        </button>
       </div>
     </nav>
 
@@ -638,6 +712,43 @@
         <div class="detail-pane" id="runDetail" aria-live="polite"></div>
       </section>
 
+
+      <section id="askSentinelView" class="view ask-sentinel-view" hidden aria-label="Ask Sentinel">
+        <header class="ask-sentinel-header">
+          <div class="ask-sentinel-title">
+            <span class="ask-sentinel-mark" aria-hidden="true">S/AI</span>
+            <div><h1>Ask Sentinel</h1><p>Your monitoring history, explained.</p></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span id="askSentinelQuota" class="ask-sentinel-state" aria-live="polite">3 requests/day</span>
+            <button id="askSentinelBack" class="ask-sentinel-back" type="button">Dashboard</button>
+          </div>
+        </header>
+        <div id="askSentinelMessages" class="ask-sentinel-messages" aria-live="polite">
+          <div class="ask-sentinel-welcome" id="askSentinelWelcome">
+            <div class="ask-sentinel-eyebrow">Monitoring intelligence</div>
+            <h2>Your monitoring history.<br>One clear answer.</h2>
+            <p>Ask about changes, scan runs, source health, past alerts, or the evidence behind a finding. Answers should be grounded in the saved ChangeSentinel records.</p>
+            <div class="ask-sentinel-prompts">
+              <button class="ask-sentinel-prompt" type="button" data-ask-prompt="Summarize the latest monitoring run, including changes and any errors."><span>01 / Latest run</span>What happened in the latest scan?</button>
+              <button class="ask-sentinel-prompt" type="button" data-ask-prompt="Summarize the important changes detected over the last 7 days and link them to their sources."><span>02 / Change review</span>What changed this week?</button>
+              <button class="ask-sentinel-prompt" type="button" data-ask-prompt="Which monitored pages have problems or incomplete data, and what evidence supports that?"><span>03 / Source health</span>Is anything unhealthy or incomplete?</button>
+              <button class="ask-sentinel-prompt" type="button" data-ask-prompt="Explain the most recent regulatory change and distinguish verified source changes from baseline migrations or false positives."><span>04 / Evidence</span>Explain the last meaningful change.</button>
+            </div>
+          </div>
+          <div id="askSentinelTranscript"></div>
+        </div>
+        <div class="ask-sentinel-composer">
+          <form id="askSentinelForm" class="ask-sentinel-form">
+            <label class="visually-hidden" for="askSentinelInput">Ask Sentinel a question</label>
+            <textarea id="askSentinelInput" class="ask-sentinel-input" rows="1" maxlength="1200" placeholder="Ask about a scan, change, source or alert…" required></textarea>
+            <button class="ask-sentinel-send" id="askSentinelSend" type="submit" aria-label="Send question" title="Send question">
+              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M8 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </form>
+          <div class="ask-sentinel-footnote"><span>Answers use saved monitoring records.</span><span>Daily limit: 3 requests per user.</span></div>
+        </div>
+      </section>
       <section id="notificationsView" class="view view-split" hidden aria-label="Alerts">
         <div class="list-pane">
           <div class="list-head"><div class="list-title-row"><h1 class="list-title">Alerts</h1><span class="list-count" id="notificationCounts"></span></div></div>
@@ -688,7 +799,13 @@
   <div class="field-tip" id="fieldTip" role="tooltip" hidden></div>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script src="dashboard-lib.js?v=20261020-led-1"></script>
-  <script src="dashboard.js?v=20261020-led-1"></script>
+  <script>
+    window.CHANGESENTINEL_ASK_ENDPOINT = "https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel";
+    window.CHANGESENTINEL_ASK_SUPABASE_URL = "https://pysoukwmnwwgilkwafdy.supabase.co";
+    window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV";
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.121.0/dist/umd/supabase.js"></script>
+  <script src="dashboard-lib.js?v=20261020-ask-sentinel-3"></script>
+  <script src="dashboard.js?v=20261020-ask-sentinel-3"></script>
 </body>
 </html>

@@ -50,8 +50,8 @@ const ENDPOINTS = {
   outbox: new URL("./data/notification-outbox.json", document.baseURI).href,
   config: new URL("./config/sources.json", document.baseURI).href
 };
-const VIEWS = ["overview", "changes", "monitors", "runs", "notifications"];
-const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", notifications: "alerts" };
+const VIEWS = ["overview", "changes", "monitors", "runs", "notifications", "askSentinel"];
+const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", notifications: "alerts", askSentinel: "ask-sentinel" };
 const $ = id => document.getElementById(id);
 const esc = L.esc;
 const state = {
@@ -1346,7 +1346,7 @@ function renderNotificationDetail() {
 /* ================= Navigation ================= */
 
 function viewSection(view) {
-  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView" }[view];
+  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", askSentinel: "askSentinelView" }[view] || "overviewView";
 }
 function hasSelection(view) {
   return view === "changes" ? !!state.selectedChangeId : view === "monitors" ? !!state.selectedId
@@ -1362,7 +1362,10 @@ function renderViews() {
     button.classList.toggle("active", button.dataset.view === state.view);
     button.setAttribute("aria-current", button.dataset.view === state.view ? "page" : "false");
   });
-  const titles = { overview: "Overview", changes: "Changes", monitors: "Pages", runs: "Runs", notifications: "Alerts" };
+  const askLauncher = $("askSentinelLaunch");
+  askLauncher.classList.toggle("active", state.view === "askSentinel");
+  askLauncher.setAttribute("aria-current", state.view === "askSentinel" ? "page" : "false");
+  const titles = { overview: "Overview", changes: "Changes", monitors: "Pages", runs: "Runs", notifications: "Alerts", askSentinel: "Ask Sentinel" };
   document.title = titles[state.view] + " | ChangeSentinel";
 }
 // On wide screens the first row is selected automatically, so opening a view
@@ -1403,7 +1406,7 @@ function resetDetailScroll(view) {
 function writeHash() {
   const id = state.view === "changes" ? state.selectedChangeId : state.view === "monitors" ? state.selectedId
     : state.view === "runs" ? state.selectedRunId : state.view === "notifications" ? state.selectedNotificationId : "";
-  const hash = "#" + HASH_NAMES[state.view] + (id ? "/" + encodeURIComponent(id) : "");
+  const hash = "#" + (HASH_NAMES[state.view] || (state.view === "askSentinel" ? "ask-sentinel" : "overview")) + (id ? "/" + encodeURIComponent(id) : "");
   try { history.replaceState(null, "", state.view === "overview" ? location.pathname + location.search : hash); } catch (_) {}
 }
 function readHash() {
@@ -1411,7 +1414,7 @@ function readHash() {
   const legacy = raw.match(/^monitor=([^&]+)/);
   if (legacy) return { view: "monitors", id: decodeURIComponent(legacy[1]) };
   const [name, ...rest] = raw.split("/");
-  const view = Object.keys(HASH_NAMES).find(key => HASH_NAMES[key] === name);
+  const view = Object.keys(HASH_NAMES).find(key => HASH_NAMES[key] === name) || (name === "ask-sentinel" ? "askSentinel" : null);
   return view ? { view, id: rest.length ? decodeURIComponent(rest.join("/")) : "" } : null;
 }
 function setView(view, options) {
@@ -1719,6 +1722,234 @@ $("addMonitorForm").addEventListener("submit", submitAddMonitor);
 if (compactQuery && typeof compactQuery.addEventListener === "function") {
   compactQuery.addEventListener("change", () => { if (state.loaded) setView(state.view, { detail: state.mobileDetail }); });
 }
+
+
+
+/* ================= Ask Sentinel =================
+ * This UI deliberately talks only to a same-origin server endpoint.
+ * It never contains an OpenRouter credential and does not implement a
+ * client-side quota (which would be bypassable by clearing browser storage).
+ */
+const ASK_SENTINEL_ENDPOINT = window.CHANGESENTINEL_ASK_ENDPOINT || "";
+const ASK_SENTINEL_MAX_TRANSCRIPT = 12;
+const askSentinelState = { messages: [], sending: false, remaining: 3, warmed: false, warmingPromise: null, warmError: "", identity: null, memoryVisitorId: "" };
+
+const ASK_SENTINEL_SUPABASE_URL = window.CHANGESENTINEL_ASK_SUPABASE_URL || "";
+const ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY = window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY || "";
+let askSentinelSupabaseClient = null;
+
+function askSentinelGetClient() {
+  if (!window.supabase || typeof window.supabase.createClient !== "function") {
+    throw new Error("The secure chat connection could not load. Please refresh the dashboard and retry.");
+  }
+  if (!ASK_SENTINEL_SUPABASE_URL || !ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY) {
+    throw new Error("The Ask Sentinel connection has not been configured.");
+  }
+  if (!askSentinelSupabaseClient) {
+    askSentinelSupabaseClient = window.supabase.createClient(
+      ASK_SENTINEL_SUPABASE_URL,
+      ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY,
+      { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: "changesentinel-ask-auth" } }
+    );
+  }
+  return askSentinelSupabaseClient;
+}
+function askSentinelVisitorId() {
+  const key = "changesentinel-ask-visitor-id";
+  try {
+    const existing = localStorage.getItem(key) || "";
+    if (/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(existing)) return existing;
+    const id = window.crypto.randomUUID();
+    localStorage.setItem(key, id);
+    return id;
+  } catch (_) {
+    if (!askSentinelState.memoryVisitorId) askSentinelState.memoryVisitorId = window.crypto.randomUUID();
+    return askSentinelState.memoryVisitorId;
+  }
+}
+async function askSentinelIdentity() {
+  if (askSentinelState.identity) return askSentinelState.identity;
+  try {
+    const client = askSentinelGetClient();
+    const current = await client.auth.getSession();
+    if (current.error) throw current.error;
+    let session = current.data && current.data.session;
+    if (!session) {
+      const created = await client.auth.signInAnonymously();
+      if (created.error) throw created.error;
+      session = created.data && created.data.session;
+    }
+    if (session && session.access_token) {
+      askSentinelState.identity = { accessToken: session.access_token, visitorId: "" };
+      return askSentinelState.identity;
+    }
+  } catch (_) {
+    // Prototype fallback: clearing site storage resets this visitor identity.
+  }
+  askSentinelState.identity = { accessToken: "", visitorId: askSentinelVisitorId() };
+  return askSentinelState.identity;
+}
+function askSentinelIdentityHeaders(identity) {
+  const headers = { "Accept": "application/json", "apikey": ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY };
+  if (identity.accessToken) headers["Authorization"] = "Bearer " + identity.accessToken;
+  else headers["x-ask-sentinel-visitor-id"] = identity.visitorId;
+  return headers;
+}
+function askSentinelWarmIndex() {
+  if (askSentinelState.warmed) {
+    return Promise.resolve({ ok: true, remaining: askSentinelState.remaining });
+  }
+  if (askSentinelState.warmingPromise) return askSentinelState.warmingPromise;
+  askSentinelState.warmError = "";
+  $("askSentinelQuota").textContent = "Preparing monitoring archive…";
+  askSentinelState.warmingPromise = (async () => {
+    const identity = await askSentinelIdentity();
+    const response = await fetch(ASK_SENTINEL_ENDPOINT + "?mode=warm", {
+      method: "GET",
+      headers: askSentinelIdentityHeaders(identity),
+      credentials: "omit"
+    });
+    let payload = {};
+    try { payload = await response.json(); } catch (_) {}
+    if (!response.ok || payload.ok !== true) {
+      throw new Error(typeof payload.error === "string" ? payload.error : "Could not prepare the monitoring archive. Please retry.");
+    }
+    askSentinelState.warmed = true;
+    askSentinelUpdateQuota(payload.remaining);
+    return payload;
+  })().catch(error => {
+    askSentinelState.warmError = String(error && error.message || "The monitoring archive could not be prepared.");
+    $("askSentinelQuota").textContent = "Archive unavailable";
+    return null;
+  }).finally(() => {
+    askSentinelState.warmingPromise = null;
+  });
+  return askSentinelState.warmingPromise;
+}
+
+function askSentinelEscapedText(value) {
+  return String(value == null ? "" : value)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function askSentinelMessageNode(role, content, extraClass) {
+  const node = document.createElement("article");
+  node.className = "ask-sentinel-message " + (role === "user" ? "user" : "assistant") + (extraClass ? " " + extraClass : "");
+  const avatar = document.createElement("div");
+  avatar.className = "ask-sentinel-avatar";
+  avatar.setAttribute("aria-hidden", "true");
+  avatar.textContent = role === "user" ? "YOU" : "S/AI";
+  const body = document.createElement("div");
+  body.className = "ask-sentinel-message-body";
+  const label = document.createElement("div");
+  label.className = "ask-sentinel-role";
+  label.textContent = role === "user" ? "You" : "Sentinel";
+  const text = document.createElement("div");
+  text.className = "ask-sentinel-text";
+  text.textContent = content;
+  body.append(label, text);
+  node.append(avatar, body);
+  return node;
+}
+function askSentinelAppendMessage(role, content, extraClass) {
+  const transcript = $("askSentinelTranscript");
+  const node = askSentinelMessageNode(role, content, extraClass);
+  transcript.append(node);
+  $("askSentinelMessages").scrollTop = $("askSentinelMessages").scrollHeight;
+  return node;
+}
+function askSentinelUpdateQuota(remaining) {
+  if (Number.isInteger(remaining) && remaining >= 0 && remaining <= 3) askSentinelState.remaining = remaining;
+  const quota = $("askSentinelQuota");
+  quota.textContent = askSentinelState.remaining + " of 3 left today";
+}
+function askSentinelOpen() {
+  setView("askSentinel");
+  $("askSentinelInput").focus({ preventScroll: true });
+  void askSentinelWarmIndex();
+}
+function askSentinelSetSending(sending) {
+  askSentinelState.sending = sending;
+  $("askSentinelSend").disabled = sending || askSentinelState.remaining <= 0;
+  $("askSentinelInput").disabled = sending || askSentinelState.remaining <= 0;
+  $("askSentinelSend").setAttribute("aria-busy", String(sending));
+}
+/* Repository history and evidence are indexed server-side; client context is not sent as authoritative evidence. */
+async function askSentinelSendQuestion(promptOverride) {
+  if (askSentinelState.sending || askSentinelState.remaining <= 0) return;
+  const input = $("askSentinelInput");
+  const question = String(promptOverride == null ? input.value : promptOverride).trim();
+  if (!question) { input.focus(); return; }
+  if (!state.loaded) {
+    askSentinelAppendMessage("assistant", "Monitoring data is still loading. Please wait until the dashboard finishes loading before asking a question.", "ask-sentinel-error");
+    return;
+  }
+  if (question.length > 1200) {
+    askSentinelAppendMessage("assistant", "Please keep each question to 1,200 characters or fewer.", "ask-sentinel-error");
+    return;
+  }
+  if (!ASK_SENTINEL_ENDPOINT || !ASK_SENTINEL_SUPABASE_URL || !ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY) {
+    askSentinelAppendMessage("assistant",
+      "Ask Sentinel’s interface is ready, but its secure server endpoint has not been configured yet. No request was sent, and no daily allowance was used. Configure CHANGESENTINEL_ASK_ENDPOINT to a dedicated server-side endpoint that authenticates each user, enforces the three-request daily limit atomically, and calls Groq without exposing its key.",
+      "ask-sentinel-error");
+    return;
+  }
+  $("askSentinelWelcome").hidden = true;
+  input.value = "";
+  askSentinelAppendMessage("user", question);
+  const history = askSentinelState.messages.slice(-ASK_SENTINEL_MAX_TRANSCRIPT);
+  const typing = askSentinelAppendMessage("assistant", "Reviewing saved monitoring records…", "ask-sentinel-typing");
+  askSentinelSetSending(true);
+  try {
+    const warmed = await askSentinelWarmIndex();
+    if (!warmed) throw new Error(askSentinelState.warmError || "The monitoring archive could not be prepared. Please retry.");
+    const identity = await askSentinelIdentity();
+    const response = await fetch(ASK_SENTINEL_ENDPOINT, {
+      method: "POST",
+      headers: { ...askSentinelIdentityHeaders(identity), "Content-Type": "application/json" },
+      credentials: "omit",
+      body: JSON.stringify({ question, conversation: history })
+    });
+    let payload = {};
+    try { payload = await response.json(); } catch (_) {}
+    if (Number.isInteger(payload.remaining)) askSentinelUpdateQuota(payload.remaining);
+    if (response.status === 429) {
+      throw new Error("Daily limit reached. Ask Sentinel allows three requests per user per day. Your allowance resets according to the server’s daily reset time.");
+    }
+    if (!response.ok) {
+      throw new Error(typeof payload.error === "string" ? payload.error : "Ask Sentinel could not answer this request. Please try again later.");
+    }
+    const answer = typeof payload.answer === "string" ? payload.answer.trim() : "";
+    if (!answer) throw new Error("Ask Sentinel returned an empty answer. Please retry.");
+    typing.querySelector(".ask-sentinel-text").textContent = answer;
+    typing.classList.remove("ask-sentinel-typing");
+    askSentinelState.messages.push({ role: "user", content: question }, { role: "assistant", content: answer });
+    if (askSentinelState.messages.length > ASK_SENTINEL_MAX_TRANSCRIPT * 2) {
+      askSentinelState.messages = askSentinelState.messages.slice(-ASK_SENTINEL_MAX_TRANSCRIPT * 2);
+    }
+  } catch (error) {
+    typing.querySelector(".ask-sentinel-text").textContent = String(error && error.message || "A connection error occurred.");
+    typing.classList.add("ask-sentinel-error");
+    typing.classList.remove("ask-sentinel-typing");
+  } finally {
+    askSentinelSetSending(false);
+    if (askSentinelState.remaining <= 0) {
+      $("askSentinelQuota").textContent = "0 of 3 left today";
+      $("askSentinelInput").placeholder = "Daily request limit reached";
+    }
+    input.focus({ preventScroll: true });
+  }
+}
+$("askSentinelLaunch").addEventListener("click", askSentinelOpen);
+$("askSentinelBack").addEventListener("click", () => setView("overview"));
+$("askSentinelForm").addEventListener("submit", event => {
+  event.preventDefault();
+  askSentinelSendQuestion();
+});
+$("askSentinelMessages").addEventListener("click", event => {
+  const prompt = event.target.closest("[data-ask-prompt]");
+  if (prompt) askSentinelSendQuestion(prompt.dataset.askPrompt);
+});
 
 loadData(true);
 window.setInterval(() => loadData(false), 120000);

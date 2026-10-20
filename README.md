@@ -828,3 +828,20 @@ Manually registered URLs are bounded to one exact URL. Redirects are validated, 
 ## License
 
 No license is currently specified in this repository. See GitHub's documentation on repository licensing before reusing the project in another project or organization.
+
+
+## Ask Sentinel
+
+Ask Sentinel is integrated into the existing dashboard theme and navigation. It uses the dedicated Supabase Edge Function at `https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel` and Groq's `openai/gpt-oss-20b` model via the server-side `GROQ_API` secret. No Groq API key is shipped to the browser.
+
+### Repository knowledge and retrieval
+
+The Edge Function reads the current `main` commit of `GauravDarwesh/ChangeSentinel`, indexes readable repository text and caches it in private Supabase tables. It covers the committed run history, monitoring reports, source configuration, URL registry, notification ledgers, change evidence, extracted text snapshots, discovery inventory text, documentation, source code, tests, scripts and workflows. Binary PDF and ZIP files are not sent directly to the model; the committed extracted text snapshots and evidence JSON are indexed instead. Each question retrieves relevant records from this text corpus within a conservative prompt budget for the stated free Groq limit. It does not attempt to paste the entire repository into one prompt. The corpus is refreshed automatically when a new `main` commit is detected on the next warm-up.
+
+The model is instructed to distinguish currently configured active sources from inactive/archived records, and verified source changes from baseline migrations, extraction drift, superseded alerts and fetch/extraction failures. It should report when retrieved evidence is insufficient instead of making up an answer.
+
+### Authentication and daily quota
+
+The frontend first attempts a Supabase anonymous Auth session. If anonymous sign-ins are unavailable, it falls back to a stable UUID stored in that browser's local storage. The Edge Function validates a Supabase session when present; otherwise it accepts the visitor UUID and applies the same atomic server-side limit of three accepted requests per identity per UTC calendar day. This fallback keeps a prototype presentation usable without an Auth-provider toggle, but it is not strong authentication: visitors can clear browser storage or deliberately choose another UUID to reset their identity. Enable anonymous sign-ins for stronger per-user continuity when possible.
+
+`GROQ_API` must be present under Edge Function secrets. The function platform JWT gate is disabled because the handler validates bearer tokens itself when Supabase Auth is used, and validates the UUID format when using prototype visitor identity. Only the Supabase publishable key is included in the dashboard. The Supabase secret/service-role key and Groq API key remain server-side. Retrieved evidence is capped at 8,500 characters, recent chat history is tightly bounded, and model output is capped at 800 tokens to leave headroom under the stated 8K-token input budget.
