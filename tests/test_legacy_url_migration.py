@@ -127,6 +127,14 @@ class TestLegacyUrlCollisionMigration(unittest.TestCase):
         )
         self.assertEqual(record["canonical_url_collision_migration"]["normalized_hash"], record["normalized_hash"])
         self.assertEqual(migrated["sources"]["unrelated"], original["sources"]["unrelated"])
+        # The next scan may discover the alternate query order. It must resolve
+        # to the migrated survivor rather than report the duplicate as removed.
+        from regmon.engine import resolve_previous
+        resolved_id, resolved_record = resolve_previous(
+            self.reversed_url, migrated["sources"]["eba-test"]
+        )
+        self.assertEqual(resolved_id, self.preferred_id)
+        self.assertEqual(resolved_record["normalized_hash"], record["normalized_hash"])
         self.assertEqual(self.latest, original)
         self.assertTrue((self.data_dir / "snapshots" / "legacy.txt").is_file())
 
