@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261020T043257Z-447a7de5",
-  "generated_at": "2026-10-20T04:33:13.402593+00:00",
+  "run_id": "20261020T112144Z-06a8f51f",
+  "generated_at": "2026-10-20T11:21:45.007363+00:00",
   "source": {
     "id": "fed-reporting-forms-detail-pilot",
     "name": "Federal Reserve \u2014 Recently Updated Forms Detail Pilot (Exact URL Allowlist)",
@@ -38,7 +38,7 @@
   "baseline_update_allowed": true,
   "change_detector": {
     "raw_hash": "SHA-256 retrieved response bytes",
-    "html_hash": "SHA-256 full HTML response body; retained for raw snapshots and evidence",
+    "html_hash": "SHA-256 of the saved HTML snapshot; when only volatile Cloudflare tokens changed, the previous equivalent snapshot is reused (raw_hash is always this response)",
     "html_comparison_hash": "HTML comparison signature with volatile Cloudflare challenge IDs/timestamps stabilized",
     "normalized_hash": "SHA-256 extracted normalized content",
     "classification_hash": "normalized_hash with separate HTML_SOURCE_CHANGED events",
@@ -69,6 +69,7 @@
     "source_changed": 0,
     "removed": 0,
     "removal_held": 0,
+    "removal_pending_confirmation": 0,
     "unchanged": 14,
     "baseline_migration": 0,
     "extraction_drift": 0,

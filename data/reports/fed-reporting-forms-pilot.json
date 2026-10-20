@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261020T043257Z-447a7de5",
-  "generated_at": "2026-10-20T04:32:57.616576+00:00",
+  "run_id": "20261020T112144Z-06a8f51f",
+  "generated_at": "2026-10-20T11:21:44.578506+00:00",
   "source": {
     "id": "fed-reporting-forms-pilot",
     "name": "Federal Reserve \u2014 Reporting Forms Pilot (Exact URL Allowlist)",
@@ -35,7 +35,7 @@
   "baseline_update_allowed": true,
   "change_detector": {
     "raw_hash": "SHA-256 retrieved response bytes",
-    "html_hash": "SHA-256 full HTML response body; retained for raw snapshots and evidence",
+    "html_hash": "SHA-256 of the saved HTML snapshot; when only volatile Cloudflare tokens changed, the previous equivalent snapshot is reused (raw_hash is always this response)",
     "html_comparison_hash": "HTML comparison signature with volatile Cloudflare challenge IDs/timestamps stabilized",
     "normalized_hash": "SHA-256 extracted normalized content",
     "classification_hash": "normalized_hash with separate HTML_SOURCE_CHANGED events",
@@ -62,19 +62,20 @@
   "counts": {
     "discovered": 2,
     "new": 0,
-    "changed": 1,
+    "changed": 0,
     "source_changed": 0,
     "removed": 0,
     "removal_held": 0,
-    "unchanged": 1,
+    "removal_pending_confirmation": 0,
+    "unchanged": 2,
     "baseline_migration": 0,
     "extraction_drift": 0,
     "fetch_error": 0,
     "extraction_error": 0,
     "not_modified": 0,
     "forced_full_fetch": 0,
-    "relevance_candidates": 1,
-    "ai_ok": 1,
+    "relevance_candidates": 0,
+    "ai_ok": 0,
     "ai_invalid": 0,
     "ai_error": 0,
     "ai_skipped": 0,
@@ -82,248 +83,11 @@
     "ai_backlog_pending": 0,
     "crawl_paused": 0
   },
-  "events": [
-    {
-      "event_id": "1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1",
-      "event_type": "CHANGED_URL",
-      "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
-      "url_id": "2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49",
-      "source_id": "fed-reporting-forms-pilot",
-      "timestamp": "2026-10-20T04:32:57.616576+00:00",
-      "evidence_location": "data/evidence/1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1.json",
-      "evidence": {
-        "previous": {
-          "schema_version": 2,
-          "url_id": "2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49",
-          "source_id": "fed-reporting-forms-pilot",
-          "regulator": "Board of Governors of the Federal Reserve System",
-          "canonical_url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
-          "first_seen": "2026-10-18T06:09:31.008124+00:00",
-          "last_seen": "2026-10-19T22:16:07.739154+00:00",
-          "last_checked": "2026-10-19T22:16:07.739154+00:00",
-          "last_full_fetch": "2026-10-19T22:16:07.739154+00:00",
-          "active": true,
-          "terminal_file": false,
-          "http_status": 200,
-          "content_type": "text/html; charset=utf-8",
-          "content_length": null,
-          "etag": null,
-          "last_modified": null,
-          "raw_hash": "312b7fcbb4386e7b6fa12bfb1bb6844d75473a0b3874d8a53ff12ab45d637c55",
-          "normalized_hash": "a50fa6e7f97f9f2adbe278847af11005a9b560898a66a1b817d0990a6154ad46",
-          "html_hash": "4272a974ffbfeaba46b2f86183a1a63684c6e6123dd5fbf8074abc5762d275c4",
-          "html_comparison_hash": "9584a3ee9ec3bfc5f529268eb1c274a4592d3198e4d3f5c0728aed18b97f3412",
-          "html_snapshot_location": "data/snapshots/html/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-4272a974ffbfeaba46b2f86183a1a63684c6e6123dd5fbf8074abc5762d275c4.html",
-          "file_snapshot_location": null,
-          "extraction_type": "html",
-          "extractor_version": "content-extractor-v5",
-          "extraction_error": null,
-          "fetch_error": null,
-          "snapshot_location": "data/snapshots/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-a50fa6e7f97f9f2adbe278847af11005a9b560898a66a1b817d0990a6154ad46.txt",
-          "evidence_location": "data/evidence/09f05cb5c2dab6991e455bb4d5f23e86b879c3abbb5e5e472536b51a88aaea26.json",
-          "relevance": {
-            "candidate": true,
-            "reason": "Regulatory signal detected",
-            "signals": [
-              "report"
-            ]
-          },
-          "ai_pending": null,
-          "last_changed_at": null,
-          "change_history": [],
-          "not_modified": false,
-          "full_fetch_forced": true,
-          "html_baseline_forced": false,
-          "file_baseline_forced": false,
-          "extractor_baseline_forced": true,
-          "migration_reason": "extractor_version"
-        },
-        "current": {
-          "schema_version": 2,
-          "url_id": "2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49",
-          "source_id": "fed-reporting-forms-pilot",
-          "regulator": "Board of Governors of the Federal Reserve System",
-          "canonical_url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
-          "first_seen": "2026-10-18T06:09:31.008124+00:00",
-          "last_seen": "2026-10-20T04:32:57.616576+00:00",
-          "last_checked": "2026-10-20T04:32:57.616576+00:00",
-          "last_full_fetch": "2026-10-20T04:32:57.616576+00:00",
-          "active": true,
-          "terminal_file": false,
-          "http_status": 200,
-          "content_type": "text/html; charset=utf-8",
-          "content_length": null,
-          "etag": null,
-          "last_modified": null,
-          "raw_hash": "aa2b846b43218e6750847474e2f298bb9d30cb247245ba0ebce8c5a4949bfd71",
-          "normalized_hash": "fa00286b0d400d61641e1387592468374015d38fe34ed152c9178e43c7f21f5d",
-          "html_hash": "aa2b846b43218e6750847474e2f298bb9d30cb247245ba0ebce8c5a4949bfd71",
-          "html_comparison_hash": "bc6b2c92fde0ef98cddcd4473ca30be0168611764f6ffce48303e4fefdc64ad8",
-          "html_snapshot_location": "data/snapshots/html/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-aa2b846b43218e6750847474e2f298bb9d30cb247245ba0ebce8c5a4949bfd71.html",
-          "file_snapshot_location": null,
-          "extraction_type": "html",
-          "extractor_version": "content-extractor-v5",
-          "extraction_error": null,
-          "fetch_error": null,
-          "snapshot_location": "data/snapshots/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-fa00286b0d400d61641e1387592468374015d38fe34ed152c9178e43c7f21f5d.txt",
-          "evidence_location": "data/evidence/1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1.json",
-          "relevance": {
-            "candidate": true,
-            "reason": "Regulatory signal detected",
-            "signals": [
-              "report"
-            ]
-          },
-          "last_changed_at": "2026-10-20T04:32:57.616576+00:00",
-          "change_history": [
-            {
-              "event_id": "1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1",
-              "event_type": "CHANGED_URL",
-              "timestamp": "2026-10-20T04:32:57.616576+00:00",
-              "evidence_location": "data/evidence/1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1.json",
-              "ai_relevant": false,
-              "ai_topic": "Reporting forms updates webpage content removal",
-              "ai_summary": "Removal of entry regarding FR 3033p/FR 3033s final OMB supporting statement and July 21, 2026 date from the Federal Reserve reporting forms recent updates page."
-            }
-          ],
-          "not_modified": false,
-          "full_fetch_forced": false,
-          "html_baseline_forced": false,
-          "file_baseline_forced": false,
-          "extractor_baseline_forced": false
-        }
-      }
-    }
-  ],
+  "events": [],
   "new_urls": [],
-  "changed_urls": [
-    {
-      "before": {
-        "schema_version": 2,
-        "url_id": "2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49",
-        "source_id": "fed-reporting-forms-pilot",
-        "regulator": "Board of Governors of the Federal Reserve System",
-        "canonical_url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
-        "first_seen": "2026-10-18T06:09:31.008124+00:00",
-        "last_seen": "2026-10-19T22:16:07.739154+00:00",
-        "last_checked": "2026-10-19T22:16:07.739154+00:00",
-        "last_full_fetch": "2026-10-19T22:16:07.739154+00:00",
-        "active": true,
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=utf-8",
-        "content_length": null,
-        "etag": null,
-        "last_modified": null,
-        "raw_hash": "312b7fcbb4386e7b6fa12bfb1bb6844d75473a0b3874d8a53ff12ab45d637c55",
-        "normalized_hash": "a50fa6e7f97f9f2adbe278847af11005a9b560898a66a1b817d0990a6154ad46",
-        "html_hash": "4272a974ffbfeaba46b2f86183a1a63684c6e6123dd5fbf8074abc5762d275c4",
-        "html_comparison_hash": "9584a3ee9ec3bfc5f529268eb1c274a4592d3198e4d3f5c0728aed18b97f3412",
-        "html_snapshot_location": "data/snapshots/html/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-4272a974ffbfeaba46b2f86183a1a63684c6e6123dd5fbf8074abc5762d275c4.html",
-        "file_snapshot_location": null,
-        "extraction_type": "html",
-        "extractor_version": "content-extractor-v5",
-        "extraction_error": null,
-        "fetch_error": null,
-        "snapshot_location": "data/snapshots/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-a50fa6e7f97f9f2adbe278847af11005a9b560898a66a1b817d0990a6154ad46.txt",
-        "evidence_location": "data/evidence/09f05cb5c2dab6991e455bb4d5f23e86b879c3abbb5e5e472536b51a88aaea26.json",
-        "relevance": {
-          "candidate": true,
-          "reason": "Regulatory signal detected",
-          "signals": [
-            "report"
-          ]
-        },
-        "ai_pending": null,
-        "last_changed_at": null,
-        "change_history": [],
-        "not_modified": false,
-        "full_fetch_forced": true,
-        "html_baseline_forced": false,
-        "file_baseline_forced": false,
-        "extractor_baseline_forced": true,
-        "migration_reason": "extractor_version"
-      },
-      "after": {
-        "schema_version": 2,
-        "url_id": "2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49",
-        "source_id": "fed-reporting-forms-pilot",
-        "regulator": "Board of Governors of the Federal Reserve System",
-        "canonical_url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
-        "first_seen": "2026-10-18T06:09:31.008124+00:00",
-        "last_seen": "2026-10-20T04:32:57.616576+00:00",
-        "last_checked": "2026-10-20T04:32:57.616576+00:00",
-        "last_full_fetch": "2026-10-20T04:32:57.616576+00:00",
-        "active": true,
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=utf-8",
-        "content_length": null,
-        "etag": null,
-        "last_modified": null,
-        "raw_hash": "aa2b846b43218e6750847474e2f298bb9d30cb247245ba0ebce8c5a4949bfd71",
-        "normalized_hash": "fa00286b0d400d61641e1387592468374015d38fe34ed152c9178e43c7f21f5d",
-        "html_hash": "aa2b846b43218e6750847474e2f298bb9d30cb247245ba0ebce8c5a4949bfd71",
-        "html_comparison_hash": "bc6b2c92fde0ef98cddcd4473ca30be0168611764f6ffce48303e4fefdc64ad8",
-        "html_snapshot_location": "data/snapshots/html/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-aa2b846b43218e6750847474e2f298bb9d30cb247245ba0ebce8c5a4949bfd71.html",
-        "file_snapshot_location": null,
-        "extraction_type": "html",
-        "extractor_version": "content-extractor-v5",
-        "extraction_error": null,
-        "fetch_error": null,
-        "snapshot_location": "data/snapshots/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-fa00286b0d400d61641e1387592468374015d38fe34ed152c9178e43c7f21f5d.txt",
-        "evidence_location": "data/evidence/1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1.json",
-        "relevance": {
-          "candidate": true,
-          "reason": "Regulatory signal detected",
-          "signals": [
-            "report"
-          ]
-        },
-        "last_changed_at": "2026-10-20T04:32:57.616576+00:00",
-        "change_history": [
-          {
-            "event_id": "1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1",
-            "event_type": "CHANGED_URL",
-            "timestamp": "2026-10-20T04:32:57.616576+00:00",
-            "evidence_location": "data/evidence/1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1.json",
-            "ai_relevant": false,
-            "ai_topic": "Reporting forms updates webpage content removal",
-            "ai_summary": "Removal of entry regarding FR 3033p/FR 3033s final OMB supporting statement and July 21, 2026 date from the Federal Reserve reporting forms recent updates page."
-          }
-        ],
-        "not_modified": false,
-        "full_fetch_forced": false,
-        "html_baseline_forced": false,
-        "file_baseline_forced": false,
-        "extractor_baseline_forced": false
-      }
-    }
-  ],
+  "changed_urls": [],
   "source_changed_urls": [],
   "removed_urls": [],
   "baseline_migrations": [],
-  "ai_results": [
-    {
-      "event": "CHANGED_URL",
-      "event_id": "1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1",
-      "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
-      "source_id": "fed-reporting-forms-pilot",
-      "evidence_location": "data/evidence/1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1.json",
-      "ai": {
-        "status": "ok",
-        "analysis": {
-          "relevant": false,
-          "topic": "Reporting forms updates webpage content removal",
-          "change_type": "other",
-          "summary": "Removal of entry regarding FR 3033p/FR 3033s final OMB supporting statement and July 21, 2026 date from the Federal Reserve reporting forms recent updates page.",
-          "impact": "No regulatory impact; webpage content update only.",
-          "effective_date": "Not stated",
-          "affected_scope": "Federal Reserve reporting forms recent updates webpage",
-          "actions": "None required",
-          "reason": "The diff shows removal of a dated entry about an information collection update and final OMB supporting statement from a 'recent updates' webpage. This appears to be a content management change (removing outdated items) rather than a change to regulatory substance such as requirements, forms, instructions, thresholds, deadlines, or scope."
-        }
-      }
-    }
-  ]
+  "ai_results": []
 }
