@@ -175,7 +175,8 @@ class TestDiscoveryAlertEpisodes(unittest.TestCase):
 
 
 class TestAIEvaluationSet(unittest.TestCase):
-    def test_every_case_loads_and_both_verdicts_are_represented(self):
+    @staticmethod
+    def load_module():
         import importlib.util
         from pathlib import Path
 
@@ -183,12 +184,103 @@ class TestAIEvaluationSet(unittest.TestCase):
         spec = importlib.util.spec_from_file_location("ai_eval", script)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
+        return module
+
+    def test_every_case_loads_and_both_verdicts_are_represented(self):
+        module = self.load_module()
         cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
         self.assertEqual(sum(1 for case in cases if case["expected_relevant"] is False and case.get("evidence")), 15)
         self.assertTrue(any(case["expected_relevant"] for case in cases))
         for case in cases:
             url, _event, diff = module.load_case(case)
             self.assertTrue(url.startswith("https://") and diff.strip(), case["id"])
+
+    def test_pdf_table_reconstruction_cases_are_suppressed_before_ai(self):
+        module = self.load_module()
+        cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        by_id = {case["id"]: case for case in cases}
+
+        for case_id in ("d63f24035c41c768", "c2f9da22155df2c4"):
+            with self.subTest(case_id=case_id):
+                case = by_id[case_id]
+                evidence = module.load_evidence(case)
+                self.assertEqual(evidence["before"]["raw_hash"], evidence["after"]["raw_hash"])
+                self.assertNotEqual(evidence["before"]["normalized_hash"], evidence["after"]["normalized_hash"])
+                self.assertIn("-[TABLE]", evidence["diff"])
+                self.assertEqual(
+                    module.extraction_drift_reason(evidence),
+                    "identical source bytes with changed normalized extraction",
+                )
+
+                with patch.object(module, "analyze", side_effect=AssertionError("artifact evidence must not reach AI")) as model:
+                    result = module.evaluate_case(case, module.AIConfig())
+                model.assert_not_called()
+                self.assertFalse(result["got"])
+                self.assertTrue(result["correct"])
+                self.assertEqual(result["status"], "suppressed")
+                self.assertEqual(result["decision_source"], "deterministic_extraction_drift_guard")
+
+    def test_all_historical_parser_artifacts_are_suppressed_before_ai(self):
+        module = self.load_module()
+        cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        artifact_cases = [
+            case for case in cases
+            if case.get("evidence") and case["expected_relevant"] is False
+        ]
+        self.assertEqual(len(artifact_cases), 15)
+
+        with patch.object(module, "analyze", side_effect=AssertionError("parser artifacts must not reach AI")) as model:
+            for case in artifact_cases:
+                with self.subTest(case_id=case["id"]):
+                    evidence = module.load_evidence(case)
+                    self.assertIsNotNone(module.extraction_drift_reason(evidence), case["id"])
+                    result = module.evaluate_case(case, module.AIConfig())
+                    self.assertFalse(result["got"], case["id"])
+                    self.assertTrue(result["correct"], case["id"])
+                    self.assertEqual(
+                        result["decision_source"],
+                        "deterministic_extraction_drift_guard",
+                        case["id"],
+                    )
+            model.assert_not_called()
+
+    def test_unchanged_html_signature_with_different_raw_bytes_is_also_drift(self):
+        module = self.load_module()
+        evidence = {
+            "before": {"raw_hash": "raw-before", "normalized_hash": "normalized-before",
+                       "html_comparison_hash": "stable-html-signature"},
+            "after": {"raw_hash": "raw-after", "normalized_hash": "normalized-after",
+                      "html_comparison_hash": "stable-html-signature"},
+        }
+        self.assertEqual(
+            module.extraction_drift_reason(evidence),
+            "identical HTML comparison signature with changed normalized extraction",
+        )
+
+    def test_real_threshold_and_deadline_changes_still_reach_semantic_ai(self):
+        module = self.load_module()
+        cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        by_id = {case["id"]: case for case in cases}
+        response = {"status": "ok", "analysis": {"relevant": True, "reason": "Substantive change"}}
+
+        for case_id in ("synthetic-threshold", "synthetic-deadline"):
+            with self.subTest(case_id=case_id):
+                case = by_id[case_id]
+                with patch.object(module, "analyze", return_value=response) as model:
+                    result = module.evaluate_case(case, module.AIConfig())
+                model.assert_called_once()
+                self.assertEqual(model.call_args.args[2], "CHANGED_URL")
+                self.assertEqual(result["decision_source"], "ai_model")
+                self.assertTrue(result["got"])
+                self.assertTrue(result["correct"])
+
+    def test_changed_source_bytes_are_not_deterministically_suppressed(self):
+        module = self.load_module()
+        evidence = {
+            "before": {"raw_hash": "old-pdf-bytes", "normalized_hash": "old-text"},
+            "after": {"raw_hash": "new-pdf-bytes", "normalized_hash": "new-text"},
+        }
+        self.assertIsNone(module.extraction_drift_reason(evidence))
 
 
 if __name__ == "__main__":

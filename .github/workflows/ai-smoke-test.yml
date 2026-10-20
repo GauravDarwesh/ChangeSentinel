@@ -2,6 +2,16 @@ name: AI Smoke Test
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "regmon/engine.py"
+      - "regmon/change.py"
+      - "regmon/content.py"
+      - "regmon/ai.py"
+      - "scripts/ai_eval.py"
+      - "scripts/ai_eval_cases.json"
 
 permissions:
   contents: read
@@ -32,9 +42,10 @@ jobs:
           AI_ATTEMPTS: "2"
         run: python -m regmon.ai --smoke-test
 
-      # Scores relevance on 15 known parser-artifact diffs plus synthetic real
-      # changes. Fails below 80% accuracy; rerun after any prompt or model change.
-      - name: Score AI relevance on the evaluation set
+      # Runs manually or on relevant main-branch changes. Scores end-to-end decisions:
+      # deterministic extraction-drift suppression first,
+      # then semantic AI for source changes. Emits all case-level decisions and accuracy.
+      - name: Score end-to-end relevance on the evaluation set
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           AI_TIMEOUT_SECONDS: "60"
