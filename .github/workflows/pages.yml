@@ -7,6 +7,7 @@ on:
       - "index.html"
       - "dashboard-v2.html"
       - "dashboard.js"
+      - "dashboard-lib.js"
       - "data/report.json"
       - "data/latest.json"
       - "data/history/index.json"
@@ -43,6 +44,7 @@ jobs:
           cp index.html site/index.html
           cp dashboard-v2.html site/dashboard-v2.html
           cp dashboard.js site/dashboard.js
+          cp dashboard-lib.js site/dashboard-lib.js
           mkdir -p site/data/history site/config
           cp data/report.json site/data/report.json
           cp data/latest.json site/data/latest.json
