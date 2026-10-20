@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from regmon.ai import AIConfig, analyze  # noqa: E402
+from regmon.engine import is_extraction_drift  # noqa: E402
 
 CASES = Path(__file__).with_name("ai_eval_cases.json")
 
@@ -43,11 +44,11 @@ def load_case(case: dict) -> tuple[str, str, str]:
 
 
 def extraction_drift_reason(evidence: dict | None) -> str | None:
-    """Mirror the engine's deterministic guard for historical evidence.
+    """Use the production extraction-drift predicate on immutable evidence.
 
-    If the normalized text changed while the exact source bytes or the stable HTML
-    comparison signature remained identical, the observation is extraction drift,
-    not a regulatory change. Such evidence must never be sent to semantic AI.
+    Legacy evidence predates explicit extraction-state metadata, while new
+    evidence records whether either extraction had failed. The compatibility
+    path restores only metadata that is implied by the saved HTML signature.
     """
     if not isinstance(evidence, dict):
         return None
@@ -56,9 +57,16 @@ def extraction_drift_reason(evidence: dict | None) -> str | None:
     if not isinstance(before, dict) or not isinstance(after, dict):
         return None
 
-    before_normalized = before.get("normalized_hash")
-    after_normalized = after.get("normalized_hash")
-    if not before_normalized or not after_normalized or before_normalized == after_normalized:
+    guard_before = dict(before)
+    guard_after = dict(after)
+    for record in (guard_before, guard_after):
+        # Historical evidence only stored this signature for HTML records.
+        if not record.get("extraction_type") and record.get("html_comparison_hash"):
+            record["extraction_type"] = "html"
+    if guard_before.get("extraction_failed") is True:
+        guard_before["extraction_error"] = "Previous extraction failed"
+
+    if not is_extraction_drift(guard_before, guard_after):
         return None
 
     before_raw = before.get("raw_hash") or before.get("content_hash")
@@ -116,10 +124,40 @@ def evaluate_case(case: dict, config: AIConfig) -> dict:
     }
 
 
+
+def threshold_failures(
+    *,
+    accuracy: float,
+    model_accuracy: float | None,
+    model_case_count: int,
+    min_accuracy: float,
+    min_model_accuracy: float,
+) -> list[str]:
+    """Keep aggregate accuracy from hiding regressions in semantic-AI cases."""
+    failures = []
+    if accuracy < min_accuracy:
+        failures.append(
+            f"End-to-end relevance accuracy {accuracy:.1%} is below the {min_accuracy:.1%} threshold"
+        )
+    if model_case_count <= 0:
+        failures.append("No evaluation cases reached semantic AI; model-only quality could not be measured")
+    elif model_accuracy is None or model_accuracy < min_model_accuracy:
+        value = "unavailable" if model_accuracy is None else f"{model_accuracy:.1%}"
+        failures.append(
+            f"Semantic-AI-only relevance accuracy {value} is below the {min_model_accuracy:.1%} threshold"
+        )
+    return failures
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
-    parser.add_argument("--min-accuracy", type=float, default=0.8)
+    parser.add_argument("--min-accuracy", type=float, default=0.8, help="Minimum end-to-end pipeline accuracy")
+    parser.add_argument("--min-model-accuracy", type=float, default=0.8, help="Minimum semantic-AI-only accuracy")
     args = parser.parse_args()
+    if not 0.0 <= args.min_accuracy <= 1.0:
+        parser.error("--min-accuracy must be between 0 and 1")
+    if not 0.0 <= args.min_model_accuracy <= 1.0:
+        parser.error("--min-model-accuracy must be between 0 and 1")
     if not os.getenv("OPENROUTER_API_KEY"):
         raise SystemExit("OPENROUTER_API_KEY is required for the AI evaluation")
 
@@ -151,10 +189,15 @@ def main() -> None:
         },
         "cases": rows,
     }, indent=2))
-    if accuracy < args.min_accuracy:
-        raise SystemExit(
-            f"End-to-end relevance accuracy {accuracy:.1%} is below the {args.min_accuracy:.1%} threshold"
-        )
+    failures = threshold_failures(
+        accuracy=accuracy,
+        model_accuracy=model_accuracy,
+        model_case_count=len(model_rows),
+        min_accuracy=args.min_accuracy,
+        min_model_accuracy=args.min_model_accuracy,
+    )
+    if failures:
+        raise SystemExit("; ".join(failures))
 
 
 if __name__ == "__main__":
