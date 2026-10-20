@@ -112,7 +112,8 @@
       "why": "Reporting threshold amended",
       "url": "https://example.test/forms/FR_Y-9C",
       "event": "CHANGED_URL",
-      "diff": "--- before\n+++ after\n@@ -3,3 +3,3 @@\n Schedule HC-R reporting instructions\n-Holding companies with total consolidated assets of $3 billion or more must file quarterly.\n+Holding companies with total consolidated assets of $5 billion or more must file quarterly.\n Effective for the March 31, 2027, report date."
+      "diff": "--- before\n+++ after\n@@ -3,3 +3,3 @@\n Schedule HC-R reporting instructions\n-Holding companies with total consolidated assets of $3 billion or more must file quarterly.\n+Holding companies with total consolidated assets of $5 billion or more must file quarterly.\n Effective for the March 31, 2027, report date.",
+      "expected_decision_source": "ai_model"
     },
     {
       "id": "synthetic-deadline",
@@ -120,7 +121,8 @@
       "why": "Submission deadline moved",
       "url": "https://example.test/forms/FR_2028D",
       "event": "CHANGED_URL",
-      "diff": "--- before\n+++ after\n@@ -1,2 +1,2 @@\n Submission\n-Reports are due 30 calendar days after the as-of date.\n+Reports are due 15 calendar days after the as-of date."
+      "diff": "--- before\n+++ after\n@@ -1,2 +1,2 @@\n Submission\n-Reports are due 30 calendar days after the as-of date.\n+Reports are due 15 calendar days after the as-of date.",
+      "expected_decision_source": "ai_model"
     },
     {
       "id": "synthetic-new-form",
@@ -128,7 +130,8 @@
       "why": "New information collection published",
       "url": "https://example.test/forms/review",
       "event": "CHANGED_URL",
-      "diff": "--- before\n+++ after\n@@ -4,0 +5,3 @@\n+FR 2052c Liquidity Monitoring Report\n+Proposed revision published for comment; comments due January 15, 2027.\n+The revision adds daily reporting for firms with $250 billion or more in assets."
+      "diff": "--- before\n+++ after\n@@ -4,0 +5,3 @@\n+FR 2052c Liquidity Monitoring Report\n+Proposed revision published for comment; comments due January 15, 2027.\n+The revision adds daily reporting for firms with $250 billion or more in assets.",
+      "expected_decision_source": "ai_model"
     },
     {
       "id": "synthetic-whitespace",
@@ -136,7 +139,80 @@
       "why": "Whitespace and line wrapping only",
       "url": "https://example.test/forms/FR_Y-14Q",
       "event": "CHANGED_URL",
-      "diff": "--- before\n+++ after\n@@ -1,2 +1,1 @@\n-Instructions for the Capital Assessments and Stress Testing\n-information collection (Reporting Form FR Y-14Q)\n+Instructions for the Capital Assessments and Stress Testing information collection (Reporting Form FR Y-14Q)"
+      "diff": "--- before\n+++ after\n@@ -1,2 +1,1 @@\n-Instructions for the Capital Assessments and Stress Testing\n-information collection (Reporting Form FR Y-14Q)\n+Instructions for the Capital Assessments and Stress Testing information collection (Reporting Form FR Y-14Q)",
+      "expected_decision_source": "ai_model"
+    },
+    {
+      "id": "synthetic-frequency",
+      "url": "https://example.test/forms/FR_Y-9C",
+      "event": "CHANGED_URL",
+      "expected_relevant": true,
+      "expected_decision_source": "ai_model",
+      "why": "Required reporting cadence changes from quarterly to monthly",
+      "diff": "--- before\n+++ after\n@@ -1,3 +1,3 @@\n Reporting frequency\n-Submit Schedule HC-R quarterly.\n+Submit Schedule HC-R monthly, beginning with the March 31, 2027 report."
+    },
+    {
+      "id": "synthetic-data-element",
+      "url": "https://example.test/forms/FR_2052a",
+      "event": "CHANGED_URL",
+      "expected_relevant": true,
+      "expected_decision_source": "ai_model",
+      "why": "New mandatory data fields and certification requirement are introduced",
+      "diff": "--- before\n+++ after\n@@ -8,3 +8,5 @@\n Required data\n-Report total liabilities by category.\n+Report total liabilities by category and include the Legal Entity Identifier for each counterparty.\n+Certifying officer\n+An authorized officer must certify the submitted data beginning January 1, 2027."
+    },
+    {
+      "id": "synthetic-applicability-scope",
+      "url": "https://example.test/forms/FR_Y-14Q",
+      "event": "CHANGED_URL",
+      "expected_relevant": true,
+      "expected_decision_source": "ai_model",
+      "why": "Reporting applicability threshold expands the population subject to the requirement",
+      "diff": "--- before\n+++ after\n@@ -2,2 +2,2 @@\n Applicability\n-This schedule applies to institutions with consolidated assets of $100 billion or more.\n+This schedule applies to institutions with consolidated assets of $50 billion or more."
+    },
+    {
+      "id": "synthetic-typo-correction",
+      "url": "https://example.test/forms/instructions",
+      "event": "CHANGED_URL",
+      "expected_relevant": false,
+      "expected_decision_source": "ai_model",
+      "why": "Typographical correction does not change an instruction's meaning",
+      "diff": "--- before\n+++ after\n@@ -4,2 +4,2 @@\n Filing instructions\n-Submit the report by the stated date. Contact the Board if you have questions about submision.\n+Submit the report by the stated date. Contact the Board if you have questions about submission."
+    },
+    {
+      "id": "synthetic-navigation-reorder",
+      "url": "https://example.test/forms/review",
+      "event": "CHANGED_URL",
+      "expected_relevant": false,
+      "expected_decision_source": "ai_model",
+      "why": "Navigation items are reordered without changing regulatory content",
+      "diff": "--- before\n+++ after\n@@ -1,4 +1,4 @@\n Navigation\n-Home | Reporting Forms | Current Updates | Contact\n+Home | Current Updates | Reporting Forms | Contact\n Main content and form instructions are unchanged."
+    },
+    {
+      "id": "synthetic-copyright-footer",
+      "url": "https://example.test/forms/FR_Y-9C",
+      "event": "CHANGED_URL",
+      "expected_relevant": false,
+      "expected_decision_source": "ai_model",
+      "why": "Footer copyright year advances with no change to reporting requirements",
+      "diff": "--- before\n+++ after\n@@ -20,1 +20,1 @@\n-© 2026 Board of Governors of the Federal Reserve System\n+© 2027 Board of Governors of the Federal Reserve System"
+    },
+    {
+      "id": "synthetic-support-contact",
+      "url": "https://example.test/forms/support",
+      "event": "CHANGED_URL",
+      "expected_relevant": false,
+      "expected_decision_source": "ai_model",
+      "why": "General technical support phone number changes; policy and filing directions are unchanged",
+      "diff": "--- before\n+++ after\n@@ -5,1 +5,1 @@\n Technical website support\n-For website access problems, call 202-555-0140.\n+For website access problems, call 202-555-0184.\n All form requirements and submission deadlines remain unchanged."
+    },
+    {
+      "id": "synthetic-heading-capitalization",
+      "url": "https://example.test/forms/FR_2028D",
+      "event": "CHANGED_URL",
+      "expected_relevant": false,
+      "expected_decision_source": "ai_model",
+      "why": "Heading capitalization changes only",
+      "diff": "--- before\n+++ after\n@@ -1,1 +1,1 @@\n-Submission Instructions\n+SUBMISSION INSTRUCTIONS\n No body text or filing requirement changed."
     }
   ]
 }

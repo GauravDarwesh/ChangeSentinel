@@ -152,6 +152,9 @@ def write_evidence(
         "timestamp": timestamp,
         "before": {
             "normalized_hash": (before_record or {}).get("normalized_hash"),
+            "extraction_type": (before_record or {}).get("extraction_type"),
+            "extractor_version": (before_record or {}).get("extractor_version"),
+            "extraction_failed": bool((before_record or {}).get("extraction_error")),
             "raw_hash": (before_record or {}).get("raw_hash") or (before_record or {}).get("content_hash"),
             "html_hash": (before_record or {}).get("html_hash"),
             "html_comparison_hash": (before_record or {}).get("html_comparison_hash"),
@@ -161,6 +164,9 @@ def write_evidence(
         },
         "after": {
             "normalized_hash": (after_record or {}).get("normalized_hash"),
+            "extraction_type": (after_record or {}).get("extraction_type"),
+            "extractor_version": (after_record or {}).get("extractor_version"),
+            "extraction_failed": bool((after_record or {}).get("extraction_error")),
             "raw_hash": (after_record or {}).get("raw_hash") or (after_record or {}).get("content_hash"),
             "html_hash": (after_record or {}).get("html_hash"),
             "html_comparison_hash": (after_record or {}).get("html_comparison_hash"),

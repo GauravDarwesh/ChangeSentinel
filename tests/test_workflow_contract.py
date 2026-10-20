@@ -150,5 +150,25 @@ class TestCommitStateHelper(unittest.TestCase):
         self.assertIn("committed=false", output)
 
 
+class TestAIEvaluationWorkflowContract(unittest.TestCase):
+    def test_ai_evaluation_runs_on_same_repository_prs_with_both_gates(self):
+        workflow = (ROOT / ".github" / "workflows" / "ai-smoke-test.yml").read_text(encoding="utf-8")
+        self.assertIn("pull_request:", workflow)
+        self.assertIn("github.event.pull_request.head.repo.full_name == github.repository", workflow)
+        pull_request_trigger = workflow[workflow.index("  pull_request:"):workflow.index("  push:")]
+        self.assertNotIn("paths:", pull_request_trigger)
+        self.assertIn("Check whether this PR changes AI-relevant files", workflow)
+        self.assertIn("gh api --paginate", workflow)
+        self.assertIn("steps.ai-scope.outputs.relevant == 'true'", workflow)
+        self.assertEqual(workflow.count("- name: Score end-to-end relevance and free-router stability"), 1)
+        self.assertEqual(workflow.count('<<< "$changed_files"; then'), 1)
+        self.assertIn("python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8 --min-model-agreement 0.8 --min-model-cases 12 --repeats 2", workflow)
+        self.assertIn('AI_TIMEOUT_SECONDS: "20"', workflow)
+        self.assertIn('AI_ATTEMPTS: "2"', workflow)
+        self.assertIn('AI_EVAL_REPEATS: "2"', workflow)
+        self.assertIn("cancel-in-progress: true", workflow)
+        self.assertIn('"scripts/ai_eval_cases.json"', workflow)
+
+
 if __name__ == "__main__":
     unittest.main()

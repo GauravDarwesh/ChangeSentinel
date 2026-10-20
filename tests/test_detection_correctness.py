@@ -522,6 +522,26 @@ class TestGoldenCorpusCheck(unittest.TestCase):
             sandbox.write_inventory(inventory)
             self.assertEqual(len(self.run_check(sandbox)["mismatched"]), 1)
 
+    def test_known_pdf_quality_sentinels_reject_truncated_text(self):
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "golden_corpus_check", Path(__file__).resolve().parents[1] / "scripts" / "golden_corpus_check.py"
+        )
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        raw_hash = "f80f4d4734a67976906f8249f9e9ed713b8336085564914fa61f04aaff4e253a"
+        failure = module.quality_sentinel_failure(raw_hash, "FR Y-9C")
+        self.assertIsNotNone(failure)
+        self.assertLess(failure["characters"], failure["minimum_characters"])
+        self.assertIn("total consolidated assets of $3 billion or more", failure["missing_markers"])
+
+        sentinel = module.PDF_QUALITY_SENTINELS[raw_hash]
+        complete = " ".join(sentinel["required_markers"]) + (" filler" * sentinel["min_characters"])
+        self.assertIsNone(module.quality_sentinel_failure(raw_hash, complete))
+        self.assertIsNone(module.quality_sentinel_failure("unseen-source-hash", "short text"))
+
     def test_docling_variance_warns_instead_of_failing(self):
         with Sandbox() as sandbox:
             sandbox.scan(lambda *a, **k: ok(html("<p>Rule text.</p>")))

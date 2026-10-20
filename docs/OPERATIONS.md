@@ -7,7 +7,7 @@ The active production scope consists of two bounded Federal Reserve sources: the
 - **OPENROUTER_API_KEY** enables AI analysis. Deterministic comparison and evidence collection can still run if AI is unavailable.
 - **NTFY_TOPIC** is the optional destination for ntfy alerts. If it is not configured, notification candidates are retained in the notification outbox and can be delivered after a topic is configured.
 - **HEALTHCHECK_PING_URL** (optional) is pinged after every successful scan. Point it at an external dead-man's-switch service (for example a healthchecks.io check with a 14-hour period) so you are alerted even when GitHub Actions cannot start jobs at all.
-- **AI smoke test**: run `.github/workflows/ai-smoke-test.yml` manually to call the configured OpenRouter model with synthetic evidence and validate its nine-field output contract. This test does not change monitoring state or send ntfy notifications.
+- **AI smoke test**: `.github/workflows/ai-smoke-test.yml` publishes a status for every pull request, but only calls the model when AI-relevant source/evaluator files change; documentation-only and unrelated PRs retain a successful workflow check without consuming provider calls. Relevant `main` pushes and manual dispatches also run the evaluation. The workflow validates the nine-field output contract and evaluates 15 historical parser-artifact cases plus 12 semantic-AI cases (6 relevant regulatory changes and 6 cosmetic/irrelevant changes). Each semantic-AI case runs twice; end-to-end accuracy, semantic-AI-only accuracy, and repeat verdict agreement must each be at least 80%, with zero decision-source mismatches. The JSON output reports actual provider model IDs per call so free-router selection changes are observable. Every fixture must declare its expected decision source. The free router remains the default; invalid/empty responses count as incorrect and unstable. Fork PRs skip the secret-dependent model job but still run normal CI. The workflow does not change monitoring state or send ntfy notifications.
 
 ## Workflow behavior
 
@@ -51,5 +51,5 @@ Redirect targets are checked and discovery redirects must stay within the curren
 6. Keep regression coverage for transient delivery failures, confirming queued events persist and are retried.
 7. Do not reactivate eba-full-site to clear stale metadata. Select and bound the intended source explicitly.
 8. If a REMOVAL_HELD alert arrives, inspect the source first. Only when the pages were really retired, dispatch **Regulatory Monitor** with `source_id` and `allow_mass_removal` both set to that source ID.
-9. After any prompt or model change, run AI Smoke Test; its evaluation step must stay at or above 80% accuracy.
+9. After any prompt, model, evaluation fixture, or drift-guard change, require AI Smoke Test to pass the 80% end-to-end, 80% semantic-AI-only, and 80% repeated-verdict-agreement gates; confirm zero decision-source mismatches and that all 12 semantic-AI cases ran twice.
 10. Dependencies are pinned exactly. To upgrade one, change `requirements.txt` in a PR; if the golden corpus check fails, either pin back or bump `CONTENT_EXTRACTOR_VERSION` deliberately.

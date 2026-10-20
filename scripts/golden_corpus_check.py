@@ -34,6 +34,62 @@ from regmon.content import CONTENT_EXTRACTOR_VERSION, extract_content  # noqa: E
 from regmon.engine import is_current_extractor_version  # noqa: E402
 
 
+# Immutable originals that exposed difficult, table-heavy extraction paths. These
+# sentinels complement hash reproducibility: a stable but incomplete baseline must
+# not pass merely because the same incomplete text is reproduced on every run.
+# Key by original response hash so future source versions do not inherit stale
+# document-specific expectations; add a new reviewed sentinel when needed.
+PDF_QUALITY_SENTINELS = {
+    "f80f4d4734a67976906f8249f9e9ed713b8336085564914fa61f04aaff4e253a": {
+        "min_characters": 150_000,
+        "required_markers": [
+            "FR Y-9C",
+            "total consolidated assets of $3 billion or more",
+            "Page 1 of 73",
+            "Page 73 of 73",
+            "B028",
+        ],
+    },
+    "8ed5206561a87ec3f43a958323122329c1eeb3f873bd1a376d4fce18dc5f50a6": {
+        "min_characters": 1_500_000,
+        "required_markers": [
+            "Instructions for Preparation of Consolidated Financial Statements",
+            "FR Y-9C Contents-1",
+            "General Instructions",
+            "Line Item Instructions",
+        ],
+    },
+    "29bd3a812aaab10ffc4848b3410037d1961be60ced0f468e6ea85ce31dd8f9ef": {
+        "min_characters": 500_000,
+        "required_markers": [
+            "Reporting Form FR Y-14Q",
+            "WHO MUST REPORT",
+            "WHERE TO SUBMIT THE REPORTS",
+            "WHEN TO SUBMIT THE REPORTS",
+        ],
+    },
+}
+
+
+def quality_sentinel_failure(raw_hash: object, text: str | None) -> dict | None:
+    """Return a diagnostic when a known, immutable PDF extracts incomplete text."""
+    sentinel = PDF_QUALITY_SENTINELS.get(str(raw_hash or ""))
+    if sentinel is None:
+        return None
+    normalized_text = text or ""
+    missing_markers = [
+        marker for marker in sentinel["required_markers"]
+        if marker.casefold() not in normalized_text.casefold()
+    ]
+    if len(normalized_text) < sentinel["min_characters"] or missing_markers:
+        return {
+            "characters": len(normalized_text),
+            "minimum_characters": sentinel["min_characters"],
+            "missing_markers": missing_markers,
+        }
+    return None
+
+
 def profile_version(extraction_type: str, profile: str) -> str:
     """Mirror engine.make_current_item's extractor_version labelling."""
     if extraction_type == "zip" and profile.startswith("zipprofile-"):
@@ -46,7 +102,7 @@ def profile_version(extraction_type: str, profile: str) -> str:
 def check(data_dir: Path, config_path: Path) -> dict:
     _payload, sources = load_config(config_path)
     latest = json.loads((data_dir / "latest.json").read_text(encoding="utf-8"))
-    results = {"checked": 0, "matched": 0, "mismatched": [], "model_variance": [], "profile_changed": [], "skipped_old_version": 0}
+    results = {"checked": 0, "matched": 0, "mismatched": [], "quality_failures": [], "model_variance": [], "profile_changed": [], "skipped_old_version": 0}
     for source_id, records in (latest.get("sources") or {}).items():
         source = sources.get(source_id)
         if source is None or not source.active:
@@ -75,6 +131,13 @@ def check(data_dir: Path, config_path: Path) -> dict:
             produced_profile = str(profile.get("profile") or "native")
             produced_version = profile_version(extracted_kind, produced_profile)
             digest = hashlib.sha256((text or "").encode("utf-8")).hexdigest() if not error else None
+            quality_failure = quality_sentinel_failure(record.get("raw_hash"), text if not error else None)
+            if quality_failure:
+                results["quality_failures"].append({
+                    "url": record["canonical_url"],
+                    "raw_hash": record.get("raw_hash"),
+                    **quality_failure,
+                })
             if digest == record["normalized_hash"]:
                 results["matched"] += 1
             elif produced_version != record.get("extractor_version"):
@@ -108,6 +171,11 @@ def main() -> None:
         raise SystemExit(
             f"{len(results['mismatched'])} record(s) no longer reproduce their extracted baseline. "
             "Bump CONTENT_EXTRACTOR_VERSION if the change is intended, or pin the dependency that drifted."
+        )
+    if results["quality_failures"]:
+        raise SystemExit(
+            f"{len(results['quality_failures'])} known PDF extraction quality sentinel(s) failed. "
+            "Inspect extraction fidelity before accepting or re-baselining the output."
         )
 
 

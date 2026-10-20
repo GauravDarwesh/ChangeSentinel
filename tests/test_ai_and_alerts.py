@@ -120,9 +120,9 @@ class TestLateAIAssessmentsAreDelivered(unittest.TestCase):
 class TestAIRobustness(unittest.TestCase):
     """M-02: invalid output, rate limits and delimiter injection."""
 
-    def response(self, status=200, content=None, headers=None):
+    def response(self, status=200, content=None, headers=None, model="test/provider-free"):
         mock = Mock(status_code=status, headers=headers or {})
-        mock.json.return_value = {"choices": [{"message": {"content": content}}]}
+        mock.json.return_value = {"model": model, "choices": [{"message": {"content": content}}]}
         mock.raise_for_status.return_value = None
         return mock
 
@@ -138,6 +138,18 @@ class TestAIRobustness(unittest.TestCase):
         result = analyze("R", "https://example.test", "CHANGED_URL", "-a\n+b", "b", AIConfig(attempts=2))
         self.assertEqual(result["status"], "ok")
         self.assertEqual(post.call_count, 2)
+
+    @patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"})
+    @patch("regmon.ai.requests.post")
+    def test_actual_free_provider_model_is_preserved_in_result(self, post):
+        post.side_effect = [
+            self.response(content=json.dumps(ANALYSIS), model="provider/first:free"),
+            self.response(content=json.dumps(ANALYSIS), model="provider/second:free"),
+        ]
+        first = analyze("R", "https://example.test", "CHANGED_URL", "-a\\n+b", "b", AIConfig(attempts=1))
+        second = analyze("R", "https://example.test", "CHANGED_URL", "-a\\n+b", "b", AIConfig(attempts=1))
+        self.assertEqual(first["provider_model"], "provider/first:free")
+        self.assertEqual(second["provider_model"], "provider/second:free")
 
     @patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"})
     @patch("regmon.ai.time.sleep")
@@ -159,7 +171,8 @@ class TestAIRobustness(unittest.TestCase):
         self.assertEqual(user.count("</UNTRUSTED_EVIDENCE>"), 1)
         self.assertTrue(user.rstrip().endswith("</UNTRUSTED_EVIDENCE>"))
         self.assertEqual(payload["response_format"], {"type": "json_object"})
-        self.assertIn("navigation, layout, formatting", payload["messages"][0]["content"])
+        self.assertIn("navigation reordering", payload["messages"][0]["content"])
+        self.assertIn("changing a required filing deadline from 30 to 15 days is relevant", payload["messages"][0]["content"])
 
 
 class TestDiscoveryAlertEpisodes(unittest.TestCase):
@@ -189,11 +202,58 @@ class TestAIEvaluationSet(unittest.TestCase):
     def test_every_case_loads_and_both_verdicts_are_represented(self):
         module = self.load_module()
         cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        self.assertTrue(all(case.get("expected_decision_source") in {
+            "ai_model", "deterministic_extraction_drift_guard"
+        } for case in cases))
         self.assertEqual(sum(1 for case in cases if case["expected_relevant"] is False and case.get("evidence")), 15)
+        model_cases = [case for case in cases if case["expected_decision_source"] == "ai_model"]
+        self.assertEqual(len(model_cases), 12)
+        self.assertEqual(sum(1 for case in model_cases if case["expected_relevant"]), 6)
+        self.assertEqual(sum(1 for case in model_cases if not case["expected_relevant"]), 6)
         self.assertTrue(any(case["expected_relevant"] for case in cases))
         for case in cases:
             url, _event, diff = module.load_case(case)
             self.assertTrue(url.startswith("https://") and diff.strip(), case["id"])
+
+    def test_evaluation_fixture_validation_fails_closed_on_missing_or_invalid_metadata(self):
+        module = self.load_module()
+        cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        valid = dict(cases[-1])
+
+        missing_source = dict(valid)
+        missing_source.pop("expected_decision_source")
+        with self.assertRaisesRegex(ValueError, "expected_decision_source"):
+            module.validate_cases([missing_source])
+
+        invalid_source = dict(valid, expected_decision_source="some_future_route")
+        with self.assertRaisesRegex(ValueError, "expected_decision_source"):
+            module.validate_cases([invalid_source])
+
+        non_string_source = dict(valid, expected_decision_source=["ai_model"])
+        with self.assertRaisesRegex(ValueError, "expected_decision_source"):
+            module.validate_cases([non_string_source])
+
+        invalid_verdict = dict(valid, expected_relevant="false")
+        with self.assertRaisesRegex(ValueError, "expected_relevant must be a boolean"):
+            module.validate_cases([invalid_verdict])
+
+        invalid_id = dict(valid, id=123)
+        with self.assertRaisesRegex(ValueError, "id must be a non-empty string"):
+            module.validate_cases([invalid_id])
+
+        with self.assertRaisesRegex(ValueError, "Duplicate AI evaluation case id"):
+            module.validate_cases([valid, dict(valid)])
+
+    def test_invalid_case_cannot_reach_semantic_ai(self):
+        module = self.load_module()
+        cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        case = dict(next(item for item in cases if item["expected_decision_source"] == "ai_model"))
+        case.pop("expected_decision_source")
+
+        with patch.object(module, "analyze") as model:
+            with self.assertRaisesRegex(ValueError, "expected_decision_source"):
+                module.evaluate_case(case, module.AIConfig())
+            model.assert_not_called()
 
     def test_pdf_table_reconstruction_cases_are_suppressed_before_ai(self):
         module = self.load_module()
@@ -243,6 +303,188 @@ class TestAIEvaluationSet(unittest.TestCase):
                         case["id"],
                     )
             model.assert_not_called()
+
+    def test_failed_previous_extraction_is_never_mislabelled_as_drift(self):
+        module = self.load_module()
+        evidence = {
+            "before": {
+                "raw_hash": "same-pdf-bytes",
+                "normalized_hash": "old-text",
+                "extraction_type": "pdf",
+                "extraction_failed": True,
+            },
+            "after": {
+                "raw_hash": "same-pdf-bytes",
+                "normalized_hash": "new-text",
+                "extraction_type": "pdf",
+            },
+        }
+        self.assertIsNone(module.extraction_drift_reason(evidence))
+
+    def test_model_only_accuracy_has_its_own_release_gate(self):
+        module = self.load_module()
+        failures = module.threshold_failures(
+            accuracy=18 / 19,
+            model_accuracy=0.75,
+            model_case_count=4,
+            min_accuracy=0.8,
+            min_model_accuracy=0.8,
+        )
+        self.assertGreater(18 / 19, 0.8)
+        self.assertEqual(len(failures), 1)
+        self.assertIn("Semantic-AI-only relevance accuracy 75.0%", failures[0])
+
+    def test_suppressed_cases_cannot_mask_a_weak_model(self):
+        # Regression: 15 suppressed + 1 of 4 model cases right is 84% end to end,
+        # which passed the end-to-end-only gate on main before this change.
+        module = self.load_module()
+        failures = module.threshold_failures(
+            accuracy=16 / 19, model_accuracy=0.25, model_case_count=4,
+            min_accuracy=0.8, min_model_accuracy=0.8,
+            expected_model_case_count=4, model_agreement=1.0, min_model_cases=4,
+        )
+        self.assertEqual(len(failures), 1)
+        self.assertIn("Semantic-AI-only relevance accuracy 25.0%", failures[0])
+
+    def test_too_few_distinct_model_cases_fails_the_gate(self):
+        module = self.load_module()
+        failures = module.threshold_failures(
+            accuracy=1.0, model_accuracy=1.0, model_case_count=6,  # 3 cases x 2 repeats
+            min_accuracy=0.8, min_model_accuracy=0.8,
+            expected_model_case_count=3, model_agreement=1.0, min_model_cases=4,
+        )
+        self.assertEqual(len(failures), 1)
+        self.assertIn("Only 3 distinct evaluation case(s) are routed to semantic AI", failures[0])
+
+    def test_committed_fixture_meets_the_workflow_model_case_minimum(self):
+        import re
+        from pathlib import Path
+
+        module = self.load_module()
+        cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        workflow = (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "ai-smoke-test.yml").read_text()
+        minimum = int(re.search(r"--min-model-cases (\d+)", workflow).group(1))
+        self.assertGreaterEqual(minimum, 4)
+        routed = [case for case in cases if case.get("expected_decision_source") == "ai_model"]
+        self.assertGreaterEqual(len(routed), minimum)
+
+    def test_decision_source_mismatch_fails_even_when_aggregate_scores_pass(self):
+        module = self.load_module()
+        failures = module.threshold_failures(
+            accuracy=18 / 19,
+            model_accuracy=1.0,
+            model_case_count=5,
+            min_accuracy=0.8,
+            min_model_accuracy=0.8,
+            decision_source_failures=1,
+        )
+        self.assertGreater(18 / 19, 0.8)
+        self.assertEqual(len(failures), 1)
+        self.assertIn("1 case(s) used a decision source", failures[0])
+
+    def test_model_variance_gate_fails_on_disagreement_or_invalid_output(self):
+        module = self.load_module()
+        cases = [
+            {"id": "stable", "expected_relevant": True, "expected_decision_source": "ai_model"},
+            {"id": "unstable", "expected_relevant": False, "expected_decision_source": "ai_model"},
+            {"id": "invalid", "expected_relevant": True, "expected_decision_source": "ai_model"},
+        ]
+        rows = [
+            {"id": "stable", "repeat": 1, "got": True, "status": "ok", "decision_source": "ai_model", "provider_model": "provider/one:free"},
+            {"id": "stable", "repeat": 2, "got": True, "status": "ok", "decision_source": "ai_model", "provider_model": "provider/one:free"},
+            {"id": "unstable", "repeat": 1, "got": False, "status": "ok", "decision_source": "ai_model", "provider_model": "provider/two:free"},
+            {"id": "unstable", "repeat": 2, "got": True, "status": "ok", "decision_source": "ai_model", "provider_model": "provider/three:free"},
+            {"id": "invalid", "repeat": 1, "got": True, "status": "ok", "decision_source": "ai_model", "provider_model": "provider/two:free"},
+            {"id": "invalid", "repeat": 2, "got": None, "status": "invalid", "decision_source": "ai_model", "provider_model": "provider/two:free"},
+        ]
+        variance = module.summarize_model_variance(cases, rows, repeats=2)
+        self.assertEqual(variance["stable_cases"], 1)
+        self.assertEqual(variance["unstable_cases"], 2)
+        self.assertEqual(variance["agreement"], 0.333)
+        self.assertEqual(variance["provider_model_variation_cases"], 1)
+        self.assertEqual(variance["provider_model_distribution"], {
+            "provider/one:free": 2,
+            "provider/three:free": 1,
+            "provider/two:free": 3,
+        })
+        self.assertFalse(next(c for c in variance["cases"] if c["id"] == "invalid")["stable"])
+
+        failures = module.threshold_failures(
+            accuracy=1.0,
+            model_accuracy=1.0,
+            model_case_count=6,
+            min_accuracy=0.8,
+            min_model_accuracy=0.8,
+            model_agreement=variance["agreement"],
+            expected_model_case_count=variance["model_cases"],
+            min_model_agreement=0.8,
+        )
+        self.assertEqual(len(failures), 1)
+        self.assertIn("Free-router repeat agreement 33.3%", failures[0])
+
+    def test_repeated_evaluation_retries_model_cases_but_suppresses_artifacts_once(self):
+        module = self.load_module()
+        fixture_cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        model_case = dict(next(case for case in fixture_cases if case["id"] == "synthetic-threshold"))
+        artifact_case = dict(next(case for case in fixture_cases if case.get("evidence") and case["expected_relevant"] is False))
+        response = {"status": "ok", "analysis": {"relevant": True, "reason": "Synthetic valid verdict"}}
+
+        with patch.object(module, "analyze", return_value=response) as model:
+            rows, variance = module.evaluate_cases([model_case, artifact_case], module.AIConfig(), repeats=2)
+
+        self.assertEqual(model.call_count, 2)
+        self.assertEqual(len(rows), 3)
+        self.assertEqual(variance["model_cases"], 1)
+        self.assertEqual(variance["stable_cases"], 1)
+        self.assertEqual(variance["agreement"], 1.0)
+        self.assertEqual(sum(row["status"] == "suppressed" for row in rows), 1)
+
+    def test_no_semantic_ai_cases_is_a_failed_evaluation(self):
+        module = self.load_module()
+        failures = module.threshold_failures(
+            accuracy=1.0,
+            model_accuracy=None,
+            model_case_count=0,
+            min_accuracy=0.8,
+            min_model_accuracy=0.8,
+        )
+        self.assertEqual(len(failures), 1)
+        self.assertIn("No evaluation cases reached semantic AI", failures[0])
+
+    def test_evidence_persists_extraction_guard_metadata_without_error_details(self):
+        import tempfile
+        from pathlib import Path
+        from regmon.change import write_evidence
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            location = write_evidence(
+                root,
+                "CHANGED_URL",
+                "event-test",
+                "https://example.test/form",
+                "2026-10-20T00:00:00+00:00",
+                {
+                    "raw_hash": "raw-before",
+                    "normalized_hash": "text-before",
+                    "extraction_type": "pdf",
+                    "extractor_version": "content-extractor-v5",
+                    "extraction_error": "secret-ish diagnostic detail",
+                },
+                {
+                    "raw_hash": "raw-after",
+                    "normalized_hash": "text-after",
+                    "extraction_type": "pdf",
+                    "extractor_version": "content-extractor-v5",
+                },
+                "before",
+                "after",
+            )
+            evidence = json.loads((root / location).read_text(encoding="utf-8"))
+            self.assertTrue(evidence["before"]["extraction_failed"])
+            self.assertFalse(evidence["after"]["extraction_failed"])
+            self.assertEqual(evidence["before"]["extraction_type"], "pdf")
+            self.assertNotIn("secret-ish diagnostic detail", json.dumps(evidence))
 
     def test_unchanged_html_signature_with_different_raw_bytes_is_also_drift(self):
         module = self.load_module()
