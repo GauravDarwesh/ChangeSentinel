@@ -353,7 +353,7 @@ class TestAIEvaluationSet(unittest.TestCase):
         variance = module.summarize_model_variance(cases, rows, repeats=2)
         self.assertEqual(variance["stable_cases"], 1)
         self.assertEqual(variance["unstable_cases"], 2)
-        self.assertEqual(variance["agreement"], 1 / 3)
+        self.assertEqual(variance["agreement"], 0.333)
         self.assertFalse(next(c for c in variance["cases"] if c["id"] == "invalid")["stable"])
 
         failures = module.threshold_failures(
