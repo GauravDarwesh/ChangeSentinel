@@ -6,6 +6,9 @@ on:
     branches:
       - main
     paths:
+      - "regmon/engine.py"
+      - "regmon/change.py"
+      - "regmon/content.py"
       - "regmon/ai.py"
       - "scripts/ai_eval.py"
       - "scripts/ai_eval_cases.json"
