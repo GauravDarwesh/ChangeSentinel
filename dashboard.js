@@ -1914,7 +1914,6 @@ $("askSentinelTranscript").addEventListener("click", event => {
   const prompt = event.target.closest("[data-ask-prompt]");
   if (prompt) askSentinelSubmit(prompt.dataset.askPrompt);
 });
-document.querySelectorAll("[data-ask-prompt]").forEach(button => button.addEventListener("click", () => askSentinelSubmit(button.dataset.askPrompt)));
 
 loadData(true);
 window.setInterval(() => loadData(false), 120000);
