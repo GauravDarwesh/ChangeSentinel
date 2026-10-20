@@ -140,8 +140,27 @@
     .rail { display: flex; flex-direction: column; padding: 20px 20px 18px; overflow-y: auto; }
     .brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font-size: 14px; font-weight: 500; letter-spacing: -.01em; text-decoration: none; }
     .brand-mark { display: grid; grid-template-columns: repeat(3, 4px); gap: 1.5px; }
-    .brand-mark i { width: 4px; height: 4px; background: var(--led-dim); }
-    .brand-mark i.on { background: var(--accent); box-shadow: var(--glow); }
+    .brand-mark i { --c: var(--led-dim); --g: none; width: 4px; height: 4px; background: var(--c); box-shadow: var(--g); }
+    .brand-mark i.on { --c: var(--accent); --g: var(--glow); }
+    /* Living mark: a scan head snakes through the grid (1 2 3 / 6 5 4 / 7 8 9) and the
+       mark mirrors scan status. Pure CSS, driven by the existing #statusDot state. */
+    .brand-mark i:nth-child(1) { --k: 0; } .brand-mark i:nth-child(2) { --k: 1; } .brand-mark i:nth-child(3) { --k: 2; }
+    .brand-mark i:nth-child(6) { --k: 3; } .brand-mark i:nth-child(5) { --k: 4; } .brand-mark i:nth-child(4) { --k: 5; }
+    .brand-mark i:nth-child(7) { --k: 6; } .brand-mark i:nth-child(8) { --k: 7; } .brand-mark i:nth-child(9) { --k: 8; }
+    @keyframes markSweep {
+      0% { background: var(--led-new); box-shadow: 0 0 8px var(--accent); }
+      6% { background: var(--accent); box-shadow: var(--glow); }
+      18%, 100% { background: var(--c); box-shadow: var(--g); }
+    }
+    @keyframes markBreathe { 50% { background: var(--led-new); box-shadow: 0 0 12px var(--accent); } }
+    @keyframes markAlarm { 50% { background: var(--led-off); box-shadow: none; } }
+    .brand-mark i { animation: markSweep var(--sweep, 5s) linear calc(var(--k) * .09s) infinite; }
+    body:has(#statusDot:not(.is-ok):not(.is-warn):not(.is-error)) .brand-mark i { --sweep: 1.1s; }
+    .brand:hover .brand-mark i { --sweep: 1.4s; }
+    body:has(#statusDot.is-warn) .brand-mark i:nth-child(5) { --c: var(--accent); --g: var(--glow); animation: markBreathe 2.4s ease-in-out infinite; }
+    body:has(#statusDot.is-error) .brand-mark i { --c: var(--led-off); --g: none; }
+    body:has(#statusDot.is-error) .brand-mark i:nth-child(5) { --c: var(--led-bad); --g: 0 0 8px var(--led-bad); animation: markAlarm 1s steps(1) infinite; }
+    @media (prefers-reduced-motion: reduce) { .brand-mark i { animation: none !important; } }
     .rail-intro { margin-top: 14px; color: var(--ink-2); font-size: 13.5px; line-height: 1.55; }
     .rail-nav { display: grid; gap: 1px; margin: 22px 0 0; padding: 0; list-style: none; }
     .nav-button {
@@ -546,6 +565,8 @@
 .ask-sentinel-text h3, .ask-sentinel-text h4 { margin: 18px 0 6px; font-family: var(--font-ui); font-size: 13px; font-weight: 500; letter-spacing: .02em; color: var(--ink); }
 .ask-sentinel-text ul, .ask-sentinel-text ol { padding-left: 20px; }
 .ask-sentinel-text li { margin: 3px 0; }
+.ask-sentinel-text li > p, .ask-sentinel-text li > pre { margin: 0 0 6px; }
+.ask-sentinel-text li > :last-child { margin-bottom: 0; }
 .ask-sentinel-text li::marker { color: var(--ink-3); }
 .ask-sentinel-text strong { font-weight: 600; }
 .ask-sentinel-text a { color: var(--link); text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 3px; }
@@ -823,7 +844,7 @@
     window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV";
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.121.0/dist/umd/supabase.js"></script>
-  <script src="dashboard-lib.js?v=20261020-ask-sentinel-4"></script>
-  <script src="dashboard.js?v=20261020-ask-sentinel-4"></script>
+  <script src="dashboard-lib.js?v=20261020-ask-sentinel-5"></script>
+  <script src="dashboard.js?v=20261020-ask-sentinel-5"></script>
 </body>
 </html>

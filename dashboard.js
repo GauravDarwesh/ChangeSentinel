@@ -1875,12 +1875,38 @@ function askSentinelMarkdown(source) {
     }
     const heading = line.match(/^\s*(#{1,6})\s+(.+)$/);
     if (heading) { html.push("<h" + (heading[1].length <= 2 ? 3 : 4) + ">" + askSentinelInline(heading[2]) + "</h" + (heading[1].length <= 2 ? 3 : 4) + ">"); i++; continue; }
-    const listMatch = line.match(/^\s*([-*•]|\d+[.)])\s+/);
+    const listMatch = line.match(/^(\s*)([-*•]|\d+[.)])\s+/);
     if (listMatch) {
-      const ordered = /\d/.test(listMatch[1]);
+      const ordered = /\d/.test(listMatch[2]);
+      const indent = listMatch[1].length;
+      const bullet = /^(\s*)([-*•]|\d+[.)])\s+/;
       const items = [];
-      while (i < lines.length && /^\s*([-*•]|\d+[.)])\s+/.test(lines[i])) items.push(lines[i++].replace(/^\s*([-*•]|\d+[.)])\s+/, ""));
-      html.push((ordered ? "<ol>" : "<ul>") + items.map(item => "<li>" + askSentinelInline(item) + "</li>").join("") + (ordered ? "</ol>" : "</ul>"));
+      while (i < lines.length) {
+        const m = lines[i].match(bullet);
+        if (m && m[1].length <= indent && /\d/.test(m[2]) === ordered) {
+          items.push([lines[i++].replace(bullet, "")]);
+          continue;
+        }
+        // Indented lines (continuations, nested fences, sub-lists) belong to the current item.
+        if (items.length && /^\s+\S/.test(lines[i])) { items[items.length - 1].push(lines[i++]); continue; }
+        // A blank line keeps the list open only if the next non-blank line continues it.
+        if (items.length && !lines[i].trim()) {
+          let j = i;
+          while (j < lines.length && !lines[j].trim()) j++;
+          const next = lines[j] || "";
+          const nm = next.match(bullet);
+          if ((nm && nm[1].length <= indent && /\d/.test(nm[2]) === ordered) || /^\s+\S/.test(next)) { items[items.length - 1].push(""); i = j; continue; }
+        }
+        break;
+      }
+      html.push((ordered ? "<ol>" : "<ul>") + items.map(item => {
+        const [first, ...rest] = item;
+        const body = rest.join("\n").replace(/^\n+|\n+$/g, "");
+        if (!body) return "<li>" + askSentinelInline(first) + "</li>";
+        const pad = Math.min(...rest.filter(l => l.trim()).map(l => l.match(/^\s*/)[0].length));
+        const dedented = rest.map(l => l.slice(Math.min(pad, l.match(/^\s*/)[0].length))).join("\n");
+        return "<li>" + askSentinelMarkdown(first + "\n" + dedented) + "</li>";
+      }).join("") + (ordered ? "</ol>" : "</ul>"));
       continue;
     }
     if (!line.trim()) { i++; continue; }
