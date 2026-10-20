@@ -203,7 +203,7 @@ def _merge_records(
         "migrated_at": migrated_at,
         "canonical_url": canonical_url,
         "survivor_url_id": survivor_id,
-        "merged_url_ids": sorted(record_id for record_id, _ in []),
+        "merged_url_ids": [],
         "original_urls": sorted({str(record.get("canonical_url") or "") for record in all_records}),
         "normalized_hash": result.get("normalized_hash"),
         "policy": "same normalized hash and valid snapshots; preserve merged change history and immutable audit records",
@@ -231,7 +231,6 @@ def migrate_collisions(latest: dict, plans: list[dict], migrated_at: str | None 
         group_ids = [survivor_id, *merged_ids]
         if len(group_ids) != plan["record_count"]:
             continue
-        group_records = [records[url_id] for url_id in group_ids]
         merged = _merge_records(
             records[survivor_id],
             [records[url_id] for url_id in merged_ids],
@@ -259,6 +258,8 @@ def main() -> None:
     parser.add_argument("--source", help="Audit one configured source ID")
     parser.add_argument("--apply", action="store_true", help="Apply only safe collisions in inactive sources")
     args = parser.parse_args()
+    if args.apply and not args.source:
+        parser.error("--apply requires --source so an operator must select one inactive source explicitly")
 
     try:
         _payload, sources = load_config(args.config)
