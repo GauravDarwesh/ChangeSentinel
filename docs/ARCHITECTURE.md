@@ -25,6 +25,10 @@ HTTP discovery resolves relative and absolute links with bounded concurrency; br
 
 PDF, DOCX, XLSX, PPTX, CSV, JSON, XML, and text resources are normalized before comparison. Previous trusted baselines are preserved when discovery is incomplete.
 
+## Legacy URL collision migration
+
+`scripts/migrate_legacy_url_collisions.py` audits inventory IDs that map to the same current canonical URL. It is dry-run by default. An apply run requires an explicit source ID, refuses active sources, requires the same non-empty normalized hash and present snapshots for every colliding record, and refuses groups with conflicting pending AI work. It merges change timelines into the preferred record and edits only `data/latest.json`; immutable event evidence, snapshots, historical reports, run history, and sent-notification ledger entries remain untouched.
+
 ## Quality gates
 
 - `scripts/golden_corpus_check.py` (CI) re-extracts every saved original produced by the current extractor version and fails if its text no longer reproduces the baseline, so dependency or runner drift is caught before it reaches a scan.
