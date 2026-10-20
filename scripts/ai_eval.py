@@ -31,10 +31,11 @@ def validate_case(case: object, index: int | None = None) -> dict:
     label = f"Case {index}" if index is not None else "Evaluation case"
     if not isinstance(case, dict):
         raise ValueError(f"{label} must be a JSON object")
-    case_id = str(case.get("id") or "").strip()
-    label = f"Case {case_id}" if case_id else label
-    if not case_id:
-        raise ValueError(f"{label} is missing a non-empty id")
+    raw_id = case.get("id")
+    if not isinstance(raw_id, str) or not raw_id.strip():
+        raise ValueError(f"{label} id must be a non-empty string")
+    case_id = raw_id.strip()
+    label = f"Case {case_id}"
     if type(case.get("expected_relevant")) is not bool:
         raise ValueError(f"{label} expected_relevant must be a boolean")
     expected_source = case.get("expected_decision_source")
