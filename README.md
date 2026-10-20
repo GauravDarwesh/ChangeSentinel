@@ -828,3 +828,27 @@ Manually registered URLs are bounded to one exact URL. Redirects are validated, 
 ## License
 
 No license is currently specified in this repository. See GitHub's documentation on repository licensing before reusing the project in another project or organization.
+
+
+## Ask Sentinel
+
+The dashboard has an isolated Ask Sentinel chat view linked from the bottom of the desktop sidebar. It reuses the existing theme tokens and keeps mobile dashboard navigation unchanged. Chat requests are sent only to a same-origin-configurable server endpoint (`window.CHANGESENTINEL_ASK_ENDPOINT`); the browser must never receive the OpenRouter API key.
+
+### Backend contract (required before enabling chat)
+
+The static GitHub Pages frontend intentionally does **not** simulate a secure request counter using browser storage or an IP address. The configured server endpoint must:
+
+1. Authenticate or establish a stable, privacy-conscious user identity.
+2. Enforce an atomic maximum of three accepted requests per user per calendar day on the server/database, and return `429` after the limit. Include `remaining` (integer 0–3) in success/error responses when known.
+3. Call OpenRouter from server-side code using a server-side secret (prefer `openrouter/free` if the chosen model is available); never pass that secret to the browser.
+4. Ground answers in committed ChangeSentinel data: `data/report.json`, `data/latest.json`, `data/history/index.json`, notification ledgers, source configuration, evidence JSON and referenced snapshots. The browser sends a bounded summary of the currently loaded dashboard state for convenience; the server must treat client context as untrusted, validate it, and load repository evidence independently as needed.
+5. Distinguish verified source changes from baseline migrations, extraction drift, superseded/false-positive alerts, and monitoring failures. State when historical evidence is unavailable; do not invent events or citations.
+6. Limit prompt size, output size and timeouts; return JSON like `{"answer":"…","remaining":2}`; return structured JSON errors for rate limits and provider failures.
+
+Example environment bootstrap for local/staging use:
+
+```html
+<script>window.CHANGESENTINEL_ASK_ENDPOINT = "https://YOUR-OWN-BACKEND.example/ask-sentinel";</script>
+```
+
+This variable is an endpoint URL, not a secret. Do not point it at an unrelated production function. Until a dedicated endpoint and identity-backed quota are configured, the UI is intentionally disabled with a clear message and spends no request allowance.
