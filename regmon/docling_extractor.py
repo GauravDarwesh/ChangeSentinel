@@ -7,8 +7,13 @@ from __future__ import annotations
 
 import hashlib
 import io
+import json
+import logging
 import os
 import threading
+import time
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 _CONVERTER: Any | None = None
@@ -30,6 +35,80 @@ KNOWN_TIMEOUT_PDF_SHA256 = frozenset({
     "f21712326d091ffae6f5e9eb9e9c8d5d811081532da0d0c19379a2f7e4670d0d",
     "2ae0ac7cb6ff39be4a1dfd2d9cc8d5df71f7bd5348d9693ad18fe8a047c0b30c",
 })
+
+# Learned registry: any PDF whose conversion exhausts the time budget is recorded by
+# SHA-256 and skipped on later runs while its bytes are unchanged. Production runs
+# persist it to data/docling-timeouts.json (committed with the rest of the monitoring
+# state), so a newly republished heavy PDF costs one timeout, not one per scan.
+# The hard-coded seeds above keep CI's golden corpus fast without that file.
+TIMEOUT_FRACTION = 0.9
+MAX_LEARNED_ENTRIES = 500
+_REGISTRY_LOCK = threading.Lock()
+_LEARNED: dict[str, dict] = {}
+_REGISTRY_PATH: Path | None = None
+_LOG = logging.getLogger(__name__)
+
+
+def configure_timeout_registry(path: Path | None, *, persist: bool = True) -> None:
+    """Load learned timeouts from ``path``; write new ones back only when ``persist``.
+
+    A malformed file is reported and left untouched (never overwritten), and the run
+    proceeds without learned skips: this is a performance cache, not monitoring state.
+    """
+    global _REGISTRY_PATH
+    learned: dict[str, dict] = {}
+    writable = persist
+    if path is not None and path.exists():
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            entries = data.get("time_budget_exhausted") if isinstance(data, dict) else None
+            if not isinstance(entries, dict) or not all(
+                isinstance(k, str) and len(k) == 64 and isinstance(v, dict) for k, v in entries.items()
+            ):
+                raise ValueError("expected {'time_budget_exhausted': {sha256: {...}}}")
+            learned = dict(entries)
+        except (OSError, ValueError) as exc:
+            _LOG.warning("Ignoring unreadable Docling timeout registry %s (%s); it will not be overwritten.", path, exc)
+            writable = False
+    with _REGISTRY_LOCK:
+        _LEARNED.clear()
+        _LEARNED.update(learned)
+        _REGISTRY_PATH = path if writable else None
+
+
+def _known_timeout(digest: str) -> bool:
+    with _REGISTRY_LOCK:
+        return digest in KNOWN_TIMEOUT_PDF_SHA256 or digest in _LEARNED
+
+
+def _remember_timeout(digest: str, elapsed: float, pages: int) -> None:
+    with _REGISTRY_LOCK:
+        if digest in _LEARNED:
+            return
+        _LEARNED[digest] = {
+            "recorded_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "elapsed_seconds": round(elapsed, 1),
+            "pages": pages,
+        }
+        if len(_LEARNED) > MAX_LEARNED_ENTRIES:
+            for old in sorted(_LEARNED, key=lambda k: _LEARNED[k].get("recorded_at", ""))[: len(_LEARNED) - MAX_LEARNED_ENTRIES]:
+                del _LEARNED[old]
+        path = _REGISTRY_PATH
+        snapshot = {"time_budget_exhausted": dict(sorted(_LEARNED.items()))}
+    _LOG.warning("Docling used its %ss budget on SHA-256 %s; later runs will skip Docling for these exact bytes.", DOCUMENT_TIMEOUT_SECONDS, digest)
+    if path is None:
+        return
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(path.suffix + ".tmp")
+        with open(tmp, "w", encoding="utf-8") as handle:
+            json.dump(snapshot, handle, indent=2)
+            handle.write("\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(tmp, path)
+    except OSError as exc:
+        _LOG.warning("Could not persist Docling timeout registry %s: %s", path, exc)
 
 
 def _build_converter():
@@ -80,7 +159,7 @@ def extract_pdf_with_docling(
         )
 
     digest = hashlib.sha256(body).hexdigest()
-    if digest in KNOWN_TIMEOUT_PDF_SHA256:
+    if _known_timeout(digest):
         return None, (
             "Docling intentionally skipped for a previously time-budget-exhausted "
             f"PDF (SHA-256 {digest}); retaining the established extraction result."
@@ -99,6 +178,7 @@ def extract_pdf_with_docling(
                 name="changesentinel-input.pdf",
                 stream=io.BytesIO(body),
             )
+            started = time.monotonic()
             result = _CONVERTER.convert(
                 source,
                 max_num_pages=expected_pages,
@@ -109,7 +189,10 @@ def extract_pdf_with_docling(
         status_name = str(
             getattr(status, "name", str(status).rsplit(".", 1)[-1])
         ).upper()
+        elapsed = time.monotonic() - started
         if status_name != "SUCCESS":
+            if elapsed >= DOCUMENT_TIMEOUT_SECONDS * TIMEOUT_FRACTION:
+                _remember_timeout(digest, elapsed, expected_pages)
             return None, f"Docling conversion did not complete successfully (status={status_name or 'UNKNOWN'})."
 
         document = getattr(result, "document", None)

@@ -35,6 +35,81 @@ class TestDoclingAdapter(unittest.TestCase):
         self.assertIn(known_hash, error)
         build.assert_not_called()
 
+    def _timeout_converter(self):
+        converter = Mock()
+        document = Mock()
+        document.pages = {1: object()}
+        converter.convert.return_value = types.SimpleNamespace(
+            status=types.SimpleNamespace(name="PARTIAL_SUCCESS"), document=document
+        )
+        return converter
+
+    def _run_with_clock(self, converter, body, elapsed):
+        ticks = iter([1000.0, 1000.0 + elapsed])
+        with patch.dict(sys.modules, self._mock_docling_stream_module()), patch(
+            "regmon.docling_extractor._CONVERTER", converter
+        ), patch("regmon.docling_extractor.time.monotonic", side_effect=lambda: next(ticks)):
+            return extract_pdf_with_docling(body, expected_pages=1)
+
+    def test_time_budget_timeout_is_learned_persisted_and_skipped_next_run(self):
+        import json
+        import regmon.docling_extractor as de
+
+        with tempfile.TemporaryDirectory() as tmp:
+            registry = Path(tmp) / "docling-timeouts.json"
+            de.configure_timeout_registry(registry, persist=True)
+            try:
+                body = b"%PDF-1.7 heavy vector rules"
+                converter = self._timeout_converter()
+                text, error = self._run_with_clock(converter, body, elapsed=de.DOCUMENT_TIMEOUT_SECONDS)
+                self.assertIsNone(text)
+                self.assertIn("did not complete successfully", error)
+                saved = json.loads(registry.read_text(encoding="utf-8"))["time_budget_exhausted"]
+                digest = de.hashlib.sha256(body).hexdigest()
+                self.assertIn(digest, saved)
+
+                # A fresh process reading the committed file skips the same bytes before conversion.
+                de.configure_timeout_registry(registry, persist=True)
+                converter.convert.reset_mock()
+                text, error = self._run_with_clock(converter, body, elapsed=0)
+                self.assertIn("intentionally skipped", error)
+                converter.convert.assert_not_called()
+
+                # A republished revision (different bytes) is evaluated normally.
+                self._run_with_clock(converter, body + b" revised", elapsed=1)
+                converter.convert.assert_called_once()
+            finally:
+                de.configure_timeout_registry(None)
+
+    def test_fast_partial_success_is_not_learned_and_dry_run_never_writes(self):
+        import regmon.docling_extractor as de
+
+        with tempfile.TemporaryDirectory() as tmp:
+            registry = Path(tmp) / "docling-timeouts.json"
+            de.configure_timeout_registry(registry, persist=True)
+            try:
+                self._run_with_clock(self._timeout_converter(), b"%PDF-1.7 quick partial", elapsed=3)
+                self.assertFalse(registry.exists())
+                de.configure_timeout_registry(registry, persist=False)
+                self._run_with_clock(self._timeout_converter(), b"%PDF-1.7 dry", elapsed=de.DOCUMENT_TIMEOUT_SECONDS)
+                self.assertFalse(registry.exists())
+            finally:
+                de.configure_timeout_registry(None)
+
+    def test_corrupt_timeout_registry_is_ignored_and_never_overwritten(self):
+        import regmon.docling_extractor as de
+
+        with tempfile.TemporaryDirectory() as tmp:
+            registry = Path(tmp) / "docling-timeouts.json"
+            registry.write_text("{not json", encoding="utf-8")
+            with self.assertLogs("regmon.docling_extractor", level="WARNING"):
+                de.configure_timeout_registry(registry, persist=True)
+            try:
+                self._run_with_clock(self._timeout_converter(), b"%PDF-1.7 x", elapsed=de.DOCUMENT_TIMEOUT_SECONDS)
+                self.assertEqual(registry.read_text(encoding="utf-8"), "{not json")
+            finally:
+                de.configure_timeout_registry(None)
+
     def test_success_requires_every_page_and_returns_markdown(self):
         document = Mock()
         document.pages = {1: object()}
