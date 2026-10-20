@@ -29,6 +29,12 @@ def _build_converter():
         do_table_structure=True,
         document_timeout=DOCUMENT_TIMEOUT_SECONDS,
         queue_max_size=1,
+        # Vector-rule separator analysis can become pathological on PDFs with
+        # dense drawing geometry. It is optional in Docling; keep layout and
+        # accurate table reconstruction enabled, but use its ordinary reading
+        # order instead. The existing fast/pdfplumber extraction remains the
+        # safety net, and Docling output is still subject to a strict quality gate.
+        use_reading_order_separators=False,
     )
     options.table_structure_options.mode = TableFormerMode.ACCURATE
     try:
