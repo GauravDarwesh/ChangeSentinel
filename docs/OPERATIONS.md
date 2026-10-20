@@ -7,7 +7,7 @@ The active production scope consists of two bounded Federal Reserve sources: the
 - **OPENROUTER_API_KEY** enables AI analysis. Deterministic comparison and evidence collection can still run if AI is unavailable.
 - **NTFY_TOPIC** is the optional destination for ntfy alerts. If it is not configured, notification candidates are retained in the notification outbox and can be delivered after a topic is configured.
 - **HEALTHCHECK_PING_URL** (optional) is pinged after every successful scan. Point it at an external dead-man's-switch service (for example a healthchecks.io check with a 14-hour period) so you are alerted even when GitHub Actions cannot start jobs at all.
-- **AI smoke test**: run `.github/workflows/ai-smoke-test.yml` manually to call the configured OpenRouter model with synthetic evidence and validate its nine-field output contract. This test does not change monitoring state or send ntfy notifications.
+- **AI smoke test**: `.github/workflows/ai-smoke-test.yml` runs manually, on relevant `main` pushes, and on relevant same-repository pull requests. It validates the nine-field output contract and evaluates 15 historical parser-artifact cases plus 12 semantic-AI cases (6 relevant regulatory changes and 6 cosmetic/irrelevant changes). Both end-to-end and semantic-AI-only accuracy must be at least 80%; each case must declare its expected decision source. Fork pull requests skip the secret-dependent model job but still run normal CI. The workflow does not change monitoring state or send ntfy notifications.
 
 ## Workflow behavior
 
@@ -43,5 +43,5 @@ Redirect targets are checked and discovery redirects must stay within the curren
 6. Keep regression coverage for transient delivery failures, confirming queued events persist and are retried.
 7. Do not reactivate eba-full-site to clear stale metadata. Select and bound the intended source explicitly.
 8. If a REMOVAL_HELD alert arrives, inspect the source first. Only when the pages were really retired, dispatch **Regulatory Monitor** with `source_id` and `allow_mass_removal` both set to that source ID.
-9. After any prompt or model change, run AI Smoke Test; its evaluation step must stay at or above 80% accuracy.
+9. After any prompt, model, evaluation fixture, or drift-guard change, require AI Smoke Test to pass both the 80% end-to-end and 80% semantic-AI-only thresholds, confirm zero decision-source mismatches, and verify that at least one case reaches semantic AI.
 10. Dependencies are pinned exactly. To upgrade one, change `requirements.txt` in a PR; if the golden corpus check fails, either pin back or bump `CONTENT_EXTRACTOR_VERSION` deliberately.
