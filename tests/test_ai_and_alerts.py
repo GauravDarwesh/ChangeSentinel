@@ -220,6 +220,10 @@ class TestAIEvaluationSet(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "expected_relevant must be a boolean"):
             module.validate_cases([invalid_verdict])
 
+        invalid_id = dict(valid, id=123)
+        with self.assertRaisesRegex(ValueError, "id must be a non-empty string"):
+            module.validate_cases([invalid_id])
+
         with self.assertRaisesRegex(ValueError, "Duplicate AI evaluation case id"):
             module.validate_cases([valid, dict(valid)])
 
