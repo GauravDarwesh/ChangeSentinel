@@ -29,7 +29,7 @@ concurrency:
 jobs:
   live-health:
     runs-on: ubuntu-24.04
-    timeout-minutes: 3
+    timeout-minutes: 10
     steps:
       - name: Check the deployed Groq-backed endpoint
         env:
@@ -52,11 +52,119 @@ jobs:
           )
           missing = [key for key in required if status.get(key) is not True]
           if status.get("ok") is not True or missing:
-              # Deliberately print only safe booleans, never keys or model responses.
               safe = {key: status.get(key) is True for key in required}
               print("Ask Sentinel backend health failed: " + json.dumps(safe))
               raise SystemExit(1)
           print("Ask Sentinel backend health passed: Groq key valid, model available, Supabase server keys present.")
           print("Repository: " + str(status.get("repository", "unknown")))
           print("Model: " + str(status.get("model", "unknown")))
+          PY
+
+      - name: Authenticate, index the repository, and ask a real Groq question
+        env:
+          SUPABASE_URL: https://pysoukwmnwwgilkwafdy.supabase.co
+          SUPABASE_PUBLISHABLE_KEY: sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV
+          ASK_SENTINEL_URL: https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+
+          base = os.environ["SUPABASE_URL"].rstrip("/")
+          public_key = os.environ["SUPABASE_PUBLISHABLE_KEY"]
+          function = os.environ["ASK_SENTINEL_URL"].rstrip("/")
+
+          def request_json(url, method="GET", body=None, token=None, timeout=30):
+              headers = {"apikey": public_key, "Accept": "application/json"}
+              payload = None
+              if body is not None:
+                  payload = json.dumps(body).encode("utf-8")
+                  headers["Content-Type"] = "application/json"
+              if token:
+                  headers["Authorization"] = "Bearer " + token
+              request = urllib.request.Request(url, data=payload, headers=headers, method=method)
+              try:
+                  with urllib.request.urlopen(request, timeout=timeout) as response:
+                      raw = response.read()
+                      code = response.status
+              except urllib.error.HTTPError as error:
+                  raw = error.read()
+                  message = raw.decode("utf-8", "replace")[:350]
+                  raise RuntimeError(f"{method} {url.split('?')[0]} returned HTTP {error.code}: {message}") from None
+              try:
+                  value = json.loads(raw.decode("utf-8"))
+              except Exception:
+                  raise RuntimeError(f"{method} {url.split('?')[0]} returned non-JSON data") from None
+              if not isinstance(value, dict):
+                  raise RuntimeError(f"{method} {url.split('?')[0]} returned unexpected JSON")
+              return code, value
+
+          # A new anonymous user keeps this smoke run independent from any demo user.
+          _, auth = request_json(
+              base + "/auth/v1/signup",
+              method="POST",
+              body={"data": {"ask_sentinel_ci_smoke": True}},
+              timeout=20,
+          )
+          token = auth.get("access_token")
+          if not isinstance(token, str) or len(token) < 40:
+              raise RuntimeError("Supabase anonymous sign-in did not return an access token. Enable Anonymous Sign-Ins for this dedicated project.")
+          if auth.get("user", {}).get("is_anonymous") is False:
+              raise RuntimeError("Supabase did not return an anonymous smoke-test identity.")
+
+          # This exercises the first-run full text corpus sync. It does not consume an AI request.
+          _, warm = request_json(
+              function + "?mode=warm",
+              token=token,
+              timeout=175,
+          )
+          if warm.get("ok") is not True or warm.get("indexed") is not True:
+              raise RuntimeError("The repository warm-up did not complete: " + json.dumps({
+                  "ok": warm.get("ok"), "indexed": warm.get("indexed"),
+                  "error": warm.get("error"), "document_count": warm.get("document_count")
+              }))
+          if not isinstance(warm.get("document_count"), int) or warm["document_count"] < 1000:
+              raise RuntimeError("The repository index appears incomplete: " + str(warm.get("document_count")) + " chunks.")
+
+          # Validate that the answer comes from actual committed monitoring data.
+          report_url = "https://raw.githubusercontent.com/GauravDarwesh/ChangeSentinel/main/data/report.json"
+          with urllib.request.urlopen(report_url, timeout=20) as response:
+              report = json.loads(response.read().decode("utf-8"))
+          expected_run = str(report.get("run_id", ""))
+          if not expected_run:
+              raise RuntimeError("Could not read the expected monitoring run ID from the committed report.")
+
+          question = (
+              "From the indexed committed ChangeSentinel records, summarize monitoring run "
+              + expected_run
+              + ". State its exact run ID, changed count, fetch errors, extraction errors, and source. "
+                "If a field is unavailable in evidence, say so."
+          )
+          _, answer = request_json(
+              function,
+              method="POST",
+              body={"question": question, "conversation": []},
+              token=token,
+              timeout=45,
+          )
+          text = answer.get("answer")
+          if not isinstance(text, str) or len(text.strip()) < 40:
+              raise RuntimeError("Ask Sentinel returned no usable answer.")
+          if answer.get("model") != "openai/gpt-oss-20b":
+              raise RuntimeError("Ask Sentinel reported an unexpected model: " + str(answer.get("model")))
+          if answer.get("remaining") != 2:
+              raise RuntimeError("One question should leave two daily requests; received " + str(answer.get("remaining")))
+          if answer.get("indexed_commit") != warm.get("commit_sha"):
+              raise RuntimeError("The answer used a different repository revision than the warm-up.")
+          if expected_run not in text:
+              raise RuntimeError("Ask Sentinel did not reproduce the exact run ID from the indexed report.")
+          print("Ask Sentinel end-to-end test passed.")
+          print("Indexed commit: " + str(warm.get("commit_sha")))
+          print("Indexed document chunks: " + str(warm.get("document_count")))
+          print("Monitoring run grounded: " + expected_run)
+          print("Groq model: " + str(answer.get("model")) + "; remaining quota: " + str(answer.get("remaining")))
+          print("Answer length: " + str(len(text)) + " characters; answer text omitted from CI logs.")
           PY
