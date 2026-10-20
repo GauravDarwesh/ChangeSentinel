@@ -10,7 +10,7 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from engine_harness import ANALYSIS, Sandbox, html, ok
 from regmon.config import SourceConfig
@@ -319,6 +319,59 @@ class TestDiscoveryAndRemovalGuards(unittest.TestCase):
             with patch("regmon.discovery._stealth_discover", return_value=["https://www.example.com/a"]) as stealth:
                 self.assertEqual(discovery.discover(source, root), ["https://www.example.com/a"])
             stealth.assert_called_once()
+            fresh_metadata = json.loads((root / "discovery" / "browser-only.json").read_text())
+            self.assertEqual(fresh_metadata["state"], "DEGRADED")
+            self.assertEqual(fresh_metadata["method"], "stealth")
+
+    def test_browser_only_success_can_complete_discovery(self):
+        """A successful browser-only crawl must not be downgraded because HTTP is disabled."""
+        from regmon.discovery import discover
+
+        source = SourceConfig(
+            id="browser-success", name="b", regulator="r",
+            seed_urls=("https://www.example.com/a",),
+            allowed_prefixes=("https://www.example.com/",),
+            allowed_domains=("www.example.com",),
+            use_http_discovery=False,
+        )
+        result = Mock(
+            returncode=0,
+            stdout="https://www.example.com/a\\n",
+            stderr="",
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            with patch("regmon.discovery_browser.subprocess.run", return_value=result):
+                urls = discover(source, Path(temporary))
+            metadata = json.loads((Path(temporary) / "discovery" / "browser-success.json").read_text())
+        self.assertEqual(urls, ["https://www.example.com/a"])
+        self.assertEqual(metadata["state"], "COMPLETE")
+        self.assertEqual(metadata["method"], "stealth")
+        self.assertEqual(metadata["failed_pages"], 0)
+
+    def test_browser_only_partial_crawl_cannot_be_marked_complete(self):
+        """Useful URLs from a failing crawler remain visible but never bless the baseline."""
+        from regmon.discovery import discover
+
+        source = SourceConfig(
+            id="browser-partial", name="b", regulator="r",
+            seed_urls=("https://www.example.com/a",),
+            allowed_prefixes=("https://www.example.com/",),
+            allowed_domains=("www.example.com",),
+            use_http_discovery=False,
+        )
+        result = Mock(
+            returncode=2,
+            stdout="https://www.example.com/a\\n",
+            stderr="crawler exited before completing the crawl",
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            with patch("regmon.discovery_browser.subprocess.run", return_value=result):
+                urls = discover(source, Path(temporary))
+            metadata = json.loads((Path(temporary) / "discovery" / "browser-partial.json").read_text())
+        self.assertEqual(urls, ["https://www.example.com/a"])
+        self.assertEqual(metadata["state"], "DEGRADED")
+        self.assertEqual(metadata["failed_pages"], 1)
+        self.assertEqual(metadata["failed_seeds"], 1)
 
 
 class TestConditionalFetchAndSnapshots(unittest.TestCase):
