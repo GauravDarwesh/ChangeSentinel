@@ -66,22 +66,45 @@ def _atomic_write_json(path: Path, value: dict) -> None:
         raise
 
 
+def _content(value: dict) -> dict:
+    """The durable content of a state file, ignoring its write timestamp."""
+    return {key: item for key, item in json.loads(json.dumps(value)).items() if key != "updated_at"}
+
+
+def _save_if_changed(path: Path, value: dict) -> bool:
+    """Write only when the content differs from what is already on disk.
+
+    Bumping updated_at on every run produced a timestamp-only "Record
+    notification deliveries" commit (and a Pages deploy) after every scan, even
+    when nothing was queued or sent. An unchanged file keeps its timestamp.
+    """
+    if path.exists():
+        try:
+            existing = json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError, UnicodeError):
+            existing = None
+        if isinstance(existing, dict) and _content(existing) == _content(value):
+            value["updated_at"] = existing.get("updated_at")
+            return False
+    value["updated_at"] = datetime.now(timezone.utc).isoformat()
+    _atomic_write_json(path, value)
+    return True
+
+
 def load_state(path: Path = STATE_PATH) -> dict:
     return _load_state_mapping(path, "sent_events")
 
 
-def save_state(state: dict, path: Path = STATE_PATH) -> None:
-    state["updated_at"] = datetime.now(timezone.utc).isoformat()
-    _atomic_write_json(path, state)
+def save_state(state: dict, path: Path = STATE_PATH) -> bool:
+    return _save_if_changed(path, state)
 
 
 def load_outbox(path: Path = OUTBOX_PATH) -> dict:
     return _load_state_mapping(path, "pending_events")
 
 
-def save_outbox(outbox: dict, path: Path = OUTBOX_PATH) -> None:
-    outbox["updated_at"] = datetime.now(timezone.utc).isoformat()
-    _atomic_write_json(path, outbox)
+def save_outbox(outbox: dict, path: Path = OUTBOX_PATH) -> bool:
+    return _save_if_changed(path, outbox)
 
 
 AI_VARIANTS = {"ai", "ai_irrelevant"}

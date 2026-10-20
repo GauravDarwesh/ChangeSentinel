@@ -1,3 +1,4 @@
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -108,6 +109,61 @@ class TestNotifications(unittest.TestCase):
             state={"sent_events":{"x":{}},"updated_at":None}
             save_state(state,path)
             self.assertIn("x",load_state(path)["sent_events"])
+
+class TestNoOpStateWrites(unittest.TestCase):
+    """Regression: every scan committed notification files whose only change was updated_at."""
+
+    def test_unchanged_state_and_outbox_are_not_rewritten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            state_path = Path(tmp) / "notifications.json"
+            outbox_path = Path(tmp) / "notification-outbox.json"
+            self.assertTrue(save_state({"sent_events": {"x": {"kind": "CHANGED_URL"}}, "updated_at": None}, state_path))
+            self.assertTrue(save_outbox({"pending_events": {}, "updated_at": None}, outbox_path))
+            before = (state_path.read_bytes(), outbox_path.read_bytes())
+
+            state, outbox = load_state(state_path), load_outbox(outbox_path)
+            enqueue_notifications(outbox, [], state["sent_events"])
+            self.assertFalse(save_outbox(outbox, outbox_path))
+            self.assertFalse(save_state(state, state_path))
+            self.assertEqual((state_path.read_bytes(), outbox_path.read_bytes()), before)
+            # The in-memory copy keeps the on-disk timestamp rather than a fresh one.
+            self.assertEqual(outbox["updated_at"], json.loads(before[1])["updated_at"])
+
+    def test_empty_delivery_pass_leaves_files_untouched(self):
+        from regmon.notify import deliver_pending
+
+        with tempfile.TemporaryDirectory() as tmp:
+            state_path = Path(tmp) / "notifications.json"
+            outbox_path = Path(tmp) / "notification-outbox.json"
+            save_state({"sent_events": {}, "updated_at": None}, state_path)
+            save_outbox({"pending_events": {}, "updated_at": None}, outbox_path)
+            before = (state_path.read_bytes(), outbox_path.read_bytes())
+            state, outbox = load_state(state_path), load_outbox(outbox_path)
+
+            def persist():
+                save_state(state, state_path)
+                save_outbox(outbox, outbox_path)
+
+            with patch("regmon.notify.publish") as publish_mock:
+                result = deliver_pending(outbox, state, "topic", "https://ntfy.example", persist=persist)
+                persist()
+            publish_mock.assert_not_called()
+            self.assertEqual(result["sent"], 0)
+            self.assertEqual((state_path.read_bytes(), outbox_path.read_bytes()), before)
+
+    def test_real_change_is_written_with_a_new_timestamp(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "notification-outbox.json"
+            save_outbox({"pending_events": {}, "updated_at": None}, path)
+            first = json.loads(path.read_text())["updated_at"]
+            outbox = load_outbox(path)
+            enqueue_notifications(outbox, [{"event_id": "new-event", "kind": "CHANGED_URL"}], {})
+            self.assertTrue(save_outbox(outbox, path))
+            saved = json.loads(path.read_text())
+            self.assertIn("new-event", saved["pending_events"])
+            self.assertIsNotNone(saved["updated_at"])
+            self.assertGreaterEqual(saved["updated_at"], first)
+
 
 class TestOperationalAlertsAndDelivery(unittest.TestCase):
     def test_persistent_error_alerts_once_per_episode(self):
