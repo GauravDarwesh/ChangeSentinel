@@ -155,6 +155,11 @@ class TestAIEvaluationWorkflowContract(unittest.TestCase):
         workflow = (ROOT / ".github" / "workflows" / "ai-smoke-test.yml").read_text(encoding="utf-8")
         self.assertIn("pull_request:", workflow)
         self.assertIn("github.event.pull_request.head.repo.full_name == github.repository", workflow)
+        pull_request_trigger = workflow[workflow.index("  pull_request:"):workflow.index("  push:")]
+        self.assertNotIn("paths:", pull_request_trigger)
+        self.assertIn("Check whether this PR changes AI-relevant files", workflow)
+        self.assertIn("gh api --paginate", workflow)
+        self.assertIn("steps.ai-scope.outputs.relevant == 'true'", workflow)
         self.assertIn("python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8 --min-model-agreement 0.8 --repeats 2", workflow)
         self.assertIn('AI_TIMEOUT_SECONDS: "20"', workflow)
         self.assertIn('AI_ATTEMPTS: "2"', workflow)
