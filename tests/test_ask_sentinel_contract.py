@@ -46,7 +46,7 @@ class TestAskSentinelContract(unittest.TestCase):
         js = (ROOT / "dashboard.js").read_text(encoding="utf-8")
         html = (ROOT / "index.html").read_text(encoding="utf-8")
         self.assertIn("data-ask-prompt=", html)
-        self.assertIn("askSentinelSubmit(prompt.dataset.askPrompt)", js)
+        self.assertIn("askSentinelSendQuestion(prompt.dataset.askPrompt)", js)
         self.assertIn("fetch(ASK_SENTINEL_ENDPOINT", js)
         self.assertIn("response.status === 429", js)
 
