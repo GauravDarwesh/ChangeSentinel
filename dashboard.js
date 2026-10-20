@@ -1801,7 +1801,8 @@ function askSentinelWarmIndex() {
   }
   if (askSentinelState.warmingPromise) return askSentinelState.warmingPromise;
   askSentinelState.warmError = "";
-  $("askSentinelQuota").textContent = "Preparing monitoring archive…";
+  $("askSentinelQuota").textContent = "Connecting…";
+  $("askSentinelQuota").classList.add("is-busy");
   askSentinelState.warmingPromise = (async () => {
     const identity = await askSentinelIdentity();
     const response = await fetch(ASK_SENTINEL_ENDPOINT + "?mode=warm", {
@@ -1819,7 +1820,9 @@ function askSentinelWarmIndex() {
     return payload;
   })().catch(error => {
     askSentinelState.warmError = String(error && error.message || "The monitoring archive could not be prepared.");
-    $("askSentinelQuota").textContent = "Archive unavailable";
+    $("askSentinelQuota").textContent = "Offline — retry by asking";
+    $("askSentinelQuota").classList.remove("is-busy");
+    $("askSentinelQuota").classList.add("is-empty");
     return null;
   }).finally(() => {
     askSentinelState.warmingPromise = null;
@@ -1832,24 +1835,102 @@ function askSentinelEscapedText(value) {
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
+/* Small, safe Markdown renderer for model answers. All text is HTML-escaped first;
+ * only a fixed set of formatting tags is produced, and links must be http(s). */
+function askSentinelInline(text) {
+  let out = askSentinelEscapedText(text);
+  const codes = [];
+  out = out.replace(/`([^`]+)`/g, (_, code) => { codes.push(code); return "\u0000" + (codes.length - 1) + "\u0000"; });
+  out = out.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, label, href) =>
+    '<a href="' + href + '" target="_blank" rel="noopener noreferrer">' + label + "</a>");
+  out = out.replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, (_, pre, href) =>
+    pre + '<a href="' + href + '" target="_blank" rel="noopener noreferrer">' + href.replace(/^https?:\/\//, "") + "</a>");
+  out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>");
+  return out.replace(/\u0000(\d+)\u0000/g, (_, i) => "<code>" + codes[Number(i)] + "</code>");
+}
+function askSentinelMarkdown(source) {
+  const lines = String(source || "").replace(/\r\n/g, "\n").split("\n");
+  const html = [];
+  let i = 0;
+  const isTableRow = line => /^\s*\|.*\|\s*$/.test(line);
+  const cells = line => line.trim().replace(/^\||\|$/g, "").split("|").map(c => c.trim());
+  while (i < lines.length) {
+    const line = lines[i];
+    if (/^\s*```/.test(line)) {
+      const body = [];
+      i++;
+      while (i < lines.length && !/^\s*```/.test(lines[i])) body.push(lines[i++]);
+      i++;
+      html.push("<pre><code>" + askSentinelEscapedText(body.join("\n")) + "</code></pre>");
+      continue;
+    }
+    if (isTableRow(line) && i + 1 < lines.length && /^\s*\|?[\s:|-]+\|?\s*$/.test(lines[i + 1]) && lines[i + 1].includes("-")) {
+      const head = cells(line);
+      i += 2;
+      const rows = [];
+      while (i < lines.length && isTableRow(lines[i])) rows.push(cells(lines[i++]));
+      html.push('<div class="md-table"><table><thead><tr>' + head.map(c => "<th>" + askSentinelInline(c) + "</th>").join("") + "</tr></thead><tbody>" +
+        rows.map(r => "<tr>" + r.map(c => "<td>" + askSentinelInline(c) + "</td>").join("") + "</tr>").join("") + "</tbody></table></div>");
+      continue;
+    }
+    const heading = line.match(/^\s*(#{1,6})\s+(.+)$/);
+    if (heading) { html.push("<h" + (heading[1].length <= 2 ? 3 : 4) + ">" + askSentinelInline(heading[2]) + "</h" + (heading[1].length <= 2 ? 3 : 4) + ">"); i++; continue; }
+    const listMatch = line.match(/^\s*([-*•]|\d+[.)])\s+/);
+    if (listMatch) {
+      const ordered = /\d/.test(listMatch[1]);
+      const items = [];
+      while (i < lines.length && /^\s*([-*•]|\d+[.)])\s+/.test(lines[i])) items.push(lines[i++].replace(/^\s*([-*•]|\d+[.)])\s+/, ""));
+      html.push((ordered ? "<ol>" : "<ul>") + items.map(item => "<li>" + askSentinelInline(item) + "</li>").join("") + (ordered ? "</ol>" : "</ul>"));
+      continue;
+    }
+    if (!line.trim()) { i++; continue; }
+    const para = [];
+    while (i < lines.length && lines[i].trim() && !/^\s*(```|#{1,6}\s|([-*•]|\d+[.)])\s)/.test(lines[i]) && !isTableRow(lines[i])) para.push(lines[i++]);
+    if (para.length) html.push("<p>" + para.map(askSentinelInline).join("<br>") + "</p>");
+    else i++;
+  }
+  return html.join("");
+}
+function askSentinelSourceLink(path) {
+  const p = String(path || "");
+  if (!p || p.startsWith("__")) return null;
+  const a = document.createElement("a");
+  a.href = "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/" + p.split("/").map(encodeURIComponent).join("/");
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+  a.textContent = p;
+  return a;
+}
 function askSentinelMessageNode(role, content, extraClass) {
   const node = document.createElement("article");
   node.className = "ask-sentinel-message " + (role === "user" ? "user" : "assistant") + (extraClass ? " " + extraClass : "");
-  const avatar = document.createElement("div");
-  avatar.className = "ask-sentinel-avatar";
-  avatar.setAttribute("aria-hidden", "true");
-  avatar.textContent = role === "user" ? "YOU" : "S/AI";
-  const body = document.createElement("div");
-  body.className = "ask-sentinel-message-body";
   const label = document.createElement("div");
   label.className = "ask-sentinel-role";
   label.textContent = role === "user" ? "You" : "Sentinel";
   const text = document.createElement("div");
   text.className = "ask-sentinel-text";
   text.textContent = content;
-  body.append(label, text);
-  node.append(avatar, body);
+  node.append(label, text);
   return node;
+}
+function askSentinelRenderAnswer(node, answer, sources) {
+  node.classList.remove("ask-sentinel-typing", "ask-sentinel-error");
+  node.querySelector(".ask-sentinel-text").innerHTML = askSentinelMarkdown(answer);
+  const links = (Array.isArray(sources) ? sources : []).map(askSentinelSourceLink).filter(Boolean)
+    .filter((a, idx, all) => all.findIndex(b => b.textContent === a.textContent) === idx).slice(0, 6);
+  if (links.length) {
+    const box = document.createElement("div");
+    box.className = "ask-sentinel-sources";
+    const lead = document.createElement("span");
+    lead.textContent = "Evidence";
+    box.append(lead, ...links);
+    node.append(box);
+  }
+}
+function askSentinelShowTyping(node) {
+  node.classList.add("ask-sentinel-typing");
+  node.querySelector(".ask-sentinel-text").innerHTML =
+    '<span class="ask-sentinel-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span>Reading the monitoring record…</span>';
 }
 function askSentinelAppendMessage(role, content, extraClass) {
   const transcript = $("askSentinelTranscript");
@@ -1861,7 +1942,9 @@ function askSentinelAppendMessage(role, content, extraClass) {
 function askSentinelUpdateQuota(remaining) {
   if (Number.isInteger(remaining) && remaining >= 0 && remaining <= 3) askSentinelState.remaining = remaining;
   const quota = $("askSentinelQuota");
-  quota.textContent = askSentinelState.remaining + " of 3 left today";
+  quota.textContent = askSentinelState.remaining + " of 3 questions left today";
+  quota.classList.toggle("is-empty", askSentinelState.remaining <= 0);
+  quota.classList.remove("is-busy");
 }
 function askSentinelOpen() {
   setView("askSentinel");
@@ -1898,7 +1981,9 @@ async function askSentinelSendQuestion(promptOverride) {
   input.value = "";
   askSentinelAppendMessage("user", question);
   const history = askSentinelState.messages.slice(-ASK_SENTINEL_MAX_TRANSCRIPT);
-  const typing = askSentinelAppendMessage("assistant", "Reviewing saved monitoring records…", "ask-sentinel-typing");
+  input.style.height = "";
+  const typing = askSentinelAppendMessage("assistant", "");
+  askSentinelShowTyping(typing);
   askSentinelSetSending(true);
   try {
     const warmed = await askSentinelWarmIndex();
@@ -1921,8 +2006,8 @@ async function askSentinelSendQuestion(promptOverride) {
     }
     const answer = typeof payload.answer === "string" ? payload.answer.trim() : "";
     if (!answer) throw new Error("Ask Sentinel returned an empty answer. Please retry.");
-    typing.querySelector(".ask-sentinel-text").textContent = answer;
-    typing.classList.remove("ask-sentinel-typing");
+    askSentinelRenderAnswer(typing, answer, payload.context_sources);
+    $("askSentinelMessages").scrollTop = typing.offsetTop - 24;
     askSentinelState.messages.push({ role: "user", content: question }, { role: "assistant", content: answer });
     if (askSentinelState.messages.length > ASK_SENTINEL_MAX_TRANSCRIPT * 2) {
       askSentinelState.messages = askSentinelState.messages.slice(-ASK_SENTINEL_MAX_TRANSCRIPT * 2);
@@ -1934,8 +2019,9 @@ async function askSentinelSendQuestion(promptOverride) {
   } finally {
     askSentinelSetSending(false);
     if (askSentinelState.remaining <= 0) {
-      $("askSentinelQuota").textContent = "0 of 3 left today";
-      $("askSentinelInput").placeholder = "Daily request limit reached";
+      askSentinelUpdateQuota(0);
+      $("askSentinelInput").placeholder = "Daily limit reached — resets at 00:00 UTC";
+      document.querySelectorAll("[data-ask-prompt]").forEach(button => { button.disabled = true; });
     }
     input.focus({ preventScroll: true });
   }
@@ -1945,6 +2031,17 @@ $("askSentinelBack").addEventListener("click", () => setView("overview"));
 $("askSentinelForm").addEventListener("submit", event => {
   event.preventDefault();
   askSentinelSendQuestion();
+});
+$("askSentinelInput").addEventListener("keydown", event => {
+  if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+    event.preventDefault();
+    askSentinelSendQuestion();
+  }
+});
+$("askSentinelInput").addEventListener("input", event => {
+  const el = event.target;
+  el.style.height = "auto";
+  el.style.height = Math.min(el.scrollHeight, 160) + "px";
 });
 $("askSentinelMessages").addEventListener("click", event => {
   const prompt = event.target.closest("[data-ask-prompt]");

@@ -17,7 +17,7 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn('window.CHANGESENTINEL_ASK_ENDPOINT', html)
         self.assertIn('https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel', html)
         self.assertIn('supabase-js@2.121.0/dist/umd/supabase.js', html)
-        self.assertIn('src="dashboard.js?v=20261020-ask-sentinel-3"', html)
+        self.assertIn('src="dashboard.js?v=20261020-ask-sentinel-4"', html)
         self.assertIn('ASK_SENTINEL_ENDPOINT = window.CHANGESENTINEL_ASK_ENDPOINT || ""', js)
         self.assertIn('askSentinel: "askSentinelView"', js)
         self.assertIn('name === "ask-sentinel"', js)
@@ -75,17 +75,30 @@ class TestAskSentinelContract(unittest.TestCase):
     def test_sidebar_and_chat_use_existing_theme_and_preserve_mobile_navigation(self):
         html = (ROOT / "index.html").read_text(encoding="utf-8")
         js = (ROOT / "dashboard.js").read_text(encoding="utf-8")
-        for token in ("var(--pane)", "var(--accent)", "var(--ink)", "var(--line)", "@media (max-width:980px)", ".rail-ask { display:none; }"):
+        for token in ("var(--pane)", "var(--accent)", "var(--ink)", "var(--line)", "@media (max-width: 980px)", ".nav-ask-short { display: inline; }"):
             with self.subTest(token=token):
                 self.assertIn(token, html)
-        self.assertIn("grid-template-columns:repeat(6,minmax(0,1fr))", html)
+        self.assertIn("grid-template-columns: repeat(6, minmax(0, 1fr))", html)
         self.assertIn('data-view="askSentinel"', html)
         self.assertIn('$("askSentinelMessages").addEventListener("click"', js)
         self.assertIn('askLauncher.classList.toggle("active", state.view === "askSentinel")', js)
-        self.assertIn(".ask-sentinel-launch.active", html)
+        self.assertIn('class="nav-button nav-button-ask" id="askSentinelLaunch" data-view="askSentinel"', html)
+        self.assertNotIn("rail-ask", html)
         self.assertIn("window.supabase.createClient", js)
         self.assertIn("changesentinel-ask-visitor-id", js)
         self.assertIn("x-ask-sentinel-visitor-id", (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8"))
+    def test_cors_preflight_returns_bodyless_204(self):
+        # Regression: new Response('ok', {status: 204}) throws in Deno, so every browser
+        # preflight returned 500 and the dashboard could never reach the function.
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("return new Response(null, { status: c.allowed ? 204 : 403, headers: c.headers });", backend)
+        self.assertNotRegex(backend, r"new Response\('[^']*',\s*\{\s*status:\s*c\.allowed \? 204")
+
+    def test_answers_render_markdown_safely(self):
+        js = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        self.assertIn("function askSentinelMarkdown(", js)
+        self.assertIn("askSentinelEscapedText(", js)
+        self.assertIn("ask-sentinel-sources", js)
 
 
 if __name__ == "__main__":

@@ -573,7 +573,9 @@ async function groqCompletion(question: string, context: string, history: Array<
 Deno.serve(async (req: Request) => {
   const c = cors(req);
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { status: c.allowed ? 204 : 403, headers: c.headers });
+    // A 204 response must not carry a body; Deno throws on `new Response('ok', { status: 204 })`,
+    // which turned every browser preflight into a 500 and blocked the dashboard via CORS.
+    return new Response(null, { status: c.allowed ? 204 : 403, headers: c.headers });
   }
   if (!c.allowed && req.headers.get('origin')) return respond(req, { error: 'Origin not allowed.' }, 403);
 
