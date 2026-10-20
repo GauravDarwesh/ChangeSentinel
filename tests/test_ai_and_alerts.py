@@ -216,6 +216,10 @@ class TestAIEvaluationSet(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "expected_decision_source"):
             module.validate_cases([invalid_source])
 
+        non_string_source = dict(valid, expected_decision_source=["ai_model"])
+        with self.assertRaisesRegex(ValueError, "expected_decision_source"):
+            module.validate_cases([non_string_source])
+
         invalid_verdict = dict(valid, expected_relevant="false")
         with self.assertRaisesRegex(ValueError, "expected_relevant must be a boolean"):
             module.validate_cases([invalid_verdict])
