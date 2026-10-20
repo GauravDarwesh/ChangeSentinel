@@ -1,0 +1,47 @@
+## Board of Governors of the Federal Reserve System
+<!-- image -->
+## Survey of Terms of Bank Lending to Farmers-FR 2028B
+## Loans made during the week beginning Monday,
+Month / Day / Year (QTFL 9999)
+This report is authorized by law (12 U.S.C. § 248(a)(2)). Your voluntary cooperation in submitting this report is needed to make the results comprehensive, accurate, and timely.
+The Federal Reserve may not conduct or sponsor, and an organization is not required to respond to, a collection of information unless it displays a currently valid OMB control number.
+The Federal Reserve System regards the individual institution information provided by each respondent as confidential. If it should be determined subsequently that any information collected on this form must be released, respondents will be notified.
+10
+Name of Respondent (QTFL 9017)
+Respondent Street Address (QTFL 9028)
+City (QTFL 9130)
+State (QTFL 9200)
+Zip Code (QTFL 9220)
+Person to be Contacted Concerning This Report (QTFL 8901)
+Area Code / Phone Number (QTFL 8902)
+Public reporting burden for this collection of information is estimated to average 1.4 hours per response, including the time to gather and maintain data in the required form and to review instructions and complete the information collection. Send comments regarding this burden estimate or any other aspect of this collection of information, including suggestions for reducing this burden, to: Secretary, Board of Governors of the Federal Reserve System, 20th and C Streets, NW, Washington, DC 20551; and to the Office of Management and Budget, Paperwork Reduction Project (7100-0061), Washington, DC 20503.
+| Date Made | | Rate of Interest - Nominal Rate of Interest | Rate of Interest - Frequency with which Interest is Compounded or Paid | Rate of Interest - Next Date on which the Loan Rate may be Recalculated | Maturity (If none, enter zero) | Maturity Status Commitment Status - Termination Options (b) Number Scheduled Repayments - Prepay- ment Penalty | Maturity Status Commitment Status | Maturity Status Commitment Status - Insured or Guaranteed Loan Made under a Commitment | Federal Insurance Status - by Consolidated Farm Service Agency Insured or Guaranteed by Other U.S. Agencies or Departments (a) (b) | Security Status Syndication Participation - Farm Real Estate Other Collateral Not Secured (a) (b) (c) | or Status Primary - Your Bank Originated by Others (a) (b) | or Status Primary - Not Syndicated or Participated Feeder Livestock (c) (a) | Purpose of | Purpose of - Other Livestock Other Current Expenses Farm Machinery and Equipment or Improve Farm Real Estate All Other Loans (b) (c) (d) (e) (f) - Operating Purchase | Loan - Risk Rating | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| QTFL 9912 | QTFL 1596 Face Amount Loan in Dollars Include Loans $3,000 or Greater | QTFL 7924 | QTFL 1917 | QTFL A341 | QTFL 9914 | Callable QTFL A342 QTFL A343 QTFL 6130 | | QTFL 6131 | Not Insured by U.S. QTFL 6133 | QTFL 6134 | QTFL 6135 | | | QTFL 6136 | QTFL A344 | QTFL K806 |
+| (1) | (2) | (3) | (4) | (5) | (6) | (7) (8) | | (9) | (10) | (11) | (12) | | | (13) | (14) | (15) |
+| Mo. Day | Amount | Percent | | Year Mo. | Day Year Mo. Day | Yes No Yes No | | No Yes | Check one | Check one | Check one | | | Check one | | State |
+(9 blank entry rows)
+## Board of Governors of the Federal Reserve System
+<!-- image -->
+## Prime Rate Supplement to Survey of Terms of Lending-FR 2028S
+## For the week beginning Monday,
+(Month / Day / Year) (XMTA 9999)
+This report is authorized by law (12 U.S.C. § 248(a)(2)). Your voluntary cooperation in submitting this report is needed to make the results comprehensive, accurate, and timely. The Federal Reserve may not conduct or sponsor, and an organization is not required to respond to, a collection of information unless it displays a currently valid OMB control number.
+For purposes of this survey, the prime rate (sometimes referred to as the "base" or "reference" rate) is defined to be the administered rate used for pricing business and other credit, which your institution adjusts from time to time in response to changes in market conditions. Your institution may set this rate internally or may adopt as its own a published rate (for example, the prevailing prime rate as reported in the financial press).
+Please enter the prime rate at your institution for each day during the survey week for which your institution reports data on the FR 2028B.
+The rate should be entered to three decimal places. For example, a rate of 8-1/2 percent should be reported as 8.500.
+Name (XMTA 9017)
+Address (XMTA 9028)
+City (XMTA 9130)
+State (XMTA 9200)
+Zip Code (XMTA 9220)
+| | Date - Month - XMTA | Date - Day - 9912 | Prime Rate - Percent - XMTA 7923 |
+| --- | --- | --- | --- |
+| Monday | | | |
+| Tuesday | | | |
+| Wednesday | | | |
+| Thursday | | | |
+| Friday | | | |
+Person to be Contacted Concerning This Report (XMTA 8901)
+Area Code / Phone Number (XMTA 8902)
+Public reporting burden for this collection of information is estimated to average 0.1 hours per response, including the time to gather and maintain data in the required form and to review instructions and complete the information collection. Send comments regarding this burden estimate or any other aspect of this collection of information, including suggestions for reducing this burden, to: Secretary, Board of Governors of the Federal Reserve System, 20th and C Streets, NW, Washington, DC 20551; and to the Office of Management and Budget, Paperwork Reduction Project (7100-0061), Washington, DC 20503.
