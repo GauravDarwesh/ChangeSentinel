@@ -144,6 +144,7 @@
     .brand-mark i.on { background: var(--accent); box-shadow: var(--glow); }
     .rail-intro { margin-top: 14px; color: var(--ink-2); font-size: 13.5px; line-height: 1.55; }
     .rail-nav { display: grid; gap: 1px; margin: 22px 0 0; padding: 0; list-style: none; }
+    .nav-ask-mobile { display: none; }
     .nav-button {
       position: relative; display: flex; align-items: baseline; gap: 10px; width: 100%;
       padding: 3px 0 3px 16px; border: 0; background: none; color: var(--link);
@@ -471,7 +472,8 @@
         padding: 0 4px env(safe-area-inset-bottom); border-top: 1px solid var(--line); background: var(--pane); overflow: visible;
       }
       .rail .brand, .rail-intro, .rail-foot { display: none; }
-      .rail-nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); height: 54px; margin: 0; }
+      .rail-nav { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 54px; margin: 0; }
+      .nav-ask-mobile { display: list-item; }
       .nav-button { flex-direction: column; align-items: center; justify-content: center; gap: 0; height: 100%; padding: 8px 0 0; font-size: 12.5px; text-align: center; }
       .nav-button::before { left: 50%; top: 9px; width: 18px; height: 3px; margin: 0 0 0 -9px; }
       .nav-count { display: none; }
@@ -556,7 +558,8 @@
 .ask-sentinel-typing { color:var(--ink-3); font-size:12px; }
 @media (max-width:980px) {
   .rail-ask { display:none; }
-  .rail-nav { grid-template-columns:repeat(5,minmax(0,1fr)); }
+  .rail-nav { grid-template-columns:repeat(6,minmax(0,1fr)); }
+  .nav-ask-mobile { display:list-item; }
   .ask-sentinel-header { padding:13px 16px; }
   .ask-sentinel-messages { padding:18px 16px; }
   .ask-sentinel-welcome { margin:5vh auto 24px; }
@@ -588,15 +591,9 @@
         <li><button class="nav-button" data-view="monitors" type="button">Pages<span class="nav-count" id="navMonitorCount"></span></button></li>
         <li><button class="nav-button" data-view="runs" type="button">Runs<span class="nav-count" id="navRunCount"></span></button></li>
         <li><button class="nav-button" data-view="notifications" type="button">Alerts<span class="nav-count" id="navNotificationCount"></span></button></li>
+        <li class="nav-ask-mobile"><button class="nav-button" data-view="askSentinel" aria-label="Ask Sentinel" type="button">Ask</button></li>
       </ul>
 
-      <div class="rail-ask">
-        <button class="ask-sentinel-launch" id="askSentinelLaunch" type="button" aria-controls="askSentinelView">
-          <span class="ask-sentinel-mark" aria-hidden="true">S/AI</span>
-          <span class="ask-sentinel-copy"><strong>Ask Sentinel</strong><small>Ask about monitoring history</small></span>
-          <span class="ask-sentinel-arrow" aria-hidden="true">↗</span>
-        </button>
-      </div>
       <div class="rail-foot">
         <div class="scan-status">
           <span class="status-dot" id="statusDot" aria-hidden="true"></span>
@@ -607,6 +604,13 @@
           <button class="text-button" type="button" data-theme-toggle>Light theme</button>
           <a id="repoLink" href="https://github.com/GauravDarwesh/ChangeSentinel" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
+      </div>
+      <div class="rail-ask">
+        <button class="ask-sentinel-launch" id="askSentinelLaunch" type="button" aria-controls="askSentinelView">
+          <span class="ask-sentinel-mark" aria-hidden="true">S/AI</span>
+          <span class="ask-sentinel-copy"><strong>Ask Sentinel</strong><small>Ask about monitoring history</small></span>
+          <span class="ask-sentinel-arrow" aria-hidden="true">↗</span>
+        </button>
       </div>
     </nav>
 
