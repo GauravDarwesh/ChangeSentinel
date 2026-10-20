@@ -49,6 +49,8 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn("askSentinelSendQuestion(prompt.dataset.askPrompt)", js)
         self.assertIn("fetch(ASK_SENTINEL_ENDPOINT", js)
         self.assertIn("response.status === 429", js)
+        self.assertIn('$("askSentinelMessages").addEventListener("click"', js)
+        self.assertNotIn('$("askSentinelTranscript").addEventListener("click"', js)
 
     def test_sidebar_and_chat_use_existing_theme_and_preserve_mobile_navigation(self):
         html = (ROOT / "index.html").read_text(encoding="utf-8")
@@ -57,7 +59,7 @@ class TestAskSentinelContract(unittest.TestCase):
                 self.assertIn(token, html)
         self.assertIn("grid-template-columns:repeat(6,minmax(0,1fr))", html)
         self.assertIn('data-view="askSentinel"', html)
-        self.assertIn('$("askSentinelMessages").addEventListener("click"', read("dashboard.js"))
+        self.assertIn('$("askSentinelMessages").addEventListener("click"', js)
         self.assertIn("pages: pages.slice(0, 80)", read("dashboard.js"))
         self.assertIn('askLauncher.classList.toggle("active", state.view === "askSentinel")', read("dashboard.js"))
         self.assertIn(".ask-sentinel-launch.active", html)
