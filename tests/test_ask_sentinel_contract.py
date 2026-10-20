@@ -22,29 +22,45 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn('askSentinel: "askSentinelView"', js)
         self.assertIn('name === "ask-sentinel"', js)
 
-    def test_backend_indexes_full_monitoring_corpus_for_rag(self):
+    def test_backend_reads_index_but_never_indexes_in_a_request(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
-        for token in (
-            "data/history/",
-            "data/evidence/",
-            "data/snapshots/",
-            "data/discovery/",
-            "config/sources.json",
-            "data/latest.json",
-            "data/report.json",
-            "README.md",
-            "regmon/",
-            "docs/",
-            "__current_inventory__",
-            "raw.githubusercontent.com",
-            "ask_sentinel_documents",
-            "search_ask_sentinel_documents",
-            "openai/gpt-oss-20b",
-            "GROQ_API",
-            "MAX_CONTEXT_CHARS = 8500",
-        ):
+        for token in ("ask_sentinel_chunks", "search_ask_sentinel_chunks", "__current_inventory__",
+                      "readIndexState", "openai/gpt-oss-20b", "GROQ_API", "MAX_CONTEXT_CHARS = 8500"):
             with self.subTest(token=token):
                 self.assertIn(token, backend)
+        for forbidden in ("api.github.com", "raw.githubusercontent.com", "syncRepository", "ask_sentinel_documents"):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, backend)
+
+    def test_index_is_built_in_github_actions_after_monitor_runs(self):
+        workflow = (ROOT / ".github/workflows/ask-sentinel-index.yml").read_text(encoding="utf-8")
+        self.assertIn('workflows: ["Regulatory Monitor"]', workflow)
+        self.assertIn("secrets.SUPABASE_SECRET_KEY", workflow)
+        self.assertIn("python scripts/ask_sentinel_index.py", workflow)
+
+    def test_indexer_covers_monitoring_corpus_and_skips_archived_discovery(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("indexer", ROOT / "scripts/ask_sentinel_index.py")
+        indexer = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(indexer)
+        inactive = {"eba-full-site"}
+        self.assertFalse(indexer.is_indexable("data/discovery/eba-full-site-inventory-0001.txt", 10, inactive))
+        self.assertFalse(indexer.is_indexable("data/discovery/eba-full-site.json", 10, inactive))
+        self.assertTrue(indexer.is_indexable("data/discovery/fed-reporting-forms-pilot.json", 10, inactive))
+        self.assertFalse(indexer.is_indexable("data/snapshots/files/x.txt", 10, inactive))
+        self.assertFalse(indexer.is_indexable("data/snapshots/a.pdf", 10, inactive))
+        for path in ("data/history/r.json", "data/evidence/e.json", "data/snapshots/s.txt", "README.md", "regmon/engine.py"):
+            with self.subTest(path=path):
+                self.assertTrue(indexer.is_indexable(path, 10, inactive))
+        chunks = indexer.split_content("x\n" * 5000)
+        self.assertTrue(all(len(c) <= indexer.CHUNK_CHARS for c in chunks))
+        chunks = indexer.build_chunks(ROOT, "0" * 40)
+        paths = {c["path"] for c in chunks}
+        for required in ("__repo_overview__", "__current_report__", "__current_inventory__", "__recent_history__", "data/report.json"):
+            with self.subTest(required=required):
+                self.assertIn(required, paths)
+        keys = [(c["path"], c["chunk_index"]) for c in chunks]
+        self.assertEqual(len(keys), len(set(keys)))
 
     def test_daily_limit_is_enforced_in_private_database_not_browser(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
