@@ -27,6 +27,14 @@ The ledger is saved after each successful delivery, so a cancelled or crashed jo
 
 Persistent fetch or extraction errors alert once per episode (URL + error class + onset), not on every run; each observation still writes its own evidence. A failed workflow run sends a "Regulatory Monitor run failed" ntfy alert, and the **Monitor Freshness Check** workflow alerts when no scan has been saved for 14 hours (two missed six-hourly slots; GitHub routinely delays scheduled runs by an hour or more).
 
+## Legacy canonical URL collisions
+
+Run `python scripts/migrate_legacy_url_collisions.py --source eba-consumer-protection` for a read-only preflight. It groups inventory IDs using the current canonicalization rule and reports the survivor it would choose, whether normalized hashes/snapshots agree, and any reason a group is unsafe. The tool is dry-run by default.
+
+Applying a migration requires an explicit source selection: `python scripts/migrate_legacy_url_collisions.py --source eba-consumer-protection --apply`. The tool only modifies `data/latest.json`, only for inactive sources, and only where every record has the same non-empty normalized hash and a valid text snapshot and there are no conflicting pending AI work items. It prefers a trusted baseline, then the exact configured URL spelling, then the most recently checked record, then a deterministic lexical tie-break. Duplicate change histories are merged into the survivor; immutable evidence, snapshots, historical reports, run history, and the notification ledger are left untouched. Conflicting baselines or missing snapshots are reported and skipped for manual review.
+
+Do not reactivate either EBA source just to test this migration. Review the dry-run plan, apply one selected inactive source in a reviewed change, run state validation and CI, and verify the following scan does not emit a removal for the query-order duplicate.
+
 ## Safe monitor registration
 
 The dashboard registration workflow is owner-only. Registration rejects credential-bearing URLs and obvious private/internal addresses, bounds each manually registered source to one exact URL, and validates CSS selectors. A duplicate URL with different CSS selectors is rejected rather than silently reusing the old configuration.
