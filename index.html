@@ -773,28 +773,16 @@
       -webkit-backdrop-filter: blur(23px) saturate(145%);
       animation: csGateRise .65s cubic-bezier(.2,.7,.2,1) both;
     }
+    /* Use the exact same brand + LED mark styles as the dashboard rail. */
     .cs-gate-brand {
       display: flex; flex-direction: row; align-items: center; justify-content: center;
-      gap: 12px; margin: 0 0 27px; min-width: 0;
+      gap: 12px; margin: 0 0 27px; min-width: 0; white-space: nowrap;
     }
     .cs-gate-mark {
-      flex: none; display: grid; grid-template-columns: repeat(3, 7px); gap: 2.5px;
-      padding: 9px; border: 1px solid rgba(196, 104, 0, .14); border-radius: 5px;
+      flex: none; padding: 9px; border: 1px solid rgba(196, 104, 0, .14); border-radius: 5px;
       background: rgba(255, 255, 255, .48);
       box-shadow: 0 4px 15px rgba(116, 72, 23, .07);
     }
-    .cs-gate-mark i {
-      display: block; width: 7px; height: 7px; background: #dfcbb4;
-      animation: csGateSweep 2.8s linear calc(var(--k) * .095s) infinite;
-    }
-    .cs-gate-mark i:nth-child(1) { --k: 0; } .cs-gate-mark i:nth-child(2) { --k: 1; } .cs-gate-mark i:nth-child(3) { --k: 2; }
-    .cs-gate-mark i:nth-child(6) { --k: 3; } .cs-gate-mark i:nth-child(5) { --k: 4; } .cs-gate-mark i:nth-child(4) { --k: 5; }
-    .cs-gate-mark i:nth-child(7) { --k: 6; } .cs-gate-mark i:nth-child(8) { --k: 7; } .cs-gate-mark i:nth-child(9) { --k: 8; }
-    .cs-gate-title {
-      margin: 0; color: var(--gate-ink); white-space: nowrap;
-      font-size: clamp(22px, 5.7vw, 29px); font-weight: 500; letter-spacing: -.055em; line-height: 1.12;
-    }
-    .cs-gate-title span { color: var(--gate-accent); }
     .cs-gate-subtitle { margin: 0 0 24px; color: var(--gate-muted); font-size: 12.5px; line-height: 1.5; text-align: center; }
     .cs-gate-label { display: block; margin-bottom: 9px; color: var(--gate-ink); font-size: 13px; font-weight: 500; }
     .cs-gate-form { display: grid; gap: 10px; }
@@ -841,19 +829,11 @@
       transition: transform .54s ease, opacity .42s ease;
     }
     @keyframes csGateRise { from { opacity: 0; transform: translateY(9px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    @keyframes csGateSweep {
-      0%, 5% { background: #f3bd78; box-shadow: 0 0 10px rgba(196, 104, 0, .55); }
-      25% { background: #c46800; box-shadow: 0 0 8px rgba(196, 104, 0, .32); }
-      65%, 100% { background: #dfcbb4; box-shadow: none; }
-    }
     @keyframes csGateShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
     @media (max-width: 440px) {
       .cs-gate { padding-inline: 13px; }
       .cs-gate-card { padding: 23px 19px; }
       .cs-gate-brand { gap: 9px; margin-bottom: 23px; }
-      .cs-gate-mark { grid-template-columns: repeat(3, 6px); gap: 2px; padding: 8px; }
-      .cs-gate-mark i { width: 6px; height: 6px; }
-      .cs-gate-title { font-size: clamp(20px, 5.6vw, 26px); letter-spacing: -.06em; }
     }
     @media (prefers-reduced-motion: reduce) {
       .cs-gate *, .cs-gate *::before, .cs-gate *::after {
@@ -875,10 +855,10 @@
 
   <section class="cs-gate" id="csPasswordGate" aria-label="ChangeSentinel development access" role="dialog" aria-modal="true" aria-labelledby="csGateTitle">
     <div class="cs-gate-card">
-      <div class="cs-gate-brand">
-        <span class="cs-gate-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
-        <h1 class="cs-gate-title" id="csGateTitle">Change<span>Sentinel</span></h1>
-      </div>
+      <h1 class="brand cs-gate-brand" id="csGateTitle">
+        <span class="brand-mark cs-gate-mark" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
+        ChangeSentinel
+      </h1>
       <p class="cs-gate-subtitle">Private development preview</p>
       <form class="cs-gate-form" id="csGateForm" novalidate>
         <label class="cs-gate-label" for="csGatePassword">Enter your password</label>
@@ -893,7 +873,7 @@
         <strong>Interested in collaborating?</strong><br>
         Email me or schedule a meeting to discuss access to the project.
         <div class="cs-gate-links">
-          <a href="mailto:gaurav.darwesh@gmail.com?subject=ChangeSentinel%20collaboration" aria-label="Email Gaurav about ChangeSentinel collaboration">
+          <a href="mailto:gauravdarwesh155@gmail.com?subject=ChangeSentinel%20collaboration" aria-label="Email Gaurav about ChangeSentinel collaboration">
             <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 4.5 8 9l6-4.5M3 3h10a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Email Gaurav
           </a>
