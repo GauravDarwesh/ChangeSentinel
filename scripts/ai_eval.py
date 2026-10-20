@@ -124,6 +124,7 @@ def evaluate_case(case: dict, config: AIConfig) -> dict:
     evidence = load_evidence(case)
     drift_reason = extraction_drift_reason(evidence)
 
+    provider_model = None
     if drift_reason:
         verdict = False
         status = "suppressed"
@@ -139,6 +140,7 @@ def evaluate_case(case: dict, config: AIConfig) -> dict:
             config,
         )
         status = result.get("status", "unknown")
+        provider_model = result.get("provider_model")
         verdict = result.get("analysis", {}).get("relevant") if status == "ok" else None
         decision_source = "ai_model"
         analysis = result.get("analysis") if isinstance(result.get("analysis"), dict) else {}
@@ -154,6 +156,7 @@ def evaluate_case(case: dict, config: AIConfig) -> dict:
         "status": status,
         "decision_source": decision_source,
         "expected_decision_source": expected_source,
+        "provider_model": provider_model,
         "reason": reason,
         "verdict_correct": verdict_correct,
         "decision_source_correct": source_correct,
@@ -169,6 +172,8 @@ def summarize_model_variance(cases: list[dict], rows: list[dict], repeats: int) 
         if case["expected_decision_source"] == "ai_model"
     ]
     details = []
+    provider_model_counts: dict[str, int] = {}
+    provider_model_variation_cases = 0
     for case in model_cases:
         observations = sorted(
             (row for row in rows if row["id"] == case["id"]),
@@ -176,6 +181,17 @@ def summarize_model_variance(cases: list[dict], rows: list[dict], repeats: int) 
         )
         verdicts = [row.get("got") for row in observations]
         statuses = [row.get("status", "unknown") for row in observations]
+        provider_models = sorted({
+            str(row["provider_model"])
+            for row in observations
+            if isinstance(row.get("provider_model"), str) and row["provider_model"].strip()
+        })
+        for row in observations:
+            provider_model = row.get("provider_model")
+            if isinstance(provider_model, str) and provider_model.strip():
+                provider_model_counts[provider_model] = provider_model_counts.get(provider_model, 0) + 1
+        if len(provider_models) > 1:
+            provider_model_variation_cases += 1
         stable = (
             len(observations) == repeats
             and all(row.get("decision_source") == "ai_model" for row in observations)
@@ -187,6 +203,7 @@ def summarize_model_variance(cases: list[dict], rows: list[dict], repeats: int) 
             "expected": case["expected_relevant"],
             "verdicts": verdicts,
             "statuses": statuses,
+            "provider_models": provider_models,
             "stable": stable,
         })
     stable_count = sum(1 for detail in details if detail["stable"])
@@ -197,6 +214,8 @@ def summarize_model_variance(cases: list[dict], rows: list[dict], repeats: int) 
         "stable_cases": stable_count,
         "unstable_cases": case_count - stable_count,
         "agreement": round(stable_count / case_count, 3) if case_count else None,
+        "provider_model_distribution": dict(sorted(provider_model_counts.items())),
+        "provider_model_variation_cases": provider_model_variation_cases,
         "cases": details,
     }
 
