@@ -58,11 +58,13 @@ def _history_key(entry: dict) -> str:
 
 def _preferred_survivor(
     records: list[tuple[str, dict]],
-    source: SourceConfig,
+    source: SourceConfig | None,
     canonical_url: str,
     data_dir: Path,
 ) -> tuple[str, dict]:
-    configured_spellings = set(source.seed_urls) | set(source.allowed_urls)
+    # An unconfigured legacy inventory is inactive by definition; it has no
+    # current allowlist, so the canonical URL spelling is the deterministic tie-break.
+    configured_spellings = (set(source.seed_urls) | set(source.allowed_urls)) if source else set()
 
     def rank(pair: tuple[str, dict]) -> tuple:
         url_id, record = pair
@@ -122,9 +124,7 @@ def audit_collisions(
                 if not record.get("normalized_hash") or not _record_snapshot_exists(record, data_dir)
             ]
             reasons = []
-            if source is None:
-                reasons.append("source is not present in current configuration")
-            elif source.active:
+            if source is not None and source.active:
                 reasons.append("source is active; active-source inventory migration is prohibited")
             if len(hashes) != 1 or "" in hashes:
                 reasons.append("records do not share one non-empty normalized content hash")
@@ -139,7 +139,7 @@ def audit_collisions(
 
             plans.append({
                 "source_id": source_id,
-                "source_active": bool(source.active) if source is not None else None,
+                "source_active": bool(source.active) if source is not None else False,
                 "canonical_url": canonical_url,
                 "record_count": len(group),
                 "survivor_url_id": survivor_id or None,
@@ -160,6 +160,62 @@ def audit_collisions(
                 ],
             })
     return plans
+
+
+def audit_historical_evidence_collisions(
+    latest: dict,
+    data_dir: Path,
+    source_filter: str | None = None,
+) -> list[dict]:
+    """Find historical NEW/REMOVED evidence pairs with URL strings equal after canonicalization."""
+    source_by_canonical: dict[str, set[str]] = {}
+    for source_id, records in (latest.get("sources") or {}).items():
+        if not isinstance(records, dict):
+            continue
+        for record in records.values():
+            if isinstance(record, dict) and record.get("canonical_url"):
+                source_by_canonical.setdefault(canonical(str(record["canonical_url"])), set()).add(source_id)
+
+    evidence_dir = data_dir / "evidence"
+    grouped: dict[str, list[dict]] = {}
+    if not evidence_dir.is_dir():
+        return []
+    repository_root = data_dir.resolve().parent
+    for path in sorted(evidence_dir.glob("*.json")):
+        try:
+            evidence = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if not isinstance(evidence, dict) or not evidence.get("url") or not evidence.get("event_type"):
+            continue
+        url = str(evidence["url"])
+        canonical_url = canonical(url)
+        grouped.setdefault(canonical_url, []).append({
+            "event_id": str(evidence.get("event_id") or path.stem),
+            "event_type": str(evidence["event_type"]),
+            "url": url,
+            "timestamp": evidence.get("timestamp"),
+            "evidence_path": path.relative_to(repository_root).as_posix(),
+        })
+
+    results = []
+    for canonical_url, events in sorted(grouped.items()):
+        variants = sorted({event["url"] for event in events})
+        event_types = {event["event_type"] for event in events}
+        if len(variants) < 2 or not {"NEW_URL", "REMOVED_URL"}.issubset(event_types):
+            continue
+        source_ids = sorted(source_by_canonical.get(canonical_url, set()))
+        if source_filter and source_filter not in source_ids:
+            continue
+        results.append({
+            "canonical_url": canonical_url,
+            "source_ids_in_current_inventory": source_ids,
+            "url_variants": variants,
+            "event_types": sorted(event_types),
+            "evidence": sorted(events, key=lambda event: (str(event.get("timestamp") or ""), event["event_id"])),
+            "interpretation": "historical canonicalization collision candidate; immutable evidence is preserved and is never rewritten by migration",
+        })
+    return results
 
 
 def _merge_records(
@@ -263,11 +319,15 @@ def main() -> None:
 
     try:
         _payload, sources = load_config(args.config)
-        if args.source and args.source not in sources:
-            raise ValueError(f"Unknown source ID: {args.source}")
         latest_path = args.data_dir / "latest.json"
         latest = json.loads(latest_path.read_text(encoding="utf-8"))
+        latest_sources = latest.get("sources") or {}
+        if args.source and args.source not in sources and args.source not in latest_sources:
+            raise ValueError(f"Unknown source ID: {args.source}")
         plans = audit_collisions(latest, sources, args.data_dir, args.source)
+        historical_collisions = audit_historical_evidence_collisions(
+            latest, args.data_dir, args.source
+        )
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         raise SystemExit(f"Legacy URL collision audit failed: {exc}") from exc
 
@@ -278,6 +338,8 @@ def main() -> None:
         "safe_groups": sum(1 for plan in plans if plan["safe_to_migrate"]),
         "unsafe_groups": sum(1 for plan in plans if not plan["safe_to_migrate"]),
         "plans": plans,
+        "historical_collision_candidates": len(historical_collisions),
+        "historical_collisions": historical_collisions,
         "applied": [],
         "historical_reports_evidence_snapshots_and_notification_ledger_modified": False,
     }
