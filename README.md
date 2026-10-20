@@ -832,23 +832,16 @@ No license is currently specified in this repository. See GitHub's documentation
 
 ## Ask Sentinel
 
-The dashboard has an isolated Ask Sentinel chat view linked from the bottom of the desktop sidebar. It reuses the existing theme tokens and keeps mobile dashboard navigation unchanged. Chat requests are sent only to a same-origin-configurable server endpoint (`window.CHANGESENTINEL_ASK_ENDPOINT`); the browser must never receive the OpenRouter API key.
+Ask Sentinel is integrated into the existing dashboard theme and navigation. It uses the dedicated Supabase Edge Function at `https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel` and Groq's `openai/gpt-oss-20b` model via the server-side `GROQ_API` secret. No Groq API key is shipped to the browser.
 
-### Backend contract (required before enabling chat)
+### Repository knowledge and retrieval
 
-The static GitHub Pages frontend intentionally does **not** simulate a secure request counter using browser storage or an IP address. The configured server endpoint must:
+The Edge Function reads the current `main` commit of `GauravDarwesh/ChangeSentinel`, indexes readable repository text and caches it in private Supabase tables. It covers the committed run history, monitoring reports, source configuration, URL registry, notification ledgers, change evidence, extracted text snapshots, discovery inventory text, documentation, source code, tests, scripts and workflows. Binary PDF and ZIP files are not sent directly to the model; the committed extracted text snapshots and evidence JSON are indexed instead. Each question retrieves relevant records from this text corpus within a conservative prompt budget for the stated free Groq limit. It does not attempt to paste the entire repository into one prompt. The corpus is refreshed automatically when a new `main` commit is detected on the next warm-up.
 
-1. Authenticate or establish a stable, privacy-conscious user identity.
-2. Enforce an atomic maximum of three accepted requests per user per calendar day on the server/database, and return `429` after the limit. Include `remaining` (integer 0–3) in success/error responses when known.
-3. Call OpenRouter from server-side code using a server-side secret (prefer `openrouter/free` if the chosen model is available); never pass that secret to the browser.
-4. Ground answers in committed ChangeSentinel data: `data/report.json`, `data/latest.json`, `data/history/index.json`, notification ledgers, source configuration, evidence JSON and referenced snapshots. The browser sends a bounded summary of the currently loaded dashboard state for convenience; the server must treat client context as untrusted, validate it, and load repository evidence independently as needed.
-5. Distinguish verified source changes from baseline migrations, extraction drift, superseded/false-positive alerts, and monitoring failures. State when historical evidence is unavailable; do not invent events or citations.
-6. Limit prompt size, output size and timeouts; return JSON like `{"answer":"…","remaining":2}`; return structured JSON errors for rate limits and provider failures.
+The model is instructed to distinguish currently configured active sources from inactive/archived records, and verified source changes from baseline migrations, extraction drift, superseded alerts and fetch/extraction failures. It should report when retrieved evidence is insufficient instead of making up an answer.
 
-Example environment bootstrap for local/staging use:
+### Authentication and daily quota
 
-```html
-<script>window.CHANGESENTINEL_ASK_ENDPOINT = "https://YOUR-OWN-BACKEND.example/ask-sentinel";</script>
-```
+The static GitHub Pages frontend uses a Supabase anonymous Auth session; the function validates that JWT with Supabase Auth. A private database RPC atomically limits accepted provider requests to three per Auth user per UTC calendar day. The quota is server-side and does not rely on browser storage. Anonymous identity can be recreated by a determined visitor, so this is demonstration-grade throttling, not production-grade account identity.
 
-This variable is an endpoint URL, not a secret. Do not point it at an unrelated production function. Until a dedicated endpoint and identity-backed quota are configured, the UI is intentionally disabled with a clear message and spends no request allowance.
+Anonymous sign-ins must be enabled in the dedicated Supabase project, and `GROQ_API` must be present under Edge Function secrets. The function platform JWT gate is disabled because it explicitly validates the user's bearer token. Only the Supabase publishable key is included in the dashboard. The Supabase secret/service-role key and Groq API key remain server-side. Context size and response length are bounded to fit the free Groq use case.

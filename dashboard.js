@@ -1732,7 +1732,78 @@ if (compactQuery && typeof compactQuery.addEventListener === "function") {
  */
 const ASK_SENTINEL_ENDPOINT = window.CHANGESENTINEL_ASK_ENDPOINT || "";
 const ASK_SENTINEL_MAX_TRANSCRIPT = 12;
-const askSentinelState = { messages: [], sending: false, remaining: 3 };
+const askSentinelState = { messages: [], sending: false, remaining: 3, warmed: false, warmingPromise: null, warmError: "" };
+
+const ASK_SENTINEL_SUPABASE_URL = window.CHANGESENTINEL_ASK_SUPABASE_URL || "";
+const ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY = window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY || "";
+let askSentinelSupabaseClient = null;
+
+function askSentinelGetClient() {
+  if (!window.supabase || typeof window.supabase.createClient !== "function") {
+    throw new Error("The secure chat connection could not load. Please refresh the dashboard and retry.");
+  }
+  if (!ASK_SENTINEL_SUPABASE_URL || !ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY) {
+    throw new Error("The Ask Sentinel connection has not been configured.");
+  }
+  if (!askSentinelSupabaseClient) {
+    askSentinelSupabaseClient = window.supabase.createClient(
+      ASK_SENTINEL_SUPABASE_URL,
+      ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY,
+      { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: "changesentinel-ask-auth" } }
+    );
+  }
+  return askSentinelSupabaseClient;
+}
+async function askSentinelAccessToken() {
+  const client = askSentinelGetClient();
+  const current = await client.auth.getSession();
+  if (current.error) throw new Error("Could not restore your Ask Sentinel session. Please refresh.");
+  let session = current.data && current.data.session;
+  if (!session) {
+    const created = await client.auth.signInAnonymously();
+    if (created.error) {
+      throw new Error("Could not start a secure Ask Sentinel session. Enable anonymous sign-ins in the dedicated Supabase project and retry.");
+    }
+    session = created.data && created.data.session;
+  }
+  if (!session || !session.access_token) throw new Error("Ask Sentinel did not receive a user session.");
+  return session.access_token;
+}
+function askSentinelWarmIndex() {
+  if (askSentinelState.warmed) {
+    return Promise.resolve({ ok: true, remaining: askSentinelState.remaining });
+  }
+  if (askSentinelState.warmingPromise) return askSentinelState.warmingPromise;
+  askSentinelState.warmError = "";
+  $("askSentinelQuota").textContent = "Preparing monitoring archive…";
+  askSentinelState.warmingPromise = (async () => {
+    const token = await askSentinelAccessToken();
+    const response = await fetch(ASK_SENTINEL_ENDPOINT + "?mode=warm", {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "apikey": ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": "Bearer " + token
+      },
+      credentials: "omit"
+    });
+    let payload = {};
+    try { payload = await response.json(); } catch (_) {}
+    if (!response.ok || payload.ok !== true) {
+      throw new Error(typeof payload.error === "string" ? payload.error : "Could not prepare the monitoring archive. Please retry.");
+    }
+    askSentinelState.warmed = true;
+    askSentinelUpdateQuota(payload.remaining);
+    return payload;
+  })().catch(error => {
+    askSentinelState.warmError = String(error && error.message || "The monitoring archive could not be prepared.");
+    $("askSentinelQuota").textContent = "Archive unavailable";
+    return null;
+  }).finally(() => {
+    askSentinelState.warmingPromise = null;
+  });
+  return askSentinelState.warmingPromise;
+}
 
 function askSentinelEscapedText(value) {
   return String(value == null ? "" : value)
@@ -1773,6 +1844,7 @@ function askSentinelUpdateQuota(remaining) {
 function askSentinelOpen() {
   setView("askSentinel");
   $("askSentinelInput").focus({ preventScroll: true });
+  void askSentinelWarmIndex();
 }
 function askSentinelSetSending(sending) {
   askSentinelState.sending = sending;
@@ -1780,73 +1852,7 @@ function askSentinelSetSending(sending) {
   $("askSentinelInput").disabled = sending || askSentinelState.remaining <= 0;
   $("askSentinelSend").setAttribute("aria-busy", String(sending));
 }
-function askSentinelHistoryContext() {
-  // Summarize the dashboard's actual loaded objects. The server must treat this
-  // as untrusted context and may independently load full evidence from the repo.
-  const report = state.report || {};
-  const totals = report.counts || {};
-  const inventory = state.inventory && state.inventory.sources || {};
-  const pages = [];
-  Object.keys(inventory).forEach(sourceId => {
-    const records = inventory[sourceId];
-    if (!isPlainObject(records)) return;
-    Object.keys(records).forEach(id => {
-      const item = records[id] || {};
-      pages.push({
-        source_id: sourceId,
-        url_id: item.url_id || id,
-        regulator: item.regulator || null,
-        url: item.canonical_url || null,
-        active: item.active !== false,
-        last_checked: item.last_checked || null,
-        last_seen: item.last_seen || null,
-        http_status: item.http_status || null,
-        content_type: item.content_type || null,
-        extraction_error: item.extraction_error || null,
-        fetch_error: item.fetch_error || null,
-        relevance: item.relevance || null,
-        changes: itemChangeEntries(item).slice(0, 6).map(event => ({
-          event_id: event.event_id, event_type: event.event_type,
-          timestamp: event.timestamp, summary: event.summary || event.ai_summary || null,
-          old_hash: event.old_hash || null, new_hash: event.new_hash || null,
-          evidence_location: event.evidence_location || null
-        }))
-      });
-    });
-  });
-  return {
-    schema_version: 1,
-    generated_at: report.generated_at || null,
-    run_id: report.run_id || null,
-    totals,
-    sources: configuredSources().map(source => ({
-      id: source.id, name: source.name, regulator: source.regulator,
-      seeds: source.seeds || [], active: source.active !== false
-    })),
-    latest_runs: (Array.isArray(state.history) ? state.history : []).slice(0, 40),
-    recent_events: changeLogEntries().slice(0, 80).map(event => ({
-      event_id: event.event_id, event_type: event.event_type,
-      timestamp: event.timestamp, source_id: event.source_id,
-      url: event.url, summary: event.summary || event.ai_summary || null,
-      status: event.status || null, relevance: event.relevance || null,
-      evidence_location: event.evidence_location || null,
-      superseded: event.superseded === true,
-      superseded_reason: event.superseded_reason || null
-    })),
-    notifications: {
-      pending: notificationLists().pending.slice(0, 25),
-      sent: notificationLists().sent.slice(0, 40)
-    },
-    pages: pages.slice(0, 80),
-    // Client context is deliberately bounded. The trusted server must load complete committed history/evidence.
-    // Paths are repository-relative and resolved only by the trusted server.
-    data_sources: [
-      "data/report.json", "data/latest.json", "data/history/index.json",
-      "data/notifications.json", "data/notification-outbox.json", "config/sources.json",
-      "data/evidence/*", "data/history/*", "data/snapshots/*", "data/file_snapshots/*"
-    ]
-  };
-}
+/* Repository history and evidence are indexed server-side; client context is not sent as authoritative evidence. */
 async function askSentinelSendQuestion(promptOverride) {
   if (askSentinelState.sending || askSentinelState.remaining <= 0) return;
   const input = $("askSentinelInput");
@@ -1860,7 +1866,7 @@ async function askSentinelSendQuestion(promptOverride) {
     askSentinelAppendMessage("assistant", "Please keep each question to 1,200 characters or fewer.", "ask-sentinel-error");
     return;
   }
-  if (!ASK_SENTINEL_ENDPOINT) {
+  if (!ASK_SENTINEL_ENDPOINT || !ASK_SENTINEL_SUPABASE_URL || !ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY) {
     askSentinelAppendMessage("assistant",
       "Ask Sentinel’s interface is ready, but its secure server endpoint has not been configured yet. No request was sent, and no daily allowance was used. Configure CHANGESENTINEL_ASK_ENDPOINT to a dedicated server-side endpoint that authenticates each user, enforces the three-request daily limit atomically, and calls OpenRouter without exposing its key.",
       "ask-sentinel-error");
@@ -1873,15 +1879,19 @@ async function askSentinelSendQuestion(promptOverride) {
   const typing = askSentinelAppendMessage("assistant", "Reviewing saved monitoring records…", "ask-sentinel-typing");
   askSentinelSetSending(true);
   try {
+    const warmed = await askSentinelWarmIndex();
+    if (!warmed) throw new Error(askSentinelState.warmError || "The monitoring archive could not be prepared. Please retry.");
+    const accessToken = await askSentinelAccessToken();
     const response = await fetch(ASK_SENTINEL_ENDPOINT, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      credentials: "same-origin",
-      body: JSON.stringify({
-        question,
-        conversation: history,
-        dashboard_context: askSentinelHistoryContext()
-      })
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "apikey": ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": "Bearer " + accessToken
+      },
+      credentials: "omit",
+      body: JSON.stringify({ question, conversation: history })
     });
     let payload = {};
     try { payload = await response.json(); } catch (_) {}
