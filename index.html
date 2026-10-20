@@ -1726,6 +1726,287 @@
   }
 </style>
 
+
+  <style id="dashboard-left-workspace">
+    /* Desktop: keep primary navigation in a dedicated left rail; let evidence use the full right workspace. */
+    @media (min-width: 901px) {
+      .command-shell {
+        display: grid;
+        grid-template-columns: 248px minmax(0, 1fr);
+        align-items: start;
+        min-height: 100vh;
+      }
+      .command-topbar {
+        grid-column: 1;
+        grid-row: 1;
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 25px;
+        width: 248px;
+        height: 100vh;
+        min-height: 640px;
+        padding: 27px 16px 22px;
+        border: 0;
+        border-right: 1px solid rgba(255,255,255,.075);
+        border-radius: 0;
+        background: #142338;
+        color: #eef3f7;
+        box-shadow: 8px 0 30px rgba(15, 31, 48, .035);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+      .command-topbar .mobile-wordmark {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 0;
+        margin: 0 5px 8px;
+      }
+      .command-topbar .mobile-wordmark .brand-mark {
+        width: 39px;
+        height: 39px;
+        flex: none;
+        border: 1px solid rgba(255,255,255,.13);
+        border-radius: 12px;
+        background: #244a43;
+        color: #b9f0dc;
+        box-shadow: none;
+      }
+      .command-topbar .mobile-wordmark .brand-mark svg { width: 21px; height: 21px; }
+      .command-topbar .mobile-wordmark .brand-name {
+        color: #f4f7f9;
+        font-size: 15px;
+        font-weight: 790;
+        letter-spacing: -.04em;
+      }
+      .command-topbar .mobile-wordmark .brand-sub {
+        margin-top: 4px;
+        color: #9eafc1;
+        font-size: 9px;
+        letter-spacing: .11em;
+      }
+      .command-nav {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        width: 100%;
+        padding: 0;
+        overflow: visible;
+      }
+      .command-nav .nav-button {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        width: 100%;
+        min-height: 46px;
+        padding: 11px 12px;
+        border: 1px solid transparent;
+        border-radius: 11px;
+        background: transparent;
+        color: #bdc9d6;
+        text-align: left;
+        flex: none;
+      }
+      .command-nav .nav-button:hover {
+        background: rgba(255,255,255,.055);
+        color: #fff;
+      }
+      .command-nav .nav-button.active {
+        border-color: rgba(164,219,201,.12);
+        background: rgba(80,169,137,.13);
+        color: #f5fbf8;
+        box-shadow: inset 3px 0 #6ed0ae;
+      }
+      .command-nav .nav-symbol {
+        width: 21px;
+        color: #a8bdc9;
+        font-size: 17px;
+      }
+      .command-nav .nav-button.active .nav-symbol { color: #9be5c8; }
+      .command-nav .nav-label { font-size: 11px; font-weight: 720; }
+      .command-nav .nav-count { margin-left: auto; color: #9eb5bd; font-size: 10px; }
+      .command-topbar .topbar-context {
+        display: block;
+        margin-top: auto;
+        padding: 15px 12px 0;
+        border-top: 1px solid rgba(255,255,255,.1);
+      }
+      .command-topbar .breadcrumb { color: #cbd6df; font-size: 11px; }
+      .command-topbar .topbar-sub {
+        align-items: flex-start;
+        gap: 8px;
+        margin-top: 9px;
+        color: #9eafbf;
+        font-size: 10px;
+        line-height: 1.6;
+      }
+      .command-topbar .topbar-sub .live-dot { margin-top: 5px; flex: none; }
+      .command-topbar .topbar-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 7px;
+        width: 100%;
+        margin: 0;
+      }
+      .command-topbar .topbar-actions .btn {
+        justify-content: flex-start;
+        width: 100%;
+        min-height: 40px;
+        padding: 10px 12px;
+        border-color: rgba(255,255,255,.12);
+        border-radius: 10px;
+        background: rgba(255,255,255,.045);
+        color: #e1eaf0;
+        box-shadow: none;
+      }
+      .command-topbar .topbar-actions .btn:hover {
+        border-color: rgba(255,255,255,.22);
+        background: rgba(255,255,255,.085);
+      }
+      .command-topbar .topbar-actions .btn-primary {
+        border-color: #347b68;
+        background: #276451;
+        color: #f4fbf7;
+      }
+      .command-topbar .topbar-actions .btn-primary:hover { background: #31765f; }
+      .command-shell > .main-column {
+        grid-column: 2;
+        grid-row: 1;
+        min-width: 0;
+      }
+      .command-shell .page-content {
+        width: 100%;
+        max-width: 1680px;
+        padding: 34px clamp(24px, 3vw, 48px) 48px;
+      }
+      .command-shell .dashboard-hero { margin-top: 0; }
+    }
+
+    /* At tablet and phone widths, retain a compact header and give every section a clear tap target. */
+    @media (max-width: 900px) {
+      .command-shell { display: block; min-height: 100vh; }
+      .command-topbar {
+        position: relative;
+        top: auto;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas: "brand actions" "nav nav";
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        padding: 12px 18px 10px;
+        border: 0;
+        border-bottom: 1px solid #e4eae7;
+        border-radius: 0;
+        background: rgba(255,255,255,.96);
+        color: #17243a;
+        box-shadow: 0 3px 15px rgba(20,39,66,.035);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+      .command-topbar .mobile-wordmark {
+        grid-area: brand;
+        display: flex;
+        margin: 0;
+        min-width: 0;
+      }
+      .command-topbar .mobile-wordmark .brand-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: #e6f4ee;
+        color: #23644e;
+        box-shadow: none;
+      }
+      .command-topbar .mobile-wordmark .brand-name { color: #172b3d; font-size: 13px; }
+      .command-topbar .mobile-wordmark .brand-sub { color: #7c8e9b; font-size: 8px; }
+      .command-topbar .command-nav {
+        grid-area: nav;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 4px;
+        width: 100%;
+        overflow: visible;
+        padding: 0;
+      }
+      .command-topbar .command-nav .nav-button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        min-width: 0;
+        min-height: 48px;
+        padding: 6px 3px;
+        border-radius: 10px;
+        color: #65776f;
+      }
+      .command-topbar .command-nav .nav-button.active {
+        border-color: #d6e9df;
+        background: #edf7f1;
+        color: #245f49;
+        box-shadow: none;
+      }
+      .command-topbar .command-nav .nav-symbol { width: auto; font-size: 17px; line-height: 1; color: inherit; }
+      .command-topbar .command-nav .nav-label { font-size: 9px; line-height: 1.2; white-space: nowrap; }
+      .command-topbar .command-nav .nav-count { display: none; }
+      .command-topbar .topbar-context { display: none; }
+      .command-topbar .topbar-actions {
+        grid-area: actions;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 5px;
+        width: auto;
+        margin: 0;
+      }
+      .command-topbar .topbar-actions .btn {
+        width: auto;
+        min-height: 36px;
+        padding: 8px 10px;
+        border: 1px solid #dfe8e2;
+        border-radius: 10px;
+        background: #fff;
+        color: #344d42;
+        font-size: 10px;
+        box-shadow: none;
+      }
+      .command-topbar .topbar-actions .repo-link { display: none; }
+      .command-shell > .main-column { min-width: 0; padding-bottom: 12px; }
+    }
+    @media (max-width: 420px) {
+      .command-topbar { padding: 10px 11px 8px; gap: 9px; }
+      .command-topbar .mobile-wordmark { gap: 7px; }
+      .command-topbar .mobile-wordmark .brand-mark { width: 30px; height: 30px; }
+      .command-topbar .mobile-wordmark .brand-name { font-size: 12px; }
+      .command-topbar .mobile-wordmark .brand-sub { font-size: 7px; }
+      .command-topbar .topbar-actions .btn { min-height: 33px; padding: 7px 8px; }
+      .command-topbar .nav-label { font-size: 8px; }
+    }
+
+    /* The radar sweep must rotate around the plotted center, not around the wedge's own bounding box. */
+    .signal-svg .signal-sweep {
+      transform-box: view-box;
+      transform-origin: 50% 49.4%;
+      animation: softSweep 18s linear infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .signal-svg .signal-sweep { animation: none !important; }
+      .command-topbar *, .command-shell .metric-card, .command-shell .monitor-card { transition: none !important; animation: none !important; }
+    }
+  </style>
+
 </head>
 <body>
 <div class="app-shell command-shell">
