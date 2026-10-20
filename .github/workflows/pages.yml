@@ -17,7 +17,6 @@ on:
       - "data/notifications.json"
       - "data/notification-outbox.json"
       - "config/sources.json"
-      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
