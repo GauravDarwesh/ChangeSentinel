@@ -26,13 +26,19 @@ on:
 permissions:
   contents: read
 
+# New commits to the same PR replace obsolete evaluations instead of leaving a
+# queue of long-running free-router evaluations on intermediate commits.
+concurrency:
+  group: ai-smoke-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   smoke-test:
     # Repository secrets are available to same-repository PRs, not fork PRs.
     # Fork contributions still run the normal non-secret CI suite.
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
@@ -58,10 +64,12 @@ jobs:
       # Runs manually or on relevant main-branch changes. Scores end-to-end decisions:
       # deterministic extraction-drift suppression first,
       # then semantic AI for source changes. Emits all case-level decisions and accuracy.
-      - name: Score end-to-end relevance on the evaluation set
+      - name: Score end-to-end relevance and free-router stability
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          # Keep the expanded 12-case model evaluation within the job's time budget.
-          AI_TIMEOUT_SECONDS: "45"
-          AI_ATTEMPTS: "1"
-        run: python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8
+          # Each of the 12 model-routed fixtures is evaluated twice. Each call
+          # can retry once for transient provider errors or invalid JSON.
+          AI_TIMEOUT_SECONDS: "20"
+          AI_ATTEMPTS: "2"
+          AI_EVAL_REPEATS: "2"
+        run: python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8 --min-model-agreement 0.8 --repeats 2
