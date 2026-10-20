@@ -55,7 +55,10 @@ class TestAskSentinelContract(unittest.TestCase):
         for token in ("var(--pane)", "var(--accent)", "var(--ink)", "var(--line)", "@media (max-width:980px)", ".rail-ask { display:none; }"):
             with self.subTest(token=token):
                 self.assertIn(token, html)
-        self.assertIn("grid-template-columns:repeat(5,minmax(0,1fr))", html)
+        self.assertIn("grid-template-columns:repeat(6,minmax(0,1fr))", html)
+        self.assertIn('data-view="askSentinel"', html)
+        self.assertIn('$("askSentinelMessages").addEventListener("click"', read("dashboard.js"))
+        self.assertIn("pages: pages.slice(0, 80)", read("dashboard.js"))
 
 
 if __name__ == "__main__":
