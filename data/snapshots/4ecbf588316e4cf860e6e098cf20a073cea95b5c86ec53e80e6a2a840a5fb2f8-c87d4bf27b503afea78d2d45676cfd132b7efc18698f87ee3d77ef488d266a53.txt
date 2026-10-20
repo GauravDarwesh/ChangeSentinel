@@ -1,0 +1,2186 @@
+FR Y-9C
+OMB Number 7100-0128 Approval expires December 31, 2028 Page 1 of 73 Board of Governors of the Federal Reserve System Consolidated Financial Statements for Holding Companies—FR Y-9C Report at the close of business as of the last calendar day of the quarter This Report is required by law: Section 5(c) of the BHC Act (12 U.S.C. § 1844(c)), section 10 of Home Owners’ Loan Act (HOLA) (12 U.S.C. § 1467a(b)), section 618 of the Dodd-Frank Act (12 U.S.C. § 1850a(c)(1)), section 165 of the Dodd-Frank Act (12 U.S.C. § 5365), and section 252.153(b)(2) of Regulation YY (12 CFR 252.153(b)(2)).
+This report form is to be filed by holding companies with total consolidated assets of $3 billion or more. In addition, holding companies meeting certain criteria must file this report (FR Y-9C) regardless of size. See page 1 of the general instructions for further information. However, when such holding companies own or control, or are owned or controlled by, other holding companies, only the top-tier holding company must file this report for the consolidated holding company organization. The Federal Reserve may not conduct or sponsor, and an organization (or a person) is not required to respond to, a collection of information unless it displays a currently valid OMB control number.
+NOTE: Each holding company's board of directors and senior management are responsible for establishing and maintaining an effective system of internal control, including controls over the Consolidated Financial Statements for Holding Companies. The Consolidated Financial Statements for Holding Companies is to be prepared in accordance with instructions provided by the Federal Reserve System. The Consolidated Financial Statements for Holding Companies must be signed and attested by the Chief Financial Officer (CFO) of the reporting holding company (or by the individual performing this equivalent function).
+I, the undersigned CFO (or equivalent) of the named holding company, attest that the Consolidated Financial Statements for Holding Companies (including the supporting schedules) for this report date have been prepared in conformance with the instructions issued by the Federal Reserve System and are true and correct to the best of my knowledge and belief.
+Printed Name of Chief Financial Officer (or Equivalent) (BHCK C490) Signature of Chief Financial Officer (or Equivalent) (BHCK H321) Date of Signature (MM/DD/YYYY) (BHTX J196) Legal Title of Holding Company (RSSD 9017) (Mailing Address of the Holding Company) Street / PO Box (RSSD 9110) City (RSSD 9130) State (RSSD 9200) Zip Code (RSSD 9220) Date of Report: Month / Day / Year (BHCK 9999) Person to whom questions about this report should be directed: Name / Title (BHTX 8901) Area Code / Phone Number (BHTX 8902) Area Code / FAX Number (BHTX 9116) E-mail Address of Contact (BHTX 4086) For Federal Reserve Bank Use Only RSSD ID C.I. S.F.
+In accordance with the General Instructions for this report (check only one), a letter justifying this request is being provided along with the report (BHCK KY38) ........................................
+1.
+a letter justifying this request has been provided separately (BHCK KY38) .............................................
+2.
+Is confidential treatment requested for any portion of this report submission? ..................
+0=No 1=Yes BHCK C447 Holding companies must maintain in their files a physically (ink) or electronically signed and attested submitted FR Y-9C.
+Public reporting burden for this information collection is estimated to vary from 5 to 1,250 hours per response, with an average of 44.79 hours per response for non-Advanced Approaches holding companies with $5 billion or more and an average of 35.59 hours per response for non-Advanced Approaches holding companies with less than $5 billion in total assets and 49.80 hours for Advanced Approaches holding companies, including time to gather and maintain data in the required form and to review instructions and complete the information collection. Comments regarding this burden estimate or any other aspect of this information collection, including suggestions for reducing the burden, may be sent to Secretary, Board of Governors of the Federal Reserve System, 20th and C Streets, NW, Washington, DC 20551, and to the Office of Management and Budget, Paperwork Reduction Project (7100-0128), Washington, DC 20503. 03/2026
+Chief Executive Officer Name (BHCK FT42) E-mail Address (BHCK FT44) Area Code / Phone Number / Extension (BHCK FT43) Chief Executive Officer Contact Information This information is being requested so the Board can distribute notifications about policy initiatives and other matters directly to the Chief Executive Officers of reporting institutions. Please provide contact information for the Chief Executive Officer of the reporting institution. Enter "none" for the Chief Executive Officer's email address if not available. Chief Executive Officer contact information is for the confidential use of the Board and will not be released to the public.
+12/2021 FR Y-9C Page 2 of 73
+For Federal Reserve Bank Use Only RSSD ID S.F.
+Report of Income for Holding Companies Report all Schedules of the Report of Income on a calendar year-to-date basis.
+FR Y-9C
+Page 3 of 73
+Schedule HI—Consolidated Income Statement
+| Item | Dollar Amounts in Thousands | BHCK | Amount |
+| --- | --- | --- | --- |
+| | 1. Interest income | | |
+| | a. Interest and fee income on loans: | | |
+| | (1) In domestic offices: | | |
+| 1.a.(1)(a) | (a) Loans secured by 1–4 family residential properties | 4435 | |
+| 1.a.(1)(b) | (b) All other loans secured by real estate | 4436 | |
+| 1.a.(1)(c) | (c) All other loans | F821 | |
+| 1.a.(2) | (2) In foreign offices, Edge and Agreement subsidiaries, and IBFs | 4059 | |
+| 1.b. | b. Income from lease financing receivables | 4065 | |
+| 1.c. | c. Interest income on balances due from depository institutions1 | 4115 | |
+| | d. Interest and dividend income on securities: | | |
+| 1.d.(1) | (1) U.S. Treasury securities and U.S. government agency obligations (excluding mortgage-backed securities) | B488 | |
+| 1.d.(2) | (2) Mortgage-backed securities | B489 | |
+| 1.d.(3) | (3) All other securities | 4060 | |
+| 1.e. | e. Interest income from trading assets2 | 4069 | |
+| 1.f. | f. Interest income on federal funds sold and securities purchased under agreements to resell | 4020 | |
+| 1.g. | g. Other interest income | 4518 | |
+| 1.h. | h. Total interest income (sum of items 1.a through 1.g) | 4107 | |
+| | 2. Interest expense | | |
+| | a. Interest on deposits: | | |
+| | (1) In domestic offices: | | |
+| 2.a.(1)(a) | (a) Time deposits of $250,000 or less | HK03 | |
+| 2.a.(1)(b) | (b) Time deposits of more than $250,000 | HK04 | |
+| 2.a.(1)(c) | (c) Other deposits | 6761 | |
+| 2.a.(2) | (2) In foreign offices, Edge and Agreement subsidiaries, and IBFs | 4172 | |
+| 2.b. | b. Expense on federal funds purchased and securities sold under agreements to repurchase | 4180 | |
+| 2.c. | c. Interest on trading liabilities and other borrowed money2 (excluding subordinated notes and debentures) | 4185 | |
+| 2.d. | d. Interest on subordinated notes and debentures and on mandatory convertible securities2 | 4397 | |
+| 2.e. | e. Other interest expense | 4398 | |
+| 2.f. | f. Total interest expense (sum of items 2.a through 2.e) | 4073 | |
+| 3. | 3. Net interest income (item 1.h minus item 2.f) | 4074 | |
+| 4. | 4. Provision for credit losses3 | JJ33 | |
+| | 5. Noninterest income: | | |
+| 5.a. | a. Income from fiduciary activities | 4070 | |
+| 5.b. | b. Service charges on deposit accounts in domestic offices | 4483 | |
+| 5.c. | c. Trading revenue2, 4 | A220 | |
+1. Includes interest income on time certificates of deposit not held for trading.
+2. To be completed by holding companies with $5 billion or more in total assets. (Asset-size test is based on the prior year June 30 report date). Income and or expenses pertaining to these items should be reported in the "other" categories 1.g, 2.e, and 5.l, respectively by holding companies with less than $5 billion in total assets.
+3. Holding companies should report in item 4, the provisions for credit losses for all financial assets and off-balance sheet credit exposures.
+4. For holding companies required to complete Schedule HI, memoranda item 9, trading revenue reported in Schedule HI, item 5.c must equal the sum of memoranda items 9.a through 9.e.
+03/2024
+FR Y-9C
+Page 4 of 73
+Schedule HI—Continued
+| Item | Dollar Amounts in Thousands | BHCK | Amount |
+| --- | --- | --- | --- |
+| | Holding companies with less than $5 billion in total assets should report data items 5.d.(6) and 5.d.(7) only and leave 5.d.(1) through 5.d.(5) blank. | | |
+| | 5. d. Income from securities-related and insurance activities: | | |
+| 5.d.(1) | (1) Fees and commissions from securities brokerage | C886 | |
+| 5.d.(2) | (2) Investment banking, advisory, and underwriting fees and commissions | C888 | |
+| 5.d.(3) | (3) Fees and commissions from annuity sales | C887 | |
+| 5.d.(4) | (4) Underwriting income from insurance and reinsurance activities | C386 | |
+| 5.d.(5) | (5) Income from other insurance activities | C387 | |
+| 5.d.(6) | (6) Fees and commissions from securities brokerage, investment banking, advisory, and underwriting fees and commissions | KX46 | |
+| 5.d.(7) | (7) Income from insurance activities5 | KX47 | |
+| 5.e. | e. Venture capital revenue6 | B491 | |
+| 5.f. | f. Net servicing fees | B492 | |
+| 5.g. | g. Net securitization income6 | B493 | |
+| | h. Not applicable. | | |
+| 5.i. | i. Net gains (losses) on sales of loans and lease | 8560 | |
+| 5.j. | j. Net gains (losses) on sales of other real estate owned | 8561 | |
+| 5.k. | k. Net gains (losses) on sales of other assets7 | B496 | |
+| 5.l. | l. Other noninterest income8 | B497 | |
+| 5.m. | m. Total noninterest income (sum of items 5.a through 5.l) | 4079 | |
+| 6.a. | 6. a. Realized gains (losses) on held-to-maturity securities | 3521 | |
+| 6.b. | b. Realized gains (losses) on available-for-sale debt securities | 3196 | |
+| | 7. Noninterest expense: | | |
+| 7.a. | a. Salaries and employee benefits | 4135 | |
+| 7.b. | b. Expenses of premises and fixed assets (net of rental income) (excluding salaries and employee benefits and mortgage interest) | 4217 | |
+| 7.c.(1) | c. (1) Goodwill impairment losses | C216 | |
+| 7.c.(2) | (2) Amortization expense and impairment losses for other intangible assets | C232 | |
+| 7.d. | d. Other noninterest expense9 | 4092 | |
+| 7.e. | e. Total noninterest expense (sum of items 7.a through 7.d) | 4093 | |
+| 8.a. | 8. a. Income (loss) before change in net unrealized holding gains (losses) on equity securities not held for trading, applicable income taxes, and discontinued operations (sum of items 3, 5.m, 6.a, 6.b, minus items 4 and 7.e) | HT69 | |
+| 8.b. | b. Change in net unrealized holding gains (losses) on equity securities not held for trading10 | HT70 | |
+| 8.c. | c. Income (loss) before applicable income taxes and discontinued operations (sum of items 8.a and 8.b) | 4301 | |
+| 9. | 9. Applicable income taxes (on item 8.c) | 4302 | |
+| 10. | 10. Income (loss) before discontinued operations (item 8.c minus item 9) | 4300 | |
+| 11. | 11. Discontinued operations, net of applicable income taxes11 | FT28 | |
+| 12. | 12. Net income (loss) attributable to holding company and noncontrolling (minority) interests (sum of items 10 and 11) | G104 | |
+| 13. | 13. LESS: Net income (loss) attributable to noncontrolling (minority) interests (if net income, report as a positive value; if net loss, report as a negative value) | G103 | |
+| 14. | 14. Net income (loss) attributable to holding company (item 12 minus item 13) | 4340 | |
+5. Includes underwriting income from insurance and reinsurance activities.
+6. To be completed by holding companies with $5 billion or more in total assets (Asset-size test is based on the prior year June 30 report date). Income and or expenses pertaining to these items should be reported in the "other" categories.
+7. Excludes net gains (losses) on sales of trading assets and held-to-maturity and available-for-sale debt securities.
+8. See Schedule HI, memoranda item 6.
+9. See Schedule HI, memoranda item 7.
+10. Item 8.b is to be completed by all holding companies. See the instructions for this item and the Glossary entry for "Securities Activities" for further detail on accounting for investments in equity securities.
+11. Describe on Schedule HI, memoranda item 8.
+03/2022
+FR Y-9C
+Page 5 of 73
+Schedule HI—Continued
+Memoranda
+| Item | Dollar Amounts in Thousands | | BHCK | Amount |
+| --- | --- | --- | --- | --- |
+| | Memo Items 1 and 2 are to be reported by holding companies with $5 billion or more in total assets.1 | | | |
+| M.1. | 1. Net interest income (item 3 above) on a fully taxable equivalent basis | | 4519 | |
+| M.2. | 2. Net income before applicable income taxes, and discontinued operations (item 8.c above) on a fully taxable equivalent basis | | 4592 | |
+| M.3. | 3. Income on tax-exempt loans and leases to states and political subdivisions in the U.S. (included in Schedule HI, items 1.a and 1.b, above) | | 4313 | |
+| M.4. | 4. Income on tax-exempt securities issued by states and political subdivisions in the U.S. (included in Schedule HI, item 1.d.(3), above) | | 4507 | |
+| M.5. | 5. Number of full-time equivalent employees at end of current period (round to nearest whole number) | | BHCK 4150 | Number |
+| | Memo Items 6.a through 6.j are to be completed annually on a calendar year-to-date basis in the December report only by holding companies with less than $5 billion in total assets. Holding companies with $5 billion or more in total assets should report these items on a quarterly basis.1 | | | |
+| | 6. Other noninterest income (from Schedule HI, item 5.l, above) (only report amounts greater than $100,000 that exceed 7 percent of Schedule HI, item 5.l): | | | Amount |
+| M.6.a. | a. Income and fees from the printing and sale of checks | | BHCK C013 | |
+| M.6.b. | b. Earnings on/increase in value of cash surrender value of life insurance | | C014 | |
+| M.6.c. | c. Income and fees from automated teller machines (ATMs) | | C016 | |
+| M.6.d. | d. Rent and other income from other real estate owned | | 4042 | |
+| M.6.e. | e. Safe deposit box rent | | C015 | |
+| M.6.f. | f. Bank card and credit card interchange fees | | F555 | |
+| M.6.g. | g. Income and fees from wire transfers | | T047 | |
+| M.6.h. | h. | TEXT 8562 | 8562 | |
+| M.6.i. | i. | TEXT 8563 | 8563 | |
+| M.6.j. | j. | TEXT 8564 | 8564 | |
+| | Memo Items 7.a through 7.p are to be completed annually on a calendar year-to-date basis in the December report only by holding companies with less than $5 billion in total assets. Holding companies with $5 billion or more in total assets should report these items on a quarterly basis.1 | | | |
+| | 7. Other noninterest expense (from Schedule HI, item 7.d, above) (only report amounts greater than $100,000 that exceed 7 percent of the sum of Schedule HI, item 7.d): | | | |
+| M.7a. | a. Data processing expenses | | C017 | |
+| M.7.b. | b. Advertising and marketing expenses | | 0497 | |
+| M.7.c. | c. Directors' fees | | 4136 | |
+| M.7.d. | d. Printing, stationery, and supplies | | C018 | |
+| M.7.e. | e. Postage | | 8403 | |
+| M.7.f. | f. Legal fees and expenses | | 4141 | |
+| M.7.g. | g. FDIC deposit insurance assessments2 | | 4146 | |
+| M.7.h. | h. Accounting and auditing expenses | | F556 | |
+| M.7. i. | i. Consulting and advisory expenses | | F557 | |
+| M.7. j. | j. Automated teller machine (ATM) and interchange expenses | | F558 | |
+| M.7.k. | k. Telecommunications expenses | | F559 | |
+| M.7. l. | l. Other real estate owned expenses | | Y923 | |
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+2. Amounts reported in Memorandum item 7.g will not be made available to the public on an individual institution basis.
+03/2022
+FR Y-9C
+Page 6 of 73
+Schedule HI—Continued
+Memoranda—Continued
+| Item | Dollar Amounts in Thousands | | | | BHCK | Amount |
+| --- | --- | --- | --- | --- | --- | --- |
+| M.7.m. | 7. m. Insurance expenses (not included in employee expenses, premises and fixed assets expenses, and other real estate owned expenses) | | | | Y924 | |
+| M.7.n. | n. | TEXT 8565 | | | 8565 | |
+| M.7.o. | o. | TEXT 8566 | | | 8566 | |
+| M.7.p. | p. | TEXT 8567 | | | 8567 | |
+| | Memo items 8.a.(1) through Memo item 8.b.(2) is reported by holding companies with $5 billion or more in total assets.1 | | | | | |
+| | 8. Discontinued operations and applicable income tax effect (from Schedule HI, item 11) (itemize and describe each discontinued operation): | | | | | |
+| M.8.a.(1) | a. (1) | TEXT FT29 | | | | |
+| M.8.a.(1) | | | | | FT29 | |
+| M.8.a.(2) | (2) Applicable income tax effect | | BHCK | FT30 | | |
+| M.8.b.(1) | b. (1) | TEXT FT31 | | | | |
+| M.8.b.(1) | | | | | FT31 | |
+| M.8.b.(2) | (2) Applicable income tax effect | | BHCK | FT32 | | |
+| | 9. Trading revenue (from cash instruments and derivative instruments) (Sum of items 9.a through 9.e must equal Schedule HI, item 5.c.) Memorandum items 9.a through 9.e are to be completed by holding companies with $5 billion or more in total assets1 that reported total trading assets of $10 million or more for any quarter of the preceding calendar year: | | | | | |
+| M.9.a. | a. Interest rate exposures | | | | 8757 | |
+| M.9.b. | b. Foreign exchange exposures | | | | 8758 | |
+| M.9.c. | c. Equity security and index exposures | | | | 8759 | |
+| M.9.d. | d. Commodity and other exposures | | | | 8760 | |
+| M.9.e. | e. Credit exposures | | | | F186 | |
+| | Memoranda items 9.f and 9.g are to be completed by holding companies with $100 billion or more in total assets that are required to complete Schedule HI, Memorandum items 9.a through 9.e, above.1 | | | | | |
+| M.9.f. | f. Impact on trading revenue of changes in the creditworthiness of the holding company's derivatives counterparties on the holding company's derivative assets (included in Memorandum items 9.a through 9.e above) | | | | K090 | |
+| M.9.g. | g. Impact on trading revenue of changes in the creditworthiness of the holding company on the holding company's derivative liabilities (included in Memorandum items 9.a through 9.e above) | | | | K094 | |
+| | Memorandum items 10.a and 10.b are to be completed by holding companies with $10 billion or more in total consolidated assets.1 | | | | | |
+| | 10. Net gains (losses) recognized in earnings on credit derivatives that economically hedge credit exposures held outside the trading account: | | | | | |
+| M.10.a. | a. Net gains (losses) on credit derivatives held for trading | | | | C889 | |
+| M.10.b. | b. Net gains (losses) on credit derivatives held for purposes other than trading | | | | C890 | |
+| | Memorandum item 11 is to be completed by holding companies with $5 billion or more in total assets.1 | | | | | |
+| M.11. | 11. Credit losses on derivatives (see instructions) | | | | A251 | |
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2022
+FR Y-9C
+Page 7 of 73 Schedule HI—Continued Memoranda—Continued Dollar Amounts in Thousands BHCK Amount Memorandum items 12.a through 12.c are to be completed by holding companies with $5 billion or more in total assets.1
+12. a. Income from the sale and servicing of mutual funds and annuities (in domestic offices).......... 8431 M.12.a.
+b. (1) Premiums on insurance related to the extension of credit.......................................... C242 M.12.b.(1)
+(2) All other insurance premiums .............................................................................. C243 M.12.b.(2) c. Benefits, losses, and expenses from insurance-related activities..................................... B983 M.12.c.
+13. Does the reporting holding company have a Subchapter S election in effect for federal income tax purposes for the current tax year? (Enter "1" for Yes; enter "0" for No.)...............
+BHCK
+A530 M.13.
+Dollar Amounts in Thousands BHCK Amount Memorandum items 14(a) through 14(b)(1) are to be completed by holding companies with $5 billion or more in total assets that have elected to account for assets and liabilities under a fair value option.1
+14. Net gains (losses) recognized in earnings on assets and liabilities that are reported at fair value under a fair value option: a. Net gains (losses) on assets ................................................................................... F551 M.14.a.
+(1) Estimated net gains (losses) on loans attributable to changes in instrument-specific credit risk ....................................................................................................... F552 M.14.a.(1) b. Net gains (losses) on liabilities................................................................................. F553 M.14.b.
+(1) Estimated net gains (losses) on liabilities attributable to changes in instrument-specific credit risk........................................................................................................ F554 M.14.b.(1)
+15. Stock-based employee compensation expense (net of tax effects) calculated for all awards under the fair value method ............................................................................. C409 M.15.
+16. and 17. Not applicable.
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+0=No 1=Yes 03/2024 Memorandum item 15 is to be completed by holding companies with $5 billion or more in total assets.1
+FR Y-9C
+Page 8 of 73 Schedule HI-A—Changes in Holding Company Equity Capital Dollar Amounts in Thousands BHCK Amount
+1. Total holding company equity capital most recently reported for the end of previous calendar year (i.e., after adjustments from amended Reports of Income) ................................... 3217 1.
+2. Cumulative effect of changes in accounting principles and corrections of material accounting errors B507 2.
+3. Balance end of previous calendar year as restated (sum of items 1 and 2) ................................. B508 3.
+BHCT
+4. Net income (loss) attributable to holding company (must equal Schedule HI, item 14) .................. 4340 4.
+5. Sale of perpetual preferred stock (excluding treasury stock transactions): BHCK a. Sale of perpetual preferred stock, gross........................................................................... 3577 5.a.
+b. Conversion or retirement of perpetual preferred stock......................................................... 3578 5.b.
+6. Sale of common stock: a. Sale of common stock, gross......................................................................................... 3579 6.a.
+b. Conversion or retirement of common stock....................................................................... 3580 6.b.
+7. Sale of treasury stock...................................................................................................... 4782 7.
+8. LESS: Purchase of treasury stock...................................................................................... 4783 8.
+9. Changes incident to business combinations, net ................................................................... 4356 9.
+10. LESS: Cash dividends declared on preferred stock ............................................................... 4598 10.
+11. LESS: Cash dividends declared on common stock ................................................................ 4460 11.
+12. Other comprehensive income1 .......................................................................................... B511 12.
+13. Change in the offsetting debit to the liability for Employee Stock Ownership Plan (ESOP) debt guaranteed by the holding company................................................................................... 4591 13.
+14. Other adjustments to equity capital (not included above) ........................................................ 3581 14.
+15. Total holding company equity capital end of current period (sum of items 3, 4, 5, 6, 7, 9, 12, 13, and 14, less items 8, 10, and 11) (must equal item 27.a on Schedule HC).............................
+BHCT
+3210 15.
+1. Includes, but is not limited to, changes in net unrealized holding gains (losses) on available-for-sale debt securities, changes in accumulated net gains (losses) on cash flow hedges, foreign currency translation adjustments, and pension and other postretirement plan related changes other than net periodic benefit cost.
+12/2020
+FR Y-9C
+Page 9 of 73
+Schedule HI-B—Charge-Offs and Recoveries on Loans and Leases and Changes in Allowances for Credit Losses
+Part I. Charge-offs and Recoveries on Loans and Leases (Fully Consolidated) Part I includes charge-offs and recoveries through
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | the allocated transfer risk reserve. | (Column A) Charge-offs1 | | (Column B) Recoveries | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHCK | Amount |
+| | 1. Loans secured by real estate: | | | | |
+| | a. Construction, land development, and other land loans in domestic offices: | | | | |
+| 1.a.(1) | (1) 1–4 family residential construction loans | C891 | | C892 | |
+| 1.a.(2) | (2) Other construction loans and all land development and other land loans | C893 | | C894 | |
+| 1.b. | b. Secured by farmland in domestic offices | 3584 | | 3585 | |
+| | c. Secured by 1–4 family residential properties in domestic offices: | | | | |
+| 1.c.(1) | (1) Revolving, open-end loans secured by 1–4 family residential properties and extended under lines of credit | 5411 | | 5412 | |
+| | (2) Closed-end loans secured by 1–4 family residential properties in domestic offices: | | | | |
+| 1.c.(2)(a) | (a) Secured by first liens | C234 | | C217 | |
+| 1.c.(2)(b) | (b) Secured by junior liens | C235 | | C218 | |
+| 1.d. | d. Secured by multifamily (5 or more) residential properties in domestic offices | 3588 | | 3589 | |
+| | e. Secured by nonfarm nonresidential properties in domestic offices: | | | | |
+| 1.e.(1) | (1) Loans secured by owner-occupied nonfarm nonresidential properties | C895 | | C896 | |
+| 1.e.(2) | (2) Loans secured by other nonfarm nonresidential properties | C897 | | C898 | |
+| 1.f. | f. In foreign offices | B512 | | B513 | |
+| | 2. Not applicable. | | | | |
+| 3. | 3. Loans to finance agricultural production and other loans to farmers | 4655 | | 4665 | |
+| | Holding companies with less than $5 billion should report Item 4.c only and leave 4.a and 4.b blank.2 | | | | |
+| | 4. Commercial and industrial loans: | | | | |
+| 4.a. | a. To U.S. addressees (domicile) | 4645 | | 4617 | |
+| 4.b. | b. To non-U.S. addressees (domicile) | 4646 | | 4618 | |
+| 4.c. | c. To U.S. addressees (domicile) and non-U.S. addressees (domicile) | KX48 | | KX49 | |
+| | 5. Loans to individuals for household, family, and other personal expenditures: | | | | |
+| 5.a. | a. Credit cards | B514 | | B515 | |
+| 5.b. | b. Automobile loans | K129 | | K133 | |
+| 5.c. | c. Other consumer loans (includes single payment, installment, all student loans, and revolving credit plans other than credit cards) | K205 | | K206 | |
+| | Item 6 is to be completed by holding companies with $5 billion or more in total consolidated assets.2 | | | | |
+| 6. | 6. Loans to foreign governments and official institutions | 4643 | | 4627 | |
+| 7. | 7. All other loans | 4644 | | 4628 | |
+1. Include write-downs arising from transfers of loans to a held-for-sale account.
+2. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2022
+FR Y-9C
+Page 10 of 73
+Schedule HI-B—Continued
+Part I—Continued
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Charge-offs1 | | (Column B) Recoveries | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHCK | Amount |
+| | Holding companies with less than $5 billion in total assets should report data item 8.c and leave item 8.a and 8.b blank. 2 | | | | |
+| | 8. Lease financing receivables: | | | | |
+| 8.a. | a. Leases to individuals for household, family, and other personal expenditures | F185 | | F187 | |
+| 8.b. | b. All other leases | C880 | | F188 | |
+| 8.c. | c. Leases to individuals for household, family, and other personal expenditures and all other leases | KX50 | | KX51 | |
+| 9. | 9. Total (sum of items 1 through 8.b)3 | 4635 | | 4605 | |
+1. Include write-downs arising from transfers of loans to a held-for-sale account.
+2. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+3. For holding companies with less than $5 billion in total assets, Total loans and leases (sum of items 1 through 7 plus 8c.)
+Memoranda
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Charge-offs1 | | (Column B) Recoveries | |
+| | Dollar Amounts in Thousands | Date BHCK | Amount | | Amount |
+| M.1. | 1. Loans to finance commercial real estate, construction, and land development activities (not secured by real estate) included in Schedule HI-B, part I, items 4 and 7 above | 5409 | | BHCK 5410 | |
+| | Memorandum item 2 is to be completed by holding companies with $5 billion or more in total assets.2 | | | | |
+| M.2. | 2. Loans secured by real estate to non-U.S. addressees (domicile) (included in Schedule HI-B, part I, item 1, above) | 4652 | | 4662 | |
+Memorandum item 3 is to be completed by (1) holding companies with $5 billion or more in total assets2 that, together with affiliated institutions, have outstanding credit card receivables (as defined in the instructions) that exceed $500 million as of the report date or
+(2) holding companies that on a consolidated basis are credit card specialty holding companies (as defined in the instructions).
+Year-to-date
+3. Uncollectible retail credit card fees and finance charges reversed against income BHCK (i.e., not included in charge-offs against the allowance for credit losses on loans and leases)........... C388
+Amount M.3.
+1. Include write-downs arising from transfers of loans to a held-for-sale account.
+2. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2024
+FR Y-9C
+Page 11 of 73
+Schedule HI-B—Continued
+Part II. Changes in Allowances for Credit Losses
+| Item | Line item | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Loans and leases held for investment | | (Column B) Held-to-maturity debt securities | | (Column C) Available-for-sale debt securities | |
+| | Dollar Amounts in Thousands | | Amount | | Amount | | Amount |
+| 1. | 1. Balance most recently reported at end of previous year (i.e., after adjustments from amended Reports of Income) | BHCK B522 | | BHCK JH88 | | BHCK JH94 | |
+| 2. | 2. Recoveries (column A must equal Part I, item 9, column B, above) | BHCT 4605 | | JH89 | | JH95 | |
+| 3. | 3. LESS: Charge-offs (column A must equal Part I, item 9, column A, above less Schedule HI-B, Part II, item 4, Column A) | BHCK C079 | | JH92 | | JH98 | |
+| 4. | 4. LESS: Write-downs arising from transfers of financial assets | 5523 | | JJ00 | | JJ01 | |
+| 5. | 5. Provisions for credit losses1 | 4230 | | JH90 | | JH96 | |
+| 6. | 6. Adjustments (see instructions for this schedule) | C233 | | JH91 | | JH97 | |
+| 7. | 7. Balance end of current period (sum of items 1, 2, 5, and 6, less items 3 and 4) (column A must equal Schedule HC, item 4.c) | BHCT 3123 | | JH93 | | JH99 | |
+1. The sum of item 5, columns A through C, plus schedule HI-B, Part II, Memorandum items 5 and 7 below, must equal Schedule HI, item 4.
+Memoranda
+| Item | Dollar Amounts in Thousands | BHCK | Amount |
+| --- | --- | --- | --- |
+| | Memoranda Items 1, 2, and 8 are to be completed by holding companies with $5 billion or more in total assets.1 | | |
+| M.1. | 1. Allocated transfer risk reserve included in Schedule HI-B, part II, item 7, column A, above | C435 | |
+| | Memoranda items 2 and 3 are to be completed by (1) holding companies that, together with affiliated institutions, have outstanding credit card receivables (as defined in the instructions) that exceed $500 million as of the report date or (2) holding companies that on a consolidated basis are credit card specialty holding companies (as defined in the instructions). | | |
+| M.2. | 2. Separate valuation allowance for uncollectible retail credit card fees and finance charges | C389 | |
+| M.3. | 3. Amount of allowance for credit losses on loans and leases attributable to retail credit card fees and finance charges | C390 | |
+| | 4. Not applicable. | | |
+| M.5. | 5. Provisions for credit losses on other financial assets measured at amortized cost (not included in item 5, above) | JJ02 | |
+| M.6. | 6. Allowance for credit losses on other financial assets measured at amortized cost (not included in item 7, above) | JJ03 | |
+| M.7. | 7. Provisions for credit losses on off-balance-sheet credit exposures | MG93 | |
+| M.8. | 8. Estimated amount of expected recoveries of amounts previously written off included within the allowance for credit losses on loans and leases held for investment (include in item 7, column A, “Balance end of current period,”above) | MG94 | |
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2026
+FR Y-9C
+Page 12 of 73
+Schedule HI-C—Disaggregated Data on the Allowances for Credit Losses
+Items 1 through 11 are to be completed semiannually in the June and December reports by holding companies with less than $5 billion in total assets.1
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Amortized Cost | | (Column B) Allowance Balance | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHCK | Amount |
+| | Loans and Leases Held for Investment: | | | | |
+| | 1. Real estate loans: | | | | |
+| 1.a. | a. Construction loans | JJ04 | | JJ12 | |
+| 1.b. | b. Commercial real estate loans | JJ05 | | JJ13 | |
+| 1.c. | c. Residential real estate loans | JJ06 | | JJ14 | |
+| 2. | 2. Commercial loans2 | JJ07 | | JJ15 | |
+| 3. | 3. Credit cards | JJ08 | | JJ16 | |
+| 4. | 4. Other consumer loans | JJ09 | | JJ17 | |
+| 5. | 5. Unallocated, if any | | | JJ18 | |
+| 6. | 6. Total (sum of items 1.a through 5)3 | JJ11 | | JJ19 | |
+| Item | Line item | | |
+| --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | Allowance Balance BHCK | Amount |
+| | Held-to-Maturity Securities: | | |
+| 7. | 7. Securities issued by states and political subdivisions in the U.S | JJ20 | |
+| 8. | 8. Total mortgage-backed securities (MBS) (including CMOs, REMICs and stripped MBS) | JJ21 | |
+| 9. | 9. Asset-backed securities and structured financial products | JJ23 | |
+| 10. | 10. Other debt securities | JJ24 | |
+| 11. | 11. Total (sum of items 7 through 10)4 | JJ25 | |
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+2. Include all loans and leases not reported as real estate loans, credit cards, or other consumer loans in items 1, 3, or 4.
+3. Item 6, column B, must equal schedule HC, item 4.c.
+4. Item 11 must equal Schedule HI-B, Part II item 7, column B.
+03/2024
+FR Y-9C
+Page 13 of 73
+Notes to the Income Statement—Predecessor Financial Items For holding companies involved in a business combination(s) during the quarter, provide on the lines below income statement information for any acquired company(ies) with aggregated assets of $10 billion or more or 5 percent of the reporting holding company's total consolidated assets as of the previous quarter-end, whichever is less. Information should be reported year-todate of acquisition.
+| Item | Dollar Amounts in Thousands | BHBC | Amount |
+| --- | --- | --- | --- |
+| 1. | 1. Total interest income | 4107 | |
+| 1.a. | a. Interest income on loans and leases | 4094 | |
+| 1.b. | b. Interest income on investment securities | 4218 | |
+| 2. | 2. Total interest expense | 4073 | |
+| 2.a. | a. Interest expense on deposits | 4421 | |
+| 3. | 3. Net interest income | 4074 | |
+| 4. | 4. Provision for credit losses | JJ33 | |
+| 5. | 5. Total noninterest income | 4079 | |
+| 5.a. | a. Income from fiduciary activities | 4070 | |
+| 5.b. | b. Trading revenue | A220 | |
+| 5.c. | c. Investment banking, advisory, brokerage, and underwriting fees and commissions | B490 | |
+| 5.d. | d. Venture capital revenue | B491 | |
+| 5.e. | e. Net securitization income | B493 | |
+| 5.f. | f. Insurance commissions and fees | B494 | |
+| 6. | 6. Realized gains (losses) on held-to-maturity and available-for-sale securities1 | 4091 | |
+| 7. | 7. Total noninterest expense | 4093 | |
+| 7.a. | a. Salaries and employee benefits | 4135 | |
+| 7.b. | b. Goodwill impairment losses | C216 | |
+| 8. | 8. Income (loss) before applicable income taxes and discontinued operations | 4301 | |
+| 9. | 9. Applicable income taxes | 4302 | |
+| 10. | 10. Noncontrolling (minority) interest | 4484 | |
+| 11. | 11. Discontinued operations, net of applicable income taxes and noncontrolling (minority) interest | BHCK FT41 | |
+| 12. | 12. Net income (loss) | BHBC 4340 | |
+| 13. | 13. Cash dividends declared | 4475 | |
+| 14. | 14. Net charge-offs | 6061 | |
+| 15. | 15. Net interest income (item 3 above) on a fully taxable equivalent basis | 4519 | |
+1. Includes provisions governing the accounting for investments in equity securities, include realized and unrealized gains (losses) (and all other value changes) on equity securities and other equity investments not held for trading in item 6.
+03/2024
+FR Y-9C
+Page 14 of 73
+Notes to the Income Statement (Other) Enter in the lines provided below any additional information on specific line items on the income statement or to its schedules that the holding company wishes to explain, that has been separately disclosed in the holding company's quarterly reports to its shareholders, in its press releases, or on its quarterly reports to the Securities and Exchange Commission (SEC). Exclude any transactions that have been separately disclosed under the reporting requirements specified in memoranda items 6 through 8 to Schedule HI, the Consolidated Income Statement.
+Also include any transactions which previously would have appeared as footnotes to Schedules HI through HI-B.
+Each additional piece of information disclosed should include the appropriate reference to schedule and item number, as well as a description of the additional information and the dollar amount (in thousands of dollars) associated with that disclosure.
+Example
+A holding company has received $1.35 million of back interest on loans and leases that are currently in nonaccrual status. The holding company's interest income for the quarter shows that increase which has been disclosed in the report to the stockholders and to the SEC. Enter on the line item below the following information:
+TEXT
+0000 Sch. HI, item 1.a(1), Recognition of interest payments on nonaccrual loans to XYZ country
+BHCK
+0000
+Amount
+1350
+Notes to the Income Statement (Other)
+Dollar Amounts in Thousands BHCK
+1. Not applicable.
+2. Initial allowances for credit losses recognized upon the acquisition of purchased credit-deteriorated
+assets1 ............................................................................................................................
+3. Not applicable.
+JJ27
+Amount
+2.
+4.
+4.
+5.
+5.
+6.
+6.
+7.
+7.
+8.
+8.
+9.
+9.
+10.
+10.
+| TEXT › 5351 › 5352 › 5353 › 5354 › 5355 › B042 › B043 | BHCK › 5351 › 5352 › 5353 › 5354 › 5355 › B042 › B043 | Amount |
+| --- | --- | --- |
+1. Institutions should report initial allowances for credit losses recognized upon the acquisition of purchased credit-deteriorated assets after the adoption of FASB ASC Topic 326.
+03/2024
+FR Y-9C
+Page 15 of 73 Notes to the Income Statement (Other)—Continued TEXT Dollar Amounts in Thousands BHCK Amount
+14. B047 B047 14.
+15. B048 B048 15.
+16. B049 B049 16.
+17. B050 B050 17.
+18. B051 B051 18.
+19. B052 B052 19.
+20. B053 B053 20.
+21. B054 B054 21.
+22. B055 B055 22.
+23. B056 B056 23.
+03/2019
+11. B044 B044 11.
+12. B045 B045 12.
+13. B046 B046 13.
+[TABLE]
+| | Page | 15 of 73 |
+| --- | --- | --- |
+| Notes to the Income Statement (Other)—Continued | | |
+| TEXT Dollar Amounts in Thousands | BHCK Amount | |
+| 11. B044 | | |
+| | B044 | 11. |
+| 12. B045 | | |
+| | B045 | 12. |
+| 13. B046 | | |
+| | B046 | 13. |
+| 14. B047 | | |
+| | B047 | 14. |
+| 15. B048 | | |
+| | B048 | 15. |
+| 16. B049 | | |
+| | B049 | 16. |
+| 17. B050 | | |
+| | B050 | 17. |
+| 18. B051 | | |
+| | B051 | 18. |
+| 19. B052 | | |
+| | B052 | 19. |
+| 20. B053 | | |
+| | B053 | 20. |
+| 21. B054 | | |
+| | B054 | 21. |
+| 22. B055 | | |
+| | B055 | 22. |
+| 23. B056 | | |
+| | B056 | 23. |
+| | | 03/2019 |
+FR Y-9C
+For Federal Reserve Bank Use Only Page 16 of 73 Name of Holding Company C.I.
+Consolidated Financial Statements for Holding Companies
+Report at the close of business Date
+Schedule HC—Consolidated Balance Sheet
+| Item | Dollar Amounts in Thousands | | | BHCK | Amount |
+| --- | --- | --- | --- | --- | --- |
+| | Assets | | | | |
+| | 1. Cash and balances due from depository institutions: | | | | |
+| 1.a. | a. Noninterest-bearing balances and currency and coin1 | | | 0081 | |
+| | b. Interest-bearing balances:2 | | | | |
+| 1.b.(1) | (1) In U.S. offices | | | 0395 | |
+| 1.b.(2) | (2) In foreign offices, Edge and Agreement subsidiaries, and IBFs | | | 0397 | |
+| | 2. Securities: | | | | |
+| 2.a. | a. Held-to-maturity securities (from Schedule HC-B, column A)3 | | | JJ34 | |
+| 2.b. | b. Available-for-sale debt securities (from Schedule HC-B, column D) | | | 1773 | |
+| 2.c. | c. Equity securities with readily determinable fair values not held for trading4 | | | JA22 | |
+| | 3. Federal funds sold and securities purchased under agreements to resell: | | | | |
+| 3.a. | a. Federal funds sold in domestic offices | | | B987 | |
+| 3.b. | b. Securities purchased under agreements to resell5, 6 | | BHDM BHCK | B989 | |
+| | 4. Loans and lease financing receivables: | | | | |
+| 4.a. | a. Loans and leases held for sale | | | 5369 | |
+| 4.b. | b. Loans and leases, held for investment | B528 | | | |
+| 4.c. | c. LESS: Allowance for credit losses on loans and leases | 3123 | | | |
+| 4.d. | d. Loans and leases, held for investment, net of allowance (item 4.b minus 4.c) | | | B529 | |
+| 5. | 5. Trading assets (from Schedule HC-D) | | | 3545 | |
+| 6. | 6. Premises and fixed assets (including right-of-use assets) | | | 2145 | |
+| 7. | 7. Other real estate owned (from Schedule HC-M) | | | 2150 | |
+| 8. | 8. Investments in unconsolidated subsidiaries and associated companies | | | 2130 | |
+| 9. | 9. Direct and indirect investments in real estate ventures | | | 3656 | |
+| 10. | 10. Intangible assets (from Schedule HC-M) | | | 2143 | |
+| 11. | 11. Other assets (from Schedule HC-F)6 | | | 2160 | |
+| 12. | 12. Total assets (sum of items 1 through 11) | | | 2170 | |
+1. Includes cash items in process of collection and unposted debits.
+2. Includes time certificates of deposit not held for trading.
+3. Holding companies should report in item 2.a amounts net of any applicable allowance for credit losses, and item 2.a should equal Schedule HC-B, item 8, column A, less Schedule HI-B, Part II, item 7, column B.
+4. Item 2.c is to be completed by all holding companies. See the instructions for this item and the Glossary for "Securities Activities" for further detail on accounting for investments in equity securities.
+5. Includes all securities resale agreements in domestic and foreign offices, regardless of maturity.
+6. Holding companies should report items 3.b and 11 amounts net of any applicable allowance for credit losses.
+03/2024
+FR Y-9C
+Page 17 of 73 Schedule HC—Continued Dollar Amounts in Thousands BHDM Amount Liabilities
+13. Deposits: a. In domestic offices (from Schedule HC-E):
+(1) Noninterest-bearing1 ............................................................................................. 6631 13.a.(1)
+(2) Interest-bearing.................................................................................................... 6636 13.a.(2) b. In foreign offices, Edge and Agreement subsidiaries, and IBFs: BHFN
+(1) Noninterest-bearing .............................................................................................. 6631 13.b.(1)
+(2) Interest-bearing.................................................................................................... 6636 13.b.(2) BHDM14. Federal funds purchased and securities sold under agreements to repurchase: a. Federal funds purchased in domestic offices2.................................................................. B993 14.a.
+BHCK
+b. Securities sold under agreements to repurchase3 ............................................................ B995 14.b.
+15. Trading liabilities (from Schedule HC-D)............................................................................ 3548 15.
+16. Other borrowed money (includes mortgage indebtedness and obligations under capitalized leases) (from Schedule HC-M) ......................................................................... 3190 16.
+17. and 18. Not applicable.
+19. a. Subordinated notes and debentures4 ............................................................................ 4062 19.a.
+b. Subordinated notes payable to unconsolidated trusts issuing trust preferred securities, and trust preferred securities issued by consolidated special purpose entities ............................. C699 19.b.
+20. Other liabilities (from Schedule HC-G) .............................................................................. 2750 20.
+21. Total liabilities (sum of items 13 through 20)....................................................................... 2948 21.
+22. Not applicable.
+Equity Capital Holding Company Equity Capital
+23. Perpetual preferred stock and related surplus .................................................................... 3283 23.
+24. Common stock (par value) ............................................................................................. 3230 24.
+25. Surplus (exclude all surplus related to preferred stock)......................................................... 3240 25.
+26. a. Retained earnings..................................................................................................... 3247 26.a.
+b. Accumulated other comprehensive income5.................................................................... B530 26.b.
+c. Other equity capital components6 ................................................................................. A130 26.c.
+27. a. Total holding company equity capital (sum of items 23 through 26.c).................................... 3210 27.a.
+b. Noncontrolling (minority) interests in consolidated subsidiaries ........................................... 3000 27.b.
+28. Total equity capital (sum of items 27.a and 27.b)................................................................. G105 28.
+29. Total liabilities and equity capital (sum of items 21 and 28).................................................... 3300 29.
+1. Includes noninterest-bearing demand, time, and savings deposits.
+2. Report overnight Federal Home Loan Bank advances in Schedule HC, item 16, "Other borrowed money."
+3. Includes all securities repurchase agreements in domestic and foreign offices regardless of maturity.
+4. Includes limited-life preferred stock and related surplus.
+5. Includes, but is not limited to, net unrealized holding gains (losses) on available-for-sale securities, accumulated net gains (losses) on cash flow hedges, cumulative foreign currency translation adjustments, and accumulated defined benefit pension and other postretirement plan adjustments.
+6. Includes treasury stock and unearned Employee Stock Ownership Plan shares.
+03/2013
+FR Y-9C
+Page 18 of 73 Schedule HC—Continued Memoranda (to be completed annually by holding companies for the December 31 report date) BHCK1. Has the holding company engaged in a full-scope independent external audit at any time during the calendar year? (Enter "1" for Yes, enter "0" for No.) ........................................................................ C884 M.1.
+2. If response to Memoranda item 1 is yes, indicate below the name and address of the holding company's independent external auditing firm (see instructions), and the name and e-mail address of the auditing firm's engagement partner.7 a.
+(1) Name of External Auditing Firm (TEXT C703)
+(2) City (TEXT C708)
+(3) State Abbreviation (TEXT C714) (4) Zip Code (TEXT C715) b.
+(1) Name of Engagement Partner (TEXT C704)
+(2) E-mail Address (TEXT C705)
+7. The Federal Reserve regards information submitted in response to Memorandum item 2.b as confidential.
+0=No 1=Yes 03/2013
+FR Y-9C
+Page 19 of 73
+Schedule HC-B—Securities
+| Item | Line item | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Held-to-Maturity | | | | Available-for-Sale | | | |
+| | | (Column A) Amortized Cost | | (Column B) Fair Value | | (Column C) Amortized Cost | | (Column D) Fair Value | |
+| | Dollar Amounts in Thousands | | Amount | | Amount | | Amount | | Amount |
+| 1. | 1. U.S. Treasury securities | BHCK 0211 | | BHCK 0213 | | BHCK 1286 | | BHCK 1287 | |
+| 2. | 2. U.S. government agency and sponsored agency obligations (exclude mortgage-backed securities)1 | HT50 | | HT51 | | HT52 | | HT53 | |
+| 3. | 3. Securities issued by states and political subdivisions in the U.S | 8496 | | 8497 | | 8498 | | 8499 | |
+| | Holding companies with less than $5 billion should report data item 4.a.(4) and should leave 4.a.(1) through 4.a.(3) blank.3 | | | | | | | | |
+| | 4. Mortgage-backed securities (MBS) | | | | | | | | |
+| | a. Residential pass-through securities: | | | | | | | | |
+| 4.a.(1) | (1) Guaranteed by GNMA | G300 | | G301 | | G302 | | G303 | |
+| 4.a.(2) | (2) Issued by FNMA and FHLMC | G304 | | G305 | | G306 | | G307 | |
+| 4.a.(3) | (3) Other pass-through securities | G308 | | G309 | | G310 | | G311 | |
+| 4.a.(4) | (4) Guaranteed by GNMA, issued by FNMA and FHLMC and other pass-through securities | KX52 | | KX53 | | KX54 | | KX55 | |
+| | b. Other residential mortgage-backed securities (include CMOs, REMICs, and stripped MBS): | | | | | | | | |
+| 4.b.(1) | (1) Issued or guaranteed by U.S. Government agencies or sponsored agencies2 | G312 | | G313 | | G314 | | G315 | |
+| 4.b.(2) | (2) Collateralized by MBS issued or guaranteed by U.S. Government agencies or sponsored agencies2 | G316 | | G317 | | G318 | | G319 | |
+| 4.b.(3) | (3) All other residential mortgage-backed securities | G320 | | G321 | | G322 | | G323 | |
+| | c. Commercial MBS: | | | | | | | | |
+| | (1) Commercial pass-through securities: | | | | | | | | |
+| 4.c.(1)(a) | (a) Issued or guaranteed by FNMA, FHLMC, or GNMA | K142 | | K143 | | K144 | | K145 | |
+| 4.c.(1)(b) | (b) Other pass-through securities | K146 | | K147 | | K148 | | K149 | |
+| | (2) Other commercial MBS: | | | | | | | | |
+| 4.c.(2)(a) | (a) Issued or guaranteed by U.S. Government agencies or sponsored agencies2 | K150 | | K151 | | K152 | | K153 | |
+| 4.c.(2)(b) | (b) All other commercial MBS | K154 | | K155 | | K156 | | K157 | |
+1. Includes Small Business Administration "Guaranteed Loan Pool Certificates," U.S. Maritime Administration obligations, Export-Import Bank participation certificates, and obligations (other than mortgage-backed securities) issued by the Farm Credit System, the Federal Home Loan Bank System, the Federal Home Loan Mortgage Corporation, the Federal National Mortgage Association, the Financing Corporation, Resolution Funding Corporation, the Student Loan Marketing Association, and the Tennessee Valley Authority.
+2. U.S. Government agencies include, but are not limited to, such agencies as the Government National Mortgage Association (GNMA), the Federal Deposit Insurance Corporation (FDIC), and the National Credit Union Administration (NCUA). U.S. Government-sponsored agencies include, but are not limited to, such agencies as the Federal Home Loan Mortgage Corporation (FHLMC) and the Federal National Mortgage Association (FNMA).
+3. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2022
+FR Y-9C
+Page 20 of 73
+Schedule HC-B—Continued
+| Item | Line item | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Held-to-Maturity | | | | Available-for-Sale | | | |
+| | | (Column A) Amortized Cost | | (Column B) Fair Value | | (Column C) Amortized Cost | | (Column D) Fair Value | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHCK | Amount | BHCK | Amount | BHCK | Amount |
+| | 5. Asset-backed securities and structured financial products: | | | | | | | | |
+| 5.a. | a. Asset-backed Securities (ABS) | C026 | | C988 | | C989 | | C027 | |
+| 5.b. | b. Structured financial products | HT58 | | HT59 | | HT60 | | HT61 | |
+| | 6. Other debt securities: | | | | | | | | |
+| 6.a. | a. Other domestic debt securities | 1737 | | 1738 | | 1739 | | 1741 | |
+| 6.b. | b. Other foreign debt securities | 1742 | | 1743 | | 1744 | | 1746 | |
+| 7. | 7. Unallocated portfolio layer fair value hedge basis adjustments1 | | | | | MG95 | | | |
+| 8. | 8. Total (sum of items 1 through 7)2 | 1754 | | 1771 | | 1772 | | BHCT 1773 | |
+Memoranda
+| Item | Dollar Amounts in Thousands | BHCK | Amount |
+| --- | --- | --- | --- |
+| M.1. | 1. Pledged securities3 | 0416 | |
+| | 2. Remaining maturity or next repricing date of debt securities4 (Schedule HC-B, items 1 through 6.b in columns A and D above): | | |
+| M.2.a. | a. 1 year and less | 0383 | |
+| M.2.b. | b. Over 1 year to 5 years | 0384 | |
+| M.2.c. | c. Over 5 years | 0387 | |
+| | Memorandum item 3 is to be completed semiannually in the June and December reports only. | | |
+| M.3. | 3. Amortized cost of held-to-maturity securities sold or transferred to available-for-sale or trading securities during the calendar year-to-date (report the amortized cost at date of sale or transfer) | 1778 | |
+| | 4. Structured notes (included in the held-to-maturity and available-for-sale accounts in Schedule HC-B, items 2, 3, 5, and 6): | | |
+| M.4.a. | a. Amortized cost | 8782 | |
+| M.4.b. | b. Fair value | 8783 | |
+1. This item is to be completed by institutions that have adopted ASU 2022-01, as applicable.
+2. The total reported in column A must equal Schedule HC, item 2.a, plus Schedule HI-B, Part II, item 7, column B. The total reported in column D must equal Schedule HC, item 2.b.
+3. Includes held-to-maturity securities at amortized cost, available-for-sale debt securities at fair value, and equity securities with readily determinable fair values not held for trading (reported in Schedule HC, item 2.c) at fair value.
+4. Report fixed-rate debt securities by remaining maturity and floating-rate debt securities by next repricing date.
+03/2024
+FR Y-9C
+Page 21 of 73
+Schedule HC-B—Continued
+Memoranda—Continued
+| Item | Line item | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Held-to-Maturity | | | | Available-for-Sale | | | |
+| | | (Column A) Amortized Cost | | (Column B) Fair Value | | (Column C) Amortized Cost | | (Column D) Fair Value | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHCK | Amount | BHCK | Amount | BHCK | Amount |
+| | Memorandum items 5.a through 5.f are to be completed by holding companies with $10 billion or more in total assets.1 | | | | | | | | |
+| | 5. Asset-backed securities (ABS) (sum of Memorandum items 5.a through 5.f must equal Schedule HC-B, item 5.a): | | | | | | | | |
+| M.5.a. | a. Credit card receivables | B838 | | B839 | | B840 | | B841 | |
+| M.5.b. | b. Home equity lines | B842 | | B843 | | B844 | | B845 | |
+| M.5.c. | c. Automobile loans | B846 | | B847 | | B848 | | B849 | |
+| M.5.d. | d. Other consumer loans | B850 | | B851 | | B852 | | B853 | |
+| M.5.e. | e. Commercial and industrial loans | B854 | | B855 | | B856 | | B857 | |
+| M.5.f. | f. Other | B858 | | B859 | | B860 | | B861 | |
+| | Memorandum items 6.a through 6.g are to be completed by holding companies with $10 billion or more in total assets.1 | | | | | | | | |
+| | 6. Structured financial products by underlying collateral or reference assets (for each column, sum of Memorandum items 6.a through 6.g must equal Schedule HC-B, 5.b): | | | | | | | | |
+| M.6.a. | a. Trust preferred securities issued by financial institutions | G348 | | G349 | | G350 | | G351 | |
+| M.6.b. | b. Trust preferred securities issued by real estate investment trusts | G352 | | G353 | | G354 | | G355 | |
+| M.6.c. | c. Corporate and similar loans | G356 | | G357 | | G358 | | G359 | |
+| M.6.d. | d. 1–4 family residential MBS issued or guaranteed by U.S. government-sponsored enterprises (GSEs) | G360 | | G361 | | G362 | | G363 | |
+| M.6.e. | e. 1–4 family residential MBS not issued or guaranteed by GSEs | G364 | | G365 | | G366 | | G367 | |
+| M.6.f. | f. Diversified (mixed) pools of structured financial products | G368 | | G369 | | G370 | | G371 | |
+| M.6.g. | g. Other collateral or reference assets | G372 | | G373 | | G374 | | G375 | |
+| M.7. | 7. Structured financial products guaranteed by U.S. Government agen- cies or sponsored agencies included in Schedule HC‐B, item 5.b | PU98 | | PU99 | | PV00 | | PV01 | |
+1. The $10 billion asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2026
+FR Y-9C
+Page 22 of 73
+Schedule HC-C—Loans and Lease Financing Receivables Do not deduct the allowance for credit losses on loans and leases from amounts reported in this schedule. Report (1) loans and leases held for sale at the lower of cost or fair value, (2) loans and leases held for investment, net of unearned income, and (3) loans and leases accounted for at fair value under a fair value option. Exclude assets held for trading and commercial paper.
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Consolidated | | (Column B) In Domestic Offices | |
+| | Dollar Amounts in Thousands | | Amount | BHDM | Amount |
+| 1. | 1. Loans secured by real estate | BHCK 1410 | | | |
+| | a. Construction, land development, and other land loans: | | | | |
+| 1.a.(1) | (1) 1–4 family residential construction loans | | | BHCK F158 | |
+| 1.a.(2) | (2) Other construction loans and all land development and other land loans | | | F159 | |
+| 1.b. | b. Secured by farmland | | | BHDM 1420 | |
+| | c. Secured by 1–4 family residential properties: | | | | |
+| 1.c.(1) | (1) Revolving, open-end loans secured by 1–4 family residential properties and extended under lines of credit | | | 1797 | |
+| | (2) Closed-end loans secured by 1–4 family residential properties: | | | | |
+| 1.c.(2)(a) | (a) Secured by first liens | | | 5367 | |
+| 1.c.(2)(b) | (b) Secured by junior liens | | | 5368 | |
+| 1.d. | d. Secured by multifamily (5 or more) residential properties | | | 1460 | |
+| | e. Secured by nonfarm nonresidential properties: | | | | |
+| 1.e.(1) | (1) Loans secured by owner-occupied nonfarm nonresidential properties | | | BHCK F160 | |
+| 1.e.(2) | (2) Loans secured by other nonfarm nonresidential properties | | | F161 | |
+| 2. | 2. Loans to depository institutions and acceptances of other banks | | | BHDM 1288 | |
+| 2.a. | a. To U.S. banks and other U.S. depository institutions | 1292 | | | |
+| 2.b. | b. To foreign banks | 1296 | | | |
+| 3. | 3. Loans to finance agricultural production and other loans to farmers | 1590 | | 1590 | |
+| | Holding companies with less than $5 billion in total assets should report data item 4.c and leave data items 4.a and 4.b blank.1 | | | | |
+| 4. | 4. Commercial and industrial loans | | | 1766 | |
+| 4.a. | a. To U.S. addressees (domicile) | 1763 | | | |
+| 4.b. | b. To non-U.S. addressees (domicile) | 1764 | | | |
+| 4.c. | c. To U.S. addressees (domicile) and non-U.S. addressees (domicile) | KX56 | | | |
+| | 5. Not applicable. | | | | |
+| 6. | 6. Loans to individuals for household, family, and other personal expenditures (i.e., consumer loans) (includes purchased paper) | | | 1975 | |
+| 6.a. | a. Credit cards | B538 | | | |
+| 6.b. | b. Other revolving credit plans | B539 | | | |
+| 6.c. | c. Automobile loans | K137 | | | |
+| 6.d. | d. Other consumer loans (includes single payment, installment, and all student loans) | K207 | | | |
+| 7. | 7. Loans to foreign governments and official institutions (including foreign central banks) | 2081 | | 2081 | |
+8. Not applicable.
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2024
+FR Y-9C
+Page 23 of 73
+Schedule HC-C—Continued
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Consolidated | | (Column B) In Domestic Offices | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHDM | Amount |
+| | Holding companies with less than $5 billion in total assets should report data item 9.b.(3) and leave data items 9.b.(1) and 9.b.(2) blank.1 | | | | |
+| | 9. Loans to nondepository financial institutions and other loans: | | | | |
+| 9.a. | a. Loans to nondepository financial institutions | J454 | | J454 | |
+| | b. Other loans | | | | |
+| 9.b.(1) | (1) Loans for purchasing or carrying securities, including margin loans | 1545 | | 1545 | |
+| 9.b.(2) | (2) All other loans (exclude consumer loans) | J451 | | J451 | |
+| 9.b.(3) | (3) Loans for purchasing or carrying securities, including margin loans and all other loans | KX57 | | KX57 | |
+| | Holding companies with less than $5 billion in total assets should report data item 10.c. and should leave data items 10.a. and 10.b. blank.1 | | | | |
+| 10. | 10. Lease financing receivables (net of unearned income) | | | 2165 | |
+| 10.a. | a. Leases to individuals for household, family, and other personal expenditures (i.e., consumer leases) | F162 | | | |
+| 10.b. | b. All other leases | F163 | | | |
+| 10.c. | c. Lease finance receivables | KX58 | | | |
+| 11. | 11. LESS: Any unearned income on loans reflected in items 1–9 above | 2123 | | 2123 | |
+| 12. | 12. Total loans and leases held for investment and held for sale (sum of items 1 through 10 minus item 11) (total of column A must equal Schedule HC, sum of items 4.a and 4.b) | 2122 | | 2122 | |
+Memoranda
+| Item | Dollar Amounts in Thousands | | BHDM | Amount |
+| --- | --- | --- | --- | --- |
+| | HC-C memoranda items 1.a.(1) through 1.f.(3)(c) are to be completed semiannually in June and December by holding companies with less than $5 billion total assets. These items are to be completed quarterly by holding companies with $5 billion or more in total assets.1 | | | |
+| | 1. Loan modifications to borrowers experiencing financial difficulty that are in compliance with their modified terms (included in Schedule HC-C, and not reported as past due or nonaccrual in Schedule HC-N, Memorandum item 1): | | | |
+| | a. Construction, land development, and other land loans in domestic offices: | | | |
+| M.1.a.(1) | (1) 1–4 family residential construction loans | | K158 | |
+| M.1.a.(2) | (2) All other construction loans and all land development and other land loans | | K159 | |
+| M.1.b. | b. Loans secured by 1–4 family residential properties in domestic offices | | F576 | |
+| M.1.c. | c. Secured by multifamily (5 or more) residential properties in domestic offices | | K160 | |
+| | d. Secured by nonfarm nonresidential properties in domestic offices: | | | |
+| M.1.d.(1) | (1) Loans secured by owner-occupied nonfarm nonresidential properties | | K161 | |
+| M.1.d.(2) | (2) Loans secured by other nonfarm nonresidential properties | | K162 | |
+| | Holding companies with less than $5 billion in total assets should report Memo item 1.e.(3) (semiannually in June and December), and should leave data item 1.e.(1) and 1.e.(2) blank.1 | | BHCK | |
+| | e. Commercial and Industrial loans: | | | |
+| M.1.e.(1) | (1) To U.S. addressees (domicile) K163 | | | |
+| M.1.e.(2) | (2) To non-U.S. addressees (domicile) K164 | | | |
+| M.1.e.(3) | (3) To U.S. addressees (domicile) and non-U.S addressees (domicile) | KX59 | | |
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2026
+FR Y-9C
+Page 24 of 73 Schedule HC-C—Continued (Column B) In Domestic Offices Dollar Amounts in Thousands BHCK Amount 12/2024 f. All other loans (include loans to individuals for household, family, and other personal expenditures) .....................................................................................................
+Itemize and describe loan categories included in Memorandum item 1.f, above that exceed 10 percent of total loan modifications to borrowers experiencing financial difficulty that are in compliance with their modified terms (sum of Memorandum items 1.a through 1.f):
+(1) Loans secured by farmland in domestic offices .................................................
+(2) Loans to finance agricultural production and other loans to farmers.......................
+(3) Loans to individuals for household, family, and other personal expenditures: (c) Other consumer loans (includes single payment, installment, all student loans, and revolving credit plans other than credit cards) .........................................
+(b) Automobile loans ...................................................................................
+(a) Credit cards ..........................................................................................
+K168
+K203
+K204
+K098
+K166
+K165
+BHCK
+HK25
+2746 B837 C391
+3. Loans secured by real estate to non-U.S. addressees (domicile) (included in Schedule HC-C, item 1, column A)............................................................. M.3.
+Memorandum item 4 is to be completed by (1) holding companies with $5 billion or more in total assets1 that, together with affiliated institutions, have outstanding credit card receivables (as defined in the instructions) that exceed $500 million as of the report date or (2) holding companies that on a consolidated basis are credit card specialty holding companies (as defined in the instructions).
+4. Outstanding credit card fees and finance charges (included in Schedule HC-C, item 6.a, column A) ........................................................... M.4.
+M.2.
+M.1.f.(2) M.1.f.(3)(b) M.1.f.(3)(c) M.1.f.(3)(a) M.1.f.(1) M.1.f.
+g. Total loan modifications to borrowers experiencing financial difficulty that are in compliance with their modified terms (sum of Memorandum items 1.a.(1) through 1.f) ....................... M.1.g.
+2. Loans to finance commercial real estate, construction, and land development activities (not secured by real estate) included in Schedule HC-C, items 4 and 9, column A, above.............
+To be completed by holding companies with $5 billion or more in total assets.1
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+Memoranda—Continued BHDM
+FR Y-9C
+Page 25 of 73
+Schedule HC-C—Continued
+Memoranda—Continued
+Dollar Amounts in Thousands BHCK
+5. Not applicable.
+Amount
+Memorandum item 6.a, 6.b, and 6.c are to be completed semiannually in the June and December reports only.
+6. Closed-end loans with negative amortization features secured by 1–4 family residential properties in domestic offices: a. Total amount of closed-end loans with negative amortization features secured by 1–4 family residential properties (included in Schedule HC-C, items 1.c.(2)(a) and (b)) .. F230 M.6.a.
+Memorandum items 6.b and 6.c are to be completed by holding companies that had closed-end loans with negative amortization features secured by 1–4 family residential properties (as reported in Schedule HC-C, Memorandum item 6.a) as of the preceding December 31 report date, that exceeded the lesser of $100 million or 5 percent of total loans and leases held for investment and held for sale in domestic offices (as reported in Schedule HC-C, item 12, column B).
+b. Total maximum remaining amount of negative amortization contractually permitted on
+closed-end loans secured by 1–4 family residential properties ...................................... F231 c. Total amount of negative amortization on closed-end loans secured by 1–4 family residential properties included in the amount reported in Memorandum item 6.a above........................................................................................................... F232
+7. and 8. Not applicable.
+9. Loans secured by 1–4 family residential properties in domestic offices in process of BHDM foreclosure (included in Schedule HC-C, items 1.c.(1), 1.c.(2)(a), and 1.c.(2)(b)) ................. F577
+M.6.b.
+M.6.c.
+M.9.
+Memorandum items 10.a through 10.e are to be completed by holding companies with $10 billion or more in total assets1 and the sum must equal the amounts reported on Schedule HC-C, item 9.a, column A and column B, respectively.
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Consolidated | | (Column B) In Domestic Offices | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHDM | Amount |
+| | 10. Loans to nondepository financial institutions: | | | | |
+| M.10.a. | a. Loans to mortgage credit intermediaries | PV05 | | PV05 | |
+| M.10.b. | b. Loans to business credit intermediaries | PV06 | | PV06 | |
+| M.10.c. | c. Loans to private equity funds | PV07 | | PV07 | |
+| M.10.d. | d. Loans to consumer credit intermediaries | PV08 | | PV08 | |
+| M.10.e. | e. Other loans to nondepository financial institutions | PV09 | | PV09 | |
+11. Not applicable.
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2026
+FR Y-9C
+Page 26 of 73
+Schedule HC-C—Continued
+Memoranda—Continued
+| Item | Line item | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Fair value of acquired loans and leases at acquisition date | | (Column B) Gross contractual amounts receivable at acquisition | | (Column C) Best estimate at acquisition date of contractual cash flows not expected to be collected | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHCK | Amount | BHCK | Amount |
+| | Memorandum item 12.a, 12.b, 12.c, and 12.d are to be completed semiannually in the June and December reports only. Holding companies with less than $5 billion in total assets should report Memorandum item 12.e semiannually in June and December and should leave 12.a, 12.b, 12.c, and 12.d blank.1 | | | | | | |
+| | 12. Loans (not considered purchased credit- dete- riorated) and leases held for investment that are acquired in business combinations with acquisition dates in the current calendar year: | | | | | | |
+| M.12.a. | a. Loans secured by real estate | G091 | | G092 | | G093 | |
+| M.12.b. | b. Commercial and industrial loans | G094 | | G095 | | G096 | |
+| M.12.c. | c. Loans to individuals for household, family, and other personal expenditures | G097 | | G098 | | G099 | |
+| M.12.d. | d. All other loans and all leases | G100 | | G101 | | G102 | |
+| M.12.e. | e. Loans and leases | KX60 | | KX61 | | KX62 | |
+Dollar Amounts in Thousands BHCK
+13. Not applicable.
+14. Pledged loans and leases ......................................................................................... G378
+Amount
+M.14.
+Memorandum item 15 is to be completed by all holding companies.
+15. Revolving, open-end loans secured by 1–4 family residential properties and extended under lines of credit in domestic offices that have converted to non-revolving closed-end status (included in item 1.c.(1) above) .................................................................................. LE75 M.15.
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2024
+FR Y-9C
+Page 27 of 73
+Schedule HC-D—Trading Assets and Liabilities
+Schedule HC-D is to be completed by holding companies with $5 billion or more in total assets1 that reported total trading assets of $10 million or more in any of the four preceding calendar quarters.
+| Item | Dollar Amounts in Thousands | BHCM | Amount |
+| --- | --- | --- | --- |
+| | Assets | | |
+| 1. | 1. U.S. Treasury securities | 3531 | |
+| 2. | 2. U.S. government agency obligations (exclude mortgage-backed securities) | 3532 | |
+| 3. | 3. Securities issued by states and political subdivisions in the U.S | 3533 | |
+| | 4. Mortgage-backed securities (MBS): | | |
+| 4.a. | a. Residential pass-through securities issued or guaranteed by FNMA, FHLMC, or GNMA | BHCK G379 | |
+| 4.b. | b. Other residential mortgage-backed securities issued or guaranteed by U.S. Government agencies or sponsored agencies2 (include CMOs, REMICs, and stripped MBS ) | G380 | |
+| 4.c. | c. All other residential mortgage-backed securities | G381 | |
+| 4.d. | d. Commercial MBS issued or guaranteed by U.S. Government agencies or sponsored agencies2 | K197 | |
+| 4.e. | e. All other commercial MBS | K198 | |
+| | 5. Other debt securities | | |
+| 5.a. | a. Structured financial products | HT62 | |
+| 5.b. | b. All other debt securities | G386 | |
+| | 6. Loans: | | |
+| | a. Loans secured by real estate: | | |
+| 6.a.(1) | (1) Loans secured by 1–4 family residential properties | HT63 | |
+| 6.a.(2) | (2) All other loans secured by real estate | HT64 | |
+| 6.b. | b. Commercial and industrial loans | F614 | |
+| 6.c. | c. Loans to individuals for household, family, and other personal expenditures (i.e., consumer loans) (includes purchased paper) | HT65 | |
+| 6.d. | d. Other loans | F618 | |
+| | 7. and 8. Not applicable. | | |
+| 9. | 9. Other trading assets | BHCM 3541 | |
+| | 10. Not applicable. | | |
+| 11. | 11. Derivatives with a positive fair value | 3543 | |
+| 12. | 12. Total trading assets (sum of items 1 through 11) (total of column A must equal Schedule HC, item 5) | BHCT 3545 | |
+| | Liabilities | | |
+| | 13. a. Liability for short positions: | | |
+| 13.a.(1) | (1) Equity securities | BHCK G209 | |
+| 13.a.(2) | (2) Debt securities | G210 | |
+| 13.a.(3) | (3) All other assets | G211 | |
+| 13.b. | b. All other trading liabilities | F624 | |
+| 14. | 14. Derivatives with a negative fair value | 3547 | |
+| 15. | 15. Total trading liabilities (sum of items 13.a through 14) (total of column A must equal Schedule HC, item 15) | BHCT 3548 | |
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+2. U.S. Government agencies include, but are not limited to, such agencies as the Government National Mortgage Association (GNMA), the Federal Deposit Insurance Corporation (FDIC), and the National Credit Union Administration (NCUA). U.S. Government-sponsored agencies include, but are not limited to, such agencies as the Federal Home Loan Mortgage Corporation (FHLMC) and the Federal National Mortgage Association (FNMA).
+03/2022
+FR Y-9C
+Page 28 of 73
+Schedule HC-D—Continued
+Memoranda
+| Item | Dollar Amounts in Thousands | BHCK | Amount |
+| --- | --- | --- | --- |
+| | 1. Unpaid principal balance of loans measured at fair value (reported in Schedule HC-D, items 6.a.(1) through 6.d.) | | |
+| | a. Loans secured by real estate: | | |
+| M.1.a.(1) | (1) Loans secured by 1–4 family residential properties | HT66 | |
+| M.1.a.(2) | (2) All other loans secured by real estate | HT67 | |
+| M.1.b. | b. Commercial and industrial loans | F632 | |
+| M.1.c. | c. Loans to individuals for household, family, and other personal expenditures (i.e., consumer loans) (includes purchased paper) | HT68 | |
+| M.1.d. | d. Other loans | F636 | |
+| | Memorandum items 2 through 10 are to be completed by holding companies with $10 billion or more in total trading assets.1 | | |
+| | 2. Loans measured at fair value that are past due 90 days or more: | | |
+| M.2.a. | a. Fair value | F639 | |
+| M.2.b. | b. Unpaid principal balance | F640 | |
+| | 3. Structured financial products by underlying collateral or reference assets (for each column, sum of Memorandum items 3.a through 3.g must equal Schedule HC-D, sum of items 5.a: | | |
+| M.3.a. | a. Trust preferred securities issued by financial institutions | G299 | |
+| M.3.b. | b. Trust preferred securities issued by real estate investment trusts | G332 | |
+| M.3.c. | c. Corporate and similar loans | G333 | |
+| M.3.d. | d. 1–4 family residential MBS issued or guaranteed by U.S. government-sponsored enterprises (GSEs) | G334 | |
+| M.3.e. | e. 1–4 family residential MBS not issued or guaranteed by GSEs | G335 | |
+| M.3.f. | f. Diversified (mixed) pools of structured financial products | G651 | |
+| M.3.g. | g. Other collateral or reference assets | G652 | |
+| | 4. Pledged trading assets: | | |
+| M.4.a. | a. Pledged securities | G387 | |
+| M.4.b. | b. Pledged loans | G388 | |
+| | 5. Asset-backed securities: | | |
+| M.5.a. | a. Credit card receivables | F643 | |
+| M.5.b. | b. Home equity lines | F644 | |
+| M.5.c. | c. Automobile loans | F645 | |
+| M.5.d. | d. Other consumer loans | F646 | |
+| M.5.e. | e. Commercial and industrial loans | F647 | |
+| M.5.f. | f. Other | F648 | |
+| | 6. Not applicable. | | |
+| | 7. Equity securities: | | |
+| M.7.a. | a. Readily determinable fair values | F652 | |
+| M.7.b. | b. Other | F653 | |
+| M.8. | 8. Loans pending securitization | F654 | |
+1. The $10 billion trading asset-size test is based on total trading assets reported as of prior year June 30 report date.
+12/2019
+FR Y-9C
+Page 29 of 73
+Schedule HC-D—Continued
+Memoranda—Continued
+| Item | Dollar Amounts in Thousands | | | BHCK | Amount |
+| --- | --- | --- | --- | --- | --- |
+| M.9.a.(1) | 9. a. (1) Gross fair value of commodity contracts | | | G212 | |
+| M.9.a.(2) | (2) Gross fair value of physical commodities held in inventory | | | G213 | |
+| M.9.b.(1) | b. Other trading assets (itemize and describe amounts included in Schedule HC-D, item 9, column A (other than amounts included in Memoranda items 9.a.(1) and 9.a.(2) above) that are greater than $1,000,000 and exceed 25 percent of item 9 less Memoranda items 9.a.(1) and 9. a. (2)):2 (1) | | BHTX F655 | F655 | |
+| M.9.b.(2) | (2) | | BHTX F656 | F656 | |
+| M.9.b.(3) | (3) | | BHTX F657 | F657 | |
+| M.10.a. | 10. Other trading liabilities (itemize and describe amounts included in Schedule HC-D, item 13.b that are greater than $1,000,000 and exceed 25 percent of the item) a. | BHTX F658 | | F658 | |
+| M.10.b. | b. | BHTX F659 | | F659 | |
+| M.10.c. | c. | BHTX F660 | | F660 | |
+2. Exclude equity securities.
+Schedule HC-E—Deposit Liabilities1
+| Item | Dollar Amounts in Thousands | BHCB | Amount |
+| --- | --- | --- | --- |
+| | 1. Deposits held in domestic offices of commercial bank subsidiaries of the reporting holding company: | | |
+| 1.a. | a. Noninterest-bearing balances2 | 2210 | |
+| 1.b. | b. Interest-bearing demand deposits, NOW, ATS, and other transaction accounts | 3187 | |
+| 1.c. | c Money market deposit accounts and other savings accounts | 2389 | |
+| 1.d. | d. Time deposits of $250,000 or less | HK29 | |
+| 1.e. | e. Time deposits of more than $250,000 | J474 | |
+| | 2. Deposits held in domestic offices of other depository institutions that are subsidiaries of the reporting holding company: | | |
+| 2.a. | a. Noninterest-bearing balances2 | BHOD 3189 | |
+| 2.b. | b. Interest-bearing demand deposits, NOW, ATS, and other transaction accounts | 3187 | |
+| 2.c. | c. Money market deposit accounts and other savings accounts | 2389 | |
+| 2.d. | d. Time deposits of $250,000 or less | HK29 | |
+| 2.e. | e. Time deposits of more than $250,000 | J474 | |
+Memoranda
+| Item | Dollar Amounts in Thousands | BHDM | Amount |
+| --- | --- | --- | --- |
+| M.1. | 1. Brokered deposits $250,000 or less with a remaining maturity of one year or less | HK06 | |
+| M.2. | 2. Brokered deposits $250,000 or less with a remaining maturity of more than one year | HK31 | |
+| M.3. | 3. Time deposits of more than $250,000 with a remaining maturity of one year or less | HK32 | |
+| M.4. | 4. Foreign office time deposits with a remaining maturity of one year or less | BHFN A245 | |
+1. The sum of items 1.a through 1.e and items 2.a through 2.e must equal the sum of Schedule HC, items 13.a.(1) and 13.a.(2).
+2. Includes noninterest-bearing demand, time, and savings deposits.
+06/2018
+FR Y-9C
+Page 30 of 73
+Schedule HC-F—Other Assets1
+| Item | Dollar Amounts in Thousands | BHCK | Amount |
+| --- | --- | --- | --- |
+| 1. | 1. Accrued interest receivable2 | B556 | |
+| 2. | 2. Net deferred tax assets3 | 2148 | |
+| 3. | 3. Interest-only strips receivable (not in the form of a security)4 | HT80 | |
+| 4. | 4. Equity investments without readily determinable fair values5 | 1752 | |
+| | 5. Life insurance assets: | | |
+| 5.a. | a. General account life insurance assets | K201 | |
+| 5.b. | b. Separate account life insurance assets | K202 | |
+| 5.c. | c. Hybrid account life insurance assets | K270 | |
+| 6. | 6. Other | 2168 | |
+| 7. | 7. Total (sum of items 1 through 6) (must equal Schedule HC, item 11) | BHCT 2160 | |
+1. Holding companies should report asset amounts in Schedule HC-F net of any applicable allowance for credit losses.
+2. Include accrued interest receivable on loans, leases, debt securities, and other interest-bearing assets. Exclude accrued interest receivables on interest-bearing assets that are reported elsewhere on the balance sheet.
+3. See discussion of deferred income taxes in Glossary entry on "income taxes."
+4. Report interest-only strips receivable in the form of a security as available-for-sale securities in Schedule HC, item 2.b, or as trading assets in Schedule HC, item 5, as appropriate.
+5. Include Federal Reserve stock, Federal Home Loan Bank stock, and bankers' bank stock.
+Schedule HC-G—Other Liabilities
+| Item | Dollar Amounts in Thousands | BHCK | Amount |
+| --- | --- | --- | --- |
+| | 1. Not applicable. | | |
+| 2. | 2. Net deferred tax liabilities1 | 3049 | |
+| 3. | 3. Allowance for credit losses on off-balance-sheet credit exposures | B557 | |
+| 4. | 4. Other | B984 | |
+| 5. | 5. Total (sum of items 2 through 4) (must equal Schedule HC, item 20) | BHCT 2750 | |
+1. See discussion of deferred income taxes in Glossary entry on "income taxes."
+Schedule HC-H—Interest Sensitivity1
+| Item | Dollar Amounts in Thousands | BHCK | Amount |
+| --- | --- | --- | --- |
+| 1. | 1. Earning assets that are repriceable within one year or mature within one year | 3197 | |
+| 2. | 2. Interest-bearing deposit liabilities that reprice within one year or mature within one year included in item 13.a.(2) and 13.b.(2) on Schedule HC, Balance Sheet | 3296 | |
+| 3. | 3. Long-term debt that reprices within one year included in items 16 and 19.a on Schedule HC, Balance Sheet | 3298 | |
+| 4. | 4. Variable-rate preferred stock (includes both limited-life and perpetual preferred stock) | 3408 | |
+| 5. | 5. Long-term debt reported in Schedule HC, item 19.a on the Balance Sheet that is scheduled to mature within one year | 3409 | |
+1. Holding companies with foreign offices have the option of excluding the smallest of such non-U.S. offices from coverage in this schedule. Such holding companies may omit the smallest of their offices in foreign countries when arrayed by total assets provided that the assets of the excluded offices do not exceed 50 percent of the total assets of the holding company's assets in foreign countries and 10 percent of the holding company's total consolidated assets as of the report date.
+03/2024
+FR Y-9C
+Page 31 of 73 Schedule HC-I—Insurance-Related Underwriting Activities (Including Reinsurance) Schedule HC-I must be completed by all top-tier holding companies. (See instructions for additional information.) I . Property and Casualty Underwriting Dollar Amounts in Thousands BHCK Amount Assets B988 1.
+C244 2.
+Liabilities
+3. Claims and claims adjustment expense reserves...................................................................... B990 3.
+4. Unearned premiums........................................................................................................... B991 4.
+5. Total equity ....................................................................................................................... C245 5.
+6. Net income....................................................................................................................... C246 6.
+II. Life and Health Underwriting Dollar Amounts in Thousands BHCK Amount Assets
+1. Reinsurance recoverables................................................................................................... C247 1.
+2. Separate account assets..................................................................................................... B992 2.
+3. Total assets...................................................................................................................... C248 3.
+Liabilities
+4. Policyholder benefits and contractholder funds ........................................................................ B994 4.
+5. Separate account liabilities .................................................................................................. B996 5.
+6. Total equity....................................................................................................................... C249 6.
+7. Net income ...................................................................................................................... C250 7.
+1. Reinsurance recoverables ...................................................................................................
+2. Total assets ......................................................................................................................
+Item 1 is to be completed by holding companies with $10,000,000 or more in reinsurance recoverables as of the effective date each quarter.
+09/2016 Item 1 is to be completed by holding companies with $10,000,000 or more in reinsurance recoverables as of the effective date each quarter.
+FR Y-9C
+Page 32 of 73 Schedule HC-K—Quarterly Averages Dollar Amounts in Thousands BHCK Amount Assets BHDM
+2. Federal funds sold and securities purchased under agreements to resell ............................
+3. a. Total loans and leases in domestic offices .................................................................
+(1) Loans secured by 1– 4 family residential properties.................................................
+(5) Loans to individuals for household, family, and other personal expenditures: (a) Credit cards ..............................................................................................
+(b) Other (includes single payment, installment other than auto loans, all student loans, and revolving credit plans other than credit cards...............................................
+(4) Commercial and industrial loans ........................................................................
+(3) Loans to finance agricultural production and other loans to farmers............................
+(2) All other loans secured by real estate...................................................................
+B560 1.c.
+3365 2.
+3516 3.a.
+3387 3.a.(4) B561 3.a.(5)(a) B562 3.a.(5)(b) 3386 3.a.(3) 3466 3.a.(2) 3465 3.a.(1) BHFN b. Total loans and leases in foreign offices, Edge and agreement subsidiaries, and IBFs.......... 3360 3.b.
+BHCK
+4. a. Trading assets..................................................................................................... 3401 4.a.
+B985 4.b.
+3368 5.
+3517 6.
+3404 7.
+3353 8.
+2635 9.
+3519 11.
+b. Other earning assets ............................................................................................
+5. Total consolidated assets4 .........................................................................................
+Liabilities
+6. Interest-bearing deposits (domestic)5 ...........................................................................
+7. Interest-bearing deposits (foreign)5..............................................................................
+8. Federal funds purchased and securities sold under agreements to repurchase ....................
+9. All other borrowed money .........................................................................................
+10. Not applicable.
+Equity Capital
+11. Total equity capital (excludes limited-life preferred stock) .................................................
+1. Quarterly averages for all debt securities should be based on amortized cost.
+2. Quarterly averages for equity securities with readily determinable fair values should be based on fair value.
+3. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+4. The quarterly average for total assets should reflect securities not held for trading as follows: a) Debt securities at amortized cost.
+b) Equity securities with readily determinable fair values should be reported at fair value.
+c) Equity investments without readily determinable fair values should be reported at their balance sheet carrying values (i.e., fair value or, if elected, cost minus impairment, if any, plus or minus changes resulting from observable price changes).
+5. Includes interest-bearing demand deposits.
+Item 4(a) is to be completed by holding companies with $5 billion or more in total assets and total trading assets of $10 million or more in any of the four preceding calendar quarters.3
+1. Securities: a. U.S. Treasury securities and U.S. government agency obligations (excluding mortgage-backed securities)1 ................................................................... B558 1.a.
+b. Mortgage-backed securities1................................................................................... B559 1.b.
+c. All other debt securities1 and equity securities with readily determinable fair values not held for trading2 ..........................................................................................................
+03/2022
+FR Y-9C
+For Federal Reserve Bank Use Only Page 33 of 73
+C.I.
+Schedule HC-L—Derivatives and Off-Balance-Sheet Items
+Report only transactions with nonrelated institutions
+| Item | Dollar Amounts in Thousands | BHCK | Amount |
+| --- | --- | --- | --- |
+| | 1. Unused commitments (report only the unused portions of commitments that are fee paid or otherwise legally binding): | | |
+| 1.a. | a. Revolving, open-end loans secured by 1–4 family residential properties, (e.g., home equity lines) .. | 3814 | |
+| | 1.b.(1) and 1.b.(2) are to be completed by holding companies with $5 billion or more in total assets1 semiannually in the June and December reports only. | | |
+| 1.b.(1) | b. (1) Unused consumer credit card lines | J455 | |
+| 1.b.(2) | (2) Other unused credit card lines | J456 | |
+| 1.c.(1) | c. (1) Commitments to fund commercial real estate, construction, and land development loans secured by real estate (sum of items 1.c.(1)(a) and (b) must equal item 1.c.(1)) | 3816 | |
+| 1.c.(1)(a) | (a) 1–4 family residential construction loan commitments F164 | | |
+| 1.c.(1)(b) | (b) Commercial real estate, other construction loan, and land development loan commitments F165 | | |
+| 1.c.(2) | (2) Commitments to fund commercial real estate, construction, and land development loans NOT secured by real estate | 6550 | |
+| | Item 1(d) is to be completed by holding companies with $5 billion or more in total assets.1 | | |
+| 1.d. | d. Securities underwriting | 3817 | |
+| | e. Other unused commitments: | | |
+| 1.e.(1) | (1) Commercial and industrial loans | J457 | |
+| 1.e.(2) | (2) Loans to depository financial institutions | PV10 | |
+| 1.e.(3) | (3) Loans to nondepository financial institutions | PV11 | |
+| | Items 1.e.(3)(a) through 1.e.(3)(e) are to be completed by holding companies with $10 billion or more in total assets1 and the sum must equal Item 1.e.(3) above. | | |
+| 1.e.(3)(a) | (a) Loans to mortgage credit intermediaries | PV12 | |
+| 1.e.(3)(b) | (b) Loans to business credit intermediaries | PV13 | |
+| 1.e.(3)(c) | (c) Loans to private equity funds | PV14 | |
+| 1.e.(3)(d) | (d) Loans to consumer credit intermediaries | PV15 | |
+| 1.e.(3)(e) | (e) Other loans to nondepository financial Institutions | PV16 | |
+| 1.e.(4) | (4) All other unused commitments | J459 | |
+| 2. | 2. Financial standby letters of credit and foreign office guarantees | 6566 | |
+| | Item 2.a is to be completed by holding companies with $5 billion or more in total assets.1 | | |
+| 2.a. | a. Amount of financial standby letters of credit conveyed to others | 3820 | |
+| 3. | 3. Performance standby letters of credit and foreign office guarantees | 6570 | |
+| | Item 3.a is to be completed by holding companies with $5 billion or more in total assets.1 | | |
+| 3.a. | a. Amount of performance standby letters of credit conveyed to others | 3822 | |
+| 4. | 4. Commercial and similar letters of credit | 3411 | |
+| | 5. Not applicable. | | |
+| | 6. Securities: | | |
+| 6.a. | a. Securities lent | 3433 | |
+| 6.b. | b. Securities borrowed | 3432 | |
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2026
+7. Credit derivatives: a. Notional amounts:
+(1) Credit default swaps .........................................................
+(Column A) Sold Protection BHCK Amount C968 (Column B) Purchased Protection BHCK Amount C969 7.a.(1)
+(2) Total return swaps............................................................ C970 C971 7.a.(2)
+(3) Credit options.................................................................. C972 C973 7.a.(3)
+(4) Other credit derivatives ..................................................... C974 C975 7.a.(4) b. Gross fair values:
+(1) Gross positive fair value .................................................... C219 C221 7.b.(1)
+(2) Gross negative fair value ................................................... C220 C222 7.b.(2) Items 7.a. through 7.d.(2)(b) are to be reported by holding companies with $5 billion or more in total assets.1 FR Y-9C Page 34 of 73 Report only transactions with nonrelated institutions Schedule HC-L—Continued Remaining Maturity of: (Column A) One year or less (Column B) Over One Year Through Five Years (Column C) Over Five Years Dollar Amounts in Thousands BHCK Amount BHCK Amount BHCK Amount d. Notional amounts by remaining maturity:
+(1) Sold credit protection:3 (a) Investment grade ........................ G406 G407 G408 7.d.(1)(a) (b) Subinvestment grade................... G409 G410 G411 7.d.(1)(b)
+(2) Purchased credit protection:4 (a) Investment grade ........................ G412 G413 G414 7.d.(2)(a) (b) Subinvestment grade................... G415 G416 G417 7.d.(2)(b) c. Notional amounts by regulatory capital treatment:2
+(1) Positions covered under the Market Risk Rule: (a) Sold protection ........................................................................................... G401 7.c.(1)(a) (b) Purchased protection................................................................................... G402 7.c.(1)(b)
+(2) All other positions: (a) Sold protection ........................................................................................... G403 7.c.(2)(a) (b) Purchased protection that is recognized as a guarantee for regulatory capital purposes.................................................................................................... G404 7.c.(2)(b) (c) Purchased protection that is not recognized as a guarantee for regulatory capital purposes.................................................................................................... G405 7.c.(2)(c) BHCK AmountDollar Amounts in Thousands
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+2. Sum of items 7.c.(1)(a) and 7.c.(2)(a), must equal sum of items 7.a.(1) through (4), column A.
+Sum of items 7.c.(1)(b), 7.c.(2)(b), and 7.c.(2)(c) must equal sum of items 7.a.(1) through (4), column B.
+3. Sum of items 7.d.(1)(a) and (b), columns A through C, must equal sum of items 7.a.(1) through (4), column A.
+4. Sum of items 7.d.(2)(a) and (b), columns A through C, must equal sum of items 7.a.(1) through (4), column B.
+03/2026
+FR Y-9C
+Page 35 of 73
+Schedule HC-L—Continued
+Report only transactions with nonrelated institutions
+Item 8 is to be completed by holding companies with foreign offices and by holding companies
+| Item | with domestic offices only and $100 billion or more in total consolidated assets.1 | | BHCK | Amount |
+| --- | --- | --- | --- | --- |
+| 8. | 8. Spot foreign exchange contracts | | 8765 | |
+| 9. | 9. All other off-balance-sheet items (exclude derivatives) (include in item 9 the aggregate amount all other off-balance-sheet items that individually exceed 10 percent of Schedule HC, item 27.a, "Total holding company equity capital") (itemize and describe in items 9.a through 9.f only amounts that exceed 25 percent of Schedule HC, item 27.a) | | 3430 | |
+| 9.a. | a. Commitments to purchase when-issued securities | | 3434 | |
+| 9.b. | b. Commitments to sell when-issued securities | | 3435 | |
+| 9.c. | c. | TEXT 6561 | 6561 | |
+| 9.d. | d. | TEXT 6562 | 6562 | |
+| 9.e. | e. | TEXT 6568 | 6568 | |
+| 9.f. | f. | TEXT 6586 | 6586 | |
+10. Not applicable.
+1. The $100 billion asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2026
+FR Y-9C
+Page 36 of 73
+Schedule HC-L—Continued
+| Item | Line item | | | | | |
+| --- | --- | --- | --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | | (Column A) Interest Rate Contracts | (Column B) Foreign Exchange Contracts | (Column C) Equity Derivative Contracts | (Column D) Commodity and Other Contracts |
+| | | Derivatives Position Indicators | Amount | Amount | Amount | Amount |
+| | Items 11.a. through 14.b.(2) are to be completed by holding companies with $5 billion or more in total assets.1 | | | | | |
+| 11.a. | 11. Gross amounts (e.g., notional amounts) (for each column, sum of items 11.a through 11.e must equal sum of items 12 and 13): | | BHCK 8693 | BHCK 8694 | BHCK 8695 | BHCK 8696 |
+| 11.a. | a. Futures contracts | | | | | |
+| 11.b. | b. Forward contracts | | BHCK 8697 | BHCK 8698 | BHCK 8699 | BHCK 8700 |
+| 11.c.(1) | c. Exchange-traded option contracts: | | BHCK 8701 | BHCK 8702 | BHCK 8703 | BHCK 8704 |
+| 11.c.(1) | (1) Written options | | | | | |
+| 11.c.(2) | (2) Purchased options.. | | BHCK 8705 | BHCK 8706 | BHCK 8707 | BHCK 8708 |
+| 11.d.(1) | d. Over-the-counter option contracts: | | BHCK 8709 | BHCK 8710 | BHCK 8711 | BHCK 8712 |
+| 11.d.(1) | (1) Written options | | | | | |
+| 11.d.(2) | (2) Purchased options.. | | BHCK 8713 | BHCK 8714 | BHCK 8715 | BHCK 8716 |
+| 11.e. | e. Swaps | | BHCK 3450 | BHCK 3826 | BHCK 8719 | BHCK 8720 |
+| 12. | 12. Total gross notional amount of derivative con- tracts held for trading | | BHCK A126 | BHCK A127 | BHCK 8723 | BHCK 8724 |
+| 13. | 13. Total gross notional amount of derivative con- tracts held for purposes other than trading | | BHCK 8725 | BHCK 8726 | BHCK 8727 | BHCK 8728 |
+| | 14. Gross fair values of deriv- ative contracts: | | | | | |
+| | a. Contracts held for trading: | | | | | |
+| 14.a.(1) | (1) Gross positive fair value | | BHCK 8733 | BHCK 8734 | BHCK 8735 | BHCK 8736 |
+| 14.a.(2) | (2) Gross negative fair value | | BHCK 8737 | BHCK 8738 | BHCK 8739 | BHCK 8740 |
+| | b. Contracts held for pur- poses other than trading: | | | | | |
+| 14.b.(1) | (1) Gross positive fair value | | BHCK 8741 | BHCK 8742 | BHCK 8743 | BHCK 8744 |
+| 14.b.(2) | (2) Gross negative fair value | | BHCK 8745 | BHCK 8746 | BHCK 8747 | BHCK 8748 |
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2022
+FR Y-9C
+Page 37 of 73
+Schedule HC-L—Continued
+| Item | Line item | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Banks and Securities Firms | | (Column B) Not applicable | (Column C) Hedge Funds | | (Column D) Sovereign Governments | | (Column E) Corporations and All Other Counterparties | |
+| | Dollar Amounts in Thousands | BHCK | Amount | | BHCK | Amount | BHCK | Amount | BHCK | Amount |
+| | Item 15 is to be completed only by holding com- panies with total assets of $10 billion or more.1 | | | | | | | | | |
+| | 15. Over-the-counter derivatives: | | | | | | | | | |
+| 15.a. | a. Net current credit exposure | G418 | | | G420 | | G421 | | G422 | |
+| | b. Fair value of collateral: | | | | | | | | | |
+| 15.b.(1) | (1) Cash–U.S. dollar | G423 | | | G425 | | G426 | | G427 | |
+| 15.b.(2) | (2) Cash–Other currencies | G428 | | | G430 | | G431 | | G432 | |
+| 15.b.(3) | (3) U.S. Treasury securities | G433 | | | G435 | | G436 | | G437 | |
+| 15.b.(4) | (4) U.S. government agency and U.S. government-sponsored agency debt securities | G438 | | | G440 | | G441 | | G442 | |
+| 15.b.(5) | (5) Corporate bonds | G443 | | | G445 | | G446 | | G447 | |
+| 15.b.(6) | (6) Equity securities | G448 | | | G450 | | G451 | | G452 | |
+| 15.b.(7) | (7) All other collateral | G453 | | | G455 | | G456 | | G457 | |
+| 15.b.(8) | (8) Total fair value of collateral (sum of items 15.b.(1) through (7)) | G458 | | | G460 | | G461 | | G462 | |
+1. The $10 billion asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2022
+FR Y-9C
+Page 38 of 73
+Schedule HC-M—Memoranda
+| Item | Dollar Amounts in Thousands | | BHCK | Amount |
+| --- | --- | --- | --- | --- |
+| 1. | 1. Total number of holding company common shares outstanding | Number (Unrounded) 3459 | | |
+| 2. | 2. Debt maturing in one year or less (included in Schedule HC, items 16 and 19.a) that is issued to unrelated third parties by bank subsidiaries | | 6555 | |
+| 3. | 3. Debt maturing in more than one year (included in Schedule HC, items 16 and 19.a) that is issued to unrelated third parties by bank subsidiaries | | 6556 | |
+| 4. | 4. Other assets acquired in satisfaction of debts previously contracted | | 6557 | |
+| 5. | 5. Securities purchased under agreements to resell offset against securities sold under agreements to repurchase on Schedule HC | | A288 | |
+| | Item 6 is only completed by holding companies with $5 billion or more in assets.1 | | | |
+| 6. | 6. Portion of covered other real estate owned included in Schedule HC, item 7 that is protected by FDIC loss-sharing agreements | | K192 | |
+| | Items 7.a and 7.b are to be completed annually in the December report only. | | | |
+| | 7. Captive insurance and reinsurance subsidiaries: | | | |
+| 7.a. | a. Total assets of captive insurance subsidiaries2 | | K193 | |
+| 7.b. | b. Total assets of captive reinsurance subsidiaries2 | | K194 | |
+8. Has the holding company entered into a business combination during the calendar year that was 0=No BHCK accounted for by the purchase method of accounting? (Enter ''1'' for Yes; enter ''0'' for No.) ............... 1=Yes C251 8.
+9. Has the holding company restated its financial statements during the last quarter as a result of new or 0=No BHCK
+revised Statements of Financial Accounting Standards? (Enter ''1'' for Yes; enter ''0'' for No.) ............. 1=Yes 6689
+10. Not applicable.
+11. Have all changes in investments and activities been reported to the Federal Reserve on the Report of Changes in Organizational Structure (FR Y-10)? Holding companies must not leave blank or enter "N/A." The holding company must enter "1" for yes or for no changes to report; or enter "0" for no. 0=No BHCK If the answer to this question is no, complete the FR Y-10........................................................... 1=Yes 6416 TEXT 6428 Name of Holding Company Official Verifying FR Y-10 Reporting (Please Type or Print) Area Code / Phone Number (TEXT 9009)
+9.
+11.
+| Item | 12. Intangible assets: | | BHCK | Amount |
+| --- | --- | --- | --- | --- |
+| 12.a. | a. Mortgage servicing assets | | 3164 | |
+| 12.a.(1) | (1) Estimated fair value of mortgage servicing assets | 6438 | | |
+| 12.b. | b. Goodwill | | 3163 | |
+| 12.c. | c. All other intangible assets | | JF76 | |
+| 12.d. | d. Total (sum of items 12.a, 12.b, and 12.c) (must equal Schedule HC, item 10) | | BHCT 2143 | |
+| 13. | 13. Other real estate owned | | 2150 | |
+| | 14. Other borrowed money: | | | |
+| 14.a. | a. Commercial paper | | BHCK 2309 | |
+| 14.b. | b. Other borrowed money with a remaining maturity of one year or less | | 2332 | |
+| 14.c. | c. Other borrowed money with a remaining maturity of more than one year | | 2333 | |
+| 14.d. | d. Total (sum of items 14.a, 14.b, and 14.c) (must equal Schedule HC, item 16) | | BHCT 3190 | |
+15. Does the holding company sell private label or third-party mutual funds and annuities? 0=No BHCK (Enter ''1'' for Yes; enter ''0" for No.) ....................................................................................... 1=Yes B569 15.
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+2. Report total assets before eliminating intercompany transactions between the consolidated insurance or reinsurance subsidiary and other offices or consolidated subsidiaries of the reporting holding company.
+09/2023
+FR Y-9C
+Page 39 of 73
+Schedule HC-M—Continued
+BHCK
+16. Assets under management in proprietary mutual funds and annuities.................................... B570
+Amount 16.
+The following two questions (items 17 and 18) will be used to determine if the reporting holding company must complete the Consolidated Holding Company Report of Equity Investments in Nonfinancial Companies (FR Y-12). See the line item instructions for further details.
+17. Does the holding company hold, either directly or indirectly through a subsidiary or affiliate, any nonfinancial equity investments (see instructions for definition) within a Small Business Investment Company (SBIC) structure, or under section 4(c)(6) or 4 (c)(7) of the Bank Holding Company Act, or pursuant to the merchant banking authority of section 4(k)4(H) of the Bank Holding Company Act, or 0=No BHCK
+pursuant to the investment authority granted by Regulation K? (Enter ''1'' for Yes; enter ''0'' for No.) ... 1=Yes C161
+If the answer to item 17 is no, your organization does not need to complete the FR Y-12. Skip item 18 and proceed to items 19.a and 19.b below. If the answer to item 17 is yes, proceed to item 18.
+17.
+18. Do your aggregate nonfinancial equity investments (see instructions for definition) equal or exceed the lesser of $100 million (on an acquisition cost basis) or 10 percent of the holding company's 0=No BHCK consolidated Tier 1 capital as of the report date? (Enter ''1'' for Yes; enter ''0'' for No.)....................... 1=Yes C159 18.
+If the answer to both item 17 and item 18 is yes, your organization must complete the FR Y-12. Skip items 19.a and 19.b and proceed to item 20 below.
+If the answer to either item 17 or item 18 is no, your organization does not need to complete the FR Y-12. Proceed to items 19.a. and 19.b. below.
+Items 19.a. and 19.b. are to be completed by all holding companies that are not required to file the FR Y-12.
+19. a. Has the holding company sold or otherwise liquidated its holding of any nonfinancial equity 0=No BHCK
+investment since the previous reporting period? (Enter ''1'' for Yes; enter ''0'' for No.).................... 1=Yes C700 b. Does the holding company manage any nonfinancial equity investments for the benefit of others? 0=No (Enter "1" for Yes; enter "0" for No.) ................................................................................... 1=Yes C701
+19.a.
+19.b.
+| Item | Dollar Amounts in Thousands | BHCK | Amount |
+| --- | --- | --- | --- |
+| | Memoranda items 20 and 21 are to be completed only by holding companies who have made an effective election to become a financial holding company. See the line item instructions for further details. | | |
+| | 20. Balances of broker-dealer subsidiaries engaged in underwriting or dealing securities pursuant to Section 4(k)(4)(E) of the Bank Holding Company Act as amended by the Gramm-Leach-Bliley Act: | | |
+| 20.a. | a. Net assets | C252 | |
+| | b. Balances due from related institutions: | | |
+| 20.b.(1) | (1) Due from the holding company (parent company only), gross | 4832 | |
+| 20.b.(2) | (2) Due from subsidiary banks of the holding company, gross | 4833 | |
+| 20.b.(3) | (3) Due from nonbank subsidiaries of the holding company, gross | 4834 | |
+| | c. Balances due to related institutions: | | |
+| 20.c.(1) | (1) Due to holding company (parent company only), gross | 5041 | |
+| 20.c.(2) | (2) Due to subsidiary banks of the holding company, gross | 5043 | |
+| 20.c.(3) | (3) Due to nonbank subsidiaries of the holding company, gross | 5045 | |
+| 20.d. | d. Intercompany liabilities reported in items 20.c.(1), 20.c.(2), and 20.c.(3) above that qualify as liabilities subordinated to claims of general creditors | 5047 | |
+| 21. | 21. Net assets of subsidiaries engaged in insurance or reinsurance underwriting pursuant to Section 4(k)(4)(B) of the Bank Holding Company Act as amended by the Gramm- Leach-Bliley Act (12 U.S.C. § 1843(k)(4)(B))1 | C253 | |
+1. A savings and loan holding company that wishes to engage in financial holding company activities must have an effective election to be treated as a financial holding company or conducts activities under section 10(c)(2)(H)(i) of the HOLA (12 U.S.C. 1467a(c)(2)(H)(i)).
+09/2023
+Memoranda items 23 through 24 are to be completed by all holding companies.
+Dollar Amounts in Thousands BHCK Amount
+23. Secured liabilities: a. Amount of "Federal funds purchased in domestic offices" that are secured (included in Schedule HC, item 14.a) ............................................................................ F064 23.a.
+b. Amount of "Other borrowings" that are secured (included in Schedule HC-M, item 14.d) .......... F065 23.b.
+24. Issuances associated with the U.S. Department of Treasury Capital Purchase Program: a. Senior perpetual preferred stock or similar items ............................................................. G234 24.a.
+b. Warrants to purchase common stock or similar items........................................................ G235 24.b.
+Schedule HC-M—Continued Memoranda item 22 is to be completed by holding companies with total assets of $30 billion or more.
+22. Address (URL) for the reporting holding company's web page that displays risk disclosures, including those about credit and market risk. (Example: www.examplebhc.com/riskdisclosures) http:// 22.TEXT C497 06/2022 FR Y-9C Page 40 of 73
+FR Y-9C
+For Federal Reserve Bank Use Only Page 41 of 73
+C.I.
+Schedule HC-N—Past Due and Nonaccrual Loans, Leases, and Other Assets
+Amounts reported by loan and lease category in Schedule HC-N, items 1 through 8, above include guaranteed and unguaranteed portions of past due and nonaccrual loans and leases. Report in items 11 and 12 below certain guaranteed loans and leases that have already been included in the amounts reported in items 1 through 8.
+| Item | Line item | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Past due 30 through 89 days and still accruing | | (Column B) Past due 90 days or more and still accruing | | (Column C) Nonaccrual | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHCK | Amount | BHCK | Amount |
+| | 1. Loans secured by real estate: | | | | | | |
+| | a. Construction, land development, and other land loans in domestic offices: | | | | | | |
+| 1.a.(1) | (1) 1–4 family residential construction loans | F172 | | F174 | | F176 | |
+| 1.a.(2) | (2) Other construction loans and all land development and other land loans | F173 | | F175 | | F177 | |
+| 1.b. | b. Secured by farmland in domestic offices.. | 3493 | | 3494 | | 3495 | |
+| | c. Secured by 1–4 family residential properties in domestic offices: | | | | | | |
+| 1.c.(1) | (1) Revolving, open-end loans secured by 1–4 family residential properties and extended under lines of credit.. | 5398 | | 5399 | | 5400 | |
+| | (2) Closed-end loans secured by 1–4 family residential properties: | | | | | | |
+| 1.c.(2)(a) | (a) Secured by first liens | C236 | | C237 | | C229 | |
+| 1.c.(2)(b) | (b) Secured by junior liens | C238 | | C239 | | C230 | |
+| 1.d. | d. Secured by multifamily (5 or more) residential properties in domestic offices.. | 3499 | | 3500 | | 3501 | |
+| | e. Secured by nonfarm nonresidential properties in domestic offices: | | | | | | |
+| 1.e.(1) | (1) Loans secured by owner-occupied nonfarm non-residential properties.. | F178 | | F180 | | F182 | |
+| 1.e.(2) | (2) Loans secured by other nonfarm nonresidential properties | F179 | | F181 | | F183 | |
+| 1.f. | f. In foreign offices | B572 | | B573 | | B574 | |
+| | 2. Loans to depository institutions and acceptances of other banks: | | | | | | |
+| 2.a. | a. U.S. banks and other U.S. depository institutions | 5377 | | 5378 | | 5379 | |
+| 2.b. | b. Foreign banks | 5380 | | 5381 | | 5382 | |
+| 3. | 3. Loans to finance agricultural production and other loans to farmers | 1594 | | 1597 | | 1583 | |
+| 4. | 4. Commercial and industrial loans | 1606 | | 1607 | | 1608 | |
+| | 5. Loans to individuals for household, family, and other personal expenditures: | | | | | | |
+| 5.a. | a. Credit cards | B575 | | B576 | | B577 | |
+| 5.b. | b. Automobile loans | K213 | | K214 | | K215 | |
+| 5.c. | c. Other consumer loans (includes single payment, installment, all student loans, and revolving credit plans other than credit cards) | K216 | | K217 | | K218 | |
+| 6. | 6. Loans to foreign governments and official institutions | 5389 | | 5390 | | 5391 | |
+| 7. | 7. All other loans | 5459 | | 5460 | | 5461 | |
+12/2019
+FR Y-9C
+Page 42 of 73
+Schedule HC-N—Continued
+| Item | Line item | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Past due 30 through 89 days and still accruing | | (Column B) Past due 90 days or more and still accruing | | (Column C) Nonaccrual | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHCK | Amount | BHCK | Amount |
+| | Holding companies with less than $5 billion in total assets are to report data item 8.c columns A, B and C and should leave data items 8.a and 8.b columns A, B and C blank.1 | | | | | | |
+| | 8. Lease financing receivables: | | | | | | |
+| 8.a. | a. Leases to individuals for household, family, and other personal expenditures.. | F166 | | F167 | | F168 | |
+| 8.b. | b. All other leases | F169 | | F170 | | F171 | |
+| 8.c. | c. Lease finance receivables | KX63 | | KX64 | | KX65 | |
+| 9. | 9. Total loans and leases (sum of items 1 through 8.b)2 | 1406 | | 1407 | | 1403 | |
+| 10. | 10. Debt securities and other assets (exclude other real estate owned and other repossessed assets) | 3505 | | 3506 | | 3507 | |
+| 11. | 11. Loans and leases reported in items 1 through 8 above which are wholly or parti- ally guaranteed by the U.S.Government (excluding loans and leases covered by loss-sharing agreements with the FDIC) | K036 | | K037 | | K038 | |
+| 11.a. | a. Guaranteed portion of loans and leases (exclude rebooked "GNMA loans") included in item 11 above | K039 | | K040 | | K041 | |
+| 11.b. | b. Rebooked "GNMA loans" that have been repurchased or are eligible for repurchase included in item 11 above.. | K042 | | K043 | | K044 | |
+| 12. | 12. Portion of covered loans and leases reported in item 9 above that are protected by loss-sharing agreements with the FDIC | K102 | | K103 | | K104 | |
+Memoranda
+| Item | Dollar Amounts in Thousands | BHDM | Amount | BHDM | Amount | BHDM | Amount |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| | Memoranda items 1.a.(1) through 1.d.(2) and 1.e.(3) through 1.f.(3)(c) are to be completed semi-annually in June and December by holding companies with less than $5 billion in total assets.1 | | | | | | |
+| | 1. Loan modifications to borrowers experiencing financial difficulty included in Schedule HC-N, items 1 through 7, above (and not reported in Schedule HC-C, Memorandum item 1): | | | | | | |
+| | a. Construction, land development, and other land loans in domestic offices: | | | | | | |
+| M.1.a.(1) | (1) 1–4 family residential construction loans | K105 | | K106 | | K107 | |
+| M.1.a.(2) | (2) Other construction loans and all land development and other land loans | K108 | | K109 | | K110 | |
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+2. For holding companies with less than $5 billion in total assets, Total loans and leases (sum of items 1 through 7 plus 8c.) 12/2024
+FR Y-9C
+Page 43 of 73
+Schedule HC-N—Continued
+Memoranda–Continued
+| Item | Line item | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Past due 30 through 89 days and still accruing | | (Column B) Past due 90 days or more and still accruing | | (Column C) Nonaccrual | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHCK | Amount | BHCK | Amount |
+| M.1.b. | 1. b. Loans secured by 1–4 family residential properties in domestic offices | BHCK F661 | | BHCK F662 | | BHCK F663 | |
+| M.1.c. | c. Secured by multifamily (5 or more) resi- dential properties in domestic offices | BHDM K111 | | BHDM K112 | | BHDM K113 | |
+| | d. Secured by nonfarm nonresidential properties in domestic offices: | | | | | | |
+| M.1.d.(1) | (1) Loans secured by owner-occupied nonfarm nonresidential properties | K114 | | K115 | | K116 | |
+| M.1.d.(2) | (2) Loans secured by other nonfarm nonresidential properties | K117 | | K118 | | K119 | |
+| | Holding companies with less than $5 billion in total assets are to report data item 1.e.(3) columns A, B and C and should leave Memoranda items 1.e.(1) and 1.e.(2) columns A, B and C blank.1 | | | | | | |
+| | 1. e. Commercial and industrial loans: | | | | | | |
+| M.1.e.(1) | (1) To U.S. addressees (domicile) | BHCK K120 | | BHCK K121 | | BHCK K122 | |
+| M.1.e.(2) | (2) To non-U.S. addressees (domicile) | K123 | | K124 | | K125 | |
+| M.1.e.(3) | (3) To U.S. addressees (domicile) and non-U.S. addresses (domicile) | KX66 | | KX67 | | KX68 | |
+| M.1.f. | f. All other loans (include loans to individuals for household, family, and other personal expenditures) Itemize and describe loan categories included in item 1.f, above that exceed 10 percent of total loan modifications to borrowers experiencing financial difficulty that are past due 30 days or more or in non-accrual status (sum of Memorandum items 1.a through 1.f, columns A through C): | K126 | | K127 | | K128 | |
+| M.1.f.(1) | (1) Loans secured by farmland in domestic offices | BHDM K130 | | BHDM K131 | | BHDM K132 | |
+| M.1.f.(2) | (2) Loans to finance agricultural production and other loans to farmers.. | BHCK K138 | | BHCK K139 | | BHCK K140 | |
+| | (3) Loans to individuals for household, family, and other personal expenditures: | | | | | | |
+| M.1.f.(3)(a) | (a) Credit cards | K274 | | K275 | | K276 | |
+| M.1.f.(3)(b) | (b) Automobile loan | K277 | | K278 | | K279 | |
+| M.1.f.(3)(c) | (c) Other consumer loans (includes single payment, installment, all student loans, and revolving credit plans other than credit cards | K280 | | K281 | | K282 | |
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+12/2024
+FR Y-9C
+Page 44 of 73
+Schedule HC-N—Continued
+Memoranda–Continued
+| Item | Line item | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Past due 30 through 89 days and still accruing | | (Column B) Past due 90 days or more and still accruing | | (Column C) Nonaccrual | |
+| | Dollar Amounts in Thousands | | Amount | | Amount | | Amount |
+| M.1.g. | 1. g. Total loan modifications to borrowers experiencing financial difficulty included in Schedule HC-N items 1 through 7, above (sum of Memorandom items 1.a.(1) through item 1.f)1 | BHCK HK26 | | BHCK HK27 | | BHCK HK28 | |
+| M.2. | 2. Loans to finance commercial real estate, construction, and land development activities (not secured by real estate) included in Schedule HC-N, items 4 and 7 above | 6558 | | 6559 | | 6560 | |
+| M.3. | 3. Loans and leases included in Schedule HC-N, items 1, 2, 4, 5, 6, 7, and 8 extended to non-U.S. addressees | 3508 | | 1912 | | 1913 | |
+| | 4. Not applicable. | | | | | | |
+| M.5. | 5. Loans and leases held-for-sale (included in Schedule HC-N, items 1 through 8 above).. | C240 | | C241 | | C226 | |
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Past due 30 through 89 days | | (Column B) Past due 90 days or more | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHCK | Amount |
+| | Item 6 is to be reported only by holding compa- nies with total consolidated assets2 of $5 billion or more, or with $2 billion or more in par/notional amounts of off-balance-sheet derivative contracts (as reported in Schedule HC-L, items 11.a through 11.e). | | | | |
+| M.6. | 6. Derivative contracts: Fair value of amounts carried as assets | 3529 | | 3530 | |
+Dollar Amounts in Thousands BHCK Memorandum items 7 and 8 are to be completed semiannually in the June and December reports only.
+7. Additions to nonaccrual assets during the previous six months ...................................... C410
+8. Nonaccrual assets sold during the previous six months................................................ C411
+Amount
+M.7.
+M.8.
+| Item | Line item | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Past due 30 through 89 days and still accruing | | (Column B) Past due 90 days or more and still accruing | | (Column C) Nonaccrual | |
+| | Dollar Amounts in Thousands | | Amount | | Amount | | Amount |
+| M.9. | 9. Loans to nondepository financial institutions, included in Schedule HC-N, item 7 | BHCK PV23 | | BHCK PV24 | | BHCK PV25 | |
+1. Exclude amounts reported in Memorandum items 1.f.(1) through 1.f.(3) when calculating the total in Memorandum item 1.g.
+2. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2026
+FR Y-9C
+Page 45 of 73
+Schedule HC-P—1–4 Family Residential Mortgage Banking Activities in Domestic Offices
+Schedule HC-P is to be completed by holding companies with $5 billion on more in total assets1, 2 at which either 1–4 family residential mortgage loan originations and purchases for resale1 from all sources, loan sales, or quarter-end loans held for sale or trading in domestic offices that exceed $10 million for two consecutive quarters.
+| Item | Dollar Amounts in Thousands | BHCK | Amount |
+| --- | --- | --- | --- |
+| 1. | 1. Retail originations during the quarter of 1–4 family residential mortgage loans for sale:1 | HT81 | |
+| 2. | 2. Wholesale originations and purchases during the quarter of 1–4 family residential mortgage loans for sale:1 | HT82 | |
+| 3. | 3. 1–4 family residential mortgages sold during the quarter | FT04 | |
+| 4. | 4. 1–4 family residential mortgages held for sale or trading at quarter-end (included in Schedule HC, items 4.a and 5) | FT05 | |
+| 5. | 5. Noninterest income for the quarter from the sale, securitization, and servicing of 1–4 family residential mortgage loans (included in Schedule HI, items 5.c, 5.f, 5.g, and 5.i) | HT85 | |
+| 6. | 6. Repurchases and indemnifications of 1–4 family residential mortgage loans during the quarter | HT86 | |
+| | 7. Representation and warranty reserves for 1–4 family residential mortgage loans sold: | | |
+| 7.a. | a. For representations and warranties made to U.S. government agencies and government- sponsored agencies3 | L191 | |
+| 7.b. | b. For representations and warranties made to other parties3 | L192 | |
+| 7.c. | c. Total representation and warranty reserves (sum of items 7.a and 7.b) | M288 | |
+1. Exclude originations and purchases of 1–4 family residential mortgage loans that are held for investment.
+2. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+3. Amounts reported in items 7.a and 7.b will not be made available to the public on an individual institution basis.
+03/2022
+FR Y-9C
+Page 46 of 73
+Schedule HC-Q—Assets and Liabilities Measured at Fair Value on a Recurring Basis
+Schedule HC-Q is to be completed by all holding companies with $5 billion or more in total assets 2 that :
+(1) Have elected to report financial instruments or servicing assets and liabilities at fair value under a fair value option with changes in fair value recognized in earnings, or
+(2) Are required to complete Schedule HC-D, Trading Assets and Liabilities.
+| Item | Line item | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Total Fair Value Reported on Schedule HC | | (Column B) LESS: Amounts Netted in the Determination of Total Fair Value | | (Column C) Level 1 Fair Value Measurements | | (Column D) Level 2 Fair Value Measurements | | (Column E) Level 3 Fair Value Measurements | |
+| | Dollar Amounts in Thousands | BHCY | Amount | BHCK | Amount | BHCK | Amount | BHCK | Amount | BHCK | Amount |
+| | Assets | | | | | | | | | | |
+| 1. | 1. Available-for-sale debt and equity securities with readily determinable fair values not held for trading1 | JA36 | | G474 | | G475 | | G476 | | G477 | |
+| 2. | 2. Federal funds sold and securities purchased under agreements to resell | BHCK G478 | | G479 | | G480 | | G481 | | G482 | |
+| 3. | 3. Loans and leases held for sale | G483 | | G484 | | G485 | | G486 | | G487 | |
+| 4. | 4. Loans and leases held for investment | G488 | | G489 | | G490 | | G491 | | G492 | |
+| | 5. Trading assets: | | | | | | | | | | |
+| 5.a. | a. Derivative assets | BHCT 3543 | | G493 | | G494 | | G495 | | G496 | |
+| 5.b. | b. Other trading assets | BHCK G497 | | G498 | | G499 | | G500 | | G501 | |
+| 5.b.(1) | (1) Nontrading securities at fair value with changes in fair value reported in current earnings (included in Schedule HC-Q, item 5.b, above) | F240 | | F684 | | F692 | | F241 | | F242 | |
+| 6. | 6. All other assets | G391 | | G392 | | G395 | | G396 | | G804 | |
+| 7. | 7. Total assets measured at fair value on a recurring basis | G502 | | G503 | | G504 | | G505 | | G506 | |
+| | Liabilities | | | | | | | | | | |
+| 8. | 8. Deposits | F252 | | F686 | | F694 | | F253 | | F254 | |
+| 9. | 9. Federal funds purchased and securities sold under agreements to repurchase | G507 | | G508 | | G509 | | G510 | | G511 | |
+| | 10. Trading liabilities: | | | | | | | | | | |
+| 10.a. | a. Derivative liabilities | BHCT 3547 | | G512 | | G513 | | G514 | | G515 | |
+| 10.b. | b. Other trading liabilities | BHCK G516 | | G517 | | G518 | | G519 | | G520 | |
+1. The amount reported in item 1, column A, must equal the sum of Schedule HC, item 2.b and 2.c.
+2. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2022
+FR Y-9C
+Page 47 of 73
+Schedule HC-Q—Continued
+| Item | Line item | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Total Fair Value Reported on Schedule HC | | (Column B) LESS: Amounts Netted in the Determination of Total Fair Value | | (Column C) Level 1 Fair Value Measurements | | (Column D) Level 2 Fair Value Measurements | | (Column E) Level 3 Fair Value Measurements | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHCK | Amount | BHCK | Amount | BHCK | Amount | BHCK | Amount |
+| | Liabilities (continued) | | | | | | | | | | |
+| 11. | 11. Other borrowed money | G521 | | G522 | | G523 | | G524 | | G525 | |
+| 12. | 12. Subordinated notes and debentures | G526 | | G527 | | G528 | | G529 | | G530 | |
+| 13. | 13. All other liabilities | G805 | | G806 | | G807 | | G808 | | G809 | |
+| 14. | 14. Total liabilities measured at fair value on a recurring basis | G531 | | G532 | | G533 | | G534 | | G535 | |
+Memoranda
+| Item | Dollar Amounts in Thousands | | BHCK | Amount | BHCK | Amount | BHCK | Amount | BHCK | Amount | BHCK | Amount |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | 1. All other assets (itemize and describe amounts included in Schedule HC-Q, item 6 that are greater than $100,000 and exceed 25 percent of item 6): | | | | | | | | | | | |
+| M.1.a. | a. Mortgage servicing assets | | G536 | | G537 | | G538 | | G539 | | G540 | |
+| M.1.b. | b. Nontrading derivative assets | | G541 | | G542 | | G543 | | G544 | | G545 | |
+| M.1.c. | c. | BHTX G546 | G546 | | G547 | | G548 | | G549 | | G550 | |
+| M.1.d. | d. | BHTX G551 | G551 | | G552 | | G553 | | G554 | | G555 | |
+| M.1.e. | e. | BHTX G556 | G556 | | G557 | | G558 | | G559 | | G560 | |
+| M.1.f. | f. | BHTX G561 | G561 | | G562 | | G563 | | G564 | | G565 | |
+| | 2. All other liabilities (itemize and describe amounts included in Schedule HC-Q, item 13 that are greater than $100,000 and exceed 25 percent of item 13): | | | | | | | | | | | |
+| M.2.a. | a. Loan commitments (not accounted for as derivatives) | | F261 | | F689 | | F697 | | F262 | | F263 | |
+| M.2.b. | b. Nontrading derivative liabilities | | G566 | | G567 | | G568 | | G569 | | G570 | |
+| M.2.c. | c. | BHTX G571 | G571 | | G572 | | G573 | | G574 | | G575 | |
+| M.2.d. | d. | BHTX G576 | G576 | | G577 | | G578 | | G579 | | G580 | |
+| M.2.e. | e. | BHTX G581 | G581 | | G582 | | G583 | | G584 | | G585 | |
+| M.2.f. | f. | BHTX G586 | G586 | | G587 | | G588 | | G589 | | G590 | |
+06/2018
+FR Y-9C
+Page 48 of 73
+Schedule HC-Q—Continued
+Memoranda
+| Item | Dollar Amounts in Thousands | BHCK | Amount |
+| --- | --- | --- | --- |
+| | Memorandum items 3 and 4 are to be completed by holding companies that have elected to measure loans included in Schedule HC-C, items 1 through 9, at fair value under a fair value option. | | |
+| | 3. Loans measured at fair value: | | |
+| | a. Loans secured by real estate: | | |
+| M.3.a.(1) | (1) Secured by 1–4 family residential properties | HT87 | |
+| M.3.a.(2) | (2) All other loans secured by real estate | HT88 | |
+| M.3.b. | b. Commercial and industrial loans | F585 | |
+| M.3.c. | c. Loans to individuals for household, family, and other personal expenditures (i.e., consumer loans) (includes purchased paper) | HT89 | |
+| M.3.d. | d. Other loans | F589 | |
+| | 4. Unpaid principal balances of loans measured at fair value (reported in memorandum item 3): | | |
+| | a. Loans secured by real estate: | | |
+| M.4.a.(1) | (1) Secured by 1–4 family residential properties | HT91 | |
+| M.4.a.(2) | (2) All other loans secured by real estate | HT92 | |
+| M.4.b. | b. Commercial and industrial loans | F597 | |
+| M.4.c. | c. Loans to individuals for household, family, and other personal expenditures (i.e., consumer loans) (includes purchased paper) | HT93 | |
+| M.4.d. | d. Other loans | F601 | |
+06/2018
+FR Y-9C
+For Federal Reserve Bank Use Only Page 49 of 73
+C.I.
+Schedule HC-R—Regulatory Capital
+Part I. Regulatory Capital Components and Ratios
+Dollar Amounts in Thousands BHCA Common Equity Tier 1 Capital
+1. Common stock plus related surplus, net of treasury stock and unearned employee stock ownership plan (ESOP) shares ............................................................................................ P742
+2. Retained earnings1 ............................................................................................................ KW00
+Amount
+1.
+2.
+a. Does your institution have a CECL transition election in effect as of the quarter-end report date?
+(enter "0" for No; enter "1" for Yes with a 3-year CECL transition election; BHCA enter "2" for Yes with a 5-year 2020 CECL transition election.) ............................................................... JJ29 2.a.
+BHCA
+3. Accumulated other comprehensive income (AOCI)................................................................... B530
+Amount 3.
+a. AOCI opt-out election (enter "1" for Yes; enter "0" for No.) 0=No BHCA (Advanced approaches institutions must enter "0" for No.) ............................................................. 1=Yes P838 3.a.
+| Item | Line item | BHCA | Amount |
+| --- | --- | --- | --- |
+| 4. | 4. Common equity tier 1 minority interest includable in common equity tier 1 capital | P839 | |
+| 5. | 5. Common equity tier 1 capital before adjustments and deductions (sum of items 1 through 4) | P840 | |
+| | Common Equity Tier 1 Capital: Adjustments and Deductions | | |
+| 6. | 6. LESS: Goodwill net of associated deferred tax liabilities (DTLs) | P841 | |
+| 7. | 7. LESS: Intangible assets (other than goodwill and mortgage servicing assets (MSAs)), net of associated DTLs | P842 | |
+| 8. | 8. LESS: Deferred tax assets (DTAs) that arise from net operating loss and tax credit carryforwards, net of any related valuation allowances and net of DTLs | P843 | |
+| | 9. AOCI-related adjustments (if entered “1” for Yes in item 3.a, complete only items 9.a through 9.e; if entered “0” for No in item 3.a, complete only item 9.f): | | |
+| 9.a. | a. LESS: Net unrealized gains (losses) on available-for-sale debt securities (if a gain, report as a positive value; if a loss, report as a negative value) | P844 | |
+| | b. Not applicable. | | |
+| 9.c. | c. LESS: Accumulated net gains (losses) on cash flow hedges (if a gain, report as a positive value; if a loss, report as a negative value) | P846 | |
+| 9.d. | d. LESS: Amounts recorded in AOCI attributed to defined benefit postretirement plans resulting from the initial and subsequent application of the relevant GAAP standards that pertain to such plans (if a gain, report as a positive value; if a loss, report as a negative value) | P847 | |
+| 9.e. | e. LESS: Net unrealized gains (losses) on held-to-maturity securities that are included in AOCI (if a gain, report as a positive value; if a loss, report as a negative value) | P848 | |
+| 9.f. | f. To be completed only by holding companies that entered “0” for No in item 3.a: LESS: Accumulated net gain (loss) on cash flow hedges included in AOCI, net of applicable income taxes, that relate to the hedging of items that are not recognized at fair value on the balance sheet (if a gain, report as a positive value; if a loss, report as a negative value) | P849 | |
+1. Holding companies that have elected to apply the 3-year or the 5-year 2020 CECL transition provision should include the applicable portion of the CECL transitional amount or the modified CECL transitional amount, respectively, in this item.
+03/2024
+FR Y-9C
+Page 50 of 73
+Schedule HC-R—Continued
+Part I—Continued
+Dollar Amounts in Thousands BHCA
+10. Other deductions from (additions to) common equity tier 1 capital before threshold-based deductions: a. LESS: Unrealized net gain (loss) related to changes in the fair value of liabilities that are due to changes in own credit risk (if a gain, report as a positive value; if a loss, report as a negative value).............................................................................................................. Q258 b. LESS: All other deductions from (additions to) common equity tier 1 capital before threshold-based deductions ................................................................................... P850
+Amount
+10.a.
+10.b.
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Non-advanced Approaches Holding Companies1 | | (Column B) Advanced Approaches Holding Companies1 | |
+| | Dollar Amounts in Thousands | BHCA | Amount | | Amount |
+| 11. | 11. LESS: Non-significant investments in the capital of unconsolidated financial institutions in the form of common stock that exceed the 10 percent threshold for non-significant investments | | | BHCW P851 | |
+| 12. | 12. Subtotal (for column A, item 5 minus items 6 through 10.b; for column B, item 5 minus items 6 through 11) | P852 | | P852 | |
+| 13.a. | 13. a. LESS: Investments in the capital of unconsolidated financial institutions, net of associated DTLs, that exceed 25 percent of item 12 | LB58 | | | |
+| 13.b. | b. LESS: Significant investments in the capital of unconsolidated financial institutions in the form of common stock, net of associated DTLs, that exceed the 10 percent common equity tier 1 capital deduction threshold.. | | | P853 | |
+| 14.a. | 14. a. LESS: MSAs, net of associated DTLs, that exceed 25 percent of item 12 | LB59 | | | |
+| 14.b. | b. LESS: MSAs, net of associated DTLs, that exceed the 10 percent common equity tier 1 capital deduction threshold | | | P854 | |
+| 15.a. | 15. a. LESS: DTAs arising from temporary differences that could not be realized through net operating loss carrybacks, net of related valuation allow- ances and net of DTLs, that exceed 25 percent of item 12 | LB60 | | | |
+| 15.b. | b. LESS: DTAs arising from temporary differences that could not be realized through net operating loss carrybacks, net of related valuation allowances and net of DTLs, that exceed the 10 percent common equity tier 1 capital deduction threshold | | | P855 | |
+| 16. | 16. LESS: Amount of significant investments in the capital of unconsolidated financial institutions in the form of common stock, net of associated DTLs; MSAs, net of associated DTLs; and DTAs arising from temporary differences that could not be realized through net operating loss carrybacks, net of related valuation allowances and net of DTLs; that exceeds the 15 percent common equity tier 1 capital deduction threshold | | | P856 | |
+| 17. | 17. LESS: Deductions applied to common equity tier 1 capital due to insufficient amounts of additional tier 1 capital and tier 2 capital2 to cover deductions | P857 | | P857 | |
+| 18. | 18. Total adjustments and deductions for common equity tier 1 capital3 | P858 | | P858 | |
+| 19. | 19. Common equity tier 1 capital (item 12 minus item 18) | P859 | | P859 | |
+1. All non-advanced approaches holding companies should complete column A for items 11-19; all advanced approaches holding companies should complete column B for items 11-19.
+2. A holding company that has a CBLR framework election in effect as of the quarter-end report date is neither required to calculate tier 2 capital nor make any deductions that would have been taken from tier 2 capital as of the report date.
+3. All non-advanced approaches holding companies should report in item 18, column A, the sum of items 13.a, 14.a, 15.a, and 17, column A; all advanced approaches holding companies should report in item 18, column B, the sum of items 13.b, 14.b, 15.b, 16, and 17, column B.
+09/2020
+FR Y-9C
+Page 51 of 73
+Schedule HC-R—Continued
+Part I—Continued
+| Item | Dollar Amounts in Thousands | BHCA | Amount |
+| --- | --- | --- | --- |
+| | Additional Tier 1 Capital | | |
+| 20. | 20. Additional tier 1 capital instruments plus related surplus | P860 | |
+| 21. | 21. Non-qualifying capital instruments subject to phase out from additional tier 1 capital | P861 | |
+| 22. | 22. Tier 1 minority interest not included in common equity tier 1 capital | P862 | |
+| 23. | 23. Additional tier 1 capital before deductions (sum of items 20, 21, and 22) | P863 | |
+| 24. | 24. LESS: Additional tier 1 capital deductions | P864 | |
+| 25. | 25. Additional tier 1 capital (greater of item 23 minus item 24, or zero) | P865 | |
+| | Tier 1 Capital | | |
+| 26. | 26. Tier 1 capital1 | 8274 | |
+| | Total Assets for the Leverage Ratio | | |
+| 27. | 27. Average total consolidated assets2 | KW03 | |
+| 28. | 28. LESS: Deductions from common equity tier 1 capital and additional tier 1 capital3 | P875 | |
+| 29. | 29. LESS: Other deductions from (additions to) assets for leverage ratio purposes | B596 | |
+| 30. | 30. Total assets for the leverage ratio (item 27 minus items 28 and 29) | A224 | |
+Leverage Ratio* BHCA
+31. Leverage ratio (item 26 divided by item 30) ............................................................................. 7204
+Percentage 31.
+a. Does your holding company have a community bank leverage ratio (CBLR) framework election in effect as of the quarter-end report date? (enter "1" for Yes; enter "0" for No) ......................
+0=No BHCA 1=Yes LE74 31.a.
+If your holding company entered “1” for Yes in item 31.a:
+• Complete items 32 through 36
+• Do not complete items 37 through 53
+• Do not complete Part II of Schedule HC-R.
+If your holding company entered “0” for No in item 31.a:
+• Skip (do not complete) items 32 through 36,
+• Complete items 37 through 53 as applicable, and
+• Complete Part II of Schedule HC-R.
+Item 31.b is to be completed only by non-advanced approaches holding companies that elect to use the Standardized Approach for Counterparty Credit Risk (SA-CCR) for purposes of the standardized approach and supplementary leverage ratio.
+b. Standardized Approach for Counterparty Credit Risk opt-in election (enter "1" for Yes; leave blank for No).......................................................................................
+BHCA
+1=Yes NC99 31.b.
+* Report each ratio and buffer as a percentage, rounded to four decimal places, e.g., 12.3456.
+1. All non-advanced approaches holding companies should report the sum of item 19, column A, and item 25 in item 26; all advanced approaches institutions should report the sum of item 19, column B, and item 25 in item 26.
+2. Holding companies that have elected to apply the 3-year or the 5-year 2020 CECL transition provision should include the applicable portion of the CECL transitional amount or the modified CECL transitional amount, respectively, in item 27.
+3. All non͈ -advanced approaches holding companies should report in item 28 the sum of items 6, 7, 8, 10.b, 13.a, 14.a, 15.a, 17 (column A), and certain elements of item 24 - see instructions; all advanced approaches holding companies should report in item 28, the sum of items 6, 7, 8, 10.b, 11, 13.b, 14.b, 15.b, 16, 17 (column B), and certain elements of item 24
+- see instructions.
+03/2024
+FR Y-9C
+Page 52 of 73
+Schedule HC-R—Continued
+Part I—Continued
+Qualifying Criteria and Other Information for CBLR holding company*
+| Item | Line item | (Column A) | | (Column B) | |
+| --- | --- | --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | | Amount | BHCA | Percentage |
+| 32. | 32. Total assets (Schedule HC, item 12); (must be less than $10 billion) | BHCA 2170 | | | |
+| 33. | 33. Trading assets and trading liabilities (Schedule HC, sum of items 5 and 15). Report as a dollar amount in column A and as a percentage of total assets (5% limit) in column B | KX77 | | KX78 | |
+| | 34. Off-balance sheet exposures: | | | | |
+| 34.a. | a. Unused portion of conditionally cancellable commitments | KX79 | | | |
+| 34.b. | b. Securities lent and borrowed (Schedule HC-L, sum of items 6.a and 6.b) | KX80 | | | |
+| 34.c. | c. Other off-balance sheet exposures | KX81 | | | |
+| 34.d. | d. Total off-balance sheet exposures (sum of items 34.a through 34.c). Report as a dollar amount in column A and as a percentage of total assets (25% limit) in column B | KX82 | | KX83 | |
+Dollar Amounts in Thousands BHCA
+35. Unconditionally cancellable commitments ............................................................................... S540
+36. Investments in the tier 2 capital of unconsolidated financial institutions.......................................... LB61
+Amount 35.
+36.
+If your holding company entered “0” for No in item 31.a, complete items 37 through 53, as applicable, and Part II of Schedule HC-R. If your holding company entered “1” for Yes in item 31.a, do not complete items 37 through 53 or Part II of Schedule HC-R.
+| Item | Dollar Amounts in Thousands | BHCA | Amount |
+| --- | --- | --- | --- |
+| | Tier 2 Capital1 | | |
+| 37. | 37. Tier 2 capital instruments plus related surplus | P866 | |
+| 38. | 38. Non-qualifying capital instruments subject to phase out from tier 2 capital | P867 | |
+| 39. | 39. Total capital minority interest that is not included in tier 1 capital | P868 | |
+| 40.a. | 40. a. Adjusted allowances for credit losses(AACL) includable in tier 2 capital2 | 5310 | |
+| 40.b. | b. (Advanced approaches holding companies that exit parallel run only): Eligible credit reserves includable in tier 2 capital | BHCW 5310 | |
+| | 41. Not applicable. | | |
+| 42.a. | 42. a. Tier 2 capital before deductions (sum of items 37 through 40.a) | BHCA P870 | |
+| 42.b. | b. (Advanced approaches holding companies that exit parallel run only): Tier 2 capital before deductions (sum of items 37 through 39, plus item 40.b) | BHCW P870 | |
+* Report each ratio and buffer as a percentage, rounded to four decimal places, e.g., 12.3456.
+1. A holding company that has a CBLR election in effect as of the quarter-end report date is neither required to calculate tier 2 capital nor make any deductions that would have been taken from tier 2 capital as of the report date.
+2. Holding companies that have elected to apply the 3-year or the 5-year 2020 CECL transition provision should subtract the applicable portion of the AACL transitional amount or the modified AACL transitional amount, respectively, from the AACL, as defined in the regulatory capital rule, before determining the amount of AACL includable in tier 2 capital. See instructions for further detail on the CECL transition provisions.
+03/2024
+FR Y-9C
+Page 53 of 73
+Schedule HC-R—Continued
+Part I—Continued
+| Item | Dollar Amounts in Thousands | BHCA | Amount |
+| --- | --- | --- | --- |
+| 43. | 43. LESS: Tier 2 capital deductions | P872 | |
+| 44.a. | 44. a. Tier 2 capital (greater of item 42.a minus item 43, or zero) | 5311 | |
+| 44.b. | b. (Advanced approaches holding companies that exit parallel run only): Tier 2 capital (greater of item 42.b minus item 43, or zero) | BHCW 5311 | |
+| | Total Capital | | |
+| 45.a. | 45. a. Total capital (sum of items 26 and 44.a) | BHCA 3792 | |
+| 45.b. | b. (Advanced approaches holding companies that exit parallel run only): Total capital (sum of items 26 and 44.b) | BHCW 3792 | |
+| | Total Risk-Weighted Assets | | |
+| 46.a. | 46. a. Total risk-weighted assets (from Schedule HC-R, Part II item 31) | BHCA A223 | |
+| 46.b. | b. (Advanced approaches holding companies that exit parallel run only): Total risk-weighted assets using advanced approaches rule (from FFIEC 101 Schedule A, item 60) | BHCW A223 | |
+| Item | Line item | Column A | | Column B | |
+| --- | --- | --- | --- | --- | --- |
+| | | BHCA | Percentage | BHCW | Percentage |
+| | Risk-Based Capital Ratios* | | | | |
+| 47. | 47. Common equity tier 1 capital ratio (Column A: item 19, column A or B, as applicable, divided by item 46.a) (Advanced approaches holding companies that exit parallel run only: Column B, item 19, column B, divided by item 46.b) | P793 | | P793 | |
+| 48. | 48. Tier 1 capital ratio (Column A: item 26 divided by item 46.a) (Advanced approaches holding companies that exit parallel run only: Column B: item 26 divided by item 46.b) | 7206 | | 7206 | |
+| 49. | 49. Total capital ratio (Column A: item 45.a divided by item 46.a) (Advanced approaches holding companies that exit parallel run only: Column B: item 45.b divided by item 46.b) | 7205 | | 7205 | |
+BHCA
+Capital Buffer* for Holding Companies not Subject to the Capital Plan Rule (items 50-52)
+50. Capital conservation buffer .................................................................................................. H311
+Percentage
+50.
+Dollar Amounts in Thousands BHCA Holding companies must complete items 51 and 52 if the amount in item 50 is less than or equal to the applicable:
+51. Eligible retained income1..................................................................................................... H313
+52. Distributions and discretionary bonus payments during the quarter2 ............................................. H314
+Amount
+51.
+52.
+BHCA
+Supplementary Leverage Ratio*
+53. Advanced approaches holding companies and holding companies subject to category III capital standards only: Supplementary leverage ratio (From FFIEC 101 Schedule A, Table 2, item 2.22)....... H036
+Percentage
+53.
+Dollar Amounts in Thousands BHCA Long-Term Debt and Total Loss Absorbing Capacity Note: only the top-tier BHCs of U.S. GSIBs and the IHCs of foreign GSIBs must complete items 54 to 59.
+54. Outstanding eligible long-term debt ....................................................................................... LF21
+55. Total loss absorbing capacity ............................................................................................... LF22
+Amount
+54.
+55.
+* Report each ratio and buffer as a percentage, rounded to four decimal places, e.g., 12.3456.
+1. Holding companies not subject to the capital plan rule must complete item 51 only if the amount reported in item 50 above is less than or equal to 2.5000 percent.
+2. Holding companies not subject to the capital plan rule must complete item 52 only if the amount reported in item 50 above for the previous calendar quarter-end report date was less than or equal to 2.5000 percent.
+12/2021
+FR Y-9C
+Page 54 of 73
+Schedule HC-R—Continued
+Part I—Continued
+| Item | Line item | (Column A) | | (Column B) | |
+| --- | --- | --- | --- | --- | --- |
+| | | BHCA | Percentage | BHCW | Percentage |
+| | Long-Term Debt and Total Loss Absorbing Capacity Ratios* | | | | |
+| 56. | 56. LTD and TLAC total risk-weighted assets ratios (Column A: item 54 divided by item 46.a Column B: item 55 divided by item 46.a) | LF23 | | LF23 | |
+| 57. | 57. Top-tier BHCs of U.S. GSIBs only: LTD and TLAC total risk-weighted assets ratios using advanced approaches rule (Column A: item 54 divided by item 46.b) (Column B: item 55 divided by item 46.b) | MK66 | | MK66 | |
+| 58. | 58. IHCs of foreign GSIBs only: LTD and TLAC leverage ratios (Column A: item 54 divided by item 30) (Column B: item 55 divided by item 30) | LF24 | | LF24 | |
+| 59. | 59. Holding companies subject to Category I, II, or III standards: LTD and TLAC supplementary leverage ratios (Column A: item 54 divided by FFIEC 101 Schedule A, Table 2, item 2.21) (Column B: item 55 divided by FFIEC 101 Schedule A, Table 2, item 2.21) | LF25 | | LF25 | |
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Standardized Approach | | (Column B) Advanced Approaches | |
+| | | BHCA | Percentage | BHCW | Percentage |
+| | Risk-Based Capital Buffer for holding companies subject to the Board's capital plan rule only: | | | | |
+| | 60. Capital conservation buffer requirement (sum of items 60.a through 60.c) | | | | |
+| 60.a. | a. of which: Stress capital buffer or 2.500% (for advanced approaches) | LE85 | | LE85 | |
+| 60.b. | b. of which: GSIB surcharge (if applicable) | LE86 | | LE86 | |
+| 60.c. | c. of which: Countercyclical capital buffer amount (if applicable) | LE87 | | LE87 | |
+| 61. | 61. Capital conservation buffer | MK76 | | H311 | |
+BHCA
+TLAC Buffers* Note: only the top-tier BHCs of U.S. GSIBs and the IHCs of foreign GSIBs must complete item 62.a. The top-tier BHCs of U.S. GSIBs must complete item 62.b.
+62. Institution-specific buffer necessary to avoid limitations on distributions and discretionary bonus payments: a. TLAC risk-weighted asset buffer....................................................................................... LF27 b. TLAC leverage buffer..................................................................................................... LF28
+Percentage
+62.a.
+62.b.
+| Item | Dollar Amounts in Thousands | BHCA | Amount |
+| --- | --- | --- | --- |
+| | Leverage buffer and requirements for holding companies subject to the capital plan rule: | | |
+| 63. | 63. Total leverage exposure for the supplementary leverage ratio (SLR) (if applicable) | LE88 | |
+| 64. | 64. Leverage buffer requirement (if applicable) | LE89 | Percentage |
+| 65. | 65. Leverage ratio buffer (if applicable) | LE90 | |
+| | Maximum payout ratios and amounts for holding companies subject to the capital plan rule: | | Amount |
+| 66. | 66. Eligible retained income | MK77 | |
+| 67. | 67. Maximum payout ratio | LE91 | Percentage |
+| 68. | 68. Maximum payout amount | LE92 | Amount |
+| 69. | 69. Distributions and discretionary bonus payments during the quarter | MK78 | |
+* Report each ratio and buffer as a percentage, rounded to four decimal places, e.g., 12.3456.
+06/2021
+FR Y-9C
+Page 55 of 73
+Schedule HC-R—Continued Part II. Risk-Weighted Assets Holding companies that entered "1" for Yes in Schedule HC-R, Part I, item 31.a, do not have to complete Schedule HC-R, Part II.
+Holding companies (HC) are required to assign a 100 percent risk-weight to all assets not specifically assigned a risk-weight under Subpart D of the Federal Reserve's regulatory capital rules1 and not deducted from tier 1 or tier 2 capital.
+| Item | Line item | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Totals From Schedule HC | (Column B) Adjustments to Totals Reported in Column A | (Column C) | (Column D) | (Column E) | (Column F) | (Column G) | (Column H) | (Column I) | (Column J) |
+| | | | | Allocation by Risk-Weight Category 0% | 2% | 4% | 10% | 20% | 50% | 100% | 150% |
+| | Dollar Amounts in Thousands Balance Sheet Asset Categories2 Items 1 through 25, (columns A through U as applicable) are to be reported semiannually in June and December by holding com- panies with less than $5 billion in 3, 4 total consolidated assets. | | | | | | | | | | |
+| 1. | 1. Cash and balances due from depository institutions | Amount BHCK D957 | Amount BHCK S396 | Amount BHCK D958 | Amount | Amount | Amount | Amount BHCK D959 | Amount BHCK S397 | Amount BHCK D960 | Amount BHCK S398 |
+| | 2. Securities: | | | | | | | | | | |
+| 2.a. | a. Held-to-maturity securities3, 4 | BHCK D961 | BHCK S399 | BHCK D962 | BHCK HJ74 | BHCK HJ75 | | BHCK D963 | BHCK D964 | BHCK D965 | BHCK S400 |
+| 2.b. | b. Available-for-sale debt securities and equity securities with readily determinable fair values not held for trading | BHCK JA21 | BHCK S402 | BHCK D967 | BHCK HJ76 | BHCK HJ77 | | BHCK D968 | BHCK D969 | BHCK D970 | BHCK S403 |
+| | 3. Federal funds sold and securities purchased under agreements to resell: | | | | | | | | | | |
+| 3.a. | a. Federal funds sold (in domestic offices) | BHCK D971 | | BHCK D972 | | | | BHCK D973 | BHCK S410 | BHCK D974 | BHCK S411 |
+| 3.b. | b. Securities purchased under agreements to resell | BHCK H171 | BHCK H172 | | | | | | | | |
+1. For bank holding companies, 12 CFR Part 217 and 225; and for covered savings and loan holding companies, 12 CFR Part 217. 2. All securitization exposures held as on-balance sheet assets of the reporting institution are to be excluded from items 1 through 8 and are to be reported instead in item 9. 3. Asset-size test is based on the total assets reported as of prior year June 30 report date. 4. Holding companies that have reported held-to-maturity securities net of allowances or credit losses in item 2.a, column A, should report as a negative number in item 2.a, column B, those allowances for credit losses eligible for inclusion in tier 2 capital, which excludes allowances for credit losses on purchased credit-deteriorated assets.
+03/2024
+FR Y-9C
+Page 56 of 73
+Schedule HC-R—Continued
+Part II—Continued
+Dollar Amounts in Thousands Balance Sheet Asset Categories (continued)
+1. Cash and balances due from depository
+institutions......................................
+2. Securities: a. Held-to-maturity securities...................................
+b. Available-for-sale debt securities and equity securities with readily determinable fair values not held for trading .......................
+3. Federal funds sold and securities purchased under agreements to resell: a. Federal funds sold (in domestic offices).....................
+b. Securities purchased under agreements to resell ........................................
+1.
+2.a.
+2.b.
+3.a.
+3.b.
+| (Column K) › Allocation by Risk-Weight Category | (Column L) › Allocation by Risk-Weight Category | (Column M) › Allocation by Risk-Weight Category | (Column N) › Allocation by Risk-Weight Category | (Column O) › Allocation by Risk-Weight Category | (Column P) › Allocation by Risk-Weight Category | (Column Q) › Allocation by Risk-Weight Category | (Column R) › Application of Other Risk- Weighting Approaches5 | (Column S) › Application of Other Risk- Weighting Approaches5 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 250% | 300% | 400% | 600% | 625% | 937.5% | 1250% | Exposure Amount | Risk-Weighted Asset Amount |
+| Amount | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Amount |
+| BHCK H270 | BHCK S405 | | BHCK S406 | | | | BHCK H271 | BHCK H272 |
+(7 blank entry rows)
+5. Includes, for example, investments in mutual funds/investment funds, exposures collateralized by securitization exposures or mutual funds, separate account bank-owned life insurance, and default fund contributions to central counterparties.
+03/2020
+FR Y-9C
+Page 57 of 73
+Schedule HC-R—Continued
+Part II—Continued
+| Item | Line item | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Totals From Schedule HC | (Column B) Adjustments to Totals Reported in Column A | (Column C) | (Column D) | (Column E) | (Column F) | (Column G) | (Column H) | (Column I) | (Column J) |
+| | | | | Allocation by Risk-Weight Category 0% | 2% | 4% | 10% | 20% | 50% | 100% | 150% |
+| | Dollar Amounts in Thousands | | | | | | | | | | |
+| | 4. Loans and leases held for sale: | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Amount |
+| 4.a. | a. Residential mortgage exposures | BHCK S413 | BHCK S414 | BHCK H173 | | | | BHCK S415 | BHCK S416 | BHCK S417 | |
+| 4.b. | b. High volatility commercial real estate exposures | BHCK S419 | BHCK S420 | BHCK H174 | | | | BHCK H175 | BHCK H176 | BHCK H177 | BHCK S421 |
+| 4.c. | c. Exposures past due 90 days or more or on nonaccrual6 | BHCK S423 | BHCK S424 | BHCK S425 | BHCK HJ78 | BHCK HJ79 | | BHCK S426 | BHCK S427 | BHCK S428 | BHCK S429 |
+| 4.d. | d. All other exposures | BHCK S431 | BHCK S432 | BHCK S433 | BHCK HJ80 | BHCK HJ81 | | BHCK S434 | BHCK S435 | BHCK S436 | BHCK S437 |
+| | 5. Loans and leases held for investment:7 | | | | | | | | | | |
+| 5.a. | a. Residential mortgage exposures | BHCK S439 | BHCK S440 | BHCK H178 | | | | BHCK S441 | BHCK S442 | BHCK S443 | |
+| 5.b. | b. High volatility commercial real estate exposures | BHCK S445 | BHCK S446 | BHCK H179 | | | | BHCK H180 | BHCK H181 | BHCK H182 | BHCK S447 |
+| 5.c. | c. Exposures past due 90 days or more or on nonaccrual8 | BHCK S449 | BHCK S450 | BHCK S451 | BHCK HJ82 | BHCK HJ83 | | BHCK S452 | BHCK S453 | BHCK S454 | BHCK S455 |
+| 5.d. | d. All other exposures | BHCK S457 | BHCK S458 | BHCK S459 | BHCK HJ84 | BHCK HJ85 | | BHCK S460 | BHCK S461 | BHCK S462 | BHCK S463 |
+| 6. | 6. LESS: Allowance for credit losses on loans and leases | BHCX 3123 | BHCY 3123 | | | | | | | | |
+6. For loans and leases held for sale, exclude residential mortgage exposures, high volatility commercial real estate exposures, or sovereign exposures that are past due 90 days or more or on nonaccrual.
+7. Holding companies should report as a positive number in column B of items 5.a through 5.d, as appropriate, any allowances for credit losses on purchased credit-deteriorated assets reported in column A of items 5.a through 5.d, as appropriate.
+8. For loans and leases held for investment, exclude residential mortgage exposures, high volatility commercial real estate exposures, or sovereign exposures that are past due 90 days or more or on nonaccrual.
+03/2024
+FR Y-9C
+Page 58 of 73
+Schedule HC-R—Continued
+Part II—Continued
+| Item | Line item | (Column K) | (Column L) | (Column M) | (Column N) | (Column O) | (Column P) | (Column Q) | (Column R) | (Column S) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Allocation by Risk-Weight Category | | | | | | | Application of Other Risk- Weighting Approaches9 | |
+| | | 250% | 300% | 400% | 600% | 625% | 937.5% | 1250% | Exposure Amount | Risk-Weighted Asset Amount |
+| | Dollar Amounts in Thousands | | | | | | | | | |
+| | 4. Loans and leases held for sale: | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Amount |
+| 4.a. | a. Residential mortgage exposures | | | | | | | | BHCK H273 | BHCK H274 |
+| 4.b. | b. High volatility commercial real estate exposures | | | | | | | | BHCK H275 | BHCK H276 |
+| 4.c. | c. Exposures past due 90 days or more or on nonaccrual10 | | | | | | | | BHCK H277 | BHCK H278 |
+| 4.d. | d. All other exposures | | | | | | | | BHCK H279 | BHCK H280 |
+| | 5. Loans and leases held for investment: | | | | | | | | | |
+| 5.a. | a. Residential mortgage exposures | | | | | | | | BHCK H281 | BHCK H282 |
+| 5.b. | b. High volatility commercial real estate exposures | | | | | | | | BHCK H283 | BHCK H284 |
+| 5.c. | c. Exposures past due 90 days or more or on nonaccrual11 | | | | | | | | BHCK H285 | BHCK H286 |
+| 5.d. | d. All other exposures | | | | | | | | BHCK H287 | BHCK H288 |
+| 6. | 6. LESS: Allowance for credit losses on loans and leases | | | | | | | | | |
+9. Includes, for example, investments in mutual funds/investment funds, exposures collateralized by securitization exposures or mutual funds, separate account bank-owned life insurance, and default fund contributions to central counterparties.
+10. For loans and leases held for sale, exclude residential mortgage exposures, high volatility commercial real estate exposures, or sovereign exposures that are past due 90 days or more or on nonaccrual.
+11. For loans and leases held for investment, exclude residential mortgage exposures, high volatility commercial real estate exposures, or sovereign exposures that are past due 90 days or more or on nonaccrual.
+03/2024
+FR Y-9C
+Page 59 of 73
+Schedule HC-R—Continued
+Part II—Continued
+7.
+8.
+8.a.
+8.b.
+| | (Column A) Totals From Schedule HC › Amount › BHCK D976 › BHCK D981 | (Column B) Adjustments to Totals Reported in Column A › Amount › BHCK S466 › BHCK S469 | (Column C) › Allocation by Risk-Weight Category › 0% › Amount › BHCK D977 › BHCK D982 | (Column D) › Allocation by Risk-Weight Category › 2% › Amount › BHCK HJ86 › BHCK HJ88 | (Column E) › Allocation by Risk-Weight Category › 4% › Amount › BHCK HJ87 › BHCK HJ89 | (Column F) › Allocation by Risk-Weight Category › 10% › Amount | (Column G) › Allocation by Risk-Weight Category › 20% › Amount › BHCK D978 › BHCK D983 | (Column H) › Allocation by Risk-Weight Category › 50% › Amount › BHCK D979 › BHCK D984 | (Column I) › Allocation by Risk-Weight Category › 100% › Amount › BHCK D980 › BHCK D985 | (Column J) › Allocation by Risk-Weight Category › 150% › Amount › BHCK S467 › BHCK H185 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| a. Separate account bank-owned life insurance ................ | | | | | | | | | | |
+| b. Default fund contributions to central counterparties .......... | | | | | | | | | | |
+(1 blank entry rows)
+12. Includes premises and fixed assets; other real estate owned; investments in unconsolidated subsidiaries and associated companies; direct and indirect investments in real estate ventures;
+intangible assets; and other assets.
+13. Holding companies that have elected to apply the 3-year or the 5-year 2020 CECL transition provision should report as a positive number in item 8, column B, the applicable portion of the DTA transitional amount as determined in accordance with the 3-year or the 5-year 2020 CECL transition rule, respectively.
+14. Holding companies that have reported any assets net of allowances for credit losses in item 8, column A, should report as a negative number in item 8, column B, those allowances for credit losses eligible for inclusion in tier 2 capital, which excludes allowances for credit losses on purchased credit-deteriorated assets.
+03/2024
+FR Y-9C
+Page 60 of 73
+Schedule HC-R—Continued
+Part II—Continued
+| Item | Line item | (Column K) | (Column L) | (Column M) | (Column N) | (Column O) | (Column P) | (Column Q) | (Column R) | (Column S) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Allocation by Risk-Weight Category | | | | | | | Application of Other Risk- Weighting Approaches15 | |
+| | | 250% | 300% | 400% | 600% | 625% | 937.5% | 1250% | Exposure Amount | Risk-Weighted Asset Amount |
+| | Dollar Amounts in Thousands | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Amount |
+| 7. | 7. Trading Assets | BHCK H289 | BHCK H186 | BHCK H290 | BHCK H187 | | | | BHCK H291 | BHCK H292 |
+| 8. | 8. All other assets16 | BHCK H293 | BHCK H188 | BHCK S470 | BHCK S471 | | | | BHCK H294 | BHCK H295 |
+| 8.a. | a. Separate account bank-owned life insurance | | | | | | | | BHCK H296 | BHCK H297 |
+| 8.b. | b. Default fund contributions to central counterparties | | | | | | | | BHCK H298 | BHCK H299 |
+15. Includes, for example, investments in mutual funds/investment funds, exposures collateralized by securitization exposures or mutual funds, separate account bank-owned life insurance, and default fund contributions to central counterparties.
+16. Includes premises and fixed assets; other real estate owned; investments in unconsolidated subsidiaries and associated companies; direct and indirect investments in real estate ventures;
+intangible assets; and other assets.
+03/2024
+FR Y-9C
+Page 61 of 73
+Schedule HC-R—Continued
+Part II—Continued
+| Item | Line item | | | | | |
+| --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Totals | (Column B) Adjustments to Totals Reported in Column A | (Column Q) | (Column T) | (Column U) |
+| | | | | Allocation by Risk-Weight Category | Total Risk-Weighted Asset Amount by Calculation Methodology | |
+| | | | | 1250% | SSFA17 | Gross-Up |
+| | Dollar Amounts in Thousands Securitization Exposures: On-and Off-Balance Sheet | Amount | Amount | Amount | Amount | Amount |
+| 9.a. | 9. On-balance sheet securitization exposures: | BHCK S475 | BHCK S476 | BHCK S477 | BHCK S478 | BHCK S479 |
+| 9.a. | a. Held-to-maturity securities18 | | | | | |
+| 9.b. | b. Available-for-sale securities | BHCK S480 | BHCK S481 | BHCK S482 | BHCK S483 | BHCK S484 |
+| 9.c. | c. Trading assets | BHCK S485 | BHCK S486 | BHCK S487 | BHCK S488 | BHCK S489 |
+| 9.d. | d. All other on-balance sheet securitization exposures | BHCK S490 | BHCK S491 | BHCK S492 | BHCK S493 | BHCK S494 |
+| 10. | 10. Off-balance sheet securitization exposures | BHCK S495 | BHCK S496 | BHCK S497 | BHCK S498 | BHCK S499 |
+Dollar Amounts in Thousands
+11. Total balance sheet assets19 ................ 11.
+| Section | Field | Item code |
+| --- | --- | --- |
+| (Column A) Totals From Schedule HC | Amount | BHCT 2170 |
+| (Column B) Adjustments to Totals Reported in Column A | Amount | BHCK S500 |
+| Allocation by Risk-Weight Category › (Column C) › 0% | Amount | BHCK D987 |
+| Allocation by Risk-Weight Category › (Column D) › 2% | Amount | BHCK HJ90 |
+| Allocation by Risk-Weight Category › (Column E) › 4% | Amount | BHCK HJ91 |
+| Allocation by Risk-Weight Category › (Column G) › 20% | Amount | BHCK D988 |
+| Allocation by Risk-Weight Category › (Column H) › 50% | Amount | BHCK D989 |
+| Allocation by Risk-Weight Category › (Column I) › 100% | Amount | BHCK D990 |
+| Allocation by Risk-Weight Category › (Column J) › 150% | Amount | BHCK S503 |
+(1 blank entry rows)
+Dollar Amounts in Thousands
+11. Total balance sheet assets19 ............................................................ 11.
+| Section | Field | Item code |
+| --- | --- | --- |
+| Allocation by Risk-Weight Category › (Column K) › 250% | Amount | BHCK S504 |
+| Allocation by Risk-Weight Category › (Column L) › 300% | Amount | BHCK S505 |
+| Allocation by Risk-Weight Category › (Column M) › 400% | Amount | BHCK S506 |
+| Allocation by Risk-Weight Category › (Column N) › 600% | Amount | BHCK S507 |
+| Allocation by Risk-Weight Category › (Column Q) › 1250% | Amount | BHCK S510 |
+| (Column R) › Application of Other Risk- Weighting Approaches › Exposure Amount | Amount | BHCK H300 |
+(1 blank entry rows)
+17. Simplified Supervisory Formula Approach. 18. Holding companies that have reported held-to-maturity securities net of allowances for credit losses in item 9.a, column A, should report as a negative number in item 9.a, column B, those allowances for credit losses eligible for inclusion in tier 2 capital, which excludes allowances for credit losses on purchased credit-deteriorated assets. 19. For each of columns A through R of item 11, report the sum of items 1 through 9. For item 11, the sum of columns B through R must equal column A. Item 11, column A, must equal Schedule HC, item 12.
+03/2024
+FR Y-9C
+Page 62 of 73
+Schedule HC-R—Continued
+Part II—Continued
+| Item | Line item | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Face, Notional, or Other Amount | CCF20 | (Column B) Credit Equivalent Amount21 | (Column C) | (Column D) | (Column E) | (Column F) | (Column G) | (Column H) | (Column I) | (Column J) |
+| | | | | | Allocation by Risk-Weight Category 0% | 2% | 4% | 10% | 20% | 50% | 100% | 150% |
+| | Dollar Amounts in Thousands Derivatives, Off-Balance Sheet Items, and Other Items Subject to Risk- Weighting (Excluding Securitization Exposure)22 | Amount | | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Amount |
+| | 12. Financial standby | BHCK D991 | | BHCK D992 | BHCK D993 | BHCK HJ92 | BHCK HJ93 | | BHCK D994 | BHCK D995 | BHCK D996 | BHCK S511 |
+| | letters of credit | | | | | | | | | | | |
+| 12. | 13. Performance standby letters of credit and | | 1.0 | | | | | | | | | |
+| | transaction-related | BHCK D997 | | BHCK D998 | BHCK D999 | | | | BHCK G603 | BHCK G604 | BHCK G605 | BHCK S512 |
+| | contingent items | | | | | | | | | | | |
+| 13. | 14. Commercial and similar letters of credit with an original | | 0.5 | | | | | | | | | |
+| | maturity of one year | BHCK G606 | | BHCK G607 | BHCK G608 | BHCK HJ94 | BHCK HJ95 | | BHCK G609 | BHCK G610 | BHCK G611 | BHCK S513 |
+| | or less | | | | | | | | | | | |
+| 14. | 15. Retained recourse on small business | | 0.2 | | | | | | | | | |
+| | obligations sold | BHCK G612 | | BHCK G613 | BHCK G614 | | | | BHCK G615 | BHCK G616 | BHCK G617 | BHCK S514 |
+| 15. | with recourse | | 1.0 | | | | | | | | | |
+20. Credit conversion factor.
+21. Column A multiplied by credit conversion factor. For each of items 12 through 21, the sum of columns C through J plus column R must equal column B.
+22. All derivatives and off-balance sheet items that are securitization exposures are to be excluded from items 12 through 21 and are to be reported instead in item 10.
+03/2024
+FR Y-9C
+Page 63 of 73
+Schedule HC-R—Continued
+Part II—Continued
+| Item | Line item | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Face, Notional, or Other Amount | CCF23 | (Column B) Credit Equivalent Amount24 | (Column C) | (Column D) | (Column E) | (Column F) | (Column G) | (Column H) | (Column I) | (Column J) |
+| | | | | | Allocation by Risk-Weight Category 0% | 2% | 4% | 10% | 20% | 50% | 100% | 150% |
+| | Dollar Amounts in Thousands | Amount | | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Amount |
+| 16. | 16. Repo-style transactions25 | BHCK S515 | 1.0 | BHCK S516 | BHCK S517 | BHCK S518 | BHCK S519 | | BHCK S520 | BHCK S521 | BHCK S522 | BHCK S523 |
+| | 17. All other off-balance | BHCK G618 | | BHCK G619 | BHCK G620 | | | | BHCK G621 | BHCK G622 | BHCK G623 | BHCK S524 |
+| | sheet liabilities | | | | | | | | | | | |
+| 17. | 18. Unused commitments: | | 1.0 | | | | | | | | | |
+| | (exclude unused commitments to asset-backed commercial paper conduits): | | | | | | | | | | | |
+| | a. Original maturity of | BHCK S525 | | BHCK S526 | BHCK S527 | BHCK HJ96 | BHCK HJ97 | | BHCK S528 | BHCK S529 | BHCK S530 | BHCK S531 |
+| | one year or less | | | | | | | | | | | |
+| 18.a. | b. Original maturity | | 0.2 | | | | | | | | | |
+| | exceeding one | BHCK G624 | | BHCK G625 | BHCK G626 | BHCK HJ98 | BHCK HJ99 | | BHCK G627 | BHCK G628 | BHCK G629 | BHCK S539 |
+| | year | | | | | | | | | | | |
+| 18.b. | 19. Unconditionally | | 0.5 | | | | | | | | | |
+| | cancelable | BHCK S540 | | BHCK S541 | | | | | | | | |
+| 19. | commitments | | 0.0 | | | | | | | | | |
+| 20. | 20. Over-the-counter derivatives | | | BHCK S542 | BHCK S543 | BHCK HK00 | BHCK HK01 | BHCK S544 | BHCK S545 | BHCK S546 | BHCK S547 | BHCK S548 |
+| 21. | 21. Centrally cleared derivatives | | | BHCK S549 | BHCK S550 | BHCK S551 | BHCK S552 | | BHCK S554 | BHCK S555 | BHCK S556 | BHCK S557 |
+| 22. | 22. Unsettled transactions (failed trades)26 | BHCK H191 | | | BHCK H193 | | | | BHCK H194 | BHCK H195 | BHCK H196 | BHCK H197 |
+23. Credit conversion factor.
+24. For items 18.b. and 19, column A multiplied by credit conversion factor.
+25. Includes securities purchased under agreements to resell (reverse repos), securities sold under agreements to repurchase (repos), securities borrowed, and securities lent.
+26. For item 22, the sum of columns C through Q must equal column A.
+03/2024
+FR Y-9C
+Page 64 of 73
+Schedule HC-R—Continued
+Part II—Continued
+| Item | Line item | (Column O) | (Column P) | (Column Q) | (Column R) | (Column S) |
+| --- | --- | --- | --- | --- | --- | --- |
+| | | Allocation by Risk-Weight Category | | | Application of Other Risk- Weighting Approaches27 | |
+| | | 625% | 937.5% | 1250% | Credit Equivalent Amount | Risk-Weighted Asset Amount |
+| | Dollar Amounts in Thousands | Amount | Amount | Amount | Amount | Amount |
+| 16. | 16. Repo-style transactions28 | | | | BHCK H301 | BHCK H302 |
+| 17. | 17. All other off-balance sheet liabilities | | | | | |
+| | 18. Unused commitments: (exclude unused commitments to asset-backed commercial paper conduits): | | | | | |
+| 18.a. | a. Original maturity of one year or less | | | | BHCK H303 | BHCK H304 |
+| 18.b. | b. Original maturity exceeding one year | | | | BHCK H307 | BHCK H308 |
+| 19. | 19. Unconditionally cancelable commitments | | | | | |
+| 20. | 20. Over-the-counter derivatives | | | | BHCK H309 | BHCK H310 |
+| 21. | 21. Centrally cleared derivatives | | | | | |
+| 22. | 22. Unsettled transactions (failed trades)29 | BHCK H198 | BHCK H199 | BHCK H200 | | |
+27. Includes, for example, exposures collateralized by securitization exposures or mutual funds.
+28. Includes securities purchased under agreements to resell (reverse repos), securities sold under agreements to repurchase (repos), securities borrowed, and securities lent.
+29. For item 22, the sum of columns C through Q must equal column A.
+03/2024
+FR Y-9C
+Page 65 of 73
+Schedule HC-R—Continued
+Part II—Continued
+| Item | Line item | (Column C) | (Column D) | (Column E) | (Column F) | (Column G) | (Column H) | (Column I) | (Column J) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Allocation by Risk-Weight Category 0% | 2% | 4% | 10% | 20% | 50% | 100% | 150% |
+| | Dollar Amounts in Thousands | | | | | | | | |
+| 23. | 23. Total assets, derivatives, off-balance sheet items, and other items subject to risk weighting by risk- weight category (for each of columns C through P, sum of items 11 through 22; for column Q, sum of items 10 through 22) | Amount BHCK G630 | Amount BHCK S558 | Amount BHCK S559 | Amount BHCK S560 | Amount BHCK G631 | Amount BHCK G632 | Amount BHCK G633 | Amount BHCK S561 |
+| 24. | 24. Risk weight factor | X 0% | X 2% | X 4% | X 10% | X 20% | X 50% | X 100% | X 150% |
+| 25. | 25. Risk-weighted assets by risk-weight category (for each column, item 23 multiplied by item 24) | BHCK G634 | BHCK S569 | BHCK S570 | BHCK S571 | BHCK G635 | BHCK G636 | BHCK G637 | BHCK S572 |
+03/2015
+FR Y-9C
+Page 66 of 73
+Schedule HC-R—Continued
+Part II—Continued
+| Item | Line item | (Column K) | (Column L) | (Column M) | (Column N) | (Column O) | (Column P) | (Column Q) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Allocation by Risk-Weight Category 250% | 300% | 400% | 600% | 625% | 937.5% | 1250% |
+| | Dollar Amounts in Thousands | | | | | | | |
+| 23. | 23. Total assets, derivatives, off-balance sheet items, and other items subject to risk weighting by risk- weight category (for each of columns C through P, sum of items 11 through 22; for column Q, sum of items 10 through 22) | Amount BHCK S562 | Amount BHCK S563 | Amount BHCK S564 | Amount BHCK S565 | Amount BHCK S566 | Amount BHCK S567 | Amount BHCK S568 |
+| 24. | 24. Risk weight factor | X 250% | X 300% | X 400% | X 600% | X 625% | X 937.5% | X 1250% |
+| 25. | 25. Risk-weighted assets by risk-weight category (for each column, item 23 multiplied by item 24) | BHCK S573 | BHCK S574 | BHCK S575 | BHCK S576 | BHCK S577 | BHCK S578 | BHCK S579 |
+Items 26 through 31 are to be reported quarterly by all holding companies.
+| Item | Items 26 through 31 are to be reported quarterly by all holding companies. | Totals | |
+| --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | | Amount |
+| 26. | 26. Risk-weighted assets for purposes of calculating the adjusted allowance for credit losses (AACL) 1.25 percent threshold | BHCK S580 | |
+| 27. | 27. Standardized market-risk weighted assets (applicable only to holding companies that are covered by the market risk capital rules) | S581 | |
+| 28. | 28. Risk-weighted assets before deductions for excess AACL30 and allocated risk transfer risk reserve31 | B704 | |
+| 29. | 29. LESS: Excess AACL30 | A222 | |
+| 30. | 30. LESS: Allocated transfer risk reserve | 3128 | |
+| 31. | 31. Total risk-weighted assets (item 28 minus items 29 and 30) | G641 | |
+30. Holding companies that have elected to apply the 3-year or the 5-year 2020 CECL transition provision should subtract the applicable portion of the AACL transitional amount or the modified AACL transitional amount, respectively, from the AACL, as defined in the regulatory capital rule, before determining the amount of excess AACL.
+31. Sum of items 2.b through 20, column S; items 9.a, 9.b, 9.c, 9.d, and 10, columns T and U; item 25, columns C through Q; and item 27 (if applicable).
+03/2024
+FR Y-9C
+Page 67 of 73
+Schedule HC-R—Continued Part II—Continued
+Memoranda Memoranda items 1, 2 and 3, columns A, B an C are to be completed semiannually in June and December by holding companies with less than $5 billion in total assets1.
+Dollar Amounts in Thousands BHCK
+1. Current credit exposure across all derivative contracts covered by the regulatory capital rules ..................................................................... G642
+Amount M.1.
+| Item | Line item | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| | | With a remaining maturity of (Column A) One year or less | | (Column B) Over one year through five years | | (Column C) Over 5 years | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHCK | Amount | BHCK | Amount |
+| | 2. Notional principal amounts of over-the-counter derivative contracts: | | | | | | |
+| M.2.a. | a. Interest rate | S582 | | S583 | | S584 | |
+| M.2.b. | b. Foreign exchange rate and gold | S585 | | S586 | | S587 | |
+| M.2.c. | c. Credit (investment grade reference asset) | S588 | | S589 | | S590 | |
+| M.2.d. | d. Credit (non-investment grade reference asset) | S591 | | S592 | | S593 | |
+| M.2.e. | e. Equity | S594 | | S595 | | S596 | |
+| M.2.f. | f. Precious metals (except gold) | S597 | | S598 | | S599 | |
+| M.2.g. | g. Other | S600 | | S601 | | S602 | |
+| | 3. Notional principal amounts of centrally cleared derivative contracts: | | | | | | |
+| M.3.a. | a. Interest rate | S603 | | S604 | | S605 | |
+| M.3.b. | b. Foreign exchange rate and gold | S606 | | S607 | | S608 | |
+| M.3.c. | c. Credit (investment grade reference asset) | S609 | | S610 | | S611 | |
+| M.3.d. | d. Credit (non-investment grade reference asset) | S612 | | S613 | | S614 | |
+| M.3.e. | e. Equity | S615 | | S616 | | S617 | |
+| M.3.f. | f. Precious metals (except gold) | S618 | | S619 | | S620 | |
+| M.3.g. | g. Other | S621 | | S622 | | S623 | |
+Dollar Amounts in Thousands BHCK
+4. Standardized market risk-weighted assets attributable to specific risk (included in Schedule HC-R, item 27)................................................... S624
+5. Amount of allowances for credit losses on purchased credit-deteriorated assets: a. Loans and leases held for investment ........................................................................................................................................... JJ30 b. Held-to-maturity debt securities ................................................................................................................................................... JJ31 c. Other financial assets measured at amortized cost .......................................................................................................................... JJ32
+Amount M.4.
+M.5.a.
+M.5.b.
+M.5.c
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2024
+FR Y-9C
+For Federal Reserve Bank Use Only Page 68 of 73
+C.I.
+Schedule HC-S—Servicing, Securitization, and Asset Sale Activities To be completed by holding companies with $5 billion or more in total assets.1
+| Item | Line item | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) 1–4 Family Residential Loans | (Column B) Home Equity Lines | (Column C) Credit Card Receivables | (Column D) Auto Loans | (Column E) Other Consumer Loans | (Column F) Commercial and Industrial Loans | (Column G) All Other Loans, All Leases, and All Other Assets |
+| | Dollar Amounts in Thousands Securitization Activities | | | | | | | |
+| 1. | 1. Outstanding principal balance of assets sold and securitized with servicing retained or with recourse or other seller-provided credit enhancements | Amount BHCK B705 | Amount BHCK B706 | Amount BHCK B707 | Amount BHCK B708 | Amount BHCK B709 | Amount BHCK B710 | Amount BHCK B711 |
+| 2. | 2. Maximum amount of credit exposure arising from recourse or other seller- provided credit enhancements provided to structures reported in item 1 | BHCK HU09 | BHCK HU10 | BHCK HU11 | BHCK HU12 | BHCK HU13 | BHCK HU14 | BHCK HU15 |
+| | Item 3 is to be completed by holding companies with $100 billion or more in total assets.1 | | | | | | | |
+| 3. | 3. Reporting institution's unused commitments to provide liquidity to structures reported in item 1 | BHCK B726 | BHCK B727 | BHCK B728 | BHCK B729 | BHCK B730 | BHCK B731 | BHCK B732 |
+| 4.a. | 4. Past due loan amounts included in item 1: | BHCK B733 | BHCK B734 | BHCK B735 | BHCK B736 | BHCK B737 | BHCK B738 | BHCK B739 |
+| 4.a. | a. 30-89 days past due | | | | | | | |
+| 4.b. | b. 90 days or more past due | BHCK B740 | BHCK B741 | BHCK B742 | BHCK B743 | BHCK B744 | BHCK B745 | BHCK B746 |
+| 5.a. | 5. Charge-offs and recoveries on assets sold and securitized with servicing retained or with recourse or other seller-provided credit enhancements (calendar year-to-date): | BHCK B747 | BHCK B748 | BHCK B749 | BHCK B750 | BHCK B751 | BHCK B752 | BHCK B753 |
+| 5.a. | a. Charge-offs | | | | | | | |
+| 5.b. | b. Recoveries | BHCK B754 | BHCK B755 | BHCK B756 | BHCK B757 | BHCK B758 | BHCK B759 | BHCK B760 |
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2022
+FR Y-9C
+Page 69 of 73
+Schedule HC-S—Continued
+| Item | Line item | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) 1–4 Family Residential Loans | (Column B) Home Equity Lines | (Column C) Credit Card Receivables | (Column D) Auto Loans | (Column E) Other Consumer Loans | (Column F) Commercial and Industrial Loans | (Column G) All Other Loans, All Leases, and All Other Assets |
+| | Dollar Amounts in Thousands Items 6 and 10 are to be completed by holding companies with $10 billion or more in total assets.2 | Amount | Amount | Amount | Amount | Amount | Amount | Amount |
+| 6. | 6. Total amount of ownership (or seller's) interest carried as securities or loans | | BHCK HU16 | BHCK HU17 | | | BHCK HU18 | |
+| | 7. and 8. Not applicable. For Securitization Facilities Sponsored By or Otherwise Established By Other Institutions | | | | | | | |
+| 9. | 9. Maximum amount of credit exposure arising from credit enhancements provided by the reporting institution to other institutions' securitization structures in the form of standby letters of credit, purchased subordinated securities, and other enhancements | BHCK B776 | | | BHCK B779 | BHCK B780 | BHCK B781 | BHCK B782 |
+| 10. | 10. Reporting institution's unused commitments to provide liquidity to other institutions' securitization structures | BHCK B783 | | | BHCK B786 | BHCK B787 | BHCK B788 | BHCK B789 |
+| | Asset Sales | | | | | | | |
+| 11. | 11. Assets sold with recourse or other seller- provided credit enhancements and not securitized | BHCK B790 | | | | | | BHCK B796 |
+| 12. | 12. Maximum amount of credit exposure arising from recourse or other seller- provided credit enhancements provided to assets reported in item 11 | BHCK B797 | | | | | | BHCK B803 |
+2. The $10 billion asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2022
+FR Y-9C
+Page 70 of 73 Schedule HC-S—Continued Memoranda Dollar Amounts in Thousands BHCK Amount
+1. Not applicable.
+2. Outstanding principal balance of assets serviced for others (includes participations serviced for others): a. 1– 4 family residential mortgages serviced with recourse or other servicer-provided credit enhancements ........................................... B804 M.2.a.
+b. 1– 4 family residential mortgages serviced with no recourse or other servicer-provided credit enhancements ....................................... B805 M.2.b.
+c. Other financial assets1........................................................................................................................................................ A591 M.2.c.
+d. 1– 4 family residential mortgages serviced for others that are in process of foreclosure at quarter-end (includes closed-end and open-end loans) ............................................................................................................................................................... F699 M.2.d.
+3. Asset-backed commercial paper conduits: a. Maximum amount of credit exposure arising from credit enhancements provided to conduit structures in the form of standby letters of credit, subordinated securities, and other enhancements:
+(1) Conduits sponsored by the bank, a bank affiliate, or the holding company2 ............................................................................... B806 M.3.a.(1)
+(2) Conduits sponsored by other unrelated institutions2 ............................................................................................................. B807 M.3.a.(2) b. Unused commitments to provide liquidity to conduit structures:
+(1) Conduits sponsored by the bank, a bank affiliate, or the holding company ................................................................................ B808 M.3.b.(1)
+(2) Conduits sponsored by other unrelated institutions .............................................................................................................. B809 M.3.b.(2)
+4. Outstanding credit card fees and finance charges (included in Schedule HC-S, item 1, column G)2,3....................................................... C407 M.4.
+1. Memorandum item 2.c is to be completed if the principal balance of other financial assets serviced for others is more than $10 million.
+2. The $10 billion asset-size test is based on the total assets reported as of prior year June 30 report date.
+3. Memorandum item 4 is to be completed by holding companies with $10 billion or more in total assets that (1) together with affiliated institutions, have outstanding credit card receivables (as defined in the instructions) that exceed $500 million as of the report date or (2) holding companies that on a consolidated basis are credit card specialty holding companies (as defined in the instructions).
+Memorandum item 3 is to be completed by holding companies with $10 billion or more in total assets.2 03/2022
+FR Y-9C
+Page 71 of 73
+Schedule HC-V—Variable Interest Entities To be completed by holding companies with $5 billion or more in total assets.1
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Securitization Vehicles | | (Column B) Other VIEs | |
+| | Dollar Amounts in Thousands | BHCK | Amount | BHCK | Amount |
+| | 1. Assets of consolidated variable interest entities (VIEs) that can be used only to settle obligations of consolidated VIEs: | | | | |
+| 1.a. | a. Cash and balances due from depository institutions | J981 | | JF84 | |
+| 1.b. | b. Securities not held for trading | HU20 | | HU21 | |
+| 1.c. | c. Loans and leases held for investment, net of allowance, and held for sale .. | HU22 | | HU23 | |
+| 1.d. | d. Other real estate owned | K009 | | JF89 | |
+| 1.e. | e. Other assets | JF91 | | JF90 | |
+| | 2. Liabilities of consolidated VIEs for which creditors do not have recourse to the general credit of the reporting holding company: | | | | |
+| 2.a. | a. Other borrowed money | JF92 | | JF85 | |
+| 2.b. | b. Other liabilities | JF93 | | JF86 | |
+| 3. | 3. All other assets of consolidated VIEs (not included in items 1.a through 1.e above) | K030 | | JF87 | |
+| 4. | 4. All other liabilities of consolidated VIEs (not included in items 2.a through 2.b above) | K033 | | JF88 | |
+Dollar Amounts in Thousands BHCK
+5. Total assets of asset-backed commercial paper (ABCP) conduit VIEs .......................................... JF77
+6. Total liabilities of ABCP conduit VIEs ..................................................................................... JF78
+Amount 5.
+6.
+1. Asset-size test is based on the total assets reported as of prior year June 30 report date.
+03/2024
+FR Y-9C
+Page 72 of 73 Notes to the Balance Sheet—Predecessor Financial Items For holding companies involved in a business combination(s) during the quarter, provide on the lines below quarterly average information for any acquired company(ies) with aggregated assets of $10 billion or more or 5 percent of the reporting holding company's total consolidated assets as of the previous quarter-end, whichever is less.
+Dollar Amounts in Thousands BHBC Amount
+1. Average loans and leases (held for investment and held for sale) ................................................. 3516 1.
+2. Average earning assets ....................................................................................................... 3402 2.
+3. Average total consolidated assets .......................................................................................... 3368 3.
+4. Average equity capital ......................................................................................................... 3519 4.
+Notes to the Balance Sheet (Other) Enter in the lines provided below any additional information on specific line items on the balance sheet or its supporting schedules that the holding company wishes to explain, that has been separately disclosed in the holding company's quarterly reports to its shareholders, in its press releases, or on its quarterly reports to the Securities and Exchange Commission (SEC).
+Each additional piece of information disclosed should include the appropriate reference to schedule and item number, as well as a description of the additional information and the dollar amount (in thousands of dollars) associated with that disclosure.
+Example A holding company has guaranteed a new loan for its leveraged Employee Stock Ownership Plan (ESOP) for $750 thousand and that amount has increased the holding company's long-term unsecured debt by a material amount. The holding company has disclosed that change to its stockholders and to the SEC. Enter on the line item below the following information: TEXT BHCK Amount 0000 Sch. HC, item 16, New loan to holding company's ESOP guaranteed by holding company 0000 750 Outstanding issuances of perpetual preferred stock associated with the U.S. Department of Treasury Community Development Capital Initiative (CDCI) program included in Schedule HC, item 23, Perpetual preferred stock and related surplus (for Subchapter S corporations, outstanding issuances of subordinated debt securities associated with CDCI included in Schedule HC, item 19.a, Subordinated notes and debentures) Notes to the Balance Sheet (Other) TEXT Dollar Amounts in Thousands BHCK Amount 1.
+1.K141 6.B027 5.5360 4.5359 3.5358 2.5357 2.
+3.
+4.
+5.
+6. B027 5357 5358 5359 5360 03/2018
+FR Y-9C
+Page 73 of 73 Notes to the Balance Sheet (Other)—Continued TEXT Dollar Amounts in Thousands BHCK Amount
+7. B028 B028 7.
+8. B029 B029 8.
+9. B030 B030 9.
+10. B031 B031 10.
+11. B032 B032 11.
+12. B033 B033 12.
+13. B034 B034 13.
+14. B035 B035 14.
+15. B036 B036 15.
+16. B037 B037 16.
+17. B038 B038 17.
+18. B039 B039 18.
+19. B040 B040 19.
+20. B041 B041 20.
+03/2003
+[TABLE]
+| | | Page | 73 of 73 |
+| --- | --- | --- | --- |
+| Not | es to the Balance Sheet (Other)—Continued | | |
+| | TEXT Dollar Amounts in Thousands | BHCK Amount | |
+| 7. | B028 | | |
+| | | B028 | 7. |
+| 8. | B029 | | |
+| | | B029 | 8. |
+| 9. | B030 | | |
+| | | B030 | 9. |
+| 10. | B031 | | |
+| | | B031 | 10. |
+| 11. | B032 | | |
+| | | B032 | 11. |
+| 12. | B033 | | |
+| | | B033 | 12. |
+| 13. | B034 | | |
+| | | B034 | 13. |
+| 14. | B035 | | |
+| | | B035 | 14. |
+| 15. | B036 | | |
+| | | B036 | 15. |
+| 16. | B037 | | |
+| | | B037 | 16. |
+| 17. | B038 | | |
+| | | B038 | 17. |
+| 18. | B039 | | |
+| | | B039 | 18. |
+| 19. | B040 | | |
+| | | B040 | 19. |
+| 20. | B041 | | |
+| | | B041 | 20. |
+| | | | 03/2003 |
