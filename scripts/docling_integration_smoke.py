@@ -197,16 +197,20 @@ def main() -> None:
     table_cell_text = normalize_label_text(
         " ".join(cell for table in tables for row in table for cell in row)
     )
-    # Docling preserves the actual FR 2028B column layout but normalizes
-    # some compound labels differently from the legacy flattened text layer.
-    # Anchor on the rendered labels observed in the structured cells.
+    # The ruled-grid extractor rebuilds the FR 2028B form from its drawn lines,
+    # including the sideways option labels that layout models drop. Every reported
+    # item, its item code and its rotated options must sit inside table cells.
     expected_table_labels = (
         "Date Made",
-        "Face Amount Loan in Dollars",
+        "Face Amount of Loan in Dollars",
         "Rate of Interest",
         "Next Date",
-        "Maturity (",
+        "Maturity Date (",
         "Risk Rating",
+        "QTFL 6136",
+        "Prepayment Penalty",
+        "Feeder Livestock",
+        "Not Insured by U.S. Agencies or Departments",
     )
     missing_table_labels = [
         label for label in expected_table_labels

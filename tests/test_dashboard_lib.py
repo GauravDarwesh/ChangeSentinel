@@ -162,3 +162,58 @@ class TestEventWording(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestCompareDiff(unittest.TestCase):
+    def test_diff_runs_reconstruct_both_sequences_and_are_minimal(self):
+        out = run_js(r"""
+          let seed = 7; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+          let ok = true, optimal = true;
+          for (let t = 0; t < 400; t++) {
+            const a = Array.from({length: Math.floor(rnd() * 30)}, () => "abcd"[Math.floor(rnd() * 4)]);
+            const b = a.filter(() => rnd() > 0.25).map(x => rnd() < 0.1 ? "z" : x);
+            const runs = L.diffSequences(a, b);
+            let ia = 0, ib = 0, same = 0;
+            for (const r of runs) {
+              if (r.a[0] !== ia || r.b[0] !== ib) ok = false;
+              if (r.type === "same") { same += r.a[1] - r.a[0]; for (let k = 0; k < r.a[1] - r.a[0]; k++) if (a[r.a[0] + k] !== b[r.b[0] + k]) ok = false; }
+              ia = r.a[1]; ib = r.b[1];
+            }
+            if (ia !== a.length || ib !== b.length) ok = false;
+            const dp = Array.from({length: a.length + 1}, () => new Array(b.length + 1).fill(0));
+            for (let i = a.length - 1; i >= 0; i--) for (let j = b.length - 1; j >= 0; j--) dp[i][j] = a[i] === b[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+            if (same !== dp[0][0]) optimal = false;
+          }
+          console.log(JSON.stringify({ok, optimal}));
+        """)
+        self.assertEqual(out, {"ok": True, "optimal": True})
+
+    def test_large_documents_diff_quickly_through_patience_anchors(self):
+        out = run_js(r"""
+          const a = Array.from({length: 150000}, (_, i) => "line " + i);
+          const b = a.slice(); b.splice(700, 1, "edited"); b.splice(120000, 0, "inserted");
+          const t0 = Date.now(); const runs = L.diffSequences(a, b);
+          console.log(JSON.stringify({ms: Date.now() - t0, changed: runs.filter(r => r.type !== "same").length}));
+        """)
+        self.assertLess(out["ms"], 5000)
+        self.assertEqual(out["changed"], 3)
+
+    def test_aligned_rows_pair_edits_word_by_word_and_keep_insertions_apart(self):
+        out = run_js(r"""
+          const r = L.alignLines("Title\nReports are due in 30 days.\nUnchanged\nOld only line here",
+                                 "Title\nReports are due in 15 days.\nUnchanged\nA completely new sentence");
+          console.log(JSON.stringify({types: r.rows.map(x => x.type), stats: r.stats,
+            del: r.rows[1].segments.filter(s => s.type === "del").map(s => s.text.trim()),
+            add: r.rows[1].segments.filter(s => s.type === "add").map(s => s.text.trim())}));
+        """)
+        self.assertEqual(out["types"], ["same", "edit", "same", "del", "add"])
+        self.assertEqual(out["del"], ["30"])
+        self.assertEqual(out["add"], ["15"])
+
+    def test_changed_words_are_reported_per_side(self):
+        out = run_js(r"""
+          const w = s => s.split(" ").map(text => ({text}));
+          console.log(JSON.stringify(L.changedWords(w("rate of 8.500 percent"), w("rate of 8.750 percent"))));
+        """)
+        self.assertEqual(out, {"removed": [2], "added": [2]})

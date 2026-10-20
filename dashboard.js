@@ -1091,7 +1091,8 @@ function renderSnapshotText(text) {
         const columnCount = Math.max(...parsedRows.map(row => row.length));
         const renderCells = (cells, tag) => {
           const padded = cells.concat(Array(Math.max(0, columnCount - cells.length)).fill(""));
-          return "<tr>" + padded.map(cell => "<" + tag + ">" + esc(cell || "") + "</" + tag + ">").join("") + "</tr>";
+          // Short values (item codes, line numbers, units) stay on one line.
+          return "<tr>" + padded.map(cell => "<" + tag + (String(cell || "").length <= 14 ? ' class="is-short"' : "") + ">" + esc(cell || "") + "</" + tag + ">").join("") + "</tr>";
         };
         const header = parsedRows[0];
         output.push('<div class="doc-table-wrap"><table class="doc-table" style="min-width:' + Math.min(1500, Math.max(520, columnCount * 100)) + 'px"><thead>' +
@@ -1742,71 +1743,6 @@ if (compactQuery && typeof compactQuery.addEventListener === "function") {
 
 
 
-/* ================= Ambient LED frame =================
- * The unlit LED tiles around the console come alive: sparse cells twinkle, and a
- * scan comet circles the frame every 30 seconds (red while scans are failing).
- * Desktop only, paused in background tabs, off for reduced motion.
- */
-(function ambientFrame() {
-  const canvas = document.getElementById("ledFrame");
-  const motion = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
-  if (!canvas || !canvas.getContext) return;
-  const ctx = canvas.getContext("2d");
-  let cells = [], cell = 20, width = 0, height = 0, ratio = 1;
-  const twinkles = new Map();
-  const LAP_MS = 30000, COMET_MS = 6500, TRAIL = 16;
-  const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  function layout() {
-    ratio = Math.min(2, window.devicePixelRatio || 1);
-    width = window.innerWidth; height = window.innerHeight;
-    canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio);
-    cell = parseFloat(css("--cell")) || 20;
-    const cols = Math.ceil(width / cell), rows = Math.ceil(height / cell);
-    cells = [];
-    for (let x = 0; x < cols; x += 1) cells.push([x, 0]);
-    for (let y = 1; y < rows; y += 1) cells.push([cols - 1, y]);
-    for (let x = cols - 2; x >= 0; x -= 1) cells.push([x, rows - 1]);
-    for (let y = rows - 2; y > 0; y -= 1) cells.push([0, y]);
-  }
-  function light(x, y, color, alpha) {
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = color;
-    ctx.fillRect((x * cell + 1) * ratio, (y * cell + 1) * ratio, (cell - 1) * ratio, (cell - 1) * ratio);
-  }
-  function frame(now) {
-    window.requestAnimationFrame(frame);
-    if (document.hidden || (motion && motion.matches) || width <= 980) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const failing = !!document.querySelector("#statusDot.is-error");
-    const on = failing ? css("--led-bad") : css("--led-on");
-    const dim = css("--led-dim");
-    if (Math.random() < 0.035 && cells.length) twinkles.set(Math.floor(Math.random() * cells.length), now);
-    twinkles.forEach((start, index) => {
-      const t = (now - start) / 1800;
-      if (t >= 1) { twinkles.delete(index); return; }
-      const [x, y] = cells[index];
-      light(x, y, dim, Math.sin(Math.PI * t) * 0.9);
-    });
-    const phase = now % LAP_MS;
-    if (phase < COMET_MS && cells.length) {
-      const head = Math.floor((phase / COMET_MS) * cells.length);
-      ctx.shadowColor = on;
-      for (let k = 0; k < TRAIL; k += 1) {
-        const index = head - k;
-        if (index < 0) break;
-        const [x, y] = cells[index];
-        ctx.shadowBlur = k === 0 ? 14 * ratio : 0;
-        light(x, y, on, (1 - k / TRAIL) * 0.95);
-      }
-      ctx.shadowBlur = 0;
-    }
-    ctx.globalAlpha = 1;
-  }
-  layout();
-  window.addEventListener("resize", layout);
-  window.requestAnimationFrame(frame);
-})();
-
 /* ================= Manual scans =================
  * Scans run on GitHub Actions. The dashboard is a static page with no write access,
  * so "Scan now" opens the Regulatory Monitor workflow, where the owner presses
@@ -1856,15 +1792,14 @@ function loadPdfJs() {
 function compareSources(evidence) {
   const before = (evidence && evidence.before) || {};
   const after = (evidence && evidence.after) || {};
+  const text = before.snapshot_location && after.snapshot_location ? { before: before.snapshot_location, after: after.snapshot_location } : null;
   if (before.file_snapshot_location && after.file_snapshot_location && /\.pdf$/i.test(after.file_snapshot_location)) {
-    return { kind: "pdf", before: before.file_snapshot_location, after: after.file_snapshot_location };
+    return { kind: "pdf", before: before.file_snapshot_location, after: after.file_snapshot_location, text };
   }
   if (before.html_snapshot_location && after.html_snapshot_location) {
-    return { kind: "html", before: before.html_snapshot_location, after: after.html_snapshot_location };
+    return { kind: "html", before: before.html_snapshot_location, after: after.html_snapshot_location, text };
   }
-  if (before.snapshot_location && after.snapshot_location) {
-    return { kind: "text", before: before.snapshot_location, after: after.snapshot_location };
-  }
+  if (text) return { kind: "text", before: text.before, after: text.after, text };
   return null;
 }
 async function fetchSnapshotBytes(path) {
@@ -1874,13 +1809,14 @@ async function fetchSnapshotBytes(path) {
 }
 function compareShell(kind, event) {
   const kindLabel = { pdf: "Saved PDFs", html: "Saved pages", text: "Extracted text" }[kind];
-  const highlight = kind === "pdf"
-    ? '<label class="cmp-toggle"><input type="checkbox" data-cmp-highlight checked> Highlight differences</label>' : "";
   return '<div class="cmp" data-kind="' + kind + '">' +
     '<div class="cmp-bar"><span class="cmp-label is-before"><i></i>Previous version</span>' +
-    '<span class="cmp-meta">' + esc(kindLabel) + highlight + '<span class="cmp-presets" role="group" aria-label="Divider position">' +
+    '<span class="cmp-meta"><span class="cmp-kind">' + esc(kindLabel) + "</span>" +
+    '<label class="cmp-toggle"><input type="checkbox" data-cmp-highlight checked> Highlight changes</label>' +
+    '<span class="cmp-presets" role="group" aria-label="Divider position">' +
     '<button type="button" data-cmp-pos="0">Before</button><button type="button" data-cmp-pos="50">Split</button><button type="button" data-cmp-pos="100">After</button></span></span>' +
     '<span class="cmp-label is-after">New · ' + esc(fmt(event.timestamp)) + "<i></i></span></div>" +
+    '<div class="cmp-summary" hidden></div>' +
     '<div class="cmp-stage" style="--pos:50%"><div class="cmp-layer cmp-before"></div><div class="cmp-layer cmp-after"></div>' +
     '<div class="cmp-handle" role="slider" tabindex="0" aria-label="Divider between previous and new version" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">' +
     '<span class="cmp-grip" aria-hidden="true"><i></i><i></i></span></div></div>' +
@@ -1900,7 +1836,7 @@ function wireCompareSlider(root) {
   };
   let dragging = false;
   stage.addEventListener("pointerdown", event => {
-    if (event.button !== 0) return;
+    if (event.button !== 0 || event.target.closest("button, a, summary")) return;
     // On touch, only the handle drags so the page still scrolls vertically.
     if (event.pointerType !== "mouse" && !event.target.closest(".cmp-handle")) return;
     dragging = true;
@@ -1925,6 +1861,18 @@ function wireCompareSlider(root) {
     set(Number(button.dataset.cmpPos));
     window.setTimeout(() => stage.classList.remove("is-animating"), 380);
   }));
+  const highlight = root.querySelector("[data-cmp-highlight]");
+  if (highlight) highlight.addEventListener("change", () => root.classList.toggle("hide-marks", !highlight.checked));
+}
+function compareSummary(root, removed, added, extra) {
+  const box = root.querySelector(".cmp-summary");
+  if (!box) return;
+  const parts = [];
+  if (removed) parts.push('<span class="cmp-chip is-del">' + esc(removed) + "</span>");
+  if (added) parts.push('<span class="cmp-chip is-add">' + esc(added) + "</span>");
+  if (!parts.length) parts.push('<span class="cmp-chip">No text differences found</span>');
+  box.innerHTML = parts.join("") + (extra || "");
+  box.hidden = false;
 }
 async function renderCompare(target, evidence, event, stillCurrent) {
   const sources = compareSources(evidence);
@@ -1939,50 +1887,288 @@ async function renderCompare(target, evidence, event, stillCurrent) {
   status.textContent = "Loading both versions…";
   try {
     if (sources.kind === "pdf") await compareFillPdf(root, before, after, status, sources, alive);
-    else if (sources.kind === "html") await compareFillHtml(before, after, status, sources, event, alive);
-    else await compareFillText(before, after, status, sources, alive);
+    else if (sources.kind === "html") await compareFillHtml(root, before, after, status, sources, event, alive);
+    else await compareFillText(root, status, sources, alive);
   } catch (error) {
     if (alive()) status.textContent = "Couldn't load both versions: " + String(error.message || error);
   }
 }
-async function compareFillText(before, after, status, sources, alive) {
+
+/* ----- Text: aligned rows, removed text red on the left, added text green on the right ----- */
+const CMP_CONTEXT_LINES = 3;
+function compareLineHtml(text, segments, side) {
+  if (text == null) return "";
+  const raw = String(text);
+  const heading = !segments && raw.match(/^\s*(#{1,6})\s+(.*)$/);
+  const isTable = /^\s*\|.*\|\s*$/.test(raw);
+  if (isTable && /^\s*\|?[\s:|-]+\|?\s*$/.test(raw) && raw.includes("-")) return '<span class="cmp-rule"></span>';
+  let html;
+  if (segments) {
+    html = segments.map(segment => {
+      if (segment.type === "same") return esc(segment.text);
+      if (side === "before" && segment.type === "del") return '<mark class="cmp-del">' + esc(segment.text) + "</mark>";
+      if (side === "after" && segment.type === "add") return '<mark class="cmp-add">' + esc(segment.text) + "</mark>";
+      return "";
+    }).join("");
+  } else {
+    html = esc(heading ? heading[2] : raw);
+  }
+  if (isTable) {
+    html = html.replace(/^\s*\|/, "").replace(/\|\s*$/, "").split("|").map(cell => '<span class="cmp-td">' + (cell.trim() || "&nbsp;") + "</span>").join("");
+    return '<span class="cmp-tr">' + html + "</span>";
+  }
+  if (heading) return '<span class="cmp-h">' + html + "</span>";
+  return html || "&nbsp;";
+}
+function compareRowHtml(row) {
+  const before = row.type === "add" ? '<span class="cmp-spacer"></span>' : compareLineHtml(row.before, row.type === "edit" ? row.segments : null, "before");
+  const after = row.type === "del" ? '<span class="cmp-spacer"></span>' : compareLineHtml(row.after, row.type === "edit" ? row.segments : null, "after");
+  return '<div class="cmp-row is-' + row.type + '"><div class="cmp-cell is-b">' + before + '</div><div class="cmp-cell is-a">' + after + "</div></div>";
+}
+async function compareFillText(root, status, sources, alive) {
   const [a, b] = await Promise.all([
     readSnapshotFile(sources.before, state.snapshotCache),
     readSnapshotFile(sources.after, state.snapshotCache)
   ]);
   if (!alive()) return;
-  before.innerHTML = '<div class="cmp-doc">' + renderSnapshotText(a) + "</div>";
-  after.innerHTML = '<div class="cmp-doc">' + renderSnapshotText(b) + "</div>";
-  status.textContent = "These versions predate saved originals, so their extracted text is compared. The redline marks each edit.";
+  const { rows, stats } = L.alignLines(a, b);
+  const stage = root.querySelector(".cmp-stage");
+  stage.classList.add("is-rows");
+  stage.querySelectorAll(".cmp-layer").forEach(layer => layer.remove());
+  const doc = document.createElement("div");
+  doc.className = "cmp-rows";
+  // Collapse long unchanged stretches, keeping a few lines of context around each change.
+  const html = [];
+  for (let i = 0; i < rows.length;) {
+    if (rows[i].type !== "same") { html.push(compareRowHtml(rows[i])); i += 1; continue; }
+    let j = i;
+    while (j < rows.length && rows[j].type === "same") j += 1;
+    const keepHead = i === 0 ? 0 : CMP_CONTEXT_LINES;
+    const keepTail = j === rows.length ? 0 : CMP_CONTEXT_LINES;
+    if (j - i <= keepHead + keepTail + 2) {
+      for (let k = i; k < j; k += 1) html.push(compareRowHtml(rows[k]));
+    } else {
+      for (let k = i; k < i + keepHead; k += 1) html.push(compareRowHtml(rows[k]));
+      const hidden = rows.slice(i + keepHead, j - keepTail);
+      html.push('<details class="cmp-gap"><summary>' + hidden.length.toLocaleString() + " unchanged lines</summary>" + hidden.map(compareRowHtml).join("") + "</details>");
+      for (let k = j - keepTail; k < j; k += 1) html.push(compareRowHtml(rows[k]));
+    }
+    i = j;
+  }
+  doc.innerHTML = html.join("");
+  stage.prepend(doc);
+  const removed = stats.removed + stats.edited, added = stats.added + stats.edited;
+  compareSummary(root, removed ? plural(removed, "line with removed text", "lines with removed text") : "", added ? plural(added, "line with added text", "lines with added text") : "");
+  status.textContent = "Extracted text of both versions, aligned line by line. Removed text is red on the left of the divider, added text green on the right.";
 }
-async function compareFillHtml(before, after, status, sources, event, alive) {
-  const [a, b] = await Promise.all([
+
+/* ----- HTML: the saved pages, with changed text marked inside each frame ----- */
+function normalizeForMatch(value) {
+  return String(value || "").normalize("NFKC").replace(/ /g, " ").replace(/\s+/g, " ").trim();
+}
+function flattenDocumentText(doc) {
+  // Visible text with a map from each normalized character back to its text node.
+  const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, {
+    acceptNode: node => node.parentElement && !/^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE)$/.test(node.parentElement.tagName) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
+  });
+  let flat = "";
+  const map = [];
+  let lastSpace = true;
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const text = node.nodeValue.normalize("NFKC");
+    for (let i = 0; i < text.length; i += 1) {
+      const ch = /\s|\u00a0/.test(text[i]) ? " " : text[i];
+      if (ch === " " && lastSpace) continue;
+      flat += ch; map.push([node, i]); lastSpace = ch === " ";
+    }
+  }
+  return { flat, map };
+}
+function countOccurrences(haystack, needle) {
+  let count = 0;
+  for (let at = haystack.indexOf(needle); at >= 0; at = haystack.indexOf(needle, at + needle.length)) count += 1;
+  return count;
+}
+function markTextInDocument(doc, index, targets, cls, otherFlat) {
+  if (!doc || !doc.body) return 0;
+  const style = doc.createElement("style");
+  style.textContent = "mark.cs-del{background:rgba(255,92,72,.30);box-shadow:0 0 0 1px rgba(214,48,30,.55);color:inherit;border-radius:2px;text-decoration:line-through;text-decoration-color:rgba(214,48,30,.8)}" +
+    "mark.cs-add{background:rgba(52,199,110,.30);box-shadow:0 0 0 1px rgba(28,140,70,.55);color:inherit;border-radius:2px}" +
+    "body.cs-hide-marks mark.cs-del,body.cs-hide-marks mark.cs-add{background:none;box-shadow:none;text-decoration:inherit}";
+  (doc.head || doc.documentElement).append(style);
+  const { flat, map } = index;
+  const ranges = [];
+  let cursor = 0;
+  const find = (needle, from, to) => {
+    let at = flat.indexOf(needle, from);
+    if (at >= 0 && to != null && at + needle.length > to) at = -1;
+    return at;
+  };
+  targets.forEach(target => {
+    const line = normalizeForMatch(target.line);
+    if (target.whole) {
+      // Text that also exists in the other version moved or re-wrapped; it was not removed or added.
+      target.parts.forEach(part => {
+        const needle = normalizeForMatch(part);
+        if (needle.length < 3) return;
+        // Text that is just as frequent in the other version moved or re-wrapped; a
+        // repeated sentence that occurs fewer times there had one copy removed or added.
+        if (otherFlat && countOccurrences(otherFlat, needle) >= countOccurrences(flat, needle)) return;
+        let at = find(needle, cursor);
+        if (at < 0) at = find(needle, 0);
+        if (at < 0) return;
+        ranges.push([at, at + needle.length]);
+        cursor = at + needle.length;
+      });
+      return;
+    }
+    // Word-level edit: a line that exists whole in the other version was only re-wrapped.
+    if (otherFlat && line.length >= 8 && otherFlat.includes(line)) return;
+    // Otherwise locate the line first, then mark only the changed words inside it.
+    const lineAt = line.length >= 8 ? (find(line, cursor) >= 0 ? find(line, cursor) : find(line, 0)) : -1;
+    target.parts.forEach(part => {
+      const needle = normalizeForMatch(part);
+      if (!needle) return;
+      let at = -1;
+      if (lineAt >= 0) at = find(needle, lineAt, lineAt + line.length);
+      else if (needle.length >= 12 && !(otherFlat && otherFlat.includes(needle))) at = find(needle, cursor) >= 0 ? find(needle, cursor) : find(needle, 0);
+      if (at < 0) return;
+      ranges.push([at, at + needle.length]);
+    });
+    if (lineAt >= 0) cursor = lineAt + line.length;
+  });
+  // Wrap from the end so earlier offsets stay valid.
+  ranges.sort((x, y) => y[0] - x[0]).forEach(([start, end]) => {
+    const pieces = new Map();
+    for (let k = start; k < end; k += 1) {
+      const [node, offset] = map[k];
+      const piece = pieces.get(node) || [offset, offset + 1];
+      piece[0] = Math.min(piece[0], offset); piece[1] = Math.max(piece[1], offset + 1);
+      pieces.set(node, piece);
+    }
+    pieces.forEach(([from, to], node) => {
+      if (!node.parentNode) return;
+      const range = doc.createRange();
+      range.setStart(node, from);
+      range.setEnd(node, Math.min(to, node.nodeValue.length));
+      const mark = doc.createElement("mark");
+      mark.className = cls;
+      try { range.surroundContents(mark); } catch (_) { /* range crosses an element boundary */ }
+    });
+  });
+  return ranges.length;
+}
+function htmlMarkTargets(rows, side) {
+  const targets = [];
+  rows.forEach(row => {
+    const line = side === "before" ? row.before : row.after;
+    if (line == null) return;
+    const whole = side === "before" ? row.type === "del" : row.type === "add";
+    if (whole) {
+      targets.push({ whole: true, line, parts: String(line).replace(/^\s*(#+|[-*•]|\d+[.)])\s+/, "").split(/\s\|\s|^\||\|$/).map(s => s.trim()).filter(Boolean) });
+    } else if (row.type === "edit") {
+      const want = side === "before" ? "del" : "add";
+      const parts = row.segments.filter(seg => seg.type === want && seg.text.trim()).map(seg => seg.text.replace(/\|/g, " ").trim()).filter(Boolean);
+      if (parts.length) targets.push({ whole: false, line: String(line).replace(/\|/g, " "), parts });
+    }
+  });
+  return targets;
+}
+async function compareFillHtml(root, before, after, status, sources, event, alive) {
+  const [a, b, textA, textB] = await Promise.all([
     readSnapshotFile(sources.before, state.htmlCache),
-    readSnapshotFile(sources.after, state.htmlCache)
+    readSnapshotFile(sources.after, state.htmlCache),
+    sources.text ? readSnapshotFile(sources.text.before, state.snapshotCache).catch(() => null) : null,
+    sources.text ? readSnapshotFile(sources.text.after, state.snapshotCache).catch(() => null) : null
   ]);
   if (!alive()) return;
-  const frame = (layer, html) => new Promise(resolve => {
+  const aligned = textA != null && textB != null ? L.alignLines(textA, textB) : null;
+  let marked = 0;
+  const frame = (layer, html, side) => new Promise(resolve => {
     const node = document.createElement("iframe");
     node.className = "cmp-frame";
-    node.title = layer === before ? "Previous saved page" : "New saved page";
-    // Same-origin without allow-scripts: the saved page cannot run code, but its
-    // height can be measured so both versions scroll together under the divider.
+    node.title = side === "before" ? "Previous saved page" : "New saved page";
+    // Same-origin without allow-scripts: the saved page cannot run code, but its text
+    // can be marked and its height measured so both versions scroll under the divider.
     node.setAttribute("sandbox", "allow-same-origin");
-    node.addEventListener("load", () => {
-      try {
-        const doc = node.contentDocument;
-        node.style.height = Math.min(30000, Math.max(600, doc.documentElement.scrollHeight, doc.body ? doc.body.scrollHeight : 0)) + "px";
-      } catch (_) { node.style.height = "1600px"; }
-      resolve(node);
-    });
+    node.addEventListener("load", () => resolve(node), { once: true });
     node.srcdoc = previewSource(html, event.url || "");
     layer.append(node);
   });
-  await Promise.all([frame(before, a), frame(after, b)]);
+  const [frameA, frameB] = await Promise.all([frame(before, a, "before"), frame(after, b, "after")]);
   if (!alive()) return;
-  const height = Math.max(before.scrollHeight, after.scrollHeight);
-  before.querySelector("iframe").style.height = after.querySelector("iframe").style.height = height + "px";
-  status.textContent = "Scripts are disabled. Images and styles load from the live site, so they can differ from what was captured.";
+  try {
+    if (aligned) {
+      const indexA = flattenDocumentText(frameA.contentDocument), indexB = flattenDocumentText(frameB.contentDocument);
+      marked += markTextInDocument(frameA.contentDocument, indexA, htmlMarkTargets(aligned.rows, "before"), "cs-del", indexB.flat);
+      marked += markTextInDocument(frameB.contentDocument, indexB, htmlMarkTargets(aligned.rows, "after"), "cs-add", indexA.flat);
+    }
+  } catch (_) { /* marking is best effort */ }
+  const measure = node => {
+    try {
+      const doc = node.contentDocument;
+      return Math.min(40000, Math.max(600, doc.documentElement.scrollHeight, doc.body ? doc.body.scrollHeight : 0));
+    } catch (_) { return 1600; }
+  };
+  const height = Math.max(measure(frameA), measure(frameB));
+  frameA.style.height = frameB.style.height = height + "px";
+  const highlight = root.querySelector("[data-cmp-highlight]");
+  if (highlight) highlight.addEventListener("change", () => root.querySelectorAll("iframe.cmp-frame").forEach(f => {
+    try { f.contentDocument.body.classList.toggle("cs-hide-marks", !highlight.checked); } catch (_) {}
+  }));
+  if (aligned) {
+    const s = aligned.stats;
+    compareSummary(root, s.removed + s.edited ? plural(s.removed + s.edited, "removed passage", "removed passages") : "", s.added + s.edited ? plural(s.added + s.edited, "added passage", "added passages") : "");
+  }
+  status.textContent = (aligned && !marked ? "No wording was added or removed on the page itself; the differences are line breaks or formatting, listed in the redline. " : "") +
+    "Scripts are disabled. Images and styles load from the live site, so they can differ from what was captured.";
+}
+
+/* ----- PDF: rendered pages, with removed words boxed red and added words green ----- */
+async function pdfWords(doc, onProgress) {
+  const words = [];
+  for (let number = 1; number <= doc.numPages; number += 1) {
+    const page = await doc.getPage(number);
+    const viewport = page.getViewport({ scale: 1 });
+    const content = await page.getTextContent();
+    content.items.forEach(item => {
+      const str = item.str || "";
+      if (!str.trim()) return;
+      const [a, b, c, d, e, f] = item.transform;
+      const along = Math.hypot(a, b) || 1, up = Math.hypot(c, d) || 1;
+      const ux = a / along, uy = b / along, vx = c / up, vy = d / up;
+      const length = item.width || along * str.length * 0.5;
+      const re = /\S+/g;
+      let match;
+      while ((match = re.exec(str))) {
+        const t0 = length * (match.index / str.length), t1 = length * ((match.index + match[0].length) / str.length);
+        const corners = [[t0, -0.22 * up], [t1, -0.22 * up], [t1, 0.92 * up], [t0, 0.92 * up]].map(([t, h]) =>
+          viewport.convertToViewportPoint(e + ux * t + vx * h, f + uy * t + vy * h));
+        const xs = corners.map(p => p[0]), ys = corners.map(p => p[1]);
+        words.push({
+          text: match[0], page: number,
+          box: [Math.min(...xs) / viewport.width, Math.min(...ys) / viewport.height, Math.max(...xs) / viewport.width, Math.max(...ys) / viewport.height]
+        });
+      }
+    });
+    if (onProgress && number % 10 === 0) onProgress(number, doc.numPages);
+  }
+  return words;
+}
+function mergeWordBoxes(words, indexes) {
+  // Join neighbouring changed words on the same line into one highlight.
+  const out = [];
+  indexes.forEach(index => {
+    const w = words[index];
+    const last = out[out.length - 1];
+    const h = w.box[3] - w.box[1];
+    if (last && last.page === w.page && Math.abs(last.box[1] - w.box[1]) < h * 0.5 && w.box[0] - last.box[2] < h * 1.6 && w.box[0] >= last.box[0] - h) {
+      last.box = [Math.min(last.box[0], w.box[0]), Math.min(last.box[1], w.box[1]), Math.max(last.box[2], w.box[2]), Math.max(last.box[3], w.box[3])];
+    } else {
+      out.push({ page: w.page, box: w.box.slice() });
+    }
+  });
+  return out;
 }
 async function compareFillPdf(root, before, after, status, sources, alive) {
   const [lib, bytesA, bytesB] = await Promise.all([loadPdfJs(), fetchSnapshotBytes(sources.before), fetchSnapshotBytes(sources.after)]);
@@ -1992,14 +2178,6 @@ async function compareFillPdf(root, before, after, status, sources, alive) {
   const stage = root.querySelector(".cmp-stage");
   const width = Math.max(320, stage.clientWidth);
   const ratio = Math.min(2, window.devicePixelRatio || 1);
-  const highlight = root.querySelector("[data-cmp-highlight]");
-  const changedPages = new Set();
-  let checked = 0;
-  const updateStatus = () => {
-    status.textContent = (docA.numPages === docB.numPages ? docA.numPages + " pages" : "Previous " + docA.numPages + " pages · new " + docB.numPages + " pages") +
-      (checked ? " · " + changedPages.size + " of " + checked + " checked " + (checked === 1 ? "page differs" : "pages differ") : "") +
-      (total < Math.max(docA.numPages, docB.numPages) ? " · showing the first " + total : "") + ". Scroll to render more.";
-  };
   const pageSize = async (doc, number) => {
     if (number > doc.numPages) return null;
     const page = await doc.getPage(number);
@@ -2015,73 +2193,32 @@ async function compareFillPdf(root, before, after, status, sources, alive) {
       const slot = document.createElement("div");
       slot.className = "cmp-page" + (size ? "" : " is-missing");
       slot.style.height = height + "px";
-      slot.innerHTML = size ? "" : '<span>' + label + "</span>";
+      slot.dataset.page = String(number);
+      if (size) {
+        // Highlight boxes are positioned against the page's own rendered area.
+        slot.innerHTML = '<div class="cmp-sheet" style="height:' + size.height + 'px"></div><span class="cmp-pageno">' + number + "</span>";
+      } else {
+        slot.innerHTML = "<span>" + label + "</span>";
+      }
       layer.append(slot);
       return slot;
     };
     slots.push({ number, sa, sb, a: make(before, sa, "Not in the previous version"), b: make(after, sb, "Not in the new version") });
   }
-  updateStatus();
   const draw = async (size, slot) => {
+    const sheet = slot.querySelector(".cmp-sheet");
     const canvas = document.createElement("canvas");
     const viewport = size.page.getViewport({ scale: size.scale * ratio });
     canvas.width = Math.round(viewport.width);
     canvas.height = Math.round(viewport.height);
     canvas.style.width = width + "px";
-    await size.page.render({ canvasContext: canvas.getContext("2d", { willReadFrequently: true }), viewport }).promise;
-    slot.append(canvas);
-    return canvas;
-  };
-  const markDifferences = (slot, ca, cb) => {
-    if (!ca || !cb || ca.width !== cb.width || ca.height !== cb.height) return;
-    const ctxA = ca.getContext("2d", { willReadFrequently: true });
-    const ctxB = cb.getContext("2d", { willReadFrequently: true });
-    const da = ctxA.getImageData(0, 0, ca.width, ca.height).data;
-    const db = ctxB.getImageData(0, 0, cb.width, cb.height).data;
-    // Mark changed regions, not changed pixels: a changed glyph is black on both
-    // versions' strokes, so pixel tints would be invisible. Blocks tint the paper.
-    const w = ca.width, h = ca.height, block = Math.round(10 * ratio);
-    const bw = Math.ceil(w / block), bh = Math.ceil(h / block);
-    const marks = new Uint8Array(bw * bh);
-    let differing = 0;
-    for (let y = 0; y < h; y += 1) {
-      const row = (y / block) | 0;
-      for (let x = 0; x < w; x += 1) {
-        const i = (y * w + x) * 4;
-        if (Math.abs(da[i] - db[i]) + Math.abs(da[i + 1] - db[i + 1]) + Math.abs(da[i + 2] - db[i + 2]) > 90) {
-          differing += 1;
-          marks[row * bw + ((x / block) | 0)] = 1;
-        }
-      }
-    }
-    checked += 1;
-    if (differing > 12) {
-      const overA = document.createElement("canvas"), overB = document.createElement("canvas");
-      [[overA, "rgb(255, 106, 82)"], [overB, "rgb(255, 159, 28)"]].forEach(([c, color]) => {
-        c.width = w; c.height = h; c.className = "cmp-diff"; c.style.width = width + "px";
-        const g = c.getContext("2d");
-        g.fillStyle = color;
-        for (let by = 0; by < bh; by += 1) {
-          for (let bx = 0; bx < bw; bx += 1) {
-            if (!marks[by * bw + bx]) continue;
-            // Pad each marked block by one block so a changed word reads as one region.
-            g.fillRect((bx - 1) * block, (by - 1) * block, block * 3, block * 3);
-          }
-        }
-      });
-      changedPages.add(slot.number);
-      slot.a.append(overA);
-      slot.b.append(overB);
-      slot.a.classList.add("has-diff");
-      slot.b.classList.add("has-diff");
-    }
-    updateStatus();
+    await size.page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+    sheet.prepend(canvas);
   };
   const renderSlot = async slot => {
     if (slot.rendered) return;
     slot.rendered = true;
-    const [ca, cb] = await Promise.all([slot.sa ? draw(slot.sa, slot.a) : null, slot.sb ? draw(slot.sb, slot.b) : null]);
-    if (alive()) markDifferences(slot, ca, cb);
+    await Promise.all([slot.sa ? draw(slot.sa, slot.a) : null, slot.sb ? draw(slot.sb, slot.b) : null]);
   };
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
@@ -2089,11 +2226,40 @@ async function compareFillPdf(root, before, after, status, sources, alive) {
       const slot = slots.find(candidate => candidate.a === entry.target);
       if (slot) { observer.unobserve(entry.target); renderSlot(slot); }
     });
-  }, { root: root.closest(".detail-pane"), rootMargin: "800px 0px" });
+  }, { root: root.closest(".detail-pane"), rootMargin: "900px 0px" });
   slots.forEach(slot => observer.observe(slot.a));
-  if (highlight) {
-    highlight.addEventListener("change", () => root.classList.toggle("hide-diff", !highlight.checked));
-  }
+
+  status.textContent = "Comparing the words of both versions…";
+  const [wordsA, wordsB] = await Promise.all([
+    pdfWords(docA, (n, all) => { if (alive()) status.textContent = "Reading the previous version… page " + n + " of " + all; }),
+    pdfWords(docB)
+  ]);
+  if (!alive()) return;
+  const { removed, added } = L.changedWords(wordsA, wordsB, { maxD: 4000 });
+  const paint = (words, indexes, layer, cls) => {
+    mergeWordBoxes(words, indexes).forEach(hit => {
+      if (hit.page > total) return;
+      const sheet = layer.querySelector('.cmp-page[data-page="' + hit.page + '"] .cmp-sheet');
+      if (!sheet) return;
+      const mark = document.createElement("i");
+      mark.className = "cmp-hl " + cls;
+      const [x0, y0, x1, y1] = hit.box;
+      mark.style.cssText = "left:" + (x0 * 100).toFixed(3) + "%;top:" + (y0 * 100).toFixed(3) + "%;width:" + ((x1 - x0) * 100).toFixed(3) + "%;height:" + ((y1 - y0) * 100).toFixed(3) + "%";
+      sheet.append(mark);
+    });
+  };
+  paint(wordsA, removed, before, "is-del");
+  paint(wordsB, added, after, "is-add");
+  const pages = [...new Set(removed.map(i => wordsA[i].page).concat(added.map(i => wordsB[i].page)))].sort((x, y) => x - y);
+  const jump = pages.length ? '<span class="cmp-pages">Changed pages ' + pages.slice(0, 30).map(p => '<button type="button" data-cmp-page="' + p + '">' + p + "</button>").join("") + (pages.length > 30 ? " …" : "") + "</span>" : "";
+  compareSummary(root, removed.length ? plural(removed.length, "word removed", "words removed") : "", added.length ? plural(added.length, "word added", "words added") : "", jump);
+  root.querySelectorAll("[data-cmp-page]").forEach(button => button.addEventListener("click", () => {
+    const slot = before.querySelector('.cmp-page[data-page="' + button.dataset.cmpPage + '"]');
+    if (slot) slot.scrollIntoView({ behavior: "smooth", block: "start" });
+  }));
+  status.textContent = (docA.numPages === docB.numPages ? docA.numPages + " pages" : "Previous " + docA.numPages + " pages, new " + docB.numPages + " pages") +
+    (total < Math.max(docA.numPages, docB.numPages) ? " (showing the first " + total + ")" : "") +
+    ". Pages render as you scroll. Text changes are compared word by word; changes to images or drawings alone are not highlighted.";
 }
 
 /* ================= Ask Sentinel =================
