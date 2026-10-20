@@ -71,13 +71,15 @@
       "id": "d63f24035c41c768",
       "evidence": "data/evidence/d63f24035c41c76857dd5c90ecfa9222b5d8d3d3c914626f192a47345a678e32.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19"
+      "why": "PDF table-reconstruction artifact: the Federal Reserve attachment SHA-256 is unchanged, while normalized extraction loses multiple [TABLE] blocks. The deterministic drift guard must suppress it before semantic AI.",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "c2f9da22155df2c4",
       "evidence": "data/evidence/c2f9da22155df2c4cecbe549ccd4015844ff3cb8fea8062d3439b0d3434aeb24.json",
       "expected_relevant": false,
-      "why": "Parser-only change: source bytes identical (HTML comparison signature or raw PDF/ZIP bytes unchanged); alert delivered 2026-10-19"
+      "why": "PDF table-reconstruction artifact: the FR 2028D attachment SHA-256 is unchanged, while normalized extraction loses reconstructed [TABLE] content. The deterministic drift guard must suppress it before semantic AI.",
+      "expected_decision_source": "deterministic_extraction_drift_guard"
     },
     {
       "id": "0c9cb7869d0a905f",
