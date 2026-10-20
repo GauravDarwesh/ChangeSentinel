@@ -40,7 +40,7 @@ class TestAskSentinelContract(unittest.TestCase):
             "search_ask_sentinel_documents",
             "openai/gpt-oss-20b",
             "GROQ_API",
-            "MAX_CONTEXT_CHARS = 10500",
+            "MAX_CONTEXT_CHARS = 8500",
         ):
             with self.subTest(token=token):
                 self.assertIn(token, backend)

@@ -1,6 +1,6 @@
 const REPOSITORY = 'GauravDarwesh/ChangeSentinel';
 const MODEL = 'openai/gpt-oss-20b';
-const MAX_CONTEXT_CHARS = 10500;
+const MAX_CONTEXT_CHARS = 8500;
 const MAX_QUESTION_CHARS = 1200;
 const MAX_OUTPUT_TOKENS = 800;
 const CHUNK_CHARS = 4200;
@@ -327,7 +327,7 @@ async function fetchRawFile(sha: string, path: string): Promise<string> {
 }
 
 async function upsertDocs(docs: Doc[]): Promise<void> {
-  const batchSize = 70;
+  const batchSize = 180;
   for (let start = 0; start < docs.length; start += batchSize) {
     const batch = docs.slice(start, start + batchSize);
     const response = await rest('ask_sentinel_documents?on_conflict=id', {
@@ -515,8 +515,8 @@ function historyForPrompt(history: unknown): Array<{ role: 'user' | 'assistant';
   if (!Array.isArray(history)) return [];
   return history
     .filter((entry: any) => entry && (entry.role === 'user' || entry.role === 'assistant') && typeof entry.content === 'string')
-    .slice(-6)
-    .map((entry: any) => ({ role: entry.role, content: entry.content.slice(0, 700) }));
+    .slice(-4)
+    .map((entry: any) => ({ role: entry.role, content: entry.content.slice(0, 450) }));
 }
 
 async function groqCompletion(question: string, context: string, history: Array<{ role: 'user' | 'assistant'; content: string }>): Promise<string> {
