@@ -336,7 +336,7 @@ class TestDiscoveryAndRemovalGuards(unittest.TestCase):
         )
         result = Mock(
             returncode=0,
-            stdout="https://www.example.com/a\\n",
+            stdout="https://www.example.com/a\n",
             stderr="",
         )
         with tempfile.TemporaryDirectory() as temporary:
@@ -361,7 +361,7 @@ class TestDiscoveryAndRemovalGuards(unittest.TestCase):
         )
         result = Mock(
             returncode=2,
-            stdout="https://www.example.com/a\\n",
+            stdout="https://www.example.com/a\n",
             stderr="crawler exited before completing the crawl",
         )
         with tempfile.TemporaryDirectory() as temporary:
