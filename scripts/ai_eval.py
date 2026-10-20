@@ -23,6 +23,41 @@ from regmon.ai import AIConfig, analyze  # noqa: E402
 from regmon.engine import is_extraction_drift  # noqa: E402
 
 CASES = Path(__file__).with_name("ai_eval_cases.json")
+EXPECTED_DECISION_SOURCES = frozenset({"ai_model", "deterministic_extraction_drift_guard"})
+
+
+def validate_case(case: object, index: int | None = None) -> dict:
+    """Fail closed when a fixture omits or corrupts expected evaluation metadata."""
+    label = f"Case {index}" if index is not None else "Evaluation case"
+    if not isinstance(case, dict):
+        raise ValueError(f"{label} must be a JSON object")
+    case_id = str(case.get("id") or "").strip()
+    label = f"Case {case_id}" if case_id else label
+    if not case_id:
+        raise ValueError(f"{label} is missing a non-empty id")
+    if type(case.get("expected_relevant")) is not bool:
+        raise ValueError(f"{label} expected_relevant must be a boolean")
+    expected_source = case.get("expected_decision_source")
+    if expected_source not in EXPECTED_DECISION_SOURCES:
+        allowed = ", ".join(sorted(EXPECTED_DECISION_SOURCES))
+        raise ValueError(f"{label} expected_decision_source must be one of: {allowed}")
+    return case
+
+
+def validate_cases(cases: object) -> list[dict]:
+    """Validate the complete fixture set before performing any paid/model calls."""
+    if not isinstance(cases, list) or not cases:
+        raise ValueError("AI evaluation fixture must contain a non-empty cases list")
+    validated = []
+    seen_ids = set()
+    for index, candidate in enumerate(cases, start=1):
+        case = validate_case(candidate, index)
+        case_id = case["id"].strip()
+        if case_id in seen_ids:
+            raise ValueError(f"Duplicate AI evaluation case id: {case_id}")
+        seen_ids.add(case_id)
+        validated.append(case)
+    return validated
 
 
 def load_evidence(case: dict) -> dict | None:
@@ -83,6 +118,7 @@ def extraction_drift_reason(evidence: dict | None) -> str | None:
 
 def evaluate_case(case: dict, config: AIConfig) -> dict:
     """Return one auditable end-to-end decision and its source."""
+    case = validate_case(case)
     url, event, diff = load_case(case)
     evidence = load_evidence(case)
     drift_reason = extraction_drift_reason(evidence)
@@ -109,7 +145,7 @@ def evaluate_case(case: dict, config: AIConfig) -> dict:
 
     verdict_correct = verdict is case["expected_relevant"]
     expected_source = case.get("expected_decision_source")
-    source_correct = not expected_source or decision_source == expected_source
+    source_correct = decision_source == expected_source
     return {
         "id": case["id"],
         "expected": case["expected_relevant"],
@@ -163,6 +199,14 @@ def main() -> None:
         parser.error("--min-accuracy must be between 0 and 1")
     if not 0.0 <= args.min_model_accuracy <= 1.0:
         parser.error("--min-model-accuracy must be between 0 and 1")
+    try:
+        payload = json.loads(CASES.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict):
+            raise ValueError("AI evaluation fixture must be a JSON object")
+        cases = validate_cases(payload.get("cases"))
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        raise SystemExit(f"Invalid AI evaluation fixture: {exc}") from exc
+
     if not os.getenv("OPENROUTER_API_KEY"):
         raise SystemExit("OPENROUTER_API_KEY is required for the AI evaluation")
 
@@ -171,7 +215,6 @@ def main() -> None:
         attempts=int(os.getenv("AI_ATTEMPTS", "2")),
         model=os.getenv("OPENROUTER_MODEL", "openrouter/free"),
     )
-    cases = json.loads(CASES.read_text(encoding="utf-8"))["cases"]
     rows = [evaluate_case(case, config) for case in cases]
     correct = sum(row["correct"] for row in rows)
     accuracy = correct / max(1, len(rows))
