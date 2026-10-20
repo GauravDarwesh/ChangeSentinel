@@ -5,8 +5,8 @@ guard first, matching the production engine. Only source changes that survive th
 guard are sent to semantic AI. The report includes both end-to-end and model-only
 accuracy so deterministic suppressions cannot be mistaken for model performance.
 
-Usage: OPENROUTER_API_KEY=... python scripts/ai_eval.py [--min-accuracy 0.8] [--min-model-accuracy 0.8]
-Exit status 1 when either accuracy threshold is missed or the key is missing.
+Usage: OPENROUTER_API_KEY=... python scripts/ai_eval.py [--min-accuracy 0.8] [--min-model-accuracy 0.8] [--repeats 2]
+Exit status 1 when accuracy, decision-source, or repeated-model-agreement thresholds are missed.
 """
 from __future__ import annotations
 
@@ -162,6 +162,59 @@ def evaluate_case(case: dict, config: AIConfig) -> dict:
 
 
 
+def summarize_model_variance(cases: list[dict], rows: list[dict], repeats: int) -> dict:
+    """Measure repeatability per model-routed case; invalid or missing outputs are unstable."""
+    model_cases = [
+        case for case in cases
+        if case["expected_decision_source"] == "ai_model"
+    ]
+    details = []
+    for case in model_cases:
+        observations = sorted(
+            (row for row in rows if row["id"] == case["id"]),
+            key=lambda row: row.get("repeat", 0),
+        )
+        verdicts = [row.get("got") for row in observations]
+        statuses = [row.get("status", "unknown") for row in observations]
+        stable = (
+            len(observations) == repeats
+            and all(row.get("decision_source") == "ai_model" for row in observations)
+            and all(row.get("status") == "ok" and type(row.get("got")) is bool for row in observations)
+            and len(set(verdicts)) == 1
+        )
+        details.append({
+            "id": case["id"],
+            "expected": case["expected_relevant"],
+            "verdicts": verdicts,
+            "statuses": statuses,
+            "stable": stable,
+        })
+    stable_count = sum(1 for detail in details if detail["stable"])
+    case_count = len(details)
+    return {
+        "repeats_per_case": repeats,
+        "model_cases": case_count,
+        "stable_cases": stable_count,
+        "unstable_cases": case_count - stable_count,
+        "agreement": round(stable_count / case_count, 3) if case_count else None,
+        "cases": details,
+    }
+
+
+def evaluate_cases(cases: list[dict], config: AIConfig, repeats: int = 2) -> tuple[list[dict], dict]:
+    """Evaluate deterministic cases once and model-routed cases repeatedly."""
+    if not 2 <= repeats <= 3:
+        raise ValueError("repeats must be between 2 and 3")
+    rows = []
+    for case in cases:
+        run_count = repeats if case["expected_decision_source"] == "ai_model" else 1
+        for repetition in range(1, run_count + 1):
+            row = evaluate_case(case, config)
+            row["repeat"] = repetition
+            rows.append(row)
+    return rows, summarize_model_variance(cases, rows, repeats)
+
+
 def threshold_failures(
     *,
     accuracy: float,
@@ -170,6 +223,9 @@ def threshold_failures(
     min_accuracy: float,
     min_model_accuracy: float,
     decision_source_failures: int = 0,
+    model_agreement: float | None = None,
+    expected_model_case_count: int = 0,
+    min_model_agreement: float = 0.8,
 ) -> list[str]:
     """Keep aggregate accuracy from hiding model or decision-routing regressions."""
     failures = []
@@ -188,6 +244,12 @@ def threshold_failures(
         failures.append(
             f"Semantic-AI-only relevance accuracy {value} is below the {min_model_accuracy:.1%} threshold"
         )
+    if model_case_count > 0 and expected_model_case_count > 0:
+        if model_agreement is None or model_agreement < min_model_agreement:
+            value = "unavailable" if model_agreement is None else f"{model_agreement:.1%}"
+            failures.append(
+                f"Free-router repeat agreement {value} is below the {min_model_agreement:.1%} threshold"
+            )
     return failures
 
 
@@ -195,11 +257,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("--min-accuracy", type=float, default=0.8, help="Minimum end-to-end pipeline accuracy")
     parser.add_argument("--min-model-accuracy", type=float, default=0.8, help="Minimum semantic-AI-only accuracy")
+    parser.add_argument("--min-model-agreement", type=float, default=0.8, help="Minimum repeated verdict agreement for model-routed cases")
+    parser.add_argument("--repeats", type=int, default=int(os.getenv("AI_EVAL_REPEATS", "2")), help="Semantic-AI evaluations per model-routed case (2–3)")
     args = parser.parse_args()
     if not 0.0 <= args.min_accuracy <= 1.0:
         parser.error("--min-accuracy must be between 0 and 1")
     if not 0.0 <= args.min_model_accuracy <= 1.0:
         parser.error("--min-model-accuracy must be between 0 and 1")
+    if not 0.0 <= args.min_model_agreement <= 1.0:
+        parser.error("--min-model-agreement must be between 0 and 1")
+    if not 2 <= args.repeats <= 3:
+        parser.error("--repeats must be between 2 and 3")
     try:
         payload = json.loads(CASES.read_text(encoding="utf-8"))
         if not isinstance(payload, dict):
@@ -216,7 +284,7 @@ def main() -> None:
         attempts=int(os.getenv("AI_ATTEMPTS", "2")),
         model=os.getenv("OPENROUTER_MODEL", "openrouter/free"),
     )
-    rows = [evaluate_case(case, config) for case in cases]
+    rows, model_variance = evaluate_cases(cases, config, repeats=args.repeats)
     correct = sum(row["correct"] for row in rows)
     accuracy = correct / max(1, len(rows))
     model_rows = [row for row in rows if row["decision_source"] == "ai_model"]
@@ -230,7 +298,9 @@ def main() -> None:
         "accuracy": round(accuracy, 3),
         "correct": correct,
         "total": len(rows),
+        "unique_cases": len(cases),
         "deterministic_extraction_drift_suppressions": suppressed,
+        "model_variance": model_variance,
         "decision_source_mismatches": sum(
             1 for row in rows
             if row["expected_decision_source"] and not row["decision_source_correct"]
@@ -250,8 +320,11 @@ def main() -> None:
         min_model_accuracy=args.min_model_accuracy,
         decision_source_failures=sum(
             1 for row in rows
-            if row["expected_decision_source"] and not row["decision_source_correct"]
+            if not row["decision_source_correct"]
         ),
+        model_agreement=model_variance["agreement"],
+        expected_model_case_count=model_variance["model_cases"],
+        min_model_agreement=args.min_model_agreement,
     )
     if failures:
         raise SystemExit("; ".join(failures))
