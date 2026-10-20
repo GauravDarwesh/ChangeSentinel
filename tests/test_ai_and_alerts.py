@@ -120,9 +120,9 @@ class TestLateAIAssessmentsAreDelivered(unittest.TestCase):
 class TestAIRobustness(unittest.TestCase):
     """M-02: invalid output, rate limits and delimiter injection."""
 
-    def response(self, status=200, content=None, headers=None):
+    def response(self, status=200, content=None, headers=None, model="test/provider-free"):
         mock = Mock(status_code=status, headers=headers or {})
-        mock.json.return_value = {"choices": [{"message": {"content": content}}]}
+        mock.json.return_value = {"model": model, "choices": [{"message": {"content": content}}]}
         mock.raise_for_status.return_value = None
         return mock
 
@@ -138,6 +138,18 @@ class TestAIRobustness(unittest.TestCase):
         result = analyze("R", "https://example.test", "CHANGED_URL", "-a\n+b", "b", AIConfig(attempts=2))
         self.assertEqual(result["status"], "ok")
         self.assertEqual(post.call_count, 2)
+
+    @patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"})
+    @patch("regmon.ai.requests.post")
+    def test_actual_free_provider_model_is_preserved_in_result(self, post):
+        post.side_effect = [
+            self.response(content=json.dumps(ANALYSIS), model="provider/first:free"),
+            self.response(content=json.dumps(ANALYSIS), model="provider/second:free"),
+        ]
+        first = analyze("R", "https://example.test", "CHANGED_URL", "-a\\n+b", "b", AIConfig(attempts=1))
+        second = analyze("R", "https://example.test", "CHANGED_URL", "-a\\n+b", "b", AIConfig(attempts=1))
+        self.assertEqual(first["provider_model"], "provider/first:free")
+        self.assertEqual(second["provider_model"], "provider/second:free")
 
     @patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"})
     @patch("regmon.ai.time.sleep")
@@ -159,7 +171,8 @@ class TestAIRobustness(unittest.TestCase):
         self.assertEqual(user.count("</UNTRUSTED_EVIDENCE>"), 1)
         self.assertTrue(user.rstrip().endswith("</UNTRUSTED_EVIDENCE>"))
         self.assertEqual(payload["response_format"], {"type": "json_object"})
-        self.assertIn("navigation, layout, formatting", payload["messages"][0]["content"])
+        self.assertIn("navigation reordering", payload["messages"][0]["content"])
+        self.assertIn("changing a required filing deadline from 30 to 15 days is relevant", payload["messages"][0]["content"])
 
 
 class TestDiscoveryAlertEpisodes(unittest.TestCase):
