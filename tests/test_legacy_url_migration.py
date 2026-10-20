@@ -173,7 +173,11 @@ class TestLegacyUrlCollisionMigration(unittest.TestCase):
         repo_root = Path(__file__).resolve().parents[1]
         latest = json.loads((repo_root / "data" / "latest.json").read_text(encoding="utf-8"))
         data_dir = repo_root / "data"
-        canonical_url = self.module.canonical(self.preferred_url)
+        canonical_url = self.module.canonical(
+            "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/"
+            "consumer-protection/guidelines-product-oversight-and-governance-arrangements-retail-banking-products"
+            "?phase=consultation&version=2015"
+        )
 
         current_records = [
             record for record in latest["sources"]["eba-consumer-protection"].values()
