@@ -274,6 +274,20 @@ class TestAIEvaluationSet(unittest.TestCase):
         self.assertEqual(len(failures), 1)
         self.assertIn("Semantic-AI-only relevance accuracy 75.0%", failures[0])
 
+    def test_decision_source_mismatch_fails_even_when_aggregate_scores_pass(self):
+        module = self.load_module()
+        failures = module.threshold_failures(
+            accuracy=18 / 19,
+            model_accuracy=1.0,
+            model_case_count=5,
+            min_accuracy=0.8,
+            min_model_accuracy=0.8,
+            decision_source_failures=1,
+        )
+        self.assertGreater(18 / 19, 0.8)
+        self.assertEqual(len(failures), 1)
+        self.assertIn("1 case(s) used a decision source", failures[0])
+
     def test_no_semantic_ai_cases_is_a_failed_evaluation(self):
         module = self.load_module()
         failures = module.threshold_failures(
