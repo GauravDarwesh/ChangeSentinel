@@ -10,7 +10,6 @@ on:
       - "tests/test_ask_sentinel_contract.py"
       - ".github/workflows/pages.yml"
       - "dashboard-v2.html"
-      - "dashboard.js"
       - "dashboard-lib.js"
       - "data/report.json"
       - "data/latest.json"
