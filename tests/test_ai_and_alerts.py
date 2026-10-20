@@ -193,6 +193,10 @@ class TestAIEvaluationSet(unittest.TestCase):
             "ai_model", "deterministic_extraction_drift_guard"
         } for case in cases))
         self.assertEqual(sum(1 for case in cases if case["expected_relevant"] is False and case.get("evidence")), 15)
+        model_cases = [case for case in cases if case["expected_decision_source"] == "ai_model"]
+        self.assertEqual(len(model_cases), 12)
+        self.assertEqual(sum(1 for case in model_cases if case["expected_relevant"]), 6)
+        self.assertEqual(sum(1 for case in model_cases if not case["expected_relevant"]), 6)
         self.assertTrue(any(case["expected_relevant"] for case in cases))
         for case in cases:
             url, _event, diff = module.load_case(case)
