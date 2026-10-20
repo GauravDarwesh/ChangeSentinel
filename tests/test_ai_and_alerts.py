@@ -233,18 +233,22 @@ class TestAIEvaluationSet(unittest.TestCase):
             "identical HTML comparison signature with changed normalized extraction",
         )
 
-    def test_real_threshold_change_still_reaches_semantic_ai(self):
+    def test_real_threshold_and_deadline_changes_still_reach_semantic_ai(self):
         module = self.load_module()
         cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
-        case = next(item for item in cases if item["id"] == "synthetic-threshold")
-        response = {"status": "ok", "analysis": {"relevant": True, "reason": "Threshold changed"}}
-        with patch.object(module, "analyze", return_value=response) as model:
-            result = module.evaluate_case(case, module.AIConfig())
-        model.assert_called_once()
-        self.assertEqual(model.call_args.args[2], "CHANGED_URL")
-        self.assertEqual(result["decision_source"], "ai_model")
-        self.assertTrue(result["got"])
-        self.assertTrue(result["correct"])
+        by_id = {case["id"]: case for case in cases}
+        response = {"status": "ok", "analysis": {"relevant": True, "reason": "Substantive change"}}
+
+        for case_id in ("synthetic-threshold", "synthetic-deadline"):
+            with self.subTest(case_id=case_id):
+                case = by_id[case_id]
+                with patch.object(module, "analyze", return_value=response) as model:
+                    result = module.evaluate_case(case, module.AIConfig())
+                model.assert_called_once()
+                self.assertEqual(model.call_args.args[2], "CHANGED_URL")
+                self.assertEqual(result["decision_source"], "ai_model")
+                self.assertTrue(result["got"])
+                self.assertTrue(result["correct"])
 
     def test_changed_source_bytes_are_not_deterministically_suppressed(self):
         module = self.load_module()
