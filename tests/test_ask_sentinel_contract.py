@@ -55,7 +55,7 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn("openai/gpt-oss-20b", backend)
         self.assertNotRegex(js + html, r"gsk_[A-Za-z0-9]{20,}")
         self.assertIn("client-side quota", js)
-        self.assertIn("atomically", backend)
+        self.assertIn("atomic database quota", backend)
 
     def test_prompt_shortcuts_use_authenticated_endpoint(self):
         js = (ROOT / "dashboard.js").read_text(encoding="utf-8")
