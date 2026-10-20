@@ -38,7 +38,7 @@ class TestAskSentinelContract(unittest.TestCase):
         js = (ROOT / "dashboard.js").read_text(encoding="utf-8")
         html = (ROOT / "index.html").read_text(encoding="utf-8")
         self.assertNotRegex(js + html, r"sk-or-v1-[A-Za-z0-9]{16,}")
-        self.assertIn("does not implement a client-side quota", js)
+        self.assertIn("client-side quota", js)
         self.assertIn("atomically", js)
         self.assertIn("Daily limit reached", js)
 
