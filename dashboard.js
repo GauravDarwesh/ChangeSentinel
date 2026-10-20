@@ -1727,6 +1727,8 @@ document.addEventListener("keydown", event => {
 $("monitorSearch").addEventListener("input", renderMonitorList);
 $("refreshBtn").addEventListener("click", () => loadData(true));
 $("addMonitorBtn").addEventListener("click", openAddMonitor);
+// The rail sits outside #workspace, so its "Add link" button needs its own listener.
+document.querySelectorAll(".rail [data-add-monitor]").forEach(button => button.addEventListener("click", openAddMonitor));
 $("closeAddMonitor").addEventListener("click", () => $("addMonitorDialog").close());
 $("cancelAddMonitor").addEventListener("click", () => $("addMonitorDialog").close());
 $("addMonitorDialog").addEventListener("click", event => {

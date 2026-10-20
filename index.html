@@ -479,6 +479,8 @@
     .led-frame { position: fixed; inset: 0; z-index: 0; width: 100vw; height: 100vh; pointer-events: none; }
     .app { z-index: 1; }
     .scan-now { color: var(--accent) !important; }
+    .rail-add { justify-content: center; width: 100%; min-height: 34px; }
+    .rail-add span { font-size: 16px; line-height: 1; }
     .scan-now::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 6px; vertical-align: 1px; background: var(--accent); box-shadow: var(--glow); animation: pulse 2.4s var(--ease) infinite; }
     @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
     .detail-inner > *, #detailHeader > *, #detailBody > * { animation: rise .38s var(--ease) both; }
@@ -719,6 +721,7 @@
       </ul>
 
       <div class="rail-foot">
+        <button class="btn btn-primary rail-add" type="button" data-add-monitor title="Add a web page or document link to monitor"><span aria-hidden="true">+</span> Add link to monitor</button>
         <div class="scan-status">
           <span class="status-dot" id="statusDot" aria-hidden="true"></span>
           <span id="connectionStatus" role="status">Loading monitoring data…</span>
@@ -739,7 +742,7 @@
         <div class="overview-text">
           <div class="mobile-head">
             <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i></span>ChangeSentinel</a>
-            <span class="rail-links"><button class="text-button" type="button" data-theme-toggle>Light theme</button><button class="text-button" type="button" data-refresh>Reload</button><button class="text-button scan-now" type="button" data-run-scan="all">Scan now</button></span>
+            <span class="rail-links"><button class="text-button" type="button" data-theme-toggle>Light theme</button><button class="text-button" type="button" data-refresh>Reload</button><button class="text-button scan-now" type="button" data-run-scan="all">Scan now</button><button class="text-button" type="button" data-add-monitor>+ Add link</button></span>
           </div>
           <h1 class="visually-hidden">Overview</h1>
           <p class="overview-statement" id="overviewLede">Reading the latest stored scan…</p>
