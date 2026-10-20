@@ -29,7 +29,7 @@ PDF, DOCX, XLSX, PPTX, CSV, JSON, XML, and text resources are normalized before 
 
 - `scripts/golden_corpus_check.py` (CI) re-extracts every saved original produced by the current extractor version and fails if its text no longer reproduces the baseline, so dependency or runner drift is caught before it reaches a scan.
 - `python -m regmon.validate_state` checks discovery metadata, inventory/report/ledger/outbox integrity and every snapshot/evidence pointer; the monitor runs it before committing state.
-- `scripts/ai_eval.py` (manual AI Smoke Test workflow) scores the configured model on 15 known parser-artifact diffs and synthetic real changes.
+- `scripts/ai_eval.py` (AI Smoke Test workflow) scores the full decision pipeline on 15 historical parser-artifact diffs and 12 model-routed cases split evenly between relevant regulatory changes and cosmetic/irrelevant changes. It validates every fixture's expected decision source, and release gates independently require at least 80% end-to-end and semantic-AI-only accuracy.
 
 ## AI
 
