@@ -112,7 +112,8 @@
       "why": "Reporting threshold amended",
       "url": "https://example.test/forms/FR_Y-9C",
       "event": "CHANGED_URL",
-      "diff": "--- before\n+++ after\n@@ -3,3 +3,3 @@\n Schedule HC-R reporting instructions\n-Holding companies with total consolidated assets of $3 billion or more must file quarterly.\n+Holding companies with total consolidated assets of $5 billion or more must file quarterly.\n Effective for the March 31, 2027, report date."
+      "diff": "--- before\n+++ after\n@@ -3,3 +3,3 @@\n Schedule HC-R reporting instructions\n-Holding companies with total consolidated assets of $3 billion or more must file quarterly.\n+Holding companies with total consolidated assets of $5 billion or more must file quarterly.\n Effective for the March 31, 2027, report date.",
+      "expected_decision_source": "ai_model"
     },
     {
       "id": "synthetic-deadline",
@@ -120,7 +121,8 @@
       "why": "Submission deadline moved",
       "url": "https://example.test/forms/FR_2028D",
       "event": "CHANGED_URL",
-      "diff": "--- before\n+++ after\n@@ -1,2 +1,2 @@\n Submission\n-Reports are due 30 calendar days after the as-of date.\n+Reports are due 15 calendar days after the as-of date."
+      "diff": "--- before\n+++ after\n@@ -1,2 +1,2 @@\n Submission\n-Reports are due 30 calendar days after the as-of date.\n+Reports are due 15 calendar days after the as-of date.",
+      "expected_decision_source": "ai_model"
     },
     {
       "id": "synthetic-new-form",
@@ -128,7 +130,8 @@
       "why": "New information collection published",
       "url": "https://example.test/forms/review",
       "event": "CHANGED_URL",
-      "diff": "--- before\n+++ after\n@@ -4,0 +5,3 @@\n+FR 2052c Liquidity Monitoring Report\n+Proposed revision published for comment; comments due January 15, 2027.\n+The revision adds daily reporting for firms with $250 billion or more in assets."
+      "diff": "--- before\n+++ after\n@@ -4,0 +5,3 @@\n+FR 2052c Liquidity Monitoring Report\n+Proposed revision published for comment; comments due January 15, 2027.\n+The revision adds daily reporting for firms with $250 billion or more in assets.",
+      "expected_decision_source": "ai_model"
     },
     {
       "id": "synthetic-whitespace",
@@ -136,7 +139,8 @@
       "why": "Whitespace and line wrapping only",
       "url": "https://example.test/forms/FR_Y-14Q",
       "event": "CHANGED_URL",
-      "diff": "--- before\n+++ after\n@@ -1,2 +1,1 @@\n-Instructions for the Capital Assessments and Stress Testing\n-information collection (Reporting Form FR Y-14Q)\n+Instructions for the Capital Assessments and Stress Testing information collection (Reporting Form FR Y-14Q)"
+      "diff": "--- before\n+++ after\n@@ -1,2 +1,1 @@\n-Instructions for the Capital Assessments and Stress Testing\n-information collection (Reporting Form FR Y-14Q)\n+Instructions for the Capital Assessments and Stress Testing information collection (Reporting Form FR Y-14Q)",
+      "expected_decision_source": "ai_model"
     }
   ]
 }
