@@ -39,7 +39,7 @@ def validate_case(case: object, index: int | None = None) -> dict:
     if type(case.get("expected_relevant")) is not bool:
         raise ValueError(f"{label} expected_relevant must be a boolean")
     expected_source = case.get("expected_decision_source")
-    if expected_source not in EXPECTED_DECISION_SOURCES:
+    if not isinstance(expected_source, str) or expected_source not in EXPECTED_DECISION_SOURCES:
         allowed = ", ".join(sorted(EXPECTED_DECISION_SOURCES))
         raise ValueError(f"{label} expected_decision_source must be one of: {allowed}")
     return case
