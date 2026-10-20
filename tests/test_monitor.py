@@ -2134,7 +2134,7 @@ class TestExtractorVersionMigration(unittest.TestCase):
         from regmon.content import CONTENT_EXTRACTOR_VERSION
         from regmon.engine import should_rebaseline_extractor
 
-        self.assertEqual(CONTENT_EXTRACTOR_VERSION, "content-extractor-v6")
+        self.assertEqual(CONTENT_EXTRACTOR_VERSION, "content-extractor-v7")
         old = {
             "extraction_type": "pdf",
             "extractor_version": "layout-pdf-html-v2",

@@ -16,6 +16,7 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
+from regmon.pdf_grid import rebuild_page
 from regmon.docling_extractor import extract_pdf_with_docling
 
 REMOVE_TAGS = {
@@ -463,7 +464,7 @@ def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
 # Bump this when PDF/HTML normalized output changes. The engine re-fetches these
 # records and records a baseline migration (not a regulatory change) if the
 # original response bytes are identical.
-CONTENT_EXTRACTOR_VERSION = "content-extractor-v6"
+CONTENT_EXTRACTOR_VERSION = "content-extractor-v7"
 LOW_TEXT_PAGE_CHARS = 40
 MAX_OCR_PAGES = 1000
 OCR_PAGE_TIMEOUT_SECONDS = 15
@@ -640,6 +641,32 @@ def tidy_docling_markdown(markdown: str) -> str:
         out.append(lines[index])
         index += 1
     return "\n".join(out)
+
+
+GRID_MIN_TOKEN_COVERAGE = 0.9
+_LEADER_LINE = re.compile(r"\.{6,}")
+_CODE_TOKEN = re.compile(r"\b[A-Z]{4}\s?[A-Z0-9]{4}\b|\b[A-Z]{2}\d{2}\b")
+_GLUED_CODES = re.compile(r"[A-Z]{2}\d{2}[A-Z]{2}\d{2}|[A-Z]{4}\d{4}[A-Z]{4}")
+
+
+def _grid_candidate_page(text: str) -> bool:
+    """Report-form pages the fragmentation test misses: dot-leader line items next to
+    item codes, or codes the text layer glued together ("HQ78HQ76")."""
+    value = str(text or "")
+    if _GLUED_CODES.search(value):
+        return True
+    leaders = sum(1 for line in value.splitlines() if _LEADER_LINE.search(line))
+    return leaders >= 3 and len(_CODE_TOKEN.findall(value)) >= 2
+_COVERAGE_TOKEN = re.compile(r"[a-z0-9]+(?:[/%._-][a-z0-9]+)*", re.IGNORECASE)
+
+
+def _token_coverage(reference: str, candidate: str) -> float:
+    """Share of the reference's distinct words (3+ characters) present in the candidate."""
+    ref = {t.casefold() for t in _COVERAGE_TOKEN.findall(reference or "") if len(t) >= 3}
+    if not ref:
+        return 1.0
+    cand = {t.casefold() for t in _COVERAGE_TOKEN.findall(candidate or "") if len(t) >= 3}
+    return len(ref & cand) / len(ref)
 
 
 def _prefer_docling_candidate(existing: str, candidate: str) -> bool:
@@ -1005,14 +1032,32 @@ def _extract_pdf(
             index for index, raw in enumerate(raw_page_texts)
             if _looks_like_fragmented_pdf_page(raw)
         ]
-        if suspicious_indexes:
+        grid_pages = 0
+        if suspicious_indexes or any(_grid_candidate_page(raw) for raw in raw_page_texts):
             try:
                 import pdfplumber
 
                 with pdfplumber.open(io.BytesIO(body)) as document:
-                    for index in suspicious_indexes:
+                    grid_only = [i for i, raw in enumerate(raw_page_texts) if i not in set(suspicious_indexes) and _grid_candidate_page(raw)]
+                    for index in sorted(set(suspicious_indexes) | set(grid_only)):
                         if index >= len(document.pages):
                             continue
+                        # Ruled tables are rebuilt from their drawn lines first (exact cells,
+                        # rotated headers, report-form fields); kept only when they retain
+                        # the page's words.
+                        try:
+                            grid_text = rebuild_page(document.pages[index], normalize_pdf_prose)
+                        except Exception as exc:
+                            grid_text = None
+                            logging.getLogger(__name__).warning(
+                                "Ruled-grid reconstruction failed on page %s: %s: %s", index + 1, type(exc).__name__, exc,
+                            )
+                        if grid_text and _token_coverage(raw_page_texts[index], grid_text) >= GRID_MIN_TOKEN_COVERAGE:
+                            page_texts[index] = grid_text
+                            grid_pages += 1
+                            continue
+                        if index not in suspicious_indexes:
+                            continue  # line-item pages without a usable grid keep their text layer
                         try:
                             candidate = _extract_pdfplumber_page(document.pages[index], page_texts[index])
                             # Successful table reconstruction wins even if it is
@@ -1059,7 +1104,11 @@ def _extract_pdf(
         # difficult PDFs only, Docling can replace it when it demonstrably recovers
         # structured tables without discarding most of the extracted text.
         text = normalize_text("\n\n".join(page_texts))
-        if suspicious_indexes:
+        if grid_pages:
+            # Ruled tables were rebuilt exactly; a layout model would only re-guess them.
+            if extraction_profile is not None:
+                extraction_profile["profile"] = "grid"
+        elif suspicious_indexes:
             docling_text, docling_error = extract_pdf_with_docling(
                 body, expected_pages=len(pages)
             )
