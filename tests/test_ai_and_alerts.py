@@ -356,17 +356,23 @@ class TestAIEvaluationSet(unittest.TestCase):
             {"id": "invalid", "expected_relevant": True, "expected_decision_source": "ai_model"},
         ]
         rows = [
-            {"id": "stable", "repeat": 1, "got": True, "status": "ok", "decision_source": "ai_model"},
-            {"id": "stable", "repeat": 2, "got": True, "status": "ok", "decision_source": "ai_model"},
-            {"id": "unstable", "repeat": 1, "got": False, "status": "ok", "decision_source": "ai_model"},
-            {"id": "unstable", "repeat": 2, "got": True, "status": "ok", "decision_source": "ai_model"},
-            {"id": "invalid", "repeat": 1, "got": True, "status": "ok", "decision_source": "ai_model"},
-            {"id": "invalid", "repeat": 2, "got": None, "status": "invalid", "decision_source": "ai_model"},
+            {"id": "stable", "repeat": 1, "got": True, "status": "ok", "decision_source": "ai_model", "provider_model": "provider/one:free"},
+            {"id": "stable", "repeat": 2, "got": True, "status": "ok", "decision_source": "ai_model", "provider_model": "provider/one:free"},
+            {"id": "unstable", "repeat": 1, "got": False, "status": "ok", "decision_source": "ai_model", "provider_model": "provider/two:free"},
+            {"id": "unstable", "repeat": 2, "got": True, "status": "ok", "decision_source": "ai_model", "provider_model": "provider/three:free"},
+            {"id": "invalid", "repeat": 1, "got": True, "status": "ok", "decision_source": "ai_model", "provider_model": "provider/two:free"},
+            {"id": "invalid", "repeat": 2, "got": None, "status": "invalid", "decision_source": "ai_model", "provider_model": "provider/two:free"},
         ]
         variance = module.summarize_model_variance(cases, rows, repeats=2)
         self.assertEqual(variance["stable_cases"], 1)
         self.assertEqual(variance["unstable_cases"], 2)
         self.assertEqual(variance["agreement"], 0.333)
+        self.assertEqual(variance["provider_model_variation_cases"], 1)
+        self.assertEqual(variance["provider_model_distribution"], {
+            "provider/one:free": 2,
+            "provider/three:free": 1,
+            "provider/two:free": 3,
+        })
         self.assertFalse(next(c for c in variance["cases"] if c["id"] == "invalid")["stable"])
 
         failures = module.threshold_failures(
