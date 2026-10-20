@@ -760,6 +760,7 @@ def process_source(
 
     removed_items = []
     removal_guard = None
+    removal_pending = []
     if discovery.get("state") == "COMPLETE":
         missing = [(uid, old) for uid, old in previous.items() if uid not in current]
         max_ratio = float(DEFAULTS.get("max_removal_ratio", 0.5))
@@ -793,6 +794,22 @@ def process_source(
                 ).hexdigest(),
             }
             missing = []
+        if missing and discovery.get("method") == "stealth" and not allow_mass_removal:
+            # Browser-only discovery depends on JavaScript rendering and timing,
+            # so a page it failed to surface once is not proof of removal. Hold
+            # the record (marked missing_since) and report REMOVED_URL only if a
+            # second consecutive complete browser crawl still misses it. A page
+            # that reappears is rebuilt from base_item, which drops the marker.
+            confirmed = []
+            for uid, old in missing:
+                if old.get("missing_since"):
+                    confirmed.append((uid, old))
+                    continue
+                held = dict(old)
+                held["missing_since"] = now
+                current[uid] = held
+                removal_pending.append(uid)
+            missing = confirmed
         for uid, old in missing:
             removed_items.append(old)
             url = old.get("canonical_url","")
@@ -1109,6 +1126,7 @@ def process_source(
         "source_changed":len(source_changed_items),
         "removed":len(removed_items),
         "removal_held":removal_guard["held_removals"] if removal_guard else 0,
+        "removal_pending_confirmation":len(removal_pending),
         "unchanged":len(unchanged_items),
         "baseline_migration":len(migration_items),
         "extraction_drift":sum(1 for entry in migration_items if entry["after"].get("migration_reason") == "extraction_drift"),
