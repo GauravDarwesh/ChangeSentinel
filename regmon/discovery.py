@@ -899,11 +899,29 @@ def discover(source: SourceConfig, data_dir: Path) -> list[str]:
     discovery integrity gate reports COMPLETE.
     """
     if not source.use_http_discovery:
-        # Never consult HTTP discovery metadata that this run did not produce: a
-        # stale COMPLETE file used to skip the browser path and return no URLs.
-        from regmon.discovery_browser import write_combined_discovery_metadata
+        # Browser-only runs own their completeness state. Remove the prior
+        # metadata first so an old COMPLETE HTTP crawl cannot bless this run.
+        metadata_path = data_dir / "discovery" / f"{source.id}.json"
+        metadata_path.unlink(missing_ok=True)
         stealth_urls = _stealth_discover(source, data_dir)
-        write_combined_discovery_metadata(source, data_dir, {"state": "SKIPPED"}, [], stealth_urls)
+        metadata = _read_discovery_metadata(source.id, data_dir)
+
+        # The browser implementation writes its own integrity metadata. Fail
+        # closed if a compatibility hook or crawler returned URLs without
+        # writing fresh metadata; URL presence alone does not prove completeness.
+        if metadata.get("source_id") != source.id or metadata.get("method") != "stealth":
+            metadata = {
+                "source_id": source.id,
+                "method": "stealth",
+                "state": "DEGRADED" if stealth_urls else "FAILED",
+                "discovered": len(stealth_urls),
+                "successful_pages": 0,
+                "failed_pages": 1,
+                "reason": "Browser discovery returned without fresh integrity metadata",
+            }
+            metadata_path.parent.mkdir(parents=True, exist_ok=True)
+            metadata_path.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+
         if stealth_urls:
             return stealth_urls
         raise RuntimeError(f"No in-scope URLs discovered for {source.id}; state was not updated.")

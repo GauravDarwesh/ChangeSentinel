@@ -10,8 +10,13 @@ from regmon.discovery import canonical, parse_discovered_urls
 
 
 def _stealth_discover(source: SourceConfig, data_dir: Path) -> list[str]:
-    """Run stealth-crawler as an optional browser fallback/enrichment path."""
+    """Run stealth-crawler and record whether every requested seed completed."""
+    import time
+
     attempts_log, discovered, seen = [], [], set()
+    successful_seeds = 0
+    failed_seeds = 0
+    capped = False
 
     for seed in source.seed_urls:
         cmd = [
@@ -32,6 +37,7 @@ def _stealth_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             ])
 
         seed_urls = []
+        seed_succeeded = False
         for attempt in range(1, source.discovery_attempts + 1):
             try:
                 result = subprocess.run(
@@ -52,33 +58,66 @@ def _stealth_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                     "STDERR:",
                     stderr,
                 ]))
-                seed_urls = parse_discovered_urls(stdout + "\n" + stderr, source)
-                if seed_urls:
+                attempt_urls = parse_discovered_urls(stdout + "\n" + stderr, source)
+                if result.returncode == 0:
+                    # Only a zero exit status establishes successful coverage.
+                    # A successful empty result is still a completed seed crawl.
+                    seed_urls = attempt_urls
+                    seed_succeeded = True
                     break
+                # Preserve useful partial results for reporting, but retry and
+                # keep the inventory DEGRADED if every attempt exits non-zero.
+                seed_urls = list(dict.fromkeys(seed_urls + attempt_urls))
             except subprocess.TimeoutExpired as exc:
                 out, err = exc.stdout or "", exc.stderr or ""
+                out = out if isinstance(out, str) else out.decode("utf-8", "replace")
+                err = err if isinstance(err, str) else err.decode("utf-8", "replace")
                 attempts_log.append("\n".join([
                     f"SOURCE={source.id}",
                     f"SEED={seed}",
                     f"ATTEMPT={attempt}",
                     f"TIMEOUT_AFTER_SECONDS={source.discovery_timeout_seconds}",
                     "STDOUT:",
-                    out if isinstance(out, str) else out.decode("utf-8", "replace"),
+                    out,
                     "STDERR:",
-                    err if isinstance(err, str) else err.decode("utf-8", "replace"),
+                    err,
                 ]))
-            if attempt < source.discovery_attempts and not seed_urls:
-                import time
+                partial_urls = parse_discovered_urls(out + "\n" + err, source)
+                seed_urls = list(dict.fromkeys(seed_urls + partial_urls))
+            except (OSError, subprocess.SubprocessError) as exc:
+                attempts_log.append("\n".join([
+                    f"SOURCE={source.id}",
+                    f"SEED={seed}",
+                    f"ATTEMPT={attempt}",
+                    f"ERROR={type(exc).__name__}: {exc}",
+                ]))
+            if attempt < source.discovery_attempts and not seed_succeeded:
                 time.sleep(source.discovery_retry_delay_seconds)
+
+        if seed_succeeded:
+            successful_seeds += 1
+        else:
+            failed_seeds += 1
 
         for url in seed_urls:
             if url not in seen:
                 seen.add(url)
                 discovered.append(url)
                 if source.max_urls > 0 and len(discovered) >= source.max_urls:
+                    capped = True
                     break
         if source.max_urls > 0 and len(discovered) >= source.max_urls:
+            # As with HTTP discovery, a configured cap is not proof that the
+            # frontier was exhausted; retain URLs but prevent baseline updates.
+            capped = True
             break
+
+    if discovered and failed_seeds == 0 and not capped:
+        state = "COMPLETE"
+    elif discovered:
+        state = "DEGRADED"
+    else:
+        state = "FAILED"
 
     data_dir.mkdir(parents=True, exist_ok=True)
     (data_dir / "stealth-output.txt").write_text(
@@ -90,16 +129,19 @@ def _stealth_discover(source: SourceConfig, data_dir: Path) -> list[str]:
     (discovery_dir / f"{source.id}.json").write_text(
         json.dumps({
             "source_id": source.id,
-            "method": "stealth-fallback",
-            "state": "DEGRADED" if discovered else "FAILED",
+            "method": "stealth",
+            "state": state,
             "discovered": len(discovered),
-            "successful_pages": len(discovered),
-            "failed_pages": 0 if discovered else 1,
+            "successful_pages": successful_seeds,
+            "failed_pages": failed_seeds,
+            "successful_seeds": successful_seeds,
+            "failed_seeds": failed_seeds,
+            "attempted_seeds": successful_seeds + failed_seeds,
+            "capped": capped,
         }, indent=2),
         encoding="utf-8",
     )
     return discovered
-
 
 def write_combined_discovery_metadata(
     source: SourceConfig,
