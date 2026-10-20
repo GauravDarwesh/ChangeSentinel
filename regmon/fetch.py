@@ -33,6 +33,27 @@ def _content_length(headers: dict) -> int | None:
     return int(value) if str(value).isdigit() else None
 
 
+def _read_body(response, max_bytes: int | None, url: str) -> bytes:
+    """Read the response body, stopping as soon as it exceeds max_bytes.
+
+    A Content-Length check alone does not bound memory: servers may omit or
+    understate it, and compressed bodies expand on decoding. Streaming caps
+    the decoded size actually held in memory.
+    """
+    if not max_bytes:
+        return response.content
+    chunks, total = [], 0
+    for chunk in response.iter_content(chunk_size=64 * 1024):
+        if not chunk:
+            continue
+        total += len(chunk)
+        if total > max_bytes:
+            response.close()
+            raise ValueError(f"Response for {url} exceeded {max_bytes} bytes; limit is {max_bytes}")
+        chunks.append(chunk)
+    return b"".join(chunks)
+
+
 def fetch(
     url: str,
     timeout: int = 30,
@@ -101,9 +122,12 @@ def fetch(
                     timeout=timeout,
                     headers=request_headers,
                     allow_redirects=False,
+                    # Stream when a size cap applies so the body can be cut off.
+                    stream=bool(max_bytes),
                 )
                 if response.status_code not in REDIRECT_STATUSES:
                     break
+                response.close()
                 location = response.headers.get("location")
                 if not location:
                     raise ValueError(f"Redirect from {current_url} did not include a Location header")
@@ -148,6 +172,7 @@ def fetch(
             )
 
         if response.status_code >= 400:
+            response.close()
             exc = requests.HTTPError(f"HTTP {response.status_code} for {current_url}")
             last_error = exc
             if response.status_code not in RETRYABLE or attempt == attempts:
@@ -157,10 +182,9 @@ def fetch(
 
         declared = _content_length(response.headers)
         if max_bytes and declared and declared > max_bytes:
+            response.close()
             raise ValueError(f"Response for {current_url} declares {declared} bytes; limit is {max_bytes}")
-        body = response.content
-        if max_bytes and len(body) > max_bytes:
-            raise ValueError(f"Response for {current_url} is {len(body)} bytes; limit is {max_bytes}")
+        body = _read_body(response, max_bytes, current_url)
         return FetchResult(
             status_code=response.status_code,
             content_type=response.headers.get("content-type", ""),

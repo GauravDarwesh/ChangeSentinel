@@ -55,8 +55,17 @@ class TestConfigValidation(unittest.TestCase):
 
 
 class TestFetchHardening(unittest.TestCase):
-    def response(self, status=200, headers=None, content=b"<html>ok</html>"):
+    def response(self, status=200, headers=None, content=b"<html>ok</html>", chunks=None):
         mock = MagicMock(status_code=status, headers=headers or {"content-type": "text/html"}, content=content)
+        served = list(chunks) if chunks is not None else [content[i:i + 4] for i in range(0, len(content), 4)]
+        mock.consumed = []
+
+        def iter_content(chunk_size=1):
+            for chunk in served:
+                mock.consumed.append(chunk)
+                yield chunk
+
+        mock.iter_content.side_effect = iter_content
         return mock
 
     @patch("regmon.fetch.validate_public_http_url", return_value=None)
@@ -105,6 +114,30 @@ class TestFetchHardening(unittest.TestCase):
         get.return_value = self.response(headers={"content-type": "application/pdf"}, content=b"x" * 2000)
         with self.assertRaisesRegex(ValueError, "limit is 1000"):
             fetch("https://www.example.com/a.pdf", max_bytes=1000)
+
+    @patch("regmon.fetch.validate_public_http_url", return_value=None)
+    @patch("regmon.fetch.requests.get")
+    def test_undeclared_oversized_body_is_cut_off_while_streaming(self, get, _validate):
+        """A body with no Content-Length used to be read fully before the size check."""
+        from regmon.fetch import fetch
+
+        response = self.response(headers={"content-type": "application/pdf"}, chunks=[b"x" * 600] * 10)
+        get.return_value = response
+        with self.assertRaisesRegex(ValueError, "exceeded 1000 bytes"):
+            fetch("https://www.example.com/a.pdf", max_bytes=1000)
+        self.assertEqual(len(response.consumed), 2)  # stopped at the chunk that crossed the cap
+        self.assertTrue(get.call_args.kwargs["stream"])
+        response.close.assert_called()
+
+    @patch("regmon.fetch.validate_public_http_url", return_value=None)
+    @patch("regmon.fetch.requests.get")
+    def test_streamed_body_within_the_cap_is_returned_intact(self, get, _validate):
+        from regmon.fetch import fetch
+
+        get.return_value = self.response(headers={"content-type": "application/pdf"}, chunks=[b"%PDF", b"", b"-1.7"])
+        result = fetch("https://www.example.com/a.pdf", max_bytes=1000)
+        self.assertEqual(result.body, b"%PDF-1.7")
+        self.assertEqual(len(result.raw_hash), 64)
 
     def test_discovery_classifies_dns_failures_as_retryable(self):
         """M-07: discovery recorded permanent_http and skipped the retry round."""
