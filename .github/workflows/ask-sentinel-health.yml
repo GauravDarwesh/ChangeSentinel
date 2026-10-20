@@ -1,0 +1,62 @@
+name: Ask Sentinel Backend Health
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/ask-sentinel-health.yml"
+      - "index.html"
+      - "dashboard.js"
+      - "supabase/functions/ask-sentinel/**"
+      - "supabase/migrations/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ask-sentinel-health.yml"
+      - "index.html"
+      - "dashboard.js"
+      - "supabase/functions/ask-sentinel/**"
+      - "supabase/migrations/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ask-sentinel-health-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  live-health:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Check the deployed Groq-backed endpoint
+        env:
+          HEALTH_URL: https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel?mode=health
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail --retry 3 --retry-all-errors --retry-delay 2 --connect-timeout 5 --max-time 20 \
+            "$HEALTH_URL" --output "$RUNNER_TEMP/ask-sentinel-health.json"
+          python - "$RUNNER_TEMP/ask-sentinel-health.json" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          status = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          required = (
+              "groqConfigured",
+              "groqApiKeyValid",
+              "modelAvailable",
+              "supabaseKeysConfigured",
+          )
+          missing = [key for key in required if status.get(key) is not True]
+          if status.get("ok") is not True or missing:
+              # Deliberately print only safe booleans, never keys or model responses.
+              safe = {key: status.get(key) is True for key in required}
+              print("Ask Sentinel backend health failed: " + json.dumps(safe))
+              raise SystemExit(1)
+          print("Ask Sentinel backend health passed: Groq key valid, model available, Supabase server keys present.")
+          print("Repository: " + str(status.get("repository", "unknown")))
+          print("Model: " + str(status.get("model", "unknown")))
+          PY
