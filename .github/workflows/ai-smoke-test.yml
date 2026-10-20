@@ -2,15 +2,9 @@ name: AI Smoke Test
 
 on:
   workflow_dispatch:
+  # Always emit a smoke-test status on PRs so branch rules can require this
+  # check consistently. Expensive provider calls are gated by changed paths below.
   pull_request:
-    paths:
-      - "regmon/engine.py"
-      - "regmon/change.py"
-      - "regmon/content.py"
-      - "regmon/ai.py"
-      - "scripts/ai_eval.py"
-      - "scripts/ai_eval_cases.json"
-      - ".github/workflows/ai-smoke-test.yml"
   push:
     branches:
       - main
@@ -25,6 +19,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 # New commits to the same PR replace obsolete evaluations instead of leaving a
 # queue of long-running free-router evaluations on intermediate commits.
@@ -54,7 +49,39 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
 
+      - name: Check whether this PR changes AI-relevant files
+        id: ai-scope
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          changed_files="$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/files" --jq '.[].filename')"
+          if grep -Eq '^(regmon/(engine|change|content|ai)\.py|scripts/ai_eval\.py|scripts/ai_eval_cases\.json|\.github/workflows/ai-smoke-test\.yml)
+      # Runs manually or on relevant main-branch changes. Scores end-to-end decisions:
+      # deterministic extraction-drift suppression first,
+      # then semantic AI for source changes. Emits all case-level decisions and accuracy.
+      - name: Score end-to-end relevance and free-router stability
+        if: ${{ github.event_name != 'pull_request' || steps.ai-scope.outputs.relevant == 'true' }}
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          # Each of the 12 model-routed fixtures is evaluated twice. Each call
+          # can retry once for transient provider errors or invalid JSON.
+          AI_TIMEOUT_SECONDS: "20"
+          AI_ATTEMPTS: "2"
+          AI_EVAL_REPEATS: "2"
+        run: python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8 --min-model-agreement 0.8 --repeats 2
+ <<< "$changed_files"; then
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+            echo "AI-relevant files changed; full AI regression gate will run."
+          else
+            echo "relevant=false" >> "$GITHUB_OUTPUT"
+            echo "No AI-relevant source/evaluator changes; model calls are skipped but the workflow check remains available."
+          fi
+
       - name: Call configured AI model with synthetic evidence
+        if: ${{ github.event_name != 'pull_request' || steps.ai-scope.outputs.relevant == 'true' }}
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           AI_TIMEOUT_SECONDS: "60"
