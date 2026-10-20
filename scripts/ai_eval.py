@@ -5,8 +5,14 @@ guard first, matching the production engine. Only source changes that survive th
 guard are sent to semantic AI. The report includes both end-to-end and model-only
 accuracy so deterministic suppressions cannot be mistaken for model performance.
 
-Usage: OPENROUTER_API_KEY=... python scripts/ai_eval.py [--min-accuracy 0.8] [--min-model-accuracy 0.8] [--repeats 2]
-Exit status 1 when accuracy, decision-source, or repeated-model-agreement thresholds are missed.
+Usage: OPENROUTER_API_KEY=... python scripts/ai_eval.py [--min-accuracy 0.8] [--min-model-accuracy 0.8]
+       [--min-model-cases 4] [--repeats 2]
+Exit status 1 when accuracy, decision-source, model-case-count, or repeated-model-agreement
+thresholds are missed.
+
+Deterministic suppressions are always scored correct, so end-to-end accuracy alone can hide a
+weak model (15 suppressed + 1 of 4 model cases right is 84%). Model-only accuracy and a minimum
+number of distinct model-routed fixtures are therefore gated separately.
 """
 from __future__ import annotations
 
@@ -245,6 +251,7 @@ def threshold_failures(
     model_agreement: float | None = None,
     expected_model_case_count: int = 0,
     min_model_agreement: float = 0.8,
+    min_model_cases: int = 0,
 ) -> list[str]:
     """Keep aggregate accuracy from hiding model or decision-routing regressions."""
     failures = []
@@ -263,6 +270,13 @@ def threshold_failures(
         failures.append(
             f"Semantic-AI-only relevance accuracy {value} is below the {min_model_accuracy:.1%} threshold"
         )
+    if min_model_cases and expected_model_case_count < min_model_cases:
+        # Counted per distinct fixture, not per repeat, so the set cannot be
+        # diluted by adding suppressed cases or removing model-routed ones.
+        failures.append(
+            f"Only {expected_model_case_count} distinct evaluation case(s) are routed to semantic AI; "
+            f"at least {min_model_cases} are required"
+        )
     if model_case_count > 0 and expected_model_case_count > 0:
         if model_agreement is None or model_agreement < min_model_agreement:
             value = "unavailable" if model_agreement is None else f"{model_agreement:.1%}"
@@ -277,6 +291,7 @@ def main() -> None:
     parser.add_argument("--min-accuracy", type=float, default=0.8, help="Minimum end-to-end pipeline accuracy")
     parser.add_argument("--min-model-accuracy", type=float, default=0.8, help="Minimum semantic-AI-only accuracy")
     parser.add_argument("--min-model-agreement", type=float, default=0.8, help="Minimum repeated verdict agreement for model-routed cases")
+    parser.add_argument("--min-model-cases", type=int, default=4, help="Minimum distinct fixtures routed to semantic AI")
     parser.add_argument("--repeats", type=int, default=int(os.getenv("AI_EVAL_REPEATS", "2")), help="Semantic-AI evaluations per model-routed case (2–3)")
     args = parser.parse_args()
     if not 0.0 <= args.min_accuracy <= 1.0:
@@ -344,6 +359,7 @@ def main() -> None:
         model_agreement=model_variance["agreement"],
         expected_model_case_count=model_variance["model_cases"],
         min_model_agreement=args.min_model_agreement,
+        min_model_cases=args.min_model_cases,
     )
     if failures:
         raise SystemExit("; ".join(failures))

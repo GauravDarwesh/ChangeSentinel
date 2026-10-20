@@ -81,4 +81,4 @@ jobs:
           AI_TIMEOUT_SECONDS: "20"
           AI_ATTEMPTS: "2"
           AI_EVAL_REPEATS: "2"
-        run: python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8 --min-model-agreement 0.8 --repeats 2
+        run: python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8 --min-model-agreement 0.8 --min-model-cases 12 --repeats 2

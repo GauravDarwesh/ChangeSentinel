@@ -162,7 +162,7 @@ class TestAIEvaluationWorkflowContract(unittest.TestCase):
         self.assertIn("steps.ai-scope.outputs.relevant == 'true'", workflow)
         self.assertEqual(workflow.count("- name: Score end-to-end relevance and free-router stability"), 1)
         self.assertEqual(workflow.count('<<< "$changed_files"; then'), 1)
-        self.assertIn("python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8 --min-model-agreement 0.8 --repeats 2", workflow)
+        self.assertIn("python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8 --min-model-agreement 0.8 --min-model-cases 12 --repeats 2", workflow)
         self.assertIn('AI_TIMEOUT_SECONDS: "20"', workflow)
         self.assertIn('AI_ATTEMPTS: "2"', workflow)
         self.assertIn('AI_EVAL_REPEATS: "2"', workflow)

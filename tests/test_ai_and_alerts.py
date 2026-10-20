@@ -334,6 +334,40 @@ class TestAIEvaluationSet(unittest.TestCase):
         self.assertEqual(len(failures), 1)
         self.assertIn("Semantic-AI-only relevance accuracy 75.0%", failures[0])
 
+    def test_suppressed_cases_cannot_mask_a_weak_model(self):
+        # Regression: 15 suppressed + 1 of 4 model cases right is 84% end to end,
+        # which passed the end-to-end-only gate on main before this change.
+        module = self.load_module()
+        failures = module.threshold_failures(
+            accuracy=16 / 19, model_accuracy=0.25, model_case_count=4,
+            min_accuracy=0.8, min_model_accuracy=0.8,
+            expected_model_case_count=4, model_agreement=1.0, min_model_cases=4,
+        )
+        self.assertEqual(len(failures), 1)
+        self.assertIn("Semantic-AI-only relevance accuracy 25.0%", failures[0])
+
+    def test_too_few_distinct_model_cases_fails_the_gate(self):
+        module = self.load_module()
+        failures = module.threshold_failures(
+            accuracy=1.0, model_accuracy=1.0, model_case_count=6,  # 3 cases x 2 repeats
+            min_accuracy=0.8, min_model_accuracy=0.8,
+            expected_model_case_count=3, model_agreement=1.0, min_model_cases=4,
+        )
+        self.assertEqual(len(failures), 1)
+        self.assertIn("Only 3 distinct evaluation case(s) are routed to semantic AI", failures[0])
+
+    def test_committed_fixture_meets_the_workflow_model_case_minimum(self):
+        import re
+        from pathlib import Path
+
+        module = self.load_module()
+        cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        workflow = (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "ai-smoke-test.yml").read_text()
+        minimum = int(re.search(r"--min-model-cases (\d+)", workflow).group(1))
+        self.assertGreaterEqual(minimum, 4)
+        routed = [case for case in cases if case.get("expected_decision_source") == "ai_model"]
+        self.assertGreaterEqual(len(routed), minimum)
+
     def test_decision_source_mismatch_fails_even_when_aggregate_scores_pass(self):
         module = self.load_module()
         failures = module.threshold_failures(
