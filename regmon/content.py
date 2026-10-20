@@ -1001,7 +1001,11 @@ def _extract_pdf(
             else:
                 if extraction_profile is not None:
                     extraction_profile["profile"] = "fallback"
-                if docling_error:
+                if docling_error and docling_error.startswith(
+                    "Docling intentionally skipped for a previously time-budget-exhausted PDF"
+                ):
+                    logging.getLogger(__name__).info("%s", docling_error)
+                elif docling_error:
                     logging.getLogger(__name__).warning(
                         "Docling fallback unavailable for SHA-256 %s: %s",
                         hashlib.sha256(body).hexdigest(),
