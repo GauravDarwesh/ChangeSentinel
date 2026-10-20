@@ -588,9 +588,8 @@ def _tidy_markdown_table(rows: list[list[str]]) -> list[str]:
     """Make a Docling form grid readable and diff-stable.
 
     Blank fill-in rows (empty apart from a row number) are dropped and counted;
-    empty and duplicated columns are removed. A wide grid that is only headers
-    (typical of regulatory report forms) becomes one line per form column, so a
-    renamed column or changed item code is a one-line diff instead of a reflowed grid.
+    empty and duplicated columns are removed. The grid itself is kept as a table so
+    column labels stay inside table cells (scripts/docling_integration_smoke.py).
     """
     width = max(len(r) for r in rows)
     rows = [r + [""] * (width - len(r)) for r in rows]
@@ -612,19 +611,8 @@ def _tidy_markdown_table(rows: list[list[str]]) -> list[str]:
     if not columns:
         return [f"({blank} blank entry rows)"] if blank else []
     grid = [list(row) for row in zip(*columns)]
-    out: list[str] = []
-    if len(columns) >= 8 and len(grid) <= 6:
-        for col in columns:
-            parts: list[str] = []
-            for cell in col:
-                if cell and cell not in parts:
-                    parts.append(cell)
-            if parts:
-                out.append("- " + " · ".join(parts))
-    else:
-        out.append("| " + " | ".join(grid[0]) + " |")
-        out.append("|" + "|".join(" --- " for _ in grid[0]) + "|")
-        out.extend("| " + " | ".join(row) + " |" for row in grid[1:])
+    out: list[str] = ["| " + " | ".join(grid[0]) + " |", "|" + "|".join(" --- " for _ in grid[0]) + "|"]
+    out.extend("| " + " | ".join(row) + " |" for row in grid[1:])
     if blank:
         out.append(f"({blank} blank entry rows)")
     return out
