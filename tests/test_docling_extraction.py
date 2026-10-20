@@ -22,6 +22,52 @@ class TestDoclingAdapter(unittest.TestCase):
             "docling.datamodel.base_models": base_models,
         }
 
+    def test_converter_disables_vector_rule_separator_analysis_but_keeps_accurate_tables(self):
+        from regmon.docling_extractor import _build_converter
+
+        docling = types.ModuleType("docling")
+        datamodel = types.ModuleType("docling.datamodel")
+        base_models = types.ModuleType("docling.datamodel.base_models")
+        base_models.InputFormat = types.SimpleNamespace(PDF="pdf")
+        pipeline_module = types.ModuleType("docling.datamodel.pipeline_options")
+        converter_module = types.ModuleType("docling.document_converter")
+
+        class FakePipelineOptions:
+            def __init__(self, **kwargs):
+                self.__dict__.update(kwargs)
+                self.table_structure_options = types.SimpleNamespace(mode=None)
+                self.accelerator_options = types.SimpleNamespace(num_threads=None)
+
+        class FakePdfFormatOption:
+            def __init__(self, *, pipeline_options):
+                self.pipeline_options = pipeline_options
+
+        class FakeTableFormerMode:
+            ACCURATE = "accurate"
+
+        pipeline_module.PdfPipelineOptions = FakePipelineOptions
+        pipeline_module.TableFormerMode = FakeTableFormerMode
+        converter_module.PdfFormatOption = FakePdfFormatOption
+        converter_module.DocumentConverter = lambda *, format_options: types.SimpleNamespace(
+            format_options=format_options
+        )
+
+        modules = {
+            "docling": docling,
+            "docling.datamodel": datamodel,
+            "docling.datamodel.base_models": base_models,
+            "docling.datamodel.pipeline_options": pipeline_module,
+            "docling.document_converter": converter_module,
+        }
+        with patch.dict(sys.modules, modules):
+            converter = _build_converter()
+
+        options = converter.format_options["pdf"].pipeline_options
+        self.assertFalse(options.use_reading_order_separators)
+        self.assertTrue(options.do_table_structure)
+        self.assertEqual(options.table_structure_options.mode, "accurate")
+        self.assertEqual(options.document_timeout, 120)
+
     def test_success_requires_every_page_and_returns_markdown(self):
         document = Mock()
         document.pages = {1: object()}
@@ -154,7 +200,7 @@ class TestDoclingPdfFallback(unittest.TestCase):
     def test_table_rich_docling_output_replaces_flattened_fragmented_text(self):
         from regmon.content import _extract_pdf
 
-        raw = "\n".join(["field" + str(index) for index in range(24)])
+        raw = "\n".join([f"field{index}" for index in range(24)])
         page = Mock()
         page.extract_text.return_value = raw
         reader = Mock()
@@ -167,7 +213,7 @@ class TestDoclingPdfFallback(unittest.TestCase):
         pdfplumber_module.open = Mock(return_value=document_context)
         docling_markdown = (
             "# Reporting schedule\n\n"
-            + "Recovered fields: " + " ".join("field" + str(index) for index in range(24))
+            + "Recovered fields: " + " ".join(f"field{index}" for index in range(24))
             + "\n\n| Field | Threshold |\n| --- | --- |\n| Required reporting | 15% |"
         )
 
