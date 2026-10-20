@@ -198,6 +198,38 @@ class TestAIEvaluationSet(unittest.TestCase):
             url, _event, diff = module.load_case(case)
             self.assertTrue(url.startswith("https://") and diff.strip(), case["id"])
 
+    def test_evaluation_fixture_validation_fails_closed_on_missing_or_invalid_metadata(self):
+        module = self.load_module()
+        cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        valid = dict(cases[-1])
+
+        missing_source = dict(valid)
+        missing_source.pop("expected_decision_source")
+        with self.assertRaisesRegex(ValueError, "expected_decision_source"):
+            module.validate_cases([missing_source])
+
+        invalid_source = dict(valid, expected_decision_source="some_future_route")
+        with self.assertRaisesRegex(ValueError, "expected_decision_source"):
+            module.validate_cases([invalid_source])
+
+        invalid_verdict = dict(valid, expected_relevant="false")
+        with self.assertRaisesRegex(ValueError, "expected_relevant must be a boolean"):
+            module.validate_cases([invalid_verdict])
+
+        with self.assertRaisesRegex(ValueError, "Duplicate AI evaluation case id"):
+            module.validate_cases([valid, dict(valid)])
+
+    def test_invalid_case_cannot_reach_semantic_ai(self):
+        module = self.load_module()
+        cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        case = dict(next(item for item in cases if item["expected_decision_source"] == "ai_model"))
+        case.pop("expected_decision_source")
+
+        with patch.object(module, "analyze") as model:
+            with self.assertRaisesRegex(ValueError, "expected_decision_source"):
+                module.evaluate_case(case, module.AIConfig())
+            model.assert_not_called()
+
     def test_pdf_table_reconstruction_cases_are_suppressed_before_ai(self):
         module = self.load_module()
         cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
