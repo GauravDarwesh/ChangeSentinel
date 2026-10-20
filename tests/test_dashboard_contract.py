@@ -147,10 +147,13 @@ class TestDashboardWorkspaceLayout(unittest.TestCase):
 
     def test_dark_and_light_themes_share_one_token_set(self):
         html = read("index.html")
-        self.assertIn('<html lang="en" data-theme="dark">', html)
+        self.assertIn('<html lang="en" data-theme="light">', html)
         self.assertIn(':root[data-theme="light"]', html)
-        # The saved theme is applied before first paint.
-        self.assertLess(html.index('localStorage.getItem("cs-theme")'), html.index("<style"))
+        # Every visitor starts in light mode before the dashboard stylesheet renders,
+        # even if this browser previously stored a dark-theme preference.
+        self.assertIn('document.documentElement.setAttribute("data-theme", "light")', html)
+        self.assertIn('localStorage.setItem("cs-theme", "light")', html)
+        self.assertLess(html.index('document.documentElement.setAttribute("data-theme", "light")'), html.index("<style"))
         source = read("dashboard.js")
         self.assertIn("data-theme-toggle", source)
         self.assertIn('localStorage.setItem("cs-theme", next)', source)
