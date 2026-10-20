@@ -71,6 +71,25 @@ PDF_QUALITY_SENTINELS = {
 }
 
 
+def quality_sentinel_failure(raw_hash: object, text: str | None) -> dict | None:
+    """Return a diagnostic when a known, immutable PDF extracts incomplete text."""
+    sentinel = PDF_QUALITY_SENTINELS.get(str(raw_hash or ""))
+    if sentinel is None:
+        return None
+    normalized_text = text or ""
+    missing_markers = [
+        marker for marker in sentinel["required_markers"]
+        if marker.casefold() not in normalized_text.casefold()
+    ]
+    if len(normalized_text) < sentinel["min_characters"] or missing_markers:
+        return {
+            "characters": len(normalized_text),
+            "minimum_characters": sentinel["min_characters"],
+            "missing_markers": missing_markers,
+        }
+    return None
+
+
 def profile_version(extraction_type: str, profile: str) -> str:
     """Mirror engine.make_current_item's extractor_version labelling."""
     if extraction_type == "zip" and profile.startswith("zipprofile-"):
@@ -112,21 +131,13 @@ def check(data_dir: Path, config_path: Path) -> dict:
             produced_profile = str(profile.get("profile") or "native")
             produced_version = profile_version(extracted_kind, produced_profile)
             digest = hashlib.sha256((text or "").encode("utf-8")).hexdigest() if not error else None
-            sentinel = PDF_QUALITY_SENTINELS.get(str(record.get("raw_hash") or ""))
-            if sentinel and not error:
-                normalized_text = text or ""
-                missing_markers = [
-                    marker for marker in sentinel["required_markers"]
-                    if marker.casefold() not in normalized_text.casefold()
-                ]
-                if len(normalized_text) < sentinel["min_characters"] or missing_markers:
-                    results["quality_failures"].append({
-                        "url": record["canonical_url"],
-                        "raw_hash": record.get("raw_hash"),
-                        "characters": len(normalized_text),
-                        "minimum_characters": sentinel["min_characters"],
-                        "missing_markers": missing_markers,
-                    })
+            quality_failure = quality_sentinel_failure(record.get("raw_hash"), text if not error else None)
+            if quality_failure:
+                results["quality_failures"].append({
+                    "url": record["canonical_url"],
+                    "raw_hash": record.get("raw_hash"),
+                    **quality_failure,
+                })
             if digest == record["normalized_hash"]:
                 results["matched"] += 1
             elif produced_version != record.get("extractor_version"):
