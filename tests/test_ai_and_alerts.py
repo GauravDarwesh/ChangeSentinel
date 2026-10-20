@@ -220,6 +220,30 @@ class TestAIEvaluationSet(unittest.TestCase):
                 self.assertEqual(result["status"], "suppressed")
                 self.assertEqual(result["decision_source"], "deterministic_extraction_drift_guard")
 
+    def test_all_historical_parser_artifacts_are_suppressed_before_ai(self):
+        module = self.load_module()
+        cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        artifact_cases = [
+            case for case in cases
+            if case.get("evidence") and case["expected_relevant"] is False
+        ]
+        self.assertEqual(len(artifact_cases), 15)
+
+        with patch.object(module, "analyze", side_effect=AssertionError("parser artifacts must not reach AI")) as model:
+            for case in artifact_cases:
+                with self.subTest(case_id=case["id"]):
+                    evidence = module.load_evidence(case)
+                    self.assertIsNotNone(module.extraction_drift_reason(evidence), case["id"])
+                    result = module.evaluate_case(case, module.AIConfig())
+                    self.assertFalse(result["got"], case["id"])
+                    self.assertTrue(result["correct"], case["id"])
+                    self.assertEqual(
+                        result["decision_source"],
+                        "deterministic_extraction_drift_guard",
+                        case["id"],
+                    )
+            model.assert_not_called()
+
     def test_unchanged_html_signature_with_different_raw_bytes_is_also_drift(self):
         module = self.load_module()
         evidence = {
