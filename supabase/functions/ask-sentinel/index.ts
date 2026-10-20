@@ -50,7 +50,7 @@ function cors(req: Request): { allowed: boolean; headers: Record<string, string>
   const headers: Record<string, string> = {
     'Vary': 'Origin',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info',
+    'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info, x-ask-sentinel-visitor-id',
     'Access-Control-Max-Age': '86400'
   };
   if (allowed) headers['Access-Control-Allow-Origin'] = origin;
@@ -82,15 +82,28 @@ async function checkedFetch(url: string, init: RequestInit = {}, timeoutMs = 150
 async function authenticatedUser(req: Request): Promise<{ id: string; is_anonymous?: boolean }> {
   const cfg = config();
   const auth = req.headers.get('authorization') || '';
-  if (!/^Bearer\s+\S+/i.test(auth)) throw new Error('Sign in session missing. Please reload Ask Sentinel and retry.');
+  if (!/^Bearer\s+\S+/i.test(auth)) throw new Error('Sign in session missing.');
   if (!cfg.publishableKey) throw new Error('Supabase publishable key is not configured on the dashboard.');
   const response = await checkedFetch(cfg.supabaseUrl + '/auth/v1/user', {
     headers: { apikey: cfg.publishableKey, Authorization: auth }
   }, 8000);
-  if (!response.ok) throw new Error('Your Ask Sentinel session is invalid or expired. Reload the dashboard to reconnect.');
+  if (!response.ok) throw new Error('Your Ask Sentinel session is invalid or expired.');
   const user = await response.json();
   if (!user || !/^[0-9a-f-]{36}$/i.test(String(user.id || ''))) throw new Error('Supabase did not return a valid user identity.');
   return { id: user.id, is_anonymous: user.is_anonymous };
+}
+
+async function requestActor(req: Request): Promise<{ id: string; mode: 'auth' | 'visitor' }> {
+  const auth = req.headers.get('authorization') || '';
+  if (/^Bearer\s+\S+/i.test(auth)) {
+    const user = await authenticatedUser(req);
+    return { id: user.id, mode: 'auth' };
+  }
+  const visitorId = req.headers.get('x-ask-sentinel-visitor-id') || '';
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(visitorId)) {
+    throw new Error('Ask Sentinel visitor identity is missing. Refresh the dashboard and retry.');
+  }
+  return { id: visitorId.toLowerCase(), mode: 'visitor' };
 }
 
 async function rest(path: string, init: RequestInit = {}, timeoutMs = 15000): Promise<Response> {
@@ -593,11 +606,11 @@ Deno.serve(async (req: Request) => {
 
   try {
     if (!cfg.groqKey) return respond(req, { error: 'GROQ_API is not configured in Supabase Edge Function secrets.' }, 503);
-    const user = await authenticatedUser(req);
+    const actor = await requestActor(req);
 
     if (req.method === 'GET' && mode === 'warm') {
       const index = await syncRepository();
-      const remaining = await remainingFor(user.id);
+      const remaining = await remainingFor(actor.id);
       return respond(req, { ok: true, indexed: true, reused: index.reused, repository: REPOSITORY, commit_sha: index.sha, document_count: index.documentCount, indexed_at: index.indexedAt, remaining, resets_at: nextUtcReset() });
     }
     if (req.method !== 'POST') return respond(req, { error: 'Use POST to ask a question, or GET ?mode=warm to prepare the archive.' }, 405);
@@ -620,7 +633,7 @@ Deno.serve(async (req: Request) => {
     if (!context.trim()) return respond(req, { error: 'No usable committed repository evidence was found for this question.' }, 503);
 
     // This enforces the atomic database quota. It runs once immediately before the provider call.
-    const quota = await consumeRequest(user.id);
+    const quota = await consumeRequest(actor.id);
     if (!quota.allowed) return respond(req, { error: 'Daily limit reached. Ask Sentinel allows three requests per user per UTC day.', remaining: 0, resets_at: nextUtcReset() }, 429);
     try {
       const answer = await groqCompletion(question, context, historyForPrompt(body.conversation));

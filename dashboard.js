@@ -1732,7 +1732,7 @@ if (compactQuery && typeof compactQuery.addEventListener === "function") {
  */
 const ASK_SENTINEL_ENDPOINT = window.CHANGESENTINEL_ASK_ENDPOINT || "";
 const ASK_SENTINEL_MAX_TRANSCRIPT = 12;
-const askSentinelState = { messages: [], sending: false, remaining: 3, warmed: false, warmingPromise: null, warmError: "" };
+const askSentinelState = { messages: [], sending: false, remaining: 3, warmed: false, warmingPromise: null, warmError: "", identity: null, memoryVisitorId: "" };
 
 const ASK_SENTINEL_SUPABASE_URL = window.CHANGESENTINEL_ASK_SUPABASE_URL || "";
 const ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY = window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY || "";
@@ -1754,20 +1754,46 @@ function askSentinelGetClient() {
   }
   return askSentinelSupabaseClient;
 }
-async function askSentinelAccessToken() {
-  const client = askSentinelGetClient();
-  const current = await client.auth.getSession();
-  if (current.error) throw new Error("Could not restore your Ask Sentinel session. Please refresh.");
-  let session = current.data && current.data.session;
-  if (!session) {
-    const created = await client.auth.signInAnonymously();
-    if (created.error) {
-      throw new Error("Could not start a secure Ask Sentinel session. Enable anonymous sign-ins in the dedicated Supabase project and retry.");
-    }
-    session = created.data && created.data.session;
+function askSentinelVisitorId() {
+  const key = "changesentinel-ask-visitor-id";
+  try {
+    const existing = localStorage.getItem(key) || "";
+    if (/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(existing)) return existing;
+    const id = window.crypto.randomUUID();
+    localStorage.setItem(key, id);
+    return id;
+  } catch (_) {
+    if (!askSentinelState.memoryVisitorId) askSentinelState.memoryVisitorId = window.crypto.randomUUID();
+    return askSentinelState.memoryVisitorId;
   }
-  if (!session || !session.access_token) throw new Error("Ask Sentinel did not receive a user session.");
-  return session.access_token;
+}
+async function askSentinelIdentity() {
+  if (askSentinelState.identity) return askSentinelState.identity;
+  try {
+    const client = askSentinelGetClient();
+    const current = await client.auth.getSession();
+    if (current.error) throw current.error;
+    let session = current.data && current.data.session;
+    if (!session) {
+      const created = await client.auth.signInAnonymously();
+      if (created.error) throw created.error;
+      session = created.data && created.data.session;
+    }
+    if (session && session.access_token) {
+      askSentinelState.identity = { accessToken: session.access_token, visitorId: "" };
+      return askSentinelState.identity;
+    }
+  } catch (_) {
+    // Prototype fallback: clearing site storage resets this visitor identity.
+  }
+  askSentinelState.identity = { accessToken: "", visitorId: askSentinelVisitorId() };
+  return askSentinelState.identity;
+}
+function askSentinelIdentityHeaders(identity) {
+  const headers = { "Accept": "application/json", "apikey": ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY };
+  if (identity.accessToken) headers["Authorization"] = "Bearer " + identity.accessToken;
+  else headers["x-ask-sentinel-visitor-id"] = identity.visitorId;
+  return headers;
 }
 function askSentinelWarmIndex() {
   if (askSentinelState.warmed) {
@@ -1777,14 +1803,10 @@ function askSentinelWarmIndex() {
   askSentinelState.warmError = "";
   $("askSentinelQuota").textContent = "Preparing monitoring archive…";
   askSentinelState.warmingPromise = (async () => {
-    const token = await askSentinelAccessToken();
+    const identity = await askSentinelIdentity();
     const response = await fetch(ASK_SENTINEL_ENDPOINT + "?mode=warm", {
       method: "GET",
-      headers: {
-        "Accept": "application/json",
-        "apikey": ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY,
-        "Authorization": "Bearer " + token
-      },
+      headers: askSentinelIdentityHeaders(identity),
       credentials: "omit"
     });
     let payload = {};
@@ -1868,7 +1890,7 @@ async function askSentinelSendQuestion(promptOverride) {
   }
   if (!ASK_SENTINEL_ENDPOINT || !ASK_SENTINEL_SUPABASE_URL || !ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY) {
     askSentinelAppendMessage("assistant",
-      "Ask Sentinel’s interface is ready, but its secure server endpoint has not been configured yet. No request was sent, and no daily allowance was used. Configure CHANGESENTINEL_ASK_ENDPOINT to a dedicated server-side endpoint that authenticates each user, enforces the three-request daily limit atomically, and calls OpenRouter without exposing its key.",
+      "Ask Sentinel’s interface is ready, but its secure server endpoint has not been configured yet. No request was sent, and no daily allowance was used. Configure CHANGESENTINEL_ASK_ENDPOINT to a dedicated server-side endpoint that authenticates each user, enforces the three-request daily limit atomically, and calls Groq without exposing its key.",
       "ask-sentinel-error");
     return;
   }
@@ -1881,15 +1903,10 @@ async function askSentinelSendQuestion(promptOverride) {
   try {
     const warmed = await askSentinelWarmIndex();
     if (!warmed) throw new Error(askSentinelState.warmError || "The monitoring archive could not be prepared. Please retry.");
-    const accessToken = await askSentinelAccessToken();
+    const identity = await askSentinelIdentity();
     const response = await fetch(ASK_SENTINEL_ENDPOINT, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "apikey": ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY,
-        "Authorization": "Bearer " + accessToken
-      },
+      headers: { ...askSentinelIdentityHeaders(identity), "Content-Type": "application/json" },
       credentials: "omit",
       body: JSON.stringify({ question, conversation: history })
     });

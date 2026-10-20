@@ -60,7 +60,7 @@ jobs:
           print("Model: " + str(status.get("model", "unknown")))
           PY
 
-      - name: Authenticate, index the repository, and ask a real Groq question
+      - name: Index the repository and ask a real Groq question
         env:
           SUPABASE_URL: https://pysoukwmnwwgilkwafdy.supabase.co
           SUPABASE_PUBLISHABLE_KEY: sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV
@@ -72,24 +72,23 @@ jobs:
           import os
           import urllib.error
           import urllib.request
+          import uuid
 
           base = os.environ["SUPABASE_URL"].rstrip("/")
           public_key = os.environ["SUPABASE_PUBLISHABLE_KEY"]
           function = os.environ["ASK_SENTINEL_URL"].rstrip("/")
+          visitor_id = str(uuid.uuid4())
 
-          def request_json(url, method="GET", body=None, token=None, timeout=30):
-              headers = {"apikey": public_key, "Accept": "application/json"}
+          def request_json(url, method="GET", body=None, timeout=30):
+              headers = {"apikey": public_key, "Accept": "application/json", "x-ask-sentinel-visitor-id": visitor_id}
               payload = None
               if body is not None:
                   payload = json.dumps(body).encode("utf-8")
                   headers["Content-Type"] = "application/json"
-              if token:
-                  headers["Authorization"] = "Bearer " + token
               request = urllib.request.Request(url, data=payload, headers=headers, method=method)
               try:
                   with urllib.request.urlopen(request, timeout=timeout) as response:
                       raw = response.read()
-                      code = response.status
               except urllib.error.HTTPError as error:
                   raw = error.read()
                   message = raw.decode("utf-8", "replace")[:350]
@@ -100,27 +99,9 @@ jobs:
                   raise RuntimeError(f"{method} {url.split('?')[0]} returned non-JSON data") from None
               if not isinstance(value, dict):
                   raise RuntimeError(f"{method} {url.split('?')[0]} returned unexpected JSON")
-              return code, value
+              return value
 
-          # A new anonymous user keeps this smoke run independent from any demo user.
-          _, auth = request_json(
-              base + "/auth/v1/signup",
-              method="POST",
-              body={"data": {"ask_sentinel_ci_smoke": True}},
-              timeout=20,
-          )
-          token = auth.get("access_token")
-          if not isinstance(token, str) or len(token) < 40:
-              raise RuntimeError("Supabase anonymous sign-in did not return an access token. Enable Anonymous Sign-Ins for this dedicated project.")
-          if auth.get("user", {}).get("is_anonymous") is False:
-              raise RuntimeError("Supabase did not return an anonymous smoke-test identity.")
-
-          # This exercises the first-run full text corpus sync. It does not consume an AI request.
-          _, warm = request_json(
-              function + "?mode=warm",
-              token=token,
-              timeout=175,
-          )
+          warm = request_json(function + "?mode=warm", timeout=175)
           if warm.get("ok") is not True or warm.get("indexed") is not True:
               raise RuntimeError("The repository warm-up did not complete: " + json.dumps({
                   "ok": warm.get("ok"), "indexed": warm.get("indexed"),
@@ -129,7 +110,6 @@ jobs:
           if not isinstance(warm.get("document_count"), int) or warm["document_count"] < 1000:
               raise RuntimeError("The repository index appears incomplete: " + str(warm.get("document_count")) + " chunks.")
 
-          # Validate that the answer comes from actual committed monitoring data.
           report_url = "https://raw.githubusercontent.com/GauravDarwesh/ChangeSentinel/main/data/report.json"
           with urllib.request.urlopen(report_url, timeout=20) as response:
               report = json.loads(response.read().decode("utf-8"))
@@ -143,13 +123,7 @@ jobs:
               + ". State its exact run ID, changed count, fetch errors, extraction errors, and source. "
                 "If a field is unavailable in evidence, say so."
           )
-          _, answer = request_json(
-              function,
-              method="POST",
-              body={"question": question, "conversation": []},
-              token=token,
-              timeout=45,
-          )
+          answer = request_json(function, method="POST", body={"question": question, "conversation": []}, timeout=45)
           text = answer.get("answer")
           if not isinstance(text, str) or len(text.strip()) < 40:
               raise RuntimeError("Ask Sentinel returned no usable answer.")

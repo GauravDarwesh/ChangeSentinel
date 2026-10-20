@@ -65,7 +65,8 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn("askSentinelSendQuestion(prompt.dataset.askPrompt)", js)
         self.assertIn("fetch(ASK_SENTINEL_ENDPOINT", js)
         self.assertIn('"?mode=warm"', js)
-        self.assertIn('"Authorization": "Bearer " + accessToken', js)
+        self.assertIn("askSentinelIdentityHeaders(identity)", js)
+        self.assertIn("x-ask-sentinel-visitor-id", js)
         self.assertIn("response.status === 429", js)
         self.assertIn('$("askSentinelMessages").addEventListener("click"', js)
         self.assertNotIn("dashboard_context: askSentinelHistoryContext()", js)
@@ -82,6 +83,8 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn('askLauncher.classList.toggle("active", state.view === "askSentinel")', js)
         self.assertIn(".ask-sentinel-launch.active", html)
         self.assertIn("window.supabase.createClient", js)
+        self.assertIn("changesentinel-ask-visitor-id", js)
+        self.assertIn("x-ask-sentinel-visitor-id", (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
