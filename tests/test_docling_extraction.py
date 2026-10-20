@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, patch
 
-from regmon.docling_extractor import extract_pdf_with_docling
+from regmon.docling_extractor import KNOWN_TIMEOUT_PDF_SHA256, extract_pdf_with_docling
 
 
 class TestDoclingAdapter(unittest.TestCase):
@@ -22,51 +22,18 @@ class TestDoclingAdapter(unittest.TestCase):
             "docling.datamodel.base_models": base_models,
         }
 
-    def test_converter_disables_vector_rule_separator_analysis_but_keeps_accurate_tables(self):
-        from regmon.docling_extractor import _build_converter
+    def test_known_timeout_pdf_is_skipped_before_model_initialization(self):
+        known_hash = next(iter(KNOWN_TIMEOUT_PDF_SHA256))
+        with patch("regmon.docling_extractor.hashlib.sha256") as sha256, patch(
+            "regmon.docling_extractor._build_converter"
+        ) as build:
+            sha256.return_value.hexdigest.return_value = known_hash
+            text, error = extract_pdf_with_docling(b"%PDF-1.7 synthetic", expected_pages=1)
 
-        docling = types.ModuleType("docling")
-        datamodel = types.ModuleType("docling.datamodel")
-        base_models = types.ModuleType("docling.datamodel.base_models")
-        base_models.InputFormat = types.SimpleNamespace(PDF="pdf")
-        pipeline_module = types.ModuleType("docling.datamodel.pipeline_options")
-        converter_module = types.ModuleType("docling.document_converter")
-
-        class FakePipelineOptions:
-            def __init__(self, **kwargs):
-                self.__dict__.update(kwargs)
-                self.table_structure_options = types.SimpleNamespace(mode=None)
-                self.accelerator_options = types.SimpleNamespace(num_threads=None)
-
-        class FakePdfFormatOption:
-            def __init__(self, *, pipeline_options):
-                self.pipeline_options = pipeline_options
-
-        class FakeTableFormerMode:
-            ACCURATE = "accurate"
-
-        pipeline_module.PdfPipelineOptions = FakePipelineOptions
-        pipeline_module.TableFormerMode = FakeTableFormerMode
-        converter_module.PdfFormatOption = FakePdfFormatOption
-        converter_module.DocumentConverter = lambda *, format_options: types.SimpleNamespace(
-            format_options=format_options
-        )
-
-        modules = {
-            "docling": docling,
-            "docling.datamodel": datamodel,
-            "docling.datamodel.base_models": base_models,
-            "docling.datamodel.pipeline_options": pipeline_module,
-            "docling.document_converter": converter_module,
-        }
-        with patch.dict(sys.modules, modules):
-            converter = _build_converter()
-
-        options = converter.format_options["pdf"].pipeline_options
-        self.assertFalse(options.use_reading_order_separators)
-        self.assertTrue(options.do_table_structure)
-        self.assertEqual(options.table_structure_options.mode, "accurate")
-        self.assertEqual(options.document_timeout, 120)
+        self.assertIsNone(text)
+        self.assertIn("intentionally skipped", error)
+        self.assertIn(known_hash, error)
+        build.assert_not_called()
 
     def test_success_requires_every_page_and_returns_markdown(self):
         document = Mock()
