@@ -402,11 +402,15 @@ class TestConditionalFetchAndSnapshots(unittest.TestCase):
             return html(f"<p>Rule text.</p><script>window.__CF$cv$params={{r:'{ray}',t:'MTc5'}};</script>")
         with Sandbox() as sandbox:
             for ray in ("aaa", "bbb", "ccc"):
-                sandbox.scan(lambda *a, ray=ray, **k: ok(page(ray)))
+                result = sandbox.scan(lambda *a, ray=ray, **k: ok(page(ray)))
             files = list((sandbox.data / "snapshots" / "html").glob("*.html"))
             self.assertEqual(len(files), 1)
             record = next(iter(sandbox.inventory().values()))
+            # html_hash identifies the saved snapshot; raw_hash the latest response.
             self.assertEqual(record["html_hash"], hashlib.sha256(files[0].read_bytes()).hexdigest())
+            self.assertEqual(record["raw_hash"], hashlib.sha256(page("ccc")).hexdigest())
+            self.assertNotEqual(record["html_hash"], record["raw_hash"])
+            self.assertIn("saved HTML snapshot", result["report"]["change_detector"]["html_hash"])
             sandbox.scan(lambda *a, **k: ok(html("<p>Rule text changed.</p>")))
             self.assertEqual(len(list((sandbox.data / "snapshots" / "html").glob("*.html"))), 2)
 
