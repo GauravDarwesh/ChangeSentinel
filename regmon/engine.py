@@ -28,6 +28,7 @@ from regmon.change import (
 from regmon.config import DEFAULT_CONFIG_PATH, SourceConfig, load_config
 from regmon.content import CONTENT_EXTRACTOR_VERSION, extract_content
 from regmon.discovery import canonical, discover
+from regmon.docling_extractor import configure_timeout_registry
 from regmon.fetch import fetch
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
@@ -1276,6 +1277,8 @@ def run(source_id: str="all", dry_run: bool=False) -> dict:
     if not selected:
         raise ValueError("No active monitoring sources are configured")
     run_id = f"{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:8]}"
+    # Learned Docling timeouts are read on every run; dry runs never write them back.
+    configure_timeout_registry(DATA / "docling-timeouts.json", persist=not dry_run)
 
     if dry_run:
         # Discovery writes checkpoints, inventories, and failure ledgers. Work on
