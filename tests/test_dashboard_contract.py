@@ -397,5 +397,23 @@ class TestCrossRunChangeLog(unittest.TestCase):
         self.assertIn('event.event_type !== "BASELINE_MIGRATION"', status)
 
 
+
+class TestDashboardLeftWorkspace(unittest.TestCase):
+    def test_primary_navigation_moves_to_a_desktop_left_rail(self):
+        source = (ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn('id="dashboard-left-workspace"', source)
+        self.assertIn("grid-template-columns: 248px minmax(0, 1fr);", source)
+        self.assertIn(".command-topbar {", source)
+        self.assertIn(".command-nav {", source)
+        self.assertIn("@media (max-width: 900px)", source)
+
+    def test_radar_sweep_uses_the_chart_center_and_reduced_motion_fallback(self):
+        source = (ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn("transform-box: view-box;", source)
+        self.assertIn("transform-origin: 50% 49.4%;", source)
+        self.assertIn("@media (prefers-reduced-motion: reduce)", source)
+        self.assertIn(".signal-svg .signal-sweep { animation: none !important; }", source)
+
+
 if __name__ == "__main__":
     unittest.main()
