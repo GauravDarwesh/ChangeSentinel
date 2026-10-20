@@ -1,4 +1,5 @@
 import json
+import re
 import unittest
 from pathlib import Path, PurePosixPath
 
@@ -6,48 +7,52 @@ from pathlib import Path, PurePosixPath
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def read(name):
+    return (ROOT / name).read_text(encoding="utf-8")
+
+
 class TestDashboardNotificationContract(unittest.TestCase):
-    def test_notification_view_is_present_in_both_published_html_entries(self):
-        required = (
+    def test_notification_view_is_present(self):
+        html = read("index.html")
+        for token in (
             'data-view="notifications"',
             'id="notificationsView"',
             'id="notificationPendingItems"',
             'id="notificationSentItems"',
             'id="navNotificationCount"',
-        )
-        for filename in ("index.html",):
-            with self.subTest(filename=filename):
-                source = (ROOT / filename).read_text(encoding="utf-8")
-                for token in required:
-                    self.assertIn(token, source)
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
 
     def test_dashboard_loads_durable_outbox_and_sent_ledger(self):
-        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        source = read("dashboard.js")
         for token in (
             'outbox: "data/notification-outbox.json"',
             'notifications: "data/notifications.json"',
-            'function renderNotifications()',
+            "function renderNotifications()",
             'notificationMap(state.outbox, "pending_events")',
             'notificationMap(state.notifications, "sent_events")',
-            'safeHttpUrl(item.url)',
+            "safeHttpUrl(item.url)",
         ):
             with self.subTest(token=token):
                 self.assertIn(token, source)
 
     def test_delivery_history_only_uses_fields_preserved_in_ledger(self):
-        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        source = read("dashboard.js")
         start = source.index('$("notificationSentItems").innerHTML')
-        end = source.index("function renderViews()", start)
+        end = source.index("function renderLists()", start)
         sent_renderer = source[start:end]
         self.assertIn("item.kind", sent_renderer)
         self.assertIn("item.sent_at", sent_renderer)
         self.assertIn("item.eventId", sent_renderer)
-        # The ledger now stores topic/url; older entries without them must still render.
+        # The ledger stores topic/url only for newer entries; older ones must still render.
         self.assertIn("item.topic ?", sent_renderer)
         self.assertIn("safeHttpUrl(item.url) ?", sent_renderer)
 
+
+class TestDashboardEvidenceContract(unittest.TestCase):
     def test_original_pdf_snapshot_is_previewed_and_text_remains_available(self):
-        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        source = read("dashboard.js")
         for token in (
             "file_snapshot_location",
             "function snapshotURL(path)",
@@ -65,144 +70,159 @@ class TestDashboardNotificationContract(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertIn(token, source)
 
-
-
-    def test_extracted_markdown_tables_are_rendered_as_html_tables(self):
-        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
-        self.assertIn("function splitMarkdownTableRow(line)", source)
-        self.assertIn("function isMarkdownTableSeparator(cells)", source)
-        self.assertIn("<table style=", source)
-        self.assertIn('renderCells(header, "th")', source)
-        self.assertIn("overflow-x:auto", source)
-
-
-
-    def test_professional_responsive_workspace_is_published_in_both_entries(self):
-        required = (
-            'id="professional-ux-rebuild"',
-            'class="app-shell command-shell"',
-            'class="topbar command-topbar"',
-            'class="nav-list command-nav"',
-            'class="page-heading dashboard-hero"',
-            'class="inventory-panel"',
-            'id="signalVisual"',
-            'id="signalChangedCount"',
-            'id="signalLinksCount"',
-            'id="nextRunTime"',
-            'id="nextRunCountdown"',
-            'color-scheme: light;',
-            '--blue: #2d6a50;',
-            '@media (max-width:1020px)',
-            '@media (max-width:760px)',
-            'viewport-fit=cover',
-            'position:fixed; inset:auto 12px calc(9px + env(safe-area-inset-bottom)) 12px',
-            '.pdf-viewer-shell.is-expanded',
-        )
-        for filename in ("index.html",):
-            with self.subTest(filename=filename):
-                source = (ROOT / filename).read_text(encoding="utf-8")
-                for token in required:
-                    self.assertIn(token, source)
-                self.assertNotIn('<aside class="sidebar"', source)
-                self.assertNotIn('class="hero-radar"', source)
-                self.assertNotIn('class="signal-panel"', source)
-                for view_id in ("monitorsView", "detailView", "changesView", "runsView", "notificationsView"):
-                    self.assertIn('id="' + view_id + '"', source)
-                for signal_id in ("signalStableCount", "signalChangedCount", "signalIssueCount", "signalWaitingCount"):
-                    self.assertIn('id="' + signal_id + '"', source)
-
-    def test_monitor_inventory_uses_compact_metadata_rows(self):
-        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
-        for token in (
-            'class="monitor-number"',
-            'class="monitor-meta-key"',
-            'data-status-kind=',
-            'data-monitor-id=',
-        ):
-            with self.subTest(token=token):
-                self.assertIn(token, source)
-
-    def test_monitor_signal_uses_real_inventory_statuses_and_utc_schedule(self):
-        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
-        for token in (
-            'function nextScheduledScan(reference = new Date())',
-            '0 */6 * * * (UTC)',
-            'function updateNextRunCountdown()',
-            'function renderMonitoringSignal()',
-            'const statuses = items.map(item => ({ item, status: itemStatus(item) }))',
-            'statuses.slice(0, maxDots)',
-            'signalLinksCount',
-            'signalChangedCount',
-            'signalIssueCount',
-            'window.setInterval(updateNextRunCountdown, 60000)',
-        ):
-            with self.subTest(token=token):
-                self.assertIn(token, source)
-
-    def test_mobile_pdf_reader_can_expand_and_close_without_losing_text_mode(self):
-        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+    def test_pdf_reader_expands_and_closes_with_escape(self):
+        source = read("dashboard.js")
         for token in (
             'class="pdf-viewer-shell" id="pdfViewerShell"',
             'data-pdf-action="expand"',
             'data-pdf-action="close"',
-            'function setPdfViewerExpanded(expanded)',
+            "function setPdfViewerExpanded(expanded)",
             'document.body.classList.toggle("pdf-viewer-open", expanded)',
             'event.key === "Escape"',
-            'new Blob([bytes], { type: "application/pdf" })',
-            'data-snapshot-mode="text"',
         ):
             with self.subTest(token=token):
                 self.assertIn(token, source)
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
-        self.assertIn('height:min(76dvh,940px)', html)
-        self.assertIn('.pdf-viewer-shell.is-expanded .pdf-snapshot-frame', html)
-        self.assertIn('@media (max-width:760px)', html)
-        self.assertIn('height:64svh', html)
+        html = read("index.html")
+        self.assertIn(".pdf-viewer-shell.is-expanded .pdf-snapshot-frame", html)
+        self.assertIn("height: min(76dvh, 940px)", html)
 
-    def test_dashboard_navigation_resets_scroll_when_changing_view_or_opening_a_monitor(self):
-        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+    def test_extracted_markdown_tables_are_rendered_as_html_tables(self):
+        lib = read("dashboard-lib.js")
+        self.assertIn("function splitMarkdownTableRow(line)", lib)
+        self.assertIn("function isMarkdownTableSeparator(cells)", lib)
+        source = read("dashboard.js")
+        self.assertIn("L.splitMarkdownTableRow", source)
+        self.assertIn('<table class="doc-table"', source)
+        self.assertIn('renderCells(header, "th")', source)
+        self.assertRegex(read("index.html"), r"\.doc-table-wrap \{[^}]*overflow-x: auto")
+
+    def test_changes_are_shown_as_a_redline_with_raw_diffs_available(self):
+        source = read("dashboard.js")
+        for token in ("L.renderRedline(evidence.diff", "L.renderUnifiedDiff(evidence.html_diff", 'data-diff-mode="', "Text diff", "HTML diff"):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+        html = read("index.html")
+        for token in (".redline del", ".redline ins", ".rl-changed::before", "--font-doc"):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+
+
+class TestDashboardWorkspaceLayout(unittest.TestCase):
+    """The page itself never scrolls: a rail, a list pane and a detail pane."""
+
+    def test_rail_list_and_detail_panes_exist_for_every_view(self):
+        html = read("index.html")
+        self.assertIn('<nav class="rail" aria-label="Workspace">', html)
+        for view in ("overview", "changes", "monitors", "runs", "notifications"):
+            with self.subTest(view=view):
+                self.assertIn('data-view="' + view + '"', html)
+        for view_id in ("overviewView", "changesView", "monitorsView", "runsView", "notificationsView"):
+            with self.subTest(view_id=view_id):
+                self.assertIn('id="' + view_id + '"', html)
+        for split in ("changesView", "monitorsView", "runsView", "notificationsView"):
+            with self.subTest(split=split):
+                self.assertRegex(html, 'id="' + split + '" class="view view-split"')
+        for pane in ("changeDetail", "detailView", "runDetail", "notificationDetail"):
+            with self.subTest(pane=pane):
+                self.assertIn('id="' + pane + '"', html)
+
+    def test_panes_scroll_independently_and_the_page_does_not(self):
+        html = read("index.html")
+        self.assertRegex(html, r"body \{[^}]*overflow: hidden")
+        self.assertRegex(html, r"\.list-body \{[^}]*overflow-y: auto")
+        self.assertRegex(html, r"\.detail-pane \{[^}]*overflow-y: auto")
+
+    def test_responsive_and_accessible_by_default(self):
+        html = read("index.html")
+        self.assertIn("viewport-fit=cover", html)
+        self.assertIn("@media (max-width: 1240px)", html)
+        self.assertIn("@media (max-width: 980px)", html)
+        self.assertIn(".view-split.has-selection .detail-pane { display: block; }", html)
+        self.assertIn("env(safe-area-inset-bottom)", html)
+        self.assertIn("@media (prefers-reduced-motion: reduce)", html)
+        self.assertIn(":focus-visible", html)
+        source = read("dashboard.js")
+        self.assertIn('window.matchMedia("(max-width: 980px)")', source)
+        self.assertIn("data-back", source)
+
+    def test_dark_and_light_themes_share_one_token_set(self):
+        html = read("index.html")
+        self.assertIn('<html lang="en" data-theme="dark">', html)
+        self.assertIn(':root[data-theme="light"]', html)
+        # The saved theme is applied before first paint.
+        self.assertLess(html.index('localStorage.getItem("cs-theme")'), html.index("<style"))
+        source = read("dashboard.js")
+        self.assertIn("data-theme-toggle", source)
+        self.assertIn('localStorage.setItem("cs-theme", next)', source)
+
+    def test_one_stylesheet_and_versioned_scripts(self):
+        html = read("index.html")
+        self.assertEqual(html.count("<style"), 1)
+        lib = re.search(r'src="dashboard-lib\.js\?v=([^"]+)"', html)
+        app = re.search(r'src="dashboard\.js\?v=([^"]+)"', html)
+        self.assertTrue(lib and app)
+        self.assertEqual(lib.group(1), app.group(1))
+        self.assertLess(html.index('src="dashboard-lib.js'), html.index('src="dashboard.js'))
+
+    def test_pages_publishes_the_helper_library(self):
+        workflow = read(".github/workflows/pages.yml")
+        self.assertIn("cp dashboard-lib.js site/dashboard-lib.js", workflow)
+        self.assertIn('- "dashboard-lib.js"', workflow)
+
+    def test_selection_resets_detail_scroll_and_keyboard_moves_through_lists(self):
+        source = read("dashboard.js")
+        self.assertIn("function resetDetailScroll(view)", source)
         self.assertGreaterEqual(source.count('window.scrollTo({ top: 0, behavior: "auto" })'), 2)
         self.assertIn('document.addEventListener("keydown"', source)
+        self.assertIn('event.key !== "ArrowDown" && event.key !== "ArrowUp"', source)
 
-
-    def test_dashboard_restores_the_intentional_style_cascade_and_versions_the_script(self):
-        for filename in ("index.html",):
-            with self.subTest(filename=filename):
-                source = (ROOT / filename).read_text(encoding="utf-8")
-                self.assertIn('id="premium-responsive-redesign"', source)
-                self.assertIn('id="professional-ux-rebuild"', source)
-                self.assertIn('id="dashboard-ux-followup"', source)
-                self.assertIn('dashboard.js?v=20261019-mobile-header-2', source)
-                self.assertIn('id="monitorListControls"', source)
-
-    def test_mobile_inventory_progressively_discloses_the_full_watchlist(self):
-        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
-        for token in (
-            'state.showAllMonitorsMobile',
-            'data-monitor-list-toggle=',
-            'all.slice(0, 6)',
-            'Show all " + all.length + " monitors',
-            'Federal Reserve " + label',
-            'cs-title:v3:',
-        ):
+    def test_page_rows_and_deep_links(self):
+        source = read("dashboard.js")
+        for token in ("data-status-kind=", "data-monitor-id=", "function readHash()", "monitor=([^&]+)"):
             with self.subTest(token=token):
                 self.assertIn(token, source)
 
 
+class TestDashboardScanSignal(unittest.TestCase):
+    def test_led_change_field_uses_real_scans_and_statuses(self):
+        source = read("dashboard.js")
+        for token in (
+            "function renderMonitoringSignal()",
+            "L.scanSlots(new Date(), geometry.slots)",
+            "L.slotState(slot, page)",
+            "scansBySource[item.source_id]",
+            "itemChangeEntries(item)",
+            "function updateNextRunCountdown()",
+            "L.scanCycle(new Date())",
+            "window.setInterval(updateNextRunCountdown, 30000)",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+        lib = read("dashboard-lib.js")
+        self.assertIn("function nextScheduledScan(reference = new Date())", lib)
+        self.assertIn("0 */6 * * * (UTC)", lib)
+        html = read("index.html")
+        self.assertIn('id="signalVisual"', html)
+        self.assertIn('id="cycleBar"', html)
+        self.assertIn(".led.is-now", html)
+        # The old decorative sweep is gone: nothing spins.
+        self.assertNotIn("signal-sweep", html + source)
 
+
+class TestDashboardDataLoading(unittest.TestCase):
     def test_missing_scan_completeness_metadata_fails_closed(self):
-        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        source = read("dashboard.js")
         for token in (
             "const incompleteDiscovery = discoveryEntries.length === 0 || discoveryEntries.some",
             "const noActiveSources = activeIds.length === 0",
             "state.report.baseline_update_allowed !== true || incompleteDiscovery",
-            '" · no active sources configured"',
+            '", no active sources configured"',
         ):
             with self.subTest(token=token):
                 self.assertIn(token, source)
 
     def test_parseable_but_malformed_dashboard_assets_are_rejected(self):
-        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        source = read("dashboard.js")
         for token in (
             "function isValidDataAssetShape(key, value)",
             'case "report":',
@@ -220,30 +240,30 @@ class TestDashboardNotificationContract(unittest.TestCase):
                 self.assertIn(token, source)
 
     def test_dashboard_data_is_published_same_origin_with_raw_fallback(self):
-        script = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        script = read("dashboard.js")
         for token in (
-            'const DATA_PATHS = {',
+            "const DATA_PATHS = {",
             'report: new URL("./data/report.json", document.baseURI).href',
             'inventory: new URL("./data/latest.json", document.baseURI).href',
-            'async function fetchDataAsset(key, required)',
+            "async function fetchDataAsset(key, required)",
             'RAW + "/" + path',
-            'Latest saved scan',
-            'Monitoring data stale',
-            'Latest scan incomplete',
-            'Latest scan partial',
-            'const missingActiveSources = activeIds.filter',
-            'active sources represented',
+            "Latest saved scan",
+            "Monitoring data stale",
+            "Latest scan incomplete",
+            "Latest scan partial",
+            "const missingActiveSources = activeIds.filter",
+            "active sources represented",
         ):
             with self.subTest(token=token):
                 self.assertIn(token, script)
-        workflow = (ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
+        workflow = read(".github/workflows/pages.yml")
         for token in (
-            'cp data/report.json site/data/report.json',
-            'cp data/latest.json site/data/latest.json',
-            'cp data/history/index.json site/data/history/index.json',
-            'cp data/notifications.json site/data/notifications.json',
-            'cp data/notification-outbox.json site/data/notification-outbox.json',
-            'cp config/sources.json site/config/sources.json',
+            "cp data/report.json site/data/report.json",
+            "cp data/latest.json site/data/latest.json",
+            "cp data/history/index.json site/data/history/index.json",
+            "cp data/notifications.json site/data/notifications.json",
+            "cp data/notification-outbox.json site/data/notification-outbox.json",
+            "cp config/sources.json site/config/sources.json",
             '"data/report.json"',
             '"data/latest.json"',
             '"config/sources.json"',
@@ -255,24 +275,9 @@ class TestDashboardNotificationContract(unittest.TestCase):
             ".github/workflows/register-monitor.yml",
         ):
             with self.subTest(workflow_path=workflow_path):
-                workflow_source = (ROOT / workflow_path).read_text(encoding="utf-8")
-                self.assertIn("gh workflow run pages.yml", workflow_source)
+                self.assertIn("gh workflow run pages.yml", read(workflow_path))
 
-    def test_mobile_header_brand_stays_visible_and_monitor_rows_have_breathing_room(self):
-        for filename in ("index.html",):
-            with self.subTest(filename=filename):
-                source = (ROOT / filename).read_text(encoding="utf-8")
-                self.assertIn('@media (max-width:760px)', source)
-                self.assertIn('.mobile-wordmark {\n      display:flex !important;', source)
-                self.assertIn('.mobile-wordmark .brand-name {\n      display:block !important;', source)
-                self.assertIn('backdrop-filter:none !important;', source)
-                self.assertIn('-webkit-backdrop-filter:none !important;', source)
-                self.assertIn('.monitor-card {\n      grid-template-columns:20px minmax(0,1fr) !important;', source)
-                self.assertIn('.dashboard-hero { grid-template-columns:minmax(0,1fr);', source)
-                self.assertIn('.dashboard-hero .hero-copy > p { margin-top:9px; font-size:13px;', source)
-                self.assertIn('.monitor-bottom { display:grid; grid-template-columns:repeat(2,minmax(0,1fr));', source)
-
-
+class TestPersistedReferences(unittest.TestCase):
     def test_snapshot_and_evidence_references_exist_in_repository_data(self):
         """Raw GitHub is the snapshot/evidence origin; every persisted pointer must resolve."""
         latest = json.loads((ROOT / "data" / "latest.json").read_text(encoding="utf-8"))
@@ -373,23 +378,26 @@ class TestDashboardNotificationContract(unittest.TestCase):
             'function snapshotURL(path) { return path ? bust(RAW + "/" + path) : ""; }',
             dashboard,
         )
-        self.assertIn('fetch(bust(RAW + "/" + event.evidence_location)', dashboard)
+        self.assertIn('fetch(bust(RAW + "/" + location)', dashboard)
+        self.assertIn("loadEvidence(event.evidence_location)", dashboard)
+
+
 
 
 class TestSingleDashboardEntry(unittest.TestCase):
     def test_legacy_entry_redirects_to_the_main_dashboard(self):
-        legacy = (ROOT / "dashboard-v2.html").read_text(encoding="utf-8")
+        legacy = read("dashboard-v2.html")
         self.assertIn('http-equiv="refresh" content="0; url=./"', legacy)
         self.assertLess(len(legacy.splitlines()), 30)
 
 
 class TestCrossRunChangeLog(unittest.TestCase):
     def test_change_log_and_counters_share_one_definition_and_span_runs(self):
-        source = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        source = read("dashboard.js")
         self.assertIn("function changeLogEntries()", source)
         self.assertIn("item.change_history", source)
         self.assertIn('$("navChangeCount").textContent = changes;', source)
-        route = source[source.index("function renderChangeRoute()"):source.index("function renderRuns()")]
+        route = source[source.index("function renderChangeRoute()"):source.index("function pageRow(item)")]
         self.assertIn("changeLogEntries()", route)
         self.assertIn("parser re-baseline", route)
         status = source[source.index("function itemStatus(item)"):source.index("function canonicalForDashboard")]

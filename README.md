@@ -467,7 +467,7 @@ File:
 
 `.github/workflows/pages.yml`
 
-Publishes `index.html`, `dashboard-v2.html`, and `dashboard.js` to GitHub Pages when the dashboard code changes, or when manually dispatched. Monitoring JSON is fetched from the repository at runtime, so data-only monitoring commits update the dashboard without requiring a static-site rebuild.
+Publishes `index.html`, `dashboard-v2.html`, `dashboard.js` and `dashboard-lib.js` to GitHub Pages when the dashboard code changes, or when manually dispatched. Monitoring JSON is fetched from the repository at runtime, so data-only monitoring commits update the dashboard without requiring a static-site rebuild.
 
 ---
 
@@ -493,22 +493,16 @@ That is when actual changes become interesting.
 
 # Dashboard
 
-The repository includes a dependency-free operations console:
+The repository includes a dependency-free review workspace (`index.html`, `dashboard.js`, `dashboard-lib.js`), published by GitHub Pages. It has no build step.
 
-`index.html`
+The layout is three panes: a rail on the left (Overview, Changes, Pages, Runs, Alerts), a list, and the selected item. The page itself never scrolls; each pane scrolls on its own. On phones the rail becomes a bottom bar and the list and detail are separate screens. A dark theme is the default, with a light theme one click away.
 
-GitHub Pages publishes it.
+- **Overview** opens with a one-sentence status, the next-scan countdown, and the **LED change field**: one row per monitored page, one cell per six-hour scan over the last few days. Amber cells are scans that found a change, red cells hit a problem, dim cells were checked with no change, and the outlined column is the scan in progress. Hover a cell for the page and scan; click to open the page.
+- **Changes** lists every change across runs, newest first, and opens the newest one straight away. Each change shows the AI assessment and a **redline** of the extracted text: deleted words struck through, inserted words underlined, edits within a line marked word by word, and unchanged stretches collapsed. Text and HTML diffs are one click away.
+- **Pages** shows each monitored page with its change history, the saved copy (rendered HTML or the original PDF), the extracted text, the fetched HTML source, and its fingerprints.
+- **Runs** and **Alerts** show scan results and the notification outbox and delivery ledger.
 
-The dashboard reads the monitoring JSON from the repository and exposes things such as:
-
-- discovered URL count
-- changed/new/removed counts
-- errors
-- AI-reviewed results
-- event filters
-- URL inventory
-- run history
-- evidence links
+`dashboard-lib.js` holds the pure logic (redline, scan schedule, LED cell states, wording); `tests/test_dashboard_lib.py` runs it through Node.
 
 Live dashboard:
 
@@ -689,6 +683,7 @@ history + dashboard
 ├── index.html
 ├── dashboard-v2.html
 ├── dashboard.js
+├── dashboard-lib.js
 ├── requirements.txt
 └── README.md
 ```
