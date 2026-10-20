@@ -161,6 +161,30 @@ class TestLegacyUrlCollisionMigration(unittest.TestCase):
         self.assertEqual(set(collisions[0]["url_variants"]), {self.preferred_url, self.reversed_url})
         self.assertEqual(len(collisions[0]["evidence"]), 2)
 
+    def test_committed_eba_history_surfaces_the_known_query_order_pair(self):
+        repo_root = Path(__file__).resolve().parents[1]
+        latest = json.loads((repo_root / "data" / "latest.json").read_text(encoding="utf-8"))
+        data_dir = repo_root / "data"
+        canonical_url = self.module.canonical(self.preferred_url)
+
+        current_records = [
+            record for record in latest["sources"]["eba-consumer-protection"].values()
+            if self.module.canonical(record.get("canonical_url", "")) == canonical_url
+        ]
+        self.assertEqual(len(current_records), 1, "the live inventory should have one authoritative record for this canonical URL")
+
+        historical = self.module.audit_historical_evidence_collisions(
+            latest, data_dir, source_filter="eba-consumer-protection"
+        )
+        target = next(
+            (entry for entry in historical if entry["canonical_url"] == canonical_url),
+            None,
+        )
+        self.assertIsNotNone(target, "dry-run should surface the historical NEW_URL/REMOVED_URL collision")
+        event_ids = {entry["event_id"] for entry in target["evidence"]}
+        self.assertIn("a431099f2de955a79fffe1262db8da5099eb7821cfed11a784dd53fc8994a42e", event_ids)
+        self.assertIn("f1126207731898f9066089114d3212c305a84a854acd0647fa31f882912a834e", event_ids)
+
     def test_unconfigured_legacy_source_can_be_audited_without_reactivating_it(self):
         plans = self.module.audit_collisions(self.latest, {}, self.data_dir, source_filter="eba-test")
         self.assertEqual(len(plans), 1)
