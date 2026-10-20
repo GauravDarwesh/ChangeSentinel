@@ -5,8 +5,8 @@ guard first, matching the production engine. Only source changes that survive th
 guard are sent to semantic AI. The report includes both end-to-end and model-only
 accuracy so deterministic suppressions cannot be mistaken for model performance.
 
-Usage: OPENROUTER_API_KEY=... python scripts/ai_eval.py [--min-accuracy 0.8]
-Exit status 1 when end-to-end accuracy is below the threshold or the key is missing.
+Usage: OPENROUTER_API_KEY=... python scripts/ai_eval.py [--min-accuracy 0.8] [--min-model-accuracy 0.8]
+Exit status 1 when either accuracy threshold is missed or the key is missing.
 """
 from __future__ import annotations
 
