@@ -1,18 +1,15 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>ChangeSentinel</title>
   <meta name="description" content="See what changed on monitored Federal Reserve pages, scan by scan, with the saved evidence behind every change.">
-  <meta name="theme-color" content="#120b07">
-  <script>
-    // Apply the saved theme before first paint so the page never flashes.
-    try {
-      var savedTheme = localStorage.getItem("cs-theme");
-      if (savedTheme === "light" || savedTheme === "dark") document.documentElement.setAttribute("data-theme", savedTheme);
-    } catch (_) {}
-  </script>
+  <meta name="theme-color" content="#e4e0da">  <script>
+    // Always start in light mode, regardless of this browser's saved theme.
+    document.documentElement.setAttribute("data-theme", "light");
+    try { localStorage.setItem("cs-theme", "light"); } catch (_) {}
+  </script>>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
@@ -737,111 +734,125 @@
 }
 
 
-    /* ---------- Development access gate (isolated from the dashboard UI) ---------- */
+    /* ---------- Minimal light glass development gate ---------- */
     html.cs-locked, html.cs-locked body { overflow: hidden !important; }
-    html.cs-locked #app,
+    /* Keep the real dashboard visible through the translucent access layer. */
+    html.cs-locked #app { visibility: visible !important; pointer-events: none !important; }
+    html.cs-locked body::before {
+      content: ""; position: fixed; inset: 0; z-index: 9998; pointer-events: none;
+      background: rgba(246, 243, 237, .34);
+      backdrop-filter: blur(3.5px) saturate(.88);
+      -webkit-backdrop-filter: blur(3.5px) saturate(.88);
+    }
     html.cs-locked #addMonitorDialog,
     html.cs-locked #fieldTip,
     html.cs-locked #toast { visibility: hidden !important; }
+
     .cs-gate {
-      --gate-bg: #120b07; --gate-pane: rgba(23,15,10,.86); --gate-line: #3b2a1c;
-      --gate-ink: #fff4e4; --gate-muted: #cdb7a0; --gate-dim: #8f7a65; --gate-accent: #ff9f1c;
+      --gate-ink: #29251f; --gate-muted: #6e665c; --gate-dim: #8f867b; --gate-accent: #c46800;
       position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center;
-      overflow: auto; padding: max(28px, env(safe-area-inset-top)) 20px max(28px, env(safe-area-inset-bottom));
-      color: var(--gate-ink); background:
-        radial-gradient(ellipse at 50% 38%, rgba(255,159,28,.105), transparent 34%),
-        linear-gradient(rgba(255,159,28,.022) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,159,28,.022) 1px, transparent 1px), var(--gate-bg);
-      background-size: auto, 28px 28px, 28px 28px, auto;
+      overflow: auto; padding: max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom));
+      color: var(--gate-ink); background: rgba(248, 246, 241, .10);
       font-family: var(--font-ui, "Geist", system-ui, sans-serif);
-      opacity: 1; transition: opacity .62s cubic-bezier(.2,.7,.2,1), filter .62s cubic-bezier(.2,.7,.2,1);
-      isolation: isolate;
-    }
-    .cs-gate::before, .cs-gate::after { content: ""; position: absolute; pointer-events: none; }
-    .cs-gate::before {
-      inset: 14px; border: 1px solid rgba(255,159,28,.12);
-      mask-image: linear-gradient(to bottom, #000 0%, transparent 36%, transparent 70%, #000 100%);
-    }
-    .cs-gate::after {
-      width: min(540px, 88vw); aspect-ratio: 1; border: 1px solid rgba(255,159,28,.07); border-radius: 50%;
-      box-shadow: 0 0 0 34px rgba(255,159,28,.018), 0 0 0 70px rgba(255,159,28,.012);
-      z-index: -1;
+      opacity: 1; transition: opacity .58s cubic-bezier(.2,.7,.2,1), filter .58s cubic-bezier(.2,.7,.2,1);
     }
     .cs-gate-card {
-      position: relative; width: min(100%, 430px); padding: clamp(26px, 5vw, 42px);
-      border: 1px solid rgba(255,159,28,.19); border-radius: 7px;
-      background: linear-gradient(145deg, rgba(37,25,16,.76), rgba(18,11,7,.93));
-      box-shadow: 0 28px 90px rgba(0,0,0,.36), inset 0 1px rgba(255,244,228,.035);
-      text-align: center; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-      animation: csGateRise .85s cubic-bezier(.2,.7,.2,1) both;
+      position: relative; width: min(100%, 408px); padding: clamp(24px, 4.5vw, 34px);
+      border: 1px solid rgba(255, 255, 255, .76); border-radius: 16px;
+      background: rgba(255, 255, 255, .66);
+      box-shadow: 0 22px 70px rgba(55, 42, 25, .14), 0 2px 10px rgba(55, 42, 25, .045),
+        inset 0 1px 0 rgba(255, 255, 255, .86);
+      backdrop-filter: blur(23px) saturate(145%);
+      -webkit-backdrop-filter: blur(23px) saturate(145%);
+      animation: csGateRise .65s cubic-bezier(.2,.7,.2,1) both;
     }
-    .cs-gate-kicker { display: inline-flex; align-items: center; justify-content: center; gap: 8px; color: var(--gate-muted); font: 500 10px/1.3 var(--font-code, "Geist Mono", monospace); letter-spacing: .18em; text-transform: uppercase; }
-    .cs-gate-live { width: 5px; height: 5px; flex: none; background: var(--gate-accent); box-shadow: 0 0 11px rgba(255,159,28,.7); animation: csGatePulse 2.2s ease-in-out infinite; }
-    .cs-gate-brand { display: flex; flex-direction: column; align-items: center; gap: 18px; margin: 18px 0 29px; }
+    .cs-gate-brand {
+      display: flex; flex-direction: row; align-items: center; justify-content: center;
+      gap: 12px; margin: 0 0 27px; min-width: 0;
+    }
     .cs-gate-mark {
-      position: relative; display: grid; grid-template-columns: repeat(3, 10px); gap: 4px; padding: 17px;
-      border: 1px solid rgba(255,159,28,.17); background: rgba(255,159,28,.035);
-      box-shadow: 0 0 45px rgba(255,159,28,.075), inset 0 0 22px rgba(255,159,28,.025);
-      transform: translateZ(0);
+      flex: none; display: grid; grid-template-columns: repeat(3, 7px); gap: 2.5px;
+      padding: 9px; border: 1px solid rgba(196, 104, 0, .14); border-radius: 5px;
+      background: rgba(255, 255, 255, .48);
+      box-shadow: 0 4px 15px rgba(116, 72, 23, .07);
     }
-    .cs-gate-mark i { width: 10px; height: 10px; display: block; background: #392719; animation: csGateSweep 2.65s linear calc(var(--k) * .095s) infinite; }
+    .cs-gate-mark i {
+      display: block; width: 7px; height: 7px; background: #dfcbb4;
+      animation: csGateSweep 2.8s linear calc(var(--k) * .095s) infinite;
+    }
     .cs-gate-mark i:nth-child(1) { --k: 0; } .cs-gate-mark i:nth-child(2) { --k: 1; } .cs-gate-mark i:nth-child(3) { --k: 2; }
     .cs-gate-mark i:nth-child(6) { --k: 3; } .cs-gate-mark i:nth-child(5) { --k: 4; } .cs-gate-mark i:nth-child(4) { --k: 5; }
     .cs-gate-mark i:nth-child(7) { --k: 6; } .cs-gate-mark i:nth-child(8) { --k: 7; } .cs-gate-mark i:nth-child(9) { --k: 8; }
-    .cs-gate-title { color: var(--gate-ink); font-size: clamp(25px, 5.6vw, 32px); font-weight: 500; letter-spacing: -.055em; line-height: 1.1; }
+    .cs-gate-title {
+      margin: 0; color: var(--gate-ink); white-space: nowrap;
+      font-size: clamp(22px, 5.7vw, 29px); font-weight: 500; letter-spacing: -.055em; line-height: 1.12;
+    }
     .cs-gate-title span { color: var(--gate-accent); }
-    .cs-gate-subtitle { margin-top: 11px; color: var(--gate-muted); font-size: 13px; line-height: 1.6; }
-    .cs-gate-divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; color: var(--gate-dim); font: 10px/1 var(--font-code, monospace); letter-spacing: .14em; text-transform: uppercase; }
-    .cs-gate-divider::before, .cs-gate-divider::after { content: ""; height: 1px; flex: 1; background: linear-gradient(90deg, transparent, rgba(255,159,28,.2)); }
-    .cs-gate-divider::after { transform: scaleX(-1); }
-    .cs-gate-label { display: block; margin-bottom: 10px; color: var(--gate-ink); font-size: 14px; font-weight: 500; text-align: left; }
+    .cs-gate-subtitle { margin: 0 0 24px; color: var(--gate-muted); font-size: 12.5px; line-height: 1.5; text-align: center; }
+    .cs-gate-label { display: block; margin-bottom: 9px; color: var(--gate-ink); font-size: 13px; font-weight: 500; }
     .cs-gate-form { display: grid; gap: 10px; }
-    .cs-gate-input-wrap { position: relative; }
     .cs-gate-input {
-      width: 100%; min-height: 49px; padding: 0 14px; border: 1px solid #4a3321; border-radius: 4px;
-      outline: none; background: rgba(10,7,5,.58); color: var(--gate-ink);
-      font: 14px/1.4 var(--font-code, "Geist Mono", monospace); letter-spacing: .04em;
-      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+      display: block; width: 100%; min-height: 47px; padding: 0 13px;
+      border: 1px solid rgba(104, 84, 60, .24); border-radius: 7px; outline: none;
+      background: rgba(255, 255, 255, .72); color: var(--gate-ink);
+      font: 14px/1.4 var(--font-code, "Geist Mono", monospace); letter-spacing: .025em;
+      box-shadow: inset 0 1px 2px rgba(59, 44, 26, .025);
+      transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
     }
-    .cs-gate-input::placeholder { color: #79634e; letter-spacing: 0; font-family: var(--font-ui, "Geist", sans-serif); }
-    .cs-gate-input:focus { border-color: var(--gate-accent); background: rgba(10,7,5,.78); box-shadow: 0 0 0 3px rgba(255,159,28,.1), 0 0 22px rgba(255,159,28,.04); }
+    .cs-gate-input::placeholder { color: #9a9084; letter-spacing: 0; font-family: var(--font-ui, "Geist", sans-serif); }
+    .cs-gate-input:focus {
+      border-color: rgba(196, 104, 0, .75); background: #fff;
+      box-shadow: 0 0 0 3px rgba(196, 104, 0, .11);
+    }
     .cs-gate-submit {
-      position: relative; display: inline-flex; justify-content: center; align-items: center; gap: 10px; width: 100%; min-height: 47px;
-      border: 1px solid var(--gate-accent); border-radius: 4px; background: var(--gate-accent); color: #170d05;
-      font: 600 13px/1 var(--font-ui, "Geist", sans-serif); transition: background .18s ease, transform .18s ease, box-shadow .18s ease;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px;
+      border: 1px solid #c46800; border-radius: 7px; background: #c46800; color: #fffaf4;
+      font: 500 13px/1 var(--font-ui, "Geist", sans-serif);
+      transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
     }
-    .cs-gate-submit:hover { background: #ffc06a; box-shadow: 0 5px 22px rgba(255,159,28,.12); }
+    .cs-gate-submit:hover { border-color: #a95500; background: #a95500; box-shadow: 0 5px 18px rgba(196, 104, 0, .16); }
     .cs-gate-submit:active { transform: translateY(1px); }
-    .cs-gate-submit svg { width: 15px; height: 15px; }
-    .cs-gate-message { min-height: 18px; margin-top: 9px; color: #ffb5a6; font-size: 12px; line-height: 1.5; text-align: left; }
-    .cs-gate-message:empty { visibility: hidden; }
-    .cs-gate-help { padding-top: 20px; border-top: 1px solid rgba(255,244,228,.075); color: var(--gate-muted); font-size: 12px; line-height: 1.75; text-align: left; }
-    .cs-gate-help strong { color: var(--gate-ink); font-weight: 500; }
-    .cs-gate-links { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 15px; margin-top: 10px; }
-    .cs-gate-links a { display: inline-flex; align-items: center; gap: 6px; color: #ffc8a0; text-decoration: none; text-underline-offset: 4px; transition: color .15s ease; }
-    .cs-gate-links a:hover { color: #fff4e4; text-decoration: underline; }
-    .cs-gate-links svg { width: 13px; height: 13px; flex: none; }
-    .cs-gate-foot { margin-top: 24px; color: #79634e; font: 10px/1.5 var(--font-code, monospace); letter-spacing: .07em; }
-    .cs-gate.is-error .cs-gate-card { animation: csGateShake .34s ease both; }
-    .cs-gate.is-success { pointer-events: none; opacity: 0; filter: blur(13px); }
-    .cs-gate.is-success .cs-gate-card { transform: translateY(-8px) scale(.985); opacity: 0; transition: transform .58s ease, opacity .45s ease; }
-    @keyframes csGateRise { from { opacity: 0; transform: translateY(12px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    @keyframes csGateSweep {
-      0%, 5% { background: #ffc8a0; box-shadow: 0 0 15px rgba(255,159,28,.8); }
-      25% { background: #ff9f1c; box-shadow: 0 0 11px rgba(255,159,28,.62); }
-      65%, 100% { background: #392719; box-shadow: none; }
+    .cs-gate-submit svg { width: 14px; height: 14px; }
+    .cs-gate-message { min-height: 16px; margin: 0; color: #a13e2b; font-size: 12px; line-height: 1.5; }
+    .cs-gate-message:empty { display: none; }
+    .cs-gate-help {
+      margin-top: 17px; padding-top: 17px; border-top: 1px solid rgba(69, 54, 36, .10);
+      color: var(--gate-muted); font-size: 12px; line-height: 1.65; text-align: center;
     }
-    @keyframes csGatePulse { 50% { opacity: .35; } }
-    @keyframes csGateShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
-    @media (max-width: 480px) {
-      .cs-gate { padding-inline: 14px; }
-      .cs-gate-card { padding: 26px 21px; }
-      .cs-gate-mark { grid-template-columns: repeat(3, 9px); gap: 3px; padding: 14px; }
-      .cs-gate-mark i { width: 9px; height: 9px; }
-      .cs-gate-help { font-size: 11.5px; }
+    .cs-gate-help strong { color: var(--gate-ink); font-weight: 500; }
+    .cs-gate-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 17px; margin-top: 9px; }
+    .cs-gate-links a {
+      display: inline-flex; align-items: center; gap: 6px; color: #a95500; text-decoration: none;
+      text-underline-offset: 4px; transition: color .15s ease;
+    }
+    .cs-gate-links a:hover { color: #713900; text-decoration: underline; }
+    .cs-gate-links svg { width: 13px; height: 13px; flex: none; }
+    .cs-gate.is-error .cs-gate-card { animation: csGateShake .32s ease both; }
+    .cs-gate.is-success { pointer-events: none; opacity: 0; filter: blur(12px); }
+    .cs-gate.is-success .cs-gate-card {
+      transform: translateY(-5px) scale(.99); opacity: 0;
+      transition: transform .54s ease, opacity .42s ease;
+    }
+    @keyframes csGateRise { from { opacity: 0; transform: translateY(9px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes csGateSweep {
+      0%, 5% { background: #f3bd78; box-shadow: 0 0 10px rgba(196, 104, 0, .55); }
+      25% { background: #c46800; box-shadow: 0 0 8px rgba(196, 104, 0, .32); }
+      65%, 100% { background: #dfcbb4; box-shadow: none; }
+    }
+    @keyframes csGateShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+    @media (max-width: 440px) {
+      .cs-gate { padding-inline: 13px; }
+      .cs-gate-card { padding: 23px 19px; }
+      .cs-gate-brand { gap: 9px; margin-bottom: 23px; }
+      .cs-gate-mark { grid-template-columns: repeat(3, 6px); gap: 2px; padding: 8px; }
+      .cs-gate-mark i { width: 6px; height: 6px; }
+      .cs-gate-title { font-size: clamp(20px, 5.6vw, 26px); letter-spacing: -.06em; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .cs-gate *, .cs-gate *::before, .cs-gate *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+      .cs-gate *, .cs-gate *::before, .cs-gate *::after {
+        animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important; scroll-behavior: auto !important;
+      }
     }
 
   </style>
@@ -857,29 +868,23 @@
 
   <section class="cs-gate" id="csPasswordGate" aria-label="ChangeSentinel development access" role="dialog" aria-modal="true" aria-labelledby="csGateTitle">
     <div class="cs-gate-card">
-      <div class="cs-gate-kicker"><span class="cs-gate-live" aria-hidden="true"></span> PRIVATE DEVELOPMENT PREVIEW</div>
       <div class="cs-gate-brand">
         <span class="cs-gate-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
-        <div>
-          <h1 class="cs-gate-title" id="csGateTitle">Change<span>Sentinel</span></h1>
-          <p class="cs-gate-subtitle">Regulatory change intelligence, in one place.</p>
-        </div>
+        <h1 class="cs-gate-title" id="csGateTitle">Change<span>Sentinel</span></h1>
       </div>
-      <div class="cs-gate-divider">Authorized access only</div>
+      <p class="cs-gate-subtitle">Private development preview</p>
       <form class="cs-gate-form" id="csGateForm" novalidate>
         <label class="cs-gate-label" for="csGatePassword">Enter your password</label>
-        <div class="cs-gate-input-wrap">
-          <input class="cs-gate-input" id="csGatePassword" name="password" type="password" placeholder="Your access password" autocomplete="current-password" autocapitalize="none" spellcheck="false" aria-describedby="csGateMessage" required autofocus>
-        </div>
+        <input class="cs-gate-input" id="csGatePassword" name="password" type="password" placeholder="Password" autocomplete="current-password" autocapitalize="none" spellcheck="false" aria-describedby="csGateMessage" required autofocus>
         <button class="cs-gate-submit" type="submit">
-          Enter workspace
+          Continue
           <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 8h10m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <p class="cs-gate-message" id="csGateMessage" role="status" aria-live="polite"></p>
       </form>
       <div class="cs-gate-help">
-        <strong>Need access or interested in collaborating?</strong><br>
-        You’re welcome to get in touch to discuss contributing to this project.
+        <strong>Interested in collaborating?</strong><br>
+        Email me or schedule a meeting to discuss access to the project.
         <div class="cs-gate-links">
           <a href="mailto:gaurav.darwesh@gmail.com?subject=ChangeSentinel%20collaboration" aria-label="Email Gaurav about ChangeSentinel collaboration">
             <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 4.5 8 9l6-4.5M3 3h10a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -891,7 +896,6 @@
           </a>
         </div>
       </div>
-      <div class="cs-gate-foot">CHANGESENTINEL <span aria-hidden="true">/</span> BUILD ACCESS</div>
     </div>
   </section>
 
