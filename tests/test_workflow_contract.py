@@ -155,9 +155,11 @@ class TestAIEvaluationWorkflowContract(unittest.TestCase):
         workflow = (ROOT / ".github" / "workflows" / "ai-smoke-test.yml").read_text(encoding="utf-8")
         self.assertIn("pull_request:", workflow)
         self.assertIn("github.event.pull_request.head.repo.full_name == github.repository", workflow)
-        self.assertIn("python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8", workflow)
-        self.assertIn('AI_TIMEOUT_SECONDS: "45"', workflow)
-        self.assertIn('AI_ATTEMPTS: "1"', workflow)
+        self.assertIn("python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8 --min-model-agreement 0.8 --repeats 2", workflow)
+        self.assertIn('AI_TIMEOUT_SECONDS: "20"', workflow)
+        self.assertIn('AI_ATTEMPTS: "2"', workflow)
+        self.assertIn('AI_EVAL_REPEATS: "2"', workflow)
+        self.assertIn("cancel-in-progress: true", workflow)
         self.assertIn('"scripts/ai_eval_cases.json"', workflow)
 
 
