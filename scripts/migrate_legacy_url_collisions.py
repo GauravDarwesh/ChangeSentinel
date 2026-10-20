@@ -133,9 +133,7 @@ def audit_collisions(
             if len(pending) > 1:
                 reasons.append("records contain different pending AI work items")
 
-            survivor_id = ""
-            if source is not None:
-                survivor_id, _ = _preferred_survivor(group, source, canonical_url, data_dir)
+            survivor_id, _ = _preferred_survivor(group, source, canonical_url, data_dir)
 
             plans.append({
                 "source_id": source_id,
