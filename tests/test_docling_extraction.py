@@ -277,3 +277,42 @@ class TestDoclingPdfFallback(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestDoclingFormTableTidy(unittest.TestCase):
+    def test_blank_entry_rows_and_duplicate_columns_are_removed(self):
+        from regmon.content import tidy_docling_markdown
+
+        markdown = "\n".join([
+            "Intro text",
+            "| Day | Rate | Rate |",
+            "|---|---|---|",
+            "| Monday | 8.500 | 8.500 |",
+            "| | | 1 |",
+            "| 2 | | |",
+            "Outro",
+        ])
+        out = tidy_docling_markdown(markdown).splitlines()
+        self.assertEqual(out[0], "Intro text")
+        self.assertIn("| Day | Rate |", out)
+        self.assertIn("| Monday | 8.500 |", out)
+        self.assertIn("(2 blank entry rows)", out)
+        self.assertEqual(out[-1], "Outro")
+
+    def test_wide_form_grid_stays_a_table_without_blank_rows(self):
+        from regmon.content import tidy_docling_markdown
+
+        header = "| " + " | ".join(f"Column {i}" for i in range(1, 10)) + " |"
+        codes = "| " + " | ".join(f"QTFL {9000 + i}" for i in range(1, 10)) + " |"
+        markdown = "\n".join([header, "|" + "---|" * 9, codes] + ["| 1 |" + " |" * 8] * 3)
+        out = tidy_docling_markdown(markdown).splitlines()
+        self.assertEqual(out[0], header)
+        self.assertEqual(out[2], codes)
+        self.assertEqual(out[-1], "(3 blank entry rows)")
+        self.assertEqual(len(out), 4)
+
+    def test_text_without_tables_is_unchanged(self):
+        from regmon.content import tidy_docling_markdown
+
+        text = "## Heading\nA | pipe in prose\n- a list"
+        self.assertEqual(tidy_docling_markdown(text), text)

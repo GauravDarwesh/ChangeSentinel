@@ -17,7 +17,7 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn('window.CHANGESENTINEL_ASK_ENDPOINT', html)
         self.assertIn('https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel', html)
         self.assertIn('supabase-js@2.121.0/dist/umd/supabase.js', html)
-        self.assertIn('src="dashboard.js?v=20261020-ask-sentinel-5"', html)
+        self.assertIn('src="dashboard.js?v=20261020-compare-1"', html)
         self.assertIn('ASK_SENTINEL_ENDPOINT = window.CHANGESENTINEL_ASK_ENDPOINT || ""', js)
         self.assertIn('askSentinel: "askSentinelView"', js)
         self.assertIn('name === "ask-sentinel"', js)
