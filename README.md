@@ -262,7 +262,7 @@ Possible technical events include:
 | `CHANGED_URL` | Normalized content changed |
 | `HTML_SOURCE_CHANGED` | HTML response markup changed while extracted text stayed the same |
 | `UNCHANGED_URL` | Normalized content is unchanged |
-| `REMOVED_URL` | Previously monitored URL is no longer discovered. If more than half of a source (at least 3 URLs) disappears in one run, the removals are held and one `REMOVAL_HELD` alert is sent instead; confirm with `REGMON_ALLOW_MASS_REMOVAL=<source id>` |
+| `REMOVED_URL` | Previously monitored URL is no longer discovered. If more than half of a source (at least 3 URLs) disappears in one run, the removals are held and one `REMOVAL_HELD` alert is sent instead; confirm with `REGMON_ALLOW_MASS_REMOVAL=<source id>`. With browser-only discovery, a URL must also be missing from two consecutive complete crawls before it is reported removed |
 | `FETCH_ERROR` | URL could not be fetched successfully |
 | `EXTRACTION_ERROR` | Resource was fetched but could not be converted into usable text |
 | `BASELINE_MIGRATION` | Extracted text changed but the source did not (`migration_reason`: `extractor_version` after a parser upgrade, `extraction_drift` when identical bytes extract differently). Never alerted, never sent to AI |

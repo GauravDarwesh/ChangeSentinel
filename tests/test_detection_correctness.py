@@ -283,6 +283,70 @@ class TestDiscoveryAndRemovalGuards(unittest.TestCase):
             again = sandbox.scan(lambda url, **k: ok(html(f"<p>{url}</p>")))
             self.assertEqual(again["report"]["removal_guard"]["notification_id"], report["removal_guard"]["notification_id"])
 
+    def browser_sandbox(self, source):
+        sandbox = Sandbox(source=source)
+        sandbox.discovery_meta = dict(sandbox.discovery_meta, method="stealth")
+        return sandbox
+
+    @staticmethod
+    def removed(result):
+        return [event["url"] for event in result["report"]["events"] if event["event_type"] == "REMOVED_URL"]
+
+    def test_browser_crawl_needs_two_consecutive_misses_to_report_removal(self):
+        """A single complete browser crawl that misses a page holds it instead of removing it."""
+        source = self.mass_removal_source()
+        gone = source.seed_urls[4]
+        with self.browser_sandbox(source) as sandbox:
+            sandbox.scan(lambda url, **k: ok(html(f"<p>{url}</p>")))
+            sandbox.discovered = list(source.seed_urls[:4])
+
+            first = sandbox.scan(lambda url, **k: ok(html(f"<p>{url}</p>")))
+            self.assertEqual(self.removed(first), [])
+            self.assertEqual(first["report"]["counts"]["removal_pending_confirmation"], 1)
+            held = {record["canonical_url"]: record for record in sandbox.inventory().values()}
+            self.assertIn(gone, held)
+            self.assertTrue(held[gone].get("missing_since"))
+
+            second = sandbox.scan(lambda url, **k: ok(html(f"<p>{url}</p>")))
+            self.assertEqual(self.removed(second), [gone])
+            self.assertEqual(second["report"]["counts"]["removal_pending_confirmation"], 0)
+            self.assertNotIn(gone, {record["canonical_url"] for record in sandbox.inventory().values()})
+
+    def test_browser_page_that_reappears_is_not_removed_later_by_one_miss(self):
+        source = self.mass_removal_source()
+        flaky = source.seed_urls[4]
+        with self.browser_sandbox(source) as sandbox:
+            sandbox.scan(lambda url, **k: ok(html(f"<p>{url}</p>")))
+            sandbox.discovered = list(source.seed_urls[:4])
+            sandbox.scan(lambda url, **k: ok(html(f"<p>{url}</p>")))
+
+            sandbox.discovered = list(source.seed_urls)
+            back = sandbox.scan(lambda url, **k: ok(html(f"<p>{url}</p>")))
+            self.assertEqual(self.removed(back), [])
+            record = {r["canonical_url"]: r for r in sandbox.inventory().values()}[flaky]
+            self.assertNotIn("missing_since", record)
+
+            sandbox.discovered = list(source.seed_urls[:4])
+            missed_again = sandbox.scan(lambda url, **k: ok(html(f"<p>{url}</p>")))
+            self.assertEqual(self.removed(missed_again), [])
+
+    def test_http_discovery_still_reports_a_removal_immediately(self):
+        source = self.mass_removal_source()
+        with Sandbox(source=source) as sandbox:
+            sandbox.scan(lambda url, **k: ok(html(f"<p>{url}</p>")))
+            sandbox.discovered = list(source.seed_urls[:4])
+            result = sandbox.scan(lambda url, **k: ok(html(f"<p>{url}</p>")))
+            self.assertEqual(self.removed(result), [source.seed_urls[4]])
+
+    def test_operator_confirmation_also_skips_the_browser_wait(self):
+        source = self.mass_removal_source()
+        with self.browser_sandbox(source) as sandbox:
+            sandbox.scan(lambda url, **k: ok(html(f"<p>{url}</p>")))
+            sandbox.discovered = list(source.seed_urls[:4])
+            with patch.dict(os.environ, {"REGMON_ALLOW_MASS_REMOVAL": "mass"}):
+                result = sandbox.scan(lambda url, **k: ok(html(f"<p>{url}</p>")))
+            self.assertEqual(self.removed(result), [source.seed_urls[4]])
+
     def test_operator_can_confirm_a_mass_removal(self):
         source = self.mass_removal_source()
         with Sandbox(source=source) as sandbox:
