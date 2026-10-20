@@ -59,6 +59,8 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn('data-view="askSentinel"', html)
         self.assertIn('$("askSentinelMessages").addEventListener("click"', read("dashboard.js"))
         self.assertIn("pages: pages.slice(0, 80)", read("dashboard.js"))
+        self.assertIn('askLauncher.classList.toggle("active", state.view === "askSentinel")', read("dashboard.js"))
+        self.assertIn(".ask-sentinel-launch.active", html)
 
 
 if __name__ == "__main__":
