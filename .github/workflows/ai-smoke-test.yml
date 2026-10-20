@@ -50,4 +50,4 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           AI_TIMEOUT_SECONDS: "60"
           AI_ATTEMPTS: "2"
-        run: python scripts/ai_eval.py --min-accuracy 0.8
+        run: python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8
