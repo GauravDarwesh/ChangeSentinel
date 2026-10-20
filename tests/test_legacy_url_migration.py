@@ -130,6 +130,44 @@ class TestLegacyUrlCollisionMigration(unittest.TestCase):
         self.assertEqual(self.latest, original)
         self.assertTrue((self.data_dir / "snapshots" / "legacy.txt").is_file())
 
+    def test_historical_new_removed_query_order_pair_is_surfaced_by_audit(self):
+        evidence_dir = self.data_dir / "evidence"
+        evidence_dir.mkdir()
+        (evidence_dir / "a431099f2de955a79fffe1262db8da5099eb7821cfed11a784dd53fc8994a42e.json").write_text(
+            json.dumps({
+                "event_id": "a431099f2de955a79fffe1262db8da5099eb7821cfed11a784dd53fc8994a42e",
+                "event_type": "NEW_URL",
+                "url": self.preferred_url,
+                "timestamp": "2026-09-23T16:33:35+00:00",
+            }),
+            encoding="utf-8",
+        )
+        (evidence_dir / "f1126207731898f9066089114d3212c305a84a854acd0647fa31f882912a834e.json").write_text(
+            json.dumps({
+                "event_id": "f1126207731898f9066089114d3212c305a84a854acd0647fa31f882912a834e",
+                "event_type": "REMOVED_URL",
+                "url": self.reversed_url,
+                "timestamp": "2026-09-23T16:33:35+00:00",
+            }),
+            encoding="utf-8",
+        )
+
+        collisions = self.module.audit_historical_evidence_collisions(
+            self.latest, self.data_dir, source_filter="eba-test"
+        )
+        self.assertEqual(len(collisions), 1)
+        self.assertEqual(collisions[0]["source_ids_in_current_inventory"], ["eba-test"])
+        self.assertEqual(set(collisions[0]["event_types"]), {"NEW_URL", "REMOVED_URL"})
+        self.assertEqual(set(collisions[0]["url_variants"]), {self.preferred_url, self.reversed_url})
+        self.assertEqual(len(collisions[0]["evidence"]), 2)
+
+    def test_unconfigured_legacy_source_can_be_audited_without_reactivating_it(self):
+        plans = self.module.audit_collisions(self.latest, {}, self.data_dir, source_filter="eba-test")
+        self.assertEqual(len(plans), 1)
+        self.assertTrue(plans[0]["safe_to_migrate"], plans[0]["reasons"])
+        self.assertFalse(plans[0]["source_active"])
+        self.assertEqual(plans[0]["survivor_url_id"], self.preferred_id)
+
     def test_conflicting_normalized_hashes_are_reported_but_not_migrated(self):
         self.latest["sources"]["eba-test"][self.legacy_id]["normalized_hash"] = "different-hash"
         plans = self.module.audit_collisions(self.latest, self.configured_sources, self.data_dir)
