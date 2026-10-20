@@ -1,0 +1,52 @@
+name: Ask Sentinel Index
+
+# Keeps the Ask Sentinel knowledge index in Supabase current. Monitor commits are made
+# with GITHUB_TOKEN, which never triggers `push` workflows, so this also listens for
+# completed Regulatory Monitor runs.
+on:
+  workflow_run:
+    workflows: ["Regulatory Monitor"]
+    types: [completed]
+  push:
+    branches: [main]
+    paths:
+      - "data/**"
+      - "config/**"
+      - "docs/**"
+      - "regmon/**"
+      - "README.md"
+      - "scripts/ask_sentinel_index.py"
+      - ".github/workflows/ask-sentinel-index.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ask-sentinel-index
+  cancel-in-progress: false
+
+jobs:
+  index:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: main
+          persist-credentials: false
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+
+      - name: Sync the knowledge index to Supabase
+        env:
+          SUPABASE_URL: https://pysoukwmnwwgilkwafdy.supabase.co
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: |
+          if [ -z "$SUPABASE_SECRET_KEY" ]; then
+            echo "::error::Add the Supabase secret key as the SUPABASE_SECRET_KEY repository secret."
+            exit 1
+          fi
+          python scripts/ask_sentinel_index.py
