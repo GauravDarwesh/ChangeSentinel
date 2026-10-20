@@ -244,6 +244,83 @@ class TestAIEvaluationSet(unittest.TestCase):
                     )
             model.assert_not_called()
 
+    def test_failed_previous_extraction_is_never_mislabelled_as_drift(self):
+        module = self.load_module()
+        evidence = {
+            "before": {
+                "raw_hash": "same-pdf-bytes",
+                "normalized_hash": "old-text",
+                "extraction_type": "pdf",
+                "extraction_failed": True,
+            },
+            "after": {
+                "raw_hash": "same-pdf-bytes",
+                "normalized_hash": "new-text",
+                "extraction_type": "pdf",
+            },
+        }
+        self.assertIsNone(module.extraction_drift_reason(evidence))
+
+    def test_model_only_accuracy_has_its_own_release_gate(self):
+        module = self.load_module()
+        failures = module.threshold_failures(
+            accuracy=18 / 19,
+            model_accuracy=0.75,
+            model_case_count=4,
+            min_accuracy=0.8,
+            min_model_accuracy=0.8,
+        )
+        self.assertGreater(18 / 19, 0.8)
+        self.assertEqual(len(failures), 1)
+        self.assertIn("Semantic-AI-only relevance accuracy 75.0%", failures[0])
+
+    def test_no_semantic_ai_cases_is_a_failed_evaluation(self):
+        module = self.load_module()
+        failures = module.threshold_failures(
+            accuracy=1.0,
+            model_accuracy=None,
+            model_case_count=0,
+            min_accuracy=0.8,
+            min_model_accuracy=0.8,
+        )
+        self.assertEqual(len(failures), 1)
+        self.assertIn("No evaluation cases reached semantic AI", failures[0])
+
+    def test_evidence_persists_extraction_guard_metadata_without_error_details(self):
+        import tempfile
+        from pathlib import Path
+        from regmon.change import write_evidence
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            location = write_evidence(
+                root,
+                "CHANGED_URL",
+                "event-test",
+                "https://example.test/form",
+                "2026-10-20T00:00:00+00:00",
+                {
+                    "raw_hash": "raw-before",
+                    "normalized_hash": "text-before",
+                    "extraction_type": "pdf",
+                    "extractor_version": "content-extractor-v5",
+                    "extraction_error": "secret-ish diagnostic detail",
+                },
+                {
+                    "raw_hash": "raw-after",
+                    "normalized_hash": "text-after",
+                    "extraction_type": "pdf",
+                    "extractor_version": "content-extractor-v5",
+                },
+                "before",
+                "after",
+            )
+            evidence = json.loads((root / location).read_text(encoding="utf-8"))
+            self.assertTrue(evidence["before"]["extraction_failed"])
+            self.assertFalse(evidence["after"]["extraction_failed"])
+            self.assertEqual(evidence["before"]["extraction_type"], "pdf")
+            self.assertNotIn("secret-ish diagnostic detail", json.dumps(evidence))
+
     def test_unchanged_html_signature_with_different_raw_bytes_is_also_drift(self):
         module = self.load_module()
         evidence = {
