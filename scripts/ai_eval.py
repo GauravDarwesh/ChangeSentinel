@@ -6,7 +6,13 @@ guard are sent to semantic AI. The report includes both end-to-end and model-onl
 accuracy so deterministic suppressions cannot be mistaken for model performance.
 
 Usage: OPENROUTER_API_KEY=... python scripts/ai_eval.py [--min-accuracy 0.8]
-Exit status 1 when end-to-end accuracy is below the threshold or the key is missing.
+       [--min-model-accuracy 0.75] [--min-model-cases 4]
+Exit status 1 when end-to-end accuracy, model-only accuracy, or the number of
+model-routed cases is below its threshold, or when the key is missing.
+
+The model-only gate matters because deterministic suppressions are always scored
+correct: with 15 suppressed cases out of 19, an end-to-end threshold of 80% passed
+even when the model got 3 of the 4 cases it actually saw wrong.
 """
 from __future__ import annotations
 
@@ -116,9 +122,58 @@ def evaluate_case(case: dict, config: AIConfig) -> dict:
     }
 
 
+def threshold_failures(
+    rows: list[dict],
+    *,
+    min_accuracy: float,
+    min_model_accuracy: float,
+    min_model_cases: int,
+) -> list[str]:
+    """Return every missed release threshold; an empty list means the gate passes.
+
+    End-to-end accuracy and model-only accuracy are gated separately so the
+    deterministic extraction-drift suppressions (which are always scored correct)
+    cannot hide a model that mislabels the changes it is actually asked about.
+    A model result that is invalid or errored counts as wrong.
+    """
+    failures = []
+    total = len(rows)
+    accuracy = sum(row["correct"] for row in rows) / total if total else 0.0
+    if accuracy < min_accuracy:
+        failures.append(
+            f"End-to-end relevance accuracy {accuracy:.1%} is below the {min_accuracy:.1%} threshold"
+        )
+    model_rows = [row for row in rows if row["decision_source"] == "ai_model"]
+    if len(model_rows) < min_model_cases:
+        failures.append(
+            f"Only {len(model_rows)} evaluation case(s) reached the model; at least {min_model_cases} are required"
+        )
+    if model_rows:
+        model_accuracy = sum(row["verdict_correct"] for row in model_rows) / len(model_rows)
+        if model_accuracy < min_model_accuracy:
+            failures.append(
+                f"Model-only relevance accuracy {model_accuracy:.1%} "
+                f"({sum(row['verdict_correct'] for row in model_rows)}/{len(model_rows)}) "
+                f"is below the {min_model_accuracy:.1%} threshold"
+            )
+    return failures
+
+
+def _fraction(value: str) -> float:
+    number = float(value)
+    if not 0.0 <= number <= 1.0:
+        raise argparse.ArgumentTypeError("must be between 0 and 1")
+    return number
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
-    parser.add_argument("--min-accuracy", type=float, default=0.8)
+    parser.add_argument("--min-accuracy", type=_fraction, default=0.8,
+                        help="Minimum end-to-end accuracy (deterministic guard plus model)")
+    parser.add_argument("--min-model-accuracy", type=_fraction, default=0.75,
+                        help="Minimum accuracy on the cases that actually reach the model")
+    parser.add_argument("--min-model-cases", type=int, default=4,
+                        help="Minimum number of cases that must reach the model")
     args = parser.parse_args()
     if not os.getenv("OPENROUTER_API_KEY"):
         raise SystemExit("OPENROUTER_API_KEY is required for the AI evaluation")
@@ -136,6 +191,12 @@ def main() -> None:
     model_correct = sum(row["verdict_correct"] for row in model_rows)
     model_accuracy = model_correct / len(model_rows) if model_rows else None
     suppressed = sum(row["decision_source"] == "deterministic_extraction_drift_guard" for row in rows)
+    failures = threshold_failures(
+        rows,
+        min_accuracy=args.min_accuracy,
+        min_model_accuracy=args.min_model_accuracy,
+        min_model_cases=args.min_model_cases,
+    )
 
     print(json.dumps({
         "model": config.model,
@@ -149,12 +210,16 @@ def main() -> None:
             "correct": model_correct,
             "total": len(model_rows),
         },
+        "thresholds": {
+            "min_accuracy": args.min_accuracy,
+            "min_model_accuracy": args.min_model_accuracy,
+            "min_model_cases": args.min_model_cases,
+        },
+        "failures": failures,
         "cases": rows,
     }, indent=2))
-    if accuracy < args.min_accuracy:
-        raise SystemExit(
-            f"End-to-end relevance accuracy {accuracy:.1%} is below the {args.min_accuracy:.1%} threshold"
-        )
+    if failures:
+        raise SystemExit("; ".join(failures))
 
 
 if __name__ == "__main__":

@@ -274,6 +274,55 @@ class TestAIEvaluationSet(unittest.TestCase):
                 self.assertTrue(result["got"])
                 self.assertTrue(result["correct"])
 
+    @staticmethod
+    def rows(suppressed: int, model_verdicts: list):
+        rows = [
+            {"correct": True, "verdict_correct": True, "decision_source": "deterministic_extraction_drift_guard"}
+            for _ in range(suppressed)
+        ]
+        rows += [
+            {"correct": bool(ok), "verdict_correct": bool(ok), "decision_source": "ai_model"}
+            for ok in model_verdicts
+        ]
+        return rows
+
+    def gate(self, module, rows):
+        return module.threshold_failures(rows, min_accuracy=0.8, min_model_accuracy=0.75, min_model_cases=4)
+
+    def test_suppressed_cases_cannot_mask_a_weak_model(self):
+        # Regression: 15 suppressed + 1 of 4 model cases right is 84% end to
+        # end, which passed the previous end-to-end-only gate.
+        module = self.load_module()
+        failures = self.gate(module, self.rows(15, [True, False, False, False]))
+        self.assertEqual(len(failures), 1)
+        self.assertIn("Model-only relevance accuracy 25.0% (1/4)", failures[0])
+
+    def test_gate_passes_when_model_meets_its_own_threshold(self):
+        module = self.load_module()
+        self.assertEqual(self.gate(module, self.rows(15, [True, True, True, False])), [])
+
+    def test_errored_or_invalid_model_results_count_as_wrong(self):
+        module = self.load_module()
+        with patch.object(module, "analyze", return_value={"status": "error", "reason": "provider down"}):
+            case = {"id": "x", "url": "https://example.test/a", "diff": "-a\n+b", "expected_relevant": True}
+            row = module.evaluate_case(case, module.AIConfig())
+        self.assertEqual(row["decision_source"], "ai_model")
+        self.assertFalse(row["verdict_correct"])
+        self.assertTrue(self.gate(module, self.rows(15, [False, False, False, False])))
+
+    def test_too_few_model_cases_fails_the_gate(self):
+        module = self.load_module()
+        failures = self.gate(module, self.rows(15, [True, True, True]))
+        self.assertTrue(any("Only 3 evaluation case(s) reached the model" in f for f in failures))
+
+    def test_committed_evaluation_set_has_enough_model_routed_cases(self):
+        module = self.load_module()
+        cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        model_routed = [case for case in cases if module.extraction_drift_reason(module.load_evidence(case)) is None]
+        self.assertGreaterEqual(len(model_routed), 4)
+        self.assertTrue(any(case["expected_relevant"] for case in model_routed))
+        self.assertTrue(any(not case["expected_relevant"] for case in model_routed))
+
     def test_changed_source_bytes_are_not_deterministically_suppressed(self):
         module = self.load_module()
         evidence = {
