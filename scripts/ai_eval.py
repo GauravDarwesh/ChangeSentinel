@@ -132,9 +132,14 @@ def threshold_failures(
     model_case_count: int,
     min_accuracy: float,
     min_model_accuracy: float,
+    decision_source_failures: int = 0,
 ) -> list[str]:
-    """Keep aggregate accuracy from hiding regressions in semantic-AI cases."""
+    """Keep aggregate accuracy from hiding model or decision-routing regressions."""
     failures = []
+    if decision_source_failures:
+        failures.append(
+            f"{decision_source_failures} case(s) used a decision source different from the expected pipeline"
+        )
     if accuracy < min_accuracy:
         failures.append(
             f"End-to-end relevance accuracy {accuracy:.1%} is below the {min_accuracy:.1%} threshold"
@@ -182,6 +187,10 @@ def main() -> None:
         "correct": correct,
         "total": len(rows),
         "deterministic_extraction_drift_suppressions": suppressed,
+        "decision_source_mismatches": sum(
+            1 for row in rows
+            if row["expected_decision_source"] and not row["decision_source_correct"]
+        ),
         "model_only": {
             "accuracy": round(model_accuracy, 3) if model_accuracy is not None else None,
             "correct": model_correct,
@@ -195,6 +204,10 @@ def main() -> None:
         model_case_count=len(model_rows),
         min_accuracy=args.min_accuracy,
         min_model_accuracy=args.min_model_accuracy,
+        decision_source_failures=sum(
+            1 for row in rows
+            if row["expected_decision_source"] and not row["decision_source_correct"]
+        ),
     )
     if failures:
         raise SystemExit("; ".join(failures))
