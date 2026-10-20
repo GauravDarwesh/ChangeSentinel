@@ -48,6 +48,7 @@ jobs:
       - name: Score end-to-end relevance on the evaluation set
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          AI_TIMEOUT_SECONDS: "60"
-          AI_ATTEMPTS: "2"
+          # Keep the expanded 12-case model evaluation within the job's time budget.
+          AI_TIMEOUT_SECONDS: "45"
+          AI_ATTEMPTS: "1"
         run: python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8
