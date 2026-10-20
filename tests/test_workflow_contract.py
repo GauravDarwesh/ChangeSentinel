@@ -150,5 +150,16 @@ class TestCommitStateHelper(unittest.TestCase):
         self.assertIn("committed=false", output)
 
 
+class TestAIEvaluationWorkflowContract(unittest.TestCase):
+    def test_ai_evaluation_runs_on_same_repository_prs_with_both_gates(self):
+        workflow = (ROOT / ".github" / "workflows" / "ai-smoke-test.yml").read_text(encoding="utf-8")
+        self.assertIn("pull_request:", workflow)
+        self.assertIn("github.event.pull_request.head.repo.full_name == github.repository", workflow)
+        self.assertIn("python scripts/ai_eval.py --min-accuracy 0.8 --min-model-accuracy 0.8", workflow)
+        self.assertIn('AI_TIMEOUT_SECONDS: "45"', workflow)
+        self.assertIn('AI_ATTEMPTS: "1"', workflow)
+        self.assertIn('"scripts/ai_eval_cases.json"', workflow)
+
+
 if __name__ == "__main__":
     unittest.main()
