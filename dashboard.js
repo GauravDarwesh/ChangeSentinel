@@ -1820,8 +1820,8 @@ function askSentinelHistoryContext() {
       id: source.id, name: source.name, regulator: source.regulator,
       seeds: source.seeds || [], active: source.active !== false
     })),
-    latest_runs: (Array.isArray(state.history) ? state.history : []).slice(0, 120),
-    recent_events: changeLogEntries().slice(0, 160).map(event => ({
+    latest_runs: (Array.isArray(state.history) ? state.history : []).slice(0, 40),
+    recent_events: changeLogEntries().slice(0, 80).map(event => ({
       event_id: event.event_id, event_type: event.event_type,
       timestamp: event.timestamp, source_id: event.source_id,
       url: event.url, summary: event.summary || event.ai_summary || null,
@@ -1831,10 +1831,11 @@ function askSentinelHistoryContext() {
       superseded_reason: event.superseded_reason || null
     })),
     notifications: {
-      pending: notificationLists().pending.slice(0, 50),
-      sent: notificationLists().sent.slice(0, 100)
+      pending: notificationLists().pending.slice(0, 25),
+      sent: notificationLists().sent.slice(0, 40)
     },
-    pages,
+    pages: pages.slice(0, 80),
+    // Client context is deliberately bounded. The trusted server must load complete committed history/evidence.
     // Paths are repository-relative and resolved only by the trusted server.
     data_sources: [
       "data/report.json", "data/latest.json", "data/history/index.json",
@@ -1848,6 +1849,10 @@ async function askSentinelSendQuestion(promptOverride) {
   const input = $("askSentinelInput");
   const question = String(promptOverride == null ? input.value : promptOverride).trim();
   if (!question) { input.focus(); return; }
+  if (!state.loaded) {
+    askSentinelAppendMessage("assistant", "Monitoring data is still loading. Please wait until the dashboard finishes loading before asking a question.", "ask-sentinel-error");
+    return;
+  }
   if (question.length > 1200) {
     askSentinelAppendMessage("assistant", "Please keep each question to 1,200 characters or fewer.", "ask-sentinel-error");
     return;
@@ -1911,7 +1916,7 @@ $("askSentinelForm").addEventListener("submit", event => {
   event.preventDefault();
   askSentinelSendQuestion();
 });
-$("askSentinelTranscript").addEventListener("click", event => {
+$("askSentinelMessages").addEventListener("click", event => {
   const prompt = event.target.closest("[data-ask-prompt]");
   if (prompt) askSentinelSendQuestion(prompt.dataset.askPrompt);
 });
