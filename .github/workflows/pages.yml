@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - "index.html"
+      - "dashboard.js"
+      - "README.md"
+      - "tests/test_ask_sentinel_contract.py"
+      - ".github/workflows/pages.yml"
       - "dashboard-v2.html"
       - "dashboard.js"
       - "dashboard-lib.js"
