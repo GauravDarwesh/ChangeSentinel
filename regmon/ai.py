@@ -140,13 +140,25 @@ def analyze(regulator: str, url: str, event_type: str, diff: str, current_text: 
                     time.sleep(_retry_after_seconds(response, attempt))
                 continue
             response.raise_for_status()
-            content = response.json()["choices"][0]["message"].get("content")
+            response_payload = response.json()
+            provider_model = response_payload.get("model") if isinstance(response_payload, dict) else None
+            content = response_payload["choices"][0]["message"].get("content")
             try:
-                return {"status": "ok", "analysis": parse_json(content)}
+                return {
+                    "status": "ok",
+                    "analysis": parse_json(content),
+                    "provider_model": provider_model,
+                }
             except (json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
                 # Free routers vary the model per request; one more attempt often
-                # returns a valid object. Report the last invalid output if not.
-                last_invalid = {"status": "invalid", "reason": str(exc), "analysis_raw": content}
+                # returns a valid object. Report the selected model and invalid output
+                # if retries are exhausted so router variance is observable.
+                last_invalid = {
+                    "status": "invalid",
+                    "reason": str(exc),
+                    "analysis_raw": content,
+                    "provider_model": provider_model,
+                }
                 continue
         except Exception as exc:
             last_error = exc
@@ -211,6 +223,7 @@ def main() -> None:
     print(json.dumps({
         "smoke_test": "passed",
         "model": config.model,
+        "provider_model": result.get("provider_model"),
         "schema_validated": True,
         "relevant": analysis["relevant"],
         "topic": analysis["topic"],
