@@ -1403,7 +1403,7 @@ function resetDetailScroll(view) {
 function writeHash() {
   const id = state.view === "changes" ? state.selectedChangeId : state.view === "monitors" ? state.selectedId
     : state.view === "runs" ? state.selectedRunId : state.view === "notifications" ? state.selectedNotificationId : "";
-  const hash = "#" + HASH_NAMES[state.view] + (id ? "/" + encodeURIComponent(id) : "");
+  const hash = "#" + (HASH_NAMES[state.view] || (state.view === "askSentinel" ? "ask-sentinel" : "overview")) + (id ? "/" + encodeURIComponent(id) : "");
   try { history.replaceState(null, "", state.view === "overview" ? location.pathname + location.search : hash); } catch (_) {}
 }
 function readHash() {
@@ -1721,6 +1721,7 @@ if (compactQuery && typeof compactQuery.addEventListener === "function") {
 }
 
 
+
 /* ================= Ask Sentinel =================
  * This UI deliberately talks only to a same-origin server endpoint.
  * It never contains an OpenRouter credential and does not implement a
@@ -1842,7 +1843,7 @@ function askSentinelHistoryContext() {
     ]
   };
 }
-async function askSentinelSubmit(promptOverride) {
+async function askSentinelSendQuestion(promptOverride) {
   if (askSentinelState.sending || askSentinelState.remaining <= 0) return;
   const input = $("askSentinelInput");
   const question = String(promptOverride == null ? input.value : promptOverride).trim();
@@ -1908,11 +1909,11 @@ $("askSentinelLaunch").addEventListener("click", askSentinelOpen);
 $("askSentinelBack").addEventListener("click", () => setView("overview"));
 $("askSentinelForm").addEventListener("submit", event => {
   event.preventDefault();
-  askSentinelSubmit();
+  askSentinelSendQuestion();
 });
 $("askSentinelTranscript").addEventListener("click", event => {
   const prompt = event.target.closest("[data-ask-prompt]");
-  if (prompt) askSentinelSubmit(prompt.dataset.askPrompt);
+  if (prompt) askSentinelSendQuestion(prompt.dataset.askPrompt);
 });
 
 loadData(true);
