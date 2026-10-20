@@ -189,6 +189,9 @@ class TestAIEvaluationSet(unittest.TestCase):
     def test_every_case_loads_and_both_verdicts_are_represented(self):
         module = self.load_module()
         cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        self.assertTrue(all(case.get("expected_decision_source") in {
+            "ai_model", "deterministic_extraction_drift_guard"
+        } for case in cases))
         self.assertEqual(sum(1 for case in cases if case["expected_relevant"] is False and case.get("evidence")), 15)
         self.assertTrue(any(case["expected_relevant"] for case in cases))
         for case in cases:
