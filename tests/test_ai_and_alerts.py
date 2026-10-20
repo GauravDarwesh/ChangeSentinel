@@ -335,6 +335,57 @@ class TestAIEvaluationSet(unittest.TestCase):
         self.assertEqual(len(failures), 1)
         self.assertIn("1 case(s) used a decision source", failures[0])
 
+    def test_model_variance_gate_fails_on_disagreement_or_invalid_output(self):
+        module = self.load_module()
+        cases = [
+            {"id": "stable", "expected_relevant": True, "expected_decision_source": "ai_model"},
+            {"id": "unstable", "expected_relevant": False, "expected_decision_source": "ai_model"},
+            {"id": "invalid", "expected_relevant": True, "expected_decision_source": "ai_model"},
+        ]
+        rows = [
+            {"id": "stable", "repeat": 1, "got": True, "status": "ok", "decision_source": "ai_model"},
+            {"id": "stable", "repeat": 2, "got": True, "status": "ok", "decision_source": "ai_model"},
+            {"id": "unstable", "repeat": 1, "got": False, "status": "ok", "decision_source": "ai_model"},
+            {"id": "unstable", "repeat": 2, "got": True, "status": "ok", "decision_source": "ai_model"},
+            {"id": "invalid", "repeat": 1, "got": True, "status": "ok", "decision_source": "ai_model"},
+            {"id": "invalid", "repeat": 2, "got": None, "status": "invalid", "decision_source": "ai_model"},
+        ]
+        variance = module.summarize_model_variance(cases, rows, repeats=2)
+        self.assertEqual(variance["stable_cases"], 1)
+        self.assertEqual(variance["unstable_cases"], 2)
+        self.assertEqual(variance["agreement"], 1 / 3)
+        self.assertFalse(next(c for c in variance["cases"] if c["id"] == "invalid")["stable"])
+
+        failures = module.threshold_failures(
+            accuracy=1.0,
+            model_accuracy=1.0,
+            model_case_count=6,
+            min_accuracy=0.8,
+            min_model_accuracy=0.8,
+            model_agreement=variance["agreement"],
+            expected_model_case_count=variance["model_cases"],
+            min_model_agreement=0.8,
+        )
+        self.assertEqual(len(failures), 1)
+        self.assertIn("Free-router repeat agreement 33.3%", failures[0])
+
+    def test_repeated_evaluation_retries_model_cases_but_suppresses_artifacts_once(self):
+        module = self.load_module()
+        fixture_cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
+        model_case = dict(next(case for case in fixture_cases if case["id"] == "synthetic-threshold"))
+        artifact_case = dict(next(case for case in fixture_cases if case.get("evidence") and case["expected_relevant"] is False))
+        response = {"status": "ok", "analysis": {"relevant": True, "reason": "Synthetic valid verdict"}}
+
+        with patch.object(module, "analyze", return_value=response) as model:
+            rows, variance = module.evaluate_cases([model_case, artifact_case], module.AIConfig(), repeats=2)
+
+        self.assertEqual(model.call_count, 2)
+        self.assertEqual(len(rows), 3)
+        self.assertEqual(variance["model_cases"], 1)
+        self.assertEqual(variance["stable_cases"], 1)
+        self.assertEqual(variance["agreement"], 1.0)
+        self.assertEqual(sum(row["status"] == "suppressed" for row in rows), 1)
+
     def test_no_semantic_ai_cases_is_a_failed_evaluation(self):
         module = self.load_module()
         failures = module.threshold_failures(
