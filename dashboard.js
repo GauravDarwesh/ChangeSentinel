@@ -1346,7 +1346,7 @@ function renderNotificationDetail() {
 /* ================= Navigation ================= */
 
 function viewSection(view) {
-  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView" }[view];
+  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", askSentinel: "askSentinelView" }[view] || "overviewView";
 }
 function hasSelection(view) {
   return view === "changes" ? !!state.selectedChangeId : view === "monitors" ? !!state.selectedId
@@ -1411,7 +1411,7 @@ function readHash() {
   const legacy = raw.match(/^monitor=([^&]+)/);
   if (legacy) return { view: "monitors", id: decodeURIComponent(legacy[1]) };
   const [name, ...rest] = raw.split("/");
-  const view = Object.keys(HASH_NAMES).find(key => HASH_NAMES[key] === name);
+  const view = Object.keys(HASH_NAMES).find(key => HASH_NAMES[key] === name) || (name === "ask-sentinel" ? "askSentinel" : null);
   return view ? { view, id: rest.length ? decodeURIComponent(rest.join("/")) : "" } : null;
 }
 function setView(view, options) {
