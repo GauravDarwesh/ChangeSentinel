@@ -2,6 +2,13 @@ name: AI Smoke Test
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "regmon/ai.py"
+      - "scripts/ai_eval.py"
+      - "scripts/ai_eval_cases.json"
 
 permissions:
   contents: read
@@ -32,7 +39,8 @@ jobs:
           AI_ATTEMPTS: "2"
         run: python -m regmon.ai --smoke-test
 
-      # Scores end-to-end decisions: deterministic extraction-drift suppression first,
+      # Runs manually or on relevant main-branch changes. Scores end-to-end decisions:
+      # deterministic extraction-drift suppression first,
       # then semantic AI for source changes. Emits all case-level decisions and accuracy.
       - name: Score end-to-end relevance on the evaluation set
         env:
