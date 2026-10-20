@@ -1362,6 +1362,9 @@ function renderViews() {
     button.classList.toggle("active", button.dataset.view === state.view);
     button.setAttribute("aria-current", button.dataset.view === state.view ? "page" : "false");
   });
+  const askLauncher = $("askSentinelLaunch");
+  askLauncher.classList.toggle("active", state.view === "askSentinel");
+  askLauncher.setAttribute("aria-current", state.view === "askSentinel" ? "page" : "false");
   const titles = { overview: "Overview", changes: "Changes", monitors: "Pages", runs: "Runs", notifications: "Alerts", askSentinel: "Ask Sentinel" };
   document.title = titles[state.view] + " | ChangeSentinel";
 }
