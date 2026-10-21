@@ -47,6 +47,16 @@ class TestConfig(unittest.TestCase):
         )
         self.assertEqual(source.resource_link_text_patterns, ("^Current",))
 
+    def test_frbservices_user_guides_monitor_is_configured_and_scoped(self):
+        _, sources = load_config(DEFAULT_CONFIG_PATH)
+        source = sources["manual-fe66388fe452"]
+        expected = "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides"
+        self.assertTrue(source.active)
+        self.assertTrue(source.baseline_on_first_run)
+        self.assertEqual(source.seed_urls, (expected,))
+        self.assertEqual(source.allowed_urls, (expected,))
+        self.assertTrue(source.allowed_prefixes[0].startswith("https://www.frbservices.org/"))
+
     def test_eba_sources_are_inactive_and_federal_reserve_pilot_is_bounded(self):
         _, sources = load_config(DEFAULT_CONFIG_PATH)
 

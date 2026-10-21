@@ -9,7 +9,7 @@ import time
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from urllib.parse import parse_qsl, urlencode, urljoin, urlparse, urlunparse
+from urllib.parse import parse_qsl, urlencode, urljoin, urlparse, urlsplit, urlunparse, urlunsplit
 
 import requests
 from bs4 import BeautifulSoup
@@ -30,6 +30,12 @@ URL_RE = re.compile(r"https?://[^\s<>\"']+", re.IGNORECASE)
 DISCOVERY_RETRYABLE = {408, 425, 429, 500, 502, 503, 504}
 INVENTORY_CHUNK_SIZE = 5000
 CHECKPOINT_SCHEMA_VERSION = 2
+
+
+def _redirect_key(url: str) -> str:
+    """Identify HTTP redirect loops while preserving trailing-slash variants."""
+    parsed = urlsplit(url)
+    return urlunsplit((parsed.scheme.lower(), parsed.netloc.lower(), parsed.path or "/", parsed.query, ""))
 _DISCOVERY_STOP_REQUESTED = False
 
 
@@ -159,7 +165,7 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
             if not in_scope(url, source):
                 raise ValueError(f"Discovery target is outside the configured monitor scope: {url}")
             current_url = url
-            visited = {canonical(url)}
+            visited = {_redirect_key(current_url)}
             response = None
             for redirect_count in range(6):
                 with public_destinations_only():
@@ -175,15 +181,16 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
                 location = response.headers.get("location")
                 if not location:
                     raise ValueError(f"Redirect from {current_url} did not include a Location header")
-                target = canonical(urljoin(current_url, location))
+                target = urljoin(current_url, location)
                 validate_public_http_url(target, resolve_dns=True)
                 if not in_scope(target, source):
                     raise ValueError(f"Redirect target is outside the configured monitor scope: {target}")
-                if target in visited:
+                target_key = _redirect_key(target)
+                if target_key in visited:
                     raise ValueError(f"Redirect loop detected at {target}")
                 if redirect_count == 5:
                     raise ValueError("Too many redirects during discovery")
-                visited.add(target)
+                visited.add(target_key)
                 current_url = target
             if response is None:
                 raise RuntimeError("No response received during discovery")

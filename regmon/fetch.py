@@ -6,7 +6,7 @@ import time
 from dataclasses import dataclass
 
 import requests
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urljoin, urlsplit, urlunsplit
 
 from regmon.discovery import canonical
 
@@ -15,6 +15,12 @@ from regmon.security import REDIRECT_STATUSES, USER_AGENT, DNSResolutionError, r
 
 RETRYABLE = {408, 425, 429, 500, 502, 503, 504}
 MAX_REDIRECTS = 5
+
+
+def _redirect_key(url: str) -> str:
+    """Identify HTTP redirect loops while preserving trailing-slash variants."""
+    parsed = urlsplit(url)
+    return urlunsplit((parsed.scheme.lower(), parsed.netloc.lower(), parsed.path or "/", parsed.query, ""))
 
 
 @dataclass(frozen=True)
@@ -115,7 +121,7 @@ def fetch(
             validate_public_http_url(url, resolve_dns=True)
             current_url = url
             request_headers = dict(headers)
-            visited = {current_url}
+            visited = {_redirect_key(current_url)}
             response = None
             for redirect_count in range(MAX_REDIRECTS + 1):
                 # The connection itself refuses non-public addresses, closing the
@@ -138,11 +144,12 @@ def fetch(
                 target = urljoin(current_url, location)
                 enforce_scope(target)
                 validate_public_http_url(target, resolve_dns=True)
-                if target in visited:
+                target_key = _redirect_key(target)
+                if target_key in visited:
                     raise ValueError(f"Redirect loop detected at {target}")
                 if redirect_count >= MAX_REDIRECTS:
                     raise ValueError(f"Exceeded {MAX_REDIRECTS} redirects for {url}")
-                visited.add(target)
+                visited.add(target_key)
                 current_url = target
                 # Validators apply to the original response, not an unrelated redirect.
                 request_headers = {"User-Agent": headers["User-Agent"]}

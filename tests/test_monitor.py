@@ -24,6 +24,25 @@ SOURCE = SourceConfig(
 )
 
 class TestContent(unittest.TestCase):
+
+    def test_fetch_accepts_trailing_slash_redirect_variant_as_same_page(self):
+        source_url = "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides"
+        trailing_url = source_url + "/"
+        response = Mock(status_code=200, headers={"content-type": "text/html; charset=UTF-8", "content-length": "37"})
+        response.content = b"<main>Reporting Central guides</main>"
+        response.url = trailing_url
+        with patch("regmon.fetch.requests.get", side_effect=[
+            Mock(status_code=301, headers={"location": trailing_url}, close=Mock()),
+            response,
+        ]), patch("regmon.fetch.validate_public_http_url", return_value=None):
+            result = fetch(
+                source_url, attempts=1, allowed_domains=["www.frbservices.org"],
+                allowed_prefixes=["https://www.frbservices.org/"],
+                allowed_urls=[source_url], max_bytes=None,
+            )
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result.body, response.content)
+
     def test_dynamic_markup_is_ignored(self):
         a="<body><nav>A</nav><main><h1>Guideline</h1><p>Version one.</p></main><footer>A</footer></body>"
         b="<body><nav>B</nav><main><h1>Guideline</h1><p>Version one.</p></main><footer>B</footer></body>"
@@ -371,6 +390,31 @@ class TestDiscovery(unittest.TestCase):
         self.assertEqual(url, mock_get.return_value.url)
         self.assertEqual(links, [])
         self.assertIsNone(failure)
+
+
+    @patch("regmon.discovery.requests.get")
+    def test_discovery_redirect_between_trailing_slash_variants_is_not_a_loop(self, mock_get):
+        source = SourceConfig(
+            id="frbservices-test",
+            name="FRBServices user guides",
+            regulator="www.frbservices.org",
+            seed_urls=("https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides",),
+            allowed_prefixes=("https://www.frbservices.org/",),
+            allowed_domains=("www.frbservices.org",),
+            allowed_urls=("https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides",),
+            discovery_http_workers=1,
+        )
+        mock_get.side_effect = [
+            Mock(status_code=301, headers={"location": "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides/"}),
+            Mock(status_code=200, headers={"content-type": "text/html; charset=UTF-8"},
+                 text="<main><h1>Reporting Central</h1><a href='/central-bank/reporting-central/other'>Other</a></main>",
+                 url="https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides/"),
+        ]
+        url, links, failure = _fetch_links(source.seed_urls[0], source, 10)
+        self.assertIsNone(failure)
+        self.assertEqual(url, source.seed_urls[0])
+        self.assertEqual(links, [])
+        self.assertEqual(mock_get.call_count, 2)
 
     @patch("regmon.discovery.requests.get")
     def test_http_discovery_retries_transient_errors(self, mock_get):
