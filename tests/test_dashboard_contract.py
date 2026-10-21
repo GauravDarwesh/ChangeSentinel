@@ -510,9 +510,9 @@ class TestScoutView(unittest.TestCase):
 
     def test_phone_bar_fits_seven_tabs_without_rules(self):
         html = read("index.html")
-        self.assertIn(".rail-nav { grid-template-columns: repeat(7, auto); justify-content: space-between; padding: 0 6px; }", html)
+        self.assertIn(".rail-nav { grid-template-columns: repeat(8, auto); justify-content: space-between; padding: 0 6px; }", html)
         self.assertNotIn("grid-template-columns: repeat(6, minmax(0, 1fr))", html)
-        self.assertIn(".nav-scout, .nav-ask { margin-top: 0; padding-top: 0; border-top: 0; }", html)
+        self.assertIn(".nav-scout, .nav-calendar, .nav-ask { margin-top: 0; padding-top: 0; border-top: 0; }", html)
 
     def test_scout_is_a_split_view_with_review_filters_and_coverage(self):
         html = read("index.html")
@@ -625,3 +625,81 @@ class TestReviewLayerContract(unittest.TestCase):
         js = read("dashboard.js")
         self.assertIn('const CALENDAR_FEED = new URL("./data/calendar.ics", document.baseURI).href;', js)
         self.assertIn("renderUpcomingDates();", js)
+
+class TestCadenceCalendarContract(unittest.TestCase):
+    """Cadence is an additive regulatory calendar; Scout and existing views remain intact."""
+
+    def test_calendar_is_under_scout_and_before_ask_sentinel(self):
+        html = read("index.html")
+        scout = html.index('data-view="scout"')
+        cadence = html.index('data-view="calendar"')
+        ask = html.index('data-view="askSentinel"')
+        self.assertLess(scout, cadence)
+        self.assertLess(cadence, ask)
+        for token in (
+            'id="calendarView" class="view cadence-view"',
+            'id="cadenceMonthGrid"',
+            'id="cadenceAgenda"',
+            'id="cadenceEntryDialog"',
+            'id="cadenceEntryForm"',
+            'id="cadenceSignInForm"',
+            'data-calendar-export',
+            'data-calendar-new',
+            'id="navCadenceCount"',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+
+    def test_calendar_navigation_fits_existing_mobile_rail(self):
+        html = read("index.html")
+        self.assertIn(".rail-nav { grid-template-columns: repeat(8, auto); justify-content: space-between; padding: 0 6px; }", html)
+        self.assertIn(".nav-scout, .nav-calendar, .nav-ask { margin-top: 0; padding-top: 0; border-top: 0; }", html)
+        self.assertIn("@media (max-width: 620px)", html)
+        self.assertIn(".cadence-layout { grid-template-columns: minmax(0, 1fr); }", html)
+
+    def test_calendar_ui_uses_private_api_and_does_not_embed_service_credentials(self):
+        source = read("dashboard.js")
+        for token in (
+            'const CADENCE_ENDPOINT = window.CHANGESENTINEL_CALENDAR_ENDPOINT || "";',
+            'storageKey: "changesentinel-cadence-auth"',
+            "function cadenceEventsBetween(from, to)",
+            "function renderCadenceView()",
+            "function saveCadenceEntry(event)",
+            "function exportCadenceCalendar()",
+            'calendar: "cadence"',
+            "data-calendar-complete",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+        self.assertNotIn("SUPABASE_SERVICE_ROLE_KEY", source)
+        self.assertNotIn("sb_secret_", source)
+
+    def test_database_and_scheduler_keep_team_entries_private(self):
+        migration = read("supabase/migrations/20261021180000_regulatory_calendar.sql")
+        for token in (
+            "alter table public.regulatory_calendar_members enable row level security",
+            "alter table public.regulatory_calendar_entries enable row level security",
+            "revoke all on public.regulatory_calendar_entries from public, anon, authenticated",
+            "grant all on public.regulatory_calendar_entries to service_role",
+            "unique (entry_id, occurrence_date, recipient_email)",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, migration)
+        edge = read("supabase/functions/calendar-api/index.ts")
+        for token in (
+            "user?.is_anonymous === true",
+            "regulatory_calendar_members",
+            "function dueReminderJobs(",
+            'req.headers.get("x-calendar-cron-token")',
+            'api.resend.com/emails',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, edge)
+        workflow = read(".github/workflows/regulatory-calendar-reminders.yml")
+        self.assertIn('cron: "0 8 * * *"', workflow)
+        self.assertIn("REGULATORY_CALENDAR_CRON_TOKEN", workflow)
+        self.assertIn('{"action":"send-reminders"}', workflow)
+        ci = read(".github/workflows/ci.yml")
+        self.assertIn("npx deno check supabase/functions/calendar-api/index.ts", ci)
+        self.assertIn("npx deno test --allow-env supabase/functions/calendar-api/index_test.ts", ci)
+
