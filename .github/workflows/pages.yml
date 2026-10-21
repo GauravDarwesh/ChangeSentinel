@@ -14,6 +14,9 @@ on:
       - "data/notifications.json"
       - "data/notification-outbox.json"
       - "config/sources.json"
+      - "data/scout/latest.json"
+      - "data/scout/review.json"
+      - "config/scout.json"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -52,6 +55,10 @@ jobs:
           cp data/notifications.json site/data/notifications.json
           cp data/notification-outbox.json site/data/notification-outbox.json
           cp config/sources.json site/config/sources.json
+          mkdir -p site/data/scout
+          cp data/scout/latest.json site/data/scout/latest.json
+          cp data/scout/review.json site/data/scout/review.json
+          cp config/scout.json site/config/scout.json
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: site

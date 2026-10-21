@@ -1,0 +1,89 @@
+name: Scout
+
+# Weekly discovery of new regulator URLs. Scout reads only the channels declared
+# in config/scout.json, never changes monitoring configuration or monitoring
+# state, and commits only data/scout/. Candidates reach monitoring only when the
+# owner registers them through the dashboard's existing "Add a link" flow.
+on:
+  schedule:
+    # Mondays 04:17 UTC (off the hour, clear of the six-hourly monitor at 00/06).
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      regulator:
+        description: Regulator id from config/scout.json, a comma-separated list, or all
+        required: false
+        default: all
+        type: string
+
+# Sweeps and review decisions share one queue so a decision is never committed
+# while a sweep is rebuilding the same files.
+concurrency:
+  group: scout
+  cancel-in-progress: false
+  queue: max
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  sweep:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: main
+          fetch-depth: 1
+          # Publisher pages are untrusted input; no write token sits in .git/config
+          # while they are parsed. Only the commit step receives the token.
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      # Scout needs only the HTTP and HTML parsing libraries, at the pinned versions.
+      - name: Install Scout dependencies
+        run: python -m pip install --disable-pip-version-check requests==2.34.2 beautifulsoup4==4.14.3
+
+      - name: Record base commit
+        id: base
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Sweep regulator channels
+        id: sweep
+        env:
+          SCOUT_REGULATOR: ${{ inputs.regulator || 'all' }}
+          SCOUT_TRIGGER: ${{ github.event_name == 'schedule' && 'scheduled' || 'manual' }}
+        run: python -u -m regmon.scout sweep --regulator "$SCOUT_REGULATOR" --trigger "$SCOUT_TRIGGER"
+
+      - name: Validate Scout state
+        run: python -m regmon.scout validate
+
+      - name: Commit Scout state
+        id: commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "changesentinel-scout"
+          git config user.email "actions@users.noreply.github.com"
+          bash scripts/commit_state.sh "Update Scout discovery state" "${{ steps.base.outputs.sha }}" data/scout
+
+      - name: Publish Scout data to Pages
+        if: ${{ steps.commit.outputs.committed == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --repo "${{ github.repository }}" --ref main
+
+      - name: Flag incomplete coverage
+        if: ${{ steps.sweep.outputs.status != 'COMPLETE' }}
+        run: echo "::warning title=Scout coverage::Sweep status ${{ steps.sweep.outputs.status }}. See data/scout/latest.json for each channel's note."

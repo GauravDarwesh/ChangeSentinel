@@ -5,7 +5,7 @@ name: Ask Sentinel Index
 # completed Regulatory Monitor runs.
 on:
   workflow_run:
-    workflows: ["Regulatory Monitor"]
+    workflows: ["Regulatory Monitor", "Scout", "Scout Review Decision", "Scout Source Request"]
     types: [completed]
   push:
     branches: [main]

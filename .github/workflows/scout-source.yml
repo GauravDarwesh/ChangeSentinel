@@ -1,0 +1,121 @@
+name: Scout Source Request
+
+# The dashboard's "Add source" and "Edit details" forms open a prefilled issue.
+# Only issues the repository owner opens are processed. A request can create a
+# regulator profile, add a channel, or replace a regulator's metadata (names,
+# region, languages, path hints, keywords, known gaps, active). The merged
+# config/scout.json must validate before it is committed; channels are never
+# removed here. The new or edited regulator is then swept once.
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+jobs:
+  source:
+    if: ${{ github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, '[ChangeSentinel] Scout source') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    # Shares Scout's queue so the configuration never changes under a running sweep.
+    concurrency:
+      group: scout
+      cancel-in-progress: false
+      queue: max
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+
+      # Applying a request uses only the Python standard library.
+      - name: Apply request and commit
+        id: apply
+        run: |
+          set -euo pipefail
+          git config user.name "changesentinel-scout"
+          git config user.email "actions@users.noreply.github.com"
+          success=false
+          for attempt in 1 2 3; do
+            git fetch origin main --quiet
+            git checkout -B main origin/main
+            python -m regmon.scout source --event "$GITHUB_EVENT_PATH" --output "$RUNNER_TEMP/scout-source.json"
+            python -m regmon.scout validate
+            if git diff --quiet -- config/scout.json data/scout; then
+              success=true
+              break
+            fi
+            git add -A -- config/scout.json data/scout
+            git commit -m "Update Scout sources (issue #${{ github.event.issue.number }})"
+            if git push origin HEAD:main; then
+              success=true
+              break
+            fi
+            echo "Push attempt $attempt did not publish; refreshing main and retrying."
+            sleep 2
+          done
+          if [ "$success" != true ]; then
+            echo "Could not publish the Scout source change after three attempts."
+            exit 1
+          fi
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os
+          d = json.load(open(os.environ["RUNNER_TEMP"] + "/scout-source.json"))
+          print("regulator_id=" + d["regulator_id"])
+          print("created=" + str(d["created"]).lower())
+          print("channel_id=" + d["channel_id"])
+          print("active=" + str(d["active"]).lower())
+          PY
+
+      - name: Publish Scout data to Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main
+
+      - name: Sweep the regulator once
+        if: ${{ steps.apply.outputs.active == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REGULATOR: ${{ steps.apply.outputs.regulator_id }}
+        run: gh workflow run scout.yml --repo "$GITHUB_REPOSITORY" --ref main -f regulator="$REGULATOR"
+
+      - name: Confirm on the request
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REGULATOR: ${{ steps.apply.outputs.regulator_id }}
+          CREATED: ${{ steps.apply.outputs.created }}
+          CHANNEL: ${{ steps.apply.outputs.channel_id }}
+          ACTIVE: ${{ steps.apply.outputs.active }}
+        run: |
+          set -euo pipefail
+          if [ "$CREATED" = "true" ]; then
+            message="Added regulator $REGULATOR to config/scout.json with channel $CHANNEL."
+          elif [ -n "$CHANNEL" ]; then
+            message="Added channel $CHANNEL to regulator $REGULATOR and saved its details."
+          else
+            message="Saved the details of regulator $REGULATOR."
+          fi
+          if [ "$ACTIVE" = "true" ]; then
+            message="$message A Scout sweep of $REGULATOR has been queued; a new channel's first read is a quiet baseline."
+          else
+            message="$message The regulator is inactive, so it is not swept."
+          fi
+          gh issue comment "${{ github.event.issue.number }}" --repo "$GITHUB_REPOSITORY" --body "$message"
+          gh issue close "${{ github.event.issue.number }}" --repo "$GITHUB_REPOSITORY"
+
+      - name: Explain a rejected request
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --repo "$GITHUB_REPOSITORY" --body "Scout could not apply this request. The workflow run says why: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
