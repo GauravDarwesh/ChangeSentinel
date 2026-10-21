@@ -203,6 +203,39 @@
       "allowed_domains": [
         "www.osfi-bsif.gc.ca"
       ]
+    },
+    {
+      "id": "manual-fe66388fe452",
+      "name": "Reporting Central and Structure Central User Guides",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "seed_urls": [
+        "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
     }
   ]
 }
