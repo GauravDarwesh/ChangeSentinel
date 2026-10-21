@@ -319,7 +319,7 @@ def main() -> int:
                 marker = "PASS" if result["passed"] is True else "INCONCLUSIVE" if result["passed"] is None else "FAIL"
                 file.write(f"### {marker} - {result['name']}\n\n")
                 file.write(result["detail"] + "\n\n")
-                file.write("Answer length: {} characters; error code: {}. Response text omitted.\\n\\n".format(result["answer_chars"], result["error_code"] or "none"))
+                file.write("Answer length: {} characters; error code: {}. Response text omitted.\n\n".format(result["answer_chars"], result["error_code"] or "none"))
 
     print(f"Ask Sentinel data-grounding evaluation: {passed} passed, {failed} failed, {inconclusive} inconclusive out of {len(results)}.")
     if failed or inconclusive:
