@@ -77,8 +77,8 @@ const ENDPOINTS = {
 };
 // The calendar feed is served from Pages so calendar apps can subscribe to it.
 const CALENDAR_FEED = new URL("./data/calendar.ics", document.baseURI).href;
-const VIEWS = ["overview", "changes", "monitors", "runs", "notifications", "scout", "askSentinel"];
-const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", notifications: "alerts", scout: "scout", askSentinel: "ask-sentinel" };
+const VIEWS = ["overview", "changes", "monitors", "runs", "notifications", "scout", "calendar", "askSentinel"];
+const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", notifications: "alerts", scout: "scout", calendar: "cadence", askSentinel: "ask-sentinel" };
 const $ = id => document.getElementById(id);
 const esc = L.esc;
 // Snapshot text, saved HTML and evidence are cached for the session, but only
@@ -116,7 +116,10 @@ const state = {
   workflowRuns: [], workflowSignature: "", scanColumns: null, pendingScan: null,
   scoutLatest: null, scoutReview: null, scoutConfig: null, scoutFilter: "REVIEW", selectedScoutKey: "", scoutMonitored: null,
   scoutSourceMode: "add",
-  calendar: null, lineage: null, reviews: null, reviewTarget: "", integrity: {}
+  calendar: null, lineage: null, reviews: null, reviewTarget: "", integrity: {},
+  cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
+  cadenceLoading: null, cadenceMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  cadenceSelectedDate: L.localIsoDate(new Date()), cadenceSignInBusy: false
 };
 const compactQuery = window.matchMedia ? window.matchMedia("(max-width: 980px)") : null;
 function isCompact() { return !!(compactQuery && compactQuery.matches); }
@@ -1336,6 +1339,7 @@ function renderLists() {
   renderRuns();
   renderNotifications();
   renderScout();
+  renderCadenceView();
   renderNavCounts();
 }
 function renderNavCounts() {
@@ -1345,6 +1349,13 @@ function renderNavCounts() {
   const toReview = scoutBuckets().REVIEW.length;
   $("navScoutCount").textContent = toReview ? toReview : "";
   $("navScoutCount").classList.toggle("is-fresh", toReview > 0);
+  const cadenceCount = $("navCadenceCount");
+  if (cadenceCount) {
+    const today = L.localIsoDate(new Date());
+    const soon = cadenceEventsBetween(today, cadenceAddDays(today, 30)).filter(event => event.kind === "manual" && event.entry && event.entry.reminder_enabled && !event.completed).length;
+    cadenceCount.textContent = soon ? String(soon) : "";
+    cadenceCount.classList.toggle("is-fresh", soon > 0);
+  }
 }
 
 /* ================= Detail: a change ================= */
@@ -2312,10 +2323,406 @@ function openScoutDecision(verb, item) {
   if (githubWindow) { try { githubWindow.opener = null; } catch (_) {} } else { window.location.href = target; }
 }
 
+
+/* ================= Cadence: shared regulatory calendar =================
+ * Automatic change dates stay in the read-only JSON feed. Team entries use the
+ * private calendar-api, which requires a confirmed Supabase Auth email that is
+ * on the Cadence membership list. The dashboard never receives a service key.
+ */
+const CADENCE_ENDPOINT = window.CHANGESENTINEL_CALENDAR_ENDPOINT || "";
+const CADENCE_SUPABASE_URL = window.CHANGESENTINEL_ASK_SUPABASE_URL || "";
+const CADENCE_PUBLISHABLE_KEY = window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY || "";
+let cadenceClient = null;
+function cadenceGetClient() {
+  if (!window.supabase || typeof window.supabase.createClient !== "function") throw new Error("The secure calendar connection could not load. Refresh and retry.");
+  if (!CADENCE_SUPABASE_URL || !CADENCE_PUBLISHABLE_KEY || !CADENCE_ENDPOINT) throw new Error("Cadence has not been configured yet.");
+  if (!cadenceClient) cadenceClient = window.supabase.createClient(CADENCE_SUPABASE_URL, CADENCE_PUBLISHABLE_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: "changesentinel-cadence-auth" }
+  });
+  return cadenceClient;
+}
+function cadenceSetMessage(title, message, isError) {
+  $("cadenceAccessTitle").textContent = title;
+  $("cadenceAccessMessage").textContent = message;
+  $("cadenceAccess").classList.toggle("is-error", !!isError);
+}
+async function cadenceApi(method, payload) {
+  const client = cadenceGetClient();
+  const result = await client.auth.getSession();
+  const session = result.data && result.data.session;
+  if (result.error || !session || !session.access_token) throw new Error("Sign in with your team email to load shared calendar entries.");
+  state.cadenceSession = session;
+  const url = method === "GET" ? CADENCE_ENDPOINT + "?action=list" : CADENCE_ENDPOINT;
+  const headers = { Accept: "application/json", apikey: CADENCE_PUBLISHABLE_KEY, Authorization: "Bearer " + session.access_token };
+  if (method !== "GET") headers["Content-Type"] = "application/json";
+  const response = await fetch(url, { method, headers, body: method === "GET" ? undefined : JSON.stringify(payload || {}), cache: "no-store" });
+  let data = {};
+  try { data = await response.json(); } catch (_) {}
+  if (!response.ok) throw new Error(data.error || ("Cadence returned HTTP " + response.status + "."));
+  return data;
+}
+async function refreshCadence(force) {
+  if (state.cadenceLoading) return state.cadenceLoading;
+  if (state.view !== "calendar" && !force) return;
+  state.cadenceLoading = (async () => {
+    try {
+      const client = cadenceGetClient();
+      const sessionResult = await client.auth.getSession();
+      if (sessionResult.error) throw sessionResult.error;
+      state.cadenceSession = sessionResult.data && sessionResult.data.session;
+      if (!state.cadenceSession || !state.cadenceSession.access_token) {
+        state.cadenceMember = null;
+        state.cadenceEntries = [];
+        state.cadenceStatus = "signed-out";
+        state.cadenceError = "";
+        cadenceSetMessage("Team calendar", "Sign in with an approved team email to load and edit shared entries. Regulatory dates derived from ChangeSentinel remain visible below.", false);
+        renderCadenceView();
+        return;
+      }
+      state.cadenceStatus = "loading";
+      renderCadenceAccess();
+      const data = await cadenceApi("GET");
+      state.cadenceEntries = Array.isArray(data.entries) ? data.entries : [];
+      state.cadenceMember = data.member || null;
+      state.cadenceStatus = "ready";
+      state.cadenceError = "";
+      cadenceSetMessage("Connected to Cadence", "Shared team entries are loaded. Changes are saved centrally and email reminders run on the scheduled service.", false);
+    } catch (error) {
+      state.cadenceEntries = [];
+      state.cadenceMember = null;
+      state.cadenceStatus = "error";
+      state.cadenceError = String(error.message || error);
+      cadenceSetMessage("Calendar access needs attention", state.cadenceError, true);
+    } finally {
+      renderCadenceView();
+    }
+  })().finally(() => { state.cadenceLoading = null; });
+  return state.cadenceLoading;
+}
+async function signInCadence(event) {
+  event.preventDefault();
+  if (state.cadenceSignInBusy) return;
+  const email = $("cadenceSignInEmail").value.trim().toLowerCase();
+  if (!email) { $("cadenceSignInEmail").focus(); return; }
+  state.cadenceSignInBusy = true;
+  $("cadenceSignInButton").disabled = true;
+  try {
+    const client = cadenceGetClient();
+    const result = await client.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: new URL("./#cadence", document.baseURI).href, shouldCreateUser: true }
+    });
+    if (result.error) throw result.error;
+    cadenceSetMessage("Check your inbox", "A secure sign-in link was sent to " + email + ". Open it in this browser, then return to Cadence. Your address must be on the approved team list.", false);
+    showToast("Cadence sign-in link sent.");
+  } catch (error) {
+    cadenceSetMessage("Couldn't send sign-in link", String(error.message || error), true);
+  } finally {
+    state.cadenceSignInBusy = false;
+    $("cadenceSignInButton").disabled = false;
+    renderCadenceAccess();
+  }
+}
+async function signOutCadence() {
+  try { const client = cadenceGetClient(); await client.auth.signOut(); } catch (_) {}
+  state.cadenceSession = null;
+  state.cadenceMember = null;
+  state.cadenceEntries = [];
+  state.cadenceStatus = "signed-out";
+  state.cadenceError = "";
+  cadenceSetMessage("Signed out", "Shared team entries are hidden until you sign in again. Publicly derived regulatory dates remain available.", false);
+  renderCadenceView();
+}
+function renderCadenceAccess() {
+  const session = state.cadenceSession;
+  const member = state.cadenceMember;
+  $("cadenceSignInForm").hidden = !!session;
+  $("cadenceSignedIn").hidden = !session;
+  $("cadenceMemberLabel").textContent = member ? member.email + " · " + member.role : session ? "Signed in · not on the team list" : "";
+  document.querySelectorAll("[data-calendar-test]").forEach(button => { button.hidden = !(member && (member.role === "admin" || member.role === "editor")); });
+  document.querySelectorAll("[data-calendar-new]").forEach(button => {
+    button.disabled = !!(member && member.role === "viewer");
+    button.title = member && member.role === "viewer" ? "Your Cadence role is read-only" : "Add a regulatory date or team follow-up";
+  });
+}
+function cadenceDate(value) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ""));
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null;
+}
+function cadenceDateISO(date) { return L.localIsoDate(date); }
+function cadenceAddDays(dateIso, days) {
+  const d = cadenceDate(dateIso);
+  if (!d) return "";
+  d.setDate(d.getDate() + days);
+  return cadenceDateISO(d);
+}
+function cadenceDaysBetween(a, b) {
+  const x = cadenceDate(a), y = cadenceDate(b);
+  return x && y ? Math.round((Date.UTC(y.getFullYear(), y.getMonth(), y.getDate()) - Date.UTC(x.getFullYear(), x.getMonth(), x.getDate())) / 86400000) : null;
+}
+function cadenceMonthShift(date, amount) { return new Date(date.getFullYear(), date.getMonth() + amount, 1); }
+function cadenceOccurrenceDate(entry, index) {
+  const start = cadenceDate(entry.start_date);
+  if (!start) return "";
+  const type = entry.recurrence || "none";
+  if (!index || type === "none") return cadenceDateISO(start);
+  if (type === "weekly") { start.setDate(start.getDate() + index * 7); return cadenceDateISO(start); }
+  const step = type === "quarterly" ? 3 : type === "yearly" ? 12 : 1;
+  const month = start.getMonth() + index * step;
+  const targetYear = start.getFullYear() + Math.floor(month / 12);
+  const targetMonth = ((month % 12) + 12) % 12;
+  return cadenceDateISO(new Date(targetYear, targetMonth, Math.min(start.getDate(), new Date(targetYear, targetMonth + 1, 0).getDate())));
+}
+function cadenceOccurrenceDates(entry, from, to) {
+  if (!entry || !cadenceDate(entry.start_date) || from > to) return [];
+  const type = entry.recurrence || "none";
+  if (type === "none") return entry.start_date >= from && entry.start_date <= to ? [entry.start_date] : [];
+  let index = 0;
+  if (type === "weekly") index = Math.max(0, Math.floor((cadenceDaysBetween(entry.start_date, from) || 0) / 7) - 1);
+  else {
+    const a = cadenceDate(entry.start_date), b = cadenceDate(from);
+    const step = type === "quarterly" ? 3 : type === "yearly" ? 12 : 1;
+    index = Math.max(0, Math.floor(((b.getFullYear() - a.getFullYear()) * 12 + b.getMonth() - a.getMonth()) / step) - 1);
+  }
+  const dates = [];
+  for (let n = 0; n < 1200; n += 1, index += 1) {
+    const date = cadenceOccurrenceDate(entry, index);
+    if (!date || date > to) break;
+    if (date >= from) dates.push(date);
+  }
+  return dates;
+}
+function cadenceEventsBetween(from, to) {
+  const events = [];
+  const automatic = state.calendar && Array.isArray(state.calendar.entries) ? state.calendar.entries : [];
+  for (const item of automatic) {
+    const date = String(item && item.date || "");
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date < from || date > to) continue;
+    events.push({ kind: "derived", date, title: String(item.title || "Regulatory date"), category: "derived", eventId: String(item.event_id || ""), sourceUrl: String(item.url || ""), item });
+  }
+  for (const entry of state.cadenceEntries || []) {
+    if (!entry || entry.archived || !entry.start_date) continue;
+    const duration = entry.end_date && cadenceDaysBetween(entry.start_date, entry.end_date) !== null
+      ? Math.max(0, Math.min(30, cadenceDaysBetween(entry.start_date, entry.end_date))) : 0;
+    const rangeStart = cadenceAddDays(from, -duration);
+    for (const occurrence of cadenceOccurrenceDates(entry, rangeStart, to)) {
+      const completed = new Set(Array.isArray(entry.completed_dates) ? entry.completed_dates.map(String) : []);
+      for (let offset = 0; offset <= duration; offset += 1) {
+        const date = cadenceAddDays(occurrence, offset);
+        if (date < from || date > to) continue;
+        events.push({
+          kind: "manual", date, occurrenceDate: occurrence, title: String(entry.title || "Team entry"),
+          category: String(entry.category || "other"), entry, entryId: String(entry.id || ""),
+          completed: completed.has(occurrence), sourceUrl: String(entry.source_url || "")
+        });
+      }
+    }
+  }
+  return events.sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title));
+}
+function cadenceTag(category) {
+  return ({ expected_update: "Expected update", deadline: "Deadline", meeting: "Meeting", internal_task: "Team task", other: "Other", derived: "Detected date" })[category] || "Calendar entry";
+}
+function cadenceClass(event) {
+  if (event.kind === "derived") return "is-derived";
+  if (event.category === "expected_update" || event.category === "deadline") return "is-expected";
+  return "is-team";
+}
+function cadenceEventLabel(event) {
+  return event.kind === "derived" ? event.title : (event.category === "expected_update" && event.entry.regulator ? event.entry.regulator + " · " : "") + event.title;
+}
+function renderCadenceView() {
+  const grid = $("cadenceMonthGrid");
+  if (!grid) return;
+  renderCadenceAccess();
+  const month = state.cadenceMonth instanceof Date ? state.cadenceMonth : new Date();
+  const first = new Date(month.getFullYear(), month.getMonth(), 1);
+  const offset = (first.getDay() + 6) % 7;
+  const gridStart = new Date(first.getFullYear(), first.getMonth(), 1 - offset);
+  const gridEnd = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + 41);
+  const startISO = cadenceDateISO(gridStart), endISO = cadenceDateISO(gridEnd);
+  const events = cadenceEventsBetween(startISO, endISO);
+  const byDate = new Map();
+  events.forEach(event => { if (!byDate.has(event.date)) byDate.set(event.date, []); byDate.get(event.date).push(event); });
+  $("cadenceMonthLabel").textContent = month.toLocaleDateString([], { month: "long", year: "numeric" });
+  const today = cadenceDateISO(new Date());
+  if (!state.cadenceSelectedDate) state.cadenceSelectedDate = today;
+  const thisMonthEvents = events.filter(event => event.date.slice(0, 7) === cadenceDateISO(first).slice(0, 7));
+  $("cadenceStatMonth").textContent = String(thisMonthEvents.filter(event => event.kind === "derived").length);
+  $("cadenceStatExpected").textContent = String(thisMonthEvents.filter(event => event.kind === "manual" && event.category === "expected_update" && !event.completed).length);
+  $("cadenceStatReminders").textContent = String((state.cadenceEntries || []).filter(entry => entry && !entry.archived && entry.reminder_enabled).length);
+  let cells = "";
+  for (let i = 0; i < 42; i += 1) {
+    const day = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
+    const iso = cadenceDateISO(day), dayEvents = byDate.get(iso) || [];
+    const classes = ["cadence-day"];
+    if (day.getMonth() !== month.getMonth()) classes.push("is-outside");
+    if (iso === today) classes.push("is-today");
+    if (iso === state.cadenceSelectedDate) classes.push("is-selected");
+    const bars = dayEvents.slice(0, 3).map(event => '<span class="cadence-day-event ' + cadenceClass(event) + (event.completed ? " is-done" : "") + '" title="' + esc(cadenceEventLabel(event)) + '">' + esc(cadenceEventLabel(event)) + '</span>').join("");
+    const more = dayEvents.length > 3 ? '<span class="cadence-day-more">+' + (dayEvents.length - 3) + " more</span>" : "";
+    cells += '<button type="button" role="gridcell" class="' + classes.join(" ") + '" data-calendar-day="' + iso + '" aria-label="' + esc(day.toLocaleDateString([], { weekday: "long", month: "long", day: "numeric", year: "numeric" }) + ", " + dayEvents.length + " entries") + '"><span class="cadence-day-number">' + day.getDate() + '</span><span class="cadence-day-events">' + bars + more + "</span></button>";
+  }
+  grid.innerHTML = cells;
+  const selectedDate = cadenceDate(state.cadenceSelectedDate);
+  $("cadenceSelectedDay").textContent = selectedDate ? selectedDate.toLocaleDateString([], { weekday: "long", month: "short", day: "numeric" }) : "Agenda";
+  const dayEvents = byDate.get(state.cadenceSelectedDate) || [];
+  $("cadenceAgendaCount").textContent = String(dayEvents.length);
+  $("cadenceAgenda").innerHTML = dayEvents.length ? dayEvents.map(event => {
+    if (event.kind === "derived") {
+      const linked = event.eventId && changeLogEntries().some(change => change.event_id === event.eventId);
+      return '<article class="cadence-agenda-item"><div class="cadence-agenda-row"><i class="cadence-agenda-dot is-derived"></i><div class="cadence-agenda-content"><span class="cadence-agenda-title">' + esc(event.title) + '</span><div class="cadence-agenda-meta"><span class="cadence-tag">Detected date</span><span>ChangeSentinel</span></div>' +
+        (event.item && event.item.description ? '<p class="cadence-agenda-notes">' + esc(String(event.item.description)) + "</p>" : "") + '</div></div><div class="cadence-agenda-actions">' +
+        (event.sourceUrl ? '<a href="' + esc(event.sourceUrl) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' : "") +
+        (linked ? '<button type="button" data-calendar-open-change="' + esc(event.eventId) + '">View change →</button>' : "") + "</div></article>";
+    }
+    const entry = event.entry, isEditor = state.cadenceMember && ["admin", "editor"].includes(state.cadenceMember.role);
+    const isDone = !!event.completed;
+    const reminder = entry.reminder_enabled ? '<span class="cadence-tag is-reminder">Email reminder</span>' : "";
+    return '<article class="cadence-agenda-item"><div class="cadence-agenda-row"><i class="cadence-agenda-dot ' + cadenceClass(event) + '"></i><div class="cadence-agenda-content"><span class="cadence-agenda-title">' + esc(event.title) + '</span><div class="cadence-agenda-meta"><span class="cadence-tag">' + esc(cadenceTag(event.category)) + '</span>' +
+      (entry.regulator ? '<span>' + esc(entry.regulator) + '</span>' : "") + (entry.owner_name ? '<span>Owner: ' + esc(entry.owner_name) + '</span>' : "") + reminder + (entry.recurrence && entry.recurrence !== "none" ? '<span>↻ ' + esc(entry.recurrence) + '</span>' : "") +
+      '</div>' + (entry.description ? '<p class="cadence-agenda-notes">' + esc(entry.description) + "</p>" : "") + '</div></div><div class="cadence-agenda-actions">' +
+      (event.sourceUrl ? '<a href="' + esc(event.sourceUrl) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' : "") +
+      (isEditor ? '<button type="button" data-calendar-complete="' + esc(event.entryId) + '" data-calendar-date="' + esc(event.occurrenceDate) + '" data-calendar-done="' + String(isDone) + '">' + (isDone ? "Reopen occurrence" : "Mark done") + '</button><button type="button" data-calendar-edit="' + esc(event.entryId) + '">Edit</button><button type="button" data-calendar-delete="' + esc(event.entryId) + '">Archive</button>' : (isDone ? '<span>Completed</span>' : "")) +
+      "</div></article>";
+  }).join("") : '<div class="cadence-empty">Nothing is scheduled for this day.<br>Use <strong>New entry</strong> to log an expected release, filing deadline or internal follow-up.</div>';
+  renderCadenceAccess();
+}
+function shiftCadenceMonth(delta) {
+  state.cadenceMonth = cadenceMonthShift(state.cadenceMonth, delta);
+  const first = new Date(state.cadenceMonth.getFullYear(), state.cadenceMonth.getMonth(), 1);
+  if (state.cadenceSelectedDate.slice(0, 7) !== cadenceDateISO(first).slice(0, 7)) state.cadenceSelectedDate = cadenceDateISO(first);
+  renderCadenceView();
+}
+function openCadenceEntry(id) {
+  if (!state.cadenceMember) {
+    showToast(state.cadenceSession ? "This email is not on the Cadence team list yet." : "Sign in with your team email before adding shared entries.");
+    $("cadenceSignInEmail").focus();
+    return;
+  }
+  if (!["admin", "editor"].includes(state.cadenceMember.role)) { showToast("Your Cadence role is read-only."); return; }
+  const entry = id ? state.cadenceEntries.find(item => item.id === id) : null;
+  $("cadenceEntryId").value = entry ? entry.id : "";
+  $("cadenceEntryTitle").value = entry ? entry.title || "" : "";
+  $("cadenceEntryCategory").value = entry ? entry.category || "expected_update" : "expected_update";
+  $("cadenceEntryRecurrence").value = entry ? entry.recurrence || "none" : "none";
+  $("cadenceEntryStart").value = entry ? entry.start_date || "" : state.cadenceSelectedDate || L.localIsoDate(new Date());
+  $("cadenceEntryEnd").value = entry ? entry.end_date || "" : "";
+  $("cadenceEntryRegulator").value = entry ? entry.regulator || "" : "";
+  $("cadenceEntryOwner").value = entry ? entry.owner_name || "" : "";
+  $("cadenceEntrySource").value = entry ? entry.source_url || "" : "";
+  $("cadenceEntryDescription").value = entry ? entry.description || "" : "";
+  $("cadenceReminderEnabled").checked = !!(entry && entry.reminder_enabled);
+  $("cadenceReminderDays").value = String(entry ? entry.reminder_days_before ?? 7 : 7);
+  $("cadenceReminderEmails").value = entry && Array.isArray(entry.reminder_emails) ? entry.reminder_emails.join(", ") : (state.cadenceMember.email || "");
+  $("cadenceReminderDays").disabled = !$("cadenceReminderEnabled").checked;
+  $("cadenceReminderEmails").disabled = !$("cadenceReminderEnabled").checked;
+  $("cadenceEntryError").hidden = true;
+  $("cadenceEntryHeading").textContent = entry ? "Edit regulatory entry" : "New regulatory entry";
+  $("cadenceEntrySave").textContent = entry ? "Save changes" : "Save entry";
+  $("cadenceEntryDialog").showModal();
+}
+function cadenceFormValue() {
+  return {
+    title: $("cadenceEntryTitle").value.trim(),
+    category: $("cadenceEntryCategory").value,
+    recurrence: $("cadenceEntryRecurrence").value,
+    start_date: $("cadenceEntryStart").value,
+    end_date: $("cadenceEntryEnd").value || null,
+    regulator: $("cadenceEntryRegulator").value.trim(),
+    owner_name: $("cadenceEntryOwner").value.trim(),
+    source_url: $("cadenceEntrySource").value.trim(),
+    description: $("cadenceEntryDescription").value.trim(),
+    reminder_enabled: $("cadenceReminderEnabled").checked,
+    reminder_days_before: Number($("cadenceReminderDays").value),
+    reminder_emails: $("cadenceReminderEmails").value.split(/[;,]/).map(value => value.trim().toLowerCase()).filter(Boolean)
+  };
+}
+async function saveCadenceEntry(event) {
+  event.preventDefault();
+  if (!state.cadenceMember) { showToast("Sign in with your team email before saving entries."); return; }
+  const save = $("cadenceEntrySave"), errorBox = $("cadenceEntryError");
+  if (!$("cadenceEntryTitle").reportValidity() || !$("cadenceEntryStart").reportValidity()) return;
+  const payload = cadenceFormValue(), id = $("cadenceEntryId").value;
+  if (payload.end_date && payload.end_date < payload.start_date) { errorBox.textContent = "The end date must be on or after the start date."; errorBox.hidden = false; return; }
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (payload.reminder_enabled && (!payload.reminder_emails.length || payload.reminder_emails.some(email => !emailPattern.test(email)))) {
+    errorBox.textContent = "Enter one or more valid email addresses for reminders, separated by commas.";
+    errorBox.hidden = false; return;
+  }
+  save.disabled = true; errorBox.hidden = true;
+  try {
+    const result = await cadenceApi("POST", { action: "save", id: id || undefined, entry: payload });
+    $("cadenceEntryDialog").close();
+    const saved = result.entry;
+    if (saved && saved.start_date) { state.cadenceSelectedDate = saved.start_date; state.cadenceMonth = cadenceDate(saved.start_date); state.cadenceMonth.setDate(1); }
+    await refreshCadence(true);
+    showToast(id ? "Calendar entry updated." : "Calendar entry saved.");
+  } catch (error) {
+    errorBox.textContent = String(error.message || error);
+    errorBox.hidden = false;
+  } finally { save.disabled = false; }
+}
+async function archiveCadenceEntry(id) {
+  const entry = state.cadenceEntries.find(item => item.id === id);
+  if (!entry || !state.cadenceMember || !["admin", "editor"].includes(state.cadenceMember.role)) { showToast("You do not have access to archive this entry."); return; }
+  if (!confirm("Archive “" + String(entry.title || "this entry") + "”? It will disappear from the calendar; its reminder history is retained.")) return;
+  try {
+    await cadenceApi("POST", { action: "delete", id });
+    await refreshCadence(true);
+    showToast("Calendar entry archived.");
+  } catch (error) { showToast(String(error.message || error)); }
+}
+async function toggleCadenceOccurrence(id, occurrenceDate, currentlyDone) {
+  if (!state.cadenceMember) return showToast("Sign in before changing an occurrence.");
+  try {
+    await cadenceApi("POST", { action: "complete", id, occurrence_date: occurrenceDate, completed: !currentlyDone });
+    await refreshCadence(true);
+    showToast(currentlyDone ? "Occurrence reopened." : "Occurrence marked complete.");
+  } catch (error) { showToast(String(error.message || error)); }
+}
+async function sendCadenceTestEmail() {
+  if (!state.cadenceMember || !["admin", "editor"].includes(state.cadenceMember.role)) return;
+  try {
+    await cadenceApi("POST", { action: "send-test" });
+    showToast("Test reminder email sent to " + state.cadenceMember.email + ".");
+  } catch (error) { cadenceSetMessage("Email test failed", String(error.message || error), true); }
+}
+function cadenceIcsEscape(value) { return String(value || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;"); }
+function downloadTextFile(name, type, text) {
+  const blob = new Blob([text], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url; link.download = name; link.style.display = "none";
+  document.body.appendChild(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function exportCadenceCalendar() {
+  const now = new Date(), from = L.localIsoDate(now), to = cadenceAddDays(from, 365);
+  const events = cadenceEventsBetween(from, to);
+  if (!events.length) { showToast("No calendar entries in the next 12 months to export."); return; }
+  const unique = new Map();
+  events.forEach(event => {
+    const identity = event.kind === "manual" ? event.entryId + "|" + event.occurrenceDate : "derived|" + event.date + "|" + event.title;
+    if (!unique.has(identity)) unique.set(identity, event);
+  });
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//ChangeSentinel//Cadence Regulatory Calendar//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
+  unique.forEach(event => {
+    const day = event.kind === "manual" ? event.occurrenceDate : event.date;
+    const nextDay = cadenceAddDays(day, 1).replace(/-/g, "");
+    const entry = event.entry || {};
+    lines.push("BEGIN:VEVENT", "UID:" + cadenceIcsEscape((event.kind === "manual" ? event.entryId : "derived-" + event.eventId) + "-" + day + "@changesentinel", "DTSTAMP:" + new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, ""), "DTSTART;VALUE=DATE:" + day.replace(/-/g, ""), "DTEND;VALUE=DATE:" + nextDay, "SUMMARY:" + cadenceIcsEscape(event.title), "DESCRIPTION:" + cadenceIcsEscape(entry.description || (event.kind === "derived" ? "Detected by ChangeSentinel" : cadenceTag(event.category))), ...(event.sourceUrl ? ["URL:" + String(event.sourceUrl).replace(/[\r\n]/g, "")] : []), "END:VEVENT");
+  });
+  lines.push("END:VCALENDAR");
+  downloadTextFile("cadence-regulatory-calendar.ics", "text/calendar;charset=utf-8", lines.join("\r\n") + "\r\n");
+  showToast("Exported the next 12 months of calendar entries.");
+}
+
+
 /* ================= Navigation ================= */
 
 function viewSection(view) {
-  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", scout: "scoutView", askSentinel: "askSentinelView" }[view] || "overviewView";
+  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", scout: "scoutView", calendar: "calendarView", askSentinel: "askSentinelView" }[view] || "overviewView";
 }
 function hasSelection(view) {
   return view === "changes" ? !!state.selectedChangeId : view === "monitors" ? !!state.selectedId
@@ -2335,7 +2742,7 @@ function renderViews() {
   const askLauncher = $("askSentinelLaunch");
   askLauncher.classList.toggle("active", state.view === "askSentinel");
   askLauncher.setAttribute("aria-current", state.view === "askSentinel" ? "page" : "false");
-  const titles = { overview: "Overview", changes: "Changes", monitors: "Pages", runs: "Runs", notifications: "Alerts", scout: "Scout", askSentinel: "Ask Sentinel" };
+  const titles = { overview: "Overview", changes: "Changes", monitors: "Pages", runs: "Runs", notifications: "Alerts", scout: "Scout", calendar: "Cadence", askSentinel: "Ask Sentinel" };
   document.title = titles[state.view] + " | ChangeSentinel";
 }
 // On wide screens the first row is selected automatically, so opening a view
@@ -2413,9 +2820,10 @@ function renderDetailFor(view) {
   else if (view === "runs") renderRunDetail();
   else if (view === "notifications") renderNotificationDetail();
   else if (view === "scout") renderScoutDetail();
+  else if (view === "calendar") { renderCadenceView(); refreshCadence(); }
 }
 function resetDetailScroll(view) {
-  const pane = { changes: "changeDetail", monitors: "detailView", runs: "runDetail", notifications: "notificationDetail", scout: "scoutDetail" }[view];
+  const pane = { changes: "changeDetail", monitors: "detailView", runs: "runDetail", notifications: "notificationDetail", scout: "scoutDetail", calendar: "calendarView" }[view];
   if (pane && $(pane)) $(pane).scrollTop = 0;
   if (view === "overview") $("overviewView").scrollTop = 0;
 }
@@ -3116,9 +3524,25 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit]");
+  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout]");
   if (!target) return;
   const data = target.dataset;
+  if (data.calendarPrev !== undefined) return shiftCadenceMonth(-1);
+  if (data.calendarNext !== undefined) return shiftCadenceMonth(1);
+  if (data.calendarToday !== undefined) { state.cadenceMonth = new Date(); state.cadenceMonth.setDate(1); state.cadenceSelectedDate = L.localIsoDate(new Date()); return renderCadenceView(); }
+  if (data.calendarNew !== undefined) return openCadenceEntry();
+  if (data.calendarExport !== undefined) return exportCadenceCalendar();
+  if (data.calendarDay) { state.cadenceSelectedDate = data.calendarDay; return renderCadenceView(); }
+  if (data.calendarOpenChange) {
+    const entry = changeLogEntries().find(item => item.event_id === data.calendarOpenChange);
+    if (entry) return select("changes", entry.event_id);
+    showToast("This automatic date is no longer linked to a current change."); return;
+  }
+  if (data.calendarEdit) return openCadenceEntry(data.calendarEdit);
+  if (data.calendarDelete) return archiveCadenceEntry(data.calendarDelete);
+  if (data.calendarComplete) return toggleCadenceOccurrence(data.calendarComplete, data.calendarDate, data.calendarDone === "true");
+  if (data.calendarTest !== undefined) return sendCadenceTestEmail();
+  if (data.calendarSignout !== undefined) return signOutCadence();
   if (data.reviewChange) return openReview(data.reviewChange);
   if (data.evidencePack) return downloadEvidencePack(data.evidencePack);
   if (data.exportChanges !== undefined) return exportChanges();
@@ -3266,6 +3690,11 @@ document.addEventListener("keydown", event => {
 });
 $("monitorSearch").addEventListener("input", renderMonitorList);
 $("scoutSearch").addEventListener("input", renderScout);
+$("cadenceSignInForm").addEventListener("submit", signInCadence);
+$("cadenceEntryForm").addEventListener("submit", saveCadenceEntry);
+document.querySelectorAll("[data-calendar-close]").forEach(button => button.addEventListener("click", () => $("cadenceEntryDialog").close()));
+$("cadenceEntryDialog").addEventListener("click", event => { if (event.target === $("cadenceEntryDialog")) $("cadenceEntryDialog").close(); });
+$("cadenceReminderEnabled").addEventListener("change", () => { const enabled = $("cadenceReminderEnabled").checked; $("cadenceReminderDays").disabled = !enabled; $("cadenceReminderEmails").disabled = !enabled; });
 $("scoutSourceForm").addEventListener("submit", submitScoutSource);
 $("scoutSourceForm").addEventListener("change", syncScoutSourceForm);
 $("closeScoutSource").addEventListener("click", () => $("scoutSourceDialog").close());
