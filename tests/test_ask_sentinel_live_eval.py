@@ -56,7 +56,7 @@ class TestAskSentinelLiveEvalClassification(unittest.TestCase):
         self.assertIn("error_code: errorCode", backend)
         self.assertIn("}, 422);", backend)
         self.assertIn("logStage('provider_failed'", backend)
-        self.assertIn("error_code: str(response.get(\"error_code\") or \"\")", evaluator)
+        self.assertIn('"error_code": str(response.get("error_code")', evaluator)
         self.assertNotIn("ANSWER EXCERPT:", evaluator)
         self.assertNotIn('"answer_excerpt"', evaluator)
 
