@@ -820,6 +820,52 @@ select.field-input { appearance: auto; }
 .scout-sheet-actions { display: inline-flex; align-items: center; gap: 14px; }
 @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
 
+/* ---------- Review decisions, dates, reporting items, saved-copy integrity ---------- */
+.choice-row { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.choice-row label { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); font-size: 13px; cursor: pointer; }
+.choice-row label:has(input:checked) { color: var(--ink); }
+.choice-row input { accent-color: var(--accent); }
+.review-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 4px; }
+.review-log { display: grid; gap: 10px; margin: 12px 0 0; padding: 0; list-style: none; }
+.review-log li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.review-log-when { color: var(--ink-3); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.review-log p { flex-basis: 100%; max-width: 72ch; color: var(--ink-2); font-size: 13.5px; line-height: 1.55; }
+.date-list, .items-list, .integrity-list { margin: 0; padding: 0; list-style: none; }
+.date-row { display: grid; grid-template-columns: minmax(124px, auto) minmax(0, 1fr); gap: 3px 18px; padding: 11px 18px; border-top: 1px solid var(--line); }
+.date-row:first-child { border-top: 0; }
+.date-day { color: var(--ink); font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.date-what { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.date-due { color: var(--ink-3); font-size: 12.5px; }
+.date-quote, .date-basis { grid-column: 2; }
+.date-quote { max-width: 72ch; color: var(--ink-2); font-family: var(--font-doc); font-size: 14px; line-height: 1.55; overflow-wrap: anywhere; }
+.date-basis { color: var(--ink-3); font-size: 12px; }
+.items-body { padding: 2px 0 8px; }
+.items-group + .items-group { border-top: 1px solid var(--line); }
+.items-group-label { display: flex; align-items: center; gap: 8px; padding: 12px 18px 4px; color: var(--ink-3); font-size: 12px; }
+.items-group-label::before { content: ""; width: 7px; height: 7px; background: var(--led-dim); }
+.items-group-label.is-added::before { background: var(--state-new); }
+.items-group-label.is-removed::before { background: var(--state-bad); }
+.items-group-label.is-amended::before { background: var(--accent); box-shadow: var(--glow); }
+.items-group-label span { font-variant-numeric: tabular-nums; }
+.item-row { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 2px 14px; padding: 7px 18px; }
+.item-code { color: var(--ink); font: 500 12.5px/1.6 var(--font-code); }
+.item-text { min-width: 0; color: var(--ink-2); font-size: 13px; line-height: 1.55; overflow-wrap: anywhere; }
+.item-text del { color: var(--del); background: var(--del-soft); text-decoration: line-through; text-decoration-thickness: 1.25px; }
+.item-text ins { color: var(--ins); background: var(--ins-soft); text-decoration: underline; text-decoration-thickness: 1.25px; text-underline-offset: 3px; }
+.item-assets { grid-column: 2; color: var(--ink-3); font-size: 12.5px; line-height: 1.55; }
+.item-asset { color: var(--ink); font: 400 12px/1.6 var(--font-code); }
+.integrity-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 16px; padding: 11px 18px; border-top: 1px solid var(--line); }
+.integrity-row:first-child { border-top: 0; }
+.integrity-name { font-size: 13.5px; }
+.integrity-state { justify-self: end; color: var(--ink-3); font-size: 12.5px; }
+.integrity-path, .integrity-detail { grid-column: 1 / -1; min-width: 0; overflow-wrap: anywhere; }
+.integrity-path { color: var(--ink-3); font: 400 11.5px/1.6 var(--font-code); }
+.integrity-detail { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--ink-3); font-size: 12px; }
+@media (max-width: 560px) {
+  .date-row, .item-row { grid-template-columns: 1fr; }
+  .date-quote, .date-basis, .item-assets { grid-column: 1; }
+}
+
 /* ---------- Ask Sentinel ---------- */
 .nav-ask { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
 .nav-ask-short { display: none; }
@@ -924,7 +970,7 @@ select.field-input { appearance: auto; }
      * workspace stays hidden underneath until then.
      */
     html.cs-locked, html.cs-locked body { overflow: hidden !important; }
-    html.cs-locked #app, html.cs-locked #addMonitorDialog, html.cs-locked #scoutSourceDialog, html.cs-locked #fieldTip, html.cs-locked #toast { visibility: hidden !important; }
+    html.cs-locked #app, html.cs-locked #addMonitorDialog, html.cs-locked #scoutSourceDialog, html.cs-locked #reviewDialog, html.cs-locked #fieldTip, html.cs-locked #toast { visibility: hidden !important; }
     html.cs-open .cs-gate { display: none !important; }
     .cs-gate {
       --g-bg: #0b0705; --g-card: #170f0a; --g-raise: #20160f; --g-line: #3a2a1c; --g-line-2: #57402b;
@@ -1166,6 +1212,10 @@ select.field-input { appearance: auto; }
             <div id="recentChanges"><div class="loading">Loading changes…</div></div>
           </div>
           <div class="block">
+            <div class="block-label"><span>Dates ahead</span><button class="sheet-link" type="button" data-copy-calendar title="Copy the address of the calendar feed to subscribe to it in a calendar app">Calendar feed</button></div>
+            <div id="upcomingDates"><div class="loading">Reading dates…</div></div>
+          </div>
+          <div class="block">
             <div class="block-label"><span>Sources</span></div>
             <div class="source-lines" id="sourceTable"></div>
           </div>
@@ -1193,10 +1243,14 @@ select.field-input { appearance: auto; }
         <div class="list-pane">
           <div class="list-head">
             <div class="list-title-row"><h1 class="list-title">Changes</h1><span class="list-count" id="changeCount"></span></div>
-            <div class="filters" role="group" aria-label="Filter changes">
-              <button type="button" data-change-filter="ALL" aria-pressed="true">All</button>
-              <button type="button" data-change-filter="RELEVANT" aria-pressed="false">Relevant</button>
-              <button type="button" data-change-filter="PROBLEMS" aria-pressed="false">Problems</button>
+            <div class="list-tools">
+              <div class="filters" role="group" aria-label="Filter changes">
+                <button type="button" data-change-filter="ALL" aria-pressed="true">All</button>
+                <button type="button" data-change-filter="RELEVANT" aria-pressed="false">Relevant</button>
+                <button type="button" data-change-filter="PROBLEMS" aria-pressed="false">Problems</button>
+                <button type="button" data-change-filter="UNDECIDED" aria-pressed="false" title="Changes with no recorded review decision">Undecided</button>
+              </div>
+              <button class="sheet-link" type="button" data-export-changes title="Download the changes in this list as a CSV file">Export</button>
             </div>
           </div>
           <div class="list-body" id="changeItems" aria-label="Change list"><div class="loading">Loading changes…</div></div>
@@ -1471,6 +1525,44 @@ select.field-input { appearance: auto; }
       </div>
     </form>
   </dialog>
+  <dialog class="modal" id="reviewDialog" aria-labelledby="reviewHeading">
+    <div class="modal-head">
+      <div><h2 id="reviewHeading">Record a review decision</h2><p id="reviewLede">Say whether this change is material to you and why.</p></div>
+      <button class="btn btn-quiet" id="closeReview" type="button" aria-label="Close">Close</button>
+    </div>
+    <form id="reviewForm" class="modal-body" novalidate>
+      <fieldset class="form-group">
+        <legend>Decision</legend>
+        <div class="choice-row" role="radiogroup" aria-label="Decision">
+          <label><input type="radio" name="reviewDecision" value="material"> Material</label>
+          <label><input type="radio" name="reviewDecision" value="action_required"> Action required</label>
+          <label><input type="radio" name="reviewDecision" value="not_material"> Not material</label>
+          <label><input type="radio" name="reviewDecision" value="acknowledged"> Acknowledged</label>
+        </div>
+        <div class="field-help" id="reviewDecisionHelp">Choose the decision that fits. A later decision never erases this one.</div>
+      </fieldset>
+      <div>
+        <label class="field-label-text" for="reviewRationale">Rationale <span id="reviewRationaleNote">Optional</span></label>
+        <textarea class="field-input" id="reviewRationale" rows="3" maxlength="600" placeholder="The new due date applies to our quarterly FR Y-9C filing."></textarea>
+      </div>
+      <div class="form-grid">
+        <div>
+          <label class="field-label-text" for="reviewOwner">Owner <span>Optional</span></label>
+          <input class="field-input" id="reviewOwner" type="text" maxlength="120" placeholder="Regulatory Reporting" autocomplete="off">
+        </div>
+        <div>
+          <label class="field-label-text" for="reviewTicket">Ticket <span>Optional link</span></label>
+          <input class="field-input" id="reviewTicket" type="url" maxlength="600" placeholder="https://tracker.example.com/REG-142" autocomplete="off">
+        </div>
+      </div>
+      <div class="bulk-status is-error" id="reviewStatus" role="alert" hidden></div>
+      <p class="modal-info">This opens a prefilled request on GitHub. Only requests the repository owner opens are recorded; the decision is added to data/reviews/ledger.json with who made it and when, and every earlier decision is kept.</p>
+      <div class="modal-actions">
+        <button class="btn" id="cancelReview" type="button">Cancel</button>
+        <button class="btn btn-primary" type="submit">Continue on GitHub</button>
+      </div>
+    </form>
+  </dialog>
   <div class="field-tip" id="fieldTip" role="tooltip" hidden></div>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
@@ -1645,8 +1737,8 @@ select.field-input { appearance: auto; }
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261021-hardening-1"></script>
-  <script src="dashboard.js?v=20261021-hardening-1"></script>
+  <script src="dashboard-lib.js?v=20261021-impact-1"></script>
+  <script src="dashboard.js?v=20261021-impact-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

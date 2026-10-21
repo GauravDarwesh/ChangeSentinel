@@ -15,6 +15,13 @@
  * moved on, and at least every ten minutes. A refresh that brings nothing new
  * re-renders nothing, so an open comparison or a long redline keeps its place.
  *
+ * Review layer: a change also shows its reporting-item (MDRM) impact with the
+ * downstream assets mapped in config/lineage.json, the dates it states
+ * (data/calendar.json, also served as an .ics feed), and the human review
+ * decision recorded in data/reviews/ledger.json. Decisions are recorded through
+ * an owner-only issue workflow; the dashboard itself never writes. Saved copies
+ * can be re-fingerprinted in the browser, and a change exports as one evidence pack.
+ *
  * Interface: a rail, a list pane and a detail pane. Selecting a list row shows
  * it on the right without scrolling the page; on phones the list and detail are
  * separate screens. Pure helpers (redline diff, scan cycle, wording) live in
@@ -47,7 +54,10 @@ const DATA_PATHS = {
   config: "config/sources.json",
   scoutLatest: "data/scout/latest.json",
   scoutReview: "data/scout/review.json",
-  scoutConfig: "config/scout.json"
+  scoutConfig: "config/scout.json",
+  calendar: "data/calendar.json",
+  lineage: "config/lineage.json",
+  reviews: "data/reviews/ledger.json"
 };
 // Load core state from the same origin as GitHub Pages first. Keep the raw GitHub
 // URL as a fallback so older deployments can still recover while Pages publishes.
@@ -60,8 +70,13 @@ const ENDPOINTS = {
   config: new URL("./config/sources.json", document.baseURI).href,
   scoutLatest: new URL("./data/scout/latest.json", document.baseURI).href,
   scoutReview: new URL("./data/scout/review.json", document.baseURI).href,
-  scoutConfig: new URL("./config/scout.json", document.baseURI).href
+  scoutConfig: new URL("./config/scout.json", document.baseURI).href,
+  calendar: new URL("./data/calendar.json", document.baseURI).href,
+  lineage: new URL("./config/lineage.json", document.baseURI).href,
+  reviews: new URL("./data/reviews/ledger.json", document.baseURI).href
 };
+// The calendar feed is served from Pages so calendar apps can subscribe to it.
+const CALENDAR_FEED = new URL("./data/calendar.ics", document.baseURI).href;
 const VIEWS = ["overview", "changes", "monitors", "runs", "notifications", "scout", "askSentinel"];
 const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", notifications: "alerts", scout: "scout", askSentinel: "ask-sentinel" };
 const $ = id => document.getElementById(id);
@@ -100,7 +115,8 @@ const state = {
   assetSignatures: {}, renderedSignature: "", lastFullLoad: 0, loading: null, detailKeys: {},
   workflowRuns: [], workflowSignature: "", scanColumns: null, pendingScan: null,
   scoutLatest: null, scoutReview: null, scoutConfig: null, scoutFilter: "REVIEW", selectedScoutKey: "", scoutMonitored: null,
-  scoutSourceMode: "add"
+  scoutSourceMode: "add",
+  calendar: null, lineage: null, reviews: null, reviewTarget: "", integrity: {}
 };
 const compactQuery = window.matchMedia ? window.matchMedia("(max-width: 980px)") : null;
 function isCompact() { return !!(compactQuery && compactQuery.matches); }
@@ -177,6 +193,14 @@ function isValidDataAssetShape(key, value) {
       return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.candidates) && Array.isArray(value.regulators);
     case "scoutConfig":
       return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.regulators);
+    // Dates, lineage and review decisions are optional too: before the first
+    // scan that writes a calendar, or the first recorded review, they are absent.
+    case "calendar":
+      return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.entries);
+    case "lineage":
+      return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.mappings);
+    case "reviews":
+      return isPlainObject(value) && value.schema_version === 1 && isPlainObject(value.reviews) && Array.isArray(value.log);
     default:
       return false;
   }
@@ -675,8 +699,33 @@ function renderOverview() {
     return '<div class="source-line-row"><div class="source-line-name">' + esc(shortSourceLabel(source)) + '</div><div class="source-line-meta">' + esc(parts.join(", ")) + "</div></div>";
   }).join("") || '<p class="block-value"><small>No active sources. Add a page to start.</small></p>';
 
+  renderUpcomingDates();
   renderMonitoringSignal();
   renderLatestPreview();
+}
+// Deadlines and effective dates read from recorded changes, soonest first.
+function renderUpcomingDates() {
+  const today = L.localIsoDate();
+  const dates = L.upcomingDates(state.calendar, today, 5);
+  if (!dates.length) {
+    $("upcomingDates").innerHTML = '<p class="block-value"><small>' + (state.calendar
+      ? "No dates ahead. When a change states a comment deadline, report date or effective date, it shows up here and in the calendar feed."
+      : "The calendar is written by the next scan. Comment deadlines, report dates and effective dates found in changes show up here.") + "</small></p>";
+    return;
+  }
+  $("upcomingDates").innerHTML = '<ul class="link-list">' + dates.map(entry =>
+    '<li><button class="link-row" type="button" data-select-change="' + esc(entry.event_id) + '" title="' + esc(dateBasis(entry) + (entry.quote ? ": \u201c" + entry.quote + "\u201d" : "")) + '">' +
+    '<span class="link-title">' + esc(entry.title || displayUrl(entry.url)) + '</span><span class="row-time">' + esc(calendarDay(entry.date, entry.date.slice(0, 4) !== today.slice(0, 4))) + "</span>" +
+    '<span class="row-sub"><span class="tag is-warn">' + esc(entry.label || "Date") + '</span><span class="row-host">' + esc(L.dueLabel(entry.date, today)) + "</span></span></button></li>"
+  ).join("") + "</ul>";
+}
+async function copyCalendarFeed() {
+  try {
+    await navigator.clipboard.writeText(CALENDAR_FEED);
+    showToast("Calendar feed address copied. Add it in your calendar app as a subscription by URL; it updates after every scan.");
+  } catch (_) {
+    window.prompt("Copy the calendar feed address:", CALENDAR_FEED);
+  }
 }
 
 // The newest content change, previewed as a redline under the field, so the
@@ -1112,13 +1161,14 @@ function changeRow(entry, options) {
     '<span class="row-mark ' + toneClass(entry) + '" aria-hidden="true"></span>' +
     '<span class="row-title">' + esc(eventTitle(entry)) + "</span>" +
     '<span class="row-time">' + esc(rowTime(entry.timestamp)) + "</span>" +
-    '<span class="row-sub"><span class="tag ' + toneClass(entry) + '">' + esc(L.eventLabel(entry.event_type)) + "</span>" + verdictTag(verdict, entry) + "</span>" +
+    '<span class="row-sub"><span class="tag ' + toneClass(entry) + '">' + esc(L.eventLabel(entry.event_type)) + "</span>" + verdictTag(verdict, entry) + reviewTag(reviewFor(entry.event_id)) + "</span>" +
     '<span class="row-summary">' + esc(eventHeadline(entry)) + "</span></button>";
 }
 function filteredChanges() {
   return changeLogEntries().filter(entry => {
     if (state.changeFilter === "RELEVANT") return verdictFor(entry).state === "relevant";
     if (state.changeFilter === "PROBLEMS") return L.eventTone(entry.event_type) === "problem";
+    if (state.changeFilter === "UNDECIDED") return CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0 && !reviewFor(entry.event_id);
     return true;
   });
 }
@@ -1420,13 +1470,135 @@ function renderChangeDetail() {
   const tone = L.eventTone(entry.event_type);
   const meta = '<span class="tag ' + toneClass(entry) + '">' + esc(L.eventLabel(entry.event_type)) + "</span><span>" + esc(fmt(entry.timestamp)) + "</span>" + urlMeta(entry.url);
   const actions = externalLink(entry.url, "Open live page") +
-    (item ? '<button class="btn" type="button" data-open-page="' + esc(item.url_id) + '">Page history and snapshots</button>' : "");
+    (item ? '<button class="btn" type="button" data-open-page="' + esc(item.url_id) + '">Page history and snapshots</button>' : "") +
+    (tone === "problem" ? "" : '<button class="btn" type="button" data-evidence-pack="' + esc(entry.event_id) + '" title="Download this change, its evidence, assessment, dates and review as one JSON file">Evidence pack</button>');
   const boxId = "change-evidence";
   pane.innerHTML = '<div class="detail-inner">' +
     detailHeading({ back: true, source, title: eventTitle(entry), meta, actions }) +
-    renderVerdict(entry) + evidenceSheet(entry, boxId) + "</div>";
+    renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id="change-items"></div>' + evidenceSheet(entry, boxId) + "</div>";
   const eventId = entry.event_id;
-  fillEvidence(entry, boxId, () => state.view === "changes" && state.selectedChangeId === eventId);
+  const stillCurrent = () => state.view === "changes" && state.selectedChangeId === eventId;
+  fillEvidence(entry, boxId, stillCurrent);
+  fillReportingItems(entry, "change-items", stillCurrent);
+}
+
+/* ================= Review decisions, dates, reporting items ================= */
+
+const REVIEW_TONES = { material: "is-relevant", action_required: "is-warn", not_material: "is-irrelevant", acknowledged: "" };
+function reviewFor(eventId) {
+  const reviews = state.reviews && isPlainObject(state.reviews.reviews) ? state.reviews.reviews : {};
+  return isPlainObject(reviews[eventId]) ? reviews[eventId] : null;
+}
+// Every decision ever recorded for a change, newest first.
+function reviewLog(eventId) {
+  const log = state.reviews && Array.isArray(state.reviews.log) ? state.reviews.log : [];
+  return log.filter(record => isPlainObject(record) && record.event_id === eventId)
+    .sort((a, b) => String(b.reviewed_at || "").localeCompare(String(a.reviewed_at || "")));
+}
+function reviewTag(review) {
+  if (!review) return "";
+  const label = L.REVIEW_DECISIONS[review.decision] || review.label || "Reviewed";
+  return '<span class="tag ' + (REVIEW_TONES[review.decision] || "") + '">' + esc(label) + "</span>";
+}
+function reviewRequestLink(review) {
+  const number = String(review.request || "").match(/#(\d+)/);
+  return number ? externalLink(REPO + "/issues/" + number[1], "Issue #" + number[1], "sheet-link") : "";
+}
+function reviewSheet(entry) {
+  if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0) return "";
+  const review = reviewFor(entry.event_id);
+  const button = '<button class="btn" type="button" data-review-change="' + esc(entry.event_id) + '">' + (review ? "Record a new decision" : "Record review") + "</button>";
+  if (!review) {
+    return '<section class="sheet" aria-label="Review decision"><div class="verdict is-muted"><div class="verdict-head"><span class="tag is-unreviewed">No decision yet</span><span class="verdict-label">Human review</span></div>' +
+      '<p class="verdict-summary">Record whether this change matters to you. The decision, its rationale and who made it are kept with the change.</p>' +
+      '<div class="review-actions">' + button + "</div></div></section>";
+  }
+  const ticket = safeHttpUrl(review.ticket);
+  const facts = [
+    ["Decided by", review.reviewed_by], ["Recorded", fmt(review.reviewed_at)], ["Owner", review.owner],
+  ].filter(([, value]) => value && String(value).trim());
+  const earlier = reviewLog(entry.event_id).slice(1);
+  return '<section class="sheet" aria-label="Review decision"><div class="verdict">' +
+    '<div class="verdict-head"><span class="verdict-label">Review decision</span>' + reviewTag(review) + "</div>" +
+    (review.rationale ? '<p class="verdict-summary">' + esc(review.rationale) + "</p>" : "") +
+    '<dl class="verdict-grid">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") +
+    (ticket ? '<div><dt>Ticket</dt><dd><a class="detail-url" href="' + esc(ticket) + '" target="_blank" rel="noopener noreferrer"><span>' + esc(displayUrl(ticket)) + "</span>" + icon("external") + "</a></dd></div>" : "") +
+    "</dl>" +
+    (earlier.length
+      ? '<details class="verdict-why"><summary>' + esc(plural(earlier.length, "earlier decision", "earlier decisions")) + "</summary>" +
+        '<ul class="review-log">' + earlier.map(record => "<li>" + reviewTag(record) + '<span class="review-log-when">' + esc(fmt(record.reviewed_at)) +
+          (record.reviewed_by ? " · " + esc(record.reviewed_by) : "") + "</span>" + (record.rationale ? "<p>" + esc(record.rationale) + "</p>" : "") + "</li>").join("") + "</ul></details>"
+      : "") +
+    '<div class="review-actions">' + button + reviewRequestLink(review) + "</div></div></section>";
+}
+function calendarDay(iso, withYear) {
+  const day = L.isoDayToDate(iso);
+  return day ? dateLabel(day, withYear) : String(iso || "");
+}
+function dateBasis(entry) { return entry.basis === "ai" ? "From the AI reading of the change" : "Stated in the text the change added"; }
+function datesSheet(entry) {
+  const dates = L.datesForChange(state.calendar, entry.event_id);
+  if (!dates.length) return "";
+  const today = L.localIsoDate();
+  return '<section class="sheet" aria-labelledby="change-dates-title"><div class="sheet-head"><div><h3 class="sheet-title" id="change-dates-title">Dates in this change</h3>' +
+    '<div class="sheet-note">Read from the change, not confirmed by anyone. Check each date against the source before relying on it.</div></div>' +
+    '<button class="sheet-link" type="button" data-copy-calendar>Calendar feed</button></div>' +
+    '<ul class="date-list">' + dates.map(date => '<li class="date-row"><span class="date-day">' + esc(calendarDay(date.date, true)) + "</span>" +
+      '<span class="date-what"><span class="tag ' + (date.date >= today ? "is-warn" : "") + '">' + esc(date.label || "Date") + '</span><span class="date-due">' + esc(L.dueLabel(date.date, today)) + "</span></span>" +
+      (date.quote ? '<q class="date-quote">' + esc(date.quote) + "</q>" : "") + '<span class="date-basis">' + esc(dateBasis(date)) + "</span></li>").join("") +
+    "</ul></section>";
+}
+function hasLineage() { return !!(state.lineage && Array.isArray(state.lineage.mappings) && state.lineage.mappings.length); }
+function itemAssets(code) {
+  const assets = L.lineageFor(code, state.lineage);
+  if (!assets.length) return "";
+  const owners = Array.from(new Set(assets.map(asset => asset.owner).filter(Boolean)));
+  return '<span class="item-assets">Feeds ' + assets.map(asset => '<span class="item-asset">' + esc(asset.asset) + "</span>").join(", ") +
+    (owners.length ? " · " + esc(owners.join(", ")) : "") + "</span>";
+}
+const ITEM_GROUPS = [["added", "Added"], ["removed", "Removed"], ["amended", "Amended"]];
+const ITEM_ROWS_SHOWN = 40;
+function reportingItemsSheet(codes) {
+  const counts = codes.counts || {};
+  const affected = new Set();
+  const groups = ITEM_GROUPS.map(([key, label]) => {
+    const entries = Array.isArray(codes[key]) ? codes[key] : [];
+    if (!entries.length) return "";
+    entries.forEach(entry => L.lineageFor(entry.code, state.lineage).forEach(asset => affected.add(asset.asset)));
+    return '<div class="items-group"><div class="items-group-label is-' + key + '">' + esc(label) + " <span>" + esc(counts[key] || entries.length) + "</span></div>" +
+      '<ul class="items-list">' + entries.slice(0, ITEM_ROWS_SHOWN).map(entry => '<li class="item-row"><span class="item-code">' + esc(entry.code) + "</span>" +
+        '<span class="item-text">' + (key === "amended" ? L.renderWordEdit(entry.before || "", entry.after || "") : esc(entry.context || "")) + "</span>" +
+        itemAssets(entry.code) + "</li>").join("") + "</ul>" +
+      (entries.length > ITEM_ROWS_SHOWN ? '<p class="note-strip">And ' + esc(entries.length - ITEM_ROWS_SHOWN) + " more in the evidence file.</p>" : "") + "</div>";
+  }).join("");
+  // An older change records only the counts and a few codes, not their context.
+  const sampleOnly = !groups && Array.isArray(codes.codes) && codes.codes.length;
+  const body = groups || (sampleOnly ? '<p class="note-strip">' + esc(L.describeItemCodes(codes)) + "</p>" : "");
+  const before = Number(codes.before_count), after = Number(codes.after_count);
+  const note = L.describeItemCodes({ counts, codes: [] }) + (Number.isFinite(before) && Number.isFinite(after) ? " · " + plural(before, "item", "items") + " before, " + after + " after" : "");
+  const foot = hasLineage()
+    ? '<span class="sheet-note">' + (affected.size ? esc(plural(affected.size, "mapped asset", "mapped assets")) + " affected" : "None of these items is mapped to a downstream asset") + "</span>" +
+      externalLink(REPO + "/blob/main/config/lineage.json", "Lineage map", "sheet-link")
+    : '<span class="sheet-note">Map item codes to the tables, models and reports that use them, and each change here names what it affects.</span>' +
+      externalLink(REPO + "/blob/main/config/lineage.json", "config/lineage.json", "sheet-link");
+  return '<section class="sheet" aria-labelledby="change-items-title"><div class="sheet-head"><div><h3 class="sheet-title" id="change-items-title">Reporting items</h3>' +
+    '<div class="sheet-note">' + esc(note) + (codes.truncated ? " (lists are capped)" : "") + "</div></div></div>" +
+    '<div class="items-body">' + body + "</div>" + '<div class="sheet-foot">' + foot + "</div></section>";
+}
+async function fillReportingItems(entry, slotId, stillCurrent) {
+  const summary = isPlainObject(entry.item_codes) ? entry.item_codes : null;
+  let codes = summary;
+  if (entry.evidence_location) {
+    try {
+      const evidence = await loadEvidence(entry.evidence_location);
+      if (isPlainObject(evidence.item_codes)) codes = evidence.item_codes;
+    } catch (_) {
+      // The evidence sheet below reports the failure; the summary still shows.
+    }
+  }
+  const slot = document.getElementById(slotId);
+  if (!slot || !stillCurrent() || !codes || !L.describeItemCodes(codes)) return;
+  slot.innerHTML = reportingItemsSheet(codes);
 }
 
 /* ================= Detail: a page ================= */
@@ -1651,7 +1823,7 @@ function renderDetails(item) {
     ["Text snapshot", item.snapshot_location || "Not saved", true], ["HTML snapshot", item.html_snapshot_location || "Not saved", true],
     ["Original file", item.file_snapshot_location || "Not saved", true]
   ];
-  $("detailBody").innerHTML = '<section class="sheet"><dl class="facts">' + rows.map(([key, value, code]) =>
+  $("detailBody").innerHTML = integritySheet(item) + '<section class="sheet"><dl class="facts">' + rows.map(([key, value, code]) =>
     "<div><dt>" + esc(key) + '</dt><dd class="' + (code ? "is-code" : "") + '">' + esc(value == null || value === "" ? "Not recorded" : value) + "</dd></div>"
   ).join("") + "</dl></section>";
 }
@@ -2201,7 +2373,8 @@ function detailRenderKey(view) {
   try {
     if (view === "changes") {
       const entry = changeLogEntries().find(candidate => candidate.event_id === state.selectedChangeId);
-      return entry ? JSON.stringify([entry.event_id, entry.evidence_location, verdictFor(entry), state.diffMode]) : "none";
+      return entry ? JSON.stringify([entry.event_id, entry.evidence_location, verdictFor(entry), state.diffMode, reviewLog(entry.event_id),
+        L.datesForChange(state.calendar, entry.event_id), state.assetSignatures.lineage || ""]) : "none";
     }
     if (view === "monitors") {
       const item = selectedItem();
@@ -2299,9 +2472,10 @@ function setSelected(id) { select("monitors", id); }
 
 /* ================= Data refresh ================= */
 
-const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig"];
+// Review decisions arrive between scans, so the ledger is polled with the small files.
+const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "reviews"];
 const LARGE_ASSETS = ["inventory", "history", "scoutReview"];
-const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig"]);
+const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews"]);
 const FULL_REFRESH_MS = 10 * 60 * 1000;
 function assetsSignature() {
   return SMALL_ASSETS.concat(LARGE_ASSETS).map(key => key + "=" + (state.assetSignatures[key] || "")).join("|");
@@ -2359,6 +2533,9 @@ async function loadDataOnce(showErrors) {
     state.scoutLatest = values.scoutLatest;
     state.scoutReview = values.scoutReview;
     state.scoutConfig = values.scoutConfig;
+    state.calendar = values.calendar;
+    state.lineage = values.lineage;
+    state.reviews = values.reviews;
     state.items = makeItems();
     state.scoutMonitored = null;
     const firstLoad = !state.loaded;
@@ -2719,13 +2896,234 @@ function clearBulkImport() {
   renderBulkPreview();
   setBulkStatus("Accepted columns: URL (required), Name, Include Selector, Ignore Selectors.", false);
 }
+/* ================= Review decisions, exports, saved-copy integrity ================= */
+
+function changeById(eventId) { return changeLogEntries().find(entry => entry.event_id === eventId) || null; }
+const REVIEW_HELP = {
+  material: "It changes what you must do. Name an owner or ticket if there is work to track.",
+  action_required: "Material, with work to do. An owner or a ticket link keeps it traceable.",
+  not_material: "It doesn't affect you. A rationale of at least 10 characters is required.",
+  acknowledged: "Seen; the assessment is still pending. Record the final decision later."
+};
+function syncReviewForm() {
+  const choice = document.querySelector('input[name="reviewDecision"]:checked');
+  const decision = choice ? choice.value : "";
+  $("reviewDecisionHelp").textContent = REVIEW_HELP[decision] || "Choose the decision that fits. A later decision never erases this one.";
+  $("reviewRationaleNote").textContent = decision === "not_material" ? "Required" : "Optional";
+}
+function openReview(eventId) {
+  const entry = changeById(eventId);
+  const dialog = $("reviewDialog");
+  if (!entry || typeof dialog.showModal !== "function") {
+    showToast(entry ? "This browser can't open the review dialog. Use a current browser." : "That change is no longer in the record.");
+    return;
+  }
+  state.reviewTarget = eventId;
+  const current = reviewFor(eventId);
+  $("reviewLede").textContent = eventTitle(entry) + " \u00b7 " + L.eventLabel(entry.event_type) + " " + fmt(entry.timestamp);
+  document.querySelectorAll('input[name="reviewDecision"]').forEach(input => { input.checked = false; });
+  ["reviewRationale", "reviewOwner", "reviewTicket"].forEach(id => { $(id).value = ""; });
+  // A new decision starts from the current owner and ticket; the rationale is always new.
+  if (current) {
+    $("reviewOwner").value = current.owner || "";
+    $("reviewTicket").value = current.ticket || "";
+  }
+  $("reviewStatus").hidden = true;
+  syncReviewForm();
+  dialog.showModal();
+  window.setTimeout(() => { const first = document.querySelector('input[name="reviewDecision"]'); if (first) first.focus(); }, 30);
+}
+function submitReview(event) {
+  event.preventDefault();
+  const entry = changeById(state.reviewTarget);
+  const choice = document.querySelector('input[name="reviewDecision"]:checked');
+  const request = L.changeReviewRequest({
+    decision: choice ? choice.value : "",
+    rationale: $("reviewRationale").value, owner: $("reviewOwner").value, ticket: $("reviewTicket").value,
+    changes: entry ? [{ event_id: entry.event_id, url: entry.url }] : []
+  });
+  if (request.errors.length) {
+    $("reviewStatus").textContent = request.errors.join(" ");
+    $("reviewStatus").hidden = false;
+    return;
+  }
+  const params = new URLSearchParams();
+  params.set("title", request.title);
+  params.set("body", request.body);
+  $("reviewDialog").close();
+  showToast("Submit the prefilled request on GitHub. The decision shows here about a minute after it is recorded.");
+  const githubWindow = window.open(REPO + "/issues/new?" + params.toString(), "_blank");
+  if (githubWindow) {
+    try { githubWindow.opener = null; } catch (_) {}
+  } else {
+    window.location.href = REPO + "/issues/new?" + params.toString();
+  }
+}
+
+function downloadFile(name, type, content) {
+  const url = URL.createObjectURL(new Blob([content], { type }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = name;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function changeDashboardLink(entry) { return location.origin + location.pathname + "#changes/" + encodeURIComponent(entry.event_id); }
+// The list as filtered, one row per change, for a spreadsheet or an audit file.
+function exportChanges() {
+  const entries = filteredChanges();
+  if (!entries.length) { showToast("Nothing to export: the list is empty."); return; }
+  const rows = [["Detected (UTC)", "Event", "Page", "URL", "Source", "AI assessment", "AI topic", "Review decision", "Reviewed by", "Reviewed at (UTC)",
+    "Rationale", "Owner", "Ticket", "Reporting items", "Dates", "Dashboard link", "Evidence file", "Event ID"]];
+  entries.forEach(entry => {
+    const item = itemForEvent(entry);
+    const verdict = verdictFor(entry);
+    const review = reviewFor(entry.event_id);
+    const analysis = verdict.analysis || {};
+    rows.push([
+      entry.timestamp || "", L.eventLabel(entry.event_type), eventTitle(entry), entry.url || "", item ? sourceLabel(sourceForItem(item)) : "",
+      verdict.state === "relevant" ? "Relevant" : verdict.state === "irrelevant" ? "Not relevant" : L.eventTone(entry.event_type) === "problem" ? "" : "Not reviewed",
+      analysis.topic || "", review ? L.REVIEW_DECISIONS[review.decision] || review.label || "" : "", review ? review.reviewed_by || "" : "", review ? review.reviewed_at || "" : "",
+      review ? review.rationale || "" : "", review ? review.owner || "" : "", review ? review.ticket || "" : "",
+      L.describeItemCodes(entry.item_codes),
+      L.datesForChange(state.calendar, entry.event_id).map(date => date.date + " " + (date.label || "")).join("; "),
+      changeDashboardLink(entry), entry.evidence_location ? REPO + "/blob/main/" + entry.evidence_location : "", entry.event_id || ""
+    ]);
+  });
+  const filter = state.changeFilter === "ALL" ? "all" : state.changeFilter.toLowerCase();
+  downloadFile("changesentinel-changes-" + filter + "-" + L.localIsoDate() + ".csv", "text/csv;charset=utf-8", "\ufeff" + L.toCsv(rows));
+  showToast("Exported " + plural(entries.length, "change", "changes") + ".");
+}
+// One change with everything recorded about it, in a single file someone else
+// can check: the evidence, the assessment, dates, reporting items, decisions,
+// and where each saved file and its fingerprint live.
+async function downloadEvidencePack(eventId) {
+  const entry = changeById(eventId);
+  if (!entry) { showToast("That change is no longer in the record."); return; }
+  let evidence = null;
+  if (entry.evidence_location) {
+    try { evidence = await loadEvidence(entry.evidence_location); } catch (error) {
+      showToast("Couldn't load the evidence file: " + String(error.message || error));
+      return;
+    }
+  }
+  const item = itemForEvent(entry);
+  const result = aiResultForEvent(entry);
+  const codes = evidence && isPlainObject(evidence.item_codes) ? evidence.item_codes : entry.item_codes || null;
+  const codeList = codes ? [].concat(...ITEM_GROUPS.map(([key]) => (Array.isArray(codes[key]) ? codes[key] : []).map(row => row.code))) : [];
+  const files = [];
+  const addFile = (role, path, sha256) => { if (path) files.push({ role, path, url: snapshotURL(path), history: REPO + "/commits/main/" + path, sha256: sha256 || null }); };
+  if (evidence) {
+    const before = evidence.before || {}, after = evidence.after || {};
+    addFile("evidence", entry.evidence_location, null);
+    addFile("text before", before.snapshot_location, before.normalized_hash);
+    addFile("text after", after.snapshot_location, after.normalized_hash);
+    addFile("html before", before.html_snapshot_location, before.html_hash);
+    addFile("html after", after.html_snapshot_location, after.html_hash);
+    addFile("file before", before.file_snapshot_location, before.raw_hash);
+    addFile("file after", after.file_snapshot_location, after.raw_hash);
+  }
+  const pack = {
+    format: "changesentinel-evidence-pack/1",
+    exported_at: new Date().toISOString(),
+    repository: REPO,
+    dashboard_link: changeDashboardLink(entry),
+    change: entry,
+    page: item ? { title: itemTitle(item), url: item.canonical_url, url_id: item.url_id, source_id: item.source_id, source: sourceLabel(sourceForItem(item)) } : { url: entry.url },
+    ai_assessment: result && result.ai ? result.ai : verdictFor(entry),
+    review: { current: reviewFor(entry.event_id), history: reviewLog(entry.event_id) },
+    dates: L.datesForChange(state.calendar, entry.event_id),
+    reporting_items: codes,
+    lineage: codeList.length ? codeList.map(code => ({ code, assets: L.lineageFor(code, state.lineage) })).filter(row => row.assets.length) : [],
+    files,
+    verification: "Each sha256 is the fingerprint recorded when the file was saved; the file name carries it too. Recompute it (for example `shasum -a 256 <file>`) to confirm the saved copy is unchanged, and use the history link for when it was committed.",
+    evidence
+  };
+  const name = "changesentinel-evidence-" + L.fileSlug(eventTitle(entry), 40) + "-" + String(entry.timestamp || "").slice(0, 10) + "-" + String(entry.event_id).slice(0, 8) + ".json";
+  downloadFile(name, "application/json", JSON.stringify(pack, null, 2) + "\n");
+}
+
+// Saved copies are content-addressed: each file's SHA-256 was recorded when it
+// was written and is part of its name. Recomputing it here shows the copy being
+// reviewed is byte-for-byte what was fingerprinted at scan time.
+function integrityFiles(item) {
+  const kind = itemKind(item);
+  return [
+    ["Extracted text", item.snapshot_location, item.normalized_hash],
+    ["Saved HTML", item.html_snapshot_location, item.html_hash],
+    [kind === "pdf" ? "Original PDF" : kind === "zip" ? "Original archive" : "Original file", item.file_snapshot_location, item.raw_hash]
+  ].filter(([, path, hash]) => path && hash).map(([label, path, hash]) => ({ label, path, hash }));
+}
+function integrityState(file) {
+  const result = state.integrity[file.path];
+  if (!result) return '<span class="integrity-state">Not checked</span>';
+  if (result.state === "checking") return '<span class="integrity-state">Checking…</span>';
+  if (result.state === "ok") return '<span class="integrity-state"><span class="tag is-relevant">Matches</span></span>';
+  if (result.state === "bad") return '<span class="integrity-state"><span class="tag tone-problem">Does not match</span></span>';
+  return '<span class="integrity-state"><span class="tag is-warn">Couldn\'t check</span></span>';
+}
+function integritySheet(item) {
+  const files = integrityFiles(item);
+  if (!files.length) return "";
+  return '<section class="sheet" aria-labelledby="integrity-title"><div class="sheet-head"><div><h3 class="sheet-title" id="integrity-title">Saved-copy integrity</h3>' +
+    '<div class="sheet-note">Recompute each saved file\'s SHA-256 in this browser and compare it with the fingerprint recorded at scan time.</div></div>' +
+    '<button class="btn" type="button" data-verify-fingerprints="' + esc(item.url_id) + '">Verify fingerprints</button></div>' +
+    '<ul class="integrity-list" id="integrityList">' + integrityRows(files) + "</ul></section>";
+}
+function integrityRows(files) {
+  return files.map(file => {
+    const result = state.integrity[file.path] || {};
+    return '<li class="integrity-row"><span class="integrity-name">' + esc(file.label) + "</span>" + integrityState(file) +
+      '<span class="integrity-path">' + esc(file.path) + "</span>" +
+      '<span class="integrity-detail"><span>Recorded ' + esc(file.hash.slice(0, 16)) + "…</span>" +
+      (result.computed && result.state === "bad" ? "<span>Computed " + esc(result.computed.slice(0, 16)) + "…</span>" : "") +
+      (result.state === "error" ? "<span>" + esc(result.message || "") + "</span>" : "") +
+      externalLink(REPO + "/commits/main/" + file.path, "File history", "sheet-link") + "</span></li>";
+  }).join("");
+}
+function hex(buffer) { return Array.from(new Uint8Array(buffer), byte => byte.toString(16).padStart(2, "0")).join(""); }
+async function verifyFingerprints(urlId) {
+  const item = state.items.find(candidate => candidate.url_id === urlId);
+  if (!item) return;
+  const files = integrityFiles(item);
+  const redraw = () => {
+    const list = $("integrityList");
+    if (list && selectedItem() && selectedItem().url_id === urlId && state.detailTab === "details") list.innerHTML = integrityRows(files);
+  };
+  if (!(window.crypto && crypto.subtle)) {
+    files.forEach(file => { state.integrity[file.path] = { state: "error", message: "This browser can't compute SHA-256 on this page (it needs HTTPS)." }; });
+    redraw();
+    return;
+  }
+  files.forEach(file => { state.integrity[file.path] = { state: "checking" }; });
+  redraw();
+  await Promise.all(files.map(async file => {
+    try {
+      const response = await fetchImmutable(file.path);
+      if (!response.ok) throw new Error("the saved file returned HTTP " + response.status);
+      const computed = hex(await crypto.subtle.digest("SHA-256", await response.arrayBuffer()));
+      state.integrity[file.path] = { state: computed === String(file.hash).toLowerCase() ? "ok" : "bad", computed };
+    } catch (error) {
+      state.integrity[file.path] = { state: "error", message: String(error.message || error) };
+    }
+    redraw();
+  }));
+}
+
 /* ================= Events ================= */
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit]");
+  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit]");
   if (!target) return;
   const data = target.dataset;
+  if (data.reviewChange) return openReview(data.reviewChange);
+  if (data.evidencePack) return downloadEvidencePack(data.evidencePack);
+  if (data.exportChanges !== undefined) return exportChanges();
+  if (data.copyCalendar !== undefined) return copyCalendarFeed();
+  if (data.verifyFingerprints) return verifyFingerprints(data.verifyFingerprints);
   if (data.scoutKey) return select("scout", data.scoutKey);
   if (data.scoutCoverage !== undefined) return select("scout", "coverage");
   if (data.scoutAddSource !== undefined) return openScoutSource("add", "");
@@ -2890,6 +3288,13 @@ $("addMonitorDialog").addEventListener("click", event => {
 });
 $("newMonitorUrl").addEventListener("input", () => $("newMonitorUrl").setCustomValidity(""));
 $("addMonitorForm").addEventListener("submit", submitAddMonitor);
+$("reviewForm").addEventListener("submit", submitReview);
+$("reviewForm").addEventListener("change", event => { if (event.target.name === "reviewDecision") syncReviewForm(); });
+$("closeReview").addEventListener("click", () => $("reviewDialog").close());
+$("cancelReview").addEventListener("click", () => $("reviewDialog").close());
+$("reviewDialog").addEventListener("click", event => {
+  if (event.target === $("reviewDialog")) $("reviewDialog").close();
+});
 $("bulkMonitorFile").addEventListener("change", event => readBulkFile(event.target.files && event.target.files[0]));
 $("submitBulkMonitor").addEventListener("click", submitBulkMonitor);
 $("clearBulkImport").addEventListener("click", clearBulkImport);
@@ -3778,9 +4183,7 @@ async function askSentinelSendQuestion(promptOverride) {
     try { payload = await response.json(); } catch (_) {}
     if (Number.isInteger(payload.remaining)) askSentinelUpdateQuota(payload.remaining);
     if (response.status === 429) {
-      // The server says which limit was reached (this browser, this network or the service).
-      throw new Error(typeof payload.error === "string" ? payload.error
-        : "Daily limit reached. Ask Sentinel allows three requests per user per day. Your allowance resets according to the server’s daily reset time.");
+      throw new Error("Daily limit reached. Ask Sentinel allows three requests per user per day. Your allowance resets according to the server’s daily reset time.");
     }
     if (!response.ok) {
       throw new Error(typeof payload.error === "string" ? payload.error : "Ask Sentinel could not answer this request. Please try again later.");

@@ -1176,6 +1176,137 @@
     return { errors, title, body, request };
   }
 
+  /* ---------- Reporting items, dates, review decisions and exports ---------- */
+
+  // One edited line as inline redline markup (struck before, underlined after).
+  function renderWordEdit(before, after) { return renderSegments(wordDiff(before, after)); }
+
+  // "1 added, 2 amended (RCON1234, RCON2170, …)": the line alerts carry, worded
+  // exactly as regmon/item_codes.py describe() words it.
+  function describeItemCodes(codes) {
+    if (!codes || typeof codes !== "object") return "";
+    const counts = codes.counts || {};
+    const parts = ["added", "removed", "amended"].filter(key => counts[key]).map(key => counts[key] + " " + key);
+    if (!parts.length) return "";
+    let list = codes.codes;
+    if (!Array.isArray(list)) list = [].concat(...["added", "removed", "amended"].map(key => (codes[key] || []).map(entry => entry.code)));
+    const shown = list.slice(0, 4).join(", ") + (list.length > 4 ? ", …" : "");
+    return parts.join(", ") + (shown ? " (" + shown + ")" : "");
+  }
+
+  // What config/lineage.json says consumes an item code: exact-code mappings
+  // before whole-series ones, each asset once. Mirrors regmon/lineage.py assets_for.
+  function lineageFor(code, lineage) {
+    const value = String(code || "").toUpperCase();
+    const mappings = lineage && Array.isArray(lineage.mappings) ? lineage.mappings.filter(mapping => mapping && typeof mapping === "object") : [];
+    const out = [];
+    const seen = new Set();
+    [true, false].forEach(exact => {
+      mappings.forEach(mapping => {
+        const keys = exact ? mapping.codes : mapping.series;
+        if (!Array.isArray(keys) || keys.indexOf(exact ? value : value.slice(0, 4)) < 0) return;
+        (Array.isArray(mapping.assets) ? mapping.assets : []).forEach(asset => {
+          const name = String(asset || "").trim();
+          if (!name || seen.has(name)) return;
+          seen.add(name);
+          out.push({ asset: name, owner: String(mapping.owner || ""), via: exact ? value : value.slice(0, 4) + "*" });
+        });
+      });
+    });
+    return out;
+  }
+
+  // Calendar dates are plain days ("2027-03-31"). They are compared as days in
+  // the viewer's own calendar, never parsed as UTC midnight (which shows the
+  // day before anywhere west of Greenwich).
+  const ISO_DAY = /^(\d{4})-(\d{2})-(\d{2})$/;
+  function localIsoDate(date) {
+    const d = date instanceof Date ? date : new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function isoDayToDate(iso) {
+    const match = ISO_DAY.exec(String(iso || ""));
+    return match ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])) : null;
+  }
+  function daysBetween(fromIso, toIso) {
+    const from = ISO_DAY.exec(String(fromIso || "")), to = ISO_DAY.exec(String(toIso || ""));
+    if (!from || !to) return null;
+    return Math.round((Date.UTC(+to[1], +to[2] - 1, +to[3]) - Date.UTC(+from[1], +from[2] - 1, +from[3])) / 86400000);
+  }
+  function dueLabel(dateIso, todayIso) {
+    const days = daysBetween(todayIso, dateIso);
+    if (days === null) return "";
+    if (days === 0) return "Today";
+    if (days === 1) return "Tomorrow";
+    if (days === -1) return "Yesterday";
+    return days > 0 ? "In " + days + " days" : days * -1 + " days ago";
+  }
+  function calendarList(calendar) {
+    return calendar && Array.isArray(calendar.entries)
+      ? calendar.entries.filter(entry => entry && typeof entry === "object" && ISO_DAY.test(String(entry.date || "")))
+      : [];
+  }
+  function upcomingDates(calendar, todayIso, limit) {
+    return calendarList(calendar).filter(entry => entry.date >= todayIso)
+      .sort((a, b) => a.date.localeCompare(b.date) || String(a.title || "").localeCompare(String(b.title || "")))
+      .slice(0, limit || 5);
+  }
+  function datesForChange(calendar, eventId) {
+    return calendarList(calendar).filter(entry => entry.event_id === eventId).sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  // The body regmon/reviews.py parses: one Decision, Rationale, Owner and Ticket
+  // line, then one "- <event id> | <url>" line per change.
+  const CHANGE_REVIEW_MARKER = "<!-- changesentinel:change-review:v1 -->";
+  const REVIEW_DECISIONS = { material: "Material", not_material: "Not material", acknowledged: "Acknowledged", action_required: "Action required" };
+  function changeReviewRequest(values) {
+    const v = values || {};
+    const errors = [];
+    const decision = Object.prototype.hasOwnProperty.call(REVIEW_DECISIONS, v.decision) ? v.decision : "";
+    const rationale = oneLine(v.rationale, 600);
+    const owner = oneLine(v.owner, 600);
+    const ticket = oneLine(v.ticket, 600);
+    const changes = (Array.isArray(v.changes) ? v.changes : []).filter(change => change && /^[0-9a-f]{64}$/.test(String(change.event_id || "")));
+    if (!decision) errors.push("Choose a decision.");
+    if (decision === "not_material" && rationale.length < 10) errors.push("Say why the change is not material (at least 10 characters).");
+    if (ticket && !/^https?:\/\/\S+$/.test(ticket)) errors.push("The ticket must be a link beginning with https://.");
+    if (!changes.length) errors.push("This change has no recorded identifier, so it can't be reviewed.");
+    if (changes.length > 50) errors.push("Review at most 50 changes in one request.");
+    const lines = [
+      CHANGE_REVIEW_MARKER, "",
+      "Please record this review decision.", "",
+      "Decision: " + decision.replace("_", " "),
+      "Rationale: " + (rationale || "(none)"),
+      "Owner: " + (owner || "(none)"),
+      "Ticket: " + (ticket || "(none)"), "",
+      "Changes:"
+    ];
+    changes.forEach(change => {
+      const url = String(change.url || "");
+      lines.push("- " + change.event_id + (url && !/\s/.test(url) ? " | " + url : ""));
+    });
+    lines.push("", "Only requests opened by the repository owner are recorded. Earlier decisions stay in the ledger's log.", "",
+      "This request was created from the ChangeSentinel dashboard.");
+    return {
+      errors,
+      title: "[ChangeSentinel] Change review: " + (REVIEW_DECISIONS[decision] || "decision") + (changes.length > 1 ? " (" + changes.length + ")" : ""),
+      body: lines.join("\n")
+    };
+  }
+
+  // A spreadsheet runs a cell that starts with =, +, - or @ as a formula. Page
+  // titles and quotes come from outside sites, so such cells are prefixed with
+  // an apostrophe (OWASP's CSV-injection advice) before quoting.
+  function csvCell(value) {
+    let text = value == null ? "" : String(value);
+    if (/^[=+\-@\t\r]/.test(text)) text = "'" + text;
+    return /[",\r\n]/.test(text) || text !== text.trim() ? '"' + text.replace(/"/g, '""') + '"' : text;
+  }
+  function toCsv(rows) { return rows.map(row => row.map(csvCell).join(",")).join("\r\n") + "\r\n"; }
+  function fileSlug(text, max) {
+    return String(text || "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, max || 48).replace(/-+$/, "") || "change";
+  }
+
   return {
     diffSequences, alignLines, changedWords,
     esc, nextScheduledScan, scanCycle, runColumns, columnCellState, pendingScan, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
@@ -1185,6 +1316,8 @@
     foldWhitespace, inlineMarkdown, xlsxFirstSheetRows, normalizeForMatch, changedPartOffsets,
     canonicalUrl, urlKey, scoutBucket, scoutBuckets, scoutSentence, scoutReviewIssue, nextScoutSweep,
     SCOUT_FILTERS, SCOUT_OUTCOMES, SCOUT_CONFIDENCE, SCOUT_STATUS, SCOUT_CHANNEL_STATUS, SCOUT_NOUNS, SCOUT_REVIEW_MARKER,
-    scoutSlug, splitList, splitLines, parsePathHints, pathHintsText, scoutSourceRequest, SCOUT_SOURCE_MARKER, SCOUT_TOPIC_IDS, SCOUT_REGIONS
+    scoutSlug, splitList, splitLines, parsePathHints, pathHintsText, scoutSourceRequest, SCOUT_SOURCE_MARKER, SCOUT_TOPIC_IDS, SCOUT_REGIONS,
+    renderWordEdit, describeItemCodes, lineageFor, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
+    changeReviewRequest, CHANGE_REVIEW_MARKER, REVIEW_DECISIONS, csvCell, toCsv, fileSlug
   };
 }));

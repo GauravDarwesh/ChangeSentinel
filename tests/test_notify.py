@@ -101,6 +101,29 @@ class TestNotifications(unittest.TestCase):
         self.assertIn("Suggested action: Update the filing calendar", message)
 
     @patch("regmon.notify.requests.post")
+    def test_reporting_item_changes_ride_along_on_ai_and_generic_alerts(self, mock_post):
+        mock_post.return_value.raise_for_status.return_value = None
+        codes = {"counts": {"added": 1, "removed": 0, "amended": 2}, "codes": ["RCON1234", "RCON2170", "RCFD3210"], "series": ["RCON", "RCFD"]}
+        report = {
+            "events": [
+                {"event_id": "a", "event_type": "CHANGED_URL", "url": "https://x.gov/a", "item_codes": codes},
+                {"event_id": "g", "event_type": "CHANGED_URL", "url": "https://x.gov/g", "item_codes": codes},
+                {"event_id": "plain", "event_type": "CHANGED_URL", "url": "https://x.gov/p"},
+            ],
+            "ai_results": [{"event_id": "a", "event": "CHANGED_URL", "url": "https://x.gov/a", "ai": {"status": "ok", "analysis": {
+                "relevant": True, "topic": "Schedule RC", "summary": "Items changed", "impact": "Filing", "reason": "Diff"}}}],
+        }
+        notifications = {n["event_id"]: n for n in build_notifications(report)}
+        self.assertEqual(notifications["a"]["reporting_items"], "1 added, 2 amended (RCON1234, RCON2170, RCFD3210)")
+        self.assertEqual(notifications["g"]["variant"], "generic")
+        self.assertEqual(notifications["g"]["reporting_items"], notifications["a"]["reporting_items"])
+        self.assertNotIn("reporting_items", notifications["plain"])
+        publish(notifications["a"], "topic", "https://ntfy.sh", "")
+        self.assertIn("Reporting items: 1 added, 2 amended (RCON1234", mock_post.call_args.kwargs["json"]["message"])
+        publish(notifications["plain"], "topic", "https://ntfy.sh", "")
+        self.assertNotIn("Reporting items:", mock_post.call_args.kwargs["json"]["message"])
+
+    @patch("regmon.notify.requests.post")
     def test_not_stated_fields_are_left_out(self, mock_post):
         mock_post.return_value.raise_for_status.return_value = None
         publish({"event_id": "x", "kind": "CHANGED_URL", "topic": "T", "summary": "S", "reason": "R", "impact": "I",

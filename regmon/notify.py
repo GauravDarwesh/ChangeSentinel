@@ -9,8 +9,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote
 
-import requests
 import tempfile
+
+import requests
+
+from regmon import item_codes
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -178,6 +181,14 @@ def build_notifications(report: dict) -> list[dict]:
             if event_id:
                 deterministically_excluded_events.add(event_id)
 
+    # Reporting-item (MDRM) changes are deterministic, so they ride along on
+    # every alert for the change: AI, generic fallback, or follow-up.
+    item_lines = {}
+    for event in report.get("events", []):
+        line = item_codes.describe(event.get("item_codes")) if isinstance(event.get("item_codes"), dict) else ""
+        if line and event.get("event_id"):
+            item_lines[event["event_id"]] = line
+
     output = []
     seen = set()
     explicitly_irrelevant = set()
@@ -211,6 +222,8 @@ def build_notifications(report: dict) -> list[dict]:
                 "effective_date": analysis.get("effective_date"), "actions": analysis.get("actions"),
                 "tags": ["warning", "bank", "regulatory"],
             }
+            if result["event_id"] in item_lines:
+                item["reporting_items"] = item_lines[result["event_id"]]
             output.append(item)
             seen.add(item["event_id"])
 
@@ -235,14 +248,17 @@ def build_notifications(report: dict) -> list[dict]:
                 "priority": 4, "tags": ["warning", "link", "regulatory"],
             })
         elif kind in {"CHANGED_URL", "NEW_URL"}:
-            output.append({
+            generic = {
                 "event_id": event_id, "kind": kind, "variant": "generic", "url": event.get("url"),
                 "topic": "Technical change detected",
                 "summary": "A monitored regulator resource changed and was detected by deterministic content comparison.",
                 "reason": "The change remains visible even when semantic AI review is unavailable, invalid, or deferred.",
                 "impact": "Review the evidence and diff to determine regulatory significance.",
                 "priority": 3, "tags": ["warning", "change", "regulatory"],
-            })
+            }
+            if event_id in item_lines:
+                generic["reporting_items"] = item_lines[event_id]
+            output.append(generic)
         elif kind in {"FETCH_ERROR", "EXTRACTION_ERROR"}:
             error = (event.get("evidence") or {}).get("error", "Unknown operational error")
             # Operational events get a unique ID per observation (so evidence is
@@ -341,6 +357,8 @@ def publish(notification: dict, topic: str, server: str, dashboard_url: str = ""
         details += f"Effective: {_stated(notification.get('effective_date'))}\n"
     if _stated(notification.get("actions")):
         details += f"Suggested action: {_stated(notification.get('actions'))}\n"
+    if _stated(notification.get("reporting_items")):
+        details += f"Reporting items: {_stated(notification.get('reporting_items'))}\n"
     message = (
         f"Event: {notification['kind']}\n"
         f"Topic: {notification['topic']}\n"

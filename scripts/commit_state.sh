@@ -3,9 +3,10 @@
 #
 # Usage: scripts/commit_state.sh "<commit message>" <base-sha> [<state-path>]
 #
-# <state-path> defaults to "data" (the monitor's state, excluding data/scout).
-# Scout passes "data/scout". The two never touch each other's files, so each
-# job only refuses when *its own* state was committed by someone else meanwhile.
+# <state-path> defaults to "data" (the monitor's state, excluding data/scout and
+# data/reviews). Scout passes "data/scout"; review decisions are committed under
+# data/reviews by their own workflow. None of them touch each other's files, so
+# each job only refuses when *its own* state was committed by someone else meanwhile.
 #
 # <base-sha> is the main commit this job checked out. If main advanced while the
 # job ran, the push is retried after rebasing onto the new main, but ONLY when
@@ -21,7 +22,7 @@ message="${1:?commit message required}"
 base_sha="${2:?base commit SHA required}"
 state_path="${3:-data}"
 if [ "$state_path" = "data" ]; then
-  pathspec=(data ':(exclude)data/scout')
+  pathspec=(data ':(exclude)data/scout' ':(exclude)data/reviews')
 else
   pathspec=("$state_path")
 fi
