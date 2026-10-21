@@ -195,6 +195,15 @@ class TestPendingScan(unittest.TestCase):
         out = self.pending("2026-10-20T05:12:00Z", [self.SCHEDULED_0433], runs)
         self.assertEqual((out["phase"], out["trigger"]), ("running", "manual"))
 
+    def test_a_finished_run_whose_scan_is_saved_is_not_still_publishing(self):
+        # The 8:06 am manual run: results saved at 02:36:32Z, GitHub marked the run done at 02:40:37Z.
+        saved = {"id": "x", "at": 1792550192000, "trigger": "manual", "workflowRunId": "39533795876"}
+        runs = [{"id": 39533795876, "event": "workflow_dispatch", "status": "completed", "conclusion": "success",
+                 "created_at": "2026-10-21T02:34:40Z", "run_started_at": "2026-10-21T02:34:45Z", "updated_at": "2026-10-21T02:40:37Z"}]
+        self.assertEqual(self.pending("2026-10-21T02:45:00Z", [saved], runs)["phase"], "late")
+        saved.pop("workflowRunId")
+        self.assertEqual(self.pending("2026-10-21T02:45:00Z", [saved], runs)["phase"], "late")
+
     def test_a_finished_run_not_yet_saved_is_publishing(self):
         runs = [{"id": 9, "event": "schedule", "status": "completed", "conclusion": "success",
                  "created_at": "2026-10-20T06:40:00Z", "updated_at": "2026-10-20T06:45:00Z"}]
