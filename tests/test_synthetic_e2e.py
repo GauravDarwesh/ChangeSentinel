@@ -221,7 +221,8 @@ class TestSyntheticEndToEndRun(unittest.TestCase):
             dashboard_js = (Path(__file__).resolve().parents[1] / "dashboard.js").read_text(encoding="utf-8")
             self.assertIn("event.evidence_location", dashboard_js)
             # Evidence is fetched from raw GitHub through one cached loader.
-            self.assertIn('fetch(bust(RAW + "/" + location)', dashboard_js)
+            self.assertIn("fetchImmutable(location)", dashboard_js)
+            self.assertIn('const url = snapshotURL(path);', dashboard_js)
             self.assertIn("loadEvidence(event.evidence_location)", dashboard_js)
             self.assertIn("evidence.html_diff", dashboard_js)
             self.assertIn("evidence.diff", dashboard_js)

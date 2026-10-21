@@ -508,7 +508,7 @@ That is when actual changes become interesting.
 
 The repository includes a dependency-free review workspace (`index.html`, `dashboard.js`, `dashboard-lib.js`), published by GitHub Pages. It has no build step.
 
-The layout is three panes: a rail on the left (Overview, Changes, Pages, Runs, Alerts, then Scout and Ask Sentinel set apart by a rule), a list, and the selected item. The page itself never scrolls; each pane scrolls on its own. On phones the rail becomes a bottom bar and the list and detail are separate screens. A dark theme is the default, with a light theme one click away.
+The layout is three panes: a rail on the left (Overview, Changes, Pages, Runs, Alerts, then Scout and Ask Sentinel set apart by a rule), a list, and the selected item. The page itself never scrolls; each pane scrolls on its own. On phones the rail becomes a bottom bar and the list and detail are separate screens. Every visit opens in the light theme; the dark theme is one click away for the rest of the visit.
 
 - **Overview** opens with a one-sentence status, the next-scan countdown, and the **LED change field**: one row per monitored page, one cell per six-hour scan over the last few days. Amber cells are scans that found a change, red cells hit a problem, dim cells were checked with no change, and the outlined column is the scan in progress. Hover a cell for the page and scan; click to open the page.
 - **Changes** lists every change across runs, newest first, and opens the newest one straight away. Each change shows the AI assessment and a **redline** of the extracted text: deleted words struck through, inserted words underlined, edits within a line marked word by word, and unchanged stretches collapsed. Text and HTML diffs are one click away.
@@ -872,7 +872,7 @@ Notification candidates are persisted in the repository's notification outbox. S
 
 The production workflow validates discovery metadata only for active sources selected in the current run. Historical inactive-source state must not block the active Federal Reserve pilot. Exact URL allowlists are included in checkpoint fingerprints and recovered inventories are filtered to the current scope.
 
-Manually registered URLs are bounded to one exact URL. Redirects are validated, and duplicate monitor registrations with different CSS selectors are rejected rather than silently ignored. DNS preflight reduces SSRF risk but does not fully prevent deliberate DNS rebinding; high-assurance deployments should add outbound network egress controls.
+Manually registered URLs are bounded to one exact URL. Redirects are validated, and duplicate monitor registrations with different CSS selectors are rejected rather than silently ignored. Every HTTP request the scanner, discovery and Scout make also checks its destination when the socket is opened (`regmon/safe_http.py`): the host is resolved again, any non-public address refuses the connection, and the socket connects to exactly the address that was checked, so a record that rebinds between the preflight and the connection is refused. TLS still verifies the original hostname. The browser-based discovery fallback and traffic through a configured proxy rely on the preflight alone; high-assurance deployments should still add outbound egress controls.
 
 ## License
 

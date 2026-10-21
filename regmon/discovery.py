@@ -15,6 +15,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from regmon.config import SourceConfig
+from regmon.safe_http import public_destinations_only
 from regmon.security import USER_AGENT, DNSResolutionError, retry_delay, validate_public_http_url
 
 TRACKING_PARAMS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
@@ -161,12 +162,13 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
             visited = {canonical(url)}
             response = None
             for redirect_count in range(6):
-                response = requests.get(
-                    current_url,
-                    timeout=timeout,
-                    allow_redirects=False,
-                    headers={"User-Agent": USER_AGENT},
-                )
+                with public_destinations_only():
+                    response = requests.get(
+                        current_url,
+                        timeout=timeout,
+                        allow_redirects=False,
+                        headers={"User-Agent": USER_AGENT},
+                    )
                 last_status = response.status_code
                 if response.status_code not in {301, 302, 303, 307, 308}:
                     break

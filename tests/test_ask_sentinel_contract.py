@@ -16,8 +16,10 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn('data-view="notifications"', html)
         self.assertIn('window.CHANGESENTINEL_ASK_ENDPOINT', html)
         self.assertIn('https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel', html)
-        self.assertIn('supabase-js@2.121.0/dist/umd/supabase.js', html)
-        self.assertIn('src="dashboard.js?v=20261021-scout-1"', html)
+        # 2.121.0 was never published; a missing client silently disabled sign-in.
+        self.assertIn('supabase-js@2.118.0/dist/umd/supabase.js', html)
+        self.assertNotIn('supabase-js@2.121.0', html)
+        self.assertIn('src="dashboard.js?v=20261021-hardening-1"', html)
         self.assertIn('ASK_SENTINEL_ENDPOINT = window.CHANGESENTINEL_ASK_ENDPOINT || ""', js)
         self.assertIn('askSentinel: "askSentinelView"', js)
         self.assertIn('name === "ask-sentinel"', js)

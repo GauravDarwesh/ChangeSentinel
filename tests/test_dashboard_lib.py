@@ -329,3 +329,135 @@ class TestScoutHelpers(unittest.TestCase):
         out = run_js("console.log(JSON.stringify([L.nextScoutSweep(new Date('2026-10-21T05:00:00Z')).toISOString(), L.nextScoutSweep(new Date('2026-10-26T04:00:00Z')).toISOString()]));")
         self.assertEqual(out, ["2026-10-26T04:17:00.000Z", "2026-10-26T04:17:00.000Z"])
 
+
+    def test_backlog_is_grouped_by_regulator_then_strongest_first(self):
+        candidates = [
+            {"key": "x:1", "regulator_id": "pra", "origin": "baseline", "url": "https://p.org/1", "title": "B", "assessment": {"outcome": "relevant", "rank": 10}},
+            {"key": "y:1", "regulator_id": "eba", "origin": "baseline", "url": "https://e.org/1", "title": "A", "assessment": {"outcome": "relevant", "rank": 5}},
+            {"key": "x:2", "regulator_id": "pra", "origin": "baseline", "url": "https://p.org/2", "title": "C", "assessment": {"outcome": "relevant", "rank": 30}},
+            {"key": "y:2", "regulator_id": "eba", "origin": "baseline", "url": "https://e.org/2", "title": "D", "assessment": {"outcome": "relevant", "rank": 5},
+             "evidence": {"published": "2026-10-01"}},
+        ]
+        out = run_js("console.log(JSON.stringify(L.scoutBuckets(" + json.dumps(candidates) + ", new Set()).BACKLOG.map(x => x.key)));")
+        self.assertEqual(out, ["y:2", "y:1", "x:2", "x:1"])
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestWordDiffAndUrls(unittest.TestCase):
+    def test_a_replaced_phrase_reads_as_one_edit(self):
+        out = run_js('console.log(JSON.stringify(L.wordDiff("the quick brown fox", "a slow red fox")));')
+        self.assertEqual(out, [{"type": "del", "text": "the quick brown"}, {"type": "add", "text": "a slow red"},
+                               {"type": "same", "text": " fox"}])
+
+    def test_segments_always_rebuild_both_texts(self):
+        out = run_js("""
+          const words = "alpha beta gamma 10% 2026 $5 billion Tier 1 2".split(" ");
+          let seed = 7; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+          const make = () => Array.from({length: Math.floor(rnd() * 12)}, () => words[Math.floor(rnd() * words.length)]).join(rnd() < .3 ? "  " : " ");
+          let bad = 0;
+          for (let i = 0; i < 2000; i++) {
+            const a = make(), b = make(), s = L.wordDiff(a, b);
+            const before = s.filter(x => x.type !== "add").map(x => x.text).join("");
+            const after = s.filter(x => x.type !== "del").map(x => x.text).join("");
+            if (before !== a || after !== b) bad++;
+          }
+          console.log(JSON.stringify(bad));""")
+        self.assertEqual(out, 0)
+
+    def test_a_long_line_does_not_build_a_quadratic_table(self):
+        out = run_js("""
+          const a = Array.from({length: 1500}, (_, i) => "w" + i).join(" ");
+          const b = a.replace("w700", "x700");
+          const t = Date.now(); const s = L.wordDiff(a, b);
+          console.log(JSON.stringify({ms: Date.now() - t, dels: s.filter(x => x.type === "del").map(x => x.text)}));""")
+        self.assertEqual(out["dels"], ["w700"])
+        self.assertLess(out["ms"], 2000)
+
+    def test_one_canonical_form_mirrors_the_engine(self):
+        out = run_js("""console.log(JSON.stringify([
+          L.canonicalUrl("https://Example.org/a/b/?utm_source=x&b=2&a=1&gclid=q#top"),
+          L.urlKey("http://example.org/a/b?a=1&b=2&fbclid=z"),
+          L.urlKey("https://example.org/a/b/?b=2&a=1"),
+          L.canonicalUrl("not a url")
+        ]));""")
+        self.assertEqual(out[0], "https://example.org/a/b?a=1&b=2")
+        self.assertEqual(out[1], out[2])
+        self.assertEqual(out[3], "not a url")
+
+    def test_python_and_javascript_canonical_forms_agree(self):
+        from regmon.discovery import canonical
+        urls = ["https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=ab-12&type=pdf",
+                "https://x.gov/a/?z=1&utm_medium=e&a=2#f", "https://x.gov/", "https://x.gov/path?q=a b"]
+        out = run_js("console.log(JSON.stringify(" + json.dumps(urls) + ".map(L.canonicalUrl)));")
+        self.assertEqual(out, [canonical(url) for url in urls])
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestInlineMarkdown(unittest.TestCase):
+    def render(self, text):
+        return run_js("console.log(JSON.stringify(L.inlineMarkdown(" + json.dumps(text) + ")));")
+
+    def test_an_asterisk_inside_a_link_never_becomes_emphasis(self):
+        html = self.render("[form](https://x.gov/a*b*c) and **bold**")
+        self.assertIn('href="https://x.gov/a*b*c"', html)
+        self.assertNotIn("<em>", html)
+        self.assertIn("<strong>bold</strong>", html)
+
+    def test_sentence_punctuation_stays_outside_a_bare_link(self):
+        html = self.render("See https://x.gov/page. Then (https://y.gov/p).")
+        self.assertIn('href="https://x.gov/page"', html)
+        self.assertIn('href="https://y.gov/p"', html)
+        self.assertTrue(html.endswith(").") )
+
+    def test_markup_and_script_urls_are_inert(self):
+        html = self.render('<img src=x onerror=alert(1)> [x](javascript:alert(1)) "quoted"')
+        self.assertNotIn("<img", html)
+        self.assertNotIn('href="javascript', html)
+        self.assertIn("&quot;quoted&quot;", html)
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestLocalXlsxReader(unittest.TestCase):
+    def test_first_sheet_cells_are_read_as_text(self):
+        import tempfile
+        from openpyxl import Workbook
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.append(["URL", "Name", "Include Selector", "Ignore Selectors"])
+        sheet.append(["https://www.example.gov/a?x=1&y=2", "Policy <A> & B", "main .content", ".cookie;.nav"])
+        sheet["A4"] = "https://www.example.gov/b"
+        sheet["B4"] = 2026
+        workbook.create_sheet("Second")["A1"] = "ignored"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "links.xlsx"
+            workbook.save(path)
+            out = run_js("const fs = require('fs'); L.xlsxFirstSheetRows(fs.readFileSync(" + json.dumps(str(path)) +
+                         ")).then(rows => console.log(JSON.stringify(rows)));")
+        self.assertEqual(out[0], ["URL", "Name", "Include Selector", "Ignore Selectors"])
+        self.assertEqual(out[1], ["https://www.example.gov/a?x=1&y=2", "Policy <A> & B", "main .content", ".cookie;.nav"])
+        self.assertEqual(out[2], [])
+        self.assertEqual(out[3], ["https://www.example.gov/b", "2026"])
+        self.assertEqual(len(out), 4)
+
+    def test_a_non_workbook_is_rejected_with_a_readable_error(self):
+        out = run_js("L.xlsxFirstSheetRows(new Uint8Array([1,2,3,4])).then(() => console.log(JSON.stringify('ok')), e => console.log(JSON.stringify(e.message)));")
+        self.assertIn("not a valid .xlsx", out)
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestEditOffsets(unittest.TestCase):
+    def test_a_repeated_token_is_located_where_it_changed(self):
+        out = run_js("""
+          const before = "Tier 1 capital for Tier 1 banks", after = "Tier 1 capital for Tier 2 banks";
+          const parts = L.changedPartOffsets(L.wordDiff(before, after), "add");
+          const line = L.normalizeForMatch(after);
+          console.log(JSON.stringify(parts.map(p => [p.text, p.offset, line.substr(p.offset, p.text.length)])));""")
+        self.assertEqual(out, [["2", 24, "2"]])
+
+    def test_offsets_survive_whitespace_and_table_pipes(self):
+        out = run_js("""
+          const before = "| Item  | 30 days |  BHCK 2170 |", after = "| Item  | 15 days |  BHCK 2170 |";
+          const parts = L.changedPartOffsets(L.wordDiff(before, after), "add");
+          const line = L.normalizeForMatch(after.replace(/\\|/g, " "));
+          console.log(JSON.stringify(parts.map(p => line.substr(p.offset, p.text.length))));""")
+        self.assertEqual(out, ["15"])
