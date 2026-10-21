@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import time
 import urllib.error
 import urllib.request
 import uuid
@@ -25,6 +26,10 @@ def load_json(path: str) -> Any:
 
 
 def ask(question: str) -> dict[str, Any]:
+    # The deployed Groq model has an 8k-token/minute quota. The preceding workflow smoke
+    # question plus six rapid evaluation calls exceeded TPM, masking real grounding results.
+    # Pace requests to stay within that provider quota instead of misreporting 429 as hallucination.
+    time.sleep(50)
     payload = json.dumps({"question": question, "conversation": []}).encode("utf-8")
     request = urllib.request.Request(
         ENDPOINT,
@@ -127,8 +132,9 @@ def main() -> int:
     def check_latest(_response, answer):
         required = ["changed", "source_changed", "unchanged", "fetch_error", "extraction_error"]
         missing = [field for field in required if field not in counts or not count_mentioned(answer, field, counts[field])]
-        if run_id not in answer:
-            return False, "exact current run ID missing"
+        normalize_id_text = lambda value: re.sub(r"[\\u2010-\\u2015\\u2212]", "-", value)
+        if normalize_id_text(run_id) not in normalize_id_text(answer):
+            return False, "exact current run ID missing (allowing typographic hyphens)"
         event_source = str((current_events[0] if current_events else {}).get("source_id") or "")
         if event_source and event_source not in answer:
             return False, "affected source ID missing: " + event_source
