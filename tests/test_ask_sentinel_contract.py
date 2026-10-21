@@ -120,5 +120,30 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn("ask-sentinel-sources", js)
 
 
+    def test_grounding_uses_question_relevant_evidence_not_unconditional_core_docs(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("type AskSentinelEvidence = { context: string; sources: string[] };", backend)
+        self.assertIn("const relevant = docs", backend)
+        self.assertIn(".filter((d: any) => d.is_core !== true)", backend)
+        self.assertIn("return { context: context.join", backend)
+        self.assertNotIn("for (const d of core) addContext", backend)
+
+    def test_answers_require_citations_to_selected_evidence(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("function validateGroundedCitations(answer: string, allowedSources: string[]): boolean", backend)
+        self.assertIn("validateGroundedCitations(answer, evidence.sources)", backend)
+        self.assertIn("context_sources: evidence.sources", backend)
+        self.assertIn("temperature: 0,", backend)
+        self.assertIn("Conversation history is supplied only to resolve follow-up references. It is not evidence.", backend)
+
+    def test_backend_emits_phase_diagnostics_without_request_content(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("event: 'ask_sentinel_stage'", backend)
+        self.assertIn("event: 'ask_sentinel_error'", backend)
+        self.assertIn("phase, elapsed_ms:", backend)
+        self.assertNotIn("console.info(question", backend)
+        self.assertNotIn("console.info(answer", backend)
+
+
 if __name__ == "__main__":
     unittest.main()
