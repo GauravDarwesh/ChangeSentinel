@@ -34,6 +34,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Check the deployed Groq-backed endpoint
+        id: endpoint_health
         env:
           HEALTH_URL: https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel?mode=health
         run: |
@@ -146,11 +147,13 @@ jobs:
           PY
 
       - name: Check out dashboard data and grounding evaluator
+        if: ${{ always() && steps.endpoint_health.outcome == 'success' }}
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           persist-credentials: false
 
       - name: Evaluate live grounding against current dashboard records
+        if: ${{ always() && steps.endpoint_health.outcome == 'success' }}
         # Pull requests cannot change the already-deployed Edge Function, so this is a baseline
         # report until the fix is deployed. On main, treat the live evaluation as a gate.
         continue-on-error: ${{ github.event_name == 'pull_request' }}
