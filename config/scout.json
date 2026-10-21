@@ -12,7 +12,7 @@
     "max_seconds_per_regulator": 900,
     "max_enrich_per_regulator": 25,
     "review_new_days": 120,
-    "review_backlog_limit": 150,
+    "review_backlog_limit": 100,
     "history_sweeps": 52
   },
   "regulators": [
@@ -28,9 +28,7 @@
         {"id": "fed-press-bcreg", "type": "feed", "label": "Banking and consumer regulatory policy releases", "url": "https://www.federalreserve.gov/feeds/press_bcreg.xml"},
         {"id": "fed-press-enforcement", "type": "feed", "label": "Enforcement actions", "url": "https://www.federalreserve.gov/feeds/press_enforcement.xml"},
         {"id": "fed-bankinginfo", "type": "feed", "label": "Supervision and regulation letters and manuals", "url": "https://www.federalreserve.gov/feeds/bankinginfo-rss.xml"},
-        {"id": "fed-reporting-forms", "type": "feed", "label": "Reporting form updates", "url": "https://www.federalreserve.gov/feeds/reportforms-rss.xml"},
-        {"id": "fed-current-faqs", "type": "feed", "label": "Current frequently asked questions", "url": "https://www.federalreserve.gov/feeds/currentfaqs.xml", "required": false},
-        {"id": "fed-collections-review", "type": "listing", "label": "Information collections under review", "url": "https://www.federalreserve.gov/apps/reportingforms/review", "link_prefixes": ["https://www.federalreserve.gov/apps/reportingforms/"]}
+        {"id": "fed-collections-review", "type": "listing", "label": "Information collections under review", "url": "https://www.federalreserve.gov/apps/reportingforms/review", "content_selector": ".data-table", "link_prefixes": ["https://www.federalreserve.gov/apps/reportingforms/"]}
       ],
       "path_hints": [
         {"prefix": "/supervisionreg/srletters/", "publication_type": "supervisory_letter"},
@@ -42,7 +40,7 @@
         {"prefix": "/newsevents/speech/", "publication_type": "speech"}
       ],
       "known_gaps": [
-        "Reads five Board feeds and the information-collections page. Pages that are not announced in those feeds and not linked from that page, such as standalone guidance pages reached only through site navigation, are not covered."
+        "Reads three Board feeds and the information-collections page (the reporting-forms feed only points at the recent-updates page, which the monitor already watches). Pages that are not announced in those feeds and not linked from that page, such as standalone guidance pages reached only through site navigation, are not covered."
       ]
     },
     {
@@ -82,18 +80,20 @@
       "channels": [
         {
           "id": "eba-publications", "type": "listing", "label": "Publications", "url": "https://www.eba.europa.eu/publications-and-media/publications",
+          "content_selector": ".views-element-container",
           "newest_first": true, "pagination": {"param": "page", "start": 0, "max_pages": 6, "baseline_pages": 2},
           "exclude_link_patterns": ["[?&](document_type|media_topics|text|sort_by|sort_order|items_per_page)="]
         },
         {
           "id": "eba-press-releases", "type": "listing", "label": "Press releases", "url": "https://www.eba.europa.eu/publications-and-media/press-releases",
+          "content_selector": ".views-element-container",
           "newest_first": true, "pagination": {"param": "page", "start": 0, "max_pages": 4, "baseline_pages": 1},
           "exclude_link_patterns": ["[?&](document_type|media_topics|text|sort_by|sort_order|items_per_page)="]
         }
       ],
       "path_hints": [
         {"prefix": "/publications-and-media/press-releases/", "publication_type": "press_release"},
-        {"prefix": "/publications-and-media/events/", "publication_type": "event", "effect": "negative"},
+        {"prefix": "/publications-and-media/events", "effect": "negative"},
         {"prefix": "/activities/single-rulebook/", "topic": "supervision"}
       ],
       "known_gaps": [
@@ -111,7 +111,6 @@
       "prefer_https": true,
       "channels": [
         {"id": "boe-pra-publications", "type": "feed", "label": "Prudential regulation publications", "url": "https://www.bankofengland.co.uk/rss/prudential-regulation-publications"},
-        {"id": "boe-publications", "type": "feed", "label": "Bank publications", "url": "https://www.bankofengland.co.uk/rss/publications", "required": false},
         {"id": "boe-news", "type": "feed", "label": "News", "url": "https://www.bankofengland.co.uk/rss/news", "required": false}
       ],
       "path_hints": [
@@ -119,12 +118,12 @@
         {"prefix": "/prudential-regulation/", "topic": "supervision"},
         {"prefix": "/speech/", "publication_type": "speech"},
         {"prefix": "/statistics/", "publication_type": "statistics"},
-        {"prefix": "/events/", "publication_type": "event", "effect": "negative"},
+        {"prefix": "/events/", "effect": "negative"},
         {"prefix": "/working-paper/", "publication_type": "research"},
         {"prefix": "/bank-overground/", "publication_type": "research"}
       ],
       "known_gaps": [
-        "Reads the Bank's PRA publications, publications and news feeds. The Bank's full site map is not read (it would add tens of thousands of baseline URLs), so PRA pages announced in none of these feeds are not covered."
+        "Reads the Bank's PRA publications feed and its news feed. The Bank's full site map and its research and statistics feeds are not read, so PRA pages announced in neither feed are not covered."
       ]
     },
     {

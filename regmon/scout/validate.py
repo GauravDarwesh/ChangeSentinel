@@ -44,7 +44,7 @@ def validate(config, data_dir: Path) -> list[str]:
         latest = read_json(latest_path, {})
         if latest.get("schema_version") != SCHEMA_VERSION or not isinstance(latest.get("regulators"), list):
             problems.append("latest.json has an unexpected shape")
-        elif latest.get("status") not in STATUS_ORDER:
+        elif latest.get("status") not in STATUS_ORDER + ("NOT_RUN",):
             problems.append(f"latest.json has status {latest.get('status')!r}")
         else:
             for entry in latest["regulators"]:

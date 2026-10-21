@@ -29,7 +29,8 @@ from regmon.scout.channels import (
 from regmon.scout.net import BudgetExhausted, PoliteClient, ScoutFetchError
 from regmon.scout.profiles import Channel, Regulator, ScoutConfig
 from regmon.scout.registry import (
-    Registry, build_review, dump, iso, load_decisions, monitored_urls, near_monitored, read_json, utc_now, write_if_changed,
+    Registry, build_review, compact_assessment, dump, dump_compact, iso, load_decisions, monitored_urls, near_monitored,
+    read_json, utc_now, write_if_changed,
 )
 from regmon.scout.urls import canonical, candidate_id, file_format, host, is_asset
 
@@ -149,8 +150,7 @@ def run_sitemap(client: PoliteClient, regulator: Regulator, run: ChannelRun, con
             own = canonical(entry["loc"], regulator.https_hosts)
             language = next((code for code, href in alternates.items() if canonical(href, regulator.https_hosts) == own), "")
             run.observations.append(_observation(
-                entry["loc"], run, lastmod=entry.get("lastmod", ""), alternates=alternates, language=language,
-                parent_url=url))
+                entry["loc"], run, lastmod=entry.get("lastmod", "")[:10], alternates=alternates, language=language))
         run.items += len(document.entries)
     if run.items == 0:
         raise ParseError("The sitemap listed no URLs")
@@ -246,6 +246,8 @@ def _link_translations(registry: Registry, regulator: Regulator, cids: list[str]
                 parent = candidate_id(canonical(href, regulator.https_hosts))
                 if parent in registry.candidates and parent != cid:
                     record["relationship"] = {"type": "translation", "of": parent, "language": language}
+                    # The parent keeps the evidence; a translation needs only its language.
+                    record["evidence"] = {"language": language}
                     linked += 1
                     break
     return linked
@@ -354,10 +356,13 @@ def sweep_regulator(regulator: Regulator, config: ScoutConfig, data_dir: Path, *
     new_ids = [cid for cid in created if registry.candidates[cid].get("origin") == "new"]
     enriched = _enrich(client, registry, regulator, new_ids, config.defaults.max_enrich_per_regulator, now)
 
-    for record in registry.candidates.values():
+    outcomes_by_id = {}
+    for cid, record in registry.candidates.items():
         result = assess(record, regulator, config.objective)
-        if record.get("assessment") != result:
-            record["assessment"] = result
+        outcomes_by_id[cid] = result["outcome"]
+        compact = compact_assessment(result)
+        if record.get("assessment") != compact:
+            record["assessment"] = compact
 
     for run in runs:
         state = registry.channels.setdefault(run.channel.id, {})
@@ -368,11 +373,10 @@ def sweep_regulator(regulator: Regulator, config: ScoutConfig, data_dir: Path, *
     registry.save(data_dir)
 
     status, reason = regulator_status(runs)
-    new_records = [registry.candidates[cid] for cid in new_ids]
     outcomes = {"relevant": 0, "uncertain": 0, "irrelevant": 0}
-    for record in new_records:
-        if not record.get("relationship"):
-            outcomes[record["assessment"]["outcome"]] += 1
+    for cid in new_ids:
+        if not registry.candidates[cid].get("relationship"):
+            outcomes[outcomes_by_id[cid]] += 1
     robots = {name: {"status": policy.status, "crawl_delay": policy.crawl_delay} for name, policy in client.robots.items()}
     return {
         "id": regulator.id, "name": regulator.name, "short_name": regulator.short_name, "region": regulator.region,
@@ -443,7 +447,7 @@ def run(config: ScoutConfig, data_dir: Path, *, sources_config: Path, latest_pat
     decisions = load_decisions(data_dir)
     monitored_all = monitored_urls(sources_config, latest_path, frozenset().union(*(item.https_hosts for item in config.regulators)))
     review = build_review(config, data_dir, monitored=monitored_all, decisions=decisions, generated_at=finished_at, sweep_id=sweep_id)
-    write_if_changed(data_dir / "review.json", dump(review))
+    write_if_changed(data_dir / "review.json", dump_compact(review))
 
     history = read_json(data_dir / "history.json", [])
     history.insert(0, {
@@ -464,5 +468,5 @@ def rebuild_review(config: ScoutConfig, data_dir: Path, *, sources_config: Path,
     monitored_all = monitored_urls(sources_config, latest_path, frozenset().union(*(item.https_hosts for item in config.regulators)))
     review = build_review(config, data_dir, monitored=monitored_all, decisions=decisions,
                           generated_at=iso(utc_now()), sweep_id=str(latest.get("sweep_id") or ""))
-    write_if_changed(data_dir / "review.json", dump(review))
+    write_if_changed(data_dir / "review.json", dump_compact(review))
     return review

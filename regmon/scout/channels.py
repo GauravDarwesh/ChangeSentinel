@@ -21,6 +21,24 @@ GENERIC_ANCHORS = {
     "more", "view", "view press release", "press release", "link", "details", "see more", "learn more", "full text",
     "en savoir plus", "lire la suite", "télécharger", "ver más", "leia mais", "saiba mais", "next", "previous",
 }
+GENERIC_ANCHOR_RE = re.compile(
+    r"^(\d+(\.\d+)?\s?(kb|mb|gb)|n/?a|not available|link( \d+)?|pdf \(?\d|\(?pdf\)?|\d{1,3}|download( \w+)?)$", re.I)
+NOISE_RE = re.compile(r"\b\d+(\.\d+)?\s?(KB|MB|GB)\b|\bN/A\b|\bNot Available\b|\bDownload document\b|\bView press release\b|(?<!\w)link( \d+)?(?!\w)", re.I)
+PUBLISHED_RE = re.compile(r"\b(published|posted|issued|released|publié|publicado)\s*(on|le|el)?\s*:?\s*", re.I)
+
+
+def is_generic(anchor: str) -> bool:
+    value = clean(anchor, 300).strip(" .:-–|").lower()
+    return value in GENERIC_ANCHORS or bool(GENERIC_ANCHOR_RE.match(value))
+
+
+def tidy_label(text: str, limit: int = 160) -> str:
+    """A readable label from listing text: file sizes, "N/A" and button words removed."""
+    value = NOISE_RE.sub(" ", str(text or ""))
+    value = re.sub(r"\s+", " ", value).strip(" .:-–|")
+    return clean(value, limit)
+
+
 DATE_PATTERNS = (
     re.compile(r"\b(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s*,?\s+(\d{4})\b", re.I),
     re.compile(r"\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(\d{4})\b", re.I),
@@ -29,8 +47,8 @@ DATE_PATTERNS = (
 MONTHS = {name: index for index, name in enumerate(
     ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"], 1)}
 CONTEXT_TAGS = ("li", "tr", "article", "dd", "dt", "p", "figure", "section")
-CONTEXT_CLASS_RE = re.compile(r"(row|item|card|teaser|result|entry|listing|views-row|publication|document)", re.I)
-MAX_CONTEXT = 320
+CONTEXT_CLASS_RE = re.compile(r"(row|item|card|teaser|result|entry|listing|publication|document|node)", re.I)
+MAX_CONTEXT = 360
 MAX_SITEMAP_BYTES_EXPANDED = 60_000_000
 
 
@@ -87,11 +105,24 @@ def iso(value) -> str:
 
 
 def date_in_text(text: str) -> str:
-    """First calendar date written in listing text, as YYYY-MM-DD ("" if none)."""
+    """The calendar date written in listing text, as YYYY-MM-DD ("" if none).
+
+    A date introduced by "Published"/"Issued" wins over any other date in the
+    text (a summary may mention the period a report covers).
+    """
     value = str(text or "")
+    for marker in PUBLISHED_RE.finditer(value):
+        following = value[marker.end(): marker.end() + 40]
+        if any(pattern.match(following) for pattern in DATE_PATTERNS):
+            return _first_date(following)
+    return _first_date(value)
+
+
+def _first_date(value: str) -> str:
+    best, best_at = "", len(value) + 1
     for pattern in DATE_PATTERNS:
         match = pattern.search(value)
-        if not match:
+        if not match or match.start() >= best_at:
             continue
         groups = match.groups()
         try:
@@ -101,10 +132,10 @@ def date_in_text(text: str) -> str:
                 month, day, year = MONTHS[groups[0].lower()], int(groups[1]), int(groups[2])
             else:
                 year, month, day = int(groups[0]), int(groups[1]), int(groups[2])
-            return datetime(year, month, day).strftime("%Y-%m-%d")
+            best, best_at = datetime(year, month, day).strftime("%Y-%m-%d"), match.start()
         except (ValueError, KeyError):
             continue
-    return ""
+    return best
 
 
 # ---------------------------------------------------------------- XML safety
@@ -281,18 +312,32 @@ class ListingLink:
 
 
 def _context_for(tag) -> str:
+    """Text of the listed item around a link: its date, type and summary.
+
+    Climbs to the outermost item-like container (list item, table row, teaser
+    card) that still looks like one item: under 700 characters and linking to
+    at most three addresses. The innermost container is always accepted, so a
+    table row with many attachments still gives the row's text.
+    """
+    best = ""
     node = tag.parent
     depth = 0
-    while node is not None and getattr(node, "name", None) not in (None, "[document]") and depth < 6:
+    while node is not None and getattr(node, "name", None) not in (None, "[document]") and depth < 8:
         classes = " ".join(node.get("class") or []) if hasattr(node, "get") else ""
         if node.name in CONTEXT_TAGS or (node.name == "div" and CONTEXT_CLASS_RE.search(classes)):
             text = clean(node.get_text(" ", strip=True), 2000)
-            if len(text) <= 900:
-                return clean(text, MAX_CONTEXT)
-            break
+            if len(text) > 700:
+                break
+            targets = {str(link.get("href") or "").split("#", 1)[0] for link in node.find_all("a", href=True)}
+            if not best:
+                best = text
+            elif len(targets) <= 3:
+                best = text
+            else:
+                break
         node = node.parent
         depth += 1
-    return ""
+    return clean(best, MAX_CONTEXT)
 
 
 def harvest_listing(html: str, page_url: str, content_selector: str = "") -> list[ListingLink]:
@@ -327,7 +372,7 @@ def harvest_listing(html: str, page_url: str, content_selector: str = "") -> lis
             if existing is None:
                 found[url] = link
                 order.append(url)
-            elif anchor.lower() not in GENERIC_ANCHORS and (existing.anchor_text.lower() in GENERIC_ANCHORS or len(anchor) > len(existing.anchor_text)):
+            elif not is_generic(anchor) and (is_generic(existing.anchor_text) or len(anchor) > len(existing.anchor_text)):
                 # Keep the most descriptive label when the same URL is linked twice
                 # ("Title" and "Download document").
                 found[url] = ListingLink(url, anchor, existing.context or context, existing.title_attr or link.title_attr,

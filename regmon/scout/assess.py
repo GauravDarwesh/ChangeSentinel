@@ -41,13 +41,14 @@ PUBLICATION_TYPES: tuple[Kind, ...] = (
     Kind("enforcement", "Enforcement action", "priority", _p(
         r"\benforcement (action|order|decision)s?\b", r"\bcease[- ]and[- ]desist\b", r"\bcivil money penalt", r"\bwritten agreement\b",
         r"\bprohibition order\b", r"\b(fines?|fined|penalt(y|ies)) (imposed|on|against)\b", r"\bterminat(es|ion of) enforcement\b",
+        r"\btakes? (enforcement )?action (against|to address)\b", r"\bfinal notice\b",
         r"\bsanci[oó]n(es)? administrativa", r"\bprocessos? administrativos? sancionador")),
     Kind("rule", "Rule or regulation", "priority", _p(
         r"\b(interim )?final rules?\b", r"\b(?-i:Regulation [A-Z]{1,2})\b", r"\b(delegated|implementing|commission) regulation\b",
         r"\bdirective\b", r"\brulemaking\b", r"\bamend(s|ed|ments?|ing) (to )?(the |its )?(rules?|regulations?)\b", r"\brègle(ment)?s?\b",
         r"\bresoluci[oó]n\b", r"\bresolu[cç][aã]o\b", r"\binstru[cç][aã]o normativa\b", r"\bnorma de car[aá]cter general\b", r"\bdecreto\b")),
     Kind("consultation", "Consultation or proposal", "priority", _p(
-        r"\bconsultations?\b", r"\bconsults? on\b", r"\bproposed (rule|guidance|guideline|changes?|amendments?|revisions?)\b",
+        r"\bconsultations?\b", r"\bconsults? on\b", r"\b(?-i:CP\d{1,2}/\d{2})\b", r"\b(?-i:DP\d{1,2}/\d{2})\b", r"\bproposed (rule|guidance|guideline|changes?|amendments?|revisions?)\b",
         r"\bproposals?\b", r"\bproposes?\b", r"\brequests? (for )?comments?\b", r"\bcomment period\b", r"\bseeks? (feedback|comments?|views)\b",
         r"\bdiscussion paper\b", r"\bcall for (evidence|input|advice)\b", r"\bnotice of proposed\b", r"\bconsulta p[uú]blica\b",
         r"\bdocument de consultation\b", r"\bsollicite\b")),
@@ -55,12 +56,15 @@ PUBLICATION_TYPES: tuple[Kind, ...] = (
         r"\b(regulatory|implementing) technical standards?\b", r"\b(?-i:RTS|ITS)\b", r"\btechnical standards?\b")),
     Kind("guidance", "Guidance or guideline", "priority", _p(
         r"\bguidelines?\b", r"\bguidance\b", r"\bsupervisory (statement|expectations?)\b", r"\bpolicy statement\b",
-        r"\bprudential (standard|practice guide)s?\b", r"\bline(s)? directrice(s)?\b", r"\bpréavis\b", r"\bgu[ií]as?\b", r"\borienta[cç][oõ]es\b")),
+        r"\bprudential (standard|practice guide)s?\b", r"\b(?-i:(CPS|CPG|APS|APG|SPS|SPG|GPS|GPG|LPS|LPG|HPS|HPG) ?\d{3})",
+        r"\b(?-i:(SS|PS)\d{1,2}/\d{2})\b", r"\bline(s)? directrice(s)?\b", r"\bpréavis\b", r"\bgu[ií]as?\b", r"\borienta[cç][oõ]es\b")),
     Kind("reporting", "Reporting form or instructions", "priority", _p(
         r"\breporting (form|instruction|requirement|template|framework|return)s?\b", r"\b(regulatory|financial|filing) returns?\b",
         r"\bfiling instructions?\b", r"\binstructions? for (preparation|completing|filing)\b", r"\b(?-i:FR [A-Z0-9][A-Z0-9-]{0,7})\b",
         r"\b(?-i:FFIEC) ?\d{3}\b", r"\bcall reports?\b", r"\btaxonom(y|ies)\b", r"\bxbrl\b", r"\b(?-i:DPM)\b", r"\bdata point model\b",
-        r"\btable layouts?\b", r"\bvalidation rules?\b", r"\breporting\b", r"\brelevés?\b", r"\bformulaires?\b")),
+        r"\btable layouts?\b", r"\bvalidation rules?\b", r"\breporting\b", r"\brelevés?\b", r"\bformulaires?\b",
+        r"\b(?-i:(RPG|RPS|ARF|ARS|GRF|GRS|LRF|LRS|SRF|SRS|HRF|HRS) ?\d{3})", r"\b(data|statistics|statistical) collections?\b",
+        r"\breporting (practice guide|standard)s?\b", r"\bsupporting statement\b")),
     Kind("supervisory_letter", "Supervisory letter or notice", "priority", _p(
         r"\b(?-i:(SR|CA) \d{2}-\d{1,2})\b", r"\bsupervis(ory|ion) and regulation letters?\b", r"\bsupervisory letters?\b",
         r"\bdear (ceo|chief executive)\b", r"\bcirculars?\b", r"\bcircular\b", r"\binterpretive letters?\b", r"\bstaff (statement|letter)s?\b",
@@ -68,7 +72,8 @@ PUBLICATION_TYPES: tuple[Kind, ...] = (
         r"\bcomunicado\b", r"\bcarta circular\b", r"\bcarta-circular\b")),
     Kind("qa", "Q&A", "priority", _p(r"\bq ?& ?a\b", r"\bfaqs?\b", r"\bfrequently asked questions\b", r"\bquestions and answers\b")),
     Kind("decision_opinion", "Decision or opinion", "priority", _p(
-        r"\bopinions?\b", r"\bdecisions?\b", r"\bdeterminations?\b", r"\border approving\b", r"\bapproval of\b")),
+        r"\bopinions? (of|on|to)\b", r"\b(final |formal |supervisory |board |commission )?decisions? (of|on|regarding|concerning|to)\b",
+        r"\bdeterminations? (of|on)\b", r"\border approving\b", r"\bapproval of\b")),
     Kind("report", "Report or review", "neutral", _p(
         r"\breports?\b", r"\bpeer review\b", r"\brisk (dashboard|assessment)\b", r"\bwork programme\b", r"\bfeedback statement\b",
         r"\bstress test results\b", r"\bassessments?\b", r"\binforme\b", r"\brelat[oó]rio\b")),
@@ -124,6 +129,16 @@ TOPICS: tuple[Kind, ...] = (
                                                                     r"\bbank holding compan", r"\bregulatory policy\b", r"\bsurveillance prudentielle\b", r"\bsupervisi[oó]n\b")),
 )
 
+# Noun phrases for reasons ("points to guidance or a guideline"); kept in step
+# with SCOUT_NOUNS in dashboard-lib.js.
+NOUNS = {
+    "rule": "a rule or regulation", "consultation": "a consultation or proposal", "technical_standard": "a technical standard",
+    "guidance": "guidance or a guideline", "reporting": "a reporting form or instructions", "supervisory_letter": "a supervisory letter or notice",
+    "qa": "a Q&A", "enforcement": "an enforcement action", "decision_opinion": "a decision or opinion", "report": "a report",
+    "press_release": "a press release", "speech": "a speech or testimony", "minutes": "a meeting record", "research": "research",
+    "statistics": "a statistical release", "event": "an event page", "media": "a media page", "job": "a job posting",
+}
+
 UTILITY_PATH = re.compile(
     r"/(careers?|jobs?|vacanc(y|ies)|recruitment|emplois?|carrieres?|work-with-us|join-us|contact(-us)?|nous-joindre|contactez-nous|"
     r"privacy(-policy|-notice|-statement)?|cookies?(-policy|-notice|-settings)?|terms(-of-use|-and-conditions)?|legal-notice|disclaimer|"
@@ -160,12 +175,12 @@ def _date(value):
 def _sources(candidate: dict) -> list[tuple[str, str]]:
     evidence = candidate.get("evidence") or {}
     anchor = str(evidence.get("anchor_text") or "")
-    from regmon.scout.channels import GENERIC_ANCHORS
+    from regmon.scout.channels import is_generic
     sources = [
         ("title", evidence.get("title")),
         ("page heading", evidence.get("heading")),
         ("title", evidence.get("page_title")),
-        ("link text", "" if anchor.lower() in GENERIC_ANCHORS else anchor),
+        ("link text", "" if is_generic(anchor) else anchor),
         ("link text", evidence.get("title_attr")),
         ("feed category", " · ".join(evidence.get("categories") or [])),
         ("keywords", evidence.get("keywords")),
@@ -243,15 +258,15 @@ def assess(candidate: dict, regulator: Regulator, objective: Objective) -> dict:
     negative_hint = next((hint for hint in regulator.path_hints if hint.effect == "negative" and path.startswith(hint.prefix)), None)
 
     for key, (kind, source, term) in sorted(priority.items(), key=lambda item: strength(item[1][1]) == "weak"):
-        reasons.append({"effect": "+", "source": source, "text": f"{source.capitalize()} points to a {_lower(kind.label)} (“{term}”)"})
+        reasons.append({"effect": "+", "source": source, "text": f"{source.capitalize()} points to {NOUNS[kind.id]} (“{term}”)"})
     for key, (kind, source, term) in list(topics.items())[:3]:
         reasons.append({"effect": "+", "source": source, "text": f"{source.capitalize()} mentions {_lower(kind.label)} (“{term}”)"})
     if evidence.get("near_monitored"):
         reasons.append({"effect": "+", "source": "address", "text": "Sits in a section ChangeSentinel already monitors"})
     for key, (kind, source, term) in out.items():
-        reasons.append({"effect": "-", "source": source, "text": f"{source.capitalize()} suggests a {_lower(kind.label)} (“{term}”), outside the monitoring objective"})
+        reasons.append({"effect": "-", "source": source, "text": f"{source.capitalize()} suggests {NOUNS[kind.id]} (“{term}”), outside the monitoring objective"})
     for key, (kind, source, term) in secondary.items():
-        reasons.append({"effect": "~", "source": source, "text": f"{source.capitalize()} suggests a {_lower(kind.label)} (“{term}”); these sometimes signal policy changes"})
+        reasons.append({"effect": "~", "source": source, "text": f"{source.capitalize()} suggests {NOUNS[kind.id]} (“{term}”); these sometimes signal policy changes"})
     if utility_path:
         reasons.append({"effect": "-", "source": "address", "text": f"Address looks like a site utility page (“{utility_path.group(1)}”)"})
     if utility_title:
@@ -302,14 +317,19 @@ def assess(candidate: dict, regulator: Regulator, objective: Objective) -> dict:
     if candidate.get("origin") == "new" and dated and seen and (seen - dated).days >= 365:
         reasons.append({"effect": "~", "source": "dates", "text": f"Dated {dated.date().isoformat()}; this may be an older page that has only now appeared in a channel"})
 
+    # The kind of page shown is the one named by the most direct evidence: a
+    # title beats a curated path hint, which beats a summary or the address.
+    rank = {"strong": 3, "medium": 2, "weak": 1}
+    order = {kind.id: index for index, kind in enumerate(PUBLICATION_TYPES)}
+    path_bonus = lambda source: 0.5 if source == "page path" else 0
     chosen_type = None
     for group in (strong_priority, priority, neutral, secondary, out):
         if group:
-            kind = sorted(group.values(), key=lambda value: strength(value[1]) == "weak")[0][0]
+            kind = sorted(group.values(), key=lambda value: (-(rank[strength(value[1])] + path_bonus(value[1])), order[value[0].id]))[0][0]
             chosen_type = {"id": kind.id, "label": kind.label}
             break
     hint_text = " ".join([str(evidence.get("anchor_text") or ""), str(evidence.get("context") or "")])
-    order = {"relevant": 3, "uncertain": 2, "irrelevant": 1}[outcome]
+    outcome_rank = {"relevant": 3, "uncertain": 2, "irrelevant": 1}[outcome]
     band = {"strong": 4, "supported": 3, "conflicting": 2, "weak": 1}[confidence]
     return {
         "outcome": outcome,
@@ -318,6 +338,6 @@ def assess(candidate: dict, regulator: Regulator, objective: Objective) -> dict:
         "topics": [kind.label for kind, _, _ in topics.values()][:4],
         "format": file_format(url, hint_text),
         "reasons": reasons[:8],
-        "rank": order * 10 + band + (2 if strong_priority else 0),
+        "rank": outcome_rank * 10 + band + (2 if strong_priority else 0),
         "rules_version": RULES_VERSION,
     }

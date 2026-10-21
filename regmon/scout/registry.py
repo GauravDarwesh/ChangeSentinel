@@ -16,6 +16,7 @@ history.json               compact summaries of recent sweeps.
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -49,6 +50,10 @@ def parse_iso(value: str) -> datetime | None:
 
 def dump(value) -> str:
     return json.dumps(value, indent=1, ensure_ascii=False, sort_keys=True) + "\n"
+
+
+def dump_compact(value) -> str:
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n"
 
 
 def read_json(path: Path, default):
@@ -87,7 +92,7 @@ class Registry:
                 "candidates": self.candidates, "channels": self.channels}
 
     def save(self, data_dir: Path) -> bool:
-        return write_if_changed(registry_path(data_dir, self.regulator_id), dump(self.to_json()))
+        return write_if_changed(registry_path(data_dir, self.regulator_id), dump_registry(self.to_json()))
 
     def channel_baselined(self, channel_id: str) -> bool:
         return bool((self.channels.get(channel_id) or {}).get("baselined_at"))
@@ -120,10 +125,21 @@ class Registry:
             "language": observation.language, "alternates": observation.alternates,
             "original_url": observation.original_url if observation.original_url != url else "",
         }
+        from regmon.scout.channels import is_generic
+
         for key, value in values.items():
+            if not value:
+                continue
+            current = evidence.get(key)
             # Fill gaps only: first evidence is kept, so re-observing a URL every
-            # week does not rewrite its record.
-            if value and not evidence.get(key):
+            # week does not rewrite its record. A button label ("Download
+            # document") or a bare fragment is the exception: a channel that
+            # gives the real title replaces it.
+            if not current:
+                evidence[key] = value
+            elif key == "anchor_text" and is_generic(current) and not is_generic(value):
+                evidence[key] = value
+            elif key == "context" and len(str(current)) < 25 and len(str(value)) > len(str(current)):
                 evidence[key] = value
         return cid, created
 
@@ -133,14 +149,52 @@ def registry_path(data_dir: Path, regulator_id: str) -> Path:
 
 
 def best_title(record: dict) -> str:
-    evidence = record.get("evidence") or {}
-    from regmon.scout.channels import GENERIC_ANCHORS
+    """The most descriptive name Scout has for a URL.
 
-    for key in ("title", "heading", "page_title", "anchor_text", "title_attr"):
+    Feed and page titles first; then the link text, unless it is a button
+    label, a file size or a bare number ("12/2026"), in which case the listed
+    item's text is used; the address slug is the last resort.
+    """
+    from regmon.scout.channels import is_generic, tidy_label
+
+    evidence = record.get("evidence") or {}
+    for key in ("title", "heading", "page_title"):
         value = str(evidence.get(key) or "").strip()
-        if value and value.lower() not in GENERIC_ANCHORS:
+        if value and not is_generic(value):
             return value[:300]
+    anchor = str(evidence.get("anchor_text") or "").strip()
+    context = tidy_label(evidence.get("context") or "")
+    weak_anchor = not anchor or is_generic(anchor) or len(anchor) < 14 or not re.search(r"[A-Za-zÀ-ÿ]{4}", anchor)
+    if weak_anchor and context and len(context) > len(anchor):
+        return context
+    if anchor and not is_generic(anchor):
+        return anchor[:300]
+    title_attr = str(evidence.get("title_attr") or "").strip()
+    if title_attr:
+        return title_attr[:300]
     return slug_title(record.get("url") or "")
+
+
+def dump_registry(data: dict) -> str:
+    """One candidate per line: compact on disk, and a weekly diff touches only new lines."""
+    head = {key: value for key, value in data.items() if key != "candidates"}
+    lines = ["{"]
+    for key in sorted(head):
+        lines.append(json.dumps(key) + ":" + json.dumps(head[key], ensure_ascii=False, sort_keys=True, separators=(",", ":")) + ",")
+    candidates = data.get("candidates") or {}
+    lines.append('"candidates":{')
+    entries = [json.dumps(cid) + ":" + json.dumps(candidates[cid], ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+               for cid in sorted(candidates)]
+    lines.append(",\n".join(entries))
+    lines.append("}}")
+    return "\n".join(lines) + "\n"
+
+
+def compact_assessment(assessment: dict) -> dict:
+    """What the registry keeps of an assessment; the review queue carries the full one."""
+    kind = assessment.get("publication_type") or {}
+    return {"outcome": assessment.get("outcome"), "confidence": assessment.get("confidence"),
+            "type": kind.get("id", ""), "rules_version": assessment.get("rules_version")}
 
 
 # ---------------------------------------------------------------- monitored URLs
@@ -214,6 +268,8 @@ def apply_decision(decisions: dict, *, key: str, regulator_id: str, url: str, de
 
 def build_review(config, data_dir: Path, *, monitored: dict[str, list[str]], decisions: dict, generated_at: str, sweep_id: str) -> dict:
     """The dashboard's review queue: new arrivals, a capped backlog and decided items."""
+    from regmon.scout.assess import assess
+
     defaults = config.defaults
     now = parse_iso(generated_at) or utc_now()
     recent_cutoff = now - timedelta(days=defaults.review_new_days)
@@ -232,7 +288,7 @@ def build_review(config, data_dir: Path, *, monitored: dict[str, list[str]], dec
             key = f"{regulator.id}:{cid}"
             decision = decisions["decisions"].get(key)
             monitored_ids = monitored.get(canonical(record["url"], regulator.https_hosts), [])
-            assessment = record.get("assessment") or {}
+            assessment = assess(record, regulator, config.objective)
             first_seen = parse_iso(record.get("first_seen")) or now
             item = {
                 "key": key,
@@ -244,7 +300,8 @@ def build_review(config, data_dir: Path, *, monitored: dict[str, list[str]], dec
                 "first_seen": record.get("first_seen"),
                 "first_sweep": record.get("first_sweep"),
                 "channels": record.get("channels") or [],
-                "evidence": {key: value for key, value in (record.get("evidence") or {}).items() if key in EVIDENCE_FIELDS and value},
+                "evidence": {key: value for key, value in (record.get("evidence") or {}).items()
+                             if key in EVIDENCE_FIELDS and value and key != "alternates"},
                 "assessment": assessment,
                 "decision": decision,
                 "monitored_by": monitored_ids,
