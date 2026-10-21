@@ -157,6 +157,11 @@ class TestChangeFieldCells(unittest.TestCase):
 
     def test_a_new_page_has_its_own_state(self):
         self.assertEqual(self.state({"events": [{"event_type": "NEW_URL", "timestamp": "2026-10-20T21:31:03Z"}]}), "new")
+    def test_first_successful_scan_of_new_source_shows_new_even_without_baseline_event(self):
+        self.assertEqual(self.state({"firstSeen": "2026-10-20T20:00:00Z", "events": []}), "new")
+
+    def test_new_monitor_does_not_paint_scans_from_before_it_was_added(self):
+        self.assertEqual(self.state({"firstSeen": "2026-10-20T21:32:00Z", "events": []}), "none")
 
     def test_a_scan_with_no_change_is_dim(self):
         self.assertEqual(self.state({}), "dim")

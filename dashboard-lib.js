@@ -151,6 +151,9 @@
     const events = (page.events || []).filter(event => inColumn(event.timestamp));
     if (events.some(event => event.event_type === "FETCH_ERROR" || event.event_type === "EXTRACTION_ERROR")) return "bad";
     if (page.problemAt && inColumn(page.problemAt)) return "bad";
+    // Initial baselines intentionally suppress NEW_URL; first_seen identifies the first successful scan.
+    // Only light it in a column that actually scanned this source, never earlier scans.
+    if (Number.isFinite(firstSeen) && firstSeen > column.prevAt && firstSeen <= scannedAt + 1000) return "new";
     if (events.some(event => event.event_type === "NEW_URL")) return "new";
     if (events.some(event => event.event_type === "CHANGED_URL" || event.event_type === "REMOVED_URL" || event.event_type === "HTML_SOURCE_CHANGED")) return "on";
     return "dim";
