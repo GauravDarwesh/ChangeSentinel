@@ -976,10 +976,7 @@ select.field-input { appearance: auto; }
     .cs-key-leds .cs-key-caret { width: 2px; height: 16px; margin-left: 2px; background: var(--g-ink-2); box-shadow: none; animation: csBlink 1.05s steps(1) infinite; }
     .cs-key:not(:focus-within) .cs-key-caret { display: none; }
     .cs-key-leds .cs-key-hint { color: var(--g-ink-3); font-size: 13.5px; white-space: nowrap; transition: opacity .12s var(--ease); }
-    .cs-key:focus-within .cs-key-hint { opacity: 0; }
-    /* Keep the LED caret aligned with the input text origin, not ahead of it. */
-    .cs-key-leds .cs-key-caret { position: absolute; left: 14px; margin-left: 0; }
-    .cs-key:focus-within .cs-key-leds .cs-key-caret { left: calc(14px + var(--typed-width, 0px)); }
+    .cs-key:focus-within .cs-key-hint { display: none; }
     .cs-key.is-error .cs-key-leds i:not(.cs-key-caret) { background: var(--g-bad); box-shadow: 0 0 9px rgba(255, 90, 70, .6); }
     .cs-key.is-checking .cs-key-leds i:not(.cs-key-caret) { animation: csKeyCheck .7s var(--ease) infinite; animation-delay: calc(var(--k, 0) * 45ms); }
     .cs-key.is-ok .cs-key-leds i:not(.cs-key-caret) { background: var(--g-good); box-shadow: 0 0 10px rgba(76, 213, 156, .6); animation: csKeyIn .22s var(--ease) both; animation-delay: calc(var(--k, 0) * 30ms); }
@@ -1049,7 +1046,7 @@ select.field-input { appearance: auto; }
         <label class="cs-gate-label" for="csGatePassword"><span>Access key</span><span>Enter to unlock</span></label>
         <div class="cs-key" id="csGateKey">
           <input class="cs-gate-input" id="csGatePassword" name="password" type="password" autocomplete="current-password" autocapitalize="none" spellcheck="false" aria-describedby="csGateMessage" placeholder="Enter the key" required autofocus>
-          <span class="cs-key-leds" id="csGateLeds" aria-hidden="true"><span class="cs-key-hint">Type the key</span><i class="cs-key-caret"></i></span>
+          <span class="cs-key-leds" id="csGateLeds" aria-hidden="true"><span class="cs-key-hint">Enter the key</span><i class="cs-key-caret"></i></span>
           <button class="cs-gate-submit" type="submit" aria-label="Unlock" title="Unlock">
             <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 8h10m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
@@ -1569,13 +1566,9 @@ select.field-input { appearance: auto; }
 
       function renderLeds() {
         const n = input.value.length;
-        let html = n ? "" : '<span class="cs-key-hint">Type the key</span>';
+        let html = n ? "" : '<span class="cs-key-hint">Enter the key</span>';
         for (let i = 0; i < Math.min(n, 28); i++) html += '<i style="--k:' + i + '"></i>';
         leds.innerHTML = html + '<i class="cs-key-caret"></i>';
-        // Each LED represents one password character; align the caret after the last one.
-        const ledWidth = 9, ledGap = 4, caretGap = 2;
-        const caretOffset = n ? Math.min(n, 28) * (ledWidth + ledGap) - ledGap + caretGap : 0;
-        key.style.setProperty("--typed-width", caretOffset + "px");
       }
       async function digest(text) {
         const bytes = new TextEncoder().encode(text);
