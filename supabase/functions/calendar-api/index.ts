@@ -144,7 +144,7 @@ async function authenticatedMember(req:Request){
   const res=await checkedFetch(cfg.url+"/auth/v1/user",{headers:{apikey:cfg.publishable,Authorization:auth}},8000);
   if(!res.ok)throw new PublicError("Your Cadence session has expired. Sign in again.",401);
   const user=await res.json(),email=String(user?.email||"").trim().toLowerCase();
-  if(!/^[0-9a-f-]{36}$/i.test(String(user?.id||""))||user?.is_anonymous===true||!email)throw new PublicError("Cadence requires a team email account, not a visitor session.",403);
+  if(!/^[0-9a-f-]{36}$/i.test(String(user?.id||""))||user?.is_anonymous === true||!email)throw new PublicError("Cadence requires a team email account, not a visitor session.",403);
   if(!(user.email_confirmed_at||user.confirmed_at))throw new PublicError("Confirm your team email address before using Cadence.",403);
   const params=new URLSearchParams({select:"email,role,active",email:"eq."+email,limit:"1"});
   const rows=await restJson("regulatory_calendar_members?"+params.toString()),member=Array.isArray(rows)?rows[0]:null;
