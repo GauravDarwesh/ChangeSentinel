@@ -179,6 +179,13 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn("invalid_citation_count: citationValidation.invalid_citation_count", backend)
         self.assertIn("uncited_line_count: citationValidation.uncited_line_count", backend)
 
+    def test_live_grounding_eval_runs_after_smoke_failure_if_health_passes(self):
+        workflow = (ROOT / ".github/workflows/ask-sentinel-health.yml").read_text(encoding="utf-8")
+        self.assertIn("id: endpoint_health", workflow)
+        condition = "if: ${{ always() && steps.endpoint_health.outcome == 'success' }}"
+        self.assertGreaterEqual(workflow.count(condition), 2)
+        self.assertIn("name: Evaluate live grounding against current dashboard records", workflow)
+
     def test_run_and_evidence_ids_are_pinned_to_exact_indexed_paths(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
         self.assertIn("function exactRunId(question: string): string | null", backend)
