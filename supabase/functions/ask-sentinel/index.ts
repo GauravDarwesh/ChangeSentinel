@@ -203,7 +203,7 @@ function addContext(
   maxChars: number
 ): boolean {
   const path = String(doc.path || 'repository document');
-  const marker = path + ' :: ' + String(doc.doc_type || 'text');
+  const marker = 'Source path: ' + path + ' | Document type: ' + String(doc.doc_type || 'text');
   const bodyText = String(doc.content || '');
   const identity = marker + bodyText;
   if (!bodyText || seen.has(identity)) return false;
@@ -266,27 +266,46 @@ function buildContext(question: string, docs: any[], targetedDocs: any[]): AskSe
 
   return { context: context.join('\n\n'), sources };
 }
-function validateGroundedCitations(answer: string, allowedSources: string[]): boolean {
+type CitationValidation = {
+  valid: boolean;
+  reason: 'valid' | 'no_citations' | 'unapproved_source' | 'uncited_line';
+  citation_count: number;
+  invalid_citation_count: number;
+  uncited_line_count: number;
+};
+
+function validateGroundedCitations(answer: string, allowedSources: string[]): CitationValidation {
   // Every citation must reference evidence that was included in this request.
   const citations = [...answer.matchAll(/\[Source:\s*([^\]]+)\]/gi)]
     .map((match) => match[1].trim());
-  if (!citations.length) return false;
   const allowed = new Set(allowedSources);
-  if (!citations.every((path) => allowed.has(path))) return false;
+  const invalidCitationCount = citations.filter((path) => !allowed.has(path)).length;
 
   // Require a source marker in every substantive paragraph and every explicit list item.
   // This cannot prove semantic entailment, but prevents a single citation from appearing to
   // support an otherwise entirely uncited answer.
   const blocks = answer.split(/\n\s*\n/).map((block) => block.trim()).filter(Boolean);
-  if (!blocks.length) return false;
+  let uncitedLineCount = 0;
   for (const block of blocks) {
     const lines = block.split('\n').map((line) => line.trim()).filter(Boolean);
     for (const line of lines) {
       if (/^#{1,6}\s/.test(line)) continue;
-      if (!/\[Source:\s*[^\]]+\]/i.test(line)) return false;
+      if (!/\[Source:\s*[^\]]+\]/i.test(line)) uncitedLineCount += 1;
     }
   }
-  return true;
+
+  let reason: CitationValidation['reason'] = 'valid';
+  if (!citations.length) reason = 'no_citations';
+  else if (invalidCitationCount > 0) reason = 'unapproved_source';
+  else if (uncitedLineCount > 0) reason = 'uncited_line';
+
+  return {
+    valid: reason === 'valid',
+    reason,
+    citation_count: citations.length,
+    invalid_citation_count: invalidCitationCount,
+    uncited_line_count: uncitedLineCount
+  };
 }
 
 function historyForPrompt(history: unknown): Array<{ role: 'user' | 'assistant'; content: string }> {
@@ -303,7 +322,7 @@ async function groqCompletion(question: string, context: string, history: Array<
   const system = [
     'You are Ask Sentinel, the monitoring-history assistant embedded in the ChangeSentinel regulatory-monitoring dashboard.',
     'Answer only from the retrieved repository evidence supplied in this request. The retrieved evidence is a bounded subset of the index, not the whole repository.',
-    'Every factual paragraph and every list item must carry an exact citation in the form [Source: repository/path]. Keep each bullet self-contained and cite it on the same line. Do not use Markdown tables; use individual cited bullets instead. Do not put facts on uncited continuation lines. Use only paths shown in the evidence headers; never invent a path, date, run ID, URL, count, alert, or source.',
+    'Every factual paragraph and every list item must carry an exact citation in the form [Source: path]. Keep each bullet self-contained and cite it on the same line. Do not use Markdown tables; use individual cited bullets instead. Do not put facts on uncited continuation lines. Evidence headers label the exact citation value as Source path: PATH; cite only that exact path and exclude the Document type label or any other suffix. For example, use [Source: data/report.json] when the header says Source path: data/report.json. Use only paths shown in the evidence headers; never invent a path, date, run ID, URL, count, alert, or source.',
     'If the evidence does not directly support the answer, state: "I cannot verify that from the indexed ChangeSentinel evidence available to this request." Briefly explain which specific fact is missing and do not infer or fill gaps from general knowledge.',
     'Conversation history is supplied only to resolve follow-up references. It is not evidence. Never repeat a factual claim from a prior assistant response unless the retrieved repository evidence in this request supports it.',
     'Distinguish configured active sources from inactive/archived sources even when historical URL registry entries remain. Distinguish real source changes from baseline migrations/extraction drift, superseded or false-positive alerts, and fetch/extraction failures. Keep current status separate from historical records.',
@@ -467,22 +486,58 @@ Deno.serve(async (req: Request) => {
       const answer = await groqCompletion(question, evidence.context, historyForPrompt(body.conversation));
       logStage('provider_complete', { answer_chars: answer.length });
       phase = 'citation_validation';
-      if (!validateGroundedCitations(answer, evidence.sources)) {
-        logStage('citation_rejected', { source_count: evidence.sources.length });
+      const citationValidation = validateGroundedCitations(answer, evidence.sources);
+      if (!citationValidation.valid) {
+        // Diagnostics are counts/reason codes only; never log the question or generated answer.
+        logStage('citation_rejected', {
+          source_count: evidence.sources.length,
+          reason: citationValidation.reason,
+          citation_count: citationValidation.citation_count,
+          invalid_citation_count: citationValidation.invalid_citation_count,
+          uncited_line_count: citationValidation.uncited_line_count
+        });
         return respond(req, {
           error: 'I could not verify the generated answer against the retrieved source citations. Please retry with a more specific question.',
+          error_code: 'citation_validation_failed',
+          citation_validation: {
+            reason: citationValidation.reason,
+            citation_count: citationValidation.citation_count,
+            invalid_citation_count: citationValidation.invalid_citation_count,
+            uncited_line_count: citationValidation.uncited_line_count
+          },
           remaining: quota.remaining,
           resets_at: nextUtcReset(),
           model: MODEL,
           indexed_commit: index.sha,
           context_sources: evidence.sources
-        }, 502);
+        }, 422);
       }
       return respond(req, { answer, remaining: quota.remaining, resets_at: nextUtcReset(), model: MODEL, indexed_commit: index.sha, context_sources: evidence.sources });
     } catch (error) {
+      // Keep provider diagnostics useful without logging raw provider bodies or answer/question text.
       const message = String((error as Error)?.message || 'Groq request failed.');
-      console.error(JSON.stringify({ event: 'ask_sentinel_error', phase, elapsed_ms: Date.now() - phaseStartedAt, error: message.slice(0, 260) }));
-      return respond(req, { error: 'Ask Sentinel could not complete the AI request. Please retry.', remaining: quota.remaining, resets_at: nextUtcReset() }, 502);
+      const statusMatch = message.match(/Groq could not answer this request \((\d{3})\)/);
+      const providerStatus = statusMatch ? Number(statusMatch[1]) : null;
+      const errorCode = providerStatus === 429
+        ? 'provider_rate_limited'
+        : providerStatus !== null && providerStatus >= 500
+          ? 'provider_unavailable'
+          : providerStatus !== null
+            ? 'provider_request_failed'
+            : /timeout|timed out|abort/i.test(message)
+              ? 'provider_timeout'
+              : 'provider_unavailable';
+      logStage('provider_failed', {
+        error_code: errorCode,
+        provider_status: providerStatus,
+        source_count: evidence.sources.length
+      });
+      return respond(req, {
+        error: 'Ask Sentinel could not complete the AI request. Please retry.',
+        error_code: errorCode,
+        remaining: quota.remaining,
+        resets_at: nextUtcReset()
+      }, 503);
     }
   } catch (error) {
     const message = String((error as Error)?.message || 'Ask Sentinel request failed.');
