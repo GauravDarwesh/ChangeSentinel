@@ -113,9 +113,9 @@ def fetch(
             # Resolve inside the retry loop: a transient resolver failure used to
             # fail the fetch immediately with no retry.
             validate_public_http_url(url, resolve_dns=True)
-            current_url = url
+            current_url = canonical(url)
             request_headers = dict(headers)
-            visited = {current_url}
+            visited = {canonical(current_url)}
             response = None
             for redirect_count in range(MAX_REDIRECTS + 1):
                 # The connection itself refuses non-public addresses, closing the
@@ -135,14 +135,14 @@ def fetch(
                 location = response.headers.get("location")
                 if not location:
                     raise ValueError(f"Redirect from {current_url} did not include a Location header")
-                target = urljoin(current_url, location)
+                target = canonical(urljoin(current_url, location))
                 enforce_scope(target)
                 validate_public_http_url(target, resolve_dns=True)
-                if target in visited:
+                if canonical(target) in visited:
                     raise ValueError(f"Redirect loop detected at {target}")
                 if redirect_count >= MAX_REDIRECTS:
                     raise ValueError(f"Exceeded {MAX_REDIRECTS} redirects for {url}")
-                visited.add(target)
+                visited.add(canonical(target))
                 current_url = target
                 # Validators apply to the original response, not an unrelated redirect.
                 request_headers = {"User-Agent": headers["User-Agent"]}

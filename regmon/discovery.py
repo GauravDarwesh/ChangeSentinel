@@ -158,8 +158,8 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
             validate_public_http_url(url, resolve_dns=True)
             if not in_scope(url, source):
                 raise ValueError(f"Discovery target is outside the configured monitor scope: {url}")
-            current_url = url
-            visited = {canonical(url)}
+            current_url = canonical(url)
+            visited = {canonical(current_url)}
             response = None
             for redirect_count in range(6):
                 with public_destinations_only():
