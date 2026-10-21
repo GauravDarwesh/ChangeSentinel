@@ -35,7 +35,13 @@ await new Promise(resolve => server.listen(0, "127.0.0.1", resolve));
 const base = "http://127.0.0.1:" + server.address().port + "/";
 
 const failures = [];
-const check = (condition, message) => { if (!condition) failures.push(message); console.log((condition ? "ok   " : "FAIL ") + message); };
+// In GitHub Actions each result is also an annotation, readable without the log.
+const annotate = (level, message) => { if (process.env.GITHUB_ACTIONS) console.log("::" + level + " title=Dashboard smoke::" + message.replace(/\r?\n/g, " ")); };
+const check = (condition, message) => {
+  if (!condition) failures.push(message);
+  console.log((condition ? "ok   " : "FAIL ") + message);
+  annotate(condition ? "notice" : "error", (condition ? "ok: " : "FAIL: ") + message);
+};
 
 const browser = await chromium.launch();
 async function openDashboard(viewport) {
@@ -134,6 +140,8 @@ try {
   await phone.page.screenshot({ path: path.join(OUT, "overview-phone.png") });
   phone.errors.forEach(message => check(false, message));
   await phone.context.close();
+} catch (error) {
+  check(false, "the smoke test itself failed: " + String(error && error.stack || error).slice(0, 600));
 } finally {
   await browser.close();
   server.close();
