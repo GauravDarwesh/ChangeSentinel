@@ -58,9 +58,17 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertTrue(all(len(c) <= indexer.CHUNK_CHARS for c in chunks))
         chunks = indexer.build_chunks(ROOT, "0" * 40)
         paths = {c["path"] for c in chunks}
-        for required in ("__repo_overview__", "__current_report__", "__current_inventory__", "__recent_history__", "data/report.json"):
+        for required in ("__repo_overview__", "__current_report__", "__current_scope__", "__current_inventory__", "__recent_history__", "data/report.json"):
             with self.subTest(required=required):
                 self.assertIn(required, paths)
+        scope = "\n".join(c["content"] for c in chunks if c["path"] == "__current_scope__")
+        self.assertIn("fed-reporting-forms-pilot", scope)
+        self.assertIn("fed-reporting-forms-detail-pilot", scope)
+        self.assertIn("manual-f1df3c7d3e94", scope)
+        self.assertIn("eba-full-site", scope)
+        self.assertIn("INACTIVE / ARCHIVED - NOT CURRENTLY MONITORED", scope)
+        self.assertIn("eba-consumer-protection", scope)
+        self.assertIn("NOT PRESENT IN config/sources.json", scope)
         keys = [(c["path"], c["chunk_index"]) for c in chunks]
         self.assertEqual(len(keys), len(set(keys)))
 
@@ -118,6 +126,81 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn("function askSentinelMarkdown(", js)
         self.assertIn("askSentinelEscapedText(", js)
         self.assertIn("ask-sentinel-sources", js)
+
+
+    def test_grounding_uses_question_relevant_evidence_not_unconditional_core_docs(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("type AskSentinelEvidence = { context: string; sources: string[] };", backend)
+        self.assertIn("const searchResults = docs", backend)
+        self.assertIn(".filter((doc: any) => doc.is_core !== true)", backend)
+        self.assertIn("return { context: context.join", backend)
+        self.assertNotIn("for (const d of core) addContext", backend)
+
+    def test_answers_require_citations_to_selected_evidence(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("function validateGroundedCitations(answer: string, allowedSources: string[]): boolean", backend)
+        self.assertIn("validateGroundedCitations(answer, evidence.sources)", backend)
+        self.assertIn("context_sources: evidence.sources", backend)
+        self.assertIn("temperature: 0,", backend)
+        self.assertIn("Conversation history is supplied only to resolve follow-up references. It is not evidence.", backend)
+
+    def test_backend_emits_phase_diagnostics_without_request_content(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("event: 'ask_sentinel_stage'", backend)
+        self.assertIn("event: 'ask_sentinel_error'", backend)
+        self.assertIn("phase, elapsed_ms:", backend)
+        self.assertNotIn("console.info(question", backend)
+        self.assertNotIn("console.info(answer", backend)
+
+
+    def test_citation_validator_accepts_only_paths_in_supplied_evidence(self):
+        import re
+
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("function validateGroundedCitations(answer: string, allowedSources: string[]): boolean {", backend)
+        citation_pattern = re.compile(r"\[Source:\s*([^\]]+)\]", re.IGNORECASE)
+
+        def validate(answer, allowed_sources):
+            citations = [match.group(1).strip() for match in citation_pattern.finditer(answer)]
+            return bool(citations) and all(path in set(allowed_sources) for path in citations)
+
+        self.assertTrue(validate("A fact. [Source: data/report.json]", ["data/report.json"]))
+        self.assertFalse(validate("A fact with no citation.", ["data/report.json"]))
+        self.assertFalse(validate("A fact. [Source: data/made-up.json]", ["data/report.json"]))
+        self.assertFalse(validate("A fact. [Source: data/report.json] [Source: invented.json]", ["data/report.json"]))
+        self.assertIn("if (!citations.every((path) => allowed.has(path))) return false;", backend)
+
+    def test_run_and_evidence_ids_are_pinned_to_exact_indexed_paths(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("function exactRunId(question: string): string | null", backend)
+        self.assertIn("function exactEvidencePath(question: string): string | null", backend)
+        self.assertIn("'data/history/' + requestedRunId + '.json'", backend)
+        self.assertIn("fetchDocsByPath(requestedEvidencePath)", backend)
+        self.assertIn("exact_run_not_found", backend)
+        self.assertIn("No answer was generated from another run.", backend)
+
+    def test_operational_retrieval_excludes_manifest_and_unrelated_snapshots(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("doc.doc_type !== 'repository file manifest'", backend)
+        self.assertIn("!asksInventory(question) || doc.path !== '__current_inventory__'", backend)
+        self.assertIn("!['source code or workflow', 'project documentation', 'repository file', 'extracted page snapshot'].includes", backend)
+
+    def test_every_answer_line_requires_a_valid_selected_source_citation(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("Require a source marker in every substantive paragraph and every explicit list item.", backend)
+        self.assertIn("if (!/\\[Source:", backend)
+
+
+    def test_grounding_errors_use_http_errors_the_existing_frontend_displays(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        js = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        self.assertIn("No answer was generated from another run.'", backend)
+        self.assertIn("I cannot verify that evidence file in the indexed committed records.' }, 404)", backend)
+        self.assertIn("supporting indexed evidence for this question.", backend)
+        self.assertIn("}, 422);", backend)
+        self.assertIn("could not verify the generated answer against the retrieved source citations.", backend)
+        self.assertIn("if (!response.ok)", js)
+        self.assertIn("typeof payload.error === \"string\" ? payload.error", js)
 
 
 if __name__ == "__main__":

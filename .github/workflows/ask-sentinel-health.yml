@@ -8,6 +8,7 @@ on:
       - "dashboard.js"
       - "supabase/functions/ask-sentinel/**"
       - "supabase/migrations/**"
+      - "scripts/ask_sentinel_live_eval.py"
   push:
     branches:
       - main
@@ -17,6 +18,7 @@ on:
       - "dashboard.js"
       - "supabase/functions/ask-sentinel/**"
       - "supabase/migrations/**"
+      - "scripts/ask_sentinel_live_eval.py"
   workflow_dispatch:
 
 permissions:
@@ -142,3 +144,17 @@ jobs:
           print("Groq model: " + str(answer.get("model")) + "; remaining quota: " + str(answer.get("remaining")))
           print("Answer length: " + str(len(text)) + " characters; answer text omitted from CI logs.")
           PY
+
+      - name: Check out dashboard data and grounding evaluator
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - name: Evaluate live grounding against current dashboard records
+        # Pull requests cannot change the already-deployed Edge Function, so this is a baseline
+        # report until the fix is deployed. On main, treat the live evaluation as a gate.
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
+        env:
+          ASK_SENTINEL_URL: https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel
+          SUPABASE_PUBLISHABLE_KEY: sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV
+        run: python scripts/ask_sentinel_live_eval.py

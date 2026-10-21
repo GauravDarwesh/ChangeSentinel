@@ -129,6 +129,53 @@ def current_inventory(config: dict, latest: dict) -> str:
     return "\n".join(lines)
 
 
+def current_scope_summary(config: dict, latest: dict) -> str:
+    """Compact, authoritative scope summary for Ask Sentinel questions about monitoring scope.
+
+    Unlike current_inventory(), this intentionally prioritizes configured active sources
+    and lists URLs only for those sources. Old registry rows are summarized as inactive/stale
+    so they cannot crowd current scope facts out of the model's context window.
+    """
+    configured = {str(s.get("id")): s for s in config.get("sources", [])}
+    registries = latest.get("sources") or {}
+    lines = [
+        "AUTHORITATIVE CURRENT MONITORING SCOPE",
+        "Source status comes from config/sources.json active=true/false, not from old registry rows.",
+        "Current URL records below are listed only for configured active sources.",
+    ]
+    for source_id in sorted(configured):
+        source = configured[source_id]
+        registry = registries.get(source_id) or {}
+        active = source.get("active") is True
+        status = "ACTIVE - INCLUDED IN CURRENT MONITORING SCOPE" if active else "INACTIVE / ARCHIVED - NOT CURRENTLY MONITORED"
+        lines += [
+            "",
+            f"SOURCE {source_id} | {source.get('name', source_id)} | {status}",
+            f"regulator={source.get('regulator', 'unknown')} | configured_seed_urls={len(source.get('seed_urls') or [])} | configured_allowed_urls={len(source.get('allowed_urls') or [])} | saved_registry_entries={len(registry)}",
+        ]
+        if not active:
+            continue
+        for key, page in sorted(registry.items()):
+            page = page or {}
+            errors = "; ".join(
+                str(value) for value in (page.get("fetch_error"), page.get("extraction_error")) if value
+            ) or "none recorded"
+            lines.append(
+                f"- url_id={page.get('url_id', key)} | url={page.get('canonical_url', 'URL unavailable')}"
+                f" | last_checked={page.get('last_checked', 'unknown')} | HTTP={page.get('http_status', 'unknown')}"
+                f" | errors={errors} | evidence={page.get('evidence_location') or 'none'}"
+            )
+
+    stale_ids = sorted(set(registries) - set(configured))
+    if stale_ids:
+        lines += ["", "LEGACY / UNCONFIGURED REGISTRY IDS - NOT ACTIVE CONFIGURED SOURCES"]
+        for source_id in stale_ids:
+            lines.append(
+                f"- {source_id} | NOT PRESENT IN config/sources.json | registry entries={len(registries.get(source_id) or {})} | do not count as active"
+            )
+    return "\n".join(lines)
+
+
 def current_report(report: dict) -> str:
     events = [
         {k: e.get(k) for k in ("event_id", "event_type", "source_id", "url", "timestamp", "evidence_location", "relevance")}
@@ -197,6 +244,7 @@ def build_chunks(root: Path, sha: str) -> list[dict]:
     docs: list[tuple[str, str, str, bool]] = [
         ("__repo_overview__", overview(sha, files, indexed, config, latest, report, history), "repository overview", True),
         ("__current_report__", current_report(report), "latest monitoring report", True),
+        ("__current_scope__", current_scope_summary(config, latest), "authoritative current monitoring scope", False),
         ("__current_inventory__", current_inventory(config, latest), "current monitored URL inventory", False),
         ("__recent_history__", history_summary(history), "recent run history", False),
         ("__repository_manifest__", "\n".join(f"{f} | {(root / f).stat().st_size} bytes | {doc_type(f)}" for f in indexed), "repository file manifest", False),
