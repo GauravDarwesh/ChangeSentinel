@@ -132,7 +132,7 @@ class TestAskSentinelContract(unittest.TestCase):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
         self.assertIn("type AskSentinelEvidence = { context: string; sources: string[] };", backend)
         self.assertIn("const searchResults = docs", backend)
-        self.assertIn(".filter((d: any) => d.is_core !== true)", backend)
+        self.assertIn(".filter((doc: any) => doc.is_core !== true)", backend)
         self.assertIn("return { context: context.join", backend)
         self.assertNotIn("for (const d of core) addContext", backend)
 
