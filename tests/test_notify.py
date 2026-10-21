@@ -74,8 +74,40 @@ class TestNotifications(unittest.TestCase):
             "priority":4,"tags":["warning"]
         },"topic","https://ntfy.sh","https://dash")
         kwargs=mock_post.call_args.kwargs
-        self.assertEqual(kwargs["json"]["click"],"https://dash")
+        # The alert opens its own change, not the dashboard's front page.
+        self.assertEqual(kwargs["json"]["click"],"https://dash#changes/x")
         self.assertIn("Impact: I",kwargs["json"]["message"])
+
+    def test_links_follow_the_change_behind_follow_ups_and_episodes(self):
+        from regmon.notify import dashboard_link
+        base = "https://dash/"
+        self.assertEqual(dashboard_link({"kind": "AI_ASSESSMENT", "event_id": "e1#ai", "source_event_id": "e1"}, base), base + "#changes/e1")
+        self.assertEqual(dashboard_link({"kind": "FETCH_ERROR", "event_id": "op-9", "source_event_id": "e2"}, base), base + "#changes/e2")
+        self.assertEqual(dashboard_link({"kind": "REMOVAL_HELD", "event_id": "removal-guard-x"}, base), base + "#runs")
+        self.assertEqual(dashboard_link({"kind": "TEST", "event_id": "test-1"}, base), base)
+        self.assertEqual(dashboard_link({"kind": "CHANGED_URL", "event_id": "a/b"}, base + "#overview"), base + "#changes/a%2Fb")
+        self.assertEqual(dashboard_link({"kind": "CHANGED_URL", "event_id": "x"}, ""), "")
+
+    @patch("regmon.notify.requests.post")
+    def test_relevant_change_alert_states_its_date_and_action(self, mock_post):
+        mock_post.return_value.raise_for_status.return_value = None
+        report = {"ai_results": [{"event_id": "e", "event": "CHANGED_URL", "url": "https://x.gov/f", "ai": {"status": "ok", "analysis": {
+            "relevant": True, "topic": "Deadline", "change_type": "deadline", "summary": "Due date moved", "impact": "Earlier filing",
+            "effective_date": "March 31, 2027", "affected_scope": "Filers", "actions": "Update the filing calendar", "reason": "Diff"}}}]}
+        notification = build_notifications(report)[0]
+        publish(notification, "topic", "https://ntfy.sh", "https://dash")
+        message = mock_post.call_args.kwargs["json"]["message"]
+        self.assertIn("Effective: March 31, 2027", message)
+        self.assertIn("Suggested action: Update the filing calendar", message)
+
+    @patch("regmon.notify.requests.post")
+    def test_not_stated_fields_are_left_out(self, mock_post):
+        mock_post.return_value.raise_for_status.return_value = None
+        publish({"event_id": "x", "kind": "CHANGED_URL", "topic": "T", "summary": "S", "reason": "R", "impact": "I",
+                 "effective_date": "Not stated", "actions": "", "priority": 4, "tags": []}, "t", "https://ntfy.sh", "")
+        message = mock_post.call_args.kwargs["json"]["message"]
+        self.assertNotIn("Effective:", message)
+        self.assertNotIn("click", mock_post.call_args.kwargs["json"])
 
     def test_discovery_degraded_becomes_operational_alert(self):
         report = {"discovery": [{"source_id": "fed-pilot", "state": "DEGRADED", "unresolved_failures": 3}]}

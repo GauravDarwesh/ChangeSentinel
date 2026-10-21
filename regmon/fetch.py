@@ -10,6 +10,7 @@ from urllib.parse import urljoin, urlsplit
 
 from regmon.discovery import canonical
 
+from regmon.safe_http import public_destinations_only
 from regmon.security import REDIRECT_STATUSES, USER_AGENT, DNSResolutionError, retry_delay, validate_public_http_url
 
 RETRYABLE = {408, 425, 429, 500, 502, 503, 504}
@@ -117,14 +118,17 @@ def fetch(
             visited = {current_url}
             response = None
             for redirect_count in range(MAX_REDIRECTS + 1):
-                response = requests.get(
-                    current_url,
-                    timeout=timeout,
-                    headers=request_headers,
-                    allow_redirects=False,
-                    # Stream when a size cap applies so the body can be cut off.
-                    stream=bool(max_bytes),
-                )
+                # The connection itself refuses non-public addresses, closing the
+                # gap between the DNS preflight above and the socket (rebinding).
+                with public_destinations_only():
+                    response = requests.get(
+                        current_url,
+                        timeout=timeout,
+                        headers=request_headers,
+                        allow_redirects=False,
+                        # Stream when a size cap applies so the body can be cut off.
+                        stream=bool(max_bytes),
+                    )
                 if response.status_code not in REDIRECT_STATUSES:
                     break
                 response.close()
@@ -160,6 +164,8 @@ def fetch(
         if response is None:
             raise RuntimeError(f"No response received for {url}")
         if response.status_code == 304:
+            # A streamed response holds its connection until closed.
+            response.close()
             return FetchResult(
                 status_code=304,
                 content_type=response.headers.get("content-type", ""),
