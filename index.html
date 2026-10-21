@@ -1573,7 +1573,6 @@ select.field-input { appearance: auto; }
         for (let i = 0; i < Math.min(n, 28); i++) html += '<i style="--k:' + i + '"></i>';
         leds.innerHTML = html + '<i class="cs-key-caret"></i>';
         // Each LED represents one password character; align the caret after the last one.
-        const led = leds.querySelector("i:not(.cs-key-caret)");
         const ledWidth = 9, ledGap = 4, caretGap = 2;
         const caretOffset = n ? Math.min(n, 28) * (ledWidth + ledGap) - ledGap + caretGap : 0;
         key.style.setProperty("--typed-width", caretOffset + "px");
