@@ -17,6 +17,10 @@ on:
       - "data/scout/latest.json"
       - "data/scout/review.json"
       - "config/scout.json"
+      - "config/lineage.json"
+      - "data/calendar.json"
+      - "data/calendar.ics"
+      - "data/reviews/ledger.json"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -59,6 +63,13 @@ jobs:
           cp data/scout/latest.json site/data/scout/latest.json
           cp data/scout/review.json site/data/scout/review.json
           cp config/scout.json site/config/scout.json
+          cp config/lineage.json site/config/lineage.json
+          # The regulatory calendar appears after the first scan that builds it.
+          # The .ics is served from Pages so calendar apps can subscribe to it.
+          mkdir -p site/data/reviews
+          for f in data/calendar.json data/calendar.ics data/reviews/ledger.json; do
+            if [ -f "$f" ]; then cp "$f" "site/$f"; fi
+          done
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: site
