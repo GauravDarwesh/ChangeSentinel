@@ -1,5 +1,21 @@
 [
  {
+  "finished_at": "2026-10-21T09:21:23Z",
+  "regulators": [
+   {
+    "id": "fed",
+    "new": 0,
+    "observed": 125,
+    "requests": 6,
+    "status": "DEGRADED"
+   }
+  ],
+  "started_at": "2026-10-21T09:21:08Z",
+  "status": "DEGRADED",
+  "sweep_id": "20261021T092108Z-51e7c7",
+  "trigger": "manual"
+ },
+ {
   "finished_at": "2026-10-21T09:06:28Z",
   "regulators": [
    {

@@ -1,5 +1,5 @@
 {
-"channels":{"fed-bankinginfo":{"baselined_at":"2026-10-21T09:05:09Z","last_success":"2026-10-21T09:05:09Z"},"fed-collections-review":{"baselined_at":"2026-10-21T09:05:09Z","last_success":"2026-10-21T09:05:09Z"},"fed-press-bcreg":{"baselined_at":"2026-10-21T09:05:09Z","last_success":"2026-10-21T09:05:09Z"},"fed-press-enforcement":{"baselined_at":"2026-10-21T09:05:09Z","last_success":"2026-10-21T09:05:09Z"}},
+"channels":{"fed-bankinginfo":{"baselined_at":"2026-10-21T09:05:09Z","last_success":"2026-10-21T09:21:08Z"},"fed-collections-review":{"baselined_at":"2026-10-21T09:05:09Z","last_success":"2026-10-21T09:21:08Z"},"fed-press-bcreg":{"baselined_at":"2026-10-21T09:05:09Z","last_success":"2026-10-21T09:21:08Z"},"fed-press-enforcement":{"baselined_at":"2026-10-21T09:05:09Z","last_success":"2026-10-21T09:21:08Z"},"fed-regulatory-reform-rss":{}},
 "regulator_id":"fed",
 "schema_version":1,
 "candidates":{

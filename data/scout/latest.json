@@ -1,5 +1,5 @@
 {
- "finished_at": "2026-10-21T09:06:28Z",
+ "finished_at": "2026-10-21T09:21:23Z",
  "objective": {
   "description": "New regulator publications a compliance reviewer may want ChangeSentinel to monitor: rules, consultations, guidance, technical standards, reporting forms and instructions, supervisory letters and notices, Q&A, enforcement actions, decisions and opinions.",
   "id": "regulatory-publications-v1"
@@ -66,10 +66,25 @@
      "status": "ok",
      "type": "listing",
      "url": "https://www.federalreserve.gov/apps/reportingforms/review"
+    },
+    {
+     "error": "The feed returned no items",
+     "id": "fed-regulatory-reform-rss",
+     "items": 0,
+     "label": "Regulatory Reform RSS",
+     "new": 0,
+     "note": "",
+     "observed": 0,
+     "out_of_scope": 0,
+     "pages_read": 1,
+     "required": true,
+     "status": "failed",
+     "type": "feed",
+     "url": "https://www.federalreserve.gov/feeds/regreform.xml"
     }
    ],
    "counts": {
-    "baseline_added": 125,
+    "baseline_added": 0,
     "enriched": 0,
     "new": 0,
     "new_irrelevant": 0,
@@ -79,7 +94,7 @@
     "registry_size": 125,
     "translations_linked": 0
    },
-   "finished_at": "2026-10-21T09:05:21Z",
+   "finished_at": "2026-10-21T09:21:23Z",
    "id": "fed",
    "jurisdiction": "United States",
    "known_gaps": [
@@ -88,18 +103,18 @@
    "name": "Board of Governors of the Federal Reserve System",
    "region": "NAM",
    "request_budget": 60,
-   "requests": 5,
+   "requests": 6,
    "robots": {
     "www.federalreserve.gov": {
      "crawl_delay": null,
      "status": "unavailable"
     }
    },
-   "seconds": 12.5,
+   "seconds": 15.2,
    "short_name": "Federal Reserve",
-   "status": "COMPLETE",
-   "status_reason": "Every declared channel was read as planned",
-   "sweep_id": "20261021T090509Z-575d29",
+   "status": "DEGRADED",
+   "status_reason": "1 of 5 required channels could not be read",
+   "sweep_id": "20261021T092108Z-51e7c7",
    "time_budget_seconds": 900.0
   },
   {
@@ -448,18 +463,18 @@
   }
  ],
  "schema_version": 1,
- "scope": "all",
- "started_at": "2026-10-21T09:05:09Z",
- "status": "COMPLETE",
- "sweep_id": "20261021T090509Z-575d29",
+ "scope": "fed",
+ "started_at": "2026-10-21T09:21:08Z",
+ "status": "DEGRADED",
+ "sweep_id": "20261021T092108Z-51e7c7",
  "totals": {
-  "baseline_added": 4386,
+  "baseline_added": 0,
   "new": 0,
   "new_irrelevant": 0,
   "new_relevant": 0,
   "new_uncertain": 0,
-  "observed": 4405,
-  "requests": 25
+  "observed": 125,
+  "requests": 6
  },
  "trigger": "manual"
 }
