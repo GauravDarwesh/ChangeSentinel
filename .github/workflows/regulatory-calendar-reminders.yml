@@ -1,0 +1,39 @@
+name: Cadence calendar reminders
+
+on:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+# Prevent two reminder sweeps from sending the same mail concurrently.
+concurrency:
+  group: cadence-calendar-reminders
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      CALENDAR_API_URL: https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/calendar-api
+      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+      REGULATORY_CALENDAR_CRON_TOKEN: ${{ secrets.REGULATORY_CALENDAR_CRON_TOKEN }}
+    steps:
+      - name: Send due regulatory reminders
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${SUPABASE_PUBLISHABLE_KEY:-}" || -z "${REGULATORY_CALENDAR_CRON_TOKEN:-}" ]]; then
+            echo "Cadence reminder secrets are not configured yet; skipping this run."
+            exit 0
+          fi
+          curl --fail-with-body --silent --show-error --max-time 45 \
+            -X POST "$CALENDAR_API_URL" \
+            -H "apikey: $SUPABASE_PUBLISHABLE_KEY" \
+            -H "Content-Type: application/json" \
+            -H "x-calendar-cron-token: $REGULATORY_CALENDAR_CRON_TOKEN" \
+            --data '{"action":"send-reminders"}'
+          echo
