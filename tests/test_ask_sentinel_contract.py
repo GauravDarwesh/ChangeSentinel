@@ -188,7 +188,6 @@ class TestAskSentinelContract(unittest.TestCase):
     def test_every_answer_line_requires_a_valid_selected_source_citation(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
         self.assertIn("Require a source marker in every substantive paragraph and every explicit list item.", backend)
-        self.assertIn("if (!allowed.has(path))", backend) if False else None
         self.assertIn("if (!/\\[Source:", backend)
 
 
