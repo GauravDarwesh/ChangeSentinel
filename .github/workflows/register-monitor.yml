@@ -29,6 +29,16 @@ jobs:
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      # register_monitor imports bs4; keep the full pinned project dependency
+      # set available rather than relying on whichever libraries the runner has.
+      - name: Install registration dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements.txt
+
+      - name: Preflight registration dependencies
+        run: python -c "from bs4 import BeautifulSoup; from regmon.register_monitor import register_request; print('Monitor registration imports OK')"
 
       - name: Register URL and commit source configuration
         id: register
@@ -117,4 +127,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
-          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "Automatic registration failed. Check the Register Dashboard Monitor run logs, correct the URL if needed, and reopen a new request. Only the repository owner can register URLs."
+          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "Automatic registration failed. Check the Register Dashboard Monitor run logs for the failing step. The workflow now checks its Python imports before registration; only correct the URL if logs identify it as invalid. Only the repository owner can register URLs."
