@@ -6,7 +6,7 @@ import time
 from dataclasses import dataclass
 
 import requests
-from urllib.parse import urljoin, urlsplit, urlunsplit, urlunsplit
+from urllib.parse import urljoin, urlsplit, urlunsplit
 
 from regmon.discovery import canonical
 
