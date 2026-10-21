@@ -732,7 +732,7 @@
 .nav-count.is-fresh { color: var(--state-new); }
 
 /* Scout's Notion-style avatar replaces only the Scout navigation marker. */
-.nav-button-scout::before { content: none; }
+.nav-button.nav-button-scout::before { content: none; }
 .nav-button-scout .scout-avatar-wrap {
   position: absolute; left: -7px; top: 50%; z-index: 1;
   display: block; width: 22px; height: 22px; margin: 0;
@@ -762,7 +762,7 @@
 @keyframes scout-nod { 0%, 100% { transform: translateY(0) rotate(0); } 28%, 64% { transform: translateY(1px) rotate(2deg); } }
 @media (max-width: 980px) {
   .nav-button-scout .scout-avatar-wrap { left: 50%; top: 5px; width: 17px; height: 17px; transform: translateX(-50%); }
-  .nav-button-scout::before { content: none; }
+  .nav-button.nav-button-scout::before { content: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .scout-avatar-wrap *, .scout-avatar-wrap { animation: none !important; transition: none !important; }
