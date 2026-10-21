@@ -2711,7 +2711,7 @@ function exportCadenceCalendar() {
     const day = event.kind === "manual" ? event.occurrenceDate : event.date;
     const nextDay = cadenceAddDays(day, 1).replace(/-/g, "");
     const entry = event.entry || {};
-    lines.push("BEGIN:VEVENT", "UID:" + cadenceIcsEscape((event.kind === "manual" ? event.entryId : "derived-" + event.eventId) + "-" + day + "@changesentinel", "DTSTAMP:" + new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, ""), "DTSTART;VALUE=DATE:" + day.replace(/-/g, ""), "DTEND;VALUE=DATE:" + nextDay, "SUMMARY:" + cadenceIcsEscape(event.title), "DESCRIPTION:" + cadenceIcsEscape(entry.description || (event.kind === "derived" ? "Detected by ChangeSentinel" : cadenceTag(event.category))), ...(event.sourceUrl ? ["URL:" + String(event.sourceUrl).replace(/[\r\n]/g, "")] : []), "END:VEVENT");
+    lines.push("BEGIN:VEVENT", "UID:" + cadenceIcsEscape((event.kind === "manual" ? event.entryId : "derived-" + event.eventId) + "-" + day + "@changesentinel"), "DTSTAMP:" + new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, ""), "DTSTART;VALUE=DATE:" + day.replace(/-/g, ""), "DTEND;VALUE=DATE:" + nextDay, "SUMMARY:" + cadenceIcsEscape(event.title), "DESCRIPTION:" + cadenceIcsEscape(entry.description || (event.kind === "derived" ? "Detected by ChangeSentinel" : cadenceTag(event.category))), ...(event.sourceUrl ? ["URL:" + String(event.sourceUrl).replace(/[\r\n]/g, "")] : []), "END:VEVENT");
   });
   lines.push("END:VCALENDAR");
   downloadTextFile("cadence-regulatory-calendar.ics", "text/calendar;charset=utf-8", lines.join("\r\n") + "\r\n");
