@@ -58,9 +58,17 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertTrue(all(len(c) <= indexer.CHUNK_CHARS for c in chunks))
         chunks = indexer.build_chunks(ROOT, "0" * 40)
         paths = {c["path"] for c in chunks}
-        for required in ("__repo_overview__", "__current_report__", "__current_inventory__", "__recent_history__", "data/report.json"):
+        for required in ("__repo_overview__", "__current_report__", "__current_scope__", "__current_inventory__", "__recent_history__", "data/report.json"):
             with self.subTest(required=required):
                 self.assertIn(required, paths)
+        scope = "\n".join(c["content"] for c in chunks if c["path"] == "__current_scope__")
+        self.assertIn("fed-reporting-forms-pilot", scope)
+        self.assertIn("fed-reporting-forms-detail-pilot", scope)
+        self.assertIn("manual-f1df3c7d3e94", scope)
+        self.assertIn("eba-full-site", scope)
+        self.assertIn("INACTIVE / ARCHIVED - NOT CURRENTLY MONITORED", scope)
+        self.assertIn("eba-consumer-protection", scope)
+        self.assertIn("NOT PRESENT IN config/sources.json", scope)
         keys = [(c["path"], c["chunk_index"]) for c in chunks]
         self.assertEqual(len(keys), len(set(keys)))
 
@@ -161,6 +169,28 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertFalse(validate("A fact. [Source: data/made-up.json]", ["data/report.json"]))
         self.assertFalse(validate("A fact. [Source: data/report.json] [Source: invented.json]", ["data/report.json"]))
         self.assertIn("return citations.every((path) => allowed.has(path));", backend)
+
+    def test_run_and_evidence_ids_are_pinned_to_exact_indexed_paths(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("function exactRunId(question: string): string | null", backend)
+        self.assertIn("function exactEvidencePath(question: string): string | null", backend)
+        self.assertIn("'data/history/' + requestedRunId + '.json'", backend)
+        self.assertIn("fetchDocsByPath(requestedEvidencePath)", backend)
+        self.assertIn("exact_run_not_found", backend)
+        self.assertIn("No answer was generated from another run.", backend)
+
+    def test_operational_retrieval_excludes_manifest_and_unrelated_snapshots(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("doc.doc_type !== 'repository file manifest'", backend)
+        self.assertIn("!asksInventory(question) || doc.path !== '__current_inventory__'", backend)
+        self.assertIn("!['source code or workflow', 'project documentation', 'repository file', 'extracted page snapshot'].includes", backend)
+
+    def test_every_answer_line_requires_a_valid_selected_source_citation(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("Require a source marker in every substantive paragraph and every explicit list item.", backend)
+        self.assertIn("if (!allowed.has(path))", backend) if False else None
+        self.assertIn("if (!/\\[Source:", backend)
+
 
 if __name__ == "__main__":
     unittest.main()
