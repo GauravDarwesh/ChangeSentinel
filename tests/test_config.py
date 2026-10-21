@@ -56,6 +56,9 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(source.seed_urls, (expected,))
         self.assertEqual(source.allowed_urls, (expected,))
         self.assertTrue(source.allowed_prefixes[0].startswith("https://www.frbservices.org/"))
+        # This source may need to revalidate its saved inventory after an interrupted
+        # run. A one-page slice is exhausted by recovery before the baseline can be saved.
+        self.assertGreaterEqual(source.discovery_max_pages_per_slice, 10)
 
     def test_eba_sources_are_inactive_and_federal_reserve_pilot_is_bounded(self):
         _, sources = load_config(DEFAULT_CONFIG_PATH)
