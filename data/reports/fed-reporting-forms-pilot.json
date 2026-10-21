@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261021T023631Z-9daf4746",
-  "generated_at": "2026-10-21T02:36:31.991364+00:00",
+  "run_id": "20261021T042545Z-0c27c4e4",
+  "generated_at": "2026-10-21T04:25:45.993865+00:00",
   "source": {
     "id": "fed-reporting-forms-pilot",
     "name": "Federal Reserve \u2014 Reporting Forms Pilot (Exact URL Allowlist)",
@@ -90,6 +90,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "39533795876"
+  "trigger": "scheduled",
+  "workflow_run_id": "39543789505"
 }
