@@ -84,7 +84,7 @@ jobs:
           from urllib.parse import urljoin
 
           from regmon.config import SourceConfig
-          from regmon.discovery import in_scope
+          from regmon.discovery import in_scope, _redirect_key
           from regmon.safe_http import public_destinations_only
           from regmon.security import REDIRECT_STATUSES, USER_AGENT, validate_public_http_url
 
@@ -107,7 +107,7 @@ jobs:
               for url in source.seed_urls:
                   try:
                       current_url = url
-                      visited = {current_url}
+                      visited = {_redirect_key(current_url)}
                       validate_public_http_url(current_url, resolve_dns=True)
                       response = None
                       for redirect_count in range(6):
@@ -135,11 +135,12 @@ jobs:
                               raise ValueError(
                                   f"Redirect target is outside configured monitor scope: {target}"
                               )
-                          if target in visited:
+                          target_key = _redirect_key(target)
+                          if target_key in visited:
                               raise ValueError(f"Redirect loop detected at {target}")
                           if redirect_count >= 5:
                               raise ValueError("Exceeded 5 redirects during preflight")
-                          visited.add(target)
+                          visited.add(target_key)
                           current_url = target
 
                       if response is None:
