@@ -2967,10 +2967,24 @@ function loadPdfJs() {
   }
   return pdfjsPromise;
 }
-function openPdf(lib, bytes) {
+let releasingPdfs = Promise.resolve();
+async function openPdf(lib, bytes) {
+  // A document being released still holds the shared worker port; opening the
+  // next one before that finishes makes pdf.js refuse ("worker is being destroyed").
+  await releasingPdfs;
   // isEvalSupported is the documented CVE-2024-4367 mitigation; patched
   // releases ignore it, and it keeps any future downgrade safe.
   return lib.getDocument({ data: bytes, isEvalSupported: false, enableXfa: false }).promise;
+}
+// pdf.js 5+ releases a document through its loading task (older releases had
+// PDFDocumentProxy.destroy). The shared worker itself stays up for the next one.
+function releasePdf(doc) {
+  try {
+    const task = doc && doc.loadingTask;
+    return Promise.resolve(task && task.destroy ? task.destroy() : doc && doc.destroy ? doc.destroy() : null).catch(() => {});
+  } catch (_) {
+    return Promise.resolve();
+  }
 }
 // Each comparison owns its PDF documents and lazy-render observer; they are
 // released as soon as another comparison (or a refresh) replaces it.
@@ -2978,7 +2992,7 @@ function disposeCompare() {
   const previous = activeCompare;
   activeCompare = { docs: [], observer: null };
   if (previous.observer) previous.observer.disconnect();
-  previous.docs.forEach(doc => { try { doc.destroy(); } catch (_) {} });
+  if (previous.docs.length) releasingPdfs = Promise.all([releasingPdfs].concat(previous.docs.map(releasePdf))).then(() => {});
 }
 function compareSources(evidence) {
   const before = (evidence && evidence.before) || {};

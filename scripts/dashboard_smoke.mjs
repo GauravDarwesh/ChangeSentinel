@@ -84,7 +84,7 @@ try {
       await pdfPage.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
       const text = await pdfPage.getTextContent();
       const pages = doc.numPages;
-      await doc.destroy();
+      await releasePdf(doc);
       return { version: lib.version, pages, items: text.items.length };
     } catch (error) {
       return { error: String(error && error.message || error) };

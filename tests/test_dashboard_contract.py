@@ -471,7 +471,8 @@ class TestThirdPartyScripts(unittest.TestCase):
     def test_compare_documents_are_released(self):
         js = read("dashboard.js")
         self.assertIn("function disposeCompare()", js)
-        self.assertIn("doc.destroy()", js)
+        self.assertIn("task.destroy()", js)
+        self.assertIn("await releasingPdfs;", js)
         self.assertIn("activeCompare.observer = observer;", js)
 
 
