@@ -138,7 +138,7 @@ class TestAskSentinelContract(unittest.TestCase):
 
     def test_answers_require_citations_to_selected_evidence(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
-        self.assertIn("function validateGroundedCitations(answer: string, allowedSources: string[]): boolean", backend)
+        self.assertIn("function validateGroundedCitations(answer: string, allowedSources: string[]): CitationValidation", backend)
         self.assertIn("validateGroundedCitations(answer, evidence.sources)", backend)
         self.assertIn("context_sources: evidence.sources", backend)
         self.assertIn("temperature: 0,", backend)
@@ -157,7 +157,7 @@ class TestAskSentinelContract(unittest.TestCase):
         import re
 
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
-        self.assertIn("function validateGroundedCitations(answer: string, allowedSources: string[]): boolean {", backend)
+        self.assertIn("function validateGroundedCitations(answer: string, allowedSources: string[]): CitationValidation {", backend)
         citation_pattern = re.compile(r"\[Source:\s*([^\]]+)\]", re.IGNORECASE)
 
         def validate(answer, allowed_sources):
@@ -168,7 +168,16 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertFalse(validate("A fact with no citation.", ["data/report.json"]))
         self.assertFalse(validate("A fact. [Source: data/made-up.json]", ["data/report.json"]))
         self.assertFalse(validate("A fact. [Source: data/report.json] [Source: invented.json]", ["data/report.json"]))
-        self.assertIn("if (!citations.every((path) => allowed.has(path))) return false;", backend)
+        self.assertIn("const invalidCitationCount = citations.filter((path) => !allowed.has(path)).length;", backend)
+        self.assertIn("reason: 'unapproved_source'", backend)
+
+    def test_evidence_headers_make_exact_citation_paths_unambiguous(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("const marker = 'Source path: ' + path + ' | Document type: ' + String(doc.doc_type || 'text');", backend)
+        self.assertIn("cite only that exact path and exclude the Document type label or any other suffix.", backend)
+        self.assertIn("reason: citationValidation.reason", backend)
+        self.assertIn("invalid_citation_count: citationValidation.invalid_citation_count", backend)
+        self.assertIn("uncited_line_count: citationValidation.uncited_line_count", backend)
 
     def test_run_and_evidence_ids_are_pinned_to_exact_indexed_paths(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
