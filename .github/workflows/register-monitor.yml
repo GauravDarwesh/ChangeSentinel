@@ -40,6 +40,14 @@ jobs:
       - name: Preflight registration dependencies
         run: python -c "from bs4 import BeautifulSoup; from regmon.register_monitor import register_request; print('Monitor registration imports OK')"
 
+      # Registration only imports BeautifulSoup and standard-library modules.
+      # Avoid installing the heavyweight document-processing stack in this job.
+      - name: Install registration dependency
+        run: python -m pip install --disable-pip-version-check beautifulsoup4==4.14.3
+
+      - name: Preflight registration imports
+        run: python -c "from bs4 import BeautifulSoup; from regmon.register_monitor import register_request; print('Monitor registration imports OK')"
+
       - name: Register URL and commit source configuration
         id: register
         env:
@@ -57,16 +65,24 @@ jobs:
               --event "$GITHUB_EVENT_PATH" \
               --config config/sources.json \
               --output "$RUNNER_TEMP/monitor-registration.json"
-            SOURCE_ID="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json"))["source_id"])')"
+            SOURCE_IDS="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(";".join(d.get("source_ids") or [d["source_id"]]))')"
             URL="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json"))["url"])')"
             CREATED="$(python -c 'import json,os; print(str(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json"))["created"]).lower())')"
+            BULK="$(python -c 'import json,os; print(str(bool(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("bulk", False))).lower())')"
+            COUNT="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("count", 1))')"
+            CREATED_COUNT="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(d.get("created_count", int(d["created"])))')"
+            EXISTING_COUNT="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(d.get("existing_count", int(not d["created"])))')"
             if git diff --quiet -- config/sources.json; then
-              echo "This URL is already configured; continuing with its existing source."
+              echo "All requested URLs are already configured; continuing with their existing sources."
               success=true
               break
             fi
             git add config/sources.json
-            git commit -m "Register manually requested monitor $SOURCE_ID"
+            if [ "$BULK" = "true" ]; then
+              git commit -m "Register manually requested monitor batch ($COUNT links)"
+            else
+              git commit -m "Register manually requested monitor $(printf '%s' "$SOURCE_IDS" | cut -d';' -f1)"
+            fi
             if git push origin HEAD:main; then
               success=true
               break
@@ -78,9 +94,13 @@ jobs:
             echo "Could not publish monitor configuration after three attempts."
             exit 1
           fi
-          echo "source_id=$SOURCE_ID" >> "$GITHUB_OUTPUT"
+          echo "source_ids=$SOURCE_IDS" >> "$GITHUB_OUTPUT"
           echo "monitor_url=$URL" >> "$GITHUB_OUTPUT"
           echo "created=$CREATED" >> "$GITHUB_OUTPUT"
+          echo "bulk=$BULK" >> "$GITHUB_OUTPUT"
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "created_count=$CREATED_COUNT" >> "$GITHUB_OUTPUT"
+          echo "existing_count=$EXISTING_COUNT" >> "$GITHUB_OUTPUT"
 
       - name: Publish updated source configuration to Pages
         env:
@@ -94,28 +114,40 @@ jobs:
       - name: Start first monitoring scan
         env:
           GH_TOKEN: ${{ github.token }}
-          SOURCE_ID: ${{ steps.register.outputs.source_id }}
+          SOURCE_IDS: ${{ steps.register.outputs.source_ids }}
         run: |
           set -euo pipefail
-          gh workflow run regulatory-monitor.yml \
-            --repo "$GITHUB_REPOSITORY" \
-            --ref main \
-            -f source_id="$SOURCE_ID" \
-            -f test_notification=false
+          IFS=';' read -r -a source_id_list <<< "$SOURCE_IDS"
+          for SOURCE_ID in "${source_id_list[@]}"; do
+            [ -n "$SOURCE_ID" ] || continue
+            gh workflow run regulatory-monitor.yml \
+              --repo "$GITHUB_REPOSITORY" \
+              --ref main \
+              -f source_id="$SOURCE_ID" \
+              -f test_notification=false
+          done
 
       - name: Confirm registration on the request
         if: success()
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
-          SOURCE_ID: ${{ steps.register.outputs.source_id }}
+          SOURCE_IDS: ${{ steps.register.outputs.source_ids }}
           MONITOR_URL: ${{ steps.register.outputs.monitor_url }}
           CREATED: ${{ steps.register.outputs.created }}
+          BULK: ${{ steps.register.outputs.bulk }}
+          COUNT: ${{ steps.register.outputs.count }}
+          CREATED_COUNT: ${{ steps.register.outputs.created_count }}
+          EXISTING_COUNT: ${{ steps.register.outputs.existing_count }}
         run: |
           set -euo pipefail
-          if [ "$CREATED" = "true" ]; then
+          if [ "$BULK" = "true" ]; then
+            message="Bulk registration processed $COUNT unique links: $CREATED_COUNT new monitors and $EXISTING_COUNT already configured. The first monitoring scan has been queued for each requested source."
+          elif [ "$CREATED" = "true" ]; then
+            SOURCE_ID="${SOURCE_IDS%%;*}"
             message="Registered $MONITOR_URL as source $SOURCE_ID in config/sources.json. The first monitoring scan has been queued."
           else
+            SOURCE_ID="${SOURCE_IDS%%;*}"
             message="$MONITOR_URL is already configured under source $SOURCE_ID. A monitoring scan has been queued."
           fi
           gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$message"

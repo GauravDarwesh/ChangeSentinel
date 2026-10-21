@@ -421,5 +421,21 @@ class TestCrossRunChangeLog(unittest.TestCase):
         self.assertIn('event.event_type !== "BASELINE_MIGRATION"', status)
 
 
+
+    def test_bulk_link_import_is_an_additive_owner_approved_flow(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        for token in ('id="bulkMonitorFile"', 'accept=".csv,.xlsx', 'id="bulkImportPreview"',
+                      'id="submitBulkMonitor"', 'id="bulkTemplateLink"', 'BULK_REQUEST_MARKER'):
+            with self.subTest(token=token):
+                self.assertIn(token, html + js)
+        for token in ("function parseCsvMatrix(", "function bulkRowsFromMatrix(", "function makeBulkGitHubIssueUrl(",
+                      "BULK_DATA_JSON:", "MAX_BULK_LINKS = 25", "cdn.sheetjs.com/xlsx-0.20.3",
+                      "Continue with", "The dashboard stores no access token"):
+            with self.subTest(token=token):
+                self.assertIn(token, js + html)
+        self.assertIn('$("bulkMonitorFile").addEventListener("change"', js)
+
+
 if __name__ == "__main__":
     unittest.main()

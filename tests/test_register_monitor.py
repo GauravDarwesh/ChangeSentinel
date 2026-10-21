@@ -4,6 +4,8 @@ import unittest
 from pathlib import Path
 
 from regmon.register_monitor import (
+    BULK_REQUEST_MARKER,
+    MAX_BULK_REQUESTS,
     REQUEST_MARKER,
     canonicalize_url,
     register_request,
@@ -39,6 +41,21 @@ def issue_event(
             "user": {"login": login},
         }
     }
+
+
+
+def bulk_issue_event(rows, login="GauravDarwesh", title="[ChangeSentinel] Add monitor bulk request"):
+    body = "\n".join([
+        BULK_REQUEST_MARKER,
+        "",
+        "Please register these links.",
+        "",
+        "BULK_DATA_JSON:",
+        json.dumps(rows, separators=(",", ":")),
+        "",
+        "This request was created from the ChangeSentinel dashboard bulk upload.",
+    ])
+    return {"issue": {"title": title, "body": body, "user": {"login": login}}}
 
 
 class TestRegisterMonitor(unittest.TestCase):
@@ -153,6 +170,85 @@ class TestRegisterMonitor(unittest.TestCase):
             self.assertFalse(result["created"])
             self.assertEqual(result["source_id"], existing["id"])
             self.assertEqual(len(json.loads(path.read_text(encoding="utf-8"))["sources"]), 1)
+
+
+    def test_bulk_registration_adds_multiple_sources_in_one_atomic_write(self):
+        rows = [
+            {"url": "https://www.example.com/one", "name": "One"},
+            {"url": "https://www.example.com/two", "name": "Two"},
+            {"url": "https://www.example.com/one?utm_source=repeat", "name": "Duplicate"},
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            result = register_request(bulk_issue_event(rows), path, "GauravDarwesh/ChangeSentinel")
+            saved = json.loads(path.read_text(encoding="utf-8"))["sources"]
+        self.assertTrue(result["bulk"])
+        self.assertEqual(result["count"], 2)
+        self.assertEqual(result["created_count"], 2)
+        self.assertEqual(result["existing_count"], 0)
+        self.assertEqual(len(result["source_ids"]), 2)
+        self.assertEqual(len(saved), 2)
+        self.assertEqual({source["name"] for source in saved}, {"One", "Two"})
+
+    def test_bulk_registration_reuses_existing_sources_and_is_idempotent(self):
+        existing = source_for_url("https://www.example.com/one", "Existing one")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": [existing]}), encoding="utf-8")
+            event = bulk_issue_event([
+                {"url": "https://www.example.com/one", "name": "Other name"},
+                {"url": "https://www.example.com/two", "name": "Two"},
+            ])
+            first = register_request(event, path, "GauravDarwesh/ChangeSentinel")
+            second = register_request(event, path, "GauravDarwesh/ChangeSentinel")
+            saved = json.loads(path.read_text(encoding="utf-8"))["sources"]
+        self.assertEqual(first["created_count"], 1)
+        self.assertEqual(first["existing_count"], 1)
+        self.assertEqual(first["source_ids"][0], existing["id"])
+        self.assertEqual(second["created_count"], 0)
+        self.assertEqual(second["count"], 2)
+        self.assertEqual(len(saved), 2)
+
+    def test_bulk_invalid_row_does_not_partially_write_config(self):
+        original = {"version": 4, "defaults": {}, "sources": []}
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            before = json.dumps(original)
+            path.write_text(before, encoding="utf-8")
+            event = bulk_issue_event([
+                {"url": "https://www.example.com/valid"},
+                {"url": "file:///etc/passwd"},
+            ])
+            with self.assertRaisesRegex(ValueError, "Bulk row 2"):
+                register_request(event, path, "GauravDarwesh/ChangeSentinel")
+            self.assertEqual(path.read_text(encoding="utf-8"), before)
+
+    def test_bulk_selector_conflict_does_not_partially_write_config(self):
+        original = {"version": 4, "defaults": {}, "sources": []}
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            before = json.dumps(original)
+            path.write_text(before, encoding="utf-8")
+            event = bulk_issue_event([
+                {"url": "https://www.example.com/one", "include_selector": "main"},
+                {"url": "https://www.example.com/one", "include_selector": "article"},
+            ])
+            with self.assertRaisesRegex(ValueError, "Bulk row 2"):
+                register_request(event, path, "GauravDarwesh/ChangeSentinel")
+            self.assertEqual(path.read_text(encoding="utf-8"), before)
+
+    def test_bulk_request_is_owner_only_and_limited(self):
+        with self.assertRaisesRegex(ValueError, "Only the repository owner"):
+            register_request(bulk_issue_event([{"url": "https://www.example.com/one"}], login="someone-else"),
+                             Path("unused.json"), "GauravDarwesh/ChangeSentinel")
+        event = bulk_issue_event([{"url": f"https://www.example.com/{i}"} for i in range(MAX_BULK_REQUESTS + 1)])
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps({"sources": []}), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "at most 25 links"):
+                register_request(event, path, "GauravDarwesh/ChangeSentinel")
+            self.assertEqual(json.loads(path.read_text(encoding="utf-8"))["sources"], [])
 
 
 if __name__ == "__main__":

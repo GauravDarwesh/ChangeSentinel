@@ -1859,7 +1859,14 @@ function reportScanStatus() {
   }
 }
 
-/* ================= Add a page ================= */
+/* ================= Add a page / bulk spreadsheet upload ================= */
+
+const BULK_REQUEST_MARKER = "<!-- changesentinel:add-monitor-bulk:v1 -->";
+const MAX_BULK_LINKS = 25;
+const MAX_BULK_REQUEST_URL_LENGTH = 7000;
+let bulkImportRows = [];
+let bulkImportErrors = [];
+let xlsxParserPromise = null;
 
 function openAddMonitor() {
   const dialog = $("addMonitorDialog");
@@ -1883,6 +1890,16 @@ function makeGitHubIssueUrl(url, name, includeSelector, ignoreSelectors) {
   params.set("title", "[ChangeSentinel] Add monitor request");
   params.set("body", bodyLines.join("\n"));
   return REPO + "/issues/new?" + params.toString();
+}
+function openGitHubRequest(target, toastMessage) {
+  $("addMonitorDialog").close();
+  showToast(toastMessage);
+  const githubWindow = window.open(target, "_blank");
+  if (githubWindow) {
+    try { githubWindow.opener = null; } catch (_) {}
+  } else {
+    window.location.href = target;
+  }
 }
 function submitAddMonitor(event) {
   event.preventDefault();
@@ -1908,17 +1925,240 @@ function submitAddMonitor(event) {
   }
   parsed.hash = "";
   const target = makeGitHubIssueUrl(parsed.toString(), name, includeSelector, ignoreSelectors);
-  $("addMonitorDialog").close();
   ["newMonitorUrl", "newMonitorName", "newMonitorIncludeSelector", "newMonitorIgnoreSelectors"].forEach(id => { $(id).value = ""; });
-  showToast("Submit the prefilled request on GitHub. The page is scanned once the request is accepted.");
-  const githubWindow = window.open(target, "_blank");
-  if (githubWindow) {
-    try { githubWindow.opener = null; } catch (_) {}
-  } else {
-    window.location.href = target;
-  }
+  openGitHubRequest(target, "Submit the prefilled request on GitHub. The page is scanned once the request is accepted.");
 }
 
+/* CSV is parsed locally. XLSX uses the pinned SheetJS standalone build, fetched only when needed. */
+function parseCsvMatrix(text) {
+  const rows = [];
+  let row = [], cell = "", quoted = false;
+  const source = String(text || "").replace(/^\uFEFF/, "");
+  for (let i = 0; i < source.length; i += 1) {
+    const ch = source[i];
+    if (quoted) {
+      if (ch === '"' && source[i + 1] === '"') { cell += '"'; i += 1; }
+      else if (ch === '"') quoted = false;
+      else cell += ch;
+    } else if (ch === '"' && cell.length === 0) quoted = true;
+    else if (ch === ",") { row.push(cell); cell = ""; }
+    else if (ch === "\n" || ch === "\r") {
+      if (ch === "\r" && source[i + 1] === "\n") i += 1;
+      row.push(cell); rows.push(row); row = []; cell = "";
+    } else cell += ch;
+  }
+  if (cell.length || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+function bulkHeaderKey(value) {
+  return String(value || "").replace(/^\uFEFF/, "").trim().toLowerCase().replace(/[\s_-]+/g, " ");
+}
+function bulkRowsFromMatrix(matrix) {
+  const empty = row => !row || row.every(cell => !String(cell == null ? "" : cell).trim());
+  const rows = (matrix || []).map(row => Array.isArray(row) ? row.map(value => String(value == null ? "" : value).trim()) : []).filter(row => !empty(row));
+  if (!rows.length) throw new Error("The spreadsheet has no link rows.");
+  const aliases = {
+    url: ["url", "urls", "link", "links", "website", "website url", "webpage", "web page", "page url", "address"],
+    name: ["name", "display name", "title", "monitor name", "label"],
+    include_selector: ["include selector", "include css selector", "selector", "css selector"],
+    ignore_selectors: ["ignore selectors", "ignore css selectors"]
+  };
+  const first = rows[0].map(bulkHeaderKey);
+  const urlColumn = first.findIndex(value => aliases.url.includes(value));
+  const hasHeader = urlColumn >= 0;
+  const columns = {};
+  if (hasHeader) {
+    for (const key of Object.keys(aliases)) columns[key] = first.findIndex(value => aliases[key].includes(value));
+    rows.shift();
+  } else {
+    columns.url = 0;
+    columns.name = 1;
+    columns.include_selector = 2;
+    columns.ignore_selectors = 3;
+  }
+  const parsed = [];
+  const errors = [];
+  const seen = new Map();
+  rows.forEach((row, index) => {
+    const rowNumber = index + (hasHeader ? 2 : 1);
+    const cell = column => column >= 0 && column < row.length ? row[column] : "";
+    const rawUrl = cell(columns.url);
+    if (!rawUrl) {
+      if (!empty(row)) errors.push("Row " + rowNumber + ": missing URL.");
+      return;
+    }
+    let url;
+    try {
+      const candidate = new URL(rawUrl);
+      if (!["http:", "https:"].includes(candidate.protocol) || !candidate.hostname || candidate.username || candidate.password) throw new Error();
+      candidate.hash = "";
+      if (candidate.pathname !== "/" && candidate.pathname.endsWith("/")) candidate.pathname = candidate.pathname.slice(0, -1);
+      for (const key of Array.from(candidate.searchParams.keys())) {
+        const lowered = key.toLowerCase();
+        if (lowered.startsWith("utm_") || ["fbclid", "gclid", "mc_cid", "mc_eid"].includes(lowered)) candidate.searchParams.delete(key);
+      }
+      url = candidate.toString();
+    } catch (_) {
+      errors.push("Row " + rowNumber + ": enter a complete public http:// or https:// URL.");
+      return;
+    }
+    const name = cell(columns.name).replace(/[\r\n]+/g, " ").trim().slice(0, 100);
+    const includeSelector = cell(columns.include_selector).trim();
+    const rawIgnore = cell(columns.ignore_selectors);
+    const ignoreSelectors = rawIgnore ? rawIgnore.split(/[;\r\n]+/).map(value => value.trim()).filter(Boolean) : [];
+    if (includeSelector.length > 500) errors.push("Row " + rowNumber + ": include selector exceeds 500 characters.");
+    if (ignoreSelectors.length > 20 || ignoreSelectors.some(value => value.length > 500)) errors.push("Row " + rowNumber + ": use at most 20 ignore selectors, each at most 500 characters.");
+    const previous = seen.get(url);
+    if (previous) {
+      if (previous.include_selector !== includeSelector || previous.ignore_selectors.join("\n") !== ignoreSelectors.join("\n")) {
+        errors.push("Row " + rowNumber + ": duplicate URL has different selectors from an earlier row.");
+      }
+      return;
+    }
+    const item = { url, name, include_selector: includeSelector, ignore_selectors: ignoreSelectors };
+    seen.set(url, item);
+    parsed.push(item);
+  });
+  if (!parsed.length && !errors.length) errors.push("No valid URLs were found. Add a URL column or place one URL in the first column.");
+  if (parsed.length > MAX_BULK_LINKS) errors.push("This request supports up to " + MAX_BULK_LINKS + " unique links. Split this file into smaller batches.");
+  return { rows: parsed, errors, rowCount: rows.length, duplicateCount: Math.max(0, rows.length - parsed.length - errors.length) };
+}
+function loadXlsxParser() {
+  if (window.XLSX) return Promise.resolve(window.XLSX);
+  if (xlsxParserPromise) return xlsxParserPromise;
+  xlsxParserPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js";
+    script.async = true;
+    script.onload = () => window.XLSX ? resolve(window.XLSX) : reject(new Error("Excel parser could not be initialized."));
+    script.onerror = () => reject(new Error("Excel support could not load. Try saving the spreadsheet as CSV."));
+    document.head.appendChild(script);
+  }).catch(error => {
+    xlsxParserPromise = null;
+    throw error;
+  });
+  return xlsxParserPromise;
+}
+function setBulkStatus(message, isError) {
+  const status = $("bulkImportStatus");
+  status.textContent = message;
+  status.classList.toggle("is-error", !!isError);
+}
+function renderBulkPreview() {
+  const preview = $("bulkImportPreview");
+  const actions = $("bulkImportActions");
+  preview.replaceChildren();
+  if (!bulkImportRows.length) {
+    preview.hidden = true;
+    actions.hidden = true;
+    $("submitBulkMonitor").disabled = true;
+    return;
+  }
+  preview.hidden = false;
+  actions.hidden = false;
+  bulkImportRows.slice(0, 5).forEach(item => {
+    const line = document.createElement("div");
+    line.className = "bulk-preview-row";
+    const name = document.createElement("span");
+    name.className = "bulk-preview-name";
+    name.textContent = item.name || item.url;
+    const url = document.createElement("span");
+    url.className = "bulk-preview-url";
+    try { url.textContent = new URL(item.url).hostname; } catch (_) { url.textContent = item.url; }
+    line.append(name, url);
+    preview.appendChild(line);
+  });
+  if (bulkImportRows.length > 5) {
+    const more = document.createElement("div");
+    more.className = "field-help";
+    more.textContent = "+ " + (bulkImportRows.length - 5) + " more links";
+    preview.appendChild(more);
+  }
+  $("submitBulkMonitor").disabled = !!bulkImportErrors.length;
+}
+async function readBulkFile(file) {
+  bulkImportRows = [];
+  bulkImportErrors = [];
+  renderBulkPreview();
+  if (!file) {
+    setBulkStatus("Accepted columns: URL (required), Name, Include Selector, Ignore Selectors.", false);
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    bulkImportErrors = ["File exceeds the 5 MB limit."];
+    setBulkStatus("This file is too large. Choose a file smaller than 5 MB.", true);
+    renderBulkPreview();
+    return;
+  }
+  const extension = file.name.toLowerCase().split(".").pop();
+  try {
+    let matrix;
+    if (extension === "csv") {
+      matrix = parseCsvMatrix(await file.text());
+    } else if (extension === "xlsx") {
+      const XLSX = await loadXlsxParser();
+      const workbook = XLSX.read(await file.arrayBuffer(), { type: "array", cellText: true, cellDates: false });
+      const firstSheet = workbook.SheetNames && workbook.SheetNames[0];
+      if (!firstSheet) throw new Error("The workbook does not contain a worksheet.");
+      matrix = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet], { header: 1, raw: false, defval: "" });
+    } else {
+      throw new Error("Choose a .csv or .xlsx file.");
+    }
+    const result = bulkRowsFromMatrix(matrix);
+    bulkImportRows = result.rows;
+    bulkImportErrors = result.errors;
+    if (bulkImportErrors.length) {
+      setBulkStatus("Found " + bulkImportErrors.length + " issue(s): " + bulkImportErrors.slice(0, 3).join(" ") + (bulkImportErrors.length > 3 ? " …" : ""), true);
+    } else {
+      setBulkStatus("Ready to import " + bulkImportRows.length + " unique links" + (result.duplicateCount ? " (" + result.duplicateCount + " duplicate row(s) removed)" : "") + ". " + (extension === "xlsx" ? "Reading the first worksheet." : "CSV parsed locally."), false);
+    }
+  } catch (error) {
+    bulkImportRows = [];
+    bulkImportErrors = [String(error && error.message || error)];
+    setBulkStatus(bulkImportErrors[0], true);
+  }
+  renderBulkPreview();
+  if (!bulkImportErrors.length && bulkImportRows.length) {
+    const target = makeBulkGitHubIssueUrl(bulkImportRows);
+    if (target.length > MAX_BULK_REQUEST_URL_LENGTH) {
+      bulkImportErrors.push("The prefilled GitHub request is too long. Split the spreadsheet into smaller batches.");
+      setBulkStatus(bulkImportErrors[0], true);
+      $("submitBulkMonitor").disabled = true;
+    } else {
+      $("submitBulkMonitor").textContent = "Continue with " + bulkImportRows.length + (bulkImportRows.length === 1 ? " link" : " links");
+    }
+  }
+}
+function makeBulkGitHubIssueUrl(rows) {
+  const bodyLines = [
+    BULK_REQUEST_MARKER, "",
+    "Please register the URLs listed below as ChangeSentinel monitors.", "",
+    "BULK_DATA_JSON:",
+    JSON.stringify(rows),
+    "",
+    "This request was created from the ChangeSentinel dashboard bulk upload."
+  ];
+  const params = new URLSearchParams();
+  params.set("title", "[ChangeSentinel] Add monitor bulk request");
+  params.set("body", bodyLines.join("\n"));
+  return REPO + "/issues/new?" + params.toString();
+}
+function submitBulkMonitor() {
+  if (!bulkImportRows.length || bulkImportErrors.length) return;
+  const target = makeBulkGitHubIssueUrl(bulkImportRows);
+  if (target.length > MAX_BULK_REQUEST_URL_LENGTH) {
+    setBulkStatus("The prefilled GitHub request is too long. Split the spreadsheet into smaller batches.", true);
+    return;
+  }
+  openGitHubRequest(target, "Submit the prefilled bulk request on GitHub. The owner-only workflow will validate the links, register the sources and queue their first scans.");
+}
+function clearBulkImport() {
+  $("bulkMonitorFile").value = "";
+  bulkImportRows = [];
+  bulkImportErrors = [];
+  renderBulkPreview();
+  setBulkStatus("Accepted columns: URL (required), Name, Include Selector, Ignore Selectors.", false);
+}
 /* ================= Events ================= */
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
@@ -2045,6 +2285,9 @@ $("addMonitorDialog").addEventListener("click", event => {
 });
 $("newMonitorUrl").addEventListener("input", () => $("newMonitorUrl").setCustomValidity(""));
 $("addMonitorForm").addEventListener("submit", submitAddMonitor);
+$("bulkMonitorFile").addEventListener("change", event => readBulkFile(event.target.files && event.target.files[0]));
+$("submitBulkMonitor").addEventListener("click", submitBulkMonitor);
+$("clearBulkImport").addEventListener("click", clearBulkImport);
 if (compactQuery && typeof compactQuery.addEventListener === "function") {
   compactQuery.addEventListener("change", () => { if (state.loaded) setView(state.view, { detail: state.mobileDetail }); });
 }
