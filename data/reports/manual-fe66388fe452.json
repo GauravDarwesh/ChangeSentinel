@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261021T144027Z-2442a908",
-  "generated_at": "2026-10-21T14:44:02.929290+00:00",
+  "run_id": "20261021T160458Z-78dc7470",
+  "generated_at": "2026-10-21T16:08:31.292147+00:00",
   "source": {
     "id": "manual-fe66388fe452",
     "name": "Reporting Central and Structure Central User Guides",
@@ -19,8 +19,8 @@
     "method": "http-resumable",
     "state": "DEGRADED",
     "discovered": 1,
-    "html_processed": 2,
-    "successful_pages": 0,
+    "html_processed": 3,
+    "successful_pages": 1,
     "failed_pages": 2,
     "capped": false,
     "pending": 0,
@@ -86,5 +86,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "manual",
-  "workflow_run_id": "39618606456"
+  "workflow_run_id": "39631209226"
 }

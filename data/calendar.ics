@@ -1,0 +1,12 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ChangeSentinel//Regulatory dates//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:ChangeSentinel regulatory dates
+X-WR-CALDESC:Dates stated in regulatory changes ChangeSentinel detected. Ea
+ ch links to the change it came from\; check the source before relying on a
+  date.
+REFRESH-INTERVAL;VALUE=DURATION:PT6H
+X-PUBLISHED-TTL:PT6H
+END:VCALENDAR
