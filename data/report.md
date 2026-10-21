@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261021T170332Z-4b6659e0
-Generated: 2026-10-21T17:06:37.149453+00:00
+Run: 20261021T213228Z-3d241913
+Generated: 2026-10-21T21:34:43.459860+00:00
 
 ## Aggregate counts
 
@@ -38,7 +38,7 @@ Generated: 2026-10-21T17:06:37.149453+00:00
 ### Federal Reserve — Reporting Forms Pilot (Exact URL Allowlist)
 
 - Regulator: Board of Governors of the Federal Reserve System
-- Report run: 20261021T170332Z-4b6659e0 (2026-10-21T17:03:32.212973+00:00)
+- Report run: 20261021T213228Z-3d241913 (2026-10-21T21:32:28.421276+00:00)
 - Discovered: 2
 - Changed content: 0
 - HTML source-only changes: 0
@@ -49,7 +49,7 @@ Generated: 2026-10-21T17:06:37.149453+00:00
 ### Federal Reserve — Recently Updated Forms Detail Pilot (Exact URL Allowlist)
 
 - Regulator: Board of Governors of the Federal Reserve System
-- Report run: 20261021T170332Z-4b6659e0 (2026-10-21T17:03:32.905272+00:00)
+- Report run: 20261021T213228Z-3d241913 (2026-10-21T21:32:28.930613+00:00)
 - Discovered: 14
 - Changed content: 0
 - HTML source-only changes: 0
@@ -60,7 +60,7 @@ Generated: 2026-10-21T17:06:37.149453+00:00
 ### OSFI BCAR 2027
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261021T170332Z-4b6659e0 (2026-10-21T17:06:36.508669+00:00)
+- Report run: 20261021T213228Z-3d241913 (2026-10-21T21:34:43.059963+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -71,7 +71,7 @@ Generated: 2026-10-21T17:06:37.149453+00:00
 ### Reporting Central and Structure Central User Guides
 
 - Regulator: www.frbservices.org
-- Report run: 20261021T170332Z-4b6659e0 (2026-10-21T17:06:37.149453+00:00)
+- Report run: 20261021T213228Z-3d241913 (2026-10-21T21:34:43.459860+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
