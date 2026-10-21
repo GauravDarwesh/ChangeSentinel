@@ -1,4 +1,20 @@
 {
-  "pending_events": {},
-  "updated_at": "2026-10-20T04:49:23.271756+00:00"
+  "pending_events": {
+    "discovery-2fb24c73bc766fec6007710d95b60f678a5fdc195a78f8556244452a6b9219d7": {
+      "event_id": "discovery-2fb24c73bc766fec6007710d95b60f678a5fdc195a78f8556244452a6b9219d7",
+      "kind": "DISCOVERY_DEGRADED",
+      "url": null,
+      "topic": "Discovery degraded for manual-fe66388fe452",
+      "summary": "URL discovery for manual-fe66388fe452 finished in DEGRADED state.",
+      "reason": "1",
+      "impact": "Change and removal detection is not authoritative until discovery completes successfully.",
+      "priority": 4,
+      "tags": [
+        "warning",
+        "monitoring",
+        "discovery"
+      ]
+    }
+  },
+  "updated_at": "2026-10-21T13:28:04.480293+00:00"
 }

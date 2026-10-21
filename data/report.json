@@ -1,8 +1,20 @@
 {
   "schema_version": 2,
-  "run_id": "20261021T113732Z-394ea41d",
-  "generated_at": "2026-10-21T11:41:03.551121+00:00",
+  "run_id": "20261021T132803Z-4ab85276",
+  "generated_at": "2026-10-21T13:28:03.813393+00:00",
   "sources": [
+    {
+      "id": "manual-fe66388fe452",
+      "name": "Reporting Central and Structure Central User Guides",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
     {
       "id": "fed-reporting-forms-pilot",
       "name": "Federal Reserve \u2014 Reporting Forms Pilot (Exact URL Allowlist)",
@@ -46,6 +58,11 @@
     }
   ],
   "source_runs": {
+    "manual-fe66388fe452": {
+      "run_id": "20261021T132803Z-4ab85276",
+      "generated_at": "2026-10-21T13:28:03.813393+00:00",
+      "trigger": "continuation"
+    },
     "fed-reporting-forms-pilot": {
       "run_id": "20261021T113732Z-394ea41d",
       "generated_at": "2026-10-21T11:37:32.135052+00:00",
@@ -71,8 +88,11 @@
     "ai_skipped": 0,
     "baseline_migration": 0,
     "changed": 0,
+    "crawl_degraded": 1,
+    "crawl_failed": 0,
     "crawl_paused": 0,
-    "discovered": 17,
+    "discovered": 18,
+    "discovery_incomplete": 1,
     "extraction_drift": 0,
     "extraction_error": 0,
     "fetch_error": 0,
@@ -87,6 +107,22 @@
     "unchanged": 16
   },
   "discovery": [
+    {
+      "source_id": "manual-fe66388fe452",
+      "method": "http-resumable",
+      "state": "DEGRADED",
+      "discovered": 1,
+      "html_processed": 1,
+      "successful_pages": 0,
+      "failed_pages": 1,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 1,
+      "checkpoint_schema_version": 2,
+      "config_fingerprint": "cf78149bcacb9baf303e87fd9eb5b726e206094ccea112d8b4b68fb464f54053",
+      "inventory": "data/discovery/manual-fe66388fe452-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-fe66388fe452-failures.jsonl"
+    },
     {
       "source_id": "fed-reporting-forms-pilot",
       "method": "http-resumable",
@@ -137,7 +173,7 @@
     }
   ],
   "removal_guards": [],
-  "baseline_update_allowed": true,
+  "baseline_update_allowed": false,
   "change_detector": {
     "classification_hash": "normalized_hash",
     "html_hash": "SHA-256 of the saved HTML snapshot (reused when only volatile tokens changed; raw_hash is always the fetched response)",
@@ -436,5 +472,5 @@
     }
   ],
   "ai_results": [],
-  "trigger": "scheduled"
+  "trigger": "continuation"
 }
