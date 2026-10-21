@@ -1,5 +1,63 @@
 [
  {
+  "finished_at": "2026-10-21T09:06:28Z",
+  "regulators": [
+   {
+    "id": "fed",
+    "new": 0,
+    "observed": 125,
+    "requests": 5,
+    "status": "COMPLETE"
+   },
+   {
+    "id": "osfi",
+    "new": 0,
+    "observed": 3763,
+    "requests": 4,
+    "status": "COMPLETE"
+   },
+   {
+    "id": "eba",
+    "new": 0,
+    "observed": 47,
+    "requests": 4,
+    "status": "COMPLETE"
+   },
+   {
+    "id": "boe-pra",
+    "new": 0,
+    "observed": 100,
+    "requests": 3,
+    "status": "COMPLETE"
+   },
+   {
+    "id": "apra",
+    "new": 0,
+    "observed": 30,
+    "requests": 4,
+    "status": "COMPLETE"
+   },
+   {
+    "id": "banxico",
+    "new": 0,
+    "observed": 323,
+    "requests": 3,
+    "status": "COMPLETE"
+   },
+   {
+    "id": "bcra",
+    "new": 0,
+    "observed": 17,
+    "requests": 2,
+    "status": "COMPLETE"
+   }
+  ],
+  "started_at": "2026-10-21T09:05:09Z",
+  "status": "COMPLETE",
+  "sweep_id": "20261021T090509Z-575d29",
+  "trigger": "manual"
+ },
+ {
   "finished_at": "2026-10-21T09:00:56Z",
   "regulators": [
    {
