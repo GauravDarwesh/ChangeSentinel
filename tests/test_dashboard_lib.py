@@ -461,3 +461,92 @@ class TestEditOffsets(unittest.TestCase):
           const line = L.normalizeForMatch(after.replace(/\\|/g, " "));
           console.log(JSON.stringify(parts.map(p => line.substr(p.offset, p.text.length))));""")
         self.assertEqual(out, ["15"])
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestReviewLayer(unittest.TestCase):
+    """The dashboard's half of item codes, lineage, dates and review requests
+    must agree with the Python half that writes and parses them."""
+
+    def test_item_code_wording_matches_the_alert_line(self):
+        from regmon import item_codes
+        before = "\n".join(["| RCON1000 | Cash | 1 |", "| RCON2000 | Loans | 2 |", "| RCON3000 | Total | 3 |", "| RCON4000 | Old item | 4 |"])
+        after = "\n".join(["| RCON1000 | Cash and balances | 1 |", "| RCON2000 | Loans | 2 |", "| RCON3000 | Total | 3 |", "| RCON5000 | New item | 5 |", "| RCON6000 | Newer | 6 |"])
+        result = item_codes.diff(before, after)
+        summary = item_codes.summary(result)
+        out = run_js("console.log(JSON.stringify([L.describeItemCodes(" + json.dumps(result) + "), L.describeItemCodes(" + json.dumps(summary) + "), L.describeItemCodes(null)]));")
+        self.assertEqual(out, [item_codes.describe(result), item_codes.describe(summary), ""])
+        self.assertTrue(out[0].startswith("2 added, 1 removed, 1 amended"))
+
+    def test_lineage_lookup_matches_the_python_lookup(self):
+        from regmon import lineage
+        payload = {"schema_version": 1, "mappings": [
+            {"series": ["BHCK"], "assets": ["dbt: fr_y9c.all_items", "warehouse.fr_y9c.total_assets"], "owner": "Finance"},
+            {"codes": ["BHCK2170"], "assets": ["warehouse.fr_y9c.total_assets"], "owner": "Regulatory Reporting"},
+            {"codes": ["RCON1234"], "assets": ["edit check 12"]},
+        ]}
+        mappings = lineage.validate(payload)
+        for code in ("BHCK2170", "BHCK9999", "RCON1234", "QTFL0001"):
+            with self.subTest(code=code):
+                out = run_js("console.log(JSON.stringify(L.lineageFor(" + json.dumps(code) + ", " + json.dumps(payload) + ")));")
+                self.assertEqual(out, lineage.assets_for(code, mappings))
+
+    def test_calendar_days_are_never_shifted_by_the_viewers_time_zone(self):
+        script = ("const L = require(" + json.dumps(str(ROOT / "dashboard-lib.js")) + ");"
+                  "const d = L.isoDayToDate('2027-03-31');"
+                  "console.log(JSON.stringify([d.getDate(), d.getMonth(), L.dueLabel('2027-03-31', '2027-03-30'), L.daysBetween('2026-12-31', '2027-03-31')]));")
+        for zone in ("America/Los_Angeles", "Pacific/Kiritimati", "UTC"):
+            with self.subTest(zone=zone):
+                result = subprocess.run([NODE, "-e", script], capture_output=True, text=True, timeout=30, check=True, env={"TZ": zone, "PATH": "/usr/bin:/bin"})
+                self.assertEqual(json.loads(result.stdout), [31, 2, "Tomorrow", 90])
+
+    def test_upcoming_dates_are_soonest_first_and_skip_the_past(self):
+        calendar = {"schema_version": 1, "entries": [
+            {"date": "2026-10-20", "title": "Past", "event_id": "a"},
+            {"date": "2027-01-15", "title": "Later", "event_id": "b"},
+            {"date": "2026-11-02", "title": "Sooner", "event_id": "a"},
+            {"date": "not a date", "title": "Broken", "event_id": "a"},
+        ]}
+        out = run_js("const c = " + json.dumps(calendar) + "; console.log(JSON.stringify([L.upcomingDates(c, '2026-10-21', 5).map(e => e.title), "
+                     "L.datesForChange(c, 'a').map(e => e.title), L.dueLabel('2026-10-20', '2026-10-21'), L.dueLabel('2026-11-02', '2026-10-21'), L.upcomingDates(null, '2026-10-21')]));")
+        self.assertEqual(out, [["Sooner", "Later"], ["Past", "Sooner"], "Yesterday", "In 12 days", []])
+
+    def test_review_request_is_what_the_review_workflow_parses(self):
+        from regmon import reviews
+        event_id = "a" * 64
+        out = run_js("console.log(JSON.stringify(L.changeReviewRequest({decision: 'action_required', rationale: '  New due\\n date  applies ', "
+                     "owner: 'Reg Reporting', ticket: 'https://tracker.example.com/REG-1', changes: [{event_id: " + json.dumps(event_id) + ", url: 'https://www.fed.gov/a?b=1'}]})));")
+        self.assertEqual(out["errors"], [])
+        self.assertTrue(out["title"].startswith(reviews.TITLE_PREFIX))
+        self.assertIn(reviews.MARKER, out["body"])
+        parsed = reviews.parse_request(out["body"])
+        self.assertEqual(parsed["decision"], "action_required")
+        self.assertEqual(parsed["rationale"], "New due date applies")
+        self.assertEqual(parsed["owner"], "Reg Reporting")
+        self.assertEqual(parsed["ticket"], "https://tracker.example.com/REG-1")
+        self.assertEqual(parsed["events"], [{"event_id": event_id, "url": "https://www.fed.gov/a?b=1"}])
+
+        for decision in ("material", "not_material", "acknowledged"):
+            with self.subTest(decision=decision):
+                body = run_js("console.log(JSON.stringify(L.changeReviewRequest({decision: " + json.dumps(decision) + ", rationale: 'Only affects a form we do not file.', "
+                              "changes: [{event_id: " + json.dumps(event_id) + "}]}).body));")
+                parsed = reviews.parse_request(body)
+                self.assertEqual(parsed["decision"], decision)
+                self.assertEqual((parsed["owner"], parsed["ticket"]), ("", ""))
+
+    def test_review_request_refuses_what_the_workflow_would_reject(self):
+        out = run_js("""
+          const id = "b".repeat(64);
+          console.log(JSON.stringify([
+            L.changeReviewRequest({decision: "not_material", rationale: "short", changes: [{event_id: id}]}).errors.length,
+            L.changeReviewRequest({decision: "material", ticket: "javascript:alert(1)", changes: [{event_id: id}]}).errors.length,
+            L.changeReviewRequest({decision: "maybe", changes: [{event_id: id}]}).errors.length,
+            L.changeReviewRequest({decision: "material", changes: [{event_id: "not-an-id"}]}).errors.length,
+            L.changeReviewRequest({decision: "material", changes: [{event_id: id}]}).errors.length
+          ]));""")
+        self.assertEqual(out, [1, 1, 1, 1, 0])
+
+    def test_csv_cells_cannot_run_as_formulas(self):
+        out = run_js("console.log(JSON.stringify([L.csvCell('=HYPERLINK(\"x\")'), L.csvCell('+1'), L.csvCell('@SUM(A1)'), L.csvCell('-2'), "
+                     "L.csvCell('a, b'), L.csvCell('say \"hi\"'), L.csvCell(null), L.csvCell('plain'), L.toCsv([['a', 'b'], ['c', 'd']])]));")
+        self.assertEqual(out, ["\"'=HYPERLINK(\"\"x\"\")\"", "'+1", "'@SUM(A1)", "'-2", '"a, b"', '"say ""hi"""', "", "plain", "a,b\r\nc,d\r\n"])

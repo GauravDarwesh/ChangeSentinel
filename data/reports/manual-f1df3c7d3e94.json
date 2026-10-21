@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261021T144027Z-2442a908",
-  "generated_at": "2026-10-21T14:44:02.062042+00:00",
+  "run_id": "20261021T113732Z-394ea41d",
+  "generated_at": "2026-10-21T11:41:03.551121+00:00",
   "source": {
     "id": "manual-f1df3c7d3e94",
     "name": "OSFI BCAR 2027",
@@ -84,15 +84,75 @@
   },
   "events": [
     {
-      "event_id": "5596965b6d9b24684d573fef7f211c2f8018302f396cf9fdab063b5a04ffdf40",
+      "event_id": "e5e2a4135f756b1a2e45b1a689933ec23f9eddfd76e6aabf7fb33e20d7564f10",
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
       "url_id": "f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4",
       "source_id": "manual-f1df3c7d3e94",
-      "timestamp": "2026-10-21T14:44:02.062042+00:00",
-      "evidence_location": "data/evidence/5596965b6d9b24684d573fef7f211c2f8018302f396cf9fdab063b5a04ffdf40.json",
+      "timestamp": "2026-10-21T11:41:03.551121+00:00",
+      "evidence_location": "data/evidence/e5e2a4135f756b1a2e45b1a689933ec23f9eddfd76e6aabf7fb33e20d7564f10.json",
       "evidence": {
         "previous": {
+          "schema_version": 2,
+          "url_id": "f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4",
+          "source_id": "manual-f1df3c7d3e94",
+          "regulator": "www.osfi-bsif.gc.ca",
+          "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+          "first_seen": "2026-10-21T03:47:47.510475+00:00",
+          "last_seen": "2026-10-21T04:29:41.958303+00:00",
+          "last_checked": "2026-10-21T04:29:41.958303+00:00",
+          "last_full_fetch": "2026-10-21T04:29:41.958303+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=UTF-8",
+          "content_length": 87967,
+          "etag": "W/\"1792556384\"",
+          "last_modified": "Wed, 21 Oct 2026 04:19:44 GMT",
+          "raw_hash": "6071b4e9ba73c754b3e24b83d4b430a172fd5e00fd32ae0ff7a20856b0e57046",
+          "normalized_hash": "ae3c0b5208289f9571623f205ae7d22e3d8bdbde26a298ef6d71f9211c0c886b",
+          "html_hash": "6071b4e9ba73c754b3e24b83d4b430a172fd5e00fd32ae0ff7a20856b0e57046",
+          "html_comparison_hash": "6071b4e9ba73c754b3e24b83d4b430a172fd5e00fd32ae0ff7a20856b0e57046",
+          "html_snapshot_location": "data/snapshots/html/f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4-6071b4e9ba73c754b3e24b83d4b430a172fd5e00fd32ae0ff7a20856b0e57046.html",
+          "file_snapshot_location": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4-ae3c0b5208289f9571623f205ae7d22e3d8bdbde26a298ef6d71f9211c0c886b.txt",
+          "evidence_location": "data/evidence/4d712f7425a7c02c130416841981bd880245ee9652739097d44e18bf9c225b1e.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "Regulatory signal detected",
+            "signals": [
+              "decision",
+              "guideline",
+              "regulatory",
+              "report",
+              "requirement",
+              "risk",
+              "rule",
+              "standard",
+              "supervisory"
+            ]
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "4d712f7425a7c02c130416841981bd880245ee9652739097d44e18bf9c225b1e",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-21T04:29:41.958303+00:00",
+              "evidence_location": "data/evidence/4d712f7425a7c02c130416841981bd880245ee9652739097d44e18bf9c225b1e.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
+        },
+        "current": {
           "schema_version": 2,
           "url_id": "f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4",
           "source_id": "manual-f1df3c7d3e94",
@@ -157,78 +217,6 @@
           "html_baseline_forced": false,
           "file_baseline_forced": false,
           "extractor_baseline_forced": false
-        },
-        "current": {
-          "schema_version": 2,
-          "url_id": "f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4",
-          "source_id": "manual-f1df3c7d3e94",
-          "regulator": "www.osfi-bsif.gc.ca",
-          "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
-          "first_seen": "2026-10-21T03:47:47.510475+00:00",
-          "last_seen": "2026-10-21T14:44:02.062042+00:00",
-          "last_checked": "2026-10-21T14:44:02.062042+00:00",
-          "last_full_fetch": "2026-10-21T14:44:02.062042+00:00",
-          "active": true,
-          "terminal_file": false,
-          "http_status": 200,
-          "content_type": "text/html; charset=UTF-8",
-          "content_length": 87958,
-          "etag": "W/\"1792592688\"",
-          "last_modified": "Wed, 21 Oct 2026 14:24:48 GMT",
-          "raw_hash": "433df4565de7561f82266ef33d1be6875f15caf07f655841dee45ebce199407d",
-          "normalized_hash": "ae3c0b5208289f9571623f205ae7d22e3d8bdbde26a298ef6d71f9211c0c886b",
-          "html_hash": "433df4565de7561f82266ef33d1be6875f15caf07f655841dee45ebce199407d",
-          "html_comparison_hash": "433df4565de7561f82266ef33d1be6875f15caf07f655841dee45ebce199407d",
-          "html_snapshot_location": "data/snapshots/html/f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4-433df4565de7561f82266ef33d1be6875f15caf07f655841dee45ebce199407d.html",
-          "file_snapshot_location": null,
-          "extraction_type": "html",
-          "extractor_version": "content-extractor-v7",
-          "extraction_error": null,
-          "fetch_error": null,
-          "snapshot_location": "data/snapshots/f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4-ae3c0b5208289f9571623f205ae7d22e3d8bdbde26a298ef6d71f9211c0c886b.txt",
-          "evidence_location": "data/evidence/5596965b6d9b24684d573fef7f211c2f8018302f396cf9fdab063b5a04ffdf40.json",
-          "relevance": {
-            "candidate": true,
-            "reason": "Regulatory signal detected",
-            "signals": [
-              "decision",
-              "guideline",
-              "regulatory",
-              "report",
-              "requirement",
-              "risk",
-              "rule",
-              "standard",
-              "supervisory"
-            ]
-          },
-          "ai_pending": null,
-          "last_changed_at": null,
-          "change_history": [
-            {
-              "event_id": "5596965b6d9b24684d573fef7f211c2f8018302f396cf9fdab063b5a04ffdf40",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-21T14:44:02.062042+00:00",
-              "evidence_location": "data/evidence/5596965b6d9b24684d573fef7f211c2f8018302f396cf9fdab063b5a04ffdf40.json"
-            },
-            {
-              "event_id": "e5e2a4135f756b1a2e45b1a689933ec23f9eddfd76e6aabf7fb33e20d7564f10",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-21T11:41:03.551121+00:00",
-              "evidence_location": "data/evidence/e5e2a4135f756b1a2e45b1a689933ec23f9eddfd76e6aabf7fb33e20d7564f10.json"
-            },
-            {
-              "event_id": "4d712f7425a7c02c130416841981bd880245ee9652739097d44e18bf9c225b1e",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-21T04:29:41.958303+00:00",
-              "evidence_location": "data/evidence/4d712f7425a7c02c130416841981bd880245ee9652739097d44e18bf9c225b1e.json"
-            }
-          ],
-          "not_modified": false,
-          "full_fetch_forced": false,
-          "html_baseline_forced": false,
-          "file_baseline_forced": false,
-          "extractor_baseline_forced": false
         }
       }
     }
@@ -238,6 +226,66 @@
   "source_changed_urls": [
     {
       "before": {
+        "schema_version": 2,
+        "url_id": "f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4",
+        "source_id": "manual-f1df3c7d3e94",
+        "regulator": "www.osfi-bsif.gc.ca",
+        "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+        "first_seen": "2026-10-21T03:47:47.510475+00:00",
+        "last_seen": "2026-10-21T04:29:41.958303+00:00",
+        "last_checked": "2026-10-21T04:29:41.958303+00:00",
+        "last_full_fetch": "2026-10-21T04:29:41.958303+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": 87967,
+        "etag": "W/\"1792556384\"",
+        "last_modified": "Wed, 21 Oct 2026 04:19:44 GMT",
+        "raw_hash": "6071b4e9ba73c754b3e24b83d4b430a172fd5e00fd32ae0ff7a20856b0e57046",
+        "normalized_hash": "ae3c0b5208289f9571623f205ae7d22e3d8bdbde26a298ef6d71f9211c0c886b",
+        "html_hash": "6071b4e9ba73c754b3e24b83d4b430a172fd5e00fd32ae0ff7a20856b0e57046",
+        "html_comparison_hash": "6071b4e9ba73c754b3e24b83d4b430a172fd5e00fd32ae0ff7a20856b0e57046",
+        "html_snapshot_location": "data/snapshots/html/f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4-6071b4e9ba73c754b3e24b83d4b430a172fd5e00fd32ae0ff7a20856b0e57046.html",
+        "file_snapshot_location": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4-ae3c0b5208289f9571623f205ae7d22e3d8bdbde26a298ef6d71f9211c0c886b.txt",
+        "evidence_location": "data/evidence/4d712f7425a7c02c130416841981bd880245ee9652739097d44e18bf9c225b1e.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "Regulatory signal detected",
+          "signals": [
+            "decision",
+            "guideline",
+            "regulatory",
+            "report",
+            "requirement",
+            "risk",
+            "rule",
+            "standard",
+            "supervisory"
+          ]
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "4d712f7425a7c02c130416841981bd880245ee9652739097d44e18bf9c225b1e",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-21T04:29:41.958303+00:00",
+            "evidence_location": "data/evidence/4d712f7425a7c02c130416841981bd880245ee9652739097d44e18bf9c225b1e.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false
+      },
+      "after": {
         "schema_version": 2,
         "url_id": "f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4",
         "source_id": "manual-f1df3c7d3e94",
@@ -302,84 +350,12 @@
         "html_baseline_forced": false,
         "file_baseline_forced": false,
         "extractor_baseline_forced": false
-      },
-      "after": {
-        "schema_version": 2,
-        "url_id": "f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4",
-        "source_id": "manual-f1df3c7d3e94",
-        "regulator": "www.osfi-bsif.gc.ca",
-        "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
-        "first_seen": "2026-10-21T03:47:47.510475+00:00",
-        "last_seen": "2026-10-21T14:44:02.062042+00:00",
-        "last_checked": "2026-10-21T14:44:02.062042+00:00",
-        "last_full_fetch": "2026-10-21T14:44:02.062042+00:00",
-        "active": true,
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_length": 87958,
-        "etag": "W/\"1792592688\"",
-        "last_modified": "Wed, 21 Oct 2026 14:24:48 GMT",
-        "raw_hash": "433df4565de7561f82266ef33d1be6875f15caf07f655841dee45ebce199407d",
-        "normalized_hash": "ae3c0b5208289f9571623f205ae7d22e3d8bdbde26a298ef6d71f9211c0c886b",
-        "html_hash": "433df4565de7561f82266ef33d1be6875f15caf07f655841dee45ebce199407d",
-        "html_comparison_hash": "433df4565de7561f82266ef33d1be6875f15caf07f655841dee45ebce199407d",
-        "html_snapshot_location": "data/snapshots/html/f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4-433df4565de7561f82266ef33d1be6875f15caf07f655841dee45ebce199407d.html",
-        "file_snapshot_location": null,
-        "extraction_type": "html",
-        "extractor_version": "content-extractor-v7",
-        "extraction_error": null,
-        "fetch_error": null,
-        "snapshot_location": "data/snapshots/f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4-ae3c0b5208289f9571623f205ae7d22e3d8bdbde26a298ef6d71f9211c0c886b.txt",
-        "evidence_location": "data/evidence/5596965b6d9b24684d573fef7f211c2f8018302f396cf9fdab063b5a04ffdf40.json",
-        "relevance": {
-          "candidate": true,
-          "reason": "Regulatory signal detected",
-          "signals": [
-            "decision",
-            "guideline",
-            "regulatory",
-            "report",
-            "requirement",
-            "risk",
-            "rule",
-            "standard",
-            "supervisory"
-          ]
-        },
-        "ai_pending": null,
-        "last_changed_at": null,
-        "change_history": [
-          {
-            "event_id": "5596965b6d9b24684d573fef7f211c2f8018302f396cf9fdab063b5a04ffdf40",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-21T14:44:02.062042+00:00",
-            "evidence_location": "data/evidence/5596965b6d9b24684d573fef7f211c2f8018302f396cf9fdab063b5a04ffdf40.json"
-          },
-          {
-            "event_id": "e5e2a4135f756b1a2e45b1a689933ec23f9eddfd76e6aabf7fb33e20d7564f10",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-21T11:41:03.551121+00:00",
-            "evidence_location": "data/evidence/e5e2a4135f756b1a2e45b1a689933ec23f9eddfd76e6aabf7fb33e20d7564f10.json"
-          },
-          {
-            "event_id": "4d712f7425a7c02c130416841981bd880245ee9652739097d44e18bf9c225b1e",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-21T04:29:41.958303+00:00",
-            "evidence_location": "data/evidence/4d712f7425a7c02c130416841981bd880245ee9652739097d44e18bf9c225b1e.json"
-          }
-        ],
-        "not_modified": false,
-        "full_fetch_forced": false,
-        "html_baseline_forced": false,
-        "file_baseline_forced": false,
-        "extractor_baseline_forced": false
       }
     }
   ],
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "39618606456"
+  "trigger": "scheduled",
+  "workflow_run_id": "39593138646"
 }
