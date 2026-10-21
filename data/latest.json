@@ -1606,6 +1606,61 @@
         "file_baseline_forced": false,
         "extractor_baseline_forced": false
       }
+    },
+    "manual-f1df3c7d3e94": {
+      "f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4": {
+        "schema_version": 2,
+        "url_id": "f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4",
+        "source_id": "manual-f1df3c7d3e94",
+        "regulator": "www.osfi-bsif.gc.ca",
+        "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+        "first_seen": "2026-10-21T03:47:47.510475+00:00",
+        "last_seen": "2026-10-21T03:47:47.510475+00:00",
+        "last_checked": "2026-10-21T03:47:47.510475+00:00",
+        "last_full_fetch": "2026-10-21T03:47:47.510475+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": 87972,
+        "etag": "W/\"1792554456\"",
+        "last_modified": "Wed, 21 Oct 2026 03:47:36 GMT",
+        "raw_hash": "0856d3ab84d9b7f9ceb5edd969d651fab1354cd71f06bc46060dc70cc14dabde",
+        "normalized_hash": "ae3c0b5208289f9571623f205ae7d22e3d8bdbde26a298ef6d71f9211c0c886b",
+        "html_hash": "0856d3ab84d9b7f9ceb5edd969d651fab1354cd71f06bc46060dc70cc14dabde",
+        "html_comparison_hash": "0856d3ab84d9b7f9ceb5edd969d651fab1354cd71f06bc46060dc70cc14dabde",
+        "html_snapshot_location": "data/snapshots/html/f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4-0856d3ab84d9b7f9ceb5edd969d651fab1354cd71f06bc46060dc70cc14dabde.html",
+        "file_snapshot_location": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/f1df3c7d3e94f4cb8962b62f5688de0713eadd61da2ebff866cb04463ee80ff4-ae3c0b5208289f9571623f205ae7d22e3d8bdbde26a298ef6d71f9211c0c886b.txt",
+        "evidence_location": null,
+        "relevance": {
+          "candidate": true,
+          "reason": "Regulatory signal detected",
+          "signals": [
+            "decision",
+            "guideline",
+            "regulatory",
+            "report",
+            "requirement",
+            "risk",
+            "rule",
+            "standard",
+            "supervisory"
+          ]
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [],
+        "not_modified": false,
+        "full_fetch_forced": true,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false
+      }
     }
   }
 }
