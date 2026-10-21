@@ -132,7 +132,7 @@ def main() -> int:
     def check_latest(_response, answer):
         required = ["changed", "source_changed", "unchanged", "fetch_error", "extraction_error"]
         missing = [field for field in required if field not in counts or not count_mentioned(answer, field, counts[field])]
-        normalize_id_text = lambda value: re.sub(r"[\\u2010-\\u2015\\u2212]", "-", value)
+        normalize_id_text = lambda value: re.sub(r"[\u2010-\u2015\u2212]", "-", value)
         if normalize_id_text(run_id) not in normalize_id_text(answer):
             return False, "exact current run ID missing (allowing typographic hyphens)"
         event_source = str((current_events[0] if current_events else {}).get("source_id") or "")
