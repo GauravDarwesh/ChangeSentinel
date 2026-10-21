@@ -98,8 +98,9 @@ export function normalizeEntry(input:any):Record<string,any>{
   const category=String(input.category||"expected_update"),recurrence=String(input.recurrence||"none");
   const start=String(input.start_date||""),end=input.end_date?String(input.end_date):null;
   const regulator=String(input.regulator||"").trim(),owner=String(input.owner_name||"").trim(),source=String(input.source_url||"").trim();
-  const days=Number(input.reminder_days_before??1),emails=[...new Set((Array.isArray(input.reminder_emails)?input.reminder_emails:[]).map((x:any)=>String(x||"").trim().toLowerCase()).filter(Boolean))];
-  const completed=[...new Set((Array.isArray(input.completed_dates)?input.completed_dates:[]).map((x:any)=>String(x||"")).filter(isIsoDate))].sort();
+  const days=Number(input.reminder_days_before??1);
+  const emails: string[]=[...new Set<string>((Array.isArray(input.reminder_emails)?input.reminder_emails:[]).map((x:any)=>String(x||"").trim().toLowerCase()).filter((x:any): x is string => Boolean(x)))];
+  const completed: string[]=[...new Set<string>((Array.isArray(input.completed_dates)?input.completed_dates:[]).map((x:any)=>String(x||"")).filter((x:any): x is string => isIsoDate(x)))].sort();
   if(!title||title.length>160)throw new PublicError("Give the entry a title (up to 160 characters).");
   if(description.length>4000)throw new PublicError("Description is too long (maximum 4,000 characters).");
   if(!CATEGORIES.has(category))throw new PublicError("Choose a valid calendar category.");
