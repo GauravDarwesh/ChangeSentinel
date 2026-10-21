@@ -131,7 +131,7 @@ class TestAskSentinelContract(unittest.TestCase):
     def test_grounding_uses_question_relevant_evidence_not_unconditional_core_docs(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
         self.assertIn("type AskSentinelEvidence = { context: string; sources: string[] };", backend)
-        self.assertIn("const relevant = docs", backend)
+        self.assertIn("const searchResults = docs", backend)
         self.assertIn(".filter((d: any) => d.is_core !== true)", backend)
         self.assertIn("return { context: context.join", backend)
         self.assertNotIn("for (const d of core) addContext", backend)
@@ -168,7 +168,7 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertFalse(validate("A fact with no citation.", ["data/report.json"]))
         self.assertFalse(validate("A fact. [Source: data/made-up.json]", ["data/report.json"]))
         self.assertFalse(validate("A fact. [Source: data/report.json] [Source: invented.json]", ["data/report.json"]))
-        self.assertIn("return citations.every((path) => allowed.has(path));", backend)
+        self.assertIn("if (!citations.every((path) => allowed.has(path))) return false;", backend)
 
     def test_run_and_evidence_ids_are_pinned_to_exact_indexed_paths(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
