@@ -151,6 +151,9 @@ jobs:
           persist-credentials: false
 
       - name: Evaluate live grounding against current dashboard records
+        # Pull requests cannot change the already-deployed Edge Function, so this is a baseline
+        # report until the fix is deployed. On main, treat the live evaluation as a gate.
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
         env:
           ASK_SENTINEL_URL: https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel
           SUPABASE_PUBLISHABLE_KEY: sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV
