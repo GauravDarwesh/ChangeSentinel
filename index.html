@@ -679,7 +679,7 @@
         padding: 0 4px env(safe-area-inset-bottom); border-top: 1px solid var(--line); background: var(--pane); overflow: visible;
       }
       .rail .brand, .rail-intro, .rail-foot { display: none; }
-      .rail-nav { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 54px; margin: 0; }
+      .rail-nav { display: grid; grid-template-columns: repeat(7, auto); height: 54px; margin: 0; }
       .nav-button { flex-direction: column; align-items: center; justify-content: center; gap: 0; height: 100%; padding: 8px 0 0; font-size: 12.5px; text-align: center; }
       .nav-button::before { left: 50%; top: 9px; width: 18px; height: 3px; margin: 0 0 0 -9px; }
       .nav-count { display: none; }
@@ -725,6 +725,64 @@
       *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
     }
   
+/* ---------- Scout ----------
+ * Scout and Ask Sentinel form their own group in the rail: a rule above Scout
+ * and Ask Sentinel's rule below it set the pair apart from the review views. */
+.nav-scout { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.nav-count.is-fresh { color: var(--state-new); }
+.tag.is-warn { color: var(--accent); }
+.tag.is-warn::before { background: var(--accent); box-shadow: var(--glow); }
+.scout-sweep {
+  display: flex; align-items: baseline; gap: 9px; width: 100%; padding: 0; border: 0; background: none;
+  color: var(--ink-2); font-size: 12.5px; line-height: 1.45; text-align: left; transition: color .15s var(--ease);
+}
+.scout-sweep::before { content: ""; flex: none; align-self: center; width: 7px; height: 7px; background: var(--ink-3); }
+.scout-sweep[data-tone="ok"]::before { background: var(--good); }
+.scout-sweep[data-tone="warn"]::before { background: var(--accent); box-shadow: var(--glow); }
+.scout-sweep[data-tone="bad"]::before { background: var(--led-bad); }
+.scout-sweep[data-tone="idle"]::before { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); }
+.scout-sweep:hover { color: var(--ink); }
+.scout-sweep #scoutSweepText { min-width: 0; }
+.scout-sweep-link { flex: none; margin-left: auto; color: var(--link); }
+.scout-sweep:hover .scout-sweep-link { color: var(--ink); }
+.scout-sweep[aria-pressed="true"] .scout-sweep-link { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: 5px; }
+.scout-reasons { display: grid; gap: 7px; margin: 2px 0 0; padding: 0; list-style: none; }
+.scout-reasons li { position: relative; max-width: 72ch; padding-left: 17px; color: var(--ink-2); font-size: 13.5px; line-height: 1.5; overflow-wrap: anywhere; }
+.scout-reasons li::before { content: ""; position: absolute; left: 0; top: 7px; width: 7px; height: 7px; background: var(--led-dim); }
+.scout-reasons li.is-plus::before { background: var(--state-new); }
+.scout-reasons li.is-minus::before { background: var(--state-bad); }
+.scout-reasons li.is-neutral::before { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); }
+.scout-channels { width: 100%; border-collapse: collapse; font-size: 13px; }
+.scout-channels td { padding: 10px 18px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.scout-channels tr:last-child td { border-bottom: 0; }
+.scout-channels td:last-child { text-align: right; white-space: nowrap; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.scout-channel-name { color: var(--ink); }
+.scout-channel-note { display: block; margin-top: 2px; color: var(--ink-3); font-size: 12px; line-height: 1.5; }
+.scout-channel-note.is-problem { color: var(--problem); }
+.scout-gaps { margin: 0; padding: 12px 18px 14px 34px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 12.5px; line-height: 1.55; }
+.scout-gaps li + li { margin-top: 6px; }
+.detail-actions .btn[disabled] { opacity: .5; cursor: not-allowed; }
+.scout-source-modal { width: min(600px, calc(100vw - 32px)); }
+.form-group { display: grid; gap: 12px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.form-group legend { display: flex; justify-content: space-between; width: 100%; margin-bottom: 2px; padding: 0; color: var(--ink); font-size: 13px; font-weight: 500; }
+.form-group legend span { color: var(--ink-3); font-weight: 400; }
+.form-group + .form-group { padding-top: 14px; border-top: 1px solid var(--line); }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 14px; }
+.form-grid .span-2 { grid-column: 1 / -1; }
+select.field-input { appearance: auto; }
+.scout-type { gap: 18px; }
+.scout-type label { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); font-size: 13px; cursor: pointer; }
+.scout-type input { accent-color: var(--accent); }
+.check-row { display: flex; align-items: center; gap: 8px; color: var(--ink-2); font-size: 13px; cursor: pointer; }
+.check-row input { accent-color: var(--accent); }
+.form-more { border-top: 1px solid var(--line); padding-top: 12px; }
+.form-more > summary { color: var(--link); font-size: 13px; cursor: pointer; }
+.form-more > summary:hover { color: var(--ink); }
+.form-more-body { display: grid; gap: 12px; margin-top: 12px; }
+.scout-meta { display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 11px 18px 0; color: var(--ink-3); font-size: 12px; }
+.scout-sheet-actions { display: inline-flex; align-items: center; gap: 14px; }
+@media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+
 /* ---------- Ask Sentinel ---------- */
 .nav-ask { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
 .nav-ask-short { display: none; }
@@ -799,9 +857,14 @@
 .ask-sentinel-send:hover:not(:disabled) { background: var(--link); border-color: var(--link); }
 .ask-sentinel-send:disabled { opacity: .35; cursor: not-allowed; }
 .ask-sentinel-footnote { display: flex; justify-content: space-between; gap: 10px; max-width: 760px; margin: 7px auto 0; color: var(--ink-3); font-size: 11px; }
+@media (max-width: 380px) {
+  .rail-nav .nav-button { font-size: 11.5px; letter-spacing: -.01em; }
+}
 @media (max-width: 980px) {
-  .rail-nav { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  .nav-ask { margin-top: 0; padding-top: 0; border-top: 0; }
+  /* Seven tabs: columns size to their labels so "Overview" gets the room "Ask" doesn't need. */
+  .rail-nav { grid-template-columns: repeat(7, auto); justify-content: space-between; padding: 0 6px; }
+  .rail-nav .nav-button { padding-left: 3px; padding-right: 3px; white-space: nowrap; }
+  .nav-scout, .nav-ask { margin-top: 0; padding-top: 0; border-top: 0; }
   .nav-ask-full, .nav-ai { display: none; }
   .nav-ask-short { display: inline; }
   .nav-add { display: none; }
@@ -824,7 +887,7 @@
      * workspace stays hidden underneath until then.
      */
     html.cs-locked, html.cs-locked body { overflow: hidden !important; }
-    html.cs-locked #app, html.cs-locked #addMonitorDialog, html.cs-locked #fieldTip, html.cs-locked #toast { visibility: hidden !important; }
+    html.cs-locked #app, html.cs-locked #addMonitorDialog, html.cs-locked #scoutSourceDialog, html.cs-locked #fieldTip, html.cs-locked #toast { visibility: hidden !important; }
     html.cs-open .cs-gate { display: none !important; }
     .cs-gate {
       --g-bg: #0b0705; --g-card: #170f0a; --g-raise: #20160f; --g-line: #3a2a1c; --g-line-2: #57402b;
@@ -976,6 +1039,7 @@
         <li><button class="nav-button" data-view="monitors" type="button">Pages<span class="nav-count" id="navMonitorCount"></span></button></li>
         <li><button class="nav-button" data-view="runs" type="button">Runs<span class="nav-count" id="navRunCount"></span></button></li>
         <li><button class="nav-button" data-view="notifications" type="button">Alerts<span class="nav-count" id="navNotificationCount"></span></button></li>
+        <li class="nav-scout"><button class="nav-button nav-button-scout" id="scoutLaunch" data-view="scout" aria-controls="scoutView" type="button" title="New regulator pages found by the weekly Scout sweep">Scout<span class="nav-count" id="navScoutCount"></span></button></li>
         <li class="nav-ask"><button class="nav-button nav-button-ask" id="askSentinelLaunch" data-view="askSentinel" aria-label="Ask Sentinel" aria-controls="askSentinelView" type="button"><span class="nav-ask-full">Ask Sentinel</span><span class="nav-ask-short">Ask</span><span class="nav-ai">AI</span></button></li>
         <li class="nav-add"><button class="nav-button nav-button-add" type="button" data-add-monitor title="Add a web page or document link to monitor">Add a link<span class="nav-plus" aria-hidden="true">+</span></button></li>
       </ul>
@@ -1138,6 +1202,23 @@
           <div class="ask-sentinel-footnote"><span>Enter to send · Shift+Enter for a new line</span><span>AI answers can be wrong — check the linked evidence.</span></div>
         </div>
       </section>
+      <section id="scoutView" class="view view-split" hidden aria-label="Scout">
+        <div class="list-pane">
+          <div class="list-head">
+            <div class="list-title-row"><h1 class="list-title">Scout</h1><span class="list-count" id="scoutCount"></span></div>
+            <button class="scout-sweep" id="scoutSweep" type="button" data-scout-coverage data-tone="idle"><span id="scoutSweepText">Loading the last sweep…</span><span class="scout-sweep-link">Sources</span></button>
+            <label class="search-field" for="scoutSearch"><span class="visually-hidden">Search Scout findings</span><input id="scoutSearch" type="search" placeholder="Search titles, regulators or addresses" autocomplete="off"></label>
+            <div class="filters" role="group" aria-label="Filter Scout findings">
+              <button type="button" data-scout-filter="REVIEW" aria-pressed="true">To review</button>
+              <button type="button" data-scout-filter="BACKLOG" aria-pressed="false">Backlog</button>
+              <button type="button" data-scout-filter="EXCLUDED" aria-pressed="false">Set aside</button>
+              <button type="button" data-scout-filter="DONE" aria-pressed="false">Decided</button>
+            </div>
+          </div>
+          <div class="list-body" id="scoutItems" aria-label="Scout findings"><div class="loading">Loading Scout findings…</div></div>
+        </div>
+        <div class="detail-pane" id="scoutDetail" aria-live="polite"></div>
+      </section>
       <section id="notificationsView" class="view view-split" hidden aria-label="Alerts">
         <div class="list-pane">
           <div class="list-head"><div class="list-title-row"><h1 class="list-title">Alerts</h1><span class="list-count" id="notificationCounts"></span></div></div>
@@ -1199,6 +1280,119 @@
           <button class="btn btn-primary" id="submitBulkMonitor" type="button" disabled>Continue with links</button>
         </div>
       </section>
+    </form>
+  </dialog>
+  <dialog class="modal scout-source-modal" id="scoutSourceDialog" aria-labelledby="scoutSourceHeading">
+    <div class="modal-head">
+      <div><h2 id="scoutSourceHeading">Add a Scout source</h2><p id="scoutSourceLede">Tell Scout where a regulator publishes. The owner-only workflow checks the request, updates config/scout.json and runs a first sweep, which is a quiet baseline.</p></div>
+      <button class="btn btn-quiet" id="closeScoutSource" type="button" aria-label="Close">Close</button>
+    </div>
+    <form id="scoutSourceForm" class="modal-body" novalidate>
+      <fieldset class="form-group">
+        <legend>Regulator</legend>
+        <label class="field-label-text" for="scoutSourceRegulator">Regulator</label>
+        <select class="field-input" id="scoutSourceRegulator"></select>
+        <div class="form-grid" id="scoutNewRegulator">
+          <div class="span-2">
+            <label class="field-label-text" for="scoutSourceName">Name</label>
+            <input class="field-input" id="scoutSourceName" type="text" maxlength="160" placeholder="Monetary Authority of Singapore" autocomplete="off">
+          </div>
+          <div>
+            <label class="field-label-text" for="scoutSourceShortName">Short name <span>Optional</span></label>
+            <input class="field-input" id="scoutSourceShortName" type="text" maxlength="60" placeholder="MAS" autocomplete="off">
+          </div>
+          <div>
+            <label class="field-label-text" for="scoutSourceId">ID</label>
+            <input class="field-input" id="scoutSourceId" type="text" maxlength="40" placeholder="mas" autocomplete="off" spellcheck="false">
+          </div>
+          <div>
+            <label class="field-label-text" for="scoutSourceRegion">Region</label>
+            <select class="field-input" id="scoutSourceRegion"><option value="NAM">NAM</option><option value="LATAM">LATAM</option><option value="EMEA">EMEA</option><option value="APAC">APAC</option></select>
+          </div>
+          <div>
+            <label class="field-label-text" for="scoutSourceJurisdiction">Jurisdiction <span>Optional</span></label>
+            <input class="field-input" id="scoutSourceJurisdiction" type="text" maxlength="80" placeholder="Singapore" autocomplete="off">
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="form-group">
+        <legend>Where it publishes <span id="scoutChannelOptional">Optional when editing details</span></legend>
+        <div class="segmented scout-type" role="radiogroup" aria-label="Channel type">
+          <label><input type="radio" name="scoutChannelType" value="feed" checked> Feed</label>
+          <label><input type="radio" name="scoutChannelType" value="sitemap"> Site map</label>
+          <label><input type="radio" name="scoutChannelType" value="listing"> Listing page</label>
+        </div>
+        <div>
+          <label class="field-label-text" for="scoutChannelUrl">Address</label>
+          <input class="field-input" id="scoutChannelUrl" type="url" placeholder="https://www.example.gov/news/rss.xml" autocomplete="off">
+          <div class="field-help" id="scoutChannelHelp">An RSS, Atom or RDF feed the regulator publishes.</div>
+        </div>
+        <div>
+          <label class="field-label-text" for="scoutChannelLabel">Label</label>
+          <input class="field-input" id="scoutChannelLabel" type="text" maxlength="120" placeholder="Circulars and notices" autocomplete="off">
+        </div>
+        <div class="form-grid" id="scoutListingOptions" hidden>
+          <div class="span-2">
+            <label class="field-label-text" for="scoutChannelSelector">Only read links inside <span>Optional CSS selector</span></label>
+            <input class="field-input" id="scoutChannelSelector" type="text" maxlength="200" placeholder=".views-element-container" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="span-2">
+            <label class="field-label-text" for="scoutChannelPrefix">Only links starting with <span>Optional</span></label>
+            <input class="field-input" id="scoutChannelPrefix" type="url" placeholder="https://www.example.gov/regulation/" autocomplete="off">
+          </div>
+          <div>
+            <label class="field-label-text" for="scoutChannelPageParam">Page parameter <span>Optional</span></label>
+            <input class="field-input" id="scoutChannelPageParam" type="text" maxlength="40" placeholder="page" autocomplete="off" spellcheck="false">
+          </div>
+          <div>
+            <label class="field-label-text" for="scoutChannelMaxPages">Pages per sweep</label>
+            <input class="field-input" id="scoutChannelMaxPages" type="number" min="1" max="50" value="5">
+          </div>
+          <div class="span-2 field-help">With a page parameter, the listing must show newest items first; Scout reads pages until it reaches items it has seen before.</div>
+        </div>
+        <label class="check-row"><input type="checkbox" id="scoutChannelRequired" checked> Required: if it can't be read, the sweep is marked degraded</label>
+      </fieldset>
+      <details class="form-more" id="scoutMetadata">
+        <summary>Details used to judge relevance</summary>
+        <div class="form-more-body">
+          <div class="form-grid">
+            <div>
+              <label class="field-label-text" for="scoutLanguages">Languages</label>
+              <input class="field-input" id="scoutLanguages" type="text" maxlength="60" placeholder="en, fr" autocomplete="off">
+            </div>
+            <div>
+              <label class="field-label-text" for="scoutReviewLanguages">Review in</label>
+              <input class="field-input" id="scoutReviewLanguages" type="text" maxlength="60" placeholder="en" autocomplete="off">
+            </div>
+          </div>
+          <div>
+            <label class="field-label-text" for="scoutRelevantKeywords">Relevant keywords <span>One per line</span></label>
+            <textarea class="field-input" id="scoutRelevantKeywords" rows="3" maxlength="4000" placeholder="superannuation&#10;payment services"></textarea>
+            <div class="field-help">A page whose title, link or listing text contains one counts as relevant evidence.</div>
+          </div>
+          <div>
+            <label class="field-label-text" for="scoutExcludeKeywords">Exclusion keywords <span>One per line</span></label>
+            <textarea class="field-input" id="scoutExcludeKeywords" rows="2" maxlength="4000" placeholder="banknote&#10;museum"></textarea>
+            <div class="field-help">Sets a page aside only when nothing regulatory points the other way. Applies to this regulator only.</div>
+          </div>
+          <div>
+            <label class="field-label-text" for="scoutPathHints">Path hints <span>One per line</span></label>
+            <textarea class="field-input" id="scoutPathHints" rows="3" maxlength="4000" placeholder="/en/guidance/ = guidance&#10;/en/supervision/ = topic:supervision&#10;/events/ = exclude"></textarea>
+            <div class="field-help" id="scoutPathHintHelp"></div>
+          </div>
+          <div>
+            <label class="field-label-text" for="scoutKnownGaps">Known gaps <span>One per line</span></label>
+            <textarea class="field-input" id="scoutKnownGaps" rows="2" maxlength="4000" placeholder="Speeches are published only on a separate site."></textarea>
+          </div>
+          <label class="check-row" id="scoutActiveRow"><input type="checkbox" id="scoutActive" checked> Active: include this regulator in weekly sweeps</label>
+        </div>
+      </details>
+      <div class="bulk-status is-error" id="scoutSourceStatus" role="alert" hidden></div>
+      <div class="modal-info">Submitting opens a prefilled request on GitHub. Nothing changes until you submit it there. Channels are added, never removed, from here.</div>
+      <div class="modal-actions">
+        <button class="btn" id="cancelScoutSource" type="button">Cancel</button>
+        <button class="btn btn-primary" id="submitScoutSource" type="submit">Open request on GitHub</button>
+      </div>
     </form>
   </dialog>
   <div class="field-tip" id="fieldTip" role="tooltip" hidden></div>
@@ -1373,7 +1567,7 @@
     window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV";
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.121.0/dist/umd/supabase.js"></script>
-  <script src="dashboard-lib.js?v=20261021-bulk-1"></script>
-  <script src="dashboard.js?v=20261021-bulk-1"></script>
+  <script src="dashboard-lib.js?v=20261021-scout-1"></script>
+  <script src="dashboard.js?v=20261021-scout-1"></script>
 </body>
 </html>
