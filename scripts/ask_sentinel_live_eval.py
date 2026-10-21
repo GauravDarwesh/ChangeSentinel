@@ -17,8 +17,8 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-ENDPOINT = os.environ["ASK_SENTINEL_URL"].rstrip("/")
-PUBLISHABLE_KEY = os.environ["SUPABASE_PUBLISHABLE_KEY"]
+ENDPOINT = os.environ.get("ASK_SENTINEL_URL", "").rstrip("/")
+PUBLISHABLE_KEY = os.environ.get("SUPABASE_PUBLISHABLE_KEY", "")
 
 
 def load_json(path: str) -> Any:
@@ -57,6 +57,33 @@ def ask(question: str) -> dict[str, Any]:
         return {"http_status": "ERROR", "error": type(error).__name__ + ": " + str(error)[:180]}
 
 
+def is_citation_rejection(response: dict[str, Any]) -> bool:
+    """Recognize our own grounding rejection, including older deployed responses without error_code."""
+    if response.get("error_code") == "citation_validation_failed":
+        return True
+    status = response.get("http_status")
+    message = str(response.get("error") or "").lower()
+    return status in {422, 502} and (
+        "retrieved source citations" in message
+        or "citation validation" in message
+        or "unapproved_source" in message
+        or "uncited_line" in message
+    )
+
+
+def is_unavailable_response(response: dict[str, Any]) -> bool:
+    """Only classify real transport/provider failures as inconclusive, never grounding rejection."""
+    if is_citation_rejection(response):
+        return False
+    status = response.get("http_status")
+    error_code = str(response.get("error_code") or "")
+    if error_code.startswith("provider_"):
+        return True
+    return status == "ERROR" or (
+        isinstance(status, int) and status in {429, 500, 502, 503, 504}
+    )
+
+
 def count_mentioned(text: str, field: str, expected: Any) -> bool:
     aliases = {
         "changed": ["changed"],
@@ -82,15 +109,19 @@ def run_case(results: list[dict[str, Any]], name: str, question: str, check) -> 
     response = ask(question)
     answer = str(response.get("answer") or "")
     status = response.get("http_status")
-    # Provider/runtime failures are unavailable evidence, not hallucinations. Keep them visible
-    # as inconclusive and still fail the strict post-deployment gate, but do not mislabel them
-    # as bad factual answers.
-    unavailable = status == "ERROR" or (
-        isinstance(status, int) and status in {429, 500, 502, 503, 504}
-    )
-    if not answer and unavailable:
+    # A citation rejection is a grounding failure; provider/runtime outages are inconclusive.
+    if not answer and is_citation_rejection(response):
+        passed = False
+        detail = "citation validation rejected the generated answer: " + str(
+            (response.get("citation_validation") or {}).get("reason")
+            or response.get("error_code")
+            or "citation rejection"
+        )
+    elif not answer and is_unavailable_response(response):
         passed = None
-        detail = "provider/endpoint unavailable; grounding could not be evaluated: " + str(response.get("error") or "no answer")[:200]
+        detail = "provider/endpoint unavailable; grounding could not be evaluated: " + str(
+            response.get("error_code") or response.get("error") or "no answer"
+        )[:200]
     else:
         try:
             checked, detail = check(response, answer)
@@ -103,7 +134,8 @@ def run_case(results: list[dict[str, Any]], name: str, question: str, check) -> 
         "passed": passed,
         "detail": str(detail),
         "http_status": status,
-        "answer_excerpt": (answer or str(response.get("error") or ""))[:1300],
+        "error_code": str(response.get("error_code") or ""),
+        "answer_chars": len(answer),
     })
 
 
@@ -266,8 +298,7 @@ def main() -> int:
     inconclusive = sum(1 for result in results if result["passed"] is None)
     for result in results:
         marker = "PASS" if result["passed"] is True else "INCONCLUSIVE" if result["passed"] is None else "FAIL"
-        print(f"{marker} [{result['name']}] HTTP={result['http_status']} - {result['detail']}")
-        print("ANSWER EXCERPT: " + result["answer_excerpt"].replace("\n", " ")[:1300])
+        print("{} [{}] HTTP={} error_code={} answer_chars={} - {}".format(marker, result["name"], result["http_status"], result["error_code"] or "none", result["answer_chars"], result["detail"]))
 
     summary = {
         "dashboard_run_tested": run_id,
@@ -288,7 +319,7 @@ def main() -> int:
                 marker = "PASS" if result["passed"] is True else "INCONCLUSIVE" if result["passed"] is None else "FAIL"
                 file.write(f"### {marker} - {result['name']}\n\n")
                 file.write(result["detail"] + "\n\n")
-                file.write("Answer excerpt: " + result["answer_excerpt"].replace("\n", " ")[:1300] + "\n\n")
+                file.write("Answer length: {} characters; error code: {}. Response text omitted.\\n\\n".format(result["answer_chars"], result["error_code"] or "none"))
 
     print(f"Ask Sentinel data-grounding evaluation: {passed} passed, {failed} failed, {inconclusive} inconclusive out of {len(results)}.")
     if failed or inconclusive:
