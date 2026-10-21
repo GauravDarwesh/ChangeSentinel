@@ -175,7 +175,6 @@
     const slot = slotStartOf(now);
     const scheduledDone = cols.some(column => column.at >= slot && (column.trigger === "scheduled" || column.trigger === "unknown"));
     const due = scheduledDone ? slot + PERIOD_MS : slot;
-    const latestAt = cols.length ? cols[cols.length - 1].at : 0;
     const result = {
       due: new Date(due), slot, phase: scheduledDone ? "waiting" : (now - slot < 20 * 60000 ? "due" : "late"),
       remainingMinutes: Math.max(0, Math.ceil((due - now) / 60000)),
@@ -192,10 +191,16 @@
       result.htmlUrl = active.html_url || "";
       return result;
     }
+    // A finished run keeps working for a few minutes after its results are
+    // saved (commit, alerts, Pages), so "finished" is only "still saving"
+    // while no saved scan belongs to it yet.
+    const saved = run => cols.some(column =>
+      (column.workflowRunId && String(column.workflowRunId) === String(run.id)) ||
+      column.at >= (runTime(run, "run_started_at") ?? runTime(run, "created_at") ?? Infinity) - 60000);
     const finished = runs.find(run => {
       const ended = runTime(run, "updated_at");
       return run.status === "completed" && run.conclusion === "success" && ended !== null &&
-        ended > latestAt + 60000 && now - ended < 20 * 60000;
+        now - ended < 20 * 60000 && !saved(run);
     });
     if (finished) {
       result.phase = "publishing";

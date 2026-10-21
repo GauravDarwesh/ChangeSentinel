@@ -417,7 +417,10 @@
     .block-label { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; color: var(--ink-3); font-size: 12.5px; }
     .block-value { margin-top: 4px; font-size: 15px; }
     .block-value small { color: var(--ink-3); font-size: 13px; }
-    .cycle-bar { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 2px; margin-top: 10px; }
+    .cycle-bar { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 2px; margin-top: 10px; padding-bottom: 6px; }
+    .cycle-bar i { position: relative; }
+    /* A manual run in this six-hour window: the same dash used under the field's columns. */
+    .cycle-bar i.m-manual::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 3px; background: var(--ink-2); }
     .cycle-bar i { aspect-ratio: 1; background: var(--led-off); }
     .cycle-bar i.on { background: var(--led-dim); }
     .cycle-bar i.now { background: var(--accent); box-shadow: var(--glow); animation: pulse 1.8s var(--ease) infinite; }
@@ -484,7 +487,7 @@
     .field-marks i.m-continuation { background: var(--line-2); }
     .field-axis { margin-top: 6px; }
     .field-axis span { white-space: nowrap; }
-    .field-note { margin-top: 16px; color: var(--ink-3); font-size: 12.5px; max-width: 70ch; }
+    .field-note { margin-top: 16px; color: var(--ink-3); font-size: 12.5px; line-height: 1.6; text-wrap: pretty; }
     .field-tip {
       position: fixed; z-index: 80; max-width: 280px; padding: 8px 10px; border: 1px solid var(--line-2); border-radius: var(--radius);
       background: var(--raise-2); color: var(--ink); font-size: 12.5px; line-height: 1.45; pointer-events: none;
@@ -572,12 +575,16 @@
     .cmp-pages { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-left: auto; color: var(--ink-3); }
     .cmp-pages button { min-width: 26px; padding: 1px 6px; border: 1px solid var(--line-2); background: none; color: var(--ink-2); font: 11.5px var(--font-code); }
     .cmp-pages button:hover { border-color: var(--accent); color: var(--ink); }
-    .cmp-stage { position: relative; display: grid; overflow: hidden; background: var(--bg); cursor: ew-resize; user-select: none; touch-action: pan-y; }
+    .cmp-stage { position: relative; display: grid; overflow: hidden; overflow: clip; background: var(--bg); cursor: ew-resize; user-select: none; touch-action: pan-y; }
     .cmp-layer { grid-area: 1 / 1; min-width: 0; }
     .cmp-after { clip-path: inset(0 0 0 var(--pos)); }
     .cmp-stage.is-animating .cmp-after, .cmp-stage.is-animating .cmp-cell.is-a { transition: clip-path .35s var(--ease); }
     .cmp-stage.is-animating .cmp-handle { transition: left .35s var(--ease); }
-    .cmp-handle { position: absolute; top: 0; bottom: 0; left: var(--pos); z-index: 2; width: 2px; margin-left: -1px; background: var(--accent); box-shadow: var(--glow); outline: none; }
+    .cmp-handle { position: absolute; top: 0; bottom: 0; left: var(--pos); z-index: 2; width: 2px; margin-left: -1px; background: var(--accent); box-shadow: var(--glow); outline: none; touch-action: none; }
+    @media (pointer: coarse) {
+      .cmp-grip { width: 42px; height: 42px; margin-left: -20px; }
+      .cmp-grip i { height: 16px; }
+    }
     .cmp-grip { position: sticky; top: 42vh; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; place-items: center; width: 30px; height: 30px; margin-left: -14px; border: 1px solid var(--accent); background: var(--pane); box-shadow: var(--glow); cursor: ew-resize; transition: transform .15s var(--ease); }
     .cmp-grip i { width: 2px; height: 12px; background: var(--accent); }
     .cmp-handle:focus-visible .cmp-grip, .cmp-stage.is-dragging .cmp-grip, .cmp-grip:hover { transform: scale(1.12); }
@@ -685,7 +692,19 @@
       .facts { grid-template-columns: 1fr; }
       .toast { bottom: calc(68px + env(safe-area-inset-bottom)); }
     }
-    .mobile-head { display: none; align-items: center; justify-content: space-between; gap: 12px; padding: 0 0 18px; }
+    .mobile-head { display: none; flex-direction: column; gap: 14px; padding: 0 0 20px; }
+    .mobile-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .mobile-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .m-action {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; height: 36px; padding: 0 8px;
+      border: 1px solid var(--line-2); background: var(--raise); color: var(--link); font-size: 13px; white-space: nowrap;
+      transition: border-color .15s var(--ease), color .15s var(--ease);
+    }
+    .m-action::before { content: ""; flex: none; width: 7px; height: 7px; box-shadow: inset 0 0 0 1px var(--led-dim); }
+    .m-action.is-scan { color: var(--accent); }
+    .m-action.is-scan::before { background: var(--accent); box-shadow: var(--glow); }
+    .m-action:active, .m-action:hover { border-color: var(--accent); color: var(--ink); }
+    .m-action:active::before, .m-action:hover::before { box-shadow: inset 0 0 0 1px var(--accent), 0 0 9px rgba(255, 159, 28, .55); }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -809,7 +828,9 @@
       animation: csGateRise .7s var(--ease) both;
       transition: opacity .35s var(--ease), transform .45s var(--ease);
     }
-    .cs-gate.is-opening .cs-gate-card { opacity: 0; transform: scale(.97); }
+    /* An exit animation, not a transition: the entrance animation's fill would hold the card visible. */
+    .cs-gate.is-closing .cs-gate-card, .cs-gate.is-opening .cs-gate-card { animation: csCardOut .34s var(--ease) forwards; }
+    @keyframes csCardOut { to { opacity: 0; transform: translateY(-6px) scale(.97); visibility: hidden; } }
     .cs-gate-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .cs-gate-brand { display: inline-flex; align-items: center; gap: 10px; margin: 0; font-size: 14px; font-weight: 500; letter-spacing: -.01em; }
     .cs-gate-brand .brand-mark { grid-template-columns: repeat(3, 5px); gap: 2px; }
@@ -839,7 +860,8 @@
     .cs-key-leds i { flex: none; width: 9px; height: 9px; background: var(--g-accent); box-shadow: 0 0 8px rgba(255, 159, 28, .55); animation: csKeyIn .18s var(--ease) both; }
     .cs-key-leds .cs-key-caret { width: 2px; height: 16px; margin-left: 2px; background: var(--g-ink-2); box-shadow: none; animation: csBlink 1.05s steps(1) infinite; }
     .cs-key:not(:focus-within) .cs-key-caret { display: none; }
-    .cs-key-leds .cs-key-hint { color: var(--g-ink-3); font-size: 13.5px; white-space: nowrap; }
+    .cs-key-leds .cs-key-hint { color: var(--g-ink-3); font-size: 13.5px; white-space: nowrap; transition: opacity .12s var(--ease); }
+    .cs-key:focus-within .cs-key-hint { opacity: 0; }
     .cs-key.is-error .cs-key-leds i:not(.cs-key-caret) { background: var(--g-bad); box-shadow: 0 0 9px rgba(255, 90, 70, .6); }
     .cs-key.is-checking .cs-key-leds i:not(.cs-key-caret) { animation: csKeyCheck .7s var(--ease) infinite; animation-delay: calc(var(--k, 0) * 45ms); }
     .cs-key.is-ok .cs-key-leds i:not(.cs-key-caret) { background: var(--g-good); box-shadow: 0 0 10px rgba(76, 213, 156, .6); animation: csKeyIn .22s var(--ease) both; animation-delay: calc(var(--k, 0) * 30ms); }
@@ -963,8 +985,15 @@
       <section id="overviewView" class="view view-overview" aria-label="Overview">
         <div class="overview-text">
           <div class="mobile-head">
-            <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i></span>ChangeSentinel</a>
-            <span class="rail-links"><button class="text-button" type="button" data-theme-toggle>Light theme</button><button class="text-button" type="button" data-refresh>Reload</button><button class="text-button scan-now" type="button" data-run-scan="all">Scan now</button><button class="text-button" type="button" data-add-monitor>+ Add link</button></span>
+            <div class="mobile-top">
+              <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i></span>ChangeSentinel</a>
+              <button class="text-button" type="button" data-theme-toggle>Light theme</button>
+            </div>
+            <div class="mobile-actions">
+              <button class="m-action" type="button" data-refresh>Reload</button>
+              <button class="m-action is-scan" type="button" data-run-scan="all">Scan now</button>
+              <button class="m-action" type="button" data-add-monitor>Add link</button>
+            </div>
           </div>
           <h1 class="visually-hidden">Overview</h1>
           <p class="overview-statement" id="overviewLede">Reading the latest stored scan…</p>
@@ -1168,6 +1197,7 @@
       const OFF = [31, 21, 14];
       let W = 0, H = 0, dpr = 1, cols = 0, rows = 0, raf = 0, last = 0;
       let opening = null;
+      let cardRect = null;
 
       // Same smooth value noise as the change field (dashboard-lib.js), inlined
       // so the gate can paint before the dashboard scripts load.
@@ -1200,7 +1230,7 @@
         const t = reduced ? 3 : now / 1000;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, W, H);
-        const card = gate.querySelector(".cs-gate-card").getBoundingClientRect();
+        const card = cardRect || gate.querySelector(".cs-gate-card").getBoundingClientRect();
         const cx = (card.left + card.width / 2) / 20, cy = (card.top + card.height / 2) / 20;
         const radius = opening ? ((now - opening) / 950) * Math.hypot(cols, rows) : -1;
         for (let j = 0; j < rows; j++) {
@@ -1266,15 +1296,20 @@
         key.classList.add("is-ok");
         message.className = "cs-gate-message";
         message.textContent = "Unlocked. Opening the dashboard…";
+        // The green key holds for a beat, the card fades away, then the wall
+        // empties outward from where the card stood to reveal the workspace.
         setTimeout(() => {
           if (reduced) { finish(); return; }
-          // Reveal the workspace under the wall, then sweep the wall away.
-          root.classList.remove("cs-locked");
-          gate.classList.add("is-opening");
-          opening = performance.now();
-          cancelAnimationFrame(raf); raf = 0; start();
-          window.dispatchEvent(new Event("resize"));
-        }, 380);
+          cardRect = gate.querySelector(".cs-gate-card").getBoundingClientRect();
+          gate.classList.add("is-closing");
+          setTimeout(() => {
+            root.classList.remove("cs-locked");
+            gate.classList.add("is-opening");
+            opening = performance.now();
+            cancelAnimationFrame(raf); raf = 0; start();
+            window.dispatchEvent(new Event("resize"));
+          }, 380);
+        }, 420);
       }
       form.addEventListener("submit", async event => {
         event.preventDefault();
@@ -1307,7 +1342,7 @@
     window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV";
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.121.0/dist/umd/supabase.js"></script>
-  <script src="dashboard-lib.js?v=20261021-led-2"></script>
-  <script src="dashboard.js?v=20261021-led-2"></script>
+  <script src="dashboard-lib.js?v=20261021-sync-3"></script>
+  <script src="dashboard.js?v=20261021-sync-3"></script>
 </body>
 </html>

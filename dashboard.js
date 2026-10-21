@@ -162,17 +162,30 @@ function loadEvidence(location) {
 
 /* ================= Formatting ================= */
 
+// One clock format across the dashboard ("8:06 am"). Every stamp is cut to the
+// minute the same way, so a change and the scan behind it never disagree.
+function clock(value) {
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).replace(/\s?([AP])M$/i, (_, m) => " " + m.toLowerCase() + "m");
+}
+function dateLabel(d, withYear) {
+  return d.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short", year: withYear ? "numeric" : undefined });
+}
+// "Today, 8:06 am", "Yesterday, 10:02 am", "Mon 19 Oct, 6:21 pm".
+function when(value) {
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  const heading = L.dayHeading(value);
+  const day = heading === "Today" || heading === "Yesterday" ? heading : dateLabel(d, d.getFullYear() !== new Date().getFullYear());
+  return day + ", " + clock(d);
+}
 function fmt(value) {
   if (!value) return "Not recorded";
   const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? String(value) : d.toLocaleString([], {
-    year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
-  });
+  return Number.isNaN(d.getTime()) ? String(value) : dateLabel(d, true) + ", " + clock(d);
 }
-function timeOnly(value) {
-  const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? "" : d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-}
+function timeOnly(value) { return clock(value); }
 function shortDate(value) {
   const d = new Date(value);
   return Number.isNaN(d.getTime()) ? "" : d.toLocaleDateString([], { day: "numeric", month: "short" });
@@ -586,7 +599,7 @@ function renderOverview() {
     ? '<ul class="link-list">' + recent.map(entry => {
         const tone = L.eventTone(entry.event_type);
         return '<li><button class="link-row" type="button" data-select-change="' + esc(entry.event_id) + '"><span class="link-title">' + esc(eventTitle(entry)) +
-          '</span><span class="row-time">' + esc(rowTime(entry.timestamp)) + '</span><span class="row-sub"><span class="tag ' + toneClass(entry) + '">' +
+          '</span><span class="row-time">' + esc(when(entry.timestamp)) + '</span><span class="row-sub"><span class="tag ' + toneClass(entry) + '">' +
           esc(L.eventLabel(entry.event_type)) + "</span>" + verdictTag(verdictFor(entry), entry) + "</span></button></li>";
       }).join("") + "</ul>"
     : '<p class="block-value"><small>Nothing yet. A change shows up here, with a redline, the scan after a page differs from its saved copy.</small></p>';
@@ -643,7 +656,8 @@ function fieldGeometry() {
   const labelWidth = Math.round(Math.min(220, Math.max(104, width * (isCompact() ? .36 : .3))));
   const gap = 3;
   const room = Math.max(120, width - labelWidth);
-  const tile = Math.max(11, Math.min(20, Math.floor((room + gap) / 22) - gap));
+  const scans = new Set((state.history || []).map(run => run && run.run_id)).size + 1;
+  const tile = Math.max(11, Math.min(26, Math.floor((room + gap) / Math.max(22, scans)) - gap));
   const capacity = Math.max(6, Math.floor((room + gap) / (tile + gap)));
   return { capacity, labelWidth, tile, gap, key: capacity + "x" + tile };
 }
@@ -687,9 +701,9 @@ function renderMonitoringSignal() {
       html += '<button class="field-label" type="button" data-monitor-id="' + esc(item.url_id) + '" data-row="' + y + '" title="' + esc(title) + '">' + esc(title) + "</button>";
       columns.forEach((column, x) => {
         const s = L.columnCellState(column, page);
-        html += '<span class="led s-' + s + '" role="gridcell" data-x="' + x + '" data-y="' + y + '" data-col="' + esc(column.id) + '"' +
+        html += '<span class="led s-' + s + '" role="gridcell" data-x="' + x + '" data-y="' + y + '" data-col="' + esc(column.id) + '" data-source="' + esc(item.source_id) + '"' +
           (s === "none" ? "" : ' data-monitor-id="' + esc(item.url_id) + '"') +
-          ' data-tip="' + esc(title) + '" data-state="' + s + '" aria-label="' + esc(title + ", " + columnLabel(column) + ": " + stateWords(s)) + '"></span>';
+          ' data-tip="' + esc(title) + '" data-state="' + s + '" aria-label="' + esc(title + ", " + columnLabel(column, item.source_id) + ": " + stateWords(s)) + '"></span>';
       });
       html += '<span class="led s-pending" role="gridcell" data-x="' + columns.length + '" data-y="' + y + '" data-col="pending" data-tip="' + esc(title) +
         '" data-state="pending" aria-label="' + esc(title + ", " + pendingTip.title) + '"></span>';
@@ -722,9 +736,7 @@ function renderMonitoringSignal() {
   ledField.measure();
   updateNextRunCountdown();
 }
-function timeOnlyShort(date) {
-  return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).replace(/\s?([AP])M$/i, (_, m) => " " + m.toLowerCase() + "m");
-}
+function timeOnlyShort(date) { return clock(date); }
 // The four scheduled slot times (00, 06, 12, 18 UTC) in the viewer's time zone.
 function scheduleTimes() {
   const base = Date.UTC(2026, 0, 1);
@@ -735,9 +747,9 @@ function scheduleTimes() {
 function triggerWords(trigger) {
   return { scheduled: "Scheduled scan", manual: "Manual scan", continuation: "Crawl continuation" }[trigger] || "Scan";
 }
-function columnLabel(column) {
-  const at = new Date(column.at);
-  const ran = at.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" }) + ", " + timeOnlyShort(at);
+function columnLabel(column, sourceId) {
+  const at = new Date((sourceId && column.sources[sourceId]) || column.at);
+  const ran = when(at);
   if (column.trigger === "scheduled" && column.at - column.slot > 20 * 60000) {
     return "Scheduled " + timeOnlyShort(new Date(column.slot)) + " scan, ran " + ran;
   }
@@ -779,9 +791,22 @@ function updateNextRunCountdown() {
   const bar = $("cycleBar");
   if (bar) {
     const waiting = pending.phase === "waiting";
+    const period = L.SCAN_INTERVAL_HOURS * 3600000;
     const lit = waiting ? Math.floor(Math.min(1, Math.max(0, 1 - pending.remainingMinutes / (L.SCAN_INTERVAL_HOURS * 60))) * 24) : 24;
+    // The bar spans the six hours leading to the scan it counts down to; a manual
+    // run saved inside that window is marked under its cell, as in the field.
+    const windowStart = (waiting ? pending.due.getTime() : pending.slot + period) - period;
+    const manualCells = new Map();
+    (state.scanColumns || []).forEach(column => {
+      if (column.trigger !== "manual" || column.at < windowStart || column.at >= windowStart + period) return;
+      manualCells.set(Math.min(23, Math.floor((column.at - windowStart) / period * 24)), column);
+    });
     bar.dataset.phase = pending.phase;
-    bar.innerHTML = Array.from({ length: 24 }, (_, i) => '<i class="' + (i < lit ? "on" : i === lit ? "now" : "") + '" style="--i:' + i + '"></i>').join("");
+    bar.innerHTML = Array.from({ length: 24 }, (_, i) => {
+      const manual = manualCells.get(i);
+      return '<i class="' + (i < lit ? "on" : i === lit ? "now" : "") + (manual ? " m-manual" : "") + '" style="--i:' + i + '"' +
+        (manual ? ' title="Manual scan, ' + esc(when(manual.at)) + '"' : "") + "></i>";
+    }).join("");
   }
   const last = state.report.generated_at;
   if ($("lastScanTime")) {
@@ -797,14 +822,14 @@ function showFieldTip(target, x, y) {
   const tip = $("fieldTip");
   ledField.hover(target);
   if (!target) { tip.hidden = true; return; }
-  let when = "";
+  let label = "";
   if (target.dataset.state === "pending") {
-    when = pendingWords(state.pendingScan || L.pendingScan(new Date(), [], [])).title;
+    label = pendingWords(state.pendingScan || L.pendingScan(new Date(), [], [])).title;
   } else {
     const column = (state.scanColumns || []).find(candidate => candidate.id === target.dataset.col);
-    when = column ? columnLabel(column) : "";
+    label = column ? columnLabel(column, target.dataset.source) : "";
   }
-  tip.innerHTML = esc(target.dataset.tip) + "<small>" + esc(when) + "</small>" +
+  tip.innerHTML = esc(target.dataset.tip) + "<small>" + esc(label) + "</small>" +
     (target.dataset.state === "pending" ? "" : "<small>" + esc(stateWords(target.dataset.state).replace(/^\w/, ch => ch.toUpperCase())) + "</small>");
   tip.hidden = false;
   const box = tip.getBoundingClientRect();
@@ -1103,6 +1128,11 @@ function renderMonitorList() {
   }).join("");
 }
 function runKey(run) { return String(run.run_id || "") + "|" + String(run.source_id || ""); }
+function runTriggerPrefix(run) {
+  const column = (state.scanColumns || L.runColumns(state.history, { workflowRuns: state.workflowRuns })).find(candidate => candidate.id === String(run.run_id));
+  const trigger = column ? column.trigger : L.normalizeTrigger(run.trigger);
+  return trigger === "manual" ? "Manual · " : trigger === "continuation" ? "Continuation · " : trigger === "scheduled" ? "Scheduled · " : "";
+}
 function runSummary(counts) {
   const changed = Number(counts.changed || 0) + Number(counts.new || 0) + Number(counts.removed || 0);
   const problems = Number(counts.fetch_error || 0) + Number(counts.extraction_error || 0);
@@ -1134,7 +1164,7 @@ function renderRuns() {
       '<span class="row-mark tone-' + tone + '" aria-hidden="true"></span>' +
       '<span class="row-title">' + esc(shortSourceLabel(source.id ? source : { name: run.regulator || run.source_id })) + "</span>" +
       '<span class="row-time">' + esc(timeOnly(run.generated_at)) + "</span>" +
-      '<span class="row-summary">' + esc(runSummary(counts)) + (run.superseded ? ". Superseded by a later correction." : "") + "</span></button>";
+      '<span class="row-summary">' + esc(runTriggerPrefix(run) + runSummary(counts)) + (run.superseded ? ". Superseded by a later correction." : "") + "</span></button>";
   }).join("");
 }
 function notificationMap(value, key) {
@@ -1377,7 +1407,10 @@ function renderSourceCode(source) {
   return '<div class="source-code" role="region" aria-label="Saved HTML source">' +
     lines.map((line, index) => '<div class="source-line"><span class="line-no">' + (index + 1) + "</span><code>" + (esc(line) || " ") + "</code></div>").join("") + "</div>";
 }
+// Saved pages render in a sandbox without scripts, so their <script> blocks
+// are dropped up front rather than left to fill the console with blocked-script errors.
 function previewSource(source, url) {
+  source = String(source || "").replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, "").replace(/<script\b[^>]*\/?>/gi, "");
   const baseTag = '<base href="' + esc(url) + '">';
   if (/<head\b[^>]*>/i.test(source)) return source.replace(/<head\b[^>]*>/i, match => match + baseTag);
   return '<!doctype html><html><head><meta charset="utf-8">' + baseTag + "</head><body>" + source + "</body></html>";
@@ -1697,6 +1730,7 @@ function readHash() {
 }
 function setView(view, options) {
   options = options || {};
+  showFieldTip(null);
   state.view = VIEWS.indexOf(view) >= 0 ? view : "overview";
   state.mobileDetail = !!options.detail;
   ensureSelection(state.view);
@@ -1932,11 +1966,20 @@ $("workspace").addEventListener("click", event => {
   }
 });
 // LED tooltips: which page, which scan, what happened.
-$("signalVisual").addEventListener("mousemove", event => {
-  const cell = event.target.closest(".led");
-  showFieldTip(cell, event.clientX, event.clientY);
+$("signalVisual").addEventListener("pointermove", event => {
+  if (event.pointerType !== "mouse") return;
+  showFieldTip(event.target.closest(".led"), event.clientX, event.clientY);
 });
-$("signalVisual").addEventListener("mouseleave", () => showFieldTip(null));
+$("signalVisual").addEventListener("pointerleave", event => { if (event.pointerType === "mouse") showFieldTip(null); });
+let fieldTipTimer = 0;
+document.addEventListener("pointerdown", event => {
+  clearTimeout(fieldTipTimer);
+  if (event.pointerType === "mouse") return;
+  const pendingCell = event.target.closest && event.target.closest(".led.s-pending");
+  showFieldTip(pendingCell, event.clientX, event.clientY);
+  if (pendingCell) fieldTipTimer = setTimeout(() => showFieldTip(null), 2600);
+}, true);
+document.addEventListener("scroll", () => { if (!$("fieldTip").hidden) showFieldTip(null); }, true);
 // Redraw the field when its width changes enough to fit a different number of
 // columns, and re-measure the painted lights whenever it moves or resizes.
 if (typeof ResizeObserver === "function") {
