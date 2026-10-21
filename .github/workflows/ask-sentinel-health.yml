@@ -145,6 +145,11 @@ jobs:
           print("Answer length: " + str(len(text)) + " characters; answer text omitted from CI logs.")
           PY
 
+      - name: Check out dashboard data and grounding evaluator
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
       - name: Evaluate live grounding against current dashboard records
         env:
           ASK_SENTINEL_URL: https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel
