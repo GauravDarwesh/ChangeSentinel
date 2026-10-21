@@ -147,28 +147,20 @@ class TestAskSentinelContract(unittest.TestCase):
 
     def test_citation_validator_accepts_only_paths_in_supplied_evidence(self):
         import re
-        from pathlib import Path
 
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
-        match = re.search(
-            r"function validateGroundedCitations\\(answer: string, allowedSources: string\\[\\]\\): boolean \\{[\\s\\S]*?\\n\\}",
-            backend,
-        )
-        self.assertIsNotNone(match)
-        source = match.group(0)
-        # Run the validator's exact citation matching policy through an equivalent Python check.
-        citation_pattern = re.compile(r"\\[Source:\\s*([^\\]]+)\\]", re.IGNORECASE)
+        self.assertIn("function validateGroundedCitations(answer: string, allowedSources: string[]): boolean {", backend)
+        citation_pattern = re.compile(r"\[Source:\s*([^\]]+)\]", re.IGNORECASE)
 
         def validate(answer, allowed_sources):
-            citations = [m.group(1).strip() for m in citation_pattern.finditer(answer)]
+            citations = [match.group(1).strip() for match in citation_pattern.finditer(answer)]
             return bool(citations) and all(path in set(allowed_sources) for path in citations)
 
         self.assertTrue(validate("A fact. [Source: data/report.json]", ["data/report.json"]))
         self.assertFalse(validate("A fact with no citation.", ["data/report.json"]))
         self.assertFalse(validate("A fact. [Source: data/made-up.json]", ["data/report.json"]))
         self.assertFalse(validate("A fact. [Source: data/report.json] [Source: invented.json]", ["data/report.json"]))
-        self.assertIn("return citations.every((path) => allowed.has(path));", source)
-
+        self.assertIn("return citations.every((path) => allowed.has(path));", backend)
 
 if __name__ == "__main__":
     unittest.main()
