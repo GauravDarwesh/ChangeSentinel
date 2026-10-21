@@ -310,15 +310,63 @@
 
   /* ---------- Word-level diff ---------- */
 
-  const MAX_TOKENS = 600;
+  // Lines longer than this are shown as a whole-line replacement. The token diff
+  // itself is Myers with a bounded edit distance, so this only guards memory.
+  const MAX_TOKENS = 4000;
+  const WORD_DIFF_MAX_D = 400;
 
   function tokenize(text) {
     return String(text || "").match(/\s+|[A-Za-z0-9$%][A-Za-z0-9$%.,'’\/-]*[A-Za-z0-9%]|[A-Za-z0-9$%]|[^\sA-Za-z0-9]/g) || [];
   }
 
-  // Longest-common-subsequence diff over tokens. Returns segments of
-  // {type: "same"|"del"|"add", text}. Very long lines fall back to a whole-line
-  // replacement rather than an expensive comparison.
+  // A whitespace-only "same" run between two edits is folded into them, so
+  // "the quick fox" -> "a slow fox" reads as one replaced phrase rather than
+  // alternating struck and inserted words. Whitespace both sides still share at
+  // the edges of a folded phrase is handed back as unchanged text. Before and
+  // after text are always exactly reconstructable from the segments.
+  function foldWhitespace(segments) {
+    const out = [];
+    const push = (type, text) => {
+      if (!text) return;
+      const last = out[out.length - 1];
+      if (last && last.type === type) last.text += text;
+      else out.push({ type, text });
+    };
+    let group = null;
+    const flush = () => {
+      if (!group) return;
+      let del = group.del, add = group.add;
+      let lead = "";
+      while (del && add && /\s/.test(del[0]) && del[0] === add[0]) { lead += del[0]; del = del.slice(1); add = add.slice(1); }
+      let trail = "";
+      while (del && add && /\s/.test(del[del.length - 1]) && del[del.length - 1] === add[add.length - 1]) {
+        trail = del[del.length - 1] + trail; del = del.slice(0, -1); add = add.slice(0, -1);
+      }
+      push("same", lead); push("del", del); push("add", add); push("same", trail);
+      group = null;
+    };
+    segments.forEach((segment, index) => {
+      if (segment.type !== "same") {
+        group = group || { del: "", add: "" };
+        group[segment.type] += segment.text;
+        return;
+      }
+      const next = segments[index + 1];
+      if (group && next && next.type !== "same" && /^\s+$/.test(segment.text)) {
+        group.del += segment.text;
+        group.add += segment.text;
+        return;
+      }
+      flush();
+      push("same", segment.text);
+    });
+    flush();
+    return out;
+  }
+
+  // Token diff (patience anchors + Myers, see diffSequences). Returns segments
+  // of {type: "same"|"del"|"add", text}. Very long lines, or lines rewritten
+  // beyond the edit-distance budget, become a whole-line replacement.
   function wordDiff(before, after) {
     const a = tokenize(before);
     const b = tokenize(after);
@@ -326,31 +374,18 @@
       return [{ type: "del", text: String(before || "") }, { type: "add", text: String(after || "") }]
         .filter(segment => segment.text);
     }
-    const rows = a.length + 1;
-    const cols = b.length + 1;
-    const table = new Array(rows);
-    for (let i = 0; i < rows; i++) table[i] = new Uint16Array(cols);
-    for (let i = a.length - 1; i >= 0; i--) {
-      for (let j = b.length - 1; j >= 0; j--) {
-        table[i][j] = a[i] === b[j] ? table[i + 1][j + 1] + 1 : Math.max(table[i + 1][j], table[i][j + 1]);
-      }
-    }
     const segments = [];
     const push = (type, text) => {
+      if (!text) return;
       const last = segments[segments.length - 1];
       if (last && last.type === type) last.text += text;
       else segments.push({ type, text });
     };
-    let i = 0, j = 0;
-    while (i < a.length && j < b.length) {
-      if (a[i] === b[j]) { push("same", a[i]); i++; j++; }
-      else if (table[i + 1][j] >= table[i][j + 1]) { push("del", a[i]); i++; }
-      else { push("add", b[j]); j++; }
-    }
-    while (i < a.length) push("del", a[i++]);
-    while (j < b.length) push("add", b[j++]);
-    // Whitespace-only "same" runs between two edits read better folded into them.
-    return segments;
+    diffSequences(a, b, { maxD: WORD_DIFF_MAX_D }).forEach(run => {
+      if (run.type === "add") push("add", b.slice(run.b[0], run.b[1]).join(""));
+      else push(run.type, a.slice(run.a[0], run.a[1]).join(""));
+    });
+    return foldWhitespace(segments);
   }
 
   // Share of the line that survived; low values mean "rewritten", not "edited".
@@ -494,6 +529,212 @@
 
   function isMarkdownTableSeparator(cells) {
     return cells.length > 0 && cells.every(cell => /^:?-{3,}:?$/.test(String(cell || "").trim()));
+  }
+
+  /* ---------- Locating an edit inside a rendered page ---------- */
+
+  // Text as the HTML compare matches it: NFKC, no-break spaces and runs of
+  // whitespace collapsed to one space, trimmed.
+  function normalizeForMatch(value) {
+    return String(value || "").normalize("NFKC").replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
+  }
+  // The changed runs of one side of a word diff ("del" for before, "add" for
+  // after), each with its offset inside normalizeForMatch(that side's line).
+  // Table pipes read as spaces, as they do in the rendered page. Knowing the
+  // offset lets the compare mark "Tier 2" where it changed even when "2"
+  // occurs earlier on the same line.
+  function changedPartOffsets(segments, want) {
+    let raw = "";
+    const parts = [];
+    (segments || []).forEach(seg => {
+      if (seg.type !== "same" && seg.type !== want) return;
+      const text = String(seg.text || "").replace(/\|/g, " ");
+      if (seg.type === want && text.trim()) {
+        const prefix = raw + text.slice(0, text.length - text.trimStart().length);
+        const normalized = normalizeForMatch(prefix);
+        parts.push({ text: text.trim(), offset: normalized.length + (normalized && /\s$/.test(prefix) ? 1 : 0) });
+      }
+      raw += text;
+    });
+    return parts;
+  }
+
+  /* ---------- Model answers: a small, safe Markdown subset ----------
+   * All text is HTML-escaped first and only fixed tags are produced; links must
+   * be http(s). Code spans and links are set aside before emphasis is applied,
+   * so a "*" inside an address can never turn into <em>, and a sentence's
+   * closing punctuation stays outside a bare link.
+   */
+  function linkHtml(href, label) {
+    return '<a href="' + href + '" target="_blank" rel="noopener noreferrer">' + label + "</a>";
+  }
+  // `url` is already HTML-escaped, so quotes arrive as entities.
+  function splitTrailingPunctuation(url) {
+    let tail = "";
+    for (;;) {
+      const mark = url.match(/(?:[.,;:!?]|&quot;|&#39;)$/);
+      if (mark) { tail = mark[0] + tail; url = url.slice(0, -mark[0].length); continue; }
+      if (url.endsWith(")") && url.split("(").length < url.split(")").length) { tail = ")" + tail; url = url.slice(0, -1); continue; }
+      return [url, tail];
+    }
+  }
+  function inlineMarkdown(text) {
+    let out = esc(text);
+    const held = [];
+    const hold = html => { held.push(html); return "\u0000" + (held.length - 1) + "\u0000"; };
+    out = out.replace(/`([^`\u0000]+)`/g, (_, code) => hold("<code>" + code + "</code>"));
+    out = out.replace(/\[([^\]\u0000]+)\]\((https?:\/\/[^\s)\u0000]+)\)/g, (_, label, href) => hold(linkHtml(href, label)));
+    out = out.replace(/(^|[\s(])(https?:\/\/(?:(?!&lt;|&gt;)[^\s\u0000])+)/g, (_, pre, raw) => {
+      const [href, tail] = splitTrailingPunctuation(raw);
+      return href.length > 8 ? pre + hold(linkHtml(href, href.replace(/^https?:\/\//, ""))) + tail : pre + raw;
+    });
+    out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>");
+    // A link label can hold a code span, so restore until nothing is left.
+    for (let pass = 0; pass < 4 && out.indexOf("\u0000") >= 0; pass += 1) {
+      out = out.replace(/\u0000(\d+)\u0000/g, (_, index) => held[Number(index)]);
+    }
+    return out;
+  }
+
+  /* ---------- XLSX: the first worksheet as rows of text ----------
+   * A minimal reader so the bulk-upload dialog needs no third-party script: an
+   * .xlsx file is a ZIP of XML parts. Only the first worksheet's cell text is
+   * read (shared, inline and formula-result strings, and numbers as written).
+   * Entry count, sizes and rows are capped, and everything returned is plain
+   * text that callers escape before display. Inflation uses the browser's
+   * DecompressionStream (also available in Node 18+).
+   */
+  const XLSX_LIMITS = { entries: 2000, partBytes: 24 * 1024 * 1024, totalBytes: 64 * 1024 * 1024, rows: 5000, columns: 64 };
+  function zipEntries(bytes) {
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    let eocd = -1;
+    for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 22 - 65535); i -= 1) {
+      if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+    }
+    if (eocd < 0) throw new Error("This file is not a valid .xlsx workbook.");
+    const count = view.getUint16(eocd + 10, true);
+    if (count > XLSX_LIMITS.entries) throw new Error("The workbook has too many parts to read safely.");
+    let offset = view.getUint32(eocd + 16, true);
+    const decoder = new TextDecoder("utf-8");
+    const entries = new Map();
+    for (let n = 0; n < count; n += 1) {
+      if (offset + 46 > bytes.length || view.getUint32(offset, true) !== 0x02014b50) throw new Error("The workbook's file index is damaged.");
+      const method = view.getUint16(offset + 10, true);
+      const compressed = view.getUint32(offset + 20, true);
+      const size = view.getUint32(offset + 24, true);
+      const nameLength = view.getUint16(offset + 28, true);
+      const extraLength = view.getUint16(offset + 30, true);
+      const commentLength = view.getUint16(offset + 32, true);
+      const local = view.getUint32(offset + 42, true);
+      const name = decoder.decode(bytes.subarray(offset + 46, offset + 46 + nameLength));
+      entries.set(name, { method, compressed, size, local });
+      offset += 46 + nameLength + extraLength + commentLength;
+    }
+    return entries;
+  }
+  async function zipText(bytes, entries, name, budget) {
+    const entry = entries.get(name);
+    if (!entry) return null;
+    if (entry.size > XLSX_LIMITS.partBytes) throw new Error("A workbook part is too large to read safely.");
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    const at = entry.local;
+    if (at + 30 > bytes.length || view.getUint32(at, true) !== 0x04034b50) throw new Error("The workbook's file data is damaged.");
+    const start = at + 30 + view.getUint16(at + 26, true) + view.getUint16(at + 28, true);
+    const raw = bytes.subarray(start, start + entry.compressed);
+    let data;
+    if (entry.method === 0) data = raw;
+    else if (entry.method === 8) {
+      if (typeof DecompressionStream !== "function") throw new Error("This browser can't read .xlsx files. Save the sheet as CSV.");
+      const stream = new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+      const reader = stream.getReader();
+      const chunks = [];
+      let total = 0;
+      for (;;) {
+        const part = await reader.read();
+        if (part.done) break;
+        total += part.value.length;
+        budget.used += part.value.length;
+        if (total > XLSX_LIMITS.partBytes || budget.used > XLSX_LIMITS.totalBytes) {
+          try { await reader.cancel(); } catch (_) {}
+          throw new Error("The workbook expands beyond the safe size limit.");
+        }
+        chunks.push(part.value);
+      }
+      data = new Uint8Array(total);
+      let pos = 0;
+      chunks.forEach(chunk => { data.set(chunk, pos); pos += chunk.length; });
+    } else {
+      throw new Error("The workbook uses an unsupported compression method. Save the sheet as CSV.");
+    }
+    return new TextDecoder("utf-8").decode(data);
+  }
+  function xmlText(value) {
+    return String(value || "").replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (_, code) => {
+      const lower = code.toLowerCase();
+      if (lower[0] === "#") {
+        const point = lower[1] === "x" ? parseInt(lower.slice(2), 16) : parseInt(lower.slice(1), 10);
+        return Number.isFinite(point) && point > 0 && point <= 0x10ffff ? String.fromCodePoint(point) : "";
+      }
+      return { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" }[lower];
+    });
+  }
+  function runText(xml) {
+    let text = "";
+    String(xml || "").replace(/<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g, (_, value) => { text += xmlText(value); return ""; });
+    return text;
+  }
+  function columnIndex(ref) {
+    const letters = (String(ref || "").match(/^[A-Z]+/i) || [""])[0].toUpperCase();
+    let index = 0;
+    for (const ch of letters) index = index * 26 + (ch.charCodeAt(0) - 64);
+    return index - 1;
+  }
+  async function xlsxFirstSheetRows(buffer) {
+    const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+    const entries = zipEntries(bytes);
+    const budget = { used: 0 };
+    const workbook = await zipText(bytes, entries, "xl/workbook.xml", budget);
+    if (!workbook) throw new Error("The workbook does not contain a worksheet.");
+    const firstSheet = workbook.match(/<sheet\b[^>]*>/);
+    if (!firstSheet) throw new Error("The workbook does not contain a worksheet.");
+    const relId = (firstSheet[0].match(/\br:id="([^"]+)"/) || firstSheet[0].match(/\bid="([^"]+)"/) || [])[1];
+    let target = "xl/worksheets/sheet1.xml";
+    const rels = await zipText(bytes, entries, "xl/_rels/workbook.xml.rels", budget);
+    if (rels && relId) {
+      const rel = Array.from(rels.matchAll(/<Relationship\b[^>]*>/g)).map(match => match[0])
+        .find(tag => (tag.match(/\bId="([^"]+)"/) || [])[1] === relId);
+      const path = rel && (rel.match(/\bTarget="([^"]+)"/) || [])[1];
+      if (path) target = path.startsWith("/") ? path.slice(1) : "xl/" + path.replace(/^\.\//, "");
+    }
+    const sheet = await zipText(bytes, entries, target, budget);
+    if (!sheet) throw new Error("The workbook's first worksheet could not be read.");
+    const sharedXml = await zipText(bytes, entries, "xl/sharedStrings.xml", budget);
+    const shared = sharedXml ? Array.from(sharedXml.matchAll(/<si\b[^>]*>([\s\S]*?)<\/si>/g)).map(match => runText(match[1])) : [];
+    const rows = [];
+    for (const rowMatch of sheet.matchAll(/<row\b([^>]*)>([\s\S]*?)<\/row>/g)) {
+      // Keep spreadsheet row numbers: blank rows are omitted from the XML.
+      const number = Number((rowMatch[1].match(/\br="(\d+)"/) || [])[1]);
+      while (number && rows.length < number - 1 && rows.length < XLSX_LIMITS.rows) rows.push([]);
+      if (rows.length >= XLSX_LIMITS.rows) break;
+      const row = [];
+      for (const cell of rowMatch[2].matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)) {
+        const attrs = cell[1] || "";
+        const body = cell[2] || "";
+        const ref = (attrs.match(/\br="([^"]+)"/) || [])[1];
+        const col = ref ? columnIndex(ref) : row.length;
+        if (col < 0 || col >= XLSX_LIMITS.columns) continue;
+        const type = (attrs.match(/\bt="([^"]+)"/) || [])[1] || "n";
+        const raw = (body.match(/<v>([\s\S]*?)<\/v>/) || [])[1];
+        let value = "";
+        if (type === "s") value = shared[Number(raw)] || "";
+        else if (type === "inlineStr") value = runText(body);
+        else if (raw != null) value = xmlText(raw);
+        while (row.length < col) row.push("");
+        row[col] = value;
+      }
+      rows.push(row);
+    }
+    return rows;
   }
 
   /* ---------- Time ---------- */
@@ -689,11 +930,39 @@
   };
   const SCOUT_REVIEW_MARKER = "<!-- changesentinel:scout-review:v1 -->";
 
-  // Loose address identity for the "already monitored" hint: the scheme, a
-  // trailing slash and a fragment never make a different page.
+  /* ---------- URL identity ----------
+   * One canonical form for the whole dashboard, mirroring regmon/discovery.py
+   * canonical(): no fragment, one trailing slash dropped, tracking parameters
+   * (utm_*, fbclid, gclid, mc_cid, mc_eid) removed and the rest of the query
+   * sorted by key then value. Inventory URLs are stored in this form, so any
+   * address compared against them must go through it too.
+   */
+  const TRACKING_PARAMS = ["fbclid", "gclid", "mc_cid", "mc_eid"];
+  function canonicalUrl(value) {
+    const raw = String(value == null ? "" : value).trim();
+    try {
+      const url = new URL(raw);
+      url.hash = "";
+      if (url.pathname !== "/" && url.pathname.endsWith("/")) url.pathname = url.pathname.slice(0, -1);
+      const params = Array.from(url.searchParams.entries()).filter(([key]) => {
+        const lower = key.toLowerCase();
+        return !lower.startsWith("utm_") && TRACKING_PARAMS.indexOf(lower) < 0;
+      });
+      params.sort((x, y) => x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : x[1] < y[1] ? -1 : x[1] > y[1] ? 1 : 0);
+      url.search = "";
+      params.forEach(([key, val]) => url.searchParams.append(key, val));
+      return url.toString();
+    } catch (_) {
+      return raw;
+    }
+  }
+
+  // Loose address identity for the "already monitored" hint: on top of the
+  // canonical form, the scheme, host case, a trailing dot and any trailing
+  // slashes never make a different page.
   function urlKey(value) {
     try {
-      const url = new URL(String(value || ""));
+      const url = new URL(canonicalUrl(value));
       const path = url.pathname.replace(/\/+$/, "") || "/";
       return url.hostname.toLowerCase().replace(/\.$/, "") + path + url.search;
     } catch (_) {
@@ -721,7 +990,17 @@
     const rank = item => Number((item.assessment || {}).rank || 0);
     const day = value => String(value || "").slice(0, 10);
     const byArrival = (a, b) => day(b.first_seen).localeCompare(day(a.first_seen)) || rank(b) - rank(a) || String(a.title).localeCompare(String(b.title));
+    // The backlog is shown grouped under one heading per regulator, so it must
+    // be contiguous by regulator; within one, strongest evidence then newest first.
+    const published = item => {
+      const evidence = item.evidence || {};
+      const t = Date.parse(evidence.published || evidence.page_published || evidence.date_hint || item.first_seen || "");
+      return Number.isNaN(t) ? 0 : t;
+    };
+    const byRegulator = (a, b) => String(a.regulator_id || "").localeCompare(String(b.regulator_id || "")) ||
+      rank(b) - rank(a) || published(b) - published(a) || String(a.title).localeCompare(String(b.title));
     out.REVIEW.sort(byArrival);
+    out.BACKLOG.sort(byRegulator);
     out.EXCLUDED.sort(byArrival);
     out.DONE.sort((a, b) => String((b.decision || {}).decided_at || b.first_seen || "").localeCompare(String((a.decision || {}).decided_at || a.first_seen || "")));
     return out;
@@ -903,7 +1182,8 @@
     eventLabel, eventTone, EVENT_LABELS,
     parseUnifiedDiff, tokenize, wordDiff, similarity, redlineRows, redlineSummary, renderRedline, renderUnifiedDiff,
     splitMarkdownTableRow, isMarkdownTableSeparator, relativeTime, dayHeading,
-    urlKey, scoutBucket, scoutBuckets, scoutSentence, scoutReviewIssue, nextScoutSweep,
+    foldWhitespace, inlineMarkdown, xlsxFirstSheetRows, normalizeForMatch, changedPartOffsets,
+    canonicalUrl, urlKey, scoutBucket, scoutBuckets, scoutSentence, scoutReviewIssue, nextScoutSweep,
     SCOUT_FILTERS, SCOUT_OUTCOMES, SCOUT_CONFIDENCE, SCOUT_STATUS, SCOUT_CHANNEL_STATUS, SCOUT_NOUNS, SCOUT_REVIEW_MARKER,
     scoutSlug, splitList, splitLines, parsePathHints, pathHintsText, scoutSourceRequest, SCOUT_SOURCE_MARKER, SCOUT_TOPIC_IDS, SCOUT_REGIONS
   };

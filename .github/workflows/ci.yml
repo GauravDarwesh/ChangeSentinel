@@ -41,3 +41,31 @@ jobs:
       - name: Dashboard JavaScript syntax checks
         run: |
           node -e "const fs=require('fs'); for (const f of ['dashboard-lib.js','dashboard.js']) { const s=fs.readFileSync(f,'utf8'); new Function(s); console.log(f + ' syntax OK'); } const h=fs.readFileSync('index.html','utf8'); for (const ref of ['src=\"dashboard-lib.js','src=\"dashboard.js']) { if (!h.includes(ref)) throw new Error('index.html is missing ' + ref); }"
+
+  # A real browser run of the dashboard against this commit's data: every pinned
+  # third-party script must load under its integrity hash, pdf.js must render a
+  # saved PDF, each view must draw without a script error, and the phone layout
+  # must not scroll sideways. Screenshots are kept for review.
+  dashboard-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save --no-package-lock --ignore-scripts playwright@1.56.0
+          npx playwright install --with-deps chromium
+      - name: Dashboard browser smoke test
+        env:
+          SMOKE_ARTIFACTS: smoke-artifacts
+        run: node scripts/dashboard_smoke.mjs
+      - name: Keep the screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dashboard-smoke-screenshots
+          path: smoke-artifacts
+          retention-days: 14
+          if-no-files-found: ignore

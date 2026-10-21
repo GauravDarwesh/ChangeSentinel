@@ -56,7 +56,7 @@ class TestDashboardEvidenceContract(unittest.TestCase):
         for token in (
             "file_snapshot_location",
             "function snapshotURL(path)",
-            "snapshotURL(filePath)",
+            "fetchImmutable(filePath)",
             "response.arrayBuffer()",
             'new Blob([bytes], { type: "application/pdf" })',
             "URL.createObjectURL",
@@ -250,7 +250,7 @@ class TestDashboardDataLoading(unittest.TestCase):
             "if (!isValidDataAssetShape(key, value))",
             'failures.push(host + " returned JSON with invalid schema")',
             'throw new Error("Invalid monitoring data schema: " + invalid.join(", "))',
-            "validateDataAssets({ report, inventory, historyData, notifications, outbox, config })",
+            "validateDataAssets({\n      report: values.report, inventory: values.inventory, historyData: values.history,",
         ):
             with self.subTest(token=token):
                 self.assertIn(token, source)
@@ -390,11 +390,11 @@ class TestPersistedReferences(unittest.TestCase):
             dashboard,
         )
         self.assertIn('return { owner: "GauravDarwesh", repo: "ChangeSentinel" };', dashboard)
-        self.assertIn(
-            'function snapshotURL(path) { return path ? bust(RAW + "/" + path) : ""; }',
-            dashboard,
-        )
-        self.assertIn('fetch(bust(RAW + "/" + location)', dashboard)
+        # Snapshot and evidence files are content-addressed and immutable, so they
+        # are cacheable; a transient raw-CDN 404 is retried once past every cache.
+        self.assertIn('function snapshotURL(path) { return path ? RAW + "/" + path : ""; }', dashboard)
+        self.assertIn('return response.ok ? response : fetch(bust(url), { cache: "no-store" });', dashboard)
+        self.assertIn("fetchImmutable(location)", dashboard)
         self.assertIn("loadEvidence(event.evidence_location)", dashboard)
 
 
@@ -430,11 +430,63 @@ class TestCrossRunChangeLog(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertIn(token, html + js)
         for token in ("function parseCsvMatrix(", "function bulkRowsFromMatrix(", "function makeBulkGitHubIssueUrl(",
-                      "BULK_DATA_JSON:", "MAX_BULK_LINKS = 25", "cdn.sheetjs.com/xlsx-0.20.3",
+                      "BULK_DATA_JSON:", "MAX_BULK_LINKS = 25", "L.xlsxFirstSheetRows(",
                       "Continue with", "The dashboard stores no access token"):
             with self.subTest(token=token):
                 self.assertIn(token, js + html)
         self.assertIn('$("bulkMonitorFile").addEventListener("change"', js)
+        # Spreadsheets are read locally; no third-party parser runs in the dashboard origin.
+        self.assertNotIn("cdn.sheetjs.com", js + html)
+
+
+class TestThirdPartyScripts(unittest.TestCase):
+    def test_every_third_party_script_is_pinned_and_integrity_checked(self):
+        html = read("index.html")
+        for tag in re.findall(r"<script\b[^>]*\bsrc=\"https?://[^>]*>", html):
+            with self.subTest(tag=tag):
+                self.assertRegex(tag, r'integrity="sha384-[A-Za-z0-9+/=]{64}"')
+                self.assertIn('crossorigin="anonymous"', tag)
+                self.assertRegex(tag, r"@\d+\.\d+\.\d+/")
+
+    def test_pdf_renderer_is_a_patched_release_loaded_with_integrity(self):
+        js = read("dashboard.js")
+        version = re.search(r'const PDFJS_VERSION = "(\d+)\.(\d+)\.(\d+)";', js)
+        self.assertIsNotNone(version)
+        # CVE-2024-4367 (script execution from a crafted PDF font) is fixed in 4.2.67.
+        self.assertGreaterEqual(tuple(int(part) for part in version.groups()), (4, 2, 67))
+        self.assertIn("script.integrity = PDFJS_INTEGRITY.lib;", js)
+        self.assertIn("integrity: PDFJS_INTEGRITY.worker", js)
+        self.assertIn("isEvalSupported: false", js)
+        self.assertIn("GlobalWorkerOptions.workerPort = new Worker(workerUrl", js)
+        self.assertNotIn("workerSrc =", js)
+
+    def test_ci_runs_the_dashboard_in_a_real_browser(self):
+        ci = read(".github/workflows/ci.yml")
+        self.assertIn("node scripts/dashboard_smoke.mjs", ci)
+        smoke = read("scripts/dashboard_smoke.mjs")
+        for token in ("window.supabase.createClient", "loadPdfJs()", "scrollWidth", "cs-dev-access-v1"):
+            with self.subTest(token=token):
+                self.assertIn(token, smoke)
+
+    def test_compare_documents_are_released(self):
+        js = read("dashboard.js")
+        self.assertIn("function disposeCompare()", js)
+        self.assertIn("task.destroy()", js)
+        self.assertIn("await releasingPdfs;", js)
+        self.assertIn("activeCompare.observer = observer;", js)
+
+
+class TestBackgroundRefresh(unittest.TestCase):
+    def test_polls_small_files_and_skips_unchanged_redraws(self):
+        js = read("dashboard.js")
+        self.assertIn('const LARGE_ASSETS = ["inventory", "history", "scoutReview"];', js)
+        self.assertIn("if (background && signature === state.renderedSignature)", js)
+        self.assertIn("refreshDetailIfChanged(state.view);", js)
+        self.assertNotIn('if (state.view !== "monitors") renderDetailFor(state.view);', js)
+
+    def test_workflow_polling_runs_one_chain(self):
+        js = read("dashboard.js")
+        self.assertIn("workflowRefreshInFlight = pollWorkflowRuns().finally(", js)
 
 
 if __name__ == "__main__":
@@ -475,8 +527,8 @@ class TestScoutView(unittest.TestCase):
         for token in (
             'scoutLatest: new URL("./data/scout/latest.json", document.baseURI).href',
             'scoutReview: new URL("./data/scout/review.json", document.baseURI).href',
-            'fetchDataAsset("scoutLatest", false)',
-            'fetchDataAsset("scoutReview", false)',
+            'const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig"]);',
+            "fetchDataAsset(key, !OPTIONAL_ASSETS.has(key))",
             'scout: "scout"',
             "function renderScoutCoverage(pane)",
             "L.scoutReviewIssue(verb, [item], \"\")",
@@ -502,7 +554,7 @@ class TestScoutView(unittest.TestCase):
                 self.assertIn(token, html)
         source = read("dashboard.js")
         for token in ("data-scout-add-source", "data-scout-add-channel", "data-scout-edit", "L.scoutSourceRequest({",
-                      'scoutConfig: new URL("./config/scout.json", document.baseURI).href', 'fetchDataAsset("scoutConfig", false)'):
+                      'scoutConfig: new URL("./config/scout.json", document.baseURI).href', '"scoutConfig"]);'):
             with self.subTest(token=token):
                 self.assertIn(token, source)
         self.assertIn("cp config/scout.json site/config/scout.json", read(".github/workflows/pages.yml"))
