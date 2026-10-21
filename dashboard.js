@@ -2644,6 +2644,8 @@ async function saveCadenceEntry(event) {
   const save = $("cadenceEntrySave"), errorBox = $("cadenceEntryError");
   if (!$("cadenceEntryTitle").reportValidity() || !$("cadenceEntryStart").reportValidity()) return;
   const payload = cadenceFormValue(), id = $("cadenceEntryId").value;
+  const existing = id ? state.cadenceEntries.find(item => item.id === id) : null;
+  if (existing && Array.isArray(existing.completed_dates)) payload.completed_dates = existing.completed_dates;
   if (payload.end_date && payload.end_date < payload.start_date) { errorBox.textContent = "The end date must be on or after the start date."; errorBox.hidden = false; return; }
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (payload.reminder_enabled && (!payload.reminder_emails.length || payload.reminder_emails.some(email => !emailPattern.test(email)))) {
