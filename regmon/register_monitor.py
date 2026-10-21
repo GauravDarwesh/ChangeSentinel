@@ -13,6 +13,8 @@ from bs4 import BeautifulSoup
 from regmon.security import validate_public_http_url
 
 REQUEST_MARKER = "<!-- changesentinel:add-monitor:v1 -->"
+BULK_REQUEST_MARKER = "<!-- changesentinel:add-monitor-bulk:v1 -->"
+MAX_BULK_REQUESTS = 25
 ISSUE_TITLE_PREFIX = "[ChangeSentinel] Add monitor"
 TRACKING_PARAMS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
 DEFAULT_SOURCE_SETTINGS = {
@@ -125,7 +127,7 @@ def source_for_url(
     }
 
 
-def request_from_issue(event: dict, repository: str) -> tuple[str, str, str, tuple[str, ...]]:
+def _validated_issue_body(event: dict, repository: str, marker: str) -> str:
     issue = event.get("issue") or {}
     title = str(issue.get("title") or "")
     if not title.startswith(ISSUE_TITLE_PREFIX):
@@ -135,25 +137,25 @@ def request_from_issue(event: dict, repository: str) -> tuple[str, str, str, tup
     if not repo_owner or issue_owner != repo_owner:
         raise ValueError("Only the repository owner can register a monitor through the dashboard.")
     body = str(issue.get("body") or "")
-    if REQUEST_MARKER not in body:
+    if marker not in body:
         raise ValueError("The issue is missing the ChangeSentinel request marker.")
-    url_match = re.search(r"(?m)^URL:[ \t]*(\S+)[ \t]*$", body)
-    if not url_match:
-        raise ValueError("No URL field was found in the request body.")
-    name_match = re.search(r"(?m)^Name:[ \t]*(.*?)[ \t]*$", body)
-    include_match = re.search(r"(?m)^Include selector:[ \t]*(.*?)[ \t]*$", body)
-    ignore_match = re.search(
-        r"(?ms)^Ignore selectors:\s*\n(.*?)(?=\n\nThis request was created from the ChangeSentinel dashboard\.|\Z)",
-        body,
-    )
-    url = canonicalize_url(url_match.group(1))
-    name = re.sub(r"[\r\n]+", " ", name_match.group(1)).strip()[:100] if name_match else ""
-    include_selector = str(include_match.group(1) if include_match else "").strip()
+    return body
+
+
+def _validated_request_values(
+    url_value: str,
+    name_value: str = "",
+    include_value: str = "",
+    ignore_values: tuple[str, ...] | list[str] = (),
+) -> tuple[str, str, str, tuple[str, ...]]:
+    url = canonicalize_url(url_value)
+    name = re.sub(r"[\r\n]+", " ", str(name_value or "")).strip()[:100]
+    include_selector = str(include_value or "").strip()
     _validate_css_selector(include_selector, "include")
-    raw_ignored = ignore_match.group(1) if ignore_match else ""
     ignored = []
-    for line in raw_ignored.splitlines():
-        selector = re.sub(r"^\s*(?:-\s*|\*\s*)", "", line).strip()
+    values = ignore_values if isinstance(ignore_values, (list, tuple)) else str(ignore_values or "").splitlines()
+    for value in values:
+        selector = str(value or "").strip()
         if not selector or selector.lower() in {"(none)", "none"}:
             continue
         if selector not in ignored:
@@ -165,14 +167,71 @@ def request_from_issue(event: dict, repository: str) -> tuple[str, str, str, tup
     return url, name, include_selector, tuple(ignored)
 
 
-def register_request(event: dict, config_path: Path, repository: str) -> dict:
-    url, requested_name, include_selector, ignore_selectors = request_from_issue(event, repository)
-    config = json.loads(config_path.read_text(encoding="utf-8"))
-    sources = config.setdefault("sources", [])
-    if not isinstance(sources, list):
-        raise ValueError("config/sources.json must contain a sources array.")
+def request_from_issue(event: dict, repository: str) -> tuple[str, str, str, tuple[str, ...]]:
+    body = _validated_issue_body(event, repository, REQUEST_MARKER)
+    url_match = re.search(r"(?m)^URL:[ \t]*(\S+)[ \t]*$", body)
+    if not url_match:
+        raise ValueError("No URL field was found in the request body.")
+    name_match = re.search(r"(?m)^Name:[ \t]*(.*?)[ \t]*$", body)
+    include_match = re.search(r"(?m)^Include selector:[ \t]*(.*?)[ \t]*$", body)
+    ignore_match = re.search(
+        r"(?ms)^Ignore selectors:\s*\n(.*?)(?=\n\nThis request was created from the ChangeSentinel dashboard\.|\Z)",
+        body,
+    )
+    raw_ignored = ignore_match.group(1) if ignore_match else ""
+    ignored = []
+    for line in raw_ignored.splitlines():
+        selector = re.sub(r"^\s*(?:-\s*|\*\s*)", "", line).strip()
+        if selector and selector.lower() not in {"(none)", "none"} and selector not in ignored:
+            ignored.append(selector)
+    return _validated_request_values(
+        url_match.group(1),
+        name_match.group(1) if name_match else "",
+        include_match.group(1) if include_match else "",
+        ignored,
+    )
 
-    # Avoid creating a second source for a page already covered by an active source.
+
+def bulk_requests_from_issue(event: dict, repository: str) -> list[tuple[str, str, str, tuple[str, ...]]]:
+    """Parse an owner-submitted bulk issue. Each row is validated before config is written."""
+    body = _validated_issue_body(event, repository, BULK_REQUEST_MARKER)
+    payload_match = re.search(
+        r"(?ms)^BULK_DATA_JSON:[ \t]*\n(.*?)(?=\n\nThis request was created from the ChangeSentinel dashboard bulk upload\.|\Z)",
+        body,
+    )
+    if not payload_match:
+        raise ValueError("No BULK_DATA_JSON payload was found in the bulk request.")
+    try:
+        rows = json.loads(payload_match.group(1))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"The bulk request contains invalid JSON: {exc.msg}.") from exc
+    if not isinstance(rows, list) or not rows:
+        raise ValueError("The bulk request must contain at least one link.")
+    if len(rows) > MAX_BULK_REQUESTS:
+        raise ValueError(f"A bulk request can contain at most {MAX_BULK_REQUESTS} links.")
+    validated = []
+    for index, row in enumerate(rows, start=1):
+        if not isinstance(row, dict):
+            raise ValueError(f"Bulk row {index} must be an object containing a URL.")
+        try:
+            validated.append(_validated_request_values(
+                str(row.get("url") or ""),
+                str(row.get("name") or ""),
+                str(row.get("include_selector") or ""),
+                row.get("ignore_selectors") or [],
+            ))
+        except ValueError as exc:
+            raise ValueError(f"Bulk row {index}: {exc}") from exc
+    return validated
+
+
+def _existing_source_for_request(
+    sources: list[dict],
+    url: str,
+    include_selector: str,
+    ignore_selectors: tuple[str, ...],
+) -> dict | None:
+    """Return an exact active URL match, rejecting an implicit selector change."""
     for source in sources:
         if not source.get("active", True):
             continue
@@ -195,13 +254,103 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
                     "This URL is already monitored with different CSS selectors. "
                     "The existing monitor was not changed; update it through an explicit edit flow."
                 )
-            return {
-                "source_id": str(source["id"]),
-                "url": url,
-                "name": str(source.get("name") or requested_name or url),
-                "created": False,
-                "message": "The URL is already present in an active source.",
+            return source
+    return None
+
+
+def register_bulk_request(event: dict, config_path: Path, repository: str) -> dict:
+    """Register a set of URLs atomically; invalid/conflicting rows write no changes."""
+    requests = bulk_requests_from_issue(event, repository)
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    sources = config.setdefault("sources", [])
+    if not isinstance(sources, list):
+        raise ValueError("config/sources.json must contain a sources array.")
+
+    items = []
+    by_url: dict[str, dict] = {}
+    source_ids = []
+    for row_number, (url, requested_name, include_selector, ignore_selectors) in enumerate(requests, start=1):
+        previous = by_url.get(url)
+        if previous is not None:
+            if previous["include_selector"] != include_selector or tuple(previous["ignore_selectors"]) != ignore_selectors:
+                raise ValueError(f"Bulk row {row_number}: the same URL appears with different CSS selectors.")
+            continue
+
+        existing = _existing_source_for_request(sources, url, include_selector, ignore_selectors)
+        if existing is not None:
+            source_id = str(existing["id"])
+            item = {
+                "source_id": source_id, "url": url,
+                "name": str(existing.get("name") or requested_name or url), "created": False,
             }
+        else:
+            new_source = source_for_url(url, requested_name, include_selector, ignore_selectors)
+            source_ids_in_config = {str(source.get("id")) for source in sources}
+            if new_source["id"] in source_ids_in_config:
+                existing_collision = next(source for source in sources if str(source.get("id")) == new_source["id"])
+                existing_urls = [str(candidate) for candidate in (existing_collision.get("seed_urls") or [])]
+                if any(canonicalize_url(candidate) == url for candidate in existing_urls):
+                    item = {
+                        "source_id": new_source["id"], "url": url,
+                        "name": str(existing_collision.get("name") or new_source["name"]), "created": False,
+                    }
+                    source_id = new_source["id"]
+                else:
+                    raise ValueError(f"Bulk row {row_number}: a source ID collision was detected; no configuration was changed.")
+            else:
+                sources.append(new_source)
+                source_id = new_source["id"]
+                item = {"source_id": source_id, "url": url, "name": new_source["name"], "created": True}
+
+        by_url[url] = {
+            **item,
+            "include_selector": include_selector,
+            "ignore_selectors": list(ignore_selectors),
+        }
+        items.append(item)
+        if source_id not in source_ids:
+            source_ids.append(source_id)
+
+    created_count = sum(1 for item in items if item["created"])
+    existing_count = len(items) - created_count
+    if created_count:
+        config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return {
+        "bulk": True,
+        "source_ids": source_ids,
+        "items": items,
+        "count": len(items),
+        "created_count": created_count,
+        "existing_count": existing_count,
+        # Singular aliases keep downstream tooling compatible with its old output shape.
+        "source_id": source_ids[0],
+        "url": items[0]["url"],
+        "created": bool(created_count),
+        "message": f"Processed {len(items)} unique links: {created_count} new and {existing_count} already configured.",
+    }
+
+
+def register_request(event: dict, config_path: Path, repository: str) -> dict:
+    body = str(((event.get("issue") or {}).get("body")) or "")
+    if BULK_REQUEST_MARKER in body:
+        return register_bulk_request(event, config_path, repository)
+
+    url, requested_name, include_selector, ignore_selectors = request_from_issue(event, repository)
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    sources = config.setdefault("sources", [])
+    if not isinstance(sources, list):
+        raise ValueError("config/sources.json must contain a sources array.")
+
+    # Avoid creating a second source for a page already covered by an active source.
+    existing = _existing_source_for_request(sources, url, include_selector, ignore_selectors)
+    if existing is not None:
+        return {
+            "source_id": str(existing["id"]),
+            "url": url,
+            "name": str(existing.get("name") or requested_name or url),
+            "created": False,
+            "message": "The URL is already present in an active source.",
+        }
 
     new_source = source_for_url(url, requested_name, include_selector, ignore_selectors)
     source_ids = {str(source.get("id")) for source in sources}
@@ -227,7 +376,6 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
         "created": True,
         "message": "The URL has been added to config/sources.json.",
     }
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
