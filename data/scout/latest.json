@@ -1,0 +1,101 @@
+{
+ "finished_at": null,
+ "objective": {
+  "description": "New regulator publications a compliance reviewer may want ChangeSentinel to monitor: rules, consultations, guidance, technical standards, reporting forms and instructions, supervisory letters and notices, Q&A, enforcement actions, decisions and opinions.",
+  "id": "regulatory-publications-v1"
+ },
+ "regulators": [
+  {
+   "channels": [],
+   "counts": {},
+   "id": "fed",
+   "jurisdiction": "United States",
+   "known_gaps": [
+    "Reads five Board feeds and the information-collections page. Pages that are not announced in those feeds and not linked from that page, such as standalone guidance pages reached only through site navigation, are not covered."
+   ],
+   "name": "Board of Governors of the Federal Reserve System",
+   "region": "NAM",
+   "short_name": "Federal Reserve",
+   "status": "NOT_RUN",
+   "status_reason": "Scout has not swept this regulator yet"
+  },
+  {
+   "channels": [],
+   "counts": {},
+   "id": "osfi",
+   "jurisdiction": "Canada",
+   "known_gaps": [
+    "Reads OSFI's published site map only. French pages are linked to their English versions rather than listed separately. Pages missing from the site map are not covered."
+   ],
+   "name": "Office of the Superintendent of Financial Institutions",
+   "region": "NAM",
+   "short_name": "OSFI",
+   "status": "NOT_RUN",
+   "status_reason": "Scout has not swept this regulator yet"
+  },
+  {
+   "channels": [],
+   "counts": {},
+   "id": "eba",
+   "jurisdiction": "European Union",
+   "known_gaps": [
+    "Reads the publications and press-release listings newest first until it reaches items it has already seen (at most six and four pages per sweep). The Single Rulebook Q&A, interactive tools and pages reached only through navigation are not covered.",
+    "The EBA asks crawlers to wait ten seconds between requests, so each sweep is deliberately slow."
+   ],
+   "name": "European Banking Authority",
+   "region": "EMEA",
+   "short_name": "EBA",
+   "status": "NOT_RUN",
+   "status_reason": "Scout has not swept this regulator yet"
+  },
+  {
+   "channels": [],
+   "counts": {},
+   "id": "boe-pra",
+   "jurisdiction": "United Kingdom",
+   "known_gaps": [
+    "Reads the Bank's PRA publications, publications and news feeds. The Bank's full site map is not read (it would add tens of thousands of baseline URLs), so PRA pages announced in none of these feeds are not covered."
+   ],
+   "name": "Bank of England Prudential Regulation Authority",
+   "region": "EMEA",
+   "short_name": "Bank of England (PRA)",
+   "status": "NOT_RUN",
+   "status_reason": "Scout has not swept this regulator yet"
+  },
+  {
+   "channels": [],
+   "counts": {},
+   "id": "apra",
+   "jurisdiction": "Australia",
+   "known_gaps": [
+    "Reads APRA's news and publications listing newest first until it reaches items it has already seen (at most six pages per sweep). Standards and forms pages that are not announced there are not covered."
+   ],
+   "name": "Australian Prudential Regulation Authority",
+   "region": "APAC",
+   "short_name": "APRA",
+   "status": "NOT_RUN",
+   "status_reason": "Scout has not swept this regulator yet"
+  },
+  {
+   "channels": [],
+   "counts": {},
+   "id": "banxico",
+   "jurisdiction": "Mexico",
+   "known_gaps": [
+    "Reads Banxico's list of circulars by year. Regulation published by other Mexican authorities (CNBV, SHCP) is not covered, and an amendment that only updates an existing circular's page is a content change for the monitor, not a new URL."
+   ],
+   "name": "Banco de México",
+   "region": "LATAM",
+   "short_name": "Banxico",
+   "status": "NOT_RUN",
+   "status_reason": "Scout has not swept this regulator yet"
+  }
+ ],
+ "schema_version": 1,
+ "scope": "all",
+ "started_at": null,
+ "status": "NOT_RUN",
+ "sweep_id": "",
+ "totals": {},
+ "trigger": ""
+}

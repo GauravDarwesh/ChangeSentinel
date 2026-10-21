@@ -664,11 +664,247 @@
     return { removed, added };
   }
 
+  /* ---------- Scout (new-page discovery) ---------- */
+
+  const SCOUT_FILTERS = ["REVIEW", "BACKLOG", "EXCLUDED", "DONE"];
+  const SCOUT_OUTCOMES = {
+    relevant: { label: "Looks relevant", tag: "is-relevant", mark: "tone-new" },
+    uncertain: { label: "Unsure", tag: "is-unreviewed", mark: "tone-pending" },
+    irrelevant: { label: "Not relevant", tag: "is-irrelevant", mark: "" }
+  };
+  const SCOUT_CONFIDENCE = { strong: "Strong evidence", supported: "Supported evidence", weak: "Weak evidence", conflicting: "Conflicting evidence" };
+  const SCOUT_STATUS = {
+    COMPLETE: { label: "Complete", tone: "ok" }, PARTIAL: { label: "Partial", tone: "warn" }, DEGRADED: { label: "Degraded", tone: "warn" },
+    BLOCKED: { label: "Blocked", tone: "bad" }, FAILED: { label: "Failed", tone: "bad" }, NOT_RUN: { label: "Not run yet", tone: "idle" }
+  };
+  const SCOUT_CHANNEL_STATUS = {
+    ok: "Read as planned", partial: "Read in part", failed: "Failed", blocked: "Blocked", deferred: "Deferred by the server"
+  };
+  const SCOUT_NOUNS = {
+    rule: "a rule or regulation", consultation: "a consultation or proposal", technical_standard: "a technical standard",
+    guidance: "guidance or a guideline", reporting: "a reporting form or instructions", supervisory_letter: "a supervisory letter or notice",
+    qa: "a Q&A", enforcement: "an enforcement action", decision_opinion: "a decision or opinion", report: "a report",
+    press_release: "a press release", speech: "a speech or testimony", minutes: "a meeting record", research: "research",
+    statistics: "a statistical release", event: "an event page", media: "a media page", job: "a job posting"
+  };
+  const SCOUT_REVIEW_MARKER = "<!-- changesentinel:scout-review:v1 -->";
+
+  // Loose address identity for the "already monitored" hint: the scheme, a
+  // trailing slash and a fragment never make a different page.
+  function urlKey(value) {
+    try {
+      const url = new URL(String(value || ""));
+      const path = url.pathname.replace(/\/+$/, "") || "/";
+      return url.hostname.toLowerCase().replace(/\.$/, "") + path + url.search;
+    } catch (_) {
+      return String(value || "");
+    }
+  }
+
+  // Which list a Scout finding belongs in. Baseline findings that do not look
+  // relevant stay out of every list (they are in the registry, not the queue).
+  function scoutBucket(candidate, monitoredKeys) {
+    const decision = candidate && candidate.decision ? candidate.decision.decision : "";
+    const monitored = (candidate.monitored_by && candidate.monitored_by.length) || (monitoredKeys && monitoredKeys.has(urlKey(candidate.url)));
+    if (decision === "dismissed" || monitored) return "DONE";
+    const outcome = (candidate.assessment || {}).outcome;
+    if (candidate.origin !== "new") return outcome === "relevant" ? "BACKLOG" : null;
+    return outcome === "irrelevant" ? "EXCLUDED" : "REVIEW";
+  }
+
+  function scoutBuckets(candidates, monitoredKeys) {
+    const out = { REVIEW: [], BACKLOG: [], EXCLUDED: [], DONE: [] };
+    (candidates || []).forEach(candidate => {
+      const bucket = scoutBucket(candidate, monitoredKeys);
+      if (bucket) out[bucket].push(candidate);
+    });
+    const rank = item => Number((item.assessment || {}).rank || 0);
+    const day = value => String(value || "").slice(0, 10);
+    const byArrival = (a, b) => day(b.first_seen).localeCompare(day(a.first_seen)) || rank(b) - rank(a) || String(a.title).localeCompare(String(b.title));
+    out.REVIEW.sort(byArrival);
+    out.EXCLUDED.sort(byArrival);
+    out.DONE.sort((a, b) => String((b.decision || {}).decided_at || b.first_seen || "").localeCompare(String((a.decision || {}).decided_at || a.first_seen || "")));
+    return out;
+  }
+
+  function scoutSentence(assessment) {
+    const a = assessment || {};
+    const noun = a.publication_type ? (SCOUT_NOUNS[a.publication_type.id] || String(a.publication_type.label || "").toLowerCase()) : "";
+    const topics = (a.topics || []).slice(0, 2).map(topic => topic.charAt(0).toLowerCase() + topic.slice(1));
+    const about = topics.length ? " about " + topics.join(" and ") : "";
+    if (a.outcome === "relevant") {
+      return noun ? "Looks like " + noun + about + "." : "Mentions " + (topics.join(" and ") || "a regulatory topic") + ".";
+    }
+    if (a.outcome === "irrelevant") {
+      const utility = (a.reasons || []).some(reason => /utility page/.test(reason.text || ""));
+      if (utility) return "Looks like a site utility page, not a publication.";
+      return noun ? "Looks like " + noun + ", which the monitoring objective leaves out." : "Looks outside the monitoring objective.";
+    }
+    if (a.confidence === "conflicting") return "The evidence points both ways" + (noun ? ": possibly " + noun + about : "") + ".";
+    return noun ? "Possibly " + noun + about + ", but the evidence is thin." : "Scout couldn't tell what this page is from the evidence it has.";
+  }
+
+  function oneLine(value, max) {
+    return String(value || "").replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, max || 300);
+  }
+
+  // The body review.py parses: one Decision line, one Reason line and one
+  // "- regulator:id | url" line per finding. Decisions never cover a path or topic.
+  function scoutReviewIssue(decision, candidates, reason) {
+    const verb = decision === "restore" ? "restore" : "dismiss";
+    const lines = [
+      SCOUT_REVIEW_MARKER, "",
+      verb === "dismiss" ? "Please record these Scout findings as not relevant." : "Please return these Scout findings to review.", "",
+      "Decision: " + verb,
+      "Reason: " + (oneLine(reason) || "(none)"), "",
+      "Candidates:"
+    ];
+    (candidates || []).forEach(candidate => lines.push("- " + candidate.regulator_id + ":" + candidate.id + " | " + candidate.url));
+    lines.push("", "You can edit the Reason line before submitting. A decision applies to the listed addresses only.", "",
+      "This request was created from the ChangeSentinel dashboard.");
+    const count = (candidates || []).length;
+    return {
+      title: "[ChangeSentinel] Scout review: " + (verb === "dismiss" ? "not relevant" : "restore") + (count > 1 ? " (" + count + ")" : ""),
+      body: lines.join("\n")
+    };
+  }
+
+  // The Scout workflow's schedule: Mondays at 04:17 UTC.
+  function nextScoutSweep(reference = new Date()) {
+    const next = new Date(Date.UTC(reference.getUTCFullYear(), reference.getUTCMonth(), reference.getUTCDate(), 4, 17, 0, 0));
+    while (next.getUTCDay() !== 1 || next.getTime() <= reference.getTime()) next.setUTCDate(next.getUTCDate() + 1);
+    return next;
+  }
+
+  /* ---------- Scout sources: add a regulator, a channel, or edit metadata ---------- */
+
+  const SCOUT_SOURCE_MARKER = "<!-- changesentinel:scout-source:v1 -->";
+  const SCOUT_TOPIC_IDS = ["capital", "liquidity", "reporting", "stress_testing", "resolution", "financial_crime", "payments_crypto",
+    "consumer", "operational_resilience", "governance", "climate_esg", "credit_market_risk", "insurance_pensions", "markets", "supervision"];
+  const SCOUT_REGIONS = ["NAM", "LATAM", "EMEA", "APAC"];
+
+  function scoutSlug(text) {
+    return String(text || "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+  }
+
+  function splitList(text) {
+    const seen = new Set();
+    return String(text || "").split(/[\n,]/).map(item => item.replace(/\s+/g, " ").trim()).filter(item => {
+      const key = item.toLowerCase();
+      if (!item || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function splitLines(text) {
+    return String(text || "").split(/\n/).map(item => item.replace(/\s+/g, " ").trim()).filter(Boolean);
+  }
+
+  // "/en/guidance/ = guidance", "/x/ = topic:capital", "/events/ = exclude", or both a kind and a topic.
+  function parsePathHints(text) {
+    const hints = [], errors = [];
+    splitLines(text).forEach(line => {
+      const [prefix, rest] = line.split("=").map(part => (part || "").trim());
+      if (!prefix || !prefix.startsWith("/") || rest === undefined || !rest) {
+        errors.push("Path hint “" + line + "” should look like /path/ = guidance");
+        return;
+      }
+      const hint = { prefix };
+      const parts = rest.split(/[,\s]+/).filter(Boolean);
+      for (const part of parts) {
+        const value = part.toLowerCase();
+        if (value === "exclude" || value === "not-relevant") { hint.effect = "negative"; continue; }
+        if (value.startsWith("topic:")) {
+          const topic = value.slice(6);
+          if (SCOUT_TOPIC_IDS.indexOf(topic) < 0) { errors.push("Unknown topic “" + topic + "” in “" + line + "”"); return; }
+          hint.topic = topic;
+          continue;
+        }
+        if (!Object.prototype.hasOwnProperty.call(SCOUT_NOUNS, value)) { errors.push("Unknown kind of page “" + value + "” in “" + line + "”"); return; }
+        hint.publication_type = value;
+      }
+      if (hint.effect === "negative") { delete hint.topic; delete hint.publication_type; }
+      hints.push(hint);
+    });
+    return { hints, errors };
+  }
+
+  function pathHintsText(hints) {
+    return (hints || []).map(hint => hint.prefix + " = " + (hint.effect === "negative" ? "exclude"
+      : [hint.publication_type, hint.topic ? "topic:" + hint.topic : ""].filter(Boolean).join(", "))).join("\n");
+  }
+
+  // Builds the issue the owner-only "Scout Source Request" workflow applies.
+  // mode: "add" (a channel, for an existing or a new regulator) or "edit" (metadata, optionally plus a channel).
+  function scoutSourceRequest(values) {
+    const v = values || {};
+    const errors = [];
+    const isNew = !!v.isNew;
+    const name = String(v.name || "").trim();
+    const id = isNew ? (scoutSlug(v.id) || scoutSlug(v.shortName) || scoutSlug(name)) : String(v.regulatorId || "");
+    if (!id) errors.push(isNew ? "Enter the regulator's name." : "Choose a regulator.");
+    if (isNew && !name) errors.push("Enter the regulator's name.");
+    if (isNew && SCOUT_REGIONS.indexOf(v.region) < 0) errors.push("Choose a region.");
+    const regulator = { id };
+    if (isNew || v.mode === "edit") {
+      if (isNew || name) regulator.name = name;
+      regulator.short_name = String(v.shortName || "").trim();
+      regulator.region = v.region;
+      regulator.jurisdiction = String(v.jurisdiction || "").trim();
+      regulator.languages = splitList(v.languages).map(item => item.toLowerCase());
+      regulator.review_languages = splitList(v.reviewLanguages).map(item => item.toLowerCase());
+      regulator.keywords = { relevant: splitLines(v.relevantKeywords), exclude: splitLines(v.excludeKeywords) };
+      const hints = parsePathHints(v.pathHints);
+      hints.errors.forEach(error => errors.push(error));
+      regulator.path_hints = hints.hints;
+      regulator.known_gaps = splitLines(v.knownGaps);
+      if (v.mode === "edit") regulator.active = v.active !== false;
+      if (isNew) regulator.prefer_https = true;
+      const overlap = regulator.keywords.relevant.filter(term => regulator.keywords.exclude.some(other => other.toLowerCase() === term.toLowerCase()));
+      if (overlap.length) errors.push("A keyword can't be both relevant and excluded: " + overlap.join(", "));
+    }
+    let channel = null;
+    const url = String(v.channelUrl || "").trim();
+    if (url) {
+      let parsed = null;
+      try { parsed = new URL(url); } catch (_) { parsed = null; }
+      if (!parsed || !/^https?:$/.test(parsed.protocol) || parsed.username || parsed.password) errors.push("Enter the channel's full public address (https://…).");
+      const label = String(v.channelLabel || "").trim();
+      if (!label) errors.push("Give the channel a short label.");
+      channel = { type: v.channelType || "feed", url, label };
+      if (v.required === false) channel.required = false;
+      if (channel.type === "listing") {
+        if (String(v.contentSelector || "").trim()) channel.content_selector = String(v.contentSelector).trim();
+        if (String(v.linkPrefix || "").trim()) channel.link_prefixes = [String(v.linkPrefix).trim()];
+        if (String(v.pageParam || "").trim()) {
+          const pages = Math.max(1, Math.min(50, parseInt(v.maxPages, 10) || 5));
+          channel.pagination = { param: String(v.pageParam).trim(), max_pages: pages, baseline_pages: Math.min(2, pages) };
+        }
+      }
+    } else if (v.mode !== "edit") {
+      errors.push("Enter the address of the feed, site map or listing page.");
+    }
+    const request = { version: 1, regulator, channel };
+    const what = isNew ? "add the regulator " + name : v.mode === "edit" ? (channel ? "update " + id + " and add a channel" : "update the details of " + id) : "add a channel to " + id;
+    const body = [
+      SCOUT_SOURCE_MARKER, "",
+      "Please " + what + " in Scout (config/scout.json).", "",
+      "```json", JSON.stringify(request, null, 2), "```", "",
+      "This request was created from the ChangeSentinel dashboard."
+    ].join("\n");
+    const title = "[ChangeSentinel] Scout source: " + (isNew ? "add " + (name || id) : v.mode === "edit" ? "edit " + id : "add channel to " + id);
+    return { errors, title, body, request };
+  }
+
   return {
     diffSequences, alignLines, changedWords,
     esc, nextScheduledScan, scanCycle, runColumns, columnCellState, pendingScan, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,
     parseUnifiedDiff, tokenize, wordDiff, similarity, redlineRows, redlineSummary, renderRedline, renderUnifiedDiff,
-    splitMarkdownTableRow, isMarkdownTableSeparator, relativeTime, dayHeading
+    splitMarkdownTableRow, isMarkdownTableSeparator, relativeTime, dayHeading,
+    urlKey, scoutBucket, scoutBuckets, scoutSentence, scoutReviewIssue, nextScoutSweep,
+    SCOUT_FILTERS, SCOUT_OUTCOMES, SCOUT_CONFIDENCE, SCOUT_STATUS, SCOUT_CHANNEL_STATUS, SCOUT_NOUNS, SCOUT_REVIEW_MARKER,
+    scoutSlug, splitList, splitLines, parsePathHints, pathHintsText, scoutSourceRequest, SCOUT_SOURCE_MARKER, SCOUT_TOPIC_IDS, SCOUT_REGIONS
   };
 }));

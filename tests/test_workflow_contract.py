@@ -56,7 +56,9 @@ class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
         self.assertIn("steps.base.outputs.sha", commit_step)
         script = COMMIT_SCRIPT.read_text(encoding="utf-8")
         self.assertIn("refusing to rebase a generated state snapshot", script.lower())
-        self.assertIn('git diff --name-only "$base_sha" origin/main -- data', script)
+        self.assertIn('git diff --name-only "$base_sha" origin/main -- "${pathspec[@]}"', script)
+        # The monitor's state excludes Scout's directory, so the two never block each other.
+        self.assertIn("pathspec=(data ':(exclude)data/scout')", script)
 
     def test_failures_are_alerted_and_liveness_is_pinged(self):
         workflow = monitor_workflow()
@@ -163,6 +165,56 @@ class TestCommitStateHelper(unittest.TestCase):
         result, output = self.run_helper(job, base)
         self.assertEqual(result.returncode, 0)
         self.assertIn("committed=false", output)
+
+
+class TestScoutWorkflowContract(unittest.TestCase):
+    def test_weekly_sweep_commits_only_scout_state_with_no_token_during_parsing(self):
+        workflow = (WORKFLOWS / "scout.yml").read_text(encoding="utf-8")
+        self.assertIn('cron: "17 4 * * 1"', workflow)
+        self.assertIn("workflow_dispatch:", workflow)
+        self.assertIn("group: scout", workflow)
+        self.assertIn("queue: max", workflow)
+        self.assertIn("persist-credentials: false", workflow)
+        self.assertIn("requests==2.34.2 beautifulsoup4==4.14.3", workflow)
+        sweep = workflow.index("- name: Sweep regulator channels")
+        validate = workflow.index("- name: Validate Scout state")
+        commit = workflow.index("- name: Commit Scout state")
+        self.assertLess(sweep, validate)
+        self.assertLess(validate, commit)
+        self.assertIn('bash scripts/commit_state.sh "Update Scout discovery state" "${{ steps.base.outputs.sha }}" data/scout', workflow)
+        self.assertIn("steps.commit.outputs.committed == 'true'", workflow)
+        self.assertIn("gh workflow run pages.yml", workflow)
+        # Scout never touches monitoring configuration or monitoring state.
+        for forbidden in ("config/sources.json", "regmon.monitor", "regmon.notify", "regulatory-monitor.yml"):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, workflow)
+
+    def test_review_decisions_are_owner_only_and_queue_behind_sweeps(self):
+        workflow = (WORKFLOWS / "scout-review.yml").read_text(encoding="utf-8")
+        self.assertIn("github.event.issue.user.login == github.repository_owner", workflow)
+        self.assertIn("startsWith(github.event.issue.title, '[ChangeSentinel] Scout review')", workflow)
+        job = workflow[workflow.index("jobs:"):]
+        self.assertIn("group: scout", job)
+        self.assertIn("queue: max", job)
+        self.assertIn('python -m regmon.scout review --event "$GITHUB_EVENT_PATH"', workflow)
+        self.assertIn("git add -A -- data/scout", workflow)
+        self.assertNotIn("pip install", workflow, "recording a decision needs only the standard library")
+
+
+class TestScoutSourceWorkflowContract(unittest.TestCase):
+    def test_source_requests_are_owner_only_validated_and_swept(self):
+        workflow = (WORKFLOWS / "scout-source.yml").read_text(encoding="utf-8")
+        self.assertIn("github.event.issue.user.login == github.repository_owner", workflow)
+        self.assertIn("startsWith(github.event.issue.title, '[ChangeSentinel] Scout source')", workflow)
+        job = workflow[workflow.index("jobs:"):]
+        self.assertIn("group: scout", job)
+        self.assertIn("queue: max", job)
+        apply = workflow.index('python -m regmon.scout source --event "$GITHUB_EVENT_PATH"')
+        self.assertLess(apply, workflow.index("python -m regmon.scout validate"))
+        self.assertIn("git add -A -- config/scout.json data/scout", workflow)
+        self.assertIn('gh workflow run scout.yml --repo "$GITHUB_REPOSITORY" --ref main -f regulator="$REGULATOR"', workflow)
+        self.assertNotIn("config/sources.json", workflow)
+        self.assertNotIn("pip install", workflow)
 
 
 class TestAIEvaluationWorkflowContract(unittest.TestCase):

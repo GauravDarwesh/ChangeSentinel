@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 # Commit and push generated monitoring state under data/.
 #
-# Usage: scripts/commit_state.sh "<commit message>" <base-sha>
+# Usage: scripts/commit_state.sh "<commit message>" <base-sha> [<state-path>]
+#
+# <state-path> defaults to "data" (the monitor's state, excluding data/scout).
+# Scout passes "data/scout". The two never touch each other's files, so each
+# job only refuses when *its own* state was committed by someone else meanwhile.
 #
 # <base-sha> is the main commit this job checked out. If main advanced while the
 # job ran, the push is retried after rebasing onto the new main, but ONLY when
@@ -15,6 +19,12 @@ set -euo pipefail
 
 message="${1:?commit message required}"
 base_sha="${2:?base commit SHA required}"
+state_path="${3:-data}"
+if [ "$state_path" = "data" ]; then
+  pathspec=(data ':(exclude)data/scout')
+else
+  pathspec=("$state_path")
+fi
 
 # The checkout does not persist credentials (the scan runs third-party parsers
 # on untrusted documents). Authenticate only the git commands that need it.
@@ -34,7 +44,7 @@ emit() {
   fi
 }
 
-git add data
+git add -A -- "${pathspec[@]}"
 if git diff --cached --quiet; then
   echo "No monitoring data changes to commit."
   emit false
@@ -52,7 +62,7 @@ for attempt in 1 2 3 4 5; do
     fi
     echo "Push raced with another update of main; retrying."
   else
-    changed_data="$(git diff --name-only "$base_sha" origin/main -- data)"
+    changed_data="$(git diff --name-only "$base_sha" origin/main -- "${pathspec[@]}")"
     if [ -n "$changed_data" ]; then
       echo "Another run committed monitoring state while this job ran; refusing to rebase a generated state snapshot."
       echo "$changed_data" | head -20

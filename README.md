@@ -466,6 +466,14 @@ This manual, non-mutating workflow calls the configured OpenRouter model using a
 
 Use it after changing the AI provider/model or when you need to verify that AI interpretation is working independently of whether a real regulatory change happened. Set the repository secret `OPENROUTER_API_KEY` first.
 
+## `Scout` and `Scout Review Decision`
+
+Files:
+
+`.github/workflows/scout.yml` and `.github/workflows/scout-review.yml`
+
+`Scout` runs every Monday at 04:17 UTC (and on manual dispatch, for all regulators or a comma-separated list). It reads the discovery channels in `config/scout.json`, validates its state and commits only `data/scout/`. `Scout Review Decision` processes the owner's "Not relevant" / "Restore" requests from the dashboard, and `Scout Source Request` (`.github/workflows/scout-source.yml`) applies "Add a source" / "Edit details" requests to `config/scout.json`. None of them touches monitoring configuration or monitoring state. See [Scout](#scout-finding-new-regulator-pages) below.
+
 ## `Deploy Monitoring Console`
 
 File:
@@ -500,12 +508,13 @@ That is when actual changes become interesting.
 
 The repository includes a dependency-free review workspace (`index.html`, `dashboard.js`, `dashboard-lib.js`), published by GitHub Pages. It has no build step.
 
-The layout is three panes: a rail on the left (Overview, Changes, Pages, Runs, Alerts), a list, and the selected item. The page itself never scrolls; each pane scrolls on its own. On phones the rail becomes a bottom bar and the list and detail are separate screens. A dark theme is the default, with a light theme one click away.
+The layout is three panes: a rail on the left (Overview, Changes, Pages, Runs, Alerts, then Scout and Ask Sentinel set apart by a rule), a list, and the selected item. The page itself never scrolls; each pane scrolls on its own. On phones the rail becomes a bottom bar and the list and detail are separate screens. A dark theme is the default, with a light theme one click away.
 
 - **Overview** opens with a one-sentence status, the next-scan countdown, and the **LED change field**: one row per monitored page, one cell per six-hour scan over the last few days. Amber cells are scans that found a change, red cells hit a problem, dim cells were checked with no change, and the outlined column is the scan in progress. Hover a cell for the page and scan; click to open the page.
 - **Changes** lists every change across runs, newest first, and opens the newest one straight away. Each change shows the AI assessment and a **redline** of the extracted text: deleted words struck through, inserted words underlined, edits within a line marked word by word, and unchanged stretches collapsed. Text and HTML diffs are one click away.
 - **Pages** shows each monitored page with its change history, the saved copy (rendered HTML or the original PDF), the extracted text, the fetched HTML source, and its fingerprints.
 - **Runs** and **Alerts** show scan results and the notification outbox and delivery ledger.
+- **Scout** lists new regulator pages that are not monitored yet, each with the evidence and signals behind Scout's judgement, plus the last sweep's coverage. See [Scout](#scout-finding-new-regulator-pages).
 
 `dashboard-lib.js` holds the pure logic (redline, scan schedule, LED cell states, wording); `tests/test_dashboard_lib.py` runs it through Node.
 
@@ -516,6 +525,41 @@ https://gauravdarwesh.github.io/ChangeSentinel/
 ---
 
 The dashboard now provides an **Add a monitor** flow. It creates a prefilled GitHub issue rather than writing repository credentials into the browser. After the repository owner submits the request, the `Register Dashboard Monitor` workflow validates the public URL, adds a one-page bounded source to `config/sources.json`, commits the configuration, and dispatches the first scan. The dashboard then reads the new source from the shared configuration and displays its stored inventory once the scan has committed.
+
+# Scout: finding new regulator pages
+
+The monitor watches pages that are already configured. **Scout** answers a different question: *what has a regulator published that ChangeSentinel is not monitoring yet?* Finding a URL, judging whether it looks relevant and registering it for monitoring are three separate decisions; Scout only does the first two, and a person makes the third.
+
+**Where it looks.** Each regulator has a profile in `config/scout.json` that declares its channels: RSS/Atom/RDF feeds, XML site maps (including indexes and gzip) and listing pages (paginated, newest first). Scout never starts at a home page and crawls everything. The pilot covers all four regions: Federal Reserve and OSFI (NAM), EBA and the Bank of England's PRA (EMEA), APRA (APAC) and Banco de México (LATAM). Adding a regulator is a configuration change, never a new crawler.
+
+**How it behaves on the wire.** One polite client per regulator: robots.txt is read per host (RFC 9309 wildcards, and `Crawl-delay` honoured in full; an unreachable robots.txt means *do not crawl*), requests are paced (at least 3 seconds apart), every destination and redirect must be a public address on the regulator's declared hosts, responses are size-capped, XML with entity declarations is refused, and each regulator has a request and time budget. A 429/503 with a long `Retry-After` (seconds or HTTP-date) defers the channel instead of hammering it.
+
+**New versus baseline.** The first successful read of a channel is a quiet *baseline*: what the regulator already publishes is recorded, not announced. Afterwards a URL is *new* when a channel that already had a baseline shows it for the first time. Listings are read newest first until Scout reaches items it has already seen. URLs that ChangeSentinel already monitors (from `config/sources.json` and `data/latest.json`) are recognised and kept out of the review list. "First seen" is when Scout noticed a URL, not proof of when it was published.
+
+**Judging relevance.** Deterministic, explainable rules map titles, link text, listing text, feed categories, page metadata and addresses onto publication types (rule, consultation, guidance, technical standard, reporting form, supervisory letter, Q&A, enforcement, decision) and topics (capital, liquidity, reporting, AML, payments, resilience, …), with a few curated path hints per regulator. Each finding gets one of three outcomes with a confidence band and the signals behind it:
+
+- **Looks relevant** - positive evidence for a publication type or topic the objective covers;
+- **Unsure** - thin or conflicting evidence (for example a PDF known only by its file name);
+- **Not relevant** - explicit evidence of exclusion: a site utility page, or a type the objective leaves out (research, statistics, events, jobs) with no regulatory signal pointing the other way.
+
+Missing evidence is never treated as irrelevance. For new web pages with no title, Scout reads the page once (robots permitting) for its title, heading and metadata. AI is not used: the rules are reproducible and free, and the review step catches what they miss.
+
+**Coverage, honestly.** Every sweep records a ledger per regulator and channel: `COMPLETE` (every declared channel read as planned), `PARTIAL` (a budget or window limit stopped a channel before it caught up, or a feed may have rolled past items), `DEGRADED` (a required channel failed), `BLOCKED` (robots.txt or the server refused every required channel) or `FAILED`. Each profile lists its known gaps. Complete never means "every page on the site was seen".
+
+**Reviewing in the dashboard.** The **Scout** view sits in the rail between Alerts and Ask Sentinel. *To review* lists new findings; *Backlog* lists relevant pages that were already published when Scout started; *Set aside* keeps Scout's own exclusions so its judgement can be checked; *Decided* holds dismissed and now-monitored pages. **Monitor this page** opens the existing add-a-page dialog with the address filled in (the owner-only registration workflow does the rest). **Not relevant** and **Restore** open a prefilled issue that the owner-only `Scout Review Decision` workflow records in `data/scout/decisions.json`; a decision applies to that one address, never to a path or topic. **Coverage** shows the last sweep's ledger and each regulator's gaps.
+
+**Adding sources and tuning metadata.** *Sources* in the Scout view lists every regulator with its channels and what its profile configures. **Add a source** creates a regulator profile (name, short name, region, jurisdiction) with its first channel, or adds a channel to an existing regulator: a feed, a site map, or any listing page (a "what's new", circulars or press-release page), with an optional CSS selector, link prefix and page parameter. **Edit details** changes a regulator's metadata: languages and the language to review in, *relevant keywords* (count as relevant evidence), *exclusion keywords* (set a page aside only when nothing regulatory points the other way), *path hints* (`/en/guidance/ = guidance`, `/x/ = topic:capital`, `/events/ = exclude`), known gaps, and whether it is swept at all. Each form opens a prefilled issue; the owner-only `Scout Source Request` workflow validates the request against the same rules as every sweep, commits `config/scout.json`, and queues a sweep of that regulator (a new channel's first read is a quiet baseline). Channels are added, never removed, from the dashboard.
+
+**State.** Everything lives under `data/scout/`: `registry/<regulator>.json` (every URL observed, one per line, with first-seen time, origin, evidence and a compact assessment), `review.json` (the dashboard's queue), `latest.json` (the coverage ledger), `history.json` and `decisions.json`. `scripts/commit_state.sh` scopes each job to its own state, so a Scout commit never blocks a monitor commit and vice versa.
+
+Run it locally (writes `data/scout/`; use `--data-dir` to experiment elsewhere):
+
+```bash
+python -m regmon.scout sweep --regulator eba --data-dir /tmp/scout
+python -m regmon.scout validate --data-dir /tmp/scout
+```
+
+---
 
 # Running it locally
 

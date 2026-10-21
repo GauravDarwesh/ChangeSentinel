@@ -1,0 +1,363 @@
+{
+  "schema_version": 1,
+  "objective": {
+    "id": "regulatory-publications-v1",
+    "description": "New regulator publications a compliance reviewer may want ChangeSentinel to monitor: rules, consultations, guidance, technical standards, reporting forms and instructions, supervisory letters and notices, Q&A, enforcement actions, decisions and opinions.",
+    "priority_types": [
+      "rule",
+      "consultation",
+      "technical_standard",
+      "guidance",
+      "reporting",
+      "supervisory_letter",
+      "qa",
+      "enforcement",
+      "decision_opinion"
+    ],
+    "out_of_objective_types": [
+      "research",
+      "statistics",
+      "event",
+      "media",
+      "job"
+    ]
+  },
+  "defaults": {
+    "min_delay_seconds": 3,
+    "max_requests_per_regulator": 60,
+    "max_seconds_per_regulator": 900,
+    "max_enrich_per_regulator": 25,
+    "review_new_days": 120,
+    "review_backlog_limit": 100,
+    "history_sweeps": 52
+  },
+  "regulators": [
+    {
+      "id": "fed",
+      "name": "Board of Governors of the Federal Reserve System",
+      "short_name": "Federal Reserve",
+      "region": "NAM",
+      "jurisdiction": "United States",
+      "hosts": [
+        "www.federalreserve.gov"
+      ],
+      "prefer_https": true,
+      "channels": [
+        {
+          "id": "fed-press-bcreg",
+          "type": "feed",
+          "label": "Banking and consumer regulatory policy releases",
+          "url": "https://www.federalreserve.gov/feeds/press_bcreg.xml"
+        },
+        {
+          "id": "fed-press-enforcement",
+          "type": "feed",
+          "label": "Enforcement actions",
+          "url": "https://www.federalreserve.gov/feeds/press_enforcement.xml"
+        },
+        {
+          "id": "fed-bankinginfo",
+          "type": "feed",
+          "label": "Supervision and regulation letters and manuals",
+          "url": "https://www.federalreserve.gov/feeds/bankinginfo-rss.xml"
+        },
+        {
+          "id": "fed-collections-review",
+          "type": "listing",
+          "label": "Information collections under review",
+          "url": "https://www.federalreserve.gov/apps/reportingforms/review",
+          "content_selector": ".data-table",
+          "link_prefixes": [
+            "https://www.federalreserve.gov/apps/reportingforms/"
+          ]
+        }
+      ],
+      "path_hints": [
+        {
+          "prefix": "/supervisionreg/srletters/",
+          "publication_type": "supervisory_letter"
+        },
+        {
+          "prefix": "/supervisionreg/caletters/",
+          "publication_type": "supervisory_letter"
+        },
+        {
+          "prefix": "/newsevents/pressreleases/enforcement",
+          "publication_type": "enforcement"
+        },
+        {
+          "prefix": "/newsevents/pressreleases/bcreg",
+          "topic": "supervision"
+        },
+        {
+          "prefix": "/apps/reportingforms/",
+          "publication_type": "reporting"
+        },
+        {
+          "prefix": "/reportforms/",
+          "publication_type": "reporting"
+        },
+        {
+          "prefix": "/newsevents/speech/",
+          "publication_type": "speech"
+        }
+      ],
+      "known_gaps": [
+        "Reads three Board feeds and the information-collections page (the reporting-forms feed only points at the recent-updates page, which the monitor already watches). Pages that are not announced in those feeds and not linked from that page, such as standalone guidance pages reached only through site navigation, are not covered."
+      ]
+    },
+    {
+      "id": "osfi",
+      "name": "Office of the Superintendent of Financial Institutions",
+      "short_name": "OSFI",
+      "region": "NAM",
+      "jurisdiction": "Canada",
+      "hosts": [
+        "www.osfi-bsif.gc.ca"
+      ],
+      "prefer_https": true,
+      "languages": [
+        "en",
+        "fr"
+      ],
+      "review_languages": [
+        "en"
+      ],
+      "language_paths": {
+        "en": "/en/",
+        "fr": "/fr/"
+      },
+      "channels": [
+        {
+          "id": "osfi-sitemap",
+          "type": "sitemap",
+          "label": "Site map (English and French)",
+          "url": "https://www.osfi-bsif.gc.ca/sitemap.xml"
+        }
+      ],
+      "path_hints": [
+        {
+          "prefix": "/en/guidance/",
+          "publication_type": "guidance"
+        },
+        {
+          "prefix": "/en/data-forms/",
+          "publication_type": "reporting"
+        },
+        {
+          "prefix": "/en/supervision/",
+          "topic": "supervision"
+        },
+        {
+          "prefix": "/en/news/",
+          "publication_type": "press_release"
+        }
+      ],
+      "known_gaps": [
+        "Reads OSFI's published site map only. French pages are linked to their English versions rather than listed separately. Pages missing from the site map are not covered."
+      ]
+    },
+    {
+      "id": "eba",
+      "name": "European Banking Authority",
+      "short_name": "EBA",
+      "region": "EMEA",
+      "jurisdiction": "European Union",
+      "hosts": [
+        "www.eba.europa.eu"
+      ],
+      "prefer_https": true,
+      "max_requests": 40,
+      "max_seconds": 1200,
+      "channels": [
+        {
+          "id": "eba-publications",
+          "type": "listing",
+          "label": "Publications",
+          "url": "https://www.eba.europa.eu/publications-and-media/publications",
+          "content_selector": ".views-element-container",
+          "newest_first": true,
+          "pagination": {
+            "param": "page",
+            "start": 0,
+            "max_pages": 6,
+            "baseline_pages": 2
+          },
+          "exclude_link_patterns": [
+            "[?&](document_type|media_topics|text|sort_by|sort_order|items_per_page)="
+          ]
+        },
+        {
+          "id": "eba-press-releases",
+          "type": "listing",
+          "label": "Press releases",
+          "url": "https://www.eba.europa.eu/publications-and-media/press-releases",
+          "content_selector": ".views-element-container",
+          "newest_first": true,
+          "pagination": {
+            "param": "page",
+            "start": 0,
+            "max_pages": 4,
+            "baseline_pages": 1
+          },
+          "exclude_link_patterns": [
+            "[?&](document_type|media_topics|text|sort_by|sort_order|items_per_page)="
+          ]
+        }
+      ],
+      "path_hints": [
+        {
+          "prefix": "/publications-and-media/press-releases/",
+          "publication_type": "press_release"
+        },
+        {
+          "prefix": "/publications-and-media/events",
+          "effect": "negative"
+        },
+        {
+          "prefix": "/activities/single-rulebook/",
+          "topic": "supervision"
+        }
+      ],
+      "known_gaps": [
+        "Reads the publications and press-release listings newest first until it reaches items it has already seen (at most six and four pages per sweep). The Single Rulebook Q&A, interactive tools and pages reached only through navigation are not covered.",
+        "The EBA asks crawlers to wait ten seconds between requests, so each sweep is deliberately slow."
+      ]
+    },
+    {
+      "id": "boe-pra",
+      "name": "Bank of England Prudential Regulation Authority",
+      "short_name": "Bank of England (PRA)",
+      "region": "EMEA",
+      "jurisdiction": "United Kingdom",
+      "hosts": [
+        "www.bankofengland.co.uk"
+      ],
+      "prefer_https": true,
+      "channels": [
+        {
+          "id": "boe-pra-publications",
+          "type": "feed",
+          "label": "Prudential regulation publications",
+          "url": "https://www.bankofengland.co.uk/rss/prudential-regulation-publications"
+        },
+        {
+          "id": "boe-news",
+          "type": "feed",
+          "label": "News",
+          "url": "https://www.bankofengland.co.uk/rss/news",
+          "required": false
+        }
+      ],
+      "path_hints": [
+        {
+          "prefix": "/prudential-regulation/publication/",
+          "topic": "supervision"
+        },
+        {
+          "prefix": "/prudential-regulation/",
+          "topic": "supervision"
+        },
+        {
+          "prefix": "/speech/",
+          "publication_type": "speech"
+        },
+        {
+          "prefix": "/statistics/",
+          "publication_type": "statistics"
+        },
+        {
+          "prefix": "/events/",
+          "effect": "negative"
+        },
+        {
+          "prefix": "/working-paper/",
+          "publication_type": "research"
+        },
+        {
+          "prefix": "/bank-overground/",
+          "publication_type": "research"
+        }
+      ],
+      "known_gaps": [
+        "Reads the Bank's PRA publications feed and its news feed. The Bank's full site map and its research and statistics feeds are not read, so PRA pages announced in neither feed are not covered."
+      ]
+    },
+    {
+      "id": "apra",
+      "name": "Australian Prudential Regulation Authority",
+      "short_name": "APRA",
+      "region": "APAC",
+      "jurisdiction": "Australia",
+      "hosts": [
+        "www.apra.gov.au"
+      ],
+      "prefer_https": true,
+      "channels": [
+        {
+          "id": "apra-news-publications",
+          "type": "listing",
+          "label": "News and publications",
+          "url": "https://www.apra.gov.au/news-and-publications",
+          "newest_first": true,
+          "pagination": {
+            "param": "page",
+            "start": 0,
+            "max_pages": 6,
+            "baseline_pages": 3
+          }
+        }
+      ],
+      "path_hints": [
+        {
+          "prefix": "/consultations/",
+          "publication_type": "consultation"
+        },
+        {
+          "prefix": "/prudential-standards/",
+          "publication_type": "guidance"
+        }
+      ],
+      "known_gaps": [
+        "Reads APRA's news and publications listing newest first until it reaches items it has already seen (at most six pages per sweep). Standards and forms pages that are not announced there are not covered."
+      ]
+    },
+    {
+      "id": "banxico",
+      "name": "Banco de México",
+      "short_name": "Banxico",
+      "region": "LATAM",
+      "jurisdiction": "Mexico",
+      "hosts": [
+        "www.banxico.org.mx"
+      ],
+      "prefer_https": true,
+      "languages": [
+        "es"
+      ],
+      "review_languages": [
+        "es"
+      ],
+      "channels": [
+        {
+          "id": "banxico-circulars",
+          "type": "listing",
+          "label": "Circulars by year",
+          "url": "https://www.banxico.org.mx/marco-normativo/normativa-agrupada-por-ano-cr.html",
+          "link_prefixes": [
+            "https://www.banxico.org.mx/marco-normativo/"
+          ]
+        }
+      ],
+      "path_hints": [
+        {
+          "prefix": "/marco-normativo/normativa-emitida-por-el-banco-de-mexico/",
+          "publication_type": "rule"
+        }
+      ],
+      "known_gaps": [
+        "Reads Banxico's list of circulars by year. Regulation published by other Mexican authorities (CNBV, SHCP) is not covered, and an amendment that only updates an existing circular's page is a content change for the monitor, not a new URL."
+      ]
+    }
+  ]
+}

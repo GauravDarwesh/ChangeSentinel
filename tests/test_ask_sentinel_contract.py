@@ -17,7 +17,7 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn('window.CHANGESENTINEL_ASK_ENDPOINT', html)
         self.assertIn('https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel', html)
         self.assertIn('supabase-js@2.121.0/dist/umd/supabase.js', html)
-        self.assertIn('src="dashboard.js?v=20261021-bulk-1"', html)
+        self.assertIn('src="dashboard.js?v=20261021-scout-1"', html)
         self.assertIn('ASK_SENTINEL_ENDPOINT = window.CHANGESENTINEL_ASK_ENDPOINT || ""', js)
         self.assertIn('askSentinel: "askSentinelView"', js)
         self.assertIn('name === "ask-sentinel"', js)
@@ -34,7 +34,7 @@ class TestAskSentinelContract(unittest.TestCase):
 
     def test_index_is_built_in_github_actions_after_monitor_runs(self):
         workflow = (ROOT / ".github/workflows/ask-sentinel-index.yml").read_text(encoding="utf-8")
-        self.assertIn('workflows: ["Regulatory Monitor"]', workflow)
+        self.assertIn('workflows: ["Regulatory Monitor", "Scout", "Scout Review Decision", "Scout Source Request"]', workflow)
         self.assertIn("secrets.SUPABASE_SECRET_KEY", workflow)
         self.assertIn("python scripts/ask_sentinel_index.py", workflow)
 
@@ -49,6 +49,8 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertTrue(indexer.is_indexable("data/discovery/fed-reporting-forms-pilot.json", 10, inactive))
         self.assertFalse(indexer.is_indexable("data/snapshots/files/x.txt", 10, inactive))
         self.assertFalse(indexer.is_indexable("data/snapshots/a.pdf", 10, inactive))
+        self.assertFalse(indexer.is_indexable("data/scout/registry/osfi.json", 10, inactive))
+        self.assertTrue(indexer.is_indexable("data/scout/review.json", 10, inactive))
         for path in ("data/history/r.json", "data/evidence/e.json", "data/snapshots/s.txt", "README.md", "regmon/engine.py"):
             with self.subTest(path=path):
                 self.assertTrue(indexer.is_indexable(path, 10, inactive))
@@ -94,7 +96,8 @@ class TestAskSentinelContract(unittest.TestCase):
         for token in ("var(--pane)", "var(--accent)", "var(--ink)", "var(--line)", "@media (max-width: 980px)", ".nav-ask-short { display: inline; }"):
             with self.subTest(token=token):
                 self.assertIn(token, html)
-        self.assertIn("grid-template-columns: repeat(6, minmax(0, 1fr))", html)
+        # Seven tabs since Scout joined the bar between Alerts and Ask.
+        self.assertIn("grid-template-columns: repeat(7, auto)", html)
         self.assertIn('data-view="askSentinel"', html)
         self.assertIn('$("askSentinelMessages").addEventListener("click"', js)
         self.assertIn('askLauncher.classList.toggle("active", state.view === "askSentinel")', js)

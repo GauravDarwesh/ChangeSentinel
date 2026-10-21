@@ -439,3 +439,71 @@ class TestCrossRunChangeLog(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestScoutView(unittest.TestCase):
+    """Scout sits between Alerts and Ask Sentinel, set apart by a rule above and below."""
+
+    def test_rail_order_and_separators(self):
+        html = read("index.html")
+        alerts = html.index('data-view="notifications"')
+        scout = html.index('data-view="scout"')
+        ask = html.index('data-view="askSentinel"')
+        self.assertLess(alerts, scout)
+        self.assertLess(scout, ask)
+        self.assertIn('<li class="nav-scout">', html)
+        self.assertIn(".nav-scout { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }", html)
+        self.assertIn(".nav-ask { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }", html)
+        self.assertIn('id="navScoutCount"', html)
+
+    def test_phone_bar_fits_seven_tabs_without_rules(self):
+        html = read("index.html")
+        self.assertIn(".rail-nav { grid-template-columns: repeat(7, auto); justify-content: space-between; padding: 0 6px; }", html)
+        self.assertNotIn("grid-template-columns: repeat(6, minmax(0, 1fr))", html)
+        self.assertIn(".nav-scout, .nav-ask { margin-top: 0; padding-top: 0; border-top: 0; }", html)
+
+    def test_scout_is_a_split_view_with_review_filters_and_coverage(self):
+        html = read("index.html")
+        self.assertRegex(html, 'id="scoutView" class="view view-split"')
+        for token in ('id="scoutItems"', 'id="scoutDetail"', 'id="scoutSearch"', "data-scout-coverage",
+                      'data-scout-filter="REVIEW"', 'data-scout-filter="BACKLOG"', 'data-scout-filter="EXCLUDED"', 'data-scout-filter="DONE"'):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+
+    def test_scout_data_is_optional_published_and_read_only(self):
+        source = read("dashboard.js")
+        for token in (
+            'scoutLatest: new URL("./data/scout/latest.json", document.baseURI).href',
+            'scoutReview: new URL("./data/scout/review.json", document.baseURI).href',
+            'fetchDataAsset("scoutLatest", false)',
+            'fetchDataAsset("scoutReview", false)',
+            'scout: "scout"',
+            "function renderScoutCoverage(pane)",
+            "L.scoutReviewIssue(verb, [item], \"\")",
+            "openAddMonitor();",
+            "It does not mean every page on a regulator",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+        # The dashboard never writes: decisions go through owner-approved GitHub requests.
+        self.assertNotIn("api.github.com/repos/\" + REPOSITORY", source.split("Scout: new pages worth monitoring")[1].split("/* ================= Navigation")[0])
+        workflow = read(".github/workflows/pages.yml")
+        for token in ("cp data/scout/latest.json site/data/scout/latest.json", "cp data/scout/review.json site/data/scout/review.json",
+                      '- "data/scout/review.json"'):
+            with self.subTest(token=token):
+                self.assertIn(token, workflow)
+
+    def test_owners_can_add_sources_and_edit_metadata_through_a_reviewed_request(self):
+        html = read("index.html")
+        for token in ('id="scoutSourceDialog"', 'id="scoutSourceForm"', 'name="scoutChannelType" value="feed"', 'value="sitemap"', 'value="listing"',
+                      'id="scoutRelevantKeywords"', 'id="scoutExcludeKeywords"', 'id="scoutPathHints"', 'id="scoutKnownGaps"', 'id="scoutActive"',
+                      "html.cs-locked #scoutSourceDialog"):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+        source = read("dashboard.js")
+        for token in ("data-scout-add-source", "data-scout-add-channel", "data-scout-edit", "L.scoutSourceRequest({",
+                      'scoutConfig: new URL("./config/scout.json", document.baseURI).href', 'fetchDataAsset("scoutConfig", false)'):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+        self.assertIn("cp config/scout.json site/config/scout.json", read(".github/workflows/pages.yml"))
+

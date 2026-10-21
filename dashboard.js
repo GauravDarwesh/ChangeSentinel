@@ -38,7 +38,10 @@ const DATA_PATHS = {
   history: "data/history/index.json",
   notifications: "data/notifications.json",
   outbox: "data/notification-outbox.json",
-  config: "config/sources.json"
+  config: "config/sources.json",
+  scoutLatest: "data/scout/latest.json",
+  scoutReview: "data/scout/review.json",
+  scoutConfig: "config/scout.json"
 };
 // Load core state from the same origin as GitHub Pages first. Keep the raw GitHub
 // URL as a fallback so older deployments can still recover while Pages publishes.
@@ -48,10 +51,13 @@ const ENDPOINTS = {
   history: new URL("./data/history/index.json", document.baseURI).href,
   notifications: new URL("./data/notifications.json", document.baseURI).href,
   outbox: new URL("./data/notification-outbox.json", document.baseURI).href,
-  config: new URL("./config/sources.json", document.baseURI).href
+  config: new URL("./config/sources.json", document.baseURI).href,
+  scoutLatest: new URL("./data/scout/latest.json", document.baseURI).href,
+  scoutReview: new URL("./data/scout/review.json", document.baseURI).href,
+  scoutConfig: new URL("./config/scout.json", document.baseURI).href
 };
-const VIEWS = ["overview", "changes", "monitors", "runs", "notifications", "askSentinel"];
-const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", notifications: "alerts", askSentinel: "ask-sentinel" };
+const VIEWS = ["overview", "changes", "monitors", "runs", "notifications", "scout", "askSentinel"];
+const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", notifications: "alerts", scout: "scout", askSentinel: "ask-sentinel" };
 const $ = id => document.getElementById(id);
 const esc = L.esc;
 const state = {
@@ -62,7 +68,9 @@ const state = {
   filter: "ALL", changeFilter: "ALL", detailTab: "", diffMode: "compare", snapshotMode: "preview",
   docInfo: {}, titleQueue: [], titleWorkers: 0, titleTimer: null,
   snapshotCache: {}, htmlCache: {}, evidenceCache: {}, pdfPreviewUrl: "", toastTimer: null,
-  workflowRuns: [], workflowSignature: "", scanColumns: null, pendingScan: null
+  workflowRuns: [], workflowSignature: "", scanColumns: null, pendingScan: null,
+  scoutLatest: null, scoutReview: null, scoutConfig: null, scoutFilter: "REVIEW", selectedScoutKey: "", scoutMonitored: null,
+  scoutSourceMode: "add"
 };
 const compactQuery = window.matchMedia ? window.matchMedia("(max-width: 980px)") : null;
 function isCompact() { return !!(compactQuery && compactQuery.matches); }
@@ -116,6 +124,14 @@ function isValidDataAssetShape(key, value) {
       return isPlainObject(value) && isPlainObject(value.pending_events);
     case "config":
       return isPlainObject(value) && Array.isArray(value.sources);
+    // Scout's files are optional: a missing or malformed file shows Scout as
+    // unavailable and never blocks the monitoring views.
+    case "scoutLatest":
+      return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.regulators) && typeof value.status === "string";
+    case "scoutReview":
+      return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.candidates) && Array.isArray(value.regulators);
+    case "scoutConfig":
+      return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.regulators);
     default:
       return false;
   }
@@ -1222,12 +1238,16 @@ function renderLists() {
   renderMonitorList();
   renderRuns();
   renderNotifications();
+  renderScout();
   renderNavCounts();
 }
 function renderNavCounts() {
   const changes = changeLogEntries().filter(entry => CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0).length;
   $("navChangeCount").textContent = changes;
   $("navMonitorCount").textContent = state.items.length;
+  const toReview = scoutBuckets().REVIEW.length;
+  $("navScoutCount").textContent = toReview ? toReview : "";
+  $("navScoutCount").classList.toggle("is-fresh", toReview > 0);
 }
 
 /* ================= Detail: a change ================= */
@@ -1654,14 +1674,429 @@ function renderNotificationDetail() {
     '<div><dt>Event ID</dt><dd class="is-code">' + esc(item.eventId) + "</dd></div></dl></section></div>";
 }
 
+/* ================= Scout: new pages worth monitoring =================
+ * Scout runs weekly on GitHub Actions and commits data/scout/. The dashboard
+ * only reads it: "Monitor this page" opens the existing add-a-page dialog, and
+ * "Not relevant" / "Restore" open a prefilled issue that an owner-only workflow
+ * records. Nothing here can change monitoring on its own.
+ */
+const SCOUT_WORKFLOW_URL = REPO + "/actions/workflows/scout.yml";
+const SCOUT_FILTER_COPY = {
+  REVIEW: ["Nothing new to review", "Pages a regulator publishes after Scout's first sweep appear here, with the evidence Scout used to judge them."],
+  BACKLOG: ["No backlog", "Pages that already existed when Scout started watching, and that look relevant, are listed here."],
+  EXCLUDED: ["Nothing set aside", "New pages Scout judged not relevant are kept here so its judgement can be checked."],
+  DONE: ["No decisions yet", "Pages you mark not relevant, or start monitoring, move here."]
+};
+function scoutCandidates() {
+  return state.scoutReview && Array.isArray(state.scoutReview.candidates) ? state.scoutReview.candidates : [];
+}
+function scoutRegulator(id) {
+  const fromLatest = state.scoutLatest && Array.isArray(state.scoutLatest.regulators) ? state.scoutLatest.regulators.find(item => item.id === id) : null;
+  const fromReview = state.scoutReview && Array.isArray(state.scoutReview.regulators) ? state.scoutReview.regulators.find(item => item.id === id) : null;
+  return Object.assign({ id, short_name: id, name: id }, fromReview || {}, fromLatest || {});
+}
+function scoutChannelLabel(regulatorId, channelId) {
+  const regulator = state.scoutReview && Array.isArray(state.scoutReview.regulators) ? state.scoutReview.regulators.find(item => item.id === regulatorId) : null;
+  const channel = regulator && Array.isArray(regulator.channels) ? regulator.channels.find(item => item.id === channelId) : null;
+  return channel ? channel.label : channelId;
+}
+// Every configured or inventoried address, so a page registered since the last
+// sweep shows as monitored straight away.
+function scoutMonitoredKeys() {
+  if (state.scoutMonitored) return state.scoutMonitored;
+  const keys = new Set();
+  configuredSources().forEach(source => [].concat(source.seed_urls || [], source.allowed_urls || []).forEach(url => keys.add(L.urlKey(url))));
+  state.items.forEach(item => keys.add(L.urlKey(item.canonical_url)));
+  state.scoutMonitored = keys;
+  return keys;
+}
+function scoutBuckets() { return L.scoutBuckets(scoutCandidates(), scoutMonitoredKeys()); }
+function scoutFiltered() {
+  const query = ($("scoutSearch") ? $("scoutSearch").value : "").trim().toLowerCase();
+  const items = scoutBuckets()[state.scoutFilter] || [];
+  if (!query) return items;
+  return items.filter(item => {
+    const regulator = scoutRegulator(item.regulator_id);
+    const evidence = item.evidence || {};
+    return [item.title, item.url, regulator.short_name, regulator.name, evidence.context, evidence.description,
+      ((item.assessment || {}).publication_type || {}).label].join(" ").toLowerCase().includes(query);
+  });
+}
+function scoutSelected() { return scoutCandidates().find(item => item.key === state.selectedScoutKey) || null; }
+function scoutIsMonitored(item) {
+  return !!((item.monitored_by && item.monitored_by.length) || scoutMonitoredKeys().has(L.urlKey(item.url)));
+}
+function scoutPublished(item) {
+  const evidence = item.evidence || {};
+  if (evidence.published) return { value: evidence.published, source: "feed" };
+  if (evidence.page_published) return { value: evidence.page_published, source: "page" };
+  if (evidence.date_hint) return { value: evidence.date_hint, source: "listing" };
+  return null;
+}
+function scoutSweepSummary() {
+  const latest = state.scoutLatest;
+  if (!latest) return { text: "Scout data isn't available yet", tone: "idle" };
+  const status = L.SCOUT_STATUS[latest.status] || L.SCOUT_STATUS.NOT_RUN;
+  if (latest.status === "NOT_RUN" || !latest.finished_at) return { text: "No sweep yet. Next " + dateLabel(L.nextScoutSweep(), false), tone: "idle" };
+  return { text: "Swept " + when(latest.finished_at) + " · " + status.label, tone: status.tone };
+}
+function scoutRow(item) {
+  const assessment = item.assessment || {};
+  const outcome = L.SCOUT_OUTCOMES[assessment.outcome] || L.SCOUT_OUTCOMES.uncertain;
+  const regulator = scoutRegulator(item.regulator_id);
+  const monitored = scoutIsMonitored(item);
+  const dismissed = item.decision && item.decision.decision === "dismissed";
+  const type = assessment.publication_type ? assessment.publication_type.label : "";
+  const published = scoutPublished(item);
+  const time = state.scoutFilter === "BACKLOG" && published ? shortDate(published.value) : rowTime(item.first_seen);
+  const statusTag = monitored ? '<span class="tag is-relevant">Monitoring</span>'
+    : dismissed ? '<span class="tag is-irrelevant">Dismissed</span>'
+    : '<span class="tag ' + outcome.tag + '">' + esc(outcome.label) + "</span>";
+  return '<button class="row" type="button" data-scout-key="' + esc(item.key) + '"' + (item.key === state.selectedScoutKey ? ' aria-selected="true"' : "") + ">" +
+    '<span class="row-mark ' + (monitored || dismissed ? "" : outcome.mark) + '" aria-hidden="true"></span>' +
+    '<span class="row-title">' + esc(item.title || displayUrl(item.url)) + "</span>" +
+    '<span class="row-time">' + esc(time) + "</span>" +
+    '<span class="row-sub">' + statusTag + (type ? '<span class="tag">' + esc(type) + "</span>" : "") +
+    '<span class="row-host">' + esc(regulator.short_name + " · " + (assessment.format || "Web page")) + "</span></span></button>";
+}
+function renderScout() {
+  const buckets = scoutBuckets();
+  const items = scoutFiltered();
+  const sweep = scoutSweepSummary();
+  $("scoutSweepText").textContent = sweep.text;
+  $("scoutSweep").dataset.tone = sweep.tone;
+  $("scoutSweep").setAttribute("aria-pressed", String(state.selectedScoutKey === "coverage"));
+  document.querySelectorAll("[data-scout-filter]").forEach(button => {
+    const count = (buckets[button.dataset.scoutFilter] || []).length;
+    button.setAttribute("aria-pressed", String(button.dataset.scoutFilter === state.scoutFilter));
+    button.dataset.count = String(count);
+  });
+  const toReview = buckets.REVIEW.length;
+  $("scoutCount").textContent = state.scoutFilter === "REVIEW" ? (toReview ? toReview + " to review" : "")
+    : plural(items.length, "page", "pages");
+  if (!state.scoutReview) {
+    $("scoutItems").innerHTML = emptyState("Scout data unavailable", "The Scout files could not be loaded. Monitoring is unaffected; press Reload to try again.");
+    return;
+  }
+  if (!items.length) {
+    const copy = SCOUT_FILTER_COPY[state.scoutFilter];
+    const notRun = !state.scoutLatest || state.scoutLatest.status === "NOT_RUN";
+    $("scoutItems").innerHTML = state.scoutFilter === "REVIEW" && notRun
+      ? emptyState("Scout hasn't swept yet", "The first weekly sweep records what each regulator already publishes. Pages published after it appear here.",
+        '<button class="btn" type="button" data-scout-coverage>See what Scout covers</button>')
+      : emptyState(($("scoutSearch").value.trim() ? "No findings match" : copy[0]), ($("scoutSearch").value.trim() ? "Try a different search." : copy[1]));
+    return;
+  }
+  let lastHeading = "";
+  const omitted = state.scoutReview.omitted_backlog || {};
+  $("scoutItems").innerHTML = items.map(item => {
+    const heading = state.scoutFilter === "BACKLOG" ? scoutRegulator(item.regulator_id).short_name
+      : state.scoutFilter === "DONE" ? L.dayHeading((item.decision || {}).decided_at || item.first_seen)
+      : "Found " + L.dayHeading(item.first_seen).replace(/^(Today|Yesterday)$/, value => value.toLowerCase());
+    const label = heading !== lastHeading ? '<div class="list-group-label">' + esc(heading) + "</div>" : "";
+    lastHeading = heading;
+    return label + scoutRow(item);
+  }).join("") + (state.scoutFilter === "BACKLOG" && Object.keys(omitted).length
+    ? '<p class="note-strip">The backlog shows the newest relevant pages per regulator. ' +
+      esc(Object.entries(omitted).map(([id, count]) => scoutRegulator(id).short_name + " has " + count + " more").join("; ")) + " in Scout's registry.</p>"
+    : "");
+}
+function scoutFact(label, value, isCode) {
+  if (!value) return "";
+  return "<div><dt>" + esc(label) + "</dt><dd" + (isCode ? ' class="is-code"' : "") + ">" + value + "</dd></div>";
+}
+function scoutLink(url, label) {
+  const safe = safeHttpUrl(url);
+  return safe ? '<a class="sheet-link" href="' + esc(safe) + '" target="_blank" rel="noopener noreferrer">' + esc(label || displayUrl(safe)) + icon("external") + "</a>" : "";
+}
+function renderScoutAssessment(item) {
+  const a = item.assessment || {};
+  const outcome = L.SCOUT_OUTCOMES[a.outcome] || L.SCOUT_OUTCOMES.uncertain;
+  const published = scoutPublished(item);
+  const evidence = item.evidence || {};
+  const dims = [
+    ["Kind of page", a.publication_type ? a.publication_type.label : "Not recognised"],
+    ["Topics", (a.topics || []).join(", ") || "None recognised"],
+    ["Format", a.format || "Web page"],
+    ["Dated", published ? shortDate(published.value) + " (" + (published.source === "listing" ? "listing text" : published.source === "page" ? "page metadata" : "feed") + ")" : "No date given"],
+    ["Last modified", evidence.lastmod ? shortDate(evidence.lastmod) + " (site map)" : ""]
+  ].filter(([, value]) => value);
+  const reasons = (a.reasons || []).map(reason =>
+    '<li class="' + (reason.effect === "+" ? "is-plus" : reason.effect === "-" ? "is-minus" : "is-neutral") + '">' + esc(reason.text) + "</li>").join("");
+  return '<section class="sheet" aria-label="Scout assessment"><div class="verdict">' +
+    '<div class="verdict-head"><span class="verdict-label">Scout assessment</span><span class="tag ' + outcome.tag + '">' + esc(outcome.label) + "</span>" +
+    "<span>" + esc(L.SCOUT_CONFIDENCE[a.confidence] || "") + "</span></div>" +
+    '<p class="verdict-summary">' + esc(L.scoutSentence(a)) + "</p>" +
+    (reasons ? '<ul class="scout-reasons" aria-label="Signals">' + reasons + "</ul>" : "") +
+    '<dl class="verdict-grid">' + dims.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl>" +
+    '<p class="verdict-caveat">Scout judges from titles, link text, listing text and addresses, not the full document, and it never rejects a page for lack of evidence. Open the page before deciding.</p>' +
+    "</div></section>";
+}
+function renderScoutEvidence(item) {
+  const evidence = item.evidence || {};
+  const channels = (item.channels || []).map(id => scoutChannelLabel(item.regulator_id, id));
+  const firstSeen = fmt(item.first_seen) + (item.origin === "new" ? " · new since Scout's baseline" : " · already listed in Scout's first sweep");
+  const facts = [
+    scoutFact("Found via", esc(channels.join(", "))),
+    scoutFact("First seen by Scout", esc(firstSeen)),
+    scoutFact("Listed on", evidence.parent_url ? scoutLink(evidence.parent_url) : ""),
+    scoutFact("Link text", esc(evidence.anchor_text || "")),
+    scoutFact("Listing text", esc(evidence.context || "")),
+    scoutFact("Feed title", esc(evidence.title && evidence.title !== item.title ? evidence.title : "")),
+    scoutFact("Feed category", esc((evidence.categories || []).join(", "))),
+    scoutFact("Description", esc(evidence.description || evidence.meta_description || "")),
+    scoutFact("Page heading", esc(evidence.heading && evidence.heading !== item.title ? evidence.heading : "")),
+    scoutFact("Near a monitored page", evidence.near_monitored ? scoutLink(evidence.near_monitored) : ""),
+    scoutFact("Other languages", (item.translations || []).map(link => scoutLink(link.url, (link.language || "").toUpperCase() + " version")).join(" ")),
+    scoutFact("robots.txt", evidence.robots_disallowed ? "Disallows fetching this address; Scout did not open it" : ""),
+    scoutFact("Finding ID", esc(item.key), true)
+  ].join("");
+  return '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Evidence</h3><span class="sheet-note">What the regulator’s channel said about this address</span></div>' +
+    '<dl class="facts">' + facts + "</dl>" +
+    '<p class="note-strip">“First seen” is when Scout first noticed the address. It is not proof of when the regulator published it.</p></section>';
+}
+// The listing's own words, minus what the title already says and button labels.
+function scoutSubtitle(item) {
+  const evidence = item.evidence || {};
+  const strip = text => String(text || "")
+    .replace(/\b(Download document|View press release|Read more|Not Available|N\/A)\b/gi, " ")
+    .replace(/\b\d+(\.\d+)?\s?(KB|MB)\b/gi, " ");
+  let text = strip(evidence.description || evidence.meta_description || evidence.context);
+  const title = String(item.title || "");
+  if (title && text.indexOf(title) >= 0) text = text.replace(title, " ");
+  text = text.replace(/\s+/g, " ").trim();
+  const withoutDates = text.replace(/\b\d{1,2} [A-Za-z]+ \d{4}\b/g, "").replace(/\s+/g, " ").trim();
+  return withoutDates.length < 24 ? "" : text;
+}
+function renderScoutDetail() {
+  const pane = $("scoutDetail");
+  if (state.selectedScoutKey === "coverage") { renderScoutCoverage(pane); return; }
+  const item = scoutSelected();
+  if (!item) {
+    pane.innerHTML = '<div class="detail-inner">' + emptyState("Select a finding", "Choose a page to see why Scout surfaced it.", '<button class="btn" type="button" data-scout-coverage>See what Scout covers</button>') + "</div>";
+    return;
+  }
+  const regulator = scoutRegulator(item.regulator_id);
+  const monitored = scoutIsMonitored(item);
+  const decision = item.decision || null;
+  const dismissed = decision && decision.decision === "dismissed";
+  const inventoryItem = state.items.find(row => L.urlKey(row.canonical_url) === L.urlKey(item.url));
+  const actions = [];
+  if (!monitored && !dismissed) {
+    actions.push('<button class="btn btn-primary" type="button" data-scout-monitor="' + esc(item.key) + '">Monitor this page</button>');
+    actions.push('<button class="btn" type="button" data-scout-dismiss="' + esc(item.key) + '">Not relevant</button>');
+  }
+  if (dismissed) actions.push('<button class="btn" type="button" data-scout-restore="' + esc(item.key) + '">Restore to review</button>');
+  if (inventoryItem) actions.push('<button class="btn" type="button" data-open-page="' + esc(inventoryItem.url_id) + '">Open in Pages</button>');
+  actions.push(externalLink(item.url, "Open page"));
+  const subtitle = scoutSubtitle(item);
+  const meta = '<span>' + esc(item.origin === "new" ? "Found " + when(item.first_seen) : "In Scout's first sweep") + "</span>" + urlMeta(item.url);
+  const status = monitored
+    ? '<p class="note-strip">ChangeSentinel monitors this page' + (item.monitored_by && item.monitored_by.length ? " (source " + esc(item.monitored_by.join(", ")) + ")" : "") + ". Changes to it appear under Changes.</p>"
+    : dismissed
+      ? '<p class="note-strip is-warning">Marked not relevant' + (decision.decided_by ? " by " + esc(decision.decided_by) : "") + " on " + esc(fmt(decision.decided_at)) +
+        (decision.reason ? ". Reason: " + esc(decision.reason) : "") + ". This applies to this address only.</p>"
+      : "";
+  pane.innerHTML = '<div class="detail-inner">' +
+    detailHeading({ back: true, source: regulator.short_name + " · " + [regulator.jurisdiction, regulator.region].filter(Boolean).join(", "),
+      title: item.title || displayUrl(item.url), subtitle: subtitle.length > 260 ? subtitle.slice(0, 259) + "…" : subtitle, meta, actions: actions.join("") }) +
+    status + renderScoutAssessment(item) + renderScoutEvidence(item) + "</div>";
+}
+function scoutConfigRegulator(id) {
+  return state.scoutConfig && Array.isArray(state.scoutConfig.regulators) ? state.scoutConfig.regulators.find(item => item.id === id) || null : null;
+}
+// What the profile tells Scout beyond its channels, so configured metadata is visible where coverage is read.
+function scoutMetadataLine(id) {
+  const profile = scoutConfigRegulator(id);
+  if (!profile) return "";
+  const keywords = profile.keywords || {};
+  const parts = [
+    "Languages " + ((profile.languages || ["en"]).join(", ")) + ((profile.review_languages || []).length ? " (review " + profile.review_languages.join(", ") + ")" : ""),
+    plural((profile.path_hints || []).length, "path hint", "path hints"),
+    plural((keywords.relevant || []).length, "relevant keyword", "relevant keywords"),
+    plural((keywords.exclude || []).length, "exclusion keyword", "exclusion keywords")
+  ];
+  if (profile.active === false) parts.unshift("Inactive");
+  return '<div class="scout-meta">' + parts.map(part => "<span>" + esc(part) + "</span>").join("") + "</div>";
+}
+
+/* Add a source / edit a regulator's details. The form builds a prefilled issue;
+   the owner-only "Scout Source Request" workflow validates and applies it. */
+const SCOUT_CHANNEL_HELP = {
+  feed: "An RSS, Atom or RDF feed the regulator publishes.",
+  sitemap: "An XML site map or site-map index. Every address in it is recorded on the first sweep as the baseline.",
+  listing: "A page that lists publications (a “what's new”, circulars or press-release page). Scout records the links on it."
+};
+function scoutChannelType() {
+  const checked = document.querySelector('input[name="scoutChannelType"]:checked');
+  return checked ? checked.value : "feed";
+}
+function syncScoutSourceForm() {
+  const isNew = $("scoutSourceRegulator").value === "__new";
+  const editing = state.scoutSourceMode === "edit";
+  $("scoutNewRegulator").hidden = !(isNew || editing);
+  $("scoutSourceId").disabled = !isNew;
+  $("scoutListingOptions").hidden = scoutChannelType() !== "listing";
+  $("scoutChannelHelp").textContent = SCOUT_CHANNEL_HELP[scoutChannelType()];
+  $("scoutChannelOptional").hidden = !editing;
+  $("scoutActiveRow").hidden = !editing;
+  $("scoutMetadata").hidden = !(isNew || editing);
+}
+function fillScoutMetadata(profile) {
+  const keywords = (profile && profile.keywords) || {};
+  $("scoutSourceName").value = profile ? profile.name || "" : "";
+  $("scoutSourceShortName").value = profile ? profile.short_name || "" : "";
+  $("scoutSourceId").value = profile ? profile.id : "";
+  $("scoutSourceRegion").value = profile ? profile.region || "NAM" : "NAM";
+  $("scoutSourceJurisdiction").value = profile ? profile.jurisdiction || "" : "";
+  $("scoutLanguages").value = profile ? (profile.languages || []).join(", ") : "en";
+  $("scoutReviewLanguages").value = profile ? (profile.review_languages || []).join(", ") : "en";
+  $("scoutRelevantKeywords").value = (keywords.relevant || []).join("\n");
+  $("scoutExcludeKeywords").value = (keywords.exclude || []).join("\n");
+  $("scoutPathHints").value = L.pathHintsText(profile ? profile.path_hints : []);
+  $("scoutKnownGaps").value = profile ? (profile.known_gaps || []).join("\n") : "";
+  $("scoutActive").checked = !profile || profile.active !== false;
+}
+function openScoutSource(mode, regulatorId) {
+  state.scoutSourceMode = mode;
+  delete $("scoutSourceId").dataset.edited;
+  const regulators = state.scoutConfig && Array.isArray(state.scoutConfig.regulators) ? state.scoutConfig.regulators : [];
+  const select = $("scoutSourceRegulator");
+  select.innerHTML = (mode === "edit" ? "" : '<option value="__new">A new regulator…</option>') +
+    regulators.map(item => '<option value="' + esc(item.id) + '">' + esc((item.short_name || item.name) + (item.active === false ? " (inactive)" : "")) + "</option>").join("");
+  select.value = regulatorId || "__new";
+  select.disabled = mode === "edit";
+  fillScoutMetadata(mode === "edit" ? scoutConfigRegulator(regulatorId) : null);
+  ["scoutChannelUrl", "scoutChannelLabel", "scoutChannelSelector", "scoutChannelPrefix", "scoutChannelPageParam"].forEach(id => { $(id).value = ""; });
+  $("scoutChannelMaxPages").value = "5";
+  $("scoutChannelRequired").checked = true;
+  const feed = document.querySelector('input[name="scoutChannelType"][value="feed"]');
+  if (feed) feed.checked = true;
+  $("scoutSourceHeading").textContent = mode === "edit" ? "Edit " + ((scoutConfigRegulator(regulatorId) || {}).short_name || regulatorId) : regulatorId ? "Add a channel" : "Add a Scout source";
+  $("scoutSourceLede").textContent = mode === "edit"
+    ? "Change how Scout describes and judges this regulator, and optionally add a channel. The owner-only workflow checks the request and updates config/scout.json."
+    : "Tell Scout where a regulator publishes. The owner-only workflow checks the request, updates config/scout.json and runs a first sweep, which is a quiet baseline.";
+  $("scoutMetadata").open = mode === "edit";
+  $("scoutSourceStatus").hidden = true;
+  $("scoutPathHintHelp").textContent = "Kinds: " + Object.keys(L.SCOUT_NOUNS).join(", ") + ". Topics: " + L.SCOUT_TOPIC_IDS.map(id => "topic:" + id).join(", ") + ". Or exclude.";
+  syncScoutSourceForm();
+  const dialog = $("scoutSourceDialog");
+  if (typeof dialog.showModal === "function") {
+    dialog.showModal();
+    window.setTimeout(() => (mode === "edit" ? $("scoutSourceName") : regulatorId ? $("scoutChannelUrl") : $("scoutSourceName")).focus(), 30);
+  } else {
+    showToast("This browser can't open the form. Use a current browser.");
+  }
+}
+function submitScoutSource(event) {
+  event.preventDefault();
+  const select = $("scoutSourceRegulator");
+  const result = L.scoutSourceRequest({
+    mode: state.scoutSourceMode, isNew: select.value === "__new", regulatorId: select.value,
+    name: $("scoutSourceName").value, shortName: $("scoutSourceShortName").value, id: $("scoutSourceId").value,
+    region: $("scoutSourceRegion").value, jurisdiction: $("scoutSourceJurisdiction").value,
+    channelType: scoutChannelType(), channelUrl: $("scoutChannelUrl").value, channelLabel: $("scoutChannelLabel").value,
+    contentSelector: $("scoutChannelSelector").value, linkPrefix: $("scoutChannelPrefix").value,
+    pageParam: $("scoutChannelPageParam").value, maxPages: $("scoutChannelMaxPages").value, required: $("scoutChannelRequired").checked,
+    languages: $("scoutLanguages").value, reviewLanguages: $("scoutReviewLanguages").value,
+    relevantKeywords: $("scoutRelevantKeywords").value, excludeKeywords: $("scoutExcludeKeywords").value,
+    pathHints: $("scoutPathHints").value, knownGaps: $("scoutKnownGaps").value, active: $("scoutActive").checked
+  });
+  if (result.errors.length) {
+    $("scoutSourceStatus").textContent = result.errors.join(" ");
+    $("scoutSourceStatus").hidden = false;
+    return;
+  }
+  const params = new URLSearchParams();
+  params.set("title", result.title);
+  params.set("body", result.body);
+  const target = REPO + "/issues/new?" + params.toString();
+  $("scoutSourceDialog").close();
+  showToast("Submit the prefilled request on GitHub. Scout updates its configuration and sweeps the regulator once it is accepted.");
+  const githubWindow = window.open(target, "_blank");
+  if (githubWindow) { try { githubWindow.opener = null; } catch (_) {} } else { window.location.href = target; }
+}
+function scoutStatusTag(status) {
+  return status.tone === "ok" ? "is-relevant" : status.tone === "warn" ? "is-warn" : status.tone === "bad" ? "tone-problem" : "is-unreviewed";
+}
+function renderScoutCoverage(pane) {
+  const latest = state.scoutLatest;
+  const next = L.nextScoutSweep();
+  const nextText = "Next weekly sweep " + dateLabel(next, false) + ", " + clock(next) + ".";
+  const runButton = '<button class="btn btn-primary" type="button" data-scout-add-source>Add a source</button>' +
+    '<button class="btn" type="button" data-scout-run>Run a sweep now</button>';
+  if (!latest) {
+    pane.innerHTML = '<div class="detail-inner">' + emptyState("Scout data unavailable", "data/scout/latest.json could not be loaded. " + nextText, runButton) + "</div>";
+    return;
+  }
+  const status = L.SCOUT_STATUS[latest.status] || L.SCOUT_STATUS.NOT_RUN;
+  const totals = latest.totals || {};
+  const meta = '<span class="tag ' + scoutStatusTag(status) + '">' + esc(status.label) + "</span>" +
+    (latest.finished_at ? "<span>" + esc(fmt(latest.finished_at)) + "</span>" : "") +
+    (latest.trigger ? "<span>" + esc(latest.trigger === "scheduled" ? "Scheduled sweep" : "Manual sweep") + "</span>" : "") +
+    (totals.requests ? "<span>" + esc(plural(Number(totals.requests), "request", "requests")) + "</span>" : "");
+  const sections = (latest.regulators || []).map(regulator => {
+    const regStatus = L.SCOUT_STATUS[regulator.status] || L.SCOUT_STATUS.NOT_RUN;
+    const counts = regulator.counts || {};
+    const rows = (regulator.channels || []).map(channel => {
+      const problem = ["failed", "blocked", "deferred"].includes(channel.status);
+      const note = channel.error || channel.note || "";
+      return "<tr><td><span class=\"scout-channel-name\">" + esc(channel.label) + "</span>" +
+        '<span class="scout-channel-note' + (problem ? " is-problem" : "") + '">' + esc((L.SCOUT_CHANNEL_STATUS[channel.status] || channel.status) + (note ? ". " + note : "")) + "</span></td>" +
+        "<td>" + esc(plural(Number(channel.observed || 0), "address", "addresses")) + (channel.new ? "<br>" + esc(channel.new + " new") : "") + "</td></tr>";
+    }).join("");
+    const summary = regulator.status === "NOT_RUN" ? regulator.status_reason || "Not swept yet"
+      : plural(Number(counts.new || 0), "new page", "new pages") + " · " + plural(Number(regulator.requests || 0), "request", "requests") +
+        (regulator.sweep_id && regulator.sweep_id !== latest.sweep_id ? " · from an earlier sweep" : "");
+    const crawl = Object.values(regulator.robots || {}).find(entry => entry && entry.crawl_delay);
+    const gaps = regulator.known_gaps || [];
+    return '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">' + esc(regulator.short_name || regulator.name) +
+      ' <span class="sheet-note">' + esc([regulator.jurisdiction, regulator.region].filter(Boolean).join(", ")) + "</span></h3>" +
+      '<span class="scout-sheet-actions"><span class="tag ' + scoutStatusTag(regStatus) + '">' + esc(regStatus.label) + "</span>" +
+      (state.scoutConfig ? '<button class="sheet-link" type="button" data-scout-add-channel="' + esc(regulator.id) + '">Add channel</button>' +
+        '<button class="sheet-link" type="button" data-scout-edit="' + esc(regulator.id) + '">Edit details</button>' : "") +
+      "</span></div>" + scoutMetadataLine(regulator.id) +
+      '<p class="note-strip">' + esc(summary + (regulator.status_reason && regulator.status !== "NOT_RUN" ? ". " + regulator.status_reason + "." : "")) +
+      (crawl ? " " + esc("robots.txt asks for " + crawl.crawl_delay + " s between requests; Scout waits that long.") : "") + "</p>" +
+      (rows ? '<table class="scout-channels"><tbody>' + rows + "</tbody></table>" : "") +
+      (gaps.length ? '<ul class="scout-gaps">' + gaps.map(gap => "<li>" + esc(gap) + "</li>").join("") + "</ul>" : "") +
+      "</section>";
+  }).join("");
+  pane.innerHTML = '<div class="detail-inner">' +
+    detailHeading({ back: true, source: "Scout sources and coverage", title: latest.finished_at ? "Last sweep " + when(latest.finished_at) : "No sweep yet",
+      subtitle: "Scout reads the channels each regulator publishes (feeds, site maps and listing pages) once a week and lists pages ChangeSentinel isn't monitoring yet. " + nextText,
+      meta, actions: runButton + scoutLink(SCOUT_WORKFLOW_URL, "Sweep history on GitHub") }) +
+    '<p class="note-strip">Complete means every declared channel was read as planned. It does not mean every page on a regulator’s site was seen; each regulator’s gaps are listed below.</p>' +
+    sections + "</div>";
+}
+function openScoutMonitor(item) {
+  $("newMonitorUrl").value = item.url;
+  $("newMonitorName").value = String(item.title || "").replace(/[\r\n]+/g, " ").slice(0, 100);
+  $("newMonitorIncludeSelector").value = "";
+  $("newMonitorIgnoreSelectors").value = "";
+  openAddMonitor();
+}
+function openScoutDecision(verb, item) {
+  const request = L.scoutReviewIssue(verb, [item], "");
+  const params = new URLSearchParams();
+  params.set("title", request.title);
+  params.set("body", request.body);
+  const target = REPO + "/issues/new?" + params.toString();
+  showToast(verb === "restore" ? "Submit the prefilled request on GitHub to return this page to review."
+    : "Submit the prefilled request on GitHub. Add a reason first if you like; it applies to this address only.");
+  const githubWindow = window.open(target, "_blank");
+  if (githubWindow) { try { githubWindow.opener = null; } catch (_) {} } else { window.location.href = target; }
+}
+
 /* ================= Navigation ================= */
 
 function viewSection(view) {
-  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", askSentinel: "askSentinelView" }[view] || "overviewView";
+  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", scout: "scoutView", askSentinel: "askSentinelView" }[view] || "overviewView";
 }
 function hasSelection(view) {
   return view === "changes" ? !!state.selectedChangeId : view === "monitors" ? !!state.selectedId
-    : view === "runs" ? !!state.selectedRunId : view === "notifications" ? !!state.selectedNotificationId : false;
+    : view === "runs" ? !!state.selectedRunId : view === "notifications" ? !!state.selectedNotificationId
+    : view === "scout" ? !!state.selectedScoutKey : false;
 }
 function renderViews() {
   VIEWS.forEach(view => {
@@ -1676,7 +2111,7 @@ function renderViews() {
   const askLauncher = $("askSentinelLaunch");
   askLauncher.classList.toggle("active", state.view === "askSentinel");
   askLauncher.setAttribute("aria-current", state.view === "askSentinel" ? "page" : "false");
-  const titles = { overview: "Overview", changes: "Changes", monitors: "Pages", runs: "Runs", notifications: "Alerts", askSentinel: "Ask Sentinel" };
+  const titles = { overview: "Overview", changes: "Changes", monitors: "Pages", runs: "Runs", notifications: "Alerts", scout: "Scout", askSentinel: "Ask Sentinel" };
   document.title = titles[state.view] + " | ChangeSentinel";
 }
 // On wide screens the first row is selected automatically, so opening a view
@@ -1702,21 +2137,28 @@ function ensureSelection(view) {
       state.selectedNotificationId = first ? first.eventId : "";
     }
   }
+  if (view === "scout" && state.selectedScoutKey !== "coverage" && !scoutFiltered().some(item => item.key === state.selectedScoutKey)) {
+    // Nothing to review yet: show what the last sweep covered instead of an empty pane.
+    const first = scoutFiltered()[0];
+    state.selectedScoutKey = first ? first.key : "coverage";
+  }
 }
 function renderDetailFor(view) {
   if (view === "changes") renderChangeDetail();
   else if (view === "monitors") renderDetailBody();
   else if (view === "runs") renderRunDetail();
   else if (view === "notifications") renderNotificationDetail();
+  else if (view === "scout") renderScoutDetail();
 }
 function resetDetailScroll(view) {
-  const pane = { changes: "changeDetail", monitors: "detailView", runs: "runDetail", notifications: "notificationDetail" }[view];
+  const pane = { changes: "changeDetail", monitors: "detailView", runs: "runDetail", notifications: "notificationDetail", scout: "scoutDetail" }[view];
   if (pane && $(pane)) $(pane).scrollTop = 0;
   if (view === "overview") $("overviewView").scrollTop = 0;
 }
 function writeHash() {
   const id = state.view === "changes" ? state.selectedChangeId : state.view === "monitors" ? state.selectedId
-    : state.view === "runs" ? state.selectedRunId : state.view === "notifications" ? state.selectedNotificationId : "";
+    : state.view === "runs" ? state.selectedRunId : state.view === "notifications" ? state.selectedNotificationId
+    : state.view === "scout" ? state.selectedScoutKey : "";
   const hash = "#" + (HASH_NAMES[state.view] || (state.view === "askSentinel" ? "ask-sentinel" : "overview")) + (id ? "/" + encodeURIComponent(id) : "");
   try { history.replaceState(null, "", state.view === "overview" ? location.pathname + location.search : hash); } catch (_) {}
 }
@@ -1752,6 +2194,7 @@ function select(view, id, options) {
   }
   if (view === "runs") state.selectedRunId = id;
   if (view === "notifications") state.selectedNotificationId = id;
+  if (view === "scout") state.selectedScoutKey = id;
   state.view = view;
   state.mobileDetail = true;
   renderLists();
@@ -1769,13 +2212,16 @@ async function loadData(showErrors) {
   setStatus("Refreshing stored data…", false);
   if (showErrors !== false) $("loadError").hidden = true;
   try {
-    const [report, inventory, historyData, notifications, outbox, config] = await Promise.all([
+    const [report, inventory, historyData, notifications, outbox, config, scoutLatest, scoutReview, scoutConfig] = await Promise.all([
       fetchDataAsset("report", true),
       fetchDataAsset("inventory", true),
       fetchDataAsset("history", true),
       fetchDataAsset("notifications", true),
       fetchDataAsset("outbox", true),
-      fetchDataAsset("config", true)
+      fetchDataAsset("config", true),
+      fetchDataAsset("scoutLatest", false),
+      fetchDataAsset("scoutReview", false),
+      fetchDataAsset("scoutConfig", false)
     ]);
     validateDataAssets({ report, inventory, historyData, notifications, outbox, config });
     state.report = report;
@@ -1784,7 +2230,11 @@ async function loadData(showErrors) {
     state.notifications = notifications;
     state.outbox = outbox;
     state.config = config;
+    state.scoutLatest = scoutLatest;
+    state.scoutReview = scoutReview;
+    state.scoutConfig = scoutConfig;
     state.items = makeItems();
+    state.scoutMonitored = null;
     const firstLoad = !state.loaded;
     state.loaded = true;
     hydrateDocumentTitles();
@@ -1796,6 +2246,13 @@ async function loadData(showErrors) {
           if (route.view === "monitors" && state.items.some(item => item.url_id === route.id)) state.selectedId = route.id;
           if (route.view === "runs") state.selectedRunId = route.id;
           if (route.view === "notifications") state.selectedNotificationId = route.id;
+          if (route.view === "scout") {
+            state.selectedScoutKey = route.id;
+            // A deep link to a finding outside the default list opens the list that holds it.
+            const linked = scoutCandidates().find(item => item.key === route.id);
+            const bucket = linked ? L.scoutBucket(linked, scoutMonitoredKeys()) : "";
+            if (bucket) state.scoutFilter = bucket;
+          }
         }
         setView(route.view, { detail: !!route.id });
       } else {
@@ -2163,9 +2620,40 @@ function clearBulkImport() {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter]");
+  const target = event.target.closest("[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit]");
   if (!target) return;
   const data = target.dataset;
+  if (data.scoutKey) return select("scout", data.scoutKey);
+  if (data.scoutCoverage !== undefined) return select("scout", "coverage");
+  if (data.scoutAddSource !== undefined) return openScoutSource("add", "");
+  if (data.scoutAddChannel) return openScoutSource("add", data.scoutAddChannel);
+  if (data.scoutEdit) return openScoutSource("edit", data.scoutEdit);
+  if (data.scoutFilter) {
+    state.scoutFilter = data.scoutFilter;
+    if (!isCompact()) {
+      const first = scoutFiltered()[0];
+      state.selectedScoutKey = first ? first.key : "coverage";
+      renderScout();
+      renderScoutDetail();
+      resetDetailScroll("scout");
+      writeHash();
+    } else {
+      renderScout();
+    }
+    return;
+  }
+  if (data.scoutMonitor || data.scoutDismiss || data.scoutRestore) {
+    const key = data.scoutMonitor || data.scoutDismiss || data.scoutRestore;
+    const item = scoutCandidates().find(candidate => candidate.key === key);
+    if (!item) return;
+    if (data.scoutMonitor) return openScoutMonitor(item);
+    return openScoutDecision(data.scoutRestore ? "restore" : "dismiss", item);
+  }
+  if (data.scoutRun !== undefined) {
+    window.open(SCOUT_WORKFLOW_URL, "_blank", "noopener");
+    showToast("Opened the Scout workflow. Press \u201cRun workflow\u201d to sweep every regulator now.");
+    return;
+  }
   if (data.selectChange) return select("changes", data.selectChange);
   if (data.monitorId) return select("monitors", data.monitorId);
   if (data.selectRun) return select("runs", data.selectRun);
@@ -2274,6 +2762,18 @@ document.addEventListener("keydown", event => {
   (again || next).focus();
 });
 $("monitorSearch").addEventListener("input", renderMonitorList);
+$("scoutSearch").addEventListener("input", renderScout);
+$("scoutSourceForm").addEventListener("submit", submitScoutSource);
+$("scoutSourceForm").addEventListener("change", syncScoutSourceForm);
+$("closeScoutSource").addEventListener("click", () => $("scoutSourceDialog").close());
+$("cancelScoutSource").addEventListener("click", () => $("scoutSourceDialog").close());
+$("scoutSourceDialog").addEventListener("click", event => { if (event.target === $("scoutSourceDialog")) $("scoutSourceDialog").close(); });
+// A new regulator's id follows its short name (or name) until it is typed by hand.
+["scoutSourceName", "scoutSourceShortName"].forEach(id => $(id).addEventListener("input", () => {
+  if ($("scoutSourceRegulator").value !== "__new" || $("scoutSourceId").dataset.edited === "true") return;
+  $("scoutSourceId").value = L.scoutSlug($("scoutSourceShortName").value || $("scoutSourceName").value);
+}));
+$("scoutSourceId").addEventListener("input", () => { $("scoutSourceId").dataset.edited = "true"; });
 $("refreshBtn").addEventListener("click", () => loadData(true));
 $("addMonitorBtn").addEventListener("click", openAddMonitor);
 // The rail sits outside #workspace, so its "Add link" button needs its own listener.
