@@ -169,7 +169,7 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertFalse(validate("A fact. [Source: data/made-up.json]", ["data/report.json"]))
         self.assertFalse(validate("A fact. [Source: data/report.json] [Source: invented.json]", ["data/report.json"]))
         self.assertIn("const invalidCitationCount = citations.filter((path) => !allowed.has(path)).length;", backend)
-        self.assertIn("reason: 'unapproved_source'", backend)
+        self.assertIn("else if (invalidCitationCount > 0) reason = 'unapproved_source';", backend)
 
     def test_evidence_headers_make_exact_citation_paths_unambiguous(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
