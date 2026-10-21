@@ -358,6 +358,60 @@
       "known_gaps": [
         "Reads Banxico's list of circulars by year. Regulation published by other Mexican authorities (CNBV, SHCP) is not covered, and an amendment that only updates an existing circular's page is a content change for the monitor, not a new URL."
       ]
+    },
+    {
+      "id": "bcra",
+      "name": "Central Bank of the Argentine Republic",
+      "short_name": "BCRA",
+      "region": "LATAM",
+      "jurisdiction": "Argentina",
+      "hosts": [
+        "www.bcra.gob.ar"
+      ],
+      "prefer_https": true,
+      "languages": [
+        "es",
+        "en"
+      ],
+      "review_languages": [
+        "es"
+      ],
+      "channels": [
+        {
+          "id": "bcra-bcra-communications-index",
+          "type": "listing",
+          "label": "BCRA Communications Index",
+          "url": "https://www.bcra.gob.ar/en/communications-search-engine/",
+          "link_prefixes": [
+            "https://www.bcra.gob.ar/archivos/Pdfs/SistemasFinancierosYdePagos/Comunicaciones/"
+          ]
+        }
+      ],
+      "path_hints": [],
+      "keywords": {
+        "relevant": [
+          "comunicación",
+          "comunicaciones",
+          "circular",
+          "normativa",
+          "reglamentación",
+          "entidades financieras",
+          "sistema financiero",
+          "sistema nacional de pagos",
+          "proveedores de servicios de pago",
+          "régimen informativo",
+          "protección de los usuarios de servicios financieros",
+          "exterior y cambios",
+          "liquidez",
+          "solvencia",
+          "efectivo mínimo",
+          "capitales mínimos"
+        ]
+      },
+      "known_gaps": [
+        "The monthly report is selected through a form and View button, not exposed as a normal HTML link on the search page.",
+        "The annual index PDFs contain communication entries, but this listing source does not convert those entries into individual communication PDF URLs."
+      ]
     }
   ]
 }
