@@ -322,8 +322,21 @@ def main() -> int:
                 file.write("Answer length: {} characters; error code: {}. Response text omitted.\n\n".format(result["answer_chars"], result["error_code"] or "none"))
 
     print(f"Ask Sentinel data-grounding evaluation: {passed} passed, {failed} failed, {inconclusive} inconclusive out of {len(results)}.")
-    if failed or inconclusive:
-        raise SystemExit(f"Live Ask Sentinel grounding evaluation: {failed} failed and {inconclusive} inconclusive out of {len(results)} cases.")
+    return exit_status(passed, failed, inconclusive)
+
+
+def exit_status(passed: int, failed: int, inconclusive: int) -> int:
+    """A wrong or unsupported answer fails; a provider outage only warns.
+
+    A run where no case could be evaluated proves nothing about grounding, so it
+    also fails, but one rate-limited question among grounded answers does not.
+    """
+    if failed:
+        raise SystemExit(f"Live Ask Sentinel grounding evaluation: {failed} failed and {inconclusive} inconclusive.")
+    if inconclusive and not passed:
+        raise SystemExit(f"Live Ask Sentinel grounding evaluation: all {inconclusive} cases were inconclusive (provider or endpoint unavailable).")
+    if inconclusive:
+        print(f"::warning title=Ask Sentinel live evaluation::{inconclusive} case(s) inconclusive because the provider or endpoint was unavailable.")
     return 0
 
 

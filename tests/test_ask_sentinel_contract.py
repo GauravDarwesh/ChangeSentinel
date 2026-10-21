@@ -182,10 +182,46 @@ class TestAskSentinelContract(unittest.TestCase):
     def test_live_grounding_eval_runs_after_smoke_failure_if_health_passes(self):
         workflow = (ROOT / ".github/workflows/ask-sentinel-health.yml").read_text(encoding="utf-8")
         self.assertIn("id: endpoint_health", workflow)
-        condition = "if: ${{ always() && steps.endpoint_health.outcome == 'success' }}"
+        condition = "if: ${{ always() && steps.endpoint_health.outcome == 'success' && github.event_name != 'pull_request' }}"
         self.assertGreaterEqual(workflow.count(condition), 2)
         self.assertIn("name: Evaluate live grounding against current dashboard records", workflow)
-        self.assertIn("continue-on-error: ${{ github.event_name == 'pull_request' }}", workflow)
+
+    def test_live_questions_do_not_spend_the_provider_budget_on_every_push(self):
+        workflow = (ROOT / ".github/workflows/ask-sentinel-health.yml").read_text(encoding="utf-8")
+        triggers = workflow[workflow.index("on:"):workflow.index("permissions:")]
+        self.assertNotIn('"index.html"', triggers)
+        self.assertNotIn('"dashboard.js"', triggers)
+        self.assertIn("schedule:", triggers)
+        smoke = workflow[workflow.index("- name: Index the repository and ask a real Groq question"):]
+        self.assertIn("if: ${{ github.event_name != 'pull_request' }}", smoke[:400])
+
+    def test_abuse_limits_do_not_depend_on_the_callers_identity(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        migration = (ROOT / "supabase/migrations/20261021120000_ask_sentinel_abuse_limits.sql").read_text(encoding="utf-8")
+        self.assertIn("rpc/consume_ask_sentinel_request_v2", backend)
+        self.assertIn("req.headers.get('cf-connecting-ip')", backend)
+        self.assertIn("name: 'HMAC', hash: 'SHA-256'", backend)
+        self.assertIn("'global_limit'", migration)
+        self.assertIn("'ip_limit'", migration)
+        # The address itself is never stored.
+        self.assertNotRegex(migration, r"\bip_address\b|\binet\b")
+        # Locks in one order: service day, network, then user.
+        body = migration[migration.index("function public.consume_ask_sentinel_request_v2"):]
+        self.assertLess(body.index("from public.ask_sentinel_daily_usage d"), body.index("from public.ask_sentinel_ip_usage i"))
+        self.assertLess(body.index("from public.ask_sentinel_ip_usage i"), body.index("from public.ask_sentinel_usage u"))
+
+    def test_ci_runs_the_edge_function_against_fakes(self):
+        ci = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        self.assertIn("npx deno test --allow-env supabase/functions/ask-sentinel/index_test.ts", ci)
+        tests = (ROOT / "supabase/functions/ask-sentinel/index_test.ts").read_text(encoding="utf-8")
+        self.assertIn("fresh visitor IDs cannot get past the network limit", tests)
+
+    def test_service_failures_refund_the_question_and_hide_internal_errors(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertEqual(backend.count("await refundRequest(actor.id)"), 2)
+        self.assertIn("if (error instanceof PublicError) return respond(req, { error: error.message }, error.status);", backend)
+        self.assertNotIn("return respond(req, { error: message }, status);", backend)
+        self.assertIn("'Access-Control-Expose-Headers': 'Retry-After'", backend)
 
     def test_run_and_evidence_ids_are_pinned_to_exact_indexed_paths(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")

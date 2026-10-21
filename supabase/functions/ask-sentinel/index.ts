@@ -38,17 +38,18 @@ function cors(req: Request): { allowed: boolean; headers: Record<string, string>
     'Vary': 'Origin',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info, x-ask-sentinel-visitor-id',
+    'Access-Control-Expose-Headers': 'Retry-After',
     'Access-Control-Max-Age': '86400'
   };
   if (allowed) headers['Access-Control-Allow-Origin'] = origin;
   return { allowed, headers };
 }
 
-function respond(req: Request, payload: unknown, status = 200): Response {
+function respond(req: Request, payload: unknown, status = 200, extraHeaders: Record<string, string> = {}): Response {
   const c = cors(req);
   return new Response(JSON.stringify(payload), {
     status,
-    headers: { ...c.headers, 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }
+    headers: { ...c.headers, 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...extraHeaders }
   });
 }
 
@@ -69,14 +70,14 @@ async function checkedFetch(url: string, init: RequestInit = {}, timeoutMs = 150
 async function authenticatedUser(req: Request): Promise<{ id: string; is_anonymous?: boolean }> {
   const cfg = config();
   const auth = req.headers.get('authorization') || '';
-  if (!/^Bearer\s+\S+/i.test(auth)) throw new Error('Sign in session missing.');
+  if (!/^Bearer\s+\S+/i.test(auth)) throw new PublicError('Sign in session missing.', 401);
   if (!cfg.publishableKey) throw new Error('Supabase publishable key is not configured on the dashboard.');
   const response = await checkedFetch(cfg.supabaseUrl + '/auth/v1/user', {
     headers: { apikey: cfg.publishableKey, Authorization: auth }
   }, 8000);
-  if (!response.ok) throw new Error('Your Ask Sentinel session is invalid or expired.');
+  if (!response.ok) throw new PublicError('Your Ask Sentinel session is invalid or expired. Refresh the dashboard and retry.', 401);
   const user = await response.json();
-  if (!user || !/^[0-9a-f-]{36}$/i.test(String(user.id || ''))) throw new Error('Supabase did not return a valid user identity.');
+  if (!user || !/^[0-9a-f-]{36}$/i.test(String(user.id || ''))) throw new PublicError('Your Ask Sentinel session is invalid or expired. Refresh the dashboard and retry.', 401);
   return { id: user.id, is_anonymous: user.is_anonymous };
 }
 
@@ -88,8 +89,10 @@ async function requestActor(req: Request): Promise<{ id: string; mode: 'auth' | 
   }
   const visitorId = req.headers.get('x-ask-sentinel-visitor-id') || '';
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(visitorId)) {
-    throw new Error('Ask Sentinel visitor identity is missing. Refresh the dashboard and retry.');
+    throw new PublicError('Ask Sentinel visitor identity is missing. Refresh the dashboard and retry.', 401);
   }
+  // A visitor ID is chosen by the client, so it only separates honest browsers;
+  // the network and service limits in consumeRequest are what bound abuse.
   return { id: visitorId.toLowerCase(), mode: 'visitor' };
 }
 
@@ -132,13 +135,86 @@ async function remainingFor(userId: string): Promise<number> {
   return Math.max(0, Math.min(3, 3 - used));
 }
 
-async function consumeRequest(userId: string): Promise<{ allowed: boolean; remaining: number }> {
-  const rows = await restJson('rpc/consume_ask_sentinel_request', {
+// Errors whose message is written for the person asking. Anything else is an
+// internal failure: it is logged with its phase and answered with a generic
+// message, so database or provider response bodies never reach a browser.
+class PublicError extends Error {
+  status: number;
+  constructor(message: string, status = 503) {
+    super(message);
+    this.status = status;
+  }
+}
+
+function positiveIntEnv(name: string, fallback: number): number {
+  const value = Number(Deno.env.get(name) || '');
+  return Number.isInteger(value) && value > 0 ? value : fallback;
+}
+// Attempts per client network per UTC day, and per service per UTC day. These do
+// not depend on the caller's identity, so minting new visitor IDs or anonymous
+// sessions cannot raise them.
+const IP_DAILY_LIMIT = positiveIntEnv('ASK_SENTINEL_IP_DAILY_LIMIT', 12);
+const GLOBAL_DAILY_LIMIT = positiveIntEnv('ASK_SENTINEL_GLOBAL_DAILY_LIMIT', 300);
+
+// Cloudflare sets cf-connecting-ip itself, so a client cannot choose it; the
+// other headers are fallbacks for local development.
+function clientIp(req: Request): string {
+  const direct = req.headers.get('cf-connecting-ip') || req.headers.get('x-real-ip') || '';
+  if (direct.trim()) return direct.trim();
+  const forwarded = (req.headers.get('x-forwarded-for') || '').split(',').map((part) => part.trim()).filter(Boolean);
+  return forwarded.length ? forwarded[forwarded.length - 1] : '';
+}
+
+// The address is never stored: only an HMAC keyed by the server secret and the
+// UTC day, so counts cannot be linked across days or reversed without the key.
+async function networkBucket(req: Request): Promise<string> {
+  const ip = clientIp(req);
+  if (!ip) return 'unknown';
+  const secret = Deno.env.get('ASK_SENTINEL_IP_SALT') || config().serviceKey || 'ask-sentinel';
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('ask-sentinel-ip|' + utcDate() + '|' + ip));
+  return Array.from(new Uint8Array(mac)).slice(0, 16).map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+type QuotaResult = { allowed: boolean; remaining: number; reason: 'ok' | 'user_limit' | 'ip_limit' | 'global_limit' };
+
+async function consumeRequest(userId: string, ipHash: string): Promise<QuotaResult> {
+  const response = await rest('rpc/consume_ask_sentinel_request_v2', {
     method: 'POST',
-    body: JSON.stringify({ p_user_id: userId, p_usage_date: utcDate() })
+    body: JSON.stringify({ p_user_id: userId, p_ip_hash: ipHash, p_usage_date: utcDate(), p_ip_limit: IP_DAILY_LIMIT, p_global_limit: GLOBAL_DAILY_LIMIT })
   }, 8000);
+  const text = await response.text();
+  if (response.status === 404 || /PGRST202/.test(text)) {
+    // The abuse-limit migration is not applied yet: keep the original
+    // per-user atomic database quota rather than failing every request.
+    const legacy = await restJson('rpc/consume_ask_sentinel_request', {
+      method: 'POST',
+      body: JSON.stringify({ p_user_id: userId, p_usage_date: utcDate() })
+    }, 8000);
+    const row = Array.isArray(legacy) ? legacy[0] : legacy;
+    return { allowed: row?.allowed === true, remaining: Number.isInteger(row?.remaining) ? row.remaining : 0, reason: row?.allowed === true ? 'ok' : 'user_limit' };
+  }
+  if (!response.ok) throw new Error('Quota request failed (' + response.status + '): ' + text.slice(0, 200));
+  const rows = text ? JSON.parse(text) : null;
   const row = Array.isArray(rows) ? rows[0] : rows;
-  return { allowed: row?.allowed === true, remaining: Number.isInteger(row?.remaining) ? row.remaining : 0 };
+  const reason = ['ok', 'user_limit', 'ip_limit', 'global_limit'].includes(row?.reason) ? row.reason : (row?.allowed === true ? 'ok' : 'user_limit');
+  return { allowed: row?.allowed === true, remaining: Number.isInteger(row?.remaining) ? row.remaining : 0, reason };
+}
+
+// Best effort: the person keeps their question when the failure was ours.
+async function refundRequest(userId: string): Promise<number | null> {
+  try {
+    const response = await rest('rpc/refund_ask_sentinel_request', {
+      method: 'POST',
+      body: JSON.stringify({ p_user_id: userId, p_usage_date: utcDate() })
+    }, 6000);
+    if (!response.ok) return null;
+    const value = JSON.parse((await response.text()) || 'null');
+    const remaining = Array.isArray(value) ? value[0] : value;
+    return Number.isInteger(remaining) ? remaining : null;
+  } catch (_) {
+    return null;
+  }
 }
 
 function safeJson(raw: string): any {
@@ -152,7 +228,7 @@ async function readIndexState(): Promise<{ sha: string; documentCount: number; i
   const rows = await restJson('ask_sentinel_index_state?' + params.toString(), {}, 8000);
   const row = Array.isArray(rows) && rows.length ? rows[0] : null;
   if (!row || !row.commit_sha || !(Number(row.document_count) > 0)) {
-    throw new Error('The monitoring archive has not been indexed yet. Run the Ask Sentinel Index workflow.');
+    throw new PublicError('The monitoring archive has not been indexed yet. Run the Ask Sentinel Index workflow.', 503);
   }
   return { sha: row.commit_sha, documentCount: Number(row.document_count), indexedAt: row.indexed_at };
 }
@@ -478,8 +554,18 @@ Deno.serve(async (req: Request) => {
 
     // This enforces the atomic database quota. It runs once immediately before the provider call.
     phase = 'quota';
-    const quota = await consumeRequest(actor.id);
-    if (!quota.allowed) return respond(req, { error: 'Daily limit reached. Ask Sentinel allows three requests per user per UTC day.', remaining: 0, resets_at: nextUtcReset() }, 429);
+    const quota = await consumeRequest(actor.id, await networkBucket(req));
+    if (!quota.allowed) {
+      logStage('quota_refused', { reason: quota.reason, actor_mode: actor.mode });
+      const retryAfter = String(Math.max(60, Math.ceil((Date.parse(nextUtcReset()) - Date.now()) / 1000)));
+      if (quota.reason === 'global_limit') {
+        return respond(req, { error: 'Ask Sentinel has answered as many questions as it can today. It resets at 00:00 UTC.', error_code: 'service_daily_limit', remaining: 0, resets_at: nextUtcReset() }, 503, { 'Retry-After': retryAfter });
+      }
+      if (quota.reason === 'ip_limit') {
+        return respond(req, { error: 'This network has reached today\'s Ask Sentinel limit. It resets at 00:00 UTC.', error_code: 'network_daily_limit', remaining: 0, resets_at: nextUtcReset() }, 429, { 'Retry-After': retryAfter });
+      }
+      return respond(req, { error: 'Daily limit reached. Ask Sentinel allows three requests per user per UTC day.', error_code: 'user_daily_limit', remaining: 0, resets_at: nextUtcReset() }, 429, { 'Retry-After': retryAfter });
+    }
     phase = 'groq_completion';
     logStage('provider_start', { source_count: evidence.sources.length, context_chars: evidence.context.length });
     try {
@@ -489,6 +575,7 @@ Deno.serve(async (req: Request) => {
       const citationValidation = validateGroundedCitations(answer, evidence.sources);
       if (!citationValidation.valid) {
         // Diagnostics are counts/reason codes only; never log the question or generated answer.
+        const refunded = await refundRequest(actor.id);
         logStage('citation_rejected', {
           source_count: evidence.sources.length,
           reason: citationValidation.reason,
@@ -505,7 +592,7 @@ Deno.serve(async (req: Request) => {
             invalid_citation_count: citationValidation.invalid_citation_count,
             uncited_line_count: citationValidation.uncited_line_count
           },
-          remaining: quota.remaining,
+          remaining: refunded ?? quota.remaining,
           resets_at: nextUtcReset(),
           model: MODEL,
           indexed_commit: index.sha,
@@ -527,22 +614,27 @@ Deno.serve(async (req: Request) => {
             : /timeout|timed out|abort/i.test(message)
               ? 'provider_timeout'
               : 'provider_unavailable';
+      // The provider failing is not the asker's fault: give the question back.
+      const refunded = await refundRequest(actor.id);
       logStage('provider_failed', {
         error_code: errorCode,
         provider_status: providerStatus,
-        source_count: evidence.sources.length
+        source_count: evidence.sources.length,
+        refunded: refunded !== null
       });
       return respond(req, {
-        error: 'Ask Sentinel could not complete the AI request. Please retry.',
+        error: errorCode === 'provider_rate_limited'
+          ? 'The AI provider is busy right now. Your question was not counted; please retry in a minute.'
+          : 'Ask Sentinel could not complete the AI request. Your question was not counted; please retry.',
         error_code: errorCode,
-        remaining: quota.remaining,
+        remaining: refunded ?? quota.remaining,
         resets_at: nextUtcReset()
-      }, 503);
+      }, 503, errorCode === 'provider_rate_limited' ? { 'Retry-After': '60' } : {});
     }
   } catch (error) {
     const message = String((error as Error)?.message || 'Ask Sentinel request failed.');
     console.error(JSON.stringify({ event: 'ask_sentinel_error', phase, elapsed_ms: Date.now() - phaseStartedAt, error: message.slice(0, 260) }));
-    const status = /session|sign in|identity|expired/i.test(message) ? 401 : 503;
-    return respond(req, { error: message }, status);
+    if (error instanceof PublicError) return respond(req, { error: error.message }, error.status);
+    return respond(req, { error: 'Ask Sentinel is temporarily unavailable. Please retry in a moment.', error_code: 'internal_' + phase }, 503);
   }
 });
