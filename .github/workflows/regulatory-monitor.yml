@@ -85,6 +85,7 @@ jobs:
 
           from regmon.config import SourceConfig
           from regmon.discovery import in_scope
+          from regmon.safe_http import public_destinations_only
           from regmon.security import REDIRECT_STATUSES, USER_AGENT, validate_public_http_url
 
           requested = os.environ.get("REGMON_SOURCE", "all").strip()
@@ -114,12 +115,13 @@ jobs:
                               raise ValueError(
                                   f"Target is outside configured monitor scope: {current_url}"
                               )
-                          response = requests.get(
-                              current_url,
-                              timeout=30,
-                              headers=headers,
-                              allow_redirects=False,
-                          )
+                          with public_destinations_only():
+                              response = requests.get(
+                                  current_url,
+                                  timeout=30,
+                                  headers=headers,
+                                  allow_redirects=False,
+                              )
                           if response.status_code not in REDIRECT_STATUSES:
                               break
                           location = response.headers.get("location")
