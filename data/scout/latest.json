@@ -1,5 +1,5 @@
 {
- "finished_at": null,
+ "finished_at": "2026-10-21T09:00:56Z",
  "objective": {
   "description": "New regulator publications a compliance reviewer may want ChangeSentinel to monitor: rules, consultations, guidance, technical standards, reporting forms and instructions, supervisory letters and notices, Q&A, enforcement actions, decisions and opinions.",
   "id": "regulatory-publications-v1"
@@ -89,13 +89,74 @@
    "short_name": "Banxico",
    "status": "NOT_RUN",
    "status_reason": "Scout has not swept this regulator yet"
+  },
+  {
+   "channels": [
+    {
+     "error": "",
+     "id": "bcra-bcra-communications-index",
+     "items": 17,
+     "label": "BCRA Communications Index",
+     "new": 0,
+     "note": "",
+     "observed": 17,
+     "out_of_scope": 17,
+     "pages_read": 1,
+     "required": true,
+     "status": "ok",
+     "type": "listing",
+     "url": "https://www.bcra.gob.ar/en/communications-search-engine/"
+    }
+   ],
+   "counts": {
+    "baseline_added": 17,
+    "enriched": 0,
+    "new": 0,
+    "new_irrelevant": 0,
+    "new_relevant": 0,
+    "new_uncertain": 0,
+    "observed": 17,
+    "registry_size": 17,
+    "translations_linked": 0
+   },
+   "finished_at": "2026-10-21T09:00:56Z",
+   "id": "bcra",
+   "jurisdiction": "Argentina",
+   "known_gaps": [
+    "The monthly report is selected through a form and View button, not exposed as a normal HTML link on the search page.",
+    "The annual index PDFs contain communication entries, but this listing source does not convert those entries into individual communication PDF URLs."
+   ],
+   "name": "Central Bank of the Argentine Republic",
+   "region": "LATAM",
+   "request_budget": 60,
+   "requests": 2,
+   "robots": {
+    "www.bcra.gob.ar": {
+     "crawl_delay": null,
+     "status": "parsed"
+    }
+   },
+   "seconds": 3.5,
+   "short_name": "BCRA",
+   "status": "COMPLETE",
+   "status_reason": "Every declared channel was read as planned",
+   "sweep_id": "20261021T090053Z-423fad",
+   "time_budget_seconds": 900.0
   }
  ],
  "schema_version": 1,
- "scope": "all",
- "started_at": null,
- "status": "NOT_RUN",
- "sweep_id": "",
- "totals": {},
- "trigger": ""
+ "scope": "bcra",
+ "started_at": "2026-10-21T09:00:53Z",
+ "status": "COMPLETE",
+ "sweep_id": "20261021T090053Z-423fad",
+ "totals": {
+  "baseline_added": 17,
+  "new": 0,
+  "new_irrelevant": 0,
+  "new_relevant": 0,
+  "new_uncertain": 0,
+  "observed": 17,
+  "requests": 2
+ },
+ "trigger": "manual"
 }
