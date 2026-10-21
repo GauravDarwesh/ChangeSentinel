@@ -243,6 +243,8 @@ function buildContext(question: string, docs: any[], targetedDocs: any[]): AskSe
     // The giant file manifest repeated "run" and "report" in thousands of paths, often
     // outranking the actual run evidence without contributing facts.
     .filter((doc: any) => doc.doc_type !== 'repository file manifest' && doc.path !== '__repository_manifest__')
+    // The compact scope summary replaces the giant URL inventory for scope questions.
+    .filter((doc: any) => !asksInventory(question) || doc.path !== '__current_inventory__')
     // Operational questions should use monitoring records, not code or arbitrary snapshots
     // that happen to share common words. Implementation questions are allowed to retrieve code.
     .filter((doc: any) => implementationQuestion ||
