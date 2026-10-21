@@ -201,7 +201,8 @@ def main() -> int:
     )
 
     def check_fake(response, answer):
-        content = (answer or str(response.get("error") or "")).lower()
+        # Models often use typographic apostrophes; normalize before scoring abstentions.
+        content = (answer or str(response.get("error") or "")).lower().replace("’", "'").replace("‘", "'")
         abstains = any(phrase in content for phrase in (
             "cannot verify", "can't verify", "cannot find", "can't find", "no committed record", "not found",
             "no record", "not in the indexed", "not available in the indexed", "could not find",
