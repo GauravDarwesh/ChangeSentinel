@@ -185,6 +185,11 @@ class TestAskSentinelContract(unittest.TestCase):
         condition = "if: ${{ always() && steps.endpoint_health.outcome == 'success' }}"
         self.assertGreaterEqual(workflow.count(condition), 2)
         self.assertIn("name: Evaluate live grounding against current dashboard records", workflow)
+        self.assertIn(
+            "name: Index the repository and ask a real Groq question\\n        # On PRs this calls the already-deployed function",
+            workflow,
+        )
+        self.assertIn("continue-on-error: ${{ github.event_name == 'pull_request' }}", workflow)
 
     def test_run_and_evidence_ids_are_pinned_to_exact_indexed_paths(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
