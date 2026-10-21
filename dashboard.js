@@ -3778,7 +3778,9 @@ async function askSentinelSendQuestion(promptOverride) {
     try { payload = await response.json(); } catch (_) {}
     if (Number.isInteger(payload.remaining)) askSentinelUpdateQuota(payload.remaining);
     if (response.status === 429) {
-      throw new Error("Daily limit reached. Ask Sentinel allows three requests per user per day. Your allowance resets according to the server’s daily reset time.");
+      // The server says which limit was reached (this browser, this network or the service).
+      throw new Error(typeof payload.error === "string" ? payload.error
+        : "Daily limit reached. Ask Sentinel allows three requests per user per day. Your allowance resets according to the server’s daily reset time.");
     }
     if (!response.ok) {
       throw new Error(typeof payload.error === "string" ? payload.error : "Ask Sentinel could not answer this request. Please try again later.");
