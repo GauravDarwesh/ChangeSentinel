@@ -429,7 +429,7 @@ Deno.serve(async (req: Request) => {
           logStage('exact_run_not_found', { requested_run_id: requestedRunId });
           return respond(req, {
             error: 'I cannot verify that run ID in the indexed committed ChangeSentinel records. No answer was generated from another run.'
-          }, 200);
+          }, 404);
         }
       }
     } else if (asksCurrentReport(question)) {
@@ -441,7 +441,7 @@ Deno.serve(async (req: Request) => {
       const exactEvidenceDocs = await fetchDocsByPath(requestedEvidencePath);
       if (!exactEvidenceDocs.length) {
         logStage('exact_evidence_not_found', { requested_evidence_path: requestedEvidencePath });
-        return respond(req, { error: 'I cannot verify that evidence file in the indexed committed records.' }, 200);
+        return respond(req, { error: 'I cannot verify that evidence file in the indexed committed records.' }, 404);
       }
       targetedDocs.push(...exactEvidenceDocs);
     } else if (asksHistory(question) && !requestedRunId) {
@@ -454,7 +454,7 @@ Deno.serve(async (req: Request) => {
     if (!evidence.context.trim() || evidence.sources.length === 0) {
       return respond(req, {
         error: 'I could not find supporting indexed evidence for this question. Try naming the regulator, run ID, URL, or date you want checked.'
-      }, 200);
+      }, 422);
     }
 
     // This enforces the atomic database quota. It runs once immediately before the provider call.
@@ -476,7 +476,7 @@ Deno.serve(async (req: Request) => {
           model: MODEL,
           indexed_commit: index.sha,
           context_sources: evidence.sources
-        }, 200);
+        }, 502);
       }
       return respond(req, { answer, remaining: quota.remaining, resets_at: nextUtcReset(), model: MODEL, indexed_commit: index.sha, context_sources: evidence.sources });
     } catch (error) {
