@@ -180,6 +180,18 @@ function asksInventory(question: string): boolean {
 function asksHistory(question: string): boolean {
   return /\b(history|historical|earlier|previous|last (?:day|week|month|run|scan)|trend|over time|october|september|2026-\d\d-\d\d|20\d{6}t)\b/i.test(question);
 }
+function asksImplementation(question: string): boolean {
+  return /\b(code|implement(?:ation)?|function|workflow|architecture|algorithm|test suite|source code|how does ask sentinel work)\b/i.test(question);
+}
+function exactRunId(question: string): string | null {
+  return question.match(/\b20\d{6}T\d{6}Z-[a-f0-9]{8}\b/i)?.[0] || null;
+}
+function exactEvidencePath(question: string): string | null {
+  return question.match(/\bdata\/evidence\/[a-f0-9]{64}\.json\b/i)?.[0] || null;
+}
+function asksCurrentReport(question: string): boolean {
+  return /\b(latest|current|most recent|last|this)\b.{0,60}\b(run|report|scan|monitor(?:ing)?)\b|\b(run|report|scan)\b.{0,60}\b(latest|current|most recent)\b/i.test(question);
+}
 
 type AskSentinelEvidence = { context: string; sources: string[] };
 
@@ -211,46 +223,68 @@ function addContext(
 // when they do not match the question; treating them as primary context lets generic material
 // crowd out the records that should substantiate a factual answer. Special-purpose inventory
 // and history summaries are included only for questions that actually ask for them.
-function buildContext(
-  question: string,
-  docs: any[],
-  inventoryDocs: any[],
-  historyDocs: any[]
-): AskSentinelEvidence {
+function buildContext(question: string, docs: any[], targetedDocs: any[]): AskSentinelEvidence {
   const context: string[] = [];
   const sources: string[] = [];
   const seen = new Set<string>();
   const max = MAX_CONTEXT_CHARS;
 
-  const special: any[] = [];
-  if (asksInventory(question)) special.push(...inventoryDocs);
-  if (asksHistory(question)) special.push(...historyDocs);
-
-  for (const doc of special) {
-    addContext(context, sources, doc, seen, max);
+  // Direct, query-specific evidence must be inserted before fuzzy search results.
+  for (const doc of targetedDocs) {
     if (context.join('\n\n').length >= max) break;
+    addContext(context, sources, doc, seen, max);
   }
 
-  const relevant = docs
-    .filter((d: any) => d.is_core !== true)
-    .sort((a: any, b: any) => Number(b.score || 0) - Number(a.score || 0));
+  const implementationQuestion = asksImplementation(question);
+  const exactRun = exactRunId(question);
+  const evidencePath = exactEvidencePath(question);
+  const searchResults = docs
+    .filter((doc: any) => doc.is_core !== true)
+    // The giant file manifest repeated "run" and "report" in thousands of paths, often
+    // outranking the actual run evidence without contributing facts.
+    .filter((doc: any) => doc.doc_type !== 'repository file manifest' && doc.path !== '__repository_manifest__')
+    // Operational questions should use monitoring records, not code or arbitrary snapshots
+    // that happen to share common words. Implementation questions are allowed to retrieve code.
+    .filter((doc: any) => implementationQuestion ||
+      !['source code or workflow', 'project documentation', 'repository file', 'extracted page snapshot'].includes(String(doc.doc_type || '')))
+    // A requested run ID must never be answered using a different run's fuzzy matches.
+    .filter((doc: any) => !exactRun || String(doc.path || '').includes(exactRun))
+    // A named evidence file must be grounded in that exact record.
+    .filter((doc: any) => !evidencePath || String(doc.path || '') === evidencePath)
+    .sort((a: any, b: any) => {
+      const scoreDiff = Number(b.score || 0) - Number(a.score || 0);
+      if (scoreDiff !== 0) return scoreDiff;
+      return String(a.path || '').localeCompare(String(b.path || ''));
+    });
 
-  for (const doc of relevant) {
+  for (const doc of searchResults) {
     if (context.join('\n\n').length >= max) break;
     addContext(context, sources, doc, seen, max);
   }
 
   return { context: context.join('\n\n'), sources };
 }
-
 function validateGroundedCitations(answer: string, allowedSources: string[]): boolean {
-  // The model must cite indexed paths, and every citation it emits must refer to evidence
-  // that was actually supplied in this request. Never accept invented source paths.
+  // Every citation must reference evidence that was included in this request.
   const citations = [...answer.matchAll(/\[Source:\s*([^\]]+)\]/gi)]
     .map((match) => match[1].trim());
   if (!citations.length) return false;
   const allowed = new Set(allowedSources);
-  return citations.every((path) => allowed.has(path));
+  if (!citations.every((path) => allowed.has(path))) return false;
+
+  // Require a source marker in every substantive paragraph and every explicit list item.
+  // This cannot prove semantic entailment, but prevents a single citation from appearing to
+  // support an otherwise entirely uncited answer.
+  const blocks = answer.split(/\n\s*\n/).map((block) => block.trim()).filter(Boolean);
+  if (!blocks.length) return false;
+  for (const block of blocks) {
+    const lines = block.split('\n').map((line) => line.trim()).filter(Boolean);
+    for (const line of lines) {
+      if (/^#{1,6}\s/.test(line)) continue;
+      if (!/\[Source:\s*[^\]]+\]/i.test(line)) return false;
+    }
+  }
+  return true;
 }
 
 function historyForPrompt(history: unknown): Array<{ role: 'user' | 'assistant'; content: string }> {
@@ -367,9 +401,52 @@ Deno.serve(async (req: Request) => {
     const index = await readIndexState();
     phase = 'search';
     const docs = await searchDocs(question);
-    const inventoryDocs = asksInventory(question) ? await fetchDocsByPath('__current_inventory__') : [];
-    const recentHistoryDocs = asksHistory(question) ? await fetchDocsByPath('__recent_history__') : [];
-    const evidence = buildContext(question, docs, inventoryDocs, recentHistoryDocs);
+    const targetedDocs: any[] = [];
+
+    if (asksInventory(question)) {
+      // Prefer the compact active/inactive scope summary. The full URL inventory is too large
+      // and its alphabetical ordering puts archived EBA rows before current sources.
+      const scope = await fetchDocsByPath('__current_scope__');
+      if (scope.length) targetedDocs.push(...scope);
+      else targetedDocs.push(...await fetchDocsByPath('__repo_overview__')); // existing-index fallback
+    }
+
+    const requestedRunId = exactRunId(question);
+    if (requestedRunId) {
+      const exactRunDocs = await fetchDocsByPath('data/history/' + requestedRunId + '.json');
+      if (exactRunDocs.length) {
+        targetedDocs.push(...exactRunDocs);
+      } else {
+        // The latest report is useful only if it names the exact requested run. Never answer
+        // a missing/fabricated run ID using nearby run history or the latest report by accident.
+        const currentReport = await fetchDocsByPath('__current_report__');
+        const currentReportText = currentReport.map((doc: any) => String(doc.content || '')).join('\n');
+        if (currentReportText.includes('run_id=' + requestedRunId)) {
+          targetedDocs.push(...currentReport);
+        } else {
+          logStage('exact_run_not_found', { requested_run_id: requestedRunId });
+          return respond(req, {
+            error: 'I cannot verify that run ID in the indexed committed ChangeSentinel records. No answer was generated from another run.'
+          }, 200);
+        }
+      }
+    } else if (asksCurrentReport(question)) {
+      targetedDocs.push(...await fetchDocsByPath('__current_report__'));
+    }
+
+    const requestedEvidencePath = exactEvidencePath(question);
+    if (requestedEvidencePath) {
+      const exactEvidenceDocs = await fetchDocsByPath(requestedEvidencePath);
+      if (!exactEvidenceDocs.length) {
+        logStage('exact_evidence_not_found', { requested_evidence_path: requestedEvidencePath });
+        return respond(req, { error: 'I cannot verify that evidence file in the indexed committed records.' }, 200);
+      }
+      targetedDocs.push(...exactEvidenceDocs);
+    } else if (asksHistory(question) && !requestedRunId) {
+      targetedDocs.push(...await fetchDocsByPath('__recent_history__'));
+    }
+
+    const evidence = buildContext(question, docs, targetedDocs);
     logStage('evidence_selected', { result_count: docs.length, source_count: evidence.sources.length, context_chars: evidence.context.length, indexed_commit: index.sha });
 
     if (!evidence.context.trim() || evidence.sources.length === 0) {
