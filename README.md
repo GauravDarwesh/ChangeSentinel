@@ -872,7 +872,7 @@ Notification candidates are persisted in the repository's notification outbox. S
 
 The production workflow validates discovery metadata only for active sources selected in the current run. Historical inactive-source state must not block the active Federal Reserve pilot. Exact URL allowlists are included in checkpoint fingerprints and recovered inventories are filtered to the current scope.
 
-Manually registered URLs are bounded to one exact URL. Redirects are validated, and duplicate monitor registrations with different CSS selectors are rejected rather than silently ignored. DNS preflight reduces SSRF risk but does not fully prevent deliberate DNS rebinding; high-assurance deployments should add outbound network egress controls.
+Manually registered URLs are bounded to one exact URL. Redirects are validated, and duplicate monitor registrations with different CSS selectors are rejected rather than silently ignored. Every HTTP request the scanner, discovery and Scout make also checks its destination when the socket is opened (`regmon/safe_http.py`): the host is resolved again, any non-public address refuses the connection, and the socket connects to exactly the address that was checked, so a record that rebinds between the preflight and the connection is refused. TLS still verifies the original hostname. The browser-based discovery fallback and traffic through a configured proxy rely on the preflight alone; high-assurance deployments should still add outbound egress controls.
 
 ## License
 

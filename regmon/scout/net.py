@@ -76,7 +76,15 @@ def requests_transport(url: str, headers: dict, timeout: float, max_bytes: int):
     """Default transport: one request, no redirects, decoded body capped at max_bytes."""
     import requests  # imported lazily so the review workflow needs no third-party packages
 
-    response = requests.get(url, headers=headers, timeout=timeout, allow_redirects=False, stream=True)
+    from regmon.safe_http import BlockedDestination, public_destinations_only
+
+    try:
+        # Feeds and listings link to addresses Scout has never seen: the
+        # connection itself refuses non-public addresses (DNS rebinding).
+        with public_destinations_only():
+            response = requests.get(url, headers=headers, timeout=timeout, allow_redirects=False, stream=True)
+    except BlockedDestination as exc:
+        raise FetchFailed(str(exc)) from exc
     try:
         status = response.status_code
         response_headers = {str(key).lower(): str(value) for key, value in response.headers.items()}

@@ -7,6 +7,7 @@ import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import quote
 
 import requests
 import tempfile
@@ -207,6 +208,7 @@ def build_notifications(report: dict) -> list[dict]:
                 "variant": "ai", "url": result.get("url"), "topic": analysis["topic"],
                 "summary": analysis["summary"], "reason": analysis["reason"],
                 "impact": analysis["impact"], "priority": 4,
+                "effective_date": analysis.get("effective_date"), "actions": analysis.get("actions"),
                 "tags": ["warning", "bank", "regulatory"],
             }
             output.append(item)
@@ -304,13 +306,48 @@ def build_notifications(report: dict) -> list[dict]:
     return output
 
 
+CHANGE_LINK_KINDS = {"CHANGED_URL", "NEW_URL", "REMOVED_URL", "FETCH_ERROR", "EXTRACTION_ERROR", "AI_ASSESSMENT"}
+RUN_LINK_KINDS = {"REMOVAL_HELD", "DISCOVERY_DEGRADED", "DISCOVERY_FAILED"}
+
+
+def dashboard_link(notification: dict, dashboard_url: str) -> str:
+    """Open the alert's own change in the dashboard, not just its front page.
+
+    The dashboard routes "#changes/<event id>" to that change's redline and
+    evidence. Follow-ups and once-per-episode operational alerts carry their own
+    notification IDs, so they link through source_event_id.
+    """
+    if not dashboard_url:
+        return ""
+    base = dashboard_url.split("#", 1)[0]
+    kind = str(notification.get("kind") or "")
+    if kind in CHANGE_LINK_KINDS:
+        event_id = str(notification.get("source_event_id") or notification.get("event_id") or "")
+        if event_id and not event_id.startswith("test-"):
+            return base + "#changes/" + quote(event_id, safe="")
+    if kind in RUN_LINK_KINDS:
+        return base + "#runs"
+    return base
+
+
+def _stated(value) -> str:
+    text = str(value or "").strip()
+    return "" if not text or text.lower() == "not stated" else text
+
+
 def publish(notification: dict, topic: str, server: str, dashboard_url: str = "") -> None:
+    details = ""
+    if _stated(notification.get("effective_date")):
+        details += f"Effective: {_stated(notification.get('effective_date'))}\n"
+    if _stated(notification.get("actions")):
+        details += f"Suggested action: {_stated(notification.get('actions'))}\n"
     message = (
         f"Event: {notification['kind']}\n"
         f"Topic: {notification['topic']}\n"
         f"URL: {notification.get('url') or '(not available)'}\n\n"
         f"{notification['summary']}\n\n"
         f"Impact: {notification.get('impact', '')}\n\n"
+        + (details + "\n" if details else "") +
         f"Why: {notification['reason']}\n\n"
         f"Event ID: {notification['event_id']}"
     )
@@ -318,8 +355,9 @@ def publish(notification: dict, topic: str, server: str, dashboard_url: str = ""
         "topic": topic, "title": f"Regulatory Monitor — {notification['kind']}",
         "message": message, "priority": notification["priority"], "tags": notification["tags"],
     }
-    if dashboard_url:
-        payload["click"] = dashboard_url
+    link = dashboard_link(notification, dashboard_url)
+    if link:
+        payload["click"] = link
     response = requests.post(
         server.rstrip("/") + "/", json=payload,
         headers={"Content-Type": "application/json"}, timeout=20,
