@@ -81,16 +81,28 @@ def count_mentioned(text: str, field: str, expected: Any) -> bool:
 def run_case(results: list[dict[str, Any]], name: str, question: str, check) -> None:
     response = ask(question)
     answer = str(response.get("answer") or "")
-    try:
-        passed, detail = check(response, answer)
-    except Exception as error:
-        passed = False
-        detail = "evaluation error: " + type(error).__name__ + ": " + str(error)[:160]
+    status = response.get("http_status")
+    # Provider/runtime failures are unavailable evidence, not hallucinations. Keep them visible
+    # as inconclusive and still fail the strict post-deployment gate, but do not mislabel them
+    # as bad factual answers.
+    unavailable = status == "ERROR" or (
+        isinstance(status, int) and status in {429, 500, 502, 503, 504}
+    )
+    if not answer and unavailable:
+        passed = None
+        detail = "provider/endpoint unavailable; grounding could not be evaluated: " + str(response.get("error") or "no answer")[:200]
+    else:
+        try:
+            checked, detail = check(response, answer)
+            passed = bool(checked)
+        except Exception as error:
+            passed = False
+            detail = "evaluation error: " + type(error).__name__ + ": " + str(error)[:160]
     results.append({
         "name": name,
-        "passed": bool(passed),
+        "passed": passed,
         "detail": str(detail),
-        "http_status": response.get("http_status"),
+        "http_status": status,
         "answer_excerpt": (answer or str(response.get("error") or ""))[:1300],
     })
 
@@ -191,8 +203,9 @@ def main() -> int:
     def check_fake(response, answer):
         content = (answer or str(response.get("error") or "")).lower()
         abstains = any(phrase in content for phrase in (
-            "cannot verify", "can't verify", "cannot find", "no committed record", "not found",
+            "cannot verify", "can't verify", "cannot find", "can't find", "no committed record", "not found",
             "no record", "not in the indexed", "not available in the indexed", "could not find",
+            "cannot provide", "can't provide",
         ))
         return abstains, "explicit abstention on nonexistent run" if abstains else "unsupported details answered instead of abstaining"
 
@@ -247,10 +260,11 @@ def main() -> int:
 
         run_case(results, "exact-change-evidence", evidence_question, check_evidence)
 
-    passed = sum(1 for result in results if result["passed"])
-    failed = len(results) - passed
+    passed = sum(1 for result in results if result["passed"] is True)
+    failed = sum(1 for result in results if result["passed"] is False)
+    inconclusive = sum(1 for result in results if result["passed"] is None)
     for result in results:
-        marker = "PASS" if result["passed"] else "FAIL"
+        marker = "PASS" if result["passed"] is True else "INCONCLUSIVE" if result["passed"] is None else "FAIL"
         print(f"{marker} [{result['name']}] HTTP={result['http_status']} - {result['detail']}")
         print("ANSWER EXCERPT: " + result["answer_excerpt"].replace("\n", " ")[:1300])
 
@@ -259,6 +273,7 @@ def main() -> int:
         "case_count": len(results),
         "passed": passed,
         "failed": failed,
+        "inconclusive": inconclusive,
         "results": results,
     }
     Path(".ask-sentinel-eval-result.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
@@ -267,15 +282,16 @@ def main() -> int:
         with open(summary_path, "a", encoding="utf-8") as file:
             file.write("# Ask Sentinel live data-grounding evaluation\n\n")
             file.write(f"- Dashboard run tested: {run_id}\n")
-            file.write(f"- Cases: {len(results)} | Passed: {passed} | Failed: {failed}\n\n")
+            file.write(f"- Cases: {len(results)} | Passed: {passed} | Failed: {failed} | Inconclusive: {inconclusive}\n\n")
             for result in results:
-                file.write(f"### {'PASS' if result['passed'] else 'FAIL'} - {result['name']}\n\n")
+                marker = "PASS" if result["passed"] is True else "INCONCLUSIVE" if result["passed"] is None else "FAIL"
+                file.write(f"### {marker} - {result['name']}\n\n")
                 file.write(result["detail"] + "\n\n")
                 file.write("Answer excerpt: " + result["answer_excerpt"].replace("\n", " ")[:1300] + "\n\n")
 
-    print(f"Ask Sentinel data-grounding evaluation: {passed}/{len(results)} passed.")
-    if failed:
-        raise SystemExit(f"Live Ask Sentinel grounding evaluation failed: {failed}/{len(results)} cases.")
+    print(f"Ask Sentinel data-grounding evaluation: {passed} passed, {failed} failed, {inconclusive} inconclusive out of {len(results)}.")
+    if failed or inconclusive:
+        raise SystemExit(f"Live Ask Sentinel grounding evaluation: {failed} failed and {inconclusive} inconclusive out of {len(results)} cases.")
     return 0
 
 
