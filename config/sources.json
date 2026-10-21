@@ -170,6 +170,39 @@
       "resource_link_text_patterns": [
         "^Current"
       ]
+    },
+    {
+      "id": "manual-f1df3c7d3e94",
+      "name": "OSFI BCAR 2027",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "seed_urls": [
+        "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "allowed_urls": [
+        "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
+      ],
+      "allowed_domains": [
+        "www.osfi-bsif.gc.ca"
+      ]
     }
   ]
 }
