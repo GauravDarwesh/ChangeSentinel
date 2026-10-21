@@ -45,7 +45,7 @@ def issue_event(
 
 
 def bulk_issue_event(rows, login="GauravDarwesh", title="[ChangeSentinel] Add monitor bulk request"):
-    body = "\\n".join([
+    body = "\n".join([
         BULK_REQUEST_MARKER,
         "",
         "Please register these links.",
