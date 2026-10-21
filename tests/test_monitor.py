@@ -28,7 +28,7 @@ class TestContent(unittest.TestCase):
     def test_fetch_accepts_trailing_slash_redirect_variant_as_same_page(self):
         source_url = "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides"
         trailing_url = source_url + "/"
-        response = Mock(status_code=200, headers={"content-type": "text/html; charset=UTF-8", "content-length": "31"})
+        response = Mock(status_code=200, headers={"content-type": "text/html; charset=UTF-8", "content-length": "37"})
         response.content = b"<main>Reporting Central guides</main>"
         response.url = trailing_url
         with patch("regmon.fetch.requests.get", side_effect=[
