@@ -5,9 +5,15 @@
  *
  * Data layer (unchanged contract): core JSON is read same-origin from Pages
  * with a raw-GitHub fallback, every asset is schema-checked, and incomplete or
- * stale scans are reported as such rather than as healthy. Snapshot bytes and
- * evidence are read from raw GitHub, because Pages only publishes the UI and
- * the core JSON.
+ * stale scans are reported as such rather than as healthy. Every workflow that
+ * commits state dispatches the Pages deploy, so the published copy is current
+ * within a minute of each commit. Snapshot bytes and evidence are read from raw
+ * GitHub, because Pages publishes the UI and the core JSON, not every snapshot.
+ *
+ * Background refreshes poll only the small files; the large ones (inventory,
+ * history, Scout review) are re-read when the scan or sweep they describe has
+ * moved on, and at least every ten minutes. A refresh that brings nothing new
+ * re-renders nothing, so an open comparison or a long redline keeps its place.
  *
  * Interface: a rail, a list pane and a detail pane. Selecting a list row shows
  * it on the right without scrolling the page; on phones the list and detail are
@@ -60,6 +66,29 @@ const VIEWS = ["overview", "changes", "monitors", "runs", "notifications", "scou
 const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", notifications: "alerts", scout: "scout", askSentinel: "ask-sentinel" };
 const $ = id => document.getElementById(id);
 const esc = L.esc;
+// Snapshot text, saved HTML and evidence are cached for the session, but only
+// the most recently used entries: a long review session used to keep every
+// multi-megabyte document it had ever opened in memory.
+function boundedCache(limit) {
+  const entries = new Map();
+  return {
+    get(key) {
+      if (!entries.has(key)) return undefined;
+      const value = entries.get(key);
+      entries.delete(key);
+      entries.set(key, value);
+      return value;
+    },
+    set(key, value) {
+      entries.delete(key);
+      entries.set(key, value);
+      while (entries.size > limit) entries.delete(entries.keys().next().value);
+      return value;
+    },
+    delete(key) { entries.delete(key); },
+    get size() { return entries.size; }
+  };
+}
 const state = {
   report: {}, inventory: {}, history: [], notifications: {}, outbox: {}, config: {},
   items: [], view: "overview", loaded: false,
@@ -67,7 +96,8 @@ const state = {
   mobileDetail: false,
   filter: "ALL", changeFilter: "ALL", detailTab: "", diffMode: "compare", snapshotMode: "preview",
   docInfo: {}, titleQueue: [], titleWorkers: 0, titleTimer: null,
-  snapshotCache: {}, htmlCache: {}, evidenceCache: {}, pdfPreviewUrl: "", toastTimer: null,
+  snapshotCache: boundedCache(24), htmlCache: boundedCache(12), evidenceCache: boundedCache(80), pdfPreviewUrl: "", toastTimer: null,
+  assetSignatures: {}, renderedSignature: "", lastFullLoad: 0, loading: null, detailKeys: {},
   workflowRuns: [], workflowSignature: "", scanColumns: null, pendingScan: null,
   scoutLatest: null, scoutReview: null, scoutConfig: null, scoutFilter: "REVIEW", selectedScoutKey: "", scoutMonitored: null,
   scoutSourceMode: "add"
@@ -78,6 +108,15 @@ function isCompact() { return !!(compactQuery && compactQuery.matches); }
 /* ================= Data loading ================= */
 
 function bust(url) { return url + (url.indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now(); }
+// FNV-1a over the response text: enough to tell whether a file changed between polls.
+function textSignature(text) {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < text.length; i += 1) {
+    hash ^= text.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return text.length + ":" + (hash >>> 0).toString(16);
+}
 async function fetchDataAsset(key, required) {
   const path = DATA_PATHS[key];
   const candidates = Array.from(new Set([ENDPOINTS[key], RAW + "/" + path].filter(Boolean)));
@@ -91,7 +130,13 @@ async function fetchDataAsset(key, required) {
         failures.push(host + " returned HTTP " + response.status);
         continue;
       }
-      const value = await response.json();
+      const text = await response.text();
+      let value;
+      try { value = JSON.parse(text); } catch (_) {
+        failures.push(host + " returned invalid JSON");
+        continue;
+      }
+      state.assetSignatures[key] = textSignature(text);
       if (!isValidDataAssetShape(key, value)) {
         failures.push(host + " returned JSON with invalid schema");
         continue;
@@ -152,28 +197,37 @@ function validateDataAssets(assets) {
     throw new Error("Invalid monitoring data schema: " + invalid.join(", "));
   }
 }
-function snapshotURL(path) { return path ? bust(RAW + "/" + path) : ""; }
+// Snapshots and evidence are immutable: every file name carries its content
+// hash, so a cached copy never goes stale and no cache-busting is needed.
+function snapshotURL(path) { return path ? RAW + "/" + path : ""; }
+// A file committed moments ago can briefly 404 on the raw CDN; that answer is
+// retried once past every cache rather than trusted.
+async function fetchImmutable(path) {
+  const url = snapshotURL(path);
+  const response = await fetch(url);
+  return response.ok ? response : fetch(bust(url), { cache: "no-store" });
+}
 async function readSnapshotFile(path, cache) {
   if (!path) throw new Error("Snapshot path is not available");
-  if (cache[path] != null) return cache[path];
-  const response = await fetch(snapshotURL(path), { cache: "no-store" });
+  const cached = cache.get(path);
+  if (cached != null) return cached;
+  const response = await fetchImmutable(path);
   if (!response.ok) throw new Error("Snapshot request returned HTTP " + response.status);
   const content = await response.text();
-  cache[path] = content;
+  cache.set(path, content);
   return content;
 }
 function loadEvidence(location) {
   if (!location) return Promise.reject(new Error("No evidence file is attached to this event"));
-  if (!state.evidenceCache[location]) {
-    state.evidenceCache[location] = fetch(bust(RAW + "/" + location), { cache: "no-store" }).then(response => {
-      if (!response.ok) throw new Error("Evidence request returned HTTP " + response.status);
-      return response.json();
-    }).catch(error => {
-      delete state.evidenceCache[location];
-      throw error;
-    });
-  }
-  return state.evidenceCache[location];
+  const cached = state.evidenceCache.get(location);
+  if (cached) return cached;
+  return state.evidenceCache.set(location, fetchImmutable(location).then(response => {
+    if (!response.ok) throw new Error("Evidence request returned HTTP " + response.status);
+    return response.json();
+  }).catch(error => {
+    state.evidenceCache.delete(location);
+    throw error;
+  }));
 }
 
 /* ================= Formatting ================= */
@@ -375,7 +429,7 @@ function pumpTitleQueue() {
   }
 }
 async function readSnapshotTextHead(path, maxBytes) {
-  const response = await fetch(snapshotURL(path), { cache: "no-store" });
+  const response = await fetchImmutable(path);
   if (!response.ok) throw new Error("Snapshot title read failed with HTTP " + response.status);
   if (!response.body || !response.body.getReader) return (await response.text()).slice(0, maxBytes);
   const reader = response.body.getReader(), chunks = [];
@@ -491,24 +545,8 @@ function itemStatus(item) {
   }
   return { label: "No change", tone: "ok", kind: "ok" };
 }
-function canonicalForDashboard(value) {
-  try {
-    const url = new URL(value);
-    url.hash = "";
-    if (url.pathname !== "/") url.pathname = url.pathname.replace(/\/+$/, "");
-    const tracking = ["fbclid", "gclid", "mc_cid", "mc_eid"];
-    const params = Array.from(url.searchParams.entries()).filter(([key]) => {
-      const lower = key.toLowerCase();
-      return !lower.startsWith("utm_") && tracking.indexOf(lower) < 0;
-    });
-    params.sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0);
-    url.search = "";
-    params.forEach(([key, val]) => url.searchParams.append(key, val));
-    return url.toString();
-  } catch (_) {
-    return String(value || "");
-  }
-}
+// Same canonical form as the engine (regmon/discovery.py), shared via dashboard-lib.js.
+function canonicalForDashboard(value) { return L.canonicalUrl(value); }
 function statusPriority(item) {
   const status = itemStatus(item);
   return status.kind === "error" ? 0 : status.kind === "change" ? 1 : status.kind === "pending" ? 2 : 3;
@@ -1026,7 +1064,16 @@ const WORKFLOW_RUNS_API = "https://api.github.com/repos/" + REPOSITORY.owner + "
   "/actions/workflows/regulatory-monitor.yml/runs?per_page=40";
 let workflowPollTimer = 0;
 let workflowBackoffUntil = 0;
-async function refreshWorkflowRuns() {
+let workflowRefreshInFlight = null;
+// One poll chain only: a call made while a request is in flight (the "Scan now"
+// follow-ups, a visibility change) joins it instead of starting a second chain.
+function refreshWorkflowRuns() {
+  if (!workflowRefreshInFlight) {
+    workflowRefreshInFlight = pollWorkflowRuns().finally(() => { workflowRefreshInFlight = null; });
+  }
+  return workflowRefreshInFlight;
+}
+async function pollWorkflowRuns() {
   clearTimeout(workflowPollTimer);
   if (document.hidden) { workflowPollTimer = setTimeout(refreshWorkflowRuns, 60000); return; }
   if (Date.now() >= workflowBackoffUntil) {
@@ -1361,6 +1408,7 @@ async function fillEvidence(event, boxId, stillCurrent) {
   }
 }
 function renderChangeDetail() {
+  state.detailKeys.changes = detailRenderKey("changes");
   const pane = $("changeDetail");
   const entry = changeLogEntries().find(candidate => candidate.event_id === state.selectedChangeId);
   if (!entry) {
@@ -1536,9 +1584,9 @@ async function loadSnapshot(item) {
     try {
       // Fetch the original bytes (raw GitHub permits CORS) and render them
       // through an application/pdf Blob URL. Navigating directly to the raw
-      // URL triggers GitHub's attachment download behavior; Pages does not
-      // publish the data/ directory because its deploy artifact contains UI only.
-      const response = await fetch(snapshotURL(filePath), { cache: "no-store" });
+      // URL triggers GitHub's attachment download behavior, and Pages publishes
+      // only the core JSON, not the saved originals under data/snapshots/.
+      const response = await fetchImmutable(filePath);
       if (!response.ok) throw new Error("PDF snapshot request returned HTTP " + response.status);
       const bytes = await response.arrayBuffer();
       if (!current() || state.snapshotMode !== "preview") return;
@@ -1608,6 +1656,7 @@ function renderDetails(item) {
   ).join("") + "</dl></section>";
 }
 function renderDetailBody() {
+  state.detailKeys.monitors = detailRenderKey("monitors");
   const item = selectedItem();
   const pane = $("detailView");
   if (!item) {
@@ -1637,6 +1686,7 @@ const COUNT_LABELS = [
   ["ai_error", "AI reviews failed"], ["ai_backlog_pending", "AI reviews queued"]
 ];
 function renderRunDetail() {
+  state.detailKeys.runs = detailRenderKey("runs");
   const pane = $("runDetail");
   const run = state.history.find(candidate => runKey(candidate) === state.selectedRunId);
   if (!run) { pane.innerHTML = '<div class="detail-inner">' + emptyState("Select a run", "Choose a run to see what it checked and found.") + "</div>"; return; }
@@ -1653,6 +1703,7 @@ function renderRunDetail() {
     "</section></div>";
 }
 function renderNotificationDetail() {
+  state.detailKeys.notifications = detailRenderKey("notifications");
   const pane = $("notificationDetail");
   const { pending, sent } = notificationLists();
   const item = pending.concat(sent).find(candidate => candidate.eventId === state.selectedNotificationId);
@@ -1869,6 +1920,7 @@ function scoutSubtitle(item) {
   return withoutDates.length < 24 ? "" : text;
 }
 function renderScoutDetail() {
+  state.detailKeys.scout = detailRenderKey("scout");
   const pane = $("scoutDetail");
   if (state.selectedScoutKey === "coverage") { renderScoutCoverage(pane); return; }
   const item = scoutSelected();
@@ -2143,6 +2195,45 @@ function ensureSelection(view) {
     state.selectedScoutKey = first ? first.key : "coverage";
   }
 }
+// What the open detail pane shows, so a background refresh can leave it alone
+// when nothing it depends on changed (a redraw resets comparisons and scroll).
+function detailRenderKey(view) {
+  try {
+    if (view === "changes") {
+      const entry = changeLogEntries().find(candidate => candidate.event_id === state.selectedChangeId);
+      return entry ? JSON.stringify([entry.event_id, entry.evidence_location, verdictFor(entry), state.diffMode]) : "none";
+    }
+    if (view === "monitors") {
+      const item = selectedItem();
+      return item ? JSON.stringify([item.url_id, item.snapshot_location, item.html_snapshot_location, item.file_snapshot_location,
+        (item.change_history || []).map(entry => entry.event_id), state.detailTab, state.snapshotMode]) : "none";
+    }
+    if (view === "runs") {
+      const run = state.history.find(candidate => runKey(candidate) === state.selectedRunId);
+      return run ? JSON.stringify(run) : "none";
+    }
+    if (view === "notifications") {
+      const { pending, sent } = notificationLists();
+      const item = pending.concat(sent).find(candidate => candidate.eventId === state.selectedNotificationId);
+      return item ? JSON.stringify(item) : "none";
+    }
+    if (view === "scout") {
+      if (state.selectedScoutKey === "coverage") return "coverage|" + (state.assetSignatures.scoutLatest || "") + "|" + (state.assetSignatures.scoutConfig || "");
+      const item = scoutSelected();
+      return item ? JSON.stringify([item, scoutIsMonitored(item)]) : "none";
+    }
+  } catch (_) {}
+  return "";
+}
+function refreshDetailIfChanged(view) {
+  const key = detailRenderKey(view);
+  if (key && key === state.detailKeys[view]) {
+    // The page header carries "checked N ago"; it is cheap and never reloads a snapshot.
+    if (view === "monitors" && selectedItem()) renderDetailHeader(selectedItem());
+    return;
+  }
+  renderDetailFor(view);
+}
 function renderDetailFor(view) {
   if (view === "changes") renderChangeDetail();
   else if (view === "monitors") renderDetailBody();
@@ -2208,31 +2299,66 @@ function setSelected(id) { select("monitors", id); }
 
 /* ================= Data refresh ================= */
 
-async function loadData(showErrors) {
-  setStatus("Refreshing stored data…", false);
+const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig"];
+const LARGE_ASSETS = ["inventory", "history", "scoutReview"];
+const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig"]);
+const FULL_REFRESH_MS = 10 * 60 * 1000;
+function assetsSignature() {
+  return SMALL_ASSETS.concat(LARGE_ASSETS).map(key => key + "=" + (state.assetSignatures[key] || "")).join("|");
+}
+function scanMarker(report) { return report ? String(report.run_id || "") + "|" + String(report.generated_at || "") : ""; }
+function sweepMarker(latest) { return latest ? String(latest.sweep_id || "") + "|" + String(latest.finished_at || "") : ""; }
+async function fetchAssets(keys) {
+  const values = await Promise.all(keys.map(key => fetchDataAsset(key, !OPTIONAL_ASSETS.has(key))));
+  const out = {};
+  keys.forEach((key, index) => { out[key] = values[index]; });
+  return out;
+}
+// Overlapping calls (the two-minute poll, Reload) share one load.
+function loadData(showErrors) {
+  if (state.loading) {
+    if (showErrors !== false) state.loading = state.loading.then(() => loadDataOnce(true));
+    return state.loading;
+  }
+  state.loading = loadDataOnce(showErrors).finally(() => { state.loading = null; });
+  return state.loading;
+}
+async function loadDataOnce(showErrors) {
+  const background = showErrors === false && state.loaded;
+  if (!background) setStatus("Refreshing stored data…", false);
   if (showErrors !== false) $("loadError").hidden = true;
   try {
-    const [report, inventory, historyData, notifications, outbox, config, scoutLatest, scoutReview, scoutConfig] = await Promise.all([
-      fetchDataAsset("report", true),
-      fetchDataAsset("inventory", true),
-      fetchDataAsset("history", true),
-      fetchDataAsset("notifications", true),
-      fetchDataAsset("outbox", true),
-      fetchDataAsset("config", true),
-      fetchDataAsset("scoutLatest", false),
-      fetchDataAsset("scoutReview", false),
-      fetchDataAsset("scoutConfig", false)
-    ]);
-    validateDataAssets({ report, inventory, historyData, notifications, outbox, config });
-    state.report = report;
-    state.inventory = inventory;
-    state.history = historyData;
-    state.notifications = notifications;
-    state.outbox = outbox;
-    state.config = config;
-    state.scoutLatest = scoutLatest;
-    state.scoutReview = scoutReview;
-    state.scoutConfig = scoutConfig;
+    const full = !background || Date.now() - state.lastFullLoad > FULL_REFRESH_MS;
+    const values = await fetchAssets(full ? SMALL_ASSETS.concat(LARGE_ASSETS) : SMALL_ASSETS);
+    if (!full) {
+      // The large files only change with a new scan or sweep, which the small
+      // report and sweep summary already show.
+      const moved = scanMarker(values.report) !== scanMarker(state.report) || sweepMarker(values.scoutLatest) !== sweepMarker(state.scoutLatest);
+      if (moved) Object.assign(values, await fetchAssets(LARGE_ASSETS));
+      else LARGE_ASSETS.forEach(key => { values[key] = key === "history" ? state.history : key === "inventory" ? state.inventory : state.scoutReview; });
+      if (moved) state.lastFullLoad = Date.now();
+    } else {
+      state.lastFullLoad = Date.now();
+    }
+    validateDataAssets({
+      report: values.report, inventory: values.inventory, historyData: values.history,
+      notifications: values.notifications, outbox: values.outbox, config: values.config
+    });
+    const signature = assetsSignature();
+    if (background && signature === state.renderedSignature) {
+      reportScanStatus();
+      return;
+    }
+    state.renderedSignature = signature;
+    state.report = values.report;
+    state.inventory = values.inventory;
+    state.history = values.history;
+    state.notifications = values.notifications;
+    state.outbox = values.outbox;
+    state.config = values.config;
+    state.scoutLatest = values.scoutLatest;
+    state.scoutReview = values.scoutReview;
+    state.scoutConfig = values.scoutConfig;
     state.items = makeItems();
     state.scoutMonitored = null;
     const firstLoad = !state.loaded;
@@ -2259,9 +2385,10 @@ async function loadData(showErrors) {
         setView("overview");
       }
     } else {
-      // A background refresh keeps the current view and selection.
+      // A refresh keeps the current view and selection, and the open detail is
+      // only redrawn when what it shows actually changed.
       renderLists();
-      if (state.view !== "monitors") renderDetailFor(state.view);
+      refreshDetailIfChanged(state.view);
     }
     reportScanStatus();
   } catch (error) {
@@ -2323,7 +2450,6 @@ const MAX_BULK_LINKS = 25;
 const MAX_BULK_REQUEST_URL_LENGTH = 7000;
 let bulkImportRows = [];
 let bulkImportErrors = [];
-let xlsxParserPromise = null;
 
 function openAddMonitor() {
   const dialog = $("addMonitorDialog");
@@ -2386,7 +2512,8 @@ function submitAddMonitor(event) {
   openGitHubRequest(target, "Submit the prefilled request on GitHub. The page is scanned once the request is accepted.");
 }
 
-/* CSV is parsed locally. XLSX uses the pinned SheetJS standalone build, fetched only when needed. */
+/* CSV and XLSX are both parsed locally (XLSX by the small reader in dashboard-lib.js),
+   so no third-party script ever runs in the dashboard's origin for an upload. */
 function parseCsvMatrix(text) {
   const rows = [];
   let row = [], cell = "", quoted = false;
@@ -2448,13 +2575,9 @@ function bulkRowsFromMatrix(matrix) {
     try {
       const candidate = new URL(rawUrl);
       if (!["http:", "https:"].includes(candidate.protocol) || !candidate.hostname || candidate.username || candidate.password) throw new Error();
-      candidate.hash = "";
-      if (candidate.pathname !== "/" && candidate.pathname.endsWith("/")) candidate.pathname = candidate.pathname.slice(0, -1);
-      for (const key of Array.from(candidate.searchParams.keys())) {
-        const lowered = key.toLowerCase();
-        if (lowered.startsWith("utm_") || ["fbclid", "gclid", "mc_cid", "mc_eid"].includes(lowered)) candidate.searchParams.delete(key);
-      }
-      url = candidate.toString();
+      // The engine's canonical form, so duplicates differing only in tracking
+      // parameters or query order collapse to one request row.
+      url = L.canonicalUrl(candidate.toString());
     } catch (_) {
       errors.push("Row " + rowNumber + ": enter a complete public http:// or https:// URL.");
       return;
@@ -2479,22 +2602,6 @@ function bulkRowsFromMatrix(matrix) {
   if (!parsed.length && !errors.length) errors.push("No valid URLs were found. Add a URL column or place one URL in the first column.");
   if (parsed.length > MAX_BULK_LINKS) errors.push("This request supports up to " + MAX_BULK_LINKS + " unique links. Split this file into smaller batches.");
   return { rows: parsed, errors, rowCount: rows.length, duplicateCount: Math.max(0, rows.length - parsed.length - errors.length) };
-}
-function loadXlsxParser() {
-  if (window.XLSX) return Promise.resolve(window.XLSX);
-  if (xlsxParserPromise) return xlsxParserPromise;
-  xlsxParserPromise = new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = "https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js";
-    script.async = true;
-    script.onload = () => window.XLSX ? resolve(window.XLSX) : reject(new Error("Excel parser could not be initialized."));
-    script.onerror = () => reject(new Error("Excel support could not load. Try saving the spreadsheet as CSV."));
-    document.head.appendChild(script);
-  }).catch(error => {
-    xlsxParserPromise = null;
-    throw error;
-  });
-  return xlsxParserPromise;
 }
 function setBulkStatus(message, isError) {
   const status = $("bulkImportStatus");
@@ -2553,11 +2660,7 @@ async function readBulkFile(file) {
     if (extension === "csv") {
       matrix = parseCsvMatrix(await file.text());
     } else if (extension === "xlsx") {
-      const XLSX = await loadXlsxParser();
-      const workbook = XLSX.read(await file.arrayBuffer(), { type: "array", cellText: true, cellDates: false });
-      const firstSheet = workbook.SheetNames && workbook.SheetNames[0];
-      if (!firstSheet) throw new Error("The workbook does not contain a worksheet.");
-      matrix = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet], { header: 1, raw: false, defval: "" });
+      matrix = await L.xlsxFirstSheetRows(await file.arrayBuffer());
     } else {
       throw new Error("Choose a .csv or .xlsx file.");
     }
@@ -2677,6 +2780,7 @@ $("workspace").addEventListener("click", event => {
   }
   if (data.snapshotMode) {
     state.snapshotMode = data.snapshotMode;
+    state.detailKeys.monitors = detailRenderKey("monitors");
     const item = selectedItem();
     if (item && state.detailTab === "snapshot") loadSnapshot(item);
     return;
@@ -2721,7 +2825,8 @@ if (typeof ResizeObserver === "function") {
     }, 120);
   }).observe($("signalVisual"));
 }
-// Theme: dark by default, remembered per browser.
+// Theme: every visit opens in light (index.html sets it before first paint, by
+// design); the toggle switches theme for the rest of the visit.
 function currentTheme() { return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark"; }
 function syncThemeLabels() {
   document.querySelectorAll("[data-theme-toggle]").forEach(button => {
@@ -2819,28 +2924,61 @@ document.addEventListener("click", event => {
  * pdf.js (with a pixel-difference highlight), HTML in script-less sandboxed frames,
  * and older events without saved originals as their two text snapshots.
  */
-const PDFJS_VERSION = "3.11.174";
-const PDFJS_BASE = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/" + PDFJS_VERSION + "/";
+// pdf.js renders saved PDFs inside the dashboard's own origin, so it is pinned
+// to a patched release (the 3.x line allowed script execution from a crafted
+// font, CVE-2024-4367) and both files are checked against their published
+// SHA-384 (jsDelivr serves the npm release byte for byte). The worker is fetched
+// with the same check and started from a local blob, so no unverified code runs.
+const PDFJS_VERSION = "6.4.299";
+const PDFJS_BASE = "https://cdn.jsdelivr.net/npm/pdfjs-dist@" + PDFJS_VERSION + "/legacy/build/";
+const PDFJS_INTEGRITY = {
+  lib: "sha384-oPqHr8MeYfJpkh4zgHbWYiuwabTzthRiOS5tSWsWGmCVWlwqIkS9coGro5aa48OF",
+  worker: "sha384-tINN5IYq7dFaoHBUBBc2yfxGwR38mZn9GhaX31UofKYNgAg/3y8A7IjUI3GuEg/8"
+};
 const COMPARE_PAGE_LIMIT = 400;
 let pdfjsPromise = null;
 let compareSerial = 0;
+let activeCompare = { docs: [], observer: null };
 
 function loadPdfJs() {
-  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
   if (!pdfjsPromise) {
-    pdfjsPromise = new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      script.src = PDFJS_BASE + "pdf.min.js";
-      script.crossOrigin = "anonymous";
-      script.onload = () => {
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_BASE + "pdf.worker.min.js";
-        resolve(window.pdfjsLib);
-      };
-      script.onerror = () => { pdfjsPromise = null; reject(new Error("The PDF renderer could not load")); };
-      document.head.append(script);
+    pdfjsPromise = (async () => {
+      const lib = await new Promise((resolve, reject) => {
+        if (window.pdfjsLib) { resolve(window.pdfjsLib); return; }
+        const script = document.createElement("script");
+        script.type = "module";
+        script.src = PDFJS_BASE + "pdf.min.mjs";
+        script.integrity = PDFJS_INTEGRITY.lib;
+        script.crossOrigin = "anonymous";
+        script.referrerPolicy = "no-referrer";
+        script.onload = () => window.pdfjsLib ? resolve(window.pdfjsLib) : reject(new Error("The PDF renderer did not initialise"));
+        script.onerror = () => reject(new Error("The PDF renderer could not load or failed its integrity check"));
+        document.head.append(script);
+      });
+      const response = await fetch(PDFJS_BASE + "pdf.worker.min.mjs", { integrity: PDFJS_INTEGRITY.worker, credentials: "omit", referrerPolicy: "no-referrer" });
+      if (!response.ok) throw new Error("The PDF renderer's worker could not load");
+      const workerUrl = URL.createObjectURL(new Blob([await response.text()], { type: "text/javascript" }));
+      lib.GlobalWorkerOptions.workerPort = new Worker(workerUrl, { type: "module", name: "pdfjs" });
+      return lib;
+    })().catch(error => {
+      pdfjsPromise = null;
+      throw error;
     });
   }
   return pdfjsPromise;
+}
+function openPdf(lib, bytes) {
+  // isEvalSupported is the documented CVE-2024-4367 mitigation; patched
+  // releases ignore it, and it keeps any future downgrade safe.
+  return lib.getDocument({ data: bytes, isEvalSupported: false, enableXfa: false }).promise;
+}
+// Each comparison owns its PDF documents and lazy-render observer; they are
+// released as soon as another comparison (or a refresh) replaces it.
+function disposeCompare() {
+  const previous = activeCompare;
+  activeCompare = { docs: [], observer: null };
+  if (previous.observer) previous.observer.disconnect();
+  previous.docs.forEach(doc => { try { doc.destroy(); } catch (_) {} });
 }
 function compareSources(evidence) {
   const before = (evidence && evidence.before) || {};
@@ -2856,7 +2994,7 @@ function compareSources(evidence) {
   return null;
 }
 async function fetchSnapshotBytes(path) {
-  const response = await fetch(snapshotURL(path), { cache: "no-store" });
+  const response = await fetchImmutable(path);
   if (!response.ok) throw new Error("Saved file request returned HTTP " + response.status);
   return new Uint8Array(await response.arrayBuffer());
 }
@@ -2929,6 +3067,7 @@ function compareSummary(root, removed, added, extra) {
 }
 async function renderCompare(target, evidence, event, stillCurrent) {
   const sources = compareSources(evidence);
+  disposeCompare();
   const serial = ++compareSerial;
   const alive = () => serial === compareSerial && stillCurrent() && target.isConnected;
   target.innerHTML = compareShell(sources.kind, event);
@@ -3016,9 +3155,7 @@ async function compareFillText(root, status, sources, alive) {
 }
 
 /* ----- HTML: the saved pages, with changed text marked inside each frame ----- */
-function normalizeForMatch(value) {
-  return String(value || "").normalize("NFKC").replace(/ /g, " ").replace(/\s+/g, " ").trim();
-}
+const normalizeForMatch = L.normalizeForMatch;
 function flattenDocumentText(doc) {
   // Visible text with a map from each normalized character back to its text node.
   const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, {
@@ -3078,15 +3215,25 @@ function markTextInDocument(doc, index, targets, cls, otherFlat) {
     // Word-level edit: a line that exists whole in the other version was only re-wrapped.
     if (otherFlat && line.length >= 8 && otherFlat.includes(line)) return;
     // Otherwise locate the line first, then mark only the changed words inside it.
+    // Each part carries its offset within the normalized line, so an edited word
+    // that also appears earlier in the line ("Tier 1 ... Tier 2") is marked where
+    // it changed, not at its first occurrence.
     const lineAt = line.length >= 8 ? (find(line, cursor) >= 0 ? find(line, cursor) : find(line, 0)) : -1;
+    let lineCursor = lineAt;
     target.parts.forEach(part => {
-      const needle = normalizeForMatch(part);
+      const needle = normalizeForMatch(part.text);
       if (!needle) return;
       let at = -1;
-      if (lineAt >= 0) at = find(needle, lineAt, lineAt + line.length);
-      else if (needle.length >= 12 && !(otherFlat && otherFlat.includes(needle))) at = find(needle, cursor) >= 0 ? find(needle, cursor) : find(needle, 0);
+      if (lineAt >= 0) {
+        const exact = lineAt + part.offset;
+        if (part.offset >= 0 && flat.substr(exact, needle.length) === needle) at = exact;
+        else at = find(needle, lineCursor, lineAt + line.length);
+      } else if (needle.length >= 12 && !(otherFlat && otherFlat.includes(needle))) {
+        at = find(needle, cursor) >= 0 ? find(needle, cursor) : find(needle, 0);
+      }
       if (at < 0) return;
       ranges.push([at, at + needle.length]);
+      if (lineAt >= 0) lineCursor = at + needle.length;
     });
     if (lineAt >= 0) cursor = lineAt + line.length;
   });
@@ -3121,7 +3268,7 @@ function htmlMarkTargets(rows, side) {
       targets.push({ whole: true, line, parts: String(line).replace(/^\s*(#+|[-*•]|\d+[.)])\s+/, "").split(/\s\|\s|^\||\|$/).map(s => s.trim()).filter(Boolean) });
     } else if (row.type === "edit") {
       const want = side === "before" ? "del" : "add";
-      const parts = row.segments.filter(seg => seg.type === want && seg.text.trim()).map(seg => seg.text.replace(/\|/g, " ").trim()).filter(Boolean);
+      const parts = L.changedPartOffsets(row.segments, want);
       if (parts.length) targets.push({ whole: false, line: String(line).replace(/\|/g, " "), parts });
     }
   });
@@ -3178,9 +3325,11 @@ async function compareFillHtml(root, before, after, status, sources, event, aliv
 }
 
 /* ----- PDF: rendered pages, with removed words boxed red and added words green ----- */
-async function pdfWords(doc, onProgress) {
+async function pdfWords(doc, limit, alive, onProgress) {
   const words = [];
-  for (let number = 1; number <= doc.numPages; number += 1) {
+  const last = Math.min(doc.numPages, limit);
+  for (let number = 1; number <= last; number += 1) {
+    if (!alive()) return words;
     const page = await doc.getPage(number);
     const viewport = page.getViewport({ scale: 1 });
     const content = await page.getTextContent();
@@ -3204,7 +3353,7 @@ async function pdfWords(doc, onProgress) {
         });
       }
     });
-    if (onProgress && number % 10 === 0) onProgress(number, doc.numPages);
+    if (onProgress && (number % 10 === 0 || number === last)) onProgress(number);
   }
   return words;
 }
@@ -3226,7 +3375,9 @@ function mergeWordBoxes(words, indexes) {
 async function compareFillPdf(root, before, after, status, sources, alive) {
   const [lib, bytesA, bytesB] = await Promise.all([loadPdfJs(), fetchSnapshotBytes(sources.before), fetchSnapshotBytes(sources.after)]);
   if (!alive()) return;
-  const [docA, docB] = await Promise.all([lib.getDocument({ data: bytesA }).promise, lib.getDocument({ data: bytesB }).promise]);
+  const [docA, docB] = await Promise.all([openPdf(lib, bytesA), openPdf(lib, bytesB)]);
+  activeCompare.docs.push(docA, docB);
+  if (!alive()) { disposeCompare(); return; }
   const total = Math.min(COMPARE_PAGE_LIMIT, Math.max(docA.numPages, docB.numPages));
   const stage = root.querySelector(".cmp-stage");
   const width = Math.max(320, stage.clientWidth);
@@ -3280,15 +3431,23 @@ async function compareFillPdf(root, before, after, status, sources, alive) {
       if (slot) { observer.unobserve(entry.target); renderSlot(slot); }
     });
   }, { root: root.closest(".detail-pane"), rootMargin: "900px 0px" });
+  activeCompare.observer = observer;
   slots.forEach(slot => observer.observe(slot.a));
 
   status.textContent = "Comparing the words of both versions…";
+  const pagesA = Math.min(docA.numPages, COMPARE_PAGE_LIMIT), pagesB = Math.min(docB.numPages, COMPARE_PAGE_LIMIT);
+  const read = { a: 0, b: 0 };
+  const progress = () => {
+    if (alive()) status.textContent = "Reading both versions… page " + (read.a + read.b) + " of " + (pagesA + pagesB);
+  };
   const [wordsA, wordsB] = await Promise.all([
-    pdfWords(docA, (n, all) => { if (alive()) status.textContent = "Reading the previous version… page " + n + " of " + all; }),
-    pdfWords(docB)
+    pdfWords(docA, COMPARE_PAGE_LIMIT, alive, n => { read.a = n; progress(); }),
+    pdfWords(docB, COMPARE_PAGE_LIMIT, alive, n => { read.b = n; progress(); })
   ]);
   if (!alive()) return;
-  const { removed, added } = L.changedWords(wordsA, wordsB, { maxD: 4000 });
+  // A bounded edit distance keeps a heavily rewritten document from stalling
+  // the page; beyond it a stretch is marked as replaced rather than diffed.
+  const { removed, added } = L.changedWords(wordsA, wordsB, { maxD: 1500 });
   const paint = (words, indexes, layer, cls) => {
     mergeWordBoxes(words, indexes).forEach(hit => {
       if (hit.page > total) return;
@@ -3427,17 +3586,7 @@ function askSentinelEscapedText(value) {
 }
 /* Small, safe Markdown renderer for model answers. All text is HTML-escaped first;
  * only a fixed set of formatting tags is produced, and links must be http(s). */
-function askSentinelInline(text) {
-  let out = askSentinelEscapedText(text);
-  const codes = [];
-  out = out.replace(/`([^`]+)`/g, (_, code) => { codes.push(code); return "\u0000" + (codes.length - 1) + "\u0000"; });
-  out = out.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, label, href) =>
-    '<a href="' + href + '" target="_blank" rel="noopener noreferrer">' + label + "</a>");
-  out = out.replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, (_, pre, href) =>
-    pre + '<a href="' + href + '" target="_blank" rel="noopener noreferrer">' + href.replace(/^https?:\/\//, "") + "</a>");
-  out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>");
-  return out.replace(/\u0000(\d+)\u0000/g, (_, i) => "<code>" + codes[Number(i)] + "</code>");
-}
+function askSentinelInline(text) { return L.inlineMarkdown(text); }
 function askSentinelMarkdown(source) {
   const lines = String(source || "").replace(/\r\n/g, "\n").split("\n");
   const html = [];
@@ -3511,7 +3660,7 @@ function askSentinelSourceLink(path) {
   const p = String(path || "");
   if (!p || p.startsWith("__")) return null;
   const a = document.createElement("a");
-  a.href = "https://github.com/GauravDarwesh/ChangeSentinel/blob/main/" + p.split("/").map(encodeURIComponent).join("/");
+  a.href = REPO + "/blob/main/" + p.split("/").map(encodeURIComponent).join("/");
   a.target = "_blank";
   a.rel = "noopener noreferrer";
   a.textContent = p;
@@ -3664,6 +3813,7 @@ $("askSentinelMessages").addEventListener("click", event => {
   if (prompt) askSentinelSendQuestion(prompt.dataset.askPrompt);
 });
 
+if ($("repoLink")) $("repoLink").href = REPO;
 loadData(true);
 refreshWorkflowRuns();
 window.setInterval(() => loadData(false), 120000);
