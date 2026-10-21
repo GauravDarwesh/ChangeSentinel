@@ -80,6 +80,21 @@ class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
                     self.assertRegex(action, r"@[0-9a-f]{40}$", f"{action} must be pinned to a commit SHA")
 
 
+    def test_bulk_registration_workflow_installs_small_dependency_and_queues_each_source(self):
+        workflow = (WORKFLOWS / "register-monitor.yml").read_text(encoding="utf-8")
+        for token in (
+            "beautifulsoup4==4.14.3",
+            "Preflight registration imports",
+            "source_ids",
+            "for SOURCE_ID in",
+            "Bulk registration processed $COUNT unique links",
+            "gh workflow run regulatory-monitor.yml",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, workflow)
+        self.assertNotIn("pip install --disable-pip-version-check -r requirements.txt", workflow)
+
+
 @unittest.skipIf(os.name == "nt", "bash helper")
 class TestCommitStateHelper(unittest.TestCase):
     def git(self, cwd, *args):
