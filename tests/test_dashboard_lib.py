@@ -293,3 +293,39 @@ class TestCompareDiff(unittest.TestCase):
           console.log(JSON.stringify(L.changedWords(w("rate of 8.500 percent"), w("rate of 8.750 percent"))));
         """)
         self.assertEqual(out, {"removed": [2], "added": [2]})
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestScoutHelpers(unittest.TestCase):
+    CANDIDATES = [
+        {"key": "a:1", "origin": "new", "url": "https://r.org/a", "first_seen": "2026-10-19T04:20:00Z", "assessment": {"outcome": "relevant", "rank": 36}},
+        {"key": "a:2", "origin": "new", "url": "https://r.org/b", "first_seen": "2026-10-19T04:20:00Z", "assessment": {"outcome": "uncertain", "rank": 21}},
+        {"key": "a:3", "origin": "new", "url": "https://r.org/c", "first_seen": "2026-10-12T04:20:00Z", "assessment": {"outcome": "irrelevant", "rank": 12}},
+        {"key": "a:4", "origin": "baseline", "url": "https://r.org/d", "first_seen": "2026-10-12T04:20:00Z", "assessment": {"outcome": "relevant"}},
+        {"key": "a:5", "origin": "baseline", "url": "https://r.org/e", "first_seen": "2026-10-12T04:20:00Z", "assessment": {"outcome": "uncertain"}},
+        {"key": "a:6", "origin": "new", "url": "https://r.org/f", "first_seen": "2026-10-19T04:20:00Z", "assessment": {"outcome": "relevant"},
+         "decision": {"decision": "dismissed", "decided_at": "2026-10-20T10:00:00Z"}},
+        {"key": "a:7", "origin": "new", "url": "http://r.org/g/", "first_seen": "2026-10-19T04:20:00Z", "assessment": {"outcome": "relevant"}},
+    ]
+
+    def test_findings_land_in_one_list_each(self):
+        out = run_js("const b = L.scoutBuckets(" + json.dumps(self.CANDIDATES) + ", new Set([L.urlKey('https://r.org/g')]));" +
+                     "console.log(JSON.stringify(Object.fromEntries(Object.entries(b).map(([k, v]) => [k, v.map(x => x.key)]))));")
+        self.assertEqual(out, {"REVIEW": ["a:1", "a:2"], "BACKLOG": ["a:4"], "EXCLUDED": ["a:3"], "DONE": ["a:6", "a:7"]})
+
+    def test_sentences_never_overstate_the_evidence(self):
+        out = run_js("""console.log(JSON.stringify([
+          L.scoutSentence({outcome: "relevant", publication_type: {id: "guidance"}, topics: ["Liquidity"]}),
+          L.scoutSentence({outcome: "uncertain", confidence: "weak"}),
+          L.scoutSentence({outcome: "irrelevant", reasons: [{text: "Address looks like a site utility page"}]}),
+          L.scoutSentence({outcome: "uncertain", confidence: "conflicting", publication_type: {id: "research"}})
+        ]));""")
+        self.assertEqual(out[0], "Looks like guidance or a guideline about liquidity.")
+        self.assertIn("couldn't tell", out[1])
+        self.assertIn("utility page", out[2])
+        self.assertIn("both ways", out[3])
+
+    def test_next_sweep_is_the_coming_monday_0417_utc(self):
+        out = run_js("console.log(JSON.stringify([L.nextScoutSweep(new Date('2026-10-21T05:00:00Z')).toISOString(), L.nextScoutSweep(new Date('2026-10-26T04:00:00Z')).toISOString()]));")
+        self.assertEqual(out, ["2026-10-26T04:17:00.000Z", "2026-10-26T04:17:00.000Z"])
+

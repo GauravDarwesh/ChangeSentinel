@@ -19,6 +19,15 @@ The active production scope consists of two bounded Federal Reserve sources: the
 - **Monitor Freshness Check** runs every three hours and alerts (ntfy) when no scan has been saved for 14 hours.
 - **RegMonitor CI** also runs the golden extraction corpus check and full persisted-state validation.
 
+## Scout
+
+- **Scout** runs every Monday at 04:17 UTC, or on manual dispatch with `regulator` set to `all`, one id or a comma-separated list. It needs no secrets. A sweep that is not `COMPLETE` raises a workflow warning; the dashboard's Coverage panel shows each channel's note.
+- **The first sweep is a baseline.** It records what each regulator already publishes and announces nothing; new pages appear from the following week. The *Backlog* filter lists already-published pages that look relevant.
+- **Adding a regulator or channel from the dashboard:** Scout → Sources → *Add a source* (or *Add channel* / *Edit details* on a regulator). The prefilled issue is applied by **Scout Source Request** only when the owner opened it; the merged `config/scout.json` must validate, new hosts must resolve to public addresses, and a channel address already used elsewhere is refused. The regulator is then swept once. Removing a channel or changing budgets remains a reviewed edit of `config/scout.json`.
+- **Adding a regulator by hand:** add a profile to `config/scout.json` (hosts, channels, optional path hints, keywords, known gaps), run `python -m regmon.scout sweep --regulator <id> --data-dir /tmp/scout` locally or dispatch the workflow for that id, and check the Coverage panel. Paginated listings must declare `newest_first`; a listing whose content selector stops matching fails loudly rather than reading the whole page.
+- **Reviewing:** "Monitor this page" uses the normal owner-only registration flow. "Not relevant" and "Restore" open an issue processed by **Scout Review Decision**, which records the decision for that address only, rebuilds `data/scout/review.json`, closes the issue and republishes Pages.
+- Sweeps and review decisions share the `scout` concurrency queue; Scout and monitor state commits are scoped to their own paths and never block each other.
+
 ## Alert reliability
 
 Every run queues its notification candidates in the durable outbox and commits the monitoring state **before** anything is sent; delivery happens only after that commit succeeds, and the delivery ledger is committed afterwards. If the state commit cannot be published, nothing has been sent and the next run re-detects the same events. The commit helper (`scripts/commit_state.sh`) rebases the data-only commit when `main` advanced with code-only commits, and refuses when another run committed `data/` in the meantime.
