@@ -70,6 +70,12 @@
           "link_prefixes": [
             "https://www.federalreserve.gov/apps/reportingforms/"
           ]
+        },
+        {
+          "id": "fed-regulatory-reform-rss",
+          "type": "feed",
+          "label": "Regulatory Reform RSS",
+          "url": "https://www.federalreserve.gov/feeds/regreform.xml"
         }
       ],
       "path_hints": [
