@@ -498,18 +498,46 @@ Deno.serve(async (req: Request) => {
         });
         return respond(req, {
           error: 'I could not verify the generated answer against the retrieved source citations. Please retry with a more specific question.',
+          error_code: 'citation_validation_failed',
+          citation_validation: {
+            reason: citationValidation.reason,
+            citation_count: citationValidation.citation_count,
+            invalid_citation_count: citationValidation.invalid_citation_count,
+            uncited_line_count: citationValidation.uncited_line_count
+          },
           remaining: quota.remaining,
           resets_at: nextUtcReset(),
           model: MODEL,
           indexed_commit: index.sha,
           context_sources: evidence.sources
-        }, 502);
+        }, 422);
       }
       return respond(req, { answer, remaining: quota.remaining, resets_at: nextUtcReset(), model: MODEL, indexed_commit: index.sha, context_sources: evidence.sources });
     } catch (error) {
+      // Keep provider diagnostics useful without logging raw provider bodies or answer/question text.
       const message = String((error as Error)?.message || 'Groq request failed.');
-      console.error(JSON.stringify({ event: 'ask_sentinel_error', phase, elapsed_ms: Date.now() - phaseStartedAt, error: message.slice(0, 260) }));
-      return respond(req, { error: 'Ask Sentinel could not complete the AI request. Please retry.', remaining: quota.remaining, resets_at: nextUtcReset() }, 502);
+      const statusMatch = message.match(/Groq could not answer this request \((\d{3})\)/);
+      const providerStatus = statusMatch ? Number(statusMatch[1]) : null;
+      const errorCode = providerStatus === 429
+        ? 'provider_rate_limited'
+        : providerStatus !== null && providerStatus >= 500
+          ? 'provider_unavailable'
+          : providerStatus !== null
+            ? 'provider_request_failed'
+            : /timeout|timed out|abort/i.test(message)
+              ? 'provider_timeout'
+              : 'provider_unavailable';
+      logStage('provider_failed', {
+        error_code: errorCode,
+        provider_status: providerStatus,
+        source_count: evidence.sources.length
+      });
+      return respond(req, {
+        error: 'Ask Sentinel could not complete the AI request. Please retry.',
+        error_code: errorCode,
+        remaining: quota.remaining,
+        resets_at: nextUtcReset()
+      }, 503);
     }
   } catch (error) {
     const message = String((error as Error)?.message || 'Ask Sentinel request failed.');
