@@ -1,0 +1,139 @@
+{
+  "schema_version": 2,
+  "run_id": "20261021T023631Z-9daf4746",
+  "generated_at": "2026-10-21T02:36:32.610564+00:00",
+  "sources": [
+    {
+      "id": "fed-reporting-forms-pilot",
+      "name": "Federal Reserve \u2014 Reporting Forms Pilot (Exact URL Allowlist)",
+      "regulator": "Board of Governors of the Federal Reserve System",
+      "seeds": [
+        "https://www.federalreserve.gov/apps/reportingforms/review",
+        "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+      ],
+      "allowed_prefixes": [
+        "https://www.federalreserve.gov/apps/reportingforms/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "fed-reporting-forms-detail-pilot",
+      "name": "Federal Reserve \u2014 Recently Updated Forms Detail Pilot (Exact URL Allowlist)",
+      "regulator": "Board of Governors of the Federal Reserve System",
+      "seeds": [
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C",
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028bs",
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D",
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M",
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q"
+      ],
+      "allowed_prefixes": [
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/"
+      ],
+      "initial_baseline": false
+    }
+  ],
+  "source_runs": {
+    "fed-reporting-forms-pilot": {
+      "run_id": "20261021T023631Z-9daf4746",
+      "generated_at": "2026-10-21T02:36:31.991364+00:00",
+      "trigger": "manual"
+    },
+    "fed-reporting-forms-detail-pilot": {
+      "run_id": "20261021T023631Z-9daf4746",
+      "generated_at": "2026-10-21T02:36:32.610564+00:00",
+      "trigger": "manual"
+    }
+  },
+  "counts": {
+    "ai_backlog_pending": 0,
+    "ai_deferred": 0,
+    "ai_error": 0,
+    "ai_invalid": 0,
+    "ai_ok": 0,
+    "ai_skipped": 0,
+    "baseline_migration": 0,
+    "changed": 0,
+    "crawl_paused": 0,
+    "discovered": 16,
+    "extraction_drift": 0,
+    "extraction_error": 0,
+    "fetch_error": 0,
+    "forced_full_fetch": 0,
+    "new": 0,
+    "not_modified": 0,
+    "relevance_candidates": 0,
+    "removal_held": 0,
+    "removal_pending_confirmation": 0,
+    "removed": 0,
+    "source_changed": 0,
+    "unchanged": 16
+  },
+  "discovery": [
+    {
+      "source_id": "fed-reporting-forms-pilot",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 2,
+      "html_processed": 2,
+      "successful_pages": 2,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 2,
+      "config_fingerprint": "654eded76ded5c892c0ef7b6170548a39b8184d15524ecb5beda76e366370265",
+      "inventory": "data/discovery/fed-reporting-forms-pilot-inventory-*.txt",
+      "failure_ledger": "data/discovery/fed-reporting-forms-pilot-failures.jsonl"
+    },
+    {
+      "source_id": "fed-reporting-forms-detail-pilot",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 14,
+      "html_processed": 5,
+      "successful_pages": 5,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 2,
+      "config_fingerprint": "f81e97345dd1ff8946cf711f9b5b2c157d89f26bac24feca2686c4a7bbaa7bb4",
+      "inventory": "data/discovery/fed-reporting-forms-detail-pilot-inventory-*.txt",
+      "failure_ledger": "data/discovery/fed-reporting-forms-detail-pilot-failures.jsonl"
+    }
+  ],
+  "removal_guards": [],
+  "baseline_update_allowed": true,
+  "change_detector": {
+    "classification_hash": "normalized_hash",
+    "html_hash": "SHA-256 of the saved HTML snapshot (reused when only volatile tokens changed; raw_hash is always the fetched response)",
+    "html_comparison_hash": "volatile Cloudflare challenge IDs/timestamps stabilized before markup-only classification",
+    "http_validators": "ETag/Last-Modified are optimization hints only"
+  },
+  "relevance_gate": {
+    "mode": "high_recall",
+    "ai_final_semantic_decision": true
+  },
+  "ai_contract": {
+    "required_keys": [
+      "relevant",
+      "topic",
+      "change_type",
+      "summary",
+      "impact",
+      "effective_date",
+      "affected_scope",
+      "actions",
+      "reason"
+    ],
+    "strict": true
+  },
+  "new_urls": [],
+  "changed_urls": [],
+  "source_changed_urls": [],
+  "removed_urls": [],
+  "baseline_migrations": [],
+  "events": [],
+  "ai_results": []
+}
