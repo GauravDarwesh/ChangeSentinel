@@ -527,7 +527,7 @@ class TestScoutView(unittest.TestCase):
         for token in (
             'scoutLatest: new URL("./data/scout/latest.json", document.baseURI).href',
             'scoutReview: new URL("./data/scout/review.json", document.baseURI).href',
-            'const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig"]);',
+            'const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig",',
             "fetchDataAsset(key, !OPTIONAL_ASSETS.has(key))",
             'scout: "scout"',
             "function renderScoutCoverage(pane)",
@@ -554,8 +554,74 @@ class TestScoutView(unittest.TestCase):
                 self.assertIn(token, html)
         source = read("dashboard.js")
         for token in ("data-scout-add-source", "data-scout-add-channel", "data-scout-edit", "L.scoutSourceRequest({",
-                      'scoutConfig: new URL("./config/scout.json", document.baseURI).href', '"scoutConfig"]);'):
+                      'scoutConfig: new URL("./config/scout.json", document.baseURI).href', '"scoutConfig", "calendar"'):
             with self.subTest(token=token):
                 self.assertIn(token, source)
         self.assertIn("cp config/scout.json site/config/scout.json", read(".github/workflows/pages.yml"))
 
+
+
+class TestReviewLayerContract(unittest.TestCase):
+    """Reporting items, dates, review decisions, exports and integrity checks."""
+
+    def test_new_files_are_optional_and_published(self):
+        js = read("dashboard.js")
+        for key, path in (("calendar", "data/calendar.json"), ("lineage", "config/lineage.json"), ("reviews", "data/reviews/ledger.json")):
+            with self.subTest(key=key):
+                self.assertIn(key + ': "' + path + '"', js)
+                self.assertIn('new URL("./' + path + '", document.baseURI)', js)
+                self.assertIn('case "' + key + '":', js)
+        self.assertIn('const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews"]);', js)
+        self.assertRegex(js, r'const SMALL_ASSETS = \[[^\]]*"calendar", "lineage", "reviews"\]')
+        pages = read(".github/workflows/pages.yml")
+        for path in ("config/lineage.json", "data/calendar.json", "data/calendar.ics", "data/reviews/ledger.json"):
+            with self.subTest(path=path):
+                self.assertIn(path, pages)
+
+    def test_review_dialog_offers_exactly_the_decisions_the_workflow_accepts(self):
+        from regmon import reviews
+        html = read("index.html")
+        offered = set(re.findall(r'name="reviewDecision" value="([a-z_]+)"', html))
+        self.assertEqual(offered, set(reviews.LABELS))
+        lib = read("dashboard-lib.js")
+        self.assertIn('const CHANGE_REVIEW_MARKER = "' + reviews.MARKER + '";', lib)
+        for key, label in reviews.LABELS.items():
+            self.assertIn(key + ': "' + label + '"', lib)
+        self.assertIn("html.cs-locked #reviewDialog", html)
+        for token in ('id="reviewDialog"', 'id="reviewForm"', 'id="reviewRationale"', 'id="reviewOwner"', 'id="reviewTicket"', 'id="reviewStatus"'):
+            self.assertIn(token, html)
+
+    def test_actions_are_delegated_and_the_dashboard_never_writes(self):
+        js = read("dashboard.js")
+        for attribute in ("data-review-change", "data-evidence-pack", "data-export-changes", "data-copy-calendar", "data-verify-fingerprints"):
+            with self.subTest(attribute=attribute):
+                self.assertIn("[" + attribute + "]", js)
+        self.assertIn('REPO + "/issues/new?"', js)
+        self.assertIn("L.changeReviewRequest(", js)
+        self.assertNotIn("api.github.com/repos/\" + REPOSITORY.owner + \"/\" + REPOSITORY.repo + \"/issues\"", js)
+
+    def test_change_detail_shows_review_dates_and_items(self):
+        js = read("dashboard.js")
+        self.assertIn("renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id=\"change-items\"></div>' + evidenceSheet(entry, boxId)", js)
+        self.assertIn("fillReportingItems(entry, \"change-items\", stillCurrent);", js)
+        self.assertIn("L.lineageFor(", js)
+        # A new decision or date redraws the open change.
+        self.assertIn("reviewLog(entry.event_id),\n        L.datesForChange(state.calendar, entry.event_id)", js)
+        self.assertIn('data-change-filter="UNDECIDED"', read("index.html"))
+
+    def test_exports_are_spreadsheet_safe_and_integrity_uses_sha256(self):
+        js = read("dashboard.js")
+        self.assertIn("L.toCsv(rows)", js)
+        self.assertIn('crypto.subtle.digest("SHA-256"', js)
+        self.assertIn("fetchImmutable(file.path)", js)
+        self.assertIn('format: "changesentinel-evidence-pack/1"', js)
+        # Calendar days are built in the viewer's calendar, never parsed as UTC midnight.
+        self.assertNotRegex(js, r"new Date\((?:entry|date)\.date\)")
+
+    def test_overview_lists_dates_ahead_with_a_feed(self):
+        html = read("index.html")
+        self.assertIn('id="upcomingDates"', html)
+        self.assertIn("data-copy-calendar", html)
+        js = read("dashboard.js")
+        self.assertIn('const CALENDAR_FEED = new URL("./data/calendar.ics", document.baseURI).href;', js)
+        self.assertIn("renderUpcomingDates();", js)

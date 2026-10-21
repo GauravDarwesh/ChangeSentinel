@@ -1,0 +1,88 @@
+name: Change Review Decision
+
+# The dashboard's "Record review" opens a prefilled issue. Only issues the
+# repository owner opens are processed. The decision (material, not material
+# with a rationale, acknowledged, or action required) is recorded per change in
+# data/reviews/ledger.json, with an append-only log of every decision.
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+jobs:
+  review:
+    if: ${{ github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, '[ChangeSentinel] Change review') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    concurrency:
+      group: change-review
+      cancel-in-progress: false
+      queue: max
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+
+      # Recording a decision uses only the Python standard library. data/reviews is
+      # outside the monitor's state path, so a scan running meanwhile is unaffected.
+      - name: Record decision and commit
+        id: record
+        run: |
+          set -euo pipefail
+          git config user.name "changesentinel-review"
+          git config user.email "actions@users.noreply.github.com"
+          success=false
+          for attempt in 1 2 3; do
+            git fetch origin main --quiet
+            git checkout -B main origin/main
+            python -m regmon.reviews --event "$GITHUB_EVENT_PATH" --data-dir data --output "$RUNNER_TEMP/review.json"
+            if git diff --quiet -- data/reviews; then
+              success=true
+              break
+            fi
+            git add -A -- data/reviews
+            git commit -m "Record change review decision (issue #${{ github.event.issue.number }})"
+            if git push origin HEAD:main; then
+              success=true
+              break
+            fi
+            echo "Push attempt $attempt did not publish; refreshing main and retrying."
+            sleep 2
+          done
+          if [ "$success" != true ]; then
+            echo "Could not publish the review decision after three attempts."
+            exit 1
+          fi
+          echo "summary=$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/review.json")); print(d["label"] + " for " + str(d["count"]) + " change(s)")')" >> "$GITHUB_OUTPUT"
+
+      - name: Publish the ledger to Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main
+
+      - name: Confirm on the request
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SUMMARY: ${{ steps.record.outputs.summary }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --repo "$GITHUB_REPOSITORY" --body "Recorded: $SUMMARY. The dashboard shows it after the next Pages deploy (about a minute)."
+          gh issue close "${{ github.event.issue.number }}" --repo "$GITHUB_REPOSITORY"
+
+      - name: Explain a rejected request
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --repo "$GITHUB_REPOSITORY" --body "The review could not be recorded. Open the workflow run for the reason: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

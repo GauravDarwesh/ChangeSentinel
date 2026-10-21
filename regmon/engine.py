@@ -32,6 +32,7 @@ from regmon.docling_extractor import configure_timeout_registry
 from regmon.fetch import fetch
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
+from regmon import deadlines, item_codes
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -294,6 +295,8 @@ def record_change(item: dict, event: dict) -> None:
         "timestamp": event["timestamp"],
         "evidence_location": event.get("evidence_location"),
     }
+    if event.get("item_codes"):
+        entry["item_codes"] = event["item_codes"]
     history = [old for old in (item.get("change_history") or []) if old.get("event_id") != entry["event_id"]]
     item["change_history"] = [entry, *history][:CHANGE_HISTORY_LIMIT]
     if event["event_type"] in CONTENT_CHANGE_EVENTS:
@@ -740,14 +743,20 @@ def process_source(
                         after_hash = item.get("normalized_hash")
                     event_id = build_event_id(event_type, uid, before_hash, after_hash)
                     evidence = None
+                    codes = None
                     if event_type in {"NEW_URL","CHANGED_URL","HTML_SOURCE_CHANGED"}:
+                        before_text = old_text if old_text is not None else read_snapshot(old)
+                        # Which reporting items the change added, retired or redefined
+                        # (deterministic, from the full texts rather than the capped diff).
+                        codes = item_codes.diff(before_text, text) if event_type == "CHANGED_URL" else None
                         evidence = (
                             _write_evidence(
                                 ROOT, event_type, event_id, url, now, old, item,
-                                old_text if old_text is not None else read_snapshot(old),
+                                before_text,
                                 text,
                                 before_html=read_html_snapshot(old),
                                 after_html=html_body.decode("utf-8", "replace") if html_body is not None else None,
+                                item_codes=codes,
                             )
                             if not dry_run
                             else None
@@ -755,6 +764,9 @@ def process_source(
                         item["evidence_location"] = evidence
                         current[uid] = item
                     event = {"event_id":event_id,"event_type":event_type,"url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"evidence":{"previous":old,"current":item}}
+                    codes_summary = item_codes.summary(codes)
+                    if codes_summary:
+                        event["item_codes"] = codes_summary
                     if item.get("migration_reason"):
                         event["migration_reason"] = item["migration_reason"]
                     if event_type in {"NEW_URL", "CHANGED_URL", "HTML_SOURCE_CHANGED"}:
@@ -1296,6 +1308,12 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
         c=report["counts"]; src=report["source"]
         md += [f"### {src['name']}","",f"- Regulator: {src['regulator']}",f"- Report run: {report.get('run_id')} ({report.get('generated_at')})",f"- Discovered: {c.get('discovered',0)}",f"- Changed content: {c.get('changed',0)}",f"- HTML source-only changes: {c.get('source_changed',0)}",f"- New: {c.get('new',0)}",f"- Removed: {c.get('removed',0)}",f"- Fetch errors: {c.get('fetch_error',0)}", ""]
     atomic_write_text(DATA / "report.md", "\n".join(md))
+    # Dates stated in detected changes, as data/calendar.json and a subscribable
+    # .ics feed. Rebuilt from the committed records; never allowed to fail a scan.
+    try:
+        deadlines.write(DATA, DEFAULT_CONFIG_PATH)
+    except Exception as exc:
+        print(f"Regulatory calendar not rebuilt: {type(exc).__name__}: {exc}")
     return {"dry_run":False,"sources":[r["report"]["source"]["id"] for r in source_results],"run_id":run_id}
 
 def run(source_id: str="all", dry_run: bool=False) -> dict:

@@ -139,6 +139,7 @@ def write_evidence(
     before_html: str | None = None,
     after_html: str | None = None,
     max_diff_lines: int = MAX_DIFF_LINES,
+    item_codes: dict | None = None,
 ) -> str:
     path = root / "data" / "evidence" / f"{event_id}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -181,5 +182,7 @@ def write_evidence(
     }
     if error:
         payload["error"] = error
+    if item_codes:
+        payload["item_codes"] = item_codes
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     return str(path.relative_to(root))

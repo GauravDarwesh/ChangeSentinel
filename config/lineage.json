@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "about": "Map reporting-item codes (for example BHCK2170) or whole series (BHCK) to the tables, models, reports and checks that consume them. A change to a mapped item then names what it affects. Each mapping: {\"codes\": [...]} and/or {\"series\": [...]}, \"assets\": [...], optional \"owner\" and \"note\". See regmon/lineage.py.",
+  "mappings": []
+}

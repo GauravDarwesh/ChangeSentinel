@@ -58,7 +58,7 @@ class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
         self.assertIn("refusing to rebase a generated state snapshot", script.lower())
         self.assertIn('git diff --name-only "$base_sha" origin/main -- "${pathspec[@]}"', script)
         # The monitor's state excludes Scout's directory, so the two never block each other.
-        self.assertIn("pathspec=(data ':(exclude)data/scout')", script)
+        self.assertIn("pathspec=(data ':(exclude)data/scout' ':(exclude)data/reviews')", script)
 
     def test_failures_are_alerted_and_liveness_is_pinged(self):
         workflow = monitor_workflow()
