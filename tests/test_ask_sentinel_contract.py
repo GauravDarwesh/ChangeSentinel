@@ -191,5 +191,17 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn("if (!/\\[Source:", backend)
 
 
+    def test_grounding_errors_use_http_errors_the_existing_frontend_displays(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        js = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        self.assertIn("No answer was generated from another run.'", backend)
+        self.assertIn("I cannot verify that evidence file in the indexed committed records.' }, 404)", backend)
+        self.assertIn("supporting indexed evidence for this question.", backend)
+        self.assertIn("}, 422);", backend)
+        self.assertIn("could not verify the generated answer against the retrieved source citations.", backend)
+        self.assertIn("if (!response.ok)", js)
+        self.assertIn("typeof payload.error === \"string\" ? payload.error", js)
+
+
 if __name__ == "__main__":
     unittest.main()
