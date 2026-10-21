@@ -61,5 +61,18 @@ class TestAskSentinelLiveEvalClassification(unittest.TestCase):
         self.assertNotIn('"answer_excerpt"', evaluator)
 
 
+class TestAskSentinelLiveEvalExit(unittest.TestCase):
+    def test_a_grounding_failure_fails_the_run(self):
+        with self.assertRaises(SystemExit):
+            live_eval.exit_status(passed=5, failed=1, inconclusive=0)
+
+    def test_one_provider_outage_among_grounded_answers_only_warns(self):
+        self.assertEqual(live_eval.exit_status(passed=5, failed=0, inconclusive=1), 0)
+
+    def test_a_run_that_evaluated_nothing_fails(self):
+        with self.assertRaises(SystemExit):
+            live_eval.exit_status(passed=0, failed=0, inconclusive=6)
+
+
 if __name__ == "__main__":
     unittest.main()

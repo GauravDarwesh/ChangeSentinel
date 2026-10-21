@@ -42,6 +42,23 @@ jobs:
         run: |
           node -e "const fs=require('fs'); for (const f of ['dashboard-lib.js','dashboard.js']) { const s=fs.readFileSync(f,'utf8'); new Function(s); console.log(f + ' syntax OK'); } const h=fs.readFileSync('index.html','utf8'); for (const ref of ['src=\"dashboard-lib.js','src=\"dashboard.js']) { if (!h.includes(ref)) throw new Error('index.html is missing ' + ref); }"
 
+  # The Ask Sentinel Edge Function, type-checked and run against in-memory fakes
+  # of Supabase and Groq: quotas, network and service limits, refunds and the
+  # wording of errors, without touching the deployed function or its budget.
+  edge-function:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - name: Install Deno
+        run: npm install --no-save --no-package-lock deno@2.9.6
+      - name: Type-check and test the Edge Function
+        run: |
+          npx deno check supabase/functions/ask-sentinel/index.ts
+          npx deno test --allow-env supabase/functions/ask-sentinel/index_test.ts
+
   # A real browser run of the dashboard against this commit's data: every pinned
   # third-party script must load under its integrity hash, pdf.js must render a
   # saved PDF, each view must draw without a script error, and the phone layout
