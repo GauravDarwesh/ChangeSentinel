@@ -92,51 +92,113 @@ class TestScanSchedule(unittest.TestCase):
         out = run_js('console.log(JSON.stringify(L.nextScheduledScan(new Date("2026-10-20T06:00:00Z")).toISOString()));')
         self.assertEqual(out, "2026-10-20T12:00:00.000Z")
 
-    def test_scan_slots_end_with_the_slot_in_progress(self):
-        out = run_js('const s = L.scanSlots(new Date("2026-10-20T07:30:00Z"), 4); console.log(JSON.stringify(s.map(x => [new Date(x.start).toISOString(), x.current])));')
-        self.assertEqual(out, [
-            ["2026-10-19T12:00:00.000Z", False],
-            ["2026-10-19T18:00:00.000Z", False],
-            ["2026-10-20T00:00:00.000Z", False],
-            ["2026-10-20T06:00:00.000Z", True],
-        ])
-
     def test_durations_are_written_for_people(self):
         out = run_js("console.log(JSON.stringify([L.formatDuration(45), L.formatDuration(120), L.formatDuration(226)]));")
         self.assertEqual(out, ["45 min", "2 h", "3 h 46 min"])
 
 
 @unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestScanColumns(unittest.TestCase):
+    HISTORY = [
+        {"run_id": "a", "generated_at": "2026-10-20T04:32:57Z", "source_id": "s1"},
+        {"run_id": "a", "generated_at": "2026-10-20T04:33:13Z", "source_id": "s2"},
+        {"run_id": "m", "generated_at": "2026-10-20T14:50:52Z", "source_id": "s1", "trigger": "manual"},
+        {"run_id": "b", "generated_at": "2026-10-20T21:31:03Z", "source_id": "s1", "trigger": "scheduled"},
+        {"run_id": "b", "generated_at": "2026-10-20T21:31:02Z", "source_id": "s2", "trigger": "scheduled"},
+    ]
+
+    def columns(self, history=None, runs=None, limit=0):
+        return run_js("console.log(JSON.stringify(L.runColumns(" + json.dumps(history or self.HISTORY) + ", {workflowRuns: " +
+                      json.dumps(runs or []) + ", limit: " + str(limit) + "})));")
+
+    def test_every_saved_scan_is_one_column_including_manual_runs(self):
+        cols = self.columns()
+        self.assertEqual([c["id"] for c in cols], ["a", "m", "b"])
+        self.assertEqual([c["trigger"] for c in cols], ["unknown", "manual", "scheduled"])
+        self.assertEqual(sorted(cols[0]["sources"]), ["s1", "s2"])
+        self.assertEqual(sorted(cols[1]["sources"]), ["s1"])
+        # Each column owns the events saved since the previous scan.
+        self.assertEqual(cols[2]["prevAt"], cols[1]["at"])
+
+    def test_older_history_is_labelled_from_the_actions_api(self):
+        runs = [{"id": 7, "event": "workflow_dispatch", "status": "completed", "conclusion": "success",
+                 "created_at": "2026-10-20T04:31:27Z", "run_started_at": "2026-10-20T04:31:30Z", "updated_at": "2026-10-20T04:35:00Z",
+                 "actor": "GauravDarwesh"}]
+        cols = self.columns(runs=runs)
+        self.assertEqual((cols[0]["trigger"], cols[0]["workflowRunId"]), ("manual", "7"))
+
+    def test_continuation_dispatches_are_not_counted_as_manual(self):
+        runs = [{"id": 8, "event": "workflow_dispatch", "actor": "github-actions[bot]", "created_at": "2026-10-20T04:31:27Z",
+                 "updated_at": "2026-10-20T04:35:00Z", "status": "completed"}]
+        self.assertEqual(self.columns(runs=runs)[0]["trigger"], "continuation")
+
+    def test_the_limit_keeps_the_newest_columns(self):
+        self.assertEqual([c["id"] for c in self.columns(limit=2)], ["m", "b"])
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
 class TestChangeFieldCells(unittest.TestCase):
-    SLOT = '{start: Date.parse("2026-10-20T00:00:00Z"), end: Date.parse("2026-10-20T06:00:00Z")}'
+    COLUMN = {"id": "b", "at": 1792531863000, "prevAt": 1792507852000, "sources": {"s1": 1792531863000}}  # 2026-10-20 21:31:03Z, prev 14:50:52Z
 
     def state(self, page: dict) -> str:
-        return run_js("console.log(JSON.stringify(L.slotState(" + self.SLOT + ", " + json.dumps(page) + ")));")
+        page = dict({"sourceId": "s1"}, **page)
+        return run_js("console.log(JSON.stringify(L.columnCellState(" + json.dumps(self.COLUMN) + ", " + json.dumps(page) + ")));")
 
     def test_a_scan_that_found_a_change_lights_up(self):
-        page = {"scans": ["2026-10-20T04:33:00Z"], "events": [{"event_type": "CHANGED_URL", "timestamp": "2026-10-20T04:33:00Z"}]}
-        self.assertEqual(self.state(page), "on")
+        self.assertEqual(self.state({"events": [{"event_type": "CHANGED_URL", "timestamp": "2026-10-20T21:31:03Z"}]}), "on")
 
     def test_problems_outrank_changes(self):
-        page = {"events": [{"event_type": "CHANGED_URL", "timestamp": "2026-10-20T01:00:00Z"},
-                           {"event_type": "FETCH_ERROR", "timestamp": "2026-10-20T02:00:00Z"}]}
+        page = {"events": [{"event_type": "CHANGED_URL", "timestamp": "2026-10-20T21:31:03Z"},
+                           {"event_type": "FETCH_ERROR", "timestamp": "2026-10-20T21:31:03Z"}]}
         self.assertEqual(self.state(page), "bad")
 
-    def test_a_current_error_marks_the_slot_of_the_last_check(self):
-        self.assertEqual(self.state({"problemAt": "2026-10-20T04:33:00Z", "scans": ["2026-10-20T04:33:00Z"]}), "bad")
+    def test_a_current_error_marks_the_scan_of_the_last_check(self):
+        self.assertEqual(self.state({"problemAt": "2026-10-20T21:31:03Z"}), "bad")
 
     def test_a_new_page_has_its_own_state(self):
-        self.assertEqual(self.state({"events": [{"event_type": "NEW_URL", "timestamp": "2026-10-20T05:00:00Z"}]}), "new")
+        self.assertEqual(self.state({"events": [{"event_type": "NEW_URL", "timestamp": "2026-10-20T21:31:03Z"}]}), "new")
 
     def test_a_scan_with_no_change_is_dim(self):
-        self.assertEqual(self.state({"scans": ["2026-10-20T04:33:00Z"]}), "dim")
+        self.assertEqual(self.state({}), "dim")
 
-    def test_no_scan_and_before_monitoring_are_unlit(self):
-        self.assertEqual(self.state({"scans": ["2026-10-19T22:00:00Z"]}), "none")
-        self.assertEqual(self.state({"firstSeen": "2026-10-21T00:00:00Z", "scans": ["2026-10-20T04:33:00Z"]}), "none")
+    def test_an_earlier_scans_event_belongs_to_that_scan(self):
+        self.assertEqual(self.state({"events": [{"event_type": "CHANGED_URL", "timestamp": "2026-10-20T14:50:52Z"}]}), "dim")
 
-    def test_the_slot_end_is_exclusive(self):
-        self.assertEqual(self.state({"scans": ["2026-10-20T06:00:00Z"]}), "none")
+    def test_other_sources_and_pages_not_yet_monitored_are_not_drawn(self):
+        self.assertEqual(self.state({"sourceId": "s2"}), "none")
+        self.assertEqual(self.state({"firstSeen": "2026-10-21T00:00:00Z"}), "none")
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestPendingScan(unittest.TestCase):
+    def pending(self, now, columns, runs=None):
+        return run_js("const p = L.pendingScan(new Date(" + json.dumps(now) + "), " + json.dumps(columns) + ", " + json.dumps(runs or []) +
+                      "); console.log(JSON.stringify({due: p.due.toISOString(), phase: p.phase, late: p.lateMinutes, trigger: p.trigger}));")
+
+    SCHEDULED_0433 = {"id": "a", "at": 1792470793000, "trigger": "scheduled"}  # 2026-10-20T04:33:13Z
+    MANUAL_0300 = {"id": "m", "at": 1792465200000, "trigger": "manual"}       # 2026-10-20T03:00:00Z
+
+    def test_after_the_slots_scheduled_scan_the_clock_moves_to_the_next_slot(self):
+        out = self.pending("2026-10-20T05:00:00Z", [self.SCHEDULED_0433])
+        self.assertEqual((out["due"], out["phase"]), ("2026-10-20T06:00:00.000Z", "waiting"))
+
+    def test_a_manual_run_does_not_stand_in_for_the_scheduled_scan(self):
+        out = self.pending("2026-10-20T03:30:00Z", [self.MANUAL_0300])
+        self.assertEqual((out["due"], out["phase"], out["late"]), ("2026-10-20T00:00:00.000Z", "late", 210))
+
+    def test_just_after_a_slot_starts_the_scan_is_due(self):
+        self.assertEqual(self.pending("2026-10-20T06:05:00Z", [self.SCHEDULED_0433])["phase"], "due")
+
+    def test_a_run_in_progress_on_github_shows_as_running(self):
+        runs = [{"id": 9, "event": "workflow_dispatch", "actor": "GauravDarwesh", "status": "in_progress",
+                 "created_at": "2026-10-20T05:10:00Z", "run_started_at": "2026-10-20T05:10:05Z", "updated_at": "2026-10-20T05:11:00Z"}]
+        out = self.pending("2026-10-20T05:12:00Z", [self.SCHEDULED_0433], runs)
+        self.assertEqual((out["phase"], out["trigger"]), ("running", "manual"))
+
+    def test_a_finished_run_not_yet_saved_is_publishing(self):
+        runs = [{"id": 9, "event": "schedule", "status": "completed", "conclusion": "success",
+                 "created_at": "2026-10-20T06:40:00Z", "updated_at": "2026-10-20T06:45:00Z"}]
+        self.assertEqual(self.pending("2026-10-20T06:48:00Z", [self.SCHEDULED_0433], runs)["phase"], "publishing")
 
 
 @unittest.skipUnless(NODE, "node is required for dashboard library tests")

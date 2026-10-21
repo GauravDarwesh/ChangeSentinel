@@ -186,6 +186,30 @@ class TestSavedOutputs(unittest.TestCase):
             history_file = json.loads((sandbox.data / "history" / "single.json").read_text())
             self.assertEqual([s["id"] for s in history_file["sources"]], [sandbox.source.id])
 
+    def test_history_records_what_started_each_run(self):
+        from regmon import engine
+
+        with Sandbox() as sandbox:
+            config = self.two_source_config(sandbox)
+            result = sandbox.scan(lambda *a, **k: ok(html("<p>x</p>")), persist=False)
+            env = {"GITHUB_EVENT_NAME": "workflow_dispatch", "GITHUB_ACTOR": "GauravDarwesh", "GITHUB_RUN_ID": "123456"}
+            with patch.dict("os.environ", env), \
+                 patch("regmon.engine.load_config", side_effect=lambda *a, **k: load_config(config)):
+                engine.save_outputs([result], "manual-run")
+            entry = json.loads((sandbox.data / "history" / "index.json").read_text())[0]
+            self.assertEqual((entry["trigger"], entry["workflow_run_id"]), ("manual", "123456"))
+            report = json.loads((sandbox.data / "report.json").read_text())
+            self.assertEqual(report["trigger"], "manual")
+            self.assertEqual(report["source_runs"][sandbox.source.id]["trigger"], "manual")
+
+    def test_run_trigger_tells_scheduled_manual_and_continuation_apart(self):
+        from regmon.engine import run_trigger
+
+        self.assertEqual(run_trigger({"GITHUB_EVENT_NAME": "schedule", "GITHUB_RUN_ID": "9"}), {"trigger": "scheduled", "workflow_run_id": "9"})
+        self.assertEqual(run_trigger({"GITHUB_EVENT_NAME": "workflow_dispatch", "GITHUB_ACTOR": "someone"})["trigger"], "manual")
+        self.assertEqual(run_trigger({"GITHUB_EVENT_NAME": "workflow_dispatch", "GITHUB_ACTOR": "github-actions[bot]"})["trigger"], "continuation")
+        self.assertEqual(run_trigger({}), {"trigger": "local", "workflow_run_id": None})
+
     def test_events_are_saved_in_a_stable_order(self):
         from regmon.engine import _sort_events
 
