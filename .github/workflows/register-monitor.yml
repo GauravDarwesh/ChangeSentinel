@@ -32,14 +32,6 @@ jobs:
           cache: pip
           cache-dependency-path: requirements.txt
 
-      # register_monitor imports bs4; keep the full pinned project dependency
-      # set available rather than relying on whichever libraries the runner has.
-      - name: Install registration dependencies
-        run: python -m pip install --disable-pip-version-check -r requirements.txt
-
-      - name: Preflight registration dependencies
-        run: python -c "from bs4 import BeautifulSoup; from regmon.register_monitor import register_request; print('Monitor registration imports OK')"
-
       # Registration only imports BeautifulSoup and standard-library modules.
       # Avoid installing the heavyweight document-processing stack in this job.
       - name: Install registration dependency
