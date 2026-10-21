@@ -10,6 +10,10 @@
     // Always start in light mode, regardless of this browser's saved theme.
     document.documentElement.setAttribute("data-theme", "light");
     try { localStorage.setItem("cs-theme", "light"); } catch (_) {}
+    // Lock until the development key is entered once in this browser tab.
+    try {
+      document.documentElement.classList.add(sessionStorage.getItem("cs-dev-access-v1") === "granted" ? "cs-open" : "cs-locked");
+    } catch (_) { document.documentElement.classList.add("cs-locked"); }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,15 +30,17 @@
     :root,
     :root[data-theme="dark"] {
       color-scheme: dark;
-      --bg: #120b07;
-      --pane: #170f0a;
-      --raise: #1d140d;
-      --raise-2: #251910;
-      --line: #2a1d13;
-      --line-2: #3b2a1c;
+      /* Frame gaps sit darkest, the frame's unlit tiles a step up, and the panes
+         a clear step above both, so the workspace reads as lifted off the LED frame. */
+      --bg: #0b0705;
+      --pane: #1c130d;
+      --raise: #241911;
+      --raise-2: #2d2016;
+      --line: #33251a;
+      --line-2: #4a3626;
       --ink: #fff4e4;
-      --ink-2: #cdb7a0;
-      --ink-3: #8f7a65;
+      --ink-2: #d6c1aa;
+      --ink-3: #a08a74;
       --accent: #ff9f1c;
       --accent-soft: rgba(255, 159, 28, .13);
       --link: #ffc8a0;
@@ -45,12 +51,22 @@
       --ins-soft: rgba(147, 187, 255, .12);
       --del: #ff8270;
       --del-soft: rgba(255, 93, 71, .12);
-      --led-frame: #1a110b;
-      --led-off: #22170f;
-      --led-dim: #4a301b;
+      --led-frame: #1f150e;
+      --led-off: #2a1d13;
+      --led-dim: #55381f;
       --led-on: #ff9f1c;
       --led-new: #ffc8a0;
       --led-bad: #ff4d38;
+      /* Scan states in the change field and on every list mark. */
+      --state-change: #5ea4ff;
+      --state-change-glow: rgba(94, 164, 255, .55);
+      --state-new: #4cd59c;
+      --state-new-glow: rgba(76, 213, 156, .5);
+      --state-bad: #ff5a46;
+      --state-bad-glow: rgba(255, 90, 70, .55);
+      --idle-lo: #2e1f13;
+      --idle-hi: #84512a;
+      --pane-edge: 0 0 0 1px #3d2c1e, 0 0 0 4px rgba(11, 7, 5, .85), 0 28px 70px -24px rgba(0, 0, 0, .9);
       --glow: 0 0 10px rgba(255, 159, 28, .55);
     }
     :root[data-theme="light"] {
@@ -80,6 +96,15 @@
       --led-on: #e8890a;
       --led-new: #f2b685;
       --led-bad: #d8432f;
+      --state-change: #2f6fe0;
+      --state-change-glow: rgba(47, 111, 224, .35);
+      --state-new: #179463;
+      --state-new-glow: rgba(23, 148, 99, .3);
+      --state-bad: #d8432f;
+      --state-bad-glow: rgba(216, 67, 47, .35);
+      --idle-lo: #ebe2d6;
+      --idle-hi: #d9b285;
+      --pane-edge: 0 0 0 1px #d2c8bb, 0 0 0 4px rgba(228, 224, 218, .9), 0 24px 60px -28px rgba(70, 48, 24, .35);
       --glow: 0 0 8px rgba(232, 137, 10, .45);
     }
     :root {
@@ -128,7 +153,10 @@
       display: grid;
       grid-template-columns: var(--rail-w) minmax(0, 1fr);
       gap: 1px;
+      overflow: hidden;
+      border-radius: 3px;
       background: var(--line);
+      box-shadow: var(--pane-edge);
     }
     .rail, .workspace { background: var(--pane); min-height: 0; }
     .workspace { position: relative; min-width: 0; overflow: hidden; }
@@ -191,11 +219,11 @@
     /* ---------- Shared text pieces ---------- */
     .tag { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); font-size: 12px; white-space: nowrap; }
     .tag::before { content: ""; width: 6px; height: 6px; background: var(--led-dim); }
-    .tag.tone-change { color: var(--accent); }
-    .tag.tone-change::before { background: var(--accent); box-shadow: var(--glow); }
+    .tag.tone-change { color: var(--state-change); }
+    .tag.tone-change::before { background: var(--state-change); box-shadow: 0 0 8px var(--state-change-glow); }
     .tag.tone-problem { color: var(--problem); }
-    .tag.tone-problem::before { background: var(--led-bad); }
-    .tag.tone-new::before { background: var(--led-new); }
+    .tag.tone-problem::before { background: var(--state-bad); }
+    .tag.tone-new::before { background: var(--state-new); }
     .tag.is-relevant { color: var(--ink); }
     .tag.is-relevant::before { background: var(--good); }
     .tag.is-irrelevant, .tag.is-unreviewed { color: var(--ink-3); }
@@ -254,9 +282,9 @@
     .row-title { min-width: 0; overflow: hidden; color: var(--ink); font-size: 13.5px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
     .row-time { color: var(--ink-3); font-size: 12px; white-space: nowrap; font-variant-numeric: tabular-nums; }
     .row-mark { width: 7px; height: 7px; margin-top: 6px; background: var(--led-dim); }
-    .row-mark.tone-change { background: var(--led-on); box-shadow: var(--glow); }
-    .row-mark.tone-new { background: var(--led-new); box-shadow: none; }
-    .row-mark.tone-problem { background: var(--led-bad); }
+    .row-mark.tone-change { background: var(--state-change); box-shadow: 0 0 8px var(--state-change-glow); }
+    .row-mark.tone-new { background: var(--state-new); box-shadow: none; }
+    .row-mark.tone-problem { background: var(--state-bad); }
     .row-mark.tone-pending { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); }
     .row-sub { grid-column: 2 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; min-width: 0; }
     .row-host { min-width: 0; overflow: hidden; color: var(--ink-3); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
@@ -393,6 +421,12 @@
     .cycle-bar i { aspect-ratio: 1; background: var(--led-off); }
     .cycle-bar i.on { background: var(--led-dim); }
     .cycle-bar i.now { background: var(--accent); box-shadow: var(--glow); animation: pulse 1.8s var(--ease) infinite; }
+    /* Past due, the bar is full and waits; while a scan runs a light runs along it. */
+    .cycle-bar[data-phase="late"] i.on, .cycle-bar[data-phase="due"] i.on { animation: pulse 2.6s var(--ease) infinite; }
+    .cycle-bar[data-phase="running"] i, .cycle-bar[data-phase="queued"] i, .cycle-bar[data-phase="publishing"] i {
+      animation: barRun 1.6s linear infinite; animation-delay: calc(var(--i, 0) * 55ms);
+    }
+    @keyframes barRun { 0%, 100% { background: var(--led-dim); box-shadow: none; } 8% { background: var(--accent); box-shadow: var(--glow); } 30% { background: var(--led-dim); box-shadow: none; } }
     .link-list { margin: 8px 0 0; padding: 0; list-style: none; }
     .link-list li + li { border-top: 1px solid var(--line); }
     .link-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; width: 100%; padding: 9px 0; border: 0; background: none; text-align: left; }
@@ -416,37 +450,39 @@
     .field-title { font-size: 14px; font-weight: 500; }
     .field-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--ink-3); font-size: 12px; }
     .field-legend span { display: inline-flex; align-items: center; gap: 6px; }
-    .field-legend i { width: 9px; height: 9px; background: var(--led-off); }
-    .field-legend i.dim { background: var(--led-dim); }
-    .field-legend i.on { background: var(--led-on); box-shadow: var(--glow); }
-    .field-legend i.new { background: var(--led-new); }
-    .field-legend i.bad { background: var(--led-bad); }
+    .field-legend i { width: 9px; height: 9px; border-radius: 1.5px; background: var(--idle-lo); }
+    .field-legend i.dim { background: linear-gradient(135deg, var(--idle-lo), var(--idle-hi)); }
+    .field-legend i.on { background: var(--state-change); box-shadow: 0 0 8px var(--state-change-glow); }
+    .field-legend i.new { background: var(--state-new); box-shadow: 0 0 8px var(--state-new-glow); }
+    .field-legend i.bad { background: var(--state-bad); box-shadow: 0 0 8px var(--state-bad-glow); }
+    .field-legend i.next { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); }
+    .field-legend i.manual { width: 9px; height: 3px; border-radius: 0; background: var(--ink-2); }
+    .field-stage { position: relative; margin-top: 18px; }
+    .field-canvas { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; }
     .change-field {
-      --slots: 28;
-      display: grid; grid-template-columns: var(--label-w, 200px) repeat(var(--slots), minmax(8px, 1fr));
-      gap: 2px; align-items: center; margin-top: 18px;
+      --cols: 14; --tile: 19px; --gap: 3px;
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: var(--label-w, 200px) repeat(var(--cols), var(--tile));
+      gap: var(--gap); align-items: center; justify-content: start;
     }
     .field-label {
       min-width: 0; overflow: hidden; padding: 0 12px 0 0; border: 0; background: none; color: var(--ink-2);
       font-size: 12.5px; line-height: 1.3; text-align: left; text-overflow: ellipsis; white-space: nowrap;
+      transition: color .15s var(--ease);
     }
     .field-label:hover, .field-label.is-hot { color: var(--ink); }
     .field-group { grid-column: 1 / -1; padding: 12px 0 4px; color: var(--ink-3); font-size: 12px; }
     .field-group:first-child { padding-top: 0; }
-    .led {
-      aspect-ratio: 1; min-width: 0; border: 0; padding: 0; background: var(--led-off); cursor: pointer;
-      transition: transform .12s var(--ease), background-color .3s var(--ease);
-      animation: led-in .5s var(--ease) both; animation-delay: calc(var(--x, 0) * 14ms + var(--y, 0) * 6ms);
-    }
-    .led.s-none { cursor: default; }
-    .led.s-dim { background: var(--led-dim); }
-    .led.s-on { background: var(--led-on); box-shadow: var(--glow); }
-    .led.s-new { background: var(--led-new); }
-    .led.s-bad { background: var(--led-bad); box-shadow: 0 0 10px rgba(255, 77, 56, .5); }
-    .led.is-now { outline: 1px solid var(--accent); outline-offset: 1px; }
-    .led.is-now.s-dim, .led.is-now.s-none { animation: led-in .5s var(--ease) both, pulse 1.8s var(--ease) 1s infinite; }
-    .led:not(.s-none):hover { transform: scale(1.25); }
-    .field-axis { grid-column: 2 / -1; display: grid; grid-template-columns: repeat(var(--slots), minmax(8px, 1fr)); gap: 2px; margin-top: 8px; color: var(--ink-3); font-size: 11.5px; }
+    /* Cells are hit areas only: the lights themselves are painted on the canvas behind. */
+    .led { width: var(--tile); height: var(--tile); min-width: 0; border: 0; padding: 0; background: transparent; cursor: pointer; }
+    .led.s-none { cursor: default; pointer-events: none; }
+    .led.s-pending { cursor: help; }
+    .field-axis, .field-marks { grid-column: 2 / -1; display: grid; grid-template-columns: repeat(var(--cols), var(--tile)); gap: var(--gap); color: var(--ink-3); font-size: 11.5px; }
+    .field-marks { height: 3px; margin-top: 4px; }
+    .field-marks i { height: 3px; }
+    .field-marks i.m-manual { background: var(--ink-2); }
+    .field-marks i.m-continuation { background: var(--line-2); }
+    .field-axis { margin-top: 6px; }
     .field-axis span { white-space: nowrap; }
     .field-note { margin-top: 16px; color: var(--ink-3); font-size: 12.5px; max-width: 70ch; }
     .field-tip {
@@ -455,7 +491,6 @@
       box-shadow: 0 10px 30px -10px rgba(0, 0, 0, .55);
     }
     .field-tip small { display: block; color: var(--ink-3); font-size: 12px; }
-    @keyframes led-in { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
 
     /* ---------- Dialog and toast ---------- */
@@ -477,10 +512,25 @@
     /* ---------- Responsive ---------- */
     /* ---------- Motion ---------- */
     .scan-now { color: var(--accent) !important; }
-    .nav-plus { margin-left: auto; display: grid; place-items: center; width: 22px; height: 16px; border: 1px solid var(--line-2); color: var(--ink-3); font: 500 12px/1 var(--font-code); transition: border-color .15s var(--ease), color .15s var(--ease); }
-    .nav-button-add:hover .nav-plus { border-color: var(--accent); color: var(--accent); }
-    .nav-button-add::before { background: transparent !important; box-shadow: inset 0 0 0 1px var(--led-dim) !important; }
-    .nav-button-add:hover::before { box-shadow: inset 0 0 0 1px var(--accent) !important; }
+    /* Ask Sentinel and Add a link share one action style: an outlined LED and a
+       chip on the right, both lighting together on hover or focus. */
+    .nav-plus, .nav-ai {
+      margin-left: auto; display: grid; place-items: center; min-width: 22px; height: 16px; padding: 0 5px;
+      border: 1px solid var(--line-2); color: var(--ink-3); font: 500 10px/1 var(--font-code); letter-spacing: .06em;
+      transition: border-color .18s var(--ease), color .18s var(--ease), box-shadow .18s var(--ease);
+    }
+    .nav-plus { font-size: 12px; letter-spacing: 0; }
+    .nav-button-add::before, .nav-button-ask::before { background: transparent; box-shadow: inset 0 0 0 1px var(--led-dim); }
+    .nav-button-add:hover::before, .nav-button-ask:hover::before,
+    .nav-button-add:focus-visible::before, .nav-button-ask:focus-visible::before {
+      background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent), 0 0 9px rgba(255, 159, 28, .55);
+    }
+    .nav-button-add:hover .nav-plus, .nav-button-ask:hover .nav-ai,
+    .nav-button-add:focus-visible .nav-plus, .nav-button-ask:focus-visible .nav-ai {
+      border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px -2px rgba(255, 159, 28, .5);
+    }
+    .nav-button-ask.active::before { background: var(--accent); box-shadow: var(--glow); }
+    .nav-button-ask.active .nav-ai { border-color: var(--accent); color: var(--accent); }
     .scan-now::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 6px; vertical-align: 1px; background: var(--accent); box-shadow: var(--glow); }
     @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
     .detail-inner > *, #detailHeader > *, #detailBody > * { animation: rise .38s var(--ease) both; }
@@ -492,7 +542,7 @@
     .list-body .row:nth-child(n+6) { animation-delay: .1s; }
     .row-mark { transition: transform .2s var(--ease), box-shadow .2s var(--ease); }
     .row:hover .row-mark { transform: scale(1.35); }
-    .row:hover .row-mark.tone-change { box-shadow: 0 0 14px var(--accent); }
+    .row:hover .row-mark.tone-change { box-shadow: 0 0 14px var(--state-change-glow); }
     .btn { transition: border-color .15s var(--ease), background-color .15s var(--ease), transform .15s var(--ease); }
     .btn:active { transform: translateY(1px); }
     @media (prefers-reduced-motion: reduce) {
@@ -644,8 +694,6 @@
 /* ---------- Ask Sentinel ---------- */
 .nav-ask { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
 .nav-ask-short { display: none; }
-.nav-ai { margin-left: auto; padding: 0 5px; border: 1px solid var(--line-2); color: var(--ink-3); font: 500 10px/16px var(--font-code); letter-spacing: .06em; }
-.nav-button-ask.active .nav-ai, .nav-button-ask:hover .nav-ai { border-color: var(--accent); color: var(--accent); }
 .ask-sentinel-view { display: flex; flex-direction: column; height: 100%; min-height: 0; }
 .ask-sentinel-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; padding: 14px 28px; border-bottom: 1px solid var(--line); }
 .ask-sentinel-title { min-width: 0; }
@@ -735,117 +783,112 @@
 }
 
 
-    /* ---------- Minimal light glass development gate ---------- */
+    /* ---------- Development gate ----------
+     * The LED frame fills the whole screen while the dashboard is locked: a slow
+     * warm wave drifts across it behind a solid card. Unlocking ripples the wall
+     * away from the card and leaves the normal frame and workspace behind. The
+     * workspace stays hidden underneath until then.
+     */
     html.cs-locked, html.cs-locked body { overflow: hidden !important; }
-    /* Keep the real dashboard visible through the translucent access layer. */
-    html.cs-locked #app { visibility: visible !important; pointer-events: none !important; }
-    body::before {
-      content: ""; position: fixed; inset: 0; z-index: 9998; pointer-events: none; opacity: 0;
-      background: rgba(246, 243, 237, .34);
-      backdrop-filter: blur(0) saturate(1);
-      -webkit-backdrop-filter: blur(0) saturate(1);
-      transition: opacity .56s cubic-bezier(.2,.7,.2,1), backdrop-filter .56s cubic-bezier(.2,.7,.2,1);
-    }
-    html.cs-locked body::before {
-      opacity: 1;
-      backdrop-filter: blur(3.5px) saturate(.88);
-      -webkit-backdrop-filter: blur(3.5px) saturate(.88);
-    }
-    html.cs-locked #addMonitorDialog,
-    html.cs-locked #fieldTip,
-    html.cs-locked #toast { visibility: hidden !important; }
-
+    html.cs-locked #app, html.cs-locked #addMonitorDialog, html.cs-locked #fieldTip, html.cs-locked #toast { visibility: hidden !important; }
+    html.cs-open .cs-gate { display: none !important; }
     .cs-gate {
-      --gate-ink: #29251f; --gate-muted: #6e665c; --gate-dim: #8f867b; --gate-accent: #c46800;
-      position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center;
-      overflow: auto; padding: max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom));
-      color: var(--gate-ink); background: rgba(248, 246, 241, .10);
-      font-family: var(--font-ui, "Geist", system-ui, sans-serif);
-      opacity: 1; transition: opacity .58s cubic-bezier(.2,.7,.2,1), filter .58s cubic-bezier(.2,.7,.2,1);
+      --g-bg: #0b0705; --g-card: #170f0a; --g-raise: #20160f; --g-line: #3a2a1c; --g-line-2: #57402b;
+      --g-ink: #fff4e4; --g-ink-2: #d6c1aa; --g-ink-3: #9c8670; --g-accent: #ff9f1c; --g-bad: #ff5a46; --g-good: #4cd59c;
+      position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; overflow: auto;
+      padding: max(28px, env(safe-area-inset-top)) 18px max(28px, env(safe-area-inset-bottom));
+      background: var(--g-bg); color: var(--g-ink); font: 400 14px/1.55 var(--font-ui);
+      color-scheme: dark;
     }
+    .cs-gate.is-opening { background: transparent; pointer-events: none; }
+    .cs-gate-wall { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
     .cs-gate-card {
-      position: relative; width: min(100%, 408px); padding: clamp(24px, 4.5vw, 34px);
-      border: 1px solid rgba(255, 255, 255, .76); border-radius: 16px;
-      background: rgba(255, 255, 255, .66);
-      box-shadow: 0 22px 70px rgba(55, 42, 25, .14), 0 2px 10px rgba(55, 42, 25, .045),
-        inset 0 1px 0 rgba(255, 255, 255, .86);
-      backdrop-filter: blur(23px) saturate(145%);
-      -webkit-backdrop-filter: blur(23px) saturate(145%);
-      animation: csGateRise .65s cubic-bezier(.2,.7,.2,1) both;
+      position: relative; width: min(100%, 420px); padding: 26px 28px 22px;
+      border: 1px solid var(--g-line); border-radius: 6px; background: var(--g-card);
+      box-shadow: 0 0 0 5px rgba(11, 7, 5, .9), 0 40px 90px -30px rgba(0, 0, 0, .95), 0 0 120px -40px rgba(255, 140, 20, .35);
+      animation: csGateRise .7s var(--ease) both;
+      transition: opacity .35s var(--ease), transform .45s var(--ease);
     }
-    /* Use the exact same brand + LED mark styles as the dashboard rail. */
-    .cs-gate-brand {
-      display: flex; flex-direction: row; align-items: center; justify-content: center;
-      gap: 12px; margin: 0 0 27px; min-width: 0; white-space: nowrap;
+    .cs-gate.is-opening .cs-gate-card { opacity: 0; transform: scale(.97); }
+    .cs-gate-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .cs-gate-brand { display: inline-flex; align-items: center; gap: 10px; margin: 0; font-size: 14px; font-weight: 500; letter-spacing: -.01em; }
+    .cs-gate-brand .brand-mark { grid-template-columns: repeat(3, 5px); gap: 2px; }
+    .cs-gate-brand .brand-mark i { width: 5px; height: 5px; --c: #55381f; }
+    .cs-gate-brand .brand-mark i.on { --c: var(--g-accent); --g: 0 0 10px rgba(255, 159, 28, .6); }
+    .cs-gate-chip {
+      display: inline-flex; align-items: center; gap: 7px; padding: 0 7px; height: 20px; border: 1px solid var(--g-line-2);
+      color: var(--g-ink-3); font: 500 10px/1 var(--font-code); letter-spacing: .08em; text-transform: uppercase;
     }
-    .cs-gate-mark {
-      flex: none; padding: 9px; border: 1px solid rgba(196, 104, 0, .14); border-radius: 5px;
-      background: rgba(255, 255, 255, .48);
-      box-shadow: 0 4px 15px rgba(116, 72, 23, .07);
+    .cs-gate-chip::before { content: ""; width: 5px; height: 5px; background: var(--g-accent); box-shadow: 0 0 8px var(--g-accent); animation: csBlink 2.4s steps(1) infinite; }
+    .cs-gate-title { margin: 26px 0 0; font: 400 25px/1.22 var(--font-doc); letter-spacing: -.01em; text-wrap: balance; }
+    .cs-gate-sub { margin: 8px 0 0; color: var(--g-ink-2); font-size: 13.5px; }
+    .cs-gate-form { margin-top: 22px; }
+    .cs-gate-label { display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--g-ink-3); font-size: 12px; }
+    .cs-key {
+      position: relative; display: flex; align-items: center; gap: 6px; height: 46px; padding: 5px 5px 5px 0;
+      border: 1px solid var(--g-line-2); background: var(--g-raise); transition: border-color .18s var(--ease), box-shadow .18s var(--ease);
     }
-    .cs-gate-subtitle { margin: 0 0 24px; color: var(--gate-muted); font-size: 12.5px; line-height: 1.5; text-align: center; }
-    .cs-gate-label { display: block; margin-bottom: 9px; color: var(--gate-ink); font-size: 13px; font-weight: 500; }
-    .cs-gate-form { display: grid; gap: 10px; }
+    .cs-key:focus-within { border-color: var(--g-accent); box-shadow: 0 0 0 3px rgba(255, 159, 28, .12); }
     .cs-gate-input {
-      display: block; width: 100%; min-height: 47px; padding: 0 13px;
-      border: 1px solid rgba(104, 84, 60, .24); border-radius: 7px; outline: none;
-      background: rgba(255, 255, 255, .72); color: var(--gate-ink);
-      font: 14px/1.4 var(--font-code, "Geist Mono", monospace); letter-spacing: .025em;
-      box-shadow: inset 0 1px 2px rgba(59, 44, 26, .025);
-      transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+      position: absolute; inset: 0; width: 100%; height: 100%; padding: 0 56px 0 14px; border: 0; outline: 0 !important; background: transparent;
+      color: transparent; caret-color: transparent; font: 16px/1 var(--font-code); letter-spacing: .2em;
     }
-    .cs-gate-input::placeholder { color: #9a9084; letter-spacing: 0; font-family: var(--font-ui, "Geist", sans-serif); }
-    .cs-gate-input:focus {
-      border-color: rgba(196, 104, 0, .75); background: #fff;
-      box-shadow: 0 0 0 3px rgba(196, 104, 0, .11);
-    }
+    .cs-gate-input::selection { background: transparent; }
+    /* The typed key shows as LEDs, one per character, instead of bullets. */
+    .cs-key-leds { position: relative; flex: 1; display: flex; align-items: center; gap: 4px; min-width: 0; height: 100%; padding-left: 14px; overflow: hidden; pointer-events: none; }
+    .cs-key-leds i { flex: none; width: 9px; height: 9px; background: var(--g-accent); box-shadow: 0 0 8px rgba(255, 159, 28, .55); animation: csKeyIn .18s var(--ease) both; }
+    .cs-key-leds .cs-key-caret { width: 2px; height: 16px; margin-left: 2px; background: var(--g-ink-2); box-shadow: none; animation: csBlink 1.05s steps(1) infinite; }
+    .cs-key:not(:focus-within) .cs-key-caret { display: none; }
+    .cs-key-leds .cs-key-hint { color: var(--g-ink-3); font-size: 13.5px; white-space: nowrap; }
+    .cs-key.is-error .cs-key-leds i:not(.cs-key-caret) { background: var(--g-bad); box-shadow: 0 0 9px rgba(255, 90, 70, .6); }
+    .cs-key.is-checking .cs-key-leds i:not(.cs-key-caret) { animation: csKeyCheck .7s var(--ease) infinite; animation-delay: calc(var(--k, 0) * 45ms); }
+    .cs-key.is-ok .cs-key-leds i:not(.cs-key-caret) { background: var(--g-good); box-shadow: 0 0 10px rgba(76, 213, 156, .6); animation: csKeyIn .22s var(--ease) both; animation-delay: calc(var(--k, 0) * 30ms); }
     .cs-gate-submit {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px;
-      border: 1px solid #c46800; border-radius: 7px; background: #c46800; color: #fffaf4;
-      font: 500 13px/1 var(--font-ui, "Geist", sans-serif);
-      transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+      position: relative; z-index: 1; display: grid; place-items: center; flex: none; width: 36px; height: 36px;
+      border: 1px solid var(--g-accent); background: var(--g-accent); color: #140c08;
+      transition: background-color .15s var(--ease), border-color .15s var(--ease), box-shadow .15s var(--ease);
     }
-    .cs-gate-submit:hover { border-color: #a95500; background: #a95500; box-shadow: 0 5px 18px rgba(196, 104, 0, .16); }
-    .cs-gate-submit:active { transform: translateY(1px); }
-    .cs-gate-submit svg { width: 14px; height: 14px; }
-    .cs-gate-message { min-height: 16px; margin: 0; color: #a13e2b; font-size: 12px; line-height: 1.5; }
-    .cs-gate-message:empty { display: none; }
-    .cs-gate-help {
-      margin-top: 17px; padding-top: 17px; border-top: 1px solid rgba(69, 54, 36, .10);
-      color: var(--gate-muted); font-size: 12px; line-height: 1.65; text-align: center;
-    }
-    .cs-gate-help strong { color: var(--gate-ink); font-weight: 500; }
-    .cs-gate-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 17px; margin-top: 9px; }
+    .cs-gate-submit:hover { background: #ffc8a0; border-color: #ffc8a0; box-shadow: 0 0 16px -2px rgba(255, 159, 28, .6); }
+    .cs-gate-submit svg { width: 16px; height: 16px; }
+    .cs-gate-message { min-height: 20px; margin: 9px 0 0; color: var(--g-ink-3); font-size: 12.5px; line-height: 1.5; }
+    .cs-gate-message.is-error { color: #ff8270; }
+    .cs-gate.is-error .cs-gate-card { animation: csGateShake .36s ease both; }
+    .cs-gate-help { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--g-line); }
+    .cs-gate-help p { margin: 0 0 8px; color: var(--g-ink-3); font-size: 12.5px; }
+    /* Same action style as Ask Sentinel / Add a link in the workspace rail. */
+    .cs-gate-links { display: grid; gap: 2px; }
     .cs-gate-links a {
-      display: inline-flex; align-items: center; gap: 6px; color: #a95500; text-decoration: none;
-      text-underline-offset: 4px; transition: color .15s ease;
+      position: relative; display: flex; align-items: center; gap: 10px; padding: 4px 0 4px 16px; color: #ffc8a0; font-size: 13.5px; text-decoration: none;
+      transition: color .15s var(--ease);
     }
-    .cs-gate-links a:hover { color: #713900; text-decoration: underline; }
-    .cs-gate-links svg { width: 13px; height: 13px; flex: none; }
-    .cs-gate.is-error .cs-gate-card { animation: csGateShake .32s ease both; }
-    .cs-gate.is-success { pointer-events: none; opacity: 0; filter: blur(12px); }
-    .cs-gate.is-success .cs-gate-card {
-      transform: translateY(-5px) scale(.99); opacity: 0;
-      transition: transform .54s ease, opacity .42s ease;
+    .cs-gate-links a::before {
+      content: ""; position: absolute; left: 0; top: 50%; width: 7px; height: 7px; margin-top: -3.5px;
+      box-shadow: inset 0 0 0 1px #55381f; transition: background-color .18s var(--ease), box-shadow .18s var(--ease);
     }
-    @keyframes csGateRise { from { opacity: 0; transform: translateY(9px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    @keyframes csGateShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+    .cs-gate-links a span {
+      margin-left: auto; display: grid; place-items: center; min-width: 22px; height: 16px; padding: 0 5px; border: 1px solid var(--g-line-2);
+      color: var(--g-ink-3); font: 500 10px/1 var(--font-code); letter-spacing: .06em;
+      transition: border-color .18s var(--ease), color .18s var(--ease), box-shadow .18s var(--ease);
+    }
+    .cs-gate-links a:hover, .cs-gate-links a:focus-visible { color: var(--g-ink); }
+    .cs-gate-links a:hover::before, .cs-gate-links a:focus-visible::before { background: rgba(255, 159, 28, .13); box-shadow: inset 0 0 0 1px var(--g-accent), 0 0 9px rgba(255, 159, 28, .55); }
+    .cs-gate-links a:hover span, .cs-gate-links a:focus-visible span { border-color: var(--g-accent); color: var(--g-accent); box-shadow: 0 0 10px -2px rgba(255, 159, 28, .5); }
+    @keyframes csGateRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    @keyframes csGateShake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 45% { transform: translateX(4px); } 70% { transform: translateX(-2px); } }
+    @keyframes csBlink { 50% { opacity: .15; } }
+    @keyframes csKeyIn { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: none; } }
+    @keyframes csKeyCheck { 0%, 100% { opacity: .35; } 40% { opacity: 1; } }
     @media (max-width: 440px) {
-      .cs-gate { padding-inline: 13px; }
-      .cs-gate-card { padding: 23px 19px; }
-      .cs-gate-brand { gap: 9px; margin-bottom: 23px; }
+      .cs-gate-card { padding: 22px 20px 18px; }
+      .cs-gate-title { font-size: 22px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .cs-gate *, .cs-gate *::before, .cs-gate *::after {
-        animation-duration: .01ms !important; animation-iteration-count: 1 !important;
-        transition-duration: .01ms !important; scroll-behavior: auto !important;
-      }
+      .cs-gate *, .cs-gate *::before, .cs-gate *::after { animation: none !important; transition: none !important; }
     }
 
   </style>
 </head>
 <body>
-  <script>document.documentElement.classList.add('cs-locked');</script>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <symbol id="i-external" viewBox="0 0 16 16"><path d="M9.5 2.75h3.75V6.5M13 3l-5.5 5.5M11.5 9.5v3.25H3.25V4.5H6.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -854,33 +897,30 @@
 
 
   <section class="cs-gate" id="csPasswordGate" aria-label="ChangeSentinel development access" role="dialog" aria-modal="true" aria-labelledby="csGateTitle">
+    <canvas class="cs-gate-wall" id="csGateWall" aria-hidden="true"></canvas>
     <div class="cs-gate-card">
-      <h1 class="brand cs-gate-brand" id="csGateTitle">
-        <span class="brand-mark cs-gate-mark" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
-        ChangeSentinel
-      </h1>
-      <p class="cs-gate-subtitle">Private development preview</p>
+      <div class="cs-gate-top">
+        <p class="cs-gate-brand"><span class="brand-mark" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i></span>ChangeSentinel</p>
+        <span class="cs-gate-chip">Preview</span>
+      </div>
+      <h1 class="cs-gate-title" id="csGateTitle">A private workspace, still being built.</h1>
+      <p class="cs-gate-sub">Enter the access key to open the dashboard.</p>
       <form class="cs-gate-form" id="csGateForm" novalidate>
-        <label class="cs-gate-label" for="csGatePassword">Enter your password</label>
-        <input class="cs-gate-input" id="csGatePassword" name="password" type="password" placeholder="Password" autocomplete="current-password" autocapitalize="none" spellcheck="false" aria-describedby="csGateMessage" required autofocus>
-        <button class="cs-gate-submit" type="submit">
-          Continue
-          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 8h10m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        <label class="cs-gate-label" for="csGatePassword"><span>Access key</span><span>Enter to unlock</span></label>
+        <div class="cs-key" id="csGateKey">
+          <input class="cs-gate-input" id="csGatePassword" name="password" type="password" autocomplete="current-password" autocapitalize="none" spellcheck="false" aria-describedby="csGateMessage" required autofocus>
+          <span class="cs-key-leds" id="csGateLeds" aria-hidden="true"><span class="cs-key-hint">Type the key</span><i class="cs-key-caret"></i></span>
+          <button class="cs-gate-submit" type="submit" aria-label="Unlock" title="Unlock">
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 8h10m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
         <p class="cs-gate-message" id="csGateMessage" role="status" aria-live="polite"></p>
       </form>
       <div class="cs-gate-help">
-        <strong>Interested in collaborating?</strong><br>
-        Email me or schedule a meeting to discuss access to the project.
+        <p>Want access, or to collaborate on the project?</p>
         <div class="cs-gate-links">
-          <a href="mailto:gauravdarwesh155@gmail.com?subject=ChangeSentinel%20collaboration" aria-label="Email Gaurav about ChangeSentinel collaboration">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 4.5 8 9l6-4.5M3 3h10a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Email Gaurav
-          </a>
-          <a href="https://calendar.app.google/MERrAzP8nSjnbxu89" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 2v3M13 2v3M2 5.5h12M3 3h10a1 1 0 0 1 1 1v9H2V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
-            Schedule a meeting
-          </a>
+          <a href="mailto:gauravdarwesh155@gmail.com?subject=ChangeSentinel%20collaboration">Email Gaurav<span>@</span></a>
+          <a href="https://calendar.app.google/MERrAzP8nSjnbxu89" target="_blank" rel="noopener noreferrer">Book a meeting<span>&#8599;</span></a>
         </div>
       </div>
     </div>
@@ -950,10 +990,13 @@
           <div class="field-head">
             <h2 class="field-title" id="fieldTitle">Every page, every scan</h2>
             <div class="field-legend" aria-label="Legend">
-              <span><i class="on"></i>Changed</span><span><i class="new"></i>New page</span><span><i class="bad"></i>Problem</span><span><i class="dim"></i>Checked, no change</span><span><i></i>No scan</span>
+              <span><i class="on"></i>Changed</span><span><i class="new"></i>New page</span><span><i class="bad"></i>Problem</span><span><i class="dim"></i>Checked, no change</span><span><i class="next"></i>Next scan</span><span><i class="manual"></i>Manual run</span>
             </div>
           </div>
-          <div class="change-field" id="signalVisual" role="grid" aria-label="Scan results by page and scan"><div class="loading">Drawing the change field…</div></div>
+          <div class="field-stage" id="fieldStage">
+            <canvas class="field-canvas" id="fieldCanvas" aria-hidden="true"></canvas>
+            <div class="change-field" id="signalVisual" role="grid" aria-label="Scan results by page and scan"><div class="loading">Drawing the change field…</div></div>
+          </div>
           <p class="field-note" id="fieldNote"></p>
           <section class="preview" id="latestPreview" hidden aria-labelledby="previewHeading">
             <div class="field-head"><h2 class="field-title" id="previewHeading">Latest change</h2><span id="previewOpen"></span></div>
@@ -1103,58 +1146,158 @@
 
 
   <script>
+    // Development gate. This only keeps casual visitors out while the dashboard
+    // is being built: the page, its data and this check are all public, so it
+    // is not access control. Only the SHA-256 of the key is stored here.
     (() => {
       const gate = document.getElementById("csPasswordGate");
+      if (!gate) return;
+      const root = document.documentElement;
+      if (root.classList.contains("cs-open")) { gate.remove(); return; }
+      const KEY_SHA256 = "8132bc7d9699dc989048bf09b98b43cafa3ff4444373b90f33537211034a7b3e";
+      const STORAGE_KEY = "cs-dev-access-v1";
       const form = document.getElementById("csGateForm");
       const input = document.getElementById("csGatePassword");
+      const key = document.getElementById("csGateKey");
+      const leds = document.getElementById("csGateLeds");
       const message = document.getElementById("csGateMessage");
-      const correctPassword = "123D@d456";
-      const storageKey = "cs-dev-access-v1";
+      const canvas = document.getElementById("csGateWall");
+      const ctx = canvas.getContext("2d");
+      const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const PALETTE = [[255, 84, 0], [255, 107, 26], [255, 133, 16], [255, 159, 28], [255, 176, 52], [255, 120, 45]];
+      const OFF = [31, 21, 14];
+      let W = 0, H = 0, dpr = 1, cols = 0, rows = 0, raf = 0, last = 0;
+      let opening = null;
 
-      document.documentElement.classList.add("cs-locked");
-
-      try {
-        if (sessionStorage.getItem(storageKey) === "granted") {
-          gate.remove();
-          document.documentElement.classList.remove("cs-locked");
-          return;
-        }
-      } catch (_) {}
-
-      const unlock = () => {
-        gate.classList.add("is-success");
-        window.setTimeout(() => {
-          gate.remove();
-          document.documentElement.classList.remove("cs-locked");
-          try { sessionStorage.setItem(storageKey, "granted"); } catch (_) {}
-        }, 560);
+      // Same smooth value noise as the change field (dashboard-lib.js), inlined
+      // so the gate can paint before the dashboard scripts load.
+      const hash = (x, y, z) => {
+        let h = (x * 374761393 + y * 668265263 + z * 1274126177) | 0;
+        h = Math.imul(h ^ (h >>> 13), 1274126177);
+        return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
       };
+      const sm = t => t * t * (3 - 2 * t);
+      const noise = (x, y, z) => {
+        const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
+        const xf = sm(x - xi), yf = sm(y - yi), zf = sm(z - zi);
+        const l = (a, b, t) => a + (b - a) * t;
+        const p = k => l(l(hash(xi, yi, k), hash(xi + 1, yi, k), xf), l(hash(xi, yi + 1, k), hash(xi + 1, yi + 1, k), xf), yf);
+        return l(p(zi), p(zi + 1), zf);
+      };
+      const fbm = (x, y, z) => (noise(x, y, z) * .57 + noise(x * 2.03, y * 2.03, z * 2.03 + 17) * .29 + noise(x * 4.1, y * 4.1, z * 4.1 + 34) * .14);
+      const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 
-      form.addEventListener("submit", (event) => {
-        event.preventDefault();
-        if (input.value === correctPassword) {
-          message.textContent = "";
-          input.setAttribute("aria-invalid", "false");
-          unlock();
-          return;
+      function size() {
+        dpr = Math.min(2, window.devicePixelRatio || 1);
+        W = window.innerWidth; H = window.innerHeight;
+        canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+        cols = Math.ceil(W / 20); rows = Math.ceil(H / 20);
+      }
+      function paint(now) {
+        raf = 0;
+        if (!reduced && !opening && now - last < 40) { raf = requestAnimationFrame(paint); return; }
+        last = now;
+        const t = reduced ? 3 : now / 1000;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, W, H);
+        const card = gate.querySelector(".cs-gate-card").getBoundingClientRect();
+        const cx = (card.left + card.width / 2) / 20, cy = (card.top + card.height / 2) / 20;
+        const radius = opening ? ((now - opening) / 950) * Math.hypot(cols, rows) : -1;
+        for (let j = 0; j < rows; j++) {
+          for (let i = 0; i < cols; i++) {
+            const d = Math.hypot(i + .5 - cx, j + .5 - cy);
+            let ring = 0;
+            if (opening) {
+              if (d < radius - 2.5) continue; // already swept away: the dashboard shows through
+              const e = radius - d;
+              ring = e > -1.5 ? Math.max(0, 1 - Math.abs(e) / 2.5) : 0;
+            }
+            let b = fbm(i * .085 + t * .06, j * .085 + t * .025, t * .09);
+            b = Math.max(0, (b - .36) / .5);
+            b = Math.pow(Math.min(1, b), 1.25);
+            // Keep the wall quieter right around the card so the form stays legible.
+            const near = Math.max(0, 1 - d / 22);
+            b *= 1 - near * .6;
+            const hue = fbm(i * .04 + t * .03, j * .04 - t * .015, t * .05 + 9) * 1.6 + t * .012;
+            const k = ((hue % 1) + 1) % 1 * PALETTE.length;
+            const c0 = PALETTE[Math.floor(k) % PALETTE.length], c1 = PALETTE[(Math.floor(k) + 1) % PALETTE.length];
+            let color = mix(OFF, mix(c0, c1, k % 1), Math.min(1, b * .62 + ring));
+            if (ring) color = mix(color, [255, 236, 200], ring * .5);
+            if (opening) { ctx.fillStyle = "#0b0705"; ctx.fillRect(i * 20, j * 20, 20, 20); } // the wall's gaps stay opaque until swept
+            ctx.fillStyle = "rgb(" + (color[0] | 0) + "," + (color[1] | 0) + "," + (color[2] | 0) + ")";
+            ctx.fillRect(i * 20 + .5, j * 20 + .5, 19, 19);
+          }
         }
+        if (opening && radius > Math.hypot(cols, rows) + 4) { finish(); return; }
+        if (!reduced || opening) raf = requestAnimationFrame(paint);
+      }
+      function start() { if (!raf) raf = requestAnimationFrame(paint); }
 
-        gate.classList.remove("is-error");
-        // Restart the gentle nudge animation for consecutive incorrect attempts.
-        void gate.offsetWidth;
-        gate.classList.add("is-error");
+      function renderLeds() {
+        const n = input.value.length;
+        let html = n ? "" : '<span class="cs-key-hint">Type the key</span>';
+        for (let i = 0; i < Math.min(n, 28); i++) html += '<i style="--k:' + i + '"></i>';
+        leds.innerHTML = html + '<i class="cs-key-caret"></i>';
+      }
+      async function digest(text) {
+        const bytes = new TextEncoder().encode(text);
+        const buffer = await crypto.subtle.digest("SHA-256", bytes);
+        return Array.from(new Uint8Array(buffer), b => b.toString(16).padStart(2, "0")).join("");
+      }
+      function fail(text) {
+        key.classList.remove("is-checking");
+        key.classList.add("is-error");
+        gate.classList.remove("is-error"); void gate.offsetWidth; gate.classList.add("is-error");
         input.setAttribute("aria-invalid", "true");
-        message.textContent = "That password doesn’t look right. Please try again, or email me / schedule a quick meeting for access or collaboration.";
+        message.className = "cs-gate-message is-error";
+        message.textContent = text;
         input.select();
+      }
+      function finish() {
+        cancelAnimationFrame(raf);
+        root.classList.remove("cs-locked");
+        root.classList.add("cs-open");
+        gate.remove();
+        window.removeEventListener("resize", onResize);
+      }
+      function unlock() {
+        try { sessionStorage.setItem(STORAGE_KEY, "granted"); } catch (_) {}
+        key.classList.remove("is-checking", "is-error");
+        key.classList.add("is-ok");
+        message.className = "cs-gate-message";
+        message.textContent = "Unlocked. Opening the dashboard…";
+        setTimeout(() => {
+          if (reduced) { finish(); return; }
+          // Reveal the workspace under the wall, then sweep the wall away.
+          root.classList.remove("cs-locked");
+          gate.classList.add("is-opening");
+          opening = performance.now();
+          cancelAnimationFrame(raf); raf = 0; start();
+          window.dispatchEvent(new Event("resize"));
+        }, 380);
+      }
+      form.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!input.value) { fail("Enter the access key first."); return; }
+        if (!(window.crypto && crypto.subtle)) { fail("This browser can't check the key on an insecure connection. Open the https:// address."); return; }
+        key.classList.remove("is-error"); key.classList.add("is-checking");
+        const [hex] = await Promise.all([digest(input.value), new Promise(r => setTimeout(r, 420))]);
+        if (hex === KEY_SHA256) unlock();
+        else fail("That key isn't right. Try again, or get in touch below for access.");
       });
-
       input.addEventListener("input", () => {
         input.setAttribute("aria-invalid", "false");
-        message.textContent = "";
+        key.classList.remove("is-error");
         gate.classList.remove("is-error");
+        message.className = "cs-gate-message";
+        message.textContent = "";
+        renderLeds();
       });
-
-      window.requestAnimationFrame(() => input.focus({ preventScroll: true }));
+      const onResize = () => { size(); start(); };
+      window.addEventListener("resize", onResize);
+      document.addEventListener("visibilitychange", () => { if (!document.hidden) start(); });
+      size(); renderLeds(); start();
+      requestAnimationFrame(() => input.focus({ preventScroll: true }));
     })();
   </script>
 
@@ -1164,7 +1307,7 @@
     window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV";
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.121.0/dist/umd/supabase.js"></script>
-  <script src="dashboard-lib.js?v=20261020-grid-1"></script>
-  <script src="dashboard.js?v=20261020-grid-1"></script>
+  <script src="dashboard-lib.js?v=20261021-led-2"></script>
+  <script src="dashboard.js?v=20261021-led-2"></script>
 </body>
 </html>

@@ -61,7 +61,8 @@ const state = {
   mobileDetail: false,
   filter: "ALL", changeFilter: "ALL", detailTab: "", diffMode: "compare", snapshotMode: "preview",
   docInfo: {}, titleQueue: [], titleWorkers: 0, titleTimer: null,
-  snapshotCache: {}, htmlCache: {}, evidenceCache: {}, pdfPreviewUrl: "", toastTimer: null
+  snapshotCache: {}, htmlCache: {}, evidenceCache: {}, pdfPreviewUrl: "", toastTimer: null,
+  workflowRuns: [], workflowSignature: "", scanColumns: null, pendingScan: null
 };
 const compactQuery = window.matchMedia ? window.matchMedia("(max-width: 980px)") : null;
 function isCompact() { return !!(compactQuery && compactQuery.matches); }
@@ -633,123 +634,384 @@ function renderLatestPreview() {
   });
 }
 
-// The LED change field: one row per page, one cell per six-hour scan slot.
-// The field shows as many six-hour slots as fit (at least 14px each), between
-// three and seven days, so labels never collapse on narrower screens.
+// The LED change field: one row per page, one column per saved scan, newest on
+// the right, then one empty column for the next scan. Scheduled and manual
+// scans each add a column, so the field grows a block at a time.
 function fieldGeometry() {
   const field = $("signalVisual");
   const width = (field && (field.clientWidth || field.parentElement.clientWidth)) || 800;
-  const labelWidth = Math.round(Math.min(220, Math.max(104, width * (isCompact() ? .36 : .34))));
-  const slots = Math.max(12, Math.min(28, Math.floor((width - labelWidth) / 16)));
-  return { slots, labelWidth };
+  const labelWidth = Math.round(Math.min(220, Math.max(104, width * (isCompact() ? .36 : .3))));
+  const gap = 3;
+  const room = Math.max(120, width - labelWidth);
+  const tile = Math.max(11, Math.min(20, Math.floor((room + gap) / 22) - gap));
+  const capacity = Math.max(6, Math.floor((room + gap) / (tile + gap)));
+  return { capacity, labelWidth, tile, gap, key: capacity + "x" + tile };
 }
 function renderMonitoringSignal() {
   const field = $("signalVisual");
   const items = state.items || [];
   if (!items.length) {
     field.innerHTML = emptyState("No pages yet", "Each monitored page gets a row of lights here, one per scan.");
+    ledField.measure();
     return;
   }
   const geometry = fieldGeometry();
-  const slots = L.scanSlots(new Date(), geometry.slots);
-  field.style.setProperty("--slots", slots.length);
+  const columns = L.runColumns(state.history, { workflowRuns: state.workflowRuns, limit: geometry.capacity - 1 });
+  const pending = L.pendingScan(new Date(), columns, state.workflowRuns);
+  state.scanColumns = columns;
+  state.pendingScan = pending;
+  field.style.setProperty("--cols", columns.length + 1);
+  field.style.setProperty("--tile", geometry.tile + "px");
+  field.style.setProperty("--gap", geometry.gap + "px");
   field.style.setProperty("--label-w", geometry.labelWidth + "px");
-  field.dataset.slots = String(slots.length);
-  const scansBySource = {};
-  state.history.forEach(run => {
-    if (run && run.source_id && run.generated_at) (scansBySource[run.source_id] = scansBySource[run.source_id] || []).push(run.generated_at);
-  });
+  field.dataset.geometry = geometry.key;
   const reportEvents = allEvents();
-  const groups = [];
-  items.forEach(item => {
-    const last = groups[groups.length - 1];
-    if (last && last.sourceId === item.source_id) last.items.push(item);
-    else groups.push({ sourceId: item.source_id, items: [item] });
-  });
-  groups.sort((a, b) => String(a.sourceId).localeCompare(String(b.sourceId)));
   const merged = {};
-  groups.forEach(group => { (merged[group.sourceId] = merged[group.sourceId] || []).push(...group.items); });
+  items.forEach(item => { (merged[item.source_id] = merged[item.source_id] || []).push(item); });
+  const sourceIds = Object.keys(merged).sort((a, b) => String(a).localeCompare(String(b)));
+  const pendingTip = pendingWords(pending);
   let html = "";
   let y = 0;
-  const sourceIds = Object.keys(merged);
   sourceIds.forEach(sourceId => {
     const source = configuredSources().find(candidate => candidate.id === sourceId) || { id: sourceId };
     if (sourceIds.length > 1) html += '<div class="field-group" role="row"><span role="rowheader">' + esc(shortSourceLabel(source)) + "</span></div>";
     merged[sourceId].slice().sort((a, b) => itemTitle(a).localeCompare(itemTitle(b))).forEach(item => {
       const page = {
+        sourceId: item.source_id,
         firstSeen: item.first_seen,
         events: itemChangeEntries(item).concat(reportEvents.filter(event => (event.url_id === item.url_id || event.url === item.canonical_url) &&
           (event.event_type === "FETCH_ERROR" || event.event_type === "EXTRACTION_ERROR"))),
-        scans: scansBySource[item.source_id] || [],
         problemAt: item.fetch_error || item.extraction_error ? item.last_checked : null
       };
       const title = itemTitle(item);
-      html += '<button class="field-label" type="button" data-monitor-id="' + esc(item.url_id) + '" title="' + esc(title) + '">' + esc(title) + "</button>";
-      slots.forEach((slot, x) => {
-        const s = L.slotState(slot, page);
-        html += '<span class="led s-' + s + (slot.current ? " is-now" : "") + '" role="gridcell" style="--x:' + x + ";--y:" + y + '"' +
+      html += '<button class="field-label" type="button" data-monitor-id="' + esc(item.url_id) + '" data-row="' + y + '" title="' + esc(title) + '">' + esc(title) + "</button>";
+      columns.forEach((column, x) => {
+        const s = L.columnCellState(column, page);
+        html += '<span class="led s-' + s + '" role="gridcell" data-x="' + x + '" data-y="' + y + '" data-col="' + esc(column.id) + '"' +
           (s === "none" ? "" : ' data-monitor-id="' + esc(item.url_id) + '"') +
-          ' data-tip="' + esc(title) + '" data-slot="' + slot.start + '" data-state="' + s + '" aria-label="' + esc(title + ", " + slotLabel(slot) + ": " + stateWords(s)) + '"></span>';
+          ' data-tip="' + esc(title) + '" data-state="' + s + '" aria-label="' + esc(title + ", " + columnLabel(column) + ": " + stateWords(s)) + '"></span>';
       });
+      html += '<span class="led s-pending" role="gridcell" data-x="' + columns.length + '" data-y="' + y + '" data-col="pending" data-tip="' + esc(title) +
+        '" data-state="pending" aria-label="' + esc(title + ", " + pendingTip.title) + '"></span>';
       y++;
     });
   });
-  // Day labels under the first slot of each local day.
+  // Manual and continuation runs are marked under their column.
+  html += '<div class="field-marks" aria-hidden="true">' + columns.map(column =>
+    '<i class="' + (column.trigger === "manual" ? "m-manual" : column.trigger === "continuation" ? "m-continuation" : "") + '"></i>').join("") + "<i></i></div>";
+  // Day labels under the first scan of each local day.
   let lastDay = "";
-  html += '<div class="field-axis" aria-hidden="true">' + slots.map(slot => {
-    const d = new Date(slot.start);
-    const day = d.toLocaleDateString([], { weekday: "short" });
+  html += '<div class="field-axis" aria-hidden="true">' + columns.map(column => {
+    const day = new Date(column.at).toLocaleDateString([], { weekday: "short" });
     const label = day !== lastDay ? day : "";
     lastDay = day;
     return "<span>" + esc(label) + "</span>";
-  }).join("") + "</div>";
+  }).join("") + "<span></span></div>";
   field.innerHTML = html;
   const lit = field.querySelectorAll(".led.s-on, .led.s-new").length;
   const bad = field.querySelectorAll(".led.s-bad").length;
-  $("fieldNote").textContent = "Each light is one page in one six-hour scan, newest on the right; the outlined column is the scan in progress. " +
+  const manual = columns.filter(column => column.trigger === "manual").length;
+  $("fieldNote").textContent = "Each column is one saved scan, newest on the right: the scheduled scan every six hours (" + scheduleTimes() +
+    " your time) plus any manual run" + (manual ? " (" + plural(manual, "manual run", "manual runs") + " here, marked underneath)" : "") +
+    ". The outlined column is the next scan. " +
     (lit || bad
-      ? plural(lit, "scan", "scans") + " found a change" + (bad ? ", and " + plural(bad, "scan", "scans") + " hit a problem" : "") + " in this window."
+      ? plural(lit, "light", "lights") + (lit === 1 ? " shows" : " show") + " a change" + (bad ? " and " + plural(bad, "light", "lights") + " a problem" : "") + " in this window."
       : "No scan in this window found a change.");
+  const manualLegend = document.querySelector(".field-legend .manual");
+  if (manualLegend) manualLegend.parentElement.hidden = !columns.some(column => column.trigger === "manual");
+  ledField.measure();
   updateNextRunCountdown();
 }
-function slotLabel(slot) {
-  const start = new Date(slot.start);
-  return start.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" }) + ", " +
-    start.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + " scan" + (slot.current ? " (in progress)" : "");
+function timeOnlyShort(date) {
+  return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).replace(/\s?([AP])M$/i, (_, m) => " " + m.toLowerCase() + "m");
+}
+// The four scheduled slot times (00, 06, 12, 18 UTC) in the viewer's time zone.
+function scheduleTimes() {
+  const base = Date.UTC(2026, 0, 1);
+  return [0, 6, 12, 18].map(hour => new Date(base + hour * 3600000))
+    .sort((a, b) => (a.getHours() * 60 + a.getMinutes()) - (b.getHours() * 60 + b.getMinutes()))
+    .map(timeOnlyShort).join(", ");
+}
+function triggerWords(trigger) {
+  return { scheduled: "Scheduled scan", manual: "Manual scan", continuation: "Crawl continuation" }[trigger] || "Scan";
+}
+function columnLabel(column) {
+  const at = new Date(column.at);
+  const ran = at.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" }) + ", " + timeOnlyShort(at);
+  if (column.trigger === "scheduled" && column.at - column.slot > 20 * 60000) {
+    return "Scheduled " + timeOnlyShort(new Date(column.slot)) + " scan, ran " + ran;
+  }
+  return triggerWords(column.trigger) + ", " + ran;
 }
 function stateWords(s) {
-  return { on: "content changed", new: "new page", bad: "couldn't fetch or read", dim: "checked, no change", none: "no scan" }[s] || s;
+  return { on: "content changed", new: "new page", bad: "couldn't fetch or read", dim: "checked, no change", none: "not scanned", pending: "next scan" }[s] || s;
+}
+// How the next-scan column and the countdown describe the scan that is coming.
+function pendingWords(pending) {
+  const due = timeOnlyShort(pending.due);
+  const day = pending.due.toLocaleDateString([], { weekday: "short" });
+  const since = pending.startedAt ? L.formatDuration((Date.now() - pending.startedAt.getTime()) / 60000) : "";
+  const who = pending.trigger === "manual" ? "Manual scan" : pending.trigger === "continuation" ? "Crawl continuation" : "Scan";
+  switch (pending.phase) {
+    case "running": return { title: who + " running now", time: "Scanning now", note: "started " + since + " ago", countdown: "in progress" };
+    case "queued": return { title: who + " queued on GitHub", time: "Queued on GitHub", note: "waiting " + since, countdown: "starting" };
+    case "publishing": return { title: "Scan finished, saving results", time: "Saving results", note: "publishing to the dashboard", countdown: "almost done" };
+    case "late": return { title: "Scheduled " + due + " scan, not started by GitHub yet", time: due, note: day + " · GitHub hasn't started it yet", countdown: L.formatDuration(pending.lateMinutes) + " late" };
+    case "due": return { title: "Scheduled " + due + " scan, due now", time: due, note: day + " · due now", countdown: "due now" };
+    default: return { title: "Next scheduled scan, " + day + " " + due, time: due, note: day, countdown: "in " + L.formatDuration(pending.remainingMinutes) };
+  }
 }
 function nextScheduledScan(reference = new Date()) { return L.nextScheduledScan(reference); }
 // Updates the countdown and the six-hour cycle bar; called every 30 seconds.
 function updateNextRunCountdown() {
-  const cycle = L.scanCycle(new Date());
+  const pending = L.pendingScan(new Date(), state.scanColumns || L.runColumns(state.history, { workflowRuns: state.workflowRuns }), state.workflowRuns);
+  if (state.pendingScan && state.pendingScan.phase !== pending.phase && state.loaded && state.view === "overview") {
+    state.pendingScan = pending;
+    renderMonitoringSignal();
+    return;
+  }
+  state.pendingScan = pending;
+  const words = pendingWords(pending);
   const timeNode = $("nextRunTime");
-  if (timeNode) timeNode.innerHTML = esc(cycle.next.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })) +
-    ' <small>' + esc(cycle.next.toLocaleDateString([], { weekday: "short" })) + "</small>";
+  if (timeNode) timeNode.innerHTML = esc(words.time) + " <small>" + esc(words.note) + "</small>";
   const countdown = $("nextRunCountdown");
-  if (countdown) countdown.textContent = "in " + L.formatDuration(cycle.remainingMinutes);
+  if (countdown) countdown.textContent = words.countdown;
   const bar = $("cycleBar");
   if (bar) {
-    const lit = Math.floor(cycle.progress * 24);
-    bar.innerHTML = Array.from({ length: 24 }, (_, i) => '<i class="' + (i < lit ? "on" : i === lit ? "now" : "") + '"></i>').join("");
+    const waiting = pending.phase === "waiting";
+    const lit = waiting ? Math.floor(Math.min(1, Math.max(0, 1 - pending.remainingMinutes / (L.SCAN_INTERVAL_HOURS * 60))) * 24) : 24;
+    bar.dataset.phase = pending.phase;
+    bar.innerHTML = Array.from({ length: 24 }, (_, i) => '<i class="' + (i < lit ? "on" : i === lit ? "now" : "") + '" style="--i:' + i + '"></i>').join("");
   }
   const last = state.report.generated_at;
   if ($("lastScanTime")) {
+    const latest = (state.scanColumns || []).slice(-1)[0];
     $("lastScanTime").textContent = last ? relativeTime(last) : "None saved yet";
     const stale = last && Date.now() - new Date(last).getTime() > 8 * 3600 * 1000;
-    $("lastScanNote").textContent = last ? (stale ? "later than the six-hour schedule" : timeOnly(last)) : "";
+    $("lastScanNote").textContent = last
+      ? (stale ? "later than the six-hour schedule" : timeOnly(last) + (latest && latest.trigger === "manual" ? " · manual" : ""))
+      : "";
   }
 }
 function showFieldTip(target, x, y) {
   const tip = $("fieldTip");
+  ledField.hover(target);
   if (!target) { tip.hidden = true; return; }
-  const slot = { start: Number(target.dataset.slot), current: target.classList.contains("is-now") };
-  tip.innerHTML = esc(target.dataset.tip) + "<small>" + esc(slotLabel(slot)) + "</small><small>" + esc(stateWords(target.dataset.state).replace(/^\w/, ch => ch.toUpperCase())) + "</small>";
+  let when = "";
+  if (target.dataset.state === "pending") {
+    when = pendingWords(state.pendingScan || L.pendingScan(new Date(), [], [])).title;
+  } else {
+    const column = (state.scanColumns || []).find(candidate => candidate.id === target.dataset.col);
+    when = column ? columnLabel(column) : "";
+  }
+  tip.innerHTML = esc(target.dataset.tip) + "<small>" + esc(when) + "</small>" +
+    (target.dataset.state === "pending" ? "" : "<small>" + esc(stateWords(target.dataset.state).replace(/^\w/, ch => ch.toUpperCase())) + "</small>");
   tip.hidden = false;
   const box = tip.getBoundingClientRect();
   tip.style.left = Math.min(window.innerWidth - box.width - 12, x + 14) + "px";
   tip.style.top = Math.max(12, y - box.height - 12) + "px";
+}
+
+/* ---------- LED field painter ----------
+ * The cells in #signalVisual are transparent hit areas; this paints the lights
+ * on a canvas behind them. Scanned cells carry a slow drifting wave of warm
+ * light; changes, new pages and problems glow in their own colour on top of it.
+ * A new scan column drops in as a block. The next-scan column is an empty,
+ * colourless box with a small 3x3 LED scan head running down it, faster while a
+ * scan is actually running. Paused whenever the field is off screen.
+ */
+const ledField = (() => {
+  const canvas = $("fieldCanvas");
+  const stage = $("fieldStage");
+  const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
+  const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const SNAKE = [0, 1, 2, 5, 4, 3, 6, 7, 8];
+  let cells = [], rows = 0, colors = null, dpr = 1, born = {}, seen = null, hoverEl = null;
+  let frame = 0, lastPaint = 0, sleepTimer = 0, revealed = false;
+
+  function parseColor(value) {
+    const v = String(value || "").trim();
+    let m = v.match(/^#([0-9a-f]{6})$/i);
+    if (m) return [parseInt(m[1].slice(0, 2), 16), parseInt(m[1].slice(2, 4), 16), parseInt(m[1].slice(4, 6), 16), 1];
+    m = v.match(/rgba?\(([^)]+)\)/i);
+    if (m) { const p = m[1].split(",").map(Number); return [p[0], p[1], p[2], p.length > 3 ? p[3] : 1]; }
+    return [128, 128, 128, 1];
+  }
+  function readColors() {
+    const css = getComputedStyle(document.documentElement);
+    const get = name => parseColor(css.getPropertyValue(name));
+    colors = {
+      on: get("--state-change"), new: get("--state-new"), bad: get("--state-bad"),
+      lo: get("--idle-lo"), hi: get("--idle-hi"), ink: get("--ink"),
+      light: document.documentElement.getAttribute("data-theme") === "light"
+    };
+  }
+  const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+  const rgba = (c, a) => "rgba(" + (c[0] | 0) + "," + (c[1] | 0) + "," + (c[2] | 0) + "," + Math.max(0, Math.min(1, a)).toFixed(3) + ")";
+  const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+
+  function measure() {
+    if (!ctx || !stage) return;
+    const box = stage.getBoundingClientRect();
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = Math.max(1, Math.round(box.width * dpr));
+    canvas.height = Math.max(1, Math.round(box.height * dpr));
+    const now = performance.now();
+    const ids = new Set();
+    cells = [];
+    rows = 0;
+    stage.querySelectorAll(".led").forEach(el => {
+      if (el.classList.contains("s-none")) return;
+      const r = el.getBoundingClientRect();
+      const cell = { el, x: r.left - box.left, y: r.top - box.top, s: r.width, state: el.dataset.state, col: Number(el.dataset.x), row: Number(el.dataset.y), id: el.dataset.col };
+      cells.push(cell);
+      rows = Math.max(rows, cell.row + 1);
+      if (cell.id !== "pending") ids.add(cell.id);
+    });
+    // First paint builds the field left to right; afterwards only a scan that
+    // wasn't on screen before drops in.
+    let order = 0;
+    Array.from(ids).forEach(id => {
+      if (born[id] !== undefined) return;
+      born[id] = reduced ? 0 : seen === null ? now + 120 + (order++) * 45 : now;
+    });
+    seen = ids;
+    readColors();
+    wake();
+  }
+
+  function paintLight(cell, t, now) {
+    const delay = (born[cell.id] || 0) + cell.row * 22;
+    const p = reduced ? 1 : clamp01((now - delay) / 560);
+    if (p <= 0) return;
+    const ease = 1 - Math.pow(1 - p, 3);
+    const n = L.fbm(cell.col * .26 + t * .22, cell.row * .26 + t * .08, t * .11);
+    const w = clamp01((n - .3) / .42);
+    const hovered = cell.el === hoverEl;
+    const grow = hovered ? 2 : 0;
+    const x = cell.x - grow, y = cell.y - grow - (1 - ease) * 12, s = cell.s + grow * 2;
+    let color, alpha = ease, glow = 0;
+    if (cell.state === "dim") {
+      color = mix(colors.lo, colors.hi, Math.pow(w, 1.5) * .92 + (hovered ? .25 : 0));
+    } else {
+      const base = colors[cell.state] || colors.on;
+      const k = .74 + .26 * w;
+      color = mix(base, [255, 255, 255], Math.max(0, w - .7) * .55);
+      alpha *= colors.light ? .7 + .3 * k : k;
+      glow = (hovered ? 16 : 9 + 6 * w) * dpr;
+      ctx.shadowColor = rgba(base, colors.light ? .45 : .7);
+    }
+    if (p < 1) color = mix(color, [255, 255, 255], (1 - ease) * .5);
+    ctx.shadowBlur = glow;
+    ctx.fillStyle = rgba(color, alpha);
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, s, s, 2); else ctx.rect(x, y, s, s);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  function paintPending(cell, t) {
+    const phase = (state.pendingScan && state.pendingScan.phase) || "waiting";
+    const busy = phase === "running" || phase === "queued" || phase === "publishing";
+    const speed = phase === "running" ? 30 : phase === "publishing" ? 22 : phase === "queued" ? 14 : phase === "late" ? 9 : 6;
+    const tail = busy ? 6 : 3.6;
+    const span = rows * 9 + (busy ? 10 : 30);
+    const head = reduced ? -99 : (t * speed) % span;
+    const ink = colors.ink;
+    const pad = Math.max(2.5, cell.s * .2);
+    const gap = Math.max(1, cell.s * .07);
+    const dot = Math.max(1.5, (cell.s - pad * 2 - gap * 2) / 3);
+    let boost = 0;
+    for (let k = 0; k < 9; k++) {
+      const order = SNAKE.indexOf(k);
+      const d = head - (cell.row * 9 + order);
+      const trail = d >= 0 && d < 40 ? Math.exp(-d / tail) : 0;
+      boost = Math.max(boost, trail);
+      const level = (busy ? .1 : .055) + (busy ? .85 : .6) * trail;
+      ctx.fillStyle = rgba(ink, level);
+      ctx.fillRect(cell.x + pad + (k % 3) * (dot + gap), cell.y + pad + Math.floor(k / 3) * (dot + gap), dot, dot);
+    }
+    ctx.strokeStyle = rgba(ink, (busy ? .3 : .2) + .3 * boost + (cell.el === hoverEl ? .2 : 0));
+    ctx.lineWidth = 1;
+    ctx.strokeRect(cell.x + .5, cell.y + .5, cell.s - 1, cell.s - 1);
+  }
+
+  function visible() {
+    return !document.hidden && canvas && canvas.offsetParent !== null && cells.length > 0;
+  }
+  function paint(now) {
+    frame = 0;
+    if (!visible()) { sleep(); return; }
+    if (now - lastPaint >= 32 || reduced) {
+      lastPaint = now;
+      if (!colors) readColors();
+      const t = now / 1000;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      cells.forEach(cell => cell.state === "pending" ? paintPending(cell, t) : paintLight(cell, t, now));
+      revealed = true;
+    }
+    if (reduced) return;
+    frame = requestAnimationFrame(paint);
+  }
+  function sleep() {
+    clearTimeout(sleepTimer);
+    sleepTimer = setTimeout(wake, 600);
+  }
+  function wake() {
+    if (!ctx || frame) return;
+    clearTimeout(sleepTimer);
+    frame = requestAnimationFrame(paint);
+  }
+  document.addEventListener("visibilitychange", wake);
+  if (typeof MutationObserver === "function") {
+    new MutationObserver(() => { colors = null; if (reduced) wake(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+  return {
+    measure,
+    hover(el) { hoverEl = el || null; if (reduced) wake(); },
+    get revealed() { return revealed; }
+  };
+})();
+
+/* ---------- Live scan status from GitHub Actions ----------
+ * The committed data only changes after a scan finishes. The public Actions API
+ * says whether a scan is queued or running right now, and which saved scans
+ * were scheduled or manual. Unauthenticated calls are limited to 60 an hour per
+ * visitor, so this polls once a minute while a scan is active and every five
+ * minutes otherwise, and backs off if GitHub refuses.
+ */
+const WORKFLOW_RUNS_API = "https://api.github.com/repos/" + REPOSITORY.owner + "/" + REPOSITORY.repo +
+  "/actions/workflows/regulatory-monitor.yml/runs?per_page=40";
+let workflowPollTimer = 0;
+let workflowBackoffUntil = 0;
+async function refreshWorkflowRuns() {
+  clearTimeout(workflowPollTimer);
+  if (document.hidden) { workflowPollTimer = setTimeout(refreshWorkflowRuns, 60000); return; }
+  if (Date.now() >= workflowBackoffUntil) {
+    try {
+      const response = await fetch(WORKFLOW_RUNS_API, { headers: { Accept: "application/vnd.github+json" }, cache: "no-store" });
+      if (response.status === 403 || response.status === 429) workflowBackoffUntil = Date.now() + 15 * 60000;
+      else if (response.ok) {
+        const body = await response.json();
+        const runs = (Array.isArray(body.workflow_runs) ? body.workflow_runs : []).map(run => ({
+          id: run.id, event: run.event, status: run.status, conclusion: run.conclusion,
+          created_at: run.created_at, run_started_at: run.run_started_at, updated_at: run.updated_at,
+          actor: run.actor && run.actor.login, triggering_actor: run.triggering_actor && run.triggering_actor.login,
+          html_url: run.html_url
+        }));
+        const signature = JSON.stringify(runs.map(run => [run.id, run.status, run.conclusion]));
+        const changed = signature !== state.workflowSignature;
+        state.workflowRuns = runs;
+        state.workflowSignature = signature;
+        if (changed && state.loaded && state.view === "overview") renderMonitoringSignal();
+      }
+    } catch (_) {
+      // Offline or blocked: the field still works from the committed data.
+    }
+  }
+  const active = (state.pendingScan && ["running", "queued", "publishing"].indexOf(state.pendingScan.phase) >= 0);
+  workflowPollTimer = setTimeout(refreshWorkflowRuns, active ? 60000 : 300000);
 }
 
 /* ================= Lists ================= */
@@ -1675,13 +1937,16 @@ $("signalVisual").addEventListener("mousemove", event => {
   showFieldTip(cell, event.clientX, event.clientY);
 });
 $("signalVisual").addEventListener("mouseleave", () => showFieldTip(null));
-// Redraw the field when its width changes enough to fit a different number of slots.
+// Redraw the field when its width changes enough to fit a different number of
+// columns, and re-measure the painted lights whenever it moves or resizes.
 if (typeof ResizeObserver === "function") {
   let resizeTimer = null;
   new ResizeObserver(() => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
-      if (state.loaded && state.view === "overview" && String(fieldGeometry().slots) !== $("signalVisual").dataset.slots) renderMonitoringSignal();
+      if (!state.loaded || state.view !== "overview") return;
+      if (fieldGeometry().key !== $("signalVisual").dataset.geometry) renderMonitoringSignal();
+      else ledField.measure();
     }, 120);
   }).observe($("signalVisual"));
 }
@@ -1692,7 +1957,7 @@ function syncThemeLabels() {
     button.textContent = currentTheme() === "dark" ? "Light theme" : "Dark theme";
   });
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute("content", currentTheme() === "dark" ? "#120b07" : "#e4e0da");
+  if (meta) meta.setAttribute("content", currentTheme() === "dark" ? "#0b0705" : "#e4e0da");
 }
 document.addEventListener("click", event => {
   if (!event.target.closest("[data-theme-toggle]")) return;
@@ -1754,6 +2019,8 @@ document.addEventListener("click", event => {
   if (!button) return;
   const sourceId = button.dataset.runScan || "all";
   window.open(MONITOR_WORKFLOW_URL, "_blank", "noopener");
+  // Look for the new run soon after the reviewer starts it on GitHub.
+  [30000, 75000].forEach(delay => setTimeout(refreshWorkflowRuns, delay));
   const copy = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(sourceId).catch(() => {}) : Promise.resolve();
   copy.then(() => showToast(sourceId === "all"
     ? "Opened the Regulatory Monitor workflow. Press “Run workflow” to scan every active source."
@@ -2612,5 +2879,6 @@ $("askSentinelMessages").addEventListener("click", event => {
 });
 
 loadData(true);
+refreshWorkflowRuns();
 window.setInterval(() => loadData(false), 120000);
 window.setInterval(updateNextRunCountdown, 30000);

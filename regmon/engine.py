@@ -1192,13 +1192,35 @@ def _sort_events(events: list[dict]) -> list[dict]:
     return sorted(events, key=lambda e: (str(e.get("url") or ""), str(e.get("event_type") or ""), str(e.get("event_id") or "")))
 
 
+def run_trigger(environ: dict | None = None) -> dict:
+    """What started this run, so the dashboard can tell scheduled scans from manual ones.
+
+    GitHub sets GITHUB_EVENT_NAME for every Actions job. A paused crawl re-dispatches
+    itself with the workflow token, so a dispatch by github-actions[bot] is a
+    continuation slice rather than a person pressing "Run workflow".
+    """
+    env = os.environ if environ is None else environ
+    event = str(env.get("GITHUB_EVENT_NAME") or "")
+    if event == "schedule":
+        trigger = "scheduled"
+    elif event == "workflow_dispatch":
+        actor = str(env.get("GITHUB_TRIGGERING_ACTOR") or env.get("GITHUB_ACTOR") or "")
+        trigger = "continuation" if actor == "github-actions[bot]" else "manual"
+    elif event:
+        trigger = event
+    else:
+        trigger = "local"
+    run_id = str(env.get("GITHUB_RUN_ID") or "")
+    return {"trigger": trigger, "workflow_run_id": run_id if run_id.isdigit() else None}
+
+
 def _aggregate_report(reports: list[dict], run_id: str, generated_at: str | None = None) -> dict:
     count_keys = set().union(*(report["counts"].keys() for report in reports))
     return {
         "schema_version":2,"run_id":run_id,
         "generated_at":generated_at or max(report["generated_at"] for report in reports),
         "sources":[report["source"] for report in reports],
-        "source_runs":{report["source"]["id"]: {"run_id": report.get("run_id"), "generated_at": report.get("generated_at")} for report in reports},
+        "source_runs":{report["source"]["id"]: {"run_id": report.get("run_id"), "generated_at": report.get("generated_at"), "trigger": report.get("trigger")} for report in reports},
         "counts":{k:sum(int(report["counts"].get(k,0)) for report in reports) for k in sorted(count_keys)},
         "discovery":[report.get("discovery",{}) for report in reports],
         "removal_guards":[report["removal_guard"] for report in reports if report.get("removal_guard") and report.get("run_id") == run_id],
@@ -1236,8 +1258,12 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
         sid = report["source"]["id"]
         if report.get("baseline_update_allowed"):
             payload["sources"][sid] = result["inventory"]
+        origin = run_trigger()
+        report.setdefault("trigger", origin["trigger"])
+        report.setdefault("workflow_run_id", origin["workflow_run_id"])
         atomic_write_text(REPORTS / f"{sid}.json", json.dumps(report,indent=2))
-        history.append({"run_id":report["run_id"],"generated_at":report["generated_at"],"source_id":sid,"regulator":report["source"]["regulator"],"counts":report["counts"]})
+        history.append({"run_id":report["run_id"],"generated_at":report["generated_at"],"source_id":sid,"regulator":report["source"]["regulator"],
+                        "trigger":report["trigger"],"workflow_run_id":report["workflow_run_id"],"counts":report["counts"]})
     # Keep the newest N entries PER SOURCE. A global cap of N x (sources in this
     # run) truncated the other sources' history on every single-source run.
     history.sort(key=lambda x:x.get("generated_at",""),reverse=True)
@@ -1259,6 +1285,7 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
     carried = _active_source_reports({report["source"]["id"] for report in reports})
     all_reports = reports + carried
     aggregate = _aggregate_report(all_reports, run_id, generated_at=max(report["generated_at"] for report in reports))
+    aggregate["trigger"] = run_trigger()["trigger"]
     atomic_write_text(DATA / "report.json", json.dumps(aggregate,indent=2))
     atomic_write_text(HISTORY / f"{run_id}.json", json.dumps(_aggregate_report(reports, run_id), indent=2))
     aggregate_counts = aggregate["counts"]

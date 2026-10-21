@@ -45,40 +45,192 @@
     return { start, next, progress, remainingMinutes };
   }
 
-  // The scheduled six-hour slots ending with the one in progress, oldest first.
-  function scanSlots(reference = new Date(), count = 28) {
-    const periodMs = SCAN_INTERVAL_HOURS * 3600 * 1000;
-    const currentStart = nextScheduledScan(reference).getTime() - periodMs;
-    const slots = [];
-    for (let i = count - 1; i >= 0; i--) {
-      const start = currentStart - i * periodMs;
-      slots.push({ start, end: start + periodMs, current: i === 0 });
+  const PERIOD_MS = SCAN_INTERVAL_HOURS * 3600 * 1000;
+  function slotStartOf(time) { return Math.floor(time / PERIOD_MS) * PERIOD_MS; }
+
+  /* ---------- Scan columns ---------- */
+
+  // What started a run: "scheduled", "manual", "continuation" (a paused crawl
+  // re-dispatching itself) or "unknown" for history written before runs
+  // recorded it.
+  function normalizeTrigger(value) {
+    const raw = String(value || "").toLowerCase();
+    if (raw === "schedule" || raw === "scheduled") return "scheduled";
+    if (raw === "workflow_dispatch" || raw === "manual") return "manual";
+    if (raw === "continuation") return "continuation";
+    return raw ? "manual" : "";
+  }
+  // A GitHub Actions run, as returned by the workflow runs API.
+  function workflowRunTrigger(run) {
+    if (!run) return "";
+    if (run.event === "schedule") return "scheduled";
+    const actor = String(run.triggering_actor || run.actor || "");
+    if (run.event === "workflow_dispatch" && actor === "github-actions[bot]") return "continuation";
+    return run.event ? "manual" : "";
+  }
+  function runTime(run, key) {
+    const t = Date.parse(run && run[key]);
+    return Number.isNaN(t) ? null : t;
+  }
+  // The Actions run that produced a saved scan: by id when the scan recorded
+  // it, otherwise the run whose lifetime contains the scan's save time.
+  function matchWorkflowRun(column, runs) {
+    if (column.workflowRunId) {
+      const byId = runs.find(run => String(run.id) === String(column.workflowRunId));
+      if (byId) return byId;
     }
-    return slots;
+    let best = null;
+    runs.forEach(run => {
+      const started = runTime(run, "run_started_at") ?? runTime(run, "created_at");
+      const ended = runTime(run, "updated_at");
+      if (started === null || ended === null) return;
+      if (column.at < started - 60000 || column.at > ended + 180000) return;
+      if (!best || started > (runTime(best, "run_started_at") ?? runTime(best, "created_at"))) best = run;
+    });
+    return best;
   }
 
-  // One LED in the change field: what happened to one page during one slot.
-  //   "on"  a scan in this slot found a content change
-  //   "new" the page first appeared in this slot
-  //   "bad" a scan in this slot could not fetch or read the page
-  //   "dim" the page was scanned and nothing changed
-  //   "none" no scan covered the page (not yet monitored, or no run)
-  // Scans are runs of the page's source; a scheduled run often lands hours
-  // into its slot, so anything inside [start, end) belongs to that slot.
-  function slotState(slot, page) {
-    const inSlot = time => {
-      const t = new Date(time).getTime();
-      return !Number.isNaN(t) && t >= slot.start && t < slot.end;
+  // One column per saved scan, oldest first. A scan covers every source that
+  // ran under the same run id. Scheduled and manual scans each get their own
+  // column, so a manual run shows up the moment its results are saved.
+  //   at       when the scan's results were saved (ms)
+  //   prevAt   the previous scan's save time; events in (prevAt, at] belong here
+  //   sources  { source_id: saved at (ms) }
+  //   trigger  scheduled | manual | continuation | unknown
+  //   slot     start of the six-hour schedule slot the scan ran in
+  function runColumns(history, options = {}) {
+    const workflowRuns = Array.isArray(options.workflowRuns) ? options.workflowRuns : [];
+    const byId = new Map();
+    (Array.isArray(history) ? history : []).forEach(entry => {
+      if (!entry || !entry.generated_at) return;
+      const t = Date.parse(entry.generated_at);
+      if (Number.isNaN(t)) return;
+      const id = String(entry.run_id || entry.generated_at);
+      let column = byId.get(id);
+      if (!column) {
+        column = { id, at: t, sources: {}, trigger: "", workflowRunId: null, htmlUrl: "" };
+        byId.set(id, column);
+      }
+      column.at = Math.max(column.at, t);
+      if (entry.source_id) column.sources[entry.source_id] = Math.max(column.sources[entry.source_id] || 0, t);
+      if (entry.trigger && !column.trigger) column.trigger = normalizeTrigger(entry.trigger);
+      if (entry.workflow_run_id && !column.workflowRunId) column.workflowRunId = String(entry.workflow_run_id);
+    });
+    const columns = Array.from(byId.values()).sort((a, b) => a.at - b.at);
+    columns.forEach((column, index) => {
+      const run = matchWorkflowRun(column, workflowRuns);
+      if (run) {
+        if (!column.trigger) column.trigger = workflowRunTrigger(run);
+        if (!column.workflowRunId && run.id) column.workflowRunId = String(run.id);
+        column.htmlUrl = run.html_url || "";
+      }
+      if (!column.trigger) column.trigger = "unknown";
+      column.prevAt = index ? columns[index - 1].at : column.at - PERIOD_MS;
+      column.slot = slotStartOf(column.at);
+    });
+    const limit = Number(options.limit) || 0;
+    return limit > 0 && columns.length > limit ? columns.slice(-limit) : columns;
+  }
+
+  // One LED in the change field: what happened to one page in one scan.
+  //   "on"   the scan found a content change
+  //   "new"  the page first appeared in this scan
+  //   "bad"  the scan could not fetch or read the page
+  //   "dim"  the page was scanned and nothing changed
+  //   "none" this scan did not cover the page (another source's run, or the
+  //          page was not monitored yet); nothing is drawn
+  function columnCellState(column, page) {
+    const scannedAt = column.sources[page.sourceId];
+    if (!scannedAt) return "none";
+    const firstSeen = page.firstSeen ? Date.parse(page.firstSeen) : NaN;
+    if (!Number.isNaN(firstSeen) && firstSeen > scannedAt + 1000) return "none";
+    const inColumn = time => {
+      const t = Date.parse(time);
+      return !Number.isNaN(t) && t > column.prevAt && t <= column.at;
     };
-    const firstSeen = page.firstSeen ? new Date(page.firstSeen).getTime() : null;
-    if (firstSeen !== null && !Number.isNaN(firstSeen) && slot.end <= firstSeen) return "none";
-    const events = (page.events || []).filter(event => inSlot(event.timestamp));
+    const events = (page.events || []).filter(event => inColumn(event.timestamp));
     if (events.some(event => event.event_type === "FETCH_ERROR" || event.event_type === "EXTRACTION_ERROR")) return "bad";
-    if (page.problemAt && inSlot(page.problemAt)) return "bad";
+    if (page.problemAt && inColumn(page.problemAt)) return "bad";
     if (events.some(event => event.event_type === "NEW_URL")) return "new";
     if (events.some(event => event.event_type === "CHANGED_URL" || event.event_type === "REMOVED_URL" || event.event_type === "HTML_SOURCE_CHANGED")) return "on";
-    if ((page.scans || []).some(inSlot)) return "dim";
-    return "none";
+    return "dim";
+  }
+
+  const ACTIVE_RUN_STATUSES = ["queued", "in_progress", "waiting", "requested", "pending"];
+
+  // The next scan, for the empty column at the end of the field and the
+  // countdown. The schedule clock never stops: slots start at 00, 06, 12 and
+  // 18 UTC. GitHub often starts a scheduled run hours into its slot, so until
+  // that run is saved the slot's scan is still "due", not "done".
+  //   phase  waiting     the slot's scheduled scan is saved; next one at `due`
+  //          due         the slot just started; GitHub should start it soon
+  //          late        the slot started a while ago and GitHub hasn't run it
+  //          queued      GitHub has the run queued
+  //          running     a scan is running on GitHub right now
+  //          publishing  a scan finished; its results are being saved
+  function pendingScan(reference, columns, workflowRuns) {
+    const now = reference instanceof Date ? reference.getTime() : Number(reference);
+    const cols = Array.isArray(columns) ? columns : [];
+    const runs = Array.isArray(workflowRuns) ? workflowRuns : [];
+    const slot = slotStartOf(now);
+    const scheduledDone = cols.some(column => column.at >= slot && (column.trigger === "scheduled" || column.trigger === "unknown"));
+    const due = scheduledDone ? slot + PERIOD_MS : slot;
+    const latestAt = cols.length ? cols[cols.length - 1].at : 0;
+    const result = {
+      due: new Date(due), slot, phase: scheduledDone ? "waiting" : (now - slot < 20 * 60000 ? "due" : "late"),
+      remainingMinutes: Math.max(0, Math.ceil((due - now) / 60000)),
+      lateMinutes: scheduledDone ? 0 : Math.max(0, Math.floor((now - slot) / 60000)),
+      startedAt: null, trigger: "", htmlUrl: ""
+    };
+    const active = runs
+      .filter(run => ACTIVE_RUN_STATUSES.indexOf(run.status) >= 0)
+      .sort((a, b) => (runTime(b, "created_at") || 0) - (runTime(a, "created_at") || 0))[0];
+    if (active) {
+      result.phase = active.status === "in_progress" ? "running" : "queued";
+      result.startedAt = new Date(runTime(active, "run_started_at") ?? runTime(active, "created_at") ?? now);
+      result.trigger = workflowRunTrigger(active);
+      result.htmlUrl = active.html_url || "";
+      return result;
+    }
+    const finished = runs.find(run => {
+      const ended = runTime(run, "updated_at");
+      return run.status === "completed" && run.conclusion === "success" && ended !== null &&
+        ended > latestAt + 60000 && now - ended < 20 * 60000;
+    });
+    if (finished) {
+      result.phase = "publishing";
+      result.trigger = workflowRunTrigger(finished);
+      result.htmlUrl = finished.html_url || "";
+    }
+    return result;
+  }
+
+  /* ---------- LED wave ---------- */
+
+  // Smooth 3-D value noise, summed over three octaves (0..1). Drives the slow
+  // wave of light that drifts across the change field and the lock screen.
+  function hash3(x, y, z) {
+    let h = (x * 374761393 + y * 668265263 + z * 1274126177) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
+  }
+  function smooth(t) { return t * t * (3 - 2 * t); }
+  function valueNoise(x, y, z) {
+    const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
+    const xf = smooth(x - xi), yf = smooth(y - yi), zf = smooth(z - zi);
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const plane = k => lerp(
+      lerp(hash3(xi, yi, k), hash3(xi + 1, yi, k), xf),
+      lerp(hash3(xi, yi + 1, k), hash3(xi + 1, yi + 1, k), xf), yf);
+    return lerp(plane(zi), plane(zi + 1), zf);
+  }
+  function fbm(x, y, z) {
+    let sum = 0, amp = .55, freq = 1, norm = 0;
+    for (let octave = 0; octave < 3; octave++) {
+      sum += amp * valueNoise(x * freq, y * freq, z * freq + octave * 17.3);
+      norm += amp; amp *= .5; freq *= 2.03;
+    }
+    return sum / norm;
   }
 
   function formatDuration(minutes) {
@@ -506,7 +658,7 @@
 
   return {
     diffSequences, alignLines, changedWords,
-    esc, nextScheduledScan, scanCycle, scanSlots, slotState, formatDuration, SCAN_INTERVAL_HOURS,
+    esc, nextScheduledScan, scanCycle, runColumns, columnCellState, pendingScan, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,
     parseUnifiedDiff, tokenize, wordDiff, similarity, redlineRows, redlineSummary, renderRedline, renderUnifiedDiff,
     splitMarkdownTableRow, isMarkdownTableSeparator, relativeTime, dayHeading

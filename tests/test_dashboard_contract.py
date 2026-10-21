@@ -191,13 +191,18 @@ class TestDashboardScanSignal(unittest.TestCase):
         source = read("dashboard.js")
         for token in (
             "function renderMonitoringSignal()",
-            "L.scanSlots(new Date(), geometry.slots)",
-            "L.slotState(slot, page)",
-            "scansBySource[item.source_id]",
+            "L.runColumns(state.history, { workflowRuns: state.workflowRuns, limit: geometry.capacity - 1 })",
+            "L.pendingScan(new Date(), columns, state.workflowRuns)",
+            "L.columnCellState(column, page)",
             "itemChangeEntries(item)",
             "function updateNextRunCountdown()",
-            "L.scanCycle(new Date())",
             "window.setInterval(updateNextRunCountdown, 30000)",
+            # Live run status comes from the public Actions API and fails quietly.
+            "/actions/workflows/regulatory-monitor.yml/runs?per_page=40",
+            "workflowBackoffUntil = Date.now() + 15 * 60000",
+            # The lights are painted on a canvas that pauses when off screen.
+            "const ledField = (() => {",
+            "prefers-reduced-motion: reduce",
         ):
             with self.subTest(token=token):
                 self.assertIn(token, source)
@@ -205,11 +210,19 @@ class TestDashboardScanSignal(unittest.TestCase):
         self.assertIn("function nextScheduledScan(reference = new Date())", lib)
         self.assertIn("0 */6 * * * (UTC)", lib)
         html = read("index.html")
-        self.assertIn('id="signalVisual"', html)
-        self.assertIn('id="cycleBar"', html)
-        self.assertIn(".led.is-now", html)
-        # The old decorative sweep is gone: nothing spins.
+        for token in ('id="signalVisual"', 'id="cycleBar"', 'id="fieldCanvas"', ".led.s-pending", "--state-change"):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+        # "No scan" cells are gone: an unscanned cell is simply not drawn.
+        self.assertNotIn("No scan</span>", html)
         self.assertNotIn("signal-sweep", html + source)
+
+    def test_development_gate_hides_the_workspace_and_stores_only_a_hash(self):
+        html = read("index.html")
+        self.assertIn('id="csPasswordGate"', html)
+        self.assertIn("html.cs-locked #app", html)
+        self.assertIn('crypto.subtle.digest("SHA-256"', html)
+        self.assertNotIn("correctPassword", html)
 
 
 class TestDashboardDataLoading(unittest.TestCase):
