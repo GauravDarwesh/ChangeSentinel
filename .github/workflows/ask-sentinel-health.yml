@@ -64,6 +64,9 @@ jobs:
           PY
 
       - name: Index the repository and ask a real Groq question
+        # On PRs this calls the already-deployed function, not the branch's proposed Edge Function.
+        # Treat it as a baseline until deployment; keep the post-merge check strict.
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
         env:
           SUPABASE_URL: https://pysoukwmnwwgilkwafdy.supabase.co
           SUPABASE_PUBLISHABLE_KEY: sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV
