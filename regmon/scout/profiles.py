@@ -86,6 +86,8 @@ class Regulator:
     path_hints: tuple[PathHint, ...] = ()
     exclude_paths: tuple[str, ...] = ()
     known_gaps: tuple[str, ...] = ()
+    relevant_keywords: tuple[str, ...] = ()
+    exclude_keywords: tuple[str, ...] = ()
     max_requests: int | None = None
     max_seconds: float | None = None
 
@@ -241,14 +243,32 @@ def _regulator(raw: dict, channel_ids: set[str], regulator_ids: set[str]) -> Reg
         effect = str(item.get("effect") or "positive")
         if effect not in {"positive", "negative"}:
             raise ConfigError(f"{regulator_id}: path hint effect must be positive or negative")
-        hints.append(PathHint(prefix=item["prefix"], publication_type=str(item.get("publication_type") or ""),
-                              topic=str(item.get("topic") or ""), effect=effect))
+        hint = PathHint(prefix=item["prefix"], publication_type=str(item.get("publication_type") or ""),
+                        topic=str(item.get("topic") or ""), effect=effect)
+        from regmon.scout.assess import PUBLICATION_TYPES, TOPICS
+
+        if hint.publication_type and hint.publication_type not in {kind.id for kind in PUBLICATION_TYPES}:
+            raise ConfigError(f"{regulator_id}: unknown publication type {hint.publication_type!r} in path_hints")
+        if hint.topic and hint.topic not in {kind.id for kind in TOPICS}:
+            raise ConfigError(f"{regulator_id}: unknown topic {hint.topic!r} in path_hints")
+        hints.append(hint)
     language_paths = raw.get("language_paths") or {}
     if not isinstance(language_paths, dict) or not all(
         isinstance(key, str) and isinstance(value, str) and value.startswith("/") for key, value in language_paths.items()
     ):
         raise ConfigError(f"{regulator_id}: language_paths maps a language code to a path prefix")
     https_hosts = frozenset(hosts) if raw.get("prefer_https") else frozenset()
+    keywords = raw.get("keywords") or {}
+    if not isinstance(keywords, dict) or set(keywords) - {"relevant", "exclude"}:
+        raise ConfigError(f"{regulator_id}: keywords must be an object with optional relevant and exclude lists")
+    relevant_keywords = _strings(keywords.get("relevant"), f"{regulator_id}: keywords.relevant")
+    exclude_keywords = _strings(keywords.get("exclude"), f"{regulator_id}: keywords.exclude")
+    for term in relevant_keywords + exclude_keywords:
+        if len(term) > 80:
+            raise ConfigError(f"{regulator_id}: keyword {term[:20]!r}… is longer than 80 characters")
+    overlap = {term.lower() for term in relevant_keywords} & {term.lower() for term in exclude_keywords}
+    if overlap:
+        raise ConfigError(f"{regulator_id}: keywords cannot be both relevant and excluded: {', '.join(sorted(overlap))}")
     name = str(raw.get("name") or "").strip()
     if not name:
         raise ConfigError(f"{regulator_id}: name is required")
@@ -268,6 +288,8 @@ def _regulator(raw: dict, channel_ids: set[str], regulator_ids: set[str]) -> Reg
         path_hints=tuple(hints),
         exclude_paths=_strings(raw.get("exclude_paths"), f"{regulator_id}: exclude_paths"),
         known_gaps=_strings(raw.get("known_gaps"), f"{regulator_id}: known_gaps"),
+        relevant_keywords=relevant_keywords,
+        exclude_keywords=exclude_keywords,
         max_requests=_positive(raw.get("max_requests"), None, f"{regulator_id}: max_requests"),
         max_seconds=_positive(raw.get("max_seconds"), None, f"{regulator_id}: max_seconds", float),
     )

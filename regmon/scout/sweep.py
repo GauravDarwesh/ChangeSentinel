@@ -163,7 +163,20 @@ def run_listing(client: PoliteClient, regulator: Regulator, run: ChannelRun, *, 
     caught_up = reached_end = False
     for index in range(pages):
         url = page_url(channel, index)
-        response = client.get(fetch_url(url, regulator))
+        try:
+            response = client.get(fetch_url(url, regulator))
+        except BudgetExhausted:
+            raise
+        except ScoutFetchError as exc:
+            if index == 0:
+                raise
+            if exc.status in {404, 410}:
+                reached_end = True
+            else:
+                run.status = "partial"
+                run.note = f"Page {index + 1} could not be read ({clean(str(exc), 160)}); older pages were not checked this sweep"
+                return
+            break
         run.pages_read += 1
         html = response.body.decode("utf-8", errors="replace")
         links = harvest_listing(html, response.url, channel.content_selector)
@@ -184,7 +197,12 @@ def run_listing(client: PoliteClient, regulator: Regulator, run: ChannelRun, *, 
                 link.url, run, anchor_text=link.anchor_text, title_attr=link.title_attr, context=link.context,
                 date_hint=link.date_hint, parent_url=response.url))
         if pagination and channel.newest_first and not baseline:
-            if all(canonical(link.url, regulator.https_hosts) in known for link in in_scope):
+            # Newest first: once the tail of a page is made of items seen before,
+            # everything older was seen too. Checking the tail (not just "any
+            # known item") keeps a pinned old item at the top from ending the read.
+            seen = [canonical(link.url, regulator.https_hosts) in known for link in in_scope]
+            tail = 1 if len(seen) < 6 else 2
+            if all(seen[-tail:]):
                 caught_up = True
                 break
     if pagination and baseline:
@@ -192,7 +210,7 @@ def run_listing(client: PoliteClient, regulator: Regulator, run: ChannelRun, *, 
     elif pagination and caught_up:
         run.note = f"Caught up with items seen before on page {run.pages_read}"
     elif pagination and reached_end:
-        run.note = f"Reached the end of the listing after {run.pages_read - 1} page(s)"
+        run.note = f"Reached the end of the listing after {run.pages_read} page(s)"
     elif pagination:
         run.status = "partial"
         run.note = f"Read {run.pages_read} page(s) without reaching items seen before; older pages were not checked this sweep"
@@ -241,7 +259,8 @@ def _link_translations(registry: Registry, regulator: Regulator, cids: list[str]
             language = next((code for code, prefix in regulator.language_paths.items() if path.startswith(prefix)), "")
         if not language or language in regulator.review_languages:
             continue
-        for code, href in (evidence.get("alternates") or {}).items():
+        alternates = dict(evidence.get("alternates") or {})
+        for code, href in alternates.items():
             if code in regulator.review_languages:
                 parent = candidate_id(canonical(href, regulator.https_hosts))
                 if parent in registry.candidates and parent != cid:

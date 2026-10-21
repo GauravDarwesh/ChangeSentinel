@@ -192,6 +192,23 @@ def _sources(candidate: dict) -> list[tuple[str, str]]:
     return [(label, str(text)) for label, text in sources if text and str(text).strip()]
 
 
+_KEYWORD_CACHE: dict[str, re.Pattern] = {}
+
+
+def _keyword(terms, sources, strengths):
+    """First (source, term) where a configured keyword appears as a whole word or phrase."""
+    for source, text in sources:
+        if SOURCE_STRENGTH.get(source, "weak") not in strengths:
+            continue
+        for term in terms:
+            pattern = _KEYWORD_CACHE.get(term)
+            if pattern is None:
+                pattern = _KEYWORD_CACHE[term] = re.compile(r"(?<!\w)" + re.escape(term) + r"(?!\w)", re.IGNORECASE)
+            if pattern.search(text):
+                return source, term
+    return None
+
+
 def _find(kinds, sources):
     """First matching source and term for each kind: {kind_id: (kind, source, term)}."""
     found = {}
@@ -244,6 +261,9 @@ def assess(candidate: dict, regulator: Regulator, objective: Objective) -> dict:
     def strength(source: str) -> str:
         return SOURCE_STRENGTH.get(source, "weak")
 
+    if file_format(url, " ".join([str(evidence.get("anchor_text") or ""), str(evidence.get("context") or "")])) != "Web page":
+        # A spreadsheet or PDF is a document, whatever "update" or "news" its file name contains.
+        types.pop("press_release", None)
     priority = {key: value for key, value in types.items() if _class_of(key, value[0].default_class, objective) == "priority"}
     out = {key: value for key, value in types.items() if _class_of(key, value[0].default_class, objective) == "out"}
     secondary = {key: value for key, value in types.items() if _class_of(key, value[0].default_class, objective) == "secondary"}
@@ -252,6 +272,10 @@ def assess(candidate: dict, regulator: Regulator, objective: Objective) -> dict:
     strong_topics = {key: value for key, value in topics.items() if strength(value[1]) != "weak"}
     strong_out = {key: value for key, value in out.items() if strength(value[1]) != "weak"}
 
+    # Owner-configured profile keywords: a relevant keyword counts like a topic,
+    # an exclusion keyword like an out-of-objective type. Both are visible reasons.
+    keyword_hit = _keyword(regulator.relevant_keywords, sources, {"strong", "medium"})
+    exclusion_hit = _keyword(regulator.exclude_keywords, sources, {"strong"})
     utility_path = UTILITY_PATH.search(path)
     title_text = next((text for label, text in sources if label in {"title", "page heading", "link text"}), "")
     utility_title = UTILITY_TITLE.search(title_text.strip()) if title_text else None
@@ -263,6 +287,10 @@ def assess(candidate: dict, regulator: Regulator, objective: Objective) -> dict:
         reasons.append({"effect": "+", "source": source, "text": f"{source.capitalize()} mentions {_lower(kind.label)} (“{term}”)"})
     if evidence.get("near_monitored"):
         reasons.append({"effect": "+", "source": "address", "text": "Sits in a section ChangeSentinel already monitors"})
+    if keyword_hit:
+        reasons.append({"effect": "+", "source": keyword_hit[0], "text": f"{keyword_hit[0].capitalize()} matches the profile keyword “{keyword_hit[1]}”"})
+    if exclusion_hit:
+        reasons.append({"effect": "-", "source": exclusion_hit[0], "text": f"{exclusion_hit[0].capitalize()} matches the profile's exclusion keyword “{exclusion_hit[1]}”"})
     for key, (kind, source, term) in out.items():
         reasons.append({"effect": "-", "source": source, "text": f"{source.capitalize()} suggests {NOUNS[kind.id]} (“{term}”), outside the monitoring objective"})
     for key, (kind, source, term) in secondary.items():
@@ -274,22 +302,22 @@ def assess(candidate: dict, regulator: Regulator, objective: Objective) -> dict:
     if negative_hint:
         reasons.append({"effect": "-", "source": "page path", "text": f"Under {negative_hint.prefix}, which this regulator's profile marks as outside the objective"})
 
-    positive_strong = bool(strong_priority) or bool(strong_topics) or bool(evidence.get("near_monitored"))
-    has_any_positive = bool(priority) or bool(topics) or bool(evidence.get("near_monitored"))
+    positive_strong = bool(strong_priority) or bool(strong_topics) or bool(evidence.get("near_monitored")) or bool(keyword_hit)
+    has_any_positive = bool(priority) or bool(topics) or bool(evidence.get("near_monitored")) or bool(keyword_hit)
 
     if (utility_path or utility_title) and not positive_strong:
         outcome = "irrelevant"
         confidence = "strong" if utility_path and utility_title else "supported"
     elif negative_hint and not positive_strong:
         outcome, confidence = "irrelevant", "supported"
-    elif strong_out and not strong_priority:
+    elif (strong_out or exclusion_hit) and not strong_priority and not keyword_hit:
         if strong_topics or evidence.get("near_monitored"):
             outcome, confidence = "uncertain", "conflicting"
         else:
             outcome = "irrelevant"
             confidence = "strong" if len(strong_out) > 1 or any(source in {"feed category", "page path"} for _, source, _ in out.values()) else "supported"
     elif strong_priority:
-        conflicting = bool(strong_out) or utility_path or utility_title
+        conflicting = bool(strong_out) or bool(exclusion_hit) or utility_path or utility_title
         outcome = "relevant"
         if conflicting:
             confidence = "conflicting"
@@ -299,9 +327,10 @@ def assess(candidate: dict, regulator: Regulator, objective: Objective) -> dict:
             confidence = "supported"
     elif secondary and strength(next(iter(secondary.values()))[1]) != "weak":
         outcome, confidence = "uncertain", "supported"
-    elif strong_topics:
+    elif strong_topics or keyword_hit:
         outcome = "relevant"
         from_title = any(strength(source) == "strong" for _, source, _ in strong_topics.values())
+        from_title = from_title or bool(keyword_hit and SOURCE_STRENGTH.get(keyword_hit[0]) == "strong")
         confidence = "supported" if from_title or len(strong_topics) >= 2 else "weak"
     elif has_any_positive:
         outcome, confidence = "uncertain", "weak"

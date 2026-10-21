@@ -2,6 +2,7 @@
 
   python -m regmon.scout sweep [--regulator all|ID[,ID]] [--trigger scheduled|manual]
   python -m regmon.scout review --event "$GITHUB_EVENT_PATH"
+  python -m regmon.scout source --event "$GITHUB_EVENT_PATH"
   python -m regmon.scout rebuild-review
   python -m regmon.scout validate
 """
@@ -26,17 +27,43 @@ def _outputs(path: str | None, values: dict) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m regmon.scout", description="Discover new regulator URLs worth monitoring.")
-    parser.add_argument("command", choices=["sweep", "review", "rebuild-review", "validate"])
+    parser.add_argument("command", choices=["sweep", "review", "source", "rebuild-review", "validate"])
     parser.add_argument("--config", default="config/scout.json")
     parser.add_argument("--data-dir", default="data/scout")
     parser.add_argument("--sources-config", default="config/sources.json")
     parser.add_argument("--latest", default="data/latest.json", help="The monitor's URL inventory, used to mark known URLs")
     parser.add_argument("--regulator", default="all")
     parser.add_argument("--trigger", default="manual")
-    parser.add_argument("--event", help="GitHub issue event JSON for the review command")
+    parser.add_argument("--event", help="GitHub issue event JSON for the review and source commands")
+    parser.add_argument("--no-dns", action="store_true", help="Skip DNS checks of new hosts (tests and offline use)")
     parser.add_argument("--output", help="Write a JSON result here")
     parser.add_argument("--github-output", default=os.environ.get("GITHUB_OUTPUT"))
     args = parser.parse_args(argv)
+
+    if args.command == "source":
+        # Runs before loading the configuration: the request changes it.
+        from regmon.scout.sources import SourceRequestError, apply_event as apply_source_event
+        from regmon.scout.review import load_event
+
+        if not args.event:
+            parser.error("source needs --event")
+        try:
+            summary = apply_source_event(load_event(args.event), Path(args.config), resolve_dns=not args.no_dns)
+        except SourceRequestError as exc:
+            print(f"Scout source request rejected: {exc}", file=sys.stderr)
+            _outputs(args.github_output, {"error": str(exc).replace("\n", " ")})
+            return 3
+        config = load_config(args.config)
+        from regmon.scout.sweep import rebuild_review
+
+        rebuild_review(config, Path(args.data_dir), sources_config=Path(args.sources_config), latest_path=Path(args.latest))
+        verb = "Added regulator" if summary["created"] else "Updated regulator"
+        print(f"{verb} {summary['regulator_id']}" + (f" with channel {summary['channel_id']}" if summary["channel_id"] else ""))
+        _outputs(args.github_output, {"regulator_id": summary["regulator_id"], "created": str(summary["created"]).lower(),
+                                      "channel_id": summary["channel_id"], "active": str(summary["active"]).lower()})
+        if args.output:
+            Path(args.output).write_text(json.dumps(summary, indent=1), encoding="utf-8")
+        return 0
 
     try:
         config = load_config(args.config)

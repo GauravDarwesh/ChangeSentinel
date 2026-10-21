@@ -36,6 +36,8 @@ def tidy_label(text: str, limit: int = 160) -> str:
     """A readable label from listing text: file sizes, "N/A" and button words removed."""
     value = NOISE_RE.sub(" ", str(text or ""))
     value = re.sub(r"\s+", " ", value).strip(" .:-–|")
+    # "FR 2225 FR 2225 FR 2225" (a form named once per column) reads as "FR 2225".
+    value = re.sub(r"\b(.{3,40}?)(?:\s+\1\b)+", r"\1", value)
     return clean(value, limit)
 
 

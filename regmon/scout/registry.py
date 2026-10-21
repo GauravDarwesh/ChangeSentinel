@@ -116,14 +116,18 @@ class Registry:
             self.candidates[cid] = record
         if observation.channel_id not in record["channels"]:
             record["channels"] = sorted(set(record["channels"]) | {observation.channel_id})
+        if (record.get("relationship") or {}).get("type") == "translation":
+            return cid, created  # the linked original keeps the evidence
         evidence = record.setdefault("evidence", {})
         values = {
             "title": observation.title, "anchor_text": observation.anchor_text, "title_attr": observation.title_attr,
             "context": observation.context,
             "parent_url": observation.parent_url, "description": observation.description, "categories": observation.categories,
             "published": observation.published, "lastmod": observation.lastmod, "date_hint": observation.date_hint,
-            "language": observation.language, "alternates": observation.alternates,
-            "original_url": observation.original_url if observation.original_url != url else "",
+            "language": observation.language,
+            "alternates": {code: href for code, href in (observation.alternates or {}).items()
+                           if canonical(href, https_hosts) != url},
+            "original_url": observation.original_url if _meaningfully_different(observation.original_url, url) else "",
         }
         from regmon.scout.channels import is_generic
 
@@ -142,6 +146,13 @@ class Registry:
             elif key == "context" and len(str(current)) < 25 and len(str(value)) > len(str(current)):
                 evidence[key] = value
         return cid, created
+
+
+def _meaningfully_different(original: str, url: str) -> bool:
+    """Keep the published spelling only when it differs by more than scheme or a trailing slash."""
+    value = re.sub(r"^http://", "https://", str(original or "").split("#", 1)[0].strip().rstrip("/"))
+    target = re.sub(r"^http://", "https://", url.rstrip("/"))
+    return bool(original) and value.lower() != target.lower()
 
 
 def registry_path(data_dir: Path, regulator_id: str) -> Path:
