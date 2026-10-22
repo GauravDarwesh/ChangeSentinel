@@ -1,28 +1,28 @@
 # Cadence — regulatory calendar
 
-Cadence is a shared calendar for regulatory deadlines, expected releases, filing cycles, meetings and internal follow-ups. It is a separate feature from the automatically generated `data/calendar.json` / `data/calendar.ics` feed: automatic dates remain read-only evidence; private team entries live in Supabase.
+Cadence is the dashboard’s evidence-first view of regulatory deadlines and effective dates. It renders the automatically generated `data/calendar.json` / `data/calendar.ics` feed, so every visible date can be traced back to a detected change and its saved evidence.
 
 ## What it supports
 
-- Manual team entries with a category, regulator/form, source link, owner and notes.
-- One-off, weekly, monthly, quarterly and yearly recurrence. Monthly/quarterly dates stay anchored to the original day where possible (for example, a monthly series beginning on the 31st uses the last day of shorter months).
-- Completion tracking for each occurrence of a repeating entry.
-- Per-entry email reminders sent to one or more recipients, from the scheduled reminder service.
-- A team-only edit surface. Only confirmed, non-anonymous Supabase Auth users whose email is active in `public.regulatory_calendar_members` can load or change team entries. An editor/admin can create or edit; viewer is read-only. The public Data API does not have table grants.
+- Evidence-linked dates generated from material ChangeSentinel findings.
+- Month navigation, a daily agenda, source links and a direct route back to the underlying change.
+- An `.ics` export and subscription feed for personal or team calendars.
+- No Cadence email sign-in, magic link, or browser-side access to private team entries.
+- Existing privately configured entries can still send their scheduled email reminders. Their owners and recipient addresses are never returned to the dashboard.
 
 ## Production setup
 
-The code in this PR is not active just because it is merged. Apply the migration, deploy the Edge Function and configure the email provider before asking the team to use Cadence.
+The evidence calendar works from the monitored repository data. The private reminder service is optional and must be set up separately before it can send email.
 
-1. Apply `supabase/migrations/20261021180000_regulatory_calendar.sql` to the ChangeSentinel Supabase project (project ref `pysoukwmnwwgilkwafdy`). Using the Supabase CLI from the repository root: `supabase db push --project-ref pysoukwmnwwgilkwafdy`. Review the migration before applying it to any other environment.
-2. Add the first calendar admin through the Supabase SQL Editor, replacing the sample address with the person's verified work email:
+1. Apply `supabase/migrations/20261021180000_regulatory_calendar.sql` to the ChangeSentinel Supabase project (project ref `pysoukwmnwwgilkwafdy`) only if you need private recurring entries and email reminders. Using the Supabase CLI from the repository root: `supabase db push --project-ref pysoukwmnwwgilkwafdy`.
+2. Add or manage private reminder entries through the secured back-office process. The dashboard intentionally does not expose a browser editor while email authentication is disabled.
    ```sql
    insert into public.regulatory_calendar_members (email, role, active)
    values ('calendar-admin@example.com', 'admin', true)
    on conflict (email) do update set role = excluded.role, active = true;
    ```
-   Add additional people as `editor` or `viewer`. Emails must be lowercase. The membership table is not readable or writable by anon/authenticated clients.
-3. Deploy the function with JWT verification disabled at the gateway; the function performs its own email/member verification for browser requests and checks a separate high-entropy token for scheduled jobs:
+   Emails must be lowercase. The membership table is not readable or writable by anon/authenticated clients.
+3. Deploy the function with JWT verification disabled at the gateway; it performs its own member verification for secured write requests and checks a separate high-entropy token for scheduled jobs:
    ```sh
    supabase functions deploy calendar-api --project-ref pysoukwmnwwgilkwafdy --no-verify-jwt
    ```
@@ -38,11 +38,9 @@ The code in this PR is not active just because it is merged. Apply the migration
 
 ## Reminder behaviour
 
-For an entry scheduled on day D with a reminder lead time of N days, Cadence targets D − N. A zero-day lead time means a reminder on the scheduled day. A completed occurrence is not emailed. Emails contain the entry title, scheduled date, regulator/form, owner/notes and source link if provided. The “Test email” button sends a test to the currently signed-in team member.
+For a private entry scheduled on day D with a reminder lead time of N days, Cadence targets D − N. A zero-day lead time means a reminder on the scheduled day. A completed occurrence is not emailed. Emails contain the entry title, scheduled date, regulator/form, owner/notes and source link if provided.
 
 ## Important operational notes
 
-- A Supabase admin must add team membership; an anonymous Ask Sentinel visitor session is not accepted for Cadence.
 - The Supabase database secret/service-role key must stay in Supabase Edge Function secrets. It must never be added to `index.html`, `dashboard.js` or the GitHub Pages data files.
-- If the user is signed in but sees “not on the Cadence team list”, confirm the exact lowercase email in `regulatory_calendar_members`.
 - The existing automatic effective-date feed is not rewritten by team entries, and Scout plus other dashboard views remain independent.

@@ -32,7 +32,7 @@ from regmon.docling_extractor import configure_timeout_registry
 from regmon.fetch import fetch
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import deadlines, item_codes
+from regmon import deadlines, item_codes, reviews
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -537,6 +537,7 @@ def process_source(
     now = datetime.now(timezone.utc).isoformat()
     previous = load_previous(source.id)
     initial_baseline = source.baseline_on_first_run and not previous
+    suppressed_markup_urls = {canonical(url) for url in reviews.not_material_html_urls(DATA)}
 
     discovery_root = discovery_data_dir or DATA
     urls = discover(source, discovery_root)
@@ -714,6 +715,12 @@ def process_source(
             event_type, migrated = classify_change(
                 old, item, force_baseline_migration=extractor_rebaseline or extraction_drift
             )
+            # A not-material review of a markup-only event is a durable choice
+            # for this monitored URL.  Keep the current snapshot/fingerprint so
+            # genuine extracted-text changes still alert, but do not reopen the
+            # same cosmetic HTML churn on every subsequent fetch.
+            if event_type == "HTML_SOURCE_CHANGED" and canonical(url) in suppressed_markup_urls:
+                event_type = "UNCHANGED_URL"
             if event_type == "NEW_URL":
                 new_items.append(item)
             elif event_type == "CHANGED_URL":

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "reviews": {
+    "b4f298ba7b2967060f245693c76b480b52e2945a036794350446333351b97d5f": {
+      "decision": "not_material",
+      "label": "Not material",
+      "rationale": "No need to track it is just HTML change",
+      "owner": "",
+      "ticket": "",
+      "reviewed_by": "GauravDarwesh",
+      "reviewed_at": "2026-10-21T17:17:06+00:00",
+      "request": "issue #115",
+      "event_type": "HTML_SOURCE_CHANGED",
+      "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+      "detected_at": "2026-10-21T17:06:36.508669+00:00"
+    }
+  },
+  "log": [
+    {
+      "event_id": "b4f298ba7b2967060f245693c76b480b52e2945a036794350446333351b97d5f",
+      "decision": "not_material",
+      "label": "Not material",
+      "rationale": "No need to track it is just HTML change",
+      "owner": "",
+      "ticket": "",
+      "reviewed_by": "GauravDarwesh",
+      "reviewed_at": "2026-10-21T17:17:06+00:00",
+      "request": "issue #115",
+      "event_type": "HTML_SOURCE_CHANGED",
+      "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
+      "detected_at": "2026-10-21T17:06:36.508669+00:00"
+    }
+  ],
+  "updated_at": "2026-10-21T17:17:06+00:00"
+}

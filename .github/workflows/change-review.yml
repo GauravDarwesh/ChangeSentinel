@@ -47,7 +47,9 @@ jobs:
             git fetch origin main --quiet
             git checkout -B main origin/main
             python -m regmon.reviews --event "$GITHUB_EVENT_PATH" --data-dir data --output "$RUNNER_TEMP/review.json"
-            if git diff --quiet -- data/reviews; then
+            # ``git diff --quiet`` does not see a first, untracked ledger.  That
+            # made the workflow confirm a review without ever committing it.
+            if test -z "$(git status --porcelain -- data/reviews)"; then
               success=true
               break
             fi

@@ -640,11 +640,7 @@ class TestCadenceCalendarContract(unittest.TestCase):
             'id="calendarView" class="view cadence-view"',
             'id="cadenceMonthGrid"',
             'id="cadenceAgenda"',
-            'id="cadenceEntryDialog"',
-            'id="cadenceEntryForm"',
-            'id="cadenceSignInForm"',
             'data-calendar-export',
-            'data-calendar-new',
             'id="navCadenceCount"',
         ):
             with self.subTest(token=token):
@@ -657,22 +653,27 @@ class TestCadenceCalendarContract(unittest.TestCase):
         self.assertIn("@media (max-width: 620px)", html)
         self.assertIn(".cadence-layout { grid-template-columns: minmax(0, 1fr); }", html)
 
-    def test_calendar_ui_uses_private_api_and_does_not_embed_service_credentials(self):
+    def test_calendar_ui_is_read_only_and_does_not_embed_service_credentials(self):
         source = read("dashboard.js")
         for token in (
-            'const CADENCE_ENDPOINT = window.CHANGESENTINEL_CALENDAR_ENDPOINT || "";',
-            'storageKey: "changesentinel-cadence-auth"',
             "function cadenceEventsBetween(from, to)",
             "function renderCadenceView()",
-            "function saveCadenceEntry(event)",
             "function exportCadenceCalendar()",
             'calendar: "cadence"',
-            "data-calendar-complete",
+            "async function refreshCadence(force)",
         ):
             with self.subTest(token=token):
                 self.assertIn(token, source)
-        self.assertNotIn("SUPABASE_SERVICE_ROLE_KEY", source)
-        self.assertNotIn("sb_secret_", source)
+        for forbidden in (
+            "SUPABASE_SERVICE_ROLE_KEY",
+            "sb_secret_",
+            "signInWithOtp",
+            "changesentinel-cadence-auth",
+            "function saveCadenceEntry(event)",
+            "data-calendar-complete",
+        ):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, source)
 
     def test_database_and_scheduler_keep_team_entries_private(self):
         migration = read("supabase/migrations/20261021180000_regulatory_calendar.sql")

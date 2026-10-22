@@ -47,6 +47,16 @@ class TestReviewLedger(unittest.TestCase):
         self.assertEqual(ledger["reviews"][EVENT]["decision"], "material")
         self.assertEqual([entry["decision"] for entry in ledger["log"]], ["not_material", "material"])
 
+    def test_not_material_markup_review_suppresses_only_while_it_is_current(self):
+        item = {"canonical_url": "https://fed.example/FR_Y-9C", "change_history": [{
+            "event_id": EVENT, "event_type": "HTML_SOURCE_CHANGED", "timestamp": "2026-10-20T06:00:00+00:00",
+        }]}
+        (self.data / "latest.json").write_text(json.dumps({"schema_version": 2, "sources": {"fed": {"u1": item}}}))
+        reviews.apply_event(issue_event(body()), self.data)
+        self.assertEqual(reviews.not_material_html_urls(self.data), {"https://fed.example/FR_Y-9C"})
+        reviews.apply_event(issue_event(body("material", "Markup now changes accessibility")), self.data)
+        self.assertEqual(reviews.not_material_html_urls(self.data), set())
+
     def test_only_the_owner_can_record(self):
         with self.assertRaises(reviews.ReviewError):
             reviews.apply_event(issue_event(body(), login="someone-else"), self.data)
