@@ -443,7 +443,146 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
         ),
     }
 
-def register_request(event: dict, config_path: Path, repository: str) -> dict:
+def _scout_discovery_flag(body: str) -> bool:
+    matches = re.findall(r"(?mi)^Scout discovery:[ \t]*(.*?)[ \t]*$", str(body or ""))
+    if len(matches) > 1:
+        raise ValueError("The request must contain at most one Scout discovery field.")
+    if not matches:
+        return False
+    value = matches[0].strip().lower()
+    if value not in {"yes", "no"}:
+        raise ValueError("Scout discovery must be yes or no.")
+    return value == "yes"
+
+
+def _configure_scout_source(
+    scout_config: dict,
+    url: str,
+    display_name: str,
+    crawl_depth: int,
+) -> tuple[bool, str, str]:
+    """Add/update a bounded weekly Scout listing in memory, then validate the full profile."""
+    from regmon.scout.profiles import parse_config
+
+    if not 1 <= crawl_depth <= 3:
+        raise ValueError("Scout weekly discovery requires crawl depth 1, 2, or 3.")
+    regulators = scout_config.get("regulators")
+    if not isinstance(regulators, list):
+        raise ValueError("config/scout.json must contain a regulators array.")
+
+    parsed = urlparse(url)
+    hostname = str(parsed.hostname or "").lower().rstrip(".")
+    if not hostname:
+        raise ValueError("Scout discovery requires a public hostname.")
+    origin_prefix = f"{parsed.scheme}://{parsed.netloc}/"
+    channel_id = "manual-page-" + hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
+    regulator_id = ""
+
+    # If an ordinary (non-paginated) Scout listing already watches this exact
+    # root, extend it instead of creating a duplicate request to the site.
+    for regulator in regulators:
+        for channel in regulator.get("channels") or []:
+            try:
+                same_url = canonicalize_url(str(channel.get("url") or "")) == url
+            except ValueError:
+                same_url = False
+            if same_url and channel.get("type") == "listing" and not channel.get("pagination"):
+                prefixes = list(channel.get("link_prefixes") or [])
+                if origin_prefix not in prefixes:
+                    prefixes.append(origin_prefix)
+                new_values = {
+                    "crawl_depth": crawl_depth,
+                    "link_prefixes": prefixes,
+                    "label": channel.get("label") or display_name[:160],
+                }
+                changed = any(channel.get(key) != value for key, value in new_values.items())
+                channel.update(new_values)
+                regulator_id = str(regulator.get("id") or "")
+                parse_config(scout_config)
+                return changed, channel_id if changed else str(channel.get("id") or channel_id), regulator_id
+
+    # A deterministic ID makes repeated requests idempotent. If this exact
+    # dashboard-created channel already exists, update its selected depth.
+    existing_channel = None
+    existing_regulator = None
+    for regulator in regulators:
+        for channel in regulator.get("channels") or []:
+            if str(channel.get("id") or "") == channel_id:
+                existing_channel, existing_regulator = channel, regulator
+                break
+        if existing_channel:
+            break
+    if existing_channel is not None:
+        if canonicalize_url(str(existing_channel.get("url") or "")) != url:
+            raise ValueError("A Scout channel ID collision was detected; no configuration was changed.")
+        prefixes = list(existing_channel.get("link_prefixes") or [])
+        if origin_prefix not in prefixes:
+            prefixes.append(origin_prefix)
+        new_values = {"crawl_depth": crawl_depth, "link_prefixes": prefixes, "label": display_name[:160]}
+        changed = any(existing_channel.get(key) != value for key, value in new_values.items())
+        existing_channel.update(new_values)
+        regulator_id = str(existing_regulator.get("id") or "")
+        parse_config(scout_config)
+        return changed, channel_id, regulator_id
+
+    channel = {
+        "id": channel_id,
+        "type": "listing",
+        "label": display_name[:160] or hostname,
+        "url": url,
+        "required": True,
+        "link_prefixes": [origin_prefix],
+        "crawl_depth": crawl_depth,
+    }
+
+    # Reuse an existing profile for this exact host when possible. Otherwise
+    # create an explicitly labelled custom profile; OTHER is a category, not a
+    # guessed jurisdiction. Traversal still cannot leave this single host.
+    profile = next(
+        (item for item in regulators if hostname in {
+            str(value).lower().rstrip(".") for value in (item.get("hosts") or [])
+        }),
+        None,
+    )
+    changed = True
+    if profile is None:
+        regulator_id = "manual-" + hashlib.sha256(hostname.encode("utf-8")).hexdigest()[:12]
+        colliding = next((item for item in regulators if str(item.get("id") or "") == regulator_id), None)
+        if colliding is not None:
+            if hostname not in {str(value).lower().rstrip(".") for value in (colliding.get("hosts") or [])}:
+                raise ValueError("A Scout profile ID collision was detected; no configuration was changed.")
+            profile = colliding
+        else:
+            profile = {
+                "id": regulator_id,
+                "name": f"User-configured source: {display_name[:100] or hostname}",
+                "short_name": display_name[:80] or hostname,
+                "region": "OTHER",
+                "jurisdiction": "User-configured",
+                "hosts": [hostname],
+                "active": True,
+                "channels": [],
+                "known_gaps": [
+                    f"Dashboard-added listing rooted at {url}; only links on this host through depth {crawl_depth} are discovered. "
+                    "Unlinked pages and paths beyond the selected depth are not covered."
+                ],
+            }
+            regulators.append(profile)
+    regulator_id = str(profile.get("id") or "")
+    channels = profile.setdefault("channels", [])
+    if not isinstance(channels, list):
+        raise ValueError(f"Scout profile {regulator_id} must contain a channels array.")
+    channels.append(channel)
+    parse_config(scout_config)
+    return changed, channel_id, regulator_id
+
+
+def register_request(
+    event: dict,
+    config_path: Path,
+    repository: str,
+    scout_config_path: Path | None = None,
+) -> dict:
     body = str(((event.get("issue") or {}).get("body")) or "")
     if DELETE_REQUEST_MARKER in body:
         return delete_monitor_request(event, config_path, repository)
@@ -461,6 +600,11 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
         crawl_depth = int(raw_depth)
     else:
         crawl_depth = 0
+    scout_enabled = _scout_discovery_flag(body)
+    if scout_enabled and crawl_depth == 0:
+        raise ValueError("Scout weekly discovery requires crawl depth 1, 2, or 3.")
+    if scout_enabled and scout_config_path is None:
+        raise ValueError("Scout discovery was selected, but no Scout config path was supplied to registration.")
 
     config = json.loads(config_path.read_text(encoding="utf-8"))
     sources = config.setdefault("sources", [])
@@ -473,8 +617,9 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
     existing = _existing_source_for_request(
         sources, url, include_selector, ignore_selectors, crawl_depth=crawl_depth
     )
+    source_changed = False
     if existing is not None:
-        return {
+        source_result = {
             "source_id": str(existing["id"]),
             "url": url,
             "name": str(existing.get("name") or display_name or url),
@@ -482,35 +627,67 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
             "crawl_depth": int(existing.get("crawl_depth", 0)),
             "message": "The URL is already present in an active source.",
         }
-
-    new_source = source_for_url(
-        url, display_name, include_selector, ignore_selectors, crawl_depth=crawl_depth
-    )
-    source_ids = {str(source.get("id")) for source in sources}
-    if new_source["id"] in source_ids:
-        existing = next(source for source in sources if str(source.get("id")) == new_source["id"])
-        existing_urls = [str(candidate) for candidate in (existing.get("seed_urls") or [])]
-        if any(canonicalize_url(candidate) == url for candidate in existing_urls):
-            return {
+    else:
+        new_source = source_for_url(
+            url, display_name, include_selector, ignore_selectors, crawl_depth=crawl_depth
+        )
+        source_ids = {str(source.get("id")) for source in sources}
+        if new_source["id"] in source_ids:
+            existing_collision = next(source for source in sources if str(source.get("id")) == new_source["id"])
+            existing_urls = [str(candidate) for candidate in (existing_collision.get("seed_urls") or [])]
+            if any(canonicalize_url(candidate) == url for candidate in existing_urls):
+                source_result = {
+                    "source_id": new_source["id"],
+                    "url": url,
+                    "name": str(existing_collision.get("name") or new_source["name"]),
+                    "created": False,
+                    "crawl_depth": crawl_depth,
+                    "message": "The monitor is already configured.",
+                }
+            else:
+                raise ValueError("A source ID collision was detected; no configuration was changed.")
+        else:
+            sources.append(new_source)
+            source_changed = True
+            source_result = {
                 "source_id": new_source["id"],
                 "url": url,
-                "name": str(existing.get("name") or new_source["name"]),
-                "created": False,
-                "message": "The monitor is already configured.",
+                "name": new_source["name"],
+                "created": True,
+                "crawl_depth": crawl_depth,
+                "message": "The URL has been added to config/sources.json.",
             }
-        raise ValueError("A source ID collision was detected; no configuration was changed.")
 
-    sources.append(new_source)
-    config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    return {
-        "source_id": new_source["id"],
-        "url": url,
-        "name": new_source["name"],
-        "created": True,
-        "crawl_depth": crawl_depth,
-        "message": "The URL has been added to config/sources.json.",
-    }
+    scout_changed = False
+    scout_channel_id = ""
+    scout_regulator_id = ""
+    scout_data = None
+    if scout_enabled:
+        scout_data = json.loads(Path(scout_config_path).read_text(encoding="utf-8"))
+        scout_changed, scout_channel_id, scout_regulator_id = _configure_scout_source(
+            scout_data, url, str(source_result["name"] or display_name or url), crawl_depth
+        )
 
+    # Validate both proposed files before replacing either one. GitHub commits
+    # the two config files together in a single owner-approved workflow run.
+    if source_changed:
+        config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    if scout_enabled and scout_changed:
+        Path(scout_config_path).write_text(
+            json.dumps(scout_data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        )
+
+    source_result["scout_enabled"] = scout_enabled
+    source_result["scout_configured"] = scout_enabled
+    source_result["scout_changed"] = scout_changed
+    source_result["scout_channel_id"] = scout_channel_id
+    source_result["scout_regulator_id"] = scout_regulator_id
+    if scout_enabled:
+        source_result["message"] += (
+            f" Weekly Scout discovery is configured at depth {crawl_depth} "
+            f"(channel {scout_channel_id}); newly discovered links will appear in Scout for review."
+        )
+    return source_result
 
 def delete_monitor_request(event: dict, config_path: Path, repository: str) -> dict:
     """Exclude an individual page or disable a crawl root without deleting evidence."""
@@ -556,12 +733,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--event", type=Path, required=True, help="GitHub issues event JSON")
     parser.add_argument("--config", type=Path, required=True, help="Source configuration JSON")
+    parser.add_argument("--scout-config", type=Path, help="Optional Scout profile configuration JSON for weekly discovery")
     parser.add_argument("--output", type=Path, help="Optional JSON output path")
     args = parser.parse_args()
 
     repository = str(__import__("os").environ.get("GITHUB_REPOSITORY") or "")
     event = json.loads(args.event.read_text(encoding="utf-8"))
-    result = register_request(event, args.config, repository)
+    result = register_request(event, args.config, repository, args.scout_config)
     encoded = json.dumps(result, ensure_ascii=False)
     if args.output:
         args.output.write_text(encoded + "\n", encoding="utf-8")
