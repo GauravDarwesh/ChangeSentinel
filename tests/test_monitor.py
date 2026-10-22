@@ -623,6 +623,52 @@ class TestDiscovery(unittest.TestCase):
         self.assertEqual(second_meta["state"], "COMPLETE")
 
     @patch("regmon.discovery.requests.get")
+    def test_successful_recovery_resolves_a_previous_permanent_failure(self, mock_get):
+        """A fixed redirect must clear the prior failure ledger entry.
+
+        FRBServices initially redirected the exact URL to its trailing-slash
+        variant.  The old redirect code logged that as a permanent loop.  Once
+        the redirect code was fixed, discovery still remained DEGRADED because
+        an ordinary recovery fetch never replaced the old failure ledger row.
+        """
+        source = SourceConfig(
+            id="frbservices-test",
+            name="FRBServices user guides",
+            regulator="www.frbservices.org",
+            seed_urls=("https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides",),
+            allowed_prefixes=("https://www.frbservices.org/",),
+            allowed_domains=("www.frbservices.org",),
+            allowed_urls=("https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides",),
+            discovery_http_workers=1,
+        )
+        url = source.seed_urls[0]
+        mock_get.return_value = Mock(
+            status_code=200,
+            headers={"content-type": "text/html; charset=UTF-8"},
+            text="<main>Reporting Central</main>",
+            url=url,
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            discovery_dir = Path(tmp) / "discovery"
+            discovery_dir.mkdir(parents=True)
+            (discovery_dir / "frbservices-test-inventory-0000.txt").write_text(url + "\n", encoding="utf-8")
+            (discovery_dir / "frbservices-test.json").write_text(json.dumps({
+                "source_id": source.id, "state": "DEGRADED", "discovered": 1,
+                "html_processed": 1, "successful_pages": 0, "failed_pages": 1,
+            }), encoding="utf-8")
+            (discovery_dir / "frbservices-test-failures.jsonl").write_text(json.dumps({
+                "url": url, "status_code": 301,
+                "error": "ValueError: Redirect loop detected",
+                "retry_classification": "permanent_http",
+            }) + "\n", encoding="utf-8")
+            urls = http_discover(source, Path(tmp))
+            metadata = json.loads((discovery_dir / "frbservices-test.json").read_text(encoding="utf-8"))
+            latest_failure = json.loads((discovery_dir / "frbservices-test-failures.jsonl").read_text(encoding="utf-8").splitlines()[-1])
+        self.assertEqual(urls, [url])
+        self.assertEqual(metadata["state"], "COMPLETE")
+        self.assertTrue(latest_failure["resolved"])
+
+    @patch("regmon.discovery.requests.get")
     def test_url_cap_is_always_degraded_and_never_complete(self, mock_get):
         source = SourceConfig(
             id="eba-test",
@@ -1438,6 +1484,43 @@ class TestEngineFlow(unittest.TestCase):
                 self.assertEqual(result["report"]["counts"]["changed"],1)
             finally:
                 old_file.unlink(missing_ok=True)
+
+    def test_not_material_markup_review_suppresses_future_html_only_events(self):
+        """A decision must prevent cosmetic markup churn from reopening work."""
+        from regmon.engine import process_source
+
+        url = "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a"
+        uid = make_id(url)
+        old = {
+            "url_id": uid,
+            "canonical_url": url,
+            "normalized_hash": "stable-text",
+            "raw_hash": "old-html",
+            "html_hash": "old-html",
+            "first_seen": "2026-01-01T00:00:00+00:00",
+        }
+        current = {
+            "url_id": uid,
+            "source_id": SOURCE.id,
+            "regulator": SOURCE.regulator,
+            "canonical_url": url,
+            "normalized_hash": "stable-text",
+            "raw_hash": "new-html",
+            "html_hash": "new-html",
+            "relevance": {"candidate": False},
+            "first_seen": "2026-01-01T00:00:00+00:00",
+        }
+        with patch("regmon.engine.load_discovery_metadata", return_value={
+            "source_id": SOURCE.id, "state": "COMPLETE", "method": "test"
+        }), patch("regmon.engine.load_previous", return_value={uid: old}), \
+             patch("regmon.engine.discover", return_value=[url]), \
+             patch("regmon.engine.make_current_item", return_value=(current, "same regulatory text", b"<main>same regulatory text</main>")), \
+             patch("regmon.engine.reviews.not_material_html_urls", return_value={url}):
+            result = process_source(SOURCE, "reviewed-markup-change", dry_run=True)
+
+        self.assertEqual(result["report"]["counts"]["source_changed"], 0)
+        self.assertEqual(result["report"]["counts"]["unchanged"], 1)
+        self.assertEqual(result["report"]["events"], [])
 
     @patch("regmon.engine.analyze", return_value={"status": "skipped", "reason": "API key missing"})
     def test_skipped_ai_analysis_is_counted(self, mock_analyze):

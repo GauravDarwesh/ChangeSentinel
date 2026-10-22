@@ -375,7 +375,14 @@ def _retryable_failure_urls(source: SourceConfig, data_dir: Path) -> list[str]:
     )
 
 
-def _record_retry_resolution(source: SourceConfig, data_dir: Path, url: str, status_code: int | None) -> None:
+def _record_success_resolution(source: SourceConfig, data_dir: Path, url: str, status_code: int | None) -> None:
+    """Mark the latest discovery failure for a URL as resolved.
+
+    A recovery can happen during the normal discovery pass, not just in the
+    explicit retry pass.  Leaving the earlier failure as the final ledger row
+    made a source permanently DEGRADED even after the same URL fetched cleanly
+    on a later run.
+    """
     _record_failure(
         source,
         data_dir,
@@ -647,6 +654,13 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
 
         discovered_set = set(discovered)
         queued = set(pending)
+        # Keep the failure ledger compact: only append a resolution for a URL
+        # that actually has an outstanding failure.  Recording every ordinary
+        # success would turn a large healthy crawl into a giant failure ledger.
+        unresolved_failure_urls = {
+            url for url, record in _load_latest_failure_records(source, data_dir).items()
+            if not record.get("resolved")
+        }
         slice_processed = 0
 
         while pending:
@@ -691,8 +705,12 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                     if failure:
                         failed_pages += 1
                         _record_failure(source, data_dir, failure)
+                        unresolved_failure_urls.add(url)
                     else:
                         successful_pages += 1
+                        if url in unresolved_failure_urls:
+                            _record_success_resolution(source, data_dir, url, 200)
+                            unresolved_failure_urls.discard(url)
                     batch_links.update(links)
 
             new_links = []
@@ -801,6 +819,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                         }
                     if failure:
                         failed_pages += 1
+                        unresolved_failure_urls.add(url)
                         _record_failure(
                             source,
                             data_dir,
@@ -811,7 +830,9 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                         )
                     else:
                         successful_pages += 1
-                        _record_retry_resolution(source, data_dir, url, 200)
+                        if url in unresolved_failure_urls:
+                            _record_success_resolution(source, data_dir, url, 200)
+                            unresolved_failure_urls.discard(url)
                         # A recovered page may contain links that the failed first
                         # attempt never exposed. Keep those links in the same
                         # resumable work queue so recursive discovery remains complete.

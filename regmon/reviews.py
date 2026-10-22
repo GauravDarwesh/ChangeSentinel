@@ -124,6 +124,30 @@ def known_changes(data_dir: Path) -> dict[str, dict]:
     return known
 
 
+def not_material_html_urls(data_dir: Path) -> set[str]:
+    """Return URLs whose current review suppresses markup-only repeat events.
+
+    ``HTML_SOURCE_CHANGED`` means the extracted regulatory text stayed stable
+    while the source markup changed.  When an examiner records that such an
+    event is not material, treating every later cosmetic markup revision as a
+    fresh change only recreates the same false positive.  The current review is
+    authoritative: a later material decision removes the suppression.
+    """
+    try:
+        records = load_ledger(data_dir).get("reviews", {})
+    except ReviewError:
+        # A bad optional review ledger must never block regulatory monitoring.
+        return set()
+    return {
+        str(record.get("url") or "").strip()
+        for record in records.values()
+        if isinstance(record, dict)
+        and record.get("decision") == "not_material"
+        and record.get("event_type") == "HTML_SOURCE_CHANGED"
+        and str(record.get("url") or "").strip()
+    }
+
+
 def apply_event(event: dict, data_dir: Path, now: str | None = None) -> dict:
     issue = event.get("issue") or {}
     repository = event.get("repository") or {}
