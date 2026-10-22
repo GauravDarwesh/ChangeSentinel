@@ -235,6 +235,18 @@ class TestEventWording(unittest.TestCase):
                 self.assertIn(event_type, engine)
                 self.assertIn(event_type + ":", lib)
 
+    def test_saved_federal_reserve_evidence_includes_both_deleted_rows(self):
+        from pathlib import Path
+        evidence = ROOT / "data/evidence/c89216e3b00e847563d351357b43772920c29a2266cccb68a8a651736f928219.json"
+        if not evidence.exists():
+            self.skipTest("current Federal Reserve evidence not present in this checkout")
+        record = json.loads(evidence.read_text(encoding="utf-8"))
+        self.assertEqual(record["url"], "https://www.federalreserve.gov/apps/reportingforms/review")
+        out = run_js("console.log(JSON.stringify(L.renderRedline(" + json.dumps(record["diff"]) + ")));")
+        self.assertEqual(out["stats"], {"added": 0, "removed": 2, "edited": 0})
+        self.assertIn("FFIEC 031", out["html"])
+        self.assertIn("FR Y-9C R-1867", out["html"])
+
     def test_markup_only_events_are_visually_distinct_from_content_changes(self):
         out = run_js("""
           console.log(JSON.stringify([
