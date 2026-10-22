@@ -6,6 +6,8 @@ Cadence is the dashboard’s evidence-first view of regulatory deadlines and eff
 
 - Evidence-linked dates generated from material ChangeSentinel findings.
 - Month navigation, a daily agenda, source links and a direct route back to the underlying change.
+- Shared search and entry-type filters across the month grid/agenda and Upcoming view.
+- An Upcoming view grouping uncompleted overdue team commitments, today's entries, the next 7 days and later entries through the next 90 days. Recurring overdue entries show their most recent missed occurrence instead of flooding the list with every past cycle; selecting a date jumps back to that day in Month view.
 - An `.ics` export and subscription feed for personal or team calendars.
 - No email magic-link flow or self-service sign-up. Calendar editing uses password sign-in for pre-provisioned team accounts; private entries and reminder recipients remain behind the calendar API.
 - Existing privately configured entries can still send their scheduled email reminders. Their owners and recipient addresses are never returned to the dashboard.
