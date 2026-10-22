@@ -244,21 +244,43 @@ async function fetchDocsByPath(path: string): Promise<any[]> {
 
 async function fetchCurrentPageRecordsForUrls(urls: string[]): Promise<any[]> {
   if (!urls.length) return [];
-  // Query only current-page records and require exact canonical_url equality.
-  const params = new URLSearchParams({
-    select: 'path,doc_type,content,is_core',
-    path: 'like.__current_page__/*',
-    limit: '200'
-  });
-  const rows = await restJson('ask_sentinel_chunks?' + params.toString(), {}, 10000);
-  const needles = new Set(urls.map(normalizeUrl));
-  const matched: any[] = [];
-  for (const row of Array.isArray(rows) ? rows : []) {
-    const content = String(row.content || '');
-    const match = content.match(/"canonical_url"\s*:\s*"([^"]+)"/);
-    if (match && needles.has(normalizeUrl(match[1]))) matched.push(row);
+
+  // Narrow the database scan to the hosts named by the user. Registry rows include
+  // old/inactive sources, so loading the first 200 rows globally can miss current URLs.
+  const canonicalUrls = new Set(urls.map(normalizeUrl));
+  const hosts = [...new Set(urls.flatMap((value) => {
+    try { return [new URL(value).hostname.toLowerCase()]; } catch (_) { return []; }
+  }))];
+  const matched = new Map<string, any>();
+  const pageSize = 200;
+
+  for (const host of hosts) {
+    let offset = 0;
+    while (true) {
+      const params = new URLSearchParams({
+        select: 'path,doc_type,content,is_core',
+        path: 'like.__current_page__/*',
+        content: 'like.*' + host + '*',
+        order: 'path.asc',
+        limit: String(pageSize),
+        offset: String(offset)
+      });
+      const rows = await restJson('ask_sentinel_chunks?' + params.toString(), {}, 10000);
+      if (!Array.isArray(rows) || rows.length === 0) break;
+
+      for (const row of rows) {
+        const record = safeJson(String(row.content || ''));
+        const canonicalUrl = typeof record?.canonical_url === 'string' ? record.canonical_url : '';
+        if (canonicalUrl && canonicalUrls.has(normalizeUrl(canonicalUrl))) {
+          matched.set(String(row.path || canonicalUrl), row);
+        }
+      }
+
+      if (rows.length < pageSize) break;
+      offset += rows.length;
+    }
   }
-  return matched;
+  return [...matched.values()];
 }
 
 async function searchDocs(question: string): Promise<any[]> {
@@ -274,7 +296,7 @@ function normalizeQuestion(question: string): string {
 }
 
 function asksInventory(question: string): boolean {
-  return /\bhow many\b.{0,100}\b(?:links?|urls?|pages?|websites?|sources?)\b|\b(?:list|show|name|enumerate|which|all|every)\b.{0,100}\b(?:sources?|pages?|urls?|websites?|watchlist|inventory|scope|monitor(?:ed|ing)?)\b|\bwhat (?:do we|does sentinel|are we)\s+(?:currently\s+)?(?:monitor|track|watch)\b|\b(?:current|active)\s+(?:monitoring\s+)?(?:inventory|scope|sources?|links?|urls?)\b|\bhow many (?:things|items) do we monitor\b/i.test(question);
+  return /\bhow many\b.{0,100}\b(?:links?|urls?|pages?|websites?|sources?)\b|\b(?:list|show|name|enumerate|which|all|every|everything)\b.{0,100}\b(?:sources?|pages?|urls?|websites?|watchlist|inventory|scope|monitor(?:ed|ing)?)\b|\bwhat (?:is|are|was|were|do we|did we|does sentinel|is sentinel|are you|do you)\s+(?:sentinel\s+)?(?:currently\s+)?(?:being\s+)?(?:monitor(?:ed|ing)?|track(?:ed|ing)?|watch(?:ed|ing)?)\b|\bwhat (?:do we|does sentinel|are we)\s+(?:currently\s+)?(?:monitor|track|watch)\b|\b(?:current|active)\s+(?:monitoring\s+)?(?:inventory|scope|sources?|links?|urls?)\b|\bhow many (?:things|items) do we monitor\b|\beverything (?:that )?(?:we|sentinel) (?:monitor|track|watch)\b/i.test(question);
 }
 
 function asksRecentChanges(question: string): boolean {
@@ -316,11 +338,23 @@ function extractUrls(question: string): string[] {
 
 function normalizeUrl(value: string): string {
   try {
-    const url = new URL(value);
-    url.hash = '';
-    return url.toString().replace(/\/+$/, '').toLowerCase();
+    const url = new URL(value.trim());
+    // Match regmon.discovery.canonical(): lowercase only scheme/host, drop fragments
+    // and tracking parameters, remove a non-root trailing slash, and sort query pairs.
+    // URL paths are case-sensitive and must never be lowercased.
+    const path = url.pathname !== '/' && url.pathname.endsWith('/')
+      ? url.pathname.slice(0, -1)
+      : (url.pathname || '/');
+    const trackingParams = new Set(['fbclid', 'gclid', 'mc_cid', 'mc_eid']);
+    const pairs = [...url.searchParams.entries()]
+      .filter(([key]) => !key.toLowerCase().startsWith('utm_') && !trackingParams.has(key.toLowerCase()))
+      .sort(([ak, av], [bk, bv]) => ak < bk ? -1 : ak > bk ? 1 : av < bv ? -1 : av > bv ? 1 : 0);
+    const query = new URLSearchParams();
+    for (const [key, item] of pairs) query.append(key, item);
+    const suffix = query.toString();
+    return url.protocol.toLowerCase() + '//' + url.host.toLowerCase() + path + (suffix ? '?' + suffix : '');
   } catch (_) {
-    return value.replace(/\/+$/, '').toLowerCase();
+    return value.trim();
   }
 }
 
@@ -427,31 +461,41 @@ function validateGroundedCitations(answer: string, allowedSources: string[]): Ci
   const allowed = new Set(allowedSources);
   const invalidCitationCount = citations.filter((path) => !allowed.has(path)).length;
 
-  // Validate prose paragraphs and individual list items, not physical wrapped lines.
+  // Validate prose paragraphs and individual list/table rows. A table header is exempt
+  // only when the next line is a Markdown separator; word-based guesses can exempt data.
   let uncitedLineCount = 0;
   const blocks = answer.split(/\n\s*\n/).map((block) => block.trim()).filter(Boolean);
   for (const block of blocks) {
     const lines = block.split('\n').map((line) => line.trim()).filter(Boolean);
     let proseHasCitation = false;
     let hasProse = false;
-    for (const line of lines) {
+
+    for (let index = 0; index < lines.length; index += 1) {
+      const line = lines[index];
       if (/^#{1,6}\s/.test(line)) continue;
       const isListItem = /^(?:[-*•]\s+|\d+[.)]\s+)/.test(line);
       const isTableRow = /^\|/.test(line);
       const isTableSeparator = /^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$/.test(line);
       const hasCitation = /\[Source:\s*[^\]]+\]/i.test(line);
-      if (isTableRow && !isTableSeparator) {
-        // Header cells are labels, while each data row must cite its own source.
-        const isTableHeader = /^\|.*(?:source|evidence|regulator|url|link|count|status|change)/i.test(line) && !hasCitation;
-        if (!isTableHeader && !hasCitation) uncitedLineCount += 1;
-        if (hasCitation) proseHasCitation = true;
-      } else if (isListItem) {
+
+      if (isTableRow) {
+        if (isTableSeparator) continue;
+        const next = lines[index + 1] || '';
+        const nextIsSeparator = /^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$/.test(next);
+        if (nextIsSeparator) continue; // only a structurally identified header row is exempt
         if (!hasCitation) uncitedLineCount += 1;
-      } else {
-        hasProse = true;
-        if (hasCitation) proseHasCitation = true;
+        continue;
       }
+
+      if (isListItem) {
+        if (!hasCitation) uncitedLineCount += 1;
+        continue;
+      }
+
+      hasProse = true;
+      if (hasCitation) proseHasCitation = true;
     }
+
     if (hasProse && !proseHasCitation) uncitedLineCount += 1;
   }
 
@@ -461,7 +505,6 @@ function validateGroundedCitations(answer: string, allowedSources: string[]): Ci
   else if (uncitedLineCount > 0) reason = 'uncited_line';
   return { valid: reason === 'valid', reason, citation_count: citations.length, invalid_citation_count: invalidCitationCount, uncited_line_count: uncitedLineCount };
 }
-
 
 function historyForPrompt(history: unknown): Array<{ role: 'user' | 'assistant'; content: string }> {
   if (!Array.isArray(history)) return [];
