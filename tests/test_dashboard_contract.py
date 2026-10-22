@@ -653,27 +653,27 @@ class TestCadenceCalendarContract(unittest.TestCase):
         self.assertIn("@media (max-width: 620px)", html)
         self.assertIn(".cadence-layout { grid-template-columns: minmax(0, 1fr); }", html)
 
-    def test_calendar_ui_is_read_only_and_does_not_embed_service_credentials(self):
+    def test_calendar_editor_uses_password_auth_and_does_not_embed_service_credentials(self):
         source = read("dashboard.js")
         for token in (
+            'const CADENCE_ENDPOINT = window.CHANGESENTINEL_CALENDAR_ENDPOINT || "";',
             "function cadenceEventsBetween(from, to)",
             "function renderCadenceView()",
             "function exportCadenceCalendar()",
-            'calendar: "cadence"',
-            "async function refreshCadence(force)",
+            "function saveCadenceEntry(event)",
+            "function openCadenceEntry(id)",
+            "data-calendar-complete",
+            "signInWithPassword",
         ):
             with self.subTest(token=token):
                 self.assertIn(token, source)
-        for forbidden in (
-            "SUPABASE_SERVICE_ROLE_KEY",
-            "sb_secret_",
-            "signInWithOtp",
-            "changesentinel-cadence-auth",
-            "function saveCadenceEntry(event)",
-            "data-calendar-complete",
-        ):
+        for forbidden in ("SUPABASE_SERVICE_ROLE_KEY", "sb_secret_", "signInWithOtp", "shouldCreateUser"):
             with self.subTest(forbidden=forbidden):
                 self.assertNotIn(forbidden, source)
+        html = read("index.html")
+        self.assertIn('id="cadenceSignInPassword"', html)
+        self.assertNotIn("Email sign-in link", html)
+        self.assertNotIn("signInWithOtp", html)
 
     def test_database_and_scheduler_keep_team_entries_private(self):
         migration = read("supabase/migrations/20261021180000_regulatory_calendar.sql")
