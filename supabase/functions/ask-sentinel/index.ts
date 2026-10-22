@@ -556,7 +556,12 @@ async function groqCompletion(question: string, context: string, history: Array<
   const raw = await response.text();
   if (!response.ok) throw new Error('Groq could not answer this request (' + response.status + '): ' + raw.slice(0, 220));
   const payload = safeJson(raw);
-  const value = payload?.choices?.[0]?.message?.content;
+  const choice = payload?.choices?.[0];
+  if (choice?.finish_reason === 'length') {
+    // Do not return a partial answer as though its facts were complete and verified.
+    throw new Error('Groq response reached the configured output limit before completion.');
+  }
+  const value = choice?.message?.content;
   const answer = typeof value === 'string' ? value.trim()
     : Array.isArray(value) ? value.map((part: any) => typeof part?.text === 'string' ? part.text : '').join('').trim()
     : '';
