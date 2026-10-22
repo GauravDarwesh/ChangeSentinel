@@ -29,7 +29,7 @@ NON_HTML_SUFFIXES = {
 URL_RE = re.compile(r"https?://[^\s<>\"']+", re.IGNORECASE)
 DISCOVERY_RETRYABLE = {408, 425, 429, 500, 502, 503, 504}
 INVENTORY_CHUNK_SIZE = 5000
-CHECKPOINT_SCHEMA_VERSION = 2
+CHECKPOINT_SCHEMA_VERSION = 3
 
 
 def _redirect_key(url: str) -> str:
