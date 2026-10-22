@@ -131,6 +131,148 @@ Deno.test('help with punctuation is answered locally without Groq or quota use',
   if (!String(answer.body.answer).includes('last 7 days')) throw new Error('help answer should include a useful example');
 });
 
+Deno.test('natural help phrasing returns a local answer without Groq or quota use', async () => {
+  reset(() => { throw new Error('Groq should not be called for natural help phrasing'); });
+  const answer = await ask({ ip: '203.0.113.28', question: 'what can you do for me?' });
+  assertEquals([answer.status, answer.body.model, answer.body.remaining, fake.global], [200, 'local-response', 3, 0]);
+  if (!String(answer.body.answer).includes('what changes came today?')) throw new Error('help answer should include a same-day example');
+});
+
+Deno.test('today change phrasing fetches current report and recent history', async () => {
+  reset();
+  const answer = await ask({ ip: '203.0.113.29', question: 'What changes came today?' });
+  assertEquals(answer.status, 200);
+  if (!fakeFetchedPaths.includes('__current_report__')) throw new Error('today query did not fetch the current report');
+  if (!fakeFetchedPaths.includes('__recent_history__')) throw new Error('today query did not fetch recent history');
+});
+
+Deno.test('same-day and seven-day questions load concrete changed-page evidence', async () => {
+  const todayEvidence = 'data/evidence/' + 'b'.repeat(64) + '.json';
+  const olderEvidence = 'data/evidence/' + 'c'.repeat(64) + '.json';
+  const now = Date.now();
+  reset(() => groqAnswer('A monitored Federal Reserve page changed. [Source: ' + todayEvidence + ']'));
+  fakeCurrentPageRows = [{
+    path: '__current_page__/fed-reporting-forms-pilot/review',
+    doc_type: 'current monitored URL record',
+    is_core: false,
+    content: JSON.stringify({
+      source_name: 'Federal Reserve Reporting Forms Pilot',
+      regulator: 'Board of Governors of the Federal Reserve System',
+      canonical_url: 'https://www.federalreserve.gov/apps/reportingforms/review',
+      configured_source_active: true,
+      last_checked: new Date(now).toISOString(),
+      change_history: [
+        {
+          timestamp: new Date(now - 60 * 60 * 1000).toISOString(),
+          event_type: 'CHANGED_URL',
+          ai_relevant: true,
+          ai_topic: 'Reporting forms list update',
+          ai_summary: 'Today the list removed FR Y-9C R-1867 and FFIEC 031 entries.',
+          evidence_location: todayEvidence
+        },
+        {
+          timestamp: new Date(now - 3 * 24 * 60 * 60 * 1000).toISOString(),
+          event_type: 'CHANGED_URL',
+          ai_relevant: true,
+          ai_topic: 'Earlier reporting forms update',
+          ai_summary: 'An earlier reporting forms entry was added.',
+          evidence_location: olderEvidence
+        }
+      ],
+      evidence_location: todayEvidence
+    })
+  }];
+  fakeEvidenceRows.set(todayEvidence, [{
+    path: todayEvidence, doc_type: 'monitoring evidence', is_core: false,
+    content: 'The reporting forms list removed FR Y-9C R-1867 and FFIEC 031 entries.'
+  }]);
+  fakeEvidenceRows.set(olderEvidence, [{
+    path: olderEvidence, doc_type: 'monitoring evidence', is_core: false,
+    content: 'An earlier reporting forms entry was added.'
+  }]);
+
+  const today = await ask({ ip: '203.0.113.33', question: 'What changes came today?' });
+  assertEquals(today.status, 200);
+  let prompt = lastGroqMessages.map((message) => String(message.content || '')).join('\\n');
+  if (!prompt.includes('Today the list removed FR Y-9C R-1867 and FFIEC 031 entries.')) {
+    throw new Error('today query did not prioritize the current page change summary');
+  }
+  if (!prompt.includes('https://www.federalreserve.gov/apps/reportingforms/review')) {
+    throw new Error('today query context is missing the source URL');
+  }
+  if (prompt.includes('An earlier reporting forms entry was added.')) {
+    throw new Error('today query should exclude changes outside its one-day window');
+  }
+
+  const week = await ask({ ip: '203.0.113.34', question: 'Summarize changes over the last 7 days and link their sources.' });
+  assertEquals(week.status, 200);
+  prompt = lastGroqMessages.map((message) => String(message.content || '')).join('\\n');
+  if (!prompt.includes('An earlier reporting forms entry was added.')) {
+    throw new Error('seven-day query missed an event within the requested window');
+  }
+});
+
+Deno.test('citation formatting is repaired once before an answer is rejected', async () => {
+  let calls = 0;
+  reset(() => {
+    calls += 1;
+    return calls === 1
+      ? groqAnswer('The latest run had no changes.')
+      : groqAnswer('The latest run had no changes. [Source: data/report.json]');
+  });
+  const answer = await ask({ ip: '203.0.113.30' });
+  assertEquals([answer.status, answer.body.answer, calls], [200, 'The latest run had no changes. [Source: data/report.json]', 2]);
+  if (!lastGroqMessages.some((message) => String(message.content || '').includes('Draft answer to repair'))) {
+    throw new Error('repair prompt did not include the draft to repair');
+  }
+});
+
+Deno.test('named FRB link queries retrieve matching active page evidence', async () => {
+  const evidencePath = 'data/evidence/' + 'a'.repeat(64) + '.json';
+  reset(() => groqAnswer('The Federal Reserve reporting-forms page is actively monitored and was checked successfully. [Source: ' + evidencePath + ']'));
+  fakeCurrentPageRows = [{
+    path: '__current_page__/fed-reporting-forms-pilot/review',
+    doc_type: 'current monitored URL record',
+    is_core: false,
+    content: JSON.stringify({
+      canonical_url: 'https://www.federalreserve.gov/apps/reportingforms/review',
+      configured_source_active: true,
+      last_checked: '2026-10-22T06:54:49.381237Z',
+      evidence_location: evidencePath,
+      change_history: [{
+        timestamp: '2026-10-22T04:23:52Z',
+        evidence_location: evidencePath,
+        ai_summary: 'A reporting forms list changed'
+      }]
+    })
+  }];
+  fakeEvidenceRows.set(evidencePath, [{
+    path: evidencePath, doc_type: 'monitoring evidence', is_core: false,
+    content: 'Evidence for the Federal Reserve reporting forms page change.'
+  }]);
+  const answer = await ask({ ip: '203.0.113.31', question: 'tell me about the frb link' });
+  assertEquals(answer.status, 200);
+  if (!fakeFetchedPaths.includes(evidencePath)) throw new Error('FRB query did not load matching page evidence');
+  const evidenceMessage = lastGroqMessages.map((message) => String(message.content || '')).join('\\n');
+  if (!evidenceMessage.includes('https://www.federalreserve.gov/apps/reportingforms/review')) {
+    throw new Error('FRB response context is missing the canonical monitored URL.');
+  }
+  if (evidenceMessage.indexOf('Source path: __current_page__/') > evidenceMessage.indexOf('Source path: ' + evidencePath)) {
+    throw new Error('FRB page record should precede its supporting evidence.');
+  }
+});
+
+Deno.test('transient provider transport failures retry once', async () => {
+  let calls = 0;
+  reset(() => {
+    calls += 1;
+    if (calls === 1) throw new TypeError('fetch failed');
+    return groqAnswer('The latest run changed nothing. [Source: data/report.json]');
+  });
+  const answer = await ask({ ip: '203.0.113.32' });
+  assertEquals([answer.status, calls], [200, 2]);
+});
+
 Deno.test('paragraph-level citations are accepted while invalid paths still fail closed', async () => {
   reset(() => groqAnswer('The latest run had no changes.\nThe fetch and extraction error counts are zero. [Source: data/report.json]'));
   const accepted = await ask({ ip: '203.0.113.11' });
@@ -170,6 +312,9 @@ Deno.test('an exact URL retrieves its stored evidence before fuzzy search result
   const evidenceMessage = lastGroqMessages.map((message) => String(message.content || '')).join('\\n');
   if (!evidenceMessage.includes(evidencePath)) throw new Error('Exact URL evidence path was not passed to Groq.');
   if (!evidenceMessage.includes('CHANGED_URL: reporting forms table row removed.')) throw new Error('Exact URL evidence content was not passed to Groq.');
+  if (evidenceMessage.indexOf('Source path: __current_page__/') > evidenceMessage.indexOf('Source path: ' + evidencePath)) {
+    throw new Error('Exact current page record should precede its supporting evidence in the bounded context.');
+  }
 });
 
 Deno.test('exact URL retrieval paginates past unrelated earlier records', async () => {
