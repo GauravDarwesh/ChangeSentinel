@@ -1200,7 +1200,7 @@ def process_source(
             "discovery":discovery,
             "removal_guard":removal_guard,
             "baseline_update_allowed":discovery.get("state") == "COMPLETE",
-            "change_detector":{"raw_hash":"SHA-256 retrieved response bytes","html_hash":"SHA-256 of the saved HTML snapshot; when only volatile Cloudflare tokens changed, the previous equivalent snapshot is reused (raw_hash is always this response)", "html_comparison_hash":"HTML comparison signature with volatile Cloudflare challenge IDs/timestamps stabilized","normalized_hash":"SHA-256 extracted normalized content","classification_hash":"normalized_hash with separate HTML_SOURCE_CHANGED events","http_validators":"ETag/Last-Modified used only for conditional fetch optimization"},
+            "change_detector":{"raw_hash":"SHA-256 retrieved response bytes","html_hash":"SHA-256 of the saved HTML snapshot; when only volatile Cloudflare tokens changed, the previous equivalent snapshot is reused (raw_hash is always this response)", "html_comparison_hash":"Versioned HTML signature; known Cloudflare challenge tokens and pageConfig.cacheBuster are normalized","html_comparison_hash_version":HTML_COMPARISON_HASH_VERSION,"normalized_hash":"SHA-256 extracted normalized content","classification_hash":"normalized_hash with separate HTML_SOURCE_CHANGED events","http_validators":"ETag/Last-Modified used only for conditional fetch optimization"},
             "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
             "ai_contract":{"required_keys":["relevant","topic","change_type","summary","impact","effective_date","affected_scope","actions","reason"],"strict":True},
             "counts":counts,"events":events,"new_urls":[] if initial_baseline else new_items,"changed_urls":changed_items,"source_changed_urls":source_changed_items,"removed_urls":removed_items,"baseline_migrations":migration_items,"ai_results":sorted(ai_results,key=lambda x:x.get("event_id",""))
@@ -1268,7 +1268,7 @@ def _aggregate_report(reports: list[dict], run_id: str, generated_at: str | None
         "discovery":[report.get("discovery",{}) for report in reports],
         "removal_guards":[report["removal_guard"] for report in reports if report.get("removal_guard") and report.get("run_id") == run_id],
         "baseline_update_allowed":all(report.get("baseline_update_allowed",False) for report in reports),
-        "change_detector":{"classification_hash":"normalized_hash","html_hash":"SHA-256 of the saved HTML snapshot (reused when only volatile tokens changed; raw_hash is always the fetched response)", "html_comparison_hash":"volatile Cloudflare challenge IDs/timestamps stabilized before markup-only classification","http_validators":"ETag/Last-Modified are optimization hints only"},
+        "change_detector":{"classification_hash":"normalized_hash","html_hash":"SHA-256 of the saved HTML snapshot (reused when only volatile tokens changed; raw_hash is always the fetched response)", "html_comparison_hash":"Versioned HTML signature; known Cloudflare challenge tokens and pageConfig.cacheBuster are normalized","html_comparison_hash_version":HTML_COMPARISON_HASH_VERSION,"http_validators":"ETag/Last-Modified are optimization hints only"},
         "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
         "ai_contract":reports[0]["ai_contract"],
         "new_urls":[x for report in reports for x in report.get("new_urls",[])],
