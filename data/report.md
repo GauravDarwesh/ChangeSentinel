@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261022T214619Z-5b1d0617
-Generated: 2026-10-22T21:46:19.165195+00:00
+Run: 20261022T214756Z-f760b586
+Generated: 2026-10-22T21:47:56.008963+00:00
 
 ## Aggregate counts
 
@@ -32,6 +32,17 @@ Generated: 2026-10-22T21:46:19.165195+00:00
 
 ## Sources
 
+### OSFI BCAR 2027
+
+- Regulator: www.osfi-bsif.gc.ca
+- Report run: 20261022T214756Z-f760b586 (2026-10-22T21:47:56.008963+00:00)
+- Discovered: 1
+- Changed content: 0
+- HTML source-only changes: 0
+- New: 0
+- Removed: 0
+- Fetch errors: 0
+
 ### Federal Reserve — Reporting Forms Pilot (Exact URL Allowlist)
 
 - Regulator: Board of Governors of the Federal Reserve System
@@ -48,17 +59,6 @@ Generated: 2026-10-22T21:46:19.165195+00:00
 - Regulator: Board of Governors of the Federal Reserve System
 - Report run: 20261022T214054Z-c7740d02 (2026-10-22T21:40:54.875297+00:00)
 - Discovered: 14
-- Changed content: 0
-- HTML source-only changes: 0
-- New: 0
-- Removed: 0
-- Fetch errors: 0
-
-### OSFI BCAR 2027
-
-- Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261022T213325Z-3b215818 (2026-10-22T21:33:25.520385+00:00)
-- Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
 - New: 0
