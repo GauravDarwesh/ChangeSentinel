@@ -60,7 +60,7 @@ def page_url(channel: Channel, index: int) -> str:
 
 
 def in_candidate_scope(url: str, regulator: Regulator, channel: Channel) -> bool:
-    if host(url) not in regulator.hosts or (is_asset(url) and not channel.include_assets):
+    if host(url) not in regulator.hosts or is_asset(url):
         return False
     value = canonical(url, regulator.https_hosts)
     path = urlparse(value).path or "/"
@@ -215,7 +215,12 @@ def _run_depth_limited_listing(client: PoliteClient, regulator: Regulator, run: 
 
             # At the final configured level URLs are surfaced as Scout findings,
             # but aren't fetched. PDFs and other assets are never enqueued.
-            if link_depth < depth_limit and not is_asset(link.url) and key not in visited and key not in queued:
+            if (
+                link_depth < depth_limit
+                and file_format(link.url, f"{link.anchor_text} {link.title_attr}") == "Web page"
+                and key not in visited
+                and key not in queued
+            ):
                 queue.append((link.url, link_depth))
                 queued.add(key)
 
