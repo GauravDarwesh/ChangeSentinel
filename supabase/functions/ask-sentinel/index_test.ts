@@ -27,11 +27,12 @@ type Fake = {
 };
 let fakeCurrentPageRows: any[] = [];
 let fakeEvidenceRows = new Map<string, any[]>();
+let fakeFetchedPaths: string[] = [];
 let lastGroqMessages: any[] = [];
 const fake: Fake = { users: new Map(), ips: new Map(), global: 0, groq: () => groqAnswer(), refunds: 0, v2: true, lastIpHash: '' };
 function reset(groq?: () => Response) {
   fake.users = new Map(); fake.ips = new Map(); fake.global = 0; fake.refunds = 0; fake.v2 = true;
-  fakeCurrentPageRows = []; fakeEvidenceRows = new Map(); lastGroqMessages = [];
+  fakeCurrentPageRows = []; fakeEvidenceRows = new Map(); fakeFetchedPaths = []; lastGroqMessages = [];
   fake.groq = groq || (() => groqAnswer());
 }
 function json(value: unknown, status = 200) {
@@ -64,7 +65,7 @@ globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
       const limit = Number(url.searchParams.get('limit') || 200);
       return json(rows.slice(offset, offset + limit));
     }
-    if (pathFilter.startsWith('eq.')) return json(fakeEvidenceRows.get(pathFilter.slice(3)) || []);
+    if (pathFilter.startsWith('eq.')) { const exactPath = pathFilter.slice(3); fakeFetchedPaths.push(exactPath); return json(fakeEvidenceRows.get(exactPath) || []); }
     return json([]);
   }
   if (path === '/rest/v1/ask_sentinel_usage') return json([]);
@@ -247,6 +248,13 @@ Deno.test('Markdown tables accept a structurally valid header and a cited data r
   ));
   const answer = await ask({ ip: '203.0.113.25' });
   assertEquals(answer.status, 200);
+});
+
+Deno.test('natural monitoring-scope wording selects the authoritative scope record', async () => {
+  reset();
+  const answer = await ask({ ip: '203.0.113.26', question: 'What is Sentinel currently monitoring?' });
+  assertEquals(answer.status, 200);
+  if (!fakeFetchedPaths.includes('__current_scope__')) throw new Error('Natural scope question did not fetch the authoritative scope record.');
 });
 
 Deno.test('a visitor gets three questions a day', async () => {
