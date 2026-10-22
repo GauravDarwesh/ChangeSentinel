@@ -283,6 +283,57 @@ async function fetchCurrentPageRecordsForUrls(urls: string[]): Promise<any[]> {
   return [...matched.values()];
 }
 
+async function fetchCurrentPageRecordsForHosts(hosts: string[]): Promise<any[]> {
+  const matched = new Map<string, any>();
+  const pageSize = 200;
+  for (const rawHost of [...new Set(hosts.map((host) => host.toLowerCase()))]) {
+    const host = rawHost.replace(/[^a-z0-9.-]/g, '');
+    if (!host) continue;
+    let offset = 0;
+    while (true) {
+      const params = new URLSearchParams({
+        select: 'path,doc_type,content,is_core',
+        path: 'like.__current_page__/*',
+        content: 'like.*' + host + '*',
+        order: 'path.asc',
+        limit: String(pageSize),
+        offset: String(offset)
+      });
+      const rows = await restJson('ask_sentinel_chunks?' + params.toString(), {}, 10000);
+      if (!Array.isArray(rows) || rows.length === 0) break;
+      for (const row of rows) {
+        const record = safeJson(String(row.content || ''));
+        const canonicalUrl = typeof record?.canonical_url === 'string' ? record.canonical_url : '';
+        if (!canonicalUrl) continue;
+        try {
+          if (new URL(canonicalUrl).hostname.toLowerCase() !== host) continue;
+        } catch (_) { continue; }
+        if (record.configured_source_active === false) continue;
+        matched.set(String(row.path || canonicalUrl), row);
+      }
+      if (rows.length < pageSize) break;
+      offset += rows.length;
+    }
+  }
+
+  // Prefer pages with the newest recorded change, then the most recently checked
+  // page. This makes a loose query such as "tell me about the FRB link" useful
+  // without pulling the whole historical URL registry into the prompt.
+  return [...matched.values()].sort((a, b) => {
+    const ar = safeJson(String(a.content || '')) || {};
+    const br = safeJson(String(b.content || '')) || {};
+    const latest = (record: any) => Array.isArray(record.change_history)
+      ? record.change_history.reduce((value: string, item: any) => {
+          const timestamp = String(item?.timestamp || '');
+          return timestamp > value ? timestamp : value;
+        }, '')
+      : '';
+    const changeDiff = latest(br).localeCompare(latest(ar));
+    if (changeDiff) return changeDiff;
+    return String(br.last_checked || '').localeCompare(String(ar.last_checked || ''));
+  });
+}
+
 async function searchDocs(question: string): Promise<any[]> {
   const rows = await restJson('rpc/search_ask_sentinel_chunks', {
     method: 'POST',
@@ -334,6 +385,17 @@ function asksUrlLookup(question: string): boolean {
   // A pasted URL is enough to trigger exact indexed-page lookup; users should not
   // need to phrase the request with one of a few predetermined change-related verbs.
   return extractUrls(question).length > 0;
+}
+
+function asksNamedSourceLookup(question: string): boolean {
+  return /\b(?:frb|federal reserve|federalreserve|frbservices|reporting central|structure central)\b/i.test(question)
+    && /\b(?:link|url|page|site|source|tell me about|what about|details?|information|changed?|status)\b/i.test(question);
+}
+
+function sourceHostsForQuestion(question: string): string[] {
+  if (/\b(?:frbservices|reporting central|structure central)\b/i.test(question)) return ['www.frbservices.org'];
+  if (/\b(?:frb|federal reserve|federalreserve)\b/i.test(question)) return ['www.federalreserve.gov', 'www.frbservices.org'];
+  return [];
 }
 
 function extractUrls(question: string): string[] {
@@ -561,7 +623,7 @@ async function groqCompletion(
       ? 'Original question: ' + question + '\n\nDraft answer to repair:\n' + repairDraft + '\n\nReturn a corrected answer grounded only in the supplied evidence.'
       : question
   });
-  const response = await checkedFetch('https://api.groq.com/openai/v1/chat/completions', {
+  const requestInit: RequestInit = {
     method: 'POST',
     headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({
@@ -572,7 +634,21 @@ async function groqCompletion(
       reasoning_effort: 'low',
       max_tokens: MAX_OUTPUT_TOKENS
     })
-  }, 25000);
+  };
+  let response: Response;
+  try {
+    response = await checkedFetch('https://api.groq.com/openai/v1/chat/completions', requestInit, 25000);
+  } catch (firstError) {
+    // Groq transport failures have been intermittent in production. Retry network /
+    // timeout exceptions once; do not loop or retry a received 429 response.
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    response = await checkedFetch('https://api.groq.com/openai/v1/chat/completions', requestInit, 25000);
+  }
+  if (response.status >= 500 && response.status < 600) {
+    await response.body?.cancel();
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    response = await checkedFetch('https://api.groq.com/openai/v1/chat/completions', requestInit, 25000);
+  }
   const raw = await response.text();
   if (!response.ok) throw new Error('Groq could not answer this request (' + response.status + '): ' + raw.slice(0, 220));
   const payload = safeJson(raw);
@@ -724,9 +800,33 @@ Deno.serve(async (req: Request) => {
           if (/^data\/evidence\/[a-f0-9]{64}\.json$/.test(evidencePath)) {
             exactEvidence.push(...await fetchDocsByPath(evidencePath));
           }
+          const history = Array.isArray(record?.change_history) ? record.change_history : [];
+          for (const event of history.slice(0, 2)) {
+            const eventPath = typeof event?.evidence_location === 'string' ? event.evidence_location : '';
+            if (/^data\/evidence\/[a-f0-9]{64}\.json$/.test(eventPath) && eventPath !== evidencePath) {
+              exactEvidence.push(...await fetchDocsByPath(eventPath));
+            }
+          }
         }
         targetedDocs.unshift(...exactEvidence, ...exactPages);
       }
+    } else if (asksNamedSourceLookup(question)) {
+      const candidates = await fetchCurrentPageRecordsForHosts(sourceHostsForQuestion(question));
+      const selectedPages = candidates.slice(0, 3);
+      const sourceEvidence: any[] = [];
+      for (const page of selectedPages) {
+        const record = safeJson(String(page.content || ''));
+        const paths = new Set<string>();
+        if (typeof record?.evidence_location === 'string') paths.add(record.evidence_location);
+        const history = Array.isArray(record?.change_history) ? record.change_history : [];
+        for (const event of history.slice(0, 2)) {
+          if (typeof event?.evidence_location === 'string') paths.add(event.evidence_location);
+        }
+        for (const path of paths) {
+          if (/^data\/evidence\/[a-f0-9]{64}\.json$/.test(path)) sourceEvidence.push(...await fetchDocsByPath(path));
+        }
+      }
+      targetedDocs.unshift(...sourceEvidence, ...selectedPages);
     }
 
     const evidence = buildContext(question, docs, targetedDocs);
