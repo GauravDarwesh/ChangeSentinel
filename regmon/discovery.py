@@ -73,9 +73,8 @@ def in_scope(url: str, source: SourceConfig) -> bool:
     resource_match = any(value.startswith(prefix) for prefix in source.allowed_resource_prefixes)
     if not resource_match and not any(value.startswith(prefix) for prefix in source.allowed_prefixes):
         return False
-    # Exact URL allowlists still bound page crawling. A separately configured
-    # resource prefix permits only linked attachments under that narrow path;
-    # the link-text filter below decides which document links are admitted.
+    # Exact URL allowlists still bound legacy page monitoring. Explicit crawl
+    # depth > 0 enables same-host traversal; attached resources remain scoped.
     if source.allowed_urls and value not in {canonical(url) for url in source.allowed_urls} and not resource_match:
         return False
     value_path = parsed.path.rstrip("/") or "/"
