@@ -75,7 +75,7 @@ def in_scope(url: str, source: SourceConfig) -> bool:
         return False
     # Exact URL allowlists still bound legacy page monitoring. Explicit crawl
     # depth > 0 enables same-host traversal; attached resources remain scoped.
-    if source.allowed_urls and value not in {canonical(url) for url in source.allowed_urls} and not resource_match:
+    if source.allowed_urls and value not in {canonical(url) for url in source.allowed_urls} and not resource_match and source.crawl_depth == 0:
         return False
     value_path = parsed.path.rstrip("/") or "/"
     for prefix in source.excluded_prefixes:
