@@ -9,8 +9,8 @@ Cadence is the dashboard’s evidence-first view of regulatory deadlines and eff
 - Shared search and entry-type filters across the month grid/agenda and Upcoming view.
 - An Upcoming view grouping uncompleted overdue team commitments, today's entries, the next 7 days and later entries through the next 90 days. Recurring overdue entries show their most recent missed occurrence instead of flooding the list with every past cycle; selecting a date jumps back to that day in Month view.
 - An `.ics` export and subscription feed for personal or team calendars.
-- No email magic-link sign-in or self-service sign-up. Calendar editing uses password sign-in for pre-provisioned team accounts, with an in-dashboard password-reset flow that redirects to the deployed dashboard; private entries and reminder recipients remain behind the calendar API.
-- Existing privately configured entries can still send their scheduled email reminders. Their owners and recipient addresses are never returned to the dashboard.
+- No email magic-link sign-in or self-service sign-up. Calendar editing uses password sign-in for pre-provisioned team accounts, with an in-dashboard password-reset flow that redirects to the deployed dashboard. The list API does not return reminder recipient addresses; ordinary edits preserve the private server-side list unless recipients are explicitly replaced.
+- Existing privately configured entries can still send their scheduled email reminders. Reminder recipient addresses are only read by the server-side scheduler and are omitted from the dashboard list response. The entry owner/notes are shared team calendar fields, so members with calendar access can see those fields.
 
 ## Production setup
 
@@ -37,7 +37,7 @@ The evidence calendar works from the monitored repository data. The private remi
 6. In GitHub repository Settings → Secrets and variables → Actions, set these repository secrets:
    - `SUPABASE_PUBLISHABLE_KEY`: the project's publishable key (safe to use in the browser, but the workflow still reads it from a secret).
    - `REGULATORY_CALENDAR_CRON_TOKEN`: exactly the same random value as the Supabase Edge Function secret.
-7. The `Cadence calendar reminders` workflow checks for reminders every day at 08:00 UTC. It can also be run manually. It checks the last seven days for missed reminder attempts, skips completed occurrences, and records successful sends so overlapping/retried runs do not send the same entry/occurrence/recipient twice. Failed sends are not marked delivered and can be retried by the next run if still within the catch-up window.
+7. The `Cadence calendar reminders` workflow checks for reminders every day at 08:00 UTC (13:30 India Standard Time). It can also be run manually. It checks the last seven days for missed reminder attempts, skips completed occurrences, and records successful sends. GitHub Actions concurrency serializes workflow runs, while the delivery table's unique constraint is a second guard against duplicate ledger rows. A provider send followed by a ledger-write failure can still result in a duplicate on retry; this is a provider/database boundary and should be monitored. Failed sends are not marked delivered and can be retried by the next run if still within the catch-up window. Reminder date calculations use UTC calendar days; treat this as an explicit operating convention unless the team later adds a configurable calendar timezone.
 
 ## Reminder behaviour
 
