@@ -1706,7 +1706,9 @@ function renderDetailHeader(item) {
   const actions = externalLink(item.canonical_url, "Open live page") +
     (snapshotPath ? externalLink(REPO + "/blob/main/" + snapshotPath, savedFileLabel) : "") +
     (item.source_id ? '<button class="btn" type="button" data-run-scan="' + esc(item.source_id) + '" title="Scan this page\'s source now">Scan this source</button>' : "") +
-    (item.source_id ? '<button class="btn btn-quiet" type="button" data-stop-monitor="' + esc(item.url_id) + '" title="Stop monitoring this URL">Stop monitoring</button>' : "");
+    (item.source_id ? '<button class="btn btn-quiet" type="button" data-stop-monitor="' + esc(item.url_id) +
+      '" data-stop-url="' + esc(item.canonical_url) + '" data-stop-source="' + esc(item.source_id) +
+      '" data-stop-name="' + esc(itemTitle(item)) + '" title="Stop monitoring this URL">Stop monitoring</button>' : "");
   $("detailHeader").innerHTML = detailHeading({
     back: true, source: sourceLabel(source), title: itemTitle(item), subtitle, meta, actions
   });
@@ -3384,8 +3386,11 @@ function openGitHubRequest(target, toastMessage) {
   }
 }
 function openDeleteMonitorRequest(target) {
-  const githubWindow = window.open(target, "_blank", "noopener,noreferrer");
+  // Passing "noopener" to window.open makes browsers return null even when the
+  // tab opened. Clear opener after opening so popup-block detection stays reliable.
+  const githubWindow = window.open(target, "_blank");
   if (githubWindow) {
+    try { githubWindow.opener = null; } catch (_) {}
     showToast("GitHub opened in a new tab. Review the prefilled request and click Submit new issue; monitoring stops after the request is processed.");
   } else {
     showToast("Your browser blocked the new tab. Opening the request here.");
@@ -3399,11 +3404,13 @@ function makeGitHubDeleteIssueUrl(sourceId, url, name) {
 }
 function submitDeleteMonitor() {
   const pending = state.pendingDelete;
+  const dialog = $("deleteMonitorDialog");
   if (!pending || !pending.sourceId || !pending.url) {
-    $("deleteMonitorDialog").close();
+    if (dialog && dialog.open) dialog.close();
     showToast("Could not prepare the stop-monitor request. Refresh the dashboard and try again.");
     return;
   }
+  if (dialog && dialog.open) dialog.close();
   openDeleteMonitorRequest(makeGitHubDeleteIssueUrl(pending.sourceId, pending.url, pending.name));
 }
 function submitAddMonitor(event) {
@@ -4081,16 +4088,40 @@ $("cancelDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog"
 $("deleteMonitorDialog").addEventListener("click", event => { if (event.target === $("deleteMonitorDialog")) $("deleteMonitorDialog").close(); });
 $("confirmDeleteMonitor").addEventListener("click", submitDeleteMonitor);
 document.addEventListener("click", event => {
-  const button = event.target.closest && event.target.closest("[data-stop-monitor]"); if (!button) return;
-  const item = state.inventory.find(row => row.url_id === button.dataset.stopMonitor);
-  if (!item) { showToast("This page is no longer in the current inventory. Refresh and try again."); return; }
-  const source = sourceForItem(item);
+  const button = event.target.closest && event.target.closest("[data-stop-monitor]");
+  if (!button) return;
+  // Prefer the latest inventory entry, but retain the exact rendered context as
+  // a fallback when a report/detail record is not present in the live inventory.
+  const item = (state.inventory || []).find(row => row.url_id === button.dataset.stopMonitor);
+  const url = (item && item.canonical_url) || button.dataset.stopUrl || "";
+  const sourceId = (item && item.source_id) || button.dataset.stopSource || "";
+  const name = item ? itemTitle(item) : (button.dataset.stopName || url);
+  if (!url || !sourceId) {
+    showToast("Could not identify this monitor. Refresh the dashboard and try again.");
+    return;
+  }
+  const source = item ? sourceForItem(item) : {};
   const normalize = value => { try { const u = new URL(value); u.hash = ""; return u.toString().replace(/\/$/, ""); } catch (_) { return String(value || ""); } };
-  state.pendingDelete = { url: item.canonical_url, sourceId: item.source_id, name: itemTitle(item), root: (source.seed_urls || []).some(url => normalize(url) === normalize(item.canonical_url)) };
+  state.pendingDelete = {
+    url, sourceId, name,
+    root: (source.seed_urls || []).some(seed => normalize(seed) === normalize(url))
+  };
   $("deleteMonitorHeading").textContent = state.pendingDelete.root ? "Stop this monitor?" : "Stop monitoring this page?";
   $("deleteMonitorExplanation").textContent = state.pendingDelete.root ? "Stopping this root also stops pages discovered beneath it." : "This page will be excluded from future scans; the rest of the monitor continues.";
-  $("deleteMonitorTarget").textContent = state.pendingDelete.name + " — " + state.pendingDelete.url; $("deleteMonitorDialog").showModal();
+  $("deleteMonitorTarget").textContent = state.pendingDelete.name + " — " + state.pendingDelete.url;
+  const dialog = $("deleteMonitorDialog");
+  if (!dialog || typeof dialog.showModal !== "function") {
+    openDeleteMonitorRequest(makeGitHubDeleteIssueUrl(sourceId, url, name));
+    return;
+  }
+  try {
+    dialog.showModal();
+  } catch (_) {
+    // A dialog state issue must not leave the Stop Monitoring control inert.
+    openDeleteMonitorRequest(makeGitHubDeleteIssueUrl(sourceId, url, name));
+  }
 });
+
 $("reviewForm").addEventListener("submit", submitReview);
 $("reviewForm").addEventListener("change", event => { if (event.target.name === "reviewDecision") syncReviewForm(); });
 $("closeReview").addEventListener("click", () => $("reviewDialog").close());
