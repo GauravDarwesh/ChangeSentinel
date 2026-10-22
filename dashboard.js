@@ -3369,8 +3369,8 @@ function syncScoutDiscoveryOption() {
   checkbox.disabled = !available;
   if (!available) checkbox.checked = false;
   help.textContent = available
-    ? "Scout will revisit this page weekly through the selected depth and surface new or replacement linked documents, including PDFs, for review. New discoveries are suggestions; they are not silently added as monitors."
-    : "Choose Level 1–3 to enable Scout. Level 0 only watches this URL and does not discover linked pages.";
+    ? "Use an HTML landing/listing page here, not a PDF URL. Scout will revisit it weekly through the selected depth and surface new or replacement linked documents, including PDFs, for review. New discoveries are suggestions; they are not silently added as monitors."
+    : "Choose Level 1–3 to enable Scout. Use an HTML landing/listing page as the root; Level 0 only watches this URL and does not discover linked pages.";
 }
 function openGitHubRequest(target, toastMessage) {
   $("addMonitorDialog").close();
