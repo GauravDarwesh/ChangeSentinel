@@ -361,6 +361,8 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
         else:
             metadata = _fetch_page_metadata(url) if not requested_name else {}
     display_name = requested_name or metadata.get("title", "")
+    metadata = _fetch_page_metadata(url) if not requested_name else {}
+    display_name = requested_name or metadata.get("title", "")
     new_source = source_for_url(url, display_name, include_selector, ignore_selectors, crawl_depth=crawl_depth)
             source_ids_in_config = {str(source.get("id")) for source in sources}
             if new_source["id"] in source_ids_in_config:
