@@ -25,6 +25,8 @@ class SourceConfig:
     include_selector: str = ""
     ignore_selectors: tuple[str, ...] = ()
     max_urls: int = 0
+    crawl_depth: int = -1
+    excluded_urls: tuple[str, ...] = ()
     crawler: str = "stealth-crawler"
     active: bool = True
     baseline_on_first_run: bool = False
@@ -67,6 +69,8 @@ class SourceConfig:
                 str(x).strip() for x in value.get("ignore_selectors", []) if str(x).strip()
             ),
             max_urls=int(value.get("max_urls", 0)),
+            crawl_depth=int(value.get("crawl_depth", -1)),
+            excluded_urls=tuple(str(x) for x in value.get("excluded_urls", [])),
             crawler=str(value.get("crawler", "stealth-crawler")),
             active=bool(value.get("active", True)),
             baseline_on_first_run=bool(value.get("baseline_on_first_run", False)),
@@ -88,12 +92,12 @@ class SourceConfig:
 SOURCE_KEYS = {field.name for field in fields(SourceConfig)}
 BOOL_KEYS = {"active", "baseline_on_first_run", "use_http_discovery"}
 INT_KEYS = {
-    "max_urls", "discovery_attempts", "discovery_timeout_seconds", "discovery_retry_delay_seconds",
+    "max_urls", "crawl_depth", "discovery_attempts", "discovery_timeout_seconds", "discovery_retry_delay_seconds",
     "discovery_http_timeout_seconds", "discovery_http_workers", "discovery_http_attempts",
     "discovery_slice_seconds", "discovery_max_pages_per_slice",
 }
 LIST_KEYS = {
-    "seed_urls", "allowed_prefixes", "allowed_domains", "allowed_urls", "allowed_resource_prefixes",
+    "seed_urls", "allowed_prefixes", "allowed_domains", "allowed_urls", "excluded_urls", "allowed_resource_prefixes",
     "resource_link_text_patterns", "ignore_selectors", "excluded_prefixes",
 }
 TOP_LEVEL_KEYS = {"version", "defaults", "sources"}
@@ -121,6 +125,8 @@ def _validate_source_types(value: dict[str, Any]) -> None:
     for key in INT_KEYS & set(value):
         if isinstance(value[key], bool) or not isinstance(value[key], int):
             raise ValueError(f"Source {sid}: {key} must be an integer, not {value[key]!r}")
+    if "crawl_depth" in value and value["crawl_depth"] not in {-1, 0, 1, 2, 3}:
+        raise ValueError(f"Source {sid}: crawl_depth must be -1 (legacy unlimited) or 0, 1, 2, or 3")
     for key in LIST_KEYS & set(value):
         if not isinstance(value[key], list) or not all(isinstance(item, str) for item in value[key]):
             raise ValueError(f"Source {sid}: {key} must be a list of strings")
