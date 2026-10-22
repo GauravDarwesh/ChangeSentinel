@@ -301,6 +301,12 @@ Deno.test('the network bucket is a keyed hash, never the address', async () => {
   if (fake.lastIpHash.includes('203.0.113') || !/^[0-9a-f]{32}$/.test(fake.lastIpHash)) throw new Error('unexpected bucket ' + fake.lastIpHash);
 });
 
+Deno.test('truncated model output is rejected', async () => {
+  reset(() => json({ choices: [{ message: { content: 'Partial. [Source: data/report.json]' }, finish_reason: 'length' }] }));
+  const answer = await ask({ ip: '203.0.113.28' });
+  assertEquals([answer.status, answer.body.error_code, fake.refunds], [503, 'provider_unavailable', 1]);
+});
+
 Deno.test('a provider outage gives the question back', async () => {
   reset(() => json({ error: 'rate limited' }, 429));
   const id = visitor();
