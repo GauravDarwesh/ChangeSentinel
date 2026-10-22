@@ -3344,12 +3344,12 @@ async function suggestMonitorMetadata() {
       }
     } catch (_) { /* CORS is commonly disabled; use an editable path-derived fallback. */ }
     if (title) {
-      $("newMonitorName").value = title.replace(/[\\r\\n]+/g, " ").trim().slice(0, 100);
+      $("newMonitorName").value = title.replace(/[\r\n]+/g, " ").trim().slice(0, 100);
       status.textContent = "Name filled from page metadata. You can edit it.";
     } else {
-      const tail = parsed.pathname.replace(/\\/+$/, "").split("/").pop() || parsed.hostname;
-      const suggestion = decodeURIComponent(tail).replace(/[._-]+/g, " ").replace(/\\s+/g, " ").trim();
-      $("newMonitorName").value = (suggestion || parsed.hostname).replace(/\\b\\w/g, c => c.toUpperCase()).slice(0, 100);
+      let tail = parsed.pathname.replace(/\/+$/, "").split("/").pop() || parsed.hostname;
+      let suggestion = tail; try { suggestion = decodeURIComponent(tail); } catch (_) {} suggestion = suggestion.replace(/[._-]+/g, " ").replace(/\s+/g, " ").trim();
+      $("newMonitorName").value = (suggestion || parsed.hostname).replace(/\b\w/g, c => c.toUpperCase()).slice(0, 100);
       status.textContent = "Browser metadata is blocked on this site. Added an editable URL-based suggestion; registration will retry metadata lookup.";
     }
   } finally { window.clearTimeout(timeout); button.disabled = false; }
@@ -3366,7 +3366,7 @@ function openGitHubRequest(target, toastMessage) {
 }
 function makeGitHubDeleteIssueUrl(sourceId, url, name) {
   const body = ["<!-- changesentinel:delete-monitor:v1 -->", "", "Please stop monitoring this URL in ChangeSentinel.", "", "Source ID: " + sourceId, "URL: " + url, "Name: " + (name || ""), "", "This request was created from the ChangeSentinel dashboard."];
-  const params = new URLSearchParams(); params.set("title", "[ChangeSentinel] Delete monitor request"); params.set("body", body.join("\\n"));
+  const params = new URLSearchParams(); params.set("title", "[ChangeSentinel] Delete monitor request"); params.set("body", body.join("\n"));
   return REPO + "/issues/new?" + params.toString();
 }
 function submitDeleteMonitor() {
