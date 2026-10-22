@@ -4694,7 +4694,10 @@ async function compareFillPdf(root, before, after, status, sources, alive) {
  */
 const ASK_SENTINEL_ENDPOINT = window.CHANGESENTINEL_ASK_ENDPOINT || "";
 const ASK_SENTINEL_MAX_TRANSCRIPT = 12;
-const askSentinelState = { messages: [], sending: false, remaining: 3, warmed: false, warmingPromise: null, warmError: "", identity: null, memoryVisitorId: "" };
+// TEMPORARY: visible unlimited-query test mode, in sync with the Edge Function.
+const ASK_SENTINEL_TEST_MODE_UNTIL = Date.parse("2026-10-25T15:30:00Z");
+function askSentinelUnlimitedTestMode() { return Date.now() < ASK_SENTINEL_TEST_MODE_UNTIL; }
+const askSentinelState = { messages: [], sending: false, remaining: askSentinelUnlimitedTestMode() ? 999 : 3, warmed: false, warmingPromise: null, warmError: "", identity: null, memoryVisitorId: "" };
 
 const ASK_SENTINEL_SUPABASE_URL = window.CHANGESENTINEL_ASK_SUPABASE_URL || "";
 const ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY = window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY || "";
@@ -4940,10 +4943,13 @@ function askSentinelAppendMessage(role, content, extraClass) {
   return node;
 }
 function askSentinelUpdateQuota(remaining) {
-  if (Number.isInteger(remaining) && remaining >= 0 && remaining <= 3) askSentinelState.remaining = remaining;
+  if (askSentinelUnlimitedTestMode()) askSentinelState.remaining = 999;
+  else if (Number.isInteger(remaining) && remaining >= 0 && remaining <= 3) askSentinelState.remaining = remaining;
   const quota = $("askSentinelQuota");
-  quota.textContent = askSentinelState.remaining + " of 3 questions left today";
-  quota.classList.toggle("is-empty", askSentinelState.remaining <= 0);
+  quota.textContent = askSentinelUnlimitedTestMode()
+    ? "TEST MODE — unlimited questions until " + new Date(ASK_SENTINEL_TEST_MODE_UNTIL).toLocaleString()
+    : askSentinelState.remaining + " of 3 questions left today";
+  quota.classList.toggle("is-empty", !askSentinelUnlimitedTestMode() && askSentinelState.remaining <= 0);
   quota.classList.remove("is-busy");
 }
 function askSentinelOpen() {
@@ -4953,13 +4959,14 @@ function askSentinelOpen() {
 }
 function askSentinelSetSending(sending) {
   askSentinelState.sending = sending;
-  $("askSentinelSend").disabled = sending || askSentinelState.remaining <= 0;
-  $("askSentinelInput").disabled = sending || askSentinelState.remaining <= 0;
+  const quotaEmpty = !askSentinelUnlimitedTestMode() && askSentinelState.remaining <= 0;
+  $("askSentinelSend").disabled = sending || quotaEmpty;
+  $("askSentinelInput").disabled = sending || quotaEmpty;
   $("askSentinelSend").setAttribute("aria-busy", String(sending));
 }
 /* Repository history and evidence are indexed server-side; client context is not sent as authoritative evidence. */
 async function askSentinelSendQuestion(promptOverride) {
-  if (askSentinelState.sending || askSentinelState.remaining <= 0) return;
+  if (askSentinelState.sending || (!askSentinelUnlimitedTestMode() && askSentinelState.remaining <= 0)) return;
   const input = $("askSentinelInput");
   const question = String(promptOverride == null ? input.value : promptOverride).trim();
   if (!question) { input.focus(); return; }
@@ -4967,13 +4974,13 @@ async function askSentinelSendQuestion(promptOverride) {
     askSentinelAppendMessage("assistant", "Monitoring data is still loading. Please wait until the dashboard finishes loading before asking a question.", "ask-sentinel-error");
     return;
   }
-  if (question.length > 1200) {
+  if (!askSentinelUnlimitedTestMode() && question.length > 1200) {
     askSentinelAppendMessage("assistant", "Please keep each question to 1,200 characters or fewer.", "ask-sentinel-error");
     return;
   }
   if (!ASK_SENTINEL_ENDPOINT || !ASK_SENTINEL_SUPABASE_URL || !ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY) {
     askSentinelAppendMessage("assistant",
-      "Ask Sentinel’s interface is ready, but its secure server endpoint has not been configured yet. No request was sent, and no daily allowance was used. Configure CHANGESENTINEL_ASK_ENDPOINT to a dedicated server-side endpoint that authenticates each user, enforces the three-request daily limit atomically, and calls Groq without exposing its key.",
+      "Ask Sentinel’s interface is ready, but its secure server endpoint has not been configured yet. No request was sent. Configure the server-side endpoint and keep the OpenRouter credential on the server; never expose provider keys in the browser.",
       "ask-sentinel-error");
     return;
   }
@@ -5018,7 +5025,7 @@ async function askSentinelSendQuestion(promptOverride) {
     typing.classList.remove("ask-sentinel-typing");
   } finally {
     askSentinelSetSending(false);
-    if (askSentinelState.remaining <= 0) {
+    if (!askSentinelUnlimitedTestMode() && askSentinelState.remaining <= 0) {
       askSentinelUpdateQuota(0);
       $("askSentinelInput").placeholder = "Daily limit reached — resets at 00:00 UTC";
       document.querySelectorAll("[data-ask-prompt]").forEach(button => { button.disabled = true; });
