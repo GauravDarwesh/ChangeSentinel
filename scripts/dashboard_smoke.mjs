@@ -135,10 +135,10 @@ try {
         });
         try {
           state.cadenceEntries = [
-            entry("smoke-overdue", "Cadence smoke overdue", "internal_task", -3),
-            entry("smoke-today", "Cadence smoke today", "deadline", 0),
-            entry("smoke-week", "Cadence smoke week", "internal_task", 4),
-            entry("smoke-later", "Cadence smoke later", "expected_update", 30)
+            entry("smoke-overdue", "Cadence smoke overdue", "internal_task", -3, "QA owner"),
+            entry("smoke-today", "Cadence smoke today", "deadline", 0, "Regulatory team"),
+            entry("smoke-week", "Cadence smoke week", "internal_task", 4, "Regulatory team"),
+            entry("smoke-later", "Cadence smoke later", "expected_update", 30, "Regulatory team")
           ];
           state.calendar = { schema_version: 1, entries: [{
             date: cadenceAddDays(today, 5), title: "Cadence smoke detected", event_id: "", url: "https://example.com/detected-date"
