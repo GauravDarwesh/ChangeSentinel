@@ -131,12 +131,6 @@ Deno.test('help with punctuation is answered locally without Groq or quota use',
   if (!String(answer.body.answer).includes('last 7 days')) throw new Error('help answer should include a useful example');
 });
 
-Deno.test('paragraph citations pass while fabricated source paths fail', async () => {
-  reset(() => groqAnswer('The latest run had no changes.\\nThe fetch and extraction error counts are zero. [Source: data/report.json]'));
-  const answer = await ask({ ip: '203.0.113.21' });
-  assertEquals(answer.status, 200);
-});
-
 Deno.test('paragraph-level citations are accepted while invalid paths still fail closed', async () => {
   reset(() => groqAnswer('The latest run had no changes.\nThe fetch and extraction error counts are zero. [Source: data/report.json]'));
   const accepted = await ask({ ip: '203.0.113.11' });
