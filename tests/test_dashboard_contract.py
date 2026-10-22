@@ -172,6 +172,21 @@ class TestDashboardWorkspaceLayout(unittest.TestCase):
         self.assertIn("cp dashboard-lib.js site/dashboard-lib.js", workflow)
         self.assertIn('- "dashboard-lib.js"', workflow)
 
+    def test_html_redlines_scope_table_changes_to_exact_rows(self):
+        source = read("dashboard.js")
+        lib = read("dashboard-lib.js")
+        for token in (
+            "function markdownTableCells(line)",
+            "function matchingTableRow(doc, cells)",
+            "L.tableCellsMatch(cells, actual)",
+            "const row = matchingTableRow(doc, target.tableCells)",
+            "if (!row) return; // Fail closed instead of highlighting a plausible but wrong match.",
+            "directMarked += markEntireTableRow(row, cls)",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+        self.assertIn("function tableCellsMatch(expected, actual)", lib)
+
     def test_markup_only_events_have_quieter_visual_tone(self):
         html = read("index.html")
         lib = read("dashboard-lib.js")
