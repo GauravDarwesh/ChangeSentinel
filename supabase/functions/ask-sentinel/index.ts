@@ -350,6 +350,28 @@ type CitationValidation = {
   uncited_line_count: number;
 };
 
+function isConversationalQuestion(question: string): boolean {
+  const normalized = question.toLowerCase().replace(/[.!?]+$/g, '').trim();
+  return /^(?:hi|hello|hey|hiya|howdy|good morning|good afternoon|good evening|thanks|thank you|thx|ty|bye|goodbye|help|what can you do|what can ask sentinel do|how do i use ask sentinel)(?:\s+there)?$/.test(normalized);
+}
+
+function conversationalAnswer(question: string): string | null {
+  const normalized = question.toLowerCase().replace(/[.!?]+$/g, '').trim();
+  if (/^(?:hi|hello|hey|hiya|howdy|good morning|good afternoon|good evening)(?:\s+there)?$/.test(normalized)) {
+    return 'Hello! I’m Ask Sentinel. Ask me about committed ChangeSentinel monitoring runs, recent changes, configured sources, alerts, or a specific evidence file. I’ll use the indexed records and link the evidence.';
+  }
+  if (/^(?:thanks|thank you|thx|ty)$/.test(normalized)) {
+    return 'You’re welcome. Ask another question whenever you’re ready.';
+  }
+  if (/^(?:bye|goodbye)$/.test(normalized)) {
+    return 'Goodbye! Come back whenever you need to check the monitoring record.';
+  }
+  if (/^(?:help|what can you do|what can ask sentinel do|how do i use ask sentinel)$/.test(normalized)) {
+    return 'I can summarize the latest committed monitoring run, explain detected changes and errors, distinguish active sources from archived ones, look up earlier runs, and inspect a specific evidence record. For the most precise answer, mention a regulator/source ID, run ID, date, URL, or evidence path.';
+  }
+  return null;
+}
+
 function validateGroundedCitations(answer: string, allowedSources: string[]): CitationValidation {
   // Every citation must reference evidence that was included in this request.
   const citations = [...answer.matchAll(/\[Source:\s*([^\]]+)\]/gi)]
@@ -357,17 +379,33 @@ function validateGroundedCitations(answer: string, allowedSources: string[]): Ci
   const allowed = new Set(allowedSources);
   const invalidCitationCount = citations.filter((path) => !allowed.has(path)).length;
 
-  // Require a source marker in every substantive paragraph and every explicit list item.
-  // This cannot prove semantic entailment, but prevents a single citation from appearing to
-  // support an otherwise entirely uncited answer.
+  // Validate factual paragraphs/list items, not visual line wraps. A paragraph may
+  // contain several wrapped lines in Markdown, so requiring one citation per line
+  // rejects otherwise grounded answers when the model formats prose naturally.
   const blocks = answer.split(/\n\s*\n/).map((block) => block.trim()).filter(Boolean);
   let uncitedLineCount = 0;
   for (const block of blocks) {
     const lines = block.split('\n').map((line) => line.trim()).filter(Boolean);
+    let proseLineCount = 0;
+    let proseHasCitation = false;
+
     for (const line of lines) {
       if (/^#{1,6}\s/.test(line)) continue;
-      if (!/\[Source:\s*[^\]]+\]/i.test(line)) uncitedLineCount += 1;
+      const isListItem = /^(?:[-*•]\s+|\d+[.)]\s+)/.test(line);
+      const hasLineCitation = /\[Source:\s*[^\]]+\]/i.test(line);
+      if (isListItem) {
+        // Each bullet or numbered item stands on its own, even if a sibling
+        // item in this same Markdown block has a valid citation.
+        if (!hasLineCitation) uncitedLineCount += 1;
+        continue;
+      }
+      proseLineCount += 1;
+      if (hasLineCitation) proseHasCitation = true;
     }
+
+    // Prose may wrap onto multiple lines: one citation anywhere in the same
+    // paragraph (normally at its end) is sufficient for the paragraph.
+    if (proseLineCount > 0 && !proseHasCitation) uncitedLineCount += 1;
   }
 
   let reason: CitationValidation['reason'] = 'valid';
@@ -398,7 +436,7 @@ async function groqCompletion(question: string, context: string, history: Array<
   const system = [
     'You are Ask Sentinel, the monitoring-history assistant embedded in the ChangeSentinel regulatory-monitoring dashboard.',
     'Answer only from the retrieved repository evidence supplied in this request. The retrieved evidence is a bounded subset of the index, not the whole repository.',
-    'Every factual paragraph and every list item must carry an exact citation in the form [Source: path]. Keep each bullet self-contained and cite it on the same line. Do not use Markdown tables; use individual cited bullets instead. Do not put facts on uncited continuation lines. Evidence headers label the exact citation value as Source path: PATH; cite only that exact path and exclude the Document type label or any other suffix. For example, use [Source: data/report.json] when the header says Source path: data/report.json. Use only paths shown in the evidence headers; never invent a path, date, run ID, URL, count, alert, or source.',
+    'Every factual paragraph and every list item must be supported by an exact citation in the form [Source: path]. Cite each bullet individually. For prose, one exact citation at the end of a paragraph is sufficient; do not add uncited factual paragraphs. Do not use Markdown tables; use individual cited bullets instead. Evidence headers label the exact citation value as Source path: PATH; cite only that exact path and exclude the Document type label or any other suffix. For example, use [Source: data/report.json] when the header says Source path: data/report.json. Use only paths shown in the evidence headers; never invent a path, date, run ID, URL, count, alert, or source.',
     'If the evidence does not directly support the answer, state: "I cannot verify that from the indexed ChangeSentinel evidence available to this request." Briefly explain which specific fact is missing and do not infer or fill gaps from general knowledge.',
     'Conversation history is supplied only to resolve follow-up references. It is not evidence. Never repeat a factual claim from a prior assistant response unless the retrieved repository evidence in this request supports it.',
     'Distinguish configured active sources from inactive/archived sources even when historical URL registry entries remain. Distinguish real source changes from baseline migrations/extraction drift, superseded or false-positive alerts, and fetch/extraction failures. Keep current status separate from historical records.',
@@ -490,6 +528,10 @@ Deno.serve(async (req: Request) => {
     const body = safeJson(rawBody);
     if (!body || typeof body !== 'object') return respond(req, { error: 'Request body must be JSON.' }, 400);
     const question = typeof body.question === 'string' ? body.question.trim() : '';
+    if (isConversationalQuestion(question)) {
+      const answer = conversationalAnswer(question);
+      if (answer) return respond(req, { answer, remaining: await remainingFor(actor.id), resets_at: nextUtcReset(), model: 'local-response', indexed_commit: null, context_sources: [] });
+    }
     if (!question) return respond(req, { error: 'Enter a question for Ask Sentinel.' }, 400);
     if (question.length > MAX_QUESTION_CHARS) return respond(req, { error: 'Questions must be 1,200 characters or fewer.' }, 400);
 

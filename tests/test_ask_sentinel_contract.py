@@ -146,6 +146,19 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn("temperature: 0,", backend)
         self.assertIn("Conversation history is supplied only to resolve follow-up references. It is not evidence.", backend)
 
+    def test_greetings_are_handled_without_evidence_or_provider(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("function isConversationalQuestion(question: string): boolean", backend)
+        self.assertIn("function conversationalAnswer(question: string): string | null", backend)
+        self.assertIn("if (isConversationalQuestion(question))", backend)
+        self.assertIn("model: 'local-response'", backend)
+
+    def test_citation_validation_accepts_paragraph_end_citations_but_rejects_fabricated_paths(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("one exact citation at the end of a paragraph is sufficient", backend)
+        self.assertIn("const invalidCitationCount = citations.filter((path) => !allowed.has(path)).length;", backend)
+        self.assertIn("else if (invalidCitationCount > 0) reason = 'unapproved_source';", backend)
+
     def test_backend_emits_phase_diagnostics_without_request_content(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
         self.assertIn("event: 'ask_sentinel_stage'", backend)
@@ -240,10 +253,13 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn("!asksInventory(question) || doc.path !== '__current_inventory__'", backend)
         self.assertIn("!['source code or workflow', 'project documentation', 'repository file', 'extracted page snapshot'].includes", backend)
 
-    def test_every_answer_line_requires_a_valid_selected_source_citation(self):
+    def test_paragraph_level_citations_still_require_approved_sources(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
-        self.assertIn("Require a source marker in every substantive paragraph and every explicit list item.", backend)
-        self.assertIn("if (!/\\[Source:", backend)
+        self.assertIn("Validate factual paragraphs/list items, not visual line wraps.", backend)
+        self.assertIn("if (!hasLineCitation) uncitedLineCount += 1;", backend)
+        self.assertIn("if (proseLineCount > 0 && !proseHasCitation) uncitedLineCount += 1;", backend)
+        self.assertIn("const invalidCitationCount = citations.filter((path) => !allowed.has(path)).length;", backend)
+        self.assertIn("else if (invalidCitationCount > 0) reason = 'unapproved_source';", backend)
 
 
     def test_grounding_errors_use_http_errors_the_existing_frontend_displays(self):
