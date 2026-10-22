@@ -4325,7 +4325,7 @@ function markdownTableCells(line) {
 function matchingTableRow(doc, cells) {
   if (!Array.isArray(cells)) return null;
   const matches = Array.from(doc.querySelectorAll("tr")).filter(row => {
-    const actual = Array.from(row.cells || []).map(cell => normalizeForMatch(cell.innerText || cell.textContent || ""));
+    const actual = Array.from(row.cells || []).map(cell => normalizeForMatch(flattenTextContainer(cell).flat || cell.textContent || ""));
     return L.tableCellsMatch(cells, actual);
   });
   // Duplicate or ambiguous rows are not safe to highlight by text alone.
