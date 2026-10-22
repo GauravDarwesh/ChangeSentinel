@@ -553,6 +553,11 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
         self.assertIn("if (addDialog && addDialog.open) addDialog.close();", js)
         self.assertIn("button.dataset.stopUrl", js)
         self.assertIn("button.dataset.stopSource", js)
+        stop_start = js.index('document.addEventListener("click", event => {\n  const button = event.target.closest && event.target.closest("[data-stop-monitor]")')
+        stop_end = js.index('\n});', stop_start) + 4
+        stop_handler = js[stop_start:stop_end]
+        self.assertIn('const item = (state.items || []).find(row => row.url_id === button.dataset.stopMonitor);', stop_handler)
+        self.assertNotIn("(state.inventory || []).find", stop_handler)
 
     def test_add_link_can_opt_into_depth_matched_weekly_scout_discovery(self):
         html = read("index.html")
