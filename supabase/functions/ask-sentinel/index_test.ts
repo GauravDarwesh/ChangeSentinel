@@ -187,6 +187,13 @@ Deno.test('named FRB link queries retrieve matching active page evidence', async
   const answer = await ask({ ip: '203.0.113.31', question: 'tell me about the frb link' });
   assertEquals(answer.status, 200);
   if (!fakeFetchedPaths.includes(evidencePath)) throw new Error('FRB query did not load matching page evidence');
+  const evidenceMessage = lastGroqMessages.map((message) => String(message.content || '')).join('\\n');
+  if (!evidenceMessage.includes('https://www.federalreserve.gov/apps/reportingforms/review')) {
+    throw new Error('FRB response context is missing the canonical monitored URL.');
+  }
+  if (evidenceMessage.indexOf('Source path: __current_page__/') > evidenceMessage.indexOf('Source path: ' + evidencePath)) {
+    throw new Error('FRB page record should precede its supporting evidence.');
+  }
 });
 
 Deno.test('transient provider transport failures retry once', async () => {
@@ -239,6 +246,9 @@ Deno.test('an exact URL retrieves its stored evidence before fuzzy search result
   const evidenceMessage = lastGroqMessages.map((message) => String(message.content || '')).join('\\n');
   if (!evidenceMessage.includes(evidencePath)) throw new Error('Exact URL evidence path was not passed to Groq.');
   if (!evidenceMessage.includes('CHANGED_URL: reporting forms table row removed.')) throw new Error('Exact URL evidence content was not passed to Groq.');
+  if (evidenceMessage.indexOf('Source path: __current_page__/') > evidenceMessage.indexOf('Source path: ' + evidencePath)) {
+    throw new Error('Exact current page record should precede its supporting evidence in the bounded context.');
+  }
 });
 
 Deno.test('exact URL retrieval paginates past unrelated earlier records', async () => {
