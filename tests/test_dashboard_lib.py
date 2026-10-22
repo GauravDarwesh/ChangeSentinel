@@ -247,6 +247,20 @@ class TestEventWording(unittest.TestCase):
         self.assertIn("FFIEC 031", out["html"])
         self.assertIn("FR Y-9C R-1867", out["html"])
 
+    def test_table_row_matching_requires_the_full_cell_sequence(self):
+        out = run_js(r"""
+          const expected = L.splitMarkdownTableRow("| FFIEC 031 | link | FFIEC 031 | FFIEC 031 | N/A | link | link |");
+          const sameLabelsWrongRow = ["FFIEC 031", "link", "FFIEC 031", "FFIEC 031", "N/A", "link", "Not Available"];
+          const differentCollection = ["FR 3033p FR 3033s", "link", "FR 3033p/s", "N/A", "N/A", "link", "link"];
+          console.log(JSON.stringify([
+            L.tableCellsMatch(expected, expected),
+            L.tableCellsMatch(expected, sameLabelsWrongRow),
+            L.tableCellsMatch(expected, differentCollection),
+            L.tableCellsMatch(expected, expected.slice(0, -1))
+          ]));
+        """)
+        self.assertEqual(out, [True, False, False, False])
+
     def test_markup_only_events_are_visually_distinct_from_content_changes(self):
         out = run_js("""
           console.log(JSON.stringify([
