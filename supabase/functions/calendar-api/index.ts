@@ -118,6 +118,12 @@ export function normalizeEntry(input:any):Record<string,any>{
   return {title,description,category,start_date:start,end_date:end,regulator,source_url:source,owner_name:owner,recurrence,
     reminder_enabled:enabled,reminder_days_before:days,reminder_emails:emails,completed_dates:completed};
 }
+function publicCalendarEntry(entry:Record<string,any>){
+  const visible={...entry};
+  delete visible.reminder_emails;
+  visible.reminder_configured=entry.reminder_enabled===true&&Array.isArray(entry.reminder_emails)&&entry.reminder_emails.length>0;
+  return visible;
+}
 export function dueReminderJobs(entries:Record<string,any>[],today:string){
   if(!isIsoDate(today))return [] as Array<{entry:Record<string,any>;occurrence_date:string;recipient_email:string}>;
   const jobs:Array<{entry:Record<string,any>;occurrence_date:string;recipient_email:string}>=[];
@@ -239,9 +245,9 @@ Deno.serve(async(req:Request)=>{
         const result=await runReminders();if(result.failures)return respond(req,{ok:false,...result},503);return respond(req,{ok:true,...result});
       }
       const member=await authenticatedMember(req);
-      if(body.action==="save")return respond(req,{ok:true,entry:await saveEntry(member,body)});
+      if(body.action==="save")return respond(req,{ok:true,entry:publicCalendarEntry(await saveEntry(member,body))});
       if(body.action==="delete")return respond(req,{ok:true,entry:await archiveEntry(member,body.id)});
-      if(body.action==="complete")return respond(req,{ok:true,entry:await completeOccurrence(member,body)});
+      if(body.action==="complete")return respond(req,{ok:true,entry:publicCalendarEntry(await completeOccurrence(member,body))});
       if(body.action==="send-test"){
         requireEditor(member);const cfg=config();if(!cfg.resend||!cfg.from)throw new PublicError("Email reminders are not configured yet.",503);
         const id=await sendEmail({title:"Cadence reminder test",description:"This is a test email from ChangeSentinel Cadence."},new Date().toISOString().slice(0,10),member.email);
@@ -256,10 +262,7 @@ Deno.serve(async(req:Request)=>{
     // role-checked endpoint and the scheduler reads them server-side.
     const params=new URLSearchParams({select:"*",archived:"eq.false",order:"start_date.asc"});
     const entries=await restJson("regulatory_calendar_entries?"+params.toString());
-    const publicEntries=Array.isArray(entries)?entries.map((entry:Record<string,any>)=>{
-      const {reminder_emails:_privateRecipients,...visible}=entry;
-      return {...visible,reminder_configured:entry.reminder_enabled===true&&Array.isArray(entry.reminder_emails)&&entry.reminder_emails.length>0};
-    }):[];
+    const publicEntries=Array.isArray(entries)?entries.map((entry:Record<string,any>)=>publicCalendarEntry(entry)):[];
     return respond(req,{ok:true,member:{email:member.email,role:member.role},entries:publicEntries});
   }catch(error){
     const status=error instanceof PublicError?error.status:503;
