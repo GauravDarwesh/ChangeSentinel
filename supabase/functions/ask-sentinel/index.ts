@@ -300,8 +300,13 @@ function asksInventory(question: string): boolean {
 }
 
 function asksRecentChanges(question: string): boolean {
-  return (/\b(last|past|previous|recent|over the)\s+(?:\d+\s+)?(?:days?|weeks?|months?)\b|\bthis week\b|\bchanges?\s+(?:over|in|during)\b/i.test(question))
-    && /\b(change|changes|changed|added|removed|new|updated|monitoring|run|scan|detected)\b/i.test(question);
+  const hasTimeWindow =
+    /\b(?:today|yesterday|this morning|this afternoon|since midnight)\b/i.test(question) ||
+    /\b(last|past|previous|recent|over the)\s+(?:\d+\s+)?(?:days?|weeks?|months?)\b/i.test(question) ||
+    /\bthis week\b/i.test(question) ||
+    /\bchanges?\s+(?:over|in|during)\b/i.test(question);
+  return hasTimeWindow &&
+    /\b(change|changes|changed|added|removed|new|updated|monitoring|run|scan|detected)\b/i.test(question);
 }
 
 function asksHistory(question: string): boolean {
@@ -442,7 +447,7 @@ type CitationValidation = {
 };
 
 function isConversationalQuestion(question: string): boolean {
-  return /^(?:hi|hello|hey|hiya|howdy|good morning|good afternoon|good evening|thanks|thank you|thx|ty|bye|goodbye|help|what can you do|what can ask sentinel do|how do i use ask sentinel)(?:\s+there)?$/.test(normalizeQuestion(question));
+  return /^(?:hi|hello|hey|hiya|howdy|good morning|good afternoon|good evening|thanks|thank you|thx|ty|bye|goodbye|help|what can you do(?: for me)?|what could you do(?: for me)?|what can i ask you|what can ask sentinel do|how can you help(?: me)?|what do you do|how do i use ask sentinel)(?:\s+there)?$/.test(normalizeQuestion(question));
 }
 
 function conversationalAnswer(question: string): string | null {
@@ -452,8 +457,8 @@ function conversationalAnswer(question: string): string | null {
   }
   if (/^(?:thanks|thank you|thx|ty)$/.test(q)) return 'You’re welcome. Ask another question whenever you’re ready.';
   if (/^(?:bye|goodbye)$/.test(q)) return 'Goodbye! Come back whenever you need to check the monitoring record.';
-  if (/^(?:help|what can you do|what can ask sentinel do|how do i use ask sentinel)$/.test(q)) {
-    return 'I can summarize the latest monitoring run; compare changes over a time range; report monitored-source scope; explain fetch/extraction errors; inspect a regulator, URL, run ID or evidence file; and distinguish active sources from archived ones. Try: “summarize changes over the last 7 days”, “how many URLs are monitored?”, or paste a monitored URL and ask what changed.';
+  if (/^(?:help|what can you do(?: for me)?|what could you do(?: for me)?|what can i ask you|what can ask sentinel do|how can you help(?: me)?|what do you do|how do i use ask sentinel)$/.test(q)) {
+    return 'I can summarize the latest monitoring run; compare changes over a time range; report monitored-source scope; explain fetch/extraction errors; inspect a regulator, URL, run ID or evidence file; and distinguish active sources from archived ones. Try: “summarize changes over the last 7 days”, “what changes came today?”, “how many URLs are monitored?”, or paste a monitored URL and ask what changed.';
   }
   return null;
 }
