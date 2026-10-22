@@ -242,9 +242,16 @@ Deno.serve(async(req:Request)=>{
     }
     const member=await authenticatedMember(req);
     if(url.searchParams.get("action")!=="list")throw new PublicError("Use ?action=list to read entries.");
+    // Reminder recipients are operationally private. Do not return them to the
+    // dashboard's general list response; writes continue to pass through the
+    // role-checked endpoint and the scheduler reads them server-side.
     const params=new URLSearchParams({select:"*",archived:"eq.false",order:"start_date.asc"});
     const entries=await restJson("regulatory_calendar_entries?"+params.toString());
-    return respond(req,{ok:true,member:{email:member.email,role:member.role},entries:Array.isArray(entries)?entries:[]});
+    const publicEntries=Array.isArray(entries)?entries.map((entry:Record<string,any>)=>{
+      const {reminder_emails:_privateRecipients,...visible}=entry;
+      return {...visible,reminder_configured:entry.reminder_enabled===true&&Array.isArray(entry.reminder_emails)&&entry.reminder_emails.length>0};
+    }):[];
+    return respond(req,{ok:true,member:{email:member.email,role:member.role},entries:publicEntries});
   }catch(error){
     const status=error instanceof PublicError?error.status:503;
     if(!(error instanceof PublicError))console.error(JSON.stringify({event:"cadence_calendar_error",error:String((error as Error)?.message||error).slice(0,220)}));
