@@ -120,6 +120,7 @@ const state = {
   cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
   cadenceLoading: null, cadenceMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
   cadenceSelectedDate: L.localIsoDate(new Date()), cadenceSignInBusy: false,
+  cadenceRecoveryMode: false, cadenceRecoveryBusy: false,
   cadenceSearch: "", cadenceFilter: "ALL", cadencePanel: "month"
 };
 const compactQuery = window.matchMedia ? window.matchMedia("(max-width: 980px)") : null;
@@ -2342,13 +2343,31 @@ function openScoutDecision(verb, item) {
 const CADENCE_ENDPOINT = window.CHANGESENTINEL_CALENDAR_ENDPOINT || "";
 const CADENCE_SUPABASE_URL = window.CHANGESENTINEL_ASK_SUPABASE_URL || "";
 const CADENCE_PUBLISHABLE_KEY = window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY || "";
+const CADENCE_RECOVERY_REDIRECT_URL = "https://gauravdarwesh.github.io/ChangeSentinel/";
 let cadenceClient = null;
 function cadenceGetClient() {
   if (!window.supabase || typeof window.supabase.createClient !== "function") throw new Error("The secure calendar connection could not load. Refresh and retry.");
   if (!CADENCE_SUPABASE_URL || !CADENCE_PUBLISHABLE_KEY || !CADENCE_ENDPOINT) throw new Error("Cadence has not been configured yet.");
-  if (!cadenceClient) cadenceClient = window.supabase.createClient(CADENCE_SUPABASE_URL, CADENCE_PUBLISHABLE_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: "changesentinel-cadence-auth" }
-  });
+  if (!cadenceClient) {
+    cadenceClient = window.supabase.createClient(CADENCE_SUPABASE_URL, CADENCE_PUBLISHABLE_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: "changesentinel-cadence-auth" }
+    });
+    cadenceClient.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        state.cadenceRecoveryMode = true;
+        state.cadenceSession = session || state.cadenceSession;
+        try { history.replaceState(null, "", location.pathname + location.search + "#cadence"); } catch (_) {}
+        window.setTimeout(() => {
+          cadenceSetMessage("Reset your password", "Choose a new password for your Cadence account below.", false);
+          renderCadenceAccess();
+          const field = $("cadenceRecoveryPassword");
+          if (field) field.focus({ preventScroll: true });
+        }, 0);
+      } else if (event === "SIGNED_OUT") {
+        state.cadenceRecoveryMode = false;
+      }
+    });
+  }
   return cadenceClient;
 }
 function cadenceSetMessage(title, message, isError) {
@@ -2380,6 +2399,14 @@ async function refreshCadence(force) {
       const sessionResult = await client.auth.getSession();
       if (sessionResult.error) throw sessionResult.error;
       state.cadenceSession = sessionResult.data && sessionResult.data.session;
+      if (state.cadenceRecoveryMode && state.cadenceSession && state.cadenceSession.access_token) {
+        state.cadenceMember = null;
+        state.cadenceEntries = [];
+        state.cadenceStatus = "signed-out";
+        cadenceSetMessage("Reset your password", "Choose a new password for your Cadence account below.", false);
+        renderCadenceAccess();
+        return;
+      }
       if (!state.cadenceSession || !state.cadenceSession.access_token) {
         state.cadenceMember = null;
         state.cadenceEntries = [];
@@ -2423,6 +2450,7 @@ async function signInCadence(event) {
     const result = await client.auth.signInWithPassword({ email, password });
     if (result.error) throw result.error;
     state.cadenceSession = result.data && result.data.session;
+    state.cadenceRecoveryMode = false;
     if (!state.cadenceSession || !state.cadenceSession.access_token) throw new Error("Sign-in did not return a valid session.");
     await refreshCadence(true);
     if (state.cadenceMember) showToast("Signed in to Cadence.");
@@ -2436,6 +2464,7 @@ async function signInCadence(event) {
 }
 async function signOutCadence() {
   try { const client = cadenceGetClient(); await client.auth.signOut(); } catch (_) {}
+  state.cadenceRecoveryMode = false;
   state.cadenceSession = null;
   state.cadenceMember = null;
   state.cadenceEntries = [];
@@ -2447,14 +2476,65 @@ async function signOutCadence() {
 function renderCadenceAccess() {
   const session = state.cadenceSession;
   const member = state.cadenceMember;
-  $("cadenceSignInForm").hidden = !!session;
-  $("cadenceSignedIn").hidden = !session;
+  $("cadenceSignInForm").hidden = !!session || state.cadenceRecoveryMode;
+  $("cadenceRecoveryForm").hidden = !state.cadenceRecoveryMode;
+  $("cadenceSignedIn").hidden = !session || state.cadenceRecoveryMode;
   $("cadenceMemberLabel").textContent = member ? member.email + " · " + member.role : session ? "Signed in · not on the team list" : "";
   document.querySelectorAll("[data-calendar-test]").forEach(button => { button.hidden = !(member && (member.role === "admin" || member.role === "editor")); });
   document.querySelectorAll("[data-calendar-new]").forEach(button => {
     button.disabled = !!(member && member.role === "viewer");
     button.title = member && member.role === "viewer" ? "Your Cadence role is read-only" : "Add a regulatory date or team follow-up";
   });
+}
+async function requestCadencePasswordReset() {
+  const emailInput = $("cadenceSignInEmail");
+  if (!emailInput.reportValidity()) return;
+  if (state.cadenceRecoveryBusy) return;
+  const button = $("cadenceForgotPassword");
+  state.cadenceRecoveryBusy = true;
+  button.disabled = true;
+  try {
+    const client = cadenceGetClient();
+    const { error } = await client.auth.resetPasswordForEmail(emailInput.value.trim().toLowerCase(), {
+      redirectTo: CADENCE_RECOVERY_REDIRECT_URL
+    });
+    if (error) throw error;
+    cadenceSetMessage("Check your inbox", "If this email belongs to a Cadence account, password-reset instructions have been sent. Open the newest message to finish on the deployed dashboard.", false);
+  } catch (error) {
+    cadenceSetMessage("Couldn't send reset email", String(error.message || error), true);
+  } finally {
+    state.cadenceRecoveryBusy = false;
+    button.disabled = false;
+  }
+}
+async function updateCadencePassword(event) {
+  event.preventDefault();
+  if (state.cadenceRecoveryBusy) return;
+  const passwordInput = $("cadenceRecoveryPassword");
+  const confirmInput = $("cadenceRecoveryPasswordConfirm");
+  confirmInput.setCustomValidity(confirmInput.value === passwordInput.value ? "" : "The passwords do not match.");
+  if (!passwordInput.reportValidity() || !confirmInput.reportValidity()) return;
+  const button = $("cadenceRecoverySave");
+  state.cadenceRecoveryBusy = true;
+  button.disabled = true;
+  try {
+    const client = cadenceGetClient();
+    const { error } = await client.auth.updateUser({ password: passwordInput.value });
+    if (error) throw error;
+    state.cadenceRecoveryMode = false;
+    passwordInput.value = "";
+    confirmInput.value = "";
+    confirmInput.setCustomValidity("");
+    cadenceSetMessage("Password updated", "Your new password has been saved. Loading your team calendar…", false);
+    renderCadenceAccess();
+    await refreshCadence(true);
+    showToast("Cadence password updated.");
+  } catch (error) {
+    cadenceSetMessage("Couldn't update password", String(error.message || error), true);
+  } finally {
+    state.cadenceRecoveryBusy = false;
+    button.disabled = false;
+  }
 }
 function cadenceDate(value) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ""));
@@ -2995,6 +3075,11 @@ function writeHash() {
   const hash = "#" + (HASH_NAMES[state.view] || (state.view === "askSentinel" ? "ask-sentinel" : "overview")) + (id ? "/" + encodeURIComponent(id) : "");
   try { history.replaceState(null, "", state.view === "overview" ? location.pathname + location.search : hash); } catch (_) {}
 }
+function isCadenceRecoveryRedirect() {
+  const hashParams = new URLSearchParams(String(location.hash || "").replace(/^#/, ""));
+  const searchParams = new URLSearchParams(String(location.search || ""));
+  return hashParams.get("type") === "recovery" || searchParams.get("type") === "recovery";
+}
 function readHash() {
   const raw = String(location.hash || "").replace(/^#/, "");
   const legacy = raw.match(/^monitor=([^&]+)/);
@@ -3014,7 +3099,7 @@ function setView(view, options) {
   renderViews();
   resetDetailScroll(state.view);
   window.scrollTo({ top: 0, behavior: "auto" });
-  writeHash();
+  if (!options.preserveHash) writeHash();
 }
 function select(view, id, options) {
   options = options || {};
@@ -3111,7 +3196,8 @@ async function loadDataOnce(showErrors) {
     state.loaded = true;
     hydrateDocumentTitles();
     if (firstLoad) {
-      const route = readHash();
+      const recoveryRedirect = isCadenceRecoveryRedirect();
+      const route = recoveryRedirect ? { view: "calendar", id: "" } : readHash();
       if (route) {
         if (route.id) {
           if (route.view === "changes") state.selectedChangeId = route.id;
@@ -3126,7 +3212,7 @@ async function loadDataOnce(showErrors) {
             if (bucket) state.scoutFilter = bucket;
           }
         }
-        setView(route.view, { detail: !!route.id });
+        setView(route.view, { detail: !!route.id, preserveHash: recoveryRedirect });
       } else {
         setView("overview");
       }
@@ -3856,6 +3942,9 @@ $("scoutSearch").addEventListener("input", renderScout);
 $("cadenceSearch").addEventListener("input", () => { state.cadenceSearch = $("cadenceSearch").value; renderCadenceView(); });
 $("cadenceTypeFilter").addEventListener("change", () => { state.cadenceFilter = $("cadenceTypeFilter").value; renderCadenceView(); });
 $("cadenceSignInForm").addEventListener("submit", signInCadence);
+$("cadenceForgotPassword").addEventListener("click", requestCadencePasswordReset);
+$("cadenceRecoveryForm").addEventListener("submit", updateCadencePassword);
+$("cadenceRecoveryCancel").addEventListener("click", () => signOutCadence());
 $("cadenceEntryForm").addEventListener("submit", saveCadenceEntry);
 document.querySelectorAll("[data-calendar-close]").forEach(button => button.addEventListener("click", () => $("cadenceEntryDialog").close()));
 $("cadenceEntryDialog").addEventListener("click", event => { if (event.target === $("cadenceEntryDialog")) $("cadenceEntryDialog").close(); });
