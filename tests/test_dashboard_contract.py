@@ -640,6 +640,8 @@ class TestCadenceCalendarContract(unittest.TestCase):
             'id="calendarView" class="view cadence-view"',
             'id="cadenceMonthGrid"',
             'id="cadenceAgenda"',
+            'id="cadenceSearch"',
+            'id="cadenceTypeFilter"',
             'data-calendar-export',
             'id="navCadenceCount"',
         ):
@@ -659,6 +661,9 @@ class TestCadenceCalendarContract(unittest.TestCase):
             'const CADENCE_ENDPOINT = window.CHANGESENTINEL_CALENDAR_ENDPOINT || "";',
             "function cadenceEventsBetween(from, to)",
             "function renderCadenceView()",
+            'cadenceSearch: "", cadenceFilter: "ALL"',
+            'state.cadenceFilter === "EXPECTED"',
+            '$("cadenceTypeFilter").addEventListener("change"',
             "function exportCadenceCalendar()",
             "function saveCadenceEntry(event)",
             "function openCadenceEntry(id)",
