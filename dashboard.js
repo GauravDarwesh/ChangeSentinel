@@ -4048,7 +4048,7 @@ document.addEventListener("click", event => {
   const item = state.inventory.find(row => row.url_id === button.dataset.stopMonitor);
   if (!item) { showToast("This page is no longer in the current inventory. Refresh and try again."); return; }
   const source = sourceForItem(item);
-  const normalize = value => { try { const u = new URL(value); u.hash = ""; return u.toString().replace(/\\/$/, ""); } catch (_) { return String(value || ""); } };
+  const normalize = value => { try { const u = new URL(value); u.hash = ""; return u.toString().replace(/\/$/, ""); } catch (_) { return String(value || ""); } };
   state.pendingDelete = { url: item.canonical_url, sourceId: item.source_id, name: itemTitle(item), root: (source.seed_urls || []).some(url => normalize(url) === normalize(item.canonical_url)) };
   $("deleteMonitorHeading").textContent = state.pendingDelete.root ? "Stop this monitor?" : "Stop monitoring this page?";
   $("deleteMonitorExplanation").textContent = state.pendingDelete.root ? "Stopping this root also stops pages discovered beneath it." : "This page will be excluded from future scans; the rest of the monitor continues.";
