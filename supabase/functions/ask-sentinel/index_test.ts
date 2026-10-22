@@ -146,6 +146,72 @@ Deno.test('today change phrasing fetches current report and recent history', asy
   if (!fakeFetchedPaths.includes('__recent_history__')) throw new Error('today query did not fetch recent history');
 });
 
+Deno.test('same-day and seven-day questions load concrete changed-page evidence', async () => {
+  const todayEvidence = 'data/evidence/' + 'b'.repeat(64) + '.json';
+  const olderEvidence = 'data/evidence/' + 'c'.repeat(64) + '.json';
+  const now = Date.now();
+  reset(() => groqAnswer('A monitored Federal Reserve page changed. [Source: ' + todayEvidence + ']'));
+  fakeCurrentPageRows = [{
+    path: '__current_page__/fed-reporting-forms-pilot/review',
+    doc_type: 'current monitored URL record',
+    is_core: false,
+    content: JSON.stringify({
+      source_name: 'Federal Reserve Reporting Forms Pilot',
+      regulator: 'Board of Governors of the Federal Reserve System',
+      canonical_url: 'https://www.federalreserve.gov/apps/reportingforms/review',
+      configured_source_active: true,
+      last_checked: new Date(now).toISOString(),
+      change_history: [
+        {
+          timestamp: new Date(now - 60 * 60 * 1000).toISOString(),
+          event_type: 'CHANGED_URL',
+          ai_relevant: true,
+          ai_topic: 'Reporting forms list update',
+          ai_summary: 'Today the list removed FR Y-9C R-1867 and FFIEC 031 entries.',
+          evidence_location: todayEvidence
+        },
+        {
+          timestamp: new Date(now - 3 * 24 * 60 * 60 * 1000).toISOString(),
+          event_type: 'CHANGED_URL',
+          ai_relevant: true,
+          ai_topic: 'Earlier reporting forms update',
+          ai_summary: 'An earlier reporting forms entry was added.',
+          evidence_location: olderEvidence
+        }
+      ],
+      evidence_location: todayEvidence
+    })
+  }];
+  fakeEvidenceRows.set(todayEvidence, [{
+    path: todayEvidence, doc_type: 'monitoring evidence', is_core: false,
+    content: 'The reporting forms list removed FR Y-9C R-1867 and FFIEC 031 entries.'
+  }]);
+  fakeEvidenceRows.set(olderEvidence, [{
+    path: olderEvidence, doc_type: 'monitoring evidence', is_core: false,
+    content: 'An earlier reporting forms entry was added.'
+  }]);
+
+  const today = await ask({ ip: '203.0.113.33', question: 'What changes came today?' });
+  assertEquals(today.status, 200);
+  let prompt = lastGroqMessages.map((message) => String(message.content || '')).join('\\n');
+  if (!prompt.includes('Today the list removed FR Y-9C R-1867 and FFIEC 031 entries.')) {
+    throw new Error('today query did not prioritize the current page change summary');
+  }
+  if (!prompt.includes('https://www.federalreserve.gov/apps/reportingforms/review')) {
+    throw new Error('today query context is missing the source URL');
+  }
+  if (prompt.includes('An earlier reporting forms entry was added.')) {
+    throw new Error('today query should exclude changes outside its one-day window');
+  }
+
+  const week = await ask({ ip: '203.0.113.34', question: 'Summarize changes over the last 7 days and link their sources.' });
+  assertEquals(week.status, 200);
+  prompt = lastGroqMessages.map((message) => String(message.content || '')).join('\\n');
+  if (!prompt.includes('An earlier reporting forms entry was added.')) {
+    throw new Error('seven-day query missed an event within the requested window');
+  }
+});
+
 Deno.test('citation formatting is repaired once before an answer is rejected', async () => {
   let calls = 0;
   reset(() => {
