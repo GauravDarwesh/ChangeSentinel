@@ -554,6 +554,12 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
                 self.assertIn(token, js)
 
 
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
     def test_dashboard_manual_monitor_controls_remain_owner_approved(self):
         html = read("index.html")
         js = read("dashboard.js")
@@ -568,11 +574,6 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
         self.assertIn("changesentinel:delete-monitor:v1", register)
         self.assertIn("repository_owner", workflow)
         self.assertIn("steps.register.outputs.deleted != 'true'", workflow)
-
-
-if __name__ == "__main__":
-    unittest.main()
-
 
 class TestScoutView(unittest.TestCase):
     """Scout sits between Alerts and Ask Sentinel, set apart by a rule above and below."""
