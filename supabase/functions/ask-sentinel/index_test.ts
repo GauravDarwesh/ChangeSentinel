@@ -1,4 +1,7 @@
 // Behavioural tests for the Ask Sentinel Edge Function, run with `deno test`.
+
+// Tests exercise the normal quota path, not the time-limited production testing override.
+Deno.env.set('ASK_SENTINEL_DISABLE_UNLIMITED_TEST_MODE', 'true');
 //
 // The function is imported with Deno.serve captured (no port is opened) and
 // fetch routed to in-memory fakes of the Supabase REST API and Groq, so the
