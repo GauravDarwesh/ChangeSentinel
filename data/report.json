@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261022T234050Z-c344b0e6",
-  "generated_at": "2026-10-22T23:40:50.980838+00:00",
+  "run_id": "20261022T234242Z-41621518",
+  "generated_at": "2026-10-22T23:42:42.206593+00:00",
   "sources": [
     {
       "id": "fed-reporting-forms-detail-pilot",
@@ -59,8 +59,8 @@
   ],
   "source_runs": {
     "fed-reporting-forms-detail-pilot": {
-      "run_id": "20261022T234050Z-c344b0e6",
-      "generated_at": "2026-10-22T23:40:50.980838+00:00",
+      "run_id": "20261022T234242Z-41621518",
+      "generated_at": "2026-10-22T23:42:42.206593+00:00",
       "trigger": "continuation"
     },
     "fed-reporting-forms-pilot": {
@@ -109,8 +109,8 @@
       "method": "http-resumable",
       "state": "PAUSED",
       "discovered": 14,
-      "html_processed": 156,
-      "successful_pages": 156,
+      "html_processed": 168,
+      "successful_pages": 168,
       "failed_pages": 0,
       "capped": false,
       "pending": 5,
