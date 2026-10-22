@@ -334,6 +334,84 @@ async function fetchCurrentPageRecordsForHosts(hosts: string[]): Promise<any[]> 
   });
 }
 
+function recentChangesLookbackMs(question: string): number {
+  const explicit = question.match(/\b(?:last|past|previous|over the)\s+(\d+)?\s*(days?|weeks?|months?)\b/i);
+  if (explicit) {
+    const count = Math.max(1, Math.min(90, Number(explicit[1] || 1)));
+    const unit = String(explicit[2] || 'day').toLowerCase();
+    const days = unit.startsWith('week') ? count * 7 : unit.startsWith('month') ? count * 30 : count;
+    return days * 24 * 60 * 60 * 1000;
+  }
+  if (/\byesterday\b/i.test(question)) return 48 * 60 * 60 * 1000;
+  if (/\b(?:today|this morning|this afternoon|since midnight)\b/i.test(question)) return 24 * 60 * 60 * 1000;
+  return 7 * 24 * 60 * 60 * 1000;
+}
+
+async function fetchRecentChangeRecords(question: string): Promise<{ pages: any[]; evidence: any[] }> {
+  const since = Date.now() - recentChangesLookbackMs(question);
+  const params = new URLSearchParams({
+    select: 'path,doc_type,content,is_core',
+    path: 'like.__current_page__/*',
+    content: 'like.*change_history*',
+    order: 'path.asc',
+    limit: '200',
+    offset: '0'
+  });
+  const rows = await restJson('ask_sentinel_chunks?' + params.toString(), {}, 10000);
+  if (!Array.isArray(rows) || rows.length === 0) return { pages: [], evidence: [] };
+
+  const candidates: Array<{ row: any; record: any; events: any[]; latest: number }> = [];
+  for (const row of rows) {
+    const record = safeJson(String(row.content || ''));
+    if (!record || typeof record.canonical_url !== 'string' || record.configured_source_active === false) continue;
+    const events = (Array.isArray(record.change_history) ? record.change_history : [])
+      .filter((event: any) => {
+        const timestamp = Date.parse(String(event?.timestamp || ''));
+        return Number.isFinite(timestamp) && timestamp >= since;
+      })
+      .sort((a: any, b: any) => Date.parse(String(b?.timestamp || '')) - Date.parse(String(a?.timestamp || '')));
+    if (!events.length) continue;
+    candidates.push({
+      row,
+      record,
+      events,
+      latest: Date.parse(String(events[0]?.timestamp || '')) || 0
+    });
+  }
+  candidates.sort((a, b) => b.latest - a.latest);
+
+  const selected = candidates.slice(0, 3);
+  const pages = selected.map(({ row, record, events }) => ({
+    ...row,
+    // Keep the current URL, source status, and only events within the requested
+    // window. A compact projection leaves room for the event's supporting evidence.
+    content: JSON.stringify({
+      source_name: record.source_name,
+      regulator: record.regulator,
+      configured_source_active: record.configured_source_active,
+      canonical_url: record.canonical_url,
+      last_checked: record.last_checked,
+      recent_changes: events.slice(0, 3).map((event: any) => ({
+        timestamp: event.timestamp,
+        event_type: event.event_type,
+        ai_relevant: event.ai_relevant,
+        ai_topic: event.ai_topic,
+        ai_summary: event.ai_summary,
+        evidence_location: event.evidence_location
+      }))
+    })
+  }));
+
+  const evidencePaths = [...new Set(selected.flatMap(({ record, events }) => {
+    const paths = events.slice(0, 2).map((event: any) => event?.evidence_location);
+    if (!paths.some((path: any) => typeof path === 'string')) paths.push(record.evidence_location);
+    return paths.filter((path: any) => typeof path === 'string' && /^data\/evidence\/[a-f0-9]{64}\.json$/.test(path));
+  }))].slice(0, 3) as string[];
+  const evidence: any[] = [];
+  for (const path of evidencePaths) evidence.push(...await fetchDocsByPath(path));
+  return { pages, evidence };
+}
+
 async function searchDocs(question: string): Promise<any[]> {
   const rows = await restJson('rpc/search_ask_sentinel_chunks', {
     method: 'POST',
@@ -790,8 +868,23 @@ Deno.serve(async (req: Request) => {
       }
       targetedDocs.push(...exactEvidenceDocs);
     } else if (asksHistory(question) && !requestedRunId) {
-      if (asksRecentChanges(question)) targetedDocs.push(...await fetchDocsByPath('__current_report__'));
-      targetedDocs.push(...await fetchDocsByPath('__recent_history__'));
+      if (asksRecentChanges(question)) {
+        // Specific current-page change history is more useful than a long generic run
+        // inventory. It includes source URLs and evidence paths for each recent change.
+        if (!targetedDocs.some((doc) => doc.path === '__current_report__')) {
+          targetedDocs.push(...await fetchDocsByPath('__current_report__'));
+        }
+        const recent = await fetchRecentChangeRecords(question);
+        if (recent.pages.length) {
+          targetedDocs.push(...recent.pages, ...recent.evidence);
+        } else {
+          // Some removed pages are no longer present in the current URL inventory.
+          // Fall back to the rolling history index when no current-page events match.
+          targetedDocs.push(...await fetchDocsByPath('__recent_history__'));
+        }
+      } else {
+        targetedDocs.push(...await fetchDocsByPath('__recent_history__'));
+      }
     }
 
     if (asksUrlLookup(question)) {
