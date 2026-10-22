@@ -608,39 +608,36 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
         checkpoint = _load_http_checkpoint(source, data_dir)
         depth_by_url: dict[str, int] = {}
         if checkpoint:
-            if "_legacy_discovered" in checkpoint:
-                # Bounded-depth monitors cannot infer levels from legacy checkpoints.
-                # Restart from the configured seed rather than crawling beyond the chosen depth.
-                if source.crawl_depth >= 0:
-                    checkpoint = None
-                else:
-                    discovered = list(dict.fromkeys(str(x) for x in checkpoint["_legacy_discovered"]))
-                # Legacy checkpoints stored the entire frontier plus only a capped
-                # sample of errors. They cannot prove which historical processed
-                # pages succeeded. Re-validating every known HTML URL is the only
-                # safe migration that can eventually establish COMPLETE.
-
+            if "_legacy_discovered" in checkpoint and source.crawl_depth < 0:
+                # Legacy checkpoints did not retain URL levels; only legacy unbounded
+                # sources can safely resume that historical frontier.
+                discovered = list(dict.fromkeys(str(x) for x in checkpoint["_legacy_discovered"]))
                 _reset_inventory(source, data_dir)
                 _reset_failure_ledger(source, data_dir)
                 _append_inventory(source, data_dir, discovered, 0)
                 depth_by_url = {url: 0 for url in discovered}
-                pending = deque(url for url in discovered if _needs_link_discovery(url, source) and source.crawl_depth != 0)
+                pending = deque(url for url in discovered if _needs_link_discovery(url, source))
                 retry_pending = deque()
                 processed_count = 0
                 failed_pages = 0
                 successful_pages = 0
                 started_at = str(checkpoint.get("started_at") or started_at)
                 legacy_failed = int(checkpoint.get("failed_pages", 0))
-                legacy_error_sample = (
-                    len(checkpoint.get("errors", []))
-                    if isinstance(checkpoint.get("errors"), list)
-                    else 0
-                )
+                legacy_error_sample = len(checkpoint.get("errors", [])) if isinstance(checkpoint.get("errors"), list) else 0
                 print(
                     "HTTP discovery migrated legacy checkpoint: "
                     f"discovered={len(discovered)} revalidation_html={len(pending)} "
                     f"legacy_failed={legacy_failed} legacy_error_sample={legacy_error_sample}"
                 )
+            elif "_legacy_discovered" in checkpoint:
+                # Do not trust a historical full inventory as the frontier for a
+                # bounded crawl; reset it below and walk only from configured seeds.
+                checkpoint = None
+                discovered = []
+                pending = deque()
+                retry_pending = deque()
+                processed_count = failed_pages = successful_pages = 0
+                started_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
             else:
                 discovered = _load_inventory(source, data_dir)
                 raw_depths = checkpoint.get("depth_by_url", {})
