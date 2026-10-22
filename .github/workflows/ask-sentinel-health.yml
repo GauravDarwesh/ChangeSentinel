@@ -128,10 +128,8 @@ jobs:
               raise RuntimeError("Could not read the expected monitoring run ID from the committed report.")
 
           question = (
-              "From the indexed committed ChangeSentinel records, summarize monitoring run "
-              + expected_run
-              + ". State its exact run ID, changed count, fetch errors, extraction errors, and source. "
-                "If a field is unavailable in evidence, say so."
+              "Summarize the latest monitoring run, including the exact run ID, changed count, fetch errors, extraction errors, and source. "
+              "Use the indexed current monitoring report, and say so if a field is unavailable."
           )
           answer = request_json(function, method="POST", body={"question": question, "conversation": []}, timeout=45)
           text = answer.get("answer")
