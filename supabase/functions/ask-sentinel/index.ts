@@ -662,6 +662,22 @@ function validateGroundedCitations(answer: string, allowedSources: string[]): Ci
   return { valid: reason === 'valid', reason, citation_count: citations.length, invalid_citation_count: invalidCitationCount, uncited_line_count: uncitedLineCount };
 }
 
+function citationSafeEvidenceFallback(allowedSources: string[]): string | null {
+  const paths = [...new Set(allowedSources
+    .map((path) => String(path || '').trim())
+    .filter((path) => path.length > 0 && !/[\]\r\n]/.test(path)))]
+    .slice(0, 3);
+  if (!paths.length) return null;
+
+  // Never paraphrase unsupported model output here. This fallback gives the user
+  // a real reply and direct links to the indexed evidence without inventing facts.
+  const answer = [
+    'I found indexed records relevant to this question, but the generated summary could not pass citation verification. To avoid presenting unsupported details, open the source record below. [Source: ' + paths[0] + ']',
+    ...paths.slice(1).map((path) => '- Indexed source record: [Source: ' + path + ']')
+  ].join('\n\n');
+  return validateGroundedCitations(answer, paths).valid ? answer : null;
+}
+
 function historyForPrompt(history: unknown): Array<{ role: 'user' | 'assistant'; content: string }> {
   if (!Array.isArray(history)) return [];
   return history
@@ -1016,16 +1032,40 @@ Deno.serve(async (req: Request) => {
             citationValidation = repairedValidation;
           }
         } catch (repairError) {
-          // One failed repair provider call is not followed by another model call.
+          // Keep the second bounded attempt available for a transient/format-limit
+          // failure in the first repair call. No raw provider body is logged.
+          const message = String((repairError as Error)?.message || '');
+          const providerStatus = Number(message.match(/Groq could not answer this request \((\d{3})\)/)?.[1] || 0) || null;
           logStage('citation_repair_failed', {
             attempt: repairAttempt,
-            error_kind: /timeout|timed out|abort/i.test(String((repairError as Error)?.message || '')) ? 'timeout' : 'provider_error'
+            provider_status: providerStatus,
+            error_kind: /timeout|timed out|abort/i.test(message) ? 'timeout' : providerStatus ? 'provider_http_error' : 'provider_error'
           });
-          break;
         }
       }
       if (!citationValidation.valid) {
-        // Diagnostics are counts/reason codes only; never log the question or generated answer.
+        const fallback = citationSafeEvidenceFallback(evidence.sources);
+        if (fallback) {
+          logStage('evidence_fallback_answered', {
+            source_count: evidence.sources.length,
+            reason: citationValidation.reason,
+            citation_count: citationValidation.citation_count,
+            invalid_citation_count: citationValidation.invalid_citation_count,
+            uncited_line_count: citationValidation.uncited_line_count
+          });
+          return respond(req, {
+            answer: fallback,
+            remaining: quota.remaining,
+            resets_at: nextUtcReset(),
+            model: 'evidence-fallback',
+            evidence_fallback: true,
+            indexed_commit: index.sha,
+            context_sources: evidence.sources
+          });
+        }
+
+        // Last-resort fail-closed response if even the evidence-only source fallback
+        // cannot be built and validated.
         const refunded = await refundRequest(actor.id);
         logStage('citation_rejected', {
           source_count: evidence.sources.length,
