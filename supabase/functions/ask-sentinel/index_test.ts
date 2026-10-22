@@ -131,6 +131,21 @@ Deno.test('help with punctuation is answered locally without Groq or quota use',
   if (!String(answer.body.answer).includes('last 7 days')) throw new Error('help answer should include a useful example');
 });
 
+Deno.test('natural help phrasing returns a local answer without Groq or quota use', async () => {
+  reset(() => { throw new Error('Groq should not be called for natural help phrasing'); });
+  const answer = await ask({ ip: '203.0.113.28', question: 'what can you do for me?' });
+  assertEquals([answer.status, answer.body.model, answer.body.remaining, fake.global], [200, 'local-response', 3, 0]);
+  if (!String(answer.body.answer).includes('what changes came today?')) throw new Error('help answer should include a same-day example');
+});
+
+Deno.test('today change phrasing fetches current report and recent history', async () => {
+  reset();
+  const answer = await ask({ ip: '203.0.113.29', question: 'What changes came today?' });
+  assertEquals(answer.status, 200);
+  if (!fakeFetchedPaths.includes('__current_report__')) throw new Error('today query did not fetch the current report');
+  if (!fakeFetchedPaths.includes('__recent_history__')) throw new Error('today query did not fetch recent history');
+});
+
 Deno.test('paragraph-level citations are accepted while invalid paths still fail closed', async () => {
   reset(() => groqAnswer('The latest run had no changes.\nThe fetch and extraction error counts are zero. [Source: data/report.json]'));
   const accepted = await ask({ ip: '203.0.113.11' });
