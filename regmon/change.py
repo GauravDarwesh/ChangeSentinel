@@ -26,11 +26,12 @@ _PAGE_CACHE_BUSTER = re.compile(
 
 
 def html_comparison_hash(value: str | bytes | None) -> str | None:
-    """Hash HTML after stabilizing Cloudflare's per-response challenge tokens.
+    """Hash HTML after stabilizing specifically identified volatile fields.
 
-    Raw HTML remains preserved for snapshots and evidence. This comparison
-    signature prevents rotating Ray IDs/timestamps from creating false
-    HTML_SOURCE_CHANGED events while retaining other source differences.
+    Raw HTML remains preserved for snapshots and evidence. The comparison
+    signature ignores known Cloudflare challenge tokens and the pageConfig
+    cache-buster assignment, preventing transport-only churn from creating
+    false HTML_SOURCE_CHANGED events while retaining other source differences.
     """
     if value is None:
         return None
