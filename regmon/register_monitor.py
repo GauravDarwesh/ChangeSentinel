@@ -300,8 +300,9 @@ def _existing_source_for_request(
     include_selector: str,
     ignore_selectors: tuple[str, ...],
     crawl_depth: int = 0,
+    allow_depth_promotion: bool = False,
 ) -> dict | None:
-    """Return an exact active URL match, rejecting an implicit selector change."""
+    """Return an exact active URL match, rejecting implicit selector or scope changes."""
     for source in sources:
         if not source.get("active", True):
             continue
@@ -309,7 +310,7 @@ def _existing_source_for_request(
         # A crawl source owns same-host discovered pages even when the exact
         # URL list is empty, so avoid accidentally registering a duplicate child.
         if int(source.get("crawl_depth", 0)) > 0:
-            candidates += [url for url in source.get("known_urls", []) if isinstance(url, str)]
+            candidates += [candidate for candidate in source.get("known_urls", []) if isinstance(candidate, str)]
         for candidate in candidates:
             try:
                 candidate_url = canonicalize_url(str(candidate))
@@ -328,8 +329,31 @@ def _existing_source_for_request(
                     "This URL is already monitored with different CSS selectors. "
                     "The existing monitor was not changed; update it through an explicit edit flow."
                 )
-            if int(source.get("crawl_depth", 0)) != crawl_depth:
-                raise ValueError("This URL is already monitored at a different crawl depth. The existing monitor was not changed.")
+            current_depth = int(source.get("crawl_depth", 0))
+            if current_depth != crawl_depth:
+                seed_urls = source.get("seed_urls") or []
+                try:
+                    one_exact_manual_seed = (
+                        str(source.get("id") or "").startswith("manual-")
+                        and len(seed_urls) == 1
+                        and canonicalize_url(str(seed_urls[0])) == url
+                    )
+                except (TypeError, ValueError, KeyError):
+                    one_exact_manual_seed = False
+                # Only an explicit dashboard request may promote a standalone
+                # manual exact-page monitor from depth 0 to bounded same-host
+                # discovery. Never downgrade or alter a multi-seed/source profile.
+                can_promote = (
+                    allow_depth_promotion
+                    and current_depth == 0
+                    and crawl_depth in {1, 2, 3}
+                    and one_exact_manual_seed
+                )
+                if not can_promote:
+                    raise ValueError(
+                        "This URL is already monitored at a different crawl depth. "
+                        "Only a standalone manual exact-page monitor can be promoted by an explicit depth request."
+                    )
             return source
     return None
 
@@ -618,17 +642,38 @@ def register_request(
     display_name = requested_name or metadata.get("title", "")
 
     existing = _existing_source_for_request(
-        sources, url, include_selector, ignore_selectors, crawl_depth=crawl_depth
+        sources,
+        url,
+        include_selector,
+        ignore_selectors,
+        crawl_depth=crawl_depth,
+        allow_depth_promotion=bool(crawl_matches and crawl_depth in {1, 2, 3}),
     )
     source_changed = False
+    crawl_depth_updated = False
     if existing is not None:
+        previous_depth = int(existing.get("crawl_depth", 0))
+        if previous_depth != crawl_depth:
+            # This promotion is restricted to one manual seed currently watched
+            # at depth 0. Preserve ID, selectors, exclusions, schedule, and history.
+            existing["crawl_depth"] = crawl_depth
+            existing["allowed_urls"] = []
+            existing["discovery_max_pages_per_slice"] = 200
+            if requested_name:
+                existing["name"] = _display_name(requested_name, url)
+            source_changed = True
+            crawl_depth_updated = True
         source_result = {
             "source_id": str(existing["id"]),
             "url": url,
             "name": str(existing.get("name") or display_name or url),
             "created": False,
             "crawl_depth": int(existing.get("crawl_depth", 0)),
-            "message": "The URL is already present in an active source.",
+            "message": (
+                f"The existing monitor was promoted from depth {previous_depth} to {crawl_depth}."
+                if crawl_depth_updated
+                else "The URL is already present in an active source."
+            ),
         }
     else:
         new_source = source_for_url(
@@ -680,6 +725,7 @@ def register_request(
             json.dumps(scout_data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
         )
 
+    source_result["crawl_depth_updated"] = crawl_depth_updated
     source_result["scout_enabled"] = scout_enabled
     source_result["scout_configured"] = scout_enabled
     source_result["scout_changed"] = scout_changed

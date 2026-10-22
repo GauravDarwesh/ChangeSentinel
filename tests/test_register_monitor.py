@@ -344,6 +344,58 @@ class TestRegisterMonitor(unittest.TestCase):
                 self.assertEqual(saved["allowed_urls"], [url] if depth == 0 else [])
                 self.assertEqual(saved["discovery_max_pages_per_slice"], 1 if depth == 0 else 200)
 
+    def test_explicit_depth_promotes_existing_manual_monitor_and_enables_scout(self):
+        url = "https://www.example.com/user-guides"
+        excluded = "https://www.example.com/user-guides/retired"
+        existing_source = source_for_url(url, "Previous title")
+        existing_source["excluded_urls"] = [excluded]
+        source_id = existing_source["id"]
+        with tempfile.TemporaryDirectory() as tmp:
+            source_path = Path(tmp) / "sources.json"
+            scout_path = Path(tmp) / "scout.json"
+            source_path.write_text(
+                json.dumps({"version": 4, "defaults": {}, "sources": [existing_source]}),
+                encoding="utf-8",
+            )
+            scout_path.write_text(
+                (Path(__file__).resolve().parents[1] / "config" / "scout.json").read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
+            event = issue_event(url + "/", name="FRB User Guides")
+            footer = "\n\nThis request was created from the ChangeSentinel dashboard."
+            event["issue"]["body"] = event["issue"]["body"].replace(
+                footer, "\nCrawl depth: 1\nScout discovery: yes" + footer
+            )
+
+            result = register_request(
+                event, source_path, "GauravDarwesh/ChangeSentinel", scout_path
+            )
+            saved_config = json.loads(source_path.read_text(encoding="utf-8"))
+            saved_source = saved_config["sources"][0]
+            saved_scout = json.loads(scout_path.read_text(encoding="utf-8"))
+            profile = next(
+                row for row in saved_scout["regulators"]
+                if "www.example.com" in row.get("hosts", [])
+            )
+            channel = next(
+                row for row in profile["channels"]
+                if row["url"].rstrip("/") == url
+            )
+
+        self.assertFalse(result["created"])
+        self.assertTrue(result["crawl_depth_updated"])
+        self.assertEqual(result["source_id"], source_id)
+        self.assertEqual(len(saved_config["sources"]), 1)
+        self.assertEqual(saved_source["id"], source_id)
+        self.assertEqual(saved_source["name"], "FRB User Guides")
+        self.assertEqual(saved_source["crawl_depth"], 1)
+        self.assertEqual(saved_source["allowed_urls"], [])
+        self.assertEqual(saved_source["discovery_max_pages_per_slice"], 200)
+        self.assertEqual(saved_source["excluded_urls"], [excluded])
+        self.assertTrue(result["scout_enabled"])
+        self.assertEqual(channel["type"], "listing")
+        self.assertEqual(channel["crawl_depth"], 1)
+
     def test_manual_registration_rejects_invalid_or_duplicate_crawl_depth(self):
         for fields, message in [
             (["Crawl depth: 4"], "Crawl depth must be 0, 1, 2, or 3"),

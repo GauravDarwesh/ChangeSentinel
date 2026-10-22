@@ -61,6 +61,7 @@ jobs:
             SOURCE_IDS="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(";".join(d.get("source_ids") or [d["source_id"]]))')"
             URL="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json"))["url"])')"
             CREATED="$(python -c 'import json,os; print(str(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json"))["created"]).lower())')"
+            DEPTH_UPDATED="$(python -c 'import json,os; print(str(bool(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("crawl_depth_updated", False))).lower())')"
             DELETED="$(python -c 'import json,os; print(str(bool(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("deleted", False))).lower())')"
             SCOUT_ENABLED="$(python -c 'import json,os; print(str(bool(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("scout_enabled", False))).lower())')"
             SCOUT_CHANNEL_ID="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("scout_channel_id", ""))')"
@@ -97,6 +98,7 @@ jobs:
           echo "source_ids=$SOURCE_IDS" >> "$GITHUB_OUTPUT"
           echo "monitor_url=$URL" >> "$GITHUB_OUTPUT"
           echo "created=$CREATED" >> "$GITHUB_OUTPUT"
+          echo "crawl_depth_updated=$DEPTH_UPDATED" >> "$GITHUB_OUTPUT"
           echo "deleted=$DELETED" >> "$GITHUB_OUTPUT"
           echo "scout_enabled=$SCOUT_ENABLED" >> "$GITHUB_OUTPUT"
           echo "scout_channel_id=$SCOUT_CHANNEL_ID" >> "$GITHUB_OUTPUT"
@@ -153,6 +155,7 @@ jobs:
           SOURCE_IDS: ${{ steps.register.outputs.source_ids }}
           MONITOR_URL: ${{ steps.register.outputs.monitor_url }}
           CREATED: ${{ steps.register.outputs.created }}
+          DEPTH_UPDATED: ${{ steps.register.outputs.crawl_depth_updated }}
           BULK: ${{ steps.register.outputs.bulk }}
           COUNT: ${{ steps.register.outputs.count }}
           CREATED_COUNT: ${{ steps.register.outputs.created_count }}
@@ -167,6 +170,9 @@ jobs:
             message="Stopped monitoring $MONITOR_URL in source ${SOURCE_IDS%%;*}. Future scans will exclude this URL; existing reports and saved evidence were retained."
           elif [ "$BULK" = "true" ]; then
             message="Bulk registration processed $COUNT unique links: $CREATED_COUNT new monitors and $EXISTING_COUNT already configured. The first monitoring scan has been queued for each requested source."
+          elif [ "$DEPTH_UPDATED" = "true" ]; then
+            SOURCE_ID="${SOURCE_IDS%%;*}"
+            message="Updated the existing monitor $MONITOR_URL (source $SOURCE_ID) to crawl depth $CRAWL_DEPTH. Its source ID and saved history were retained, and the first monitoring scan has been queued."
           elif [ "$CREATED" = "true" ]; then
             SOURCE_ID="${SOURCE_IDS%%;*}"
             message="Registered $MONITOR_URL as source $SOURCE_ID in config/sources.json. The first monitoring scan has been queued."

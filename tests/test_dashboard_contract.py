@@ -542,10 +542,17 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
         self.assertIn("The dashboard cannot stop monitoring directly.", html)
         self.assertIn("you must submit it there.", html)
         self.assertIn("function openDeleteMonitorRequest(target)", js)
-        self.assertIn("window.open(target, \"_blank\", \"noopener,noreferrer\")", js)
-        self.assertIn("monitoring stops after the request is processed", js)
+        start = js.index("function openDeleteMonitorRequest(target)")
+        end = js.index("function makeGitHubDeleteIssueUrl(", start)
+        handoff = js[start:end]
+        self.assertIn('window.open(target, "_blank")', handoff)
+        self.assertIn("githubWindow.opener = null", handoff)
+        self.assertNotIn("noopener,noreferrer", handoff)
+        self.assertIn("monitoring stops after the request is processed", handoff)
         self.assertIn("const addDialog = $(\"addMonitorDialog\");", js)
         self.assertIn("if (addDialog && addDialog.open) addDialog.close();", js)
+        self.assertIn("button.dataset.stopUrl", js)
+        self.assertIn("button.dataset.stopSource", js)
 
     def test_add_link_can_opt_into_depth_matched_weekly_scout_discovery(self):
         html = read("index.html")
