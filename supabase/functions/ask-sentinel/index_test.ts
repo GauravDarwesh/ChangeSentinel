@@ -171,7 +171,7 @@ Deno.test('an exact URL retrieves its stored evidence before fuzzy search result
     path: evidencePath, doc_type: 'monitoring evidence', is_core: false,
     content: 'CHANGED_URL: reporting forms table row removed.', score: 10
   }]);
-  const answer = await ask({ ip: '203.0.113.22', question: url + ' - what changed in this link?' });
+  const answer = await ask({ ip: '203.0.113.22', question: 'Tell me about this page: ' + url });
   assertEquals(answer.status, 200);
   const evidenceMessage = lastGroqMessages.map((message) => String(message.content || '')).join('\\n');
   if (!evidenceMessage.includes(evidencePath)) throw new Error('Exact URL evidence path was not passed to Groq.');
