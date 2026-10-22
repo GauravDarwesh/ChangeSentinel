@@ -286,7 +286,7 @@ class TestRegisterMonitor(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "sources.json"
             path.write_text(json.dumps(config), encoding="utf-8")
-            body = "\\n".join([
+            body = "\n".join([
                 DELETE_REQUEST_MARKER, "", "Source ID: " + source["id"],
                 "URL: " + child, "Name: Annex",
             ])
@@ -309,7 +309,7 @@ class TestRegisterMonitor(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "sources.json"
             path.write_text(json.dumps(config), encoding="utf-8")
-            body = "\\n".join([
+            body = "\n".join([
                 DELETE_REQUEST_MARKER, "", "Source ID: " + source["id"],
                 "URL: " + root, "Name: Policy crawl",
             ])
