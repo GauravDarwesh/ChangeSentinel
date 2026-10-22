@@ -103,6 +103,19 @@ Deno.test('greetings return a friendly answer without a provider call or quota u
   if (!String(answer.body.answer).includes('Hello! I’m Ask Sentinel')) throw new Error('greeting response was missing');
 });
 
+Deno.test('help with punctuation is answered locally without Groq or quota use', async () => {
+  reset(() => { throw new Error('Groq should not be called for help'); });
+  const answer = await ask({ ip: '203.0.113.20', question: 'what can you do??' });
+  assertEquals([answer.status, answer.body.model, answer.body.remaining, fake.global], [200, 'local-response', 3, 0]);
+  if (!String(answer.body.answer).includes('last 7 days')) throw new Error('help answer should include a useful example');
+});
+
+Deno.test('paragraph citations pass while fabricated source paths fail', async () => {
+  reset(() => groqAnswer('The latest run had no changes.\\nThe fetch and extraction error counts are zero. [Source: data/report.json]'));
+  const answer = await ask({ ip: '203.0.113.21' });
+  assertEquals(answer.status, 200);
+});
+
 Deno.test('paragraph-level citations are accepted while invalid paths still fail closed', async () => {
   reset(() => groqAnswer('The latest run had no changes.\nThe fetch and extraction error counts are zero. [Source: data/report.json]'));
   const accepted = await ask({ ip: '203.0.113.11' });
