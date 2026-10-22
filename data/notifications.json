@@ -108,7 +108,16 @@
       "summary": "URL discovery for manual-fe66388fe452 finished in DEGRADED state.",
       "source_event_id": null,
       "variant": null
+    },
+    "c89216e3b00e847563d351357b43772920c29a2266cccb68a8a651736f928219": {
+      "kind": "CHANGED_URL",
+      "sent_at": "2026-10-22T04:28:01.226632+00:00",
+      "url": "https://www.federalreserve.gov/apps/reportingforms/review",
+      "topic": "Federal Reserve reporting forms recently approved and implemented list",
+      "summary": "Removal of FFIEC 031 and FR Y-9C R-1867 entries from the Recently Approved and Implemented forms table",
+      "source_event_id": null,
+      "variant": "ai"
     }
   },
-  "updated_at": "2026-10-21T13:28:06.917412+00:00"
+  "updated_at": "2026-10-22T04:28:01.226961+00:00"
 }

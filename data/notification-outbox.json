@@ -1,23 +1,4 @@
 {
-  "pending_events": {
-    "c89216e3b00e847563d351357b43772920c29a2266cccb68a8a651736f928219": {
-      "event_id": "c89216e3b00e847563d351357b43772920c29a2266cccb68a8a651736f928219",
-      "kind": "CHANGED_URL",
-      "variant": "ai",
-      "url": "https://www.federalreserve.gov/apps/reportingforms/review",
-      "topic": "Federal Reserve reporting forms recently approved and implemented list",
-      "summary": "Removal of FFIEC 031 and FR Y-9C R-1867 entries from the Recently Approved and Implemented forms table",
-      "reason": "The unified diff shows removal of two form rows (FFIEC 031 and FR Y-9C R-1867) from the 'Recently Approved and Implemented' table, while other rows remain unchanged. This alters the applicability scope of which forms are listed as recently approved and implemented, constituting a substantive change beyond cosmetic layout adjustments. No filing deadlines, thresholds, or reporting obligations are modified in the diff; the removal of form entries from the approved list is a meaningful update to the forms inventory.",
-      "impact": "Updates the inventory of forms considered recently approved and implemented on the Federal Reserve reporting forms review page",
-      "priority": 4,
-      "effective_date": "Not stated",
-      "actions": "Not stated",
-      "tags": [
-        "warning",
-        "bank",
-        "regulatory"
-      ]
-    }
-  },
-  "updated_at": "2026-10-22T04:27:58.769252+00:00"
+  "pending_events": {},
+  "updated_at": "2026-10-22T04:28:01.228284+00:00"
 }
