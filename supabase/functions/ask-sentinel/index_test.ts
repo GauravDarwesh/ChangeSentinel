@@ -279,7 +279,7 @@ Deno.test('a second cited-answer repair fixes one remaining uncited paragraph', 
     calls += 1;
     if (calls === 1) return groqAnswer('The latest run had no changes.');
     if (calls === 2) return groqAnswer(
-      'The latest run had no changes. [Source: data/report.json]\\n\\nAn additional detail from the report.'
+      'The latest run had no changes. [Source: data/report.json]\n\nAn additional detail from the report.'
     );
     return groqAnswer('The latest run had no changes. [Source: data/report.json]');
   });
