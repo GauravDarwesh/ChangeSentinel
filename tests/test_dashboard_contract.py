@@ -520,6 +520,17 @@ class TestBackgroundRefresh(unittest.TestCase):
         self.assertIn("workflowRefreshInFlight = pollWorkflowRuns().finally(", js)
 
 
+class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
+    def test_virtual_index_sources_become_clickable_repository_files(self):
+        source = read("dashboard.js")
+        self.assertIn('"__current_report__": ["data/report.json"]', source)
+        self.assertIn('"__recent_history__": ["data/history/index.json"]', source)
+        self.assertIn('"__current_scope__": ["config/sources.json", "data/latest.json"]', source)
+        self.assertIn("function askSentinelLinkSourceCitations(answer)", source)
+        self.assertIn("askSentinelMarkdown(askSentinelLinkSourceCitations(answer))", source)
+        self.assertIn(".flatMap(askSentinelSourceLinks)", source)
+
+
 if __name__ == "__main__":
     unittest.main()
 
