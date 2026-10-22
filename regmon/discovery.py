@@ -630,14 +630,27 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                     f"legacy_failed={legacy_failed} legacy_error_sample={legacy_error_sample}"
                 )
             elif "_legacy_discovered" in checkpoint:
-                # Do not trust a historical full inventory as the frontier for a
-                # bounded crawl; reset it below and walk only from configured seeds.
+                # A bounded-depth crawl cannot use an old full inventory as its frontier.
                 checkpoint = None
+                _reset_inventory(source, data_dir)
+                _reset_failure_ledger(source, data_dir)
                 discovered = []
                 pending = deque()
                 retry_pending = deque()
+                depth_by_url = {}
                 processed_count = failed_pages = successful_pages = 0
                 started_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+                for seed in source.seed_urls:
+                    try:
+                        value = canonical(seed)
+                    except ValueError:
+                        continue
+                    if in_scope(value, source) and value not in discovered:
+                        discovered.append(value)
+                        depth_by_url[value] = 0
+                        if _needs_link_discovery(value, source) and source.crawl_depth != 0:
+                            pending.append(value)
+                _append_inventory(source, data_dir, discovered, 0)
             else:
                 discovered = _load_inventory(source, data_dir)
                 raw_depths = checkpoint.get("depth_by_url", {})
