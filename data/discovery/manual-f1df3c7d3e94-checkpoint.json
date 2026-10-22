@@ -4,9 +4,9 @@
   "state": "PAUSED",
   "config_fingerprint": "af310001c6d2c0874771a8e2d7500abfb0fc388324ff6627dfd5be44b65f9e8f",
   "started_at": "2026-10-22T21:27:37Z",
-  "updated_at": "2026-10-22T22:31:20Z",
+  "updated_at": "2026-10-22T22:47:58Z",
   "discovered_count": 1,
-  "processed_count": 6,
+  "processed_count": 7,
   "pending": [
     "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
   ],
@@ -15,7 +15,7 @@
     "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar": 0
   },
   "failed_pages": 0,
-  "successful_pages": 6,
+  "successful_pages": 7,
   "inventory_glob": "data/discovery/manual-f1df3c7d3e94-inventory-*.txt",
   "failure_ledger": "data/discovery/manual-f1df3c7d3e94-failures.jsonl"
 }
