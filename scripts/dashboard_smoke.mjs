@@ -116,6 +116,73 @@ try {
         return !!list && list.children.length > 0 && !!document.getElementById("cadenceUpcomingCount").textContent;
       });
       check(upcomingReady, "Cadence Upcoming & overdue list renders an empty state or entries");
+      const scenario = await page.evaluate(() => {
+        const previous = {
+          entries: state.cadenceEntries, calendar: state.calendar,
+          search: state.cadenceSearch, filter: state.cadenceFilter,
+          panel: state.cadencePanel, month: state.cadenceMonth,
+          selectedDate: state.cadenceSelectedDate,
+          searchInput: $("cadenceSearch").value, typeInput: $("cadenceTypeFilter").value
+        };
+        const today = L.localIsoDate(new Date());
+        const entry = (id, title, category, offset, owner) => ({
+          id, title, category, recurrence: "none",
+          start_date: cadenceAddDays(today, offset), end_date: null,
+          regulator: "FR Y-14Q", owner_name: owner || "QA owner",
+          source_url: "https://example.com/regulatory-form",
+          description: "Synthetic Cadence smoke-test note",
+          completed_dates: [], archived: false, reminder_enabled: false
+        });
+        try {
+          state.cadenceEntries = [
+            entry("smoke-overdue", "Cadence smoke overdue", "internal_task", -3),
+            entry("smoke-today", "Cadence smoke today", "deadline", 0),
+            entry("smoke-week", "Cadence smoke week", "internal_task", 4),
+            entry("smoke-later", "Cadence smoke later", "expected_update", 30)
+          ];
+          state.calendar = { schema_version: 1, entries: [{
+            date: cadenceAddDays(today, 5), title: "Cadence smoke detected", event_id: "", url: "https://example.com/detected-date"
+          }] };
+          state.cadenceSearch = "";
+          state.cadenceFilter = "ALL";
+          state.cadencePanel = "upcoming";
+          renderCadenceView();
+          const sections = Array.from(document.querySelectorAll("#cadenceUpcomingList .cadence-upcoming-group"));
+          const groups = Object.fromEntries(sections.map(section => [section.querySelector("h3").textContent, section.textContent]));
+          const grouped = !!(groups.Overdue && groups.Overdue.includes("Cadence smoke overdue") &&
+            groups.Today && groups.Today.includes("Cadence smoke today") &&
+            groups["Next 7 days"] && groups["Next 7 days"].includes("Cadence smoke week") &&
+            groups["Next 7 days"].includes("Cadence smoke detected") &&
+            groups["Later · next 90 days"] && groups["Later · next 90 days"].includes("Cadence smoke later"));
+          state.cadenceSearch = "QA owner";
+          renderCadenceView();
+          const searchWorks = $("cadenceUpcomingList").textContent.includes("Cadence smoke overdue") &&
+            !$("cadenceUpcomingList").textContent.includes("Cadence smoke today");
+          state.cadenceSearch = "";
+          state.cadenceFilter = "TEAM";
+          renderCadenceView();
+          const typeFilterWorks = $("cadenceUpcomingList").textContent.includes("Cadence smoke overdue") &&
+            $("cadenceUpcomingList").textContent.includes("Cadence smoke week") &&
+            !$("cadenceUpcomingList").textContent.includes("Cadence smoke today") &&
+            !$("cadenceUpcomingList").textContent.includes("Cadence smoke later") &&
+            !$("cadenceUpcomingList").textContent.includes("Cadence smoke detected");
+          return { grouped, searchWorks, typeFilterWorks };
+        } finally {
+          state.cadenceEntries = previous.entries;
+          state.calendar = previous.calendar;
+          state.cadenceSearch = previous.search;
+          state.cadenceFilter = previous.filter;
+          state.cadencePanel = previous.panel;
+          state.cadenceMonth = previous.month;
+          state.cadenceSelectedDate = previous.selectedDate;
+          $("cadenceSearch").value = previous.searchInput;
+          $("cadenceTypeFilter").value = previous.typeInput;
+          renderCadenceView();
+        }
+      });
+      check(scenario.grouped, "Cadence groups overdue, today, next-week and later entries correctly");
+      check(scenario.searchWorks, "Cadence upcoming search filters owners/entries");
+      check(scenario.typeFilterWorks, "Cadence upcoming type filters exclude unrelated entries");
       await page.click('[data-calendar-mode="month"]');
       const monthVisible = await page.waitForFunction(() => {
         const panel = document.getElementById("cadenceMonthView");
