@@ -474,7 +474,7 @@ function validateGroundedCitations(answer: string, allowedSources: string[]): Ci
     for (let index = 0; index < lines.length; index += 1) {
       const line = lines[index];
       if (/^#{1,6}\s/.test(line)) continue;
-      const isListItem = /^(?:[-*•]\s+|\d+[.)]\s+)/.test(line);
+      const isListItem = /^\s*(?:[-*•]\s+|\d+[.)]\s+)/.test(line);
       const isTableSeparator = /^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$/.test(line);
       const next = lines[index + 1] || '';
       const nextIsSeparator = /^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$/.test(next);
