@@ -305,6 +305,10 @@ def _existing_source_for_request(
         if not source.get("active", True):
             continue
         candidates = list(source.get("seed_urls") or []) + list(source.get("allowed_urls") or [])
+        # A crawl source owns same-host discovered pages even when the exact
+        # URL list is empty, so avoid accidentally registering a duplicate child.
+        if int(source.get("crawl_depth", 0)) > 0:
+            candidates += [url for url in source.get("known_urls", []) if isinstance(url, str)]
         for candidate in candidates:
             try:
                 candidate_url = canonicalize_url(str(candidate))
