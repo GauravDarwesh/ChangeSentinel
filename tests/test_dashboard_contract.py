@@ -536,6 +536,17 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertIn(token, js)
 
+    def test_stop_monitor_has_explicit_github_handoff_and_survives_missing_add_dialog(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        self.assertIn("The dashboard cannot stop monitoring directly.", html)
+        self.assertIn("you must submit it there.", html)
+        self.assertIn("function openDeleteMonitorRequest(target)", js)
+        self.assertIn("window.open(target, \"_blank\", \"noopener,noreferrer\")", js)
+        self.assertIn("monitoring stops after the request is processed", js)
+        self.assertIn("const addDialog = $(\"addMonitorDialog\");", js)
+        self.assertIn("if (addDialog && addDialog.open) addDialog.close();", js)
+
     def test_add_link_can_opt_into_depth_matched_weekly_scout_discovery(self):
         html = read("index.html")
         js = read("dashboard.js")
