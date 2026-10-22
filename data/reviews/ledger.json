@@ -13,6 +13,19 @@
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
       "detected_at": "2026-10-21T17:06:36.508669+00:00"
+    },
+    "cb0445d1447793c6a6950d9cffd08afbb9136cfcae4e9cea29991db6004714e9": {
+      "decision": "not_material",
+      "label": "Not material",
+      "rationale": "HTML Change, so again not important. only content change is important",
+      "owner": "",
+      "ticket": "",
+      "reviewed_by": "GauravDarwesh",
+      "reviewed_at": "2026-10-22T04:35:23+00:00",
+      "request": "issue #121",
+      "event_type": "HTML_SOURCE_CHANGED",
+      "url": "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides",
+      "detected_at": "2026-10-22T04:27:54.117805+00:00"
     }
   },
   "log": [
@@ -29,7 +42,21 @@
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar",
       "detected_at": "2026-10-21T17:06:36.508669+00:00"
+    },
+    {
+      "event_id": "cb0445d1447793c6a6950d9cffd08afbb9136cfcae4e9cea29991db6004714e9",
+      "decision": "not_material",
+      "label": "Not material",
+      "rationale": "HTML Change, so again not important. only content change is important",
+      "owner": "",
+      "ticket": "",
+      "reviewed_by": "GauravDarwesh",
+      "reviewed_at": "2026-10-22T04:35:23+00:00",
+      "request": "issue #121",
+      "event_type": "HTML_SOURCE_CHANGED",
+      "url": "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides",
+      "detected_at": "2026-10-22T04:27:54.117805+00:00"
     }
   ],
-  "updated_at": "2026-10-21T17:17:06+00:00"
+  "updated_at": "2026-10-22T04:35:23+00:00"
 }
