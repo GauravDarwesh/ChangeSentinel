@@ -146,6 +146,21 @@ Deno.test('today change phrasing fetches current report and recent history', asy
   if (!fakeFetchedPaths.includes('__recent_history__')) throw new Error('today query did not fetch recent history');
 });
 
+Deno.test('citation formatting is repaired once before an answer is rejected', async () => {
+  let calls = 0;
+  reset(() => {
+    calls += 1;
+    return calls === 1
+      ? groqAnswer('The latest run had no changes.')
+      : groqAnswer('The latest run had no changes. [Source: data/report.json]');
+  });
+  const answer = await ask({ ip: '203.0.113.30' });
+  assertEquals([answer.status, answer.body.answer, calls], [200, 'The latest run had no changes. [Source: data/report.json]', 2]);
+  if (!lastGroqMessages.some((message) => String(message.content || '').includes('Draft answer to repair'))) {
+    throw new Error('repair prompt did not include the draft to repair');
+  }
+});
+
 Deno.test('paragraph-level citations are accepted while invalid paths still fail closed', async () => {
   reset(() => groqAnswer('The latest run had no changes.\nThe fetch and extraction error counts are zero. [Source: data/report.json]'));
   const accepted = await ask({ ip: '203.0.113.11' });
