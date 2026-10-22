@@ -253,10 +253,12 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn("!asksInventory(question) || doc.path !== '__current_inventory__'", backend)
         self.assertIn("!['source code or workflow', 'project documentation', 'repository file', 'extracted page snapshot'].includes", backend)
 
-    def test_every_answer_line_requires_a_valid_selected_source_citation(self):
+    def test_paragraph_level_citations_still_require_approved_sources(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
-        self.assertIn("Require a source marker in every substantive paragraph and every explicit list item.", backend)
-        self.assertIn("if (!/\\[Source:", backend)
+        self.assertIn("Validate factual paragraphs/list items, not visual line wraps.", backend)
+        self.assertIn("const blockHasCitation = lines.some((line) =>", backend)
+        self.assertIn("const invalidCitationCount = citations.filter((path) => !allowed.has(path)).length;", backend)
+        self.assertIn("else if (invalidCitationCount > 0) reason = 'unapproved_source';", backend)
 
 
     def test_grounding_errors_use_http_errors_the_existing_frontend_displays(self):
