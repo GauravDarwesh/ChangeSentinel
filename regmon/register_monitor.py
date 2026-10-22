@@ -7,15 +7,19 @@ import ipaddress
 import json
 import re
 from pathlib import Path
-from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
+from urllib.parse import parse_qsl, urlencode, urljoin, urlparse, urlunparse
 
+import requests
 from bs4 import BeautifulSoup
-from regmon.security import validate_public_http_url
+from regmon.safe_http import public_destinations_only
+from regmon.security import USER_AGENT, validate_public_http_url
 
 REQUEST_MARKER = "<!-- changesentinel:add-monitor:v1 -->"
 BULK_REQUEST_MARKER = "<!-- changesentinel:add-monitor-bulk:v1 -->"
+DELETE_REQUEST_MARKER = "<!-- changesentinel:delete-monitor:v1 -->"
 MAX_BULK_REQUESTS = 25
 ISSUE_TITLE_PREFIX = "[ChangeSentinel] Add monitor"
+DELETE_ISSUE_TITLE_PREFIX = "[ChangeSentinel] Delete monitor"
 TRACKING_PARAMS = {"fbclid", "gclid", "mc_cid", "mc_eid"}
 DEFAULT_SOURCE_SETTINGS = {
     "active": True,
@@ -81,6 +85,66 @@ def canonicalize_url(value: str) -> str:
     return urlunparse((scheme, netloc, path, "", urlencode(sorted(query), doseq=True), ""))
 
 
+def _metadata_from_html(html: str) -> dict[str, str]:
+    """Extract a bounded display title and description from common HTML metadata."""
+    soup = BeautifulSoup(str(html or ""), "html.parser")
+    title = ""
+    for selector in ('meta[property="og:title"]', 'meta[name="twitter:title"]'):
+        tag = soup.select_one(selector)
+        if tag and tag.get("content"):
+            title = str(tag.get("content")).strip()
+            if title:
+                break
+    if not title and soup.title:
+        title = soup.title.get_text(" ", strip=True)
+    description = ""
+    for selector in ('meta[name="description"]', 'meta[property="og:description"]'):
+        tag = soup.select_one(selector)
+        if tag and tag.get("content"):
+            description = str(tag.get("content")).strip()
+            if description:
+                break
+    clean = lambda value, limit: re.sub(r"\\s+", " ", str(value or "")).strip()[:limit]
+    return {"title": clean(title, 160), "description": clean(description, 500)}
+
+
+def _fetch_page_metadata(url: str) -> dict[str, str]:
+    """Resolve a missing user-provided name without letting metadata fetch bypass URL safety."""
+    current = url
+    try:
+        for redirect_count in range(4):
+            validate_public_http_url(current, resolve_dns=True)
+            with public_destinations_only():
+                response = requests.get(current, timeout=(4, 7), allow_redirects=False,
+                                        headers={"User-Agent": USER_AGENT, "Accept": "text/html"}, stream=True)
+            if response.status_code in {301, 302, 303, 307, 308}:
+                location = response.headers.get("location")
+                response.close()
+                if not location or redirect_count >= 3:
+                    return {}
+                current = urljoin(current, location)
+                continue
+            if response.status_code >= 400 or "html" not in str(response.headers.get("content-type") or "").lower():
+                response.close()
+                return {}
+            chunks, total = [], 0
+            for chunk in response.iter_content(chunk_size=16 * 1024):
+                if not chunk:
+                    continue
+                total += len(chunk)
+                if total > 512 * 1024:
+                    response.close()
+                    return {}
+                chunks.append(chunk)
+            encoding = response.encoding or "utf-8"
+            response.close()
+            return _metadata_from_html(b"".join(chunks).decode(encoding, "replace"))
+    except Exception:
+        # Metadata is advisory; unavailable sites should still be registerable.
+        return {}
+    return {}
+
+
 def _display_name(name: str, url: str) -> str:
     clean = re.sub(r"\s+", " ", str(name or "")).strip()[:100]
     if clean:
@@ -107,6 +171,7 @@ def source_for_url(
     name: str = "",
     include_selector: str = "",
     ignore_selectors: tuple[str, ...] | list[str] = (),
+    crawl_depth: int = 0,
 ) -> dict:
     parsed = urlparse(url)
     source_id = "manual-" + hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
@@ -115,6 +180,8 @@ def source_for_url(
     settings = dict(DEFAULT_SOURCE_SETTINGS)
     settings["include_selector"] = str(include_selector or "").strip()
     settings["ignore_selectors"] = list(ignore_selectors or [])
+    settings["crawl_depth"] = int(crawl_depth)
+    settings["discovery_max_pages_per_slice"] = 1 if crawl_depth == 0 else 200
     return {
         "id": source_id,
         "name": _display_name(name, url),
@@ -122,7 +189,7 @@ def source_for_url(
         **settings,
         "seed_urls": [url],
         "allowed_prefixes": [parsed.scheme + "://" + authority + "/"],
-        "allowed_urls": [url],
+        "allowed_urls": [url] if crawl_depth == 0 else [],
         "allowed_domains": [host],
     }
 
@@ -130,8 +197,9 @@ def source_for_url(
 def _validated_issue_body(event: dict, repository: str, marker: str) -> str:
     issue = event.get("issue") or {}
     title = str(issue.get("title") or "")
-    if not title.startswith(ISSUE_TITLE_PREFIX):
-        raise ValueError("This issue is not a ChangeSentinel add-monitor request.")
+    expected_prefix = DELETE_ISSUE_TITLE_PREFIX if marker == DELETE_REQUEST_MARKER else ISSUE_TITLE_PREFIX
+    if not title.startswith(expected_prefix):
+        raise ValueError("This issue is not a matching ChangeSentinel monitor request.")
     repo_owner = str(repository or "").split("/", 1)[0].lower()
     issue_owner = str(((issue.get("user") or {}).get("login")) or "").lower()
     if not repo_owner or issue_owner != repo_owner:
@@ -230,6 +298,7 @@ def _existing_source_for_request(
     url: str,
     include_selector: str,
     ignore_selectors: tuple[str, ...],
+    crawl_depth: int = 0,
 ) -> dict | None:
     """Return an exact active URL match, rejecting an implicit selector change."""
     for source in sources:
@@ -254,6 +323,8 @@ def _existing_source_for_request(
                     "This URL is already monitored with different CSS selectors. "
                     "The existing monitor was not changed; update it through an explicit edit flow."
                 )
+            if int(source.get("crawl_depth", 0)) != crawl_depth:
+                raise ValueError("This URL is already monitored at a different crawl depth. The existing monitor was not changed.")
             return source
     return None
 
@@ -276,7 +347,7 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
                 raise ValueError(f"Bulk row {row_number}: the same URL appears with different CSS selectors.")
             continue
 
-        existing = _existing_source_for_request(sources, url, include_selector, ignore_selectors)
+        existing = _existing_source_for_request(sources, url, include_selector, ignore_selectors, crawl_depth=crawl_depth)
         if existing is not None:
             source_id = str(existing["id"])
             item = {
@@ -284,7 +355,9 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
                 "name": str(existing.get("name") or requested_name or url), "created": False,
             }
         else:
-            new_source = source_for_url(url, requested_name, include_selector, ignore_selectors)
+            metadata = _fetch_page_metadata(url) if not requested_name else {}
+    display_name = requested_name or metadata.get("title", "")
+    new_source = source_for_url(url, display_name, include_selector, ignore_selectors, crawl_depth=crawl_depth)
             source_ids_in_config = {str(source.get("id")) for source in sources}
             if new_source["id"] in source_ids_in_config:
                 existing_collision = next(source for source in sources if str(source.get("id")) == new_source["id"])
@@ -332,10 +405,14 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
 
 def register_request(event: dict, config_path: Path, repository: str) -> dict:
     body = str(((event.get("issue") or {}).get("body")) or "")
+    if DELETE_REQUEST_MARKER in body:
+        return delete_monitor_request(event, config_path, repository)
     if BULK_REQUEST_MARKER in body:
         return register_bulk_request(event, config_path, repository)
 
     url, requested_name, include_selector, ignore_selectors = request_from_issue(event, repository)
+    crawl_match = re.search(r"(?m)^Crawl depth:[ \\t]*(0|1|2|3)[ \\t]*$", body)
+    crawl_depth = int(crawl_match.group(1)) if crawl_match else 0
     config = json.loads(config_path.read_text(encoding="utf-8"))
     sources = config.setdefault("sources", [])
     if not isinstance(sources, list):
@@ -349,6 +426,7 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
             "url": url,
             "name": str(existing.get("name") or requested_name or url),
             "created": False,
+            "crawl_depth": int(existing.get("crawl_depth", 0)),
             "message": "The URL is already present in an active source.",
         }
 
@@ -374,8 +452,46 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
         "url": url,
         "name": new_source["name"],
         "created": True,
+        "crawl_depth": crawl_depth,
         "message": "The URL has been added to config/sources.json.",
     }
+
+def delete_monitor_request(event: dict, config_path: Path, repository: str) -> dict:
+    """Exclude an individual page or disable a crawl root without deleting evidence."""
+    body = _validated_issue_body(event, repository, DELETE_REQUEST_MARKER)
+    source_match = re.search(r"(?m)^Source ID:[ \\t]*([A-Za-z0-9._-]{1,120})[ \\t]*$", body)
+    url_match = re.search(r"(?m)^URL:[ \\t]*(\\S+)[ \\t]*$", body)
+    if not source_match or not url_match:
+        raise ValueError("Delete requests need both Source ID and URL fields.")
+    target_url = canonicalize_url(url_match.group(1))
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    sources = config.get("sources")
+    if not isinstance(sources, list):
+        raise ValueError("config/sources.json must contain a sources array.")
+    source = next((row for row in sources if str(row.get("id")) == source_match.group(1)), None)
+    if source is None:
+        raise ValueError("The requested source no longer exists.")
+    from regmon.discovery import canonical, in_scope
+    from regmon.config import SourceConfig
+    parsed_source = SourceConfig.from_dict(source)
+    if not in_scope(canonical(target_url), parsed_source):
+        raise ValueError("The selected page does not belong to this source's active scope.")
+    seeds = [str(value) for value in source.get("seed_urls") or []]
+    excluded = [canonicalize_url(value) for value in source.get("excluded_urls") or []]
+    already_excluded = target_url in excluded
+    if not already_excluded:
+        excluded.append(target_url)
+    source["excluded_urls"] = sorted(set(excluded))
+    remaining_seeds = [seed for seed in seeds if canonicalize_url(seed) != target_url]
+    root_deleted = len(remaining_seeds) != len(seeds)
+    if root_deleted and remaining_seeds:
+        source["seed_urls"] = remaining_seeds
+    elif root_deleted:
+        source["active"] = False
+    if not already_excluded or root_deleted:
+        config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+    return {"source_id": source["id"], "source_ids": [source["id"]], "url": target_url, "name": source.get("name", "Monitored page"), "created": False, "deleted": True, "deactivated": not source.get("active", True), "root_deleted": root_deleted, "bulk": False, "count": 1, "created_count": 0, "existing_count": 1, "message": "The page is excluded from future scans; history and saved evidence are retained."}
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
