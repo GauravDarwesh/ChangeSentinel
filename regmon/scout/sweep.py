@@ -60,7 +60,7 @@ def page_url(channel: Channel, index: int) -> str:
 
 
 def in_candidate_scope(url: str, regulator: Regulator, channel: Channel) -> bool:
-    if host(url) not in regulator.hosts or is_asset(url):
+    if host(url) not in regulator.hosts or (is_asset(url) and not channel.include_assets):
         return False
     value = canonical(url, regulator.https_hosts)
     path = urlparse(value).path or "/"
@@ -156,8 +156,90 @@ def run_sitemap(client: PoliteClient, regulator: Regulator, run: ChannelRun, con
         raise ParseError("The sitemap listed no URLs")
 
 
+def _run_depth_limited_listing(client: PoliteClient, regulator: Regulator, run: ChannelRun) -> None:
+    """Discover linked pages and documents up to a bounded number of same-host hops.
+
+    The listing root is at level 0. Its outgoing links are candidates at level 1.
+    Only non-asset pages at levels below the configured maximum are fetched to
+    discover further links; assets such as PDFs are recorded but never parsed as
+    pages. PoliteClient enforces robots.txt, request budgets, host scope and SSRF
+    protections for every request.
+    """
+    channel = run.channel
+    depth_limit = int(channel.crawl_depth or 0)
+    queue: list[tuple[str, int]] = [(channel.url, 0)]
+    queued = {canonical(channel.url, regulator.https_hosts)}
+    visited: set[str] = set()
+    observations: dict[str, Observation] = {}
+    root_had_in_scope_links = False
+
+    while queue:
+        current_url, page_depth = queue.pop(0)
+        current_key = canonical(current_url, regulator.https_hosts)
+        queued.discard(current_key)
+        if current_key in visited:
+            continue
+        visited.add(current_key)
+
+        response = client.get(fetch_url(current_url, regulator))
+        run.pages_read += 1
+        body = response.body
+        content_type = str(getattr(response, "content_type", "") or "").lower()
+        if "html" not in content_type and not body.lstrip()[:20].lower().startswith((b"<!doctype html", b"<html", b"<head", b"<body")):
+            if page_depth == 0:
+                raise ParseError("The Scout discovery root did not return an HTML listing page")
+            continue
+
+        html = body.decode("utf-8", errors="replace")
+        links = harvest_listing(html, response.url, channel.content_selector)
+        page_matches = 0
+        for link in links:
+            if not in_candidate_scope(link.url, regulator, channel):
+                run.out_of_scope += 1
+                continue
+
+            page_matches += 1
+            link_depth = page_depth + 1
+            key = canonical(link.url, regulator.https_hosts)
+            # BFS ensures the first copy has the shortest discovered distance.
+            if key not in observations:
+                observations[key] = _observation(
+                    link.url,
+                    run,
+                    anchor_text=link.anchor_text,
+                    title_attr=link.title_attr,
+                    context=link.context,
+                    date_hint=link.date_hint,
+                    parent_url=response.url,
+                )
+
+            # At the final configured level URLs are surfaced as Scout findings,
+            # but aren't fetched. PDFs and other assets are never enqueued.
+            if link_depth < depth_limit and not is_asset(link.url) and key not in visited and key not in queued:
+                queue.append((link.url, link_depth))
+                queued.add(key)
+
+        if page_depth == 0:
+            root_had_in_scope_links = page_matches > 0
+
+    if not root_had_in_scope_links:
+        raise ParseError("The listing page had no linked URLs in scope; its layout or scope may have changed")
+    if not observations:
+        raise ParseError("The listing page had no linked URLs in scope; its layout or scope may have changed")
+
+    run.observations.extend(observations.values())
+    run.items = len(observations)
+    run.note = (
+        f"Depth-limited discovery: read {run.pages_read} page(s), found "
+        f"{run.items} linked URL(s) through level {depth_limit}"
+    )
+
+
 def run_listing(client: PoliteClient, regulator: Regulator, run: ChannelRun, *, baseline: bool, known: set[str]) -> None:
     channel = run.channel
+    if channel.crawl_depth is not None:
+        _run_depth_limited_listing(client, regulator, run)
+        return
     pagination = channel.pagination
     pages = (pagination.baseline_pages if baseline else pagination.max_pages) if pagination else 1
     caught_up = reached_end = False
