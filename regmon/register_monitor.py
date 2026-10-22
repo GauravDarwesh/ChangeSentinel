@@ -424,6 +424,72 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
     if not isinstance(sources, list):
         raise ValueError("config/sources.json must contain a sources array.")
 
+    # Resolve metadata once; it is advisory and falls back to URL-derived naming.
+    new_source = source_for_url(url, display_name, include_selector, ignore_selectors, crawl_depth=crawl_depth)
+            source_ids_in_config = {str(source.get("id")) for source in sources}
+            if new_source["id"] in source_ids_in_config:
+                existing_collision = next(source for source in sources if str(source.get("id")) == new_source["id"])
+                existing_urls = [str(candidate) for candidate in (existing_collision.get("seed_urls") or [])]
+                if any(canonicalize_url(candidate) == url for candidate in existing_urls):
+                    item = {
+                        "source_id": new_source["id"], "url": url,
+                        "name": str(existing_collision.get("name") or new_source["name"]), "created": False,
+                    }
+                    source_id = new_source["id"]
+                else:
+                    raise ValueError(f"Bulk row {row_number}: a source ID collision was detected; no configuration was changed.")
+            else:
+                sources.append(new_source)
+                source_id = new_source["id"]
+                item = {"source_id": source_id, "url": url, "name": new_source["name"], "created": True}
+
+        by_url[url] = {
+            **item,
+            "include_selector": include_selector,
+            "ignore_selectors": list(ignore_selectors),
+        }
+        items.append(item)
+        if source_id not in source_ids:
+            source_ids.append(source_id)
+
+    created_count = sum(1 for item in items if item["created"])
+    existing_count = len(items) - created_count
+    if created_count:
+        config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return {
+        "bulk": True,
+        "source_ids": source_ids,
+        "items": items,
+        "count": len(items),
+        "created_count": created_count,
+        "existing_count": existing_count,
+        # Singular aliases keep downstream tooling compatible with its old output shape.
+        "source_id": source_ids[0],
+        "url": items[0]["url"],
+        "created": bool(created_count),
+        "message": f"Processed {len(items)} unique links: {created_count} new and {existing_count} already configured.",
+    }
+
+
+def register_request(event: dict, config_path: Path, repository: str) -> dict:
+    body = str(((event.get("issue") or {}).get("body")) or "")
+    if DELETE_REQUEST_MARKER in body:
+        return delete_monitor_request(event, config_path, repository)
+    if BULK_REQUEST_MARKER in body:
+        return register_bulk_request(event, config_path, repository)
+
+    url, requested_name, include_selector, ignore_selectors = request_from_issue(event, repository)
+    crawl_match = re.search(r"(?m)^Crawl depth:[ \t]*(0|1|2|3)[ \t]*$", body)
+    crawl_depth = int(crawl_match.group(1)) if crawl_match else 0
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    sources = config.setdefault("sources", [])
+    if not isinstance(sources, list):
+        raise ValueError("config/sources.json must contain a sources array.")
+
+    # Resolve metadata once; it is advisory and falls back to URL-derived naming.
+    metadata = _fetch_page_metadata(url) if not requested_name else {}
+    display_name = requested_name or metadata.get("title", "")
+
     # Avoid creating a second source for a page already covered by an active source.
     existing = _existing_source_for_request(sources, url, include_selector, ignore_selectors, crawl_depth=crawl_depth)
     if existing is not None:
