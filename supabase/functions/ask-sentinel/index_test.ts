@@ -17,7 +17,7 @@ const SUPABASE = 'https://fake.supabase.test';
 Deno.env.set('SUPABASE_URL', SUPABASE);
 Deno.env.set('SUPABASE_PUBLISHABLE_KEYS', JSON.stringify({ default: 'sb_publishable_test' }));
 Deno.env.set('SUPABASE_SECRET_KEYS', JSON.stringify({ default: 'sb_secret_test' }));
-Deno.env.set('GROQ_API', 'gsk_test');
+Deno.env.set('OPENROUTER_API', 'openrouter_test');
 Deno.env.set('ASK_SENTINEL_IP_DAILY_LIMIT', '5');
 Deno.env.set('ASK_SENTINEL_GLOBAL_DAILY_LIMIT', '8');
 
@@ -45,7 +45,7 @@ const realFetch = globalThis.fetch;
 globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
   const body = init?.body ? JSON.parse(String(init.body)) : {};
-  if (url.hostname === 'api.groq.com') { lastGroqMessages = body.messages || []; return fake.groq(); }
+  if (url.hostname === 'openrouter.ai') { if (url.pathname === '/api/v1/key') return json({ data: { label: 'test' } }); lastGroqMessages = body.messages || []; return fake.groq(); }
   if (url.origin !== SUPABASE) return realFetch(input, init);
   const path = url.pathname;
   if (path === '/auth/v1/user') return json({ id: '11111111-2222-4333-8444-555555555555', is_anonymous: true });
@@ -449,6 +449,48 @@ Deno.test('nested factual list items need their own citation', async () => {
   const answer = await ask({ ip: '203.0.113.27' });
   assertEquals([answer.status, answer.body.model, answer.body.evidence_fallback], [200, 'evidence-fallback', true]);
   if (!String(answer.body.answer).includes('[Source: data/report.json]')) throw new Error('uncited nested list was not replaced with an indexed source fallback');
+});
+
+
+Deno.test('latest monitoring run summary comes from indexed counts without calling the model', async () => {
+  reset(() => { throw new Error('The provider must not be called for a deterministic run summary'); });
+  fakeEvidenceRows.set('__current_report__', [{
+    path: '__current_report__', doc_type: 'latest monitoring report', is_core: false,
+    content: 'LATEST COMMITTED MONITORING REPORT\nrun_id=20261022T065449Z-97e93e07\ngenerated_at=2026-10-22T06:57:07.398839+00:00\ncounts={"discovered":18,"new":0,"changed":0,"source_changed":0,"removed":0,"unchanged":18,"fetch_error":0,"extraction_error":0,"ai_error":0,"ai_invalid":0,"ai_backlog_pending":0,"ai_deferred":0,"crawl_paused":0}'
+  }]);
+  const answer = await ask({ ip: '203.0.113.40', question: 'Summarize the latest monitoring run, including changes and any errors.' });
+  assertEquals([answer.status, answer.body.model, answer.body.remaining], [200, 'deterministic-run-summary', 2]);
+  if (!String(answer.body.answer).includes('20261022T065449Z-97e93e07')) throw new Error('run ID was omitted');
+  if (!String(answer.body.answer).includes('Links discovered') || !String(answer.body.answer).includes('| 18 |')) throw new Error('deterministic run counts were not included');
+  if (!String(answer.body.answer).includes('Fetch errors') || !String(answer.body.answer).includes('Extraction errors')) throw new Error('error counts were omitted');
+  if (!String(answer.body.answer).includes('[Latest report](')) throw new Error('the primary report link is not clickable');
+  if (lastGroqMessages.length) throw new Error('model was called for deterministic run summary');
+});
+
+Deno.test('active link inventory returns a clickable regulator/link table and excludes archived sources', async () => {
+  reset(() => { throw new Error('The provider must not be called for the link inventory'); });
+  fakeEvidenceRows.set('__current_scope__', [{
+    path: '__current_scope__', doc_type: 'authoritative current monitoring scope', is_core: false,
+    content: 'AUTHORITATIVE CURRENT MONITORING SCOPE\n' +
+      'SOURCE fed-active | Federal Reserve Pilot | ACTIVE - INCLUDED IN CURRENT MONITORING SCOPE\n' +
+      'regulator=Board of Governors of the Federal Reserve System | configured_seed_urls=2 | configured_allowed_urls=2 | saved_registry_entries=2\n' +
+      '- url_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa | url=https://www.federalreserve.gov/apps/reportingforms/recentupdates | last_checked=2026-10-22T06:54:49+00:00 | HTTP=200 | errors=none recorded | evidence=none\n' +
+      '- url_id=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb | url=https://www.federalreserve.gov/apps/reportingforms/review | last_checked=2026-10-22T06:54:49+00:00 | HTTP=200 | errors=none recorded | evidence=none\n' +
+      'SOURCE eba-inactive | European Banking Authority Pilot | INACTIVE / ARCHIVED - NOT CURRENTLY MONITORED\n' +
+      'regulator=European Banking Authority | configured_seed_urls=1 | configured_allowed_urls=1 | saved_registry_entries=1\n' +
+      '- url_id=cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc | url=https://www.eba.europa.eu/archived-only | last_checked=2026-10-22T06:54:49+00:00 | HTTP=200 | errors=none recorded | evidence=none'
+  }]);
+  fakeEvidenceRows.set('__repo_overview__', [{
+    path: '__repo_overview__', doc_type: 'repository overview', is_core: false,
+    content: 'Configured active sources include the Federal Reserve.'
+  }]);
+  const answer = await ask({ ip: '203.0.113.41', question: 'Create me a table to check how many links are supported; first column is regulator second is the link.' });
+  assertEquals([answer.status, answer.body.model, answer.body.remaining], [200, 'deterministic-link-inventory', 2]);
+  if (!String(answer.body.answer).includes('| Regulator | Link |')) throw new Error('regulator/link table header is missing');
+  if (!String(answer.body.answer).includes('[https://www.federalreserve.gov/apps/reportingforms/recentupdates]')) throw new Error('active link is not clickable');
+  if (String(answer.body.answer).includes('archived-only')) throw new Error('inactive/archived URL was included');
+  if (!String(answer.body.answer).includes('2 active link entries')) throw new Error('active link count is incorrect');
+  if (lastGroqMessages.length) throw new Error('model was called for deterministic inventory');
 });
 
 Deno.test('a visitor gets three questions a day', async () => {

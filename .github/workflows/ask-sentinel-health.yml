@@ -1,6 +1,6 @@
 name: Ask Sentinel Backend Health
 
-# Every live question spends the same Groq budget real users rely on (about 3.5k
+# Every live question spends the same OpenRouter free-tier capacity real users rely on (about 3.5k
 # tokens each; the free tier allows a few hundred thousand a day). This check used
 # to run seven live questions on every dashboard push, exhausted that budget on
 # busy days and then failed on provider 429s. Live questions now run when the
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - name: Check the deployed Groq-backed endpoint
+      - name: Check the deployed OpenRouter-backed endpoint
         id: endpoint_health
         env:
           HEALTH_URL: https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel?mode=health
@@ -53,8 +53,8 @@ jobs:
 
           status = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
           required = (
-              "groqConfigured",
-              "groqApiKeyValid",
+              "openRouterConfigured",
+              "openRouterApiKeyValid",
               "modelAvailable",
               "supabaseKeysConfigured",
           )
@@ -63,12 +63,12 @@ jobs:
               safe = {key: status.get(key) is True for key in required}
               print("Ask Sentinel backend health failed: " + json.dumps(safe))
               raise SystemExit(1)
-          print("Ask Sentinel backend health passed: Groq key valid, model available, Supabase server keys present.")
+          print("Ask Sentinel backend health passed: OpenRouter key valid, model available, Supabase server keys present.")
           print("Repository: " + str(status.get("repository", "unknown")))
           print("Model: " + str(status.get("model", "unknown")))
           PY
 
-      - name: Index the repository and ask a real Groq question
+      - name: Index the repository and ask a real OpenRouter question
         # Pull requests cannot change the deployed function, so they never spend live questions.
         if: ${{ github.event_name != 'pull_request' }}
         env:
@@ -137,7 +137,7 @@ jobs:
           text = answer.get("answer")
           if not isinstance(text, str) or len(text.strip()) < 40:
               raise RuntimeError("Ask Sentinel returned no usable answer.")
-          if answer.get("model") != "openai/gpt-oss-20b":
+          if answer.get("model") != "deterministic-run-summary":
               raise RuntimeError("Ask Sentinel reported an unexpected model: " + str(answer.get("model")))
           if answer.get("remaining") != 2:
               raise RuntimeError("One question should leave two daily requests; received " + str(answer.get("remaining")))
@@ -149,7 +149,7 @@ jobs:
           print("Indexed commit: " + str(warm.get("commit_sha")))
           print("Indexed document chunks: " + str(warm.get("document_count")))
           print("Monitoring run grounded: " + expected_run)
-          print("Groq model: " + str(answer.get("model")) + "; remaining quota: " + str(answer.get("remaining")))
+          print("Response type: " + str(answer.get("model")) + "; remaining quota: " + str(answer.get("remaining")))
           print("Answer length: " + str(len(text)) + " characters; answer text omitted from CI logs.")
           PY
 
