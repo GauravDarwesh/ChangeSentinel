@@ -635,20 +635,26 @@ async function groqCompletion(
       max_tokens: MAX_OUTPUT_TOKENS
     })
   };
-  let response: Response;
-  try {
-    response = await checkedFetch('https://api.groq.com/openai/v1/chat/completions', requestInit, 25000);
-  } catch (firstError) {
-    // Groq transport failures have been intermittent in production. Retry network /
-    // timeout exceptions once; do not loop or retry a received 429 response.
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    response = await checkedFetch('https://api.groq.com/openai/v1/chat/completions', requestInit, 25000);
+  let response: Response | null = null;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      response = await checkedFetch('https://api.groq.com/openai/v1/chat/completions', requestInit, 25000);
+      if (attempt === 0 && response.status >= 500 && response.status < 600) {
+        // Retry one transient upstream server failure, but never retry a received 429.
+        await response.body?.cancel();
+        response = null;
+        await new Promise((resolve) => setTimeout(resolve, 250));
+        continue;
+      }
+      break;
+    } catch (error) {
+      if (attempt > 0) throw error;
+      // Groq transport failures have been intermittent in production. Retry network /
+      // timeout exceptions once; the second attempt is the hard limit.
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
   }
-  if (response.status >= 500 && response.status < 600) {
-    await response.body?.cancel();
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    response = await checkedFetch('https://api.groq.com/openai/v1/chat/completions', requestInit, 25000);
-  }
+  if (!response) throw new Error('Groq request failed after one retry.');
   const raw = await response.text();
   if (!response.ok) throw new Error('Groq could not answer this request (' + response.status + '): ' + raw.slice(0, 220));
   const payload = safeJson(raw);
