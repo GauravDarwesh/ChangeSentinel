@@ -326,7 +326,9 @@ function asksCurrentReport(question: string): boolean {
 }
 
 function asksUrlLookup(question: string): boolean {
-  return /https?:\/\/\S+/i.test(question) && /\b(what changed|changes?|changed|compare|difference|diff|new|updated|update)\b/i.test(question);
+  // A pasted URL is enough to trigger exact indexed-page lookup; users should not
+  // need to phrase the request with one of a few predetermined change-related verbs.
+  return extractUrls(question).length > 0;
 }
 
 function extractUrls(question: string): string[] {
