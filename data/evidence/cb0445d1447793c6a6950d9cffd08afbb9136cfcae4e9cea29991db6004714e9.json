@@ -1,0 +1,33 @@
+{
+  "event_id": "cb0445d1447793c6a6950d9cffd08afbb9136cfcae4e9cea29991db6004714e9",
+  "event_type": "HTML_SOURCE_CHANGED",
+  "url": "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides",
+  "timestamp": "2026-10-22T04:27:54.117805+00:00",
+  "before": {
+    "normalized_hash": "4719a5e57f11cbef6e7c0ea098ebaab00138ad2fd619b72b4354c8a212896227",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "0da59a531fbc2f7345d337480a5f098121aeb8f56f9e75dd5dce99abf03fb7a2",
+    "html_hash": "0da59a531fbc2f7345d337480a5f098121aeb8f56f9e75dd5dce99abf03fb7a2",
+    "html_comparison_hash": "0da59a531fbc2f7345d337480a5f098121aeb8f56f9e75dd5dce99abf03fb7a2",
+    "snapshot_location": "data/snapshots/fe66388fe4523fbda40e241d0614f9a8779bcfb66262c27fdccbebeefed72c8a-4719a5e57f11cbef6e7c0ea098ebaab00138ad2fd619b72b4354c8a212896227.txt",
+    "html_snapshot_location": "data/snapshots/html/fe66388fe4523fbda40e241d0614f9a8779bcfb66262c27fdccbebeefed72c8a-0da59a531fbc2f7345d337480a5f098121aeb8f56f9e75dd5dce99abf03fb7a2.html",
+    "file_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "4719a5e57f11cbef6e7c0ea098ebaab00138ad2fd619b72b4354c8a212896227",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "908bfc4ece86b8bd6ea89d814acb2205892862e40838b6db1a1811fe38be2a4f",
+    "html_hash": "908bfc4ece86b8bd6ea89d814acb2205892862e40838b6db1a1811fe38be2a4f",
+    "html_comparison_hash": "908bfc4ece86b8bd6ea89d814acb2205892862e40838b6db1a1811fe38be2a4f",
+    "snapshot_location": "data/snapshots/fe66388fe4523fbda40e241d0614f9a8779bcfb66262c27fdccbebeefed72c8a-4719a5e57f11cbef6e7c0ea098ebaab00138ad2fd619b72b4354c8a212896227.txt",
+    "html_snapshot_location": "data/snapshots/html/fe66388fe4523fbda40e241d0614f9a8779bcfb66262c27fdccbebeefed72c8a-908bfc4ece86b8bd6ea89d814acb2205892862e40838b6db1a1811fe38be2a4f.html",
+    "file_snapshot_location": null
+  },
+  "diff": "",
+  "html_diff": "--- before\n+++ after\n@@ -8,7 +8,7 @@\n             var pageConfig = {};\n             pageConfig.isParentPage = false;\n pageConfig.isExcluded = false;\n-pageConfig.cacheBuster = '1792627231';\n+pageConfig.cacheBuster = '1792643276';\n             if (pageConfig.needsAgreement && pageConfig.cookieName && pageConfig.agreementUrl) {\n                 var cookieExists = document.cookie.split(';').some(function(c) {\n                     return c.trim().startsWith(pageConfig.cookieName + '=');",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body."
+}
