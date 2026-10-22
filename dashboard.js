@@ -3373,12 +3373,22 @@ function syncScoutDiscoveryOption() {
     : "Choose Level 1–3 to enable Scout. Use an HTML landing/listing page as the root; Level 0 only watches this URL and does not discover linked pages.";
 }
 function openGitHubRequest(target, toastMessage) {
-  $("addMonitorDialog").close();
+  const addDialog = $("addMonitorDialog");
+  if (addDialog && addDialog.open) addDialog.close();
   showToast(toastMessage);
   const githubWindow = window.open(target, "_blank");
   if (githubWindow) {
     try { githubWindow.opener = null; } catch (_) {}
   } else {
+    window.location.href = target;
+  }
+}
+function openDeleteMonitorRequest(target) {
+  const githubWindow = window.open(target, "_blank", "noopener,noreferrer");
+  if (githubWindow) {
+    showToast("GitHub opened in a new tab. Review the prefilled request and click Submit new issue; monitoring stops after the request is processed.");
+  } else {
+    showToast("Your browser blocked the new tab. Opening the request here.");
     window.location.href = target;
   }
 }
@@ -3388,9 +3398,13 @@ function makeGitHubDeleteIssueUrl(sourceId, url, name) {
   return REPO + "/issues/new?" + params.toString();
 }
 function submitDeleteMonitor() {
-  const pending = state.pendingDelete; $("deleteMonitorDialog").close();
-  if (!pending || !pending.sourceId || !pending.url) return;
-  openGitHubRequest(makeGitHubDeleteIssueUrl(pending.sourceId, pending.url, pending.name), "Submit the stop-monitor request on GitHub. The page will be excluded once accepted.");
+  const pending = state.pendingDelete;
+  if (!pending || !pending.sourceId || !pending.url) {
+    $("deleteMonitorDialog").close();
+    showToast("Could not prepare the stop-monitor request. Refresh the dashboard and try again.");
+    return;
+  }
+  openDeleteMonitorRequest(makeGitHubDeleteIssueUrl(pending.sourceId, pending.url, pending.name));
 }
 function submitAddMonitor(event) {
   event.preventDefault();
