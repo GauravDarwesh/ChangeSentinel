@@ -155,12 +155,21 @@ function requireEditor(member:{role:string}){if(member.role!=="admin"&&member.ro
 function validId(value:unknown){const id=String(value||"");if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw new PublicError("Calendar entry ID is invalid.");return id;}
 async function getEntry(id:string){const rows=await restJson("regulatory_calendar_entries?"+new URLSearchParams({select:"*",id:"eq."+id,limit:"1"}));const entry=Array.isArray(rows)?rows[0]:null;if(!entry)throw new PublicError("This calendar entry no longer exists.",404);return entry;}
 async function saveEntry(member:any,body:any){
-  requireEditor(member);const input=normalizeEntry(body.entry);
+  requireEditor(member);
+  let rawEntry=body.entry;
   if(body.id){
-    const id=validId(body.id),old=await getEntry(id);if(old.archived)throw new PublicError("Archived entries cannot be edited.",409);
+    const id=validId(body.id),old=await getEntry(id);
+    if(old.archived)throw new PublicError("Archived entries cannot be edited.",409);
+    // Existing reminder addresses are private and omitted from list responses.
+    // A client can preserve them by omitting reminder_emails on an ordinary edit.
+    if(rawEntry&&typeof rawEntry==="object"&&!Array.isArray(rawEntry)&&!Object.prototype.hasOwnProperty.call(rawEntry,"reminder_emails")){
+      rawEntry={...rawEntry,reminder_emails:Array.isArray(old.reminder_emails)?old.reminder_emails:[]};
+    }
+    const input=normalizeEntry(rawEntry);
     const rows=await restJson("regulatory_calendar_entries?"+new URLSearchParams({id:"eq."+id}),{method:"PATCH",headers:{Prefer:"return=representation"},body:JSON.stringify({...input,updated_by:member.user.id,updated_at:new Date().toISOString()})});
     const saved=Array.isArray(rows)?rows[0]:null;if(!saved)throw new PublicError("The calendar entry could not be updated.",404);return saved;
   }
+  const input=normalizeEntry(rawEntry);
   const rows=await restJson("regulatory_calendar_entries",{method:"POST",headers:{Prefer:"return=representation"},body:JSON.stringify({...input,created_by:member.user.id,updated_by:member.user.id})});
   const saved=Array.isArray(rows)?rows[0]:null;if(!saved)throw new Error("Calendar entry creation returned no saved record.");return saved;
 }
