@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import urlparse
 
-REGIONS = ("NAM", "LATAM", "EMEA", "APAC")
+REGIONS = ("NAM", "LATAM", "EMEA", "APAC", "OTHER")
 CHANNEL_TYPES = ("sitemap", "feed", "listing")
 ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,62}$")
 
@@ -59,6 +59,10 @@ class Channel:
     exclude_link_patterns: tuple[str, ...] = ()
     pagination: Pagination | None = None
     newest_first: bool = False
+    # Optional recursive link discovery for user-configured listing roots.
+    # None preserves the existing one-page listing behaviour.
+    crawl_depth: int | None = None
+    include_assets: bool = False
 
 
 @dataclass(frozen=True)
@@ -190,6 +194,19 @@ def _channel(raw: dict, regulator_id: str, hosts: tuple[str, ...], seen: set[str
             raise ConfigError(f"{channel_id}: pagination pages must satisfy baseline_pages <= max_pages <= 50")
     if pagination and not raw.get("newest_first"):
         raise ConfigError(f"{channel_id}: paginated listings must declare newest_first so Scout knows when it has caught up")
+    depth_value = raw.get("crawl_depth")
+    crawl_depth = None
+    if depth_value is not None:
+        if kind != "listing":
+            raise ConfigError(f"{channel_id}: crawl_depth applies only to listing channels")
+        if type(depth_value) is not int or not 1 <= depth_value <= 3:
+            raise ConfigError(f"{channel_id}: crawl_depth must be an integer from 1 to 3")
+        crawl_depth = depth_value
+    include_assets = raw.get("include_assets", False)
+    if not isinstance(include_assets, bool):
+        raise ConfigError(f"{channel_id}: include_assets must be true or false")
+    if include_assets and (kind != "listing" or crawl_depth is None):
+        raise ConfigError(f"{channel_id}: include_assets requires a depth-limited listing channel")
     patterns = _strings(raw.get("exclude_link_patterns"), f"{channel_id}: exclude_link_patterns")
     for pattern in patterns:
         try:
@@ -211,6 +228,8 @@ def _channel(raw: dict, regulator_id: str, hosts: tuple[str, ...], seen: set[str
         exclude_link_patterns=patterns,
         pagination=pagination,
         newest_first=bool(raw.get("newest_first", False)),
+        crawl_depth=crawl_depth,
+        include_assets=include_assets,
     )
 
 
