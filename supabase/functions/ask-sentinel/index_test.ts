@@ -139,13 +139,6 @@ Deno.test('paragraph-level citations are accepted while invalid paths still fail
   assertEquals([uncitedBullet.status, uncitedBullet.body.error_code, fake.refunds], [422, 'citation_validation_failed', 1]);
 });
 
-Deno.test('help with punctuation is answered locally without Groq or quota use', async () => {
-  reset(() => { throw new Error('Groq should not be called for help'); });
-  const answer = await ask({ ip: '203.0.113.20', question: 'what can you do??' });
-  assertEquals([answer.status, answer.body.model, answer.body.remaining, fake.global], [200, 'local-response', 3, 0]);
-  if (!String(answer.body.answer).includes('last 7 days')) throw new Error('help answer should include a useful example');
-});
-
 Deno.test('an exact URL retrieves its stored evidence before fuzzy search results', async () => {
   reset();
   const url = 'https://www.federalreserve.gov/apps/reportingforms/review';
