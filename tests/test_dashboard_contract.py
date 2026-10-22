@@ -536,6 +536,16 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertIn(token, js)
 
+    def test_metadata_cors_fallback_keeps_server_side_title_lookup_available(self):
+        source = read("dashboard.js")
+        start = source.index("async function suggestMonitorMetadata()")
+        end = source.index("function openGitHubRequest(", start)
+        metadata_flow = source[start:end]
+        self.assertIn('if (!nameInput.value.trim())', metadata_flow)
+        self.assertIn('nameInput.value = "";', metadata_flow)
+        self.assertIn("registration will try the page title server-side", metadata_flow)
+        self.assertNotIn('nameInput.value = (suggestion', metadata_flow)
+
     def test_dashboard_manual_monitor_controls_remain_owner_approved(self):
         html = read("index.html")
         js = read("dashboard.js")
