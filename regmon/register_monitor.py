@@ -104,7 +104,7 @@ def _metadata_from_html(html: str) -> dict[str, str]:
             description = str(tag.get("content")).strip()
             if description:
                 break
-    clean = lambda value, limit: re.sub(r"\\s+", " ", str(value or "")).strip()[:limit]
+    clean = lambda value, limit: re.sub(r"\s+", " ", str(value or "")).strip()[:limit]
     return {"title": clean(title, 160), "description": clean(description, 500)}
 
 
@@ -459,8 +459,8 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
 def delete_monitor_request(event: dict, config_path: Path, repository: str) -> dict:
     """Exclude an individual page or disable a crawl root without deleting evidence."""
     body = _validated_issue_body(event, repository, DELETE_REQUEST_MARKER)
-    source_match = re.search(r"(?m)^Source ID:[ \\t]*([A-Za-z0-9._-]{1,120})[ \\t]*$", body)
-    url_match = re.search(r"(?m)^URL:[ \\t]*(\\S+)[ \\t]*$", body)
+    source_match = re.search(r"(?m)^Source ID:[ \t]*([A-Za-z0-9._-]{1,120})[ \t]*$", body)
+    url_match = re.search(r"(?m)^URL:[ \t]*(\S+)[ \t]*$", body)
     if not source_match or not url_match:
         raise ValueError("Delete requests need both Source ID and URL fields.")
     target_url = canonicalize_url(url_match.group(1))
