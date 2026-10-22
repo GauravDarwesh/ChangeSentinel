@@ -79,6 +79,22 @@ Deno.test("editing a Cadence entry without a recipient field preserves private r
   const res=await handler!(new Request("https://fn.test/calendar-api",{method:"POST",headers,body:JSON.stringify({action:"save",id,entry})}));
   assertEquals(res.status,200);
   assertEquals(fake.entries[0].reminder_emails,["private@example.test"]);
+  const body=await res.json();
+  assertEquals(body.entry.reminder_configured,true);
+  if("reminder_emails" in body.entry)throw new Error("save response exposed private reminder recipient addresses");
+});
+
+Deno.test("completing a Cadence occurrence does not expose reminder recipients",async()=>{
+  reset();
+  const id="00000000-0000-4000-8000-000000000066";
+  fake.entries=[{id,title:"FR Y-14Q",description:"",category:"expected_update",start_date:"2026-12-31",end_date:null,regulator:"",source_url:"",owner_name:"",recurrence:"quarterly",reminder_enabled:true,reminder_days_before:7,reminder_emails:["private@example.test"],completed_dates:[],archived:false}];
+  const headers={"Content-Type":"application/json",origin:"https://gauravdarwesh.github.io",authorization:"Bearer user"};
+  const res=await handler!(new Request("https://fn.test/calendar-api",{method:"POST",headers,body:JSON.stringify({action:"complete",id,occurrence_date:"2026-12-31",completed:true})}));
+  assertEquals(res.status,200);
+  const body=await res.json();
+  assertEquals(body.entry.reminder_configured,true);
+  if("reminder_emails" in body.entry)throw new Error("completion response exposed private reminder recipient addresses");
+  assertEquals(fake.entries[0].completed_dates,["2026-12-31"]);
 });
 
 Deno.test("scheduler token and delivery ledger prevent duplicate emails",async()=>{
