@@ -62,7 +62,6 @@ class Channel:
     # Optional recursive link discovery for user-configured listing roots.
     # None preserves the existing one-page listing behaviour.
     crawl_depth: int | None = None
-    include_assets: bool = False
 
 
 @dataclass(frozen=True)
@@ -202,11 +201,6 @@ def _channel(raw: dict, regulator_id: str, hosts: tuple[str, ...], seen: set[str
         if type(depth_value) is not int or not 1 <= depth_value <= 3:
             raise ConfigError(f"{channel_id}: crawl_depth must be an integer from 1 to 3")
         crawl_depth = depth_value
-    include_assets = raw.get("include_assets", False)
-    if not isinstance(include_assets, bool):
-        raise ConfigError(f"{channel_id}: include_assets must be true or false")
-    if include_assets and (kind != "listing" or crawl_depth is None):
-        raise ConfigError(f"{channel_id}: include_assets requires a depth-limited listing channel")
     patterns = _strings(raw.get("exclude_link_patterns"), f"{channel_id}: exclude_link_patterns")
     for pattern in patterns:
         try:
@@ -229,7 +223,6 @@ def _channel(raw: dict, regulator_id: str, hosts: tuple[str, ...], seen: set[str
         pagination=pagination,
         newest_first=bool(raw.get("newest_first", False)),
         crawl_depth=crawl_depth,
-        include_assets=include_assets,
     )
 
 
