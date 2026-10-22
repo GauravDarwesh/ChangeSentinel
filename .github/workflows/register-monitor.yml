@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   register:
-    if: ${{ github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, '[ChangeSentinel] Add monitor') }}
+    if: ${{ github.event.issue.user.login == github.repository_owner && (startsWith(github.event.issue.title, '[ChangeSentinel] Add monitor') || startsWith(github.event.issue.title, '[ChangeSentinel] Delete monitor')) }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -60,6 +60,7 @@ jobs:
             SOURCE_IDS="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(";".join(d.get("source_ids") or [d["source_id"]]))')"
             URL="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json"))["url"])')"
             CREATED="$(python -c 'import json,os; print(str(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json"))["created"]).lower())')"
+            DELETED="$(python -c 'import json,os; print(str(bool(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("deleted", False))).lower())')"
             BULK="$(python -c 'import json,os; print(str(bool(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("bulk", False))).lower())')"
             COUNT="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("count", 1))')"
             CREATED_COUNT="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(d.get("created_count", int(d["created"])))')"
@@ -89,6 +90,7 @@ jobs:
           echo "source_ids=$SOURCE_IDS" >> "$GITHUB_OUTPUT"
           echo "monitor_url=$URL" >> "$GITHUB_OUTPUT"
           echo "created=$CREATED" >> "$GITHUB_OUTPUT"
+          echo "deleted=$DELETED" >> "$GITHUB_OUTPUT"
           echo "bulk=$BULK" >> "$GITHUB_OUTPUT"
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
           echo "created_count=$CREATED_COUNT" >> "$GITHUB_OUTPUT"
@@ -104,6 +106,7 @@ jobs:
           gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main
 
       - name: Start first monitoring scan
+        if: steps.register.outputs.deleted != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           SOURCE_IDS: ${{ steps.register.outputs.source_ids }}
@@ -131,9 +134,12 @@ jobs:
           COUNT: ${{ steps.register.outputs.count }}
           CREATED_COUNT: ${{ steps.register.outputs.created_count }}
           EXISTING_COUNT: ${{ steps.register.outputs.existing_count }}
+          DELETED: ${{ steps.register.outputs.deleted }}
         run: |
           set -euo pipefail
-          if [ "$BULK" = "true" ]; then
+          if [ "$DELETED" = "true" ]; then
+            message="Stopped monitoring $MONITOR_URL. Existing reports and saved evidence were retained."
+          elif [ "$BULK" = "true" ]; then
             message="Bulk registration processed $COUNT unique links: $CREATED_COUNT new monitors and $EXISTING_COUNT already configured. The first monitoring scan has been queued for each requested source."
           elif [ "$CREATED" = "true" ]; then
             SOURCE_ID="${SOURCE_IDS%%;*}"
