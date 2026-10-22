@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261022T134203Z-3676b0ca",
-  "generated_at": "2026-10-22T13:44:26.275200+00:00",
+  "run_id": "20261022T170447Z-6f39c421",
+  "generated_at": "2026-10-22T17:07:33.292811+00:00",
   "sources": [
     {
       "id": "fed-reporting-forms-pilot",
@@ -59,24 +59,24 @@
   ],
   "source_runs": {
     "fed-reporting-forms-pilot": {
-      "run_id": "20261022T134203Z-3676b0ca",
-      "generated_at": "2026-10-22T13:42:03.146037+00:00",
-      "trigger": "manual"
+      "run_id": "20261022T170447Z-6f39c421",
+      "generated_at": "2026-10-22T17:04:47.490679+00:00",
+      "trigger": "scheduled"
     },
     "fed-reporting-forms-detail-pilot": {
-      "run_id": "20261022T134203Z-3676b0ca",
-      "generated_at": "2026-10-22T13:42:03.760897+00:00",
-      "trigger": "manual"
+      "run_id": "20261022T170447Z-6f39c421",
+      "generated_at": "2026-10-22T17:04:48.220155+00:00",
+      "trigger": "scheduled"
     },
     "manual-f1df3c7d3e94": {
-      "run_id": "20261022T134203Z-3676b0ca",
-      "generated_at": "2026-10-22T13:44:25.259639+00:00",
-      "trigger": "manual"
+      "run_id": "20261022T170447Z-6f39c421",
+      "generated_at": "2026-10-22T17:07:32.562485+00:00",
+      "trigger": "scheduled"
     },
     "manual-fe66388fe452": {
-      "run_id": "20261022T134203Z-3676b0ca",
-      "generated_at": "2026-10-22T13:44:26.275200+00:00",
-      "trigger": "manual"
+      "run_id": "20261022T170447Z-6f39c421",
+      "generated_at": "2026-10-22T17:07:33.292811+00:00",
+      "trigger": "scheduled"
     }
   },
   "counts": {
@@ -203,5 +203,5 @@
   "baseline_migrations": [],
   "events": [],
   "ai_results": [],
-  "trigger": "manual"
+  "trigger": "scheduled"
 }
