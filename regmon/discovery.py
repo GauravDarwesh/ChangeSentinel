@@ -609,11 +609,17 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
         depth_by_url: dict[str, int] = {}
         if checkpoint:
             if "_legacy_discovered" in checkpoint:
+                # Bounded-depth monitors cannot infer levels from legacy checkpoints.
+                # Restart from the configured seed rather than crawling beyond the chosen depth.
+                if source.crawl_depth >= 0:
+                    checkpoint = None
+                else:
+                    discovered = list(dict.fromkeys(str(x) for x in checkpoint["_legacy_discovered"]))
                 # Legacy checkpoints stored the entire frontier plus only a capped
                 # sample of errors. They cannot prove which historical processed
                 # pages succeeded. Re-validating every known HTML URL is the only
                 # safe migration that can eventually establish COMPLETE.
-                discovered = list(dict.fromkeys(str(x) for x in checkpoint["_legacy_discovered"]))
+
                 _reset_inventory(source, data_dir)
                 _reset_failure_ledger(source, data_dir)
                 _append_inventory(source, data_dir, discovered, 0)
