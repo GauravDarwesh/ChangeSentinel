@@ -2853,7 +2853,12 @@ function openCadenceEntry(id) {
   $("cadenceEntryDescription").value = entry ? entry.description || "" : "";
   $("cadenceReminderEnabled").checked = !!(entry && entry.reminder_enabled);
   $("cadenceReminderDays").value = String(entry ? entry.reminder_days_before ?? 7 : 7);
-  $("cadenceReminderEmails").value = entry && Array.isArray(entry.reminder_emails) ? entry.reminder_emails.join(", ") : (state.cadenceMember.email || "");
+  $("cadenceReminderEmails").value = entry
+    ? (Array.isArray(entry.reminder_emails) ? entry.reminder_emails.join(", ") : "")
+    : (state.cadenceMember.email || "");
+  $("cadenceReminderEmails").placeholder = entry && entry.reminder_configured
+    ? "Recipients already configured; enter replacements to change them"
+    : "team@company.com, owner@company.com";
   $("cadenceReminderDays").disabled = !$("cadenceReminderEnabled").checked;
   $("cadenceReminderEmails").disabled = !$("cadenceReminderEnabled").checked;
   $("cadenceEntryError").hidden = true;
@@ -2884,6 +2889,10 @@ async function saveCadenceEntry(event) {
   if (!$("cadenceEntryTitle").reportValidity() || !$("cadenceEntryStart").reportValidity()) return;
   const payload = cadenceFormValue(), id = $("cadenceEntryId").value;
   const existing = id ? state.cadenceEntries.find(item => item.id === id) : null;
+  // A blank recipient field on an existing configured reminder means "keep
+  // the existing private recipients", not "erase them". The API preserves the
+  // server-side list when reminder_emails is omitted.
+  if (existing && existing.reminder_configured && !payload.reminder_emails.length) delete payload.reminder_emails;
   if (existing && Array.isArray(existing.completed_dates)) payload.completed_dates = existing.completed_dates;
   if (payload.end_date && payload.end_date < payload.start_date) { errorBox.textContent = "The end date must be on or after the start date."; errorBox.hidden = false; return; }
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
