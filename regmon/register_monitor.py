@@ -419,16 +419,15 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
     url, requested_name, include_selector, ignore_selectors = request_from_issue(event, repository)
     crawl_match = re.search(r"(?m)^Crawl depth:[ \t]*(0|1|2|3)[ \t]*$", body)
     crawl_depth = int(crawl_match.group(1)) if crawl_match else 0
+
     config = json.loads(config_path.read_text(encoding="utf-8"))
     sources = config.setdefault("sources", [])
     if not isinstance(sources, list):
         raise ValueError("config/sources.json must contain a sources array.")
 
-    # Resolve metadata once; it is advisory and falls back to URL-derived naming.
     metadata = _fetch_page_metadata(url) if not requested_name else {}
     display_name = requested_name or metadata.get("title", "")
 
-    # Avoid creating a second source for a page already covered by an active source.
     existing = _existing_source_for_request(
         sources, url, include_selector, ignore_selectors, crawl_depth=crawl_depth
     )
@@ -460,7 +459,7 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
         raise ValueError("A source ID collision was detected; no configuration was changed.")
 
     sources.append(new_source)
-    config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+    config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return {
         "source_id": new_source["id"],
         "url": url,
