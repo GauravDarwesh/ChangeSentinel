@@ -719,6 +719,31 @@ class TestCadenceCalendarContract(unittest.TestCase):
         self.assertNotIn("Email sign-in link", html)
         self.assertNotIn("signInWithOtp", html)
 
+    def test_password_recovery_returns_to_deployed_dashboard_and_updates_password(self):
+        html = read("index.html")
+        source = read("dashboard.js")
+        for token in (
+            'id="cadenceForgotPassword"',
+            'id="cadenceRecoveryForm"',
+            'id="cadenceRecoveryPasswordConfirm"',
+            'id="cadenceRecoverySave"',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+        for token in (
+            'const CADENCE_RECOVERY_REDIRECT_URL = "https://gauravdarwesh.github.io/ChangeSentinel/";',
+            "resetPasswordForEmail(emailInput.value.trim().toLowerCase()",
+            "redirectTo: CADENCE_RECOVERY_REDIRECT_URL",
+            'event === "PASSWORD_RECOVERY"',
+            "function isCadenceRecoveryRedirect()",
+            'hashParams.get("type") === "recovery"',
+            "client.auth.updateUser({ password: passwordInput.value })",
+            "if (!options.preserveHash) writeHash();",
+            "preserveHash: recoveryRedirect",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+
     def test_database_and_scheduler_keep_team_entries_private(self):
         migration = read("supabase/migrations/20261021180000_regulatory_calendar.sql")
         for token in (
