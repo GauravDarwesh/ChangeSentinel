@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261022T221132Z-d2301884",
-  "generated_at": "2026-10-22T22:11:32.729994+00:00",
+  "run_id": "20261022T222509Z-10bb0ed2",
+  "generated_at": "2026-10-22T22:25:09.118451+00:00",
   "source": {
     "id": "fed-reporting-forms-detail-pilot",
     "name": "Federal Reserve \u2014 Recently Updated Forms Detail Pilot (Exact URL Allowlist)",
@@ -23,8 +23,8 @@
     "method": "http-resumable",
     "state": "PAUSED",
     "discovered": 14,
-    "html_processed": 60,
-    "successful_pages": 60,
+    "html_processed": 72,
+    "successful_pages": 72,
     "failed_pages": 0,
     "capped": false,
     "pending": 5,
@@ -90,5 +90,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "continuation",
-  "workflow_run_id": "39861426886"
+  "workflow_run_id": "39863122810"
 }
