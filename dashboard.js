@@ -2896,10 +2896,12 @@ async function saveCadenceEntry(event) {
   if (existing && Array.isArray(existing.completed_dates)) payload.completed_dates = existing.completed_dates;
   if (payload.end_date && payload.end_date < payload.start_date) { errorBox.textContent = "The end date must be on or after the start date."; errorBox.hidden = false; return; }
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (payload.reminder_enabled && (!payload.reminder_emails.length || payload.reminder_emails.some(email => !emailPattern.test(email)))) {
+  const privateRecipientsPreserved = Boolean(existing && existing.reminder_configured && !Object.prototype.hasOwnProperty.call(payload, "reminder_emails"));
+  if (payload.reminder_enabled && !privateRecipientsPreserved && (!payload.reminder_emails.length || payload.reminder_emails.some(email => !emailPattern.test(email)))) {
     errorBox.textContent = "Enter one or more valid email addresses for reminders, separated by commas.";
     errorBox.hidden = false; return;
   }
+  if (!payload.reminder_enabled) payload.reminder_emails = [];
   save.disabled = true; errorBox.hidden = true;
   try {
     const result = await cadenceApi("POST", { action: "save", id: id || undefined, entry: payload });
