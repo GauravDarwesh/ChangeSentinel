@@ -26,6 +26,19 @@
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides",
       "detected_at": "2026-10-22T04:27:54.117805+00:00"
+    },
+    "c89216e3b00e847563d351357b43772920c29a2266cccb68a8a651736f928219": {
+      "decision": "material",
+      "label": "Material",
+      "rationale": "The regulator has removed the older updates from the page. Deletions are not important though it will definitely require a eye because new updates might get published as a result of removal of old.",
+      "owner": "",
+      "ticket": "",
+      "reviewed_by": "GauravDarwesh",
+      "reviewed_at": "2026-10-22T07:29:12+00:00",
+      "request": "issue #124",
+      "event_type": "CHANGED_URL",
+      "url": "https://www.federalreserve.gov/apps/reportingforms/review",
+      "detected_at": "2026-10-22T04:23:52.384181+00:00"
     }
   },
   "log": [
@@ -56,7 +69,21 @@
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides",
       "detected_at": "2026-10-22T04:27:54.117805+00:00"
+    },
+    {
+      "event_id": "c89216e3b00e847563d351357b43772920c29a2266cccb68a8a651736f928219",
+      "decision": "material",
+      "label": "Material",
+      "rationale": "The regulator has removed the older updates from the page. Deletions are not important though it will definitely require a eye because new updates might get published as a result of removal of old.",
+      "owner": "",
+      "ticket": "",
+      "reviewed_by": "GauravDarwesh",
+      "reviewed_at": "2026-10-22T07:29:12+00:00",
+      "request": "issue #124",
+      "event_type": "CHANGED_URL",
+      "url": "https://www.federalreserve.gov/apps/reportingforms/review",
+      "detected_at": "2026-10-22T04:23:52.384181+00:00"
     }
   ],
-  "updated_at": "2026-10-22T04:35:23+00:00"
+  "updated_at": "2026-10-22T07:29:12+00:00"
 }
