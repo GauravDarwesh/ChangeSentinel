@@ -1,8 +1,20 @@
 {
   "schema_version": 2,
-  "run_id": "20261022T230303Z-b6c6d5e0",
-  "generated_at": "2026-10-22T23:03:03.147993+00:00",
+  "run_id": "20261022T230435Z-6b448350",
+  "generated_at": "2026-10-22T23:04:35.138262+00:00",
   "sources": [
+    {
+      "id": "manual-f1df3c7d3e94",
+      "name": "OSFI BCAR 2027",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "seeds": [
+        "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "initial_baseline": false
+    },
     {
       "id": "fed-reporting-forms-pilot",
       "name": "Federal Reserve \u2014 Reporting Forms Pilot (Exact URL Allowlist)",
@@ -33,18 +45,6 @@
       "initial_baseline": false
     },
     {
-      "id": "manual-f1df3c7d3e94",
-      "name": "OSFI BCAR 2027",
-      "regulator": "www.osfi-bsif.gc.ca",
-      "seeds": [
-        "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
-      ],
-      "allowed_prefixes": [
-        "https://www.osfi-bsif.gc.ca/"
-      ],
-      "initial_baseline": false
-    },
-    {
       "id": "manual-fe66388fe452",
       "name": "Reporting Central and Structure Central User Guides",
       "regulator": "www.frbservices.org",
@@ -58,6 +58,11 @@
     }
   ],
   "source_runs": {
+    "manual-f1df3c7d3e94": {
+      "run_id": "20261022T230435Z-6b448350",
+      "generated_at": "2026-10-22T23:04:35.138262+00:00",
+      "trigger": "continuation"
+    },
     "fed-reporting-forms-pilot": {
       "run_id": "20261022T230303Z-b6c6d5e0",
       "generated_at": "2026-10-22T23:03:03.147993+00:00",
@@ -66,11 +71,6 @@
     "fed-reporting-forms-detail-pilot": {
       "run_id": "20261022T230115Z-4a46a928",
       "generated_at": "2026-10-22T23:01:15.999226+00:00",
-      "trigger": "continuation"
-    },
-    "manual-f1df3c7d3e94": {
-      "run_id": "20261022T225728Z-751c7550",
-      "generated_at": "2026-10-22T22:57:28.163477+00:00",
       "trigger": "continuation"
     },
     "manual-fe66388fe452": {
@@ -105,6 +105,22 @@
   },
   "discovery": [
     {
+      "source_id": "manual-f1df3c7d3e94",
+      "method": "http-resumable",
+      "state": "PAUSED",
+      "discovered": 1,
+      "html_processed": 9,
+      "successful_pages": 9,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 1,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "af310001c6d2c0874771a8e2d7500abfb0fc388324ff6627dfd5be44b65f9e8f",
+      "inventory": "data/discovery/manual-f1df3c7d3e94-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-f1df3c7d3e94-failures.jsonl"
+    },
+    {
       "source_id": "fed-reporting-forms-pilot",
       "method": "http-resumable",
       "state": "PAUSED",
@@ -135,22 +151,6 @@
       "config_fingerprint": "da76983ccc4888706d05a6f3790af3f986e6e1e8a5890cc44590ba45e1304075",
       "inventory": "data/discovery/fed-reporting-forms-detail-pilot-inventory-*.txt",
       "failure_ledger": "data/discovery/fed-reporting-forms-detail-pilot-failures.jsonl"
-    },
-    {
-      "source_id": "manual-f1df3c7d3e94",
-      "method": "http-resumable",
-      "state": "PAUSED",
-      "discovered": 1,
-      "html_processed": 8,
-      "successful_pages": 8,
-      "failed_pages": 0,
-      "capped": false,
-      "pending": 1,
-      "unresolved_failures": 0,
-      "checkpoint_schema_version": 3,
-      "config_fingerprint": "af310001c6d2c0874771a8e2d7500abfb0fc388324ff6627dfd5be44b65f9e8f",
-      "inventory": "data/discovery/manual-f1df3c7d3e94-inventory-*.txt",
-      "failure_ledger": "data/discovery/manual-f1df3c7d3e94-failures.jsonl"
     },
     {
       "source_id": "manual-fe66388fe452",
