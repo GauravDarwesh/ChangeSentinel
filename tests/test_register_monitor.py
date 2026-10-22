@@ -362,9 +362,9 @@ class TestRegisterMonitor(unittest.TestCase):
                 encoding="utf-8",
             )
             event = issue_event(url + "/", name="FRB User Guides")
-            footer = "\\n\\nThis request was created from the ChangeSentinel dashboard."
+            footer = "\n\nThis request was created from the ChangeSentinel dashboard."
             event["issue"]["body"] = event["issue"]["body"].replace(
-                footer, "\\nCrawl depth: 1\\nScout discovery: yes" + footer
+                footer, "\nCrawl depth: 1\nScout discovery: yes" + footer
             )
 
             result = register_request(
