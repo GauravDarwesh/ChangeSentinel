@@ -172,6 +172,22 @@ class TestDashboardWorkspaceLayout(unittest.TestCase):
         self.assertIn("cp dashboard-lib.js site/dashboard-lib.js", workflow)
         self.assertIn('- "dashboard-lib.js"', workflow)
 
+    def test_markup_only_events_have_quieter_visual_tone(self):
+        html = read("index.html")
+        lib = read("dashboard-lib.js")
+        self.assertIn('if (type === "HTML_SOURCE_CHANGED") return "markup";', lib)
+        self.assertIn(".tag.tone-markup", html)
+        self.assertIn(".row-mark.tone-markup", html)
+
+    def test_select_chevrons_are_inset_from_field_edge(self):
+        html = read("index.html")
+        start = html.index("select.field-input {")
+        end = html.index("}", start)
+        select_css = html[start:end]
+        self.assertIn("appearance: none", select_css)
+        self.assertIn("padding-right: 34px", select_css)
+        self.assertIn("right 14px center", select_css)
+
     def test_selection_resets_detail_scroll_and_keyboard_moves_through_lists(self):
         source = read("dashboard.js")
         self.assertIn("function resetDetailScroll(view)", source)
