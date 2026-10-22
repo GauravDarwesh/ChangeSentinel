@@ -3347,10 +3347,16 @@ async function suggestMonitorMetadata() {
       $("newMonitorName").value = title.replace(/[\r\n]+/g, " ").trim().slice(0, 100);
       status.textContent = "Name filled from page metadata. You can edit it.";
     } else {
-      let tail = parsed.pathname.replace(/\/+$/, "").split("/").pop() || parsed.hostname;
-      let suggestion = tail; try { suggestion = decodeURIComponent(tail); } catch (_) {} suggestion = suggestion.replace(/[._-]+/g, " ").replace(/\s+/g, " ").trim();
-      $("newMonitorName").value = (suggestion || parsed.hostname).replace(/\b\w/g, c => c.toUpperCase()).slice(0, 100);
-      status.textContent = "Browser metadata is blocked on this site. Added an editable URL-based suggestion; registration will retry metadata lookup.";
+      const nameInput = $("newMonitorName");
+      if (!nameInput.value.trim()) {
+        // Keep the field blank so registration performs its server-side metadata
+        // lookup. Filling a URL slug here would make the backend treat it as a
+        // user-supplied name and skip that more reliable lookup.
+        nameInput.value = "";
+        status.textContent = "Browser metadata is blocked on this site. Leave the name blank and registration will try the page title server-side; if unavailable, it will use the URL as a fallback.";
+      } else {
+        status.textContent = "Browser metadata is blocked on this site. Your existing display name was left unchanged.";
+      }
     }
   } finally { window.clearTimeout(timeout); button.disabled = false; }
 }
