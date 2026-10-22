@@ -4272,9 +4272,10 @@ async function compareFillText(root, status, sources, alive) {
 
 /* ----- HTML: the saved pages, with changed text marked inside each frame ----- */
 const normalizeForMatch = L.normalizeForMatch;
-function flattenDocumentText(doc) {
-  // Visible text with a map from each normalized character back to its text node.
-  const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, {
+function flattenTextContainer(container) {
+  const doc = container.nodeType === 9 ? container : container.ownerDocument;
+  const root = container.nodeType === 9 ? container.body : container;
+  const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode: node => node.parentElement && !/^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE)$/.test(node.parentElement.tagName) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
   });
   let flat = "";
@@ -4290,6 +4291,66 @@ function flattenDocumentText(doc) {
   }
   return { flat, map };
 }
+function flattenDocumentText(doc) {
+  return flattenTextContainer(doc);
+}
+function markdownTableCells(line) {
+  const value = String(line || "").trim();
+  if (!value.startsWith("|") || !value.endsWith("|")) return null;
+  const cells = L.splitMarkdownTableRow(value).map(normalizeForMatch);
+  if (cells.length < 2 || L.isMarkdownTableSeparator(cells)) return null;
+  return cells;
+}
+function matchingTableRow(doc, cells) {
+  if (!Array.isArray(cells)) return null;
+  const matches = Array.from(doc.querySelectorAll("tr")).filter(row => {
+    const actual = Array.from(row.cells || []).map(cell => normalizeForMatch(cell.innerText || cell.textContent || ""));
+    return L.tableCellsMatch(cells, actual);
+  });
+  // Duplicate or ambiguous rows are not safe to highlight by text alone.
+  return matches.length === 1 ? matches[0] : null;
+}
+function markEntireTableRow(row, cls) {
+  const doc = row.ownerDocument;
+  const walker = doc.createTreeWalker(row, NodeFilter.SHOW_TEXT, {
+    acceptNode: node => node.parentElement && !/^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE)$/.test(node.parentElement.tagName) && String(node.nodeValue || "").trim()
+      ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
+  });
+  const nodes = [];
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) nodes.push(node);
+  nodes.forEach(node => {
+    if (!node.parentNode) return;
+    const mark = doc.createElement("mark");
+    mark.className = cls;
+    node.parentNode.replaceChild(mark, node);
+    mark.appendChild(node);
+  });
+  return nodes.length;
+}
+function wrapTextRanges(doc, index, ranges, cls) {
+  // Wrap from the end so earlier offsets stay valid.
+  ranges.sort((x, y) => y[0] - x[0]).forEach(([start, end]) => {
+    const pieces = new Map();
+    for (let k = start; k < end; k += 1) {
+      const item = index.map[k];
+      if (!item) continue;
+      const [node, offset] = item;
+      const piece = pieces.get(node) || [offset, offset + 1];
+      piece[0] = Math.min(piece[0], offset); piece[1] = Math.max(piece[1], offset + 1);
+      pieces.set(node, piece);
+    }
+    pieces.forEach(([from, to], node) => {
+      if (!node.parentNode) return;
+      const range = doc.createRange();
+      range.setStart(node, from);
+      range.setEnd(node, Math.min(to, node.nodeValue.length));
+      const mark = doc.createElement("mark");
+      mark.className = cls;
+      try { range.surroundContents(mark); } catch (_) { /* range crosses an element boundary */ }
+    });
+  });
+  return ranges.length;
+}
 function countOccurrences(haystack, needle) {
   let count = 0;
   for (let at = haystack.indexOf(needle); at >= 0; at = haystack.indexOf(needle, at + needle.length)) count += 1;
@@ -4302,8 +4363,9 @@ function markTextInDocument(doc, index, targets, cls, otherFlat) {
     "mark.cs-add{background:rgba(52,199,110,.30);box-shadow:0 0 0 1px rgba(28,140,70,.55);color:inherit;border-radius:2px}" +
     "body.cs-hide-marks mark.cs-del,body.cs-hide-marks mark.cs-add{background:none;box-shadow:none;text-decoration:inherit}";
   (doc.head || doc.documentElement).append(style);
-  const { flat, map } = index;
+  const { flat } = index;
   const ranges = [];
+  let directMarked = 0;
   let cursor = 0;
   const find = (needle, from, to) => {
     let at = flat.indexOf(needle, from);
@@ -4311,6 +4373,35 @@ function markTextInDocument(doc, index, targets, cls, otherFlat) {
     return at;
   };
   targets.forEach(target => {
+    // Markdown table rows are anchored to their complete cell sequence. Searching
+    // their contents globally is unsafe: "link", "N/A", and form identifiers
+    // recur in other tables, so a deleted row can otherwise strike through an
+    // unrelated row elsewhere on the page.
+    if (Array.isArray(target.tableCells)) {
+      const row = matchingTableRow(doc, target.tableCells);
+      if (!row) return; // Fail closed instead of highlighting a plausible but wrong match.
+      if (target.whole) {
+        directMarked += markEntireTableRow(row, cls);
+        return;
+      }
+      const rowIndex = flattenTextContainer(row);
+      const expected = normalizeForMatch(target.tableCells.join(" "));
+      if (rowIndex.flat !== expected) return;
+      const rowRanges = [];
+      let rowCursor = 0;
+      target.parts.forEach(part => {
+        const needle = normalizeForMatch(part.text);
+        if (!needle) return;
+        const exact = part.offset;
+        let at = exact >= 0 && rowIndex.flat.substr(exact, needle.length) === needle
+          ? exact : rowIndex.flat.indexOf(needle, rowCursor);
+        if (at < 0) return;
+        rowRanges.push([at, at + needle.length]);
+        rowCursor = at + needle.length;
+      });
+      directMarked += wrapTextRanges(doc, rowIndex, rowRanges, cls);
+      return;
+    }
     const line = normalizeForMatch(target.line);
     if (target.whole) {
       // Text that also exists in the other version moved or re-wrapped; it was not removed or added.
@@ -4353,26 +4444,7 @@ function markTextInDocument(doc, index, targets, cls, otherFlat) {
     });
     if (lineAt >= 0) cursor = lineAt + line.length;
   });
-  // Wrap from the end so earlier offsets stay valid.
-  ranges.sort((x, y) => y[0] - x[0]).forEach(([start, end]) => {
-    const pieces = new Map();
-    for (let k = start; k < end; k += 1) {
-      const [node, offset] = map[k];
-      const piece = pieces.get(node) || [offset, offset + 1];
-      piece[0] = Math.min(piece[0], offset); piece[1] = Math.max(piece[1], offset + 1);
-      pieces.set(node, piece);
-    }
-    pieces.forEach(([from, to], node) => {
-      if (!node.parentNode) return;
-      const range = doc.createRange();
-      range.setStart(node, from);
-      range.setEnd(node, Math.min(to, node.nodeValue.length));
-      const mark = doc.createElement("mark");
-      mark.className = cls;
-      try { range.surroundContents(mark); } catch (_) { /* range crosses an element boundary */ }
-    });
-  });
-  return ranges.length;
+  return wrapTextRanges(doc, index, ranges, cls) + directMarked;
 }
 function htmlMarkTargets(rows, side) {
   const targets = [];
@@ -4380,12 +4452,16 @@ function htmlMarkTargets(rows, side) {
     const line = side === "before" ? row.before : row.after;
     if (line == null) return;
     const whole = side === "before" ? row.type === "del" : row.type === "add";
+    const tableCells = markdownTableCells(line);
     if (whole) {
-      targets.push({ whole: true, line, parts: String(line).replace(/^\s*(#+|[-*•]|\d+[.)])\s+/, "").split(/\s\|\s|^\||\|$/).map(s => s.trim()).filter(Boolean) });
+      targets.push({
+        whole: true, line, tableCells,
+        parts: String(line).replace(/^\s*(#+|[-*•]|\d+[.)])\s+/, "").split(/\s\|\s|^\||\|$/).map(s => s.trim()).filter(Boolean)
+      });
     } else if (row.type === "edit") {
       const want = side === "before" ? "del" : "add";
       const parts = L.changedPartOffsets(row.segments, want);
-      if (parts.length) targets.push({ whole: false, line: String(line).replace(/\|/g, " "), parts });
+      if (parts.length) targets.push({ whole: false, line: String(line).replace(/\|/g, " "), tableCells, parts });
     }
   });
   return targets;
