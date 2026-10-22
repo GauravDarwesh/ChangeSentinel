@@ -266,7 +266,10 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertIn("function asksRecentChanges(question: string): boolean", backend)
         self.assertIn("function asksUrlLookup(question: string): boolean", backend)
         self.assertIn("function fetchCurrentPageRecordsForUrls(urls: string[]): Promise<any[]>", backend)
-        self.assertIn("normalizeUrl(match[1])", backend)
+        self.assertIn("canonicalUrls.has(normalizeUrl(canonicalUrl))", backend)
+        self.assertIn("content: 'like.*' + host + '*'", backend)
+        self.assertIn("offset: String(offset)", backend)
+        self.assertIn("URL paths are case-sensitive and must never be lowercased.", backend)
         self.assertIn("Tables are allowed when useful", backend)
 
 
