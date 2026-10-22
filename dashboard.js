@@ -2901,7 +2901,10 @@ async function saveCadenceEntry(event) {
     errorBox.textContent = "Enter one or more valid email addresses for reminders, separated by commas.";
     errorBox.hidden = false; return;
   }
+  // If this entry had private recipients, blank means preserve. Turning reminders
+  // off is the explicit action that clears the server-side recipient list.
   if (!payload.reminder_enabled) payload.reminder_emails = [];
+  else if (privateRecipientsPreserved) delete payload.reminder_emails;
   save.disabled = true; errorBox.hidden = true;
   try {
     const result = await cadenceApi("POST", { action: "save", id: id || undefined, entry: payload });
