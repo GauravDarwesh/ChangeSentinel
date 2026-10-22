@@ -177,6 +177,36 @@ Deno.test('an exact URL retrieves its stored evidence before fuzzy search result
   if (!evidenceMessage.includes('CHANGED_URL: reporting forms table row removed.')) throw new Error('Exact URL evidence content was not passed to Groq.');
 });
 
+Deno.test('exact URL retrieval paginates past unrelated earlier records', async () => {
+  reset();
+  const url = 'https://www.federalreserve.gov/apps/reportingforms/review';
+  const evidencePath = 'data/evidence/' + 'a'.repeat(64) + '.json';
+  fakeCurrentPageRows = Array.from({ length: 205 }, (_, index) => ({
+    path: '__current_page__/aaa-legacy-source/url-' + String(index).padStart(3, '0'),
+    doc_type: 'current monitored URL record',
+    is_core: false,
+    content: JSON.stringify({
+      canonical_url: 'https://www.federalreserve.gov/legacy/page-' + index,
+      configured_source_active: false,
+      evidence_location: null
+    })
+  }));
+  fakeCurrentPageRows.push({
+    path: '__current_page__/fed-reporting-forms-pilot/url-id',
+    doc_type: 'current monitored URL record',
+    is_core: false,
+    content: JSON.stringify({ canonical_url: url, configured_source_active: true, evidence_location: evidencePath })
+  });
+  fakeEvidenceRows.set(evidencePath, [{
+    path: evidencePath, doc_type: 'monitoring evidence', is_core: false,
+    content: 'CHANGED_URL: reporting forms table row removed.', score: 10
+  }]);
+  const answer = await ask({ ip: '203.0.113.22', question: url + ' - what changed in this link?' });
+  assertEquals(answer.status, 200);
+  const evidenceMessage = lastGroqMessages.map((message) => String(message.content || '')).join('\n');
+  if (!evidenceMessage.includes(evidencePath)) throw new Error('Exact URL evidence path was not passed to Groq after pagination.');
+});
+
 Deno.test('a visitor gets three questions a day', async () => {
   reset();
   const id = visitor();
