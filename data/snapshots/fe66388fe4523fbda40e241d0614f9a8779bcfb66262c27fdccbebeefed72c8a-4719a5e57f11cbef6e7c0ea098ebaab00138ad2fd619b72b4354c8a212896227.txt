@@ -1,0 +1,314 @@
+Skip to Content
+- Application Sign In
+- Discount Window Direct
+- FedLine Developer
+- FedLine Web
+- Reporting Central
+- Reserves Central
+- Structure Central
+- Survey Central
+- Term Deposit Facility
+- Service Status
+- Contact
+- Financial Services
+- Accounting
+- Accounting Information Services (AIS) – Premium Services
+- Account Management Information
+- Daily Statement of Account
+- Daylight Overdraft Reports
+- Statement of Service Charges
+-
+- Accounting Services 2026 Fee Schedulle
+- Account Services Business Continuity Guide
+- Accounting Services Forms
+- Accounting Services Resources
+- Accounting Services Setup
+- Check Services
+- Check Adjustments Services
+- Duplicate Check Notification
+- Electronic Check Processing
+- FedImage and Electronic Check Services
+- FedPayments Reporter Service for Check Services
+- Foreign and Canadian Check Service
+- Image-Enabled Savings Bond Processing
+- Paper Check Clearing Services
+-
+- Check Services 2026 Fee Schedule
+- Check Services Forms
+- Check Services Resources
+- Check Services Setup
+- Check Services Testing Opportunities
+- FedACH Services
+- Exception Resolution Service
+- FedACH Information File Service
+- FedACH Origination and Receipt
+- FedACH Receipt Discount Program
+- FedACH Risk Management Services
+- FedACH SameDay Service
+- FedGlobal ACH Payments
+- FedPayments Insights Service
+- FedPayments Reporter Service for FedACH Services
+-
+- FedACH Services 2026 Fee Schedule
+- FedACH Services Business Continuity Guide
+- FedACH Services Forms
+- FedACH Services Resources
+- FedACH Services Setup
+- FedACH Services Testing Opportunities
+- FedCash Services
+- Cash Visibility
+- Coin
+- Coin Terminal Services
+- Currency
+- FedCash Services via the FedLine Web Solution
+-
+- FedCash Services 2026 Fee Schedule
+- FedCash Services Business Continuity Guide
+- FedCash Services Forms
+- FedCash Services Resources
+- FedCash Services Setup
+- FedNow Service
+- About the FedNow Service
+- Blog Articles (Off-site)
+- FedNow Explorer (Off-site)
+- FedNow Service Participants and Service Providers
+- Industry Stories
+- Instant Payments Education (Off-site)
+- Innovator Exchange
+- Participant Collaboration
+-
+- FedNow Service 2026 Fee Schedule
+- FedNow Service Forms
+- FedNow Service Resources
+- Fedwire Funds Service
+- FedTransaction Analyzer
+-
+- Fedwire Funds Service 2026 Fee Schedules
+- Fedwire Funds Service Business Continuity Guide
+- Fedwire Funds Service Forms
+- Fedwire Funds Service Resources
+- Fedwire Funds Service Setup
+- Fedwire Services Testing Opportunities
+- Fedwire Securities Service
+- Fedwire Securities Joint Custody Service
+-
+- Fedwire Securities Resources
+- Fedwire Securities Service 2026 Fee Schedules
+- Fedwire Securities Service Business Continuity Guide
+- Fedwire Securities Service Forms
+- Fedwire Securities Service Setup
+- Fedwire Services Testing Opportunities
+- Multiservice Solutions
+- Payee Name Verification
+-
+- Multiservice Solutions 2026 Fee Schedules
+- National Settlement Service
+- National Settlement Service 2026 Fee Schedule
+- National Settlement Service Business Continuity Guide
+- National Settlement Service Forms
+- National Settlement Service Resources
+- National Settlement Service Setup
+- Central Bank
+- Lending Central (Discount Window)
+- Discount Window Direct (DWD) Early Adopter Program Expression of Interest Form
+- Discount Window Direct (DWD) Feature Guide
+-
+- Central Bank Forms
+- Central Bank Resources
+- Discount Window Direct (DWD) Application Setup
+- Reporting Central
+- Reporting Central and Structure Central User Guides
+-
+- Central Bank Forms
+- Reporting Central and Structure Central Applications Setup
+- Reporting Central National Business Continuity Information
+- Reporting Central Resources
+- Reserves Central
+- Excess Balance Account
+- Schedule for Maintenance Periods and Interest Payments on Reserve Balances
+- Term Deposit Facility
+-
+- Central Bank Forms
+- Central Bank Resources
+- Reserves Administration Business Continuity Guide
+- Reserves Central Service Setup
+- Treasury Services
+- Collateral Services
+- Savings Bonds for Financial Institutions
+- Savings Bonds News You Can Use
+- Treasury ACH Reclamation
+- Treasury Auctions
+- Treasury Check Reclamation
+-
+- Treasury Services Business Continuity Guide
+- Treasury Service Forms
+- Treasury Services Resources
+- Treasury Services Setup
+- FedLine Solutions
+- FedLine Advantage
+- FedLine Command
+- FedLine Developer
+- FedLine Direct
+- FedLine Web
+- FedMail
+-
+- Application and Connectivity Testing
+- FedLine Solutions 2026 Fee Schedules
+- FedLine Solutions Business Continuity Guide
+- FedLine Solutions Forms
+- FedLine Solutions Resources
+- FedLine Solutions Setup
+- Forms
+- Accounting Services Forms
+- Central Bank Forms
+- Check Services Forms
+- FedACH Services Forms
+- FedCash Services Forms
+- FedLine Solutions Forms
+- FedNow Service Forms
+- Fedwire Funds Service Forms
+- Fedwire Securities Service Forms
+- National Settlement Service Forms
+- Treasury Services Forms
+-
+- Forms Frequently Asked Questions
+- Resources
+- Central Bank Resources
+- Central Bank Frequently Asked Questions
+- Reporting Central Resources
+- Structure Central Resources
+- Survey Central Resources
+- E-Payments Routing Directory
+- FedLine Solutions Resources
+- End User Authorization Contact Support Page for FedLine EUACs
+- FedLine Command Environment and Configuration Change Matrix
+- FedLine Direct File Environment and Configuration Change Matrix
+- FedLine Direct Message Environment and Configuration Change Matrix
+- FedLine Solutions Frequently Asked Questions
+- Financial Services Resources
+- Accounting Services Resources
+- Check Services Resources
+- FedACH Services Resources
+- FedCash Services Resources
+- FedGlobal ACH Payments Foreign Exchange Rates
+- FedNow Service Resources
+- Fedwire Funds Service Resources
+- Fedwire Securities Resources
+- National Settlement Service Resources
+- Industry Links
+- Resource Centers
+- Business Continuity Resource Center
+- FedLine Solutions Security and Resiliency Assurance Program (“Assurance Program”) Resource Center
+- International Payments Resource Center
+- Same Day ACH Resource Center
+- Welcome to the Business Banking Toolbox!
+- Welcome to the Risk Management Toolbox!
+- Rules and Regulations
+- Operating Circulars
+- Regulations
+- Service and Access Setup
+- Current Financial Services Customer – Add or Modify Services or Access
+- Financial Institution Merger – Modify Services or Access
+- New Financial Services Customer – Setup Services or Access
+- Payment Processors and Third-Party Service Providers – Set Up Services and Access
+- Service Fees
+- Treasury Services Resources
+- Collateral Services
+- Savings Bonds for Financial Institutions
+- Treasury Auctions
+- Treasury Services Frequently Asked Questions
+- Education
+- Federal Reserve Bank Webinars
+- Industry Events
+- Products & Services Education
+- News
+- Communications
+- Fed360
+- Press Releases
+- Research
+- Stay Engaged: Email Newsletters
+- About
+- About Federal Reserve Bank Services
+- Advisory Groups
+- Federal Reserve Bank Offices
+- Financial Services Leadership Team
+- Holiday Schedules
+Re­port­ing Cen­tral
+- Reporting Central and Structure Central User Guides
+-
+- Central Bank Resources
+- Reporting Central and Structure Central Applications Setup
+- Step 1: Designate Authorized Individuals
+- Step 2: Establish End User Authorization Contacts (EUACs)
+- Step 3: Set Up New or Make Changes to Existing FedLine Subscribers
+- Step 4: Set Up Report Access
+- Reporting Central Forms
+- Reporting Central National Business Continuity Information
+Reporting Central and Structure Central User Guides
+The Reporting Central External User Guide (PDF) and Structure Central External User Guide (PDF) provide overviews of accessing and logging into the Reporting Central and Structure Central applications, their home pages, reporting status, data entry/viewing, report file uploading, searching for a report, file attachments and contacts.
+The User Guides in the table below provide the required file formats for submitting data via the Reporting Central and/or Structure Central application(s), demonstrate how a reporting institution can create the file from a spreadsheet and provide information to assist a reporting institution in resolving problems it might have when submitting the spreadsheet file.
+Please click the links in the Report Name column below to review the User Guide for each report.
+Please note: The report names shown below with a single asterisk (*) are mandatory electronic reports.
+XML Format
+Reports – XML Format
+| Report Name | Report Description |
+| --- | --- |
+| XML User Guide (PDF) | Step-by-step guide showing how to create an XML Upload File using Microsoft® Excel® |
+| FFIEC 009 (PDF) FFIEC 009 (XML) | Country Exposure Report |
+| FFIEC 009a (PDF) FFIEC 009a (XML) | Country Exposure Information Report |
+| FFIEC 019 (PDF) FFIEC 019 (XML) | Country Exposure Report for U.S. Branches and Agencies of Foreign Banks |
+| FFIEC 030/FFIEC 030S (PDF) FFIEC 030 Sample File (XML) FFIEC 030S Sample File (XML) | Foreign Branch Report of Condition |
+| FR Q-1 (PDF) | Capital Requirements for Board-Regulated Institutions Significantly Engaged in Insurance Activities |
+| FR VV-1 (PDF) | XML File Upload Format Specification |
+| FR VV-1 Supplemental Information (Off-site) | FR VV-1 Technical Instructions |
+| FR Y-6 Technical Guides Annual Report XML File Format in Structure Central (PDF) FR Y-6 Securities Sample file (XML) FR Y-6 Insiders Sample XML file (XML) Annual Report XLXS File Format in Structure Central (PDF) FR Y-6 Securities Template file (XLSX) FR Y-6 Securities Sample file (XLSX) FR Y-6 Insiders Template file (XLSX) FR Y-6 Insiders Sample file (XLSX) | Annual Report of Holding Companies |
+| FR Y-7 XML User Guide (PDF) FR Y-7 XLSX User Guide (PDF) FR Y-7 Item 2a2 Standard Template (XLSX) FR Y-7 Item 2b Standard Template (XLSX) FR Y-7 Additional Entities Template (XLSX) FR Y-7 Additional Entities Sample File (XML) FR Y-7 Foreign Companies Template (XLSX) FR Y-7 Foreign Companies Sample File (XML) | Annual Report of Foreign Banking Organizations |
+| FR Y-7Q** (PDF) **Also available for data entry FR Y-7Q Sample File (XML) | Capital and Asset Report for Foreign Banking Organizations |
+| FR Y-12** (PDF) FR Y-12 Sample File (XML) **Also available for data entry | Consolidated Bank Holding Company Report of Equity Investments in Nonfinancial Companies |
+| FR Y-12A (PDF) FR Y-12A Sample File (XML) | Annual Report of Merchant Banking Investments Held for an Extended Period |
+| FR Y-14A/Q (PDF) | Capital Assessments and Stress Testing |
+| FR Y-14Q Supplemental Information (ZIP) | FR Y-14Q Technical Instructions |
+| FR Y-14A Supplemental Information (ZIP) | FR Y-14A Technical Instructions |
+| FR 2028B/FR 2028S (PDF) FR 2028B Sample File (XML) FR 2028S Sample File (XML) | Survey of Prime Rate & Terms of Bank Lending to Farmers |
+| FR 2028D (PDF) | Small Business Lending Survey Report |
+| FR2004* (PDF) SD/SI/WI FR 2004SD Sample File (XML) FR 2004SI Sample File (XML) FR 2004WI Sample File (XML) *Please note: the user guide for FR 2004 A/B/C/FA/FB/FC/FM are found in the TXT section below | Primary Dealer Reports |
+| FR 2420* (PDF) FR 2420CD Sample File (XML) FR 2420FE Sample File (XML) FR 2420IB Sample File (XML) | Daily Selected Money Markets Rates Report |
+| FR 2510 (PDF) | Report of Institution-to-Aggregate Granular Data on Assets and Liabilities on an Immediate Counterparty Basis |
+| FR 2590 (PDF) FR 2590 Sample File (XML) | Single-Counterparty Credit Limits Report |
+| FR 2644** (PDF) FR 2644 Sample File (XML) **Also available for data entry | Weekly Report of Selected Assets and Liabilities of Domestically Chartered Commercial Banks and U.S. Branches and Agencies of Foreign Banks |
+| FR 2900* & ** (PDF) FR 2900 Sample File (XML) **Also available for data entry | Report of Deposits and Vault Cash |
+| I to I Credit Exposure (PDF) I to I Credit Exposure Weekly (IICW) Sample File (XML) I to I Credit Exposure Monthly (IICM) Sample File (XML) | IICE (Institution to Institution) |
+| I to I Funding (PDF) | IIFD (Institution to Institution) |
+| SHC (A) Technical Guides Benchmark Series XML File Format Specification (PDF) Benchmark Schema (PDF) Benchmark Claims SHC (A) Sample File (XML) (with all optional fields) Benchmark Claims SHC (A) Sample File (XML) (with no optional fields) | Annual Report of U.S. Ownership of Foreign Securities, Including Selected Money Market Instruments |
+| SHL (A) Technical Guides Benchmark Series XML File Format Specification (PDF) Benchmark Schema (PDF) Benchmark Liabilities SHL (A) Sample File (XML) (with all optional fields) Benchmark Liabilities SHL (A) Sample File (XML) (with no optional fields) | Annual Report of Foreign Holdings of U.S. Securities, Including Selected Money Market Instruments |
+| TFC (PDF) TFC-1 Sample File (XML) TFC-2 (Sample File (XML) TFC-3 Sample File (XML) | Treasury Foreign Company Reports (TFC-1, TFC-2, TFC-3) |
+| TIC/TIC SLT (PDF) TIC BC Sample File (XML) TIC BL-1 Sample File (XML) TIC BL-2 Sample File (XML) TIC BQ-1 Sample File (XML) TIC BQ-2 Sample File (XML) TIC BQ-3 Sample File (XML) TIC CQ-1 Sample File (XML) TIC CQ-2 Sample File (XML) TIC D Sample File (XML) TIC SLT Sample File (XML) | Treasury International Capital Reports (TIC D, TIC SLT*, TIC BC, TIC BL-1, TIC BL-2, TIC BQ-1, TIC BQ-2, TIC BQ-3, TIC CQ-1, TIC CQ-2, AND TIC S (S1 AND S2) |
+| TPRX Series (PDF) | Tri Party Repo |
+TXT Format
+Reports – TXT Format
+| Report Name | Report Description |
+| --- | --- |
+| FFIEC 002/FFIEC 002S (PDF) | Report of Assets and Liabilities of U.S. Branches and Agencies of Foreign Banks / Non-U.S. Branch that is Managed or Controlled by a U.S. Branch or Agency of a Foreign (Non-U.S.) Bank |
+| FFIEC 101 (PDF) | Regulatory Capital Reporting for Institutions Subject to the Advanced Capital Adequacy Framework |
+| FFIEC 102 (PDF) | Market Risk Regulatory Report for Institutions Subject to the Market Risk Capital Rule |
+| FR2004* A/B/C/FA/FB/FC/FM (PDF) *Please note: the user guide for FR 2004 SD/SI/WI are found in the XML section above | Primary Dealer Reports |
+| FR 2248 (PDF) | Domestic Finance Company Report of Consolidated Assets and Liabilities |
+| FR 2314/FR 2314S (PDF) | Financial Statements of Foreign Subsidiaries of U.S. Banking Organizations / Abbreviated Financial Statements of Foreign Subsidiaries of U.S. Banking Organizations |
+| FR 2436 (PDF) | Semiannual Report of Derivatives Activity |
+| FR 2835 (PDF) / FR 2835A (PDF) | Quarterly Report of Interest Rates on Selected Direct Consumer Installment Loans / Quarterly Report of Credit Card Interest Rate |
+| FR 2886b (PDF) | Consolidated Report of Condition for Edge and Agreement Corporations |
+| FR 2915 (PDF) | Report of Foreign (Non-U.S.) Currency Deposits |
+| FR 3036 (PDF) | Central Bank Survey of Foreign Exchange and Derivatives Market Activity |
+| FR XX-1* (PDF) | Financial Company Report of Consolidated Liabilities |
+| FR Y-7N / FR Y-7NS (PDF) | Financial Statements of U.S. Nonbank Subsidiaries Held by Foreign Banking Organizations / Abbreviated Financial Statements of U.S. Nonbank Subsidiaries Held by Foreign Banking Organizations |
+| FR Y-8* (PDF) | The Bank Holding Company Report of Insured Depository Institutions’ Section 23A Transactions with Affiliates |
+| FR Y-9C* (PDF) | Consolidated Financial Statements for Bank Holding Companies |
+| FR Y-9ES* (PDF) | Financial Statements for Employee Stock Ownership Plan Holding Companies |
+| FR Y-9LP* (PDF) | Parent Company Only Financial Statements for Large Bank Holding Companies |
+| FR Y-9SP* (PDF) | Parent Company Only Financial Statements for Small Holding Companies |
+| FR Y-11/FR Y-11S (PDF) | Financial Statements of U.S. Nonbank Subsidiaries of U.S. Bank Holding Companies / Abbreviated Financial Statements of U.S. Nonbank Subsidiaries of U.S. Bank Holding Companies |
+| FR Y-15* (PDF) | Banking Organization Systemic Risk Report |
+| FXVOLUME (PDF) | Foreign Exchange Volume Survey |
+We’re Here to Help
+Please contact your local Reporting Central District Contact with questions regarding electronic submission of financial data and reporting instructions. For assistance with setting up access to the Reporting Central and/or Structure Central application(s) via the FedLine Web Solution, contact the Support Center.
+Top of Page
