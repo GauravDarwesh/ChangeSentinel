@@ -257,6 +257,14 @@ Deno.test('natural monitoring-scope wording selects the authoritative scope reco
   if (!fakeFetchedPaths.includes('__current_scope__')) throw new Error('Natural scope question did not fetch the authoritative scope record.');
 });
 
+Deno.test('nested factual list items need their own citation', async () => {
+  reset(() => groqAnswer(
+    'Summary of the changes.\n  - An additional factual finding without a citation.\nSupporting details. [Source: data/report.json]'
+  ));
+  const answer = await ask({ ip: '203.0.113.27' });
+  assertEquals([answer.status, answer.body.error_code, answer.body.citation_validation?.uncited_line_count], [422, 'citation_validation_failed', 1]);
+});
+
 Deno.test('a visitor gets three questions a day', async () => {
   reset();
   const id = visitor();
