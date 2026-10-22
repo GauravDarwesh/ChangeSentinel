@@ -193,64 +193,47 @@ try {
     }
   }
 
-  const tableRedline = await page.evaluate(() => {
-    const beforeLines = [
-      "| Recently Approved and Implemented | | | | | | |",
-      "| --- | --- | --- | --- | --- | --- | --- |",
-      "| Collection Identifier | OMB Supporting Statement | Reporting Form | Reporting Instructions | Other Attachments | Initial Federal Register Notice | Final Federal Register Notice |",
-      "| FFIEC 031 | link | FFIEC 031 | FFIEC 031 | N/A | link | link |",
-      "| FR 3033p FR 3033s | link | FR 3033p/s | N/A | N/A | link | link |",
-      "| FR 4031 | link | N/A | N/A | N/A | link | link |",
-      "| FR Y-9C R-1867 | link | N/A | FR Y-9C | Press Release 1 Press Release 2 | link | link |",
-      "Last Update: Oct 16, 2026"
-    ].join("\n");
-    const afterLines = [
-      "| Recently Approved and Implemented | | | | | | |",
-      "| --- | --- | --- | --- | --- | --- | --- |",
-      "| Collection Identifier | OMB Supporting Statement | Reporting Form | Reporting Instructions | Other Attachments | Initial Federal Register Notice | Final Federal Register Notice |",
-      "| FR 3033p FR 3033s | link | FR 3033p/s | N/A | N/A | link | link |",
-      "| FR 4031 | link | N/A | N/A | N/A | link | link |",
-      "Last Update: Oct 16, 2026"
-    ].join("\n");
-    const unrelated = ["FFIEC 031", "Not Available", "FFIEC 031", "FFIEC 041", "N/A", "link", "Not Available"];
-    const deletedFfiec = ["FFIEC 031", "link", "FFIEC 031", "FFIEC 031", "N/A", "link", "link"];
-    const unchanged3033 = ["FR 3033p FR 3033s", "link", "FR 3033p/s", "N/A", "N/A", "link", "link"];
-    const deletedY9c = ["FR Y-9C R-1867", "link", "N/A", "FR Y-9C", "Press Release 1 Press Release 2", "link", "link"];
-    const rowHtml = cells => "<tr>" + cells.map(cell => "<td>" + cell + "</td>").join("") + "</tr>";
-    const documentFor = includeDeleted => {
-      const doc = document.implementation.createHTMLDocument("redline test");
-      doc.body.innerHTML = "<table><tbody>" + rowHtml(unrelated) + "</tbody></table>" +
-        "<table><tbody>" + (includeDeleted ? rowHtml(deletedFfiec) : "") +
-        rowHtml(unchanged3033) + rowHtml(["FR 4031", "link", "N/A", "N/A", "N/A", "link", "link"]) +
-        (includeDeleted ? rowHtml(deletedY9c) : "") + "</tbody></table>";
-      return doc;
-    };
-    const beforeDoc = documentFor(true), afterDoc = documentFor(false);
-    const aligned = L.alignLines(beforeLines, afterLines);
+  const frbEvidence = JSON.parse(fs.readFileSync(path.join(ROOT,
+    "data/evidence/c89216e3b00e847563d351357b43772920c29a2266cccb68a8a651736f928219.json"), "utf8"));
+  const tableRedline = await page.evaluate(({ beforeHtml, afterHtml, beforeText, afterText }) => {
+    const beforeDoc = new DOMParser().parseFromString(beforeHtml, "text/html");
+    const afterDoc = new DOMParser().parseFromString(afterHtml, "text/html");
+    const aligned = L.alignLines(beforeText, afterText);
     const beforeIndex = flattenDocumentText(beforeDoc), afterIndex = flattenDocumentText(afterDoc);
     const removedMarks = markTextInDocument(beforeDoc, beforeIndex, htmlMarkTargets(aligned.rows, "before"), "cs-del", afterIndex.flat);
     markTextInDocument(afterDoc, afterIndex, htmlMarkTargets(aligned.rows, "after"), "cs-add", beforeIndex.flat);
-    const cells = row => Array.from(row.cells).map(cell => (cell.innerText || cell.textContent || "").replace(/\s+/g, " ").trim());
+    const rowCells = row => Array.from(row.cells || []).map(cell => normalizeForMatch(flattenTextContainer(cell).flat || cell.textContent || ""));
+    const expectedFfiec = L.splitMarkdownTableRow("| FFIEC 031 | link | FFIEC 031 | FFIEC 031 | N/A | link | link |").map(normalizeForMatch);
+    const expected3033 = L.splitMarkdownTableRow("| FR 3033p FR 3033s | link | FR 3033p/s | N/A | N/A | link | link |").map(normalizeForMatch);
+    const expectedY9c = L.splitMarkdownTableRow("| FR Y-9C R-1867 | link | N/A | FR Y-9C | Press Release 1 Press Release 2 | link | link |").map(normalizeForMatch);
     const beforeRows = Array.from(beforeDoc.querySelectorAll("tr"));
     const markedRows = beforeRows.filter(row => row.querySelector("mark.cs-del"));
-    const hasMarked = wanted => markedRows.some(row => L.tableCellsMatch(wanted, cells(row)));
+    const isMarked = cells => markedRows.some(row => L.tableCellsMatch(cells, rowCells(row)));
+    const otherMarkedRows = markedRows.filter(row => !L.tableCellsMatch(expectedFfiec, rowCells(row)) &&
+      !L.tableCellsMatch(expectedY9c, rowCells(row))).map(row => rowCells(row).slice(0, 3));
     return {
       stats: aligned.stats,
       removedMarks,
       markedRowCount: markedRows.length,
-      deletedFfiecMarked: hasMarked(deletedFfiec),
-      deletedY9cMarked: hasMarked(deletedY9c),
-      unchanged3033Marked: hasMarked(unchanged3033),
-      unrelatedRepeatedLabelMarked: hasMarked(unrelated)
+      deletedFfiecMarked: isMarked(expectedFfiec),
+      deletedY9cMarked: isMarked(expectedY9c),
+      unchanged3033Marked: isMarked(expected3033),
+      otherMarkedRows
     };
+  }, {
+    beforeHtml: fs.readFileSync(path.join(ROOT, frbEvidence.before.html_snapshot_location), "utf8"),
+    afterHtml: fs.readFileSync(path.join(ROOT, frbEvidence.after.html_snapshot_location), "utf8"),
+    beforeText: fs.readFileSync(path.join(ROOT, frbEvidence.before.snapshot_location), "utf8"),
+    afterText: fs.readFileSync(path.join(ROOT, frbEvidence.after.snapshot_location), "utf8")
   });
   check(tableRedline.stats.removed === 2 &&
+    tableRedline.stats.added === 0 &&
     tableRedline.deletedFfiecMarked &&
     tableRedline.deletedY9cMarked &&
     !tableRedline.unchanged3033Marked &&
-    !tableRedline.unrelatedRepeatedLabelMarked &&
+    tableRedline.otherMarkedRows.length === 0 &&
     tableRedline.markedRowCount === 2,
-    "HTML redlines mark the two exact deleted rows, not repeated FFIEC/link labels elsewhere (" + JSON.stringify(tableRedline) + ")");
+    "saved FRB HTML redline marks exactly FFIEC 031 and FR Y-9C/R-1867, not FR 3033p/s or repeated labels (" + JSON.stringify(tableRedline) + ")");
 
   await page.click('.rail [data-view="changes"]');
   const firstChange = await page.$("#changeItems [data-select-change]");
