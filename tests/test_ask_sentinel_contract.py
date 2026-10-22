@@ -268,6 +268,7 @@ class TestAskSentinelContract(unittest.TestCase):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
         self.assertIn("function asksRecentChanges(question: string): boolean", backend)
         self.assertIn("function asksUrlLookup(question: string): boolean", backend)
+        self.assertIn('return extractUrls(question).length > 0;', backend)
         self.assertIn("function fetchCurrentPageRecordsForUrls(urls: string[]): Promise<any[]>", backend)
         self.assertIn("canonicalUrls.has(normalizeUrl(canonicalUrl))", backend)
         self.assertIn("content: 'like.*' + host + '*'", backend)
