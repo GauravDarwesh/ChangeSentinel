@@ -434,8 +434,6 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
             "message": "The URL is already present in an active source.",
         }
 
-    metadata = _fetch_page_metadata(url) if not requested_name else {}
-    display_name = requested_name or metadata.get("title", "")
     new_source = source_for_url(url, display_name, include_selector, ignore_selectors, crawl_depth=crawl_depth)
     source_ids = {str(source.get("id")) for source in sources}
     if new_source["id"] in source_ids:
