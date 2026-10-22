@@ -642,6 +642,10 @@ class TestCadenceCalendarContract(unittest.TestCase):
             'id="cadenceAgenda"',
             'id="cadenceSearch"',
             'id="cadenceTypeFilter"',
+            'id="cadenceMonthView"',
+            'id="cadenceUpcomingView"',
+            'id="cadenceUpcomingList"',
+            'data-calendar-mode="upcoming"',
             'data-calendar-export',
             'id="navCadenceCount"',
         ):
@@ -654,6 +658,38 @@ class TestCadenceCalendarContract(unittest.TestCase):
         self.assertIn(".nav-scout, .nav-calendar, .nav-ask { margin-top: 0; padding-top: 0; border-top: 0; }", html)
         self.assertIn("@media (max-width: 620px)", html)
         self.assertIn(".cadence-layout { grid-template-columns: minmax(0, 1fr); }", html)
+
+    def test_upcoming_view_reuses_filters_and_groups_actionable_occurrences(self):
+        html = read("index.html")
+        source = read("dashboard.js")
+        for token in (
+            'id="cadenceMonthView"',
+            'id="cadenceUpcomingView"',
+            'id="cadenceUpcomingList"',
+            'data-calendar-mode="month"',
+            'data-calendar-mode="upcoming"',
+            '.cadence-upcoming-item { grid-template-columns: 48px minmax(0, 1fr);',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+        for token in (
+            'cadencePanel: "month"',
+            "function cadenceFilterEvents(allEvents)",
+            "function cadenceUpcomingEvents(today, horizon)",
+            "function renderCadenceUpcomingView(today)",
+            "function cadenceUpcomingItemMarkup(event, today)",
+            "const events = cadenceFilterEvents(allEvents);",
+            "const events = cadenceFilterEvents(cadenceUpcomingEvents(today, horizon));",
+            'event.title, event.date, event.occurrenceDate, event.category',
+            'title: "Overdue"',
+            'title: "Next 7 days"',
+            'title: "Later · next 90 days"',
+            "function jumpCadenceToDate(dateISO)",
+            'const thisMonthEvents = allEvents.filter(event => event.date.slice(0, 7) === cadenceDateISO(first).slice(0, 7));',
+            'cadenceOccurrenceDates(entry, cadenceAddDays(today, -800), cadenceAddDays(today, -1))',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
 
     def test_calendar_editor_uses_password_auth_and_does_not_embed_service_credentials(self):
         source = read("dashboard.js")
