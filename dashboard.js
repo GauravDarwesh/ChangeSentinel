@@ -3536,12 +3536,13 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-export],[data-calendar-day],[data-calendar-open-change]");
+  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarPrev !== undefined) return shiftCadenceMonth(-1);
   if (data.calendarNext !== undefined) return shiftCadenceMonth(1);
   if (data.calendarToday !== undefined) { state.cadenceMonth = new Date(); state.cadenceMonth.setDate(1); state.cadenceSelectedDate = L.localIsoDate(new Date()); return renderCadenceView(); }
+  if (data.calendarNew !== undefined) return openCadenceEntry();
   if (data.calendarExport !== undefined) return exportCadenceCalendar();
   if (data.calendarDay) { state.cadenceSelectedDate = data.calendarDay; return renderCadenceView(); }
   if (data.calendarOpenChange) {
@@ -3549,6 +3550,11 @@ $("workspace").addEventListener("click", event => {
     if (entry) return select("changes", entry.event_id);
     showToast("This automatic date is no longer linked to a current change."); return;
   }
+  if (data.calendarEdit) return openCadenceEntry(data.calendarEdit);
+  if (data.calendarDelete) return archiveCadenceEntry(data.calendarDelete);
+  if (data.calendarComplete) return toggleCadenceOccurrence(data.calendarComplete, data.calendarDate, data.calendarDone === "true");
+  if (data.calendarTest !== undefined) return sendCadenceTestEmail();
+  if (data.calendarSignout !== undefined) return signOutCadence();
   if (data.reviewChange) return openReview(data.reviewChange);
   if (data.evidencePack) return downloadEvidencePack(data.evidencePack);
   if (data.exportChanges !== undefined) return exportChanges();
@@ -3696,6 +3702,11 @@ document.addEventListener("keydown", event => {
 });
 $("monitorSearch").addEventListener("input", renderMonitorList);
 $("scoutSearch").addEventListener("input", renderScout);
+$("cadenceSignInForm").addEventListener("submit", signInCadence);
+$("cadenceEntryForm").addEventListener("submit", saveCadenceEntry);
+document.querySelectorAll("[data-calendar-close]").forEach(button => button.addEventListener("click", () => $("cadenceEntryDialog").close()));
+$("cadenceEntryDialog").addEventListener("click", event => { if (event.target === $("cadenceEntryDialog")) $("cadenceEntryDialog").close(); });
+$("cadenceReminderEnabled").addEventListener("change", () => { const enabled = $("cadenceReminderEnabled").checked; $("cadenceReminderDays").disabled = !enabled; $("cadenceReminderEmails").disabled = !enabled; });
 $("scoutSourceForm").addEventListener("submit", submitScoutSource);
 $("scoutSourceForm").addEventListener("change", syncScoutSourceForm);
 $("closeScoutSource").addEventListener("click", () => $("scoutSourceDialog").close());
