@@ -207,6 +207,32 @@ Deno.test('exact URL retrieval paginates past unrelated earlier records', async 
   if (!evidenceMessage.includes(evidencePath)) throw new Error('Exact URL evidence path was not passed to Groq after pagination.');
 });
 
+Deno.test('exact URL matching preserves case-sensitive path segments', async () => {
+  reset();
+  const evidencePath = 'data/evidence/' + 'b'.repeat(64) + '.json';
+  fakeCurrentPageRows = [{
+    path: '__current_page__/fed-reporting-forms-detail-pilot/url-id',
+    doc_type: 'current monitored URL record',
+    is_core: false,
+    content: JSON.stringify({
+      canonical_url: 'https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C',
+      configured_source_active: true,
+      evidence_location: evidencePath
+    })
+  }];
+  fakeEvidenceRows.set(evidencePath, [{
+    path: evidencePath, doc_type: 'monitoring evidence', is_core: false,
+    content: 'This record belongs only to the uppercase URL path.'
+  }]);
+  const answer = await ask({
+    ip: '203.0.113.23',
+    question: 'https://www.federalreserve.gov/apps/reportingforms/report/index/fr_y-9c - what changed?'
+  });
+  assertEquals(answer.status, 200);
+  const evidenceMessage = lastGroqMessages.map((message) => String(message.content || '')).join('\n');
+  if (evidenceMessage.includes(evidencePath)) throw new Error('Case-different URL incorrectly matched an indexed page record.');
+});
+
 Deno.test('a visitor gets three questions a day', async () => {
   reset();
   const id = visitor();
