@@ -499,7 +499,7 @@ def _configure_scout_source(
                 channel.update(new_values)
                 regulator_id = str(regulator.get("id") or "")
                 parse_config(scout_config)
-                return changed, channel_id if changed else str(channel.get("id") or channel_id), regulator_id
+                return changed, str(channel.get("id") or channel_id), regulator_id
 
     # A deterministic ID makes repeated requests idempotent. If this exact
     # dashboard-created channel already exists, update its selected depth.
