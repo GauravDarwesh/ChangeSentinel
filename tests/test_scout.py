@@ -375,6 +375,93 @@ class TestSweeps(ScoutTestCase):
         latest = self.sweep(both, site)
         self.assertEqual(latest["totals"]["new"], 0, "a new channel's existing items are baseline, not new")
 
+    def test_depth_limited_listing_discovers_replacement_pdf_links_weekly(self):
+        root = "https://reg.example.org/user-guides"
+        child = "https://reg.example.org/user-guides/current"
+        old_pdf = "https://reg.example.org/documents/FR-2028D-user-guide.pdf"
+        new_pdf = "https://reg.example.org/documents/FR-2028D-user-guide-revised.pdf"
+        config = config_for([{
+            "id": "ex-user-guides",
+            "type": "listing",
+            "label": "User guides",
+            "url": root,
+            "link_prefixes": ["https://reg.example.org/"],
+            "crawl_depth": 2,
+        }])
+        site = FakeSite({
+            root: b'<html><body><a href="/user-guides/current">Current user guides</a></body></html>',
+            child: f'<html><body><a href="{old_pdf}">FR 2028D user guide (PDF)</a></body></html>'.encode(),
+        })
+
+        first = self.sweep(config, site)
+        first_records = {record["url"]: record for record in self.registry().candidates.values()}
+        self.assertEqual(first["status"], "COMPLETE")
+        self.assertIn(old_pdf, first_records)
+        self.assertIn(root, site.calls)
+        self.assertIn(child, site.calls)
+        self.assertNotIn(old_pdf, site.calls, "Scout records linked PDFs but does not fetch them as HTML")
+
+        # A publisher can replace the document URL while keeping its landing page
+        # and descriptive link text. The next weekly sweep must surface the new URL.
+        site.pages[child] = f'<html><body><a href="{new_pdf}">FR 2028D user guide (PDF)</a></body></html>'.encode()
+        second = self.sweep(config, site)
+        second_records = {record["url"]: record for record in self.registry().candidates.values()}
+        new_candidate = next(item for item in self.review()["candidates"] if item["url"] == new_pdf)
+
+        self.assertEqual(second["status"], "COMPLETE")
+        self.assertIn(old_pdf, second_records, "historical Scout records are retained")
+        self.assertIn(new_pdf, second_records)
+        self.assertEqual(new_candidate["origin"], "new")
+        self.assertEqual(second["totals"]["new"], 1)
+
+    def test_depth_limited_listing_does_not_visit_pages_beyond_selected_depth(self):
+        root = "https://reg.example.org/user-guides"
+        child = "https://reg.example.org/user-guides/current"
+        grandchild = "https://reg.example.org/user-guides/current/archive"
+        config = config_for([{
+            "id": "ex-user-guides",
+            "type": "listing",
+            "label": "User guides",
+            "url": root,
+            "link_prefixes": ["https://reg.example.org/"],
+            "crawl_depth": 1,
+        }])
+        site = FakeSite({
+            root: b'<html><a href="/user-guides/current">Current</a></html>',
+            child: f'<html><a href="{grandchild}">Archive</a></html>'.encode(),
+            grandchild: b"<html><p>Archive content</p></html>",
+        })
+
+        result = self.sweep(config, site)
+        urls = {record["url"] for record in self.registry().candidates.values()}
+
+        self.assertEqual(result["status"], "COMPLETE")
+        self.assertIn(child, urls)
+        self.assertNotIn(grandchild, urls)
+        self.assertNotIn(child, site.calls, "depth 1 reads only the root page")
+        self.assertNotIn(grandchild, site.calls)
+
+    def test_recursive_listing_depth_is_validated(self):
+        base = {
+            "schema_version": 1,
+            "objective": {"id": "test", "description": "test", "priority_types": ["guidance"],
+                          "out_of_objective_types": ["event"]},
+            "defaults": {"min_delay_seconds": 1, "max_requests_per_regulator": 40,
+                         "max_seconds_per_regulator": 600},
+            "regulators": [{
+                "id": "ex", "name": "Example Regulator", "region": "OTHER",
+                "hosts": ["reg.example.org"],
+                "channels": [{"id": "manual-page", "type": "listing", "label": "Guides",
+                              "url": "https://reg.example.org/user-guides", "crawl_depth": 2}],
+            }],
+        }
+        self.assertEqual(parse_config(base).regulators[0].channels[0].crawl_depth, 2)
+        for bad_depth in (0, 4, True, "2"):
+            invalid = json.loads(json.dumps(base))
+            invalid["regulators"][0]["channels"][0]["crawl_depth"] = bad_depth
+            with self.subTest(depth=bad_depth), self.assertRaisesRegex(ConfigError, "crawl_depth"):
+                parse_config(invalid)
+
     def test_paginated_listing_stops_when_caught_up_or_reports_partial(self):
         config = config_for([{"id": "ex-list", "type": "listing", "label": "Publications", "url": LIST_URL, "newest_first": True,
                               "pagination": {"param": "page", "max_pages": 3, "baseline_pages": 1}}])
