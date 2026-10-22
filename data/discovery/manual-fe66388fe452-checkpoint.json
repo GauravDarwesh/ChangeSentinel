@@ -4,9 +4,9 @@
   "state": "PAUSED",
   "config_fingerprint": "4bd65a23894467aaa4fba3cfc4a3d0f54338f1b8183547a831cc8ca769e1817d",
   "started_at": "2026-10-22T21:27:37Z",
-  "updated_at": "2026-10-22T21:49:53Z",
+  "updated_at": "2026-10-22T22:06:37Z",
   "discovered_count": 1,
-  "processed_count": 30,
+  "processed_count": 40,
   "pending": [
     "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides"
   ],
@@ -15,7 +15,7 @@
     "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides": 0
   },
   "failed_pages": 0,
-  "successful_pages": 30,
+  "successful_pages": 40,
   "inventory_glob": "data/discovery/manual-fe66388fe452-inventory-*.txt",
   "failure_ledger": "data/discovery/manual-fe66388fe452-failures.jsonl"
 }
