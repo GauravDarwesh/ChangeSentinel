@@ -386,15 +386,26 @@ function validateGroundedCitations(answer: string, allowedSources: string[]): Ci
   let uncitedLineCount = 0;
   for (const block of blocks) {
     const lines = block.split('\n').map((line) => line.trim()).filter(Boolean);
-    const isHeadingOnly = lines.every((line) => /^#{1,6}\s/.test(line));
-    if (isHeadingOnly) continue;
-    const blockHasCitation = lines.some((line) => /\[Source:\s*[^\]]+\]/i.test(line));
-    if (blockHasCitation) continue;
-    // Preserve the explicit per-item requirement for lists. Ordinary prose can
-    // carry one exact citation at paragraph end; an uncited list item cannot.
+    let proseLineCount = 0;
+    let proseHasCitation = false;
+
     for (const line of lines) {
-      if (/^[-*•]\s+|^\d+[.)]\s+/.test(line) || !/^#{1,6}\s/.test(line)) uncitedLineCount += 1;
+      if (/^#{1,6}\s/.test(line)) continue;
+      const isListItem = /^(?:[-*•]\s+|\d+[.)]\s+)/.test(line);
+      const hasLineCitation = /\[Source:\s*[^\]]+\]/i.test(line);
+      if (isListItem) {
+        // Each bullet or numbered item stands on its own, even if a sibling
+        // item in this same Markdown block has a valid citation.
+        if (!hasLineCitation) uncitedLineCount += 1;
+        continue;
+      }
+      proseLineCount += 1;
+      if (hasLineCitation) proseHasCitation = true;
     }
+
+    // Prose may wrap onto multiple lines: one citation anywhere in the same
+    // paragraph (normally at its end) is sufficient for the paragraph.
+    if (proseLineCount > 0 && !proseHasCitation) uncitedLineCount += 1;
   }
 
   let reason: CitationValidation['reason'] = 'valid';
