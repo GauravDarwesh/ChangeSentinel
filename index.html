@@ -221,6 +221,11 @@
     .tag::before { content: ""; width: 6px; height: 6px; background: var(--led-dim); }
     .tag.tone-change { color: var(--state-change); }
     .tag.tone-change::before { background: var(--state-change); box-shadow: 0 0 8px var(--state-change-glow); }
+    /* Markup-only signals remain available in the change log without competing
+       visually with substantive content changes. */
+    .tag.tone-markup { color: var(--ink-3); }
+    .tag.tone-markup::before { background: var(--ink-3); box-shadow: none; }
+    .row-mark.tone-markup { background: var(--ink-3); box-shadow: none; }
     .tag.tone-problem { color: var(--problem); }
     .tag.tone-problem::before { background: var(--state-bad); }
     .tag.tone-new::before { background: var(--state-new); }
@@ -506,6 +511,20 @@
     .field-label-text { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; }
     .field-label-text span { color: var(--ink-3); }
     .field-input { width: 100%; margin-top: 6px; padding: 8px 10px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--bg); color: var(--ink); font-size: 14px; }
+    /* Keep native selects aligned with the field padding; the inset chevron
+       avoids the browser-dependent arrow hugging the far edge of the control. */
+    select.field-input {
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 34px;
+      background-image:
+        linear-gradient(45deg, transparent 48%, var(--ink-2) 49%, var(--ink-2) 62%, transparent 63%),
+        linear-gradient(135deg, transparent 48%, var(--ink-2) 49%, var(--ink-2) 62%, transparent 63%);
+      background-repeat: no-repeat;
+      background-size: 6px 6px, 6px 6px;
+      background-position: right 14px center, right 9px center;
+    }
+    select.field-input:disabled { cursor: not-allowed; opacity: .65; }
     textarea.field-input { resize: vertical; font: 400 12.5px/1.6 var(--font-code); }
     .field-help { margin-top: 5px; color: var(--ink-3); font-size: 12.5px; line-height: 1.5; }
     .modal-info { color: var(--ink-3); font-size: 12.5px; line-height: 1.55; }
@@ -806,7 +825,7 @@
 .form-group + .form-group { padding-top: 14px; border-top: 1px solid var(--line); }
 .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 14px; }
 .form-grid .span-2 { grid-column: 1 / -1; }
-select.field-input { appearance: auto; }
+/* Select styling is defined alongside .field-input above. */
 .scout-type { gap: 18px; }
 .scout-type label { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); font-size: 13px; cursor: pointer; }
 .scout-type input { accent-color: var(--accent); }
