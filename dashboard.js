@@ -1705,7 +1705,8 @@ function renderDetailHeader(item) {
     "<span>Checked " + esc(relativeTime(item.last_checked).toLowerCase()) + "</span>" + urlMeta(item.canonical_url);
   const actions = externalLink(item.canonical_url, "Open live page") +
     (snapshotPath ? externalLink(REPO + "/blob/main/" + snapshotPath, savedFileLabel) : "") +
-    (item.source_id ? '<button class="btn" type="button" data-run-scan="' + esc(item.source_id) + '" title="Scan this page\'s source now">Scan this source</button>' : "");
+    (item.source_id ? '<button class="btn" type="button" data-run-scan="' + esc(item.source_id) + '" title="Scan this page\'s source now">Scan this source</button>' : "") +
+    (item.source_id ? '<button class="btn btn-quiet" type="button" data-stop-monitor="' + esc(item.url_id) + '" title="Stop monitoring this URL">Stop monitoring</button>' : "");
   $("detailHeader").innerHTML = detailHeading({
     back: true, source: sourceLabel(source), title: itemTitle(item), subtitle, meta, actions
   });
@@ -3306,11 +3307,11 @@ function openAddMonitor() {
     showToast("This browser can't open the add-page dialog. Use a current browser.");
   }
 }
-function makeGitHubIssueUrl(url, name, includeSelector, ignoreSelectors) {
+function makeGitHubIssueUrl(url, name, includeSelector, ignoreSelectors, crawlDepth) {
   const bodyLines = [
     "<!-- changesentinel:add-monitor:v1 -->", "",
     "Please register this URL as a ChangeSentinel monitor.", "",
-    "URL: " + url, "Name: " + (name || ""), "Include selector: " + (includeSelector || ""), "Ignore selectors:"
+    "URL: " + url, "Name: " + (name || ""), "Crawl depth: " + String(Number.isInteger(Number(crawlDepth)) ? Math.max(0, Math.min(3, Number(crawlDepth))) : 0), "Include selector: " + (includeSelector || ""), "Ignore selectors:"
   ];
   if (ignoreSelectors.length) ignoreSelectors.forEach(selector => bodyLines.push("- " + selector));
   else bodyLines.push("(none)");
@@ -3319,6 +3320,39 @@ function makeGitHubIssueUrl(url, name, includeSelector, ignoreSelectors) {
   params.set("title", "[ChangeSentinel] Add monitor request");
   params.set("body", bodyLines.join("\n"));
   return REPO + "/issues/new?" + params.toString();
+}
+async function suggestMonitorMetadata() {
+  const rawUrl = $("newMonitorUrl").value.trim();
+  const status = $("newMonitorMetadataStatus");
+  let parsed;
+  try { parsed = new URL(rawUrl); } catch (_) { status.textContent = "Enter a full URL first."; return; }
+  if (!["http:", "https:"].includes(parsed.protocol) || !parsed.hostname || parsed.username || parsed.password) { status.textContent = "Use a public http:// or https:// URL."; return; }
+  status.textContent = "Reading page metadata…";
+  const button = $("autofillMonitorMetadata"); button.disabled = true;
+  const controller = new AbortController(); const timeout = window.setTimeout(() => controller.abort(), 6000);
+  try {
+    let title = "";
+    try {
+      const response = await fetch(parsed.toString(), { mode: "cors", credentials: "omit", redirect: "follow", signal: controller.signal, headers: { Accept: "text/html" } });
+      if (response.ok && /html/i.test(response.headers.get("content-type") || "text/html")) {
+        const html = await response.text();
+        if (html.length <= 1024 * 1024) {
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          const meta = selector => { const el = doc.querySelector(selector); return el ? String(el.getAttribute("content") || "").trim() : ""; };
+          title = meta('meta[property="og:title"]') || meta('meta[name="twitter:title"]') || (doc.title || "").trim();
+        }
+      }
+    } catch (_) { /* CORS is commonly disabled; use an editable path-derived fallback. */ }
+    if (title) {
+      $("newMonitorName").value = title.replace(/[\\r\\n]+/g, " ").trim().slice(0, 100);
+      status.textContent = "Name filled from page metadata. You can edit it.";
+    } else {
+      const tail = parsed.pathname.replace(/\\/+$/, "").split("/").pop() || parsed.hostname;
+      const suggestion = decodeURIComponent(tail).replace(/[._-]+/g, " ").replace(/\\s+/g, " ").trim();
+      $("newMonitorName").value = (suggestion || parsed.hostname).replace(/\\b\\w/g, c => c.toUpperCase()).slice(0, 100);
+      status.textContent = "Browser metadata is blocked on this site. Added an editable URL-based suggestion; registration will retry metadata lookup.";
+    }
+  } finally { window.clearTimeout(timeout); button.disabled = false; }
 }
 function openGitHubRequest(target, toastMessage) {
   $("addMonitorDialog").close();
@@ -3330,12 +3364,23 @@ function openGitHubRequest(target, toastMessage) {
     window.location.href = target;
   }
 }
+function makeGitHubDeleteIssueUrl(sourceId, url, name) {
+  const body = ["<!-- changesentinel:delete-monitor:v1 -->", "", "Please stop monitoring this URL in ChangeSentinel.", "", "Source ID: " + sourceId, "URL: " + url, "Name: " + (name || ""), "", "This request was created from the ChangeSentinel dashboard."];
+  const params = new URLSearchParams(); params.set("title", "[ChangeSentinel] Delete monitor request"); params.set("body", body.join("\\n"));
+  return REPO + "/issues/new?" + params.toString();
+}
+function submitDeleteMonitor() {
+  const pending = state.pendingDelete; $("deleteMonitorDialog").close();
+  if (!pending || !pending.sourceId || !pending.url) return;
+  openGitHubRequest(makeGitHubDeleteIssueUrl(pending.sourceId, pending.url, pending.name), "Submit the stop-monitor request on GitHub. The page will be excluded once accepted.");
+}
 function submitAddMonitor(event) {
   event.preventDefault();
   const rawUrl = $("newMonitorUrl").value.trim();
   const name = $("newMonitorName").value.replace(/[\r\n]+/g, " ").trim().slice(0, 100);
   const includeSelector = $("newMonitorIncludeSelector").value.replace(/[\r\n]+/g, " ").trim();
   const ignoreSelectors = $("newMonitorIgnoreSelectors").value.split(/\r?\n/).map(value => value.trim()).filter(Boolean);
+  const crawlDepth = Number.parseInt($("newMonitorDepth").value || "0", 10);
   let parsed;
   try { parsed = new URL(rawUrl); } catch (_) {
     $("newMonitorUrl").setCustomValidity("Enter a full URL beginning with https:// or http://.");
@@ -3353,8 +3398,10 @@ function submitAddMonitor(event) {
     return;
   }
   parsed.hash = "";
-  const target = makeGitHubIssueUrl(parsed.toString(), name, includeSelector, ignoreSelectors);
+  const target = makeGitHubIssueUrl(parsed.toString(), name, includeSelector, ignoreSelectors, crawlDepth);
   ["newMonitorUrl", "newMonitorName", "newMonitorIncludeSelector", "newMonitorIgnoreSelectors"].forEach(id => { $(id).value = ""; });
+  $("newMonitorDepth").value = "0";
+  $("newMonitorMetadataStatus").textContent = "";
   openGitHubRequest(target, "Submit the prefilled request on GitHub. The page is scanned once the request is accepted.");
 }
 
@@ -3983,8 +4030,24 @@ $("cancelAddMonitor").addEventListener("click", () => $("addMonitorDialog").clos
 $("addMonitorDialog").addEventListener("click", event => {
   if (event.target === $("addMonitorDialog")) $("addMonitorDialog").close();
 });
-$("newMonitorUrl").addEventListener("input", () => $("newMonitorUrl").setCustomValidity(""));
+$("newMonitorUrl").addEventListener("input", () => { $("newMonitorUrl").setCustomValidity(""); $("newMonitorMetadataStatus").textContent = ""; });
+$("autofillMonitorMetadata").addEventListener("click", suggestMonitorMetadata);
 $("addMonitorForm").addEventListener("submit", submitAddMonitor);
+$("closeDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog").close());
+$("cancelDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog").close());
+$("deleteMonitorDialog").addEventListener("click", event => { if (event.target === $("deleteMonitorDialog")) $("deleteMonitorDialog").close(); });
+$("confirmDeleteMonitor").addEventListener("click", submitDeleteMonitor);
+document.addEventListener("click", event => {
+  const button = event.target.closest && event.target.closest("[data-stop-monitor]"); if (!button) return;
+  const item = state.inventory.find(row => row.url_id === button.dataset.stopMonitor);
+  if (!item) { showToast("This page is no longer in the current inventory. Refresh and try again."); return; }
+  const source = sourceForItem(item);
+  const normalize = value => { try { const u = new URL(value); u.hash = ""; return u.toString().replace(/\\/$/, ""); } catch (_) { return String(value || ""); } };
+  state.pendingDelete = { url: item.canonical_url, sourceId: item.source_id, name: itemTitle(item), root: (source.seed_urls || []).some(url => normalize(url) === normalize(item.canonical_url)) };
+  $("deleteMonitorHeading").textContent = state.pendingDelete.root ? "Stop this monitor?" : "Stop monitoring this page?";
+  $("deleteMonitorExplanation").textContent = state.pendingDelete.root ? "Stopping this root also stops pages discovered beneath it." : "This page will be excluded from future scans; the rest of the monitor continues.";
+  $("deleteMonitorTarget").textContent = state.pendingDelete.name + " — " + state.pendingDelete.url; $("deleteMonitorDialog").showModal();
+});
 $("reviewForm").addEventListener("submit", submitReview);
 $("reviewForm").addEventListener("change", event => { if (event.target.name === "reviewDecision") syncReviewForm(); });
 $("closeReview").addEventListener("click", () => $("reviewDialog").close());
