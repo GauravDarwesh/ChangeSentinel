@@ -317,18 +317,19 @@ Deno.test('citation failure returns a verified source fallback instead of a dead
   }
 });
 
-Deno.test('paragraph-level citations are accepted while invalid paths still fail closed', async () => {
+Deno.test('paragraph citations pass and invalid model output falls back to validated indexed sources', async () => {
   reset(() => groqAnswer('The latest run had no changes.\nThe fetch and extraction error counts are zero. [Source: data/report.json]'));
   const accepted = await ask({ ip: '203.0.113.11' });
   assertEquals([accepted.status, accepted.body.answer], [200, 'The latest run had no changes.\nThe fetch and extraction error counts are zero. [Source: data/report.json]']);
 
   reset(() => groqAnswer('The latest run had no changes. [Source: data/fabricated.json]'));
   const rejected = await ask({ ip: '203.0.113.12' });
-  assertEquals([rejected.status, rejected.body.error_code, fake.refunds], [422, 'citation_validation_failed', 1]);
+  assertEquals([rejected.status, rejected.body.model, rejected.body.evidence_fallback, fake.refunds], [200, 'evidence-fallback', true, 0]);
+  if (!String(rejected.body.answer).includes('[Source: data/report.json]')) throw new Error('unsafe citation output was not replaced by a safe source fallback');
 
   reset(() => groqAnswer('- The latest run had no changes. [Source: data/report.json]\n- Fetch errors are zero.'));
   const uncitedBullet = await ask({ ip: '203.0.113.13' });
-  assertEquals([uncitedBullet.status, uncitedBullet.body.error_code, fake.refunds], [422, 'citation_validation_failed', 1]);
+  assertEquals([uncitedBullet.status, uncitedBullet.body.model, uncitedBullet.body.evidence_fallback, fake.refunds], [200, 'evidence-fallback', true, 0]);
 });
 
 Deno.test('an exact URL retrieves its stored evidence before fuzzy search results', async () => {
@@ -422,7 +423,8 @@ Deno.test('Markdown tables require citations on factual rows, not just the parag
     'Regulator | Change\n--- | ---\nFederal Reserve | Change detected in reporting forms. [Source: data/report.json]\nOSFI | Another change detected without a citation.'
   ));
   const answer = await ask({ ip: '203.0.113.24' });
-  assertEquals([answer.status, answer.body.error_code, answer.body.citation_validation?.uncited_line_count], [422, 'citation_validation_failed', 1]);
+  assertEquals([answer.status, answer.body.model, answer.body.evidence_fallback], [200, 'evidence-fallback', true]);
+  if (!String(answer.body.answer).includes('[Source: data/report.json]')) throw new Error('uncited table output was not replaced with an indexed source fallback');
 });
 
 Deno.test('Markdown tables accept a structurally valid header and a cited data row', async () => {
@@ -445,7 +447,8 @@ Deno.test('nested factual list items need their own citation', async () => {
     'Summary of the changes.\n  - An additional factual finding without a citation.\nSupporting details. [Source: data/report.json]'
   ));
   const answer = await ask({ ip: '203.0.113.27' });
-  assertEquals([answer.status, answer.body.error_code, answer.body.citation_validation?.uncited_line_count], [422, 'citation_validation_failed', 1]);
+  assertEquals([answer.status, answer.body.model, answer.body.evidence_fallback], [200, 'evidence-fallback', true]);
+  if (!String(answer.body.answer).includes('[Source: data/report.json]')) throw new Error('uncited nested list was not replaced with an indexed source fallback');
 });
 
 Deno.test('a visitor gets three questions a day', async () => {
@@ -498,10 +501,11 @@ Deno.test('a provider outage gives the question back', async () => {
   assertEquals(answer.headers.get('Retry-After'), '60');
 });
 
-Deno.test('an answer rejected by citation validation gives the question back', async () => {
+Deno.test('an answer rejected by citation validation returns a safe source fallback', async () => {
   reset(() => groqAnswer('An uncited claim.'));
   const answer = await ask({ ip: '203.0.113.6' });
-  assertEquals([answer.status, answer.body.error_code, answer.body.remaining, fake.refunds], [422, 'citation_validation_failed', 3, 1]);
+  assertEquals([answer.status, answer.body.model, answer.body.evidence_fallback, answer.body.remaining, fake.refunds], [200, 'evidence-fallback', true, 2, 0]);
+  if (!String(answer.body.answer).includes('[Source: data/report.json]')) throw new Error('source fallback did not point to the allowed indexed record');
 });
 
 Deno.test('internal failures are not echoed to the browser', async () => {
