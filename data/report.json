@@ -1,17 +1,17 @@
 {
   "schema_version": 2,
-  "run_id": "20261022T233144Z-2e72a904",
-  "generated_at": "2026-10-22T23:31:44.145298+00:00",
+  "run_id": "20261022T233613Z-8428bc76",
+  "generated_at": "2026-10-22T23:36:13.908774+00:00",
   "sources": [
     {
-      "id": "manual-f1df3c7d3e94",
-      "name": "OSFI BCAR 2027",
-      "regulator": "www.osfi-bsif.gc.ca",
+      "id": "manual-fe66388fe452",
+      "name": "Reporting Central and Structure Central User Guides",
+      "regulator": "www.frbservices.org",
       "seeds": [
-        "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
+        "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides"
       ],
       "allowed_prefixes": [
-        "https://www.osfi-bsif.gc.ca/"
+        "https://www.frbservices.org/"
       ],
       "initial_baseline": false
     },
@@ -45,22 +45,22 @@
       "initial_baseline": false
     },
     {
-      "id": "manual-fe66388fe452",
-      "name": "Reporting Central and Structure Central User Guides",
-      "regulator": "www.frbservices.org",
+      "id": "manual-f1df3c7d3e94",
+      "name": "OSFI BCAR 2027",
+      "regulator": "www.osfi-bsif.gc.ca",
       "seeds": [
-        "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides"
+        "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
       ],
       "allowed_prefixes": [
-        "https://www.frbservices.org/"
+        "https://www.osfi-bsif.gc.ca/"
       ],
       "initial_baseline": false
     }
   ],
   "source_runs": {
-    "manual-f1df3c7d3e94": {
-      "run_id": "20261022T233144Z-2e72a904",
-      "generated_at": "2026-10-22T23:31:44.145298+00:00",
+    "manual-fe66388fe452": {
+      "run_id": "20261022T233613Z-8428bc76",
+      "generated_at": "2026-10-22T23:36:13.908774+00:00",
       "trigger": "continuation"
     },
     "fed-reporting-forms-pilot": {
@@ -73,9 +73,9 @@
       "generated_at": "2026-10-22T23:28:09.407443+00:00",
       "trigger": "continuation"
     },
-    "manual-fe66388fe452": {
-      "run_id": "20261022T232628Z-a63bf6d7",
-      "generated_at": "2026-10-22T23:26:28.840985+00:00",
+    "manual-f1df3c7d3e94": {
+      "run_id": "20261022T233144Z-2e72a904",
+      "generated_at": "2026-10-22T23:31:44.145298+00:00",
       "trigger": "continuation"
     }
   },
@@ -105,20 +105,20 @@
   },
   "discovery": [
     {
-      "source_id": "manual-f1df3c7d3e94",
+      "source_id": "manual-fe66388fe452",
       "method": "http-resumable",
       "state": "PAUSED",
       "discovered": 1,
-      "html_processed": 12,
-      "successful_pages": 12,
+      "html_processed": 120,
+      "successful_pages": 120,
       "failed_pages": 0,
       "capped": false,
       "pending": 1,
       "unresolved_failures": 0,
       "checkpoint_schema_version": 3,
-      "config_fingerprint": "af310001c6d2c0874771a8e2d7500abfb0fc388324ff6627dfd5be44b65f9e8f",
-      "inventory": "data/discovery/manual-f1df3c7d3e94-inventory-*.txt",
-      "failure_ledger": "data/discovery/manual-f1df3c7d3e94-failures.jsonl"
+      "config_fingerprint": "4bd65a23894467aaa4fba3cfc4a3d0f54338f1b8183547a831cc8ca769e1817d",
+      "inventory": "data/discovery/manual-fe66388fe452-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-fe66388fe452-failures.jsonl"
     },
     {
       "source_id": "fed-reporting-forms-pilot",
@@ -153,20 +153,20 @@
       "failure_ledger": "data/discovery/fed-reporting-forms-detail-pilot-failures.jsonl"
     },
     {
-      "source_id": "manual-fe66388fe452",
+      "source_id": "manual-f1df3c7d3e94",
       "method": "http-resumable",
       "state": "PAUSED",
       "discovered": 1,
-      "html_processed": 110,
-      "successful_pages": 110,
+      "html_processed": 12,
+      "successful_pages": 12,
       "failed_pages": 0,
       "capped": false,
       "pending": 1,
       "unresolved_failures": 0,
       "checkpoint_schema_version": 3,
-      "config_fingerprint": "4bd65a23894467aaa4fba3cfc4a3d0f54338f1b8183547a831cc8ca769e1817d",
-      "inventory": "data/discovery/manual-fe66388fe452-inventory-*.txt",
-      "failure_ledger": "data/discovery/manual-fe66388fe452-failures.jsonl"
+      "config_fingerprint": "af310001c6d2c0874771a8e2d7500abfb0fc388324ff6627dfd5be44b65f9e8f",
+      "inventory": "data/discovery/manual-f1df3c7d3e94-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-f1df3c7d3e94-failures.jsonl"
     }
   ],
   "removal_guards": [],
