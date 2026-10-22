@@ -9,8 +9,8 @@ Cadence is the dashboard’s evidence-first view of regulatory deadlines and eff
 - Shared search and entry-type filters across the month grid/agenda and Upcoming view.
 - An Upcoming view grouping uncompleted overdue team commitments, today's entries, the next 7 days and later entries through the next 90 days. Recurring overdue entries show their most recent missed occurrence instead of flooding the list with every past cycle; selecting a date jumps back to that day in Month view.
 - An `.ics` export and subscription feed for personal or team calendars.
-- No email magic-link sign-in or self-service sign-up. Calendar editing uses password sign-in for pre-provisioned team accounts, with an in-dashboard password-reset flow that redirects to the deployed dashboard. The list API does not return reminder recipient addresses; ordinary edits preserve the private server-side list unless recipients are explicitly replaced.
-- Existing privately configured entries can still send their scheduled email reminders. Reminder recipient addresses are only read by the server-side scheduler and are omitted from the dashboard list response. The entry owner/notes are shared team calendar fields, so members with calendar access can see those fields.
+- No email magic-link sign-in or self-service sign-up. Calendar editing uses password sign-in for pre-provisioned team accounts, with an in-dashboard password-reset flow that redirects to the deployed dashboard. Calendar list and mutation responses omit reminder recipient addresses; ordinary edits preserve the private server-side list unless recipients are explicitly replaced.
+- Existing privately configured entries can still send their scheduled email reminders. Reminder recipient addresses stay on the server and are read by the scheduled sender; browser responses expose only whether reminders are configured. The entry owner/notes are shared team calendar fields, so members with calendar access can see those fields.
 
 ## Production setup
 
