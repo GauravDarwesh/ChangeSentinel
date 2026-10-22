@@ -411,7 +411,7 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
         return register_bulk_request(event, config_path, repository)
 
     url, requested_name, include_selector, ignore_selectors = request_from_issue(event, repository)
-    crawl_match = re.search(r"(?m)^Crawl depth:[ \\t]*(0|1|2|3)[ \\t]*$", body)
+    crawl_match = re.search(r"(?m)^Crawl depth:[ \t]*(0|1|2|3)[ \t]*$", body)
     crawl_depth = int(crawl_match.group(1)) if crawl_match else 0
     config = json.loads(config_path.read_text(encoding="utf-8"))
     sources = config.setdefault("sources", [])
