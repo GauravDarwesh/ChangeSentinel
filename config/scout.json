@@ -412,6 +412,33 @@
         "The monthly report is selected through a form and View button, not exposed as a normal HTML link on the search page.",
         "The annual index PDFs contain communication entries, but this listing source does not convert those entries into individual communication PDF URLs."
       ]
+    },
+    {
+      "id": "manual-bf930657f9a2",
+      "name": "User-configured source: US TIC Forms & Instructions",
+      "short_name": "US TIC Forms & Instructions",
+      "region": "OTHER",
+      "jurisdiction": "User-configured",
+      "hosts": [
+        "home.treasury.gov"
+      ],
+      "active": true,
+      "channels": [
+        {
+          "id": "manual-page-c6dccdae3ac5",
+          "type": "listing",
+          "label": "US TIC Forms & Instructions",
+          "url": "https://home.treasury.gov/data/treasury-international-capital-tic-system/tic-forms-instructions",
+          "required": true,
+          "link_prefixes": [
+            "https://home.treasury.gov/"
+          ],
+          "crawl_depth": 2
+        }
+      ],
+      "known_gaps": [
+        "Dashboard-added listing rooted at https://home.treasury.gov/data/treasury-international-capital-tic-system/tic-forms-instructions; only links on this host through depth 2 are discovered. Unlinked pages and paths beyond the selected depth are not covered."
+      ]
     }
   ]
 }
