@@ -4281,7 +4281,19 @@ function flattenTextContainer(container) {
   let flat = "";
   const map = [];
   let lastSpace = true;
+  let lastCell = null;
+  const isTableRow = root.nodeType === 1 && root.tagName === "TR";
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    // Raw HTML often has no literal whitespace between </td><td>. Insert one
+    // mapped-to-nothing separator while flattening a table row so cell offsets
+    // match the extracted pipe-delimited line without merging adjacent labels.
+    if (isTableRow) {
+      const cell = node.parentElement && node.parentElement.closest("td, th");
+      if (cell && cell !== lastCell) {
+        if (flat && !lastSpace) { flat += " "; map.push(null); lastSpace = true; }
+        lastCell = cell;
+      }
+    }
     const text = node.nodeValue.normalize("NFKC");
     for (let i = 0; i < text.length; i += 1) {
       const ch = /\s|\u00a0/.test(text[i]) ? " " : text[i];
@@ -4386,7 +4398,7 @@ function markTextInDocument(doc, index, targets, cls, otherFlat) {
       }
       const rowIndex = flattenTextContainer(row);
       const expected = normalizeForMatch(target.tableCells.join(" "));
-      if (rowIndex.flat !== expected) return;
+      if (normalizeForMatch(rowIndex.flat) !== expected) return;
       const rowRanges = [];
       let rowCursor = 0;
       target.parts.forEach(part => {
