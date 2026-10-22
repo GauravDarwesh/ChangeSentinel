@@ -1,8 +1,8 @@
 const REPOSITORY = 'GauravDarwesh/ChangeSentinel';
 const MODEL = 'openai/gpt-oss-20b';
-const MAX_CONTEXT_CHARS = 8500;
+const MAX_CONTEXT_CHARS = 6500;
 const MAX_QUESTION_CHARS = 1200;
-const MAX_OUTPUT_TOKENS = 800;
+const MAX_OUTPUT_TOKENS = 450;
 const ALLOWED_ORIGINS = new Set([
   'https://gauravdarwesh.github.io',
   'http://localhost:5173',
@@ -242,6 +242,47 @@ async function fetchDocsByPath(path: string): Promise<any[]> {
   return await restJson('ask_sentinel_chunks?' + params.toString(), {}, 8000);
 }
 
+async function fetchCurrentPageRecordsForUrls(urls: string[]): Promise<any[]> {
+  if (!urls.length) return [];
+
+  // Narrow the database scan to the hosts named by the user. Registry rows include
+  // old/inactive sources, so loading the first 200 rows globally can miss current URLs.
+  const canonicalUrls = new Set(urls.map(normalizeUrl));
+  const hosts = [...new Set(urls.flatMap((value) => {
+    try { return [new URL(value).hostname.toLowerCase()]; } catch (_) { return []; }
+  }))];
+  const matched = new Map<string, any>();
+  const pageSize = 200;
+
+  for (const host of hosts) {
+    let offset = 0;
+    while (true) {
+      const params = new URLSearchParams({
+        select: 'path,doc_type,content,is_core',
+        path: 'like.__current_page__/*',
+        content: 'like.*' + host + '*',
+        order: 'path.asc',
+        limit: String(pageSize),
+        offset: String(offset)
+      });
+      const rows = await restJson('ask_sentinel_chunks?' + params.toString(), {}, 10000);
+      if (!Array.isArray(rows) || rows.length === 0) break;
+
+      for (const row of rows) {
+        const record = safeJson(String(row.content || ''));
+        const canonicalUrl = typeof record?.canonical_url === 'string' ? record.canonical_url : '';
+        if (canonicalUrl && canonicalUrls.has(normalizeUrl(canonicalUrl))) {
+          matched.set(String(row.path || canonicalUrl), row);
+        }
+      }
+
+      if (rows.length < pageSize) break;
+      offset += rows.length;
+    }
+  }
+  return [...matched.values()];
+}
+
 async function searchDocs(question: string): Promise<any[]> {
   const rows = await restJson('rpc/search_ask_sentinel_chunks', {
     method: 'POST',
@@ -250,23 +291,73 @@ async function searchDocs(question: string): Promise<any[]> {
   return Array.isArray(rows) ? rows : [];
 }
 
+function normalizeQuestion(question: string): string {
+  return question.toLowerCase().replace(/[.!?]+$/g, '').replace(/\s+/g, ' ').trim();
+}
+
 function asksInventory(question: string): boolean {
-  return /\bwhat (?:is|are|was|were|do we|did we|does sentinel) (?:currently )?(?:being )?(?:monitor(?:ed|ing)?|track(?:ed|ing)?|watch(?:ed|ing)?)\b|\b(?:list|show|name|enumerate|all|everything|every|which|how many)\b.{0,100}\b(?:sources?|pages?|urls?|websites?|watchlist|inventory|scope|monitor(?:ed|ing)?)\b|\bmonitoring scope\b|\bcurrent inventory\b|\bactive sources\b|\beverything (?:that )?(?:we|sentinel) (?:monitor|track|watch)\b/i.test(question);
+  return /\bhow many\b.{0,100}\b(?:links?|urls?|pages?|websites?|sources?)\b|\b(?:list|show|name|enumerate|which|all|every|everything)\b.{0,100}\b(?:sources?|pages?|urls?|websites?|watchlist|inventory|scope|monitor(?:ed|ing)?)\b|\bwhat (?:is|are|was|were|do we|did we|does sentinel|is sentinel|are you|do you)\s+(?:sentinel\s+)?(?:currently\s+)?(?:being\s+)?(?:monitor(?:ed|ing)?|track(?:ed|ing)?|watch(?:ed|ing)?)\b|\bwhat (?:do we|does sentinel|are we)\s+(?:currently\s+)?(?:monitor|track|watch)\b|\b(?:current|active)\s+(?:monitoring\s+)?(?:inventory|scope|sources?|links?|urls?)\b|\bhow many (?:things|items) do we monitor\b|\beverything (?:that )?(?:we|sentinel) (?:monitor|track|watch)\b/i.test(question);
 }
+
+function asksRecentChanges(question: string): boolean {
+  return (/\b(last|past|previous|recent|over the)\s+(?:\d+\s+)?(?:days?|weeks?|months?)\b|\bthis week\b|\bchanges?\s+(?:over|in|during)\b/i.test(question))
+    && /\b(change|changes|changed|added|removed|new|updated|monitoring|run|scan|detected)\b/i.test(question);
+}
+
 function asksHistory(question: string): boolean {
-  return /\b(history|historical|earlier|previous|last (?:day|week|month|run|scan)|trend|over time|october|september|2026-\d\d-\d\d|20\d{6}t)\b/i.test(question);
+  return asksRecentChanges(question) ||
+    /\b(history|historical|earlier|previous|trend|over time|20\d{6}t|20\d{2}-\d{2}-\d{2})\b/i.test(question);
 }
+
 function asksImplementation(question: string): boolean {
   return /\b(code|implement(?:ation)?|function|workflow|architecture|algorithm|test suite|source code|how does ask sentinel work)\b/i.test(question);
 }
+
 function exactRunId(question: string): string | null {
   return question.match(/\b20\d{6}T\d{6}Z-[a-f0-9]{8}\b/i)?.[0] || null;
 }
+
 function exactEvidencePath(question: string): string | null {
   return question.match(/\bdata\/evidence\/[a-f0-9]{64}\.json\b/i)?.[0] || null;
 }
+
 function asksCurrentReport(question: string): boolean {
   return /\b(latest|current|most recent|last|this)\b.{0,60}\b(run|report|scan|monitor(?:ing)?)\b|\b(run|report|scan)\b.{0,60}\b(latest|current|most recent)\b/i.test(question);
+}
+
+function asksUrlLookup(question: string): boolean {
+  // A pasted URL is enough to trigger exact indexed-page lookup; users should not
+  // need to phrase the request with one of a few predetermined change-related verbs.
+  return extractUrls(question).length > 0;
+}
+
+function extractUrls(question: string): string[] {
+  return [...question.matchAll(/https?:\/\/[^\s<>"')\]]+/gi)]
+    .map((match) => match[0].replace(/[.,;!?]+$/g, ''))
+    .filter((url, index, all) => all.indexOf(url) === index)
+    .slice(0, 4);
+}
+
+function normalizeUrl(value: string): string {
+  try {
+    const url = new URL(value.trim());
+    // Match regmon.discovery.canonical(): lowercase only scheme/host, drop fragments
+    // and tracking parameters, remove a non-root trailing slash, and sort query pairs.
+    // URL paths are case-sensitive and must never be lowercased.
+    const path = url.pathname !== '/' && url.pathname.endsWith('/')
+      ? url.pathname.slice(0, -1)
+      : (url.pathname || '/');
+    const trackingParams = new Set(['fbclid', 'gclid', 'mc_cid', 'mc_eid']);
+    const pairs = [...url.searchParams.entries()]
+      .filter(([key]) => !key.toLowerCase().startsWith('utm_') && !trackingParams.has(key.toLowerCase()))
+      .sort(([ak, av], [bk, bv]) => ak < bk ? -1 : ak > bk ? 1 : av < bv ? -1 : av > bv ? 1 : 0);
+    const query = new URLSearchParams();
+    for (const [key, item] of pairs) query.append(key, item);
+    const suffix = query.toString();
+    return url.protocol.toLowerCase() + '//' + url.host.toLowerCase() + path + (suffix ? '?' + suffix : '');
+  } catch (_) {
+    return value.trim();
+  }
 }
 
 type AskSentinelEvidence = { context: string; sources: string[] };
@@ -351,75 +442,79 @@ type CitationValidation = {
 };
 
 function isConversationalQuestion(question: string): boolean {
-  const normalized = question.toLowerCase().replace(/[.!?]+$/g, '').trim();
-  return /^(?:hi|hello|hey|hiya|howdy|good morning|good afternoon|good evening|thanks|thank you|thx|ty|bye|goodbye|help|what can you do|what can ask sentinel do|how do i use ask sentinel)(?:\s+there)?$/.test(normalized);
+  return /^(?:hi|hello|hey|hiya|howdy|good morning|good afternoon|good evening|thanks|thank you|thx|ty|bye|goodbye|help|what can you do|what can ask sentinel do|how do i use ask sentinel)(?:\s+there)?$/.test(normalizeQuestion(question));
 }
 
 function conversationalAnswer(question: string): string | null {
-  const normalized = question.toLowerCase().replace(/[.!?]+$/g, '').trim();
-  if (/^(?:hi|hello|hey|hiya|howdy|good morning|good afternoon|good evening)(?:\s+there)?$/.test(normalized)) {
-    return 'Hello! I’m Ask Sentinel. Ask me about committed ChangeSentinel monitoring runs, recent changes, configured sources, alerts, or a specific evidence file. I’ll use the indexed records and link the evidence.';
+  const q = normalizeQuestion(question);
+  if (/^(?:hi|hello|hey|hiya|howdy|good morning|good afternoon|good evening)(?:\s+there)?$/.test(q)) {
+    return 'Hello! I’m Ask Sentinel. I can summarize committed monitoring runs, explain detected changes and errors, list currently monitored sources, and inspect a specific URL or evidence record.';
   }
-  if (/^(?:thanks|thank you|thx|ty)$/.test(normalized)) {
-    return 'You’re welcome. Ask another question whenever you’re ready.';
-  }
-  if (/^(?:bye|goodbye)$/.test(normalized)) {
-    return 'Goodbye! Come back whenever you need to check the monitoring record.';
-  }
-  if (/^(?:help|what can you do|what can ask sentinel do|how do i use ask sentinel)$/.test(normalized)) {
-    return 'I can summarize the latest committed monitoring run, explain detected changes and errors, distinguish active sources from archived ones, look up earlier runs, and inspect a specific evidence record. For the most precise answer, mention a regulator/source ID, run ID, date, URL, or evidence path.';
+  if (/^(?:thanks|thank you|thx|ty)$/.test(q)) return 'You’re welcome. Ask another question whenever you’re ready.';
+  if (/^(?:bye|goodbye)$/.test(q)) return 'Goodbye! Come back whenever you need to check the monitoring record.';
+  if (/^(?:help|what can you do|what can ask sentinel do|how do i use ask sentinel)$/.test(q)) {
+    return 'I can summarize the latest monitoring run; compare changes over a time range; report monitored-source scope; explain fetch/extraction errors; inspect a regulator, URL, run ID or evidence file; and distinguish active sources from archived ones. Try: “summarize changes over the last 7 days”, “how many URLs are monitored?”, or paste a monitored URL and ask what changed.';
   }
   return null;
 }
 
 function validateGroundedCitations(answer: string, allowedSources: string[]): CitationValidation {
-  // Every citation must reference evidence that was included in this request.
-  const citations = [...answer.matchAll(/\[Source:\s*([^\]]+)\]/gi)]
-    .map((match) => match[1].trim());
+  const citations = [...answer.matchAll(/\[Source:\s*([^\]]+)\]/gi)].map((match) => match[1].trim());
   const allowed = new Set(allowedSources);
   const invalidCitationCount = citations.filter((path) => !allowed.has(path)).length;
 
-  // Validate factual paragraphs/list items, not visual line wraps. A paragraph may
-  // contain several wrapped lines in Markdown, so requiring one citation per line
-  // rejects otherwise grounded answers when the model formats prose naturally.
-  const blocks = answer.split(/\n\s*\n/).map((block) => block.trim()).filter(Boolean);
+  // Validate prose paragraphs and individual list/table rows. A table header is exempt
+  // only when the next line is a Markdown separator; word-based guesses can exempt data.
   let uncitedLineCount = 0;
+  const blocks = answer.split(/\n\s*\n/).map((block) => block.trim()).filter(Boolean);
   for (const block of blocks) {
     const lines = block.split('\n').map((line) => line.trim()).filter(Boolean);
-    let proseLineCount = 0;
     let proseHasCitation = false;
+    let hasProse = false;
+    let inTable = false;
 
-    for (const line of lines) {
+    for (let index = 0; index < lines.length; index += 1) {
+      const line = lines[index];
       if (/^#{1,6}\s/.test(line)) continue;
-      const isListItem = /^(?:[-*•]\s+|\d+[.)]\s+)/.test(line);
-      const hasLineCitation = /\[Source:\s*[^\]]+\]/i.test(line);
-      if (isListItem) {
-        // Each bullet or numbered item stands on its own, even if a sibling
-        // item in this same Markdown block has a valid citation.
-        if (!hasLineCitation) uncitedLineCount += 1;
+      const isListItem = /^\s*(?:[-*•]\s+|\d+[.)]\s+)/.test(line);
+      const isTableSeparator = /^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$/.test(line);
+      const next = lines[index + 1] || '';
+      const nextIsSeparator = /^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$/.test(next);
+      const isTableRow = line.startsWith('|') || (line.includes('|') && (inTable || nextIsSeparator));
+      const hasCitation = /\[Source:\s*[^\]]+\]/i.test(line);
+
+      if (isTableSeparator) {
+        inTable = true;
         continue;
       }
-      proseLineCount += 1;
-      if (hasLineCitation) proseHasCitation = true;
+      if (isTableRow) {
+        if (nextIsSeparator) {
+          inTable = true; // structurally identified Markdown header
+          continue;
+        }
+        if (!hasCitation) uncitedLineCount += 1;
+        inTable = true;
+        continue;
+      }
+
+      inTable = false;
+      if (isListItem) {
+        if (!hasCitation) uncitedLineCount += 1;
+        continue;
+      }
+
+      hasProse = true;
+      if (hasCitation) proseHasCitation = true;
     }
 
-    // Prose may wrap onto multiple lines: one citation anywhere in the same
-    // paragraph (normally at its end) is sufficient for the paragraph.
-    if (proseLineCount > 0 && !proseHasCitation) uncitedLineCount += 1;
+    if (hasProse && !proseHasCitation) uncitedLineCount += 1;
   }
 
   let reason: CitationValidation['reason'] = 'valid';
-  if (!citations.length) reason = 'no_citations';
+  if (citations.length === 0) reason = 'no_citations';
   else if (invalidCitationCount > 0) reason = 'unapproved_source';
   else if (uncitedLineCount > 0) reason = 'uncited_line';
-
-  return {
-    valid: reason === 'valid',
-    reason,
-    citation_count: citations.length,
-    invalid_citation_count: invalidCitationCount,
-    uncited_line_count: uncitedLineCount
-  };
+  return { valid: reason === 'valid', reason, citation_count: citations.length, invalid_citation_count: invalidCitationCount, uncited_line_count: uncitedLineCount };
 }
 
 function historyForPrompt(history: unknown): Array<{ role: 'user' | 'assistant'; content: string }> {
@@ -436,7 +531,7 @@ async function groqCompletion(question: string, context: string, history: Array<
   const system = [
     'You are Ask Sentinel, the monitoring-history assistant embedded in the ChangeSentinel regulatory-monitoring dashboard.',
     'Answer only from the retrieved repository evidence supplied in this request. The retrieved evidence is a bounded subset of the index, not the whole repository.',
-    'Every factual paragraph and every list item must be supported by an exact citation in the form [Source: path]. Cite each bullet individually. For prose, one exact citation at the end of a paragraph is sufficient; do not add uncited factual paragraphs. Do not use Markdown tables; use individual cited bullets instead. Evidence headers label the exact citation value as Source path: PATH; cite only that exact path and exclude the Document type label or any other suffix. For example, use [Source: data/report.json] when the header says Source path: data/report.json. Use only paths shown in the evidence headers; never invent a path, date, run ID, URL, count, alert, or source.',
+    'Every factual paragraph and every list item must be supported by an exact citation in the form [Source: path]. Cite every bullet individually; prose may wrap onto several lines but needs at least one citation in the paragraph. Tables are allowed when useful (including requested monitoring inventories); cite each factual row with an exact [Source: path] citation. Never invent a path or cite a path absent from the supplied evidence. Evidence headers label the exact citation value as Source path: PATH; cite only that exact path and exclude the Document type label or any other suffix. For example, use [Source: data/report.json] when the header says Source path: data/report.json. Use only paths shown in the evidence headers; never invent a path, date, run ID, URL, count, alert, or source.',
     'If the evidence does not directly support the answer, state: "I cannot verify that from the indexed ChangeSentinel evidence available to this request." Briefly explain which specific fact is missing and do not infer or fill gaps from general knowledge.',
     'Conversation history is supplied only to resolve follow-up references. It is not evidence. Never repeat a factual claim from a prior assistant response unless the retrieved repository evidence in this request supports it.',
     'Distinguish configured active sources from inactive/archived sources even when historical URL registry entries remain. Distinguish real source changes from baseline migrations/extraction drift, superseded or false-positive alerts, and fetch/extraction failures. Keep current status separate from historical records.',
@@ -461,7 +556,12 @@ async function groqCompletion(question: string, context: string, history: Array<
   const raw = await response.text();
   if (!response.ok) throw new Error('Groq could not answer this request (' + response.status + '): ' + raw.slice(0, 220));
   const payload = safeJson(raw);
-  const value = payload?.choices?.[0]?.message?.content;
+  const choice = payload?.choices?.[0];
+  if (choice?.finish_reason === 'length') {
+    // Do not return a partial answer as though its facts were complete and verified.
+    throw new Error('Groq response reached the configured output limit before completion.');
+  }
+  const value = choice?.message?.content;
   const answer = typeof value === 'string' ? value.trim()
     : Array.isArray(value) ? value.map((part: any) => typeof part?.text === 'string' ? part.text : '').join('').trim()
     : '';
@@ -512,7 +612,6 @@ Deno.serve(async (req: Request) => {
   };
 
   try {
-    if (!cfg.groqKey) return respond(req, { error: 'GROQ_API is not configured in Supabase Edge Function secrets.' }, 503);
     phase = 'request_actor';
     const actor = await requestActor(req);
 
@@ -530,7 +629,13 @@ Deno.serve(async (req: Request) => {
     const question = typeof body.question === 'string' ? body.question.trim() : '';
     if (isConversationalQuestion(question)) {
       const answer = conversationalAnswer(question);
-      if (answer) return respond(req, { answer, remaining: await remainingFor(actor.id), resets_at: nextUtcReset(), model: 'local-response', indexed_commit: null, context_sources: [] });
+      if (answer) {
+        // A greeting/help answer is local and must not fail just because quota status
+        // cannot be read momentarily. It does not invoke Groq or consume a quota.
+        let remaining: number | null = null;
+        try { remaining = await remainingFor(actor.id); } catch (_) { /* keep local response available */ }
+        return respond(req, { answer, remaining, resets_at: nextUtcReset(), model: 'local-response', indexed_commit: null, context_sources: [] });
+      }
     }
     if (!question) return respond(req, { error: 'Enter a question for Ask Sentinel.' }, 400);
     if (question.length > MAX_QUESTION_CHARS) return respond(req, { error: 'Questions must be 1,200 characters or fewer.' }, 400);
@@ -543,11 +648,12 @@ Deno.serve(async (req: Request) => {
     const targetedDocs: any[] = [];
 
     if (asksInventory(question)) {
-      // Prefer the compact active/inactive scope summary. The full URL inventory is too large
-      // and its alphabetical ordering puts archived EBA rows before current sources.
+      // These compact records are authoritative for current configured scope and indexed totals.
       const scope = await fetchDocsByPath('__current_scope__');
+      const overview = await fetchDocsByPath('__repo_overview__');
       if (scope.length) targetedDocs.push(...scope);
-      else targetedDocs.push(...await fetchDocsByPath('__repo_overview__')); // existing-index fallback
+      if (overview.length) targetedDocs.push(...overview);
+      if (!scope.length && !overview.length) targetedDocs.push(...await fetchDocsByPath('__current_inventory__'));
     }
 
     const requestedRunId = exactRunId(question);
@@ -582,7 +688,25 @@ Deno.serve(async (req: Request) => {
       }
       targetedDocs.push(...exactEvidenceDocs);
     } else if (asksHistory(question) && !requestedRunId) {
+      if (asksRecentChanges(question)) targetedDocs.push(...await fetchDocsByPath('__current_report__'));
       targetedDocs.push(...await fetchDocsByPath('__recent_history__'));
+    }
+
+    if (asksUrlLookup(question)) {
+      // Exact canonical URL match wins over fuzzy page/snapshot matches. Follow the
+      // stored evidence_location path from that exact page record when available.
+      const exactPages = await fetchCurrentPageRecordsForUrls(extractUrls(question));
+      if (exactPages.length) {
+        const exactEvidence: any[] = [];
+        for (const page of exactPages) {
+          const record = safeJson(String(page.content || ''));
+          const evidencePath = typeof record?.evidence_location === 'string' ? record.evidence_location : '';
+          if (/^data\/evidence\/[a-f0-9]{64}\.json$/.test(evidencePath)) {
+            exactEvidence.push(...await fetchDocsByPath(evidencePath));
+          }
+        }
+        targetedDocs.unshift(...exactEvidence, ...exactPages);
+      }
     }
 
     const evidence = buildContext(question, docs, targetedDocs);

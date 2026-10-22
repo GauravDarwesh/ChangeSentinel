@@ -27,7 +27,7 @@ class TestAskSentinelContract(unittest.TestCase):
     def test_backend_reads_index_but_never_indexes_in_a_request(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
         for token in ("ask_sentinel_chunks", "search_ask_sentinel_chunks", "__current_inventory__",
-                      "readIndexState", "openai/gpt-oss-20b", "GROQ_API", "MAX_CONTEXT_CHARS = 8500"):
+                      "readIndexState", "openai/gpt-oss-20b", "GROQ_API", "MAX_CONTEXT_CHARS = 6500"):
             with self.subTest(token=token):
                 self.assertIn(token, backend)
         for forbidden in ("api.github.com", "raw.githubusercontent.com", "syncRepository", "ask_sentinel_documents"):
@@ -155,7 +155,7 @@ class TestAskSentinelContract(unittest.TestCase):
 
     def test_citation_validation_accepts_paragraph_end_citations_but_rejects_fabricated_paths(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
-        self.assertIn("one exact citation at the end of a paragraph is sufficient", backend)
+        self.assertIn("prose may wrap onto several lines but needs at least one citation in the paragraph.", backend)
         self.assertIn("const invalidCitationCount = citations.filter((path) => !allowed.has(path)).length;", backend)
         self.assertIn("else if (invalidCitationCount > 0) reason = 'unapproved_source';", backend)
 
@@ -255,11 +255,26 @@ class TestAskSentinelContract(unittest.TestCase):
 
     def test_paragraph_level_citations_still_require_approved_sources(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
-        self.assertIn("Validate factual paragraphs/list items, not visual line wraps.", backend)
-        self.assertIn("if (!hasLineCitation) uncitedLineCount += 1;", backend)
-        self.assertIn("if (proseLineCount > 0 && !proseHasCitation) uncitedLineCount += 1;", backend)
+        self.assertIn("Validate prose paragraphs and individual list/table rows.", backend)
+        self.assertIn("const isListItem = /^\\s*(?:[-*•]\\s+|\\d+[.)]\\s+)/.test(line);", backend)
+        self.assertIn("const nextIsSeparator =", backend)
+        self.assertIn("if (!hasCitation) uncitedLineCount += 1;", backend)
+        self.assertIn("if (hasProse && !proseHasCitation) uncitedLineCount += 1;", backend)
         self.assertIn("const invalidCitationCount = citations.filter((path) => !allowed.has(path)).length;", backend)
         self.assertIn("else if (invalidCitationCount > 0) reason = 'unapproved_source';", backend)
+
+
+    def test_recent_period_inventory_and_exact_url_intents_are_explicit(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("function asksRecentChanges(question: string): boolean", backend)
+        self.assertIn("function asksUrlLookup(question: string): boolean", backend)
+        self.assertIn('return extractUrls(question).length > 0;', backend)
+        self.assertIn("function fetchCurrentPageRecordsForUrls(urls: string[]): Promise<any[]>", backend)
+        self.assertIn("canonicalUrls.has(normalizeUrl(canonicalUrl))", backend)
+        self.assertIn("content: 'like.*' + host + '*'", backend)
+        self.assertIn("offset: String(offset)", backend)
+        self.assertIn("URL paths are case-sensitive and must never be lowercased.", backend)
+        self.assertIn("Tables are allowed when useful", backend)
 
 
     def test_grounding_errors_use_http_errors_the_existing_frontend_displays(self):
