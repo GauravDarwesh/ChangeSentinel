@@ -487,6 +487,8 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
         raise ValueError("config/sources.json must contain a sources array.")
 
     # Resolve metadata once; it is advisory and falls back to URL-derived naming.
+
+    # Resolve metadata once; a failed lookup falls back to URL-derived naming.
     metadata = _fetch_page_metadata(url) if not requested_name else {}
     display_name = requested_name or metadata.get("title", "")
 
