@@ -1,8 +1,21 @@
 {
   "schema_version": 2,
-  "run_id": "20261022T230115Z-4a46a928",
-  "generated_at": "2026-10-22T23:01:15.999226+00:00",
+  "run_id": "20261022T230303Z-b6c6d5e0",
+  "generated_at": "2026-10-22T23:03:03.147993+00:00",
   "sources": [
+    {
+      "id": "fed-reporting-forms-pilot",
+      "name": "Federal Reserve \u2014 Reporting Forms Pilot (Exact URL Allowlist)",
+      "regulator": "Board of Governors of the Federal Reserve System",
+      "seeds": [
+        "https://www.federalreserve.gov/apps/reportingforms/review",
+        "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+      ],
+      "allowed_prefixes": [
+        "https://www.federalreserve.gov/apps/reportingforms/"
+      ],
+      "initial_baseline": false
+    },
     {
       "id": "fed-reporting-forms-detail-pilot",
       "name": "Federal Reserve \u2014 Recently Updated Forms Detail Pilot (Exact URL Allowlist)",
@@ -16,19 +29,6 @@
       ],
       "allowed_prefixes": [
         "https://www.federalreserve.gov/apps/reportingforms/Report/Index/"
-      ],
-      "initial_baseline": false
-    },
-    {
-      "id": "fed-reporting-forms-pilot",
-      "name": "Federal Reserve \u2014 Reporting Forms Pilot (Exact URL Allowlist)",
-      "regulator": "Board of Governors of the Federal Reserve System",
-      "seeds": [
-        "https://www.federalreserve.gov/apps/reportingforms/review",
-        "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
-      ],
-      "allowed_prefixes": [
-        "https://www.federalreserve.gov/apps/reportingforms/"
       ],
       "initial_baseline": false
     },
@@ -58,14 +58,14 @@
     }
   ],
   "source_runs": {
+    "fed-reporting-forms-pilot": {
+      "run_id": "20261022T230303Z-b6c6d5e0",
+      "generated_at": "2026-10-22T23:03:03.147993+00:00",
+      "trigger": "continuation"
+    },
     "fed-reporting-forms-detail-pilot": {
       "run_id": "20261022T230115Z-4a46a928",
       "generated_at": "2026-10-22T23:01:15.999226+00:00",
-      "trigger": "continuation"
-    },
-    "fed-reporting-forms-pilot": {
-      "run_id": "20261022T225532Z-db76010d",
-      "generated_at": "2026-10-22T22:55:32.642756+00:00",
       "trigger": "continuation"
     },
     "manual-f1df3c7d3e94": {
@@ -105,6 +105,22 @@
   },
   "discovery": [
     {
+      "source_id": "fed-reporting-forms-pilot",
+      "method": "http-resumable",
+      "state": "PAUSED",
+      "discovered": 2,
+      "html_processed": 90,
+      "successful_pages": 90,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 2,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "5d911c0d2c2f19e0faf60e514dffc3abf5a2e07fdfc54926a9275ad434d7d063",
+      "inventory": "data/discovery/fed-reporting-forms-pilot-inventory-*.txt",
+      "failure_ledger": "data/discovery/fed-reporting-forms-pilot-failures.jsonl"
+    },
+    {
       "source_id": "fed-reporting-forms-detail-pilot",
       "method": "http-resumable",
       "state": "PAUSED",
@@ -119,22 +135,6 @@
       "config_fingerprint": "da76983ccc4888706d05a6f3790af3f986e6e1e8a5890cc44590ba45e1304075",
       "inventory": "data/discovery/fed-reporting-forms-detail-pilot-inventory-*.txt",
       "failure_ledger": "data/discovery/fed-reporting-forms-detail-pilot-failures.jsonl"
-    },
-    {
-      "source_id": "fed-reporting-forms-pilot",
-      "method": "http-resumable",
-      "state": "PAUSED",
-      "discovered": 2,
-      "html_processed": 80,
-      "successful_pages": 80,
-      "failed_pages": 0,
-      "capped": false,
-      "pending": 2,
-      "unresolved_failures": 0,
-      "checkpoint_schema_version": 3,
-      "config_fingerprint": "5d911c0d2c2f19e0faf60e514dffc3abf5a2e07fdfc54926a9275ad434d7d063",
-      "inventory": "data/discovery/fed-reporting-forms-pilot-inventory-*.txt",
-      "failure_ledger": "data/discovery/fed-reporting-forms-pilot-failures.jsonl"
     },
     {
       "source_id": "manual-f1df3c7d3e94",
