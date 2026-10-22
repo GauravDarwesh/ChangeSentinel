@@ -1140,6 +1140,10 @@ select.field-input { appearance: auto; }
     .cadence-stat-label { color: var(--ink-3); font-size: 11px; }
     .cadence-stat strong { font: 500 23px/1.15 var(--font-ui); color: var(--ink); }
     .cadence-stat-note { color: var(--ink-3); font-size: 11px; }
+    .cadence-filter-row { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; margin: 0 0 14px; }
+    .cadence-filter-row .field-input { margin: 0; min-width: 0; height: 36px; font-size: 12.5px; }
+    .cadence-filter-search { flex: 1 1 260px; max-width: 420px; }
+    .cadence-filter-type { flex: 0 1 230px; }
     .cadence-month-toolbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 11px; }
     .cadence-month-nav { display: flex; align-items: center; gap: 8px; min-width: 0; }
     .cadence-month-nav h2 { margin: 0 7px; font: 500 22px/1.2 var(--font-ui); letter-spacing: -.025em; white-space: nowrap; }
@@ -1209,6 +1213,8 @@ select.field-input { appearance: auto; }
       .cadence-calendar-foot { align-items: flex-start; }
     }
     @media (max-width: 620px) {
+      .cadence-filter-row { align-items: stretch; }
+      .cadence-filter-search, .cadence-filter-type { flex: 1 1 100%; max-width: none; width: 100%; }
       .cadence-shell { padding: 17px 12px 24px; }
       .cadence-header { display: block; }
       .cadence-header-actions { justify-content: flex-start; margin-top: 15px; }
@@ -1575,6 +1581,14 @@ select.field-input { appearance: auto; }
             <div class="cadence-stat"><span class="cadence-stat-label">This month</span><strong id="cadenceStatMonth">—</strong><span class="cadence-stat-note">Regulatory dates</span></div>
             <div class="cadence-stat"><span class="cadence-stat-label">Expected updates</span><strong id="cadenceStatExpected">—</strong><span class="cadence-stat-note">Tracked cycles</span></div>
             <div class="cadence-stat"><span class="cadence-stat-label">Reminders</span><strong id="cadenceStatReminders">—</strong><span class="cadence-stat-note">Email-enabled entries</span></div>
+          </div>
+          <div class="cadence-filter-row" role="search" aria-label="Filter calendar entries">
+            <label class="visually-hidden" for="cadenceSearch">Search calendar entries</label>
+            <input class="field-input cadence-filter-search" id="cadenceSearch" type="search" maxlength="160" placeholder="Search dates, forms, owners or notes…">
+            <label class="visually-hidden" for="cadenceTypeFilter">Filter by entry type</label>
+            <select class="field-input cadence-filter-type" id="cadenceTypeFilter">
+              <option value="ALL">All entry types</option><option value="DETECTED">ChangeSentinel dates</option><option value="EXPECTED">Expected updates &amp; deadlines</option><option value="TEAM">Team tasks &amp; checkpoints</option>
+            </select>
           </div>
           <div class="cadence-month-toolbar">
             <div class="cadence-month-nav">
@@ -2045,7 +2059,7 @@ select.field-input { appearance: auto; }
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="dashboard-lib.js?v=20261022-cadence-editor-1"></script>
-  <script src="dashboard.js?v=20261022-cadence-editor-1"></script>
+  <script src="dashboard.js?v=20261022-cadence-filter-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.
