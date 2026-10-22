@@ -1772,7 +1772,17 @@
       <div>
         <label class="field-label-text" for="newMonitorUrl">Page URL</label>
         <input class="field-input" id="newMonitorUrl" name="url" type="url" placeholder="https://www.example.com/policy-page" autocomplete="url" required>
-        <div class="field-help">Use the exact public page. Only this URL is monitored, not the whole site.</div>
+        <div class="field-help">Enter a public page. By default, only this URL is monitored; you can optionally follow same-site links below.</div>
+        <div class="bulk-actions"><button class="btn" id="autofillMonitorMetadata" type="button">Auto-fill name</button><span id="newMonitorMetadataStatus" class="field-help" role="status" aria-live="polite"></span></div>
+      </div>
+      <div>
+        <label class="field-label-text" for="newMonitorDepth">Follow linked pages</label>
+        <select class="field-input" id="newMonitorDepth" name="crawlDepth"><option value="0" selected>Level 0 — this page only</option><option value="1">Level 1 — direct links</option><option value="2">Level 2 — links two clicks away</option><option value="3">Level 3 — links three clicks away</option></select>
+        <div class="field-help">The starting page is depth 0. Levels 1–3 include same-host pages up to that many clicks away; off-site links are never followed.</div>
+      </div>
+      <div>
+        <label class="check-row" for="newMonitorScout"><input type="checkbox" id="newMonitorScout" disabled> Also add to Scout for weekly link discovery</label>
+        <div class="field-help" id="newMonitorScoutHelp" aria-live="polite">Choose Level 1–3 to enable Scout. It will revisit this page weekly and surface newly linked or replacement documents, including PDFs, in Scout for review. Scout discoveries are suggestions; they are not silently added as monitors.</div>
       </div>
       <div>
         <label class="field-label-text" for="newMonitorName">Display name <span>Optional</span></label>
@@ -1810,6 +1820,10 @@
         </div>
       </section>
     </form>
+  </dialog>
+  <dialog class="modal" id="deleteMonitorDialog" aria-labelledby="deleteMonitorHeading">
+    <div class="modal-head"><div><h2 id="deleteMonitorHeading">Stop monitoring this page?</h2><p id="deleteMonitorExplanation">The page will no longer be checked. Existing reports and saved evidence are kept.</p></div><button class="btn btn-quiet" id="closeDeleteMonitor" type="button" aria-label="Close">Close</button></div>
+    <div class="modal-body"><p id="deleteMonitorTarget" class="field-help"></p><p class="modal-info">This change is submitted for owner approval on GitHub, like adding a link. Stopping a crawl root also stops pages discovered beneath it.</p><div class="modal-actions"><button class="btn" id="cancelDeleteMonitor" type="button">Cancel</button><button class="btn btn-primary" id="confirmDeleteMonitor" type="button">Continue on GitHub</button></div></div>
   </dialog>
   <dialog class="modal scout-source-modal" id="scoutSourceDialog" aria-labelledby="scoutSourceHeading">
     <div class="modal-head">

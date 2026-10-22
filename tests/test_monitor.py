@@ -535,7 +535,7 @@ class TestDiscovery(unittest.TestCase):
                 (Path(tmp) / "discovery" / "eba-test-checkpoint.json").read_text(encoding="utf-8")
             )
             inventory_files = sorted((Path(tmp) / "discovery").glob("eba-test-inventory-*.txt"))
-            self.assertEqual(checkpoint["schema_version"], 2)
+            self.assertEqual(checkpoint["schema_version"], 3)
             self.assertNotIn("discovered", checkpoint)
             self.assertNotIn("processed", checkpoint)
             self.assertTrue(inventory_files)
@@ -597,7 +597,7 @@ class TestDiscovery(unittest.TestCase):
         self.assertEqual(metadata["state"], "PAUSED")
         self.assertEqual(metadata["html_processed"], 1)
         self.assertEqual(metadata["failed_pages"], 0)
-        self.assertEqual(checkpoint["schema_version"], 2)
+        self.assertEqual(checkpoint["schema_version"], 3)
         self.assertEqual(checkpoint["processed_count"], 1)
         self.assertEqual(checkpoint["pending"], ["https://www.eba.europa.eu/a"])
         self.assertIn("https://www.eba.europa.eu/documents/a.pdf", inventory)
@@ -1060,6 +1060,102 @@ class TestDiscovery(unittest.TestCase):
         self.assertEqual(mock_get.call_count, 4)
         self.assertEqual(metadata["state"], "COMPLETE")
         self.assertEqual(metadata["failed_pages"], 0)
+
+
+    @patch("regmon.discovery.validate_public_http_url", return_value=None)
+    @patch("regmon.discovery.requests.get")
+    def test_http_discovery_honors_each_configured_crawl_depth(self, mock_get, _validate):
+        root = "https://www.eba.europa.eu/homepage"
+        pages = {
+            root: '<a href="/level-1">Level one</a><a href="https://outside.example.org/not-followed">Offsite</a>',
+            "https://www.eba.europa.eu/level-1": '<a href="/level-2">Level two</a>',
+            "https://www.eba.europa.eu/level-2": '<a href="/level-3">Level three</a>',
+            "https://www.eba.europa.eu/level-3": '<a href="/level-4">Level four</a>',
+        }
+
+        def response_for(url, **kwargs):
+            return Mock(
+                status_code=200,
+                headers={"content-type": "text/html; charset=UTF-8"},
+                text=pages[url],
+                url=url,
+            )
+
+        for depth in range(4):
+            with self.subTest(depth=depth), tempfile.TemporaryDirectory() as tmp:
+                mock_get.reset_mock()
+                mock_get.side_effect = response_for
+                source = SourceConfig(
+                    id="depth-test",
+                    name="Depth test",
+                    regulator="European Banking Authority",
+                    seed_urls=(root,),
+                    allowed_prefixes=("https://www.eba.europa.eu/",),
+                    allowed_domains=("www.eba.europa.eu",),
+                    crawl_depth=depth,
+                    discovery_http_workers=1,
+                    discovery_slice_seconds=0,
+                    discovery_max_pages_per_slice=200,
+                )
+                urls = http_discover(source, Path(tmp))
+                metadata = json.loads(
+                    (Path(tmp) / "discovery" / "depth-test.json").read_text(encoding="utf-8")
+                )
+
+            expected = [root] + [
+                f"https://www.eba.europa.eu/level-{level}" for level in range(1, depth + 1)
+            ]
+            self.assertEqual(urls, expected)
+            # To discover distance N, pages at distances 0..N-1 must be fetched.
+            self.assertEqual(mock_get.call_count, depth)
+            self.assertEqual(metadata["state"], "COMPLETE")
+            self.assertFalse(any("outside.example.org" in url for url in urls))
+            self.assertNotIn("level-4", urls)
+
+    @patch("regmon.discovery.time.sleep", return_value=None)
+    @patch("regmon.discovery.validate_public_http_url", return_value=None)
+    @patch("regmon.discovery.requests.get")
+    def test_retry_after_failure_does_not_bypass_crawl_depth(self, mock_get, _validate, _sleep):
+        root = "https://www.eba.europa.eu/homepage"
+        child = "https://www.eba.europa.eu/level-1"
+        first_failure = Mock(
+            status_code=503,
+            headers={"content-type": "text/html; charset=UTF-8"},
+            text="temporary failure",
+            url=root,
+        )
+        recovered = Mock(
+            status_code=200,
+            headers={"content-type": "text/html; charset=UTF-8"},
+            text='<a href="/level-1">Level one</a>',
+            url=root,
+        )
+        mock_get.side_effect = [first_failure, recovered]
+        source = SourceConfig(
+            id="depth-retry-test",
+            name="Depth retry test",
+            regulator="European Banking Authority",
+            seed_urls=(root,),
+            allowed_prefixes=("https://www.eba.europa.eu/",),
+            allowed_domains=("www.eba.europa.eu",),
+            crawl_depth=1,
+            discovery_http_workers=1,
+            discovery_http_attempts=1,
+            discovery_slice_seconds=0,
+            discovery_max_pages_per_slice=200,
+        )
+
+        with tempfile.TemporaryDirectory() as tmp:
+            urls = http_discover(source, Path(tmp))
+            metadata = json.loads(
+                (Path(tmp) / "discovery" / "depth-retry-test.json").read_text(encoding="utf-8")
+            )
+
+        self.assertEqual(urls, [root, child])
+        self.assertEqual(mock_get.call_count, 2)
+        self.assertEqual(metadata["state"], "COMPLETE")
+        self.assertEqual(metadata["failed_pages"], 1)
+
 
     @patch("regmon.discovery._stealth_discover")
     @patch("regmon.discovery.http_discover")

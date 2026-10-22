@@ -92,5 +92,23 @@ class TestConfig(unittest.TestCase):
         ))
 
 
+    def test_crawl_depth_values_are_validated_and_defaults_remain_legacy(self):
+        from regmon.config import SourceConfig
+        source = {
+            "id": "manual", "name": "Manual page", "regulator": "example.com",
+            "seed_urls": ["https://example.com/policy"],
+            "allowed_prefixes": ["https://example.com/"],
+            "allowed_domains": ["example.com"],
+        }
+        parsed = SourceConfig.from_dict(source)
+        self.assertEqual(parsed.crawl_depth, -1)
+        bounded = SourceConfig.from_dict({**source, "crawl_depth": 2,
+                                          "excluded_urls": ["https://example.com/policy/annex"]})
+        self.assertEqual(bounded.crawl_depth, 2)
+        self.assertEqual(bounded.excluded_urls, ("https://example.com/policy/annex",))
+        with self.assertRaisesRegex(ValueError, "crawl_depth"):
+            SourceConfig.from_dict({**source, "crawl_depth": 4})
+
+
 if __name__ == "__main__":
     unittest.main()

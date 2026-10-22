@@ -168,6 +168,23 @@ class TestCommitStateHelper(unittest.TestCase):
 
 
 class TestScoutWorkflowContract(unittest.TestCase):
+    def test_add_monitor_option_updates_scout_config_and_starts_a_baseline(self):
+        workflow = (WORKFLOWS / "register-monitor.yml").read_text(encoding="utf-8")
+        register = workflow[workflow.index("- name: Register URL and commit source configuration"):
+                            workflow.index("- name: Publish updated source configuration to Pages")]
+        self.assertIn("--scout-config config/scout.json", register)
+        self.assertIn("git diff --quiet -- config/sources.json config/scout.json", register)
+        self.assertIn("git add config/sources.json config/scout.json", register)
+        self.assertIn("SCOUT_REGULATOR_ID", register)
+        initial = workflow[workflow.index("- name: Start initial Scout discovery baseline"):
+                           workflow.index("- name: Confirm registration on the request")]
+        self.assertIn("if: steps.register.outputs.scout_enabled == 'true'", initial)
+        self.assertIn("gh workflow run scout.yml", initial)
+        # The regular weekly schedule remains the source of future recrawls.
+        scout = (WORKFLOWS / "scout.yml").read_text(encoding="utf-8")
+        self.assertIn('cron: "17 4 * * 1"', scout)
+
+
     def test_weekly_sweep_commits_only_scout_state_with_no_token_during_parsing(self):
         workflow = (WORKFLOWS / "scout.yml").read_text(encoding="utf-8")
         self.assertIn('cron: "17 4 * * 1"', workflow)

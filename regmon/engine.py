@@ -442,6 +442,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             allowed_urls=source.allowed_urls,
             allowed_resource_prefixes=source.allowed_resource_prefixes,
             excluded_prefixes=source.excluded_prefixes,
+            excluded_urls=source.excluded_urls,
             max_bytes=int(DEFAULTS.get("max_response_bytes", 200 * 1024 * 1024)),
         )
         item.update({

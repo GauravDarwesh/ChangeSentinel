@@ -73,6 +73,7 @@ def fetch(
     allowed_urls: tuple[str, ...] | list[str] | None = None,
     allowed_resource_prefixes: tuple[str, ...] | list[str] | None = None,
     excluded_prefixes: tuple[str, ...] | list[str] | None = None,
+    excluded_urls: tuple[str, ...] | list[str] | None = None,
     max_bytes: int | None = None,
 ) -> FetchResult:
     last_error = None
@@ -89,6 +90,7 @@ def fetch(
     scoped_prefixes = tuple(str(value) for value in (allowed_prefixes or []))
     scoped_resource_prefixes = tuple(str(value) for value in (allowed_resource_prefixes or []))
     scoped_urls = {canonical(str(value)) for value in (allowed_urls or [])}
+    excluded_exact_urls = {canonical(str(value)) for value in (excluded_urls or [])}
     excluded_paths = tuple(
         (urlsplit(str(value)).path.rstrip("/") or "/") for value in (excluded_prefixes or [])
     )
@@ -98,6 +100,8 @@ def fetch(
         if scoped_domains and str(parsed_target.hostname or "").lower() not in scoped_domains:
             raise ValueError(f"Fetch redirect target is outside allowed domains: {target}")
         normalized_target = canonical(target)
+        if normalized_target in excluded_exact_urls:
+            raise ValueError(f"Fetch target is explicitly excluded from this monitor: {target}")
         if (scoped_prefixes or scoped_resource_prefixes) and not any(
             normalized_target.startswith(prefix)
             for prefix in (*scoped_prefixes, *scoped_resource_prefixes)

@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   register:
-    if: ${{ github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, '[ChangeSentinel] Add monitor') }}
+    if: ${{ github.event.issue.user.login == github.repository_owner && (startsWith(github.event.issue.title, '[ChangeSentinel] Add monitor') || startsWith(github.event.issue.title, '[ChangeSentinel] Delete monitor')) }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -34,11 +34,11 @@ jobs:
 
       # Registration only imports BeautifulSoup and standard-library modules.
       # Avoid installing the heavyweight document-processing stack in this job.
-      - name: Install registration dependency
-        run: python -m pip install --disable-pip-version-check beautifulsoup4==4.14.3
+      - name: Install registration dependencies
+        run: python -m pip install --disable-pip-version-check beautifulsoup4==4.14.3 requests==2.34.2
 
       - name: Preflight registration imports
-        run: python -c "from bs4 import BeautifulSoup; from regmon.register_monitor import register_request; print('Monitor registration imports OK')"
+        run: python -c "from bs4 import BeautifulSoup; from regmon.register_monitor import register_request; from regmon.scout.profiles import load_config; print('Monitor and Scout registration imports OK')"
 
       - name: Register URL and commit source configuration
         id: register
@@ -56,22 +56,30 @@ jobs:
             python -m regmon.register_monitor \
               --event "$GITHUB_EVENT_PATH" \
               --config config/sources.json \
+              --scout-config config/scout.json \
               --output "$RUNNER_TEMP/monitor-registration.json"
             SOURCE_IDS="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(";".join(d.get("source_ids") or [d["source_id"]]))')"
             URL="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json"))["url"])')"
             CREATED="$(python -c 'import json,os; print(str(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json"))["created"]).lower())')"
+            DELETED="$(python -c 'import json,os; print(str(bool(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("deleted", False))).lower())')"
+            SCOUT_ENABLED="$(python -c 'import json,os; print(str(bool(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("scout_enabled", False))).lower())')"
+            SCOUT_CHANNEL_ID="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("scout_channel_id", ""))')"
+            SCOUT_REGULATOR_ID="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("scout_regulator_id", ""))')"
+            CRAWL_DEPTH="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("crawl_depth", 0))')"
             BULK="$(python -c 'import json,os; print(str(bool(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("bulk", False))).lower())')"
             COUNT="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("count", 1))')"
             CREATED_COUNT="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(d.get("created_count", int(d["created"])))')"
             EXISTING_COUNT="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(d.get("existing_count", int(not d["created"])))')"
-            if git diff --quiet -- config/sources.json; then
-              echo "All requested URLs are already configured; continuing with their existing sources."
+            if git diff --quiet -- config/sources.json config/scout.json; then
+              echo "All requested monitor and Scout settings are already configured."
               success=true
               break
             fi
-            git add config/sources.json
+            git add config/sources.json config/scout.json
             if [ "$BULK" = "true" ]; then
               git commit -m "Register manually requested monitor batch ($COUNT links)"
+            elif [ "$SCOUT_ENABLED" = "true" ]; then
+              git commit -m "Register monitor and weekly Scout discovery"
             else
               git commit -m "Register manually requested monitor $(printf '%s' "$SOURCE_IDS" | cut -d';' -f1)"
             fi
@@ -89,6 +97,11 @@ jobs:
           echo "source_ids=$SOURCE_IDS" >> "$GITHUB_OUTPUT"
           echo "monitor_url=$URL" >> "$GITHUB_OUTPUT"
           echo "created=$CREATED" >> "$GITHUB_OUTPUT"
+          echo "deleted=$DELETED" >> "$GITHUB_OUTPUT"
+          echo "scout_enabled=$SCOUT_ENABLED" >> "$GITHUB_OUTPUT"
+          echo "scout_channel_id=$SCOUT_CHANNEL_ID" >> "$GITHUB_OUTPUT"
+          echo "scout_regulator_id=$SCOUT_REGULATOR_ID" >> "$GITHUB_OUTPUT"
+          echo "crawl_depth=$CRAWL_DEPTH" >> "$GITHUB_OUTPUT"
           echo "bulk=$BULK" >> "$GITHUB_OUTPUT"
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
           echo "created_count=$CREATED_COUNT" >> "$GITHUB_OUTPUT"
@@ -104,6 +117,7 @@ jobs:
           gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main
 
       - name: Start first monitoring scan
+        if: steps.register.outputs.deleted != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           SOURCE_IDS: ${{ steps.register.outputs.source_ids }}
@@ -119,6 +133,18 @@ jobs:
               -f test_notification=false
           done
 
+      - name: Start initial Scout discovery baseline
+        if: steps.register.outputs.scout_enabled == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SCOUT_REGULATOR: ${{ steps.register.outputs.scout_regulator_id }}
+        run: |
+          set -euo pipefail
+          gh workflow run scout.yml \
+            --repo "$GITHUB_REPOSITORY" \
+            --ref main \
+            -f regulator="$SCOUT_REGULATOR"
+
       - name: Confirm registration on the request
         if: success()
         env:
@@ -131,9 +157,15 @@ jobs:
           COUNT: ${{ steps.register.outputs.count }}
           CREATED_COUNT: ${{ steps.register.outputs.created_count }}
           EXISTING_COUNT: ${{ steps.register.outputs.existing_count }}
+          DELETED: ${{ steps.register.outputs.deleted }}
+          SCOUT_ENABLED: ${{ steps.register.outputs.scout_enabled }}
+          CRAWL_DEPTH: ${{ steps.register.outputs.crawl_depth }}
+          SCOUT_REGULATOR_ID: ${{ steps.register.outputs.scout_regulator_id }}
         run: |
           set -euo pipefail
-          if [ "$BULK" = "true" ]; then
+          if [ "$DELETED" = "true" ]; then
+            message="Stopped monitoring $MONITOR_URL in source ${SOURCE_IDS%%;*}. Future scans will exclude this URL; existing reports and saved evidence were retained."
+          elif [ "$BULK" = "true" ]; then
             message="Bulk registration processed $COUNT unique links: $CREATED_COUNT new monitors and $EXISTING_COUNT already configured. The first monitoring scan has been queued for each requested source."
           elif [ "$CREATED" = "true" ]; then
             SOURCE_ID="${SOURCE_IDS%%;*}"
@@ -141,6 +173,9 @@ jobs:
           else
             SOURCE_ID="${SOURCE_IDS%%;*}"
             message="$MONITOR_URL is already configured under source $SOURCE_ID. A monitoring scan has been queued."
+          fi
+          if [ "$SCOUT_ENABLED" = "true" ]; then
+            message="$message Weekly Scout discovery is enabled through link depth $CRAWL_DEPTH (profile $SCOUT_REGULATOR_ID). Newly discovered or replacement document URLs will appear in Scout for review; they are not silently added as monitors."
           fi
           gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$message"
           gh issue close "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY"

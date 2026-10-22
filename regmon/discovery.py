@@ -29,7 +29,7 @@ NON_HTML_SUFFIXES = {
 URL_RE = re.compile(r"https?://[^\s<>\"']+", re.IGNORECASE)
 DISCOVERY_RETRYABLE = {408, 425, 429, 500, 502, 503, 504}
 INVENTORY_CHUNK_SIZE = 5000
-CHECKPOINT_SCHEMA_VERSION = 2
+CHECKPOINT_SCHEMA_VERSION = 3
 
 
 def _redirect_key(url: str) -> str:
@@ -73,16 +73,17 @@ def in_scope(url: str, source: SourceConfig) -> bool:
     resource_match = any(value.startswith(prefix) for prefix in source.allowed_resource_prefixes)
     if not resource_match and not any(value.startswith(prefix) for prefix in source.allowed_prefixes):
         return False
-    # Exact URL allowlists still bound page crawling. A separately configured
-    # resource prefix permits only linked attachments under that narrow path;
-    # the link-text filter below decides which document links are admitted.
-    if source.allowed_urls and value not in {canonical(url) for url in source.allowed_urls} and not resource_match:
+    # Exact URL allowlists still bound legacy page monitoring. Explicit crawl
+    # depth > 0 enables same-host traversal; attached resources remain scoped.
+    if source.allowed_urls and value not in {canonical(url) for url in source.allowed_urls} and not resource_match and source.crawl_depth <= 0:
         return False
     value_path = parsed.path.rstrip("/") or "/"
     for prefix in source.excluded_prefixes:
         excluded_path = urlparse(prefix).path.rstrip("/") or "/"
         if value_path == excluded_path or value_path.startswith(excluded_path + "/"):
             return False
+    if value in {canonical(candidate) for candidate in source.excluded_urls}:
+        return False
     return True
 
 
@@ -262,6 +263,8 @@ def _config_fingerprint(source: SourceConfig) -> str:
         "allowed_domains": list(source.allowed_domains),
         "allowed_urls": sorted(canonical(url) for url in source.allowed_urls),
         "excluded_prefixes": list(source.excluded_prefixes),
+        "excluded_urls": sorted(canonical(url) for url in source.excluded_urls),
+        "crawl_depth": source.crawl_depth,
         "max_urls": source.max_urls,
     }
     material = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -454,6 +457,9 @@ def _load_http_checkpoint(source: SourceConfig, data_dir: Path) -> dict | None:
             metadata = {}
 
         if metadata.get("source_id") == source.id and metadata.get("state") in {"PAUSED", "DEGRADED"}:
+            if source.crawl_depth >= 0:
+                # Without recorded depths a recovery could exceed the configured crawl level.
+                return None
             discovered = _load_inventory(source, data_dir)
             if discovered:
                 retry_pending = deque(_retryable_failure_urls(source, data_dir))
@@ -532,6 +538,7 @@ def _write_http_checkpoint(
     failed_pages: int,
     successful_pages: int,
     started_at: str,
+    depth_by_url: dict[str, int] | None = None,
 ) -> None:
     _atomic_write_json(
         _checkpoint_path(source, data_dir),
@@ -546,6 +553,7 @@ def _write_http_checkpoint(
             "processed_count": processed_count,
             "pending": list(pending),
             "retry_pending": list(retry_pending),
+            "depth_by_url": depth_by_url or {},
             "failed_pages": failed_pages,
             "successful_pages": successful_pages,
             "inventory_glob": f"data/discovery/{_inventory_prefix(source)}*.txt",
@@ -598,16 +606,16 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
 
     try:
         checkpoint = _load_http_checkpoint(source, data_dir)
+        depth_by_url: dict[str, int] = {}
         if checkpoint:
-            if "_legacy_discovered" in checkpoint:
-                # Legacy checkpoints stored the entire frontier plus only a capped
-                # sample of errors. They cannot prove which historical processed
-                # pages succeeded. Re-validating every known HTML URL is the only
-                # safe migration that can eventually establish COMPLETE.
+            if "_legacy_discovered" in checkpoint and source.crawl_depth < 0:
+                # Legacy checkpoints did not retain URL levels; only legacy unbounded
+                # sources can safely resume that historical frontier.
                 discovered = list(dict.fromkeys(str(x) for x in checkpoint["_legacy_discovered"]))
                 _reset_inventory(source, data_dir)
                 _reset_failure_ledger(source, data_dir)
                 _append_inventory(source, data_dir, discovered, 0)
+                depth_by_url = {url: 0 for url in discovered}
                 pending = deque(url for url in discovered if _needs_link_discovery(url, source))
                 retry_pending = deque()
                 processed_count = 0
@@ -615,18 +623,40 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 successful_pages = 0
                 started_at = str(checkpoint.get("started_at") or started_at)
                 legacy_failed = int(checkpoint.get("failed_pages", 0))
-                legacy_error_sample = (
-                    len(checkpoint.get("errors", []))
-                    if isinstance(checkpoint.get("errors"), list)
-                    else 0
-                )
+                legacy_error_sample = len(checkpoint.get("errors", [])) if isinstance(checkpoint.get("errors"), list) else 0
                 print(
                     "HTTP discovery migrated legacy checkpoint: "
                     f"discovered={len(discovered)} revalidation_html={len(pending)} "
                     f"legacy_failed={legacy_failed} legacy_error_sample={legacy_error_sample}"
                 )
+            elif "_legacy_discovered" in checkpoint:
+                # A bounded-depth crawl cannot use an old full inventory as its frontier.
+                checkpoint = None
+                _reset_inventory(source, data_dir)
+                _reset_failure_ledger(source, data_dir)
+                discovered = []
+                pending = deque()
+                retry_pending = deque()
+                depth_by_url = {}
+                processed_count = failed_pages = successful_pages = 0
+                started_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+                for seed in source.seed_urls:
+                    try:
+                        value = canonical(seed)
+                    except ValueError:
+                        continue
+                    if in_scope(value, source) and value not in discovered:
+                        discovered.append(value)
+                        depth_by_url[value] = 0
+                        if _needs_link_discovery(value, source) and source.crawl_depth != 0:
+                            pending.append(value)
+                _append_inventory(source, data_dir, discovered, 0)
             else:
                 discovered = _load_inventory(source, data_dir)
+                raw_depths = checkpoint.get("depth_by_url", {})
+                depth_by_url = {canonical(str(url)): max(0, int(depth)) for url, depth in raw_depths.items() if str(url).strip() and isinstance(depth, int) and not isinstance(depth, bool)} if isinstance(raw_depths, dict) else {}
+                for url in discovered:
+                    depth_by_url.setdefault(url, 0)
                 pending = deque(str(x) for x in checkpoint.get("pending", []))
                 processed_count = int(checkpoint.get("processed_count", 0))
                 failed_pages = int(checkpoint.get("failed_pages", 0))
@@ -648,7 +678,8 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 if not in_scope(value, source) or value in discovered:
                     continue
                 discovered.append(value)
-                if _needs_link_discovery(value, source):
+                depth_by_url[value] = 0
+                if _needs_link_discovery(value, source) and source.crawl_depth != 0:
                     pending.append(value)
             _append_inventory(source, data_dir, discovered, 0)
 
@@ -672,7 +703,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 _write_http_checkpoint(
                     source, data_dir, pending=pending, retry_pending=retry_pending, discovered_count=len(discovered),
                     processed_count=processed_count, failed_pages=failed_pages,
-                    successful_pages=successful_pages, started_at=started_at,
+                    successful_pages=successful_pages, started_at=started_at, depth_by_url=depth_by_url,
                 )
                 _write_http_metadata(
                     source, data_dir, state="PAUSED", discovered=len(discovered),
@@ -688,7 +719,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
 
             with ThreadPoolExecutor(max_workers=worker_count) as pool:
                 futures = {pool.submit(_fetch_links, url, source, timeout): url for url in batch}
-                batch_links: set[str] = set()
+                batch_link_depth: dict[str, int] = {}
                 for future in as_completed(futures):
                     processed_count += 1
                     url = futures[future]
@@ -711,19 +742,27 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                         if url in unresolved_failure_urls:
                             _record_success_resolution(source, data_dir, url, 200)
                             unresolved_failure_urls.discard(url)
-                    batch_links.update(links)
+                    candidate_depth = depth_by_url.get(url, 0) + 1
+                    for link in links:
+                        if link not in batch_link_depth or candidate_depth < batch_link_depth[link]:
+                            batch_link_depth[link] = candidate_depth
 
             new_links = []
-            for link in sorted(batch_links):
+            for link in sorted(batch_link_depth):
                 if source.max_urls > 0 and len(discovered) >= source.max_urls:
                     break
+                link_depth = batch_link_depth[link]
+                old_depth = depth_by_url.get(link)
                 if link not in discovered_set:
                     discovered_set.add(link)
                     discovered.append(link)
                     new_links.append(link)
-                    if _needs_link_discovery(link, source):
-                        pending.append(link)
-                        queued.add(link)
+                    depth_by_url[link] = link_depth
+                elif old_depth is None or link_depth < old_depth:
+                    depth_by_url[link] = link_depth
+                if (source.crawl_depth < 0 or link_depth < source.crawl_depth) and _needs_link_discovery(link, source) and link not in queued:
+                    pending.append(link)
+                    queued.add(link)
 
             _append_inventory(source, data_dir, new_links, len(discovered) - len(new_links))
             slice_processed += len(batch)
@@ -757,7 +796,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 _write_http_checkpoint(
                     source, data_dir, pending=pending, retry_pending=retry_pending, discovered_count=len(discovered),
                     processed_count=processed_count, failed_pages=failed_pages,
-                    successful_pages=successful_pages, started_at=started_at,
+                    successful_pages=successful_pages, started_at=started_at, depth_by_url=depth_by_url,
                 )
                 _write_http_metadata(
                     source, data_dir, state="PAUSED", discovered=len(discovered),
@@ -784,7 +823,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                     processed_count=processed_count,
                     failed_pages=failed_pages,
                     successful_pages=successful_pages,
-                    started_at=started_at,
+                    started_at=started_at, depth_by_url=depth_by_url,
                 )
                 _write_http_metadata(
                     source, data_dir, state="PAUSED", discovered=len(discovered),
@@ -840,12 +879,19 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                         for link in sorted(links):
                             if source.max_urls > 0 and len(discovered) >= source.max_urls:
                                 break
+                            child_depth = depth_by_url.get(url, 0) + 1
+                            if not in_scope(link, source):
+                                continue
+                            old_depth = depth_by_url.get(link)
                             if link not in discovered_set:
                                 discovered_set.add(link)
                                 discovered.append(link)
                                 new_links.append(link)
-                                if _needs_link_discovery(link, source):
-                                    retry_pending.append(link)
+                                depth_by_url[link] = child_depth
+                            elif old_depth is None or child_depth < old_depth:
+                                depth_by_url[link] = child_depth
+                            if (source.crawl_depth < 0 or child_depth < source.crawl_depth) and _needs_link_discovery(link, source) and link not in retry_pending:
+                                retry_pending.append(link)
                         _append_inventory(
                             source,
                             data_dir,
@@ -875,7 +921,7 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                     processed_count=processed_count,
                     failed_pages=failed_pages,
                     successful_pages=successful_pages,
-                    started_at=started_at,
+                    started_at=started_at, depth_by_url=depth_by_url,
                 )
                 _write_http_metadata(
                     source, data_dir, state="PAUSED", discovered=len(discovered),

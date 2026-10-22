@@ -251,5 +251,211 @@ class TestRegisterMonitor(unittest.TestCase):
             self.assertEqual(json.loads(path.read_text(encoding="utf-8"))["sources"], [])
 
 
+    def test_crawl_depth_scope_is_configured_without_changing_default(self):
+        url = "https://www.example.com/policy"
+        exact = source_for_url(url, "Policy page")
+        crawl = source_for_url(url, "Policy pages", crawl_depth=2)
+        self.assertEqual(exact["crawl_depth"], 0)
+        self.assertEqual(exact["allowed_urls"], [url])
+        self.assertEqual(crawl["crawl_depth"], 2)
+        self.assertEqual(crawl["allowed_urls"], [])
+        self.assertEqual(crawl["allowed_domains"], ["www.example.com"])
+        self.assertEqual(crawl["discovery_max_pages_per_slice"], 200)
+
+    def test_metadata_parser_prefers_open_graph_title_and_bounds_text(self):
+        from regmon.register_monitor import _metadata_from_html
+        result = _metadata_from_html(
+            '<html><head><title>Document title</title>'
+            '<meta property="og:title" content="  Consultation   Update  ">'
+            '<meta name="description" content="  A useful description  "></head></html>'
+        )
+        self.assertEqual(result["title"], "Consultation Update")
+        self.assertEqual(result["description"], "A useful description")
+
+    def test_metadata_parser_falls_back_to_document_title(self):
+        from regmon.register_monitor import _metadata_from_html
+        self.assertEqual(_metadata_from_html("<title>FR 1867 Changes</title>")["title"], "FR 1867 Changes")
+
+    def test_delete_child_page_excludes_future_scans_and_keeps_source_active(self):
+        import re
+        from regmon.register_monitor import DELETE_REQUEST_MARKER, delete_monitor_request
+        root = "https://www.example.com/policy"
+        child = "https://www.example.com/policy/annex"
+        source = source_for_url(root, "Policy crawl", crawl_depth=2)
+        config = {"version": 4, "defaults": {}, "sources": [source]}
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps(config), encoding="utf-8")
+            body = "\n".join([
+                DELETE_REQUEST_MARKER, "", "Source ID: " + source["id"],
+                "URL: " + child, "Name: Annex",
+            ])
+            event = {"issue": {
+                "title": "[ChangeSentinel] Delete monitor request",
+                "body": body, "user": {"login": "GauravDarwesh"},
+            }}
+            result = delete_monitor_request(event, path, "GauravDarwesh/ChangeSentinel")
+            saved = json.loads(path.read_text(encoding="utf-8"))["sources"][0]
+        self.assertTrue(result["deleted"])
+        self.assertFalse(result["deactivated"])
+        self.assertTrue(saved["active"])
+        self.assertIn(child, saved["excluded_urls"])
+
+    def test_delete_root_deactivates_source_without_erasing_seed_or_history(self):
+        from regmon.register_monitor import DELETE_REQUEST_MARKER, delete_monitor_request
+        root = "https://www.example.com/policy"
+        source = source_for_url(root, "Policy crawl", crawl_depth=2)
+        config = {"version": 4, "defaults": {}, "sources": [source]}
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps(config), encoding="utf-8")
+            body = "\n".join([
+                DELETE_REQUEST_MARKER, "", "Source ID: " + source["id"],
+                "URL: " + root, "Name: Policy crawl",
+            ])
+            event = {"issue": {
+                "title": "[ChangeSentinel] Delete monitor request",
+                "body": body, "user": {"login": "GauravDarwesh"},
+            }}
+            result = delete_monitor_request(event, path, "GauravDarwesh/ChangeSentinel")
+            saved = json.loads(path.read_text(encoding="utf-8"))["sources"][0]
+        self.assertTrue(result["deactivated"])
+        self.assertFalse(saved["active"])
+        self.assertEqual(saved["seed_urls"], [root])
+
+
+    def test_manual_registration_respects_all_supported_crawl_depths(self):
+        url = "https://www.example.com/policy"
+        for depth in range(4):
+            with self.subTest(depth=depth), tempfile.TemporaryDirectory() as tmp:
+                path = Path(tmp) / "sources.json"
+                path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+                event = issue_event(url, name="Policy")
+                event["issue"]["body"] = event["issue"]["body"].replace(
+                    "\n\nThis request was created from the ChangeSentinel dashboard.",
+                    f"\nCrawl depth: {depth}\n\nThis request was created from the ChangeSentinel dashboard.",
+                )
+                result = register_request(event, path, "GauravDarwesh/ChangeSentinel")
+                saved = json.loads(path.read_text(encoding="utf-8"))["sources"][0]
+
+                self.assertTrue(result["created"])
+                self.assertEqual(result["crawl_depth"], depth)
+                self.assertEqual(saved["crawl_depth"], depth)
+                self.assertEqual(saved["allowed_urls"], [url] if depth == 0 else [])
+                self.assertEqual(saved["discovery_max_pages_per_slice"], 1 if depth == 0 else 200)
+
+    def test_manual_registration_rejects_invalid_or_duplicate_crawl_depth(self):
+        for fields, message in [
+            (["Crawl depth: 4"], "Crawl depth must be 0, 1, 2, or 3"),
+            (["Crawl depth: 1", "Crawl depth: 2"], "at most one Crawl depth field"),
+        ]:
+            with self.subTest(fields=fields), tempfile.TemporaryDirectory() as tmp:
+                path = Path(tmp) / "sources.json"
+                original = {"version": 4, "defaults": {}, "sources": []}
+                before = json.dumps(original)
+                path.write_text(before, encoding="utf-8")
+                event = issue_event("https://www.example.com/policy", name="Policy")
+                footer = "\n\nThis request was created from the ChangeSentinel dashboard."
+                event["issue"]["body"] = event["issue"]["body"].replace(
+                    footer, "\n" + "\n".join(fields) + footer
+                )
+                with self.assertRaisesRegex(ValueError, message):
+                    register_request(event, path, "GauravDarwesh/ChangeSentinel")
+                self.assertEqual(path.read_text(encoding="utf-8"), before)
+
+    def test_missing_display_name_uses_backend_metadata_title(self):
+        from unittest.mock import patch
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            event = issue_event("https://www.example.com/policy", name="")
+            with patch(
+                "regmon.register_monitor._fetch_page_metadata",
+                return_value={"title": "Metadata-derived policy title", "description": "Description"},
+            ) as fetch_metadata:
+                result = register_request(event, path, "GauravDarwesh/ChangeSentinel")
+            saved = json.loads(path.read_text(encoding="utf-8"))["sources"][0]
+
+        fetch_metadata.assert_called_once_with("https://www.example.com/policy")
+        self.assertTrue(result["created"])
+        self.assertEqual(saved["name"], "Metadata-derived policy title")
+
+
+
+    def test_add_link_can_opt_into_weekly_scout_with_the_same_depth(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source_path = Path(tmp) / "sources.json"
+            scout_path = Path(tmp) / "scout.json"
+            source_path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            baseline_scout = Path(__file__).resolve().parents[1] / "config" / "scout.json"
+            original_scout_text = baseline_scout.read_text(encoding="utf-8")
+            scout_path.write_text(original_scout_text, encoding="utf-8")
+
+            event = issue_event("https://www.example.com/user-guides", name="User guides")
+            footer = "\n\nThis request was created from the ChangeSentinel dashboard."
+            event["issue"]["body"] = event["issue"]["body"].replace(
+                footer, "\nCrawl depth: 2\nScout discovery: yes" + footer
+            )
+            result = register_request(
+                event, source_path, "GauravDarwesh/ChangeSentinel", scout_path
+            )
+            sources = json.loads(source_path.read_text(encoding="utf-8"))["sources"]
+            scout = json.loads(scout_path.read_text(encoding="utf-8"))
+            profile = next(item for item in scout["regulators"] if "www.example.com" in item.get("hosts", []))
+            channel = next(item for item in profile["channels"] if item["url"] == "https://www.example.com/user-guides")
+
+        self.assertTrue(result["created"])
+        self.assertTrue(result["scout_enabled"])
+        self.assertTrue(result["scout_changed"])
+        self.assertEqual(result["crawl_depth"], 2)
+        self.assertEqual(sources[0]["crawl_depth"], 2)
+        self.assertEqual(channel["type"], "listing")
+        self.assertEqual(channel["crawl_depth"], 2)
+        self.assertEqual(channel["link_prefixes"], ["https://www.example.com/"])
+        self.assertEqual(profile["region"], "OTHER")
+
+    def test_weekly_scout_registration_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source_path = Path(tmp) / "sources.json"
+            scout_path = Path(tmp) / "scout.json"
+            source_path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            scout_path.write_text(
+                (Path(__file__).resolve().parents[1] / "config" / "scout.json").read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
+            event = issue_event("https://www.example.com/user-guides", name="User guides")
+            footer = "\n\nThis request was created from the ChangeSentinel dashboard."
+            event["issue"]["body"] = event["issue"]["body"].replace(
+                footer, "\nCrawl depth: 1\nScout discovery: yes" + footer
+            )
+            first = register_request(event, source_path, "GauravDarwesh/ChangeSentinel", scout_path)
+            second = register_request(event, source_path, "GauravDarwesh/ChangeSentinel", scout_path)
+
+        self.assertTrue(first["scout_changed"])
+        self.assertFalse(second["created"])
+        self.assertTrue(second["scout_configured"])
+        self.assertFalse(second["scout_changed"])
+        self.assertEqual(first["scout_channel_id"], second["scout_channel_id"])
+
+    def test_scout_cannot_be_enabled_for_depth_zero_and_files_remain_unchanged(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source_path = Path(tmp) / "sources.json"
+            scout_path = Path(tmp) / "scout.json"
+            source_before = json.dumps({"version": 4, "defaults": {}, "sources": []})
+            scout_before = (Path(__file__).resolve().parents[1] / "config" / "scout.json").read_text(encoding="utf-8")
+            source_path.write_text(source_before, encoding="utf-8")
+            scout_path.write_text(scout_before, encoding="utf-8")
+            event = issue_event("https://www.example.com/user-guides", name="User guides")
+            footer = "\n\nThis request was created from the ChangeSentinel dashboard."
+            event["issue"]["body"] = event["issue"]["body"].replace(
+                footer, "\nCrawl depth: 0\nScout discovery: yes" + footer
+            )
+            with self.assertRaisesRegex(ValueError, "requires crawl depth 1, 2, or 3"):
+                register_request(event, source_path, "GauravDarwesh/ChangeSentinel", scout_path)
+            self.assertEqual(source_path.read_text(encoding="utf-8"), source_before)
+            self.assertEqual(scout_path.read_text(encoding="utf-8"), scout_before)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -3,13 +3,10 @@ import re
 import unittest
 from pathlib import Path, PurePosixPath
 
-
 ROOT = Path(__file__).resolve().parents[1]
-
 
 def read(name):
     return (ROOT / name).read_text(encoding="utf-8")
-
 
 class TestDashboardNotificationContract(unittest.TestCase):
     def test_notification_view_is_present(self):
@@ -48,7 +45,6 @@ class TestDashboardNotificationContract(unittest.TestCase):
         # The ledger stores topic/url only for newer entries; older ones must still render.
         self.assertIn("item.topic ?", sent_renderer)
         self.assertIn("safeHttpUrl(item.url) ?", sent_renderer)
-
 
 class TestDashboardEvidenceContract(unittest.TestCase):
     def test_original_pdf_snapshot_is_previewed_and_text_remains_available(self):
@@ -105,7 +101,6 @@ class TestDashboardEvidenceContract(unittest.TestCase):
         for token in (".redline del", ".redline ins", ".rl-changed::before", "--font-doc"):
             with self.subTest(token=token):
                 self.assertIn(token, html)
-
 
 class TestDashboardWorkspaceLayout(unittest.TestCase):
     """The page itself never scrolls: a rail, a list pane and a detail pane."""
@@ -216,7 +211,6 @@ class TestDashboardWorkspaceLayout(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertIn(token, source)
 
-
 class TestDashboardScanSignal(unittest.TestCase):
     def test_led_change_field_uses_real_scans_and_statuses(self):
         source = read("dashboard.js")
@@ -254,7 +248,6 @@ class TestDashboardScanSignal(unittest.TestCase):
         self.assertIn("html.cs-locked #app", html)
         self.assertIn('crypto.subtle.digest("SHA-256"', html)
         self.assertNotIn("correctPassword", html)
-
 
 class TestDashboardDataLoading(unittest.TestCase):
     def test_missing_scan_completeness_metadata_fails_closed(self):
@@ -428,15 +421,11 @@ class TestPersistedReferences(unittest.TestCase):
         self.assertIn("fetchImmutable(location)", dashboard)
         self.assertIn("loadEvidence(event.evidence_location)", dashboard)
 
-
-
-
 class TestSingleDashboardEntry(unittest.TestCase):
     def test_legacy_entry_redirects_to_the_main_dashboard(self):
         legacy = read("dashboard-v2.html")
         self.assertIn('http-equiv="refresh" content="0; url=./"', legacy)
         self.assertLess(len(legacy.splitlines()), 30)
-
 
 class TestCrossRunChangeLog(unittest.TestCase):
     def test_change_log_and_counters_share_one_definition_and_span_runs(self):
@@ -450,8 +439,6 @@ class TestCrossRunChangeLog(unittest.TestCase):
         status = source[source.index("function itemStatus(item)"):source.index("function canonicalForDashboard")]
         self.assertIn("RECENT_CHANGE_MS", status)
         self.assertIn('event.event_type !== "BASELINE_MIGRATION"', status)
-
-
 
     def test_bulk_link_import_is_an_additive_owner_approved_flow(self):
         html = read("index.html")
@@ -468,7 +455,6 @@ class TestCrossRunChangeLog(unittest.TestCase):
         self.assertIn('$("bulkMonitorFile").addEventListener("change"', js)
         # Spreadsheets are read locally; no third-party parser runs in the dashboard origin.
         self.assertNotIn("cdn.sheetjs.com", js + html)
-
 
 class TestThirdPartyScripts(unittest.TestCase):
     def test_every_third_party_script_is_pinned_and_integrity_checked(self):
@@ -506,7 +492,6 @@ class TestThirdPartyScripts(unittest.TestCase):
         self.assertIn("await releasingPdfs;", js)
         self.assertIn("activeCompare.observer = observer;", js)
 
-
 class TestBackgroundRefresh(unittest.TestCase):
     def test_polls_small_files_and_skips_unchanged_redraws(self):
         js = read("dashboard.js")
@@ -519,7 +504,6 @@ class TestBackgroundRefresh(unittest.TestCase):
         js = read("dashboard.js")
         self.assertIn("workflowRefreshInFlight = pollWorkflowRuns().finally(", js)
 
-
 class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
     def test_virtual_index_sources_become_clickable_repository_files(self):
         source = read("dashboard.js")
@@ -530,10 +514,66 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
         self.assertIn("askSentinelMarkdown(askSentinelLinkSourceCitations(answer))", source)
         self.assertIn(".flatMap(askSentinelSourceLinks)", source)
 
+    def test_manual_monitor_controls_include_bounded_crawl_metadata_and_delete(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        for token in (
+            'id="newMonitorDepth"',
+            'id="autofillMonitorMetadata"',
+            'id="newMonitorMetadataStatus"',
+            'id="deleteMonitorDialog"',
+            'id="confirmDeleteMonitor"',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+        for token in (
+            '"Crawl depth: "',
+            "async function suggestMonitorMetadata()",
+            "function makeGitHubDeleteIssueUrl(",
+            "data-stop-monitor=",
+            "function submitDeleteMonitor()",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, js)
 
-if __name__ == "__main__":
-    unittest.main()
+    def test_add_link_can_opt_into_depth_matched_weekly_scout_discovery(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        workflow = read(".github/workflows/register-monitor.yml")
+        self.assertIn('id="newMonitorScout"', html)
+        self.assertIn('id="newMonitorScoutHelp"', html)
+        self.assertIn("syncScoutDiscoveryOption()", js)
+        self.assertIn('"Scout discovery: " + (scoutEnabled ? "yes" : "no")', js)
+        self.assertIn("registration on the request", workflow.lower())
+        self.assertIn("--scout-config config/scout.json", workflow)
+        self.assertIn("git add config/sources.json config/scout.json", workflow)
+        self.assertIn("gh workflow run scout.yml", workflow)
+        self.assertIn("not silently added as monitors", workflow)
 
+    def test_metadata_cors_fallback_keeps_server_side_title_lookup_available(self):
+        source = read("dashboard.js")
+        start = source.index("async function suggestMonitorMetadata()")
+        end = source.index("function openGitHubRequest(", start)
+        metadata_flow = source[start:end]
+        self.assertIn('if (!nameInput.value.trim())', metadata_flow)
+        self.assertIn('nameInput.value = "";', metadata_flow)
+        self.assertIn("registration will try the page title server-side", metadata_flow)
+        self.assertNotIn('nameInput.value = (suggestion', metadata_flow)
+
+    def test_dashboard_manual_monitor_controls_remain_owner_approved(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        workflow = read(".github/workflows/register-monitor.yml")
+        register = read("regmon/register_monitor.py")
+        for token in ('id="newMonitorDepth"', 'id="autofillMonitorMetadata"', 'id="deleteMonitorDialog"', 'id="confirmDeleteMonitor"'):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+        for token in ('"Crawl depth: "', 'async function suggestMonitorMetadata()', 'function makeGitHubDeleteIssueUrl(', 'data-stop-monitor=', 'function submitDeleteMonitor()'):
+            with self.subTest(token=token):
+                self.assertIn(token, js)
+        self.assertIn("changesentinel:delete-monitor:v1", register)
+        self.assertIn("repository_owner", workflow)
+        self.assertIn("steps.register.outputs.deleted != 'true'", workflow)
 
 class TestScoutView(unittest.TestCase):
     """Scout sits between Alerts and Ask Sentinel, set apart by a rule above and below."""
@@ -600,8 +640,6 @@ class TestScoutView(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertIn(token, source)
         self.assertIn("cp config/scout.json site/config/scout.json", read(".github/workflows/pages.yml"))
-
-
 
 class TestReviewLayerContract(unittest.TestCase):
     """Reporting items, dates, review decisions, exports and integrity checks."""
@@ -815,3 +853,6 @@ class TestCadenceCalendarContract(unittest.TestCase):
         self.assertIn("npx deno check supabase/functions/calendar-api/index.ts", ci)
         self.assertIn("npx deno test --allow-env supabase/functions/calendar-api/index_test.ts", ci)
 
+
+if __name__ == "__main__":
+    unittest.main()
