@@ -864,6 +864,8 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                             if source.max_urls > 0 and len(discovered) >= source.max_urls:
                                 break
                             child_depth = depth_by_url.get(url, 0) + 1
+                            if not in_scope(link, source):
+                                continue
                             old_depth = depth_by_url.get(link)
                             if link not in discovered_set:
                                 discovered_set.add(link)
