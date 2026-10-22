@@ -138,7 +138,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ "$DELETED" = "true" ]; then
-            message="Stopped monitoring $MONITOR_URL. Existing reports and saved evidence were retained."
+            message="Stopped monitoring $MONITOR_URL in source ${SOURCE_IDS%%;*}. Future scans will exclude this URL; existing reports and saved evidence were retained."
           elif [ "$BULK" = "true" ]; then
             message="Bulk registration processed $COUNT unique links: $CREATED_COUNT new monitors and $EXISTING_COUNT already configured. The first monitoring scan has been queued for each requested source."
           elif [ "$CREATED" = "true" ]; then
