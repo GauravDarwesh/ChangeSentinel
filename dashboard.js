@@ -4092,7 +4092,7 @@ document.addEventListener("click", event => {
   if (!button) return;
   // Prefer the latest inventory entry, but retain the exact rendered context as
   // a fallback when a report/detail record is not present in the live inventory.
-  const item = (state.inventory || []).find(row => row.url_id === button.dataset.stopMonitor);
+  const item = (state.items || []).find(row => row.url_id === button.dataset.stopMonitor);
   const url = (item && item.canonical_url) || button.dataset.stopUrl || "";
   const sourceId = (item && item.source_id) || button.dataset.stopSource || "";
   const name = item ? itemTitle(item) : (button.dataset.stopName || url);
