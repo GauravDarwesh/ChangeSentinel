@@ -236,7 +236,7 @@ Deno.test('exact URL matching preserves case-sensitive path segments', async () 
 
 Deno.test('Markdown tables require citations on factual rows, not just the paragraph', async () => {
   reset(() => groqAnswer(
-    '| Regulator | Change |\n| --- | --- |\n| Federal Reserve | Change detected in reporting forms |\n\nSummary of the available evidence. [Source: data/report.json]'
+    'Regulator | Change\n--- | ---\nFederal Reserve | Change detected in reporting forms. [Source: data/report.json]\nOSFI | Another change detected without a citation.'
   ));
   const answer = await ask({ ip: '203.0.113.24' });
   assertEquals([answer.status, answer.body.error_code, answer.body.citation_validation?.uncited_line_count], [422, 'citation_validation_failed', 1]);
@@ -244,7 +244,7 @@ Deno.test('Markdown tables require citations on factual rows, not just the parag
 
 Deno.test('Markdown tables accept a structurally valid header and a cited data row', async () => {
   reset(() => groqAnswer(
-    '| Regulator | Change |\n| --- | --- |\n| Federal Reserve | No changes recorded. [Source: data/report.json] |'
+    'Regulator | Change\n--- | ---\nFederal Reserve | No changes recorded. [Source: data/report.json]'
   ));
   const answer = await ask({ ip: '203.0.113.25' });
   assertEquals(answer.status, 200);
