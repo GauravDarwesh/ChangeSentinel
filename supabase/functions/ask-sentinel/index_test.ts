@@ -82,19 +82,36 @@ function visitor() {
   visitorCounter += 1;
   return '00000000-0000-4000-8000-' + String(visitorCounter).padStart(12, '0');
 }
-async function ask(options: { visitor?: string; ip?: string; bearer?: string } = {}) {
+async function ask(options: { visitor?: string; ip?: string; bearer?: string; question?: string } = {}) {
   const headers: Record<string, string> = { 'Content-Type': 'application/json', origin: 'https://gauravdarwesh.github.io' };
   if (options.bearer) headers.authorization = 'Bearer ' + options.bearer;
   else headers['x-ask-sentinel-visitor-id'] = options.visitor || visitor();
   if (options.ip) headers['cf-connecting-ip'] = options.ip;
   const response = await handler!(new Request('https://fn.test/ask-sentinel', {
-    method: 'POST', headers, body: JSON.stringify({ question: 'What happened in the latest scan run?', conversation: [] })
+    method: 'POST', headers, body: JSON.stringify({ question: options.question || 'What happened in the latest scan run?', conversation: [] })
   }));
   return { status: response.status, body: await response.json(), headers: response.headers };
 }
 function assertEquals(actual: unknown, expected: unknown, message = '') {
   if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error(message + ' expected ' + JSON.stringify(expected) + ' got ' + JSON.stringify(actual));
 }
+
+Deno.test('greetings return a friendly answer without a provider call or quota use', async () => {
+  reset(() => { throw new Error('Groq should not be called for a greeting'); });
+  const answer = await ask({ ip: '203.0.113.10', question: 'hi' });
+  assertEquals([answer.status, answer.body.model, answer.body.remaining, fake.global], [200, 'local-response', 3, 0]);
+  if (!String(answer.body.answer).includes('Hello! I’m Ask Sentinel')) throw new Error('greeting response was missing');
+});
+
+Deno.test('paragraph-level citations are accepted while invalid paths still fail closed', async () => {
+  reset(() => groqAnswer('The latest run had no changes.\nThe fetch and extraction error counts are zero. [Source: data/report.json]'));
+  const accepted = await ask({ ip: '203.0.113.11' });
+  assertEquals([accepted.status, accepted.body.answer], [200, 'The latest run had no changes.\nThe fetch and extraction error counts are zero. [Source: data/report.json]']);
+
+  reset(() => groqAnswer('The latest run had no changes. [Source: data/fabricated.json]'));
+  const rejected = await ask({ ip: '203.0.113.12' });
+  assertEquals([rejected.status, rejected.body.error_code, fake.refunds], [422, 'citation_validation_failed', 1]);
+});
 
 Deno.test('a visitor gets three questions a day', async () => {
   reset();
