@@ -265,10 +265,12 @@
     return EVENT_LABELS[type] || "Monitoring event";
   }
 
-  // "change" | "problem" | "info" — drives colour and filtering.
+  // "change" | "markup" | "problem" | "info" — markup-only events remain visible,
+  // but are visually quieter than changes to extracted regulatory content.
   function eventTone(type) {
     if (type === "FETCH_ERROR" || type === "EXTRACTION_ERROR") return "problem";
-    if (type === "CHANGED_URL" || type === "NEW_URL" || type === "REMOVED_URL" || type === "HTML_SOURCE_CHANGED") return "change";
+    if (type === "HTML_SOURCE_CHANGED") return "markup";
+    if (type === "CHANGED_URL" || type === "NEW_URL" || type === "REMOVED_URL") return "change";
     return "info";
   }
 
