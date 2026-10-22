@@ -10,6 +10,10 @@ from bs4 import BeautifulSoup
 MAX_DIFF_LINES = 200
 MAX_HTML_DIFF_LINES = 1000
 
+# Version the HTML signature algorithm so old snapshots can be re-hashed before
+# comparing them with signatures that normalize the pageConfig cache-buster.
+HTML_COMPARISON_HASH_VERSION = 2
+
 def make_id(url: str) -> str:
     return hashlib.sha256(url.encode("utf-8")).hexdigest()
 
