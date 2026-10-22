@@ -419,7 +419,7 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
         raise ValueError("config/sources.json must contain a sources array.")
 
     # Avoid creating a second source for a page already covered by an active source.
-    existing = _existing_source_for_request(sources, url, include_selector, ignore_selectors)
+    existing = _existing_source_for_request(sources, url, include_selector, ignore_selectors, crawl_depth=crawl_depth)
     if existing is not None:
         return {
             "source_id": str(existing["id"]),
@@ -430,7 +430,9 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
             "message": "The URL is already present in an active source.",
         }
 
-    new_source = source_for_url(url, requested_name, include_selector, ignore_selectors)
+    metadata = _fetch_page_metadata(url) if not requested_name else {}
+    display_name = requested_name or metadata.get("title", "")
+    new_source = source_for_url(url, display_name, include_selector, ignore_selectors, crawl_depth=crawl_depth)
     source_ids = {str(source.get("id")) for source in sources}
     if new_source["id"] in source_ids:
         existing = next(source for source in sources if str(source.get("id")) == new_source["id"])
