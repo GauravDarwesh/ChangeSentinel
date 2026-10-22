@@ -19,6 +19,7 @@ from regmon.change import (
     build_event_id,
     classify_change,
     error_signature,
+    HTML_COMPARISON_HASH_VERSION,
     html_comparison_hash,
     make_diff,
     make_id,
@@ -263,6 +264,7 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         "normalized_hash": None,
         "html_hash": old.get("html_hash") if old else None,
         "html_comparison_hash": old.get("html_comparison_hash") if old else None,
+        "html_comparison_hash_version": old.get("html_comparison_hash_version") if old else None,
         "html_snapshot_location": old.get("html_snapshot_location") if old else None,
         "file_snapshot_location": old.get("file_snapshot_location") if old else None,
         "extraction_type": None,
@@ -455,7 +457,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         if result.not_modified:
             if old:
                 for key in (
-                    "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_snapshot_location",
+                    "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_comparison_hash_version", "html_snapshot_location",
                     "file_snapshot_location", "extraction_type", "extractor_version", "snapshot_location", "evidence_location", "relevance",
                     "extraction_error", "error_signature", "error_since",
                 ):
@@ -496,6 +498,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             if extraction_type == "html":
                 item["html_hash"] = result.raw_hash
                 item["html_comparison_hash"] = html_comparison_hash(result.body)
+                item["html_comparison_hash_version"] = HTML_COMPARISON_HASH_VERSION
                 return item, None, result.body
             if file_body is not None:
                 return item, None, None, file_body
@@ -506,6 +509,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         html_body = result.body if extraction_type == "html" else None
         item["html_hash"] = result.raw_hash if html_body is not None else None
         item["html_comparison_hash"] = html_comparison_hash(html_body)
+        item["html_comparison_hash_version"] = HTML_COMPARISON_HASH_VERSION if html_body is not None else None
         if html_body is None:
             item["html_snapshot_location"] = None
         if file_body is None:
@@ -520,7 +524,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         if old:
             for key in (
                 "http_status", "content_type", "content_length", "etag", "last_modified",
-                "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_snapshot_location",
+                "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_comparison_hash_version", "html_snapshot_location",
                 "first_seen", "snapshot_location", "evidence_location", "relevance", "extraction_type", "extractor_version"
             ):
                 if key in old:
