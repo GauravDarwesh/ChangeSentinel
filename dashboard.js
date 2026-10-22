@@ -3300,6 +3300,7 @@ let bulkImportErrors = [];
 
 function openAddMonitor() {
   const dialog = $("addMonitorDialog");
+  syncScoutDiscoveryOption();
   if (typeof dialog.showModal === "function") {
     dialog.showModal();
     window.setTimeout(() => $("newMonitorUrl").focus(), 30);
@@ -3307,11 +3308,11 @@ function openAddMonitor() {
     showToast("This browser can't open the add-page dialog. Use a current browser.");
   }
 }
-function makeGitHubIssueUrl(url, name, includeSelector, ignoreSelectors, crawlDepth) {
+function makeGitHubIssueUrl(url, name, includeSelector, ignoreSelectors, crawlDepth, scoutEnabled) {
   const bodyLines = [
     "<!-- changesentinel:add-monitor:v1 -->", "",
     "Please register this URL as a ChangeSentinel monitor.", "",
-    "URL: " + url, "Name: " + (name || ""), "Crawl depth: " + String(Number.isInteger(Number(crawlDepth)) ? Math.max(0, Math.min(3, Number(crawlDepth))) : 0), "Include selector: " + (includeSelector || ""), "Ignore selectors:"
+    "URL: " + url, "Name: " + (name || ""), "Crawl depth: " + String(Number.isInteger(Number(crawlDepth)) ? Math.max(0, Math.min(3, Number(crawlDepth))) : 0), "Scout discovery: " + (scoutEnabled ? "yes" : "no"), "Include selector: " + (includeSelector || ""), "Ignore selectors:"
   ];
   if (ignoreSelectors.length) ignoreSelectors.forEach(selector => bodyLines.push("- " + selector));
   else bodyLines.push("(none)");
@@ -3360,6 +3361,17 @@ async function suggestMonitorMetadata() {
     }
   } finally { window.clearTimeout(timeout); button.disabled = false; }
 }
+function syncScoutDiscoveryOption() {
+  const depth = Number.parseInt($("newMonitorDepth").value || "0", 10);
+  const checkbox = $("newMonitorScout");
+  const help = $("newMonitorScoutHelp");
+  const available = depth >= 1 && depth <= 3;
+  checkbox.disabled = !available;
+  if (!available) checkbox.checked = false;
+  help.textContent = available
+    ? "Scout will revisit this page weekly through the selected depth and surface new or replacement linked documents, including PDFs, for review. New discoveries are suggestions; they are not silently added as monitors."
+    : "Choose Level 1–3 to enable Scout. Level 0 only watches this URL and does not discover linked pages.";
+}
 function openGitHubRequest(target, toastMessage) {
   $("addMonitorDialog").close();
   showToast(toastMessage);
@@ -3387,6 +3399,7 @@ function submitAddMonitor(event) {
   const includeSelector = $("newMonitorIncludeSelector").value.replace(/[\r\n]+/g, " ").trim();
   const ignoreSelectors = $("newMonitorIgnoreSelectors").value.split(/\r?\n/).map(value => value.trim()).filter(Boolean);
   const crawlDepth = Number.parseInt($("newMonitorDepth").value || "0", 10);
+  const scoutEnabled = $("newMonitorScout").checked;
   let parsed;
   try { parsed = new URL(rawUrl); } catch (_) {
     $("newMonitorUrl").setCustomValidity("Enter a full URL beginning with https:// or http://.");
@@ -3403,12 +3416,20 @@ function submitAddMonitor(event) {
     showToast("Use one selector of up to 500 characters to compare, and up to 20 selectors to ignore.");
     return;
   }
+  if (scoutEnabled && crawlDepth === 0) {
+    showToast("Choose crawl Level 1, 2, or 3 before enabling weekly Scout discovery.");
+    return;
+  }
   parsed.hash = "";
-  const target = makeGitHubIssueUrl(parsed.toString(), name, includeSelector, ignoreSelectors, crawlDepth);
+  const target = makeGitHubIssueUrl(parsed.toString(), name, includeSelector, ignoreSelectors, crawlDepth, scoutEnabled);
   ["newMonitorUrl", "newMonitorName", "newMonitorIncludeSelector", "newMonitorIgnoreSelectors"].forEach(id => { $(id).value = ""; });
   $("newMonitorDepth").value = "0";
+  $("newMonitorScout").checked = false;
   $("newMonitorMetadataStatus").textContent = "";
-  openGitHubRequest(target, "Submit the prefilled request on GitHub. The page is scanned once the request is accepted.");
+  syncScoutDiscoveryOption();
+  openGitHubRequest(target, scoutEnabled
+    ? "Submit the prefilled request on GitHub. Scout will establish a baseline now, then look for new linked documents weekly."
+    : "Submit the prefilled request on GitHub. The page is scanned once the request is accepted.");
 }
 
 /* CSV and XLSX are both parsed locally (XLSX by the small reader in dashboard-lib.js),
@@ -4037,6 +4058,8 @@ $("addMonitorDialog").addEventListener("click", event => {
   if (event.target === $("addMonitorDialog")) $("addMonitorDialog").close();
 });
 $("newMonitorUrl").addEventListener("input", () => { $("newMonitorUrl").setCustomValidity(""); $("newMonitorMetadataStatus").textContent = ""; });
+$("newMonitorDepth").addEventListener("change", syncScoutDiscoveryOption);
+syncScoutDiscoveryOption();
 $("autofillMonitorMetadata").addEventListener("click", suggestMonitorMetadata);
 $("addMonitorForm").addEventListener("submit", submitAddMonitor);
 $("closeDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog").close());
