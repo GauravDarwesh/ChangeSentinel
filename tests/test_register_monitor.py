@@ -324,5 +324,64 @@ class TestRegisterMonitor(unittest.TestCase):
         self.assertEqual(saved["seed_urls"], [root])
 
 
+    def test_manual_registration_respects_all_supported_crawl_depths(self):
+        url = "https://www.example.com/policy"
+        for depth in range(4):
+            with self.subTest(depth=depth), tempfile.TemporaryDirectory() as tmp:
+                path = Path(tmp) / "sources.json"
+                path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+                event = issue_event(url, name="Policy")
+                event["issue"]["body"] = event["issue"]["body"].replace(
+                    "\n\nThis request was created from the ChangeSentinel dashboard.",
+                    f"\nCrawl depth: {depth}\n\nThis request was created from the ChangeSentinel dashboard.",
+                )
+                result = register_request(event, path, "GauravDarwesh/ChangeSentinel")
+                saved = json.loads(path.read_text(encoding="utf-8"))["sources"][0]
+
+                self.assertTrue(result["created"])
+                self.assertEqual(result["crawl_depth"], depth)
+                self.assertEqual(saved["crawl_depth"], depth)
+                self.assertEqual(saved["allowed_urls"], [url] if depth == 0 else [])
+                self.assertEqual(saved["discovery_max_pages_per_slice"], 1 if depth == 0 else 200)
+
+    def test_manual_registration_rejects_invalid_or_duplicate_crawl_depth(self):
+        for fields, message in [
+            (["Crawl depth: 4"], "Crawl depth must be 0, 1, 2, or 3"),
+            (["Crawl depth: 1", "Crawl depth: 2"], "at most one Crawl depth field"),
+        ]:
+            with self.subTest(fields=fields), tempfile.TemporaryDirectory() as tmp:
+                path = Path(tmp) / "sources.json"
+                original = {"version": 4, "defaults": {}, "sources": []}
+                before = json.dumps(original)
+                path.write_text(before, encoding="utf-8")
+                event = issue_event("https://www.example.com/policy", name="Policy")
+                footer = "\n\nThis request was created from the ChangeSentinel dashboard."
+                event["issue"]["body"] = event["issue"]["body"].replace(
+                    footer, "\n" + "\n".join(fields) + footer
+                )
+                with self.assertRaisesRegex(ValueError, message):
+                    register_request(event, path, "GauravDarwesh/ChangeSentinel")
+                self.assertEqual(path.read_text(encoding="utf-8"), before)
+
+    def test_missing_display_name_uses_backend_metadata_title(self):
+        from unittest.mock import patch
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            event = issue_event("https://www.example.com/policy", name="")
+            with patch(
+                "regmon.register_monitor._fetch_page_metadata",
+                return_value={"title": "Metadata-derived policy title", "description": "Description"},
+            ) as fetch_metadata:
+                result = register_request(event, path, "GauravDarwesh/ChangeSentinel")
+            saved = json.loads(path.read_text(encoding="utf-8"))["sources"][0]
+
+        fetch_metadata.assert_called_once_with("https://www.example.com/policy")
+        self.assertTrue(result["created"])
+        self.assertEqual(saved["name"], "Metadata-derived policy title")
+
+
+
 if __name__ == "__main__":
     unittest.main()
