@@ -4869,15 +4869,37 @@ function askSentinelMarkdown(source) {
   }
   return html.join("");
 }
-function askSentinelSourceLink(path) {
-  const p = String(path || "");
-  if (!p || p.startsWith("__")) return null;
-  const a = document.createElement("a");
-  a.href = REPO + "/blob/main/" + p.split("/").map(encodeURIComponent).join("/");
-  a.target = "_blank";
-  a.rel = "noopener noreferrer";
-  a.textContent = p;
-  return a;
+const ASK_SENTINEL_INTERNAL_SOURCE_PATHS = Object.freeze({
+  "__current_report__": ["data/report.json"],
+  "__recent_history__": ["data/history/index.json"],
+  "__current_scope__": ["config/sources.json", "data/latest.json"],
+  "__repo_overview__": ["README.md"],
+  "__current_inventory__": ["data/latest.json"]
+});
+function askSentinelRepositoryFileUrl(path) {
+  return REPO + "/blob/main/" + path.split("/").map(encodeURIComponent).join("/");
+}
+function askSentinelSourcePaths(path) {
+  const value = String(path || "");
+  if (Object.prototype.hasOwnProperty.call(ASK_SENTINEL_INTERNAL_SOURCE_PATHS, value)) return ASK_SENTINEL_INTERNAL_SOURCE_PATHS[value];
+  return value && !value.startsWith("__") ? [value] : [];
+}
+function askSentinelSourceLinks(path) {
+  return askSentinelSourcePaths(path).map(file => {
+    const a = document.createElement("a");
+    a.href = askSentinelRepositoryFileUrl(file);
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.textContent = file;
+    return a;
+  });
+}
+function askSentinelLinkSourceCitations(answer) {
+  return String(answer || "").replace(/\[Source:\s*(__[a-z0-9_-]+__)\s*\]/gi, (citation, internalPath) => {
+    const paths = askSentinelSourcePaths(internalPath);
+    if (!paths.length) return citation;
+    return paths.map(file => "[" + file + "](" + askSentinelRepositoryFileUrl(file) + ")").join(" · ");
+  });
 }
 function askSentinelMessageNode(role, content, extraClass) {
   const node = document.createElement("article");
@@ -4893,8 +4915,8 @@ function askSentinelMessageNode(role, content, extraClass) {
 }
 function askSentinelRenderAnswer(node, answer, sources) {
   node.classList.remove("ask-sentinel-typing", "ask-sentinel-error");
-  node.querySelector(".ask-sentinel-text").innerHTML = askSentinelMarkdown(answer);
-  const links = (Array.isArray(sources) ? sources : []).map(askSentinelSourceLink).filter(Boolean)
+  node.querySelector(".ask-sentinel-text").innerHTML = askSentinelMarkdown(askSentinelLinkSourceCitations(answer));
+  const links = (Array.isArray(sources) ? sources : []).flatMap(askSentinelSourceLinks)
     .filter((a, idx, all) => all.findIndex(b => b.textContent === a.textContent) === idx).slice(0, 6);
   if (links.length) {
     const box = document.createElement("div");
