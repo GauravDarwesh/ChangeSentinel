@@ -235,6 +235,36 @@ class TestEventWording(unittest.TestCase):
                 self.assertIn(event_type, engine)
                 self.assertIn(event_type + ":", lib)
 
+    def test_markup_only_events_are_visually_distinct_from_content_changes(self):
+        out = run_js("""
+          console.log(JSON.stringify([
+            L.eventTone("CHANGED_URL"), L.eventTone("NEW_URL"),
+            L.eventTone("REMOVED_URL"), L.eventTone("HTML_SOURCE_CHANGED"),
+            L.eventTone("FETCH_ERROR")
+          ]));
+        """)
+        self.assertEqual(out, ["change", "change", "change", "markup", "problem"])
+
+    def test_federal_reserve_recently_approved_table_redline_keeps_both_deleted_rows(self):
+        # Regression for a repeated form label near the top of the table:
+        # it must not disappear when another distinct row is deleted near the bottom.
+        diff = "\\n".join([
+            "--- before", "+++ after",
+            "@@ -68,8 +68,6 @@",
+            "| Recently Approved and Implemented | | | | | | |",
+            "| --- | --- | --- | --- | --- | --- | --- |",
+            "| Collection Identifier | OMB Supporting Statement | Reporting Form | Reporting Instructions | Other Attachments | Initial Federal Register Notice | Final Federal Register Notice |",
+            "-| FFIEC 031 | link | FFIEC 031 | FFIEC 031 | N/A | link | link |",
+            "| FR 3033p FR 3033s | link | FR 3033p/s | N/A | N/A | link | link |",
+            "| FR 4031 | link | N/A | N/A | N/A | link | link |",
+            "-| FR Y-9C R-1867 | link | N/A | FR Y-9C | Press Release 1 Press Release 2 | link | link |",
+            "Last Update: Oct 16, 2026"
+        ])
+        out = run_js("console.log(JSON.stringify(L.renderRedline(" + json.dumps(diff) + ")));")
+        self.assertEqual(out["stats"], {"added": 0, "removed": 2, "edited": 0})
+        self.assertIn("FFIEC 031", out["html"])
+        self.assertIn("FR Y-9C R-1867", out["html"])
+
 
 if __name__ == "__main__":
     unittest.main()
