@@ -493,7 +493,7 @@ def delete_monitor_request(event: dict, config_path: Path, repository: str) -> d
     elif root_deleted:
         source["active"] = False
     if not already_excluded or root_deleted:
-        config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+        config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return {"source_id": source["id"], "source_ids": [source["id"]], "url": target_url, "name": source.get("name", "Monitored page"), "created": False, "deleted": True, "deactivated": not source.get("active", True), "root_deleted": root_deleted, "bulk": False, "count": 1, "created_count": 0, "existing_count": 1, "message": "The page is excluded from future scans; history and saved evidence are retained."}
 
 
