@@ -2542,6 +2542,28 @@ function cadenceClass(event) {
 function cadenceEventLabel(event) {
   return event.kind === "derived" ? event.title : (event.category === "expected_update" && event.entry.regulator ? event.entry.regulator + " · " : "") + event.title;
 }
+function cadenceFilterEvents(allEvents) {
+  const search = String(state.cadenceSearch || "").trim().toLocaleLowerCase();
+  return allEvents.filter(event => {
+    if (state.cadenceFilter === "DETECTED" && event.kind !== "derived") return false;
+    if (state.cadenceFilter === "EXPECTED" && !(event.kind === "manual" && ["expected_update", "deadline"].includes(event.category))) return false;
+    if (state.cadenceFilter === "TEAM" && !(event.kind === "manual" && !["expected_update", "deadline"].includes(event.category))) return false;
+    if (!search) return true;
+    // Include the same fields exposed in the agenda and upcoming rows, without
+    // ever indexing private reminder-recipient addresses.
+    const entry = event.entry || {};
+    const item = event.item || {};
+    const haystack = [
+      event.title, event.date, event.occurrenceDate, event.category, cadenceTag(event.category),
+      entry.title, entry.regulator, entry.owner_name, entry.description,
+      entry.source_url, entry.recurrence, event.entryId,
+      item.title, item.event_id, item.url, item.description,
+      event.eventId, event.sourceUrl
+    ].filter(value => value !== null && value !== undefined && String(value).trim() !== "")
+      .map(value => String(value).toLocaleLowerCase()).join(" ");
+    return haystack.includes(search);
+  });
+}
 function renderCadenceView() {
   const grid = $("cadenceMonthGrid");
   if (!grid) return;
