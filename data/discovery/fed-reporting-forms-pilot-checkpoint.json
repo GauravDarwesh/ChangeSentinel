@@ -4,9 +4,9 @@
   "state": "PAUSED",
   "config_fingerprint": "5d911c0d2c2f19e0faf60e514dffc3abf5a2e07fdfc54926a9275ad434d7d063",
   "started_at": "2026-10-22T21:27:32Z",
-  "updated_at": "2026-10-22T21:46:20Z",
+  "updated_at": "2026-10-22T22:02:55Z",
   "discovered_count": 2,
-  "processed_count": 30,
+  "processed_count": 40,
   "pending": [
     "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
     "https://www.federalreserve.gov/apps/reportingforms/review"
@@ -17,7 +17,7 @@
     "https://www.federalreserve.gov/apps/reportingforms/recentupdates": 0
   },
   "failed_pages": 0,
-  "successful_pages": 30,
+  "successful_pages": 40,
   "inventory_glob": "data/discovery/fed-reporting-forms-pilot-inventory-*.txt",
   "failure_ledger": "data/discovery/fed-reporting-forms-pilot-failures.jsonl"
 }
