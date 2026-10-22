@@ -2582,6 +2582,7 @@ function renderCadenceView() {
   const startISO = cadenceDateISO(gridStart), endISO = cadenceDateISO(gridEnd);
   const allEvents = cadenceEventsBetween(startISO, endISO);
   const events = cadenceFilterEvents(allEvents);
+  const search = String(state.cadenceSearch || "").trim();
   const byDate = new Map();
   events.forEach(event => { if (!byDate.has(event.date)) byDate.set(event.date, []); byDate.get(event.date).push(event); });
   $("cadenceMonthLabel").textContent = month.toLocaleDateString([], { month: "long", year: "numeric" });
