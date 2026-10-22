@@ -1,0 +1,38 @@
+{
+  "schema_version": 3,
+  "source_id": "fed-reporting-forms-detail-pilot",
+  "state": "PAUSED",
+  "config_fingerprint": "da76983ccc4888706d05a6f3790af3f986e6e1e8a5890cc44590ba45e1304075",
+  "started_at": "2026-10-22T21:27:33Z",
+  "updated_at": "2026-10-22T21:27:37Z",
+  "discovered_count": 14,
+  "processed_count": 12,
+  "pending": [
+    "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028bs",
+    "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C",
+    "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D",
+    "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M",
+    "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q"
+  ],
+  "retry_pending": [],
+  "depth_by_url": {
+    "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C": 0,
+    "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028bs": 0,
+    "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D": 0,
+    "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M": 0,
+    "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q": 0,
+    "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=5804347e-ee41-4e02-a57e-14f60f5ff0a3": 1,
+    "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=58f18be6-92e4-497c-ad0d-db006caa2e03": 1,
+    "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=6914ef8d-789b-4b36-a636-06960f6c3972": 1,
+    "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f": 1,
+    "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=dd598245-8cad-4674-917a-56235b919d88": 1,
+    "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=f59446fb-8250-4fbe-9db3-411d107bda3a": 1,
+    "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=4fb13ec8-042d-4abd-89c6-4a9608a1e82a": 1,
+    "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=6e93d22f-8c4d-434b-8236-93f29216776e": 1,
+    "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=e19f2e85-cab1-48b7-a4f6-33d93bd4be12": 1
+  },
+  "failed_pages": 0,
+  "successful_pages": 12,
+  "inventory_glob": "data/discovery/fed-reporting-forms-detail-pilot-inventory-*.txt",
+  "failure_ledger": "data/discovery/fed-reporting-forms-detail-pilot-failures.jsonl"
+}

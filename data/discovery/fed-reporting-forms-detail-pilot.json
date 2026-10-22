@@ -1,16 +1,16 @@
 {
   "source_id": "fed-reporting-forms-detail-pilot",
   "method": "http-resumable",
-  "state": "COMPLETE",
+  "state": "PAUSED",
   "discovered": 14,
-  "html_processed": 5,
-  "successful_pages": 5,
+  "html_processed": 12,
+  "successful_pages": 12,
   "failed_pages": 0,
   "capped": false,
-  "pending": 0,
+  "pending": 5,
   "unresolved_failures": 0,
-  "checkpoint_schema_version": 2,
-  "config_fingerprint": "f81e97345dd1ff8946cf711f9b5b2c157d89f26bac24feca2686c4a7bbaa7bb4",
+  "checkpoint_schema_version": 3,
+  "config_fingerprint": "da76983ccc4888706d05a6f3790af3f986e6e1e8a5890cc44590ba45e1304075",
   "inventory": "data/discovery/fed-reporting-forms-detail-pilot-inventory-*.txt",
   "failure_ledger": "data/discovery/fed-reporting-forms-detail-pilot-failures.jsonl"
 }

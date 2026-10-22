@@ -1,16 +1,16 @@
 {
   "source_id": "manual-fe66388fe452",
   "method": "http-resumable",
-  "state": "COMPLETE",
+  "state": "PAUSED",
   "discovered": 1,
-  "html_processed": 1,
-  "successful_pages": 1,
+  "html_processed": 10,
+  "successful_pages": 10,
   "failed_pages": 0,
   "capped": false,
-  "pending": 0,
+  "pending": 1,
   "unresolved_failures": 0,
-  "checkpoint_schema_version": 2,
-  "config_fingerprint": "cf78149bcacb9baf303e87fd9eb5b726e206094ccea112d8b4b68fb464f54053",
+  "checkpoint_schema_version": 3,
+  "config_fingerprint": "4bd65a23894467aaa4fba3cfc4a3d0f54338f1b8183547a831cc8ca769e1817d",
   "inventory": "data/discovery/manual-fe66388fe452-inventory-*.txt",
   "failure_ledger": "data/discovery/manual-fe66388fe452-failures.jsonl"
 }
