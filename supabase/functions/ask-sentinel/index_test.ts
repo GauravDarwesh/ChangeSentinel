@@ -52,7 +52,18 @@ globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   if (path === '/rest/v1/rpc/search_ask_sentinel_chunks') return json([{ path: 'data/report.json', doc_type: 'monitoring report', content: 'run_id=r1 changed=0', is_core: false, score: 1 }]);
   if (path === '/rest/v1/ask_sentinel_chunks') {
     const pathFilter = url.searchParams.get('path') || '';
-    if (pathFilter === 'like.__current_page__/*') return json(fakeCurrentPageRows);
+    if (pathFilter === 'like.__current_page__/*') {
+      const contentFilter = url.searchParams.get('content') || '';
+      const hostMatch = contentFilter.match(/^like\.\*(.+)\*$/);
+      const host = hostMatch?.[1]?.toLowerCase() || '';
+      const rows = fakeCurrentPageRows
+        .filter((row) => String(row.path || '').startsWith('__current_page__/'))
+        .filter((row) => !host || String(row.content || '').toLowerCase().includes(host))
+        .sort((a, b) => String(a.path).localeCompare(String(b.path)));
+      const offset = Number(url.searchParams.get('offset') || 0);
+      const limit = Number(url.searchParams.get('limit') || 200);
+      return json(rows.slice(offset, offset + limit));
+    }
     if (pathFilter.startsWith('eq.')) return json(fakeEvidenceRows.get(pathFilter.slice(3)) || []);
     return json([]);
   }
