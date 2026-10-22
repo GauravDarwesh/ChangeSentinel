@@ -27,7 +27,7 @@ class TestAskSentinelContract(unittest.TestCase):
     def test_backend_reads_index_but_never_indexes_in_a_request(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
         for token in ("ask_sentinel_chunks", "search_ask_sentinel_chunks", "__current_inventory__",
-                      "readIndexState", "openai/gpt-oss-20b", "GROQ_API", "MAX_CONTEXT_CHARS = 6500"):
+                      "readIndexState", "openrouter/free", "OPENROUTER_API", "MAX_CONTEXT_CHARS = 6500"):
             with self.subTest(token=token):
                 self.assertIn(token, backend)
         for forbidden in ("api.github.com", "raw.githubusercontent.com", "syncRepository", "ask_sentinel_documents"):
@@ -81,8 +81,8 @@ class TestAskSentinelContract(unittest.TestCase):
         html = (ROOT / "index.html").read_text(encoding="utf-8")
         self.assertIn("consume_ask_sentinel_request", backend)
         self.assertIn("where u.request_count < 3", migration)
-        self.assertIn("GROQ_API", backend)
-        self.assertIn("openai/gpt-oss-20b", backend)
+        self.assertIn("OPENROUTER_API", backend)
+        self.assertIn("openrouter/free", backend)
         self.assertNotRegex(js + html, r"gsk_[A-Za-z0-9]{20,}")
         self.assertIn("client-side quota", js)
         self.assertIn("atomic database quota", backend)
@@ -207,7 +207,7 @@ class TestAskSentinelContract(unittest.TestCase):
         self.assertNotIn('"index.html"', triggers)
         self.assertNotIn('"dashboard.js"', triggers)
         self.assertIn("schedule:", triggers)
-        smoke = workflow[workflow.index("- name: Index the repository and ask a real Groq question"):]
+        smoke = workflow[workflow.index("- name: Index the repository and ask a real OpenRouter question"):]
         self.assertIn("if: ${{ github.event_name != 'pull_request' }}", smoke[:400])
 
     def test_abuse_limits_do_not_depend_on_the_callers_identity(self):
