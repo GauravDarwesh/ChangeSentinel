@@ -111,6 +111,10 @@ Deno.test('paragraph-level citations are accepted while invalid paths still fail
   reset(() => groqAnswer('The latest run had no changes. [Source: data/fabricated.json]'));
   const rejected = await ask({ ip: '203.0.113.12' });
   assertEquals([rejected.status, rejected.body.error_code, fake.refunds], [422, 'citation_validation_failed', 1]);
+
+  reset(() => groqAnswer('- The latest run had no changes. [Source: data/report.json]\\n- Fetch errors are zero.'));
+  const uncitedBullet = await ask({ ip: '203.0.113.13' });
+  assertEquals([uncitedBullet.status, uncitedBullet.body.error_code, fake.refunds], [422, 'citation_validation_failed', 1]);
 });
 
 Deno.test('a visitor gets three questions a day', async () => {
