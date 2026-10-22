@@ -248,7 +248,7 @@ class TestEventWording(unittest.TestCase):
     def test_federal_reserve_recently_approved_table_redline_keeps_both_deleted_rows(self):
         # Regression for a repeated form label near the top of the table:
         # it must not disappear when another distinct row is deleted near the bottom.
-        diff = "\\n".join([
+        diff = "\n".join([
             "--- before", "+++ after",
             "@@ -68,8 +68,6 @@",
             "| Recently Approved and Implemented | | | | | | |",
