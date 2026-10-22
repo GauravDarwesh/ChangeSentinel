@@ -814,11 +814,13 @@ Deno.serve(async (req: Request) => {
             }
           }
         }
-        targetedDocs.unshift(...exactEvidence, ...exactPages);
+        // Put the current page record first so the canonical URL/status cannot be
+        // crowded out by a verbose supporting evidence document.
+        targetedDocs.unshift(...exactPages, ...exactEvidence);
       }
     } else if (asksNamedSourceLookup(question)) {
       const candidates = await fetchCurrentPageRecordsForHosts(sourceHostsForQuestion(question));
-      const selectedPages = candidates.slice(0, 3);
+      const selectedPages = candidates.slice(0, 2);
       const sourceEvidence: any[] = [];
       for (const page of selectedPages) {
         const record = safeJson(String(page.content || ''));
@@ -832,7 +834,9 @@ Deno.serve(async (req: Request) => {
           if (/^data\/evidence\/[a-f0-9]{64}\.json$/.test(path)) sourceEvidence.push(...await fetchDocsByPath(path));
         }
       }
-      targetedDocs.unshift(...sourceEvidence, ...selectedPages);
+      // Preserve the page name, canonical URL, active status, and latest check
+      // before adding potentially larger evidence records to the bounded context.
+      targetedDocs.unshift(...selectedPages, ...sourceEvidence);
     }
 
     const evidence = buildContext(question, docs, targetedDocs);
