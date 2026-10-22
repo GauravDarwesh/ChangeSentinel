@@ -255,11 +255,19 @@ class TestAskSentinelContract(unittest.TestCase):
 
     def test_paragraph_level_citations_still_require_approved_sources(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
-        self.assertIn("Validate factual paragraphs/list items, not visual line wraps.", backend)
-        self.assertIn("if (!hasLineCitation) uncitedLineCount += 1;", backend)
-        self.assertIn("if (proseLineCount > 0 && !proseHasCitation) uncitedLineCount += 1;", backend)
+        self.assertIn("Validate prose paragraphs and individual list items, not physical wrapped lines.", backend)
+        self.assertIn("if (!hasCitation) uncitedLineCount += 1;", backend)
+        self.assertIn("if (hasProse && !proseHasCitation) uncitedLineCount += 1;", backend)
         self.assertIn("const invalidCitationCount = citations.filter((path) => !allowed.has(path)).length;", backend)
         self.assertIn("else if (invalidCitationCount > 0) reason = 'unapproved_source';", backend)
+
+    def test_recent_period_inventory_and_exact_url_intents_are_explicit(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        self.assertIn("function asksRecentChanges(question: string): boolean", backend)
+        self.assertIn("function asksUrlLookup(question: string): boolean", backend)
+        self.assertIn("function fetchCurrentPageRecordsForUrls(urls: string[]): Promise<any[]>", backend)
+        self.assertIn("normalizeUrl(match[1])", backend)
+        self.assertIn("Tables are allowed when useful", backend)
 
 
     def test_grounding_errors_use_http_errors_the_existing_frontend_displays(self):
