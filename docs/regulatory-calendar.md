@@ -9,7 +9,7 @@ Cadence is the dashboard’s evidence-first view of regulatory deadlines and eff
 - Shared search and entry-type filters across the month grid/agenda and Upcoming view.
 - An Upcoming view grouping uncompleted overdue team commitments, today's entries, the next 7 days and later entries through the next 90 days. Recurring overdue entries show their most recent missed occurrence instead of flooding the list with every past cycle; selecting a date jumps back to that day in Month view.
 - An `.ics` export and subscription feed for personal or team calendars.
-- No email magic-link flow or self-service sign-up. Calendar editing uses password sign-in for pre-provisioned team accounts; private entries and reminder recipients remain behind the calendar API.
+- No email magic-link sign-in or self-service sign-up. Calendar editing uses password sign-in for pre-provisioned team accounts, with an in-dashboard password-reset flow that redirects to the deployed dashboard; private entries and reminder recipients remain behind the calendar API.
 - Existing privately configured entries can still send their scheduled email reminders. Their owners and recipient addresses are never returned to the dashboard.
 
 ## Production setup
@@ -24,19 +24,20 @@ The evidence calendar works from the monitored repository data. The private remi
    on conflict (email) do update set role = excluded.role, active = true;
    ```
    Emails must be lowercase. The membership table is not readable or writable by anon/authenticated clients.
-3. Deploy the function with JWT verification disabled at the gateway; it performs its own member verification for secured write requests and checks a separate high-entropy token for scheduled jobs:
+3. In Supabase Project → Authentication → URL Configuration, set **Site URL** to `https://gauravdarwesh.github.io/ChangeSentinel/` and add `https://gauravdarwesh.github.io/ChangeSentinel/**` to **Redirect URLs**. The dashboard's password-reset request uses the deployed URL explicitly; Supabase requires that redirect to be allow-listed. Reset emails already sent with a localhost target remain stale, so request a fresh one after changing this setting.
+4. Deploy the function with JWT verification disabled at the gateway; it performs its own member verification for secured write requests and checks a separate high-entropy token for scheduled jobs:
    ```sh
    supabase functions deploy calendar-api --project-ref pysoukwmnwwgilkwafdy --no-verify-jwt
    ```
-4. In Supabase Edge Function secrets, set:
+5. In Supabase Edge Function secrets, set:
    - `REGULATORY_CALENDAR_CRON_TOKEN`: a random value of at least 32 characters.
    - `RESEND_API_KEY`: the key for the Resend account used for email.
    - `REGULATORY_CALENDAR_FROM_EMAIL`: a sender address on a domain verified with Resend.
    - Optional `REGULATORY_CALENDAR_DASHBOARD_URL`: the deployed dashboard's Cadence URL.
-5. In GitHub repository Settings → Secrets and variables → Actions, set these repository secrets:
+6. In GitHub repository Settings → Secrets and variables → Actions, set these repository secrets:
    - `SUPABASE_PUBLISHABLE_KEY`: the project's publishable key (safe to use in the browser, but the workflow still reads it from a secret).
    - `REGULATORY_CALENDAR_CRON_TOKEN`: exactly the same random value as the Supabase Edge Function secret.
-6. The `Cadence calendar reminders` workflow checks for reminders every day at 08:00 UTC. It can also be run manually. It checks the last seven days for missed reminder attempts, skips completed occurrences, and records successful sends so overlapping/retried runs do not send the same entry/occurrence/recipient twice. Failed sends are not marked delivered and can be retried by the next run if still within the catch-up window.
+7. The `Cadence calendar reminders` workflow checks for reminders every day at 08:00 UTC. It can also be run manually. It checks the last seven days for missed reminder attempts, skips completed occurrences, and records successful sends so overlapping/retried runs do not send the same entry/occurrence/recipient twice. Failed sends are not marked delivered and can be retried by the next run if still within the catch-up window.
 
 ## Reminder behaviour
 

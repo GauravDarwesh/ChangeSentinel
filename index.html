@@ -1606,7 +1606,16 @@ select.field-input { appearance: auto; }
 <input class="field-input" id="cadenceSignInEmail" type="email" autocomplete="username" maxlength="320" placeholder="name@company.com" required>
 <label class="visually-hidden" for="cadenceSignInPassword">Password</label>
 <input class="field-input" id="cadenceSignInPassword" type="password" autocomplete="current-password" maxlength="256" placeholder="Password" required>
-<button class="btn btn-primary" id="cadenceSignInButton" type="submit">Sign in</button></form>
+<button class="btn btn-primary" id="cadenceSignInButton" type="submit">Sign in</button>
+<button class="text-button" id="cadenceForgotPassword" type="button">Forgot password?</button></form>
+            <form id="cadenceRecoveryForm" class="cadence-signin-form" hidden>
+              <label class="visually-hidden" for="cadenceRecoveryPassword">New password</label>
+              <input class="field-input" id="cadenceRecoveryPassword" type="password" autocomplete="new-password" minlength="8" maxlength="256" placeholder="New password" required>
+              <label class="visually-hidden" for="cadenceRecoveryPasswordConfirm">Confirm new password</label>
+              <input class="field-input" id="cadenceRecoveryPasswordConfirm" type="password" autocomplete="new-password" minlength="8" maxlength="256" placeholder="Confirm password" required>
+              <button class="btn btn-primary" id="cadenceRecoverySave" type="submit">Update password</button>
+              <button class="text-button" id="cadenceRecoveryCancel" type="button">Back to sign in</button>
+            </form>
             <div class="cadence-signed-in" id="cadenceSignedIn" hidden>
               <span class="cadence-member" id="cadenceMemberLabel"></span>
               <button class="text-button" type="button" data-calendar-test>Test email</button>
@@ -2109,8 +2118,8 @@ select.field-input { appearance: auto; }
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261022-cadence-upcoming-1"></script>
-  <script src="dashboard.js?v=20261022-cadence-upcoming-1"></script>
+  <script src="dashboard-lib.js?v=20261022-cadence-password-recovery-1"></script>
+  <script src="dashboard.js?v=20261022-cadence-password-recovery-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.
