@@ -223,7 +223,7 @@ class TestEventWording(unittest.TestCase):
         labels = [label for label, _tone in out]
         self.assertNotIn("Monitoring event", labels)
         self.assertEqual(dict(zip(types, [tone for _label, tone in out])), {
-            "CHANGED_URL": "change", "NEW_URL": "change", "REMOVED_URL": "change", "HTML_SOURCE_CHANGED": "change",
+            "CHANGED_URL": "change", "NEW_URL": "change", "REMOVED_URL": "change", "HTML_SOURCE_CHANGED": "markup",
             "FETCH_ERROR": "problem", "EXTRACTION_ERROR": "problem", "BASELINE_MIGRATION": "info",
         })
 
