@@ -222,6 +222,7 @@ def store_html_snapshot(uid: str, body: bytes, item: dict, old: dict | None) -> 
         and old.get("html_hash")
         and old.get("html_comparison_hash")
         and old.get("html_comparison_hash") == item.get("html_comparison_hash")
+        and old.get("html_comparison_hash_version") == item.get("html_comparison_hash_version")
         and (ROOT / str(old["html_snapshot_location"])).is_file()
     ):
         item["html_hash"] = old["html_hash"]
@@ -701,14 +702,32 @@ def process_source(
                 events.append({"event_id":event_id,"event_type":"EXTRACTION_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"notification_id":notification_id,"error_since":item["error_since"],"evidence":{"error":item["extraction_error"]}})
                 continue
 
-            # Migrate older HTML inventory records lazily from their immutable
-            # snapshot so the first run with comparison signatures does not
-            # mistake a rotating Cloudflare challenge token for a source change.
-            if old and item.get("html_comparison_hash") and not old.get("html_comparison_hash"):
-                old_html = read_html_snapshot(old)
-                if old_html is not None:
-                    old = dict(old)
-                    old["html_comparison_hash"] = html_comparison_hash(old_html)
+            # Re-hash an older HTML snapshot when the signature algorithm version
+            # changes. Comparing its stored old-version digest with a new-version
+            # digest would itself create a false HTML_SOURCE_CHANGED event.
+            html_signature_rebaseline = False
+            if (
+                old
+                and item.get("html_comparison_hash")
+                and old.get("html_comparison_hash_version") != HTML_COMPARISON_HASH_VERSION
+            ):
+                if item.get("not_modified"):
+                    # A 304 gives no body to hash. Keep both sides on the stored
+                    # version until a full fetch lets us migrate safely.
+                    item["html_comparison_hash"] = old.get("html_comparison_hash")
+                    item["html_comparison_hash_version"] = old.get("html_comparison_hash_version")
+                else:
+                    old_html = read_html_snapshot(old)
+                    if old_html is not None:
+                        old = dict(old)
+                        old["html_comparison_hash"] = html_comparison_hash(old_html)
+                        old["html_comparison_hash_version"] = HTML_COMPARISON_HASH_VERSION
+                    elif old.get("normalized_hash") == item.get("normalized_hash"):
+                        # Without the old body, an HTML-only transition cannot be
+                        # classified reliably. Record a one-time baseline migration
+                        # instead of presenting signature-algorithm churn as a change.
+                        html_signature_rebaseline = True
+                        item["migration_reason"] = "html_comparison_hash_version"
 
             extractor_rebaseline = should_rebaseline_extractor(old, item)
             extraction_drift = not extractor_rebaseline and is_extraction_drift(old, item)
@@ -717,7 +736,8 @@ def process_source(
             elif extraction_drift:
                 item["migration_reason"] = "extraction_drift"
             event_type, migrated = classify_change(
-                old, item, force_baseline_migration=extractor_rebaseline or extraction_drift
+                old, item,
+                force_baseline_migration=extractor_rebaseline or extraction_drift or html_signature_rebaseline,
             )
             # A not-material review of a markup-only event is a durable choice
             # for this monitored URL.  Keep the current snapshot/fingerprint so
