@@ -554,6 +554,22 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
                 self.assertIn(token, js)
 
 
+    def test_dashboard_manual_monitor_controls_remain_owner_approved(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        workflow = read(".github/workflows/register-monitor.yml")
+        register = read("regmon/register_monitor.py")
+        for token in ('id="newMonitorDepth"', 'id="autofillMonitorMetadata"', 'id="deleteMonitorDialog"', 'id="confirmDeleteMonitor"'):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+        for token in ('"Crawl depth: "', 'async function suggestMonitorMetadata()', 'function makeGitHubDeleteIssueUrl(', 'data-stop-monitor=', 'function submitDeleteMonitor()'):
+            with self.subTest(token=token):
+                self.assertIn(token, js)
+        self.assertIn("changesentinel:delete-monitor:v1", register)
+        self.assertIn("repository_owner", workflow)
+        self.assertIn("steps.register.outputs.deleted != 'true'", workflow)
+
+
 if __name__ == "__main__":
     unittest.main()
 
