@@ -4275,24 +4275,33 @@ const normalizeForMatch = L.normalizeForMatch;
 function flattenTextContainer(container) {
   const doc = container.nodeType === 9 ? container : container.ownerDocument;
   const root = container.nodeType === 9 ? container.body : container;
-  const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-    acceptNode: node => node.parentElement && !/^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE)$/.test(node.parentElement.tagName) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
+  const walker = doc.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, {
+    acceptNode: node => {
+      if (node.nodeType === 1) {
+        if (/^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE)$/.test(node.tagName)) return NodeFilter.FILTER_REJECT;
+        // Keep structural separators in the flat text while skipping ordinary
+        // wrappers; raw HTML may have neither whitespace between cells nor text
+        // nodes for <br>, even though the visible/extracted text has both.
+        return node.tagName === "BR" || node.tagName === "TD" || node.tagName === "TH"
+          ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+      }
+      return node.parentElement && !/^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE)$/.test(node.parentElement.tagName)
+        ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }
   });
   let flat = "";
   const map = [];
   let lastSpace = true;
   let lastCell = null;
-  const isTableRow = root.nodeType === 1 && root.tagName === "TR";
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-    // Raw HTML often has no literal whitespace between </td><td>. Insert one
-    // mapped-to-nothing separator while flattening a table row so cell offsets
-    // match the extracted pipe-delimited line without merging adjacent labels.
-    if (isTableRow) {
-      const cell = node.parentElement && node.parentElement.closest("td, th");
-      if (cell && cell !== lastCell) {
+    if (node.nodeType === 1) {
+      if (node.tagName === "BR") {
         if (flat && !lastSpace) { flat += " "; map.push(null); lastSpace = true; }
-        lastCell = cell;
+      } else if (node.tagName === "TD" || node.tagName === "TH") {
+        if (node !== lastCell && flat && !lastSpace) { flat += " "; map.push(null); lastSpace = true; }
+        lastCell = node;
       }
+      continue;
     }
     const text = node.nodeValue.normalize("NFKC");
     for (let i = 0; i < text.length; i += 1) {
