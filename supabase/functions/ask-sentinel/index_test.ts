@@ -25,9 +25,13 @@ type Fake = {
   users: Map<string, number>; ips: Map<string, number>; global: number;
   groq: () => Response; refunds: number; v2: boolean; lastIpHash: string;
 };
+let fakeCurrentPageRows: any[] = [];
+let fakeEvidenceRows = new Map<string, any[]>();
+let lastGroqMessages: any[] = [];
 const fake: Fake = { users: new Map(), ips: new Map(), global: 0, groq: () => groqAnswer(), refunds: 0, v2: true, lastIpHash: '' };
 function reset(groq?: () => Response) {
   fake.users = new Map(); fake.ips = new Map(); fake.global = 0; fake.refunds = 0; fake.v2 = true;
+  fakeCurrentPageRows = []; fakeEvidenceRows = new Map(); lastGroqMessages = [];
   fake.groq = groq || (() => groqAnswer());
 }
 function json(value: unknown, status = 200) {
@@ -40,13 +44,18 @@ const realFetch = globalThis.fetch;
 globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
   const body = init?.body ? JSON.parse(String(init.body)) : {};
-  if (url.hostname === 'api.groq.com') return fake.groq();
+  if (url.hostname === 'api.groq.com') { lastGroqMessages = body.messages || []; return fake.groq(); }
   if (url.origin !== SUPABASE) return realFetch(input, init);
   const path = url.pathname;
   if (path === '/auth/v1/user') return json({ id: '11111111-2222-4333-8444-555555555555', is_anonymous: true });
   if (path === '/rest/v1/ask_sentinel_index_state') return json([{ commit_sha: 'abc', document_count: 4000, indexed_at: '2026-10-21T00:00:00Z' }]);
   if (path === '/rest/v1/rpc/search_ask_sentinel_chunks') return json([{ path: 'data/report.json', doc_type: 'monitoring report', content: 'run_id=r1 changed=0', is_core: false, score: 1 }]);
-  if (path === '/rest/v1/ask_sentinel_chunks') return json([]);
+  if (path === '/rest/v1/ask_sentinel_chunks') {
+    const pathFilter = url.searchParams.get('path') || '';
+    if (pathFilter === 'like.__current_page__/*') return json(fakeCurrentPageRows);
+    if (pathFilter.startsWith('eq.')) return json(fakeEvidenceRows.get(pathFilter.slice(3)) || []);
+    return json([]);
+  }
   if (path === '/rest/v1/ask_sentinel_usage') return json([]);
   if (path === '/rest/v1/rpc/consume_ask_sentinel_request_v2') {
     if (!fake.v2) return json({ code: 'PGRST202', message: 'Could not find the function' }, 404);
@@ -128,6 +137,40 @@ Deno.test('paragraph-level citations are accepted while invalid paths still fail
   reset(() => groqAnswer('- The latest run had no changes. [Source: data/report.json]\n- Fetch errors are zero.'));
   const uncitedBullet = await ask({ ip: '203.0.113.13' });
   assertEquals([uncitedBullet.status, uncitedBullet.body.error_code, fake.refunds], [422, 'citation_validation_failed', 1]);
+});
+
+Deno.test('help with punctuation is answered locally without Groq or quota use', async () => {
+  reset(() => { throw new Error('Groq should not be called for help'); });
+  const answer = await ask({ ip: '203.0.113.20', question: 'what can you do??' });
+  assertEquals([answer.status, answer.body.model, answer.body.remaining, fake.global], [200, 'local-response', 3, 0]);
+  if (!String(answer.body.answer).includes('last 7 days')) throw new Error('help answer should include a useful example');
+});
+
+Deno.test('an exact URL retrieves its stored evidence before fuzzy search results', async () => {
+  reset();
+  const url = 'https://www.federalreserve.gov/apps/reportingforms/review';
+  const evidencePath = 'data/evidence/' + 'a'.repeat(64) + '.json';
+  fakeCurrentPageRows = [{
+    path: '__current_page__/fed-reporting-forms-pilot/url-id',
+    doc_type: 'current monitored URL record',
+    is_core: false,
+    content: JSON.stringify({
+      canonical_url: url,
+      configured_source_active: true,
+      evidence_location: evidencePath,
+      snapshot_location: null,
+      change_history: [{ event_type: 'CHANGED_URL', ai_summary: 'A reporting forms table row was removed.' }]
+    })
+  }];
+  fakeEvidenceRows.set(evidencePath, [{
+    path: evidencePath, doc_type: 'monitoring evidence', is_core: false,
+    content: 'CHANGED_URL: reporting forms table row removed.', score: 10
+  }]);
+  const answer = await ask({ ip: '203.0.113.22', question: url + ' - what changed in this link?' });
+  assertEquals(answer.status, 200);
+  const evidenceMessage = lastGroqMessages.map((message) => String(message.content || '')).join('\\n');
+  if (!evidenceMessage.includes(evidencePath)) throw new Error('Exact URL evidence path was not passed to Groq.');
+  if (!evidenceMessage.includes('CHANGED_URL: reporting forms table row removed.')) throw new Error('Exact URL evidence content was not passed to Groq.');
 });
 
 Deno.test('a visitor gets three questions a day', async () => {
