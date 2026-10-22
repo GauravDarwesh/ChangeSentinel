@@ -1105,8 +1105,28 @@ Deno.serve(async (req: Request) => {
             : /timeout|timed out|abort/i.test(message)
               ? 'provider_timeout'
               : 'provider_unavailable';
-      // The provider failing is not the asker's fault: give the question back.
+      // The provider failing is not the asker's fault: refund the AI call. When
+      // indexed source paths are available, still give a real answer by returning
+      // only the citation-validated evidence links, never the unverified model draft.
       const refunded = await refundRequest(actor.id);
+      const fallback = citationSafeEvidenceFallback(evidence.sources);
+      if (fallback) {
+        logStage('provider_fallback_answered', {
+          error_code: errorCode,
+          provider_status: providerStatus,
+          source_count: evidence.sources.length,
+          refunded: refunded !== null
+        });
+        return respond(req, {
+          answer: fallback,
+          remaining: refunded ?? quota.remaining,
+          resets_at: nextUtcReset(),
+          model: 'evidence-fallback',
+          evidence_fallback: true,
+          indexed_commit: index.sha,
+          context_sources: evidence.sources
+        });
+      }
       logStage('provider_failed', {
         error_code: errorCode,
         provider_status: providerStatus,
