@@ -6,6 +6,19 @@ const MAX_CONTEXT_CHARS = 6500;
 const MAX_QUESTION_CHARS = 1200;
 const MAX_OUTPUT_TOKENS = 700;
 
+// TEMPORARY: disable Ask Sentinel's app-level daily quotas for testing.
+// Automatically turns off at 2026-10-25 15:30 UTC (21:00 IST).
+// Tests can opt out with ASK_SENTINEL_DISABLE_UNLIMITED_TEST_MODE=true.
+const TEMPORARY_UNLIMITED_TEST_MODE_UNTIL = Date.parse('2026-10-25T15:30:00Z');
+const UNLIMITED_TEST_REMAINING = 999;
+
+function unlimitedTestModeActive(): boolean {
+  if (Deno.env.get('ASK_SENTINEL_DISABLE_UNLIMITED_TEST_MODE') === 'true') {
+    return false;
+  }
+  return Date.now() < TEMPORARY_UNLIMITED_TEST_MODE_UNTIL;
+}
+
 const ALLOWED_ORIGINS = new Set([
   'https://gauravdarwesh.github.io',
   'http://localhost:5173',
@@ -251,6 +264,8 @@ function nextUtcReset(): string {
 }
 
 async function remainingFor(userId: string): Promise<number> {
+  if (unlimitedTestModeActive()) return UNLIMITED_TEST_REMAINING;
+
   const day = utcDate();
 
   const params = new URLSearchParams({
@@ -1793,6 +1808,7 @@ Deno.serve(async (req: Request) => {
   try {
     phase = 'request_actor';
     const actor = await requestActor(req);
+    const unlimitedTestMode = unlimitedTestModeActive();
 
     if (req.method === 'GET' && mode === 'warm') {
       const index = await readIndexState();
@@ -1879,7 +1895,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (question.length > MAX_QUESTION_CHARS) {
+    if (!unlimitedTestMode && question.length > MAX_QUESTION_CHARS) {
       return respond(
         req,
         {
@@ -2163,10 +2179,16 @@ Deno.serve(async (req: Request) => {
 
     phase = 'quota';
 
-    const quota = await consumeRequest(
-      actor.id,
-      await networkBucket(req)
-    );
+    const quota: QuotaResult = unlimitedTestMode
+      ? { allowed: true, remaining: UNLIMITED_TEST_REMAINING, reason: 'ok' }
+      : await consumeRequest(actor.id, await networkBucket(req));
+
+    if (unlimitedTestMode) {
+      logStage('temporary_unlimited_test_mode', {
+        expires_at: new Date(TEMPORARY_UNLIMITED_TEST_MODE_UNTIL).toISOString(),
+        actor_mode: actor.mode
+      });
+    }
 
     if (!quota.allowed) {
       logStage('quota_refused', {
@@ -2417,7 +2439,7 @@ Deno.serve(async (req: Request) => {
           });
         }
 
-        const refunded = await refundRequest(actor.id);
+        const refunded = unlimitedTestMode ? null : await refundRequest(actor.id);
 
         logStage('citation_rejected', {
           source_count: evidence.sources.length,
@@ -2491,7 +2513,7 @@ Deno.serve(async (req: Request) => {
 
       // If the provider fails, refund the request and return only
       // validated evidence links instead of unsupported model text.
-      const refunded = await refundRequest(actor.id);
+      const refunded = unlimitedTestMode ? null : await refundRequest(actor.id);
 
       const fallback =
         citationSafeEvidenceFallback(evidence.sources, 'provider_failure');
