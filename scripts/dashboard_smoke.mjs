@@ -93,16 +93,37 @@ try {
   if (pdf.skipped) console.log("skip " + pdf.skipped);
   else check(!pdf.error && pdf.pages > 0 && pdf.items > 0, "pdf.js " + (pdf.version || "") + " loads under its integrity hash and renders a saved PDF " + JSON.stringify(pdf));
 
-  for (const view of ["changes", "monitors", "runs", "notifications", "scout", "overview"]) {
+  for (const view of ["changes", "monitors", "runs", "notifications", "scout", "calendar", "overview"]) {
     await page.click('.rail [data-view="' + view + '"]');
     await page.waitForTimeout(400);
     const visible = await page.evaluate(name => {
-      const id = { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", scout: "scoutView" }[name];
+      const id = { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", scout: "scoutView", calendar: "calendarView" }[name];
       const section = document.getElementById(id);
       return !!section && !section.hidden && section.getBoundingClientRect().height > 0;
     }, view);
     check(visible, "the " + view + " view renders");
     await page.screenshot({ path: path.join(OUT, "view-" + view + ".png") });
+    if (view === "calendar") {
+      await page.click('[data-calendar-mode="upcoming"]');
+      const upcomingVisible = await page.waitForFunction(() => {
+        const panel = document.getElementById("cadenceUpcomingView");
+        const toggle = document.querySelector('[data-calendar-mode="upcoming"]');
+        return panel && !panel.hidden && toggle && toggle.getAttribute("aria-pressed") === "true";
+      }, null, { timeout: 10000 }).then(() => true, () => false);
+      check(upcomingVisible, "Cadence Upcoming & overdue view switches on");
+      const upcomingReady = await page.evaluate(() => {
+        const list = document.getElementById("cadenceUpcomingList");
+        return !!list && list.children.length > 0 && !!document.getElementById("cadenceUpcomingCount").textContent;
+      });
+      check(upcomingReady, "Cadence Upcoming & overdue list renders an empty state or entries");
+      await page.click('[data-calendar-mode="month"]');
+      const monthVisible = await page.waitForFunction(() => {
+        const panel = document.getElementById("cadenceMonthView");
+        const toggle = document.querySelector('[data-calendar-mode="month"]');
+        return panel && !panel.hidden && toggle && toggle.getAttribute("aria-pressed") === "true";
+      }, null, { timeout: 10000 }).then(() => true, () => false);
+      check(monthVisible, "Cadence Month view remains available after switching back");
+    }
   }
 
   await page.click('.rail [data-view="changes"]');
