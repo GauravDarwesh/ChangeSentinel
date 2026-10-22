@@ -273,6 +273,23 @@ Deno.test('transient provider transport failures retry once', async () => {
   assertEquals([answer.status, calls], [200, 2]);
 });
 
+Deno.test('a second cited-answer repair fixes one remaining uncited paragraph', async () => {
+  let calls = 0;
+  reset(() => {
+    calls += 1;
+    if (calls === 1) return groqAnswer('The latest run had no changes.');
+    if (calls === 2) return groqAnswer(
+      'The latest run had no changes. [Source: data/report.json]\n\nAn additional detail from the report.'
+    );
+    return groqAnswer('The latest run had no changes. [Source: data/report.json]');
+  });
+  const answer = await ask({ ip: '203.0.113.35' });
+  assertEquals([answer.status, answer.body.answer, calls], [200, 'The latest run had no changes. [Source: data/report.json]', 3]);
+  const repairPrompt = lastGroqMessages.map((message) => String(message.content || '')).join('\\n');
+  if (!repairPrompt.includes('uncited_line_count=1')) throw new Error('second repair prompt omitted validator feedback');
+  if (!repairPrompt.includes('data/report.json')) throw new Error('second repair prompt omitted allowed source paths');
+});
+
 Deno.test('paragraph-level citations are accepted while invalid paths still fail closed', async () => {
   reset(() => groqAnswer('The latest run had no changes.\nThe fetch and extraction error counts are zero. [Source: data/report.json]'));
   const accepted = await ask({ ip: '203.0.113.11' });

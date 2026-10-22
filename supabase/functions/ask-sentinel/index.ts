@@ -674,7 +674,8 @@ async function groqCompletion(
   question: string,
   context: string,
   history: Array<{ role: 'user' | 'assistant'; content: string }>,
-  repairDraft: string | null = null
+  repairDraft: string | null = null,
+  repairFeedback: string | null = null
 ): Promise<string> {
   const key = config().groqKey.trim();
   if (!key) throw new Error('The GROQ_API secret is missing from the Supabase Edge Function environment.');
@@ -689,7 +690,8 @@ async function groqCompletion(
     'The index includes committed text files and extracted text snapshots; binary PDFs and ZIPs are not fed directly to the model.',
     'Be concise and transparent about limitations. Do not claim live regulatory status unless the supplied records support it.',
     ...(repairDraft ? [
-      'The first draft failed strict citation validation. Correct the draft using only the supplied evidence. Add exact allowed [Source: path] markers to factual paragraphs, list items and table rows; remove unsupported claims instead of guessing. Do not invent facts or source paths. Return only the corrected answer.'
+      'The draft failed strict citation validation. Correct it using only the supplied evidence. Audit every factual paragraph, every list item, and every factual table row individually. Each must contain at least one exact allowed [Source: path] citation; do not assume a citation elsewhere in the answer covers it. Remove unsupported claims rather than guessing. Do not add greetings, explanations about the process, or closing offers. Return only the corrected answer.',
+      repairFeedback ? 'Deterministic validator feedback for the previous draft: ' + repairFeedback : ''
     ] : [])
   ].join(' ');
   const messages: any[] = [{ role: 'system', content: system }];
@@ -698,7 +700,11 @@ async function groqCompletion(
   messages.push({
     role: 'user',
     content: repairDraft
-      ? 'Original question: ' + question + '\n\nDraft answer to repair:\n' + repairDraft + '\n\nReturn a corrected answer grounded only in the supplied evidence.'
+      ? 'Original question: ' + question +
+        '\n\nDraft answer to repair:\n' + repairDraft +
+        '\n\nValidator feedback:\n' + (repairFeedback || 'The draft did not pass citation validation.') +
+        '\n\nExact allowed source paths:\n' + context.match(/Source path: ([^ |\]]+)/g)?.map((value) => value.replace('Source path: ', '')).filter((value, index, all) => all.indexOf(value) === index).join('\n') +
+        '\n\nReturn a corrected answer grounded only in the supplied evidence.'
       : question
   });
   const requestInit: RequestInit = {
@@ -964,36 +970,58 @@ Deno.serve(async (req: Request) => {
       phase = 'citation_validation';
       let citationValidation = validateGroundedCitations(answer, evidence.sources);
 
-      // One bounded repair call prevents a citation-formatting miss from turning
-      // a valid question into another dead end. Repaired output is revalidated.
-      if (!citationValidation.valid) {
-        const firstValidation = citationValidation;
+      // Two bounded repair attempts handle a common model failure: the first
+      // repair adds citations but leaves one remaining uncited paragraph/list item.
+      // Each repaired candidate is revalidated, and unvalidated text is never served.
+      const validationRank = (validation: CitationValidation) =>
+        validation.invalid_citation_count * 1000 +
+        validation.uncited_line_count * 10 +
+        (validation.citation_count === 0 ? 10000 : 0);
+      for (let repairAttempt = 1; !citationValidation.valid && repairAttempt <= 2; repairAttempt += 1) {
+        const previousValidation = citationValidation;
+        const feedback = [
+          'attempt=' + repairAttempt,
+          'reason=' + previousValidation.reason,
+          'citation_count=' + previousValidation.citation_count,
+          'invalid_citation_count=' + previousValidation.invalid_citation_count,
+          'uncited_line_count=' + previousValidation.uncited_line_count,
+          'Every factual paragraph, list item, and table data row needs its own exact allowed citation. Remove any remaining uncited factual segment or unsupported claim.'
+        ].join('; ');
         logStage('citation_repair_start', {
+          attempt: repairAttempt,
           source_count: evidence.sources.length,
-          reason: firstValidation.reason,
-          citation_count: firstValidation.citation_count,
-          invalid_citation_count: firstValidation.invalid_citation_count,
-          uncited_line_count: firstValidation.uncited_line_count
+          reason: previousValidation.reason,
+          citation_count: previousValidation.citation_count,
+          invalid_citation_count: previousValidation.invalid_citation_count,
+          uncited_line_count: previousValidation.uncited_line_count
         });
         try {
-          const repaired = await groqCompletion(question, evidence.context, history, answer);
+          const repaired = await groqCompletion(question, evidence.context, history, answer, feedback);
           const repairedValidation = validateGroundedCitations(repaired, evidence.sources);
           logStage('citation_repair_complete', {
+            attempt: repairAttempt,
             valid: repairedValidation.valid,
             reason: repairedValidation.reason,
             citation_count: repairedValidation.citation_count,
             invalid_citation_count: repairedValidation.invalid_citation_count,
             uncited_line_count: repairedValidation.uncited_line_count
           });
-          if (repairedValidation.valid || repairedValidation.invalid_citation_count <= firstValidation.invalid_citation_count) {
+          if (repairedValidation.valid) {
+            answer = repaired;
+            citationValidation = repairedValidation;
+            break;
+          }
+          if (validationRank(repairedValidation) < validationRank(citationValidation)) {
             answer = repaired;
             citationValidation = repairedValidation;
           }
         } catch (repairError) {
-          // Do not expose provider details or an unvalidated draft to the caller.
+          // One failed repair provider call is not followed by another model call.
           logStage('citation_repair_failed', {
+            attempt: repairAttempt,
             error_kind: /timeout|timed out|abort/i.test(String((repairError as Error)?.message || '')) ? 'timeout' : 'provider_error'
           });
+          break;
         }
       }
       if (!citationValidation.valid) {
