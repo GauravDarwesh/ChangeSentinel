@@ -290,6 +290,33 @@ Deno.test('a second cited-answer repair fixes one remaining uncited paragraph', 
   if (!repairPrompt.includes('data/report.json')) throw new Error('second repair prompt omitted allowed source paths');
 });
 
+Deno.test('a provider error during citation repair still permits the second bounded attempt', async () => {
+  let calls = 0;
+  reset(() => {
+    calls += 1;
+    if (calls === 1) return groqAnswer('The latest run had no changes.');
+    if (calls === 2) return json({ error: 'temporary provider request error' }, 400);
+    return groqAnswer('The latest run had no changes. [Source: data/report.json]');
+  });
+  const answer = await ask({ ip: '203.0.113.36' });
+  assertEquals([answer.status, answer.body.answer, calls], [200, 'The latest run had no changes. [Source: data/report.json]', 3]);
+});
+
+Deno.test('citation failure returns a verified source fallback instead of a dead-end error', async () => {
+  let calls = 0;
+  reset(() => {
+    calls += 1;
+    if (calls === 1) return groqAnswer('The latest run had no changes.');
+    if (calls === 2) return json({ error: 'temporary provider request error' }, 400);
+    return groqAnswer('Still no usable citation.');
+  });
+  const answer = await ask({ ip: '203.0.113.37' });
+  assertEquals([answer.status, answer.body.model, answer.body.evidence_fallback, fake.refunds], [200, 'evidence-fallback', true, 0]);
+  if (!String(answer.body.answer).includes('[Source: data/report.json]')) {
+    throw new Error('fallback did not return an allowed indexed source citation');
+  }
+});
+
 Deno.test('paragraph-level citations are accepted while invalid paths still fail closed', async () => {
   reset(() => groqAnswer('The latest run had no changes.\nThe fetch and extraction error counts are zero. [Source: data/report.json]'));
   const accepted = await ask({ ip: '203.0.113.11' });
