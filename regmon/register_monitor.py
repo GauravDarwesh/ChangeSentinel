@@ -488,8 +488,11 @@ def _configure_scout_source(
                 same_url = False
             if same_url and channel.get("type") == "listing" and not channel.get("pagination"):
                 prefixes = list(channel.get("link_prefixes") or [])
-                if origin_prefix not in prefixes:
-                    prefixes.append(origin_prefix)
+                # Preserve an existing regulator channel's narrower URL scope.
+                # Only add the submitted page's origin as a boundary when the
+                # existing channel had no explicit link-prefix restriction.
+                if not prefixes:
+                    prefixes = [origin_prefix]
                 new_values = {
                     "crawl_depth": crawl_depth,
                     "link_prefixes": prefixes,
