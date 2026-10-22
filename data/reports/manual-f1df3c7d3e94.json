@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261022T220441Z-c408b466",
-  "generated_at": "2026-10-22T22:04:41.457255+00:00",
+  "run_id": "20261022T221817Z-f3de8dfb",
+  "generated_at": "2026-10-22T22:18:17.385192+00:00",
   "source": {
     "id": "manual-f1df3c7d3e94",
     "name": "OSFI BCAR 2027",
@@ -19,8 +19,8 @@
     "method": "http-resumable",
     "state": "PAUSED",
     "discovered": 1,
-    "html_processed": 4,
-    "successful_pages": 4,
+    "html_processed": 5,
+    "successful_pages": 5,
     "failed_pages": 0,
     "capped": false,
     "pending": 1,
@@ -86,5 +86,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "continuation",
-  "workflow_run_id": "39860130367"
+  "workflow_run_id": "39862244673"
 }
