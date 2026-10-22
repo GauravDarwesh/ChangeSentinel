@@ -14,11 +14,15 @@ def make_id(url: str) -> str:
     return hashlib.sha256(url.encode("utf-8")).hexdigest()
 
 
-# Cloudflare's JavaScript-detection challenge injects per-response Ray IDs and
-# encoded timestamps into an inline script. They change on virtually every
-# request but carry no page-content meaning. Stabilize only those two fields;
-# retain the rest of the HTML signature so real source/DOM changes are visible.
+# Some sites put a per-request timestamp in a dedicated cache-buster config
+# field. It is transport/cache metadata rather than page content. Stabilize only
+# known volatile fields (not arbitrary timestamps or query strings), preserving
+# every other source byte in the comparison signature.
 _CF_CV_PARAMS = re.compile(r"window\.__CF\$cv\$params\s*=\s*\{[^}]*\}", re.DOTALL)
+_PAGE_CACHE_BUSTER = re.compile(
+    r"(\bpageConfig\s*\.\s*cacheBuster\s*=\s*)(['\"])[^'\"]*\2",
+    re.IGNORECASE,
+)
 
 
 def html_comparison_hash(value: str | bytes | None) -> str | None:
@@ -49,6 +53,10 @@ def html_comparison_hash(value: str | bytes | None) -> str | None:
         return block
 
     stable_html = _CF_CV_PARAMS.sub(stabilize_params, html)
+    stable_html = _PAGE_CACHE_BUSTER.sub(
+        lambda match: match.group(1) + match.group(2) + "<volatile-cache-buster>" + match.group(2),
+        stable_html,
+    )
     return hashlib.sha256(stable_html.encode("utf-8")).hexdigest()
 
 def classify_change(
