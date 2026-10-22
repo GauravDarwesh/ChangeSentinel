@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261022T042352Z-c172ca9c
-Generated: 2026-10-22T04:27:54.117805+00:00
+Run: 20261022T065449Z-97e93e07
+Generated: 2026-10-22T06:57:07.398839+00:00
 
 ## Aggregate counts
 
@@ -11,10 +11,10 @@ Generated: 2026-10-22T04:27:54.117805+00:00
 | ai_deferred | 0 |
 | ai_error | 0 |
 | ai_invalid | 0 |
-| ai_ok | 1 |
+| ai_ok | 0 |
 | ai_skipped | 0 |
 | baseline_migration | 0 |
-| changed | 1 |
+| changed | 0 |
 | crawl_paused | 0 |
 | discovered | 18 |
 | extraction_drift | 0 |
@@ -23,21 +23,21 @@ Generated: 2026-10-22T04:27:54.117805+00:00
 | forced_full_fetch | 0 |
 | new | 0 |
 | not_modified | 0 |
-| relevance_candidates | 1 |
+| relevance_candidates | 0 |
 | removal_held | 0 |
 | removal_pending_confirmation | 0 |
 | removed | 0 |
-| source_changed | 1 |
-| unchanged | 16 |
+| source_changed | 0 |
+| unchanged | 18 |
 
 ## Sources
 
 ### Federal Reserve — Reporting Forms Pilot (Exact URL Allowlist)
 
 - Regulator: Board of Governors of the Federal Reserve System
-- Report run: 20261022T042352Z-c172ca9c (2026-10-22T04:23:52.384181+00:00)
+- Report run: 20261022T065449Z-97e93e07 (2026-10-22T06:54:49.381237+00:00)
 - Discovered: 2
-- Changed content: 1
+- Changed content: 0
 - HTML source-only changes: 0
 - New: 0
 - Removed: 0
@@ -46,7 +46,7 @@ Generated: 2026-10-22T04:27:54.117805+00:00
 ### Federal Reserve — Recently Updated Forms Detail Pilot (Exact URL Allowlist)
 
 - Regulator: Board of Governors of the Federal Reserve System
-- Report run: 20261022T042352Z-c172ca9c (2026-10-22T04:25:39.795159+00:00)
+- Report run: 20261022T065449Z-97e93e07 (2026-10-22T06:54:49.897811+00:00)
 - Discovered: 14
 - Changed content: 0
 - HTML source-only changes: 0
@@ -57,7 +57,7 @@ Generated: 2026-10-22T04:27:54.117805+00:00
 ### OSFI BCAR 2027
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261022T042352Z-c172ca9c (2026-10-22T04:27:53.681982+00:00)
+- Report run: 20261022T065449Z-97e93e07 (2026-10-22T06:57:06.847910+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -68,10 +68,10 @@ Generated: 2026-10-22T04:27:54.117805+00:00
 ### Reporting Central and Structure Central User Guides
 
 - Regulator: www.frbservices.org
-- Report run: 20261022T042352Z-c172ca9c (2026-10-22T04:27:54.117805+00:00)
+- Report run: 20261022T065449Z-97e93e07 (2026-10-22T06:57:07.398839+00:00)
 - Discovered: 1
 - Changed content: 0
-- HTML source-only changes: 1
+- HTML source-only changes: 0
 - New: 0
 - Removed: 0
 - Fetch errors: 0
