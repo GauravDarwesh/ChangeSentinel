@@ -1,8 +1,8 @@
 const REPOSITORY = 'GauravDarwesh/ChangeSentinel';
 const MODEL = 'openai/gpt-oss-20b';
-const MAX_CONTEXT_CHARS = 8500;
+const MAX_CONTEXT_CHARS = 6500;
 const MAX_QUESTION_CHARS = 1200;
-const MAX_OUTPUT_TOKENS = 800;
+const MAX_OUTPUT_TOKENS = 450;
 const ALLOWED_ORIGINS = new Set([
   'https://gauravdarwesh.github.io',
   'http://localhost:5173',
@@ -437,8 +437,15 @@ function validateGroundedCitations(answer: string, allowedSources: string[]): Ci
     for (const line of lines) {
       if (/^#{1,6}\s/.test(line)) continue;
       const isListItem = /^(?:[-*•]\s+|\d+[.)]\s+)/.test(line);
+      const isTableRow = /^\|/.test(line);
+      const isTableSeparator = /^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$/.test(line);
       const hasCitation = /\[Source:\s*[^\]]+\]/i.test(line);
-      if (isListItem) {
+      if (isTableRow && !isTableSeparator) {
+        // Header cells are labels, while each data row must cite its own source.
+        const isTableHeader = /^\|.*(?:source|evidence|regulator|url|link|count|status|change)/i.test(line) && !hasCitation;
+        if (!isTableHeader && !hasCitation) uncitedLineCount += 1;
+        if (hasCitation) proseHasCitation = true;
+      } else if (isListItem) {
         if (!hasCitation) uncitedLineCount += 1;
       } else {
         hasProse = true;
@@ -627,9 +634,20 @@ Deno.serve(async (req: Request) => {
     }
 
     if (asksUrlLookup(question)) {
-      // Exact canonical URL match wins over fuzzy page/snapshot matches.
+      // Exact canonical URL match wins over fuzzy page/snapshot matches. Follow the
+      // stored evidence_location path from that exact page record when available.
       const exactPages = await fetchCurrentPageRecordsForUrls(extractUrls(question));
-      if (exactPages.length) targetedDocs.unshift(...exactPages);
+      if (exactPages.length) {
+        const exactEvidence: any[] = [];
+        for (const page of exactPages) {
+          const record = safeJson(String(page.content || ''));
+          const evidencePath = typeof record?.evidence_location === 'string' ? record.evidence_location : '';
+          if (/^data\/evidence\/[a-f0-9]{64}\.json$/.test(evidencePath)) {
+            exactEvidence.push(...await fetchDocsByPath(evidencePath));
+          }
+        }
+        targetedDocs.unshift(...exactEvidence, ...exactPages);
+      }
     }
 
     const evidence = buildContext(question, docs, targetedDocs);
