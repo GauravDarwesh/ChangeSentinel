@@ -27,7 +27,7 @@ class TestAskSentinelContract(unittest.TestCase):
     def test_backend_reads_index_but_never_indexes_in_a_request(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
         for token in ("ask_sentinel_chunks", "search_ask_sentinel_chunks", "__current_inventory__",
-                      "readIndexState", "openai/gpt-oss-20b", "GROQ_API", "MAX_CONTEXT_CHARS = 8500"):
+                      "readIndexState", "openai/gpt-oss-20b", "GROQ_API", "MAX_CONTEXT_CHARS = 6500"):
             with self.subTest(token=token):
                 self.assertIn(token, backend)
         for forbidden in ("api.github.com", "raw.githubusercontent.com", "syncRepository", "ask_sentinel_documents"):
@@ -155,7 +155,7 @@ class TestAskSentinelContract(unittest.TestCase):
 
     def test_citation_validation_accepts_paragraph_end_citations_but_rejects_fabricated_paths(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
-        self.assertIn("one exact citation at the end of a paragraph is sufficient", backend)
+        self.assertIn("prose may wrap onto several lines but needs at least one citation in the paragraph.", backend)
         self.assertIn("const invalidCitationCount = citations.filter((path) => !allowed.has(path)).length;", backend)
         self.assertIn("else if (invalidCitationCount > 0) reason = 'unapproved_source';", backend)
 
