@@ -556,9 +556,10 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
 
 
 
+
+
 if __name__ == "__main__":
     unittest.main()
-
 
     def test_dashboard_manual_monitor_controls_remain_owner_approved(self):
         html = read("index.html")
