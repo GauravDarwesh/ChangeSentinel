@@ -161,6 +161,45 @@ Deno.test('citation formatting is repaired once before an answer is rejected', a
   }
 });
 
+Deno.test('named FRB link queries retrieve matching active page evidence', async () => {
+  const evidencePath = 'data/evidence/' + 'a'.repeat(64) + '.json';
+  reset(() => groqAnswer('The Federal Reserve reporting-forms page is actively monitored and was checked successfully. [Source: ' + evidencePath + ']'));
+  fakeCurrentPageRows = [{
+    path: '__current_page__/fed-reporting-forms-pilot/review',
+    doc_type: 'current monitored URL record',
+    is_core: false,
+    content: JSON.stringify({
+      canonical_url: 'https://www.federalreserve.gov/apps/reportingforms/review',
+      configured_source_active: true,
+      last_checked: '2026-10-22T06:54:49.381237Z',
+      evidence_location: evidencePath,
+      change_history: [{
+        timestamp: '2026-10-22T04:23:52Z',
+        evidence_location: evidencePath,
+        ai_summary: 'A reporting forms list changed'
+      }]
+    })
+  }];
+  fakeEvidenceRows.set(evidencePath, [{
+    path: evidencePath, doc_type: 'monitoring evidence', is_core: false,
+    content: 'Evidence for the Federal Reserve reporting forms page change.'
+  }]);
+  const answer = await ask({ ip: '203.0.113.31', question: 'tell me about the frb link' });
+  assertEquals(answer.status, 200);
+  if (!fakeFetchedPaths.includes(evidencePath)) throw new Error('FRB query did not load matching page evidence');
+});
+
+Deno.test('transient provider transport failures retry once', async () => {
+  let calls = 0;
+  reset(() => {
+    calls += 1;
+    if (calls === 1) throw new TypeError('fetch failed');
+    return groqAnswer('The latest run changed nothing. [Source: data/report.json]');
+  });
+  const answer = await ask({ ip: '203.0.113.32' });
+  assertEquals([answer.status, calls], [200, 2]);
+});
+
 Deno.test('paragraph-level citations are accepted while invalid paths still fail closed', async () => {
   reset(() => groqAnswer('The latest run had no changes.\nThe fetch and extraction error counts are zero. [Source: data/report.json]'));
   const accepted = await ask({ ip: '203.0.113.11' });
