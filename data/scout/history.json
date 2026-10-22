@@ -1,5 +1,21 @@
 [
  {
+  "finished_at": "2026-10-22T23:48:39Z",
+  "regulators": [
+   {
+    "id": "manual-bf930657f9a2",
+    "new": 0,
+    "observed": 1213,
+    "requests": 27,
+    "status": "COMPLETE"
+   }
+  ],
+  "started_at": "2026-10-22T23:44:22Z",
+  "status": "COMPLETE",
+  "sweep_id": "20261022T234422Z-89ed37",
+  "trigger": "manual"
+ },
+ {
   "finished_at": "2026-10-21T09:36:24Z",
   "regulators": [
    {
