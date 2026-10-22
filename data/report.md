@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261022T233613Z-8428bc76
-Generated: 2026-10-22T23:36:13.908774+00:00
+Run: 20261022T234050Z-c344b0e6
+Generated: 2026-10-22T23:40:50.980838+00:00
 
 ## Aggregate counts
 
@@ -32,11 +32,11 @@ Generated: 2026-10-22T23:36:13.908774+00:00
 
 ## Sources
 
-### Reporting Central and Structure Central User Guides
+### Federal Reserve — Recently Updated Forms Detail Pilot (Exact URL Allowlist)
 
-- Regulator: www.frbservices.org
-- Report run: 20261022T233613Z-8428bc76 (2026-10-22T23:36:13.908774+00:00)
-- Discovered: 1
+- Regulator: Board of Governors of the Federal Reserve System
+- Report run: 20261022T234050Z-c344b0e6 (2026-10-22T23:40:50.980838+00:00)
+- Discovered: 14
 - Changed content: 0
 - HTML source-only changes: 0
 - New: 0
@@ -54,21 +54,21 @@ Generated: 2026-10-22T23:36:13.908774+00:00
 - Removed: 0
 - Fetch errors: 0
 
-### Federal Reserve — Recently Updated Forms Detail Pilot (Exact URL Allowlist)
+### OSFI BCAR 2027
 
-- Regulator: Board of Governors of the Federal Reserve System
-- Report run: 20261022T232809Z-950d1c65 (2026-10-22T23:28:09.407443+00:00)
-- Discovered: 14
+- Regulator: www.osfi-bsif.gc.ca
+- Report run: 20261022T233144Z-2e72a904 (2026-10-22T23:31:44.145298+00:00)
+- Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
 - New: 0
 - Removed: 0
 - Fetch errors: 0
 
-### OSFI BCAR 2027
+### Reporting Central and Structure Central User Guides
 
-- Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261022T233144Z-2e72a904 (2026-10-22T23:31:44.145298+00:00)
+- Regulator: www.frbservices.org
+- Report run: 20261022T233613Z-8428bc76 (2026-10-22T23:36:13.908774+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
