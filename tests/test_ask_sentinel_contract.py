@@ -19,7 +19,7 @@ class TestAskSentinelContract(unittest.TestCase):
         # 2.121.0 was never published; a missing client silently disabled sign-in.
         self.assertIn('supabase-js@2.118.0/dist/umd/supabase.js', html)
         self.assertNotIn('supabase-js@2.121.0', html)
-        self.assertIn('src="dashboard.js?v=20261022-cadence-readonly-1"', html)
+        self.assertIn('src="dashboard.js?v=20261022-cadence-upcoming-1"', html)
         self.assertIn('ASK_SENTINEL_ENDPOINT = window.CHANGESENTINEL_ASK_ENDPOINT || ""', js)
         self.assertIn('askSentinel: "askSentinelView"', js)
         self.assertIn('name === "ask-sentinel"', js)

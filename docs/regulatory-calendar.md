@@ -6,8 +6,10 @@ Cadence is the dashboard’s evidence-first view of regulatory deadlines and eff
 
 - Evidence-linked dates generated from material ChangeSentinel findings.
 - Month navigation, a daily agenda, source links and a direct route back to the underlying change.
+- Shared search and entry-type filters across the month grid/agenda and Upcoming view.
+- An Upcoming view grouping uncompleted overdue team commitments, today's entries, the next 7 days and later entries through the next 90 days. Recurring overdue entries show their most recent missed occurrence instead of flooding the list with every past cycle; selecting a date jumps back to that day in Month view.
 - An `.ics` export and subscription feed for personal or team calendars.
-- No Cadence email sign-in, magic link, or browser-side access to private team entries.
+- No email magic-link flow or self-service sign-up. Calendar editing uses password sign-in for pre-provisioned team accounts; private entries and reminder recipients remain behind the calendar API.
 - Existing privately configured entries can still send their scheduled email reminders. Their owners and recipient addresses are never returned to the dashboard.
 
 ## Production setup
@@ -15,7 +17,7 @@ Cadence is the dashboard’s evidence-first view of regulatory deadlines and eff
 The evidence calendar works from the monitored repository data. The private reminder service is optional and must be set up separately before it can send email.
 
 1. Apply `supabase/migrations/20261021180000_regulatory_calendar.sql` to the ChangeSentinel Supabase project (project ref `pysoukwmnwwgilkwafdy`) only if you need private recurring entries and email reminders. Using the Supabase CLI from the repository root: `supabase db push --project-ref pysoukwmnwwgilkwafdy`.
-2. Add or manage private reminder entries through the secured back-office process. The dashboard intentionally does not expose a browser editor while email authentication is disabled.
+2. Provision each approved editor/viewer as a Supabase Auth user with a password using the trusted Supabase admin workflow, and add their normalized email to `regulatory_calendar_members` with the intended role. The dashboard has no self-service sign-up or magic-link login. Do not place an admin/service-role credential in the browser. Existing users created for the previous magic-link flow may need an administrator-assisted password setup/reset before they can use the editor. Manage entries through the authenticated Cadence editor; the API still checks active membership and role for each operation.
    ```sql
    insert into public.regulatory_calendar_members (email, role, active)
    values ('calendar-admin@example.com', 'admin', true)

@@ -1121,11 +1121,59 @@ select.field-input { appearance: auto; }
     .cadence-access-copy { flex: 1; min-width: 160px; }
     .cadence-access-title { font-size: 13px; font-weight: 500; color: var(--ink); }
     .cadence-access-copy p { margin: 3px 0 0; max-width: 680px; color: var(--ink-3); font-size: 12px; line-height: 1.5; }
+    .cadence-signin-form { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; min-width: 0; }
+    .cadence-signin-form .field-input { width: min(180px, 18vw); min-width: 130px; margin: 0; font-size: 12.5px; }
+    .cadence-signin-form .btn { white-space: nowrap; }
+    .cadence-signed-in { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; }
+    .cadence-member { color: var(--ink-2); font-size: 12px; }
+    .cadence-entry-dialog { width: min(700px, calc(100vw - 28px)); }
+    .cadence-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .cadence-reminder-fieldset { min-width: 0; margin: 0; padding: 12px; border: 1px solid var(--line); }
+    .cadence-reminder-fieldset legend { padding: 0 5px; color: var(--ink); font-size: 12.5px; }
+    .cadence-reminder-fieldset legend label { display: inline-flex; align-items: center; gap: 8px; }
+    .cadence-reminder-fieldset input[type="checkbox"] { accent-color: var(--accent); }
+    .cadence-reminder-fieldset:has(#cadenceReminderEnabled:not(:checked)) .cadence-form-grid, .cadence-reminder-fieldset:has(#cadenceReminderEnabled:not(:checked)) .field-help { opacity: .48; }
+    .cadence-form-grid .field-input { min-width: 0; }
+
     .cadence-stat-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin-bottom: 23px; }
     .cadence-stat { display: grid; gap: 4px; min-height: 86px; padding: 13px 15px; border: 1px solid var(--line); background: var(--pane); }
     .cadence-stat-label { color: var(--ink-3); font-size: 11px; }
     .cadence-stat strong { font: 500 23px/1.15 var(--font-ui); color: var(--ink); }
     .cadence-stat-note { color: var(--ink-3); font-size: 11px; }
+    .cadence-filter-row { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; margin: 0 0 14px; }
+    .cadence-filter-row .field-input { margin: 0; min-width: 0; height: 36px; font-size: 12.5px; }
+    .cadence-filter-search { flex: 1 1 260px; max-width: 420px; }
+    .cadence-filter-type { flex: 0 1 230px; }
+    .cadence-view-switch { display: flex; width: max-content; max-width: 100%; gap: 3px; margin: 0 0 14px; padding: 3px; border: 1px solid var(--line); background: var(--bg); }
+    .cadence-view-switch button { min-height: 32px; padding: 6px 13px; border: 1px solid transparent; background: transparent; color: var(--ink-2); font: 500 12px/1.2 var(--font-ui); cursor: pointer; }
+    .cadence-view-switch button[aria-pressed="true"] { border-color: var(--line-2); background: var(--pane); color: var(--ink); }
+    .cadence-upcoming-view { min-width: 0; border: 1px solid var(--line); background: var(--pane); }
+    .cadence-upcoming-intro { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 17px 18px; border-bottom: 1px solid var(--line); }
+    .cadence-upcoming-intro h2 { margin: 0; font: 500 18px/1.3 var(--font-ui); letter-spacing: -.02em; }
+    .cadence-upcoming-intro p { margin: 4px 0 0; color: var(--ink-3); font-size: 12.5px; line-height: 1.5; }
+    .cadence-upcoming-total { flex: 0 0 auto; color: var(--ink-2); font: 500 11px/1.4 var(--font-code); }
+    .cadence-upcoming-group + .cadence-upcoming-group { border-top: 1px solid var(--line); }
+    .cadence-upcoming-group-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px 9px; }
+    .cadence-upcoming-group-head h3 { margin: 0; color: var(--ink); font: 500 13px/1.4 var(--font-ui); }
+    .cadence-upcoming-group-head p { margin: 2px 0 0; color: var(--ink-3); font-size: 11.5px; }
+    .cadence-upcoming-count { display: inline-grid; place-items: center; min-width: 25px; height: 22px; padding: 0 6px; border: 1px solid var(--line); color: var(--ink-2); font: 11px/1 var(--font-code); }
+    .cadence-upcoming-item { display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; align-items: start; gap: 12px; padding: 12px 18px; border-top: 1px solid var(--line); }
+    .cadence-upcoming-date { display: grid; justify-items: center; gap: 2px; min-width: 0; padding: 7px 4px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }
+    .cadence-upcoming-date:hover { border-color: var(--accent); }
+    .cadence-upcoming-date strong { font: 500 19px/1 var(--font-ui); font-variant-numeric: tabular-nums; }
+    .cadence-upcoming-date span { color: var(--ink-3); font: 10px/1.2 var(--font-code); text-transform: uppercase; }
+    .cadence-upcoming-content { min-width: 0; }
+    .cadence-upcoming-title { color: var(--ink); font: 500 13px/1.45 var(--font-ui); overflow-wrap: anywhere; }
+    .cadence-upcoming-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 9px; margin-top: 5px; color: var(--ink-3); font-size: 11.5px; line-height: 1.5; }
+    .cadence-upcoming-urgency { color: var(--ink-2); font-weight: 500; }
+    .cadence-upcoming-urgency.is-overdue { color: var(--state-bad, #b64437); }
+    .cadence-upcoming-urgency.is-due-today { color: var(--accent); }
+    .cadence-upcoming-item.is-overdue .cadence-upcoming-date { border-color: var(--state-bad, #b64437); }
+    .cadence-upcoming-notes { margin: 6px 0 0; color: var(--ink-2); font-size: 12px; line-height: 1.55; overflow-wrap: anywhere; }
+    .cadence-upcoming-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 5px 10px; }
+    .cadence-upcoming-actions a, .cadence-upcoming-actions button, .cadence-upcoming-completed { padding: 0; border: 0; background: none; color: var(--ink-2); font: 500 11.5px/1.5 var(--font-ui); text-decoration: none; cursor: pointer; }
+    .cadence-upcoming-actions a:hover, .cadence-upcoming-actions button:hover { color: var(--accent); text-decoration: underline; }
+    .cadence-upcoming-empty { padding: 5px 18px 15px 84px; color: var(--ink-3); font-size: 12px; }
     .cadence-month-toolbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 11px; }
     .cadence-month-nav { display: flex; align-items: center; gap: 8px; min-width: 0; }
     .cadence-month-nav h2 { margin: 0 7px; font: 500 22px/1.2 var(--font-ui); letter-spacing: -.025em; white-space: nowrap; }
@@ -1188,6 +1236,12 @@ select.field-input { appearance: auto; }
       .rail-nav { grid-template-columns: repeat(8, auto); }
       .nav-calendar { margin-top: 0; padding-top: 0; border-top: 0; }
       .cadence-layout { grid-template-columns: minmax(0, 1fr); }
+      .cadence-view-switch { width: 100%; }
+      .cadence-view-switch button { flex: 1; }
+      .cadence-upcoming-intro { align-items: flex-start; padding: 14px; }
+      .cadence-upcoming-item { grid-template-columns: 48px minmax(0, 1fr); gap: 9px; padding: 12px; }
+      .cadence-upcoming-actions { grid-column: 2; justify-content: flex-start; }
+      .cadence-upcoming-empty { padding-left: 69px; }
       .cadence-side { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
       .cadence-header { align-items: flex-start; }
       .cadence-legend { display: none; }
@@ -1195,6 +1249,8 @@ select.field-input { appearance: auto; }
       .cadence-calendar-foot { align-items: flex-start; }
     }
     @media (max-width: 620px) {
+      .cadence-filter-row { align-items: stretch; }
+      .cadence-filter-search, .cadence-filter-type { flex: 1 1 100%; max-width: none; width: 100%; }
       .cadence-shell { padding: 17px 12px 24px; }
       .cadence-header { display: block; }
       .cadence-header-actions { justify-content: flex-start; margin-top: 15px; }
@@ -1532,24 +1588,49 @@ select.field-input { appearance: auto; }
             <div class="cadence-title-block">
               <div class="cadence-eyebrow"><span class="cadence-live-dot"></span> REGULATORY OPERATIONS</div>
               <h1>Cadence</h1>
-              <p>One read-only timeline for dates detected in published regulatory changes.</p>
+              <p>Expected releases, effective dates and the team’s next regulatory commitments.</p>
             </div>
             <div class="cadence-header-actions">
               <button class="btn btn-quiet" type="button" data-calendar-export>Export .ics</button>
+              <button class="btn btn-primary" type="button" data-calendar-new>+ New entry</button>
             </div>
           </header>
           <section class="cadence-access" id="cadenceAccess" aria-live="polite">
             <span class="cadence-access-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5h16v15H4zM8 3.5v4M16 3.5v4M4 9.5h16M8 13h2M14 13h2M8 17h2"/></svg></span>
             <div class="cadence-access-copy">
-              <div class="cadence-access-title" id="cadenceAccessTitle">Regulatory schedule</div>
-              <p id="cadenceAccessMessage">Detected regulatory dates stay linked to their evidence. Private team reminders continue in the scheduled service without exposing recipient details here.</p>
+              <div class="cadence-access-title" id="cadenceAccessTitle">Team calendar</div>
+              <p id="cadenceAccessMessage">Sign in with your approved team account to manage shared entries and reminders. Regulatory dates remain visible without signing in.</p>
+            </div>
+            <form id="cadenceSignInForm" class="cadence-signin-form">
+<label class="visually-hidden" for="cadenceSignInEmail">Approved team email</label>
+<input class="field-input" id="cadenceSignInEmail" type="email" autocomplete="username" maxlength="320" placeholder="name@company.com" required>
+<label class="visually-hidden" for="cadenceSignInPassword">Password</label>
+<input class="field-input" id="cadenceSignInPassword" type="password" autocomplete="current-password" maxlength="256" placeholder="Password" required>
+<button class="btn btn-primary" id="cadenceSignInButton" type="submit">Sign in</button></form>
+            <div class="cadence-signed-in" id="cadenceSignedIn" hidden>
+              <span class="cadence-member" id="cadenceMemberLabel"></span>
+              <button class="text-button" type="button" data-calendar-test>Test email</button>
+              <button class="text-button" type="button" data-calendar-signout>Sign out</button>
             </div>
           </section>
           <div class="cadence-stat-row" id="cadenceStats">
             <div class="cadence-stat"><span class="cadence-stat-label">This month</span><strong id="cadenceStatMonth">—</strong><span class="cadence-stat-note">Regulatory dates</span></div>
-            <div class="cadence-stat"><span class="cadence-stat-label">Next 30 days</span><strong id="cadenceStatExpected">—</strong><span class="cadence-stat-note">Evidence dates</span></div>
-            <div class="cadence-stat"><span class="cadence-stat-label">Calendar feed</span><strong id="cadenceStatReminders">.ics</strong><span class="cadence-stat-note">Ready to subscribe</span></div>
+            <div class="cadence-stat"><span class="cadence-stat-label">Expected updates</span><strong id="cadenceStatExpected">—</strong><span class="cadence-stat-note">Tracked cycles</span></div>
+            <div class="cadence-stat"><span class="cadence-stat-label">Reminders</span><strong id="cadenceStatReminders">—</strong><span class="cadence-stat-note">Email-enabled entries</span></div>
           </div>
+          <div class="cadence-filter-row" role="search" aria-label="Filter calendar entries">
+            <label class="visually-hidden" for="cadenceSearch">Search calendar entries</label>
+            <input class="field-input cadence-filter-search" id="cadenceSearch" type="search" maxlength="160" placeholder="Search dates, forms, owners or notes…">
+            <label class="visually-hidden" for="cadenceTypeFilter">Filter by entry type</label>
+            <select class="field-input cadence-filter-type" id="cadenceTypeFilter">
+              <option value="ALL">All entry types</option><option value="DETECTED">ChangeSentinel dates</option><option value="EXPECTED">Expected updates &amp; deadlines</option><option value="TEAM">Team tasks &amp; checkpoints</option>
+            </select>
+          </div>
+          <div class="cadence-view-switch" role="group" aria-label="Calendar view">
+            <button type="button" data-calendar-mode="month" aria-pressed="true">Month</button>
+            <button type="button" data-calendar-mode="upcoming" aria-pressed="false">Upcoming &amp; overdue</button>
+          </div>
+          <div class="cadence-month-view" id="cadenceMonthView">
           <div class="cadence-month-toolbar">
             <div class="cadence-month-nav">
               <button class="cadence-icon-btn" type="button" data-calendar-prev aria-label="Previous month" title="Previous month">‹</button>
@@ -1557,7 +1638,7 @@ select.field-input { appearance: auto; }
               <button class="cadence-icon-btn" type="button" data-calendar-next aria-label="Next month" title="Next month">›</button>
               <button class="btn btn-quiet cadence-today-btn" type="button" data-calendar-today>Today</button>
             </div>
-            <div class="cadence-legend"><span><i class="cadence-legend-mark is-derived"></i> ChangeSentinel evidence date</span></div>
+            <div class="cadence-legend"><span><i class="cadence-legend-mark is-derived"></i> ChangeSentinel date</span><span><i class="cadence-legend-mark is-expected"></i> Expected update</span><span><i class="cadence-legend-mark is-team"></i> Team task</span></div>
           </div>
           <div class="cadence-layout">
             <section class="cadence-calendar-card" aria-label="Monthly calendar">
@@ -1574,11 +1655,21 @@ select.field-input { appearance: auto; }
               </section>
               <section class="cadence-guide-card">
                 <div class="cadence-guide-icon" aria-hidden="true">↻</div>
-                <div><h3>Keep the next cycle visible</h3><p>Subscribe to the calendar feed for your planning view. Cadence keeps published dates and the evidence that produced them together.</p><a class="text-button" href="./data/calendar.ics" target="_blank" rel="noopener noreferrer">Open calendar feed →</a></div>
+                <div><h3>Track the next cycle</h3><p>Log an expected form update once, set its cadence (monthly, quarterly or yearly), and Cadence will place its future occurrences on the calendar.</p><button class="text-button" type="button" data-calendar-new>Plan an update →</button></div>
               </section>
-              <div class="cadence-footnote">Dates detected from regulatory changes are read-only evidence. Reminder recipients are never shown in the dashboard.</div>
+              <div class="cadence-footnote">Dates detected from regulatory changes are read-only evidence. Team entries and reminders are stored separately.</div>
             </aside>
           </div>
+          </div>
+          <section class="cadence-upcoming-view" id="cadenceUpcomingView" hidden aria-label="Upcoming and overdue entries">
+            <header class="cadence-upcoming-intro">
+              <div><h2>Upcoming &amp; overdue</h2><p>Uncompleted team commitments and regulatory dates over the next 90 days.</p></div>
+              <span class="cadence-upcoming-total" id="cadenceUpcomingCount">0 entries</span>
+            </header>
+            <div class="cadence-upcoming-list" id="cadenceUpcomingList" aria-live="polite">
+              <div class="cadence-loading">Preparing upcoming calendar entries…</div>
+            </div>
+          </section>
         </div>
       </section>
       <section id="notificationsView" class="view view-split" hidden aria-label="Alerts">
@@ -1596,6 +1687,54 @@ select.field-input { appearance: auto; }
     </main>
   </div>
 
+  <dialog class="modal cadence-entry-dialog" id="cadenceEntryDialog" aria-labelledby="cadenceEntryHeading">
+    <div class="modal-head">
+      <div><h2 id="cadenceEntryHeading">New regulatory entry</h2><p>Keep the next filing, expected release or team follow-up visible.</p></div>
+      <button class="btn btn-quiet" type="button" data-calendar-close aria-label="Close">Close</button>
+    </div>
+    <form class="modal-body" id="cadenceEntryForm" novalidate>
+      <input id="cadenceEntryId" type="hidden">
+      <div>
+        <label class="field-label-text" for="cadenceEntryTitle">Entry title</label>
+        <input class="field-input" id="cadenceEntryTitle" maxlength="160" placeholder="FR Y-14Q expected update" required>
+      </div>
+      <div class="cadence-form-grid">
+        <div><label class="field-label-text" for="cadenceEntryCategory">Type</label>
+          <select class="field-input" id="cadenceEntryCategory">
+            <option value="expected_update">Expected update</option><option value="deadline">Regulatory deadline</option><option value="meeting">Meeting / checkpoint</option><option value="internal_task">Internal task</option><option value="other">Other</option>
+          </select>
+        </div>
+        <div><label class="field-label-text" for="cadenceEntryRecurrence">Repeat</label>
+          <select class="field-input" id="cadenceEntryRecurrence">
+            <option value="none">Does not repeat</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option><option value="yearly">Yearly</option>
+          </select>
+        </div>
+      </div>
+      <div class="cadence-form-grid">
+        <div><label class="field-label-text" for="cadenceEntryStart">Start date</label><input class="field-input" id="cadenceEntryStart" type="date" required></div>
+        <div><label class="field-label-text" for="cadenceEntryEnd">End date <span>Optional</span></label><input class="field-input" id="cadenceEntryEnd" type="date"></div>
+      </div>
+      <div class="cadence-form-grid">
+        <div><label class="field-label-text" for="cadenceEntryRegulator">Regulator / form</label><input class="field-input" id="cadenceEntryRegulator" maxlength="160" placeholder="Federal Reserve · FR Y-14Q"></div>
+        <div><label class="field-label-text" for="cadenceEntryOwner">Owner</label><input class="field-input" id="cadenceEntryOwner" maxlength="120" placeholder="Regulatory Reporting"></div>
+      </div>
+      <div><label class="field-label-text" for="cadenceEntrySource">Source link <span>Optional</span></label><input class="field-input" id="cadenceEntrySource" type="url" maxlength="1000" placeholder="https://www.example.gov/guidance"></div>
+      <div><label class="field-label-text" for="cadenceEntryDescription">Notes <span>Optional</span></label><textarea class="field-input" id="cadenceEntryDescription" rows="3" maxlength="4000" placeholder="What is expected, who needs to check, and what to do next…"></textarea></div>
+      <fieldset class="cadence-reminder-fieldset">
+        <legend><label><input type="checkbox" id="cadenceReminderEnabled"> Email reminder</label></legend>
+        <div class="cadence-form-grid">
+          <div><label class="field-label-text" for="cadenceReminderDays">Remind before</label><select class="field-input" id="cadenceReminderDays"><option value="0">On the day</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7" selected>1 week before</option><option value="14">2 weeks before</option><option value="30">30 days before</option></select></div>
+          <div><label class="field-label-text" for="cadenceReminderEmails">Send to</label><input class="field-input" id="cadenceReminderEmails" type="text" maxlength="3200" placeholder="team@company.com, owner@company.com"></div>
+        </div>
+        <p class="field-help">Enter one or more email addresses separated by commas. Reminders are sent by the scheduled service, not from your browser.</p>
+      </fieldset>
+      <div id="cadenceEntryError" class="bulk-status is-error" role="alert" hidden></div>
+      <div class="modal-actions">
+        <button class="btn" type="button" data-calendar-close>Cancel</button>
+        <button class="btn btn-primary" id="cadenceEntrySave" type="submit">Save entry</button>
+      </div>
+    </form>
+  </dialog>
   <dialog class="modal" id="addMonitorDialog" aria-labelledby="addMonitorHeading">
     <div class="modal-head">
       <div><h2 id="addMonitorHeading">Add a page to monitor</h2><p>The page is checked on every scan and compared with its saved copy.</p></div>
@@ -1962,6 +2101,7 @@ select.field-input { appearance: auto; }
   </script>
 
   <script>
+    window.CHANGESENTINEL_CALENDAR_ENDPOINT = "https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/calendar-api";
     window.CHANGESENTINEL_ASK_ENDPOINT = "https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel";
     window.CHANGESENTINEL_ASK_SUPABASE_URL = "https://pysoukwmnwwgilkwafdy.supabase.co";
     window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV";
@@ -1969,8 +2109,8 @@ select.field-input { appearance: auto; }
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261022-cadence-readonly-1"></script>
-  <script src="dashboard.js?v=20261022-cadence-readonly-1"></script>
+  <script src="dashboard-lib.js?v=20261022-cadence-upcoming-1"></script>
+  <script src="dashboard.js?v=20261022-cadence-upcoming-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

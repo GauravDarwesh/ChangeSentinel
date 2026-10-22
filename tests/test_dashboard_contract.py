@@ -640,6 +640,12 @@ class TestCadenceCalendarContract(unittest.TestCase):
             'id="calendarView" class="view cadence-view"',
             'id="cadenceMonthGrid"',
             'id="cadenceAgenda"',
+            'id="cadenceSearch"',
+            'id="cadenceTypeFilter"',
+            'id="cadenceMonthView"',
+            'id="cadenceUpcomingView"',
+            'id="cadenceUpcomingList"',
+            'data-calendar-mode="upcoming"',
             'data-calendar-export',
             'id="navCadenceCount"',
         ):
@@ -653,27 +659,65 @@ class TestCadenceCalendarContract(unittest.TestCase):
         self.assertIn("@media (max-width: 620px)", html)
         self.assertIn(".cadence-layout { grid-template-columns: minmax(0, 1fr); }", html)
 
-    def test_calendar_ui_is_read_only_and_does_not_embed_service_credentials(self):
+    def test_upcoming_view_reuses_filters_and_groups_actionable_occurrences(self):
+        html = read("index.html")
         source = read("dashboard.js")
         for token in (
-            "function cadenceEventsBetween(from, to)",
-            "function renderCadenceView()",
-            "function exportCadenceCalendar()",
-            'calendar: "cadence"',
-            "async function refreshCadence(force)",
+            'id="cadenceMonthView"',
+            'id="cadenceUpcomingView"',
+            'id="cadenceUpcomingList"',
+            'data-calendar-mode="month"',
+            'data-calendar-mode="upcoming"',
+            '.cadence-upcoming-item { grid-template-columns: 48px minmax(0, 1fr);',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+        for token in (
+            'cadencePanel: "month"',
+            "function cadenceFilterEvents(allEvents)",
+            "function cadenceUpcomingEvents(today, horizon)",
+            "function renderCadenceUpcomingView(today)",
+            "function cadenceUpcomingItemMarkup(event, today)",
+            "const events = cadenceFilterEvents(allEvents);",
+            "const events = cadenceFilterEvents(cadenceUpcomingEvents(today, horizon));",
+            'event.title, event.date, event.occurrenceDate, event.category',
+            'title: "Overdue"',
+            'title: "Next 7 days"',
+            'title: "Later · next 90 days"',
+            "function jumpCadenceToDate(dateISO)",
+            'const thisMonthEvents = allEvents.filter(event => event.date.slice(0, 7) === cadenceDateISO(first).slice(0, 7));',
+            'cadenceOccurrenceDates(entry, cadenceAddDays(today, -800), cadenceAddDays(today, -1))',
         ):
             with self.subTest(token=token):
                 self.assertIn(token, source)
-        for forbidden in (
-            "SUPABASE_SERVICE_ROLE_KEY",
-            "sb_secret_",
-            "signInWithOtp",
-            "changesentinel-cadence-auth",
+
+    def test_calendar_editor_uses_password_auth_and_does_not_embed_service_credentials(self):
+        source = read("dashboard.js")
+        for token in (
+            'const CADENCE_ENDPOINT = window.CHANGESENTINEL_CALENDAR_ENDPOINT || "";',
+            "function cadenceEventsBetween(from, to)",
+            "function renderCadenceView()",
+            'cadenceSearch: "", cadenceFilter: "ALL"',
+            'state.cadenceFilter === "EXPECTED"',
+            'entry.source_url, entry.recurrence, event.entryId',
+            'item.title, item.event_id, item.url, item.description',
+            '.map(value => String(value).toLocaleLowerCase()).join(" ")',
+            '$("cadenceTypeFilter").addEventListener("change"',
+            "function exportCadenceCalendar()",
             "function saveCadenceEntry(event)",
+            "function openCadenceEntry(id)",
             "data-calendar-complete",
+            "signInWithPassword",
         ):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+        for forbidden in ("SUPABASE_SERVICE_ROLE_KEY", "sb_secret_", "signInWithOtp", "shouldCreateUser"):
             with self.subTest(forbidden=forbidden):
                 self.assertNotIn(forbidden, source)
+        html = read("index.html")
+        self.assertIn('id="cadenceSignInPassword"', html)
+        self.assertNotIn("Email sign-in link", html)
+        self.assertNotIn("signInWithOtp", html)
 
     def test_database_and_scheduler_keep_team_entries_private(self):
         migration = read("supabase/migrations/20261021180000_regulatory_calendar.sql")
