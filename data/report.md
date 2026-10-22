@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261022T232133Z-d259ddf0
-Generated: 2026-10-22T23:21:33.031364+00:00
+Run: 20261022T232628Z-a63bf6d7
+Generated: 2026-10-22T23:26:28.840985+00:00
 
 ## Aggregate counts
 
@@ -32,10 +32,10 @@ Generated: 2026-10-22T23:21:33.031364+00:00
 
 ## Sources
 
-### OSFI BCAR 2027
+### Reporting Central and Structure Central User Guides
 
-- Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261022T232133Z-d259ddf0 (2026-10-22T23:21:33.031364+00:00)
+- Regulator: www.frbservices.org
+- Report run: 20261022T232628Z-a63bf6d7 (2026-10-22T23:26:28.840985+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -65,10 +65,10 @@ Generated: 2026-10-22T23:21:33.031364+00:00
 - Removed: 0
 - Fetch errors: 0
 
-### Reporting Central and Structure Central User Guides
+### OSFI BCAR 2027
 
-- Regulator: www.frbservices.org
-- Report run: 20261022T231639Z-abf6f0d7 (2026-10-22T23:16:39.151115+00:00)
+- Regulator: www.osfi-bsif.gc.ca
+- Report run: 20261022T232133Z-d259ddf0 (2026-10-22T23:21:33.031364+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
