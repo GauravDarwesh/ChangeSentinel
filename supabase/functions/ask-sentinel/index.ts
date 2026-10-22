@@ -469,24 +469,33 @@ function validateGroundedCitations(answer: string, allowedSources: string[]): Ci
     const lines = block.split('\n').map((line) => line.trim()).filter(Boolean);
     let proseHasCitation = false;
     let hasProse = false;
+    let inTable = false;
 
     for (let index = 0; index < lines.length; index += 1) {
       const line = lines[index];
       if (/^#{1,6}\s/.test(line)) continue;
       const isListItem = /^(?:[-*•]\s+|\d+[.)]\s+)/.test(line);
-      const isTableRow = /^\|/.test(line);
       const isTableSeparator = /^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$/.test(line);
+      const next = lines[index + 1] || '';
+      const nextIsSeparator = /^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$/.test(next);
+      const isTableRow = line.startsWith('|') || (line.includes('|') && (inTable || nextIsSeparator));
       const hasCitation = /\[Source:\s*[^\]]+\]/i.test(line);
 
+      if (isTableSeparator) {
+        inTable = true;
+        continue;
+      }
       if (isTableRow) {
-        if (isTableSeparator) continue;
-        const next = lines[index + 1] || '';
-        const nextIsSeparator = /^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$/.test(next);
-        if (nextIsSeparator) continue; // only a structurally identified header row is exempt
+        if (nextIsSeparator) {
+          inTable = true; // structurally identified Markdown header
+          continue;
+        }
         if (!hasCitation) uncitedLineCount += 1;
+        inTable = true;
         continue;
       }
 
+      inTable = false;
       if (isListItem) {
         if (!hasCitation) uncitedLineCount += 1;
         continue;
