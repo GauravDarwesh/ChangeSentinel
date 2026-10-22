@@ -181,6 +181,7 @@ def source_for_url(
     settings["include_selector"] = str(include_selector or "").strip()
     settings["ignore_selectors"] = list(ignore_selectors or [])
     settings["crawl_depth"] = int(crawl_depth)
+    settings["excluded_urls"] = []
     settings["discovery_max_pages_per_slice"] = 1 if crawl_depth == 0 else 200
     return {
         "id": source_id,
