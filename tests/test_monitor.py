@@ -61,6 +61,19 @@ class TestContent(unittest.TestCase):
         self.assertNotEqual(before, after)
         self.assertEqual(html_comparison_hash(before), html_comparison_hash(after))
 
+    def test_frbservices_rotating_cache_buster_does_not_change_html_signature(self):
+        before = """<html><body><main>Reporting Central user guides</main>
+        <script>var pageConfig = {}; pageConfig.cacheBuster = '1792627231';</script>
+        </body></html>"""
+        after = before.replace("1792627231", "1792643276")
+        self.assertNotEqual(before, after)
+        self.assertEqual(html_comparison_hash(before), html_comparison_hash(after))
+
+    def test_substantive_page_config_change_is_not_suppressed_with_cache_buster(self):
+        before = "<script>pageConfig.cacheBuster = '1'; pageConfig.isParentPage = false;</script>"
+        after = "<script>pageConfig.cacheBuster = '2'; pageConfig.isParentPage = true;</script>"
+        self.assertNotEqual(html_comparison_hash(before), html_comparison_hash(after))
+
     def test_real_html_link_change_remains_detectable(self):
         before = '<html><body><a href="/forms/a">Reporting form</a></body></html>'
         after = before.replace('/forms/a', '/forms/b')
