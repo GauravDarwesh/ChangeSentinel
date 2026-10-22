@@ -244,7 +244,7 @@ def request_from_issue(event: dict, repository: str) -> tuple[str, str, str, tup
     name_match = re.search(r"(?m)^Name:[ \t]*(.*?)[ \t]*$", body)
     include_match = re.search(r"(?m)^Include selector:[ \t]*(.*?)[ \t]*$", body)
     ignore_match = re.search(
-        r"(?ms)^Ignore selectors:\s*\n(.*?)(?=\n\nThis request was created from the ChangeSentinel dashboard\.|\Z)",
+        r"(?ms)^Ignore selectors:\s*\n(.*?)(?=\nCrawl depth:[ \t]*[^\n]*|\n\nThis request was created from the ChangeSentinel dashboard\.|\Z)",
         body,
     )
     raw_ignored = ignore_match.group(1) if ignore_match else ""
