@@ -1552,6 +1552,7 @@ class TestEngineFlow(unittest.TestCase):
             "html_hash": hashlib.sha256(before.encode()).hexdigest(),
             "html_comparison_hash": hashlib.sha256(before.encode()).hexdigest(),
             "html_snapshot_location": "data/snapshots/html/old.html",
+            "extraction_type": "html", "extractor_version": "content-extractor-v7",
             "first_seen": "2026-01-01T00:00:00+00:00",
         }
         current = {
@@ -1596,6 +1597,7 @@ class TestEngineFlow(unittest.TestCase):
             "html_hash": hashlib.sha256(before.encode()).hexdigest(),
             "html_comparison_hash": hashlib.sha256(before.encode()).hexdigest(),
             "html_snapshot_location": "data/snapshots/html/old.html",
+            "extraction_type": "html", "extractor_version": "content-extractor-v7",
             "first_seen": "2026-01-01T00:00:00+00:00",
         }
         current = {
@@ -1645,6 +1647,7 @@ class TestEngineFlow(unittest.TestCase):
             "raw_hash": before_hash, "html_hash": before_hash,
             "html_comparison_hash": before_hash,
             "html_snapshot_location": "data/snapshots/html/missing.html",
+            "extraction_type": "html", "extractor_version": "content-extractor-v7",
             "first_seen": "2026-01-01T00:00:00+00:00",
         }
         with patch("regmon.engine.load_discovery_metadata", return_value={
