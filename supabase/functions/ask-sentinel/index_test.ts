@@ -487,18 +487,20 @@ Deno.test('the network bucket is a keyed hash, never the address', async () => {
   if (fake.lastIpHash.includes('203.0.113') || !/^[0-9a-f]{32}$/.test(fake.lastIpHash)) throw new Error('unexpected bucket ' + fake.lastIpHash);
 });
 
-Deno.test('truncated model output is rejected', async () => {
+Deno.test('truncated model output is discarded in favor of cited indexed-source fallback', async () => {
   reset(() => json({ choices: [{ message: { content: 'Partial. [Source: data/report.json]' }, finish_reason: 'length' }] }));
   const answer = await ask({ ip: '203.0.113.28' });
-  assertEquals([answer.status, answer.body.error_code, fake.refunds], [503, 'provider_unavailable', 1]);
+  assertEquals([answer.status, answer.body.model, answer.body.evidence_fallback, fake.refunds], [200, 'evidence-fallback', true, 1]);
+  if (String(answer.body.answer).includes('Partial.')) throw new Error('truncated model draft must never be shown');
+  if (!String(answer.body.answer).includes('[Source: data/report.json]')) throw new Error('fallback is missing the exact indexed source path');
 });
 
-Deno.test('a provider outage gives the question back', async () => {
+Deno.test('a provider rate limit returns validated indexed-source evidence and refunds the AI call', async () => {
   reset(() => json({ error: 'rate limited' }, 429));
   const id = visitor();
   const answer = await ask({ visitor: id, ip: '203.0.113.5' });
-  assertEquals([answer.status, answer.body.error_code, answer.body.remaining, fake.refunds], [503, 'provider_rate_limited', 3, 1]);
-  assertEquals(answer.headers.get('Retry-After'), '60');
+  assertEquals([answer.status, answer.body.model, answer.body.evidence_fallback, answer.body.remaining, fake.refunds], [200, 'evidence-fallback', true, 3, 1]);
+  if (!String(answer.body.answer).includes('[Source: data/report.json]')) throw new Error('rate-limit fallback is missing the exact indexed source path');
 });
 
 Deno.test('an answer rejected by citation validation returns a safe source fallback', async () => {
