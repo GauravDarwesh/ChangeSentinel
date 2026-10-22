@@ -495,13 +495,16 @@ def delete_monitor_request(event: dict, config_path: Path, repository: str) -> d
     already_excluded = target_url in excluded
     if not already_excluded:
         excluded.append(target_url)
-    source["excluded_urls"] = sorted(set(excluded))
     remaining_seeds = [seed for seed in seeds if canonicalize_url(seed) != target_url]
     root_deleted = len(remaining_seeds) != len(seeds)
-    if root_deleted and remaining_seeds:
-        source["seed_urls"] = remaining_seeds
-    elif root_deleted:
+    if root_deleted and not remaining_seeds:
+        # Deactivation is the authoritative stop signal for a root. Keep the seed
+        # intact so its historical identity and inventory remain available.
         source["active"] = False
+    else:
+        source["excluded_urls"] = sorted(set(excluded))
+        if root_deleted:
+            source["seed_urls"] = remaining_seeds
     if not already_excluded or root_deleted:
         config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return {"source_id": source["id"], "source_ids": [source["id"]], "url": target_url, "name": source.get("name", "Monitored page"), "created": False, "deleted": True, "deactivated": not source.get("active", True), "root_deleted": root_deleted, "bulk": False, "count": 1, "created_count": 0, "existing_count": 1, "message": "The page is excluded from future scans; history and saved evidence are retained."}
