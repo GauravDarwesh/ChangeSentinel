@@ -193,6 +193,48 @@ try {
     }
   }
 
+  const frbEvidence = JSON.parse(fs.readFileSync(path.join(ROOT,
+    "data/evidence/c89216e3b00e847563d351357b43772920c29a2266cccb68a8a651736f928219.json"), "utf8"));
+  const tableRedline = await page.evaluate(({ beforeHtml, afterHtml, beforeText, afterText }) => {
+    const beforeDoc = new DOMParser().parseFromString(beforeHtml, "text/html");
+    const afterDoc = new DOMParser().parseFromString(afterHtml, "text/html");
+    const aligned = L.alignLines(beforeText, afterText);
+    const beforeIndex = flattenDocumentText(beforeDoc), afterIndex = flattenDocumentText(afterDoc);
+    const removedMarks = markTextInDocument(beforeDoc, beforeIndex, htmlMarkTargets(aligned.rows, "before"), "cs-del", afterIndex.flat);
+    markTextInDocument(afterDoc, afterIndex, htmlMarkTargets(aligned.rows, "after"), "cs-add", beforeIndex.flat);
+    const rowCells = row => Array.from(row.cells || []).map(cell => normalizeForMatch(flattenTextContainer(cell).flat || cell.textContent || ""));
+    const expectedFfiec = L.splitMarkdownTableRow("| FFIEC 031 | link | FFIEC 031 | FFIEC 031 | N/A | link | link |").map(normalizeForMatch);
+    const expected3033 = L.splitMarkdownTableRow("| FR 3033p FR 3033s | link | FR 3033p/s | N/A | N/A | link | link |").map(normalizeForMatch);
+    const expectedY9c = L.splitMarkdownTableRow("| FR Y-9C R-1867 | link | N/A | FR Y-9C | Press Release 1 Press Release 2 | link | link |").map(normalizeForMatch);
+    const beforeRows = Array.from(beforeDoc.querySelectorAll("tr"));
+    const markedRows = beforeRows.filter(row => row.querySelector("mark.cs-del"));
+    const isMarked = cells => markedRows.some(row => L.tableCellsMatch(cells, rowCells(row)));
+    const otherMarkedRows = markedRows.filter(row => !L.tableCellsMatch(expectedFfiec, rowCells(row)) &&
+      !L.tableCellsMatch(expectedY9c, rowCells(row))).map(row => rowCells(row).slice(0, 3));
+    return {
+      stats: aligned.stats,
+      removedMarks,
+      markedRowCount: markedRows.length,
+      deletedFfiecMarked: isMarked(expectedFfiec),
+      deletedY9cMarked: isMarked(expectedY9c),
+      unchanged3033Marked: isMarked(expected3033),
+      otherMarkedRows
+    };
+  }, {
+    beforeHtml: fs.readFileSync(path.join(ROOT, frbEvidence.before.html_snapshot_location), "utf8"),
+    afterHtml: fs.readFileSync(path.join(ROOT, frbEvidence.after.html_snapshot_location), "utf8"),
+    beforeText: fs.readFileSync(path.join(ROOT, frbEvidence.before.snapshot_location), "utf8"),
+    afterText: fs.readFileSync(path.join(ROOT, frbEvidence.after.snapshot_location), "utf8")
+  });
+  check(tableRedline.stats.removed === 2 &&
+    tableRedline.stats.added === 0 &&
+    tableRedline.deletedFfiecMarked &&
+    tableRedline.deletedY9cMarked &&
+    !tableRedline.unchanged3033Marked &&
+    tableRedline.otherMarkedRows.length === 0 &&
+    tableRedline.markedRowCount === 2,
+    "saved FRB HTML redline marks exactly FFIEC 031 and FR Y-9C/R-1867, not FR 3033p/s or repeated labels (" + JSON.stringify(tableRedline) + ")");
+
   await page.click('.rail [data-view="changes"]');
   const firstChange = await page.$("#changeItems [data-select-change]");
   if (firstChange) {

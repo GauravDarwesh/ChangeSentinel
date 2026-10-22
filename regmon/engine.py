@@ -19,6 +19,7 @@ from regmon.change import (
     build_event_id,
     classify_change,
     error_signature,
+    HTML_COMPARISON_HASH_VERSION,
     html_comparison_hash,
     make_diff,
     make_id,
@@ -221,6 +222,7 @@ def store_html_snapshot(uid: str, body: bytes, item: dict, old: dict | None) -> 
         and old.get("html_hash")
         and old.get("html_comparison_hash")
         and old.get("html_comparison_hash") == item.get("html_comparison_hash")
+        and old.get("html_comparison_hash_version") == item.get("html_comparison_hash_version")
         and (ROOT / str(old["html_snapshot_location"])).is_file()
     ):
         item["html_hash"] = old["html_hash"]
@@ -263,6 +265,7 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         "normalized_hash": None,
         "html_hash": old.get("html_hash") if old else None,
         "html_comparison_hash": old.get("html_comparison_hash") if old else None,
+        "html_comparison_hash_version": old.get("html_comparison_hash_version") if old else None,
         "html_snapshot_location": old.get("html_snapshot_location") if old else None,
         "file_snapshot_location": old.get("file_snapshot_location") if old else None,
         "extraction_type": None,
@@ -455,7 +458,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         if result.not_modified:
             if old:
                 for key in (
-                    "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_snapshot_location",
+                    "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_comparison_hash_version", "html_snapshot_location",
                     "file_snapshot_location", "extraction_type", "extractor_version", "snapshot_location", "evidence_location", "relevance",
                     "extraction_error", "error_signature", "error_since",
                 ):
@@ -496,6 +499,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             if extraction_type == "html":
                 item["html_hash"] = result.raw_hash
                 item["html_comparison_hash"] = html_comparison_hash(result.body)
+                item["html_comparison_hash_version"] = HTML_COMPARISON_HASH_VERSION
                 return item, None, result.body
             if file_body is not None:
                 return item, None, None, file_body
@@ -506,6 +510,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         html_body = result.body if extraction_type == "html" else None
         item["html_hash"] = result.raw_hash if html_body is not None else None
         item["html_comparison_hash"] = html_comparison_hash(html_body)
+        item["html_comparison_hash_version"] = HTML_COMPARISON_HASH_VERSION if html_body is not None else None
         if html_body is None:
             item["html_snapshot_location"] = None
         if file_body is None:
@@ -520,7 +525,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         if old:
             for key in (
                 "http_status", "content_type", "content_length", "etag", "last_modified",
-                "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_snapshot_location",
+                "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_comparison_hash_version", "html_snapshot_location",
                 "first_seen", "snapshot_location", "evidence_location", "relevance", "extraction_type", "extractor_version"
             ):
                 if key in old:
@@ -697,14 +702,32 @@ def process_source(
                 events.append({"event_id":event_id,"event_type":"EXTRACTION_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"notification_id":notification_id,"error_since":item["error_since"],"evidence":{"error":item["extraction_error"]}})
                 continue
 
-            # Migrate older HTML inventory records lazily from their immutable
-            # snapshot so the first run with comparison signatures does not
-            # mistake a rotating Cloudflare challenge token for a source change.
-            if old and item.get("html_comparison_hash") and not old.get("html_comparison_hash"):
-                old_html = read_html_snapshot(old)
-                if old_html is not None:
-                    old = dict(old)
-                    old["html_comparison_hash"] = html_comparison_hash(old_html)
+            # Re-hash an older HTML snapshot when the signature algorithm version
+            # changes. Comparing its stored old-version digest with a new-version
+            # digest would itself create a false HTML_SOURCE_CHANGED event.
+            html_signature_rebaseline = False
+            if (
+                old
+                and item.get("html_comparison_hash")
+                and old.get("html_comparison_hash_version") != HTML_COMPARISON_HASH_VERSION
+            ):
+                if item.get("not_modified"):
+                    # A 304 gives no body to hash. Keep both sides on the stored
+                    # version until a full fetch lets us migrate safely.
+                    item["html_comparison_hash"] = old.get("html_comparison_hash")
+                    item["html_comparison_hash_version"] = old.get("html_comparison_hash_version")
+                else:
+                    old_html = read_html_snapshot(old)
+                    if old_html is not None:
+                        old = dict(old)
+                        old["html_comparison_hash"] = html_comparison_hash(old_html)
+                        old["html_comparison_hash_version"] = HTML_COMPARISON_HASH_VERSION
+                    elif old.get("normalized_hash") == item.get("normalized_hash"):
+                        # Without the old body, an HTML-only transition cannot be
+                        # classified reliably. Record a one-time baseline migration
+                        # instead of presenting signature-algorithm churn as a change.
+                        html_signature_rebaseline = True
+                        item["migration_reason"] = "html_comparison_hash_version"
 
             extractor_rebaseline = should_rebaseline_extractor(old, item)
             extraction_drift = not extractor_rebaseline and is_extraction_drift(old, item)
@@ -713,7 +736,8 @@ def process_source(
             elif extraction_drift:
                 item["migration_reason"] = "extraction_drift"
             event_type, migrated = classify_change(
-                old, item, force_baseline_migration=extractor_rebaseline or extraction_drift
+                old, item,
+                force_baseline_migration=extractor_rebaseline or extraction_drift or html_signature_rebaseline,
             )
             # A not-material review of a markup-only event is a durable choice
             # for this monitored URL.  Keep the current snapshot/fingerprint so
@@ -1176,7 +1200,7 @@ def process_source(
             "discovery":discovery,
             "removal_guard":removal_guard,
             "baseline_update_allowed":discovery.get("state") == "COMPLETE",
-            "change_detector":{"raw_hash":"SHA-256 retrieved response bytes","html_hash":"SHA-256 of the saved HTML snapshot; when only volatile Cloudflare tokens changed, the previous equivalent snapshot is reused (raw_hash is always this response)", "html_comparison_hash":"HTML comparison signature with volatile Cloudflare challenge IDs/timestamps stabilized","normalized_hash":"SHA-256 extracted normalized content","classification_hash":"normalized_hash with separate HTML_SOURCE_CHANGED events","http_validators":"ETag/Last-Modified used only for conditional fetch optimization"},
+            "change_detector":{"raw_hash":"SHA-256 retrieved response bytes","html_hash":"SHA-256 of the saved HTML snapshot; when only volatile Cloudflare tokens changed, the previous equivalent snapshot is reused (raw_hash is always this response)", "html_comparison_hash":"Versioned HTML signature; known Cloudflare challenge tokens and pageConfig.cacheBuster are normalized","html_comparison_hash_version":HTML_COMPARISON_HASH_VERSION,"normalized_hash":"SHA-256 extracted normalized content","classification_hash":"normalized_hash with separate HTML_SOURCE_CHANGED events","http_validators":"ETag/Last-Modified used only for conditional fetch optimization"},
             "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
             "ai_contract":{"required_keys":["relevant","topic","change_type","summary","impact","effective_date","affected_scope","actions","reason"],"strict":True},
             "counts":counts,"events":events,"new_urls":[] if initial_baseline else new_items,"changed_urls":changed_items,"source_changed_urls":source_changed_items,"removed_urls":removed_items,"baseline_migrations":migration_items,"ai_results":sorted(ai_results,key=lambda x:x.get("event_id",""))
@@ -1244,7 +1268,7 @@ def _aggregate_report(reports: list[dict], run_id: str, generated_at: str | None
         "discovery":[report.get("discovery",{}) for report in reports],
         "removal_guards":[report["removal_guard"] for report in reports if report.get("removal_guard") and report.get("run_id") == run_id],
         "baseline_update_allowed":all(report.get("baseline_update_allowed",False) for report in reports),
-        "change_detector":{"classification_hash":"normalized_hash","html_hash":"SHA-256 of the saved HTML snapshot (reused when only volatile tokens changed; raw_hash is always the fetched response)", "html_comparison_hash":"volatile Cloudflare challenge IDs/timestamps stabilized before markup-only classification","http_validators":"ETag/Last-Modified are optimization hints only"},
+        "change_detector":{"classification_hash":"normalized_hash","html_hash":"SHA-256 of the saved HTML snapshot (reused when only volatile tokens changed; raw_hash is always the fetched response)", "html_comparison_hash":"Versioned HTML signature; known Cloudflare challenge tokens and pageConfig.cacheBuster are normalized","html_comparison_hash_version":HTML_COMPARISON_HASH_VERSION,"http_validators":"ETag/Last-Modified are optimization hints only"},
         "relevance_gate":{"mode":"high_recall","ai_final_semantic_decision":True},
         "ai_contract":reports[0]["ai_contract"],
         "new_urls":[x for report in reports for x in report.get("new_urls",[])],

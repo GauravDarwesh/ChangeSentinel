@@ -265,10 +265,12 @@
     return EVENT_LABELS[type] || "Monitoring event";
   }
 
-  // "change" | "problem" | "info" — drives colour and filtering.
+  // "change" | "markup" | "problem" | "info" — markup-only events remain visible,
+  // but are visually quieter than changes to extracted regulatory content.
   function eventTone(type) {
     if (type === "FETCH_ERROR" || type === "EXTRACTION_ERROR") return "problem";
-    if (type === "CHANGED_URL" || type === "NEW_URL" || type === "REMOVED_URL" || type === "HTML_SOURCE_CHANGED") return "change";
+    if (type === "HTML_SOURCE_CHANGED") return "markup";
+    if (type === "CHANGED_URL" || type === "NEW_URL" || type === "REMOVED_URL") return "change";
     return "info";
   }
 
@@ -529,6 +531,14 @@
 
   function isMarkdownTableSeparator(cells) {
     return cells.length > 0 && cells.every(cell => /^:?-{3,}:?$/.test(String(cell || "").trim()));
+  }
+
+  // Exact row identity matters when labels such as "link", "N/A", or a form
+  // identifier recur across multiple tables. Never treat one shared cell as a
+  // match for an entire row.
+  function tableCellsMatch(expected, actual) {
+    if (!Array.isArray(expected) || !Array.isArray(actual) || expected.length !== actual.length) return false;
+    return expected.every((cell, index) => normalizeForMatch(cell) === normalizeForMatch(actual[index]));
   }
 
   /* ---------- Locating an edit inside a rendered page ---------- */
@@ -1313,7 +1323,7 @@
     eventLabel, eventTone, EVENT_LABELS,
     parseUnifiedDiff, tokenize, wordDiff, similarity, redlineRows, redlineSummary, renderRedline, renderUnifiedDiff,
     splitMarkdownTableRow, isMarkdownTableSeparator, relativeTime, dayHeading,
-    foldWhitespace, inlineMarkdown, xlsxFirstSheetRows, normalizeForMatch, changedPartOffsets,
+    foldWhitespace, inlineMarkdown, xlsxFirstSheetRows, normalizeForMatch, changedPartOffsets, tableCellsMatch,
     canonicalUrl, urlKey, scoutBucket, scoutBuckets, scoutSentence, scoutReviewIssue, nextScoutSweep,
     SCOUT_FILTERS, SCOUT_OUTCOMES, SCOUT_CONFIDENCE, SCOUT_STATUS, SCOUT_CHANNEL_STATUS, SCOUT_NOUNS, SCOUT_REVIEW_MARKER,
     scoutSlug, splitList, splitLines, parsePathHints, pathHintsText, scoutSourceRequest, SCOUT_SOURCE_MARKER, SCOUT_TOPIC_IDS, SCOUT_REGIONS,

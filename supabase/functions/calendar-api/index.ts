@@ -118,6 +118,12 @@ export function normalizeEntry(input:any):Record<string,any>{
   return {title,description,category,start_date:start,end_date:end,regulator,source_url:source,owner_name:owner,recurrence,
     reminder_enabled:enabled,reminder_days_before:days,reminder_emails:emails,completed_dates:completed};
 }
+function publicCalendarEntry(entry:Record<string,any>){
+  const visible={...entry};
+  delete visible.reminder_emails;
+  visible.reminder_configured=entry.reminder_enabled===true&&Array.isArray(entry.reminder_emails)&&entry.reminder_emails.length>0;
+  return visible;
+}
 export function dueReminderJobs(entries:Record<string,any>[],today:string){
   if(!isIsoDate(today))return [] as Array<{entry:Record<string,any>;occurrence_date:string;recipient_email:string}>;
   const jobs:Array<{entry:Record<string,any>;occurrence_date:string;recipient_email:string}>=[];
@@ -155,12 +161,21 @@ function requireEditor(member:{role:string}){if(member.role!=="admin"&&member.ro
 function validId(value:unknown){const id=String(value||"");if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))throw new PublicError("Calendar entry ID is invalid.");return id;}
 async function getEntry(id:string){const rows=await restJson("regulatory_calendar_entries?"+new URLSearchParams({select:"*",id:"eq."+id,limit:"1"}));const entry=Array.isArray(rows)?rows[0]:null;if(!entry)throw new PublicError("This calendar entry no longer exists.",404);return entry;}
 async function saveEntry(member:any,body:any){
-  requireEditor(member);const input=normalizeEntry(body.entry);
+  requireEditor(member);
+  let rawEntry=body.entry;
   if(body.id){
-    const id=validId(body.id),old=await getEntry(id);if(old.archived)throw new PublicError("Archived entries cannot be edited.",409);
+    const id=validId(body.id),old=await getEntry(id);
+    if(old.archived)throw new PublicError("Archived entries cannot be edited.",409);
+    // Existing reminder addresses are private and omitted from list responses.
+    // A client can preserve them by omitting reminder_emails on an ordinary edit.
+    if(rawEntry&&typeof rawEntry==="object"&&!Array.isArray(rawEntry)&&!Object.prototype.hasOwnProperty.call(rawEntry,"reminder_emails")){
+      rawEntry={...rawEntry,reminder_emails:Array.isArray(old.reminder_emails)?old.reminder_emails:[]};
+    }
+    const input=normalizeEntry(rawEntry);
     const rows=await restJson("regulatory_calendar_entries?"+new URLSearchParams({id:"eq."+id}),{method:"PATCH",headers:{Prefer:"return=representation"},body:JSON.stringify({...input,updated_by:member.user.id,updated_at:new Date().toISOString()})});
     const saved=Array.isArray(rows)?rows[0]:null;if(!saved)throw new PublicError("The calendar entry could not be updated.",404);return saved;
   }
+  const input=normalizeEntry(rawEntry);
   const rows=await restJson("regulatory_calendar_entries",{method:"POST",headers:{Prefer:"return=representation"},body:JSON.stringify({...input,created_by:member.user.id,updated_by:member.user.id})});
   const saved=Array.isArray(rows)?rows[0]:null;if(!saved)throw new Error("Calendar entry creation returned no saved record.");return saved;
 }
@@ -230,9 +245,9 @@ Deno.serve(async(req:Request)=>{
         const result=await runReminders();if(result.failures)return respond(req,{ok:false,...result},503);return respond(req,{ok:true,...result});
       }
       const member=await authenticatedMember(req);
-      if(body.action==="save")return respond(req,{ok:true,entry:await saveEntry(member,body)});
+      if(body.action==="save")return respond(req,{ok:true,entry:publicCalendarEntry(await saveEntry(member,body))});
       if(body.action==="delete")return respond(req,{ok:true,entry:await archiveEntry(member,body.id)});
-      if(body.action==="complete")return respond(req,{ok:true,entry:await completeOccurrence(member,body)});
+      if(body.action==="complete")return respond(req,{ok:true,entry:publicCalendarEntry(await completeOccurrence(member,body))});
       if(body.action==="send-test"){
         requireEditor(member);const cfg=config();if(!cfg.resend||!cfg.from)throw new PublicError("Email reminders are not configured yet.",503);
         const id=await sendEmail({title:"Cadence reminder test",description:"This is a test email from ChangeSentinel Cadence."},new Date().toISOString().slice(0,10),member.email);
@@ -242,9 +257,13 @@ Deno.serve(async(req:Request)=>{
     }
     const member=await authenticatedMember(req);
     if(url.searchParams.get("action")!=="list")throw new PublicError("Use ?action=list to read entries.");
+    // Reminder recipients are operationally private. Do not return them to the
+    // dashboard's general list response; writes continue to pass through the
+    // role-checked endpoint and the scheduler reads them server-side.
     const params=new URLSearchParams({select:"*",archived:"eq.false",order:"start_date.asc"});
     const entries=await restJson("regulatory_calendar_entries?"+params.toString());
-    return respond(req,{ok:true,member:{email:member.email,role:member.role},entries:Array.isArray(entries)?entries:[]});
+    const publicEntries=Array.isArray(entries)?entries.map((entry:Record<string,any>)=>publicCalendarEntry(entry)):[];
+    return respond(req,{ok:true,member:{email:member.email,role:member.role},entries:publicEntries});
   }catch(error){
     const status=error instanceof PublicError?error.status:503;
     if(!(error instanceof PublicError))console.error(JSON.stringify({event:"cadence_calendar_error",error:String((error as Error)?.message||error).slice(0,220)}));

@@ -5,7 +5,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from regmon.ai import AIConfig, AI_REQUIRED_KEYS, analyze, parse_json, run_smoke_test, validate_analysis
-from regmon.change import build_event_id, classify_change, html_comparison_hash, make_diff, make_id, write_evidence
+from regmon.change import HTML_COMPARISON_HASH_VERSION, build_event_id, classify_change, html_comparison_hash, make_diff, make_id, write_evidence
 from regmon.content import extract_content, normalize_html
 from regmon.config import SourceConfig
 from regmon.discovery import _config_fingerprint, _fetch_links, _load_inventory, canonical, extract_html_links, http_discover, in_scope, parse_discovered_urls
@@ -60,6 +60,19 @@ class TestContent(unittest.TestCase):
         )
         self.assertNotEqual(before, after)
         self.assertEqual(html_comparison_hash(before), html_comparison_hash(after))
+
+    def test_frbservices_rotating_cache_buster_does_not_change_html_signature(self):
+        before = """<html><body><main>Reporting Central user guides</main>
+        <script>var pageConfig = {}; pageConfig.cacheBuster = '1792627231';</script>
+        </body></html>"""
+        after = before.replace("1792627231", "1792643276")
+        self.assertNotEqual(before, after)
+        self.assertEqual(html_comparison_hash(before), html_comparison_hash(after))
+
+    def test_substantive_page_config_change_is_not_suppressed_with_cache_buster(self):
+        before = "<script>pageConfig.cacheBuster = '1'; pageConfig.isParentPage = false;</script>"
+        after = "<script>pageConfig.cacheBuster = '2'; pageConfig.isParentPage = true;</script>"
+        self.assertNotEqual(html_comparison_hash(before), html_comparison_hash(after))
 
     def test_real_html_link_change_remains_detectable(self):
         before = '<html><body><a href="/forms/a">Reporting form</a></body></html>'
@@ -1521,6 +1534,135 @@ class TestEngineFlow(unittest.TestCase):
         self.assertEqual(result["report"]["counts"]["source_changed"], 0)
         self.assertEqual(result["report"]["counts"]["unchanged"], 1)
         self.assertEqual(result["report"]["events"], [])
+
+    def test_old_html_signature_is_rehashed_before_cache_buster_comparison(self):
+        """Upgrading the HTML hash must not alert on an unchanged page with a rotating cache-buster."""
+        import hashlib
+        import regmon.engine as mod
+        from regmon.engine import process_source
+
+        url = "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/cache-buster"
+        uid = make_id(url)
+        before = ("<html><body><main>Reporting Central user guides</main>"
+                  "<script>var pageConfig = {}; pageConfig.cacheBuster = '1792627231';</script></body></html>")
+        after = before.replace("1792627231", "1792643276")
+        old = {
+            "url_id": uid, "canonical_url": url, "normalized_hash": "same-text",
+            "raw_hash": hashlib.sha256(before.encode()).hexdigest(),
+            "html_hash": hashlib.sha256(before.encode()).hexdigest(),
+            "html_comparison_hash": hashlib.sha256(before.encode()).hexdigest(),
+            "html_snapshot_location": "data/snapshots/html/old.html",
+            "extraction_type": "html", "extractor_version": "content-extractor-v7",
+            "first_seen": "2026-01-01T00:00:00+00:00",
+        }
+        current = {
+            "url_id": uid, "source_id": SOURCE.id, "regulator": SOURCE.regulator,
+            "canonical_url": url, "normalized_hash": "same-text",
+            "raw_hash": hashlib.sha256(after.encode()).hexdigest(),
+            "html_hash": hashlib.sha256(after.encode()).hexdigest(),
+            "html_comparison_hash": html_comparison_hash(after),
+            "html_comparison_hash_version": HTML_COMPARISON_HASH_VERSION,
+            "extraction_type": "html", "extractor_version": "content-extractor-v7",
+            "relevance": {"candidate": False}, "first_seen": "2026-01-01T00:00:00+00:00",
+        }
+        with patch("regmon.engine.load_discovery_metadata", return_value={
+            "source_id": SOURCE.id, "state": "COMPLETE", "method": "test"
+        }), patch("regmon.engine.load_previous", return_value={uid: old}), \
+             patch("regmon.engine.discover", return_value=[url]), \
+             patch("regmon.engine.make_current_item", return_value=(current, "same regulatory text", after.encode())), \
+             patch("regmon.engine.read_html_snapshot", return_value=before), \
+             patch("regmon.engine.reviews.not_material_html_urls", return_value=set()):
+            result = process_source(SOURCE, "html-signature-version-migration", dry_run=True)
+
+        self.assertEqual(result["report"]["counts"]["source_changed"], 0)
+        self.assertEqual(result["report"]["counts"]["baseline_migration"], 0)
+        self.assertEqual(result["report"]["counts"]["unchanged"], 1)
+        self.assertEqual(result["report"]["events"], [])
+        self.assertEqual(result["inventory"][uid]["html_comparison_hash_version"], HTML_COMPARISON_HASH_VERSION)
+
+    def test_old_html_signature_migration_still_detects_a_real_html_change(self):
+        import hashlib
+        import regmon.engine as mod
+        from regmon.engine import process_source
+
+        url = "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/markup-change"
+        uid = make_id(url)
+        before = ("<html><body><main class='old'>Reporting Central user guides</main>"
+                  "<script>pageConfig.cacheBuster = '1';</script></body></html>")
+        after = ("<html><body><main class='new'>Reporting Central user guides</main>"
+                 "<script>pageConfig.cacheBuster = '2';</script></body></html>")
+        old = {
+            "url_id": uid, "canonical_url": url, "normalized_hash": "same-text",
+            "raw_hash": hashlib.sha256(before.encode()).hexdigest(),
+            "html_hash": hashlib.sha256(before.encode()).hexdigest(),
+            "html_comparison_hash": hashlib.sha256(before.encode()).hexdigest(),
+            "html_snapshot_location": "data/snapshots/html/old.html",
+            "extraction_type": "html", "extractor_version": "content-extractor-v7",
+            "first_seen": "2026-01-01T00:00:00+00:00",
+        }
+        current = {
+            "url_id": uid, "source_id": SOURCE.id, "regulator": SOURCE.regulator,
+            "canonical_url": url, "normalized_hash": "same-text",
+            "raw_hash": hashlib.sha256(after.encode()).hexdigest(),
+            "html_hash": hashlib.sha256(after.encode()).hexdigest(),
+            "html_comparison_hash": html_comparison_hash(after),
+            "html_comparison_hash_version": HTML_COMPARISON_HASH_VERSION,
+            "extraction_type": "html", "extractor_version": "content-extractor-v7",
+            "relevance": {"candidate": False}, "first_seen": "2026-01-01T00:00:00+00:00",
+        }
+        with patch("regmon.engine.load_discovery_metadata", return_value={
+            "source_id": SOURCE.id, "state": "COMPLETE", "method": "test"
+        }), patch("regmon.engine.load_previous", return_value={uid: old}), \
+             patch("regmon.engine.discover", return_value=[url]), \
+             patch("regmon.engine.make_current_item", return_value=(current, "same regulatory text", after.encode())), \
+             patch("regmon.engine.read_html_snapshot", return_value=before), \
+             patch("regmon.engine.reviews.not_material_html_urls", return_value=set()):
+            result = process_source(SOURCE, "html-signature-version-real-change", dry_run=True)
+
+        self.assertEqual(result["report"]["counts"]["source_changed"], 1)
+        self.assertEqual(result["report"]["counts"]["changed"], 0)
+        self.assertEqual(result["report"]["counts"]["baseline_migration"], 0)
+        self.assertEqual(result["report"]["events"][0]["event_type"], "HTML_SOURCE_CHANGED")
+
+    def test_old_html_signature_without_snapshot_uses_visible_baseline_migration(self):
+        import hashlib
+        from regmon.engine import process_source
+
+        url = "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/missing-html-snapshot"
+        uid = make_id(url)
+        before_hash = hashlib.sha256(b"old response").hexdigest()
+        current_html = "<html><body><main>Reporting Central user guides</main></body></html>"
+        current = {
+            "url_id": uid, "source_id": SOURCE.id, "regulator": SOURCE.regulator,
+            "canonical_url": url, "normalized_hash": "same-text",
+            "raw_hash": hashlib.sha256(current_html.encode()).hexdigest(),
+            "html_hash": hashlib.sha256(current_html.encode()).hexdigest(),
+            "html_comparison_hash": html_comparison_hash(current_html),
+            "html_comparison_hash_version": HTML_COMPARISON_HASH_VERSION,
+            "extraction_type": "html", "extractor_version": "content-extractor-v7",
+            "relevance": {"candidate": False}, "first_seen": "2026-01-01T00:00:00+00:00",
+        }
+        old = {
+            "url_id": uid, "canonical_url": url, "normalized_hash": "same-text",
+            "raw_hash": before_hash, "html_hash": before_hash,
+            "html_comparison_hash": before_hash,
+            "html_snapshot_location": "data/snapshots/html/missing.html",
+            "extraction_type": "html", "extractor_version": "content-extractor-v7",
+            "first_seen": "2026-01-01T00:00:00+00:00",
+        }
+        with patch("regmon.engine.load_discovery_metadata", return_value={
+            "source_id": SOURCE.id, "state": "COMPLETE", "method": "test"
+        }), patch("regmon.engine.load_previous", return_value={uid: old}), \
+             patch("regmon.engine.discover", return_value=[url]), \
+             patch("regmon.engine.make_current_item", return_value=(current, "same regulatory text", current_html.encode())), \
+             patch("regmon.engine.read_html_snapshot", return_value=None), \
+             patch("regmon.engine.reviews.not_material_html_urls", return_value=set()):
+            result = process_source(SOURCE, "html-signature-version-missing-snapshot", dry_run=True)
+
+        self.assertEqual(result["report"]["counts"]["source_changed"], 0)
+        self.assertEqual(result["report"]["counts"]["baseline_migration"], 1)
+        self.assertEqual(result["report"]["events"][0]["event_type"], "BASELINE_MIGRATION")
+        self.assertEqual(result["report"]["events"][0]["migration_reason"], "html_comparison_hash_version")
 
     @patch("regmon.engine.analyze", return_value={"status": "skipped", "reason": "API key missing"})
     def test_skipped_ai_analysis_is_counted(self, mock_analyze):
