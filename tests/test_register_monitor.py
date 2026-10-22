@@ -383,5 +383,79 @@ class TestRegisterMonitor(unittest.TestCase):
 
 
 
+    def test_add_link_can_opt_into_weekly_scout_with_the_same_depth(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source_path = Path(tmp) / "sources.json"
+            scout_path = Path(tmp) / "scout.json"
+            source_path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            baseline_scout = Path(__file__).resolve().parents[1] / "config" / "scout.json"
+            original_scout_text = baseline_scout.read_text(encoding="utf-8")
+            scout_path.write_text(original_scout_text, encoding="utf-8")
+
+            event = issue_event("https://www.example.com/user-guides", name="User guides")
+            footer = "\n\nThis request was created from the ChangeSentinel dashboard."
+            event["issue"]["body"] = event["issue"]["body"].replace(
+                footer, "\nCrawl depth: 2\nScout discovery: yes" + footer
+            )
+            result = register_request(
+                event, source_path, "GauravDarwesh/ChangeSentinel", scout_path
+            )
+            sources = json.loads(source_path.read_text(encoding="utf-8"))["sources"]
+            scout = json.loads(scout_path.read_text(encoding="utf-8"))
+            profile = next(item for item in scout["regulators"] if "www.example.com" in item.get("hosts", []))
+            channel = next(item for item in profile["channels"] if item["url"] == "https://www.example.com/user-guides")
+
+        self.assertTrue(result["created"])
+        self.assertTrue(result["scout_enabled"])
+        self.assertTrue(result["scout_changed"])
+        self.assertEqual(result["crawl_depth"], 2)
+        self.assertEqual(sources[0]["crawl_depth"], 2)
+        self.assertEqual(channel["type"], "listing")
+        self.assertEqual(channel["crawl_depth"], 2)
+        self.assertEqual(channel["link_prefixes"], ["https://www.example.com/"])
+        self.assertEqual(profile["region"], "OTHER")
+
+    def test_weekly_scout_registration_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source_path = Path(tmp) / "sources.json"
+            scout_path = Path(tmp) / "scout.json"
+            source_path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            scout_path.write_text(
+                (Path(__file__).resolve().parents[1] / "config" / "scout.json").read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
+            event = issue_event("https://www.example.com/user-guides", name="User guides")
+            footer = "\n\nThis request was created from the ChangeSentinel dashboard."
+            event["issue"]["body"] = event["issue"]["body"].replace(
+                footer, "\nCrawl depth: 1\nScout discovery: yes" + footer
+            )
+            first = register_request(event, source_path, "GauravDarwesh/ChangeSentinel", scout_path)
+            second = register_request(event, source_path, "GauravDarwesh/ChangeSentinel", scout_path)
+
+        self.assertTrue(first["scout_changed"])
+        self.assertFalse(second["created"])
+        self.assertTrue(second["scout_configured"])
+        self.assertFalse(second["scout_changed"])
+        self.assertEqual(first["scout_channel_id"], second["scout_channel_id"])
+
+    def test_scout_cannot_be_enabled_for_depth_zero_and_files_remain_unchanged(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source_path = Path(tmp) / "sources.json"
+            scout_path = Path(tmp) / "scout.json"
+            source_before = json.dumps({"version": 4, "defaults": {}, "sources": []})
+            scout_before = (Path(__file__).resolve().parents[1] / "config" / "scout.json").read_text(encoding="utf-8")
+            source_path.write_text(source_before, encoding="utf-8")
+            scout_path.write_text(scout_before, encoding="utf-8")
+            event = issue_event("https://www.example.com/user-guides", name="User guides")
+            footer = "\n\nThis request was created from the ChangeSentinel dashboard."
+            event["issue"]["body"] = event["issue"]["body"].replace(
+                footer, "\nCrawl depth: 0\nScout discovery: yes" + footer
+            )
+            with self.assertRaisesRegex(ValueError, "requires crawl depth 1, 2, or 3"):
+                register_request(event, source_path, "GauravDarwesh/ChangeSentinel", scout_path)
+            self.assertEqual(source_path.read_text(encoding="utf-8"), source_before)
+            self.assertEqual(scout_path.read_text(encoding="utf-8"), scout_before)
+
+
 if __name__ == "__main__":
     unittest.main()
