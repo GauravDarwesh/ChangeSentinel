@@ -536,6 +536,20 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertIn(token, js)
 
+    def test_add_link_can_opt_into_depth_matched_weekly_scout_discovery(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        workflow = read(".github/workflows/register-monitor.yml")
+        self.assertIn('id="newMonitorScout"', html)
+        self.assertIn('id="newMonitorScoutHelp"', html)
+        self.assertIn("syncScoutDiscoveryOption()", js)
+        self.assertIn('"Scout discovery: " + (scoutEnabled ? "yes" : "no")', js)
+        self.assertIn("registration on the request", workflow.lower())
+        self.assertIn("--scout-config config/scout.json", workflow)
+        self.assertIn("git add config/sources.json config/scout.json", workflow)
+        self.assertIn("gh workflow run scout.yml", workflow)
+        self.assertIn("not silently added as monitors", workflow)
+
     def test_metadata_cors_fallback_keeps_server_side_title_lookup_available(self):
         source = read("dashboard.js")
         start = source.index("async function suggestMonitorMetadata()")
