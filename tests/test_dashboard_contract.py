@@ -531,6 +531,29 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
         self.assertIn(".flatMap(askSentinelSourceLinks)", source)
 
 
+    def test_manual_monitor_controls_include_bounded_crawl_metadata_and_delete(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        for token in (
+            'id="newMonitorDepth"',
+            'id="autofillMonitorMetadata"',
+            'id="newMonitorMetadataStatus"',
+            'id="deleteMonitorDialog"',
+            'id="confirmDeleteMonitor"',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+        for token in (
+            '"Crawl depth: "',
+            "async function suggestMonitorMetadata()",
+            "function makeGitHubDeleteIssueUrl(",
+            "data-stop-monitor=",
+            "function submitDeleteMonitor()",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, js)
+
+
 if __name__ == "__main__":
     unittest.main()
 
