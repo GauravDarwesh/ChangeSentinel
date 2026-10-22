@@ -2559,8 +2559,20 @@ function renderCadenceView() {
     if (state.cadenceFilter === "EXPECTED" && !(event.kind === "manual" && ["expected_update", "deadline"].includes(event.category))) return false;
     if (state.cadenceFilter === "TEAM" && !(event.kind === "manual" && !["expected_update", "deadline"].includes(event.category))) return false;
     if (!search) return true;
+
+    // Search the same fields the agenda exposes, plus stable IDs and source
+    // URLs so a regulator/form reference can be found even when it is not in
+    // the entry title. Keep this derived-only: never search reminder recipients.
     const entry = event.entry || {};
-    const haystack = [event.title, event.category, entry.regulator, entry.owner_name, entry.description, event.item && event.item.description].filter(Boolean).join(" ").toLocaleLowerCase();
+    const item = event.item || {};
+    const haystack = [
+      event.title, event.category, cadenceTag(event.category),
+      entry.title, entry.regulator, entry.owner_name, entry.description,
+      entry.source_url, entry.recurrence, event.entryId,
+      item.title, item.event_id, item.url, item.description,
+      event.eventId, event.sourceUrl
+    ].filter(value => value !== null && value !== undefined && String(value).trim() !== "")
+      .map(value => String(value).toLocaleLowerCase()).join(" ");
     return haystack.includes(search);
   });
   const byDate = new Map();
