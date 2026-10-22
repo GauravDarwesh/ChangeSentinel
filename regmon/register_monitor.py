@@ -335,52 +335,81 @@ def _existing_source_for_request(
 
 
 def register_bulk_request(event: dict, config_path: Path, repository: str) -> dict:
-    """Register a set of URLs atomically; invalid/conflicting rows write no changes."""
-    requests = bulk_requests_from_issue(event, repository)
+    """Register a set of exact-page URLs atomically; invalid/conflicting rows write nothing."""
+    requests_to_add = bulk_requests_from_issue(event, repository)
     config = json.loads(config_path.read_text(encoding="utf-8"))
     sources = config.setdefault("sources", [])
     if not isinstance(sources, list):
         raise ValueError("config/sources.json must contain a sources array.")
 
-    items = []
+    items: list[dict] = []
     by_url: dict[str, dict] = {}
-    source_ids = []
-    for row_number, (url, requested_name, include_selector, ignore_selectors) in enumerate(requests, start=1):
+    source_ids: list[str] = []
+    for row_number, (url, requested_name, include_selector, ignore_selectors) in enumerate(
+        requests_to_add, start=1
+    ):
         previous = by_url.get(url)
         if previous is not None:
-            if previous["include_selector"] != include_selector or tuple(previous["ignore_selectors"]) != ignore_selectors:
-                raise ValueError(f"Bulk row {row_number}: the same URL appears with different CSS selectors.")
+            if (
+                previous["include_selector"] != include_selector
+                or tuple(previous["ignore_selectors"]) != ignore_selectors
+            ):
+                raise ValueError(
+                    f"Bulk row {row_number}: the same URL appears with different CSS selectors."
+                )
             continue
 
-        existing = _existing_source_for_request(sources, url, include_selector, ignore_selectors, crawl_depth=crawl_depth)
+        # Bulk upload deliberately retains the existing, safe default: each row
+        # monitors that exact page. Crawl depth is configured in the single-link
+        # dialog and is not implicitly enabled by importing a spreadsheet.
+        crawl_depth = 0
+        existing = _existing_source_for_request(
+            sources, url, include_selector, ignore_selectors, crawl_depth=crawl_depth
+        )
         if existing is not None:
             source_id = str(existing["id"])
             item = {
-                "source_id": source_id, "url": url,
-                "name": str(existing.get("name") or requested_name or url), "created": False,
+                "source_id": source_id,
+                "url": url,
+                "name": str(existing.get("name") or requested_name or url),
+                "created": False,
             }
         else:
             metadata = _fetch_page_metadata(url) if not requested_name else {}
-    display_name = requested_name or metadata.get("title", "")
-    metadata = _fetch_page_metadata(url) if not requested_name else {}
-    display_name = requested_name or metadata.get("title", "")
-    new_source = source_for_url(url, display_name, include_selector, ignore_selectors, crawl_depth=crawl_depth)
+            display_name = requested_name or metadata.get("title", "")
+            new_source = source_for_url(
+                url, display_name, include_selector, ignore_selectors, crawl_depth=crawl_depth
+            )
             source_ids_in_config = {str(source.get("id")) for source in sources}
             if new_source["id"] in source_ids_in_config:
-                existing_collision = next(source for source in sources if str(source.get("id")) == new_source["id"])
-                existing_urls = [str(candidate) for candidate in (existing_collision.get("seed_urls") or [])]
+                existing_collision = next(
+                    source for source in sources if str(source.get("id")) == new_source["id"]
+                )
+                existing_urls = [
+                    str(candidate) for candidate in (existing_collision.get("seed_urls") or [])
+                ]
                 if any(canonicalize_url(candidate) == url for candidate in existing_urls):
                     item = {
-                        "source_id": new_source["id"], "url": url,
-                        "name": str(existing_collision.get("name") or new_source["name"]), "created": False,
+                        "source_id": new_source["id"],
+                        "url": url,
+                        "name": str(existing_collision.get("name") or new_source["name"]),
+                        "created": False,
                     }
                     source_id = new_source["id"]
                 else:
-                    raise ValueError(f"Bulk row {row_number}: a source ID collision was detected; no configuration was changed.")
+                    raise ValueError(
+                        f"Bulk row {row_number}: a source ID collision was detected; "
+                        "no configuration was changed."
+                    )
             else:
                 sources.append(new_source)
                 source_id = new_source["id"]
-                item = {"source_id": source_id, "url": url, "name": new_source["name"], "created": True}
+                item = {
+                    "source_id": source_id,
+                    "url": url,
+                    "name": new_source["name"],
+                    "created": True,
+                }
 
         by_url[url] = {
             **item,
@@ -394,7 +423,9 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
     created_count = sum(1 for item in items if item["created"])
     existing_count = len(items) - created_count
     if created_count:
-        config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        config_path.write_text(
+            json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        )
     return {
         "bulk": True,
         "source_ids": source_ids,
@@ -406,9 +437,11 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
         "source_id": source_ids[0],
         "url": items[0]["url"],
         "created": bool(created_count),
-        "message": f"Processed {len(items)} unique links: {created_count} new and {existing_count} already configured.",
+        "message": (
+            f"Processed {len(items)} unique links: {created_count} new "
+            f"and {existing_count} already configured."
+        ),
     }
-
 
 def register_request(event: dict, config_path: Path, repository: str) -> dict:
     body = str(((event.get("issue") or {}).get("body")) or "")
@@ -418,8 +451,16 @@ def register_request(event: dict, config_path: Path, repository: str) -> dict:
         return register_bulk_request(event, config_path, repository)
 
     url, requested_name, include_selector, ignore_selectors = request_from_issue(event, repository)
-    crawl_match = re.search(r"(?m)^Crawl depth:[ \t]*(0|1|2|3)[ \t]*$", body)
-    crawl_depth = int(crawl_match.group(1)) if crawl_match else 0
+    crawl_matches = re.findall(r"(?m)^Crawl depth:[ \t]*(.*?)[ \t]*$", body)
+    if len(crawl_matches) > 1:
+        raise ValueError("The request must contain at most one Crawl depth field.")
+    if crawl_matches:
+        raw_depth = crawl_matches[0]
+        if raw_depth not in {"0", "1", "2", "3"}:
+            raise ValueError("Crawl depth must be 0, 1, 2, or 3.")
+        crawl_depth = int(raw_depth)
+    else:
+        crawl_depth = 0
 
     config = json.loads(config_path.read_text(encoding="utf-8"))
     sources = config.setdefault("sources", [])
