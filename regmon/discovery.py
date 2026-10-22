@@ -83,6 +83,8 @@ def in_scope(url: str, source: SourceConfig) -> bool:
         excluded_path = urlparse(prefix).path.rstrip("/") or "/"
         if value_path == excluded_path or value_path.startswith(excluded_path + "/"):
             return False
+    if value in {canonical(candidate) for candidate in source.excluded_urls}:
+        return False
     return True
 
 
