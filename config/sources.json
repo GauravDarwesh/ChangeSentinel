@@ -238,6 +238,881 @@
       "allowed_domains": [
         "www.govinfo.gov"
       ]
+    },
+    {
+      "id": "manual-87ca438373d9",
+      "name": "Reporting Central External User Guide (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/external-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/external-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-f96402c06d32",
+      "name": "Structure Central External User Guide (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/structure-central-external-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/structure-central-external-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-d73abfb2e7f2",
+      "name": "XML User Guide (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/reporting-central-xml-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/reporting-central-xml-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-c02ec80775c2",
+      "name": "XML Format: FFIEC 009 (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec009-file-transfer-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec009-file-transfer-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-81edf0641cc2",
+      "name": "XML Format: FFIEC 009 (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec009-sample-input-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec009-sample-input-file.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-ccbb8cabeb99",
+      "name": "XML Format: FFIEC 009a (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec009a-file-transfer-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec009a-file-transfer-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-3c168c3e601a",
+      "name": "XML Format: FFIEC 009a (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec009a-sample-input-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec009a-sample-input-file.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-31ada48e215e",
+      "name": "XML Format: FFIEC 019 (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec-019-file-upload-user-guide-xml.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec-019-file-upload-user-guide-xml.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-96da24f54032",
+      "name": "XML Format: FFIEC 019 (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec019-sample-input-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec019-sample-input-file.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-db5b7b1c66c0",
+      "name": "FFIEC 030/FFIEC 030S (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec030-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec030-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-c3954390bf91",
+      "name": "FFIEC 030 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec030-sample-input-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec030-sample-input-file.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-ad2f7c55bf07",
+      "name": "FFIEC 030S Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec030s-sample-input-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec030s-sample-input-file.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-07fead54d9d1",
+      "name": "XML Format: FR Q-1 (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/frq-1-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/frq-1-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-49e6cffbe46b",
+      "name": "XML Format: FR VV-1 (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/frvv1-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/frvv1-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-e49444f7481c",
+      "name": "FR VV-1 Supplemental Information (Off-site)",
+      "regulator": "www.federalreserve.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.federalreserve.gov/apps/ReportingForms"
+      ],
+      "allowed_prefixes": [
+        "https://www.federalreserve.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.federalreserve.gov/apps/ReportingForms"
+      ],
+      "allowed_domains": [
+        "www.federalreserve.gov"
+      ]
+    },
+    {
+      "id": "manual-e2a6f65d42aa",
+      "name": "Annual Report XML File Format in Structure Central (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-xml-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-xml-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-4d35aa9f9fa5",
+      "name": "FR Y-6 Securities Sample file (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-item3-sample-template.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-item3-sample-template.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-4ceffe75326c",
+      "name": "FR Y-6 Insiders Sample XML file (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-item4-sample-template.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-item4-sample-template.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-ce0c1bcab763",
+      "name": "Annual Report XLXS File Format in Structure Central (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-xlsx-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-xlsx-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-9d4f8768e197",
+      "name": "FR Y-6 Securities Template file (XLSX)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-appendix-a-template-xlsx-file-for-securities-holders.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-appendix-a-template-xlsx-file-for-securities-holders.xlsx"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-73c10748e127",
+      "name": "FR Y-6 Securities Sample file (XLSX)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-appendix-b-sample-xlsx-file-for-securities-holders.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-appendix-b-sample-xlsx-file-for-securities-holders.xlsx"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-3cde87b01727",
+      "name": "FR Y-6 Insiders Template file (XLSX)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-appendix-c-template-xlsx-file-for-insiders.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-appendix-c-template-xlsx-file-for-insiders.xlsx"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-15294ab2d815",
+      "name": "FR Y-6 Insiders Sample file (XLSX)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-appendix-d-sample-xlsx-file-for-insiders.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-appendix-d-sample-xlsx-file-for-insiders.xlsx"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-9d2a0cc1d61f",
+      "name": "FR Y-7 XML User Guide (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr-y-7-xml-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr-y-7-xml-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-b6a213ed4639",
+      "name": "FR Y-7 XLSX User Guide (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr-y-7-xlsx-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr-y-7-xlsx-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
     }
   ]
 }
