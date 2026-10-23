@@ -267,9 +267,19 @@ try {
     "saved FRB HTML redline marks exactly FFIEC 031 and FR Y-9C/R-1867, not FR 3033p/s or repeated labels (" + JSON.stringify(tableRedline) + ")");
 
   await page.click('.rail [data-view="changes"]');
-  const firstChange = await page.$("#changeItems [data-select-change]");
-  if (firstChange) {
-    await firstChange.click();
+  // Monitoring data changes between runs. The newest row may be a fetch or
+  // extraction error, which intentionally has no before/after evidence panel.
+  // Select a rendered non-problem event with a stored evidence file instead.
+  const firstChangeId = await page.evaluate(() => {
+    const byId = new Map(changeLogEntries().map(entry => [entry.event_id, entry]));
+    const row = Array.from(document.querySelectorAll("#changeItems [data-select-change]")).find(button => {
+      const entry = byId.get(button.dataset.selectChange);
+      return entry && entry.evidence_location && L.eventTone(entry.event_type) !== "problem";
+    });
+    return row ? row.dataset.selectChange : "";
+  });
+  if (firstChangeId) {
+    await page.click('#changeItems [data-select-change="' + firstChangeId + '"]');
     await page.waitForSelector("#change-evidence", { timeout: 15000 });
     const compare = await page.$('[data-diff-mode="compare"]');
     if (compare) {
@@ -285,7 +295,7 @@ try {
     }
     await page.screenshot({ path: path.join(OUT, "change-detail.png"), fullPage: false });
   } else {
-    console.log("skip no recorded change to open");
+    console.log("skip no recorded non-problem change with stored evidence to open");
   }
   errors.forEach(message => check(false, message));
   await context.close();
