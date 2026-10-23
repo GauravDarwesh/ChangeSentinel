@@ -26,7 +26,9 @@ const ALLOWED_ORIGINS = new Set([
   'http://localhost:5500',
   'http://127.0.0.1:5500'
 ]);
-const MAX_BYTES = 3_000_000;
+// Some regulator pages ship several MB of inline CSS before <body>; keep a firm cap,
+// but don't truncate the response before the document's actual links.
+const MAX_BYTES = 8_000_000;
 const FETCH_TIMEOUT_MS = 12_000;
 const MAX_REDIRECTS = 4;
 const MAX_LINKS = 4000;
