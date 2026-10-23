@@ -456,6 +456,79 @@ class TestCrossRunChangeLog(unittest.TestCase):
         # Spreadsheets are read locally; no third-party parser runs in the dashboard origin.
         self.assertNotIn("cdn.sheetjs.com", js + html)
 
+class TestGuidedDiscoverySelection(unittest.TestCase):
+    def test_manual_and_crawl_discovery_share_a_separate_selection_tray(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        for token in (
+            'id="openSourceForDiscovery"',
+            'id="openDiscoverySelectionFromAdd"',
+            'id="scoutItems"',
+            'id="selectVisibleScout"',
+            'id="openDiscoverySelection"',
+            'id="discoverySelectionDialog"',
+            'id="discoveryManualUrls"',
+            'id="discoverySelectedList"',
+            'id="discoverySelectionStatus"',
+            'id="openDiscoveryBatch"',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+        for token in (
+            'const DISCOVERY_SELECTION_STORAGE = "cs-guided-discovery-selection-v1"',
+            "function restoreDiscoverySelection()",
+            "function toggleSingleDiscoverySelection(input)",
+            "function toggleVisibleDiscoverySelection()",
+            "function addManualDiscoveryUrls()",
+            "function renderDiscoverySelectionDialog()",
+            "function openDiscoveryRegistrationBatch()",
+            'sessionStorage.setItem(DISCOVERY_SELECTION_STORAGE',
+            'data-discovery-select="',
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, js)
+
+    def test_guided_selection_uses_existing_owner_approved_bounded_registration(self):
+        js = read("dashboard.js")
+        workflow = read(".github/workflows/register-monitor.yml")
+        registration = read("regmon/register_monitor.py")
+        for token in (
+            "MAX_BULK_LINKS = 25",
+            "MAX_BULK_REQUEST_URL_LENGTH = 7000",
+            "function buildDiscoveryBatches()",
+            "makeBulkGitHubIssueUrl(candidate)",
+            "makeBulkGitHubIssueUrl([row])",
+            "Submit its GitHub issue before opening the next batch",
+            "registration is not yet confirmed",
+            "BULK_REQUEST_MARKER",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, js)
+        self.assertIn("issues:", workflow)
+        self.assertIn("github.event.issue.user.login == github.repository_owner", workflow)
+        self.assertIn("python -m regmon.register_monitor", workflow)
+        self.assertIn("MAX_BULK_REQUESTS = 25", registration)
+        # Candidate selection never writes the active config from browser JavaScript.
+        self.assertNotIn("api.github.com/repos/" + '" + REPOSITORY', js)
+        self.assertIn('config/sources.json', js)
+
+    def test_candidate_titles_and_urls_are_escaped_and_manual_urls_are_checked(self):
+        js = read("dashboard.js")
+        html = read("index.html")
+        for token in (
+            'esc(item.title || displayUrl(item.url))',
+            'esc(title)',
+            'esc(url)',
+            'if (![ "http:", "https:" ].includes(parsed.protocol)',
+            "parsed.username || parsed.password",
+            "No URLs were added; correct the input and retry.",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, js)
+        self.assertIn("Candidates are separate from active monitors.", html)
+        self.assertIn("Candidates are never activated automatically.", html)
+
+
 class TestThirdPartyScripts(unittest.TestCase):
     def test_every_third_party_script_is_pinned_and_integrity_checked(self):
         html = read("index.html")
