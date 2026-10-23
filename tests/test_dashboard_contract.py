@@ -324,7 +324,7 @@ class TestDashboardDataLoading(unittest.TestCase):
         # GitHub keeps at most one pending run per concurrency group. The group must
         # therefore be issue-scoped so rapid bulk uploads cannot drop intervening requests.
         self.assertIn("group: register-dashboard-monitor-${{ github.event.issue.number }}", workflow)
-        self.assertNotIn("group: register-dashboard-monitor\\n", workflow)
+        self.assertNotIn("group: register-dashboard-monitor\n  cancel-in-progress", workflow)
         self.assertIn("cancel-in-progress: false", workflow)
         self.assertIn("for attempt in 1 2 3 4 5 6; do", workflow)
         self.assertIn("sleep $((attempt * 2 + RANDOM % 3))", workflow)
