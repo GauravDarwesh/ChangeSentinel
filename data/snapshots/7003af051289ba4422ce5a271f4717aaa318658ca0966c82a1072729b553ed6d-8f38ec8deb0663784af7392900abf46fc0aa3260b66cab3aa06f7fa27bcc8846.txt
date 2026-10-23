@@ -1,0 +1,9 @@
+[WORKBOOK] 2 sheets: Item 2(b) Foreign Companies, Dropdowns (hidden)
+[SHEET] Item 2(b) Foreign Companies
+Item 2(b) Foreign Companies · A: Legal Name · B: City · C: Country · D: Legal Entity Identifier (LEI) · E: Percentage of Class of Voting Shares Held · F: Percent of consolidated assets that are located in the U.S. · G: Percent of gross revenues derived from the U.S. · H: Is the foreign company a subsidiary? (0 = No, 1 = Yes) · I: NAICS Code of U.S. activities · J: Are the U.S. activities the same/related to those conducted abroad? (0 = No, 1 = Yes)
+Item 2(b) Foreign Companies · A: (Column A) · B: (Column B) · C: (Column C) · D: (Column D) · E: (Column E) · F: (Column F) · G: (Column G) · H: (Column H) · I: (Column I) · J: (Column J)
+Item 2(b) Foreign Companies · A: FFBO QB91 · B: FFBO QB92 · C: FFBO QB93 · D: FFBO QB94 · E: FFBO QB95 · F: FFBO QB96 · G: FFBO QB97 · H: FFBO QB98 · I: FFBO QB99 · J: FFBO QC00
+[VALIDATION] Item 2(b) Foreign Companies · I4:I500 · whole · 11 ... 921120
+[SHEET hidden] Dropdowns
+Dropdowns · A: 0
+Dropdowns · A: 1

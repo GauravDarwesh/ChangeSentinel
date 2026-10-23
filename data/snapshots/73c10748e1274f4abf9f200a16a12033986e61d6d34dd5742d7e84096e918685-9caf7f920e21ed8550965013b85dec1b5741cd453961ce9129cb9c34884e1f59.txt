@@ -1,0 +1,22 @@
+[WORKBOOK] 2 sheets: Item 3(1) Sec Holders As Of, Item 3(2) Sec Holders During
+[SHEET] Item 3(1) Sec Holders As Of
+Item 3(1) Sec Holders As Of · A: Legal Name of Holding Company: · B: Anywhere Holding Company
+Item 3(1) Sec Holders As Of · A: FDHCPV71
+Item 3(1) Sec Holders As Of · A: Item 3(1)(a) · B: Item 3(1)(b) · C: Item 3(1)(c) · D: Item 3(1)(d) · E: Item 3(1)(e) · F: Item 3(1)(f) · G: Item 3(1)(g) · H: Item 3(1)(h) · I: Item 3(1)(i) · J: Item 3(1)(j) · K: Item 3(1)(k) · L: Item 3(1)(l) · M: Item 3(1)(m)
+Item 3(1) Sec Holders As Of · A: Name · B: City · C: State · D: Country · E: Country of Citizenship or Incorporation · F: Describe the provisions of the trust or plan · G: For individuals Acting in Concert, Identify Name of Individuals or Group Acting in Concert. · H: For Trusts, Identify each trustee or designated individual that has the power to vote · I: Number of Securities - Common Stock · J: Number of Securities - Warrants · K: Number of Securities - Options · L: Number of Securities - Other · M: Percent of each class of voting securities owned, controlled, or held with power to vote in the holding company
+Item 3(1) Sec Holders As Of · A: FDHCPV72 · B: FDHCPV73 · C: FDHCPV74 · D: FDHCPV75 · E: FDHCPV76 · F: FDHCPV77 · G: FDHCPV78 · H: FDHCPV79 · I: FDHCPV80 · J: FDHCPV81 · K: FDHCPV82 · L: FDHCPV83 · M: FDHCPV84
+Item 3(1) Sec Holders As Of · A: James Doe · B: Anywhere · C: MO · D: USA · E: USA · F: N/A · G: N/A · H: N/A · I: 720 · J: N/A · K: 100 · L: N/A · M: 0.31
+Item 3(1) Sec Holders As Of · A: Cindy Doe · B: Anywhere · C: MO · D: USA · E: USA · F: N/A · G: Cindy Doe, Gregory Doe · H: N/A · I: 667 · J: N/A · K: N/A · L: N/A · M: 0.25
+Item 3(1) Sec Holders As Of · A: Gregory Doe · B: Anywhere · C: MO · D: USA · E: USA · F: N/A · G: Cindy Doe, Gregory Doe · H: N/A · I: 293 · J: N/A · K: N/A · L: N/A · M: 0.11
+Item 3(1) Sec Holders As Of · A: Taylor Family Trust · B: St. Louis · C: MO · D: USA · E: USA · F: Trustee has discretion to vote shares without restriction. · G: N/A · H: John Taylor · I: 160 · J: N/A · K: N/A · L: N/A · M: 0.06
+Item 3(1) Sec Holders As Of · A: Mary Doe · B: Anywhere · C: MO · D: USA · E: USA · F: N/A · G: Mary Doe Family · H: N/A · I: 53 · J: N/A · K: 160 · L: N/A · M: 0.08
+Item 3(1) Sec Holders As Of · A: Benjamin Doe · B: Anywhere · C: MO · D: USA · E: USA · F: N/A · G: Mary Doe Family · H: N/A · I: 10 · J: N/A · K: N/A · L: N/A · M: 0.005
+Item 3(1) Sec Holders As Of · A: The Estate of Joe Doe · B: St. Louis · C: MO · D: USA · E: USA · F: N/A · G: N/A · H: N/A · I: 133 · J: N/A · K: N/A · L: N/A · M: 0.05
+Item 3(1) Sec Holders As Of · A: US Treasury · B: Washington, DC · C: N/A · D: USA · E: USA · F: N/A · G: N/A · H: N/A · I: N/A · J: 315000 · K: N/A · L: N/A · M: 0.05
+[SHEET] Item 3(2) Sec Holders During
+Item 3(2) Sec Holders During · A: Legal Name of Holding Company: · B: Anywhere Holding Company
+Item 3(2) Sec Holders During · A: FDHCPV71
+Item 3(2) Sec Holders During · A: Item 3(2)(a) · B: Item 3(2)(b) · C: Item 3(2)(c) · D: Item 3(2)(d) · E: Item 3(2)(e) · F: Item 3(2)(f) · G: Item 3(2)(g) · H: Item 3(2)(h) · I: Item 3(2)(i) · J: Item 3(2)(j) · K: Item 3(2)(k) · L: Item 3(2)(l) · M: Item 3(2)(m)
+Item 3(2) Sec Holders During · A: Name · B: City · C: State · D: Country · E: Country of Citizenship or Incorporation · F: Describe the provisions of the trust or plan · G: For individuals Acting in Concert, Identify Name of Individuals or Group Acting in Concert. · H: For Trusts, Identify each trustee or designated individual that has the power to vote · I: Number of Securities - Common Stock · J: Number of Securities - Warrants · K: Number of Securities - Options · L: Number of Securities - Other · M: Percent of each class of voting securities owned, controlled, or held with power to vote in the holding company
+Item 3(2) Sec Holders During · A: FDHCPV85 · B: FDHCPV86 · C: FDHCPV87 · D: FDHCPV88 · E: FDHCPV89 · F: FDHCPV90 · G: FDHCPV91 · H: FDHCPV92 · I: FDHCPV93 · J: FDHCPV94 · K: FDHCPV95 · L: FDHCPV96 · M: FDHCPV97
+Item 3(2) Sec Holders During · A: N/A

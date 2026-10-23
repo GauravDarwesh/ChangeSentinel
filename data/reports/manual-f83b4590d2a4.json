@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261023T124929Z-24b37765",
-  "generated_at": "2026-10-23T12:53:12.855276+00:00",
+  "run_id": "20261023T165753Z-bdb5034c",
+  "generated_at": "2026-10-23T17:00:56.273974+00:00",
   "source": {
     "id": "manual-f83b4590d2a4",
     "name": "TXT Format: FR 2248 (PDF)",
@@ -90,6 +90,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "continuation",
-  "workflow_run_id": "39955906806"
+  "trigger": "scheduled",
+  "workflow_run_id": "39990541906"
 }

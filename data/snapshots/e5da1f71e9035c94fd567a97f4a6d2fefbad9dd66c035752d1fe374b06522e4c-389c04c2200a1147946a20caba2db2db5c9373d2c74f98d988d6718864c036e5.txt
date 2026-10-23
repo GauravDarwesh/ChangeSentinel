@@ -1,0 +1,9 @@
+[WORKBOOK] 1 sheet: Item 2(a)2 Additional Entities
+[SHEET] Item 2(a)2 Additional Entities
+Item 2(a)2 Additional Entities · A: Legal Name · B: City · C: State or Country · D: State or Country of Incorporation · E: Legal Entity Identifier (LEI) · F: Direct Holder
+Item 2(a)2 Additional Entities · A: (Column A) · B: (Column B) · C: (Column C) · D: (Column D) · E: (Column E) · F: (Column F)
+Item 2(a)2 Additional Entities · A: FFBO QB84 · B: FFBO QB85 · C: FFBO QB86 · D: FFBO QB87 · E: FFBO QB88 · F: FFBO QB89
+Item 2(a)2 Additional Entities · A: Franklin Holding Company · B: New York · C: New York · D: New York · E: 9695008LHU2E5C2KA345 · F: Friendly Foreign Banking Organization
+Item 2(a)2 Additional Entities · A: Ernest Securities · B: London · C: United Kingdom · D: United Kingdon · E: N/A · F: Franklin Holding Company
+Item 2(a)2 Additional Entities · A: Cavalier Enterprise · B: Paris · C: France · D: France · E: 969500NUKHYEU12PXZ79 · F: Ernest Securities
+Item 2(a)2 Additional Entities · A: Blenheim Insurance · B: New York · C: New York · D: Delaware · E: 724500ZUVMX72T6IMS05 · F: Friendly Foreign Banking Organization

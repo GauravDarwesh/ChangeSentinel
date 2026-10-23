@@ -1,0 +1,34 @@
+{
+  "event_id": "5b7c95c4e38479e52cb9742ec75df0faaa2cb5d4f2cbbc6a2970c62e2082f638",
+  "event_type": "EXTRACTION_ERROR",
+  "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx",
+  "timestamp": "2026-10-23T17:00:56.880999+00:00",
+  "before": {
+    "normalized_hash": null,
+    "extraction_type": "zip",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": true,
+    "raw_hash": "7638d6ad73df0f9be30b0560da7bfda4f0491785593d94d11fd06fe2e06ca44a",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": "data/snapshots/files/fcb1777378d022cf6cdf806f7785816fe50fe66ce78125289bf2b5b8460bb2fa-7638d6ad73df0f9be30b0560da7bfda4f0491785593d94d11fd06fe2e06ca44a.zip"
+  },
+  "after": {
+    "normalized_hash": null,
+    "extraction_type": "zip",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": true,
+    "raw_hash": "7638d6ad73df0f9be30b0560da7bfda4f0491785593d94d11fd06fe2e06ca44a",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": "data/snapshots/files/fcb1777378d022cf6cdf806f7785816fe50fe66ce78125289bf2b5b8460bb2fa-7638d6ad73df0f9be30b0560da7bfda4f0491785593d94d11fd06fe2e06ca44a.zip"
+  },
+  "diff": "",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "error": "ZIP validation failed: ValueError: ZIP archive contains more than 256 entries"
+}

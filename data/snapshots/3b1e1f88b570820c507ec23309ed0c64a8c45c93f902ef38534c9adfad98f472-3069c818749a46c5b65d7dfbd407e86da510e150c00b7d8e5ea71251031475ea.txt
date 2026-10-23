@@ -1,0 +1,11 @@
+[WORKBOOK] 2 sheets: Item 2(b) Foreign Companies, Dropdowns
+[SHEET] Item 2(b) Foreign Companies
+Item 2(b) Foreign Companies · A: Legal Name · B: City · C: Country · D: Legal Entity Identifier (LEI) · E: Percentage of Class of Voting Shares Held · F: Percent of consolidated assets that are located in the U.S. · G: Percent of gross revenues derived from the U.S. · H: Is the foreign company a subsidiary? (0 = No, 1 = Yes) · I: NAICS Code of U.S. activities · J: Are the U.S. activities the same/related to those conducted abroad? (0 = No, 1 = Yes)
+Item 2(b) Foreign Companies · A: (Column A) · B: (Column B) · C: (Column C) · D: (Column D) · E: (Column E) · F: (Column F) · G: (Column G) · H: (Column H) · I: (Column I) · J: (Column J)
+Item 2(b) Foreign Companies · A: FFBO QB91 · B: FFBO QB92 · C: FFBO QB93 · D: FFBO QB94 · E: FFBO QB95 · F: FFBO QB96 · G: FFBO QB97 · H: FFBO QB98 · I: FFBO QB99 · J: FFBO QC00
+Item 2(b) Foreign Companies · A: Miracle Companies · B: London · C: United Kingdom · D: 724500ZUVMX72T6IMS05 · E: 0.51 · F: 0.25 · G: 0.25 · H: 1 · I: 51929 · J: 1
+Item 2(b) Foreign Companies · A: Ambassador, Inc. · B: Munich · C: Germany · D: N/A · E: 0.33 · F: 0.27 · G: 0.27 · H: 1 · I: 524127 · J: 0
+Item 2(b) Foreign Companies · A: Cavalier Enterprise · B: Paris · C: France · D: 9845006HEW4659760C58 · E: 1 · F: 0.33 · G: 0.85 · H: 1 · I: 53126 · J: 1
+[SHEET] Dropdowns
+Dropdowns · A: 0
+Dropdowns · A: 1

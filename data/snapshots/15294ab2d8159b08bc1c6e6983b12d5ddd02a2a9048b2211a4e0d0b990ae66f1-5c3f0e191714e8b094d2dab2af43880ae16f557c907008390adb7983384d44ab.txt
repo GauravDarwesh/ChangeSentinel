@@ -1,0 +1,29 @@
+[WORKBOOK] 3 sheets: Item (4) Identify Insiders, Item (4) Role and Shares-Subs, Item (4) Role and Shares-Other
+[SHEET] Item (4) Identify Insiders
+Item (4) Identify Insiders · A: Legal Name of Holding Company: · B: Anywhere Holding Company
+Item (4) Identify Insiders · A: FDHCPV98
+Item (4) Identify Insiders · A: Item 4(1)(a) · B: Item 4(1)(b) · C: Item 4(1)(c) · D: Item 4(1)(d) · E: Item 4(2) · F: Item 4(3)(a) · G: Item 4(3)(b)
+Item (4) Identify Insiders · A: Name · B: City · C: State · D: Country · E: Principal Occupation if other than with holding company · F: Title or Position with the Holding Company · G: Percentage of each class of voting securities owned, controlled, or held with power to vote in the holding company (including options, warrants or other securities or rights that can be converted into or exercised for voting securities)
+Item (4) Identify Insiders · A: FDHCPV99 · B: FDHCPW00 · C: FDHCPW01 · D: FDHCPW02 · E: FDHCPW03 · F: FDHCPW04 · G: FDHCPW05
+Item (4) Identify Insiders · A: James Doe · B: Anywhere · C: MO · D: USA · E: N/A · F: Director & Chairman · G: 0.27
+Item (4) Identify Insiders · A: Cindy Doe · B: Anywhere · C: MO · D: USA · E: N/A · F: Director & President · G: 0.25
+Item (4) Identify Insiders · A: Gregory Doe · B: Anywhere · C: MO · D: USA · E: N/A · F: N/A · G: 0.11
+Item (4) Identify Insiders · A: Mary Doe · B: Anywhere · C: MO · D: USA · E: Manufacturing - Widget Corp · F: Director · G: 0.02
+Item (4) Identify Insiders · A: Jeannine Doe · B: Anywhere · C: MO · D: USA · E: College Administrator · F: Director & Secretary / Treasurer · G: N/A
+[SHEET] Item (4) Role and Shares-Subs
+Item (4) Role and Shares-Subs · A: Legal Name of Holding Company:
+Item (4) Role and Shares-Subs · A: FDHCPV98
+Item (4) Role and Shares-Subs · A: Item 4(1)(a) · B: Item 4(4)(a) · C: Item 4(4)(b) · D: Item 4(4)(c)
+Item (4) Role and Shares-Subs · A: Name · B: Title or Position with direct and indirect subsidiaries · C: Name of direct and indirect subsidiaries in which Insider has a title or position or owership in · D: Percentage of each class of voting securities owned, controlled, or held with power to vote in subsidiaries of the holding company (including options, warrants or other securities or rights that can be converted into or exercised for voting securities)
+Item (4) Role and Shares-Subs · A: FDHCPV99 · B: FDHCPW06 · C: FDHCPW07 · D: FDHCPW08
+Item (4) Role and Shares-Subs · A: Cindy Doe · B: Director & Vice President · C: Cliff Bank · D: 0.05
+Item (4) Role and Shares-Subs · A: Jeannine Doe · B: N/A · C: Cliff Bank · D: 0.02
+[SHEET] Item (4) Role and Shares-Other
+Item (4) Role and Shares-Other · A: Legal Name of Holding Company:
+Item (4) Role and Shares-Other · A: FDHCPV98
+Item (4) Role and Shares-Other · A: Item 4(1)(a) · B: Item 4(5)(a) · C: Item 4(5)(b) · D: Item 4(5)(c)
+Item (4) Role and Shares-Other · A: Name · B: Title or Position with any other company in which the person is a director, trustee, partner, or executive officer. · C: Name of any other company in which the person is a director, trustee, partner, or executive officer, or owns, controls, or holds with power to vote 25% or more or its outstanding voting securities or proportionate in a partnership. · D: Percentage of each class of voting securities owned, controlled, or held with power to vote in any other company (including options, warrants or other securities or rights that can be converted into or exercised for voting securities), or proportionate interest held in a partnership, if 25% or more
+Item (4) Role and Shares-Other · A: FDHCPV99 · B: FDHCPW09 · C: FDHCPW10 · D: FDHCPW11
+Item (4) Role and Shares-Other · A: Mary Doe · B: President · C: Widget Corp · D: 0.35
+Item (4) Role and Shares-Other · A: Gregory Doe · B: N/A · C: Anywhere Auto · D: 0.25
+Item (4) Role and Shares-Other · A: Gregory Doe · B: Member · C: Anywhere Properties LLC · D: 1
