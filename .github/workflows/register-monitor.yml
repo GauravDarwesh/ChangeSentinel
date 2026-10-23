@@ -101,7 +101,7 @@ jobs:
             sleep $((attempt * 2 + RANDOM % 3))
           done
           if [ "$success" != true ]; then
-            echo "Could not publish monitor configuration after three attempts."
+            echo "Could not publish monitor configuration after six attempts."
             exit 1
           fi
           echo "source_ids=$SOURCE_IDS" >> "$GITHUB_OUTPUT"
