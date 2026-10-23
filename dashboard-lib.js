@@ -1317,7 +1317,272 @@
     return String(text || "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, max || 48).replace(/-+$/, "") || "change";
   }
 
+  /* ---------- Pick links: discovery candidates the owner selects from ----------
+   *
+   * Scout records every link a depth-limited crawl finds in its registry. These
+   * helpers turn one channel's records into a browsable link tree and a flat,
+   * filterable list. Nothing here ranks, hides or approves a link: what is
+   * shown is what Scout recorded, and only the owner's selection is submitted.
+   */
+  const PICK_FORMATS = [
+    [/\.pdf$/, "PDF"], [/\.(xlsx|xls|xlsm|csv)$/, "Spreadsheet"], [/\.(docx|doc)$/, "Word"], [/\.(pptx|ppt)$/, "Slides"],
+    [/\.zip$/, "ZIP"], [/\.(xml|xsd|xbrl)$/, "XML"], [/\.json$/, "JSON"], [/\.txt$/, "Text"]
+  ];
+  const PICK_GENERIC = /^(download( (document|file|pdf))?|pdf|here|click here|read more|more|view|link|details|see more|learn more|\(?pdf\)?|\d+(\.\d+)?\s?(kb|mb|gb))$/i;
+  const PICK_MAX_LINKS = 25;
+  const PICK_MAX_REQUEST_LENGTH = 7000;
+
+  function pickFormat(url) {
+    let path = "";
+    try { path = new URL(url).pathname.toLowerCase(); } catch (_) { return "Web page"; }
+    const match = PICK_FORMATS.find(([pattern]) => pattern.test(path));
+    return match ? match[1] : "Web page";
+  }
+  function pickSlug(url) {
+    try {
+      const segments = new URL(url).pathname.split("/").filter(Boolean);
+      while (segments.length) {
+        const words = decodeURIComponent(segments.pop()).replace(/\.[a-z0-9]{2,5}$/i, "").replace(/[-_+.]+/g, " ").trim();
+        if (words && !/^[\d\s]+$/.test(words)) return words.charAt(0).toUpperCase() + words.slice(1);
+      }
+      return new URL(url).hostname;
+    } catch (_) { return String(url || ""); }
+  }
+  // The publisher's own words for a link, in the order Scout trusts them.
+  function pickTitle(record) {
+    const evidence = (record && record.evidence) || {};
+    for (const key of ["title", "heading", "page_title"]) {
+      const value = String(evidence[key] || "").trim();
+      if (value && !PICK_GENERIC.test(value)) return value.slice(0, 300);
+    }
+    const anchor = String(evidence.anchor_text || "").trim();
+    if (anchor && !PICK_GENERIC.test(anchor)) return anchor.slice(0, 300);
+    const attr = String(evidence.title_attr || "").trim();
+    if (attr) return attr.slice(0, 300);
+    const context = String(evidence.context || "").replace(/\s+/g, " ").trim();
+    if (context) return context.slice(0, 200);
+    return pickSlug(record && record.url);
+  }
+
+  // One channel's registry records as a link tree rooted at the channel URL.
+  function pickGraph(registry, channelId, rootUrl) {
+    const candidates = registry && registry.candidates && typeof registry.candidates === "object" ? registry.candidates : {};
+    const rootKey = urlKey(rootUrl);
+    const nodes = [];
+    const byKey = new Map();
+    Object.keys(candidates).sort().forEach(id => {
+      const record = candidates[id];
+      if (!record || typeof record.url !== "string") return;
+      if ((record.relationship || {}).type === "translation") return;
+      if (channelId && !(record.channels || []).includes(channelId)) return;
+      const evidence = record.evidence || {};
+      const key = urlKey(record.url);
+      if (!key || key === rootKey || byKey.has(key)) return;
+      const recordedDepth = Number(evidence.depth);
+      const node = {
+        key, id: record.id || id, url: record.url, title: pickTitle(record), format: pickFormat(record.url),
+        section: String(evidence.section || ""), parentUrl: String(evidence.parent_url || ""),
+        parentKey: evidence.parent_url ? urlKey(evidence.parent_url) : "",
+        depth: Number.isInteger(recordedDepth) && recordedDepth > 0 ? recordedDepth : null,
+        depthRecorded: Number.isInteger(recordedDepth) && recordedDepth > 0,
+        context: String(evidence.context || ""), dateHint: String(evidence.date_hint || evidence.published || evidence.page_published || ""),
+        firstSeen: String(record.first_seen || ""), origin: record.origin === "new" ? "new" : "baseline"
+      };
+      nodes.push(node);
+      byKey.set(key, node);
+    });
+    // Depth for records saved before Scout recorded it: follow the parent chain to the root.
+    const depthOf = (node, seen) => {
+      if (node.depth) return node.depth;
+      if (!node.parentKey) return null;
+      if (node.parentKey === rootKey) return (node.depth = 1);
+      const parent = byKey.get(node.parentKey);
+      if (!parent || seen.has(parent.key)) return null;
+      seen.add(parent.key);
+      const parentDepth = depthOf(parent, seen);
+      return parentDepth ? (node.depth = parentDepth + 1) : null;
+    };
+    nodes.forEach(node => depthOf(node, new Set([node.key])));
+    const children = new Map();
+    nodes.forEach(node => {
+      // A parent Scout did not record as a link of its own (the root reached
+      // through a redirect, say) hangs off the root, so every link stays reachable.
+      const parent = node.parentKey && byKey.has(node.parentKey) ? node.parentKey : rootKey;
+      if (!children.has(parent)) children.set(parent, []);
+      children.get(parent).push(node);
+    });
+    return { rootKey, rootUrl, nodes, byKey, children };
+  }
+
+  // Children of one page in publisher order of sections, each section kept together.
+  function pickSections(items) {
+    const groups = [];
+    const index = new Map();
+    (items || []).forEach(item => {
+      const label = item.section || "";
+      if (!index.has(label)) { index.set(label, groups.length); groups.push({ section: label, items: [] }); }
+      groups[index.get(label)].items.push(item);
+    });
+    return groups;
+  }
+
+  function pickMatches(node, filters) {
+    const f = filters || {};
+    if (f.format && f.format !== "ALL") {
+      const known = ["PDF", "Web page", "Spreadsheet", "Word"];
+      if (f.format === "OTHER" ? known.includes(node.format) : node.format !== f.format) return false;
+    }
+    if (f.depth && f.depth !== "ALL") {
+      if (f.depth === "UNKNOWN" ? node.depth != null : String(node.depth) !== String(f.depth)) return false;
+    }
+    if (f.monitored === "HIDE" && f.monitoredKeys && f.monitoredKeys.has(node.key)) return false;
+    const query = String(f.query || "").trim().toLowerCase();
+    if (!query) return true;
+    return [node.title, node.url, node.section, node.context, node.parentUrl].join(" ").toLowerCase().indexOf(query) >= 0;
+  }
+
+  // The flat view: matching links grouped by the page they were found on, then
+  // by section. Group order follows the crawl (shallow pages first).
+  function pickGroups(graph, filters, parentTitle) {
+    const groups = [];
+    const index = new Map();
+    const titleOf = key => key === graph.rootKey ? (parentTitle || "Starting page") : (graph.byKey.get(key) ? graph.byKey.get(key).title : "");
+    graph.nodes.filter(node => pickMatches(node, filters)).forEach(node => {
+      const parentKey = node.parentKey || graph.rootKey;
+      const groupKey = parentKey + "\u0000" + node.section;
+      if (!index.has(groupKey)) {
+        const parent = graph.byKey.get(parentKey);
+        index.set(groupKey, groups.length);
+        groups.push({ key: groupKey, parentKey, parentUrl: node.parentUrl || graph.rootUrl, parentTitle: titleOf(parentKey) || pickSlug(node.parentUrl),
+          parentDepth: parentKey === graph.rootKey ? 0 : parent && parent.depth != null ? parent.depth : null, section: node.section, items: [] });
+      }
+      groups[index.get(groupKey)].items.push(node);
+    });
+    const depthRank = value => value == null ? 99 : value;
+    return groups.map((group, order) => Object.assign(group, { order }))
+      .sort((a, b) => depthRank(a.parentDepth) - depthRank(b.parentDepth) || a.order - b.order);
+  }
+
+  // The path from the root to one page, for the browse breadcrumb.
+  function pickTrail(graph, key) {
+    const trail = [];
+    const seen = new Set();
+    let current = graph.byKey.get(key);
+    while (current && !seen.has(current.key)) {
+      seen.add(current.key);
+      trail.unshift(current);
+      current = current.parentKey && current.parentKey !== graph.rootKey ? graph.byKey.get(current.parentKey) : null;
+    }
+    return trail;
+  }
+
+  // What will happen when the selection is submitted, counted honestly.
+  function pickSummary(selection, monitoredKeys) {
+    const rows = Array.isArray(selection) ? selection : [];
+    const seen = new Set();
+    let duplicates = 0;
+    let monitored = 0;
+    const pending = [];
+    rows.forEach(row => {
+      const key = urlKey(row && row.url);
+      if (!key) return;
+      if (seen.has(key)) { duplicates += 1; return; }
+      seen.add(key);
+      if (monitoredKeys && monitoredKeys.has(key)) monitored += 1;
+      else pending.push(row);
+    });
+    return { selected: seen.size, monitored, duplicates, pending, toRequest: pending.length };
+  }
+
+  // Split the URLs to request into owner-approved bulk requests: at most 25 links
+  // and a prefilled address short enough for GitHub. Nothing is ever dropped:
+  // a link too long for any request is reported, not truncated.
+  function pickBatches(rows, buildUrl, maxLinks, maxLength) {
+    const limit = maxLinks || PICK_MAX_LINKS;
+    const lengthLimit = maxLength || PICK_MAX_REQUEST_LENGTH;
+    const batches = [];
+    const tooLong = [];
+    let current = [];
+    (rows || []).forEach(row => {
+      if (buildUrl([row]).length > lengthLimit) { tooLong.push(row); return; }
+      const candidate = current.concat([row]);
+      if (current.length && (candidate.length > limit || buildUrl(candidate).length > lengthLimit)) {
+        batches.push(current);
+        current = [row];
+      } else {
+        current = candidate;
+      }
+    });
+    if (current.length) batches.push(current);
+    return { batches, tooLong };
+  }
+
+  // A descriptive monitor name: the link text, with its section when the text alone is thin.
+  function pickMonitorName(item) {
+    const title = String((item && item.title) || "").replace(/[\r\n]+/g, " ").trim();
+    const section = String((item && item.section) || "").replace(/[\r\n]+/g, " ").trim();
+    const thin = title.length < 18 && section && title.toLowerCase().indexOf(section.toLowerCase()) < 0;
+    return (thin ? section + ": " + title : title).slice(0, 100);
+  }
+
+  // Plain-language choices for where discovery may read pages, from one URL.
+  function pickScopeOptions(value) {
+    let url;
+    try { url = new URL(canonicalUrl(value)); } catch (_) { return []; }
+    const path = url.pathname.replace(/\/+$/, "");
+    const segments = path.split("/").filter(Boolean);
+    const options = [];
+    if (segments.length) options.push({ id: "page", prefix: url.origin + path + "/", path: path + "/", label: "Only pages under this page" });
+    if (segments.length > 1) {
+      const parent = "/" + segments.slice(0, -1).join("/") + "/";
+      options.push({ id: "section", prefix: url.origin + parent, path: parent, label: "Pages in the same section" });
+    }
+    options.push({ id: "site", prefix: "", path: "/", label: "Anywhere on " + url.hostname });
+    return options;
+  }
+
+  function pickHosts(value, startUrl) {
+    let start = "";
+    try { start = new URL(startUrl).hostname.toLowerCase(); } catch (_) {}
+    const hosts = [];
+    const invalid = [];
+    String(value || "").split(/[\s,]+/).forEach(raw => {
+      const host = raw.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "").replace(/\.$/, "");
+      if (!host) return;
+      const ok = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/.test(host) &&
+        !/(^localhost$|\.localhost$|\.local$|\.internal$|\.lan$|\.home$)/.test(host) && !/^\d+(\.\d+){3}$/.test(host);
+      if (!ok) invalid.push(raw.trim());
+      else if (host !== start && hosts.indexOf(host) < 0) hosts.push(host);
+    });
+    return { hosts, invalid };
+  }
+
+  // The Add Link request that sets up discovery only: the owner workflow saves a
+  // Scout channel and adds no monitor. Field order matters to the parser: the
+  // scope fields come before the selector fields.
+  function pickDiscoveryRequest(options) {
+    const o = options || {};
+    const depth = [1, 2, 3].indexOf(Number(o.depth)) >= 0 ? Number(o.depth) : 2;
+    const body = [
+      "<!-- changesentinel:add-monitor:v1 -->", "",
+      "Please set up link discovery for this page. Do not add it as a monitor; I will pick the links to monitor in the dashboard.", "",
+      "URL: " + o.url,
+      "Name: " + String(o.name || "").replace(/[\r\n]+/g, " ").trim().slice(0, 100),
+      "Crawl depth: " + depth,
+      "Scout discovery: yes",
+      "Discovery only: yes",
+      "Explore within: " + (o.explore || ""),
+      "Document hosts: " + (o.documentHosts || []).join(", "),
+      "Include selector: ",
+      "Ignore selectors:", "(none)", "",
+      "This request was created from the ChangeSentinel dashboard."
+    ];
+    return { title: "[ChangeSentinel] Add monitor request: link discovery", body: body.join("\n") };
+  }
+
   return {
+    pickFormat, pickTitle, pickGraph, pickSections, pickMatches, pickGroups, pickTrail, pickSummary, pickBatches, pickMonitorName,
+    pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH,
     diffSequences, alignLines, changedWords,
     esc, nextScheduledScan, scanCycle, runColumns, columnCellState, pendingScan, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,

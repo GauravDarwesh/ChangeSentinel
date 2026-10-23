@@ -76,6 +76,10 @@ class Observation:
     date_hint: str = ""
     language: str = ""
     alternates: dict = field(default_factory=dict)
+    # Depth-limited listings only: hops from the listing root, and the heading
+    # the link sat under on its parent page. Other channels leave them empty.
+    depth: int = 0
+    section: str = ""
 
 
 def clean(text, limit: int = 600) -> str:
@@ -311,6 +315,28 @@ class ListingLink:
     context: str
     title_attr: str = ""
     date_hint: str = ""
+    section: str = ""
+
+
+HEADING_TAGS = ("h1", "h2", "h3", "h4", "h5", "h6")
+
+
+def _sections(root) -> dict[int, str]:
+    """The nearest heading above each link inside root, keyed by id(tag).
+
+    One document-order pass, so a long listing is not walked once per link.
+    Headings are the publisher's own words ("Current forms", "Historical
+    forms"); nothing here interprets them.
+    """
+    current = ""
+    out: dict[int, str] = {}
+    for node in root.descendants:
+        name = getattr(node, "name", None)
+        if name in HEADING_TAGS:
+            current = clean(node.get_text(" ", strip=True), 160)
+        elif name == "a" and node.get("href"):
+            out[id(node)] = current
+    return out
 
 
 def _context_for(tag) -> str:
@@ -362,6 +388,7 @@ def harvest_listing(html: str, page_url: str, content_selector: str = "") -> lis
     found: dict[str, ListingLink] = {}
     order: list[str] = []
     for root in scope:
+        sections = _sections(root)
         for tag in root.find_all("a", href=True):
             url = absolute(page_url, tag.get("href"))
             if not url:
@@ -369,7 +396,8 @@ def harvest_listing(html: str, page_url: str, content_selector: str = "") -> lis
             anchor = clean(tag.get_text(" ", strip=True), 300)
             context = _context_for(tag)
             link = ListingLink(url=url, anchor_text=anchor, context=context,
-                               title_attr=clean(tag.get("title") or "", 300), date_hint=date_in_text(context))
+                               title_attr=clean(tag.get("title") or "", 300), date_hint=date_in_text(context),
+                               section=sections.get(id(tag), ""))
             existing = found.get(url)
             if existing is None:
                 found[url] = link
@@ -378,7 +406,7 @@ def harvest_listing(html: str, page_url: str, content_selector: str = "") -> lis
                 # Keep the most descriptive label when the same URL is linked twice
                 # ("Title" and "Download document").
                 found[url] = ListingLink(url, anchor, existing.context or context, existing.title_attr or link.title_attr,
-                                         existing.date_hint or link.date_hint)
+                                         existing.date_hint or link.date_hint, existing.section or link.section)
     return [found[url] for url in order]
 
 

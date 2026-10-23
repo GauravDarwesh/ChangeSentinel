@@ -509,5 +509,87 @@ class TestRegisterMonitor(unittest.TestCase):
             self.assertEqual(scout_path.read_text(encoding="utf-8"), scout_before)
 
 
+def discovery_event(url, fields, name="TIC forms"):
+    """An Add Link request in the dashboard's field order (scope fields before the selectors)."""
+    event = issue_event(url, name=name)
+    event["issue"]["body"] = event["issue"]["body"].replace("Include selector:", fields + "\nInclude selector:")
+    return event
+
+
+class DiscoveryOnlyRegistrationTests(unittest.TestCase):
+    ROOT = "https://home.example.gov/data/tic/forms"
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        tmp = Path(self._tmp.name)
+        self.source_path = tmp / "sources.json"
+        self.scout_path = tmp / "scout.json"
+        self.sources_before = json.dumps({"version": 4, "defaults": {}, "sources": []})
+        self.scout_before = (Path(__file__).resolve().parents[1] / "config" / "scout.json").read_text(encoding="utf-8")
+        self.source_path.write_text(self.sources_before, encoding="utf-8")
+        self.scout_path.write_text(self.scout_before, encoding="utf-8")
+
+    def register(self, fields):
+        return register_request(discovery_event(self.ROOT, fields), self.source_path,
+                                "GauravDarwesh/ChangeSentinel", self.scout_path)
+
+    def channel(self):
+        scout = json.loads(self.scout_path.read_text(encoding="utf-8"))
+        return next(channel for regulator in scout["regulators"] for channel in regulator["channels"]
+                    if channel["url"] == self.ROOT)
+
+    def test_discovery_only_adds_no_monitor_and_saves_the_scope(self):
+        result = self.register("Crawl depth: 2\nScout discovery: yes\nDiscovery only: yes\n"
+                               "Explore within: https://home.example.gov/data/tic\nDocument hosts: www.example.gov, docs.example.gov")
+        self.assertEqual(self.source_path.read_text(encoding="utf-8"), self.sources_before,
+                         "discovery only must never add a monitor")
+        self.assertTrue(result["discovery_only"])
+        self.assertEqual(result["source_ids"], [])
+        self.assertTrue(result["scout_changed"])
+        channel = self.channel()
+        self.assertEqual(channel["crawl_depth"], 2)
+        self.assertEqual(channel["explore_prefixes"], ["https://home.example.gov/data/tic/"])
+        self.assertEqual(channel["document_hosts"], ["www.example.gov", "docs.example.gov"])
+        from regmon.scout.profiles import parse_config
+        parse_config(json.loads(self.scout_path.read_text(encoding="utf-8")))
+
+    def test_scope_can_be_changed_and_cleared_on_a_later_request(self):
+        self.register("Crawl depth: 2\nScout discovery: yes\nDiscovery only: yes\n"
+                      "Explore within: https://home.example.gov/data/tic/\nDocument hosts: www.example.gov")
+        again = self.register("Crawl depth: 3\nScout discovery: yes\nDiscovery only: yes\nExplore within:\nDocument hosts:")
+        channel = self.channel()
+        self.assertTrue(again["scout_changed"])
+        self.assertEqual(channel["crawl_depth"], 3)
+        self.assertNotIn("explore_prefixes", channel)
+        self.assertNotIn("document_hosts", channel)
+        idempotent = self.register("Crawl depth: 3\nScout discovery: yes\nDiscovery only: yes\nExplore within:\nDocument hosts:")
+        self.assertFalse(idempotent["scout_changed"])
+
+    def test_invalid_scope_requests_change_nothing(self):
+        cases = (
+            ("Crawl depth: 2\nScout discovery: no\nDiscovery only: yes", "require Scout discovery"),
+            ("Crawl depth: 0\nScout discovery: yes\nDiscovery only: yes", "requires crawl depth 1, 2, or 3"),
+            ("Crawl depth: 2\nScout discovery: yes\nDiscovery only: maybe", "Discovery only must be yes or no"),
+            ("Crawl depth: 2\nScout discovery: yes\nExplore within: https://other.example.gov/x", "same host"),
+            ("Crawl depth: 2\nScout discovery: yes\nDocument hosts: https://www.example.gov/", "bare public hostname"),
+            ("Crawl depth: 2\nScout discovery: yes\nDocument hosts: intranet.local", "Local or internal"),
+            ("Crawl depth: 2\nScout discovery: yes\nDocument hosts: 10.0.0.1", "Private, loopback"),
+        )
+        for fields, message in cases:
+            with self.subTest(fields=fields), self.assertRaisesRegex(ValueError, message):
+                self.register(fields)
+            self.assertEqual(self.source_path.read_text(encoding="utf-8"), self.sources_before)
+            self.assertEqual(self.scout_path.read_text(encoding="utf-8"), self.scout_before)
+
+    def test_requests_without_the_new_fields_behave_as_before(self):
+        result = self.register("Crawl depth: 2\nScout discovery: yes")
+        self.assertFalse(result["discovery_only"])
+        self.assertTrue(result["created"])
+        channel = self.channel()
+        self.assertNotIn("explore_prefixes", channel)
+        self.assertNotIn("document_hosts", channel)
+
+
 if __name__ == "__main__":
     unittest.main()

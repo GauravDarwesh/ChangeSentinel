@@ -28,7 +28,7 @@ EVIDENCE_FIELDS = (
     "title", "anchor_text", "title_attr", "context", "parent_url", "description", "categories", "published", "lastmod",
     "date_hint", "language", "alternates", "page_title", "heading", "meta_description", "page_type", "page_published",
     "page_modified", "page_language", "canonical_link", "keywords", "near_monitored", "robots_disallowed", "enriched",
-    "enrich_error", "original_url",
+    "enrich_error", "original_url", "depth", "section",
 )
 DECISIONS = ("dismissed", "restored")
 
@@ -125,6 +125,10 @@ class Registry:
             "parent_url": observation.parent_url, "description": observation.description, "categories": observation.categories,
             "published": observation.published, "lastmod": observation.lastmod, "date_hint": observation.date_hint,
             "language": observation.language,
+            # Depth-limited listings only (0 / "" elsewhere, so never stored):
+            # hops from the listing root and the heading the link sat under.
+            "depth": getattr(observation, "depth", 0),
+            "section": getattr(observation, "section", ""),
             "alternates": {code: href for code, href in (observation.alternates or {}).items()
                            if canonical(href, https_hosts) != url},
             "original_url": observation.original_url if _meaningfully_different(observation.original_url, url) else "",

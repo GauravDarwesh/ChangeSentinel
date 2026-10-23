@@ -77,8 +77,8 @@ const ENDPOINTS = {
 };
 // The calendar feed is served from Pages so calendar apps can subscribe to it.
 const CALENDAR_FEED = new URL("./data/calendar.ics", document.baseURI).href;
-const VIEWS = ["overview", "changes", "monitors", "runs", "notifications", "scout", "calendar", "askSentinel"];
-const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", notifications: "alerts", scout: "scout", calendar: "cadence", askSentinel: "ask-sentinel" };
+const VIEWS = ["overview", "changes", "monitors", "runs", "notifications", "scout", "pick", "calendar", "askSentinel"];
+const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", notifications: "alerts", scout: "scout", pick: "pick-links", calendar: "cadence", askSentinel: "ask-sentinel" };
 const $ = id => document.getElementById(id);
 const esc = L.esc;
 // Snapshot text, saved HTML and evidence are cached for the session, but only
@@ -115,7 +115,9 @@ const state = {
   assetSignatures: {}, renderedSignature: "", lastFullLoad: 0, loading: null, detailKeys: {},
   workflowRuns: [], workflowSignature: "", scanColumns: null, pendingScan: null,
   scoutLatest: null, scoutReview: null, scoutConfig: null, scoutFilter: "REVIEW", scoutFormatFilter: "ALL", selectedScoutKey: "", scoutMonitored: null,
-  discoverySelection: [], discoveryBatchIndex: 0, discoveryDuplicatesAdded: 0, discoverySelectedPage: 0,
+  // Pick links: the owner's selection persists in this browser; discovered links stay candidates until submitted.
+  pick: { rootId: "", mode: "browse", at: "", limit: 250, anchor: "", registries: {}, graphs: {}, errors: {}, loading: {}, groups: [], trayOpen: false },
+  pickSelection: [], pickOpened: {}, pickRequested: [], addMode: "one",
   scoutSourceMode: "add",
   calendar: null, lineage: null, reviews: null, reviewTarget: "", integrity: {},
   cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
@@ -1351,6 +1353,7 @@ function renderLists() {
   renderRuns();
   renderNotifications();
   renderScout();
+  renderPickLinks();
   renderCadenceView();
   renderNavCounts();
 }
@@ -1361,6 +1364,7 @@ function renderNavCounts() {
   const toReview = scoutBuckets().REVIEW.length;
   $("navScoutCount").textContent = toReview ? toReview : "";
   $("navScoutCount").classList.toggle("is-fresh", toReview > 0);
+  renderPickNavCount();
   const cadenceCount = $("navCadenceCount");
   if (cadenceCount) {
     const today = L.localIsoDate(new Date());
@@ -2013,26 +2017,17 @@ function scoutRow(item) {
   const type = assessment.publication_type ? assessment.publication_type.label : "";
   const published = scoutPublished(item);
   const time = state.scoutFilter === "BACKLOG" && published ? shortDate(published.value) : rowTime(item.first_seen);
-  const selected = discoverySelectionHas(item.url);
-  const evidence = item.evidence || {};
-  const context = [evidence.anchor_text || evidence.context || evidence.description || "",
-    evidence.parent_url ? "From " + displayUrl(evidence.parent_url) : ""].filter(Boolean).join(" · ");
   const statusTag = monitored ? '<span class="tag is-relevant">Monitoring</span>'
     : dismissed ? '<span class="tag is-irrelevant">Dismissed</span>'
     : '<span class="tag ' + outcome.tag + '">' + esc(outcome.label) + "</span>";
-  return '<div class="scout-row-shell">' +
-    '<label class="scout-row-select"><input type="checkbox" data-discovery-select="' + esc(item.url) + '"' +
-      (selected ? " checked" : "") + ' aria-label="Select ' + esc(item.title || displayUrl(item.url)) + ' for monitoring review"></label>' +
-    '<button class="row" type="button" data-scout-key="' + esc(item.key) + '"' + (item.key === state.selectedScoutKey ? ' aria-selected="true"' : "") + ">" +
+  return '<button class="row" type="button" data-scout-key="' + esc(item.key) + '"' + (item.key === state.selectedScoutKey ? ' aria-selected="true"' : "") + ">" +
     '<span class="row-mark ' + (monitored || dismissed ? "" : outcome.mark) + '" aria-hidden="true"></span>' +
     '<span class="row-title">' + esc(item.title || displayUrl(item.url)) + "</span>" +
     '<span class="row-time">' + esc(time) + "</span>" +
     '<span class="row-sub">' + statusTag + (type ? '<span class="tag">' + esc(type) + "</span>" : "") +
-    '<span class="row-host">' + esc(regulator.short_name + " · " + (assessment.format || "Web page")) + "</span></span>" +
-    (context ? '<span class="row-summary">' + esc(context) + "</span>" : "") + "</button></div>";
+    '<span class="row-host">' + esc(regulator.short_name + " · " + (assessment.format || "Web page")) + "</span></span></button>";
 }
 function renderScout() {
-  renderDiscoverySelectionBar();
   const buckets = scoutBuckets();
   const items = scoutFiltered();
   const sweep = scoutSweepSummary();
@@ -2158,6 +2153,7 @@ function renderScoutDetail() {
   const actions = [];
   if (!monitored && !dismissed) {
     actions.push('<button class="btn btn-primary" type="button" data-scout-monitor="' + esc(item.key) + '">Monitor this page</button>');
+    actions.push('<button class="btn" type="button" data-pick-scout="' + esc(item.key) + '">' + (pickIsSelected(L.urlKey(item.url)) ? "In your selection" : "Add to selection") + "</button>");
     actions.push('<button class="btn" type="button" data-scout-dismiss="' + esc(item.key) + '">Not relevant</button>');
   }
   if (dismissed) actions.push('<button class="btn" type="button" data-scout-restore="' + esc(item.key) + '">Restore to review</button>');
@@ -2315,7 +2311,9 @@ function renderScoutCoverage(pane) {
     const rows = (regulator.channels || []).map(channel => {
       const problem = ["failed", "blocked", "deferred"].includes(channel.status);
       const note = channel.error || channel.note || "";
+      const pickable = pickRoots().some(root => root.id === regulator.id + "/" + channel.id && root.depth != null);
       return "<tr><td><span class=\"scout-channel-name\">" + esc(channel.label) + "</span>" +
+        (pickable ? ' <button class="sheet-link" type="button" data-pick-root="' + esc(regulator.id + "/" + channel.id) + '">Pick links</button>' : "") +
         '<span class="scout-channel-note' + (problem ? " is-problem" : "") + '">' + esc((L.SCOUT_CHANNEL_STATUS[channel.status] || channel.status) + (note ? ". " + note : "")) + "</span></td>" +
         "<td>" + esc(plural(Number(channel.observed || 0), "address", "addresses")) + (channel.new ? "<br>" + esc(channel.new + " new") : "") + "</td></tr>";
     }).join("");
@@ -2342,6 +2340,22 @@ function renderScoutCoverage(pane) {
       meta, actions: runButton + scoutLink(SCOUT_WORKFLOW_URL, "Sweep history on GitHub") }) +
     '<p class="note-strip">Complete means every declared channel was read as planned. It does not mean every page on a regulator’s site was seen; each regulator’s gaps are listed below.</p>' +
     sections + "</div>";
+}
+// A Scout finding joins the same selection as discovered links.
+function pickScoutFinding(key) {
+  const item = scoutCandidates().find(candidate => candidate.key === key);
+  if (!item) return;
+  const urlKey = L.urlKey(item.url);
+  if (pickIsSelected(urlKey)) { pickRemove(urlKey); showToast("Removed from your selection."); }
+  else {
+    const evidence = item.evidence || {};
+    pickAdd({ url: item.url, title: item.title, section: evidence.section || "", parentUrl: evidence.parent_url || "", depth: evidence.depth,
+      root: item.regulator_id, from: "Scout · " + scoutRegulator(item.regulator_id).short_name });
+    showToast("Added to your selection. Submit it from Pick links; nothing is monitored until then.");
+  }
+  pickSave();
+  renderScoutDetail();
+  renderNavCounts();
 }
 function openScoutMonitor(item) {
   $("newMonitorUrl").value = item.url;
@@ -3005,12 +3019,12 @@ function exportCadenceCalendar() {
 /* ================= Navigation ================= */
 
 function viewSection(view) {
-  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", scout: "scoutView", calendar: "calendarView", askSentinel: "askSentinelView" }[view] || "overviewView";
+  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", scout: "scoutView", pick: "pickView", calendar: "calendarView", askSentinel: "askSentinelView" }[view] || "overviewView";
 }
 function hasSelection(view) {
   return view === "changes" ? !!state.selectedChangeId : view === "monitors" ? !!state.selectedId
     : view === "runs" ? !!state.selectedRunId : view === "notifications" ? !!state.selectedNotificationId
-    : view === "scout" ? !!state.selectedScoutKey : false;
+    : view === "scout" ? !!state.selectedScoutKey : view === "pick" ? !!state.pick.trayOpen : false;
 }
 function renderViews() {
   VIEWS.forEach(view => {
@@ -3025,7 +3039,7 @@ function renderViews() {
   const askLauncher = $("askSentinelLaunch");
   askLauncher.classList.toggle("active", state.view === "askSentinel");
   askLauncher.setAttribute("aria-current", state.view === "askSentinel" ? "page" : "false");
-  const titles = { overview: "Overview", changes: "Changes", monitors: "Pages", runs: "Runs", notifications: "Alerts", scout: "Scout", calendar: "Cadence", askSentinel: "Ask Sentinel" };
+  const titles = { overview: "Overview", changes: "Changes", monitors: "Pages", runs: "Runs", notifications: "Alerts", scout: "Scout", pick: "Pick links", calendar: "Cadence", askSentinel: "Ask Sentinel" };
   document.title = titles[state.view] + " | ChangeSentinel";
 }
 // On wide screens the first row is selected automatically, so opening a view
@@ -3103,17 +3117,18 @@ function renderDetailFor(view) {
   else if (view === "runs") renderRunDetail();
   else if (view === "notifications") renderNotificationDetail();
   else if (view === "scout") renderScoutDetail();
+  else if (view === "pick") renderPickTray();
   else if (view === "calendar") { renderCadenceView(); refreshCadence(); }
 }
 function resetDetailScroll(view) {
-  const pane = { changes: "changeDetail", monitors: "detailView", runs: "runDetail", notifications: "notificationDetail", scout: "scoutDetail", calendar: "calendarView" }[view];
+  const pane = { changes: "changeDetail", monitors: "detailView", runs: "runDetail", notifications: "notificationDetail", scout: "scoutDetail", pick: "pickTray", calendar: "calendarView" }[view];
   if (pane && $(pane)) $(pane).scrollTop = 0;
   if (view === "overview") $("overviewView").scrollTop = 0;
 }
 function writeHash() {
   const id = state.view === "changes" ? state.selectedChangeId : state.view === "monitors" ? state.selectedId
     : state.view === "runs" ? state.selectedRunId : state.view === "notifications" ? state.selectedNotificationId
-    : state.view === "scout" ? state.selectedScoutKey : "";
+    : state.view === "scout" ? state.selectedScoutKey : state.view === "pick" ? state.pick.rootId : "";
   const hash = "#" + (HASH_NAMES[state.view] || (state.view === "askSentinel" ? "ask-sentinel" : "overview")) + (id ? "/" + encodeURIComponent(id) : "");
   try { history.replaceState(null, "", state.view === "overview" ? location.pathname + location.search : hash); } catch (_) {}
 }
@@ -3246,6 +3261,7 @@ async function loadDataOnce(showErrors) {
           if (route.view === "monitors" && state.items.some(item => item.url_id === route.id)) state.selectedId = route.id;
           if (route.view === "runs") state.selectedRunId = route.id;
           if (route.view === "notifications") state.selectedNotificationId = route.id;
+          if (route.view === "pick") state.pick.rootId = route.id;
           if (route.view === "scout") {
             state.selectedScoutKey = route.id;
             // A deep link to a finding outside the default list opens the list that holds it.
@@ -3325,308 +3341,527 @@ const MAX_BULK_REQUEST_URL_LENGTH = 7000;
 let bulkImportRows = [];
 let bulkImportErrors = [];
 
-const DISCOVERY_SELECTION_STORAGE = "cs-guided-discovery-selection-v1";
-function discoveryCandidate(url, name, source, parentUrl) {
-  const safe = safeHttpUrl(url);
-  if (!safe) return null;
-  let parsed;
-  try { parsed = new URL(safe); } catch (_) { return null; }
-  const host = String(parsed.hostname || "").toLowerCase();
-  if (![ "http:", "https:" ].includes(parsed.protocol) || !host || parsed.username || parsed.password ||
-      host === "localhost" || host.endsWith(".localhost") || host.endsWith(".local") ||
-      host.endsWith(".internal") || host.endsWith(".lan") || host.endsWith(".home")) return null;
-  parsed.hash = "";
-  return {
-    url: parsed.toString(),
-    name: String(name || "").replace(/[\r\n]+/g, " ").trim().slice(0, 160),
-    source: String(source || "Manually added").replace(/[\r\n]+/g, " ").trim().slice(0, 160),
-    parentUrl: safeHttpUrl(parentUrl || "")
-  };
-}
-function discoveryCandidateKey(itemOrUrl) {
-  const url = typeof itemOrUrl === "string" ? itemOrUrl : (itemOrUrl && itemOrUrl.url) || "";
-  return L.urlKey(url);
-}
-function discoverySelectionHas(url) {
-  const key = discoveryCandidateKey(url);
-  return !!key && state.discoverySelection.some(item => discoveryCandidateKey(item) === key);
-}
-function persistDiscoverySelection() {
+/* ================= Pick links =================
+ * Discovery may find hundreds of links; only the ones the owner ticks here and
+ * submits become monitors. Links come from Scout's registry for one discovery
+ * root (every link it recorded, not only the review queue), shown as a tree to
+ * browse page by page or as one filterable list. Nothing is ranked away or
+ * approved automatically. Submitting opens the existing owner-only bulk
+ * request (at most 25 links each); a link counts as monitored only once the
+ * configuration says so.
+ */
+const PICK_STORAGE = "cs-pick-links-v1";
+const LEGACY_SELECTION_STORAGE = "cs-guided-discovery-selection-v1";
+const PICK_PAGE_SIZE = 250;
+const PICK_TRAY_LIST_LIMIT = 200;
+
+function pickSave() {
   try {
-    sessionStorage.setItem(DISCOVERY_SELECTION_STORAGE, JSON.stringify({
-      selection: state.discoverySelection.map(item => ({
-        url: item.url, name: item.name, source: item.source, parentUrl: item.parentUrl
-      })),
-      batchIndex: state.discoveryBatchIndex,
-      duplicatesAdded: state.discoveryDuplicatesAdded
+    localStorage.setItem(PICK_STORAGE, JSON.stringify({
+      selection: state.pickSelection, opened: state.pickOpened, requested: state.pickRequested
     }));
   } catch (_) {
-    // Selection remains usable in memory even when browser storage is unavailable.
+    // The selection still works for this visit when browser storage is unavailable.
   }
 }
-function restoreDiscoverySelection() {
-  try {
-    const saved = JSON.parse(sessionStorage.getItem(DISCOVERY_SELECTION_STORAGE) || "{}");
-    const rows = Array.isArray(saved.selection) ? saved.selection : [];
-    const seen = new Set();
-    state.discoverySelection = rows.map(item => discoveryCandidate(item && item.url, item && item.name, item && item.source, item && item.parentUrl))
-      .filter(item => {
-        if (!item) return false;
-        const key = discoveryCandidateKey(item);
-        if (!key || seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
-    state.discoveryBatchIndex = Number.isInteger(saved.batchIndex) && saved.batchIndex >= 0 ? saved.batchIndex : 0;
-    state.discoveryDuplicatesAdded = Number.isInteger(saved.duplicatesAdded) && saved.duplicatesAdded >= 0 ? saved.duplicatesAdded : 0;
-  } catch (_) {
-    state.discoverySelection = [];
-    state.discoveryBatchIndex = 0;
-    state.discoveryDuplicatesAdded = 0;
-  }
-}
-function resetDiscoveryBatchProgress(shouldPersist = true) {
-  state.discoveryBatchIndex = 0;
-  if (shouldPersist) persistDiscoverySelection();
-}
-function addDiscoveryCandidate(candidate, countDuplicate, shouldPersist = true) {
-  if (!candidate) return false;
-  const key = discoveryCandidateKey(candidate);
-  if (!key) return false;
-  const existing = state.discoverySelection.find(item => discoveryCandidateKey(item) === key);
-  if (existing) {
-    if (countDuplicate) state.discoveryDuplicatesAdded += 1;
-    if (shouldPersist && countDuplicate) persistDiscoverySelection();
-    return false;
-  }
-  state.discoverySelection.push(candidate);
-  resetDiscoveryBatchProgress(shouldPersist);
-  return true;
-}
-function removeDiscoveryCandidate(key) {
-  state.discoverySelection = state.discoverySelection.filter(item => discoveryCandidateKey(item) !== key);
-  resetDiscoveryBatchProgress();
-  renderDiscoverySelectionBar();
-  renderScout();
-  if ($("discoverySelectionDialog") && $("discoverySelectionDialog").open) renderDiscoverySelectionDialog();
-}
-function discoverySelectionMetrics() {
-  const monitored = scoutMonitoredKeys();
-  const alreadyMonitored = state.discoverySelection.filter(item => monitored.has(discoveryCandidateKey(item))).length;
+function pickCleanItem(raw) {
+  const url = safeHttpUrl(raw && raw.url);
+  const key = url ? L.urlKey(url) : "";
+  if (!key) return null;
+  const text = (value, limit) => String(value || "").replace(/[\r\n]+/g, " ").trim().slice(0, limit);
   return {
-    selected: state.discoverySelection.length,
-    alreadyMonitored,
-    newCount: state.discoverySelection.length - alreadyMonitored,
-    repeated: state.discoveryDuplicatesAdded
+    key, url, title: text(raw.title, 300) || displayUrl(url), section: text(raw.section, 160), format: text(raw.format, 20) || L.pickFormat(url),
+    parentUrl: safeHttpUrl(raw.parentUrl || ""), depth: Number.isInteger(raw.depth) ? raw.depth : null, root: text(raw.root, 140),
+    from: text(raw.from, 160), addedAt: text(raw.addedAt, 40)
   };
 }
-function renderDiscoverySelectionBar() {
-  const count = $("discoverySelectionCount");
+function pickRestore() {
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(PICK_STORAGE) || "{}") || {}; } catch (_) { saved = {}; }
+  const seen = new Set();
+  const rows = Array.isArray(saved.selection) ? saved.selection : [];
+  // A selection made with the earlier tray (this tab only) is carried over once.
+  try {
+    const legacy = JSON.parse(sessionStorage.getItem(LEGACY_SELECTION_STORAGE) || "{}");
+    (Array.isArray(legacy.selection) ? legacy.selection : []).forEach(item => rows.push({ url: item.url, title: item.name, parentUrl: item.parentUrl, from: item.source }));
+    sessionStorage.removeItem(LEGACY_SELECTION_STORAGE);
+  } catch (_) {}
+  state.pickSelection = rows.map(pickCleanItem).filter(item => item && !seen.has(item.key) && seen.add(item.key));
+  state.pickOpened = saved.opened && typeof saved.opened === "object" ? saved.opened : {};
+  state.pickRequested = Array.isArray(saved.requested) ? saved.requested.filter(item => item && safeHttpUrl(item.url)).slice(-20) : [];
+  pickSave();
+}
+function pickSelectedKeys() { return new Set(state.pickSelection.map(item => item.key)); }
+function pickIsSelected(key) { return state.pickSelection.some(item => item.key === key); }
+function pickAdd(item) {
+  const clean = pickCleanItem(item);
+  if (!clean || pickIsSelected(clean.key)) return false;
+  clean.addedAt = clean.addedAt || new Date().toISOString();
+  state.pickSelection.push(clean);
+  return true;
+}
+function pickRemove(key) {
+  const before = state.pickSelection.length;
+  state.pickSelection = state.pickSelection.filter(item => item.key !== key);
+  return state.pickSelection.length !== before;
+}
+// Monitored now: active sources and the live inventory. A page whose monitor
+// was stopped is reported separately, because a new request will not restart it.
+function pickMonitoredKeys() {
+  const keys = new Set();
+  activeSources().forEach(source => [].concat(source.seed_urls || [], source.allowed_urls || []).forEach(url => keys.add(L.urlKey(url))));
+  state.items.forEach(item => keys.add(L.urlKey(item.canonical_url)));
+  return keys;
+}
+function pickStoppedKeys(monitored) {
+  const keys = new Set();
+  configuredSources().filter(source => source && source.active === false)
+    .forEach(source => (source.seed_urls || []).forEach(url => { const key = L.urlKey(url); if (!monitored.has(key)) keys.add(key); }));
+  return keys;
+}
+
+/* ---------- Discovery roots and their registries ---------- */
+
+function pickRoots() {
+  const regulators = state.scoutConfig && Array.isArray(state.scoutConfig.regulators) ? state.scoutConfig.regulators : [];
+  const roots = [];
+  regulators.forEach(regulator => (regulator.channels || []).forEach(channel => {
+    if (!channel || !channel.id || !safeHttpUrl(channel.url)) return;
+    roots.push({
+      id: regulator.id + "/" + channel.id, regulatorId: regulator.id, channelId: channel.id, url: channel.url,
+      label: channel.label || displayUrl(channel.url), regulator: regulator.short_name || regulator.name || regulator.id,
+      depth: Number.isInteger(channel.crawl_depth) ? channel.crawl_depth : null, type: channel.type || "listing",
+      active: regulator.active !== false, explore: channel.explore_prefixes || [], documentHosts: channel.document_hosts || []
+    });
+  }));
+  return roots;
+}
+function pickRoot() {
+  const roots = pickRoots();
+  return roots.find(root => root.id === state.pick.rootId) || roots.find(root => root.depth != null && root.active) || roots[0] || null;
+}
+function pickRootForUrl(url) {
+  const key = L.urlKey(url);
+  return pickRoots().find(root => L.urlKey(root.url) === key && root.depth != null) || null;
+}
+function pickChannelRun(root) {
+  const latest = state.scoutLatest && Array.isArray(state.scoutLatest.regulators) ? state.scoutLatest.regulators : [];
+  const regulator = latest.find(entry => entry && entry.id === root.regulatorId);
+  const channel = regulator && Array.isArray(regulator.channels) ? regulator.channels.find(entry => entry && entry.id === root.channelId) : null;
+  return { regulator, channel };
+}
+async function pickFetchRegistry(regulatorId) {
+  if (!/^[a-z0-9][a-z0-9-]{0,62}$/.test(regulatorId)) throw new Error("This Scout profile id is not valid");
+  const path = "data/scout/registry/" + regulatorId + ".json";
+  const failures = [];
+  for (const url of [new URL("./" + path, document.baseURI).href, RAW + "/" + path]) {
+    let host = url;
+    try { host = new URL(url).host; } catch (_) {}
+    try {
+      const response = await fetch(bust(url), { cache: "no-store" });
+      if (response.status === 404) { failures.push(host + " has no registry yet"); continue; }
+      if (!response.ok) { failures.push(host + " returned HTTP " + response.status); continue; }
+      const value = JSON.parse(await response.text());
+      if (!isPlainObject(value) || value.schema_version !== 1 || value.regulator_id !== regulatorId || !isPlainObject(value.candidates)) {
+        failures.push(host + " returned a registry with an unexpected shape");
+        continue;
+      }
+      return value;
+    } catch (error) {
+      failures.push(host + ": " + String(error.message || error));
+    }
+  }
+  if (failures.length && failures.every(text => /no registry yet/.test(text))) return { schema_version: 1, regulator_id: regulatorId, candidates: {}, channels: {} };
+  throw new Error(failures.join("; "));
+}
+// One registry per profile, re-read when a new Scout sweep has been published.
+function pickRegistry(regulatorId) {
+  const marker = sweepMarker(state.scoutLatest);
+  const cached = state.pick.registries[regulatorId];
+  if (cached && cached.marker === marker) return cached.data;
+  if (state.pick.loading[regulatorId]) return cached ? cached.data : null;
+  state.pick.loading[regulatorId] = pickFetchRegistry(regulatorId).then(data => {
+    state.pick.registries[regulatorId] = { marker, data };
+    delete state.pick.errors[regulatorId];
+  }).catch(error => {
+    state.pick.errors[regulatorId] = String(error.message || error);
+  }).finally(() => {
+    delete state.pick.loading[regulatorId];
+    Object.keys(state.pick.graphs).forEach(key => { if (key.indexOf(regulatorId + "/") === 0) delete state.pick.graphs[key]; });
+    if (state.view === "pick") renderPickLinks();
+  });
+  return cached ? cached.data : null;
+}
+function pickGraph(root) {
+  const registry = pickRegistry(root.regulatorId);
+  if (!registry) return null;
+  const cacheKey = root.id + "|" + (state.pick.registries[root.regulatorId] || {}).marker;
+  if (!state.pick.graphs[root.id] || state.pick.graphs[root.id].cacheKey !== cacheKey) {
+    state.pick.graphs[root.id] = { cacheKey, graph: L.pickGraph(registry, root.channelId, root.url) };
+  }
+  return state.pick.graphs[root.id].graph;
+}
+
+/* ---------- The list ---------- */
+
+function pickFilters(monitored) {
+  return {
+    query: $("pickSearch").value, format: $("pickFormat").value || "ALL", depth: $("pickDepth").value || "ALL", monitoredKeys: monitored
+  };
+}
+function pickSourceOptions(roots, current) {
+  const option = root => '<option value="' + esc(root.id) + '"' + (current && root.id === current.id ? " selected" : "") + ">" +
+    esc([root.label, root.regulator !== root.label ? root.regulator : "", root.depth != null ? "level " + root.depth : "", root.active ? "" : "inactive"].filter(Boolean).join(" · ")) + "</option>";
+  const discovery = roots.filter(root => root.depth != null);
+  const other = roots.filter(root => root.depth == null);
+  const pending = state.pickRequested.filter(item => !pickRootForUrl(item.url));
+  return (discovery.length ? '<optgroup label="Link discovery">' + discovery.map(option).join("") + "</optgroup>" : "") +
+    (other.length ? '<optgroup label="Other Scout channels">' + other.map(option).join("") + "</optgroup>" : "") +
+    (pending.length ? '<optgroup label="Requested, not set up yet">' + pending.map(item =>
+      '<option value="" disabled>' + esc(displayUrl(item.url) + " · requested " + relativeTime(item.at).toLowerCase()) + "</option>").join("") + "</optgroup>" : "");
+}
+function pickCoverageLine(root, graph) {
+  const { channel } = pickChannelRun(root);
+  const scope = [];
+  if (root.explore.length) scope.push("reads pages under " + root.explore.map(prefix => displayUrl(prefix)).join(", "));
+  else if (root.depth != null) scope.push("reads any page on " + (new URL(root.url)).hostname);
+  if (root.documentHosts.length) scope.push("also lists documents on " + root.documentHosts.join(", "));
+  const scopeText = scope.length ? " Discovery " + scope.join(" and ") + "." : "";
+  if (!channel) return { tone: "", text: "Not swept yet. The first discovery run starts after the owner workflow saves the request; its links appear here when it finishes." + scopeText };
+  const status = String(channel.status || "");
+  const found = graph ? graph.nodes.length : Number(channel.observed || channel.items || 0);
+  const when = state.scoutLatest && state.scoutLatest.finished_at ? " · swept " + relativeTime(state.scoutLatest.finished_at).toLowerCase() : "";
+  const base = Number(channel.pages_read || 0).toLocaleString() + " pages read · " + found.toLocaleString() + " links found" +
+    (root.depth != null ? " through level " + root.depth : "") + when + ".";
+  if (status === "ok") return { tone: "", text: base + scopeText };
+  if (status === "partial") return { tone: "is-warning", text: "Partial: " + (channel.note || "the run stopped before it finished") + ". " + base + " Links not reached are not listed." + scopeText };
+  return { tone: "is-problem", text: "Last run " + (L.SCOUT_CHANNEL_STATUS[status] || status || "did not finish").toLowerCase() + ": " + (channel.error || channel.note || "no detail recorded") +
+    ". Links from earlier runs are still listed." + scopeText };
+}
+function pickTags(node, monitored, stopped) {
+  const tags = ['<span class="tag">' + esc(node.format) + "</span>", '<span class="pick-url">' + esc(displayUrl(node.url)) + "</span>"];
+  if (monitored.has(node.key)) tags.push('<span class="tag is-monitoring">Monitoring</span>');
+  else if (stopped.has(node.key)) tags.push('<span class="tag is-irrelevant">Monitoring stopped</span>');
+  if (state.pick.mode === "all") tags.push('<span class="tag">' + esc(node.depth ? "Level " + node.depth : "Level not recorded") + "</span>");
+  if (node.origin === "new") tags.push('<span class="tag tone-new">New since first run</span>');
+  const dated = node.dateHint ? shortDate(node.dateHint) : "";
+  if (dated) tags.push('<span class="row-time">Dated ' + esc(dated) + "</span>");
+  return tags.join("");
+}
+function pickRowHtml(node, graph, monitored, stopped) {
+  const selected = pickIsSelected(node.key);
+  const links = state.pick.mode === "browse" ? (graph.children.get(node.key) || []).length : 0;
+  const context = node.context && node.context !== node.title && node.context.indexOf(node.title) !== 0 ? node.context : "";
+  const action = links ? "opens its " + plural(links, "link", "links") : (selected ? "removes it from your selection" : "adds it to your selection");
+  return '<div class="pick-row' + (selected ? " is-selected" : "") + '" data-pick-row="' + esc(node.key) + '">' +
+    '<label class="pick-check"><input type="checkbox" data-pick-toggle="' + esc(node.key) + '"' + (selected ? " checked" : "") +
+      ' aria-label="Select ' + esc(node.title) + '"><i aria-hidden="true"></i></label>' +
+    '<button class="pick-main" type="button" data-pick-main="' + esc(node.key) + '" aria-label="' + esc(node.title + ": " + action) + '">' +
+      '<span class="row-title">' + esc(node.title) + "</span>" +
+      (context ? '<span class="pick-context">' + esc(context) + "</span>" : "") +
+      '<span class="row-sub">' + pickTags(node, monitored, stopped) + "</span></button>" +
+    '<div class="pick-side">' + externalLink(node.url, "View", "sheet-link") +
+      (links ? '<button class="pick-into" type="button" data-pick-into="' + esc(node.key) + '" aria-label="Open ' + esc(node.title) + '">' + links + " links ›</button>" : "") + "</div></div>";
+}
+function pickGroupLabel(group, index) {
+  const keys = group.items.map(node => node.key);
+  const selected = pickSelectedKeys();
+  const all = keys.length && keys.every(key => selected.has(key));
+  const name = state.pick.mode === "all"
+    ? "<strong>" + esc(group.parentTitle) + "</strong>" + (group.section ? " · " + esc(group.section) : "")
+    : (group.section ? "<strong>" + esc(group.section) + "</strong>" : "<strong>" + esc(index ? "More links" : "Links on this page") + "</strong>");
+  return '<div class="list-group-label pick-group"><span class="pick-group-name">' + name + " · " + group.items.length + "</span>" +
+    '<button class="text-button" type="button" data-pick-group="' + index + '">' + (all ? "Clear these" : "Select these") + "</button></div>";
+}
+function renderPickLinks() {
+  if (!state.loaded || !$("pickItems")) return;
+  // The registry for a root is only fetched once Pick links is opened.
+  if (state.view !== "pick") { renderPickNavCount(); return; }
+  const roots = pickRoots();
+  const root = pickRoot();
+  $("pickSource").innerHTML = pickSourceOptions(roots, root);
+  $("pickSource").disabled = !roots.length;
+  document.querySelectorAll("[data-pick-mode]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.pickMode === state.pick.mode)));
+  $("pickHint").textContent = state.pick.mode === "browse" ? "Click a page to open its links · Shift-click to select" : "Click to select · Shift-click selects a range";
+  renderPickMobileBar();
+  renderPickNavCount();
+  const crumbs = $("pickCrumbs");
+  if (!root) {
+    crumbs.innerHTML = "";
+    $("pickCount").textContent = "";
+    $("pickCoverage").textContent = "";
+    $("pickItems").innerHTML = emptyState("No discovery set up yet",
+      "Add a link and choose “Pick links from a page”. ChangeSentinel reads that page and the pages it links to, then lists every link here for you to choose from.",
+      '<button class="btn btn-primary" type="button" data-add-monitor="discover">Start a discovery</button>');
+    return;
+  }
+  if (state.pick.rootId !== root.id) { state.pick.rootId = root.id; state.pick.at = ""; }
+  const graph = pickGraph(root);
+  const coverage = pickCoverageLine(root, graph);
+  $("pickCoverage").textContent = coverage.text;
+  $("pickCoverage").className = "pick-coverage" + (coverage.tone ? " " + coverage.tone : "");
+  if (!graph) {
+    crumbs.innerHTML = "";
+    $("pickCount").textContent = "";
+    const error = state.pick.errors[root.regulatorId];
+    $("pickItems").innerHTML = error
+      ? emptyState("Discovered links couldn't be loaded", error + ". Monitoring is unaffected; press Reload to try again.", '<button class="btn" type="button" data-refresh>Reload</button>')
+      : '<div class="loading">Loading discovered links…</div>';
+    return;
+  }
+  const monitored = pickMonitoredKeys();
+  const stopped = pickStoppedKeys(monitored);
+  const filters = pickFilters(monitored);
+  let groups;
+  if (state.pick.mode === "browse") {
+    if (state.pick.at && !graph.byKey.has(state.pick.at)) state.pick.at = "";
+    const here = state.pick.at || graph.rootKey;
+    const items = (graph.children.get(here) || []).filter(node => L.pickMatches(node, filters));
+    groups = L.pickSections(items).map(group => ({ section: group.section, items: group.items }));
+    const trail = state.pick.at ? L.pickTrail(graph, state.pick.at) : [];
+    crumbs.innerHTML = '<button type="button" data-pick-at="">' + esc(root.label) + "</button>" +
+      trail.map((node, index) => '<span class="sep" aria-hidden="true">/</span>' + (index === trail.length - 1
+        ? '<span aria-current="page">' + esc(node.title) + "</span>"
+        : '<button type="button" data-pick-at="' + esc(node.key) + '">' + esc(node.title) + "</button>")).join("");
+    if (!trail.length) crumbs.lastElementChild.setAttribute("aria-current", "page");
+  } else {
+    crumbs.innerHTML = "";
+    groups = L.pickGroups(graph, filters, root.label);
+  }
+  state.pick.groups = groups;
+  const total = groups.reduce((sum, group) => sum + group.items.length, 0);
+  $("pickCount").textContent = state.pick.mode === "browse"
+    ? plural(total, "link", "links") + " here · " + graph.nodes.length.toLocaleString() + " in all"
+    : total.toLocaleString() + " of " + graph.nodes.length.toLocaleString() + " links";
+  if (!graph.nodes.length) {
+    const { channel } = pickChannelRun(root);
+    $("pickItems").innerHTML = emptyState(channel ? "No links recorded" : "Waiting for the first discovery run",
+      channel ? "The last run found no links in scope on this page. Check the page and its discovery settings."
+        : "Once the owner workflow saves this discovery, Scout reads the page and lists its links here, usually within a few minutes.",
+      '<button class="btn" type="button" data-refresh>Reload</button>');
+    return;
+  }
+  if (!total) {
+    const filtered = filters.query.trim() || filters.format !== "ALL" || filters.depth !== "ALL";
+    $("pickItems").innerHTML = emptyState(filtered ? "No links match" : "No links on this page",
+      filtered ? "Try a different search or clear the filters." : "Discovery recorded no links on this page. Go back a level to see others.");
+    return;
+  }
+  let shown = 0;
+  let html = "";
+  for (let index = 0; index < groups.length && shown < state.pick.limit; index += 1) {
+    const group = groups[index];
+    const items = group.items.slice(0, state.pick.limit - shown);
+    html += pickGroupLabel(group, index) + items.map(node => pickRowHtml(node, graph, monitored, stopped)).join("");
+    shown += items.length;
+  }
+  if (shown < total) {
+    html += '<div class="pick-more"><button class="btn" type="button" data-pick-more>Show ' + Math.min(PICK_PAGE_SIZE, total - shown) +
+      " more · " + (total - shown).toLocaleString() + " not shown</button></div>";
+  }
+  $("pickItems").innerHTML = html;
+}
+function renderPickNavCount() {
+  const count = $("navPickCount");
   if (!count) return;
-  const metrics = discoverySelectionMetrics();
-  count.textContent = metrics.selected + " selected" +
-    (metrics.alreadyMonitored ? " · " + metrics.alreadyMonitored + " already monitored" : "");
-  const visible = typeof scoutFiltered === "function" ? scoutFiltered() : [];
-  const selectButton = $("selectVisibleScout");
-  if (selectButton) {
-    const selectedVisible = visible.filter(item => discoverySelectionHas(item.url)).length;
-    selectButton.textContent = visible.length && selectedVisible === visible.length ? "Deselect visible" : "Select visible";
-    selectButton.disabled = !visible.length;
-  }
+  const pending = L.pickSummary(state.pickSelection, pickMonitoredKeys()).toRequest;
+  count.textContent = pending ? String(pending) : "";
+  count.classList.toggle("is-fresh", pending > 0);
+  const button = count.closest(".nav-button");
+  if (button) button.classList.toggle("has-picks", pending > 0);
 }
-function buildDiscoveryBatches() {
-  const monitored = scoutMonitoredKeys();
-  const rows = state.discoverySelection
-    .filter(item => !monitored.has(discoveryCandidateKey(item)))
-    .map(item => ({ url: item.url, name: item.name || "", include_selector: "", ignore_selectors: [] }));
-  const batches = [];
-  let current = [];
-  for (const row of rows) {
-    const candidate = current.concat([row]);
-    const tooMany = candidate.length > MAX_BULK_LINKS;
-    const tooLong = !tooMany && makeBulkGitHubIssueUrl(candidate).length > MAX_BULK_REQUEST_URL_LENGTH;
-    if (current.length && (tooMany || tooLong)) {
-      batches.push(current);
-      current = [];
-    }
-    if (makeBulkGitHubIssueUrl([row]).length > MAX_BULK_REQUEST_URL_LENGTH) {
-      return { batches, error: "One selected URL is too long for the prefilled GitHub registration request." };
-    }
-    current.push(row);
-  }
-  if (current.length) batches.push(current);
-  return { batches, error: "" };
+function renderPickMobileBar() {
+  const label = $("pickMobileCount");
+  if (!label) return;
+  const n = state.pickSelection.length;
+  label.textContent = n ? plural(n, "link", "links") + " selected" : "Nothing selected yet";
 }
-function renderDiscoverySelectionDialog() {
-  const dialog = $("discoverySelectionDialog");
-  if (!dialog) return;
-  const metrics = discoverySelectionMetrics();
-  const summary = $("discoverySelectionStatus");
-  if (summary) {
-    summary.textContent = metrics.selected + " selected · " + metrics.alreadyMonitored + " currently monitored · " +
-      metrics.newCount + " new monitor request(s)" +
-      (metrics.repeated ? " · " + metrics.repeated + " repeated URL(s) ignored during entry" : "") + ".";
-  }
-  $("discoverySelectedCount").textContent = metrics.selected + (metrics.selected === 1 ? " URL" : " URLs");
-  const list = $("discoverySelectedList");
-  const pageSize = 50;
-  const pageCount = Math.max(1, Math.ceil(state.discoverySelection.length / pageSize));
-  state.discoverySelectedPage = Math.max(0, Math.min(state.discoverySelectedPage, pageCount - 1));
-  const start = state.discoverySelectedPage * pageSize;
-  const visibleSelection = state.discoverySelection.slice(start, start + pageSize);
-  if (!state.discoverySelection.length) {
-    list.innerHTML = '<div class="loading">No candidates selected. Select Scout findings or add URLs manually.</div>';
-  } else {
-    list.innerHTML = visibleSelection.map(item => {
-      const url = safeHttpUrl(item.url);
-      if (!url) return "";
-      const title = item.name || displayUrl(url);
-      const parent = item.parentUrl ? " · Found via " + displayUrl(item.parentUrl) : "";
-      return '<div class="discovery-selected-item"><div class="discovery-selected-info">' +
-        '<span class="discovery-selected-title">' + esc(title) + "</span>" +
-        '<a class="discovery-selected-url" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(url) + icon("external") + "</a>" +
-        '<span class="discovery-selected-meta">' + esc(item.source || "Manually added") + esc(parent) + "</span></div>" +
-        '<button class="btn" type="button" data-discovery-remove="' + esc(discoveryCandidateKey(item)) + '">Remove</button></div>';
-    }).join("");
-  }
-  $("discoverySelectionPageInfo").textContent = state.discoverySelection.length
-    ? "Showing " + (start + 1) + "–" + Math.min(start + pageSize, state.discoverySelection.length) + " of " + state.discoverySelection.length
-    : "No selected URLs";
-  $("discoverySelectionPagePrev").disabled = !state.discoverySelection.length || state.discoverySelectedPage === 0;
-  $("discoverySelectionPageNext").disabled = !state.discoverySelection.length || state.discoverySelectedPage >= pageCount - 1;
-  const batches = buildDiscoveryBatches();
-  const button = $("openDiscoveryBatch");
-  const note = $("discoveryBatchNote");
-  if (batches.error) {
-    if (note) note.textContent = batches.error;
-    button.disabled = true;
-    button.textContent = "Cannot prepare request";
-  } else if (!batches.batches.length) {
-    if (note) note.textContent = metrics.selected
-      ? "All selected URLs currently appear in the active monitor inventory. Refresh the dashboard if the inventory may be stale; no new request was prepared."
-      : "Registration requests contain at most 25 URLs and use the existing owner-approved GitHub workflow. Nothing becomes active until that workflow succeeds.";
-    button.disabled = true;
-    button.textContent = "No new URLs to request";
-  } else if (state.discoveryBatchIndex >= batches.batches.length) {
-    if (note) note.textContent = "All " + batches.batches.length + " batch(es) have been opened. This does not confirm that their GitHub requests were submitted or registered.";
-    button.disabled = false;
-    button.textContent = "Restart at batch 1 of " + batches.batches.length;
-  } else {
-    const current = state.discoveryBatchIndex + 1;
-    const rowsInBatch = batches.batches[state.discoveryBatchIndex].length;
-    if (note) note.textContent = metrics.newCount + " new URL(s) across " + batches.batches.length +
-      " bounded batch(es). This batch contains " + rowsInBatch +
-      " URL(s). Submit its GitHub issue before opening the next batch; opening a request is not the same as registration.";
-    button.disabled = false;
-    button.textContent = "Open batch " + current + " of " + batches.batches.length;
-  }
-  renderDiscoverySelectionBar();
+
+/* ---------- Selecting ---------- */
+
+function pickNodeItem(node, root) {
+  return { url: node.url, title: node.title, section: node.section, format: node.format, parentUrl: node.parentUrl, depth: node.depth,
+    root: root ? root.id : "", from: root ? root.label : "" };
 }
-function openDiscoverySelectionDialog() {
-  const dialog = $("discoverySelectionDialog");
-  state.discoverySelectedPage = 0;
-  renderDiscoverySelectionDialog();
-  if (typeof dialog.showModal === "function") dialog.showModal();
-  else showToast("This browser can't open the selection dialog. Use a current browser.");
+function pickCurrentNode(key) {
+  const root = pickRoot();
+  const graph = root ? pickGraph(root) : null;
+  return graph ? { node: graph.byKey.get(key), root } : {};
 }
-function addManualDiscoveryUrls() {
-  const input = $("discoveryManualUrls");
-  const status = $("discoveryManualStatus");
-  const lines = input.value.split(/\r?\n/).map(value => value.trim()).filter(Boolean);
-  if (!lines.length) {
-    status.textContent = "Paste one complete http:// or https:// URL per line.";
-    return;
-  }
-  const candidates = [];
-  const errors = [];
-  lines.forEach((line, index) => {
-    const candidate = discoveryCandidate(line, "", "Manually added", "");
-    if (!candidate) errors.push("Line " + (index + 1) + " is not a valid public HTTP(S) URL without credentials.");
-    else candidates.push(candidate);
+function pickChanged() {
+  pickSave();
+  renderPickLinks();
+  renderPickTray();
+}
+function pickToggle(key, force) {
+  const { node, root } = pickCurrentNode(key);
+  const selected = pickIsSelected(key);
+  const want = typeof force === "boolean" ? force : !selected;
+  if (want && !selected && node) pickAdd(pickNodeItem(node, root));
+  if (!want && selected) pickRemove(key);
+  state.pick.anchor = key;
+}
+// Shift-click: everything listed between the last row touched and this one.
+function pickRange(key) {
+  const rows = Array.from(document.querySelectorAll("#pickItems [data-pick-row]")).map(row => row.dataset.pickRow);
+  const from = rows.indexOf(state.pick.anchor);
+  const to = rows.indexOf(key);
+  if (from < 0 || to < 0) return pickToggle(key);
+  const want = !pickIsSelected(key);
+  rows.slice(Math.min(from, to), Math.max(from, to) + 1).forEach(rowKey => pickToggle(rowKey, want));
+  state.pick.anchor = key;
+}
+function pickGroupToggle(index) {
+  const group = state.pick.groups[index];
+  if (!group) return;
+  const selected = pickSelectedKeys();
+  const all = group.items.every(node => selected.has(node.key));
+  group.items.forEach(node => pickToggle(node.key, !all));
+  pickChanged();
+  showToast(all ? "Cleared " + plural(group.items.length, "link", "links") + "." : "Selected " + plural(group.items.length, "link", "links") + ". Nothing is monitored until you submit the request.");
+}
+function pickOpenPage(key) {
+  state.pick.at = key || "";
+  state.pick.limit = PICK_PAGE_SIZE;
+  state.pick.anchor = "";
+  renderPickLinks();
+  $("pickItems").scrollTop = 0;
+}
+
+/* ---------- The selection and its requests ---------- */
+
+function pickRequestRows(items) {
+  return items.map(item => ({ url: item.url, name: L.pickMonitorName(item), include_selector: "", ignore_selectors: [] }));
+}
+function pickBatchState(batch) {
+  const opened = batch.map(row => state.pickOpened[L.urlKey(row.url)]).filter(Boolean);
+  if (!opened.length) return { text: "Not opened yet", tone: "" };
+  const latest = opened.sort().slice(-1)[0];
+  if (opened.length < batch.length) return { text: "Partly opened · " + plural(batch.length - opened.length, "link", "links") + " not yet requested", tone: "is-opened" };
+  return { text: "Opened " + relativeTime(latest).toLowerCase() + " · submit it on GitHub, then Reload", tone: "is-opened" };
+}
+function pickSelectedList(items, limit) {
+  const shown = items.slice(0, limit);
+  return '<ul class="pick-selected">' + shown.map(item => '<li><span class="pick-sel-title" title="' + esc(item.title) + '">' + esc(item.title) + "</span>" +
+    '<span class="pick-url">' + esc(displayUrl(item.url)) + "</span>" +
+    '<button type="button" data-pick-remove="' + esc(item.key) + '" aria-label="Remove ' + esc(item.title) + ' from your selection">Remove</button></li>').join("") + "</ul>" +
+    (items.length > shown.length ? '<p class="note-strip">And ' + (items.length - shown.length).toLocaleString() + " more. They are all included in the requests.</p>" : "");
+}
+function renderPickTray() {
+  const pane = $("pickTray");
+  if (!pane) return;
+  // A redraw (a background refresh, a removal) keeps what is being typed by hand.
+  const draft = $("pickManualUrls") ? $("pickManualUrls").value : "";
+  const draftOpen = !!(pane.querySelector(".pick-manual") || {}).open;
+  window.requestAnimationFrame(() => {
+    const input = $("pickManualUrls");
+    if (input && draft && !input.value) { input.value = draft; if (input.closest("details")) input.closest("details").open = true; }
+    else if (input && draftOpen && input.closest("details")) input.closest("details").open = true;
   });
-  if (errors.length) {
-    status.textContent = errors.slice(0, 3).join(" ") + (errors.length > 3 ? " More invalid lines were found." : "") +
-      " No URLs were added; correct the input and retry.";
+  state.detailKeys.pick = "";
+  const monitored = pickMonitoredKeys();
+  const stopped = pickStoppedKeys(monitored);
+  const summary = L.pickSummary(state.pickSelection, monitored);
+  const pending = summary.pending.filter(item => !stopped.has(item.key));
+  const stoppedItems = summary.pending.filter(item => stopped.has(item.key));
+  const monitoredItems = state.pickSelection.filter(item => monitored.has(item.key));
+  const manual = '<details class="pick-manual"' + (summary.selected ? "" : " open") + '><summary>Add a link by hand</summary>' +
+    '<p class="field-help">Paste exact page or document addresses, one per line, for links discovery did not find.</p>' +
+    '<textarea class="field-input" id="pickManualUrls" rows="3" spellcheck="false" placeholder="https://www.example.gov/forms/current-form.pdf"></textarea>' +
+    '<div class="bulk-actions"><span class="field-help" id="pickManualStatus" role="status" aria-live="polite"></span><button class="btn" type="button" data-pick-manual>Add to selection</button></div></details>';
+  const back = '<button class="text-button detail-back" type="button" data-back>Back to the links</button>';
+  if (!summary.selected) {
+    pane.innerHTML = '<div class="detail-inner">' + back +
+      emptyState("Nothing selected yet", "Tick the links you want ChangeSentinel to monitor. Discovered links stay candidates; none is monitored until you submit a request for it.") +
+      '<section class="sheet">' + manual + "</section></div>";
     return;
   }
-  let added = 0;
-  candidates.forEach(candidate => { if (addDiscoveryCandidate(candidate, true, false)) added += 1; });
-  persistDiscoverySelection();
-  input.value = "";
-  persistDiscoverySelection();
-  status.textContent = added + " URL(s) added to the selection" +
-    (candidates.length - added ? "; " + (candidates.length - added) + " duplicate(s) already in the selection." : ".");
-  renderDiscoverySelectionDialog();
-  renderScout();
+  const prepared = L.pickBatches(pickRequestRows(pending), makeBulkGitHubIssueUrl, MAX_BULK_LINKS, MAX_BULK_REQUEST_URL_LENGTH);
+  const batches = prepared.batches.map((batch, index) => {
+    const status = pickBatchState(batch);
+    return '<div class="pick-batch"><span class="pick-batch-name">Request ' + (index + 1) + " of " + prepared.batches.length + " · " + plural(batch.length, "link", "links") + "</span>" +
+      '<span class="pick-batch-state ' + status.tone + '">' + esc(status.text) + "</span>" +
+      '<button class="btn' + (status.tone ? "" : " btn-primary") + '" type="button" data-pick-batch="' + index + '">' + (status.tone ? "Open again" : "Open on GitHub") + "</button></div>";
+  }).join("");
+  const counts = '<dl class="pick-counts"><div><dt>Selected</dt><dd>' + summary.selected.toLocaleString() + "</dd></div>" +
+    "<div><dt>Already monitored</dt><dd>" + monitoredItems.length.toLocaleString() + "</dd></div>" +
+    '<div><dt>To request</dt><dd class="is-accent">' + pending.length.toLocaleString() + "</dd></div></dl>";
+  const sentence = pending.length
+    ? plural(pending.length, "new monitor", "new monitors") + " will be requested in " + plural(prepared.batches.length, "request", "requests") +
+      (monitoredItems.length ? "; " + monitoredItems.length + " already monitored and left out" : "") + (stoppedItems.length ? "; " + stoppedItems.length + " stopped earlier and left out" : "") + "."
+    : "Every selected link is already monitored" + (stoppedItems.length ? " or was stopped earlier" : "") + ". Nothing new to request.";
+  pane.innerHTML = '<div class="detail-inner">' + back +
+    detailHeading({ source: "Your selection", title: plural(summary.selected, "link", "links") + " selected",
+      subtitle: "Nothing is monitored until you submit these requests on GitHub and the owner workflow registers each link." }) +
+    counts + '<p class="pick-coverage pick-sentence">' + esc(sentence) + "</p>" +
+    (prepared.batches.length || prepared.tooLong.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Requests</h3><span class="sheet-note">At most ' + MAX_BULK_LINKS + " links each</span></div>" + batches +
+      (prepared.tooLong.length ? '<p class="note-strip is-warning">' + esc(plural(prepared.tooLong.length, "address is", "addresses are")) + " too long for a prefilled GitHub request and " +
+        (prepared.tooLong.length === 1 ? "is" : "are") + " not included: " + esc(prepared.tooLong.map(row => displayUrl(row.url)).join(", ")) + ".</p>" : "") +
+      '<div class="sheet-foot"><span class="sheet-note">Opening a request registers nothing. After you submit it, the owner workflow adds each link and starts its first scan. Links still waiting stay here, so opening a request again is safe.</span>' +
+      '<button class="btn" type="button" data-refresh>Reload</button></div></section>' : "") +
+    (pending.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">To request</h3><span class="sheet-note">' + plural(pending.length, "link", "links") + "</span></div>" + pickSelectedList(pending, PICK_TRAY_LIST_LIMIT) + "</section>" : "") +
+    (stoppedItems.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Stopped earlier</h3><span class="sheet-note">Not included</span></div>' +
+      '<p class="note-strip">Monitoring of these addresses was stopped. A new request would not restart it; restart them in config/sources.json instead.</p>' + pickSelectedList(stoppedItems, 50) + "</section>" : "") +
+    (monitoredItems.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Already monitored</h3><button class="sheet-link" type="button" data-pick-clear-monitored>Remove from selection</button></div>' +
+      pickSelectedList(monitoredItems, 50) + "</section>" : "") +
+    '<section class="sheet">' + manual + '<div class="sheet-foot"><span class="sheet-note">Your selection is kept in this browser until you clear it.</span><button class="sheet-link" type="button" data-pick-clear>Clear selection</button></div></section>' +
+    "</div>";
 }
-function toggleVisibleDiscoverySelection() {
-  const visible = scoutFiltered();
-  if (!visible.length) return;
-  const allSelected = visible.every(item => discoverySelectionHas(item.url));
-  visible.forEach(item => {
-    const key = discoveryCandidateKey(item.url);
-    if (allSelected) {
-      state.discoverySelection = state.discoverySelection.filter(row => discoveryCandidateKey(row) !== key);
-    } else if (!discoverySelectionHas(item.url)) {
-      addDiscoveryCandidate(discoveryCandidate(item.url, item.title, "Scout · " + scoutRegulator(item.regulator_id).short_name,
-        (item.evidence || {}).parent_url), false, false);
-    }
-  });
-  resetDiscoveryBatchProgress();
-  renderDiscoverySelectionBar();
-  renderScout();
-  if ($("discoverySelectionDialog").open) renderDiscoverySelectionDialog();
-}
-function toggleSingleDiscoverySelection(input) {
-  const url = input.dataset.discoverySelect || "";
-  const key = discoveryCandidateKey(url);
-  if (input.checked) {
-    const candidate = scoutCandidates().find(item => discoveryCandidateKey(item.url) === key);
-    if (candidate) addDiscoveryCandidate(discoveryCandidate(candidate.url, candidate.title,
-      "Scout · " + scoutRegulator(candidate.regulator_id).short_name, (candidate.evidence || {}).parent_url), false);
-  } else {
-    state.discoverySelection = state.discoverySelection.filter(item => discoveryCandidateKey(item) !== key);
-    resetDiscoveryBatchProgress();
-  }
-  persistDiscoverySelection();
-  renderDiscoverySelectionBar();
-  renderScout();
-  if ($("discoverySelectionDialog").open) renderDiscoverySelectionDialog();
-}
-function openDiscoveryRegistrationBatch() {
-  const prepared = buildDiscoveryBatches();
-  if (prepared.error) { showToast(prepared.error); renderDiscoverySelectionDialog(); return; }
-  if (!prepared.batches.length) { renderDiscoverySelectionDialog(); return; }
-  if (state.discoveryBatchIndex >= prepared.batches.length) state.discoveryBatchIndex = 0;
-  const index = state.discoveryBatchIndex;
-  const target = makeBulkGitHubIssueUrl(prepared.batches[index]);
-  if (target.length > MAX_BULK_REQUEST_URL_LENGTH) {
-    showToast("This registration request is too long; no URL was submitted.");
-    return;
-  }
-  // Persist the next position before navigation so browser Back can recover the batch tray.
-  state.discoveryBatchIndex = index + 1;
-  persistDiscoverySelection();
-  renderDiscoverySelectionDialog();
+function pickOpenBatch(index) {
+  const monitored = pickMonitoredKeys();
+  const stopped = pickStoppedKeys(monitored);
+  const pending = L.pickSummary(state.pickSelection, monitored).pending.filter(item => !stopped.has(item.key));
+  const prepared = L.pickBatches(pickRequestRows(pending), makeBulkGitHubIssueUrl, MAX_BULK_LINKS, MAX_BULK_REQUEST_URL_LENGTH);
+  const batch = prepared.batches[index];
+  if (!batch) { renderPickTray(); return; }
+  const target = makeBulkGitHubIssueUrl(batch);
+  if (target.length > MAX_BULK_REQUEST_URL_LENGTH) { showToast("This request is too long for GitHub; nothing was opened."); return; }
+  const now = new Date().toISOString();
+  batch.forEach(row => { state.pickOpened[L.urlKey(row.url)] = now; });
+  pickSave();
+  renderPickTray();
   const githubWindow = window.open(target, "_blank");
   if (githubWindow) {
     try { githubWindow.opener = null; } catch (_) {}
-    showToast("Opened batch " + (index + 1) + " of " + prepared.batches.length +
-      ". Submit the GitHub request before opening the next batch; registration is not yet confirmed.");
+    showToast("Request " + (index + 1) + " of " + prepared.batches.length + " opened on GitHub. Submit it there; nothing is registered until you do.");
   } else {
-    showToast("Your browser blocked the new tab. Opening the prefilled request here.");
+    showToast("Your browser blocked the new tab. Opening the request here.");
     window.location.href = target;
   }
 }
+function pickAddManual() {
+  const input = $("pickManualUrls");
+  const status = $("pickManualStatus");
+  if (!input || !status) return;
+  const lines = input.value.split(/\r?\n/).map(value => value.trim()).filter(Boolean);
+  if (!lines.length) { status.textContent = "Paste one full http:// or https:// address per line."; return; }
+  const invalid = [];
+  const items = [];
+  lines.forEach((line, index) => {
+    let parsed;
+    try { parsed = new URL(line); } catch (_) { invalid.push(index + 1); return; }
+    const host = parsed.hostname.toLowerCase();
+    if (!["http:", "https:"].includes(parsed.protocol) || !host || parsed.username || parsed.password ||
+        /(^localhost$|\.localhost$|\.local$|\.internal$|\.lan$|\.home$)/.test(host)) { invalid.push(index + 1); return; }
+    parsed.hash = "";
+    items.push({ url: parsed.toString(), title: "", from: "Added by hand" });
+  });
+  if (invalid.length) { status.textContent = (invalid.length > 1 ? "Lines " : "Line ") + invalid.slice(0, 5).join(", ") + ": not a public web address. Nothing was added."; return; }
+  const added = items.filter(item => pickAdd(item)).length;
+  input.value = "";
+  pickChanged();
+  const after = $("pickManualStatus");
+  if (after) after.textContent = plural(added, "link", "links") + " added" + (items.length - added ? "; " + (items.length - added) + " already in your selection." : ".");
+}
 
-function openAddMonitor() {
+function openAddMonitor(mode) {
   const dialog = $("addMonitorDialog");
-  syncScoutDiscoveryOption();
+  setAddMode(mode === "discover" ? "discover" : "one");
   if (typeof dialog.showModal === "function") {
     dialog.showModal();
     window.setTimeout(() => $("newMonitorUrl").focus(), 30);
   } else {
-    showToast("This browser can't open the add-page dialog. Use a current browser.");
+    showToast("This browser can't open the add-link dialog. Use a current browser.");
   }
 }
 function makeGitHubIssueUrl(url, name, includeSelector, ignoreSelectors, crawlDepth, scoutEnabled) {
@@ -3682,16 +3917,64 @@ async function suggestMonitorMetadata() {
     }
   } finally { window.clearTimeout(timeout); button.disabled = false; }
 }
-function syncScoutDiscoveryOption() {
-  const depth = Number.parseInt($("newMonitorDepth").value || "0", 10);
-  const checkbox = $("newMonitorScout");
-  const help = $("newMonitorScoutHelp");
-  const available = depth >= 1 && depth <= 3;
-  checkbox.disabled = !available;
-  if (!available) checkbox.checked = false;
-  help.textContent = available
-    ? "Use an HTML landing/listing page here, not a PDF URL. Scout will revisit it weekly through the selected depth and surface new or replacement linked documents, including PDFs, for review. New discoveries are suggestions; they are not silently added as monitors."
-    : "Choose Level 1–3 to enable Scout. Use an HTML landing/listing page as the root; Level 0 only watches this URL and does not discover linked pages.";
+// The dialog has two modes. "One page" registers that exact address (depth 0),
+// as before. "Pick links" only sets up discovery: the owner workflow saves a
+// Scout channel and adds no monitor; links are chosen later in Pick links.
+function setAddMode(mode) {
+  state.addMode = mode === "discover" ? "discover" : "one";
+  const discover = state.addMode === "discover";
+  document.querySelectorAll("#addMonitorDialog [data-add-mode]").forEach(button => {
+    const on = button.dataset.addMode === state.addMode;
+    button.setAttribute("aria-pressed", String(on));
+    button.setAttribute("aria-checked", String(on));
+  });
+  $("addPickFields").hidden = !discover;
+  $("addOneAdvanced").hidden = discover;
+  const bulk = document.querySelector("#addMonitorDialog .bulk-import");
+  if (bulk) bulk.hidden = discover;
+  $("newMonitorUrlLabel").textContent = discover ? "Starting page" : "Page or document URL";
+  $("newMonitorUrl").placeholder = discover ? "https://www.example.gov/reporting/forms" : "https://www.example.com/policy-page";
+  $("newMonitorUrlHelp").textContent = discover
+    ? "A page that lists the documents you care about. Nothing on it is monitored until you pick links."
+    : "This exact address is checked on every scan and compared with its saved copy.";
+  $("addMonitorInfo").textContent = discover
+    ? "This opens a prefilled request on GitHub. Once you submit it, the owner workflow saves the discovery settings and runs a first discovery, usually within a few minutes. No monitor is added: its links wait in Pick links until you choose them. The dashboard stores no access token."
+    : "This opens a prefilled request on GitHub. Once the repository owner submits it, the page is added to the configuration and scanned. The dashboard stores no access token.";
+  syncAddPick();
+}
+function syncAddPick() {
+  if (state.addMode !== "discover") return;
+  const raw = $("newMonitorUrl").value.trim();
+  const options = safeHttpUrl(raw) ? L.pickScopeOptions(raw) : [];
+  const box = $("newPickScope");
+  const previous = (box.querySelector("input:checked") || {}).value;
+  const existing = safeHttpUrl(raw) ? pickRootForUrl(raw) : null;
+  if (!options.length) {
+    box.innerHTML = '<p class="field-help">Enter the starting page to see the choices.</p>';
+  } else {
+    // An existing discovery keeps its current scope unless the owner changes it.
+    const current = !existing ? "" : existing.explore.length
+      ? (options.find(option => option.prefix && existing.explore.some(prefix => L.urlKey(prefix) === L.urlKey(option.prefix))) || {}).id || ""
+      : "site";
+    const chosen = options.some(option => option.id === previous) ? previous : current || (options.find(option => option.id === "section") || options[0]).id;
+    box.innerHTML = options.map(option => '<label class="add-scope-option"><input type="radio" name="pickScope" value="' + esc(option.id) + '" data-prefix="' + esc(option.prefix) + '"' +
+      (option.id === chosen ? " checked" : "") + "><span>" + esc(option.label) + "</span><code>" + esc(option.prefix ? displayUrl(option.prefix) : "No limit; may wander into unrelated sections") + "</code></label>").join("");
+  }
+  const notice = $("addPickExisting");
+  if (existing) {
+    const graph = state.pick.graphs[existing.id] ? state.pick.graphs[existing.id].graph : null;
+    const { channel } = pickChannelRun(existing);
+    const found = graph ? graph.nodes.length : Number(channel && channel.observed || 0);
+    notice.innerHTML = esc("Discovery is already set up for this page (level " + existing.depth + (found ? ", " + found.toLocaleString() + " links found" : "") +
+      "). Continuing updates its depth and scope; its links stay as they are until the next run.") +
+      '<br><button class="btn" type="button" data-pick-root="' + esc(existing.id) + '">Open its links</button>';
+    notice.hidden = false;
+    if (!$("newPickHosts").dataset.touched && existing.documentHosts.length) $("newPickHosts").value = existing.documentHosts.join(", ");
+    if (existing.depth) $("newMonitorDepth").value = String(existing.depth);
+  } else {
+    notice.hidden = true;
+    notice.innerHTML = "";
+  }
 }
 function openGitHubRequest(target, toastMessage) {
   const addDialog = $("addMonitorDialog");
@@ -3732,44 +4015,72 @@ function submitDeleteMonitor() {
   if (dialog && dialog.open) dialog.close();
   openDeleteMonitorRequest(makeGitHubDeleteIssueUrl(pending.sourceId, pending.url, pending.name));
 }
-function submitAddMonitor(event) {
-  event.preventDefault();
+function readAddUrl() {
   const rawUrl = $("newMonitorUrl").value.trim();
-  const name = $("newMonitorName").value.replace(/[\r\n]+/g, " ").trim().slice(0, 100);
-  const includeSelector = $("newMonitorIncludeSelector").value.replace(/[\r\n]+/g, " ").trim();
-  const ignoreSelectors = $("newMonitorIgnoreSelectors").value.split(/\r?\n/).map(value => value.trim()).filter(Boolean);
-  const crawlDepth = Number.parseInt($("newMonitorDepth").value || "0", 10);
-  const scoutEnabled = $("newMonitorScout").checked;
   let parsed;
   try { parsed = new URL(rawUrl); } catch (_) {
     $("newMonitorUrl").setCustomValidity("Enter a full URL beginning with https:// or http://.");
     $("newMonitorUrl").reportValidity();
-    return;
+    return null;
   }
   if (!["http:", "https:"].includes(parsed.protocol) || !parsed.hostname || parsed.username || parsed.password) {
     $("newMonitorUrl").setCustomValidity("Use a public http:// or https:// URL without a username or password.");
     $("newMonitorUrl").reportValidity();
-    return;
+    return null;
   }
   $("newMonitorUrl").setCustomValidity("");
+  parsed.hash = "";
+  return parsed;
+}
+function resetAddForm() {
+  ["newMonitorUrl", "newMonitorName", "newMonitorIncludeSelector", "newMonitorIgnoreSelectors", "newPickHosts"].forEach(id => { $(id).value = ""; });
+  delete $("newPickHosts").dataset.touched;
+  $("newMonitorDepth").value = "2";
+  $("newMonitorMetadataStatus").textContent = "";
+  $("addPickExisting").hidden = true;
+}
+function submitAddMonitor(event) {
+  event.preventDefault();
+  const parsed = readAddUrl();
+  if (!parsed) return;
+  const name = $("newMonitorName").value.replace(/[\r\n]+/g, " ").trim().slice(0, 100);
+  if (state.addMode === "discover") return submitPickDiscovery(parsed, name);
+  const includeSelector = $("newMonitorIncludeSelector").value.replace(/[\r\n]+/g, " ").trim();
+  const ignoreSelectors = $("newMonitorIgnoreSelectors").value.split(/\r?\n/).map(value => value.trim()).filter(Boolean);
   if (includeSelector.length > 500 || ignoreSelectors.length > 20 || ignoreSelectors.some(selector => selector.length > 500)) {
     showToast("Use one selector of up to 500 characters to compare, and up to 20 selectors to ignore.");
     return;
   }
-  if (scoutEnabled && crawlDepth === 0) {
-    showToast("Choose crawl Level 1, 2, or 3 before enabling weekly Scout discovery.");
+  // One page or document: that exact address, never a crawl.
+  const target = makeGitHubIssueUrl(parsed.toString(), name, includeSelector, ignoreSelectors, 0, false);
+  resetAddForm();
+  openGitHubRequest(target, "Submit the prefilled request on GitHub. The page is scanned once the request is accepted.");
+}
+function submitPickDiscovery(parsed, name) {
+  const depth = Number.parseInt($("newMonitorDepth").value || "2", 10);
+  const scope = $("newPickScope").querySelector("input:checked");
+  const hosts = L.pickHosts($("newPickHosts").value, parsed.toString());
+  if (hosts.invalid.length) {
+    $("newPickHosts").setCustomValidity("Use bare public host names such as www.example.gov, separated by commas.");
+    $("newPickHosts").reportValidity();
     return;
   }
-  parsed.hash = "";
-  const target = makeGitHubIssueUrl(parsed.toString(), name, includeSelector, ignoreSelectors, crawlDepth, scoutEnabled);
-  ["newMonitorUrl", "newMonitorName", "newMonitorIncludeSelector", "newMonitorIgnoreSelectors"].forEach(id => { $(id).value = ""; });
-  $("newMonitorDepth").value = "0";
-  $("newMonitorScout").checked = false;
-  $("newMonitorMetadataStatus").textContent = "";
-  syncScoutDiscoveryOption();
-  openGitHubRequest(target, scoutEnabled
-    ? "Submit the prefilled request on GitHub. Scout will establish a baseline now, then look for new linked documents weekly."
-    : "Submit the prefilled request on GitHub. The page is scanned once the request is accepted.");
+  if (hosts.hosts.length > 10) { showToast("List at most 10 document hosts."); return; }
+  $("newPickHosts").setCustomValidity("");
+  const request = L.pickDiscoveryRequest({
+    url: parsed.toString(), name, depth: [1, 2, 3].indexOf(depth) >= 0 ? depth : 2,
+    explore: scope ? scope.dataset.prefix || "" : "", documentHosts: hosts.hosts
+  });
+  const params = new URLSearchParams();
+  params.set("title", request.title);
+  params.set("body", request.body);
+  state.pickRequested = state.pickRequested.filter(item => L.urlKey(item.url) !== L.urlKey(parsed.toString()))
+    .concat([{ url: parsed.toString(), at: new Date().toISOString() }]).slice(-20);
+  pickSave();
+  resetAddForm();
+  openGitHubRequest(REPO + "/issues/new?" + params.toString(),
+    "Submit the request on GitHub. Discovery runs once the owner workflow saves it; its links then appear in Pick links. Nothing is monitored until you pick links.");
+  setView("pick");
 }
 
 /* CSV and XLSX are both parsed locally (XLSX by the small reader in dashboard-lib.js),
@@ -4199,7 +4510,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout]");
+  const target = event.target.closest("[data-pick-root],[data-pick-scout],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -4225,6 +4536,8 @@ $("workspace").addEventListener("click", event => {
   if (data.exportChanges !== undefined) return exportChanges();
   if (data.copyCalendar !== undefined) return copyCalendarFeed();
   if (data.verifyFingerprints) return verifyFingerprints(data.verifyFingerprints);
+  if (data.pickRoot) return openPickRoot(data.pickRoot);
+  if (data.pickScout) return pickScoutFinding(data.pickScout);
   if (data.scoutKey) return select("scout", data.scoutKey);
   if (data.scoutCoverage !== undefined) return select("scout", "coverage");
   if (data.scoutAddSource !== undefined) return openScoutSource("add", "");
@@ -4264,7 +4577,7 @@ $("workspace").addEventListener("click", event => {
   if (data.openPage) return select("monitors", data.openPage, { tab: "changes" });
   if (data.back !== undefined) { state.mobileDetail = false; renderViews(); return; }
   if (data.refresh !== undefined) return loadData(true);
-  if (data.addMonitor !== undefined) return openAddMonitor();
+  if (data.addMonitor !== undefined) return openAddMonitor(data.addMonitor);
   if (data.pdfAction) return setPdfViewerExpanded(data.pdfAction === "expand");
   if (data.diffMode) {
     state.diffMode = data.diffMode;
@@ -4371,38 +4684,103 @@ $("scoutFormatFilter").addEventListener("change", () => {
   state.scoutFormatFilter = $("scoutFormatFilter").value || "ALL";
   renderScout();
 });
-$("scoutItems").addEventListener("change", event => {
-  const input = event.target.closest && event.target.closest("input[data-discovery-select]");
-  if (input) toggleSingleDiscoverySelection(input);
+/* Pick links: one listener for the list, one for the selection pane. */
+function pickFocus(selector) {
+  window.requestAnimationFrame(() => { const element = document.querySelector(selector); if (element) element.focus({ preventScroll: true }); });
+}
+$("pickItems").addEventListener("click", event => {
+  const toggle = event.target.closest("input[data-pick-toggle]");
+  if (toggle) {
+    const key = toggle.dataset.pickToggle;
+    if (event.shiftKey && state.pick.anchor) { event.preventDefault(); pickRange(key); }
+    else pickToggle(key, toggle.checked);
+    pickChanged();
+    pickFocus('#pickItems input[data-pick-toggle="' + CSS.escape(key) + '"]');
+    return;
+  }
+  const main = event.target.closest("[data-pick-main]");
+  if (main) {
+    const key = main.dataset.pickMain;
+    const root = pickRoot();
+    const graph = root ? pickGraph(root) : null;
+    const opens = state.pick.mode === "browse" && graph && (graph.children.get(key) || []).length;
+    if (event.shiftKey) { event.preventDefault(); if (state.pick.anchor) pickRange(key); else pickToggle(key); }
+    else if (opens) { pickOpenPage(key); pickFocus("#pickItems [data-pick-main]"); return; }
+    else pickToggle(key);
+    pickChanged();
+    pickFocus('#pickItems [data-pick-main="' + CSS.escape(key) + '"]');
+    return;
+  }
+  const into = event.target.closest("[data-pick-into]");
+  if (into) { pickOpenPage(into.dataset.pickInto); pickFocus("#pickItems [data-pick-main]"); return; }
+  const group = event.target.closest("[data-pick-group]");
+  if (group) { pickGroupToggle(Number(group.dataset.pickGroup)); pickFocus('#pickItems [data-pick-group="' + group.dataset.pickGroup + '"]'); return; }
+  if (event.target.closest("[data-pick-more]")) { state.pick.limit += PICK_PAGE_SIZE; renderPickLinks(); }
 });
-$("selectVisibleScout").addEventListener("click", toggleVisibleDiscoverySelection);
-$("openDiscoverySelection").addEventListener("click", openDiscoverySelectionDialog);
-$("closeDiscoverySelection").addEventListener("click", () => $("discoverySelectionDialog").close());
-$("cancelDiscoverySelection").addEventListener("click", () => $("discoverySelectionDialog").close());
-$("discoverySelectionDialog").addEventListener("click", event => {
-  if (event.target === $("discoverySelectionDialog")) $("discoverySelectionDialog").close();
+// Shift-clicking text would otherwise select it instead of the row.
+$("pickItems").addEventListener("mousedown", event => { if (event.shiftKey && event.target.closest(".pick-row")) event.preventDefault(); });
+$("pickCrumbs").addEventListener("click", event => {
+  const crumb = event.target.closest("[data-pick-at]");
+  if (crumb) { pickOpenPage(crumb.dataset.pickAt); pickFocus("#pickItems [data-pick-main]"); }
 });
-$("addDiscoveryManualUrls").addEventListener("click", addManualDiscoveryUrls);
-$("clearDiscoverySelection").addEventListener("click", () => {
-  state.discoverySelection = [];
-  state.discoveryDuplicatesAdded = 0;
-  resetDiscoveryBatchProgress();
-  renderDiscoverySelectionDialog();
-  renderScout();
+document.querySelectorAll("[data-pick-mode]").forEach(button => button.addEventListener("click", () => {
+  state.pick.mode = button.dataset.pickMode === "all" ? "all" : "browse";
+  state.pick.limit = PICK_PAGE_SIZE;
+  state.pick.anchor = "";
+  renderPickLinks();
+}));
+$("pickSource").addEventListener("change", () => {
+  state.pick.rootId = $("pickSource").value;
+  state.pick.at = "";
+  state.pick.limit = PICK_PAGE_SIZE;
+  state.pick.anchor = "";
+  renderPickLinks();
+  writeHash();
 });
-$("discoverySelectedList").addEventListener("click", event => {
-  const button = event.target.closest && event.target.closest("[data-discovery-remove]");
-  if (button) removeDiscoveryCandidate(button.dataset.discoveryRemove);
+["pickSearch", "pickFormat", "pickDepth"].forEach(id => $(id).addEventListener(id === "pickSearch" ? "input" : "change", () => {
+  state.pick.limit = PICK_PAGE_SIZE;
+  renderPickLinks();
+}));
+$("pickMobileBar").addEventListener("click", () => {
+  state.pick.trayOpen = true;
+  state.mobileDetail = true;
+  renderPickTray();
+  renderViews();
+  resetDetailScroll("pick");
 });
-$("openDiscoveryBatch").addEventListener("click", openDiscoveryRegistrationBatch);
-$("discoverySelectionPagePrev").addEventListener("click", () => {
-  state.discoverySelectedPage = Math.max(0, state.discoverySelectedPage - 1);
-  renderDiscoverySelectionDialog();
+$("pickTray").addEventListener("click", event => {
+  const remove = event.target.closest("[data-pick-remove]");
+  if (remove) { pickRemove(remove.dataset.pickRemove); return pickChanged(); }
+  const batch = event.target.closest("[data-pick-batch]");
+  if (batch) return pickOpenBatch(Number(batch.dataset.pickBatch));
+  if (event.target.closest("[data-pick-manual]")) return pickAddManual();
+  if (event.target.closest("[data-pick-clear-monitored]")) {
+    const monitored = pickMonitoredKeys();
+    state.pickSelection = state.pickSelection.filter(item => !monitored.has(item.key));
+    return pickChanged();
+  }
+  if (event.target.closest("[data-pick-clear]")) {
+    const count = state.pickSelection.length;
+    if (count > 20 && !window.confirm("Clear all " + count + " selected links? Nothing that is already monitored changes.")) return;
+    state.pickSelection = [];
+    return pickChanged();
+  }
 });
-$("discoverySelectionPageNext").addEventListener("click", () => {
-  state.discoverySelectedPage += 1;
-  renderDiscoverySelectionDialog();
+// Another tab (or the tab GitHub opened from) may have changed the selection.
+window.addEventListener("storage", event => {
+  if (event.key !== PICK_STORAGE) return;
+  pickRestore();
+  if (state.loaded) { renderPickLinks(); renderPickTray(); }
 });
+function openPickRoot(id) {
+  state.pick.rootId = id || "";
+  state.pick.at = "";
+  state.pick.limit = PICK_PAGE_SIZE;
+  state.pick.trayOpen = false;
+  const dialog = $("addMonitorDialog");
+  if (dialog && dialog.open) dialog.close();
+  setView("pick");
+}
 $("cadenceSearch").addEventListener("input", () => { state.cadenceSearch = $("cadenceSearch").value; renderCadenceView(); });
 $("cadenceTypeFilter").addEventListener("change", () => { state.cadenceFilter = $("cadenceTypeFilter").value; renderCadenceView(); });
 $("cadenceSignInForm").addEventListener("submit", signInCadence);
@@ -4425,40 +4803,24 @@ $("scoutSourceDialog").addEventListener("click", event => { if (event.target ===
 }));
 $("scoutSourceId").addEventListener("input", () => { $("scoutSourceId").dataset.edited = "true"; });
 $("refreshBtn").addEventListener("click", () => loadData(true));
-$("addMonitorBtn").addEventListener("click", openAddMonitor);
+$("addMonitorBtn").addEventListener("click", () => openAddMonitor("one"));
 // The rail sits outside #workspace, so its "Add link" button needs its own listener.
-document.querySelectorAll(".rail [data-add-monitor]").forEach(button => button.addEventListener("click", openAddMonitor));
+document.querySelectorAll(".rail [data-add-monitor]").forEach(button => button.addEventListener("click", () => openAddMonitor(button.dataset.addMonitor)));
 $("closeAddMonitor").addEventListener("click", () => $("addMonitorDialog").close());
 $("cancelAddMonitor").addEventListener("click", () => $("addMonitorDialog").close());
 $("addMonitorDialog").addEventListener("click", event => {
   if (event.target === $("addMonitorDialog")) $("addMonitorDialog").close();
 });
 $("newMonitorUrl").addEventListener("input", () => { $("newMonitorUrl").setCustomValidity(""); $("newMonitorMetadataStatus").textContent = ""; });
-$("newMonitorDepth").addEventListener("change", syncScoutDiscoveryOption);
-syncScoutDiscoveryOption();
 $("autofillMonitorMetadata").addEventListener("click", suggestMonitorMetadata);
-$("openSourceForDiscovery").addEventListener("click", () => {
-  const raw = $("newMonitorUrl").value.trim();
-  let parsed;
-  try { parsed = new URL(raw); } catch (_) { showToast("Enter a full source URL before opening it to explore."); return; }
-  if (!["http:", "https:"].includes(parsed.protocol) || !parsed.hostname || parsed.username || parsed.password) {
-    showToast("Use a public http:// or https:// source URL without credentials.");
-    return;
-  }
-  parsed.hash = "";
-  const pageWindow = window.open(parsed.toString(), "_blank");
-  if (pageWindow) {
-    try { pageWindow.opener = null; } catch (_) {}
-    showToast("Source page opened. Copy the exact links you want to monitor, then use Pick links manually.");
-  } else {
-    showToast("The browser blocked the new tab. Allow pop-ups to explore the source without leaving ChangeSentinel.");
-  }
+$("addMonitorDialog").addEventListener("click", event => {
+  const mode = event.target.closest("[data-add-mode]");
+  if (mode && mode.closest(".add-mode")) { setAddMode(mode.dataset.addMode); return; }
+  const root = event.target.closest("[data-pick-root]");
+  if (root) openPickRoot(root.dataset.pickRoot);
 });
-$("openDiscoverySelectionFromAdd").addEventListener("click", () => {
-  const dialog = $("addMonitorDialog");
-  if (dialog && dialog.open) dialog.close();
-  openDiscoverySelectionDialog();
-});
+$("newMonitorUrl").addEventListener("input", syncAddPick);
+$("newPickHosts").addEventListener("input", () => { $("newPickHosts").setCustomValidity(""); $("newPickHosts").dataset.touched = "true"; });
 $("addMonitorForm").addEventListener("submit", submitAddMonitor);
 $("closeDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog").close());
 $("cancelDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog").close());
@@ -5569,7 +5931,7 @@ $("askSentinelMessages").addEventListener("click", event => {
   if (prompt) askSentinelSendQuestion(prompt.dataset.askPrompt);
 });
 
-restoreDiscoverySelection();
+pickRestore();
 if ($("repoLink")) $("repoLink").href = REPO;
 loadData(true);
 refreshWorkflowRuns();

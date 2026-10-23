@@ -544,47 +544,147 @@
     .bulk-preview-name { min-width: 0; overflow: hidden; color: var(--ink); text-overflow: ellipsis; white-space: nowrap; }
     .bulk-preview-url { flex: none; max-width: 48%; overflow: hidden; color: var(--ink-3); font-family: var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
     .bulk-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
-    /* Guided discovery keeps candidate selection visually separate from active monitors. */
+    /* Scout's search row keeps a file-type filter beside it. */
     .discovery-filter-row { display: grid; grid-template-columns: minmax(0, 1fr) 124px; gap: 8px; }
     .discovery-filter-row .field-input { min-width: 0; min-height: 32px; margin-top: 0; padding: 5px 25px 5px 8px; font-size: 12.5px; }
-    .discovery-selection-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--line); background: var(--raise-2); }
-    .discovery-selection-copy { display: grid; min-width: 0; gap: 2px; }
-    .discovery-selection-count { color: var(--ink); font-size: 12.5px; font-weight: 500; font-variant-numeric: tabular-nums; }
-    .discovery-selection-help { color: var(--ink-3); font-size: 11.5px; line-height: 1.4; }
-    .discovery-selection-actions { display: flex; flex: none; flex-wrap: wrap; gap: 6px; }
-    .discovery-selection-actions .btn { min-height: 27px; padding: 4px 8px; font-size: 12px; }
-    .scout-row-shell { display: grid; grid-template-columns: 28px minmax(0, 1fr); border-bottom: 1px solid var(--line); }
-    .scout-row-select { display: flex; align-items: flex-start; justify-content: center; padding-top: 17px; cursor: pointer; }
-    .scout-row-select input { width: 14px; height: 14px; margin: 0; accent-color: var(--accent); cursor: pointer; }
-    .scout-row-shell > .row { min-width: 0; border-bottom: 0; padding-left: 4px; }
-    .scout-row-shell > .row:hover { background: var(--raise); }
-    .discovery-selection-dialog { width: min(760px, calc(100vw - 32px)); }
-    .discovery-selection-body { display: grid; gap: 13px; padding: 18px 22px 22px; }
-    .discovery-selection-status { color: var(--ink-2); font-size: 12.5px; line-height: 1.5; }
-    .discovery-selection-status strong { color: var(--ink); font-weight: 500; }
-    .discovery-manual-entry { display: grid; gap: 7px; padding: 12px; border: 1px solid var(--line); background: var(--raise); }
-    .discovery-manual-entry textarea { min-height: 88px; }
-    .discovery-selected-list { display: grid; max-height: min(42vh, 360px); overflow: auto; border: 1px solid var(--line); background: var(--pane); }
-    .discovery-selected-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
-    .discovery-selected-item:last-child { border-bottom: 0; }
-    .discovery-selected-info { display: grid; min-width: 0; gap: 3px; }
-    .discovery-selected-title { overflow-wrap: anywhere; color: var(--ink); font-size: 12.5px; font-weight: 500; }
-    .discovery-selected-url { overflow-wrap: anywhere; color: var(--link); font: 400 11.5px/1.5 var(--font-code); text-decoration: none; }
-    .discovery-selected-meta { color: var(--ink-3); font-size: 11.5px; }
-    .discovery-selected-item .btn { align-self: center; min-height: 26px; padding: 3px 7px; font-size: 12px; }
-    .discovery-list-pagination { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 7px; color: var(--ink-3); font-size: 12px; }
-    .discovery-list-pagination-actions { display: flex; gap: 6px; }
-    .discovery-list-pagination .btn { min-height: 25px; padding: 3px 8px; font-size: 12px; }
-    .discovery-batch-note { color: var(--ink-3); font-size: 12px; line-height: 1.5; }
-    .discovery-selection-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
-    .discovery-selection-footer-group { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
-    @media (max-width: 640px) {
-      .discovery-selection-bar { align-items: flex-start; flex-direction: column; }
-      .discovery-selection-actions { width: 100%; }
-      .discovery-selection-actions .btn { flex: 1; }
-      .discovery-selection-body { padding: 14px; }
-      .discovery-selected-item { grid-template-columns: minmax(0, 1fr); }
-      .discovery-selected-item .btn { justify-self: start; }
+
+    /* ---------- Add a link: one page, or pick links from a page ---------- */
+    .add-mode { gap: 18px; padding-bottom: 2px; border-bottom: 1px solid var(--line); }
+    .add-mode button { padding: 0 0 10px; font-size: 13.5px; }
+    .add-mode button[aria-pressed="true"] { text-decoration: none; position: relative; }
+    .add-mode button[aria-pressed="true"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1.5px; background: var(--accent); box-shadow: var(--glow); }
+    .add-url-actions { align-items: center; justify-content: space-between; margin-top: 6px; }
+    .add-url-actions .field-help { margin-top: 0; }
+    .add-pick-fields { display: grid; gap: 16px; }
+    .add-scope { margin: 0; padding: 0; border: 0; min-width: 0; }
+    .add-scope legend { width: 100%; padding: 0; }
+    .add-scope-options { display: grid; gap: 1px; margin-top: 7px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--line); overflow: hidden; }
+    .add-scope-option { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 2px 10px; padding: 9px 11px; background: var(--bg); cursor: pointer; }
+    .add-scope-option input { grid-row: 1 / 3; margin: 3px 0 0; accent-color: var(--accent); }
+    .add-scope-option span { font-size: 13px; }
+    .add-scope-option code { min-width: 0; overflow: hidden; color: var(--ink-3); font: 400 11.5px/1.5 var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
+    .add-scope-option:has(input:checked) { background: var(--raise); box-shadow: inset 2px 0 0 var(--accent); }
+    .add-scope-options .field-help { margin: 0; padding: 9px 11px; background: var(--bg); }
+    .add-pick-existing { padding: 10px 12px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--raise); color: var(--ink-2); font-size: 12.5px; line-height: 1.5; }
+    .add-pick-existing .btn { margin-top: 8px; }
+    .add-advanced > summary { display: flex; justify-content: space-between; width: 100%; color: var(--link); font-size: 13px; cursor: pointer; list-style: none; }
+    .add-advanced > summary::-webkit-details-marker { display: none; }
+    .add-advanced > summary span { color: var(--ink-3); }
+    .add-advanced > summary:hover { color: var(--ink); }
+    .add-advanced-body { display: grid; gap: 14px; margin-top: 12px; }
+
+    /* ---------- Pick links ----------
+     * Discovered links on the left, the owner's selection on the right. The
+     * list reads like every other list here; a selected row gets the same amber
+     * edge as a selected row elsewhere, and its LED lights. */
+    .view-pick { --tray-w: 380px; display: grid; grid-template-columns: minmax(0, 1fr) var(--tray-w); }
+    .pick-pane { min-width: 0; }
+    .pick-source-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; }
+    .pick-select { min-width: 0; min-height: 32px; margin-top: 0; padding: 5px 30px 5px 10px; font-size: 13px; }
+    .pick-coverage { color: var(--ink-3); font-size: 12.5px; line-height: 1.5; }
+    .pick-coverage.is-warning { color: var(--accent); }
+    .pick-coverage.is-problem { color: var(--problem); }
+    .pick-hint { color: var(--ink-3); font-size: 12px; white-space: nowrap; }
+    .pick-filter-row { display: grid; grid-template-columns: minmax(0, 1fr) 132px 132px; gap: 8px; }
+    .pick-filter-row .field-input { min-width: 0; min-height: 32px; margin-top: 0; padding: 5px 26px 5px 9px; font-size: 12.5px; }
+    .pick-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; padding: 10px 20px; border-bottom: 1px solid var(--line); color: var(--ink-3); font-size: 12.5px; }
+    .pick-crumbs:empty { display: none; }
+    .pick-crumbs button { max-width: 260px; overflow: hidden; padding: 0; border: 0; background: none; color: var(--link); font-size: 12.5px; text-overflow: ellipsis; white-space: nowrap; }
+    .pick-crumbs button:hover { color: var(--ink); }
+    .pick-crumbs [aria-current="page"] { max-width: 360px; overflow: hidden; color: var(--ink); text-overflow: ellipsis; white-space: nowrap; }
+    .pick-crumbs .sep { color: var(--line-2); }
+    .pick-group { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .pick-group-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pick-group-name strong { color: var(--ink-2); font-weight: 500; }
+    .pick-group .text-button { flex: none; font-size: 12px; }
+    .pick-row {
+      position: relative; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: start;
+      border-bottom: 1px solid var(--line); transition: background-color .12s var(--ease);
+    }
+    .pick-row:hover { background: var(--raise); }
+    .pick-row.is-selected { background: var(--raise-2); }
+    .pick-row.is-selected::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--accent); box-shadow: var(--glow); }
+    .pick-check { display: flex; justify-content: center; align-self: stretch; padding: 15px 0 0 8px; cursor: pointer; }
+    .pick-check input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+    .pick-check i { width: 9px; height: 9px; box-shadow: inset 0 0 0 1px var(--ink-3); transition: background-color .15s var(--ease), box-shadow .15s var(--ease); }
+    .pick-check input:checked + i { background: var(--accent); box-shadow: var(--glow); }
+    .pick-check input:focus-visible + i { outline: 1.5px solid var(--accent); outline-offset: 3px; }
+    .pick-row:hover .pick-check i { box-shadow: inset 0 0 0 1px var(--accent); }
+    .pick-row:hover .pick-check input:checked + i { box-shadow: var(--glow); }
+    .pick-main { display: grid; gap: 3px; min-width: 0; padding: 10px 10px 10px 4px; border: 0; background: none; color: inherit; text-align: left; cursor: pointer; }
+    .pick-main .row-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; }
+    .pick-main .row-sub { grid-column: auto; flex-wrap: nowrap; min-width: 0; }
+    .pick-main .row-sub > * { flex: none; }
+    .pick-main .row-sub > .pick-url { flex: 0 1 auto; }
+    .pick-url { min-width: 0; overflow: hidden; color: var(--ink-3); font: 400 11.5px/1.5 var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
+    .pick-context { color: var(--ink-2); font-size: 12px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+    .pick-side { display: flex; align-items: baseline; gap: 14px; padding: 11px 20px 10px 0; }
+    .pick-side .sheet-link { font-size: 12.5px; white-space: nowrap; }
+    .pick-into { min-width: 64px; padding: 0; border: 0; background: none; color: var(--link); font-size: 12.5px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .pick-into:hover { color: var(--ink); }
+    .pick-more { display: flex; justify-content: center; padding: 16px 20px; }
+    .pick-mobile-bar { display: none; }
+    .tag.is-monitoring { color: var(--good); }
+    .tag.is-monitoring::before { background: var(--good); }
+
+    .pick-tray .detail-inner { max-width: none; padding: 22px 22px 48px; }
+    .pick-tray .detail-title { font-size: 20px; }
+    .pick-tray .sheet { margin-top: 16px; }
+    .pick-counts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--raise); }
+    .pick-counts div { padding: 10px 12px; border-left: 1px solid var(--line); }
+    .pick-counts div:first-child { border-left: 0; }
+    .pick-counts dt { color: var(--ink-3); font-size: 11.5px; }
+    .pick-counts dd { margin-top: 2px; font-size: 18px; font-variant-numeric: tabular-nums; }
+    .pick-counts dd.is-accent { color: var(--accent); }
+    .pick-batch { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 12px; padding: 11px 18px; border-top: 1px solid var(--line); }
+    .pick-batch:first-of-type { border-top: 0; }
+    .pick-batch-name { font-size: 13px; }
+    .pick-batch-state { grid-column: 1; color: var(--ink-3); font-size: 12px; }
+    .pick-batch-state.is-opened { color: var(--accent); }
+    .pick-batch .btn { grid-row: 1 / 3; grid-column: 2; min-height: 28px; padding: 4px 10px; font-size: 12.5px; }
+    .pick-selected { margin: 0; padding: 0; list-style: none; }
+    .pick-selected li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; padding: 9px 18px; border-top: 1px solid var(--line); }
+    .pick-selected li:first-child { border-top: 0; }
+    .pick-selected .pick-sel-title { min-width: 0; overflow: hidden; color: var(--ink); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+    .pick-selected .pick-url { grid-column: 1; }
+    .pick-selected button { grid-row: 1 / 3; grid-column: 2; align-self: center; padding: 0; border: 0; background: none; color: var(--ink-3); font-size: 12px; }
+    .pick-selected button:hover { color: var(--problem); }
+    .pick-selected-group { padding: 10px 18px 2px; color: var(--ink-3); font-size: 12px; }
+    /* On wide screens Pick links is in the rail; phones reach it from Scout. */
+    .scout-pick-link { display: none; white-space: nowrap; }
+    @media (max-width: 980px) { .scout-pick-link { display: inline-flex; } }
+    .pick-sentence { margin-top: 10px; color: var(--ink-2); }
+    .pick-manual { padding: 12px 18px 16px; }
+    .pick-manual > summary { color: var(--link); font-size: 13px; cursor: pointer; }
+    .pick-manual > summary:hover { color: var(--ink); }
+    .pick-manual textarea { min-height: 76px; }
+    .pick-manual .bulk-actions { align-items: center; justify-content: space-between; margin-top: 8px; }
+    .pick-manual .field-help { margin-top: 0; }
+    @media (max-width: 1240px) { .view-pick { --tray-w: 320px; } .pick-filter-row { grid-template-columns: minmax(0, 1fr) 112px 112px; } }
+    @media (min-width: 1500px) { .view-pick { --tray-w: clamp(380px, 24vw, 460px); } }
+    @media (max-width: 980px) {
+      .view-pick { display: block; height: 100%; }
+      .view-pick .pick-tray { display: none; height: 100%; }
+      .view-pick.has-selection .pick-pane { display: none; }
+      .view-pick.has-selection .pick-tray { display: block; }
+      .pick-pane { height: 100%; }
+      .pick-hint { display: none; }
+      .pick-filter-row { grid-template-columns: minmax(0, 1fr) 1fr; }
+      .pick-filter-row .search-field { grid-column: 1 / -1; }
+      .pick-crumbs { padding: 9px 18px; }
+      .pick-side { padding-right: 16px; }
+      .pick-tray .detail-inner { padding: 14px 18px 40px; }
+      .pick-mobile-bar {
+        display: flex; flex: none; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px;
+        border: 0; border-top: 1px solid var(--line); background: var(--raise-2); color: var(--ink); font-size: 13.5px;
+      }
+      .pick-mobile-bar span:last-child { color: var(--link); }
+    }
+    @media (max-width: 560px) {
+      .pick-row { grid-template-columns: 32px minmax(0, 1fr); }
+      .pick-side { grid-column: 2; justify-content: flex-start; padding: 0 16px 11px 4px; }
+      .pick-main { padding-bottom: 4px; }
+      .pick-counts dd { font-size: 16px; }
     }
     .toast { position: fixed; left: 50%; bottom: 32px; z-index: 90; max-width: min(520px, calc(100vw - 32px)); transform: translateX(-50%); padding: 10px 14px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--raise-2); color: var(--ink); font-size: 13.5px; }
 
@@ -610,6 +710,12 @@
     }
     .nav-button-ask.active::before { background: var(--accent); box-shadow: var(--glow); }
     .nav-button-ask.active .nav-ai { border-color: var(--accent); color: var(--accent); }
+    /* Pick links sits under Add a link: an outlined LED that lights while it is open
+       or while links are selected and waiting to be submitted. */
+    .nav-button-pick::before { background: transparent; box-shadow: inset 0 0 0 1px var(--led-dim); }
+    .nav-button-pick.has-picks::before { background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+    .nav-button-pick.active::before { background: var(--accent); box-shadow: var(--glow); }
+    .nav-button-pick .nav-count.is-fresh { color: var(--accent); }
     .scan-now::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 6px; vertical-align: 1px; background: var(--accent); box-shadow: var(--glow); }
     @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
     .detail-inner > *, #detailHeader > *, #detailBody > * { animation: rise .38s var(--ease) both; }
@@ -1011,7 +1117,7 @@
   .nav-scout, .nav-calendar, .nav-ask { margin-top: 0; padding-top: 0; border-top: 0; }
   .nav-ask-full, .nav-ai { display: none; }
   .nav-ask-short { display: inline; }
-  .nav-add { display: none; }
+  .nav-add, .nav-pick { display: none; }
   .ask-sentinel-header { min-height: 0; padding: 12px 16px; }
   .ask-sentinel-title p { display: none; }
   .ask-sentinel-messages { padding: 18px 16px 8px; }
@@ -1458,6 +1564,7 @@
           </span>Cadence<span class="nav-count" id="navCadenceCount"></span></button></li>
         <li class="nav-ask"><button class="nav-button nav-button-ask" id="askSentinelLaunch" data-view="askSentinel" aria-label="Ask Sentinel" aria-controls="askSentinelView" type="button"><span class="nav-ask-full">Ask Sentinel</span><span class="nav-ask-short">Ask</span><span class="nav-ai">AI</span></button></li>
         <li class="nav-add"><button class="nav-button nav-button-add" type="button" data-add-monitor title="Add a web page or document link to monitor">Add a link<span class="nav-plus" aria-hidden="true">+</span></button></li>
+        <li class="nav-pick"><button class="nav-button nav-button-pick" type="button" data-view="pick" aria-controls="pickView" title="Choose which discovered links to monitor">Pick links<span class="nav-count" id="navPickCount"></span></button></li>
       </ul>
 
       <div class="rail-foot">
@@ -1635,26 +1742,48 @@
               <label class="search-field" for="scoutSearch"><span class="visually-hidden">Search Scout findings</span><input id="scoutSearch" type="search" placeholder="Search titles, URLs or sections" autocomplete="off"></label>
               <label for="scoutFormatFilter"><span class="visually-hidden">Filter by file type</span><select class="field-input" id="scoutFormatFilter" aria-label="Filter by file type"><option value="ALL">All types</option><option value="PDF">PDF</option><option value="HTML">HTML pages</option><option value="OFFICE">Office files</option><option value="OTHER">Other files</option></select></label>
             </div>
-            <div class="filters" role="group" aria-label="Filter Scout findings">
-              <button type="button" data-scout-filter="REVIEW" aria-pressed="true">To review</button>
-              <button type="button" data-scout-filter="BACKLOG" aria-pressed="false">Backlog</button>
-              <button type="button" data-scout-filter="EXCLUDED" aria-pressed="false">Set aside</button>
-              <button type="button" data-scout-filter="DONE" aria-pressed="false">Decided</button>
-            </div>
-          </div>
-          <div class="discovery-selection-bar" aria-label="Candidate selection">
-            <div class="discovery-selection-copy">
-              <span class="discovery-selection-count" id="discoverySelectionCount">0 selected</span>
-              <span class="discovery-selection-help">Candidates are separate from active monitors.</span>
-            </div>
-            <div class="discovery-selection-actions">
-              <button class="btn" id="selectVisibleScout" type="button">Select visible</button>
-              <button class="btn btn-primary" id="openDiscoverySelection" type="button">Review selection</button>
+            <div class="list-tools">
+              <div class="filters" role="group" aria-label="Filter Scout findings">
+                <button type="button" data-scout-filter="REVIEW" aria-pressed="true">To review</button>
+                <button type="button" data-scout-filter="BACKLOG" aria-pressed="false">Backlog</button>
+                <button type="button" data-scout-filter="EXCLUDED" aria-pressed="false">Set aside</button>
+                <button type="button" data-scout-filter="DONE" aria-pressed="false">Decided</button>
+              </div>
+              <button class="sheet-link scout-pick-link" type="button" data-go="pick" title="Browse every link Scout found and choose which to monitor">Pick links</button>
             </div>
           </div>
           <div class="list-body" id="scoutItems" aria-label="Scout findings"><div class="loading">Loading Scout findings…</div></div>
         </div>
         <div class="detail-pane" id="scoutDetail" aria-live="polite"></div>
+      </section>
+      <section id="pickView" class="view view-pick" hidden aria-label="Pick links">
+        <div class="list-pane pick-pane">
+          <div class="list-head">
+            <div class="list-title-row"><h1 class="list-title">Pick links</h1><span class="list-count" id="pickCount"></span></div>
+            <div class="pick-source-row">
+              <label class="visually-hidden" for="pickSource">Discovered from</label>
+              <select class="field-input pick-select" id="pickSource" aria-describedby="pickCoverage"></select>
+              <button class="sheet-link" type="button" data-add-monitor="discover">New discovery</button>
+            </div>
+            <p class="pick-coverage" id="pickCoverage" aria-live="polite"></p>
+            <div class="list-tools">
+              <div class="filters" role="group" aria-label="How to show discovered links">
+                <button type="button" data-pick-mode="browse" aria-pressed="true">Browse</button>
+                <button type="button" data-pick-mode="all" aria-pressed="false">All links</button>
+              </div>
+              <span class="pick-hint" id="pickHint">Shift-click a row to select it</span>
+            </div>
+            <div class="pick-filter-row">
+              <label class="search-field" for="pickSearch"><span class="visually-hidden">Search discovered links</span><input id="pickSearch" type="search" placeholder="Search titles, sections or addresses" autocomplete="off"></label>
+              <label><span class="visually-hidden">File type</span><select class="field-input" id="pickFormat"><option value="ALL">All types</option><option value="PDF">PDF</option><option value="Web page">Web pages</option><option value="Spreadsheet">Spreadsheets</option><option value="Word">Word</option><option value="OTHER">Other files</option></select></label>
+              <label><span class="visually-hidden">Link level</span><select class="field-input" id="pickDepth"><option value="ALL">Any level</option><option value="1">Level 1</option><option value="2">Level 2</option><option value="3">Level 3</option><option value="UNKNOWN">Level not recorded</option></select></label>
+            </div>
+          </div>
+          <nav class="pick-crumbs" id="pickCrumbs" aria-label="Where you are in the discovered pages"></nav>
+          <div class="list-body" id="pickItems" aria-label="Discovered links"><div class="loading">Loading discovered links…</div></div>
+          <button class="pick-mobile-bar" id="pickMobileBar" type="button" data-pick-tray><span id="pickMobileCount">Nothing selected</span><span>Review</span></button>
+        </div>
+        <aside class="detail-pane pick-tray" id="pickTray" aria-label="Your selection" aria-live="polite"></aside>
       </section>
       <section id="calendarView" class="view cadence-view" hidden aria-label="Cadence regulatory calendar">
         <div class="cadence-shell">
@@ -1818,46 +1947,62 @@
       </div>
     </form>
   </dialog>
-  <dialog class="modal" id="addMonitorDialog" aria-labelledby="addMonitorHeading">
+  <dialog class="modal add-link-modal" id="addMonitorDialog" aria-labelledby="addMonitorHeading">
     <div class="modal-head">
-      <div><h2 id="addMonitorHeading">Add a page to monitor</h2><p>The page is checked on every scan and compared with its saved copy.</p></div>
+      <div><h2 id="addMonitorHeading">Add a link</h2><p id="addMonitorLede">Monitor one page or document, or find the links on a page and pick the ones to monitor.</p></div>
       <button class="btn btn-quiet" id="closeAddMonitor" type="button" aria-label="Close">Close</button>
     </div>
     <form id="addMonitorForm" class="modal-body">
+      <div class="segmented add-mode" role="radiogroup" aria-label="What to add">
+        <button type="button" role="radio" data-add-mode="one" aria-pressed="true" aria-checked="true">One page or document</button>
+        <button type="button" role="radio" data-add-mode="discover" aria-pressed="false" aria-checked="false">Pick links from a page</button>
+      </div>
       <div>
-        <label class="field-label-text" for="newMonitorUrl">Page URL</label>
+        <label class="field-label-text" for="newMonitorUrl"><span class="add-url-label" id="newMonitorUrlLabel">Page or document URL</span></label>
         <input class="field-input" id="newMonitorUrl" name="url" type="url" placeholder="https://www.example.com/policy-page" autocomplete="url" required>
-        <div class="field-help">Enter a public page. By default, only this URL is monitored; you can optionally follow same-site links below.</div>
-        <div class="bulk-actions"><button class="btn" id="autofillMonitorMetadata" type="button">Auto-fill name</button><button class="btn" id="openSourceForDiscovery" type="button">Open page to explore</button><button class="btn" id="openDiscoverySelectionFromAdd" type="button">Pick links manually</button><span id="newMonitorMetadataStatus" class="field-help" role="status" aria-live="polite"></span></div>
+        <div class="field-help" id="newMonitorUrlHelp">This exact address is checked on every scan and compared with its saved copy.</div>
+        <div class="bulk-actions add-url-actions"><span id="newMonitorMetadataStatus" class="field-help" role="status" aria-live="polite"></span><button class="btn" id="autofillMonitorMetadata" type="button">Auto-fill name</button></div>
       </div>
-      <div>
-        <label class="field-label-text" for="newMonitorDepth">Follow linked pages</label>
-        <select class="field-input" id="newMonitorDepth" name="crawlDepth"><option value="0" selected>Level 0 — this page only</option><option value="1">Level 1 — direct links</option><option value="2">Level 2 — links two clicks away</option><option value="3">Level 3 — links three clicks away</option></select>
-        <div class="field-help">The starting page is depth 0. Levels 1–3 control how far discovery follows same-host links; they do not mean every discovered URL becomes a separate active monitor. Use Scout to review discoveries before requesting additional monitors.</div>
-      </div>
-      <div>
-        <label class="check-row" for="newMonitorScout"><input type="checkbox" id="newMonitorScout" disabled> Also add to Scout for weekly link discovery</label>
-        <div class="field-help" id="newMonitorScoutHelp" aria-live="polite">Choose Level 1–3 to enable Scout. It will revisit this page weekly and surface newly linked or replacement documents, including PDFs, in Scout for review. Scout discoveries are suggestions; they are not silently added as monitors.</div>
+      <div class="add-pick-fields" id="addPickFields" hidden>
+        <div class="add-pick-existing" id="addPickExisting" hidden></div>
+        <div>
+          <label class="field-label-text" for="newMonitorDepth">How far to follow links <span>Discovery depth</span></label>
+          <select class="field-input" id="newMonitorDepth" name="crawlDepth"><option value="1">Level 1 — links on this page</option><option value="2" selected>Level 2 — and links on the pages it links to</option><option value="3">Level 3 — one click further</option></select>
+          <div class="field-help">Depth sets how far discovery looks. It does not decide what is monitored: every link found waits in Pick links until you choose it.</div>
+        </div>
+        <fieldset class="add-scope">
+          <legend class="field-label-text">Which pages may discovery read? <span>Links found anywhere are still listed</span></legend>
+          <div class="add-scope-options" id="newPickScope"><p class="field-help">Enter the starting page to see the choices.</p></div>
+        </fieldset>
+        <div>
+          <label class="field-label-text" for="newPickHosts">Also list documents hosted on <span>Optional</span></label>
+          <input class="field-input" id="newPickHosts" type="text" maxlength="400" placeholder="www.example.gov" autocomplete="off" spellcheck="false">
+          <div class="field-help" id="newPickHostsHelp">Some sites keep their PDFs on another address. Name it here and its PDFs, spreadsheets and other files linked from these pages are listed too. Discovery never opens them, and never reads that site’s pages.</div>
+        </div>
       </div>
       <div>
         <label class="field-label-text" for="newMonitorName">Display name <span>Optional</span></label>
         <input class="field-input" id="newMonitorName" name="name" type="text" maxlength="100" placeholder="Consultation on capital requirements" autocomplete="off">
       </div>
-      <div>
-        <label class="field-label-text" for="newMonitorIncludeSelector">Only compare this part of the page <span>Optional CSS selector</span></label>
-        <input class="field-input" id="newMonitorIncludeSelector" name="includeSelector" type="text" maxlength="500" placeholder="main .consultation-content" autocomplete="off">
-        <div class="field-help">The selector must match on every scan. If it stops matching, the scan reports a problem instead of comparing the whole page.</div>
-      </div>
-      <div>
-        <label class="field-label-text" for="newMonitorIgnoreSelectors">Ignore these parts <span>Optional, one selector per line</span></label>
-        <textarea class="field-input" id="newMonitorIgnoreSelectors" name="ignoreSelectors" rows="3" maxlength="10000" placeholder=".cookie-banner&#10;.breadcrumb"></textarea>
-        <div class="field-help">Up to 20 selectors, removed before the text is compared.</div>
-      </div>
-      <p class="modal-info">This opens a prefilled request on GitHub. Once the repository owner submits it, the page is added to the configuration and scanned. The dashboard stores no access token.</p>
-      <p class="modal-info">For manual selection, open the source page and add the exact URLs you choose to Scout’s candidate selection tray. For broader discovery, enable Scout below and review findings after a sweep. Candidates are never activated automatically.</p>
+      <details class="add-advanced" id="addOneAdvanced">
+        <summary>Compare settings <span>Optional</span></summary>
+        <div class="add-advanced-body">
+          <div>
+            <label class="field-label-text" for="newMonitorIncludeSelector">Only compare this part of the page <span>CSS selector</span></label>
+            <input class="field-input" id="newMonitorIncludeSelector" name="includeSelector" type="text" maxlength="500" placeholder="main .consultation-content" autocomplete="off">
+            <div class="field-help">The selector must match on every scan. If it stops matching, the scan reports a problem instead of comparing the whole page.</div>
+          </div>
+          <div>
+            <label class="field-label-text" for="newMonitorIgnoreSelectors">Ignore these parts <span>One selector per line</span></label>
+            <textarea class="field-input" id="newMonitorIgnoreSelectors" name="ignoreSelectors" rows="3" maxlength="10000" placeholder=".cookie-banner&#10;.breadcrumb"></textarea>
+            <div class="field-help">Up to 20 selectors, removed before the text is compared.</div>
+          </div>
+        </div>
+      </details>
+      <p class="modal-info" id="addMonitorInfo">This opens a prefilled request on GitHub. Once the repository owner submits it, the page is added to the configuration and scanned. The dashboard stores no access token.</p>
       <div class="modal-actions">
         <button class="btn" id="cancelAddMonitor" type="button">Cancel</button>
-        <button class="btn btn-primary" type="submit">Continue on GitHub</button>
+        <button class="btn btn-primary" id="submitAddMonitor" type="submit">Continue on GitHub</button>
       </div>
       <section class="bulk-import" aria-labelledby="bulkImportHeading">
         <div class="bulk-import-head">
@@ -1876,40 +2021,6 @@
         </div>
       </section>
     </form>
-  </dialog>
-  <dialog class="modal discovery-selection-dialog" id="discoverySelectionDialog" aria-labelledby="discoverySelectionHeading">
-    <div class="modal-head">
-      <div>
-        <h2 id="discoverySelectionHeading">Review monitor selection</h2>
-        <p>Only distinct, selected URLs are included. Nothing is activated until the owner-approved GitHub request succeeds.</p>
-      </div>
-      <button class="btn btn-quiet" id="closeDiscoverySelection" type="button" aria-label="Close">Close</button>
-    </div>
-    <div class="discovery-selection-body">
-      <div class="discovery-selection-status" id="discoverySelectionStatus" role="status" aria-live="polite">No candidates selected.</div>
-      <section class="discovery-manual-entry" aria-labelledby="discoveryManualHeading">
-        <div class="field-label-text" id="discoveryManualHeading">Add URLs manually <span>one per line</span></div>
-        <p class="field-help">Paste the exact page or document URLs you chose while exploring a site. If the source blocks an embedded preview, open it in a new tab and add only the links you want to review.</p>
-        <textarea class="field-input" id="discoveryManualUrls" rows="4" spellcheck="false" placeholder="https://www.example.com/current-guidance.pdf&#10;https://www.example.com/reporting-forms"></textarea>
-        <div class="bulk-actions">
-          <span class="field-help" id="discoveryManualStatus" role="status" aria-live="polite"></span>
-          <button class="btn" id="addDiscoveryManualUrls" type="button">Add to selection</button>
-        </div>
-      </section>
-      <div>
-        <div class="field-label-text"><span>Selected candidates</span><span id="discoverySelectedCount">0 URLs</span></div>
-        <div class="discovery-selected-list" id="discoverySelectedList" aria-label="Selected candidate URLs"></div>
-        <div class="discovery-list-pagination" aria-label="Selected candidate pages"><span id="discoverySelectionPageInfo">No selected URLs</span><span class="discovery-list-pagination-actions"><button class="btn" id="discoverySelectionPagePrev" type="button" disabled>Previous</button><button class="btn" id="discoverySelectionPageNext" type="button" disabled>Next</button></span></div>
-      </div>
-      <p class="discovery-batch-note" id="discoveryBatchNote">Registration requests use batches of at most 25 URLs and the existing GitHub owner-approved workflow. Submit each GitHub request before opening the next batch.</p>
-      <div class="discovery-selection-footer">
-        <button class="btn btn-quiet" id="clearDiscoverySelection" type="button">Clear selection</button>
-        <div class="discovery-selection-footer-group">
-          <button class="btn" id="cancelDiscoverySelection" type="button">Close</button>
-          <button class="btn btn-primary" id="openDiscoveryBatch" type="button" disabled>Open registration batch</button>
-        </div>
-      </div>
-    </div>
   </dialog>
   <dialog class="modal" id="deleteMonitorDialog" aria-labelledby="deleteMonitorHeading">
     <div class="modal-head"><div><h2 id="deleteMonitorHeading">Stop monitoring this page?</h2><p id="deleteMonitorExplanation">The page will no longer be checked. Existing reports and saved evidence are kept.</p></div><button class="btn btn-quiet" id="closeDeleteMonitor" type="button" aria-label="Close">Close</button></div>
@@ -2241,8 +2352,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261023-guided-discovery"></script>
-  <script src="dashboard.js?v=20261023-guided-discovery"></script>
+  <script src="dashboard-lib.js?v=20261023-pick-links-1"></script>
+  <script src="dashboard.js?v=20261023-pick-links-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

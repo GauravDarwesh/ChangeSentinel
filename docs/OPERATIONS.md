@@ -28,6 +28,13 @@ The active production scope consists of two bounded Federal Reserve sources: the
 - **Reviewing:** "Monitor this page" uses the normal owner-only registration flow. "Not relevant" and "Restore" open an issue processed by **Scout Review Decision**, which records the decision for that address only, rebuilds `data/scout/review.json`, closes the issue and republishes Pages.
 - Sweeps and review decisions share the `scout` concurrency queue; Scout and monitor state commits are scoped to their own paths and never block each other.
 
+## Pick links (discovered links to monitor)
+
+- **Setting up discovery:** Add a link → *Pick links from a page*. The request carries `Discovery only: yes`, so **Register Dashboard Monitor** saves a depth-limited Scout channel in `config/scout.json` and adds **no** monitor to `config/sources.json`; it then queues one Scout sweep. A later request for the same page updates its depth and scope.
+- **Scope:** `explore_prefixes` (optional) limits which HTML pages discovery reads to find more links; links found anywhere in scope are still listed. `document_hosts` (optional) lists other hosts whose document links (PDF, spreadsheets, Word, ZIP and similar, judged by address) are listed as candidates. Scout never fetches those hosts. Channels without these fields behave exactly as before.
+- **Choosing:** The dashboard's *Pick links* view reads `data/scout/registry/<profile>.json` (published to Pages, raw GitHub as a fallback) and lists every link the channel recorded, by page or as one filterable list. The selection is kept in the browser. Submitting opens the existing owner-only bulk request, at most 25 links each; a link counts as monitored only once `config/sources.json` or the inventory says so.
+- **TIC example:** the TIC forms channel predates these fields. To list its documents hosted on another Treasury address, submit *Pick links from a page* for the same starting URL with that host under *Also list documents hosted on* (and, if wanted, *Pages in the same section*).
+
 ## Alert reliability
 
 Every run queues its notification candidates in the durable outbox and commits the monitoring state **before** anything is sent; delivery happens only after that commit succeeds, and the delivery ledger is committed afterwards. If the state commit cannot be published, nothing has been sent and the next run re-detects the same events. The commit helper (`scripts/commit_state.sh`) rebases the data-only commit when `main` advanced with code-only commits, and refuses when another run committed `data/` in the meantime.

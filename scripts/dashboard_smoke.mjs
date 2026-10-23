@@ -93,16 +93,22 @@ try {
   if (pdf.skipped) console.log("skip " + pdf.skipped);
   else check(!pdf.error && pdf.pages > 0 && pdf.items > 0, "pdf.js " + (pdf.version || "") + " loads under its integrity hash and renders a saved PDF " + JSON.stringify(pdf));
 
-  for (const view of ["changes", "monitors", "runs", "notifications", "scout", "calendar", "overview"]) {
+  for (const view of ["changes", "monitors", "runs", "notifications", "scout", "pick", "calendar", "overview"]) {
     await page.click('.rail [data-view="' + view + '"]');
     await page.waitForTimeout(400);
     const visible = await page.evaluate(name => {
-      const id = { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", scout: "scoutView", calendar: "calendarView" }[name];
+      const id = { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", scout: "scoutView", pick: "pickView", calendar: "calendarView" }[name];
       const section = document.getElementById(id);
       return !!section && !section.hidden && section.getBoundingClientRect().height > 0;
     }, view);
     check(visible, "the " + view + " view renders");
     await page.screenshot({ path: path.join(OUT, "view-" + view + ".png") });
+    if (view === "pick") {
+      // Pick links reads one Scout registry on demand and draws its links or an honest empty state.
+      const drawn = await page.waitForFunction(() => document.querySelector("#pickItems .pick-row, #pickItems .empty"), null, { timeout: 15000 })
+        .then(() => true, () => false);
+      check(drawn, "Pick links draws discovered links or an empty state");
+    }
     if (view === "calendar") {
       await page.click('[data-calendar-mode="upcoming"]');
       const upcomingVisible = await page.waitForFunction(() => {

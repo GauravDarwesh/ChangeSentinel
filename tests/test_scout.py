@@ -441,6 +441,101 @@ class TestSweeps(ScoutTestCase):
         self.assertNotIn(child, site.calls, "depth 1 reads only the root page")
         self.assertNotIn(grandchild, site.calls)
 
+    def _tic_like_site(self):
+        """A forms section, a historical sub-page, an unrelated same-host section and a cross-host PDF host."""
+        root = "https://reg.example.org/data/tic/forms"
+        b_forms = "https://reg.example.org/data/tic/forms/b-forms"
+        unrelated = "https://reg.example.org/data/auction-allotments"
+        site = FakeSite({
+            root: (b'<html><body><main><h2>Reporting forms</h2>'
+                   b'<a href="/data/tic/forms/b-forms">TIC B Forms and Instructions</a>'
+                   b'<h2>Other data</h2><a href="/data/auction-allotments">Investor class auction allotments</a>'
+                   b'</main></body></html>'),
+            b_forms: (b'<html><body><main><h2>Current forms</h2>'
+                      b'<a href="https://docs.example.org/forms/BC.pdf">Form BC (PDF)</a>'
+                      b'<a href="https://docs.example.org/forms/BC-instructions.pdf">Instructions</a>'
+                      b'<h2>Historical forms</h2>'
+                      b'<a href="https://docs.example.org/forms/BC-2019.pdf">Form BC, 2019 (PDF)</a>'
+                      b'<a href="https://elsewhere.example.net/forms/x.pdf">Not an allowed host</a>'
+                      b'<a href="https://docs.example.org/about">An HTML page on the document host</a>'
+                      b'</main></body></html>'),
+            unrelated: b'<html><body><main>' + b"".join(
+                f'<a href="/data/auction-allotments/{index}">Allotment {index}</a>'.encode() for index in range(30)) + b"</main></body></html>",
+        })
+        return root, b_forms, unrelated, site
+
+    def test_explore_scope_and_document_hosts_are_opt_in(self):
+        root, b_forms, unrelated, site = self._tic_like_site()
+        channel = {"id": "ex-tic", "type": "listing", "label": "TIC forms", "url": root,
+                   "link_prefixes": ["https://reg.example.org/"], "crawl_depth": 2}
+
+        # Without the new fields the original behaviour holds: every in-scope page
+        # is read and cross-host links are out of scope.
+        self.sweep(config_for([channel]), site)
+        urls = {record["url"] for record in self.registry().candidates.values()}
+        self.assertIn(unrelated, site.calls)
+        self.assertIn("https://reg.example.org/data/auction-allotments/7", urls)
+        self.assertFalse(any("docs.example.org" in url for url in urls))
+
+    def test_explore_scope_limits_what_is_read_but_not_what_is_listed(self):
+        root, b_forms, unrelated, site = self._tic_like_site()
+        config = config_for([{
+            "id": "ex-tic", "type": "listing", "label": "TIC forms", "url": root,
+            "link_prefixes": ["https://reg.example.org/"], "crawl_depth": 2,
+            "explore_prefixes": ["https://reg.example.org/data/tic/forms/"],
+            "document_hosts": ["docs.example.org"],
+        }])
+        result = self.sweep(config, site)
+        records = {record["url"]: record for record in self.registry().candidates.values()}
+
+        self.assertEqual(result["status"], "COMPLETE")
+        self.assertIn(b_forms, site.calls)
+        self.assertNotIn(unrelated, site.calls, "a page outside the explore scope is listed but never read")
+        self.assertIn(unrelated, records, "the out-of-scope page is still a visible candidate")
+        self.assertFalse(any(url.startswith(unrelated + "/") for url in records))
+
+        current = records["https://docs.example.org/forms/BC.pdf"]
+        historical = records["https://docs.example.org/forms/BC-2019.pdf"]
+        self.assertIn("https://docs.example.org/forms/BC-instructions.pdf", records)
+        self.assertEqual(current["evidence"]["depth"], 2)
+        self.assertEqual(current["evidence"]["section"], "Current forms")
+        self.assertEqual(current["evidence"]["parent_url"], b_forms)
+        self.assertEqual(historical["evidence"]["section"], "Historical forms",
+                         "historical documents are surfaced with the publisher's heading, never dropped")
+        self.assertEqual(records[b_forms]["evidence"]["depth"], 1)
+        self.assertEqual(records[b_forms]["evidence"]["section"], "Reporting forms")
+        self.assertNotIn("https://elsewhere.example.net/forms/x.pdf", records, "only declared document hosts are admitted")
+        self.assertNotIn("https://docs.example.org/about", records, "a document host contributes documents, not HTML pages")
+        self.assertFalse(any("docs.example.org" in call for call in site.calls), "document hosts are never fetched")
+
+        from regmon.scout.registry import EVIDENCE_FIELDS
+        self.assertIn("depth", EVIDENCE_FIELDS)
+        self.assertIn("section", EVIDENCE_FIELDS)
+
+    def test_explore_scope_and_document_hosts_are_validated(self):
+        base = {"id": "ex-tic", "type": "listing", "label": "TIC forms", "url": "https://reg.example.org/data/tic/forms",
+                "crawl_depth": 2}
+        parsed = config_for([dict(base, explore_prefixes=["https://reg.example.org/data/tic/"], document_hosts=["Docs.Example.org"])])
+        channel = parsed.regulators[0].channels[0]
+        self.assertEqual(channel.explore_prefixes, ("https://reg.example.org/data/tic/",))
+        self.assertEqual(channel.document_hosts, ("docs.example.org",))
+        self.assertEqual(config_for([base]).regulators[0].channels[0].document_hosts, ())
+        for bad, pattern in (
+            ({"explore_prefixes": ["https://other.example.org/x/"]}, "not one of the regulator hosts"),
+            ({"document_hosts": ["https://docs.example.org/"]}, "bare hostname"),
+            ({"document_hosts": ["localhost"]}, "bare hostname"),
+            ({"crawl_depth": None, "document_hosts": ["docs.example.org"]}, "depth-limited"),
+        ):
+            with self.subTest(bad=bad), self.assertRaisesRegex(ConfigError, pattern):
+                config_for([{key: value for key, value in dict(base, **bad).items() if value is not None}])
+
+    def test_section_headings_are_recorded_per_link(self):
+        html = ('<html><body><main><h2>Current</h2><ul><li><a href="/a.pdf">A</a></li></ul>'
+                '<h3>Archive</h3><p><a href="/b.pdf">B</a></p></main></body></html>')
+        links = {link.url: link.section for link in channels.harvest_listing(html, "https://reg.example.org/x")}
+        self.assertEqual(links["https://reg.example.org/a.pdf"], "Current")
+        self.assertEqual(links["https://reg.example.org/b.pdf"], "Archive")
+
     def test_recursive_listing_depth_is_validated(self):
         base = {
             "schema_version": 1,
