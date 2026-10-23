@@ -3983,6 +3983,216 @@
       "allowed_domains": [
         "www.frbservices.org"
       ]
+    },
+    {
+      "id": "manual-fcb1777378d0",
+      "name": "BA - 2027 BCAR sample return (clean) (XLSX, 2.80 MB)",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "allowed_urls": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx"
+      ],
+      "allowed_domains": [
+        "www.osfi-bsif.gc.ca"
+      ]
+    },
+    {
+      "id": "manual-87b1ac938a3f",
+      "name": "BA - 2027 BCAR sample return (tracked changes) (XLSX, 2.81 MB)",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "allowed_urls": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx"
+      ],
+      "allowed_domains": [
+        "www.osfi-bsif.gc.ca"
+      ]
+    },
+    {
+      "id": "manual-db3db09fda63",
+      "name": "BA - 2027 BCAR technical specification (XLSX, 3.41 MB)",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-09-10-en.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "allowed_urls": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-09-10-en.xlsx"
+      ],
+      "allowed_domains": [
+        "www.osfi-bsif.gc.ca"
+      ]
+    },
+    {
+      "id": "manual-5b8c86f37ebc",
+      "name": "BA - 2027 BCAR sample XML (XML, 479 KB)",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "allowed_urls": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xml"
+      ],
+      "allowed_domains": [
+        "www.osfi-bsif.gc.ca"
+      ]
+    },
+    {
+      "id": "manual-2673ea372676",
+      "name": "BA - 2027 BCAR sample XSD (XSD, 4.74 MB)",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xsd"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "allowed_urls": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xsd"
+      ],
+      "allowed_domains": [
+        "www.osfi-bsif.gc.ca"
+      ]
+    },
+    {
+      "id": "manual-b7f72aa87973",
+      "name": "Technical specification - frequently asked questions (BCAR)",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "allowed_urls": [
+        "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification"
+      ],
+      "allowed_domains": [
+        "www.osfi-bsif.gc.ca"
+      ]
     }
   ]
 }
