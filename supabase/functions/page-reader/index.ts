@@ -52,21 +52,66 @@ function ipv4Parts(value: string): number[] | null {
   return numbers.every(n => n >= 0 && n <= 255) ? numbers : null;
 }
 
+function ipv6Words(value: string): number[] | null {
+  let input = value.toLowerCase();
+  // Convert an IPv4 tail (for example ::ffff:192.0.2.1) to two IPv6 words.
+  if (input.includes('.')) {
+    const lastColon = input.lastIndexOf(':');
+    const tail = ipv4Parts(input.slice(lastColon + 1));
+    if (!tail) return null;
+    input = input.slice(0, lastColon + 1) +
+      ((tail[0] << 8) | tail[1]).toString(16) + ':' +
+      ((tail[2] << 8) | tail[3]).toString(16);
+  }
+  if ((input.match(/::/g) || []).length > 1) return null;
+  const halves = input.split('::');
+  const left = halves[0] ? halves[0].split(':') : [];
+  const right = halves.length > 1 && halves[1] ? halves[1].split(':') : [];
+  if ([...left, ...right].some(part => !/^[0-9a-f]{1,4}$/.test(part))) return null;
+  const missing = 8 - left.length - right.length;
+  if (halves.length === 1 && missing !== 0) return null;
+  if (halves.length === 2 && missing < 1) return null;
+  const words = [...left, ...Array(Math.max(0, missing)).fill('0'), ...right].map(part => parseInt(part, 16));
+  return words.length === 8 ? words : null;
+}
+
+function ipv4FromWords(words: number[]): string {
+  const a = words[6], b = words[7];
+  return [a >> 8, a & 255, b >> 8, b & 255].join('.');
+}
+
 export function isPrivateAddress(address: string): boolean {
   const value = address.trim().toLowerCase().replace(/^\[|\]$/g, '');
   const v4 = ipv4Parts(value);
   if (v4) {
-    const [a, b] = v4;
+    const [a, b, c] = v4;
     return a === 0 || a === 10 || a === 127 || a >= 224 ||
       (a === 100 && b >= 64 && b <= 127) || (a === 169 && b === 254) ||
       (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) ||
-      (a === 192 && b === 0) || (a === 198 && (b === 18 || b === 19));
+      (a === 192 && b === 0) || (a === 198 && (b === 18 || b === 19)) ||
+      (a === 192 && b === 0 && c === 2) || (a === 198 && b === 51 && c === 100) ||
+      (a === 203 && b === 0 && c === 113);
   }
   if (value.includes(':')) {
-    if (value === '::' || value === '::1') return true;
-    const mapped = value.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/);
-    if (mapped) return isPrivateAddress(mapped[1]);
-    return /^(fc|fd|fe8|fe9|fea|feb|ff)/.test(value) || value.startsWith('64:ff9b:') || value.startsWith('2001:db8');
+    const words = ipv6Words(value);
+    // Fail closed for malformed IPv6 literals.
+    if (!words) return true;
+    if (words.every(word => word === 0) || words.slice(0, 7).every(word => word === 0) && words[7] === 1) return true;
+
+    // IPv4-mapped, IPv4-compatible, and the well-known NAT64 prefix embed IPv4.
+    // Classify the embedded address rather than rejecting every NAT64 result:
+    // public destinations translated by DNS64 remain usable, private ones do not.
+    const mapped = words.slice(0, 5).every(word => word === 0) && words[5] === 0xffff;
+    const compatible = words.slice(0, 6).every(word => word === 0);
+    const nat64 = words[0] === 0x0064 && words[1] === 0xff9b &&
+      words.slice(2, 6).every(word => word === 0);
+    if (mapped || compatible || nat64) return isPrivateAddress(ipv4FromWords(words));
+
+    return (words[0] & 0xfe00) === 0xfc00 || // unique-local fc00::/7
+      (words[0] & 0xffc0) === 0xfe80 || // link-local fe80::/10
+      words[0] === 0xff00 || // multicast
+      (words[0] === 0x2001 && words[1] === 0x0db8) || // documentation
+      (words[0] === 0x2001 && words[1] === 0x0010); // ORCHID
   }
   return false;
 }
