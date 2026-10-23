@@ -467,6 +467,35 @@ class TestDiscovery(unittest.TestCase):
         self.assertEqual(metadata["failed_pages"], 0)
 
     @patch("regmon.discovery.requests.get")
+    def test_http_discovery_does_not_requeue_already_processed_pages(self, mock_get):
+        # Regression: two allowlisted pages that link to themselves and to each
+        # other were re-queued after every fetch, so discovery never emptied its
+        # frontier and paused forever (one continuation run per slice).
+        a = "https://www.federalreserve.gov/apps/reportingforms/review"
+        b = "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+        source = SourceConfig(
+            id="exact-loop",
+            name="Exact loop",
+            regulator="Fed",
+            seed_urls=(a, b),
+            allowed_prefixes=("https://www.federalreserve.gov/apps/reportingforms/",),
+            allowed_domains=("www.federalreserve.gov",),
+            allowed_urls=(a, b),
+            discovery_http_workers=1,
+            discovery_max_pages_per_slice=50,
+        )
+        html = "<a href='/apps/reportingforms/review'>R</a><a href='/apps/reportingforms/recentupdates'>U</a>"
+        mock_get.side_effect = lambda url, **_: Mock(
+            status_code=200, headers={"content-type": "text/html; charset=UTF-8"}, text=html, url=url)
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch("regmon.discovery.time.monotonic", return_value=0):
+                urls = http_discover(source, Path(tmp))
+            metadata = json.loads((Path(tmp) / "discovery" / "exact-loop.json").read_text(encoding="utf-8"))
+        self.assertEqual(sorted(urls), sorted([a, b]))
+        self.assertEqual(metadata["state"], "COMPLETE")
+        self.assertEqual(mock_get.call_count, 2)
+
+    @patch("regmon.discovery.requests.get")
     def test_http_discovery_pauses_and_resumes(self, mock_get):
         source = SourceConfig(
             id="eba-test",
