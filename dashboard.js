@@ -4633,9 +4633,9 @@ if (typeof ResizeObserver === "function") {
   resizeObserver.observe($("signalVisual"));
   if ($("fieldViewport")) resizeObserver.observe($("fieldViewport"));
 }
-if ($("fieldViewport")) {
-  $("fieldViewport").addEventListener("scroll", () => ledField.measure(), { passive: true });
-}
+// Scrolling moves the viewport, not the cells relative to their canvas stage.
+// Do not re-size/repaint the canvas on every scroll event: resetting its backing
+// store caused visible flashes while users moved through the heatmap.
 // Theme: every visit opens in light (index.html sets it before first paint, by
 // design); the toggle switches theme for the rest of the visit.
 function currentTheme() { return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark"; }
