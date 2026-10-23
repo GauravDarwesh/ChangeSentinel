@@ -570,6 +570,9 @@
     .discovery-selected-url { overflow-wrap: anywhere; color: var(--link); font: 400 11.5px/1.5 var(--font-code); text-decoration: none; }
     .discovery-selected-meta { color: var(--ink-3); font-size: 11.5px; }
     .discovery-selected-item .btn { align-self: center; min-height: 26px; padding: 3px 7px; font-size: 12px; }
+    .discovery-list-pagination { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 7px; color: var(--ink-3); font-size: 12px; }
+    .discovery-list-pagination-actions { display: flex; gap: 6px; }
+    .discovery-list-pagination .btn { min-height: 25px; padding: 3px 8px; font-size: 12px; }
     .discovery-batch-note { color: var(--ink-3); font-size: 12px; line-height: 1.5; }
     .discovery-selection-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
     .discovery-selection-footer-group { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
@@ -1891,6 +1894,7 @@
       <div>
         <div class="field-label-text"><span>Selected candidates</span><span id="discoverySelectedCount">0 URLs</span></div>
         <div class="discovery-selected-list" id="discoverySelectedList" aria-label="Selected candidate URLs"></div>
+        <div class="discovery-list-pagination" aria-label="Selected candidate pages"><span id="discoverySelectionPageInfo">No selected URLs</span><span class="discovery-list-pagination-actions"><button class="btn" id="discoverySelectionPagePrev" type="button" disabled>Previous</button><button class="btn" id="discoverySelectionPageNext" type="button" disabled>Next</button></span></div>
       </div>
       <p class="discovery-batch-note" id="discoveryBatchNote">Registration requests use batches of at most 25 URLs and the existing GitHub owner-approved workflow. Submit each GitHub request before opening the next batch.</p>
       <div class="discovery-selection-footer">
