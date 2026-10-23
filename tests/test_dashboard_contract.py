@@ -456,82 +456,66 @@ class TestCrossRunChangeLog(unittest.TestCase):
         # Spreadsheets are read locally; no third-party parser runs in the dashboard origin.
         self.assertNotIn("cdn.sheetjs.com", js + html)
 
-class TestGuidedDiscoverySelection(unittest.TestCase):
-    def test_manual_and_crawl_discovery_share_a_separate_selection_tray(self):
+class TestAddLinkFlow(unittest.TestCase):
+    """Add a link: explore a page or follow its links by level, then confirm a checklist."""
+
+    def test_the_whole_flow_lives_in_the_add_a_link_dialog(self):
         html = read("index.html")
         js = read("dashboard.js")
-        for token in (
-            'id="openSourceForDiscovery"',
-            'id="openDiscoverySelectionFromAdd"',
-            'id="scoutItems"',
-            'id="scoutFormatFilter"',
-            'id="selectVisibleScout"',
-            'id="openDiscoverySelection"',
-            'id="discoverySelectionDialog"',
-            'id="discoveryManualUrls"',
-            'id="discoverySelectedList"',
-            'id="discoverySelectionStatus"',
-            'id="openDiscoveryBatch"',
-        ):
+        dialog = html[html.index('id="addMonitorDialog"'):html.index('id="deleteMonitorDialog"')]
+        for token in ('name="addMethod" value="explore"', 'name="addMethod" value="crawl"', 'id="newMonitorDepth"', 'id="newPickScope"',
+                      'data-add-step-panel="explore"', 'data-add-step-panel="crawl"', 'data-add-step-panel="review"',
+                      'id="exploreFrame"', 'id="exploreSelectMode"', 'id="reviewList"', 'id="bulkMonitorFile"', 'id="addExactSubmit"'):
             with self.subTest(token=token):
-                self.assertIn(token, html)
-        for token in (
-            'const DISCOVERY_SELECTION_STORAGE = "cs-guided-discovery-selection-v1"',
-            "function restoreDiscoverySelection()",
-            "restoreDiscoverySelection();",
-            "function toggleSingleDiscoverySelection(input)",
-            "function toggleVisibleDiscoverySelection()",
-            "function addManualDiscoveryUrls()",
-            "function renderDiscoverySelectionDialog()",
-            "function openDiscoveryRegistrationBatch()",
-            'formatFilter === "PDF"',
-            'formatFilter === "HTML"',
-            "evidence.parent_url",
-            'sessionStorage.setItem(DISCOVERY_SELECTION_STORAGE',
-            'data-discovery-select="',
-        ):
-            with self.subTest(token=token):
-                self.assertIn(token, js)
+                self.assertIn(token, dialog)
+        # No separate view or tray: everything happens inside Add a link.
+        for removed in ('id="pickView"', 'data-view="pick"', 'id="discoverySelectionDialog"', 'id="selectVisibleScout"', 'data-discovery-select'):
+            self.assertNotIn(removed, html + js)
 
-    def test_guided_selection_uses_existing_owner_approved_bounded_registration(self):
-        js = read("dashboard.js")
-        workflow = read(".github/workflows/register-monitor.yml")
-        registration = read("regmon/register_monitor.py")
-        for token in (
-            "MAX_BULK_LINKS = 25",
-            "MAX_BULK_REQUEST_URL_LENGTH = 7000",
-            "function buildDiscoveryBatches()",
-            "makeBulkGitHubIssueUrl(candidate)",
-            "makeBulkGitHubIssueUrl([row])",
-            "Submit its GitHub issue before opening the next batch",
-            "registration is not yet confirmed",
-            "BULK_REQUEST_MARKER",
-        ):
-            with self.subTest(token=token):
-                self.assertIn(token, js)
-        self.assertIn("issues:", workflow)
-        self.assertIn("github.event.issue.user.login == github.repository_owner", workflow)
-        self.assertIn("python -m regmon.register_monitor", workflow)
-        self.assertIn("MAX_BULK_REQUESTS = 25", registration)
-        # The dashboard only opens a prefilled issue; the owner-only workflow applies configuration changes.
-        self.assertIn("function openGitHubRequest(target, toastMessage)", js)
-        self.assertIn('config/sources.json', js)
-
-    def test_candidate_titles_and_urls_are_escaped_and_manual_urls_are_checked(self):
-        js = read("dashboard.js")
+    def test_a_closed_dialog_is_never_laid_out(self):
+        # Setting display on a <dialog> overrides the browser's rule that hides a
+        # closed one; it then covers the dashboard and swallows clicks.
         html = read("index.html")
-        for token in (
-            'esc(item.title || displayUrl(item.url))',
-            'esc(title)',
-            'esc(url)',
-            'if (![ "http:", "https:" ].includes(parsed.protocol)',
-            "parsed.username || parsed.password",
-            "No URLs were added; correct the input and retry.",
-        ):
-            with self.subTest(token=token):
-                self.assertIn(token, js)
-        self.assertIn("Candidates are separate from active monitors.", html)
-        self.assertIn("Candidates are never activated automatically.", html)
+        for rule in re.findall(r"\.add-link(?:\.[\w-]+)?\s*\{[^}]*\}", html):
+            with self.subTest(rule=rule):
+                self.assertNotRegex(rule, r"(^|[;{\s])display\s*:", "only .add-link[open] may set display")
+        self.assertIn(".add-link[open] { display: flex;", html)
+
+    def test_the_explored_page_cannot_run_script(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        frame = re.search(r'<iframe id="exploreFrame"[^>]*>', html).group(0)
+        self.assertIn('sandbox="allow-same-origin"', frame)
+        self.assertNotIn("allow-scripts", frame)
+        self.assertNotIn("allow-forms", frame)
+        self.assertNotIn("allow-top-navigation", frame)
+        self.assertIn('doc.addEventListener("click", exploreFrameClick, true)', js)
+        self.assertIn("if (event.shiftKey || a.selectMode) { addToggle(item); return; }", js)
+        reader = read("supabase/functions/page-reader/index.ts")
+        self.assertIn("script-src 'none'", reader)
+        self.assertIn("checkResolvesPublic(url)", reader)
+        self.assertIn("redirect: 'manual'", reader)
+
+    def test_nothing_is_ticked_for_the_owner_and_requests_stay_owner_approved(self):
+        js = read("dashboard.js")
+        start = js.index("/* ================= Add a link: explore a page or follow its links")
+        module = js[start:js.index("function makeGitHubIssueUrl(", start)]
+        self.assertIn("a.picked = new Map();", module[module.index("async function crawlStart("):])
+        self.assertIn("makeBulkGitHubIssueUrl, MAX_BULK_LINKS, MAX_BULK_REQUEST_URL_LENGTH", module)
+        self.assertIn("nothing is registered until you do", module)
+        self.assertIn("githubWindow.opener = null", module)
+        self.assertNotIn("api.github.com", module)
+        self.assertIn("localStorage.setItem(ADD_DRAFT_STORAGE", module)
+        self.assertIn("CRAWL_PAGE_LIMITS = { 1: 1, 2: 60, 3: 150 }", module)
+        self.assertIn("esc(item.title)", module)
+        self.assertNotIn("${", module)
+
+    def test_reader_endpoint_is_configured_without_secrets(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        self.assertIn('window.CHANGESENTINEL_PAGE_READER_ENDPOINT = "https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/page-reader";', html)
+        self.assertIn("askSentinelIdentityHeaders(identity)", js)
+        self.assertNotIn("sb_secret_", html + js)
 
 
 class TestThirdPartyScripts(unittest.TestCase):
@@ -637,19 +621,18 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
         self.assertIn('const item = (state.items || []).find(row => row.url_id === button.dataset.stopMonitor);', stop_handler)
         self.assertNotIn("(state.inventory || []).find", stop_handler)
 
-    def test_add_link_can_opt_into_depth_matched_weekly_scout_discovery(self):
-        html = read("index.html")
+    def test_weekly_check_is_discovery_only_and_owner_approved(self):
         js = read("dashboard.js")
+        lib = read("dashboard-lib.js")
         workflow = read(".github/workflows/register-monitor.yml")
-        self.assertIn('id="newMonitorScout"', html)
-        self.assertIn('id="newMonitorScoutHelp"', html)
-        self.assertIn("syncScoutDiscoveryOption()", js)
-        self.assertIn('"Scout discovery: " + (scoutEnabled ? "yes" : "no")', js)
-        self.assertIn("registration on the request", workflow.lower())
+        self.assertIn("function reviewOpenWeekly()", js)
+        self.assertIn('"Discovery only: yes"', lib)
+        self.assertLess(lib.index('"Document hosts: "'), lib.index('"Include selector: "'))
         self.assertIn("--scout-config config/scout.json", workflow)
         self.assertIn("git add config/sources.json config/scout.json", workflow)
         self.assertIn("gh workflow run scout.yml", workflow)
-        self.assertIn("not silently added as monitors", workflow)
+        self.assertIn("steps.register.outputs.discovery_only != 'true'", workflow)
+        self.assertIn("No monitor was added", workflow)
 
     def test_metadata_cors_fallback_keeps_server_side_title_lookup_available(self):
         source = read("dashboard.js")

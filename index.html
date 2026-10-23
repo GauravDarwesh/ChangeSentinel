@@ -544,47 +544,167 @@
     .bulk-preview-name { min-width: 0; overflow: hidden; color: var(--ink); text-overflow: ellipsis; white-space: nowrap; }
     .bulk-preview-url { flex: none; max-width: 48%; overflow: hidden; color: var(--ink-3); font-family: var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
     .bulk-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
-    /* Guided discovery keeps candidate selection visually separate from active monitors. */
+    /* Scout's search row keeps a file-type filter beside it. */
     .discovery-filter-row { display: grid; grid-template-columns: minmax(0, 1fr) 124px; gap: 8px; }
     .discovery-filter-row .field-input { min-width: 0; min-height: 32px; margin-top: 0; padding: 5px 25px 5px 8px; font-size: 12.5px; }
-    .discovery-selection-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--line); background: var(--raise-2); }
-    .discovery-selection-copy { display: grid; min-width: 0; gap: 2px; }
-    .discovery-selection-count { color: var(--ink); font-size: 12.5px; font-weight: 500; font-variant-numeric: tabular-nums; }
-    .discovery-selection-help { color: var(--ink-3); font-size: 11.5px; line-height: 1.4; }
-    .discovery-selection-actions { display: flex; flex: none; flex-wrap: wrap; gap: 6px; }
-    .discovery-selection-actions .btn { min-height: 27px; padding: 4px 8px; font-size: 12px; }
-    .scout-row-shell { display: grid; grid-template-columns: 28px minmax(0, 1fr); border-bottom: 1px solid var(--line); }
-    .scout-row-select { display: flex; align-items: flex-start; justify-content: center; padding-top: 17px; cursor: pointer; }
-    .scout-row-select input { width: 14px; height: 14px; margin: 0; accent-color: var(--accent); cursor: pointer; }
-    .scout-row-shell > .row { min-width: 0; border-bottom: 0; padding-left: 4px; }
-    .scout-row-shell > .row:hover { background: var(--raise); }
-    .discovery-selection-dialog { width: min(760px, calc(100vw - 32px)); }
-    .discovery-selection-body { display: grid; gap: 13px; padding: 18px 22px 22px; }
-    .discovery-selection-status { color: var(--ink-2); font-size: 12.5px; line-height: 1.5; }
-    .discovery-selection-status strong { color: var(--ink); font-weight: 500; }
-    .discovery-manual-entry { display: grid; gap: 7px; padding: 12px; border: 1px solid var(--line); background: var(--raise); }
-    .discovery-manual-entry textarea { min-height: 88px; }
-    .discovery-selected-list { display: grid; max-height: min(42vh, 360px); overflow: auto; border: 1px solid var(--line); background: var(--pane); }
-    .discovery-selected-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
-    .discovery-selected-item:last-child { border-bottom: 0; }
-    .discovery-selected-info { display: grid; min-width: 0; gap: 3px; }
-    .discovery-selected-title { overflow-wrap: anywhere; color: var(--ink); font-size: 12.5px; font-weight: 500; }
-    .discovery-selected-url { overflow-wrap: anywhere; color: var(--link); font: 400 11.5px/1.5 var(--font-code); text-decoration: none; }
-    .discovery-selected-meta { color: var(--ink-3); font-size: 11.5px; }
-    .discovery-selected-item .btn { align-self: center; min-height: 26px; padding: 3px 7px; font-size: 12px; }
-    .discovery-list-pagination { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 7px; color: var(--ink-3); font-size: 12px; }
-    .discovery-list-pagination-actions { display: flex; gap: 6px; }
-    .discovery-list-pagination .btn { min-height: 25px; padding: 3px 8px; font-size: 12px; }
-    .discovery-batch-note { color: var(--ink-3); font-size: 12px; line-height: 1.5; }
-    .discovery-selection-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
-    .discovery-selection-footer-group { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
-    @media (max-width: 640px) {
-      .discovery-selection-bar { align-items: flex-start; flex-direction: column; }
-      .discovery-selection-actions { width: 100%; }
-      .discovery-selection-actions .btn { flex: 1; }
-      .discovery-selection-body { padding: 14px; }
-      .discovery-selected-item { grid-template-columns: minmax(0, 1fr); }
-      .discovery-selected-item .btn { justify-self: start; }
+
+    /* ---------- Add a link ----------
+     * One dialog, four steps: choose a page and a method, explore it (or follow
+     * its links by level), then tick the links to monitor. The explore and
+     * confirm steps widen the dialog into a pane of the same console. */
+    /* Only an open dialog is laid out; a closed one must stay hidden. */
+    .add-link[open] { display: flex; flex-direction: column; }
+    .add-link.is-wide { width: min(1320px, calc(100vw - 32px)); height: calc(100dvh - 32px); max-height: none; overflow: hidden; }
+    .add-link.is-wide .add-head { padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+    .add-step[hidden] { display: none !important; }
+    .add-methods { display: grid; gap: 1px; margin: 0; padding: 0; border: 0; min-width: 0; }
+    .add-methods legend { width: 100%; padding: 0 0 7px; }
+    .add-method { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 3px 11px; padding: 12px 13px; border: 1px solid var(--line-2); background: var(--bg); cursor: pointer; transition: background-color .15s var(--ease); }
+    .add-method + .add-method { margin-top: -1px; }
+    .add-method:first-of-type { border-radius: var(--radius) var(--radius) 0 0; }
+    .add-method:last-of-type { border-radius: 0 0 var(--radius) var(--radius); }
+    .add-method input { grid-row: 1 / 3; margin: 3px 0 0; accent-color: var(--accent); }
+    .add-method-title { font-size: 14px; font-weight: 500; }
+    .add-method-copy { color: var(--ink-2); font-size: 12.5px; line-height: 1.5; }
+    .add-method:has(input:checked) { position: relative; z-index: 1; border-color: var(--accent); background: var(--raise); box-shadow: inset 2px 0 0 var(--accent); }
+    .add-crawl-options { display: grid; gap: 16px; }
+    .add-scope { margin: 0; padding: 0; border: 0; min-width: 0; }
+    .add-scope legend { width: 100%; padding: 0; }
+    .add-scope-options { display: grid; gap: 1px; margin-top: 7px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--line); overflow: hidden; }
+    .add-scope-option { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 2px 10px; padding: 9px 11px; background: var(--bg); cursor: pointer; }
+    .add-scope-option input { grid-row: 1 / 3; margin: 3px 0 0; accent-color: var(--accent); }
+    .add-scope-option span { font-size: 13px; }
+    .add-scope-option code { min-width: 0; overflow: hidden; color: var(--ink-3); font: 400 11.5px/1.5 var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
+    .add-scope-option:has(input:checked) { background: var(--raise); box-shadow: inset 2px 0 0 var(--accent); }
+    .add-scope-options .field-help { margin: 0; padding: 9px 11px; background: var(--bg); }
+    .add-resume { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; padding: 10px 12px; border: 1px solid var(--accent); border-radius: var(--radius); background: var(--accent-soft); color: var(--ink-2); font-size: 12.5px; }
+    .add-resume div { display: flex; gap: 8px; }
+    .add-more { padding-top: 14px; border-top: 1px solid var(--line); }
+    .add-more > summary { display: flex; justify-content: space-between; gap: 10px; color: var(--link); font-size: 13px; cursor: pointer; list-style: none; }
+    .add-more > summary::-webkit-details-marker { display: none; }
+    .add-more > summary span { color: var(--ink-3); }
+    .add-more > summary:hover { color: var(--ink); }
+    .add-more-body { display: grid; gap: 14px; margin-top: 12px; }
+    .add-more.add-bulk-wrap .bulk-import { padding-top: 0; border-top: 0; }
+    .add-url-actions { align-items: center; justify-content: space-between; margin-top: 6px; }
+    .add-url-actions .field-help { margin-top: 0; }
+    .add-foot { display: flex; flex: none; align-items: center; gap: 12px; padding: 12px 22px; border-top: 1px solid var(--line); background: var(--pane); }
+    .add-link .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .add-link .btn-primary:disabled:hover { border-color: var(--accent); background: var(--accent); }
+    .add-foot-note { flex: 1; min-width: 0; color: var(--ink-3); font-size: 12.5px; }
+
+    /* Explore: the page in a frame, the selection beside it. */
+    .add-explore { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+    .explore-bar { display: flex; align-items: center; gap: 8px; padding: 10px 22px; border-bottom: 1px solid var(--line); }
+    .explore-nav { display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 1px solid var(--line-2); border-radius: var(--radius); background: transparent; color: var(--ink-2); font-size: 18px; line-height: 1; }
+    .explore-nav:hover:not(:disabled) { border-color: var(--ink-3); background: var(--raise); color: var(--ink); }
+    .explore-nav:disabled { opacity: .4; cursor: default; }
+    .explore-address { display: flex; flex: 1; align-items: center; gap: 9px; min-width: 0; height: 30px; padding: 0 10px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--bg); color: var(--ink-2); font: 400 12px/1 var(--font-code); }
+    .explore-address span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .explore-led { flex: none; width: 7px; height: 7px; background: var(--led-dim); }
+    .explore-led.is-loading { background: var(--accent); box-shadow: var(--glow); animation: pulse 1s var(--ease) infinite; }
+    .explore-led.is-ok { background: var(--good); }
+    .explore-led.is-bad { background: var(--state-bad); }
+    .explore-this { min-height: 30px; padding: 4px 10px; font-size: 12.5px; }
+    .explore-this[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+    .explore-mode { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); font-size: 12.5px; white-space: nowrap; cursor: pointer; }
+    .explore-mode input { accent-color: var(--accent); }
+    .explore-newtab { font-size: 12.5px; white-space: nowrap; }
+    .explore-body { display: grid; flex: 1; grid-template-columns: minmax(0, 1fr) 320px; min-height: 0; }
+    .explore-stage { position: relative; min-width: 0; min-height: 0; background: #fff; }
+    .explore-stage iframe { display: block; width: 100%; height: 100%; border: 0; background: #fff; }
+    .explore-status { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; background: var(--pane); text-align: center; }
+    .explore-status:empty { display: none; }
+    .explore-status .empty { min-height: 0; }
+    .explore-side { display: flex; flex-direction: column; min-height: 0; border-left: 1px solid var(--line); }
+    .explore-tabs { padding: 14px 18px 0; }
+    .explore-hint { padding: 8px 18px 10px; border-bottom: 1px solid var(--line); color: var(--ink-3); font-size: 12px; line-height: 1.5; }
+    .explore-hint kbd { padding: 0 4px; border: 1px solid var(--line-2); border-radius: 3px; background: var(--raise); color: var(--ink-2); font: 500 11px/1.5 var(--font-code); }
+    .explore-list { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+    .explore-list .empty { min-height: 0; padding: 28px 18px; }
+
+    /* One row style for every list of links in the dialog. */
+    .link-pick { position: relative; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; align-items: start; border-bottom: 1px solid var(--line); transition: background-color .12s var(--ease); }
+    .link-pick:hover { background: var(--raise); }
+    .link-pick.is-on { background: var(--raise-2); }
+    .link-pick.is-on::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--accent); box-shadow: var(--glow); }
+    .link-pick-check { display: flex; justify-content: center; align-self: stretch; padding: 13px 0 0 6px; cursor: pointer; }
+    .link-pick-check input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+    .link-pick-check i { width: 9px; height: 9px; box-shadow: inset 0 0 0 1px var(--ink-3); transition: background-color .15s var(--ease), box-shadow .15s var(--ease); }
+    .link-pick-check input:checked + i { background: var(--accent); box-shadow: var(--glow); }
+    .link-pick-check input:focus-visible + i { outline: 1.5px solid var(--accent); outline-offset: 3px; }
+    .link-pick-check input:disabled + i { opacity: .4; }
+    .link-pick:hover .link-pick-check i { box-shadow: inset 0 0 0 1px var(--accent); }
+    .link-pick:hover .link-pick-check input:checked + i { box-shadow: var(--glow); }
+    .link-pick-main { display: grid; gap: 3px; min-width: 0; padding: 9px 8px 10px 2px; cursor: pointer; }
+    .link-pick-title { color: var(--ink); font-size: 13px; font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .link-pick-meta { display: flex; align-items: center; gap: 4px 10px; min-width: 0; }
+    .link-pick-meta .tag { flex: none; }
+    .link-pick-url { min-width: 0; overflow: hidden; color: var(--ink-3); font: 400 11.5px/1.5 var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
+    .link-pick-side { display: flex; align-items: baseline; gap: 12px; padding: 10px 18px 0 0; }
+    .link-pick-side .sheet-link, .link-pick-side button { padding: 0; border: 0; background: none; color: var(--link); font-size: 12px; white-space: nowrap; }
+    .link-pick-side button:hover { color: var(--ink); }
+    .tag.is-monitoring { color: var(--good); }
+    .tag.is-monitoring::before { background: var(--good); }
+    .link-group { position: sticky; top: 0; z-index: 1; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 18px 6px; background: var(--pane); color: var(--ink-3); font-size: 12px; }
+    .link-group-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .link-group-name strong { color: var(--ink-2); font-weight: 500; }
+    .link-group .text-button { flex: none; font-size: 12px; }
+    .link-more { display: flex; justify-content: center; padding: 16px; }
+
+    /* Following links by level. */
+    .add-crawl { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+    .crawl-body { display: grid; flex: 1; align-content: center; gap: 16px; width: min(560px, 100%); margin: 0 auto; padding: 28px 22px; }
+    .crawl-title { font-size: 17px; font-weight: 500; }
+    .crawl-bar { grid-template-columns: repeat(40, minmax(0, 1fr)); margin: 0; }
+    .crawl-bar[data-phase="running"] i { animation: barRun 1.6s linear infinite; animation-delay: calc(var(--i, 0) * 40ms); }
+    .crawl-now { min-height: 1.5em; overflow: hidden; color: var(--ink-3); font: 400 12px/1.5 var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
+    .pick-counts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--raise); }
+    .pick-counts div { padding: 10px 12px; border-left: 1px solid var(--line); }
+    .pick-counts div:first-child { border-left: 0; }
+    .pick-counts dt { color: var(--ink-3); font-size: 11.5px; }
+    .pick-counts dd { margin-top: 2px; font-size: 18px; font-variant-numeric: tabular-nums; }
+
+    /* Confirm: the checklist and the requests it becomes. */
+    .add-review { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+    .review-head { display: grid; gap: 10px; padding: 14px 22px 12px; border-bottom: 1px solid var(--line); }
+    .review-note { color: var(--ink-2); font-size: 13px; line-height: 1.55; }
+    .review-note.is-warning { color: var(--accent); }
+    .review-tools { display: grid; grid-template-columns: minmax(0, 1fr) 150px auto; align-items: center; gap: 12px; }
+    .review-tools .field-input { min-height: 32px; margin-top: 0; padding: 5px 26px 5px 9px; font-size: 12.5px; }
+    .review-list { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+    .review-list .empty { min-height: 200px; }
+    .review-foot { flex-wrap: wrap; }
+    .review-summary { flex: 1; min-width: 220px; color: var(--ink-2); font-size: 12.5px; line-height: 1.5; }
+    .review-summary strong { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+    .review-requests { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
+    .review-request-state { color: var(--accent); font-size: 12px; }
+    .review-weekly { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); font-size: 12.5px; cursor: pointer; }
+    .review-weekly input { accent-color: var(--accent); }
+
+    @media (max-width: 1100px) { .explore-body { grid-template-columns: minmax(0, 1fr) 270px; } }
+    @media (max-width: 760px) {
+      .add-link.is-wide { width: 100vw; height: 100dvh; max-width: 100vw; border: 0; border-radius: 0; }
+      .add-link.is-wide .add-head { padding: 12px 16px; }
+      .add-link.is-wide .add-head p { display: none; }
+      .explore-bar { flex-wrap: wrap; padding: 8px 12px; }
+      .explore-address { order: -1; flex-basis: 100%; }
+      .explore-newtab { margin-left: auto; }
+      .explore-body { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) minmax(120px, 34%); }
+      .explore-side { border-top: 1px solid var(--line); border-left: 0; }
+      .explore-tabs { padding: 10px 16px 0; }
+      .explore-hint { padding: 6px 16px 8px; }
+      .add-foot { padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); }
+      .add-foot-note { display: none; }
+      .add-foot > .btn-primary { margin-left: auto; }
+      .review-head { padding: 12px 16px; }
+      .review-tools { grid-template-columns: minmax(0, 1fr) 1fr; }
+      .review-tools .search-field { grid-column: 1 / -1; }
+      .link-pick { grid-template-columns: 30px minmax(0, 1fr); }
+      .link-pick-side { grid-column: 2; padding: 0 14px 10px 2px; }
+      .link-group { padding: 10px 14px 6px; }
+      .review-requests { width: 100%; justify-content: stretch; }
+      .review-requests .btn { flex: 1; justify-content: center; }
     }
     .toast { position: fixed; left: 50%; bottom: 32px; z-index: 90; max-width: min(520px, calc(100vw - 32px)); transform: translateX(-50%); padding: 10px 14px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--raise-2); color: var(--ink); font-size: 13.5px; }
 
@@ -1642,16 +1762,6 @@
               <button type="button" data-scout-filter="DONE" aria-pressed="false">Decided</button>
             </div>
           </div>
-          <div class="discovery-selection-bar" aria-label="Candidate selection">
-            <div class="discovery-selection-copy">
-              <span class="discovery-selection-count" id="discoverySelectionCount">0 selected</span>
-              <span class="discovery-selection-help">Candidates are separate from active monitors.</span>
-            </div>
-            <div class="discovery-selection-actions">
-              <button class="btn" id="selectVisibleScout" type="button">Select visible</button>
-              <button class="btn btn-primary" id="openDiscoverySelection" type="button">Review selection</button>
-            </div>
-          </div>
           <div class="list-body" id="scoutItems" aria-label="Scout findings"><div class="loading">Loading Scout findings…</div></div>
         </div>
         <div class="detail-pane" id="scoutDetail" aria-live="polite"></div>
@@ -1818,48 +1928,68 @@
       </div>
     </form>
   </dialog>
-  <dialog class="modal" id="addMonitorDialog" aria-labelledby="addMonitorHeading">
-    <div class="modal-head">
-      <div><h2 id="addMonitorHeading">Add a page to monitor</h2><p>The page is checked on every scan and compared with its saved copy.</p></div>
+  <dialog class="modal add-link" id="addMonitorDialog" aria-labelledby="addMonitorHeading" data-step="start">
+    <div class="modal-head add-head">
+      <div><h2 id="addMonitorHeading">Add a link</h2><p id="addMonitorLede">Open a page and pick the links on it you want ChangeSentinel to monitor.</p></div>
       <button class="btn btn-quiet" id="closeAddMonitor" type="button" aria-label="Close">Close</button>
     </div>
-    <form id="addMonitorForm" class="modal-body">
+
+    <form class="add-step modal-body" id="addMonitorForm" data-add-step-panel="start" novalidate>
+      <div class="add-resume" id="addResume" hidden></div>
       <div>
-        <label class="field-label-text" for="newMonitorUrl">Page URL</label>
-        <input class="field-input" id="newMonitorUrl" name="url" type="url" placeholder="https://www.example.com/policy-page" autocomplete="url" required>
-        <div class="field-help">Enter a public page. By default, only this URL is monitored; you can optionally follow same-site links below.</div>
-        <div class="bulk-actions"><button class="btn" id="autofillMonitorMetadata" type="button">Auto-fill name</button><button class="btn" id="openSourceForDiscovery" type="button">Open page to explore</button><button class="btn" id="openDiscoverySelectionFromAdd" type="button">Pick links manually</button><span id="newMonitorMetadataStatus" class="field-help" role="status" aria-live="polite"></span></div>
+        <label class="field-label-text" for="newMonitorUrl">Page address</label>
+        <input class="field-input" id="newMonitorUrl" name="url" type="url" placeholder="https://www.example.gov/reporting/forms" autocomplete="url" required>
       </div>
-      <div>
-        <label class="field-label-text" for="newMonitorDepth">Follow linked pages</label>
-        <select class="field-input" id="newMonitorDepth" name="crawlDepth"><option value="0" selected>Level 0 — this page only</option><option value="1">Level 1 — direct links</option><option value="2">Level 2 — links two clicks away</option><option value="3">Level 3 — links three clicks away</option></select>
-        <div class="field-help">The starting page is depth 0. Levels 1–3 control how far discovery follows same-host links; they do not mean every discovered URL becomes a separate active monitor. Use Scout to review discoveries before requesting additional monitors.</div>
+      <fieldset class="add-methods">
+        <legend class="field-label-text">How do you want to find the links?</legend>
+        <label class="add-method"><input type="radio" name="addMethod" value="explore" checked>
+          <span class="add-method-title">Explore the page</span>
+          <span class="add-method-copy">The page opens here. Browse it as usual and Shift-click each link you want to monitor.</span></label>
+        <label class="add-method"><input type="radio" name="addMethod" value="crawl">
+          <span class="add-method-title">Follow links by level</span>
+          <span class="add-method-copy">Collect every link up to one, two or three clicks away, then tick the ones you want.</span></label>
+      </fieldset>
+      <div class="add-crawl-options" id="addCrawlOptions" hidden>
+        <div>
+          <label class="field-label-text" for="newMonitorDepth">How far to follow links</label>
+          <select class="field-input" id="newMonitorDepth" name="crawlDepth"><option value="1">Level 1 — links on this page</option><option value="2" selected>Level 2 — and links on the pages it links to</option><option value="3">Level 3 — one click further</option></select>
+          <div class="field-help">The level only sets how far ChangeSentinel looks. It never decides what is monitored: you tick the links on the next screen.</div>
+        </div>
+        <fieldset class="add-scope">
+          <legend class="field-label-text">Which pages may it open along the way? <span>Links found anywhere are still listed</span></legend>
+          <div class="add-scope-options" id="newPickScope"><p class="field-help">Enter the page address to see the choices.</p></div>
+        </fieldset>
       </div>
-      <div>
-        <label class="check-row" for="newMonitorScout"><input type="checkbox" id="newMonitorScout" disabled> Also add to Scout for weekly link discovery</label>
-        <div class="field-help" id="newMonitorScoutHelp" aria-live="polite">Choose Level 1–3 to enable Scout. It will revisit this page weekly and surface newly linked or replacement documents, including PDFs, in Scout for review. Scout discoveries are suggestions; they are not silently added as monitors.</div>
-      </div>
-      <div>
-        <label class="field-label-text" for="newMonitorName">Display name <span>Optional</span></label>
-        <input class="field-input" id="newMonitorName" name="name" type="text" maxlength="100" placeholder="Consultation on capital requirements" autocomplete="off">
-      </div>
-      <div>
-        <label class="field-label-text" for="newMonitorIncludeSelector">Only compare this part of the page <span>Optional CSS selector</span></label>
-        <input class="field-input" id="newMonitorIncludeSelector" name="includeSelector" type="text" maxlength="500" placeholder="main .consultation-content" autocomplete="off">
-        <div class="field-help">The selector must match on every scan. If it stops matching, the scan reports a problem instead of comparing the whole page.</div>
-      </div>
-      <div>
-        <label class="field-label-text" for="newMonitorIgnoreSelectors">Ignore these parts <span>Optional, one selector per line</span></label>
-        <textarea class="field-input" id="newMonitorIgnoreSelectors" name="ignoreSelectors" rows="3" maxlength="10000" placeholder=".cookie-banner&#10;.breadcrumb"></textarea>
-        <div class="field-help">Up to 20 selectors, removed before the text is compared.</div>
-      </div>
-      <p class="modal-info">This opens a prefilled request on GitHub. Once the repository owner submits it, the page is added to the configuration and scanned. The dashboard stores no access token.</p>
-      <p class="modal-info">For manual selection, open the source page and add the exact URLs you choose to Scout’s candidate selection tray. For broader discovery, enable Scout below and review findings after a sweep. Candidates are never activated automatically.</p>
+      <p class="modal-info">Nothing is monitored until you confirm the links and submit the request on GitHub. The dashboard stores no access token.</p>
       <div class="modal-actions">
         <button class="btn" id="cancelAddMonitor" type="button">Cancel</button>
-        <button class="btn btn-primary" type="submit">Continue on GitHub</button>
+        <button class="btn btn-primary" id="addStartGo" type="submit">Open the page</button>
       </div>
-      <section class="bulk-import" aria-labelledby="bulkImportHeading">
+      <details class="add-more" id="addExact">
+        <summary>Monitor only this exact address <span>Name and compare settings</span></summary>
+        <div class="add-more-body">
+          <div>
+            <label class="field-label-text" for="newMonitorName">Display name <span>Optional</span></label>
+            <input class="field-input" id="newMonitorName" name="name" type="text" maxlength="100" placeholder="Consultation on capital requirements" autocomplete="off">
+            <div class="bulk-actions add-url-actions"><span id="newMonitorMetadataStatus" class="field-help" role="status" aria-live="polite"></span><button class="btn" id="autofillMonitorMetadata" type="button">Auto-fill name</button></div>
+          </div>
+          <div>
+            <label class="field-label-text" for="newMonitorIncludeSelector">Only compare this part of the page <span>CSS selector</span></label>
+            <input class="field-input" id="newMonitorIncludeSelector" name="includeSelector" type="text" maxlength="500" placeholder="main .consultation-content" autocomplete="off">
+            <div class="field-help">The selector must match on every scan. If it stops matching, the scan reports a problem instead of comparing the whole page.</div>
+          </div>
+          <div>
+            <label class="field-label-text" for="newMonitorIgnoreSelectors">Ignore these parts <span>One selector per line</span></label>
+            <textarea class="field-input" id="newMonitorIgnoreSelectors" name="ignoreSelectors" rows="3" maxlength="10000" placeholder=".cookie-banner&#10;.breadcrumb"></textarea>
+            <div class="field-help">Up to 20 selectors, removed before the text is compared.</div>
+          </div>
+          <div class="modal-actions"><button class="btn" id="addExactSubmit" type="button">Continue on GitHub</button></div>
+        </div>
+      </details>
+      <details class="add-more add-bulk-wrap">
+        <summary>Upload a spreadsheet of links <span>CSV or XLSX</span></summary>
+        <div class="add-more-body">
+      <section class="bulk-import add-bulk" aria-labelledby="bulkImportHeading">
         <div class="bulk-import-head">
           <div>
             <div class="field-label-text" id="bulkImportHeading">Bulk upload <span>CSV or XLSX</span></div>
@@ -1875,41 +2005,77 @@
           <button class="btn btn-primary" id="submitBulkMonitor" type="button" disabled>Continue with links</button>
         </div>
       </section>
+        </div>
+      </details>
     </form>
-  </dialog>
-  <dialog class="modal discovery-selection-dialog" id="discoverySelectionDialog" aria-labelledby="discoverySelectionHeading">
-    <div class="modal-head">
-      <div>
-        <h2 id="discoverySelectionHeading">Review monitor selection</h2>
-        <p>Only distinct, selected URLs are included. Nothing is activated until the owner-approved GitHub request succeeds.</p>
+
+    <section class="add-step add-explore" data-add-step-panel="explore" hidden aria-label="Explore the page">
+      <div class="explore-bar">
+        <button class="explore-nav" type="button" data-explore-back aria-label="Back" title="Back">&#8249;</button>
+        <button class="explore-nav" type="button" data-explore-forward aria-label="Forward" title="Forward">&#8250;</button>
+        <div class="explore-address"><span class="explore-led" id="exploreLed" aria-hidden="true"></span><span id="exploreAddress"></span></div>
+        <button class="btn explore-this" type="button" data-explore-this>Select this page</button>
+        <label class="explore-mode" title="When on, clicking or tapping a link selects it instead of opening it"><input type="checkbox" id="exploreSelectMode"><span>Tap selects</span></label>
+        <a class="sheet-link explore-newtab" id="exploreNewTab" href="#" target="_blank" rel="noopener noreferrer">New tab</a>
       </div>
-      <button class="btn btn-quiet" id="closeDiscoverySelection" type="button" aria-label="Close">Close</button>
-    </div>
-    <div class="discovery-selection-body">
-      <div class="discovery-selection-status" id="discoverySelectionStatus" role="status" aria-live="polite">No candidates selected.</div>
-      <section class="discovery-manual-entry" aria-labelledby="discoveryManualHeading">
-        <div class="field-label-text" id="discoveryManualHeading">Add URLs manually <span>one per line</span></div>
-        <p class="field-help">Paste the exact page or document URLs you chose while exploring a site. If the source blocks an embedded preview, open it in a new tab and add only the links you want to review.</p>
-        <textarea class="field-input" id="discoveryManualUrls" rows="4" spellcheck="false" placeholder="https://www.example.com/current-guidance.pdf&#10;https://www.example.com/reporting-forms"></textarea>
-        <div class="bulk-actions">
-          <span class="field-help" id="discoveryManualStatus" role="status" aria-live="polite"></span>
-          <button class="btn" id="addDiscoveryManualUrls" type="button">Add to selection</button>
+      <div class="explore-body">
+        <div class="explore-stage">
+          <iframe id="exploreFrame" title="Page you are exploring" sandbox="allow-same-origin" referrerpolicy="no-referrer"></iframe>
+          <div class="explore-status" id="exploreStatus" role="status" aria-live="polite"></div>
         </div>
-      </section>
-      <div>
-        <div class="field-label-text"><span>Selected candidates</span><span id="discoverySelectedCount">0 URLs</span></div>
-        <div class="discovery-selected-list" id="discoverySelectedList" aria-label="Selected candidate URLs"></div>
-        <div class="discovery-list-pagination" aria-label="Selected candidate pages"><span id="discoverySelectionPageInfo">No selected URLs</span><span class="discovery-list-pagination-actions"><button class="btn" id="discoverySelectionPagePrev" type="button" disabled>Previous</button><button class="btn" id="discoverySelectionPageNext" type="button" disabled>Next</button></span></div>
+        <aside class="explore-side" aria-label="Links">
+          <div class="segmented explore-tabs" role="group" aria-label="Show">
+            <button type="button" data-explore-tab="selected" aria-pressed="true">Selected <span class="num" id="exploreSelectedCount">0</span></button>
+            <button type="button" data-explore-tab="page" aria-pressed="false">On this page <span class="num" id="explorePageCount"></span></button>
+          </div>
+          <p class="explore-hint" id="exploreHint"><kbd>Shift</kbd>-click a link to select it. Click it to open it here.</p>
+          <div class="explore-list" id="exploreList"></div>
+        </aside>
       </div>
-      <p class="discovery-batch-note" id="discoveryBatchNote">Registration requests use batches of at most 25 URLs and the existing GitHub owner-approved workflow. Submit each GitHub request before opening the next batch.</p>
-      <div class="discovery-selection-footer">
-        <button class="btn btn-quiet" id="clearDiscoverySelection" type="button">Clear selection</button>
-        <div class="discovery-selection-footer-group">
-          <button class="btn" id="cancelDiscoverySelection" type="button">Close</button>
-          <button class="btn btn-primary" id="openDiscoveryBatch" type="button" disabled>Open registration batch</button>
+      <div class="add-foot">
+        <button class="btn" type="button" data-add-goto="start">Back</button>
+        <span class="add-foot-note" id="exploreFootNote" aria-live="polite"></span>
+        <button class="btn btn-primary" type="button" data-add-goto="review" id="exploreReview" disabled>Review links</button>
+      </div>
+    </section>
+
+    <section class="add-step add-crawl" data-add-step-panel="crawl" hidden aria-label="Following links">
+      <div class="crawl-body">
+        <div class="crawl-title" id="crawlTitle">Following links…</div>
+        <div class="cycle-bar crawl-bar" id="crawlBar" aria-hidden="true"></div>
+        <dl class="pick-counts crawl-counts">
+          <div><dt>Pages read</dt><dd id="crawlPages">0</dd></div>
+          <div><dt>Links found</dt><dd id="crawlLinks">0</dd></div>
+          <div><dt>Couldn’t read</dt><dd id="crawlFailed">0</dd></div>
+        </dl>
+        <p class="crawl-now" id="crawlNow" aria-live="polite"></p>
+      </div>
+      <div class="add-foot">
+        <button class="btn" type="button" id="crawlStop">Stop</button>
+        <span class="add-foot-note" id="crawlNote"></span>
+        <button class="btn btn-primary" type="button" data-add-goto="review" id="crawlReview" disabled>Review links</button>
+      </div>
+    </section>
+
+    <section class="add-step add-review" data-add-step-panel="review" hidden aria-label="Confirm the links to monitor">
+      <div class="review-head">
+        <p class="review-note" id="reviewNote"></p>
+        <div class="review-tools">
+          <label class="search-field" for="reviewSearch"><span class="visually-hidden">Search links</span><input id="reviewSearch" type="search" placeholder="Search titles, sections or addresses" autocomplete="off"></label>
+          <label><span class="visually-hidden">File type</span><select class="field-input" id="reviewFormat"><option value="ALL">All types</option><option value="PDF">PDF</option><option value="Web page">Web pages</option><option value="Spreadsheet">Spreadsheets</option><option value="Word">Word</option><option value="OTHER">Other files</option></select></label>
+          <div class="filters" role="group" aria-label="Show">
+            <button type="button" data-review-show="ALL" aria-pressed="true">All</button>
+            <button type="button" data-review-show="SELECTED" aria-pressed="false">Ticked</button>
+          </div>
         </div>
       </div>
-    </div>
+      <div class="review-list" id="reviewList" aria-label="Links found"></div>
+      <div class="add-foot review-foot">
+        <button class="btn" type="button" id="reviewBack">Back</button>
+        <div class="review-summary" id="reviewSummary" aria-live="polite"></div>
+        <div class="review-requests" id="reviewRequests"></div>
+      </div>
+    </section>
   </dialog>
   <dialog class="modal" id="deleteMonitorDialog" aria-labelledby="deleteMonitorHeading">
     <div class="modal-head"><div><h2 id="deleteMonitorHeading">Stop monitoring this page?</h2><p id="deleteMonitorExplanation">The page will no longer be checked. Existing reports and saved evidence are kept.</p></div><button class="btn btn-quiet" id="closeDeleteMonitor" type="button" aria-label="Close">Close</button></div>
@@ -2235,14 +2401,15 @@
   <script>
     window.CHANGESENTINEL_CALENDAR_ENDPOINT = "https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/calendar-api";
     window.CHANGESENTINEL_ASK_ENDPOINT = "https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel";
+    window.CHANGESENTINEL_PAGE_READER_ENDPOINT = "https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/page-reader";
     window.CHANGESENTINEL_ASK_SUPABASE_URL = "https://pysoukwmnwwgilkwafdy.supabase.co";
     window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV";
   </script>
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261023-guided-discovery"></script>
-  <script src="dashboard.js?v=20261023-guided-discovery"></script>
+  <script src="dashboard-lib.js?v=20261023-add-link-explore-1"></script>
+  <script src="dashboard.js?v=20261023-add-link-explore-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

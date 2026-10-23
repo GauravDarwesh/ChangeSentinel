@@ -479,11 +479,84 @@ def _scout_discovery_flag(body: str) -> bool:
     return value == "yes"
 
 
+def _yes_no_field(body: str, label: str) -> bool | None:
+    """An optional yes/no field; None when the request does not carry it."""
+    matches = re.findall(rf"(?mi)^{re.escape(label)}:[ \t]*(.*?)[ \t]*$", str(body or ""))
+    if len(matches) > 1:
+        raise ValueError(f"The request must contain at most one {label} field.")
+    if not matches:
+        return None
+    value = matches[0].strip().lower()
+    if value not in {"yes", "no"}:
+        raise ValueError(f"{label} must be yes or no.")
+    return value == "yes"
+
+
+def _optional_field(body: str, label: str) -> str | None:
+    matches = re.findall(rf"(?m)^{re.escape(label)}:[ \t]*(.*?)[ \t]*$", str(body or ""))
+    if len(matches) > 1:
+        raise ValueError(f"The request must contain at most one {label} field.")
+    return matches[0].strip() if matches else None
+
+
+MAX_DOCUMENT_HOSTS = 10
+
+
+def _discovery_scope(body: str, url: str) -> tuple[list[str] | None, list[str] | None]:
+    """Optional Scout discovery scope: where pages may be read, which other hosts may supply documents.
+
+    A field that is absent leaves an existing channel unchanged (None). A field
+    present but empty clears it ([]): read anywhere on the host, no other hosts.
+    """
+    host = (urlparse(url).hostname or "").rstrip(".").lower()
+    explore_value = _optional_field(body, "Explore within")
+    explore = None
+    if explore_value is not None:
+        explore = []
+        if explore_value and explore_value.lower() not in {"(anywhere on this site)", "none", "(none)"}:
+            prefix = canonicalize_url(explore_value)
+            if (urlparse(prefix).hostname or "").rstrip(".").lower() != host:
+                raise ValueError("Explore within must be an address on the same host as the starting page.")
+            parsed = urlparse(prefix)
+            # A prefix names a folder: "…/forms" reads "…/forms" and "…/forms/…", not "…/forms-archive".
+            path = parsed.path if parsed.path.endswith("/") else parsed.path + "/"
+            explore = [urlunparse((parsed.scheme, parsed.netloc, path, "", "", ""))]
+    hosts_value = _optional_field(body, "Document hosts")
+    document_hosts = None
+    if hosts_value is not None:
+        document_hosts = []
+        if hosts_value.lower() not in {"", "none", "(none)"}:
+            for item in re.split(r"[,\s]+", hosts_value):
+                candidate = item.strip().lower().rstrip(".")
+                if not candidate:
+                    continue
+                if not re.fullmatch(r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+", candidate):
+                    raise ValueError(f"Document host {candidate!r} must be a bare public hostname such as www.example.gov.")
+                canonicalize_url(f"https://{candidate}/")  # rejects local, internal and private destinations
+                if candidate != host and candidate not in document_hosts:
+                    document_hosts.append(candidate)
+            if len(document_hosts) > MAX_DOCUMENT_HOSTS:
+                raise ValueError(f"At most {MAX_DOCUMENT_HOSTS} document hosts can be listed.")
+    return explore, document_hosts
+
+
+def _apply_scope(channel: dict, explore_prefixes: list[str] | None, document_hosts: list[str] | None) -> None:
+    for key, value in (("explore_prefixes", explore_prefixes), ("document_hosts", document_hosts)):
+        if value is None:
+            continue
+        if value:
+            channel[key] = list(value)
+        else:
+            channel.pop(key, None)
+
+
 def _configure_scout_source(
     scout_config: dict,
     url: str,
     display_name: str,
     crawl_depth: int,
+    explore_prefixes: list[str] | None = None,
+    document_hosts: list[str] | None = None,
 ) -> tuple[bool, str, str]:
     """Add/update a bounded weekly Scout listing in memory, then validate the full profile."""
     from regmon.scout.profiles import parse_config
@@ -522,8 +595,10 @@ def _configure_scout_source(
                     "link_prefixes": prefixes,
                     "label": channel.get("label") or display_name[:160],
                 }
-                changed = any(channel.get(key) != value for key, value in new_values.items())
+                before = json.dumps(channel, sort_keys=True)
                 channel.update(new_values)
+                _apply_scope(channel, explore_prefixes, document_hosts)
+                changed = json.dumps(channel, sort_keys=True) != before
                 regulator_id = str(regulator.get("id") or "")
                 parse_config(scout_config)
                 return changed, str(channel.get("id") or channel_id), regulator_id
@@ -546,8 +621,10 @@ def _configure_scout_source(
         if origin_prefix not in prefixes:
             prefixes.append(origin_prefix)
         new_values = {"crawl_depth": crawl_depth, "link_prefixes": prefixes, "label": display_name[:160]}
-        changed = any(existing_channel.get(key) != value for key, value in new_values.items())
+        before = json.dumps(existing_channel, sort_keys=True)
         existing_channel.update(new_values)
+        _apply_scope(existing_channel, explore_prefixes, document_hosts)
+        changed = json.dumps(existing_channel, sort_keys=True) != before
         regulator_id = str(existing_regulator.get("id") or "")
         parse_config(scout_config)
         return changed, channel_id, regulator_id
@@ -561,6 +638,7 @@ def _configure_scout_source(
         "link_prefixes": [origin_prefix],
         "crawl_depth": crawl_depth,
     }
+    _apply_scope(channel, explore_prefixes, document_hosts)
 
     # Reuse an existing profile for this exact host when possible. Otherwise
     # create an explicitly labelled custom profile; OTHER is a category, not a
@@ -632,6 +710,12 @@ def register_request(
         raise ValueError("Scout weekly discovery requires crawl depth 1, 2, or 3.")
     if scout_enabled and scout_config_path is None:
         raise ValueError("Scout discovery was selected, but no Scout config path was supplied to registration.")
+    # "Discovery only" sets up link discovery without adding any monitor: the
+    # links Scout finds are candidates the owner selects from in the dashboard.
+    discovery_only = bool(_yes_no_field(body, "Discovery only"))
+    explore_prefixes, document_hosts = _discovery_scope(body, url)
+    if (discovery_only or explore_prefixes is not None or document_hosts is not None) and not scout_enabled:
+        raise ValueError("Discovery only, Explore within and Document hosts require Scout discovery: yes.")
 
     config = json.loads(config_path.read_text(encoding="utf-8"))
     sources = config.setdefault("sources", [])
@@ -640,6 +724,37 @@ def register_request(
 
     metadata = _fetch_page_metadata(url) if not requested_name else {}
     display_name = requested_name or metadata.get("title", "")
+
+    if discovery_only:
+        scout_data = json.loads(Path(scout_config_path).read_text(encoding="utf-8"))
+        scout_changed, scout_channel_id, scout_regulator_id = _configure_scout_source(
+            scout_data, url, str(display_name or url), crawl_depth, explore_prefixes, document_hosts
+        )
+        if scout_changed:
+            Path(scout_config_path).write_text(
+                json.dumps(scout_data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+            )
+        return {
+            "source_id": "",
+            "source_ids": [],
+            "url": url,
+            "name": str(display_name or url),
+            "created": False,
+            "crawl_depth": crawl_depth,
+            "crawl_depth_updated": False,
+            "discovery_only": True,
+            "scout_enabled": True,
+            "scout_configured": True,
+            "scout_changed": scout_changed,
+            "scout_channel_id": scout_channel_id,
+            "scout_regulator_id": scout_regulator_id,
+            "explore_prefixes": explore_prefixes or [],
+            "document_hosts": document_hosts or [],
+            "message": (
+                f"Link discovery is configured at depth {crawl_depth} (channel {scout_channel_id}). "
+                "No monitor was added; discovered links are candidates to select from."
+            ),
+        }
 
     existing = _existing_source_for_request(
         sources,
@@ -713,7 +828,8 @@ def register_request(
     if scout_enabled:
         scout_data = json.loads(Path(scout_config_path).read_text(encoding="utf-8"))
         scout_changed, scout_channel_id, scout_regulator_id = _configure_scout_source(
-            scout_data, url, str(source_result["name"] or display_name or url), crawl_depth
+            scout_data, url, str(source_result["name"] or display_name or url), crawl_depth,
+            explore_prefixes, document_hosts,
         )
 
     # Validate both proposed files before replacing either one. GitHub commits
@@ -726,6 +842,7 @@ def register_request(
         )
 
     source_result["crawl_depth_updated"] = crawl_depth_updated
+    source_result["discovery_only"] = False
     source_result["scout_enabled"] = scout_enabled
     source_result["scout_configured"] = scout_enabled
     source_result["scout_changed"] = scout_changed

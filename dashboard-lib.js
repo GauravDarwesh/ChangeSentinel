@@ -1317,7 +1317,200 @@
     return String(text || "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, max || 48).replace(/-+$/, "") || "change";
   }
 
+  /* ---------- Add a link: links found by exploring or following a page ----------
+   *
+   * The dialog collects links two ways (exploring a page, or following its
+   * links by level) and ends in one checklist. Nothing here ranks, hides or
+   * approves a link: what is shown is what the pages linked to, and only the
+   * links the owner ticks are submitted.
+   */
+  const PICK_FORMATS = [
+    [/\.pdf$/, "PDF"], [/\.(xlsx|xls|xlsm|csv)$/, "Spreadsheet"], [/\.(docx|doc)$/, "Word"], [/\.(pptx|ppt)$/, "Slides"],
+    [/\.zip$/, "ZIP"], [/\.(xml|xsd|xbrl)$/, "XML"], [/\.json$/, "JSON"], [/\.txt$/, "Text"]
+  ];
+  const PICK_MAX_LINKS = 25;
+  const PICK_MAX_REQUEST_LENGTH = 7000;
+
+  function pickFormat(url) {
+    let path = "";
+    try { path = new URL(url).pathname.toLowerCase(); } catch (_) { return "Web page"; }
+    const match = PICK_FORMATS.find(([pattern]) => pattern.test(path));
+    return match ? match[1] : "Web page";
+  }
+  // Readable words from an address when a link has no text of its own.
+  function pickSlug(url) {
+    try {
+      const segments = new URL(url).pathname.split("/").filter(Boolean);
+      while (segments.length) {
+        const words = decodeURIComponent(segments.pop()).replace(/\.[a-z0-9]{2,5}$/i, "").replace(/[-_+.]+/g, " ").trim();
+        if (words && !/^[\d\s]+$/.test(words)) return words.charAt(0).toUpperCase() + words.slice(1);
+      }
+      return new URL(url).hostname;
+    } catch (_) { return String(url || ""); }
+  }
+
+  // Whether following-by-level may read this page: the starting host, and the
+  // chosen folder when there is one. Links outside are still listed, not read.
+  function pickInScope(url, startUrl, prefix) {
+    try {
+      const target = new URL(canonicalUrl(url));
+      const start = new URL(canonicalUrl(startUrl));
+      if (target.hostname.toLowerCase() !== start.hostname.toLowerCase()) return false;
+      if (!prefix) return true;
+      const folder = new URL(prefix).pathname.replace(/\/+$/, "");
+      const path = target.pathname.replace(/\/+$/, "");
+      return path === folder || path.indexOf(folder + "/") === 0;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function pickSections(items) {
+    const groups = [];
+    const index = new Map();
+    (items || []).forEach(item => {
+      const label = item.section || "";
+      if (!index.has(label)) { index.set(label, groups.length); groups.push({ section: label, items: [] }); }
+      groups[index.get(label)].items.push(item);
+    });
+    return groups;
+  }
+
+  function pickMatches(item, filters) {
+    const f = filters || {};
+    if (f.format && f.format !== "ALL") {
+      const known = ["PDF", "Web page", "Spreadsheet", "Word"];
+      if (f.format === "OTHER" ? known.includes(item.format) : item.format !== f.format) return false;
+    }
+    if (f.selectedKeys && f.show === "SELECTED" && !f.selectedKeys.has(item.key)) return false;
+    const query = String(f.query || "").trim().toLowerCase();
+    if (!query) return true;
+    return [item.title, item.url, item.section, item.parentTitle].join(" ").toLowerCase().indexOf(query) >= 0;
+  }
+
+  // The checklist: links grouped by the page they were found on, then by the
+  // heading they sat under, in the order they were found.
+  function pickGroupBy(items, filters) {
+    const groups = [];
+    const index = new Map();
+    (items || []).filter(item => pickMatches(item, filters)).forEach(item => {
+      const key = urlKey(item.parentUrl || "") + "\u0000" + (item.section || "");
+      if (!index.has(key)) {
+        index.set(key, groups.length);
+        groups.push({ key, parentUrl: item.parentUrl || "", parentTitle: item.parentTitle || pickSlug(item.parentUrl || ""), section: item.section || "", items: [] });
+      }
+      groups[index.get(key)].items.push(item);
+    });
+    return groups;
+  }
+
+  // What will happen when the selection is submitted, counted honestly.
+  function pickSummary(selection, monitoredKeys) {
+    const rows = Array.isArray(selection) ? selection : [];
+    const seen = new Set();
+    let duplicates = 0;
+    let monitored = 0;
+    const pending = [];
+    rows.forEach(row => {
+      const key = urlKey(row && row.url);
+      if (!key) return;
+      if (seen.has(key)) { duplicates += 1; return; }
+      seen.add(key);
+      if (monitoredKeys && monitoredKeys.has(key)) monitored += 1;
+      else pending.push(row);
+    });
+    return { selected: seen.size, monitored, duplicates, pending, toRequest: pending.length };
+  }
+
+  // Split the URLs to request into owner-approved bulk requests: at most 25 links
+  // and a prefilled address short enough for GitHub. Nothing is ever dropped:
+  // a link too long for any request is reported, not truncated.
+  function pickBatches(rows, buildUrl, maxLinks, maxLength) {
+    const limit = maxLinks || PICK_MAX_LINKS;
+    const lengthLimit = maxLength || PICK_MAX_REQUEST_LENGTH;
+    const batches = [];
+    const tooLong = [];
+    let current = [];
+    (rows || []).forEach(row => {
+      if (buildUrl([row]).length > lengthLimit) { tooLong.push(row); return; }
+      const candidate = current.concat([row]);
+      if (current.length && (candidate.length > limit || buildUrl(candidate).length > lengthLimit)) {
+        batches.push(current);
+        current = [row];
+      } else {
+        current = candidate;
+      }
+    });
+    if (current.length) batches.push(current);
+    return { batches, tooLong };
+  }
+
+  // A descriptive monitor name: the link text, with its section when the text alone is thin.
+  function pickMonitorName(item) {
+    const title = String((item && item.title) || "").replace(/[\r\n]+/g, " ").trim();
+    const section = String((item && item.section) || "").replace(/[\r\n]+/g, " ").trim();
+    const thin = title.length < 18 && section && title.toLowerCase().indexOf(section.toLowerCase()) < 0;
+    return (thin ? section + ": " + title : title).slice(0, 100);
+  }
+
+  // Plain-language choices for where discovery may read pages, from one URL.
+  function pickScopeOptions(value) {
+    let url;
+    try { url = new URL(canonicalUrl(value)); } catch (_) { return []; }
+    const path = url.pathname.replace(/\/+$/, "");
+    const segments = path.split("/").filter(Boolean);
+    const options = [];
+    if (segments.length) options.push({ id: "page", prefix: url.origin + path + "/", path: path + "/", label: "Only pages under this page" });
+    if (segments.length > 1) {
+      const parent = "/" + segments.slice(0, -1).join("/") + "/";
+      options.push({ id: "section", prefix: url.origin + parent, path: parent, label: "Pages in the same section" });
+    }
+    options.push({ id: "site", prefix: "", path: "/", label: "Anywhere on " + url.hostname });
+    return options;
+  }
+
+  function pickHosts(value, startUrl) {
+    let start = "";
+    try { start = new URL(startUrl).hostname.toLowerCase(); } catch (_) {}
+    const hosts = [];
+    const invalid = [];
+    String(value || "").split(/[\s,]+/).forEach(raw => {
+      const host = raw.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "").replace(/\.$/, "");
+      if (!host) return;
+      const ok = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/.test(host) &&
+        !/(^localhost$|\.localhost$|\.local$|\.internal$|\.lan$|\.home$)/.test(host) && !/^\d+(\.\d+){3}$/.test(host);
+      if (!ok) invalid.push(raw.trim());
+      else if (host !== start && hosts.indexOf(host) < 0) hosts.push(host);
+    });
+    return { hosts, invalid };
+  }
+
+  // The Add Link request that sets up discovery only: the owner workflow saves a
+  // Scout channel and adds no monitor. Field order matters to the parser: the
+  // scope fields come before the selector fields.
+  function pickDiscoveryRequest(options) {
+    const o = options || {};
+    const depth = [1, 2, 3].indexOf(Number(o.depth)) >= 0 ? Number(o.depth) : 2;
+    const body = [
+      "<!-- changesentinel:add-monitor:v1 -->", "",
+      "Please re-check this page weekly for new links. Do not add it as a monitor; new links appear in Scout for review.", "",
+      "URL: " + o.url,
+      "Name: " + String(o.name || "").replace(/[\r\n]+/g, " ").trim().slice(0, 100),
+      "Crawl depth: " + depth,
+      "Scout discovery: yes",
+      "Discovery only: yes",
+      "Explore within: " + (o.explore || ""),
+      "Document hosts: " + (o.documentHosts || []).join(", "),
+      "Include selector: ",
+      "Ignore selectors:", "(none)", "",
+      "This request was created from the ChangeSentinel dashboard."
+    ];
+    return { title: "[ChangeSentinel] Add monitor request: weekly link check", body: body.join("\n") };
+  }
+
   return {
+    pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
+    pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH,
     diffSequences, alignLines, changedWords,
     esc, nextScheduledScan, scanCycle, runColumns, columnCellState, pendingScan, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,

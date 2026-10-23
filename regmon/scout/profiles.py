@@ -62,6 +62,13 @@ class Channel:
     # Optional recursive link discovery for user-configured listing roots.
     # None preserves the existing one-page listing behaviour.
     crawl_depth: int | None = None
+    # Optional for depth-limited listings only. explore_prefixes narrows which
+    # HTML pages are fetched to find more links (empty: any in-scope page, the
+    # original behaviour); candidates are still governed by link_prefixes.
+    # document_hosts lets document links (PDF, spreadsheet, ...) on another
+    # declared host surface as candidates. Those hosts are never fetched.
+    explore_prefixes: tuple[str, ...] = ()
+    document_hosts: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -211,6 +218,16 @@ def _channel(raw: dict, regulator_id: str, hosts: tuple[str, ...], seen: set[str
     selector = str(raw.get("content_selector") or "").strip()
     if len(selector) > 200:
         raise ConfigError(f"{channel_id}: content_selector is too long")
+    explore = tuple(_url(prefix, f"{channel_id}: explore_prefixes", hosts)
+                    for prefix in _strings(raw.get("explore_prefixes"), f"{channel_id}: explore_prefixes"))
+    document_hosts = tuple(item.lower().rstrip(".") for item in _strings(raw.get("document_hosts"), f"{channel_id}: document_hosts"))
+    if (explore or document_hosts) and crawl_depth is None:
+        raise ConfigError(f"{channel_id}: explore_prefixes and document_hosts apply only to depth-limited listings (crawl_depth)")
+    if len(explore) > 10 or len(document_hosts) > 10:
+        raise ConfigError(f"{channel_id}: at most 10 explore_prefixes and 10 document_hosts are allowed")
+    for item in document_hosts:
+        if "/" in item or ":" in item or "." not in item or not re.fullmatch(r"[a-z0-9.-]+", item):
+            raise ConfigError(f"{channel_id}: document host {item!r} must be a bare hostname")
     return Channel(
         id=channel_id,
         type=kind,
@@ -223,6 +240,8 @@ def _channel(raw: dict, regulator_id: str, hosts: tuple[str, ...], seen: set[str
         pagination=pagination,
         newest_first=bool(raw.get("newest_first", False)),
         crawl_depth=crawl_depth,
+        explore_prefixes=explore,
+        document_hosts=document_hosts,
     )
 
 

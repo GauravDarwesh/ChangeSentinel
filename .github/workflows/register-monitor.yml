@@ -71,13 +71,16 @@ jobs:
             COUNT="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("count", 1))')"
             CREATED_COUNT="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(d.get("created_count", int(d["created"])))')"
             EXISTING_COUNT="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(d.get("existing_count", int(not d["created"])))')"
+            DISCOVERY_ONLY="$(python -c 'import json,os; print(str(bool(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("discovery_only", False))).lower())')"
             if git diff --quiet -- config/sources.json config/scout.json; then
               echo "All requested monitor and Scout settings are already configured."
               success=true
               break
             fi
             git add config/sources.json config/scout.json
-            if [ "$BULK" = "true" ]; then
+            if [ "$DISCOVERY_ONLY" = "true" ]; then
+              git commit -m "Register Scout link discovery (no monitor added)"
+            elif [ "$BULK" = "true" ]; then
               git commit -m "Register manually requested monitor batch ($COUNT links)"
             elif [ "$SCOUT_ENABLED" = "true" ]; then
               git commit -m "Register monitor and weekly Scout discovery"
@@ -108,6 +111,7 @@ jobs:
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
           echo "created_count=$CREATED_COUNT" >> "$GITHUB_OUTPUT"
           echo "existing_count=$EXISTING_COUNT" >> "$GITHUB_OUTPUT"
+          echo "discovery_only=$DISCOVERY_ONLY" >> "$GITHUB_OUTPUT"
 
       - name: Publish updated source configuration to Pages
         env:
@@ -119,7 +123,7 @@ jobs:
           gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main
 
       - name: Start first monitoring scan
-        if: steps.register.outputs.deleted != 'true'
+        if: steps.register.outputs.deleted != 'true' && steps.register.outputs.discovery_only != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           SOURCE_IDS: ${{ steps.register.outputs.source_ids }}
@@ -164,9 +168,12 @@ jobs:
           SCOUT_ENABLED: ${{ steps.register.outputs.scout_enabled }}
           CRAWL_DEPTH: ${{ steps.register.outputs.crawl_depth }}
           SCOUT_REGULATOR_ID: ${{ steps.register.outputs.scout_regulator_id }}
+          DISCOVERY_ONLY: ${{ steps.register.outputs.discovery_only }}
         run: |
           set -euo pipefail
-          if [ "$DELETED" = "true" ]; then
+          if [ "$DISCOVERY_ONLY" = "true" ]; then
+            message="Saved link discovery for $MONITOR_URL through link depth $CRAWL_DEPTH (Scout profile $SCOUT_REGULATOR_ID). No monitor was added. A first discovery sweep has been queued; when it finishes, open Discover in the dashboard to pick the links to monitor. Only links you select and submit become monitors."
+          elif [ "$DELETED" = "true" ]; then
             message="Stopped monitoring $MONITOR_URL in source ${SOURCE_IDS%%;*}. Future scans will exclude this URL; existing reports and saved evidence were retained."
           elif [ "$BULK" = "true" ]; then
             message="Bulk registration processed $COUNT unique links: $CREATED_COUNT new monitors and $EXISTING_COUNT already configured. The first monitoring scan has been queued for each requested source."
@@ -180,7 +187,7 @@ jobs:
             SOURCE_ID="${SOURCE_IDS%%;*}"
             message="$MONITOR_URL is already configured under source $SOURCE_ID. A monitoring scan has been queued."
           fi
-          if [ "$SCOUT_ENABLED" = "true" ]; then
+          if [ "$SCOUT_ENABLED" = "true" ] && [ "$DISCOVERY_ONLY" != "true" ]; then
             message="$message Weekly Scout discovery is enabled through link depth $CRAWL_DEPTH (profile $SCOUT_REGULATOR_ID). Newly discovered or replacement document URLs will appear in Scout for review; they are not silently added as monitors."
           fi
           gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$message"

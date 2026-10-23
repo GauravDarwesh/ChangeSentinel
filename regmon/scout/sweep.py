@@ -59,7 +59,21 @@ def page_url(channel: Channel, index: int) -> str:
     return urlunparse(parsed._replace(query=urlencode(query)))
 
 
+def is_cross_host_document(url: str, regulator: Regulator, channel: Channel) -> bool:
+    """A document link on a host the channel explicitly lists in document_hosts.
+
+    The format is read from the address alone (a "(PDF)" label could sit on an
+    HTML page), and such a link is a candidate only: Scout never fetches it.
+    """
+    item_host = host(url)
+    return (bool(channel.document_hosts) and item_host not in regulator.hosts and item_host in channel.document_hosts
+            and file_format(url) != "Web page" and not is_asset(url))
+
+
 def in_candidate_scope(url: str, regulator: Regulator, channel: Channel) -> bool:
+    if is_cross_host_document(url, regulator, channel):
+        path = urlparse(url).path or "/"
+        return not any(re.search(pattern, url) for pattern in channel.exclude_link_patterns) and path not in {"", "/"}
     if host(url) not in regulator.hosts or is_asset(url):
         return False
     value = canonical(url, regulator.https_hosts)
@@ -156,6 +170,24 @@ def run_sitemap(client: PoliteClient, regulator: Regulator, run: ChannelRun, con
         raise ParseError("The sitemap listed no URLs")
 
 
+def may_explore(url: str, regulator: Regulator, channel: Channel) -> bool:
+    """Whether a candidate page may be fetched to look for further links.
+
+    Without explore_prefixes every in-scope page may be (the original
+    behaviour). With them, only pages under one of those prefixes are read;
+    links found elsewhere are still recorded as candidates, just not followed.
+    """
+    if host(url) not in regulator.hosts:
+        return False
+    if not channel.explore_prefixes:
+        return True
+    value = canonical(url, regulator.https_hosts)
+    prefixes = [canonical(prefix, regulator.https_hosts) for prefix in channel.explore_prefixes]
+    # canonical() drops a trailing slash, so "…/section/" also matches the
+    # section page itself; a sibling such as "…/section-two" does not match.
+    return any(value == prefix or value.startswith(prefix.rstrip("/") + "/") for prefix in prefixes)
+
+
 def _run_depth_limited_listing(client: PoliteClient, regulator: Regulator, run: ChannelRun) -> None:
     """Discover linked pages and documents up to a bounded number of same-host hops.
 
@@ -163,7 +195,9 @@ def _run_depth_limited_listing(client: PoliteClient, regulator: Regulator, run: 
     Only non-asset pages at levels below the configured maximum are fetched to
     discover further links; assets such as PDFs are recorded but never parsed as
     pages. PoliteClient enforces robots.txt, request budgets, host scope and SSRF
-    protections for every request.
+    protections for every request. An optional explore scope narrows which pages
+    are read; optional document hosts admit cross-host document links as
+    candidates without ever fetching them.
     """
     channel = run.channel
     depth_limit = int(channel.crawl_depth or 0)
@@ -211,13 +245,17 @@ def _run_depth_limited_listing(client: PoliteClient, regulator: Regulator, run: 
                     context=link.context,
                     date_hint=link.date_hint,
                     parent_url=response.url,
+                    depth=link_depth,
+                    section=link.section,
                 )
 
             # At the final configured level URLs are surfaced as Scout findings,
-            # but aren't fetched. PDFs and other assets are never enqueued.
+            # but aren't fetched. PDFs and other assets are never enqueued, and
+            # neither is anything outside the optional explore scope.
             if (
                 link_depth < depth_limit
                 and file_format(link.url, f"{link.anchor_text} {link.title_attr}") == "Web page"
+                and may_explore(link.url, regulator, channel)
                 and key not in visited
                 and key not in queued
             ):
