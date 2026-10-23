@@ -1,4 +1,35 @@
 {
-  "pending_events": {},
-  "updated_at": "2026-10-22T04:28:01.228284+00:00"
+  "pending_events": {
+    "op-5e5809a57639a79a64a250d56bb9bfd3be0cb0bab2dd6ccd3b17a1f6ce3e4e0a": {
+      "event_id": "op-5e5809a57639a79a64a250d56bb9bfd3be0cb0bab2dd6ccd3b17a1f6ce3e4e0a",
+      "source_event_id": "3cd6548e354f201da2d7b9ed7f728a5e4bfebd43fee4efdd19d5dcbeb31041b4",
+      "kind": "EXTRACTION_ERROR",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx",
+      "topic": "Monitoring operational alert",
+      "summary": "The current run could not fully process a monitored regulator resource.",
+      "reason": "ZIP validation failed: ValueError: ZIP archive contains more than 256 entries",
+      "impact": "The previous known-good baseline was preserved.",
+      "priority": 3,
+      "tags": [
+        "warning",
+        "monitoring"
+      ]
+    },
+    "op-5413d389446b6cec5b5acdf61107932c84cac21998514b94986d013a1fd4afcc": {
+      "event_id": "op-5413d389446b6cec5b5acdf61107932c84cac21998514b94986d013a1fd4afcc",
+      "source_event_id": "ed7b26ee381208c698c901af10e98fb7a11f4ada46efaa96f5c34f3d1861d27b",
+      "kind": "EXTRACTION_ERROR",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx",
+      "topic": "Monitoring operational alert",
+      "summary": "The current run could not fully process a monitored regulator resource.",
+      "reason": "ZIP validation failed: ValueError: ZIP archive contains more than 256 entries",
+      "impact": "The previous known-good baseline was preserved.",
+      "priority": 3,
+      "tags": [
+        "warning",
+        "monitoring"
+      ]
+    }
+  },
+  "updated_at": "2026-10-23T12:53:50.729575+00:00"
 }

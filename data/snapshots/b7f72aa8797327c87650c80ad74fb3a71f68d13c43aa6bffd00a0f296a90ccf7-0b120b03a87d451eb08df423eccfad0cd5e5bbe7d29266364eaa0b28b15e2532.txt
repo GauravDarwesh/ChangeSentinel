@@ -1,0 +1,151 @@
+Basel Capital Adequacy Reporting (BCAR) FAQ Technical Specification
+Information
+Type of document
+FAQs
+Industry
+Deposit-taking institutions
+Return
+Basel Capital Adequacy Reporting (BCAR)
+Last updated
+February 26, 2024
+Related documents
+- Basel Capital Adequacy Reporting (BCAR) 2026
+- Basel Capital Adequacy Reporting (BCAR) 2027
+1. Introduction
+OSFI has specified a return for the Basel Capital Adequacy Reporting (BCAR) data call. This return must be submitted to OSFI through the Tri-Agency Database System called RRS (Regulatory Reporting System). This document highlights the technical file layout and format for that submission file.
+Bibliography
+Please note that the “XX” in the year denotes the start of the next fiscal reporting period.
+These files are available for download at:
+Basel Capital Adequacy Reporting (BCAR)
+2. Basic concepts and terms
+In this section, we explain a number of concepts and terms related to the way that Return data is organized within a Return data file. We begin with a description of how to read the new BCAR template then move to dimensions and measurement records. Then these concepts are related to record types, which specify a grouping of dimensional records that you will provide in your Return data file.
+The most significant change to the return data file is that it is being collected in an XML format rather than the existing .dat format. Extensible Markup Language (XML) lets you define and store data in a shareable manner. XML supports information exchange between computer systems such as websites, databases, and third-party applications.
+2.1. How to read the new BCAR templates
+The BCAR return can be divided into two concepts. The conventional format of data collection and the dimensional format of data collection.
+The conventional cells are represented by a single location or cell where a value is required.
+There is no additional dimensionality. These are identified with a 4- or 5-digit DPA numbers.
+An example is DPA 1001 which exists on Schedule 10.010 and has a label of Tier 1 Capital Ratio (%). The representation of these 4- or 5-digit DPAs is unchanged in the new definition of BCAR.
+The dimensional cells do not have a unique number attached to them. They are represented as a cross section of dimension codes and a measure. The cells are not individually numbered.
+3. Dimensions, measures, and information categories (record types)
+3.1. Dimensions
+A dimension is a list of business categories that are grouped under a single business concept. BCAR contains 8 dimensions as highlighted in the list below. Note that previously DD Double Default Framework was a dimension but is no longer reported.
+Dimension ID
+- Approach type (APPROACH_TYPE)
+- Exposure class (EXP_CL)
+- Risk type (RISK_TYPE)
+- Equity type (EQUITY_TYPE)
+- Exposure Type (EXP_TYPE)
+- PD Bands (PD)
+- Risk weight (RISK_WEIGHT)
+- Country (COUNTRY)
+3.2. Dimension codes
+Dimension codes are the specific values associated with each dimension. Each dimension code is identified by a label and a dimension ID.
+For instance, the following dimension codes are part of the Exposure Class but not limited to these:
+- Sovereign (106)
+- Public Sector Entities (PSEs) (120)
+- Multilateral Development Banks (MDB) (121)
+- Bank (excluding Covered Bonds) (107)
+The number of dimension codes used can change with every housekeeping cycle.
+For a complete list of all the dimension codes and how they are used please refer to:
+OSFI, “Technical Specifications (Technical Specification - Effective QX 20XX)”, Microsoft Excel Spreadsheet, Unclassified OSFI Publication.
+3.3. Measures
+Measures are specific addresses or cells that represent a value that needs to be reported.
+Typically, a measure will be a unique cell in valid combination of dimension codes.
+For a complete list of all the measures and how they are used please refer to:
+OSFI, “Technical Specifications (Technical Specification - Effective QX 20XX)”, Microsoft Excel Spreadsheet, Unclassified OSFI Publication.
+3.4. Information categories (record types)
+OSFI is responsible for collecting and evaluating several general categories of information. Each information category is defined by a set of dimensions and measures.
+Note that Record Type 025 is no longer collected.
+| Record type code | Description |
+| --- | --- |
+| 005 | The standardized approach to calculating credit risk-weighted assets |
+| 010 | Exposures reported under the general IRB approach |
+| 015 | Specialized lending is a subclass of Corporate for which the reporting institution does not meet the requirements for estimating PDs and cannot use the risk-weight formulas. In these cases, it must use a Supervisory Slotting approach to calculate risk-weighted assets. |
+| 030 | Within the corporate and retail exposure classes, eligible purchased receivables are given unique treatment, whereby risk-weighted assets are calculated separately for default and for dilution risk. |
+| 035 | Measures relating to eligible purchased receivables qualifying for special treatment are captured in this record type as well as in Purchased Receivables |
+| 040 | Data collected by Reverse mortgages are given special capital treatment set out in the Advisory on Capital Treatment of Reverse Mortgages |
+| 045 | Reverse Mortgages to be deducted from capital as set out in the Advisory on the Capital Treatment of Reverse Mortgages |
+| 050 | Countercyclical Buffer (CCyB) Requirement |
+| 055 | Countercyclical Buffer (CCyB) Requirement for Category III SMSBs |
+For a complete list of all the Record types and how they are used please refer to:
+OSFI, “Technical Specifications (Technical Specification - Effective QX 20XX)”, Microsoft Excel Spreadsheet, Unclassified OSFI Publication.
+3.5. Invalid Combinations (holes)
+An invalid combination otherwise known as a hole is an instance where a value is not required. Currently this applies to BCAR returns only, although in the future it may apply to other returns as well.
+Measure Holes – a measure hole is a single cell where a value is not required.
+Dimensional Holes – A dimensional hole is a series of measure holes that may or may not appear on the table. It is often represented by its absence. In the example Schedule 40.050 record Type 005 is defined as having multiple Exposure Types (EXP_TYPE) yet only three are displayed for data entry:
+- Exposure Types (EXP_TYPE) = Drawn (501)
+- Exposure Types (EXP_TYPE) = Undrawn commitment (502)
+- Exposure Types (EXP_TYPE) = Other off-balance sheet (505)
+There are several exposure types that are not required in this schedule:
+Note that Exposure Type (EXP_TYPE)= Repo-Style Transaction (503) is absent from Schedule 40.150 – Record Type 005 although it is on the list of allowed values.
+Since there are no values required across the full range of all the measures for this Exposure Type it is not even displayed on the schedule. Had it been displayed all its values would have been greyed out. This is a dimensional hole.
+Do not submit data for any measure or dimensional holes otherwise you will receive a validation error.
+4. Submission file requirements
+The following sections describe the BCAR Return extract file layout required by RRS.
+4.1. File type and naming convention
+The BCAR submission is collected in an XML Format.
+XML supports information exchange between computer systems such as websites, databases, and third-party applications.
+There are no requirements for the name of the file submission.
+An XSD and a Sample XML file are provided on the OSFI web site. An XSD is An XML schema definition (XSD), which is a framework document that defines the rules and constraints for XML documents.
+For an exact listing of all the Record Types, Dimensions, Dimension Codes and Measures please refer to:
+OSFI, “Technical Specifications (Technical Specification - Effective QX 20XX)”, Microsoft Excel Spreadsheet, Unclassified OSFI Publication.
+4.2. Submission file structure – Conventional datapoints
+When creating a submission file for a conventional 4- or 5-digit DPA please note the following
+- Identify the datapoint for which you wish to submit a value. You can review
+OSFI, “BCAR 20XX Return (BCAR 20XX return - Effective QX 20XX)”, Microsoft Excel Spreadsheet, Unclassified OSFI Publication.
+- As an example, datapoint 5615 exists on schedule 10.050 (Cell D27).
+- In the document “BCAR XML Sample File (BCAR Sample XML - Effective QX 20XX)”, for sample purposes only, the value represents the datapoint number.
+- The tags around the value identify the datapoint number by the formula of “_x003” + first datapoint digit + underscore + remaining 3 or 4 datapoint digits. (Example line #’s 35-37).
+35 <_x0035_615> 36 <value>5615</value> 37 </_x0035_615>
+- In the document BCAR Return XSD (BCAR Sample XSD - Effective QX 20XX), this tag value can be linked back to the XSD to find the details such as datatype and hierarchy of other parent elements. For example, line #’s 82633, 82639 & 82645.
+82633 <xs:element minOccurs="0" maxOccurs="1" name="BA-6"> 82634 <xs:annotation> 82635 <xs:documentation>BA-6</xs:documentation> 82636 </xs:annotation> 82637 <xs:complexType> 82638 <xs:all> 82639 <xs:element minOccurs="0" maxOccurs="1" name="_x0035_615"> 82640 <xs:annotation> ... 82642 </xs:annotation> 82643 <xs:complexType> 82644 <xs:complexContent mixed="false"> 82645 <xs:extension base="Whole_x0020_Number">
+4.3. Submission file structure - Dimensional datapoints
+The dimensional submission section of the XML can be created and defined by following the same line of logic as the conventional submissions.
+- Identify the dimensional range that you wish to submit data.
+OSFI, “BCAR 20XX Return (BCAR 20XX return - Effective QX 20XX)”, Microsoft Excel Spreadsheet, Unclassified OSFI Publication.
+- In Schedule 40.010 we are aware that we wish to submit data for the following dimensional codes:
+- Record Type = 005 (Reference cell A4)
+- Exposure Class = Sovereign (106) (Reference cell A3)
+- Exposure Type = Undrawn Commitments (502)(Reference cell A4)
+- Risk Weight = 20% Rated (804)(Reference cell A22)
+- Measure = Notional Principal Amount (M12) (Reference cell B7)
+- The sample XML file: BCAR XML Sample File (BCAR Sample XML - Effective QX 20XX) can be reviewed to see how the elements are laid out on lines #s 18191, 18199, 18202 & 18205.
+An example taken from the BCAR XML Sample File document, showing the following XML tags: at line 18191, value tag around 106; at line 18199, value tag around 502; at line 18202, value tage around 804; and at line 18205 value tag around 120.
+18187 <BCAR> 18188 <_x0030_05> 18189 <_x0030_05_x0020_Repeat_x0020_Group> 18190 <EXP_CL> 18191 <value>106</value> 18192 </EXP_CL> 18193 <Standardized> 18194 <StandardizedTable> ... 18197 <StandardizedTable_x0020_Repeat_x0020_Group> 18198 <EXP_TYPE> 18199 <value>502</value> 18200 </EXP_TYPE> 18201 <RISK_WEIGHT> 18202 <value>804</value> 18203 </RISK_WEIGHT> 18204 <M12> 18205 <value>120</value> 18206 </M12> 18207 <M13> 18208 <value>130</value> 18209 </M13>
+In the document BCAR Return XSD (BCAR Sample XSD - Effective QX 20XX), this tag value can be linked back to the XSD to find the details such as datatype and hierarchy of other parent elements. For example, line #’s 154318 & 154324. The hierarchy can be different for each record type.
+BCAR Return XSD (BCAR Sample XSD - Effective QX 20XX)
+An example from the BCAR Return XSD document, showing the following XML tags: at line 154318, <xs:element minOccurs=“0” maxOccurs=“1” name=“EXP_CL”>, and at line 154324, <xs:extension base=“EXP_CL”>.
+154311 <xs:all> 154312 <xs:element minOccurs="0" maxOccurs="1" name="_x0030_05"> 154313 <xs:complexType> 154314 <xs:sequence minOccurs="0" maxOccurs="unbounded"> 154315 <xs:element minOccurs="1" maxOccurs="1" name="_x0030_05_x0020_Repeat_x0020_Group"> 154316 <xs:complexType> 154317 <xs:all> 154318 <xs:element minOccurs="0" maxOccurs="1" name="EXP_CL"> 154319 <xs:annotation> 154320 <xs:documentation>BCAR Exposure Classes / RNFPB - Catégories d'exposition</xs:documentation> 154321 </xs:annotation> 154322 <xs:complexType> 154323 <xs:complexContent mixed="false"> 154324 <xs:extension base="EXP_CL"> 154325 <xs:attribute default="item" name="type" /> 154326 </xs:extension> 154327 </xs:complexContent> 154328 </xs:complexType> 154329 </xs:element> 154330 <xs:element minOccurs="0" maxOccurs="1" name="Standardized"> 154331 <xs:annotation> 154332 <xs:documentation>Standardized</xs:documentation> 154333 </xs:annotation> 154334 <xs:complexType> 154335 <xs:all>
+5. Frequently asked questions
+Q: What if I have nothing to submit for a particular datapoint or measure?
+A: For instance, if you do not wish to submit a value for datapoint 5615 then just omit the element tags and the value tags. Do not submit empty value tags as this will result in a structural error
+Invalid - will throw an error
+35 <_x0035_615> 36 <value>|</value> 37 </_x0035_615>
+Instead omit the elements and value tags completely
+Q: For dimensional submission, is the structure of all the record types the same?
+A: No Record Types 005, 010, 030, 035 use a different hierarchy in the way the elements are laid out. Please refer the sample XML file and the XSD for details.
+OSFI, “BCAR XML Sample File (BCAR Sample XML - Effective QX 20XX)”, XML File, Unclassified OSFI Publication.
+This is an XML file that can be used as a sample submission file
+OSFI, “BCAR Return XSD (BCAR Sample XSD - Effective QX 20XX)”, XSD File, Unclassified OSFI Publication.
+This is an XSD file that defines the submission sample file.
+Q: Why does it seems that certain XML element tags are mapped to the reporting schedules while others seem to be more arbitrary?
+A: The RRS system, as with other internal systems, are shared between the Tri Agency – OSFI, Bank of Canada and CDIC. The different XML elements are used for compatibility between the Tri Agency’s internal systems. Please refer the sample XML file and the XSD for the correct elements to use.
+Q: What if I receive a rule or structural error that I don’t understand?
+A: Please send an email to RRSsupport-SDRsoutien@osfi-bsif.gc.ca.
+6. Version control
+| Version | Date | Author | Description |
+| --- | --- | --- | --- |
+| 1.0 | July 14, 2023 | Deniz Berkin | Document created |
+| 1.1 | February 26,2024 | Deniz Berkin | Updated for BCAR 2024 |
+Report a problem or mistake on this page
+Please select all that apply:
+A link, button or video is not working
+It has a spelling mistake
+Information is missing
+Information is outdated or wrong
+I can't find what I'm looking for
+Other issue not in this list
+Additional information
+Leave this field blank
+Date modified:
+2024-02-26

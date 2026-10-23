@@ -1,0 +1,34 @@
+{
+  "event_id": "ed7b26ee381208c698c901af10e98fb7a11f4ada46efaa96f5c34f3d1861d27b",
+  "event_type": "EXTRACTION_ERROR",
+  "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx",
+  "timestamp": "2026-10-23T12:53:14.115209+00:00",
+  "before": {
+    "normalized_hash": null,
+    "extraction_type": null,
+    "extractor_version": null,
+    "extraction_failed": false,
+    "raw_hash": null,
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": null,
+    "extraction_type": "zip",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": true,
+    "raw_hash": "392cdadc449b3c115699f71e1ce96365be0cc91095c6456507c56175cfae245f",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": "data/snapshots/files/87b1ac938a3fa3fe2d820d1e7537e4c140fae68f6db54064368c22e88270ae8f-392cdadc449b3c115699f71e1ce96365be0cc91095c6456507c56175cfae245f.zip"
+  },
+  "diff": "",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "error": "ZIP validation failed: ValueError: ZIP archive contains more than 256 entries"
+}

@@ -1,0 +1,16 @@
+{
+  "source_id": "manual-fcb1777378d0",
+  "method": "http-resumable",
+  "state": "COMPLETE",
+  "discovered": 1,
+  "html_processed": 0,
+  "successful_pages": 0,
+  "failed_pages": 0,
+  "capped": false,
+  "pending": 0,
+  "unresolved_failures": 0,
+  "checkpoint_schema_version": 3,
+  "config_fingerprint": "3b13da05add5a315beab27e745330fd9ed20eeef51dba96fedf2ba0b561e664c",
+  "inventory": "data/discovery/manual-fcb1777378d0-inventory-*.txt",
+  "failure_ledger": "data/discovery/manual-fcb1777378d0-failures.jsonl"
+}
