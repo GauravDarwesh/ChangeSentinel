@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261023T095308Z-0b23afa5",
-  "generated_at": "2026-10-23T09:56:43.050307+00:00",
+  "run_id": "20261023T112703Z-7266a1f7",
+  "generated_at": "2026-10-23T11:30:35.930519+00:00",
   "source": {
     "id": "manual-e49444f7481c",
     "name": "FR VV-1 Supplemental Information (Off-site)",
@@ -85,75 +85,15 @@
   },
   "events": [
     {
-      "event_id": "59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999",
+      "event_id": "6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47",
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.federalreserve.gov/apps/ReportingForms",
       "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
       "source_id": "manual-e49444f7481c",
-      "timestamp": "2026-10-23T09:56:43.050307+00:00",
-      "evidence_location": "data/evidence/59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999.json",
+      "timestamp": "2026-10-23T11:30:35.930519+00:00",
+      "evidence_location": "data/evidence/6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47.json",
       "evidence": {
         "previous": {
-          "schema_version": 2,
-          "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
-          "source_id": "manual-e49444f7481c",
-          "regulator": "www.federalreserve.gov",
-          "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
-          "first_seen": "2026-10-23T08:14:35.781047+00:00",
-          "last_seen": "2026-10-23T09:47:43.429866+00:00",
-          "last_checked": "2026-10-23T09:47:43.429866+00:00",
-          "last_full_fetch": "2026-10-23T09:47:43.429866+00:00",
-          "active": true,
-          "terminal_file": false,
-          "http_status": 200,
-          "content_type": "text/html; charset=utf-8",
-          "content_length": null,
-          "etag": null,
-          "last_modified": null,
-          "raw_hash": "ee5ac76b22723f3159e89a07a9b42774c75a342158aaecf33083dcdb977c0193",
-          "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
-          "html_hash": "ee5ac76b22723f3159e89a07a9b42774c75a342158aaecf33083dcdb977c0193",
-          "html_comparison_hash": "4c15061fa4c0a955b291ce068d6861ed05bf5a77f72ddc87c8d3bccf0622e63a",
-          "html_comparison_hash_version": 2,
-          "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-ee5ac76b22723f3159e89a07a9b42774c75a342158aaecf33083dcdb977c0193.html",
-          "file_snapshot_location": null,
-          "extraction_type": "html",
-          "extractor_version": "content-extractor-v7",
-          "extraction_error": null,
-          "fetch_error": null,
-          "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
-          "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json",
-          "relevance": {
-            "candidate": true,
-            "reason": "Regulatory signal detected",
-            "signals": [
-              "policy",
-              "report"
-            ]
-          },
-          "ai_pending": null,
-          "last_changed_at": null,
-          "change_history": [
-            {
-              "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T09:47:43.429866+00:00",
-              "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
-            },
-            {
-              "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T08:22:54.837336+00:00",
-              "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
-            }
-          ],
-          "not_modified": false,
-          "full_fetch_forced": false,
-          "html_baseline_forced": false,
-          "file_baseline_forced": false,
-          "extractor_baseline_forced": false
-        },
-        "current": {
           "schema_version": 2,
           "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
           "source_id": "manual-e49444f7481c",
@@ -218,6 +158,78 @@
           "html_baseline_forced": false,
           "file_baseline_forced": false,
           "extractor_baseline_forced": false
+        },
+        "current": {
+          "schema_version": 2,
+          "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
+          "source_id": "manual-e49444f7481c",
+          "regulator": "www.federalreserve.gov",
+          "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
+          "first_seen": "2026-10-23T08:14:35.781047+00:00",
+          "last_seen": "2026-10-23T11:30:35.930519+00:00",
+          "last_checked": "2026-10-23T11:30:35.930519+00:00",
+          "last_full_fetch": "2026-10-23T11:30:35.930519+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8",
+          "content_length": null,
+          "etag": null,
+          "last_modified": null,
+          "raw_hash": "ad9b728fe5345b897430776add7dac73346be316ca03701472a11e6465969d58",
+          "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
+          "html_hash": "ad9b728fe5345b897430776add7dac73346be316ca03701472a11e6465969d58",
+          "html_comparison_hash": "9a5a9485a48ccddc50cd4909ec51080a58c7feb85830b0ffcdbbd3e3a92f21b0",
+          "html_comparison_hash_version": 2,
+          "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-ad9b728fe5345b897430776add7dac73346be316ca03701472a11e6465969d58.html",
+          "file_snapshot_location": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
+          "evidence_location": "data/evidence/6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "Regulatory signal detected",
+            "signals": [
+              "policy",
+              "report"
+            ]
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T11:30:35.930519+00:00",
+              "evidence_location": "data/evidence/6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47.json"
+            },
+            {
+              "event_id": "59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T09:56:43.050307+00:00",
+              "evidence_location": "data/evidence/59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999.json"
+            },
+            {
+              "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T09:47:43.429866+00:00",
+              "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
+            },
+            {
+              "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T08:22:54.837336+00:00",
+              "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
         }
       }
     }
@@ -227,66 +239,6 @@
   "source_changed_urls": [
     {
       "before": {
-        "schema_version": 2,
-        "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
-        "source_id": "manual-e49444f7481c",
-        "regulator": "www.federalreserve.gov",
-        "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
-        "first_seen": "2026-10-23T08:14:35.781047+00:00",
-        "last_seen": "2026-10-23T09:47:43.429866+00:00",
-        "last_checked": "2026-10-23T09:47:43.429866+00:00",
-        "last_full_fetch": "2026-10-23T09:47:43.429866+00:00",
-        "active": true,
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=utf-8",
-        "content_length": null,
-        "etag": null,
-        "last_modified": null,
-        "raw_hash": "ee5ac76b22723f3159e89a07a9b42774c75a342158aaecf33083dcdb977c0193",
-        "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
-        "html_hash": "ee5ac76b22723f3159e89a07a9b42774c75a342158aaecf33083dcdb977c0193",
-        "html_comparison_hash": "4c15061fa4c0a955b291ce068d6861ed05bf5a77f72ddc87c8d3bccf0622e63a",
-        "html_comparison_hash_version": 2,
-        "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-ee5ac76b22723f3159e89a07a9b42774c75a342158aaecf33083dcdb977c0193.html",
-        "file_snapshot_location": null,
-        "extraction_type": "html",
-        "extractor_version": "content-extractor-v7",
-        "extraction_error": null,
-        "fetch_error": null,
-        "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
-        "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json",
-        "relevance": {
-          "candidate": true,
-          "reason": "Regulatory signal detected",
-          "signals": [
-            "policy",
-            "report"
-          ]
-        },
-        "ai_pending": null,
-        "last_changed_at": null,
-        "change_history": [
-          {
-            "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T09:47:43.429866+00:00",
-            "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
-          },
-          {
-            "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T08:22:54.837336+00:00",
-            "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
-          }
-        ],
-        "not_modified": false,
-        "full_fetch_forced": false,
-        "html_baseline_forced": false,
-        "file_baseline_forced": false,
-        "extractor_baseline_forced": false
-      },
-      "after": {
         "schema_version": 2,
         "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
         "source_id": "manual-e49444f7481c",
@@ -351,12 +303,84 @@
         "html_baseline_forced": false,
         "file_baseline_forced": false,
         "extractor_baseline_forced": false
+      },
+      "after": {
+        "schema_version": 2,
+        "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
+        "source_id": "manual-e49444f7481c",
+        "regulator": "www.federalreserve.gov",
+        "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
+        "first_seen": "2026-10-23T08:14:35.781047+00:00",
+        "last_seen": "2026-10-23T11:30:35.930519+00:00",
+        "last_checked": "2026-10-23T11:30:35.930519+00:00",
+        "last_full_fetch": "2026-10-23T11:30:35.930519+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "content_length": null,
+        "etag": null,
+        "last_modified": null,
+        "raw_hash": "ad9b728fe5345b897430776add7dac73346be316ca03701472a11e6465969d58",
+        "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
+        "html_hash": "ad9b728fe5345b897430776add7dac73346be316ca03701472a11e6465969d58",
+        "html_comparison_hash": "9a5a9485a48ccddc50cd4909ec51080a58c7feb85830b0ffcdbbd3e3a92f21b0",
+        "html_comparison_hash_version": 2,
+        "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-ad9b728fe5345b897430776add7dac73346be316ca03701472a11e6465969d58.html",
+        "file_snapshot_location": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
+        "evidence_location": "data/evidence/6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "Regulatory signal detected",
+          "signals": [
+            "policy",
+            "report"
+          ]
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T11:30:35.930519+00:00",
+            "evidence_location": "data/evidence/6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47.json"
+          },
+          {
+            "event_id": "59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T09:56:43.050307+00:00",
+            "evidence_location": "data/evidence/59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999.json"
+          },
+          {
+            "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T09:47:43.429866+00:00",
+            "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
+          },
+          {
+            "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T08:22:54.837336+00:00",
+            "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false
       }
     }
   ],
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "continuation",
-  "workflow_run_id": "39933976734"
+  "trigger": "scheduled",
+  "workflow_run_id": "39945956048"
 }

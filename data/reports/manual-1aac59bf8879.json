@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261023T095308Z-0b23afa5",
-  "generated_at": "2026-10-23T09:56:54.092947+00:00",
+  "run_id": "20261023T112703Z-7266a1f7",
+  "generated_at": "2026-10-23T11:30:38.341878+00:00",
   "source": {
     "id": "manual-1aac59bf8879",
     "name": "XML Format: FR 2590 (PDF)",
@@ -12,7 +12,7 @@
     "allowed_prefixes": [
       "https://www.frbservices.org/"
     ],
-    "initial_baseline": true
+    "initial_baseline": false
   },
   "discovery": {
     "source_id": "manual-1aac59bf8879",
@@ -61,20 +61,20 @@
   },
   "counts": {
     "discovered": 1,
-    "new": 1,
+    "new": 0,
     "changed": 0,
     "source_changed": 0,
     "removed": 0,
     "removal_held": 0,
     "removal_pending_confirmation": 0,
-    "unchanged": 0,
+    "unchanged": 1,
     "baseline_migration": 0,
     "extraction_drift": 0,
     "fetch_error": 0,
     "extraction_error": 0,
-    "not_modified": 0,
-    "forced_full_fetch": 1,
-    "relevance_candidates": 1,
+    "not_modified": 1,
+    "forced_full_fetch": 0,
+    "relevance_candidates": 0,
     "ai_ok": 0,
     "ai_invalid": 0,
     "ai_error": 0,
@@ -90,6 +90,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "continuation",
-  "workflow_run_id": "39933976734"
+  "trigger": "scheduled",
+  "workflow_run_id": "39945956048"
 }
