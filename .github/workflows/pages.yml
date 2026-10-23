@@ -16,7 +16,6 @@ on:
       - "config/sources.json"
       - "data/scout/latest.json"
       - "data/scout/review.json"
-      - "data/scout/registry/**"
       - "config/scout.json"
       - "config/lineage.json"
       - "data/calendar.json"
@@ -63,10 +62,6 @@ jobs:
           mkdir -p site/data/scout
           cp data/scout/latest.json site/data/scout/latest.json
           cp data/scout/review.json site/data/scout/review.json
-          # Every link Scout has recorded, one file per profile. The Discover view
-          # reads one on demand so the owner can pick links to monitor from all
-          # of them, not only those the review queue shows.
-          if [ -d data/scout/registry ]; then cp -R data/scout/registry site/data/scout/registry; fi
           cp config/scout.json site/config/scout.json
           cp config/lineage.json site/config/lineage.json
           # The regulatory calendar appears after the first scan that builds it.

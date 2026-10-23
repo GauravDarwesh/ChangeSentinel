@@ -609,58 +609,42 @@ class TestReviewLayer(unittest.TestCase):
 
 
 @unittest.skipUnless(NODE, "node is required for dashboard library tests")
-class TestPickLinks(unittest.TestCase):
-    """Pick links: every recorded link stays visible and selectable; requests are bounded and honest."""
+class TestAddLinkHelpers(unittest.TestCase):
+    """The Add a link checklist: every link stays listed and selectable; requests are bounded and honest."""
 
-    ROOT = "https://home.example.gov/data/tic/forms"
-    REGISTRY = {
-        "schema_version": 1, "regulator_id": "manual-x", "channels": {},
-        "candidates": {
-            "a": {"id": "a", "url": "https://home.example.gov/data/tic/forms/b-forms", "channels": ["ch"], "origin": "baseline",
-                  "evidence": {"anchor_text": "TIC B Forms", "parent_url": ROOT + "/", "section": "Reporting forms"}},
-            "b": {"id": "b", "url": "https://docs.example.gov/forms/BC.pdf", "channels": ["ch"], "origin": "baseline",
-                  "evidence": {"anchor_text": "Form BC (PDF)", "parent_url": "https://home.example.gov/data/tic/forms/b-forms",
-                               "section": "Current forms", "depth": 2}},
-            "c": {"id": "c", "url": "https://docs.example.gov/forms/BC-2019.pdf", "channels": ["ch"], "origin": "baseline",
-                  "evidence": {"anchor_text": "Download", "context": "Form BC, 2019 version", "section": "Historical forms",
-                               "parent_url": "https://home.example.gov/data/tic/forms/b-forms"}},
-            "d": {"id": "d", "url": "https://home.example.gov/data/auction-allotments", "channels": ["ch"], "origin": "new",
-                  "evidence": {"anchor_text": "Investor class auction allotments", "parent_url": ROOT}},
-            "e": {"id": "e", "url": "https://home.example.gov/elsewhere", "channels": ["other-channel"],
-                  "evidence": {"anchor_text": "Another channel's link"}},
-            "f": {"id": "f", "url": "https://home.example.gov/data/tic/forms/b-forms/fr", "channels": ["ch"],
-                  "relationship": {"type": "translation", "of": "a"}, "evidence": {}},
-        },
-    }
+    ITEMS = [
+        {"key": "a", "url": "https://docs.example.gov/BC.pdf", "title": "Form BC", "format": "PDF", "section": "Current forms",
+         "parentUrl": "https://home.example.gov/b-forms", "parentTitle": "TIC B Forms"},
+        {"key": "b", "url": "https://docs.example.gov/BC-2019.pdf", "title": "Form BC, 2019", "format": "PDF", "section": "Historical forms",
+         "parentUrl": "https://home.example.gov/b-forms", "parentTitle": "TIC B Forms"},
+        {"key": "c", "url": "https://home.example.gov/auctions", "title": "Auction allotments", "format": "Web page", "section": "",
+         "parentUrl": "https://home.example.gov/forms", "parentTitle": "TIC Forms"},
+    ]
 
-    def graph(self, expression):
-        script = ("const g = L.pickGraph(" + json.dumps(self.REGISTRY) + ", 'ch', " + json.dumps(self.ROOT) + ");\n" +
-                  "console.log(JSON.stringify(" + expression + "));")
-        return run_js(script)
-
-    def test_the_tree_keeps_every_link_of_the_channel_and_nothing_else(self):
-        out = self.graph("{nodes: g.nodes.map(n => [n.url, n.title, n.format, n.depth, n.section]), root: (g.children.get(g.rootKey) || []).map(n => n.url),"
-                         " bforms: (g.children.get(L.urlKey('https://home.example.gov/data/tic/forms/b-forms')) || []).map(n => n.url)}")
-        urls = [row[0] for row in out["nodes"]]
-        self.assertEqual(len(urls), 4, "translations and other channels' links are left out")
-        self.assertIn("https://docs.example.gov/forms/BC-2019.pdf", urls, "historical documents are listed, never dropped")
-        by_url = {row[0]: row for row in out["nodes"]}
-        self.assertEqual(by_url["https://docs.example.gov/forms/BC.pdf"][1:], ["Form BC (PDF)", "PDF", 2, "Current forms"])
-        self.assertEqual(by_url["https://docs.example.gov/forms/BC-2019.pdf"][1], "Form BC, 2019 version", "a button label falls back to the listing text")
-        self.assertEqual(by_url["https://docs.example.gov/forms/BC-2019.pdf"][3], 2, "depth is derived from the parent chain when not recorded")
-        self.assertEqual(by_url["https://home.example.gov/data/tic/forms/b-forms"][3], 1)
-        self.assertEqual(sorted(out["root"]), ["https://home.example.gov/data/auction-allotments", "https://home.example.gov/data/tic/forms/b-forms"])
-        self.assertEqual(len(out["bforms"]), 2)
-
-    def test_filters_and_groups_never_select_anything(self):
-        out = self.graph("{pdf: L.pickGroups(g, {format: 'PDF'}, 'TIC').map(x => [x.parentTitle, x.section, x.items.length]),"
-                         " search: g.nodes.filter(n => L.pickMatches(n, {query: '2019'})).length,"
-                         " level1: g.nodes.filter(n => L.pickMatches(n, {depth: '1'})).length,"
-                         " sections: L.pickSections(g.children.get(L.urlKey('https://home.example.gov/data/tic/forms/b-forms'))).map(x => x.section)}")
-        self.assertEqual(out["pdf"], [["TIC B Forms", "Current forms", 1], ["TIC B Forms", "Historical forms", 1]])
+    def test_groups_keep_historical_links_and_filters_only_narrow_the_view(self):
+        out = run_js("const items = " + json.dumps(self.ITEMS) + ";\nconsole.log(JSON.stringify({" +
+                     "all: L.pickGroupBy(items, {}).map(g => [g.parentTitle, g.section, g.items.length])," +
+                     "pdf: L.pickGroupBy(items, {format: 'PDF'}).reduce((n, g) => n + g.items.length, 0)," +
+                     "search: L.pickGroupBy(items, {query: '2019'}).reduce((n, g) => n + g.items.length, 0)," +
+                     "ticked: L.pickGroupBy(items, {show: 'SELECTED', selectedKeys: new Set(['a'])}).reduce((n, g) => n + g.items.length, 0)}));")
+        self.assertEqual(out["all"], [["TIC B Forms", "Current forms", 1], ["TIC B Forms", "Historical forms", 1], ["TIC Forms", "", 1]])
+        self.assertEqual(out["pdf"], 2)
         self.assertEqual(out["search"], 1)
-        self.assertEqual(out["level1"], 2)
-        self.assertEqual(out["sections"], ["Current forms", "Historical forms"])
+        self.assertEqual(out["ticked"], 1)
+
+    def test_following_links_reads_only_the_chosen_section(self):
+        out = run_js("""
+          const start = 'https://home.example.gov/data/tic/forms';
+          console.log(JSON.stringify([
+            L.pickInScope('https://home.example.gov/data/tic/forms/b-forms', start, 'https://home.example.gov/data/tic/'),
+            L.pickInScope('https://home.example.gov/data/tic', start, 'https://home.example.gov/data/tic/'),
+            L.pickInScope('https://home.example.gov/data/tic-archive', start, 'https://home.example.gov/data/tic/'),
+            L.pickInScope('https://home.example.gov/data/auctions', start, 'https://home.example.gov/data/tic/'),
+            L.pickInScope('https://home.example.gov/anything', start, ''),
+            L.pickInScope('https://www.example.gov/data/tic/x', start, '')
+          ]));
+        """)
+        self.assertEqual(out, [True, True, False, False, True, False])
 
     def test_summary_counts_monitored_and_duplicate_links_honestly(self):
         out = run_js("""
@@ -679,7 +663,7 @@ class TestPickLinks(unittest.TestCase):
           console.log(JSON.stringify({batches: r.batches.length, max: Math.max(...r.batches.map(b => b.length)),
             total: r.batches.reduce((n, b) => n + b.length, 0), longest: Math.max(...r.batches.map(b => build(b).length)), tooLong: r.tooLong.length}));
         """)
-        self.assertEqual(out["total"], 1214, "every selected link is in exactly one request")
+        self.assertEqual(out["total"], 1214, "every ticked link is in exactly one request")
         self.assertLessEqual(out["max"], 25)
         self.assertLessEqual(out["longest"], 7000)
         self.assertEqual(out["tooLong"], 1, "an address too long for any request is reported, not truncated")
@@ -698,7 +682,7 @@ class TestPickLinks(unittest.TestCase):
         self.assertEqual(out["hosts"]["hosts"], ["www.example.gov", "docs.example.gov"])
         self.assertEqual(out["hosts"]["invalid"], ["localhost", "10.0.0.1", "bad_host"])
 
-    def test_the_discovery_request_is_what_registration_parses(self):
+    def test_the_weekly_check_request_is_what_registration_parses(self):
         out = run_js("""
           console.log(JSON.stringify(L.pickDiscoveryRequest({url: 'https://home.example.gov/data/tic/forms', name: 'TIC\\nforms', depth: 2,
             explore: 'https://home.example.gov/data/tic/', documentHosts: ['www.example.gov']})));
@@ -718,11 +702,10 @@ class TestPickLinks(unittest.TestCase):
                            if c["url"] == "https://home.example.gov/data/tic/forms")
         self.assertTrue(out["title"].startswith("[ChangeSentinel] Add monitor"))
         self.assertTrue(result["discovery_only"])
-        self.assertEqual(saved_sources, [], "the dashboard's discovery request never adds a monitor")
+        self.assertEqual(saved_sources, [], "the weekly check never adds a monitor")
         self.assertEqual(channel["crawl_depth"], 2)
         self.assertEqual(channel["explore_prefixes"], ["https://home.example.gov/data/tic/"])
         self.assertEqual(channel["document_hosts"], ["www.example.gov"])
-        self.assertEqual(channel["label"], "TIC forms")
 
     def test_thin_link_text_is_named_with_its_section(self):
         out = run_js("console.log(JSON.stringify([L.pickMonitorName({title: 'Instructions', section: 'Form BC'}),"

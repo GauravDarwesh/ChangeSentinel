@@ -456,86 +456,57 @@ class TestCrossRunChangeLog(unittest.TestCase):
         # Spreadsheets are read locally; no third-party parser runs in the dashboard origin.
         self.assertNotIn("cdn.sheetjs.com", js + html)
 
-class TestPickLinks(unittest.TestCase):
-    """Discovered links are candidates; only links the owner selects and submits become monitors."""
+class TestAddLinkFlow(unittest.TestCase):
+    """Add a link: explore a page or follow its links by level, then confirm a checklist."""
 
-    def test_pick_links_is_its_own_view_beside_add_a_link(self):
+    def test_the_whole_flow_lives_in_the_add_a_link_dialog(self):
         html = read("index.html")
         js = read("dashboard.js")
-        for token in (
-            'data-view="pick"', 'id="pickView"', 'id="pickSource"', 'id="pickItems"', 'id="pickTray"',
-            'data-pick-mode="browse"', 'data-pick-mode="all"', 'id="pickSearch"', 'id="pickFormat"', 'id="pickDepth"',
-            'id="pickCrumbs"', 'id="pickMobileBar"',
-        ):
+        dialog = html[html.index('id="addMonitorDialog"'):html.index('id="deleteMonitorDialog"')]
+        for token in ('name="addMethod" value="explore"', 'name="addMethod" value="crawl"', 'id="newMonitorDepth"', 'id="newPickScope"',
+                      'data-add-step-panel="explore"', 'data-add-step-panel="crawl"', 'data-add-step-panel="review"',
+                      'id="exploreFrame"', 'id="exploreSelectMode"', 'id="reviewList"', 'id="bulkMonitorFile"', 'id="addExactSubmit"'):
             with self.subTest(token=token):
-                self.assertIn(token, html)
-        self.assertLess(html.index('class="nav-add"'), html.index('class="nav-pick"'))
-        for token in (
-            'pick: "pick-links"', 'pick: "pickView"', "function renderPickLinks()", "function renderPickTray()",
-            "function pickRange(key)", "function pickGroupToggle(index)", "function pickOpenBatch(index)",
-        ):
-            with self.subTest(token=token):
-                self.assertIn(token, js)
-        # #141's bolt-on tray is gone; Scout rows are plain rows again.
-        for removed in ('id="discoverySelectionDialog"', 'id="selectVisibleScout"', 'data-discovery-select'):
+                self.assertIn(token, dialog)
+        # No separate view or tray: everything happens inside Add a link.
+        for removed in ('id="pickView"', 'data-view="pick"', 'id="discoverySelectionDialog"', 'id="selectVisibleScout"', 'data-discovery-select'):
             self.assertNotIn(removed, html + js)
 
-    def test_every_recorded_link_is_listed_from_the_registry(self):
-        js = read("dashboard.js")
-        pages = read(".github/workflows/pages.yml")
-        self.assertIn('"data/scout/registry/" + regulatorId + ".json"', js)
-        self.assertIn("RAW + \"/\" + path", js)
-        self.assertIn("cp -R data/scout/registry site/data/scout/registry", pages)
-        self.assertIn('"data/scout/registry/**"', pages)
-        # The registry is only fetched once the view is open.
-        self.assertIn('if (state.view !== "pick") { renderPickNavCount(); return; }', js)
-
-    def test_selection_persists_and_is_never_submitted_without_the_owner(self):
-        js = read("dashboard.js")
-        for token in (
-            'const PICK_STORAGE = "cs-pick-links-v1"', "localStorage.setItem(PICK_STORAGE", "pickRestore();",
-            'window.addEventListener("storage"', "makeBulkGitHubIssueUrl, MAX_BULK_LINKS, MAX_BULK_REQUEST_URL_LENGTH",
-            "Opening a request registers nothing.", "githubWindow.opener = null",
-        ):
-            with self.subTest(token=token):
-                self.assertIn(token, js)
-        # Nothing in the view writes configuration: requests go through the existing owner-only issue.
-        start = js.index("/* ================= Pick links")
-        end = js.index("function openAddMonitor(mode)", start)
-        module = js[start:end]
-        self.assertNotIn("fetch(REPO", module)
-        self.assertNotIn("api.github.com", module)
-        self.assertIn("esc(node.title)", module)
-        self.assertIn("safeHttpUrl(", module)
-
-    def test_add_link_offers_one_page_or_discovery_only(self):
+    def test_the_explored_page_cannot_run_script(self):
         html = read("index.html")
         js = read("dashboard.js")
-        lib = read("dashboard-lib.js")
-        for token in ('data-add-mode="one"', 'data-add-mode="discover"', 'id="addPickFields"', 'id="newPickScope"', 'id="newPickHosts"',
-                      'id="newMonitorDepth"', 'id="addPickExisting"'):
-            with self.subTest(token=token):
-                self.assertIn(token, html)
-        self.assertIn("makeGitHubIssueUrl(parsed.toString(), name, includeSelector, ignoreSelectors, 0, false)", js)
-        self.assertIn('"Discovery only: yes"', lib)
-        self.assertIn('"Explore within: "', lib)
-        self.assertIn('"Document hosts: "', lib)
-        # Scope fields must precede the selector fields, which the registration parser reads to the end.
-        self.assertLess(lib.index('"Document hosts: "'), lib.index('"Include selector: "'))
+        frame = re.search(r'<iframe id="exploreFrame"[^>]*>', html).group(0)
+        self.assertIn('sandbox="allow-same-origin"', frame)
+        self.assertNotIn("allow-scripts", frame)
+        self.assertNotIn("allow-forms", frame)
+        self.assertNotIn("allow-top-navigation", frame)
+        self.assertIn('doc.addEventListener("click", exploreFrameClick, true)', js)
+        self.assertIn("if (event.shiftKey || a.selectMode) { addToggle(item); return; }", js)
+        reader = read("supabase/functions/page-reader/index.ts")
+        self.assertIn("script-src 'none'", reader)
+        self.assertIn("checkResolvesPublic(url)", reader)
+        self.assertIn("redirect: 'manual'", reader)
 
-    def test_candidate_text_is_escaped_and_hand_added_urls_are_checked(self):
+    def test_nothing_is_ticked_for_the_owner_and_requests_stay_owner_approved(self):
         js = read("dashboard.js")
-        start = js.index("/* ================= Pick links")
-        module = js[start:js.index("function openAddMonitor(mode)", start)]
-        for token in (
-            "esc(node.title)", "esc(displayUrl(node.url))", "esc(context)", "esc(item.title)",
-            '!["http:", "https:"].includes(parsed.protocol)', "parsed.username || parsed.password",
-            "not a public web address. Nothing was added.",
-        ):
-            with self.subTest(token=token):
-                self.assertIn(token, module)
-        # Untrusted publisher text never reaches innerHTML unescaped through a template literal.
+        start = js.index("/* ================= Add a link: explore a page or follow its links")
+        module = js[start:js.index("function makeGitHubIssueUrl(", start)]
+        self.assertIn("a.picked = new Map();", module[module.index("async function crawlStart("):])
+        self.assertIn("makeBulkGitHubIssueUrl, MAX_BULK_LINKS, MAX_BULK_REQUEST_URL_LENGTH", module)
+        self.assertIn("nothing is registered until you do", module)
+        self.assertIn("githubWindow.opener = null", module)
+        self.assertNotIn("api.github.com", module)
+        self.assertIn("localStorage.setItem(ADD_DRAFT_STORAGE", module)
+        self.assertIn("CRAWL_PAGE_LIMITS = { 1: 1, 2: 60, 3: 150 }", module)
+        self.assertIn("esc(item.title)", module)
         self.assertNotIn("${", module)
+
+    def test_reader_endpoint_is_configured_without_secrets(self):
+        html = read("index.html")
+        js = read("dashboard.js")
+        self.assertIn('window.CHANGESENTINEL_PAGE_READER_ENDPOINT = "https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/page-reader";', html)
+        self.assertIn("askSentinelIdentityHeaders(identity)", js)
+        self.assertNotIn("sb_secret_", html + js)
 
 
 class TestThirdPartyScripts(unittest.TestCase):
@@ -641,18 +612,18 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
         self.assertIn('const item = (state.items || []).find(row => row.url_id === button.dataset.stopMonitor);', stop_handler)
         self.assertNotIn("(state.inventory || []).find", stop_handler)
 
-    def test_add_link_discovery_is_saved_by_the_owner_workflow_without_a_monitor(self):
+    def test_weekly_check_is_discovery_only_and_owner_approved(self):
         js = read("dashboard.js")
+        lib = read("dashboard-lib.js")
         workflow = read(".github/workflows/register-monitor.yml")
-        self.assertIn("function submitPickDiscovery(parsed, name)", js)
-        self.assertIn("L.pickDiscoveryRequest(", js)
-        self.assertIn("registration on the request", workflow.lower())
+        self.assertIn("function reviewOpenWeekly()", js)
+        self.assertIn('"Discovery only: yes"', lib)
+        self.assertLess(lib.index('"Document hosts: "'), lib.index('"Include selector: "'))
         self.assertIn("--scout-config config/scout.json", workflow)
         self.assertIn("git add config/sources.json config/scout.json", workflow)
         self.assertIn("gh workflow run scout.yml", workflow)
         self.assertIn("steps.register.outputs.discovery_only != 'true'", workflow)
         self.assertIn("No monitor was added", workflow)
-        self.assertIn("not silently added as monitors", workflow)
 
     def test_metadata_cors_fallback_keeps_server_side_title_lookup_available(self):
         source = read("dashboard.js")

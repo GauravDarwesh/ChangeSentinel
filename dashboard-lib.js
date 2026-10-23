@@ -1317,18 +1317,17 @@
     return String(text || "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, max || 48).replace(/-+$/, "") || "change";
   }
 
-  /* ---------- Pick links: discovery candidates the owner selects from ----------
+  /* ---------- Add a link: links found by exploring or following a page ----------
    *
-   * Scout records every link a depth-limited crawl finds in its registry. These
-   * helpers turn one channel's records into a browsable link tree and a flat,
-   * filterable list. Nothing here ranks, hides or approves a link: what is
-   * shown is what Scout recorded, and only the owner's selection is submitted.
+   * The dialog collects links two ways (exploring a page, or following its
+   * links by level) and ends in one checklist. Nothing here ranks, hides or
+   * approves a link: what is shown is what the pages linked to, and only the
+   * links the owner ticks are submitted.
    */
   const PICK_FORMATS = [
     [/\.pdf$/, "PDF"], [/\.(xlsx|xls|xlsm|csv)$/, "Spreadsheet"], [/\.(docx|doc)$/, "Word"], [/\.(pptx|ppt)$/, "Slides"],
     [/\.zip$/, "ZIP"], [/\.(xml|xsd|xbrl)$/, "XML"], [/\.json$/, "JSON"], [/\.txt$/, "Text"]
   ];
-  const PICK_GENERIC = /^(download( (document|file|pdf))?|pdf|here|click here|read more|more|view|link|details|see more|learn more|\(?pdf\)?|\d+(\.\d+)?\s?(kb|mb|gb))$/i;
   const PICK_MAX_LINKS = 25;
   const PICK_MAX_REQUEST_LENGTH = 7000;
 
@@ -1338,6 +1337,7 @@
     const match = PICK_FORMATS.find(([pattern]) => pattern.test(path));
     return match ? match[1] : "Web page";
   }
+  // Readable words from an address when a link has no text of its own.
   function pickSlug(url) {
     try {
       const segments = new URL(url).pathname.split("/").filter(Boolean);
@@ -1348,73 +1348,23 @@
       return new URL(url).hostname;
     } catch (_) { return String(url || ""); }
   }
-  // The publisher's own words for a link, in the order Scout trusts them.
-  function pickTitle(record) {
-    const evidence = (record && record.evidence) || {};
-    for (const key of ["title", "heading", "page_title"]) {
-      const value = String(evidence[key] || "").trim();
-      if (value && !PICK_GENERIC.test(value)) return value.slice(0, 300);
+
+  // Whether following-by-level may read this page: the starting host, and the
+  // chosen folder when there is one. Links outside are still listed, not read.
+  function pickInScope(url, startUrl, prefix) {
+    try {
+      const target = new URL(canonicalUrl(url));
+      const start = new URL(canonicalUrl(startUrl));
+      if (target.hostname.toLowerCase() !== start.hostname.toLowerCase()) return false;
+      if (!prefix) return true;
+      const folder = new URL(prefix).pathname.replace(/\/+$/, "");
+      const path = target.pathname.replace(/\/+$/, "");
+      return path === folder || path.indexOf(folder + "/") === 0;
+    } catch (_) {
+      return false;
     }
-    const anchor = String(evidence.anchor_text || "").trim();
-    if (anchor && !PICK_GENERIC.test(anchor)) return anchor.slice(0, 300);
-    const attr = String(evidence.title_attr || "").trim();
-    if (attr) return attr.slice(0, 300);
-    const context = String(evidence.context || "").replace(/\s+/g, " ").trim();
-    if (context) return context.slice(0, 200);
-    return pickSlug(record && record.url);
   }
 
-  // One channel's registry records as a link tree rooted at the channel URL.
-  function pickGraph(registry, channelId, rootUrl) {
-    const candidates = registry && registry.candidates && typeof registry.candidates === "object" ? registry.candidates : {};
-    const rootKey = urlKey(rootUrl);
-    const nodes = [];
-    const byKey = new Map();
-    Object.keys(candidates).sort().forEach(id => {
-      const record = candidates[id];
-      if (!record || typeof record.url !== "string") return;
-      if ((record.relationship || {}).type === "translation") return;
-      if (channelId && !(record.channels || []).includes(channelId)) return;
-      const evidence = record.evidence || {};
-      const key = urlKey(record.url);
-      if (!key || key === rootKey || byKey.has(key)) return;
-      const recordedDepth = Number(evidence.depth);
-      const node = {
-        key, id: record.id || id, url: record.url, title: pickTitle(record), format: pickFormat(record.url),
-        section: String(evidence.section || ""), parentUrl: String(evidence.parent_url || ""),
-        parentKey: evidence.parent_url ? urlKey(evidence.parent_url) : "",
-        depth: Number.isInteger(recordedDepth) && recordedDepth > 0 ? recordedDepth : null,
-        depthRecorded: Number.isInteger(recordedDepth) && recordedDepth > 0,
-        context: String(evidence.context || ""), dateHint: String(evidence.date_hint || evidence.published || evidence.page_published || ""),
-        firstSeen: String(record.first_seen || ""), origin: record.origin === "new" ? "new" : "baseline"
-      };
-      nodes.push(node);
-      byKey.set(key, node);
-    });
-    // Depth for records saved before Scout recorded it: follow the parent chain to the root.
-    const depthOf = (node, seen) => {
-      if (node.depth) return node.depth;
-      if (!node.parentKey) return null;
-      if (node.parentKey === rootKey) return (node.depth = 1);
-      const parent = byKey.get(node.parentKey);
-      if (!parent || seen.has(parent.key)) return null;
-      seen.add(parent.key);
-      const parentDepth = depthOf(parent, seen);
-      return parentDepth ? (node.depth = parentDepth + 1) : null;
-    };
-    nodes.forEach(node => depthOf(node, new Set([node.key])));
-    const children = new Map();
-    nodes.forEach(node => {
-      // A parent Scout did not record as a link of its own (the root reached
-      // through a redirect, say) hangs off the root, so every link stays reachable.
-      const parent = node.parentKey && byKey.has(node.parentKey) ? node.parentKey : rootKey;
-      if (!children.has(parent)) children.set(parent, []);
-      children.get(parent).push(node);
-    });
-    return { rootKey, rootUrl, nodes, byKey, children };
-  }
-
-  // Children of one page in publisher order of sections, each section kept together.
   function pickSections(items) {
     const groups = [];
     const index = new Map();
@@ -1426,54 +1376,32 @@
     return groups;
   }
 
-  function pickMatches(node, filters) {
+  function pickMatches(item, filters) {
     const f = filters || {};
     if (f.format && f.format !== "ALL") {
       const known = ["PDF", "Web page", "Spreadsheet", "Word"];
-      if (f.format === "OTHER" ? known.includes(node.format) : node.format !== f.format) return false;
+      if (f.format === "OTHER" ? known.includes(item.format) : item.format !== f.format) return false;
     }
-    if (f.depth && f.depth !== "ALL") {
-      if (f.depth === "UNKNOWN" ? node.depth != null : String(node.depth) !== String(f.depth)) return false;
-    }
-    if (f.monitored === "HIDE" && f.monitoredKeys && f.monitoredKeys.has(node.key)) return false;
+    if (f.selectedKeys && f.show === "SELECTED" && !f.selectedKeys.has(item.key)) return false;
     const query = String(f.query || "").trim().toLowerCase();
     if (!query) return true;
-    return [node.title, node.url, node.section, node.context, node.parentUrl].join(" ").toLowerCase().indexOf(query) >= 0;
+    return [item.title, item.url, item.section, item.parentTitle].join(" ").toLowerCase().indexOf(query) >= 0;
   }
 
-  // The flat view: matching links grouped by the page they were found on, then
-  // by section. Group order follows the crawl (shallow pages first).
-  function pickGroups(graph, filters, parentTitle) {
+  // The checklist: links grouped by the page they were found on, then by the
+  // heading they sat under, in the order they were found.
+  function pickGroupBy(items, filters) {
     const groups = [];
     const index = new Map();
-    const titleOf = key => key === graph.rootKey ? (parentTitle || "Starting page") : (graph.byKey.get(key) ? graph.byKey.get(key).title : "");
-    graph.nodes.filter(node => pickMatches(node, filters)).forEach(node => {
-      const parentKey = node.parentKey || graph.rootKey;
-      const groupKey = parentKey + "\u0000" + node.section;
-      if (!index.has(groupKey)) {
-        const parent = graph.byKey.get(parentKey);
-        index.set(groupKey, groups.length);
-        groups.push({ key: groupKey, parentKey, parentUrl: node.parentUrl || graph.rootUrl, parentTitle: titleOf(parentKey) || pickSlug(node.parentUrl),
-          parentDepth: parentKey === graph.rootKey ? 0 : parent && parent.depth != null ? parent.depth : null, section: node.section, items: [] });
+    (items || []).filter(item => pickMatches(item, filters)).forEach(item => {
+      const key = urlKey(item.parentUrl || "") + "\u0000" + (item.section || "");
+      if (!index.has(key)) {
+        index.set(key, groups.length);
+        groups.push({ key, parentUrl: item.parentUrl || "", parentTitle: item.parentTitle || pickSlug(item.parentUrl || ""), section: item.section || "", items: [] });
       }
-      groups[index.get(groupKey)].items.push(node);
+      groups[index.get(key)].items.push(item);
     });
-    const depthRank = value => value == null ? 99 : value;
-    return groups.map((group, order) => Object.assign(group, { order }))
-      .sort((a, b) => depthRank(a.parentDepth) - depthRank(b.parentDepth) || a.order - b.order);
-  }
-
-  // The path from the root to one page, for the browse breadcrumb.
-  function pickTrail(graph, key) {
-    const trail = [];
-    const seen = new Set();
-    let current = graph.byKey.get(key);
-    while (current && !seen.has(current.key)) {
-      seen.add(current.key);
-      trail.unshift(current);
-      current = current.parentKey && current.parentKey !== graph.rootKey ? graph.byKey.get(current.parentKey) : null;
-    }
-    return trail;
+    return groups;
   }
 
   // What will happen when the selection is submitted, counted honestly.
@@ -1565,7 +1493,7 @@
     const depth = [1, 2, 3].indexOf(Number(o.depth)) >= 0 ? Number(o.depth) : 2;
     const body = [
       "<!-- changesentinel:add-monitor:v1 -->", "",
-      "Please set up link discovery for this page. Do not add it as a monitor; I will pick the links to monitor in the dashboard.", "",
+      "Please re-check this page weekly for new links. Do not add it as a monitor; new links appear in Scout for review.", "",
       "URL: " + o.url,
       "Name: " + String(o.name || "").replace(/[\r\n]+/g, " ").trim().slice(0, 100),
       "Crawl depth: " + depth,
@@ -1577,11 +1505,11 @@
       "Ignore selectors:", "(none)", "",
       "This request was created from the ChangeSentinel dashboard."
     ];
-    return { title: "[ChangeSentinel] Add monitor request: link discovery", body: body.join("\n") };
+    return { title: "[ChangeSentinel] Add monitor request: weekly link check", body: body.join("\n") };
   }
 
   return {
-    pickFormat, pickTitle, pickGraph, pickSections, pickMatches, pickGroups, pickTrail, pickSummary, pickBatches, pickMonitorName,
+    pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH,
     diffSequences, alignLines, changedWords,
     esc, nextScheduledScan, scanCycle, runColumns, columnCellState, pendingScan, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
