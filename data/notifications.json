@@ -117,7 +117,25 @@
       "summary": "Removal of FFIEC 031 and FR Y-9C R-1867 entries from the Recently Approved and Implemented forms table",
       "source_event_id": null,
       "variant": "ai"
+    },
+    "op-5e5809a57639a79a64a250d56bb9bfd3be0cb0bab2dd6ccd3b17a1f6ce3e4e0a": {
+      "kind": "EXTRACTION_ERROR",
+      "sent_at": "2026-10-23T12:53:55.161402+00:00",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx",
+      "topic": "Monitoring operational alert",
+      "summary": "The current run could not fully process a monitored regulator resource.",
+      "source_event_id": "3cd6548e354f201da2d7b9ed7f728a5e4bfebd43fee4efdd19d5dcbeb31041b4",
+      "variant": null
+    },
+    "op-5413d389446b6cec5b5acdf61107932c84cac21998514b94986d013a1fd4afcc": {
+      "kind": "EXTRACTION_ERROR",
+      "sent_at": "2026-10-23T12:53:55.347359+00:00",
+      "url": "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx",
+      "topic": "Monitoring operational alert",
+      "summary": "The current run could not fully process a monitored regulator resource.",
+      "source_event_id": "ed7b26ee381208c698c901af10e98fb7a11f4ada46efaa96f5c34f3d1861d27b",
+      "variant": null
     }
   },
-  "updated_at": "2026-10-22T04:28:01.226961+00:00"
+  "updated_at": "2026-10-23T12:53:55.347939+00:00"
 }
