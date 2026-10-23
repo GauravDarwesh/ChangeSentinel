@@ -175,6 +175,56 @@ class TestChangeFieldCells(unittest.TestCase):
 
 
 @unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestSlotColumns(unittest.TestCase):
+    # Real shape of 21-22 Oct: a one-source continuation and manual runs between
+    # scheduled scans used to add a column each, leaving holes in every other row.
+    HISTORY = [
+        {"run_id": "c", "generated_at": "2026-10-21T03:47:47Z", "source_id": "bcar", "trigger": "continuation"},
+        {"run_id": "s1", "generated_at": "2026-10-21T04:25:45Z", "source_id": "fed", "trigger": "scheduled"},
+        {"run_id": "s1", "generated_at": "2026-10-21T04:29:41Z", "source_id": "bcar", "trigger": "scheduled"},
+        {"run_id": "m", "generated_at": "2026-10-21T06:54:49Z", "source_id": "fed", "trigger": "manual"},
+        {"run_id": "s2", "generated_at": "2026-10-21T11:37:32Z", "source_id": "fed", "trigger": "scheduled"},
+        {"run_id": "s2", "generated_at": "2026-10-21T11:41:03Z", "source_id": "bcar", "trigger": "scheduled"},
+    ]
+
+    def columns(self, limit=0):
+        return run_js("console.log(JSON.stringify(L.slotColumns(" + json.dumps(self.HISTORY) + ", {limit: " + str(limit) + "})));")
+
+    def cell(self, column, page):
+        return run_js("console.log(JSON.stringify(L.columnCellState(" + json.dumps(column) + ", " + json.dumps(page) + ")));")
+
+    def test_off_schedule_runs_merge_into_their_six_hour_slot(self):
+        cols = self.columns()
+        self.assertEqual(len(cols), 2)
+        self.assertEqual(sorted(cols[0]["sources"]), ["bcar", "fed"])
+        self.assertEqual(sorted(cols[1]["sources"]), ["bcar", "fed"])
+        self.assertEqual([c["trigger"] for c in cols], ["scheduled", "scheduled"])
+        self.assertEqual([c["manual"] for c in cols], [0, 1])
+
+    def test_a_page_added_mid_window_lights_green_once(self):
+        cols = self.columns()
+        page = {"sourceId": "bcar", "firstSeen": "2026-10-21T03:47:47Z", "events": []}
+        self.assertEqual([self.cell(c, page) for c in cols], ["new", "dim"])
+
+    def test_a_page_whose_first_crawl_is_still_running_draws_nothing(self):
+        cols = self.columns()
+        page = {"sourceId": "bcar", "pending": True, "events": []}
+        self.assertEqual([self.cell(c, page) for c in cols], ["none", "none"])
+
+    def test_markup_only_changes_do_not_light_as_content_changes(self):
+        cols = self.columns()
+        page = {"sourceId": "bcar", "firstSeen": "2026-10-20T00:00:00Z",
+                "events": [{"event_type": "HTML_SOURCE_CHANGED", "timestamp": "2026-10-21T11:41:03Z"}]}
+        self.assertEqual([self.cell(c, page) for c in cols], ["dim", "markup"])
+
+    def test_a_content_change_in_a_manual_run_lights_its_slot(self):
+        cols = self.columns()
+        page = {"sourceId": "fed", "firstSeen": "2026-10-18T00:00:00Z",
+                "events": [{"event_type": "CHANGED_URL", "timestamp": "2026-10-21T06:54:49Z"}]}
+        self.assertEqual([self.cell(c, page) for c in cols], ["dim", "on"])
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
 class TestPendingScan(unittest.TestCase):
     def pending(self, now, columns, runs=None):
         return run_js("const p = L.pendingScan(new Date(" + json.dumps(now) + "), " + json.dumps(columns) + ", " + json.dumps(runs or []) +

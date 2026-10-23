@@ -132,30 +132,82 @@
     return limit > 0 && columns.length > limit ? columns.slice(-limit) : columns;
   }
 
-  // One LED in the change field: what happened to one page in one scan.
-  //   "on"   the scan found a content change
-  //   "new"  the page first appeared in this scan
-  //   "bad"  the scan could not fetch or read the page
-  //   "dim"  the page was scanned and nothing changed
-  //   "none" this scan did not cover the page (another source's run, or the
-  //          page was not monitored yet); nothing is drawn
+  // One column per six-hour schedule slot that saved at least one scan, oldest
+  // first. Manual runs and crawl continuations land in the slot they ran in
+  // instead of adding a column of their own, so a one-source run can't leave a
+  // hole in every other row, and each column means the same span of time.
+  //   start, end  the slot's window [start, end)
+  //   at          the last save in the slot
+  //   sources     { source_id: last save in the slot (ms) }
+  //   scans       the saved scans (runColumns entries) in the slot
+  //   trigger     scheduled if the slot's scheduled scan ran, else manual/continuation
+  //   manual      number of manual scans in the slot
+  function slotColumns(history, options = {}) {
+    const runs = runColumns(history, { workflowRuns: options.workflowRuns });
+    const bySlot = new Map();
+    runs.forEach(run => {
+      let column = bySlot.get(run.slot);
+      if (!column) {
+        column = { id: "slot-" + run.slot, slot: run.slot, start: run.slot, end: run.slot + PERIOD_MS, at: run.at, sources: {}, scans: [], trigger: "", manual: 0, htmlUrl: "" };
+        bySlot.set(run.slot, column);
+      }
+      column.scans.push(run);
+      column.at = Math.max(column.at, run.at);
+      Object.keys(run.sources).forEach(id => { column.sources[id] = Math.max(column.sources[id] || 0, run.sources[id]); });
+      if (run.trigger === "manual") column.manual++;
+      if (run.htmlUrl) column.htmlUrl = run.htmlUrl;
+    });
+    const columns = Array.from(bySlot.values()).sort((a, b) => a.slot - b.slot);
+    columns.forEach(column => {
+      const triggers = column.scans.map(run => run.trigger);
+      column.trigger = triggers.some(t => t === "scheduled" || t === "unknown") ? "scheduled"
+        : triggers.indexOf("manual") >= 0 ? "manual" : "continuation";
+    });
+    const limit = Number(options.limit) || 0;
+    return limit > 0 && columns.length > limit ? columns.slice(-limit) : columns;
+  }
+
+  const CONTENT_CHANGE_TYPES = ["CHANGED_URL", "REMOVED_URL"];
+
+  // One LED in the change field: what happened to one page in one column.
+  //   "on"      the page's extracted text changed (or it disappeared)
+  //   "new"     the page was first saved in this column
+  //   "bad"     a scan could not fetch or read the page
+  //   "markup"  the HTML changed but the extracted text is identical; drawn
+  //             like "dim" because nothing a reader cares about changed
+  //   "dim"     the page was scanned and nothing changed
+  //   "skip"    the page was monitored but no scan in this window covered it
+  //   "none"    nothing to draw: the page wasn't monitored yet, is still
+  //             waiting for its first scan, or no scan in the column covered it
+  // Columns from slotColumns carry a [start, end) window; columns from
+  // runColumns use (prevAt, at].
   function columnCellState(column, page) {
-    const scannedAt = column.sources[page.sourceId];
-    if (!scannedAt) return "none";
-    const firstSeen = page.firstSeen ? Date.parse(page.firstSeen) : NaN;
-    if (!Number.isNaN(firstSeen) && firstSeen > scannedAt + 1000) return "none";
+    const windowed = Number.isFinite(column.start) && Number.isFinite(column.end);
+    const lo = windowed ? column.start : column.prevAt;
+    const hi = windowed ? column.end : column.at;
     const inColumn = time => {
-      const t = Date.parse(time);
-      return !Number.isNaN(t) && t > column.prevAt && t <= column.at;
+      const t = typeof time === "number" ? time : Date.parse(time);
+      if (Number.isNaN(t)) return false;
+      return windowed ? t >= lo && t < hi : t > lo && t <= hi;
     };
+    // A page still waiting for its first scan (its crawl hasn't finished) has no history yet.
+    if (page.pending) return "none";
+    const firstSeen = page.firstSeen ? Date.parse(page.firstSeen) : NaN;
+    const known = !Number.isNaN(firstSeen);
+    // Before the page was first saved: nothing to show.
+    if (known && (windowed ? firstSeen >= hi : firstSeen > hi + 1000)) return "none";
     const events = (page.events || []).filter(event => inColumn(event.timestamp));
     if (events.some(event => event.event_type === "FETCH_ERROR" || event.event_type === "EXTRACTION_ERROR")) return "bad";
     if (page.problemAt && inColumn(page.problemAt)) return "bad";
-    // Initial baselines intentionally suppress NEW_URL; first_seen identifies the first successful scan.
-    // Only light it in a column that actually scanned this source, never earlier scans.
-    if (Number.isFinite(firstSeen) && firstSeen > column.prevAt && firstSeen <= scannedAt + 1000) return "new";
+    // first_seen is the page's first save, whether or not the first run was a
+    // quiet baseline (which suppresses NEW_URL). The column holding it is green.
+    if (known && (windowed ? inColumn(firstSeen) : firstSeen > lo)) return "new";
     if (events.some(event => event.event_type === "NEW_URL")) return "new";
-    if (events.some(event => event.event_type === "CHANGED_URL" || event.event_type === "REMOVED_URL" || event.event_type === "HTML_SOURCE_CHANGED")) return "on";
+    // Monitored, but no scan in this window reached its source (a missed or late
+    // scheduled scan): a placeholder keeps the row continuous instead of a hole.
+    if (!column.sources[page.sourceId]) return known && windowed ? "skip" : "none";
+    if (events.some(event => CONTENT_CHANGE_TYPES.indexOf(event.event_type) >= 0)) return "on";
+    if (events.some(event => event.event_type === "HTML_SOURCE_CHANGED")) return "markup";
     return "dim";
   }
 
@@ -1512,7 +1564,7 @@
     pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH,
     diffSequences, alignLines, changedWords,
-    esc, nextScheduledScan, scanCycle, runColumns, columnCellState, pendingScan, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
+    esc, nextScheduledScan, scanCycle, runColumns, slotColumns, columnCellState, pendingScan, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,
     parseUnifiedDiff, tokenize, wordDiff, similarity, redlineRows, redlineSummary, renderRedline, renderUnifiedDiff,
     splitMarkdownTableRow, isMarkdownTableSeparator, relativeTime, dayHeading,

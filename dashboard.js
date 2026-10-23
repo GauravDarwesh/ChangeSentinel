@@ -727,7 +727,7 @@ function renderUpcomingDates() {
   const dates = L.upcomingDates(state.calendar, today, 5);
   if (!dates.length) {
     $("upcomingDates").innerHTML = '<p class="block-value"><small>' + (state.calendar
-      ? "No dates ahead. When a change states a comment deadline, report date or effective date, it shows up here and in the calendar feed."
+      ? "None found. Deadlines and effective dates stated in a change appear here."
       : "The calendar is written by the next scan. Comment deadlines, report dates and effective dates found in changes show up here.") + "</small></p>";
     return;
   }
@@ -768,19 +768,23 @@ function renderLatestPreview() {
   });
 }
 
-// The LED change field: one row per page, one column per saved scan, newest on
-// the right, then one empty column for the next scan. Scheduled and manual
-// scans each add a column, so the field grows a block at a time.
+// The LED change field: one row per page, one column per six-hour scan window
+// (newest on the right), then one empty column for the next scan. Manual runs
+// and crawl continuations fold into the window they ran in, so every column is
+// the same span of time and a one-source run never leaves holes in other rows.
 function fieldGeometry() {
   const field = $("signalVisual");
   const width = (field && (field.clientWidth || field.parentElement.clientWidth)) || 800;
-  const labelWidth = Math.round(Math.min(220, Math.max(104, width * (isCompact() ? .36 : .3))));
-  const gap = 3;
-  const room = Math.max(120, width - labelWidth);
-  const scans = new Set((state.history || []).map(run => run && run.run_id)).size + 1;
-  const tile = Math.max(11, Math.min(26, Math.floor((room + gap) / Math.max(22, scans)) - gap));
-  const capacity = Math.max(6, Math.floor((room + gap) / (tile + gap)));
-  return { capacity, labelWidth, tile, gap, key: capacity + "x" + tile };
+  const compact = isCompact();
+  // Labels get the room they need to stay readable; the time window gives way.
+  const labelWidth = Math.round(compact ? Math.min(176, Math.max(128, width * .44)) : Math.min(260, Math.max(150, width * .28)));
+  const gap = compact ? 3 : 4;
+  const room = Math.max(100, width - labelWidth);
+  // Four windows a day: at most seven days on wide screens, about two on phones.
+  const wanted = (compact ? 13 : 29);
+  const tile = Math.max(compact ? 12 : 14, Math.min(22, Math.floor((room + gap) / wanted) - gap));
+  const capacity = Math.max(5, Math.min(wanted, Math.floor((room + gap) / (tile + gap))));
+  return { capacity, labelWidth, tile, gap, key: capacity + "x" + tile + "x" + labelWidth };
 }
 function renderMonitoringSignal() {
   const field = $("signalVisual");
@@ -791,9 +795,12 @@ function renderMonitoringSignal() {
     return;
   }
   const geometry = fieldGeometry();
-  const columns = L.runColumns(state.history, { workflowRuns: state.workflowRuns, limit: geometry.capacity - 1 });
-  const pending = L.pendingScan(new Date(), columns, state.workflowRuns);
-  state.scanColumns = columns;
+  // The countdown and the cycle bar need every saved scan; the field shows windows.
+  const scans = L.runColumns(state.history, { workflowRuns: state.workflowRuns });
+  const columns = L.slotColumns(state.history, { workflowRuns: state.workflowRuns, limit: geometry.capacity - 1 });
+  const pending = L.pendingScan(new Date(), scans, state.workflowRuns);
+  state.scanColumns = scans;
+  state.fieldColumns = columns;
   state.pendingScan = pending;
   field.style.setProperty("--cols", columns.length + 1);
   field.style.setProperty("--tile", geometry.tile + "px");
@@ -813,6 +820,7 @@ function renderMonitoringSignal() {
     merged[sourceId].slice().sort((a, b) => itemTitle(a).localeCompare(itemTitle(b))).forEach(item => {
       const page = {
         sourceId: item.source_id,
+        pending: Boolean(item.pending_registration),
         firstSeen: item.first_seen,
         events: itemChangeEntries(item).concat(reportEvents.filter(event => (event.url_id === item.url_id || event.url === item.canonical_url) &&
           (event.event_type === "FETCH_ERROR" || event.event_type === "EXTRACTION_ERROR"))),
@@ -827,33 +835,32 @@ function renderMonitoringSignal() {
           ' data-tip="' + esc(title) + '" data-state="' + s + '" aria-label="' + esc(title + ", " + columnLabel(column, item.source_id) + ": " + stateWords(s)) + '"></span>';
       });
       html += '<span class="led s-pending" role="gridcell" data-x="' + columns.length + '" data-y="' + y + '" data-col="pending" data-tip="' + esc(title) +
-        '" data-state="pending" aria-label="' + esc(title + ", " + pendingTip.title) + '"></span>';
+        '" data-state="pending"' + (item.pending_registration ? ' data-first="1"' : "") + ' aria-label="' + esc(title + ", " + (item.pending_registration ? "first scan in progress" : pendingTip.title)) + '"></span>';
       y++;
     });
   });
-  // Manual and continuation runs are marked under their column.
+  // A window that included a manual run is marked under its column.
   html += '<div class="field-marks" aria-hidden="true">' + columns.map(column =>
-    '<i class="' + (column.trigger === "manual" ? "m-manual" : column.trigger === "continuation" ? "m-continuation" : "") + '"></i>').join("") + "<i></i></div>";
-  // Day labels under the first scan of each local day.
+    '<i class="' + (column.manual ? "m-manual" : "") + '"></i>').join("") + "<i></i></div>";
+  // Day labels under the first window of each local day; a hairline marks the day boundary.
   let lastDay = "";
   html += '<div class="field-axis" aria-hidden="true">' + columns.map(column => {
-    const day = new Date(column.at).toLocaleDateString([], { weekday: "short" });
+    const day = new Date(column.slot).toLocaleDateString([], { weekday: "short" });
     const label = day !== lastDay ? day : "";
     lastDay = day;
-    return "<span>" + esc(label) + "</span>";
+    return "<span" + (label ? ' class="is-day"' : "") + ">" + esc(label) + "</span>";
   }).join("") + "<span></span></div>";
   field.innerHTML = html;
-  const lit = field.querySelectorAll(".led.s-on, .led.s-new").length;
+  const lit = field.querySelectorAll(".led.s-on").length;
+  const fresh = field.querySelectorAll(".led.s-new").length;
   const bad = field.querySelectorAll(".led.s-bad").length;
-  const manual = columns.filter(column => column.trigger === "manual").length;
-  $("fieldNote").textContent = "Each column is one saved scan, newest on the right: the scheduled scan every six hours (" + scheduleTimes() +
-    " your time) plus any manual run" + (manual ? " (" + plural(manual, "manual run", "manual runs") + " here, marked underneath)" : "") +
-    ". The outlined column is the next scan. " +
-    (lit || bad
-      ? plural(lit, "light", "lights") + (lit === 1 ? " shows" : " show") + " a change" + (bad ? " and " + plural(bad, "light", "lights") + " a problem" : "") + " in this window."
-      : "No scan in this window found a change.");
+  const manual = columns.some(column => column.manual);
+  $("fieldNote").textContent = "One column per six-hour scan window (starting " + scheduleTimes() + " your time), newest on the right" +
+    (manual ? "; a dash marks a window with a manual run" : "") + ". Markup-only edits don't count as changes. " +
+    ([lit ? plural(lit, "change", "changes") : "", fresh ? plural(fresh, "new page", "new pages") : "", bad ? plural(bad, "problem", "problems") : ""]
+      .filter(Boolean).join(", ").replace(/^./, ch => ch.toUpperCase()) || "No changes") + " in this window.";
   const manualLegend = document.querySelector(".field-legend .manual");
-  if (manualLegend) manualLegend.parentElement.hidden = !columns.some(column => column.trigger === "manual");
+  if (manualLegend) manualLegend.parentElement.hidden = !manual;
   ledField.measure();
   updateNextRunCountdown();
 }
@@ -871,13 +878,21 @@ function triggerWords(trigger) {
 function columnLabel(column, sourceId) {
   const at = new Date((sourceId && column.sources[sourceId]) || column.at);
   const ran = when(at);
+  if (Number.isFinite(column.start)) {
+    const span = new Date(column.start).toLocaleDateString([], { weekday: "short" }) + " " + timeOnlyShort(new Date(column.start)) + "–" + timeOnlyShort(new Date(column.end));
+    const extras = [];
+    if (column.manual) extras.push(plural(column.manual, "manual run", "manual runs"));
+    const continuations = column.scans.filter(scan => scan.trigger === "continuation").length;
+    if (continuations) extras.push(plural(continuations, "continuation", "continuations"));
+    return span + " · " + (sourceId && column.sources[sourceId] ? "scanned " + timeOnlyShort(at) : "not scanned") + (extras.length ? " · " + extras.join(", ") : "");
+  }
   if (column.trigger === "scheduled" && column.at - column.slot > 20 * 60000) {
     return "Scheduled " + timeOnlyShort(new Date(column.slot)) + " scan, ran " + ran;
   }
   return triggerWords(column.trigger) + ", " + ran;
 }
 function stateWords(s) {
-  return { on: "content changed", new: "new page", bad: "couldn't fetch or read", dim: "checked, no change", none: "not scanned", pending: "next scan" }[s] || s;
+  return { on: "content changed", new: "new page, first saved", bad: "couldn't fetch or read", dim: "checked, no change", skip: "no scan reached this source in this window", markup: "checked; markup changed, text the same", none: "not scanned", pending: "next scan" }[s] || s;
 }
 // How the next-scan column and the countdown describe the scan that is coming.
 function pendingWords(pending) {
@@ -945,9 +960,9 @@ function showFieldTip(target, x, y) {
   if (!target) { tip.hidden = true; return; }
   let label = "";
   if (target.dataset.state === "pending") {
-    label = pendingWords(state.pendingScan || L.pendingScan(new Date(), [], [])).title;
+    label = target.dataset.first ? "First scan in progress; it lights green once saved" : pendingWords(state.pendingScan || L.pendingScan(new Date(), [], [])).title;
   } else {
-    const column = (state.scanColumns || []).find(candidate => candidate.id === target.dataset.col);
+    const column = (state.fieldColumns || []).find(candidate => candidate.id === target.dataset.col);
     label = column ? columnLabel(column, target.dataset.source) : "";
   }
   tip.innerHTML = esc(target.dataset.tip) + "<small>" + esc(label) + "</small>" +
@@ -1037,7 +1052,7 @@ const ledField = (() => {
     const grow = hovered ? 2 : 0;
     const x = cell.x - grow, y = cell.y - grow - (1 - ease) * 12, s = cell.s + grow * 2;
     let color, alpha = ease, glow = 0;
-    if (cell.state === "dim") {
+    if (cell.state === "dim" || cell.state === "markup") {
       color = mix(colors.lo, colors.hi, Math.pow(w, 1.5) * .92 + (hovered ? .25 : 0));
     } else {
       const base = colors[cell.state] || colors.on;
@@ -1082,6 +1097,13 @@ const ledField = (() => {
     ctx.strokeRect(cell.x + .5, cell.y + .5, cell.s - 1, cell.s - 1);
   }
 
+  // A window no scan reached: a small dot, so the row reads as continuous.
+  function paintSkip(cell) {
+    const d = Math.max(2, Math.round(cell.s * .18));
+    ctx.fillStyle = rgba(colors.ink, colors.light ? .18 : .22);
+    ctx.fillRect(cell.x + (cell.s - d) / 2, cell.y + (cell.s - d) / 2, d, d);
+  }
+
   function visible() {
     return !document.hidden && canvas && canvas.offsetParent !== null && cells.length > 0;
   }
@@ -1094,7 +1116,7 @@ const ledField = (() => {
       const t = now / 1000;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      cells.forEach(cell => cell.state === "pending" ? paintPending(cell, t) : paintLight(cell, t, now));
+      cells.forEach(cell => cell.state === "pending" ? paintPending(cell, t) : cell.state === "skip" ? paintSkip(cell) : paintLight(cell, t, now));
       revealed = true;
     }
     if (reduced) return;
