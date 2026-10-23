@@ -545,6 +545,8 @@
     .bulk-preview-url { flex: none; max-width: 48%; overflow: hidden; color: var(--ink-3); font-family: var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
     .bulk-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
     /* Guided discovery keeps candidate selection visually separate from active monitors. */
+    .discovery-filter-row { display: grid; grid-template-columns: minmax(0, 1fr) 124px; gap: 8px; }
+    .discovery-filter-row .field-input { min-width: 0; min-height: 32px; margin-top: 0; padding: 5px 25px 5px 8px; font-size: 12.5px; }
     .discovery-selection-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--line); background: var(--raise-2); }
     .discovery-selection-copy { display: grid; min-width: 0; gap: 2px; }
     .discovery-selection-count { color: var(--ink); font-size: 12.5px; font-weight: 500; font-variant-numeric: tabular-nums; }
@@ -1629,7 +1631,10 @@
           <div class="list-head">
             <div class="list-title-row"><h1 class="list-title">Scout</h1><span class="list-count" id="scoutCount"></span></div>
             <button class="scout-sweep" id="scoutSweep" type="button" data-scout-coverage data-tone="idle"><span id="scoutSweepText">Loading the last sweep…</span><span class="scout-sweep-link">Sources</span></button>
-            <label class="search-field" for="scoutSearch"><span class="visually-hidden">Search Scout findings</span><input id="scoutSearch" type="search" placeholder="Search titles, regulators or addresses" autocomplete="off"></label>
+            <div class="discovery-filter-row">
+              <label class="search-field" for="scoutSearch"><span class="visually-hidden">Search Scout findings</span><input id="scoutSearch" type="search" placeholder="Search titles, URLs or sections" autocomplete="off"></label>
+              <label for="scoutFormatFilter"><span class="visually-hidden">Filter by file type</span><select class="field-input" id="scoutFormatFilter" aria-label="Filter by file type"><option value="ALL">All types</option><option value="PDF">PDF</option><option value="HTML">HTML pages</option><option value="OFFICE">Office files</option><option value="OTHER">Other files</option></select></label>
+            </div>
             <div class="filters" role="group" aria-label="Filter Scout findings">
               <button type="button" data-scout-filter="REVIEW" aria-pressed="true">To review</button>
               <button type="button" data-scout-filter="BACKLOG" aria-pressed="false">Backlog</button>
