@@ -241,7 +241,7 @@
       "id": "manual-c6dccdae3ac5",
       "name": "US TIC Forms & Instructions",
       "regulator": "home.treasury.gov",
-      "active": true,
+      "active": false,
       "baseline_on_first_run": true,
       "include_selector": "",
       "ignore_selectors": [],
