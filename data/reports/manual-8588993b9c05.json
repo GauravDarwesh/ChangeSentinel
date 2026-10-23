@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261023T170414Z-c6a6d7b9",
-  "generated_at": "2026-10-23T17:07:54.328879+00:00",
+  "run_id": "20261023T211930Z-9b2ddad9",
+  "generated_at": "2026-10-23T21:22:17.191379+00:00",
   "source": {
     "id": "manual-8588993b9c05",
     "name": "FR Y-14Q Supplemental Information (ZIP)",
@@ -90,6 +90,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "39990540764"
+  "trigger": "scheduled",
+  "workflow_run_id": "40025663582"
 }

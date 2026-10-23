@@ -1,0 +1,33 @@
+{
+  "event_id": "4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2",
+  "event_type": "HTML_SOURCE_CHANGED",
+  "url": "https://www.federalreserve.gov/apps/ReportingForms",
+  "timestamp": "2026-10-23T21:22:14.496468+00:00",
+  "before": {
+    "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "7b5a8bd0fde8abd82892bac9086d6fadb9c872e4ebe6847b86f7792c279763fe",
+    "html_hash": "7b5a8bd0fde8abd82892bac9086d6fadb9c872e4ebe6847b86f7792c279763fe",
+    "html_comparison_hash": "9a3ff015bc076021ae472ba200266c7b4cadb0420e0ba65fe3979914dc64bb64",
+    "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
+    "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-7b5a8bd0fde8abd82892bac9086d6fadb9c872e4ebe6847b86f7792c279763fe.html",
+    "file_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "d8da168d84efd15e2e04dbdc5198704109f74f12d1b0973a06911a108d377523",
+    "html_hash": "d8da168d84efd15e2e04dbdc5198704109f74f12d1b0973a06911a108d377523",
+    "html_comparison_hash": "3133747a750e4ae406da1c1b8f97697992b410ebc60c07247b6194b53638a9ca",
+    "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
+    "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-d8da168d84efd15e2e04dbdc5198704109f74f12d1b0973a06911a108d377523.html",
+    "file_snapshot_location": null
+  },
+  "diff": "",
+  "html_diff": "--- before\n+++ after\n@@ -1760,7 +1760,7 @@\n       Filter by:\n      </h3>\n      <form action=\"/apps/reportingforms/\" method=\"post\">\n-      <input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"5lYVO9cG4SutCE8Ha8YZMcl72EU14UGqyxpxqqN4CeDxuKd0KGCnJc72GINVZZAPp4MRW5lvNyajuoYHIZE9rW8CUHzoY6zayWZkXBmD9Po1\"/>\n+      <input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"6cPfWrP38KjIMnxZMxRLrjuG00tS38xlWrsRwThrAdL4qRFirnQbVkob_tH4CX3mFAIUYKieNeRQz1V-JsvWPTCuF3LThEkTSUmpss5WqKs1\"/>\n       <div class=\"row\" style=\"padding-bottom: 15px;\">\n        <div class=\"col-md-2\">\n         <label for=\"SearchString\">\n@@ -2355,7 +2355,7 @@\n });\n   </script>\n   <script>\n-   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a4f2571f887b75d6',t:'MTc5Mjc3NTI3MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n+   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a4f3cbc8e9d1072c',t:'MTc5Mjc5MDUzNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n   </script>\n  </body>\n </html>",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body."
+}
