@@ -64,6 +64,27 @@ Deno.test('redirects are re-checked and documents are not parsed', async () => {
   eq((await readPage('https://8.8.8.8/missing', fake) as any).status, 404, 'errors are reported, not thrown');
 });
 
+Deno.test('large inline header does not hide links beyond the former 3 MB cap', async () => {
+  const filler = '.mega-menu{margin:0;padding:0}\n'.repeat(115_000);
+  const html = '<!doctype html><html><head><title>Regulator guides</title><style>' + filler +
+    '</style></head><body><main><h1>Guides</h1><a href="/files/guide.pdf">Download guide</a></main></body></html>';
+  const bytes = new TextEncoder().encode(html);
+  assert(bytes.length > 3_000_000 && bytes.length < 8_000_000, 'fixture crosses old cap but stays under new cap');
+  const fake = (async () => new Response(new ReadableStream<Uint8Array>({
+    start(controller) {
+      for (let offset = 0; offset < bytes.length; offset += 64 * 1024) {
+        controller.enqueue(bytes.slice(offset, Math.min(offset + 64 * 1024, bytes.length)));
+      }
+      controller.close();
+    }
+  }), { headers: { 'content-type': 'text/html; charset=utf-8' } })) as typeof fetch;
+  const page = await readPage('https://8.8.8.8/large-page', fake) as any;
+  eq(page.kind, 'page', 'large page is parsed');
+  eq(page.links[0]?.url, 'https://8.8.8.8/files/guide.pdf', 'body link beyond former cap is available');
+  eq(page.links[0]?.text, 'Download guide', 'body link text is preserved');
+  eq(page.truncated, false, 'response within the new cap is not marked truncated');
+});
+
 Deno.test('requests need an allowed origin, an identity and stay within budget', async () => {
   const visitor = '12345678-1234-4123-8123-123456789abc';
   const request = (origin: string, headers: Record<string, string> = {}) => new Request('https://fn.test/page-reader', {
