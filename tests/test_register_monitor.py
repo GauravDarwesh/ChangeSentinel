@@ -335,9 +335,9 @@ class TestRegisterMonitor(unittest.TestCase):
                 encoding="utf-8",
             )
             event = issue_event(url, name="Policy")
-            footer = "\\n\\nThis request was created from the ChangeSentinel dashboard."
+            footer = "\n\nThis request was created from the ChangeSentinel dashboard."
             event["issue"]["body"] = event["issue"]["body"].replace(
-                footer, "\\nCrawl depth: 2\\nScout discovery: yes" + footer
+                footer, "\nCrawl depth: 2\nScout discovery: yes" + footer
             )
             result = register_request(event, source_path, "GauravDarwesh/ChangeSentinel", scout_path)
             source = json.loads(source_path.read_text(encoding="utf-8"))["sources"][0]
@@ -347,6 +347,10 @@ class TestRegisterMonitor(unittest.TestCase):
         self.assertTrue(source["register_discovered_urls"])
         self.assertEqual(source["seed_urls"], [url])
         self.assertEqual(source["allowed_urls"], [])
+        self.assertEqual(
+            source["allowed_prefixes"],
+            ["https://www.example.com/"],
+        )
 
     def test_manual_registration_respects_all_supported_crawl_depths(self):
         url = "https://www.example.com/policy"
