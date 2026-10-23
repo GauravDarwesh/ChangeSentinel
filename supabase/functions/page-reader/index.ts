@@ -88,7 +88,7 @@ export function isPrivateAddress(address: string): boolean {
     return a === 0 || a === 10 || a === 127 || a >= 224 ||
       (a === 100 && b >= 64 && b <= 127) || (a === 169 && b === 254) ||
       (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) ||
-      (a === 192 && b === 0) || (a === 198 && (b === 18 || b === 19)) ||
+      (a === 192 && b === 0 && c === 0) || (a === 198 && (b === 18 || b === 19)) ||
       (a === 192 && b === 0 && c === 2) || (a === 198 && b === 51 && c === 100) ||
       (a === 203 && b === 0 && c === 113);
   }
@@ -196,6 +196,108 @@ function absolute(value: string, base: string): string {
 // chrome: the link sits in the site's own header, menu or footer (outside the main content).
 export type PageLink = { url: string; text: string; section: string; format: string; chrome: boolean };
 
+
+function decodeFallbackEntities(value: string): string {
+  return String(value || '')
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&#(\d+);/g, (_, digits) => {
+      const code = Number(digits);
+      return code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : '';
+    })
+    .replace(/&#x([0-9a-f]+);/gi, (_, digits) => {
+      const code = parseInt(digits, 16);
+      return code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : '';
+    });
+}
+
+function extractRawHtmlLinks(html: string, pageUrl: string): { links: PageLink[]; truncated: boolean } {
+  const visibleSource = html
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/<(script|style|noscript|template|iframe|object|svg|textarea)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, ' ');
+  const events: Array<{ position: number; kind: 'heading' | 'anchor'; attributes?: string; content: string }> = [];
+  const headingPattern = /<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]\s*>/gi;
+  const anchorPattern = /<a\b([^>]*)>([\s\S]*?)<\/a\s*>/gi;
+  let match: RegExpExecArray | null;
+
+  while ((match = headingPattern.exec(visibleSource)) !== null) {
+    events.push({ position: match.index, kind: 'heading', content: match[1] || '' });
+  }
+  while ((match = anchorPattern.exec(visibleSource)) !== null) {
+    events.push({ position: match.index, kind: 'anchor', attributes: match[1] || '', content: match[2] || '' });
+  }
+  events.sort((a, b) => a.position - b.position);
+
+  const links: PageLink[] = [];
+  const byUrl = new Set<string>();
+  let section = '';
+  let truncated = false;
+  const self = pageUrl.split('#')[0];
+
+  for (const event of events) {
+    const textContent = decodeFallbackEntities(event.content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim());
+    if (event.kind === 'heading') {
+      section = textContent.slice(0, 160);
+      continue;
+    }
+
+    const hrefMatch = (event.attributes || '').match(/\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>]+))/i);
+    if (!hrefMatch) continue;
+    const rawHref = decodeFallbackEntities(hrefMatch[1] ?? hrefMatch[2] ?? hrefMatch[3] ?? '');
+    const resolved = absolute(rawHref, pageUrl);
+    if (!/^https?:\/\//i.test(resolved)) continue;
+
+    const normalized = resolved.split('#')[0];
+    if (!normalized || (normalized === self && resolved.includes('#'))) continue;
+    if (byUrl.has(normalized)) continue;
+    if (links.length >= MAX_LINKS) {
+      truncated = true;
+      continue;
+    }
+
+    byUrl.add(normalized);
+    links.push({
+      url: normalized,
+      text: textContent.slice(0, 300) || rawHref.slice(0, 300) || normalized,
+      section,
+      format: formatOf(normalized),
+      chrome: false
+    });
+  }
+  return { links, truncated };
+}
+
+function escapeFallbackHtml(value: string): string {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function buildFallbackPreview(title: string, links: PageLink[]): string {
+  const cards = links.map((link, index) =>
+    '<li><a data-cs-link="' + index + '" href="' + escapeFallbackHtml(link.url) + '">' +
+    escapeFallbackHtml(link.text || link.url) + '</a>' +
+    (link.section ? '<small>' + escapeFallbackHtml(link.section) + '</small>' : '') +
+    '<span>' + escapeFallbackHtml(link.format) + '</span></li>'
+  ).join('');
+  const body = links.length
+    ? '<p>The original page layout could not be safely reconstructed. These links were extracted from its HTML.</p><ol>' + cards + '</ol>'
+    : '<p>The reader could not reconstruct this page safely, and no standard HTML links were available.</p>';
+  return '<!doctype html>\n<html><head><meta charset="utf-8">' +
+    '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; img-src data: https:; script-src \'none\'; object-src \'none\'; base-uri \'none\'">' +
+    '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+    '<title>' + escapeFallbackHtml(title || 'Page preview') + '</title>' +
+    '<style>body{font:16px/1.5 system-ui,-apple-system,sans-serif;color:#27231f;background:#fff;margin:0;padding:20px}h1{font-size:1.25rem;overflow-wrap:anywhere}p{color:#6f665d}ol{padding-left:1.5rem}li{padding:.6rem .25rem;border-bottom:1px solid #eee;overflow-wrap:anywhere}a{color:#9b4e16}small{display:block;color:#72695f;margin-top:.15rem}li span{display:block;color:#8a8177;font-size:.8rem}</style>' +
+    '</head><body><h1>' + escapeFallbackHtml(title || 'Page preview') + '</h1>' +
+    body + '</body></html>';
+}
+
 export function readHtml(html: string, pageUrl: string): { title: string; html: string; links: PageLink[]; truncated: boolean } {
   const document: Node = new (DOMParser as Node)().parseFromString(html, 'text/html');
   const baseTag = document.querySelector('base[href]');
@@ -264,6 +366,31 @@ export function readHtml(html: string, pageUrl: string): { title: string; html: 
       }
     }
     node.setAttribute('data-cs-link', String(index));
+  }
+
+  // linkedom can return a title/head yet fail to build body descendants for some large HTML pages.
+  // Extract standard anchors and render a newly constructed preview rather than a blank frame.
+  const parsedBodyElements = Array.from(document.querySelectorAll('body *')).length;
+  const rawHasLinkedAnchors = /<a\b[^>]*\bhref\s*=/i.test(html);
+  if (parsedBodyElements === 0 || (links.length === 0 && rawHasLinkedAnchors)) {
+    const fallback = extractRawHtmlLinks(html, pageUrl);
+    console.warn('page-reader safe link-index fallback', JSON.stringify({
+      url: pageUrl,
+      title,
+      inputHtmlLength: html.length,
+      parsedBodyElements,
+      rawAnchorTags: (html.match(/<a\b/gi) || []).length,
+      rawHrefAttributes: (html.match(/\bhref\s*=/gi) || []).length,
+      fallbackLinks: fallback.links.length
+    }));
+    if (fallback.links.length > 0 || parsedBodyElements === 0) {
+      return {
+        title,
+        html: buildFallbackPreview(title, fallback.links),
+        links: fallback.links,
+        truncated: fallback.truncated
+      };
+    }
   }
 
   // The copy cannot run script even if a page smuggles some past the cleanup:
