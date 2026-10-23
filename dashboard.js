@@ -3408,7 +3408,7 @@ function renderDiscoverySelectionBar() {
   const count = $("discoverySelectionCount");
   if (!count) return;
   const metrics = discoverySelectionMetrics();
-  count.textContent = metrics.selected + (metrics.selected === 1 ? " selected" : " selected") +
+  count.textContent = metrics.selected + " selected" +
     (metrics.alreadyMonitored ? " · " + metrics.alreadyMonitored + " already monitored" : "");
   const visible = typeof scoutFiltered === "function" ? scoutFiltered() : [];
   const selectButton = $("selectVisibleScout");
