@@ -478,6 +478,7 @@ class TestGuidedDiscoverySelection(unittest.TestCase):
         for token in (
             'const DISCOVERY_SELECTION_STORAGE = "cs-guided-discovery-selection-v1"',
             "function restoreDiscoverySelection()",
+            "restoreDiscoverySelection();",
             "function toggleSingleDiscoverySelection(input)",
             "function toggleVisibleDiscoverySelection()",
             "function addManualDiscoveryUrls()",
