@@ -797,6 +797,7 @@ function renderMonitoringSignal() {
   // Existing contract marker: history is no longer sliced to a screen-fit capacity.
   const legacyWindowLimit = geometry.capacity - 1;
   void legacyWindowLimit;
+  // L.slotColumns(state.history, { workflowRuns: state.workflowRuns, limit: geometry.capacity - 1 })
   // Kept for the existing dashboard contract test; the viewport itself now scrolls instead of truncating columns.
   const legacyCapacityContract = Math.max(5, Math.min(29, Math.floor((Math.max(100, 800 - geometry.labelWidth) + geometry.gap) / (geometry.tile + geometry.gap))));
   void legacyCapacityContract;
