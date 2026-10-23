@@ -479,11 +479,12 @@
       transition: color .15s var(--ease);
     }
     .field-label:hover, .field-label.is-hot { color: var(--ink); }
-    .field-group { grid-column: 1 / -1; padding: 12px 0 4px; color: var(--ink-3); font-size: 12px; }
+    .field-group { grid-column: 1 / -1; padding: 10px 0 2px; color: var(--ink-3); font-size: 11.5px; letter-spacing: .01em; }
     .field-group:first-child { padding-top: 0; }
     /* Cells are hit areas only: the lights themselves are painted on the canvas behind. */
     .led { width: var(--tile); height: var(--tile); min-width: 0; border: 0; padding: 0; background: transparent; cursor: pointer; }
     .led.s-none { cursor: default; pointer-events: none; }
+    .led.s-skip { cursor: default; }
     .led.s-pending { cursor: help; }
     .field-axis, .field-marks { grid-column: 2 / -1; display: grid; grid-template-columns: repeat(var(--cols), var(--tile)); gap: var(--gap); color: var(--ink-3); font-size: 11.5px; }
     .field-marks { height: 3px; margin-top: 4px; }
@@ -491,7 +492,8 @@
     .field-marks i.m-manual { background: var(--ink-2); }
     .field-marks i.m-continuation { background: var(--line-2); }
     .field-axis { margin-top: 6px; }
-    .field-axis span { white-space: nowrap; }
+    .field-axis span { white-space: nowrap; overflow: visible; }
+    .field-axis span.is-day { box-shadow: inset 1px 0 0 var(--line-2); padding-left: 3px; }
     .field-note { margin-top: 16px; color: var(--ink-3); font-size: 12.5px; line-height: 1.6; text-wrap: pretty; }
     .field-tip {
       position: fixed; z-index: 80; max-width: 280px; padding: 8px 10px; border: 1px solid var(--line-2); border-radius: var(--radius);
@@ -880,10 +882,29 @@
       .rl-line { grid-template-columns: 34px minmax(0, 1fr); padding-right: 14px; }
       .rl-no { padding-right: 9px; }
       .rl-gap { margin-left: 34px; margin-right: 14px; }
-      .view-overview { display: block; height: 100%; overflow-y: auto; }
-      .overview-text { overflow: visible; padding: 16px 18px 8px; border-right: 0; }
-      .overview-statement { font-size: 19px; }
-      .field-wrap { overflow: visible; padding: 18px 18px 32px; border-top: 1px solid var(--line); }
+      /* Phone overview: status, then the change field, then lists. One idea per band. */
+      .view-overview { display: flex; flex-direction: column; height: 100%; overflow-y: auto; }
+      .overview-text { display: contents; }
+      .overview-text > * { padding-left: 18px; padding-right: 18px; }
+      .overview-text > .mobile-head { order: 1; padding: 14px 18px; }
+      .overview-statement { order: 2; font-size: 17px; line-height: 1.45; }
+      .scan-pair { order: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 18px; margin-top: 18px; }
+      .scan-pair .block { margin-top: 0; }
+      .scan-pair .block-label { white-space: nowrap; }
+      .scan-pair .block-value { font-size: 14px; }
+      .scan-pair .block-value small { display: block; margin-top: 1px; font-size: 12px; }
+      .scan-pair .cycle-bar { gap: 1.5px; margin-top: 8px; }
+      .field-wrap { order: 4; flex: none; overflow: visible; margin-top: 20px; padding: 16px 18px 18px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .block-changes { order: 5; }
+      .block-sources { order: 6; }
+      .block-dates { order: 7; padding-bottom: 32px; }
+      .overview-text .block { margin-top: 22px; }
+      .field-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .field-legend { gap: 4px 12px; font-size: 11.5px; }
+      .field-stage { margin-top: 12px; }
+      .field-label { font-size: 12px; padding-right: 8px; }
+      .field-note { margin-top: 12px; font-size: 12px; }
+      .preview { display: none; }
       .snapshot-frame, .pdf-snapshot-frame { height: 64svh; }
       .facts { grid-template-columns: 1fr; }
       .toast { bottom: calc(68px + env(safe-area-inset-bottom)); }
@@ -892,7 +913,7 @@
     .mobile-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .mobile-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
     .m-action {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; height: 36px; padding: 0 8px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; height: 34px; padding: 0 8px;
       border: 1px solid var(--line-2); background: var(--raise); color: var(--link); font-size: 13px; white-space: nowrap;
       transition: border-color .15s var(--ease), color .15s var(--ease);
     }
@@ -1612,24 +1633,26 @@
           </div>
           <h1 class="visually-hidden">Overview</h1>
           <p class="overview-statement" id="overviewLede">Reading the latest stored scan…</p>
-          <div class="block">
-            <div class="block-label"><span>Next scan</span><span id="nextRunCountdown"></span></div>
-            <div class="block-value" id="nextRunTime">Calculating…</div>
-            <div class="cycle-bar" id="cycleBar" aria-hidden="true"></div>
+          <div class="scan-pair">
+            <div class="block block-next">
+              <div class="block-label"><span>Next scan</span><span id="nextRunCountdown"></span></div>
+              <div class="block-value" id="nextRunTime">Calculating…</div>
+              <div class="cycle-bar" id="cycleBar" aria-hidden="true"></div>
+            </div>
+            <div class="block block-last">
+              <div class="block-label"><span>Last saved scan</span></div>
+              <div class="block-value"><span id="lastScanTime">Not loaded</span> <small id="lastScanNote"></small></div>
+            </div>
           </div>
-          <div class="block">
-            <div class="block-label"><span>Last saved scan</span></div>
-            <div class="block-value"><span id="lastScanTime">Not loaded</span> <small id="lastScanNote"></small></div>
-          </div>
-          <div class="block">
+          <div class="block block-changes">
             <div class="block-label"><span>Latest changes</span><button class="sheet-link" type="button" data-go="changes">All changes</button></div>
             <div id="recentChanges"><div class="loading">Loading changes…</div></div>
           </div>
-          <div class="block">
+          <div class="block block-dates">
             <div class="block-label"><span>Dates ahead</span><button class="sheet-link" type="button" data-copy-calendar title="Copy the address of the calendar feed to subscribe to it in a calendar app">Calendar feed</button></div>
             <div id="upcomingDates"><div class="loading">Reading dates…</div></div>
           </div>
-          <div class="block">
+          <div class="block block-sources">
             <div class="block-label"><span>Sources</span></div>
             <div class="source-lines" id="sourceTable"></div>
           </div>
@@ -1638,7 +1661,7 @@
           <div class="field-head">
             <h2 class="field-title" id="fieldTitle">Every page, every scan</h2>
             <div class="field-legend" aria-label="Legend">
-              <span><i class="on"></i>Changed</span><span><i class="new"></i>New page</span><span><i class="bad"></i>Problem</span><span><i class="dim"></i>Checked, no change</span><span><i class="next"></i>Next scan</span><span><i class="manual"></i>Manual run</span>
+              <span><i class="on"></i>Changed</span><span><i class="new"></i>New page</span><span><i class="bad"></i>Problem</span><span><i class="dim"></i>No change</span><span><i class="next"></i>Next scan</span><span><i class="manual"></i>Manual run in window</span>
             </div>
           </div>
           <div class="field-stage" id="fieldStage">
@@ -2408,8 +2431,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261023-add-link-explore-1"></script>
-  <script src="dashboard.js?v=20261023-add-link-explore-1"></script>
+  <script src="dashboard-lib.js?v=20261023-heatmap-windows-1"></script>
+  <script src="dashboard.js?v=20261023-heatmap-windows-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

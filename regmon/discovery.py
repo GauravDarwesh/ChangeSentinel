@@ -753,14 +753,20 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                     break
                 link_depth = batch_link_depth[link]
                 old_depth = depth_by_url.get(link)
+                # Only a new page, or a known page now reached by a shorter path,
+                # needs (re)visiting. Re-queueing every known link made pages
+                # that link to each other (or to themselves) loop forever.
+                needs_visit = False
                 if link not in discovered_set:
                     discovered_set.add(link)
                     discovered.append(link)
                     new_links.append(link)
                     depth_by_url[link] = link_depth
+                    needs_visit = True
                 elif old_depth is None or link_depth < old_depth:
                     depth_by_url[link] = link_depth
-                if (source.crawl_depth < 0 or link_depth < source.crawl_depth) and _needs_link_discovery(link, source) and link not in queued:
+                    needs_visit = source.crawl_depth >= 0 and old_depth is not None
+                if needs_visit and (source.crawl_depth < 0 or link_depth < source.crawl_depth) and _needs_link_discovery(link, source) and link not in queued:
                     pending.append(link)
                     queued.add(link)
 
@@ -883,14 +889,17 @@ def http_discover(source: SourceConfig, data_dir: Path) -> list[str]:
                             if not in_scope(link, source):
                                 continue
                             old_depth = depth_by_url.get(link)
+                            needs_visit = False
                             if link not in discovered_set:
                                 discovered_set.add(link)
                                 discovered.append(link)
                                 new_links.append(link)
                                 depth_by_url[link] = child_depth
+                                needs_visit = True
                             elif old_depth is None or child_depth < old_depth:
                                 depth_by_url[link] = child_depth
-                            if (source.crawl_depth < 0 or child_depth < source.crawl_depth) and _needs_link_discovery(link, source) and link not in retry_pending:
+                                needs_visit = source.crawl_depth >= 0 and old_depth is not None
+                            if needs_visit and (source.crawl_depth < 0 or child_depth < source.crawl_depth) and _needs_link_discovery(link, source) and link not in retry_pending:
                                 retry_pending.append(link)
                         _append_inventory(
                             source,

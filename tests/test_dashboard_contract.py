@@ -216,8 +216,10 @@ class TestDashboardScanSignal(unittest.TestCase):
         source = read("dashboard.js")
         for token in (
             "function renderMonitoringSignal()",
-            "L.runColumns(state.history, { workflowRuns: state.workflowRuns, limit: geometry.capacity - 1 })",
-            "L.pendingScan(new Date(), columns, state.workflowRuns)",
+            # The field shows six-hour windows; the countdown still sees every saved scan.
+            "L.slotColumns(state.history, { workflowRuns: state.workflowRuns, limit: geometry.capacity - 1 })",
+            "L.pendingScan(new Date(), scans, state.workflowRuns)",
+            "pending: Boolean(item.pending_registration)",
             "L.columnCellState(column, page)",
             "itemChangeEntries(item)",
             "function updateNextRunCountdown()",
