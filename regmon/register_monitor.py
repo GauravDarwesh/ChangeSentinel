@@ -184,6 +184,11 @@ def source_for_url(
     settings["excluded_urls"] = []
     settings["discovery_max_pages_per_slice"] = 1 if crawl_depth == 0 else 200
     settings["register_discovered_urls"] = crawl_depth > 0
+    if crawl_depth > 0:
+        # Limit a manually-added crawl to the chosen page's parent directory,
+        # rather than allowing it to escape across the entire public host.
+        path_parent = parsed.path.rstrip("/").rsplit("/", 1)[0]
+        settings["allowed_prefixes"] = [parsed.scheme + "://" + authority + (path_parent.rstrip("/") + "/" if path_parent else "/")]
     return {
         "id": source_id,
         "name": _display_name(name, url),
