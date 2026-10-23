@@ -1,0 +1,1225 @@
+Reporting Central User Guide
+FR Y-9C
+Consolidated Financial Statements for Holding Companies
+Federal Reserve System
+Statistics Function June 2026
+2
+Overview This document provides the required file format for submitting the data upload file via Reporting Central and shows how a reporting institution can create the file from a spreadsheet for the FR Y -9C – Consolidated Financial Statement for Holding Companies . Formulas were used to pull the data from the spreadsheet worksheets containing the data and format them for transmission to Reporting Central.
+3
+How to create a text file from a spreadsheet for the FR Y-9C The FR Y-9C is comprised of multiple schedules and over a thousand financial data and text fields. To minimize issues arising during the creation of the Reporting Central text file, it is strongly recommended reporting institutions follow the process described below.
+Field Labels
+The identifying label for both financial and text data is the eight -character MDRM descriptor listed in Appendix A. Reporting Central uses the MDRM to identify individual report items in the file upload. We differentiate between text items and financial data items in Appendix A to help with creating the data listing in the next step.
+Field Values
+Data fields can have either positive, negative, zero, or null values. When you prepare your spreadsheet, this table explains how you enter positive, negative, zero, and null values in the item value cell of the spreadsheet (for our example in Step 1, the item value cells are in Column L).
+Financial Data Item Value Format Positive [leave value as is] Negative Preceded by minus (-) sign Zero 0 Null (or blank) [leave blank]
+Field Character Limits
+Standard financial data are reported in Thousands and allow entry of up to 14 digits, with no decimal places.
+For nonstandard financial data and text items character limits, see Appendix B.
+4
+Step 1 – Create Data Listing Since it is presumed that the reporter already has the report data in spreadsheet format, all subsequent steps in this guide are based on using this report data as the source. The first step recommended is to create a sequential listing of all the items by report schedule. Each line will contain the item number, the eight-character MDRM, and item value.
+NOTE Adding additional information to this spreadsheet (like item description) can make items easier to identify and help troubleshoot potential problems. However, this information is optional.
+For items with multiple columns, it is important to list each MDRM separately in the spreadsheet. This will allow you to format the data cells more easily, addressed in the Step 2.
+Complete the spreadsheet by listing all the items in Appendix A.
+5
+Step 2 – Link and Format Data Cells In Sheet 2 of the workbook, all the financial and text items will be linked to Sheet 1 and formatting characters inserted to aid in the creation of the final data file.
+NOTE We differentiate between financial items and text items in Appendix A. It is sometimes clear by the MDRM that an item is text, but that may not be the case in every instance. We identified all text items clearly in the Report Form Line Number column with “TEXT” clearly displayed alongside the item number. You should use this column to identify text items.
+Data Format for Financial Data Items
+• “L” is the separator between data items.
+• Eight-character MDRM.
+• “+” represents the maximum number of columns on the report form into which financial data can be entered for one MDRM. For FR Y-9C, the maximum number of columns is one. The formula for each financial item must contain only one “+”.
+• Financial data displays after each “+” and includes a “-” (minus sign) if the value is negative.
+Financial Data Excel formula: =”L”&Sheet1!E13&”+”&Sheet1!L13 Translates to: LBHCK4435+100
+Data Format for Text Items
+• “L” is the separator between data items.
+• Eight-character MDRM.
+• Text data entry is preceded by two underscores and followed by two underscores.
+Text Data Excel formula: =”L”&Sheet1!E1684&” ”&Sheet1!L1684&” ” Translates to: LBHTX8901 John Smith, AVP
+NOTE For null values, which you leave blank in the spreadsheet, the resulting item values will also be blank. For example, the items with null values will look like this:
+• For data items: LBHCK4435+ (a blank follows the plus sign)
+• For text items: LBHTX8902 (two underscores before and after the blank)
+The above is repeated for all financial data and text items. Once all fields have been linked, you can create the text file.
+6
+Step 3 – Create the Text File After saving the file in spreadsheet format the text file can be created by first navigating to the File tab.
+Then selecting the ‘Save As’ option and indicating the file type as ‘Text (Tab delimited) (*.txt).’
+If a message appears indicating that this file selection does not support workbooks with multiple worksheets, select ‘OK.’
+An additional message will be displayed concerning incompatibility features, select ‘Yes.’
+7
+Step 4 – Format the Text File and Add Header Record The text file you created will look like this.
+The next step is to add the header record as the first line.
+The file header record consists of the following items:
+• the first 10 spaces are the RSSD ID with leading zeroes
+• the next 10 spaces are the report series ID ‘FRY9C,’ plus FIVE trailing spaces
+• the report as-of date, in MM-DD-YYYY format
+8
+Step 5 – Reporting Central Submission In Reporting Central, select the “Upload file” tab and then click the “Upload your files here” tab. Then, navigate to the stored text file and select the filename so it appears in the ‘File name:’ box. Select “Open” to continue.
+Next select the “Upload” tab.
+9
+If there are no formatting issues during the file upload you will get a “File Upload Complete” message the data will load directly into the report screen.
+The report data can then be validated, saved, submitted or deleted. If errors exist in the text file error messages will appear in the file upload window, which can be used to troubleshoot any formatting issues.
+10
+- - - - Appendix A FR Y-9C Report Detailed Field Specifications
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+TEXT Name / Title BHTX8901 TEXT Area Code / Phone Number BHTX8902 TEXT Area Code / FAX Number BHTX9116 TEXT E-mail Address of Contact BHTX4086 TEXT Legal Title of Holding Company RSSD9017 TEXT (Mailing Address of the Holding Company) Street / PO Box RSSD9110 TEXT City RSSD9130 TEXT State RSSD9200 TEXT Zip Code RSSD9220 INTEGER Cover Page, Confidential treatment request BHCKC447 INTEGER Cover Page, If letter is provided BHCKKY38 TEXT Printed Name of Chief Financial Officer (or Equivalent) BHCKC490 TEXT Signature of Chief Financial Officer (or Equivalent) BHCKH321 TEXT Date of Signature (MM/DD/YYYY) BHTXJ196 TEXT Name BHCKFT42 TEXT Phone Number BHCKFT43 TEXT E-mail Address BHCKFT44
+Interest income a. Interest and fee income on loans:
+(1) In domestic offices: 1.a.(1)(a) (a) Loans secured by 1- 4 family residential properties BHCK4435 1.a.(1)(b) 1. (b) All other loans secured by real estate BHCK4436 1.a.(1)(c) (c) All other loans BHCKF821 1.a.(2) (2) In foreign offices, Edge and Agreement subsidiaries, and IBFs BHCK4059 1.b. b. Income from lease financing receivables BHCK4065 1.c. c. Interest income on balances due from depository institutions BHCK4115 d. Interest and dividend income on securities: - 1.d.(1) (1) U.S. Treasury securities and U.S. government agency obligations (excluding mortgage-backed securities) BHCKB488 1.d.(2) (2) Mortgage-backed securities BHCKB489 1.d.(3) (3) All other securities BHCK4060
+11
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I 1.e. e. Interest income from trading assets BHCK4069 1.f. f. Interest income on federal funds sold and securities purchased under agreements to resell BHCK4020 1.g. g. Other interest income BHCK4518 1.h. h. Total interest income (sum of items 1.a through 1.g) BHCK4107
+2. Interest expense a. Interest on deposits: -
+(1) In domestic offices: - 2.a.(1)(a) (a) Time deposits of $250,000 or less BHCKHK03 2.a.(1)(b) (b) Time deposits of more than $250,000 BHCKHK04 2.a.(1)(c) (c) Other deposits BHCK6761 2.a.(2) (2) In foreign offices, Edge and Agreement subsidiaries, and IBFs BHCK4172 2.b. b. Expense on federal funds purchased and securities sold under agreements to repurchase BHCK4180 2.c. c. Interest on trading liabilities and other borrowed money (excluding subordinated notes and debentures) BHCK4185 2.d. d. Interest on subordinated notes and debentures and on mandatory convertible securities BHCK4397 2.e. e. Other interest expense BHCK4398 2.f. f. Total interest expense (sum of items 2.a through 2.e) BHCK4073
+3. 3. Net interest income (item 1.h minus item 2.f) BHCK4074
+4. 4. Provision for credit losses on financial assets BHCKJJ33
+5. Noninterest income: - 5.a. a. Income from fiduciary activities BHCK4070 5.b. b. Service charges on deposit accounts in domestic offices BHCK4483 5.c. c. Trading revenue BHCKA220 5.d.(1) d. (1) Fees and commissions from securities brokerage BHCKC886 5.d.(2) (2) Investment banking, advisory, and underwriting fees and commissions BHCKC888 5.d.(3) (3) Fees and commissions from annuity sales BHCKC887 5.d.(4) (4) Underwriting income from insurance and reinsurance activities BHCKC386 5.d.(5) (5) Income from other insurance activities BHCKC387 5.d.(6)
+(6) Fees and commissions from securities brokerage, investment banking, advisory, and underwriting fees and commissions BHCKKX46
+5.d.(7) (7) Income from insurance activities BHCKKX47 5.e. e. Venture capital revenue BHCKB491
+12
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I 5.f. f. Net servicing fees BHCKB492 5.g. g. Net securitization income BHCKB493 h. Not applicable - 5.i. i. Net gains (losses) on sales of loans and leases BHCK8560 5.j. j. Net gains (losses) on sales of other real estate owned BHCK8561 5.k. k. Net gains (losses) on sales of other assets (excluding securities) BHCKB496 5.l. l. Other noninterest income BHCKB497 5.m. m. Total noninterest income (sum of items 5.a through 5.l) BHCK4079 6.a. 6. a. Realized gains (losses) on held-to-maturity securities BHCK3521 6.b. b. Realized gains (losses) on available-for-sale debt securities BHCK3196
+7. Noninterest expense: - 7.a. a. Salaries and employee benefits BHCK4135 7.b.
+b. Expenses of premises and fixed assets (net of rental income) (excluding salaries and employee benefits and mortgage interest) BHCK4217
+7.c.(1) c. (1) Goodwill impairment losses BHCKC216 7.c.(2) (2) Amortization expense and impairment losses for other intangible assets BHCKC232 7.d. d. Other noninterest expense BHCK4092 7.e. e. Total noninterest expense (sum of items 7.a through 7.d) BHCK4093
+8.a.
+a. Income (loss) before change in net unrealized holding gains (losses) on equity securities not held for trading, applicable income taxes, and discontinued operations (sum of items 3, 5.m, 6.a, 6.b, minus items 4 and 7.e)
+BHCKHT69
+8.b. b. Unrealized holding gains (losses) on equity securities not held for trading BHCKHT70 8.c. c. Income (loss) before applicable income taxes and discontinued operations (sum of items 8.a and 8.b) BHCK4301
+9. 9. Applicable income taxes (foreign and domestic) BHCK4302
+10. 10. Income (loss) before discontinued operations (item 8 minus item 9) BHCK4300
+11. 11. Discontinued operations, net of applicable income taxes BHCKFT28
+12. 12. Net income (loss) attributable to holding company and noncontrolling (minority) interests (sum of items 10 and 11) BHCKG104 13.
+13. LESS: Net income (loss) attributable to noncontrolling (minority) interests (if net income, report as a positive value;
+if net loss, report as a negative value) BHCKG103
+13
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+14. 14. Net income (loss) attributable to holding company (item 12 minus item 13) BHCK4340 - M.1. 1. Net interest income (item 3 above) on a fully taxable equivalent basis BHCK4519 M.2.
+Memoranda
+2. Net income before applicable income taxes, and discontinued operations (item 8.c. above) on a fully taxable equivalent basis BHCK4592
+M.3.
+3. Income on tax-exempt loans and leases to states and political subdivisions in the U.S. (included in Schedule HI, items 1.a and 1.b, above) BHCK4313
+M.4.
+4. Income on tax-exempt securities issued by states and political subdivisions in the U.S. (included in Schedule HI, item 1.d.(3), above) BHCK4507
+M.5. 5. Number of full-time equivalent employees at end of current period (round to nearest whole number) BHCK4150
+6. Other noninterest income (from Schedule HI, item 5.l, above) (only report amounts greater than $100,000 that exceed 7 percent of Schedule HI, item 5.l): -
+M.6.a. a. Income and fees from the printing and sale of checks BHCKC013 M.6.b. b. Earnings on/increase in value of cash surrender value of life insurance BHCKC014 M.6.c. c. Income and fees from automated teller machines (ATMs) BHCKC016 M.6.d. d. Rent and other income from other real estate owned BHCK4042 M.6.e. e. Safe deposit box rent BHCKC015 M.6.f. f. Bank card and credit card interchange fees BHCKF555 M.6.g. g. Income and fees from wire transfers BHCKT047 M.6.h. TEXT h. Description TEXT8562 M.6.h. h. Amount BHCK8562 M.6.i. TEXT i. Description TEXT8563 M.6.i. i. Amount BHCK8563 M.6.j. TEXT j. Description TEXT8564 M.6.j. j. Amount BHCK8564
+7. Other noninterest expense (from Schedule HI, item 7.d, above) (only report amounts greater than $100,000 that exceed 7 percent of the sum of Schedule HI, item 7.d): -
+M.7.a. a. Data processing expenses BHCKC017 M.7.b. b. Advertising and marketing expenses BHCK0497 M.7.c. c. Directors' fees BHCK4136 M.7.d. d. Printing, stationery, and supplies BHCKC018
+14
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I M.7.e. e. Postage BHCK8403 M.7.f. f. Legal fees and expenses BHCK4141 M.7.g. g. FDIC deposit insurance assessments BHCK4146 M.7.h. h. Accounting and auditing expenses BHCKF556 M.7.i. i. Consulting and advisory expenses BHCKF557 M.7.j. j. Automated teller machine (ATM) and interchange expenses BHCKF558 M.7.k. k. Telecommunications expenses BHCKF559 M.7.l. l. Other real estate owned expenses BHCKY923 M.7.m. m. Insurance expenses (not included in employee expenses, premises and fixed assets expenses, and other real estate owned expenses) BHCKY924
+M.7.n. TEXT 7. n. Description TEXT8565 M.7.n n. Amount BHCK8565 M.7.o. TEXT o. Description TEXT8566 M.7.o. o. Amount BHCK8566 M.7.p. TEXT p. Description TEXT8567 M.7.p. p. Amount BHCK8567
+8. Discontinued operations and applicable income tax effect (from Schedule HI, item 11) (itemize and describe each discontinued operation): -
+M.8.a.(1) TEXT a. (1) Description TEXTFT29 M.8.a.(1) a. (1) Amount BHCKFT29 M.8.a.(2) (2) Applicable income tax effect BHCKFT30 M.8.b.(1) TEXT b. (1) Description TEXTFT31 M.8.b.(1) b. (1) Amount BHCKFT31 M.8.b.(2) (2) Applicable income tax effect BHCKFT32
+9. Trading revenue (from cash instruments and derivative instruments) (Sum of items 9.a through 9.e must equal Schedule HI, item 5.c.) -
+M.9.a. a. Interest rate exposures BHCK8757 M.9.b. b. Foreign exchange exposures BHCK8758 M.9.c. c. Equity security and index exposures BHCK8759 M.9.d. d. Commodity and other exposures BHCK8760 M.9.e. e. Credit exposures BHCKF186
+M.9.f f. Impact on trading revenue of changes in the creditworthiness of the holding company's derivatives counterparties on the holding company's derivative assets (included in Memorandum items 9.a through 9.e above)
+BHCKK090
+15
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+M.9.g.
+g. Impact on trading revenue of changes in the creditworthiness of the holding company on the holding company's derivative liabilities (included in Memorandum items 9.a through 9.e above)
+BHCKK094
+10. Net gains (losses) recognized in earnings on credit derivatives that economically hedge credit exposures held outside the trading account: -
+M.10.a. a. Net gains (losses) on credit derivatives held for trading BHCKC889 M.10.b. b. Net gains (losses) on credit derivatives held for purposes other than trading BHCKC890 M.11. 11. Credit losses on derivatives (see instructions) BHCKA251 M.12.a. 12. a. Income from the sale and servicing of mutual funds and annuities (in domestic offices) BHCK8431 M.12.b.(1) b. (1) Premiums on insurance related to the extension of credit BHCKC242 M.12.b.(2) (2) All other insurance premiums BHCKC243 M.12.c. c. Benefits, losses, and expenses from insurance-related activities BHCKB983 M.13.
+13. Does the reporting holding company have a Subchapter S election in effect for federal income tax purposes for the current tax year?
+BHCKA530
+14. Net gains (losses) recognized in earnings on assets and liabilities that are reported at fair value under a fair value option: -
+M.14.a. a. Net gains (losses) on assets BHCKF551 M.14.a.(1) (1) Estimated net gains (losses) on loans attributable to changes in instrument-specific credit risk BHCKF552 M.14.b. b. Net gains (losses) on liabilities BHCKF553 M.14.b.(1) (1) Estimated net gains (losses) on liabilities attributable to changes in instrument-specific credit risk BHCKF554 M.15. 15. Stock-based employee compensation expense (net of tax effects) calculated for all awards under the fair value method BHCKC409 M.16. Not Applicable - M. 17. Not Applicable - Schedule HI-A - Changes in Holding Company Equity Capital 1.
+1. Total holding company equity capital most recently reported for the end of previous calendar year (i.e., after adjustments from amended Reports of Income)
+BHCK3217
+16
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+2. 2. Cumulative effect of changes in accounting principles and corrections of material accounting errors BHCKB507
+3. 3. Balance end of previous calendar year as restated (sum of items 1 and 2) BHCKB508
+4. 4. Net income (loss) attributable to holding company (must equal Schedule HI, item 14) BHCT4340
+5. Sale of perpetual preferred stock (excluding treasury stock transactions): - 5.a. a. Sale of perpetual preferred stock, gross BHCK3577 5.b. b. Conversion or retirement of perpetual preferred stock BHCK3578
+6. Sale of common stock: - 6.a. a. Sale of common stock, gross BHCK3579 6.b. b. Conversion or retirement of common stock BHCK3580
+7. 7. Sale of treasury stock BHCK4782
+8. 8. LESS: Purchase of treasury stock BHCK4783
+9. 9. Changes incident to business combinations, net BHCK4356
+10. 10. LESS: Cash dividends declared on preferred stock BHCK4598
+11. 11. LESS: Cash dividends declared on common stock BHCK4460
+12. 12. Other comprehensive income BHCKB511 13.
+13. Change in the offsetting debit to the liability for Employee Stock Ownership Plan (ESOP) debt guaranteed by the holding company BHCK4591
+14. 14. Other adjustments to equity capital (not included above) BHCK3581 15.
+15. Total holding company equity capital end of current period (sum of items 3, 4, 5, 6, 7, 9, 12, 13, and 14, less items 8, 10, and 11) (must equal item 27.a on Schedule HC) BHCT3210
+Schedule HI-B - Charge-Offs and Recoveries on Loans and Leases and Changes in Allowances for Credit Losses I. Charge-offs and Recoveries on Loans and Leases (Fully Consolidated) -
+1. Loans secured by real estate: a. Construction, land development, and other land loans in domestic offices: - 1.a.(1) (1) 1- 4 family residential construction loans BHCKC891 BHCKC892 1.a.(2) (2) Other construction loans and all land development and other land loans BHCKC893 BHCKC894 1.b. b. Secured by farmland in domestic offices BHCK3584 BHCK3585 c. Secured by 1- 4 family residential properties in domestic offices: - 1.c.(1) (1) Revolving, open-ended loans secured by 1- 4 family residential properties and extended under lines of credit BHCK5411 BHCK5412
+17
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+(2) Closed-end loans secured by 1- 4 family residential properties in domestic offices: - 1.c.(2)(a) (a) Secured by first liens BHCKC234 BHCKC217 1.c.(2)(b) (b) Secured by junior liens BHCKC235 BHCKC218 1.d. d. Secured by multifamily (5 or more) residential properties in domestic offices BHCK3588 BHCK3589 e. Secured by nonfarm nonresidential properties in domestic offices: - 1.e.(1) (1) Loans secured by owner-occupied nonfarm nonresidential properties BHCKC895 BHCKC896 1.e.(2) (2) Loans secured by other nonfarm nonresidential properties BHCKC897 BHCKC898 1.f. f. In foreign offices BHCKB512 BHCKB513
+2. Not applicable -
+3. 3. Loans to finance agricultural production and other loans to farmers BHCK4655 BHCK4665
+4. Commercial and industrial loans: - 4.a. a. To U.S. addressees (domicile) BHCK4645 BHCK4617 4.b. b. To non-U.S. addressees (domicile) BHCK4646 BHCK4618 4.c. c. To U.S. addressees (domicile) and non-U.S. addressees (domicile) BHCKKX48 BHCKKX49
+5. Loans to individuals for household, family, and other personal expenditures: - 5.a. a. Credit cards BHCKB514 BHCKB515 5.b. b. Automobile loans BHCKK129 BHCKK133 5.c.
+c. Other consumer loans (includes single payment, installment, all student loans, and revolving credit plans other than credit cards) BHCKK205 BHCKK206
+6. 6. Loans to foreign governments and official institutions BHCK4643 BHCK4627
+7. 7. All other loans BHCK4644 BHCK4628
+8. Lease financing receivables: - 8.a. a. Leases to individuals for household, family, and other personal expenditures BHCKF185 BHCKF187 8.b. b. All other leases BHCKC880 BHCKF188 8.c. c. Leases to individuals for household, family, and other personal expenditures and all other leases. BHCKKX50 BHCKKX51
+9. 9. Total (sum of items 1 through 8) BHCK4635 BHCK4605 - M.1.
+1. Loans to finance commercial real estate, construction, and land development activities (not secured by real estate) included in Schedule HI-B, part I, items 4 and 7 above BHCK5409 BHCK5410
+18
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I M.2. 2. Loans secured by real estate to non-U.S. addressees (domicile) (included in Schedule HI-B, part I, item 1, above) BHCK4652 BHCK4662 Memorandum item 3 is to be completed by (1) holding companies that, together with affiliated institutions, have outstanding credit card receivables (as defined in the instructions) that exceed $500 million as of the report date or
+(2) holding companies that on a consolidated basis are credit card specialty holding companies (as defined in the instructions).
+-
+M.3.
+3. Uncollectible retail credit card fees and finance charges reversed against income (i.e., not included in charge-offs against the allowance for credit losses on loans and leases) BHCKC388
+II. Changes in Allowances for Credit Losses -
+1. 1. Balance most recently reported at end of previous year (i.e., after adjustments from amended Reports of Income) BHCKB522 BHCKJH88 BHCKJH94
+2. 2. Recoveries (must equal Part I, item 9, column B, above) BHCT4605 BHCKJH89 BHCKJH95 3.
+3. LESS: Charge-offs (column A must equal Part I, item 9, column A above less Schedule HI-B, part II, item 4, Column A) BHCKC079 BHCKJH92 BHCKJH98
+4. 4. LESS: Write-downs arising from transfers of financial assets BHCK5523 BHCKJJ00 BHCKJJ01
+5. 5. Provision for credit losses BHCK4230 BHCKJH90 BHCKJH96
+6. 6. Adjustments (see instructions for this schedule) BHCKC233 BHCKJH91 BHCKJH97 7.
+7. Balance end of current period (sum of items 1, 2, 5, and 6, less items 3 and 4) (column A must equal Schedule HC, item 4.c) BHCT3123 BHCKJH93 BHCKJH99
+Memoranda - M.1. 1. Allocated transfer risk reserve included in Schedule HI-B, part II, item 7, column A, above BHCKC435 Memoranda items 2 and 3 are to be completed by (1) holding companies that, together with affiliated institutions, have outstanding credit card receivables (as defined in the instructions) that exceed $500 million as of the report date or
+(2) holding companies that on a consolidated basis are credit card specialty holding companies (as defined in the instructions).
+-
+M.2. 2. Separate valuation allowance for uncollectible retail credit card fees and finance charges BHCKC389 M.3. 3. Amount of allowance for credit losses on loans and leases attributable to retail credit card fees and finance charges
+BHCKC390
+19
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I M.4. Not Applicable - M.5. 5. Provisions for credit losses on other financial assets measured at amortized cost (not included in item 5, above). BHCKJJ02 M.6. 6. Allowance for credit losses on other financial assets measured at amortized cost (not included in item 7, above). BHCKJJ03 M.7. 7. Provisions for credit losses on off-balance-sheet credit exposures. BHCKMG93
+M.8.
+8. Estimated amount of expected recoveries of amounts previously written off included within the allowance for credit losses on loans and leases held for investment (include in item 7, column A, “Balance end of current period,” above).
+BHCKMG94
+Schedule HI-C - Disaggregated Data on the Allowance for Credit Losses Disaggregated Data on Allowances for Credit Losses - Loans and Leases, Held for Investment -
+1. 1. Real estate loans: - 1.a. a. Construction Loans BHCKJJ04 BHCKJJ12 1.b. b. Commercial real estate loans BHCKJJ05 BHCKJJ13 1.c. c. Residential real estate loans BHCKJJ06 BHCKJJ14
+2. 2. Commercial Loans BHCKJJ07 BHCKJJ15
+3. 3. Credit Cards BHCKJJ08 BHCKJJ16
+4. 4. Other consumer loans BHCKJJ09 BHCKJJ17
+5. 5. Unallocated BHCKJJ18
+6. 6. Total (sum of items 1.a through 5) BHCKJJ11 BHCKJJ19
+20
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I Held-To-Maturity Securities:
+7. 7. Secs issued by states and political subdivisions in the U.S. BHCKJJ20
+8. 8. Total Mortgage-backed securities (MBS) (including CMOs, REMICs, and stripped MBS) BHCKJJ21
+9. 9. Asset-backed securities and structured financial products BHCKJJ23
+10. 10. Other debt securities BHCKJJ24
+11. 11. Total (sum of items 7 through 10) BHCKJJ25 Notes to the Income Statement - Predecessor Financial Items -
+1. 1. Total interest income BHBC4107 1.a. a. Interest income on loans and leases BHBC4094 1.b. b. Interest income on investment securities BHBC4218
+2. 2. Total interest expense BHBC4073 2.a. a. Interest expense on deposits BHBC4421
+3. 3. Net interest income BHBC4074
+4. 4. Provision for credit losses on financial assets BHBCJJ33
+5. 5. Total noninterest income BHBC4079 5.a. a. Income from fiduciary activities BHBC4070 5.b. b. Trading revenue BHBCA220 5.c. c. Investment banking, advisory, brokerage, and underwriting fees and commissions BHBCB490 5.d. d. Venture capital revenue BHBCB491 5.e. e. Net securitization income BHBCB493 5.f. f. Insurance commissions and fees BHBCB494
+6. 6. Realized gains (losses) on held-to-maturity and available- for-sale securities BHBC4091
+7. 7. Total noninterest expense BHBC4093 7.a. a. Salaries and employee benefits BHBC4135 7.b. b. Goodwill impairment losses BHBCC216
+8. 8. Income (loss) before applicable income taxes and discontinued operations BHBC4301
+9. 9. Applicable income taxes BHBC4302
+10. 10. Noncontrolling (minority) interest BHBC4484
+11. 11. Discontinued operations, net of applicable income taxes and noncontrolling (minority) interest BHCKFT41
+12. 12. Net income (loss) BHBC4340
+13. 13. Cash dividends declared BHBC4475
+14. 14. Net charge-offs
+BHBC6061
+21
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+15. 15. Net interest income (item 3 above) on a fully taxable equivalent basis BHBC4519 Notes to the Income Statement (Other) -
+1. Not Applicable -
+2. 2. Initial allowances for credit losses recognized upon the acquisition of purchased credit-deteriorated assets on or after the effective date of ASU 2016-13.
+BHCKJJ27
+3. Not Applicable -
+4. TEXT 4. Description TEXT5351
+4. 4. Amount BHCK5351
+5. TEXT 5. Description TEXT5352
+5. 5. Amount BHCK5352
+6. TEXT 6. Description TEXT5353
+6. 6. Amount BHCK5353
+7. TEXT 7. Description TEXT5354
+7. 7. Amount BHCK5354
+8. TEXT 8. Description TEXT5355
+8. 8. Amount BHCK5355
+9. TEXT 9. Description TEXTB042
+9. 9. Amount BHCKB042
+10. TEXT 10. Description TEXTB043
+10. 10. Amount BHCKB043
+11. TEXT 11. Description TEXTB044
+11. 11. Amount BHCKB044
+12. TEXT 12. Description TEXTB045
+12. 12. Amount BHCKB045
+13. TEXT 13. Description TEXTB046
+13. 13. Amount BHCKB046
+14. TEXT 14. Description TEXTB047
+14. 14. Amount BHCKB047
+15. TEXT 15. Description TEXTB048
+15. 15. Amount BHCKB048
+16. TEXT 16. Description TEXTB049
+16. 16. Amount BHCKB049
+17. TEXT 17. Description
+TEXTB050
+22
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+17. 17. Amount BHCKB050
+18. TEXT 18. Description TEXTB051
+18. 18. Amount BHCKB051
+19. TEXT 19. Description TEXTB052
+19. 19. Amount BHCKB052
+20. TEXT 20. Description TEXTB053
+20. 20. Amount BHCKB053
+21. TEXT 21. Description TEXTB054
+21. 21. Amount BHCKB054
+22. TEXT 22. Description TEXTB055
+22. 22. Amount BHCKB055
+23. TEXT 23. Description TEXTB056
+23. 23. Amount BHCKB056 Schedule HC - Consolidated Balance Sheet Assets -
+1. Cash and balances due from depository institutions: - 1.a. a. Noninterest-bearing balances and currency and coin BHCK0081 b. Interest-bearing balances: - 1.b.(1) (1) In U.S. offices BHCK0395 1.b.(2) (2) In foreign offices, Edge and Agreement subsidiaries, and IBFs BHCK0397
+2. Securities: - 2.a. a. Held-to-maturity securities (from Schedule HC-B, column A) BHCKJJ34 2.b. b. Available-for-sale debt securities (from Schedule HC-B, column D) BHCK1773 2.c. c. Equity securities with readily determinable fair values not held for trading. BHCKJA22
+3. Federal funds sold and securities purchased under agreements to resell: - 3.a. a. Federal funds sold in domestic offices BHDMB987 3.b. b. Securities purchased under agreements to resell BHCKB989
+4. Loans and lease financing receivables: - 4.a. a. Loans and leases held for sale BHCK5369 4.b. b. Loans and leases, held for investment BHCKB528 4.c. c. LESS: Allowance for credit losses on loans and leases BHCK3123 4.d. d. Loans and leases, held for investment, net of allowance for loan and lease losses (item 4.b minus 4.c) BHCKB529
+5. 5. Trading assets (from Schedule HC-D)
+BHCK3545
+23
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+6. 6. Premises and fixed assets (including right of use assets) BHCK2145
+7. 7. Other real estate owned (from Schedule HC-M) BHCK2150
+8. 8. Investments in unconsolidated subsidiaries and associated companies BHCK2130
+9. 9. Direct and indirect investments in real estate ventures BHCK3656
+10. Intangible assets (from Schedule HC-M) BHCK2143
+11. 11. Other assets (from Schedule HC-F) BHCK2160
+12. 12. Total assets (sum of items 1 through 11) BHCK2170 Liabilities -
+13. Deposits: a. In domestic offices (from Schedule HC-E): - 13.a.(1) (1) Noninterest-bearing BHDM6631 13.a.(2) (2) Interest-bearing BHDM6636 b. In foreign offices, Edge and Agreement subsidiaries, and IBFs: - 13.b.(1) (1) Noninterest-bearing BHFN6631 13.a.(2) (2) Interest-bearing BHFN6636
+14. Federal funds purchased and securities sold under agreements to repurchase: - 14.a. a. Federal funds purchased in domestic offices BHDMB993 14.b. b. Securities sold under agreements to repurchase BHCKB995
+15. 15. Trading liabilities (from Schedule HC-D) BHCK3548 16.
+16. Other borrowed money (includes mortgage indebtedness and obligations under capitalized leases) (from Schedule HC-M) BHCK3190
+17. Not applicable -
+18. Not applicable - 19.a. 19. a. Subordinated notes and debentures BHCK4062 19.b.
+b. Subordinated notes payable to unconsolidated trusts issuing trust preferred securities, and trust preferred securities issued by consolidated special purpose entities BHCKC699
+20. 20. Other liabilities (from Schedule HC-G) BHCK2750
+21. 21. Total liabilities (sum of items 13 through 20) BHCK2948
+22. Not applicable - Equity Capital -
+23. 23. Perpetual preferred stock and related surplus BHCK3283
+24. 24. Common stock (par value) BHCK3230
+25. 25. Surplus (exclude all surplus related to preferred stock) BHCK3240 26.a. 26. a. Retained earnings
+BHCK3247
+24
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I 26.b. b. Accumulated other comprehensive income BHCKB530 26.c. c. Other equity capital components BHCKA130 27.a. 27. a. Total holding company equity capital (sum of items 23 through 26.c) BHCK3210 27.b. b. Noncontrolling (minority) interests in consolidated subsidiaries BHCK3000
+28. 28. Total equity capital (sum of items 27.a and 27.b) BHCKG105
+29. 29. Total liabilities and equity capital (sum of items 21 and 28) BHCK3300 - M.1.
+1. Has the holding company engaged in a full-scope independent external audit at any time during the calendar year?
+BHCKC884
+Memoranda
+2. If response to Memoranda item 1 is yes, indicate below the name and address of the holding company's independent external auditing firm (see instructions), and the name and email address of the auditing firm's engagement partner.
+-
+M.2.a.(1) TEXT a. (1) Name of External Auditing Firm TEXTC703 M.2.a.(2) TEXT (2) City TEXTC708 M.2.a.(3) TEXT (3) State Abbreviation TEXTC714 M.2.a.(4) TEXT (4) Zip Code TEXTC715 M.2.b.(1) TEXT b. (1) Name of Engagement Partner TEXTC704 M.2.b.(2) TEXT (2) E-mail Address TEXTC705 Schedule HC-B - Securities
+1. 1. U.S. Treasury securities BHCK0211 BHCK0213 BHCK1286 BHCK1287
+2. 2. U.S. government agency obligations (exclude mortgage- backed securities) BHCKHT50 BHCKHT51 BHCKHT52 BHCKHT53
+3. 3. Securities issued by states and political subdivisions in the U.S. BHCK8496 BHCK8497 BHCK8498 BHCK8499
+4. Mortgage-backed securities (MBS) a. Residential pass-through securities: - 4.a.(1) (1) Guaranteed by GNMA BHCKG300 BHCKG301 BHCKG302 BHCKG303 4.a.(2) (2) Issued by FNMA and FHLMC BHCKG304 BHCKG305 BHCKG306 BHCKG307 4.a.(3) (3) Other pass-through securities BHCKG308 BHCKG309 BHCKG310 BHCKG311 4.a.(4) (4) Guaranteed by GNMA, issued by FNMA and FHLMC and other pass-through securities. BHCKKX52 BHCKKX53 BHCKKX54 BHCKKX55 b. Other residential mortgage-backed securities (include CMOs, REMICs, and stripped MBS): - 4.b.(1) (1) Issued or guaranteed by U.S. Government agencies or sponsored agencies
+BHCKG312 BHCKG313 BHCKG314 BHCKG315
+25
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I 4.b.(2) (2) Collateralized by MBS issued or guaranteed by U.S. Government agencies or sponsored agencies BHCKG316 BHCKG317 BHCKG318 BHCKG319 4.b.(3) (3) All other residential mortgage-backed securities BHCKG320 BHCKG321 BHCKG322 BHCKG323 c. Commercial MBS: -
+(1) Commercial pass-through securities: - 4.c.(1)(a) (a) Issued or guaranteed by FNMA, FHLMC, or GNMA BHCKK142 BHCKK143 BHCKK144 BHCKK145 4.c.(1)(b) (b) Other pass-through securities BHCKK146 BHCKK147 BHCKK148 BHCKK149
+(2) Other commercial MBS: - 4.c.(2)(a) (a) Issued or guaranteed by U.S. Government agencies or sponsored agencies BHCKK150 BHCKK151 BHCKK152 BHCKK153 4.c.(2)(b) (b) All other commercial MBS BHCKK154 BHCKK155 BHCKK156 BHCKK157
+5. Asset-backed securities and structured financial products: - 5.a. a. Asset-backed Securities (ABS) BHCKC026 BHCKC988 BHCKC989 BHCKC027 5.b. b. Structured financial products BHCKHT58 BHCKHT59 BHCKHT60 BHCKHT61
+6. Other debt securities: - 6.a. a. Other domestic debt securities BHCK1737 BHCK1738 BHCK1739 BHCK1741 6.b. b. Other foreign debt securities BHCK1742 BHCK1743 BHCK1744 BHCK1746
+7. 7. Unallocated portfolio layer fair value hedge basis adjustments BHCKMG95
+8. 8. Total (sum of items 1 through 7) BHCK1754 BHCK1771 BHCK1772 BHCT1773 Memoranda - M.1. 1. Pledged securities BHCK0416
+2. Remaining maturity or next repricing date of debt securities (Schedule HC-B, items 1 through 6.b in columns A and D above): -
+M.2.a a. 1 year and less BHCK0383 M.2.b b. Over 1 year to 5 years BHCK0384 M.2.c. c. Over 5 years BHCK0387
+M.3.
+3. Amortized cost of held-to-maturity securities sold or transferred to available-for-sale or trading securities during the calendar year-to-date (report the amortized cost at date of sale or transfer)
+BHCK1778
+4. Structured notes (included in the held-to-maturity and available-for-sale accounts in Schedule HC-B, items 2, 3, 5, and 6): -
+M.4.a. a. Amortized cost BHCK8782 M.4.b. b. Fair value BHCK8783
+5. Asset-backed securities (ABS) - M.5.a. a. Credit card receivables
+BHCKB838 BHCKB839 BHCKB840 BHCKB841
+26
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I M.5.b. b. Home equity lines BHCKB842 BHCKB843 BHCKB844 BHCKB845 M.5.c. c. Automobile loans BHCKB846 BHCKB847 BHCKB848 BHCKB849 M.5.d. d. Other consumer loans BHCKB850 BHCKB851 BHCKB852 BHCKB853 M.5.e. e. Commercial and industrial loans BHCKB854 BHCKB855 BHCKB856 BHCKB857 M.5.f. f. Other BHCKB858 BHCKB859 BHCKB860 BHCKB861
+6. Structured financial products by underlying collateral or reference assets (for each column, sum of Memorandum items 6.a through 6.g must equal Schedule HC-B, 5.b.): -
+M.6.a. a. Trust preferred securities issued by financial institutions BHCKG348 BHCKG349 BHCKG350 BHCKG351 M.6.b. b. Trust preferred sec issued by real estate investment trusts BHCKG352 BHCKG353 BHCKG354 BHCKG355 M.6.c. c. Corporate and similar loans BHCKG356 BHCKG357 BHCKG358 BHCKG359 M.6.d. d. 1- 4 family residential MBS issued or guaranteed by U.S. government-sponsored enterprises (GSEs) BHCKG360 BHCKG361 BHCKG362 BHCKG363 M.6.e. e. 1- 4 family residential MBS not issued or guaranteed by GSEs BHCKG364 BHCKG365 BHCKG366 BHCKG367 M.6.f. f. Diversified (mixed) pools of structured financial products BHCKG368 BHCKG369 BHCKG370 BHCKG371 M.6.g. g. Other collateral or reference assets BHCKG372 BHCKG373 BHCKG374 BHCKG375 M.7. 7. Structured financial products guaranteed by U.S. Government agencies or sponsored agencies included in Sch HC-B, item 5.b BHCKPU98 BHCKPU99 BHCKPV00 BHCKPV01 Schedule HC-C - Loans and Lease Financing Receivables
+1. 1. Loans secured by real estate BHCK1410 a. Construction, land development, and other land loans: - 1.a.(1) (1) 1- 4 family residential construction loans BHCKF158 1.a.(2) (2) Other construction loans and all land development and other land loans BHCKF159 1.b. b. Secured by farmland BHDM1420 c. Secured by 1- 4 family residential properties: - 1.c.(1) (1) Revolving, open-end loans secured by 1- 4 family residential properties and extended under lines of credit BHDM1797
+(2) Closed-end loans secured by 1- 4 family residential properties: - 1.c.(2)(a) (a) Secured by first liens BHDM5367 1.c.(2)(b) (b) Secured by junior liens BHDM5368 1.d. d. Secured by multifamily (5 or more) residential properties BHDM1460 e. Secured by nonfarm nonresidential properties: - 1.e.(1) (1) Loans secured by owner- occupied nonfarm nonresidential properties BHCKF160 1.e.(2) (2) Loans secured by other nonfarm nonresidential properties BHCKF161
+2. 2. Loans to depository institutions and acceptances of other banks BHDM1288
+27
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I 2.a. a. To U.S. banks and other U.S. depository institutions BHCK1292 2.b. b. To foreign banks BHCK1296
+3. 3. Loans to finance agricultural production and other loans to farmers BHCK1590 BHDM1590
+4. 4. Commercial and industrial loans BHDM1766 4.a. a. To U.S. addressees (domicile) BHCK1763 4.b. b. To non-U.S. addressees (domicile) BHCK1764 4.c. c. To U.S. addressees (domicile) and non-U.S. addressees (domicile) BHCKKX56
+5. Not applicable - 6.
+6. Loans to individuals for household, family, and other personal expenditures (i.e., consumer loans) (includes purchased paper)
+BHDM1975
+6.a. a. Credit cards BHCKB538 6.b. b. Other revolving credit plans BHCKB539 6.c. c. Automobile loans BHCKK137 6.d. d. Other consumer loans (includes single payment, installment, and all student loans) BHCKK207
+7. 7. Loans to foreign governments and official institutions (including foreign central banks) BHCK2081 BHDM2081
+8. Not applicable -
+9. Loans to nondepository financial institutions and other loans: - 9.a. a. Loans to nondepository financial institutions BHCKJ454 BHDMJ454 b. Other loans - 9.b.(1) (1) Loans for purchasing or carrying securities (including margin loans) BHCK1545 BHDM1545 9.b.(2) (2) All other loans (exclude consumer loans) BHCKJ451 BHDMJ451 9.b.(3) (3) Loans for purchasing or carrying securities (including margin loans) and all other loans BHCKKX57 BHDMKX57
+10. 10. Lease financing receivables (net of unearned income) BHDM2165 10.a. a. Leases to individuals for household, family, and other personal expenditures (i.e., consumer leases) BHCKF162 10.b b. All other leases BHCKF163 10.c c. Lease finance receivables BHCKKX58
+11. 11. LESS: Any unearned income on loans reflected in items 1-9 above
+BHCK2123 BHDM2123
+28
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+12.
+12. Total loans and leases held for investment and held for sale (sum of items 1 through 10 minus item 11)(total of column A must equal Schedule HC, sum of items 4.a and 4.b)
+BHCK2122
+BHDM2122
+Memoranda -
+1. Loan modification to borrowers experiencing financial difficulty that are in compliance with their modified terms (included in Schedule HC-C, and not reported as past due or nonaccrual in Schedule HC-N, Memorandum item 1):
+-
+a. Construction, land development, and other land loans in domestic offices: - M.1.a.(1) (1) 1- 4 family residential construction loans BHDMK158 M.1.a.(2) (2) All other construction loans and all land development and other land loans BHDMK159 M.1.b. b. Loans secured by 1- 4 family residential properties in domestic offices BHDMF576 M.1.c. c. Secured by multifamily (5 or more) residential properties in domestic offices BHDMK160 d. Secured by non-farm non-residential properties in domestic offices: - M.1.d.(1) (1) Loans secured by owner-occupied nonfarm nonresidential properties BHDMK161 M.1.d.(2) (2) Loans secured by other nonfarm nonresidential properties BHDMK162 e. Commercial and Industrial loans: - M.1.e.(1) (1) To U.S. addressees (domicile) BHCKK163 M.1.e.(2) (2) To non-U.S. addressees (domicile) BHCKK164 M.1.e.(3) (3) To U.S. addressees (domicile) and non-U.S addressees (domicile) BHCKKX59 M.1.f f . All other loans (include loans to individuals for household, family, and other personal expenditures) BHCKK165 M.1.f.(1) (1) Loans secured by farmland in domestic offices BHDMK166 M.1.f.(2) (2) Loans to finance agricultural production and other loans to farmers BHCKK168
+(3) Loans to individuals for household, family, and other personal expenditures: - M.1.f.(3)(a) (a) Credit cards BHCKK098 M.1.f.(3)(b) (b) Automobile loans BHCKK203 M.1.f.(3)(c) (c) Other consumer loans (includes single payment, installment, all student loans, and revolving credit plans other than credit cards) BHCKK204
+29
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I M.1.g.
+g. Total loan modifications to borrowers experiencing financial difficulties that are in compliance with their modified terms (sum of Memorandum items 1.a.(1) through 1.f.) BHCKHK25
+M.2.
+2. Loans to finance commercial real estate, construction, and land development activities (not secured by real estate) included in Schedule HC-C, items 4 and 9, Column A, above BHCK2746
+M.3. 3. Loans secured by real estate to non-U.S. addressees (domicile) (included in Schedule HC-C, item 1, column A) BHCKB837 M.4. 4. Outstanding credit card fees and finance charges (included in Schedule HC-C, item 6.a, Column A) BHCKC391 M.5 Not Applicable -
+6. Closed-end loans with negative amortization features secured by 1- 4 family residential properties in domestic offices: -
+M.6.a.
+a. Total carrying amount of closed-end loans with negative amortization features secured by 1- 4 family residential properties (included in Schedule HC-C, items 1.c.(2)(a) and (b))
+BHCKF230
+M.6.b.
+6. b. Total maximum remaining amount of negative amortization contractually permitted on closed-end loans secured by 1- 4 family residential properties BHCKF231
+M.6.c.
+c. Total amount of negative amortization on closed-end loans secured by 1- 4 family residential properties included in the carrying amount reported in Memorandum item 6.a above BHCKF232
+7.-8. Not applicable. - M.9.
+9. Loans secured by 1- 4 family residential properties in domestic offices in process of foreclosure (included in Schedule HC-C, items 1.c.(1), 1.c.(2)(a), and 1.c.(2)(b)) BHDMF577
+10. Loans to nondepository financial institutions: M.10.a a. Loans to mortgage credit intermediaries BHCKPV05 BHDMPV05 M.10.b b. Loans to business credit intermediaries BHCKPV06 BHDMPV06 M.10.c c. Loans to private equity funds BHCKPV07 BHDMPV07 M.10.d d. Loans to consumer credit intermediaries BHCKPV08 BHDMPV08 M.10.e e. Other loans to nondepository financial institutions BHCKPV09 BHDMPV09
+11. Not applicable.
+12. Loans (not considered purchased credit deteriorated per ASC 326) and leases held for investment that are acquired in business combinations with acquisition dates in the current calendar year:
+-
+M.12.a. a. Loans secured by real estate BHCKG091 BHCKG092 BHCKG093 M.12.b. b. Commercial and industrial loans BHCKG094 BHCKG095 BHCKG096
+30
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I M.12.c. c. Loans to individuals for household, family, and other personal expenditures BHCKG097 BHCKG098 BHCKG099 M.12.d. d. All other loans and all leases BHCKG100 BHCKG101 BHCKG102 M.12.e. e. Loans and leases BHCKKX60 BHCKKX61 BHCKKX62
+13. Not applicable - M.14. 14. Pledged loans and leases BHCKG378
+M.15.
+15. Revolving, open-end loans secured by 1-4 family residential properties and extended under lines of credit in domestic offices that have converted to non-revolving closedend status (included in item 1.c(1) above)
+BHCKLE75
+Schedule HC-D - Trading Assets and Liabilities Assets -
+1. 1. U.S. Treasury securities BHCM3531
+2. 2. U.S. government agency obligations (exclude mortgage- backed securities) BHCM3532
+3. 3. Securities issued by states and political subdivisions in the U.S. BHCM3533
+4. Mortgage-backed securities (MBS): - 4.a. a. Residential pass-through securities issued or guaranteed by FNMA, FHLMC, or GNMA BHCKG379 4.b.
+b. Other residential mortgage-backed securities issued or guaranteed by U.S. Government agencies or sponsored agencies (include CMOs, REMICs, and stripped MBS ) BHCKG380
+4.c. c. All other residential mortgage-backed securities BHCKG381 4.d. d. Commercial MBS issued or guaranteed by U.S. Government agencies or sponsored agencies BHCKK197 4.e. e. All other commercial MBS BHCKK198
+5. Other debt securities - 5.a. a. Structured financial products BHCKHT62 5.b. b. All other debt securities BHCKG386
+6. Loans: a. Loans secured by real estate - 6.a.(1) (1) Loans secured by 1-4 family residential properties BHCKHT63 6.a.(2) (2) All other loans secured by real estate BHCKHT64 6.b. b. Commercial and industrial loans BHCKF614 6.c.
+c. Loans to individuals for household, family, and other personal expenditures (i.e., consumer loans) (includes purchased paper) BHCKHT65
+6.d. d. Other loans BHCKF618 7.-8. Not applicable
+-
+31
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+9. 9. Other trading assets BHCM3541
+10. Not applicable -
+11. 11. Derivatives with a positive fair value BHCM3543
+12. 12. Total trading assets (sum of items 1 through 11)(total of Column A must equal Schedule HC, item 5) BHCT3545 Liabilities -
+13. a. Liability for short positions: - 13.a.(1) (1) Equity securities BHCKG209 13.a.(2) (2) Debt securities BHCKG210 13.a.(3) (3) All other assets BHCKG211 13.b. b. All other trading liabilities BHCKF624
+14. 14. Derivatives with a negative fair value BHCK3547
+15. 15. Total trading liabilities (sum of items 13.a through 14)(total of column A must equal Schedule HC, item 15) BHCT3548 Memoranda -
+1. Unpaid principal balance of loans measured at fair value (reported in Schedule HC-D, items 6.a. through 6.d.) a. Loans secured by real estate - M.1.a.(1) (1) Loans secured by 1-4 family residential properties BHCKHT66 M.1.a.(2) (2) All other loans secured by real estate BHCKHT67 M.1.b b. Commercial and industrial loans BHCKF632 M.1.c.
+c. Loans to individuals for household, family, and other personal expenditures (i.e., consumer loans) (includes purchased paper) BHCKHT68
+M.1.d. d. Other loans BHCKF636
+2. Loans measured at fair value that are past due 90 days or more: - M.2.a. a. Fair value BHCKF639 M.2.b. b. Unpaid principal balance BHCKF640
+3. Structured financial products by underlying collateral or reference assets (for each column, sum of Memorandum items 3.a through 3.g must equal Schedule HC-D, item 5.a.): -
+M.3.a. a. Trust preferred securities issued by financial institutions BHCKG299 M.3.b. b. Trust preferred securities issued by real estate investment trusts BHCKG332 M.3.c. c. Corporate and similar loans BHCKG333 M.3.d. d. 1- 4 family residential MBS issued or guaranteed by U.S. government-sponsored enterprises (GSEs) BHCKG334 M.3.e. e. 1- 4 family residential MBS not issued or guaranteed by GSEs BHCKG335
+32
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I M.3.f. f. Diversified (mixed) pools of structured financial products BHCKG651 M.3.g. g. Other collateral or reference assets BHCKG652
+4. Pledged trading assets: - M.4.a. a. Pledged securities BHCKG387 M.4.b. b. Pledged loans BHCKG388 Asset-backed securities: - M.5.a. a. Credit card receivables BHCKF643 M.5.b. b. Home equity lines BHCKF644 M.5.c. c. Automobile loans BHCKF645 M.5.d. 5. d. Other consumer loans BHCKF646 M.5.e. e. Commercial and industrial loans BHCKF647 M.5.f. f. Other BHCKF648
+6. Not applicable -
+7. Equity securities: - M.7.a. a. Readily determinable fair values BHCKF652 M.7.b. b. Other BHCKF653 M.8. 8. Loans pending securitization BHCKF654 M.9.a.(1) 9. a. (1) Gross fair value of commodity contracts BHCKG212 M.9.a.(2) (2) Gross fair value of physical commodities held in inventory BHCKG213 9.b. Other trading assets (itemize and describe amounts included in Schedule HC-D, item 9, column A (other than amounts included in Memoranda items 9.a.(1) and 9.a.(2) above) that are greater than $1,000,000 and exceed 25 percent of item 9 less Memoranda items 9.a.(1) and 9. a.
+(2)):11. Discontinued operations, net of applicable income taxes and noncontrolling (minority) interest
+-
+M.9.b.(1) TEXT (1) Description BHTXF655 M.9.b.(1) (1) Amount BHCKF655 M.9.b.(2) TEXT (2) Description BHTXF656 M.9.b.(2) (2) Amount BHCKF656 M.9.b.(3) TEXT (3) Description BHTXF657 M.9.b.(3) (3) Amount BHCKF657
+10. Other trading liabilities (itemize and describe amounts included in Schedule HC-D, item 13.b that are greater than $1,000,000 and exceed 25 percent of the item) -
+M.10.a. TEXT a. Description BHTXF658 M.10.a. a. Amount BHCKF658 M.10.b. TEXT b. Description BHTXF659 M.10.b. b. Amount
+BHCKF659
+33
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I M.10.c. TEXT c. Description BHTXF660 M.10.c. c. Amount BHCKF660 Schedule HC-E - Deposit Liabilities
+1. Deposits held in domestic offices of commercial bank subsidiaries of the reporting holding company: - 1.a. a. Noninterest-bearing balances BHCB2210 1.b. b. Interest-bearing demand deposits, NOW, ATS, and other transaction accounts BHCB3187 1.c. c. Money market deposit accounts and other savings accounts BHCB2389 1.d. d. Time deposits of $250,000 or less BHCBHK29 1.e. e. Time deposits of more than $250,000 BHCBJ474
+2. Deposits held in domestic offices of other depository institutions that are subsidiaries of the reporting holding company: -
+2.a. a. Noninterest-bearing balances BHOD3189 2.b. b. Interest-bearing demand deposits, NOW, ATS, and other transaction accounts BHOD3187 2.c. c. Money market deposit accounts and other savings accounts BHOD2389 2.d. d. Time deposits of $250,000 or less BHODHK29 2.e. e. Time deposits of more than $250,000 BHODJ474 Memoranda - M.1. 1. Brokered deposits $250,000 or less with a remaining maturity of one year or less BHDMHK06 M.2. 2. Brokered deposits $250,000 or less with a remaining maturity of more than one year BHDMHK31 M.3. 3. Time deposits of more than $250,000 with a remaining maturity of one year or less BHDMHK32 M.4. 4. Foreign office time deposits with a remaining maturity of one year or less BHFNA245 Schedule HC-F - Other Assets
+1. 1. Accrued interest receivable BHCKB556
+2. 2. Net deferred tax assets BHCK2148
+3. 3. Interest-only strips receivable (not in the form of a security) BHCKHT80
+4. 4. Equity investments without readily determinable fair values BHCK1752
+5. Life insurance assets: - 5.a. a. General account life insurance assets BHCKK201 5.b. b. Separate account life insurance assets BHCKK202 5.c. c. Hybrid account life insurance assets
+BHCKK270
+34
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+6. 6. Other BHCK2168
+7. 7. Total (sum of items 1 through 6) (must equal Schedule HC, item 11) BHCT2160 Schedule HC-G - Other Liabilities
+1. Not applicable -
+2. 2. Net deferred tax liabilities BHCK3049
+3. 3. Allowance for credit losses on off-balance-sheet credit exposures BHCKB557
+4. 4. Other BHCKB984
+5. 5. Total (sum of items 2 through 4) (must equal Schedule HC, item 20) BHCT2750 Schedule HC-H - Interest Sensitivity
+1. 1. Earning assets that are repriceable within one year or mature within one year BHCK3197 2.
+2. Interest-bearing deposit liabilities that reprice within one year or mature within one year included in item 13.a.(2) and 13.b.(2) on Schedule HC, Balance Sheet BHCK3296
+3. 3. Long-term debt that reprices within one year included in items 16 and 19.a on Schedule HC, Balance Sheet BHCK3298
+4. 4. Variable-rate preferred stock (includes both limited-life and perpetual preferred stock) BHCK3408
+5. 5. Long-term debt reported in Schedule HC, item 19.a on the Balance Sheet that is scheduled to mature within one year BHCK3409 Schedule HC-I - Insurance-Related Underwriting Activities (Including Reinsurance) I. Property and Casualty Underwriting - Assets -
+1. 1. Reinsurance recoverables BHCKB988
+2. 2. Total assets BHCKC244 Liabilities -
+3. 3. Claims and claims adjustment expense reserves BHCKB990
+4. 4. Unearned premiums BHCKB991
+5. 5. Total equity BHCKC245
+6. 6. Net income BHCKC246 II. Life and Health Underwriting - Assets -
+1. 1. Reinsurance recoverables BHCKC247
+2. 2. Separate account assets BHCKB992
+3. 3. Total assets BHCKC248 Liabilities
+-
+35
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+4. 4. Policyholder benefits and contract holder funds BHCKB994
+5. 5. Separate account liabilities BHCKB996
+6. 6. Total equity BHCKC249
+7. 7. Net income BHCKC250 Schedule HC-K - Quarterly Averages Assets -
+1. Securities: - 1.a. a. U.S. Treasury securities and U.S. government agency obligations (excluding mortgage-backed securities) BHCKB558 1.b. b. Mortgage-backed securities BHCKB559 1.c. c. All other debt securities and equity securities with readily determinable fair values not held for trading BHCKB560
+2. 2. Federal funds sold and securities purchased under agreements to resell BHCK3365 3.a. 3. a. Total loans and leases in domestic offices BHDM3516 3.a.(1) (1) Loans secured by 1- 4 family residential properties BHDM3465 3.a.(2) (2) All other loans secured by real estate BHDM3466 3.a.(3) (3) Loans to finance agricultural production and other loans to farmers BHDM3386 3.a.(4) (4) Commercial and industrial loans BHDM3387
+(5) Loans to individuals for household, family, and other personal expenditures: - 3.a.(5)(a) (a) Credit cards BHDMB561 3.a.(5)(b) (b) Other (includes single payment, installment other than auto loans, all student loans, and revolving credit plans other than credit cards BHDMB562
+3.b. b. Total loans and leases in foreign offices, Edge and agreement subsidiaries, and IBFs BHFN3360 4.a. 4. a. Trading assets BHCK3401 4.b. b. Other earning assets BHCKB985
+5. 5. Total consolidated assets BHCK3368 Liabilities -
+6. 6. Interest-bearing deposits (domestic) BHCK3517
+7. 7. Interest-bearing deposits (foreign) BHCK3404
+8. 8. Federal funds purchased and securities sold under agreements to repurchase BHCK3353
+9. 9. All other borrowed money BHCK2635
+10. Not applicable - Equity Capital -
+11. 11. Total equity capital (excluding limited-life preferred stock) BHCK3519
+36
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I Schedule HC-L - Derivatives and Off-Balance-Sheet Items
+1. Unused commitments (report only the unused portions of commitments that are fee paid or otherwise legally binding): - 1.a. a. Revolving, open-ended loans secured by 1- 4 family residential properties, (e.g., home equity lines) BHCK3814 1.b.(1) b. (1) Unused consumer credit card lines BHCKJ455 1.b.(2) (2) Other unused credit card lines BHCKJ456
+1.c.(1) c. (1) Commitments to fund commercial real estate, construction, land development loans secured by real estate (sum of items 1.c.(1)(a) and (b) must equal item 1.c.(1))
+BHCK3816
+1.c.(1)(a) (a) 1- 4 family residential construction loan commitments BHCKF164 1.c.(1)(b) (b) Commercial real estate, other construction loan, and land development loan commitments BHCKF165 1.c.(2)
+(2) Commitments to fund commercial real estate, Construction & land development loans NOT secured by RE BHCK6550
+1.d. d. Securities underwriting BHCK3817 e. Other unused commitments: - 1.e.(1) (1) Commercial and industrial loans BHCKJ457 1.e.(2) (2) Loans to depository financial institutions BHCKPV10 1.e.(3) (3) Loans to nondepository financial institutions BHCKPV11 1.e.(3)(a) (a) Loans to mortgage credit intermediaries BHCKPV12 1.e.(3)(b) (b) Loans to business credit intermediaries BHCKPV13 1.e.(3)(c) (c) Loans to private equity funds BHCKPV14 1.e.(3)(d) (d) Loans to consumer credit intermediaries BHCKPV15 1.e.(3)(e) (e) Other loans to nondepository financial institutions BHCKPV16 1.e.(4) (4) All other unused commitments BHCKJ459
+2. 2. Financial standby LCs & foreign office guarantees BHCK6566 2.a. a. Amount of financial standby LCs, conveyed to others BHCK3820
+3. 3. Performance standby LCs & foreign office guarantees BHCK6570 3.a. a. Amount of performance standby LCs conveyed to others BHCK3822
+4. 4. Commercial and similar letters of credit BHCK3411
+5. Not applicable -
+6. Securities: - 6.a. a. Securities lent BHCK3433 6.b. b. Securities borrowed BHCK3432
+7. Credit derivatives: a. Notional amounts: - 7.a.(1) (1) Credit default swaps BHCKC968 BHCKC969 7.a.(2) (2) Total return swaps BHCKC970 BHCKC971
+37
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I 7.a.(3) (3) Credit options BHCKC972 BHCKC973 7.a.(4) (4) Other credit derivatives BHCKC974 BHCKC975 b. Gross fair values: - 7.b.(1) (1) Gross positive fair value BHCKC219 BHCKC221 7.b.(2) (2) Gross negative fair value BHCKC220 BHCKC222
+7. c. Notional amounts by regulatory capital treatment: -
+(1) Positions covered under the Market Risk Rule: - 7.c.(1)(a) (a) Sold protection BHCKG401 7.c.(1)(b) (b) Purchased protection BHCKG402
+(2) All other positions: - 7.c.(2)(a) (a) Sold protection BHCKG403 7.c.(2)(b) (b) Purchased protection that is recognized as a guarantee for regulatory capital purposes BHCKG404 7.c.(2)(c) (c) Purchased protection that is not recognized as a guarantee for regulatory capital purposes BHCKG405
+7. d. Notional amounts by remaining maturity: -
+(1) Sold credit protection: - 7.d.(1)(a) (a) Investment grade BHCKG406 BHCKG407 BHCKG408 7.d.(1)(b) (b) Sub-investment grade BHCKG409 BHCKG410 BHCKG411
+(2) Purchased credit protection: - 7.d.(2)(a) (a) Investment grade BHCKG412 BHCKG413 BHCKG414 7.d.(2)(b) (b) Sub-investment grade BHCKG415 BHCKG416 BHCKG417
+8. 8. Spot foreign exchange contracts BHCK8765
+9.
+9. All other off-balance-sheet items (exclude derivatives) (include in item 9 the aggregate amount all other off-balancesheet items that individually exceed 10 percent of Schedule HC, item 27.a, "Total holding company equity capital") (itemize and describe in items 9.a through 9.f only amounts that exceed 25 percent of Schedule HC, item 27.a)
+BHCK3430
+9.a. a. Commitments to purchase when-issued securities BHCK3434 9.b. b. Commitments to sell when-issued securities BHCK3435 9.c TEXT 9. c. Description TEXT6561 9.c. c. Amount BHCK6561 9.d.TEXT d. Description TEXT6562 9.d. d. Amount BHCK6562 9.e.TEXT e. Description TEXT6568 9.e. e. Amount BHCK6568 9.f.TEXT f. Description TEXT6586 9.f. f. Amount BHCK6586
+37
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with its own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+10. Not applicable -
+11. Gross amounts (e.g., notional amounts) (for each column, sum of items 11.a through 11.e must equal sum of items 12 and 13): -
+11.a. a. Futures contracts BHCK8693 BHCK8694 BHCK8695 BHCK8696 11.b. b. Forward contracts BHCK8697 BHCK8698 BHCK8699 BHCK8700 c. Exchange-traded option contracts: - 11.c.(1) (1) Written options BHCK8701 BHCK8702 BHCK8703 BHCK8704 11.c.(2) (2) Purchased options BHCK8705 BHCK8706 BHCK8707 BHCK8708 d. Over-the-counter option contracts: - 11.d.(1) (1) Written options BHCK8709 BHCK8710 BHCK8711 BHCK8712 11.d.(2) (2) Purchased options BHCK8713 BHCK8714 BHCK8715 BHCK8716 11.e. e. Swaps BHCK3450 BHCK3826 BHCK8719 BHCK8720
+12. 12. Total gross notional amount of derivative contracts held for trading BHCKA126 BHCKA127 BHCK8723 BHCK8724
+13. 13. Total gross notional amount of derivative contracts held for purposes other than trading BHCK8725 BHCK8726 BHCK8727 BHCK8728
+14. Gross fair values of derivative contracts: a. Contracts held for trading: - 14.a.(1) (1) Gross positive fair value BHCK8733 BHCK8734 BHCK8735 BHCK8736 14.a.(2) (2) Gross negative fair value BHCK8737 BHCK8738 BHCK8739 BHCK8740 b. Contracts held for purposes other than trading: - 14.b.(1) (1) Gross positive fair value BHCK8741 BHCK8742 BHCK8743 BHCK8744 14.b.(2) (2) Gross negative fair value BHCK8745 BHCK8746 BHCK8747 BHCK8748
+15. Over-the-counter derivatives: - 15.a. a. Net current credit exposure BHCKG418 BHCKG420 BHCKG421 BHCKG422 b. Fair value of collateral: - 15.b.(1) (1) Cash-U.S. dollar BHCKG423 BHCKG425 BHCKG426 BHCKG427 15.b.(2) (2) Cash-Other currencies BHCKG428 BHCKG430 BHCKG431 BHCKG432 15.b.(3) (3) U.S. Treasury securities BHCKG433 BHCKG435 BHCKG436 BHCKG437 15.b.(4) (4) U.S. government agency and U.S. government- sponsored agency debt securities BHCKG438 BHCKG440 BHCKG441 BHCKG442 15.b.(5) (5) Corporate bonds BHCKG443 BHCKG445 BHCKG446 BHCKG447 15.b.(6) (6) Equity securities BHCKG448 BHCKG450 BHCKG451 BHCKG452 15.b.(7) (7) All other collateral BHCKG453 BHCKG455 BHCKG456 BHCKG457 15.b.(8) (8) Total fair value of collateral (sum of items 15.b.(1) through (7)) BHCKG458 BHCKG460 BHCKG461 BHCKG462 Schedule HC-M. Memoranda
+38
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+1. 1. Total number of holding company common shares outstanding BHCK3459
+2.
+2. Debt maturing in one year or less (included in Schedule HC, items 16 and 19.a) that is issued to unrelated third parties by bank subsidiaries
+BHCK6555
+3.
+3. Debt maturing in more than one year (included in Schedule HC, items 16 and 19.a) that is issued to unrelated third parties by bank subsidiaries
+BHCK6556
+4. 4. Other assets acquired in satisfaction of debts previously contracted BHCK6557
+5.
+5. Securities purchased under agreements to resell offset against securities sold under agreements to repurchase on Schedule HC
+BHCKA288
+6. Assets covered by loss-sharing agreements with the FDIC: a. Loans and leases (included in Schedule HC, items 4.a and 4.b): -
+(1) Loans secured by real estate in domestic offices: - (a) Construction, land development, and other land loans: -
+6.
+6. Portion of covered other real estate owned included in Schedule HC, item 7 that is protected by FDIC loss-sharing agreements
+BHCKK192
+7. Captive insurance and reinsurance subsidiaries: - 7.a. a. Total assets of captive insurance subsidiaries BHCKK193 Schedule HC-M Items 1-7 Number EHC - 7.b. b. Total assets of captive reinsurance subsidiaries BHCKK194
+8.
+8. Has the holding company entered into a business combination during the calendar year that was accounted for by the purchase method of accounting? (Enter ''1'' for Yes;
+enter ''0'' for No.)
+BHCKC251
+9.
+9. Has the holding company restated its financial statements during the last quarter as a result of new or revised Statements of Financial Accounting Standards? (Enter ''1'' for Yes; enter ''0'' for No.)
+BHCK6689
+10. Not applicable -
+11.
+11. Have all changes in investments and activities been reported to the Federal Reserve on the Report of Changes in Organizational Structure (FR Y-10)? Holding companies must not leave blank or enter N/A. The holding company must enter "1" for yes or for no changes to report; or enter "0" for no. If the answer to this question is no, complete the FR Y-10
+BHCK6416
+39
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+11. TEXT Name of Holding Company Official Verifying FR Y-10 Reporting TEXT6428
+11. TEXT Area Code / Phone Number TEXT9009
+12. Intangible assets other than goodwill: - 12.a. a. Mortgage servicing assets BHCK3164 12.a.(1) (1) Estimated fair value of mortgage servicing assets BHCK6438 12.b. b. Goodwill BHCK3163 12.c. c. All other intangible assets BHCKJF76 12.d. d. Total (sum of items 12.a, 12.b, and 12.c) (must equal Schedule HC, item 10.b) BHCT2143
+13. 13. Other real estate owned BHCT2150
+14. Other borrowed money: - 14.a. a. Commercial paper BHCK2309 14.b. b. Other borrowed money with a remaining maturity of one year or less BHCK2332 14.c. c. Other borrowed money with a remaining maturity of more than one year BHCK2333 14.d. d. Total (sum of items 14.a, 14.b, and 14.c) (must equal Schedule HC, item 16) BHCT3190
+15. 15. Does the holding company sell private label or third-party mutual funds and annuities? BHCKB569
+16. 16. Assets under management in proprietary mutual funds and annuities BHCKB570
+17.
+17. Does the holding company hold, either directly or indirectly through a subsidiary or affiliate, any nonfinancial equity investments (see instructions for definition) within a Small Business Investment Company (SBIC) structure, or under section 4(c)(6) or 4 (c)(7) of the Bank Holding Company Act, or pursuant to the merchant banking authority of section 4(k)4(H) of the Bank Holding Company Act, or pursuant to the investment authority granted by Regulation K?
+BHCKC161
+18.
+18. Do your aggregate nonfinancial equity investments (see instructions for definition) equal or exceed the lesser of $100 million (on an acquisition cost basis) or 10 percent of the holding company's consolidated Tier 1 capital as of the report date?
+BHCKC159
+19.a.
+19. a. Has the holding company sold or otherwise liquidated its holding of any nonfinancial equity investment since the previous reporting period?
+BHCKC700
+40
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I 19.b. b. Does the holding company manage any nonfinancial equity investments for the benefit of others? BHCKC701
+20. Balances of broker-dealer subsidiaries engaged in underwriting or dealing securities pursuant to Section 4(k)(4)(E) of the Bank Holding Company Act as amended by the Gramm-Leach-Bliley Act:
+-
+20.a. a. Net assets BHCKC252 b. Balances due from related institutions: - 20.b.(1) (1) Due from the holding company (parent company only), gross BHCK4832 20.b.(2) (2) Due from subsidiary banks of the holding company, gross BHCK4833 20.b.(3) (3) Due from nonbank subsidiaries of the holding company, gross BHCK4834 c. Balances due to related institutions: - 20.c.(1) (1) Due to holding company (parent company only), gross BHCK5041 20.c.(2) (2) Due to subsidiary banks of the holding company, gross BHCK5043 20.c.(3) (3) Due to nonbank subsidiaries of the holding company, gross BHCK5045
+20.d.
+d. Intercompany liabilities reported in items 20.c.(1), 20.c.(2), and 20.c.(3) above that qualify as liabilities subordinated to claims of general creditors
+BHCK5047
+21.
+21. Net assets of subsidiaries engaged in insurance or reinsurance underwriting pursuant to Section 4(k)(4)(B) of the Bank Holding Company Act as amended by the Gramm- Leach-Bliley Act (12 U.S.C. § 1843(k)(4)(B))
+BHCKC253
+22.
+22. Address (URL) for the reporting holding company's web page that displays risk disclosures, including those about credit and market risk. (Example: www.examplebhc.com/riskdisclosures)
+TEXTC497
+23. Secured liabilities: - 23.a. a. Amount of "Federal funds purchased in domestic offices" that are secured (included in Schedule HC, item 14.a) BHCKF064 23.b. b. Amount of "Other borrowings" that are secured (included in Schedule HC-M, item 14.d) BHCKF065
+24. Issuances associated with the U.S. Department of Treasury Capital Purchase Program: - 24.a. a. Senior perpetual preferred stock or similar items BHCKG234 24.b. b. Warrants to purchase common stock or similar items
+BHCKG235
+Schedule HC-N - Past Due and Nonaccrual Loans, Leases, and Other Assets
+1. Loans secured by real estate: -
+41
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I a. Construction, land development, and other land loans in domestic offices: - 1.a.(1) (1) 1- 4 family residential construction loans BHCKF172 BHCKF174 BHCKF176 1.a.(2) (2) Other construction loans and all land development and other land loans BHCKF173 BHCKF175 BHCKF177 1.b. b. Secured by farmland in domestic offices BHCK3493 BHCK3494 BHCK3495 c. Secured by 1- 4 family residential properties in domestic offices: - 1.c.(1) (1) Revolving, open-end loans secured by 1- 4 family residential properties and extended under lines of credit BHCK5398 BHCK5399 BHCK5400
+(2) Closed-end loans secured by 1- 4 family residential properties: - 1.c.(2)(a) (a) Secured by first liens BHCKC236 BHCKC237 BHCKC229 1.c.(2)(b) (b) Secured by junior liens BHCKC238 BHCKC239 BHCKC230 1.d. d. Secured by multifamily (5 or more) residential properties in domestic offices BHCK3499 BHCK3500 BHCK3501 e. Secured by nonfarm nonresidential properties in domestic offices: - 1.e.(1) (1) Loans secured by owner-occupied nonfarm non- residential properties BHCKF178 BHCKF180 BHCKF182 1.e.(2) (2) Loans secured by other nonfarm nonresidential properties BHCKF179 BHCKF181 BHCKF183 1.f. f. In foreign offices BHCKB572 BHCKB573 BHCKB574
+2. Loans to depository institutions and acceptances of other banks: - 2.a. a. U.S. banks and other U.S. depository institutions BHCK5377 BHCK5378 BHCK5379 2.b. b. Foreign banks BHCK5380 BHCK5381 BHCK5382
+3. 3. Loans to finance agricultural production and other loans to farmers BHCK1594 BHCK1597 BHCK1583
+4. 4. Commercial and industrial loans BHCK1606 BHCK1607 BHCK1608
+5. Loans to individuals for household, family, and other personal expenditures: - 5.a. a. Credit cards BHCKB575 BHCKB576 BHCKB577 5.b. b. Automobile loans BHCKK213 BHCKK214 BHCKK215
+5.c.
+c. Other consumer loans (includes single payment, installment, all student loans, and revolving credit plans other than credit cards)
+BHCKK216
+BHCKK217
+BHCKK218
+6. 6. Loans to foreign governments and official institutions BHCK5389 BHCK5390 BHCK5391
+7. 7. All other loans BHCK5459 BHCK5460 BHCK5461
+8. Lease financing receivables:
+-
+42
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I 8.a. a. Leases to individuals for household, family, and other personal expenditures BHCKF166 BHCKF167 BHCKF168 8.b. b. All other leases BHCKF169 BHCKF170 BHCKF171 8.c. c. Lease finance receivables BHCKKX63 BHCKKX64 BHCKKX65
+9. 9. Total loans and leases (Sum of items 1 through 8.b) BHCK1406 BHCK1407 BHCK1403
+10.
+10. Debt securities and other assets (exclude other real estate owned and other repossessed assets)
+BHCK3505
+BHCK3506
+BHCK3507
+11.
+11. Loans and leases reported in items 1 through 8 above which are wholly or partially guaranteed by the U.S.
+Government (excluding loans and leases covered by losssharing agreements with the FDIC)
+BHCKK036
+BHCKK037
+BHCKK038
+11.a. a. Guaranteed portion of loans and leases (exclude rebooked "GNMA loans") included in item 11 above BHCKK039 BHCKK040 BHCKK041 11.b. b. Rebooked "GNMA loans" that have been repurchased or are eligible for repurchase included in item 11 above BHCKK042 BHCKK043 BHCKK044
+12. Loans and leases in items 1 through 8 above which are covered by loss-sharing agreements with the FDIC: a. Loans secured by real estate in domestic offices: -
+(1) Construction, land development, and other land loans: -
+12.
+12. Portion of covered loans and leases reported in item 9 above that are protected by loss-sharing agreements with the FDIC
+BHCKK102
+BHCKK103
+BHCKK104
+Memoranda -
+1. Loan modifications to borrowers experiencing financial difficulty included in Schedule HC-N, items 1 through 7, above (and not reported in Schedule HC-C, Memorandum item 1):
+-
+a. Construction, land development, and other land loans in domestic offices: - M.1.a.(1) (1) 1-4 family residential construction loans BHDMK105 BHDMK106 BHDMK107 M.1.a.(2) (2) Other construction loans and all land development and other land loans BHDMK108 BHDMK109 BHDMK110 M.1.b. b. Loans secured by 1- 4 family residential properties in domestic offices BHCKF661 BHCKF662 BHCKF663 M.1.c. c. Secured by multifamily (5 or more) residential properties in domestic offices BHDMK111 BHDMK112 BHDMK113 d. Secured by nonfarm nonresidential properties in domestic offices: - M.1.d.(1) (1) Loans secured by owner-occupied nonfarm nonresidential properties BHDMK114 BHDMK115 BHDMK116 M.1.d.(2) (2) Loans secured by other nonfarm nonresidential properties BHDMK117 BHDMK118 BHDMK119
+43
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I e. Commercial and industrial loans: - M.1.e.(1) (1) To U.S. addressees (domicile) BHCKK120 BHCKK121 BHCKK122 M.1.e.(2) (2) To non-U.S. addressees (domicile) BHCKK123 BHCKK124 BHCKK125 M.1.a.(3) (3) To U.S. addressees (domicile) and Non-U.S. addressees (domicile) BHCKKX66 BHCKKX67 BHCKKX68 M.1.f. f. All other loans (include loans to individuals for household, family, and other personal expenditures) BHCKK126 BHCKK127 BHCKK128 M.1.f.(1) (1) Loans secured by farmland in domestic offices BHDMK130 BHDMK131 BHDMK132 M.1.f.(2) (2) Loans to finance agricultural production and other loans to farmers BHCKK138 BHCKK139 BHCKK140
+(3) Loans to individuals for household, family, and other personal expenditures: - M.1.f.(3)(a) (a) Credit cards BHCKK274 BHCKK275 BHCKK276 M.1.f.(3)(b) (b) Automobile loan BHCKK277 BHCKK278 BHCKK279
+M.1.f.(3)(c) (c) Other consumer loans (includes single payment, installment, all student loans, and revolving credit plans other than credit cards
+BHCKK280
+BHCKK281
+BHCKK282
+M.1.g.
+g. Total loan modifications to borrowers experiencing financial difficulty included in Schedule HC-N items 1 through 7, above and not reported in Schedule HC-C, Memorandum item 1 (sum of Memorandum items 1.a.(1) through item 1.f.)
+BHCKHK26
+BHCKHK27
+BHCKHK28
+M.2.
+2. Loans to finance commercial real estate, construction, and land development activities (not secured by real estate) included in Schedule HC-N, items 4 and 7 above
+BHCK6558
+BHCK6559
+BHCK6560
+M.3. 3. Loans and leases included in Schedule HC-N, items 1, 2, 4, 5, 6, 7, and 8 extended to non-U.S. addressees BHCK3508 BHCK1912 BHCK1913
+4. Not applicable - M.5. 5. Loans and leases held-for-sale and loans measured at fair value (included in Schedule HC-N, items 1 through 8 above) BHCKC240 BHCKC241 BHCKC226 M.6. 6. Derivative contracts: Fair value of amounts carried as assets BHCK3529 BHCK3530 M.7. 7. Additions to nonaccrual assets during the previous six months BHCKC410 M.8. 8. Nonaccrual assets sold during the previous six months BHCKC411 M.9 9. Loans to nondepository financial institutions included in Schedule HC-N, item 7:
+BHCKPV23 BHCKPV24 BHCKPV25
+Schedule HC-P - 1-4 Family Residential Mortgage Banking Activities in Domestic Offices
+44
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+1. 1. Retail originations during the quarter of 1- 4 family residential mortgage loans for sale BHCKHT81
+2. 2. Wholesale originations and purchases during the quarter of 1- 4 family residential mortgage loans for sale BHCKHT82
+3. 3. 1- 4 family residential mortgages sold during the quarter BHCKFT04
+4. 4. 1- 4 family residential mortgages held for sale or trading at quarter-end (included in Schedule HC, items 4.a and 5) BHCKFT05
+5.
+5. Noninterest income for the quarter from the sale, securitization, and servicing of 1- 4 family residential mortgage loans (included in Schedule HI, items 5.c, 5.f, 5.g, and 5.i)
+BHCKHT85
+6. 6. Repurchases and indemnifications of 1- 4 family residential mortgage loans during the quarter BHCKHT86
+7. Representation and warranty reserves for 1- 4 family residential mortgage loans sold: - 7.a. a. For representations and warranties made to U.S. government agencies and government-sponsored agencies BHCKL191 7.b. b. For representations and warranties made to other parties BHCKL192 7.c. c. Total representation and warranty reserves (sum of items 7.a and 7.b) BHCKM288 Schedule HC-Q - Assets and Liabilities Measured at Fair Value on a Recurring Basis Assets -
+1. 1. Available-for sale debt and equity securities with readily determinable fair values not held for trading. BHCYJA36 BHCKG474 BHCKG475 BHCKG476 BHCKG477
+2. 2. Federal funds sold and securities purchased under agreements to resell BHCKG478 BHCKG479 BHCKG480 BHCKG481 BHCKG482
+3. 3. Loans and leases held for sale BHCKG483 BHCKG484 BHCKG485 BHCKG486 BHCKG487
+4. 4. Loans and leases held for investment BHCKG488 BHCKG489 BHCKG490 BHCKG491 BHCKG492
+5. Trading assets: - 5.a. a. Derivative assets BHCT3543 BHCKG493 BHCKG494 BHCKG495 BHCKG496 5.b. b. Other trading assets BHCKG497 BHCKG498 BHCKG499 BHCKG500 BHCKG501
+5.b.(1)
+(1) Non-trading securities at fair value with changes in fair value reported in current earnings (included in Schedule HC- Q, item 5.b, above)
+BHCKF240
+BHCKF684
+BHCKF692
+BHCKF241
+BHCKF242
+6. 6. All other assets BHCKG391 BHCKG392 BHCKG395 BHCKG396 BHCKG804
+7. 7. Total assets measured at fair value on a recurring basis BHCKG502 BHCKG503 BHCKG504 BHCKG505 BHCKG506 Liabilities -
+8. 8. Deposits BHCKF252 BHCKF686 BHCKF694 BHCKF253 BHCKF254
+9. 9. Federal funds purchased and securities sold under agreements to repurchase
+BHCKG507 BHCKG508 BHCKG509 BHCKG510 BHCKG511
+45
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+10. Trading liabilities: - 10.a. a. Derivative liabilities BHCT3547 BHCTG512 BHCKG513 BHCKG514 BHCKG515 10.b. b. Other trading liabilities BHCKG516 BHCKG517 BHCKG518 BHCKG519 BHCKG520
+11. 11. Other borrowed money BHCKG521 BHCKG518 BHCKG523 BHCKG524 BHCKG525
+12. 12. Subordinated notes and debentures BHCKG526 BHCKG527 BHCKG528 BHCKG529 BHCKG530
+13. 13. All other liabilities BHCKG805 BHCKG806 BHCKG807 BHCKG808 BHCKG809
+14. 14. Total liabilities measured at fair value on a recurring basis BHCKG531 BHCKG532 BHCKG533 BHCKG534 BHCKG535 Memoranda -
+1. All other assets (itemize and describe amounts included in Schedule HC-Q, item 6 that are greater than $100,000 and exceed 25 percent of item 6):
+-
+M.1.a. a. Mortgage servicing assets BHCKG536 BHCKG537 BHCKG538 BHCKG539 BHCKG540 M.1.b. b. Non-trading derivative assets BHCKG541 BHCKG542 BHCKG543 BHCKG544 BHCKG545 M.1.c. TEXT c. Description BHTXG546 M.1.c. c. Amounts BHCKG546 BHCKG547 BHCKG548 BHCKG549 BHCKG550 M.1.d. TEXT d. Description BHTXG551 M.1.d. d. Amounts BHCKG551 BHCKG552 BHCKG553 BHCKG554 BHCKG555 M.1.e. TEXT e. Description BHTXG556 M.1.e. e. Amounts BHCKG556 BHCKG557 BHCKG558 BHCKG559 BHCKG560 M.1.f. TEXT f. Description BHTXG561 M.1.f. f. Amounts BHCKG561 BHCKG562 BHCKG563 BHCKG564 BHCKG565
+2. All other liabilities (itemize and describe amounts included in Schedule HC-Q, item 13 that are greater than $100,000 and exceed 25 percent of item 13): -
+M.2.a. a. Loan commitments (not accounted for as derivatives) BHCKF261 BHCKF689 BHCKF697 BHCKF262 BHCKF263 M.2.b. b. Non-trading derivative liabilities BHCKG566 BHCKG567 BHCKG568 BHCKG569 BHCKG570 M.2.c. TEXT c. Description BHTXG571 M.2.c. c. Amounts BHCKG571 BHCKG572 BHCKG573 BHCKG574 BHCKG575 M.2.d. TEXT d. Description BHTXG576 M.2.d. d. Amounts BHCKG576 BHCKG577 BHCKG578 BHCKG579 BHCKG580 M.2.e. TEXT e. Description BHTXG581 M.2.e. e. Amounts BHCKG581 BHCKG582 BHCKG583 BHCKG584 BHCKG585 M.2.f. TEXT f. Description BHTXG586 M.2.f. f. Amounts BHCKG586 BHCKG587 BHCKG588 BHCKG589 BHCKG590
+3. Loans measured at fair value: a. Loans secured by real estate - M.3.a.(1) (1) Secured by 1- 4 family residential properties BHCKHT87 M.3.a.(2) (2) All other loans secured by real estate
+BHCKHT88
+46
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I M.3.b. b. Commercial and industrial loans BHCKF585
+M.3.c.
+c. Loans to individuals for household, family, and other personal expenditures (i.e., consumer loans) (includes purchased paper)
+BHCKHT89
+M.3.d. d. Other loans BHCKF589
+4. Unpaid principal balances of loans measured at fair value (reported in memorandum item 3): a. Loans secured by real estate - M.4.a.(1) (1) Secured by 1- 4 family residential properties BHCKHT91 M.4.a.(2) (2) All other loans secured by real estate BHCKHT92 M.4.b. b. Commercial and industrial loans BHCKF597
+M.4.c.
+c. Loans to individuals for household, family, and other personal expenditures (i.e., consumer loans) (includes purchased paper)
+BHCKHT93
+M.4.d. d. Other loans BHCKF601 Schedule HC-R - Regulatory Capital, Part I. Regulatory Capital Components and Ratios Part I. Regulatory Capital and Ratios -
+1.
+1. Common stock plus related surplus, net of treasury stock and unearned employee stock ownership plan (ESOP) shares
+BHCAP742
+2. 2. Retained earnings BHCAKW00
+2.a.
+2. a. To be completed only by institutions that have adopted ASU 2016-13: Does your institution have a CECL transition election in effect as of the quarter-end report date? (enter “0” for No; enter “1” for Yes with a 3-year CECL Transition; enter “2” for Yes with a 5-year 2020 CECL Transition.)
+BHCAJJ29
+3. 3. Accumulated other comprehensive income (AOCI) BHCAB530 3.a. 3. a. AOCI opt-out election (Advanced approaches institutions must enter "0" for No.) BHCAP838
+4. 4. Common equity tier 1 minority interest includable in common equity tier 1 capital BHCAP839
+5. 5. Common equity tier 1 capital before adjustments and deductions (sum of items 1 through 4) BHCAP840
+6. 6. LESS: Goodwill net of associated deferred tax liabilities (DTLs) BHCAP841
+7. 7. LESS: Intangible assets (other than goodwill and mortgage servicing assets (MSAs)), net of associated DTLs BHCAP842
+8.
+8. LESS: Deferred tax assets (DTAs) that arise from net operating loss and tax credit carryforwards, net of any related valuation allowances and net of DTLs
+BHCAP843
+47
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+9. AOCI-related adjustments (items 9.a. through 9.e. are effective January 1, 2015) (if entered “1” for Yes in item 3.a, complete only items 9.a through 9.e; if entered “0” for No in item 3.a, complete only item 9.f):
+-
+9.a.
+a. LESS: Net unrealized gains (losses) on available-for-sale debt securities (if a gain, report as a positive value; if a loss, report as a negative value)
+BHCAP844
+9.b. Not applicable -
+9.c.
+c. LESS: Accumulated net gains (losses) on cash flow hedges (if a gain, report as a positive value; if a loss, report as a negative value)
+BHCAP846
+9.d.
+d. LESS: Amounts recorded in AOCI attributed to defined benefit postretirement plans resulting from the initial and subsequent application of the relevant GAAP standards that pertain to such plans (if a gain, report as a positive value; if a loss, report as a negative value)
+BHCAP847
+9.e.
+e. LESS: Net unrealized gains (losses) on held-to-maturity securities that are included in AOCI (if a gain, report as a positive value; if a loss, report as a negative value)
+BHCAP848
+9.f.
+f. To be completed only by holding companies that entered “0” for No in item 3.a: LESS: Accumulated net gain (loss) on cash flow hedges included in AOCI, net of applicable income taxes, that relate to the hedging of items that are not recognized at fair value on the balance sheet (if a gain, report as a positive value; if a loss, report as a negative value)
+BHCAP849
+10. Other deductions from (additions to) common equity tier 1 capital before threshold-based deductions: -
+10.a.
+a. LESS: Unrealized net gain (loss) related to changes in the fair value of liabilities that are due to changes in own credit risk (if a gain, report as a positive value; if a loss, report as a negative value)
+BHCAQ258
+10.b. b. LESS: All other deductions from (additions to) common equity tier 1 capital before threshold-based deductions BHCAP850
+11.
+11. LESS: Non-significant investments in the capital of unconsolidated financial institutions in the form of common stock that exceed the 10 percent threshold for non-significant investments Column B BHCWP851
+12. 12. Subtotal (for column A, item 5 minus items 6 through 10.b; for column B, item 5 minus items 6 through 11) BHCAP852 BHCWP852
+48
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+13.a.
+a. Less: Investments in the capital of unconsolidated financial institutions, net of associated DTLs, that exceed the 25 percent of line 12
+BHCALB58
+13.b.
+b.. LESS: Significant investments in the capital of unconsolidated financial institutions in the form of common stock, net of associated DTLs, that exceed the 10 percent common equity tier 1 capital deduction threshold Column B BHCWP853 14.a. a. Less: MSAs, net of associated DTLs, that exceed 25 percent of line 12 BHCALB59 14.b. b. LESS: MSAs, net of associated DTLs, that exceed the 10 percent common equity tier 1 capital deduction threshold Column B BHCWP854
+15.a.
+a. LESS: DTAs arising from temporary differences that could not be realized through net operating loss carrybacks, net of related valuation allowances and net of DTLs that exceed the 25 percent of line 12
+BHCALB60
+15.b.
+b. LESS: DTAs arising from temporary differences that could not be realized through net operating loss carrybacks, net of related valuation allowances and net of DTLs, that exceed the 10 percent common equity tier 1 capital deduction threshold Column B BHCWP855
+16.
+16. LESS: Amount of significant investments in the capital of unconsolidated financial institutions in the form of common stock, net of associated DTLs; MSAs, net of associated DTLs; and DTAs arising from temporary differences that could not be realized through net operating loss carrybacks, net of related valuation allowances and net of DTLs; that exceeds the 15 percent common equity tier 1 capital deduction threshold
+Column B
+BHCWP856
+17.
+17. LESS: Deductions applied to common equity tier 1 capital due to insufficient amounts of additional tier 1 capital and tier 2 capital to cover deductions
+BHCAP857
+BHCWP857
+18. 18. Total adjustments and deductions for common equity tier 1 capital (sum of items 13 through 17) BHCAP858 BHCWP858
+19. 19. Common equity tier 1 capital (item 12 minus item 18) BHCAP859 BHCWP859
+20. 20. Additional tier 1 capital instruments plus related surplus BHCAP860
+21. 21. Non-qualifying capital instruments subject to phase out from additional tier 1 capital BHCAP861
+22. 22. Tier 1 minority interest not included in common equity tier 1 capital BHCAP862
+23. 23. Additional tier 1 capital before deductions (sum of items 20, 21, and 22) BHCAP863
+24. 24. LESS: Additional tier 1 capital deductions BHCAP864
+49
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+25. 25. Additional tier 1 capital (greater of item 23 minus item 24, or zero) BHCAP865
+26.
+26. Tier 1 capital (for non-advanced approaches holding companies, sum of item 19, column A and item 25; for advanced approaches holding companies, sum of item 19, column B, and item 25)
+BHCA8274
+27. 27. Average total consolidated assets BHCAKW03
+28.
+28. LESS: Deductions from common equity tier 1 capital and additional tier 1 capital (sum of items 6, 7, 8, 10.b, 11, 13 through 17, and certain elements of item 24 - see instructions)
+BHCAP875
+29. 29. LESS: Other deductions from (additions to) assets for leverage ratio purposes BHCAB596
+30. 30. Total assets for the leverage ratio (item 36 minus items 37 and 38) BHCAA224
+31. 31. Leverage Ratio (item 26 divided by 30) BHCA7204
+31.a.
+a. Does your institution have a community bank leverage ratio (CBLR) framework election in effect as of the quarterend report date? (enter "1" for Yes; enter "0" for No)
+BHCALE74
+31.b. b. Standardized Approach for Counterparty Credit Risk opt-in election (enter “1” for Yes; leave blank for No.) BHCANC99
+32. 32. Total assets BHCA2170
+33.
+33. Trading assets and trading liabilities (Schedule HC, sum of items 5 and 15). Report as a dollar amount in Column A and as a percentage of total consolidated assets (5% limit) in Column B
+BHCAKX77
+BHCAKX78
+34.a. a. Unused portion of conditionally cancellable commitments BHCAKX79 34.b. b. Securities lent and borrowed (Schedule HC-L, sum of items 6.a and 6.b) BHCAKX80 34.c. c. Other off-balance sheet exposures BHCAKX81
+34.d.
+d. Total off-balance sheet exposures (sum of items 34.a through 34.c). Report as a dollar amount in Column A and as a percentage of total consolidated assets (25% limit) in Column B
+BHCAKX82
+BHCAKX83
+35. 35. Unconditionally cancellable commitments BHCAS540
+36. 36. Investments in the Tier 2 capital of unconsolidated financial institution BHCALB61
+37. 37. Tier 2 capital instruments plus related surplus BHCAP866
+38. 38. Non-qualifying capital instruments subject to phase out from tier 2 capital BHCAP867
+50
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+39. 39. Total capital minority interest that is not included in tier 1 capital BHCAP868 40.a. a. Adjusted allowances for credit losses (AACL) includable in tier 2 capital BHCA5310
+40.b.
+b. (Advanced approaches holding companies that exit parallel run only): Eligible credit reserves includable in tier 2 capital
+BHCW5310
+41. Not applicable - 42.a. a. Tier 2 capital before deductions (sum of items 37 through 40) BHCAP870
+42.b.
+b. (Advanced approaches holding companies that exit parallel run only): Tier 2 capital before deductions (sum of items 37 through 39, plus item 40.b)
+BHCWP870
+43. 43. LESS: Tier 2 capital deductions BHCAP872 44.a. a. Tier 2 capital (greater of item 42.a minus item 43, or zero) BHCA5311
+44.b.
+b. (Advanced approaches holding companies that exit parallel run only): Tier 2 capital (greater of item 42.b minus item 43, or zero)
+BHCW5311
+45.a. a. Total capital (sum of items 26 and 44.a) BHCA3792 45.b. b. (Advanced approaches holding companies that exit parallel run only): Total capital (sum of items 26 and 44.b) BHCW3792 46.a. a. Total risk-weighted assets (from Schedule HC-R, Part II item 31) BHCAA223
+46.b.
+b. (Advanced approaches holding companies that exit parallel run only): Total risk-weighted assets using advanced approaches rule (from FFIEC 101 Schedule A, item 60)
+BHCWA223
+47.
+47. Common equity tier 1 capital ratio (Column A: item 19 divided by item 46.a) (Advanced approaches holding companies that exit parallel run only: Column B: item 19 divided by item 46.b)
+BHCAP793
+BHCWP793
+48.
+48. Tier 1 capital ratio (Column A: item 26 divided by item 46.a) (Advanced approaches holding companies that exit parallel run only: Column B: item 26 divided by item 46.b)
+BHCA7206
+BHCW7206
+49.
+49. Total capital ratio (Column A: item 35.a divided by item 46.a) (Advanced approaches holding companies that exit parallel run only: Column B: item 35.b divided by item 46.b)
+BHCA7205
+BHCW7205
+50. 50. Capital conservative buffer BHCAH311
+51. 51. Eligible retained income BHCAH313
+52. 52. Distributions and discretionary bonus payments BHCAH314
+53. 53. Supplementary leverage ratio BHCAH036
+54. 54. Outstanding eligible long-term debt BHCALF21
+51
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+55. 55. Total loss absorbing capacity BHCALF22
+56.
+56. LTD and TLAC total risk-weighted assets ratios (Column A: item 54 divided by item 46.a Column B: item 55 divided by item 46.a)
+BHCALF23
+BHCWLF23
+57.
+57. Top-tier BHCs of U.S. GSIBs only: LTD and TLAC total risk-weighted assets ratios using advanced approaches rule (Column A: item 54 divided by item 46.b) (Column B: item 55 divided by item 46.b)
+BHCAMK66
+BHCWMK66
+58.
+58. IHCs of foreign GSIBs only: LTD and TLAC leverage ratios (Column A: item 54 divided by item 30) (Column B: item 55 divided by item 30)
+BHCALF24
+BHCWLF24
+59.
+59. Holding companies subject to Category I, II, or III standards: LTD and TLAC supplementary leverage ratios (Column A: item 54 divided by FFIEC 101 Schedule A, Table 2, item 2.21) (Column B: item 55 divided by FFIEC 101 Schedule A, Table 2, item 2.21)
+BHCALF25
+BHCWLF25
+Capital conservation buffer requirement (sum of items 60.a through 60.c) - 60.a a. of which: Stress capital buffer or 2.500% (for advanced approaches) BHCALE85 BHCWLE85 60.b b. of which: GSIB surcharge (if applicable) BHCALE86 BHCWLE86 60.c c. of which: Countercyclical capital buffer amount (if applicable) BHCALE87 BHCWLE87
+61. 61. Capital conservation buffer BHCAMK76 BHCWH311 62.a a. TLAC risk-weighted asset buffer BHCALF27 62.b b. TLAC leverage buffer BHCALF28
+63. 63. Total leverage exposure for the supplementary leverage ratio (SLR) (if applicable) BHCALE88
+64. 64. Leverage buffer requirement (if applicable) BHCALE89
+65. 65. Leverage ratio buffer (if applicable) BHCALE90
+66. 66. Eligible retained income BHCAMK77
+67. 67. Maximum payout ratio BHCALE91
+68. 68. Maximum payout amount BHCALE92
+69. 69. Distributions and discretionary bonus payments during the quarter BHCAMK78 Part II. Risk-Weighted Assets -
+1. 1. Cash and balances due from depository institutions Column A Column B Column C Column G Column H Column I Column J BHCKD957 BHCKS396 BHCKD958 BHCKD959 BHCKS397 BHCKD960 BHCKS398
+2. Securities: - 2.a. a. Held-to-maturity securities
+Column A Column B Column C Column D Column E Column G Column H Column I Column J
+52
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I BHCKD961 BHCKS399 BHCKD962 BHCKHJ74 BHCKHJ75 BHCKD963 BHCKD964 BHCKD965 BHCKS400
+2.b.
+b. Available-for-sale debt securities and equity securities with readily determinable fair values not held for trading Column A Column B Column C Column D Column E Column G Column H Column I Column J BHCKJA21 BHCKS402 BHCKD967 BHCKHJ76 BHCKHJ77 BHCKD968 BHCKD969 BHCKD970 BHCKS403 Column K Column L Column N Column R Column S BHCKH270 BHCKS405 BHCKS406 BHCKH271 BHCKH272
+3. Federal funds sold and securities purchased under agreements to resell: - 3.a. a. Federal funds sold (in domestic offices) Column A Column C Column G Column H Column I Column J BHCKD971 BHCKD972 BHCKD973 BHCKS410 BHCKD974 BHCKS411 3.b. b. Securities purchased under agreements to resell BHCKH171 BHCKH172
+4. Loans and leases held for sale: - 4.a. a. Residential mortgage exposures Column A Column B Column C Column G Column H Column I Column R Column S BHCKS413 BHCKS414 BHCKH173 BHCKS415 BHCKS416 BHCKS417 BHCKH273 BHCKH274 4.b. b. High volatility commercial real estate exposures Column A Column B Column C Column G Column H Column I Column J Column R Column S BHCKS419 BHCKS420 BHCKH174 BHCKH175 BHCKH176 BHCKH177 BHCKS421 BHCKH275 BHCKH276
+4.c.
+c. Exposures past due 90 days or more or on nonaccrual (3) Column A Column B Column C Column D Column E Column G Column H Column I Column J BHCKS423 BHCKS424 BHCKS425 BHCKHJ78 BHCKHJ79 BHCKS426 BHCKS427 BHCKS428 BHCKS429 Column R Column S BHCKH277 BHCKH278
+4.D.
+d. All other exposures Column A Column B Column C Column D Column E Column G Column H Column I Column J BHCKS431 BHCKS432 BHCKS433 BHCKHJ80 BHCKHJ81 BHCKS434 BHCKS435 BHCKS436 BHCKS437 Column R Column S BHCKH279 BHCKH280
+5. Loans and leases, held for investment: - 5.a. a. Residential mortgage exposures Column A Column B Column C Column G Column H Column I Column R Column S BHCKS439 BHCKS440 BHCKH178 BHCKS441 BHCKS442 BHCKS443 BHCKH281 BHCKH282 5.b. b. High volatility commercial real estate exposures Column A Column B Column C Column G Column H Column I Column J Column R Column S BHCKS445 BHCKS446 BHCKH179 BHCKH180 BHCKH181 BHCKH182 BHCKS447 BHCKH283 BHCKH284
+5.c.
+c. Exposures past due 90 days or more on nonaccrual (5) Column A Column B Column C Column D Column E Column G Column H Column I Column J BHCKS449 BHCKS450 BHCKS451 BHCKHJ82 BHCKHJ83 BHCKS452 BHCKS453 BHCKS454 BHCKS455 Column R Column S BHCKH285 BHCKH286
+5.d.
+d. All other exposures Column A Column B Column C Column D Column E Column G Column H Column I Column J BHCKS457 BHCKS458 BHCKS459 BHCKHJ84 BHCKHJ85 BHCKS460 BHCKS461 BHCKS462 BHCKS463 Column R Column S BHCKH287 BHCKH288
+6. 6. LESS: Allowance for loan and lease losses BHCX3123 BHCY3123
+7. 7. Trading Assets
+Column A Column B Column C Column D Column E Column G Column H Column I Column J
+53
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I BHCKD976 BHCKS466 BHCKD977 BHCKHJ86 BHCKHJ87 BHCKD978 BHCKD979 BHCKD980 BHCKS467 Column H Column I Column J Column K Column R Column S BHCKH186 BHCKH290 BHCKH187 BHCKH289 BHCKH291 BHCKH292
+8.
+8. All other assets (6) Column A Column B Column C Column D Column E Column G Column H Column Column J BHCKD981 BHCKS469 BHCKD982 BHCKHJ88 BHCKHJ89 BHCKD983 BHCKD984 BHCKD985 BHCKH185 Column H Column I Column J Column K Column R Column S BHCKH188 BHCKS470 BHCKS471 BHCKH293 BHCKH294 BHCKH295 8.a. a. Separate account bank-owned life insurance Column R Column S BHCKH296 BHCKH297 Schedule HC-R Part II Items 8a-b EHC - 8.b. b. Default fund contributions to central counterparties Column R Column S BHCKH298 BHCKH299
+9. On-balance sheet securitization exposures: - 9.a. a. Held-to-maturity securities Column A Column B Column Q Column T Column U BHCKS475 BHCKS476 BHCKS477 BHCKS478 BHCKS479 9.b. b. Available-for-sale securities Column A Column B Column Q Column T Column U BHCKS480 BHCKS481 BHCKS482 BHCKS483 BHCKS484 9.c. c. Trading assets Column A Column B Column Q Column T Column U BHCKS485 BHCKS486 BHCKS487 BHCKS488 BHCKS489 9.d. d. All other on-balance sheet securitization exposures Column A Column B Column Q Column T Column U BHCKS490 BHCKS491 BHCKS492 BHCKS493 BHCKS494
+10. 10. Off-balance sheet securitization exposures Column A Column B Column Q Column T Column U BHCKS495 BHCKS496 BHCKS497 BHCKS498 BHCKS499
+11.
+11. Total balance sheet assets (1) Column A Column B Column C Column D Column E Column G Column H Column I Column J BHCT2170 BHCKS500 BHCKD987 BHCKHJ90 BHCKHJ91 BHCKD988 BHCKD989 BHCKD990 BHCKS503 Column K Column L Column M Column N Column Q Column R BHCKS504 BHCKS505 BHCKS506 BHCKS507 BHCKS510 BHCKH300
+12. 12. Financial standby letters of credit Column A Column B Column C Column D Column E Column G Column H Column I Column J BHCKD991 BHCKD992 BHCKD993 BHCKHJ92 BHCKHJ93 BHCKD994 BHCKD995 BHCKD996 BHCKS511
+13. 13. Performance standby letters of credit and transaction- related contingent items Column A Column B Column C Column G Column H Column I Column J BHCKD997 BHCKD998 BHCKD999 BHCKG603 BHCKG604 BHCKG605 BHCKS512
+14. 14. Commercial and similar letters of credit with an original maturity of one year or less Column A Column B Column C Column D Column E Column G Column H Column I Column J BHCKG606 BHCKG607 BHCKG608 BHCKHJ94 BHCKHJ95 BHCKG609 BHCKG610 BHCKG611 BHCKS513
+15. 15. Retained recourse on small business obligations sold with recourse Column A Column B Column C Column G Column H Column I Column J BHCKG612 BHCKG613 BHCKG614 BHCKG615 BHCKG616 BHCKG617 BHCKS514
+16.
+16. Repo-style transactions (6)
+Column A Column B Column C Column D Column E Column G Column H Column I Column J BHCKS515 BHCKS516 BHCKS517 BHCKS518 BHCKS519 BHCKS520 BHCKS521 BHCKS522 BHCKS523 Column R Column S
+54
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I BHCKH301 BHCKH302
+17. 17. All other off-balance sheet liabilities Column A Column B Column C Column G Column H Column I Column J BHCKG618 BHCKG619 BHCKG620 BHCKG621 BHCKG622 BHCKG623 BHCKS524
+18. Unused commitments: (exclude unused commitments to asset-backed commercial paper conduits): -
+18.a
+a. Original maturity of one year or less Column A Column B Column C Column D Column E Column G Column H Column I Column J BHCKS525 BHCKS526 BHCKS527 BHCKHJ96 BHCKHJ97 BHCKS528 BHCKS529 BHCKS530 BHCKS531 Column R Column S BHCKH303 BHCKH304
+18.b.
+b. Original maturity exceeding one year Column A Column B Column C Column D Column E Column G Column H Column I Column J BHCKG624 BHCKG625 BHCKG626 BHCKHJ98 BHCKHJ99 BHCKG627 BHCKG628 BHCKG629 BHCKS539 Column R Column S BHCKH307 BHCKH308
+19. 19. Unconditionally cancelable commitments BHCKS540 BHCKS541
+20.
+20. Over-the-counter derivatives Column B Column C Column D Column E Column F Column G Column H Column I Column J BHCKS542 BHCKS543 BHCKHK00 BHCKHK01 BHCKS544 BHCKS545 BHCKS546 BHCKS547 BHCKS548 Column R Column S BHCKH309 BHCKH310
+21. 21. Centrally cleared derivatives Column B Column C Column D Column E Column G Column H Column I Column J BHCKS549 BHCKS550 BHCKS551 BHCKS552 BHCKS554 BHCKS555 BHCKS556 BHCKS557
+22. 22. Unsettled transactions (failed trades) (7) Column A Column C Column G Column H Column I Column J Column O Column P Column Q BHCKH191 BHCKH193 BHCKH194 BHCKH195 BHCKH196 BHCKH197 BHCKH198 BHCKH199 BHCKH200
+23.
+23. Total assets, derivatives, off-balance sheet items, and other items subject to risk weighting by risk-weight category (for each of columns C through P, sum of items 11 through 22; for column Q, sum of items 10 through 22) Column C Column D Column E Column F Column G Column H Column I Column J Column K BHCKG630 BHCKS558 BHCKS559 BHCKS560 BHCKG631 BHCKG632 BHCKG633 BHCKS561 BHCKS562 Column L Column M Column N Column O Column P Column Q BHCKS563 BHCKS564 BHCKS565 BHCKS566 BHCKS567 BHCKS568
+24. Risk weight factor -
+25.
+25. Risk-weighted assets by risk-weight category (for each column, item 23 multiplied by item 24) Column C Column D Column E Column F Column G Column H Column I Column J Column K BHCKG634 BHCKS569 BHCKS570 BHCKS571 BHCKG635 BHCKG636 BHCKG637 BHCKS572 BHCKS573 Column L Column M Column N Column O Column P Column Q BHCKS574 BHCKS575 BHCKS576 BHCKS577 BHCKS578 BHCKS579
+26. 26. Risk-weighted assets for purposes of calculating the adjusted allowance for credit losses 1.25 percent threshold BHCKS580
+27.
+27. Standardized market-risk weighted assets (applicable only to holding companies that are covered by the market risk capital rules)
+BHCKS581
+28.
+28. Risk-weighted assets before deductions for excess adjusted allowance for credit losses and allocated risk transfer risk reserve (1)
+BHCKB704
+55
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+29. 29. LESS: Excess adjusted allowance for credit losses BHCKA222
+30. 30. LESS: Allocated transfer risk reserve BHCK3128
+31. 31. Total risk-weighted assets (item 28 minus items 29 and 30) BHCKG641 Memoranda - M.1. 1. Current credit exposure across all derivative contracts covered by the regulatory capital rules BHCKG642
+2. Notional principal amounts of over-the-counter derivative contracts: - M.2.a. a. Interest rate BHCKS582 BHCKS583 BHCKS584 M.2.b. b. Foreign exchange rate and gold BHCKS585 BHCKS586 BHCKS587 M.2.c. c. Credit (investment grade reference asset) BHCKS588 BHCKS589 BHCKS590 M.2.d. d. Credit (non-investment grade reference asset) BHCKS591 BHCKS592 BHCKS593 M.2.e. e. Equity BHCKS594 BHCKS595 BHCKS596 M.2.f. f. Precious metals (except gold) BHCKS597 BHCKS598 BHCKS599 M.2.g. g. Other BHCKS600 BHCKS601 BHCKS602
+3. Notional principal amounts of centrally cleared derivative contracts: - M.3.a. a. Interest rate BHCKS603 BHCKS604 BHCKS605 M.3.b. b. Foreign exchange rate and gold BHCKS606 BHCKS607 BHCKS608 M.3.c. c. Credit (investment grade reference asset) BHCKS609 BHCKS610 BHCKS611 M.3.d. d. Credit (non-investment grade reference asset) BHCKS612 BHCKS613 BHCKS614 M.3.e. e. Equity BHCKS615 BHCKS616 BHCKS617 M.3.f. f. Precious metals (except gold) BHCKS618 BHCKS619 BHCKS620 M.3.g. g. Other BHCKS621 BHCKS622 BHCKS623 M.4. 4. Standardized market risk-weighted assets attributable to specific risk (included in Schedule HC-R, item 27) BHCKS624
+5. Amount of allowances for credit losses on purchased credit-deteriorated assets: - M.5.a. a. Loans and leases held for investment BHCKJJ30 M.5.b. b. Held-to-maturity debt securities BHCKJJ31 M.5.c. c. Other financial assets measured at amortized cost BHCKJJ32 Schedule HC-S - Servicing, Securitization, and Asset Sale Activities
+1.
+1. Outstanding principal balance of assets sold and securitized with servicing retained or with recourse or other seller-provided credit enhancements
+BHCKB705
+BHCKB706
+BHCKB707
+BHCKB708
+BHCKB709
+BHCKB710
+BHCKB711
+2.
+2. Maximum amount of credit exposure arising from recourse or other seller-provided credit enhancements provided to structures reported in item 1
+BHCKHU09
+BHCKHU10
+BHCKHU11
+BHCKHU12
+BHCKHU13
+BHCKHU14
+BHCKHU15
+56
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+3. 3. Reporting institution's unused commitments to provide liquidity to structures reported in item 1 BHCKB726 BHCKB727 BHCKB728 BHCKB729 BHCKB730 BHCKB731 BHCKB732
+4. Past due loan amounts included in item 1: - 4.a. a. 30-89 days past due BHCKB733 BHCKB734 BHCKB735 BHCKB736 BHCKB737 BHCKB738 BHCKB739 4.b. b. 90 days or more past due BHCKB740 BHCKB741 BHCKB742 BHCKB743 BHCKB744 BHCKB745 BHCKB746
+5. Charge-offs and recoveries on assets sold and securitized with servicing retained or with recourse or other sellerprovided credit enhancements (calendar year-to-date): -
+5.a. a. Charge-offs BHCKB747 BHCKB748 BHCKB749 BHCKB750 BHCKB751 BHCKB752 BHCKB753 5.b. b. Recoveries BHCKB754 BHCKB755 BHCKB756 BHCKB757 BHCKB758 BHCKB759 BHCKB760
+6. 6. Total amount of ownership (or seller’s) interest carried as securities or loans BHCKHU16 BHCKHU17 BHCKHU18 7.-8. Not applicable -
+9.
+9. Maximum amount of credit exposure arising from credit enhancements provided by the reporting institution to other institutions' securitization structures in the form of standby letters of credit, purchased subordinated securities, and other enhancements
+BHCKB776
+BHCKB779
+BHCKB780
+BHCKB781
+BHCKB782
+10. 10. Reporting institution's unused commitments to provide liquidity to other institutions' securitization structures BHCKB783 BHCKB786 BHCKB787 BHCKB788 BHCKB789
+11. 11. Assets sold with recourse or other seller-provided credit enhancements and not securitized BHCKB790 BHCKB796
+12.
+12. Maximum amount of credit exposure arising from recourse or other seller-provided credit enhancements provided to assets reported in item 11
+BHCKB797
+BHCKB803
+Memoranda -
+1. Not applicable -
+2. Outstanding principal balance of assets serviced for others (includes participations serviced for others): - M.2.a. b. 1- 4 family residential mortgages serviced with no recourse or other servicer-provided credit enhancements BHCKB804 M.2.b b. 1- 4 family residential mortgages serviced with no recourse or other servicer-provided credit enhancements BHCKB805 M.2.c. c. Other financial assets BHCKA591
+M.2.d.
+d. 1- 4 family residential mortgages serviced for others that are in process of foreclosure at quarter-end (includes closedend and open-end loans)
+BHCKF699
+3. Asset-backed commercial paper conduits:
+-
+57
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I a. Maximum amount of credit exposure arising from credit enhancements provided to conduit structures in the form of standby letters of credit, subordinated securities, and other enhancements:
+-
+M.3.a.(1) (1) Conduits sponsored by the bank, a bank affiliate, or the holding company BHCKB806 M.3.a.(2) (2) Conduits sponsored by other unrelated institutions BHCKB807 b. Unused commitments to provide liquidity to conduit structures:
+M.3.b.(1) (1) Conduits sponsored by the bank, a bank affiliate, or the holding company BHCKB808 M.3.b.(2) (2) Conduits sponsored by other unrelated institutions BHCKB809 M.4. 4. Outstanding credit card fees and finance charges (included in Schedule HC-S, item 1, column G) BHCKC407 Schedule HC-V - Variable Interest Entities
+1. Assets of consolidated variable interest entities (VIEs) that can be used only to settle obligations of consolidated VIEs: - 1.a. a. Cash and balances due from depository institutions BHCKJ981 BHCKJF84 1.b b. Securities not held for trading BHCKHU20 BHCKHU21 1.c. c. Loans and leases held for investment, net of allowance, and held for sale BHCKHU22 BHCKHU23 1.d. d. Other real estate owned BHCKK009 BHCKJF89 1.e. e. Other assets BHCKJF91 BHCKJF90
+2. Liabilities of consolidated VIEs for which creditors do not have recourse to the general credit of the reporting holding company:
+-
+2.a. a. Other borrowed money BHCKJF92 BHCKJF85 2.b. b. Other liabilities BHCKJF93 BHCKJF86
+3. 3. All other assets of consolidated VIEs (not included in items 1.a through 1.e above) BHCKK030 BHCKJF87
+4. 4. All other liabilities of consolidated VIEs (not included in items 2.a through 2.b above) BHCKK033 BHCKJF88
+5. Total assets of asset-backed commercial paper (ABCP) conduit VIES BHCKJF77
+6. Total liabilities of ABCP conduit VIES BHCKJF78 Notes to the Balance Sheet - Predecessor Financial Items
+1. 1. Average loans and leases (held for investment and held for sale) BHBC3516
+2. 2. Average earning assets BHBC3402
+3. 3. Average total consolidated assets BHBC3368
+58
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+4. 4. Average equity capital BHBC3519 Notes to the Balance Sheet (Other) -
+1. TEXT 1. Outstanding issuances of perpetual preferred stock associated with the U.S. Department of Treasury Community Development Capital Initiative (CDCI) program included in Schedule HC, item 23, Perpetual preferred stock, and related surplus (for Subchapter S corporations, outstanding issuances of subordinated debt securities associated with CDCI included in Schedule HC, item 19.a, Subordinated notes and debentures) -
+1. 1. Amount BHCKK141
+2. TEXT 2. Description TEXT5357
+2. 2. Amount BHCK5357
+3. TEXT 3. Description TEXT5358
+3. 3. Amount BHCK5358
+4. TEXT 4. Description TEXT5359
+4. 4. Amount BHCK5359
+5. TEXT 5. Description TEXT5360
+5. 5. Amount BHCK5360
+6. TEXT 6. Description TEXTB027
+6. 6. Amount BHCKB027
+7. TEXT 7. Description TEXTB028
+7. 7. Amount BHCKB028
+8. TEXT 8. Description TEXTB029
+8. 8. Amount BHCKB029
+9. TEXT 9. Description TEXTB030
+9. 9. Amount BHCKB030
+10. TEXT 10. Description TEXTB031
+10. 10. Amount BHCKB031
+11. TEXT 11. Description TEXTB032
+11. 11. Amount BHCKB032
+12. TEXT 12. Description TEXTB033
+12. 12. Amount BHCKB033
+13. TEXT 13. Description TEXTB034
+13. 13. Amount BHCKB034
+14. TEXT 14. Description TEXTB035
+14. 14. Amount BHCKB035
+15. TEXT 15. Description TEXTB036
+15. 15. Amount BHCKB036
+59
+Report Form Line Number
+Item 8-character MDRM. Note: some items have more than one column, each with their own MDRM Column A Column B Column C Column D Column E Column F Column G Column H Column I
+16. TEXT 16. Description TEXTB037
+16. 16. Amount BHCKB037
+17. TEXT 17. Description TEXTB038
+17. 17. Amount BHCKB038
+18. TEXT 18. Description TEXTB039
+18. 18. Amount BHCKB039
+19. TEXT 19. Description TEXTB040
+19. 19. Amount BHCKB040
+20. TEXT 20. Description TEXTB041
+20. 20. Amount BHCKB041
+60
+Appendix B FR Y-9C Nonstandard Financial Items and Text Item Character Limits
+Nonstandard Financial Items Character Limits
+Schedule Item Number
+MDRM
+Item Description Character Limit Effective Dates
+Limit 1 Format HI - Mem M.13. BHCKA530 Does the reporting holding company have a Subchapter S election in effect for Federal Income Tax purposes for current year? (1=YES, 0=NO) 9/30/2014 – 12/31/9999 1,0 Units HC - Mem M.1. BHCKC884 Has the holding company engaged in a full scope independent audit as of the December 31 report date? (1=YES, 0=NO) 9/30/2014 – 12/31/9999 1,0 Units HC-M 1 BHCK3459 Total number of holding company common shares outstanding 9/30/2014 – 12/31/9999 12,0 Units HI - Mem M.5. BHCK4150 Number of full-time equivalent employees at end of current period 9/30/2014 – 12/31/9999 11,0 Units HC-M 8 BHCKC251 Has the holding company entered in business combination during calendar year that was accounted for by Purchase Method of Accounting? (1-YES, 0-NO) 9/30/2014 – 12/31/9999 1,0 Units HC-M 9 BHCK6689 Has the holding company restated its financial statements during the last quarter as a result of new or revised Statements of Financial Accounting Standards? (1-YES, 0-NO) 9/30/2014 – 12/31/9999 1,0 Units HC-M 11 BHCK6416 Have all changes in investments and activities been reported to the Federal Reserve on the Report of Changes in Organizational Structure (FR Y-10)? Holding companies must not leave blank or enter N/A. The holding company must enter "1" for yes or for no changes to report; or enter "0" for no. If the answer to this question is no, complete the FR Y-10 9/30/2014 – 12/31/9999 1,0 Units HC-M 15 BHCKB569 Does the holding company sell private label or third-party mutual funds and annuities? (1=YES, 0=NO) 9/30/2014 – 12/31/9999 1,0 Units HC-M 17 BHCKC161 Does the holding company hold, direct or indirect, any nonfinancial equity investments within a Small Business Investment Co. (SIBC), or under Section 4(C)(6) or 4(C)(7) of BHC Act, or pursuant to the Merchant Banking Authority Section 4(K)4(H) of BHC Act, or pursuant to the Investment Authority granted by REG. K? (1=YES, 0=NO) 9/30/2014 – 12/31/9999 1,0 Units HC-M 18 BHCKC159 Do your aggregate nonfinancial equity investments equal or exceed the lesser of $100 million (on an Acquisition Cost Basis) or 10% of the holding company’s Consolidated Tier 1 Capital as of the report date? (1=YES, 0=NO) 9/30/2014 – 12/31/9999 1,0 Units HC-M 19.a. BHCKC700 Has the holding company sold or otherwise liquidated its holding of any nonfinancial equity investment since the previous reporting period? (1=YES, 0=NO) 9/30/2014 – 12/31/9999 1,0 Units HC-M 19.b. BHCKC701 Does the holding company manage any nonfinancial equity investments for the benefit of others?
+(1=YES, 0=NO) 9/30/2014 – 12/31/9999 1,0 Units HC-R Part 1 2.a. BHCAJJ29 Does your institution have a CECL transition election in effect as of the quarter-end report date?
+(0=NO, 1=YES; 3-year CECL transition election, 2=YES; 5-year CECL transition election) 6/30/2020 – 12/31/9999 1,0 Units HC-R Part 1 3.a. BHCAP838 AOCI Opt-out election (1=YES, 0=NO) 9/30/2014 – 12/31/9999 1,0 Units HC-R Part 1 31 BHCA7204 Leverage Ratio 9/30/2014 – 12/31/2015 6,2 Decimal 3/31/2016 – 12/31/9999 8,4 Decimal
+61
+Schedule Item Number
+MDRM
+Item Description Character Limit Effective Dates
+Limit 1 Format HC-R Part 1 47 Col A BHCAP793 Common equity tier 1 capital ratio 9/30/2014 – 12/31/2015 6,2 Decimal 3/31/2016 – 12/31/9999 8,4 Decimal HC-R Part 1 47 Col B BHCWP793 Common equity tier 1 capital ratio 9/30/2014 – 12/31/2015 6,2 Decimal 3/31/2016 – 12/31/9999 8,4 Decimal HC-R Part 1 48 Col A BHCA7206 Tier 1 capital ratio 9/30/2014 – 12/31/2015 6,2 Decimal 3/31/2016 – 12/31/9999 8,4 Decimal
+1 Item limits, where applicable, are provided in (x,y) format, where “x” is the maximum number of digits/characters allowed for the item, “y” is the maximum number of digits allowed after the decimal, and subtracting “y” from “x” is the maximum number of digits allowed before the decimal.
+Nonstandard Financial Items Character Limits (continued)
+| | Item | | | Character Limit | | |
+| --- | --- | --- | --- | --- | --- | --- |
+| Schedule | Number | MDRM | Item Description | Effective Dates | Limit 1 | Format |
+| HC-R Part1 | 31.b. | BHCANC99 | b. Standardized Approach for Counterparty Credit Risk opt-in election (enter “1” for Yes; leave blank for No.) | 12/31/2021 – 12/31/9999 | 1.0 | Units |
+| HC-R Part 1 | 48 Col B | BHCW7206 | Tier 1 capital ratio | 9/30/2014 – 12/31/2015 | 6,2 | Decimal |
+| | | | | 3/31/2016 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 49 Col A | BHCA7205 | Total capital ratio | 9/30/2014 – 12/31/2015 | 6,2 | Decimal |
+| | | | | 3/31/2016 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 49 Col B | BHCW7205 | Total capital ratio | 9/30/2014 – 12/31/2015 | 6,2 | Decimal |
+| | | | | 3/31/2016 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 50 | BHCAH311 | Capital conservative buffer | 3/31/2016 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 53 | BHCAH036 | Supplementary leverage ratio | 9/30/2016 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 56 Col A | BHCALF23 | 56. LTD and TLAC total risk-weighted assets ratios (Column A: item 54 divided by item 46.a Column B: item 55 divided by item 46.a) | 6/30/2021 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 56 Col B | BHCWLF23 | 56. LTD and TLAC total risk-weighted assets ratios (Column A: item 54 divided by item 46.a Column B: item 55 divided by item 46.a) | 6/30/2021 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 57 Col A | BHCAMK66 | 57. Top-tier BHCs of U.S. GSIBs only: LTD and TLAC total risk-weighted assets ratios using advanced approaches rule (Column A: item 54 divided by item 46.b) (Column B: item 55 divided by item 46.b) | 6/30/2021 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 57 Col B | BHCWMK66 | 57. Top-tier BHCs of U.S. GSIBs only: LTD and TLAC total risk-weighted assets ratios using advanced approaches rule (Column A: item 54 divided by item 46.b) (Column B: item 55 divided by item 46.b) | 6/30/2021 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 58 Col A | BHCALF24 | 58. IHCs of foreign GSIBs only: LTD and TLAC leverage ratios (Column A: item 54 divided by item 30) (Column B: item 55 divided by item 30) | 6/30/2021 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 58 Col B | BHCWLF24 | 58. IHCs of foreign GSIBs only: LTD and TLAC leverage ratios (Column A: item 54 divided by item 30) (Column B: item 55 divided by item 30) | 6/30/2021 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 59 Col A | BHCALF25 | 59. Holding companies subject to Category I, II, or III standards: LTD and TLAC supplementary leverage ratios (Column A: item 54 divided by FFIEC 101 Schedule A, Table 2, item 2.21) (Column B: item 55 divided by FFIEC 101 Schedule A, Table 2, item 2.21) | 6/30/2021 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 59 Col B | BHCWLF25 | 59. Holding companies subject to Category I, II, or III standards: LTD and TLAC supplementary leverage ratios (Column A: item 54 divided by FFIEC 101 Schedule A, Table 2, item 2.21) (Column B: item 55 divided by FFIEC 101 Schedule A, Table 2, item 2.21) | 6/30/2021 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 60a Col A | BHCALE85 | a. of which: Stress capital buffer or 2.500% (for advanced approaches) | 12/31/2020 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 60a Col B | BHCWLE85 | a. of which: Stress capital buffer or 2.500% (for advanced approaches) | 12/31/2020 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 60b Col A | BHCALE86 | b. of which: GSIB surcharge (if applicable) | 12/31/2020 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 60b Col B | BHCWLE86 | b. of which: GSIB surcharge (if applicable) | 12/31/2020 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 60c Col A | BHCALE87 | c. of which: Countercyclical capital buffer amount (if applicable) | 12/31/2020 – 12/31/9999 | 8,4 | Decimal |
+| HC-R Part 1 | 60c Col B | BHCWLE87 | c. of which: Countercyclical capital buffer amount (if applicable) | 12/31/2020 – 12/31/9999 | 8,4 | Decimal |
+62
+63
+Schedule Item Number
+MDRM
+Item Description Character Limit Effective Dates
+Limit 1 Format HC-R Part 1 61 Col A BHCAMK76 Capital conservation buffer 12/31/2020 – 12/31/9999 8,4 Decimal HC-R Part 1 61 Col B BHCWH311 Capital conservation buffer 12/31/2020 – 12/31/9999 8,4 Decimal HC-R Part 1 62a BHCALF27 a. TLAC risk-weighted asset buffer 6/30/2021 – 12/31/9999 8,4 Decimal HC-R Part 1 62B BHCALF28 b. TLAC leverage buffer 6/30/2021 – 12/31/9999 8,4 Decimal HC-R Part 1 64 BHCALE89 Leverage buffer requirement (if applicable) 12/31/2020 – 12/31/9999 8,4 Decimal HC-R Part 1 65 BHCALE90 Leverage ratio buffer (if applicable) 12/31/2020 – 12/31/9999 8,4 Decimal HC-R Part 1 67 BHCALE91 Maximum payout ratio 12/31/2020 – 12/31/9999 8,4 Decimal Cover Page BHTXJ196 Date of Signature 9/30/2014 – 12/31/9999 10,0 Date Cover Page BHCKKY38 In accordance with the General Instructions for this report, if a letter justifying this request is being provided along with the report, enter “1”. If a letter justifying this request has been provided separately, enter “0”.
+9/30/2021 – 12/31/9999 1,0 Units Cover Page BHCKC447 Is confidential treatment requested for any portion of this report submission? (0=No, 1=Yes) 9/30/2021 – 12/31/9999 1,0 Units
+1 Item limits, where applicable, are provided in (x,y) format, where “x” is the maximum number of digits/characters allowed for the item, “y” is the maximum number of digits allowed after the decimal, and subtracting “y” from “x” is the maximum number of digits allowed before the decimal.
+Text Item Character Limits
+| MDRM › Number | Description | Length | Format |
+| --- | --- | --- | --- |
+| BHCKC490 | PRINTED NAME OF CHIEF FINANCIAL OFFICER | 72 | Text |
+| BHTX8901 | NAME/TITLE OF CONTACT | 72 | Text |
+| BHTX8902 | AREA CODE/PHONE NUMBER OF CONTACT | 30 | Text |
+| BHTX9116 | FAX NUMBER OF CONTACT | 30 | Text |
+| BHTX4086 | E-MAIL ADDRESS OF CONTACT | 72 | Text |
+| BHCKFT42 | NAME | 72 | Text |
+| BHCKFT43 | PHONE NUMBER | 30 | Text |
+| BHCKFT44 | E-MAIL ADDRESS | 72 | Text |
+| BHTXF655 | OTHER TRADING ASSETS (TEXT DESCRIPTION FOR ITEMIZED AMOUNT 1) | 192 | Text |
+| BHTXF656 | OTHER TRADING ASSETS (TEXT DESCRIPTION FOR ITEMIZED AMOUNT 2) | 192 | Text |
+| BHTXF657 | OTHER TRADING ASSETS (TEXT DESCRIPTION FOR ITEMIZED AMOUNT 3) | 192 | Text |
+| BHTXF658 | OTHER TRADING LIABILITIES (TEXT DESCRIPTION FOR ITEMIZED AMOUNT 1 | 192 | Text |
+| BHTXF659 | OTHER TRADING LIABILITIES (TEXT DESCRIPTION FOR ITEMIZED AMOUNT 2 | 192 | Text |
+| BHTXF660 | OTHER TRADING LIABILITIES (TEXT DESCRIPTION FOR ITEMIZED AMOUNT 3 | 192 | Text |
+| BHTXG546 | ALL OTHER ASSETS: [RESPONDENT ENTERED TEXT] | 72 | Text |
+| BHTXG551 | ALL OTHER ASSETS: [RESPONDENT ENTERED TEXT] | 72 | Text |
+| BHTXG556 | ALL OTHER ASSETS: [RESPONDENT ENTERED TEXT] | 72 | Text |
+| BHTXG561 | ALL OTHER ASSETS: [RESPONDENT ENTERED TEXT] | 72 | Text |
+| BHTXG571 | ALL OTHER LIABILITIES: [RESPONDENT ENTERED TEXT] | 72 | Text |
+| BHTXG576 | ALL OTHER LIABILITIES: [RESPONDENT ENTERED TEXT] | 72 | Text |
+| BHTXG581 | ALL OTHER LIABILITIES: [RESPONDENT ENTERED TEXT] | 72 | Text |
+| BHTXG586 | ALL OTHER LIABILITIES: [RESPONDENT ENTERED TEXT] | 72 | Text |
+| TEXTB027 | NOTES TO FR Y-9C BALANCE SHEET - 6TH LINE TEXT | 192 | Text |
+| TEXTB028 | NOTES TO FR Y-9C BALANCE SHEET - 7TH LINE TEXT | 192 | Text |
+| TEXTB029 | NOTES TO FR Y-9C BALANCE SHEET - 8TH LINE TEXT | 192 | Text |
+| TEXTB030 | NOTES TO FR Y-9C BALANCE SHEET - 9TH LINE TEXT | 192 | Text |
+| TEXTB031 | NOTES TO FR Y-9C BALANCE SHEET - 10TH LINE TEXT | 192 | Text |
+| TEXTB032 | NOTES TO FR Y-9C BALANCE SHEET - 11TH LINE TEXT | 192 | Text |
+| TEXTB033 | NOTES TO FR Y-9C BALANCE SHEET - 12TH LINE TEXT | 192 | Text |
+| TEXTB034 | NOTES TO FR Y-9C BALANCE SHEET - 13TH LINE TEXT | 192 | Text |
+| TEXTB035 | NOTES TO FR Y-9C BALANCE SHEET - 14TH LINE TEXT | 192 | Text |
+64
+| MDRM › Number | Description | Length | Format |
+| --- | --- | --- | --- |
+| TEXTB036 | NOTES TO FR Y-9C BALANCE SHEET - 15TH LINE TEXT | 192 | Text |
+| TEXTB037 | NOTES TO FR Y-9C BALANCE SHEET - 16TH LINE TEXT | 192 | Text |
+| TEXTB038 | NOTES TO FR Y-9C BALANCE SHEET - 17TH LINE TEXT | 192 | Text |
+| TEXTB039 | NOTES TO FR Y-9C BALANCE SHEET - 18TH LINE TEXT | 192 | Text |
+| TEXTB040 | NOTES TO FR Y-9C BALANCE SHEET - 19TH LINE TEXT | 192 | Text |
+| TEXTB041 | NOTES TO FR Y-9C BALANCE SHEET - 20TH LINE TEXT | 192 | Text |
+| TEXTB042 | NOTES TO FR Y-9C INCOME STATEMENT - 6TH LINE TEXT | 219 | Text |
+| TEXTB043 | NOTES TO FR Y-9C INCOME STATEMENT - 7TH LINE TEXT | 219 | Text |
+| TEXTB044 | NOTES TO FR Y-9C INCOME STATEMENT - 8TH LINE TEXT | 192 | Text |
+| TEXTB045 | NOTES TO FR Y-9C INCOME STATEMENT - 9TH LINE TEXT | 219 | Text |
+| TEXTB046 | NOTES TO FR Y-9C INCOME STATEMENT - 10TH LINE TEXT | 219 | Text |
+| TEXTB047 | NOTES TO FR Y-9C INCOME STATEMENT - 11TH LINE TEXT | 192 | Text |
+| TEXTB048 | NOTES TO FR Y-9C INCOME STATEMENT - 12TH LINE TEXT | 192 | Text |
+| TEXTB049 | NOTES TO FR Y-9C INCOME STATEMENT - 13TH LINE TEXT | 192 | Text |
+| TEXTB050 | NOTES TO FR Y-9C INCOME STATEMENT - 14TH LINE TEXT | 192 | Text |
+| TEXTB051 | NOTES TO FR Y-9C INCOME STATEMENT - 15TH LINE TEXT | 192 | Text |
+| TEXTB052 | NOTES TO FR Y-9C INCOME STATEMENT - 16TH LINE TEXT | 192 | Text |
+| TEXTB053 | NOTES TO FR Y-9C INCOME STATEMENT - 17TH LINE TEXT | 192 | Text |
+| TEXTB054 | NOTES TO FR Y-9C INCOME STATEMENT - 18TH LINE TEXT | 192 | Text |
+| TEXTB055 | NOTES TO FR Y-9C INCOME STATEMENT - 19TH LINE TEXT | 192 | Text |
+| TEXTB056 | NOTES TO FR Y-9C INCOME STATEMENT - 20TH LINE TEXT | 192 | Text |
+| TEXTC497 | URL FOR THE REPORTING BANK HOLDING COMPANY'S WEB PAGE THAT DISPLAYS RISK DISCLOSURES | 192 | Text |
+| TEXTC703 | NAME OF EXTERNAL AUDITING FIRM | 72 | Text |
+| TEXTC704 | NAME OF ENGAGEMENT PARTNER | 72 | Text |
+| TEXTC705 | E-MAIL ADDRESS ENGAGEMENT PARTNER | 72 | Text |
+| TEXTC708 | CITY OF EXTERNAL AUDITING FIRM | 72 | Text |
+| TEXTC714 | STATE ABBREV. OF EXTERNAL AUDITING FIRM | 2 | Text |
+| TEXTC715 | ZIP CODE OF EXTERNAL AUDITING FIRM | 30 | Text |
+| TEXTFT29 | 1ST TEXT - EXTRAORDINARY ITEMS AND OTHER ADJUSTMENTS | 192 | Text |
+| TEXTFT31 | 2ND TEXT - EXTRAORDINARY ITEMS AND OTHER ADJUSTMENTS | 192 | Text |
+| TEXT5351 | NOTES TO FR Y-9C INCOME STATEMENT - 1ST LINE TEXT | 219 | Text |
+| TEXT5352 | NOTES TO FR Y-9C INCOME STATEMENT - 2ND LINE TEXT | 219 | Text |
+65
+| MDRM › Number | Description | Length | Format |
+| --- | --- | --- | --- |
+| TEXT5353 | NOTES TO FR Y-9C INCOME STATEMENT - 3RD LINE TEXT | 219 | Text |
+| TEXT5354 | NOTES TO FR Y-9C INCOME STATEMENT - 4TH LINE TEXT | 219 | Text |
+| TEXT5355 | NOTES TO FR Y-9C INCOME STATEMENT - 5TH LINE TEXT | 219 | Text |
+| TEXT5357 | NOTES TO FR Y-9C BALANCE SHEET--LINE 2 TEXT | 219 | Text |
+| TEXT5358 | NOTES TO FR Y-9C BALANCE SHEET--LINE 3 TEXT | 219 | Text |
+| TEXT5359 | NOTES TO FR Y-9C BALANCE SHEET--LINE 4 TEXT | 219 | Text |
+| TEXT5360 | NOTES TO FR Y-9C BALANCE SHEET--LINE 5 TEXT | 219 | Text |
+| TEXT6428 | NAME OF BHC OFFICIAL VERIFYING FR Y-10 REPORTING | 72 | Text |
+| TEXT6561 | 1ST TEXT - OTHER SIGNIFICANT OFF-BALANCE SHEET ITEMS > 25% OF TOTAL EQUITY CAPITAL | 192 | Text |
+| TEXT6562 | 2ND TEXT - OTHER SIGNIFICANT OFF-BALANCE SHEET ITEMS > 25% OF TOTAL EQUITY CAPITAL | 192 | Text |
+| TEXT6568 | 3RD TEXT - OTHER SIGNIFICANT OFF-BALANCE SHEET ITEMS > 25% OF TOTAL EQUITY CAPITAL | 192 | Text |
+| TEXT6586 | 4TH TEXT - OTHER SIGNIFICANT OFF-BALANCE SHEET ITEMS > 25% OF TOTAL EQUITY CAPITAL | 192 | Text |
+| TEXT8562 | 1ST TEXT - OTHER NONINTEREST INCOME > 10% OF TOTAL | 192 | Text |
+| TEXT8563 | 2ND TEXT - OTHER NONINTEREST INCOME > 10% OF TOTAL | 192 | Text |
+| TEXT8564 | 3RD TEXT - OTHER NONINTEREST INCOME > 10% OF TOTAL | 192 | Text |
+| TEXT8565 | 1ST TEXT - OTHER NONINTEREST EXPENSE > 10% OF TOTAL | 192 | Text |
+| TEXT8566 | 2ND TEXT - OTHER NONINTEREST EXPENSE > 10% OF TOTAL | 192 | Text |
+| TEXT8567 | 3RD TEXT - OTHER NONINTEREST EXPENSE > 10% OF TOTAL | 192 | Text |
+| TEXT9009 | PHONE NUMBER OF BHC OFFICIAL VERIFYING FR Y-10 REPORTING | 30 | Text |
+| RSSD9017 | LEGAL TITLE OF HOLDING COMPANY | 72 | Text |
+| RSSD9110 | MAILING ADDRESS OF THE HOLDING COMPANY STREET/ PO BOX | 72 | Text |
+| RSSD9130 | CITY | 30 | Text |
+| RSSD9200 | STATE | 2 | Text |
+| RSSD9220 | ZIP CODE | 30 | Text |
+66

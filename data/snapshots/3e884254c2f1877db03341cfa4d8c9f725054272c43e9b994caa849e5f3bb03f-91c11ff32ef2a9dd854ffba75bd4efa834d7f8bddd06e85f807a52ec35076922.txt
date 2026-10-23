@@ -1,0 +1,146 @@
+Reporting Central User Guide
+FR Y-9LP
+Parent Company Only Financial Statements for Large Holding Companies
+Federal Reserve System
+Statistics Function June 2026
+2
+Overview
+This document provides the required file format for submitting the data upload file via Reporting Central and shows how a reporting institution can create the file from a spreadsheet for the FR Y-9LP – Parent Company Only Financial Statements for Large Holding Companies . Formulas were used to pull the data from the spreadsheet worksheets containing the data and format them for transmission to Reporting Central.
+3
+How to create a text file from a spreadsheet for the FR Y–9LP The FR Y-9LP is comprised of multiple schedules and several financial and text fields. To minimize issues arising during the creation of the Reporting Central text file, it is strongly recommended reporting institutions follow the process described below.
+Field Labels
+The identifying label for both financial and text data is the eight-character MDRM descriptor listed in Appendix A. Reporting Central uses the MDRM to identify individual report items in the file upload.
+Field Values
+Financial data fields can have either positive, negative, zero, or null values.
+Table 1. Format Differences for Financial Data Item Values
+Financial Data Item Value Format Positive [leave value as is] Negative Preceded by minus (-) sign Zero 0 Null (or blank) [leave blank] NOTE Only one file upload can be submitted for each individual respondent and as of date. It is no longer possible to submit multiple branches or agencies in a single file.
+4
+Step 1 – Create Data Listing Since it is presumed that the reporter already has the report data in spreadsheet format, all subsequent steps in this guide are based on using this report data as the source. The first step recommended is to create a sequential listing of all the items containing the item number, the eight-character MDRM, item description, and item value.
+It is easier if you list all the financial data items first and then the text items after that.
+NOTE Adding additional information to this spreadsheet (like item description and item number) can make items easier to identify and help troubleshoot potential problems. However, this information is completely optional.
+5
+Step 2 – Link and Format Data Cells In Sheet 2 of the workbook, all the financial and text items will be linked to Sheet 1 and formatting characters inserted to aid in the creation of the final text file.
+Data Format for Financial Data Items
+• “L” is the separator between data items.
+• Eight-character MDRM.
+• “+” represents the maximum number of columns on the report form into which financial data can be entered. If a report section contains a smaller number of columns than another section that has the maximum number, each item still must contain the maximum number of +’s.
+• Financial data is entered after each “+”. For FR Y-9LP, the maximum number of columns is one.
+The formula for each financial item must contain only one “+”.
+Financial Data Excel formula: =”L”&Sheet1!C6&”+”&Sheet1!D6 Translates to: LBHCP0508+1
+Data Format for Text Items
+• “L” is the separator between data items.
+• Eight-character MDRM.
+• Text data entry is preceded by two underscores and followed by two underscores.
+Text Data Excel formula: =”L”&Sheet1!C221&” ”&Sheet1!D221&” ” Translates to: LBHPX8901 John Smith
+This is repeated for all fields. Once all fields have been linked, you can create the text file.
+Step 3 – Create the Text File After saving the file in spreadsheet format the text file can be created by first navigating to the File tab.
+6
+Then selecting the ‘Save As’ option and indicating the file type as ‘Text (Tab delimited) (*.txt).’
+A message will appear indicating that this file selection does not support workbooks with multiple worksheets, select ‘OK.’
+An additional message will be displayed concerning incompatibility features, select ‘Yes.’
+7
+Step 4 – Format the Text File and Add Header Record The text file will have been created and will look like this. If you see quotation marks at the beginning and the end of the file, then you will need to remove those before continuing.
+The next step is to add the header record.
+The file header record consists of the following items:
+• the first 10 spaces are the RSSD ID with leading zeroes
+• the next 10 spaces are the report series ID ‘FRY9LP,’ plus four trailing spaces
+• the report as-of date, in MM-DD-YYYY.
+8
+Step 5 – Reporting Central Submission In Reporting Central, select the “Upload file” tab and then click the “Upload your files here” tab. Then, navigate to the stored text file and select the filename so it appears in the ‘File name:’ box. Select “Open” to continue.
+Next select the “Upload” tab.
+9
+If there are no formatting issues during the file upload you will get a “File Upload Complete” message the data will load directly into the report screen.
+The report data can then be validated, saved, submitted or deleted. If errors exist in the text file error messages will appear in the file upload window, which can be used to troubleshoot any formatting issues.
+10
+Appendix A FR Y- 9LP Report Detailed Field Specifications
+Report Form Line Number
+Item 8-character MDRM Financial Data Items Schedule PI - Parent Company Only Income Statement 1.a.(1) Dividends BHCP0508 1.a.(2) Interest BHCP0512 1.a.(3) Management and service fees BHCP0515 1.a.(4) Other BHCP0518 1.a.(5) Total (sum of items 1.a(1) through 1.a(4)) BHCP0520 1.b.(1) Dividends BHCP1275 1.b.(2) Interest BHCP1276 1.b.(3) Management and service fees BHCP1277 1.b.(4) Other BHCP1278 1.b.(5) Total (sum of items 1.b(1) through 1.b(4)) BHCP1279 1.c.(1) Dividends BHCP0206 1.c.(2) Interest BHCP0207 1.c.(3) Management and service fees BHCP0208 1.c.(4) Other BHCP0209 1.c.(5) Total (sum of items 1.c(1) through 1.c(4)) BHCP0210 1.d. Securities gains/(losses) BHCP4091 1.e. All other operating income BHCP0447 1.f. Total operating income (sum of items 1.a(5), 1.b(5), 1.c(5), 1.d, and 1.e) BHCP4000 2.a. Salaries and employee benefits BHCP4135 2.b. Interest expense BHCP4073 2.d. All other expenses BHCP0522 2.c. Provision for loan and lease losses* BHCPJJ33 2.e. Total operating expense (sum of items 2.a through 2.d) BHCP4130 3.a. Income (loss) before unrealized holding gains (losses) on equity securities not held for trading, applicable income taxes, and discontinued operations (item1.f. minus item 2.e.) BHCPHT69 3.b. Unrealized holding gains (losses) on equity securities not held for trading ** BHCPHT70 3.c. Income (loss) before applicable income taxes, discontinued operations and undistributed income (sum of items 3.a and 3.b) BHCP4250
+4. Applicable income taxes BHCP4302
+5. Discontinued operations, net of applicable income taxes BHCPFT28
+6. Income (loss) before undistributed income of subsidiaries and associated companies (sum of items 3.c and 5 minus item 4) BHCP0496 7.a. Bank BHCP3156 7.b. Nonbank BHCP3147 7.c. Subsidiary holding companies BHCP3513
+8. Net Income (loss) (sum of items 6, 7.a, 7.b, and 7.c) BHCP4340 Memoranda M.1. Noncash items included in operating expense BHCP4647 M.2. Loan and lease financing receivables charged-off BHCP4635
+11
+Report Form Line Number
+Item 8-character MDRM M.3. Loan and lease financing receivables recoveries BHCP4605 M.4. Interest expense paid to special-purpose subsidiaries that issued trust preferred securities (included in item 2.d above) BHCPC254 Memorandum item 5 is to be completed by holding companies that have elected to account for financial instruments or servicing assets and liabilities at fair value under a fair value option.
+M.5. Net change in fair values of financial instruments accounted for under a fair value option BHCPJ980 Schedule PI-A - Cash Flow Statement Part I. Cash Flows from Operating Activities:
+1. Net income (loss) (must equal Schedule PI, item 8) BHPA4340 Adjustments to reconcile net income to net cash provided by operating activities: 2.a. Provision for deferred income taxes BHCP3611 2.b. (Gain) or loss on sales of assets BHCP3612 2.c. Equity in undistributed (earnings) losses of subsidiaries BHCP3613 2.d. Not applicable 2.e. Net change in other liabilities BHCP3615 2.f. Net change in other assets BHCP3616 2.g. Other, net BHCP3617 2.h. Total adjustments (sum of items 2.a through 2.g) BHCP3618
+3. Net cash provided (used) by operating activities (sum of Part I, items 1 and 2.h) BHCP3619 Part II. Cash Flows from Investing Activities:
+1. Purchases of held-to-maturity and available-for-sale securities BHCP6552 1.a. Purchases of equity securities with readily determinable fair value * BHCPHU25
+2. Sales and maturities of held-to-maturity and available-for-sale securities BHCP6567 2.a. Sales and maturities of equity securities with readily determinable fair value * BHCPHU26
+3. Payments for investments in and advances to subsidiaries BHCP6571
+4. Sale or repayment of investments in and advances to subsidiaries BHCP6573
+5. Outlays for business acquisitions BHCPF737
+6. Proceeds from business divestitures BHCPF817
+7. Other, net BHCP6588
+8. Net cash provided (used) by investing activities (sum of Part II, items 2, 2.a, 4, 6, and 7 minus items 1, 1.a, 3, and 5) BHCP6589 Part III. Cash Flows from Financing Activities:
+1. Net change in purchased funds and other short-term borrowings BHCPF818 Not applicable
+3. Proceeds from advances from subsidiaries BHCP6592
+4. Repayment of advances from subsidiaries BHCP6596
+5. Proceeds from issuance of long-term debt BHCP6600
+6. Repayment of long-term debt BHCP6604
+7. Proceeds from issuance of common stock BHCP6607
+8. Payment to repurchase common stock BHCP8518
+9. Proceeds from issuance of preferred stock BHCP6619
+10. Payment to repurchase preferred stock BHCP6741
+11. Dividends paid BHCP6742
+12. Other, net BHCP6743
+13. Net cash provided (used) by financing activities (sum of Part III, items 1, 3, 5, 7, 9, and 12 minus items 4, 6, 8, 10, and 11) BHCP6744
+12 Report Form Line Number Item 8-character MDRM Part IV. Cash and Cash Equivalents:
+1. Net (decrease) increase in cash and cash equivalents (sum of Part I, item 3, Part II, item 8, and Part III, item 13) BHCP6758
+2. Cash and cash equivalents at beginning of year BHCP6773
+3. Cash and cash equivalents, current year-to-date (sum of Part IV, items 1 and 2) BHCP6775 Schedule PC - Parent Company Only Balance Sheet
+1. Cash and balances due from depository institutions: 1.a. Balances with subsidiary or affiliated depository institutions BHCP5993 1.b. Balances with unrelated depository institutions BHCP0010
+2. Securities:* 2.a. U.S. Treasury securities BHCP0400 2.b. Securities of U.S. Government agencies and corporations and securities issued by states and political subdivisions BHCP6791 2.c. Other debt and equity securities BHCP1299
+3. Securities purchased under agreements to resell** BHCP0277
+4. Loans and lease financing receivables: a. Loans: 4.a.(1) To U.S. addressees (domicile) BHCP0362 4.a.(2) To non-U.S. addressees (domicile) BHCP0363 4.b. LESS: Unearned income on loans BHCP2123 4.c. Loans, held for investment and held for sale (sum of items 4.a(1) and 4.a(2) minus item 4.b) BHCP0364 4.d. Lease financing receivables, net of unearned income BHCP2165 4.e. LESS: Allowance for loan and lease losses*** BHCP3123 4.f. Loans and leases, held for investment and held for sale, net of allowance for loan and lease losses (sum of items 4.c and 4.d minus item 4.e) BHCP2125
+5. Investments in and receivables due from subsidiaries and associated companies (from Schedule PC-A, item 4) BHCP0365
+6. Premises and fixed assets (including right-of-use assets) BHCP2145 Intangible assets (other than reported in item 5 above): 7.a. Goodwill BHCP3163 7.b. Mortgage servicing assets BHCP3164 7.c. Other identifiable intangibles BHCP3165
+8. Other assets** BHCP2160
+9. Balances due from related institutions, other than investments: 9.a. Related banks BHCP3602 9.b. Related nonbank companies BHCP3603 9.c. Related holding companies BHCP3604
+10. TOTAL ASSETS (sum of items 1.a through 3, and 4.f through 9.c above) BHCP2170
+11. Deposits BHCP2200
+12. Securities sold under agreements to repurchase BHCP0279 13.a. Commercial paper BHCP2309 13.b. Other borrowings BHCP2332
+14. Other borrowed money with a remaining maturity of more than one year BHCP0368
+15. Not applicable
+16. Subordinated notes and debentures **** BHCP4062
+17. Other liabilities BHCP2930
+13
+Report Form Line Number
+Item 8-character MDRM 18.a. Subsidiary banks BHCP3605 18.b. Nonbank subsidiaries BHCP3606 18.c. Related holding companies BHCP3607
+19. Not applicable 20.a. Perpetual preferred stock (including related surplus) BHCP3283 20.b. Common stock (par value) BHCP3230 20.c. Surplus (exclude all surplus related to preferred stock) BHCP3240 20.d. Retained earnings BHCP3247 20.e. Accumulated other comprehensive income ***** BHCPB530 20.f. Other equity capital components ****** BHCPA130 g. Not applicable 20.h. TOTAL EQUITY CAPITAL (sum of items 20.a through 20.f) BHCP3210
+21. TOTAL LIABILITIES AND EQUITY CAPITAL (sum of items 11 through 20) BHCP3300 Memoranda Memoranda items 1.a and 1.b are to be completed by holding companies that have elected to account for financial instruments or servicing assets and liabilities at fair value under a fair value option.
+sM.1.a. Total assets BHCPF819 M.1.b. Total liabilities BHCPF820 Schedule PC-A - Investments in Subsidiaries and Associated Companies 1.a.(1) Common and preferred stock (net of amount reported in item 1.a(2)) BHCP3239 1.a.(2)(a) Goodwill BHCP3238 1.a.(2)(b) Other identifiable intangibles BHCP4485 1.b.(1) Loans, advances, notes, bonds, and debentures BHCP0533 1.b.(2) Other receivables BHCP0534 2.a.(1) Common and preferred stock (net of amount reported in items 2.a(2)) BHCP1273 2.a.(2)(a) Goodwill BHCP0087 2.a.(2)(b) Other identifiable intangibles BHCP0536 2.b.(1) Loans, advances, notes, bonds, and debentures BHCP0537 2.b.(2) Other receivables BHCP0538 3.a.(1) Common and preferred stock (net of amount reported in Item 3.a(2)) BHCP0201 3.a.(2)(a) Goodwill BHCP0202 3.a.(2)(b) Other identifiable intangibles BHCP0203 3.b.(1) Loans, advances, notes, bonds, and debentures BHCP0204 3.b.(2) Other receivables BHCP0205
+4. TOTAL (sum of items 1 through 3) (must equal Schedule PC, item 5) BHPA0365 Schedule PC-B - Memoranda
+1. Amount of assets scheduled to mature within one year (including contractual payments to be repaid within one year) BHCP0543
+2. Amount of borrowings included in Schedule PC, items 16 and 18 that is scheduled to mature within one year (exclude short-term debt) BHCP3409
+3. Amount of liabilities (other than borrowings) scheduled to mature within one year (including any contractual payments to be repaid within one year) BHCP3609 4.a. Bank BHCP0540 4.b. Nonbank BHCP0541 4.c. Related holding companies BHCP0542
+14
+Report Form Line Number
+Item 8-character MDRM
+5. Borrowing by the parent from subsidiaries and associated companies (included in Schedule PC, item 18):
+5.a. Bank BHCP0467 5.b. Nonbank BHCP1274 5.c. Related holding companies BHCP0539
+6. Long-term debt that reprices within one year BHCP3298
+7. Loans and lease financing receivables of the parent: 7.a. Past due 90 days or more and still accruing BHCP1407 7.b. Nonaccrual status BHCP1403
+8. Loans of the parent restructured in troubled debt restructurings that are in compliance with their modified terms BHCPK297
+9. Not applicable
+10. Pledged securities * BHCP0416 11.a. Fair value of securities classified as available-for-sale in Schedule PC, items 2.a through 2.c BHCP8516 11.b. Amortized cost of securities classified as held-to-maturity in Schedule PC, items 2.a through 2.c BHCP8517 11.c. Fair value of equity securities with readily determinable fair values not held for trading in Schedule PC, items 2.a through 2.c. ** BHCPJA22
+12. Balances held by subsidiary banks of the holding company due from: 12.a. Other bank subsidiaries of the holding company BHCP6792 12.b. Nonbank subsidiaries of the holding company BHCP6793
+13. Balances held by subsidiary banks of the holding company due to: 13.a. Other bank subsidiaries of the holding company BHCP6794 13.b. Nonbank subsidiaries of the holding company BHCP6795
+14. 14. Holding company (parent company only) borrowings not held by financial institutions or by insiders (including directors) and their interests BHCP3152
+15. (To be completed only by the top-tier holding company for its consolidated nonbank and thrift subsidiaries. ***)
+15.a. Total combined nonbank assets of nonbank subsidiaries BHCP4778 15.b. Total combined loans and leases of nonbank subsidiaries BHCPC427 15.c. Total aggregate operating revenue of nonbank subsidiaries BHCPC428 15.e. Combined foreign nonbank subsidiary assets included in 15.a BHCP2793 15.d. Combined thrift assets included in 15.a (to be completed only by a bank holding company) BHCP2792 15.f. Number of nonbank subsidiaries included in 15.a BHCP2794 15.g. Number of thrift subsidiaries included in 15.d (to be completed only by a bank holding company) BHCP2796 15.h. Number of foreign nonbank subsidiaries included in 15.e BHCP2831
+16. Notes payable to special-purpose subsidiaries that issued trust preferred securities (included in Schedule PC, item 18.b and item 5.b above) BHCPC255 17.
+Total nonbank assets of a holding company (to be completed only by top-tier holding companies that are subject to the Federal Reserve Board's capital plan rule (12 CFR 225.8) and top-tier savings and loan holding companies with $100 billion or more in total consolidated assets**** BHCPHK02 Notes to the Parent Company Only Financial Statements
+1. Amount BHCP5485
+2. Amount BHCP5486
+3. Amount BHCP5487
+4. Amount BHCP5488
+5. Amount BHCP5489
+15
+Report Form Line Number
+Item 8-character MDRM Text Items
+1. Description TEXT5485
+2. Description TEXT5486
+3. Description TEXT5487
+4. Description TEXT5488
+5. Description TEXT5489 Cover Page Contact Name BHPX8901 Cover Page Contact Phone BHPX8902 Cover Page Contact FAX BHPX9116 Cover Page Contact email BHPX4086 Cover Page Legal Title of Holding Company RSSD9017 Cover Page Street Address of Holding Company RSSD9110 Cover Page City of Holding Company RSSD9130 Cover Page State of Holding Company RSSD9200 Cover Page Zip Code of Holding Company RSSD9220 Cover Page Confidentiality Treatment Request Indicator BHCPC447 Cover Page Letter Justifying Request Provided Indicator BHCPKY38 Cover Page Name of Chief Financial Officer BHCPC490 Cover Page Signature Date BHPXJ196

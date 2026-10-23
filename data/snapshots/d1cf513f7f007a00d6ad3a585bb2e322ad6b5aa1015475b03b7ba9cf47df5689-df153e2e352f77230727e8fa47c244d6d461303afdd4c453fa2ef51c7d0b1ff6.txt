@@ -1,0 +1,68 @@
+Spreadsheet File Transfer User Guide
+FR Y9-ES
+Financial Statements for Employee Stock Ownership Plan Holding Companies
+STATISTICS FUNCTION
+April 2026
+2 Overview
+The Federal Reserve System’s Reporting Central Application provides the ability to submit spreadsheet files (e.g., Microsoft Excel) via the internet. As a result, reporting institutions that use a spreadsheet to prepare their data will not have to key their data into a web page form. While this feature was provided for reporting institutions using spreadsheets, the file can be created by any other ba ckend system that a reporting institution uses to generate its data.
+This document provides the required file format for submitting the data via Reporting Central and shows how a reporting institution can create th e file from a spreadsheet for the FR Y9 -ES – Financial Statements for Employee Stock Ownership Plan Holding Companies. Formulas were used to pull the data from the spreadsheet worksheets containing the data and format them for transmission to Reporting Central.
+Microsoft Excel was used in this example but the same process can be applied to other spreadsheet software. The method used to create the file is at the discretion of the reporter. This guide assumes that the data already exist in spreadsheet form.
+3 How to create a text file from a spreadsheet for the FR Y9-ES
+The FR Y9-ES is comprised of a Cover Page, four schedules and several financial and text fields. To minimize issues arising during the creation of the Reporting Central text file, it is strongly recommended reporting institutions follow the process described below.
+Field Labels
+The identifying label for both financial and text data is the eight-character MDRM descriptor listed in Appendix A. Reporting Central uses the MDRM to identify individual report items in the file upload.
+Field Values Financial data fields can have either positive, zero, or null values. When you prepare your spreadsheet, this table explains how you enter positive, negative, zero, and null values in the item value cell of the spreadsheet.
+Financial Data Item Value Format Positive [leave value as is] Negative Preceded by minus (-) sign Zero 0 Null (or blank) [leave blank]
+Field Character Limits
+Standard financial data are reported in Thousands and allow entry of up to 14 digits, with no decimal places. For nonstandard financial limits and text items character limits, see Appendix B.
+Step 1 – Create Data Listing
+4 Since it is presumed that the reporter already has the report data in spreadsheet format, all subsequent steps in this guide are based on using this report data as the source. The first step recommended is to create a sequential listing of all the items containing the item number, the eight-character MDRM, item description, and item value. It is easier to list all the financial data items first and then the text items after that.
+NOTE Adding additional information to this spreadsheet (like item description and item number) can make items easier to identify and help troubleshoot potential problems. However, this information is completely optional.
+Complete the spreadsheet by listing all the items in Appendix A.
+Step 2 – Link and Format Data Cells
+5 In Sheet 2 of the workbook, all the financial and text items will be linked to Sheet 1 and formatting characters inserted to aid in the creation of the final text file.
+NOTE We differentiate between financial items and text items in Appendix A. It is sometimes clear by the MDRM that an item is text, but that may not be the case in every instance. We identified all text items clearly in the Report Form Line Number column with “TEXT” in this column. You should use this column to identify text items.
+Data Format for Financial Data Items
+• “L” is the separator between data items.
+• Eight-character MDRM.
+• “+” represents the maximum number of columns on the report form into which financial data can be entered for one MDRM. For FR Y9-ES, the maximum number of columns financial data can be entered for one MDRM is one. The formula for each financial item must contain only one “+”.
+• Financial data displays after each “+” and includes a “-“ (minus sign) if the value is negative.
+Financial Data Excel formula: =”L”&Sheet1!D12&”+”&Sheet1!G12 Translates to: LESOP0508+300000
+Data Format for Text Items
+• “L” is the separator between data items.
+• Eight-character MDRM.
+• Text data entry is preceded by two underscores and followed by two underscores.
+Text Data Excel formula: =”L”&Sheet1!C61&”__”&Sheet1!F61&”__” Translates to: LESOP8901__James Jones__
+NOTE For null values, which you leave blank in the spreadsheet, the resulting item values will also be blank. For example, the items with null values will look like this:
+• For data items: LESOPC356+ (a blank follows the plus sign for null)
+• For text items: LESOP8902____ (four underscores)
+The above is repeated for all financial data and text items. Once all fields have been linked, you can create the text file.
+Step 3 – Create the Text File
+After saving the file in spreadsheet format the text file can be created by first navigating to the File tab.
+6
+Then selecting the ‘Save As’ option and indicating the file type as ‘Text (Tab delimited) (*.txt).’
+A message will appear indicating that this file selection does not support workbooks with multiple worksheets, select ‘OK.’
+An additional message will be displayed concerning incompatibility features, select ‘Yes.’
+7 Step 4 – Format the Text File and Add Header Record
+The text file will have been created and will look like this. If there are quotation marks at the beginning and the end of the file, you will need to remove those before continuing.
+The next step is to add the header record.
+The file header record consists of the following items:
+• the first 10 spaces are the RSSD ID with leading zeroes
+• the next 10 spaces are the report series ID ‘FRY9ES,’ plus four trailing spaces
+• the report as-of date, in MM-DD-YYYY format
+8 Step 5 – Reporting Central Submission
+In Reporting Central, select the File Upload tab and then click the ‘Browse...” button. Then, navigate to the stored text file and select the filename so it appears in the ‘File:’ box. Select “Continue” to upload.
+If there are no formatting issues during the file upload you will get a message that the file upload is completed and the data will load directly into the report screen.
+The report data can then be validated and saved. If errors exist in the text file error messages will appear in the file upload window, which can be used to troubleshoot any formatting issues.
+9 Appendix A FR Y9-ES Report Detailed Field Specifications
+Item Description Schedule MDRM Type Length Printed Name of Trustee or Other Authorized Representative of the ESOP Cover Page ESOPC490 Text 72 Date of Signature (MM/DD/YYYY) Cover Page ESOPJ196 Text 10 Legal Title of ESOP HC Cover Page RSSD9017 Text 72 Mailing Address of the ESOP HC: Street/P.O. Bank Cover Page RSSD9110 Text 72 City Cover Page RSSD9130 Text 30 State Cover Page RSSD9200 Text 2 Zip Code Cover Page RSSD9220 Text 5 Name/Title Cover Page ESOP8901 Text 30 Area Code/Phone Number Cover Page ESOP8902 Text 30 FAX Number Cover Page ESOP9116 Text 30 Email Address of Contact Cover Page ESOP4086 Text 72 Is confidential treatment requested for any portion of this report submission (0=No, 1=Yes) Cover Page ESOPC447 Numeric 1 If a letter justifying this request is being provided along with the report, enter "1". If a letter justifying this request has been provided separately, enter "0".
+Cover Page ESOPKY38 Numeric 1 Item Item Description Schedule MDRM Item Length Item Type 1 Net appreciation (depreciation) FV of investments Sch SC 14 Numeric 1.a Employer securities Sch SC ESOPC316 14 Numeric 1.b Other securities Sch SC ESOPC317 14 Numeric 2 Interest Income Sch SC ESOPC318 14 Numeric 3 Dividend Income Sch SC ESOPC319 14 Numeric 4 Employer contributions Sch SC ESOPC320 14 Numeric 5 Participation contributions Sch SC ESOPC321 14 Numeric 6 Other additions Sch SC ESOP3328 14 Numeric 7 Total additions (sum of items 1.a through 6) Sch SC ESOPC323 14 Numeric 8 Interest Expense Sch SC ESOPC324 14 Numeric 9 Insurance Expense Sch SC ESOPC330 14 Numeric 10 Distributions paid to participants Sch SC ESOPC325 14 Numeric 11 Other deductions Sch SC ESOPC326 14 Numeric 12 Total deductions (sum of items 8 through 11) Sch SC ESOPC327 14 Numeric 13 Net increase (decrease) (item 7 minus item 12) Sch SC ESOPC328 14 Numeric 14 Beginning of year: net assets available for benefits Sch SC ESOPC329 14 Numeric 15 End of year: net assets available for benefits (sum of item 13 and 14) must equal Sch SB, Item 15) Sch SC ESPTC342 14 Numeric
+10
+Item Item Description Schedule MDRM Item Length Item Type 1 Cash and cash equivalents (including money market instruments) Sch SB ESOPC322 14 Numeric 2 Holding company securities: Sch SB 2.a Equity securities Sch SB ESOPC331 14 Numeric 2.b Debt securities Sch SB ESOPC332 14 Numeric 3 Bank securities: Sch SB 3.a Equity securities Sch SB ESOPC333 14 Numeric 3.b Debt securities Sch SB ESOPC334 14 Numeric 4 Securities (other than securities reported in items 1,2,3, and 9) Sch SB ESOPC335 14 Numeric 5 Employer's contribution receivable Sch SB ESOPC336 14 Numeric 6 Participants' contribution receivable Sch SB ESOPC337 14 Numeric 7 Dividends and interest receivable Sch SB ESOPC363 14 Numeric 8 Cash surrender value of life insurance Sch SB ESOPC009 14 Numeric 9 Other assets Sch SB ESOPC338 14 Numeric 10 Total assets (sum of items 1 through 9) Sch SB ESOP2170 14 Numeric 11 Loans payable Sch SB ESOPC339 14 Numeric 12 Interest payable Sch SB ESOPC340 14 Numeric 13 Other Liabilities Sch SB ESOPC341 14 Numeric 14 Total Liabilities (sum of items 11 through 13) Sch SB ESOP2948 14 Numeric 15 Net assets available for benefits (item 10 minus item 14) Sch SB ESOPC342 14 Numeric
+11
+Item Item Description Schedule MDRM Item Length Item Type M.1 Sponsoring Employer Sch SB-M TEXT9152 14 Text M.2 Shares held by ESOP: Sch SB-M M.2.a Total number of banks shares help ESOP Sch SB-M ESOPC343 11 Numeric M.2.b Percentage of bank shares held by ESOP included in 2.a Sch SB-M ESOP7285 7 Percentage (up to 5 digits before the decimal & exactly 2 after it).
+M.2.c Number of bank shares allocated by ESOP participants Sch SB-M ESOPC344 11 Numeric M.2.d Total number of holding company shares held by ESOP Sch SB-M ESOPC345 11 Numeric M.2.e Percentage of holding company shares held by ESOP included in 2.d Sch SB-M ESOP7286 7 Percentage (up to 5 digits before the decimal & exactly 2 after it).
+M.2.f Number of holding company allocated by ESOP participants Sch SB-M ESOPC346 11 Numeric M.3 Amount of ESOP debt reported as contra-equity by sponsoring employer or unearned ESOP shares on: Sch SB-M M.3.a Bank Report of Condition Sch SB-M ESOPC347 14 Numeric M.3.b Holding company balance sheet Sch SB-M ESOPC348 14 Numeric M.4 Year ESOP was initially adopted (YYYY) Sch SB-M ESOPC349 4 Numeric M.4.a Account for under AICAP Statement of Position 76- 3 or Statement of Position 93-6 (Enter "1" for SOP 76-3; enter "2" for SOP 93-6) Sch SB-M ESOPC350 1 Numeric M.4.b Total number of plan participants as of December 31 of the report year Sch SB-M ESOPC351 11 Numeric M.5 Estimated employer liability for payment of plan benefits/distributions within two (2) years after December 31 of the report year Sch SB-M ESOPC352 14 Numeric M.6 The net amount of plan participant balances eligible for diversification under the diversification requirement Sch SB-M ESOPC353 14 Numeric M.7 Did the plan engage in any transaction with partiesin-interest during the current report year? (Enter "1" for yes; enter "0" for no) .
+Sch SB-M ESOPC354 1 Numeric M.8 Has there been a change in plan trustees or the plan administrative committee during the current report year? (Enter "1" for yes; enter "0" for no) Sch SB-M ESOPC355 1 Numeric
+12
+Item Item Description Schedule MDRM Item Length Item Type 1 Description - 1 Notes to Financial Statements TEXTC356 192 Text 1 Amount -1 Notes to Financial Statements ESOPC356 14 Numeric 2 Description - 2 Notes to Financial Statements TEXTC357 192 Text 2 Amount - 2 Notes to Financial Statements ESOPC357 14 Numeric 3 Description - 3 Notes to Financial Statements TEXTC358 192 Text 3 Amount - 3 Notes to Financial Statements ESOPC358 14 Numeric 4 Description - 4 Notes to Financial Statements TEXTC359 192 Text 4 Amount - 4 Notes to Financial Statements ESOPC359 14 Numeric 5 Description - 5 Notes to Financial Statements TEXTC360 192 Text 5 Amount - 5 Notes to Financial Statements ESOPC356 14 Numeric
