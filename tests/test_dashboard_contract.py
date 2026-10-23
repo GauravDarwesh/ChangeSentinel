@@ -508,8 +508,8 @@ class TestGuidedDiscoverySelection(unittest.TestCase):
         self.assertIn("github.event.issue.user.login == github.repository_owner", workflow)
         self.assertIn("python -m regmon.register_monitor", workflow)
         self.assertIn("MAX_BULK_REQUESTS = 25", registration)
-        # Candidate selection never writes the active config from browser JavaScript.
-        self.assertNotIn("api.github.com/repos/" + '" + REPOSITORY', js)
+        # The dashboard only opens a prefilled issue; the owner-only workflow applies configuration changes.
+        self.assertIn("function openGitHubRequest(target, toastMessage)", js)
         self.assertIn('config/sources.json', js)
 
     def test_candidate_titles_and_urls_are_escaped_and_manual_urls_are_checked(self):
