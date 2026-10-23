@@ -324,6 +324,30 @@ class TestRegisterMonitor(unittest.TestCase):
         self.assertEqual(saved["seed_urls"], [root])
 
 
+    def test_depth_request_enables_discovered_urls_for_monitoring(self):
+        url = "https://www.example.com/policy"
+        with tempfile.TemporaryDirectory() as tmp:
+            source_path = Path(tmp) / "sources.json"
+            scout_path = Path(tmp) / "scout.json"
+            source_path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            scout_path.write_text(
+                (Path(__file__).resolve().parents[1] / "config" / "scout.json").read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
+            event = issue_event(url, name="Policy")
+            footer = "\\n\\nThis request was created from the ChangeSentinel dashboard."
+            event["issue"]["body"] = event["issue"]["body"].replace(
+                footer, "\\nCrawl depth: 2\\nScout discovery: yes" + footer
+            )
+            result = register_request(event, source_path, "GauravDarwesh/ChangeSentinel", scout_path)
+            source = json.loads(source_path.read_text(encoding="utf-8"))["sources"][0]
+
+        self.assertTrue(result["register_discovered_urls"])
+        self.assertEqual(source["crawl_depth"], 2)
+        self.assertTrue(source["register_discovered_urls"])
+        self.assertEqual(source["seed_urls"], [url])
+        self.assertEqual(source["allowed_urls"], [])
+
     def test_manual_registration_respects_all_supported_crawl_depths(self):
         url = "https://www.example.com/policy"
         for depth in range(4):
