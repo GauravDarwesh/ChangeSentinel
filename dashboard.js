@@ -4608,14 +4608,19 @@ document.addEventListener("scroll", () => { if (!$("fieldTip").hidden) showField
 // columns, and re-measure the painted lights whenever it moves or resizes.
 if (typeof ResizeObserver === "function") {
   let resizeTimer = null;
-  new ResizeObserver(() => {
+  const resizeObserver = new ResizeObserver(() => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       if (!state.loaded || state.view !== "overview") return;
       if (fieldGeometry().key !== $("signalVisual").dataset.geometry) renderMonitoringSignal();
       else ledField.measure();
     }, 120);
-  }).observe($("signalVisual"));
+  });
+  resizeObserver.observe($("signalVisual"));
+  if ($("fieldViewport")) resizeObserver.observe($("fieldViewport"));
+}
+if ($("fieldViewport")) {
+  $("fieldViewport").addEventListener("scroll", () => ledField.measure(), { passive: true });
 }
 // Theme: every visit opens in light (index.html sets it before first paint, by
 // design); the toggle switches theme for the rest of the visit.
