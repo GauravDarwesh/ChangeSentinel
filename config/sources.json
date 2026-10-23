@@ -3108,6 +3108,881 @@
       "allowed_domains": [
         "www.frbservices.org"
       ]
+    },
+    {
+      "id": "manual-402b469209b8",
+      "name": "TIC BL-1 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticbl1-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticbl1-xml-sample.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-453a6875f704",
+      "name": "TIC BL-2 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticbl2-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticbl2-xml-sample.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-67fce0ca2005",
+      "name": "TIC BQ-1 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticbq1-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticbq1-xml-sample.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-77ad1b54bab6",
+      "name": "TIC BQ-3 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticbq3-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticbq3-xml-sample.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-e49d5dac5ef1",
+      "name": "TIC BQ-2 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticbq2-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticbq2-xml-sample.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-ad7be2fd023c",
+      "name": "TIC CQ-1 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticcq1-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticcq1-xml-sample.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-f7443cb8f9e1",
+      "name": "TIC CQ-2 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticcq2-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticcq2-xml-sample.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-5d1702b4b2cc",
+      "name": "TIC D Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticd-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticd-xml-sample.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-27ffffaeabd2",
+      "name": "TIC SLT Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticslt-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ticslt-xml-sample.xml"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-41ddf2bfed6b",
+      "name": "XML Format: TPRX Series (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/tri-party-repo-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/tri-party-repo-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-269906856d86",
+      "name": "FFIEC 002/FFIEC 002S (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec-002-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec-002-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-bf0ce15f4647",
+      "name": "TXT Format: FFIEC 101 (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec-101-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec-101-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-23abd061ae1e",
+      "name": "TXT Format: FFIEC 102 (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec-102-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec-102-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-cc3cad4938af",
+      "name": "FR2004*A/B/C/FA/FB/FC/FM (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2004-file-transfer-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2004-file-transfer-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-f83b4590d2a4",
+      "name": "TXT Format: FR 2248 (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2248-file-transfer-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2248-file-transfer-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-a61735026ca7",
+      "name": "FR 2314/FR 2314S (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2314-fr2314s-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2314-fr2314s-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-820a6d4ac8f7",
+      "name": "TXT Format: FR 2436 (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2436-spreadsheet-file-transfer-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2436-spreadsheet-file-transfer-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-e7cbd658db35",
+      "name": "TXT Format: FR 2835 (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2835-file-upload-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2835-file-upload-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-20a5a7fcb6d5",
+      "name": "TXT Format: FR 2835A (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2835a-file-upload-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2835a-file-upload-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-51e8b541fd12",
+      "name": "TXT Format: FR 2886b (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2886b-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2886b-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-315fd3d9ba06",
+      "name": "TXT Format: FR 2915 (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2915-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr2915-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-d34e7c77f55c",
+      "name": "TXT Format: FR 3036 (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr3036-transfer-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fr3036-transfer-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-b93ecc826c69",
+      "name": "TXT Format: FR XX-1* (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/frxx1-file-transfer-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/frxx1-file-transfer-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-0efe314fb13e",
+      "name": "FR Y-7N / FR Y-7NS (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry7n-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry7n-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
+    },
+    {
+      "id": "manual-9e2c4b1f8ea2",
+      "name": "TXT Format: FR Y-8* (PDF)",
+      "regulator": "www.frbservices.org",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry8-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "allowed_urls": [
+        "https://www.frbservices.org/wp-content/uploads/fry8-user-guide.pdf"
+      ],
+      "allowed_domains": [
+        "www.frbservices.org"
+      ]
     }
   ]
 }
