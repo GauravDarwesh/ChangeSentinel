@@ -301,6 +301,31 @@ class TestDiscovery(unittest.TestCase):
         self.assertTrue(in_scope("https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/consumer-protection/a",SOURCE))
 
 
+    def test_depth_limited_manual_scope_includes_root_and_same_directory_descendants_only(self):
+        root = "https://home.treasury.gov/data/treasury-international-capital-tic-system/tic-forms-instructions"
+        source = SourceConfig(
+            id="manual-tic",
+            name="US TIC Forms & Instructions",
+            regulator="home.treasury.gov",
+            seed_urls=(root,),
+            allowed_prefixes=("https://home.treasury.gov/data/treasury-international-capital-tic-system/",),
+            allowed_domains=("home.treasury.gov",),
+            crawl_depth=2,
+        )
+        self.assertTrue(in_scope(root, source))
+        self.assertTrue(in_scope(
+            "https://home.treasury.gov/data/treasury-international-capital-tic-system/tic-forms-instructions/form-s",
+            source,
+        ))
+        self.assertFalse(in_scope(
+            "https://home.treasury.gov/data/treasury-open-data",
+            source,
+        ))
+        self.assertFalse(in_scope(
+            "https://home.treasury.gov/data/treasury-international-capital-tic-system-home-page/tic-forms-instructions",
+            source,
+        ))
+
     def test_scope_handles_custom_ports_and_legacy_port_domains(self):
         url = "https://www.example.com:8443/policy"
         for configured_domain in ("www.example.com", "www.example.com:8443"):
