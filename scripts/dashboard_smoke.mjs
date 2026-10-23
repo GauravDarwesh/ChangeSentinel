@@ -104,6 +104,12 @@ try {
     check(visible, "the " + view + " view renders");
     await page.screenshot({ path: path.join(OUT, "view-" + view + ".png") });
     if (view === "overview") {
+      // A closed dialog must not be drawn: it would cover the page and swallow clicks.
+      const closedHidden = await page.evaluate(() => {
+        const dialog = document.getElementById("addMonitorDialog");
+        return !!dialog && !dialog.open && dialog.getBoundingClientRect().height === 0;
+      });
+      check(closedHidden, "the closed Add a link dialog is not drawn on the page");
       // Add a link opens on its first step with both ways to find links.
       await page.click('.rail [data-add-monitor]');
       const dialogReady = await page.evaluate(() => {

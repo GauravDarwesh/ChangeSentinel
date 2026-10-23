@@ -552,8 +552,8 @@
      * One dialog, four steps: choose a page and a method, explore it (or follow
      * its links by level), then tick the links to monitor. The explore and
      * confirm steps widen the dialog into a pane of the same console. */
-    .add-link { display: flex; flex-direction: column; }
-    .add-link[open] { display: flex; }
+    /* Only an open dialog is laid out; a closed one must stay hidden. */
+    .add-link[open] { display: flex; flex-direction: column; }
     .add-link.is-wide { width: min(1320px, calc(100vw - 32px)); height: calc(100dvh - 32px); max-height: none; overflow: hidden; }
     .add-link.is-wide .add-head { padding-bottom: 14px; border-bottom: 1px solid var(--line); }
     .add-step[hidden] { display: none !important; }

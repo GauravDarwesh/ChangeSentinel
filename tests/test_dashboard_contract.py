@@ -472,6 +472,15 @@ class TestAddLinkFlow(unittest.TestCase):
         for removed in ('id="pickView"', 'data-view="pick"', 'id="discoverySelectionDialog"', 'id="selectVisibleScout"', 'data-discovery-select'):
             self.assertNotIn(removed, html + js)
 
+    def test_a_closed_dialog_is_never_laid_out(self):
+        # Setting display on a <dialog> overrides the browser's rule that hides a
+        # closed one; it then covers the dashboard and swallows clicks.
+        html = read("index.html")
+        for rule in re.findall(r"\.add-link(?:\.[\w-]+)?\s*\{[^}]*\}", html):
+            with self.subTest(rule=rule):
+                self.assertNotRegex(rule, r"(^|[;{\s])display\s*:", "only .add-link[open] may set display")
+        self.assertIn(".add-link[open] { display: flex;", html)
+
     def test_the_explored_page_cannot_run_script(self):
         html = read("index.html")
         js = read("dashboard.js")
