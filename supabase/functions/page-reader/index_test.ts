@@ -6,10 +6,12 @@ function assert(condition: unknown, message: string) { if (!condition) throw new
 function eq(a: unknown, b: unknown, message: string) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error(message + ': ' + JSON.stringify(a) + ' !== ' + JSON.stringify(b)); }
 
 Deno.test('private and internal addresses are refused', () => {
-  for (const address of ['127.0.0.1', '10.1.2.3', '172.20.0.1', '192.168.1.1', '169.254.169.254', '100.64.0.1', '::1', 'fd00::1', '::ffff:10.0.0.1', '0.0.0.0']) {
-    assert(isPrivateAddress(address), address + ' should be private');
+  for (const address of ['127.0.0.1', '10.1.2.3', '172.20.0.1', '192.168.1.1', '169.254.169.254', '100.64.0.1', '::1', 'fd00::1', '::ffff:10.0.0.1', '::ffff:7f00:1', '64:ff9b::a00:1', '0.0.0.0', '192.0.2.1', '2001:db8::1']) {
+    assert(isPrivateAddress(address), address + ' should be private or reserved');
   }
-  for (const address of ['8.8.8.8', '151.101.1.1', '2606:4700::1111']) assert(!isPrivateAddress(address), address + ' should be public');
+  for (const address of ['8.8.8.8', '151.101.1.1', '2606:4700::1111', '64:ff9b::808:808']) {
+    assert(!isPrivateAddress(address), address + ' should be public');
+  }
   for (const raw of ['http://localhost/', 'http://intranet.local/x', 'http://10.0.0.1/', 'ftp://example.gov/', 'https://user:pw@example.gov/', 'https://example.gov:22/', 'http://[::1]/']) {
     let refused = false;
     try { checkUrl(raw); } catch (error) { refused = error instanceof PublicError; }
@@ -46,20 +48,20 @@ Deno.test('redirects are re-checked and documents are not parsed', async () => {
   const calls: string[] = [];
   const fake = (async (url: string) => {
     calls.push(url);
-    if (url === 'https://203.0.113.10/start') return new Response(null, { status: 302, headers: { location: 'http://127.0.0.1/admin' } });
-    if (url === 'https://203.0.113.10/form.pdf') return new Response('%PDF', { headers: { 'content-type': 'application/pdf' } });
-    if (url === 'https://203.0.113.10/page') return new Response('<html><body><a href="/a">A</a></body></html>', { headers: { 'content-type': 'text/html; charset=utf-8' } });
+    if (url === 'https://8.8.8.8/start') return new Response(null, { status: 302, headers: { location: 'http://127.0.0.1/admin' } });
+    if (url === 'https://8.8.8.8/form.pdf') return new Response('%PDF', { headers: { 'content-type': 'application/pdf' } });
+    if (url === 'https://8.8.8.8/page') return new Response('<html><body><a href="/a">A</a></body></html>', { headers: { 'content-type': 'text/html; charset=utf-8' } });
     return new Response('', { status: 404 });
   }) as typeof fetch;
   let refused = false;
-  try { await readPage('https://203.0.113.10/start', fake); } catch (error) { refused = error instanceof PublicError; }
+  try { await readPage('https://8.8.8.8/start', fake); } catch (error) { refused = error instanceof PublicError; }
   assert(refused, 'a redirect to a private address is refused');
   assert(!calls.includes('http://127.0.0.1/admin'), 'the private address is never requested');
-  eq((await readPage('https://203.0.113.10/form.pdf', fake) as any).kind, 'document', 'PDF is reported as a document');
-  const page = await readPage('https://203.0.113.10/page', fake) as any;
+  eq((await readPage('https://8.8.8.8/form.pdf', fake) as any).kind, 'document', 'PDF is reported as a document');
+  const page = await readPage('https://8.8.8.8/page', fake) as any;
   eq(page.kind, 'page', 'html page');
-  eq(page.links[0].url, 'https://203.0.113.10/a', 'link resolved');
-  eq((await readPage('https://203.0.113.10/missing', fake) as any).status, 404, 'errors are reported, not thrown');
+  eq(page.links[0].url, 'https://8.8.8.8/a', 'link resolved');
+  eq((await readPage('https://8.8.8.8/missing', fake) as any).status, 404, 'errors are reported, not thrown');
 });
 
 Deno.test('requests need an allowed origin, an identity and stay within budget', async () => {
