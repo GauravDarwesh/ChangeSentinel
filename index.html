@@ -454,7 +454,8 @@
     .source-line-meta { color: var(--ink-3); font-size: 12.5px; }
 
     .field-wrap { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 22px 24px 18px; overflow: hidden; }
-    .field-viewport { position: relative; flex: 1 1 auto; min-width: 0; min-height: 0; max-height: min(56vh, 560px); margin-top: 18px; overflow: auto; overscroll-behavior: contain; scrollbar-width: none; -ms-overflow-style: none; border: 1px solid var(--line); border-radius: var(--radius); background: var(--raise); }
+    .field-viewport { position: relative; flex: 0 0 auto; width: 100%; height: clamp(360px, 64vh, 760px); max-height: calc(100dvh - 300px); min-width: 0; min-height: 280px; margin-top: 18px; overflow: auto; overscroll-behavior: contain; scrollbar-width: none; -ms-overflow-style: none; border: 1px solid var(--line); border-radius: var(--radius); background: var(--raise); }
+    @media (max-width: 720px) { .field-viewport { height: clamp(300px, 54vh, 560px); max-height: calc(100dvh - 280px); min-height: 240px; } }
     .field-viewport::-webkit-scrollbar { display: none; }
     .field-stage { position: relative; min-width: max-content; min-height: max-content; margin-top: 0; padding: 14px; }
     .field-canvas { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -2438,8 +2439,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261023-heatmap-scroll-ux-1"></script>
-  <script src="dashboard.js?v=20261023-heatmap-scroll-ux-1"></script>
+  <script src="dashboard-lib.js?v=20261023-heatmap-viewport-fix-1"></script>
+  <script src="dashboard.js?v=20261023-heatmap-viewport-fix-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.
