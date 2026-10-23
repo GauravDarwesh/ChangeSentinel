@@ -1820,7 +1820,7 @@
         <label class="field-label-text" for="newMonitorUrl">Page URL</label>
         <input class="field-input" id="newMonitorUrl" name="url" type="url" placeholder="https://www.example.com/policy-page" autocomplete="url" required>
         <div class="field-help">Enter a public page. By default, only this URL is monitored; you can optionally follow same-site links below.</div>
-        <div class="bulk-actions"><button class="btn" id="autofillMonitorMetadata" type="button">Auto-fill name</button><span id="newMonitorMetadataStatus" class="field-help" role="status" aria-live="polite"></span></div>
+        <div class="bulk-actions"><button class="btn" id="autofillMonitorMetadata" type="button">Auto-fill name</button><button class="btn" id="openSourceForDiscovery" type="button">Open page to explore</button><button class="btn" id="openDiscoverySelectionFromAdd" type="button">Pick links manually</button><span id="newMonitorMetadataStatus" class="field-help" role="status" aria-live="polite"></span></div>
       </div>
       <div>
         <label class="field-label-text" for="newMonitorDepth">Follow linked pages</label>
@@ -1846,6 +1846,7 @@
         <div class="field-help">Up to 20 selectors, removed before the text is compared.</div>
       </div>
       <p class="modal-info">This opens a prefilled request on GitHub. Once the repository owner submits it, the page is added to the configuration and scanned. The dashboard stores no access token.</p>
+      <p class="modal-info">For manual selection, open the source page and add the exact URLs you choose to Scout’s candidate selection tray. For broader discovery, enable Scout below and review findings after a sweep. Candidates are never activated automatically.</p>
       <div class="modal-actions">
         <button class="btn" id="cancelAddMonitor" type="button">Cancel</button>
         <button class="btn btn-primary" type="submit">Continue on GitHub</button>
@@ -2231,8 +2232,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261023-stop-monitor-items-fix-1"></script>
-  <script src="dashboard.js?v=20261023-stop-monitor-items-fix-1"></script>
+  <script src="dashboard-lib.js?v=20261023-guided-discovery"></script>
+  <script src="dashboard.js?v=20261023-guided-discovery"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.
