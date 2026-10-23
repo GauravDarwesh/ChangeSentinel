@@ -208,7 +208,7 @@
       "id": "manual-12f61e0df21e",
       "name": "Forms SHL/SHLA: (05/22/2026)",
       "regulator": "www.govinfo.gov",
-      "active": true,
+      "active": false,
       "baseline_on_first_run": true,
       "include_selector": "",
       "ignore_selectors": [],
