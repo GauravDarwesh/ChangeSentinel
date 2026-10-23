@@ -109,7 +109,7 @@ export function isPrivateAddress(address: string): boolean {
 
     return (words[0] & 0xfe00) === 0xfc00 || // unique-local fc00::/7
       (words[0] & 0xffc0) === 0xfe80 || // link-local fe80::/10
-      words[0] === 0xff00 || // multicast
+      (words[0] & 0xff00) === 0xff00 || // multicast
       (words[0] === 0x2001 && words[1] === 0x0db8) || // documentation
       (words[0] === 0x2001 && words[1] === 0x0010); // ORCHID
   }
