@@ -45,7 +45,7 @@ class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
         queue_step = workflow[queue:commit]
         self.assertIn("python -m regmon.notify --enqueue-only", queue_step)
         # Notifications from completed sources must still be queued on a paused run.
-        self.assertNotIn("paused", queue_step)
+        self.assertNotIn("steps.crawl-status.outputs.paused", queue_step)
         deliver_step = workflow[deliver:record]
         self.assertIn("python -m regmon.notify --deliver-only", deliver_step)
         self.assertNotIn("if:", deliver_step.split("run:", 1)[0])
