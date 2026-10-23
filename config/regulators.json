@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "description": "Who publishes a monitored page, by host. The dashboard groups the scan history by these regulators and their jurisdictions; Scout's own regulator profiles (config/scout.json) are used after these. Hosts match the host itself and any subdomain.",
+  "regulators": [
+    {
+      "id": "fed",
+      "name": "Board of Governors of the Federal Reserve System",
+      "short_name": "Federal Reserve",
+      "jurisdiction": "United States",
+      "region": "NAM",
+      "hosts": ["federalreserve.gov", "frbservices.org", "newyorkfed.org"]
+    },
+    {
+      "id": "ffiec",
+      "name": "Federal Financial Institutions Examination Council",
+      "short_name": "FFIEC",
+      "jurisdiction": "United States",
+      "region": "NAM",
+      "hosts": ["ffiec.gov", "cdr.ffiec.gov"]
+    },
+    {
+      "id": "fdic",
+      "name": "Federal Deposit Insurance Corporation",
+      "short_name": "FDIC",
+      "jurisdiction": "United States",
+      "region": "NAM",
+      "hosts": ["fdic.gov"]
+    },
+    {
+      "id": "occ",
+      "name": "Office of the Comptroller of the Currency",
+      "short_name": "OCC",
+      "jurisdiction": "United States",
+      "region": "NAM",
+      "hosts": ["occ.gov", "occ.treas.gov"]
+    },
+    {
+      "id": "treasury",
+      "name": "U.S. Department of the Treasury",
+      "short_name": "U.S. Treasury",
+      "jurisdiction": "United States",
+      "region": "NAM",
+      "hosts": ["treasury.gov", "home.treasury.gov"]
+    },
+    {
+      "id": "sec",
+      "name": "U.S. Securities and Exchange Commission",
+      "short_name": "SEC",
+      "jurisdiction": "United States",
+      "region": "NAM",
+      "hosts": ["sec.gov"]
+    },
+    {
+      "id": "govinfo",
+      "name": "U.S. Government Publishing Office (Federal Register, CFR)",
+      "short_name": "GovInfo",
+      "jurisdiction": "United States",
+      "region": "NAM",
+      "hosts": ["govinfo.gov", "federalregister.gov", "ecfr.gov"]
+    },
+    {
+      "id": "osfi",
+      "name": "Office of the Superintendent of Financial Institutions",
+      "short_name": "OSFI",
+      "jurisdiction": "Canada",
+      "region": "NAM",
+      "hosts": ["osfi-bsif.gc.ca"]
+    },
+    {
+      "id": "boc",
+      "name": "Bank of Canada",
+      "short_name": "Bank of Canada",
+      "jurisdiction": "Canada",
+      "region": "NAM",
+      "hosts": ["bankofcanada.ca"]
+    },
+    {
+      "id": "eba",
+      "name": "European Banking Authority",
+      "short_name": "EBA",
+      "jurisdiction": "European Union",
+      "region": "EMEA",
+      "hosts": ["eba.europa.eu"]
+    },
+    {
+      "id": "ecb",
+      "name": "European Central Bank (Banking Supervision)",
+      "short_name": "ECB",
+      "jurisdiction": "European Union",
+      "region": "EMEA",
+      "hosts": ["ecb.europa.eu", "bankingsupervision.europa.eu"]
+    },
+    {
+      "id": "esma",
+      "name": "European Securities and Markets Authority",
+      "short_name": "ESMA",
+      "jurisdiction": "European Union",
+      "region": "EMEA",
+      "hosts": ["esma.europa.eu"]
+    },
+    {
+      "id": "eiopa",
+      "name": "European Insurance and Occupational Pensions Authority",
+      "short_name": "EIOPA",
+      "jurisdiction": "European Union",
+      "region": "EMEA",
+      "hosts": ["eiopa.europa.eu"]
+    },
+    {
+      "id": "boe-pra",
+      "name": "Bank of England (Prudential Regulation Authority)",
+      "short_name": "Bank of England (PRA)",
+      "jurisdiction": "United Kingdom",
+      "region": "EMEA",
+      "hosts": ["bankofengland.co.uk"]
+    },
+    {
+      "id": "fca",
+      "name": "Financial Conduct Authority",
+      "short_name": "FCA",
+      "jurisdiction": "United Kingdom",
+      "region": "EMEA",
+      "hosts": ["fca.org.uk"]
+    },
+    {
+      "id": "apra",
+      "name": "Australian Prudential Regulation Authority",
+      "short_name": "APRA",
+      "jurisdiction": "Australia",
+      "region": "APAC",
+      "hosts": ["apra.gov.au"]
+    },
+    {
+      "id": "mas",
+      "name": "Monetary Authority of Singapore",
+      "short_name": "MAS",
+      "jurisdiction": "Singapore",
+      "region": "APAC",
+      "hosts": ["mas.gov.sg"]
+    },
+    {
+      "id": "hkma",
+      "name": "Hong Kong Monetary Authority",
+      "short_name": "HKMA",
+      "jurisdiction": "Hong Kong",
+      "region": "APAC",
+      "hosts": ["hkma.gov.hk"]
+    },
+    {
+      "id": "rbi",
+      "name": "Reserve Bank of India",
+      "short_name": "RBI",
+      "jurisdiction": "India",
+      "region": "APAC",
+      "hosts": ["rbi.org.in"]
+    },
+    {
+      "id": "banxico",
+      "name": "Banco de México",
+      "short_name": "Banxico",
+      "jurisdiction": "Mexico",
+      "region": "LATAM",
+      "hosts": ["banxico.org.mx"]
+    },
+    {
+      "id": "cnbv",
+      "name": "Comisión Nacional Bancaria y de Valores",
+      "short_name": "CNBV",
+      "jurisdiction": "Mexico",
+      "region": "LATAM",
+      "hosts": ["cnbv.gob.mx"]
+    },
+    {
+      "id": "bcra",
+      "name": "Banco Central de la República Argentina",
+      "short_name": "BCRA",
+      "jurisdiction": "Argentina",
+      "region": "LATAM",
+      "hosts": ["bcra.gob.ar"]
+    },
+    {
+      "id": "cbob",
+      "name": "Central Bank of The Bahamas",
+      "short_name": "Central Bank of The Bahamas",
+      "jurisdiction": "Bahamas",
+      "region": "LATAM",
+      "hosts": ["centralbankbahamas.com"]
+    },
+    {
+      "id": "bis",
+      "name": "Bank for International Settlements (Basel Committee)",
+      "short_name": "BIS / BCBS",
+      "jurisdiction": "International",
+      "region": "Global",
+      "hosts": ["bis.org"]
+    }
+  ]
+}

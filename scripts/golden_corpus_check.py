@@ -96,6 +96,8 @@ def profile_version(extraction_type: str, profile: str) -> str:
         return CONTENT_EXTRACTOR_VERSION + "-" + profile
     if extraction_type in {"pdf", "zip"} and profile == "fallback":
         return CONTENT_EXTRACTOR_VERSION + "-fallback"
+    if extraction_type == "xlsx":
+        return CONTENT_EXTRACTOR_VERSION + "-xlsx2"
     return CONTENT_EXTRACTOR_VERSION
 
 
@@ -114,8 +116,8 @@ def check(data_dir: Path, config_path: Path) -> dict:
             if not is_current_extractor_version(record.get("extractor_version")):
                 results["skipped_old_version"] += 1
                 continue
-            pointer = record.get("file_snapshot_location") if kind in {"pdf", "zip"} else record.get("html_snapshot_location")
-            if kind not in {"html", "pdf", "zip"} or not pointer:
+            pointer = record.get("file_snapshot_location") if kind in {"pdf", "zip", "xlsx"} else record.get("html_snapshot_location")
+            if kind not in {"html", "pdf", "zip", "xlsx"} or not pointer:
                 continue
             original = data_dir.parent / pointer
             if not original.is_file():

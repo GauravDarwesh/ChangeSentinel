@@ -105,8 +105,15 @@ class TestOfficeExtraction(unittest.TestCase):
         self.assertIn("[NOTES] Speaker note about the revision", text)
 
     def test_xlsx_formula_without_cached_value_is_kept(self):
+        # A workbook on its own keeps its sheet and columns (regmon/workbook.py) ...
         text, _kind, _error = extract_content("https://example.test/a.xlsx", OFFICE_TYPES["xlsx"], make_xlsx())
-        self.assertIn("Threshold | 10 | =B1*2", text)
+        self.assertIn("A: Threshold · B: 10 · C: =B1*2", text)
+        # ... and inside a ZIP bundle it keeps the earlier row text, so saved bundle baselines reproduce.
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as archive:
+            archive.writestr("form.xlsx", make_xlsx())
+        bundle, _kind, _error = extract_content("https://example.test/bundle.zip", "application/zip", buffer.getvalue())
+        self.assertIn("Threshold | 10 | =B1*2", bundle)
 
     def test_zip_with_an_office_member_extracts(self):
         buffer = io.BytesIO()

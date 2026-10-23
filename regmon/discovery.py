@@ -74,8 +74,15 @@ def in_scope(url: str, source: SourceConfig) -> bool:
     if not resource_match and not any(value.startswith(prefix) for prefix in source.allowed_prefixes):
         return False
     # Exact URL allowlists still bound legacy page monitoring. Explicit crawl
-    # depth > 0 enables same-host traversal; attached resources remain scoped.
-    if source.allowed_urls and value not in {canonical(url) for url in source.allowed_urls} and not resource_match and source.crawl_depth <= 0:
+    # depth > 0 enables same-host traversal, unless the source names document
+    # folders: then it watches its listed pages plus those documents only (a
+    # document rule taught in the dashboard). Attached resources remain scoped.
+    if (
+        source.allowed_urls
+        and value not in {canonical(url) for url in source.allowed_urls}
+        and not resource_match
+        and (source.crawl_depth <= 0 or source.allowed_resource_prefixes)
+    ):
         return False
     value_path = parsed.path.rstrip("/") or "/"
     for prefix in source.excluded_prefixes:

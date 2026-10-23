@@ -79,11 +79,16 @@ def should_force_full_fetch(old: dict | None, now: str, interval_hours: float) -
     return age_hours >= max(0.0, interval_hours)
 
 
+# Workbooks monitored on their own use the structured workbook text (regmon/workbook.py).
+WORKBOOK_EXTRACTOR_VERSION = CONTENT_EXTRACTOR_VERSION + "-xlsx2"
+WORKBOOK_TYPES = {"xlsx"}
+
+
 def is_current_extractor_version(version: object) -> bool:
     """Recognize stable variants of the current hybrid PDF extraction pipeline."""
     value = str(version or "")
     return (
-        value in {CONTENT_EXTRACTOR_VERSION, CONTENT_EXTRACTOR_VERSION + "-fallback"}
+        value in {CONTENT_EXTRACTOR_VERSION, CONTENT_EXTRACTOR_VERSION + "-fallback", WORKBOOK_EXTRACTOR_VERSION}
         or value.startswith(CONTENT_EXTRACTOR_VERSION + "-zipprofile-")
     )
 
@@ -231,8 +236,8 @@ def store_html_snapshot(uid: str, body: bytes, item: dict, old: dict | None) -> 
 
 
 def write_file_snapshot(uid: str, body: bytes, content_hash: str | None, extraction_type: str) -> str:
-    """Persist original PDF/ZIP bytes so the dashboard can preview or download the exact file."""
-    suffix = {"pdf": "pdf", "zip": "zip"}.get(str(extraction_type or "").lower())
+    """Persist original PDF/ZIP/XLSX bytes so the dashboard can preview, compare or download the exact file."""
+    suffix = {"pdf": "pdf", "zip": "zip", "xlsx": "xlsx"}.get(str(extraction_type or "").lower())
     if suffix is None:
         raise ValueError(f"Unsupported original-file snapshot type: {extraction_type!r}")
     directory = SNAPSHOTS / "files"
@@ -407,12 +412,12 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         old_content_type = str((old or {}).get("content_type") or "").lower()
         file_baseline_missing = bool(
             old
-            and (old_type in {"pdf", "zip"} or "pdf" in old_content_type or "zip" in old_content_type)
+            and (old_type in {"pdf", "zip"} | WORKBOOK_TYPES or "pdf" in old_content_type or "zip" in old_content_type)
             and not old.get("file_snapshot_location")
         )
         extractor_baseline_missing = bool(
             old
-            and old_type in {"html", "pdf", "zip"}
+            and old_type in {"html", "pdf", "zip"} | WORKBOOK_TYPES
             and not is_current_extractor_version(old.get("extractor_version"))
         )
         # A record that failed extraction must be re-fetched and re-extracted on
@@ -482,7 +487,9 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             _extraction_profile=extraction_profile,
         )
         item["extraction_type"] = extraction_type
-        if extraction_type in {"html", "pdf", "zip"}:
+        if extraction_type in WORKBOOK_TYPES:
+            item["extractor_version"] = WORKBOOK_EXTRACTOR_VERSION
+        elif extraction_type in {"html", "pdf", "zip"}:
             parser_profile = str(extraction_profile.get("profile") or "native")
             if extraction_type == "zip" and parser_profile.startswith("zipprofile-"):
                 item["extractor_version"] = CONTENT_EXTRACTOR_VERSION + "-" + parser_profile
@@ -490,7 +497,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
                 item["extractor_version"] = CONTENT_EXTRACTOR_VERSION + "-fallback"
             else:
                 item["extractor_version"] = CONTENT_EXTRACTOR_VERSION
-        file_body = result.body if extraction_type in {"pdf", "zip"} else None
+        file_body = result.body if extraction_type in {"pdf", "zip"} | WORKBOOK_TYPES else None
         if extraction_error:
             item["extraction_error"] = extraction_error
             if old:

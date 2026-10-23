@@ -427,7 +427,7 @@ def _extract_zip_bundle(body: bytes, extraction_profile: dict | None = None):
             media_type = ZIP_MEMBER_MEDIA_TYPES.get(suffix, "")
             member_profile = {}
             text, kind, error = extract_content(
-                name, media_type, member_bytes, _extraction_profile=member_profile
+                name, media_type, member_bytes, _extraction_profile=member_profile, _workbook_detail=False
             )
             if error:
                 raise ValueError(f"Could not extract ZIP member {name}: {error}")
@@ -1155,6 +1155,7 @@ def extract_content(
     include_selector: str | None = None,
     ignore_selectors: tuple[str, ...] | list[str] | None = None,
     _extraction_profile: dict | None = None,
+    _workbook_detail: bool = True,
 ):
     if _extraction_profile is not None:
         _extraction_profile["profile"] = "native"
@@ -1193,7 +1194,16 @@ def extract_content(
     if office == "docx":
         return _extract_docx(body)
     if office == "xlsx":
-        return _extract_xlsx(body)
+        # A workbook monitored on its own keeps its structure (sheets, cell columns,
+        # formulas, merges, drop-down lists, names). Workbooks inside a ZIP bundle keep
+        # the earlier row text, so saved bundle baselines still reproduce exactly.
+        if not _workbook_detail:
+            return _extract_xlsx(body)
+        from regmon.workbook import PROFILE, extract_workbook
+
+        if _extraction_profile is not None:
+            _extraction_profile["profile"] = PROFILE
+        return extract_workbook(body)
     if office == "pptx":
         return _extract_pptx(body)
 

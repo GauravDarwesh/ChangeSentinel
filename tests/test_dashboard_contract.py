@@ -220,7 +220,7 @@ class TestDashboardScanSignal(unittest.TestCase):
             "L.slotColumns(state.history, { workflowRuns: state.workflowRuns })",
             # The field opens on a lens over a chosen range and folds quiet pages into summary rows.
             "L.fieldWindow(allColumns, prefs.range, new Date())",
-            "L.fieldRows(pages, { lens: prefs.lens, query: prefs.query, open: prefs.open, closed: prefs.closed, limit: prefs.limit })",
+            "L.fieldRows(pages, { lens: prefs.lens, query: prefs.query, groupBy: prefs.groupBy, open: prefs.open, closed: prefs.closed, limit: prefs.limit, limits: prefs.limits })",
             "L.pendingScan(new Date(), scans, state.workflowRuns)",
             "pending: Boolean(item.pending_registration)",
             "L.columnCellState(column, page)",
@@ -764,8 +764,9 @@ class TestReviewLayerContract(unittest.TestCase):
                 self.assertIn(key + ': "' + path + '"', js)
                 self.assertIn('new URL("./' + path + '", document.baseURI)', js)
                 self.assertIn('case "' + key + '":', js)
-        self.assertIn('const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews"]);', js)
-        self.assertRegex(js, r'const SMALL_ASSETS = \[[^\]]*"calendar", "lineage", "reviews"\]')
+        self.assertIn('const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews", "regulators"]);', js)
+        self.assertIn("cp config/regulators.json", read(".github/workflows/pages.yml"))
+        self.assertRegex(js, r'const SMALL_ASSETS = \[[^\]]*"calendar", "lineage", "reviews", "regulators"\]')
         pages = read(".github/workflows/pages.yml")
         for path in ("config/lineage.json", "data/calendar.json", "data/calendar.ics", "data/reviews/ledger.json"):
             with self.subTest(path=path):

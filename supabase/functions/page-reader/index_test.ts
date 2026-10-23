@@ -1,6 +1,6 @@
 // Tests for the page reader. Network calls go to a fake fetcher; nothing leaves the machine.
 (Deno as any).serve = () => ({ finished: Promise.resolve(), shutdown: async () => {}, ref() {}, unref() {}, addr: { hostname: 'test', port: 0 } });
-const { checkUrl, isPrivateAddress, readHtml, readPage, formatOf, spend, handle, PublicError, absoluteCssUrls, clientRedirect, botCheck, USER_AGENT, BROWSER_USER_AGENT } = await import('./index.ts');
+const { checkUrl, isPrivateAddress, readHtml, readPage, formatOf, spend, handle, PublicError, absoluteCssUrls, clientRedirect, botCheck, USER_AGENT, BROWSER_USER_AGENT, documentFormat, MAX_FILE_BYTES } = await import('./index.ts');
 
 function assert(condition: unknown, message: string) { if (!condition) throw new Error(message); }
 function eq(a: unknown, b: unknown, message: string) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error(message + ': ' + JSON.stringify(a) + ' !== ' + JSON.stringify(b)); }
@@ -218,4 +218,25 @@ Deno.test('a refusal is retried once as a browser, refresh pages and cookies are
     const session = await readPage('https://8.8.8.8/session', fake) as any;
     eq(session.kind, 'page', 'a cookie set on a redirect is sent back');
   }
+});
+
+Deno.test('documents can be read whole for the dashboard viewers', async () => {
+  const pdf = new TextEncoder().encode('%PDF-1.7 fake');
+  const fake = (async (url: string) => {
+    if (url === 'https://8.8.8.8/form.pdf') return new Response(pdf, { headers: { 'content-type': 'application/pdf' } });
+    if (url === 'https://8.8.8.8/DownloadAttachment?guid=1') return new Response(pdf, { headers: { 'content-type': 'application/pdf' } });
+    if (url === 'https://8.8.8.8/page') return new Response('<html><body><a href="/a">A</a></body></html>', { headers: { 'content-type': 'text/html' } });
+    if (url === 'https://8.8.8.8/huge.xlsx') return new Response(new Uint8Array(MAX_FILE_BYTES + 10), { headers: { 'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' } });
+    return new Response('', { status: 404 });
+  }) as typeof fetch;
+  const file = await readPage('https://8.8.8.8/form.pdf', fake, { file: true }) as any;
+  eq([file.kind, file.format, file.bytes.length], ['file', 'PDF', pdf.length], 'a PDF comes back whole');
+  eq((await readPage('https://8.8.8.8/DownloadAttachment?guid=1', fake, { file: true }) as any).format, 'PDF', 'by content type when the address has no extension');
+  eq((await readPage('https://8.8.8.8/form.pdf', fake) as any).kind, 'document', 'without file mode a document is only described');
+  eq((await readPage('https://8.8.8.8/page', fake, { file: true }) as any).kind, 'page', 'a web page is still read as a page');
+  let refused = '';
+  try { await readPage('https://8.8.8.8/huge.xlsx', fake, { file: true }); } catch (error) { refused = (error as Error).message; }
+  assert(/larger than 25 MB/.test(refused), 'oversized documents are refused: ' + refused);
+  eq([documentFormat('https://x.gov/a.xlsx', ''), documentFormat('https://x.gov/a.csv', 'text/csv'), documentFormat('https://x.gov/a.docx', ''),
+      documentFormat('https://x.gov/a', 'application/zip'), documentFormat('https://x.gov/page', 'text/html')], ['Spreadsheet', 'CSV', 'Word', 'ZIP', ''], 'formats');
 });

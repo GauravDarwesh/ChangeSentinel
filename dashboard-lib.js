@@ -276,67 +276,156 @@
   }
 
   // The rows the field draws, in order. Each is one of
+  //   { type: "section", key, label, note, count, states, open, counts }   a regulator (or other) heading
   //   { type: "page", page, member }            a page's own lights (member: inside an open summary)
   //   { type: "group", key, label, count, states, open, kind }   a summary row
-  //   { type: "more", key, hidden }             "show more" at the end of a long list
-  // options: lens (FIELD_LENSES), query, open (summary keys opened), closed (source
-  // keys closed in the "all" lens), limit (page rows before "show more").
+  //   { type: "more", key, hidden }             one "show more" for a section whose pages ran past its limit
+  // options: lens (FIELD_LENSES); query; groupBy ("none" or anything the pages carry a
+  // groupKey for); open (summary keys opened); closed (section and source keys closed);
+  // limit (page rows per section); limits ({ sectionKey: page rows } raised by "show more").
   function fieldRows(pages, options = {}) {
     const lens = FIELD_LENSES.indexOf(options.lens) >= 0 ? options.lens : "activity";
     const open = options.open instanceof Set ? options.open : new Set(options.open || []);
-    let budget = Math.max(1, Number(options.limit) || 80);
+    const closed = options.closed instanceof Set ? options.closed : new Set(options.closed || []);
+    const limits = options.limits || {};
+    const grouped = !!options.groupBy && options.groupBy !== "none";
     const list = (pages || []).map(page => Object.assign({}, page, { activity: page.activity || rowActivity(page.states) }));
     const matching = list.filter(page => fieldMatches(page, options.query));
     const byTitle = (a, b) => String(a.title || "").localeCompare(String(b.title || ""));
     const byActivity = (a, b) => (b.activity.problems ? 1 : 0) - (a.activity.problems ? 1 : 0) ||
       b.activity.last - a.activity.last || (b.activity.changed + b.activity.problems) - (a.activity.changed + a.activity.problems) || byTitle(a, b);
+    const merged = members => {
+      const width = members.length ? members[0].states.length : 0;
+      return Array.from({ length: width }, (_, x) => mergeCellStates(members.map(page => page.states[x])));
+    };
     const rows = [];
-    const pushPages = (members, key, member) => {
-      let shown = 0;
-      members.forEach(page => {
-        if (budget <= 0) return;
-        rows.push({ type: "page", page, member: !!member });
-        budget -= 1;
-        shown += 1;
-      });
-      if (shown < members.length) rows.push({ type: "more", key, hidden: members.length - shown });
-    };
-    // Summary rows start closed; a source's rows in the "all" lens start open.
-    const closed = options.closed instanceof Set ? options.closed : new Set(options.closed || []);
-    const summary = (key, label, members, kind) => {
+    const flat = String(options.query || "").trim() || lens === "changed" || lens === "problems" || lens === "new";
+    const keep = lens === "changed" ? page => page.activity.changed > 0
+      : lens === "problems" ? page => page.activity.problems > 0
+      : lens === "new" ? page => page.activity.kind === "new"
+      : () => true;
+    // Sections: one per regulator (or jurisdiction, kind, source), in name order with "Other" last.
+    const sections = new Map();
+    matching.forEach(page => {
+      const key = grouped ? String(page.groupKey || "other") : "all";
+      if (!sections.has(key)) sections.set(key, { key, label: grouped ? String(page.groupLabel || "Other") : "", note: grouped ? String(page.groupNote || "") : "", pages: [] });
+      sections.get(key).pages.push(page);
+    });
+    const ordered = Array.from(sections.values()).sort((a, b) =>
+      (a.key === "other") - (b.key === "other") || a.label.localeCompare(b.label));
+    ordered.forEach(section => {
+      const members = flat ? section.pages.filter(keep) : section.pages;
       if (!members.length) return;
-      const width = members[0].states.length;
-      const states = Array.from({ length: width }, (_, x) => mergeCellStates(members.map(page => page.states[x])));
-      const isOpen = kind === "source" ? !closed.has(key) : open.has(key);
-      rows.push({ type: "group", key, label, count: members.length, states, open: isOpen, kind });
-      if (isOpen) pushPages(members.slice().sort(byTitle), key, true);
-    };
-    if (String(options.query || "").trim() || lens === "changed" || lens === "problems" || lens === "new") {
-      const keep = lens === "changed" ? page => page.activity.changed > 0
-        : lens === "problems" ? page => page.activity.problems > 0
-        : lens === "new" ? page => page.activity.kind === "new"
-        : () => true;
-      pushPages(matching.filter(keep).sort(byActivity), "flat", false);
-    } else if (lens === "all") {
-      const bySource = new Map();
-      matching.forEach(page => {
-        const key = String(page.sourceId || "");
-        if (!bySource.has(key)) bySource.set(key, []);
-        bySource.get(key).push(page);
-      });
-      Array.from(bySource.entries())
-        .sort((a, b) => String(a[1][0].sourceLabel || a[0]).localeCompare(String(b[1][0].sourceLabel || b[0])))
-        .forEach(([sourceId, members]) => {
-          if (members.length === 1) pushPages(members, "src:" + sourceId, false);
-          else summary("src:" + sourceId, members[0].sourceLabel || sourceId, members, "source");
+      const sectionKey = "sec:" + section.key;
+      let budget = Math.max(1, Number(limits[sectionKey]) || Number(options.limit) || 80);
+      let hidden = 0;
+      const pushPages = (list, member) => {
+        list.forEach(page => {
+          if (budget <= 0) { hidden += 1; return; }
+          rows.push({ type: "page", page, member: !!member, section: section.key });
+          budget -= 1;
         });
-    } else {
-      pushPages(matching.filter(page => page.activity.changed || page.activity.problems).sort(byActivity), "active", false);
-      summary("new", "New pages", matching.filter(page => !page.activity.changed && !page.activity.problems && page.activity.kind === "new"), "new");
-      summary("quiet", "No change", matching.filter(page => page.activity.kind === "quiet"), "quiet");
-      summary("waiting", "Not scanned yet", matching.filter(page => page.activity.kind === "unscanned"), "waiting");
-    }
+      };
+      const summary = (key, label, group, kind) => {
+        if (!group.length) return;
+        const isOpen = kind === "source" ? !closed.has(key) : open.has(key);
+        rows.push({ type: "group", key, label, count: group.length, states: merged(group), open: isOpen, kind, section: section.key, members: group });
+        if (isOpen) pushPages(group.slice().sort(byTitle), true);
+      };
+      if (grouped) {
+        const counts = fieldCounts(members);
+        const isOpen = !closed.has(sectionKey);
+        rows.push({ type: "section", key: sectionKey, label: section.label, note: section.note, count: members.length, states: merged(members), open: isOpen, counts, members });
+        if (!isOpen) return;
+      }
+      const scope = grouped ? section.key + ":" : "";
+      if (flat) {
+        pushPages(members.slice().sort(byActivity), false);
+      } else if (lens === "all") {
+        if (grouped && options.groupBy !== "source") {
+          pushPages(members.slice().sort(byTitle), false);
+        } else {
+          const bySource = new Map();
+          members.forEach(page => {
+            const key = String(page.sourceId || "");
+            if (!bySource.has(key)) bySource.set(key, []);
+            bySource.get(key).push(page);
+          });
+          Array.from(bySource.entries())
+            .sort((a, b) => String(a[1][0].sourceLabel || a[0]).localeCompare(String(b[1][0].sourceLabel || b[0])))
+            .forEach(([sourceId, group]) => {
+              if (group.length === 1 || options.groupBy === "source") pushPages(group.slice().sort(byTitle), false);
+              else summary("src:" + sourceId, group[0].sourceLabel || sourceId, group, "source");
+            });
+        }
+      } else {
+        pushPages(members.filter(page => page.activity.changed || page.activity.problems).sort(byActivity), false);
+        summary(scope + "new", "New pages", members.filter(page => !page.activity.changed && !page.activity.problems && page.activity.kind === "new"), "new");
+        summary(scope + "quiet", "No change", members.filter(page => page.activity.kind === "quiet"), "quiet");
+        summary(scope + "waiting", "Not scanned yet", members.filter(page => page.activity.kind === "unscanned"), "waiting");
+      }
+      if (hidden) rows.push({ type: "more", key: sectionKey, hidden, section: section.key });
+    });
     return { rows, lens, counts: fieldCounts(matching) };
+  }
+
+  /* ---------- Who publishes a page ----------
+   * Monitors added from the dashboard carry only their host name, so the field
+   * groups pages by the regulator behind the host: config/regulators.json first,
+   * then Scout's regulator profiles, then the country a public-sector domain
+   * belongs to.
+   */
+  const JURISDICTION_SUFFIXES = [
+    [/\.europa\.eu$/, "European Union", "EMEA"], [/\.gc\.ca$|\.ca$/, "Canada", "NAM"], [/\.gov\.uk$|\.co\.uk$|\.org\.uk$|\.uk$/, "United Kingdom", "EMEA"],
+    [/\.gov\.au$|\.au$/, "Australia", "APAC"], [/\.gob\.mx$|\.mx$/, "Mexico", "LATAM"], [/\.gob\.ar$|\.ar$/, "Argentina", "LATAM"],
+    [/\.bs$/, "Bahamas", "LATAM"], [/\.gov\.sg$|\.sg$/, "Singapore", "APAC"], [/\.gov\.hk$|\.hk$/, "Hong Kong", "APAC"],
+    [/\.gov\.in$|\.in$/, "India", "APAC"], [/\.go\.jp$|\.jp$/, "Japan", "APAC"], [/\.de$/, "Germany", "EMEA"], [/\.fr$/, "France", "EMEA"],
+    [/\.ie$/, "Ireland", "EMEA"], [/\.nl$/, "Netherlands", "EMEA"], [/\.ch$/, "Switzerland", "EMEA"], [/\.za$/, "South Africa", "EMEA"],
+    [/\.gov$|\.mil$|\.fed\.us$|\.us$/, "United States", "NAM"]
+  ];
+  function hostOf(url) {
+    try { return new URL(String(url || "")).hostname.toLowerCase().replace(/\.$/, ""); } catch (_) { return ""; }
+  }
+  function jurisdictionForHost(host) {
+    const h = String(host || "").toLowerCase();
+    const hit = JURISDICTION_SUFFIXES.find(([pattern]) => pattern.test(h));
+    return hit ? { jurisdiction: hit[1], region: hit[2] } : { jurisdiction: "", region: "" };
+  }
+  // profiles: [{ id, name, short_name, jurisdiction, region, hosts: [...] }, ...] in priority order.
+  function regulatorFor(url, profiles, fallbackName) {
+    const host = hostOf(url);
+    const bare = host.replace(/^www\d?\./, "");
+    for (const profile of profiles || []) {
+      const hosts = (profile && profile.hosts) || [];
+      if (hosts.some(entry => {
+        const candidate = String(entry || "").toLowerCase().replace(/^www\d?\./, "");
+        return candidate && (bare === candidate || bare.endsWith("." + candidate));
+      })) {
+        const where = jurisdictionForHost(host);
+        return { id: String(profile.id || bare), name: profile.name || profile.short_name || bare, short: profile.short_name || profile.name || bare,
+          jurisdiction: profile.jurisdiction || where.jurisdiction, region: profile.region || where.region, known: true };
+      }
+    }
+    const where = jurisdictionForHost(host);
+    const named = fallbackName && !/^[\w.-]+\.[a-z]{2,}$/i.test(String(fallbackName).trim()) ? String(fallbackName).trim() : "";
+    return { id: bare || "other", name: named || bare || "Other", short: named || bare || "Other", jurisdiction: where.jurisdiction, region: where.region, known: !!named };
+  }
+
+  // What kind of document a monitored page is, from its title and address.
+  function pageKind(title, url, extractionType) {
+    const text = String(title || "") + " " + String(url || "").toLowerCase().replace(/[-_/]+/g, " ");
+    if (/\binstruction/i.test(text)) return "Instructions";
+    if (/\bsample\b|\bexample\b/i.test(text)) return "Sample files";
+    if (/technical spec|specification|taxonom|\bxsd\b|schema|validation rule|edit check/i.test(text)) return "Technical specifications";
+    if (/\bfaq\b|q&a|questions and answers|frequently asked/i.test(text)) return "Q&A";
+    if (/\btemplate|\bform\b|reporting form|\breturn\b|report form|\bschedule\b/i.test(text)) return "Forms and templates";
+    if (/guid|guideline|manual|handbook|\bnotice|circular|\bletter/i.test(text)) return "Guidance and notices";
+    const type = String(extractionType || "").toLowerCase();
+    const path = String(url || "").toLowerCase();
+    if (type === "xlsx" || type === "csv" || /\.(xlsx|xlsm|xls|csv)(\?|$)/.test(path)) return "Spreadsheets";
+    if (type === "pdf" || /\.pdf(\?|$)/.test(path)) return "Other documents";
+    if (type === "zip" || /\.zip(\?|$)/.test(path)) return "Bundles";
+    return "Web pages";
   }
 
   const ACTIVE_RUN_STATUSES = ["queued", "in_progress", "waiting", "requested", "pending"];
@@ -925,6 +1014,329 @@
       rows.push(row);
     }
     return rows;
+  }
+
+
+  /* ---------- Workbooks: every sheet, cell by cell ----------
+   * readWorkbook reads an .xlsx/.xlsm in the browser (no library): every sheet in
+   * order with its visibility, each cell's displayed value and formula, merged
+   * ranges, data-validation lists and defined names. Dates stored as serial
+   * numbers are shown as dates when their cell format is a date format.
+   * workbookDiff compares two such workbooks the way a reviewer reads a template:
+   * sheets matched by name (or by content, if renamed), rows aligned so an
+   * inserted row is one inserted row rather than a cascade of edits, then the
+   * cells in each matched row.
+   */
+  const WORKBOOK_LIMITS = { cellsPerSheet: 400000, cells: 1500000, changesPerSheet: 4000 };
+  function columnName(index) {
+    let name = "";
+    let n = index + 1;
+    while (n > 0) { const r = (n - 1) % 26; name = String.fromCharCode(65 + r) + name; n = Math.floor((n - 1) / 26); }
+    return name;
+  }
+  function cellRef(row, col) { return columnName(col) + row; }
+  function attr(tag, name) {
+    const match = String(tag || "").match(new RegExp("\\b" + name + '="([^"]*)"'));
+    return match ? xmlText(match[1]) : "";
+  }
+  const BUILTIN_DATE_FORMATS = new Set([14, 15, 16, 17, 22, 27, 30, 36, 45, 46, 47, 50, 57]);
+  function isDateFormat(code) {
+    const text = String(code || "").replace(/"[^"]*"|\[[^\]]*\]|\\./g, "");
+    return /[dmy]/i.test(text) && !/^[#0.,%\s]*$/.test(text);
+  }
+  function serialDate(serial, withTime) {
+    const ms = Math.round((Number(serial) - 25569) * 86400000);
+    const date = new Date(ms);
+    if (!Number.isFinite(ms) || Number.isNaN(date.getTime())) return String(serial);
+    const iso = date.toISOString();
+    return withTime && Math.abs(Number(serial) % 1) > 1e-9 ? iso.slice(0, 16).replace("T", " ") : iso.slice(0, 10);
+  }
+  async function readWorkbook(buffer, options = {}) {
+    const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+    const entries = zipEntries(bytes);
+    const budget = { used: 0 };
+    const read = name => zipText(bytes, entries, name, budget);
+    const workbookXml = await read("xl/workbook.xml");
+    if (!workbookXml) throw new Error("This file is not an Excel workbook (.xlsx).");
+    const rels = (await read("xl/_rels/workbook.xml.rels")) || "";
+    const relTargets = {};
+    Array.from(rels.matchAll(/<Relationship\b[^>]*>/g)).forEach(match => {
+      const id = attr(match[0], "Id");
+      const target = attr(match[0], "Target");
+      if (id && target) relTargets[id] = target.startsWith("/") ? target.slice(1) : "xl/" + target.replace(/^\.\//, "");
+    });
+    const sharedXml = await read("xl/sharedStrings.xml");
+    const shared = sharedXml ? Array.from(sharedXml.matchAll(/<si\b[^>]*>([\s\S]*?)<\/si>/g)).map(match => runText(match[1])) : [];
+    const stylesXml = (await read("xl/styles.xml")) || "";
+    const customFormats = {};
+    Array.from(stylesXml.matchAll(/<numFmt\b[^>]*>/g)).forEach(match => { customFormats[Number(attr(match[0], "numFmtId"))] = attr(match[0], "formatCode"); });
+    const xfs = (stylesXml.match(/<cellXfs\b[^>]*>([\s\S]*?)<\/cellXfs>/) || ["", ""])[1];
+    const dateStyles = Array.from(xfs.matchAll(/<xf\b[^>]*\/?>/g)).map(match => {
+      const id = Number(attr(match[0], "numFmtId"));
+      return BUILTIN_DATE_FORMATS.has(id) || (customFormats[id] ? isDateFormat(customFormats[id]) : false);
+    });
+    const names = Array.from(workbookXml.matchAll(/<definedName\b([^>]*)>([\s\S]*?)<\/definedName>/g)).map(match => ({
+      name: attr(match[1], "name"), scope: attr(match[1], "localSheetId"), value: xmlText(match[2]).trim()
+    })).filter(entry => entry.name && !/^_xlnm\._FilterDatabase$/.test(entry.name));
+    const sheets = [];
+    let total = 0;
+    let truncated = false;
+    for (const match of workbookXml.matchAll(/<sheet\b[^>]*>/g)) {
+      const tag = match[0];
+      const name = attr(tag, "name");
+      const relId = attr(tag, "r:id") || attr(tag, "id");
+      const path = relTargets[relId];
+      const sheet = { name, state: attr(tag, "state") || "visible", cells: {}, maxRow: 0, maxCol: 0, merges: [], validations: [], count: 0, truncated: false, kind: "worksheet" };
+      sheets.push(sheet);
+      if (!path || !/worksheets\//.test(path)) { sheet.kind = path && /chartsheets\//.test(path) ? "chart" : "other"; continue; }
+      const xml = await read(path);
+      if (!xml) continue;
+      const sharedFormulas = {};
+      for (const rowMatch of xml.matchAll(/<row\b([^>]*?)(?:\/>|>([\s\S]*?)<\/row>)/g)) {
+        const rowNumber = Number(attr(rowMatch[1], "r")) || sheet.maxRow + 1;
+        for (const cell of String(rowMatch[2] || "").matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)) {
+          const attrs = cell[1] || "";
+          const body = cell[2] || "";
+          const ref = attr(attrs, "r");
+          const col = ref ? columnIndex(ref) : 0;
+          const row = ref ? Number((ref.match(/\d+$/) || [rowNumber])[0]) : rowNumber;
+          const type = attr(attrs, "t") || "n";
+          const raw = (body.match(/<v>([\s\S]*?)<\/v>/) || [])[1];
+          const formulaMatch = body.match(/<f\b([^>]*?)(?:\/>|>([\s\S]*?)<\/f>)/);
+          let formula = formulaMatch && formulaMatch[2] ? xmlText(formulaMatch[2]) : "";
+          // Shared formulas are written once and referenced by index from the other cells.
+          const sharedIndex = formulaMatch && attr(formulaMatch[1], "t") === "shared" ? attr(formulaMatch[1], "si") : "";
+          if (sharedIndex) {
+            if (formula) sharedFormulas[sharedIndex] = formula;
+            else formula = sharedFormulas[sharedIndex] ? sharedFormulas[sharedIndex] + " (shared)" : "(shared formula)";
+          }
+          let value = "";
+          if (type === "s") value = shared[Number(raw)] || "";
+          else if (type === "inlineStr") value = runText(body);
+          else if (type === "b") value = raw === "1" ? "TRUE" : raw === "0" ? "FALSE" : "";
+          else if (raw != null) {
+            value = xmlText(raw);
+            const style = Number(attr(attrs, "s"));
+            if (type === "n" && value !== "" && dateStyles[style]) value = serialDate(value, true);
+          }
+          if (value === "" && !formula) continue;
+          if (sheet.count >= WORKBOOK_LIMITS.cellsPerSheet || total >= WORKBOOK_LIMITS.cells) { sheet.truncated = truncated = true; break; }
+          sheet.cells[cellRef(row, col)] = formula ? { v: value, f: formula } : { v: value };
+          sheet.count += 1;
+          total += 1;
+          if (row > sheet.maxRow) sheet.maxRow = row;
+          if (col + 1 > sheet.maxCol) sheet.maxCol = col + 1;
+        }
+        if (sheet.truncated) break;
+      }
+      sheet.merges = Array.from(xml.matchAll(/<mergeCell\b[^>]*>/g)).map(m => attr(m[0], "ref")).filter(Boolean);
+      sheet.validations = Array.from(xml.matchAll(/<dataValidation\b([^>]*)>([\s\S]*?)<\/dataValidation>/g)).map(m => ({
+        range: attr(m[1], "sqref"), type: attr(m[1], "type") || "any",
+        rule: xmlText((m[2].match(/<formula1>([\s\S]*?)<\/formula1>/) || ["", ""])[1]) + ((m[2].match(/<formula2>([\s\S]*?)<\/formula2>/) || [])[1] ? " … " + xmlText(m[2].match(/<formula2>([\s\S]*?)<\/formula2>/)[1]) : "")
+      }));
+    }
+    return { sheets, names, truncated };
+  }
+  // A sheet's rows as arrays [row number, signature, { col: cell }], in order.
+  function sheetRows(sheet) {
+    const byRow = new Map();
+    Object.keys(sheet.cells).forEach(ref => {
+      const row = Number(ref.match(/\d+$/)[0]);
+      const col = columnIndex(ref);
+      if (!byRow.has(row)) byRow.set(row, {});
+      byRow.get(row)[col] = sheet.cells[ref];
+    });
+    return Array.from(byRow.keys()).sort((a, b) => a - b).map(row => {
+      const cells = byRow.get(row);
+      const cols = Object.keys(cells).map(Number).sort((a, b) => a - b);
+      return { row, cells, signature: cols.map(col => col + "=" + cells[col].v + (cells[col].f ? "{" + cells[col].f + "}" : "")).join("\u0001") };
+    });
+  }
+  function rowSimilarity(a, b) {
+    const left = new Set(Object.keys(a.cells).map(col => col + "=" + a.cells[col].v));
+    const right = Object.keys(b.cells).map(col => col + "=" + b.cells[col].v);
+    if (!left.size && !right.length) return 1;
+    const shared = right.filter(key => left.has(key)).length;
+    return (2 * shared) / (left.size + right.length);
+  }
+  function sheetSimilarity(a, b) {
+    const values = sheet => new Set(Object.values(sheet.cells).slice(0, 4000).map(cell => cell.v).filter(Boolean));
+    const left = values(a), right = values(b);
+    if (!left.size || !right.size) return 0;
+    let shared = 0;
+    right.forEach(value => { if (left.has(value)) shared += 1; });
+    return (2 * shared) / (left.size + right.size);
+  }
+  function diffSheet(before, after) {
+    const a = sheetRows(before), b = sheetRows(after);
+    const changes = [];
+    const rowsAdded = [], rowsRemoved = [];
+    let more = 0;
+    const push = change => { if (changes.length < WORKBOOK_LIMITS.changesPerSheet) changes.push(change); else more += 1; };
+    const compareRows = (left, right) => {
+      const cols = new Set(Object.keys(left.cells).concat(Object.keys(right.cells)).map(Number));
+      Array.from(cols).sort((x, y) => x - y).forEach(col => {
+        const was = left.cells[col], now = right.cells[col];
+        const beforeRef = was ? cellRef(left.row, col) : "", afterRef = now ? cellRef(right.row, col) : "";
+        if (was && now) {
+          if (was.v === now.v && (was.f || "") === (now.f || "")) return;
+          push({ kind: (was.f || "") !== (now.f || "") ? "formula" : "value", before: { ref: beforeRef, v: was.v, f: was.f || "" }, after: { ref: afterRef, v: now.v, f: now.f || "" } });
+        } else if (now) push({ kind: "added", before: null, after: { ref: afterRef, v: now.v, f: now.f || "" } });
+        else push({ kind: "removed", before: { ref: beforeRef, v: was.v, f: was.f || "" }, after: null });
+      });
+    };
+    const runs = diffSequences(a.map(row => row.signature), b.map(row => row.signature), { maxD: 2000 });
+    for (let i = 0; i < runs.length; i += 1) {
+      const run = runs[i];
+      if (run.type === "same") continue;
+      // A removed block followed by an added block: pair rows that still look alike as edits.
+      let removed = run.type === "del" ? a.slice(run.a[0], run.a[1]) : [];
+      let added = run.type === "add" ? b.slice(run.b[0], run.b[1]) : [];
+      if (run.type === "del" && runs[i + 1] && runs[i + 1].type === "add") { added = b.slice(runs[i + 1].b[0], runs[i + 1].b[1]); i += 1; }
+      // In order: each removed row pairs with the most similar added row after the
+      // last pair; added rows skipped over are insertions, unpaired removals deletions.
+      let y = 0;
+      removed.forEach(row => {
+        let best = -1, score = 0;
+        for (let k = y; k < added.length && k < y + 60; k += 1) {
+          const s = rowSimilarity(row, added[k]);
+          if (s > score) { score = s; best = k; }
+        }
+        if (best >= 0 && score >= 0.34) {
+          for (let k = y; k < best; k += 1) rowsAdded.push(added[k].row);
+          compareRows(row, added[best]);
+          y = best + 1;
+        } else rowsRemoved.push(row.row);
+      });
+      added.slice(y).forEach(row => rowsAdded.push(row.row));
+    }
+    rowsRemoved.forEach(row => { const r = a.find(entry => entry.row === row); if (r) Object.keys(r.cells).forEach(col => push({ kind: "removed", before: { ref: cellRef(row, Number(col)), v: r.cells[col].v, f: r.cells[col].f || "" }, after: null, row: true })); });
+    rowsAdded.forEach(row => { const r = b.find(entry => entry.row === row); if (r) Object.keys(r.cells).forEach(col => push({ kind: "added", before: null, after: { ref: cellRef(row, Number(col)), v: r.cells[col].v, f: r.cells[col].f || "" }, row: true })); });
+    const setDiff = (x, y) => x.filter(item => y.indexOf(item) < 0);
+    const merges = { added: setDiff(after.merges, before.merges), removed: setDiff(before.merges, after.merges) };
+    const rule = v => v.range + " " + v.type + " " + v.rule;
+    const validations = { added: setDiff(after.validations.map(rule), before.validations.map(rule)), removed: setDiff(before.validations.map(rule), after.validations.map(rule)) };
+    const counts = { value: 0, formula: 0, added: 0, removed: 0 };
+    changes.forEach(change => { counts[change.kind] += 1; });
+    const changed = changes.length || more || merges.added.length || merges.removed.length || validations.added.length || validations.removed.length || before.state !== after.state;
+    return { changes, more, counts, rowsAdded, rowsRemoved, merges, validations, visibility: before.state !== after.state ? [before.state, after.state] : null, changed: !!changed };
+  }
+  function workbookDiff(before, after) {
+    const sheets = [];
+    const left = (before && before.sheets) || [], right = (after && after.sheets) || [];
+    const matchedRight = new Set();
+    const pairs = [];
+    left.forEach(sheet => {
+      const twin = right.find(candidate => candidate.name === sheet.name);
+      if (twin) { pairs.push([sheet, twin]); matchedRight.add(twin); } else pairs.push([sheet, null]);
+    });
+    // A sheet missing by name may have been renamed: match by content.
+    pairs.forEach(pair => {
+      if (pair[1]) return;
+      let best = null, score = 0;
+      right.filter(candidate => !matchedRight.has(candidate)).forEach(candidate => {
+        const s = sheetSimilarity(pair[0], candidate);
+        if (s > score) { score = s; best = candidate; }
+      });
+      if (best && score >= 0.6) { pair[1] = best; pair.renamed = true; matchedRight.add(best); }
+    });
+    pairs.forEach(pair => {
+      const [was, now] = pair;
+      if (!now) { sheets.push({ name: was.name, before: was.name, after: null, status: "removed", cells: was.count }); return; }
+      const diff = diffSheet(was, now);
+      sheets.push(Object.assign({ name: now.name, before: was.name, after: now.name, status: pair.renamed ? "renamed" : diff.changed ? "changed" : "same" }, diff));
+    });
+    right.forEach((sheet, index) => {
+      if (matchedRight.has(sheet)) return;
+      const entry = { name: sheet.name, before: null, after: sheet.name, status: "added", cells: sheet.count };
+      // Keep the new workbook's sheet order.
+      const at = sheets.findIndex(item => item.after && right.findIndex(s => s.name === item.after) > index);
+      if (at < 0) sheets.push(entry); else sheets.splice(at, 0, entry);
+    });
+    const key = entry => entry.name + "=" + entry.value + "@" + entry.scope;
+    const beforeNames = ((before && before.names) || []).map(key), afterNames = ((after && after.names) || []).map(key);
+    const names = { added: afterNames.filter(n => beforeNames.indexOf(n) < 0), removed: beforeNames.filter(n => afterNames.indexOf(n) < 0) };
+    const totals = { sheetsChanged: sheets.filter(s => s.status !== "same").length, cells: 0, rowsAdded: 0, rowsRemoved: 0 };
+    sheets.forEach(s => { if (s.changes) { totals.cells += s.changes.filter(c => !c.row).length + (s.more || 0); totals.rowsAdded += s.rowsAdded.length; totals.rowsRemoved += s.rowsRemoved.length; } });
+    return { sheets, names, totals, truncated: !!((before && before.truncated) || (after && after.truncated)) };
+  }
+  function parseCsv(text, limit) {
+    const rows = [];
+    let row = [], cell = "", quoted = false;
+    const max = limit || 20000;
+    const s = String(text || "");
+    for (let i = 0; i < s.length; i += 1) {
+      const ch = s[i];
+      if (quoted) {
+        if (ch === '"' && s[i + 1] === '"') { cell += '"'; i += 1; }
+        else if (ch === '"') quoted = false;
+        else cell += ch;
+      } else if (ch === '"') quoted = true;
+      else if (ch === ",") { row.push(cell); cell = ""; }
+      else if (ch === "\n" || ch === "\r") {
+        if (ch === "\r" && s[i + 1] === "\n") i += 1;
+        row.push(cell); rows.push(row); row = []; cell = "";
+        if (rows.length >= max) return rows;
+      } else cell += ch;
+    }
+    if (cell || row.length) { row.push(cell); rows.push(row); }
+    return rows;
+  }
+  // A CSV file as a one-sheet workbook, so it can use the same viewer and comparison.
+  function csvWorkbook(text, name) {
+    const sheet = { name: name || "Sheet1", state: "visible", cells: {}, maxRow: 0, maxCol: 0, merges: [], validations: [], count: 0, truncated: false, kind: "worksheet" };
+    parseCsv(text).forEach((row, r) => row.forEach((value, c) => {
+      if (value === "") return;
+      sheet.cells[cellRef(r + 1, c)] = { v: value };
+      sheet.count += 1;
+      sheet.maxRow = Math.max(sheet.maxRow, r + 1);
+      sheet.maxCol = Math.max(sheet.maxCol, c + 1);
+    }));
+    return { sheets: [sheet], names: [], truncated: false };
+  }
+  // The names in a zip file, for listing a bundle's contents.
+  async function zipListing(buffer) {
+    const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+    return Array.from(zipEntries(bytes).entries()).map(([name, entry]) => ({ name, size: entry.size, compressed: entry.compressed }))
+      .filter(entry => !entry.name.endsWith("/"));
+  }
+  async function zipFile(buffer, name) {
+    const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+    const entries = zipEntries(bytes);
+    const entry = entries.get(name);
+    if (!entry) return null;
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    const at = entry.local;
+    const start = at + 30 + view.getUint16(at + 26, true) + view.getUint16(at + 28, true);
+    const raw = bytes.subarray(start, start + entry.compressed);
+    if (entry.method === 0) return raw.slice();
+    if (entry.method !== 8 || typeof DecompressionStream !== "function") throw new Error("This part of the bundle can't be opened here.");
+    const out = await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer();
+    return new Uint8Array(out);
+  }
+  // Paragraphs and tables of a Word document, as plain blocks.
+  async function readDocx(buffer) {
+    const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+    const entries = zipEntries(bytes);
+    const xml = await zipText(bytes, entries, "word/document.xml", { used: 0 });
+    if (!xml) throw new Error("This file is not a Word document (.docx).");
+    const body = (xml.match(/<w:body>([\s\S]*)<\/w:body>/) || ["", xml])[1];
+    const blocks = [];
+    const paragraphText = p => Array.from(p.matchAll(/<w:t(?:\s[^>]*)?>([\s\S]*?)<\/w:t>|<w:tab\/>|<w:br\/>/g)).map(m => m[1] != null ? xmlText(m[1]) : " ").join("");
+    for (const part of body.matchAll(/<w:tbl>[\s\S]*?<\/w:tbl>|<w:p\b[\s\S]*?<\/w:p>/g)) {
+      const chunk = part[0];
+      if (chunk.startsWith("<w:tbl")) {
+        const rows = Array.from(chunk.matchAll(/<w:tr\b[\s\S]*?<\/w:tr>/g)).map(tr =>
+          Array.from(tr[0].matchAll(/<w:tc\b[\s\S]*?<\/w:tc>/g)).map(tc => Array.from(tc[0].matchAll(/<w:p\b[\s\S]*?<\/w:p>/g)).map(p => paragraphText(p[0])).join("\n")));
+        blocks.push({ type: "table", rows });
+      } else {
+        const text = paragraphText(chunk);
+        const style = (chunk.match(/<w:pStyle w:val="([^"]+)"/) || [])[1] || "";
+        if (text.trim()) blocks.push({ type: /heading|title/i.test(style) ? "heading" : "paragraph", text });
+      }
+      if (blocks.length > 5000) break;
+    }
+    return blocks;
   }
 
   /* ---------- Time ---------- */
@@ -1724,12 +2136,133 @@
     return { title: "[ChangeSentinel] Add monitor request: weekly link check", body: body.join("\n") };
   }
 
+
+  /* ---------- Smarter picking: likely-relevant links, older versions, similar links, rules ---------- */
+  const PICK_GOOD_WORDS = [
+    [/\binstructions?\b/i, "Instructions"], [/\btemplates?\b/i, "Template"], [/\breporting forms?\b|\bforms?\b(?! of)/i, "Form"],
+    [/technical spec|specifications?\b/i, "Technical specification"], [/taxonom|\bxbrl\b|\bxsd\b|schema/i, "Taxonomy / schema"],
+    [/validation (rule|check)|edit checks?/i, "Validation rules"], [/\bfaq\b|q&a|questions and answers/i, "Q&A"],
+    [/\bguidance\b|\bguidelines?\b|\bmanual\b/i, "Guidance"], [/\bcircular\b|\bnotice\b|\bletter\b|\bbulletin\b/i, "Notice"],
+    [/\bconsultation\b|\bproposal\b|\bdraft\b/i, "Consultation"], [/\brule\b|\bregulation\b|\bstandard\b/i, "Rule"],
+    [/\breturns?\b|\bschedules?\b|\breporting\b|\bfiling\b/i, "Reporting"], [/\bsample\b/i, "Sample file"]
+  ];
+  const PICK_BAD_WORDS = /\b(news|press|event|webinar|career|job|vacanc|contact|privacy|cookie|terms of use|accessibility|login|log in|sign in|subscribe|newsletter|sitemap|search|facebook|twitter|linkedin|youtube|instagram|share|print|back to top|skip to|home)\b/i;
+  const PICK_OLD_WORDS = /\b(archived?|historical|previous|superseded|obsolete|former|old version|legacy|withdrawn|retired)\b/i;
+  const PICK_DOC_FORMATS = { PDF: 2, Spreadsheet: 3, ZIP: 2, XML: 2, Word: 1, JSON: 1 };
+  // How likely a link is to be something a compliance team would monitor, with the reasons.
+  function pickScore(link) {
+    const text = String((link && (link.text || link.title)) || "");
+    const url = String((link && link.url) || "").toLowerCase();
+    const haystack = text + " " + (link && link.section || "") + " " + url.replace(/[-_/.]+/g, " ");
+    const reasons = [];
+    let score = PICK_DOC_FORMATS[link && link.format] || 0;
+    if (score) reasons.push(link.format === "Spreadsheet" ? "Excel file" : link.format + " file");
+    PICK_GOOD_WORDS.forEach(([pattern, label]) => { if (pattern.test(haystack) && reasons.indexOf(label) < 0) { score += 2; reasons.push(label); } });
+    if (link && link.chrome) score -= 3;
+    if (PICK_BAD_WORDS.test(text)) score -= 3;
+    const older = PICK_OLD_WORDS.test(haystack);
+    if (older) score -= 1;
+    return { score, reasons: reasons.slice(0, 3), older };
+  }
+  // Links that are the same document in another year or version: all but the newest
+  // of each family are marked older. A family is the link text and address with the
+  // years, dates and version numbers taken out.
+  function pickVersions(links) {
+    const stem = link => (String(link.text || "") + " " + String(link.url || "").replace(/^https?:\/\/[^/]+/, ""))
+      .toLowerCase().replace(/\b(19|20)\d{2}\b|\bq[1-4]\b|\bv(ersion)?\s*\d+(\.\d+)*\b|\b\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}\b|\d+/g, "#").replace(/[^a-z#]+/g, " ").trim();
+    const weight = link => {
+      const source = String(link.text || "") + " " + String(link.url || "");
+      const years = (source.match(/\b(19|20)\d{2}\b/g) || []).map(Number);
+      const version = (source.match(/\bv(?:ersion)?\s*(\d+(?:\.\d+)*)/i) || [])[1];
+      const quarter = (source.match(/\bq([1-4])\b/i) || [])[1];
+      return (years.length ? Math.max(...years) : 0) * 100 + (quarter ? Number(quarter) * 10 : 0) + (version ? parseFloat(version) : 0);
+    };
+    const families = new Map();
+    (links || []).forEach((link, index) => {
+      const key = stem(link);
+      if (!key || key.replace(/[# ]/g, "").length < 3) return;
+      if (!families.has(key)) families.set(key, []);
+      families.get(key).push({ index, weight: weight(link) });
+    });
+    const older = new Set();
+    families.forEach(members => {
+      if (members.length < 2) return;
+      const best = Math.max(...members.map(member => member.weight));
+      if (!best) return;
+      members.forEach(member => { if (member.weight < best) older.add(member.index); });
+    });
+    return older;
+  }
+  function folderOf(url) {
+    try { const u = new URL(url); return u.origin + u.pathname.replace(/[^/]*$/, ""); } catch (_) { return ""; }
+  }
+  function firstWords(text, n) { return String(text || "").trim().split(/\s+/).slice(0, n).join(" "); }
+  function escapeRegex(text) { return String(text).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+  // Rules that describe the picked links and find more like them on the page.
+  // Returns [{ id, label, keys: [...] }] for rules that would add at least one link.
+  function pickSimilar(picked, links, keyOf) {
+    const key = keyOf || (link => urlKey(link.url));
+    const chosen = (picked || []).filter(Boolean);
+    const all = (links || []).filter(link => link && !link.chrome);
+    if (!chosen.length || !all.length) return [];
+    const have = new Set(chosen.map(key));
+    const rules = [];
+    const formats = Array.from(new Set(chosen.map(link => link.format)));
+    const sections = Array.from(new Set(chosen.map(link => link.section || "")));
+    const folders = Array.from(new Set(chosen.map(link => folderOf(link.url))));
+    const format = formats.length === 1 ? formats[0] : "";
+    const kind = format && format !== "Web page" ? (format === "Spreadsheet" ? "Excel files" : format + "s") : "links";
+    // A shared first word or two ("Current", "Form FR"): the way regulators label the live version.
+    for (let words = 2; words >= 1; words -= 1) {
+      const prefixes = Array.from(new Set(chosen.map(link => firstWords(link.text, words).toLowerCase())));
+      if (prefixes.length === 1 && prefixes[0].length >= 4 && !/^(the|a|an|download|view|click|link)$/.test(prefixes[0])) {
+        const prefix = firstWords(chosen[0].text, words);
+        rules.push({ id: "text:" + prefix, label: "All " + kind + " starting “" + prefix + "”", pattern: "^" + escapeRegex(prefix), test: link => (!format || link.format === format) && firstWords(link.text, words).toLowerCase() === prefixes[0] });
+        break;
+      }
+    }
+    if (sections.length === 1 && sections[0]) rules.push({ id: "section:" + sections[0], label: "All " + kind + " under “" + sections[0] + "”", test: link => (link.section || "") === sections[0] && (!format || link.format === format) });
+    if (folders.length === 1 && folders[0]) {
+      let path = folders[0];
+      try { path = new URL(folders[0]).pathname; } catch (_) {}
+      if (path !== "/") rules.push({ id: "folder:" + folders[0], label: "All " + kind + " in " + path, prefix: folders[0], test: link => folderOf(link.url) === folders[0] && (!format || link.format === format) });
+    }
+    if (format && format !== "Web page") rules.push({ id: "format:" + format, label: "Every " + kind.replace(/s$/, "") + " on this page", test: link => link.format === format });
+    const seen = new Set();
+    return rules.map(rule => ({ id: rule.id, label: rule.label, pattern: rule.pattern || "", prefix: rule.prefix || "", keys: all.filter(rule.test).map(key) }))
+      .filter(rule => {
+        const extra = rule.keys.filter(k => !have.has(k)).length;
+        const signature = rule.keys.slice().sort().join("|");
+        if (!extra || seen.has(signature)) return false;
+        seen.add(signature);
+        rule.extra = extra;
+        return true;
+      });
+  }
+  // A monitoring rule from what was picked on one page: watch the page, follow the
+  // documents it links to, but only those labelled like the picked ones and only
+  // under their folder. The owner workflow turns it into the monitor's settings.
+  function pickRecipe(pageUrl, picked, links) {
+    let host = "";
+    try { host = new URL(pageUrl).host; } catch (_) { return null; }
+    const docs = (picked || []).filter(link => link && link.format !== "Web page");
+    if (!docs.length) return null;
+    const similar = pickSimilar(docs, links);
+    const textRule = similar.find(rule => rule.pattern);
+    const sameHost = docs.every(link => { try { return new URL(link.url).host === host; } catch (_) { return false; } });
+    const folders = Array.from(new Set(docs.map(link => folderOf(link.url))));
+    const prefix = sameHost && folders.length === 1 ? folders[0] : "";
+    const matches = (links || []).filter(link => link && !link.chrome && link.format !== "Web page" &&
+      (!textRule || new RegExp(textRule.pattern, "i").test(String(link.text || ""))) && (!prefix || String(link.url).indexOf(prefix) === 0));
+    return { url: pageUrl, depth: 1, textPattern: textRule ? textRule.pattern : "", prefix, count: matches.length };
+  }
+
   return {
     pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
-    pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH,
-    diffSequences, alignLines, changedWords,
+    pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe,
+    diffSequences, alignLines, changedWords, readWorkbook, workbookDiff, csvWorkbook, parseCsv, zipListing, zipFile, readDocx, columnName, cellRef,
     esc, nextScheduledScan, scanCycle, runColumns, slotColumns, columnCellState, pendingScan,
-    fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
+    fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, regulatorFor, jurisdictionForHost, hostOf, pageKind, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,
     parseUnifiedDiff, tokenize, wordDiff, similarity, redlineRows, redlineSummary, renderRedline, renderUnifiedDiff,
     splitMarkdownTableRow, isMarkdownTableSeparator, relativeTime, dayHeading,
