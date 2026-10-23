@@ -4375,6 +4375,14 @@ $("discoverySelectedList").addEventListener("click", event => {
   if (button) removeDiscoveryCandidate(button.dataset.discoveryRemove);
 });
 $("openDiscoveryBatch").addEventListener("click", openDiscoveryRegistrationBatch);
+$("discoverySelectionPagePrev").addEventListener("click", () => {
+  state.discoverySelectedPage = Math.max(0, state.discoverySelectedPage - 1);
+  renderDiscoverySelectionDialog();
+});
+$("discoverySelectionPageNext").addEventListener("click", () => {
+  state.discoverySelectedPage += 1;
+  renderDiscoverySelectionDialog();
+});
 $("cadenceSearch").addEventListener("input", () => { state.cadenceSearch = $("cadenceSearch").value; renderCadenceView(); });
 $("cadenceTypeFilter").addEventListener("change", () => { state.cadenceFilter = $("cadenceTypeFilter").value; renderCadenceView(); });
 $("cadenceSignInForm").addEventListener("submit", signInCadence);
