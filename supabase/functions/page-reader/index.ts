@@ -383,7 +383,23 @@ export function readHtml(html: string, pageUrl: string): { title: string; html: 
       rawHrefAttributes: (html.match(/\bhref\s*=/gi) || []).length,
       escapedAnchorTags: (html.match(/&lt;a\b/gi) || []).length,
       hrefContexts: (html.match(/.{0,100}\bhref\s*=\s*.{0,180}/gi) || []).slice(0, 5),
-      leadingHtmlSample: html.slice(0, 500),
+      bodyTagCount: (html.match(/<body\b/gi) || []).length,
+      anchorTagVariants: {
+        normalA: (html.match(/<a(?:\s|>)/gi) || []).length,
+        uppercaseA: (html.match(/<A(?:\s|>)/g) || []).length,
+        escapedA: (html.match(/&lt;a\b/gi) || []).length,
+        encodedHref: (html.match(/href(?:\\u003d|&#61;|&equals;)/gi) || []).length
+      },
+      contentMarkers: {
+        xmlUserGuide: /XML User Guide/i.test(html),
+        ffiec009: /FFIEC 009/i.test(html),
+        reportingCentral: /Reporting Central/i.test(html),
+        wpJson: /wp-json/i.test(html),
+        applicationJson: /application\/(?:ld\+)?json/i.test(html)
+      },
+      bodyOpeningSample: (() => { const i = html.search(/<body\b/i); return i >= 0 ? html.slice(i, i + 1200) : ''; })(),
+      contentTermSample: (() => { const i = html.search(/XML User Guide|FFIEC 009/i); return i >= 0 ? html.slice(Math.max(0, i - 300), i + 700) : ''; })(),
+      tailSample: html.slice(-700),
       fallbackLinks: fallback.links.length
     }));
     if (fallback.links.length > 0 || parsedBodyElements === 0) {
