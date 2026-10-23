@@ -5569,6 +5569,7 @@ $("askSentinelMessages").addEventListener("click", event => {
   if (prompt) askSentinelSendQuestion(prompt.dataset.askPrompt);
 });
 
+restoreDiscoverySelection();
 if ($("repoLink")) $("repoLink").href = REPO;
 loadData(true);
 refreshWorkflowRuns();
