@@ -23,11 +23,11 @@ on:
   schedule:
     - cron: "0 */6 * * *"
 
-# Serialize monitor runs without accumulating an unbounded queue of paused continuations.
-# Durable discovery checkpoints remain available for deliberate manual resumption.
+# Serialize production scans and state commits. Keep at most one pending run rather than
+# building an unbounded queue when scheduled/manual triggers overlap.
 concurrency:
   group: regulatory-monitor
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -183,10 +183,9 @@ jobs:
         id: crawl-status
         run: python -m regmon.validate_state --source "$REGMON_SOURCE" --data-dir data --config config/sources.json --github-output "$GITHUB_OUTPUT"
 
-      # Paused discovery slices are incomplete scans. Keep their checkpoint for inspection,
-      # but do not enqueue notifications unless discovery has completed.
+      # Queue notification candidates before the state commit, including when discovery
+      # is paused, so valid events from completed sources are not lost.
       - name: Queue notifications
-        if: ${{ steps.crawl-status.outputs.paused != 'true' }}
         run: python -m regmon.notify --enqueue-only
 
       # Commit generated state before anything is delivered. If the commit cannot
@@ -203,7 +202,6 @@ jobs:
           bash scripts/commit_state.sh "Update regulatory monitoring state" "${{ steps.base.outputs.sha }}"
 
       - name: Publish notifications
-        if: ${{ steps.crawl-status.outputs.paused != 'true' }}
         id: delivery
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
