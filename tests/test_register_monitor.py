@@ -14,6 +14,23 @@ from regmon.register_monitor import (
 )
 
 
+_REAL_RESOLVE = None
+
+
+def setUpModule():
+    # Registration follows redirects over the network; these tests stay offline
+    # except where a test drives the resolver with a fake transport.
+    global _REAL_RESOLVE
+    import regmon.register_monitor as module
+    _REAL_RESOLVE = module._resolve_redirects
+    module._resolve_redirects = lambda url: url
+
+
+def tearDownModule():
+    import regmon.register_monitor as module
+    module._resolve_redirects = _REAL_RESOLVE
+
+
 def issue_event(
     url,
     name="Policy updates",
@@ -589,6 +606,74 @@ class DiscoveryOnlyRegistrationTests(unittest.TestCase):
         channel = self.channel()
         self.assertNotIn("explore_prefixes", channel)
         self.assertNotIn("document_hosts", channel)
+
+
+class RedirectedAddressTests(unittest.TestCase):
+    """Old Treasury document links 302 to ticdata.treasury.gov; a monitor must watch the final address."""
+
+    OLD = "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fbc-2022dec.pdf"
+    NEW = "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fbc-2022dec.pdf"
+
+    def fake_get(self, routes):
+        class Response:
+            def __init__(self, status, location=None):
+                self.status_code = status
+                self.headers = {"location": location} if location else {}
+            def close(self):
+                pass
+        def get(url, **kwargs):
+            self.assertFalse(kwargs.get("allow_redirects"), "every hop is checked, never followed blindly")
+            status, location = routes.get(url, (200, None))
+            return Response(status, location)
+        return get
+
+    def resolve(self, url, routes):
+        from unittest.mock import patch
+        with patch("regmon.register_monitor.requests.get", self.fake_get(routes)), \
+             patch("regmon.register_monitor.validate_public_http_url", lambda value, **_: None):
+            return _REAL_RESOLVE(url)
+
+    def test_a_redirect_is_followed_to_the_final_address(self):
+        self.assertEqual(self.resolve(self.OLD, {self.OLD: (302, self.NEW)}), self.NEW)
+        self.assertEqual(self.resolve(self.NEW, {}), self.NEW)
+
+    def test_failures_and_loops_keep_the_submitted_address(self):
+        loop = {self.OLD: (302, self.NEW), self.NEW: (302, self.OLD)}
+        self.assertEqual(self.resolve(self.OLD, loop), self.OLD)
+        from unittest.mock import patch
+        def boom(*_, **__):
+            raise OSError("offline")
+        with patch("regmon.register_monitor.requests.get", boom):
+            self.assertEqual(_REAL_RESOLVE(self.OLD), self.OLD)
+
+    def test_a_private_redirect_target_is_never_registered(self):
+        from unittest.mock import patch
+        from regmon.security import validate_public_http_url as real_validate
+        routes = {self.OLD: (302, "http://127.0.0.1/admin")}
+        def validate(value, **_):
+            if "127.0.0.1" in value:
+                real_validate(value)
+        with patch("regmon.register_monitor.requests.get", self.fake_get(routes)), \
+             patch("regmon.register_monitor.validate_public_http_url", validate):
+            self.assertEqual(_REAL_RESOLVE(self.OLD), self.OLD)
+
+    def test_bulk_registration_stores_the_final_address(self):
+        import regmon.register_monitor as module
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            module._resolve_redirects = lambda url: self.NEW if url == self.OLD else url
+            try:
+                result = register_request(bulk_issue_event([{"url": self.OLD, "name": "Form BC"}, {"url": self.NEW, "name": "Form BC"}]),
+                                          path, "GauravDarwesh/ChangeSentinel")
+            finally:
+                module._resolve_redirects = lambda url: url
+            source = json.loads(path.read_text(encoding="utf-8"))["sources"][0]
+        self.assertEqual(result["count"], 1, "two links to the same final address are one monitor")
+        self.assertEqual(result["items"][0]["redirected_from"], self.OLD)
+        self.assertEqual(source["seed_urls"], [self.NEW])
+        self.assertEqual(source["allowed_urls"], [self.NEW])
+        self.assertEqual(source["allowed_domains"], ["ticdata.treasury.gov"])
 
 
 if __name__ == "__main__":
