@@ -761,3 +761,87 @@ class TestAddLinkHelpers(unittest.TestCase):
         out = run_js("console.log(JSON.stringify([L.pickMonitorName({title: 'Instructions', section: 'Form BC'}),"
                      " L.pickMonitorName({title: 'Treasury International Capital Form BC', section: 'Current'})]))")
         self.assertEqual(out, ["Form BC: Instructions", "Treasury International Capital Form BC"])
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestChangeFieldLenses(unittest.TestCase):
+    """The scan history keeps a row for each page that changed or failed and folds the rest."""
+
+    PAGES = """
+      const mk = (id, title, states, sourceId) => ({ id, title, url: "https://x.gov/" + id, sourceId: sourceId || "s", sourceLabel: (sourceId || "s").toUpperCase(), states });
+      const pages = [
+        mk("a", "Alpha", ["dim", "on", "dim"]),
+        mk("b", "Bravo", ["new", "dim", "dim"]),
+        mk("c", "Charlie", ["dim", "dim", "markup"]),
+        mk("d", "Delta", ["dim", "bad", "dim"]),
+        mk("e", "Echo", ["none", "none", "none"]),
+        mk("f", "Foxtrot", ["skip", "dim", "dim"], "t"),
+        mk("g", "Golf", ["dim", "dim", "dim"], "t")
+      ];
+      const describe = rows => rows.map(r => r.type === "page" ? (r.member ? "  " : "") + r.page.title : r.type === "group" ? "[" + r.label + " " + r.count + (r.open ? " open" : "") + "] " + r.states.join(",") : "(+" + r.hidden + ")");
+    """
+
+    def test_activity_keeps_changes_and_problems_and_folds_the_rest(self):
+        out = run_js(self.PAGES + "console.log(JSON.stringify(describe(L.fieldRows(pages, {}).rows)));")
+        self.assertEqual(out, [
+            "Delta", "Alpha",
+            "[New pages 1] new,dim,dim",
+            "[No change 3] dim,dim,markup",
+            "[Not scanned yet 1] none,none,none",
+        ])
+
+    def test_a_summary_row_opens_in_place_and_long_lists_page(self):
+        out = run_js(self.PAGES + "console.log(JSON.stringify(describe(L.fieldRows(pages, { open: new Set(['quiet']), limit: 4 }).rows)));")
+        self.assertEqual(out, ["Delta", "Alpha", "[New pages 1] new,dim,dim", "[No change 3 open] dim,dim,markup", "  Charlie", "  Foxtrot", "(+1)", "[Not scanned yet 1] none,none,none"])
+
+    def test_problems_outrank_changes_when_lights_merge(self):
+        out = run_js("console.log(JSON.stringify([L.mergeCellStates(['dim', 'on', 'bad']), L.mergeCellStates(['skip', 'markup']), L.mergeCellStates([])]));")
+        self.assertEqual(out, ["bad", "markup", "none"])
+
+    def test_lenses_search_and_source_groups(self):
+        out = run_js(self.PAGES + """
+          console.log(JSON.stringify({
+            changed: describe(L.fieldRows(pages, { lens: "changed" }).rows),
+            problems: describe(L.fieldRows(pages, { lens: "problems" }).rows),
+            fresh: describe(L.fieldRows(pages, { lens: "new" }).rows),
+            all: describe(L.fieldRows(pages, { lens: "all" }).rows),
+            closed: describe(L.fieldRows(pages, { lens: "all", closed: new Set(["src:t"]) }).rows),
+            search: describe(L.fieldRows(pages, { query: "golf" }).rows),
+            counts: L.fieldRows(pages, {}).counts
+          }));""")
+        self.assertEqual(out["changed"], ["Alpha"])
+        self.assertEqual(out["problems"], ["Delta"])
+        self.assertEqual(out["fresh"], ["Bravo"])
+        self.assertEqual(out["all"][0], "[S 5 open] new,bad,markup")
+        self.assertIn("[T 2 open] dim,dim,dim", out["all"])
+        self.assertIn("[T 2] dim,dim,dim", out["closed"])
+        self.assertNotIn("Golf", out["closed"])
+        self.assertEqual(out["search"], ["Golf"])
+        self.assertEqual(out["counts"], {"activity": 2, "changed": 1, "problems": 1, "new": 1, "quiet": 3, "waiting": 1, "all": 7})
+
+    def test_the_range_keeps_only_recent_windows(self):
+        out = run_js("""
+          const day = 86400000, now = Date.UTC(2026, 9, 23, 12);
+          const cols = [10, 5, 1.5, 0.2].map(d => ({ id: String(d), start: now - d * day, end: now - d * day + 6 * 3600000 }));
+          console.log(JSON.stringify(["2d", "7d", "30d", "all"].map(r => L.fieldWindow(cols, r, now).map(c => c.id))));""")
+        self.assertEqual(out, [["1.5", "0.2"], ["5", "1.5", "0.2"], ["10", "5", "1.5", "0.2"], ["10", "5", "1.5", "0.2"]])
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestScoutDigest(unittest.TestCase):
+    def test_findings_group_by_kind_regulator_and_day(self):
+        out = run_js("""
+          const f = (id, reg, kind, seen, confidence) => ({ key: id, regulator_id: reg, first_seen: seen, assessment: { confidence, publication_type: kind ? { id: kind, label: kind.toUpperCase() } : null } });
+          const items = [f(1, "fed", "rule", "2026-10-21T09:00:00Z", "strong"), f(2, "eba", "rule", "2026-10-20T09:00:00Z", "weak"),
+                         f(3, "fed", "guidance", "2026-10-21T10:00:00Z", "supported"), f(4, "fed", null, "2026-10-19T09:00:00Z", "conflicting")];
+          const keys = groups => groups.map(g => g.label + ":" + g.items.map(i => i.key).join(","));
+          console.log(JSON.stringify({
+            kind: keys(L.scoutGroups(items, "kind")),
+            regulator: keys(L.scoutGroups(items, "regulator", id => id.toUpperCase())),
+            day: L.scoutGroups(items, "date").map(g => g.key),
+            strength: items.map(i => L.scoutStrength(i.assessment).level + L.scoutStrength(i.assessment).tone)
+          }));""")
+        self.assertEqual(out["kind"], ["RULE:1,2", "GUIDANCE:3", "Kind not recognised:4"])
+        self.assertEqual(out["regulator"], ["FED:1,3,4", "EBA:2"])
+        self.assertEqual(out["day"], ["day:2026-10-21", "day:2026-10-20", "day:2026-10-19"])
+        self.assertEqual(out["strength"], ["3strong", "1weak", "2supported", "1conflicting"])

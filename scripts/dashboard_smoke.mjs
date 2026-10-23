@@ -44,8 +44,22 @@ const check = (condition, message) => {
 };
 
 const browser = await chromium.launch();
-async function openDashboard(viewport) {
-  const context = await browser.newContext({ viewport });
+// A stand-in for the page reader, so the explorer can be exercised without
+// reading a real site or spending the deployed function's budget.
+function fakeReaderPage(url) {
+  const links = [{ url: "https://www.example.gov/forms/a.pdf", text: "Form A", section: "Forms", format: "PDF", chrome: false },
+    { url: "https://www.example.gov/guidance", text: "Guidance", section: "Forms", format: "Web page", chrome: false }];
+  const html = "<!doctype html>\n<html><head><meta charset=\"utf-8\"><meta http-equiv=\"Content-Security-Policy\" content=\"script-src 'none'\"></head><body>" +
+    "<h1>Reader copy of " + url + "</h1><p><a id=\"l0\" data-cs-link=\"0\" href=\"https://www.example.gov/forms/a.pdf\">Form A</a></p>" +
+    "<p><a id=\"l1\" data-cs-link=\"1\" href=\"https://www.example.gov/guidance\">Guidance</a></p></body></html>";
+  return { kind: "page", url, title: "Reader copy", html, links, truncated: false };
+}
+async function openDashboard(viewport, options = {}) {
+  const context = await browser.newContext({ viewport, hasTouch: !!options.touch, isMobile: !!options.touch });
+  await context.route(/\/functions\/v1\/page-reader/, async route => {
+    const body = JSON.parse(route.request().postData() || "{}");
+    await route.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(fakeReaderPage(body.url || "")) });
+  });
   // The development gate only keeps casual visitors out; tests open it the way an unlocked tab is.
   await context.addInitScript(() => { try { sessionStorage.setItem("cs-dev-access-v1", "granted"); } catch (_) {} });
   const page = await context.newPage();
@@ -115,10 +129,9 @@ try {
       const dialogReady = await page.evaluate(() => {
         const dialog = document.getElementById("addMonitorDialog");
         return !!dialog && dialog.open && !!dialog.querySelector('input[value="explore"]') && !!dialog.querySelector('input[value="crawl"]') &&
-          /allow-same-origin/.test(document.getElementById("exploreFrame").getAttribute("sandbox") || "") &&
-          !/allow-scripts/.test(document.getElementById("exploreFrame").getAttribute("sandbox") || "");
+          (document.getElementById("exploreFrame").getAttribute("sandbox") || "") === "allow-scripts";
       });
-      check(dialogReady, "Add a link offers Explore and Follow by level, with a script-free frame");
+      check(dialogReady, "Add a link offers Explore and Follow by level, with an opaque-origin frame");
       await page.keyboard.press("Escape");
     }
     if (view === "calendar") {
@@ -254,9 +267,19 @@ try {
     "saved FRB HTML redline marks exactly FFIEC 031 and FR Y-9C/R-1867, not FR 3033p/s or repeated labels (" + JSON.stringify(tableRedline) + ")");
 
   await page.click('.rail [data-view="changes"]');
-  const firstChange = await page.$("#changeItems [data-select-change]");
-  if (firstChange) {
-    await firstChange.click();
+  // Monitoring data changes between runs. The newest row may be a fetch or
+  // extraction error, which intentionally has no before/after evidence panel.
+  // Select a rendered non-problem event with a stored evidence file instead.
+  const firstChangeId = await page.evaluate(() => {
+    const byId = new Map(changeLogEntries().map(entry => [entry.event_id, entry]));
+    const row = Array.from(document.querySelectorAll("#changeItems [data-select-change]")).find(button => {
+      const entry = byId.get(button.dataset.selectChange);
+      return entry && entry.evidence_location && L.eventTone(entry.event_type) !== "problem";
+    });
+    return row ? row.dataset.selectChange : "";
+  });
+  if (firstChangeId) {
+    await page.click('#changeItems [data-select-change="' + firstChangeId + '"]');
     await page.waitForSelector("#change-evidence", { timeout: 15000 });
     const compare = await page.$('[data-diff-mode="compare"]');
     if (compare) {
@@ -272,10 +295,58 @@ try {
     }
     await page.screenshot({ path: path.join(OUT, "change-detail.png"), fullPage: false });
   } else {
-    console.log("skip no recorded change to open");
+    console.log("skip no recorded non-problem change with stored evidence to open");
   }
   errors.forEach(message => check(false, message));
   await context.close();
+
+  // The explorer: a Shift-click inside the opaque-origin frame selects a link and a
+  // plain click opens it. Safari can't run parent-attached listeners in a script-less
+  // frame, so this is the path every browser now takes.
+  {
+    const { context: exploreContext, page: explorePage, errors: exploreErrors } = await openDashboard({ width: 1280, height: 860 });
+    await explorePage.evaluate(() => { try { localStorage.removeItem(ADD_DRAFT_STORAGE); } catch (_) {} addClearDraft(); });
+    await explorePage.click('.rail [data-add-monitor]');
+    await explorePage.fill("#newMonitorUrl", "https://www.example.gov/start");
+    await explorePage.click("#addStartGo");
+    const frame = await (await explorePage.waitForSelector("#exploreFrame")).contentFrame();
+    const loaded = await frame.waitForSelector("#l1", { timeout: 15000 }).then(() => true, () => false);
+    check(loaded, "the explorer shows the reader's copy");
+    if (loaded) {
+      check(await frame.evaluate(() => String(window.origin)) === "null", "the explored copy runs in an opaque origin");
+      await explorePage.waitForTimeout(250);
+      await frame.click("#l0", { modifiers: ["Shift"] });
+      await explorePage.waitForTimeout(300);
+      check(await explorePage.evaluate(() => state.add.picked.size) === 1, "Shift-click inside the explored page selects the link");
+      check(await frame.evaluate(() => document.querySelectorAll("[data-cs-picked]").length) === 1, "the selected link is marked in the page");
+      await frame.click("#l1");
+      const navigated = await explorePage.waitForFunction(() => /guidance/.test(document.getElementById("exploreAddress").textContent), null, { timeout: 10000 }).then(() => true, () => false);
+      check(navigated, "a plain click opens the linked page in the explorer");
+    }
+    await explorePage.evaluate(() => { const dialog = document.getElementById("addMonitorDialog"); if (dialog.open) dialog.close(); });
+    // The scan history: hovering a light shows its tip and clicking through removes it.
+    await explorePage.click('.rail [data-view="overview"]');
+    await explorePage.click("[data-field-lens=all]");
+    await explorePage.waitForTimeout(600);
+    // The newest light of the first page row: in view, since the field opens on the newest scan.
+    const firstRow = await explorePage.$eval("#signalVisual .led[data-monitor-id]:not(.s-none):not(.s-pending)", el => el.dataset.y).catch(() => null);
+    const lights = firstRow === null ? [] : await explorePage.$$('#signalVisual .led[data-y="' + firstRow + '"][data-monitor-id]:not(.s-none):not(.s-pending)');
+    const light = lights[lights.length - 1];
+    if (light) await light.scrollIntoViewIfNeeded();
+    const box = light ? await light.boundingBox() : null;
+    if (box) {
+      await explorePage.mouse.move(box.x + 3, box.y + 3);
+      await explorePage.mouse.move(box.x + 5, box.y + 5);
+      check(await explorePage.isVisible("#fieldTip"), "hovering a light shows what happened in that scan");
+      await explorePage.mouse.click(box.x + 5, box.y + 5);
+      await explorePage.waitForTimeout(300);
+      check(!(await explorePage.isVisible("#fieldTip")) && await explorePage.evaluate(() => state.view) === "monitors", "clicking a light opens the page and clears the tip");
+    } else {
+      console.log("skip no scanned light to hover");
+    }
+    exploreErrors.forEach(message => check(false, message));
+    await exploreContext.close();
+  }
 
   const phone = await openDashboard({ width: 390, height: 844 });
   const layout = await phone.page.evaluate(() => ({
