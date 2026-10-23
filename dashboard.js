@@ -784,6 +784,9 @@ function fieldGeometry() {
 }
 function renderMonitoringSignal() {
   const field = $("signalVisual");
+  const viewport = $("fieldViewport");
+  // Follow the latest scan unless the user has moved left into older history.
+  const followLatest = Boolean(viewport && (viewport.dataset.initialized !== "1" || viewport.scrollWidth - viewport.clientWidth - viewport.scrollLeft <= 24));
   const items = state.items || [];
   if (!items.length) {
     field.innerHTML = emptyState("No pages yet", "Each monitored page gets a row of lights here, one per scan.");
@@ -831,8 +834,8 @@ function renderMonitoringSignal() {
       };
       const title = itemTitle(item);
       html += '<button class="field-label" type="button" data-monitor-id="' + esc(item.url_id) + '" data-row="' + y + '" title="' + esc(title) + '">' + esc(title) + "</button>";
-      // Newest saved run first. Older scan windows continue to the right.
-      columns.slice().reverse().forEach((column, x) => {
+      // Chronological order: older scan windows are left, newest is on the right.
+      columns.forEach((column, x) => {
         const s = L.columnCellState(column, page);
         html += '<span class="led s-' + s + '" role="gridcell" data-x="' + x + '" data-y="' + y + '" data-col="' + esc(column.id) + '" data-source="' + esc(item.source_id) + '"' +
           (s === "none" ? "" : ' data-monitor-id="' + esc(item.url_id) + '"') +
@@ -843,22 +846,26 @@ function renderMonitoringSignal() {
       y++;
     });
   });
-  // Marks and day labels follow the same newest-to-oldest order as the cells.
-  html += '<div class="field-marks" aria-hidden="true">' + columns.slice().reverse().map(column =>
+  // Marks and day labels follow the same chronological order as the cells.
+  html += '<div class="field-marks" aria-hidden="true">' + columns.map(column =>
     '<i class="' + (column.manual ? "m-manual" : "") + '"></i>').join("") + "<i></i></div>";
   let lastDay = "";
-  html += '<div class="field-axis" aria-hidden="true">' + columns.slice().reverse().map(column => {
+  html += '<div class="field-axis" aria-hidden="true">' + columns.map(column => {
     const day = new Date(column.slot).toLocaleDateString([], { weekday: "short" });
     const label = day !== lastDay ? day : "";
     lastDay = day;
     return "<span" + (label ? ' class="is-day"' : "") + ">" + esc(label) + "</span>";
   }).join("") + "<span></span></div>";
   field.innerHTML = html;
+  if (viewport) {
+    viewport.dataset.initialized = "1";
+    if (followLatest) requestAnimationFrame(() => { viewport.scrollLeft = viewport.scrollWidth; ledField.measure(); });
+  }
   const lit = field.querySelectorAll(".led.s-on").length;
   const fresh = field.querySelectorAll(".led.s-new").length;
   const bad = field.querySelectorAll(".led.s-bad").length;
   const manual = columns.some(column => column.manual);
-  $("fieldNote").textContent = "One column per six-hour scan window (starting " + scheduleTimes() + " your time), newest on the left; scroll right for older history" +
+  $("fieldNote").textContent = "One column per six-hour scan window (starting " + scheduleTimes() + " your time), newest on the right; scroll left for older history" +
     (manual ? "; a dash marks a window with a manual run" : "") + ". Markup-only edits don't count as changes. " +
     ([lit ? plural(lit, "change", "changes") : "", fresh ? plural(fresh, "new page", "new pages") : "", bad ? plural(bad, "problem", "problems") : ""]
       .filter(Boolean).join(", ").replace(/^./, ch => ch.toUpperCase()) || "No changes") + " in the displayed history.";
