@@ -26,7 +26,7 @@ class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
         end = workflow.index("- name: Setup Python", start)
         checkout = workflow[start:end]
 
-        self.assertIn("cancel-in-progress: true", workflow)
+        self.assertIn("cancel-in-progress: false", workflow)
         self.assertNotIn("queue: max", workflow)
         self.assertIn("ref: main", checkout)
         self.assertIn("possibly stale GITHUB_SHA", checkout)
@@ -44,11 +44,11 @@ class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
 
         queue_step = workflow[queue:commit]
         self.assertIn("python -m regmon.notify --enqueue-only", queue_step)
-        # Paused continuations must still queue alerts for the sources that finished.
-        self.assertIn("steps.crawl-status.outputs.paused != 'true'", queue_step)
+        # Notifications from completed sources must still be queued on a paused run.
+        self.assertNotIn("paused", queue_step)
         deliver_step = workflow[deliver:record]
         self.assertIn("python -m regmon.notify --deliver-only", deliver_step)
-        self.assertIn("if:", deliver_step.split("run:", 1)[0])
+        self.assertNotIn("if:", deliver_step.split("run:", 1)[0])
 
     def test_state_commit_uses_the_guarded_data_only_helper(self):
         workflow = monitor_workflow()
