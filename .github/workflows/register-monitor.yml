@@ -67,6 +67,7 @@ jobs:
             SCOUT_CHANNEL_ID="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("scout_channel_id", ""))')"
             SCOUT_REGULATOR_ID="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("scout_regulator_id", ""))')"
             CRAWL_DEPTH="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("crawl_depth", 0))')"
+            REGISTER_DISCOVERED="$(python -c 'import json,os; print(str(bool(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("register_discovered_urls", False))).lower())')"
             BULK="$(python -c 'import json,os; print(str(bool(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("bulk", False))).lower())')"
             COUNT="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("count", 1))')"
             CREATED_COUNT="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(d.get("created_count", int(d["created"])))')"
@@ -104,6 +105,7 @@ jobs:
           echo "scout_channel_id=$SCOUT_CHANNEL_ID" >> "$GITHUB_OUTPUT"
           echo "scout_regulator_id=$SCOUT_REGULATOR_ID" >> "$GITHUB_OUTPUT"
           echo "crawl_depth=$CRAWL_DEPTH" >> "$GITHUB_OUTPUT"
+          echo "register_discovered_urls=$REGISTER_DISCOVERED" >> "$GITHUB_OUTPUT"
           echo "bulk=$BULK" >> "$GITHUB_OUTPUT"
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
           echo "created_count=$CREATED_COUNT" >> "$GITHUB_OUTPUT"
@@ -163,6 +165,7 @@ jobs:
           DELETED: ${{ steps.register.outputs.deleted }}
           SCOUT_ENABLED: ${{ steps.register.outputs.scout_enabled }}
           CRAWL_DEPTH: ${{ steps.register.outputs.crawl_depth }}
+          REGISTER_DISCOVERED: ${{ steps.register.outputs.register_discovered_urls }}
           SCOUT_REGULATOR_ID: ${{ steps.register.outputs.scout_regulator_id }}
         run: |
           set -euo pipefail
@@ -180,8 +183,11 @@ jobs:
             SOURCE_ID="${SOURCE_IDS%%;*}"
             message="$MONITOR_URL is already configured under source $SOURCE_ID. A monitoring scan has been queued."
           fi
+          if [ "$REGISTER_DISCOVERED" = "true" ]; then
+            message="$message The monitoring crawl is configured to monitor in-scope linked pages through depth $CRAWL_DEPTH; they will appear under Pages once the initial crawl completes."
+          fi
           if [ "$SCOUT_ENABLED" = "true" ]; then
-            message="$message Weekly Scout discovery is enabled through link depth $CRAWL_DEPTH (profile $SCOUT_REGULATOR_ID). Newly discovered or replacement document URLs will appear in Scout for review; they are not silently added as monitors."
+            message="$message Weekly Scout discovery is enabled through link depth $CRAWL_DEPTH (profile $SCOUT_REGULATOR_ID); Scout findings are also available for review."
           fi
           gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$message"
           gh issue close "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY"
