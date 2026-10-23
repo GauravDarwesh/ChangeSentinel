@@ -23,13 +23,11 @@ on:
   schedule:
     - cron: "0 */6 * * *"
 
-# Serialize the full production scan, including its state commit. Do not allow
-# overlapping scan runs to create conflicting reports/snapshots/outbox changes.
-# queue:max prevents pending continuations from being dropped.
+# Serialize production scans and state commits. Keep at most one pending run rather than
+# building an unbounded queue when scheduled/manual triggers overlap.
 concurrency:
   group: regulatory-monitor
   cancel-in-progress: false
-  queue: max
 
 permissions:
   contents: write
@@ -185,9 +183,8 @@ jobs:
         id: crawl-status
         run: python -m regmon.validate_state --source "$REGMON_SOURCE" --data-dir data --config config/sources.json --github-output "$GITHUB_OUTPUT"
 
-      # Queue alerts in the durable outbox BEFORE committing, for every run
-      # (including paused continuations). The outbox is part of the state commit,
-      # so an alert is never lost when a later run overwrites data/report.json.
+      # Queue notification candidates before the state commit, including when discovery
+      # is paused, so valid events from completed sources are not lost.
       - name: Queue notifications
         run: python -m regmon.notify --enqueue-only
 
@@ -242,24 +239,12 @@ jobs:
           # workflow chain, so explicitly publish the updated JSON data files.
           gh workflow run pages.yml --repo "${{ github.repository }}" --ref main
 
-      - name: Continue paused crawl
+      - name: Report paused crawl without auto-dispatching another run
         if: ${{ steps.crawl-status.outputs.paused == 'true' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
-          set -euo pipefail
-          source_ids="${{ steps.crawl-status.outputs.paused_sources }}"
-          test -n "$source_ids"
-          IFS=',' read -r -a paused_ids <<< "$source_ids"
-          for source_id in "${paused_ids[@]}"; do
-            test -n "$source_id"
-            echo "Dispatching next discovery slice for $source_id"
-            gh workflow run regulatory-monitor.yml \
-              --repo "${{ github.repository }}" \
-              --ref main \
-              -f source_id="$source_id" \
-              -f test_notification=false
-          done
+          echo "Discovery is paused for: ${{ steps.crawl-status.outputs.paused_sources }}"
+          echo "Automatic continuation is disabled to prevent repeated non-progressing runs."
+          echo "Inspect the durable checkpoint and resume manually after resolving the crawl condition."
 
       # Optional out-of-band liveness signal (for example a healthchecks.io check
       # that alerts when no ping arrives for 14 hours). This also catches runs that
