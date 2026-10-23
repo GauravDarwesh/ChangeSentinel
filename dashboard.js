@@ -130,7 +130,7 @@ const state = {
   cadenceLoading: null, cadenceMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
   cadenceSelectedDate: L.localIsoDate(new Date()), cadenceSignInBusy: false,
   cadenceRecoveryMode: false, cadenceRecoveryBusy: false,
-  cadenceSearch: "", cadenceFilter: "ALL", cadencePanel: "month"
+  cadenceSearch: "", cadenceFilter: "ALL", cadencePanel: "month", cadenceOwner: "ALL", cadenceLinkEvents: {}
 };
 const compactQuery = window.matchMedia ? window.matchMedia("(max-width: 980px)") : null;
 function isCompact() { return !!(compactQuery && compactQuery.matches); }
@@ -3248,6 +3248,7 @@ function cadenceFilterEvents(allEvents) {
     if (state.cadenceFilter === "DETECTED" && event.kind !== "derived") return false;
     if (state.cadenceFilter === "EXPECTED" && !(event.kind === "manual" && ["expected_update", "deadline"].includes(event.category))) return false;
     if (state.cadenceFilter === "TEAM" && !(event.kind === "manual" && !["expected_update", "deadline"].includes(event.category))) return false;
+    if (state.cadenceOwner && state.cadenceOwner !== "ALL" && !(event.kind === "manual" && String(event.entry.owner_name || "").trim().toLocaleLowerCase() === state.cadenceOwner.toLocaleLowerCase())) return false;
     if (!search) return true;
     // Include the same fields exposed in the agenda and upcoming rows, without
     // ever indexing private reminder-recipient addresses.
@@ -3268,6 +3269,9 @@ function renderCadenceView() {
   const grid = $("cadenceMonthGrid");
   if (!grid) return;
   renderCadenceAccess();
+  state.cadenceLinkEvents = {};
+  syncCadenceOwnerFilter();
+  renderCadenceLoad();
   const panel = state.cadencePanel === "upcoming" ? "upcoming" : "month";
   $("cadenceMonthView").hidden = panel !== "month";
   $("cadenceUpcomingView").hidden = panel !== "upcoming";
@@ -3300,6 +3304,7 @@ function renderCadenceView() {
     if (day.getMonth() !== month.getMonth()) classes.push("is-outside");
     if (iso === today) classes.push("is-today");
     if (iso === state.cadenceSelectedDate) classes.push("is-selected");
+    if (dayEvents.filter(event => event.kind === "derived" || event.category === "deadline").length >= 2) classes.push("is-clash");
     const bars = dayEvents.slice(0, 3).map(event => '<span class="cadence-day-event ' + cadenceClass(event) + (event.completed ? " is-done" : "") + '" title="' + esc(cadenceEventLabel(event)) + '">' + esc(cadenceEventLabel(event)) + '</span>').join("");
     const more = dayEvents.length > 3 ? '<span class="cadence-day-more">+' + (dayEvents.length - 3) + " more</span>" : "";
     cells += '<button type="button" role="gridcell" class="' + classes.join(" ") + '" data-calendar-day="' + iso + '" aria-label="' + esc(day.toLocaleDateString([], { weekday: "long", month: "long", day: "numeric", year: "numeric" }) + ", " + dayEvents.length + " entries") + '"><span class="cadence-day-number">' + day.getDate() + '</span><span class="cadence-day-events">' + bars + more + "</span></button>";
@@ -3315,7 +3320,9 @@ function renderCadenceView() {
       return '<article class="cadence-agenda-item"><div class="cadence-agenda-row"><i class="cadence-agenda-dot is-derived"></i><div class="cadence-agenda-content"><span class="cadence-agenda-title">' + esc(event.title) + '</span><div class="cadence-agenda-meta"><span class="cadence-tag">Detected date</span><span>ChangeSentinel</span></div>' +
         (event.item && event.item.description ? '<p class="cadence-agenda-notes">' + esc(String(event.item.description)) + "</p>" : "") + '</div></div><div class="cadence-agenda-actions">' +
         (event.sourceUrl ? '<a href="' + esc(event.sourceUrl) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' : "") +
-        (linked ? '<button type="button" data-calendar-open-change="' + esc(event.eventId) + '">View change →</button>' : "") + "</div></article>";
+        (linked ? '<button type="button" data-calendar-open-change="' + esc(event.eventId) + '">View change →</button>' : "") +
+        (cadenceIsEditor() ? '<button type="button" data-calendar-track="' + esc(event.eventId) + '" data-calendar-date="' + esc(event.date) + '" title="Add this date to the team calendar with an owner and a reminder">Track this</button>' : "") +
+        cadenceCalendarLinks(event) + "</div></article>";
     }
     const entry = event.entry, isEditor = state.cadenceMember && ["admin", "editor"].includes(state.cadenceMember.role);
     const isDone = !!event.completed;
@@ -3323,9 +3330,9 @@ function renderCadenceView() {
     return '<article class="cadence-agenda-item"><div class="cadence-agenda-row"><i class="cadence-agenda-dot ' + cadenceClass(event) + '"></i><div class="cadence-agenda-content"><span class="cadence-agenda-title">' + esc(event.title) + '</span><div class="cadence-agenda-meta"><span class="cadence-tag">' + esc(cadenceTag(event.category)) + '</span>' +
       (entry.regulator ? '<span>' + esc(entry.regulator) + '</span>' : "") + (entry.owner_name ? '<span>Owner: ' + esc(entry.owner_name) + '</span>' : "") + reminder + (entry.recurrence && entry.recurrence !== "none" ? '<span>↻ ' + esc(entry.recurrence) + '</span>' : "") +
       '</div>' + (entry.description ? '<p class="cadence-agenda-notes">' + esc(entry.description) + "</p>" : "") + '</div></div><div class="cadence-agenda-actions">' +
-      (event.sourceUrl ? '<a href="' + esc(event.sourceUrl) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' : "") +
+      (event.sourceUrl ? '<a href="' + esc(event.sourceUrl) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' + cadenceSourceFlag(event.sourceUrl) : "") +
       (isEditor ? '<button type="button" data-calendar-complete="' + esc(event.entryId) + '" data-calendar-date="' + esc(event.occurrenceDate) + '" data-calendar-done="' + String(isDone) + '">' + (isDone ? "Reopen occurrence" : "Mark done") + '</button><button type="button" data-calendar-edit="' + esc(event.entryId) + '">Edit</button><button type="button" data-calendar-delete="' + esc(event.entryId) + '">Archive</button>' : (isDone ? '<span>Completed</span>' : "")) +
-      "</div></article>";
+      cadenceCalendarLinks(event) + "</div></article>";
   }).join("") : (search || state.cadenceFilter !== "ALL" ? '<div class="cadence-empty">No entries match these filters on this day. Try another date or clear the search and type filter.</div>' : '<div class="cadence-empty">Nothing is scheduled for this day.<br>Use <strong>New entry</strong> to log an expected release, filing deadline or internal follow-up.</div>');
   if (panel === "upcoming") renderCadenceUpcomingView(today);
   renderCadenceAccess();
@@ -3409,7 +3416,7 @@ function cadenceUpcomingItemMarkup(event, today) {
     '<div class="cadence-upcoming-meta"><span class="cadence-tag">' + esc(category) + '</span>' + regulator + owner + recurrence +
     (urgency ? '<span class="cadence-upcoming-urgency' + statusClass + '">' + esc(urgency) + '</span>' : "") + '</div>' +
     (notes ? '<p class="cadence-upcoming-notes">' + esc(String(notes)) + '</p>' : "") +
-    '<div class="cadence-upcoming-actions">' + source + changeAction + editActions + '</div></div></article>';
+    '<div class="cadence-upcoming-actions">' + source + (manual && event.sourceUrl ? cadenceSourceFlag(event.sourceUrl) : changeAction) + editActions + cadenceCalendarLinks(event) + '</div></div></article>';
 }
 function renderCadenceUpcomingView(today) {
   const list = $("cadenceUpcomingList");
@@ -3453,7 +3460,7 @@ function shiftCadenceMonth(delta) {
   if (state.cadenceSelectedDate.slice(0, 7) !== cadenceDateISO(first).slice(0, 7)) state.cadenceSelectedDate = cadenceDateISO(first);
   renderCadenceView();
 }
-function openCadenceEntry(id) {
+function openCadenceEntry(id, preset) {
   if (!state.cadenceMember) {
     showToast(state.cadenceSession ? "This email is not on the Cadence team list yet." : "Sign in with your team email before adding shared entries.");
     $("cadenceSignInEmail").focus();
@@ -3482,7 +3489,14 @@ function openCadenceEntry(id) {
   $("cadenceReminderDays").disabled = !$("cadenceReminderEnabled").checked;
   $("cadenceReminderEmails").disabled = !$("cadenceReminderEnabled").checked;
   $("cadenceEntryError").hidden = true;
-  $("cadenceEntryHeading").textContent = entry ? "Edit regulatory entry" : "New regulatory entry";
+  if (!entry && preset) {
+    $("cadenceEntryTitle").value = preset.title || "";
+    $("cadenceEntryCategory").value = preset.category || "deadline";
+    $("cadenceEntryStart").value = preset.start_date || $("cadenceEntryStart").value;
+    $("cadenceEntrySource").value = preset.source_url || "";
+    $("cadenceEntryDescription").value = preset.description || "";
+  }
+  $("cadenceEntryHeading").textContent = entry ? "Edit regulatory entry" : preset ? "Track this date" : "New regulatory entry";
   $("cadenceEntrySave").textContent = entry ? "Save changes" : "Save entry";
   $("cadenceEntryDialog").showModal();
 }
@@ -3591,6 +3605,227 @@ function exportCadenceCalendar() {
   lines.push("END:VCALENDAR");
   downloadTextFile("cadence-regulatory-calendar.ics", "text/calendar;charset=utf-8", lines.join("\r\n") + "\r\n");
   showToast("Exported the next 12 months of calendar entries.");
+}
+
+
+
+/* ---------- Cadence: load strip, source flags, calendar links, filing planner ---------- */
+
+function cadenceIsEditor() { return !!(state.cadenceMember && ["admin", "editor"].includes(state.cadenceMember.role)); }
+function cadenceOwners() {
+  const owners = new Map();
+  (state.cadenceEntries || []).forEach(entry => {
+    const name = String(entry && !entry.archived && entry.owner_name || "").trim();
+    if (name) owners.set(name.toLocaleLowerCase(), name);
+  });
+  return Array.from(owners.values()).sort((a, b) => a.localeCompare(b));
+}
+function syncCadenceOwnerFilter() {
+  const select = $("cadenceOwnerFilter");
+  if (!select) return;
+  const owners = cadenceOwners();
+  if (state.cadenceOwner !== "ALL" && owners.indexOf(state.cadenceOwner) < 0) state.cadenceOwner = "ALL";
+  const html = '<option value="ALL">Every owner</option>' + owners.map(name => '<option value="' + esc(name) + '">' + esc(name) + "</option>").join("");
+  if (select.dataset.options !== html) { select.innerHTML = html; select.dataset.options = html; }
+  select.value = state.cadenceOwner;
+  select.hidden = !owners.length;
+}
+// What ChangeSentinel knows about an entry's source page: changed lately,
+// monitored and quiet, or not monitored yet (with a way to start).
+function cadenceSourceFlag(url) {
+  const key = url ? L.urlKey(url) : "";
+  if (!key) return "";
+  const monitored = (state.items || []).some(item => L.urlKey(item.canonical_url || "") === key);
+  const changes = changeLogEntries().filter(change => change.url && L.urlKey(change.url) === key && CHANGE_EVENT_TYPES.indexOf(change.event_type) >= 0)
+    .sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+  const latest = changes[0];
+  const age = latest ? (Date.now() - new Date(latest.timestamp).getTime()) / 86400000 : Infinity;
+  if (latest && age <= 45) {
+    return '<span class="cadence-flag is-changed" title="ChangeSentinel saw this source change">Source changed ' + esc(relativeTime(latest.timestamp)) + "</span>" +
+      '<button type="button" data-calendar-open-change="' + esc(latest.event_id) + '">View change →</button>';
+  }
+  if (monitored) return '<span class="cadence-flag is-watched" title="ChangeSentinel checks this page on every scan">Source monitored · no recent change</span>';
+  return '<button type="button" data-calendar-monitor="' + esc(url) + '" title="Ask ChangeSentinel to watch this page so a change shows here">Monitor this source</button>';
+}
+// One-off calendar links for an entry: Google Calendar and a single .ics file.
+function cadenceCalendarLinks(event) {
+  const day = event.kind === "manual" ? (event.occurrenceDate || event.date) : event.date;
+  const entry = event.entry || {};
+  const endDate = event.kind === "manual" && entry.end_date ? cadenceAddDays(day, cadenceEntryDurationDays(entry)) : day;
+  const details = event.kind === "manual" ? [cadenceTag(event.category), entry.regulator, entry.owner_name ? "Owner: " + entry.owner_name : "", entry.description].filter(Boolean).join("\n")
+    : [(event.item && event.item.description) || "Detected by ChangeSentinel"].join("\n");
+  const google = L.googleCalendarLink({ date: day, endDate, title: cadenceEventLabel(event), details, url: event.sourceUrl });
+  const key = (event.kind === "manual" ? event.entryId : "derived-" + (event.eventId || event.title)) + "|" + day;
+  state.cadenceLinkEvents[key] = { day, endDate, title: cadenceEventLabel(event), details, url: event.sourceUrl, uid: key };
+  return (google ? '<a href="' + esc(google) + '" target="_blank" rel="noopener noreferrer" title="Add to Google Calendar">Google Calendar ↗</a>' : "") +
+    '<button type="button" data-calendar-ics="' + esc(key) + '" title="Download this entry for Outlook or Apple Calendar">.ics</button>';
+}
+function downloadCadenceEvent(key) {
+  const e = state.cadenceLinkEvents[key];
+  if (!e) return;
+  const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//ChangeSentinel//Cadence Regulatory Calendar//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+    "BEGIN:VEVENT", "UID:" + cadenceIcsEscape(e.uid + "@changesentinel"), "DTSTAMP:" + stamp,
+    "DTSTART;VALUE=DATE:" + e.day.replace(/-/g, ""), "DTEND;VALUE=DATE:" + cadenceAddDays(e.endDate || e.day, 1).replace(/-/g, ""),
+    "SUMMARY:" + cadenceIcsEscape(e.title), "DESCRIPTION:" + cadenceIcsEscape(e.details)]
+    .concat(e.url ? ["URL:" + String(e.url).replace(/[\r\n]/g, "")] : [], ["END:VEVENT", "END:VCALENDAR"]);
+  downloadTextFile(L.fileSlug ? L.fileSlug(e.title) + ".ics" : "cadence-entry.ics", "text/calendar;charset=utf-8", lines.join("\r\n") + "\r\n");
+}
+// The next twelve weeks at a glance: how much is due each week, with weeks
+// carrying three or more deadlines marked as clashes.
+function renderCadenceLoad() {
+  const host = $("cadenceLoad");
+  if (!host) return;
+  const today = cadenceDateISO(new Date());
+  const events = cadenceFilterEvents(cadenceEventsBetween(today, cadenceAddDays(today, 7 * 12))).map(event => ({
+    key: event.kind === "manual" ? event.entryId + "|" + event.occurrenceDate : "derived|" + event.date + "|" + event.title,
+    date: event.kind === "manual" ? event.occurrenceDate || event.date : event.date,
+    title: cadenceEventLabel(event), completed: !!event.completed,
+    deadline: event.kind === "manual" ? event.category === "deadline" : true
+  }));
+  const weeks = L.cadenceWeeks(events, today, 12);
+  const busy = weeks.filter(week => week.busy);
+  const total = weeks.reduce((sum, week) => sum + week.total, 0);
+  const label = iso => { const d = cadenceDate(iso); return d ? d.toLocaleDateString([], { day: "numeric", month: "short" }) : iso; };
+  host.innerHTML = '<div class="cadence-load-head"><div><span class="cadence-eyebrow">NEXT 12 WEEKS</span><strong>' + plural(total, "open date", "open dates") + "</strong>" +
+      (busy.length ? '<span class="cadence-load-warn">' + plural(busy.length, "week has", "weeks have") + " three or more deadlines</span>" : "") + "</div>" +
+      '<span class="cadence-load-key"><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> more due</span></div>' +
+    '<div class="cadence-load-strip" role="list">' + weeks.map(week =>
+      '<button type="button" role="listitem" class="cadence-load-week lv' + week.level + (week.busy ? " is-busy" : "") + (week.start <= today && today <= week.end ? " is-now" : "") +
+        '" data-calendar-jump-date="' + esc(week.start <= today ? today : week.start) + '" title="' + esc("Week of " + label(week.start) + ": " + (week.total ? plural(week.total, "date", "dates") + (week.deadlines ? ", " + plural(week.deadlines, "deadline", "deadlines") : "") + "\n" + week.titles.join("\n") : "nothing scheduled")) + '">' +
+        '<span class="cadence-load-bar"><i style="height:' + (week.level * 25) + '%"></i></span><span class="cadence-load-count">' + (week.total || "") + "</span>" +
+        '<span class="cadence-load-date">' + esc(label(week.start)) + "</span></button>").join("") + "</div>";
+}
+function trackDetectedDate(eventId, date) {
+  const item = state.calendar && Array.isArray(state.calendar.entries)
+    ? state.calendar.entries.find(entry => String(entry.event_id || "") === eventId && String(entry.date || "") === date) : null;
+  if (!item) return;
+  openCadenceEntry("", {
+    title: String(item.title || "Regulatory date").slice(0, 160), category: "deadline", start_date: date,
+    source_url: String(item.url || ""), description: [item.description ? String(item.description) : "", "Detected by ChangeSentinel."].filter(Boolean).join("\n\n").slice(0, 4000)
+  });
+}
+
+/* Filing planner: a periodic return's next due dates and the team's steps before each. */
+const PLAN_MILESTONES = [["Data cut-off", 10], ["Review", 5], ["Sign-off", 2]];
+function openCadencePlanner() {
+  const dialog = $("cadencePlanDialog");
+  const list = $("cadencePlanRegulators");
+  if (list && !list.children.length) {
+    list.innerHTML = regulatorProfiles().map(profile => '<option value="' + esc(profile.short_name ? profile.short_name + " · " + profile.name : profile.name) + '"></option>').join("");
+  }
+  $("cadencePlanMilestones").innerHTML = PLAN_MILESTONES.map(([label, offset], index) =>
+    '<div class="plan-milestone"><input type="checkbox" id="planStep' + index + '" checked aria-label="Include ' + esc(label) + '">' +
+    '<input class="field-input" id="planStepLabel' + index + '" maxlength="80" value="' + esc(label) + '" aria-label="Step name">' +
+    '<input class="field-input" id="planStepOffset' + index + '" type="number" min="1" max="120" value="' + offset + '" aria-label="Business days before the due date"><span>business days before</span></div>').join("");
+  $("cadencePlanStatus").textContent = "";
+  $("cadencePlanStatus").classList.remove("is-error");
+  if (!$("cadencePlanOwner").value && state.cadenceMember && state.cadenceMember.email) $("cadencePlanOwner").placeholder = "Regulatory Reporting";
+  syncCadencePlanner();
+  dialog.showModal();
+  window.setTimeout(() => $("cadencePlanName").focus(), 30);
+}
+function cadencePlanOptions() {
+  const frequency = $("cadencePlanFrequency").value;
+  return {
+    name: $("cadencePlanName").value.replace(/[\r\n]+/g, " ").trim().slice(0, 100),
+    regulator: $("cadencePlanRegulator").value.trim().slice(0, 160),
+    owner: $("cadencePlanOwner").value.trim().slice(0, 120),
+    source: $("cadencePlanSource").value.trim(),
+    frequency, yearEndMonth: Number($("cadencePlanYearEnd").value),
+    lag: Number($("cadencePlanLag").value), lagLast: Number($("cadencePlanLagLast").value || $("cadencePlanLag").value),
+    business: $("cadencePlanBusiness").checked, cycles: Number($("cadencePlanCycles").value),
+    reminder: $("cadencePlanReminder").checked,
+    milestones: PLAN_MILESTONES.map((_, index) => $("planStep" + index).checked ? { label: $("planStepLabel" + index).value, offset: Number($("planStepOffset" + index).value) } : null).filter(Boolean),
+    from: cadenceDateISO(new Date())
+  };
+}
+function cadencePlanRows(o) {
+  const plan = L.cadencePlan(o);
+  const name = o.name || "Return";
+  const rows = [];
+  plan.forEach(cycle => {
+    rows.push({ title: name + " due · " + cycle.period, category: "deadline", start_date: cycle.due, cycle, main: true,
+      description: "Filing for the period ending " + cycle.periodEnd + "." + (cycle.rolled ? " The due date fell on a weekend and was moved to the next business day." : "") + " Planned with the Cadence filing planner." });
+    cycle.milestones.forEach(step => rows.push({ title: name + " · " + step.label + " · " + cycle.period, category: "internal_task", start_date: step.date, cycle,
+      description: step.offset + " business days before the " + cycle.due + " filing." }));
+  });
+  return { plan, rows };
+}
+function syncCadencePlanner() {
+  const o = cadencePlanOptions();
+  $("cadencePlanYearEndWrap").hidden = o.frequency === "monthly";
+  $("cadencePlanLagLastWrap").hidden = o.frequency === "yearly";
+  const cycles = $("cadencePlanCycles");
+  const choices = o.frequency === "monthly" ? [3, 6, 12] : o.frequency === "yearly" ? [1, 2, 3] : [2, 4, 8];
+  const wanted = choices.indexOf(Number(cycles.value)) >= 0 ? Number(cycles.value) : choices[1];
+  const html = choices.map(n => '<option value="' + n + '"' + (n === wanted ? " selected" : "") + ">Next " + n + "</option>").join("");
+  if (cycles.dataset.options !== html) { cycles.innerHTML = html; cycles.dataset.options = html; }
+  const { plan, rows } = cadencePlanRows(cadencePlanOptions());
+  const existing = new Set((state.cadenceEntries || []).filter(entry => !entry.archived).map(entry => entry.title + "|" + entry.start_date));
+  const fmtDay = iso => { const d = cadenceDate(iso); return d ? d.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short", year: "numeric" }) : iso; };
+  $("cadencePlanPreview").innerHTML = plan.length ? plan.map(cycle =>
+    '<div class="plan-cycle"><div class="plan-cycle-head"><strong>' + esc(cycle.period) + '</strong><span class="plan-due">Due ' + esc(fmtDay(cycle.due)) + (cycle.rolled ? ' <em title="Moved off a weekend">moved to Monday</em>' : "") + "</span></div>" +
+      (cycle.milestones.length ? '<ol class="plan-steps">' + cycle.milestones.map(step => "<li><span>" + esc(step.label) + "</span><time>" + esc(fmtDay(step.date)) + "</time></li>").join("") + "</ol>" : "") + "</div>").join("")
+    : '<p class="cadence-empty">Enter how many days after the period end the return is due.</p>';
+  const fresh = rows.filter(row => !existing.has(row.title + "|" + row.start_date));
+  const save = $("cadencePlanSave");
+  save.disabled = !o.name || !rows.length || !fresh.length || !cadenceIsEditor();
+  save.textContent = fresh.length ? "Add " + plural(fresh.length, "entry", "entries") + " to Cadence" : rows.length ? "Already on the calendar" : "Add to Cadence";
+  $("cadencePlanIcs").disabled = !o.name || !rows.length;
+  const note = !cadenceIsEditor() ? "Sign in as a Cadence editor to add these to the shared calendar; you can still download them." :
+    rows.length > fresh.length ? plural(rows.length - fresh.length, "entry is", "entries are") + " already on the calendar and will be skipped." : "";
+  $("cadencePlanNote").textContent = note;
+}
+async function saveCadencePlan() {
+  const o = cadencePlanOptions();
+  const status = $("cadencePlanStatus");
+  if (!o.name) { $("cadencePlanName").reportValidity(); return; }
+  if (o.source && !safeHttpUrl(o.source)) { status.textContent = "Enter the source as a full https:// address, or leave it empty."; status.classList.add("is-error"); return; }
+  if (!cadenceIsEditor()) return;
+  const existing = new Set((state.cadenceEntries || []).filter(entry => !entry.archived).map(entry => entry.title + "|" + entry.start_date));
+  const rows = cadencePlanRows(o).rows.filter(row => !existing.has(row.title + "|" + row.start_date));
+  const save = $("cadencePlanSave");
+  save.disabled = true;
+  status.classList.remove("is-error");
+  let done = 0;
+  try {
+    for (const row of rows) {
+      status.textContent = "Adding " + (done + 1) + " of " + rows.length + "…";
+      const reminder = o.reminder && row.main;
+      await cadenceApi("POST", { action: "save", entry: {
+        title: row.title.slice(0, 160), category: row.category, recurrence: "none", start_date: row.start_date, end_date: null,
+        regulator: o.regulator, owner_name: o.owner, source_url: o.source, description: row.description.slice(0, 4000),
+        reminder_enabled: reminder, reminder_days_before: 7, reminder_emails: reminder && state.cadenceMember.email ? [state.cadenceMember.email] : []
+      } });
+      done += 1;
+    }
+    $("cadencePlanDialog").close();
+    const first = rows[0];
+    if (first) { state.cadenceSelectedDate = first.start_date; state.cadenceMonth = cadenceDate(first.start_date); state.cadenceMonth.setDate(1); }
+    await refreshCadence(true);
+    showToast(plural(done, "entry", "entries") + " added to Cadence for " + o.name + ".");
+  } catch (error) {
+    status.textContent = (done ? plural(done, "entry was", "entries were") + " added before this error: " : "") + String(error.message || error);
+    status.classList.add("is-error");
+    if (done) refreshCadence(true);
+  } finally { save.disabled = false; }
+}
+function downloadCadencePlan() {
+  const o = cadencePlanOptions();
+  const rows = cadencePlanRows(o).rows;
+  if (!o.name || !rows.length) return;
+  const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//ChangeSentinel//Cadence Filing Planner//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
+  rows.forEach(row => {
+    lines.push("BEGIN:VEVENT", "UID:" + cadenceIcsEscape(L.fileSlug(o.name) + "-" + row.category + "-" + row.start_date + "-" + L.fileSlug(row.title).slice(0, 40) + "@changesentinel"), "DTSTAMP:" + stamp,
+      "DTSTART;VALUE=DATE:" + row.start_date.replace(/-/g, ""), "DTEND;VALUE=DATE:" + cadenceAddDays(row.start_date, 1).replace(/-/g, ""),
+      "SUMMARY:" + cadenceIcsEscape(row.title), "DESCRIPTION:" + cadenceIcsEscape([row.description, o.regulator, o.owner ? "Owner: " + o.owner : ""].filter(Boolean).join("\n")));
+    if (o.source && safeHttpUrl(o.source)) lines.push("URL:" + o.source.replace(/[\r\n]/g, ""));
+    lines.push("END:VEVENT");
+  });
+  lines.push("END:VCALENDAR");
+  downloadTextFile(L.fileSlug(o.name) + "-filing-plan.ics", "text/calendar;charset=utf-8", lines.join("\r\n") + "\r\n");
 }
 
 
@@ -5755,7 +5990,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout]");
+  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -5772,6 +6007,15 @@ $("workspace").addEventListener("click", event => {
     showToast("This automatic date is no longer linked to a current change."); return;
   }
   if (data.calendarEdit) return openCadenceEntry(data.calendarEdit);
+  if (data.calendarPlan !== undefined) return openCadencePlanner();
+  if (data.calendarTrack !== undefined) return trackDetectedDate(data.calendarTrack, data.calendarDate);
+  if (data.calendarIcs) return downloadCadenceEvent(data.calendarIcs);
+  if (data.calendarMonitor) {
+    openAddMonitor();
+    $("newMonitorUrl").value = data.calendarMonitor;
+    $("addExact").open = true;
+    return;
+  }
   if (data.calendarDelete) return archiveCadenceEntry(data.calendarDelete);
   if (data.calendarComplete) return toggleCadenceOccurrence(data.calendarComplete, data.calendarDate, data.calendarDone === "true");
   if (data.calendarTest !== undefined) return sendCadenceTestEmail();
@@ -6059,6 +6303,12 @@ $("scoutFormatFilter").addEventListener("change", () => {
 });
 $("cadenceSearch").addEventListener("input", () => { state.cadenceSearch = $("cadenceSearch").value; renderCadenceView(); });
 $("cadenceTypeFilter").addEventListener("change", () => { state.cadenceFilter = $("cadenceTypeFilter").value; renderCadenceView(); });
+$("cadenceOwnerFilter").addEventListener("change", () => { state.cadenceOwner = $("cadenceOwnerFilter").value || "ALL"; renderCadenceView(); });
+$("cadencePlanForm").addEventListener("input", syncCadencePlanner);
+$("cadencePlanForm").addEventListener("change", syncCadencePlanner);
+$("cadencePlanForm").addEventListener("submit", event => { event.preventDefault(); saveCadencePlan(); });
+$("cadencePlanIcs").addEventListener("click", downloadCadencePlan);
+document.querySelectorAll("[data-plan-close]").forEach(button => button.addEventListener("click", () => $("cadencePlanDialog").close()));
 $("cadenceSignInForm").addEventListener("submit", signInCadence);
 $("cadenceForgotPassword").addEventListener("click", requestCadencePasswordReset);
 $("cadenceRecoveryForm").addEventListener("submit", updateCadencePassword);

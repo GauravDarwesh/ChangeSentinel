@@ -899,7 +899,7 @@ class TestCadenceCalendarContract(unittest.TestCase):
             '$("cadenceTypeFilter").addEventListener("change"',
             "function exportCadenceCalendar()",
             "function saveCadenceEntry(event)",
-            "function openCadenceEntry(id)",
+            "function openCadenceEntry(id, preset)",
             "data-calendar-complete",
             "signInWithPassword",
         ):

@@ -939,3 +939,38 @@ class TestSmartPicking(unittest.TestCase):
         self.assertIn("Name: Forms Page", lines)
         self.assertLess(lines.index("Documents under: https://x.gov/forms/2026/"), lines.index("Include selector: main"))
         self.assertIn("- div.banner", lines)
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestCadencePlanning(unittest.TestCase):
+    def test_quarterly_plan_rolls_weekends_and_places_steps_in_business_days(self):
+        out = run_js("""console.log(JSON.stringify(L.cadencePlan({ frequency: "quarterly", yearEndMonth: 11, lag: 40, lagLast: 45, business: true,
+          milestones: [{ label: "Data cut-off", offset: 10 }, { label: "Sign-off", offset: 2 }, { label: "", offset: 3 }], cycles: 4, from: "2026-10-23" })));""")
+        self.assertEqual([c["due"] for c in out], ["2026-11-09", "2027-02-15", "2027-05-10", "2027-08-09"])
+        self.assertEqual([c["periodEnd"] for c in out], ["2026-09-30", "2026-12-31", "2027-03-31", "2027-06-30"])
+        self.assertTrue(out[1]["rolled"])  # 14 Feb 2027 is a Sunday
+        self.assertEqual(out[0]["period"].split(" ")[0], "Q3")
+        self.assertEqual([(m["label"], m["date"]) for m in out[0]["milestones"]], [("Data cut-off", "2026-10-26"), ("Sign-off", "2026-11-05")])
+
+    def test_fiscal_quarters_monthly_and_yearly_plans(self):
+        out = run_js("""console.log(JSON.stringify({
+          fiscal: L.cadencePlan({ frequency: "quarterly", yearEndMonth: 2, lag: 30, cycles: 2, from: "2026-10-23" }).map(c => [c.period.split(" ")[0], c.due]),
+          monthly: L.cadencePlan({ frequency: "monthly", lag: 15, cycles: 3, from: "2026-10-23" }).map(c => c.due),
+          yearly: L.cadencePlan({ frequency: "yearly", yearEndMonth: 2, lag: 90, cycles: 1, from: "2026-10-23" }).map(c => c.due),
+          shift: [L.businessShift("2026-10-26", -1), L.businessShift("2026-10-23", 1), L.nextBusinessDay("2026-10-24")] }));""")
+        self.assertEqual(out["fiscal"], [["Q2", "2026-10-30"], ["Q3", "2027-01-30"]])
+        self.assertEqual(out["monthly"], ["2026-11-15", "2026-12-15", "2027-01-15"])
+        self.assertEqual(out["yearly"], ["2027-06-29"])
+        self.assertEqual(out["shift"], ["2026-10-23", "2026-10-26", "2026-10-26"])
+
+    def test_weekly_load_and_calendar_links(self):
+        out = run_js("""
+          const events = [{ key: "a", date: "2026-10-27", title: "A", deadline: true }, { key: "b", date: "2026-10-28", title: "B", deadline: true },
+            { key: "c", date: "2026-10-29", title: "C", deadline: true }, { key: "c", date: "2026-10-29", title: "C again", deadline: true },
+            { key: "d", date: "2026-11-04", title: "D" }, { key: "e", date: "2026-11-05", title: "E", completed: true }];
+          const weeks = L.cadenceWeeks(events, "2026-10-23", 3);
+          console.log(JSON.stringify({ weeks: weeks.map(w => [w.start, w.total, w.deadlines, w.busy, w.level]),
+            link: L.googleCalendarLink({ date: "2026-11-09", title: "FR Y-9C due", url: "https://x.gov" }), bad: L.googleCalendarLink({ date: "soon" }) }));""")
+        self.assertEqual(out["weeks"], [["2026-10-19", 0, 0, False, 0], ["2026-10-26", 3, 3, True, 4], ["2026-11-02", 1, 0, False, 1]])
+        self.assertIn("dates=20261109%2F20261110", out["link"])
+        self.assertEqual(out["bad"], "")
