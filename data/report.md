@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261023T002053Z-b283866b
-Generated: 2026-10-23T00:20:53.011091+00:00
+Run: 20261023T005904Z-bf265160
+Generated: 2026-10-23T00:59:04.596500+00:00
 
 ## Aggregate counts
 
@@ -16,9 +16,9 @@ Generated: 2026-10-23T00:20:53.011091+00:00
 | changed | 0 |
 | crawl_degraded | 0 |
 | crawl_failed | 0 |
-| crawl_paused | 5 |
-| discovered | 3524 |
-| discovery_incomplete | 5 |
+| crawl_paused | 4 |
+| discovered | 18 |
+| discovery_incomplete | 4 |
 | extraction_drift | 0 |
 | extraction_error | 0 |
 | fetch_error | 0 |
@@ -35,7 +35,7 @@ Generated: 2026-10-23T00:20:53.011091+00:00
 ### Federal Reserve — Recently Updated Forms Detail Pilot (Exact URL Allowlist)
 
 - Regulator: Board of Governors of the Federal Reserve System
-- Report run: 20261023T002053Z-b283866b (2026-10-23T00:20:53.011091+00:00)
+- Report run: 20261023T005904Z-bf265160 (2026-10-23T00:59:04.596500+00:00)
 - Discovered: 14
 - Changed content: 0
 - HTML source-only changes: 0
@@ -70,17 +70,6 @@ Generated: 2026-10-23T00:20:53.011091+00:00
 - Regulator: www.frbservices.org
 - Report run: 20261022T233613Z-8428bc76 (2026-10-22T23:36:13.908774+00:00)
 - Discovered: 1
-- Changed content: 0
-- HTML source-only changes: 0
-- New: 0
-- Removed: 0
-- Fetch errors: 0
-
-### US TIC Forms & Instructions
-
-- Regulator: home.treasury.gov
-- Report run: 20261022T234638Z-1c77fef4 (2026-10-22T23:46:38.319600+00:00)
-- Discovered: 3506
 - Changed content: 0
 - HTML source-only changes: 0
 - New: 0

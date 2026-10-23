@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261023T002053Z-b283866b",
-  "generated_at": "2026-10-23T00:20:53.011091+00:00",
+  "run_id": "20261023T005904Z-bf265160",
+  "generated_at": "2026-10-23T00:59:04.596500+00:00",
   "sources": [
     {
       "id": "fed-reporting-forms-detail-pilot",
@@ -55,24 +55,12 @@
         "https://www.frbservices.org/"
       ],
       "initial_baseline": false
-    },
-    {
-      "id": "manual-c6dccdae3ac5",
-      "name": "US TIC Forms & Instructions",
-      "regulator": "home.treasury.gov",
-      "seeds": [
-        "https://home.treasury.gov/data/treasury-international-capital-tic-system/tic-forms-instructions"
-      ],
-      "allowed_prefixes": [
-        "https://home.treasury.gov/"
-      ],
-      "initial_baseline": true
     }
   ],
   "source_runs": {
     "fed-reporting-forms-detail-pilot": {
-      "run_id": "20261023T002053Z-b283866b",
-      "generated_at": "2026-10-23T00:20:53.011091+00:00",
+      "run_id": "20261023T005904Z-bf265160",
+      "generated_at": "2026-10-23T00:59:04.596500+00:00",
       "trigger": "continuation"
     },
     "fed-reporting-forms-pilot": {
@@ -89,11 +77,6 @@
       "run_id": "20261022T233613Z-8428bc76",
       "generated_at": "2026-10-22T23:36:13.908774+00:00",
       "trigger": "continuation"
-    },
-    "manual-c6dccdae3ac5": {
-      "run_id": "20261022T234638Z-1c77fef4",
-      "generated_at": "2026-10-22T23:46:38.319600+00:00",
-      "trigger": "continuation"
     }
   },
   "counts": {
@@ -106,9 +89,9 @@
     "changed": 0,
     "crawl_degraded": 0,
     "crawl_failed": 0,
-    "crawl_paused": 5,
-    "discovered": 3524,
-    "discovery_incomplete": 5,
+    "crawl_paused": 4,
+    "discovered": 18,
+    "discovery_incomplete": 4,
     "extraction_drift": 0,
     "extraction_error": 0,
     "fetch_error": 0,
@@ -126,8 +109,8 @@
       "method": "http-resumable",
       "state": "PAUSED",
       "discovered": 14,
-      "html_processed": 192,
-      "successful_pages": 192,
+      "html_processed": 204,
+      "successful_pages": 204,
       "failed_pages": 0,
       "capped": false,
       "pending": 5,
@@ -184,22 +167,6 @@
       "config_fingerprint": "4bd65a23894467aaa4fba3cfc4a3d0f54338f1b8183547a831cc8ca769e1817d",
       "inventory": "data/discovery/manual-fe66388fe452-inventory-*.txt",
       "failure_ledger": "data/discovery/manual-fe66388fe452-failures.jsonl"
-    },
-    {
-      "source_id": "manual-c6dccdae3ac5",
-      "method": "http-resumable",
-      "state": "PAUSED",
-      "discovered": 3506,
-      "html_processed": 200,
-      "successful_pages": 199,
-      "failed_pages": 1,
-      "capped": false,
-      "pending": 46,
-      "unresolved_failures": 1,
-      "checkpoint_schema_version": 3,
-      "config_fingerprint": "a8b15d03b1f0cf9a0be9f608552f376cb329fa0159f544623ac46924797146d5",
-      "inventory": "data/discovery/manual-c6dccdae3ac5-inventory-*.txt",
-      "failure_ledger": "data/discovery/manual-c6dccdae3ac5-failures.jsonl"
     }
   ],
   "removal_guards": [],
