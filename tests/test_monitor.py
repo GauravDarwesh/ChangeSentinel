@@ -2028,6 +2028,55 @@ class TestEngineFlow(unittest.TestCase):
             self.assertEqual(restored["pending_events"][event["event_id"]]["summary"],
                              "The synthetic reporting requirement changed.")
 
+    def test_depth_limited_crawl_registers_all_discovered_pages_in_inventory(self):
+        from regmon.engine import process_source
+
+        root = "https://example.org/tic/forms"
+        child = "https://example.org/tic/forms/form-a"
+        grandchild = "https://example.org/tic/forms/form-a/instructions"
+        source = SourceConfig(
+            id="manual-depth-monitor",
+            name="TIC Forms",
+            regulator="Example Treasury",
+            seed_urls=(root,),
+            allowed_prefixes=("https://example.org/tic/",),
+            allowed_domains=("example.org",),
+            allowed_urls=(),
+            crawl_depth=2,
+            register_discovered_urls=True,
+            baseline_on_first_run=True,
+        )
+        urls = [root, child, grandchild]
+
+        def page(url, old, _source, _now):
+            slug = url.rsplit("/", 1)[-1]
+            item = {
+                "canonical_url": url,
+                "source_id": source.id,
+                "active": True,
+                "raw_hash": "raw-" + slug,
+                "normalized_hash": "norm-" + slug,
+                "content_type": "text/html",
+                "http_status": 200,
+                "extraction_type": "html",
+                "relevance": {"candidate": False, "reason": "test"},
+            }
+            return item, "TIC policy text", b"<main>TIC policy text</main>"
+
+        with patch("regmon.engine.load_discovery_metadata", return_value={
+            "source_id": source.id, "state": "COMPLETE", "method": "http-resumable",
+            "discovered": len(urls), "successful_pages": len(urls), "failed_pages": 0,
+        }), patch("regmon.engine.load_previous", return_value={}), patch(
+            "regmon.engine.discover", return_value=urls
+        ), patch("regmon.engine.make_current_item", side_effect=page):
+            result = process_source(source, "depth-monitor-test", dry_run=True)
+
+        self.assertEqual(
+            {item["canonical_url"] for item in result["inventory"].values()},
+            set(urls),
+        )
+        self.assertEqual(result["report"]["counts"]["discovered"], 3)
+
     def test_first_successful_baseline_creates_snapshot_without_ai_or_alerts(self):
         from regmon.engine import process_source
 
