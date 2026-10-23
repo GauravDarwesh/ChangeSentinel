@@ -114,7 +114,7 @@ const state = {
   snapshotCache: boundedCache(24), htmlCache: boundedCache(12), evidenceCache: boundedCache(80), pdfPreviewUrl: "", toastTimer: null,
   assetSignatures: {}, renderedSignature: "", lastFullLoad: 0, loading: null, detailKeys: {},
   workflowRuns: [], workflowSignature: "", scanColumns: null, pendingScan: null,
-  scoutLatest: null, scoutReview: null, scoutConfig: null, scoutFilter: "REVIEW", selectedScoutKey: "", scoutMonitored: null,
+  scoutLatest: null, scoutReview: null, scoutConfig: null, scoutFilter: "REVIEW", scoutFormatFilter: "ALL", selectedScoutKey: "", scoutMonitored: null,
   discoverySelection: [], discoveryBatchIndex: 0, discoveryDuplicatesAdded: 0, discoverySelectedPage: 0,
   scoutSourceMode: "add",
   calendar: null, lineage: null, reviews: null, reviewTarget: "", integrity: {},
@@ -1962,13 +1962,28 @@ function scoutMonitoredKeys() {
 function scoutBuckets() { return L.scoutBuckets(scoutCandidates(), scoutMonitoredKeys()); }
 function scoutFiltered() {
   const query = ($("scoutSearch") ? $("scoutSearch").value : "").trim().toLowerCase();
+  const formatFilter = ($("scoutFormatFilter") ? $("scoutFormatFilter").value : state.scoutFormatFilter) || "ALL";
   const items = scoutBuckets()[state.scoutFilter] || [];
-  if (!query) return items;
   return items.filter(item => {
     const regulator = scoutRegulator(item.regulator_id);
     const evidence = item.evidence || {};
+    const assessment = item.assessment || {};
+    const format = String(assessment.format || "").toLowerCase();
+    let path = "";
+    try { path = new URL(item.url).pathname.toLowerCase(); } catch (_) {}
+    const isPdf = format.includes("pdf") || path.endsWith(".pdf");
+    const isOffice = /\.(doc|docx|xls|xlsx|ppt|pptx)$/i.test(path) || /word|excel|office document|powerpoint/.test(format);
+    const hasFileExtension = /\.[a-z0-9]{2,6}$/.test(path);
+    const isHtml = format.includes("html") || /web ?page/.test(format) || (!isPdf && !isOffice && !hasFileExtension);
+    const typeMatches = formatFilter === "ALL" ||
+      (formatFilter === "PDF" && isPdf) ||
+      (formatFilter === "OFFICE" && isOffice) ||
+      (formatFilter === "HTML" && isHtml) ||
+      (formatFilter === "OTHER" && !isPdf && !isOffice && !isHtml);
+    if (!typeMatches) return false;
+    if (!query) return true;
     return [item.title, item.url, regulator.short_name, regulator.name, evidence.context, evidence.description,
-      ((item.assessment || {}).publication_type || {}).label].join(" ").toLowerCase().includes(query);
+      evidence.anchor_text, evidence.parent_url, ((assessment.publication_type || {}).label)].join(" ").toLowerCase().includes(query);
   });
 }
 function scoutSelected() { return scoutCandidates().find(item => item.key === state.selectedScoutKey) || null; }
@@ -4351,6 +4366,10 @@ document.addEventListener("keydown", event => {
 });
 $("monitorSearch").addEventListener("input", renderMonitorList);
 $("scoutSearch").addEventListener("input", renderScout);
+$("scoutFormatFilter").addEventListener("change", () => {
+  state.scoutFormatFilter = $("scoutFormatFilter").value || "ALL";
+  renderScout();
+});
 $("scoutItems").addEventListener("change", event => {
   const input = event.target.closest && event.target.closest("input[data-discovery-select]");
   if (input) toggleSingleDiscoverySelection(input);
