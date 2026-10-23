@@ -26,7 +26,8 @@ class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
         end = workflow.index("- name: Setup Python", start)
         checkout = workflow[start:end]
 
-        self.assertIn("queue: max", workflow)
+        self.assertIn("cancel-in-progress: true", workflow)
+        self.assertNotIn("queue: max", workflow)
         self.assertIn("ref: main", checkout)
         self.assertIn("possibly stale GITHUB_SHA", checkout)
 
@@ -44,10 +45,10 @@ class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
         queue_step = workflow[queue:commit]
         self.assertIn("python -m regmon.notify --enqueue-only", queue_step)
         # Paused continuations must still queue alerts for the sources that finished.
-        self.assertNotIn("paused", queue_step)
+        self.assertIn("steps.crawl-status.outputs.paused != 'true'", queue_step)
         deliver_step = workflow[deliver:record]
         self.assertIn("python -m regmon.notify --deliver-only", deliver_step)
-        self.assertNotIn("if:", deliver_step.split("run:", 1)[0])
+        self.assertIn("if:", deliver_step.split("run:", 1)[0])
 
     def test_state_commit_uses_the_guarded_data_only_helper(self):
         workflow = monitor_workflow()
@@ -70,7 +71,7 @@ class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
 
     def test_pages_publish_only_after_a_commit(self):
         workflow = monitor_workflow()
-        pages = workflow[step_index(workflow, "Publish latest monitoring data to Pages"):step_index(workflow, "Continue paused crawl")]
+        pages = workflow[step_index(workflow, "Publish latest monitoring data to Pages"):step_index(workflow, "Report paused crawl without auto-dispatching another run")]
         self.assertIn("steps.state-commit.outputs.committed == 'true'", pages)
 
     def test_workflows_pin_runner_image_and_action_commits(self):
@@ -97,6 +98,11 @@ class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
         self.assertNotIn("pip install --disable-pip-version-check -r requirements.txt", workflow)
 
 
+
+    def test_paused_discovery_does_not_auto_dispatch(self):
+        workflow = monitor_workflow()
+        self.assertNotIn("gh workflow run regulatory-monitor.yml", workflow)
+        self.assertIn("Report paused crawl without auto-dispatching another run", workflow)
 @unittest.skipIf(os.name == "nt", "bash helper")
 class TestCommitStateHelper(unittest.TestCase):
     def git(self, cwd, *args):
