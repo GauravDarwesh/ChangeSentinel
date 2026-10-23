@@ -1,0 +1,253 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="2025-08-28" createTime="13:55:46" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2026-08-03" reporterId="12345" series="FR2028B">
+    <itemData confidential="N" estimated="N" mdrm="XMTA9017">
+      <value>Your Bank</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA9028">
+      <value>100 Main St</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA9130">
+      <value>Buffalo</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA9200">
+      <value>NY</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA9220">
+      <value>10045</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA8901">
+      <value>Jim Smith</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA8902">
+      <value>212-555-5555</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA4086">
+      <value>jimsmith@testbank.com</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA19912">
+      <value>0803</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA29912">
+      <value>0804</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA39912">
+      <value>0805</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA49912">
+      <value>0806</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA59912">
+      <value>0807</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA17923">
+      <value>4.500</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA27923">
+      <value>3.500</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA37923">
+      <value>5.000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA47923">
+      <value>4.250</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA57923">
+      <value>4.000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA21284">
+      <value />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL9912">
+      <value>0804</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL1596">
+      <value>2500</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL7924">
+      <value>7.501</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL1917">
+      <value>0</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLA341">
+      <value>20260804</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL9914">
+      <value>20270115</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLA342">
+      <value>2</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLA343">
+      <value>2</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6130">
+      <value>1</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6131">
+      <value>1</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6133">
+      <value>3</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6134">
+      <value>2</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6135">
+      <value>3</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6136">
+      <value>4</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLA344">
+      <value>1</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLK806">
+      <value>40</value>
+      <context mdrm="QTFL9780" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL9912">
+      <value>0804</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL1596">
+      <value>35000</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL7924">
+      <value>7.502</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL1917">
+      <value>2</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLA341">
+      <value>20260804</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL9914">
+      <value>20270115</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLA342">
+      <value>2</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLA343">
+      <value>2</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6130">
+      <value>1</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6131">
+      <value>1</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6133">
+      <value>3</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6134">
+      <value>2</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6135">
+      <value>3</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6136">
+      <value>4</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLA344">
+      <value>1</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLK806">
+      <value>40</value>
+      <context mdrm="QTFL9780" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL9912">
+      <value>0804</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL1596">
+      <value>45000</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL7924">
+      <value>7.503</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL1917">
+      <value>2</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLA341">
+      <value>20260804</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL9914">
+      <value>20270115</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLA342">
+      <value>2</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLA343">
+      <value>2</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6130">
+      <value>1</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6131">
+      <value>1</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6133">
+      <value>3</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6134">
+      <value>2</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6135">
+      <value>3</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFL6136">
+      <value>4</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLA344">
+      <value>1</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="QTFLK806">
+      <value>40</value>
+      <context mdrm="QTFL9780" value="3" />
+    </itemData>
+  </report>
+</reportingFile>

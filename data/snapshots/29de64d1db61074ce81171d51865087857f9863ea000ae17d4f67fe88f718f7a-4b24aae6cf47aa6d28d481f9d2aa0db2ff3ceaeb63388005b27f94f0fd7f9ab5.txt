@@ -1,0 +1,277 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2026-12-31" reporterId="12345" series="FRY12A">
+    <itemData confidential="N" estimated="N" mdrm="RSSD9017">
+      <value>Test Bank</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="RSSD9028">
+      <value>123 Main Street</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="RSSD9130">
+      <value>Cleveland</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="RSSD9200">
+      <value>OH</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="RSSD9220">
+      <value>44114</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMB9110">
+      <value>125 Main Street</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF206">
+      <value>Cleveland</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF207">
+      <value>OH</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF208">
+      <value>44114</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMB8901">
+      <value>John Doe</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMB8902">
+      <value>123-456-7890</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMB4086">
+      <value>John.Doe@Testbank.com</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMB9185">
+      <value>130 Main Street</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMB9187">
+      <value>Akron</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF209">
+      <value>OH</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMB9189">
+      <value>44110</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBC490">
+      <value>Joe Smith</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBC491">
+      <value>CFO</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBJ196">
+      <value>12/31/2023</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF189">
+      <value>Test Bank</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF190">
+      <value>Cleveland</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF191">
+      <value>OH</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF192">
+      <value>15460</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF507">
+      <value>12311</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF193">
+      <value>12/15/2023</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBJF96">
+      <value>12/20/2023</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF194">
+      <value>Test Bank</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF195">
+      <value>Kent</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF196">
+      <value>OH</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF197">
+      <value>84458</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF198">
+      <value>15000</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF199">
+      <value>Crypto</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF200">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF276">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF277">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF278">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF279">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF280">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF281">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF282">
+      <value />
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHM8F200">
+      <value>Other</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF201">
+      <value>50</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF202">
+      <value>50</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF203">
+      <value>1000</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF204">
+      <value>10000</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF205">
+      <value>100000</value>
+      <context mdrm="FHMBF316" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF189">
+      <value>Test Bank2</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF190">
+      <value>Cleveland</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF191">
+      <value>OH</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF192">
+      <value>15460</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF507">
+      <value>12311</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF193">
+      <value>12/15/2023</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBJF96">
+      <value>12/20/2023</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF194">
+      <value>Test Bank2</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF195">
+      <value>Kent</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF196">
+      <value>OH</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF197">
+      <value>84458</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF198">
+      <value>15000</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF199">
+      <value>Crypto</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF200">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF276">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF277">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF278">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF279">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF280">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF281">
+      <value>1</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF282">
+      <value />
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHM8F200">
+      <value>Other</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF201">
+      <value>50</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF202">
+      <value>50</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF203">
+      <value>1000</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF204">
+      <value>10000</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FHMBF205">
+      <value>100000</value>
+      <context mdrm="FHMBF316" value="2" />
+    </itemData>
+  </report>
+</reportingFile>

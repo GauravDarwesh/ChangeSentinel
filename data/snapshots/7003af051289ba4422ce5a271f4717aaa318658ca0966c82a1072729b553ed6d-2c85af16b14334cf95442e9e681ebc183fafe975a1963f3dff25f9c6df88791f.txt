@@ -1,0 +1,11 @@
+[SHEET] Item 2(b) Foreign Companies
+Legal Name | City
+| Country | Legal Entity Identifier (LEI) | Percentage of Class of Voting Shares Held
+| Percent of consolidated assets that are located in the U.S. | Percent of gross revenues derived from the U.S. | Is the foreign company a subsidiary?
+(0 = No, 1 = Yes) | NAICS Code of U.S. activities | Are the U.S. activities the same/related to those conducted abroad?
+(0 = No, 1 = Yes)
+(Column A) | (Column B) | (Column C) | (Column D) | (Column E) | (Column F) | (Column G) | (Column H) | (Column I) | (Column J)
+FFBO QB91 | FFBO QB92 | FFBO QB93 | FFBO QB94 | FFBO QB95 | FFBO QB96 | FFBO QB97 | FFBO QB98 | FFBO QB99 | FFBO QC00
+[SHEET] Dropdowns
+0
+1

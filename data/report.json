@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261023T082010Z-5c97bbca",
-  "generated_at": "2026-10-23T08:23:11.092648+00:00",
+  "run_id": "20261023T094413Z-98273121",
+  "generated_at": "2026-10-23T09:50:34.174629+00:00",
   "sources": [
     {
       "id": "fed-reporting-forms-pilot",
@@ -366,7 +366,7 @@
       "allowed_prefixes": [
         "https://www.frbservices.org/"
       ],
-      "initial_baseline": true
+      "initial_baseline": false
     },
     {
       "id": "manual-d1cf513f7f00",
@@ -378,7 +378,7 @@
       "allowed_prefixes": [
         "https://www.frbservices.org/"
       ],
-      "initial_baseline": true
+      "initial_baseline": false
     },
     {
       "id": "manual-3e884254c2f1",
@@ -390,7 +390,7 @@
       "allowed_prefixes": [
         "https://www.frbservices.org/"
       ],
-      "initial_baseline": true
+      "initial_baseline": false
     },
     {
       "id": "manual-d22911c410fc",
@@ -402,7 +402,7 @@
       "allowed_prefixes": [
         "https://www.frbservices.org/"
       ],
-      "initial_baseline": true
+      "initial_baseline": false
     },
     {
       "id": "manual-8e5bda39a33e",
@@ -414,7 +414,7 @@
       "allowed_prefixes": [
         "https://www.frbservices.org/"
       ],
-      "initial_baseline": true
+      "initial_baseline": false
     },
     {
       "id": "manual-7adab8f358bc",
@@ -426,7 +426,7 @@
       "allowed_prefixes": [
         "https://www.frbservices.org/"
       ],
-      "initial_baseline": true
+      "initial_baseline": false
     },
     {
       "id": "manual-f3c955eb0656",
@@ -438,188 +438,613 @@
       "allowed_prefixes": [
         "https://www.frbservices.org/"
       ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-053af629e35a",
+      "name": "FR Y-7 Item 2a2 Standard Template (XLSX)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/item-2a2-standard-template.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-7003af051289",
+      "name": "FR Y-7 Item 2b Standard Template (XLSX)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/item-2b-standard-template.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-e5da1f71e903",
+      "name": "FR Y-7 Additional Entities Template (XLSX)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/item-2a2-addl-entities-sample-data.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-215a82c132cd",
+      "name": "FR Y-7 Additional Entities Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry7-Item2a2-sample-template.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-3b1e1f88b570",
+      "name": "FR Y-7 Foreign Companies Template (XLSX)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/item-2b-foreign-co-sample-data.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-e3f60bc85420",
+      "name": "FR Y-7 Foreign Companies Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry7-item2b-sample-template.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-2b3ee4b0e158",
+      "name": "XML Format: FR Y-7Q** (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-7q-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-16625bb5e529",
+      "name": "FR Y-7Q Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-7q-sample-input-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-a81bf7248131",
+      "name": "XML Format: FR Y-12** (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry12-file-transfer.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-bb542f59562b",
+      "name": "FR Y-12 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry12-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-9f4eeee473f4",
+      "name": "XML Format: FR Y-12A (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry12a-file-upload-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-29de64d1db61",
+      "name": "FR Y-12A Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry12a-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-d4603522a989",
+      "name": "XML Format: FR Y-14A/Q (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-14aq-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-8588993b9c05",
+      "name": "FR Y-14Q Supplemental Information (ZIP)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-14q-ti.zip"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-ddc3e02572f3",
+      "name": "FR Y-14A Supplemental Information (ZIP)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-14a-ti.zip"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-26375675a7ba",
+      "name": "FR 2028B/FR 2028S (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2028-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-1f06400ec592",
+      "name": "FR 2028B Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2028b-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-7b0addc7e307",
+      "name": "FR 2028S Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2028s-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-e2cab0e0f486",
+      "name": "XML Format: FR 2028D (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2028d-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-fcf8b514162c",
+      "name": "XML Format: FR2004* (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2004-file-transfer-guide-xml.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-559ac45a9a23",
+      "name": "FR 2004SD Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2004sd-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-95e85c0ac861",
+      "name": "FR 2004SI Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2004si-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-01e6eb794d40",
+      "name": "FR 2004WI Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2004wi-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-a51425ec0d12",
+      "name": "XML Format: FR 2420* (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2420-xml-file-transfer-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": true
+    },
+    {
+      "id": "manual-d2ffa46a0ee0",
+      "name": "FR 2420CD Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2420cd-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
       "initial_baseline": true
     }
   ],
   "source_runs": {
     "fed-reporting-forms-pilot": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:20:10.509451+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:44:13.893234+00:00",
       "trigger": "continuation"
     },
     "fed-reporting-forms-detail-pilot": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:20:11.173792+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:44:15.596093+00:00",
       "trigger": "continuation"
     },
     "manual-f1df3c7d3e94": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:53.346329+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:42.146731+00:00",
       "trigger": "continuation"
     },
     "manual-12f61e0df21e": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:53.845821+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:42.581996+00:00",
       "trigger": "continuation"
     },
     "manual-87ca438373d9": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.019722+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:42.701263+00:00",
       "trigger": "continuation"
     },
     "manual-f96402c06d32": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.239401+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:42.753696+00:00",
       "trigger": "continuation"
     },
     "manual-d73abfb2e7f2": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.285148+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:42.804080+00:00",
       "trigger": "continuation"
     },
     "manual-c02ec80775c2": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.331064+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:42.859332+00:00",
       "trigger": "continuation"
     },
     "manual-81edf0641cc2": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.377322+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:42.911540+00:00",
       "trigger": "continuation"
     },
     "manual-ccbb8cabeb99": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.422701+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:42.960485+00:00",
       "trigger": "continuation"
     },
     "manual-3c168c3e601a": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.468096+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:43.012238+00:00",
       "trigger": "continuation"
     },
     "manual-31ada48e215e": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.514058+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:43.061867+00:00",
       "trigger": "continuation"
     },
     "manual-96da24f54032": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.559326+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:43.114464+00:00",
       "trigger": "continuation"
     },
     "manual-db5b7b1c66c0": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.605032+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:43.163899+00:00",
       "trigger": "continuation"
     },
     "manual-c3954390bf91": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.651173+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:43.218476+00:00",
       "trigger": "continuation"
     },
     "manual-ad2f7c55bf07": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.695808+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:43.273124+00:00",
       "trigger": "continuation"
     },
     "manual-07fead54d9d1": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.740815+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:43.327851+00:00",
       "trigger": "continuation"
     },
     "manual-49e6cffbe46b": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.786675+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:43.380407+00:00",
       "trigger": "continuation"
     },
     "manual-e49444f7481c": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:54.837336+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:43.429866+00:00",
       "trigger": "continuation"
     },
     "manual-e2a6f65d42aa": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:55.200263+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:43.822509+00:00",
       "trigger": "continuation"
     },
     "manual-4d35aa9f9fa5": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:55.246753+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:43.875115+00:00",
       "trigger": "continuation"
     },
     "manual-4ceffe75326c": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:55.292268+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:43.924412+00:00",
       "trigger": "continuation"
     },
     "manual-ce0c1bcab763": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:55.337473+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:43.974153+00:00",
       "trigger": "continuation"
     },
     "manual-9d4f8768e197": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:55.383892+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.023233+00:00",
       "trigger": "continuation"
     },
     "manual-73c10748e127": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:55.429098+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.072304+00:00",
       "trigger": "continuation"
     },
     "manual-3cde87b01727": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:55.474653+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.122207+00:00",
       "trigger": "continuation"
     },
     "manual-15294ab2d815": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:55.519880+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.178497+00:00",
       "trigger": "continuation"
     },
     "manual-9d2a0cc1d61f": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:55.570581+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.228755+00:00",
       "trigger": "continuation"
     },
     "manual-b6a213ed4639": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:55.616826+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.281091+00:00",
       "trigger": "continuation"
     },
     "manual-c8ecced11490": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:22:55.663036+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.330167+00:00",
       "trigger": "continuation"
     },
     "manual-d1cf513f7f00": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:23:06.600158+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.385352+00:00",
       "trigger": "continuation"
     },
     "manual-3e884254c2f1": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:23:06.921279+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.434836+00:00",
       "trigger": "continuation"
     },
     "manual-d22911c410fc": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:23:07.297552+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.485326+00:00",
       "trigger": "continuation"
     },
     "manual-8e5bda39a33e": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:23:08.283516+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.535342+00:00",
       "trigger": "continuation"
     },
     "manual-7adab8f358bc": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:23:09.128085+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.586975+00:00",
       "trigger": "continuation"
     },
     "manual-f3c955eb0656": {
-      "run_id": "20261023T082010Z-5c97bbca",
-      "generated_at": "2026-10-23T08:23:11.092648+00:00",
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.642740+00:00",
+      "trigger": "continuation"
+    },
+    "manual-053af629e35a": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.697768+00:00",
+      "trigger": "continuation"
+    },
+    "manual-7003af051289": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.804639+00:00",
+      "trigger": "continuation"
+    },
+    "manual-e5da1f71e903": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:44.925444+00:00",
+      "trigger": "continuation"
+    },
+    "manual-215a82c132cd": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:45.022819+00:00",
+      "trigger": "continuation"
+    },
+    "manual-3b1e1f88b570": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:45.077755+00:00",
+      "trigger": "continuation"
+    },
+    "manual-e3f60bc85420": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:45.195338+00:00",
+      "trigger": "continuation"
+    },
+    "manual-2b3ee4b0e158": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:47:45.253155+00:00",
+      "trigger": "continuation"
+    },
+    "manual-16625bb5e529": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:48:13.256197+00:00",
+      "trigger": "continuation"
+    },
+    "manual-a81bf7248131": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:48:13.314270+00:00",
+      "trigger": "continuation"
+    },
+    "manual-bb542f59562b": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:48:13.776867+00:00",
+      "trigger": "continuation"
+    },
+    "manual-9f4eeee473f4": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:48:13.841325+00:00",
+      "trigger": "continuation"
+    },
+    "manual-29de64d1db61": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:48:14.625715+00:00",
+      "trigger": "continuation"
+    },
+    "manual-d4603522a989": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:48:14.683327+00:00",
+      "trigger": "continuation"
+    },
+    "manual-8588993b9c05": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:48:15.911051+00:00",
+      "trigger": "continuation"
+    },
+    "manual-ddc3e02572f3": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:48:54.230202+00:00",
+      "trigger": "continuation"
+    },
+    "manual-26375675a7ba": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:49:57.155489+00:00",
+      "trigger": "continuation"
+    },
+    "manual-1f06400ec592": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:50:30.881657+00:00",
+      "trigger": "continuation"
+    },
+    "manual-7b0addc7e307": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:50:30.944780+00:00",
+      "trigger": "continuation"
+    },
+    "manual-e2cab0e0f486": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:50:30.996820+00:00",
+      "trigger": "continuation"
+    },
+    "manual-fcf8b514162c": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:50:33.120448+00:00",
+      "trigger": "continuation"
+    },
+    "manual-559ac45a9a23": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:50:33.472083+00:00",
+      "trigger": "continuation"
+    },
+    "manual-95e85c0ac861": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:50:33.540865+00:00",
+      "trigger": "continuation"
+    },
+    "manual-01e6eb794d40": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:50:33.607127+00:00",
+      "trigger": "continuation"
+    },
+    "manual-a51425ec0d12": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:50:33.664749+00:00",
+      "trigger": "continuation"
+    },
+    "manual-d2ffa46a0ee0": {
+      "run_id": "20261023T094413Z-98273121",
+      "generated_at": "2026-10-23T09:50:34.174629+00:00",
       "trigger": "continuation"
     }
   },
@@ -633,19 +1058,19 @@
     "baseline_migration": 0,
     "changed": 0,
     "crawl_paused": 0,
-    "discovered": 50,
+    "discovered": 75,
     "extraction_drift": 0,
     "extraction_error": 0,
     "fetch_error": 0,
-    "forced_full_fetch": 7,
-    "new": 7,
-    "not_modified": 25,
-    "relevance_candidates": 7,
+    "forced_full_fetch": 25,
+    "new": 25,
+    "not_modified": 32,
+    "relevance_candidates": 25,
     "removal_held": 0,
     "removal_pending_confirmation": 0,
     "removed": 0,
     "source_changed": 1,
-    "unchanged": 42
+    "unchanged": 49
   },
   "discovery": [
     {
@@ -1223,6 +1648,406 @@
       "config_fingerprint": "0a036fc4bfd98f27956df0ad553bc2342eee09eec9277100fdd75fc6cb2af790",
       "inventory": "data/discovery/manual-f3c955eb0656-inventory-*.txt",
       "failure_ledger": "data/discovery/manual-f3c955eb0656-failures.jsonl"
+    },
+    {
+      "source_id": "manual-053af629e35a",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "a35ac7c2f4ceb1414f4445132f522c17c4466c7dea82f202cf16765d90b2caa6",
+      "inventory": "data/discovery/manual-053af629e35a-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-053af629e35a-failures.jsonl"
+    },
+    {
+      "source_id": "manual-7003af051289",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "4f2b079faebc36afe2ab9e216fd0ce7260dc4c9b13bfc9caa739277781493320",
+      "inventory": "data/discovery/manual-7003af051289-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-7003af051289-failures.jsonl"
+    },
+    {
+      "source_id": "manual-e5da1f71e903",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "4582b81c156ebfe804386222eda9a434682f86699b0000851d6ccc4a6fac539f",
+      "inventory": "data/discovery/manual-e5da1f71e903-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-e5da1f71e903-failures.jsonl"
+    },
+    {
+      "source_id": "manual-215a82c132cd",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "2d2f08e5ab61922a10a106fe0097d7aa0b3e09e4e5345dc328fdfeb2a41bea3b",
+      "inventory": "data/discovery/manual-215a82c132cd-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-215a82c132cd-failures.jsonl"
+    },
+    {
+      "source_id": "manual-3b1e1f88b570",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "7fb20d3264e131757ab6d4d56b85b1df8d33a51b789f5900ec25200ddc74e6d5",
+      "inventory": "data/discovery/manual-3b1e1f88b570-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-3b1e1f88b570-failures.jsonl"
+    },
+    {
+      "source_id": "manual-e3f60bc85420",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "32e2f94ea24730a86fcb1ad4073e6018cbf5b0d356df82e5b43aa7fd0659a8a6",
+      "inventory": "data/discovery/manual-e3f60bc85420-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-e3f60bc85420-failures.jsonl"
+    },
+    {
+      "source_id": "manual-2b3ee4b0e158",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "446a5008567b8edbb355f66e94d09ec204e025ae31de96de3dd8e57833cf7832",
+      "inventory": "data/discovery/manual-2b3ee4b0e158-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-2b3ee4b0e158-failures.jsonl"
+    },
+    {
+      "source_id": "manual-16625bb5e529",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "681d4416dbe14d2ed7c0add0fd6302e34550a5e108925967e992c84623c84805",
+      "inventory": "data/discovery/manual-16625bb5e529-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-16625bb5e529-failures.jsonl"
+    },
+    {
+      "source_id": "manual-a81bf7248131",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "242e615818ceb55b9ac78079e60aa31f02da7b6004c7ef708b1a6bc51f6b087d",
+      "inventory": "data/discovery/manual-a81bf7248131-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-a81bf7248131-failures.jsonl"
+    },
+    {
+      "source_id": "manual-bb542f59562b",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "24c42e7e64fb4b0f28d76cb55dc24a364d693210058add9fa9d72d997ee102ce",
+      "inventory": "data/discovery/manual-bb542f59562b-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-bb542f59562b-failures.jsonl"
+    },
+    {
+      "source_id": "manual-9f4eeee473f4",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "173e99b06b9ddfc201c39c9da7b7725a0a33fb51981ebdf3323f2a08ea596a85",
+      "inventory": "data/discovery/manual-9f4eeee473f4-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-9f4eeee473f4-failures.jsonl"
+    },
+    {
+      "source_id": "manual-29de64d1db61",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "e25d4e2c53a1e955d94885b670eb0caa5686702e2db870cc17171e4266e6575c",
+      "inventory": "data/discovery/manual-29de64d1db61-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-29de64d1db61-failures.jsonl"
+    },
+    {
+      "source_id": "manual-d4603522a989",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "9b861e83a34d074e2d1ab8c457fcbbb5e38985415203caae48b63522b634dd65",
+      "inventory": "data/discovery/manual-d4603522a989-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-d4603522a989-failures.jsonl"
+    },
+    {
+      "source_id": "manual-8588993b9c05",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "8db9ffb3f9ed09c2798a515ce1822bdaf79cb510f5cea2eba36c1e7caf5f3375",
+      "inventory": "data/discovery/manual-8588993b9c05-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-8588993b9c05-failures.jsonl"
+    },
+    {
+      "source_id": "manual-ddc3e02572f3",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "3fbef91226f2e4f3b5512c278a0f4e1f05f3e9f5578050f7231295d09418516e",
+      "inventory": "data/discovery/manual-ddc3e02572f3-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-ddc3e02572f3-failures.jsonl"
+    },
+    {
+      "source_id": "manual-26375675a7ba",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "684deebc7e08c05011028bef77e63fcfd2f17dc8ace22a992319b981615da539",
+      "inventory": "data/discovery/manual-26375675a7ba-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-26375675a7ba-failures.jsonl"
+    },
+    {
+      "source_id": "manual-1f06400ec592",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "38759aee24c0c689cd23576d98845dc6faf1813898ed8025f5886661152b640e",
+      "inventory": "data/discovery/manual-1f06400ec592-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-1f06400ec592-failures.jsonl"
+    },
+    {
+      "source_id": "manual-7b0addc7e307",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "370168f66bdc45c815c22da170535658762f4be8322caf4202c5003eb2dee1e3",
+      "inventory": "data/discovery/manual-7b0addc7e307-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-7b0addc7e307-failures.jsonl"
+    },
+    {
+      "source_id": "manual-e2cab0e0f486",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "326323fa7680058fd8d1cbbf537d34015ced33037a88aeb0a2a30996a57a6130",
+      "inventory": "data/discovery/manual-e2cab0e0f486-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-e2cab0e0f486-failures.jsonl"
+    },
+    {
+      "source_id": "manual-fcf8b514162c",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "d7ec638d309d8db39a23bba479efbd0b5dadaa5a32df55a777ef5100c7fba304",
+      "inventory": "data/discovery/manual-fcf8b514162c-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-fcf8b514162c-failures.jsonl"
+    },
+    {
+      "source_id": "manual-559ac45a9a23",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "d9e94bec44c0aa99121b7665da7e8d9aa6c0db6dd343533773c0d01854fedb8d",
+      "inventory": "data/discovery/manual-559ac45a9a23-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-559ac45a9a23-failures.jsonl"
+    },
+    {
+      "source_id": "manual-95e85c0ac861",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "fb91da0ca2c1cac4d164102694f3f164edf831292ba12a26a6deb75df1cd9327",
+      "inventory": "data/discovery/manual-95e85c0ac861-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-95e85c0ac861-failures.jsonl"
+    },
+    {
+      "source_id": "manual-01e6eb794d40",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "b726259efb4b56e01d02a5fd47463248f140d8dc6c2c6b5777f65cf594420f94",
+      "inventory": "data/discovery/manual-01e6eb794d40-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-01e6eb794d40-failures.jsonl"
+    },
+    {
+      "source_id": "manual-a51425ec0d12",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "2d35e22accc7795087e9b09ec12ba1fe21bd8fd1174371061e090a5be8036199",
+      "inventory": "data/discovery/manual-a51425ec0d12-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-a51425ec0d12-failures.jsonl"
+    },
+    {
+      "source_id": "manual-d2ffa46a0ee0",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "dc9650ff79c9759c70460e9ff36a1497c1d0716509f4a970fa7c83336e14a0af",
+      "inventory": "data/discovery/manual-d2ffa46a0ee0-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-d2ffa46a0ee0-failures.jsonl"
     }
   ],
   "removal_guards": [],
@@ -1257,53 +2082,6 @@
   "source_changed_urls": [
     {
       "before": {
-        "schema_version": 2,
-        "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
-        "source_id": "manual-e49444f7481c",
-        "regulator": "www.federalreserve.gov",
-        "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
-        "first_seen": "2026-10-23T08:14:35.781047+00:00",
-        "last_seen": "2026-10-23T08:14:35.781047+00:00",
-        "last_checked": "2026-10-23T08:14:35.781047+00:00",
-        "last_full_fetch": "2026-10-23T08:14:35.781047+00:00",
-        "active": true,
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=utf-8",
-        "content_length": null,
-        "etag": null,
-        "last_modified": null,
-        "raw_hash": "cc80cafdc699b9f2b44adc2019d19606cc9ae4a6521e9b14117cbae59d686f7a",
-        "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
-        "html_hash": "cc80cafdc699b9f2b44adc2019d19606cc9ae4a6521e9b14117cbae59d686f7a",
-        "html_comparison_hash": "d6085f012d3ca249cea77b215f864089f9d55fc6f4e8e6f01ba281f1bc908b4e",
-        "html_comparison_hash_version": 2,
-        "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-cc80cafdc699b9f2b44adc2019d19606cc9ae4a6521e9b14117cbae59d686f7a.html",
-        "file_snapshot_location": null,
-        "extraction_type": "html",
-        "extractor_version": "content-extractor-v7",
-        "extraction_error": null,
-        "fetch_error": null,
-        "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
-        "evidence_location": null,
-        "relevance": {
-          "candidate": true,
-          "reason": "Regulatory signal detected",
-          "signals": [
-            "policy",
-            "report"
-          ]
-        },
-        "ai_pending": null,
-        "last_changed_at": null,
-        "change_history": [],
-        "not_modified": false,
-        "full_fetch_forced": true,
-        "html_baseline_forced": false,
-        "file_baseline_forced": false,
-        "extractor_baseline_forced": false
-      },
-      "after": {
         "schema_version": 2,
         "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
         "source_id": "manual-e49444f7481c",
@@ -1356,6 +2134,66 @@
         "html_baseline_forced": false,
         "file_baseline_forced": false,
         "extractor_baseline_forced": false
+      },
+      "after": {
+        "schema_version": 2,
+        "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
+        "source_id": "manual-e49444f7481c",
+        "regulator": "www.federalreserve.gov",
+        "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
+        "first_seen": "2026-10-23T08:14:35.781047+00:00",
+        "last_seen": "2026-10-23T09:47:43.429866+00:00",
+        "last_checked": "2026-10-23T09:47:43.429866+00:00",
+        "last_full_fetch": "2026-10-23T09:47:43.429866+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "content_length": null,
+        "etag": null,
+        "last_modified": null,
+        "raw_hash": "ee5ac76b22723f3159e89a07a9b42774c75a342158aaecf33083dcdb977c0193",
+        "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
+        "html_hash": "ee5ac76b22723f3159e89a07a9b42774c75a342158aaecf33083dcdb977c0193",
+        "html_comparison_hash": "4c15061fa4c0a955b291ce068d6861ed05bf5a77f72ddc87c8d3bccf0622e63a",
+        "html_comparison_hash_version": 2,
+        "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-ee5ac76b22723f3159e89a07a9b42774c75a342158aaecf33083dcdb977c0193.html",
+        "file_snapshot_location": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
+        "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "Regulatory signal detected",
+          "signals": [
+            "policy",
+            "report"
+          ]
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T09:47:43.429866+00:00",
+            "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
+          },
+          {
+            "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T08:22:54.837336+00:00",
+            "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false
       }
     }
   ],
@@ -1363,62 +2201,15 @@
   "baseline_migrations": [],
   "events": [
     {
-      "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
+      "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.federalreserve.gov/apps/ReportingForms",
       "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
       "source_id": "manual-e49444f7481c",
-      "timestamp": "2026-10-23T08:22:54.837336+00:00",
-      "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json",
+      "timestamp": "2026-10-23T09:47:43.429866+00:00",
+      "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json",
       "evidence": {
         "previous": {
-          "schema_version": 2,
-          "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
-          "source_id": "manual-e49444f7481c",
-          "regulator": "www.federalreserve.gov",
-          "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
-          "first_seen": "2026-10-23T08:14:35.781047+00:00",
-          "last_seen": "2026-10-23T08:14:35.781047+00:00",
-          "last_checked": "2026-10-23T08:14:35.781047+00:00",
-          "last_full_fetch": "2026-10-23T08:14:35.781047+00:00",
-          "active": true,
-          "terminal_file": false,
-          "http_status": 200,
-          "content_type": "text/html; charset=utf-8",
-          "content_length": null,
-          "etag": null,
-          "last_modified": null,
-          "raw_hash": "cc80cafdc699b9f2b44adc2019d19606cc9ae4a6521e9b14117cbae59d686f7a",
-          "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
-          "html_hash": "cc80cafdc699b9f2b44adc2019d19606cc9ae4a6521e9b14117cbae59d686f7a",
-          "html_comparison_hash": "d6085f012d3ca249cea77b215f864089f9d55fc6f4e8e6f01ba281f1bc908b4e",
-          "html_comparison_hash_version": 2,
-          "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-cc80cafdc699b9f2b44adc2019d19606cc9ae4a6521e9b14117cbae59d686f7a.html",
-          "file_snapshot_location": null,
-          "extraction_type": "html",
-          "extractor_version": "content-extractor-v7",
-          "extraction_error": null,
-          "fetch_error": null,
-          "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
-          "evidence_location": null,
-          "relevance": {
-            "candidate": true,
-            "reason": "Regulatory signal detected",
-            "signals": [
-              "policy",
-              "report"
-            ]
-          },
-          "ai_pending": null,
-          "last_changed_at": null,
-          "change_history": [],
-          "not_modified": false,
-          "full_fetch_forced": true,
-          "html_baseline_forced": false,
-          "file_baseline_forced": false,
-          "extractor_baseline_forced": false
-        },
-        "current": {
           "schema_version": 2,
           "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
           "source_id": "manual-e49444f7481c",
@@ -1459,6 +2250,66 @@
           "ai_pending": null,
           "last_changed_at": null,
           "change_history": [
+            {
+              "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T08:22:54.837336+00:00",
+              "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
+        },
+        "current": {
+          "schema_version": 2,
+          "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
+          "source_id": "manual-e49444f7481c",
+          "regulator": "www.federalreserve.gov",
+          "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
+          "first_seen": "2026-10-23T08:14:35.781047+00:00",
+          "last_seen": "2026-10-23T09:47:43.429866+00:00",
+          "last_checked": "2026-10-23T09:47:43.429866+00:00",
+          "last_full_fetch": "2026-10-23T09:47:43.429866+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8",
+          "content_length": null,
+          "etag": null,
+          "last_modified": null,
+          "raw_hash": "ee5ac76b22723f3159e89a07a9b42774c75a342158aaecf33083dcdb977c0193",
+          "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
+          "html_hash": "ee5ac76b22723f3159e89a07a9b42774c75a342158aaecf33083dcdb977c0193",
+          "html_comparison_hash": "4c15061fa4c0a955b291ce068d6861ed05bf5a77f72ddc87c8d3bccf0622e63a",
+          "html_comparison_hash_version": 2,
+          "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-ee5ac76b22723f3159e89a07a9b42774c75a342158aaecf33083dcdb977c0193.html",
+          "file_snapshot_location": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
+          "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "Regulatory signal detected",
+            "signals": [
+              "policy",
+              "report"
+            ]
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T09:47:43.429866+00:00",
+              "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
+            },
             {
               "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
               "event_type": "HTML_SOURCE_CHANGED",

@@ -1,0 +1,96 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="2026-01-09" createTime="12:39:00" xsi:noNamespaceSchemaLocation="Y7InputXML-Item2a2-202601096.xsd">
+  <report asOfDate="2026-01-09" series="Y7">
+    <itemGroup ref="addnlEntity">
+      <itemData key="yes" mdrm="mdrm">
+        <value>1</value>
+      </itemData>
+      <itemData mdrm="FFBOQB84">
+        <value>Franklin Holding Company</value>
+      </itemData>
+      <itemData mdrm="FFBOQB85">
+        <value>New York</value>
+      </itemData>
+      <itemData mdrm="FFBOQB86">
+        <value>New York</value>
+      </itemData>
+      <itemData mdrm="FFBOQB87">
+        <value>New York</value>
+      </itemData>
+      <itemData mdrm="FFBOQB88">
+        <value>9695008LHU2E5C2KA345</value>
+      </itemData>
+      <itemData mdrm="FFBOQB89">
+        <value>Friendly Foreign Banking Organization</value>
+      </itemData>
+    </itemGroup>
+    <itemGroup ref="addnlEntity">
+      <itemData key="yes" mdrm="mdrm">
+        <value>2</value>
+      </itemData>
+      <itemData mdrm="FFBOQB84">
+        <value>Ernest Securities</value>
+      </itemData>
+      <itemData mdrm="FFBOQB85">
+        <value>London</value>
+      </itemData>
+      <itemData mdrm="FFBOQB86">
+        <value>United Kingdom</value>
+      </itemData>
+      <itemData mdrm="FFBOQB87">
+        <value>United Kingdom</value>
+      </itemData>
+      <itemData mdrm="FFBOQB88">
+        <value>N/A</value>
+      </itemData>
+      <itemData mdrm="FFBOQB89">
+        <value>Franklin Holding Company</value>
+      </itemData>
+    </itemGroup>
+    <itemGroup ref="addnlEntity">
+      <itemData key="yes" mdrm="mdrm">
+        <value>3</value>
+      </itemData>
+      <itemData mdrm="FFBOQB84">
+        <value>Cavalier Enterprise</value>
+      </itemData>
+      <itemData mdrm="FFBOQB85">
+        <value>Paris</value>
+      </itemData>
+      <itemData mdrm="FFBOQB86">
+        <value>France</value>
+      </itemData>
+      <itemData mdrm="FFBOQB87">
+        <value>France</value>
+      </itemData>
+      <itemData mdrm="FFBOQB88">
+        <value>969500NUKHYEU12PXZ79</value>
+      </itemData>
+      <itemData mdrm="FFBOQB89">
+        <value>Ernest Securities</value>
+      </itemData>
+    </itemGroup>
+    <itemGroup ref="addnlEntity">
+      <itemData key="yes" mdrm="mdrm">
+        <value>4</value>
+      </itemData>
+      <itemData mdrm="FFBOQB84">
+        <value>Blenheim Insurance</value>
+      </itemData>
+      <itemData mdrm="FFBOQB85">
+        <value>New York</value>
+      </itemData>
+      <itemData mdrm="FFBOQB86">
+        <value>New York</value>
+      </itemData>
+      <itemData mdrm="FFBOQB87">
+        <value>Delaware</value>
+      </itemData>
+      <itemData mdrm="FFBOQB88">
+        <value>724500ZUVMX72T6IMS05</value>
+      </itemData>
+      <itemData mdrm="FFBOQB89">
+        <value>Friendly Foreign Banking Organization</value>
+      </itemData>
+    </itemGroup>
+  </report>
+</reportingFile>

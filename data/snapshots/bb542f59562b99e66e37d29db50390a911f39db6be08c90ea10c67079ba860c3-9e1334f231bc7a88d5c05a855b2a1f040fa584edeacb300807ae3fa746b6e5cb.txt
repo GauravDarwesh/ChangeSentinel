@@ -1,0 +1,361 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2024-12-35" reporterId="12345" series="FRY12">
+    <itemData confidential="N" estimated="N" mdrm="BHEI8901">
+      <value>John Smith</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEI8902">
+      <value>test</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEI4086">
+      <value>c.test@gmail.com</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC490">
+      <value>officer name</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC491">
+      <value>officer title</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIJ196">
+      <value>12/31/2025</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="RSSD9017">
+      <value>Legal Name</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="RSSD9110">
+      <value>1 Main St</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="RSSD9130">
+      <value>New York</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="RSSD9200">
+      <value>NY</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="RSSD9220">
+      <value>10001</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC447">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIKY38">
+      <value />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC088">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF30">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF37">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC090">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC091">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC093">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF31">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF38">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC095">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC097">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF32">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF39">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC099">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC101">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF33">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF40">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC103">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC100">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC104">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILE62">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF41">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC106">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIB498">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC716">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIJ443">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC107">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC108">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC109">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC110">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC111">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC112">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC113">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC114">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC115">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC717">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC117">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILE63">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF45">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC118">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC121">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILE64">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF46">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC122">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC126">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILE65">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF47">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC127">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC136">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILE66">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF48">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC137">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC722">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILE67">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF49">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC724">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC131">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILE68">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF50">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC132">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC726">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILE69">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF51">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC728">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC145">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILE70">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF52">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC146">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC150">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILE71">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF53">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC151">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC155">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILE72">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF54">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC156">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC157">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILE73">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEILF55">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC158">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC731">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC732">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIJ434">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIJ435">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC733">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC734">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC735">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC736">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIJ436">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIJ437">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC737">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC738">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC739">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIJ438">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC740">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC741">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC742">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIJ439">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIJ440">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC743">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC744">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC745">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC746">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIJ441">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIJ442">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC747">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="BHEIC748">
+      <value>0</value>
+    </itemData>
+  </report>
+</reportingFile>

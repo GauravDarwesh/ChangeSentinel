@@ -1,0 +1,109 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="2026-01-09" createTime="12:39:00" xsi:noNamespaceSchemaLocation="Y7InputXML-Item2b-202601096.xsd">
+  <report asOfDate="2026-01-09" series="Y7">
+    <itemGroup ref="foreignCompany">
+      <itemData key="yes" mdrm="mdrm">
+        <value>1</value>
+      </itemData>
+      <itemData mdrm="FFBOQB91">
+        <value>Miracle Companies</value>
+      </itemData>
+      <itemData mdrm="FFBOQB92">
+        <value>London</value>
+      </itemData>
+      <itemData mdrm="FFBOQB93">
+        <value>United Kingdom</value>
+      </itemData>
+      <itemData mdrm="FFBOQB94">
+        <value>724500ZUVMX72T6IMS05</value>
+      </itemData>
+      <itemData mdrm="FFBOQB95">
+        <value>51.00</value>
+      </itemData>
+      <itemData mdrm="FFBOQB96">
+        <value>25.00</value>
+      </itemData>
+      <itemData mdrm="FFBOQB97">
+        <value>25.00</value>
+      </itemData>
+      <itemData mdrm="FFBOQB98">
+        <value>1</value>
+      </itemData>
+      <itemData mdrm="FFBOQB99">
+        <value>51929</value>
+      </itemData>
+      <itemData mdrm="FFBOQC00">
+        <value>1</value>
+      </itemData>
+    </itemGroup>
+    <itemGroup ref="foreignCompany">
+      <itemData key="yes" mdrm="mdrm">
+        <value>2</value>
+      </itemData>
+      <itemData mdrm="FFBOQB91">
+        <value>Ambassador, Inc.</value>
+      </itemData>
+      <itemData mdrm="FFBOQB92">
+        <value>Munich</value>
+      </itemData>
+      <itemData mdrm="FFBOQB93">
+        <value>Germany</value>
+      </itemData>
+      <itemData mdrm="FFBOQB94">
+        <value>N/A</value>
+      </itemData>
+      <itemData mdrm="FFBOQB95">
+        <value>33.00</value>
+      </itemData>
+      <itemData mdrm="FFBOQB96">
+        <value>27.00</value>
+      </itemData>
+      <itemData mdrm="FFBOQB97">
+        <value>27.00</value>
+      </itemData>
+      <itemData mdrm="FFBOQB98">
+        <value>1</value>
+      </itemData>
+      <itemData mdrm="FFBOQB99">
+        <value>524127</value>
+      </itemData>
+      <itemData mdrm="FFBOQC00">
+        <value>0</value>
+      </itemData>
+    </itemGroup>
+    <itemGroup ref="foreignCompany">
+      <itemData key="yes" mdrm="mdrm">
+        <value>3</value>
+      </itemData>
+      <itemData mdrm="FFBOQB91">
+        <value>Cavalier Enterprise</value>
+      </itemData>
+      <itemData mdrm="FFBOQB92">
+        <value>Paris</value>
+      </itemData>
+      <itemData mdrm="FFBOQB93">
+        <value>France</value>
+      </itemData>
+      <itemData mdrm="FFBOQB94">
+        <value>9845006HEW4659760C58</value>
+      </itemData>
+      <itemData mdrm="FFBOQB95">
+        <value>100.00</value>
+      </itemData>
+      <itemData mdrm="FFBOQB96">
+        <value>33.00</value>
+      </itemData>
+      <itemData mdrm="FFBOQB97">
+        <value>85.00</value>
+      </itemData>
+      <itemData mdrm="FFBOQB98">
+        <value>1</value>
+      </itemData>
+      <itemData mdrm="FFBOQB99">
+        <value>53126</value>
+      </itemData>
+      <itemData mdrm="FFBOQC00">
+        <value>1</value>
+      </itemData>
+    </itemGroup>
+  </report>
+</reportingFile>

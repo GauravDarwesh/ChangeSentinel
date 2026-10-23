@@ -1,0 +1,219 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="2026-08-31" createTime="11:06:38+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2026-06-30" reporterId="12345" series="FR2420CD">
+    <itemData confidential="N" estimated="N" mdrm="SMMRN187">
+      <value>11</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRT140">
+      <value>20260630</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRG886">
+      <value>20260701</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMR9914">
+      <value>20270501</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMR7333">
+      <value>1.10000</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRMU36">
+      <value>3</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRT143">
+      <value>4.33</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRN189">
+      <value>1</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRT144">
+      <value>NA</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRN190">
+      <value>7</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRN191">
+      <value>1</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRN192">
+      <value>Y</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRT145">
+      <value>0</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRT141">
+      <value>7</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRQC55">
+      <value>1</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRN187">
+      <value>11</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRT140">
+      <value>20260630</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRG886">
+      <value>20260701</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMR9914">
+      <value>20270501</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMR7333">
+      <value>1.10000</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRMU36">
+      <value>3</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRT143">
+      <value>4.33</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRN189">
+      <value>1</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRT144">
+      <value>NA</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRN190">
+      <value>7</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRN191">
+      <value>1</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRN192">
+      <value>Y</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRT145">
+      <value>0</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRT141">
+      <value>7</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRQC55">
+      <value>1</value>
+      <context mdrm="SMMRN188" value="3" />
+      <context mdrm="SMMRN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRN187">
+      <value>11</value>
+      <context mdrm="SMMRN188" value="6" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRT140">
+      <value>20260630</value>
+      <context mdrm="SMMRN188" value="6" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRG886">
+      <value>20260701</value>
+      <context mdrm="SMMRN188" value="6" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMR9914">
+      <value>20270501</value>
+      <context mdrm="SMMRN188" value="6" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMR7333">
+      <value>1.10000</value>
+      <context mdrm="SMMRN188" value="6" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRQC56">
+      <value>1.10000</value>
+      <context mdrm="SMMRN188" value="6" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRMU36">
+      <value>3</value>
+      <context mdrm="SMMRN188" value="6" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRN189">
+      <value>1</value>
+      <context mdrm="SMMRN188" value="6" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRN190">
+      <value>7</value>
+      <context mdrm="SMMRN188" value="6" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRN191">
+      <value>0</value>
+      <context mdrm="SMMRN188" value="6" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRT143">
+      <value>4.33</value>
+      <context mdrm="SMMRN188" value="6" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRQC57">
+      <value>1</value>
+      <context mdrm="SMMRN188" value="6" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="SMMRT145">
+      <value>0</value>
+      <context mdrm="SMMRN188" value="6" />
+      <context mdrm="SMMRN186" value="1" />
+    </itemData>
+  </report>
+</reportingFile>

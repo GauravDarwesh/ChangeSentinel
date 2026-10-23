@@ -1,0 +1,161 @@
+Reporting Central User Guide
+FR Y-14A/Q Data Collection Capital Assessments and Stress Testing
+Federal Reserve System
+STATISTICS FUNCTION
+September 2026
+Note: this version of the user guide includes: FR Y-14GEN General FR Y-14A A. Summary FR Y-14A B. Scenario FR Y-14A C. Regulatory Capital Instruments FR Y-14A E. Operational Risk FR Y-14A F. Business Plan Changes FR Y-14Q A.1 – A.10 Retail FR Y-14Q B. Securities FR Y-14Q C. Regulatory Capital Instruments FR Y-14Q D. Regulatory Capital (formerly Regulatory Capital Transitions) FR Y-14Q E. Operational Risk FR Y-14Q F. Trading FR Y-14Q G. PPNR FR Y-14Q H.1. Wholesale Risk Corporate Loan Data FR Y-14Q H.2. Wholesale Risk Commercial Real Estate FR Y-14Q H.3. Wholesale Line of Business FR Y-14Q H.4. Wholesale Internal Risk Rating FR Y-14Q J. FVO/HFS FR Y-14Q K. Supplemental FR Y-14Q L. Counterparty FR Y-14Q M. Balances
+1
+Overview
+This user guide is for FR Y-14 schedules that are processed by the Statistics function:
+• FR Y-14 General (GEN) Schedule
+• FR Y-14 Annual schedule A, B, C, E, and F
+• FR Y-14 Quarterly schedules A.1 through A.10, B, C, D, E, F, G, H.1*, H.2*, H.3*, H.4*, J, K, L, and M
+Respondents will submit their XML data files and CSV Respondent Edit Reports for the FR Y- 14A/Q through the Reporting Central application. Respondents will be able to submit any file type for the FR Y-14GEN series (file expectations will be communicated separately). The process of submitting qualitative supporting information will remain unchanged, and respondents should continue to submit that information electronically through OASiS.
+The Reporting Central application will subject firm’s XML data files and CSV Respondent Edit Report submissions to basic file level validations that must be resolved before submissions can be accepted. Note that for the FR Y-14GEN series, no file level validations will be performed.
+See Appendix A for further information on basic file level validations performed by Reporting Central.
+List of FR Y-14 Series
+In Reporting Central each FR Y-14A/Q schedule is considered a “series” of its own. The table below lists the names of the retail schedules as they appear in Reporting Central.
+Reporters will submit files for one, several, or all these series according to the materiality rules in the FR Y-14A/Q reporting instructions.
+| Name as it appears in Reporting Central | FR Y-14A/Q | Frequency | Collection ID |
+| --- | --- | --- | --- |
+| FY14GEN | General | N/A | N/A |
+| FY14AA | Summary Schedule | Annual | SMRY - ACT, SMRY - CAP_PROJ, SMRY - OPSRISK, SMRY - OTTI_ACT, SMRY - OTTI_CUSIP, SMRY - OTTI_MV, SMRY - OTTI_PROJ, SMRY - PROJ, SMRY – VINT, SMRY - TRDNG |
+| FY14AB | Scenario | Annual | SCNR - DEF, SCNR - VAL |
+| FY14AC | Regulatory Capital Instruments | Annual | RCI - PROJ, RCI - SUPP |
+| FY14AE | Operational Risk | Annual | OPSRISK - LR, OPSRISK - OL, OPSRISK - RI, OPRISK - RS |
+| FY14AF | Business Plan Changes | Annual | BPC - CAP_PROJ, BPC - PROJ |
+| FY14QA1 | A.1. Retail International Auto Loan | Quarterly | RETAIL - INTAUTO |
+| FY14QA2 | A.2 Retail US Auto Loan | Quarterly | RETAIL - AUTO |
+| FY14QA3 | A.3. Retail International Credit Card | Quarterly | RETAIL - INTCARD |
+| FY14QA4 | A.4. Retail International Home Equity | Quarterly | RETAIL - INTHE |
+| FY14QA5 | A.5. Retail International First Lien Mortgage | Quarterly | RETAIL - INTFM |
+| FY14QA6 | A.6. Retail International Other Consumer | Quarterly | RETAIL - INTLOTHCONS |
+| FY14QA7 | A.7. Retail US Other Consumer | Quarterly | RETAIL - USOTHCONS |
+| FY14QA8 | A.8. Retail International Small Business | Quarterly | RETAIL - INTSB |
+| FY14QA9 | A.9. Retail US Small Business | Quarterly | RETAIL - USSB |
+| FY14QA10 | A.10. Retail Student Loan | Quarterly | RETAIL - STUDENT |
+| FY14QB | Securities | Quarterly | SCRTS – AGG, SCRTS – HDG, SCRTS - MS |
+| FY14QC | Regulatory Capital Instruments | Quarterly | RCI – ISS, RCI – MS, RCI - RED |
+| FY14QD | Regulatory Capital (formerly Regulatory Capital Transitions) | Quarterly | RCT – MS, RCT - PA |
+| FY14QE | Operational Risk | Quarterly | OPSRISK - BL, OPSRISK – MS, OPSRISK – RF, OPSRISK – TH, OPSRISK - UOM |
+| FY14QF | Trading | Quarterly | TRDNG - AGNCS, TRDNG - CMDTY, TRDNG - CMDTY_SVG, TRDNG - CRED_CORR, TRDNG - |
+2
+| Name as it appears in Reporting Central | FR Y-14A/Q | Frequency | Collection ID |
+| --- | --- | --- | --- |
+| | | | EQ_BG, TRDNG - EQ_SVG, TRDNG - FVO, TRDNG - FX_SPOT, TRDNG - FX_VEGA, TRDNG - IDR_CC, TRDNG - IDR_CC_BI, TRDNG - IDR_CC_BP, TRDNG - IDR_CC_BS, TRDNG - IDR_JTD, TRDNG - M_ARS_CC, TRDNG - OTH_EQ, TRDNG - OTH_RTS, TRDNG - PE_OFVA, TRDNG - RTS_DV01, TRDNG - RTS_VEGA, TRDNG - SEC_PROD, TRDNG - SOV_CRED |
+| FY14QG | PPNR | Quarterly | PPNR |
+| FY14QH1 | H.1. Wholesale Risk Corporate Loan Data | Quarterly | CIL |
+| FY14QH2 | H.2. Wholesale Commercial Real Estate | Quarterly | CRE |
+| FY14QH3 | H.3. Wholesale Line of Business | Quarterly | CLBS |
+| FY14QH4 | H.4. Wholesale Internal Risk Rating | Quarterly | CIRR |
+| FY14QJ | FVO/HFS | Quarterly | FVO - SMRY, FVO - VNTG |
+| FY14QK | Supplemental | Quarterly | SUPP |
+| FY14QL | Counterparty | Quarterly | CPC - AGG_RTS_COL, CPC - CRED_QLTY, CPC - DRV_AGG, CPC - DRV_MTM, CPC - EE_RNK, CPC - RNK, CPC - SENS_AGG, CPC - SENS_RANK, CPC - SFT_AGG, CPC - SFT_CP, CPC - SFT_MTM, CPC - DRV_SFT, CPC - IND_REG |
+| FY14QM | Balances | Quarterly | BLNCS |
+3
+4
+Reporter Dashboard
+The Reporter Dashboard appears after the external user logs into Reporting Central and will display as-of dates for all reports the users has access to for the selected RSSD, as well as any as-of dates with a missing report.
+Multiple functionalities are displayed on this page that allow the user to:
+• Verify the reporting statuses of its reports.
+• Select to go to the Search page.
+• Select to go to the Data Entry page
+• Select the “Open Schedule” icon to go to the Data Entry page for a specific report.
+When required to file a future as-of date, the user can navigate to the Data Entry and select from the list of available dates.
+5
+Upload for FR Y-14A/Q Series
+Note that if a CSV or XML file is larger than 2GB, the file must be compressed.
+See Appendix B for further details regarding file compression.
+The FR Y-14 Data Entry page has a section to upload Financial Data files and a section for Remarks files.
+Upload files may be:
+Financial Data
+• XML file of financial data
+• ZIP file containing one XML file
+Remarks
+• CSV file of edit remarks
+• ZIP file containing one CSV file
+The Remarks file must include “RespondentEditReport” within the file name.
+You can submit both files at the same time or in separate submissions. Users can also submit multiple files in either section at the same time.
+One difference for the FR Y-14 compared to other series is the user is always in edit mode when they enter the screen for a report that has been submitted. For other series the user must select the “Modify” button to enter edit mode.
+6
+Click on the corresponding Upload button. In this example we selected the Upload button for Financial Data.
+To begin the uploading process, the user should click on the icon above “Upload Your Attachments Here” in the middle of the page or by dragging the file from their Explorer to the Upload icon.
+7
+After selecting a file from their computer, the user can select the Upload button.
+The file uploads and appears on the attachment screen. It has not yet been submitted for processing by Reporting Central and the “X” to the right can be used to delete the file.
+8
+When a file has a status of “Validating,” the “Refresh” button can be selected periodically to see if the validation is complete. Once validation is complete the status will change to either “Valid” or “Invalid.” In this example, two files have been uploaded for validation in a report with one file that was previously submitted.
+The user may select “Save” to leave the page while file validation is in progress. The validation will continue despite the user being on a separate page and the user can return to the Data Entry screen to check the status of the validation process.
+9
+The “+ Add Row” button can be used to add rows to each section as needed to upload additional files.
+When all the files in a report have a status of “Valid,” the user can select the “Submit” button to transmit to the Federal Reserve. Once a file has been submitted it can no longer be deleted or replaced. Any revisions to the report must be made by submitting additional files.
+10
+When the user selects to submit they will be asked to confirm the action.
+The user receives this confirmation message after submitting the report.
+11
+The “Close” button will save any changes that have been made and return the user to the Dashboard.
+The “Delete” button will give the user the option to delete the draft.
+12
+Revisions
+For revisions, the user can add files to update their data while any files with a Submitted status cannot be replaced. This can be done by using the “+ Add Row” button that is used to upload multiple files in a section during the original submission.
+13
+Validation of XML and CSV files (for all FR Y-14A/Q series) In addition to ensuring a valid file type, Reporting Central checks the uploaded file for other validations listed in Appendix A of this user guide. If an uploaded file fails any validations, Reporting Central will display error messages.
+The upload process will capture schema validations and up to 1,000 custom validation errors. If any errors were detected, a link “Click to View Errors” will become available to download the error messages and the status of upload is marked as “Invalid”. If the error count captures more than the allotted amount of errors, you will see a message at the end of the file that says “The maximum number of file validations have been executed.”
+Examples:
+14
+References
+Reporting Central main site
+• https://www.frbservices.org/central-bank/reporting-central/index.html
+Reporting Central external user guide
+• https://www.frbservices.org/assets/central-bank/reporting-central/external-user-guide.pdf
+Appendix A: Validations Performed by Reporting Central for FR Y-14A/Q Series (Except for FR Y-14GEN)
+If an uploaded file fails any validation, Reporting Central will display error message output in an excel spreadsheet. The spreadsheet can be downloaded by clicking on the link, “Click to View Errors”.
+Validations apply to the XML file, the Remarks (CSV) file, or both. Some validations apply to specific schedules (Reporting Central series) within the FR Y-14.
+NOTE: FR Y-14GEN series does not have any validations.
+| # › 1 | Series › All | Category › All | Requirement › Confirm submitted files are only .CSV or .XML extension. | Final Error Message › Financial data files must have extension .XML › Remarks data files must have extension .CSV |
+| --- | --- | --- | --- | --- |
+| 2 | All | Remarks | Confirm for remarks file names contain the displayed text, ‘RespondentEdit Report’. The file name may contain text before and after the requested text. | Remarks data file name must contain “RespondentEditReport”. |
+| 3 | All | XML | Confirm the required primary keys are nonnull. The “FRY14 Technical Documentation” lists primary keys of each series. | |
+| 4 | All | Remarks | Confirm the required primary keys are nonnull. The “FRY14 Technical Documentation” lists primary keys of each series. | |
+| 5 | FR Y- 14Q | All | Confirm Reporting_Mont | For Remarks file row and col are included |
+15
+| # › 6 | Series › Retail schedule s A.1 through A.10 › FR Y- 14Q Retail schedule s A.1 through A.10 | Category › All | Requirement › h is in the required format,’yyyymm dd’. Confirm the ‘yyyy’ matches the year provided in the metadata. Confirm the ‘mm’ portion of Reporting_Mont h is one of three month’s corresponding with the reporting quarter. Confirm the ‘dd’ portion of the Reporting_Mont h is the last day of the month based on the month. › Confirm Segment_ID are the correct length and start with a leading zero. Confirm the Segment_ID only has allowed values at each position within the Segment_ID. | Final Error Message › For Financial data file, row and col information is not available › For Remarks file For Financial data file |
+| --- | --- | --- | --- | --- |
+16
+| # › 7 › 8 › 9 › 10 | Series › All | Category › XML | Requirement › XSD validation must verify that the XML file is correctly formatted and complete. Each XML file must utilize a specified root element, pursuant to the requirements provided for each report schedule. Files that do not contain an opening and closing root element must not be accepted. › If the XML tags (start and end) cannot be verified against predefined XSD, the output should indicate the unidentified XML tag and its position in the file. › If the XML file is incorrectly formatted or incomplete, the output should indicate the root cause. › If the XML file contains an ID_RSSD and/or D_DT that is/are not aligned with the required metadata firms complete as part of the submission, the output should | Final Error Message › XML schema validations will be displayed › XMLschema validations will be displayed |
+| --- | --- | --- | --- | --- |
+17
+| # | Series | Category | Requirement | Final Error Message |
+| --- | --- | --- | --- | --- |
+| | | | indicate the incorrect ID_RSSD or D_DT and its position in the file. | |
+| 11 | All except for FR Y- 14Q Retail schedule s A.1 through A.10 | XML | If the XML file does not contain a correctly format ‘D_DT’ for each record within a XML file, the output should indicate all instances of incorrect ‘D_DT’ and their corresponding line position in the file. The output should also indicate the correct (expected) format, ‘YYYY- MMdd'T'00:00:00.00 0’ or ‘YYYY-MMdd'T'00:00:00’. | |
+| 12 | All | Remarks | The CSV file must utilize the predefined column names and ordering. Reference the ‘Respondent Edit Report’ template within the Technical Instructions package to identify the correct column names and order. | |
+| 13 | All | Remarks | If the CSV file does not utilize a correct ‘Collection ID’ | |
+18
+| # › 14 › 15 | Series › All | Category › Remarks | Requirement › for each record within a remarks file, the output should indicate all instances of incorrect ‘Collection ID’ and their corresponding line position in the file. The output must also indicate the accepted (expected) ‘Collection ID’. › If the CSV file does not contain a correctly formatted ‘As-of Date’ for each record within a remarks file, the output should indicate all instances of incorrect ‘As-of Date’ and their corresponding line position in the file. The output should also indicate the correct (expected) format, ‘YYYY- MM-DD 00:00:00.000’. › If the CSV file does not contain the ID_RSSD of the reporting institution, the output should indicate the ID_RSSD provided does not match the expected ID_RSSD. | Final Error Message |
+| --- | --- | --- | --- | --- |
+19
+| # | Series | Category | Requirement | Final Error Message |
+| --- | --- | --- | --- | --- |
+| 16 | All | Remarks | If the CSV file contains carriage return (CR) or line feed (LF) within a column, the output should indicate the first instance of the incorrect CR or LF and its line position in the file. | |
+| 17 | All | Remarks | If the CSV file contains any blank rows, the output should indicate the number of blank rows and their line position within the file. | |
+| 18 | All | Remarks | No records provided in the remarks file. | No record found in remarks file. |
+| 19 | All | All | File parsing exceptions for both remarks and financial data | The submitted file could not be validated, please refer to the technical instructions for guidance and resubmit |
+20
+21
+Appendix B: File compression for upload files larger than 2GB
+A file larger than 2GB must be compressed before it can be uploaded.
+Compressed files must be ZIP (legacy compression), not the latest ZIPX extension.. GZ and 7z extensions are also not supported.
+The file must also be compressed using the DEFLATE compression algorithm. Please note that the “Windows Send to Compressed Folder” compression method uses a proprietary compression algorithm for files larger than 2GB so a different compression utility such as Winzip or 7-Zip is required for large files (>2GB).
+See below for an error message when a ZIP file is uploaded using an unsupported compression algorithm.
+22
+Using 7-Zip as an example of a supported compression algorithm, the instructions for compressing a file are as followed:
+1. Right click on a file to be compressed.
+2. Select 7- Zip.
+3. Select “Add to archive...”.
+23
+4. Select “zip” as Archive format.
+24
+5. Select “Deflate” as Compression method.
+6. Click OK button.
+Once the file has been compressed into a ZIP file, you can upload to Reporting Central.

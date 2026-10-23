@@ -1,0 +1,181 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2026-06-30" reporterId="12345" series="FRY7Q">
+    <itemData confidential="N" estimated="N" mdrm="RSSD9017">
+      <value>FBO Test</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="RSSD9110">
+      <value>68 Liberty Street</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="RSSD9130">
+      <value>New York</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="RSSD9005">
+      <value>USA</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="RSSD9220">
+      <value>10007</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQC447">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQKY38">
+      <value />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQ8901">
+      <value>VP</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQ8902">
+      <value>314-720-0000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQ9116">
+      <value>314-720-1000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQ4086">
+      <value>t.test2@tt.com</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQC490">
+      <value>J. Johnson</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQC491">
+      <value>Vice President</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQJ196">
+      <value>06/30/2025</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQB162">
+      <value>1</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQ8274">
+      <value>8274</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQ3792">
+      <value>3792</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQA223">
+      <value>223</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQ2170">
+      <value>2270</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOD2170">
+      <value>2271</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBODNK61">
+      <value>2271</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBODS292">
+      <value>292</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQC116">
+      <value>20250630</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQP859">
+      <value>859</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQP865">
+      <value>865</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOT8274">
+      <value>8274</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQ5311">
+      <value>5311</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOT3792">
+      <value>3792</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQFB52">
+      <value>5200.0002</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQFB53">
+      <value>5200.0003</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQFB54">
+      <value>5200.0004</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQFS41">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQFS42">
+      <value>42</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQFS43">
+      <value>43</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQFS44">
+      <value>4400.0001</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQNK59">
+      <value>12411</value>
+      <context mdrm="FBOQN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQ9017">
+      <value>APPLE</value>
+      <context mdrm="FBOQN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQ9005">
+      <value>USA</value>
+      <context mdrm="FBOQN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBO1B162">
+      <value>0</value>
+      <context mdrm="FBOQN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBO18274">
+      <value>8574</value>
+      <context mdrm="FBOQN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBO13792">
+      <value>4292</value>
+      <context mdrm="FBOQN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBO1A223">
+      <value>233</value>
+      <context mdrm="FBOQN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBO12170">
+      <value>2470</value>
+      <context mdrm="FBOQN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBO1C116">
+      <value>20250630</value>
+      <context mdrm="FBOQN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQNK59">
+      <value>45711</value>
+      <context mdrm="FBOQN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQ9017">
+      <value>TEST2</value>
+      <context mdrm="FBOQN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBOQ9005">
+      <value>USA</value>
+      <context mdrm="FBOQN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBO1B162">
+      <value>0</value>
+      <context mdrm="FBOQN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBO18274">
+      <value>25274</value>
+      <context mdrm="FBOQN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBO13792">
+      <value>25792</value>
+      <context mdrm="FBOQN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBO1A223">
+      <value>2423</value>
+      <context mdrm="FBOQN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBO12170">
+      <value>22700</value>
+      <context mdrm="FBOQN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FBO1C116">
+      <value>20250630</value>
+      <context mdrm="FBOQN186" value="2" />
+    </itemData>
+  </report>
+</reportingFile>

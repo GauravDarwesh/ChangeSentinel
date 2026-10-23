@@ -1,0 +1,104 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2025-10-10" reporterId="123456789" series="FR2004WI">
+    <itemData confidential="N" estimated="N" mdrm="GSWI1962">
+      <value>20280915</value>
+      <context mdrm="GSWIN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWI8801">
+      <value>3.375</value>
+      <context mdrm="GSWIN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM690">
+      <value>1</value>
+      <context mdrm="GSWIN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM691">
+      <value>2</value>
+      <context mdrm="GSWIN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM692">
+      <value>3</value>
+      <context mdrm="GSWIN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM693">
+      <value>4</value>
+      <context mdrm="GSWIN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM694">
+      <value>3</value>
+      <context mdrm="GSWIN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWI1962">
+      <value>20350815</value>
+      <context mdrm="GSWIN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWI8801">
+      <value>4.250</value>
+      <context mdrm="GSWIN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM690">
+      <value>1</value>
+      <context mdrm="GSWIN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM691">
+      <value>2</value>
+      <context mdrm="GSWIN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM692">
+      <value>3</value>
+      <context mdrm="GSWIN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM693">
+      <value>4</value>
+      <context mdrm="GSWIN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM694">
+      <value>10</value>
+      <context mdrm="GSWIN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWI1962">
+      <value>20550815</value>
+      <context mdrm="GSWIN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWI8801">
+      <value>4.750</value>
+      <context mdrm="GSWIN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM690">
+      <value>1</value>
+      <context mdrm="GSWIN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM691">
+      <value>2</value>
+      <context mdrm="GSWIN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM692">
+      <value>3</value>
+      <context mdrm="GSWIN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM693">
+      <value>4</value>
+      <context mdrm="GSWIN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM694">
+      <value>30</value>
+      <context mdrm="GSWIN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM690">
+      <value>3</value>
+      <context mdrm="GSWIN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM691">
+      <value>6</value>
+      <context mdrm="GSWIN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM692">
+      <value>9</value>
+      <context mdrm="GSWIN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSWIM693">
+      <value>12</value>
+      <context mdrm="GSWIN186" value="Total" />
+    </itemData>
+  </report>
+</reportingFile>

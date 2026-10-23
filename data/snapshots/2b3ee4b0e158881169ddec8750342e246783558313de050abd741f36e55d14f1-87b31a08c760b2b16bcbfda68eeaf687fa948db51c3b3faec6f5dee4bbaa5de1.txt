@@ -1,0 +1,126 @@
+<!-- image -->
+## Reporting Central XML User Guide
+## FR Y-7Q The Capital and Asset Report for Foreign Banking Organizations
+Federal Reserve System Statistics Function July 2026
+Contents
+General Information ........................................................................................................................................ 3
+How the XML File Is Structured ...................................................................................................................... 3
+XML Tags and Their Meanings ....................................................................................................................... 4
+FR Y-7Q Item Data MDRMs ........................................................................................................................... 5
+Example FR Y-7Q XML File Upload ............................................................................................................... 8
+How to upload a file..................................................................................................................9
+## General Information
+The Federal Reserve System's Reporting Central Application provides the ability for a reporting entity to submit their reports electronically using an XML file. This document describes the required format for creating the XML file for the FR Y-7Q (Capital and Asset Report for Foreign Banking Organizations) report. A full sample XML file can be found at the end of this document.
+## How the XML File Is Structured
+Each XML file contains financial data for one reporting entity and as-of date. The data in the file is organized into the following sections.
+- Reporting File
+- o Create date
+- o Create time
+- Report
+- o Respondent Id
+- o As-Of Date
+- o Series Id
+- Item Data
+- o Context used for data in a variable schedule FR Y-7Q schedule Part 2 is variable schedule
+- o Value
+## XML structure or schema:
+```
+<?xml version="1.0" encoding="UTF-8"?> <reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd"> <report series="FRY7Q" asOfDate="2026-06-30" reporterId="12345> <!-- Cover Page items --> <itemData confidential="N" estimated="N" mdrm="MDRM1111"> <value>value for "MDRM1111"</value> </itemData> <!-Non-Variable schedule items - Part 1 and Part 1A --> <itemData confidential="N" estimated="N" mdrm="MDRM1116"> <value>value for "MDRM1116"</value> </itemData> <!-- Variable schedule items - Part 2 --> <!-- Item #1 --> <itemData confidential="N" estimated="N" mdrm="MDRM1114"> <value> value for 1 st occurrence of "MDRM1114"</value> <context mdrm="MDRM1010" value="1"/> </itemData> <itemData confidential="N" estimated="N" mdrm="MDRM1115"> <value>value for 1 st occurrence of "MDRM1115"</value> <context mdrm="MDRM1010" value=" 1"/> </itemData> <!-- Item #2 --> <itemData confidential="N" estimated="N" mdrm="MDRM1114"> <value> value for 2 nd occurrence of "MDRM1114"</</value> <context mdrm="MDRM1010" value=" 2"/> </itemData> <itemData confidential="N" estimated="N" mdrm="MDRM1115"> <value>value for 2 nd occurrence of "MDRM1115"</value> <context mdrm="MDRM1010" value=" 2"/> </itemData>
+```
+&lt;/report&gt; &lt;/reportingFile&gt;
+Reporting File is a wrapper that encapsulates all the data in the file; it must include the create date and time of the file.
+Report is a wrapper that encapsulates all the data items; it must include attributes to identity the respondent Reporter Id, the report As of Date, and the report Series Id.
+Item Data is a wrapper that encapsulates the report data values for the reporting entity and as of date.
+XML Tags and Their Meanings
+| XML Tag/Attribute | Meaning/How Used |
+| --- | --- |
+| <reportingFile> | A tag used to encapsulate all the data in the file |
+| xsi:noNamespaceSchemaLocation="RCInputXML- 1.0-20160520.xsd" | Attribute of the reportingFile tag which specifies the location of the Schema |
+| createTime="09:30:45" | Attribute of the reportingFile tag which specifies the time the file was created |
+| createDate="2016-08-13 | Attribute of the reportingFile tag which specifies the date the file was created |
+| xmlns:xsi="http://www.w3.org/2001/XMLSchema- instance" | Optional attribute of the reportingFile tag which tells the schema-validator that all elements used in the XML file are declared in the "http://www.w3.org/2001/XMLSchema- instance" namespace |
+| <report> | A tag used to identify the series name, the reporting entity and the as of data of the data. |
+| reporterId="9999999999" | Attribute of the report tag which specifies the respondent ID |
+| asOfDate="2016-09-30" | Attribute of the report tag which specifies the as of date of the report |
+| series="SERIESID" | Attribute of the report tag which specifies the series name |
+| <itemData> | A tag used to encapsulate the item and its value from the report |
+| mdrm="MDRM9999" | Attribute of the itemData tag which identifies a specific item in the report |
+| <value> | A tag encapsulated within itemData tag and contains the value of the item |
+| <context> | An optional tag encapsulated within itemData tag used to identify the order of a variable list of items |
+| mdrm="MDRM8888" | Attribute of the context tag which identifies a group of items in the report |
+| value="1" | Attribute of the context tag which identifies the order of in the item group |
+## FR Y-7Q Item Data MDRMs
+| Cover Page - Data Items | Cover Page - MDRM | Cover Page - Data Type | Cover Page - Field Length | Cover Page - Notes |
+| --- | --- | --- | --- | --- |
+| Name / Title | FBOQ8901 | Text | 72 | |
+| Area Code / Phone Number | FBOQ8902 | Text | 30 | |
+| Area Code / FAX Number | FBOQ9116 | Text | 30 | |
+| E-mail Address of Contact | FBOQ4086 | Text | 72 | |
+| Legal Name of Foreign Banking Organization | RSSD9017 | Text | 72 | |
+| Mailing Address of Foreign Banking Organization | RSSD9110 | Text | 72 | |
+| City | RSSD9130 | Text | 30 | |
+| Country | RSSD9005 | Text | 72 | |
+| Postal Code | RSSD9220 | Text | 30 | |
+| Is confidential treatment requested for any portion of this report submission? (0=No, 1=Yes) | FBOQC447 | Numeric | 1 | |
+| In accordance with the General Instructions for this report, if a letter justifying this request is being provided along with the report, enter "1". If a letter justifying this request has been provided separately, enter "0". | FBOQKY38 | Numeric | 1 | If confidentiality treatment is not requested, then this item should be included in the submission file and reported as "null". |
+| Printed Name of Officer | FBOQC490 | Text | 72 | |
+| Title of Officer | FBOQC491 | Text | 72 | |
+| Date of Signature (MM/DD/YYYY) | FBOQJ196 | Text | 10 | |
+| Part 1A Data Items | MDRM | Data Type | Field Length | Notes |
+| --- | --- | --- | --- | --- |
+| 1. Is the foreign banking organization required by its home-country supervisor to calculate its capital ratios using a risk-adjusted framework consistent with the Basel Capital Accord? If the answer to line item 1 is "Yes," provide capital and asset information in U.S. dollars using the procedure consistent with the risk-based framework required by the home-country supervisor. If the answer to line item 1 is "No," then provide the organization's best approximation under the Basel Capital Accord of the capital and asset information requested in U.S. dollars. | FBOQB162 | Numeric | 1 | Reported in up to 1 digit, 0=NO, 1=YES |
+| 2. Tier 1 capital | FBOQ8274 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 3. Total risk-based capital | FBOQ3792 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 4. Risk-weighted assets | FBOQA223 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 5. Total consolidated assets at the end of the reporting period | FBOQ2170 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 6. Total combined assets of U.S. operations, net of intercompany balances & transactions between U.S. domiciled affiliates, branches, and agencies | | | | |
+| Part 1A - Data Items | Part 1A - MDRM | Part 1A - Data Type | Part 1A - Field Length | Part 1A - Notes |
+| --- | --- | --- | --- | --- |
+| 6. a. Total assets for the quarter | FBOD2170 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 6. b. Average total assets for the quarter | FBODNK61 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes. Reporters that file FR Y-15 (with the same RSSD ID) should not provide this value & should leave the item blank. This value will be populated by Reporting Central |
+| (For Top-tier FBO Only) 7. Total U.S. non-branch assets | FBODS292 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| (Item 6 for Lower-tier FBO) 8. Enter the as-of date for the financial data provided above (report the date in YYYYMMDD format) | FBOQC116 | Date | YYYY MMDD | Reported in date in this exact format. |
+| Part 1B - Data Items | Part 1B - MDRM | Part 1B - Data Type | Part 1B - Field Length | Part 1B - Notes |
+| --- | --- | --- | --- | --- |
+| 1. Common equity tier 1 capital | FBOQP859 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 2. Additional tier 1 capital | FBOQP865 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 3. Tier 1 capital (sum of items 1 and 2) | FBOT8274 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 4. Tier 2 capital | FBOQ5311 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 5. Total risk-based capital (sum of items 3 and 4) | FBOT3792 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 6. Capital conservation buffer | FBOQFB52 | Numeric | 8,4 | Reported in up to 8 digits total 4 digits before the decimal and 4 digits after the decimal. |
+| 7. Countercyclical capital buffer (if any) | FBOQFB53 | Decimal | 8,4 | Reported in up to 8 digits total 4 digits before the decimal and 4 digits after the decimal. |
+| 8. GSIB buffer | FBOQFB54 | Decimal | 8,4 | Reported in up to 8 digits total 4 digits before the decimal and 4 digits after the decimal. |
+| 9. Compliance with restrictions on capital distributions and discretionary bonus payments associated with a capital buffer (enter "1" for Yes; enter "0" for No.) | FBOQFS41 | Numeric | 1 | Reported in up to 1 digit, 0=NO, 1=YES |
+| 10. Home country capital measure used in the numerator of the Basel III leverage ratio | FBOQFS42 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 11. Home country exposure measure used in the denominator for the Basel III leverage ratio | FBOQFS43 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 12. Minimum home country leverage ratio (if different from Basel III leverage ratio, as applicable) | FBOQFS44 | Decimal | 8,4 | Reported in up to 8 digits total 4 digits before the decimal and 4 digits after the decimal. |
+| Part 2* Data Items | MDRM | Data Type | Field Length | Notes |
+| --- | --- | --- | --- | --- |
+| For FRS Use Only RSSD ID | FBOQNK59 | Numeric | 10 | Reported in whole dollars without commas and leading zeroes. RBA will manually input the RSSD ID. |
+| Legal title of lower-tier FBO operating a branch, or an agency, or owning an Edge/Agreement Corporation, or a commercial lending company subsidiary in the United States. | FBOQ9017 | Text | 72 | Reported in up to 72 characters. |
+| Country of lower-tier FBO operating a branch, or an agency, or owning an Edge/Agreement corporation, or a commercial lending company subsidiary in the United States. | FBOQ9005 | Text | 30 | Reported in up to 30 characters. |
+| 1.See question above | FBO1B162 | Numeric | 1 | Reported in up to 1 digit, 0=NO, 1=YES |
+| 2.Tier 1 capital | FBO18274 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 3.Total risk-based capital | FBO13792 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 4.Risk-weighted assets | FBO1A223 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 5.Total consolidated assets at the end of the reporting period | FBO12170 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 6.Enter the as-of date for the financial data provided | FBO1C116 | Date | YYYY MMDD | Reported in date in this exact format. |
+| Contexts used in variable schedules: - Schedule | Contexts used in variable schedules: - Data Items | Contexts used in variable schedules: - MDRM | Contexts used in variable schedules: - Data Type | Contexts used in variable schedules: - Field Length | Contexts used in variable schedules: - Notes |
+| --- | --- | --- | --- | --- | --- |
+| Part 2 | Item Number | FBOQN186 | Numeric | | Every data item in this table should contain a context tag. |
+## Example FR Y-7Q XML File Upload
+The following FR Y-7Q XML file upload example includes sample items for the cover page, Part 1A, Part 1B, and Part 2 Schedule.
+```
+<?xml version="1.0" encoding="UTF-8"?> <reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd"> <report series="FRY7Q" asOfDate="2026-06-30" reporterId="12345"> <!-- Cover Page items --> <itemData confidential="N" estimated="N" mdrm="FBOQC490"> <value>John Smith</value> </itemData> <itemData confidential="N" estimated="N" mdrm="FBOQ8901"> <value>Officer</value> </itemData> <!-Part 1A Schedule items --> <itemData confidential="N" estimated="N" mdrm=" FBOQB162"> <value>0</value> </itemData> <itemData confidential="N" estimated="N" mdrm="FBOQ8274"> <value>200</value> </itemData> <!-Part 1B Schedule items --> <itemData confidential="N" estimated="N" mdrm=" FBOQP859"> <value>1000</value> </itemData> <itemData confidential="N" estimated="N" mdrm="FBOQP865"> <value>2000</value> </itemData> <!-- Part 2 items --> <!-- Item #1 --> <itemData confidential="N" estimated="N" mdrm="FBOQ9017"> <value>Title 1</value> <context mdrm="FBOQN186" value="1"/> </itemData> <itemData confidential="N" estimated="N" mdrm="FBOQ9005"> <value>USA</value> <context mdrm="FBOQN186" value="1"/> </itemData> <!-- Item #2 --> <itemData confidential="N" estimated="N" mdrm="FBOQ9017"> <value>Title 2</value> <context mdrm="FBOQN186" value="2"/> </itemData> <itemData confidential="N" estimated="N" mdrm="FBOQ9005"> <value>USA</value> <context mdrm="FBOQN186" value="2"/> </itemData> </report> </reportingFile>
+```
+## Report Submission in Reporting Central Cloud
+In Reporting Central, select the "Upload file" tab and then click the "Upload your files here" tab.
+<!-- image -->
+Then, navigate to the stored text file and select the filename so it appears in the 'File name:' box. Select "Open" to continue.
+<!-- image -->
+Next select the "Upload" tab.
+<!-- image -->
+If there are no formatting issues during the file upload you will get a "File Upload Complete" message the data will load directly into the report screen.
+<!-- image -->
+The report data can then be validated, saved, submitted or deleted. If errors exist in the text file error messages will appear in the file upload window, which can be used to troubleshoot any formatting issues.
+<!-- image -->

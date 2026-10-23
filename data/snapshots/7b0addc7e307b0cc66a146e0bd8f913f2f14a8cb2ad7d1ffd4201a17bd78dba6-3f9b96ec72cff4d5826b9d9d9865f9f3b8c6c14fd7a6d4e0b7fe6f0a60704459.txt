@@ -1,0 +1,55 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="2024-01-22" createTime="14:23:11" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2026-02-02" reporterId="41218" series="FR2028S">
+    <itemData confidential="N" estimated="N" mdrm="XMA19912">
+      <value>0202</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA29912">
+      <value>0203</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA39912">
+      <value>0204</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA49912">
+      <value>0205</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA59912">
+      <value>0206</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA17923">
+      <value>4.500</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA27923">
+      <value>3.500</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA37923">
+      <value>5.000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA47923">
+      <value>4.250</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMA57923">
+      <value>4.000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA8901">
+      <value>John Smith</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA8902">
+      <value>123-456-7890</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA9017">
+      <value>Test Bank</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA9028">
+      <value>123 Test Bank</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA9130">
+      <value>Atlanta</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA9200">
+      <value>GA</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="XMTA9220">
+      <value>30144</value>
+    </itemData>
+  </report>
+</reportingFile>

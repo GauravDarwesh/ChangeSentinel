@@ -1,0 +1,14 @@
+[SHEET] Item 2(b) Foreign Companies
+Legal Name | City
+| Country | Legal Entity Identifier (LEI) | Percentage of Class of Voting Shares Held
+| Percent of consolidated assets that are located in the U.S. | Percent of gross revenues derived from the U.S. | Is the foreign company a subsidiary?
+(0 = No, 1 = Yes) | NAICS Code of U.S. activities | Are the U.S. activities the same/related to those conducted abroad?
+(0 = No, 1 = Yes)
+(Column A) | (Column B) | (Column C) | (Column D) | (Column E) | (Column F) | (Column G) | (Column H) | (Column I) | (Column J)
+FFBO QB91 | FFBO QB92 | FFBO QB93 | FFBO QB94 | FFBO QB95 | FFBO QB96 | FFBO QB97 | FFBO QB98 | FFBO QB99 | FFBO QC00
+Miracle Companies | London | United Kingdom | 724500ZUVMX72T6IMS05 | 0.51 | 0.25 | 0.25 | 1 | 51929 | 1
+Ambassador, Inc. | Munich | Germany | N/A | 0.33 | 0.27 | 0.27 | 1 | 524127 | 0
+Cavalier Enterprise | Paris | France | 9845006HEW4659760C58 | 1 | 0.33 | 0.85 | 1 | 53126 | 1
+[SHEET] Dropdowns
+0
+1

@@ -1,0 +1,5 @@
+[SHEET] Item 2(a)2 Additional Entities
+Legal Name | City | State or Country | State or Country of Incorporation | Legal Entity Identifier
+(LEI) | Direct Holder
+(Column A) | (Column B) | (Column C) | (Column D) | (Column E) | (Column F)
+FFBO QB84 | FFBO QB85 | FFBO QB86 | FFBO QB87 | FFBO QB88 | FFBO QB89

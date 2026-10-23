@@ -1,0 +1,760 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="2024-01-22" createTime="14:23:11" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2022-01-03" reporterId="123456789" series="FR2004SD">
+    <itemData confidential="N" estimated="N" mdrm="GSSD1962">
+      <value>20231231</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD8801">
+      <value>0.750</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM694">
+      <value>2</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM695">
+      <value>108</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM696">
+      <value>85</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM697">
+      <value>-140</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM698">
+      <value>138</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM699">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM700">
+      <value>3</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM701">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM702">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM703">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM704">
+      <value>3</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM705">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM706">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM707">
+      <value>2</value>
+      <context mdrm="GSSDN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD1962">
+      <value>20250115</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD8801">
+      <value>1.125</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM694">
+      <value>3</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM695">
+      <value>560</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM696">
+      <value>495</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM697">
+      <value>-74</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM698">
+      <value>300</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM699">
+      <value>11</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM700">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM701">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM702">
+      <value>18</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM703">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM704">
+      <value>202</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM705">
+      <value>17</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM706">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM707">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD1962">
+      <value>20261231</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD8801">
+      <value>1.250</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM694">
+      <value>5</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM695">
+      <value>130</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM696">
+      <value>1036</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM697">
+      <value>5</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM698">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM699">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM700">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM701">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM702">
+      <value>745</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM703">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM704">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM705">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM706">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM707">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="3" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD1962">
+      <value>20281231</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD8801">
+      <value>1.375</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM694">
+      <value>7</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM695">
+      <value>1128</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM696">
+      <value>1082</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM697">
+      <value>180</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM698">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM699">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM700">
+      <value>15</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM701">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM702">
+      <value>180</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM703">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM704">
+      <value>15</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM705">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM706">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM707">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="4" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD1962">
+      <value>20311115</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD8801">
+      <value>1.375</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM694">
+      <value>10</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM695">
+      <value>10</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM696">
+      <value>703</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM697">
+      <value>-12</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM698">
+      <value>50</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM699">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM700">
+      <value>14</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM701">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM702">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM703">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM704">
+      <value>52</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM705">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM706">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM707">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="5" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD1962">
+      <value>20411115</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD8801">
+      <value>2.000</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM694">
+      <value>20</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM695">
+      <value>15</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM696">
+      <value>480</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM697">
+      <value>175</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM698">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM699">
+      <value>50</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM700">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM701">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM702">
+      <value>225</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM703">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM704">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM705">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM706">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM707">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="6" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD1962">
+      <value>20511115</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD8801">
+      <value>1.875</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM694">
+      <value>30</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM695">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM696">
+      <value>61</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM697">
+      <value>6</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM698">
+      <value>586</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM699">
+      <value>190</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM700">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM701">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM702">
+      <value>1</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM703">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM704">
+      <value>746</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM705">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM706">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM707">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="7" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD1962">
+      <value>20261015</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD8801">
+      <value>0.125</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM694">
+      <value>55</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM695">
+      <value>55</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM696">
+      <value>455</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM697">
+      <value>630</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM698">
+      <value>250</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM699">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM700">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM701">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM702">
+      <value>750</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM703">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM704">
+      <value>130</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM705">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM706">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM707">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="8" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD1962">
+      <value>20310715</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD8801">
+      <value>0.125</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM694">
+      <value>60</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM695">
+      <value>30</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM696">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM697">
+      <value>91</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM698">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM699">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM700">
+      <value>285</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM701">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM702">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM703">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM704">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM705">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM706">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM707">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="9" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD1962">
+      <value>20510215</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD8801">
+      <value>0.125</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM694">
+      <value>80</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM695">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM696">
+      <value>14</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM697">
+      <value>44</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM698">
+      <value>401</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM699">
+      <value>190</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM700">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM701">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM702">
+      <value>16</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM703">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM704">
+      <value>579</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM705">
+      <value>10</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM706">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM707">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="10" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD1962">
+      <value>20231031</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSD8801">
+      <value>0.035</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM694">
+      <value>102</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM695">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM696">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM697">
+      <value>136</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM698">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM699">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM700">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM701">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM702">
+      <value>135</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM703">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM704">
+      <value>1</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM705">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM706">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM707">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="11" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM695">
+      <value>2036</value>
+      <context mdrm="GSSDN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM696">
+      <value>4411</value>
+      <context mdrm="GSSDN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM697">
+      <value>1041</value>
+      <context mdrm="GSSDN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM698">
+      <value>1725</value>
+      <context mdrm="GSSDN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM699">
+      <value>441</value>
+      <context mdrm="GSSDN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM700">
+      <value>317</value>
+      <context mdrm="GSSDN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM701">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM702">
+      <value>2070</value>
+      <context mdrm="GSSDN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM703">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM704">
+      <value>1728</value>
+      <context mdrm="GSSDN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM705">
+      <value>27</value>
+      <context mdrm="GSSDN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM706">
+      <value>0</value>
+      <context mdrm="GSSDN186" value="Total" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="GSSDM707">
+      <value>2</value>
+      <context mdrm="GSSDN186" value="Total" />
+    </itemData>
+  </report>
+</reportingFile>

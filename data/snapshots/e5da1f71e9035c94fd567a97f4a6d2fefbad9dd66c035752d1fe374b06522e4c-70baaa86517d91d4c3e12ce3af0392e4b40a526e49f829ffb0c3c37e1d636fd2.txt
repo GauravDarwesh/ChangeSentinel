@@ -1,0 +1,9 @@
+[SHEET] Item 2(a)2 Additional Entities
+Legal Name | City | State or Country | State or Country of Incorporation | Legal Entity Identifier
+(LEI) | Direct Holder
+(Column A) | (Column B) | (Column C) | (Column D) | (Column E) | (Column F)
+FFBO QB84 | FFBO QB85 | FFBO QB86 | FFBO QB87 | FFBO QB88 | FFBO QB89
+Franklin Holding Company | New York | New York | New York | 9695008LHU2E5C2KA345 | Friendly Foreign Banking Organization
+Ernest Securities | London | United Kingdom | United Kingdon | N/A | Franklin Holding Company
+Cavalier Enterprise | Paris | France | France | 969500NUKHYEU12PXZ79 | Ernest Securities
+Blenheim Insurance | New York | New York | Delaware | 724500ZUVMX72T6IMS05 | Friendly Foreign Banking Organization
