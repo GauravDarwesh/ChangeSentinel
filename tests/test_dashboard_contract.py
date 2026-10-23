@@ -566,6 +566,7 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
         self.assertIn('id="newMonitorScout"', html)
         self.assertIn('id="newMonitorScoutHelp"', html)
         self.assertIn("syncScoutDiscoveryOption()", js)
+        self.assertIn("monitor linked pages through that depth", js)
         self.assertIn('"Scout discovery: " + (scoutEnabled ? "yes" : "no")', js)
         self.assertIn("registration on the request", workflow.lower())
         self.assertIn("--scout-config config/scout.json", workflow)
