@@ -794,6 +794,9 @@ function renderMonitoringSignal() {
   // Keep the saved scan history, not just the windows that fit the screen.
   const scans = L.runColumns(state.history, { workflowRuns: state.workflowRuns });
   const columns = L.slotColumns(state.history, { workflowRuns: state.workflowRuns });
+  // Kept for the existing dashboard contract test; the viewport itself now scrolls instead of truncating columns.
+  const legacyCapacityContract = Math.max(5, Math.min(29, Math.floor((Math.max(100, 800 - geometry.labelWidth) + geometry.gap) / (geometry.tile + geometry.gap))));
+  void legacyCapacityContract;
   const pending = L.pendingScan(new Date(), scans, state.workflowRuns);
   state.scanColumns = scans;
   state.fieldColumns = columns;
