@@ -319,6 +319,16 @@ class TestDashboardDataLoading(unittest.TestCase):
             with self.subTest(workflow_path=workflow_path):
                 self.assertIn("gh workflow run pages.yml", read(workflow_path))
 
+    def test_registration_requests_for_distinct_issues_are_not_cancelled_by_concurrency(self):
+        workflow = read(".github/workflows/register-monitor.yml")
+        # GitHub keeps at most one pending run per concurrency group. The group must
+        # therefore be issue-scoped so rapid bulk uploads cannot drop intervening requests.
+        self.assertIn("group: register-dashboard-monitor-${{ github.event.issue.number }}", workflow)
+        self.assertNotIn("group: register-dashboard-monitor\\n", workflow)
+        self.assertIn("cancel-in-progress: false", workflow)
+        self.assertIn("for attempt in 1 2 3 4 5 6; do", workflow)
+        self.assertIn("sleep $((attempt * 2 + RANDOM % 3))", workflow)
+
 class TestPersistedReferences(unittest.TestCase):
     def test_snapshot_and_evidence_references_exist_in_repository_data(self):
         """Raw GitHub is the snapshot/evidence origin; every persisted pointer must resolve."""
