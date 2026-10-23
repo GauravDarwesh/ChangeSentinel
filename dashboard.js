@@ -122,7 +122,8 @@ const state = {
   // Add a link: the page being explored, links found by level, and the ticked links.
   add: { step: "start", method: "explore", url: "", history: [], at: -1, page: null, pages: new Map(), loading: 0,
     tab: "selected", selectMode: false, candidates: [], picked: new Map(), anchor: "", origin: "explore", notes: [], info: "",
-    crawl: null, query: "", format: "ALL", show: "ALL", limit: 300, opened: {}, weekly: false, scope: "" },
+    crawl: null, query: "", format: "ALL", show: "ALL", limit: 300, opened: {}, weekly: false, scope: "",
+    rules: {}, area: null, picking: false, showOlder: false, ruleDrafts: {}, ruleRequests: {}, ruleOpen: false, similar: [], hideOlder: true, reviewSimilar: [] },
   scoutSourceMode: "add",
   calendar: null, lineage: null, reviews: null, reviewTarget: "", integrity: {},
   cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
@@ -3973,7 +3974,8 @@ function addSaveDraft() {
   try {
     localStorage.setItem(ADD_DRAFT_STORAGE, JSON.stringify({
       url: a.url, method: a.method, origin: a.origin, scope: a.scope, notes: a.notes.slice(0, 6), info: a.info,
-      candidates: a.candidates.slice(0, 6000), picked: Array.from(a.picked.keys()), opened: a.opened, savedAt: new Date().toISOString()
+      candidates: a.candidates.slice(0, 6000), picked: Array.from(a.picked.keys()), opened: a.opened, rules: a.rules, ruleRequests: a.ruleRequests,
+      savedAt: new Date().toISOString()
     }));
   } catch (_) {
     // Without browser storage the work is kept for this visit only.
@@ -4007,10 +4009,28 @@ function addRestoreDraft() {
   a.notes = Array.isArray(saved.notes) ? saved.notes.map(String).slice(0, 6) : [];
   a.info = typeof saved.info === "string" ? saved.info.slice(0, 200) : "";
   a.opened = saved.opened && typeof saved.opened === "object" ? saved.opened : {};
+  a.rules = {};
+  if (saved.rules && typeof saved.rules === "object") {
+    Object.keys(saved.rules).slice(0, 200).forEach(key => {
+      const rule = saved.rules[key] || {};
+      const include = typeof rule.include === "string" ? rule.include.slice(0, RULE_LIMITS.selector) : "";
+      const ignore = Array.isArray(rule.ignore) ? rule.ignore.filter(value => typeof value === "string" && value.length <= RULE_LIMITS.selector).slice(0, RULE_LIMITS.ignore) : [];
+      if (include || ignore.length) a.rules[key] = { include, ignore };
+    });
+  }
+  a.ruleRequests = {};
+  if (saved.ruleRequests && typeof saved.ruleRequests === "object") {
+    Object.keys(saved.ruleRequests).slice(0, 50).forEach(key => {
+      const request = saved.ruleRequests[key] || {};
+      if (Array.isArray(request.keys)) a.ruleRequests[key] = { url: String(request.url || ""), title: String(request.title || "").slice(0, 200), folder: String(request.folder || ""),
+        pattern: String(request.pattern || "").slice(0, 200), keys: request.keys.map(String).slice(0, 5000), at: String(request.at || "") };
+    });
+  }
 }
 function addClearDraft() {
   const a = state.add;
   a.candidates = []; a.picked = new Map(); a.opened = {}; a.notes = []; a.history = []; a.at = -1; a.page = null; a.anchor = "";
+  a.rules = {}; a.area = null; a.ruleDrafts = {}; a.ruleRequests = {}; a.ruleOpen = false;
   try { localStorage.removeItem(ADD_DRAFT_STORAGE); } catch (_) {}
 }
 
@@ -4018,7 +4038,7 @@ function addClearDraft() {
 
 const ADD_STEP_COPY = {
   start: ["Add a link", "Open a page and pick the links on it you want ChangeSentinel to monitor."],
-  explore: ["Explore the page", "Click a link to open it here. Shift-click a link to select it for monitoring."],
+  explore: ["Explore the page", "Click a link to open it here. Shift-click to select it, Shift-drag to box an area, or pick a part of the page to watch or ignore."],
   crawl: ["Following links", "Reading the page and the pages it links to. You choose what to monitor next."],
   review: ["Confirm the links to monitor", "Only ticked links are requested. Nothing is monitored until the owner workflow registers them."]
 };
@@ -4204,7 +4224,10 @@ async function exploreOpen(url, push) {
     a.at = a.history.length - 1;
   }
   a.page = data;
-  a.tab = a.picked.size ? a.tab : "page";
+  a.area = null;
+  a.ruleOpen = false;
+  if (a.picking) a.picking = false;
+  a.tab = a.picked.size ? a.tab : (exploreSuggestions().items.length ? "suggested" : "page");
   $("exploreAddress").textContent = displayUrl(data.url);
   $("exploreNewTab").href = safeHttpUrl(data.url) || "#";
   a.frameToken = exploreRandom(16);
@@ -4226,6 +4249,11 @@ async function exploreOpen(url, push) {
 function exploreBridge(token) {
   var root = document.documentElement;
   var shift = false;
+  var picking = false;
+  var drag = null;
+  var swallowClick = false;
+  var hovered = null;
+  var BLOCKS = "main,article,section,aside,nav,header,footer,form,table,tbody,ul,ol,dl,figure,fieldset,details,div,p,li,tr";
   function send(message) {
     message.cs = "cs-explore";
     message.token = token;
@@ -4239,7 +4267,124 @@ function exploreBridge(token) {
     shift = !!on;
     root.classList.toggle("cs-shift", shift);
   }
+  function setPicking(on) {
+    picking = !!on;
+    root.classList.toggle("cs-picking", picking);
+    if (!picking) setHover(null);
+  }
+  function setHover(node) {
+    if (hovered === node) return;
+    if (hovered) hovered.removeAttribute("data-cs-hover");
+    hovered = node;
+    if (hovered) hovered.setAttribute("data-cs-hover", "");
+  }
+  // A short, stable CSS selector for a part of the page: an id when it has a
+  // readable one, otherwise tags and classes, with :nth-of-type only where needed.
+  function stableClass(name) { return /^[A-Za-z_-][\w-]{1,40}$/.test(name) && !/^cs-/.test(name) && !/\d{3,}/.test(name) && !/^(active|open|show|hidden|selected|current|visible|focus|hover)$|^(is|has)-/.test(name); }
+  function esc(value) { return window.CSS && CSS.escape ? CSS.escape(value) : String(value).replace(/[^\w-]/g, "\\$&"); }
+  function unique(selector) { try { return document.querySelectorAll(selector).length === 1; } catch (e) { return false; } }
+  function selectorFor(node) {
+    if (!node || node.nodeType !== 1) return "";
+    var parts = [];
+    var current = node;
+    while (current && current.nodeType === 1 && current !== document.body && current !== root) {
+      var id = current.getAttribute("id");
+      if (id && /^[A-Za-z][\w-]{1,60}$/.test(id) && !/\d{4,}/.test(id)) {
+        parts.unshift("#" + esc(id));
+        var byId = parts.join(" > ");
+        if (unique(byId)) return byId;
+      } else {
+        var part = current.tagName.toLowerCase();
+        var classes = Array.prototype.filter.call(current.classList || [], stableClass).slice(0, 2);
+        if (classes.length) part += "." + classes.map(esc).join(".");
+        var parentNode = current.parentElement;
+        if (parentNode) {
+          var same = Array.prototype.filter.call(parentNode.children, function (child) { return child.tagName === current.tagName; });
+          if (same.length > 1 && !(classes.length && Array.prototype.filter.call(parentNode.children, function (child) { return child.matches && child.matches(part); }).length === 1)) {
+            part += ":nth-of-type(" + (same.indexOf(current) + 1) + ")";
+          }
+        }
+        parts.unshift(part);
+        var path = parts.join(" > ");
+        // Stop at the first unique path anchored on a class, so a bare "ul" or
+        // "div:nth-of-type(3)" isn't left to break when the page grows.
+        if (classes.length && unique(path)) return path;
+      }
+      current = current.parentElement;
+    }
+    var full = parts.length ? "body > " + parts.join(" > ") : "body";
+    var short = parts.join(" > ");
+    return short && unique(short) ? short : full;
+  }
+  function labelFor(node) {
+    var heading = node.querySelector && node.querySelector("h1,h2,h3,h4,caption,legend,summary");
+    var name = node.getAttribute("aria-label") || (heading && heading.textContent) || "";
+    var kind = { TABLE: "Table", UL: "List", OL: "List", NAV: "Menu", FORM: "Form", HEADER: "Header", FOOTER: "Footer", ASIDE: "Side panel", SECTION: "Section", ARTICLE: "Article", MAIN: "Main content", P: "Paragraph" }[node.tagName] || "Part of the page";
+    name = String(name).replace(/\s+/g, " ").trim();
+    return name ? kind + " · " + name.slice(0, 70) : kind;
+  }
+  function linksIn(node) {
+    var indexes = [];
+    var nodes = node.querySelectorAll ? node.querySelectorAll("[data-cs-link]") : [];
+    if (node.hasAttribute && node.hasAttribute("data-cs-link")) nodes = [node].concat(Array.prototype.slice.call(nodes));
+    for (var i = 0; i < nodes.length; i++) {
+      var index = Number(nodes[i].getAttribute("data-cs-link"));
+      if (indexes.indexOf(index) < 0) indexes.push(index);
+    }
+    return indexes;
+  }
+  function report(node, indexes, how) {
+    var marked = document.querySelectorAll("[data-cs-area]");
+    for (var i = 0; i < marked.length; i++) marked[i].removeAttribute("data-cs-area");
+    if (node && node !== document.body) node.setAttribute("data-cs-area", "");
+    var text = node ? String(node.innerText || node.textContent || "").replace(/\s+/g, " ").trim() : "";
+    send({ type: "area", how: how, indexes: indexes, selector: node && node !== document.body ? selectorFor(node) : "",
+      label: node ? labelFor(node) : "Selected area", text: text.slice(0, 220), words: text ? text.split(" ").length : 0 });
+  }
+  function commonAncestor(nodes) {
+    if (!nodes.length) return null;
+    var ancestor = nodes[0];
+    for (var i = 1; i < nodes.length; i++) {
+      while (ancestor && !ancestor.contains(nodes[i])) ancestor = ancestor.parentElement;
+    }
+    return ancestor && ancestor.nodeType === 1 && ancestor.nodeName !== "A" ? ancestor : ancestor && ancestor.parentElement;
+  }
+  function finishDrag(box) {
+    drag.box.parentNode && drag.box.parentNode.removeChild(drag.box);
+    var left = Math.min(drag.x, box.x), right = Math.max(drag.x, box.x), top = Math.min(drag.y, box.y), bottom = Math.max(drag.y, box.y);
+    var all = document.querySelectorAll("[data-cs-link]");
+    var inside = [], indexes = [];
+    for (var i = 0; i < all.length; i++) {
+      var r = all[i].getBoundingClientRect();
+      if (!r.width && !r.height) continue;
+      var cx = r.left + scrollX + r.width / 2, cy = r.top + scrollY + r.height / 2;
+      if (cx >= left && cx <= right && cy >= top && cy <= bottom) {
+        inside.push(all[i]);
+        var index = Number(all[i].getAttribute("data-cs-link"));
+        if (indexes.indexOf(index) < 0) indexes.push(index);
+      }
+    }
+    var node = commonAncestor(inside);
+    if (!node) {
+      node = document.elementFromPoint((left + right) / 2 - scrollX, (top + bottom) / 2 - scrollY);
+      var area = (right - left) * (bottom - top);
+      while (node && node.parentElement && node !== document.body) {
+        var nr = node.getBoundingClientRect();
+        if (nr.width * nr.height >= area * 0.6) break;
+        node = node.parentElement;
+      }
+    }
+    report(node, indexes, "drag");
+  }
   document.addEventListener("click", function (event) {
+    if (swallowClick) { swallowClick = false; event.preventDefault(); event.stopPropagation(); return; }
+    if (picking) {
+      event.preventDefault();
+      event.stopPropagation();
+      var target = event.target && event.target.closest ? event.target.closest(BLOCKS) : null;
+      if (target) report(target, linksIn(target), "pick");
+      return;
+    }
     var link = linkOf(event.target);
     if (!link) return;
     var href = link.getAttribute("href") || "";
@@ -4250,18 +4395,62 @@ function exploreBridge(token) {
     send({ type: "click", index: Number(link.getAttribute("data-cs-link")), shift: !!(event.shiftKey || shift) });
   }, true);
   ["auxclick", "dragstart"].forEach(function (name) {
-    document.addEventListener(name, function (event) { if (linkOf(event.target)) event.preventDefault(); }, true);
+    document.addEventListener(name, function (event) { if (linkOf(event.target) || drag) event.preventDefault(); }, true);
   });
   document.addEventListener("submit", function (event) { event.preventDefault(); }, true);
-  // Shift+mousedown would otherwise extend a text selection across the page.
-  document.addEventListener("mousedown", function (event) { if (event.shiftKey && linkOf(event.target)) event.preventDefault(); }, true);
+  // Shift+drag draws a box: the links inside it and the part of the page that
+  // holds them are reported. Shift+mousedown would otherwise select text.
+  document.addEventListener("mousedown", function (event) {
+    if (!event.shiftKey || event.button !== 0) return;
+    event.preventDefault();
+    drag = { x: event.pageX, y: event.pageY, moved: false, box: null };
+  }, true);
+  document.addEventListener("mousemove", function (event) {
+    if (!!event.shiftKey !== shift) setShift(event.shiftKey);
+    if (picking) {
+      var block = event.target && event.target.closest ? event.target.closest(BLOCKS) : null;
+      setHover(block && block !== document.body ? block : null);
+    }
+    if (!drag) return;
+    if (!drag.moved && Math.abs(event.pageX - drag.x) + Math.abs(event.pageY - drag.y) < 8) return;
+    if (!drag.moved) {
+      drag.moved = true;
+      drag.box = document.createElement("div");
+      drag.box.className = "cs-drag-box";
+      document.body.appendChild(drag.box);
+    }
+    var s = drag.box.style;
+    s.left = Math.min(drag.x, event.pageX) + "px";
+    s.top = Math.min(drag.y, event.pageY) + "px";
+    s.width = Math.abs(event.pageX - drag.x) + "px";
+    s.height = Math.abs(event.pageY - drag.y) + "px";
+  }, true);
+  document.addEventListener("mouseup", function (event) {
+    if (!drag) return;
+    var moved = drag.moved;
+    if (moved) { finishDrag({ x: event.pageX, y: event.pageY }); swallowClick = true; setTimeout(function () { swallowClick = false; }, 0); }
+    drag = null;
+  }, true);
   document.addEventListener("keydown", function (event) {
     if (event.key === "Shift") setShift(true);
-    if (event.key === "Escape") send({ type: "escape" });
+    if (event.key === "Escape") {
+      if (drag && drag.box && drag.box.parentNode) drag.box.parentNode.removeChild(drag.box);
+      drag = null;
+      if (picking) { setPicking(false); send({ type: "pickoff" }); } else send({ type: "escape" });
+    }
   }, true);
   document.addEventListener("keyup", function (event) { if (event.key === "Shift") setShift(false); }, true);
-  document.addEventListener("mousemove", function (event) { if (!!event.shiftKey !== shift) setShift(event.shiftKey); }, true);
   window.addEventListener("blur", function () { setShift(false); });
+  function markRules(include, ignore) {
+    var marked = document.querySelectorAll("[data-cs-watch],[data-cs-ignore]");
+    for (var i = 0; i < marked.length; i++) { marked[i].removeAttribute("data-cs-watch"); marked[i].removeAttribute("data-cs-ignore"); }
+    function mark(selector, name) {
+      if (!selector) return;
+      try { var nodes = document.querySelectorAll(selector); for (var j = 0; j < nodes.length; j++) nodes[j].setAttribute(name, ""); } catch (e) {}
+    }
+    mark(include, "data-cs-watch");
+    (ignore || []).forEach(function (selector) { mark(selector, "data-cs-ignore"); });
+  }
   window.addEventListener("message", function (event) {
     if (event.source !== parent) return;
     var data = event.data || {};
@@ -4277,6 +4466,13 @@ function exploreBridge(token) {
       root.classList.toggle("cs-select", !!data.select);
     } else if (data.type === "shift") {
       setShift(data.on);
+    } else if (data.type === "pick") {
+      setPicking(data.on);
+    } else if (data.type === "rules") {
+      markRules(data.include, data.ignore);
+    } else if (data.type === "area-clear") {
+      var areas = document.querySelectorAll("[data-cs-area]");
+      for (var k = 0; k < areas.length; k++) areas[k].removeAttribute("data-cs-area");
     } else if (data.type === "locate") {
       var target = document.querySelector('[data-cs-link="' + Number(data.index) + '"]');
       if (!target) return;
@@ -4301,7 +4497,13 @@ function exploreDocument(html, token, nonce) {
     "[data-cs-picked]{outline:2px solid #e8890a!important;outline-offset:2px;background:rgba(232,137,10,.16)!important;border-radius:2px}" +
     "html.cs-shift [data-cs-link],html.cs-select [data-cs-link]{cursor:copy!important;outline:1px dashed rgba(232,137,10,.85);outline-offset:2px}" +
     "@keyframes csFlash{0%,100%{box-shadow:0 0 0 0 rgba(232,137,10,0)}30%{box-shadow:0 0 0 6px rgba(232,137,10,.45)}}" +
-    ".cs-flash{animation:csFlash 1.2s ease 2}</style>";
+    ".cs-flash{animation:csFlash 1.2s ease 2}" +
+    ".cs-drag-box{position:absolute;z-index:2147483646;pointer-events:none;border:1.5px dashed #e8890a;background:rgba(232,137,10,.10);border-radius:3px}" +
+    "html.cs-picking,html.cs-picking *{cursor:crosshair!important}" +
+    "[data-cs-hover]{outline:2px dashed #3d7bd9!important;outline-offset:2px;background:rgba(61,123,217,.07)!important}" +
+    "[data-cs-area]{outline:2px solid #e8890a!important;outline-offset:3px}" +
+    "[data-cs-watch]{outline:2px solid #2f9e6b!important;outline-offset:4px;box-shadow:0 0 0 9999px rgba(20,24,30,.18)!important;position:relative;z-index:1}" +
+    "[data-cs-ignore]{opacity:.35!important;filter:grayscale(1)!important;outline:1px dashed #c0392b!important}</style>";
   const script = '<script nonce="' + nonce + '">(' + exploreBridge.toString() + ")(" + JSON.stringify(token) + ");<\/script>";
   // Only the policy written here may apply: the reader's own (script-src 'none') would block the bridge.
   let doc = String(html || "").replace(/<meta\b[^>]*http-equiv\s*=\s*["']?content-security-policy["']?[^>]*>/gi, "");
@@ -4318,6 +4520,8 @@ function explorePost(message) {
 function exploreSync() {
   explorePost({ type: "mode", select: state.add.selectMode });
   exploreMarkPicked();
+  exploreSendRules();
+  exploreSetPicking(state.add.picking);
 }
 function exploreShift(on) {
   if (state.add.step === "explore") explorePost({ type: "shift", on: !!on });
@@ -4374,6 +4578,8 @@ window.addEventListener("message", event => {
   if (data.cs !== "cs-explore" || !state.add.frameToken || data.token !== state.add.frameToken) return;
   if (data.type === "ready") exploreSync();
   else if (data.type === "click") exploreLinkClick(Number(data.index), !!data.shift);
+  else if (data.type === "area") exploreAreaMessage(data);
+  else if (data.type === "pickoff") exploreSetPicking(false);
   // Escape inside the page closes the dialog, as it does anywhere else in it; the draft is kept.
   else if (data.type === "escape" && $("addMonitorDialog").open) $("addMonitorDialog").close();
 });
@@ -4408,6 +4614,10 @@ function addPickRow(item, options) {
   const tags = ['<span class="tag">' + esc(item.format) + "</span>"];
   if (o.monitored) tags.push('<span class="tag is-monitoring">Already monitored</span>');
   else if (o.stopped) tags.push('<span class="tag is-irrelevant">Monitoring stopped</span>');
+  else if (o.covered) tags.push('<span class="tag is-rule">In your document rule</span>');
+  if (o.part) tags.push('<span class="tag is-part">' + esc(o.part) + "</span>");
+  if (o.older) tags.push('<span class="tag is-older">Older version</span>');
+  (o.reasons || []).filter(reason => !/ file$/.test(reason)).slice(0, 2).forEach(reason => tags.push('<span class="reason">' + esc(reason) + "</span>"));
   return '<div class="link-pick' + (on && !o.locked ? " is-on" : "") + '" data-link-row="' + esc(item.key) + '">' +
     '<label class="link-pick-check"><input type="checkbox" data-link-toggle="' + esc(item.key) + '"' + (on && !o.locked ? " checked" : "") + (o.locked ? " disabled" : "") +
       ' aria-label="' + esc((o.locked ? "Already monitored: " : "Select ") + item.title) + '"><i aria-hidden="true"></i></label>' +
@@ -4420,12 +4630,18 @@ function renderExploreSide() {
   const picked = Array.from(a.picked.values());
   $("exploreSelectedCount").textContent = String(picked.length);
   $("explorePageCount").textContent = a.page ? String(a.page.links.filter(link => !link.chrome).length) : "";
+  const suggestions = a.page ? exploreSuggestions() : { items: [] };
+  $("exploreSuggestedCount").textContent = a.page ? String(suggestions.items.length) : "";
   document.querySelectorAll("[data-explore-tab]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.exploreTab === a.tab)));
   $("exploreSelectMode").checked = a.selectMode;
-  $("exploreHint").innerHTML = a.selectMode
+  const pickButton = document.querySelector("[data-explore-pick]");
+  if (pickButton) { pickButton.disabled = !a.page; pickButton.setAttribute("aria-pressed", String(a.picking)); pickButton.textContent = a.picking ? "Picking… (Esc)" : "Pick a part"; }
+  $("exploreHint").innerHTML = a.picking
+    ? "Click any part of the page — a table, a list, a section — to select it."
+    : a.selectMode
     ? "Tap selects is on: clicking or tapping a link selects it. Turn it off to browse."
-    : coarsePointer && coarsePointer.matches ? "Tap a link to open it here. Turn on <strong>Tap selects</strong> to select links."
-      : "<kbd>Shift</kbd>-click a link to select it. Click it to open it here.";
+    : coarsePointer && coarsePointer.matches ? "Tap a link to open it here. Turn on <strong>Tap selects</strong> to select links, or use <strong>Pick a part</strong>."
+      : "<kbd>Shift</kbd>-click a link to select it. <kbd>Shift</kbd>-drag to box an area. Click a link to open it here.";
   const thisPage = a.page ? a.picked.has(L.urlKey(a.page.url)) : false;
   const thisButton = document.querySelector("[data-explore-this]");
   thisButton.setAttribute("aria-pressed", String(thisPage));
@@ -4434,9 +4650,14 @@ function renderExploreSide() {
   document.querySelector("[data-explore-back]").disabled = a.at <= 0;
   document.querySelector("[data-explore-forward]").disabled = a.at >= a.history.length - 1;
   const list = $("exploreList");
+  const tools = exploreToolsHtml();
+  const covered = addRuleCoveredKeys();
+  const rowOptions = item => ({ covered: covered.has(item.key), part: addRulesFor(item.key).include ? "Watching one part" : addRulesFor(item.key).ignore.length ? "Ignoring " + plural(addRulesFor(item.key).ignore.length, "part", "parts") : "" });
   if (a.tab === "selected") {
-    list.innerHTML = picked.length ? picked.slice().reverse().map(item => addPickRow(item)).join("")
-      : emptyState("Nothing selected yet", "Shift-click links on the page, or tick them under “On this page”.");
+    list.innerHTML = tools + (picked.length ? picked.slice().reverse().map(item => addPickRow(item, rowOptions(item))).join("")
+      : emptyState("Nothing selected yet", "Shift-click links on the page, Shift-drag a box around several, or tick them under “Suggested” and “On this page”."));
+  } else if (a.tab === "suggested" && a.page) {
+    list.innerHTML = tools + exploreSuggestedHtml();
   } else if (!a.page) {
     list.innerHTML = '<div class="loading">Reading the page…</div>';
   } else if (!a.page.links.length) {
@@ -4444,7 +4665,7 @@ function renderExploreSide() {
   } else {
     const content = a.page.links.filter(link => !link.chrome);
     const menus = a.page.links.length - content.length;
-    list.innerHTML = L.pickSections(content.map(link => addLinkItem(link, a.page, null)).filter(Boolean)).map((group, index) =>
+    list.innerHTML = tools + L.pickSections(content.map(link => addLinkItem(link, a.page, null)).filter(Boolean)).map((group, index) =>
       '<div class="link-group"><span class="link-group-name"><strong>' + esc(group.section || "On this page") + "</strong> · " + group.items.length + "</span></div>" +
       group.items.map(item => addPickRow(item, { open: item.format === "Web page" })).join("")).join("") +
       (menus ? '<p class="note-strip">' + plural(menus, "link", "links") + " in the site’s menus, header and footer " + (menus === 1 ? "is" : "are") +
@@ -4455,6 +4676,284 @@ function renderExploreSide() {
   button.disabled = !picked.length;
   button.textContent = picked.length ? "Review " + plural(picked.length, "link", "links") : "Review links";
   $("exploreFootNote").textContent = picked.length ? plural(picked.length, "link", "links") + " selected · " + plural(a.history.length, "page", "pages") + " visited" : "";
+}
+
+/* ---------- Smarter picking: areas, page rules, suggestions, similar links, document rules ---------- */
+
+const RULE_LIMITS = { selector: 500, ignore: 20 };
+function addPageKey() { return state.add.page ? L.urlKey(state.add.page.url) : ""; }
+function addRulesFor(key) {
+  const rules = state.add.rules[key];
+  return rules && typeof rules === "object" ? { include: String(rules.include || ""), ignore: Array.isArray(rules.ignore) ? rules.ignore.map(String) : [] } : { include: "", ignore: [] };
+}
+function addSetRules(key, rules) {
+  const a = state.add;
+  if (!rules.include && !rules.ignore.length) delete a.rules[key];
+  else a.rules[key] = { include: rules.include, ignore: rules.ignore.slice(0, RULE_LIMITS.ignore) };
+  // A document rule already requested for this page carries the old checking rules.
+  if (a.ruleRequests[key]) a.ruleRequests[key].stale = true;
+  exploreSendRules();
+  addSaveDraft();
+}
+function exploreSendRules() {
+  const rules = addRulesFor(addPageKey());
+  explorePost({ type: "rules", include: rules.include, ignore: rules.ignore });
+}
+function exploreSetPicking(on) {
+  const a = state.add;
+  a.picking = !!on;
+  explorePost({ type: "pick", on: a.picking });
+  const button = document.querySelector("[data-explore-pick]");
+  if (button) {
+    button.setAttribute("aria-pressed", String(a.picking));
+    button.textContent = a.picking ? "Picking… (Esc)" : "Pick a part";
+  }
+}
+function exploreContentLinks() {
+  const a = state.add;
+  return a.page ? a.page.links.filter(link => !link.chrome) : [];
+}
+// Suggestions for the page being explored: documents and pages a compliance team
+// would most likely monitor, best first, with older versions of the same document
+// held back.
+function exploreSuggestions() {
+  const a = state.add;
+  if (!a.page) return { items: [], older: [] };
+  const links = a.page.links;
+  const olderIndexes = L.pickVersions(links);
+  const rows = [];
+  const older = [];
+  const seen = new Set();
+  links.forEach((link, index) => {
+    if (link.chrome) return;
+    const key = L.urlKey(link.url);
+    if (seen.has(key)) return;
+    seen.add(key);
+    const score = L.pickScore(link);
+    const isOlder = score.older || olderIndexes.has(index);
+    const row = { link, index, key, score: score.score, reasons: score.reasons, older: isOlder };
+    if (isOlder) { if (score.score >= 2) older.push(row); return; }
+    if (score.score >= 3) rows.push(row);
+  });
+  rows.sort((x, y) => y.score - x.score || x.index - y.index);
+  return { items: rows, older };
+}
+function explorePickedOnPage() {
+  const a = state.add;
+  return exploreContentLinks().filter(link => a.picked.has(L.urlKey(link.url)));
+}
+function addSelectKeys(keys, links) {
+  const a = state.add;
+  const byKey = new Map();
+  (links || []).forEach(link => { const key = L.urlKey(link.url); if (!byKey.has(key)) byKey.set(key, link); });
+  let added = 0;
+  keys.forEach(key => {
+    if (a.picked.has(key)) return;
+    const link = byKey.get(key);
+    const item = link ? (link.key ? link : addLinkItem(link, a.page, null)) : a.candidates.find(candidate => candidate.key === key);
+    if (!item) return;
+    if (!a.candidates.some(candidate => candidate.key === item.key)) a.candidates.push(item);
+    a.picked.set(item.key, a.candidates.find(candidate => candidate.key === item.key) || item);
+    added += 1;
+  });
+  return added;
+}
+function ruleDraftFor(key) {
+  const a = state.add;
+  if (!a.ruleDrafts[key]) {
+    const recipe = L.pickRecipe(a.page.url, explorePickedOnPage(), a.page.links) || {};
+    a.ruleDrafts[key] = { folder: recipe.prefix || "", pattern: recipe.textPattern || "" };
+  }
+  return a.ruleDrafts[key];
+}
+function ruleSummaryHtml(matches) {
+  if (matches.error) return '<span class="rule-error">' + esc(matches.error) + "</span>";
+  return "Today that’s <strong>" + plural(matches.count, "document", "documents") + "</strong> on this page. New ones that match are picked up automatically; no other page on the site is followed.";
+}
+function exploreToolsHtml() {
+  const a = state.add;
+  if (!a.page) return "";
+  const key = addPageKey();
+  const parts = [];
+  // The part of the page last boxed or picked.
+  if (a.area && a.area.pageKey === key) {
+    const area = a.area;
+    const free = (area.indexes || []).filter(index => a.page.links[index] && !a.picked.has(L.urlKey(a.page.links[index].url)));
+    parts.push('<section class="smart-card area-card" aria-label="Selected area">' +
+      '<div class="smart-card-head"><span class="smart-kicker">Selected area</span><button class="text-button" type="button" data-area-clear aria-label="Clear the selected area">Clear</button></div>' +
+      '<strong class="area-label">' + esc(area.label || "Part of the page") + "</strong>" +
+      (area.text ? '<p class="area-text">' + esc(area.text) + (area.words > 36 ? "…" : "") + "</p>" : "") +
+      '<div class="smart-actions">' +
+        (area.indexes && area.indexes.length ? '<button class="btn btn-primary" type="button" data-area-select' + (free.length ? "" : " disabled") + ">" +
+          (free.length ? "Select its " + plural(free.length, "link", "links") : "Its links are selected") + "</button>" : "") +
+        (area.selector ? '<button class="btn" type="button" data-area-watch title="Compare only this part when the page is checked">Watch only this part</button>' +
+          '<button class="btn" type="button" data-area-ignore title="Leave this part out when the page is checked (menus, banners, dates that change every day)">Ignore this part</button>' : "") +
+      "</div>" +
+      (area.selector ? '<code class="area-selector" title="CSS selector">' + esc(area.selector) + "</code>" : "") +
+      "</section>");
+  }
+  // Rules already set for this page.
+  const rules = addRulesFor(key);
+  if (rules.include || rules.ignore.length) {
+    parts.push('<section class="smart-card rules-card" aria-label="How this page is checked">' +
+      '<div class="smart-card-head"><span class="smart-kicker">How this page is checked</span></div>' +
+      (rules.include ? '<div class="rule-chip is-watch"><span>Only</span><code>' + esc(rules.include) + '</code><button type="button" data-rule-remove="include" aria-label="Remove">×</button></div>' : "") +
+      rules.ignore.map((selector, index) => '<div class="rule-chip is-ignore"><span>Ignore</span><code>' + esc(selector) + '</code><button type="button" data-rule-remove="' + index + '" aria-label="Remove">×</button></div>').join("") +
+      (a.ruleRequests[key] && a.ruleRequests[key].stale
+        ? '<p class="smart-note is-warning">Your document rule for this page was requested before this change.</p><div class="smart-actions"><button class="btn btn-primary" type="button" data-rule-request>Update the rule request</button></div>'
+        : '<p class="smart-note">Applies when this page is requested as a monitor.</p>') + "</section>");
+  }
+  // More like what was picked here.
+  const picked = explorePickedOnPage();
+  if (picked.length) {
+    const similar = L.pickSimilar(picked, exploreContentLinks(), link => L.urlKey(link.url)).slice(0, 3);
+    a.similar = similar;
+    if (similar.length) {
+      parts.push('<div class="similar-row" role="group" aria-label="Select similar links"><span class="smart-kicker">Select similar</span>' +
+        similar.map((rule, index) => '<button class="similar-chip" type="button" data-similar="' + index + '"><b>+' + rule.extra + "</b> " + esc(rule.label) + "</button>").join("") + "</div>");
+    }
+    // Teach the monitor the pattern instead of a fixed list.
+    const docs = picked.filter(link => link.format !== "Web page");
+    if (docs.length) {
+      const request = a.ruleRequests[key];
+      if (!a.ruleOpen) {
+        parts.push('<button class="rule-open" type="button" data-rule-open><span class="rule-open-mark" aria-hidden="true">↻</span><span><strong>' +
+          (request ? "Document rule requested" : "Make this a monitoring rule") + "</strong><small>" +
+          (request ? "Open it again or change it" : "Watch this page and every document like these, including future ones") + "</small></span></button>");
+      } else {
+        const draft = ruleDraftFor(key);
+        const matches = L.pickRuleMatches(a.page.links, draft);
+        parts.push('<section class="smart-card rule-card" aria-label="Monitoring rule">' +
+          '<div class="smart-card-head"><span class="smart-kicker">Monitoring rule</span><button class="text-button" type="button" data-rule-close>Close</button></div>' +
+          '<p class="rule-lede">Watch <strong>' + esc(a.page.title || displayUrl(a.page.url)) + "</strong> and the documents it links to:</p>" +
+          '<label class="rule-field"><span>In this folder</span><input class="field-input" id="ruleFolder" type="url" spellcheck="false" autocomplete="off" value="' + esc(draft.folder) + '" placeholder="Anywhere on this site"></label>' +
+          '<label class="rule-field"><span>Whose link text matches</span><input class="field-input" id="rulePattern" type="text" spellcheck="false" autocomplete="off" value="' + esc(draft.pattern) + '" placeholder="Any link text (for example ^Current)"></label>' +
+          '<p class="rule-count" id="ruleCount" aria-live="polite">' + ruleSummaryHtml(matches) + "</p>" +
+          (rules.include || rules.ignore.length ? '<p class="smart-note">The page is checked with the rules above.</p>' : "") +
+          '<div class="smart-actions"><button class="btn btn-primary" type="button" data-rule-request' + (matches.error ? " disabled" : "") + ">" + (request ? "Open the rule request again" : "Request this rule on GitHub") + "</button>" +
+          '<button class="text-button" type="button" data-rule-show>Show matches</button></div>' +
+          (request ? '<p class="smart-note">Requested ' + esc(when(request.at)) + ". Its documents are left out of the link requests, so nothing is registered twice.</p>" : "") +
+          "</section>");
+      }
+    }
+  }
+  return parts.length ? '<div class="smart-tools">' + parts.join("") + "</div>" : "";
+}
+function exploreSuggestedHtml() {
+  const a = state.add;
+  const suggestions = exploreSuggestions();
+  const free = suggestions.items.filter(row => !a.picked.has(row.key));
+  if (!suggestions.items.length) {
+    return emptyState("No clear suggestions", "Nothing on this page looks like a form, template, instructions or a regulatory document. See “On this page” for every link.");
+  }
+  const row = item => {
+    const entry = addLinkItem(item.link, a.page, null);
+    return entry ? addPickRow(entry, { open: entry.format === "Web page", reasons: item.reasons, older: item.older }) : "";
+  };
+  return '<div class="link-group"><span class="link-group-name"><strong>Likely worth monitoring</strong> · ' + suggestions.items.length + "</span>" +
+      (free.length ? '<button class="text-button" type="button" data-suggest-all>Select all ' + free.length + "</button>" : "") + "</div>" +
+    suggestions.items.map(row).join("") +
+    (suggestions.older.length ? '<div class="link-group"><span class="link-group-name"><strong>Older versions</strong> · ' + suggestions.older.length + "</span>" +
+      '<button class="text-button" type="button" data-older-toggle>' + (a.showOlder ? "Hide" : "Show") + "</button></div>" +
+      (a.showOlder ? suggestions.older.map(row).join("") : '<p class="note-strip">Earlier years and superseded copies of the documents above are held back.</p>') : "");
+}
+function exploreAreaMessage(data) {
+  const a = state.add;
+  if (!a.page) return;
+  const indexes = (Array.isArray(data.indexes) ? data.indexes : []).map(Number).filter(index => Number.isInteger(index) && a.page.links[index]).slice(0, 2000);
+  a.area = { pageKey: addPageKey(), indexes, selector: String(data.selector || "").slice(0, 1000), label: String(data.label || "").slice(0, 120),
+    text: String(data.text || "").slice(0, 240), words: Number(data.words) || 0, how: data.how === "pick" ? "pick" : "drag" };
+  if (a.picking) exploreSetPicking(false);
+  renderExploreSide();
+  const list = $("exploreList");
+  if (list) list.scrollTop = 0;
+}
+function exploreAreaAction(kind) {
+  const a = state.add;
+  const area = a.area;
+  if (!area || !a.page || area.pageKey !== addPageKey()) return;
+  if (kind === "select") {
+    const added = addSelectKeys(area.indexes.map(index => L.urlKey(a.page.links[index].url)), area.indexes.map(index => a.page.links[index]));
+    exploreMarkPicked();
+    renderExploreSide();
+    addSaveDraft();
+    showToast(added ? plural(added, "link", "links") + " selected from the area." : "Those links were already selected.");
+    return;
+  }
+  if (!area.selector) return;
+  if (area.selector.length > RULE_LIMITS.selector) { showToast("That part of the page has no short selector. Pick a smaller or more distinct part."); return; }
+  const key = addPageKey();
+  const rules = addRulesFor(key);
+  if (kind === "watch") {
+    rules.include = area.selector;
+    rules.ignore = rules.ignore.filter(selector => selector !== area.selector);
+    const previous = a.at > 0 ? a.pages.get(L.urlKey(a.history[a.at - 1])) : null;
+    const pageItem = addItem({ url: a.page.url, title: a.page.title, parentUrl: previous ? previous.url : "", parentTitle: previous ? previous.title : "" });
+    if (pageItem && !a.picked.has(pageItem.key)) addToggle(pageItem, true);
+    showToast("This page will be compared only within “" + area.label + "”. The page is selected for monitoring.");
+  } else {
+    if (rules.ignore.length >= RULE_LIMITS.ignore) { showToast("A page can ignore at most " + RULE_LIMITS.ignore + " parts."); return; }
+    if (rules.ignore.indexOf(area.selector) < 0) rules.ignore.push(area.selector);
+    if (rules.include === area.selector) rules.include = "";
+    showToast("“" + area.label + "” will be left out when this page is checked.");
+  }
+  a.area = null;
+  explorePost({ type: "area-clear" });
+  addSetRules(key, rules);
+  renderExploreSide();
+}
+function exploreRuleInput() {
+  const a = state.add;
+  const key = addPageKey();
+  if (!key || !a.ruleDrafts[key]) return;
+  a.ruleDrafts[key].folder = ($("ruleFolder") || {}).value || "";
+  a.ruleDrafts[key].pattern = ($("rulePattern") || {}).value || "";
+  const matches = L.pickRuleMatches(a.page.links, a.ruleDrafts[key]);
+  $("ruleCount").innerHTML = ruleSummaryHtml(matches);
+  const button = document.querySelector("[data-rule-request]");
+  if (button) button.disabled = !!matches.error;
+}
+function exploreRuleShow() {
+  const a = state.add;
+  const key = addPageKey();
+  const matches = L.pickRuleMatches(a.page.links, ruleDraftFor(key));
+  const indexes = [];
+  a.page.links.forEach((link, index) => { if (matches.keys.indexOf(L.urlKey(link.url)) >= 0) indexes.push(index); });
+  explorePost({ type: "picked", indexes });
+  if (indexes.length) explorePost({ type: "locate", index: indexes[0] });
+  showToast(indexes.length ? "Matching documents are outlined on the page for a moment." : "Nothing on this page matches the rule yet.");
+  window.setTimeout(exploreMarkPicked, 2600);
+}
+function exploreRuleRequest() {
+  const a = state.add;
+  const key = addPageKey();
+  if (!a.page || !key) return;
+  const draft = ruleDraftFor(key);
+  const matches = L.pickRuleMatches(a.page.links, draft);
+  if (matches.error) { showToast(matches.error); return; }
+  const rules = addRulesFor(key);
+  const request = L.pickRuleRequest({ url: a.page.url, name: a.page.title || "", folder: draft.folder, pattern: draft.pattern, include: rules.include, ignore: rules.ignore });
+  const params = new URLSearchParams();
+  params.set("title", request.title);
+  params.set("body", request.body);
+  const target = REPO + "/issues/new?" + params.toString();
+  if (target.length > MAX_BULK_REQUEST_URL_LENGTH) { showToast("This rule is too long for a GitHub request. Shorten the pattern or selectors."); return; }
+  a.ruleRequests[key] = { url: a.page.url, title: a.page.title || "", folder: draft.folder, pattern: draft.pattern, keys: matches.keys.concat([key]), at: new Date().toISOString() };
+  addSaveDraft();
+  renderExploreSide();
+  const githubWindow = window.open(target, "_blank");
+  if (githubWindow) {
+    try { githubWindow.opener = null; } catch (_) {}
+    showToast("Submit the rule request on GitHub. Once the owner workflow accepts it, the page and its matching documents are monitored.");
+  } else {
+    showToast("Your browser blocked the new tab. Allow pop-ups for this dashboard and press the button again.");
+  }
+}
+// Keys a requested document rule already covers: left out of the link requests.
+function addRuleCoveredKeys() {
+  const covered = new Set();
+  Object.values(state.add.ruleRequests || {}).forEach(request => (request.keys || []).forEach(key => covered.add(key)));
+  return covered;
 }
 
 /* ---------- Follow links by level ---------- */
@@ -4546,7 +5045,10 @@ function renderCrawl() {
 /* ---------- Confirm ---------- */
 
 function addRequestRows(items) {
-  return items.map(item => ({ url: item.url, name: L.pickMonitorName(item), include_selector: "", ignore_selectors: [] }));
+  return items.map(item => {
+    const rules = addRulesFor(item.key);
+    return { url: item.url, name: L.pickMonitorName(item), include_selector: rules.include, ignore_selectors: rules.ignore };
+  });
 }
 function addPlan() {
   const a = state.add;
@@ -4554,22 +5056,48 @@ function addPlan() {
   const stopped = addStoppedKeys(monitored);
   const picked = Array.from(a.picked.values());
   const summary = L.pickSummary(picked, monitored);
-  const pending = summary.pending.filter(item => !stopped.has(item.key));
-  const leftStopped = summary.pending.length - pending.length;
+  const covered = addRuleCoveredKeys();
+  const notStopped = summary.pending.filter(item => !stopped.has(item.key));
+  const leftStopped = summary.pending.length - notStopped.length;
+  const pending = notStopped.filter(item => !covered.has(item.key));
+  const leftCovered = notStopped.length - pending.length;
   const prepared = L.pickBatches(addRequestRows(pending), makeBulkGitHubIssueUrl, MAX_BULK_LINKS, MAX_BULK_REQUEST_URL_LENGTH);
-  return { monitored, stopped, picked, summary, pending, leftStopped, prepared };
+  return { monitored, stopped, covered, picked, summary, pending, leftStopped, leftCovered, prepared };
 }
 function renderReview() {
   const a = state.add;
   const plan = addPlan();
   const filters = { query: a.query, format: a.format, show: a.show, selectedKeys: new Set(a.picked.keys()) };
-  const groups = L.pickGroupBy(a.candidates, filters);
+  // Scores and older versions, worked out once per candidate list.
+  if (a.scored !== a.candidates || a.scoredCount !== a.candidates.length) {
+    const olderIndexes = L.pickVersions(a.candidates);
+    a.scores = new Map();
+    a.candidates.forEach((item, index) => {
+      const score = L.pickScore(item);
+      a.scores.set(item.key, { score: score.score, reasons: score.reasons, older: score.older || olderIndexes.has(index) });
+    });
+    a.scored = a.candidates;
+    a.scoredCount = a.candidates.length;
+  }
+  const scoreOf = item => a.scores.get(item.key) || { score: 0, reasons: [], older: false };
+  const pool = a.candidates.filter(item => {
+    const score = scoreOf(item);
+    if (a.picked.has(item.key)) return a.show !== "SUGGESTED" || score.score >= 3;
+    if (a.hideOlder && score.older) return false;
+    return a.show !== "SUGGESTED" || score.score >= 3;
+  });
+  const hiddenOlder = a.hideOlder ? a.candidates.filter(item => !a.picked.has(item.key) && scoreOf(item).older).length : 0;
+  const groups = L.pickGroupBy(pool, Object.assign({}, filters, { show: a.show === "SUGGESTED" ? "ALL" : a.show }));
   const total = groups.reduce((sum, group) => sum + group.items.length, 0);
   const notes = a.origin === "crawl"
     ? ["Found " + plural(a.candidates.length, "link", "links") + (a.crawl ? " on " + plural(a.crawl.read, "page", "pages") : "") + ". Nothing is ticked yet: tick the ones to monitor. Historical and unrelated links are listed too, so you decide.", a.info || ""]
     : a.origin === "scout" ? ["These are the Scout findings you selected. Untick any you don't want; each one is requested as its own monitor."]
     : ["These are the links you selected while exploring. Untick any you don't want."];
+  if (hiddenOlder) notes.push(plural(hiddenOlder, "older version is", "older versions are") + " hidden.");
+  const rulesRequested = Object.values(a.ruleRequests || {});
+  if (rulesRequested.length) notes.push(plural(rulesRequested.length, "document rule was", "document rules were") + " requested; the links " + (rulesRequested.length === 1 ? "it covers are" : "they cover are") + " left out of these requests.");
   $("reviewNote").textContent = notes.concat(a.notes).filter(Boolean).join(" ");
+  if ($("reviewHideOlder")) $("reviewHideOlder").checked = a.hideOlder;
   $("reviewNote").classList.toggle("is-warning", a.notes.length > 0);
   document.querySelectorAll("[data-review-show]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.reviewShow === a.show)));
   $("reviewFormat").value = a.format;
@@ -4582,6 +5110,12 @@ function renderReview() {
   } else {
     let shown = 0;
     let html = "";
+    const tickedItems = Array.from(a.picked.values()).filter(item => !plan.monitored.has(item.key));
+    a.reviewSimilar = tickedItems.length ? L.pickSimilar(tickedItems.slice(0, 200), a.candidates.filter(item => !plan.monitored.has(item.key) && !plan.stopped.has(item.key) && !(a.hideOlder && scoreOf(item).older)), item => item.key).slice(0, 3) : [];
+    if (a.reviewSimilar.length) {
+      html += '<div class="review-similar" role="group" aria-label="Tick similar links"><span class="smart-kicker">Tick similar</span>' +
+        a.reviewSimilar.map((rule, index) => '<button class="similar-chip" type="button" data-review-similar="' + index + '"><b>+' + rule.extra + "</b> " + esc(rule.label) + "</button>").join("") + "</div>";
+    }
     groups.forEach((group, index) => {
       if (shown >= a.limit) return;
       const rows = group.items.slice(0, a.limit - shown);
@@ -4590,7 +5124,13 @@ function renderReview() {
       html += '<div class="link-group"><span class="link-group-name"><strong>' + esc(group.parentTitle || "Starting page") + "</strong>" +
         (group.section ? " · " + esc(group.section) : "") + " · " + group.items.length + "</span>" +
         (free.length ? '<button class="text-button" type="button" data-review-group="' + index + '">' + (all ? "Untick these" : "Tick these") + "</button>" : "") + "</div>" +
-        rows.map(item => addPickRow(item, { monitored: plan.monitored.has(item.key), stopped: plan.stopped.has(item.key), locked: plan.monitored.has(item.key) || plan.stopped.has(item.key) })).join("");
+        rows.map(item => {
+          const score = scoreOf(item);
+          const rules = addRulesFor(item.key);
+          return addPickRow(item, { monitored: plan.monitored.has(item.key), stopped: plan.stopped.has(item.key), locked: plan.monitored.has(item.key) || plan.stopped.has(item.key),
+            covered: plan.covered.has(item.key), reasons: score.reasons, older: score.older,
+            part: rules.include ? "Watching one part" : rules.ignore.length ? "Ignoring " + plural(rules.ignore.length, "part", "parts") : "" });
+        }).join("");
       shown += rows.length;
     });
     if (shown < total) html += '<div class="link-more"><button class="btn" type="button" data-review-more>Show ' + Math.min(REVIEW_PAGE, total - shown) + " more · " + (total - shown).toLocaleString() + " not shown</button></div>";
@@ -4606,6 +5146,7 @@ function renderReviewFoot(plan) {
   const parts = ["<strong>" + p.summary.selected + "</strong> ticked"];
   if (p.summary.monitored) parts.push(p.summary.monitored + " already monitored, left out");
   if (p.leftStopped) parts.push(p.leftStopped + " stopped earlier, left out");
+  if (p.leftCovered) parts.push(p.leftCovered + " covered by your document rule");
   parts.push("<strong>" + p.pending.length + "</strong> new " + (p.pending.length === 1 ? "monitor" : "monitors") +
     (batches.length ? " in " + plural(batches.length, "request", "requests") : ""));
   const tooLong = p.prepared.tooLong.length ? " " + esc(plural(p.prepared.tooLong.length, "address is", "addresses are")) + " too long for a GitHub request and left out." : "";
@@ -5580,7 +6121,39 @@ document.querySelector(".add-explore").addEventListener("click", event => {
   const retry = event.target.closest("[data-explore-retry]");
   if (retry) { a.pages.delete(L.urlKey(retry.dataset.exploreRetry)); return exploreOpen(retry.dataset.exploreRetry, !a.page || a.history[a.at] !== retry.dataset.exploreRetry); }
   const tab = event.target.closest("[data-explore-tab]");
-  if (tab) { a.tab = tab.dataset.exploreTab === "page" ? "page" : "selected"; return renderExploreSide(); }
+  if (tab) { a.tab = ["page", "suggested"].indexOf(tab.dataset.exploreTab) >= 0 ? tab.dataset.exploreTab : "selected"; return renderExploreSide(); }
+  if (event.target.closest("[data-explore-pick]")) return exploreSetPicking(!a.picking), renderExploreSide();
+  if (event.target.closest("[data-area-clear]")) { a.area = null; explorePost({ type: "area-clear" }); return renderExploreSide(); }
+  if (event.target.closest("[data-area-select]")) return exploreAreaAction("select");
+  if (event.target.closest("[data-area-watch]")) return exploreAreaAction("watch");
+  if (event.target.closest("[data-area-ignore]")) return exploreAreaAction("ignore");
+  const ruleRemove = event.target.closest("[data-rule-remove]");
+  if (ruleRemove) {
+    const key = addPageKey();
+    const rules = addRulesFor(key);
+    if (ruleRemove.dataset.ruleRemove === "include") rules.include = "";
+    else rules.ignore.splice(Number(ruleRemove.dataset.ruleRemove), 1);
+    addSetRules(key, rules);
+    return renderExploreSide();
+  }
+  const similar = event.target.closest("[data-similar]");
+  if (similar) {
+    const rule = (a.similar || [])[Number(similar.dataset.similar)];
+    if (!rule) return;
+    const added = addSelectKeys(rule.keys, exploreContentLinks());
+    exploreMarkPicked(); addSaveDraft(); renderExploreSide();
+    return showToast(plural(added, "more link", "more links") + " selected: " + rule.label.replace(/^All |^Every /, "").toLowerCase() + ".");
+  }
+  if (event.target.closest("[data-suggest-all]")) {
+    const added = addSelectKeys(exploreSuggestions().items.map(row => row.key), exploreContentLinks());
+    exploreMarkPicked(); addSaveDraft(); renderExploreSide();
+    return showToast(plural(added, "suggested link", "suggested links") + " selected.");
+  }
+  if (event.target.closest("[data-older-toggle]")) { a.showOlder = !a.showOlder; return renderExploreSide(); }
+  if (event.target.closest("[data-rule-open]")) { a.ruleOpen = true; renderExploreSide(); const input = $("rulePattern"); if (input) input.focus({ preventScroll: true }); return; }
+  if (event.target.closest("[data-rule-close]")) { a.ruleOpen = false; return renderExploreSide(); }
+  if (event.target.closest("[data-rule-show]")) return exploreRuleShow();
+  if (event.target.closest("[data-rule-request]")) return exploreRuleRequest();
   const go = event.target.closest("[data-explore-go]");
   if (go) return exploreOpen(go.dataset.exploreGo, true);
   const toggle = event.target.closest("input[data-link-toggle]");
@@ -5608,6 +6181,9 @@ document.querySelector(".add-explore").addEventListener("click", event => {
   if (locate) return exploreLocate(locate.dataset.exploreLocate);
   const goto = event.target.closest("[data-add-goto]");
   if (goto) addGoto(goto.dataset.addGoto);
+});
+document.querySelector(".add-explore").addEventListener("input", event => {
+  if (event.target.id === "ruleFolder" || event.target.id === "rulePattern") exploreRuleInput();
 });
 $("exploreSelectMode").addEventListener("change", () => {
   state.add.selectMode = $("exploreSelectMode").checked;
@@ -5653,7 +6229,16 @@ document.querySelector(".add-review").addEventListener("click", event => {
   }
   if (event.target.closest("[data-review-more]")) { a.limit += REVIEW_PAGE; return renderReview(); }
   const show = event.target.closest("[data-review-show]");
-  if (show) { a.show = show.dataset.reviewShow === "SELECTED" ? "SELECTED" : "ALL"; a.limit = REVIEW_PAGE; return renderReview(); }
+  if (show) { a.show = ["SELECTED", "SUGGESTED"].indexOf(show.dataset.reviewShow) >= 0 ? show.dataset.reviewShow : "ALL"; a.limit = REVIEW_PAGE; return renderReview(); }
+  const similar = event.target.closest("[data-review-similar]");
+  if (similar) {
+    const rule = (a.reviewSimilar || [])[Number(similar.dataset.reviewSimilar)];
+    if (!rule) return;
+    const added = addSelectKeys(rule.keys, a.candidates);
+    addSaveDraft();
+    renderReview();
+    return showToast(plural(added, "more link", "more links") + " ticked.");
+  }
   const batch = event.target.closest("[data-review-batch]");
   if (batch) return reviewOpenBatch(Number(batch.dataset.reviewBatch));
   if (event.target.closest("[data-review-weekly]")) return reviewOpenWeekly();
@@ -5661,6 +6246,7 @@ document.querySelector(".add-review").addEventListener("click", event => {
 });
 document.querySelector(".add-review").addEventListener("change", event => {
   if (event.target.id === "reviewWeekly") { state.add.weekly = event.target.checked; renderReviewFoot(); }
+  if (event.target.id === "reviewHideOlder") { state.add.hideOlder = event.target.checked; state.add.limit = REVIEW_PAGE; renderReview(); }
 });
 document.querySelector(".add-review").addEventListener("mousedown", event => { if (event.shiftKey && event.target.closest(".link-pick")) event.preventDefault(); });
 $("reviewSearch").addEventListener("input", () => { state.add.query = $("reviewSearch").value; state.add.limit = REVIEW_PAGE; renderReview(); });

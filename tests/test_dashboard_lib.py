@@ -889,3 +889,53 @@ class TestScoutDigest(unittest.TestCase):
         self.assertEqual(out["regulator"], ["FED:1,3,4", "EBA:2"])
         self.assertEqual(out["day"], ["day:2026-10-21", "day:2026-10-20", "day:2026-10-19"])
         self.assertEqual(out["strength"], ["3strong", "1weak", "2supported", "1conflicting"])
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestSmartPicking(unittest.TestCase):
+    LINKS = """[
+      { url: "https://x.gov/forms/2026/y9c.pdf", text: "Current FR Y-9C form", section: "Current", format: "PDF" },
+      { url: "https://x.gov/forms/2026/y9c-instr.pdf", text: "Current FR Y-9C instructions", section: "Current", format: "PDF" },
+      { url: "https://x.gov/forms/2026/y9c.xlsx", text: "Current FR Y-9C template", section: "Current", format: "Spreadsheet" },
+      { url: "https://x.gov/forms/archive/y9c-2024.pdf", text: "Annual report 2024", section: "Archive", format: "PDF" },
+      { url: "https://x.gov/forms/archive/y9c-2025.pdf", text: "Annual report 2025", section: "Archive", format: "PDF" },
+      { url: "https://x.gov/news", text: "News", section: "", format: "Web page", chrome: true }
+    ]"""
+
+    def test_scores_reasons_and_older_versions(self):
+        out = run_js("const links = " + self.LINKS + """;
+          console.log(JSON.stringify({ scores: links.map(l => L.pickScore(l).score), reasons: L.pickScore(links[1]).reasons,
+            older: Array.from(L.pickVersions(links)) }));""")
+        self.assertGreater(out["scores"][2], out["scores"][3])
+        self.assertLess(out["scores"][5], 0)
+        self.assertIn("Instructions", out["reasons"])
+        self.assertEqual(out["older"], [3])
+
+    def test_similar_links_and_the_inferred_rule(self):
+        out = run_js("const links = " + self.LINKS + """;
+          const similar = L.pickSimilar([links[0]], links, l => l.url).map(r => [r.label, r.extra]);
+          console.log(JSON.stringify({ similar, recipe: L.pickRecipe("https://x.gov/forms", [links[0], links[2]], links) }));""")
+        self.assertEqual(out["similar"], [["All PDFs starting “Current FR”", 1], ["Every PDF on this page", 3]])
+        self.assertEqual(out["recipe"]["textPattern"], "^Current")
+        self.assertEqual(out["recipe"]["prefix"], "https://x.gov/forms/2026/")
+        self.assertEqual(out["recipe"]["count"], 3)
+
+    def test_rule_matches_folders_and_request(self):
+        out = run_js("const links = " + self.LINKS + """;
+          const req = L.pickRuleRequest({ url: "https://x.gov/forms", name: "Forms\\nPage", folder: "https://x.gov/forms/2026/y9c.pdf",
+            pattern: "^Current", include: "main", ignore: ["div.banner"] });
+          console.log(JSON.stringify({
+            folders: ["https://x.gov/forms", "https://x.gov/forms/a.pdf", "https://x.gov/forms/2026/", "ftp://x"].map(L.pickRuleFolder),
+            match: L.pickRuleMatches(links, { folder: "https://x.gov/forms/2026/", pattern: "^current" }).count,
+            anywhere: L.pickRuleMatches(links, { folder: "", pattern: "" }).count,
+            bad: L.pickRuleMatches(links, { pattern: "(" }).error !== "",
+            title: req.title, body: req.body }));""")
+        self.assertEqual(out["folders"], ["https://x.gov/forms/", "https://x.gov/forms/", "https://x.gov/forms/2026/", ""])
+        self.assertEqual(out["match"], 3)
+        self.assertEqual(out["anywhere"], 5)
+        self.assertTrue(out["bad"])
+        self.assertTrue(out["title"].startswith("[ChangeSentinel] Add monitor request"))
+        lines = out["body"].splitlines()
+        self.assertIn("Name: Forms Page", lines)
+        self.assertLess(lines.index("Documents under: https://x.gov/forms/2026/"), lines.index("Include selector: main"))
+        self.assertIn("- div.banner", lines)

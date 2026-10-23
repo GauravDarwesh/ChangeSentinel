@@ -771,6 +771,59 @@
     .explore-list { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
     .explore-list .empty { min-height: 0; padding: 28px 18px; }
 
+    /* Smarter picking: the area, page rules, similar links and document rules. */
+    .explore-pick { min-height: 30px; padding: 4px 10px; font-size: 12.5px; }
+    .explore-pick[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+    .explore-tabs button { padding-left: 9px; padding-right: 9px; }
+    .smart-tools { display: grid; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); background: var(--bg); }
+    .smart-card { display: grid; gap: 7px; padding: 11px 12px 12px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--pane); }
+    .smart-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .smart-card-head .text-button { font-size: 12px; }
+    .smart-kicker { color: var(--ink-3); font: 500 10.5px/1.4 var(--font-code); letter-spacing: .08em; text-transform: uppercase; }
+    .area-card { border-color: color-mix(in srgb, var(--accent) 55%, var(--line-2)); box-shadow: inset 2px 0 0 var(--accent); }
+    .area-label { color: var(--ink); font-size: 13px; font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; }
+    .area-text { color: var(--ink-2); font-size: 12px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .area-selector { overflow: hidden; color: var(--ink-3); font: 400 11px/1.5 var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
+    .smart-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .smart-actions .btn { min-height: 28px; padding: 3px 9px; font-size: 12px; }
+    .smart-note { color: var(--ink-3); font-size: 11.5px; line-height: 1.5; }
+    .smart-note.is-warning { color: var(--accent); }
+    .rule-chip { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 5px 4px 5px 8px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); font-size: 12px; }
+    .rule-chip span { font-weight: 500; }
+    .rule-chip.is-watch span { color: var(--good); }
+    .rule-chip.is-ignore span { color: var(--state-bad); }
+    .rule-chip code { overflow: hidden; color: var(--ink-2); font: 400 11px/1.5 var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
+    .rule-chip button { width: 22px; height: 22px; padding: 0; border: 0; background: none; color: var(--ink-3); font-size: 15px; line-height: 1; }
+    .rule-chip button:hover { color: var(--ink); }
+    .similar-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .similar-row .smart-kicker { flex-basis: 100%; }
+    .similar-chip { display: inline-flex; align-items: baseline; gap: 6px; max-width: 100%; padding: 5px 10px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--pane); color: var(--ink-2); font-size: 12px; line-height: 1.35; text-align: left; }
+    .similar-chip b { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
+    .similar-chip:hover { border-color: var(--accent); color: var(--ink); }
+    .rule-open { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border: 1px dashed color-mix(in srgb, var(--accent) 60%, var(--line-2)); border-radius: var(--radius); background: var(--accent-soft); color: var(--ink); text-align: left; }
+    .rule-open:hover { border-style: solid; }
+    .rule-open-mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--bg); font-size: 15px; }
+    .rule-open strong { display: block; font-size: 13px; font-weight: 500; }
+    .rule-open small { display: block; margin-top: 1px; color: var(--ink-2); font-size: 11.5px; line-height: 1.4; }
+    .rule-card { border-color: color-mix(in srgb, var(--accent) 55%, var(--line-2)); }
+    .rule-lede { color: var(--ink-2); font-size: 12.5px; line-height: 1.5; overflow-wrap: anywhere; }
+    .rule-lede strong { color: var(--ink); font-weight: 500; }
+    .rule-field { display: grid; gap: 3px; color: var(--ink-3); font-size: 11.5px; }
+    .rule-field .field-input { min-height: 30px; margin-top: 0; padding: 4px 8px; font: 400 12px/1.4 var(--font-code); }
+    .rule-count { color: var(--ink-2); font-size: 12px; line-height: 1.5; }
+    .rule-count strong { color: var(--ink); font-weight: 500; }
+    .rule-error { color: var(--state-bad); }
+    .link-pick-meta .reason { flex: none; padding: 0 6px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink-2); font-size: 11px; line-height: 17px; white-space: nowrap; }
+    .tag.is-older { color: var(--ink-3); }
+    .tag.is-older::before { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); }
+    .tag.is-rule, .tag.is-part { color: var(--accent); }
+    .tag.is-rule::before, .tag.is-part::before { background: var(--accent); }
+    .link-pick-meta { flex-wrap: wrap; }
+    .review-similar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 18px; border-bottom: 1px solid var(--line); background: var(--bg); }
+    .review-similar .smart-kicker { margin-right: 4px; }
+    .review-older { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); font-size: 12.5px; white-space: nowrap; cursor: pointer; }
+    .review-older input { accent-color: var(--accent); }
+
     /* One row style for every list of links in the dialog. */
     .link-pick { position: relative; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; align-items: start; border-bottom: 1px solid var(--line); transition: background-color .12s var(--ease); }
     .link-pick:hover { background: var(--raise); }
@@ -818,7 +871,7 @@
     .review-head { display: grid; gap: 10px; padding: 14px 22px 12px; border-bottom: 1px solid var(--line); }
     .review-note { color: var(--ink-2); font-size: 13px; line-height: 1.55; }
     .review-note.is-warning { color: var(--accent); }
-    .review-tools { display: grid; grid-template-columns: minmax(0, 1fr) 150px auto; align-items: center; gap: 12px; }
+    .review-tools { display: grid; grid-template-columns: minmax(0, 1fr) 150px auto auto; align-items: center; gap: 12px; }
     .review-tools .field-input { min-height: 32px; margin-top: 0; padding: 5px 26px 5px 9px; font-size: 12.5px; }
     .review-list { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
     .review-list .empty { min-height: 200px; }
@@ -848,6 +901,9 @@
       .review-head { padding: 12px 16px; }
       .review-tools { grid-template-columns: minmax(0, 1fr) 1fr; }
       .review-tools .search-field { grid-column: 1 / -1; }
+      .review-tools .filters { grid-column: 1 / -1; }
+      .explore-pick { order: 1; }
+      .smart-tools { padding: 10px 12px; }
       .link-pick { grid-template-columns: 30px minmax(0, 1fr); }
       .link-pick-side { grid-column: 2; padding: 0 14px 10px 2px; }
       .link-group { padding: 10px 14px 6px; }
@@ -2322,6 +2378,7 @@
         <button class="explore-nav" type="button" data-explore-forward aria-label="Forward" title="Forward">&#8250;</button>
         <div class="explore-address"><span class="explore-led" id="exploreLed" aria-hidden="true"></span><span id="exploreAddress"></span></div>
         <button class="btn explore-this" type="button" data-explore-this>Select this page</button>
+        <button class="btn explore-pick" type="button" data-explore-pick aria-pressed="false" title="Click a table, list or section of the page to select it">Pick a part</button>
         <label class="explore-mode" title="When on, clicking or tapping a link selects it instead of opening it"><input type="checkbox" id="exploreSelectMode"><span>Tap selects</span></label>
         <a class="sheet-link explore-newtab" id="exploreNewTab" href="#" target="_blank" rel="noopener noreferrer">New tab</a>
       </div>
@@ -2334,8 +2391,9 @@
         </div>
         <aside class="explore-side" aria-label="Links">
           <div class="segmented explore-tabs" role="group" aria-label="Show">
+            <button type="button" data-explore-tab="suggested" aria-pressed="false">Suggested <span class="num" id="exploreSuggestedCount"></span></button>
+            <button type="button" data-explore-tab="page" aria-pressed="false">Page <span class="num" id="explorePageCount"></span></button>
             <button type="button" data-explore-tab="selected" aria-pressed="true">Selected <span class="num" id="exploreSelectedCount">0</span></button>
-            <button type="button" data-explore-tab="page" aria-pressed="false">On this page <span class="num" id="explorePageCount"></span></button>
           </div>
           <p class="explore-hint" id="exploreHint"><kbd>Shift</kbd>-click a link to select it. Click it to open it here.</p>
           <div class="explore-list" id="exploreList"></div>
@@ -2374,8 +2432,10 @@
           <label><span class="visually-hidden">File type</span><select class="field-input" id="reviewFormat"><option value="ALL">All types</option><option value="PDF">PDF</option><option value="Web page">Web pages</option><option value="Spreadsheet">Spreadsheets</option><option value="Word">Word</option><option value="OTHER">Other files</option></select></label>
           <div class="filters" role="group" aria-label="Show">
             <button type="button" data-review-show="ALL" aria-pressed="true">All</button>
+            <button type="button" data-review-show="SUGGESTED" aria-pressed="false" title="Forms, templates, instructions and other regulatory documents">Suggested</button>
             <button type="button" data-review-show="SELECTED" aria-pressed="false">Ticked</button>
           </div>
+          <label class="review-older" title="Earlier years and superseded copies of the same document"><input type="checkbox" id="reviewHideOlder" checked> Hide older versions</label>
         </div>
       </div>
       <div class="review-list" id="reviewList" aria-label="Links found"></div>

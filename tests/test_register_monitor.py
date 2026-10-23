@@ -793,3 +793,34 @@ class TestDocumentRules(unittest.TestCase):
         """
         links = extract_html_links(url, html, source)
         self.assertEqual(links, ["https://www.example.gov/reporting/files/current.pdf", url])
+
+
+class TestDashboardRuleRequest(unittest.TestCase):
+    def test_the_dashboard_rule_request_registers_as_written(self):
+        import shutil
+        import subprocess
+
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node is required to build the dashboard request")
+        root = Path(__file__).resolve().parents[1]
+        script = (
+            "const L = require(" + json.dumps(str(root / "dashboard-lib.js")) + ");"
+            "const r = L.pickRuleRequest({ url: 'https://www.example.gov/forms/fr-y9c', name: 'FR Y-9C',"
+            " folder: 'https://www.example.gov/forms/2026/', pattern: '^Current', include: 'section.current-forms', ignore: ['div.banner'] });"
+            "console.log(JSON.stringify(r));"
+        )
+        request = json.loads(subprocess.run([node, "-e", script], capture_output=True, text=True, check=True).stdout)
+        event = {"issue": {"title": request["title"], "body": request["body"], "user": {"login": "GauravDarwesh"}}}
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            register_request(event, path, "GauravDarwesh/ChangeSentinel")
+            saved = json.loads(path.read_text(encoding="utf-8"))["sources"][0]
+        self.assertEqual(saved["name"], "FR Y-9C")
+        self.assertEqual(saved["crawl_depth"], 1)
+        self.assertEqual(saved["allowed_urls"], ["https://www.example.gov/forms/fr-y9c"])
+        self.assertEqual(saved["allowed_resource_prefixes"], ["https://www.example.gov/forms/2026/"])
+        self.assertEqual(saved["resource_link_text_patterns"], ["^Current"])
+        self.assertEqual(saved["include_selector"], "section.current-forms")
+        self.assertEqual(saved["ignore_selectors"], ["div.banner"])
