@@ -195,7 +195,7 @@ def source_for_url(
         "regulator": parsed.hostname or host,
         **settings,
         "seed_urls": [url],
-        "allowed_prefixes": [parsed.scheme + "://" + authority + "/"],
+        "allowed_prefixes": settings.get("allowed_prefixes") or [parsed.scheme + "://" + authority + "/"],
         "allowed_urls": [url] if crawl_depth == 0 else [],
         "allowed_domains": [host],
     }
