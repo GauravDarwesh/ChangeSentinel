@@ -183,6 +183,7 @@ def source_for_url(
     settings["crawl_depth"] = int(crawl_depth)
     settings["excluded_urls"] = []
     settings["discovery_max_pages_per_slice"] = 1 if crawl_depth == 0 else 200
+    settings["register_discovered_urls"] = crawl_depth > 0
     return {
         "id": source_id,
         "name": _display_name(name, url),
@@ -628,6 +629,7 @@ def register_request(
     else:
         crawl_depth = 0
     scout_enabled = _scout_discovery_flag(body)
+    register_discovered = bool(crawl_matches and crawl_depth > 0)
     if scout_enabled and crawl_depth == 0:
         raise ValueError("Scout weekly discovery requires crawl depth 1, 2, or 3.")
     if scout_enabled and scout_config_path is None:
@@ -659,6 +661,7 @@ def register_request(
             existing["crawl_depth"] = crawl_depth
             existing["allowed_urls"] = []
             existing["discovery_max_pages_per_slice"] = 200
+            existing["register_discovered_urls"] = register_discovered
             if requested_name:
                 existing["name"] = _display_name(requested_name, url)
             source_changed = True
@@ -669,6 +672,7 @@ def register_request(
             "name": str(existing.get("name") or display_name or url),
             "created": False,
             "crawl_depth": int(existing.get("crawl_depth", 0)),
+            "register_discovered_urls": bool(existing.get("register_discovered_urls", False)),
             "message": (
                 f"The existing monitor was promoted from depth {previous_depth} to {crawl_depth}."
                 if crawl_depth_updated
@@ -679,6 +683,7 @@ def register_request(
         new_source = source_for_url(
             url, display_name, include_selector, ignore_selectors, crawl_depth=crawl_depth
         )
+        new_source["register_discovered_urls"] = register_discovered
         source_ids = {str(source.get("id")) for source in sources}
         if new_source["id"] in source_ids:
             existing_collision = next(source for source in sources if str(source.get("id")) == new_source["id"])
@@ -690,6 +695,7 @@ def register_request(
                     "name": str(existing_collision.get("name") or new_source["name"]),
                     "created": False,
                     "crawl_depth": crawl_depth,
+                    "register_discovered_urls": bool(existing_collision.get("register_discovered_urls", False)),
                     "message": "The monitor is already configured.",
                 }
             else:
@@ -703,6 +709,7 @@ def register_request(
                 "name": new_source["name"],
                 "created": True,
                 "crawl_depth": crawl_depth,
+                "register_discovered_urls": register_discovered,
                 "message": "The URL has been added to config/sources.json.",
             }
 
@@ -726,6 +733,7 @@ def register_request(
         )
 
     source_result["crawl_depth_updated"] = crawl_depth_updated
+    source_result["register_discovered_urls"] = bool(source_result.get("register_discovered_urls", register_discovered))
     source_result["scout_enabled"] = scout_enabled
     source_result["scout_configured"] = scout_enabled
     source_result["scout_changed"] = scout_changed
