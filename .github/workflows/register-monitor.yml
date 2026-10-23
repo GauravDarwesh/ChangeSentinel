@@ -9,8 +9,11 @@ permissions:
   issues: write
   actions: write
 
+# A repository-wide concurrency group keeps only one pending run. During a bulk upload,
+# later issue events replace earlier pending runs, silently dropping valid monitor requests.
+# Scope the group to one issue; distinct issue registrations reconcile concurrent main pushes below.
 concurrency:
-  group: register-dashboard-monitor
+  group: register-dashboard-monitor-${{ github.event.issue.number }}
   cancel-in-progress: false
 
 jobs:
@@ -50,7 +53,7 @@ jobs:
           git config user.name "changesentinel-bot"
           git config user.email "actions@users.noreply.github.com"
           success=false
-          for attempt in 1 2 3; do
+          for attempt in 1 2 3 4 5 6; do
             git fetch origin main --quiet
             git checkout -B main origin/main
             python -m regmon.register_monitor \
@@ -93,10 +96,12 @@ jobs:
               break
             fi
             echo "Push attempt $attempt did not publish; refreshing main and retrying."
-            sleep 2
+            # Different issue events now run independently. Back off with small jitter so
+            # concurrent registrations do not repeatedly collide on the same main commit.
+            sleep $((attempt * 2 + RANDOM % 3))
           done
           if [ "$success" != true ]; then
-            echo "Could not publish monitor configuration after three attempts."
+            echo "Could not publish monitor configuration after six attempts."
             exit 1
           fi
           echo "source_ids=$SOURCE_IDS" >> "$GITHUB_OUTPUT"
