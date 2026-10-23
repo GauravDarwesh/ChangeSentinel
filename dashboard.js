@@ -115,6 +115,8 @@ const state = {
   assetSignatures: {}, renderedSignature: "", lastFullLoad: 0, loading: null, detailKeys: {},
   workflowRuns: [], workflowSignature: "", scanColumns: null, pendingScan: null,
   scoutLatest: null, scoutReview: null, scoutConfig: null, scoutFilter: "REVIEW", scoutFormatFilter: "ALL", selectedScoutKey: "", scoutMonitored: null,
+  scoutGroupBy: "", scoutStrongOnly: false, scoutOpenGroups: new Set(), scoutPicked: new Map(),
+  scoutPreview: { mode: "page", device: "desktop", expanded: false, key: "", serial: 0, token: "", page: null, locate: "", trail: [] },
   // Add a link: the page being explored, links found by level, and the ticked links.
   add: { step: "start", method: "explore", url: "", history: [], at: -1, page: null, pages: new Map(), loading: 0,
     tab: "selected", selectMode: false, candidates: [], picked: new Map(), anchor: "", origin: "explore", notes: [], info: "",
@@ -768,42 +770,84 @@ function renderLatestPreview() {
   });
 }
 
-// The LED change field: one row per page, one column per six-hour scan window
-// (newest on the right), then one empty column for the next scan. Manual runs
-// and crawl continuations fold into the window they ran in, so every column is
-// the same span of time and a one-source run never leaves holes in other rows.
-function fieldGeometry() {
+// The LED change field: one column per six-hour scan window (newest on the
+// right), then one empty column for the next scan. Manual runs and crawl
+// continuations fold into the window they ran in, so every column is the same
+// span of time and a one-source run never leaves holes in other rows.
+//
+// It has to stay readable at hundreds of pages, so it opens on a lens: each page
+// that changed or failed in the chosen range keeps its own row, and every other
+// page folds into one summary row per kind ("New pages", "No change") that opens
+// in place. Other lenses list just the changed, failing or new pages, or every
+// page grouped by source. Labels and the day header stay pinned while the
+// lights scroll under them.
+const FIELD_STORAGE = "cs-field-v1";
+const FIELD_LENS_WORDS = { activity: "Activity", changed: "Changed", problems: "Problems", new: "New", all: "All pages" };
+function fieldPrefs() {
+  if (state.field) return state.field;
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(FIELD_STORAGE) || "{}") || {}; } catch (_) { saved = {}; }
+  state.field = {
+    lens: L.FIELD_LENSES.indexOf(saved.lens) >= 0 ? saved.lens : "activity",
+    range: Object.prototype.hasOwnProperty.call(L.FIELD_RANGES, saved.range) ? saved.range : isCompact() ? "2d" : "7d",
+    query: "", open: new Set(), closed: new Set(), limit: 80
+  };
+  return state.field;
+}
+function saveFieldPrefs() {
+  const f = fieldPrefs();
+  try { localStorage.setItem(FIELD_STORAGE, JSON.stringify({ lens: f.lens, range: f.range })); } catch (_) {}
+}
+// Lights keep a fixed size; the label column takes whatever width the lights
+// leave, within limits, so long page names show in full when there is room.
+function fieldGeometry(columnCount) {
   const viewport = $("fieldViewport");
   const width = (viewport && viewport.clientWidth) || 800;
   const compact = isCompact();
-  const labelWidth = Math.round(compact ? Math.min(176, Math.max(128, width * .44)) : Math.min(260, Math.max(150, width * .28)));
-  const gap = compact ? 3 : 4;
-  // Keep cell sizing stable; overflow is handled by the dedicated viewport.
-  const tile = compact ? 14 : 18;
+  const gap = compact ? 2 : 3;
+  const tile = compact ? 14 : 16;
+  const lights = ((columnCount || 0) + 1) * (tile + gap) + 16;
+  const min = compact ? 108 : 160;
+  const max = compact ? 168 : 380;
+  const labelWidth = Math.round(Math.min(max, Math.max(min, width - lights)));
   return { labelWidth, tile, gap, key: labelWidth + "x" + tile + "x" + gap };
+}
+function fieldPage(item, reportEvents) {
+  return {
+    sourceId: item.source_id,
+    pending: Boolean(item.pending_registration),
+    firstSeen: item.first_seen,
+    events: itemChangeEntries(item).concat(reportEvents.filter(event => (event.url_id === item.url_id || event.url === item.canonical_url) &&
+      (event.event_type === "FETCH_ERROR" || event.event_type === "EXTRACTION_ERROR"))),
+    problemAt: item.fetch_error || item.extraction_error ? item.last_checked : null
+  };
+}
+function fieldCellSummary(states) {
+  const order = ["bad", "on", "new", "markup", "dim", "skip"];
+  const words = { bad: "couldn't be read", on: "changed", new: "new", markup: "markup only", dim: "no change", skip: "not scanned" };
+  const counts = {};
+  states.forEach(s => { counts[s] = (counts[s] || 0) + 1; });
+  return order.filter(s => counts[s]).map(s => counts[s] + " " + words[s]).join(", ");
 }
 function renderMonitoringSignal() {
   const field = $("signalVisual");
   const viewport = $("fieldViewport");
+  const prefs = fieldPrefs();
   // Follow the latest scan unless the user has moved left into older history.
   const followLatest = Boolean(viewport && (viewport.dataset.initialized !== "1" || viewport.scrollWidth - viewport.clientWidth - viewport.scrollLeft <= 24));
   const items = state.items || [];
+  syncFieldTools();
   if (!items.length) {
+    field.style.removeProperty("--cols");
     field.innerHTML = emptyState("No pages yet", "Each monitored page gets a row of lights here, one per scan.");
     ledField.measure();
     return;
   }
-  const geometry = fieldGeometry();
-  // Keep the saved scan history, not just the windows that fit the screen.
+  // The countdown sees every saved scan; the field shows the six-hour windows in the chosen range.
   const scans = L.runColumns(state.history, { workflowRuns: state.workflowRuns });
-  const columns = L.slotColumns(state.history, { workflowRuns: state.workflowRuns });
-  // Existing contract marker: history is no longer sliced to a screen-fit capacity.
-  const legacyWindowLimit = geometry.capacity - 1;
-  void legacyWindowLimit;
-  // L.slotColumns(state.history, { workflowRuns: state.workflowRuns, limit: geometry.capacity - 1 })
-  // Kept for the existing dashboard contract test; the viewport itself now scrolls instead of truncating columns.
-  const legacyCapacityContract = Math.max(5, Math.min(29, Math.floor((Math.max(100, 800 - geometry.labelWidth) + geometry.gap) / (geometry.tile + geometry.gap))));
-  void legacyCapacityContract;
+  const allColumns = L.slotColumns(state.history, { workflowRuns: state.workflowRuns });
+  const columns = L.fieldWindow(allColumns, prefs.range, new Date());
+  const geometry = fieldGeometry(columns.length);
   const pending = L.pendingScan(new Date(), scans, state.workflowRuns);
   state.scanColumns = scans;
   state.fieldColumns = columns;
@@ -814,65 +858,120 @@ function renderMonitoringSignal() {
   field.style.setProperty("--label-w", geometry.labelWidth + "px");
   field.dataset.geometry = geometry.key;
   const reportEvents = allEvents();
-  const merged = {};
-  items.forEach(item => { (merged[item.source_id] = merged[item.source_id] || []).push(item); });
-  const sourceIds = Object.keys(merged).sort((a, b) => String(a).localeCompare(String(b)));
-  const pendingTip = pendingWords(pending);
-  let html = "";
-  let y = 0;
-  sourceIds.forEach(sourceId => {
-    const source = configuredSources().find(candidate => candidate.id === sourceId) || { id: sourceId };
-    if (sourceIds.length > 1) html += '<div class="field-group" role="row"><span role="rowheader">' + esc(shortSourceLabel(source)) + "</span></div>";
-    merged[sourceId].slice().sort((a, b) => itemTitle(a).localeCompare(itemTitle(b))).forEach(item => {
-      const page = {
-        sourceId: item.source_id,
-        pending: Boolean(item.pending_registration),
-        firstSeen: item.first_seen,
-        events: itemChangeEntries(item).concat(reportEvents.filter(event => (event.url_id === item.url_id || event.url === item.canonical_url) &&
-          (event.event_type === "FETCH_ERROR" || event.event_type === "EXTRACTION_ERROR"))),
-        problemAt: item.fetch_error || item.extraction_error ? item.last_checked : null
-      };
-      const title = itemTitle(item);
-      html += '<button class="field-label" type="button" data-monitor-id="' + esc(item.url_id) + '" data-row="' + y + '" title="' + esc(title) + '">' + esc(title) + "</button>";
-      // Chronological order: older scan windows are left, newest is on the right.
-      columns.forEach((column, x) => {
-        const s = L.columnCellState(column, page);
-        html += '<span class="led s-' + s + '" role="gridcell" data-x="' + x + '" data-y="' + y + '" data-col="' + esc(column.id) + '" data-source="' + esc(item.source_id) + '"' +
-          (s === "none" ? "" : ' data-monitor-id="' + esc(item.url_id) + '"') +
-          ' data-tip="' + esc(title) + '" data-state="' + s + '" aria-label="' + esc(title + ", " + columnLabel(column, item.source_id) + ": " + stateWords(s)) + '"></span>';
-      });
-      html += '<span class="led s-pending" role="gridcell" data-x="' + columns.length + '" data-y="' + y + '" data-col="pending" data-tip="' + esc(title) +
-        '" data-state="pending"' + (item.pending_registration ? ' data-first="1"' : "") + ' aria-label="' + esc(title + ", " + (item.pending_registration ? "first scan in progress" : pendingTip.title)) + '"></span>';
-      y++;
-    });
+  const itemById = new Map(items.map(item => [item.url_id, item]));
+  const sourceById = new Map(configuredSources().map(source => [source.id, source]));
+  const pages = items.map(item => {
+    const source = sourceById.get(item.source_id) || { id: item.source_id };
+    const page = fieldPage(item, reportEvents);
+    const row = { id: item.url_id, url: item.canonical_url, title: itemTitle(item), sourceId: item.source_id, sourceLabel: shortSourceLabel(source),
+      pending: page.pending, states: columns.map(column => L.columnCellState(column, page)) };
+    return row;
   });
-  // Marks and day labels follow the same chronological order as the cells.
-  html += '<div class="field-marks" aria-hidden="true">' + columns.map(column =>
-    '<i class="' + (column.manual ? "m-manual" : "") + '"></i>').join("") + "<i></i></div>";
-  let lastDay = "";
-  html += '<div class="field-axis" aria-hidden="true">' + columns.map(column => {
-    const day = new Date(column.slot).toLocaleDateString([], { weekday: "short" });
-    const label = day !== lastDay ? day : "";
-    lastDay = day;
-    return "<span" + (label ? ' class="is-day"' : "") + ">" + esc(label) + "</span>";
-  }).join("") + "<span></span></div>";
+  const layout = L.fieldRows(pages, { lens: prefs.lens, query: prefs.query, open: prefs.open, closed: prefs.closed, limit: prefs.limit });
+  state.fieldLayout = layout;
+  syncFieldTools(layout.counts);
+  const pendingTip = pendingWords(pending);
+  // Header: one label per day spanning that day's windows, pinned while the rows
+  // scroll; a dash under a window marks a manual run in it.
+  let html = '<div class="field-corner" role="columnheader">' + esc(columns.length ? plural(columns.length, "scan window", "scan windows") : "No scans in range") + "</div>";
+  const days = [];
+  columns.forEach(column => {
+    const date = new Date(column.slot);
+    const key = date.toDateString();
+    if (!days.length || days[days.length - 1].key !== key) days.push({ key, date, columns: [] });
+    days[days.length - 1].columns.push(column);
+  });
+  days.forEach(day => {
+    const span = day.columns.length;
+    const weekday = day.date.toLocaleDateString([], { weekday: "short" });
+    const label = span >= 3 ? weekday + " " + day.date.getDate() : span === 2 ? weekday : weekday.charAt(0);
+    const marks = day.columns.map((column, k) => column.manual ? '<i class="field-manual" style="--k:' + k + '"></i>' : "").join("");
+    html += '<span class="field-day" role="columnheader" style="grid-column: span ' + span + '" title="' + esc(day.date.toLocaleDateString([], { weekday: "long", day: "numeric", month: "long" })) + '">' +
+      '<span class="field-day-text">' + esc(label) + "</span>" + marks + "</span>";
+  });
+  html += '<span class="field-day is-next" role="columnheader" title="The next scan">Next</span>';
+  let y = 0;
+  const cells = (states, attrs, tipTitle, summaries) => states.map((s, x) =>
+    '<span class="led s-' + s + '" role="gridcell" data-x="' + x + '" data-y="' + y + '" data-col="' + esc(columns[x].id) + '" data-state="' + s + '" data-tip="' + esc(tipTitle) + '"' +
+      attrs(s) + (summaries ? ' data-summary="' + esc(summaries[x]) + '"' : "") +
+      ' aria-label="' + esc(tipTitle + ", " + (attrs.source ? columnLabel(columns[x], attrs.source) : windowSpan(columns[x])) + ": " + (summaries ? summaries[x] : stateWords(s))) + '"></span>').join("");
+  layout.rows.forEach(row => {
+    if (row.type === "more") {
+      html += '<button class="field-more" type="button" data-field-more="' + esc(row.key) + '">Show ' + esc(Math.min(80, row.hidden)) + " more · " + esc(plural(row.hidden, "page", "pages")) + " not shown</button>";
+      return;
+    }
+    if (row.type === "group") {
+      const members = pages.filter(page => fieldGroupHas(row, page));
+      const memberStates = columns.map((_, x) => members.map(page => page.states[x]));
+      const summaries = memberStates.map(list => fieldCellSummary(list.filter(s => s !== "none")) || "not scanned");
+      const title = row.label + " · " + plural(row.count, "page", "pages");
+      html += '<button class="field-label field-group-label is-' + esc(row.kind) + '" type="button" data-field-group="' + esc(row.key) + '" aria-expanded="' + String(row.open) + '" title="' + esc(title) + '">' +
+        '<span class="field-chevron" aria-hidden="true"></span><span class="field-name">' + esc(row.label) + '</span><span class="field-label-count num">' + esc(row.count) + "</span></button>";
+      const attrs = s => (s === "none" ? "" : ' data-field-group="' + esc(row.key) + '"');
+      attrs.source = "";
+      html += cells(row.states, attrs, title, summaries);
+      html += '<span class="led s-pending is-summary" role="gridcell" data-x="' + columns.length + '" data-y="' + y + '" data-col="pending" data-tip="' + esc(title) + '" data-state="pending" aria-label="' + esc(title + ", " + pendingTip.title) + '"></span>';
+      y++;
+      return;
+    }
+    const page = row.page;
+    const item = itemById.get(page.id);
+    const a = page.activity || L.rowActivity(page.states);
+    const badge = a.problems ? '<i class="field-badge is-bad" aria-hidden="true"></i>' : a.changed ? '<i class="field-badge is-on" aria-hidden="true"></i>' : "";
+    html += '<button class="field-label' + (row.member ? " is-member" : "") + '" type="button" data-monitor-id="' + esc(page.id) + '" data-row="' + y + '" title="' + esc(page.title + " · " + page.sourceLabel) + '">' +
+      badge + '<span class="field-name">' + esc(page.title) + "</span></button>";
+    const attrs = s => (s === "none" ? "" : ' data-monitor-id="' + esc(page.id) + '" data-source="' + esc(page.sourceId) + '"');
+    attrs.source = page.sourceId;
+    html += cells(page.states, attrs, page.title);
+    html += '<span class="led s-pending" role="gridcell" data-x="' + columns.length + '" data-y="' + y + '" data-col="pending" data-tip="' + esc(page.title) +
+      '" data-state="pending"' + (item && item.pending_registration ? ' data-first="1"' : "") + ' aria-label="' + esc(page.title + ", " + (item && item.pending_registration ? "first scan in progress" : pendingTip.title)) + '"></span>';
+    y++;
+  });
+  if (!layout.rows.length) {
+    const words = prefs.query ? "No page matches “" + prefs.query + "”." : prefs.lens === "problems" ? "No page failed to scan in this range." :
+      prefs.lens === "changed" ? "No page changed in this range." : prefs.lens === "new" ? "No page was added in this range." : "Nothing to show in this range.";
+    html += '<div class="field-empty">' + esc(words) + ' <button class="text-button" type="button" data-field-lens="all">Show all pages</button></div>';
+  }
   field.innerHTML = html;
   if (viewport) {
     viewport.dataset.initialized = "1";
     if (followLatest) requestAnimationFrame(() => { viewport.scrollLeft = viewport.scrollWidth; ledField.measure(); });
   }
-  const lit = field.querySelectorAll(".led.s-on").length;
-  const fresh = field.querySelectorAll(".led.s-new").length;
-  const bad = field.querySelectorAll(".led.s-bad").length;
+  const c = layout.counts;
   const manual = columns.some(column => column.manual);
-  $("fieldNote").textContent = "One column per six-hour scan window (starting " + scheduleTimes() + " your time), newest on the right; scroll left for older history" +
-    (manual ? "; a dash marks a window with a manual run" : "") + ". Markup-only edits don't count as changes. " +
-    ([lit ? plural(lit, "change", "changes") : "", fresh ? plural(fresh, "new page", "new pages") : "", bad ? plural(bad, "problem", "problems") : ""]
-      .filter(Boolean).join(", ").replace(/^./, ch => ch.toUpperCase()) || "No changes") + " in the displayed history.";
+  const rangeWords = { "2d": "the last 2 days", "7d": "the last 7 days", "30d": "the last 30 days", all: "all saved history" }[prefs.range];
+  $("fieldNote").textContent = "Each column is a six-hour scan window (starting " + scheduleTimes() + " your time), newest on the right" +
+    (columns.length > 12 ? "; scroll sideways for older windows" : "") + (manual ? "; a dash under a day marks a window with a manual run" : "") + ". In " + rangeWords + ": " +
+    ([c.changed ? plural(c.changed, "page changed", "pages changed") : "no content changes", c.problems ? plural(c.problems, "page had problems", "pages had problems") : "",
+      c.new ? plural(c.new, "new page", "new pages") : ""].filter(Boolean).join(", ")) + ". Markup-only edits don't count as changes.";
   const manualLegend = document.querySelector(".field-legend .manual");
   if (manualLegend) manualLegend.parentElement.hidden = !manual;
   ledField.measure();
   updateNextRunCountdown();
+}
+// Which pages a summary row stands for, by the same rule fieldRows used.
+function fieldGroupHas(row, page) {
+  const a = page.activity || L.rowActivity(page.states);
+  if (!fieldMatchesQuery(page)) return false;
+  if (row.kind === "source") return "src:" + page.sourceId === row.key;
+  if (a.changed || a.problems) return false;
+  return row.kind === "new" ? a.kind === "new" : row.kind === "waiting" ? a.kind === "unscanned" : a.kind === "quiet";
+}
+function fieldMatchesQuery(page) {
+  const q = String(fieldPrefs().query || "").trim().toLowerCase();
+  return !q || [page.title, page.url, page.sourceLabel].join(" ").toLowerCase().indexOf(q) >= 0;
+}
+function syncFieldTools(counts) {
+  const prefs = fieldPrefs();
+  document.querySelectorAll("[data-field-lens]").forEach(button => {
+    if (!button.closest(".field-lenses")) return;
+    const lens = button.dataset.fieldLens;
+    button.setAttribute("aria-pressed", String(lens === prefs.lens));
+    const count = button.querySelector("[data-lens-count]");
+    if (count && counts) count.textContent = String(counts[lens] == null ? "" : counts[lens]);
+  });
+  const range = $("fieldRange");
+  if (range && range.value !== prefs.range) range.value = prefs.range;
 }
 function timeOnlyShort(date) { return clock(date); }
 // The four scheduled slot times (00, 06, 12, 18 UTC) in the viewer's time zone.
@@ -884,6 +983,10 @@ function scheduleTimes() {
 }
 function triggerWords(trigger) {
   return { scheduled: "Scheduled scan", manual: "Manual scan", continuation: "Crawl continuation" }[trigger] || "Scan";
+}
+function windowSpan(column) {
+  if (!Number.isFinite(column.start)) return when(new Date(column.at));
+  return new Date(column.start).toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" }) + ", " + timeOnlyShort(new Date(column.start)) + "–" + timeOnlyShort(new Date(column.end));
 }
 function columnLabel(column, sourceId) {
   const at = new Date((sourceId && column.sources[sourceId]) || column.at);
@@ -964,40 +1067,75 @@ function updateNextRunCountdown() {
       : "";
   }
 }
-function showFieldTip(target, x, y) {
+// The tip under the pointer (mouse), or pinned to a tapped light with its actions
+// (touch). It is hidden whenever the field it describes is not on screen: Safari
+// sends no pointerleave when the hovered cell is hidden by a view change, so the
+// tip must never rely on that event alone.
+function hideFieldTip() {
   const tip = $("fieldTip");
+  ledField.hover(null);
+  if (!tip || tip.hidden) return;
+  tip.hidden = true;
+  tip.classList.remove("is-pinned");
+  tip.innerHTML = "";
+}
+function showFieldTip(target, x, y, pinned) {
+  const tip = $("fieldTip");
+  if (!target || state.view !== "overview" || !target.isConnected || !target.getClientRects().length) { hideFieldTip(); return; }
   ledField.hover(target);
-  if (!target) { tip.hidden = true; return; }
   let label = "";
+  let detail = "";
+  const group = target.dataset.fieldGroup || "";
   if (target.dataset.state === "pending") {
     label = target.dataset.first ? "First scan in progress; it lights green once saved" : pendingWords(state.pendingScan || L.pendingScan(new Date(), [], [])).title;
   } else {
     const column = (state.fieldColumns || []).find(candidate => candidate.id === target.dataset.col);
-    label = column ? columnLabel(column, target.dataset.source) : "";
+    label = column ? (target.dataset.source ? columnLabel(column, target.dataset.source) : windowSpan(column)) : "";
+    detail = target.dataset.summary || stateWords(target.dataset.state);
   }
-  tip.innerHTML = esc(target.dataset.tip) + "<small>" + esc(label) + "</small>" +
-    (target.dataset.state === "pending" ? "" : "<small>" + esc(stateWords(target.dataset.state).replace(/^\w/, ch => ch.toUpperCase())) + "</small>");
+  let actions = "";
+  if (pinned) {
+    if (target.dataset.monitorId) actions = '<button class="btn btn-primary" type="button" data-tip-open="' + esc(target.dataset.monitorId) + '">Open page</button>';
+    else if (group) actions = '<button class="btn" type="button" data-tip-group="' + esc(group) + '">' + (fieldPrefs().open.has(group) ? "Hide these pages" : "Show these pages") + "</button>";
+    actions = '<div class="field-tip-actions">' + actions + '<button class="btn btn-quiet" type="button" data-tip-close>Close</button></div>';
+  }
+  tip.innerHTML = '<strong class="field-tip-title">' + esc(target.dataset.tip) + "</strong><small>" + esc(label) + "</small>" +
+    (detail ? "<small>" + esc(detail.replace(/^\w/, ch => ch.toUpperCase())) + "</small>" : "") + actions;
+  tip.classList.toggle("is-pinned", !!pinned);
   tip.hidden = false;
   const box = tip.getBoundingClientRect();
-  tip.style.left = Math.min(window.innerWidth - box.width - 12, x + 14) + "px";
-  tip.style.top = Math.max(12, y - box.height - 12) + "px";
+  if (pinned) {
+    const cell = target.getBoundingClientRect();
+    const left = Math.min(window.innerWidth - box.width - 10, Math.max(10, cell.left + cell.width / 2 - box.width / 2));
+    const above = cell.top - box.height - 10;
+    tip.style.left = left + "px";
+    tip.style.top = (above > 10 ? above : Math.min(window.innerHeight - box.height - 10, cell.bottom + 10)) + "px";
+    return;
+  }
+  tip.style.left = Math.max(8, Math.min(window.innerWidth - box.width - 12, x + 14)) + "px";
+  tip.style.top = (y - box.height - 12 > 8 ? y - box.height - 12 : Math.min(window.innerHeight - box.height - 8, y + 18)) + "px";
 }
 
 /* ---------- LED field painter ----------
  * The cells in #signalVisual are transparent hit areas; this paints the lights
- * on a canvas behind them. Scanned cells carry a slow drifting wave of warm
- * light; changes, new pages and problems glow in their own colour on top of it.
- * A new scan column drops in as a block. The next-scan column is an empty,
- * colourless box with a small 3x3 LED scan head running down it, faster while a
- * scan is actually running. Paused whenever the field is off screen.
+ * on a canvas the size of the visible viewport, behind the scrolling grid, and
+ * draws only the cells in view. (A canvas as large as the whole grid would
+ * exceed Safari's canvas size limit once there are a few hundred rows.) Scanned
+ * cells carry a slow drifting wave of warm light; changes, new pages and
+ * problems glow in their own colour on top of it. A new scan column drops in as
+ * a block. The next-scan column is an empty box with a small 3x3 LED scan head
+ * running down it, faster while a scan is actually running. Paused whenever the
+ * field is off screen.
  */
 const ledField = (() => {
   const canvas = $("fieldCanvas");
+  const viewport = $("fieldViewport");
   const stage = $("fieldStage");
+  const field = $("signalVisual");
   const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
   const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const SNAKE = [0, 1, 2, 5, 4, 3, 6, 7, 8];
-  let cells = [], rows = 0, colors = null, dpr = 1, born = {}, seen = null, hoverEl = null;
+  let cells = [], rows = 0, colors = null, dpr = 1, born = {}, seen = null, hoverEl = null, width = 0, height = 0;
   let frame = 0, lastPaint = 0, sleepTimer = 0, revealed = false;
 
   function parseColor(value) {
@@ -1022,19 +1160,24 @@ const ledField = (() => {
   const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
 
   function measure() {
-    if (!ctx || !stage) return;
-    const box = stage.getBoundingClientRect();
+    if (!ctx || !viewport || !field) return;
+    width = viewport.clientWidth;
+    height = viewport.clientHeight;
     dpr = Math.min(2, window.devicePixelRatio || 1);
-    canvas.width = Math.max(1, Math.round(box.width * dpr));
-    canvas.height = Math.max(1, Math.round(box.height * dpr));
+    canvas.width = Math.max(1, Math.round(width * dpr));
+    canvas.height = Math.max(1, Math.round(height * dpr));
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
     const now = performance.now();
     const ids = new Set();
+    // Positions in the viewport's scrolled content: led -> field -> stage -> viewport.
+    const ox = field.offsetLeft + (stage ? stage.offsetLeft : 0);
+    const oy = field.offsetTop + (stage ? stage.offsetTop : 0);
     cells = [];
     rows = 0;
-    stage.querySelectorAll(".led").forEach(el => {
+    field.querySelectorAll(".led").forEach(el => {
       if (el.classList.contains("s-none")) return;
-      const r = el.getBoundingClientRect();
-      const cell = { el, x: r.left - box.left, y: r.top - box.top, s: r.width, state: el.dataset.state, col: Number(el.dataset.x), row: Number(el.dataset.y), id: el.dataset.col };
+      const cell = { el, x: el.offsetLeft + ox, y: el.offsetTop + oy, s: el.offsetWidth, state: el.dataset.state, col: Number(el.dataset.x), row: Number(el.dataset.y), id: el.dataset.col };
       cells.push(cell);
       rows = Math.max(rows, cell.row + 1);
       if (cell.id !== "pending") ids.add(cell.id);
@@ -1048,10 +1191,10 @@ const ledField = (() => {
     });
     seen = ids;
     readColors();
-    wake();
+    wake(true);
   }
 
-  function paintLight(cell, t, now) {
+  function paintLight(cell, x0, y0, t, now) {
     const delay = (born[cell.id] || 0) + cell.row * 22;
     const p = reduced ? 1 : clamp01((now - delay) / 560);
     if (p <= 0) return;
@@ -1060,7 +1203,7 @@ const ledField = (() => {
     const w = clamp01((n - .3) / .42);
     const hovered = cell.el === hoverEl;
     const grow = hovered ? 2 : 0;
-    const x = cell.x - grow, y = cell.y - grow - (1 - ease) * 12, s = cell.s + grow * 2;
+    const x = x0 - grow, y = y0 - grow - (1 - ease) * 12, s = cell.s + grow * 2;
     let color, alpha = ease, glow = 0;
     if (cell.state === "dim" || cell.state === "markup") {
       color = mix(colors.lo, colors.hi, Math.pow(w, 1.5) * .92 + (hovered ? .25 : 0));
@@ -1081,7 +1224,7 @@ const ledField = (() => {
     ctx.shadowBlur = 0;
   }
 
-  function paintPending(cell, t) {
+  function paintPending(cell, x, y, t) {
     const phase = (state.pendingScan && state.pendingScan.phase) || "waiting";
     const busy = phase === "running" || phase === "queued" || phase === "publishing";
     const speed = phase === "running" ? 30 : phase === "publishing" ? 22 : phase === "queued" ? 14 : phase === "late" ? 9 : 6;
@@ -1100,18 +1243,18 @@ const ledField = (() => {
       boost = Math.max(boost, trail);
       const level = (busy ? .1 : .055) + (busy ? .85 : .6) * trail;
       ctx.fillStyle = rgba(ink, level);
-      ctx.fillRect(cell.x + pad + (k % 3) * (dot + gap), cell.y + pad + Math.floor(k / 3) * (dot + gap), dot, dot);
+      ctx.fillRect(x + pad + (k % 3) * (dot + gap), y + pad + Math.floor(k / 3) * (dot + gap), dot, dot);
     }
     ctx.strokeStyle = rgba(ink, (busy ? .3 : .2) + .3 * boost + (cell.el === hoverEl ? .2 : 0));
     ctx.lineWidth = 1;
-    ctx.strokeRect(cell.x + .5, cell.y + .5, cell.s - 1, cell.s - 1);
+    ctx.strokeRect(x + .5, y + .5, cell.s - 1, cell.s - 1);
   }
 
   // A window no scan reached: a small dot, so the row reads as continuous.
-  function paintSkip(cell) {
+  function paintSkip(cell, x, y) {
     const d = Math.max(2, Math.round(cell.s * .18));
     ctx.fillStyle = rgba(colors.ink, colors.light ? .18 : .22);
-    ctx.fillRect(cell.x + (cell.s - d) / 2, cell.y + (cell.s - d) / 2, d, d);
+    ctx.fillRect(x + (cell.s - d) / 2, y + (cell.s - d) / 2, d, d);
   }
 
   function visible() {
@@ -1124,9 +1267,17 @@ const ledField = (() => {
       lastPaint = now;
       if (!colors) readColors();
       const t = now / 1000;
+      const sx = viewport.scrollLeft, sy = viewport.scrollTop;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      cells.forEach(cell => cell.state === "pending" ? paintPending(cell, t) : cell.state === "skip" ? paintSkip(cell) : paintLight(cell, t, now));
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < cells.length; i++) {
+        const cell = cells[i];
+        const x = cell.x - sx, y = cell.y - sy;
+        if (x < -cell.s - 8 || y < -cell.s - 8 || x > width + 8 || y > height + 8) continue;
+        if (cell.state === "pending") paintPending(cell, x, y, t);
+        else if (cell.state === "skip") paintSkip(cell, x, y);
+        else paintLight(cell, x, y, t, now);
+      }
       revealed = true;
     }
     if (reduced) return;
@@ -1136,18 +1287,20 @@ const ledField = (() => {
     clearTimeout(sleepTimer);
     sleepTimer = setTimeout(wake, 600);
   }
-  function wake() {
-    if (!ctx || frame) return;
+  function wake(force) {
+    if (!ctx) return;
+    if (frame) { if (!force || !reduced) return; cancelAnimationFrame(frame); frame = 0; }
     clearTimeout(sleepTimer);
     frame = requestAnimationFrame(paint);
   }
-  document.addEventListener("visibilitychange", wake);
+  document.addEventListener("visibilitychange", () => wake());
+  if (viewport) viewport.addEventListener("scroll", () => { if (reduced) wake(true); }, { passive: true });
   if (typeof MutationObserver === "function") {
-    new MutationObserver(() => { colors = null; if (reduced) wake(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    new MutationObserver(() => { colors = null; if (reduced) wake(true); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   }
   return {
     measure,
-    hover(el) { hoverEl = el || null; if (reduced) wake(); },
+    hover(el) { hoverEl = el || null; if (reduced) wake(true); },
     get revealed() { return revealed; }
   };
 })();
@@ -1707,9 +1860,16 @@ function renderSourceCode(source) {
 }
 // Saved pages render in a sandbox without scripts, so their <script> blocks
 // are dropped up front rather than left to fill the console with blocked-script errors.
+// Saved copies are shown without script, so undo what a site's own script would
+// have done on load: hide loading screens and reveal content waiting for an animation.
+const SNAPSHOT_REVEAL_CSS = "<style data-cs-reveal>html,body{opacity:1!important;visibility:visible!important;overflow-y:auto!important}" +
+  ".async-hide,[data-aos],.aos-init,.wow,.animate__animated,.animated,[data-animate],[data-animation],[data-scroll],[data-sal],.reveal-on-scroll,.js-reveal,.fade-in,.fadeIn,.lazyload,.lazyloading" +
+  "{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important;transition:none!important}" +
+  "[id*=preloader],[class*=preloader],[id*=page-loader],[class*=page-loader],[id*=pageloader],[class*=pageloader],[class*=loader-wrapper],[id*=loader-wrapper]," +
+  "[class*=loading-overlay],[id*=loading-overlay],[class*=site-loader],[id*=site-loader],[class*=splash-screen],[id*=splash-screen],.pace,#loader,.loader-overlay{display:none!important}</style>";
 function previewSource(source, url) {
   source = String(source || "").replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, "").replace(/<script\b[^>]*\/?>/gi, "");
-  const baseTag = '<base href="' + esc(url) + '">';
+  const baseTag = '<base href="' + esc(url) + '">' + SNAPSHOT_REVEAL_CSS;
   if (/<head\b[^>]*>/i.test(source)) return source.replace(/<head\b[^>]*>/i, match => match + baseTag);
   return '<!doctype html><html><head><meta charset="utf-8">' + baseTag + "</head><body>" + source + "</body></html>";
 }
@@ -2016,6 +2176,7 @@ function scoutFiltered() {
       (formatFilter === "HTML" && isHtml) ||
       (formatFilter === "OTHER" && !isPdf && !isOffice && !isHtml);
     if (!typeMatches) return false;
+    if (state.scoutStrongOnly && L.scoutStrength(assessment).level < 3) return false;
     if (!query) return true;
     return [item.title, item.url, regulator.short_name, regulator.name, evidence.context, evidence.description,
       evidence.anchor_text, evidence.parent_url, ((assessment.publication_type || {}).label)].join(" ").toLowerCase().includes(query);
@@ -2039,6 +2200,16 @@ function scoutSweepSummary() {
   if (latest.status === "NOT_RUN" || !latest.finished_at) return { text: "No sweep yet. Next " + dateLabel(L.nextScoutSweep(), false), tone: "idle" };
   return { text: "Swept " + when(latest.finished_at) + " · " + status.label, tone: status.tone };
 }
+// Three small lights: how strongly Scout's evidence points the way it judged.
+function scoutMeter(assessment) {
+  const strength = L.scoutStrength(assessment);
+  return '<span class="scout-meter is-' + strength.tone + '" title="' + esc(strength.label) + '" aria-label="' + esc(strength.label) + '">' +
+    [1, 2, 3].map(level => "<i" + (level <= strength.level ? ' class="on"' : "") + "></i>").join("") + "</span>";
+}
+function scoutGroupBy() {
+  if (state.scoutGroupBy) return state.scoutGroupBy;
+  return state.scoutFilter === "BACKLOG" || state.scoutFilter === "EXCLUDED" ? "kind" : "date";
+}
 function scoutRow(item) {
   const assessment = item.assessment || {};
   const outcome = L.SCOUT_OUTCOMES[assessment.outcome] || L.SCOUT_OUTCOMES.uncertain;
@@ -2047,17 +2218,24 @@ function scoutRow(item) {
   const dismissed = item.decision && item.decision.decision === "dismissed";
   const type = assessment.publication_type ? assessment.publication_type.label : "";
   const published = scoutPublished(item);
-  const time = state.scoutFilter === "BACKLOG" && published ? shortDate(published.value) : rowTime(item.first_seen);
+  const time = published ? shortDate(published.value) : rowTime(item.first_seen);
+  const by = scoutGroupBy();
   const statusTag = monitored ? '<span class="tag is-relevant">Monitoring</span>'
     : dismissed ? '<span class="tag is-irrelevant">Dismissed</span>'
-    : '<span class="tag ' + outcome.tag + '">' + esc(outcome.label) + "</span>";
-  return '<button class="row" type="button" data-scout-key="' + esc(item.key) + '"' + (item.key === state.selectedScoutKey ? ' aria-selected="true"' : "") + ">" +
-    '<span class="row-mark ' + (monitored || dismissed ? "" : outcome.mark) + '" aria-hidden="true"></span>' +
+    : state.scoutFilter === "REVIEW" || state.scoutFilter === "EXCLUDED" ? '<span class="tag ' + outcome.tag + '">' + esc(outcome.label) + "</span>" : "";
+  const meta = [by === "kind" ? "" : type, by === "regulator" ? "" : regulator.short_name, assessment.format && assessment.format !== "Web page" ? assessment.format : ""].filter(Boolean);
+  const picked = state.scoutPicked.has(item.key);
+  const locked = monitored || dismissed;
+  return '<div class="scout-item' + (picked ? " is-picked" : "") + '">' +
+    (locked ? "" : '<label class="scout-check"><input type="checkbox" data-scout-pick="' + esc(item.key) + '"' + (picked ? " checked" : "") +
+      ' aria-label="' + esc("Select " + (item.title || item.url)) + '"><i aria-hidden="true"></i></label>') +
+    '<button class="row scout-row" type="button" data-scout-key="' + esc(item.key) + '"' + (item.key === state.selectedScoutKey ? ' aria-selected="true"' : "") + ">" +
+    scoutMeter(assessment) +
     '<span class="row-title">' + esc(item.title || displayUrl(item.url)) + "</span>" +
     '<span class="row-time">' + esc(time) + "</span>" +
-    '<span class="row-sub">' + statusTag + (type ? '<span class="tag">' + esc(type) + "</span>" : "") +
-    '<span class="row-host">' + esc(regulator.short_name + " · " + (assessment.format || "Web page")) + "</span></span></button>";
+    '<span class="row-sub">' + statusTag + '<span class="row-host">' + esc(meta.join(" · ")) + "</span></span></button></div>";
 }
+const SCOUT_GROUP_PREVIEW = 4;
 function renderScout() {
   const buckets = scoutBuckets();
   const items = scoutFiltered();
@@ -2069,36 +2247,98 @@ function renderScout() {
     const count = (buckets[button.dataset.scoutFilter] || []).length;
     button.setAttribute("aria-pressed", String(button.dataset.scoutFilter === state.scoutFilter));
     button.dataset.count = String(count);
+    const badge = button.querySelector(".num");
+    if (badge) badge.textContent = count ? String(count) : "";
   });
+  document.querySelectorAll("[data-scout-group-by]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.scoutGroupBy === scoutGroupBy())));
+  $("scoutStrongOnly").checked = !!state.scoutStrongOnly;
   const toReview = buckets.REVIEW.length;
   $("scoutCount").textContent = state.scoutFilter === "REVIEW" ? (toReview ? toReview + " to review" : "")
     : plural(items.length, "page", "pages");
+  renderScoutBulk();
   if (!state.scoutReview) {
     $("scoutItems").innerHTML = emptyState("Scout data unavailable", "The Scout files could not be loaded. Monitoring is unaffected; press Reload to try again.");
+    $("scoutDigest").hidden = true;
     return;
   }
   if (!items.length) {
+    $("scoutDigest").hidden = true;
     const copy = SCOUT_FILTER_COPY[state.scoutFilter];
     const notRun = !state.scoutLatest || state.scoutLatest.status === "NOT_RUN";
+    const filtered = $("scoutSearch").value.trim() || state.scoutStrongOnly || state.scoutFormatFilter !== "ALL";
     $("scoutItems").innerHTML = state.scoutFilter === "REVIEW" && notRun
       ? emptyState("Scout hasn't swept yet", "The first weekly sweep records what each regulator already publishes. Pages published after it appear here.",
         '<button class="btn" type="button" data-scout-coverage>See what Scout covers</button>')
-      : emptyState(($("scoutSearch").value.trim() ? "No findings match" : copy[0]), ($("scoutSearch").value.trim() ? "Try a different search." : copy[1]));
+      : emptyState((filtered ? "No findings match" : copy[0]), (filtered ? "Try a different search or filter." : copy[1]));
     return;
   }
-  let lastHeading = "";
+  // A one-line digest first: how many, from how many regulators, how strong.
+  const regulators = new Set(items.map(item => item.regulator_id));
+  const strong = items.filter(item => L.scoutStrength(item.assessment).level === 3).length;
+  $("scoutDigest").hidden = false;
+  $("scoutDigest").innerHTML = "<strong>" + esc(plural(items.length, "page", "pages")) + "</strong> from " + esc(plural(regulators.size, "regulator", "regulators")) +
+    (strong && strong < items.length ? " · " + esc(strong) + " with strong evidence" : strong ? " · all with strong evidence" : "");
+  const groups = L.scoutGroups(items, scoutGroupBy(), id => scoutRegulator(id).short_name);
+  // Long lists open as a digest: each group shows its first few pages until opened.
+  const digest = items.length > 30 && groups.length > 1;
   const omitted = state.scoutReview.omitted_backlog || {};
-  $("scoutItems").innerHTML = items.map(item => {
-    const heading = state.scoutFilter === "BACKLOG" ? scoutRegulator(item.regulator_id).short_name
-      : state.scoutFilter === "DONE" ? L.dayHeading((item.decision || {}).decided_at || item.first_seen)
-      : "Found " + L.dayHeading(item.first_seen).replace(/^(Today|Yesterday)$/, value => value.toLowerCase());
-    const label = heading !== lastHeading ? '<div class="list-group-label">' + esc(heading) + "</div>" : "";
-    lastHeading = heading;
-    return label + scoutRow(item);
+  $("scoutItems").innerHTML = groups.map(group => {
+    const open = !digest || state.scoutOpenGroups.has(group.key);
+    const shown = open ? group.items : group.items.slice(0, SCOUT_GROUP_PREVIEW);
+    const free = group.items.filter(item => !scoutIsMonitored(item) && !(item.decision && item.decision.decision === "dismissed"));
+    const allPicked = free.length && free.every(item => state.scoutPicked.has(item.key));
+    return '<div class="scout-group">' +
+      '<button class="scout-group-head" type="button" data-scout-group="' + esc(group.key) + '"' + (digest ? ' aria-expanded="' + String(open) + '"' : "") + ">" +
+        (digest ? '<span class="field-chevron" aria-hidden="true"></span>' : "") + '<span class="scout-group-name">' + esc(group.label) + '</span><span class="num">' + esc(group.items.length) + "</span></button>" +
+      (free.length ? '<button class="text-button scout-group-pick" type="button" data-scout-group-pick="' + esc(group.key) + '">' + (allPicked ? "Clear" : "Select all") + "</button>" : "") +
+      "</div>" + shown.map(scoutRow).join("") +
+      (shown.length < group.items.length ? '<button class="scout-more" type="button" data-scout-group="' + esc(group.key) + '">Show all ' + esc(group.items.length) + "</button>" : "");
   }).join("") + (state.scoutFilter === "BACKLOG" && Object.keys(omitted).length
     ? '<p class="note-strip">The backlog shows the newest relevant pages per regulator. ' +
       esc(Object.entries(omitted).map(([id, count]) => scoutRegulator(id).short_name + " has " + count + " more").join("; ")) + " in Scout's registry.</p>"
     : "");
+}
+// Several findings at once: monitor them through the Add a link checklist, or
+// record them as not relevant in one owner-approved request.
+const SCOUT_BULK_DISMISS_LIMIT = 30;
+function scoutPickedItems() {
+  return Array.from(state.scoutPicked.keys()).map(key => scoutCandidates().find(item => item.key === key)).filter(Boolean)
+    .filter(item => !scoutIsMonitored(item) && !(item.decision && item.decision.decision === "dismissed"));
+}
+function renderScoutBulk() {
+  const bar = $("scoutBulk");
+  const picked = scoutPickedItems();
+  bar.hidden = !picked.length;
+  if (!picked.length) return;
+  $("scoutBulkCount").textContent = plural(picked.length, "page", "pages") + " selected";
+  const dismiss = bar.querySelector('[data-scout-bulk="dismiss"]');
+  dismiss.disabled = picked.length > SCOUT_BULK_DISMISS_LIMIT;
+  dismiss.title = picked.length > SCOUT_BULK_DISMISS_LIMIT ? "Up to " + SCOUT_BULK_DISMISS_LIMIT + " pages per request" : "";
+}
+function scoutBulk(action) {
+  const picked = scoutPickedItems();
+  if (action === "clear" || !picked.length) { state.scoutPicked = new Map(); return renderScout(); }
+  if (action === "dismiss") {
+    if (picked.length > SCOUT_BULK_DISMISS_LIMIT) { showToast("Select up to " + SCOUT_BULK_DISMISS_LIMIT + " pages per request."); return; }
+    openScoutDecision("dismiss", picked);
+    return;
+  }
+  if (action === "monitor") {
+    const a = state.add;
+    addClearDraft();
+    a.origin = "scout";
+    a.url = picked[0].url;
+    a.candidates = picked.map(item => addItem({ url: item.url, title: item.title, format: (item.assessment || {}).format === "PDF" ? "PDF" : "",
+      section: ((item.assessment || {}).publication_type || {}).label || "", parentUrl: (item.evidence || {}).parent_url || "",
+      parentTitle: "Scout · " + scoutRegulator(item.regulator_id).short_name })).filter(Boolean);
+    a.candidates.forEach(item => a.picked.set(item.key, item));
+    addSaveDraft();
+    const dialog = $("addMonitorDialog");
+    if (typeof dialog.showModal === "function" && !dialog.open) dialog.showModal();
+    addGoto("review");
+    state.scoutPicked = new Map();
+    renderScout();
+  }
 }
 function scoutFact(label, value, isCode) {
   if (!value) return "";
@@ -2113,6 +2353,7 @@ function renderScoutAssessment(item) {
   const outcome = L.SCOUT_OUTCOMES[a.outcome] || L.SCOUT_OUTCOMES.uncertain;
   const published = scoutPublished(item);
   const evidence = item.evidence || {};
+  const strength = L.scoutStrength(a);
   const dims = [
     ["Kind of page", a.publication_type ? a.publication_type.label : "Not recognised"],
     ["Topics", (a.topics || []).join(", ") || "None recognised"],
@@ -2121,14 +2362,16 @@ function renderScoutAssessment(item) {
     ["Last modified", evidence.lastmod ? shortDate(evidence.lastmod) + " (site map)" : ""]
   ].filter(([, value]) => value);
   const reasons = (a.reasons || []).map(reason =>
-    '<li class="' + (reason.effect === "+" ? "is-plus" : reason.effect === "-" ? "is-minus" : "is-neutral") + '">' + esc(reason.text) + "</li>").join("");
-  return '<section class="sheet" aria-label="Scout assessment"><div class="verdict">' +
-    '<div class="verdict-head"><span class="verdict-label">Scout assessment</span><span class="tag ' + outcome.tag + '">' + esc(outcome.label) + "</span>" +
-    "<span>" + esc(L.SCOUT_CONFIDENCE[a.confidence] || "") + "</span></div>" +
+    '<li class="' + (reason.effect === "+" ? "is-plus" : reason.effect === "-" ? "is-minus" : "is-neutral") + '"><span class="scout-signal-mark" aria-hidden="true">' +
+      (reason.effect === "+" ? "+" : reason.effect === "-" ? "−" : "~") + "</span><span>" + esc(reason.text) + "</span>" +
+      (reason.source ? "<small>" + esc(reason.source) + "</small>" : "") + "</li>").join("");
+  return '<section class="sheet scout-why" aria-label="Why Scout surfaced this page"><div class="verdict">' +
+    '<div class="verdict-head"><span class="verdict-label">Why Scout surfaced it</span><span class="tag ' + outcome.tag + '">' + esc(outcome.label) + "</span>" +
+    '<span class="scout-strength">' + scoutMeter(a) + esc(strength.label) + "</span></div>" +
     '<p class="verdict-summary">' + esc(L.scoutSentence(a)) + "</p>" +
-    (reasons ? '<ul class="scout-reasons" aria-label="Signals">' + reasons + "</ul>" : "") +
+    (reasons ? '<ul class="scout-signals" aria-label="Signals">' + reasons + "</ul>" : "") +
     '<dl class="verdict-grid">' + dims.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl>" +
-    '<p class="verdict-caveat">Scout judges from titles, link text, listing text and addresses, not the full document, and it never rejects a page for lack of evidence. Open the page before deciding.</p>' +
+    '<p class="verdict-caveat">Scout judges from titles, link text, listing text and addresses, not the full document, and it never rejects a page for lack of evidence. Look at the page below before deciding.</p>' +
     "</div></section>";
 }
 function renderScoutEvidence(item) {
@@ -2150,9 +2393,158 @@ function renderScoutEvidence(item) {
     scoutFact("robots.txt", evidence.robots_disallowed ? "Disallows fetching this address; Scout did not open it" : ""),
     scoutFact("Finding ID", esc(item.key), true)
   ].join("");
-  return '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Evidence</h3><span class="sheet-note">What the regulator’s channel said about this address</span></div>' +
+  return '<details class="sheet scout-evidence"><summary class="sheet-head"><h3 class="sheet-title">Evidence Scout recorded</h3><span class="sheet-note">What the regulator’s channel said about this address</span></summary>' +
     '<dl class="facts">' + facts + "</dl>" +
-    '<p class="note-strip">“First seen” is when Scout first noticed the address. It is not proof of when the regulator published it.</p></section>';
+    '<p class="note-strip">“First seen” is when Scout first noticed the address. It is not proof of when the regulator published it.</p></details>';
+}
+// A live look at the finding without leaving the dashboard: the page itself, or
+// the listing page it was found on with the link marked. Read through the same
+// page reader as Add a link and shown in the same opaque-origin sandbox.
+function scoutPreviewShell(item) {
+  const evidence = item.evidence || {};
+  const p = state.scoutPreview;
+  const isDocument = L.pickFormat(item.url) !== "Web page" || /^(PDF|ZIP)$/i.test(String((item.assessment || {}).format || ""));
+  const mode = p.mode === "source" && evidence.parent_url ? "source" : "page";
+  const address = mode === "source" ? evidence.parent_url : item.url;
+  return '<section class="sheet scout-preview' + (p.expanded ? " is-expanded" : "") + '" id="scoutPreview" aria-label="Preview">' +
+    '<div class="sheet-head scout-preview-head">' +
+      '<div class="segmented" role="group" aria-label="Preview">' +
+        '<button type="button" data-scout-preview="page" aria-pressed="' + String(mode === "page") + '">' + (isDocument ? "The document" : "The page") + "</button>" +
+        (evidence.parent_url ? '<button type="button" data-scout-preview="source" aria-pressed="' + String(mode === "source") + '">Where Scout found it</button>' : "") +
+      "</div>" +
+      '<span class="scout-preview-tools">' +
+        '<button class="sheet-link" type="button" data-scout-preview-back hidden>Back</button>' +
+        '<button class="sheet-link scout-device" type="button" data-scout-device aria-pressed="' + String(p.device === "phone") + '" title="Show the page at phone width">Phone width</button>' +
+        '<button class="sheet-link" type="button" data-scout-expand>' + (p.expanded ? "Close" : "Expand") + "</button>" +
+        '<a class="sheet-link" id="scoutPreviewOpen" href="' + esc(safeHttpUrl(address) || "#") + '" target="_blank" rel="noopener noreferrer">Open' + icon("external") + "</a>" +
+      "</span></div>" +
+    '<p class="scout-preview-address" id="scoutPreviewAddress">' + esc(displayUrl(address)) + "</p>" +
+    '<div class="scout-preview-stage' + (p.device === "phone" ? " is-phone" : "") + '">' +
+      '<iframe id="scoutPreviewFrame" title="Preview of the page Scout found" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>' +
+      '<div class="explore-status" id="scoutPreviewStatus" role="status" aria-live="polite"><div class="loading">Preparing the preview…</div></div>' +
+    "</div></section>";
+}
+let scoutPreviewTimer = 0;
+function scoutPreviewStatus(html) {
+  const box = $("scoutPreviewStatus");
+  if (box) box.innerHTML = html || "";
+}
+function scoutPreviewLoad(item, url, options) {
+  const o = options || {};
+  const p = state.scoutPreview;
+  clearTimeout(scoutPreviewTimer);
+  const token = ++p.serial;
+  p.key = item.key;
+  const target = safeHttpUrl(url);
+  if (!target) { scoutPreviewStatus(emptyState("No address to preview", "Scout recorded no address here.")); return; }
+  if ($("scoutPreviewAddress")) $("scoutPreviewAddress").textContent = displayUrl(target);
+  if ($("scoutPreviewOpen")) $("scoutPreviewOpen").href = target;
+  const back = document.querySelector("[data-scout-preview-back]");
+  if (back) back.hidden = !p.trail.length;
+  if (L.pickFormat(target) !== "Web page") {
+    scoutPreviewStatus(emptyState("This is a " + L.pickFormat(target) + " document", "Documents can't be shown inside the dashboard. Open it in a new tab to read it.",
+      '<a class="btn" href="' + esc(target) + '" target="_blank" rel="noopener noreferrer">Open the document' + icon("external") + "</a>"));
+    return;
+  }
+  if (!PAGE_READER_ENDPOINT) { scoutPreviewStatus(emptyState("Preview isn't set up", "The page reader isn't configured for this dashboard. Open the page in a new tab instead.")); return; }
+  scoutPreviewStatus('<div class="loading">Reading ' + esc(displayUrl(target)) + "…</div>");
+  // A short pause, so moving through the list with the arrow keys doesn't read every page on the way.
+  scoutPreviewTimer = setTimeout(async () => {
+    let data;
+    try {
+      data = await addReadPage(target);
+    } catch (error) {
+      if (token !== p.serial) return;
+      scoutPreviewStatus(emptyState("This page couldn't be shown here", String(error.message || error) + ". You can still open it in a new tab.",
+        '<button class="btn" type="button" data-scout-preview-retry>Try again</button>'));
+      return;
+    }
+    if (token !== p.serial || !$("scoutPreviewFrame")) return;
+    if (data.kind === "document") {
+      scoutPreviewStatus(emptyState("This address is a document", "Documents can't be shown inside the dashboard. Open it in a new tab to read it.",
+        '<a class="btn" href="' + esc(safeHttpUrl(data.url) || target) + '" target="_blank" rel="noopener noreferrer">Open the document' + icon("external") + "</a>"));
+      return;
+    }
+    if (data.kind !== "page") {
+      scoutPreviewStatus(emptyState("The site didn't return the page", (data.message || "No page came back.") + " Open it in a new tab to check.",
+        '<button class="btn" type="button" data-scout-preview-retry>Try again</button>'));
+      return;
+    }
+    p.page = data;
+    p.token = exploreRandom(16);
+    p.locate = o.locate || "";
+    $("scoutPreviewFrame").srcdoc = exploreDocument(data.html, p.token, exploreRandom(18));
+    scoutPreviewStatus("");
+  }, o.immediate ? 0 : 320);
+}
+function scoutPreviewStart(item) {
+  const p = state.scoutPreview;
+  const evidence = item.evidence || {};
+  p.trail = [];
+  const source = p.mode === "source" && evidence.parent_url;
+  scoutPreviewLoad(item, source ? evidence.parent_url : item.url, { locate: source ? item.url : "" });
+}
+function scoutPreviewPost(message) {
+  const frame = $("scoutPreviewFrame");
+  if (!frame || !frame.contentWindow || !state.scoutPreview.token) return;
+  try { frame.contentWindow.postMessage(Object.assign({ cs: "cs-explore", token: state.scoutPreview.token }, message), "*"); } catch (_) {}
+}
+window.addEventListener("message", event => {
+  const frame = $("scoutPreviewFrame");
+  if (!frame || event.source !== frame.contentWindow) return;
+  const data = event.data || {};
+  const p = state.scoutPreview;
+  if (data.cs !== "cs-explore" || !p.token || data.token !== p.token || !p.page) return;
+  if (data.type === "ready" && p.locate) {
+    // Mark the finding on the listing page it came from.
+    const key = L.urlKey(p.locate);
+    const index = p.page.links.findIndex(link => L.urlKey(link.url) === key);
+    if (index >= 0) { scoutPreviewPost({ type: "picked", indexes: [index] }); scoutPreviewPost({ type: "locate", index }); }
+    else showToast("The link isn't on the listing page any more, or the site adds it with script.");
+  }
+  if (data.type === "click") {
+    const link = p.page.links[Number(data.index)];
+    const item = scoutSelected();
+    if (!link || !item) return;
+    if (link.format !== "Web page") { showToast("“" + (link.text || displayUrl(link.url)) + "” is a " + link.format + ". Use Open to read it in a new tab."); return; }
+    p.trail.push(p.page.url);
+    scoutPreviewLoad(item, link.url, { immediate: true });
+  }
+});
+function setScoutPreviewExpanded(expanded) {
+  const p = state.scoutPreview;
+  p.expanded = !!expanded;
+  const box = $("scoutPreview");
+  if (box) box.classList.toggle("is-expanded", p.expanded);
+  document.body.classList.toggle("pdf-viewer-open", p.expanded);
+  const button = document.querySelector("[data-scout-expand]");
+  if (button) button.textContent = p.expanded ? "Close" : "Expand";
+}
+function scoutPreviewAction(target) {
+  const item = scoutSelected();
+  if (!item) return;
+  const p = state.scoutPreview;
+  if (target.dataset.scoutPreview) {
+    p.mode = target.dataset.scoutPreview === "source" ? "source" : "page";
+    return renderScoutDetail();
+  }
+  if (target.dataset.scoutDevice !== undefined) {
+    p.device = p.device === "phone" ? "desktop" : "phone";
+    target.setAttribute("aria-pressed", String(p.device === "phone"));
+    const stage = document.querySelector(".scout-preview-stage");
+    if (stage) stage.classList.toggle("is-phone", p.device === "phone");
+    return;
+  }
+  if (target.dataset.scoutExpand !== undefined) return setScoutPreviewExpanded(!p.expanded);
+  if (target.dataset.scoutPreviewBack !== undefined && p.trail.length) {
+    const previous = p.trail.pop();
+    return scoutPreviewLoad(item, previous, { immediate: true, locate: p.trail.length ? "" : (p.mode === "source" ? item.url : "") });
+  }
+  if (target.dataset.scoutPreviewRetry !== undefined) {
+    const url = $("scoutPreviewOpen") ? $("scoutPreviewOpen").getAttribute("href") : item.url;
+    state.add.pages.delete(L.urlKey(url));
+    return scoutPreviewLoad(item, url, { immediate: true, locate: p.mode === "source" && !p.trail.length ? item.url : "" });
+  }
 }
 // The listing's own words, minus what the title already says and button labels.
 function scoutSubtitle(item) {
@@ -2197,10 +2589,13 @@ function renderScoutDetail() {
       ? '<p class="note-strip is-warning">Marked not relevant' + (decision.decided_by ? " by " + esc(decision.decided_by) : "") + " on " + esc(fmt(decision.decided_at)) +
         (decision.reason ? ". Reason: " + esc(decision.reason) : "") + ". This applies to this address only.</p>"
       : "";
+  const kind = (item.assessment || {}).publication_type ? item.assessment.publication_type.label : "";
   pane.innerHTML = '<div class="detail-inner">' +
-    detailHeading({ back: true, source: regulator.short_name + " · " + [regulator.jurisdiction, regulator.region].filter(Boolean).join(", "),
+    detailHeading({ back: true, source: [regulator.short_name, kind].filter(Boolean).join(" · "),
       title: item.title || displayUrl(item.url), subtitle: subtitle.length > 260 ? subtitle.slice(0, 259) + "…" : subtitle, meta, actions: actions.join("") }) +
-    status + renderScoutAssessment(item) + renderScoutEvidence(item) + "</div>";
+    status + renderScoutAssessment(item) + scoutPreviewShell(item) + renderScoutEvidence(item) + "</div>";
+  if (state.scoutPreview.key !== item.key) { state.scoutPreview.expanded = false; document.body.classList.remove("pdf-viewer-open"); }
+  scoutPreviewStart(item);
 }
 function scoutConfigRegulator(id) {
   return state.scoutConfig && Array.isArray(state.scoutConfig.regulators) ? state.scoutConfig.regulators.find(item => item.id === id) || null : null;
@@ -2379,13 +2774,14 @@ function openScoutMonitor(item) {
   $("addExact").open = true;
 }
 function openScoutDecision(verb, item) {
-  const request = L.scoutReviewIssue(verb, [item], "");
+  const items = Array.isArray(item) ? item : [item];
+  const request = L.scoutReviewIssue(verb, items, "");
   const params = new URLSearchParams();
   params.set("title", request.title);
   params.set("body", request.body);
   const target = REPO + "/issues/new?" + params.toString();
-  showToast(verb === "restore" ? "Submit the prefilled request on GitHub to return this page to review."
-    : "Submit the prefilled request on GitHub. Add a reason first if you like; it applies to this address only.");
+  showToast(verb === "restore" ? "Submit the prefilled request on GitHub to return " + (items.length > 1 ? "these pages" : "this page") + " to review."
+    : "Submit the prefilled request on GitHub. Add a reason first if you like; it applies to " + (items.length > 1 ? "these " + items.length + " addresses" : "this address") + " only.");
   const githubWindow = window.open(target, "_blank");
   if (githubWindow) { try { githubWindow.opener = null; } catch (_) {} } else { window.location.href = target; }
 }
@@ -3160,7 +3556,8 @@ function readHash() {
 }
 function setView(view, options) {
   options = options || {};
-  showFieldTip(null);
+  hideFieldTip();
+  if (state.scoutPreview.expanded && view !== "scout") setScoutPreviewExpanded(false);
   state.view = VIEWS.indexOf(view) >= 0 ? view : "overview";
   state.mobileDetail = !!options.detail;
   ensureSelection(state.view);
@@ -3173,6 +3570,7 @@ function setView(view, options) {
 }
 function select(view, id, options) {
   options = options || {};
+  hideFieldTip();
   if (view === "changes") state.selectedChangeId = id;
   if (view === "monitors") {
     if (options.tab) state.detailTab = options.tab;
@@ -3435,7 +3833,7 @@ function addRestoreDraft() {
   });
   a.url = safeHttpUrl(saved.url || "") || "";
   a.method = saved.method === "crawl" ? "crawl" : "explore";
-  a.origin = saved.origin === "crawl" ? "crawl" : "explore";
+  a.origin = saved.origin === "crawl" || saved.origin === "scout" ? saved.origin : "explore";
   a.scope = typeof saved.scope === "string" ? saved.scope : "";
   a.notes = Array.isArray(saved.notes) ? saved.notes.map(String).slice(0, 6) : [];
   a.info = typeof saved.info === "string" ? saved.info.slice(0, 200) : "";
@@ -3558,6 +3956,17 @@ function startAddLink(event) {
 
 /* ---------- Reading pages ---------- */
 
+// AbortSignal.timeout arrived in Safari 16; older Safari gets the same behaviour by hand.
+function timeoutSignal(ms) {
+  if (typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function") return AbortSignal.timeout(ms);
+  const controller = new AbortController();
+  setTimeout(() => {
+    let reason;
+    try { reason = new DOMException("The operation timed out.", "TimeoutError"); } catch (_) { reason = undefined; }
+    controller.abort(reason);
+  }, ms);
+  return controller.signal;
+}
 async function addReadPage(url) {
   const a = state.add;
   const key = L.urlKey(url);
@@ -3567,9 +3976,9 @@ async function addReadPage(url) {
   const headers = Object.assign(askSentinelIdentityHeaders(identity), { "Content-Type": "application/json" });
   let response;
   try {
-    response = await fetch(PAGE_READER_ENDPOINT, { method: "POST", headers, body: JSON.stringify({ url }), signal: AbortSignal.timeout(40000) });
+    response = await fetch(PAGE_READER_ENDPOINT, { method: "POST", headers, body: JSON.stringify({ url }), signal: timeoutSignal(40000) });
   } catch (error) {
-    throw new Error(error && error.name === "TimeoutError" ? "The page took too long to read" : "The page reader could not be reached");
+    throw new Error(error && (error.name === "TimeoutError" || error.name === "AbortError") ? "The page took too long to read" : "The page reader could not be reached");
   }
   let data = {};
   try { data = await response.json(); } catch (_) {}
@@ -3593,6 +4002,7 @@ async function exploreOpen(url, push) {
   $("exploreAddress").textContent = displayUrl(url);
   $("exploreNewTab").href = safeHttpUrl(url) || "#";
   exploreStatus('<div class="loading">Reading ' + esc(displayUrl(url)) + "…</div>", "loading");
+  $("exploreNotice").hidden = true;
   let data;
   try {
     data = await addReadPage(url);
@@ -3624,48 +4034,128 @@ async function exploreOpen(url, push) {
   a.tab = a.picked.size ? a.tab : "page";
   $("exploreAddress").textContent = displayUrl(data.url);
   $("exploreNewTab").href = safeHttpUrl(data.url) || "#";
-  $("exploreFrame").srcdoc = exploreDocument(data.html);
+  a.frameToken = exploreRandom(16);
+  $("exploreFrame").srcdoc = exploreDocument(data.html, a.frameToken, exploreRandom(18));
+  const notice = $("exploreNotice");
+  notice.textContent = typeof data.notice === "string" ? data.notice.slice(0, 400) : "";
+  notice.hidden = !notice.textContent;
   exploreStatus("", "ok");
   renderExploreSide();
 }
-// The reader's copy, plus the marks for selected links. Shown with
-// sandbox="allow-same-origin" and no allow-scripts: nothing in it can run.
-function exploreDocument(html) {
-  const style = "<style>a[data-cs-link]{cursor:pointer}" +
-    "a[data-cs-picked]{outline:2px solid #e8890a!important;outline-offset:2px;background:rgba(232,137,10,.16)!important;border-radius:2px}" +
-    "html.cs-shift a[data-cs-link],html.cs-select a[data-cs-link]{cursor:copy!important;outline:1px dashed rgba(232,137,10,.85);outline-offset:2px}</style>";
-  return /<\/head>/i.test(html) ? html.replace(/<\/head>/i, style + "</head>") : style + html;
+// The reader's copy, shown in a frame sandboxed with allow-scripts but without
+// allow-same-origin: it runs in an opaque origin, so nothing in it can reach the
+// dashboard, its storage or its cookies. The reader already strips every script
+// and handler; this document's policy then admits only the one bridge script
+// below, by nonce. The bridge reports link clicks (with Shift) by postMessage and
+// draws the selection marks. Safari never runs event listeners that the parent
+// page attaches inside a script-less sandboxed frame, so clicks are handled from
+// within the frame instead.
+function exploreBridge(token) {
+  var root = document.documentElement;
+  var shift = false;
+  function send(message) {
+    message.cs = "cs-explore";
+    message.token = token;
+    try { parent.postMessage(message, "*"); } catch (e) {}
+  }
+  function linkOf(node) {
+    while (node && node.nodeType !== 1) node = node.parentNode;
+    return node && node.closest ? node.closest("[data-cs-link], a[href], area[href]") : null;
+  }
+  function setShift(on) {
+    shift = !!on;
+    root.classList.toggle("cs-shift", shift);
+  }
+  document.addEventListener("click", function (event) {
+    var link = linkOf(event.target);
+    if (!link) return;
+    var href = link.getAttribute("href") || "";
+    if (!link.hasAttribute("data-cs-link") && href.charAt(0) === "#") return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (!link.hasAttribute("data-cs-link")) return;
+    send({ type: "click", index: Number(link.getAttribute("data-cs-link")), shift: !!(event.shiftKey || shift) });
+  }, true);
+  ["auxclick", "dragstart"].forEach(function (name) {
+    document.addEventListener(name, function (event) { if (linkOf(event.target)) event.preventDefault(); }, true);
+  });
+  document.addEventListener("submit", function (event) { event.preventDefault(); }, true);
+  // Shift+mousedown would otherwise extend a text selection across the page.
+  document.addEventListener("mousedown", function (event) { if (event.shiftKey && linkOf(event.target)) event.preventDefault(); }, true);
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Shift") setShift(true);
+    if (event.key === "Escape") send({ type: "escape" });
+  }, true);
+  document.addEventListener("keyup", function (event) { if (event.key === "Shift") setShift(false); }, true);
+  document.addEventListener("mousemove", function (event) { if (!!event.shiftKey !== shift) setShift(event.shiftKey); }, true);
+  window.addEventListener("blur", function () { setShift(false); });
+  window.addEventListener("message", function (event) {
+    if (event.source !== parent) return;
+    var data = event.data || {};
+    if (data.cs !== "cs-explore" || data.token !== token) return;
+    if (data.type === "picked") {
+      var marked = document.querySelectorAll("[data-cs-picked]");
+      for (var i = 0; i < marked.length; i++) marked[i].removeAttribute("data-cs-picked");
+      (data.indexes || []).forEach(function (index) {
+        var nodes = document.querySelectorAll('[data-cs-link="' + Number(index) + '"]');
+        for (var j = 0; j < nodes.length; j++) nodes[j].setAttribute("data-cs-picked", "");
+      });
+    } else if (data.type === "mode") {
+      root.classList.toggle("cs-select", !!data.select);
+    } else if (data.type === "shift") {
+      setShift(data.on);
+    } else if (data.type === "locate") {
+      var target = document.querySelector('[data-cs-link="' + Number(data.index) + '"]');
+      if (!target) return;
+      try { target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) { target.scrollIntoView(); }
+      target.classList.remove("cs-flash");
+      void target.offsetWidth;
+      target.classList.add("cs-flash");
+    }
+  });
+  send({ type: "ready" });
 }
-function exploreWire() {
+function exploreRandom(bytes) {
+  const values = new Uint8Array(bytes);
+  (window.crypto || {}).getRandomValues ? window.crypto.getRandomValues(values) : values.forEach((_, i) => { values[i] = Math.floor(Math.random() * 256); });
+  return Array.from(values, value => value.toString(16).padStart(2, "0")).join("");
+}
+function exploreDocument(html, token, nonce) {
+  const policy = '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'nonce-' + nonce + '\'; ' +
+    "style-src * data: blob: 'unsafe-inline'; img-src * data: blob:; font-src * data:; media-src * data: blob:; connect-src 'none'; " +
+    "frame-src 'none'; child-src 'none'; worker-src 'none'; object-src 'none'; form-action 'none'; base-uri 'none'\">";
+  const style = "<style>[data-cs-link]{cursor:pointer}" +
+    "[data-cs-picked]{outline:2px solid #e8890a!important;outline-offset:2px;background:rgba(232,137,10,.16)!important;border-radius:2px}" +
+    "html.cs-shift [data-cs-link],html.cs-select [data-cs-link]{cursor:copy!important;outline:1px dashed rgba(232,137,10,.85);outline-offset:2px}" +
+    "@keyframes csFlash{0%,100%{box-shadow:0 0 0 0 rgba(232,137,10,0)}30%{box-shadow:0 0 0 6px rgba(232,137,10,.45)}}" +
+    ".cs-flash{animation:csFlash 1.2s ease 2}</style>";
+  const script = '<script nonce="' + nonce + '">(' + exploreBridge.toString() + ")(" + JSON.stringify(token) + ");<\/script>";
+  // Only the policy written here may apply: the reader's own (script-src 'none') would block the bridge.
+  let doc = String(html || "").replace(/<meta\b[^>]*http-equiv\s*=\s*["']?content-security-policy["']?[^>]*>/gi, "");
+  doc = /<head\b[^>]*>/i.test(doc) ? doc.replace(/<head\b[^>]*>/i, match => match + policy) : policy + doc;
+  doc = /<\/head>/i.test(doc) ? doc.replace(/<\/head>/i, style + "</head>") : style + doc;
+  doc = /<\/body>/i.test(doc) ? doc.replace(/<\/body>(?![\s\S]*<\/body>)/i, script + "</body>") : doc + script;
+  return doc;
+}
+function explorePost(message) {
   const frame = $("exploreFrame");
-  let doc = null;
-  try { doc = frame.contentDocument; } catch (_) { doc = null; }
-  if (!doc || !doc.documentElement || doc.__csWired) return;
-  doc.__csWired = true;
-  doc.addEventListener("click", exploreFrameClick, true);
-  doc.addEventListener("auxclick", event => event.preventDefault(), true);
-  doc.addEventListener("submit", event => event.preventDefault(), true);
-  doc.addEventListener("keydown", event => exploreShift(event.shiftKey), true);
-  doc.addEventListener("keyup", event => exploreShift(event.shiftKey), true);
-  doc.addEventListener("mousemove", event => exploreShift(event.shiftKey), { passive: true });
-  doc.documentElement.classList.toggle("cs-select", state.add.selectMode);
+  if (!frame || !frame.contentWindow || !state.add.frameToken) return;
+  try { frame.contentWindow.postMessage(Object.assign({ cs: "cs-explore", token: state.add.frameToken }, message), "*"); } catch (_) {}
+}
+function exploreSync() {
+  explorePost({ type: "mode", select: state.add.selectMode });
   exploreMarkPicked();
 }
 function exploreShift(on) {
-  try { $("exploreFrame").contentDocument.documentElement.classList.toggle("cs-shift", !!on); } catch (_) {}
+  if (state.add.step === "explore") explorePost({ type: "shift", on: !!on });
 }
-function exploreFrameClick(event) {
-  const anchor = event.target && event.target.closest ? event.target.closest("a") : null;
-  if (!anchor) return;
-  event.preventDefault();
-  event.stopPropagation();
+function exploreLinkClick(index, shift) {
   const a = state.add;
-  const index = anchor.getAttribute("data-cs-link");
-  const link = index != null && a.page ? a.page.links[Number(index)] : null;
+  const link = Number.isInteger(index) && a.page ? a.page.links[index] : null;
   if (!link) return;
   const item = addLinkItem(link, a.page, null);
   if (!item) return;
-  if (event.shiftKey || a.selectMode) { addToggle(item); return; }
+  if (shift || a.selectMode) { addToggle(item); return; }
   if (link.format !== "Web page") {
     addToggle(item, true);
     showToast("“" + item.title + "” is a " + link.format + ", so it can't be opened here. It was selected.");
@@ -3673,16 +4163,29 @@ function exploreFrameClick(event) {
   }
   exploreOpen(link.url, true);
 }
+window.addEventListener("message", event => {
+  const frame = $("exploreFrame");
+  if (!frame || event.source !== frame.contentWindow) return;
+  const data = event.data || {};
+  if (data.cs !== "cs-explore" || !state.add.frameToken || data.token !== state.add.frameToken) return;
+  if (data.type === "ready") exploreSync();
+  else if (data.type === "click") exploreLinkClick(Number(data.index), !!data.shift);
+  // Escape inside the page closes the dialog, as it does anywhere else in it; the draft is kept.
+  else if (data.type === "escape" && $("addMonitorDialog").open) $("addMonitorDialog").close();
+});
 function exploreMarkPicked() {
   const a = state.add;
-  let doc = null;
-  try { doc = $("exploreFrame").contentDocument; } catch (_) {}
-  if (!doc || !a.page) return;
-  doc.querySelectorAll("a[data-cs-link]").forEach(anchor => {
-    const link = a.page.links[Number(anchor.getAttribute("data-cs-link"))];
-    if (link && a.picked.has(L.urlKey(link.url))) anchor.setAttribute("data-cs-picked", "");
-    else anchor.removeAttribute("data-cs-picked");
-  });
+  if (!a.page) return;
+  const indexes = [];
+  a.page.links.forEach((link, index) => { if (a.picked.has(L.urlKey(link.url))) indexes.push(index); });
+  explorePost({ type: "picked", indexes });
+}
+function exploreLocate(url) {
+  const a = state.add;
+  if (!a.page || a.step !== "explore") return;
+  const key = L.urlKey(url);
+  const index = a.page.links.findIndex(link => L.urlKey(link.url) === key);
+  if (index >= 0) explorePost({ type: "locate", index });
 }
 function addToggle(item, force) {
   const a = state.add;
@@ -3860,6 +4363,7 @@ function renderReview() {
   const total = groups.reduce((sum, group) => sum + group.items.length, 0);
   const notes = a.origin === "crawl"
     ? ["Found " + plural(a.candidates.length, "link", "links") + (a.crawl ? " on " + plural(a.crawl.read, "page", "pages") : "") + ". Nothing is ticked yet: tick the ones to monitor. Historical and unrelated links are listed too, so you decide.", a.info || ""]
+    : a.origin === "scout" ? ["These are the Scout findings you selected. Untick any you don't want; each one is requested as its own monitor."]
     : ["These are the links you selected while exploring. Untick any you don't want."];
   $("reviewNote").textContent = notes.concat(a.notes).filter(Boolean).join(" ");
   $("reviewNote").classList.toggle("is-warning", a.notes.length > 0);
@@ -4603,21 +5107,100 @@ $("workspace").addEventListener("click", event => {
     renderMonitorList();
   }
 });
-// LED tooltips: which page, which scan, what happened.
+// LED tooltips: which page, which scan, what happened. A mouse hovers; a touch
+// pins the tip to the tapped light with its actions instead of navigating away.
+let lastPointerType = "mouse";
 $("signalVisual").addEventListener("pointermove", event => {
   if (event.pointerType !== "mouse") return;
+  const tip = $("fieldTip");
+  if (tip.classList.contains("is-pinned")) return;
   showFieldTip(event.target.closest(".led"), event.clientX, event.clientY);
 });
-$("signalVisual").addEventListener("pointerleave", event => { if (event.pointerType === "mouse") showFieldTip(null); });
-let fieldTipTimer = 0;
+$("signalVisual").addEventListener("pointerleave", event => { if (event.pointerType === "mouse" && !$("fieldTip").classList.contains("is-pinned")) hideFieldTip(); });
 document.addEventListener("pointerdown", event => {
-  clearTimeout(fieldTipTimer);
-  if (event.pointerType === "mouse") return;
-  const pendingCell = event.target.closest && event.target.closest(".led.s-pending");
-  showFieldTip(pendingCell, event.clientX, event.clientY);
-  if (pendingCell) fieldTipTimer = setTimeout(() => showFieldTip(null), 2600);
+  lastPointerType = event.pointerType || "mouse";
+  const tip = $("fieldTip");
+  if (!tip.hidden && !tip.contains(event.target) && !(event.target.closest && event.target.closest("#signalVisual .led"))) hideFieldTip();
 }, true);
-document.addEventListener("scroll", () => { if (!$("fieldTip").hidden) showFieldTip(null); }, true);
+// Safari keeps the last hovered element "under" the pointer after the view
+// changes, so any mouse movement away from the lights also clears the tip.
+document.addEventListener("pointermove", event => {
+  if (event.pointerType !== "mouse") return;
+  const tip = $("fieldTip");
+  if (tip.hidden || tip.classList.contains("is-pinned")) return;
+  if (!(event.target.closest && event.target.closest("#signalVisual .led"))) hideFieldTip();
+}, { passive: true, capture: true });
+document.addEventListener("scroll", () => { if (!$("fieldTip").hidden) hideFieldTip(); }, true);
+window.addEventListener("blur", hideFieldTip);
+document.addEventListener("visibilitychange", () => { if (document.hidden) hideFieldTip(); });
+$("signalVisual").addEventListener("click", event => {
+  const more = event.target.closest("[data-field-more]");
+  if (more) {
+    event.stopPropagation();
+    const prefs = fieldPrefs();
+    prefs.limit += 80;
+    renderMonitoringSignal();
+    return;
+  }
+  const led = event.target.closest(".led");
+  const groupLabel = event.target.closest(".field-group-label");
+  if (led && lastPointerType !== "mouse" && led.dataset.state !== "none") {
+    // Touch: show what this light means first; the tip carries the way in.
+    event.stopPropagation();
+    event.preventDefault();
+    showFieldTip(led, 0, 0, true);
+    return;
+  }
+  const groupKey = (groupLabel && groupLabel.dataset.fieldGroup) || (led && led.dataset.fieldGroup);
+  if (groupKey) {
+    event.stopPropagation();
+    toggleFieldGroup(groupKey);
+    return;
+  }
+  if (led && led.dataset.state === "pending") event.stopPropagation();
+});
+function toggleFieldGroup(key) {
+  const prefs = fieldPrefs();
+  if (key.indexOf("src:") === 0) { if (prefs.closed.has(key)) prefs.closed.delete(key); else prefs.closed.add(key); }
+  else if (prefs.open.has(key)) prefs.open.delete(key); else prefs.open.add(key);
+  hideFieldTip();
+  renderMonitoringSignal();
+}
+$("fieldTip").addEventListener("click", event => {
+  const open = event.target.closest("[data-tip-open]");
+  const group = event.target.closest("[data-tip-group]");
+  if (event.target.closest("[data-tip-close]")) return hideFieldTip();
+  if (open) { hideFieldTip(); return select("monitors", open.dataset.tipOpen); }
+  if (group) return toggleFieldGroup(group.dataset.tipGroup);
+});
+document.querySelector(".field-wrap").addEventListener("click", event => {
+  const lens = event.target.closest("[data-field-lens]");
+  if (!lens) return;
+  const prefs = fieldPrefs();
+  prefs.lens = L.FIELD_LENSES.indexOf(lens.dataset.fieldLens) >= 0 ? lens.dataset.fieldLens : "activity";
+  if (!lens.closest(".field-lenses")) { prefs.query = ""; $("fieldSearch").value = ""; }
+  prefs.limit = 80;
+  saveFieldPrefs();
+  hideFieldTip();
+  renderMonitoringSignal();
+});
+$("fieldRange").addEventListener("change", () => {
+  const prefs = fieldPrefs();
+  prefs.range = Object.prototype.hasOwnProperty.call(L.FIELD_RANGES, $("fieldRange").value) ? $("fieldRange").value : "7d";
+  saveFieldPrefs();
+  $("fieldViewport").dataset.initialized = "";
+  renderMonitoringSignal();
+});
+let fieldSearchTimer = 0;
+$("fieldSearch").addEventListener("input", () => {
+  clearTimeout(fieldSearchTimer);
+  fieldSearchTimer = setTimeout(() => {
+    const prefs = fieldPrefs();
+    prefs.query = $("fieldSearch").value.trim().slice(0, 120);
+    prefs.limit = 80;
+    renderMonitoringSignal();
+  }, 140);
+});
 // Redraw the field when its width changes enough to fit a different number of
 // columns, and re-measure the painted lights whenever it moves or resizes.
 if (typeof ResizeObserver === "function") {
@@ -4626,7 +5209,7 @@ if (typeof ResizeObserver === "function") {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       if (!state.loaded || state.view !== "overview") return;
-      if (fieldGeometry().key !== $("signalVisual").dataset.geometry) renderMonitoringSignal();
+      if (fieldGeometry((state.fieldColumns || []).length).key !== $("signalVisual").dataset.geometry) renderMonitoringSignal();
       else ledField.measure();
     }, 120);
   });
@@ -4663,7 +5246,8 @@ $("detailBody").addEventListener("toggle", event => {
 // Arrow keys move through the list in the focused pane.
 document.addEventListener("keydown", event => {
   if (event.key === "Escape" && document.body.classList.contains("pdf-viewer-open")) {
-    setPdfViewerExpanded(false);
+    if (state.scoutPreview.expanded) setScoutPreviewExpanded(false);
+    else setPdfViewerExpanded(false);
     return;
   }
   if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
@@ -4677,6 +5261,36 @@ document.addEventListener("keydown", event => {
   const again = document.querySelector('.view:not([hidden]) .row[aria-selected="true"]');
   (again || next).focus();
 });
+// Scout: grouping, selection, bulk actions and the preview.
+$("scoutView").addEventListener("click", event => {
+  const target = event.target.closest("[data-scout-group],[data-scout-group-pick],[data-scout-group-by],[data-scout-bulk],[data-scout-preview],[data-scout-device],[data-scout-expand],[data-scout-preview-back],[data-scout-preview-retry]");
+  if (!target) return;
+  const data = target.dataset;
+  if (data.scoutGroupBy) { state.scoutGroupBy = data.scoutGroupBy; state.scoutOpenGroups = new Set(); return renderScout(); }
+  if (data.scoutBulk) return scoutBulk(data.scoutBulk);
+  if (data.scoutGroup) {
+    if (state.scoutOpenGroups.has(data.scoutGroup)) state.scoutOpenGroups.delete(data.scoutGroup); else state.scoutOpenGroups.add(data.scoutGroup);
+    return renderScout();
+  }
+  if (data.scoutGroupPick) {
+    const group = L.scoutGroups(scoutFiltered(), scoutGroupBy(), id => scoutRegulator(id).short_name).find(entry => entry.key === data.scoutGroupPick);
+    if (!group) return;
+    const free = group.items.filter(item => !scoutIsMonitored(item) && !(item.decision && item.decision.decision === "dismissed"));
+    const all = free.every(item => state.scoutPicked.has(item.key));
+    free.forEach(item => { if (all) state.scoutPicked.delete(item.key); else state.scoutPicked.set(item.key, true); });
+    return renderScout();
+  }
+  return scoutPreviewAction(target);
+});
+$("scoutItems").addEventListener("change", event => {
+  const box = event.target.closest("[data-scout-pick]");
+  if (!box) return;
+  if (box.checked) state.scoutPicked.set(box.dataset.scoutPick, true); else state.scoutPicked.delete(box.dataset.scoutPick);
+  const item = box.closest(".scout-item");
+  if (item) item.classList.toggle("is-picked", box.checked);
+  renderScoutBulk();
+});
+$("scoutStrongOnly").addEventListener("change", () => { state.scoutStrongOnly = $("scoutStrongOnly").checked; renderScout(); });
 $("monitorSearch").addEventListener("input", renderMonitorList);
 $("scoutSearch").addEventListener("input", renderScout);
 $("scoutFormatFilter").addEventListener("change", () => {
@@ -4736,7 +5350,6 @@ $("addResume").addEventListener("click", event => {
   if (a.origin === "explore" && !a.candidates.length) return;
   addGoto("review");
 });
-$("exploreFrame").addEventListener("load", exploreWire);
 document.querySelector(".add-explore").addEventListener("click", event => {
   const a = state.add;
   if (event.target.closest("[data-explore-back]") && a.at > 0) { a.at -= 1; return exploreOpen(a.history[a.at], false); }
@@ -4757,15 +5370,20 @@ document.querySelector(".add-explore").addEventListener("click", event => {
     const key = toggle ? toggle.dataset.linkToggle : main.dataset.linkMain;
     const item = a.candidates.find(candidate => candidate.key === key) ||
       (a.page ? a.page.links.map(link => addLinkItem(link, a.page, null)).find(candidate => candidate && candidate.key === key) : null);
-    if (item) addToggle(item, toggle ? toggle.checked : undefined);
+    if (item) {
+      addToggle(item, toggle ? toggle.checked : undefined);
+      if (a.picked.has(item.key)) exploreLocate(item.url);
+    }
     return;
   }
+  const locate = event.target.closest("[data-explore-locate]");
+  if (locate) return exploreLocate(locate.dataset.exploreLocate);
   const goto = event.target.closest("[data-add-goto]");
   if (goto) addGoto(goto.dataset.addGoto);
 });
 $("exploreSelectMode").addEventListener("change", () => {
   state.add.selectMode = $("exploreSelectMode").checked;
-  try { $("exploreFrame").contentDocument.documentElement.classList.toggle("cs-select", state.add.selectMode); } catch (_) {}
+  explorePost({ type: "mode", select: state.add.selectMode });
   renderExploreSide();
 });
 document.addEventListener("keydown", event => { if (event.key === "Shift" && state.add.step === "explore") exploreShift(true); });
@@ -5825,7 +6443,7 @@ function askSentinelUpdateQuota(remaining) {
   else if (Number.isInteger(remaining) && remaining >= 0 && remaining <= 3) askSentinelState.remaining = remaining;
   const quota = $("askSentinelQuota");
   quota.textContent = askSentinelUnlimitedTestMode()
-    ? "TEST MODE — unlimited questions until " + new Date(ASK_SENTINEL_TEST_MODE_UNTIL).toLocaleString()
+    ? "Test mode · unlimited until " + new Date(ASK_SENTINEL_TEST_MODE_UNTIL).toLocaleString([], { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })
     : askSentinelState.remaining + " of 3 questions left today";
   quota.classList.toggle("is-empty", !askSentinelUnlimitedTestMode() && askSentinelState.remaining <= 0);
   quota.classList.remove("is-busy");

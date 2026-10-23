@@ -211,6 +211,134 @@
     return "dim";
   }
 
+  /* ---------- Change field: lenses, ranges and summary rows ----------
+   * The field can't give every page its own row forever: at a few hundred pages
+   * the rows that matter (a change, a problem) drown in rows where nothing
+   * happened. So the default lens keeps a row for each page that changed or
+   * failed in the displayed range, and folds the rest into one summary row per
+   * kind ("New pages", "No change") whose lights are the strongest state of
+   * any member in that column. A summary row opens in place to list its pages.
+   */
+  const FIELD_RANGES = { "2d": 2, "7d": 7, "30d": 30, all: 0 };
+  const FIELD_LENSES = ["activity", "changed", "problems", "new", "all"];
+  const STATE_RANK = { bad: 6, on: 5, new: 4, markup: 3, dim: 2, skip: 1, none: 0 };
+
+  // The columns inside a range ending now; "all" keeps every saved column.
+  function fieldWindow(columns, range, reference) {
+    const list = Array.isArray(columns) ? columns.slice() : [];
+    const days = FIELD_RANGES[range];
+    if (!days) return list;
+    const now = reference instanceof Date ? reference.getTime() : Number(reference || Date.now());
+    const from = now - days * 86400000;
+    return list.filter(column => (Number.isFinite(column.end) ? column.end : column.at) > from);
+  }
+
+  // One light standing for several pages: the most important thing that happened to any of them.
+  function mergeCellStates(states) {
+    let best = "none";
+    (states || []).forEach(state => { if ((STATE_RANK[state] || 0) > STATE_RANK[best]) best = state; });
+    return best;
+  }
+
+  // What one page's row amounts to over the displayed columns.
+  function rowActivity(states) {
+    const list = Array.isArray(states) ? states : [];
+    let changed = 0, problems = 0, fresh = 0, scanned = 0, last = -1;
+    list.forEach((state, index) => {
+      if (state === "on") { changed += 1; last = index; }
+      else if (state === "bad") { problems += 1; last = index; }
+      else if (state === "new") { fresh += 1; last = Math.max(last, index); }
+      if (state !== "none") scanned += 1;
+    });
+    const kind = problems ? "problem" : changed ? "changed" : fresh ? "new" : scanned ? "quiet" : "unscanned";
+    return { kind, changed, problems, fresh, last };
+  }
+
+  function fieldCounts(pages) {
+    const counts = { activity: 0, changed: 0, problems: 0, new: 0, quiet: 0, waiting: 0, all: 0 };
+    (pages || []).forEach(page => {
+      const a = page.activity || rowActivity(page.states);
+      counts.all += 1;
+      if (a.changed) counts.changed += 1;
+      if (a.problems) counts.problems += 1;
+      if (a.changed || a.problems) counts.activity += 1;
+      else if (a.kind === "new") counts.new += 1;
+      else if (a.kind === "quiet") counts.quiet += 1;
+      else counts.waiting += 1;
+    });
+    return counts;
+  }
+
+  function fieldMatches(page, query) {
+    const q = String(query || "").trim().toLowerCase();
+    if (!q) return true;
+    return [page.title, page.url, page.sourceLabel].join(" ").toLowerCase().indexOf(q) >= 0;
+  }
+
+  // The rows the field draws, in order. Each is one of
+  //   { type: "page", page, member }            a page's own lights (member: inside an open summary)
+  //   { type: "group", key, label, count, states, open, kind }   a summary row
+  //   { type: "more", key, hidden }             "show more" at the end of a long list
+  // options: lens (FIELD_LENSES), query, open (summary keys opened), closed (source
+  // keys closed in the "all" lens), limit (page rows before "show more").
+  function fieldRows(pages, options = {}) {
+    const lens = FIELD_LENSES.indexOf(options.lens) >= 0 ? options.lens : "activity";
+    const open = options.open instanceof Set ? options.open : new Set(options.open || []);
+    let budget = Math.max(1, Number(options.limit) || 80);
+    const list = (pages || []).map(page => Object.assign({}, page, { activity: page.activity || rowActivity(page.states) }));
+    const matching = list.filter(page => fieldMatches(page, options.query));
+    const byTitle = (a, b) => String(a.title || "").localeCompare(String(b.title || ""));
+    const byActivity = (a, b) => (b.activity.problems ? 1 : 0) - (a.activity.problems ? 1 : 0) ||
+      b.activity.last - a.activity.last || (b.activity.changed + b.activity.problems) - (a.activity.changed + a.activity.problems) || byTitle(a, b);
+    const rows = [];
+    const pushPages = (members, key, member) => {
+      let shown = 0;
+      members.forEach(page => {
+        if (budget <= 0) return;
+        rows.push({ type: "page", page, member: !!member });
+        budget -= 1;
+        shown += 1;
+      });
+      if (shown < members.length) rows.push({ type: "more", key, hidden: members.length - shown });
+    };
+    // Summary rows start closed; a source's rows in the "all" lens start open.
+    const closed = options.closed instanceof Set ? options.closed : new Set(options.closed || []);
+    const summary = (key, label, members, kind) => {
+      if (!members.length) return;
+      const width = members[0].states.length;
+      const states = Array.from({ length: width }, (_, x) => mergeCellStates(members.map(page => page.states[x])));
+      const isOpen = kind === "source" ? !closed.has(key) : open.has(key);
+      rows.push({ type: "group", key, label, count: members.length, states, open: isOpen, kind });
+      if (isOpen) pushPages(members.slice().sort(byTitle), key, true);
+    };
+    if (String(options.query || "").trim() || lens === "changed" || lens === "problems" || lens === "new") {
+      const keep = lens === "changed" ? page => page.activity.changed > 0
+        : lens === "problems" ? page => page.activity.problems > 0
+        : lens === "new" ? page => page.activity.kind === "new"
+        : () => true;
+      pushPages(matching.filter(keep).sort(byActivity), "flat", false);
+    } else if (lens === "all") {
+      const bySource = new Map();
+      matching.forEach(page => {
+        const key = String(page.sourceId || "");
+        if (!bySource.has(key)) bySource.set(key, []);
+        bySource.get(key).push(page);
+      });
+      Array.from(bySource.entries())
+        .sort((a, b) => String(a[1][0].sourceLabel || a[0]).localeCompare(String(b[1][0].sourceLabel || b[0])))
+        .forEach(([sourceId, members]) => {
+          if (members.length === 1) pushPages(members, "src:" + sourceId, false);
+          else summary("src:" + sourceId, members[0].sourceLabel || sourceId, members, "source");
+        });
+    } else {
+      pushPages(matching.filter(page => page.activity.changed || page.activity.problems).sort(byActivity), "active", false);
+      summary("new", "New pages", matching.filter(page => !page.activity.changed && !page.activity.problems && page.activity.kind === "new"), "new");
+      summary("quiet", "No change", matching.filter(page => page.activity.kind === "quiet"), "quiet");
+      summary("waiting", "Not scanned yet", matching.filter(page => page.activity.kind === "unscanned"), "waiting");
+    }
+    return { rows, lens, counts: fieldCounts(matching) };
+  }
+
   const ACTIVE_RUN_STATUSES = ["queued", "in_progress", "waiting", "requested", "pending"];
 
   // The next scan, for the empty column at the end of the field and the
@@ -1068,6 +1196,42 @@
     return out;
   }
 
+  // How strongly Scout's evidence points one way, as a three-light meter.
+  function scoutStrength(assessment) {
+    const confidence = (assessment || {}).confidence;
+    if (confidence === "strong") return { level: 3, label: "Strong evidence", tone: "strong" };
+    if (confidence === "supported") return { level: 2, label: "Supported evidence", tone: "supported" };
+    if (confidence === "conflicting") return { level: 1, label: "Conflicting evidence", tone: "conflicting" };
+    return { level: 1, label: "Weak evidence", tone: "weak" };
+  }
+
+  // Findings grouped for reading: by kind of publication, by regulator, or by the
+  // day Scout found them. Groups keep the order of the list they were given
+  // within themselves; larger groups come first except for dates (newest first).
+  function scoutGroups(items, by, regulatorLabel) {
+    const label = typeof regulatorLabel === "function" ? regulatorLabel : id => id;
+    const groups = new Map();
+    (items || []).forEach(item => {
+      const a = item.assessment || {};
+      let key, name;
+      if (by === "regulator") { key = "reg:" + (item.regulator_id || ""); name = label(item.regulator_id || "") || "Unknown regulator"; }
+      else if (by === "date") {
+        const when = (item.decision || {}).decided_at || item.first_seen || "";
+        key = "day:" + String(when).slice(0, 10);
+        name = when ? dayHeading(when) : "Date unknown";
+      } else {
+        const type = a.publication_type || null;
+        key = "kind:" + (type ? type.id : "unrecognised");
+        name = type ? type.label : "Kind not recognised";
+      }
+      if (!groups.has(key)) groups.set(key, { key, label: name, items: [] });
+      groups.get(key).items.push(item);
+    });
+    const list = Array.from(groups.values());
+    if (by === "date") return list.sort((x, y) => y.key.localeCompare(x.key));
+    return list.sort((x, y) => y.items.length - x.items.length || x.label.localeCompare(y.label));
+  }
+
   function scoutSentence(assessment) {
     const a = assessment || {};
     const noun = a.publication_type ? (SCOUT_NOUNS[a.publication_type.id] || String(a.publication_type.label || "").toLowerCase()) : "";
@@ -1564,12 +1728,13 @@
     pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH,
     diffSequences, alignLines, changedWords,
-    esc, nextScheduledScan, scanCycle, runColumns, slotColumns, columnCellState, pendingScan, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
+    esc, nextScheduledScan, scanCycle, runColumns, slotColumns, columnCellState, pendingScan,
+    fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,
     parseUnifiedDiff, tokenize, wordDiff, similarity, redlineRows, redlineSummary, renderRedline, renderUnifiedDiff,
     splitMarkdownTableRow, isMarkdownTableSeparator, relativeTime, dayHeading,
     foldWhitespace, inlineMarkdown, xlsxFirstSheetRows, normalizeForMatch, changedPartOffsets, tableCellsMatch,
-    canonicalUrl, urlKey, scoutBucket, scoutBuckets, scoutSentence, scoutReviewIssue, nextScoutSweep,
+    canonicalUrl, urlKey, scoutBucket, scoutBuckets, scoutSentence, scoutReviewIssue, nextScoutSweep, scoutStrength, scoutGroups,
     SCOUT_FILTERS, SCOUT_OUTCOMES, SCOUT_CONFIDENCE, SCOUT_STATUS, SCOUT_CHANNEL_STATUS, SCOUT_NOUNS, SCOUT_REVIEW_MARKER,
     scoutSlug, splitList, splitLines, parsePathHints, pathHintsText, scoutSourceRequest, SCOUT_SOURCE_MARKER, SCOUT_TOPIC_IDS, SCOUT_REGIONS,
     renderWordEdit, describeItemCodes, lineageFor, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,

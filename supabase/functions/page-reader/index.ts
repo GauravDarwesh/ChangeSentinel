@@ -29,13 +29,23 @@ const ALLOWED_ORIGINS = new Set([
 // Some regulator pages ship several MB of inline CSS before <body>; keep a firm cap,
 // but don't truncate the response before the document's actual links.
 const MAX_BYTES = 8_000_000;
-const FETCH_TIMEOUT_MS = 12_000;
-const MAX_REDIRECTS = 4;
+// Smaller regulators' servers are often slow; one hop may take up to 20 s, and the
+// whole read (redirects, a retry, a meta refresh) stays inside the dashboard's 40 s.
+const FETCH_TIMEOUT_MS = 20_000;
+const TOTAL_BUDGET_MS = 34_000;
+const MAX_REDIRECTS = 6;
 const MAX_LINKS = 4000;
+const MAX_DATA_LINKS = 400;
 const WINDOW_MS = 10 * 60 * 1000;
 const ACTOR_BUDGET = 400;
 const IP_BUDGET = 800;
-const USER_AGENT = 'ChangeSentinel page reader (+https://github.com/GauravDarwesh/ChangeSentinel)';
+// The same identity as the monitor's own fetcher. Many web application firewalls
+// refuse any agent that does not start with "Mozilla/5.0".
+export const USER_AGENT = 'Mozilla/5.0 (compatible; ChangeSentinel/0.6 page reader; +https://github.com/GauravDarwesh/ChangeSentinel)';
+// When a site still answers "forbidden" or "unavailable", one retry looks like an
+// ordinary browser visit. The reader only ever fetches the one page a person asked for.
+export const BROWSER_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15';
+const RETRY_STATUSES = new Set([401, 403, 406, 409, 429, 503]);
 
 export class PublicError extends Error {
   status: number;
@@ -300,20 +310,201 @@ function buildFallbackPreview(title: string, links: PageLink[]): string {
     body + '</body></html>';
 }
 
-export function readHtml(html: string, pageUrl: string): { title: string; html: string; links: PageLink[]; truncated: boolean } {
+/* ---------------------------------------------------------------- readable without script
+ *
+ * The copy is shown with scripting off, so anything the site's own script would
+ * have done on load has to be undone here, or the page looks broken or empty:
+ *   * loading screens and splash overlays that script removes once the page is ready;
+ *   * content hidden until a scroll animation or an anti-flicker snippet reveals it;
+ *   * images whose real address waits in data-src for a lazy loader;
+ *   * stylesheets loaded as "preload" or media="print" and switched on by an onload handler;
+ *   * links that only exist as onclick="location.href=…" or javascript:open('…');
+ *   * relative url() references inside inline styles, which a copy without <base> would lose.
+ */
+
+const OVERLAY_NAME = /(?:^|[\s_-])(?:pre-?loader|page-?loader|site-?loader|loader-?(?:wrap|wrapper|overlay|container|bg|backdrop|mask|screen|page|outer|inner)|loading-?(?:overlay|screen|wrapper|mask|page|container|bg)|load-?screen|splash-?screen|page-?loading|spinner-?(?:wrap|wrapper|overlay|container|bg))(?:$|[\s_-])/i;
+const OVERLAY_TOKEN = /^(?:loader|loading|spinner|preload|pageload|page-load|pace)$/i;
+const OVERLAY_KEEP = new Set(['html', 'body', 'main', 'article', 'header', 'footer', 'nav', 'form', 'table', 'ul', 'ol', 'section']);
+const LAZY_SRC = ['data-src', 'data-lazy-src', 'data-original', 'data-lazy', 'data-echo', 'data-hi-res-src', 'data-full-src'];
+const LAZY_SRCSET = ['data-srcset', 'data-lazy-srcset', 'data-original-set'];
+const LAZY_BG = ['data-bg', 'data-background', 'data-bg-src', 'data-background-image'];
+const PLACEHOLDER_SRC = /^data:|blank|placeholder|spacer|1x1|pixel|transparent|loading|lazy|grey\.gif|gray\.gif/i;
+const NAV_SCRIPT = /(?:location(?:\.href)?\s*=|location\.(?:assign|replace)\s*\(|window\.open\s*\(|open(?:Window|Popup|Win|Doc|Document|File|Link)?\s*\(|popup\w*\s*\()\s*['"]([^'"]+)['"]/i;
+const JS_HREF_URL = /['"]((?:https?:\/\/|\/|\.\.?\/)[^'"\s]+|[^'"\s]+\.(?:pdf|xlsx?|xlsm|docx?|pptx?|zip|csv|xml|aspx?|html?|php|jsp)(?:\?[^'"]*)?)['"]/i;
+const ENABLE_JS_TEXT = /enable javascript|javascript (?:is )?(?:disabled|required|turned off|must be enabled)|turn on javascript|requires javascript|browser does not support javascript/i;
+
+export const REVEAL_CSS = 'html,body{opacity:1!important;visibility:visible!important;overflow-y:auto!important}' +
+  '.async-hide,[data-aos],.aos-init,.wow,.animate__animated,.animated,[data-animate],[data-animation],[data-scroll],' +
+  '[data-sal],.sal-animate,.reveal-on-scroll,.js-reveal,.fade-in,.fadeIn,.lazyload,.lazyloading,.lazyloaded,.lazy' +
+  '{opacity:1!important;visibility:visible!important;transform:none!important;animation:none!important;transition:none!important}';
+
+export function absoluteCssUrls(css: string, base: string): string {
+  return String(css || '')
+    .replace(/url\(\s*(['"]?)([^'")]*)\1\s*\)/gi, (whole: string, _quote: string, value: string) => {
+      const raw = String(value || '').trim();
+      if (!raw || raw.startsWith('#') || /^data:/i.test(raw)) return whole;
+      const resolved = absolute(raw, base);
+      return resolved && /^https?:/i.test(resolved) ? 'url("' + resolved.replace(/"/g, '%22') + '")' : 'none';
+    })
+    .replace(/@import\s+(['"])([^'"]+)\1/gi, (_whole: string, _quote: string, value: string) => {
+      const resolved = absolute(value, base);
+      return resolved && /^https?:/i.test(resolved) ? '@import "' + resolved.replace(/"/g, '%22') + '"' : '';
+    });
+}
+
+function isOverlay(element: Node): boolean {
+  const tag = String(element.tagName || '').toLowerCase();
+  if (OVERLAY_KEEP.has(tag)) return false;
+  const names = (String(element.getAttribute('id') || '') + ' ' + String(element.getAttribute('class') || '')).trim();
+  if (!names) return false;
+  if (!OVERLAY_NAME.test(names) && !names.split(/\s+/).some(token => OVERLAY_TOKEN.test(token))) return false;
+  // A loading screen carries a logo or a spinner, not the page's content.
+  if (element.querySelector('a[href], input, select, textarea, table, h1, h2, h3')) return false;
+  return clean(element.textContent, 200).length <= 80;
+}
+
+function wakeLazyMedia(element: Node, base: string) {
+  const tag = String(element.tagName || '').toLowerCase();
+  if (tag === 'img' || tag === 'source' || tag === 'video' || tag === 'audio') {
+    const current = String(element.getAttribute('src') || '').trim();
+    const lazy = LAZY_SRC.map(name => element.getAttribute(name)).find(value => value && String(value).trim());
+    if (lazy && (!current || PLACEHOLDER_SRC.test(current))) {
+      const resolved = absolute(String(lazy), base);
+      if (resolved) element.setAttribute('src', resolved);
+    }
+    const lazySet = LAZY_SRCSET.map(name => element.getAttribute(name)).find(value => value && String(value).trim());
+    if (lazySet && !element.getAttribute('srcset')) element.setAttribute('srcset', String(lazySet));
+    if (element.getAttribute('loading') === 'lazy') element.removeAttribute('loading');
+  }
+  const background = LAZY_BG.map(name => element.getAttribute(name)).find(value => value && String(value).trim());
+  if (background) {
+    const resolved = absolute(String(background).replace(/^url\(\s*['"]?|['"]?\s*\)$/g, ''), base);
+    if (resolved && /^https?:/i.test(resolved)) {
+      const style = String(element.getAttribute('style') || '');
+      element.setAttribute('style', (style ? style.replace(/;?\s*$/, ';') : '') + "background-image:url('" + resolved.replace(/'/g, '%27') + "')");
+    }
+  }
+}
+
+// Stylesheets that wait for script before they apply: rel=preload as=style, and
+// the media="print" onload="this.media='all'" trick.
+function enableDeferredStylesheets(document: Node) {
+  for (const link of Array.from(document.querySelectorAll('link')) as Node[]) {
+    const rel = String(link.getAttribute('rel') || '').toLowerCase().split(/\s+/);
+    const as = String(link.getAttribute('as') || '').toLowerCase();
+    const onload = String(link.getAttribute('onload') || '');
+    if (rel.includes('preload') && as === 'style') {
+      link.setAttribute('rel', 'stylesheet');
+      link.removeAttribute('as');
+    } else if (rel.includes('stylesheet') && /media/i.test(onload) && /^\s*(print|none|only x)\s*$/i.test(String(link.getAttribute('media') || ''))) {
+      link.setAttribute('media', 'all');
+    }
+  }
+}
+
+// <noscript> is what a browser shows with scripting off, so its images and
+// stylesheets belong in the copy; "please enable JavaScript" notices do not.
+function unwrapNoscript(document: Node) {
+  for (const element of Array.from(document.querySelectorAll('noscript')) as Node[]) {
+    const useful = element.querySelector && element.querySelector('img, picture, link[rel~="stylesheet"], a[href]');
+    if (!useful || ENABLE_JS_TEXT.test(clean(element.textContent, 600))) { element.remove(); continue; }
+    const parent = element.parentNode;
+    if (!parent) continue;
+    while (element.firstChild) parent.insertBefore(element.firstChild, element);
+    element.remove();
+  }
+}
+
+// Pages that build their content with script still carry their addresses in
+// embedded data (Next.js, Nuxt, JSON-LD, inline configuration).
+export function extractDataLinks(html: string, pageUrl: string, known: Set<string>): PageLink[] {
+  let host = '';
+  try {
+    host = new URL(pageUrl).hostname.toLowerCase().replace(/^www\./, '');
+  } catch (_) {
+    return [];
+  }
+  const links: PageLink[] = [];
+  const seen = new Set(known);
+  const blocks = String(html || '').match(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi) || [];
+  const pattern = /["']((?:https?:)?\\?\/\\?\/[^"'\s<>]{3,400}|\\?\/[A-Za-z0-9][^"'\s<>]{1,300})["']/g;
+  for (const block of blocks) {
+    let match: RegExpExecArray | null;
+    pattern.lastIndex = 0;
+    while ((match = pattern.exec(block)) !== null) {
+      if (links.length >= MAX_DATA_LINKS) return links;
+      const raw = match[1].replace(/\\\//g, '/');
+      const resolved = absolute(raw, pageUrl);
+      if (!/^https?:\/\//i.test(resolved)) continue;
+      let url: URL;
+      try {
+        url = new URL(resolved);
+      } catch (_) {
+        continue;
+      }
+      url.hash = '';
+      const path = url.pathname.toLowerCase();
+      if (/\.(?:m?js|css|map|png|jpe?g|gif|svg|webp|avif|ico|woff2?|ttf|otf|eot|json|mp4|webm|mp3)$/.test(path)) continue;
+      if (/\/(?:_next|_nuxt|static|assets|api|wp-json|wp-includes|cdn-cgi|graphql)\//.test(path)) continue;
+      const sameSite = url.hostname.toLowerCase().replace(/^www\./, '').endsWith(host);
+      const format = formatOf(url.href);
+      if (!sameSite && format === 'Web page') continue;
+      if (seen.has(url.href)) continue;
+      seen.add(url.href);
+      const slug = decodeURIComponent(path.split('/').filter(Boolean).pop() || url.hostname).replace(/[-_]+/g, ' ').replace(/\.\w{2,5}$/, '');
+      links.push({ url: url.href, text: clean(slug, 300) || url.href, section: "Found in the page's script data", format, chrome: false });
+    }
+  }
+  return links;
+}
+
+export function readHtml(html: string, pageUrl: string): { title: string; html: string; links: PageLink[]; truncated: boolean; notice?: string } {
   const document: Node = new (DOMParser as Node)().parseFromString(html, 'text/html');
   const baseTag = document.querySelector('base[href]');
   const base = (baseTag && absolute(baseTag.getAttribute('href') || '', pageUrl)) || pageUrl;
   const title = clean(document.querySelector('title')?.textContent || document.querySelector('h1')?.textContent || '', 300);
 
+  enableDeferredStylesheets(document);
+  unwrapNoscript(document);
   for (const element of Array.from(document.querySelectorAll(REMOVE)) as Node[]) element.remove();
+  for (const element of Array.from(document.querySelectorAll('[id], [class]')) as Node[]) {
+    if (element.isConnected !== false && isOverlay(element)) element.remove();
+  }
+  for (const style of Array.from(document.querySelectorAll('style')) as Node[]) {
+    const css = String(style.textContent || '');
+    if (/url\(|@import/i.test(css)) style.textContent = absoluteCssUrls(css, base);
+  }
   for (const element of Array.from(document.querySelectorAll('*')) as Node[]) {
+    wakeLazyMedia(element, base);
+    const tag = String(element.tagName || '').toLowerCase();
+    if (tag !== 'a' && tag !== 'img' && tag !== 'source' && !element.getAttribute('data-cs-href')) {
+      const target = element.getAttribute('data-href') || element.getAttribute('data-link') || (tag === 'tr' || tag === 'li' || tag === 'div' || tag === 'button' ? element.getAttribute('data-url') : '');
+      const resolved = target ? absolute(String(target), base) : '';
+      if (/^https?:/i.test(resolved)) element.setAttribute('data-cs-href', resolved);
+    }
     for (const attribute of Array.from(element.attributes || []) as Node[]) {
       const name = attribute.name.toLowerCase();
-      if (name.startsWith('on') || name === 'srcdoc' || name === 'target' || name === 'ping' || name === 'http-equiv') {
+      if (name.startsWith('on')) {
+        // onclick="location.href='/forms/x.pdf'" is a link in everything but name.
+        const nav = String(attribute.value || '').match(NAV_SCRIPT);
+        if (nav && !(tag === 'a' && /^https?:/i.test(absolute(element.getAttribute('href') || '', base)))) {
+          const resolved = absolute(nav[1], base);
+          if (/^https?:/i.test(resolved)) element.setAttribute('data-cs-href', resolved);
+        }
+        element.removeAttribute(attribute.name);
+      } else if (name === 'srcdoc' || name === 'target' || name === 'ping' || name === 'http-equiv') {
         element.removeAttribute(attribute.name);
       } else if (name === 'href' && String(attribute.value).trim().startsWith('#')) {
         // A jump within the page stays a jump; it is not a link to collect.
+      } else if (name === 'href' && /^\s*javascript:/i.test(String(attribute.value))) {
+        // href="javascript:openWindow('/forms/x.pdf')": keep the address it opens.
+        const inner = String(attribute.value).match(NAV_SCRIPT) || String(attribute.value).match(JS_HREF_URL);
+        const resolved = inner ? absolute(inner[1], base) : '';
+        if (/^https?:/i.test(resolved)) element.setAttribute('href', resolved);
+        else element.removeAttribute(attribute.name);
+      } else if (name === 'style') {
+        if (/expression\(|javascript:|url\(\s*['"]?\s*javascript:/i.test(attribute.value)) element.removeAttribute('style');
+        else if (/url\(/i.test(attribute.value)) element.setAttribute('style', absoluteCssUrls(attribute.value, base).replace(/url\("([^"]*)"\)/g, "url('$1')"));
       } else if (URL_ATTRS.includes(name) || name === 'xlink:href') {
         const value = absolute(attribute.value, base);
         if (value) element.setAttribute(attribute.name, value);
@@ -326,8 +517,6 @@ export function readHtml(html: string, pageUrl: string): { title: string; html: 
         }).filter(Boolean).join(', ');
         if (value) element.setAttribute('srcset', value);
         else element.removeAttribute('srcset');
-      } else if (name === 'style' && /expression\(|javascript:|url\(\s*['"]?\s*javascript:/i.test(attribute.value)) {
-        element.removeAttribute('style');
       }
     }
   }
@@ -338,12 +527,13 @@ export function readHtml(html: string, pageUrl: string): { title: string; html: 
   let section = '';
   let truncated = false;
   const self = pageUrl.split('#')[0];
-  for (const node of Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6, a[href]')) as Node[]) {
+  for (const node of Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6, a[href], area[href], [data-cs-href]')) as Node[]) {
     if (/^h[1-6]$/i.test(node.tagName)) {
       section = clean(node.textContent, 160);
       continue;
     }
-    const href = node.getAttribute('href') || '';
+    const scripted = node.getAttribute('data-cs-href') || '';
+    const href = (/^(a|area)$/i.test(node.tagName) && /^https?:/i.test(node.getAttribute('href') || '') ? node.getAttribute('href') : scripted) || '';
     if (!/^https?:/i.test(href)) continue;
     const url = href.split('#')[0];
     if (url === self && href.includes('#')) continue; // a jump within this page
@@ -354,7 +544,7 @@ export function readHtml(html: string, pageUrl: string): { title: string; html: 
         continue;
       }
       const image = node.querySelector('img[alt]');
-      const text = clean(node.textContent, 300) || clean(node.getAttribute('title') || node.getAttribute('aria-label') || image?.getAttribute('alt') || '', 300);
+      const text = clean(node.textContent, 300) || clean(node.getAttribute('title') || node.getAttribute('aria-label') || node.getAttribute('alt') || node.getAttribute('value') || image?.getAttribute('alt') || '', 300);
       index = links.length;
       indexByUrl.set(url, index);
       const chrome = !!node.closest('header, nav, footer, [role="navigation"], [role="banner"], [role="contentinfo"]') && !node.closest('main, article, [role="main"]');
@@ -395,9 +585,30 @@ export function readHtml(html: string, pageUrl: string): { title: string; html: 
     }
   }
 
+  // A page that builds itself with script arrives nearly empty. Say so, and list the
+  // addresses its embedded data carries so there is still something to pick from.
+  let notice = '';
+  const visibleText = clean(document.querySelector('body')?.textContent || '', 2000);
+  const contentLinks = links.filter(link => !link.chrome).length;
+  const scriptBuilt = /id=["'](?:root|app|__next|__nuxt|main-app|application|svelte)["']|data-reactroot|ng-app|ng-version|data-server-rendered|<app-root|<script\b[^>]*type=["']module["']/i.test(html) ||
+    (String(html).match(/<script\b/gi) || []).length >= 5;
+  if (contentLinks < 5 && visibleText.length < 250 && scriptBuilt) {
+    const known = new Set(links.map(link => link.url));
+    const dataLinks = extractDataLinks(html, base, known).slice(0, Math.max(0, MAX_LINKS - links.length));
+    links.push(...dataLinks);
+    notice = dataLinks.length
+      ? 'This page builds its content with script, which the reader does not run. ' + dataLinks.length + ' address' + (dataLinks.length === 1 ? '' : 'es') + ' found in its data are listed under “On this page”.'
+      : 'This page builds its content with script, which the reader does not run, so it may look empty here. Open it in a new tab, or go back and use “Follow links by level”.';
+  }
+
+  const head = document.querySelector('head') || document.documentElement;
+  const reveal = document.createElement('style');
+  reveal.setAttribute('data-cs-reveal', '');
+  reveal.textContent = REVEAL_CSS;
+  head.appendChild(reveal);
+
   // The copy cannot run script even if a page smuggles some past the cleanup:
   // the dashboard shows it in a sandbox without scripts, and this policy agrees.
-  const head = document.querySelector('head') || document.documentElement;
   const policy = document.createElement('meta');
   policy.setAttribute('http-equiv', 'Content-Security-Policy');
   policy.setAttribute('content', "script-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'");
@@ -406,7 +617,10 @@ export function readHtml(html: string, pageUrl: string): { title: string; html: 
   charset.setAttribute('charset', 'utf-8');
   head.insertBefore(charset, head.firstChild);
 
-  return { title, html: '<!doctype html>\n' + document.documentElement.outerHTML, links, truncated };
+  const page: { title: string; html: string; links: PageLink[]; truncated: boolean; notice?: string } =
+    { title, html: '<!doctype html>\n' + document.documentElement.outerHTML, links, truncated };
+  if (notice) page.notice = notice;
+  return page;
 }
 
 /* ---------------------------------------------------------------- fetching */
@@ -444,21 +658,126 @@ async function readBody(response: Response): Promise<{ bytes: Uint8Array; trunca
   return { bytes, truncated };
 }
 
+// Session cookies some sites set on the first response and require on the redirect
+// that follows (otherwise they redirect forever). Kept for this one read only.
+type Cookie = { domain: string; hostOnly: boolean; name: string; value: string };
+function storeCookies(jar: Cookie[], response: Response, url: URL) {
+  const headers = response.headers as Headers & { getSetCookie?: () => string[] };
+  const lines = typeof headers.getSetCookie === 'function' ? headers.getSetCookie() : [];
+  for (const line of lines) {
+    const [pair, ...attributes] = String(line || '').split(';');
+    const eq = pair.indexOf('=');
+    if (eq <= 0) continue;
+    const name = pair.slice(0, eq).trim();
+    const value = pair.slice(eq + 1).trim();
+    const domainAttribute = attributes.map(part => part.trim()).find(part => /^domain=/i.test(part));
+    const host = url.hostname.toLowerCase();
+    let domain = domainAttribute ? domainAttribute.slice(7).trim().toLowerCase().replace(/^\./, '') : host;
+    if (domain !== host && !host.endsWith('.' + domain)) domain = host;
+    const index = jar.findIndex(cookie => cookie.name === name && cookie.domain === domain);
+    if (index >= 0) jar.splice(index, 1);
+    if (value && jar.length < 40) jar.push({ domain, hostOnly: !domainAttribute, name, value: value.slice(0, 4096) });
+  }
+}
+function cookieHeader(jar: Cookie[], url: URL): string {
+  const host = url.hostname.toLowerCase();
+  return jar.filter(cookie => host === cookie.domain || (!cookie.hostOnly && host.endsWith('.' + cookie.domain)))
+    .map(cookie => cookie.name + '=' + cookie.value).join('; ');
+}
+
+// A page whose only job is to send the browser elsewhere: <meta http-equiv="refresh">
+// or a one-line location assignment in an otherwise empty page.
+export function clientRedirect(html: string, pageUrl: string): string {
+  const head = String(html || '').slice(0, 60_000);
+  const meta = head.match(/<meta\b[^>]*http-equiv\s*=\s*["']?refresh["']?[^>]*>/i);
+  if (meta) {
+    const content = meta[0].match(/content\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i);
+    const value = content ? (content[1] ?? content[2] ?? content[3] ?? '') : '';
+    const parts = value.match(/^\s*(\d+(?:\.\d+)?)\s*[;,]?\s*(?:url\s*=\s*)?['"]?([^'"]*)['"]?\s*$/i);
+    if (parts && Number(parts[1]) <= 15 && parts[2].trim()) return absolute(decodeFallbackEntities(parts[2].trim()), pageUrl);
+  }
+  if (head.length < 20_000) {
+    const text = head.replace(/<(script|style)\b[\s\S]*?<\/\1\s*>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const script = head.match(/(?:window\.|document\.|top\.|self\.)?location(?:\.href)?\s*=\s*["']([^"']+)["']|location\.(?:replace|assign)\(\s*["']([^"']+)["']/i);
+    if (script && text.length < 300) return absolute(script[1] || script[2], pageUrl);
+  }
+  return '';
+}
+
+// Signs that a site answered with a bot check rather than the page.
+export function botCheck(html: string): string {
+  const head = String(html || '').slice(0, 80_000);
+  // Cloudflare and others also inject their scripts into ordinary pages, so a marker
+  // only counts when the page has next to no text of its own.
+  const text = head.replace(/<(script|style|noscript)\b[\s\S]*?<\/\1\s*>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  if (/<title>\s*(just a moment|attention required|checking your browser|ddos-guard|please wait while we verify)/i.test(head) ||
+      (text.length < 1500 && /cf-chl|cf_chl_opt|_Incapsula_Resource|incapsula incident|px-captcha|captcha-delivery|sec-if-cpt|<title>\s*(access denied|request rejected|security check)/i.test(head))) {
+    return 'The site answered with a bot check instead of the page, and the reader cannot pass it without a full browser. Open it in a new tab.';
+  }
+  return '';
+}
+
+const STATUS_WORDS: Record<number, string> = {
+  401: 'The site asks for a sign-in before showing this page.',
+  403: 'The site refused the reader (HTTP 403). Some sites only answer people using a full browser; open it in a new tab.',
+  404: 'The site says this page does not exist (HTTP 404).',
+  410: 'The site says this page has been removed (HTTP 410).',
+  429: 'The site is limiting requests right now (HTTP 429). Wait a minute and try again.',
+  451: 'The site will not serve this page in the reader\'s region (HTTP 451).',
+  503: 'The site is unavailable or refused the reader (HTTP 503). Try again, or open it in a new tab.'
+};
+function statusMessage(status: number): string {
+  return STATUS_WORDS[status] || (status >= 500 ? 'The site had a problem answering (HTTP ' + status + '). Try again shortly.' : 'The site answered HTTP ' + status + '.');
+}
+
+function requestHeaders(browser: boolean, cookies: string): Record<string, string> {
+  const headers: Record<string, string> = browser
+    ? {
+      'User-Agent': BROWSER_USER_AGENT,
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'en-GB,en;q=0.9',
+      'Upgrade-Insecure-Requests': '1',
+      'Sec-Fetch-Dest': 'document',
+      'Sec-Fetch-Mode': 'navigate',
+      'Sec-Fetch-Site': 'none',
+      'Sec-Fetch-User': '?1'
+    }
+    : { 'User-Agent': USER_AGENT, Accept: 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.5', 'Accept-Language': 'en;q=0.9,*;q=0.5' };
+  if (cookies) headers.Cookie = cookies;
+  return headers;
+}
+
 export async function readPage(raw: string, fetcher: typeof fetch = fetch) {
   let url = checkUrl(raw);
+  const started = Date.now();
+  const jar: Cookie[] = [];
+  let browser = false;
+  let retried = false;
+  const visited = new Set<string>();
   for (let hop = 0; ; hop += 1) {
     await checkResolvesPublic(url);
+    const remaining = TOTAL_BUDGET_MS - (Date.now() - started);
+    if (remaining < 1500) throw new PublicError('The page took too long to answer.', 504);
     let response: Response;
     try {
       response = await fetcher(url.href, {
         redirect: 'manual',
-        headers: { 'User-Agent': USER_AGENT, Accept: 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.5' },
-        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS)
+        headers: requestHeaders(browser, cookieHeader(jar, url)),
+        signal: AbortSignal.timeout(Math.min(FETCH_TIMEOUT_MS, remaining))
       });
     } catch (error) {
-      const timedOut = error instanceof DOMException && error.name === 'TimeoutError';
+      const timedOut = error instanceof DOMException && (error.name === 'TimeoutError' || error.name === 'AbortError');
+      if (!timedOut && !retried) {
+        // Some servers drop connections from unfamiliar agents instead of refusing them.
+        retried = true;
+        browser = true;
+        hop -= 1;
+        continue;
+      }
       throw new PublicError(timedOut ? 'The page took too long to answer.' : 'The page could not be reached.', 502);
     }
+    storeCookies(jar, response, url);
+    visited.add(url.href);
     if ([301, 302, 303, 307, 308].includes(response.status)) {
       const location = response.headers.get('location');
       await response.body?.cancel();
@@ -469,9 +788,16 @@ export async function readPage(raw: string, fetcher: typeof fetch = fetch) {
     const contentType = String(response.headers.get('content-type') || '').toLowerCase();
     if (response.status >= 400) {
       await response.body?.cancel();
-      return { kind: 'error', url: url.href, status: response.status, message: 'The site answered HTTP ' + response.status + '.' };
+      if (RETRY_STATUSES.has(response.status) && !retried) {
+        retried = true;
+        browser = true;
+        hop -= 1;
+        continue;
+      }
+      return { kind: 'error', url: url.href, status: response.status, message: statusMessage(response.status) };
     }
-    if (contentType && !/html|xml/.test(contentType)) {
+    const looksLikeFile = formatOf(url.href) !== 'Web page';
+    if (contentType && !/html|xml/.test(contentType) && (looksLikeFile || !/text\/plain|octet-stream|unknown/.test(contentType))) {
       await response.body?.cancel();
       return { kind: 'document', url: url.href, contentType: contentType.split(';')[0], format: formatOf(url.href) };
     }
@@ -484,6 +810,21 @@ export async function readPage(raw: string, fetcher: typeof fetch = fetch) {
     }
     if (!/<(html|head|body|a\s)/i.test(text.slice(0, 50_000))) {
       return { kind: 'document', url: url.href, contentType: contentType.split(';')[0] || 'unknown', format: formatOf(url.href) };
+    }
+    const next = clientRedirect(text, url.href);
+    if (next && /^https?:/i.test(next) && !visited.has(next.split('#')[0]) && hop < MAX_REDIRECTS) {
+      url = checkUrl(next);
+      continue;
+    }
+    const blocked = botCheck(text);
+    if (blocked) {
+      if (!retried) {
+        retried = true;
+        browser = true;
+        hop -= 1;
+        continue;
+      }
+      return { kind: 'error', url: url.href, status: response.status, message: blocked };
     }
     const page = readHtml(text, url.href);
     return { kind: 'page', url: url.href, ...page, truncated: page.truncated || body.truncated };

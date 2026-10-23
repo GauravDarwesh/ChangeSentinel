@@ -1,6 +1,6 @@
 // Tests for the page reader. Network calls go to a fake fetcher; nothing leaves the machine.
 (Deno as any).serve = () => ({ finished: Promise.resolve(), shutdown: async () => {}, ref() {}, unref() {}, addr: { hostname: 'test', port: 0 } });
-const { checkUrl, isPrivateAddress, readHtml, readPage, formatOf, spend, handle, PublicError } = await import('./index.ts');
+const { checkUrl, isPrivateAddress, readHtml, readPage, formatOf, spend, handle, PublicError, absoluteCssUrls, clientRedirect, botCheck, USER_AGENT, BROWSER_USER_AGENT } = await import('./index.ts');
 
 function assert(condition: unknown, message: string) { if (!condition) throw new Error(message); }
 function eq(a: unknown, b: unknown, message: string) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error(message + ': ' + JSON.stringify(a) + ' !== ' + JSON.stringify(b)); }
@@ -108,4 +108,114 @@ Deno.test('site navigation links are flagged, not dropped', () => {
   eq(byUrl['https://x.example.gov/forms'].section, 'Forms', 'and takes its content heading');
   eq(byUrl['https://x.example.gov/a.pdf'].chrome, false, 'content link');
   assert(page.html.includes('data-cs-link'), 'chrome links stay clickable in the copy');
+});
+
+Deno.test('loading screens, hidden-until-script content and lazy media are undone', () => {
+  const page = readHtml(`<html><head><title>Financial Return Template</title>
+    <link rel="preload" as="style" href="/css/site.css" onload="this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/print-trick.css" media="print" onload="this.media='all'">
+    <style>.hero{background:url(../img/hero.png)} @import "/css/more.css"; .x{filter:url(#f)}</style></head>
+    <body class="loading"><div id="preloader" class="page-loader"><img src="/img/loader.gif" alt=""></div>
+    <div class="spinner"></div>
+    <main><h1>Financial Return Template v2.12</h1><div data-aos="fade-up"><p>Published August 2025.</p>
+    <a href="https://cdn.example.org/doc.xlsx">Download</a></div>
+    <img src="data:image/gif;base64,R0lGOD" data-src="/img/chart.png" alt="chart">
+    <div data-bg="/img/banner.jpg">Banner</div>
+    <noscript><img src="/img/fallback.png" alt="fallback"></noscript>
+    <noscript><p>Please enable JavaScript to use this site.</p></noscript></main></body></html>`, 'https://www.example.org/forms/template');
+  const html = page.html;
+  assert(!html.includes('preloader') && !html.includes('loader.gif'), 'the loading screen is removed');
+  assert(!/class="spinner"/.test(html), 'an empty spinner is removed');
+  assert(html.includes('class="loading"'), 'a body class is left alone');
+  assert(html.includes('Financial Return Template v2.12') && html.includes('data-aos'), 'the content stays');
+  assert(html.includes('data-cs-reveal') && html.includes('[data-aos]'), 'content waiting for a scroll animation is revealed');
+  assert(/<link[^>]+rel="stylesheet"[^>]+href="https:\/\/www\.example\.org\/css\/site\.css"|<link[^>]+href="https:\/\/www\.example\.org\/css\/site\.css"[^>]+rel="stylesheet"/.test(html), 'a preloaded stylesheet applies');
+  assert(/print-trick\.css"[^>]*media="all"|media="all"[^>]*print-trick\.css"/.test(html), 'a print-media stylesheet switched on by script applies');
+  assert(html.includes('url("https://www.example.org/img/hero.png")'), 'relative url() in a style block is absolute');
+  assert(html.includes('@import "https://www.example.org/css/more.css"'), '@import is absolute');
+  assert(html.includes('url(#f)'), 'fragment references are kept');
+  assert(html.includes('src="https://www.example.org/img/chart.png"'), 'a lazy image gets its real address');
+  assert(html.includes("background-image:url('https://www.example.org/img/banner.jpg')"), 'a lazy background is applied');
+  assert(html.includes('https://www.example.org/img/fallback.png'), 'noscript images are shown');
+  assert(!/enable JavaScript/i.test(html), 'noscript notices are dropped');
+  eq(page.links.map(link => link.url), ['https://cdn.example.org/doc.xlsx'], 'links');
+  assert(!page.notice, 'an ordinary page carries no notice');
+});
+
+Deno.test('links that only exist in script handlers are collected', () => {
+  const page = readHtml(`<html><body><main><h2>Forms</h2>
+    <a href="javascript:openWindow('/forms/BC.pdf')">Form BC</a>
+    <a href="javascript:void(0)" onclick="window.open('https://docs.example.gov/annual.xlsx')">Annual return</a>
+    <button onclick="location.href='/guidance/notes'">Guidance notes</button>
+    <tr data-href="/forms/archive"><td>Archive</td></tr>
+    <a href="javascript:__doPostBack('ctl00','')">Postback</a></main></body></html>`, 'https://www.example.gov/forms/');
+  const urls = page.links.map(link => link.url);
+  assert(urls.includes('https://www.example.gov/forms/BC.pdf'), 'javascript: href keeps the address it opens');
+  assert(urls.includes('https://docs.example.gov/annual.xlsx'), 'onclick window.open is a link');
+  assert(urls.includes('https://www.example.gov/guidance/notes'), 'onclick location.href is a link');
+  eq(page.links.find(link => link.url.endsWith('/notes'))?.text, 'Guidance notes', 'its text is kept');
+  assert(!page.html.includes('javascript:'), 'no javascript: address survives');
+  assert(!page.html.includes('onclick'), 'no handler survives');
+  assert((page.html.match(/data-cs-link=/g) || []).length >= 3, 'scripted links are numbered so they can be picked');
+});
+
+Deno.test('a page built with script lists the addresses in its data and says so', () => {
+  const page = readHtml(`<html><head><title>Rules</title></head><body><div id="__next"></div>
+    <script id="__NEXT_DATA__" type="application/json">{"props":{"items":[{"href":"/rules/2026-01"},{"href":"https:\\/\\/www.example.gov\\/rules\\/2026-02"},
+    {"file":"https://cdn.other.org/forms/q1.pdf"},{"chunk":"/_next/static/chunks/main.js"},{"img":"/images/logo.png"},{"ext":"https://tracker.other.org/page"}]}}</script></body></html>`, 'https://www.example.gov/rules');
+  const urls = page.links.map(link => link.url);
+  assert(urls.includes('https://www.example.gov/rules/2026-01'), 'relative address in data');
+  assert(urls.includes('https://www.example.gov/rules/2026-02'), 'escaped absolute address in data');
+  assert(urls.includes('https://cdn.other.org/forms/q1.pdf'), 'a document on another host');
+  assert(!urls.some(url => /_next|logo\.png|tracker\.other/.test(url)), 'assets and other sites\' pages are skipped');
+  assert(/builds its content with script/.test(page.notice || ''), 'the reader says why the copy looks empty');
+});
+
+Deno.test('client-side redirects and bot checks are recognised', () => {
+  eq(clientRedirect('<html><head><meta http-equiv="refresh" content="0; URL=\'/new/home\'"></head></html>', 'https://x.gov/old'), 'https://x.gov/new/home', 'meta refresh');
+  eq(clientRedirect('<html><head><meta http-equiv="Refresh" content="600"></head><body>Page</body></html>', 'https://x.gov/'), '', 'a periodic reload is not a redirect');
+  eq(clientRedirect('<html><body><script>window.location.href = "https://x.gov/en/";</script></body></html>', 'https://x.gov/'), 'https://x.gov/en/', 'script redirect on an empty page');
+  eq(clientRedirect('<html><body>' + '<p>Real content here.</p>'.repeat(40) + '<script>if (a) location.href="/x"</script></body></html>', 'https://x.gov/'), '', 'not on a page with content');
+  assert(botCheck('<html><head><title>Just a moment...</title></head><body></body></html>'), 'Cloudflare interstitial');
+  eq(botCheck('<html><head><title>Rules</title><script src="/cdn-cgi/challenge-platform/scripts/jsd/main.js"></script></head><body>' + '<p>Rule text.</p>'.repeat(200) + '</body></html>'), '', 'an ordinary page served through Cloudflare');
+  eq(absoluteCssUrls("a{b:url('x.png')} c{d:url(javascript:alert)}", 'https://x.gov/css/s.css'), 'a{b:url("https://x.gov/css/x.png")} c{d:none}', 'css urls');
+});
+
+Deno.test('a refusal is retried once as a browser, refresh pages and cookies are followed', async () => {
+  const seen: { url: string; agent: string; cookie: string }[] = [];
+  const headerOf = (init: RequestInit | undefined, name: string) => String((init?.headers as Record<string, string> || {})[name] || '');
+  const fake = (async (url: string, init?: RequestInit) => {
+    seen.push({ url, agent: headerOf(init, 'User-Agent'), cookie: headerOf(init, 'Cookie') });
+    if (url === 'https://8.8.8.8/guarded') {
+      return headerOf(init, 'User-Agent') === BROWSER_USER_AGENT
+        ? new Response('<html><body><main><a href="/a.pdf">A</a></main></body></html>', { headers: { 'content-type': 'text/html' } })
+        : new Response('denied', { status: 403 });
+    }
+    if (url === 'https://8.8.8.8/old') return new Response('<html><head><meta http-equiv="refresh" content="0;url=/new"></head></html>', { headers: { 'content-type': 'text/html' } });
+    if (url === 'https://8.8.8.8/new') return new Response('<html><body><main><a href="/b">B</a></main></body></html>', { headers: { 'content-type': 'text/html' } });
+    if (url === 'https://8.8.8.8/always') return new Response('x', { status: 403 });
+    if (url === 'https://8.8.8.8/check') return new Response('<html><head><title>Just a moment...</title></head><body></body></html>', { headers: { 'content-type': 'text/html' } });
+    if (url === 'https://8.8.8.8/session') {
+      return headerOf(init, 'Cookie').includes('sid=1')
+        ? new Response('<html><body><main><a href="/c">C</a></main></body></html>', { headers: { 'content-type': 'text/html' } })
+        : new Response(null, { status: 302, headers: { location: '/session', 'set-cookie': 'sid=1; Path=/; HttpOnly' } });
+    }
+    return new Response('', { status: 404 });
+  }) as typeof fetch;
+  assert(USER_AGENT.startsWith('Mozilla/5.0 (compatible; ChangeSentinel'), 'the reader names itself like the monitor');
+  const guarded = await readPage('https://8.8.8.8/guarded', fake) as any;
+  eq(guarded.kind, 'page', 'a 403 is retried as a browser');
+  eq(seen.filter(call => call.url === 'https://8.8.8.8/guarded').map(call => call.agent === BROWSER_USER_AGENT), [false, true], 'first as itself, then once as a browser');
+  const moved = await readPage('https://8.8.8.8/old', fake) as any;
+  eq([moved.kind, moved.url, moved.links[0].url], ['page', 'https://8.8.8.8/new', 'https://8.8.8.8/b'], 'meta refresh followed');
+  const refused = await readPage('https://8.8.8.8/always', fake) as any;
+  eq(refused.kind, 'error', 'still refused');
+  assert(/full browser/.test(refused.message), 'the refusal is explained: ' + refused.message);
+  const check = await readPage('https://8.8.8.8/check', fake) as any;
+  assert(check.kind === 'error' && /bot check/.test(check.message), 'a bot check is reported, not shown');
+  // Runtimes that hide Set-Cookie on constructed responses (browsers) cannot exercise the jar.
+  if (new Response(null, { headers: { 'set-cookie': 'a=b' } }).headers.get('set-cookie')) {
+    const session = await readPage('https://8.8.8.8/session', fake) as any;
+    eq(session.kind, 'page', 'a cookie set on a redirect is sent back');
+  }
 });

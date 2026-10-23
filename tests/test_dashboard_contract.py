@@ -217,7 +217,10 @@ class TestDashboardScanSignal(unittest.TestCase):
         for token in (
             "function renderMonitoringSignal()",
             # The field shows six-hour windows; the countdown still sees every saved scan.
-            "L.slotColumns(state.history, { workflowRuns: state.workflowRuns, limit: geometry.capacity - 1 })",
+            "L.slotColumns(state.history, { workflowRuns: state.workflowRuns })",
+            # The field opens on a lens over a chosen range and folds quiet pages into summary rows.
+            "L.fieldWindow(allColumns, prefs.range, new Date())",
+            "L.fieldRows(pages, { lens: prefs.lens, query: prefs.query, open: prefs.open, closed: prefs.closed, limit: prefs.limit })",
             "L.pendingScan(new Date(), scans, state.workflowRuns)",
             "pending: Boolean(item.pending_registration)",
             "L.columnCellState(column, page)",
@@ -493,16 +496,30 @@ class TestAddLinkFlow(unittest.TestCase):
                 self.assertNotRegex(rule, r"(^|[;{\s])display\s*:", "only .add-link[open] may set display")
         self.assertIn(".add-link[open] { display: flex;", html)
 
-    def test_the_explored_page_cannot_run_script(self):
+    def test_the_explored_page_runs_only_the_bridge_in_an_opaque_origin(self):
+        # Safari never runs listeners the parent attaches inside a script-less
+        # sandboxed frame, so clicks are reported from inside the frame by one
+        # nonce-locked bridge script. Without allow-same-origin the copy runs in an
+        # opaque origin and cannot reach the dashboard, its storage or its cookies.
         html = read("index.html")
         js = read("dashboard.js")
         frame = re.search(r'<iframe id="exploreFrame"[^>]*>', html).group(0)
-        self.assertIn('sandbox="allow-same-origin"', frame)
-        self.assertNotIn("allow-scripts", frame)
-        self.assertNotIn("allow-forms", frame)
-        self.assertNotIn("allow-top-navigation", frame)
-        self.assertIn('doc.addEventListener("click", exploreFrameClick, true)', js)
-        self.assertIn("if (event.shiftKey || a.selectMode) { addToggle(item); return; }", js)
+        self.assertIn('sandbox="allow-scripts"', frame)
+        for forbidden in ("allow-same-origin", "allow-forms", "allow-top-navigation", "allow-popups", "allow-modals"):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, frame)
+                self.assertNotIn(forbidden, js[js.index("function scoutPreviewShell("):js.index("let scoutPreviewTimer")])
+        self.assertIn('sandbox="allow-scripts" referrerpolicy="no-referrer"', js)
+        self.assertIn("script-src \\'nonce-' + nonce + '\\'", js)
+        self.assertIn("connect-src 'none'", js)
+        self.assertIn("form-action 'none'", js)
+        # The reader's own policy (script-src 'none') is replaced, never combined.
+        self.assertIn('http-equiv\\s*=\\s*["\']?content-security-policy', js)
+        # Messages count only from the frame itself, with this load's token.
+        self.assertIn("event.source !== frame.contentWindow", js)
+        self.assertIn("data.token !== state.add.frameToken", js)
+        self.assertIn("if (shift || a.selectMode) { addToggle(item); return; }", js)
+        self.assertNotIn("contentDocument.documentElement.classList", js)
         reader = read("supabase/functions/page-reader/index.ts")
         self.assertIn("script-src 'none'", reader)
         self.assertIn("checkResolvesPublic(url)", reader)
@@ -709,7 +726,7 @@ class TestScoutView(unittest.TestCase):
             "fetchDataAsset(key, !OPTIONAL_ASSETS.has(key))",
             'scout: "scout"',
             "function renderScoutCoverage(pane)",
-            "L.scoutReviewIssue(verb, [item], \"\")",
+            "L.scoutReviewIssue(verb, items, \"\")",
             "openAddMonitor();",
             "It does not mean every page on a regulator",
         ):
