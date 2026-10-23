@@ -145,6 +145,35 @@ def _fetch_page_metadata(url: str) -> dict[str, str]:
     return {}
 
 
+MAX_REGISTRATION_REDIRECTS = 4
+
+
+def _resolve_redirects(url: str) -> str:
+    """The address a link finally serves from, so a monitor watches where the content lives.
+
+    An exact-address monitor never follows a redirect to another host (its scope
+    is that one address), so registering an address that now redirects - as old
+    www.treasury.gov document links do to ticdata.treasury.gov - would fail on
+    every scan. Each hop is checked like any registered URL. Any failure keeps
+    the address as submitted: resolution is a convenience, never a gate.
+    """
+    current = url
+    try:
+        for _ in range(MAX_REGISTRATION_REDIRECTS + 1):
+            validate_public_http_url(current, resolve_dns=True)
+            with public_destinations_only():
+                response = requests.get(current, timeout=(4, 10), allow_redirects=False, stream=True,
+                                        headers={"User-Agent": USER_AGENT})
+            status, location = response.status_code, response.headers.get("location")
+            response.close()
+            if status not in {301, 302, 303, 307, 308} or not location:
+                return canonicalize_url(current)
+            current = canonicalize_url(urljoin(current, location))
+    except Exception:
+        return url
+    return url
+
+
 def _display_name(name: str, url: str) -> str:
     clean = re.sub(r"\s+", " ", str(name or "")).strip()[:100]
     if clean:
@@ -369,9 +398,10 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
     items: list[dict] = []
     by_url: dict[str, dict] = {}
     source_ids: list[str] = []
-    for row_number, (url, requested_name, include_selector, ignore_selectors) in enumerate(
+    for row_number, (submitted_url, requested_name, include_selector, ignore_selectors) in enumerate(
         requests_to_add, start=1
     ):
+        url = _resolve_redirects(submitted_url)
         previous = by_url.get(url)
         if previous is not None:
             if (
@@ -435,6 +465,8 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
                     "created": True,
                 }
 
+        if url != submitted_url:
+            item["redirected_from"] = submitted_url
         by_url[url] = {
             **item,
             "include_selector": include_selector,
@@ -694,7 +726,7 @@ def register_request(
     if BULK_REQUEST_MARKER in body:
         return register_bulk_request(event, config_path, repository)
 
-    url, requested_name, include_selector, ignore_selectors = request_from_issue(event, repository)
+    submitted_url, requested_name, include_selector, ignore_selectors = request_from_issue(event, repository)
     crawl_matches = re.findall(r"(?m)^Crawl depth:[ \t]*(.*?)[ \t]*$", body)
     if len(crawl_matches) > 1:
         raise ValueError("The request must contain at most one Crawl depth field.")
@@ -706,6 +738,9 @@ def register_request(
     else:
         crawl_depth = 0
     scout_enabled = _scout_discovery_flag(body)
+    # Discovery reads the page as submitted; a monitor watches where it now serves from.
+    discovery_only_requested = bool(_yes_no_field(body, "Discovery only"))
+    url = submitted_url if discovery_only_requested else _resolve_redirects(submitted_url)
     if scout_enabled and crawl_depth == 0:
         raise ValueError("Scout weekly discovery requires crawl depth 1, 2, or 3.")
     if scout_enabled and scout_config_path is None:
@@ -843,6 +878,8 @@ def register_request(
 
     source_result["crawl_depth_updated"] = crawl_depth_updated
     source_result["discovery_only"] = False
+    if url != submitted_url:
+        source_result["redirected_from"] = submitted_url
     source_result["scout_enabled"] = scout_enabled
     source_result["scout_configured"] = scout_enabled
     source_result["scout_changed"] = scout_changed

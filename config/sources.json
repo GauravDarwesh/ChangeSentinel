@@ -273,7 +273,7 @@
     {
       "id": "manual-4c1f334576d9",
       "name": "TIC B-Forms and Instructions: Form BC",
-      "regulator": "www.treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -293,22 +293,22 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fbc-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fbc-2022dec.pdf"
       ],
       "allowed_prefixes": [
-        "https://www.treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fbc-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fbc-2022dec.pdf"
       ],
       "allowed_domains": [
-        "www.treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
       "id": "manual-1385b7968980",
       "name": "TIC B-Forms and Instructions: Form BL-1",
-      "regulator": "www.treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -328,22 +328,22 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fbl1-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fbl1-2022dec.pdf"
       ],
       "allowed_prefixes": [
-        "https://www.treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fbl1-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fbl1-2022dec.pdf"
       ],
       "allowed_domains": [
-        "www.treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
       "id": "manual-cf137f5b0e18",
       "name": "TIC B-Forms and Instructions: Form BL-2",
-      "regulator": "www.treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -363,22 +363,22 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fbl2-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fbl2-2022dec.pdf"
       ],
       "allowed_prefixes": [
-        "https://www.treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fbl2-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fbl2-2022dec.pdf"
       ],
       "allowed_domains": [
-        "www.treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
       "id": "manual-ffef3c5bad79",
       "name": "TIC B-Forms and Instructions: Form BQ-1",
-      "regulator": "www.treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -398,22 +398,22 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fbq1-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fbq1-2022dec.pdf"
       ],
       "allowed_prefixes": [
-        "https://www.treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fbq1-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fbq1-2022dec.pdf"
       ],
       "allowed_domains": [
-        "www.treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
       "id": "manual-d25bd74f70c2",
       "name": "TIC B-Forms and Instructions: Form BQ-2",
-      "regulator": "www.treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -433,22 +433,22 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fbq2-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fbq2-2022dec.pdf"
       ],
       "allowed_prefixes": [
-        "https://www.treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fbq2-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fbq2-2022dec.pdf"
       ],
       "allowed_domains": [
-        "www.treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
       "id": "manual-85bfc152bb21",
       "name": "TIC B-Forms and Instructions: Form BQ-3",
-      "regulator": "www.treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -468,22 +468,22 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fbq3-dec2013.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fbq3-dec2013.pdf"
       ],
       "allowed_prefixes": [
-        "https://www.treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fbq3-dec2013.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fbq3-dec2013.pdf"
       ],
       "allowed_domains": [
-        "www.treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
       "id": "manual-ff67d6e209f2",
       "name": "TIC C-Forms and Instructions: Form CQ-1",
-      "regulator": "www.treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -503,22 +503,22 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fcq1-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fcq1-2022dec.pdf"
       ],
       "allowed_prefixes": [
-        "https://www.treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fcq1-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fcq1-2022dec.pdf"
       ],
       "allowed_domains": [
-        "www.treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
       "id": "manual-dccdb22bbc89",
       "name": "TIC C-Forms and Instructions: Form CQ-2",
-      "regulator": "www.treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -538,22 +538,22 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fcq2-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fcq2-2022dec.pdf"
       ],
       "allowed_prefixes": [
-        "https://www.treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fcq2-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fcq2-2022dec.pdf"
       ],
       "allowed_domains": [
-        "www.treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
       "id": "manual-24fcc8b320e7",
       "name": "Instructions for the C-Forms",
-      "regulator": "www.treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -573,22 +573,22 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fcinstr-dec2019.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fcinstr-dec2019.pdf"
       ],
       "allowed_prefixes": [
-        "https://www.treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fcinstr-dec2019.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fcinstr-dec2019.pdf"
       ],
       "allowed_domains": [
-        "www.treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
       "id": "manual-d857de2b8ce1",
       "name": "TIC D Form and Instructions: Form D",
-      "regulator": "www.treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -608,22 +608,22 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fd-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fd-2022dec.pdf"
       ],
       "allowed_prefixes": [
-        "https://www.treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/fd-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fd-2022dec.pdf"
       ],
       "allowed_domains": [
-        "www.treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
       "id": "manual-aa51a819b71a",
       "name": "Instructions for Form D",
-      "regulator": "www.treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -643,22 +643,22 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/dinstr-sept2018.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/dinstr-sept2018.pdf"
       ],
       "allowed_prefixes": [
-        "https://www.treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/dinstr-sept2018.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/dinstr-sept2018.pdf"
       ],
       "allowed_domains": [
-        "www.treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
       "id": "manual-6fd63fe1ddc0",
       "name": "TIC SLT Form and Instructions: Form SLT(2022)",
-      "regulator": "treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -678,22 +678,22 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://treasury.gov/resource-center/data-chart-center/tic/Documents/fslt-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fslt-2022dec.pdf"
       ],
       "allowed_prefixes": [
-        "https://treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://treasury.gov/resource-center/data-chart-center/tic/Documents/fslt-2022dec.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/fslt-2022dec.pdf"
       ],
       "allowed_domains": [
-        "treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
       "id": "manual-f16691d08911",
       "name": "Instructions for Form SLT(2022)",
-      "regulator": "www.treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -713,16 +713,16 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/sltinstr-2022nov.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/sltinstr-2022nov.pdf"
       ],
       "allowed_prefixes": [
-        "https://www.treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://www.treasury.gov/resource-center/data-chart-center/tic/Documents/sltinstr-2022nov.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/sltinstr-2022nov.pdf"
       ],
       "allowed_domains": [
-        "www.treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
@@ -973,7 +973,7 @@
     {
       "id": "manual-859e905f6b89",
       "name": "Forms and Instructions",
-      "regulator": "treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -993,22 +993,22 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://treasury.gov//resource-center/data-chart-center/tic/Documents/shca2025in.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/shca2025in.pdf"
       ],
       "allowed_prefixes": [
-        "https://treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://treasury.gov//resource-center/data-chart-center/tic/Documents/shca2025in.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/shca2025in.pdf"
       ],
       "allowed_domains": [
-        "treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
       "id": "manual-410e126475a3",
       "name": "Forms and Instructions",
-      "regulator": "treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -1028,16 +1028,16 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://treasury.gov/resource-center/data-chart-center/tic/Documents/shla2025in.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/shla2025in.pdf"
       ],
       "allowed_prefixes": [
-        "https://treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://treasury.gov/resource-center/data-chart-center/tic/Documents/shla2025in.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/shla2025in.pdf"
       ],
       "allowed_domains": [
-        "treasury.gov"
+        "ticdata.treasury.gov"
       ]
     },
     {
@@ -1078,7 +1078,7 @@
     {
       "id": "manual-9578dff1d746",
       "name": "Forms SHL/SHLA: Schedules",
-      "regulator": "treasury.gov",
+      "regulator": "ticdata.treasury.gov",
       "active": true,
       "baseline_on_first_run": true,
       "include_selector": "",
@@ -1098,16 +1098,16 @@
       "crawl_depth": 0,
       "excluded_urls": [],
       "seed_urls": [
-        "https://treasury.gov/resource-center/data-chart-center/tic/Documents/shl2019f.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/shl2019f.pdf"
       ],
       "allowed_prefixes": [
-        "https://treasury.gov/"
+        "https://ticdata.treasury.gov/"
       ],
       "allowed_urls": [
-        "https://treasury.gov/resource-center/data-chart-center/tic/Documents/shl2019f.pdf"
+        "https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/shl2019f.pdf"
       ],
       "allowed_domains": [
-        "treasury.gov"
+        "ticdata.treasury.gov"
       ]
     }
   ]

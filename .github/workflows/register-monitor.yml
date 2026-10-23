@@ -71,6 +71,7 @@ jobs:
             COUNT="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("count", 1))')"
             CREATED_COUNT="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(d.get("created_count", int(d["created"])))')"
             EXISTING_COUNT="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(d.get("existing_count", int(not d["created"])))')"
+            REDIRECTED="$(python -c 'import json,os; d=json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")); print(sum(1 for i in (d.get("items") or [d]) if i.get("redirected_from")))')"
             DISCOVERY_ONLY="$(python -c 'import json,os; print(str(bool(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-registration.json")).get("discovery_only", False))).lower())')"
             if git diff --quiet -- config/sources.json config/scout.json; then
               echo "All requested monitor and Scout settings are already configured."
@@ -112,6 +113,7 @@ jobs:
           echo "created_count=$CREATED_COUNT" >> "$GITHUB_OUTPUT"
           echo "existing_count=$EXISTING_COUNT" >> "$GITHUB_OUTPUT"
           echo "discovery_only=$DISCOVERY_ONLY" >> "$GITHUB_OUTPUT"
+          echo "redirected=$REDIRECTED" >> "$GITHUB_OUTPUT"
 
       - name: Publish updated source configuration to Pages
         env:
@@ -129,15 +131,26 @@ jobs:
           SOURCE_IDS: ${{ steps.register.outputs.source_ids }}
         run: |
           set -euo pipefail
+          # Start exactly one scan. Scans share one concurrency queue that holds a
+          # single waiting run, so one dispatch per source made GitHub cancel all
+          # but the first and last. A batch is scanned together in one "all" run
+          # (every new source gets its quiet first baseline there).
           IFS=';' read -r -a source_id_list <<< "$SOURCE_IDS"
+          ids=()
           for SOURCE_ID in "${source_id_list[@]}"; do
-            [ -n "$SOURCE_ID" ] || continue
-            gh workflow run regulatory-monitor.yml \
-              --repo "$GITHUB_REPOSITORY" \
-              --ref main \
-              -f source_id="$SOURCE_ID" \
-              -f test_notification=false
+            [ -n "$SOURCE_ID" ] && ids+=("$SOURCE_ID")
           done
+          if [ "${#ids[@]}" -eq 0 ]; then
+            echo "No source to scan."
+            exit 0
+          fi
+          TARGET="${ids[0]}"
+          if [ "${#ids[@]}" -gt 1 ]; then TARGET="all"; fi
+          gh workflow run regulatory-monitor.yml \
+            --repo "$GITHUB_REPOSITORY" \
+            --ref main \
+            -f source_id="$TARGET" \
+            -f test_notification=false
 
       - name: Start initial Scout discovery baseline
         if: steps.register.outputs.scout_enabled == 'true'
@@ -169,6 +182,7 @@ jobs:
           CRAWL_DEPTH: ${{ steps.register.outputs.crawl_depth }}
           SCOUT_REGULATOR_ID: ${{ steps.register.outputs.scout_regulator_id }}
           DISCOVERY_ONLY: ${{ steps.register.outputs.discovery_only }}
+          REDIRECTED: ${{ steps.register.outputs.redirected }}
         run: |
           set -euo pipefail
           if [ "$DISCOVERY_ONLY" = "true" ]; then
@@ -176,7 +190,7 @@ jobs:
           elif [ "$DELETED" = "true" ]; then
             message="Stopped monitoring $MONITOR_URL in source ${SOURCE_IDS%%;*}. Future scans will exclude this URL; existing reports and saved evidence were retained."
           elif [ "$BULK" = "true" ]; then
-            message="Bulk registration processed $COUNT unique links: $CREATED_COUNT new monitors and $EXISTING_COUNT already configured. The first monitoring scan has been queued for each requested source."
+            message="Bulk registration processed $COUNT unique links: $CREATED_COUNT new monitors and $EXISTING_COUNT already configured. One monitoring scan of all sources has been queued; it takes the first saved copy of each new link."
           elif [ "$DEPTH_UPDATED" = "true" ]; then
             SOURCE_ID="${SOURCE_IDS%%;*}"
             message="Updated the existing monitor $MONITOR_URL (source $SOURCE_ID) to crawl depth $CRAWL_DEPTH. Its source ID and saved history were retained, and the first monitoring scan has been queued."
@@ -186,6 +200,9 @@ jobs:
           else
             SOURCE_ID="${SOURCE_IDS%%;*}"
             message="$MONITOR_URL is already configured under source $SOURCE_ID. A monitoring scan has been queued."
+          fi
+          if [ "${REDIRECTED:-0}" != "0" ]; then
+            message="$message $REDIRECTED address(es) redirected elsewhere, so the final address was registered instead (see config/sources.json)."
           fi
           if [ "$SCOUT_ENABLED" = "true" ] && [ "$DISCOVERY_ONLY" != "true" ]; then
             message="$message Weekly Scout discovery is enabled through link depth $CRAWL_DEPTH (profile $SCOUT_REGULATOR_ID). Newly discovered or replacement document URLs will appear in Scout for review; they are not silently added as monitors."
