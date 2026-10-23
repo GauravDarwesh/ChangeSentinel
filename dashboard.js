@@ -4396,6 +4396,28 @@ $("newMonitorUrl").addEventListener("input", () => { $("newMonitorUrl").setCusto
 $("newMonitorDepth").addEventListener("change", syncScoutDiscoveryOption);
 syncScoutDiscoveryOption();
 $("autofillMonitorMetadata").addEventListener("click", suggestMonitorMetadata);
+$("openSourceForDiscovery").addEventListener("click", () => {
+  const raw = $("newMonitorUrl").value.trim();
+  let parsed;
+  try { parsed = new URL(raw); } catch (_) { showToast("Enter a full source URL before opening it to explore."); return; }
+  if (!["http:", "https:"].includes(parsed.protocol) || !parsed.hostname || parsed.username || parsed.password) {
+    showToast("Use a public http:// or https:// source URL without credentials.");
+    return;
+  }
+  parsed.hash = "";
+  const pageWindow = window.open(parsed.toString(), "_blank");
+  if (pageWindow) {
+    try { pageWindow.opener = null; } catch (_) {}
+    showToast("Source page opened. Copy the exact links you want to monitor, then use Pick links manually.");
+  } else {
+    showToast("The browser blocked the new tab. Allow pop-ups to explore the source without leaving ChangeSentinel.");
+  }
+});
+$("openDiscoverySelectionFromAdd").addEventListener("click", () => {
+  const dialog = $("addMonitorDialog");
+  if (dialog && dialog.open) dialog.close();
+  openDiscoverySelectionDialog();
+});
 $("addMonitorForm").addEventListener("submit", submitAddMonitor);
 $("closeDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog").close());
 $("cancelDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog").close());
