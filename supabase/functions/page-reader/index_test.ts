@@ -6,10 +6,12 @@ function assert(condition: unknown, message: string) { if (!condition) throw new
 function eq(a: unknown, b: unknown, message: string) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error(message + ': ' + JSON.stringify(a) + ' !== ' + JSON.stringify(b)); }
 
 Deno.test('private and internal addresses are refused', () => {
-  for (const address of ['127.0.0.1', '10.1.2.3', '172.20.0.1', '192.168.1.1', '169.254.169.254', '100.64.0.1', '::1', 'fd00::1', '::ffff:10.0.0.1', '0.0.0.0']) {
-    assert(isPrivateAddress(address), address + ' should be private');
+  for (const address of ['127.0.0.1', '10.1.2.3', '172.20.0.1', '192.168.1.1', '169.254.169.254', '100.64.0.1', '::1', 'fd00::1', '::ffff:10.0.0.1', '::ffff:7f00:1', '64:ff9b::a00:1', '0.0.0.0', '192.0.2.1', '2001:db8::1']) {
+    assert(isPrivateAddress(address), address + ' should be private or reserved');
   }
-  for (const address of ['8.8.8.8', '151.101.1.1', '2606:4700::1111']) assert(!isPrivateAddress(address), address + ' should be public');
+  for (const address of ['8.8.8.8', '151.101.1.1', '2606:4700::1111', '64:ff9b::808:808']) {
+    assert(!isPrivateAddress(address), address + ' should be public');
+  }
   for (const raw of ['http://localhost/', 'http://intranet.local/x', 'http://10.0.0.1/', 'ftp://example.gov/', 'https://user:pw@example.gov/', 'https://example.gov:22/', 'http://[::1]/']) {
     let refused = false;
     try { checkUrl(raw); } catch (error) { refused = error instanceof PublicError; }
