@@ -114,7 +114,8 @@ const state = {
   snapshotCache: boundedCache(24), htmlCache: boundedCache(12), evidenceCache: boundedCache(80), pdfPreviewUrl: "", toastTimer: null,
   assetSignatures: {}, renderedSignature: "", lastFullLoad: 0, loading: null, detailKeys: {},
   workflowRuns: [], workflowSignature: "", scanColumns: null, pendingScan: null,
-  scoutLatest: null, scoutReview: null, scoutConfig: null, scoutFilter: "REVIEW", selectedScoutKey: "", scoutMonitored: null,
+  scoutLatest: null, scoutReview: null, scoutConfig: null, scoutFilter: "REVIEW", scoutFormatFilter: "ALL", selectedScoutKey: "", scoutMonitored: null,
+  discoverySelection: [], discoveryBatchIndex: 0, discoveryDuplicatesAdded: 0, discoverySelectedPage: 0,
   scoutSourceMode: "add",
   calendar: null, lineage: null, reviews: null, reviewTarget: "", integrity: {},
   cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
@@ -1961,13 +1962,28 @@ function scoutMonitoredKeys() {
 function scoutBuckets() { return L.scoutBuckets(scoutCandidates(), scoutMonitoredKeys()); }
 function scoutFiltered() {
   const query = ($("scoutSearch") ? $("scoutSearch").value : "").trim().toLowerCase();
+  const formatFilter = ($("scoutFormatFilter") ? $("scoutFormatFilter").value : state.scoutFormatFilter) || "ALL";
   const items = scoutBuckets()[state.scoutFilter] || [];
-  if (!query) return items;
   return items.filter(item => {
     const regulator = scoutRegulator(item.regulator_id);
     const evidence = item.evidence || {};
+    const assessment = item.assessment || {};
+    const format = String(assessment.format || "").toLowerCase();
+    let path = "";
+    try { path = new URL(item.url).pathname.toLowerCase(); } catch (_) {}
+    const isPdf = format.includes("pdf") || path.endsWith(".pdf");
+    const isOffice = /\.(doc|docx|xls|xlsx|ppt|pptx)$/i.test(path) || /word|excel|office document|powerpoint/.test(format);
+    const hasFileExtension = /\.[a-z0-9]{2,6}$/.test(path);
+    const isHtml = format.includes("html") || /web ?page/.test(format) || (!isPdf && !isOffice && !hasFileExtension);
+    const typeMatches = formatFilter === "ALL" ||
+      (formatFilter === "PDF" && isPdf) ||
+      (formatFilter === "OFFICE" && isOffice) ||
+      (formatFilter === "HTML" && isHtml) ||
+      (formatFilter === "OTHER" && !isPdf && !isOffice && !isHtml);
+    if (!typeMatches) return false;
+    if (!query) return true;
     return [item.title, item.url, regulator.short_name, regulator.name, evidence.context, evidence.description,
-      ((item.assessment || {}).publication_type || {}).label].join(" ").toLowerCase().includes(query);
+      evidence.anchor_text, evidence.parent_url, ((assessment.publication_type || {}).label)].join(" ").toLowerCase().includes(query);
   });
 }
 function scoutSelected() { return scoutCandidates().find(item => item.key === state.selectedScoutKey) || null; }
@@ -1997,17 +2013,26 @@ function scoutRow(item) {
   const type = assessment.publication_type ? assessment.publication_type.label : "";
   const published = scoutPublished(item);
   const time = state.scoutFilter === "BACKLOG" && published ? shortDate(published.value) : rowTime(item.first_seen);
+  const selected = discoverySelectionHas(item.url);
+  const evidence = item.evidence || {};
+  const context = [evidence.anchor_text || evidence.context || evidence.description || "",
+    evidence.parent_url ? "From " + displayUrl(evidence.parent_url) : ""].filter(Boolean).join(" · ");
   const statusTag = monitored ? '<span class="tag is-relevant">Monitoring</span>'
     : dismissed ? '<span class="tag is-irrelevant">Dismissed</span>'
     : '<span class="tag ' + outcome.tag + '">' + esc(outcome.label) + "</span>";
-  return '<button class="row" type="button" data-scout-key="' + esc(item.key) + '"' + (item.key === state.selectedScoutKey ? ' aria-selected="true"' : "") + ">" +
+  return '<div class="scout-row-shell">' +
+    '<label class="scout-row-select"><input type="checkbox" data-discovery-select="' + esc(item.url) + '"' +
+      (selected ? " checked" : "") + ' aria-label="Select ' + esc(item.title || displayUrl(item.url)) + ' for monitoring review"></label>' +
+    '<button class="row" type="button" data-scout-key="' + esc(item.key) + '"' + (item.key === state.selectedScoutKey ? ' aria-selected="true"' : "") + ">" +
     '<span class="row-mark ' + (monitored || dismissed ? "" : outcome.mark) + '" aria-hidden="true"></span>' +
     '<span class="row-title">' + esc(item.title || displayUrl(item.url)) + "</span>" +
     '<span class="row-time">' + esc(time) + "</span>" +
     '<span class="row-sub">' + statusTag + (type ? '<span class="tag">' + esc(type) + "</span>" : "") +
-    '<span class="row-host">' + esc(regulator.short_name + " · " + (assessment.format || "Web page")) + "</span></span></button>";
+    '<span class="row-host">' + esc(regulator.short_name + " · " + (assessment.format || "Web page")) + "</span></span>" +
+    (context ? '<span class="row-summary">' + esc(context) + "</span>" : "") + "</button></div>";
 }
 function renderScout() {
+  renderDiscoverySelectionBar();
   const buckets = scoutBuckets();
   const items = scoutFiltered();
   const sweep = scoutSweepSummary();
@@ -3300,6 +3325,300 @@ const MAX_BULK_REQUEST_URL_LENGTH = 7000;
 let bulkImportRows = [];
 let bulkImportErrors = [];
 
+const DISCOVERY_SELECTION_STORAGE = "cs-guided-discovery-selection-v1";
+function discoveryCandidate(url, name, source, parentUrl) {
+  const safe = safeHttpUrl(url);
+  if (!safe) return null;
+  let parsed;
+  try { parsed = new URL(safe); } catch (_) { return null; }
+  const host = String(parsed.hostname || "").toLowerCase();
+  if (![ "http:", "https:" ].includes(parsed.protocol) || !host || parsed.username || parsed.password ||
+      host === "localhost" || host.endsWith(".localhost") || host.endsWith(".local") ||
+      host.endsWith(".internal") || host.endsWith(".lan") || host.endsWith(".home")) return null;
+  parsed.hash = "";
+  return {
+    url: parsed.toString(),
+    name: String(name || "").replace(/[\r\n]+/g, " ").trim().slice(0, 160),
+    source: String(source || "Manually added").replace(/[\r\n]+/g, " ").trim().slice(0, 160),
+    parentUrl: safeHttpUrl(parentUrl || "")
+  };
+}
+function discoveryCandidateKey(itemOrUrl) {
+  const url = typeof itemOrUrl === "string" ? itemOrUrl : (itemOrUrl && itemOrUrl.url) || "";
+  return L.urlKey(url);
+}
+function discoverySelectionHas(url) {
+  const key = discoveryCandidateKey(url);
+  return !!key && state.discoverySelection.some(item => discoveryCandidateKey(item) === key);
+}
+function persistDiscoverySelection() {
+  try {
+    sessionStorage.setItem(DISCOVERY_SELECTION_STORAGE, JSON.stringify({
+      selection: state.discoverySelection.map(item => ({
+        url: item.url, name: item.name, source: item.source, parentUrl: item.parentUrl
+      })),
+      batchIndex: state.discoveryBatchIndex,
+      duplicatesAdded: state.discoveryDuplicatesAdded
+    }));
+  } catch (_) {
+    // Selection remains usable in memory even when browser storage is unavailable.
+  }
+}
+function restoreDiscoverySelection() {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(DISCOVERY_SELECTION_STORAGE) || "{}");
+    const rows = Array.isArray(saved.selection) ? saved.selection : [];
+    const seen = new Set();
+    state.discoverySelection = rows.map(item => discoveryCandidate(item && item.url, item && item.name, item && item.source, item && item.parentUrl))
+      .filter(item => {
+        if (!item) return false;
+        const key = discoveryCandidateKey(item);
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    state.discoveryBatchIndex = Number.isInteger(saved.batchIndex) && saved.batchIndex >= 0 ? saved.batchIndex : 0;
+    state.discoveryDuplicatesAdded = Number.isInteger(saved.duplicatesAdded) && saved.duplicatesAdded >= 0 ? saved.duplicatesAdded : 0;
+  } catch (_) {
+    state.discoverySelection = [];
+    state.discoveryBatchIndex = 0;
+    state.discoveryDuplicatesAdded = 0;
+  }
+}
+function resetDiscoveryBatchProgress(shouldPersist = true) {
+  state.discoveryBatchIndex = 0;
+  if (shouldPersist) persistDiscoverySelection();
+}
+function addDiscoveryCandidate(candidate, countDuplicate, shouldPersist = true) {
+  if (!candidate) return false;
+  const key = discoveryCandidateKey(candidate);
+  if (!key) return false;
+  const existing = state.discoverySelection.find(item => discoveryCandidateKey(item) === key);
+  if (existing) {
+    if (countDuplicate) state.discoveryDuplicatesAdded += 1;
+    if (shouldPersist && countDuplicate) persistDiscoverySelection();
+    return false;
+  }
+  state.discoverySelection.push(candidate);
+  resetDiscoveryBatchProgress(shouldPersist);
+  return true;
+}
+function removeDiscoveryCandidate(key) {
+  state.discoverySelection = state.discoverySelection.filter(item => discoveryCandidateKey(item) !== key);
+  resetDiscoveryBatchProgress();
+  renderDiscoverySelectionBar();
+  renderScout();
+  if ($("discoverySelectionDialog") && $("discoverySelectionDialog").open) renderDiscoverySelectionDialog();
+}
+function discoverySelectionMetrics() {
+  const monitored = scoutMonitoredKeys();
+  const alreadyMonitored = state.discoverySelection.filter(item => monitored.has(discoveryCandidateKey(item))).length;
+  return {
+    selected: state.discoverySelection.length,
+    alreadyMonitored,
+    newCount: state.discoverySelection.length - alreadyMonitored,
+    repeated: state.discoveryDuplicatesAdded
+  };
+}
+function renderDiscoverySelectionBar() {
+  const count = $("discoverySelectionCount");
+  if (!count) return;
+  const metrics = discoverySelectionMetrics();
+  count.textContent = metrics.selected + " selected" +
+    (metrics.alreadyMonitored ? " · " + metrics.alreadyMonitored + " already monitored" : "");
+  const visible = typeof scoutFiltered === "function" ? scoutFiltered() : [];
+  const selectButton = $("selectVisibleScout");
+  if (selectButton) {
+    const selectedVisible = visible.filter(item => discoverySelectionHas(item.url)).length;
+    selectButton.textContent = visible.length && selectedVisible === visible.length ? "Deselect visible" : "Select visible";
+    selectButton.disabled = !visible.length;
+  }
+}
+function buildDiscoveryBatches() {
+  const monitored = scoutMonitoredKeys();
+  const rows = state.discoverySelection
+    .filter(item => !monitored.has(discoveryCandidateKey(item)))
+    .map(item => ({ url: item.url, name: item.name || "", include_selector: "", ignore_selectors: [] }));
+  const batches = [];
+  let current = [];
+  for (const row of rows) {
+    const candidate = current.concat([row]);
+    const tooMany = candidate.length > MAX_BULK_LINKS;
+    const tooLong = !tooMany && makeBulkGitHubIssueUrl(candidate).length > MAX_BULK_REQUEST_URL_LENGTH;
+    if (current.length && (tooMany || tooLong)) {
+      batches.push(current);
+      current = [];
+    }
+    if (makeBulkGitHubIssueUrl([row]).length > MAX_BULK_REQUEST_URL_LENGTH) {
+      return { batches, error: "One selected URL is too long for the prefilled GitHub registration request." };
+    }
+    current.push(row);
+  }
+  if (current.length) batches.push(current);
+  return { batches, error: "" };
+}
+function renderDiscoverySelectionDialog() {
+  const dialog = $("discoverySelectionDialog");
+  if (!dialog) return;
+  const metrics = discoverySelectionMetrics();
+  const summary = $("discoverySelectionStatus");
+  if (summary) {
+    summary.textContent = metrics.selected + " selected · " + metrics.alreadyMonitored + " currently monitored · " +
+      metrics.newCount + " new monitor request(s)" +
+      (metrics.repeated ? " · " + metrics.repeated + " repeated URL(s) ignored during entry" : "") + ".";
+  }
+  $("discoverySelectedCount").textContent = metrics.selected + (metrics.selected === 1 ? " URL" : " URLs");
+  const list = $("discoverySelectedList");
+  const pageSize = 50;
+  const pageCount = Math.max(1, Math.ceil(state.discoverySelection.length / pageSize));
+  state.discoverySelectedPage = Math.max(0, Math.min(state.discoverySelectedPage, pageCount - 1));
+  const start = state.discoverySelectedPage * pageSize;
+  const visibleSelection = state.discoverySelection.slice(start, start + pageSize);
+  if (!state.discoverySelection.length) {
+    list.innerHTML = '<div class="loading">No candidates selected. Select Scout findings or add URLs manually.</div>';
+  } else {
+    list.innerHTML = visibleSelection.map(item => {
+      const url = safeHttpUrl(item.url);
+      if (!url) return "";
+      const title = item.name || displayUrl(url);
+      const parent = item.parentUrl ? " · Found via " + displayUrl(item.parentUrl) : "";
+      return '<div class="discovery-selected-item"><div class="discovery-selected-info">' +
+        '<span class="discovery-selected-title">' + esc(title) + "</span>" +
+        '<a class="discovery-selected-url" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(url) + icon("external") + "</a>" +
+        '<span class="discovery-selected-meta">' + esc(item.source || "Manually added") + esc(parent) + "</span></div>" +
+        '<button class="btn" type="button" data-discovery-remove="' + esc(discoveryCandidateKey(item)) + '">Remove</button></div>';
+    }).join("");
+  }
+  $("discoverySelectionPageInfo").textContent = state.discoverySelection.length
+    ? "Showing " + (start + 1) + "–" + Math.min(start + pageSize, state.discoverySelection.length) + " of " + state.discoverySelection.length
+    : "No selected URLs";
+  $("discoverySelectionPagePrev").disabled = !state.discoverySelection.length || state.discoverySelectedPage === 0;
+  $("discoverySelectionPageNext").disabled = !state.discoverySelection.length || state.discoverySelectedPage >= pageCount - 1;
+  const batches = buildDiscoveryBatches();
+  const button = $("openDiscoveryBatch");
+  const note = $("discoveryBatchNote");
+  if (batches.error) {
+    if (note) note.textContent = batches.error;
+    button.disabled = true;
+    button.textContent = "Cannot prepare request";
+  } else if (!batches.batches.length) {
+    if (note) note.textContent = metrics.selected
+      ? "All selected URLs currently appear in the active monitor inventory. Refresh the dashboard if the inventory may be stale; no new request was prepared."
+      : "Registration requests contain at most 25 URLs and use the existing owner-approved GitHub workflow. Nothing becomes active until that workflow succeeds.";
+    button.disabled = true;
+    button.textContent = "No new URLs to request";
+  } else if (state.discoveryBatchIndex >= batches.batches.length) {
+    if (note) note.textContent = "All " + batches.batches.length + " batch(es) have been opened. This does not confirm that their GitHub requests were submitted or registered.";
+    button.disabled = false;
+    button.textContent = "Restart at batch 1 of " + batches.batches.length;
+  } else {
+    const current = state.discoveryBatchIndex + 1;
+    const rowsInBatch = batches.batches[state.discoveryBatchIndex].length;
+    if (note) note.textContent = metrics.newCount + " new URL(s) across " + batches.batches.length +
+      " bounded batch(es). This batch contains " + rowsInBatch +
+      " URL(s). Submit its GitHub issue before opening the next batch; opening a request is not the same as registration.";
+    button.disabled = false;
+    button.textContent = "Open batch " + current + " of " + batches.batches.length;
+  }
+  renderDiscoverySelectionBar();
+}
+function openDiscoverySelectionDialog() {
+  const dialog = $("discoverySelectionDialog");
+  state.discoverySelectedPage = 0;
+  renderDiscoverySelectionDialog();
+  if (typeof dialog.showModal === "function") dialog.showModal();
+  else showToast("This browser can't open the selection dialog. Use a current browser.");
+}
+function addManualDiscoveryUrls() {
+  const input = $("discoveryManualUrls");
+  const status = $("discoveryManualStatus");
+  const lines = input.value.split(/\r?\n/).map(value => value.trim()).filter(Boolean);
+  if (!lines.length) {
+    status.textContent = "Paste one complete http:// or https:// URL per line.";
+    return;
+  }
+  const candidates = [];
+  const errors = [];
+  lines.forEach((line, index) => {
+    const candidate = discoveryCandidate(line, "", "Manually added", "");
+    if (!candidate) errors.push("Line " + (index + 1) + " is not a valid public HTTP(S) URL without credentials.");
+    else candidates.push(candidate);
+  });
+  if (errors.length) {
+    status.textContent = errors.slice(0, 3).join(" ") + (errors.length > 3 ? " More invalid lines were found." : "") +
+      " No URLs were added; correct the input and retry.";
+    return;
+  }
+  let added = 0;
+  candidates.forEach(candidate => { if (addDiscoveryCandidate(candidate, true, false)) added += 1; });
+  persistDiscoverySelection();
+  input.value = "";
+  persistDiscoverySelection();
+  status.textContent = added + " URL(s) added to the selection" +
+    (candidates.length - added ? "; " + (candidates.length - added) + " duplicate(s) already in the selection." : ".");
+  renderDiscoverySelectionDialog();
+  renderScout();
+}
+function toggleVisibleDiscoverySelection() {
+  const visible = scoutFiltered();
+  if (!visible.length) return;
+  const allSelected = visible.every(item => discoverySelectionHas(item.url));
+  visible.forEach(item => {
+    const key = discoveryCandidateKey(item.url);
+    if (allSelected) {
+      state.discoverySelection = state.discoverySelection.filter(row => discoveryCandidateKey(row) !== key);
+    } else if (!discoverySelectionHas(item.url)) {
+      addDiscoveryCandidate(discoveryCandidate(item.url, item.title, "Scout · " + scoutRegulator(item.regulator_id).short_name,
+        (item.evidence || {}).parent_url), false, false);
+    }
+  });
+  resetDiscoveryBatchProgress();
+  renderDiscoverySelectionBar();
+  renderScout();
+  if ($("discoverySelectionDialog").open) renderDiscoverySelectionDialog();
+}
+function toggleSingleDiscoverySelection(input) {
+  const url = input.dataset.discoverySelect || "";
+  const key = discoveryCandidateKey(url);
+  if (input.checked) {
+    const candidate = scoutCandidates().find(item => discoveryCandidateKey(item.url) === key);
+    if (candidate) addDiscoveryCandidate(discoveryCandidate(candidate.url, candidate.title,
+      "Scout · " + scoutRegulator(candidate.regulator_id).short_name, (candidate.evidence || {}).parent_url), false);
+  } else {
+    state.discoverySelection = state.discoverySelection.filter(item => discoveryCandidateKey(item) !== key);
+    resetDiscoveryBatchProgress();
+  }
+  persistDiscoverySelection();
+  renderDiscoverySelectionBar();
+  renderScout();
+  if ($("discoverySelectionDialog").open) renderDiscoverySelectionDialog();
+}
+function openDiscoveryRegistrationBatch() {
+  const prepared = buildDiscoveryBatches();
+  if (prepared.error) { showToast(prepared.error); renderDiscoverySelectionDialog(); return; }
+  if (!prepared.batches.length) { renderDiscoverySelectionDialog(); return; }
+  if (state.discoveryBatchIndex >= prepared.batches.length) state.discoveryBatchIndex = 0;
+  const index = state.discoveryBatchIndex;
+  const target = makeBulkGitHubIssueUrl(prepared.batches[index]);
+  if (target.length > MAX_BULK_REQUEST_URL_LENGTH) {
+    showToast("This registration request is too long; no URL was submitted.");
+    return;
+  }
+  // Persist the next position before navigation so browser Back can recover the batch tray.
+  state.discoveryBatchIndex = index + 1;
+  persistDiscoverySelection();
+  renderDiscoverySelectionDialog();
+  const githubWindow = window.open(target, "_blank");
+  if (githubWindow) {
+    try { githubWindow.opener = null; } catch (_) {}
+    showToast("Opened batch " + (index + 1) + " of " + prepared.batches.length +
+      ". Submit the GitHub request before opening the next batch; registration is not yet confirmed.");
+  } else {
+    showToast("Your browser blocked the new tab. Opening the prefilled request here.");
+    window.location.href = target;
+  }
+}
+
 function openAddMonitor() {
   const dialog = $("addMonitorDialog");
   syncScoutDiscoveryOption();
@@ -4048,6 +4367,42 @@ document.addEventListener("keydown", event => {
 });
 $("monitorSearch").addEventListener("input", renderMonitorList);
 $("scoutSearch").addEventListener("input", renderScout);
+$("scoutFormatFilter").addEventListener("change", () => {
+  state.scoutFormatFilter = $("scoutFormatFilter").value || "ALL";
+  renderScout();
+});
+$("scoutItems").addEventListener("change", event => {
+  const input = event.target.closest && event.target.closest("input[data-discovery-select]");
+  if (input) toggleSingleDiscoverySelection(input);
+});
+$("selectVisibleScout").addEventListener("click", toggleVisibleDiscoverySelection);
+$("openDiscoverySelection").addEventListener("click", openDiscoverySelectionDialog);
+$("closeDiscoverySelection").addEventListener("click", () => $("discoverySelectionDialog").close());
+$("cancelDiscoverySelection").addEventListener("click", () => $("discoverySelectionDialog").close());
+$("discoverySelectionDialog").addEventListener("click", event => {
+  if (event.target === $("discoverySelectionDialog")) $("discoverySelectionDialog").close();
+});
+$("addDiscoveryManualUrls").addEventListener("click", addManualDiscoveryUrls);
+$("clearDiscoverySelection").addEventListener("click", () => {
+  state.discoverySelection = [];
+  state.discoveryDuplicatesAdded = 0;
+  resetDiscoveryBatchProgress();
+  renderDiscoverySelectionDialog();
+  renderScout();
+});
+$("discoverySelectedList").addEventListener("click", event => {
+  const button = event.target.closest && event.target.closest("[data-discovery-remove]");
+  if (button) removeDiscoveryCandidate(button.dataset.discoveryRemove);
+});
+$("openDiscoveryBatch").addEventListener("click", openDiscoveryRegistrationBatch);
+$("discoverySelectionPagePrev").addEventListener("click", () => {
+  state.discoverySelectedPage = Math.max(0, state.discoverySelectedPage - 1);
+  renderDiscoverySelectionDialog();
+});
+$("discoverySelectionPageNext").addEventListener("click", () => {
+  state.discoverySelectedPage += 1;
+  renderDiscoverySelectionDialog();
+});
 $("cadenceSearch").addEventListener("input", () => { state.cadenceSearch = $("cadenceSearch").value; renderCadenceView(); });
 $("cadenceTypeFilter").addEventListener("change", () => { state.cadenceFilter = $("cadenceTypeFilter").value; renderCadenceView(); });
 $("cadenceSignInForm").addEventListener("submit", signInCadence);
@@ -4082,6 +4437,28 @@ $("newMonitorUrl").addEventListener("input", () => { $("newMonitorUrl").setCusto
 $("newMonitorDepth").addEventListener("change", syncScoutDiscoveryOption);
 syncScoutDiscoveryOption();
 $("autofillMonitorMetadata").addEventListener("click", suggestMonitorMetadata);
+$("openSourceForDiscovery").addEventListener("click", () => {
+  const raw = $("newMonitorUrl").value.trim();
+  let parsed;
+  try { parsed = new URL(raw); } catch (_) { showToast("Enter a full source URL before opening it to explore."); return; }
+  if (!["http:", "https:"].includes(parsed.protocol) || !parsed.hostname || parsed.username || parsed.password) {
+    showToast("Use a public http:// or https:// source URL without credentials.");
+    return;
+  }
+  parsed.hash = "";
+  const pageWindow = window.open(parsed.toString(), "_blank");
+  if (pageWindow) {
+    try { pageWindow.opener = null; } catch (_) {}
+    showToast("Source page opened. Copy the exact links you want to monitor, then use Pick links manually.");
+  } else {
+    showToast("The browser blocked the new tab. Allow pop-ups to explore the source without leaving ChangeSentinel.");
+  }
+});
+$("openDiscoverySelectionFromAdd").addEventListener("click", () => {
+  const dialog = $("addMonitorDialog");
+  if (dialog && dialog.open) dialog.close();
+  openDiscoverySelectionDialog();
+});
 $("addMonitorForm").addEventListener("submit", submitAddMonitor);
 $("closeDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog").close());
 $("cancelDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog").close());
@@ -5192,6 +5569,7 @@ $("askSentinelMessages").addEventListener("click", event => {
   if (prompt) askSentinelSendQuestion(prompt.dataset.askPrompt);
 });
 
+restoreDiscoverySelection();
 if ($("repoLink")) $("repoLink").href = REPO;
 loadData(true);
 refreshWorkflowRuns();
