@@ -1,0 +1,16 @@
+{
+  "source_id": "manual-cc3cad4938af",
+  "method": "http-resumable",
+  "state": "COMPLETE",
+  "discovered": 1,
+  "html_processed": 0,
+  "successful_pages": 0,
+  "failed_pages": 0,
+  "capped": false,
+  "pending": 0,
+  "unresolved_failures": 0,
+  "checkpoint_schema_version": 3,
+  "config_fingerprint": "585906ed7ae3db64b0681d450614cff5d1173dcdb1aee7b046cf7559acfb66af",
+  "inventory": "data/discovery/manual-cc3cad4938af-inventory-*.txt",
+  "failure_ledger": "data/discovery/manual-cc3cad4938af-failures.jsonl"
+}

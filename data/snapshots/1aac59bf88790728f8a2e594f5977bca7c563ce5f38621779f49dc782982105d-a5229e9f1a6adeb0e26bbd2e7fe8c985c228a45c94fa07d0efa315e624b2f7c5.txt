@@ -1,0 +1,138 @@
+Reporting Central
+FR 2590
+XML File Upload Format Specification
+Federal Reserve System
+STATISTICS FUNCTION
+March 31, 2026
+3
+Contents General Information ......................................................................................................................................................... 3 How the XML File Is Structured ...................................................................................................................................... 3 XML Tags and Their Meanings ............................................................................................................................................................... 4 FR 2590 Item Data MDRMs ....................................................................................................................................................... 5
+4 General Information
+The Federal Reserve System’s Reporting Central Application provides the ability for a reporting entity to submit their reports electronically using an XML file. This document describes the required format for creating the XML file for the FR 2590 (Single-Counterparty Credit Limits Reporting Form) report.
+How the XML File Is Structured
+Each XML file contains financial data for one reporting entity and as of date. The data in the file is organized into the following sections.
+• Reporting File o Create date o Create time
+• Report o Respondent Id o As Of Date o Series Id
+• Item Data o Value XML structure or schema:
+<?xml version="1.0" encoding="UTF -8"?> <reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema -instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd"> <report series="FR2590" asOfDate="202 6-06-30" reporterId="9999999999">
+<!-- Cover Page items --> <itemData confidential="N" estimated="N" mdrm=”MDRM1111”> <value>value for “MDRM1111”</value> </itemData>
+<!-- Schedule items --> <itemData confidential="N" estimated="N" mdrm=”MDRM1112”> <value>value for “MDRM1116”</value> </itemData>
+</report> </reportingFile>
+5 XML Tags and Their Meanings
+XML Tag/Attribute Meaning/How Used <reportingFile> A tag used to encapsulate all of the data in the file xsi:noNamespaceSchemaLocation="RCInputXML- 1.0-20160520.xsd" Attribute of the reportingFile tag which specifies the location of the Schema createTime=”09:30:45” Attribute of the reportingFile tag which specifies the time the file was created createDate=”2016-08-13” Attribute of the reportingFile tag which specifies the date the file was created
+xmlns:xsi="http://www.w3.org/2001/XMLSchemainstance" Optional attribute of the reportingFile tag which tells the schema-validator that all elements used in the XML file are declared in the "http://www.w3.org/2001/XMLSchemainstance" namespace <report> A tag used to identify the series name, the reporting entity and the as of data of the data.
+reporterId=”9999999999” Attribute of the report tag which specifies the respondent ID asOfDate=”2016-09-30” Attribute of the report tag which specifies the as of date of the report series=”SERIESID” Attribute of the report tag which specifies the series name <itemData> A tag used to encapsulate the item and its value from the report mdrm=”MDRM9999” Attribute of the itemData tag which identifies a specific item in the report <value> A tag encapsulated within itemData tag and contains the value of the item <context> An optional tag encapsulated within itemData tag used to identify the order of a variable list of items mdrm=”MDRM8888” Attribute of the context tag which identifies a group of items in the report value=”1” Attribute of the context tag which identifies the order of in the item group
+FR 2590 Item Data MDRMs
+| Cover Page | Cover Page | Cover Page | Cover Page | Cover Page |
+| --- | --- | --- | --- | --- |
+| | | Data | Field | |
+| Data Items | MDRM | Type | Length | Notes |
+| Name / Title | SCCL8901 | Text | 72 | |
+| Area Code / Phone Number | SCCL8902 | Text | 30 | |
+| Area Code / Fax Number | SCCL9116 | Text | 30 | |
+| E-mail Address of Contact | SCCL4086 | Text | 72 | |
+| Legal Title of Covered Company or Covered Foreign Entity | RSSD9017 | Text | 72 | |
+| (Mailing Address of Covered Company or Covered Foreign Entity) Street / PO Box | RSSD9110 | Text | 72 | |
+| City | RSSD9130 | Text | 30 | |
+| State | RSSD9200 | Text | 2 | |
+| Zip Code | RSSD9220 | Text | 30 | |
+| Printed Name of the Senior Officer (or Equivalent) | SCCLC490 | Text | 72 | |
+| Date of Signature (MM/DD/YYYY) | SCCLJ196 | Text | 10 | |
+| General Information on Respondent Organization › Data Items › 1. Certification (to be completed by foreign banking organizations only) › 2. Tier 1 Capital › 3. Capital Stock and Surplus › 4. Total Consolidated Assets › 5. Major Status | General Information on Respondent Organization › MDRM › SCCLJF99 › SCCLJG00 › SCCLJG01 › SCCLJG02 › SCCLJG03 | General Information on Respondent Organization › Data › Type › Text › Numeric | General Information on Respondent Organization › Field › Length › 1 › 72 › 14 | General Information on Respondent Organization › Notes |
+| --- | --- | --- | --- | --- |
+| General Information on Counterparties | General Information on Counterparties | General Information on Counterparties | General Information on Counterparties | General Information on Counterparties |
+| --- | --- | --- | --- | --- |
+| | | Data | Field | |
+| Data Items | MDRM | Type | Length | Notes |
+| Counterparty Name | SCCLJG04 | Text | 219 | Use context MDRM - SCCLLB13 |
+| Counterparty Type | SCCLJG05 | Text | 219 | Use context MDRM - SCCLLB13 |
+| Counterparty Classification | SCCLJG06 | Numeric | 1 | Use context MDRM - SCCLLB13 |
+| Counterparty Exemption Status | SCCLJG07 | Numeric | 1 | Use context MDRM - SCCLLB13 |
+6
+| Schedule G-1—General Exposures | Schedule G-1—General Exposures | Schedule G-1—General Exposures | Schedule G-1—General Exposures | Schedule G-1—General Exposures |
+| --- | --- | --- | --- | --- |
+| | | Data | Field | |
+| Data Items | MDRM | Type | Length | Notes |
+| Deposits | SCCLJG08 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Loans and Leases | SCCLJG09 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Debt Securities or Investments | SCCLJG10 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Equity Securities or Investments | SCCLJG11 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Committed Credit Lines | SCCLJG12 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Guarantees and Letters of Credit | SCCLJG13 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Securitization Arising from Look-Through | SCCLJG14 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Total Gross Exposure: G-1 Schedule | SCCLJG15 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Schedule G-2—Repurchase Agreement Exposures › Data Items › Sovereign Issuers (zero percent risk weight) › Sovereign Issuers (20 or 50 percent risk weight) | Schedule G-2—Repurchase Agreement Exposures › Data Items › Transferred › Received | Schedule G-2—Repurchase Agreement Exposures › Data Items › 1 year or less › Over 1 year, through 5 years › Over 5 years | Schedule G-2—Repurchase Agreement Exposures › MDRM › SCCLJG16 › SCCLJG17 › SCCLJG18 › SCCLJG19 › SCCLJG20 › SCCLJG21 › SCCLJG22 › SCCLJG23 › SCCLJG24 › SCCLJG25 › SCCLJG26 › SCCLJG27 | Schedule G-2—Repurchase Agreement Exposures › Data › Type › Numeric | Schedule G-2—Repurchase Agreement Exposures › Field › Length › 14 | Schedule G-2—Repurchase Agreement Exposures › Notes › Use context MDRM - SCCLLB13 |
+| --- | --- | --- | --- | --- | --- | --- |
+7
+| Schedule G-2—Repurchase Agreement Exposures › Data Items › Sovereign Issuers (100 percent risk weight) › Non-Sovereign Issuers (20 percent risk weight) › Non-Sovereign Issuers (50 percent risk weight) › Non-Sovereign Issuers (100 percent risk weight) | Schedule G-2—Repurchase Agreement Exposures › Data Items › Transferred › Received | Schedule G-2—Repurchase Agreement Exposures › Data Items › 1 year or less › Over 1 year, through 5 years › Over 5 years | Schedule G-2—Repurchase Agreement Exposures › MDRM › SCCLJG28 › SCCLJG29 › SCCLJG30 › SCCLJG31 › SCCLJG32 › SCCLJG33 › SCCLJG34 › SCCLJG35 › SCCLJG36 › SCCLJG37 › SCCLJG38 › SCCLJG39 › SCCLJG40 › SCCLJG41 › SCCLJG42 › SCCLJG43 › SCCLJG44 › SCCLJG45 › SCCLJG46 › SCCLJG47 | Schedule G-2—Repurchase Agreement Exposures › Data › Type › Numeric | Schedule G-2—Repurchase Agreement Exposures › Field › Length › 14 | Schedule G-2—Repurchase Agreement Exposures › Notes › Use context MDRM - SCCLLB13 |
+| --- | --- | --- | --- | --- | --- | --- |
+8
+| Schedule G-2—Repurchase Agreement Exposures › Data Items › Non-Sovereign Issuers (100 percent risk weight) (cont’d) › Investment Grade Securitization Exposure › Main Index Equities (including convertible bonds) and gold › Other Publicly Traded Equities (including convertible bonds) › Cash › Other › Internal Models Method, If Approved | Schedule G-2—Repurchase Agreement Exposures › Data Items › Received › Transferred | Schedule G-2—Repurchase Agreement Exposures › Data Items › Over 5 years › 1 year or less › Over 1 year, through 5 years › Transferred › Received › Total Gross Exposure Under Bilateral Netting Agreements › Total Gross Exposure | Schedule G-2—Repurchase Agreement Exposures › MDRM › SCCLJG48 › SCCLJG49 › SCCLJG50 › SCCLJG51 › SCCLJG52 › SCCLJG53 › SCCLJG54 › SCCLJG55 › SCCLJG56 › SCCLJG57 › SCCLJG58 › SCCLJG59 › SCCLJG60 › SCCLJG61 › SCCLJG62 › SCCLJG63 › SCCLJG64 › SCCLJG65 › SCCLJG66 › SCCLJG67 | Schedule G-2—Repurchase Agreement Exposures › Data › Type › Numeric | Schedule G-2—Repurchase Agreement Exposures › Field › Length › 14 | Schedule G-2—Repurchase Agreement Exposures › Notes › Use context MDRM - SCCLLB13 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Total Gross Exposure Under Bilateral Netting Agreements | | | SCCLJG68 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Total Gross Exposure G-2 Schedule | | | SCCLJG69 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+9
+| Schedule G-3—Securities Lending Exposures › Data Items › Sovereign Issuers (zero percent risk weight) › Sovereign Issuers (20 or 50 percent risk weight) › Sovereign Issuers (100 percent risk weight) | Schedule G-3—Securities Lending Exposures › Data Items › Transferred › Received | Schedule G-3—Securities Lending Exposures › Data Items › 1 year or less › Over 1 year, through 5 years › Over 5 years | Schedule G-3—Securities Lending Exposures › MDRM › SCCLJG70 › SCCLJG71 › SCCLJG72 › SCCLJG73 › SCCLJG74 › SCCLJG75 › SCCLJG76 › SCCLJG77 › SCCLJG78 › SCCLJG79 › SCCLJG80 › SCCLJG81 › SCCLJG82 › SCCLJG83 › SCCLJG84 › SCCLJG85 › SCCLJG86 › SCCLJG87 | Schedule G-3—Securities Lending Exposures › Data › Type › Numeric | Schedule G-3—Securities Lending Exposures › Field › Length › 14 | Schedule G-3—Securities Lending Exposures › Notes › Use context MDRM - SCCLLB13 |
+| --- | --- | --- | --- | --- | --- | --- |
+10
+| Schedule G-3—Securities Lending Exposures › Data Items › Non-Sovereign Issuers (20 percent risk weight) › Non-Sovereign Issuers (50 percent risk weight) › Non-Sovereign Issuers (100 percent risk weight) › Investment Grade Securitization Exposure | Schedule G-3—Securities Lending Exposures › Data Items › Transferred › Received | Schedule G-3—Securities Lending Exposures › Data Items › 1 year or less › Over 1 year, through 5 years › Over 5 years | Schedule G-3—Securities Lending Exposures › MDRM › SCCLJG88 › SCCLJG89 › SCCLJG90 › SCCLJG91 › SCCLJG92 › SCCLJG93 › SCCLJG94 › SCCLJG95 › SCCLJG96 › SCCLJG97 › SCCLJG98 › SCCLJG99 › SCCLJH00 › SCCLJH01 › SCCLJH02 › SCCLJH03 › SCCLJH04 › SCCLJH05 › SCCLJH06 › SCCLJH07 › SCCLJH08 | Schedule G-3—Securities Lending Exposures › Data › Type › Numeric | Schedule G-3—Securities Lending Exposures › Field › Length › 14 | Schedule G-3—Securities Lending Exposures › Notes › Use context MDRM - SCCLLB13 |
+| --- | --- | --- | --- | --- | --- | --- |
+11
+| Schedule G-3—Securities Lending Exposures › Data Items › Investment Grade Securitization Exposure (cont’d) › Main Index Equities (including convertible bonds) and gold › Other Publicly Traded Equities (including convertible bonds) › Cash › Other › Internal Models Method, If Approved | Schedule G-3—Securities Lending Exposures › Data Items › Received | Schedule G-3—Securities Lending Exposures › Data Items › 1 year or less › Over 1 year, through 5 years › Over 5 years › Transferred › Received › Total Gross Exposure Under Bilateral Netting Agreements › Total Gross Exposure | Schedule G-3—Securities Lending Exposures › MDRM › SCCLJH09 › SCCLJH10 › SCCLJH11 › SCCLJH12 › SCCLJH13 › SCCLJH14 › SCCLJH15 › SCCLJH16 › SCCLJH17 › SCCLJH18 › SCCLJH19 › SCCLJH20 › SCCLJH21 | Schedule G-3—Securities Lending Exposures › Data › Type › Numeric | Schedule G-3—Securities Lending Exposures › Field › Length › 14 | Schedule G-3—Securities Lending Exposures › Notes › Use context MDRM - SCCLLB13 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Total Gross Exposure Under Bilateral Netting Agreements | | | SCCLJH22 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Total Gross Exposure G-3 Schedule | | | SCCLJH23 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Schedule G-4—Derivatives Exposures › Data Items › Gross Notional by Product Type | Schedule G-4—Derivatives Exposures › Data Items › Interest Rate › Foreign Exchange Rate › Credit, Except Where the Covered Firm is the Protection Provider | Schedule G-4—Derivatives Exposures › MDRM › SCCLJH24 › SCCLJH25 › SCCLJH26 | Schedule G-4—Derivatives Exposures › Data Type › Numeric | Schedule G-4—Derivatives Exposures › Field › Length › 14 | Schedule G-4—Derivatives Exposures › Notes › Use context MDRM - SCCLLB13 |
+| --- | --- | --- | --- | --- | --- |
+12
+| Schedule G-4—Derivatives Exposures › Data Items › Gross Notional by Production Type (cont’d) › Internal Models Method, If Approved | Schedule G-4—Derivatives Exposures › Data Items › Credit, Where the Covered Firm is the Protection Provider › Equity › Commodity › Other › Total Gross Exposure Under Qualifying Master Netting Agreements › Total Gross Exposure | Schedule G-4—Derivatives Exposures › MDRM › SCCLKX86 › SCCLJH27 › SCCLJH28 › SCCLJH29 › SCCLJH30 › SCCLJH31 | Schedule G-4—Derivatives Exposures › Data Type › Numeric | Schedule G-4—Derivatives Exposures › Field › Length › 14 | Schedule G-4—Derivatives Exposures › Notes › Use context MDRM - SCCLLB13 |
+| --- | --- | --- | --- | --- | --- |
+| | Total Gross Exposure Under Qualifying Master Netting Agreements | SCCLJH32 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| | Total Gross Exposure G-4 Schedule | SCCLJH33 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Schedule G-5—Risk Shifting Exposures | Schedule G-5—Risk Shifting Exposures | Schedule G-5—Risk Shifting Exposures | Schedule G-5—Risk Shifting Exposures | Schedule G-5—Risk Shifting Exposures |
+| --- | --- | --- | --- | --- |
+| | | Data | Field | |
+| Data Items | MDRM | Type | Length | Notes |
+| Eligible Collateral | SCCLJH34 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Eligible Guarantees | SCCLJH35 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Eligible Credit and Equity Derivatives | SCCLJH36 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Other Eligible Hedges | SCCLJH37 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Unused Portion of Certain Extensions of Credit | SCCLJH38 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Credit Transactions Involving Excluded and Exempt Entities | SCCLJH39 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Total Gross Exposure: G-5 Schedule | SCCLJH40 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Schedule M-1—Eligible Collateral | Schedule M-1—Eligible Collateral | Schedule M-1—Eligible Collateral | Schedule M-1—Eligible Collateral | Schedule M-1—Eligible Collateral |
+| --- | --- | --- | --- | --- |
+| | | Data | Field | |
+| Table A Data Items | MDRM | Type | Length | Notes |
+| Sovereign Issuers (zero percent risk weight) | SCCLJH41 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Sovereign Issuers (20 or 50 percent risk weight) | SCCLJH42 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Sovereign Issuers (100 percent risk weight) | SCCLJH43 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Non-Sovereign Issuers (20 percent risk weight) | SCCLJH44 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+| Non-Sovereign Issuers (50 percent risk weight) | SCCLJH45 | Numeric | 14 | Use context MDRM - SCCLLB13 |
+13
+14
+Schedule M-1—Eligible Collateral
+Table A Data Items
+MDRM
+Data Type Field Length
+Notes Non-Sovereign Issuers (100 percent risk weight) SCCLJH46 Numeric 14 Use context MDRM - SCCLLB13 Main Index Equities (including convertible bonds) and Gold SCCLJH47 Numeric 14 Use context MDRM - SCCLLB13 Other Publicly Traded Equities (including convertible bonds) SCCLJH48 Numeric 14 Use context MDRM - SCCLLB13 Cash SCCLJH49 Numeric 14 Use context MDRM - SCCLLB13 Other SCCLJH50 Numeric 14 Use context MDRM - SCCLLB13 Total Credit Risk Mitigation: M-1 Schedule SCCLJH51 Numeric 14 Use context MDRM - SCCLLB13
+Schedule M-1—Eligible Collateral
+Table B Data Items
+MDRM
+Data Type Field Length
+Notes Sovereign Issuers (zero percent risk weight) SCCLPU87 Numeric 14 Use context MDRM - SCCLLB13 Sovereign Issuers (20 or 50 percent risk weight) SCCLPU88 Numeric 14 Use context MDRM - SCCLLB13 Sovereign Issuers (100 percent risk weight) SCCLPU89 Numeric 14 Use context MDRM - SCCLLB13 Non-Sovereign Issuers (20 percent risk weight) SCCLPU90 Numeric 14 Use context MDRM - SCCLLB13 Non-Sovereign Issuers (50 percent risk weight) SCCLPU91 Numeric 14 Use context MDRM - SCCLLB13 Non-Sovereign Issuers (100 percent risk weight) SCCLPU92 Numeric 14 Use context MDRM - SCCLLB13 Main Index Equities (including convertible bonds) and Gold SCCLPU93 Numeric 14 Use context MDRM - SCCLLB13 Other Publicly Traded Equities (including convertible bonds) SCCLPU94 Numeric 14 Use context MDRM - SCCLLB13 Cash SCCLPU95 Numeric 14 Use context MDRM - SCCLLB13 Other SCCLPU96 Numeric 14 Use context MDRM - SCCLLB13 Total Credit Risk Mitigation: M-1 Schedule SCCLPU97 Numeric 14 Use context MDRM - SCCLLB13
+Schedule M-2—General Risk Mitigants
+Data Items
+MDRM
+Data Type Field Length
+Notes Eligible Guarantees SCCLJH52 Numeric 14 Use context MDRM - SCCLLB13 Eligible Credit and Equity Derivatives SCCLJH53 Numeric 14 Use context MDRM - SCCLLB13 Other Eligible Hedges SCCLJH54 Numeric 14 Use context MDRM - SCCLLB13 Unused Portion of Certain Extensions of Credit SCCLJH55 Numeric 14 Use context MDRM - SCCLLB13 Credit Transactions Involving Excluded and Exempt Entities SCCLJH56 Numeric 14 Use context MDRM - SCCLLB13 Total Credit Risk Mitigation: M-2 Schedule SCCLJH57 Numeric 14 Use context MDRM - SCCLLB13
+15
+Summary of Net Credit Exposures
+Data Items
+MDRM
+Data Type Field Length
+Notes Total G-1 SCCLJH58 Numeric 14 Use context MDRM - SCCLLB13 Total G-2 SCCLJH59 Numeric 14 Use context MDRM - SCCLLB13 Total G-3 SCCLJH60 Numeric 14 Use context MDRM - SCCLLB13 Total G-4 SCCLJH61 Numeric 14 Use context MDRM - SCCLLB13 Total G-5 SCCLJH62 Numeric 14 Use context MDRM - SCCLLB13 Gross Credit Exposure SCCLJH63 Numeric 14 Use context MDRM - SCCLLB13 Total M-1 SCCLJH64 Numeric 14 Use context MDRM - SCCLLB13 Total M-2 SCCLJH65 Numeric 14 Use context MDRM - SCCLLB13 Aggregate Credit Risk Mitigants SCCLJH66 Numeric 14 Use context MDRM - SCCLLB13 Aggregate Net Credit Exposure SCCLJH67 Numeric 14 Use context MDRM - SCCLLB13 Eligible Capital Base SCCLJH68 Numeric 14 Use context MDRM - SCCLLB13 Net Credit Exposure Ratio SCCLJH69 Decimal (8,4) Use context MDRM - SCCLLB13
+| Schedule A-1—Economic Interdependence › Data Items › Interconnected Counterparty Group | Schedule A-1—Economic Interdependence › Data Items › Interdependent Counterparty 1 › Interdependent Counterparty 2 › Interdependent Counterparty 3 › Interdependent Counterparty 4 › Interdependent Counterparty 5 › Total Exposure to Counterparty Group | Schedule A-1—Economic Interdependence › MDRM › SCCLJH70 › SCCLJH71 › SCCLJH72 › SCCLJH73 › SCCLJH74 › SCCLJH75 | Schedule A-1—Economic Interdependence › Data › Type › Text › Decimal | Schedule A-1—Economic Interdependence › Field › Length › 219 › (8,4) | Schedule A-1—Economic Interdependence › Notes › Use context MDRM - SCCLLB14 |
+| --- | --- | --- | --- | --- | --- |
+| Schedule A-2—Control Relationships › Data Items › Control Counterparty Group | Schedule A-2—Control Relationships › Data Items › Control Counterparty 1 › Control Counterparty 2 › Control Counterparty 3 › Control Counterparty 4 › Control Counterparty 5 › Total Exposure to Counterparty Group | Schedule A-2—Control Relationships › MDRM › SCCLJH76 › SCCLJH77 › SCCLJH78 › SCCLJH79 › SCCLJH80 › SCCLJH81 | Schedule A-2—Control Relationships › Data › Type › Text › Decimal | Schedule A-2—Control Relationships › Field › Length › 219 › (8,4) | Schedule A-2—Control Relationships › Notes › Use context MDRM - SCCLLB15 |
+| --- | --- | --- | --- | --- | --- |
+16

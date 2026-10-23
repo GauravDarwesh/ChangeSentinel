@@ -1,0 +1,219 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2025-12-31" reporterId="1234" series="TICBQ3">
+    <itemData confidential="N" estimated="N" mdrm="TICLC495">
+      <value>John Smith</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICL8902">
+      <value>212-720-1000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLC490">
+      <value>TJ AL</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLC491">
+      <value>VP</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICL4086">
+      <value>Tester</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP297">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80101" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP300">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80101" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP297">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80209" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP298">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80209" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP299">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80209" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP300">
+      <value>3000</value>
+      <context mdrm="TICLP320" value="80209" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP297">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80306" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP298">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80306" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP299">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80306" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP300">
+      <value>3000</value>
+      <context mdrm="TICLP320" value="80306" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP297">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80403" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP298">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80403" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP299">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80403" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP300">
+      <value>3000</value>
+      <context mdrm="TICLP320" value="80403" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP297">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80519" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP298">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80519" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP299">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80519" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP300">
+      <value>3000</value>
+      <context mdrm="TICLP320" value="80519" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP297">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80527" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP298">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80527" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP299">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80527" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP300">
+      <value>3000</value>
+      <context mdrm="TICLP320" value="80527" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP297">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80535" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP298">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80535" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP299">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80535" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP300">
+      <value>3000</value>
+      <context mdrm="TICLP320" value="80535" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP297">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80543" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP298">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80543" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP299">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80543" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP300">
+      <value>3000</value>
+      <context mdrm="TICLP320" value="80543" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP297">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80551" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP298">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80551" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP299">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80551" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP300">
+      <value>3000</value>
+      <context mdrm="TICLP320" value="80551" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP297">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80578" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP298">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80578" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP299">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="80578" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP300">
+      <value>3000</value>
+      <context mdrm="TICLP320" value="80578" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP301">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="81396" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP302">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="81396" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP303">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="81396" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP304">
+      <value>3000</value>
+      <context mdrm="TICLP320" value="81396" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP301">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="81434" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP302">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="81434" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP303">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="81434" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP304">
+      <value>3000</value>
+      <context mdrm="TICLP320" value="81434" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP301">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="81477" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP302">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="81477" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP303">
+      <value>1000</value>
+      <context mdrm="TICLP320" value="81477" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TICLP304">
+      <value>3000</value>
+      <context mdrm="TICLP320" value="81477" />
+    </itemData>
+  </report>
+</reportingFile>

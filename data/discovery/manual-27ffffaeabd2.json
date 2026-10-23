@@ -1,0 +1,16 @@
+{
+  "source_id": "manual-27ffffaeabd2",
+  "method": "http-resumable",
+  "state": "COMPLETE",
+  "discovered": 1,
+  "html_processed": 0,
+  "successful_pages": 0,
+  "failed_pages": 0,
+  "capped": false,
+  "pending": 0,
+  "unresolved_failures": 0,
+  "checkpoint_schema_version": 3,
+  "config_fingerprint": "85058a2c984bbe88701fb71ac58b85a1b08bfaeb267bbc94f94b75bf0e54dd9d",
+  "inventory": "data/discovery/manual-27ffffaeabd2-inventory-*.txt",
+  "failure_ledger": "data/discovery/manual-27ffffaeabd2-failures.jsonl"
+}

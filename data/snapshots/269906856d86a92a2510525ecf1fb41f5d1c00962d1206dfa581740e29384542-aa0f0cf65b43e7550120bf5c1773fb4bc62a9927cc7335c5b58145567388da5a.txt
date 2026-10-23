@@ -1,0 +1,1755 @@
+Reporting Central User Guide
+FFIEC 002
+Report of Assets and Liabilities of U.S. Branches and Agencies of Foreign Banks
+and
+FFIEC 002S
+Report of Assets and Liabilities of a Non-U.S. Branch that is Managed or Controlled by a U.S. Branch or Agency of a Foreign (Non- U.S.) Bank
+Federal Reserve System
+STATISTICS FUNCTION
+May 2026
+Overview
+This document demonstrates how to create the file for the FFIEC 002 – Report of Assets and Liabilities of U.S.
+Branches and Agencies of Foreign Banks and the FFIEC 002S – Report of Assets and Liabilities of a Non- U.S. Branch that is Controlled or Managed by a U.S. Branch or Agency of a Foreign (Non-U.S.) Bank. Formulae were used to pull the data from the spreadsheet worksheets containing the data and format them for transmission to Reporting Central.
+How to create a text file from a spreadsheet for the FFIEC 002
+The FFIC 002 is comprised of multiple schedules and over 900 financial and text fields. In order to minimize issues with problems arising during the creation of the Reporting Central text file it is strongly recommended that the following process be observed. Please note that only one file can be submitted for each individual respondent. It is no longer possible to submit multiple branches or agencies on a single file.
+Field Labels
+The identifying label for both financial and text data is the eight character descriptor listed in Appendix A in the ‘RC ITEM IDENTIFIER’ column.
+Field Values
+Financial data fields can have both positive and negative values. When creating the text file all positive values must be preceded with a plus sign (‘+’) while all negative values must be preceded by a minus sign (‘-‘). Some financial fields can also be zero filled or left blank. Fields that are zero filled must be formatted as ‘+0’ while numeric fields that are left blank are reported as ‘-0’.
+The report cover page and several schedules contain textual data. All text data fields are preceded by a plus sign and an underscore (‘+_’).
+Step 1 – Create Data Listing
+Since it is presumed that the reporter already has the report data in spreadsheet format, all subsequent steps in this guide are based on using this report data as the source. The first step recommended is to create a sequential data listing of all the financial information containing the item number, the eight character field label, item description, and reported amount as Sheet 1.
+The next step is to add all the text data directly below the financial information.
+This is to aid in troubleshooting potential problems further in the process.
+Step 2 – Link and Format Data Cells
+In Sheet 2 of the workbook all of the financial and text items will be linked to Sheet 1 and formatting characters inserted to aid in the creation of the final text file. The basic formula used is:
+=n Sheet 2 of the work!G496&G49
+The formula begins by inserting the eight character field label as text contained within quotation marks (“AAAA9999”). The ampersand indicates there are additional values (&). The plus sign is enclosed in quotation marks to indicate a positive value (“+”). NOTE: If the value was negative it would be preceded by a minus sign here (“-“). The next ampersand indicates there are additional values (&). The financial data is extracted from its cell location in Sheet 1 (Sheet1!G496). The final ampersand indicates there are additional values (&). The last item is to inset a comma at the end of the field by placing it in quotation marks (“,”). This will generate a fully formatted field that appears as:
+AAAA9999+500,
+This is repeated for all fields of the financial data.
+In this example the item number and corresponding eight character label were included as the first two columns and the resulting text field derived from applying the above formula is the third column. This step is not required but can be useful in tracking the source of the linkage.
+The formula to extract text information contains a few additional character settings:
+=”AAAA9999”&”+_”&Sheet1!G496&” ”&”,”
+Just as with the formula for financial data it begins by inserting the eight character field label as text contained within quotation marks (“AAAA9999”). The first ampersand indicates there are additional values (&). As mentioned previously, text must be preceded by a plus sign and one underscore, which is enclosed in quotation marks (“+_”). The next ampersand indicates there are additional values (&). The text data is extracted from its cell location in Sheet 1 (Sheet1!G865). The next ampersand indicates there are additional values (&). Two underscores contained within quotation marks are inserted to indicate the end of the text field (“ ”). The last ampersand indicates there are additional values (&).
+The last item is to inset a comma at the end of the field by placing it in quotation marks (“,”). This will generate a fully formatted field that appears as:
+TEXTC490+_Mr. John Smith ,
+Once all fields have been linked it is now possible to build the text file.
+Step 3 – Build Text File
+The text file is created in a two-step process. The first part is to create a new worksheet (Sheet 3) using the linked data fields in Sheet 2. The formula to begin building this component of the text file is:
+=Sheet2!A900&Sheet 2!A901&Sheet2!A902.....
+The formula begins with the cell location of the data field in Sheet 2, followed by an ampersand to indicate additional data (&) with this format continuing until all data fields are strung together. Because of formula size limitations it is necessary to break this down into five separate formulas keeping the text fields as the final item.
+The second step is to create a final formula to consolidate the five formulas on Sheet 3.
+The formula begins with the cell location in Sheet 3 of the first formula, an ampersand to indicate additional information, then the cell location in Sheet 3 of the second formula and so on until all five formulas are linked together. This will become the source of creating the text file.
+It is strongly recommended that the spreadsheet file be saved before continuing.
+Step 4 – Create and Format the Text File
+After saving the file in spreadsheet format the text file can be created by first navigating to the File tab:
+Then selecting the ‘Save As’ option and indicating the file type as ‘Text (Tab delimited) (*.txt)’:
+A message will appear indicating that this file selection does not support workbooks with multiple worksheets, select ‘OK’:
+An additional message will be displayed concerning incompatibility features, select ‘Yes’:
+The spreadsheet file can be closed, but without saving changes. The text file will have been created and will look as follows:
+Step 5 – Format the Text File
+The first step is to remove the double quotation marks at the beginning and end of the file:
+The next step is to insert the header record. Insert a blank line at the top of the text file and insert the following information:
+(PASSWORD,FFIEC002,140331,0000999999,140508,15253600,
+The first item in the file header must be a left parentheses, ‘(‘. This is followed by the series password that is provided by the Federal Reserve Bank analyst. It must be exactly eight characters in length and spaces should be inserted if the actual password is shorter. Next is the report series name ‘FFIEC002’, followed by the report as-of date in year, month, and day format (YYMMDD). Next is the reporter RSSDID. It must be ten digits in length and should be prefixed by leading zeroes if shorter. Lastly is the date and time stamp. Enter the date submitted in year, month, and day format (YYMMDD) followed by a comma and then the time submitted in hour, minute and seconds format (the last two digits should be zero filled) followed by a comma (he fi
+The final step in formatting is to insert a right parenthesis ‘)’ at the end of the file. The file should now be ready for submission to Reporting Central.
+Step 6 – Uploading the file to Reporting Central In Reporting Central, select the File Upload tab and then click the Browse... button. Then, navigate to the stored text file and select the filename so it appears in the File: box. Select Open to choose the file. In Reporting Central, select Continue to upload the file.
+The report data can then be validated and saved. If errors exist in the text file, error messages will appear in the file upload window, which can be used to troubleshoot any formatting issues.
+If there are no formatting issues during the file upload you will get a message that the file upload is completed and the data will load directly into the report screen.
+How to create a Text file from a spreadsheet for the FFIEC 002S
+All of the formatting requirements that apply to the FFIEC 002 report also apply to the FFIEC 002S. The only difference is to the header information and the field labels. The file header information referenced in Step 5 of the FFIEC 002 should be replaced with the following:
+(PASSWORD,FIEC002S,140331,0000999999,140508,15253600,
+The first item in the file header must be a left parentheses, report also apply to the FFIEC 002S. The only difference is to the header information and the field labels. Exactly eight characters in length and spaces should be inserted if the actual password is shorter. Next is the report series name ‘FIEC002S’, followed by the report as-of date in year, month, and day format (YYMMDD). Next is the reporter RSSDID. It must be ten digits in length and should be prefixed by leading zeroes if shorter. Lastly is the date and time stamp. Enter the date submitted in year, month, and day format (YYMMDD) followed by a comma and then the time submitted in hour, minute and seconds format (the last two digits should be zero filled) followed by a comma (‘,’). The final step in formatting is to insert a right parenthesis ‘)’ at the end of the file. The file should now be ready for submission to Reporting Central.
+Lastly, the field labels are found in Appendix B.
+Appendix A FFIEC 002 Report Detailed Field Specifications
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 28 |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Reporting Central (RC)
+FILE: Banking Statistics Formatted Transmission File FFIEC002 VERSION 29
+REPORT DATES:
+UP TO VERSION:
+FLOW: Input from DI
+200930 30
+INTERFACE: FLASH
+APPLICATION DATA
+DESCRIPTION: FFIEC002 VERSION 29
+The following guidelines for the electronic submission of the data files should be observed:
+Please refer to the report form and instructions for these requirements.
+All financial items without reported data should be zero filled EXCEPT for those items referenced in the * RCFN tab, which can be null, zero filled or actual.
+* The following sections address the transmittal of null values for items that are not applicable.
+* The following text items should be null when there is no associated financial data reported.
+Schedule RAL, Memo Items 14 and 15 text, 14a (TEXTA539) 14b (TEXTA540) 14c (TEXTA541) 15a (TEXTA542) 15b (TEXTA543) 15c (TEXTA544) Schedule L, Items 7 and 8 text, 7a (TEXT5598) 7b (TEXT5600) 7c (TEXT5601) 8a (TEXT5604) 8b (TEXT5605) 8c (TEXT5606) Schedule M, Part V, Items 7 and 8 text, 7a (TEXT8570) 7b (TEXT8571) 7c (TEXT8572) 8a (TEXT8574) 8b (TEXT8575) 8c (TEXT8576) Schedule Q, Memo Items 1 and 2 text, 1c (TEXTG546)
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+1d (TEXTG551) 1e (TEXTG556) 1f (TEXTG561) 2c (TEXTG571) 2d (TEXTG576) 2e (TEXTG581) 2f (TEXTG586)
+The following item should be null for the June, September, and December Reports: Schedule RAL, Memoranda Item 17 (RCFD6724)
+If the reporting agency or branch is not FDIC insured, the following items should always be reported as null:
+Schedule RAL, Statutory or Regulatory Requirement Items, S3a (RCFD2334) S3b (RCFD2387) Schedule C, Part II, All Items Schedule O, All Items
+For FDIC insured institutions, the following items should be null for March, September, and December reports:
+Schedule C, Part II, All Items Schedule O, Memoranda Item 1a2 (RCONF050) Schedule O, Memoranda Item 1c2 (RCONF046)
+For FDIC insured institutions, the following item should be null for March, June, and September: Schedule O, Memoranda Item 3 (RCON5590) For FDIC insured institutions, the following items can be null or actual regardless of date:
+Schedule O, Item 4 (RCFDF238) Schedule O, Item 5 (RCFDF239) Schedule O, Item 6 (RCFNF235) Schedule O, Memoranda Item 2 (RCON5597)
+* The following section addresses the reporting requirements for Schedule T. Schedule T is reported annually every December. For March, June, and September all items should be "null".
+* For December the following items are required:
+Schedule T, item 1 (RCFDA345) must be " 1 " for yes, or " 0 " for no If Schedule T, item 1 (RCFDA345) is " 0 " no: DOCUMENT CIPS TECHNICAL RELEASE NUMBER 1.1 MANUAL APPLICATIONS DATE EFFECTIVE 9/30/2020 SECTION BANKING STATISTICS (STAT) VERSION NUMBER 29
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+Schedule T, items 2 thru Memorandum item 3.h, column B should be ' null '
+If Schedule T, item 1 (RCFDA345) is " 1 " yes
+Schedule T, item 2 ( RCFDA346) should be " 1 " for yes, or " 0 " for no Schedule T, item 3 ( RCFDB867) should be "1 " for yes, or " 0 " for no
+If Schedule T, item 3 (RCFDB867) is " 0 " no
+Schedule T, item 4, column A thru Memorandum item 3.h, column B should be "null".
+If Schedule T, item 3 (RCFDB867) is " 1 " yes,
+Schedule T, item 4, column A through Memorandum item 3.h, column B, should be "actual".
+* When applicable, the following items should be reported as single-digit numeric values to indicate responses to questions or statements on the report form .
+For all institutions, for the March report, the following item should be reported with a number from 1 to 7 which represents a choice of a statement regarding auditing:
+Schedule RAL, Memoranda Item 17 (RCFD6724)
+Narrative descriptions (text) should be transmitted for the items below when the associated dollar value fields contain reported data. Text for each of these items may not exceed * 50 characters, including punctuation and spaces:
+Schedule RAL, Memo Items 14 and 15 text, 14a (TEXTA539) 14b (TEXTA540) 14c (TEXTA541) 15a (TEXTA542) 15b (TEXTA543) 15c (TEXTA544) Schedule L, Items 7 and 8 text, 7a (TEXT5598) 7b (TEXT5600) 7c (TEXT5601) 8a (TEXT5604) 8b (TEXT5605) 8c (TEXT5606) Schedule M, Part V, Items 7 and 8 text, 7a (TEXT8570) 7b (TEXT8571) DOCUMENT CIPS TECHNICAL RELEASE NUMBER 1.1 MANUAL APPLICATIONS DATE EFFECTIVE 9/30/2020 SECTION BANKING STATISTICS (STAT) VERSION NUMBER 29
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 29 |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+7c (TEXT8572) 8a (TEXT8574) 8b (TEXT8575) 8c (TEXT8576) Schedule Q, Memo Items 1 and 2 text, 1c (TEXTG546) 1d (TEXTG551) 1e (TEXTG556) 1f (TEXTG561) 2c (TEXTG571) 2d (TEXTG576) 2e (TEXTG581) 2f (TEXTG586)
+For information of the formatting requirements for null values and text items, see the General STAT Application Data Record, Section 9.4.2.
+The following section addresses the transmittal of respondent contact text information.
+* Text may not exceed 75 characters, including punctuation and spaces, for each of the following items:
+E-mail Address (TEXT B926) E-mail Address (TEXT C368) E-mail Address (TEXT C373) E-mail Address (TEXT C492) E-mail Address (TEXT 4086)
+Text may not exceed 40 characters, including punctuation and spaces, for each of the following items:
+Name (TEXT C366) Title (TEXT C367) Name (TEXT C371) Title (TEXT C372) Name (TEXT C490) Title (TEXT C491) Name (TEXT C495) Title (TEXT C496)
+Text may not exceed 30 characters, including punctuation and spaces, for the following item:
+Name & Title (TEXT B962) page 28
+Text may not exceed 20 characters, including punctuation and spaces, for each of the following items:
+Telephone (TEXT B963) page 28 Telephone (TEXT C369) Telephone (TEXT C374) Telephone (TEXT C493) Telephone (TEXT 8902)
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 29 |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+Text may not exceed 12 characters, including punctuation and spaces, for each of the following items: FAX (TEXT B964) page 28 FAX (TEXT C370) FAX (TEXT C375) FAX (TEXT C494) FAX (TEXT 9116)
+The following section addresses the transmittal of USA Patriot Act Section 314(a) Anti-Money Laundering Contact Information.
+* Text may not exceed 75 characters, including punctuation and spaces, for each of the following items:
+E-mail Address (TEXT C439) E-mail Address (TEXT C444) E-mail Address (TEXT C872) E-mail Address (TEXT C877)
+Text may not exceed 40 characters, including punctuation and spaces, for each of the following items:
+Name (TEXT C437) Title (TEXT C438) Name (TEXT C442) Title (TEXT C443) Name (TEXT C870) Title (TEXT C871) Name (TEXT C875) Title (TEXT C876)
+Text may not exceed 20 characters, including punctuation and spaces, for each of the following items:
+Telephone (TEXT C440) Telephone (TEXT C445) Telephone (TEXT C873) Telephone (TEXT C878)
+The following section addresses the transmittal of large data items (trillion-dollar data items).
+* The following items are reportable as trillion-dollar figures and require 10-digit fields:
+Schedule L, Item 9e, Column A (RCFD3450) Schedule L, Item 10, Column A (RCFDA126) Schedule L, Item 10, Column B (RCFDA127)
+The following subsection addresses the transmittal of large data item (trillion-dollar data items) in Schedule T.
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+Schedule T, Item 4, Column A (RCFDB868) Schedule T, Item 4, Column B (RCFDB869) Schedule T, Item 5A, Column A (RCFDB872) Schedule T, Item 5A, Column B (RCFDB873) Schedule T, Item 5B, Column A (RCFDB876) Schedule T, Item 5B, Column B (RCFDB877) Schedule T, Item 5C, Column A (RCFDB880) Schedule T, Item 5C, Column B (RCFDB881) Schedule T, Item 6, Column A (RCFDB884) Schedule T, Item 6, Column B (RCFDB885) Schedule T, Item 7, Column A (RCFDB886) Schedule T, Item 8, Column A (RCFDB890) Schedule T, Item 8, Column B (RCFDB891) Schedule T, Item 9, Column A (RCFDB894) Schedule T, Item 9, Column B (RCFDB895) Schedule T, Item 10, Column B (RCFDB898) Schedule T, Memo item l.L (RCXXB868) Schedule T, Memo item 2A, Column B (RCFDB928) Schedule T, Memo item 3A, Column B (RCFDB932) Schedule T, Memo item 3B, Column B (RCFDB934) Schedule T, Memo item 3C, Column B (RCFDB936) Schedule T, Memo item 3D, Column B (RCFDB938) Schedule T, Memo item 3E, Column B (RCFDB940) Schedule T, Memo item 3F, Column B (RCFDB942) Schedule T, Memo item 3G, Column B (RCFDB944) Schedule T, Memo item 3H, Column B (RCFDB946)
+FORMAT
+User Data File (UDF) FFIEC002 VERSION 28 Reporting Central Application Data Record
+Field Value Description
+( Left parenthesis, indicates the start of a record.
+Password 1-8 character password that will be provided by the FRB to each reporter submitting FFIEC002 data electronically
+, Comma, field separator
+Report Name FFIEC002 - literal
+, Comma, field separator
+Report date 6 digit report as of date (YYMMDD) which must be the last calendar day of the quarter (e.g., 110331) and be equal to or greater than 140331
+, Comma, field separator.
+RC reporting 1-10 character reporting institution identifier will be institution ID provided under separate cover to each reporter submitting FFIEC002 data DOCUMENT CIPS TECHNICAL RELEASE NUMBER 1.1 MANUAL APPLICATIONS DATE EFFECTIVE 9/30/2020 SECTION BANKING STATISTICS (STAT) VERSION NUMBER 29
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+electronically to the FRB.
+, Comma, field separator
+Report record 6 digit data that indicates when the report data were created by the reporting institution (YYMMDD).
+Field Value/Description
+, Comma, field separator.
+Report record 8 digit time that indicates when the report data were creation time created by the reporting institution in hours, minutes, seconds, and hundredths of a second (HHMMSSTT).
+The report record creation date and the report record creation time are used to ensure correct sequencing of report data received at the Federal Reserve Bank. Report data are stored only if the report record creation date and time are more current than that of the last transmission received for the report, report date, and reporting institution.
+, Comma, field separator.
+Data item This section contains the data items specific to Version 29 of the CIPS specifications for the FFIEC002 report. All the data item identifiers which must be included in the data file and their related report cells are listed and described below. Refer to information regarding the general layout and field descriptions in the General STAT Application Data Record, Section 9.4.2.
+Refer to the FFIEC002 report from and instructions provided by your regulatory agency for additional information regarding the content of the application data file.
+Right parenthesis, indicates the end of a report record.
+DOCUMENT CIPS TECHNICAL RELEASE NUMBER 1.1
+MANUAL APPLICATIONS DATE EFFECTIVE 9/30/2020
+SECTION BANKING STATISTICS (STAT) VERSION NUMBER 29
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 29 |
+| | | SUB IDENTIFIER | RCFD |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Banking Statistics Standard Application (STAT)
+FILE: Banking Statistics Formatted Transmission File FFIEC002 VERSION 30 REPORT DATES: 200930 UP TO VERSION: 30 FLOW: Input from DI
+INTERFACE: FLASH
+SUB IDENTIFIER RCFD
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFD0010
+RCFD0020
+RCFD0070
+RCFD0080
+RCFD0082
+RCFD0090
+RCFD0260
+RCFD0371
+RCFD1403
+RCFD1404
+RCFD1406
+RCFD1407
+RCFD1415
+RCFD1420
+RCFD1421
+RCFD1422
+RCFD1423
+RCFD1424
+RCFD1460
+RCFD1480
+RCFD1520
+RCFD1545
+RCFD1582
+RCFD1606
+RCFD1607
+RCFD1608
+RCFD1609
+RCFD1623
+RCFD1624
+RCFD1625
+RCFD1627
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+RAL A
+A A A
+A RAL
+RAL N
+N N N
+C. Part 1 C. Part 1 N N N N C. Part 1 C. Part 1 C. Part 1 C. Part 1 N N N N N N N N N
+1A 1 4 2 3 5 1B1 1B2 3 3 3 3 1A 1B 1B 1B 1B 1B 1D 1E 3 7 M1 1A 1A 1A 1A 2 2 2 2
+A A A
+A A A
+A A C
+D A B
+A A A
+B C D
+A A A
+A C A
+B C D
+A B C
+D
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFD1628
+RCFD1629
+RCFD1637
+RCFD1754
+RCFD1763
+RCFD1764
+RCFD1771
+RCFD1772
+RCFD1773
+RCFD1797
+RCFD1798
+RCFD1885
+RCFD2081
+RCFD2122
+RCFD2123
+RCFD2150
+RCFD2151
+RCFD2154
+RCFD2170
+RCFD2171
+RCFD2182
+RCFD2183
+RCFD2205
+RCFD2334
+RCFD2387
+RCFD2785
+RCFD2805
+RCFD2869
+RCFD2916
+RCFD2927
+RCFD2944
+RCFD2950
+RCFD3001
+RCFD3002
+RCFD3007
+RCFD3008
+RCFD3009
+RCFD3010
+RCFD3025
+RCFD3026
+RCFD3027
+RCFD3028
+RCFD3029
+RCFD3030
+RCFD3031
+RCFD3032
+RCFD3033
+RCFD3034
+RCFD3035
+RCFD3105
+RCFD3106
+RCFD3107
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+N N N
+RAL C. Part 1 C. Part 1 RAL RAL RAL C. Part 1 C. Part 1 C. Part 1 C. Part 1 RAL C. Part 1 M, Part 4 RAL RAL RAL RAL C. Part 1 C. Part 1 RAL RAL RAL RAL P P RAL RAL RAL RAL M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 3 M, Part 3 M, Part 3 M, Part 3 M, Part 3 M, Part 3 M, Part 1 K K K
+M1 M1
+M1 M2
+4A 4B M1 M4 M3 1C1 1C2 8 6 1E 10 2 1H 2A 3 1I 9A 9B 4A S3A S3B M13 M1 3 4F 4G 5A 6 3 3 1A1 1A1 1A2 1A2 M1A M1A M1B M1B 1 1 2 2 M1 M1 4 4 5 7
+A B D
+A A A
+A A A
+A A A
+A A A
+A A A
+A A A
+A
+A A A
+A A A
+A B A
+B A B
+A B A
+B A B
+A B A
+B A
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFD3171
+RCFD3172
+RCFD3173
+RCFD3174
+RCFD3175
+RCFD3176
+RCFD3177
+RCFD3178
+RCFD3179
+RCFD3180
+RCFD3181
+RCFD3182
+RCFD3183
+RCFD3184
+RCFD3185
+RCFD3186
+RCFD3190
+RCFD3195
+RCFD3312
+RCFD3313
+RCFD3314
+RCFD3315
+RCFD3343
+RCFD3345
+RCFD3349
+RCFD3353
+RCFD3355
+RCFD3360
+RCFD3365
+RCFD3375
+RCFD3376
+RCFD3377
+RCFD3378
+RCFD3381
+RCFD3411
+RCFD3423
+RCFD3450
+RCFD3529
+RCFD3530
+RCFD3536
+RCFD3543
+RCFD3547
+RCFD3548
+RCFD3826
+RCFD4150
+RCFD5598
+RCFD5600
+RCFD5601
+RCFD5602
+RCFD5603
+RCFD5604
+RCFD5605
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 M, Part 1 N N N N RAL M, Part 4 P P P P RAL K RAL K K K K L L L L K L L L N N RAL RAL RAL RAL L RAL L L L L L L L
+1B 1B 2A 2A 2B1 2B1 2B2 2B2 2C 2C M2 M2 1C 1C 1C 1C 4C 1 1A 1B 2A 2B S1 6 S2 8 9 3 2 3A 3A1 3A2 3B 1 4 1 9E M2 M2 1F2B M10 M11 4E 9E M16 7A 7B 7C 7 8 8A 8B
+A B A
+B A B
+A B A
+B A B
+A B C
+D A
+A A A
+A
+A A B
+A A A
+A B
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFD5606
+RCFD5766
+RCFD5770
+RCFD5771
+RCFD6119
+RCFD6120
+RCFD6122
+RCFD6123
+RCFD6724
+RCFD8569
+RCFD8570
+RCFD8571
+RCFD8572
+RCFD8573
+RCFD8574
+RCFD8575
+RCFD8576
+RCFD8693
+RCFD8694
+RCFD8695
+RCFD8696
+RCFD8697
+RCFD8698
+RCFD8699
+RCFD8700
+RCFD8701
+RCFD8702
+RCFD8703
+RCFD8704
+RCFD8705
+RCFD8706
+RCFD8707
+RCFD8708
+RCFD8709
+RCFD8710
+RCFD8711
+RCFD8712
+RCFD8713
+RCFD8714
+RCFD8715
+RCFD8716
+RCFD8719
+RCFD8720
+RCFD8723
+RCFD8724
+RCFD8725
+RCFD8726
+RCFD8727
+RCFD8728
+RCFD8733
+RCFD8734
+RCFD8735
+RCFD8736
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+L M, Part 5 M, Part 5 M, Part 5 C. Part 1 C. Part 1 C. Part 1 C. Part 1 RAL M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 L L L L L L L L L L L L L L L L L L L L L L L L L L L L L L L L L L L L
+8C 1 3 4
+M3A M3B
+M4A M4B
+M17 7
+7A 7B 7C 8 8A 8B 8C 9A 9A 9A 9A 9B 9B 9B 9B 9C1 9C1 9C1 9C1 9C2 9C2 9C2 9C2 9D1 9D1 9D1 9D1 9D2 9D2 9D2 9D2 9E 9E 10 10 11 11 11 11 12A1 12A1 12A1 12A1
+A A A
+A
+A B C
+D A B
+C D A
+B C D
+A B C
+D A B
+C D A
+B C D
+C D C
+D A B
+C D A
+B C D
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFD8737
+RCFD8738
+RCFD8739
+RCFD8740
+RCFD8741
+RCFD8742
+RCFD8743
+RCFD8744
+RCFD8745
+RCFD8746
+RCFD8747
+RCFD8748
+RCFD8765
+RCFD8782
+RCFD8783
+RCFDA003
+RCFDA006
+RCFDA007
+RCFDA008
+RCFDA009
+RCFDA010
+RCFDA037
+RCFDA038
+RCFDA039
+RCFDA040
+RCFDA041
+RCFDA042
+RCFDA043
+RCFDA044
+RCFDA045
+RCFDA046
+RCFDA047
+RCFDA048
+RCFDA049
+RCFDA050
+RCFDA051
+RCFDA052
+RCFDA053
+RCFDA054
+RCFDA055
+RCFDA056
+RCFDA057
+RCFDA058
+RCFDA059
+RCFDA060
+RCFDA061
+RCFDA062
+RCFDA063
+RCFDA064
+RCFDA065
+RCFDA066
+RCFDA067
+RCFDA068
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+L L L
+L L L
+L L L
+L L L
+L RAL
+RAL RAL
+M, Part 1 M, Part 1 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5
+12A2 12A2 12A2 12A2 12B1 12B1 12B1 12B1 12B2 12B2 12B2 12B2 2 M8 M7 1C1 M3 M3 9A 9A 9A 9A 9B 9B 9B 9B 9C1 9C1 9C1 9C1 9C2 9C2 9C2 9C2 9D1 9D1 9D1 9D1 9D2 9D2 9D2 9D2 9E 9E 9E 9E 10 10 10 10 11 11 11
+A B C
+D A B
+C D A
+B C D
+A A A
+A B A
+B C D
+A B C
+D A B
+C D A
+B C D
+A B C
+D A B
+C D A
+B C D
+A B C
+D A B
+C
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFDA069
+RCFDA074
+RCFDA075
+RCFDA076
+RCFDA077
+RCFDA078
+RCFDA079
+RCFDA080
+RCFDA081
+RCFDA082
+RCFDA083
+RCFDA084
+RCFDA085
+RCFDA086
+RCFDA087
+RCFDA088
+RCFDA089
+RCFDA125
+RCFDA126
+RCFDA127
+RCFDA345
+RCFDA346
+RCFDA539
+RCFDA540
+RCFDA541
+RCFDA542
+RCFDA543
+RCFDA544
+RCFDB532
+RCFDB533
+RCFDB534
+RCFDB536
+RCFDB537
+RCFDB570
+RCFDB705
+RCFDB706
+RCFDB707
+RCFDB708
+RCFDB709
+RCFDB710
+RCFDB711
+RCFDB726
+RCFDB727
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 L L T T RAL RAL RAL RAL RAL RAL C. Part 1 C. Part 1 C. Part 1 C. Part 1 C. Part 1 RAL S S S S S S S S S
+11 12A1 12A1 12A1 12A1 12A2 12A2 12A2 12A2 12B1 12B1 12B1 12B1 12B2 12B2 12B2 12B2 2 10 10 1 2 M14A M14B M14C M15A M15B M15C 2A1 2A2 2B 2C1 2C2 M9 1 1 1 1 1 1 1 3 3
+D A B
+C D A
+B C D
+A B C
+D A B
+C D
+A B
+A A A
+A A A
+A B C
+D E F
+G A B
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFDB728
+RCFDB729
+RCFDB730
+RCFDB731
+RCFDB732
+RCFDB733
+RCFDB734
+RCFDB735
+RCFDB736
+RCFDB737
+RCFDB738
+RCFDB739
+RCFDB740
+RCFDB741
+RCFDB742
+RCFDB743
+RCFDB744
+RCFDB745
+RCFDB746
+RCFDB776
+RCFDB779
+RCFDB780
+RCFDB781
+RCFDB782
+RCFDB783
+RCFDB786
+RCFDB787
+RCFDB788
+RCFDB789
+RCFDB790
+RCFDB796
+RCFDB797
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+S S S
+S S S
+S S S
+S S S
+S S S
+S S S
+S S S
+S S S
+S S S
+S S S
+S S
+3 3 3 3 3 4A 4A 4A 4A 4A 4A 4A 4B 4B 4B 4B 4B 4B 4B 9 9 9 9 9 10 10 10 10 10 11 11 12
+C D E
+F G A
+B C D
+E F G
+A B C
+D E F
+G A D
+E F G
+A D E
+F G A
+G A
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFDB803
+RCFDB806
+RCFDB807
+RCFDB808
+RCFDB809
+RCFDB867
+RCFDB868
+RCFDB869
+RCFDB870
+RCFDB871
+RCFDB872
+RCFDB873
+RCFDB874
+RCFDB875
+RCFDB876
+RCFDB877
+RCFDB878
+RCFDB879
+RCFDB880
+RCFDB881
+RCFDB882
+RCFDB883
+RCFDB884
+RCFDB885
+RCFDB886
+RCFDB888
+RCFDB890
+RCFDB891
+RCFDB892
+RCFDB893
+RCFDB894
+RCFDB895
+RCFDB896
+RCFDB897
+RCFDB898
+RCFDB899
+RCFDB913
+RCFDB914
+RCFDB915
+RCFDB916
+RCFDB917
+RCFDB918
+RCFDB919
+RCFDB920
+RCFDB921
+RCFDB922
+RCFDB923
+RCFDB927
+RCFDB928
+RCFDB929
+RCFDB931
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+S S S
+S S T
+T T T
+T T T
+T T T
+T T T
+T T T
+T T T
+T T T
+T T T
+T T T
+T T T
+T T T
+T T T
+T T T
+T T T
+T T T
+12 M1A1 M1A2 M1B1 M1B2 3 4 4 4 4 5A 5A 5A 5A 5B 5B 5B 5B 5C 5C 5C 5C 6 6 7 7 8 8 8 8 9 9 9 9 10 10 M1A M1B M1C M1D M1E M1F M1G M1H M1I M1J M1K M2A M2A M2B M3A
+G
+A B C
+D A B
+C D A
+B C D
+A B C
+D A B
+A C A
+B C D
+A B C
+D B D
+A B A
+A
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFDB932
+RCFDB933
+RCFDB934
+RCFDB935
+RCFDB936
+RCFDB937
+RCFDB938
+RCFDB939
+RCFDB940
+RCFDB941
+RCFDB942
+RCFDB943
+RCFDB944
+RCFDB945
+RCFDB946
+RCFDC001
+RCFDC002
+RCFDC036
+RCFDC037
+RCFDC219
+RCFDC220
+RCFDC221
+RCFDC222
+RCFDC412
+RCFDC413
+RCFDC414
+RCFDC415
+RCFDC416
+RCFDC417
+RCFDC420
+RCFDC421
+RCFDC422
+RCFDC423
+RCFDC484
+RCFDC487
+RCFDC488
+RCFDC489
+RCFDC968
+RCFDC969
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+T T T
+T T T
+T T T
+T T T
+T T T
+T T RAL
+RAL L
+L L L
+RAL RAL
+RAL RAL
+RAL RAL
+RAL RAL+D47 RAL RAL M, Part 5 M, Part 5 M, Part 5 M, Part 5 L L
+M3A M3B
+M3B M3C
+M3C M3D
+M3D M3E
+M3E M3F
+M3F M3G
+M3G M3H
+M3H 6
+6 1C3 1C4 6B1 6B2 6B1 6B2 1D1A 1D1B 1D2A 1D2B 1C2A 1C2B 4B1A 4B1B 4B2A 4B2B 6B1 6B2 6B1 6B2 6A1 6A1
+B A B
+A B A
+B A B
+A B A
+B A B
+C D A
+A A A
+B B A
+A A A
+A A A
+A A A
+A A B
+B A B
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFDC970
+RCFDC971
+RCFDC972
+RCFDC973
+RCFDC974
+RCFDC975
+RCFDF236
+RCFDF237
+RCFDF240
+RCFDF241
+RCFDF242
+RCFDF252
+RCFDF253
+RCFDF254
+RCFDF261
+RCFDF262
+RCFDF263
+RCFDF585
+RCFDF597
+RCFDF614
+RCFDF632
+RCFDF684
+RCFDF686
+RCFDF689
+RCFDF692
+RCFDF694
+RCFDF697
+RCFDF856
+RCFDF857
+RCFDG006
+RCFDG007
+RCFDJA36
+RCFDG009
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+L L L
+L L L
+O O Q
+Q Q Q
+Q Q Q
+Q Q Q, Part 1 Q, Part 1 RAL RAL Q Q Q Q Q Q RAL RAL RAL RAL Q RAL
+6A2 6A2 6A3 6A3 6A4 6A4 1 2 5B1 5B1 5B1 8 8 8 M2A M2A M2A M3B M4B M5B M6B 5B1 8 M2A 5B1 8 M2A 1D1B 1D2B M5A3B M5C 1 M6C
+A B A
+B A B
+A D E
+A D E
+A D E
+A A A
+A B B
+B C C
+C A A
+A A A
+A
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFDG011
+RCFDG013
+RCFN1773
+RCFDG014
+RCFD G015
+RCFDG016
+RCFDG017
+RCFDG018
+RCFDG019
+RCFDG020
+RCFDG021
+RCFDG391
+RCFDG392
+RCFDG395
+RCFDG396
+RCFDG474
+RCFDG475
+RCFDG476
+RCFDG477
+RCFDG478
+RCFDG479
+RCFDG480
+RCFDG481
+RCFDG482
+RCFDG483
+RCFDG484
+RCFDG485
+RCFDG486
+RCFDG487
+RCFDG488
+RCFDG489
+RCFDG490
+RCFDG491
+RCFDG492
+RCFDG493
+RCFDG494
+RCFDG495
+RCFDG496
+RCFDG497
+RCFDG498
+RCFDG499
+RCFDG500
+RCFDG501
+RCFDG502
+RCFDG503
+RCFDG504
+RCFDG505
+RCFDG506
+RCFDG507
+RCFDG508
+RCFDG509
+RCFDG510
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+Q, Part 1 Q, Part 1 RAL M, Part 4 M, Part 4 M, Part 4 M, Part 4 M, Part 4 M, Part 4 M, Part 4 M, Part 4 Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q Q
+M3C M4C
+M3A 6A1
+6A1 6A2 6A2 6A3 6A3 6A4 6A4 6 6 6 6 1 1 1 1 2 2 2 2 2 3 3 3 3 3 4 4 4 4 4 5A 5A 5A 5A 5B 5B 5B 5B 5B 7 7 7 7 7 9 9 9 9
+A A A
+A B A
+B A B
+A B A
+B C D
+B C D
+E A B
+C D E
+A B C
+D E A
+B C D
+E B C
+D E A
+B C D
+E A B
+C D E
+A B C
+D
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFDG511
+RCFDG512
+RCFDG513
+RCFDG514
+RCFDG515
+RCFDG516
+RCFDG517
+RCFDG518
+RCFDG519
+RCFDG520
+RCFDG521
+RCFDG522
+RCFDG523
+RCFDG524
+RCFDG525
+RCFDG526
+RCFDG527
+RCFDG528
+RCFDG529
+RCFDG530
+RCFDG531
+RCFDG532
+RCFDG533
+RCFDG534
+RCFDG535
+RCFDG536
+RCFDG537
+RCFDG538
+RCFDG539
+RCFDG540
+RCFDG541
+RCFDG542
+RCFDG543
+RCFDG544
+RCFDG545
+RCFDG546
+RCFDG547
+RCFDG548
+RCFDG549
+RCFDG550
+RCFDG551
+RCFDG552
+RCFDG553
+RCFDG554
+RCFDG555
+RCFDG556
+RCFDG557
+RCFDG558
+RCFDG559
+RCFDG560
+RCFDG561
+RCFDG562
+RCFDG563
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q Q
+Q Q
+9 10A 10A 10A 10A 10B 10B 10B 10B 10B 11 11 11 11 11 12 12 12 12 12 14 14 14 14 14 M1A M1A M1A M1A M1A M1B M1B M1B M1B M1B M1C M1C M1C M1C M1C M1D M1D M1D M1D M1D M1E M1E M1E M1E M1E M1F M1F M1F
+E B C
+D E A
+B C D
+E A B
+C D E
+A B C
+D E A
+B C D
+E A B
+C D E
+A B C
+D E A
+B C D
+E A B
+C D E
+A B C
+D E A
+B C
+RC ITEM
+IDENTIFIER
+RC ITEM
+IDENTIFIER
+OCCURRENCE
+TEXT ITEM
+(Y=YES) REPORT FORM SCHEDULE NAME REPORT FORM LINE NAME REPORT FORM COLUMN NAME RCFDG564 1 Q M1F D RCFDG565 1 Q M1F E RCFDG566 1 Q M2B A RCFDG567 1 Q M2B B RCFDG568 1 Q M2B C RCFDG569 1 Q M2B D RCFDG570 1 Q M2B E RCFDG571 1 Q M2C A RCFDG572 1 Q M2C B RCFDG573 1 Q M2C C RCFDG574 1 Q M2C D RCFDG575 1 Q M2C E RCFDG576 1 Q M2D A RCFDG577 1 Q M2D B RCFDG578 1 Q M2D C RCFDG579 1 Q M2D D RCFDG580 1 Q M2D E RCFDG581 1 Q M2E A RCFDG582 1 Q M2E B RCFDG583 1 Q M2E C RCFDG584 1 Q M2E D RCFDG585 1 Q M2E E RCFDG586 1 Q M2F A RCFDG587 1 Q M2F B RCFDG588 1 Q M2F C RCFDG589 1 Q M2F D RCFDG590 1 Q M2F E RCFDG804 1 Q 6 E RCFDG805 1 Q 13 A RCFDG806 1 Q 13 B RCFDG807 1 Q 13 C RCFDG808 1 Q 13 D RCFDG809 1 Q 13 E RCFDHT63 1 RAL M5A1 A RCFDHT64 1 RAL M5A2 A RCFDHT66 1 RAL M6A1 A RCFDHT67 1 RAL M6A2 A RCFDHT87 1 Q M3A1 A RCFDHT88 1 Q M3A2 A RCFDHT91 1 Q M4A1 A RCFDHT92 1 Q M4A2 A RCFDHU09 1 S 2 A RCFDHU10 1 S 2 B RCFDHU11 1 S 2 C RCFDHU12 1 S 2 D RCFDHU13 1 S 2 E RCFDHU14 1 S 2 F RCFDHU15 1 S 2 G RCFDHU16 1 S 6 B RCFDHU17 1 S 6 C RCFDHU18 1 S 6 F RCFDJA22 1 RAL M3 A RCFDK298 1 RAL 1F2A A RCFDK299 1 RAL 1F3 A RCFDK302 1 RAL 1F5 A RCFDK479 1 RAL 1F1 A
+[TABLE]
+| RC ITEM | IDENTIFIER TEXT ITEM | SCHEDULE REPOR | T FORM LINE | REPORT |
+| --- | --- | --- | --- | --- |
+| IDENTIFIER | OCCURRENCE (Y=YES) | NAME | NAME | COLUMN |
+| RCFDG564 | 1 | Q | M1F | D |
+| RCFDG565 | 1 | Q | M1F | E |
+| RCFDG566 | 1 | Q | M2B | A |
+| RCFDG567 | 1 | Q | M2B | B |
+| RCFDG568 | 1 | Q | M2B | C |
+| RCFDG569 | 1 | Q | M2B | D |
+| RCFDG570 | 1 | Q | M2B | E |
+| RCFDG571 | 1 | Q | M2C | A |
+| RCFDG572 | 1 | Q | M2C | B |
+| RCFDG573 | 1 | Q | M2C | C |
+| RCFDG574 | 1 | Q | M2C | D |
+| RCFDG575 | 1 | Q | M2C | E |
+| RCFDG576 | 1 | Q | M2D | A |
+| RCFDG577 | 1 | Q | M2D | B |
+| RCFDG578 | 1 | Q | M2D | C |
+| RCFDG579 | 1 | Q | M2D | D |
+| RCFDG580 | 1 | Q | M2D | E |
+| RCFDG581 | 1 | Q | M2E | A |
+| RCFDG582 | 1 | Q | M2E | B |
+| RCFDG583 | 1 | Q | M2E | C |
+| RCFDG584 | 1 | Q | M2E | D |
+| RCFDG585 | 1 | Q | M2E | E |
+| RCFDG586 | 1 | Q | M2F | A |
+| RCFDG587 | 1 | Q | M2F | B |
+| RCFDG588 | 1 | Q | M2F | C |
+| RCFDG589 | 1 | Q | M2F | D |
+| RCFDG590 | 1 | Q | M2F | E |
+| RCFDG804 | 1 | Q | 6 | E |
+| RCFDG805 | 1 | Q | 13 | A |
+| RCFDG806 | 1 | Q | 13 | B |
+| RCFDG807 | 1 | Q | 13 | C |
+| RCFDG808 | 1 | Q | 13 | D |
+| RCFDG809 | 1 | Q | 13 | E |
+| RCFDHT63 | 1 | RAL | M5A1 | A |
+| RCFDHT64 | 1 | RAL | M5A2 | A |
+| RCFDHT66 | 1 | RAL | M6A1 | A |
+| RCFDHT67 | 1 | RAL | M6A2 | A |
+| RCFDHT87 | 1 | Q | M3A1 | A |
+| RCFDHT88 | 1 | Q | M3A2 | A |
+| RCFDHT91 | 1 | Q | M4A1 | A |
+| RCFDHT92 | 1 | Q | M4A2 | A |
+| RCFDHU09 | 1 | S | 2 | A |
+| RCFDHU10 | 1 | S | 2 | B |
+| RCFDHU11 | 1 | S | 2 | C |
+| RCFDHU12 | 1 | S | 2 | D |
+| RCFDHU13 | 1 | S | 2 | E |
+| RCFDHU14 | 1 | S | 2 | F |
+| RCFDHU15 | 1 | S | 2 | G |
+| RCFDHU16 | 1 | S | 6 | B |
+| RCFDHU17 | 1 | S | 6 | C |
+| RCFDHU18 | 1 | S | 6 | F |
+| RCFDJA22 | 1 | RAL | M3 | A |
+| RCFDK298 | 1 | RAL | 1F2A | A |
+| RCFDK299 | 1 | RAL | 1F3 | A |
+| RCFDK302 | 1 | RAL | 1F5 | A |
+| RCFDK479 | 1 | RAL | 1F1 | A |
+RCFDK652 1 O 4
+RCFDK653 1 O 4A
+RCFDK654 1 O 5
+RCFDK655 1 O 6
+RCFDL193 1 RAL 1F4 A
+TOTAL ITEMS FOR SUBSERIES IDENTIFIER RCFD:
+657 TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER RCFD: 657
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 29 |
+| | | SUB IDENTIFIER | RCFN |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Banking Statistics Standard Application (STAT)
+FILE: Banking Statistics Formatted Transmission File FFIEC002 VERSION 29REPORT DATES: 200930UP TO VERSION: 30 FLOW: Input from DI
+INTERFACE: FLASH
+SUB IDENTIFIER RCFN
+These items can be null, zero filled or actual.
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFN0010
+RCFN0020
+RCFN0070
+RCFN0082
+RCFN1415
+RCFN1420
+RCFN1460
+RCFN1480
+RCFN1520
+RCFN1545
+RCFN1668
+RCFN1669
+RCFN1671
+RCFN1672
+RCFN1754
+RCFN1763
+RCFN1764
+RCFN1771
+RCFN1772
+RCFN1797
+RCFN1798
+RCFN1885
+RCFN1888
+RCFN2081
+RCFN2122
+RCFN2123
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+RAL A
+A A C, Part 1 C, Part 1 C, Part 1 C, Part 1 C, Part 1 C, Part 1 E E E E RAL C, Part 1 C, Part 1 RAL RAL C, Part 1 C, Part 1 C, Part 1 M, Part 2 C, Part 1 RAL C, Part 1
+1A 1 4 3 1A 1B 1D 1E 3 7 2A 2B 3A 3B M2 4A 4B M1 M4 1C1 1C2 8 2 6 1E 10
+B B B
+B B B
+B B B
+B D D
+D D B
+B B B
+B B B
+B
+B B B
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCFN2151
+RCFN2154
+RCFN2170
+RCFN2171
+RCFN2182
+RCFN2183
+RCFN2205
+RCFN2261
+RCFN2650
+RCFN2869
+RCFN2916
+RCFN2927
+RCFN2944
+RCFN2950
+RCFN3001
+RCFN3002
+RCFN3003
+RCFN3004
+RCFN3173
+RCFN3174
+RCFN3175
+RCFN3176
+RCFN3177
+RCFN3178
+RCFN3179
+RCFN3180
+RCFN3190
+RCFN3193
+RCFN3194
+RCFN3312
+RCFN3313
+RCFN3314
+RCFN3315
+RCFN3536
+RCFN3543
+RCFN3547
+RCFN3548
+RCFN8782
+RCFN8783
+RCFNA003
+RCFNB532
+RCFNB533
+RCFNB534
+RCFNB536
+RCFNB537
+RCFNB570
+RCFNC036
+RCFNC037
+RCFNC042
+RCFNC045
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+RAL RAL
+RAL RAL
+C, Part 1 C, Part 1 RAL E E P RAL RAL RAL RAL M, Part 2 M, Part 2 M, Part 2 M, Part 2 M, Part 2 M, Part 2 M, Part 2 M, Part 2 M, Part 2 M, Part 2 M, Part 2 M, Part 2 RAL M, Part 2 M, Part 2 P P P P RAL RAL RAL RAL RAL RAL RAL C, Part 1 C, Part 1 C, Part 1 C, Part 1 C, Part 1 RAL RAL RAL E E
+1H 2B 3 1I 9A 9B 4A 5 4 3 4F 4G 5B 6 1C 1C 1A 1A 1B1 1B1 1B2A 1B2A 1B2B 1B2B 1B3 1B3 4C 1D 3 1A 1B 2A 2B 1F2B M10 M11 4E M8 M7 1C1 2A1 2A2 2B 2C1 2C2 M9 1C3 1C4 1A 1B
+B B B
+B B B
+B D D
+B B B
+B B B
+A B A
+A B A
+B A B
+A B B
+B B B
+B B B
+B B B
+B B B
+B B B
+B B B
+B D D
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| RCFNC412 RCFNC413 RCFNC414 RCFNC415 RCFNC416 RCFNC417 RCFNC420 RCFNC421 RCFNC422 RCFNC423 RCFNF234 RCFNF585 RCFNF597 RCFNF614 RCFNF632 RCFNF856 RCFNF857 RCFNG007 RCFNG009 RCFNG011 RCFNG013 RCFNHT63 RCFNHT64 RCFNHT66 RCFNHT67 RCFNHT87 RCFNHT88 RCFNHT91 RCFNHT92 RCFNJA21 RCFNJA22 RCFNK298 RCFNK299 RCFNK302 RCFNK479 RCFNL193 | 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 | | RAL RAL RAL RAL RAL RAL RAL RAL RAL RAL O Q, Q, RAL RAL RAL RAL RAL RAL Q, Q, RAL RAL RAL RAL Q Q Q Q RAL RAL RAL RAL RAL RAL RAL | 1D1A 1D1B 1D2A 1D2B 1C2A 1C2B 4B1A 4B1B 4B2A 4B2B 3 M3B M4B M5B M6B 1D1B 1D2B M5C M6C M3C M4C M5A1 M5A2 M6A1 M6A2 M3A1 M3A2 M4A1 M4A2 M3 M3 1F2A 1F3 1F5 1F1 1F4 | |
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| TOTAL ITEMS FOR SUBSERIES IDENTIFIER RCFN: TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER RCFN: | | | | | 130 130 |
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2021 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 29 |
+| | | SUB IDENTIFIER | RCON |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Banking Statistics Standard Application (STAT)
+FILE: Banking Statistics Formatted Transmission File FFIEC002 VERSION 29 REPORT DATES: 200930UP TO VERSION: 30 FLOW: Input from DI
+INTERFACE: FLASH
+SUB IDENTIFIER RCON
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+RCON1643
+RCON1645
+RCON1646
+RCON1647
+RCON1649
+RCON1650
+RCON1653
+RCON2210
+RCON2259
+RCON2347
+RCON2348
+RCON2367
+RCON2373
+RCON2377
+RCON2385
+RCON2604
+RCON5564
+RCON5565
+RCON5566
+RCON5567
+RCON5568
+RCON5569
+RCON5570
+RCON5571
+RCON5572
+RCON5573
+RCON5574
+RCON5575
+RCON5578
+RCON5579
+RCON5580
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+E E E
+E E E
+E E E
+E E E
+E E E
+E C, Part 2 C, Part 2 C, Part 2 C, Part 2 C, Part 2 C, Part 2 C, Part 2 C, Part 2 C, Part 2 C, Part 2 C, Part 2 C, Part 2 C, Part 2 C, Part 2 C, Part 2
+2A 2B 3A 3B 4 5 7 7 5 2A 2B 3A 3B 4 7 M1A 2A 2A 2B 2B 2C 2C 3A 3A 3B 3B 3C 3C 4A 4A 4B
+A A A
+A A A
+A B C
+C C C
+C C C
+A B A
+B A B
+A B A
+B A B
+A B A
+APPLICATION DATA
+RC ITEM
+IDENTIFIER
+RC ITEM
+IDENTIFIER
+OCCURRENCE
+TEXT ITEM
+(Y=YES) REPORT FORM SCHEDULE NAME REPORT FORM LINE NAME REPORT FORM COLUMN NAME RCON5581 1 C, Part 2 4B B RCON5582 1 C, Part 2 4C A RCON5583 1 C, Part 2 4C B RCON5584 1 C, Part 2 5A A RCON5585 1 C, Part 2 5A B RCON5586 1 C, Part 2 5B A RCON5587 1 C, Part 2 5B B RCON5588 1 C, Part 2 5C A RCON5589 1 C, Part 2 5C B RCON5590 1 O M3 RCON5597 1 O M2 RCON6643 1 E M1C RCON9395 1 Cover CONSCD RCON9999 1 Cover date RCONC040 1 E 1A A RCONC041 1 E 1A C RCONC043 1 E 1B A RCONC044 1 E 1B C RCONF045 1 O M1C1 RCONF046 1 O M1C2 RCONF047 1 O M1D1 RCONF048 1 O M1D2 RCONF049 1 O M1A1 RCONF050 1 O M1A2 RCONF051 1 O M1B1 RCONF052 1 O M1B2 RCONF233 1 E M1C RCONLG27 1 O M6 RCONLG24 1 C M5a RCONLG25 1 C M5b RCONMT87 1 O M8A RCONMT89 1 O M8B RCONMT91 1 O M8C RCONMT93 1 O M8D RCONMT95 1 O M9 TOTAL ITEMS FOR SUBSERIES IDENTIFIER RCON: 65 TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER RCON: 65
+[TABLE]
+| RC ITEM | IDENTIFIER TEXT ITEM | SCHEDULE REPO | RT FORM LINE REPOR | T |
+| --- | --- | --- | --- | --- |
+| IDENTIFIER | OCCURRENCE (Y=YES) | NAME | NAME COLUM | N |
+| RCON5581 | 1 | C, Part 2 | 4B | B |
+| RCON5582 | 1 | C, Part 2 | 4C | A |
+| RCON5583 | 1 | C, Part 2 | 4C | B |
+| RCON5584 | 1 | C, Part 2 | 5A | A |
+| RCON5585 | 1 | C, Part 2 | 5A | B |
+| RCON5586 | 1 | C, Part 2 | 5B | A |
+| RCON5587 | 1 | C, Part 2 | 5B | B |
+| RCON5588 | 1 | C, Part 2 | 5C | A |
+| RCON5589 | 1 | C, Part 2 | 5C | B |
+| RCON5590 | 1 | O | M3 | |
+| RCON 5597 | 1 | O | M2 | |
+| RCON 6643 | 1 | E | M1C | |
+| RCON 9395 | 1 | Cover | CONSCD | |
+| RCON 9999 | 1 | Cover | date | |
+| RCONC040 | 1 | E | 1A | A |
+| RCONC041 | 1 | E | 1A | C |
+| RCONC043 | 1 | E | 1B | A |
+| RCONC044 | 1 | E | 1B | C |
+| RCONF045 | 1 | O | M1C1 | |
+| RCONF046 | 1 | O | M1C2 | |
+| RCONF047 | 1 | O | M1D1 | |
+| RCONF048 | 1 | O | M1D2 | |
+| RCONF049 | 1 | O | M1A1 | |
+| RCONF050 | 1 | O | M1A2 | |
+| RCONF051 | 1 | O | M1B1 | |
+| RCONF052 | 1 | O | M1B2 | |
+| RCONF233 | 1 | E | M1C | |
+| RCON LG27 | 1 | O | M 6 | |
+| RCONLG24 | 1 | C | M5 a | |
+| RCON LG25 | 1 | C | M5 b | |
+| RCON MT87 | 1 | O | M8A | |
+| RCONMT89 | 1 | O | M8B | |
+| RCONMT91 | 1 | O | M8C | |
+| RCONMT93 | 1 | O | M8D | |
+| RCONMT95 | 1 | O | M9 | |
+| TO | TAL ITEMS FOR SUBSERIES IDENTIF | IER RCON: | | 65 |
+| TO | TAL OCCURRENCES FOR SUBSERIE | S IDENTIFIER RCON: | | 65 |
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 29 |
+| | | SUB IDENTIFIER | RCXX |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Banking Statistics Standard Application (STAT)
+FILE: Banking Statistics Formatted Transmission File FFIEC002 VERSION 29 REPORT DATES: 200930UP TO VERSION: 30 FLOW: Input from DI
+INTERFACE: FLASH
+SUB IDENTIFIER RCXX
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| RCXX0010 RCXX1773 RCXX2122 RCXX3190 RCXX3543 RCXX3547 RCXXB868 | 1 1 1 1 1 1 1 | | A Q C, Part 1 P Q Q T | 6 1 11 4 5A 10A M1L | A A A A A A |
+| TOTAL ITEMS FOR SUBSERIES IDENTIFIER RCXX: TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER RCXX: | | | | | 6 6 |
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 29 |
+| | | SUB IDENTIFIER | RCXY |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Banking Statistics Standard Application (STAT)
+FILE: Banking Statistics Formatted Transmission File FFIEC002 VERSION 29 REPORT DATES: 200930 UP TO VERSION: 30 FLOW: Input from DI
+INTERFACE: FLASH
+SUB IDENTIFIER RCXY
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| RCXY0010 RCXY2122 RCXY2205 RCXY3190 | 1 1 1 1 | | A C, Part 1 E P | 6 11 7 4 | B B D B |
+| TOTAL ITEMS FOR SUBSERIES IDENTIFIER RCXY: TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER RCXY: | | | | | 4 4 |
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 29 |
+| | | SUB IDENTIFIER | TEXT |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Banking Statistics Standard Application (STAT)
+FILE: Banking Statistics Formatted Transmission File FFIEC002 VERSION 29 REPORT DATES: 200930 UP TO VERSION: 30 FLOW: Input from DI
+INTERFACE: FLASH
+SUB IDENTIFIER TEXT
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+TEXT5598
+TEXT5600
+TEXT5601
+TEXT5604
+TEXT5605
+TEXT5606
+TEXT8570
+TEXT8571
+TEXT8572
+TEXT8574
+TEXT8575
+TEXT8576
+TEXTA539
+TEXTA540
+TEXTA541
+TEXTA542
+TEXTA543
+TEXTA544
+TEXTB926
+TEXTB962
+TEXTB963
+TEXTB964
+TEXT4086
+TEXT8902
+TEXT9116
+TEXTC366
+TEXTC367
+TEXTC368
+TEXTC369
+TEXTC370
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+Y Y Y
+Y Y Y
+Y Y Y
+Y Y Y
+Y Y Y
+Y Y Y
+Y Y Y
+Y Y Y
+Y Y Y
+Y Y Y
+L L L
+L L L
+M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 M, Part 5 RAL RAL RAL RAL RAL RAL T T T T Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page
+7A 7B 7C 8A 8B 8C 7A 7B 7C 8A 8B 8C M14A M14B M14C M15A M15B M15C Name & Title E-mail Telephone Fax E-mail Telephone Fax Name Title E-mail Telephone Fax
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| TEXTC371 TEXTC372 TEXTC373 TEXTC374 TEXTC375 TEXTC437 TEXTC438 TEXTC439 TEXTC440 TEXTC442 TEXTC443 TEXTC444 TEXTC445 TEXTC490 TEXTC491 TEXTC492 TEXTC493 TEXTC494 TEXTC495 TEXTC496 TEXTC870 TEXTC871 TEXTC872 TEXTC873 TEXTC875 TEXTC876 TEXTC877 TEXTC878 TEXTG546 TEXTG551 TEXTG556 TEXTG561 TEXTG571 TEXTG576 TEXTG581 TEXTG586 | 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 | Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y | Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Cover Page Q Q Q Q Q Q Q Q | Name Title E-mail Telephone Fax Name Title E-mail Telephone Name Title E-mail Telephone Name Title E-mail Telephone Fax Name Title Name Title E-mail Telephone Name Title E-mail Telephone M1C M1D M1E M1F M2C M2D M2E M2F | |
+| TOTAL ITEMS FOR SUBSERIES IDENTIFIER TEXT: TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER TEXT: | | | | | 66 66 |
+Appendix B FFIEC 002S Report Detailed Field Specifications
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 4 |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Reporting Central (RC)
+FILE: Banking Statistics Formatted Transmission File FFIEC002S VERSION 4
+REPORT DATES:
+UP TO VERSION:
+FLOW: Input from DI
+200930 4
+INTERFACE: FLASH
+APPLICATION DATA
+DESCRIPTION: FFIEC002S VERSION 4
+The following guidelines for the electronic submission of the FFIEC 002S should be observed:
+* This report supplement to the FFIEC 002 should be filed by those branches and agencies of foreign banks which "manage or control" an offshore branch. Typically, this would be a so-called "shell branch" in the Caribbean, although it may in rare cases, be a branch located elsewhere offshore.
+* Please note that the report name in the data file is "FIEC002S" (not FFIEC002S) due to the 8 character limit for this field.
+* Numeric data items without reported data should be zero-filled. Text items which are not applicable should be reported as null.
+* Item CRCB6862 must be reported with either a "1" for yes or a "0" for no.
+* Respondent information (text) should be included for the items listed below:
+Country (TEXT 9031) Legal Title of U.S. Branch or Agency (TEXT 9010)
+* A text field not exceeding 20 characters for:
+City (of each other related U.S. agency and branch included in the report) (TEX19130) (TEX29130) (TEX39130) (TEX49130) (TEX59130) (TEX69130)
+* A text field not exceeding 14 characters for:
+(TEX19200) (TEX29200) (TEX39200) (TEX49200) (TEX59200) (TEX69200)
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+FORMAT
+User Data File (UDF) FFIEC002S VERSION 3 STAT Application Data Record
+Field Value Description
+( Left parenthesis, indicates the start of a record.
+Password 1-8 character password that will be provided by the FRB to each reporter submitting FFIEC002s data electronically
+, Comma, field separator
+Report Name FIEC002S - literal
+, Comma, field separator
+Report date 6 digit report as of date (YYMMDD) which must be the last calendar day of the quarter (e.g., 120331) and be equal to or greater than 180930
+, Comma, field separator.
+STAT reporting 1-10 character reporting institution identifier will be institution ID provided under separate cover to each reporter submitting FFIEC002s data electronically to the FRB.
+, Comma, field separator
+Report record 6 digit data that indicates when the report data were created by the reporting institution (YYMMDD).
+Field Value/Description
+, Comma, field separator.
+Report record 8 digit time that indicates when the report data were creation time created by the reporting institution in hours, minutes, seconds, and hundredths of a second (HHMMSSTT).
+The report record creation date and the report record creation time are used to ensure correct sequencing of report data received at the Federal Reserve Bank. Report data are stored only if the report record creation date and time are more current than that of the last transmission received for the report, report date, and reporting institution.
+, Comma, field separator.
+DOCUMENT CIPS TECHNICAL RELEASE NUMBER 1.1
+MANUAL APPLICATIONS DATE EFFECTIVE 9/30/2020
+SECTION BANKING STATISTICS (STAT) VERSION NUMBER 4
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+Data item This section contains the data items specific to Version 4 of the CIPS specifications for the FFIEC 002S report. All the data item identifiers which must be included in the data file and their related report cells are listed and described below. Refer to information regarding the general layout and field descriptions in the General STAT Application Data Record, Section 9.4.2.
+Refer to the FFIEC 002S report from and instructions provided by your regulatory agency for additional information regarding the content of the application data file.
+Right parenthesis, indicates the end of a report record.
+DOCUMENT CIPS TECHNICAL RELEASE NUMBER 1.1
+MANUAL APPLICATIONS DATE EFFECTIVE 9/30/2020
+SECTION BANKING STATISTICS (STAT) VERSION NUMBER 4
+DOCUMENT CIPS TECHNICAL RELEASE NUMBER 1.1
+MANUAL APPLICATIONS DATE EFFECTIVE 9/30/2020
+SECTION BANKING STATISTICS (STAT) VERSION NUMBER 4
+SUB IDENTIFIER RCFD
+APPLICATION: Reporting Central (RC) FILE: Banking Statistics Formatted Transmission File FFIEC002S VERSION 4 REPORT DATES: 200930 UP TO VERSION: 4 FLOW: Input from DI INTERFACE: FLASH SUB IDENTIFIER CRCB APPLICATION DATA RC ITEM IDENTIFIER RC ITEM IDENTIFIER OCCURRENCE TEXT ITEM (Y=YES) REPORT FORM SCHEDULE NAME REPORT FORM LINE NAME REPORT FORM COLUMN NAME CRCB0373 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2B2 2C1 2C3 2B1 2C6 2C5 6 7 13 14 4A 11A 1 2A1 2A2 2C2 2C4 2D 2E 3 4B 4C 4D 5 8 9A1 9A2 9B1 9B2 10 11B 11C 11D CRCB1410 CRCB1763 CRCB1918 CRCB2122 CRCB2123 CRCB2151 CRCB2170 CRCB2916 CRCB2950 CRCB3173 CRCB3174 CRCB5527 CRCB5528 CRCB5529 CRCB5530 CRCB5531 CRCB5532 CRCB5533 CRCB5534 CRCB5536 CRCB5537 CRCB5538 CRCB5539 CRCB5540 CRCB5541 CRCB5542 CRCB5544 CRCB5545 CRCB5546 CRCB5548 CRCB5549 CRCB5550 REPORTING CENTRAL FILE FORMAT SPECIFICATIONS DATA FORMAT
+[TABLE]
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 4 |
+| | | SUB IDENTIFIER | RCFD |
+[TABLE]
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| CRCB0373 | | | | | |
+| CRCB1410 | | | | | |
+| CRCB1763 | | | | | |
+| CRCB1918 | | | | | |
+| CRCB2122 | | | | | |
+| CRCB2123 | | | | | |
+| CRCB2151 | | | | | |
+| CRCB2170 | | | | | |
+| CRCB2916 | | | | | |
+| CRCB2950 | | | | | |
+| CRCB3173 | | | | | |
+| CRCB3174 | | | | | |
+| CRCB5527 | | | | | |
+| CRCB5528 | | | | | |
+| CRCB5529 | | | | | |
+| CRCB5530 | | | | | |
+| CRCB5531 | | | | | |
+| CRCB5532 | | | | | |
+| CRCB5533 | | | | | |
+| CRCB5534 | | | | | |
+| CRCB5536 | | | | | |
+| CRCB5537 | | | | | |
+| CRCB5538 | | | | | |
+| CRCB5539 | | | | | |
+| CRCB5540 | | | | | |
+| CRCB5541 | | | | | |
+| CRCB5542 | | | | | |
+| CRCB5544 | | | | | |
+| CRCB5545 | | | | | |
+| CRCB5546 | | | | | |
+| CRCB5548 | | | | | |
+| CRCB5549 | | | | | |
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| CRCB5551 | 1 1 1 1 1 1 1 1 1 1 1 1 | | | 12 M1A M1B M2A1 M2A2 M2B1 M2B2 M3A M3B M4A M4B CONSOL | |
+| CRCB5552 | | | | | |
+| CRCB5553 | | | | | |
+| CRCB5554 | | | | | |
+| CRCB5555 | | | | | |
+| CRCB5556 | | | | | |
+| CRCB5557 | | | | | |
+| CRCB5558 | | | | | |
+| CRCB5559 | | | | | |
+| CRCB5560 | | | | | |
+| CRCB5561 | | | | | |
+| CRCB6862 | | | | | |
+| TOTAL ITEMS FOR SUBSERIES IDENTIFIER CRCB: TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER CRCB: | | | | | 45 45 |
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 4 |
+| | | SUB IDENTIFIER | RCON |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Reporting Central (RC)
+FILE: Banking Statistics Formatted Transmission File FFIEC002S VERSION 4 REPORT DATES: 200930 UP TO VERSION: 4 FLOW: Input from DI
+INTERFACE: FLASH
+SUB IDENTIFIER TEXT
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| TEXT9031 TEXT9010 | 1 1 | Y Y | | | |
+| TOTAL ITEMS FOR SUBSERIES IDENTIFIER TEXT: TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER TEXT: | | | | | 2 2 |
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 4 |
+| | | SUB IDENTIFIER | RCXX |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Reporting Central (RC)
+FILE: Banking Statistics Formatted Transmission File FFIEC002S VERSION 4 REPORT DATES: 200930 UP TO VERSION: 4 FLOW: Input from DI
+INTERFACE: FLASH
+SUB IDENTIFIER TEX1
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| TEX19130 TEX19200 | 1 1 | Y Y | | City State | |
+| TOTAL ITEMS FOR SUBSERIES IDENTIFIER TEX1: TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER TEX1: | | | | | 2 2 |
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 4 |
+| | | SUB IDENTIFIER | RCXY |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Reporting Central (RC)
+FILE: Banking Statistics Formatted Transmission File FFIEC002S VERSION 4REPORT DATES: 200930 UP TO VERSION: 4 FLOW: Input from DI
+INTERFACE: FLASH
+SUB IDENTIFIER TEX2
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| TEX29130 TEX29200 | 1 1 | Y Y | | City State | |
+| TOTAL ITEMS FOR SUBSERIES IDENTIFIER TEX2: TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER TEX2: | | | | | 2 2 |
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 9 |
+| | | SUB IDENTIFIER | TEXT |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Reporting Central (RC)
+FILE: Banking Statistics Formatted Transmission File FFIEC002S VERSION 4 REPORT DATES: 200930 UP TO VERSION: 4 FLOW: Input from DI
+INTERFACE: FLASH
+SUB IDENTIFIER TEXT
+APPLICATION DATA
+| | RC ITEM | | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | TEXT ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| TEX39130 TEX39200 | 1 1 | Y Y | | City State | |
+| TOTAL ITEMS FOR SUBSERIES IDENTIFIER TEX3: TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER TEX3: | | | | | 2 2 |
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 4 |
+| | | SUB IDENTIFIER | TEXT |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Reporting Central (RC)
+FILE: Banking Statistics Formatted Transmission File FFIEC002S VERSION 4 REPORT DATES: 200930 UP TO VERSION: 4 FLOW: Input from DI
+INTERFACE: FLASH
+SUB IDENTIFIER TEX4
+APPLICATION DATA
+| | RC ITEM | TEXT | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| TEX49130 TEX49200 | 1 1 | Y Y | | City State | |
+| TOTAL ITEMS FOR SUBSERIES IDENTIFIER TEX4: TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER TEX4: | | | | | 2 2 |
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 4 |
+| | | SUB IDENTIFIER | TEXT |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Reporting Central (RC)
+FILE: Banking Statistics Formatted Transmission File FFIEC002S VERSION 4 REPORT DATES: 200930 UP TO VERSION: 4 FLOW: Input from DI
+INTERFACE: FLASH
+SUB IDENTIFIER TEX5
+APPLICATION DATA
+| | RC ITEM | TEXT | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| TEX59130 TEX59200 | 1 1 | Y Y | | City State | |
+| TOTAL ITEMS FOR SUBSERIES IDENTIFIER TEX5: TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER TEX5: | | | | | 2 2 |
+| DOCUMENT | CIPS TECHNICAL | RELEASE NUMBER | 1.1 |
+| --- | --- | --- | --- |
+| MANUAL | APPLICATIONS | DATE EFFECTIVE | 9/30/2020 |
+| SECTION | BANKING STATISTICS (STAT) | VERSION NUMBER | 4 |
+| | | SUB IDENTIFIER | TEXT |
+REPORTING CENTRAL FILE FORMAT SPECIFICATIONS
+DATA FORMAT
+APPLICATION: Reporting Central (RC)
+FILE: Banking Statistics Formatted Transmission File FFIEC002S VERSION 4 REPORT DATES: 200930 UP TO VERSION: 4 FLOW: Input from DI
+INTERFACE: FLASH
+SUB IDENTIFIER TEX6
+APPLICATION DATA
+| | RC ITEM | TEXT | REPORT FORM | | |
+| --- | --- | --- | --- | --- | --- |
+| RC ITEM | IDENTIFIER | ITEM | SCHEDULE | REPORT FORM LINE | REPORT FORM |
+| IDENTIFIER | OCCURRENCE | (Y=YES) | NAME | NAME | COLUMN NAME |
+| TEX69130 TEX69200 | 1 1 | Y Y | | City State | |
+| TOTAL ITEMS FOR SUBSERIES IDENTIFIER TEX6: TOTAL OCCURRENCES FOR SUBSERIES IDENTIFIER TEX6: | | | | | 2 2 |

@@ -1,0 +1,1171 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2021-09-29" reporterId="0000100562" series="IICM">
+    <itemData confidential="N" estimated="N" mdrm="IICM9017">
+      <value>Test_Bank</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICM9999">
+      <value>09/2/2021</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMR656">
+      <value>1</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICM9224">
+      <value>LEI</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMS371">
+      <value>USD</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMS395">
+      <value>1.00</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMM900">
+      <value>Counterparty 1</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMM901">
+      <value>1111111</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP75">
+      <value>458.6496746</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP76">
+      <value>54.16135218</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP77">
+      <value>838.4648750</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP78">
+      <value>2105.743042</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP79">
+      <value>17562.38588</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP80">
+      <value>0.053544710</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP81">
+      <value>468.528650</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP82">
+      <value>74.30562285</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP83">
+      <value>753.727582</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP84">
+      <value>2549.745072</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP85">
+      <value>16900.3127564</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP86">
+      <value>0.21333344935</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP87">
+      <value>852.1278695</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP88">
+      <value>409.0446402</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP89">
+      <value>556.36015</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP90">
+      <value>424.48494723</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP91">
+      <value>2.323581748</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP92">
+      <value>131.04080951</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP93">
+      <value>14.94</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP94">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP95">
+      <value>38.5762623</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP96">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP97">
+      <value>0.00000001</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP98">
+      <value>12.88888623</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP99">
+      <value>38.00678167</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ00">
+      <value>0.19282828</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ01">
+      <value>0.56239683</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ02">
+      <value>12.14692085</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ03">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ04">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ05">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ06">
+      <value>83.67862311</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ07">
+      <value>36.39759793</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ08">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ09">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ10">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ11">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ12">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ13">
+      <value>27.72219852</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ14">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ15">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ16">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ17">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ18">
+      <value>5000</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ19">
+      <value>5000</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ20">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMM900">
+      <value>Counterparty 2</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMM901">
+      <value>2222222</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP75">
+      <value>21.126767621</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP76">
+      <value>15.31908957</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP77">
+      <value>0.0571908843</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP78">
+      <value>332.353241468</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP79">
+      <value>883.1599305</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP80">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP81">
+      <value>15.9057755106</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP82">
+      <value>10.045798060</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP83">
+      <value>0.057697770</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP84">
+      <value>262.357360699874</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP85">
+      <value>447.15559214</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP86">
+      <value>0.27398427</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP87">
+      <value>33.00309965</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP88">
+      <value>100.9456558984</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP89">
+      <value>2.86</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP90">
+      <value>43.23407683978</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP91">
+      <value>0.54501726</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP92">
+      <value>13.63599444978</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP93">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP94">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP95">
+      <value>100.00636111</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP96">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP97">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP98">
+      <value>100.00636111</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP99">
+      <value>110.76134126</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ00">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ01">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ02">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ03">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ04">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ05">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ06">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ07">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ08">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ09">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ10">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ11">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ12">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ13">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ14">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ15">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ16">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ17">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ18">
+      <value>1200</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ19">
+      <value>1200</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ20">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMM900">
+      <value>Counterparty 3</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMM901">
+      <value>33333333</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP75">
+      <value>4.6900751</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP76">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP77">
+      <value>28.9828169</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP78">
+      <value>228.516988</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP79">
+      <value>4698.44142418</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP80">
+      <value>0.06551815</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP81">
+      <value>3.9573901</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP82">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP83">
+      <value>41.06789787</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP84">
+      <value>175.19066</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP85">
+      <value>4557.18814171</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP86">
+      <value>0.177677658</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP87">
+      <value>135.7182164</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP88">
+      <value>130.7262202</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP89">
+      <value>96.97121675</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP90">
+      <value>32.8464118</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP91">
+      <value>14.312284554</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP92">
+      <value>8.41169668</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP93">
+      <value>24.533524</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP94">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP95">
+      <value>1693.43803179</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP96">
+      <value>1195.61745113</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP97">
+      <value>497.80995772</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP98">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMP99">
+      <value>1778.26958445</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ00">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ01">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ02">
+      <value>0.3562404</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ03">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ04">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ05">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ06">
+      <value>766.3727485</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ07">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ08">
+      <value>766.3727485</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ09">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ10">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ11">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ12">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ13">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ14">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ15">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ16">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ17">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ18">
+      <value>800</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ19">
+      <value>800</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ20">
+      <value>0</value>
+      <context mdrm="IICMM899" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ21">
+      <value>484.46651</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ22">
+      <value>69.48044175</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ23">
+      <value>867.50488292</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ24">
+      <value>2666.613272</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ25">
+      <value>23143.987241</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ26">
+      <value>0.1190628</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ27">
+      <value>488.3918157</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ28">
+      <value>84.3514209</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ29">
+      <value>794.853178</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ30">
+      <value>2987.29309</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ31">
+      <value>21904.65649</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ32">
+      <value>0.664995378</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ33">
+      <value>1020.84918561</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ34">
+      <value>17.18088356</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ35">
+      <value>1832.0206552</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ36">
+      <value>1927.03770738</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ37">
+      <value>0.000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ38">
+      <value>766.3727485</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ39">
+      <value>0.000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ40">
+      <value>0.000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ41">
+      <value>0.000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ42">
+      <value>0.000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ43">
+      <value>27.722</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ44">
+      <value>Sample</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ45">
+      <value>Sample</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ46">
+      <value>Sample</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMM06">
+      <value>Sample</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMT83">
+      <value>1</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICM9031">
+      <value>Total US</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMNC97">
+      <value>USA</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ54">
+      <value>6907</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ55">
+      <value>711</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ56">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ57">
+      <value>306</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ58">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ59">
+      <value>463</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ60">
+      <value />
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ61">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ62">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ63">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ64">
+      <value>516325</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ65">
+      <value>696</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ66">
+      <value>81</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ67">
+      <value>14</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ68">
+      <value>95</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ69">
+      <value>-328</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ70">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ71">
+      <value>3000</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ72">
+      <value>20</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ73">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ74">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ75">
+      <value>520271</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ76">
+      <value>335999</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ77">
+      <value>300000</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMT83">
+      <value>2</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICM9031">
+      <value>Total GB</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMNC97">
+      <value>GBR</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ54">
+      <value>2358</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ55">
+      <value>38</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ56">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ57">
+      <value>754</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ58">
+      <value>0.10645423310198</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ59">
+      <value>557</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ60">
+      <value />
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ61">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ62">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ63">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ64">
+      <value>1891</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ65">
+      <value>-64</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ66">
+      <value>69</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ67">
+      <value>100</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ68">
+      <value>169</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ69">
+      <value>404</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ70">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ71">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ72">
+      <value>5</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ73">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ74">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ75">
+      <value>2957</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ76">
+      <value>100256</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ77">
+      <value>100000</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMT83">
+      <value>3</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICM9031">
+      <value>Total CN</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMNC97">
+      <value>CAN</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ54">
+      <value>2305</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ55">
+      <value>297</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ56">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ57">
+      <value>513</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ58">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ59">
+      <value>826</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ60">
+      <value />
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ61">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ62">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ63">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ64">
+      <value>3083</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ65">
+      <value>-496</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ66">
+      <value>-82</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ67">
+      <value>-18</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ68">
+      <value>-100</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ69">
+      <value>-87</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ70">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ71">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ72">
+      <value>-10</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ73">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ74">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ75">
+      <value>3226</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ76">
+      <value>1002</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ77">
+      <value>1000</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMT83">
+      <value>4</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICM9031">
+      <value>Total IT</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMNC97">
+      <value>ITA</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ54">
+      <value>4203</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ55">
+      <value>863</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ56">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ57">
+      <value>99</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ58">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ59">
+      <value>13</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ60">
+      <value />
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ61">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ62">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ63">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ64">
+      <value>2142</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ65">
+      <value>191</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ66">
+      <value>-26</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ67">
+      <value>93</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ68">
+      <value>67</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ69">
+      <value>-507</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ70">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ71">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ72">
+      <value>-1</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ73">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ74">
+      <value>0</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ75">
+      <value>1905</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ76">
+      <value>1403</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ77">
+      <value>1378</value>
+      <context mdrm="IICMN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMML79">
+      <value>95</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMML80">
+      <value>test</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMML81">
+      <value>Daily</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMML82">
+      <value>test</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMML83">
+      <value>test</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMML84">
+      <value>test</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMML85">
+      <value>other</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMML86">
+      <value>1000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMML87">
+      <value>test</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMR02">
+      <value>97</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMR03">
+      <value>test</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMR04">
+      <value>Daily</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMR05">
+      <value>test</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMR06">
+      <value>test</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMR07">
+      <value>test</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMR08">
+      <value>other</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMR09">
+      <value>1000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMR10">
+      <value>test</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMR58">
+      <value>test</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="IICMMQ47">
+      <value>test</value>
+    </itemData>
+  </report>
+</reportingFile>

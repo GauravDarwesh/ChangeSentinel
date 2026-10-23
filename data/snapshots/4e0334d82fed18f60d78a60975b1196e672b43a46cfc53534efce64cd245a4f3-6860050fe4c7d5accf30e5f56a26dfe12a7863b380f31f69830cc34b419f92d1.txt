@@ -1,0 +1,354 @@
+<financialDataFile>
+  <fileDescription>
+    <createDate>20140311</createDate>
+    <createTime>131035</createTime>
+    <reportingForm>SHLA</reportingForm>
+  </fileDescription>
+  <asofDate date="20150630">
+    <financialData>
+      <reportingEntity>
+        <reportingEntityIdentifier>0000100562</reportingEntityIdentifier>
+        <reportItem>
+          <rs_id type="mdrm">SHLA9017</rs_id>
+          <itemValue>big bank</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLA9028</rs_id>
+          <itemValue>1 main street</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLA9130</rs_id>
+          <itemValue>new york</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLA9200</rs_id>
+          <itemValue>NY</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLA9220</rs_id>
+          <itemValue>12345</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAN261</rs_id>
+          <itemValue>2</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAN262</rs_id>
+          <itemValue>2</itemValue>
+        </reportItem>
+        <itemGroup ref="BusContact">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHLAR069</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLAC495</rs_id>
+            <itemValue>bob smith</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLAC496</rs_id>
+            <itemValue>manager</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLA8902</rs_id>
+            <itemValue>2025551234</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLA4086</rs_id>
+            <itemValue>bob.smith@bigbank.com</itemValue>
+          </reportItem>
+        </itemGroup>
+        <itemGroup ref="BusContact">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHLAR069</rs_id>
+            <itemValue>2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLAC495</rs_id>
+            <itemValue>bobbie smith</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLAC496</rs_id>
+            <itemValue>big manager</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLA8902</rs_id>
+            <itemValue>2025557890</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLA4086</rs_id>
+            <itemValue>bobbie.smith@bigbank.com</itemValue>
+          </reportItem>
+        </itemGroup>
+        <itemGroup ref="ServiceProvider">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHLAR070</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLAN263</rs_id>
+            <itemValue>ajax corp</itemValue>
+          </reportItem>
+        </itemGroup>
+        <itemGroup ref="ServiceProvider">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHLAR070</rs_id>
+            <itemValue>2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLAN263</rs_id>
+            <itemValue>ajax corp group2</itemValue>
+          </reportItem>
+        </itemGroup>
+        <reportItem>
+          <rs_id type="mdrm">SHLAN444</rs_id>
+          <itemValue>mary jones</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAN445</rs_id>
+          <itemValue>technical support analyst</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAN446</rs_id>
+          <itemValue>8005553456</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAN447</rs_id>
+          <itemValue>mary.jones@ajax.com</itemValue>
+        </reportItem>
+        <itemGroup ref="ValTechnique">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHLAN448</rs_id>
+            <itemValue>RU1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLAN449</rs_id>
+            <itemValue>worth a lot</itemValue>
+          </reportItem>
+        </itemGroup>
+        <itemGroup ref="ValTechnique">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHLAN448</rs_id>
+            <itemValue>RU2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLAN449</rs_id>
+            <itemValue>worth a lot more</itemValue>
+          </reportItem>
+        </itemGroup>
+        <reportItem>
+          <rs_id type="mdrm">SHLAN450</rs_id>
+          <itemValue>2</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAN451</rs_id>
+          <itemValue>20000000</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAN452</rs_id>
+          <itemValue>20000000</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAN453</rs_id>
+          <itemValue>20000000</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAN454</rs_id>
+          <itemValue>20000000</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAJ196</rs_id>
+          <itemValue>03112014</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAC490</rs_id>
+          <itemValue>jerome</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAC491</rs_id>
+          <itemValue>approver</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAC493</rs_id>
+          <itemValue>8005558888</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHLAC492</rs_id>
+          <itemValue>jerome@ajax.com</itemValue>
+        </reportItem>
+        <itemGroup ref="Schedule2">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHLDN186</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLAN448</rs_id>
+            <itemValue>RU1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN460</rs_id>
+            <itemValue>cash</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN461</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN462</rs_id>
+            <itemValue>sdf1234</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN463</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN464</rs_id>
+            <itemValue>org name</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN465</rs_id>
+            <itemValue>bond</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN466</rs_id>
+            <itemValue>chase</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN488</rs_id>
+            <itemValue>4</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN468</rs_id>
+            <itemValue>4</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN469</rs_id>
+            <itemValue>23456</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN470</rs_id>
+            <itemValue>usd</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN489</rs_id>
+            <itemValue>2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN490</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN472</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN473</rs_id>
+            <itemValue>50000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN474</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN475</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN477</rs_id>
+            <itemValue>01012000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLD9914</rs_id>
+            <itemValue>01012020</itemValue>
+          </reportItem>
+        </itemGroup>
+        <itemGroup ref="Schedule2">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHLDN186</rs_id>
+            <itemValue>2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLAN448</rs_id>
+            <itemValue>RU1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN460</rs_id>
+            <itemValue>cash</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN461</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN462</rs_id>
+            <itemValue>sdf1234</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN463</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN464</rs_id>
+            <itemValue>org name</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN465</rs_id>
+            <itemValue>bond</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN466</rs_id>
+            <itemValue>chase</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN488</rs_id>
+            <itemValue>4</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN468</rs_id>
+            <itemValue>4</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN469</rs_id>
+            <itemValue>23456</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN470</rs_id>
+            <itemValue>usd</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN489</rs_id>
+            <itemValue>2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN490</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN472</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN473</rs_id>
+            <itemValue>50000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN474</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN475</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLDN477</rs_id>
+            <itemValue>01012000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHLD9914</rs_id>
+            <itemValue>01012020</itemValue>
+          </reportItem>
+        </itemGroup>
+      </reportingEntity>
+    </financialData>
+  </asofDate>
+</financialDataFile>

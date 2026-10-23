@@ -1,0 +1,301 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2025-09-30" reporterId="1234" series="TFC2">
+    <itemData confidential="N" estimated="N" mdrm="TFCMC490">
+      <value>Mel Johnson</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMC491">
+      <value>VP</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMC492">
+      <value>mjtester@tester.com</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMC493">
+      <value>123-456-7890</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMC366">
+      <value>Tom Smith</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMC368">
+      <value>tstester@tester.com</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMC369">
+      <value>123-546-7891</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW821">
+      <value>210</value>
+      <context mdrm="TFCMKX44" value="U.S. DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW822">
+      <value>11</value>
+      <context mdrm="TFCMKX44" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW823">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW824">
+      <value>9</value>
+      <context mdrm="TFCMKX44" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW825">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW826">
+      <value>60</value>
+      <context mdrm="TFCMKX44" value="CANADIAN DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW827">
+      <value>189</value>
+      <context mdrm="TFCMKX44" value="U.S. DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW828">
+      <value>24</value>
+      <context mdrm="TFCMKX44" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW829">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW830">
+      <value>9</value>
+      <context mdrm="TFCMKX44" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW831">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW832">
+      <value>60</value>
+      <context mdrm="TFCMKX44" value="CANADIAN DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW833">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="U.S. DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW834">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW835">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW836">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW837">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW838">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="CANADIAN DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW839">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="U.S. DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW840">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW841">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW842">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW843">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW844">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="CANADIAN DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW815">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="U.S. DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW816">
+      <value>20</value>
+      <context mdrm="TFCMKX44" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW817">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW818">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW819">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW820">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="CANADIAN DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW845">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW846">
+      <value>6360</value>
+      <context mdrm="TFCMKX44" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW847">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW848">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW849">
+      <value>1</value>
+      <context mdrm="TFCMKX44" value="CANADIAN DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW850">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW851">
+      <value>622</value>
+      <context mdrm="TFCMKX44" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW852">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW853">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW854">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="CANADIAN DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW855">
+      <value>7</value>
+      <context mdrm="TFCMKX44" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW856">
+      <value>5738</value>
+      <context mdrm="TFCMKX44" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW857">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW858">
+      <value>0</value>
+      <context mdrm="TFCMKX44" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW859">
+      <value>1</value>
+      <context mdrm="TFCMKX44" value="CANADIAN DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW860">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="U.S. DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW861">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW862">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW863">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW864">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW865">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="CANADIAN DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW866">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="U.S. DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW867">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW868">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW869">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW870">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW871">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="CANADIAN DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW872">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="U.S. DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW873">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW874">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW875">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW876">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW877">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="CANADIAN DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW878">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="U.S. DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW879">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW880">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW881">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW882">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCMW883">
+      <value>0</value>
+      <context mdrm="TFCMKX32" value="CANADIAN DOLLARS" />
+    </itemData>
+  </report>
+</reportingFile>

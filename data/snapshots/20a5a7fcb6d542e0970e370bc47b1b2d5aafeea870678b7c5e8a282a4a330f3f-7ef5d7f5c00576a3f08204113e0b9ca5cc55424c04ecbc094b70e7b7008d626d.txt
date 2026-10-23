@@ -1,0 +1,12 @@
+Reporting Central User Guide FR 2835a Quarterly Report of Credit Card Plans Federal Reserve System Statistics Function October 2025 1
+Options for submitting
+1. Text File. See the File Upload user guide, located within the Reporting Central General User Guide, for the steps on how to create a Text file.
+2. Data Entry Preparing the File Upload for the FR 2835a The FR 2835a is comprised of both financial, non-financial and text fields.
+Field Values
+• Financial data fields can have either positive, zero, or null values. All dollar amounts are to be reported in thousands of dollars, exclusive of dollar signs and commas. This applies to Items 3-6.
+• Numeric values (interest rates) are to be reported as a percentage to two decimal places. They can have either positive, zero, or null values. Zero should only be submitted for any items that have a value of zero value. Null values should be submitted for any item that does not apply to the institution. This will only apply to one item, Item 1 “Average nominal finance rate (%), all accounts” (QRCC7164).
+• Non-financial data is not a dollar amount and therefore not reported in thousands. This will only apply to Item 2 “Total number of accounts” (QRCC8602) which should be reported as a whole number.
+Field Labels The identifying label for both financial and text data is the eight-charter MDRM descriptor listed see the table below. Reporting Central uses the MDRM to identify individual report items in the file upload.
+Field Character Limits 2
+Report Form Line Number Item 8-character MDRM Field Length 1 Average nominal finance rate, all accounts QRCC7164 12 2 Total number of accounts QRCC8601 12 3 Total finance charges billed in period QRCC8602 12 4 Total balances on which finance charges are computed (average daily balances) for accounts with finance charges QRCC8603 12 5 Total ending balances (new balances) for all accounts QRCC8604 12 6 Total ending balances (new balances) for accounts with finance charges QRCC8658 12 Name and Address of Respondent Cover Page Name QRCC9017 72 Cover Page Street Address QRCC9028 72 Cover Page City QRCC9130 72 Cover Page State QRCC9200 30 Cover Page Zip QRCC9220 30 Cover Page Name QRCC8901 72 Cover Page Area/Phone Number/Extension QRCC8902 30 Cover Page Email Address QRCC4086 72 Financial Data Items Text Items Person to be Contacted Concerning This Report Formatted: Centered
+3

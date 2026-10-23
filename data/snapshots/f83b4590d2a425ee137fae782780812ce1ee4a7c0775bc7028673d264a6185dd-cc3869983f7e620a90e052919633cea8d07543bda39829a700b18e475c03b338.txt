@@ -1,0 +1,67 @@
+1
+Reporting Central User Guide
+FR 2248
+Domestic Finance Company Report of Consolidated Assets and Liabilities
+Federal Reserve System
+Statistics Function January 2026
+2 Overview
+The Federal Reserve System’s Reporting Central Application provides the ability to submit spreadsheet files (e.g., Microsoft Excel) via the internet. As a result, reporting institutions that use a spreadsheet to prepare their data will not have to key their data into a web page form. While this feature was provided for reporting institutions using spreadsheets, the file can be created by any other backend system that a reporting institution uses to generate its data.
+This document provides the required file format for submitting the data via Reporting Central and shows how a reporting institution can create the file from a spreadsheet for the FR 2248 – Domestic Finance Company Report of Consolidated Assets and Liabilities. Formulas were used to pull the data from the spreadsheet worksheets containing the data and format them for transmission to Reporting Central.
+Microsoft Excel was used in this example but the same process can be applied to other spreadsheet software. The method used to create the file is at the discretion of the reporter. This guide assumes that the data already exist in spreadsheet form.
+3 How to create a text file from a spreadsheet for the FR 2248
+The FR 2248 is comprised of one schedule and several financial and text fields. To minimize issues arising during the creation of the Reporting Central text file, it is strongly recommended reporting institutions follow the process described below.
+Field Labels
+The identifying label for both financial and text data is the eight -character MDRM descriptor listed in Appendix A. Reporting Central uses the MDRM to identify individual report items in the file upload.
+Field Values
+Financial data fields can have either positive, zero, or null values.
+Table 1. Format Differences for Financial Data Item Values Entered into the Spreadsheet Financial Data Item Value Format Positive [leave value as is] Zero 0 Null (or blank) [leave blank]
+4 Step 1 – Create Data Listing
+Since it is presumed that the reporter already has the report data in spreadsheet format, all subsequent steps in this guide are based on using this report data as the source. The first step recommended is to create a sequential listing of all the items c ontaining the item number, the eight -character MDRM, item description, and item value.
+It is easier if you list all the financial data items first and then the text items after that.
+NOTE Adding additional information to this spreadsheet (like item description and item number) can make items easier to identify and help troubleshoot potential problems.
+However, this information is completely optional.
+5 Step 2 – Link and Format Data Cells
+In Sheet 2 of the workbook, all the financial and text items will be linked to Sheet 1 and formatting characters inserted to aid in the creation of the final text file.
+Data Format for Financial Data Items
+• “L” is the separator between data items.
+• Eight-character MDRM.
+• “+” represents the maximum number of columns on the report form into which financial data can be entered for one MDRM. For FR 2248, the maximum number of columns is one. The formula for each financial item must contain one and only one “+”.
+• Financial data displays after each “+”.
+Financial Data Excel formula: =”L”&Sheet1!C11&”+”&Sheet1!F11 Translates to: LDFCR0066+10
+Data Format for Text Items
+• “L” is the separator between data items.
+• Eight-character MDRM.
+• Text data entry is preceded by two underscores and followed by two underscores.
+Text Data Excel formula: =”L”&Sheet1!C61&”__”&Sheet1!F61&”__” Translates to: LDFCR8901__Jane Jones__
+This is repeated for all fields. Once all fields have been linked, you can create the text file.
+6 Step 3 – Create the Text File
+After saving the file in spreadsheet format the text file can be created by first navigating to the File tab.
+Then selecting the ‘Save As’ option and indicating the file type as ‘Text (Tab delimited) (*.txt).’
+A message will appear indicating that this file selection does not support workbooks with multiple worksheets, select ‘OK.’
+An additional message will be displayed concerning incompatibility features, select ‘Yes.’
+7 Step 4 – Format the Text File and Add Header Record
+The text file will have been created and will look like this. If there are quotation marks at the beginning and the end of the file, you will need to remove those before continuing.
+The next step is to add the header record.
+The file header record consists of the following items:
+• the first 10 spaces are the RSSD ID with leading zeroes
+• the next 10 spaces are the report series ID ‘FR2248,’ plus four trailing spaces
+• the report as-of date, in MM-DD-YYYY format
+8 Step 5 – Reporting Central Submission
+In Reporting Central Cloud select the Data Entry tab, then select the series, your RSSD ID and as-of date of the file submission; then click the ‘Upload File” button on the bottom of the page. Then, navigate to the stored text file and select the filename so it appears in the ‘File:’ box. Select “Open” and then “Upload” button to upload data.
+File Upload
+Upload your fles here
+4M» Downloads > FR2B
+New folder
+(Frazee, 123.12.31.2005.
+File Upload
+FR2248_123.12.31.2025.08
+10 If there are no formatting issues during the file upload the data will load directly into the report screen.
+The report data can then be validated and saved. If errors exist in the text file error messages will appear in the file upload window, which can be used to troubleshoot any formatting issues.
+11 Appendix A FR 2248 Report Detailed Field Specifications
+Report Form Line Number Item On-balance-sheet Off-balance-sheet Securitizations Financial Data Items 8-character MDRM 8-character MDRM
+1. Cash and Cash Equivalents (Report end-of-quarter only) DFCR0066
+2. Securities (Report end-of-quarter only) DFCR0390 3.a.(1) 1-4 Family Real Estate Loans DFCRA253 3.a.(1)(a) Revolving, Open-end Loans DFCR1797 3.a.(1)(b) Closed-end Loans Secured by First Liens DFCR5367 3.a.(1)(c) Closed-end Loans Secured by Junior Liens DFCR5368 3.a.(2) Multifamily Real Estate Loans DFCR1460 DFCRA254 3.a.(3) Commercial and Farm Real Estate Loans DFCR1683 DFCRA255 3.b.(1) Consumer Motor Vehicle Loans DFCR2751 DFCR5001 3.b.(2) Revolving Consumer Credit DFCR1682 DFCRA198 3.b.(3) Government-guaranteed Student Loans DFCRP749 DFCRP747 3.b.(4) Private Student Loans DFCRP745 DFCRP748 3.b.(5) Other Consumer Loans DFCR1987 DFCR5005 3.c.(1)(a) Retail Motor Vehicle Loans DFCR2752 DFCRA297 3.c.(1)(b) Wholesale Motor Vehicle Loans DFCR2027 DFCRA298 3.c.(2) Commercial, Industrial, and Agricultural Equipment Loans DFCR1989 DFCRA256 3.c.(3) Other Business Loans DFCR8610 DFCRA258 3.d.(1)(a) Consumer Motor Vehicle Leases DFCRA211 DFCRA271 3.d.(1)(b) Consumer Non-motor-vehicle Leases DFCRJ947 DFCRJ948 3.d.(2)(a) Business Motor Vehicle Leases DFCRA212 DFCRA272 3.d.(2)(b) Commercial, Industrial, and Agricultural Equipment Loans DFCR1685 DFCRA257 3.d.(2)(c) Other Business Leases DFCRJ949 DFCRJ950 3.e.(1) Reserves for Unearned Income DFCR2065 3.e.(2) Allowance for credit losses on loan and leases. DFCR2066 3.f Net Loans and Capital Leases DFCRJ951 4.a.(1) Consumer Motor Vehicle Leases DFCRA214 DFCRA274 4.a.(2) Consumer Non-motor-vehicle Leases DFCRA217 DFCRA277 4.b.(1) Business Motor Vehicle Leases DFCRA215 DFCRA275 4.b.(2) Commercial, Industrial, and Agricultural Equipment Leases DFCRA218 DFCRA278 4.b.(3) Other Business Leases DFCRJ952 DFCRJ953 4.c Total Operating Leases (Report end-of-quarter only) DFCRJ954
+5. All Other Assets and Accounts and Notes Receivable (Report endof-quarter only) DFCRA219
+6. Total Assets (Report end-of-quarter only) DFCR2170 7.a. Commercial Paper (Report end-of-quarter only) DFCR2614
+12 Report Form Line Number Item On-balance-sheet Off-balance-sheet Securitizations 7.b. Bank Loans (Report end-of-quarter only) DFCR2613 7.c. Notes, Bonds, Debentures, and Other Debt (Report end-of-quarter only) DFCRP746 7.d. Debt due to Parent Company (Report end-of-quarter only) DFCR2753 7.e. All Other Liabilities (Report end-of-quarter only) DFCR3112 7.f. Total Liabilities (Report end-of-quarter only) DFCR2948 8.a. Retained earnings and Common Stock (Report end-of-quarter only) DFCRJ956 8.b. Preferred Stock and Other Capital Accounts (Report end-of-quarter only) DFCRJ957 8.c. Total Equity Capital (Report end-of-quarter only) DFCR3113
+9. Total Liabilities and Equity Capital (Report end-of-quarter only) DFCR3300 Text Items Cover Page Company Name DFCR9017 Cover Page Street Address DFCR9028 Cover Page City DFCR9130 Cover Page State DFCR9200 Cover Page Zip Code DFCR9220 Cover Page Contact Name DFCR8901 Cover Page Area Code / Phone Number DFCR8902 Cover Page E-mail Address DFCR4086

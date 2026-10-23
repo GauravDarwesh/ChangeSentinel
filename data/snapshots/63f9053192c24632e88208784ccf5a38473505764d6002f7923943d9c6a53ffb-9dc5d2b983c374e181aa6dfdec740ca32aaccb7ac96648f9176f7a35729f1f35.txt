@@ -1,0 +1,103 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2025-10-01" reporterId="1234" series="TFC1">
+    <itemData confidential="N" estimated="N" mdrm="TFCWC490">
+      <value>Mel Johnon</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWC491">
+      <value>VP</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWC492">
+      <value>mjtester@tester.com</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWC493">
+      <value>123-456-7890</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWC366">
+      <value>Tom Smith</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWC368">
+      <value>tstester@tester.com</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWC369">
+      <value>123-456-7891</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWD953">
+      <value>1</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWD954">
+      <value>0</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW803">
+      <value>1059591</value>
+      <context mdrm="TFCWKX32" value="U.S. DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW809">
+      <value>1044635</value>
+      <context mdrm="TFCWKX32" value="U.S. DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW815">
+      <value>47</value>
+      <context mdrm="TFCWKX32" value="U.S. DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW804">
+      <value>3036941</value>
+      <context mdrm="TFCWKX32" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW810">
+      <value>308612</value>
+      <context mdrm="TFCWKX32" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW816">
+      <value>3</value>
+      <context mdrm="TFCWKX32" value="EUROS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW805">
+      <value>66963</value>
+      <context mdrm="TFCWKX32" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW811">
+      <value>65912</value>
+      <context mdrm="TFCWKX32" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW817">
+      <value>8</value>
+      <context mdrm="TFCWKX32" value="SWISS FRANCS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW806">
+      <value>153367</value>
+      <context mdrm="TFCWKX32" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW812">
+      <value>160493</value>
+      <context mdrm="TFCWKX32" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW818">
+      <value>0</value>
+      <context mdrm="TFCWKX32" value="U.K. POUNDS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW807">
+      <value>22274397</value>
+      <context mdrm="TFCWKX32" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW813">
+      <value>23822812</value>
+      <context mdrm="TFCWKX32" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW819">
+      <value>4499</value>
+      <context mdrm="TFCWKX32" value="JAPANESE YEN" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW808">
+      <value>79069</value>
+      <context mdrm="TFCWKX32" value="CANADIAN DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW814">
+      <value>82116</value>
+      <context mdrm="TFCWKX32" value="CANADIAN DOLLARS" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="TFCWW820">
+      <value>47</value>
+      <context mdrm="TFCWKX32" value="CANADIAN DOLLARS" />
+    </itemData>
+  </report>
+</reportingFile>

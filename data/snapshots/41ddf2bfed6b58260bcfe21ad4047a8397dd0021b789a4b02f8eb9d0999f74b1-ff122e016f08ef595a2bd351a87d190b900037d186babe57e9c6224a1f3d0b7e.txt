@@ -1,0 +1,106 @@
+Reporting Central User Guide
+Tri-Party Repo (TPRX)
+Federal Reserve System
+Statistics Function September 2026
+2
+Table of Contents Overview.............................................................................................................................3 How the XML File is Structured....................................................................................................... 3 XML file Structure details..................................................................................................................4 File Name Convention...............................................................................................................7 Illegal Characters......................................................................................................................................7 How to upload file in Reporting Central..............................................................................................8
+3
+General Information
+The Federal Reserve System’s Reporting Central application provides the ability for reporting entities to submit their reports electronically using an XML file. This document provides the required file format for creating the XML file for the XML file for the TPRX (Tri Party Repo) reports.
+How the XML File Is Structured
+Figure1.
+The Financial Data File section is a wrapper to encapsulate all the data in the file.
+The File Description section defines the file header information and specifies the name of the report being submitted, and the file’s creation date and time.
+The As of Date section encapsulates the financial data for the reporting entity. The file must only contain report data for a single as of date.
+The Financial Data section is a wrapper to encapsulate the financial data for the reporting entity and as of date.
+The Reporting Entity section contains the reported values for the items appearing on the report. The value for each report item is contained in a <reportItem> tag. An <itemGroup> tag is used to group a collection of related report items.
+Item Groups are defined using the following structure. The first <reportItem> in an <itemGroup> identifies the unique key for the <itemGroup>. The key to the <itemGroup> is indicated by the <reportItem key=”yes”> tag. The subsequent <reportItem> tags identify the report items, and their values, that comprise the <itemGroup>.
+4
+XML Tag Meaning/How Used <financialDataFile> A tag used to encapsulate all the data in the file
+<fileDescription> A tag used to encapsulate header information about the file <createDate> The date that the file was created by reporting entity. The date is 8 digits and is formatted as YYYYMMDD <createTime>
+The time that the file was created by the reporting entity.
+The time is 6 digits and is formatted as HHMMSS <dataTypeIndicator> This tag is used internally by the FRB. Its value is always set to “Production” (without the quotes) <requestType>
+This tag is used internally by the FRB. Its value is always set to “Scheduler” (without the quotes) <receivingSite>
+This tag is used internally by the FRB. Its value is always set to “New York” (without the quotes)
+<seriesName>
+This tag is used internally by the FRB. Its value is always set to “TPRX” (without the quotes) <reportingForm>
+This tag is always set to “TPRX” (without the quotes), the name of the reporting form for the data submitted in this file <asofDate>
+The as of date for the financial data. The as of date is 8 digits and is formatted as YYYYMMDD. The file cannot contain more than one <asofDate> <financialData>
+A tag to encapsulate all the financial data for the <asofDate> <reportingEntity>
+A tag to encapsulate the financial data for the <reportingEntityIdentifier> <reportingEntityIdentifier>
+The <reportingEntity>’s RSSD number. The RSSD number is 10 digits; however, leading zeroes can be suppressed. The RSSD number must be entered in this tag and not in a <reportItem> tag <transferType>
+This tag is used internally by the FRB. Its value is always set to “Initial” (without the quotes) <sendingSiteReportKey>
+This tag is used internally by the FRB. Its value is always set to “STAR Internal Key” (without the quotes) <processingDistrict>
+Its value is always set to “02” (without the quotes), the district number for the Federal Reserve Bank of New York.
+<confidentiality status=”1”>
+This tag is used to indicate whether the reporting entity has requested that the FRB keep its report data confidential. It must be set as follows.
+<confidentiality status=”1”>None</confidentiality> (capital N without quotes) <estimation>
+This tag is used to indicate whether the report data is estimated. TPRX report data cannot be estimated. Its value is always set to “None” (capital N without the quotes) <reportItem> A tag to encapsulate a report item <reportItem key=”yes”>
+This tag is only used with the <itemGroup ref=”xxx”> tag and is always the first tag within the <itemGroup ref=”xxx”> tag.
+The “key=”yes”” attribute indicates that the value for this <reportItem> is the key for each of the <reportItem>s in the item group <rs_id type=”mdrm”>
+The <rs_id type=”mdrm”> is an attribute that is used internally by the FRB. The tag is a constant that does not change. Its value is the line identifier for the report item
+5
+XML Tag Meaning/How Used <itemName>
+A text description of the mdrm specified by <rs_id>. This tag is optional and is generally not used to minimize the overall number of characters in the file <itemValue> The reported data value for a <reportItem> <itemGroup ref=”xxx”>
+The <itemGroup ref=”xxx”> tag encapsulates a logical grouping of related items. An item group can be thought of as a single row in a database table. The <reportItem>s within the <itemGroup ref=”xxx”> tag can be thought of as the columns in that database row. The “ref” attribute provides additional context as to what the item group represents.
+XML file Structure details.
+XML file structure (Fig. 1) consists of 6 major parts.
+!!!!! General rule for the tags – must be the same as presented in the figures provided. Only the actual content (value) of the tag may change.
+1. Root tag is . All the reported data is within this tag.
+2. Header information. This is the information on file level. Only ones in the file.
+Figure2.
+- The createDate tag has YYYYMMDD format.
+- The createTime tag has HHMMSS format (military time).
+- The dataTypeIndicator tag is PROD All the rest of the tags should be hardcoded as represented on the Figure2.
+3. All financial data is reported within asofDate tag.
+asofDate is the date for which the financial data is reported. Only one asofDate is allowed in the file.
+4. The next tag contains the reporter information.
+Figure3.
+- reportingEntityIdentifier tag contains the reporting Institution RSSD.
+- processingDistrict is the district number for the reporting Institution.
+All the rest of the tags should be hardcoded as represented on the Figure3.
+6
+5. Domain – each domain represents one reporteed transaction (unique set of financial data). There are two domains in the file shown in Figure 1.
+Figure 4
+6. The content of each domain is shown in Figure 5.
+!!!!!General rule for the financial data tags – must be the same as presented on the pictures. Only the actual content of the <itemValue> tag may change.
+All the rest of the tags should be hardcoded as represented in Figure 5
+Figure 5.
+Sequence Number TPRXN186 Numeric (Should not | The sequence number
+exceed 7 digits) of the transaction.
+Each transaction must
+have a unique
+number. Numbering
+should start with 1
+and be incremented
+by 1.
+Data Source TPRXM892 Character (1
+Character)
+Dealer Name TPRXM893 Character (Up to 100
+Characters)
+Repo ID TPRXM894 Numeric (Up to 10
+Digits)
+Component TPRXM895 Numeric (Up to 5
+Digits)
+Asset Class TPRXM896 Character (Up to 100
+Characters)
+Collateral Value TPRXM897 Numeric (Up to 15
+Before Haircut Digits)
+Collateral Value After | TPRXM898 Numeric (Up to 15
+Haircut Digits)
+File Name Convention
+After creation of the file assign the name as following:
+TPRX.DYYMMDD.THHMMCCM.XML (e.g. TPRX.D140915.T1652539.XML)
+TPRX — series name (hard coded)
+D_ - Date identifier (hard coded)
+YYMMDD - year (e.g. 14), month (e.g. 03), day (e.g. 26) of the file creation
+T -Time identifier (hard coded)
+HHMMSSM — military hours (e.g. 16), seconds (e.g. 35), tenths of a second (e.g. 4) of the file
+creation.
+Illegal Characters
+Illegal XML characters (e.g. &, >, <, etc...) should be handled accordingly.
+8
+Report Submission in Reporting Central In Reporting Central, select the “Upload file” tab and then click the “Upload your files here” tab.
+Then, navigate to the stored XML file and select the filename so it appears in the ‘File name:’ box. Select “Open” to continue and then hit the “Upload” button.
+If there are no formatting issues during the file upload you will get a “File Upload Complete” message the data will load directly into the report screen.
+The report data can then be validated, saved, submitted or deleted. If errors exist in the text file error messages will appear in the file upload window, which can be used to troubleshoot any formatting issues.

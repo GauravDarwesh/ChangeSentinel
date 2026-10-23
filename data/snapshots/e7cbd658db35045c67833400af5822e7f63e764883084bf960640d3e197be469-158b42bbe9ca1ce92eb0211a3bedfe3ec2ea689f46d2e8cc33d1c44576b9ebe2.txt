@@ -1,0 +1,15 @@
+1
+Reporting Central User Guide
+FR 2835
+Quarterly Report of Interest Rates on Selected Direct Consumer Installment Loans
+Federal Reserve System
+Statistics Function October 2025
+2 Options for submitting
+1. Text File. See the File Upload user guide, located within the Reporting Central General User Guide, for the steps on how to create a Text file.
+2. Data Entry Preparing the File Upload for the FR 2835 The FR 2835 is comprised of both financial and text fields.
+Field Values Financial data fields can have either positive, zero, or null values.
+All numeric values (interest rates) are to be reported as a percentage to two decimal places.
+Zero should only be submitted for any items that have a value of zero value. Null values should be submitted for any item that does not apply to the institution.
+Field Labels The identifying label for both numeric and text data is the eight-charter MDRM descriptor listed see the table below. Reporting Central uses the MDRM to identify individual report items in the file upload.
+Field Character Limits
+Report Form Line Number Item 8-character MDRM Field Length 1 New automobiles (48-month) LIRS7802 12 2 New automobiles (60-month) LIRS7332 12 3 New automobiles (72-month) LIRST146 12 4 Other loans for consumer goods and personal expenditures (24-month) LIRS7808 12 Cover Page Explain large fluctuations of reported data LITX8585 219 Cover Page Name LIRS9017 72 Cover Page Street Address LIRS9028 72 Cover Page City LIRS9130 72 Cover Page State LIRS9200 30 Cover Page Zip Code LIRS9220 30 Cover Page Name of Person to Contact LIRS8901 72 Cover Page Area Code/Phone Number/Extension of Person to Contact LIRS8902 30 Cover Page E-mail Address of Person to Contact LIRS4086 72 Numeric Data Items - Reported as a percentage to two decimal places Text Items

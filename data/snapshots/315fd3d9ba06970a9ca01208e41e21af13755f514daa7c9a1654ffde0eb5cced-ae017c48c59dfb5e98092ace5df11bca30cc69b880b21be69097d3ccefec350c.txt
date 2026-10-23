@@ -1,0 +1,56 @@
+Repor&ing Cen&r,- User Guide
+FR 2515
+Repor& of Foreign (Non-U.S.) Currenc@ Deposi&s
+Feder,- Reserve S@s&em
+STATISTICS FUNCTION
+October 2026
+2 Overview
+This document provides the required file format for submitting the data via Reporting Central and shows how a reporting institution can create the file from a spreadsheet for the FR 2915 – Report of Foreign (Non-U.S.) Currency Deposits. Formulas were used to pull the data from the spreadsheet worksheets containing the data and format them for transmission to Reporting Central.
+3 How to create a text file from a spreadsheet for the FR 2915
+The FR 2915 is comprised of one schedule and several financial and text fields. To minimize issues arising during the creation of the Reporting Central text file, it is strongly recommended reporting institutions follow the process described below.
+Field Labels
+The identifying label for both financial and text data is the eight-character MDRM descriptor listed in Appendix A. Reporting Central uses the MDRM to identify individual report items in the file upload.
+Field Values
+Financial data fields can have either positive, zero, or null values.
+Financial Data Item Value Format Positive [leave value as is] Zero 0 Null (or blank) [leave blank]
+4 Step 1 – Create Data Listing
+Since it is presumed that the reporter already has the report data in spreadsheet format, all subsequent steps in this guide are based on using this report data as the source. The first step recommended is to create a sequential listing of all the items containing the item number, the eight-character MDRM, item description, and item value.
+It is easier if you list all of the financial data items first and then the text items after that.
+NOTE Adding additional information to this spreadsheet (like item description and item number) can make items easier to identify and help troubleshoot potential problems. However, this information is completely optional.
+5 Step 2 – Link and Format Data Cells
+In Sheet 2 of the workbook, all of the financial and text items will be linked to Sheet 1 and formatting characters inserted to aid in the creation of the final text file.
+Data Format for Financial Data Items
+• “L” is the separator between data items.
+• Eight-character MDRM.
+• “+” represents the maximum number of columns on the report form into which financial data can be entered for one MDRM. For FR 2915, the maximum number of columns is one. The formula for each financial item must contain only one “+”.
+• Financial data displays after each “+”.
+Financial Data Excel formula: =”L”&Sheet1!E10&”+”&Sheet1!L10 Translates to: LFCDQ2340+100
+Data Format for Text Items
+• “L” is the separator between data items.
+• Eight-character MDRM.
+• Text data entry is preceded by two underscores and followed by two underscores.
+Text Data Excel formula: =”L”&Sheet1!E18&”__”&Sheet1!L18&”__” Translates to: LFCDQ9130__Your City__
+The above is repeated for all financial data and text items. Once all fields have been linked, you can create the text file.
+6 Step 3 – Create the Text File
+After saving the file in spreadsheet format the text file can be created by first navigating to the File tab.
+Then selecting the ‘Save As’ option and indicating the file type as ‘Text (Tab delimited) (*.txt).’
+If a message appears indicating that this file selection does not support workbooks with multiple worksheets, select ‘OK.’
+An additional message will be displayed concerning incompatibility features, select ‘Yes.’
+7 Step 4 – Format the Text File and Add Header Record
+The text file you created will look like this.
+The next step is to add the header record as the first line.
+The file header record consists of the following items:
+• the first 10 spaces are the RSSD ID with leading zeroes
+• the next 10 spaces are the report series ID ‘FR2915,’ plus four trailing spaces
+• the report as-of date, in MM-DD-YYYY format
+8 Step 5 – Reporting Central Submission
+In Reporting Central, select the File Upload tab and then click the Browse... button. Then, navigate to the stored text file and select the filename so it appears in the File: box. Select Open to choose the file. In Reporting Central, select Continue to upload the file.
+If there are no formatting issues during the file upload the data will load directly into the report screen.
+The report data can then be validated and saved. If errors exist in the text file error messages will appear in the file upload window, which can be used to troubleshoot any formatting issues.
+9 Appendix A FR 2915 Report Detailed Field Specifications
+Report Form Line Number Item 8-character MDRM Financial Data Items [checkbox] No foreign currency deposits Indicate ‘1’ if your institution had no foreign (non-U.S.) deposits at your U.S. offices on every day of reporting week. Otherwise, please complete the entire report.
+FCDQH020
+1. Demand deposits due to the public FCDQ2340
+2. Other liquid deposits FCDQMB60
+3. Cash items in process of collection FCDQ0020
+4. Small time deposits FCDQ2697 Text Items Name of Reporting Institution FCDQ9017 Address of Reporting Institution FCDQ9028 City of Reporting Institution FCDQ9130 State of Reporting Institution FCDQ9200 Zip Code of Reporting Institution FCDQ9220 Title FCDQC491 Person to be Contacted Concerning this Report FCDQ8901 Area Code / Phone Number FCDQ8902

@@ -1,0 +1,499 @@
+<financialDataFile>
+  <fileDescription>
+    <createDate>20140311</createDate>
+    <createTime>131035</createTime>
+    <dataTypeIndicator>Test</dataTypeIndicator>
+    <requestType>Scheduler</requestType>
+    <receivingSite>New York</receivingSite>
+    <seriesName>SHCA</seriesName>
+    <reportingForm>SHCA</reportingForm>
+  </fileDescription>
+  <asofDate date="20141231">
+    <financialData>
+      <reportingEntity>
+        <reportingEntityIdentifier>0000100562</reportingEntityIdentifier>
+        <transferType>Initial</transferType>
+        <sendingSiteReportKey>STAR Internal Key</sendingSiteReportKey>
+        <processingDistrict>02</processingDistrict>
+        <confidentiality status="1">None</confidentiality>
+        <estimation>None</estimation>
+        <reportItem>
+          <rs_id type="mdrm">SHCA9017</rs_id>
+          <itemValue>big bank</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCA9028</rs_id>
+          <itemValue>1 main street</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCA9130</rs_id>
+          <itemValue>new york</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCA9200</rs_id>
+          <itemValue>NY</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCA9220</rs_id>
+          <itemValue>12345</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN261</rs_id>
+          <itemValue>2</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN262</rs_id>
+          <itemValue>2</itemValue>
+        </reportItem>
+        <itemGroup ref="BusContact">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHCAR069</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCAC495</rs_id>
+            <itemValue>bob smith</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCAC496</rs_id>
+            <itemValue>manager</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCA8902</rs_id>
+            <itemValue>2025551234</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCA4086</rs_id>
+            <itemValue>bob.smith@bigbank.com</itemValue>
+          </reportItem>
+        </itemGroup>
+        <itemGroup ref="BusContact">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHCAR069</rs_id>
+            <itemValue>2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCAC495</rs_id>
+            <itemValue>bobbie smith</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCAC496</rs_id>
+            <itemValue>big manager</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCA8902</rs_id>
+            <itemValue>2025557890</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCA4086</rs_id>
+            <itemValue>bobbie.smith@bigbank.com</itemValue>
+          </reportItem>
+        </itemGroup>
+        <itemGroup ref="ServiceProvider">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHCAR070</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCAN263</rs_id>
+            <itemValue>ajax corp</itemValue>
+          </reportItem>
+        </itemGroup>
+        <itemGroup ref="ServiceProvider">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHCAR070</rs_id>
+            <itemValue>2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCAN263</rs_id>
+            <itemValue>ajax corp group2</itemValue>
+          </reportItem>
+        </itemGroup>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN444</rs_id>
+          <itemValue>mary jones</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN445</rs_id>
+          <itemValue>technical support analyst</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN446</rs_id>
+          <itemValue>8005553456</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN447</rs_id>
+          <itemValue>mary.jones@ajax.com</itemValue>
+        </reportItem>
+        <itemGroup ref="ValTechnique">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHCAN448</rs_id>
+            <itemValue>RU1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCAN449</rs_id>
+            <itemValue>worth a lot</itemValue>
+          </reportItem>
+        </itemGroup>
+        <itemGroup ref="ValTechnique">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHCAN448</rs_id>
+            <itemValue>RU2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCAN449</rs_id>
+            <itemValue>worth a lot more</itemValue>
+          </reportItem>
+        </itemGroup>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN450</rs_id>
+          <itemValue>2</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN451</rs_id>
+          <itemValue>20000000</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN452</rs_id>
+          <itemValue>20000000</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN453</rs_id>
+          <itemValue>20000000</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN454</rs_id>
+          <itemValue>20000000</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN455</rs_id>
+          <itemValue>5</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN456</rs_id>
+          <itemValue>20000000</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN457</rs_id>
+          <itemValue>20000000</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN458</rs_id>
+          <itemValue>20000000</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAN459</rs_id>
+          <itemValue>20000000</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAC490</rs_id>
+          <itemValue>jerome</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAC491</rs_id>
+          <itemValue>approver</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAC493</rs_id>
+          <itemValue>8005558888</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAJ196</rs_id>
+          <itemValue>03112014</itemValue>
+        </reportItem>
+        <reportItem>
+          <rs_id type="mdrm">SHCAC492</rs_id>
+          <itemValue>jerome@ajax.com</itemValue>
+        </reportItem>
+        <itemGroup ref="Schedule2">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHCDN186</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCAN448</rs_id>
+            <itemValue>RU1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN460</rs_id>
+            <itemValue>cash</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN461</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN462</rs_id>
+            <itemValue>sdf1234</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN463</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN464</rs_id>
+            <itemValue>org name</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN465</rs_id>
+            <itemValue>bond</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN466</rs_id>
+            <itemValue>chase</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN467</rs_id>
+            <itemValue>2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN468</rs_id>
+            <itemValue>4</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN486</rs_id>
+            <itemValue>23456</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN470</rs_id>
+            <itemValue>usd</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN471</rs_id>
+            <itemValue>2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN487</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN490</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN472</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN473</rs_id>
+            <itemValue>50000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN474</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN475</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN477</rs_id>
+            <itemValue>01012000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCD9914</rs_id>
+            <itemValue>01012020</itemValue>
+          </reportItem>
+        </itemGroup>
+        <itemGroup ref="Scchedule2">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHCDN186</rs_id>
+            <itemValue>2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCAN448</rs_id>
+            <itemValue>RU2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN460</rs_id>
+            <itemValue>cash</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN461</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN462</rs_id>
+            <itemValue>sdf1234</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN463</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN464</rs_id>
+            <itemValue>org name</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN465</rs_id>
+            <itemValue>bond</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN466</rs_id>
+            <itemValue>chase</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN467</rs_id>
+            <itemValue>2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN468</rs_id>
+            <itemValue>4</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN486</rs_id>
+            <itemValue>23456</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN470</rs_id>
+            <itemValue>usd</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN471</rs_id>
+            <itemValue>2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN487</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN490</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN472</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN473</rs_id>
+            <itemValue>50000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN474</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN475</rs_id>
+            <itemValue>30000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCDN477</rs_id>
+            <itemValue>01012000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCD9914</rs_id>
+            <itemValue>01012020</itemValue>
+          </reportItem>
+        </itemGroup>
+        <itemGroup ref="Schedule3">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHCCN186</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN478</rs_id>
+            <itemValue>99</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN456</rs_id>
+            <itemValue>40000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN457</rs_id>
+            <itemValue>40000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN458</rs_id>
+            <itemValue>40000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN459</rs_id>
+            <itemValue>40000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN479</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN480</rs_id>
+            <itemValue>morgan</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN481</rs_id>
+            <itemValue>50 main</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN482</rs_id>
+            <itemValue>new york</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN483</rs_id>
+            <itemValue>ny</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN484</rs_id>
+            <itemValue>01234</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN485</rs_id>
+            <itemValue>2023457788</itemValue>
+          </reportItem>
+        </itemGroup>
+        <itemGroup ref="Schedule3">
+          <reportItem key="yes">
+            <rs_id type="mdrm">SHCCN186</rs_id>
+            <itemValue>2</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN478</rs_id>
+            <itemValue>99</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN456</rs_id>
+            <itemValue>40000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN457</rs_id>
+            <itemValue>40000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN458</rs_id>
+            <itemValue>40000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN459</rs_id>
+            <itemValue>40000000</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN479</rs_id>
+            <itemValue>1</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN480</rs_id>
+            <itemValue>morgan</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN481</rs_id>
+            <itemValue>50 main</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN482</rs_id>
+            <itemValue>new york</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN483</rs_id>
+            <itemValue>ny</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN484</rs_id>
+            <itemValue>01234</itemValue>
+          </reportItem>
+          <reportItem>
+            <rs_id type="mdrm">SHCCN485</rs_id>
+            <itemValue>2023457788</itemValue>
+          </reportItem>
+        </itemGroup>
+      </reportingEntity>
+    </financialData>
+  </asofDate>
+</financialDataFile>

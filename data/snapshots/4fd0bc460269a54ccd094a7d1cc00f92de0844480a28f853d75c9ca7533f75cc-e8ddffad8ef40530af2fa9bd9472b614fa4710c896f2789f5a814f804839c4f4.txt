@@ -1,0 +1,321 @@
+Reporting Central User Guide I-I Credit Exposure (IICE) Weekly and Monthly Federal Reserve System Statistics Function September 2026
+Contents General Information .......................................................................................................................... 3 How the XML File is Structured....................................................................................................... 3 XML Tags and Their Meanings........................................................................................................................4 I-I Credit Exposure Item Data MDRMs ...................................................................................................5 How to upload file in Reporting Central ...........................................................................................................18 2
+General Information The Federal Reserve System’s Reporting Central Application provides the ability for a reporting entity to submit their reports electronically using an XML file. This document describes the required format for creating the XML file for the I-I Credit Exposure report.
+How the XML File Is Structured Each XML file contains financial data for one reporting entity and as of date. The data in the file is organized into the following sections.
+• Reporting File o Create date o Create time
+• Report o Respondent RSSD_ID number o As Of Date o Series Id
+• Item Data o Value XML structure or schema: <?xml version="1.0" encoding="UTF -8"?> <reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema -instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd"> <report series="IICW" asOfDate="2021 -03-31" reporterId="9999999999"> <!-- Cover Page items --> <itemData confidential="N" estimated="N" mdrm=”MDRM1111”> <value>value for “MDRM1111”</value> </itemData> <!-- Schedule items --> <itemData confidential="N" estimated="N" mdrm=”MDRM1112”> <value>value for “MDRM1116”</value> </itemData> </report> </reportingFile> 3
+XML Tags and Their Meanings XML Tag/Attribute Meaning/How Used <reportingFile> A tag used to encapsulate all the data in the file xsi:noNamespaceSchemaLocation="RCInputXML- 1.0-20160520.xsd" Attribute of the reportingFile tag which specifies the location of the Schema createTime=”09:30:45” Attribute of the reportingFile tag which specifies the time the file was created createDate=”2016-08-13” Attribute of the reportingFile tag which specifies the date the file was created xmlns:xsi="http://www.w3.org/2001/XMLSchemainstance" Optional attribute of the reportingFile tag which tells the schemavalidator that all elements used in the XML file are declared in the "http://www.w3.org/2001/XMLSchema- instance" namespace <report> A tag used to identify the series name, the reporting entity and the as of data of the data.
+reporterId=”9999999999” Attribute of the report tag which specifies the respondent ID asOfDate=”2021-03-31” Attribute of the report tag which specifies the as of date of the report series=”SERIESID” Attribute of the report tag which specifies the series name <itemData> A tag used to encapsulate the item and its value from the report mdrm=”MDRM9999” Attribute of the itemData tag which identifies a specific item in the report <value> A tag encapsulated within itemData tag and contains the value of the item <context> An optional tag encapsulated within itemData tag used to identify the order of a variable list of items mdrm=”MDRM8888” Attribute of the context tag which identifies a group of items in the report value=”1” Attribute of the context tag which identifies the order of in the item group 4
+I-I Credit Exposure (Weekly) Item Data MDRMs Schedule A: Largest Counterparty Credit Exposures (weekly) Data Items MDRM Data Type Field Length Notes Legal Name IICW9017 Text 72 As of date IICW9999 Numeric 14 Version number IICWR656 Numeric 2 Legal Entity Identifier IICW9224 Text 72 Currency IICWS371 Text 3 Exchange Rate IICWS395 Numeric 5 2 digits before and 3 digits after decimal.
+Counterparty Information Rank IICWM899 Numeric 3 Counterparty Name IICWM900 Text 72 Unique Identifier IICWM901 Text 72 Derivatives Receivables Gross Current Exposure IICWML43 Numeric 34 24 digits before and 10 digits after decimal.
+Collateral Received IICWML44 Numeric 34 24 digits before and 10 digits after decimal.
+Initial Margin Received IICWML45 Numeric 34 24 digits before and 10 digits after decimal.
+Variation Margin Received IICWML46 Numeric 34 24 digits before and 10 digits after decimal.
+Net Current Exposure IICWML47 Numeric 34 24 digits before and 10 digits after decimal.
+Credit Valuation Adjustments Balance IICWML48 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Potential Exposure IICWML49 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives SA-Counterparty Credit Risk Exposure at Default IICWML50 Numeric 34 24 digits before and 10 digits after decimal.
+Collateral Received as a Third-Party IICWML51 Numeric 34 24 digits before and 10 digits after decimal.
+Securities Financing Transactions Potential Exposure Securities Lending/Borrowing Potential Exposure IICWML52 Numeric 34 24 digits before and 10 digits after decimal.
+Repo/Reverse Repo Potential Exposure IICWML53 Numeric 34 24 digits before and 10 digits after decimal.
+Lending Credit Hedges Credit Hedges Notional IICWML54 Numeric 34 24 digits before and 10 digits after decimal.
+Credit Hedges Market Value IICWML55 Numeric 34 24 digits before and 10 digits after decimal.
+Short Term Money Placements Total Short Term Money Placements IICWML56 Numeric 34 24 digits before and 10 digits after decimal.
+Short Term Money Placements: Open or Overnight IICWML57 Numeric 34 24 digits before and 10 digits after decimal.
+Issuer Risk Equity Mark to Market (MTM) value IICWML58 Numeric 34 24 digits before and 10 digits after decimal.
+Equity Derivatives IICWML59 Numeric 34 24 digits before and 10 digits after decimal.
+Fixed Income Mark to Market (MTM) value IICWML60 Numeric 34 24 digits before and 10 digits after decimal.
+Fixed Income Derivatives IICWML61 Numeric 34 24 digits before and 10 digits after decimal.
+Notional of Credit Default Swap (CDS) Bought IICWML62 Numeric 34 24 digits before and 10 digits after decimal.
+Notional of Credit Default Swap (CDS) Sold IICWML63 Numeric 34 24 digits before and 10 digits after decimal.
+Net Notional Credit Default Swap IICWML64 Numeric 34 24 digits before and 10 digits after decimal.
+Net Mark to Market (MTM) Credit Default Swap IICWML65 Numeric 34 24 digits before and 10 digits after decimal.
+Net JTD Credit Default Swap (structured products) IICWML66 Numeric 34 24 digits before and 10 digits after decimal.
+Total Exposures: All Counterparties Derivatives Receivables Gross Current Exposure IICWML67 Numeric 34 24 digits before and 10 digits after decimal.
+Net Current Exposure IICWML68 Numeric 34 24 digits before and 10 digits after decimal.
+Credit Valuation Adjustments Balance IICWML69 Numeric 34 24 digits before and 10 digits after decimal.
+5
+Schedule A: Largest Counterparty Credit Exposures (weekly) Data Items MDRM Data Type Field Length Notes Short Term Money Placements Total Short Term Money Placements IICWML70 Numeric 34 24 digits before and 10 digits after decimal.
+Issuer Risk Equity Mark to Market (MTM) Value IICWML71 Numeric 34 24 digits before and 10 digits after decimal.
+Equity Derivatives IICWML72 Numeric 34 24 digits before and 10 digits after decimal.
+Fixed Income Mark to Market (MTM) Value IICWML73 Numeric 34 24 digits before and 10 digits after decimal.
+Fixed Income Derivatives IICWML74 Numeric 34 24 digits before and 10 digits after decimal.
+Notional of Credit Default Swap (CDS) Bought IICWML75 Numeric 34 24 digits before and 10 digits after decimal.
+Notional of Credit Default Swap (CDS) Sold IICWML76 Numeric 34 24 digits before and 10 digits after decimal.
+Net Notional Credit Default Swap IICWML77 Numeric 34 24 digits before and 10 digits after decimal.
+Net Mark to Market (MTM) Value Credit Default Swap IICWML78 Numeric 34 24 digits before and 10 digits after decimal.
+Description of Derivatives Potential Exposure Methodology Confidence Level IICWML79 Numeric 2 Margin Period of Risk IICWML80 Text 219 Calibration Period IICWML81 Text 219 Time Grid IICWML82 Text 219 Collateral IICWML83 Text 219 Over-Collateralization IICWML84 Text 219 Model IICWML85 Text 219 Number of Monte Carlo Scenarios IICWML86 Numeric 14 Other Assumptions and Materiality Thresholds IICWML87 Text 219 Description of Securities Lending/Borrowing Potential Exposure Methodology Confidence Level IICWML88 Numeric 2 Margin Period of Risk IICWML89 Text 219 Calibration Period IICWML90 Text 219 Time Grid IICWML91 Text 219 Collateral IICWML92 Text 219 Over-Collateralization IICWML93 Text 219 Model IICWML94 Text 219 Number of Monte Carlo Scenarios IICWML95 Numeric 14 Other Assumptions and Materiality Thresholds IICWML96 Text 219 Description of Repo/Reverse Repo Potential Exposure Methodology Confidence Level IICWML97 Numeric 2 Margin Period of Risk IICWML98 Text 219 Calibration Period IICWML99 Text 219 Time Grid IICWMM00 Text 219 Collateral IICWMM01 Text 219 Over-Collateralization IICWMM02 Text 219 Model IICWMM03 Text 219 Number of Monte Carlo Scenarios IICWMM04 Numeric 14 Other Assumptions and Materiality Thresholds IICWMM05 Text 219 Largest Counterparty Credit Exposures Other Firm Notes IICWMM06 Text 864 6
+Schedule C: Top 10 exposures to Central Counterparties (CCP)(weekly) Data Items MDRM Data Type Field Length Notes Legal Name IICW9017 Text 72 As of date IICW9999 Numeric 14 Version number IICWR656 Numeric 2 Legal Entity Identifier IICW9224 Text 72 Currency IICWS371 Text 3 Exchange Rate IICWS395 Numeric 5 2 digits before decimal, 3 digits after Counterparty Information Row Sequential Number IICWN186 Numeric 2 Rank IICWMT83 Numeric 3 Central Counterparty (CCP) Group Name IICWMM08 Text 72 Central Counterparty (CCP) Entity Name IICWMM09 Text 72 House or Client Account IICWMM10 Text 72 Unique Identifier IIC1M901 Text 72 Clearing Account Default Fund Contributions IICWMM11 Numeric 34 24 digits before and 10 digits after decimal.
+Contingent Default Fund Contributions IICWMM12 Numeric 34 24 digits before and 10 digits after decimal.
+Capital Requirement (KCM_i) IICWMM13 Numeric 34 24 digits before and 10 digits after decimal.
+Initial Margin Required IICWMM14 Numeric 34 24 digits before and 10 digits after decimal.
+Excess Initial Margin IICWMM15 Numeric 34 24 digits before and 10 digits after decimal.
+Variation Margin Received IICWMM16 Numeric 34 24 digits before and 10 digits after decimal.
+Max ΔVariation Margin IICWMM17 Numeric 34 24 digits before and 10 digits after decimal.
+Portfolio Net Mark to Market (MTM) IICWMM18 Numeric 34 24 digits before and 10 digits after decimal.
+Other Clearing Account Exposures IICWMM19 Numeric 34 24 digits before and 10 digits after decimal.
+Clearing Account Exposures Derivatives Exposures on Clearing Account Derivatives Gross Current Exposures IICWMM20 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives SA-Counterparty Credit Risk Exposure at Default (SA-CCR EAD) IICWMM21 Numeric 34 24 digits before and 10 digits after decimal.
+Potential Exposure (internal measure) IICWMM22 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Gross Payables IICWMM23 Numeric 34 24 digits before and 10 digits after decimal.
+Other Product Exposures on Clearing Account Securities Lending/Borrowing Potential Exposure IICWMM24 Numeric 34 24 digits before and 10 digits after decimal.
+Repo/Reverse Repo Potential Exposure IICWMM25 Numeric 34 24 digits before and 10 digits after decimal.
+Other Exposures on Clearing Account IICWMM26 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Products Breakdown Contracts with Positive Mark to Market (MTM) Credit IICWMM27 Numeric 34 24 digits before and 10 digits after decimal.
+Commodities IICWMM28 Numeric 34 24 digits before and 10 digits after decimal.
+Equity IICWMM29 Numeric 34 24 digits before and 10 digits after decimal.
+FX IICWMM30 Numeric 34 24 digits before and 10 digits after decimal.
+Interest Rate IICWMM31 Numeric 34 24 digits before and 10 digits after decimal.
+Other IICWMM32 Numeric 34 24 digits before and 10 digits after decimal.
+Contracts with Negative Mark to Market (MTM) Credit IICWMM33 Numeric 34 24 digits before and 10 digits after decimal.
+Commodities IICWMM34 Numeric 34 24 digits before and 10 digits after decimal.
+Equity IICWMM35 Numeric 34 24 digits before and 10 digits after decimal.
+7
+Schedule C: Top 10 exposures to Central Counterparties (CCP)(weekly) Data Items MDRM Data Type Field Length Notes FX IICWMM36 Numeric 34 24 digits before and 10 digits after decimal.
+Interest Rate IICWMM37 Numeric 34 24 digits before and 10 digits after decimal.
+Other IICWMM38 Numeric 34 24 digits before and 10 digits after decimal.
+Total Gross Notional Credit IICWMM39 Numeric 34 24 digits before and 10 digits after decimal.
+Commodities IICWMM40 Numeric 34 24 digits before and 10 digits after decimal.
+Equity IICWMM41 Numeric 34 24 digits before and 10 digits after decimal.
+FX IICWMM42 Numeric 34 24 digits before and 10 digits after decimal.
+Interest Rate IICWMM43 Numeric 34 24 digits before and 10 digits after decimal.
+Other IICWMM44 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Notional OTC IICWMM45 Numeric 34 24 digits before and 10 digits after decimal.
+Non-Clearing Account Exposures Derivatives Derivatives Gross Current Exposure IICWMM46 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Net Current Exposure IICWMM47 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Gross Payables IICWMM48 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Net Payables IICWMM49 Numeric 34 24 digits before and 10 digits after decimal.
+Securities Financing Transaction Potential Exposure (SFT PE) Securities Lending/Borrowing Potential Exposure IICWMM50 Numeric 34 24 digits before and 10 digits after decimal.
+Repo/Reverse Repo Potential Exposure IICWMM51 Numeric 34 24 digits before and 10 digits after decimal.
+Short Term Money Placements Total Short Term Money Placements IICWMM52 Numeric 34 24 digits before and 10 digits after decimal.
+Short Term Money Placements: Open or Overnight IICWMM53 Numeric 34 24 digits before and 10 digits after decimal.
+Lending Lending IICWMM54 Numeric 34 24 digits before and 10 digits after decimal.
+Lending Credit Hedges IICWMM55 Numeric 34 24 digits before and 10 digits after decimal.
+Issuer Risk Equity Mark to Market (MTM) IICWMM56 Numeric 34 24 digits before and 10 digits after decimal.
+Fixed Income Mark to Market (MTM) IICWMM57 Numeric 34 24 digits before and 10 digits after decimal.
+Notional of Credit Default Swap (CDS) Bought IICWMM58 Numeric 34 24 digits before and 10 digits after decimal.
+Notional of Credit Default Swap (CDS) Sold IICWMM59 Numeric 34 24 digits before and 10 digits after decimal.
+Net Mark to Market (MTM) Credit Default Swap IICWMM60 Numeric 34 24 digits before and 10 digits after decimal.
+Other Other Non-Clearing Account Exposures IICWMM61 Numeric 34 24 digits before and 10 digits after decimal.
+Securities Financing Transactions Mark to Market (MTM) Securities Lending/Borrowing MTM: Cash and Securities Received Total Cash and Securities Received IICWMM62 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: G7 Sovereign and Agency MBS and Debt IICWMM63 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: Highly Rated Corp & Non-G7 Sov Debt IICWMM64 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: Cash IICWMM65 Numeric 34 24 digits before and 10 digits after decimal.
+Securities Lending/Borrowing MTM: Cash and Securities Provided Total Cash and Securities Provided IICWMM66 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: G7 Sovereign and Agency MBS and Debt IICWMM67 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: Highly Rated Corporate and Non-G7 Sovereign Debt IICWMM68 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: Cash IICWMM69 Numeric 34 24 digits before and 10 digits after decimal.
+8
+Schedule C: Top 10 exposures to Central Counterparties (CCP)(weekly) Data Items MDRM Data Type Field Length Notes Repo MTM Total Repo IICWMM70 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: G7 Sovereign and Agency Mortgage Backed Securities (MBS) and Debt IICWMM71 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: Highly Rated Corporate and Non-G7 Sovereign Debt IICWMM72 Numeric 34 24 digits before and 10 digits after decimal.
+Reverse Repo MTM Total Reverse Repo IICWMM73 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: G7 Sovereign and Agency Mortgage Backed Securities (MBS) and Debt IICWMM74 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: Highly Rated Corporate and Non-G7 Sovereign Debt IICWMM75 Numeric 34 24 digits before and 10 digits after decimal.
+Securing Financing Transactions (SFT) Mark to Market (MTM) on Clearing Account Cash Provided on Clearing Account IICWMM76 Numeric 34 24 digits before and 10 digits after decimal.
+Cash Received on Clearing Account IICWMM77 Numeric 34 24 digits before and 10 digits after decimal.
+All Central Counterparties House Clearing Account Default Fund Contributions IICWMM78 Numeric 34 24 digits before and 10 digits after decimal.
+Contingent Default Fund Contributions (DFC) IICWMM79 Numeric 34 24 digits before and 10 digits after decimal.
+Capital Requirement (KCM_i) IICWMM80 Numeric 34 24 digits before and 10 digits after decimal.
+Initial Margin Required IICWMM81 Numeric 34 24 digits before and 10 digits after decimal.
+Excess Initial Margin IICWMM82 Numeric 34 24 digits before and 10 digits after decimal.
+Variation Margin Received IICWMM83 Numeric 34 24 digits before and 10 digits after decimal.
+Max Variation Margin (ΔVM) IICWMM84 Numeric 34 24 digits before and 10 digits after decimal.
+Portfolio Net MTM IICWMM85 Numeric 34 24 digits before and 10 digits after decimal.
+Other Clearing Account Exposures IICWMM86 Numeric 34 24 digits before and 10 digits after decimal.
+Clearing Account Exposures Derivatives Exposures on Clearing Account Derivatives Gross CE IICWMM87 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Gross Payables IICWMM88 Numeric 34 24 digits before and 10 digits after decimal.
+Other Product Exposures on Clearing Account Other Exposures on Clearing Account IICWMM89 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Products Breakdown Contracts with Positive MTM Credit IICWMM90 Numeric 34 24 digits before and 10 digits after decimal.
+Commodities IICWMM91 Numeric 34 24 digits before and 10 digits after decimal.
+Equity IICWMM92 Numeric 34 24 digits before and 10 digits after decimal.
+FX IICWMM93 Numeric 34 24 digits before and 10 digits after decimal.
+Interest Rate IICWMM94 Numeric 34 24 digits before and 10 digits after decimal.
+Other IICWMM95 Numeric 34 24 digits before and 10 digits after decimal.
+Contracts with Negative MTM Credit IICWMM96 Numeric 34 24 digits before and 10 digits after decimal.
+Commodities IICWMM97 Numeric 34 24 digits before and 10 digits after decimal.
+Equity IICWMM98 Numeric 34 24 digits before and 10 digits after decimal.
+FX IICWMM99 Numeric 34 24 digits before and 10 digits after decimal.
+Interest Rate IICWMN00 Numeric 34 24 digits before and 10 digits after decimal.
+9
+Schedule C: Top 10 exposures to Central Counterparties (CCP)(weekly) Data Items MDRM Data Type Field Length Notes Other IICWMN01 Numeric 34 24 digits before and 10 digits after decimal.
+Total Gross Notional Credit IICWMN02 Numeric 34 24 digits before and 10 digits after decimal.
+Commodities IICWMN03 Numeric 34 24 digits before and 10 digits after decimal.
+Equity IICWMN04 Numeric 34 24 digits before and 10 digits after decimal.
+FX IICWMN05 Numeric 34 24 digits before and 10 digits after decimal.
+Interest Rate IICWMN06 Numeric 34 24 digits before and 10 digits after decimal.
+Other IICWMN07 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Notional OTC IICWMN08 Numeric 34 24 digits before and 10 digits after decimal.
+Non-Clearing Account Exposures Derivatives Derivatives Gross CE IICWMN09 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Net CE IICWMN10 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Gross Payables IICWMN11 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Net Payables IICWMN12 Numeric 34 24 digits before and 10 digits after decimal.
+STMP
+Total STMP IICWMN13 Numeric 34 24 digits before and 10 digits after decimal.
+Lending Lending IICWMN14 Numeric 34 24 digits before and 10 digits after decimal.
+Issuer Risk Equity MTM IICWMN15 Numeric 34 24 digits before and 10 digits after decimal.
+Fixed Income MTM IICWMN16 Numeric 34 24 digits before and 10 digits after decimal.
+Notional of Credit Default Swap (CDS) Bought IICWMN17 Numeric 34 24 digits before and 10 digits after decimal.
+Notional of Credit Default Swap (CDS) Sold IICWMN18 Numeric 34 24 digits before and 10 digits after decimal.
+Net MTM Credit Default Swap (CDS) IICWMN19 Numeric 34 24 digits before and 10 digits after decimal.
+Other Other Non-Clearing Account Exposures IICWMN20 Numeric 34 24 digits before and 10 digits after decimal.
+Securities Financing Transactions Mark to Market (MTM) Securities Lending/Borrowing MTM Cash and Securities Received Total Cash and Securities Received IICWMN21 Numeric 34 24 digits before and 10 digits after decimal.
+Cash and Securities Provided Total Cash and Securities Provided IICWMN22 Numeric 34 24 digits before and 10 digits after decimal.
+Securities Financing Transactions Mark to Market (MTM) Repo MTM Total Repo IICWMN23 Numeric 34 24 digits before and 10 digits after decimal.
+Reverse Repo MTM Total Reverse Repo IICWMN24 Numeric 34 24 digits before and 10 digits after decimal.
+Client Clearing Account Default Fund Contributions IICWMN25 Numeric 34 24 digits before and 10 digits after decimal.
+Contingent Default Fund Contributions (DFC) IICWMN26 Numeric 34 24 digits before and 10 digits after decimal.
+Capital Requirement (KCM_i) IICWMN27 Numeric 34 24 digits before and 10 digits after decimal.
+Initial Margin Required IICWMN28 Numeric 34 24 digits before and 10 digits after decimal.
+Excess Initial Margin IICWMN29 Numeric 34 24 digits before and 10 digits after decimal.
+Variation Margin Received IICWMN30 Numeric 34 24 digits before and 10 digits after decimal.
+10
+Schedule C: Top 10 exposures to Central Counterparties (CCP)(weekly) Data Items MDRM Data Type Field Length Notes Max Variation Margin (ΔVM) IICWMN31 Numeric 34 24 digits before and 10 digits after decimal.
+Portfolio Net MTM IICWMN32 Numeric 34 24 digits before and 10 digits after decimal.
+Other Clearing Account Exposures IICWMN33 Numeric 34 24 digits before and 10 digits after decimal.
+Clearing Account Exposures Derivatives Exposures on Clearing Account Derivatives Gross CE IICWMN34 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Gross Payables IICWMN35 Numeric 34 24 digits before and 10 digits after decimal.
+Other Product Exposures on Clearing Account Other Exposures on Clearing Account IICWMN36 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Products Breakdown Contracts with Positive MTM Credit IICWMN37 Numeric 34 24 digits before and 10 digits after decimal.
+Commodities IICWMN38 Numeric 34 24 digits before and 10 digits after decimal.
+Equity IICWMN39 Numeric 34 24 digits before and 10 digits after decimal.
+FX IICWMN40 Numeric 34 24 digits before and 10 digits after decimal.
+Interest Rate IICWMN41 Numeric 34 24 digits before and 10 digits after decimal.
+Other IICWMN42 Numeric 34 24 digits before and 10 digits after decimal.
+Contracts with Negative MTM Credit IICWMN43 Numeric 34 24 digits before and 10 digits after decimal.
+Commodities IICWMN44 Numeric 34 24 digits before and 10 digits after decimal.
+Equity IICWMN45 Numeric 34 24 digits before and 10 digits after decimal.
+FX IICWMN46 Numeric 34 24 digits before and 10 digits after decimal.
+Interest Rate IICWMN47 Numeric 34 24 digits before and 10 digits after decimal.
+Other IICWMN48 Numeric 34 24 digits before and 10 digits after decimal.
+Total Gross Notional Credit IICWMN49 Numeric 34 24 digits before and 10 digits after decimal.
+Commodities IICWMN50 Numeric 34 24 digits before and 10 digits after decimal.
+Equity IICWMN51 Numeric 34 24 digits before and 10 digits after decimal.
+FX IICWMN52 Numeric 34 24 digits before and 10 digits after decimal.
+Interest Rate IICWMN53 Numeric 34 24 digits before and 10 digits after decimal.
+Other IICWMN54 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Notional OTC IICWMN55 Numeric 34 24 digits before and 10 digits after decimal.
+Non-Clearing Account Exposures Derivatives Derivatives Gross CE IICWMN56 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Net CE IICWMN57 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Gross Payables IICWMN58 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Net Payables IICWMN59 Numeric 34 24 digits before and 10 digits after decimal.
+STMP
+Total STMP IICWMN60 Numeric 34 24 digits before and 10 digits after decimal.
+Lending Lending IICWMN61 Numeric 34 24 digits before and 10 digits after decimal.
+Issuer Risk Equity MTM IICWMN62 Numeric 34 24 digits before and 10 digits after decimal.
+Fixed Income MTM IICWMN63 Numeric 34 24 digits before and 10 digits after decimal.
+Notional of Credit Default Swap (CDS) Bought IICWMN64 Numeric 34 24 digits before and 10 digits after decimal.
+11
+Schedule C: Top 10 exposures to Central Counterparties (CCP)(weekly) Data Items MDRM Data Type Field Length Notes Notional of Credit Default Swap (CDS) Sold IICWMN65 Numeric 34 24 digits before and 10 digits after decimal.
+Net MTM Credit Default Swap (CDS) IICWMN66 Numeric 34 24 digits before and 10 digits after decimal.
+Other Other Non-Clearing Account Exposures IICWMN67 Numeric 34 24 digits before and 10 digits after decimal.
+Securities Financing Transactions Mark to Market (MTM) Securities Lending/Borrowing MTM Cash and Securities Received Total Cash and Securities Received IICWMN68 Numeric 34 24 digits before and 10 digits after decimal.
+Cash and Securities Provided Total Cash and Securities Provided IICWMN69 Numeric 34 24 digits before and 10 digits after decimal.
+Securities Financing Transactions Mark to Market (MTM) Repo MTM Total Repo IICWMN70 Numeric 34 24 digits before and 10 digits after decimal.
+Reverse Repo MTM Total Reverse Repo IICWMN71 Numeric 34 24 digits before and 10 digits after decimal.
+Top 10 Exposures to Central Counterparties Description of Capital Requirements IICWMN72 Text 219 Description of Portfolio Net Mark to Market (MTM) IICWMN73 Text 219 Description of Other Clearing Account Exposures IICWMN74 Text 219 Description of Clearing Account Exposures PE Methodology Derivatives PE Confidence Level IICWMN75 Numeric 2 Margin Period of Risk (MPOR) IICWMN76 Text 219 Calibration Period IICWMN77 Text 219 Time Grid IICWMN78 Text 219 Collateral IICWMN79 Text 219 Over-Collateralization IICWMN80 Text 219 Model IICWMN81 Text 219 Number of Monte Carlo Scenarios IICWMN82 Numeric 14 Other Assumptions and Materiality Thresholds IICWMN83 Text 219 Securities Lending/Borrowing PE Confidence Level IICWMN84 Numeric 2 Margin Period of Risk (MPOR) IICWMN85 Text 219 Calibration Period IICWMN86 Text 219 Time Grid IICWMN87 Text 219 Collateral IICWMN88 Text 219 Over-Collateralization IICWMN89 Text 219 Model IICWMN90 Text 219 Number of Monte Carlo Scenarios IICWMN91 Numeric 14 Other Assumptions and Materiality Thresholds IICWMN92 Text 219 Repo/Reverse Repo PE Confidence Level IICWMN93 Numeric 2 Margin Period of Risk (MPOR) IICWMN94 Text 219 Calibration Period IICWMN95 Text 219 Time Grid IICWMN96 Text 219 Collateral IICWMN97 Text 219 12
+Schedule C: Top 10 exposures to Central Counterparties (CCP)(weekly) Data Items MDRM Data Type Field Length Notes Over-Collateralization IICWMN98 Text 219 Model IICWMN99 Text 219 Number of Monte Carlo Scenarios IICWMP00 Numeric 14 Other Assumptions and Materiality Thresholds IICWMP01 Text 219 Description of Other Exposures on Clearing Account IICWMP02 Text 219 Description of Other Derivatives IICWMP03 Text 219 Description of Securities Financing Transaction Potential Exposure (SFT PE) Methodology Securities Lending/Borrowing Potential Exposure Confidence Level IICWMP04 Numeric 2 Margin Period of Risk (MPOR) IICWMP05 Text 219 Calibration Period IICWMP06 Text 219 Time Grid IICWMP07 Text 219 Collateral IICWMP08 Text 219 Over-Collateralization IICWMP09 Text 219 Model IICWMP10 Text 219 Number of Monte Carlo Scenarios IICWMP11 Numeric 14 Other Assumptions and Materiality Thresholds IICWMP12 Text 219 Repo/Reverse Repo Potential Exposure Confidence Level IICWMP13 Numeric 2 Margin Period of Risk (MPOR) IICWMP14 Text 219 Calibration Period IICWMP15 Text 219 Time Grid IICWMP16 Text 219 Collateral IICWMP17 Text 219 Over-Collateralization IICWMP18 Text 219 Model IICWMP19 Text 219 Number of Monte Carlo Scenarios IICWMP20 Numeric 14 Other Assumptions and Materiality Thresholds IICWMP21 Text 219 Top 10 Exposures to Central Counterparties Description of Other Non-Clearing Account Exposures IICWMP22 Text 219 Other Firm Notes IICWMR57 Text 219 I-I Credit Exposure (Monthly) Item Data MDRMs Schedule B: Largest Counterparty Credit Exposures (monthly) Data Items MDRM Data Type Field Length Notes Legal Name IICM9017 Text 72 As of date IICM9999 Numeric 14 Version number IICMR656 Numeric 2 Legal Entity Identifier IICM9224 Text 72 Currency IICMS371 Text 3 Exchange Rate IICMS395 Numeric 5 2 digits before decimal, 3 digits after Counterparty Information Rank IICMM899 Numeric 3 Counterparty Name IICMM900 Text 72 13
+Schedule B: Largest Counterparty Credit Exposures (monthly) Data Items MDRM Data Type Field Length Notes Unique Identifier IICMM901 Text 72 Derivatives Products MTM Contracts with Positive MTM Credit IICMMP75 Numeric 34 24 digits before and 10 digits after decimal.
+Commodities IICMMP76 Numeric 34 24 digits before and 10 digits after decimal.
+Equity IICMMP77 Numeric 34 24 digits before and 10 digits after decimal.
+FX IICMMP78 Numeric 34 24 digits before and 10 digits after decimal.
+Interest Rate IICMMP79 Numeric 34 24 digits before and 10 digits after decimal.
+Other IICMMP80 Numeric 34 24 digits before and 10 digits after decimal.
+Contracts with Negative MTM Credit IICMMP81 Numeric 34 24 digits before and 10 digits after decimal.
+Commodities IICMMP82 Numeric 34 24 digits before and 10 digits after decimal.
+Equity IICMMP83 Numeric 34 24 digits before and 10 digits after decimal.
+FX IICMMP84 Numeric 34 24 digits before and 10 digits after decimal.
+Interest Rate IICMMP85 Numeric 34 24 digits before and 10 digits after decimal.
+Other IICMMP86 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Payables Gross Payables IICMMP87 Numeric 34 24 digits before and 10 digits after decimal.
+IM Posted IICMMP88 Numeric 34 24 digits before and 10 digits after decimal.
+VM Posted IICMMP89 Numeric 34 24 digits before and 10 digits after decimal.
+Collateral Posted IICMMP90 Numeric 34 24 digits before and 10 digits after decimal.
+Net Payables IICMMP91 Numeric 34 24 digits before and 10 digits after decimal.
+Collateral Posted in Excess IICMMP92 Numeric 34 24 digits before and 10 digits after decimal.
+Collateral in Dispute IICMMP93 Numeric 34 24 digits before and 10 digits after decimal.
+Collateral Posted to a Third-Party IICMMP94 Numeric 34 24 digits before and 10 digits after decimal.
+Securities Financing Transactions MTM Securities Lending/Borrowing: Cash and Securities Received Total Cash and Securities Received IICMMP95 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: G7 Sovereign and Agency MBS and Debt IICMMP96 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: Highly Rated Corporate and Non-G7 Sovereign Debt IICMMP97 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: Cash IICMMP98 Numeric 34 24 digits before and 10 digits after decimal.
+Securities Lending/Borrowing: Cash and Securities Provided Total Cash and Securities Provided IICMMP99 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: G7 Sovereign and Agency MBS and Debt IICMMQ00 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: Highly Rated Corporate and Non-G7 Sovereign Debt IICMMQ01 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: Cash IICMMQ02 Numeric 34 24 digits before and 10 digits after decimal.
+Repo MTM Total Repo IICMMQ03 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: G7 Sovereign and Agency MBS and Debt IICMMQ04 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: Highly Rated Corporate and Non-G7 Sovereign Debt IICMMQ05 Numeric 34 24 digits before and 10 digits after decimal.
+Reverse Repo MTM Total Reverse Repo IICMMQ06 Numeric 34 24 digits before and 10 digits after decimal.
+14
+Schedule B: Largest Counterparty Credit Exposures (monthly) Data Items MDRM Data Type Field Length Notes Of which: G7 Sovereign and Agency MBS and Debt IICMMQ07 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: Highly Rated Corporate and Non-G7 Sovereign Debt IICMMQ08 Numeric 34 24 digits before and 10 digits after decimal.
+Lending Undrawn Commitments (secured) IICMMQ09 Numeric 34 24 digits before and 10 digits after decimal.
+Undrawn Commitments (unsecured) IICMMQ10 Numeric 34 24 digits before and 10 digits after decimal.
+Funded (secured) IICMMQ11 Numeric 34 24 digits before and 10 digits after decimal.
+Funded (unsecured) IICMMQ12 Numeric 34 24 digits before and 10 digits after decimal.
+Funded Participations vv Originator IICMMQ13 Numeric 34 24 digits before and 10 digits after decimal.
+Unfunded Participations (received) IICMMQ14 Numeric 34 24 digits before and 10 digits after decimal.
+Unfunded Participations (provided) IICMMQ15 Numeric 34 24 digits before and 10 digits after decimal.
+Credit Reserves IICMMQ16 Numeric 34 24 digits before and 10 digits after decimal.
+Issuer Risk Sovereign-backed IICMMQ17 Numeric 34 24 digits before and 10 digits after decimal.
+Settlement Limits Total Payments/Clearing/Settlement Limits IICMMQ18 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: FX Clearing/Settlement Limits IICMMQ19 Numeric 34 24 digits before and 10 digits after decimal.
+Other Other Exposures IICMMQ20 Numeric 34 24 digits before and 10 digits after decimal.
+TOTAL EXPOSURE
+All Counterparties Derivatives Products MTM Contracts with Positive MTM Credit IICMMQ21 Numeric 34 24 digits before and 10 digits after decimal.
+Commodities IICMMQ22 Numeric 34 24 digits before and 10 digits after decimal.
+Equity IICMMQ23 Numeric 34 24 digits before and 10 digits after decimal.
+FX IICMMQ24 Numeric 34 24 digits before and 10 digits after decimal.
+Interest Rate IICMMQ25 Numeric 34 24 digits before and 10 digits after decimal.
+Other IICMMQ26 Numeric 34 24 digits before and 10 digits after decimal.
+Contracts with Negative MTM Credit IICMMQ27 Numeric 34 24 digits before and 10 digits after decimal.
+Commodities IICMMQ28 Numeric 34 24 digits before and 10 digits after decimal.
+Equity IICMMQ29 Numeric 34 24 digits before and 10 digits after decimal.
+FX IICMMQ30 Numeric 34 24 digits before and 10 digits after decimal.
+Interest Rate IICMMQ31 Numeric 34 24 digits before and 10 digits after decimal.
+Other IICMMQ32 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives Payables Gross Payables IICMMQ33 Numeric 34 24 digits before and 10 digits after decimal.
+Net Payables IICMMQ34 Numeric 34 24 digits before and 10 digits after decimal.
+Securities Financing Transactions MTM Securities Lending/Borrowing: Cash and Securities Received Total Cash and Securities Received IICMMQ35 Numeric 34 24 digits before and 10 digits after decimal.
+Securities Lending/Borrowing: Cash and Securities Provided Total Cash and Securities Provided IICMMQ36 Numeric 34 24 digits before and 10 digits after decimal.
+Repo MTM 15
+Schedule B: Largest Counterparty Credit Exposures (monthly) Data Items MDRM Data Type Field Length Notes Total Repo IICMMQ37 Numeric 34 24 digits before and 10 digits after decimal.
+Reverse Repo MTM Total Reverse Repo IICMMQ38 Numeric 34 24 digits before and 10 digits after decimal.
+Lending Undrawn Commitments (secured) IICMMQ39 Numeric 34 24 digits before and 10 digits after decimal.
+Undrawn Commitments (unsecured) IICMMQ40 Numeric 34 24 digits before and 10 digits after decimal.
+Funded (secured) IICMMQ41 Numeric 34 24 digits before and 10 digits after decimal.
+Funded (unsecured) IICMMQ42 Numeric 34 24 digits before and 10 digits after decimal.
+Funded Participations vv Originator IICMMQ43 Numeric 34 24 digits before and 10 digits after decimal.
+Firm Notes Description of Other Derivatives IICMMQ44 Text 219 Description of Collateral in Dispute IICMMQ45 Text 219 Description of Other Expenses IICMMQ46 Text 219 Other firm notes IICMMM06 Text 864 Schedule D: Top 20 exposures to Sovereign Entities (monthly) Data Items MDRM Data Type Field Length Notes Firm Name IICM9017 Text 72 As of date IICM9999 Numeric 14 Version number IICMR656 Numeric 2 Firm LEI IICM9224 Text 72 Currency IICMS371 Text 3 Closing Exchange Rate IICMS395 Numeric 5 2 digits before decimal, 3 digits after Counterparty Information Row Sequential Number IICMN186 Numeric 2 Rank IICMMT83 Numeric 3 Country IICM9031 Text 72 ISO Country Code IICMNC97 Text 3 Exposures to central governments, by product type Derivatives Positions Gross CE IICMMQ54 Numeric 34 24 digits before and 10 digits after decimal.
+Collateral Received IICMMQ55 Numeric 34 24 digits before and 10 digits after decimal.
+Collateral Posted in Excess IICMMQ56 Numeric 34 24 digits before and 10 digits after decimal.
+Net CE IICMMQ57 Numeric 34 24 digits before and 10 digits after decimal.
+CVA balance IICMMQ58 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives PE (internal measure) IICMMQ59 Numeric 34 24 digits before and 10 digits after decimal.
+Derivatives SA-CCR EAD IICMMQ60 Numeric 34 24 digits before and 10 digits after decimal.
+Gross Payables IICMMQ61 Numeric 34 24 digits before and 10 digits after decimal.
+Collateral Posted IICMMQ62 Numeric 34 24 digits before and 10 digits after decimal.
+Net Payables IICMMQ63 Numeric 34 24 digits before and 10 digits after decimal.
+Issuer Risk Fixed Income MTM IICMMQ64 Numeric 34 24 digits before and 10 digits after decimal.
+Fixed Income Derivatives IICMMQ65 Numeric 34 24 digits before and 10 digits after decimal.
+Notional of CDS Bought IICMMQ66 Numeric 34 24 digits before and 10 digits after decimal.
+16
+Schedule D: Top 20 exposures to Sovereign Entities (monthly) Data Items MDRM Data Type Field Length Notes Notional of CDS Sold IICMMQ67 Numeric 34 24 digits before and 10 digits after decimal.
+Net Notional CDS IICMMQ68 Numeric 34 24 digits before and 10 digits after decimal.
+Net MTM CDS IICMMQ69 Numeric 34 24 digits before and 10 digits after decimal.
+SFT SFT PE IICMMQ70 Numeric 34 24 digits before and 10 digits after decimal.
+Lending Lending IICMMQ71 Numeric 34 24 digits before and 10 digits after decimal.
+Lending Credit Hedges Credit Hedges Notional IICMMQ72 Numeric 34 24 digits before and 10 digits after decimal.
+Credit Hedges Market Value IICMMQ73 Numeric 34 24 digits before and 10 digits after decimal.
+Other Exposures Other Exposures IICMMQ74 Numeric 34 24 digits before and 10 digits after decimal.
+Total Exposures by counterparty type Sorting Criteria Central Government IICMMQ75 Numeric 34 24 digits before and 10 digits after decimal.
+Not in Sorting Criteria Central Bank IICMMQ76 Numeric 34 24 digits before and 10 digits after decimal.
+Of which: Reserves at the Central Bank IICMMQ77 Numeric 34 24 digits before and 10 digits after decimal.
+Firm Notes Describe PE Methodology Derivatives PE Confidence Level IICMML79 Numeric 2 MPOR IICMML80 Text 219 Calibration Period IICMML81 Text 219 Time Grid IICMML82 Text 219 Collateral IICMML83 Text 219 Over-Collateralization IICMML84 Text 219 Model IICMML85 Text 219 Number of Monte Carlo Scenarios IICMML86 Numeric 14 Other assumptions and materiality thresholds IICMML87 Text 219 SFT PE Confidence Level IICMMR02 Numeric 2 MPOR IICMMR03 Text 219 Calibration Period IICMMR04 Text 219 Time Grid IICMMR05 Text 219 Collateral IICMMR06 Text 219 Over-Collateralization IICMMR07 Text 219 Model IICMMR08 Text 219 Number of Monte Carlo Scenarios IICMMR09 Numeric 14 Other assumptions and materiality thresholds IICMMR10 Text 219 Description of Other Exposures IICMMR58 Text 219 Other firm notes IICMMQ47 Text 219 17
+Report Submission in Reporting Central In Reporting Central, select the “Upload file” tab and then click the “Upload your files here” tab.
+Then, navigate to the stored XML file and select the filename so it appears in the ‘File name:’ box. Select “Open” to continue and then hit the “Upload” button.
+If there are no formatting issues during the file upload you will get a “File Upload Complete” message the data will load directly into the report screen.
+The report data can then be validated, saved, submitted or deleted. If errors exist in the text file error messages will appear in the file upload window, which can be used to troubleshoot any formatting issues.
+18

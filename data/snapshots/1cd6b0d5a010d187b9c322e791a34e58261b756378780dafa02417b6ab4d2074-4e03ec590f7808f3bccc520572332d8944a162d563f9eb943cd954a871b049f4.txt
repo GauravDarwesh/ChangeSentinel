@@ -1,0 +1,594 @@
+Reporting Central User Guide
+FR 2510
+Report of Institution-to-Aggregate Granular Data on Assets and Liabilities on an Immediate Counterparty Basis
+Federal Reserve System
+Statistics Function June 2026
+2 General Information
+The Federal Reserve System’s Reporting Central Application provides the ability for a reporting entity to submit their reports electronically using an XML file. This document describes the required format for creating the XML file for the FR2510 (Report of Institution-to-Aggregate Granular Data on Assets and Liabilities on an Immediate Counterparty Basis) report.
+How the XML File Is Structured
+Each XML file contains financial data for one reporting entity and asof date. The data in the file is organized into the following sections.
+• Reporting File o Create date o Create time
+• Report o Respondent Id o As Of Date o Series Id
+• Item Data o Context used for data in a variable schedule All FR2510 schedules are variable schedules except for Financial Derivatives Schedule o Value
+XML structure or schema:
+<?xml version="1.0" encoding="UTF-8"?> <reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd"> <report series="FR2510" asOfDate="2019-09-30" reporterId="9999999999"> <!-- Cover Page items --> <itemData confidential="N" estimated="N" mdrm=”MDRM1111”> <value>value for “MDRM1111”</value> </itemData>
+<!-- Variable schedule items --> <!-- Item #1 --> <itemData confidential="N" estimated="N" mdrm=”MDRM1114”> <value> value for 1st occurrence of “MDRM1114”</value> <context mdrm=”MDRM1010” value=”1”/> </itemData> <itemData confidential="N" estimated="N" mdrm=”MDRM1115”> <value>value for 1st occurrence of “MDRM1115”</value> <context mdrm=”MDRM1010” value=” 1”/> </itemData>
+<!-- Item #2 --> <itemData confidential="N" estimated="N" mdrm=”MDRM1114”> <value> value for 2nd occurrence of “MDRM1114”</</value> <context mdrm=”MDRM1010” value=” 2”/> </itemData> <itemData confidential="N" estimated="N" mdrm=”MDRM1115”> <value>value for 2nd occurrence of “MDRM1115”</value> <context mdrm=”MDRM1010” value=” 2”/> </itemData>
+<!—Non-Variable schedule items --> <itemData confidential="N" estimated="N" mdrm=”MDRM1116”> <value>value for “MDRM1116”</value> </itemData>
+</report>
+3 </reportingFile>
+Reporting File is a wrapper that encapsulates all the data in the file; it must include the create date and time of the file.
+Report is a wrapper that encapsulates all the data items; it must include attributes to identity the respondent Reporter Id, the report As of Date, and the report Series Id.
+Item Data is a wrapper that encapsulates the report data values for the reporting entity and as of date.
+XML Tags and Their Meanings
+XML Tag/Attribute Meaning/How Used <reportingFile> A tag used to encapsulate all the data in the file xsi:noNamespaceSchemaLocation="RCInputXML- 1.0-20160520.xsd" Attribute of the reportingFile tag which specifies the location of the Schema createTime=”09:30:45” Attribute of the reportingFile tag which specifies the time the file was created createDate=”2016-08-13 Attribute of the reportingFile tag which specifies the date the file was created xmlns:xsi="http://www.w3.org/2001/XMLSchemainstance" Optional attribute of the reportingFile tag which tells the schema-validator that all elements used in the XML file are declared in the "http://www.w3.org/2001/XMLSchemainstance" namespace <report> A tag used to identify the series name, the reporting entity and the as of data of the data.
+reporterId=”9999999999” Attribute of the report tag which specifies the respondent ID asOfDate=”2016-09-30” Attribute of the report tag which specifies the as of date of the report series=”SERIESID” Attribute of the report tag which specifies the series name <itemData> A tag used to encapsulate the item and its value from the report mdrm=”MDRM9999” Attribute of the itemData tag which identifies a specific item in the report <value> A tag encapsulated within itemData tag and contains the value of the item <context> An optional tag encapsulated within itemData tag used to identify the order of a variable list of items mdrm=”MDRM8888” Attribute of the context tag which identifies a group of items in the report value=”1” Attribute of the context tag which identifies the order of in the item group
+4 FR2510 Item Data MDRMs
+Cover Page
+Data Items
+MDRM Type Length Notes Name IAIC8901 Text 72 Title IAICC496 Text 72 Area Code / Phone Number IAIC8902 Text 30 Legal Name of Reporting Institution RSSD9017 Text 72
+City RSSD9130 Text 30
+State RSSD9200 Text 2
+Table 1
+Data Items
+MDRM Type Length Notes
+1. Cash and balances due from banks
+Total Positions IAICGW69 Numeric 14 Only applicable in USD currency.
+Reported in whole dollars without commas and leading zeroes Currency IAICGX13 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX57 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY01 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY45 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGY89 Numeric 14 Reported in whole dollars without commas and leading zeroes
+2. Resale agreements Total Positions IAICGW70 Numeric 14 Only applicable in USD currency.
+Reported in whole dollars without commas and leading zeroes Currency IAICGX14 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX58 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY02 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY46 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGY90 Numeric 14 Reported in whole dollars without commas and leading zeroes
+3. Securities borrowing Total Positions IAICGW71 Numeric 14 Only applicable in USD currency.
+Reported in whole dollars without commas and leading zeroes Currency IAICGX15 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX59 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY03 Numeric 14 Reported in whole dollars without commas and leading zeroes
+5
+Table 1
+Data Items
+MDRM Type Length Notes 3 Months and Less Than 1 Year IAICGY47 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGY91 Numeric 14 Reported in whole dollars without commas and leading zeroes
+4. Loans gross of allowances for credit losses (sum of items 4.a through 4.c) Total Positions IAICGW72 Numeric 14 Only applicable in USD currency.
+Reported in whole dollars without commas and leading zeroes Currency IAICGX16 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX60 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY04 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY48 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGY92 Numeric 14 Reported in whole dollars without commas and leading zeroes 4.a. Residential loans Total Positions IAICGW73 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX17 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX61 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY05 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY49 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGY93 Numeric 14 Reported in whole dollars without commas and leading zeroes 4.b. Commercial real estate loans Total Positions IAICGW74 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX18 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX62 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY06 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY50 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGY94 Numeric 14 Reported in whole dollars without commas and leading zeroes 4.c. Other loans Total Positions IAICGW75 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX19 Numeric 14 Reported in whole dollars without commas and leading zeroes
+6
+Table 1
+Data Items
+MDRM Type Length Notes Non-Maturity Instruments IAICGX63 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY07 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY51 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGY95 Numeric 14 Reported in whole dollars without commas and leading zeroes 4.d. Allowances for credit losses Total Positions IAICGW76 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+5. Debt securities holdings (sum of items 5.a through 5.c) Total Positions IAICGW77 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX21 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX65 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY09 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY53 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGY97 Numeric 14 Reported in whole dollars without commas and leading zeroes 5.a. ABS Total Positions IAICGW78 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX22 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX66 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY10 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY54 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGY98 Numeric 14 Reported in whole dollars without commas and leading zeroes 5.b. Other secured debt securities Total Positions IAICGW79 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX23 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX67 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY11 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY55 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGY99 Numeric 14 Reported in whole dollars without commas and leading zeroes
+7
+Table 1
+Data Items
+MDRM Type Length Notes 5.c. Unsecured debt securities Total Positions IAICGW80 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX24 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX68 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY12 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY56 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ00 Numeric 14 Reported in whole dollars without commas and leading zeroes
+6. Financial derivatives
+Total Positions IAICGW81 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+7. Equity instruments Total Positions IAICGW82 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX26 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX70 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY14 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY58 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ02 Numeric 14 Reported in whole dollars without commas and leading zeroes
+8. Other financial advances and instruments
+Total Positions IAICGW83 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes 9.a. Gross of allowances for credit losses (sum of items 1 through 5, plus 7) Total Positions IAICGW84 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX28 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX72 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY16 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY60 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ04 Numeric 14 Reported in whole dollars without commas and leading zeroes 9.b. Net of allowances for credit losses (sum of items 1 through 4, less 4.d, plus 5, plus 7) Total Positions IAICGW85 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+10. Tangible / fixed assets
+Total Positions IAICGW86 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+11. Intangible assets Total Positions IAICGW87
+Numeric 14 Only applicable in USD currency
+8
+Table 1
+Data Items
+MDRM Type Length Notes Reported in whole dollars without commas and leading zeroes
+12. Tax assets Total Positions IAICGW88
+Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+13. Other assets Total Positions IAICGW89
+Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+14. Total assets (sum of items 6 plus 8, plus 9.b, plus 10 through 13) Total Positions IAICGW90
+Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+15. Deposits Total Positions IAICGW91 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX35 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX79 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY23 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY67 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ11 Numeric 14 Reported in whole dollars without commas and leading zeroes
+16. Repurchase agreements Total Positions IAICGW92 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX36 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX80 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY24 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY68 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ12 Numeric 14 Reported in whole dollars without commas and leading zeroes
+17. Securities lending Total Positions IAICGW93 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX37 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX81 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY25 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY69 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ13 Numeric 14 Reported in whole dollars without commas and leading zeroes
+18. Other borrowings Total Positions IAICGW94 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX38 Numeric 14 Reported in whole dollars without commas and leading zeroes
+9
+Table 1
+Data Items
+MDRM Type Length Notes Non-Maturity Instruments IAICGX82 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY26 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY70 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ14 Numeric 14 Reported in whole dollars without commas and leading zeroes 19.a. Debt securities issued (sum of items 19.a.(1) through 19.a.(7)) Total Positions IAICGW95 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX39 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX83 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY27 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY71 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ15 Numeric 14 Reported in whole dollars without commas and leading zeroes 19.a. (1) ABS Total Positions IAICGW96 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX40 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX84 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY28 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY72 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ16 Numeric 14 Reported in whole dollars without commas and leading zeroes 19.a. (2) Covered bonds Total Positions IAICGW98 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX42 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX86 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY30 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY74 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ18 Numeric 14 Reported in whole dollars without commas and leading zeroes 19.a. (3) Commercial papers Total Positions IAICGW99 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX43 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX87 Numeric 14 Reported in whole dollars without commas and leading zeroes
+10
+Table 1
+Data Items
+MDRM Type Length Notes Overnight and Less Than 3 Months IAICGY31 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY75 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ19 Numeric 14 Reported in whole dollars without commas and leading zeroes 19.a. (4) Senior unsecured long-term debts Total Positions IAICGX00 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX44 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX88 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY32 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY76 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ20 Numeric 14 Reported in whole dollars without commas and leading zeroes 19.a. (5) Hybrid contracts Total Positions IAICGX01 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX45 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX89 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY33 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY77 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ21 Numeric 14 Reported in whole dollars without commas and leading zeroes 19.a. (6) Other debt securities issued convertible Total Positions IAICGX02 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX46 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX90 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY34 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY78 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ22 Numeric 14 Reported in whole dollars without commas and leading zeroes 19.a. (7) Other debt securities Total Positions IAICGX03 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX47 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX91 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY35 Numeric 14 Reported in whole dollars without commas and leading zeroes
+11
+Table 1
+Data Items
+MDRM Type Length Notes 3 Months and Less Than 1 Year IAICGY79 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ23 Numeric 14 Reported in whole dollars without commas and leading zeroes 19.b. Of which: subordinated debt securities Total Positions IAICGX04 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX41 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX85 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY29 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY73 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ17 Numeric 14 Reported in whole dollars without commas and leading zeroes
+20. Financial derivatives Total Positions IAICGW97 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+21. Other financial payables Total Positions IAICGX05 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+22. Total financial liabs excluding derivatives, debt sec, & other fin payables (sum of items 15-18) Total Positions IAICGX06 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes Currency IAICGX50 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-Maturity Instruments IAICGX94 Numeric 14 Reported in whole dollars without commas and leading zeroes Overnight and Less Than 3 Months IAICGY38 Numeric 14 Reported in whole dollars without commas and leading zeroes 3 Months and Less Than 1 Year IAICGY82 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year and Over IAICGZ26 Numeric 14 Reported in whole dollars without commas and leading zeroes
+23. Allowance for credit losses on off-balance sheet exposures Total Positions IAICGX07 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+24. Tax liabilities Total Positions IAICGX08 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+25. Other liabilities Total Positions IAICGX09 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+26. Total liabilities (sum of items 19 through 25) Total Positions IAICGX10 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+27. Total equity Total Positions IAICG105 Numeric 14 Only applicable in USD currency.
+Populated from the FR Y-9C
+28. Total liabilities & equity (sum of items 26 and 27) Total Positions IAICGX12 Numeric 14 Only applicable in USD currency Reported in whole dollars without commas and leading zeroes
+12
+Table 2
+Data Items
+MDRM Type Length Notes
+1. Cash and balances due from banks Sector Total (= CBS total claims) IAICGZ33 Numeric 14 Reported in whole dollars without commas & leading zeroes Banks IAICHA01 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD41 Numeric 14 Reported in whole dollars without commas and leading zeroes
+2. Resale agreements Sector Total (= CBS total claims) IAICGZ34 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA02 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHA70 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB38 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHC74 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD42 Numeric 14 Reported in whole dollars without commas and leading zeroes
+3. Securities borrowing Sector Total (= CBS total claims) IAICGZ35 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA03 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHA71 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB39 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHC75 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD43 Numeric 14 Reported in whole dollars without commas and leading zeroes
+4. Loans gross of allowances for credit losses (sum of items 4.a through 4.c) Sector Total (= CBS total claims) IAICGZ36 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA04 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHA72 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB40 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC08 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHC76 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD44 Numeric 14 Reported in whole dollars without commas and leading zeroes
+4. a. Residential loans Sector Total (= CBS total claims) IAICGZ37 Numeric 14 Reported in whole dollars without commas and leading zeroes
+4. b. Commercial real estate loans Sector Total (= CBS total claims) IAICGZ38 Numeric 14 Reported in whole dollars without commas and leading zeroes
+4. c. Other loans Sector Total (= CBS total claims) IAICGZ39 Numeric 14 Reported in whole dollars without commas and leading zeroes
+13
+Table 2
+Data Items
+MDRM Type Length Notes
+4. d. Allowances for credit losses Sector Total (= CBS total claims) IAICGZ40 Numeric 14 Reported in whole dollars without commas and leading zeroes
+5. Debt securities holdings (sum of items 5.a through 5.c) Sector Total (= CBS total claims) IAICGZ41 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA09 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHA77 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB45 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHC81 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD49 Numeric 14 Reported in whole dollars without commas and leading zeroes 5.a. ABS Sector Total (= CBS total claims) IAICGZ42 Numeric 14 Reported in whole dollars without commas and leading zeroes 5.b. Other secured debt securities Sector Total (= CBS total claims) IAICGZ43 Numeric 14 Reported in whole dollars without commas and leading zeroes 5.c. Unsecured debt securities Sector Total (= CBS total claims) IAICGZ44 Numeric 14 Reported in whole dollars without commas and leading zeroes
+7. Equity instruments Sector Total (= CBS total claims) IAICGZ46 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA14 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHA82 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB50 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector
+IAICHD54 Numeric 14 Reported in whole dollars without commas and leading zeroes 9.a. Gross of allowances for credit losses (sum of items 1 through 5, plus 7) Sector Total (= CBS total claims) IAICGZ48 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA16 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHA84 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB52 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC20 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHC88 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD56 Numeric 14 Reported in whole dollars without commas and leading zeroes 9.b. Net of allowances for credit losses (sum of items 1-4, less 4.d, plus 5, plus 7) Sector Total (= CBS total claims) IAICGZ49 Numeric 14 Reported in whole dollars without commas and leading zeroes
+15. Deposits Sector Total (= CBS total claims) IAICGZ64 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA32 Numeric 14 Reported in whole dollars without commas and leading zeroes
+14
+Table 2
+Data Items
+MDRM Type Length Notes NBFIs
+IAICHB00 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB68 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC36 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHD04 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD72 Numeric 14 Reported in whole dollars without commas and leading zeroes
+16. Repurchase agreements Sector Total (= CBS total claims) IAICGZ65 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA33 Numeric 14 Reported in whole dollars without commas and leading zeroes
+NBFIs
+IAICHB01 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB69 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHD05 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD73 Numeric 14 Reported in whole dollars without commas and leading zeroes
+17. Securities lending Sector Total (= CBS total claims) IAICGZ66 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA34 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHB02 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB70 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHD06
+Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD74 Numeric 14 Reported in whole dollars without commas and leading zeroes
+18. Other borrowings Sector Total (= CBS total claims) IAICGZ67 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA35 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHB03 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB71 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC39 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHD07 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector
+IAICHD75
+Numeric 14 Reported in whole dollars without commas and leading zeroes
+29. Financial guarantees given (sum of items 29.a and 29.b) Sector Total (= CBS total claims) IAICGZ95
+Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA63
+Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHB31
+Numeric 14 Reported in whole dollars without commas and leading zeroes
+| 29.a. CDs and other credit derivatives (protection sold) › 29.b. Guarantees extended › 30. Credit commitments given (sum of items 30.a and 30.b › 30.a. Loan commitments given | Table 2 › Data Items › 29.a. CDs and other credit derivatives (protection sold) › 29.b. Guarantees extended › 30. Credit commitments given (sum of items 30.a and 30.b › 30.a. Loan commitments given | Table 2 › Data Items › NFCs › Households › Government › Unallocated by Sector › Sector Total (= CBS total claims) › Banks › NBFIs | Table 2 › NFCs › Households › Government › Unallocated by Sector › Sector Total (= CBS total claims) › Banks › NBFIs | Table 2 › IAICHB99 › IAICHC67 › IAICHD35 › IAICHE03 › IAICGZ96 › IAICHA64 › IAICHB32 › IAICHC00 › IAICHC68 › IAICHD36 › IAICHE04 › IAICGZ97 › IAICHA65 › IAICHB33 › IAICHC01 › IAICHC69 › IAICHD37 › IAICHE05 › IAICGZ98 › IAICHA66 › IAICHB34 › IAICHC02 › IAICHC70 › IAICHD38 › IAICHE06 › IAICGZ99 › IAICHA67 | Table 2 › MDRM › IAICHB99 › IAICHC67 › IAICHD35 › IAICHE03 › IAICGZ96 › IAICHA64 › IAICHB32 › IAICHC00 › IAICHC68 › IAICHD36 › IAICHE04 › IAICGZ97 › IAICHA65 › IAICHB33 › IAICHC01 › IAICHC69 › IAICHD37 › IAICHE05 › IAICGZ98 › IAICHA66 › IAICHB34 › IAICHC02 › IAICHC70 › IAICHD38 › IAICHE06 › IAICGZ99 › IAICHA67 | Table 2 › IAICHB99 › IAICHC67 › IAICHD35 › IAICHE03 › IAICGZ96 › IAICHA64 › IAICHB32 › IAICHC00 › IAICHC68 › IAICHD36 › IAICHE04 › IAICGZ97 › IAICHA65 › IAICHB33 › IAICHC01 › IAICHC69 › IAICHD37 › IAICHE05 › IAICGZ98 › IAICHA66 › IAICHB34 › IAICHC02 › IAICHC70 › IAICHD38 › IAICHE06 › IAICGZ99 › IAICHA67 | Table 2 › Type › Numeric | Table 2 › Length › 14 | Table 2 › Notes › Reported in whole dollars without commas and leading zeroes | Notes › Reported in whole dollars without commas and leading zeroes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+15
+16
+Table 2
+Data Items
+MDRM Type Length Notes NBFIs
+IAICHB35 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHC03 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC71 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHD39 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHE07 Numeric 14 Reported in whole dollars without commas and leading zeroes 30.b. Other commitments given Sector Total (= CBS total claims) IAICHA00 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA68 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHB36 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHC04 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC72 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHD40 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHE08 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 1a. Cross-border positions in FX Sector Total (= CBS total claims) IAICGZ56 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA24 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHA92 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB60 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC28 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHC96 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD64 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-maturity instruments IAICHE32 Numeric 14 Reported in whole dollars without commas and leading zeroes Less Than 1 Year IAICHF00 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year And Over IAICHF68 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 1.a.(1) Of which in USD Sector Total (= CBS total claims) IAICGZ57 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 1.a.(2) Of which in EUR Sector Total (= CBS total claims) IAICGZ58 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 1.b. Cross-border positions in local currency Sector Total (= CBS total claims) IAICGZ59 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA27 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHA95 Numeric 14 Reported in whole dollars without commas and leading zeroes
+17
+Table 2
+Data Items
+MDRM Type Length Notes NFCs
+IAICHB63 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC31 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHC99 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD67 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-maturity instruments IAICHE35 Numeric 14 Reported in whole dollars without commas and leading zeroes Less Than 1 Year IAICHF03 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year And Over IAICHF71 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 1.c. Local positions in FX Sector Total (= CBS total claims) IAICGZ60 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA28 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHA96 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB64 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC32 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHD00 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD68 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-maturity instruments IAICHE36 Numeric 14 Reported in whole dollars without commas and leading zeroes Less Than 1 Year IAICHF04 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year And Over IAICHF72 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 1.c.(1) Of which in USD Sector Total (= CBS total claims) IAICGZ61 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 1.c.(2) Of which in EUR Sector Total (= CBS total claims) IAICGZ62 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 1.d. Local positions in local currency Sector Total (= CBS total claims) IAICGZ63 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA31 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHA99 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB67 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC35 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHD03 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD71 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-maturity instruments IAICHE39 Numeric 14 Reported in whole dollars without commas and leading zeroes
+18
+Table 2
+Data Items
+MDRM Type Length Notes Less Than 1 Year IAICHF07 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year And Over IAICHF75 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 2.a. Cross-border positions in FX Sector Total (= CBS total claims) IAICGZ87 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA55 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHB23 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB91 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC59 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHD27 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD95 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-maturity instruments IAICHE63 Numeric 14 Reported in whole dollars without commas and leading zeroes Less Than 1 Year IAICHF31 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year And Over IAICHF99 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 2.a.(1) Of which in USD Sector Total (= CBS total claims) IAICGZ88 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 2.a.(2) Of which in EUR Sector Total (= CBS total claims) IAICGZ89 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 2.b. Cross-border positions in local currency Sector Total (= CBS total claims) IAICGZ90 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA58 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHB26 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB94 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC62 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHD30 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD98 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-maturity instruments IAICHE66 Numeric 14 Reported in whole dollars without commas and leading zeroes Less Than 1 Year IAICHF34 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year And Over IAICHG02 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 2.c. Local positions in FX Sector Total (= CBS total claims) IAICGZ91 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA59 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHB27 Numeric 14 Reported in whole dollars without commas and leading zeroes
+19
+Table 2
+Data Items
+MDRM Type Length Notes NFCs
+IAICHB95 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC63 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHD31 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHD99 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-maturity instruments IAICHE67 Numeric 14 Reported in whole dollars without commas and leading zeroes Less Than 1 Year IAICHF35 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year And Over IAICHG03 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 2.c.(1) Of which in USD
+Sector Total (= CBS total claims) IAICGZ92 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 2.c.(2) Of which in EUR Sector Total (= CBS total claims) IAICGZ93 Numeric 14 Reported in whole dollars without commas and leading zeroes M. 2.d. Local positions in local currency Sector Total (= CBS total claims) IAICGZ94 Numeric 14 Reported in whole dollars without commas and leading zeroes Banks IAICHA62 Numeric 14 Reported in whole dollars without commas and leading zeroes NBFIs
+IAICHB30 Numeric 14 Reported in whole dollars without commas and leading zeroes NFCs
+IAICHB98 Numeric 14 Reported in whole dollars without commas and leading zeroes Households IAICHC66 Numeric 14 Reported in whole dollars without commas and leading zeroes Government
+IAICHD34 Numeric 14 Reported in whole dollars without commas and leading zeroes Unallocated by Sector IAICHE02 Numeric 14 Reported in whole dollars without commas and leading zeroes Non-maturity instruments IAICHE70 Numeric 14 Reported in whole dollars without commas and leading zeroes Less Than 1 Year IAICHF38 Numeric 14 Reported in whole dollars without commas and leading zeroes 1 Year And Over IAICHG06 Numeric 14 Reported in whole dollars without commas and leading zeroes
+| 1. Exchange-Traded Derivatives › 1.a. Equity derivatives › 1.b. Interest rate derivatives › 1.c. Foreign exchange derivatives › 1.d. Credit derivatives › 1.e. Commodity derivatives › 1.f. Other derivatives › 2. Centrally-Cleared OTC Derivatives › 2.a. Equity derivatives | Financial Derivatives Schedule › Data Items › 1. Exchange-Traded Derivatives › 1.a. Equity derivatives › 1.b. Interest rate derivatives › 1.c. Foreign exchange derivatives › 1.d. Credit derivatives › 1.e. Commodity derivatives › 1.f. Other derivatives › 2. Centrally-Cleared OTC Derivatives › 2.a. Equity derivatives | Financial Derivatives Schedule › Data Items › Gross Positive Fair Value › Gross Negative Fair Value › Notional Amounts | Financial Derivatives Schedule › Gross Positive Fair Value › Gross Negative Fair Value › Notional Amounts | Financial Derivatives Schedule › IAICHG13 › IAICHG34 › IAICHG55 › IAICHG14 › IAICHG35 › IAICHG56 › IAICHG15 › IAICHG36 › IAICHG57 › IAICHG16 › IAICHG37 › IAICHG58 › IAICHG17 › IAICHG38 › IAICHG59 › IAICHG18 › IAICHG39 › IAICHG60 › IAICHG19 › IAICHG40 › IAICHG61 › IAICHG20 › IAICHG41 › IAICKX35 › IAICHG21 › IAICHG42 | Financial Derivatives Schedule › MDRM › IAICHG13 › IAICHG34 › IAICHG55 › IAICHG14 › IAICHG35 › IAICHG56 › IAICHG15 › IAICHG36 › IAICHG57 › IAICHG16 › IAICHG37 › IAICHG58 › IAICHG17 › IAICHG38 › IAICHG59 › IAICHG18 › IAICHG39 › IAICHG60 › IAICHG19 › IAICHG40 › IAICHG61 › IAICHG20 › IAICHG41 › IAICKX35 › IAICHG21 › IAICHG42 | Financial Derivatives Schedule › IAICHG13 › IAICHG34 › IAICHG55 › IAICHG14 › IAICHG35 › IAICHG56 › IAICHG15 › IAICHG36 › IAICHG57 › IAICHG16 › IAICHG37 › IAICHG58 › IAICHG17 › IAICHG38 › IAICHG59 › IAICHG18 › IAICHG39 › IAICHG60 › IAICHG19 › IAICHG40 › IAICHG61 › IAICHG20 › IAICHG41 › IAICKX35 › IAICHG21 › IAICHG42 | Financial Derivatives Schedule › Type › Numeric | Financial Derivatives Schedule › Length › 14 | Financial Derivatives Schedule › Notes › Reported in whole dollars without commas and leading zeroes | Notes › Reported in whole dollars without commas and leading zeroes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+20
+| 2.b. Interest rate derivatives › 2.c. Foreign exchange derivatives › 2.d. Credit derivatives › 2.e. Commodity derivatives › 2.f. Other derivatives › 3. Bilateral/Uncleared OTC Derivatives › 3.a. Equity derivatives › 3.b. Interest rate derivatives › 3.c. Foreign exchange derivatives | Financial Derivatives Schedule › Data Items › 2.b. Interest rate derivatives › 2.c. Foreign exchange derivatives › 2.d. Credit derivatives › 2.e. Commodity derivatives › 2.f. Other derivatives › 3. Bilateral/Uncleared OTC Derivatives › 3.a. Equity derivatives › 3.b. Interest rate derivatives › 3.c. Foreign exchange derivatives | Financial Derivatives Schedule › Data Items › Notional Amounts › Gross Positive Fair Value › Gross Negative Fair Value | Financial Derivatives Schedule › Notional Amounts › Gross Positive Fair Value › Gross Negative Fair Value | Financial Derivatives Schedule › IAICHG62 › IAICHG22 › IAICHG43 › IAICHG63 › IAICHG23 › IAICHG44 › IAICHG64 › IAICHG24 › IAICHG45 › IAICHG65 › IAICHG25 › IAICHG46 › IAICHG66 › IAICHG26 › IAICHG47 › IAICHG67 › IAICHG27 › IAICHG48 › IAICKX36 › IAICHG28 › IAICHG49 › IAICHG68 › IAICHG29 › IAICHG50 › IAICHG69 › IAICHG30 › IAICHG51 | Financial Derivatives Schedule › MDRM › IAICHG62 › IAICHG22 › IAICHG43 › IAICHG63 › IAICHG23 › IAICHG44 › IAICHG64 › IAICHG24 › IAICHG45 › IAICHG65 › IAICHG25 › IAICHG46 › IAICHG66 › IAICHG26 › IAICHG47 › IAICHG67 › IAICHG27 › IAICHG48 › IAICKX36 › IAICHG28 › IAICHG49 › IAICHG68 › IAICHG29 › IAICHG50 › IAICHG69 › IAICHG30 › IAICHG51 | Financial Derivatives Schedule › IAICHG62 › IAICHG22 › IAICHG43 › IAICHG63 › IAICHG23 › IAICHG44 › IAICHG64 › IAICHG24 › IAICHG45 › IAICHG65 › IAICHG25 › IAICHG46 › IAICHG66 › IAICHG26 › IAICHG47 › IAICHG67 › IAICHG27 › IAICHG48 › IAICKX36 › IAICHG28 › IAICHG49 › IAICHG68 › IAICHG29 › IAICHG50 › IAICHG69 › IAICHG30 › IAICHG51 | Financial Derivatives Schedule › Type › Numeric | Financial Derivatives Schedule › Length › 14 | Financial Derivatives Schedule › Notes › Reported in whole dollars without commas and leading zeroes | Notes › Reported in whole dollars without commas and leading zeroes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+21
+| 3.d. Credit derivatives › 3.e. Commodity derivatives › 3.f. Other derivatives | Financial Derivatives Schedule › Data Items › 3.d. Credit derivatives › 3.e. Commodity derivatives › 3.f. Other derivatives | Financial Derivatives Schedule › Data Items › Notional Amounts › Gross Positive Fair Value › Gross Negative Fair Value | Financial Derivatives Schedule › Notional Amounts › Gross Positive Fair Value › Gross Negative Fair Value | Financial Derivatives Schedule › IAICHG70 › IAICHG31 › IAICHG52 › IAICHG71 › IAICHG32 › IAICHG53 › IAICHG72 › IAICHG33 › IAICHG54 › IAICHG73 | Financial Derivatives Schedule › MDRM › IAICHG70 › IAICHG31 › IAICHG52 › IAICHG71 › IAICHG32 › IAICHG53 › IAICHG72 › IAICHG33 › IAICHG54 › IAICHG73 | Financial Derivatives Schedule › IAICHG70 › IAICHG31 › IAICHG52 › IAICHG71 › IAICHG32 › IAICHG53 › IAICHG72 › IAICHG33 › IAICHG54 › IAICHG73 | Financial Derivatives Schedule › Type › Numeric | Financial Derivatives Schedule › Length › 14 | Financial Derivatives Schedule › Notes › Reported in whole dollars without commas and leading zeroes | Notes › Reported in whole dollars without commas and leading zeroes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+22
+23
+Foreign Exchange Derivatives Schedule
+Data Items
+MDRM Type Length Notes
+1. Long currency forwards (currency bought at maturity) USD IAICHG74 Numeric 14 Reported in whole dollars without commas and leading zeroes EUR
+IAICHG99 Numeric 14 Reported in whole dollars without commas and leading zeroes JPY
+IAICHH24 Numeric 14 Reported in whole dollars without commas and leading zeroes GBP
+IAICHH49 Numeric 14 Reported in whole dollars without commas and leading zeroes CHF
+IAICHH74 Numeric 14 Reported in whole dollars without commas and leading zeroes CNY
+IAICHH99 Numeric 14 Reported in whole dollars without commas and leading zeroes OTH
+IAICHJ24 Numeric 14 Reported in whole dollars without commas and leading zeroes Total IAICHJ49 Numeric 14 Reported in whole dollars without commas and leading zeroes 1.a. USD EUR
+IAICHH00 Numeric 14 Reported in whole dollars without commas and leading zeroes JPY
+IAICHH25 Numeric 14 Reported in whole dollars without commas and leading zeroes GBP
+IAICHH50 Numeric 14 Reported in whole dollars without commas and leading zeroes CHF
+IAICHH75 Numeric 14 Reported in whole dollars without commas and leading zeroes CNY
+IAICHJ00 Numeric 14 Reported in whole dollars without commas and leading zeroes OTH
+IAICHJ25 Numeric 14 Reported in whole dollars without commas and leading zeroes Total IAICHJ50 Numeric 14 Reported in whole dollars without commas and leading zeroes 1.b. EUR USD IAICHG76 Numeric 14 Reported in whole dollars without commas and leading zeroes JPY
+IAICHH26 Numeric 14 Reported in whole dollars without commas and leading zeroes GBP
+IAICHH51 Numeric 14 Reported in whole dollars without commas and leading zeroes CHF
+IAICHH76 Numeric 14 Reported in whole dollars without commas and leading zeroes CNY
+IAICHJ01 Numeric 14 Reported in whole dollars without commas and leading zeroes OTH
+IAICHJ26 Numeric 14 Reported in whole dollars without commas and leading zeroes Total IAICHJ51 Numeric 14 Reported in whole dollars without commas and leading zeroes
+1. c. JPY USD IAICHG77 Numeric 14 Reported in whole dollars without commas and leading zeroes EUR
+IAICHH02 Numeric 14 Reported in whole dollars without commas and leading zeroes GBP
+IAICHH52 Numeric 14 Reported in whole dollars without commas and leading zeroes CHF
+IAICHH77 Numeric 14 Reported in whole dollars without commas and leading zeroes
+| 1.d. GBP › 1.e. CHF › 1.f. CNY › 1.g. OTH | Foreign Exchange Derivatives Schedule › Data Items › 1.d. GBP › 1.e. CHF › 1.f. CNY › 1.g. OTH | Foreign Exchange Derivatives Schedule › Data Items › CNY › OTH › Total › USD › EUR › JPY › CHF › GBP | Foreign Exchange Derivatives Schedule › CNY › OTH › Total › USD › EUR › JPY › CHF › GBP | Foreign Exchange Derivatives Schedule › IAICHJ02 › IAICHJ27 › IAICHJ52 › IAICHG78 › IAICHH03 › IAICHH28 › IAICHH78 › IAICHJ03 › IAICHJ28 › IAICHJ53 › IAICHG79 › IAICHH04 › IAICHH29 › IAICHH54 › IAICHJ04 › IAICHJ29 › IAICHJ54 › IAICHG80 › IAICHH05 › IAICHH30 › IAICHH55 › IAICHH80 › IAICHJ30 › IAICHJ55 › IAICHG81 › IAICHH06 › IAICHH31 | Foreign Exchange Derivatives Schedule › MDRM › IAICHJ02 › IAICHJ27 › IAICHJ52 › IAICHG78 › IAICHH03 › IAICHH28 › IAICHH78 › IAICHJ03 › IAICHJ28 › IAICHJ53 › IAICHG79 › IAICHH04 › IAICHH29 › IAICHH54 › IAICHJ04 › IAICHJ29 › IAICHJ54 › IAICHG80 › IAICHH05 › IAICHH30 › IAICHH55 › IAICHH80 › IAICHJ30 › IAICHJ55 › IAICHG81 › IAICHH06 › IAICHH31 | Foreign Exchange Derivatives Schedule › IAICHJ02 › IAICHJ27 › IAICHJ52 › IAICHG78 › IAICHH03 › IAICHH28 › IAICHH78 › IAICHJ03 › IAICHJ28 › IAICHJ53 › IAICHG79 › IAICHH04 › IAICHH29 › IAICHH54 › IAICHJ04 › IAICHJ29 › IAICHJ54 › IAICHG80 › IAICHH05 › IAICHH30 › IAICHH55 › IAICHH80 › IAICHJ30 › IAICHJ55 › IAICHG81 › IAICHH06 › IAICHH31 | Foreign Exchange Derivatives Schedule › Type › Numeric | Foreign Exchange Derivatives Schedule › Length › 14 | Foreign Exchange Derivatives Schedule › Notes › Reported in whole dollars without commas and leading zeroes | Notes › Reported in whole dollars without commas and leading zeroes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+24
+25
+Foreign Exchange Derivatives Schedule
+Data Items
+MDRM Type Length Notes GBP
+IAICHH56 Numeric 14 Reported in whole dollars without commas and leading zeroes CHF
+IAICHH81 Numeric 14 Reported in whole dollars without commas and leading zeroes CNY
+IAICHJ06 Numeric 14 Reported in whole dollars without commas and leading zeroes OTH
+IAICHJ31 Numeric 14 Reported in whole dollars without commas and leading zeroes Total IAICHJ56 Numeric 14 Reported in whole dollars without commas and leading zeroes
+2. Long currency swaps (currency received at maturity) (sum of 2.a and 2.b) USD IAICHG82 Numeric 14 Reported in whole dollars without commas and leading zeroes EUR
+IAICHH07 Numeric 14 Reported in whole dollars without commas and leading zeroes JPY
+IAICHH32 Numeric 14 Reported in whole dollars without commas and leading zeroes GBP
+IAICHH57 Numeric 14 Reported in whole dollars without commas and leading zeroes CHF
+IAICHH82 Numeric 14 Reported in whole dollars without commas and leading zeroes CNY
+IAICHJ07 Numeric 14 Reported in whole dollars without commas and leading zeroes OTH
+IAICHJ32 Numeric 14 Reported in whole dollars without commas and leading zeroes Total IAICHJ57 Numeric 14 Reported in whole dollars without commas and leading zeroes 2.a. Exchange of Notional USD IAICHG83 Numeric 14 Reported in whole dollars without commas and leading zeroes EUR
+IAICHH08 Numeric 14 Reported in whole dollars without commas and leading zeroes JPY
+IAICHH33 Numeric 14 Reported in whole dollars without commas and leading zeroes GBP
+IAICHH58 Numeric 14 Reported in whole dollars without commas and leading zeroes CHF
+IAICHH83 Numeric 14 Reported in whole dollars without commas and leading zeroes CNY
+IAICHJ08 Numeric 14 Reported in whole dollars without commas and leading zeroes OTH
+IAICHJ33 Numeric 14 Reported in whole dollars without commas and leading zeroes Total IAICHJ58 Numeric 14 Reported in whole dollars without commas and leading zeroes 2.a.(1) USD EUR
+IAICHH09 Numeric 14 Reported in whole dollars without commas and leading zeroes JPY
+IAICHH34 Numeric 14 Reported in whole dollars without commas and leading zeroes GBP
+IAICHH59 Numeric 14 Reported in whole dollars without commas and leading zeroes CHF
+IAICHH84 Numeric 14 Reported in whole dollars without commas and leading zeroes CNY
+IAICHJ09 Numeric 14 Reported in whole dollars without commas and leading zeroes OTH
+IAICHJ34 Numeric 14 Reported in whole dollars without commas and leading zeroes
+| 2.a.(2) EUR › 2.a.(3) JPY › 2.a.(4) GBP › 2.a.(5) CHF | Foreign Exchange Derivatives Schedule › Data Items › 2.a.(2) EUR › 2.a.(3) JPY › 2.a.(4) GBP › 2.a.(5) CHF | Foreign Exchange Derivatives Schedule › Data Items › Total › USD › JPY › GBP › CHF › CNY › OTH › EUR | Foreign Exchange Derivatives Schedule › Total › USD › JPY › GBP › CHF › CNY › OTH › EUR | Foreign Exchange Derivatives Schedule › IAICHJ59 › IAICHG85 › IAICHH35 › IAICHH60 › IAICHH85 › IAICHJ10 › IAICHJ35 › IAICHJ60 › IAICHG86 › IAICHH11 › IAICHH61 › IAICHH86 › IAICHJ11 › IAICHJ36 › IAICHJ61 › IAICHG87 › IAICHH12 › IAICHH37 › IAICHH87 › IAICHJ12 › IAICHJ37 › IAICHJ62 › IAICHG88 › IAICHH13 › IAICHH38 › IAICHH63 › IAICHJ13 | Foreign Exchange Derivatives Schedule › MDRM › IAICHJ59 › IAICHG85 › IAICHH35 › IAICHH60 › IAICHH85 › IAICHJ10 › IAICHJ35 › IAICHJ60 › IAICHG86 › IAICHH11 › IAICHH61 › IAICHH86 › IAICHJ11 › IAICHJ36 › IAICHJ61 › IAICHG87 › IAICHH12 › IAICHH37 › IAICHH87 › IAICHJ12 › IAICHJ37 › IAICHJ62 › IAICHG88 › IAICHH13 › IAICHH38 › IAICHH63 › IAICHJ13 | Foreign Exchange Derivatives Schedule › IAICHJ59 › IAICHG85 › IAICHH35 › IAICHH60 › IAICHH85 › IAICHJ10 › IAICHJ35 › IAICHJ60 › IAICHG86 › IAICHH11 › IAICHH61 › IAICHH86 › IAICHJ11 › IAICHJ36 › IAICHJ61 › IAICHG87 › IAICHH12 › IAICHH37 › IAICHH87 › IAICHJ12 › IAICHJ37 › IAICHJ62 › IAICHG88 › IAICHH13 › IAICHH38 › IAICHH63 › IAICHJ13 | Foreign Exchange Derivatives Schedule › Type › Numeric | Foreign Exchange Derivatives Schedule › Length › 14 | Foreign Exchange Derivatives Schedule › Notes › Reported in whole dollars without commas and leading zeroes | Notes › Reported in whole dollars without commas and leading zeroes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+26
+27
+Foreign Exchange Derivatives Schedule
+Data Items
+MDRM Type Length Notes OTH
+IAICHJ38 Numeric 14 Reported in whole dollars without commas and leading zeroes Total IAICHJ63 Numeric 14 Reported in whole dollars without commas and leading zeroes 2.a.(6) CNY USD IAICHG89 Numeric 14 Reported in whole dollars without commas and leading zeroes EUR
+IAICHH14 Numeric 14 Reported in whole dollars without commas and leading zeroes JPY
+IAICHH39 Numeric 14 Reported in whole dollars without commas and leading zeroes GBP
+IAICHH64 Numeric 14 Reported in whole dollars without commas and leading zeroes CHF
+IAICHH89 Numeric 14 Reported in whole dollars without commas and leading zeroes OTH
+IAICHJ39 Numeric 14 Reported in whole dollars without commas and leading zeroes Total IAICHJ64 Numeric 14 Reported in whole dollars without commas and leading zeroes 2.a.(7) OTH USD IAICHG90 Numeric 14 Reported in whole dollars without commas and leading zeroes EUR
+IAICHH15 Numeric 14 Reported in whole dollars without commas and leading zeroes JPY
+IAICHH40 Numeric 14 Reported in whole dollars without commas and leading zeroes GBP
+IAICHH65 Numeric 14 Reported in whole dollars without commas and leading zeroes CHF
+IAICHH90 Numeric 14 Reported in whole dollars without commas and leading zeroes CNY
+IAICHJ15 Numeric 14 Reported in whole dollars without commas and leading zeroes OTH
+IAICHJ40 Numeric 14 Reported in whole dollars without commas and leading zeroes Total IAICHJ65 Numeric 14 Reported in whole dollars without commas and leading zeroes 2.b. Only Exchange of Interests USD IAICHG91 Numeric 14 Reported in whole dollars without commas and leading zeroes EUR
+IAICHH16 Numeric 14 Reported in whole dollars without commas and leading zeroes JPY
+IAICHH41 Numeric 14 Reported in whole dollars without commas and leading zeroes GBP
+IAICHH66 Numeric 14 Reported in whole dollars without commas and leading zeroes CHF
+IAICHH91 Numeric 14 Reported in whole dollars without commas and leading zeroes CNY
+IAICHJ16 Numeric 14 Reported in whole dollars without commas and leading zeroes OTH
+IAICHJ41 Numeric 14 Reported in whole dollars without commas and leading zeroes Total IAICHJ66 Numeric 14 Reported in whole dollars without commas and leading zeroes 2.b.(1) USD EUR
+IAICHH17 Numeric 14 Reported in whole dollars without commas and leading zeroes JPY
+IAICHH42 Numeric 14 Reported in whole dollars without commas and leading zeroes
+| 2.b.(2) EUR › 2.b.(3) JPY › 2.b.(4) GBP › 2.b.(5) CHF | Foreign Exchange Derivatives Schedule › Data Items › 2.b.(2) EUR › 2.b.(3) JPY › 2.b.(4) GBP › 2.b.(5) CHF | Foreign Exchange Derivatives Schedule › Data Items › GBP › CHF › CNY › OTH › Total › USD › JPY › EUR | Foreign Exchange Derivatives Schedule › GBP › CHF › CNY › OTH › Total › USD › JPY › EUR | Foreign Exchange Derivatives Schedule › IAICHH67 › IAICHH92 › IAICHJ17 › IAICHJ42 › IAICHJ67 › IAICHG93 › IAICHH43 › IAICHH68 › IAICHH93 › IAICHJ18 › IAICHJ43 › IAICHJ68 › IAICHG94 › IAICHH19 › IAICHH69 › IAICHH94 › IAICHJ19 › IAICHJ44 › IAICHJ69 › IAICHG95 › IAICHH20 › IAICHH45 › IAICHH95 › IAICHJ20 › IAICHJ45 › IAICHJ70 › IAICHG96 | Foreign Exchange Derivatives Schedule › MDRM › IAICHH67 › IAICHH92 › IAICHJ17 › IAICHJ42 › IAICHJ67 › IAICHG93 › IAICHH43 › IAICHH68 › IAICHH93 › IAICHJ18 › IAICHJ43 › IAICHJ68 › IAICHG94 › IAICHH19 › IAICHH69 › IAICHH94 › IAICHJ19 › IAICHJ44 › IAICHJ69 › IAICHG95 › IAICHH20 › IAICHH45 › IAICHH95 › IAICHJ20 › IAICHJ45 › IAICHJ70 › IAICHG96 | Foreign Exchange Derivatives Schedule › IAICHH67 › IAICHH92 › IAICHJ17 › IAICHJ42 › IAICHJ67 › IAICHG93 › IAICHH43 › IAICHH68 › IAICHH93 › IAICHJ18 › IAICHJ43 › IAICHJ68 › IAICHG94 › IAICHH19 › IAICHH69 › IAICHH94 › IAICHJ19 › IAICHJ44 › IAICHJ69 › IAICHG95 › IAICHH20 › IAICHH45 › IAICHH95 › IAICHJ20 › IAICHJ45 › IAICHJ70 › IAICHG96 | Foreign Exchange Derivatives Schedule › Type › Numeric | Foreign Exchange Derivatives Schedule › Length › 14 | Foreign Exchange Derivatives Schedule › Notes › Reported in whole dollars without commas and leading zeroes | Notes › Reported in whole dollars without commas and leading zeroes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+28
+29
+Foreign Exchange Derivatives Schedule
+Data Items
+MDRM Type Length Notes EUR
+IAICHH21 Numeric 14 Reported in whole dollars without commas and leading zeroes JPY
+IAICHH46 Numeric 14 Reported in whole dollars without commas and leading zeroes GBP
+IAICHH71 Numeric 14 Reported in whole dollars without commas and leading zeroes CNY
+IAICHJ21 Numeric 14 Reported in whole dollars without commas and leading zeroes OTH
+IAICHJ46 Numeric 14 Reported in whole dollars without commas and leading zeroes Total IAICHJ71 Numeric 14 Reported in whole dollars without commas and leading zeroes 2.b.(6) CNY USD IAICHG97 Numeric 14 Reported in whole dollars without commas and leading zeroes EUR
+IAICHH22 Numeric 14 Reported in whole dollars without commas and leading zeroes JPY
+IAICHH47 Numeric 14 Reported in whole dollars without commas and leading zeroes GBP
+IAICHH72 Numeric 14 Reported in whole dollars without commas and leading zeroes CHF
+IAICHH97 Numeric 14 Reported in whole dollars without commas and leading zeroes OTH
+IAICHJ47 Numeric 14 Reported in whole dollars without commas and leading zeroes Total IAICHJ72 Numeric 14 Reported in whole dollars without commas and leading zeroes 2.b.(7) OTH USD IAICHG98 Numeric 14 Reported in whole dollars without commas and leading zeroes EUR
+IAICHH23 Numeric 14 Reported in whole dollars without commas and leading zeroes JPY
+IAICHH48 Numeric 14 Reported in whole dollars without commas and leading zeroes GBP
+IAICHH73 Numeric 14 Reported in whole dollars without commas and leading zeroes CHF
+IAICHH98 Numeric 14 Reported in whole dollars without commas and leading zeroes CNY
+IAICHJ23 Numeric 14 Reported in whole dollars without commas and leading zeroes OTH
+IAICHJ48 Numeric 14 Reported in whole dollars without commas and leading zeroes Total IAICHJ73 Numeric 14 Reported in whole dollars without commas and leading zeroes
+| Schedule › Table 1 › Table 2 › Foreign Exchange Derivatives | Contexts used in variable schedules: › Schedule › Table 1 › Table 2 › Foreign Exchange Derivatives | Contexts used in variable schedules: › Data Items › Currency denomination ISO code › Country Code › Remaining Maturity Bucket | Contexts used in variable schedules: › IAICY385 › IAIC9207 › IAICHK20 | Contexts used in variable schedules: › MDRM › IAICY385 › IAIC9207 › IAICHK20 | Contexts used in variable schedules: › IAICY385 › IAIC9207 › IAICHK20 | Contexts used in variable schedules: › Type › Text › Numeric | Contexts used in variable schedules: › Length › 3 › 5 › 1 | Contexts used in variable schedules: › Notes › Every data item in this table should contain a context tag. Should contain a 3-character currency ISO › Every data item in this table should contain a context tag. Should contain a 5-digit valid country code › Every data item in this table should contain a context tag. Should contain a value of 1,2, 3 or 4 | Notes › Every data item in this table should contain a context tag. Should contain a 3-character currency ISO › Every data item in this table should contain a context tag. Should contain a 5-digit valid country code › Every data item in this table should contain a context tag. Should contain a value of 1,2, 3 or 4 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+Table 1 - Currency denomination ISO codes:
+Currency Code USD EUR JPY GBP CHF CNY Other
+Currency US Dollar Euro Japanese yen British pound Swiss franc Yuan Renminbi (includes CNY – Chinese Yuan Onshore – and CNH – Chinese Yuan Offshore) all other currencies
+Table 2 - Country codes:
+Country Code 01007
+Country United States
+EUROPE
+15105 10103 16519 10189 16527 13307 16209 10251 14109 15202 14214 10405 15288 10502 15407 13501 10618 10707
+Albania Andorra Armenia Austria Azerbaijan Bank For International Settlements Belarus Belgium Bosnia And Herzegovina Bulgaria Croatia Cyprus Czech Republic Denmark Estonia European Central Bank Faroe Islands Finland
+30
+31 10804 France 16535 Georgia 11002 Germany 11088 Gibraltar 11207 Greece 10545 Greenland 13006 Guernsey 13102 Holy See 15504 Hungary 11304 Iceland 11401 Ireland 13008 Isle Man 11509 Italy 13007 Jersey 16543 Kazakhstan 13471 Kosovo 16551 Kyrgyzstan 15601 Latvia 11606 Liechtenstein 15709 Lithuania 11703 Luxembourg 14419 Macedonia 11819 Malta 16306 Moldova 12009 Monaco 13625 Montenegro 12106 Netherlands 12203 Norway 15768 Poland 12319 Portugal 15806 Romania 16101 Russia 12408 San Marino 13218 Serbia 15318 Slovakia 14338 Slovenia 12505 Spain 12602 Sweden 12688 Switzerland 16578 Tajikistan 12807 Turkey 16616 Turkmenistan 16403 Ukraine 13005 United Kingdom 16705 Uzbekistan
+[TABLE]
+| 10804 | France |
+| --- | --- |
+| 16535 | Georgia |
+| 11002 | Germany |
+| 11088 | Gibraltar |
+| 11207 | Greece |
+| 10545 | Greenland |
+| 13006 | Guernsey |
+| 13102 | Holy See |
+| 15504 | Hungary |
+| 11304 | Iceland |
+| 11401 | Ireland |
+| 13008 | Isle Man |
+| 11509 | Italy |
+| 13007 | Jersey |
+| 16543 | Kazakhstan |
+| 13471 | Kosovo |
+| 16551 | Kyrgyzstan |
+| 15601 | Latvia |
+| 11606 | Liechtenstein |
+| 15709 | Lithuania |
+| 11703 | Luxembourg |
+| 14419 | Macedonia |
+| 11819 | Malta |
+| 16306 | Moldova |
+| 12009 | Monaco |
+| 13625 | Montenegro |
+| 12106 | Netherlands |
+| 12203 | Norway |
+| 15768 | Poland |
+| 12319 | Portugal |
+| 15806 | Romania |
+| 16101 | Russia |
+| 12408 | San Marino |
+| 13218 | Serbia |
+| 15318 | Slovakia |
+| 14338 | Slovenia |
+| 12505 | Spain |
+| 12602 | Sweden |
+| 12688 | Switzerland |
+| 16578 | Tajikistan |
+| 12807 | Turkey |
+| 16616 | Turkmenistan |
+| 16403 | Ukraine |
+| 13005 | United Kingd |
+| 16705 | Uzbekistan |
+32 LATIN AMERICA 30104 Argentina 35718 Belize 30201 Bolivia 30309 Brazil 30406 Chile 30503 Colombia 30589 Costa Rica 31003 Ecuador 31089 El Salvador 36307 Falkland Islands 36404 French Guiana 31208 Guatemala 31305 Guyana 31488 Honduras 31704 Mexico 31801 Nicaragua 31887 Panama 32107 Paraguay 32204 Peru 37702 Suriname 32603 Uruguay 32719 Venezuela CARIBBEAN 30228 Anguilla 35203 Antigua And Barbuda 35254 Aruba 35319 Bahamas 30155 Barbados 35602 Bermuda 36161 Bonaire St Eustatius and Saba 36137 Cayman Islands 30708 Cuba 36188 Curacao 36218 Dominica 30805 Dominican Republic 35416 Eastern Caribbean Central Bank 36706 Grenada 36803 Guadeloupe 31402 Haiti 31607 Jamaica 37001 Martinique 37109 Montserrat 36196 St. Maarten 36471 St. Martin and St. Barthelemy
+[TABLE]
+| LATIN AMERICA | |
+| --- | --- |
+| 30104 | Argentina |
+| 35718 | Belize |
+| 30201 | Bolivia |
+| 30309 | Brazil |
+| 30406 | Chile |
+| 30503 | Colombia |
+| 30589 | Costa Rica |
+| 31003 | Ecuador |
+| 31089 | El Salvador |
+| 36307 | Falkland Isl |
+| 36404 | French Guia |
+| 31208 | Guatemala |
+| 31305 | Guyana |
+| 31488 | Honduras |
+| 31704 | Mexico |
+| 31801 | Nicaragua |
+| 31887 | Panama |
+| 32107 | Paraguay |
+| 32204 | Peru |
+| 37702 | Suriname |
+| 32603 | Uruguay |
+| 32719 | Venezuela |
+| CARIBBEAN | |
+| 30228 | Anguilla |
+| 35203 | Antigua An |
+| 35254 | Aruba |
+| 35319 | Bahamas |
+| 30155 | Barbados |
+| 35602 | Bermuda |
+| 36161 | Bonaire St E |
+| 36137 | Cayman Isla |
+| 30708 | Cuba |
+| 36188 | Curacao |
+| 36218 | Dominica |
+| 30805 | Dominican |
+| 35416 | Eastern Cari |
+| 36706 | Grenada |
+| 36803 | Guadeloupe |
+| 31402 | Haiti |
+| 31607 | Jamaica |
+| 37001 | Martinique |
+| 37109 | Montserrat |
+| 36196 | St. Maarten |
+| 36471 | St. Martin a |
+33 37303 St. Kitts And Nevis 37508 St. Lucia 37605 St. Vincent Grenadines 32409 Trinidad And Tobago 37818 Turks And Caicos Islands 35807 Virgin Islands British ASIA 40401 Afghanistan 40703 Bahrain 40746 Bangladesh 40819 Bhutan 41009 Brunei 41106 Burma 41203 Cambodia 41408 China Mainland 45004 East Timor 42005 Hong Kong 42102 India 42218 Indonesia 42307 Iran 42404 Iraq 42501 Israel 42609 Japan 42706 Jordan 44407 Korea North 43001 Korea South 43109 Kuwait 43303 Laos 43419 Lebanon 43508 Macau 43605 Malaysia 43702 Maldives 43818 Mongolia 44202 Nepal 44105 Oman 44709 Pakistan 44806 Philippines 45101 Qatar 45608 Saudi Arabia 46019 Singapore 41319 Sri Lanka 46205 Syria 46302 Taiwan 46418 Thailand 46604 United Arab Emirates
+[TABLE]
+| 37303 | St. Kitts And | Nevis |
+| --- | --- | --- |
+| 37508 | St. Lucia | |
+| 37605 | St. Vincent G | renadine |
+| 32409 | Trinidad And | Tobago |
+| 37818 | Turks And C | aicos Isla |
+| 35807 | Virgin Island | s British |
+| ASIA | | |
+| 40401 | Afghanistan | |
+| 40703 | Bahrain | |
+| 40746 | Bangladesh | |
+| 40819 | Bhutan | |
+| 41009 | Brunei | |
+| 41106 | Burma | |
+| 41203 | Cambodia | |
+| 41408 | China Mainl | and |
+| 45004 | East Timor | |
+| 42005 | Hong Kong | |
+| 42102 | India | |
+| 42218 | Indonesia | |
+| 42307 | Iran | |
+| 42404 | Iraq | |
+| 42501 | Israel | |
+| 42609 | Japan | |
+| 42706 | Jordan | |
+| 44407 | Korea North | |
+| 43001 | Korea South | |
+| 43109 | Kuwait | |
+| 43303 | Laos | |
+| 43419 | Lebanon | |
+| 43508 | Macau | |
+| 43605 | Malaysia | |
+| 43702 | Maldives | |
+| 43818 | Mongolia | |
+| 44202 | Nepal | |
+| 44105 | Oman | |
+| 44709 | Pakistan | |
+| 44806 | Philippines | |
+| 45101 | Qatar | |
+| 45608 | Saudi Arabia | |
+| 46019 | Singapore | |
+| 41319 | Sri Lanka | |
+| 46205 | Syria | |
+| 46302 | Taiwan | |
+| 46418 | Thailand | |
+| 46604 | United Arab | Emirates |
+34 46906 Vietnam 47201 West Bank & Gaza 47104 Yemen AFRICA 50105 Algeria 50202 Angola 50318 Bank Of Central African States (BEAC) 51802 Benin 50504 Botswana 57118 Burkina Faso 50806 Burundi 51004 Cameroon 51209 Cape Verde 51306 Central African Republic 50644 Central Bank Of West African States (BCEAO) 51403 Chad 51519 Comoros 51608 Congo Brazzaville 51705 Congo Kinshasa 53007 Cote D’Ivoire Ivory Coast 52302 Djibouti 57002 Egypt 51942 Equatorial Guinea 52019 Eritrea 56219 Eswatini 52108 Ethiopia 52418 Gabon 52507 Gambia The 52604 Ghana 52701 Guinea 54402 Guinea Bissau 53104 Kenya 53155 Lesotho 53201 Liberia 53309 Libya 53406 Madagascar 53503 Malawi 53589 Mali 53708 Mauritania 53805 Mauritius 54518 Mayotte 54003 Morocco 54089 Mozambique 54127 Namibia 54208 Niger
+[TABLE]
+| 46906 | Vietnam |
+| --- | --- |
+| 47201 | West Bank & |
+| 47104 | Yemen |
+| AFRICA | |
+| 50105 | Algeria |
+| 50202 | Angola |
+| 50318 | Bank Of Cen |
+| 51802 | Benin |
+| 50504 | Botswana |
+| 57118 | Burkina Faso |
+| 50806 | Burundi |
+| 51004 | Cameroon |
+| 51209 | Cape Verde |
+| 51306 | Central Afric |
+| 50644 | Central Bank |
+| 51403 | Chad |
+| 51519 | Comoros |
+| 51608 | Congo Brazz |
+| 51705 | Congo Kinsh |
+| 53007 | Cote D’Ivoir |
+| 52302 | Djibouti |
+| 57002 | Egypt |
+| 51942 | Equatorial G |
+| 52019 | Eritrea |
+| 56219 | Eswatini |
+| 52108 | Ethiopia |
+| 52418 | Gabon |
+| 52507 | Gambia The |
+| 52604 | Ghana |
+| 52701 | Guinea |
+| 54402 | Guinea Bissa |
+| 53104 | Kenya |
+| 53155 | Lesotho |
+| 53201 | Liberia |
+| 53309 | Libya |
+| 53406 | Madagascar |
+| 53503 | Malawi |
+| 53589 | Mali |
+| 53708 | Mauritania |
+| 53805 | Mauritius |
+| 54518 | Mayotte |
+| 54003 | Morocco |
+| 54089 | Mozambique |
+| 54127 | Namibia |
+| 54208 | Niger |
+35 54305 Nigeria 54607 Reunion 55018 Rwanda 55107 Saint Helena 55204 Sao Tome Principe 55301 Senegal 55409 Seychelles 55506 Sierra Leone 55603 Somalia 55719 South Africa 53392 South Sudan 56103 Sudan 56405 Tanzania 56502 Togo 56707 Tunisia 56804 Uganda 56006 Western Sahara 57207 Zambia 54704 Zimbabwe OTHER COUNTRIES 60089 Australia 60208 British Indian Ocean Territory 60402 Cook Islands 60607 Fiji 60704 French Polynesia 60526 Kiribati 61204 Marshall Islands 60305 Micronesia Federated States 61301 Nauru 61409 New Caledonia 61689 New Zealand 61808 Niue 62502 Palau 61751 Papua New Guinea 62103 Pitcairn Islands 62618 Samoa 62308 Solomon Islands 62219 St Pierre and Miquelon 62405 Tokelau Islands 62448 Tonga 60518 Tuvalu 61603 Vanuatu 60119 Wallis and Futuna 29998 Canada
+[TABLE]
+| 54305 | Nigeria |
+| --- | --- |
+| 54607 | Reunion |
+| 55018 | Rwanda |
+| 55107 | Saint Helen |
+| 55204 | Sao Tome |
+| 55301 | Senegal |
+| 55409 | Seychelles |
+| 55506 | Sierra Leon |
+| 55603 | Somalia |
+| 55719 | South Afric |
+| 53392 | South Suda |
+| 56103 | Sudan |
+| 56405 | Tanzania |
+| 56502 | Togo |
+| 56707 | Tunisia |
+| 56804 | Uganda |
+| 56006 | Western Sa |
+| 57207 | Zambia |
+| 54704 | Zimbabwe |
+| OTHER COUNTRIES | |
+| 60089 | Australia |
+| 60208 | British Indi |
+| 60402 | Cook Islan |
+| 60607 | Fiji |
+| 60704 | French Pol |
+| 60526 | Kiribati |
+| 61204 | Marshall Is |
+| 60305 | Micronesia |
+| 61301 | Nauru |
+| 61409 | New Caled |
+| 61689 | New Zeala |
+| 61808 | Niue |
+| 62502 | Palau |
+| 61751 | Papua New |
+| 62103 | Pitcairn Isl |
+| 62618 | Samoa |
+| 62308 | Solomon Is |
+| 62219 | St Pierre an |
+| 62405 | Tokelau Isl |
+| 62448 | Tonga |
+| 60518 | Tuvalu |
+| 61603 | Vanuatu |
+| 60119 | Wallis and |
+| 29998 | Canada |
+36
+INTERNATIONAL & REGIONAL ORGANIZATIONS
+76902 African Regional Organization 75906 Asian Regional Organization 74942 Caribbean Regional Organization 73903 European Regional Organization 72907 International Regional Organization 74918 Latin American Regional Organization 77909 Middle Eastern Regional Organization
+FR 2510 Items NOT to Include in the XML File
+MDRM
+Source Series Effective Start Date Effective End Date IAICG105 FR Y-9C 9/30/2019 12/31/9999
+Example FR2510 XML File Upload
+The following FR2510 XML file upload example includes sample items for the cover page, Table 1, Table 2, Financial Derivatives Schedule, and the Foreign Exchange Derivatives Schedule.
+<?xml version="1.0" encoding="UTF-8"?> <reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd"> <report series="FR2510" asOfDate="2019-09-30" reporterId="9999999999"> <!-- Cover Page items --> <itemData confidential="N" estimated="N" mdrm="IAIC8901"> <value>John Smith</value> </itemData> <itemData confidential="N" estimated="N" mdrm="IAICC496"> <value>Officer</value> </itemData> <!-- Table 1 items --> <!-- Currency #1 --> <itemData confidential="N" estimated="N" mdrm="IAICGW69"> <value>100</value> <context mdrm="IAICY385" value="USD"/> </itemData> <itemData confidential="N" estimated="N" mdrm="IAICGX13"> <value>200</value> <context mdrm="IAICY385" value="USD"/> </itemData> <!-- Currency #2 --> <itemData confidential="N" estimated="N" mdrm="IAICGW69"> <value>100</value> <context mdrm="IAICY385" value="EUR"/> </itemData> <itemData confidential="N" estimated="N" mdrm="IAICGX13"> <value>101</value> <context mdrm="IAICY385" value=" EUR"/> </itemData>
+<!-- Table 2 items -->
+37 <!-- Country #1 --> <itemData confidential="N" estimated="N" mdrm="IAICGZ33"> <value>1100</value> <context mdrm="IAIC9207" value="01007"/> </itemData> <itemData confidential="N" estimated="N" mdrm="IAICGZ34"> <value>2200</value> <context mdrm="IAIC9207" value="01007"/> </itemData> <!-- Country #2 --> <itemData confidential="N" estimated="N" mdrm="IAICGZ33"> <value>1000</value> <context mdrm="IAIC9207" value="42609"/> </itemData> <itemData confidential="N" estimated="N" mdrm="IAICGZ34"> <value>2000</value> <context mdrm="IAIC9207" value="42609"/> </itemData> <!-- Financial Derivatives Schedule items --> <itemData confidential="N" estimated="N" mdrm="IAICHG13"> <value>100</value> </itemData> <itemData confidential="N" estimated="N" mdrm="IAICHG14"> <value>200</value> </itemData> <!-- Foreign Exchange Derivatives Schedule items --> <!-- Remaining Maturity Bucket #1 --> <itemData confidential="N" estimated="N" mdrm="IAICHG74"> <value>1000</value> <context mdrm="IAICHK20" value="1"/> </itemData> <itemData confidential="N" estimated="N" mdrm="IAICHG76"> <value>1000</value> <context mdrm="IAICHK20" value="1"/> </itemData> <!-- Remaining Maturity Bucket #2 --> <itemData confidential="N" estimated="N" mdrm="IAICHG74"> <value>1000</value> <context mdrm="IAICHK20" value="2"/> </itemData> <itemData confidential="N" estimated="N" mdrm="IAICHG76"> <value>1000</value> <context mdrm="IAICHK20" value="2"/> </itemData>
+</report> </reportingFile>

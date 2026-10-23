@@ -1,0 +1,98 @@
+Reporting Central User Guide
+IIFD (Institution to Institution)
+Federal Reserve System
+Statistics Function September 2026
+2
+Table of Contents Overview........................................................3 How the XML File is Structured. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. 3 XML file Structure details . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .. 6 File Name Convention..................................................9 How to upload file in Reporting Central.................................................................................................9
+3
+Overview
+Institution-to-Institution (I-I) data covers bilateral business between the bank and its top 50 counterparties.
+The purpose of this guide is to help the reporters to create the XML file that will be submitted to the Reporting Central module in San Francisco according to the Reporting Central standards and in compliance with the Reporting Central schema. Figure1 shows the entire structure of the XML file.
+How the XML File Is Structured
+Figure1.
+4
+The Financial Data File section is a wrapper to encapsulate all the data in the file.
+The File Description section defines the file header information and specifies the name of the report being submitted, and the file’s creation date and time.
+The As of Date section encapsulates the financial data for the reporting entity. The file must only contain report data for a single as of date.
+The Financial Data section is a wrapper to encapsulate the financial data for the reporting entity and as of date.
+The Reporting Entity section contains the reported values for the items appearing on the report. The value for each report item is contained in a <reportItem> tag. An <itemGroup> tag is used to group a collection of related report items.
+Item Groups are defined using the following structure. The first <reportItem> in an <itemGroup> identifies the unique key for the <itemGroup>. The key to the <itemGroup> is indicated by the <reportItem key=”yes”> tag. The subsequent <reportItem> tags identify the report items, and their values, that comprise the <itemGroup>.
+XML Tag Meaning/How Used <financialDataFile> A tag used to encapsulate all the data in the file
+<fileDescription> A tag used to encapsulate header information about the file <createDate> The date that the file was created by reporting entity. The date is 8 digits and is formatted as YYYYMMDD <createTime>
+The time that the file was created by the reporting entity.
+The time is 6 digits and is formatted as HHMMSS <dataTypeIndicator> This tag is used internally by the FRB. Its value is always set to “Production” (without the quotes) <requestType>
+This tag is used internally by the FRB. Its value is always set to “Scheduler” (without the quotes) <receivingSite>
+This tag is used internally by the FRB. Its value is always set to “Board of Governors” (without the quotes)
+<seriesName>
+This tag is used internally by the FRB. Its value is always set to “IIFD” (without the quotes) <reportingForm>
+This tag is always set to “IIFD” (without the quotes), the name of the reporting form for the data submitted in this file <asofDate>
+The as of date for the financial data. The as of date is 8 digits and is formatted as YYYYMMDD. The file cannot contain more than one <asofDate> <financialData>
+A tag to encapsulate all the financial data for the <asofDate> <reportingEntity>
+A tag to encapsulate the financial data for the <reportingEntityIdentifier> <reportingEntityIdentifier>
+The <reportingEntity>’s RSSD number. The RSSD number is 10 digits; however, leading zeroes can be suppressed. The RSSD number must be entered in this tag and not in a <reportItem> tag <transferType>
+This tag is used internally by the FRB. Its value is always set to “Initial” (without the quotes)
+5
+XML Tag Meaning/How Used <sendingSiteReportKey>
+This tag is used internally by the FRB. Its value is always set to “STAR Internal Key” (without the quotes) <processingDistrict>
+Its value is always set to “13” (without the quotes), the district number for the Board of Governors.
+<confidentiality status=”1”>
+This tag is used to indicate whether the reporting entity has requested that the FRB keep its report data confidential. It must be set as follows.
+<confidentiality status=”1”>None</confidentiality> (capital N without quotes) <estimation>
+This tag is used to indicate whether the report data is estimated. TPRX report data cannot be estimated. Its value is always set to “None” (capital N without the quotes) <reportItem> A tag to encapsulate a report item <reportItem key=”yes”>
+This tag is only used with the <itemGroup ref=”xxx”> tag and is always the first tag within the <itemGroup ref=”xxx”> tag.
+The “key=”yes”” attribute indicates that the value for this <reportItem> is the key for each of the <reportItem>s in the item group <rs_id type=”mdrm”>
+The <rs_id type=”mdrm”> is an attribute that is used internally by the FRB. The tag is a constant that does not change. Its value is the line identifier for the report item <itemName>
+A text description of the mdrm specified by <rs_id>. This tag is optional and is generally not used to minimize the overall number of characters in the file <itemValue> The reported data value for a <reportItem> <itemGroup ref=”xxx”>
+The <itemGroup ref=”xxx”> tag encapsulates a logical grouping of related items. An item group can be thought of as a single row in a database table. The <reportItem>s within the <itemGroup ref=”xxx”> tag can be thought of as the columns in that database row. The “ref” attribute provides additional context as to what the item group represents.
+XML file Structure details.
+XML file structure (FIG. 1) consists of 7 major parts.
+!!!!! General rule for the tags – must be the same as presented on the pictures. Only the actual content (value) of the tag may change.
+1. Root tag is . All the reported data is within this tag.
+2. Header information. This is the information on file level. Only ones in the file.
+Figure2.
+- createDate tag has YYYYMMDD format.
+- createTime tag has HHMMSS format (military Eastern time).
+6
+- dataTypeIndicator tag is TEST, QA, or PROD All the rest of the tags should be hardcoded as represented on the Figure2.
+3. All financial data is reported within asofDate tag.
+asofDate is the date for which the financial data is reported. Only one asofDate is allowed in the file.
+4. Next tag contains the reporter information.
+Figure3.
+- reportingEntityIdentifier tag contains the reporting Institution RSSD.
+- processingDistrict is the district number for the reporting Institution.
+All the rest of the tags should be hardcoded as represented on the Figure3.
+5. Financial data – stand alone items. The next three items in the file contain the general information about the submiter of the data.
+!!!!!General rule for the financial data tags – must be the same as presented on the pictures. Only the actual content of the <itemValue> tag may change.
+Figure4.
+- itemValue for mdrm=IIFDS385 contains the value of Provider (Home Country Supervisor (HCS))
+- itemValue for mdrm=IIFD9010 contains the value of the Reporting Firm Name
+- itemValue for mdrm=IIFDS387 contains the value of Reporting Firm ID All the rest of the tags should be hardcoded as represented on the Figure4.
+6. Domain – each domain represent one reported transaction (unique set of financial data). Together with the 3 items described in step5 it will be translated into one row in the CSV file reported to BIS. There are three domains in the file shown on the Figure1.
+7
+7. Content of each domain is shown on the Figure5 and Figure6.
+!!!!!General rule for the financial data tags – must be the same as presented on the pictures. Only the actual content of the <itemValue> tag may change.
+Figure5.
+8
+Figure6.
+- itemValue for mdrm=IIFDN186 contains the sequence number of the transaction. Each transaction must have the unique number. Numbering should start with 1 and be incremented by 1.
+- itemValue for mdrm=IIFDS386 contains the value of the Reporting template
+- itemValue for mdrm=IIFDS388 contains the value of Reporting Firm Consolidation Perimeter
+- itemValue for mdrm=IIFDM900 contains the value of Counterparty Name
+- itemValue for mdrm=IIFDM901 contains the value of Counterparty ID
+- itemValue for mdrm=IIFDS389 contains the value of Counterparty Consolidation Perimeter
+- itemValue for mdrm=IIFDS390 contains the value of Counterparty Nationality
+- itemValue for mdrm=IIFDS391 contains the value of Counterparty's Sector
+- itemValue for mdrm=IIFDS392 contains the value of Instrument Category
+- itemValue for mdrm=IIFDS371 contains the value of Instrument Currency
+- itemValue for mdrm=IIFDS393 contains the value of Residual Maturity
+- itemValue for mdrm=IIFDS291 contains the value of Observation value
+- itemValue for mdrm=IIFD4769 contains the value of Observation comments
+- itemValue for mdrm=IIFDS395 contains the value of Exchange rate. (Should be rounded to three decimal points) All the rest of the tags should be hardcoded as represented on the Figure5 and Figure6.
+9
+File Name Convention.
+After creation of the file assign the name as following: IIFD.DYYMMDD.THHMMSSM.XML (e.g. IIFD.D140915.T1652539.XML) IIFD – series name (hard coded) D - Date identifier (hard coded) YYMMDD – year (e.g. 14), month (e.g. 03), day (e.g. 26) of the file creation T - Eastern Time identifier (hard coded) HHMMSSM – military hours (e.g. 16), seconds (e.g. 35), tenths of a second (e.g. 4) of the file creation.
+Report Submission in Reporting Central In Reporting Central, select the “Upload file” tab and then click the “Upload your files here” tab.
+Then, navigate to the stored XML file and select the filename so it appears in the ‘File name:’ box. Select “Open” to continue and then hit the “Upload” button.
+10
+If there are no formatting issues during the file upload you will get a “File Upload Complete” message the data will load directly into the report screen.
+The report data can then be validated, saved, submitted or deleted. If errors exist in the text file error messages will appear in the file upload window, which can be used to troubleshoot any formatting issues.

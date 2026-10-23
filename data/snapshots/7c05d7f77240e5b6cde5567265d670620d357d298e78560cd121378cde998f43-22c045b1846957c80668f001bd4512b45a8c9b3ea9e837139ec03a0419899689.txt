@@ -1,0 +1,199 @@
+1
+Reporting Central User Guide
+SHC(A)
+U.S. Ownership of Foreign Securities, Included Selected Money Market Instruments SHL(A) Foreign-Residents’ Holdings of U.S. Securities, including Selected Money Market Instruments
+Federal Reserve System
+Statistics Function August 2026
+2
+How the XML File Is Structured Each XML file contains financial data for one reporting entity and asof date. The data in the file is organized into the following sections.
+• Financial Data File
+• File Description
+• Asof Date
+• Financial Data
+• Reporting Entity The XML structure is: <financialDataFile> <fileDescription> </fileDescription> <asofDate> <financialData> <reportingEntity> the financial data for the <reportingEntity> </reportingEntity> </financialData> </asofDate> </financialDataFile>
+The Financial Data File section is a wrapper to encapsulate all of the data in the file.
+The File Description section defines the file header information and specifies the name of the report being submitted, and the file’s creation date and time.
+The Asof Date section encapsulates the financial data for the reporting entity. The file must only contain report data for a single asof date.
+The Financial Data section is a wrapper to encapsulate the financial data for the reporting entity and asof date.
+The Reporting Entity section contains the reported values for the items appearing on the report. The value for each report item is contained in a <reportItem> tag. An <itemGroup> tag is used to group a collection of related report items.
+Examples of where related report items would be grouped include Business Contact Information, Technical Contact Information, and the report items specified in an individual schedule in the report.
+Item Groups are defined using the following structure. The first <reportItem> in an <itemGroup> identifies the unique key for the <itemGroup>. The key to the <itemGroup> is indicated by the <reportItem key=”yes”> tag. The subsequent <reportItem> tags identify the report items, and their values, that comprise the <itemGroup>.
+General Structure of an Item Group <itemGroup ref=”a user assigned name that describes the item group”> <reportItem key=”yes”> <rs_id type=”mdrm”>the report item’s line identifier for the item group </rs_id> <itemValue>the key value that uniquely identifies the item group</itemValue> </reportItem>
+<reportItem> <rs_id type=”mdrm”>the report item’s line identifier for the first report item in the item
+group</rs_id> <itemValue>the reported value for this report item</itemValue>
+3 </reportItem> <reportItem> <rs_id type=”mdrm”>the report item’s line identifier for the next report item in the item
+group</rs_id> <itemValue>the reported value for this report item</itemValue>
+</reportItem> </itemGroup> Example: Item Group Definitions for Two Service Providers
+<!-- Service Provider group 1 --> <itemGroup ref="Service Provider"> <reportItem key="yes"> <rs_id type="mdrm">SHLAR070</rs_id> <itemValue>1</itemValue> <!--Value of the key to identify the first item group --> </reportItem> <reportItem> <rs_id type="mdrm">SHLAN263</rs_id> <itemValue>ajax corp provider 1</itemValue> </reportItem> </itemGroup>
+<!-- Service Provider group 2 --> <itemGroup ref="Service Provider"> <reportItem key="yes"> <rs_id type="mdrm">SHLAR070</rs_id> <itemValue>2</itemValue> <!-- Value of the key to identify the second item group --> </reportItem> <reportItem> <rs_id type="mdrm">SHLAN263</rs_id> <itemValue>ajax corp provider 2</itemValue> </reportItem> </itemGroup>
+4 XML Tags and Their Meanings XML Tag Meaning/How Used <financialDataFile> A tag used to encapsulate all the data in the file <fileDescription> A tag used to encapsulate header information about the file <createDate> The date that the file was created by reporting entity. The date is 8 digits and is formatted as YYYYMMDD <createTime> The time that the file was created by the reporting entity. The time is 6 digits and is formatted as HHMMSS <dataTypeIndicator> Tag is used internally by FRB and is optional. If used, its value is always set to “Production” (without the quotes) <requestType> Tag is used internally by FRB and is optional. If used, its value is always set to “Scheduler” (without the quotes) <receivingSite> Tag is used internally by FRB and is optional. If used, its value is always set to “New York” (without the quotes) <seriesName> Tag is used internally by FRB and is optional. If used, its value is always set to “SHCA” or “SHLA” (without the quotes) <reportingForm> This tag is always set to “SHCA” or “SHLA” (without the quotes), the name of the reporting form for the data submitted in this file <asofDate> The asof date for the financial data. The asof date is 8 digits and is formatted as YYYYMMDD. The file cannot contain more than one <asofDate> <financialData> A tag to encapsulate all the financial data for the <asofDate> <reportingEntity> A tag to encapsulate the financial data for the <reportingEntityIdentifier> <reportingEntityIdentifier> The <reportingEntity>’s RSSD number. The RSSD number is 10 digits; however, leading zeros must be suppressed. For example: RSSD “0000012345” mus be reported as “12345”. The RSSD number must be entered in this tag and not in a <reportItem> tag.
+<transferType> Tag is used internally by FRB and is optional. If used, its value is always set to “Initial” (without the quotes) <sendingSiteReportKey> This tag is used internally by the FRB and is optional. If used, its value is always set to “STAR Internal Key” (without the quotes) <processingDistrict> This tag is optional. If used, its value is always set to “02” (without the quotes), the district number for the Federal Reserve Bank of New York <confidentiality status=”1”> This tag is used to indicate whether the reporting entity has requested that the FRB keep its report data confidential. This tag is optional, but if used, it must be set as follows.
+<confidentiality status=”1”>None</confidentiality> <estimation> This tag is used to indicate whether the report data is estimated. SHCA and SHLA report data cannot be estimated, so this tag is optional. If used, its value is always set to “None” (capital N without the quotes).
+<reportItem> A tag to encapsulate a report item <reportItem key=”yes”> This tag is only used with the <itemGroup ref=”xxx”> tag and is always the first tag within the <itemGroup ref=”xxx”> tag. The “key=”yes”” attribute indicates that the value for this <reportItem> is the key for each of the <reportItem>s in the item group.
+<rs_id type=”mdrm”> The <rs_id type=”mdrm”> is an attribute that is used internally by the FRB. The tag is a constant that does not change. Its value is the line identifier for the report item <itemName> A text description of the mdrm specified by <rs_id>. This tag is optional and is generally not used to minimize the overall number of characters in the file <itemValue> The reported data value for a <reportItem> <itemGroup ref=”xxx”> The <itemGroup ref=”xxx”> tag encapsulates a logical grouping of related items. An item group can be thought of as a single row in a database table. The <reportItem>s within the <itemGroup ref=”xxx”> tag can be thought of as the columns in that database row. The “ref” attribute provides additional context as to what the item group represents.
+5
+The SHCA Series Report of U.S. Ownership of Foreign Securities, Including Selected Money Market Instruments Report Items
+File Header and Common Items These items comprise the tags in the XML file header and specify the RSSD ID for the reporting entity and the asof date for the report submission. Unlike the items that appear on the report, these items are directly populated in their respective XML tags and are not used in conjunction with a <reportItem> tag. Sample SHCA XML files can be found here: SHCA - Sample XML File (with all optional fields) or SHCA - Sample XML File (with no optional fields).
+XML Tag XML Tag Description and Use <createDate> The date that the file was created by reporting entity. The date is 8 digits and is formatted as YYYYMMDD <createTime> The time that the file was created by the reporting entity. The time is 6 digits and is formatted as HHMMSS <dataTypeIndicator> This tag is used internally by the FRB and is optional. If used, its value should always be set to “Production” (without the quotes) <requestType> This tag is used internally by the FRB and is optional. If used, its value is always set to “Scheduler” (without the quotes) <receivingSite> This tag is used internally by the FRB and is optional. If used, its value is always set to “New York” (without the quotes) <seriesName> This tag is used internally by the FRB and is optional. If used, its value is always set to “SHCA” (without the quotes) <reportingForm> This tag is always set to “SHCA” (without the quotes), the name of the reporting form for the data submitted in this file <asofDate> The asof date for the financial data. The asof date is 8 digits and is formatted as YYYYMMDD. The file cannot contain more than one <asofDate> <reportingEntityIdentifier> The reporting entity’s RSSD number. The RSSD number is 10 digits; however, leading zeros must be suppressed. For example: RSSD “0000012345” must be reported as “12345” .The RSSD number must be entered in this tag and not in a <reportItem> tag.
+<transferType> This tag is used internally by the FRB and is optional. If used, its value is always set to “Initial” (without the quotes) <sendingSiteReportKey> This tag is used internally by the FRB and is optional. If used, its value is always set to “STAR Internal Key” (without the quotes) <processingDistrict> This tag is optional. If used, its value is always set to “02” (without the quotes), the district number for the Federal Reserve Bank of New York <confidentiality status=”1”> This tag is used to indicate whether the reporting entity has requested that the FRB keep its report data confidential. This tag is optional, but if used, it must be set as follows.
+<confidentiality status=”1”>None</confidentiality> <estimation> This tag is used to indicate whether the report data is estimated. SHCA report data cannot be estimated, so this tag is optional. If used, its value is always set to “None” (capital N without the quotes).
+6
+Schedule 1: Reporter Contact Identification and Summary of Financial Information
+Report Line # Identifier Data Type Length Notes
+1. Reporter Identification Number (RSSD ID) NA Numeric 10 This field is entered in the <reportingEntityIdentifier> tag. It is not specified as a <reportItem>.
+2. Organization Name SHCA9017
+Character 120 Max
+3. Street Address SHCA9028 Character 120 Max
+4. City SHCA9130 Character 80 Max
+5. State SHCA9200 Character 2 Must be a valid 2 character abbreviation as per the US Postal Service.
+6. Zip Code SHCA9220 Numeric 5 Must be a valid 5 digit Zip Code as per the US Postal Service.
+7. Reporting Status SHCAN261 Numeric 1 Must be 1 - 4
+8. Reporter Type SHCAN262 Numeric 1 Must be 1 – 9 Business Contact Information SHCAR069 This line identifier defines an <itemGroup> for Business Contact Information. There will always be at least one Business Contact Information <itemGroup>. The key for the first <itemGroup> is
+1. The key is incremented by 1 for each subsequent <itemGroup>
+9. Name SHCAC495 Character 80 Max <reportItem> in Business Contact Information <itemGroup> 10.Title SHCAC496 Character 80 Max <reportItem> in Business Contact Information <itemGroup>
+11. Telephone Number SHCA8902 Numeric 10 <reportItem> in Business Contact Information <itemGroup> 3 digit area code+7 digit phone number
+12. Email Address SHCA4086 Character 80 Max <reportItem> in Business Contact Information <itemGroup> This is the last <reportItem> in this <itemGroup> Service Provider/Vendor Contact Information SHCAR070 NA This line identifier defines an <itemGroup> for Service Provider Information. There will always be at least one Service Provider Information <itemGroup>. The key for the first <itemGroup> is
+1. The key is incremented by 1 for each subsequent <itemGroup>
+13. Name of Service Provider or Vendor Used (if applicable) SHCAN263 Character 120 Max <reportItem> in Service Provider Information <itemGroup> This is the only <reportItem> in this itemGroup>.
+14. Name SHCAN444 Character 80 Max Technical Contact Information These fields are reported as standalone reportItem tags.
+15. Title SHCAN445 Character 80 Max
+16. Telephone Number SHCAN446 Numeric 10 3 digit area code+7 digit phone number
+17. Email Address SHCAN447 Character 80 Max
+18. Valuation Technique(s) Used to Determine Fair Values NA NA NA Reporting Unit SHCAN448 Character 3 This line identifier defines an <itemGroup> for Valuation Techniques. There will always be at least one Valuation Technique <itemGroup>. This is the key for each Valuation Technique(s) <itemGroup>
+7 Valuation Description SHCAN449 Character <reportItem> in Valuation Technique <itemGroup> This is the only <reportItem> in this itemGroup>.
+Schedule 1: Reporter Contact Identification and Summary of Financial Information
+Report Line # Identifier Data Type Length Notes
+19. Total number of Schedule 2s Submitted SHCAN450 Numeric 7 Reported in whole dollars without commas, leading zeros, and decimals.
+20. Total US$ Fair Value of All Equity Securities Reported on Schedule 2(s) SHCAN451 Numeric 13 Reported in whole dollars without commas, leading zeros, and decimals.
+21. Total US$ Fair Value of All Short-Term Debt Securities (excluding asset-backed securities) Reported on Schedule 2(s) SHCAN452 Numeric 13 Reported in whole dollars without commas, leading zeros, and decimals.
+22. Total US$ Fair Value of All Long-Term Debt Securities (excluding asset-backed securities) Reported on Schedule 2(s) SHCAN453 Numeric 13 Reported in whole dollars without commas, leading zeros, and decimals.
+23. Total US$ Fair Value of All Asset-Backed Securities Reported on Schedule 2(s) SHCAN454 Numeric 13 Reported in whole dollars without commas, leading zeros, and decimals.
+24. Total Number of Schedule 3s Submitted SHCAN455 Numeric 4 Reported in whole dollars without commas, leading zeros, and decimals.
+25. Total US$ Fair Value of All Equity Securities Reported on Schedule 3(s) SHCAN456 Numeric 13 Reported in whole dollars without commas, leading zeros, and decimals.
+26. Total US$ Fair Value of All Short-Term Debt Securities (excluding asset-backed securities) Reported on Schedule 3(s) SHCAN457 Numeric 13 Reported in whole dollars without commas, leading zeros, and decimals.
+27. Total US$ Fair Value of All Long-Term Debt Securities (excluding asset-backed securities) Reported on Schedule 3(s) SHCAN458 Numeric 13 Reported in whole dollars without commas, leading zeros, and decimals.
+28. Total US$ Fair Value of All Asset-Backed Securities Reported on Schedule 3(s) SHCAN459 Numeric 13 Reported in whole dollars without commas, leading zeros, and decimals.
+29. Certifier’s Name SHCAC490 Character 80 Max
+30. Certifier’s Title SHCAC491 Character 80 Max
+31. Certifier’s Telephone Number SHCAC493 Numeric 10 3 digit area code+7 digit phone number
+32. Date Signed SHCAJ196 Numeric 8 Must be in MMDDYYYY format.
+33. Certifier’s Email Address SHCAC492 Character 80 Max
+8
+Schedule 2: Details of Securities
+Report Line # Identifier Data Type Length Notes
+1. Reporter Identification Number (RSSD) NA Numeric 10 This field is entered in the <reportingEntityIdentifier> tag. It is not specified as a <reportItem>.
+2. Sequence Number SHCDN186 Numeric 7 This line identifier defines an <itemGroup> for Schedule 2. There will always be at least one Schedule 2 <itemGroup>. The Sequence Number is the key for each item <itemGroup>. Reported without commas and leading zeros.
+3. Reporting Unit SHCAN448 Character 3 <reportItem> in Schedule 2 <itemGroup>
+4. Name of Reporting Unit SHCDN460 Character 80 Max <reportItem> in Schedule 2 <itemGroup>
+5. Reporting As SHCDN461 Numeric 1 <reportItem> in Schedule 2 <itemGroup> Must be 1 or 2
+6. Security ID SHCDN462 Character 12 <reportItem> in Schedule 2 <itemGroup>
+7. Security ID System SHCDN463 Numeric 1 <reportItem> in Schedule 2 <itemGroup> Must be 1 – 7
+8. For code of Other (7) enter the name of the organization or system that assigned the Security ID SHCDN464 Character 80 Max <reportItem> in Schedule 2 <itemGroup>
+9. Security Description SHCDN465 Character 80 Max <reportItem> in Schedule 2 <itemGroup>
+10. Name of Issuer SHCDN466 Character 80 Max <reportItem> in Schedule 2 <itemGroup>
+11. Type of Foreign Issuer SHCDN467 Numeric 1 <reportItem> in Schedule 2 <itemGroup> Must be 1 or 2
+12. Security Type SHCDN468 Numeric 2 <reportItem> in Schedule 2 <itemGroup> Must be 1 – 12
+13. Country of Residence of Issuer (Refer to Appendix C in instructions) SHCDN486 Numeric 5 <reportItem> in Schedule 2 <itemGroup>
+14. Currency of Denomination (Refer to Appendix E in instructions) SHCDN470 Character 3 <reportItem> in Schedule 2 <itemGroup>
+15. Type of U.S. Owner SHCDN471 Numeric 1 <reportItem> in Schedule 2 <itemGroup> Must be 1 – 7
+16. Depository Receipt/Share SHCDN487 Numeric 1 <reportItem> in Schedule 2 <itemGroup> Must be 1 or 2
+17. US $ Fair Value of Security SHCDN490 Numeric 12 <reportItem> in Schedule 2 <itemGroup> Reported without commas and leading zeros.
+18. Fair Value of Security in Currency of Denomination SHCDN472 Numeric 20* <reportItem> in Schedule 2 <itemGroup> Reported without commas and leading zeros.
+19. Number of Shares SHCDN473 Numeric 11 <reportItem> in Schedule 2 <itemGroup> Reported without commas and leading zeros.
+20. Face Value or Remaining Principal Outstanding in the Currency of Denomination SHCDN474 Numeric 20* <reportItem> in Schedule 2 <itemGroup> Reported without commas and leading zeros.
+21. Original Face Value in the Currency of Denomination SHCDN475 Numeric 20* <reportItem> in Schedule 2 <itemGroup> Reported without commas and leading zeros. .
+22. Issue Date (MMDDYYYY) SHCDN477 Numeric 8 <reportItem> in Schedule 2 <itemGroup> Must be in MMDDYYYY format
+23. Maturity Date (MMDDYYYY) SHCD9914 Numeric 8 <reportItem> in Schedule 2 <itemGroup>.
+This is the last <reportItem> in this <itemGroup>. Must be in MMDDYYYY format
+9 *Revised length
+Schedule 3: Custodians Used
+Report Line # Identifier Data Type Length Notes
+1. Reporter Identification Number (RSSD) NA Numeric 10 This field is entered in the <reportingEntityIdentifier> tag. It is not specified as a <reportItem>.
+2. Sequence Number SHCCN186 Numeric 5 This line identifier defines an <itemGroup> for Schedule 3. There will always be at least one Schedule 3 <itemGroup>. The Sequence Number is the key for each item <itemGroup>.
+Reported without commas and leading zeros
+3. Custodian Code (Refer to Appendix F) SHCCN478 Character 2 <reportItem> in Schedule 3 <itemGroup>
+4. Total US$ Fair Value of Foreign Equity Securities SHCCN456 Numeric 13 <reportItem> in Schedule 3 <itemGroup> Reported without commas, leading zeros and decimals.
+5. Total US$ Fair Value of Foreign Short- Term Debt Securities (excluding assetbacked securities) SHCCN457 Numeric 13 <reportItem> in Schedule 3 <itemGroup> Reported without commas, leading zeros and decimals.
+6. Total US$ Fair Value of Foreign Long- Term Debt Securities (excluding assetbacked securities) SHCCN458 Numeric 13 <reportItem> in Schedule 3 <itemGroup> Reported without commas, leading zeros and decimals.
+7. Total US$ Fair Value of Foreign Asset- Backed Securities SHCCN459 Numeric 13 <reportItem> in Schedule 3 <itemGroup> Reported without commas, leading zeros and decimals.
+8. Reporting As SHCCN479 Numeric 1 <reportItem> in Schedule 3 <itemGroup> Must be 1 or 2
+9. Name of U.S.-Resident Custodian SHCCN480 Character 120 Max <reportItem> in Schedule 3 <itemGroup>
+10. Street Address of U.S.-Resident Custodian SHCCN481 Character 80 Max <reportItem> in Schedule 3 <itemGroup>
+11. City SHCCN482 Character 80 Max <reportItem> in Schedule 3 <itemGroup>
+12. State SHCCN483 Character 2 <reportItem> in Schedule 3 <itemGroup> Must be a valid 2 character abbreviation as per the US Postal Service
+13. Zip Code SHCCN484 Numeric 5 <reportItem> in Schedule 3 <itemGroup> Must be a valid 5 digit Zip Code as per the US Postal Service
+14. Telephone Number of U.S.-Resident Custodian SHCCN485 Numeric 10 <reportItem> in Schedule 3 <itemGroup>. This is the last <reportItem> in this <itemGroup>. 3 digit area code+7 digit phone number
+10
+The SHLA Series Report of Foreign Holdings of U.S. Securities, Including Selected Money Market Instruments Report Items
+File Header and Common Items These items comprise the tags in the XML file header and specify the RSSD ID for the reporting entity and the asof date for the report submission. Unlike the items that appear on the report, these items are directly populated in their respective XML tags and are not used in conjunction with a <reportItem> tag. Sample SHLA XML files can be found here: SHLA - XML Sample File (with all optional fields) or SHLA - Sample XML File (with no optional fields).
+XML Tag XML Tag Description and Use <createDate> The date that the file was created by reporting entity. The date is 8 digits and is formatted as YYYYMMDD <createTime> The time that the file was created by the reporting entity. The time is 6 digits and is formatted as HHMMSS <dataTypeIndicator> This tag is used internally by the FRB and is optional. If used, its value should always be set to “Production” (without the quotes) <requestType> This tag is used internally by the FRB and is optional. If used, its value is always set to “Scheduler” (without the quotes) <receivingSite> This tag is used internally by the FRB and is optional. If used, its value is always set to “New York” (without the quotes) <seriesName> This tag is used internally by the FRB and is optional. If used, its value is always set to “SHLA” (without the quotes) <reportingForm> This tag is always set to “SHLA” (without the quotes), the name of the reporting form for the data submitted in this file <asofDate> The asof date for the financial data. The asof date is 8 digits and is formatted as YYYYMMDD. The file cannot contain more than one <asofDate> <reportingEntityIdentifier> The reporting entity’s RSSD number. The RSSD number is 10 digits; however, leading zeros must be suppressed. For example: RSSD “0000012345” must be reported as “12345”. The RSSD number must be entered in this tag and not in a <reportItem> tag.
+<transferType> This tag is used internally by the FRB and is optional. If used, its value is always set to “Initial” (without the quotes) <sendingSiteReportKey> This tag is used internally by the FRB and is optional. If used, its value is always set to “STAR Internal Key” (without the quotes) <processingDistrict> This tag is optional. If used, its value is always set to “02” (without the quotes), the district number for the Federal Reserve Bank of New York <confidentiality status=”1”> This tag is used to indicate whether the reporting entity has requested that the FRB keep its report data confidential. This tag is optional, but if used, it must be set as follows.
+<confidentiality status=”1”>None</confidentiality> <estimation> This tag is used to indicate whether the report data is estimated. SHLA report data cannot be estimated, so this tag is optional. If used, its value is always set to “None” (capital N without the quotes).
+11
+Schedule 1: Reporter Contact Identification and Summary of Financial Information
+Report Line # Identifier Data Type Length Notes
+1. Reporter Identification Number (RSSD) NA Numeric 10 This field is entered in the <reportingEntityIdentifier> tag. It is not specified as a <reportItem>.
+2. Organization Name SHLA9017 Character 120 Max
+3. Street Address SHLA9028 Character 80 Max
+4. City SHLA9130 Character 80 Max
+5. State SHLA9200 Character 2 Must be a valid 2 character abbreviation as per the US Postal Service
+6. Zip Code SHLA9220 Numeric 5 Must be a valid 5 digit Zip Code as per the US Postal Service
+7. Reporting Status SHLAN261 Numeric 1 Must be 1 or 2
+8. Reporter Type SHLAN262 Numeric 1 Must be 1 – 9 Business Contact Information SHLAR069 NA This line identifier defines an <itemGroup> for Business Contact Information. There will always be at least one Business Contact Information <itemGroup>. The key for the first <itemGroup> is 1. The key is incremented by 1 for each subsequent <itemGroup>
+9. Name SHLAC495 Character 80 Max <reportItem> in Business Contact Information <itemGroup> 10.Title SHLAC496 Character 80 Max <reportItem> in Business Contact Information <itemGroup>
+11. Telephone Number SHLA8902 Numeric 10 <reportItem> in Business Contact Information <itemGroup> 3 digit area code+7 digit phone number
+12. Email Address SHLA4086 Character 80 Max <reportItem> in Business Contact Information <itemGroup> This is the last <reportItem> in this <itemGroup> Service Provider/Vendor Contact Information SHLAR070 This line identifier defines an <itemGroup> for Service Provider Information. There will always be at least one Service Provider Information <itemGroup>. The key for the first <itemGroup> is 1. The key is incremented by 1 for each subsequent <itemGroup>
+13. Name of Service Provider or Vendor Used (if applicable) SHLAN263 Character 120 Max <reportItem> in Service Provider Information <itemGroup> This is the only <reportItem> in this itemGroup>.
+Technical Contact Information These fields are reported as standalone reportItem tags.
+14. Name SHLAN444 Character 80 Max
+15. Title SHLAN445 Character 80 Max
+16. Telephone Number SHLAN446 Numeric 10 3 digit area code+7 digit phone number
+17. Email Address SHLAN447 Character 80 Max
+18. Valuation Technique Used to Determine Fair Values NA NA Reporting Unit SHLAN448 Character 3 This line identifier defines an <itemGroup> for Valuation Techniques. There will always be at least one Valuation Technique <itemGroup>.
+This is the key for each Valuation Technique(s) <itemGroup>
+12 Valuation Description SHLAN449 Character <reportItem> in Valuation Technique <itemGroup> This is the only <reportItem> in this itemGroup>.
+Schedule 1: Reporter Contact Identification and Summary of Financial Information
+Report Line # Identifier Data Type Length Notes
+19. Total number of Schedule 2 Records submitted SHLAN450 Numeric 7 Reported in whole dollars without commas, leading zeros, and decimals.
+20. Total US$ Fair Value of All Equities Reported on Schedule 2 Records SHLAN451 Numeric 13 Reported in whole dollars without commas, leading zeros, and decimals.
+21. Total US$ Fair Value of All Short-Term Debt Securities (Excluding Asset-Backed Securities) Reported on Schedule 2 Records SHLAN452 Numeric 13 Reported in whole dollars without commas, leading zeros, and decimals.
+22. Total US$ Fair Value of All Long-Term Debt Securities (Excluding Asset-Backed Securities) Reported on Schedule 2 Records SHLAN453 Numeric 13 Reported in whole dollars without commas, leading zeros, and decimals.
+23. Total US$ Fair Value of All Asset-Backed Securities Reported on Schedule 2 Records SHLAN454 Numeric 13 Reported in whole dollars without commas, leading zeros, and decimals.
+24. Date Signed SHLAJ196 Numeric 8 Must be in MMDDYYYY format
+25. Certifier’s Name SHLAC490 Character 80 Max
+26. Certifier’s Title SHLAC491 Character 80 Max
+27. Certifier’s Telephone Number SHLAC493 Numeric 10 3 digit area code+7 digit phone number
+28. Certifier’s Email Address SHLAC492 Character 80 Max
+13
+Schedule 2: Details of Securities
+Report Line # Identifier Data Type Length Notes
+1. Reporter Identification Number (RSSD) NA Numeric 10 This field is entered in the <reportingEntityIdentifier> tag. It is not specified as a <reportItem>.
+2. Sequence Number SHLDN186 Numeric 7 This line identifier defines an <itemGroup> for Schedule 2. There will always be at least one Schedule 2 <itemGroup>. The Sequence Number is the key for each item <itemGroup>. Reported without commas and leading zeros
+3. Reporting Unit Code SHLAN448 Character 3 <reportItem> in Schedule 2 <itemGroup>
+4. Name of Reporting Unit SHLDN460 Character 80 Max <reportItem> in Schedule 2 <itemGroup>
+5. Reporting As SHLDN461 Numeric 1 <reportItem> in Schedule 2 <itemGroup> Must be 1 or 2
+6. Security ID SHLDN462 Character 12 <reportItem> in Schedule 2 <itemGroup>
+7. Security ID System SHLDN463 Numeric 1 <reportItem> in Schedule 2 <itemGroup> Must be 1 – 7
+8. For code of Other (7) enter the name of the org or system that assigned the security ID SHLDN464 Character 80 Max <reportItem> in Schedule 2 <itemGroup>
+9. Security Description SHLDN465 Character 80 Max <reportItem> in Schedule 2 <itemGroup>
+10. Name of Issuer SHLDN466 Character 80 Max <reportItem> in Schedule 2 <itemGroup>
+11. Type of Issuer SHLDN488 Numeric 1 <reportItem> in Schedule 2 <itemGroup> Must be 1 – 6
+12. Security Type SHLDN468 Numeric 2 <reportItem> in Schedule 2 <itemGroup> Must be 1 – 12
+13. Country of Residence of Foreign Holder (Refer to Appendix C in instructions) SHLDN469 Numeric 5 <reportItem> in Schedule 2 <itemGroup>
+14. Currency of Denomination (Refer to Appendix E in instructions) SHLDN470 Character 3 <reportItem> in Schedule 2 <itemGroup>
+15. Type of Foreign Holder (Refer to Appendix C and D in instructions) SHLDN489 Numeric 1 <reportItem> in Schedule 2 <itemGroup> Must be 1 or 2
+16. US $ Fair Value SHLDN490 Numeric 12 <reportItem> in Schedule 2 <itemGroup> Reported without commas and leading zeros
+17. Fair Value in Currency of Denomination SHLDN472 Numeric 20* <reportItem> in Schedule 2 <itemGroup> Reported without commas and leading zeros
+18. Number of Shares SHLDN473 Numeric 11 <reportItem> in Schedule 2 <itemGroup> Reported without commas and leading zeros
+19. Face Value or Remaining Principal Outstanding in Currency of Denomination SHLDN474 Numeric 20* <reportItem> in Schedule 2 <itemGroup> Reported without commas and leading zeros
+20. Original Face Value in Currency of Denomination SHLDN475 Numeric 20* <reportItem> in Schedule 2 <itemGroup> Reported without commas and leading zeros
+21. Issue Date (MMDDYYYY) SHLDN477 Numeric 8 <reportItem> in Schedule 2 <itemGroup> Must be in MMDDYYYY format
+22. Maturity Date (MMDDYYYY) SHLD9914 Numeric 8 <reportItem> in Schedule 2 <itemGroup> This is the last <reportItem> in this <itemGroup>.
+Must be in MMDDYYYY format *Revised length
+14
+Report Submission in Reporting Central Cloud In Reporting Central, select the “Upload file” tab and then click the “Upload your files here” tab.
+Then, navigate to the stored xml file and select the filename so it appears in the ‘File name:’ box. Select “Open” to continue.
+Next select the “Upload” tab.
+15
+If there are no formatting issues during the file upload you will get a “File Upload Complete” message the data will load directly into the report screen.
+The report data can then be validated, saved, submitted or deleted. If errors exist in the text file error messages will appear in the file upload window, which can be used to troubleshoot any formatting issues.

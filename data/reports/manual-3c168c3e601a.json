@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261023T094413Z-98273121",
-  "generated_at": "2026-10-23T09:47:43.012238+00:00",
+  "run_id": "20261023T095308Z-0b23afa5",
+  "generated_at": "2026-10-23T09:56:42.105937+00:00",
   "source": {
     "id": "manual-3c168c3e601a",
     "name": "XML Format: FFIEC 009a (XML)",
@@ -91,5 +91,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "continuation",
-  "workflow_run_id": "39933785643"
+  "workflow_run_id": "39933976734"
 }

@@ -1,0 +1,11 @@
+Reporting Central User Guide
+FR XX-1 SERIES
+Financial Company Report of Consolidated Liabilities
+Federal Reserve System
+Statistics Function January 2026
+Options for submitting
+1. Text File. See the File Upload user guide, located within the Reporting Central General User Guide, for the steps on how to create a Text file.
+2. Data Entry Preparing the File Upload for the FR XX-1 The FR XX-1 is comprised of both financial and text fields.
+Field Values Financial data fields can have either positive or null values. All dollar amounts are to be reported in thousands of dollars, exclusive of dollar signs and commas.
+Field Labels The identifying label for both financial and text data is the eight-charter MDRM descriptor listed see the table below. Reporting Central uses the MDRM to identify individual report items in the file upload.
+Column Report Form Item Number 8-Character MDRM Field Length Field Type Cover Page Legal Name of the Financial Company RSSD9017 72 Text Cover Page Mailing Address of the Financial Company/Street/PO Box RSSD9110 72 Text Cover Page City RSSD9130 30 Text Cover Page State RSSD9200 2 Text Cover Page Zip Code RSSD9220 30 Text Cover Page Name/Title FCCL8901 72 Text Cover Page Area Code/Phone Number FCCL8902 30 Text Cover Page Area Code/Fax Number FCCL9116 30 Text Cover Page E-mail Address of Contact FCCL4086 72 Text Cover Page Printed Name of Officer FCCLC490 72 Text Cover Page Title of Officer FCCLC491 72 Text Cover Page Date of Signature (MM/DD/YYYY). FCCLJ196 8 Text Total consolidated liabiliities of the financial company FCCL2948 14 Numeric Text Items Financial Items
