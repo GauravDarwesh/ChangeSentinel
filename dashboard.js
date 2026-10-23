@@ -4338,6 +4338,30 @@ document.addEventListener("keydown", event => {
 });
 $("monitorSearch").addEventListener("input", renderMonitorList);
 $("scoutSearch").addEventListener("input", renderScout);
+$("scoutItems").addEventListener("change", event => {
+  const input = event.target.closest && event.target.closest("input[data-discovery-select]");
+  if (input) toggleSingleDiscoverySelection(input);
+});
+$("selectVisibleScout").addEventListener("click", toggleVisibleDiscoverySelection);
+$("openDiscoverySelection").addEventListener("click", openDiscoverySelectionDialog);
+$("closeDiscoverySelection").addEventListener("click", () => $("discoverySelectionDialog").close());
+$("cancelDiscoverySelection").addEventListener("click", () => $("discoverySelectionDialog").close());
+$("discoverySelectionDialog").addEventListener("click", event => {
+  if (event.target === $("discoverySelectionDialog")) $("discoverySelectionDialog").close();
+});
+$("addDiscoveryManualUrls").addEventListener("click", addManualDiscoveryUrls);
+$("clearDiscoverySelection").addEventListener("click", () => {
+  state.discoverySelection = [];
+  state.discoveryDuplicatesAdded = 0;
+  resetDiscoveryBatchProgress();
+  renderDiscoverySelectionDialog();
+  renderScout();
+});
+$("discoverySelectedList").addEventListener("click", event => {
+  const button = event.target.closest && event.target.closest("[data-discovery-remove]");
+  if (button) removeDiscoveryCandidate(button.dataset.discoveryRemove);
+});
+$("openDiscoveryBatch").addEventListener("click", openDiscoveryRegistrationBatch);
 $("cadenceSearch").addEventListener("input", () => { state.cadenceSearch = $("cadenceSearch").value; renderCadenceView(); });
 $("cadenceTypeFilter").addEventListener("change", () => { state.cadenceFilter = $("cadenceTypeFilter").value; renderCadenceView(); });
 $("cadenceSignInForm").addEventListener("submit", signInCadence);
