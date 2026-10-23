@@ -48,20 +48,20 @@ Deno.test('redirects are re-checked and documents are not parsed', async () => {
   const calls: string[] = [];
   const fake = (async (url: string) => {
     calls.push(url);
-    if (url === 'https://203.0.113.10/start') return new Response(null, { status: 302, headers: { location: 'http://127.0.0.1/admin' } });
-    if (url === 'https://203.0.113.10/form.pdf') return new Response('%PDF', { headers: { 'content-type': 'application/pdf' } });
-    if (url === 'https://203.0.113.10/page') return new Response('<html><body><a href="/a">A</a></body></html>', { headers: { 'content-type': 'text/html; charset=utf-8' } });
+    if (url === 'https://8.8.8.8/start') return new Response(null, { status: 302, headers: { location: 'http://127.0.0.1/admin' } });
+    if (url === 'https://8.8.8.8/form.pdf') return new Response('%PDF', { headers: { 'content-type': 'application/pdf' } });
+    if (url === 'https://8.8.8.8/page') return new Response('<html><body><a href="/a">A</a></body></html>', { headers: { 'content-type': 'text/html; charset=utf-8' } });
     return new Response('', { status: 404 });
   }) as typeof fetch;
   let refused = false;
-  try { await readPage('https://203.0.113.10/start', fake); } catch (error) { refused = error instanceof PublicError; }
+  try { await readPage('https://8.8.8.8/start', fake); } catch (error) { refused = error instanceof PublicError; }
   assert(refused, 'a redirect to a private address is refused');
   assert(!calls.includes('http://127.0.0.1/admin'), 'the private address is never requested');
-  eq((await readPage('https://203.0.113.10/form.pdf', fake) as any).kind, 'document', 'PDF is reported as a document');
-  const page = await readPage('https://203.0.113.10/page', fake) as any;
+  eq((await readPage('https://8.8.8.8/form.pdf', fake) as any).kind, 'document', 'PDF is reported as a document');
+  const page = await readPage('https://8.8.8.8/page', fake) as any;
   eq(page.kind, 'page', 'html page');
-  eq(page.links[0].url, 'https://203.0.113.10/a', 'link resolved');
-  eq((await readPage('https://203.0.113.10/missing', fake) as any).status, 404, 'errors are reported, not thrown');
+  eq(page.links[0].url, 'https://8.8.8.8/a', 'link resolved');
+  eq((await readPage('https://8.8.8.8/missing', fake) as any).status, 404, 'errors are reported, not thrown');
 });
 
 Deno.test('requests need an allowed origin, an identity and stay within budget', async () => {
