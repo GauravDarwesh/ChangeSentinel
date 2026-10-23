@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261023T165753Z-bdb5034c
-Generated: 2026-10-23T17:01:28.049800+00:00
+Run: 20261023T170414Z-c6a6d7b9
+Generated: 2026-10-23T17:08:37.020091+00:00
 
 ## Aggregate counts
 
@@ -13,29 +13,29 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 | ai_invalid | 0 |
 | ai_ok | 0 |
 | ai_skipped | 0 |
-| baseline_migration | 9 |
+| baseline_migration | 0 |
 | changed | 0 |
 | crawl_paused | 0 |
 | discovered | 130 |
 | extraction_drift | 0 |
 | extraction_error | 2 |
 | fetch_error | 0 |
-| forced_full_fetch | 11 |
+| forced_full_fetch | 2 |
 | new | 0 |
-| not_modified | 98 |
+| not_modified | 106 |
 | relevance_candidates | 0 |
 | removal_held | 0 |
 | removal_pending_confirmation | 0 |
 | removed | 0 |
 | source_changed | 2 |
-| unchanged | 117 |
+| unchanged | 126 |
 
 ## Sources
 
 ### Federal Reserve — Reporting Forms Pilot (Exact URL Allowlist)
 
 - Regulator: Board of Governors of the Federal Reserve System
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T16:57:53.527992+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:04:14.987584+00:00)
 - Discovered: 2
 - Changed content: 0
 - HTML source-only changes: 0
@@ -46,7 +46,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### Federal Reserve — Recently Updated Forms Detail Pilot (Exact URL Allowlist)
 
 - Regulator: Board of Governors of the Federal Reserve System
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T16:57:54.342648+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:04:15.948131+00:00)
 - Discovered: 14
 - Changed content: 0
 - HTML source-only changes: 0
@@ -57,7 +57,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### OSFI BCAR 2027
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:48.610079+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:48.070545+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -68,7 +68,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### Reporting Central External User Guide (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:49.664063+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:48.573304+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -79,7 +79,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### Structure Central External User Guide (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:49.931939+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:48.695046+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -90,7 +90,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML User Guide (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:49.986049+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:48.819051+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -101,7 +101,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FFIEC 009 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:50.042258+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:48.941375+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -112,7 +112,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FFIEC 009 (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:50.097634+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:49.061343+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -123,7 +123,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FFIEC 009a (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:50.152933+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:49.183652+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -134,7 +134,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FFIEC 009a (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:50.207465+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:49.306068+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -145,7 +145,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FFIEC 019 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:50.261771+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:49.428160+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -156,7 +156,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FFIEC 019 (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:50.316011+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:49.549552+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -167,7 +167,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FFIEC 030/FFIEC 030S (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:50.419699+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:49.671371+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -178,7 +178,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FFIEC 030 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:50.475595+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:49.790572+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -189,7 +189,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FFIEC 030S Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:50.529826+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:49.910936+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -200,7 +200,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FR Q-1 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:50.584957+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:50.032438+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -211,7 +211,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FR VV-1 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:50.639394+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:50.152316+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -222,7 +222,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR VV-1 Supplemental Information (Off-site)
 
 - Regulator: www.federalreserve.gov
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:50.692419+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:50.274469+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
@@ -233,7 +233,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### Annual Report XML File Format in Structure Central (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:51.128983+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:50.718177+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -244,7 +244,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-6 Securities Sample file (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:51.182416+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:50.837212+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -255,7 +255,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-6 Insiders Sample XML file (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:51.237189+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:50.956154+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -266,7 +266,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### Annual Report XLXS File Format in Structure Central (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:51.290122+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:51.078272+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -277,7 +277,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-6 Securities Template file (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:51.347466+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:51.200290+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -288,7 +288,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-6 Securities Sample file (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:51.543303+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:51.319066+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -299,7 +299,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-6 Insiders Template file (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:51.736923+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:51.436848+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -310,7 +310,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-6 Insiders Sample file (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:51.894045+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:51.555148+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -321,7 +321,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-7 XML User Guide (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.056421+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:51.676803+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -332,7 +332,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-7 XLSX User Guide (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.110347+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:51.797617+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -343,7 +343,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR Y-9C* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.164458+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:51.917307+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -354,7 +354,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR Y-9ES* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.219357+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:52.037787+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -365,7 +365,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR Y-9LP* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.273392+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:52.157428+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -376,7 +376,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR Y-9SP* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.327007+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:52.275784+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -387,7 +387,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-11/FR Y-11S (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.379483+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:52.396151+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -398,7 +398,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR Y-15* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.433471+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:52.515287+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -409,7 +409,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FXVOLUME (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.486065+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:52.636165+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -420,7 +420,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-7 Item 2a2 Standard Template (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.540422+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:52.755088+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -431,7 +431,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-7 Item 2b Standard Template (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.641444+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:52.875961+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -442,7 +442,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-7 Additional Entities Template (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.760985+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:52.995875+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -453,7 +453,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-7 Additional Entities Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.862977+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:53.120914+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -464,7 +464,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-7 Foreign Companies Template (XLSX)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:52.922049+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:53.241570+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -475,7 +475,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-7 Foreign Companies Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.045030+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:53.361298+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -486,7 +486,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FR Y-7Q** (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.099792+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:53.481983+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -497,7 +497,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-7Q Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.153820+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:53.603922+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -508,7 +508,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FR Y-12** (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.208989+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:53.725481+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -519,7 +519,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-12 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.265692+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:53.847492+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -530,7 +530,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FR Y-12A (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.319934+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:53.967846+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -541,7 +541,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-12A Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.373758+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:54.087162+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -552,7 +552,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FR Y-14A/Q (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.427088+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:54.207175+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -563,7 +563,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-14Q Supplemental Information (ZIP)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.480861+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:54.328879+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -574,7 +574,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-14A Supplemental Information (ZIP)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.536602+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:54.448049+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -585,7 +585,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2028B/FR 2028S (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.590772+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:54.569001+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -596,7 +596,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2028B Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.645320+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:54.690795+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -607,7 +607,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2028S Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.699381+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:54.810324+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -618,7 +618,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FR 2028D (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.753948+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:54.931439+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -629,7 +629,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FR2004* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.809244+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:55.052105+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -640,7 +640,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2004SD Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.863486+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:55.173870+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -651,7 +651,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2004SI Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.916981+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:55.295209+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -662,7 +662,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2004WI Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:53.970226+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:55.416498+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -673,7 +673,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FR 2420* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.023330+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:55.538089+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -684,7 +684,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2420CD Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.078121+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:55.657698+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -695,7 +695,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2420FE Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.130832+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:55.777589+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -706,7 +706,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2420IB Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.186205+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:55.897983+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -717,7 +717,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FR 2510 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.240556+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:56.017590+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -728,7 +728,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FR 2590 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.294683+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:56.138738+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -739,7 +739,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2590 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.350563+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:56.259574+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -750,7 +750,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: FR 2644** (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.405267+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:56.378646+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -761,7 +761,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2644 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.458630+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:56.501952+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -772,7 +772,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2900* & ** (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.514606+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:56.621108+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -783,7 +783,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2900 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.569977+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:56.739995+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -794,7 +794,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### I to I Credit Exposure (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.623861+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:56.861100+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -805,7 +805,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### I to I Credit Exposure Weekly (IICW) Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.678285+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:56.982090+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -816,7 +816,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### I to I Credit Exposure Monthly (IICM) Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.733039+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:57.101075+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -827,7 +827,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### I to I Funding (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.787732+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:57.220052+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -838,7 +838,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### Benchmark Series XML File Format Specification (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.842312+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:57.338694+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -849,7 +849,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### Benchmark Claims SHC (A) Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.896797+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:57.460249+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -860,7 +860,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### Benchmark Schema (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:54.973636+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:57.581171+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -871,7 +871,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### Benchmark Claims SHC (A) Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.027926+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:57.701047+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -882,7 +882,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### Benchmark Liabilities SHL (A) Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.081528+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:57.822677+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -893,7 +893,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### Benchmark Liabilities SHL (A) Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.133844+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:57.942143+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -904,7 +904,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: TFC (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.187084+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:58.062320+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -915,7 +915,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TFC-2 (Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.240835+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:58.182275+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -926,7 +926,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TFC-1 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.296521+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:58.302039+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -937,7 +937,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TFC-3 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.349742+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:58.423398+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -948,7 +948,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: TIC/TIC SLT (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.404847+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:58.568370+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -959,7 +959,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TIC BC Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.458738+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:58.689395+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -970,7 +970,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TIC BL-1 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.512795+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:58.809683+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -981,7 +981,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TIC BL-2 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.566587+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:58.928652+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -992,7 +992,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TIC BQ-1 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.620494+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:59.049911+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1003,7 +1003,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TIC BQ-3 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.675258+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:59.171104+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1014,7 +1014,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TIC BQ-2 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.729826+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:59.291388+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1025,7 +1025,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TIC CQ-1 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.782562+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:59.412696+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1036,7 +1036,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TIC CQ-2 Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.836539+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:59.533683+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1047,7 +1047,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TIC D Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.889986+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:59.655967+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1058,7 +1058,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TIC SLT Sample File (XML)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.945370+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:59.776865+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1069,7 +1069,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### XML Format: TPRX Series (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:55.999858+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:07:59.896106+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1080,7 +1080,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FFIEC 002/FFIEC 002S (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.056806+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:00.015572+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1091,7 +1091,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FFIEC 101 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.110729+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:00.135330+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1102,7 +1102,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FFIEC 102 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.166303+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:00.253973+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1113,7 +1113,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR2004*A/B/C/FA/FB/FC/FM (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.220164+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:00.373520+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1124,7 +1124,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR 2248 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.273974+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:00.494590+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1135,7 +1135,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR 2314/FR 2314S (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.328555+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:00.615750+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1146,7 +1146,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR 2436 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.385172+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:00.737787+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1157,7 +1157,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR 2835 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.438426+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:00.857052+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1168,7 +1168,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR 2835A (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.495358+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:00.978958+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1179,7 +1179,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR 2886b (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.550714+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:01.101672+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1190,7 +1190,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR 2915 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.605497+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:01.224152+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1201,7 +1201,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR 3036 (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.661041+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:01.344557+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1212,7 +1212,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR XX-1* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.716477+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:01.465247+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1223,7 +1223,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### FR Y-7N / FR Y-7NS (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.770957+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:01.583814+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1234,7 +1234,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### TXT Format: FR Y-8* (PDF)
 
 - Regulator: www.frbservices.org
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.824671+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:01.703561+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1245,7 +1245,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### BA - 2027 BCAR sample return (clean) (XLSX, 2.80 MB)
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:56.880999+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:01.824680+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1256,7 +1256,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### BA - 2027 BCAR sample return (tracked changes) (XLSX, 2.81 MB)
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:57.062491+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:02.072826+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1267,7 +1267,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### BA - 2027 BCAR technical specification (XLSX, 3.41 MB)
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:00:57.226443+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:02.366866+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1278,7 +1278,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### BA - 2027 BCAR sample XML (XML, 479 KB)
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:01:25.116261+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:33.645416+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1289,7 +1289,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### BA - 2027 BCAR sample XSD (XSD, 4.74 MB)
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:01:25.455455+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:34.041832+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 0
@@ -1300,7 +1300,7 @@ Generated: 2026-10-23T17:01:28.049800+00:00
 ### Technical specification - frequently asked questions (BCAR)
 
 - Regulator: www.osfi-bsif.gc.ca
-- Report run: 20261023T165753Z-bdb5034c (2026-10-23T17:01:28.049800+00:00)
+- Report run: 20261023T170414Z-c6a6d7b9 (2026-10-23T17:08:37.020091+00:00)
 - Discovered: 1
 - Changed content: 0
 - HTML source-only changes: 1
