@@ -1,8 +1,21 @@
 {
   "schema_version": 2,
-  "run_id": "20261023T010034Z-24c0f87f",
-  "generated_at": "2026-10-23T01:00:34.464303+00:00",
+  "run_id": "20261023T042911Z-226ecf9a",
+  "generated_at": "2026-10-23T04:32:46.173733+00:00",
   "sources": [
+    {
+      "id": "fed-reporting-forms-pilot",
+      "name": "Federal Reserve \u2014 Reporting Forms Pilot (Exact URL Allowlist)",
+      "regulator": "Board of Governors of the Federal Reserve System",
+      "seeds": [
+        "https://www.federalreserve.gov/apps/reportingforms/review",
+        "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+      ],
+      "allowed_prefixes": [
+        "https://www.federalreserve.gov/apps/reportingforms/"
+      ],
+      "initial_baseline": false
+    },
     {
       "id": "fed-reporting-forms-detail-pilot",
       "name": "Federal Reserve \u2014 Recently Updated Forms Detail Pilot (Exact URL Allowlist)",
@@ -20,19 +33,6 @@
       "initial_baseline": false
     },
     {
-      "id": "fed-reporting-forms-pilot",
-      "name": "Federal Reserve \u2014 Reporting Forms Pilot (Exact URL Allowlist)",
-      "regulator": "Board of Governors of the Federal Reserve System",
-      "seeds": [
-        "https://www.federalreserve.gov/apps/reportingforms/review",
-        "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
-      ],
-      "allowed_prefixes": [
-        "https://www.federalreserve.gov/apps/reportingforms/"
-      ],
-      "initial_baseline": false
-    },
-    {
       "id": "manual-f1df3c7d3e94",
       "name": "OSFI BCAR 2027",
       "regulator": "www.osfi-bsif.gc.ca",
@@ -43,26 +43,44 @@
         "https://www.osfi-bsif.gc.ca/"
       ],
       "initial_baseline": false
+    },
+    {
+      "id": "manual-12f61e0df21e",
+      "name": "Forms SHL/SHLA: (05/22/2026)",
+      "regulator": "www.govinfo.gov",
+      "seeds": [
+        "https://www.govinfo.gov/content/pkg/FR-2026-05-22/pdf/2026-10302.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.govinfo.gov/"
+      ],
+      "initial_baseline": true
     }
   ],
   "source_runs": {
-    "fed-reporting-forms-detail-pilot": {
-      "run_id": "20261023T010034Z-24c0f87f",
-      "generated_at": "2026-10-23T01:00:34.464303+00:00",
-      "trigger": "continuation"
-    },
     "fed-reporting-forms-pilot": {
-      "run_id": "20261022T232952Z-a2053a60",
-      "generated_at": "2026-10-22T23:29:52.058442+00:00",
-      "trigger": "continuation"
+      "run_id": "20261023T042911Z-226ecf9a",
+      "generated_at": "2026-10-23T04:29:11.640322+00:00",
+      "trigger": "scheduled"
+    },
+    "fed-reporting-forms-detail-pilot": {
+      "run_id": "20261023T042911Z-226ecf9a",
+      "generated_at": "2026-10-23T04:29:12.419583+00:00",
+      "trigger": "scheduled"
     },
     "manual-f1df3c7d3e94": {
-      "run_id": "20261022T233144Z-2e72a904",
-      "generated_at": "2026-10-22T23:31:44.145298+00:00",
-      "trigger": "continuation"
+      "run_id": "20261023T042911Z-226ecf9a",
+      "generated_at": "2026-10-23T04:32:45.654507+00:00",
+      "trigger": "scheduled"
+    },
+    "manual-12f61e0df21e": {
+      "run_id": "20261023T042911Z-226ecf9a",
+      "generated_at": "2026-10-23T04:32:46.173733+00:00",
+      "trigger": "scheduled"
     }
   },
   "counts": {
+    "ai_backlog_pending": 0,
     "ai_deferred": 0,
     "ai_error": 0,
     "ai_invalid": 0,
@@ -70,49 +88,32 @@
     "ai_skipped": 0,
     "baseline_migration": 0,
     "changed": 0,
-    "crawl_degraded": 0,
-    "crawl_failed": 0,
-    "crawl_paused": 3,
-    "discovered": 17,
-    "discovery_incomplete": 3,
+    "crawl_paused": 0,
+    "discovered": 18,
     "extraction_drift": 0,
     "extraction_error": 0,
     "fetch_error": 0,
-    "forced_full_fetch": 0,
-    "new": 0,
+    "forced_full_fetch": 1,
+    "new": 1,
     "not_modified": 0,
-    "relevance_candidates": 0,
+    "relevance_candidates": 1,
+    "removal_held": 0,
+    "removal_pending_confirmation": 0,
     "removed": 0,
     "source_changed": 0,
-    "unchanged": 0
+    "unchanged": 17
   },
   "discovery": [
     {
-      "source_id": "fed-reporting-forms-detail-pilot",
-      "method": "http-resumable",
-      "state": "PAUSED",
-      "discovered": 14,
-      "html_processed": 216,
-      "successful_pages": 216,
-      "failed_pages": 0,
-      "capped": false,
-      "pending": 5,
-      "unresolved_failures": 0,
-      "checkpoint_schema_version": 3,
-      "config_fingerprint": "da76983ccc4888706d05a6f3790af3f986e6e1e8a5890cc44590ba45e1304075",
-      "inventory": "data/discovery/fed-reporting-forms-detail-pilot-inventory-*.txt",
-      "failure_ledger": "data/discovery/fed-reporting-forms-detail-pilot-failures.jsonl"
-    },
-    {
       "source_id": "fed-reporting-forms-pilot",
       "method": "http-resumable",
-      "state": "PAUSED",
+      "state": "COMPLETE",
       "discovered": 2,
-      "html_processed": 120,
-      "successful_pages": 120,
+      "html_processed": 122,
+      "successful_pages": 122,
       "failed_pages": 0,
       "capped": false,
-      "pending": 2,
+      "pending": 0,
       "unresolved_failures": 0,
       "checkpoint_schema_version": 3,
       "config_fingerprint": "5d911c0d2c2f19e0faf60e514dffc3abf5a2e07fdfc54926a9275ad434d7d063",
@@ -120,24 +121,56 @@
       "failure_ledger": "data/discovery/fed-reporting-forms-pilot-failures.jsonl"
     },
     {
-      "source_id": "manual-f1df3c7d3e94",
+      "source_id": "fed-reporting-forms-detail-pilot",
       "method": "http-resumable",
-      "state": "PAUSED",
-      "discovered": 1,
-      "html_processed": 12,
-      "successful_pages": 12,
+      "state": "COMPLETE",
+      "discovered": 14,
+      "html_processed": 221,
+      "successful_pages": 221,
       "failed_pages": 0,
       "capped": false,
-      "pending": 1,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "da76983ccc4888706d05a6f3790af3f986e6e1e8a5890cc44590ba45e1304075",
+      "inventory": "data/discovery/fed-reporting-forms-detail-pilot-inventory-*.txt",
+      "failure_ledger": "data/discovery/fed-reporting-forms-detail-pilot-failures.jsonl"
+    },
+    {
+      "source_id": "manual-f1df3c7d3e94",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 13,
+      "successful_pages": 13,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
       "unresolved_failures": 0,
       "checkpoint_schema_version": 3,
       "config_fingerprint": "af310001c6d2c0874771a8e2d7500abfb0fc388324ff6627dfd5be44b65f9e8f",
       "inventory": "data/discovery/manual-f1df3c7d3e94-inventory-*.txt",
       "failure_ledger": "data/discovery/manual-f1df3c7d3e94-failures.jsonl"
+    },
+    {
+      "source_id": "manual-12f61e0df21e",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "37c7854d503848ea002e6c72da9b40aebfaa87774945cc7b44e5c5d5123d03e7",
+      "inventory": "data/discovery/manual-12f61e0df21e-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-12f61e0df21e-failures.jsonl"
     }
   ],
   "removal_guards": [],
-  "baseline_update_allowed": false,
+  "baseline_update_allowed": true,
   "change_detector": {
     "classification_hash": "normalized_hash",
     "html_hash": "SHA-256 of the saved HTML snapshot (reused when only volatile tokens changed; raw_hash is always the fetched response)",
@@ -170,5 +203,5 @@
   "baseline_migrations": [],
   "events": [],
   "ai_results": [],
-  "trigger": "continuation"
+  "trigger": "scheduled"
 }

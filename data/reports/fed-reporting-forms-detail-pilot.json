@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261023T010034Z-24c0f87f",
-  "generated_at": "2026-10-23T01:00:34.464303+00:00",
+  "run_id": "20261023T042911Z-226ecf9a",
+  "generated_at": "2026-10-23T04:29:12.419583+00:00",
   "source": {
     "id": "fed-reporting-forms-detail-pilot",
     "name": "Federal Reserve \u2014 Recently Updated Forms Detail Pilot (Exact URL Allowlist)",
@@ -21,24 +21,28 @@
   "discovery": {
     "source_id": "fed-reporting-forms-detail-pilot",
     "method": "http-resumable",
-    "state": "PAUSED",
+    "state": "COMPLETE",
     "discovered": 14,
-    "html_processed": 216,
-    "successful_pages": 216,
+    "html_processed": 221,
+    "successful_pages": 221,
     "failed_pages": 0,
     "capped": false,
-    "pending": 5,
+    "pending": 0,
     "unresolved_failures": 0,
     "checkpoint_schema_version": 3,
     "config_fingerprint": "da76983ccc4888706d05a6f3790af3f986e6e1e8a5890cc44590ba45e1304075",
     "inventory": "data/discovery/fed-reporting-forms-detail-pilot-inventory-*.txt",
     "failure_ledger": "data/discovery/fed-reporting-forms-detail-pilot-failures.jsonl"
   },
-  "baseline_update_allowed": false,
+  "removal_guard": null,
+  "baseline_update_allowed": true,
   "change_detector": {
-    "raw_hash": "SHA-256 retrieved bytes",
+    "raw_hash": "SHA-256 retrieved response bytes",
+    "html_hash": "SHA-256 of the saved HTML snapshot; when only volatile Cloudflare tokens changed, the previous equivalent snapshot is reused (raw_hash is always this response)",
+    "html_comparison_hash": "Versioned HTML signature; known Cloudflare challenge tokens and pageConfig.cacheBuster are normalized",
+    "html_comparison_hash_version": 2,
     "normalized_hash": "SHA-256 extracted normalized content",
-    "classification_hash": "normalized_hash",
+    "classification_hash": "normalized_hash with separate HTML_SOURCE_CHANGED events",
     "http_validators": "ETag/Last-Modified used only for conditional fetch optimization"
   },
   "relevance_gate": {
@@ -65,7 +69,9 @@
     "changed": 0,
     "source_changed": 0,
     "removed": 0,
-    "unchanged": 0,
+    "removal_held": 0,
+    "removal_pending_confirmation": 0,
+    "unchanged": 14,
     "baseline_migration": 0,
     "extraction_drift": 0,
     "fetch_error": 0,
@@ -78,17 +84,16 @@
     "ai_error": 0,
     "ai_skipped": 0,
     "ai_deferred": 0,
-    "crawl_paused": 1,
-    "crawl_degraded": 0,
-    "crawl_failed": 0,
-    "discovery_incomplete": 1
+    "ai_backlog_pending": 0,
+    "crawl_paused": 0
   },
   "events": [],
   "new_urls": [],
   "changed_urls": [],
+  "source_changed_urls": [],
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "continuation",
-  "workflow_run_id": "39881355029"
+  "trigger": "scheduled",
+  "workflow_run_id": "39900393642"
 }
