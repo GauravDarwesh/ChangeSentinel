@@ -572,7 +572,7 @@ class TestAskSentinelVirtualSourceLinks(unittest.TestCase):
         self.assertIn("--scout-config config/scout.json", workflow)
         self.assertIn("git add config/sources.json config/scout.json", workflow)
         self.assertIn("gh workflow run scout.yml", workflow)
-        self.assertIn("not silently added as monitors", workflow)
+        self.assertIn("The monitoring crawl is configured to monitor in-scope linked pages", workflow)
 
     def test_metadata_cors_fallback_keeps_server_side_title_lookup_available(self):
         source = read("dashboard.js")
