@@ -29,6 +29,9 @@ const ALLOWED_ORIGINS = new Set([
 // Some regulator pages ship several MB of inline CSS before <body>; keep a firm cap,
 // but don't truncate the response before the document's actual links.
 const MAX_BYTES = 8_000_000;
+// Documents (PDF, workbooks, Word, CSV, ZIP) can be read whole for the dashboard's viewers.
+export const MAX_FILE_BYTES = 25_000_000;
+const FILE_BUDGET = 80;
 // Smaller regulators' servers are often slow; one hop may take up to 20 s, and the
 // whole read (redirects, a retry, a meta refresh) stays inside the dashboard's 40 s.
 const FETCH_TIMEOUT_MS = 20_000;
@@ -182,6 +185,20 @@ export function formatOf(url: string): string {
   }
   const match = FORMATS.find(([pattern]) => pattern.test(path));
   return match ? match[1] : 'Web page';
+}
+
+// The document formats the dashboard can show, from the address or the content type.
+export function documentFormat(url: string, contentType: string): string {
+  const type = String(contentType || '').toLowerCase();
+  const byName = formatOf(url);
+  if (/pdf/.test(type) || byName === 'PDF') return 'PDF';
+  if (/spreadsheetml|ms-excel|\bcsv\b/.test(type) || byName === 'Spreadsheet') return /csv/.test(type) || /\.csv(\?|$)/i.test(url) ? 'CSV' : 'Spreadsheet';
+  if (/wordprocessingml|msword/.test(type) || byName === 'Word') return 'Word';
+  if (/zip/.test(type) || byName === 'ZIP') return 'ZIP';
+  if (byName === 'XML' && !/html/.test(type)) return 'XML';
+  if (byName === 'JSON' || /json/.test(type)) return 'JSON';
+  if (byName === 'Text') return 'Text';
+  return '';
 }
 
 /* ---------------------------------------------------------------- sanitising */
@@ -632,7 +649,7 @@ function charsetOf(contentType: string, head: Uint8Array): string {
   return sniff.match(/<meta[^>]+charset=["']?([\w-]+)/i)?.[1]?.toLowerCase() || 'utf-8';
 }
 
-async function readBody(response: Response): Promise<{ bytes: Uint8Array; truncated: boolean }> {
+async function readBody(response: Response, limit = MAX_BYTES): Promise<{ bytes: Uint8Array; truncated: boolean }> {
   const reader = response.body?.getReader();
   if (!reader) return { bytes: new Uint8Array(), truncated: false };
   const chunks: Uint8Array[] = [];
@@ -642,7 +659,7 @@ async function readBody(response: Response): Promise<{ bytes: Uint8Array; trunca
     const { done, value } = await reader.read();
     if (done) break;
     total += value.length;
-    if (total > MAX_BYTES) {
+    if (total > limit) {
       truncated = true;
       await reader.cancel();
       break;
@@ -747,7 +764,9 @@ function requestHeaders(browser: boolean, cookies: string): Record<string, strin
   return headers;
 }
 
-export async function readPage(raw: string, fetcher: typeof fetch = fetch) {
+// With { file: true } a document comes back whole as { kind: 'file', bytes } for the
+// dashboard's viewers instead of { kind: 'document' }. A web page is still read as a page.
+export async function readPage(raw: string, fetcher: typeof fetch = fetch, options: { file?: boolean } = {}) {
   let url = checkUrl(raw);
   const started = Date.now();
   const jar: Cookie[] = [];
@@ -797,6 +816,12 @@ export async function readPage(raw: string, fetcher: typeof fetch = fetch) {
       return { kind: 'error', url: url.href, status: response.status, message: statusMessage(response.status) };
     }
     const looksLikeFile = formatOf(url.href) !== 'Web page';
+    const fileFormat = documentFormat(url.href, contentType);
+    if (options.file && fileFormat) {
+      const file = await readBody(response, MAX_FILE_BYTES);
+      if (file.truncated) throw new PublicError('The document is larger than 25 MB, too large to show here. Open it in a new tab.', 413);
+      return { kind: 'file', url: url.href, contentType: contentType.split(';')[0] || 'application/octet-stream', format: fileFormat, bytes: file.bytes };
+    }
     if (contentType && !/html|xml/.test(contentType) && (looksLikeFile || !/text\/plain|octet-stream|unknown/.test(contentType))) {
       await response.body?.cancel();
       return { kind: 'document', url: url.href, contentType: contentType.split(';')[0], format: formatOf(url.href) };
@@ -840,7 +865,7 @@ function cors(req: Request) {
     Vary: 'Origin',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info, x-ask-sentinel-visitor-id',
-    'Access-Control-Expose-Headers': 'Retry-After',
+    'Access-Control-Expose-Headers': 'Retry-After, X-CS-Kind, X-CS-Format, X-CS-Url',
     'Access-Control-Max-Age': '86400'
   };
   if (allowed) headers['Access-Control-Allow-Origin'] = origin;
@@ -901,13 +926,36 @@ export async function handle(req: Request): Promise<Response> {
     if (!spend(actor, ACTOR_BUDGET) || !spend('ip:' + ip, IP_BUDGET)) {
       return respond(req, { error: 'Too many pages read in a short time. Wait a few minutes and retry.' }, 429, { 'Retry-After': '120' });
     }
-    let body: { url?: string } = {};
+    let body: { url?: string; mode?: string } = {};
     try {
       body = await req.json();
     } catch (_) {
       throw new PublicError('Send a JSON body with a url.');
     }
-    return respond(req, await readPage(String(body.url || '')));
+    const wantFile = body.mode === 'file';
+    if (wantFile && !spend('file:' + actor, FILE_BUDGET)) {
+      return respond(req, { error: 'Too many documents opened in a short time. Wait a few minutes and retry.' }, 429, { 'Retry-After': '120' });
+    }
+    const result = await readPage(String(body.url || ''), fetch, { file: wantFile }) as Record<string, unknown>;
+    if (result.kind === 'file') {
+      // Bytes for the dashboard's script to read, never a document to render: always
+      // octet-stream, with the detected format in a header.
+      const bytes = result.bytes as Uint8Array;
+      return new Response(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer, {
+        status: 200,
+        headers: {
+          ...cors(req).headers,
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': 'attachment',
+          'X-Content-Type-Options': 'nosniff',
+          'Cache-Control': 'no-store',
+          'X-CS-Kind': 'file',
+          'X-CS-Format': String(result.format),
+          'X-CS-Url': encodeURI(String(result.url))
+        }
+      });
+    }
+    return respond(req, result);
   } catch (error) {
     if (error instanceof PublicError) return respond(req, { error: error.message }, error.status);
     console.error('page-reader failed', error);

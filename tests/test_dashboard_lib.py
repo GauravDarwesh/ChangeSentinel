@@ -792,7 +792,51 @@ class TestChangeFieldLenses(unittest.TestCase):
 
     def test_a_summary_row_opens_in_place_and_long_lists_page(self):
         out = run_js(self.PAGES + "console.log(JSON.stringify(describe(L.fieldRows(pages, { open: new Set(['quiet']), limit: 4 }).rows)));")
-        self.assertEqual(out, ["Delta", "Alpha", "[New pages 1] new,dim,dim", "[No change 3 open] dim,dim,markup", "  Charlie", "  Foxtrot", "(+1)", "[Not scanned yet 1] none,none,none"])
+        self.assertEqual(out, ["Delta", "Alpha", "[New pages 1] new,dim,dim", "[No change 3 open] dim,dim,markup", "  Charlie", "  Foxtrot", "[Not scanned yet 1] none,none,none", "(+1)"])
+
+    def test_many_single_page_sources_past_the_limit_get_one_show_more(self):
+        # Regression: every single-page source after the limit used to add its own "Show 1 more" row.
+        out = run_js("""
+          const pages = Array.from({ length: 30 }, (_, i) => ({ id: "p" + i, title: "Page " + String(i).padStart(2, "0"), sourceId: "s" + i, sourceLabel: "S" + i, states: ["dim"] }));
+          const rows = L.fieldRows(pages, { lens: "all", limit: 10 }).rows;
+          console.log(JSON.stringify({ more: rows.filter(r => r.type === "more").map(r => r.hidden), pages: rows.filter(r => r.type === "page").length }));""")
+        self.assertEqual(out, {"more": [20], "pages": 10})
+
+    def test_pages_are_sectioned_by_regulator_with_a_summary_strip(self):
+        out = run_js(self.PAGES + """
+          const tagged = pages.map(p => Object.assign(p, p.sourceId === "t" ? { groupKey: "osfi", groupLabel: "OSFI", groupNote: "Canada" } : { groupKey: "fed", groupLabel: "Federal Reserve", groupNote: "United States" }));
+          const rows = L.fieldRows(tagged, { groupBy: "regulator" }).rows;
+          const closedRows = L.fieldRows(tagged, { groupBy: "regulator", closed: new Set(["sec:fed"]) }).rows;
+          console.log(JSON.stringify({
+            rows: rows.map(r => r.type === "section" ? "## " + r.label + " " + r.count + " " + r.states.join(",") : describe([r])[0]),
+            closed: closedRows.map(r => r.type === "section" ? "## " + r.label + (r.open ? "" : " (closed)") : describe([r])[0]),
+            counts: rows.filter(r => r.type === "section").map(r => r.counts.activity)
+          }));""")
+        self.assertEqual(out["rows"], [
+            "## Federal Reserve 5 new,bad,markup", "Delta", "Alpha", "[New pages 1] new,dim,dim", "[No change 1] dim,dim,markup", "[Not scanned yet 1] none,none,none",
+            "## OSFI 2 dim,dim,dim", "[No change 2] dim,dim,dim",
+        ])
+        self.assertEqual(out["closed"], ["## Federal Reserve (closed)", "## OSFI", "[No change 2] dim,dim,dim"])
+        self.assertEqual(out["counts"], [2, 0])
+
+    def test_regulators_are_found_by_host_then_by_domain(self):
+        out = run_js("""
+          const profiles = [{ id: "fed", short_name: "Federal Reserve", jurisdiction: "United States", hosts: ["federalreserve.gov", "www.frbservices.org"] }];
+          const pick = (url, name) => { const r = L.regulatorFor(url, profiles, name); return [r.id, r.short, r.jurisdiction]; };
+          console.log(JSON.stringify([
+            pick("https://www.frbservices.org/a.xlsx", "www.frbservices.org"),
+            pick("https://www.federalreserve.gov/apps/x", ""),
+            pick("https://www.centralbankbahamas.com/x", "www.centralbankbahamas.com"),
+            pick("https://www.osfi-bsif.gc.ca/en/x", "www.osfi-bsif.gc.ca"),
+            pick("https://www.eba.europa.eu/x", "European Banking Authority"),
+            [L.pageKind("FR Y-9C instructions", ""), L.pageKind("Item 2b standard template", "https://x/item-2b.xlsx"), L.pageKind("TFC-1 Sample File (XML)", ""), L.pageKind("BCAR FAQ technical specification", "")]
+          ]));""")
+        self.assertEqual(out[0], ["fed", "Federal Reserve", "United States"])
+        self.assertEqual(out[1], ["fed", "Federal Reserve", "United States"])
+        self.assertEqual(out[2], ["centralbankbahamas.com", "centralbankbahamas.com", ""])
+        self.assertEqual(out[3], ["osfi-bsif.gc.ca", "osfi-bsif.gc.ca", "Canada"])
+        self.assertEqual(out[4], ["eba.europa.eu", "European Banking Authority", "European Union"])
+        self.assertEqual(out[5], ["Instructions", "Forms and templates", "Sample files", "Technical specifications"])
 
     def test_problems_outrank_changes_when_lights_merge(self):
         out = run_js("console.log(JSON.stringify([L.mergeCellStates(['dim', 'on', 'bad']), L.mergeCellStates(['skip', 'markup']), L.mergeCellStates([])]));")

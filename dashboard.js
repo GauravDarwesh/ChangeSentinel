@@ -57,7 +57,8 @@ const DATA_PATHS = {
   scoutConfig: "config/scout.json",
   calendar: "data/calendar.json",
   lineage: "config/lineage.json",
-  reviews: "data/reviews/ledger.json"
+  reviews: "data/reviews/ledger.json",
+  regulators: "config/regulators.json"
 };
 // Load core state from the same origin as GitHub Pages first. Keep the raw GitHub
 // URL as a fallback so older deployments can still recover while Pages publishes.
@@ -73,7 +74,8 @@ const ENDPOINTS = {
   scoutConfig: new URL("./config/scout.json", document.baseURI).href,
   calendar: new URL("./data/calendar.json", document.baseURI).href,
   lineage: new URL("./config/lineage.json", document.baseURI).href,
-  reviews: new URL("./data/reviews/ledger.json", document.baseURI).href
+  reviews: new URL("./data/reviews/ledger.json", document.baseURI).href,
+  regulators: new URL("./config/regulators.json", document.baseURI).href
 };
 // The calendar feed is served from Pages so calendar apps can subscribe to it.
 const CALENDAR_FEED = new URL("./data/calendar.ics", document.baseURI).href;
@@ -212,6 +214,9 @@ function isValidDataAssetShape(key, value) {
       return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.mappings);
     case "reviews":
       return isPlainObject(value) && value.schema_version === 1 && isPlainObject(value.reviews) && Array.isArray(value.log);
+    // Who publishes each host; without it pages are grouped by their domain.
+    case "regulators":
+      return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.regulators);
     default:
       return false;
   }
@@ -783,6 +788,7 @@ function renderLatestPreview() {
 // lights scroll under them.
 const FIELD_STORAGE = "cs-field-v1";
 const FIELD_LENS_WORDS = { activity: "Activity", changed: "Changed", problems: "Problems", new: "New", all: "All pages" };
+const FIELD_GROUPS = { regulator: "Regulator", jurisdiction: "Jurisdiction", kind: "Kind of document", source: "Monitor", none: "No grouping" };
 function fieldPrefs() {
   if (state.field) return state.field;
   let saved = {};
@@ -790,13 +796,14 @@ function fieldPrefs() {
   state.field = {
     lens: L.FIELD_LENSES.indexOf(saved.lens) >= 0 ? saved.lens : "activity",
     range: Object.prototype.hasOwnProperty.call(L.FIELD_RANGES, saved.range) ? saved.range : isCompact() ? "2d" : "7d",
-    query: "", open: new Set(), closed: new Set(), limit: 80
+    groupBy: Object.prototype.hasOwnProperty.call(FIELD_GROUPS, saved.groupBy) ? saved.groupBy : "regulator",
+    query: "", open: new Set(), closed: new Set(), limit: 60, limits: {}
   };
   return state.field;
 }
 function saveFieldPrefs() {
   const f = fieldPrefs();
-  try { localStorage.setItem(FIELD_STORAGE, JSON.stringify({ lens: f.lens, range: f.range })); } catch (_) {}
+  try { localStorage.setItem(FIELD_STORAGE, JSON.stringify({ lens: f.lens, range: f.range, groupBy: f.groupBy })); } catch (_) {}
 }
 // Lights keep a fixed size; the label column takes whatever width the lights
 // leave, within limits, so long page names show in full when there is room.
@@ -804,10 +811,10 @@ function fieldGeometry(columnCount) {
   const viewport = $("fieldViewport");
   const width = (viewport && viewport.clientWidth) || 800;
   const compact = isCompact();
-  const gap = compact ? 2 : 3;
+  const gap = compact ? 3 : 4;
   const tile = compact ? 14 : 16;
-  const lights = ((columnCount || 0) + 1) * (tile + gap) + 16;
-  const min = compact ? 108 : 160;
+  const lights = ((columnCount || 0) + 1) * (tile + gap) + 18;
+  const min = compact ? 116 : 180;
   const max = compact ? 168 : 380;
   const labelWidth = Math.round(Math.min(max, Math.max(min, width - lights)));
   return { labelWidth, tile, gap, key: labelWidth + "x" + tile + "x" + gap };
@@ -828,6 +835,44 @@ function fieldCellSummary(states) {
   const counts = {};
   states.forEach(s => { counts[s] = (counts[s] || 0) + 1; });
   return order.filter(s => counts[s]).map(s => counts[s] + " " + words[s]).join(", ");
+}
+// Regulators by host: config/regulators.json first, then Scout's profiles.
+function regulatorProfiles() {
+  if (state.regulatorProfiles) return state.regulatorProfiles;
+  const own = state.regulators && Array.isArray(state.regulators.regulators) ? state.regulators.regulators : [];
+  const scout = state.scoutConfig && Array.isArray(state.scoutConfig.regulators) ? state.scoutConfig.regulators : [];
+  state.regulatorProfiles = own.concat(scout.map(profile => ({ id: profile.id, name: profile.name, short_name: profile.short_name,
+    jurisdiction: profile.jurisdiction, region: profile.region, hosts: profile.hosts || [] })));
+  return state.regulatorProfiles;
+}
+function itemRegulator(item) {
+  const source = sourceForItem(item) || {};
+  return L.regulatorFor(item.canonical_url, regulatorProfiles(), source.regulator || "");
+}
+function fieldGroupOf(item, groupBy, sourceLabelText) {
+  if (groupBy === "none") return {};
+  if (groupBy === "source") return { groupKey: "src:" + item.source_id, groupLabel: sourceLabelText, groupNote: "" };
+  if (groupBy === "kind") {
+    const kind = L.pageKind(itemTitle(item), item.canonical_url, item.extraction_type);
+    return { groupKey: "kind:" + kind, groupLabel: kind, groupNote: "" };
+  }
+  const regulator = itemRegulator(item);
+  if (groupBy === "jurisdiction") {
+    return regulator.jurisdiction ? { groupKey: "j:" + regulator.jurisdiction, groupLabel: regulator.jurisdiction, groupNote: regulator.region || "" } : { groupKey: "other", groupLabel: "Other", groupNote: "" };
+  }
+  return { groupKey: "reg:" + regulator.id, groupLabel: regulator.short, groupNote: [regulator.short !== regulator.name ? regulator.name : "", regulator.jurisdiction].filter(Boolean).join(" · ") };
+}
+// A small lit monogram for each section, its colour fixed by its name.
+const FIELD_BADGE_HUES = ["#e8890a", "#2f6fe0", "#179463", "#c4321f", "#8a5cf5", "#0e8fa3", "#b3541e", "#6b8f1a", "#d0447c", "#4a6fa5"];
+function fieldBadge(label) {
+  const text = String(label || "?").replace(/\(.*?\)/g, " ").trim();
+  const words = text.split(/[\s/·-]+/).filter(word => /[A-Za-z0-9]/.test(word) && !/^(of|the|and|for|de|la|du|des|del)$/i.test(word));
+  const acronym = /^[A-Z0-9&.]{2,5}$/.test(words[0] || "") ? words[0].replace(/\./g, "") : "";
+  const initials = acronym || words.slice(0, 2).map(word => word.charAt(0).toUpperCase()).join("") || "?";
+  let hash = 0;
+  for (let i = 0; i < text.length; i += 1) hash = (hash * 31 + text.charCodeAt(i)) | 0;
+  const hue = FIELD_BADGE_HUES[Math.abs(hash) % FIELD_BADGE_HUES.length];
+  return '<span class="field-monogram" style="--badge:' + hue + '" aria-hidden="true">' + esc(initials.slice(0, 4)) + "</span>";
 }
 function renderMonitoringSignal() {
   const field = $("signalVisual");
@@ -863,17 +908,19 @@ function renderMonitoringSignal() {
   const pages = items.map(item => {
     const source = sourceById.get(item.source_id) || { id: item.source_id };
     const page = fieldPage(item, reportEvents);
-    const row = { id: item.url_id, url: item.canonical_url, title: itemTitle(item), sourceId: item.source_id, sourceLabel: shortSourceLabel(source),
-      pending: page.pending, states: columns.map(column => L.columnCellState(column, page)) };
-    return row;
+    const sourceLabelText = shortSourceLabel(source);
+    return Object.assign({ id: item.url_id, url: item.canonical_url, title: itemTitle(item), sourceId: item.source_id, sourceLabel: sourceLabelText,
+      pending: page.pending, states: columns.map(column => L.columnCellState(column, page)) }, fieldGroupOf(item, prefs.groupBy, sourceLabelText));
   });
-  const layout = L.fieldRows(pages, { lens: prefs.lens, query: prefs.query, open: prefs.open, closed: prefs.closed, limit: prefs.limit });
+  const layout = L.fieldRows(pages, { lens: prefs.lens, query: prefs.query, groupBy: prefs.groupBy, open: prefs.open, closed: prefs.closed, limit: prefs.limit, limits: prefs.limits });
   state.fieldLayout = layout;
   syncFieldTools(layout.counts);
   const pendingTip = pendingWords(pending);
-  // Header: one label per day spanning that day's windows, pinned while the rows
-  // scroll; a dash under a window marks a manual run in it.
-  let html = '<div class="field-corner" role="columnheader">' + esc(columns.length ? plural(columns.length, "scan window", "scan windows") : "No scans in range") + "</div>";
+  const rangeShort = { "2d": "Last 2 days", "7d": "Last 7 days", "30d": "Last 30 days", all: "All history" }[prefs.range];
+  // Header: one label per day spanning that day's windows (weekday over date),
+  // pinned while the rows scroll; a dash under a window marks a manual run in it.
+  const todayKey = new Date().toDateString();
+  let html = '<div class="field-corner" role="columnheader"><span>' + esc(rangeShort) + "</span><small>" + esc(columns.length ? plural(columns.length, "scan window", "scan windows") : "No scans in range") + "</small></div>";
   const days = [];
   columns.forEach(column => {
     const date = new Date(column.slot);
@@ -881,36 +928,64 @@ function renderMonitoringSignal() {
     if (!days.length || days[days.length - 1].key !== key) days.push({ key, date, columns: [] });
     days[days.length - 1].columns.push(column);
   });
-  days.forEach(day => {
+  days.forEach((day, index) => {
     const span = day.columns.length;
-    const weekday = day.date.toLocaleDateString([], { weekday: "short" });
-    const label = span >= 3 ? weekday + " " + day.date.getDate() : span === 2 ? weekday : weekday.charAt(0);
-    const marks = day.columns.map((column, k) => column.manual ? '<i class="field-manual" style="--k:' + k + '"></i>' : "").join("");
-    html += '<span class="field-day" role="columnheader" style="grid-column: span ' + span + '" title="' + esc(day.date.toLocaleDateString([], { weekday: "long", day: "numeric", month: "long" })) + '">' +
-      '<span class="field-day-text">' + esc(label) + "</span>" + marks + "</span>";
+    const weekday = day.date.toLocaleDateString([], { weekday: span >= 2 ? "short" : "narrow" });
+    const marks = day.columns.map((column, k) => column.manual ? '<i class="field-manual" style="--k:' + k + '" title="' + esc(plural(column.manual, "manual run", "manual runs")) + '"></i>' : "").join("");
+    html += '<span class="field-day' + (day.key === todayKey ? " is-today" : "") + (index % 2 ? " is-odd" : "") + '" role="columnheader" style="grid-column: span ' + span + '" title="' +
+      esc(day.date.toLocaleDateString([], { weekday: "long", day: "numeric", month: "long" })) + '"><span class="field-day-week">' + esc(weekday) + '</span><span class="field-day-date">' +
+      esc(span >= 2 || index === days.length - 1 ? day.date.getDate() : "") + "</span>" + marks + "</span>";
   });
-  html += '<span class="field-day is-next" role="columnheader" title="The next scan">Next</span>';
+  html += '<span class="field-day is-next" role="columnheader" title="The next scan"><span class="field-day-week">Next</span></span>';
+  // Activity ribbon: how many pages in view changed, failed or were new in each window.
+  const scope = pages.filter(fieldMatchesQuery);
+  const tallies = columns.map((_, x) => {
+    const tally = { on: 0, bad: 0, new: 0 };
+    scope.forEach(page => { const s = page.states[x]; if (s === "on" || s === "bad" || s === "new") tally[s] += 1; });
+    return tally;
+  });
+  const peak = Math.max(1, ...tallies.map(t => t.on + t.bad + t.new));
+  html += '<div class="field-corner field-pulse-label" role="rowheader">Activity</div>';
+  html += tallies.map((t, x) => {
+    const total = t.on + t.bad + t.new;
+    const bar = (count, cls) => count ? '<i class="' + cls + '" style="--h:' + Math.max(18, Math.round(Math.sqrt(count / peak) * 100)) + '%"></i>' : "";
+    const words = [t.on ? plural(t.on, "change", "changes") : "", t.bad ? plural(t.bad, "problem", "problems") : "", t.new ? plural(t.new, "new page", "new pages") : ""].filter(Boolean).join(", ");
+    return '<span class="field-pulse' + (total ? "" : " is-quiet") + '" role="gridcell" title="' + esc(windowSpan(columns[x]) + (words ? ": " + words : ": nothing changed")) + '">' +
+      bar(t.bad, "is-bad") + bar(t.on, "is-on") + bar(t.new, "is-new") + "</span>";
+  }).join("") + '<span class="field-pulse is-next" aria-hidden="true"></span>';
   let y = 0;
   const cells = (states, attrs, tipTitle, summaries) => states.map((s, x) =>
     '<span class="led s-' + s + '" role="gridcell" data-x="' + x + '" data-y="' + y + '" data-col="' + esc(columns[x].id) + '" data-state="' + s + '" data-tip="' + esc(tipTitle) + '"' +
       attrs(s) + (summaries ? ' data-summary="' + esc(summaries[x]) + '"' : "") +
       ' aria-label="' + esc(tipTitle + ", " + (attrs.source ? columnLabel(columns[x], attrs.source) : windowSpan(columns[x])) + ": " + (summaries ? summaries[x] : stateWords(s))) + '"></span>').join("");
+  const summaryCells = (row, title) => {
+    const summaries = columns.map((_, x) => fieldCellSummary(row.members.map(page => page.states[x]).filter(s => s !== "none")) || "not scanned");
+    const attrs = s => (s === "none" ? "" : ' data-field-group="' + esc(row.key) + '"');
+    attrs.source = "";
+    return cells(row.states, attrs, title, summaries) +
+      '<span class="led s-pending is-summary" role="gridcell" data-x="' + columns.length + '" data-y="' + y + '" data-col="pending" data-tip="' + esc(title) + '" data-state="pending" aria-label="' + esc(title + ", " + pendingTip.title) + '"></span>';
+  };
   layout.rows.forEach(row => {
     if (row.type === "more") {
-      html += '<button class="field-more" type="button" data-field-more="' + esc(row.key) + '">Show ' + esc(Math.min(80, row.hidden)) + " more · " + esc(plural(row.hidden, "page", "pages")) + " not shown</button>";
+      html += '<button class="field-more" type="button" data-field-more="' + esc(row.key) + '">Show ' + esc(Math.min(60, row.hidden)) + " more · " + esc(plural(row.hidden, "page", "pages")) + " not shown</button>";
+      return;
+    }
+    if (row.type === "section") {
+      const title = row.label + " · " + plural(row.count, "page", "pages");
+      const chips = [row.counts.problems ? '<i class="field-chip is-bad">' + esc(row.counts.problems) + "</i>" : "", row.counts.changed ? '<i class="field-chip is-on">' + esc(row.counts.changed) + "</i>" : "",
+        row.counts.new ? '<i class="field-chip is-new">' + esc(row.counts.new) + "</i>" : ""].join("");
+      html += '<button class="field-label field-section-label" type="button" data-field-group="' + esc(row.key) + '" data-row="' + y + '" aria-expanded="' + String(row.open) + '" title="' + esc(title + (row.note ? " · " + row.note : "")) + '">' +
+        fieldBadge(row.label) + '<span class="field-section-text"><span class="field-name">' + esc(row.label) + '</span><small>' + esc([row.note, plural(row.count, "page", "pages")].filter(Boolean).join(" · ")) + "</small></span>" +
+        '<span class="field-chips">' + chips + '</span><span class="field-chevron" aria-hidden="true"></span></button>';
+      html += summaryCells(row, title);
+      y++;
       return;
     }
     if (row.type === "group") {
-      const members = pages.filter(page => fieldGroupHas(row, page));
-      const memberStates = columns.map((_, x) => members.map(page => page.states[x]));
-      const summaries = memberStates.map(list => fieldCellSummary(list.filter(s => s !== "none")) || "not scanned");
       const title = row.label + " · " + plural(row.count, "page", "pages");
-      html += '<button class="field-label field-group-label is-' + esc(row.kind) + '" type="button" data-field-group="' + esc(row.key) + '" aria-expanded="' + String(row.open) + '" title="' + esc(title) + '">' +
+      html += '<button class="field-label field-group-label is-' + esc(row.kind) + '" type="button" data-field-group="' + esc(row.key) + '" data-row="' + y + '" aria-expanded="' + String(row.open) + '" title="' + esc(title) + '">' +
         '<span class="field-chevron" aria-hidden="true"></span><span class="field-name">' + esc(row.label) + '</span><span class="field-label-count num">' + esc(row.count) + "</span></button>";
-      const attrs = s => (s === "none" ? "" : ' data-field-group="' + esc(row.key) + '"');
-      attrs.source = "";
-      html += cells(row.states, attrs, title, summaries);
-      html += '<span class="led s-pending is-summary" role="gridcell" data-x="' + columns.length + '" data-y="' + y + '" data-col="pending" data-tip="' + esc(title) + '" data-state="pending" aria-label="' + esc(title + ", " + pendingTip.title) + '"></span>';
+      html += summaryCells(row, title);
       y++;
       return;
     }
@@ -949,18 +1024,6 @@ function renderMonitoringSignal() {
   ledField.measure();
   updateNextRunCountdown();
 }
-// Which pages a summary row stands for, by the same rule fieldRows used.
-function fieldGroupHas(row, page) {
-  const a = page.activity || L.rowActivity(page.states);
-  if (!fieldMatchesQuery(page)) return false;
-  if (row.kind === "source") return "src:" + page.sourceId === row.key;
-  if (a.changed || a.problems) return false;
-  return row.kind === "new" ? a.kind === "new" : row.kind === "waiting" ? a.kind === "unscanned" : a.kind === "quiet";
-}
-function fieldMatchesQuery(page) {
-  const q = String(fieldPrefs().query || "").trim().toLowerCase();
-  return !q || [page.title, page.url, page.sourceLabel].join(" ").toLowerCase().indexOf(q) >= 0;
-}
 function syncFieldTools(counts) {
   const prefs = fieldPrefs();
   document.querySelectorAll("[data-field-lens]").forEach(button => {
@@ -972,6 +1035,12 @@ function syncFieldTools(counts) {
   });
   const range = $("fieldRange");
   if (range && range.value !== prefs.range) range.value = prefs.range;
+  const group = $("fieldGroup");
+  if (group && group.value !== prefs.groupBy) group.value = prefs.groupBy;
+}
+function fieldMatchesQuery(page) {
+  const q = String(fieldPrefs().query || "").trim().toLowerCase();
+  return !q || [page.title, page.url, page.sourceLabel, page.groupLabel].join(" ").toLowerCase().indexOf(q) >= 0;
 }
 function timeOnlyShort(date) { return clock(date); }
 // The four scheduled slot times (00, 06, 12, 18 UTC) in the viewer's time zone.
@@ -1096,7 +1165,10 @@ function showFieldTip(target, x, y, pinned) {
   let actions = "";
   if (pinned) {
     if (target.dataset.monitorId) actions = '<button class="btn btn-primary" type="button" data-tip-open="' + esc(target.dataset.monitorId) + '">Open page</button>';
-    else if (group) actions = '<button class="btn" type="button" data-tip-group="' + esc(group) + '">' + (fieldPrefs().open.has(group) ? "Hide these pages" : "Show these pages") + "</button>";
+    else if (group) {
+      const shown = group.indexOf("sec:") === 0 || group.indexOf("src:") === 0 ? !fieldPrefs().closed.has(group) : fieldPrefs().open.has(group);
+      actions = '<button class="btn" type="button" data-tip-group="' + esc(group) + '">' + (shown ? "Hide these pages" : "Show these pages") + "</button>";
+    }
     actions = '<div class="field-tip-actions">' + actions + '<button class="btn btn-quiet" type="button" data-tip-close>Close</button></div>';
   }
   tip.innerHTML = '<strong class="field-tip-title">' + esc(target.dataset.tip) + "</strong><small>" + esc(label) + "</small>" +
@@ -1135,7 +1207,10 @@ const ledField = (() => {
   const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
   const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const SNAKE = [0, 1, 2, 5, 4, 3, 6, 7, 8];
-  let cells = [], rows = 0, colors = null, dpr = 1, born = {}, seen = null, hoverEl = null, width = 0, height = 0;
+  let cells = [], rows = 0, colors = null, dpr = 1, born = {}, seen = null, hoverEl = null, hoverRow = -1, width = 0, height = 0;
+  // Backdrop geometry: the pinned label column and header (lights are clipped to
+  // the area they leave), one band per day, the section rows and each row's height.
+  let clipLeft = 0, clipTop = 0, dayBands = [], sectionBands = [], rowBands = new Map(), gapPx = 3;
   let frame = 0, lastPaint = 0, sleepTimer = 0, revealed = false;
 
   function parseColor(value) {
@@ -1151,7 +1226,7 @@ const ledField = (() => {
     const get = name => parseColor(css.getPropertyValue(name));
     colors = {
       on: get("--state-change"), new: get("--state-new"), bad: get("--state-bad"),
-      lo: get("--idle-lo"), hi: get("--idle-hi"), ink: get("--ink"),
+      lo: get("--idle-lo"), hi: get("--idle-hi"), ink: get("--ink"), accent: get("--accent"),
       light: document.documentElement.getAttribute("data-theme") === "light"
     };
   }
@@ -1173,6 +1248,17 @@ const ledField = (() => {
     // Positions in the viewport's scrolled content: led -> field -> stage -> viewport.
     const ox = field.offsetLeft + (stage ? stage.offsetLeft : 0);
     const oy = field.offsetTop + (stage ? stage.offsetTop : 0);
+    gapPx = parseFloat(getComputedStyle(field).columnGap) || 3;
+    const corner = field.querySelector(".field-corner");
+    const pulse = field.querySelector(".field-pulse-label");
+    clipLeft = corner ? corner.offsetWidth + ox : 0;
+    clipTop = pulse ? pulse.offsetTop + pulse.offsetHeight + oy : corner ? corner.offsetTop + corner.offsetHeight + oy : 0;
+    dayBands = Array.from(field.querySelectorAll(".field-day:not(.is-next)")).map((el, index) => ({
+      x: el.offsetLeft + ox, w: el.offsetWidth, odd: index % 2 === 1, today: el.classList.contains("is-today")
+    }));
+    sectionBands = Array.from(field.querySelectorAll(".field-section-label")).map(el => ({ y: el.offsetTop + oy, h: el.offsetHeight }));
+    rowBands = new Map();
+    field.querySelectorAll(".field-label[data-row]").forEach(el => rowBands.set(Number(el.dataset.row), { y: el.offsetTop + oy, h: el.offsetHeight }));
     cells = [];
     rows = 0;
     field.querySelectorAll(".led").forEach(el => {
@@ -1250,6 +1336,35 @@ const ledField = (() => {
     ctx.strokeRect(x + .5, y + .5, cell.s - 1, cell.s - 1);
   }
 
+  // Days alternate in a faint band with a hairline where each starts (today in
+  // the accent), section rows get a band of their own, and the hovered row is lit.
+  function paintBackdrop(sx, sy) {
+    const ink = colors.ink;
+    dayBands.forEach(band => {
+      const x = band.x - sx;
+      if (x > width || x + band.w < clipLeft) return;
+      const left = x - gapPx / 2;
+      if (band.today) { ctx.fillStyle = rgba(colors.accent, colors.light ? .07 : .09); ctx.fillRect(left, clipTop, band.w + gapPx, height); }
+      else if (band.odd) { ctx.fillStyle = rgba(ink, colors.light ? .028 : .035); ctx.fillRect(left, clipTop, band.w + gapPx, height); }
+      // The same place as the header's hairline (.field-day::before).
+      ctx.fillStyle = band.today ? rgba(colors.accent, .45) : rgba(ink, colors.light ? .09 : .12);
+      ctx.fillRect(left - .5, clipTop, 1, height);
+    });
+    sectionBands.forEach(band => {
+      const y = band.y - sy;
+      if (y > height || y + band.h < clipTop) return;
+      ctx.fillStyle = rgba(ink, colors.light ? .035 : .05);
+      ctx.fillRect(clipLeft, y - 2, width, band.h + 4);
+      ctx.fillStyle = rgba(ink, colors.light ? .08 : .12);
+      ctx.fillRect(clipLeft, y - 2, width, 1);
+    });
+    const row = rowBands.get(hoverRow);
+    if (row) {
+      ctx.fillStyle = rgba(colors.accent, colors.light ? .08 : .1);
+      ctx.fillRect(clipLeft, row.y - sy, width, row.h);
+    }
+  }
+
   // A window no scan reached: a small dot, so the row reads as continuous.
   function paintSkip(cell, x, y) {
     const d = Math.max(2, Math.round(cell.s * .18));
@@ -1270,6 +1385,11 @@ const ledField = (() => {
       const sx = viewport.scrollLeft, sy = viewport.scrollTop;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, width, height);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(clipLeft, clipTop, Math.max(0, width - clipLeft), Math.max(0, height - clipTop));
+      ctx.clip();
+      paintBackdrop(sx, sy);
       for (let i = 0; i < cells.length; i++) {
         const cell = cells[i];
         const x = cell.x - sx, y = cell.y - sy;
@@ -1278,6 +1398,7 @@ const ledField = (() => {
         else if (cell.state === "skip") paintSkip(cell, x, y);
         else paintLight(cell, x, y, t, now);
       }
+      ctx.restore();
       revealed = true;
     }
     if (reduced) return;
@@ -1300,7 +1421,8 @@ const ledField = (() => {
   }
   return {
     measure,
-    hover(el) { hoverEl = el || null; if (reduced) wake(true); },
+    hover(el) { hoverEl = el || null; hoverRow = el && el.dataset ? Number(el.dataset.y != null ? el.dataset.y : el.dataset.row) : -1; if (reduced) wake(true); },
+    hoverRow(row) { hoverRow = Number.isFinite(row) ? row : -1; if (reduced) wake(true); },
     get revealed() { return revealed; }
   };
 })();
@@ -1953,9 +2075,9 @@ async function loadSnapshot(item) {
   }
   const filePath = item.file_snapshot_location || "";
   const fileType = String(item.extraction_type || "").toLowerCase();
-  const isFile = filePath && (fileType === "pdf" || fileType === "zip");
+  const isFile = filePath && (fileType === "pdf" || fileType === "zip" || fileType === "xlsx");
   const isPdf = fileType === "pdf";
-  const previewLabel = isFile ? (isPdf ? "PDF" : "Archive") : "Rendered page";
+  const previewLabel = isFile ? (isPdf ? "PDF" : fileType === "xlsx" ? "Workbook" : "Archive") : "Rendered page";
   body.innerHTML = '<section class="sheet"><div class="snapshot-toolbar"><span class="snapshot-note">Saved ' + esc(fmt(item.last_full_fetch || item.last_checked)) + "</span>" +
     '<div class="segmented" role="group" aria-label="Snapshot view">' +
     '<button type="button" data-snapshot-mode="preview" aria-pressed="' + String(state.snapshotMode === "preview") + '">' + previewLabel + "</button>" +
@@ -1995,7 +2117,15 @@ async function loadSnapshot(item) {
     return;
   }
   if (isFile) {
-    canvas.innerHTML = emptyState("Original archive saved", "Archives can't be previewed in the browser. Download it from the saved file link, or read its extracted text.", externalLink(REPO + "/blob/main/" + filePath, "Saved ZIP"));
+    // Workbooks and bundles open in the dashboard's own viewers.
+    try {
+      const bytes = await fetchSnapshotBytes(filePath);
+      if (!current() || state.snapshotMode !== "preview") return;
+      canvas.innerHTML = '<div class="doc-host doc-host-inline"></div>';
+      await renderDocument(canvas.querySelector(".doc-host"), { bytes, name: filePath, title: "The original " + (fileType === "xlsx" ? "workbook" : "bundle") + " as fetched", url: item.canonical_url, alive: current });
+    } catch (error) {
+      if (current()) canvas.innerHTML = emptyState("Couldn't load the saved file", String(error.message || error) + ". The extracted text may still be available.", externalLink(REPO + "/blob/main/" + filePath, "Saved file"));
+    }
     return;
   }
   if (!item.html_snapshot_location) {
@@ -2441,12 +2571,9 @@ function scoutPreviewLoad(item, url, options) {
   if ($("scoutPreviewOpen")) $("scoutPreviewOpen").href = target;
   const back = document.querySelector("[data-scout-preview-back]");
   if (back) back.hidden = !p.trail.length;
-  if (L.pickFormat(target) !== "Web page") {
-    scoutPreviewStatus(emptyState("This is a " + L.pickFormat(target) + " document", "Documents can't be shown inside the dashboard. Open it in a new tab to read it.",
-      '<a class="btn" href="' + esc(target) + '" target="_blank" rel="noopener noreferrer">Open the document' + icon("external") + "</a>"));
-    return;
-  }
+  scoutDocumentHost(false);
   if (!PAGE_READER_ENDPOINT) { scoutPreviewStatus(emptyState("Preview isn't set up", "The page reader isn't configured for this dashboard. Open the page in a new tab instead.")); return; }
+  if (L.pickFormat(target) !== "Web page") { scoutDocumentLoad(item, target, token, o.immediate); return; }
   scoutPreviewStatus('<div class="loading">Reading ' + esc(displayUrl(target)) + "…</div>");
   // A short pause, so moving through the list with the arrow keys doesn't read every page on the way.
   scoutPreviewTimer = setTimeout(async () => {
@@ -2460,11 +2587,7 @@ function scoutPreviewLoad(item, url, options) {
       return;
     }
     if (token !== p.serial || !$("scoutPreviewFrame")) return;
-    if (data.kind === "document") {
-      scoutPreviewStatus(emptyState("This address is a document", "Documents can't be shown inside the dashboard. Open it in a new tab to read it.",
-        '<a class="btn" href="' + esc(safeHttpUrl(data.url) || target) + '" target="_blank" rel="noopener noreferrer">Open the document' + icon("external") + "</a>"));
-      return;
-    }
+    if (data.kind === "document") { scoutDocumentLoad(item, safeHttpUrl(data.url) || target, token, true); return; }
     if (data.kind !== "page") {
       scoutPreviewStatus(emptyState("The site didn't return the page", (data.message || "No page came back.") + " Open it in a new tab to check.",
         '<button class="btn" type="button" data-scout-preview-retry>Try again</button>'));
@@ -2476,6 +2599,49 @@ function scoutPreviewLoad(item, url, options) {
     $("scoutPreviewFrame").srcdoc = exploreDocument(data.html, p.token, exploreRandom(18));
     scoutPreviewStatus("");
   }, o.immediate ? 0 : 320);
+}
+// A document finding (PDF, workbook, Word, CSV, ZIP) opens in the dashboard's own viewer.
+function scoutDocumentHost(show) {
+  const stage = document.querySelector(".scout-preview-stage");
+  if (!stage) return null;
+  let host = stage.querySelector(".doc-host");
+  if (show && !host) { host = document.createElement("div"); host.className = "doc-host"; stage.appendChild(host); }
+  if (host) host.hidden = !show;
+  stage.classList.toggle("has-doc", !!show);
+  return host;
+}
+function scoutDocumentLoad(item, url, token, immediate) {
+  const p = state.scoutPreview;
+  scoutPreviewStatus('<div class="loading">Opening the document…</div>');
+  clearTimeout(scoutPreviewTimer);
+  scoutPreviewTimer = setTimeout(async () => {
+    let data;
+    try {
+      data = await readDocumentFile(url);
+    } catch (error) {
+      if (token !== p.serial) return;
+      scoutPreviewStatus(emptyState("This document couldn't be opened here", String(error.message || error) + ". You can still open it in a new tab.",
+        '<button class="btn" type="button" data-scout-preview-retry>Try again</button>' + externalLink(url, "Open in a new tab", "btn")));
+      return;
+    }
+    if (token !== p.serial) return;
+    if (data.kind === "page" && $("scoutPreviewFrame")) {
+      p.page = data;
+      p.token = exploreRandom(16);
+      $("scoutPreviewFrame").srcdoc = exploreDocument(data.html, p.token, exploreRandom(18));
+      scoutPreviewStatus("");
+      return;
+    }
+    if (data.kind !== "file") {
+      scoutPreviewStatus(emptyState("The site didn't return the document", (data.message || data.error || "Nothing came back.") + " Open it in a new tab to check.",
+        '<button class="btn" type="button" data-scout-preview-retry>Try again</button>'));
+      return;
+    }
+    const host = scoutDocumentHost(true);
+    scoutPreviewStatus("");
+    await renderDocument(host, { bytes: data.bytes, name: data.url || url, title: item.title || displayUrl(url), format: data.format, url: data.url || url,
+      alive: () => token === p.serial });
+  }, immediate ? 0 : 320);
 }
 function scoutPreviewStart(item) {
   const p = state.scoutPreview;
@@ -2506,9 +2672,9 @@ window.addEventListener("message", event => {
     const link = p.page.links[Number(data.index)];
     const item = scoutSelected();
     if (!link || !item) return;
-    if (link.format !== "Web page") { showToast("“" + (link.text || displayUrl(link.url)) + "” is a " + link.format + ". Use Open to read it in a new tab."); return; }
     p.trail.push(p.page.url);
     scoutPreviewLoad(item, link.url, { immediate: true });
+    return;
   }
 });
 function setScoutPreviewExpanded(expanded) {
@@ -2543,6 +2709,7 @@ function scoutPreviewAction(target) {
   if (target.dataset.scoutPreviewRetry !== undefined) {
     const url = $("scoutPreviewOpen") ? $("scoutPreviewOpen").getAttribute("href") : item.url;
     state.add.pages.delete(L.urlKey(url));
+    documentCache.delete(L.urlKey(url));
     return scoutPreviewLoad(item, url, { immediate: true, locate: p.mode === "source" && !p.trail.length ? item.url : "" });
   }
 }
@@ -3595,9 +3762,9 @@ function setSelected(id) { select("monitors", id); }
 /* ================= Data refresh ================= */
 
 // Review decisions arrive between scans, so the ledger is polled with the small files.
-const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "reviews"];
+const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "reviews", "regulators"];
 const LARGE_ASSETS = ["inventory", "history", "scoutReview"];
-const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews"]);
+const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews", "regulators"]);
 const FULL_REFRESH_MS = 10 * 60 * 1000;
 function assetsSignature() {
   return SMALL_ASSETS.concat(LARGE_ASSETS).map(key => key + "=" + (state.assetSignatures[key] || "")).join("|");
@@ -3658,6 +3825,8 @@ async function loadDataOnce(showErrors) {
     state.calendar = values.calendar;
     state.lineage = values.lineage;
     state.reviews = values.reviews;
+    state.regulators = values.regulators;
+    state.regulatorProfiles = null;
     state.items = makeItems();
     state.scoutMonitored = null;
     const firstLoad = !state.loaded;
@@ -4003,6 +4172,7 @@ async function exploreOpen(url, push) {
   $("exploreNewTab").href = safeHttpUrl(url) || "#";
   exploreStatus('<div class="loading">Reading ' + esc(displayUrl(url)) + "…</div>", "loading");
   $("exploreNotice").hidden = true;
+  exploreDocumentClose();
   let data;
   try {
     data = await addReadPage(url);
@@ -4017,7 +4187,10 @@ async function exploreOpen(url, push) {
   if (data.kind === "document") {
     exploreStatus("", a.page ? "ok" : "");
     const item = addItem({ url: data.url || url, format: data.format, parentUrl: a.page ? a.page.url : "", parentTitle: a.page ? a.page.title : "" });
-    if (item) { addToggle(item, true); showToast("That address is a document, so it can't be shown here. It was selected for monitoring."); }
+    if (item) {
+      if (!a.candidates.some(candidate => candidate.key === item.key)) a.candidates.push(item);
+      exploreDocumentOpen(item);
+    }
     if (a.page) { $("exploreAddress").textContent = displayUrl(a.page.url); $("exploreNewTab").href = a.page.url; }
     return;
   }
@@ -4156,12 +4329,43 @@ function exploreLinkClick(index, shift) {
   const item = addLinkItem(link, a.page, null);
   if (!item) return;
   if (shift || a.selectMode) { addToggle(item); return; }
-  if (link.format !== "Web page") {
-    addToggle(item, true);
-    showToast("“" + item.title + "” is a " + link.format + ", so it can't be opened here. It was selected.");
+  if (link.format !== "Web page") return exploreDocumentOpen(item);
+  exploreOpen(link.url, true);
+}
+// A document linked from the page opens over it in the dashboard's viewer, with
+// a way to select it and a way back to the page.
+async function exploreDocumentOpen(item) {
+  const a = state.add;
+  const host = $("exploreDoc");
+  const token = ++a.loading;
+  a.docItem = item;
+  host.hidden = false;
+  const actions = () => '<button class="btn' + (a.picked.has(item.key) ? "" : " btn-primary") + '" type="button" data-explore-doc-pick>' + (a.picked.has(item.key) ? "Selected ✓" : "Select this document") + "</button>" +
+    '<button class="btn" type="button" data-explore-doc-close>Back to the page</button>';
+  host.innerHTML = '<div class="doc-view">' + docToolbar({ title: item.title, kindLabel: item.format, actions: actions() }) + '<div class="doc-body"><div class="loading">Opening ' + esc(item.title) + "…</div></div></div>";
+  let data;
+  try {
+    data = await readDocumentFile(item.url);
+  } catch (error) {
+    if (token !== a.loading) return;
+    host.querySelector(".doc-body").innerHTML = emptyState("This document couldn't be opened here", String(error.message || error) + ". You can still select it, or open it in a new tab.", externalLink(item.url, "Open in a new tab", "btn"));
     return;
   }
-  exploreOpen(link.url, true);
+  if (token !== a.loading || host.hidden) return;
+  if (data.kind !== "file") {
+    host.querySelector(".doc-body").innerHTML = emptyState("The site didn't return a document", (data.message || data.error || "Nothing came back.") + " Select it anyway, or open it in a new tab.", externalLink(item.url, "Open in a new tab", "btn"));
+    return;
+  }
+  await renderDocument(host, { bytes: data.bytes, name: data.url || item.url, title: item.title, format: data.format, url: data.url || item.url, actions: actions(),
+    alive: () => token === a.loading && !host.hidden });
+}
+function exploreDocumentClose() {
+  const host = $("exploreDoc");
+  if (!host || host.hidden) return;
+  host.hidden = true;
+  host.innerHTML = "";
+  releaseDocumentPdfs();
+  state.add.loading += 1;
 }
 window.addEventListener("message", event => {
   const frame = $("exploreFrame");
@@ -5116,7 +5320,13 @@ $("signalVisual").addEventListener("pointermove", event => {
   if (tip.classList.contains("is-pinned")) return;
   showFieldTip(event.target.closest(".led"), event.clientX, event.clientY);
 });
-$("signalVisual").addEventListener("pointerleave", event => { if (event.pointerType === "mouse" && !$("fieldTip").classList.contains("is-pinned")) hideFieldTip(); });
+$("signalVisual").addEventListener("pointerover", event => {
+  const label = event.target.closest && event.target.closest(".field-label[data-row]");
+  if (label) ledField.hoverRow(Number(label.dataset.row));
+  else if (!(event.target.closest && event.target.closest(".led"))) ledField.hoverRow(-1);
+});
+$("signalVisual").addEventListener("pointerleave", event => {
+  ledField.hoverRow(-1); if (event.pointerType === "mouse" && !$("fieldTip").classList.contains("is-pinned")) hideFieldTip(); });
 document.addEventListener("pointerdown", event => {
   lastPointerType = event.pointerType || "mouse";
   const tip = $("fieldTip");
@@ -5138,12 +5348,13 @@ $("signalVisual").addEventListener("click", event => {
   if (more) {
     event.stopPropagation();
     const prefs = fieldPrefs();
-    prefs.limit += 80;
+    const key = more.dataset.fieldMore;
+    prefs.limits[key] = (prefs.limits[key] || prefs.limit) + 60;
     renderMonitoringSignal();
     return;
   }
   const led = event.target.closest(".led");
-  const groupLabel = event.target.closest(".field-group-label");
+  const groupLabel = event.target.closest(".field-group-label, .field-section-label");
   if (led && lastPointerType !== "mouse" && led.dataset.state !== "none") {
     // Touch: show what this light means first; the tip carries the way in.
     event.stopPropagation();
@@ -5161,7 +5372,7 @@ $("signalVisual").addEventListener("click", event => {
 });
 function toggleFieldGroup(key) {
   const prefs = fieldPrefs();
-  if (key.indexOf("src:") === 0) { if (prefs.closed.has(key)) prefs.closed.delete(key); else prefs.closed.add(key); }
+  if (key.indexOf("src:") === 0 || key.indexOf("sec:") === 0) { if (prefs.closed.has(key)) prefs.closed.delete(key); else prefs.closed.add(key); }
   else if (prefs.open.has(key)) prefs.open.delete(key); else prefs.open.add(key);
   hideFieldTip();
   renderMonitoringSignal();
@@ -5180,6 +5391,14 @@ document.querySelector(".field-wrap").addEventListener("click", event => {
   prefs.lens = L.FIELD_LENSES.indexOf(lens.dataset.fieldLens) >= 0 ? lens.dataset.fieldLens : "activity";
   if (!lens.closest(".field-lenses")) { prefs.query = ""; $("fieldSearch").value = ""; }
   prefs.limit = 80;
+  saveFieldPrefs();
+  hideFieldTip();
+  renderMonitoringSignal();
+});
+$("fieldGroup").addEventListener("change", () => {
+  const prefs = fieldPrefs();
+  prefs.groupBy = Object.prototype.hasOwnProperty.call(FIELD_GROUPS, $("fieldGroup").value) ? $("fieldGroup").value : "regulator";
+  prefs.limits = {};
   saveFieldPrefs();
   hideFieldTip();
   renderMonitoringSignal();
@@ -5376,6 +5595,15 @@ document.querySelector(".add-explore").addEventListener("click", event => {
     }
     return;
   }
+  if (event.target.closest("[data-explore-doc-close]")) return exploreDocumentClose();
+  const docPick = event.target.closest("[data-explore-doc-pick]");
+  if (docPick) {
+    const target = a.docItem || null;
+    if (target) addToggle(target);
+    docPick.textContent = target && a.picked.has(target.key) ? "Selected ✓" : "Select this document";
+    docPick.classList.toggle("btn-primary", !(target && a.picked.has(target.key)));
+    return;
+  }
   const locate = event.target.closest("[data-explore-locate]");
   if (locate) return exploreLocate(locate.dataset.exploreLocate);
   const goto = event.target.closest("[data-add-goto]");
@@ -5516,6 +5744,373 @@ document.addEventListener("click", event => {
     : "Opened the Regulatory Monitor workflow. Press “Run workflow” and paste “" + sourceId + "” (copied) as source_id."));
 });
 
+
+/* ================= Documents inside the dashboard =================
+ * PDFs, Excel workbooks, CSV, Word documents and ZIP bundles open in place:
+ * Scout's preview, Add a link, a page's saved copy and a change's comparison all
+ * use these viewers. A live document is read whole through the page reader's file
+ * mode (the regulator's site does not allow the browser to fetch it directly);
+ * saved originals come from the repository. Nothing here runs the document's own
+ * code: PDFs are drawn by the integrity-checked pdf.js, the rest is parsed as data.
+ */
+const DOC_LIMITS = { gridRows: 400, gridCols: 60, pdfPages: 400 };
+const documentCache = boundedCache(6);
+let docSerial = 0;
+let docPdfs = [];
+function releaseDocumentPdfs() {
+  docPdfs.forEach(entry => { if (entry.observer) entry.observer.disconnect(); releasePdf(entry.doc); });
+  docPdfs = [];
+}
+function docKind(name, format) {
+  const path = String(name || "").toLowerCase().split(/[?#]/)[0];
+  const hint = String(format || "").toLowerCase();
+  if (/\.pdf$/.test(path) || hint === "pdf") return "pdf";
+  if (/\.(xlsx|xlsm)$/.test(path) || hint === "xlsx" || hint === "spreadsheet" && !/\.(xls|csv)$/.test(path)) return "xlsx";
+  if (/\.xls$/.test(path)) return "xls";
+  if (/\.csv$/.test(path) || hint === "csv") return "csv";
+  if (/\.docx$/.test(path) || hint === "word" || hint === "docx") return "docx";
+  if (/\.zip$/.test(path) || hint === "zip") return "zip";
+  if (/\.(xml|xsd|xbrl)$/.test(path) || hint === "xml") return "xml";
+  if (/\.json$/.test(path) || hint === "json") return "json";
+  if (/\.(txt|md)$/.test(path) || hint === "text") return "text";
+  return "other";
+}
+// Sniff the bytes when the name says nothing (DownloadAttachment?guid=…).
+function docKindFromBytes(bytes, fallback) {
+  if (!bytes || bytes.length < 4) return fallback;
+  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
+  if (bytes[0] === 0x50 && bytes[1] === 0x4b) return "package";
+  if (bytes[0] === 0xd0 && bytes[1] === 0xcf) return "xls";
+  return fallback;
+}
+function formatBytes(size) {
+  if (!Number.isFinite(size)) return "";
+  if (size < 1024) return size + " B";
+  if (size < 1048576) return Math.round(size / 102.4) / 10 + " KB";
+  return Math.round(size / 104857.6) / 10 + " MB";
+}
+// A live document, read whole by the page reader.
+async function readDocumentFile(url) {
+  const key = L.urlKey(url);
+  const cached = documentCache.get(key);
+  if (cached) return cached;
+  if (!PAGE_READER_ENDPOINT) throw new Error("The page reader isn't set up for this dashboard yet");
+  const identity = await askSentinelIdentity();
+  const headers = Object.assign(askSentinelIdentityHeaders(identity), { "Content-Type": "application/json" });
+  let response;
+  try {
+    response = await fetch(PAGE_READER_ENDPOINT, { method: "POST", headers, body: JSON.stringify({ url, mode: "file" }), signal: timeoutSignal(60000) });
+  } catch (error) {
+    throw new Error(error && (error.name === "TimeoutError" || error.name === "AbortError") ? "The document took too long to read" : "The page reader could not be reached");
+  }
+  if (response.headers.get("X-CS-Kind") === "file") {
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    let finalUrl = url;
+    try { finalUrl = decodeURI(response.headers.get("X-CS-Url") || url); } catch (_) {}
+    const result = { kind: "file", bytes, format: response.headers.get("X-CS-Format") || "", url: finalUrl };
+    documentCache.set(key, result);
+    return result;
+  }
+  let data = {};
+  try { data = await response.json(); } catch (_) {}
+  if (!response.ok) throw new Error(data.error || "The page reader answered HTTP " + response.status);
+  return data;
+}
+function docToolbar(meta) {
+  const parts = [meta.kindLabel, meta.size ? formatBytes(meta.size) : "", meta.extra || ""].filter(Boolean);
+  return '<div class="doc-bar"><span class="doc-bar-name" title="' + esc(meta.name || "") + '">' + esc(meta.title || meta.name || "Document") + "</span>" +
+    '<span class="doc-bar-meta">' + parts.map(part => "<span>" + esc(part) + "</span>").join("") + "</span>" +
+    '<span class="doc-bar-actions">' + (meta.actions || "") + "</span></div>";
+}
+const DOC_KIND_LABEL = { pdf: "PDF", xlsx: "Excel workbook", xls: "Excel 97–2003 workbook", csv: "CSV", docx: "Word document", zip: "ZIP bundle", xml: "XML", json: "JSON", text: "Text", other: "File" };
+// Renders a document into `host`. options: { bytes, name, title, format, url, actions, alive }.
+async function renderDocument(host, options) {
+  const o = options || {};
+  const serial = ++docSerial;
+  const alive = () => serial === docSerial && host.isConnected && (!o.alive || o.alive());
+  releaseDocumentPdfs();
+  const bytes = o.bytes instanceof Uint8Array ? o.bytes : new Uint8Array(o.bytes || []);
+  let kind = docKindFromBytes(bytes, docKind(o.name || o.url, o.format));
+  // A zip package is a workbook or a Word document when its index says so, else a bundle.
+  if (kind === "package") {
+    let names = [];
+    try { names = (await L.zipListing(bytes)).map(entry => entry.name); } catch (_) { names = []; }
+    kind = names.indexOf("xl/workbook.xml") >= 0 ? "xlsx" : names.indexOf("word/document.xml") >= 0 ? "docx" : "zip";
+  }
+  const download = URL.createObjectURL(new Blob([bytes], { type: "application/octet-stream" }));
+  const fileName = (String(o.name || o.url || "document").split(/[?#]/)[0].split("/").pop() || "document").slice(0, 120);
+  const actions = (o.actions || "") + '<a class="sheet-link" href="' + esc(download) + '" download="' + esc(fileName) + '">Download</a>' +
+    (safeHttpUrl(o.url) ? externalLink(o.url, "Open original", "sheet-link") : "");
+  host.innerHTML = '<div class="doc-view" data-kind="' + esc(kind) + '">' + docToolbar({ name: fileName, title: o.title || fileName, kindLabel: DOC_KIND_LABEL[kind], size: bytes.length, actions }) +
+    '<div class="doc-body"><div class="loading">Opening the ' + esc((DOC_KIND_LABEL[kind] || "file").toLowerCase()) + "…</div></div></div>";
+  const body = host.querySelector(".doc-body");
+  try {
+    if (kind === "pdf") await renderPdfDocument(body, bytes, alive);
+    else if (kind === "xlsx") { const book = await L.readWorkbook(bytes); if (alive()) renderWorkbook(body, book, {}); }
+    else if (kind === "csv") { if (alive()) renderWorkbook(body, L.csvWorkbook(new TextDecoder("utf-8").decode(bytes), fileName), {}); }
+    else if (kind === "docx") { const blocks = await L.readDocx(bytes); if (alive()) body.innerHTML = renderDocxBlocks(blocks); }
+    else if (kind === "zip") await renderZipListing(body, bytes, alive, o);
+    else if (kind === "xml" || kind === "json" || kind === "text") {
+      let text = new TextDecoder("utf-8").decode(bytes.subarray(0, 2000000));
+      if (kind === "json") { try { text = JSON.stringify(JSON.parse(text), null, 2); } catch (_) {} }
+      if (alive()) body.innerHTML = '<pre class="doc-text-raw">' + esc(text) + (bytes.length > 2000000 ? "\n…" : "") + "</pre>";
+    } else if (kind === "xls") {
+      body.innerHTML = emptyState("An Excel 97–2003 workbook", "The older binary .xls format can't be read in the browser. Download it to open it in Excel.");
+    } else {
+      body.innerHTML = emptyState("This file can't be shown here", "Download it to open it on your computer.");
+    }
+  } catch (error) {
+    if (alive()) body.innerHTML = emptyState("This document couldn't be opened here", String(error.message || error) + ". Download it to open it on your computer.");
+  }
+  return kind;
+}
+async function renderPdfDocument(body, bytes, alive) {
+  const lib = await loadPdfJs();
+  const doc = await openPdf(lib, bytes.slice());
+  if (!alive()) { releasePdf(doc); return; }
+  const entry = { doc, observer: null };
+  docPdfs.push(entry);
+  const count = Math.min(doc.numPages, DOC_LIMITS.pdfPages);
+  const first = await doc.getPage(1);
+  const base = first.getViewport({ scale: 1 });
+  body.innerHTML = '<div class="doc-pages">' + Array.from({ length: count }, (_, i) =>
+    '<div class="doc-page" data-page="' + (i + 1) + '" style="aspect-ratio:' + base.width + " / " + base.height + '"><span class="doc-pageno">' + (i + 1) + " / " + doc.numPages + "</span></div>").join("") +
+    (doc.numPages > count ? '<p class="note-strip">Showing the first ' + count + " of " + doc.numPages + " pages. Download the file for the rest.</p>" : "") + "</div>";
+  const render = async holder => {
+    if (holder.dataset.rendered) return;
+    holder.dataset.rendered = "1";
+    try {
+      const page = await doc.getPage(Number(holder.dataset.page));
+      const width = holder.clientWidth || 600;
+      const unscaled = page.getViewport({ scale: 1 });
+      const ratio = Math.min(2, window.devicePixelRatio || 1);
+      const viewport = page.getViewport({ scale: (width / unscaled.width) * ratio });
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.floor(viewport.width);
+      canvas.height = Math.floor(viewport.height);
+      await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+      if (alive()) holder.insertBefore(canvas, holder.firstChild);
+    } catch (_) {
+      holder.classList.add("is-missing");
+    }
+  };
+  const pages = Array.from(body.querySelectorAll(".doc-page"));
+  if (typeof IntersectionObserver === "function") {
+    entry.observer = new IntersectionObserver(items => items.forEach(item => { if (item.isIntersecting) render(item.target); }), { root: null, rootMargin: "600px 0px" });
+    pages.forEach(page => entry.observer.observe(page));
+  } else {
+    for (const page of pages.slice(0, 20)) await render(page);
+  }
+}
+function renderDocxBlocks(blocks) {
+  if (!blocks.length) return emptyState("No text in this document", "It may consist of images only.");
+  return '<div class="doc-text">' + blocks.map(block => {
+    if (block.type === "heading") return '<p class="doc-heading">' + esc(block.text) + "</p>";
+    if (block.type === "table") {
+      return '<div class="doc-table-wrap"><table class="doc-table"><tbody>' + block.rows.slice(0, 400).map(row =>
+        "<tr>" + row.map(cell => "<td>" + esc(cell).replace(/\n/g, "<br>") + "</td>").join("") + "</tr>").join("") + "</tbody></table></div>";
+    }
+    return "<p>" + esc(block.text) + "</p>";
+  }).join("") + "</div>";
+}
+async function renderZipListing(body, bytes, alive, options) {
+  const entries = await L.zipListing(bytes);
+  if (!alive()) return;
+  const openable = name => ["pdf", "xlsx", "csv", "docx", "xml", "json", "text"].indexOf(docKind(name, "")) >= 0;
+  body.innerHTML = '<ul class="doc-zip">' + entries.slice(0, 2000).map(entry =>
+    '<li><span class="doc-zip-name">' + esc(entry.name) + '</span><span class="doc-zip-size">' + esc(formatBytes(entry.size)) + "</span>" +
+    (openable(entry.name) ? '<button class="sheet-link" type="button" data-doc-zip-open="' + esc(entry.name) + '">Open</button>' : "") + "</li>").join("") + "</ul>";
+  body.querySelectorAll("[data-doc-zip-open]").forEach(button => button.addEventListener("click", async () => {
+    const name = button.dataset.docZipOpen;
+    try {
+      const inner = await L.zipFile(bytes, name);
+      if (!inner) return;
+      const host = body.closest(".doc-view").parentElement;
+      const back = '<button class="sheet-link" type="button" data-doc-zip-back>Back to the bundle</button>';
+      await renderDocument(host, { bytes: inner, name, title: name, url: options.url, actions: back });
+      const backButton = host.querySelector("[data-doc-zip-back]");
+      if (backButton) backButton.addEventListener("click", () => renderDocument(host, options));
+    } catch (error) {
+      showToast("Couldn't open " + name + ": " + String(error.message || error));
+    }
+  }));
+}
+
+/* ----- Workbook grid: sheet tabs, pinned headings, formulas on request ----- */
+function workbookSheetTabs(sheets, active, badges) {
+  return '<div class="wb-tabs" role="tablist">' + sheets.map((sheet, index) => {
+    const badge = badges && badges[index];
+    return '<button type="button" role="tab" class="wb-tab' + (sheet.state !== "visible" ? " is-hidden" : "") + (badge ? " is-" + badge.tone : "") + '" data-wb-sheet="' + index + '" aria-selected="' + String(index === active) + '"' +
+      (sheet.state !== "visible" ? ' title="Hidden sheet"' : "") + ">" + esc(sheet.name || "Sheet " + (index + 1)) + (badge ? '<span class="wb-tab-badge">' + esc(badge.text) + "</span>" : "") + "</button>";
+  }).join("") + "</div>";
+}
+// marks: { "A1": { tone: "value"|"formula"|"added"|"removed", was: "..." } }
+function workbookGrid(sheet, options) {
+  const o = options || {};
+  if (!sheet || sheet.kind && sheet.kind !== "worksheet") return emptyState("Not a worksheet", "This sheet holds a chart or another object, not cells.");
+  if (!sheet.count) return emptyState("An empty sheet", "This sheet has no filled cells.");
+  const rows = Math.min(sheet.maxRow, o.rows || DOC_LIMITS.gridRows);
+  const cols = Math.min(sheet.maxCol, DOC_LIMITS.gridCols);
+  const marks = o.marks || {};
+  let html = '<div class="wb-grid-wrap"><table class="wb-grid"><thead><tr><th class="wb-corner"></th>';
+  for (let c = 0; c < cols; c += 1) html += "<th>" + L.columnName(c) + "</th>";
+  html += "</tr></thead><tbody>";
+  for (let r = 1; r <= rows; r += 1) {
+    html += '<tr><th class="wb-rowno">' + r + "</th>";
+    for (let c = 0; c < cols; c += 1) {
+      const ref = L.cellRef(r, c);
+      const cell = sheet.cells[ref];
+      const mark = marks[ref];
+      // A formula saved without its result (common in templates) shows the formula itself.
+      const text = cell ? (o.formulas && cell.f ? "=" + cell.f : cell.v !== "" ? cell.v : cell.f ? "=" + cell.f : "") : "";
+      const title = [cell && cell.f ? "=" + cell.f : "", mark && mark.was != null ? "Before: " + mark.was : ""].filter(Boolean).join("\n");
+      html += "<td" + (mark ? ' class="is-' + mark.tone + '"' : cell && cell.f ? ' class="has-formula"' : "") + (title ? ' title="' + esc(title) + '"' : "") + ' data-ref="' + ref + '">' + esc(text) + "</td>";
+    }
+    html += "</tr>";
+  }
+  html += "</tbody></table></div>";
+  const notes = [];
+  if (sheet.maxRow > rows) notes.push('<button class="sheet-link" type="button" data-wb-more>Show ' + Math.min(800, sheet.maxRow - rows) + " more rows</button> · " + (sheet.maxRow - rows).toLocaleString() + " not shown");
+  if (sheet.maxCol > cols) notes.push("Columns after " + L.columnName(cols - 1) + " are not shown");
+  if (sheet.truncated) notes.push("This sheet is very large; only its first cells were read");
+  if (sheet.merges && sheet.merges.length) notes.push(plural(sheet.merges.length, "merged range", "merged ranges"));
+  if (sheet.validations && sheet.validations.length) notes.push(plural(sheet.validations.length, "drop-down or validation rule", "drop-down or validation rules"));
+  return html + (notes.length ? '<p class="wb-notes">' + notes.join(" · ") + "</p>" : "");
+}
+function renderWorkbook(host, book, options) {
+  const state0 = { sheet: Math.max(0, book.sheets.findIndex(sheet => sheet.state === "visible")), formulas: false, rows: DOC_LIMITS.gridRows };
+  const draw = () => {
+    const sheet = book.sheets[state0.sheet];
+    host.innerHTML = '<div class="wb">' + '<div class="wb-head">' + workbookSheetTabs(book.sheets, state0.sheet) +
+      '<label class="cmp-toggle wb-formulas"><input type="checkbox" data-wb-formulas' + (state0.formulas ? " checked" : "") + "> Show formulas</label></div>" +
+      workbookGrid(sheet, { formulas: state0.formulas, rows: state0.rows }) +
+      (book.names && book.names.length ? '<details class="wb-names"><summary>' + esc(plural(book.names.length, "named range", "named ranges")) + "</summary><ul>" +
+        book.names.slice(0, 300).map(name => "<li><code>" + esc(name.name) + "</code> " + esc(name.value) + "</li>").join("") + "</ul></details>" : "") + "</div>";
+  };
+  host.onclick = event => {
+    const tab = event.target.closest("[data-wb-sheet]");
+    if (tab) { state0.sheet = Number(tab.dataset.wbSheet); state0.rows = DOC_LIMITS.gridRows; return draw(); }
+    if (event.target.closest("[data-wb-more]")) { state0.rows += 800; return draw(); }
+  };
+  host.onchange = event => { if (event.target.matches("[data-wb-formulas]")) { state0.formulas = event.target.checked; draw(); } };
+  draw();
+}
+
+/* ----- Workbook comparison: which sheets changed, then every changed cell ----- */
+const WB_STATUS_WORDS = { same: "No change", changed: "Changed", added: "New sheet", removed: "Sheet removed", renamed: "Renamed" };
+function workbookChangeWords(sheet) {
+  if (sheet.status === "added") return "New sheet";
+  if (sheet.status === "removed") return "Removed";
+  if (sheet.status === "same") return "No change";
+  const parts = [];
+  const cells = (sheet.counts.value || 0) + (sheet.counts.formula || 0);
+  if (cells) parts.push(plural(cells, "cell", "cells"));
+  if (sheet.rowsAdded.length) parts.push("+" + plural(sheet.rowsAdded.length, "row", "rows"));
+  if (sheet.rowsRemoved.length) parts.push("−" + plural(sheet.rowsRemoved.length, "row", "rows"));
+  const loose = sheet.changes.filter(change => !change.row && (change.kind === "added" || change.kind === "removed")).length;
+  if (loose) parts.push(plural(loose, "cell filled or cleared", "cells filled or cleared"));
+  if (sheet.merges.added.length + sheet.merges.removed.length) parts.push("merges");
+  if (sheet.validations.added.length + sheet.validations.removed.length) parts.push("drop-downs");
+  if (sheet.visibility) parts.push(sheet.visibility.join(" → "));
+  if (sheet.status === "renamed") parts.unshift("renamed from “" + sheet.before + "”");
+  return parts.join(", ") || "Changed";
+}
+function renderWorkbookCompare(host, before, after, diff, options) {
+  const o = options || {};
+  const order = diff.sheets;
+  const firstChanged = Math.max(0, order.findIndex(sheet => sheet.status !== "same"));
+  const view = { sheet: firstChanged, mode: "changes", formulas: false, rows: DOC_LIMITS.gridRows, kind: "ALL" };
+  const sheetOf = (book, name) => book.sheets.find(sheet => sheet.name === name) || null;
+  const draw = () => {
+    const entry = order[view.sheet];
+    const badges = order.map(sheet => sheet.status === "same" ? null : {
+      tone: sheet.status === "added" ? "added" : sheet.status === "removed" ? "removed" : "changed",
+      text: sheet.status === "added" ? "new" : sheet.status === "removed" ? "gone" : String((sheet.changes || []).length + (sheet.more || 0) || "•")
+    });
+    const t = diff.totals;
+    const summary = [
+      plural(t.sheetsChanged, "sheet changed", "sheets changed") + " of " + order.length,
+      t.cells ? plural(t.cells, "cell changed", "cells changed") : "",
+      t.rowsAdded ? plural(t.rowsAdded, "row added", "rows added") : "",
+      t.rowsRemoved ? plural(t.rowsRemoved, "row removed", "rows removed") : "",
+      diff.names.added.length + diff.names.removed.length ? "named ranges changed" : ""
+    ].filter(Boolean).join(" · ");
+    let body = "";
+    if (!entry) body = emptyState("No sheets", "Neither version has a worksheet.");
+    else if (entry.status === "added" || entry.status === "removed") {
+      const sheet = entry.status === "added" ? sheetOf(after, entry.after) : sheetOf(before, entry.before);
+      body = '<p class="wb-sheet-note is-' + entry.status + '">' + esc(entry.status === "added" ? "This sheet is new in this version." : "This sheet was removed in this version; its last saved contents are shown.") + "</p>" +
+        workbookGrid(sheet, { formulas: view.formulas, rows: view.rows });
+    } else if (view.mode === "changes") {
+      const list = entry.changes.filter(change => view.kind === "ALL" || change.kind === view.kind.toLowerCase());
+      const extra = [];
+      entry.merges.added.forEach(range => extra.push(["Merged", "", range]));
+      entry.merges.removed.forEach(range => extra.push(["Unmerged", range, ""]));
+      entry.validations.added.forEach(rule => extra.push(["Drop-down / validation", "", rule]));
+      entry.validations.removed.forEach(rule => extra.push(["Drop-down / validation", rule, ""]));
+      if (entry.visibility) extra.push(["Visibility", entry.visibility[0], entry.visibility[1]]);
+      const kinds = ["ALL", "VALUE", "FORMULA", "ADDED", "REMOVED"].map(kind => '<button type="button" data-wb-kind="' + kind + '" aria-pressed="' + String(view.kind === kind) + '">' +
+        esc({ ALL: "All", VALUE: "Values", FORMULA: "Formulas", ADDED: "Added", REMOVED: "Removed" }[kind]) + "</button>").join("");
+      body = (entry.status === "same" ? '<p class="wb-sheet-note">No differences on this sheet.</p>' : "") +
+        (entry.changes.length ? '<div class="segmented wb-kinds" role="group" aria-label="Show">' + kinds + "</div>" : "") +
+        (list.length || extra.length ? '<div class="doc-table-wrap"><table class="wb-changes"><thead><tr><th>Cell</th><th>Before</th><th>After</th></tr></thead><tbody>' +
+          list.slice(0, 2000).map(change => {
+            const was = change.before, now = change.after;
+            const shown = cell => cell ? (cell.f ? '<code>=' + esc(cell.f) + "</code>" + (cell.v !== "" ? '<span class="wb-result">' + esc(cell.v) + "</span>" : "") : esc(cell.v)) : '<span class="wb-empty">empty</span>';
+            const ref = now && was && now.ref !== was.ref ? esc(was.ref) + " → " + esc(now.ref) : esc((now || was).ref);
+            return '<tr class="is-' + change.kind + '"><td class="wb-ref" data-wb-goto="' + esc((now || was).ref) + '" data-wb-side="' + (now ? "after" : "before") + '">' + ref +
+              (change.row ? '<small>' + (now ? "row added" : "row removed") + "</small>" : change.kind === "formula" ? "<small>formula</small>" : "") + "</td>" +
+              '<td class="wb-before">' + shown(was) + '</td><td class="wb-after">' + shown(now) + "</td></tr>";
+          }).join("") +
+          extra.map(row => '<tr class="is-structure"><td class="wb-ref">' + esc(row[0]) + '</td><td class="wb-before">' + esc(row[1]) + '</td><td class="wb-after">' + esc(row[2]) + "</td></tr>").join("") +
+          "</tbody></table></div>" + (list.length > 2000 || entry.more ? '<p class="wb-notes">' + esc(((list.length > 2000 ? list.length - 2000 : 0) + (entry.more || 0)).toLocaleString()) + " more changes on this sheet are not listed.</p>" : "")
+          : (entry.status !== "same" ? '<p class="wb-sheet-note">No cell changes of this kind.</p>' : ""));
+    } else {
+      const side = view.mode === "before" ? sheetOf(before, entry.before) : sheetOf(after, entry.after);
+      const marks = {};
+      entry.changes.forEach(change => {
+        const cell = view.mode === "before" ? change.before : change.after;
+        if (!cell) return;
+        const other = view.mode === "before" ? change.after : change.before;
+        marks[cell.ref] = { tone: change.kind === "formula" ? "formula" : change.kind === "value" ? "value" : view.mode === "before" ? "removed" : "added",
+          was: other ? (other.f ? "=" + other.f + (other.v ? " (" + other.v + ")" : "") : other.v) : null };
+      });
+      body = workbookGrid(side, { formulas: view.formulas, rows: view.rows, marks });
+    }
+    host.innerHTML = '<div class="wb wb-compare">' +
+      '<div class="wb-summary"><strong>' + esc(summary) + "</strong>" + (diff.truncated ? '<span class="wb-notes">Very large workbook: only the first cells were compared.</span>' : "") + "</div>" +
+      '<div class="wb-head">' + workbookSheetTabs(order.map(sheet => ({ name: sheet.name, state: (sheetOf(after, sheet.after) || sheetOf(before, sheet.before) || {}).state || "visible" })), view.sheet, badges) +
+      '<div class="wb-head-tools"><div class="segmented" role="group" aria-label="View">' +
+        ["changes", "after", "before"].map(mode => '<button type="button" data-wb-mode="' + mode + '" aria-pressed="' + String(view.mode === mode) + '">' + { changes: "Changes", after: "New version", before: "Previous version" }[mode] + "</button>").join("") +
+      '</div><label class="cmp-toggle wb-formulas"><input type="checkbox" data-wb-formulas' + (view.formulas ? " checked" : "") + "> Formulas</label></div></div>" +
+      (entry ? '<p class="wb-sheet-status">' + esc(entry.name) + " · " + esc(workbookChangeWords(entry)) + "</p>" : "") + body +
+      (diff.names.added.length + diff.names.removed.length ? '<details class="wb-names" open><summary>Named ranges</summary><ul>' +
+        diff.names.removed.map(name => '<li class="is-removed">− ' + esc(name.replace(/@$/, "")) + "</li>").join("") + diff.names.added.map(name => '<li class="is-added">+ ' + esc(name.replace(/@$/, "")) + "</li>").join("") + "</ul></details>" : "") +
+      "</div>";
+  };
+  host.onclick = event => {
+    const tab = event.target.closest("[data-wb-sheet]");
+    if (tab) { view.sheet = Number(tab.dataset.wbSheet); view.rows = DOC_LIMITS.gridRows; return draw(); }
+    const mode = event.target.closest("[data-wb-mode]");
+    if (mode) { view.mode = mode.dataset.wbMode; return draw(); }
+    const kind = event.target.closest("[data-wb-kind]");
+    if (kind) { view.kind = kind.dataset.wbKind; return draw(); }
+    if (event.target.closest("[data-wb-more]")) { view.rows += 800; return draw(); }
+    const go = event.target.closest("[data-wb-goto]");
+    if (go) {
+      view.mode = go.dataset.wbSide === "before" ? "before" : "after";
+      const row = Number(go.dataset.wbGoto.match(/\d+$/)[0]);
+      view.rows = Math.max(view.rows, row + 20);
+      draw();
+      const cell = host.querySelector('td[data-ref="' + go.dataset.wbGoto + '"]');
+      if (cell) { cell.scrollIntoView({ block: "center", inline: "center" }); cell.classList.add("is-focus"); }
+    }
+  };
+  host.onchange = event => { if (event.target.matches("[data-wb-formulas]")) { view.formulas = event.target.checked; draw(); } };
+  draw();
+  if (o.onSummary) o.onSummary(diff);
+}
+
 /* ================= Before / after comparison =================
  * Visualping-style overlay of the previous and new saved versions with a draggable
  * divider. Everything renders in the browser from files already committed: PDFs via
@@ -5598,6 +6193,9 @@ function compareSources(evidence) {
   const text = before.snapshot_location && after.snapshot_location ? { before: before.snapshot_location, after: after.snapshot_location } : null;
   if (before.file_snapshot_location && after.file_snapshot_location && /\.pdf$/i.test(after.file_snapshot_location)) {
     return { kind: "pdf", before: before.file_snapshot_location, after: after.file_snapshot_location, text };
+  }
+  if (before.file_snapshot_location && after.file_snapshot_location && /\.xlsx$/i.test(after.file_snapshot_location) && /\.xlsx$/i.test(before.file_snapshot_location)) {
+    return { kind: "xlsx", before: before.file_snapshot_location, after: after.file_snapshot_location, text };
   }
   if (before.html_snapshot_location && after.html_snapshot_location) {
     return { kind: "html", before: before.html_snapshot_location, after: after.html_snapshot_location, text };
@@ -5682,6 +6280,7 @@ async function renderCompare(target, evidence, event, stillCurrent) {
   disposeCompare();
   const serial = ++compareSerial;
   const alive = () => serial === compareSerial && stillCurrent() && target.isConnected;
+  if (sources.kind === "xlsx") return compareWorkbooks(target, sources, alive);
   target.innerHTML = compareShell(sources.kind, event);
   const root = target.querySelector(".cmp");
   const before = root.querySelector(".cmp-before");
@@ -5695,6 +6294,21 @@ async function renderCompare(target, evidence, event, stillCurrent) {
     else await compareFillText(root, status, sources, alive);
   } catch (error) {
     if (alive()) status.textContent = "Couldn't load both versions: " + String(error.message || error);
+  }
+}
+
+/* ----- Workbooks: both saved originals read in the browser and compared sheet by sheet, cell by cell ----- */
+async function compareWorkbooks(target, sources, alive) {
+  target.innerHTML = '<div class="cmp" data-kind="xlsx"><p class="cmp-status" role="status">Reading both workbooks…</p></div>';
+  try {
+    const [beforeBytes, afterBytes] = await Promise.all([fetchSnapshotBytes(sources.before), fetchSnapshotBytes(sources.after)]);
+    if (!alive()) return;
+    const [before, after] = await Promise.all([L.readWorkbook(beforeBytes), L.readWorkbook(afterBytes)]);
+    if (!alive()) return;
+    const diff = L.workbookDiff(before, after);
+    renderWorkbookCompare(target, before, after, diff);
+  } catch (error) {
+    if (alive()) target.innerHTML = '<div class="cmp"><p class="cmp-status">Couldn\'t compare the two workbooks: ' + esc(String(error.message || error)) + ". The text redline is still available.</p></div>";
   }
 }
 

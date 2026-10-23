@@ -18,6 +18,7 @@ on:
       - "data/scout/review.json"
       - "config/scout.json"
       - "config/lineage.json"
+      - "config/regulators.json"
       - "data/calendar.json"
       - "data/calendar.ics"
       - "data/reviews/ledger.json"
@@ -64,6 +65,7 @@ jobs:
           cp data/scout/review.json site/data/scout/review.json
           cp config/scout.json site/config/scout.json
           cp config/lineage.json site/config/lineage.json
+          cp config/regulators.json site/config/regulators.json
           # The regulatory calendar appears after the first scan that builds it.
           # The .ics is served from Pages so calendar apps can subscribe to it.
           mkdir -p site/data/reviews

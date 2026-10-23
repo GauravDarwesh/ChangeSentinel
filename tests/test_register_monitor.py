@@ -678,3 +678,118 @@ class RedirectedAddressTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def rule_event(url, fields, name="Reporting forms"):
+    event = issue_event(url, name=name)
+    event["issue"]["body"] = event["issue"]["body"].replace(
+        "Include selector:", "\n".join(fields) + "\nInclude selector:"
+    )
+    return event
+
+
+class TestDocumentRules(unittest.TestCase):
+    """A rule taught in the dashboard: this page plus matching documents, nothing else."""
+
+    def _config(self, tmp, sources=()):
+        path = Path(tmp) / "sources.json"
+        path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": list(sources)}), encoding="utf-8")
+        return path
+
+    def test_rule_registers_the_page_and_its_document_folder(self):
+        url = "https://www.example.gov/reporting/forms"
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._config(tmp)
+            result = register_request(rule_event(url, [
+                "Crawl depth: 1",
+                "Scout discovery: no",
+                "Documents under: https://www.example.gov/reporting/files/2026/",
+                "Document link text matches: ^Current",
+            ]), path, "GauravDarwesh/ChangeSentinel")
+            saved = json.loads(path.read_text(encoding="utf-8"))["sources"][0]
+        self.assertTrue(result["created"])
+        self.assertEqual(result["document_rule"]["patterns"], ["^Current"])
+        self.assertEqual(saved["crawl_depth"], 1)
+        self.assertEqual(saved["allowed_urls"], [url])
+        self.assertEqual(saved["allowed_resource_prefixes"], ["https://www.example.gov/reporting/files/2026/"])
+        self.assertEqual(saved["resource_link_text_patterns"], ["^Current"])
+
+    def test_rule_without_a_pattern_or_folder_defaults_sensibly(self):
+        url = "https://www.example.gov/reporting/forms"
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._config(tmp)
+            register_request(rule_event(url, ["Crawl depth: 1", "Document link text matches: instructions"]),
+                             path, "GauravDarwesh/ChangeSentinel")
+            saved = json.loads(path.read_text(encoding="utf-8"))["sources"][0]
+        self.assertEqual(saved["allowed_resource_prefixes"], ["https://www.example.gov/"])
+        self.assertEqual(saved["resource_link_text_patterns"], ["instructions"])
+
+    def test_a_file_address_names_its_folder_and_other_hosts_are_allowed(self):
+        url = "https://www.example.gov/reporting/forms"
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._config(tmp)
+            register_request(rule_event(url, [
+                "Crawl depth: 1", "Documents under: https://files.example.gov/forms/FR_Y9C.pdf",
+            ]), path, "GauravDarwesh/ChangeSentinel")
+            saved = json.loads(path.read_text(encoding="utf-8"))["sources"][0]
+        self.assertEqual(saved["allowed_resource_prefixes"], ["https://files.example.gov/forms/"])
+        self.assertIn("files.example.gov", saved["allowed_domains"])
+        self.assertEqual(saved["resource_link_text_patterns"], [])
+
+    def test_rule_updates_a_page_already_monitored_on_its_own(self):
+        url = "https://www.example.gov/reporting/forms"
+        existing = source_for_url(url, "Forms page")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._config(tmp, [existing])
+            fields = ["Crawl depth: 1", "Documents under: https://www.example.gov/reporting/files/"]
+            first = register_request(rule_event(url, fields), path, "GauravDarwesh/ChangeSentinel")
+            again = register_request(rule_event(url, fields), path, "GauravDarwesh/ChangeSentinel")
+            saved = json.loads(path.read_text(encoding="utf-8"))["sources"]
+        self.assertEqual(len(saved), 1)
+        self.assertEqual(saved[0]["id"], existing["id"])
+        self.assertFalse(first["created"])
+        self.assertTrue(first["crawl_depth_updated"])
+        self.assertIn("now follows", first["message"])
+        self.assertIn("already follows", again["message"])
+        self.assertEqual(saved[0]["allowed_urls"], [url])
+
+    def test_invalid_rules_change_nothing(self):
+        url = "https://www.example.gov/reporting/forms"
+        cases = [
+            (["Crawl depth: 0", "Documents under: https://www.example.gov/files/"], "Crawl depth: 1"),
+            (["Crawl depth: 1", "Document link text matches: ^(Current"], "not a valid pattern"),
+            (["Crawl depth: 1", "Documents under: http://127.0.0.1/files/"], ""),
+            (["Crawl depth: 1", "Documents under: " + " ".join(f"https://www.example.gov/f{i}/" for i in range(6))], "At most 5"),
+            (["Crawl depth: 1", "Document link text matches: " + "x" * 201], "200 characters"),
+        ]
+        for fields, message in cases:
+            with self.subTest(fields=fields), tempfile.TemporaryDirectory() as tmp:
+                path = self._config(tmp)
+                before = path.read_text(encoding="utf-8")
+                with self.assertRaises(ValueError) as caught:
+                    register_request(rule_event(url, fields), path, "GauravDarwesh/ChangeSentinel")
+                if message:
+                    self.assertIn(message, str(caught.exception))
+                self.assertEqual(path.read_text(encoding="utf-8"), before)
+
+    def test_discovery_keeps_a_rule_to_its_page_and_matching_documents(self):
+        from regmon.config import load_config
+        from regmon.discovery import extract_html_links
+
+        url = "https://www.example.gov/reporting/forms"
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._config(tmp)
+            register_request(rule_event(url, [
+                "Crawl depth: 1", "Documents under: https://www.example.gov/reporting/files/",
+                "Document link text matches: ^Current",
+            ]), path, "GauravDarwesh/ChangeSentinel")
+            _, sources = load_config(path)
+            source = next(iter(sources.values()))
+        html = """
+          <a href="/reporting/files/current.pdf">Current form</a>
+          <a href="/reporting/files/2019.pdf">Form 2019 (archived)</a>
+          <a href="/reporting/other-page">Another page</a>
+          <a href="/reporting/forms">This page</a>
+        """
+        links = extract_html_links(url, html, source)
+        self.assertEqual(links, ["https://www.example.gov/reporting/files/current.pdf", url])

@@ -489,20 +489,36 @@
     .field-viewport:focus-visible { outline-offset: -2px; }
     .field-stage { position: relative; width: max-content; min-width: 100%; padding: 0 12px 10px 0; }
     .change-field {
-      --cols: 14; --tile: 16px; --gap: 3px; --label-w: 200px;
+      --cols: 14; --tile: 16px; --gap: 4px; --label-w: 200px; --head-h: 38px; --pulse-h: 24px;
       position: relative; z-index: 1;
-      display: grid; grid-template-columns: var(--label-w) repeat(var(--cols), var(--tile)); grid-auto-rows: var(--tile);
+      display: grid; grid-template-columns: var(--label-w) repeat(var(--cols), var(--tile)); grid-template-rows: var(--head-h) var(--pulse-h); grid-auto-rows: minmax(var(--tile), auto);
       gap: var(--gap); align-items: center; justify-content: start;
     }
     .change-field > .loading, .change-field > .empty { grid-column: 1 / -1; }
-    /* Pinned day header and label column: opaque, so the lights scroll under them. */
-    .field-corner, .field-day { position: sticky; top: 0; z-index: 3; align-self: stretch; height: calc(var(--tile) + 10px); margin-bottom: 2px; padding-top: 8px; background: var(--raise); color: var(--ink-3); font-size: 11px; line-height: 1; white-space: nowrap; }
-    .field-corner { left: 0; z-index: 4; padding-left: 14px; overflow: hidden; text-overflow: ellipsis; }
-    .field-day { min-width: 0; padding-left: 4px; box-shadow: inset 1px 0 0 var(--line-2); color: var(--ink-2); }
-    .field-day-text { display: block; overflow: hidden; text-overflow: clip; }
-    .field-day.is-next { padding-left: 0; box-shadow: none; color: var(--ink-3); font-size: 9.5px; letter-spacing: .02em; overflow: visible; }
-    .field-manual { position: absolute; bottom: 1px; left: calc(var(--k) * (var(--tile) + var(--gap)) + 2px); width: calc(var(--tile) - 4px); height: 2px; background: var(--ink-2); }
-    .change-field { grid-template-rows: calc(var(--tile) + 10px); }
+    /* Pinned day header, activity ribbon and label column: opaque, so the lights
+       scroll under them; each covers the gap below it as well. */
+    .field-corner, .field-day, .field-pulse { position: sticky; top: 0; z-index: 3; align-self: stretch; background: var(--raise); box-shadow: 0 var(--gap) 0 var(--raise); }
+    .field-corner { left: 0; z-index: 5; display: flex; flex-direction: column; justify-content: flex-end; gap: 1px; min-width: 0; padding: 0 12px 6px 14px; overflow: hidden; white-space: nowrap; }
+    .field-corner span { color: var(--ink-2); font-size: 11.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
+    .field-corner small { color: var(--ink-3); font-size: 10.5px; overflow: hidden; text-overflow: ellipsis; }
+    .field-day { display: flex; flex-direction: column; justify-content: flex-end; min-width: 0; padding: 0 0 6px 3px; overflow: visible; white-space: nowrap; }
+    /* The day's hairline sits in the middle of the gap before its first window,
+       exactly where the canvas draws it under the lights. */
+    .field-day:not(.is-next)::before { content: ""; position: absolute; top: 5px; bottom: calc(var(--gap) * -1); left: calc(var(--gap) / -2 - .5px); width: 1px; background: var(--line-2); }
+    .field-day-week { color: var(--ink-3); font: 500 9.5px/1.2 var(--font-ui); letter-spacing: .08em; text-transform: uppercase; overflow: hidden; }
+    .field-day-date { color: var(--ink); font-size: 13px; font-weight: 500; line-height: 1.2; font-variant-numeric: tabular-nums; }
+    .field-day.is-today .field-day-week, .field-day.is-today .field-day-date { color: var(--accent); }
+    .field-day.is-today::before { background: var(--accent); }
+    .field-day.is-next { padding-left: 0; overflow: visible; }
+    .field-day.is-next .field-day-week { font-size: 8.5px; letter-spacing: .04em; overflow: visible; }
+    .field-manual { position: absolute; bottom: 1px; left: calc(var(--k) * (var(--tile) + var(--gap))); width: var(--tile); height: 2px; border-radius: 1px; background: var(--ink-2); }
+    .field-pulse { top: var(--head-h); display: flex; align-items: flex-end; justify-content: center; gap: 1px; padding-bottom: 3px; border-bottom: 1px solid var(--line); }
+    .field-pulse.field-pulse-label, .field-corner.field-pulse-label { top: var(--head-h); z-index: 5; flex-direction: row; align-items: center; justify-content: flex-start; padding: 0 12px 0 14px; border-bottom: 1px solid var(--line); color: var(--ink-3); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; }
+    .field-pulse i { width: 3px; height: var(--h); border-radius: 1px 1px 0 0; }
+    .field-pulse i.is-on { background: var(--state-change); box-shadow: 0 0 6px var(--state-change-glow); }
+    .field-pulse i.is-bad { background: var(--state-bad); box-shadow: 0 0 6px var(--state-bad-glow); }
+    .field-pulse i.is-new { background: var(--state-new); }
+    .field-pulse.is-quiet::after { content: ""; width: 6px; height: 2px; border-radius: 1px; background: var(--line-2); }
     .field-label {
       position: sticky; left: 0; z-index: 2; display: flex; align-items: center; gap: 6px; height: calc(var(--tile) + var(--gap)); min-width: 0; margin: calc(var(--gap) / -2) 0;
       padding: 0 12px 0 14px; border: 0; background: var(--raise); color: var(--ink-2); font-size: 12.5px; line-height: 1; text-align: left;
@@ -515,12 +531,29 @@
     .field-label-count { margin-left: auto; padding-left: 8px; color: var(--ink-3); font-size: 11.5px; }
     .field-group-label { color: var(--ink); font-weight: 500; }
     .field-chevron { flex: none; width: 6px; height: 6px; margin-right: 2px; border-right: 1.5px solid var(--ink-3); border-bottom: 1.5px solid var(--ink-3); transform: rotate(-45deg); transition: transform .15s var(--ease); }
-    .field-group-label[aria-expanded="true"] .field-chevron { transform: rotate(45deg); }
+    .field-group-label[aria-expanded="true"] .field-chevron, .field-section-label[aria-expanded="true"] .field-chevron { transform: rotate(45deg); }
+    /* A section per regulator (or jurisdiction, kind, monitor): a taller row with a lit monogram. */
+    .field-section-label { height: calc(var(--tile) + 18px); margin: 4px 0 0; gap: 9px; padding-right: 10px; color: var(--ink); font-weight: 500; }
+    .field-section-label .field-chevron { margin-left: 2px; }
+    .field-section-text { display: flex; flex-direction: column; justify-content: center; gap: 1px; min-width: 0; }
+    .field-section-text .field-name { font-size: 12.5px; }
+    .field-section-text small { overflow: hidden; color: var(--ink-3); font-size: 10.5px; font-weight: 400; text-overflow: ellipsis; white-space: nowrap; }
+    .field-monogram {
+      flex: none; display: grid; place-items: center; min-width: 22px; height: 20px; padding: 0 4px; border-radius: 4px;
+      background: color-mix(in srgb, var(--badge) 16%, transparent); color: var(--badge); font: 600 9.5px/1 var(--font-code); letter-spacing: .02em;
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--badge) 45%, transparent), 0 0 10px -3px var(--badge);
+    }
+    .field-chips { display: inline-flex; gap: 4px; margin-left: auto; }
+    .field-chip { display: inline-flex; align-items: center; gap: 3px; color: var(--ink-2); font: 500 10.5px/1 var(--font-ui); font-style: normal; font-variant-numeric: tabular-nums; }
+    .field-chip::before { content: ""; width: 5px; height: 5px; border-radius: 1px; background: var(--ink-3); }
+    .field-chip.is-on::before { background: var(--state-change); }
+    .field-chip.is-bad::before { background: var(--state-bad); }
+    .field-chip.is-new::before { background: var(--state-new); }
     .field-badge { flex: none; width: 6px; height: 6px; border-radius: 1px; }
     .field-badge.is-on { background: var(--state-change); }
     .field-badge.is-bad { background: var(--state-bad); }
     .field-more, .field-empty { grid-column: 1 / -1; position: sticky; left: 0; justify-self: start; width: min(100%, 420px); }
-    .field-more { height: var(--tile); padding: 0 14px; border: 0; background: none; color: var(--link); font-size: 12px; text-align: left; }
+    .field-more { height: var(--tile); padding: 0 14px 0 30px; border: 0; background: none; color: var(--link); font-size: 12px; text-align: left; }
     .field-more:hover { color: var(--ink); }
     .field-empty { grid-row: span 2; padding: 6px 14px; color: var(--ink-3); font-size: 12.5px; line-height: 1.5; }
     /* Cells are hit areas only: the lights themselves are painted on the canvas behind. */
@@ -539,6 +572,81 @@
     .field-tip.is-pinned { pointer-events: auto; max-width: min(320px, calc(100vw - 20px)); padding: 12px 13px; }
     .field-tip-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+
+    /* ---------- Documents: PDF pages, workbooks, Word, bundles ---------- */
+    .doc-host { position: absolute; inset: 0; z-index: 2; overflow: auto; background: var(--pane); }
+    .doc-host[hidden] { display: none; }
+    .doc-host-inline { position: relative; inset: auto; max-height: min(78vh, 960px); }
+    .scout-preview-stage.has-doc iframe { visibility: hidden; }
+    .doc-view { display: flex; flex-direction: column; min-height: 100%; }
+    .doc-bar { position: sticky; top: 0; z-index: 3; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 9px 14px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--raise) 94%, transparent); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+    .doc-bar-name { min-width: 0; flex: 1 1 200px; overflow: hidden; font-size: 13px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+    .doc-bar-meta { display: inline-flex; gap: 10px; color: var(--ink-3); font-size: 12px; }
+    .doc-bar-actions { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+    .doc-body { flex: 1; min-height: 0; }
+    .doc-body > .empty, .doc-body > .loading { min-height: 240px; }
+    .doc-pages { display: grid; gap: 14px; padding: 14px; background: repeating-linear-gradient(135deg, var(--raise) 0 10px, var(--pane) 10px 20px); }
+    .doc-page { position: relative; width: min(100%, 980px); margin: 0 auto; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .12), 0 8px 24px -14px rgba(0, 0, 0, .35); }
+    .doc-page canvas { display: block; width: 100%; height: auto; }
+    .doc-page.is-missing { background: repeating-linear-gradient(45deg, var(--raise) 0 10px, var(--pane) 10px 20px); }
+    .doc-pageno { position: absolute; right: 8px; bottom: 6px; padding: 1px 6px; background: rgba(0, 0, 0, .55); color: #fff; font: 10.5px var(--font-code); }
+    .doc-text-raw { margin: 0; padding: 14px 18px; overflow: auto; color: var(--ink-2); font: 12px/1.6 var(--font-code); white-space: pre-wrap; overflow-wrap: anywhere; }
+    .doc-zip { margin: 0; padding: 0; list-style: none; }
+    .doc-zip li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: baseline; padding: 9px 16px; border-bottom: 1px solid var(--line); font-size: 13px; }
+    .doc-zip-name { min-width: 0; overflow-wrap: anywhere; font-family: var(--font-code); font-size: 12px; }
+    .doc-zip-size { color: var(--ink-3); font-size: 12px; font-variant-numeric: tabular-nums; }
+    /* Workbooks: sheet tabs over a grid with pinned column letters and row numbers. */
+    .wb { display: flex; flex-direction: column; min-width: 0; }
+    .wb-head { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; padding: 8px 12px; border-bottom: 1px solid var(--line); background: var(--raise); }
+    .doc-view .wb-head { top: 41px; }
+    .wb-head-tools { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+    .wb-tabs { display: flex; gap: 4px; min-width: 0; max-width: 100%; overflow-x: auto; scrollbar-width: thin; }
+    .wb-tab { display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 4px 10px; border: 1px solid var(--line-2); border-radius: 4px 4px 0 0; background: var(--pane); color: var(--ink-2); font-size: 12px; white-space: nowrap; }
+    .wb-tab[aria-selected="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+    .wb-tab.is-hidden { font-style: italic; opacity: .75; }
+    .wb-tab-badge { min-width: 16px; padding: 0 5px; border-radius: 8px; background: var(--accent); color: #140c08; font: 600 10px/16px var(--font-ui); text-align: center; }
+    .wb-tab.is-added .wb-tab-badge { background: var(--state-new); color: #fff; }
+    .wb-tab.is-removed .wb-tab-badge { background: var(--state-bad); color: #fff; }
+    .wb-formulas { font-size: 12px; }
+    .wb-grid-wrap { max-height: min(64vh, 720px); overflow: auto; background: var(--pane); }
+    .doc-host .wb-grid-wrap { max-height: none; }
+    .wb-grid { border-collapse: separate; border-spacing: 0; font: 12px/1.35 var(--font-ui); color: var(--ink); }
+    .wb-grid th, .wb-grid td { max-width: 260px; min-width: 56px; padding: 4px 7px; overflow: hidden; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); text-overflow: ellipsis; white-space: nowrap; vertical-align: top; }
+    .wb-grid thead th { position: sticky; top: 0; z-index: 1; background: var(--raise-2); color: var(--ink-3); font: 500 11px var(--font-code); text-align: center; }
+    .wb-grid .wb-rowno { position: sticky; left: 0; z-index: 1; min-width: 42px; background: var(--raise-2); color: var(--ink-3); font: 500 11px var(--font-code); text-align: right; }
+    .wb-grid .wb-corner { left: 0; z-index: 2; }
+    .wb-grid td { background: var(--raise); }
+    .wb-grid td.has-formula { color: var(--ins); }
+    .wb-grid td.is-value { background: color-mix(in srgb, var(--accent) 20%, var(--raise)); box-shadow: inset 0 0 0 1px var(--accent); }
+    .wb-grid td.is-formula { background: color-mix(in srgb, #8a5cf5 18%, var(--raise)); box-shadow: inset 0 0 0 1px #8a5cf5; }
+    .wb-grid td.is-added { background: var(--cmp-add-soft); box-shadow: inset 0 0 0 1px var(--cmp-add); }
+    .wb-grid td.is-removed { background: var(--cmp-del-soft); box-shadow: inset 0 0 0 1px var(--cmp-del); text-decoration: line-through; }
+    .wb-grid td.is-focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+    .wb-notes { margin: 0; padding: 8px 14px; color: var(--ink-3); font-size: 12px; }
+    .wb-names { padding: 8px 14px 12px; border-top: 1px solid var(--line); font-size: 12.5px; }
+    .wb-names summary { color: var(--link); cursor: pointer; }
+    .wb-names ul { margin: 8px 0 0; padding-left: 18px; color: var(--ink-2); }
+    .wb-names li.is-added { color: var(--cmp-add); }
+    .wb-names li.is-removed { color: var(--cmp-del); }
+    .wb-summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 13px; }
+    .wb-summary strong { font-weight: 500; }
+    .wb-sheet-status { margin: 0; padding: 8px 14px; color: var(--ink-2); font-size: 12.5px; border-bottom: 1px solid var(--line); }
+    .wb-sheet-note { margin: 0; padding: 10px 14px; color: var(--ink-3); font-size: 12.5px; }
+    .wb-sheet-note.is-added { color: var(--cmp-add); }
+    .wb-sheet-note.is-removed { color: var(--cmp-del); }
+    .wb-kinds { padding: 8px 14px 0; }
+    .wb-changes { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    .wb-changes th { position: sticky; top: 0; padding: 7px 12px; background: var(--raise-2); color: var(--ink-3); font-weight: 500; text-align: left; }
+    .wb-changes td { padding: 7px 12px; border-top: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
+    .wb-changes .wb-ref { width: 120px; font: 500 12px var(--font-code); color: var(--link); cursor: pointer; white-space: nowrap; }
+    .wb-changes .wb-ref small { display: block; color: var(--ink-3); font: 11px var(--font-ui); }
+    .wb-changes .wb-before { color: var(--cmp-del); }
+    .wb-changes .wb-after { color: var(--cmp-add); }
+    .wb-changes tr.is-value .wb-before, .wb-changes tr.is-formula .wb-before { text-decoration: line-through; text-decoration-thickness: 1px; }
+    .wb-changes code { font: 12px var(--font-code); }
+    .wb-result { display: block; color: var(--ink-3); font-size: 11.5px; }
+    .wb-empty { color: var(--ink-3); font-style: italic; }
+    .wb-changes tr.is-structure .wb-ref { color: var(--ink-2); cursor: default; font-family: var(--font-ui); }
 
     /* ---------- Dialog and toast ---------- */
     .modal { width: min(540px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); overflow-y: auto; padding: 0; border: 1px solid var(--line-2); border-radius: 6px; background: var(--pane); color: var(--ink); }
@@ -946,7 +1054,12 @@
       .field-search, .field-search input { min-width: 0; }
       .field-lenses::-webkit-scrollbar { display: none; }
       .field-lenses button { min-height: 32px; }
-      .field-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+      .field-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+      .field-controls .search-field { grid-column: 1 / -1; }
+      .field-controls .field-input { width: 100%; }
+      .field-section-text small { display: none; }
+      .field-chips { display: none; }
+      .change-field { --head-h: 34px; --pulse-h: 20px; }
       .field-search input { width: 100%; }
       .field-viewport { max-height: 68svh; overscroll-behavior-y: auto; }
       .field-label { font-size: 12px; padding: 0 8px 0 10px; }
@@ -1811,6 +1924,7 @@
             </div>
             <div class="field-controls">
               <label class="search-field field-search" for="fieldSearch"><span class="visually-hidden">Find a page in the scan history</span><input id="fieldSearch" type="search" placeholder="Find a page" autocomplete="off"></label>
+              <label for="fieldGroup"><span class="visually-hidden">Group pages by</span><select class="field-input" id="fieldGroup" aria-label="Group pages by"><option value="regulator">By regulator</option><option value="jurisdiction">By jurisdiction</option><option value="kind">By kind of document</option><option value="source">By monitor</option><option value="none">No grouping</option></select></label>
               <label for="fieldRange"><span class="visually-hidden">Time range</span><select class="field-input" id="fieldRange" aria-label="Time range"><option value="2d">Last 2 days</option><option value="7d" selected>Last 7 days</option><option value="30d">Last 30 days</option><option value="all">All history</option></select></label>
             </div>
           </div>
@@ -2215,6 +2329,7 @@
         <div class="explore-stage">
           <p class="explore-notice" id="exploreNotice" role="note" hidden></p>
           <iframe id="exploreFrame" title="Page you are exploring" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
+          <div class="doc-host explore-doc" id="exploreDoc" hidden></div>
           <div class="explore-status" id="exploreStatus" role="status" aria-live="polite"></div>
         </div>
         <aside class="explore-side" aria-label="Links">
@@ -2602,8 +2717,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261023-lenses-scout-safari-1"></script>
-  <script src="dashboard.js?v=20261023-lenses-scout-safari-1"></script>
+  <script src="dashboard-lib.js?v=20261023-regulators-excel-docs-1"></script>
+  <script src="dashboard.js?v=20261023-regulators-excel-docs-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

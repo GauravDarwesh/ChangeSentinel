@@ -201,6 +201,7 @@ def source_for_url(
     include_selector: str = "",
     ignore_selectors: tuple[str, ...] | list[str] = (),
     crawl_depth: int = 0,
+    document_rule: dict | None = None,
 ) -> dict:
     parsed = urlparse(url)
     source_id = "manual-" + hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
@@ -212,7 +213,7 @@ def source_for_url(
     settings["crawl_depth"] = int(crawl_depth)
     settings["excluded_urls"] = []
     settings["discovery_max_pages_per_slice"] = 1 if crawl_depth == 0 else 200
-    return {
+    source = {
         "id": source_id,
         "name": _display_name(name, url),
         "regulator": parsed.hostname or host,
@@ -222,6 +223,78 @@ def source_for_url(
         "allowed_urls": [url] if crawl_depth == 0 else [],
         "allowed_domains": [host],
     }
+    if document_rule:
+        _apply_document_rule(source, url, document_rule)
+    return source
+
+
+MAX_DOCUMENT_FOLDERS = 5
+
+
+def _document_rule(body: str, url: str) -> dict | None:
+    """An optional monitoring rule taught in the dashboard: watch this page and the
+    documents it links to, but only those in the given folders and, optionally,
+    only those whose link text matches a pattern (for example ^Current).
+
+    Returns None when the request carries neither field.
+    """
+    folders_value = _optional_field(body, "Documents under")
+    pattern_value = _optional_field(body, "Document link text matches")
+    if folders_value is None and pattern_value is None:
+        return None
+    parsed_page = urlparse(url)
+    folders: list[str] = []
+    for item in re.split(r"[,\s]+", folders_value or ""):
+        value = item.strip()
+        if not value or value.lower() in {"none", "(none)"}:
+            continue
+        prefix = canonicalize_url(value)  # rejects local, internal and private destinations
+        parsed = urlparse(prefix)
+        # A folder: "…/forms" admits "…/forms/…", not "…/forms-archive". A file's
+        # address ("…/forms/FR_Y9C.pdf") names the folder it sits in.
+        last = parsed.path.rsplit("/", 1)[-1]
+        if parsed.path.endswith("/") or value.rstrip().endswith("/") or "." not in last:
+            path = parsed.path.rstrip("/") + "/"
+        else:
+            path = parsed.path.rsplit("/", 1)[0] + "/"
+        folder = urlunparse((parsed.scheme, parsed.netloc, path, "", "", ""))
+        if folder not in folders:
+            folders.append(folder)
+    if len(folders) > MAX_DOCUMENT_FOLDERS:
+        raise ValueError(f"At most {MAX_DOCUMENT_FOLDERS} document folders can be listed.")
+    if not folders:
+        # Only a label pattern: documents anywhere on the page's own site.
+        folders = [urlunparse((parsed_page.scheme, parsed_page.netloc, "/", "", "", ""))]
+    pattern = str(pattern_value or "").strip()
+    if pattern.lower() in {"none", "(none)", "(any)"}:
+        pattern = ""
+    if len(pattern) > 200:
+        raise ValueError("Document link text matches must be at most 200 characters.")
+    if pattern:
+        try:
+            re.compile(pattern)
+        except re.error as exc:
+            raise ValueError(f"Document link text matches is not a valid pattern: {exc}") from exc
+    return {"folders": folders, "patterns": [pattern] if pattern else []}
+
+
+def _apply_document_rule(source: dict, url: str, rule: dict) -> None:
+    """Watch the listed page plus matching documents; no other page is followed.
+
+    Discovery binds pages to allowed_urls whenever document folders are set, so a
+    depth-1 rule never wanders into the site's other pages.
+    """
+    source["crawl_depth"] = 1
+    source["allowed_urls"] = [url]
+    source["allowed_resource_prefixes"] = list(rule["folders"])
+    source["resource_link_text_patterns"] = list(rule["patterns"])
+    source["discovery_max_pages_per_slice"] = 200
+    domains = [str(domain) for domain in (source.get("allowed_domains") or [])]
+    for folder in rule["folders"]:
+        host = (urlparse(folder).hostname or "").rstrip(".").lower()
+        if host and host not in domains:
+            domains.append(host)
+    source["allowed_domains"] = domains
 
 
 def _validated_issue_body(event: dict, repository: str, marker: str) -> str:
@@ -751,6 +824,12 @@ def register_request(
     explore_prefixes, document_hosts = _discovery_scope(body, url)
     if (discovery_only or explore_prefixes is not None or document_hosts is not None) and not scout_enabled:
         raise ValueError("Discovery only, Explore within and Document hosts require Scout discovery: yes.")
+    document_rule = _document_rule(body, url)
+    if document_rule is not None:
+        if scout_enabled:
+            raise ValueError("A document rule cannot be combined with Scout discovery in the same request.")
+        if crawl_depth != 1:
+            raise ValueError("A document rule needs Crawl depth: 1.")
 
     config = json.loads(config_path.read_text(encoding="utf-8"))
     sources = config.setdefault("sources", [])
@@ -801,7 +880,40 @@ def register_request(
     )
     source_changed = False
     crawl_depth_updated = False
-    if existing is not None:
+    if existing is not None and document_rule is not None:
+        seed_urls = existing.get("seed_urls") or []
+        try:
+            own_page = (
+                str(existing.get("id") or "").startswith("manual-")
+                and len(seed_urls) == 1
+                and canonicalize_url(str(seed_urls[0])) == url
+            )
+        except (TypeError, ValueError, KeyError):
+            own_page = False
+        if not own_page:
+            raise ValueError(
+                "This page is already monitored as part of another source; a document rule can only "
+                "be set on a page monitored on its own."
+            )
+        previous_depth = int(existing.get("crawl_depth", 0))
+        before = json.dumps(existing, sort_keys=True)
+        _apply_document_rule(existing, url, document_rule)
+        if requested_name:
+            existing["name"] = _display_name(requested_name, url)
+        source_changed = json.dumps(existing, sort_keys=True) != before
+        crawl_depth_updated = previous_depth != 1
+        source_result = {
+            "source_id": str(existing["id"]),
+            "url": url,
+            "name": str(existing.get("name") or display_name or url),
+            "created": False,
+            "crawl_depth": 1,
+            "message": (
+                "The existing monitor now follows the document rule." if source_changed
+                else "The monitor already follows this document rule."
+            ),
+        }
+    elif existing is not None:
         previous_depth = int(existing.get("crawl_depth", 0))
         if previous_depth != crawl_depth:
             # This promotion is restricted to one manual seed currently watched
@@ -827,7 +939,8 @@ def register_request(
         }
     else:
         new_source = source_for_url(
-            url, display_name, include_selector, ignore_selectors, crawl_depth=crawl_depth
+            url, display_name, include_selector, ignore_selectors, crawl_depth=crawl_depth,
+            document_rule=document_rule,
         )
         source_ids = {str(source.get("id")) for source in sources}
         if new_source["id"] in source_ids:
@@ -878,6 +991,8 @@ def register_request(
 
     source_result["crawl_depth_updated"] = crawl_depth_updated
     source_result["discovery_only"] = False
+    if document_rule is not None:
+        source_result["document_rule"] = document_rule
     if url != submitted_url:
         source_result["redirected_from"] = submitted_url
     source_result["scout_enabled"] = scout_enabled
