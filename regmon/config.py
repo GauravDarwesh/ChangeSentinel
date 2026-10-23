@@ -27,6 +27,7 @@ class SourceConfig:
     max_urls: int = 0
     crawl_depth: int = -1
     excluded_urls: tuple[str, ...] = ()
+    register_discovered_urls: bool = False
     crawler: str = "stealth-crawler"
     active: bool = True
     baseline_on_first_run: bool = False
@@ -71,6 +72,7 @@ class SourceConfig:
             max_urls=int(value.get("max_urls", 0)),
             crawl_depth=int(value.get("crawl_depth", -1)),
             excluded_urls=tuple(str(x) for x in value.get("excluded_urls", [])),
+            register_discovered_urls=bool(value.get("register_discovered_urls", False)),
             crawler=str(value.get("crawler", "stealth-crawler")),
             active=bool(value.get("active", True)),
             baseline_on_first_run=bool(value.get("baseline_on_first_run", False)),
@@ -90,7 +92,7 @@ class SourceConfig:
 
 
 SOURCE_KEYS = {field.name for field in fields(SourceConfig)}
-BOOL_KEYS = {"active", "baseline_on_first_run", "use_http_discovery"}
+BOOL_KEYS = {"active", "baseline_on_first_run", "use_http_discovery", "register_discovered_urls"}
 INT_KEYS = {
     "max_urls", "crawl_depth", "discovery_attempts", "discovery_timeout_seconds", "discovery_retry_delay_seconds",
     "discovery_http_timeout_seconds", "discovery_http_workers", "discovery_http_attempts",
