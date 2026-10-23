@@ -115,7 +115,7 @@ const state = {
   assetSignatures: {}, renderedSignature: "", lastFullLoad: 0, loading: null, detailKeys: {},
   workflowRuns: [], workflowSignature: "", scanColumns: null, pendingScan: null,
   scoutLatest: null, scoutReview: null, scoutConfig: null, scoutFilter: "REVIEW", selectedScoutKey: "", scoutMonitored: null,
-  discoverySelection: [], discoveryBatchIndex: 0, discoveryDuplicatesAdded: 0,
+  discoverySelection: [], discoveryBatchIndex: 0, discoveryDuplicatesAdded: 0, discoverySelectedPage: 0,
   scoutSourceMode: "add",
   calendar: null, lineage: null, reviews: null, reviewTarget: "", integrity: {},
   cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
@@ -3370,21 +3370,22 @@ function restoreDiscoverySelection() {
     state.discoveryDuplicatesAdded = 0;
   }
 }
-function resetDiscoveryBatchProgress() {
+function resetDiscoveryBatchProgress(shouldPersist = true) {
   state.discoveryBatchIndex = 0;
-  persistDiscoverySelection();
+  if (shouldPersist) persistDiscoverySelection();
 }
-function addDiscoveryCandidate(candidate, countDuplicate) {
+function addDiscoveryCandidate(candidate, countDuplicate, shouldPersist = true) {
   if (!candidate) return false;
   const key = discoveryCandidateKey(candidate);
   if (!key) return false;
   const existing = state.discoverySelection.find(item => discoveryCandidateKey(item) === key);
   if (existing) {
     if (countDuplicate) state.discoveryDuplicatesAdded += 1;
+    if (shouldPersist && countDuplicate) persistDiscoverySelection();
     return false;
   }
   state.discoverySelection.push(candidate);
-  resetDiscoveryBatchProgress();
+  resetDiscoveryBatchProgress(shouldPersist);
   return true;
 }
 function removeDiscoveryCandidate(key) {
@@ -3452,10 +3453,15 @@ function renderDiscoverySelectionDialog() {
   }
   $("discoverySelectedCount").textContent = metrics.selected + (metrics.selected === 1 ? " URL" : " URLs");
   const list = $("discoverySelectedList");
+  const pageSize = 50;
+  const pageCount = Math.max(1, Math.ceil(state.discoverySelection.length / pageSize));
+  state.discoverySelectedPage = Math.max(0, Math.min(state.discoverySelectedPage, pageCount - 1));
+  const start = state.discoverySelectedPage * pageSize;
+  const visibleSelection = state.discoverySelection.slice(start, start + pageSize);
   if (!state.discoverySelection.length) {
     list.innerHTML = '<div class="loading">No candidates selected. Select Scout findings or add URLs manually.</div>';
   } else {
-    list.innerHTML = state.discoverySelection.map(item => {
+    list.innerHTML = visibleSelection.map(item => {
       const url = safeHttpUrl(item.url);
       if (!url) return "";
       const title = item.name || displayUrl(url);
@@ -3467,6 +3473,11 @@ function renderDiscoverySelectionDialog() {
         '<button class="btn" type="button" data-discovery-remove="' + esc(discoveryCandidateKey(item)) + '">Remove</button></div>';
     }).join("");
   }
+  $("discoverySelectionPageInfo").textContent = state.discoverySelection.length
+    ? "Showing " + (start + 1) + "–" + Math.min(start + pageSize, state.discoverySelection.length) + " of " + state.discoverySelection.length
+    : "No selected URLs";
+  $("discoverySelectionPagePrev").disabled = !state.discoverySelection.length || state.discoverySelectedPage === 0;
+  $("discoverySelectionPageNext").disabled = !state.discoverySelection.length || state.discoverySelectedPage >= pageCount - 1;
   const batches = buildDiscoveryBatches();
   const button = $("openDiscoveryBatch");
   const note = $("discoveryBatchNote");
@@ -3497,6 +3508,7 @@ function renderDiscoverySelectionDialog() {
 }
 function openDiscoverySelectionDialog() {
   const dialog = $("discoverySelectionDialog");
+  state.discoverySelectedPage = 0;
   renderDiscoverySelectionDialog();
   if (typeof dialog.showModal === "function") dialog.showModal();
   else showToast("This browser can't open the selection dialog. Use a current browser.");
@@ -3522,7 +3534,8 @@ function addManualDiscoveryUrls() {
     return;
   }
   let added = 0;
-  candidates.forEach(candidate => { if (addDiscoveryCandidate(candidate, true)) added += 1; });
+  candidates.forEach(candidate => { if (addDiscoveryCandidate(candidate, true, false)) added += 1; });
+  persistDiscoverySelection();
   input.value = "";
   persistDiscoverySelection();
   status.textContent = added + " URL(s) added to the selection" +
@@ -3540,7 +3553,7 @@ function toggleVisibleDiscoverySelection() {
       state.discoverySelection = state.discoverySelection.filter(row => discoveryCandidateKey(row) !== key);
     } else if (!discoverySelectionHas(item.url)) {
       addDiscoveryCandidate(discoveryCandidate(item.url, item.title, "Scout · " + scoutRegulator(item.regulator_id).short_name,
-        (item.evidence || {}).parent_url), false);
+        (item.evidence || {}).parent_url), false, false);
     }
   });
   resetDiscoveryBatchProgress();
