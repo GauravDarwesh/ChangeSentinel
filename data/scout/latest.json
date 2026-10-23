@@ -1,5 +1,5 @@
 {
- "finished_at": "2026-10-22T23:48:39Z",
+ "finished_at": "2026-10-21T09:36:24Z",
  "objective": {
   "description": "New regulator publications a compliance reviewer may want ChangeSentinel to monitor: rules, consultations, guidance, technical standards, reporting forms and instructions, supervisory letters and notices, Q&A, enforcement actions, decisions and opinions.",
   "id": "regulatory-publications-v1"
@@ -100,7 +100,7 @@
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
    "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 900.0
+   "time_budget_seconds": 900
   },
   {
    "channels": [
@@ -147,12 +147,12 @@
      "status": "parsed"
     }
    },
-   "seconds": 11.0,
+   "seconds": 11,
    "short_name": "OSFI",
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
    "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 900.0
+   "time_budget_seconds": 900
   },
   {
    "channels": [
@@ -211,7 +211,7 @@
    "requests": 3,
    "robots": {
     "www.eba.europa.eu": {
-     "crawl_delay": 10.0,
+     "crawl_delay": 10,
      "status": "parsed"
     }
    },
@@ -220,7 +220,7 @@
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
    "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 1200.0
+   "time_budget_seconds": 1200
   },
   {
    "channels": [
@@ -287,7 +287,7 @@
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
    "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 900.0
+   "time_budget_seconds": 900
   },
   {
    "channels": [
@@ -339,7 +339,7 @@
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
    "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 900.0
+   "time_budget_seconds": 900
   },
   {
    "channels": [
@@ -391,7 +391,7 @@
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
    "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 900.0
+   "time_budget_seconds": 900
   },
   {
    "channels": [
@@ -444,74 +444,21 @@
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
    "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 900.0
-  },
-  {
-   "channels": [
-    {
-     "error": "",
-     "id": "manual-page-c6dccdae3ac5",
-     "items": 1213,
-     "label": "US TIC Forms & Instructions",
-     "new": 0,
-     "note": "Depth-limited discovery: read 26 page(s), found 1213 linked URL(s) through level 2",
-     "observed": 1213,
-     "out_of_scope": 350,
-     "pages_read": 26,
-     "required": true,
-     "status": "ok",
-     "type": "listing",
-     "url": "https://home.treasury.gov/data/treasury-international-capital-tic-system/tic-forms-instructions"
-    }
-   ],
-   "counts": {
-    "baseline_added": 1213,
-    "enriched": 0,
-    "new": 0,
-    "new_irrelevant": 0,
-    "new_relevant": 0,
-    "new_uncertain": 0,
-    "observed": 1213,
-    "registry_size": 1213,
-    "translations_linked": 0
-   },
-   "finished_at": "2026-10-22T23:48:39Z",
-   "id": "manual-bf930657f9a2",
-   "jurisdiction": "User-configured",
-   "known_gaps": [
-    "Dashboard-added listing rooted at https://home.treasury.gov/data/treasury-international-capital-tic-system/tic-forms-instructions; only links on this host through depth 2 are discovered. Unlinked pages and paths beyond the selected depth are not covered."
-   ],
-   "name": "User-configured source: US TIC Forms & Instructions",
-   "region": "OTHER",
-   "request_budget": 60,
-   "requests": 27,
-   "robots": {
-    "home.treasury.gov": {
-     "crawl_delay": null,
-     "status": "parsed"
-    }
-   },
-   "seconds": 256.9,
-   "short_name": "US TIC Forms & Instructions",
-   "status": "COMPLETE",
-   "status_reason": "Every declared channel was read as planned",
-   "sweep_id": "20261022T234422Z-89ed37",
-   "time_budget_seconds": 900.0
+   "time_budget_seconds": 900
   }
  ],
  "schema_version": 1,
- "scope": "manual-bf930657f9a2",
- "started_at": "2026-10-22T23:44:22Z",
+ "started_at": "2026-10-21T09:35:20Z",
  "status": "COMPLETE",
- "sweep_id": "20261022T234422Z-89ed37",
+ "sweep_id": "20261021T093520Z-135485",
  "totals": {
-  "baseline_added": 1213,
-  "new": 0,
-  "new_irrelevant": 0,
+  "baseline_added": 0,
+  "new": 1,
+  "new_irrelevant": 1,
   "new_relevant": 0,
   "new_uncertain": 0,
-  "observed": 1213,
-  "requests": 27
+  "observed": 4370,
+  "requests": 22
  },
  "trigger": "manual"
 }

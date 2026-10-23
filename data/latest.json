@@ -1725,65 +1725,6 @@
         "file_baseline_forced": false,
         "extractor_baseline_forced": false
       }
-    },
-    "manual-fe66388fe452": {
-      "fe66388fe4523fbda40e241d0614f9a8779bcfb66262c27fdccbebeefed72c8a": {
-        "schema_version": 2,
-        "url_id": "fe66388fe4523fbda40e241d0614f9a8779bcfb66262c27fdccbebeefed72c8a",
-        "source_id": "manual-fe66388fe452",
-        "regulator": "www.frbservices.org",
-        "canonical_url": "https://www.frbservices.org/central-bank/reporting-central/reporting-central-structure-central-user-guides",
-        "first_seen": "2026-10-22T03:55:54.288402+00:00",
-        "last_seen": "2026-10-22T17:07:33.292811+00:00",
-        "last_checked": "2026-10-22T17:07:33.292811+00:00",
-        "last_full_fetch": "2026-10-22T17:07:33.292811+00:00",
-        "active": true,
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_length": null,
-        "etag": null,
-        "last_modified": null,
-        "raw_hash": "e279d6827da509b5afe33e86321d39a41286488f730a3daafa9bed8f14e38484",
-        "normalized_hash": "4719a5e57f11cbef6e7c0ea098ebaab00138ad2fd619b72b4354c8a212896227",
-        "html_hash": "908bfc4ece86b8bd6ea89d814acb2205892862e40838b6db1a1811fe38be2a4f",
-        "html_comparison_hash": "28b811282f72e442c303a397e424a3688a77276ccf1b686bc6e526e4e8be575c",
-        "html_comparison_hash_version": 2,
-        "html_snapshot_location": "data/snapshots/html/fe66388fe4523fbda40e241d0614f9a8779bcfb66262c27fdccbebeefed72c8a-908bfc4ece86b8bd6ea89d814acb2205892862e40838b6db1a1811fe38be2a4f.html",
-        "file_snapshot_location": null,
-        "extraction_type": "html",
-        "extractor_version": "content-extractor-v7",
-        "extraction_error": null,
-        "fetch_error": null,
-        "snapshot_location": "data/snapshots/fe66388fe4523fbda40e241d0614f9a8779bcfb66262c27fdccbebeefed72c8a-4719a5e57f11cbef6e7c0ea098ebaab00138ad2fd619b72b4354c8a212896227.txt",
-        "evidence_location": "data/evidence/cb0445d1447793c6a6950d9cffd08afbb9136cfcae4e9cea29991db6004714e9.json",
-        "relevance": {
-          "candidate": true,
-          "reason": "Regulatory signal detected",
-          "signals": [
-            "regulatory",
-            "report",
-            "risk",
-            "rule",
-            "standard"
-          ]
-        },
-        "ai_pending": null,
-        "last_changed_at": null,
-        "change_history": [
-          {
-            "event_id": "cb0445d1447793c6a6950d9cffd08afbb9136cfcae4e9cea29991db6004714e9",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-22T04:27:54.117805+00:00",
-            "evidence_location": "data/evidence/cb0445d1447793c6a6950d9cffd08afbb9136cfcae4e9cea29991db6004714e9.json"
-          }
-        ],
-        "not_modified": false,
-        "full_fetch_forced": false,
-        "html_baseline_forced": false,
-        "file_baseline_forced": false,
-        "extractor_baseline_forced": false
-      }
     }
   }
 }
