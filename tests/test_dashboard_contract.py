@@ -464,6 +464,7 @@ class TestGuidedDiscoverySelection(unittest.TestCase):
             'id="openSourceForDiscovery"',
             'id="openDiscoverySelectionFromAdd"',
             'id="scoutItems"',
+            'id="scoutFormatFilter"',
             'id="selectVisibleScout"',
             'id="openDiscoverySelection"',
             'id="discoverySelectionDialog"',
@@ -482,6 +483,9 @@ class TestGuidedDiscoverySelection(unittest.TestCase):
             "function addManualDiscoveryUrls()",
             "function renderDiscoverySelectionDialog()",
             "function openDiscoveryRegistrationBatch()",
+            'formatFilter === "PDF"',
+            'formatFilter === "HTML"',
+            "evidence.parent_url",
             'sessionStorage.setItem(DISCOVERY_SELECTION_STORAGE',
             'data-discovery-select="',
         ):
