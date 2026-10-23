@@ -3407,6 +3407,7 @@ function removeDiscoveryCandidate(key) {
   state.discoverySelection = state.discoverySelection.filter(item => discoveryCandidateKey(item) !== key);
   resetDiscoveryBatchProgress();
   renderDiscoverySelectionBar();
+  renderScout();
   if ($("discoverySelectionDialog") && $("discoverySelectionDialog").open) renderDiscoverySelectionDialog();
 }
 function discoverySelectionMetrics() {
