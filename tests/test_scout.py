@@ -737,7 +737,11 @@ class TestSourceRequests(unittest.TestCase):
 class TestConfigurationAndState(unittest.TestCase):
     def test_pilot_profiles_cover_all_four_regions(self):
         config = load_config(ROOT / "config" / "scout.json")
-        self.assertEqual({regulator.region for regulator in config.regulators if regulator.active}, {"NAM", "LATAM", "EMEA", "APAC"})
+        # User-added Scout listings use OTHER and are not part of the four-region built-in pilot.
+        self.assertEqual(
+            {regulator.region for regulator in config.regulators if regulator.active and regulator.region != "OTHER"},
+            {"NAM", "LATAM", "EMEA", "APAC"},
+        )
         for regulator in config.regulators:
             with self.subTest(regulator=regulator.id):
                 self.assertTrue(regulator.known_gaps, "every profile states what it does not cover")
