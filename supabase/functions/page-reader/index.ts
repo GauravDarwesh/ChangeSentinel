@@ -381,6 +381,9 @@ export function readHtml(html: string, pageUrl: string): { title: string; html: 
       parsedBodyElements,
       rawAnchorTags: (html.match(/<a\b/gi) || []).length,
       rawHrefAttributes: (html.match(/\bhref\s*=/gi) || []).length,
+      escapedAnchorTags: (html.match(/&lt;a\b/gi) || []).length,
+      hrefContexts: (html.match(/.{0,100}\bhref\s*=\s*.{0,180}/gi) || []).slice(0, 5),
+      leadingHtmlSample: html.slice(0, 500),
       fallbackLinks: fallback.links.length
     }));
     if (fallback.links.length > 0 || parsedBodyElements === 0) {
