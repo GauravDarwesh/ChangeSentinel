@@ -1,0 +1,268 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2026-06-30" reporterId="35301" series="FFIEC009A">
+    <itemData confidential="N" estimated="N" mdrm="CEXA8901">
+      <value>Jim Smith</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXA8902">
+      <value>123-456-7890</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXA9017">
+      <value>Test Bank</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXA9130">
+      <value>Newark</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXA9200">
+      <value>DE</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAC496">
+      <value>CEO</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXA9224">
+      <value>12345678910111200000</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXA5224">
+      <value>Statement by Management</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAPG78">
+      <value>1227</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAPG79">
+      <value>9</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXA5215">
+      <value>6592</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM881">
+      <value>977</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM882">
+      <value>1771</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXA4254">
+      <value>9340</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM883">
+      <value>141</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAPG80">
+      <value>236</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAPG81">
+      <value>736</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAPG82">
+      <value>36</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAPG83">
+      <value>228</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM884">
+      <value>4736</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM885">
+      <value>3890</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM886">
+      <value>5</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM887">
+      <value>709</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM888">
+      <value>9117</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM889">
+      <value>223</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM956">
+      <value>3890</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM874">
+      <value>5</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM869">
+      <value>709</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM870">
+      <value>871</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM871">
+      <value>223</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM872">
+      <value>0</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM873">
+      <value>0</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAC936">
+      <value>0</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM875">
+      <value>0</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM876">
+      <value>0</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM877">
+      <value>0</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM878">
+      <value>0</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM879">
+      <value>0</value>
+      <context mdrm="CEX59209" value="15105" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAPG78">
+      <value>1227</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAPG79">
+      <value>9</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXA5215">
+      <value>6592</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM881">
+      <value>977</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM882">
+      <value>1771</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXA4254">
+      <value>9340</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM883">
+      <value>141</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAPG80">
+      <value>236</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAPG81">
+      <value>736</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAPG82">
+      <value>36</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAPG83">
+      <value>228</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM884">
+      <value>4736</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM885">
+      <value>3890</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM886">
+      <value>5</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM887">
+      <value>709</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM888">
+      <value>9117</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM889">
+      <value>223</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM956">
+      <value>3890</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM874">
+      <value>5</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM869">
+      <value>709</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM870">
+      <value>871</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM871">
+      <value>223</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM872">
+      <value>0</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM873">
+      <value>0</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAC936">
+      <value>0</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM875">
+      <value>0</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM876">
+      <value>0</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM877">
+      <value>0</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM878">
+      <value>0</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="CEXAM879">
+      <value>0</value>
+      <context mdrm="CEX59209" value="29998" />
+    </itemData>
+  </report>
+</reportingFile>

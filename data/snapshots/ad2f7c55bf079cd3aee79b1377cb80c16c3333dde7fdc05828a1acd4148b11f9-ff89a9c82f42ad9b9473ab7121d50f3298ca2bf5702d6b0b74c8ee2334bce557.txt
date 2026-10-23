@@ -1,0 +1,74 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="2017-08-11" createTime="12:39:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2025-12-31" reporterId="123456" series="FFIEC030S">
+    <itemData mdrm="FORB9017">
+      <value>Test Name of Bank</value>
+    </itemData>
+    <itemData mdrm="FORB9028">
+      <value>100 Bank Street</value>
+    </itemData>
+    <itemData mdrm="FORB9130">
+      <value>Bank City</value>
+    </itemData>
+    <itemData mdrm="FORB9200">
+      <value>TX</value>
+    </itemData>
+    <itemData mdrm="FORBQ050">
+      <value>Test Frgn Branch Name</value>
+    </itemData>
+    <itemData mdrm="FORBW913">
+      <value>100 Branch Street</value>
+    </itemData>
+    <itemData mdrm="FORBW914">
+      <value>Branch CITY</value>
+    </itemData>
+    <itemData mdrm="FORB9005">
+      <value>Venezuela</value>
+    </itemData>
+    <itemData mdrm="FORBC490">
+      <value>Authorized Officer</value>
+    </itemData>
+    <itemData mdrm="FORBC491">
+      <value>Senior Authorized Officer</value>
+    </itemData>
+    <itemData mdrm="FORBJ196">
+      <value>01/01/2018</value>
+    </itemData>
+    <itemData mdrm="FORB2991">
+      <value>2</value>
+    </itemData>
+    <itemData mdrm="FORBW917">
+      <value>Country 1, Country 2</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBFS64">
+      <value>101 Market Street</value>
+      <context mdrm="FORBN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBFS65">
+      <value>San Francisco</value>
+      <context mdrm="FORBN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBFS64">
+      <value>101 Street address</value>
+      <context mdrm="FORBN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBFS65">
+      <value>Fremont</value>
+      <context mdrm="FORBN186" value="2" />
+    </itemData>
+    <itemData mdrm="FORB3002">
+      <value>1</value>
+    </itemData>
+    <itemData mdrm="FORB2170">
+      <value>2</value>
+    </itemData>
+    <itemData mdrm="FORB3001">
+      <value>1</value>
+    </itemData>
+    <itemData mdrm="FORBF156">
+      <value>3</value>
+    </itemData>
+    <itemData mdrm="FORBF157">
+      <value>5</value>
+    </itemData>
+  </report>
+</reportingFile>

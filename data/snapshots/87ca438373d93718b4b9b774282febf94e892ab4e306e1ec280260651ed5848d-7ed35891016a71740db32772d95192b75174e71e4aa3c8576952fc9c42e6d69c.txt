@@ -1,0 +1,260 @@
+## REPORTING CENTRAL EXTERNAL USER GUIDE
+FEDERAL RESERVE SYSTEM
+Statistics Function September 2026
+## Table of Contents
+| Overview................................................................... Page 3 | Overview................................................................... Page 3 |
+| --- | --- |
+| a. Upload File .............................. Page | 14 |
+| Reporting Central Reporter b. Validating................................. Page 17 | Dashboard........................... Page 7 Page 8 |
+| Accessing and Logging Into Reporting Reporting Status......................................................... Data Entry, Upload, and Viewing.................................... | Central.................. Page 4 Page 11 |
+| c. Save....................................... | |
+| | Page 18 |
+| d. Clear....................................... e. | Page 18 Submit.................................... Page 19 |
+| f. | Delete..................................... Page 20 |
+| g. | 20 |
+| | Close....................................... Page |
+| h. Print........................................Page Report | 21 Search............................................................. Page 23 |
+| How to Create a Text File from a Spreadsheet................... | Page 25 |
+| Confidentiality and File | Page |
+| Attachments............................................................... i. Add Attachment...................... Page 32 | 30 |
+| j. View/Download.......................Page | 34 |
+| k. Replace................................. Page | 34 |
+| l. Delete................................... Page 35 | |
+| General Rules, Filing Tips, and Common Errors................. | Page 36 |
+| Reporting Central Contacts........................................... | Page 38 |
+## Overview
+Reporting Central is a web-based reporting application developed by the Federal Reserve to provide a secure, technically advanced and efficient system that serves as a single point of entry for Federal Reserve, Federal Financial Institution Examination Council (FFIEC) and the U.S. Department of the Treasury electronic reports submission and file uploads.
+To use Reporting Central, the external user or Reporting Entity will have to apply for a digital certificate and will be issued a physical token for access. There are several steps that need to be completed by each reporting entity prior to being issued a token. More information about this process (and the overall setup process) can be found by using the following link:
+[https://www.frbservices.org/central-bank/reporting-central/service-setup/index.html](https://www.frbservices.org/central-bank/reporting-central/service-setup/index.html)
+## Accessing and Logging into Reporting Central
+The Reporting Central application can be accessed on the Federal Reserve Bank Services website using the following link:
+[https://www.frbservices.org/central-bank/reporting-central/index.html](https://www.frbservices.org/central-bank/reporting-central/index.html)
+<!-- image -->
+- The user clicks on "Secure Logon" button in the Reporting Central box to start the logon process.
+- A warning message will appear asking whether the user is authorized to use the Reporting Central application. If the user is authorized, click on the "Reporting Central Secure Logon" button.
+- The physical token 1 which the user has been provided with should be inserted in the computer.
+- A window will appear asking the user to choose the appropriate digital certificate.
+- After the certificate has been selected, a message will display requiring the user to enter their token password.
+<!-- image -->
+1 The physical token is valid for three years of usage. After that time period has elapsed, the token must be renewed.
+<!-- image -->
+## Reporting Central Reporter Dashboard
+The Reporter Dashboard home page appears after the external user logs into Reporting Central and will display the most recent as-of date for all reports the user has access to for the selected RSSD, as well as any as-of dates with a missing report.
+Multiple functionalities are displayed on this page that allow the user to:
+- Verify the reporting statuses of its reports.
+- Select to go to the Search page.
+- Select to go to the Data Entry page.
+- Select the "Open Schedule" icon to go to the Data Entry page for a specific report.
+<!-- image -->
+<!-- image -->
+## Reporting Status
+In the "Recent Activity" section, each of the entity's reports the user has access to that are submitted via Reporting Central will be displayed. The user can use the RSSD ID dropdown to switch between the entities they have access to.
+<!-- image -->
+The "Report," "AsofDate" and "Status" columns can all be sorted in ascending and descending order. The "AsofDate" and "Status" columns can be used to find reports that are past due or due in a certain number of days.
+<!-- image -->
+The report status can be the following:
+- Does Not Exist
+- Accepted
+- Draft saved MM/DD/YYYY
+- File Upload is Proceeding
+- File Upload Completed - Action Needed
+- File Upload Failed - Action Needed
+The status will be accompanied by notes that a report was late (when applicable for a series), when it was due or in how many days it will be due.
+Accepted reports will appear in green, late reports (including uploads that completed with an error) will appear in red and reports with upcoming due dates will appear in black.
+The "Open Schedule" icon will be displayed to the right of every report listed in the table. The "Versions" icon will be displayed to the right of the "Open Schedule" icon for each report that has been saved as a draft or submitted.
+<!-- image -->
+By selecting a name in the Report column on the Recent Activity page the user can open the "Reporting Activity" page with the submission history of the selected report. In addition to the columns and options on the Recent Activity page, the user can also see the "Report Version," "User ID" and "Name" columns. The Report Version will be either "Submitted," "Missing" or "Draft".
+<!-- image -->
+## Data Entry, Uploading and Viewing
+The user can reach an editable report form by selecting a single "Series" from the drop-down list and a "As of Date" from the calendar. Only valid As of Dates will be available for selection from the calendar (bolded).
+<!-- image -->
+The "Data Entry" page allows users the ability to manually enter, upload or view a report. Data that has been populated using the file upload function can then be manually adjusted if permitted. Shown here is the data entry screen for Schedule PI of the 6/30/2025 FR Y-9LP. The user can manually enter data or use the file upload feature at the bottom of the page.
+<!-- image -->
+Depending on the series, the number of sections contained within a report varies. However, every report contains a "Cover Page" which provides the name of the reporting entity, the entity's RSSD ID, the report as of date and fields for contact information, which for some series are required to be complete.
+<!-- image -->
+<!-- image -->
+The other sections are specific to the report and its data. The page will feature the schedules to be completed as links on the left side of the page.
+<!-- image -->
+The user has the following options at the bottom of the Data Entry page:
+- Upload File
+- Validate
+- Save
+- Clear
+- Submit
+- Delete (Only available when working with a draft or an "in progress"/file upload in progress filing)
+- Close
+<!-- image -->
+## Upload File
+*See the How to Create a Text File from a Spreadsheet section for the steps on how to create a text file from a spreadsheet
+The file uploading option is located at the bottom left of the Data Entry page. This allows the user to upload their data using a file instead of manually inputting it.
+<!-- image -->
+There are separate user guides for each report series that explain how text (.txt) and XML (.xml) files must be formatted for successful submissions. The documents can be found by using the following link:
+## [https://www.frbservices.org/central-bank/reporting-central/user-guides.html](https://www.frbservices.org/central-bank/reporting-central/user-guides.html)
+Please note any files above 2gb in size should be uploaded as a zipped file.
+To begin the uploading process, the user should click on the icon above "Upload Your File Here" in the middle of the page or by dragging the file from their Explorer to the Upload icon. The file should be saved in the acceptable format compatible with Reporting Central.
+<!-- image -->
+Once the file has been selected, the user should click on the "Upload" button.
+<!-- image -->
+If there is an error in the file format, the user will receive an error message. The error must be corrected before the file can be successfully submitted.
+<!-- image -->
+If there are no file format errors, the data contained in the file will be loaded into the report. The user will be able to view the data found in the cells prior to submitting the report, as long as the series allows manual data entry. The user can then treat the report as if it had been entered through Reporting Central Data Entry. The user will still need to save, validate or submit the report. The user can also choose to close or clear the form and the data uploaded will no longer populate..
+## Data populated into schedule PI.
+<!-- image -->
+## Validating
+Validating a report is a recommended step before data submission. The validating process verifies that there are no errors associated with the data, which would prevent it from being submitted. If the validation has been successful, a message saying "Validation complete. No errors found." will appear and the user can then submit their data.
+<!-- image -->
+If errors are discovered there will be a message stating "Validation errors found. Schedules with errors have been found." Each schedule with an error will have a red triangle next to its name. The edit name and formula will be displayed at the top of the page for each edit related to the schedule being viewed. A report containing errors may not be submitted, however it can be saved with errors using the "Save" button.
+<!-- image -->
+## Save
+The "Save" option allows the user to save the report being worked on without submitting it. Since the report is not being submitted, drafts can be saved with errors (edits) or incomplete data. When the user searches for the report, the saved draft will appear. From there, the user can continue working on the report prior to validating and submitting it.
+## Clear
+The "Clear" button allows the user to delete the data on the schedule they are currently viewing (e.g. Schedule PI-A on the FR Y-9LP). When the user selects "Clear" they will be asked to confirm before the data is cleared.
+<!-- image -->
+## Submit
+The user can submit a report once it has been successfully entered, and all validity errors have been addressed. The submitted data is stored by the application and can be accessed by the user or by Federal Reserve Bank analysts.
+The user will be shown a message and asked to confirm they wish to submit the report.
+<!-- image -->
+After a report has been successfully submitted, a message notifying the user that the report has been accepted and time-stamped by the Federal Reserve Bank will appear. The user will also have the option to print the report (see section on Printing below).
+<!-- image -->
+## Delete
+The Delete option is only available when working with a Saved Draft or after uploading a file ("In Progress") before it has been saved.
+<!-- image -->
+The user will be asked to confirm the draft should be deleted.
+<!-- image -->
+## Close
+When the user selects the "Close" button on the Data Entry screen they will be given the options to save or delete the changes they have made. After making a selection they will be taken back to the Reporter Dashboard.
+<!-- image -->
+## Print
+After a report has been submitted the user will be shown the option to print the report. For certain series, this will allow the user to print a header page along with the entire report. For other series, the user will be able to print a header page.
+<!-- image -->
+Selecting "Print" will present the user with a dropdown box from which they can "Save as PDF" or send to a local printer. The pop-up will display the timestamp of the submission followed up a full copy of the report.
+<!-- image -->
+## Report Search
+The report search section is located as an option at the top of the page. This section provides multiple ways for the respondent to browse for a report.
+To search for the latest as-of date the user can leave "Most Recent" selected for the as-of date. The user can select "Other" to search for a date range up to 6 months long. The Reporter field can be used to search for a single RSSDs or all reporters for which the user has access. The Versions field can be used to search for all, missing, or the latest report.
+<!-- image -->
+For a more detailed search, the "Advanced Search" feature can be selected where the user can choose from a list of search options.
+- o "Draft" (by the reporter), "In Progress," "Submitted" and "Deleted" for the Report Status.
+- o "Actual" and/or "Estimated" 2 data for the Report Data.
+- o "From" and "To" fields to search by last activity date.
+- o "Anyone" or a specific "User ID" for the Last Activity field (the latest activity by any user of the reporting entity will be displayed).
+2 Data can be entered as "estimated," however, a final submission of the report is required prior to the report due date.
+<!-- image -->
+## How to Create a Text File from a Spreadsheet
+Report series are typically comprised of several financial and text fields on multiple schedules. To minimize issues arising during the creation of the Reporting Central text file, it is strongly recommended reporting institutions follow the process described below. The FR Y-9SP is used here for demonstration purposes and the process can be applied to any series that accepts a text file.
+## Field Labels
+The identifying label for both financial and text data is the eight-character MDRM descriptor found on the report form or the series specific user guide. Reporting Central uses the MDRM to identify individual report items in the file upload.
+## Field Values
+Financial data fields can have either positive, negative, zero or null values. Specifics on the appropriate values for fields can be found in the user guide for each series.
+## Step 1 - Create Data Listing
+Since it is presumed that the reporter already has the report data in spreadsheet format, all subsequent steps in this guide are based on using this report data as the source. The first step recommended is to create a sequential listing of all the items containing the item number, the eight-character MDRM, item description and item value. It is easier if you list all the financial data items first and then the text items after that.
+<!-- image -->
+Note: Adding additional information to this spreadsheet (e.g. item description and item number) can make items easier to identify and help troubleshoot potential problems. However, this information is completely optional.
+## Step 2 - Link and Format Data Cells
+In Sheet 2 of the workbook, all the financial and text items will be linked to Sheet 1 and formatting characters inserted to aid in the creation of the final text file.
+## Data Format for Financial Data Items
+- "L" is the separator between data items.
+- Eight-character MDRM.
+- "+" represents the maximum number of columns on the report form into which financial data can be entered. If a report section contains a smaller number of columns than another section that has the maximum number, each item still must contain the maximum number of +'s.
+- Financial data is entered after each "+". For FR Y-9LP, the maximum number of columns is one. The formula for each financial item must contain only one "+".
+```
+Financial Data Excel formula: ="L"&Sheet1!C13&"+"&Sheet1!F13 Translates to: LBHSP0508+300000
+```
+## Data Format for Text Items
+- "L" is the separator between data items.
+- Eight-character MDRM.
+- Text data entry is preceded by two underscores and followed by two underscores.
+Text Data Excel formula: ="L"&amp;Sheet1!C59&amp;"\_\_"&amp;Sheet1!F59&amp;"\_\_"
+```
+Translates to: LBHPX8901__John Johns, AVP__
+```
+This is repeated for all fields. Once all fields have been linked, you can create the text file.
+## Step 3 - Create the Text File
+After saving the file in spreadsheet format the text file can be created by first navigating to the File tab.
+<!-- image -->
+Then selecting the 'Save As' option and indicating the file type as 'Text (Tab delimited) (*.txt).'
+<!-- image -->
+A message will appear indicating that this file selection does not support workbooks with multiple worksheets, select 'OK.'
+<!-- image -->
+An additional message will be displayed concerning incompatibility features, select 'Yes.'
+<!-- image -->
+## Step 4 - Format the Text File and Add Header Record
+The text file will have been created and will look like this. If you see quotation marks at the beginning and the end of the file, then you will need to remove those before continuing.
+<!-- image -->
+The next step is to add the header record.
+The file header record consists of the following items:
+- the first 10 spaces are the RSSD ID with leading zeroes
+- the next 10 spaces are the report series ID 'FRY9LP,' plus four trailing spaces
+- the report as-of date, in MM-DD-YYYY.
+The file is now ready to be uploaded as shown in the Data Entry, Uploading, and Viewing section.
+## Confidentiality and Attachments
+## Confidentiality
+Reporting institutions have the capability of requesting confidential treatment for their financial data via Reporting Central for a number of series. 3 . Refer to the report instructions and series specific user guide to confirm eligibility.
+If a report series is eligible for confidential treatment, the user will need to provide the two related MDRMs in their upload file and will see two related questions on the data entry screen:
+<!-- image -->
+- o The first MDRM (ending "C447") must be completed with a "1" for yes or a "0" for no
+- o If the first MDRM is "1", then the second MDRM (ending "KY38") must be "1" for yes or "0" for no. 4
+- o If the first MDRM is "0", then the second MDRM must be null.
+When both the "Confidential Treatment Requested" and "Letter Justifying" items are populated with a "1", the user is required to attach at least one request letter via the "Attachments" schedule that can be accessed through the link on the left.
+3 FR 2225, FR 2314/S, FR 2320, FR XX-1, FR Y-7N/NS, FR Y-9ES, FR Y-11/S, FR Y-9C, FR Y-9LP, FR Y-9SP, FR Y-12, and FR Y-15. Refer to the series specific user guides for their specific MDRMs.
+4 The FR 2225 does not have the second MDRM.
+<!-- image -->
+The user will be required to provide elements of the file name from drop-down selections. These fields are used to indicate whether the attachment contains a request or an appeal to a denied request and if the request is for the entire report ("Full") or a subset of items ("Partial").
+<!-- image -->
+When the "Letter Justifying" item is "1" and the user clicks "Submit" without attaching any document, an error will display at the point of submission.
+<!-- image -->
+The user can request confidentiality when submitting a report in Reporting Central by entering "1" for the "Confidential Treatment Requested" item and "0" for the "Letter Justifying" item. However, if the "Letter Justifying" item is submitted with a "0", it is an indication that the user did not provide any supporting document to justify the confidentiality request and will provide it separately. In this instance, if a letter is not submitted by the time of the report filing, the Reserve Bank analyst will reach out to the reporting institution for the supporting documentation to complete the request process.
+## Attachments
+Reporting Central allows you to add, replace, delete, and download file attachments for some report series. If a report series allows file attachments, the data entry screen will display the Attachments Schedule.
+## Add a File Attachment
+To add an attachment, select the arrow to the right of the File Name field.
+<!-- image -->
+Select the Upload icon on the pop-up or drag the file from Explorer to the Upload icon.
+<!-- image -->
+After selecting your file, select the "Upload" box.
+<!-- image -->
+Reporting Central will display a message indicating a successful upload.
+<!-- image -->
+Currently, Reporting Central only allows certain attachment types (e.g. PDF) for a given series. You will get an error message if you attempt to add a file that does not match the type(s) accepted for a series.
+You may add multiple files for some series by selecting the "+ Add Row" button"
+<!-- image -->
+## View/Download a File Attachment
+Once a file has been uploaded, you may view/download the file for viewing by clicking the information icon to the right of the File Name.
+<!-- image -->
+## Replace a File Attachment
+Once a file has been uploaded, you can replace the file with a different file. To use the Replace feature, click on the arrow that earlier served as the upload icon.
+<!-- image -->
+## Delete a File Attachment
+Once a file has been uploaded, you may delete the file attachment. For series with the option to include attachments, including the series that allow confidentiality, use the garbage can icon at the end of a row to delete that row's file.
+<!-- image -->
+The user will need to confirm they wish to delete the selected row.
+<!-- image -->
+Series that require an attachment have an "X" to the right of the row that reset the values entered in the attachment row(s) without deleting them.
+<!-- image -->
+## General Rules, Filing Tips, and Common Errors
+## General Rules
+Please refer to the report specific file upload user guide for more detailed information and instructions on uploading and submitting your reports in Reporting Central.
+## Filing Tips
+Clear your cache after each migration date to ensure you can access the updated application as a failure to do so may result in an "Unauthorized Access" message. The list of completed and scheduled migrations, which occur over weekends, is available at Migration Schedule on the Reporting Central home page.
+Update your institution's safe website list to ensure your institution's firewall does not block access to the site, resulting in a "Fedline Web Login Authorization Failed" message. Please contact your technology support IT area to have the updated Reporting Central's URL added to their list of safe websites.
+As a report series migration date approaches, wait to begin your drafting and filing a report until after the series migrates. Draft reports saved in the legacy version of Reporting Central are unable to be submitted in the updated version of the application.
+Users can access the Reporting Central application directly through the application link provided here when you no longer file any report series in the legacy version of the application. In some situations, particularly in cases where a user has access to only one report in Reporting Central, existing users who were able to access Reporting Central prior to the migration may receive an "Unauthorized Access" message when attempting to log in after the migration. Since user access is automatically transferred from the legacy version to the updated application upon migration, some users may no longer have access to any report series still in the legacy application. As a result, these users will not be able to use the button within legacy Reporting Central to access the updated Reporting Central and should use the link above.
+## Common Errors
+- In TEXT files...
+- o RSSDs must always be ten characters long (use leading zeros).
+- o The series name must always be the appropriate number of characters for that series as specified in its report specific user guide. For example, the FR Y-11 must be ten spaces ("FRY11" followed by 5 spaces). Please note that if you receive an error
+- message saying your file contains special characters that it could be due to an extra blank space.
+- o An error message when uploading a file could also be due to an invalid file format.
+- o The character "L" must precede each MDRM in the file.
+- o There must be two underscores before and after text items. In the event of an error, respondents should check there are no consecutive underscores.
+- In XML files...
+- o RSSDs must NOT include any leading zeroes.
+- o The header rows at the beginning of the files must match the same rows as provided in the XML sample files.
+## Reporting Central Contacts
+- Reporting Central District Contacts:
+[https://www.frbservices.org/contactus/reporting-central.html](https://www.frbservices.org/contactus/reporting-central.html)
+- Tokens, Passwords and Reporting Central Set Up:
+[https://www.frbservices.org/contactus/customer-contact-center.html](https://www.frbservices.org/contactus/customer-contact-center.html)
+Federal Reserve Bank Services Support Center: 1-833-377-7827
+## · Email Questions To:
+[NY.ReportingCentralCommunication@NY.FRB.ORG](mailto:NY.ReportingCentralCommunication@NY.FRB.ORG)

@@ -1,0 +1,402 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="2024-05-30" createTime="12:39:00" xsi:noNamespaceSchemaLocation="Y6InputXML-Item3-1.0-20240603.xsd">
+  <report asOfDate="2023-12-31" series="Y6">
+    <reportingEntity legalName="Chaya Smith Holding Company, Inc." mdrm="FDHCPV71">
+      <itemGroup ref="SecHolderAsOf">
+        <itemData key="yes" mdrm="mdrm">
+          <value>1</value>
+        </itemData>
+        <itemData mdrm="FDHCPV72">
+          <value>John Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPV73">
+          <value>Detroit</value>
+        </itemData>
+        <itemData mdrm="FDHCPV74">
+          <value>MI</value>
+        </itemData>
+        <itemData mdrm="FDHCPV75">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV76">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV77">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV78">
+          <value>Smith Family</value>
+        </itemData>
+        <itemData mdrm="FDHCPV79">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV80">
+          <value>1.79</value>
+        </itemData>
+        <itemData mdrm="FDHCPV81">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV82">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV83">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV84">
+          <value>1.79%</value>
+        </itemData>
+      </itemGroup>
+      <itemGroup ref="SecHolderAsOf">
+        <itemData key="yes" mdrm="mdrm">
+          <value>2</value>
+        </itemData>
+        <itemData mdrm="FDHCPV72">
+          <value>Joe Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPV73">
+          <value>Carson</value>
+        </itemData>
+        <itemData mdrm="FDHCPV74">
+          <value>CA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV75">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV76">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV77">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV78">
+          <value>Smith Family</value>
+        </itemData>
+        <itemData mdrm="FDHCPV79">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV80">
+          <value>0.33</value>
+        </itemData>
+        <itemData mdrm="FDHCPV81">
+          <value>0.12</value>
+        </itemData>
+        <itemData mdrm="FDHCPV82">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV83">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV84">
+          <value>0.45%</value>
+        </itemData>
+      </itemGroup>
+      <itemGroup ref="SecHolderAsOf">
+        <itemData key="yes" mdrm="mdrm">
+          <value>3</value>
+        </itemData>
+        <itemData mdrm="FDHCPV72">
+          <value>Jack Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPV73">
+          <value>Las Vegas</value>
+        </itemData>
+        <itemData mdrm="FDHCPV74">
+          <value>NV</value>
+        </itemData>
+        <itemData mdrm="FDHCPV75">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV76">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV77">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV78">
+          <value>Smith Family</value>
+        </itemData>
+        <itemData mdrm="FDHCPV79">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV80">
+          <value>5.13</value>
+        </itemData>
+        <itemData mdrm="FDHCPV81">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV82">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV83">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV84">
+          <value>5.13%</value>
+        </itemData>
+      </itemGroup>
+      <itemGroup ref="SecHolderAsOf">
+        <itemData key="yes" mdrm="mdrm">
+          <value>4</value>
+        </itemData>
+        <itemData mdrm="FDHCPV72">
+          <value>Jay Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPV73">
+          <value>Dallas</value>
+        </itemData>
+        <itemData mdrm="FDHCPV74">
+          <value>TX</value>
+        </itemData>
+        <itemData mdrm="FDHCPV75">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV76">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV77">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV78">
+          <value>Smith Family</value>
+        </itemData>
+        <itemData mdrm="FDHCPV79">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV80">
+          <value>2.56</value>
+        </itemData>
+        <itemData mdrm="FDHCPV81">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV82">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV83">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV84">
+          <value>2.56%</value>
+        </itemData>
+      </itemGroup>
+      <itemGroup ref="SecHolderAsOf">
+        <itemData key="yes" mdrm="mdrm">
+          <value>5</value>
+        </itemData>
+        <itemData mdrm="FDHCPV72">
+          <value>Jane Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPV73">
+          <value>Carson</value>
+        </itemData>
+        <itemData mdrm="FDHCPV74">
+          <value>CA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV75">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV76">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV77">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV78">
+          <value>Smith Family</value>
+        </itemData>
+        <itemData mdrm="FDHCPV79">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV80">
+          <value>10.30</value>
+        </itemData>
+        <itemData mdrm="FDHCPV81">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV82">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV83">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV84">
+          <value>10.30%</value>
+        </itemData>
+      </itemGroup>
+      <itemGroup ref="SecHolderAsOf">
+        <itemData key="yes" mdrm="mdrm">
+          <value>6</value>
+        </itemData>
+        <itemData mdrm="FDHCPV72">
+          <value>Jade Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPV73">
+          <value>Carson</value>
+        </itemData>
+        <itemData mdrm="FDHCPV74">
+          <value>CA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV75">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV76">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV77">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV78">
+          <value>Smith Family</value>
+        </itemData>
+        <itemData mdrm="FDHCPV79">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV80">
+          <value>1.50</value>
+        </itemData>
+        <itemData mdrm="FDHCPV81">
+          <value>5.00</value>
+        </itemData>
+        <itemData mdrm="FDHCPV82">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV83">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV84">
+          <value>6.50%</value>
+        </itemData>
+      </itemGroup>
+      <itemGroup ref="SecHolderAsOf">
+        <itemData key="yes" mdrm="mdrm">
+          <value>7</value>
+        </itemData>
+        <itemData mdrm="FDHCPV72">
+          <value>Jacob Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPV73">
+          <value>New York</value>
+        </itemData>
+        <itemData mdrm="FDHCPV74">
+          <value>NY</value>
+        </itemData>
+        <itemData mdrm="FDHCPV75">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV76">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV77">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV78">
+          <value>Smith Family</value>
+        </itemData>
+        <itemData mdrm="FDHCPV79">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV80">
+          <value>8.80</value>
+        </itemData>
+        <itemData mdrm="FDHCPV81">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV82">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV83">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV84">
+          <value>8.80%</value>
+        </itemData>
+      </itemGroup>
+      <itemGroup ref="SecHolderAsOf">
+        <itemData key="yes" mdrm="mdrm">
+          <value>8</value>
+        </itemData>
+        <itemData mdrm="FDHCPV72">
+          <value>Smith Family Living Trust</value>
+        </itemData>
+        <itemData mdrm="FDHCPV73">
+          <value>New York</value>
+        </itemData>
+        <itemData mdrm="FDHCPV74">
+          <value>NY</value>
+        </itemData>
+        <itemData mdrm="FDHCPV75">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV76">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV77">
+          <value>Assets distributed equally</value>
+        </itemData>
+        <itemData mdrm="FDHCPV78">
+          <value>Smith Family</value>
+        </itemData>
+        <itemData mdrm="FDHCPV79">
+          <value>Jeremy Smith and Jeremiah Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPV80">
+          <value>49.00</value>
+        </itemData>
+        <itemData mdrm="FDHCPV81">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV82">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV83">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV84">
+          <value>49%</value>
+        </itemData>
+      </itemGroup>
+      <itemGroup ref="SecHolderDuring">
+        <itemData key="yes" mdrm="mdrm">
+          <value>1</value>
+        </itemData>
+        <itemData mdrm="FDHCPV85">
+          <value>Jude Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPV86">
+          <value>New Orleans</value>
+        </itemData>
+        <itemData mdrm="FDHCPV87">
+          <value>LA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV88">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV89">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPV90">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV91">
+          <value>Smith Family</value>
+        </itemData>
+        <itemData mdrm="FDHCPV92">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV93">
+          <value>11.00</value>
+        </itemData>
+        <itemData mdrm="FDHCPV94">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV95">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV96">
+          <value />
+        </itemData>
+        <itemData mdrm="FDHCPV97">
+          <value>11.00%</value>
+        </itemData>
+      </itemGroup>
+    </reportingEntity>
+  </report>
+</reportingFile>

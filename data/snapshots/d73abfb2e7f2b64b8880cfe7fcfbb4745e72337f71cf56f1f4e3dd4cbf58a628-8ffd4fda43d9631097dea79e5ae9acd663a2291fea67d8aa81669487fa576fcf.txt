@@ -1,0 +1,23 @@
+1
+Create an XML Upload File Using Microsoft® Excel®
+The steps below show how to create an XML Upload File using Excel. Once the file is created, this mapping can be reused each week by updating your GL (General Ledger) data tab and then exporting the next upload file all within your Excel workbook.
+1) Go to the Reporting Central and Structure Central User Guides page on FRBservices.org® to find the sample XML file for your reporting series. This example uses the FR2900.
+2) Cut and paste the Example XML File Upload file content from the user guide into the selected XML compatible editor and save the file. Example below uses Notepad ++
+3) The below example shows an Excel file that fetches data from the GL each week. Add a second tab to the Excel file that will be the XML map.
+2
+4) Go to the Developer tab and click on Source. You may have to add the Developer tab to your ribbon via the File tab menu. XML Source will open on the side panel. Click on ‘XML Maps’ and an XML map box will open. Click on ‘Add.’
+3
+5) Select the XML file created in Notepad ++. Ignore any error messages that appear and select ‘Okay’ to move forward and select the XML map you just uploaded. Select ‘Okay’ again, and you will see the new map appear in the right-hand pane.
+6) Drag the needed elements from the XML map to the Excel spreadsheet.
+4
+7) Add the values that don’t change from week to week for Confidentiality, Estimated and MDRM. Link the data tab values that do change week to week to the value cells in the XML map.
+5
+8) Add the Series, As-of Date and RSSD ID by dragging each of these fields individually to create entry boxes. You will need to label each of them.
+9) Click on ‘Export’ from the developer tab, name the file and save it locally.
+6
+10) Open the file you just created to add missing/incorrect header information so that it matches the example upload file format. You must open with an XML editor, or you won’t be able to modify the file. The first two header rows do not export in the correct format. Delete these rows, go back to the sample upload file, then copy and paste those first three header rows into your newly generated file.
+7
+11) Save this new file, which is ready to load into Reporting Central. The user should select the “Upload File” button at the bottom of the Data Entry page in Reporting Central to access the area to upload the file.
+To begin the uploading process, the user should click on the icon above “Upload Your File Here” in the middle of the page or by dragging the file from their Explorer to the Upload icon. The file should be saved in the acceptable format compatible with Reporting Central.
+8
+“FRBservices.org” is a service mark of the Federal Reserve Banks. A list of marks related to financial services products that are offered to financial institutions by the Federal Reserve Banks is available at FRBservices.org/terms. “Microsoft” and “Excel” are registered trademarks of Microsoft Corporation.

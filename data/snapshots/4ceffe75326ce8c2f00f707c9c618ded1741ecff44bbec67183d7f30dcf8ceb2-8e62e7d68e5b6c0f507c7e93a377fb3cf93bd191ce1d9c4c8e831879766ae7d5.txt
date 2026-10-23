@@ -1,0 +1,342 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="2024-05-30" createTime="12:39:00" xsi:noNamespaceSchemaLocation="Y6InputXML-Item4-1.0-20240603.xsd">
+  <report asOfDate="2023-12-31" series="Y6">
+    <reportingEntity legalName="Smith Holding Company, Inc." mdrm="FDHCPV98">
+      <itemGroup ref="Insider">
+        <itemData key="yes" mdrm="mdrm">
+          <value>1</value>
+        </itemData>
+        <itemData mdrm="FDHCPV99">
+          <value>John Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPW00">
+          <value>Detroit</value>
+        </itemData>
+        <itemData mdrm="FDHCPW01">
+          <value>MI</value>
+        </itemData>
+        <itemData mdrm="FDHCPW02">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPW03">
+          <value>Dentist</value>
+        </itemData>
+        <itemData mdrm="FDHCPW04">
+          <value>Director</value>
+        </itemData>
+        <itemData mdrm="FDHCPW05">
+          <value>1.79%</value>
+        </itemData>
+      </itemGroup>
+      <itemGroup ref="Insider">
+        <itemData key="yes" mdrm="mdrm">
+          <value>2</value>
+        </itemData>
+        <itemData mdrm="FDHCPV99">
+          <value>Joe Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPW00">
+          <value>Carson</value>
+        </itemData>
+        <itemData mdrm="FDHCPW01">
+          <value>CA</value>
+        </itemData>
+        <itemData mdrm="FDHCPW02">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPW03">
+          <value>Retired</value>
+        </itemData>
+        <itemData mdrm="FDHCPW04">
+          <value>Director</value>
+        </itemData>
+        <itemData mdrm="FDHCPW05">
+          <value>0.33%</value>
+        </itemData>
+        <itemGroup ref="RoleSharesSubs">
+          <itemData key="yes" mdrm="mdrm">
+            <value>1</value>
+          </itemData>
+          <itemData mdrm="FDHCPW06">
+            <value>President &amp; CEO</value>
+          </itemData>
+          <itemData mdrm="FDHCPW07">
+            <value>Sub A</value>
+          </itemData>
+          <itemData mdrm="FDHCPW08">
+            <value>N/A</value>
+          </itemData>
+        </itemGroup>
+      </itemGroup>
+      <itemGroup ref="Insider">
+        <itemData key="yes" mdrm="mdrm">
+          <value>3</value>
+        </itemData>
+        <itemData mdrm="FDHCPV99">
+          <value>Jack Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPW00">
+          <value>Las Vegas</value>
+        </itemData>
+        <itemData mdrm="FDHCPW01">
+          <value>NV</value>
+        </itemData>
+        <itemData mdrm="FDHCPW02">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPW03">
+          <value>Funeral Director</value>
+        </itemData>
+        <itemData mdrm="FDHCPW04">
+          <value>Director</value>
+        </itemData>
+        <itemData mdrm="FDHCPW05">
+          <value>5.13%</value>
+        </itemData>
+        <itemGroup ref="RoleSharesOther">
+          <itemData key="yes" mdrm="mdrm">
+            <value>1</value>
+          </itemData>
+          <itemData mdrm="FDHCPW09">
+            <value>CEO</value>
+          </itemData>
+          <itemData mdrm="FDHCPW10">
+            <value>Company A</value>
+          </itemData>
+          <itemData mdrm="FDHCPW11">
+            <value>10%</value>
+          </itemData>
+        </itemGroup>
+      </itemGroup>
+      <itemGroup ref="Insider">
+        <itemData key="yes" mdrm="mdrm">
+          <value>4</value>
+        </itemData>
+        <itemData mdrm="FDHCPV99">
+          <value>Jay Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPW00">
+          <value>Dallas</value>
+        </itemData>
+        <itemData mdrm="FDHCPW01">
+          <value>TX</value>
+        </itemData>
+        <itemData mdrm="FDHCPW02">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPW03">
+          <value>Grocery Owner</value>
+        </itemData>
+        <itemData mdrm="FDHCPW04">
+          <value>Director</value>
+        </itemData>
+        <itemData mdrm="FDHCPW05">
+          <value>2.56%</value>
+        </itemData>
+      </itemGroup>
+      <itemGroup ref="Insider">
+        <itemData key="yes" mdrm="mdrm">
+          <value>5</value>
+        </itemData>
+        <itemData mdrm="FDHCPV99">
+          <value>Jane Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPW00">
+          <value>Carson</value>
+        </itemData>
+        <itemData mdrm="FDHCPW01">
+          <value>CA</value>
+        </itemData>
+        <itemData mdrm="FDHCPW02">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPW03">
+          <value>Coach</value>
+        </itemData>
+        <itemData mdrm="FDHCPW04">
+          <value>Director</value>
+        </itemData>
+        <itemData mdrm="FDHCPW05">
+          <value>10.30%</value>
+        </itemData>
+        <itemGroup ref="RoleSharesSubs">
+          <itemData key="yes" mdrm="mdrm">
+            <value>1</value>
+          </itemData>
+          <itemData mdrm="FDHCPW06">
+            <value>CFO</value>
+          </itemData>
+          <itemData mdrm="FDHCPW07">
+            <value>Sub A</value>
+          </itemData>
+          <itemData mdrm="FDHCPW08">
+            <value>N/A</value>
+          </itemData>
+        </itemGroup>
+      </itemGroup>
+      <itemGroup ref="Insider">
+        <itemData key="yes" mdrm="mdrm">
+          <value>6</value>
+        </itemData>
+        <itemData mdrm="FDHCPV99">
+          <value>Jade Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPW00">
+          <value>Carson</value>
+        </itemData>
+        <itemData mdrm="FDHCPW01">
+          <value>CA</value>
+        </itemData>
+        <itemData mdrm="FDHCPW02">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPW03">
+          <value>Banker</value>
+        </itemData>
+        <itemData mdrm="FDHCPW04">
+          <value>Director</value>
+        </itemData>
+        <itemData mdrm="FDHCPW05">
+          <value>6.50%</value>
+        </itemData>
+        <itemGroup ref="RoleSharesSubs">
+          <itemData key="yes" mdrm="mdrm">
+            <value>1</value>
+          </itemData>
+          <itemData mdrm="FDHCPW06">
+            <value>VP Operations</value>
+          </itemData>
+          <itemData mdrm="FDHCPW07">
+            <value>Sub A</value>
+          </itemData>
+          <itemData mdrm="FDHCPW08">
+            <value>N/A</value>
+          </itemData>
+        </itemGroup>
+      </itemGroup>
+      <itemGroup ref="Insider">
+        <itemData key="yes" mdrm="mdrm">
+          <value>7</value>
+        </itemData>
+        <itemData mdrm="FDHCPV99">
+          <value>Jacob Smith</value>
+        </itemData>
+        <itemData mdrm="FDHCPW00">
+          <value>New York</value>
+        </itemData>
+        <itemData mdrm="FDHCPW01">
+          <value>NY</value>
+        </itemData>
+        <itemData mdrm="FDHCPW02">
+          <value>USA</value>
+        </itemData>
+        <itemData mdrm="FDHCPW03">
+          <value>Professor</value>
+        </itemData>
+        <itemData mdrm="FDHCPW04">
+          <value>Director</value>
+        </itemData>
+        <itemData mdrm="FDHCPW05">
+          <value>8.80%</value>
+        </itemData>
+        <itemGroup ref="RoleSharesSubs">
+          <itemData key="yes" mdrm="mdrm">
+            <value>1</value>
+          </itemData>
+          <itemData mdrm="FDHCPW06">
+            <value>VP Marketing</value>
+          </itemData>
+          <itemData mdrm="FDHCPW07">
+            <value>Sub B</value>
+          </itemData>
+          <itemData mdrm="FDHCPW08">
+            <value>N/A</value>
+          </itemData>
+        </itemGroup>
+        <itemGroup ref="RoleSharesOther">
+          <itemData key="yes" mdrm="mdrm">
+            <value>1</value>
+          </itemData>
+          <itemData mdrm="FDHCPW09">
+            <value>CEO</value>
+          </itemData>
+          <itemData mdrm="FDHCPW10">
+            <value>Company A</value>
+          </itemData>
+          <itemData mdrm="FDHCPW11">
+            <value>70%</value>
+          </itemData>
+        </itemGroup>
+        <itemGroup ref="RoleSharesOther">
+          <itemData key="yes" mdrm="mdrm">
+            <value>2</value>
+          </itemData>
+          <itemData mdrm="FDHCPW09">
+            <value>CEO</value>
+          </itemData>
+          <itemData mdrm="FDHCPW10">
+            <value>Company B</value>
+          </itemData>
+          <itemData mdrm="FDHCPW11">
+            <value>70%</value>
+          </itemData>
+        </itemGroup>
+        <itemGroup ref="RoleSharesOther">
+          <itemData key="yes" mdrm="mdrm">
+            <value>3</value>
+          </itemData>
+          <itemData mdrm="FDHCPW09">
+            <value>CEO</value>
+          </itemData>
+          <itemData mdrm="FDHCPW10">
+            <value>Company C</value>
+          </itemData>
+          <itemData mdrm="FDHCPW11">
+            <value>70%</value>
+          </itemData>
+        </itemGroup>
+        <itemGroup ref="RoleSharesOther">
+          <itemData key="yes" mdrm="mdrm">
+            <value>4</value>
+          </itemData>
+          <itemData mdrm="FDHCPW09">
+            <value>CEO</value>
+          </itemData>
+          <itemData mdrm="FDHCPW10">
+            <value>Company D</value>
+          </itemData>
+          <itemData mdrm="FDHCPW11">
+            <value>70%</value>
+          </itemData>
+        </itemGroup>
+        <itemGroup ref="RoleSharesOther">
+          <itemData key="yes" mdrm="mdrm">
+            <value>5</value>
+          </itemData>
+          <itemData mdrm="FDHCPW09">
+            <value>CEO</value>
+          </itemData>
+          <itemData mdrm="FDHCPW10">
+            <value>Company E</value>
+          </itemData>
+          <itemData mdrm="FDHCPW11">
+            <value>70%</value>
+          </itemData>
+        </itemGroup>
+        <itemGroup ref="RoleSharesOther">
+          <itemData key="yes" mdrm="mdrm">
+            <value>6</value>
+          </itemData>
+          <itemData mdrm="FDHCPW09">
+            <value>CEO</value>
+          </itemData>
+          <itemData mdrm="FDHCPW10">
+            <value>Company F</value>
+          </itemData>
+          <itemData mdrm="FDHCPW11">
+            <value>70%</value>
+          </itemData>
+        </itemGroup>
+      </itemGroup>
+    </reportingEntity>
+  </report>
+</reportingFile>

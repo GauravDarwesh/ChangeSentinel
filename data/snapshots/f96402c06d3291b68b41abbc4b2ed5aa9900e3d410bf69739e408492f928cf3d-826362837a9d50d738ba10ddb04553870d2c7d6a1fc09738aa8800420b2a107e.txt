@@ -1,0 +1,173 @@
+STRUCTURE CENTRAL
+EXTERNAL USER GUIDE
+Federal Reserve System
+STATISTICS FUNCTION
+September 2026
+Table of Contents I. Overview............................................................................................................... 1 II. Accessing and Logging into Structure Central ......................................................... 2 III. Structure Central Home Page ............................................................................... 5 Dashboard ........................................................................................................... 5 Navigation Panel ................................................................................................... 5 IV. Reporting Status.................................................................................................. 6 V. Confidentiality Requests....................................................................................... 7 VI. Entering and Submitting Data ............................................................................... 8 Save as Draft ........................................................................................................ 9 Validation ............................................................................................................. 9 Submitting Data .................................................................................................. 10 Viewing Submitted Reports .................................................................................. 10 VII. Modifying Submitted Data ................................................................................. 11 VIII. Report Searching ............................................................................................. 12 IX. File Attachments ............................................................................................... 14 X. General Rules .................................................................................................... 15 XI. Navigating the FR Y-7 Submission Steps.............................................................. 16
+1. Cover Page ...................................................................................................... 16
+2. Confidentiality ................................................................................................. 16 Extension Requests ............................................................................................. 17
+3. Financial Information—Report Item 1.a ............................................................. 17
+4. Annual Report to Shareholders—Report Item 1.b ............................................... 18
+5. Organization Chart—Report Item 2.a.1.............................................................. 19
+6. Additional Entities—Report Item 2.a.2............................................................... 21
+7. Foreign Companies—Report Item 2.b ............................................................... 22
+8. Specify FBO(s) ................................................................................................. 22
+9. Number and Types of Shares—Report Item 3.a .................................................. 25
+10. Nonbearer Securities—Report Item 3.b ........................................................... 26
+11. Bearer Securities—Report Item 3.c ................................................................. 28
+12. Qualified FBO—Report Item 4.a ...................................................................... 29
+13. Limited Exemption—Report Item 4.b ............................................................... 29
+14. Prudential Standards Compliance—Report Item 5 ........................................... 30
+15. Extension Request ......................................................................................... 31
+16. Submit .......................................................................................................... 32
+XII. Contacts .......................................................................................................... 33
+1 | Page
+I. Overview Structure Central is a web-based reporting application developed by the Federal Reserve System. This application implements changes to the Annual Report of Holding Companies (FR Y-6) and the Annual Report of Foreign Banking Organizations (FR Y-7) that were first proposed in the Federal Register on May 9, 2022, and finalized in a subsequent notice on November 29, 2022. Structure Central enhances the overall user experience in filing the FR Y-6 and the FR Y-7, providing a technically advanced and efficient system for the submission of accurate data.
+To use Structure Central, your organization (the reporting entity) must apply for a digital certificate and will be issued a physical token for access. Several steps need to be completed by each reporting entity prior to being issued a token. More information about this process and the overall setup process can be found on the Federal Reserve Bank Services website at:
+https://www.frbservices.org/central-bank/reporting-central/service-setup
+2 | Page
+II. Accessing and Logging into Structure Central Access the Structure Central application on the Federal Reserve Bank Services website using the following link:
+https://www.frbservices.org/central-bank/reporting-central
+3 | Page
+To log into Structure Central:
+1. Click "Secure Logon" under Structure Central to start the login process.
+2. A warning message appears asking whether you are authorized to use the Structure Central application. If so, click the "Structure Central Secure Logon" button.
+3. Insert your physical token into the computer. (The physical token is valid for three years of usage. After that period has elapsed, you must renew the token.)
+4. A window appears asking you to choose the appropriate digital certificate.
+4 | Page
+5. After you select the certificate, a message displays, requiring you to enter your token password.
+5 | Page
+III. Structure Central Home Page The Structure Central home page appears once you log into Structure Central. Multiple functionalities are displayed on this page.
+Dashboard When you enter the Structure Central home page, the "Dashboard" displays. If you have access to multiple report series, each series has its own dashboard. In the dashboard, you can:
+● View the latest versions of your reports and their status.
+Navigation Panel Click the three horizontal lines at the top-left corner of the Structure Central home page to view the Navigation Panel. On the navigation panel, you can:
+● Select the report drop-down.
+● Select "Dashboard" to view the latest version of your reports.
+● Select "Create New" report.
+6 | Page
+IV. Reporting Status Under the "Latest Versions for Reporter" section in the Dashboard, each of your organization's reports that were created via Structure Central displays.
+● If a draft is in progress, click on the report to view the draft. If the report does not exist, it does not appear in this section. Select "Create New" to enter a new report.
+● For the "Status," there are multiple statuses: ○ "Draft": Report was saved as a draft.
+○ "Active—Pending": Report was submitted but is shown as Active— Pending when: ■ Confidentiality is requested and the letter is sent separately.
+■ The reporting entity is not registered with SEC, and the Annual Report to Shareholders is sent separately.
+○ "Active—Complete": Report is Active—Complete when all required parts of the report are included in the submission.
+○ "Obsolete": A report has been revised with an updated "Active" report.
+7 | Page
+V. Confidentiality Requests Reporting institutions may request confidential treatment for their report data via Structure Central. A request does not guarantee approval. Refer to the respective report instructions for details.
+If confidential treatment is requested, then you must indicate the status of your letter justifying the request. You must also provide confidential attachments for the specific item(s) for which confidentiality is being requested. These are done in Step 2 of both the FR Y-6 and FR Y-7.
+8 | Page
+VI. Entering and Submitting Data By default, the home page displays report series as collapsed sections on the left side of the screen. By selecting a specific report series, you can expand the section to see the "Dashboard" and "Create New" options.
+Upon selecting "Create New," you are prompted to provide information about the reporting entity. You can only search for reporting entities for which you are authorized to submit reports. Once you make this selection, you can select the Report Date.
+Repeat this process with each subsequent reporting period (i.e., fiscal year-end date).
+After selecting the reporting entity and Report Date and clicking the "Next" button, you are taken to the cover page to prepare your report.
+Click the "Next" button to populate subsequent steps of the report to complete. The number of steps varies by report series; however, guided ingestion is provided in each step where you enter report data. The steps feature areas to upload attachments, if applicable, as well as cells to enter data. Certain series contain information icons in these steps to provide additional instructions for the step. To return to a previous step, click on the desired step from the left navigation panel.
+9 | Page
+Below is an example of the FR Y-6 steps. See XI. Navigating the FR Y-7 Submission Steps for an example of the FR Y-7 steps.
+Save as Draft The "Save as Draft" option allows you to save a report in progress without submitting it.
+Since the report is not being submitted, you can save drafts while they contain errors (edits) or incomplete data. (When a report is in draft status, Federal Reserve Bank staff can see that the report is saved as a draft but cannot view the data.) The "Save as Draft" option is available on each report step, and we recommend saving the report periodically.
+You can locate a saved draft from the report dashboard. From the Dashboard, click on the RSSD ID field for the FR Y-6 to continue working on the report prior to validating and submitting it.
+Validation The validation process verifies that no errors exist that would prevent a report from being submitted. Validation occurs throughout the report creation steps and upon saving and submitting. If the validations are successful, you can submit the report. If errors are discovered, each error is identified and described on the respective screen.
+You cannot submit a report containing errors.
+10 | Page
+Submitting Data You can submit a report once it has been successfully entered and all validation errors are addressed. The "Submit" button is in the last step. Below is an example of the FR Y- 6 Submit screen. See 16. Submit for an example of the FR Y-7 Submit screen.
+After a report has been successfully submitted, a message notifies you that the report has been accepted. The submitted data is stored by the application and can be accessed on the Dashboard by you or by Federal Reserve Bank analysts.
+Viewing Submitted Reports You can download files for reports with Active—Complete, Active—Pending, and Obsolete statuses. The "View File" section on the Dashboard has a link that you can click to download the previously submitted report.
+11 | Page
+VII. Modifying Submitted Data Depending on the report series, you can modify submitted data for a specific reporting period. On the dashboard, click on the RSSD ID number from a previously submitted report to review the steps in detail and modify the reported data. When modifying previously submitted data, you must "Save as Draft" or "Submit" or the changes will not take effect and the prior version will remain the latest report version. For Obsolete versions, you can download previously submitted report versions but cannot enter or modify the detailed steps.
+Note: This is not the method for beginning a new report at the end of another fiscal year.
+For that, click "Create New" in the left navigation panel. See Section VI, Entering and Submitting Data, for more information.
+12 | Page
+VIII. Report Searching The dashboard features filtering and search functionality that can help you sort and search for your FR Y-6 or FR Y-7 Report based on different criteria.
+Click on each column header to sort by date or alphabetically (ascending or descending). Each time you click on the header, the sorting order changes.
+You can also hover over each column title to display navigation bars to the right of the header.
+When clicking the navigation bars, you can search for your report based on the criteria of the column you are selecting. For example, if selecting Report Date, you can search based on fiscal year-end date.
+13 | Page
+If both active and obsolete versions of the reports exist, view all report versions by clicking on the triangle toggle next to the report date to expand the field on the Dashboard.
+14 | Page
+IX. File Attachments When attachments are required, you are prompted to upload or drag and drop your documents.
+In items with required templates, you can select the template to download as well as view what file types are acceptable upon upload.
+For more details on specific items, review the report-specific Technical Guides.
+15 | Page
+X. General Rules ● You cannot submit a report in Structure Central for fiscal years that ended prior to December 31, 2024.
+● You cannot begin a report until after your institution's fiscal year ends.
+● A report is not fully submitted until the status is Active—Complete (not Active— Pending).
+16 | Page
+XI. Navigating the FR Y-7 Submission Steps Structure Central was updated in the fourth quarter of 2026 to accommodate the December 2025 updates to the FR Y-7 report form and instructions. Rather than simply uploading a PDF of your FR Y-7, you can now enter your FR Y-7 data directly into Structure Central where it will be stored. The ingestion process consists of sixteen steps.
+For details about the data that must be included in the FR Y-7, see the FR Y-7 report instructions.
+1. Cover Page The Cover Page information auto-populates with the reporting entity's Legal Name, Physical Address, and contact information. Verify this information and revise, if needed, and complete the remaining fields.
+Note: Changes to the Legal Name or Physical Address of the reporting institution may require an FR Y-10 submission to update our records.
+Click the "Next" button to proceed to the Confidentiality step.
+2. Confidentiality Reporting institutions may request confidential treatment for their FR Y-7 data via Structure Central. See Section V, Confidentiality Requests, for more information.
+17 | Page
+Once you answer "Yes" to the question "Is confidential treatment requested for any portion of this report submission?", Structure Central allows the user to add confidential documents and also indicate the status of the letter to justify the request.
+All the confidential data must be included in one PDF file.
+Extension Requests Starting with Step 3, you will see checkbox options: "I was granted an extension for this Report Item and will not be submitting at this time." See Step 15, Extension Request, for more information.
+3. Financial Information—Report Item 1.a Drag a file or click on the blue cloud icon to upload one PDF document containing financial statements and notes in English covering the reporting entity's two most recent fiscal years that include or are equivalent to balance sheets and income statements. See the FR Y-7 report instructions for more information about required financial information reporting.
+18 | Page
+There are three questions that you are required to answer about the financial statements.
+If you answer "yes" to the third question about "significant changes," you can upload one PDF file describing the changes by clicking on the blue cloud icon.
+4. Annual Report to Shareholders—Report Item 1.b If an annual report is created for shareholders, submit it, in English, to the Federal Reserve. Using the radio buttons, indicate on the form that an annual report to shareholders is included with the FR Y-7 report, will be sent under separate cover, or is not prepared.
+19 | Page
+If you select "Included with the report," click on the blue cloud icon to upload the Annual Report to Shareholders PDF file or drag a file into that area. A maximum of three files may be uploaded.
+5. Organization Chart—Report Item 2.a.1 An organization chart of FR Y-10 reportable entities as of the current fiscal year-end is displayed. You are required to verify and reconcile only the FR Y-7 reportable items in the listed organization structure report against the actual organization structure as of your fiscal year-end. If there are FR Y-10 reportable changes, please work with your Reserve Bank to file the FR Y-10. Indicate that you have reviewed and verified the organization chart by marking the checkbox at the bottom of the screen.
+20 | Page
+A spreadsheet containing the displayed information is available for download with the "Download Organization Chart" link.
+21 | Page
+6. Additional Entities—Report Item 2.a.2 If you answer "yes" to the "Specify Additional Entities" question, use the templates provided to report any additional companies reportable on the FR Y-7 that are not reportable on the FR Y-10. See the FR Y-7 report instructions for more information. Two versions of the blank template file are available for download: .XLSX and .XML. A PDF version of the report form is also acceptable. Drag the template file or use the blue cloud icon to upload the completed template file.
+22 | Page
+7. Foreign Companies—Report Item 2.b If you answer "yes" to the "Specify Foreign Companies" question, use the templates provided to report those companies. See the FR Y-7 report instructions for more information. Two versions of the blank template file are available for download: .XLSX and .XML. Use the blue cloud icon to upload the completed template file.
+8. Specify FBO(s) You must complete this step to identify the FBOs included in the reporting organization.
+In this step, click "Add FBO" to individually add the top-tier foreign banking organization (FBO) and additional lower-tier FBOs, as needed. See the glossary of the FR Y-10 report instructions for the definition of FBO.
+Once you click "Add FBO," complete all fields for the reportable FBO. Enter the legal name for the FBO in the text box and select "Yes" or "No" using the radio buttons to indicate if the FBO has nonbearer or bearer securities. After you complete the required fields, the "Apply" button is enabled for you to click.
+23 | Page
+Note: You must select the "Apply" button to save the data entered for each FBO.
+24 | Page
+If you need to add additional FBOs, click the "Add FBO" button and repeat the above steps. Click the "Next" button to proceed. In the example provided, you add two FBOs: FBO 1 and FBO 2. You indicate that FBO 1 has both nonbearer and bearer securities and FBO 2 has nonbearer securities but no bearer securities. Click "Apply" to save these selections. Then, click the "Next" button to continue to the next step.
+The next three steps (9. Number and Types of Shares, 10. Nonbearer Securities, and 11.
+Bearer Securities) display depending on the data entered on the Specify FBO(s) step.
+See the glossary of the FR Y-10 report instructions for definitions of Nonbearer Securities and Bearer Securities.
+25 | Page
+9. Number and Types of Shares—Report Item 3.a Proceed to enter data by clicking the "Add Type of Shares" button for each FBO. The Type of Shares, Number of Shares Authorized, Issued, or Held, and Description of Voting Rights and any agreement that limits the voting of such shares are required fields for each type of shares issued.
+Enter information regarding the Type of Shares, Number of Shares Authorized, Issued, or Held, and Description of Voting Rights and any agreement that limits the voting of such shares. At least one share type must be listed for each FBO.
+Note: The "Description of Voting Rights and any agreement that limits the voting of such shares" allows for text up to three hundred characters in each text field.
+The "Number of Shares Authorized, Issued, or Held" field is numerical-only.
+26 | Page
+Note: You must select the "Save" button to save the data entered for each FBO.
+Click the "Next" button to proceed.
+10. Nonbearer Securities—Report Item 3.b Only the FBOs indicated to have nonbearer securities in Step 8, Specify FBO(s) display on the this step.
+27 | Page
+Proceed to enter data by clicking the "Add Shareholder" button for each FBO, as applicable. If an FBO has nonbearer securities, the data fields are required.
+Note: You must select the "Save" button to save the data entered for each FBO.
+Click the "Next" button to proceed.
+28 | Page
+11. Bearer Securities—Report Item 3.c Proceed to enter data by clicking the "Add Shareholder" button for each FBO, as applicable. If an FBO has bearer securities, the data fields are required. You must also enter data via the text box provided.
+Note: You must select the "Save" button to save the data entered for each FBO.
+Click the "Next" button to proceed.
+29 | Page
+12. Qualified FBO—Report Item 4.a The following guidance is provided to assist you with completing the Qualified FBO step:
+● Complete this step to determine if your organization qualifies for exemption from the nonbanking prohibitions of the BHC Act. (Refer to the FR Y-7 report instructions for detailed guidance.) ● Use financial data for the Top Tier FBO to complete this item.
+● Enter the currency type and financial data for two of the three criteria (Assets, Revenue, or Net Income). Use the same currency to report the two criteria.
+● Enter the size of the business activities for each of the criteria in terms of: ○ Total non-U.S. Banking ○ Total U.S. Banking ○ Total Worldwide Nonbanking
+Click "Next" to proceed to the next step.
+13. Limited Exemption—Report Item 4.b Complete this step only if the Top Tier FBO does not meet the criteria for a qualified FBO based on the assessment in Report Item 4.a.
+● If the top-tier FBO does not satisfy the criteria for a qualified FBO in Report Item 4.a, complete the Limited Exemption Test, as indicated.
+● Add the currency type and the required information for the top-tier FBO and each foreign bank in the organization. The currency type must be the same in Steps 12 and 13.
+● Complete two of the three criteria for each entity, providing information for the Worldwide Business Activity and the Banking Business Activity for the top-tier FBO and each Foreign Bank in the organization.
+● See the FR Y-7 report instructions for more information.
+30 | Page
+Note: The Limited Exemption Test is not applicable for a single-tier FBO.
+Select "Apply" and "Next" to advance to the next step.
+14. Prudential Standards Compliance—Report Item 5 Complete each item, selecting "Yes," "No," or "Not Applicable" to indicate whether the reporting entity complies with the regulatory guidelines identified for the section of the Federal Reserve Regulations.
+31 | Page
+15. Extension Request This step allows you to upload documentation for extension requests that were preapproved by your Reserve Bank. The message that appears at this step is dependent on whether you indicated extension needs in previous steps.
+Extension requests must be submitted to your Reserve Bank at least 30 days before the due date. Your Reserve Bank must approve the extension before you proceed. For detailed extension requirements and procedures, refer to the FR Y-7 report Instructions.
+Scenario A: Extension Granted
+If you selected "I was granted an extension for this Report Item and will not be submitting at this time" for any items in previous steps, you see the extension upload interface. Click on the blue cloud to upload the requested documentation. You must indicate the Date of Extension to advance to the next step.
+Scenario B: No Extension Requested.
+If you did not select any extension checkboxes in your previous steps, you see the following confirmation message.
+32 | Page
+16. Submit The Submit step is the last step in the process, allowing you to preview and submit your completed report. When satisfied with your report's accuracy, click the blue "Submit" button.
+Retain your submission confirmation for your records.
+33 | Page
+XII. Contacts Reporting Central District Contacts: ● https://www.frbservices.org/contactus/reporting-central.html
+Tokens, Passwords, and Structure Central Set Up: ● https://www.frbservices.org/contactus/customer-contact-center.html ● Federal Reserve Bank Services Support Center: 1-833-377-7827

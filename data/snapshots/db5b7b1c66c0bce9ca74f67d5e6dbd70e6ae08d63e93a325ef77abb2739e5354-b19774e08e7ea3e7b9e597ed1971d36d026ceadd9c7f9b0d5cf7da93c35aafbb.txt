@@ -1,0 +1,160 @@
+Reporting Central User Guide
+FFIEC 030
+Foreign Branch Report of Condition
+FFIEC 030S
+Abbreviated Foreign Branch Report of Condition
+Federal Reserve System
+STATISTICS FUNCTION
+March 31, 2026
+2
+Contents General Information ............................................................................................................................................. 3 How the XML File Is Structured ........................................................................................................................... 3 XML Tags and Their Meanings ............................................................................................................................ 4 FFIEC 030 Item Data MDRMs ............................................................................................................................. 5 Example FFIEC 030 XML File Upload .................................................................................................................9 FFIEC 030S Item Data MDRMs .........................................................................................................................10 Example FFIEC 030S XML File Upload ............................................................................................................. 11
+3
+General Information
+The Federal Reserve System’s Reporting Central Application provides the ability for a reporting entity to submit their reports electronically using an XML file. This document describes the required format for creating the XML file for the FFIEC030 (Foreign Branch Report of Condition) report. Important Update: for the FFIEC 030S reporting in the XML file as-of 03/31/2026, please see page 11 for further details.
+How the XML File Is Structured
+Each XML file contains financial data for one reporting entity and as-of date. The data in the file is organized into the following sections.
+• Reporting File o Create date o Create time
+• Report o Respondent Id o As Of Date o Series Id
+• Item Data o Optional context used for data in a variable schedule (such as the FFIEC 030 List of Consolidated Branches) o Value
+XML structure or schema:
+<?xml version="1.0" encoding="UTF-8"?> <reportingFile xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd" createTime=”09:30:45+05:00” createDate=”2016-08-13” xmlns:xsi="http://www.w3.org/2001/XMLSchemainstance" > <report reporterId=”9999999999” asOfDate=”2016-09-30” series=”SERIESNAME”> <!-- Cover Page items --> <itemData mdrm=”MDRM1111”> <value>value for “MDRM1111”</value> </itemData> <!-- Financial items --> <itemData mdrm=”MDRM1112”> <value>value for ”MDRM1112”</value> </itemData> <itemData mdrm=”MDRM1113”> <value>value for ”MDRM1113”</value> </itemData> <!-- Variable schedule or List of Items --> <!-- Item #1 --> <itemData mdrm=”MDRM1114”> <value> value for 1st occurrence of “MDRM1114”</value> <context mdrm=”MDRM1010” value=”1”/> </itemData> <itemData mdrm=”MDRM1115”> <value>value for 1st occurrence of “MDRM1115”</value> <context mdrm=”MDRM1010” value=”1”/> </itemData>
+<!-- Item #2 --> <itemData mdrm=”MDRM1114”> <value> value for 2nd occurrence of “MDRM1114”</</value> <context mdrm=”MDRM1010” value=”2”/>
+4
+</itemData> <itemData mdrm=”MDRM1115”> <value> value for 2nd occurrence of “MDRM1115”</</value> <context mdrm=”MDRM1010” value=”2”/> </itemData> </report> </reportingFile>
+Reporting File is a wrapper that encapsulates all the data in the file; it must include the create date and time of the file.
+Report is a wrapper that encapsulates all the data items; it must include attributes to identity the respondent Reporter Id, the report As of Date, and the report Series Id.
+Item Data is a wrapper that encapsulates the report data values for the reporting entity and as of date.
+XML Tags and Their Meanings
+XML Tag/Attribute Meaning/How Used <reportingFile> A tag used to encapsulate all of the data in the file xsi:noNamespaceSchemaLocation="RCInputX ML- 1.0-20160520.xsd" Attribute of the reportingFile tag which specifies the location of the Schema createTime=”09:30:45” Attribute of the reportingFile tag which specifies the time the file was created createDate=”2016-08-13 Attribute of the reportingFile tag which specifies the date the file was created
+xmlns:xsi="http://www.w3.org/2001/XMLSchema
+- instance" Optional attribute of the reportingFile tag which tells the schema-validator that all elements used in the XML file are declared in the "http://www.w3.org/2001/XMLSchema- instance" namespace <report> A tag used to identify the series name, the reporting entity and the as of data of the data.
+reporterId=”9999999999” Attribute of the report tag which specifies the respondent ID asOfDate=”2016-09-30” Attribute of the report tag which specifies the as of date of the report series=”SERIESID” Attribute of the report tag which specifies the series name <itemData> A tag used to encapsulate the item and its value from the report mdrm=”MDRM9999” Attribute of the itemData tag which identifies a specific item in the report <value> A tag encapsulated within itemData tag and contains the value of the item <context> An optional tag encapsulated within itemData tag used to identify the order of a variable list of items mdrm=”MDRM8888” Attribute of the context tag which identifies a group of items in the report value=”1” Attribute of the context tag which identifies the order of in the item group
+FFIEC 030 Item Data MDRMs
+| | | | Field | |
+| --- | --- | --- | --- | --- |
+| Cover Page | MDRM | Data Type | Length | Notes |
+| Name | FORB9017 | Text | 72 | |
+| Street Address | FORB9028 | Text | 72 | |
+| City | FORB9130 | Text | 30 | |
+| State | FORB9200 | Text | 30 | |
+| Foreign Branch Name | FORBQ050 | Text | 72 | |
+| Foreign Branch Street Address | FORBW913 | Text | 72 | |
+| Foreign Branch City / Town | FORBW914 | Text | 30 | |
+| Foreign Branch Country | FORB9005 | Text | 72 | |
+| Printed Name of Authorized Officer | FORBC490 | Text | 72 | |
+| Title of Authorized Officer | FORBC491 | Text | 72 | |
+| Date pf Signature | FORBJ196 | Date | 10 | Format: MM/DD/YYYY |
+| To be completed for the Dec report only | FORB6909 | Unit | 1,0 | Up to 1 digit before decimal with 0 digits following it |
+| Number of Consolidation of Branches | FORB2991 | Unit | 5,0 | Up to 5 digits before decimal with 0 digits following it |
+| Country of Consolidation of Branches | FORBW917 | Text | 30 | |
+| | | | Field | |
+| --- | --- | --- | --- | --- |
+| List of Consolidated Branches | MDRM | Data Type | Length | Notes |
+| Sequence Number | FORBN186 | Number | | Sequential number |
+| Street Address | FORBFS64 | Text | 72 | |
+| City | FORBFS65 | Text | 30 | |
+| | | | Field | |
+| --- | --- | --- | --- | --- |
+| FFIEC 030 Data Items | MDRM | Data Type | Length | Notes |
+| Schedule RAL - Assets and Liabilities | | | | |
+| 1. Cash items in process of collection, unposted debits, and currency and coin | FORB0022 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 2. Balances due from U.S. banks (including IBFs and foreign branches of U.S. banks) other than the U.S. parent | FORB0033 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 3. Balances due from foreign banks (including U.S. branches and agencies of foreign banks and their IBFs) | FORB0034 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 4.a Securities and obligation of U.S. government and states and political subdivisions in the U.S. | FORB6597 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 4.b Other securities (debt and equity) | FORB0423 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 5. Trading Assets | FORB2146 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+5
+| | | | Field | |
+| --- | --- | --- | --- | --- |
+| FFIEC 030 Data Items | MDRM | Data Type | Length | Notes |
+| 6.a Loans secured by real estate | FORB1410 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 6.b Loans to depository institutions | FORB2237 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 6.c Commercial and industrial loans | FORB1600 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 6.d All other loans and all leases | FORB2024 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 6.e Less: unearned income on loans in items 6.a – d. above | FORB2123 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 6.f Total loans and leases, net | FORB2122 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 7. Premises and fixed assets (including capitalized leases) | FORB2145 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 8. Gross due from head office, U.S. branches, and other foreign branches of this bank | FORBC482 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 9. Gross due from consolidated subsidiaries of this bank | FORBC483 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 10. Other assets | FORB2160 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 11. TOTAL ASSETS | FORB2170 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 12. Deposits of U.S. banks (including IBFs and foreign branches of U.S. banks) | FORB2623 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 13. Deposits of foreign banks (including U.S. branches and agencies of foreign banks and their IBFs) | FORB2625 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 14. Other deposits | FORB2238 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 15. Liabilities for borrowed money | FORB2239 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 16. Gross due to head office, U.S. branches, and other foreign branches of this bank | FORBC485 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+6
+| | | | Field | |
+| --- | --- | --- | --- | --- |
+| FFIEC 030 Data Items | MDRM | Data Type | Length | Notes |
+| 17. Gross due to consolidated subsidiaries of this bank | FORBC486 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 18. Other liabilities | FORB2930 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 19. TOTAL LIABILITIES | FORB2950 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 20. Commitments to purchase foreign currencies and U.S. dollar exchange (spot, forward, and futures) | FORB3415 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 21. All other futures and forward contracts (excluding contracts involving foreign exchange) | FORB6836 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 22.a Written option contracts | FORB6837 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 22.b Purchased option contracts | FORB6838 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 23. Standby letters of credit and foreign office guarantees | FORB6839 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 24. Commercial and similar letters of credit | FORB3411 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 25. Notional value of all outstanding interest rate swaps | FORB3450 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 26. TOTAL INTEREST-BEARING BALANCES included in items 2 and 3 | FORB0071 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 27. TOTAL INTEREST-BEARING BALANCES included in items 12, 13 and 14 | FORB6636 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| Schedule RAL – A Due From, Due to, and Other | | | | |
+| 1.a. Head office and U.S. branches of this bank | FORBPR53 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 1.b. Other foreign branches of this bank | FORBPR54 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 2.a. Consolidated subsidiaries of this bank in the U.S. | FORBPR55 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 2.b. Consolidated subsidiaries of this bank in foreign countries | FORBPR56 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 3.a. Head office and U.S. branches of this bank | FORBPR57 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 3.b. Other foreign branches of this bank | FORBPR58 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+(1 blank entry rows)
+7
+| | | | Field | |
+| --- | --- | --- | --- | --- |
+| FFIEC 030 Data Items | MDRM | Data Type | Length | Notes |
+| 4.a. Consolidated subsidiaries of this bank in the U.S. | FORBPR59 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 4.b. Consolidated subsidiaries of this bank in foreign countries | FORBPR60 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 5. Assets that are claims on U.S. addressees other than depository institutions: | FORB1369 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 5.a. Loans secured by real estate | FORBPV51 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 5.b. Loans to nondepository financial institutions | FORBPV52 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 5.c. Commercial and industrial loans | FORBPV53 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 5.d. All other loans and all leases | FORBPV54 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 6. Liabilities to U.S. addressees other than depository institutions | FORB2964 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+8
+9
+Example FFIEC 030 XML File Upload The following FFIEC 030 XML file upload example includes cover page items and, financial items for two consolidated branches
+<reportingFile xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd" createTime=”09:30:45+05:00” createDate=”2016-08-13” xmlns:xsi="http://www.w3.org/2001/XMLSchemainstance"> <report reporterId=”9999999999” asOfDate=”2016-09-30” series=”FFIEC030”> <!-- Cover Page items --> <itemData mdrm=”FORB9028”> <value>101 Bank Street</value> </itemData> <!-- Foreign Branch of condition financial items --> <itemData mdrm=”FORB0022”> <value>100</value> </itemData> <itemData mdrm=”FORB0033”> <value>200</value> </itemData> <!-- List of Consolidated Branches variable schedule --> <!-- Branch #1 --> <itemData mdrm=”FORBFS65”> <value>100 Main Street</value> <context mdrm=”FORBN186” value=”1”/> </itemData> <itemData mdrm=”FORBFS64”> <value>San Francisco</value> <context mdrm=”FORBN186” value=”1”/> </itemData> <!-- Branch #2 --> <itemData mdrm=”FORBFS65”> <value>100 South Austin Street</value> <context mdrm=”FORBN186” value=”2”/> </itemData> <itemData mdrm=”FORBFS64”> <value>Austin</value> <context mdrm=”FORBN186” value=”2”/> </itemData> </report> </reportingFile>
+FFIEC 030S Item Data MDRMs
+| | | | Field | |
+| --- | --- | --- | --- | --- |
+| Cover Page | MDRM | Data Type | Length | Notes |
+| Name | FORB9017 | Text | 72 | |
+| Street Address | FORB9028 | Text | 72 | |
+| City | FORB9130 | Text | 30 | |
+| State | FORB9200 | Text | 30 | |
+| Foreign Branch Name | FORBQ050 | Text | 72 | |
+| Foreign Branch Street Address | FORBW913 | Text | 72 | |
+| Foreign Branch City / Town | FORBW914 | Text | 30 | |
+| Foreign Branch Country | FORB9005 | Text | 72 | |
+| Printed Name of Authorized Officer | FORBC490 | Text | 72 | |
+| Title of Authorized Officer | FORBC491 | Text | 72 | |
+| Date of Signature | FORBJ196 | Date | 10 | Format: MM/DD/YYYY |
+| Consolidation Option: Figures reported in this report are a consideration of all (Number) | FORB2991 | Number | 5,0 | |
+| Branches in (Country) | FORBW917 | Text | 72 | |
+| | | | Field | |
+| --- | --- | --- | --- | --- |
+| List of Consolidated Branches | MDRM | Data Type | Length | Notes |
+| Sequence Number | FORBN186 | Number | | Sequential number |
+| Consolidated Branch Street Address | FORBFS64 | Text | 72 | |
+| Consolidated Branch City | FORBFS65 | Text | 30 | |
+| | | | Field | |
+| --- | --- | --- | --- | --- |
+| FFIEC 030S Data Items | MDRM | Data Type | Length | Notes |
+| 1. Gross due from related institutions | FORB3002 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 2. Total assets | FORB2170 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 3. Gross due to related institutions | FORB3001 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 4. Total gross notional amount of derivative contracts | FORBF156 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+| 5. Commercial and similar letters of credit, standby letters of credit, and foreign office guarantees | FORBF157 | Numeric | 14 | Reported in whole dollars without commas and leading zeroes |
+10
+11
+Example FFIEC 030S XML File Upload The following FFIEC 030S XML file upload example includes cover page items, financial items, and two consolidated branches. Important note: beginning with the move to Reporting Central Cloud with the 03/31/2026 asof date the FFIEC 030S series should be reported as “FFIEC030S” including the “0” in the XML file vs. in Reporting Central legacy application where it was reported as “FFIEC30S”.
+<reportingFile xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd" createTime=”09:30:45+05:00” createDate=”2018-01-11” xmlns:xsi="http://www.w3.org/2001/XMLSchemainstance"> <report reporterId=”9999999999” asOfDate=”2017-12-31” series=”FFIEC030S”> <!-- Cover Page items --> <itemData mdrm=”FORB9028”> <value>101 Bank Street</value> </itemData> <!-- Foreign Branch of condition financial items --> <itemData mdrm=”FORB3002”> <value>100</value> </itemData> <itemData mdrm=”FORB2179”> <value>45000</value> </itemData> <!-- List of Consolidated Branches variable schedule --> <!-- Branch #1 --> <itemData mdrm=”FORBFS64”> <value>1009 Amherst-Bombardier Boulevard</value> <context mdrm=”FORBN186” value=”1”/> </itemData> <itemData mdrm=”FORBFS65”> <value>Montreal</value> <context mdrm=”FORBN186” value=”1”/> </itemData> <!-- Branch #2 --> <itemData mdrm=”FORBFS64”> <value>5990 Amsterdam Avenue</value> <context mdrm=”FORBN186” value=”2”/> </itemData> <itemData mdrm=”FORBFS65”> <value>Mexico City</value> <context mdrm=”FORBN186” value=”2”/> </itemData> </report> </reportingFile>

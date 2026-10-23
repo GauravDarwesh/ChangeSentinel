@@ -1,0 +1,86 @@
+Annual Report of Foreign Banking Organizations—FR Y-7
+Additional Entities and Foreign Companies
+XML User Guide
+Structure Central August 2026
+1
+Table of Contents
+Overview ................................................................................................................................................... 2 Additional Entities ...................................................................................................................................... 2 Additional Entities: Fields ................................................................................................................ 2 Additional Entities: XML File ............................................................................................................ 3 Foreign Companies ................................................................................................................................... 5 Foreign Companies: Fields ............................................................................................................. 5 Foreign Companies: XML File ......................................................................................................... 6 Appendix A: Sample XML file for Additional Entities .................................................................................. 8 Appendix B: Sample XML file for Foreign Companies ............................................................................... 8
+Overview
+The Federal Reserve System's Structure Central application allows a reporting entity to provide data for the Additional Entities and Foreign Companies sections of the FR Y-7 report as an XML file (among other valid formats). This document describes the required format for creating the XML file for these two sections of the FR Y-7 report.
+Additional Entities
+The FR Y-7 report’s Additional Entities (AE) section allows the User to download a template file in .XLSX or .XML format and/or upload the User’s AE data file (.PDF, .XLSX, or .XML).
+While the system allows the upload of multiple file formats, this document focuses on the XML file format. The template XLSX file (1) can be downloaded within Structure Central (See Appendix A) and should be filled out by the User. Once the User has prepared actual data based on the XLSX file format, the User can upload the actual XLSX file (2) as part of the report submission.
+Additional Entities: Fields
+| Field | MDRM |
+| --- | --- |
+| Legal Name | FFBO QB84 |
+| City | FFBO QB85 |
+| State or Country | FFBO QB86 |
+| State or Country of Incorporation | FFBO QB87 |
+| Legal Entity Identifier (LEI) | FFBO QB88 |
+| Direct Holder | FFBO QB89 |
+2
+3
+Additional Entities: XML File
+Each XML file contains the AE information for a reporting entity and report date.
+Below are the tags and attributes used in the XML file followed by sample XML data.
+XML Tags and Attributes
+Tag Attribute Description <reportingFile> A tag used to encapsulate all the data in the file.
+createTime Time the file was created.
+createDate Date the file was created.
+xmlns:xsi Optional attribute which tells the schema-validator that all items used in the XML file are declared in the "http://www.w3.org/2001/XMLSchema-instance" namespace.
+xsi:noNamespac eSchemaLocatio n Optional attribute that indicates the XML Schema document.
+<report> A tag used to encapsulate the reporting entity.
+series Name of the reporting series. Value is “Y7”.
+asOfDate The report date.
+<itemGroup> A tag used to encapsulate all the data items within the group.
+ref Name of the item group. Value is “addnlEntity" <itemData> A tag used to indicate the data item and its value.
+mdrm Identifier for the specific data item in the report.
+key Presence of this attributes with a value of “yes” should be included for each <itemGroup> with a unique numeric value.
+<value> A tag used to indicate the value of the data item.
+Value of zero is indicated by: 0 Value of null is indicated by: <blank>
+4
+Sample XML file excerpt: Below is an excerpt of the XML sample file.
+The full XML sample file is included in Appendix A.
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchemainstance" createTime="12:39:00" createDate="2026-01- 09" xsi:noNamespaceSchemaLocation="Y7InputXML-Item2a2-202601096.xsd"> <report series="Y7" asOfDate="2026-01-09"> <!-- Blenheim Insurance --> <itemGroup ref="addnlEntity"> <itemData mdrm="mdrm" key="yes"> <value>4</value> </itemData> <itemData mdrm="FFBOQB84"> <value>Blenheim Insurance</value> </itemData> <itemData mdrm="FFBOQB85"> <value>New York</value> </itemData> <itemData mdrm="FFBOQB86"> <value>New York</value> </itemData> <itemData mdrm="FFBOQB87"> <value>Delaware</value> </itemData> <itemData mdrm="FFBOQB88"> <value>724500ZUVMX72T6IMS05</value> </itemData> <itemData mdrm="FFBOQB89"> <value>Friendly Foreign Banking Organization</value> </itemData> </itemGroup> </report> </reportingFile>
+Foreign Companies
+The FR Y-7 report’s Foreign Companies (FC) section allows the User to download a template file in .XLSX or .XML format and/or upload the User’s FC data file (.PDF, .XLSX, or .XML).
+While the system allows the upload of multiple file formats, this document focuses on the XML file format. The template XLSX file (1) can be downloaded within Structure Central (See Appendix B) and should be filled out by the User. Once the User has prepared actual data based on the XLSX file format, the User can upload the actual XLSX file (2) as part of the report submission.
+Foreign Companies: Fields
+| Field | MDRM |
+| --- | --- |
+| Legal Name | FFBO QB91 |
+| City | FFBO QB92 |
+| Country | FFBO QB93 |
+| Legal Entity Identifier (LEI) | FFBO QB94 |
+| Percentage of Class of Voting Shares Held | FFBO QB95 |
+| Percent of consolidated assets that are located in the U.S. | FFBO QB96 |
+| Percent of gross revenues derived from the U.S. | FFBO QB97 |
+| Is the foreign company a subsidiary? (0 = No, 1 = Yes) | FFBO QB98 |
+| NAICS Code of U.S. activities | FFBO QB99 |
+| Are the U.S. activities the same/related to those conducted abroad? (0 = No, 1 = Yes) | FFBO QC00 |
+5
+6
+Foreign Companies: XML File
+Each XML file contains the FC information for a reporting entity and report date.
+Below are the tags and attributes used in the XML file as well as sample XML data.
+XML Tags and Attributes:
+Tag Attribute Description <reportingFile> A tag used to encapsulate all the data in the file createTime Time the file was created createDate Date the file was created xmlns:xsi Optional attribute which tells the schemavalidator that all items used in the XML file are declared in the "http://www.w3.org/2001/XMLSchema-instance" namespace xsi:noNamespaceSchem aLocation Optional attribute that indicates the XML Schema document <report> A tag used to encapsulate the reporting entity series Name of the reporting series. Value is “Y7”.
+asOfDate The report date <itemGroup> A tag used to encapsulate all the data items within the group.
+ref Name of the item group. Value is “foreignCompany”.
+<itemData> A tag used to indicate the data item and its value.
+mdrm Identifier for the specific data item in the report.
+key Presence of this attributes with a value of “yes” should be included for each <itemGroup> with a unique numeric value.
+<value> A tag used to indicate the value of the data item.
+Value of zero is indicated by: 0 Value of null is indicated by: <blank>
+Sample XML file excerpt:
+Below is an excerpt of the XML sample file.
+The full XML sample file is included in Appendix B.
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchemainstance" createTime="12:39:00" createDate="2026-01- 09" xsi:noNamespaceSchemaLocation="Y7InputXML-Item2b-202601096.xsd"> <report series="Y7" asOfDate="2026-01-09"> <!-- Cavalier Enterprise --> <itemGroup ref="foreignCompany"> <itemData mdrm="mdrm" key="yes"> <value>3</value> </itemData>
+7
+<itemData mdrm="FFBOQB91"> <value>Cavalier Enterprise</value> </itemData> <itemData mdrm="FFBOQB92"> <value>Paris</value> </itemData> <itemData mdrm="FFBOQB93"> <value>France</value> </itemData> <itemData mdrm="FFBOQB94"> <value>9845006HEW4659760C58</value> </itemData> <itemData mdrm="FFBOQB95"> <value>100.00</value> </itemData> <itemData mdrm="FFBOQB96"> <value>33.00</value> </itemData> <itemData mdrm="FFBOQB97"> <value>85.00</value> </itemData> <itemData mdrm="FFBOQB98"> <value>1</value> </itemData> <itemData mdrm="FFBOQB99"> <value>53126</value> </itemData> <itemData mdrm="FFBOQC00"> <value>1</value> </itemData> </itemGroup> </report> </reportingFile>
+8
+Appendix A: Sample XML file for Additional Entities The sample file below can be downloaded from Structure Central -> FR Y-7 Report -> Create New - > Step 6: Additional Entities.
+FRY 7-Item2a2-Samp le-Template.xml
+Appendix B: Sample XML file for Foreign Companies The sample file below can be downloaded from Structure Central -> FR Y-7 Report -> Create New - > Step 7: Foreign Companies
+F RY7-Item2b-Sampl e-Template.xml

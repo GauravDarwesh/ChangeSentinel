@@ -1,0 +1,168 @@
+<!-- image -->
+## Annual Report of Holding Companies - FR Y-6 Securities Holders and Insiders XML User Guide
+## Table of Contents
+| Overview ......................................................................................................................................................2 | Overview ......................................................................................................................................................2 | Overview ......................................................................................................................................................2 |
+| --- | --- | --- |
+| Securities Holders ........................................................................................................................................2 | Securities Holders ........................................................................................................................................2 | Securities Holders ........................................................................................................................................2 |
+| Securities Holders: Visual | layout | ................................................................................................. 2 |
+| Securities Holders: Detailed Field Specifications ......................................................................... | Securities Holders: Detailed Field Specifications ......................................................................... | 3 |
+| Securities Holders: XML File ....................................................................................................... | Securities Holders: XML File ....................................................................................................... | 4 |
+| Insiders.........................................................................................................................................................8 | Insiders.........................................................................................................................................................8 | |
+| Insiders: | Visual layout.................................................................................................................. | 9 |
+| Insiders: | Detailed Field Specifications ....................................................................................... | 10 |
+| Insiders: | XML File...................................................................................................................... | 11 |
+| Appendix A: | Sample XML file for Securities Holders................................................................................15 | |
+| Appendix B: | Sample XML file for Insiders.................................................................................................15 | |
+## Overview
+The Federal Reserve System's Structure Central application allows a reporting entity to provide data for the Securities Holders and Insiders sections of the Annual Report of Holding Companies - FR Y-6 (FR Y-6) as an XML file (among other valid formats).
+This document describes the required format for creating the XML file for these two sections of the FR Y-6 report.
+## Securities Holders
+The FR Y-6 report's Securities Holders (SH) section allows the User to indicate if there were changes to Item 3 SH from the prior year, download a sample file in .XLSX or .XML format and/or upload the reporter's SH data file (.PDF, .XLSX, or .XML).
+While the system allows the upload of multiple file formats, this document focuses on the XML file format. The sample XML file (1) should be used by the Reporter as a guide for the contents of the XML file to be uploaded. Once the reporter has prepared actual data based on the XML file format, the Reporter can upload the actual XML file (2).
+<!-- image -->
+## Securities Holders: Visual layout
+Item 3(1): Sec Holders As Of
+<!-- image -->
+Item 3(2): Sec Holders During
+<!-- image -->
+## Securities Holders: Detailed Field Specifications
+| Item | Field | Data Type | Max Length | MDRM |
+| --- | --- | --- | --- | --- |
+| Item 3(1) Sec Holders As Of | Item 3(1) Sec Holders As Of | Item 3(1) Sec Holders As Of | Item 3(1) Sec Holders As Of | Item 3(1) Sec Holders As Of |
+| | Legal Name of Holding Company | Text | 120 | FDHCPV71 |
+| Item 3(1)(a) | Name | Text | 60 | FDHCPV72 |
+| Item 3(1)(b) | City | Text | 60 | FDHCPV73 |
+| Item 3(1)(c) | State | Text | 2 | FDHCPV74 |
+| Item 3(1)(d) | Country | Text | 60 | 75 FDHCPV |
+| Item 3(1)(e) | Country of Citizenship or Incorporation | Text | 60 | FDHCPV76 |
+| Item 3(1)(f) | Describe the provisions of the trust or plan | Text | 120 | FDHCPV77 |
+| Item 3(1)(g) | For individuals Acting in Concert, Identify Name of Individuals or Group Acting in Concert. | Text | 120 | FDHCPV78 |
+| Item 3(1)(h) | For Trusts, Identify each trustee or designated individual that has the power to vote | Text | 120 | FDHCPV79 |
+| Item 3(1)(i) | Number of Securities - Common Stock | Decimal | 18.2 | 80 FDHCPV |
+| Item 3(1)(j) | Number of Securities - Warrants | Decimal | 18.2 | FDHCPV81 |
+| Item 3(1)(k) | Number of Securities - Options | Decimal | 18.2 | FDHCPV82 |
+| Item 3(1)(l) | Number of Securities - Other | Decimal | 18.2 | FDHCPV83 |
+| Item 3(1)(m) | Percent of each class of voting securities owned, controlled, or held with power to vote in the holding company | Text xxx.xx% | 7 | FDHCPV84 |
+| Item 3(2) Sec Holders During | Item 3(2) Sec Holders During | Item 3(2) Sec Holders During | Item 3(2) Sec Holders During | Item 3(2) Sec Holders During |
+| | Legal Name of Holding Company | Text | 120 | FDHCPV71 |
+| Item 3(2)(a) | Name | Text | 60 | 85 FDHCPV |
+| Item 3(2)(b) | City | Text | 60 | FDHCPV86 |
+| Item 3(2)(c) | State | Text | 60 | FDHCPV87 |
+| Item 3(2)(d) | Country | Text | 60 | FDHCPV88 |
+| Item 3(2)(e) | Country of Citizenship or Incorporation | Text | 60 | FDHCPV89 |
+| Item 3(2)(f) | Describe the provisions of the trust or plan | Text | 120 | 90 FDHCPV |
+| Item 3(2)(g) | For individuals Acting in Concert, Identify Name of Individuals or Group Acting in Concert. | Text | 120 | FDHCPV91 |
+| Item 3(2)(h) | For Trusts, Identify each trustee or designated individual that has the power to vote | Text | 120 | FDHCPV92 |
+| Item 3(2)(i) | Number of Securities - Common Stock | Decimal | 18.2 | FDHCPV93 |
+| Item 3(2)(j) | Number of Securities - Warrants | Decimal | 18.2 | FDHCPV94 |
+| Item 3(2)(k) | Number of Securities - Options | Decimal | 18.2 | 95 FDHCPV |
+| Item 3(2)(l) | Number of Securities - Other | Decimal | 18.2 | FDHCPV96 |
+| Item 3(2)(m) | Percent of each class of voting securities owned, controlled, or held with power to vote in the holding company | Text xxx.xx% | 7 | FDHCPV97 |
+## Securities Holders: XML File
+Each XML file contains the Securities Holders information for a reporting entity and report date. The field type and max length specification should follow the table above for each data value.
+Below are the tags and attributes used in the XML file followed by sample XML data.
+## XML Tags and Attributes
+| Tag | Attribute | Description |
+| --- | --- | --- |
+| <reportingFile> | | A tag used to encapsulate all the data in the file. |
+| | createTime | Time the file was created. |
+| | createDate | Date the file was created. |
+| | xmlns:xsi | Optional attribute which tells the schema-validator that all items used in the XML file are declared in the "http://www.w3.org/2001/XMLSchema-instance" namespace. |
+| | xsi:noNamespac eSchemaLocatio n | Optional attribute that indicates the XML Schema document. |
+| <report> | | A tag used to encapsulate the reporting entity. |
+| | series | Name of the reporting series. Value is "Y6". |
+| | asOfDate | The report date. |
+| <reportingEntity> | | A tag used to encapsulate the item groups. |
+| | mdrm | Identifier for the legalName reporting entity field. |
+| | legalName | Legal Name of the reporting entity. |
+| <itemGroup> | | A tag used to encapsulate all the data items within the group. |
+| | ref | Name of the item group. Value is "SecHolderAsOf" or "SecHolderDuring". |
+| <itemData> | | A tag used to indicate the data item and its value. |
+| | mdrm | Identifier for the specific data item in the report. |
+| | key | Presence of this attributes with a value of "yes" should be included for each <itemGroup> with a unique numeric value. |
+| <value> | | A tag used to indicate the value of the data item. Value of zero is indicated by: 0 Value of null is indicated by: <blank> |
+## Sample XML file:
+Below is an excerpt of the XML sample file.
+The full XML sample file is included in Appendix A: Sample XML file for Securities Holders.
+&lt;?xml version="1.0" encoding="UTF-8"?&gt; &lt;reportingFile createTime="12:39:00" createDate="2024-05-30" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="Y6InputXML-Item3-1.0-20240603.xsd"&gt;
+&lt;report series="Y6" asOfDate="2023-12-31" &gt;
+&lt;reportingEntity mdrm="FDHCPV71" legalName="Smith Holding Company, Inc."&gt; &lt;itemGroup ref="SecHolderAsOf" &gt; &lt;itemData mdrm="mdrm" key="yes"&gt; &lt;value&gt;1&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV72"&gt; &lt;value&gt;John Smith&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV73"&gt; &lt;value&gt;Detroit&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV74"&gt; &lt;value&gt;MI&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV75"&gt; &lt;value&gt;USA&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV76"&gt; &lt;value&gt;USA&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV77"&gt; &lt;value&gt;&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV78"&gt; &lt;value&gt;Smith Family&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV79"&gt; &lt;value&gt;&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV80"&gt; &lt;value&gt;1.79&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV81"&gt; &lt;value&gt;&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV82"&gt; &lt;value&gt;&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV83"&gt; &lt;value&gt;&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV84"&gt; &lt;value&gt;1.79%&lt;/value&gt; &lt;/itemData&gt; &lt;/itemGroup&gt; &lt;itemGroup ref="SecHolderAsOf" &gt; &lt;itemData mdrm="mdrm" key="yes"&gt; &lt;value&gt;2&lt;/value&gt;
+&lt;/itemData&gt; &lt;itemData mdrm="FDHCPV72"&gt; &lt;value&gt;Joe Smith&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV73"&gt; &lt;value&gt;Carson&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV74"&gt; &lt;value&gt;CA&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV75"&gt; &lt;value&gt;USA&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV76"&gt; &lt;value&gt;USA&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV77"&gt; &lt;value&gt;&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV78"&gt; &lt;value&gt;Smith Family&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV79"&gt; &lt;value&gt;&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV80"&gt; &lt;value&gt;0.33&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV81"&gt; &lt;value&gt;0.12&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV82"&gt; &lt;value&gt;&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV83"&gt; &lt;value&gt;&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV84"&gt; &lt;value&gt;0.45%&lt;/value&gt; &lt;/itemData&gt; &lt;/itemGroup&gt; &lt;itemGroup ref="SecHolderDuring" &gt; &lt;itemData mdrm="mdrm" key="yes"&gt; &lt;value&gt;1&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV85"&gt; &lt;value&gt;Jude Smith&lt;/value&gt; &lt;/itemData&gt;
+```
+<itemData mdrm="FDHCPV86"> <value>New Orleans</value> </itemData> <itemData mdrm="FDHCPV87"> <value>LA</value> </itemData> <itemData mdrm="FDHCPV88"> <value>USA</value> </itemData> <itemData mdrm="FDHCPV89"> <value>USA</value> </itemData> <itemData mdrm="FDHCPV90"> <value></value> </itemData> <itemData mdrm="FDHCPV91"> <value>Smith Family</value> </itemData> <itemData mdrm="FDHCPV92"> <value></value> </itemData> <itemData mdrm="FDHCPV93"> <value>11.00</value> </itemData> <itemData mdrm="FDHCPV94"> <value></value> </itemData> <itemData mdrm="FDHCPV95"> <value></value> </itemData> <itemData mdrm="FDHCPV96"> <value></value> </itemData> <itemData mdrm="FDHCPV97"> <value>11.00%</value> </itemData> </itemGroup> </reportingEntity> </report> </reportingFile>
+```
+## Insiders
+The FR Y-6 report's Insiders section allows the User to indicate if there were changes to Item 4 Insiders from the prior year, download a sample file in .XLSX or .XML format and/or upload the reporter's Insiders data file (.PDF, .XLSX or .XML).
+While the system allows the upload of multiple file formats, this document concentrates on the XML file format. The sample XML file (1) should be used by the Reporter as a guide for the contents of the XML file. Once the reporter has prepared actual data based on the XML file format, the Reporter can upload the actual XML file (2).
+<!-- image -->
+## Insiders: Visual layout
+## Item 4(1) - 4(3): Insiders
+## Item 4(4): Insiders Role and Shares-Subs
+## Item 4(5): Insiders Role and Shares-Other
+## Insiders: Detailed Field Specifications
+| Item | Field | Data Type | Max Length | MDRM |
+| --- | --- | --- | --- | --- |
+| Item 4(1) - 4(3): Insiders | Item 4(1) - 4(3): Insiders | Item 4(1) - 4(3): Insiders | Item 4(1) - 4(3): Insiders | Item 4(1) - 4(3): Insiders |
+| | Legal Name of Holding Company | Text | 120 | FDHCPV98 |
+| Item 4(1)(a) | Name | Text | 120 | FDHCPV99 |
+| Item 4(1)(b) | City | Text | 60 | FDHCPW00 |
+| Item 4(1)(c) | State | Text | 2 | FDHCPW01 |
+| Item 4(1)(d) | Country | Text | 60 | FDHCPW02 |
+| Item 4(2) | Principal Occupation if other than with holding company | Text | 60 | FDHCPW03 |
+| Item 4(3)(a) | Title or Position with the Holding Company | Text | 60 | FDHCPW04 |
+| Item 4(3)(b) | For individuals Acting in Concert, Identify Name of Individuals or Group Acting in Concert. Percentage of each class of voting securities owned, controlled, or held with power to vote in the holding company (including options, warrants or other securities or rights that can be converted into or exercised for voting securities) | Text ###.##% | 7 | FDHCPW05 |
+| Item 4(4): Insiders Role and Shares-Subs | Item 4(4): Insiders Role and Shares-Subs | Item 4(4): Insiders Role and Shares-Subs | Item 4(4): Insiders Role and Shares-Subs | Item 4(4): Insiders Role and Shares-Subs |
+| | Legal Name of Holding Company | Text | 120 | FDHCPV98 |
+| Item 4(1)(a) | Name | Text | 120 | FDHCPV99 |
+| Item 4(4)(a) | Title or Position with direct and indirect subsidiaries | Text | 60 | FDHCPW06 |
+| Item 4(4)(b) | Name of direct and indirect subsidiaries in which Insider has a title or position or ownership in | Text | 120 | FDHCPW07 |
+| Item 4(4)(c) | Percentage of each class of voting securities owned, controlled, or held with power to vote in subsidiaries of the holding company (including options, warrants or other securities or rights that can be converted into or exercised for voting securities) | Text ###.##% | 7 | FDHCPW08 |
+| Item 4(5): Insiders Role and Shares-Other | Item 4(5): Insiders Role and Shares-Other | Item 4(5): Insiders Role and Shares-Other | Item 4(5): Insiders Role and Shares-Other | Item 4(5): Insiders Role and Shares-Other |
+| | Legal Name of Holding Company | Text | 120 | FDHCPV98 |
+| Item 4(1)(a) | Name | Text | 120 | FDHCPV99 |
+| Item 4(5)(a) | Title or Position with any other company in which the person is a director, trustee, partner, or executive officer. | Text | 60 | FDHCPW09 |
+| Item 4(5)(b) | Name of any other company in which the person is a director, trustee, partner, or executive officer, or owns, controls, or holds with power to vote 25% or more or its outstanding voting securities or proportionate in a partnership. | Text | 120 | FDHCPW10 |
+| Item 4(5)(c) | Percentage of each class of voting securities owned, controlled, or held with power to vote in any other company (including options, warrants or other securities or rights that can be converted into or exercised for voting securities), or proportionate interest held in a partnership, if 25% or more | Text ###.##% | 7 | FDHCPW11 |
+## Insiders: XML File
+Each XML file contains the Insiders information for a reporting entity and report date. The field type and max length specification should follow the table above for each data value.
+Below are the tags and attributes used in the XML file as well as sample XML data.
+## XML Tags and Attributes:
+| Tag | Attribute | Description |
+| --- | --- | --- |
+| <reportingFile> | | A tag used to encapsulate all the data in the file |
+| | createTime | Time the file was created |
+| | createDate | Date the file was created |
+| | xmlns:xsi | Optional attribute which tells the schema- validator that all items used in the XML file are declared in the "http://www.w3.org/2001/XMLSchema-instance" namespace |
+| | xsi:noNamespaceSchem aLocation | Optional attribute that indicates the XML Schema document |
+| <report> | | A tag used to encapsulate the reporting entity |
+| series | | Name of the reporting series. Value is "Y6". |
+| | asOfDate | The report date |
+| <reportingEntity> | | A tag used to encapsulate the item groups |
+| mdrm | | Identifier for the legalName of the reporting entity. |
+| | legalName | Legal Name of the reporting entity |
+| <itemGroup> | | A tag used to encapsulate all the data items within the group. |
+| ref | | Name of the item group. Value is "Insider". |
+| <itemData> | | A tag used to indicate the data item and its value. |
+| | mdrm | Identifier for the specific data item in the report. |
+| key | | Presence of this attributes with a value of "yes" should be included for each <itemGroup> with a unique numeric value. |
+| <value> | | A tag used to indicate the value of the data item. Value of zero is indicated by: 0 Value of null is indicated by: <blank> |
+| <itemGroup> | | A tag used to encapsulate all the data items within the group. |
+| ref | | Name of the item group. Value is "RoleSharesSubs" or "RoleSharesOther" |
+| <itemData> | <see itemData tag above> | |
+| <value> | <see value tag above> | |
+## Sample XML file:
+Below is an excerpt of the XML sample file. The full XML sample file is included in Appendix B: Sample XML file for Insiders.
+```
+<?xml version="1.0" encoding="UTF-8"?> <reportingFile createTime="12:39:00" createDate="2024-05-30" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Y6InputXML-Item4-1.0-20240603.xsd"> <report series="Y6" asOfDate="2023-12-31" > <reportingEntity mdrm="FDHCPV98" legalName="Smith Holding Company, Inc."> <itemGroup ref="Insider" > <itemData mdrm="mdrm" key="yes"> <value>1</value> </itemData> <itemData mdrm="FDHCPV99"> <value>John Smith</value> </itemData> <itemData mdrm="FDHCPW00"> <value>Detroit</value> </itemData> <itemData mdrm="FDHCPW01"> <value>MI</value> </itemData> <itemData mdrm="FDHCPW02"> <value>USA</value> </itemData> <itemData mdrm="FDHCPW03"> <value>Dentist</value> </itemData> <itemData mdrm="FDHCPW04"> <value>Director</value> </itemData> <itemData mdrm="FDHCPW05"> <value>1.79%</value> </itemData> </itemGroup> <itemGroup ref="Insider" > <itemData mdrm="mdrm" key="yes"> <value>2</value> </itemData> <itemData mdrm="FDHCPV99"> <value>Joe Smith</value> </itemData> <itemData mdrm="FDHCPW00"> <value>Carson</value> </itemData> <itemData mdrm="FDHCPW01">
+```
+&lt;value&gt;CA&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPW02"&gt; &lt;value&gt;USA&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPW03"&gt; &lt;value&gt;Retired&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPW04"&gt; &lt;value&gt;Director&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPW05"&gt; &lt;value&gt;0.33%&lt;/value&gt; &lt;/itemData&gt; &lt;itemGroup ref="RoleSharesSubs"&gt; &lt;itemData mdrm="mdrm" key="yes"&gt; &lt;value&gt;1&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPW06"&gt; &lt;value&gt;President &amp;amp; CEO&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPW07"&gt; &lt;value&gt;Sub A&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPW08"&gt; &lt;value&gt;N/A&lt;/value&gt; &lt;/itemData&gt; &lt;/itemGroup&gt; &lt;/itemGroup&gt; &lt;itemGroup ref="Insider" &gt; &lt;itemData mdrm="mdrm" key="yes"&gt; &lt;value&gt;3&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPV99"&gt; &lt;value&gt;Jack Smith&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPW00"&gt; &lt;value&gt;Las Vegas&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPW01"&gt; &lt;value&gt;NV&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPW02"&gt; &lt;value&gt;USA&lt;/value&gt; &lt;/itemData&gt; &lt;itemData mdrm="FDHCPW03"&gt; &lt;value&gt;Funeral Director&lt;/value&gt; &lt;/itemData&gt;
+```
+<itemData mdrm="FDHCPW04"> <value>Director</value> </itemData> <itemData mdrm="FDHCPW05"> <value>5.13%</value> </itemData> <itemGroup ref="RoleSharesOther"> <itemData mdrm="mdrm" key="yes"> <value>1</value> </itemData> <itemData mdrm="FDHCPW09"> <value>CEO</value> </itemData> <itemData mdrm="FDHCPW10"> <value>Company A</value> </itemData> <itemData mdrm="FDHCPW11"> <value>10%</value> </itemData> </itemGroup> </itemGroup> </reportingEntity> </report> </reportingFile>
+```
+## Appendix A: Sample XML file for Securities Holders
+The file below can be downloaded from Structure Central -&gt; FR Y-6 Report -&gt; Create New -&gt; Step 7: Securities Holders
+[FR Y-6 Sample XML file for Securities Holders](https://www.frbservices.org/binaries/content/assets/crsocms/central-bank/reporting-central/fry-6-item3-sample-template.xml)
+## Appendix B: Sample XML file for Insiders
+The file below can be downloaded from Structure Central -&gt; FR Y-6 Report -&gt; Create New -&gt; Step 8: Insiders
+[FR Y-6 Sample XML file for Insiders](https://www.frbservices.org/binaries/content/assets/crsocms/central-bank/reporting-central/fry-6-item4-sample-template.xml)

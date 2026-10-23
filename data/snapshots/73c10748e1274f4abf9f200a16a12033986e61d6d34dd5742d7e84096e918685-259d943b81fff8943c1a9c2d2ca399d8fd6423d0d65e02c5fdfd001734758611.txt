@@ -1,0 +1,25 @@
+[SHEET] Item 3(1) Sec Holders As Of
+Legal Name of Holding Company: | Anywhere Holding Company | | | | | | | | | | |
+FDHCPV71 | | | | | | | | | | | |
+Item 3(1)(a) | Item 3(1)(b) | Item 3(1)(c) | Item 3(1)(d) | Item 3(1)(e) | Item 3(1)(f) | Item 3(1)(g) | Item 3(1)(h) | Item 3(1)(i) | Item 3(1)(j) | Item 3(1)(k) | Item 3(1)(l) | Item 3(1)(m)
+Name | City | State
+| Country | Country of Citizenship
+or Incorporation | Describe the provisions of the trust or plan | For individuals Acting in Concert, Identify Name of Individuals or Group Acting in Concert. | For Trusts, Identify each trustee or designated individual that has the power to vote | Number of Securities - Common Stock | Number of Securities - Warrants | Number of Securities - Options | Number of Securities - Other | Percent of each class of voting securities owned, controlled, or held with power to vote in the holding company
+FDHCPV72 | FDHCPV73 | FDHCPV74 | FDHCPV75 | FDHCPV76 | FDHCPV77 | FDHCPV78 | FDHCPV79 | FDHCPV80 | FDHCPV81 | FDHCPV82 | FDHCPV83 | FDHCPV84
+James Doe | Anywhere | MO | USA | USA | N/A | N/A | N/A | 720 | N/A | 100 | N/A | 0.31
+Cindy Doe | Anywhere | MO | USA | USA | N/A | Cindy Doe, Gregory Doe | N/A | 667 | N/A | N/A | N/A | 0.25
+Gregory Doe | Anywhere | MO | USA | USA | N/A | Cindy Doe, Gregory Doe | N/A | 293 | N/A | N/A | N/A | 0.11
+Taylor Family Trust | St. Louis | MO | USA | USA | Trustee has discretion to vote shares without restriction. | N/A | John Taylor | 160 | N/A | N/A | N/A | 0.06
+Mary Doe | Anywhere | MO | USA | USA | N/A | Mary Doe Family | N/A | 53 | N/A | 160 | N/A | 0.08
+Benjamin Doe | Anywhere | MO | USA | USA | N/A | Mary Doe Family | N/A | 10 | N/A | N/A | N/A | 0.005
+The Estate of Joe Doe | St. Louis | MO | USA | USA | N/A | N/A | N/A | 133 | N/A | N/A | N/A | 0.05
+US Treasury | Washington, DC | N/A | USA | USA | N/A | N/A | N/A | N/A | 315000 | N/A | N/A | 0.05
+[SHEET] Item 3(2) Sec Holders During
+Legal Name of Holding Company: | Anywhere Holding Company | | | | | | | | | | |
+FDHCPV71 | | | | | | | | | | | |
+Item 3(2)(a) | Item 3(2)(b) | Item 3(2)(c) | Item 3(2)(d) | Item 3(2)(e) | Item 3(2)(f) | Item 3(2)(g) | Item 3(2)(h) | Item 3(2)(i) | Item 3(2)(j) | Item 3(2)(k) | Item 3(2)(l) | Item 3(2)(m)
+Name | City | State
+| Country | Country of Citizenship
+or Incorporation | Describe the provisions of the trust or plan | For individuals Acting in Concert, Identify Name of Individuals or Group Acting in Concert. | For Trusts, Identify each trustee or designated individual that has the power to vote | Number of Securities - Common Stock | Number of Securities - Warrants | Number of Securities - Options | Number of Securities - Other | Percent of each class of voting securities owned, controlled, or held with power to vote in the holding company
+FDHCPV85 | FDHCPV86 | FDHCPV87 | FDHCPV88 | FDHCPV89 | FDHCPV90 | FDHCPV91 | FDHCPV92 | FDHCPV93 | FDHCPV94 | FDHCPV95 | FDHCPV96 | FDHCPV97
+N/A | | | | | | | | | | | |

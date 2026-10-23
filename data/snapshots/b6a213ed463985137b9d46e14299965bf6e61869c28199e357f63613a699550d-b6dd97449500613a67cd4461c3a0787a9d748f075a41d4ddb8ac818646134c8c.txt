@@ -1,0 +1,23 @@
+INTERNAL FR/OFFICIAL USE // FRSONLY
+Annual Report of Foreign Banking Organizations—FR Y-7 Addition al Entities and Foreign Companies XLSX User Guide Structure Central August 2026
+1
+Table of Contents
+Table of Contents ...................................................................................................................................... 1 Overview ................................................................................................................................................... 2 Additional Entities ...................................................................................................................................... 2 Foreign Companies ................................................................................................................................... 3 Appendix A: Additional Entities Files ......................................................................................................... 4 Appendix B: Foreign Companies Files ...................................................................................................... 4
+2
+Overview
+The Federal Reserve System’s Structure Central application allows a reporting entity to provide data for the Additional Entities and Foreign Companies sections of the FR Y-7 report as an XLSX file (among other valid formats).
+This document describes the required format for creating the XLSX file for these two sections of the FR Y-7 report.
+Additional Entities
+The FR Y-7 report’s Additional Entities (AE) section allows the User to download a template file in .XLSX or .XML format and/or upload the User’s AE data file ( .PDF, .XLSX, or .XML).
+While the system allows the upload of multiple file formats, this document focuses on the XLSX file format. The template XLSX file (1) can be downloaded within Structure Central (see Appendix A) and should be filled out by the U ser. Once the User has prepared actual data based on the XLSX file format, the User can upload the actual XLSX file (2) as part of the report submission.
+3
+Foreign Companies
+The FR Y-7 report’s Foreign Companies (FC) section allows the User to download a template file in .XLSX or .XML format and/or upload the User’s FC data file (.PDF, .XLSX, or .XML).
+While the system allows the upload of multiple file formats, this document focuses on the XLSX file format. The template XLSX file (1) can be downloaded within Structure Central (see Appendix B) and should be filled out by the U ser. Once the User has prepared actual data based on the XLSX file format, the User can upload the actual XLSX file (2) as part of the report submission.
+4
+Appendix A: Additional Entities Files
+1. The template below can also be downloaded from Structure Central -> FR Y-7 Report -> Create New -> Step 6: Additional Entities FR Y-7 Template XLSX file for Addition
+2. Sample File: FR Y-7 Sample XLSX file for Additional En
+Appendix B: Foreign Companies Files
+1. The template below can also be downloaded from Structure Central -> FR Y-7 Report -> Create New -> Step 7: Foreign Companies FR Y-7 Template XLSX file for Foreign
+2. Sample File: FR Y-7 Sample XLSX file for Foreign Com

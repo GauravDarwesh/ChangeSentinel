@@ -1,0 +1,203 @@
+<reportingFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" createDate="1957-08-13" createTime="09:30:47+05:00" xsi:noNamespaceSchemaLocation="RCInputXML-1.0-20160520.xsd">
+  <report asOfDate="2025-12-31" reporterId="123456" series="FFIEC030">
+    <itemData confidential="N" estimated="N" mdrm="FORB9017">
+      <value>Test Financial Institution</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB9028">
+      <value>100 S. Test Street</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB9130">
+      <value>Test City</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB9200">
+      <value>TX</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBQ050">
+      <value>TEST FRGN BRANCH</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBW913">
+      <value>100 N. Testing Street</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBW914">
+      <value>TESTING FRGN CITY</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB9005">
+      <value>Venezuela</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB6909">
+      <value>1</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBC490">
+      <value>Jane X. Doe</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBC491">
+      <value>Senior VP</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBJ196">
+      <value>09/20/2016</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2991">
+      <value>2</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBW917">
+      <value>Country 1, Country 2</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBFS64">
+      <value>101 Market Street</value>
+      <context mdrm="FORBN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBFS65">
+      <value>San Francisco</value>
+      <context mdrm="FORBN186" value="1" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBFS64">
+      <value>101 Street address</value>
+      <context mdrm="FORBN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBFS65">
+      <value>Fremont</value>
+      <context mdrm="FORBN186" value="2" />
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB0022">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB0033">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB0034">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB6597">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB0423">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2146">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB1410">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2237">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB1600">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2024">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2123">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2122">
+      <value>15</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2145">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBC482">
+      <value>10</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBC483">
+      <value>10</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2160">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2170">
+      <value>75</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2623">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2625">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2238">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2239">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBC485">
+      <value>10</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBC486">
+      <value>10</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2930">
+      <value>35</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2950">
+      <value>75</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB3415">
+      <value>3415</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB6836">
+      <value>6836</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB6837">
+      <value>6837</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB6839">
+      <value>6839</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB3411">
+      <value>3411</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB3450">
+      <value>34150</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB0071">
+      <value>10</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB6636">
+      <value>15</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBPR53">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBPR54">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBPR55">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBPR56">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBPR57">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBPR58">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBPR59">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBPR60">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB1369">
+      <value>20</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBPV51">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBPV52">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBPV53">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORBPV54">
+      <value>5</value>
+    </itemData>
+    <itemData confidential="N" estimated="N" mdrm="FORB2964">
+      <value>5</value>
+    </itemData>
+  </report>
+</reportingFile>
