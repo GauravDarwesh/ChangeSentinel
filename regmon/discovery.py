@@ -71,7 +71,8 @@ def in_scope(url: str, source: SourceConfig) -> bool:
     if hostname not in allowed_hosts:
         return False
     resource_match = any(value.startswith(prefix) for prefix in source.allowed_resource_prefixes)
-    if not resource_match and not any(value.startswith(prefix) for prefix in source.allowed_prefixes):
+    seed_match = value in {canonical(seed) for seed in source.seed_urls}
+    if not resource_match and not seed_match and not any(value.startswith(prefix) for prefix in source.allowed_prefixes):
         return False
     # Exact URL allowlists still bound legacy page monitoring. Explicit crawl
     # depth > 0 enables same-host traversal; attached resources remain scoped.
