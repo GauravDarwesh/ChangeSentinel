@@ -773,18 +773,14 @@ function renderLatestPreview() {
 // and crawl continuations fold into the window they ran in, so every column is
 // the same span of time and a one-source run never leaves holes in other rows.
 function fieldGeometry() {
-  const field = $("signalVisual");
-  const width = (field && (field.clientWidth || field.parentElement.clientWidth)) || 800;
+  const viewport = $("fieldViewport");
+  const width = (viewport && viewport.clientWidth) || 800;
   const compact = isCompact();
-  // Labels get the room they need to stay readable; the time window gives way.
   const labelWidth = Math.round(compact ? Math.min(176, Math.max(128, width * .44)) : Math.min(260, Math.max(150, width * .28)));
   const gap = compact ? 3 : 4;
-  const room = Math.max(100, width - labelWidth);
-  // Four windows a day: at most seven days on wide screens, about two on phones.
-  const wanted = (compact ? 13 : 29);
-  const tile = Math.max(compact ? 12 : 14, Math.min(22, Math.floor((room + gap) / wanted) - gap));
-  const capacity = Math.max(5, Math.min(wanted, Math.floor((room + gap) / (tile + gap))));
-  return { capacity, labelWidth, tile, gap, key: capacity + "x" + tile + "x" + labelWidth };
+  // Keep cell sizing stable; overflow is handled by the dedicated viewport.
+  const tile = compact ? 14 : 18;
+  return { labelWidth, tile, gap, key: labelWidth + "x" + tile + "x" + gap };
 }
 function renderMonitoringSignal() {
   const field = $("signalVisual");
@@ -795,9 +791,9 @@ function renderMonitoringSignal() {
     return;
   }
   const geometry = fieldGeometry();
-  // The countdown and the cycle bar need every saved scan; the field shows windows.
+  // Keep the saved scan history, not just the windows that fit the screen.
   const scans = L.runColumns(state.history, { workflowRuns: state.workflowRuns });
-  const columns = L.slotColumns(state.history, { workflowRuns: state.workflowRuns, limit: geometry.capacity - 1 });
+  const columns = L.slotColumns(state.history, { workflowRuns: state.workflowRuns });
   const pending = L.pendingScan(new Date(), scans, state.workflowRuns);
   state.scanColumns = scans;
   state.fieldColumns = columns;
@@ -828,7 +824,8 @@ function renderMonitoringSignal() {
       };
       const title = itemTitle(item);
       html += '<button class="field-label" type="button" data-monitor-id="' + esc(item.url_id) + '" data-row="' + y + '" title="' + esc(title) + '">' + esc(title) + "</button>";
-      columns.forEach((column, x) => {
+      // Newest saved run first. Older scan windows continue to the right.
+      columns.slice().reverse().forEach((column, x) => {
         const s = L.columnCellState(column, page);
         html += '<span class="led s-' + s + '" role="gridcell" data-x="' + x + '" data-y="' + y + '" data-col="' + esc(column.id) + '" data-source="' + esc(item.source_id) + '"' +
           (s === "none" ? "" : ' data-monitor-id="' + esc(item.url_id) + '"') +
@@ -839,12 +836,11 @@ function renderMonitoringSignal() {
       y++;
     });
   });
-  // A window that included a manual run is marked under its column.
-  html += '<div class="field-marks" aria-hidden="true">' + columns.map(column =>
+  // Marks and day labels follow the same newest-to-oldest order as the cells.
+  html += '<div class="field-marks" aria-hidden="true">' + columns.slice().reverse().map(column =>
     '<i class="' + (column.manual ? "m-manual" : "") + '"></i>').join("") + "<i></i></div>";
-  // Day labels under the first window of each local day; a hairline marks the day boundary.
   let lastDay = "";
-  html += '<div class="field-axis" aria-hidden="true">' + columns.map(column => {
+  html += '<div class="field-axis" aria-hidden="true">' + columns.slice().reverse().map(column => {
     const day = new Date(column.slot).toLocaleDateString([], { weekday: "short" });
     const label = day !== lastDay ? day : "";
     lastDay = day;
@@ -855,10 +851,10 @@ function renderMonitoringSignal() {
   const fresh = field.querySelectorAll(".led.s-new").length;
   const bad = field.querySelectorAll(".led.s-bad").length;
   const manual = columns.some(column => column.manual);
-  $("fieldNote").textContent = "One column per six-hour scan window (starting " + scheduleTimes() + " your time), newest on the right" +
+  $("fieldNote").textContent = "One column per six-hour scan window (starting " + scheduleTimes() + " your time), newest on the left; scroll right for older history" +
     (manual ? "; a dash marks a window with a manual run" : "") + ". Markup-only edits don't count as changes. " +
     ([lit ? plural(lit, "change", "changes") : "", fresh ? plural(fresh, "new page", "new pages") : "", bad ? plural(bad, "problem", "problems") : ""]
-      .filter(Boolean).join(", ").replace(/^./, ch => ch.toUpperCase()) || "No changes") + " in this window.";
+      .filter(Boolean).join(", ").replace(/^./, ch => ch.toUpperCase()) || "No changes") + " in the displayed history.";
   const manualLegend = document.querySelector(".field-legend .manual");
   if (manualLegend) manualLegend.parentElement.hidden = !manual;
   ledField.measure();
