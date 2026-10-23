@@ -1,464 +1,464 @@
 {
-  "finished_at": "2026-10-21T09:36:24Z",
-  "objective": {
-    "description": "New regulator publications a compliance reviewer may want ChangeSentinel to monitor: rules, consultations, guidance, technical standards, reporting forms and instructions, supervisory letters and notices, Q&A, enforcement actions, decisions and opinions.",
-    "id": "regulatory-publications-v1"
-  },
-  "regulators": [
+ "finished_at": "2026-10-21T09:36:24Z",
+ "objective": {
+  "description": "New regulator publications a compliance reviewer may want ChangeSentinel to monitor: rules, consultations, guidance, technical standards, reporting forms and instructions, supervisory letters and notices, Q&A, enforcement actions, decisions and opinions.",
+  "id": "regulatory-publications-v1"
+ },
+ "regulators": [
+  {
+   "channels": [
     {
-      "channels": [
-        {
-          "error": "",
-          "id": "fed-press-bcreg",
-          "items": 15,
-          "label": "Banking and consumer regulatory policy releases",
-          "new": 0,
-          "note": "",
-          "observed": 15,
-          "out_of_scope": 0,
-          "pages_read": 1,
-          "required": true,
-          "status": "ok",
-          "type": "feed",
-          "url": "https://www.federalreserve.gov/feeds/press_bcreg.xml"
-        },
-        {
-          "error": "",
-          "id": "fed-press-enforcement",
-          "items": 15,
-          "label": "Enforcement actions",
-          "new": 0,
-          "note": "",
-          "observed": 15,
-          "out_of_scope": 0,
-          "pages_read": 1,
-          "required": true,
-          "status": "ok",
-          "type": "feed",
-          "url": "https://www.federalreserve.gov/feeds/press_enforcement.xml"
-        },
-        {
-          "error": "",
-          "id": "fed-bankinginfo",
-          "items": 15,
-          "label": "Supervision and regulation letters and manuals",
-          "new": 0,
-          "note": "",
-          "observed": 15,
-          "out_of_scope": 0,
-          "pages_read": 1,
-          "required": true,
-          "status": "ok",
-          "type": "feed",
-          "url": "https://www.federalreserve.gov/feeds/bankinginfo-rss.xml"
-        },
-        {
-          "error": "",
-          "id": "fed-collections-review",
-          "items": 80,
-          "label": "Information collections under review",
-          "new": 0,
-          "note": "",
-          "observed": 80,
-          "out_of_scope": 108,
-          "pages_read": 1,
-          "required": true,
-          "status": "ok",
-          "type": "listing",
-          "url": "https://www.federalreserve.gov/apps/reportingforms/review"
-        }
-      ],
-      "counts": {
-        "baseline_added": 0,
-        "enriched": 0,
-        "new": 0,
-        "new_irrelevant": 0,
-        "new_relevant": 0,
-        "new_uncertain": 0,
-        "observed": 125,
-        "registry_size": 125,
-        "translations_linked": 0
-      },
-      "finished_at": "2026-10-21T09:35:32Z",
-      "id": "fed",
-      "jurisdiction": "United States",
-      "known_gaps": [
-        "Reads three Board feeds and the information-collections page (the reporting-forms feed only points at the recent-updates page, which the monitor already watches). Pages that are not announced in those feeds and not linked from that page, such as standalone guidance pages reached only through site navigation, are not covered."
-      ],
-      "name": "Board of Governors of the Federal Reserve System",
-      "region": "NAM",
-      "request_budget": 60,
-      "requests": 5,
-      "robots": {
-        "www.federalreserve.gov": {
-          "crawl_delay": null,
-          "status": "unavailable"
-        }
-      },
-      "seconds": 12.5,
-      "short_name": "Federal Reserve",
-      "status": "COMPLETE",
-      "status_reason": "Every declared channel was read as planned",
-      "sweep_id": "20261021T093520Z-135485",
-      "time_budget_seconds": 900
+     "error": "",
+     "id": "fed-press-bcreg",
+     "items": 15,
+     "label": "Banking and consumer regulatory policy releases",
+     "new": 0,
+     "note": "",
+     "observed": 15,
+     "out_of_scope": 0,
+     "pages_read": 1,
+     "required": true,
+     "status": "ok",
+     "type": "feed",
+     "url": "https://www.federalreserve.gov/feeds/press_bcreg.xml"
     },
     {
-      "channels": [
-        {
-          "error": "",
-          "id": "osfi-sitemap",
-          "items": 3763,
-          "label": "Site map (English and French)",
-          "new": 0,
-          "note": "",
-          "observed": 3763,
-          "out_of_scope": 0,
-          "pages_read": 3,
-          "required": true,
-          "status": "ok",
-          "type": "sitemap",
-          "url": "https://www.osfi-bsif.gc.ca/sitemap.xml"
-        }
-      ],
-      "counts": {
-        "baseline_added": 0,
-        "enriched": 0,
-        "new": 0,
-        "new_irrelevant": 0,
-        "new_relevant": 0,
-        "new_uncertain": 0,
-        "observed": 3763,
-        "registry_size": 3763,
-        "translations_linked": 0
-      },
-      "finished_at": "2026-10-21T09:35:43Z",
-      "id": "osfi",
-      "jurisdiction": "Canada",
-      "known_gaps": [
-        "Reads OSFI's published site map only. French pages are linked to their English versions rather than listed separately. Pages missing from the site map are not covered."
-      ],
-      "name": "Office of the Superintendent of Financial Institutions",
-      "region": "NAM",
-      "request_budget": 60,
-      "requests": 4,
-      "robots": {
-        "www.osfi-bsif.gc.ca": {
-          "crawl_delay": null,
-          "status": "parsed"
-        }
-      },
-      "seconds": 11,
-      "short_name": "OSFI",
-      "status": "COMPLETE",
-      "status_reason": "Every declared channel was read as planned",
-      "sweep_id": "20261021T093520Z-135485",
-      "time_budget_seconds": 900
+     "error": "",
+     "id": "fed-press-enforcement",
+     "items": 15,
+     "label": "Enforcement actions",
+     "new": 0,
+     "note": "",
+     "observed": 15,
+     "out_of_scope": 0,
+     "pages_read": 1,
+     "required": true,
+     "status": "ok",
+     "type": "feed",
+     "url": "https://www.federalreserve.gov/feeds/press_enforcement.xml"
     },
     {
-      "channels": [
-        {
-          "error": "",
-          "id": "eba-publications",
-          "items": 17,
-          "label": "Publications",
-          "new": 1,
-          "note": "Caught up with items seen before on page 1",
-          "observed": 17,
-          "out_of_scope": 9,
-          "pages_read": 1,
-          "required": true,
-          "status": "ok",
-          "type": "listing",
-          "url": "https://www.eba.europa.eu/publications-and-media/publications"
-        },
-        {
-          "error": "",
-          "id": "eba-press-releases",
-          "items": 15,
-          "label": "Press releases",
-          "new": 0,
-          "note": "Caught up with items seen before on page 1",
-          "observed": 15,
-          "out_of_scope": 9,
-          "pages_read": 1,
-          "required": true,
-          "status": "ok",
-          "type": "listing",
-          "url": "https://www.eba.europa.eu/publications-and-media/press-releases"
-        }
-      ],
-      "counts": {
-        "baseline_added": 0,
-        "enriched": 0,
-        "new": 1,
-        "new_irrelevant": 1,
-        "new_relevant": 0,
-        "new_uncertain": 0,
-        "observed": 32,
-        "registry_size": 46,
-        "translations_linked": 0
-      },
-      "finished_at": "2026-10-21T09:36:06Z",
-      "id": "eba",
-      "jurisdiction": "European Union",
-      "known_gaps": [
-        "Reads the publications and press-release listings newest first until it reaches items it has already seen (at most six and four pages per sweep). The Single Rulebook Q&A, interactive tools and pages reached only through navigation are not covered.",
-        "The EBA asks crawlers to wait ten seconds between requests, so each sweep is deliberately slow."
-      ],
-      "name": "European Banking Authority",
-      "region": "EMEA",
-      "request_budget": 40,
-      "requests": 3,
-      "robots": {
-        "www.eba.europa.eu": {
-          "crawl_delay": 10,
-          "status": "parsed"
-        }
-      },
-      "seconds": 22.6,
-      "short_name": "EBA",
-      "status": "COMPLETE",
-      "status_reason": "Every declared channel was read as planned",
-      "sweep_id": "20261021T093520Z-135485",
-      "time_budget_seconds": 1200
+     "error": "",
+     "id": "fed-bankinginfo",
+     "items": 15,
+     "label": "Supervision and regulation letters and manuals",
+     "new": 0,
+     "note": "",
+     "observed": 15,
+     "out_of_scope": 0,
+     "pages_read": 1,
+     "required": true,
+     "status": "ok",
+     "type": "feed",
+     "url": "https://www.federalreserve.gov/feeds/bankinginfo-rss.xml"
     },
     {
-      "channels": [
-        {
-          "error": "",
-          "id": "boe-pra-publications",
-          "items": 50,
-          "label": "Prudential regulation publications",
-          "new": 0,
-          "note": "",
-          "observed": 50,
-          "out_of_scope": 0,
-          "pages_read": 1,
-          "required": true,
-          "status": "ok",
-          "type": "feed",
-          "url": "https://www.bankofengland.co.uk/rss/prudential-regulation-publications"
-        },
-        {
-          "error": "",
-          "id": "boe-news",
-          "items": 50,
-          "label": "News",
-          "new": 0,
-          "note": "",
-          "observed": 50,
-          "out_of_scope": 0,
-          "pages_read": 1,
-          "required": false,
-          "status": "ok",
-          "type": "feed",
-          "url": "https://www.bankofengland.co.uk/rss/news"
-        }
-      ],
-      "counts": {
-        "baseline_added": 0,
-        "enriched": 0,
-        "new": 0,
-        "new_irrelevant": 0,
-        "new_relevant": 0,
-        "new_uncertain": 0,
-        "observed": 100,
-        "registry_size": 100,
-        "translations_linked": 0
-      },
-      "finished_at": "2026-10-21T09:36:12Z",
-      "id": "boe-pra",
-      "jurisdiction": "United Kingdom",
-      "known_gaps": [
-        "Reads the Bank's PRA publications feed and its news feed. The Bank's full site map and its research and statistics feeds are not read, so PRA pages announced in neither feed are not covered."
-      ],
-      "name": "Bank of England Prudential Regulation Authority",
-      "region": "EMEA",
-      "request_budget": 60,
-      "requests": 3,
-      "robots": {
-        "www.bankofengland.co.uk": {
-          "crawl_delay": null,
-          "status": "parsed"
-        }
-      },
-      "seconds": 6.4,
-      "short_name": "Bank of England (PRA)",
-      "status": "COMPLETE",
-      "status_reason": "Every declared channel was read as planned",
-      "sweep_id": "20261021T093520Z-135485",
-      "time_budget_seconds": 900
-    },
-    {
-      "channels": [
-        {
-          "error": "",
-          "id": "apra-news-publications",
-          "items": 10,
-          "label": "News and publications",
-          "new": 0,
-          "note": "Caught up with items seen before on page 1",
-          "observed": 10,
-          "out_of_scope": 4,
-          "pages_read": 1,
-          "required": true,
-          "status": "ok",
-          "type": "listing",
-          "url": "https://www.apra.gov.au/news-and-publications"
-        }
-      ],
-      "counts": {
-        "baseline_added": 0,
-        "enriched": 0,
-        "new": 0,
-        "new_irrelevant": 0,
-        "new_relevant": 0,
-        "new_uncertain": 0,
-        "observed": 10,
-        "registry_size": 30,
-        "translations_linked": 0
-      },
-      "finished_at": "2026-10-21T09:36:16Z",
-      "id": "apra",
-      "jurisdiction": "Australia",
-      "known_gaps": [
-        "Reads APRA's news and publications listing newest first until it reaches items it has already seen (at most six pages per sweep). Standards and forms pages that are not announced there are not covered."
-      ],
-      "name": "Australian Prudential Regulation Authority",
-      "region": "APAC",
-      "request_budget": 60,
-      "requests": 2,
-      "robots": {
-        "www.apra.gov.au": {
-          "crawl_delay": null,
-          "status": "parsed"
-        }
-      },
-      "seconds": 3.6,
-      "short_name": "APRA",
-      "status": "COMPLETE",
-      "status_reason": "Every declared channel was read as planned",
-      "sweep_id": "20261021T093520Z-135485",
-      "time_budget_seconds": 900
-    },
-    {
-      "channels": [
-        {
-          "error": "",
-          "id": "banxico-circulars",
-          "items": 323,
-          "label": "Circulars by year",
-          "new": 0,
-          "note": "",
-          "observed": 323,
-          "out_of_scope": 0,
-          "pages_read": 1,
-          "required": true,
-          "status": "ok",
-          "type": "listing",
-          "url": "https://www.banxico.org.mx/marco-normativo/normativa-agrupada-por-ano-cr.html"
-        }
-      ],
-      "counts": {
-        "baseline_added": 0,
-        "enriched": 0,
-        "new": 0,
-        "new_irrelevant": 0,
-        "new_relevant": 0,
-        "new_uncertain": 0,
-        "observed": 323,
-        "registry_size": 323,
-        "translations_linked": 0
-      },
-      "finished_at": "2026-10-21T09:36:21Z",
-      "id": "banxico",
-      "jurisdiction": "Mexico",
-      "known_gaps": [
-        "Reads Banxico's list of circulars by year. Regulation published by other Mexican authorities (CNBV, SHCP) is not covered, and an amendment that only updates an existing circular's page is a content change for the monitor, not a new URL."
-      ],
-      "name": "Banco de México",
-      "region": "LATAM",
-      "request_budget": 60,
-      "requests": 3,
-      "robots": {
-        "www.banxico.org.mx": {
-          "crawl_delay": null,
-          "status": "parsed"
-        }
-      },
-      "seconds": 4.6,
-      "short_name": "Banxico",
-      "status": "COMPLETE",
-      "status_reason": "Every declared channel was read as planned",
-      "sweep_id": "20261021T093520Z-135485",
-      "time_budget_seconds": 900
-    },
-    {
-      "channels": [
-        {
-          "error": "",
-          "id": "bcra-bcra-communications-index",
-          "items": 17,
-          "label": "BCRA Communications Index",
-          "new": 0,
-          "note": "",
-          "observed": 17,
-          "out_of_scope": 17,
-          "pages_read": 1,
-          "required": true,
-          "status": "ok",
-          "type": "listing",
-          "url": "https://www.bcra.gob.ar/en/communications-search-engine/"
-        }
-      ],
-      "counts": {
-        "baseline_added": 0,
-        "enriched": 0,
-        "new": 0,
-        "new_irrelevant": 0,
-        "new_relevant": 0,
-        "new_uncertain": 0,
-        "observed": 17,
-        "registry_size": 17,
-        "translations_linked": 0
-      },
-      "finished_at": "2026-10-21T09:36:24Z",
-      "id": "bcra",
-      "jurisdiction": "Argentina",
-      "known_gaps": [
-        "The monthly report is selected through a form and View button, not exposed as a normal HTML link on the search page.",
-        "The annual index PDFs contain communication entries, but this listing source does not convert those entries into individual communication PDF URLs."
-      ],
-      "name": "Central Bank of the Argentine Republic",
-      "region": "LATAM",
-      "request_budget": 60,
-      "requests": 2,
-      "robots": {
-        "www.bcra.gob.ar": {
-          "crawl_delay": null,
-          "status": "parsed"
-        }
-      },
-      "seconds": 3.1,
-      "short_name": "BCRA",
-      "status": "COMPLETE",
-      "status_reason": "Every declared channel was read as planned",
-      "sweep_id": "20261021T093520Z-135485",
-      "time_budget_seconds": 900
+     "error": "",
+     "id": "fed-collections-review",
+     "items": 80,
+     "label": "Information collections under review",
+     "new": 0,
+     "note": "",
+     "observed": 80,
+     "out_of_scope": 108,
+     "pages_read": 1,
+     "required": true,
+     "status": "ok",
+     "type": "listing",
+     "url": "https://www.federalreserve.gov/apps/reportingforms/review"
     }
-  ],
-  "schema_version": 1,
-  "started_at": "2026-10-21T09:35:20Z",
-  "status": "COMPLETE",
-  "sweep_id": "20261021T093520Z-135485",
-  "totals": {
+   ],
+   "counts": {
     "baseline_added": 0,
+    "enriched": 0,
+    "new": 0,
+    "new_irrelevant": 0,
+    "new_relevant": 0,
+    "new_uncertain": 0,
+    "observed": 125,
+    "registry_size": 125,
+    "translations_linked": 0
+   },
+   "finished_at": "2026-10-21T09:35:32Z",
+   "id": "fed",
+   "jurisdiction": "United States",
+   "known_gaps": [
+    "Reads three Board feeds and the information-collections page (the reporting-forms feed only points at the recent-updates page, which the monitor already watches). Pages that are not announced in those feeds and not linked from that page, such as standalone guidance pages reached only through site navigation, are not covered."
+   ],
+   "name": "Board of Governors of the Federal Reserve System",
+   "region": "NAM",
+   "request_budget": 60,
+   "requests": 5,
+   "robots": {
+    "www.federalreserve.gov": {
+     "crawl_delay": null,
+     "status": "unavailable"
+    }
+   },
+   "seconds": 12.5,
+   "short_name": "Federal Reserve",
+   "status": "COMPLETE",
+   "status_reason": "Every declared channel was read as planned",
+   "sweep_id": "20261021T093520Z-135485",
+   "time_budget_seconds": 900
+  },
+  {
+   "channels": [
+    {
+     "error": "",
+     "id": "osfi-sitemap",
+     "items": 3763,
+     "label": "Site map (English and French)",
+     "new": 0,
+     "note": "",
+     "observed": 3763,
+     "out_of_scope": 0,
+     "pages_read": 3,
+     "required": true,
+     "status": "ok",
+     "type": "sitemap",
+     "url": "https://www.osfi-bsif.gc.ca/sitemap.xml"
+    }
+   ],
+   "counts": {
+    "baseline_added": 0,
+    "enriched": 0,
+    "new": 0,
+    "new_irrelevant": 0,
+    "new_relevant": 0,
+    "new_uncertain": 0,
+    "observed": 3763,
+    "registry_size": 3763,
+    "translations_linked": 0
+   },
+   "finished_at": "2026-10-21T09:35:43Z",
+   "id": "osfi",
+   "jurisdiction": "Canada",
+   "known_gaps": [
+    "Reads OSFI's published site map only. French pages are linked to their English versions rather than listed separately. Pages missing from the site map are not covered."
+   ],
+   "name": "Office of the Superintendent of Financial Institutions",
+   "region": "NAM",
+   "request_budget": 60,
+   "requests": 4,
+   "robots": {
+    "www.osfi-bsif.gc.ca": {
+     "crawl_delay": null,
+     "status": "parsed"
+    }
+   },
+   "seconds": 11,
+   "short_name": "OSFI",
+   "status": "COMPLETE",
+   "status_reason": "Every declared channel was read as planned",
+   "sweep_id": "20261021T093520Z-135485",
+   "time_budget_seconds": 900
+  },
+  {
+   "channels": [
+    {
+     "error": "",
+     "id": "eba-publications",
+     "items": 17,
+     "label": "Publications",
+     "new": 1,
+     "note": "Caught up with items seen before on page 1",
+     "observed": 17,
+     "out_of_scope": 9,
+     "pages_read": 1,
+     "required": true,
+     "status": "ok",
+     "type": "listing",
+     "url": "https://www.eba.europa.eu/publications-and-media/publications"
+    },
+    {
+     "error": "",
+     "id": "eba-press-releases",
+     "items": 15,
+     "label": "Press releases",
+     "new": 0,
+     "note": "Caught up with items seen before on page 1",
+     "observed": 15,
+     "out_of_scope": 9,
+     "pages_read": 1,
+     "required": true,
+     "status": "ok",
+     "type": "listing",
+     "url": "https://www.eba.europa.eu/publications-and-media/press-releases"
+    }
+   ],
+   "counts": {
+    "baseline_added": 0,
+    "enriched": 0,
     "new": 1,
     "new_irrelevant": 1,
     "new_relevant": 0,
     "new_uncertain": 0,
-    "observed": 4370,
-    "requests": 22
+    "observed": 32,
+    "registry_size": 46,
+    "translations_linked": 0
+   },
+   "finished_at": "2026-10-21T09:36:06Z",
+   "id": "eba",
+   "jurisdiction": "European Union",
+   "known_gaps": [
+    "Reads the publications and press-release listings newest first until it reaches items it has already seen (at most six and four pages per sweep). The Single Rulebook Q&A, interactive tools and pages reached only through navigation are not covered.",
+    "The EBA asks crawlers to wait ten seconds between requests, so each sweep is deliberately slow."
+   ],
+   "name": "European Banking Authority",
+   "region": "EMEA",
+   "request_budget": 40,
+   "requests": 3,
+   "robots": {
+    "www.eba.europa.eu": {
+     "crawl_delay": 10,
+     "status": "parsed"
+    }
+   },
+   "seconds": 22.6,
+   "short_name": "EBA",
+   "status": "COMPLETE",
+   "status_reason": "Every declared channel was read as planned",
+   "sweep_id": "20261021T093520Z-135485",
+   "time_budget_seconds": 1200
   },
-  "trigger": "manual"
+  {
+   "channels": [
+    {
+     "error": "",
+     "id": "boe-pra-publications",
+     "items": 50,
+     "label": "Prudential regulation publications",
+     "new": 0,
+     "note": "",
+     "observed": 50,
+     "out_of_scope": 0,
+     "pages_read": 1,
+     "required": true,
+     "status": "ok",
+     "type": "feed",
+     "url": "https://www.bankofengland.co.uk/rss/prudential-regulation-publications"
+    },
+    {
+     "error": "",
+     "id": "boe-news",
+     "items": 50,
+     "label": "News",
+     "new": 0,
+     "note": "",
+     "observed": 50,
+     "out_of_scope": 0,
+     "pages_read": 1,
+     "required": false,
+     "status": "ok",
+     "type": "feed",
+     "url": "https://www.bankofengland.co.uk/rss/news"
+    }
+   ],
+   "counts": {
+    "baseline_added": 0,
+    "enriched": 0,
+    "new": 0,
+    "new_irrelevant": 0,
+    "new_relevant": 0,
+    "new_uncertain": 0,
+    "observed": 100,
+    "registry_size": 100,
+    "translations_linked": 0
+   },
+   "finished_at": "2026-10-21T09:36:12Z",
+   "id": "boe-pra",
+   "jurisdiction": "United Kingdom",
+   "known_gaps": [
+    "Reads the Bank's PRA publications feed and its news feed. The Bank's full site map and its research and statistics feeds are not read, so PRA pages announced in neither feed are not covered."
+   ],
+   "name": "Bank of England Prudential Regulation Authority",
+   "region": "EMEA",
+   "request_budget": 60,
+   "requests": 3,
+   "robots": {
+    "www.bankofengland.co.uk": {
+     "crawl_delay": null,
+     "status": "parsed"
+    }
+   },
+   "seconds": 6.4,
+   "short_name": "Bank of England (PRA)",
+   "status": "COMPLETE",
+   "status_reason": "Every declared channel was read as planned",
+   "sweep_id": "20261021T093520Z-135485",
+   "time_budget_seconds": 900
+  },
+  {
+   "channels": [
+    {
+     "error": "",
+     "id": "apra-news-publications",
+     "items": 10,
+     "label": "News and publications",
+     "new": 0,
+     "note": "Caught up with items seen before on page 1",
+     "observed": 10,
+     "out_of_scope": 4,
+     "pages_read": 1,
+     "required": true,
+     "status": "ok",
+     "type": "listing",
+     "url": "https://www.apra.gov.au/news-and-publications"
+    }
+   ],
+   "counts": {
+    "baseline_added": 0,
+    "enriched": 0,
+    "new": 0,
+    "new_irrelevant": 0,
+    "new_relevant": 0,
+    "new_uncertain": 0,
+    "observed": 10,
+    "registry_size": 30,
+    "translations_linked": 0
+   },
+   "finished_at": "2026-10-21T09:36:16Z",
+   "id": "apra",
+   "jurisdiction": "Australia",
+   "known_gaps": [
+    "Reads APRA's news and publications listing newest first until it reaches items it has already seen (at most six pages per sweep). Standards and forms pages that are not announced there are not covered."
+   ],
+   "name": "Australian Prudential Regulation Authority",
+   "region": "APAC",
+   "request_budget": 60,
+   "requests": 2,
+   "robots": {
+    "www.apra.gov.au": {
+     "crawl_delay": null,
+     "status": "parsed"
+    }
+   },
+   "seconds": 3.6,
+   "short_name": "APRA",
+   "status": "COMPLETE",
+   "status_reason": "Every declared channel was read as planned",
+   "sweep_id": "20261021T093520Z-135485",
+   "time_budget_seconds": 900
+  },
+  {
+   "channels": [
+    {
+     "error": "",
+     "id": "banxico-circulars",
+     "items": 323,
+     "label": "Circulars by year",
+     "new": 0,
+     "note": "",
+     "observed": 323,
+     "out_of_scope": 0,
+     "pages_read": 1,
+     "required": true,
+     "status": "ok",
+     "type": "listing",
+     "url": "https://www.banxico.org.mx/marco-normativo/normativa-agrupada-por-ano-cr.html"
+    }
+   ],
+   "counts": {
+    "baseline_added": 0,
+    "enriched": 0,
+    "new": 0,
+    "new_irrelevant": 0,
+    "new_relevant": 0,
+    "new_uncertain": 0,
+    "observed": 323,
+    "registry_size": 323,
+    "translations_linked": 0
+   },
+   "finished_at": "2026-10-21T09:36:21Z",
+   "id": "banxico",
+   "jurisdiction": "Mexico",
+   "known_gaps": [
+    "Reads Banxico's list of circulars by year. Regulation published by other Mexican authorities (CNBV, SHCP) is not covered, and an amendment that only updates an existing circular's page is a content change for the monitor, not a new URL."
+   ],
+   "name": "Banco de México",
+   "region": "LATAM",
+   "request_budget": 60,
+   "requests": 3,
+   "robots": {
+    "www.banxico.org.mx": {
+     "crawl_delay": null,
+     "status": "parsed"
+    }
+   },
+   "seconds": 4.6,
+   "short_name": "Banxico",
+   "status": "COMPLETE",
+   "status_reason": "Every declared channel was read as planned",
+   "sweep_id": "20261021T093520Z-135485",
+   "time_budget_seconds": 900
+  },
+  {
+   "channels": [
+    {
+     "error": "",
+     "id": "bcra-bcra-communications-index",
+     "items": 17,
+     "label": "BCRA Communications Index",
+     "new": 0,
+     "note": "",
+     "observed": 17,
+     "out_of_scope": 17,
+     "pages_read": 1,
+     "required": true,
+     "status": "ok",
+     "type": "listing",
+     "url": "https://www.bcra.gob.ar/en/communications-search-engine/"
+    }
+   ],
+   "counts": {
+    "baseline_added": 0,
+    "enriched": 0,
+    "new": 0,
+    "new_irrelevant": 0,
+    "new_relevant": 0,
+    "new_uncertain": 0,
+    "observed": 17,
+    "registry_size": 17,
+    "translations_linked": 0
+   },
+   "finished_at": "2026-10-21T09:36:24Z",
+   "id": "bcra",
+   "jurisdiction": "Argentina",
+   "known_gaps": [
+    "The monthly report is selected through a form and View button, not exposed as a normal HTML link on the search page.",
+    "The annual index PDFs contain communication entries, but this listing source does not convert those entries into individual communication PDF URLs."
+   ],
+   "name": "Central Bank of the Argentine Republic",
+   "region": "LATAM",
+   "request_budget": 60,
+   "requests": 2,
+   "robots": {
+    "www.bcra.gob.ar": {
+     "crawl_delay": null,
+     "status": "parsed"
+    }
+   },
+   "seconds": 3.1,
+   "short_name": "BCRA",
+   "status": "COMPLETE",
+   "status_reason": "Every declared channel was read as planned",
+   "sweep_id": "20261021T093520Z-135485",
+   "time_budget_seconds": 900
+  }
+ ],
+ "schema_version": 1,
+ "started_at": "2026-10-21T09:35:20Z",
+ "status": "COMPLETE",
+ "sweep_id": "20261021T093520Z-135485",
+ "totals": {
+  "baseline_added": 0,
+  "new": 1,
+  "new_irrelevant": 1,
+  "new_relevant": 0,
+  "new_uncertain": 0,
+  "observed": 4370,
+  "requests": 22
+ },
+ "trigger": "manual"
 }
