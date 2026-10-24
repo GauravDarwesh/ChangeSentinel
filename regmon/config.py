@@ -40,6 +40,12 @@ class SourceConfig:
     discovery_http_attempts: int = 2
     discovery_slice_seconds: int = 2700
     discovery_max_pages_per_slice: int = 2000
+    # The owner's plain-language alert condition for this monitor ("Alert me
+    # when a new XML user guide is added"). The AI reports whether each change
+    # meets it. With alert_only_on_condition, a change that the AI says does not
+    # meet it is recorded at low priority instead of raising an alert.
+    alert_condition: str = ""
+    alert_only_on_condition: bool = False
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "SourceConfig":
@@ -86,11 +92,14 @@ class SourceConfig:
             discovery_http_attempts=max(1, int(value.get("discovery_http_attempts", 2))),
             discovery_slice_seconds=max(0, int(value.get("discovery_slice_seconds", 2700))),
             discovery_max_pages_per_slice=max(1, int(value.get("discovery_max_pages_per_slice", 2000))),
+            alert_condition=" ".join(str(value.get("alert_condition", "") or "").split()),
+            alert_only_on_condition=bool(value.get("alert_only_on_condition", False)),
         )
 
 
 SOURCE_KEYS = {field.name for field in fields(SourceConfig)}
-BOOL_KEYS = {"active", "baseline_on_first_run", "use_http_discovery"}
+BOOL_KEYS = {"active", "baseline_on_first_run", "use_http_discovery", "alert_only_on_condition"}
+MAX_ALERT_CONDITION_CHARS = 500
 INT_KEYS = {
     "max_urls", "crawl_depth", "discovery_attempts", "discovery_timeout_seconds", "discovery_retry_delay_seconds",
     "discovery_http_timeout_seconds", "discovery_http_workers", "discovery_http_attempts",
@@ -130,6 +139,14 @@ def _validate_source_types(value: dict[str, Any]) -> None:
     for key in LIST_KEYS & set(value):
         if not isinstance(value[key], list) or not all(isinstance(item, str) for item in value[key]):
             raise ValueError(f"Source {sid}: {key} must be a list of strings")
+    if "alert_condition" in value:
+        condition = value["alert_condition"]
+        if not isinstance(condition, str):
+            raise ValueError(f"Source {sid}: alert_condition must be a string")
+        if len(condition.strip()) > MAX_ALERT_CONDITION_CHARS:
+            raise ValueError(f"Source {sid}: alert_condition must be at most {MAX_ALERT_CONDITION_CHARS} characters")
+    if value.get("alert_only_on_condition") is True and not str(value.get("alert_condition") or "").strip():
+        raise ValueError(f"Source {sid}: alert_only_on_condition needs a non-empty alert_condition")
     for pattern in value.get("resource_link_text_patterns", []):
         try:
             re.compile(pattern)
