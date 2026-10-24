@@ -1310,7 +1310,7 @@ function syncFieldTools(counts) {
   });
   const range = $("fieldRange");
   if (range && range.value !== prefs.range) range.value = prefs.range;
-  if (range) range.setAttribute("aria-label", view === "timeline" ? "Timeline time range" : "Grid time range");
+  if (range) range.setAttribute("aria-label", prefs.view === "timeline" ? "Timeline time range" : "Grid time range");
   const group = $("fieldGroup");
   if (group && group.value !== prefs.groupBy) group.value = prefs.groupBy;
 }
