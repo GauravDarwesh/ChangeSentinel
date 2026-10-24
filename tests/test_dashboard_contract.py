@@ -82,6 +82,23 @@ class TestDashboardEvidenceContract(unittest.TestCase):
         self.assertIn(".pdf-viewer-shell.is-expanded .pdf-snapshot-frame", html)
         self.assertIn("height: min(76dvh, 940px)", html)
 
+    def test_pdf_full_screen_escapes_the_detail_pane(self):
+        # A finished entrance animation that keeps its transform (fill-mode both)
+        # makes the element a containing block for position: fixed, which trapped
+        # the "full screen" PDF inside its panel.
+        html = read("index.html")
+        self.assertNotRegex(html, r"animation: rise [^;]* both;")
+        source = read("dashboard.js")
+        self.assertIn("shell.requestFullscreen || shell.webkitRequestFullscreen", source)
+        self.assertIn('"fullscreenchange", "webkitfullscreenchange"', source)
+
+    def test_scan_history_clip_ignores_sticky_scroll_offsets(self):
+        # offsetTop of a sticky header includes how far it is stuck, so the clip
+        # must come from on-screen edges or the lights vanish after "Show more".
+        source = read("dashboard.js")
+        self.assertIn("head.getBoundingClientRect().bottom - frameBox.top", source)
+        self.assertNotIn("clipTop = pulse ? pulse.offsetTop", source)
+
     def test_extracted_markdown_tables_are_rendered_as_html_tables(self):
         lib = read("dashboard-lib.js")
         self.assertIn("function splitMarkdownTableRow(line)", lib)
