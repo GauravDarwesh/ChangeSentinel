@@ -1490,7 +1490,10 @@
     .more-health-cells i.l-stale { background: transparent; box-shadow: inset 0 0 0 1px var(--accent); } .more-health-cells i.l-quiet { background: var(--led-off); }
     .more-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
     .more-tile .more-value { font-size: 15px; }
-    .more-tile .scout-avatar-wrap, .more-tile .cadence-nav-mark { display: none; }
+    .more-tile .more-label::before { display: none; }
+    .more-tile .more-logo { position: static; display: inline-flex; flex: none; width: 16px; height: 16px; margin: 0; transform: none; pointer-events: none; }
+    .more-tile .more-logo svg { display: block; width: 100%; height: 100%; overflow: visible; }
+    .more-tile .cadence-nav-mark { display: inline-flex; }
     .mobile-head { display: none; flex-direction: column; gap: 14px; padding: 0 0 20px; }
     .mobile-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .mobile-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
