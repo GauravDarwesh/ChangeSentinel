@@ -101,9 +101,9 @@ class TestDashboardEvidenceContract(unittest.TestCase):
         self.assertIn("function renderTimeline(columns)", source)
         self.assertIn("view: f.view", source)
 
-    def test_phone_bar_has_four_tabs_and_more_with_health(self):
+    def test_phone_bar_keeps_ask_and_puts_health_in_more(self):
         html = read("index.html")
-        for token in ('id="navMore"', 'id="moreSheet"', 'id="mobileHealth"', 'grid-template-columns: repeat(5, minmax(0, 1fr))'):
+        for token in ('id="navMore"', 'id="moreSheet"', 'id="mobileHealth"', ".rail-nav > .nav-ask, .rail-nav > .nav-more { display: block; }"):
             with self.subTest(token=token):
                 self.assertIn(token, html)
         source = read("dashboard.js")
