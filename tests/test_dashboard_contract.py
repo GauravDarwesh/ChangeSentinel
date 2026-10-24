@@ -92,6 +92,15 @@ class TestDashboardEvidenceContract(unittest.TestCase):
         self.assertIn("shell.requestFullscreen || shell.webkitRequestFullscreen", source)
         self.assertIn('"fullscreenchange", "webkitfullscreenchange"', source)
 
+    def test_scan_history_offers_grid_and_timeline_views(self):
+        html = read("index.html")
+        for token in ('data-field-view="grid"', 'data-field-view="timeline"', 'id="timelineView"', 'data-legend-for="timeline"'):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+        source = read("dashboard.js")
+        self.assertIn("function renderTimeline(columns)", source)
+        self.assertIn("view: f.view", source)
+
     def test_scan_history_clip_ignores_sticky_scroll_offsets(self):
         # offsetTop of a sticky header includes how far it is stuck, so the clip
         # must come from on-screen edges or the lights vanish after "Show more".
