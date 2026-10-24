@@ -33,7 +33,7 @@ from regmon.docling_extractor import configure_timeout_registry
 from regmon.fetch import fetch
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import deadlines, item_codes, reviews
+from regmon import deadlines, health, item_codes, reviews
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -337,10 +337,18 @@ def mark_error_episode(kind: str, item: dict, old: dict | None, now: str) -> str
     message = item.get("fetch_error") if kind == "FETCH_ERROR" else item.get("extraction_error")
     signature = error_signature(kind, message)
     since = now
+    runs = 1
     if old and old.get("error_signature") == signature and old.get("error_since"):
         since = str(old["error_since"])
+        # Records from before this counter existed already alerted for their
+        # episode; count them as at least one earlier failing run.
+        try:
+            runs = max(1, int(old.get("error_runs") or 1)) + 1
+        except (TypeError, ValueError):
+            runs = 2
     item["error_signature"] = signature
     item["error_since"] = since
+    item["error_runs"] = runs
     return operational_notification_id(item["url_id"], signature, since)
 
 
@@ -466,7 +474,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
                 for key in (
                     "raw_hash", "normalized_hash", "html_hash", "html_comparison_hash", "html_comparison_hash_version", "html_snapshot_location",
                     "file_snapshot_location", "extraction_type", "extractor_version", "snapshot_location", "evidence_location", "relevance",
-                    "extraction_error", "error_signature", "error_since",
+                    "extraction_error", "error_signature", "error_since", "error_runs",
                 ):
                     if key in old:
                         item[key] = old[key]
@@ -687,7 +695,7 @@ def process_source(
                     )
                 item["evidence_location"] = evidence
                 notification_id = mark_error_episode("FETCH_ERROR", item, old, now)
-                events.append({"event_id":event_id,"event_type":"FETCH_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"notification_id":notification_id,"error_since":item["error_since"],"evidence":{"error":item["fetch_error"]}})
+                events.append({"event_id":event_id,"event_type":"FETCH_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"notification_id":notification_id,"error_since":item["error_since"],"error_runs":item["error_runs"],"evidence":{"error":item["fetch_error"]}})
                 continue
 
             if item.get("extraction_error"):
@@ -707,7 +715,7 @@ def process_source(
                 item["evidence_location"] = evidence
                 notification_id = mark_error_episode("EXTRACTION_ERROR", item, old, now)
                 current[uid] = item
-                events.append({"event_id":event_id,"event_type":"EXTRACTION_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"notification_id":notification_id,"error_since":item["error_since"],"evidence":{"error":item["extraction_error"]}})
+                events.append({"event_id":event_id,"event_type":"EXTRACTION_ERROR","url":url,"url_id":uid,"source_id":source.id,"timestamp":now,"evidence_location":evidence,"notification_id":notification_id,"error_since":item["error_since"],"error_runs":item["error_runs"],"evidence":{"error":item["extraction_error"]}})
                 continue
 
             # Re-hash an older HTML snapshot when the signature algorithm version
@@ -1286,7 +1294,16 @@ def _aggregate_report(reports: list[dict], run_id: str, generated_at: str | None
         "baseline_migrations":[x for report in reports for x in report.get("baseline_migrations",[])],
         "events":_sort_events([x for report in reports for x in report.get("events",[])]),
         "ai_results":[x for report in reports for x in report.get("ai_results",[])],
+        "error_alert_after_runs":error_alert_after_runs(),
     }
+
+
+def error_alert_after_runs() -> int:
+    """Consecutive failing scans of a resource before its error alerts (default 1)."""
+    try:
+        return max(1, int(DEFAULTS.get("error_alert_after_runs", 1)))
+    except (TypeError, ValueError):
+        return 1
 
 
 def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -> dict:
@@ -1353,6 +1370,12 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
         deadlines.write(DATA, DEFAULT_CONFIG_PATH)
     except Exception as exc:
         print(f"Regulatory calendar not rebuilt: {type(exc).__name__}: {exc}")
+    # Fleet health ledger (failing, stale, inactive and year-stamped monitors,
+    # check and alert volumes). Derived from committed state; never fails a scan.
+    try:
+        health.write(DATA, DEFAULT_CONFIG_PATH)
+    except Exception as exc:
+        print(f"Fleet health ledger not rebuilt: {type(exc).__name__}: {exc}")
     return {"dry_run":False,"sources":[r["report"]["source"]["id"] for r in source_results],"run_id":run_id}
 
 def run(source_id: str="all", dry_run: bool=False) -> dict:

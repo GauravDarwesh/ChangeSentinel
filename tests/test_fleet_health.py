@@ -1,0 +1,157 @@
+"""Fleet health ledger (data/health.json) and the consecutive-failure alert threshold."""
+from __future__ import annotations
+
+import json
+import tempfile
+import unittest
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+from engine_harness import Sandbox, html, ok
+from regmon import health
+from regmon.config import SourceConfig, validate_config
+from regmon.notify import build_notifications
+
+NOW = datetime(2026, 12, 15, 12, 0, tzinfo=timezone.utc)
+
+
+def iso(delta: timedelta) -> str:
+    return (NOW - delta).isoformat()
+
+
+def source(source_id, url, **extra):
+    return {"id": source_id, "name": source_id.title(), "regulator": "Reg", "active": True, "seed_urls": [url], **extra}
+
+
+def row(url, **extra):
+    return {"canonical_url": url, "active": True, "first_seen": iso(timedelta(days=80)), **extra}
+
+
+def run(source_id, delta, **counts):
+    return {"source_id": source_id, "generated_at": iso(delta), "counts": counts}
+
+
+class TestHealthLedger(unittest.TestCase):
+    def build(self):
+        config = {"sources": [
+            source("ok", "https://a.test/ok"),
+            source("failing", "https://a.test/fail", alert_condition="New guide"),
+            source("quiet", "https://a.test/quiet"),
+            source("stale", "https://a.test/stale"),
+            source("circular", "https://a.test/circulares-2025"),
+            source("retired", "https://a.test/off", active=False),
+        ]}
+        latest = {"sources": {
+            "ok": {"1": row("https://a.test/ok", last_changed_at=iso(timedelta(days=2)))},
+            "failing": {"2": row(
+                "https://a.test/fail", extraction_error="Parser failed",
+                error_since=iso(timedelta(hours=13)),
+            )},
+            "quiet": {"3": row("https://a.test/quiet", last_changed_at=iso(timedelta(days=60)))},
+            "stale": {"4": row("https://a.test/stale")},
+            "circular": {"5": row("https://a.test/circulares-2025")},
+            "retired": {"6": row("https://a.test/off")},
+        }}
+        history = [
+            run("ok", timedelta(hours=1), unchanged=1),
+            run("ok", timedelta(days=2), changed=1),
+            run("failing", timedelta(hours=1), extraction_error=1),
+            run("failing", timedelta(hours=7), extraction_error=1),
+            run("failing", timedelta(hours=14), unchanged=1),
+            run("quiet", timedelta(hours=1), unchanged=1),
+            run("stale", timedelta(hours=30), unchanged=1),
+            run("circular", timedelta(hours=1), unchanged=1),
+            run("ok", timedelta(days=20), changed=1),
+        ]
+        ledger = {"sent_events": {
+            "a": {"kind": "CHANGED_URL", "sent_at": iso(timedelta(days=2))},
+            "b": {"kind": "TEST", "sent_at": iso(timedelta(days=1))},
+            "c": {"kind": "CHANGED_URL", "sent_at": iso(timedelta(days=20))},
+        }}
+        return health.build_health(config, latest, history, ledger, NOW)
+
+    def test_statuses_and_rosters(self):
+        result = self.build()
+        statuses = {monitor["source_id"]: monitor["status"] for monitor in result["monitors"]}
+        self.assertEqual(statuses, {
+            "ok": "healthy", "failing": "failing", "quiet": "inactive", "stale": "stale", "circular": "inactive",
+        })
+        self.assertNotIn("retired", statuses)
+        failing = result["failing"][0]
+        self.assertEqual((failing["source_id"], failing["kind"], failing["runs"], failing["hours"]), ("failing", "EXTRACTION_ERROR", 2, 13.0))
+        self.assertEqual(result["inactive"][0]["source_id"], "circular")
+        self.assertEqual(result["year_bound"][0]["years"], [2025])
+        self.assertEqual(result["totals"]["with_alert_condition"], 1)
+        self.assertEqual(result["totals"]["pages"], 5)
+
+    def test_windows_count_checks_failures_changes_and_real_alerts(self):
+        result = self.build()
+        week = result["last_7_days"]
+        self.assertEqual(week["checks"], 8)
+        self.assertEqual(week["failed_checks"], 2)
+        self.assertEqual(week["changes"], 1)
+        self.assertEqual(week["alerts_sent"], 1)
+        self.assertEqual(result["last_30_days"]["alerts_sent"], 2)
+        self.assertEqual(len(result["daily"]), health.SERIES_DAYS)
+        self.assertEqual(result["daily"][-1]["date"], "2026-12-15")
+
+    def test_current_year_and_fresh_urls_are_not_flagged(self):
+        self.assertIsNone(health.year_bound("https://a.test/circulares-2026", NOW))
+        self.assertIsNone(health.year_bound("https://a.test/2025-to-2026-plan", NOW))
+        self.assertEqual(health.year_bound("https://a.test/guide-12-31-2022.pdf", NOW), 2022)
+
+    def test_write_survives_missing_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data = Path(tmp)
+            config = data / "sources.json"
+            config.write_text(json.dumps({"sources": [source("ok", "https://a.test/ok")]}), encoding="utf-8")
+            result = health.write(data, config, now=NOW)
+            self.assertEqual(json.loads((data / "health.json").read_text())["totals"]["stale"], 1)
+            self.assertEqual(result["last_7_days"]["success_rate"], None)
+
+
+class TestErrorAlertThreshold(unittest.TestCase):
+    def failing_scan(self, box):
+        def fail(*_args, **_kwargs):
+            raise RuntimeError("HTTP 500 from regulator")
+        return box.scan(fail)
+
+    def test_error_runs_count_consecutive_failures_and_reset(self):
+        with Sandbox() as box:
+            box.scan(lambda *_a, **_k: ok(html("<p>v1</p>")))
+            first = self.failing_scan(box)
+            second = self.failing_scan(box)
+            events = [first["report"]["events"][0], second["report"]["events"][0]]
+            self.assertEqual([event["error_runs"] for event in events], [1, 2])
+            self.assertEqual(events[0]["notification_id"], events[1]["notification_id"])
+            box.scan(lambda *_a, **_k: ok(html("<p>v1</p>")))
+            third = self.failing_scan(box)
+            self.assertEqual(third["report"]["events"][0]["error_runs"], 1)
+
+    def test_notifier_waits_for_the_threshold_then_alerts_once(self):
+        event = {
+            "event_id": "e1", "event_type": "FETCH_ERROR", "url": "https://a.test", "notification_id": "episode-1",
+            "error_since": "2026-12-15T00:00:00+00:00", "evidence": {"error": "HTTP 500"},
+        }
+        first = build_notifications({"error_alert_after_runs": 2, "events": [dict(event, error_runs=1)]})
+        self.assertEqual(first, [])
+        second = build_notifications({"error_alert_after_runs": 2, "events": [dict(event, error_runs=2)]})
+        self.assertEqual([n["event_id"] for n in second], ["episode-1"])
+        self.assertIn("failed 2 consecutive scans", second[0]["summary"])
+        # Default and legacy reports alert on the first failure, as before.
+        self.assertEqual(len(build_notifications({"events": [dict(event, error_runs=1)]})), 1)
+        self.assertEqual(len(build_notifications({"error_alert_after_runs": 3, "events": [event]})), 1)
+
+    def test_threshold_is_validated(self):
+        base = SourceConfig.from_dict({
+            "id": "x", "name": "x", "regulator": "r", "seed_urls": ["https://a.test/"],
+            "allowed_prefixes": ["https://a.test/"], "allowed_domains": ["a.test"],
+        })
+        validate_config({"defaults": {"error_alert_after_runs": 4}, "sources": []}, [base])
+        for bad in (0, 29, "2", True):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                validate_config({"defaults": {"error_alert_after_runs": bad}, "sources": []}, [base])
+
+
+if __name__ == "__main__":
+    unittest.main()

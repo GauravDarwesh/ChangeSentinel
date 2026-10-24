@@ -165,6 +165,10 @@ def enqueue_notifications(outbox: dict, candidates: list[dict], sent_events: dic
 
 
 def build_notifications(report: dict) -> list[dict]:
+    try:
+        threshold = max(1, int(report.get("error_alert_after_runs") or 1))
+    except (TypeError, ValueError):
+        threshold = 1
     # Deterministic high-confidence exclusions (such as /contact or /careers)
     # must be excluded from delivery as well as AI analysis. Otherwise the
     # generic CHANGED_URL fallback would still alert even though triage rejected
@@ -260,6 +264,16 @@ def build_notifications(report: dict) -> list[dict]:
                 generic["reporting_items"] = item_lines[event_id]
             output.append(generic)
         elif kind in {"FETCH_ERROR", "EXTRACTION_ERROR"}:
+            # A failure alerts only once it has persisted for the configured
+            # number of consecutive scans, so a one-off timeout on a regulator
+            # site is recorded (and visible in data/health.json) without an
+            # alert. The notification ID is per episode, so it alerts once.
+            try:
+                failing_runs = int(event.get("error_runs") or threshold)
+            except (TypeError, ValueError):
+                failing_runs = threshold
+            if failing_runs < threshold:
+                continue
             error = (event.get("evidence") or {}).get("error", "Unknown operational error")
             # Operational events get a unique ID per observation (so evidence is
             # never overwritten), but an unchanged, persistent error must alert
@@ -273,7 +287,12 @@ def build_notifications(report: dict) -> list[dict]:
                 "event_id": notification_id, "source_event_id": event_id,
                 "kind": kind, "url": event.get("url"),
                 "topic": "Monitoring operational alert",
-                "summary": "The current run could not fully process a monitored regulator resource.",
+                "summary": (
+                    "The current run could not fully process a monitored regulator resource."
+                    if failing_runs <= 1 else
+                    f"A monitored regulator resource has failed {failing_runs} consecutive scans"
+                    + (f" (since {event.get('error_since')})." if event.get("error_since") else ".")
+                ),
                 "reason": error, "impact": "The previous known-good baseline was preserved.",
                 "priority": 3, "tags": ["warning", "monitoring"],
             })
