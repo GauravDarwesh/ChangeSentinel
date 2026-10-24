@@ -771,6 +771,59 @@
     .explore-list { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
     .explore-list .empty { min-height: 0; padding: 28px 18px; }
 
+    /* Smarter picking: the area, page rules, similar links and document rules. */
+    .explore-pick { min-height: 30px; padding: 4px 10px; font-size: 12.5px; }
+    .explore-pick[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+    .explore-tabs button { padding-left: 9px; padding-right: 9px; }
+    .smart-tools { display: grid; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); background: var(--bg); }
+    .smart-card { display: grid; gap: 7px; padding: 11px 12px 12px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--pane); }
+    .smart-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .smart-card-head .text-button { font-size: 12px; }
+    .smart-kicker { color: var(--ink-3); font: 500 10.5px/1.4 var(--font-code); letter-spacing: .08em; text-transform: uppercase; }
+    .area-card { border-color: color-mix(in srgb, var(--accent) 55%, var(--line-2)); box-shadow: inset 2px 0 0 var(--accent); }
+    .area-label { color: var(--ink); font-size: 13px; font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; }
+    .area-text { color: var(--ink-2); font-size: 12px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .area-selector { overflow: hidden; color: var(--ink-3); font: 400 11px/1.5 var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
+    .smart-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .smart-actions .btn { min-height: 28px; padding: 3px 9px; font-size: 12px; }
+    .smart-note { color: var(--ink-3); font-size: 11.5px; line-height: 1.5; }
+    .smart-note.is-warning { color: var(--accent); }
+    .rule-chip { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 5px 4px 5px 8px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); font-size: 12px; }
+    .rule-chip span { font-weight: 500; }
+    .rule-chip.is-watch span { color: var(--good); }
+    .rule-chip.is-ignore span { color: var(--state-bad); }
+    .rule-chip code { overflow: hidden; color: var(--ink-2); font: 400 11px/1.5 var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
+    .rule-chip button { width: 22px; height: 22px; padding: 0; border: 0; background: none; color: var(--ink-3); font-size: 15px; line-height: 1; }
+    .rule-chip button:hover { color: var(--ink); }
+    .similar-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .similar-row .smart-kicker { flex-basis: 100%; }
+    .similar-chip { display: inline-flex; align-items: baseline; gap: 6px; max-width: 100%; padding: 5px 10px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--pane); color: var(--ink-2); font-size: 12px; line-height: 1.35; text-align: left; }
+    .similar-chip b { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
+    .similar-chip:hover { border-color: var(--accent); color: var(--ink); }
+    .rule-open { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border: 1px dashed color-mix(in srgb, var(--accent) 60%, var(--line-2)); border-radius: var(--radius); background: var(--accent-soft); color: var(--ink); text-align: left; }
+    .rule-open:hover { border-style: solid; }
+    .rule-open-mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--bg); font-size: 15px; }
+    .rule-open strong { display: block; font-size: 13px; font-weight: 500; }
+    .rule-open small { display: block; margin-top: 1px; color: var(--ink-2); font-size: 11.5px; line-height: 1.4; }
+    .rule-card { border-color: color-mix(in srgb, var(--accent) 55%, var(--line-2)); }
+    .rule-lede { color: var(--ink-2); font-size: 12.5px; line-height: 1.5; overflow-wrap: anywhere; }
+    .rule-lede strong { color: var(--ink); font-weight: 500; }
+    .rule-field { display: grid; gap: 3px; color: var(--ink-3); font-size: 11.5px; }
+    .rule-field .field-input { min-height: 30px; margin-top: 0; padding: 4px 8px; font: 400 12px/1.4 var(--font-code); }
+    .rule-count { color: var(--ink-2); font-size: 12px; line-height: 1.5; }
+    .rule-count strong { color: var(--ink); font-weight: 500; }
+    .rule-error { color: var(--state-bad); }
+    .link-pick-meta .reason { flex: none; padding: 0 6px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink-2); font-size: 11px; line-height: 17px; white-space: nowrap; }
+    .tag.is-older { color: var(--ink-3); }
+    .tag.is-older::before { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); }
+    .tag.is-rule, .tag.is-part { color: var(--accent); }
+    .tag.is-rule::before, .tag.is-part::before { background: var(--accent); }
+    .link-pick-meta { flex-wrap: wrap; }
+    .review-similar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 18px; border-bottom: 1px solid var(--line); background: var(--bg); }
+    .review-similar .smart-kicker { margin-right: 4px; }
+    .review-older { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); font-size: 12.5px; white-space: nowrap; cursor: pointer; }
+    .review-older input { accent-color: var(--accent); }
+
     /* One row style for every list of links in the dialog. */
     .link-pick { position: relative; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; align-items: start; border-bottom: 1px solid var(--line); transition: background-color .12s var(--ease); }
     .link-pick:hover { background: var(--raise); }
@@ -818,7 +871,7 @@
     .review-head { display: grid; gap: 10px; padding: 14px 22px 12px; border-bottom: 1px solid var(--line); }
     .review-note { color: var(--ink-2); font-size: 13px; line-height: 1.55; }
     .review-note.is-warning { color: var(--accent); }
-    .review-tools { display: grid; grid-template-columns: minmax(0, 1fr) 150px auto; align-items: center; gap: 12px; }
+    .review-tools { display: grid; grid-template-columns: minmax(0, 1fr) 150px auto auto; align-items: center; gap: 12px; }
     .review-tools .field-input { min-height: 32px; margin-top: 0; padding: 5px 26px 5px 9px; font-size: 12.5px; }
     .review-list { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
     .review-list .empty { min-height: 200px; }
@@ -848,6 +901,9 @@
       .review-head { padding: 12px 16px; }
       .review-tools { grid-template-columns: minmax(0, 1fr) 1fr; }
       .review-tools .search-field { grid-column: 1 / -1; }
+      .review-tools .filters { grid-column: 1 / -1; }
+      .explore-pick { order: 1; }
+      .smart-tools { padding: 10px 12px; }
       .link-pick { grid-template-columns: 30px minmax(0, 1fr); }
       .link-pick-side { grid-column: 2; padding: 0 14px 10px 2px; }
       .link-group { padding: 10px 14px 6px; }
@@ -1581,6 +1637,68 @@
     .cadence-reminder-fieldset:has(#cadenceReminderEnabled:not(:checked)) .cadence-form-grid, .cadence-reminder-fieldset:has(#cadenceReminderEnabled:not(:checked)) .field-help { opacity: .48; }
     .cadence-form-grid .field-input { min-width: 0; }
 
+    /* Cadence: twelve-week load strip, clashes, source flags, filing planner. */
+    .cadence-load { margin: 0 0 14px; padding: 12px 14px 10px; border: 1px solid var(--line); background: var(--pane); }
+    .cadence-load:empty { display: none; }
+    .cadence-load-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 9px; }
+    .cadence-load-head > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+    .cadence-load-head .cadence-eyebrow { flex-basis: 100%; }
+    .cadence-load-head strong { font: 500 15px/1.3 var(--font-ui); }
+    .cadence-load-warn { color: var(--accent); font-size: 12px; }
+    .cadence-load-key { display: inline-flex; align-items: center; gap: 3px; color: var(--ink-3); font-size: 10.5px; white-space: nowrap; }
+    .cadence-load-key i { width: 9px; height: 9px; background: var(--accent); }
+    .cadence-load-key .l1 { opacity: .25; } .cadence-load-key .l2 { opacity: .45; } .cadence-load-key .l3 { opacity: .7; }
+    .cadence-load-key i:last-of-type { margin-right: 4px; }
+    .cadence-load-strip { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px; }
+    .cadence-load-week { position: relative; display: grid; grid-template-rows: 38px auto auto; justify-items: center; gap: 3px; min-width: 0; padding: 4px 2px 3px; border: 1px solid transparent; background: none; color: var(--ink-3); cursor: pointer; }
+    .cadence-load-week:hover { border-color: var(--line-2); background: var(--raise); }
+    .cadence-load-week.is-now { border-color: var(--line-2); }
+    .cadence-load-bar { position: relative; display: block; width: 100%; max-width: 30px; height: 38px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); }
+    .cadence-load-bar i { position: absolute; left: 0; right: 0; bottom: 0; background: var(--accent); opacity: .3; transition: height .3s var(--ease); }
+    .cadence-load-week.lv2 .cadence-load-bar i { opacity: .5; } .cadence-load-week.lv3 .cadence-load-bar i { opacity: .72; } .cadence-load-week.lv4 .cadence-load-bar i { opacity: 1; }
+    .cadence-load-week.is-busy .cadence-load-bar { box-shadow: inset 0 0 0 1px var(--accent); }
+    .cadence-load-week.is-busy::after { content: "!"; position: absolute; top: 1px; right: 3px; color: var(--accent); font: 600 10px/1 var(--font-code); }
+    .cadence-load-count { min-height: 13px; color: var(--ink); font: 500 11px/1.2 var(--font-code); }
+    .cadence-load-date { color: var(--ink-3); font: 9.5px/1.2 var(--font-code); white-space: nowrap; }
+    .cadence-day.is-clash::after { content: ""; position: absolute; top: 9px; right: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+    .cadence-flag { display: inline-flex; align-items: center; gap: 5px; color: var(--ink-3); font-size: 11px; }
+    .cadence-flag::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); }
+    .cadence-flag.is-changed { color: var(--accent); font-weight: 500; }
+    .cadence-flag.is-changed::before { background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+    .cadence-flag.is-watched::before { background: var(--good); }
+    .cadence-plan-dialog { width: min(980px, calc(100vw - 28px)); }
+    .plan-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 18px; align-items: start; }
+    .plan-inputs { display: grid; gap: 12px; min-width: 0; }
+    .plan-check { display: block; padding-left: 22px; text-indent: -22px; color: var(--ink-2); font-size: 12.5px; line-height: 1.45; }
+    .plan-check input { margin: 0 8px 0 0; vertical-align: -1px; }
+    .plan-check input { accent-color: var(--accent); }
+    .plan-check span { color: var(--ink-3); }
+    .plan-steps-fieldset legend { color: var(--ink); }
+    .plan-milestone { display: grid; grid-template-columns: auto minmax(0, 1fr) 64px auto; align-items: center; gap: 8px; margin-top: 6px; color: var(--ink-3); font-size: 11.5px; }
+    .plan-milestone input[type="checkbox"] { accent-color: var(--accent); }
+    .plan-milestone .field-input { min-height: 30px; margin: 0; padding: 4px 8px; font-size: 12.5px; }
+    .plan-preview-card { position: sticky; top: 0; min-width: 0; max-height: 62vh; overflow-y: auto; border: 1px solid var(--line); background: var(--bg); }
+    .plan-preview-head { padding: 10px 12px; border-bottom: 1px solid var(--line); }
+    .plan-preview { display: grid; }
+    .plan-cycle { padding: 11px 12px; border-bottom: 1px solid var(--line); }
+    .plan-cycle:last-child { border-bottom: 0; }
+    .plan-cycle-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 10px; }
+    .plan-cycle-head strong { font-size: 13px; font-weight: 500; }
+    .plan-due { color: var(--accent); font: 500 12px/1.4 var(--font-code); }
+    .plan-due em { color: var(--ink-3); font-style: normal; font-weight: 400; }
+    .plan-steps { display: grid; gap: 3px; margin: 8px 0 0; padding: 0 0 0 12px; border-left: 1px solid var(--line-2); list-style: none; }
+    .plan-steps li { display: flex; justify-content: space-between; gap: 10px; color: var(--ink-2); font-size: 12px; }
+    .plan-steps time { color: var(--ink-3); font: 11px/1.6 var(--font-code); white-space: nowrap; }
+    @media (max-width: 760px) {
+      .plan-layout { grid-template-columns: minmax(0, 1fr); }
+      .plan-preview-card { position: static; max-height: none; }
+      .cadence-load-strip { grid-template-columns: repeat(12, minmax(22px, 1fr)); overflow-x: auto; }
+      .cadence-load-date { font-size: 8.5px; }
+      .cadence-load-key { display: none; }
+      .plan-milestone { grid-template-columns: auto minmax(0, 1fr) 58px; }
+      .plan-milestone span { grid-column: 2 / -1; margin-top: -4px; }
+    }
+
     .cadence-stat-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin-bottom: 23px; }
     .cadence-stat { display: grid; gap: 4px; min-height: 86px; padding: 13px 15px; border: 1px solid var(--line); background: var(--pane); }
     .cadence-stat-label { color: var(--ink-3); font-size: 11px; }
@@ -2083,6 +2201,7 @@
             </div>
             <div class="cadence-header-actions">
               <button class="btn btn-quiet" type="button" data-calendar-export>Export .ics</button>
+              <button class="btn" type="button" data-calendar-plan title="Lay out a periodic return's next due dates and the team's steps before each">Plan a filing</button>
               <button class="btn btn-primary" type="button" data-calendar-new>+ New entry</button>
             </div>
           </header>
@@ -2125,7 +2244,10 @@
             <select class="field-input cadence-filter-type" id="cadenceTypeFilter">
               <option value="ALL">All entry types</option><option value="DETECTED">ChangeSentinel dates</option><option value="EXPECTED">Expected updates &amp; deadlines</option><option value="TEAM">Team tasks &amp; checkpoints</option>
             </select>
+            <label class="visually-hidden" for="cadenceOwnerFilter">Filter by owner</label>
+            <select class="field-input cadence-filter-type" id="cadenceOwnerFilter" hidden><option value="ALL">Every owner</option></select>
           </div>
+          <section class="cadence-load" id="cadenceLoad" aria-label="Workload over the next 12 weeks"></section>
           <div class="cadence-view-switch" role="group" aria-label="Calendar view">
             <button type="button" data-calendar-mode="month" aria-pressed="true">Month</button>
             <button type="button" data-calendar-mode="upcoming" aria-pressed="false">Upcoming &amp; overdue</button>
@@ -2235,6 +2357,46 @@
       </div>
     </form>
   </dialog>
+  <dialog class="modal cadence-entry-dialog cadence-plan-dialog" id="cadencePlanDialog" aria-labelledby="cadencePlanHeading">
+    <div class="modal-head">
+      <div><h2 id="cadencePlanHeading">Plan a filing</h2><p>Lay out a periodic return’s next due dates and the team’s steps before each, then add them to Cadence in one go.</p></div>
+      <button class="btn btn-quiet" type="button" data-plan-close aria-label="Close">Close</button>
+    </div>
+    <form class="modal-body" id="cadencePlanForm" novalidate>
+      <div class="plan-layout">
+        <div class="plan-inputs">
+          <div><label class="field-label-text" for="cadencePlanName">Return or form</label><input class="field-input" id="cadencePlanName" maxlength="100" placeholder="FR Y-9C" required></div>
+          <div class="cadence-form-grid">
+            <div><label class="field-label-text" for="cadencePlanRegulator">Regulator</label><input class="field-input" id="cadencePlanRegulator" list="cadencePlanRegulators" maxlength="160" placeholder="Federal Reserve"><datalist id="cadencePlanRegulators"></datalist></div>
+            <div><label class="field-label-text" for="cadencePlanOwner">Owner</label><input class="field-input" id="cadencePlanOwner" maxlength="120" placeholder="Regulatory Reporting"></div>
+          </div>
+          <div class="cadence-form-grid">
+            <div><label class="field-label-text" for="cadencePlanFrequency">Filed</label><select class="field-input" id="cadencePlanFrequency"><option value="quarterly" selected>Quarterly</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select></div>
+            <div id="cadencePlanYearEndWrap"><label class="field-label-text" for="cadencePlanYearEnd">Year ends in</label><select class="field-input" id="cadencePlanYearEnd">
+              <option value="0">January</option><option value="1">February</option><option value="2">March</option><option value="3">April</option><option value="4">May</option><option value="5">June</option><option value="6">July</option><option value="7">August</option><option value="8">September</option><option value="9">October</option><option value="10">November</option><option value="11" selected>December</option></select></div>
+          </div>
+          <div class="cadence-form-grid">
+            <div><label class="field-label-text" for="cadencePlanLag">Due, days after period end</label><input class="field-input" id="cadencePlanLag" type="number" min="0" max="365" value="40"></div>
+            <div id="cadencePlanLagLastWrap"><label class="field-label-text" for="cadencePlanLagLast">Year-end period <span>Optional</span></label><input class="field-input" id="cadencePlanLagLast" type="number" min="0" max="365" placeholder="Same" value="45"></div>
+          </div>
+          <label class="plan-check"><input type="checkbox" id="cadencePlanBusiness" checked> If a due date falls on a weekend, move it to the next business day <span>(public holidays aren’t known)</span></label>
+          <fieldset class="cadence-reminder-fieldset plan-steps-fieldset"><legend>Team steps before each filing</legend><div id="cadencePlanMilestones"></div></fieldset>
+          <div class="cadence-form-grid">
+            <div><label class="field-label-text" for="cadencePlanCycles">Plan</label><select class="field-input" id="cadencePlanCycles"></select></div>
+            <div><label class="field-label-text" for="cadencePlanSource">Source link <span>Optional</span></label><input class="field-input" id="cadencePlanSource" type="url" maxlength="1000" placeholder="https://www.example.gov/forms"></div>
+          </div>
+          <label class="plan-check"><input type="checkbox" id="cadencePlanReminder"> Email me a week before each due date</label>
+        </div>
+        <section class="plan-preview-card" aria-label="Preview"><div class="plan-preview-head"><span class="cadence-eyebrow">PREVIEW</span></div><div id="cadencePlanPreview" class="plan-preview"></div></section>
+      </div>
+      <p class="field-help" id="cadencePlanNote"></p>
+      <div id="cadencePlanStatus" class="bulk-status" role="status" aria-live="polite"></div>
+      <div class="modal-actions">
+        <button class="btn" type="button" id="cadencePlanIcs">Download .ics</button>
+        <button class="btn btn-primary" id="cadencePlanSave" type="submit">Add to Cadence</button>
+      </div>
+    </form>
+  </dialog>
   <dialog class="modal add-link" id="addMonitorDialog" aria-labelledby="addMonitorHeading" data-step="start">
     <div class="modal-head add-head">
       <div><h2 id="addMonitorHeading">Add a link</h2><p id="addMonitorLede">Open a page and pick the links on it you want ChangeSentinel to monitor.</p></div>
@@ -2322,6 +2484,7 @@
         <button class="explore-nav" type="button" data-explore-forward aria-label="Forward" title="Forward">&#8250;</button>
         <div class="explore-address"><span class="explore-led" id="exploreLed" aria-hidden="true"></span><span id="exploreAddress"></span></div>
         <button class="btn explore-this" type="button" data-explore-this>Select this page</button>
+        <button class="btn explore-pick" type="button" data-explore-pick aria-pressed="false" title="Click a table, list or section of the page to select it">Pick a part</button>
         <label class="explore-mode" title="When on, clicking or tapping a link selects it instead of opening it"><input type="checkbox" id="exploreSelectMode"><span>Tap selects</span></label>
         <a class="sheet-link explore-newtab" id="exploreNewTab" href="#" target="_blank" rel="noopener noreferrer">New tab</a>
       </div>
@@ -2334,8 +2497,9 @@
         </div>
         <aside class="explore-side" aria-label="Links">
           <div class="segmented explore-tabs" role="group" aria-label="Show">
+            <button type="button" data-explore-tab="suggested" aria-pressed="false">Suggested <span class="num" id="exploreSuggestedCount"></span></button>
+            <button type="button" data-explore-tab="page" aria-pressed="false">Page <span class="num" id="explorePageCount"></span></button>
             <button type="button" data-explore-tab="selected" aria-pressed="true">Selected <span class="num" id="exploreSelectedCount">0</span></button>
-            <button type="button" data-explore-tab="page" aria-pressed="false">On this page <span class="num" id="explorePageCount"></span></button>
           </div>
           <p class="explore-hint" id="exploreHint"><kbd>Shift</kbd>-click a link to select it. Click it to open it here.</p>
           <div class="explore-list" id="exploreList"></div>
@@ -2374,8 +2538,10 @@
           <label><span class="visually-hidden">File type</span><select class="field-input" id="reviewFormat"><option value="ALL">All types</option><option value="PDF">PDF</option><option value="Web page">Web pages</option><option value="Spreadsheet">Spreadsheets</option><option value="Word">Word</option><option value="OTHER">Other files</option></select></label>
           <div class="filters" role="group" aria-label="Show">
             <button type="button" data-review-show="ALL" aria-pressed="true">All</button>
+            <button type="button" data-review-show="SUGGESTED" aria-pressed="false" title="Forms, templates, instructions and other regulatory documents">Suggested</button>
             <button type="button" data-review-show="SELECTED" aria-pressed="false">Ticked</button>
           </div>
+          <label class="review-older" title="Earlier years and superseded copies of the same document"><input type="checkbox" id="reviewHideOlder" checked> Hide older versions</label>
         </div>
       </div>
       <div class="review-list" id="reviewList" aria-label="Links found"></div>
@@ -2717,8 +2883,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261023-regulators-excel-docs-1"></script>
-  <script src="dashboard.js?v=20261023-regulators-excel-docs-1"></script>
+  <script src="dashboard-lib.js?v=20261023-smart-add-cadence-1"></script>
+  <script src="dashboard.js?v=20261023-smart-add-cadence-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

@@ -889,3 +889,88 @@ class TestScoutDigest(unittest.TestCase):
         self.assertEqual(out["regulator"], ["FED:1,3,4", "EBA:2"])
         self.assertEqual(out["day"], ["day:2026-10-21", "day:2026-10-20", "day:2026-10-19"])
         self.assertEqual(out["strength"], ["3strong", "1weak", "2supported", "1conflicting"])
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestSmartPicking(unittest.TestCase):
+    LINKS = """[
+      { url: "https://x.gov/forms/2026/y9c.pdf", text: "Current FR Y-9C form", section: "Current", format: "PDF" },
+      { url: "https://x.gov/forms/2026/y9c-instr.pdf", text: "Current FR Y-9C instructions", section: "Current", format: "PDF" },
+      { url: "https://x.gov/forms/2026/y9c.xlsx", text: "Current FR Y-9C template", section: "Current", format: "Spreadsheet" },
+      { url: "https://x.gov/forms/archive/y9c-2024.pdf", text: "Annual report 2024", section: "Archive", format: "PDF" },
+      { url: "https://x.gov/forms/archive/y9c-2025.pdf", text: "Annual report 2025", section: "Archive", format: "PDF" },
+      { url: "https://x.gov/news", text: "News", section: "", format: "Web page", chrome: true }
+    ]"""
+
+    def test_scores_reasons_and_older_versions(self):
+        out = run_js("const links = " + self.LINKS + """;
+          console.log(JSON.stringify({ scores: links.map(l => L.pickScore(l).score), reasons: L.pickScore(links[1]).reasons,
+            older: Array.from(L.pickVersions(links)) }));""")
+        self.assertGreater(out["scores"][2], out["scores"][3])
+        self.assertLess(out["scores"][5], 0)
+        self.assertIn("Instructions", out["reasons"])
+        self.assertEqual(out["older"], [3])
+
+    def test_similar_links_and_the_inferred_rule(self):
+        out = run_js("const links = " + self.LINKS + """;
+          const similar = L.pickSimilar([links[0]], links, l => l.url).map(r => [r.label, r.extra]);
+          console.log(JSON.stringify({ similar, recipe: L.pickRecipe("https://x.gov/forms", [links[0], links[2]], links) }));""")
+        self.assertEqual(out["similar"], [["All PDFs starting “Current FR”", 1], ["Every PDF on this page", 3]])
+        self.assertEqual(out["recipe"]["textPattern"], "^Current")
+        self.assertEqual(out["recipe"]["prefix"], "https://x.gov/forms/2026/")
+        self.assertEqual(out["recipe"]["count"], 3)
+
+    def test_rule_matches_folders_and_request(self):
+        out = run_js("const links = " + self.LINKS + """;
+          const req = L.pickRuleRequest({ url: "https://x.gov/forms", name: "Forms\\nPage", folder: "https://x.gov/forms/2026/y9c.pdf",
+            pattern: "^Current", include: "main", ignore: ["div.banner"] });
+          console.log(JSON.stringify({
+            folders: ["https://x.gov/forms", "https://x.gov/forms/a.pdf", "https://x.gov/forms/2026/", "ftp://x"].map(L.pickRuleFolder),
+            match: L.pickRuleMatches(links, { folder: "https://x.gov/forms/2026/", pattern: "^current" }).count,
+            anywhere: L.pickRuleMatches(links, { folder: "", pattern: "" }).count,
+            bad: L.pickRuleMatches(links, { pattern: "(" }).error !== "",
+            title: req.title, body: req.body }));""")
+        self.assertEqual(out["folders"], ["https://x.gov/forms/", "https://x.gov/forms/", "https://x.gov/forms/2026/", ""])
+        self.assertEqual(out["match"], 3)
+        self.assertEqual(out["anywhere"], 5)
+        self.assertTrue(out["bad"])
+        self.assertTrue(out["title"].startswith("[ChangeSentinel] Add monitor request"))
+        lines = out["body"].splitlines()
+        self.assertIn("Name: Forms Page", lines)
+        self.assertLess(lines.index("Documents under: https://x.gov/forms/2026/"), lines.index("Include selector: main"))
+        self.assertIn("- div.banner", lines)
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestCadencePlanning(unittest.TestCase):
+    def test_quarterly_plan_rolls_weekends_and_places_steps_in_business_days(self):
+        out = run_js("""console.log(JSON.stringify(L.cadencePlan({ frequency: "quarterly", yearEndMonth: 11, lag: 40, lagLast: 45, business: true,
+          milestones: [{ label: "Data cut-off", offset: 10 }, { label: "Sign-off", offset: 2 }, { label: "", offset: 3 }], cycles: 4, from: "2026-10-23" })));""")
+        self.assertEqual([c["due"] for c in out], ["2026-11-09", "2027-02-15", "2027-05-10", "2027-08-09"])
+        self.assertEqual([c["periodEnd"] for c in out], ["2026-09-30", "2026-12-31", "2027-03-31", "2027-06-30"])
+        self.assertTrue(out[1]["rolled"])  # 14 Feb 2027 is a Sunday
+        self.assertEqual(out[0]["period"].split(" ")[0], "Q3")
+        self.assertEqual([(m["label"], m["date"]) for m in out[0]["milestones"]], [("Data cut-off", "2026-10-26"), ("Sign-off", "2026-11-05")])
+
+    def test_fiscal_quarters_monthly_and_yearly_plans(self):
+        out = run_js("""console.log(JSON.stringify({
+          fiscal: L.cadencePlan({ frequency: "quarterly", yearEndMonth: 2, lag: 30, cycles: 2, from: "2026-10-23" }).map(c => [c.period.split(" ")[0], c.due]),
+          monthly: L.cadencePlan({ frequency: "monthly", lag: 15, cycles: 3, from: "2026-10-23" }).map(c => c.due),
+          yearly: L.cadencePlan({ frequency: "yearly", yearEndMonth: 2, lag: 90, cycles: 1, from: "2026-10-23" }).map(c => c.due),
+          shift: [L.businessShift("2026-10-26", -1), L.businessShift("2026-10-23", 1), L.nextBusinessDay("2026-10-24")] }));""")
+        self.assertEqual(out["fiscal"], [["Q2", "2026-10-30"], ["Q3", "2027-01-30"]])
+        self.assertEqual(out["monthly"], ["2026-11-15", "2026-12-15", "2027-01-15"])
+        self.assertEqual(out["yearly"], ["2027-06-29"])
+        self.assertEqual(out["shift"], ["2026-10-23", "2026-10-26", "2026-10-26"])
+
+    def test_weekly_load_and_calendar_links(self):
+        out = run_js("""
+          const events = [{ key: "a", date: "2026-10-27", title: "A", deadline: true }, { key: "b", date: "2026-10-28", title: "B", deadline: true },
+            { key: "c", date: "2026-10-29", title: "C", deadline: true }, { key: "c", date: "2026-10-29", title: "C again", deadline: true },
+            { key: "d", date: "2026-11-04", title: "D" }, { key: "e", date: "2026-11-05", title: "E", completed: true }];
+          const weeks = L.cadenceWeeks(events, "2026-10-23", 3);
+          console.log(JSON.stringify({ weeks: weeks.map(w => [w.start, w.total, w.deadlines, w.busy, w.level]),
+            link: L.googleCalendarLink({ date: "2026-11-09", title: "FR Y-9C due", url: "https://x.gov" }), bad: L.googleCalendarLink({ date: "soon" }) }));""")
+        self.assertEqual(out["weeks"], [["2026-10-19", 0, 0, False, 0], ["2026-10-26", 3, 3, True, 4], ["2026-11-02", 1, 0, False, 1]])
+        self.assertIn("dates=20261109%2F20261110", out["link"])
+        self.assertEqual(out["bad"], "")

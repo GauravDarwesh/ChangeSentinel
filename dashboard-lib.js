@@ -2168,10 +2168,10 @@
   // of each family are marked older. A family is the link text and address with the
   // years, dates and version numbers taken out.
   function pickVersions(links) {
-    const stem = link => (String(link.text || "") + " " + String(link.url || "").replace(/^https?:\/\/[^/]+/, ""))
+    const stem = link => (String(link.text || link.title || "") + " " + String(link.url || "").replace(/^https?:\/\/[^/]+/, ""))
       .toLowerCase().replace(/\b(19|20)\d{2}\b|\bq[1-4]\b|\bv(ersion)?\s*\d+(\.\d+)*\b|\b\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}\b|\d+/g, "#").replace(/[^a-z#]+/g, " ").trim();
     const weight = link => {
-      const source = String(link.text || "") + " " + String(link.url || "");
+      const source = String(link.text || link.title || "") + " " + String(link.url || "");
       const years = (source.match(/\b(19|20)\d{2}\b/g) || []).map(Number);
       const version = (source.match(/\bv(?:ersion)?\s*(\d+(?:\.\d+)*)/i) || [])[1];
       const quarter = (source.match(/\bq([1-4])\b/i) || [])[1];
@@ -2214,10 +2214,10 @@
     const kind = format && format !== "Web page" ? (format === "Spreadsheet" ? "Excel files" : format + "s") : "links";
     // A shared first word or two ("Current", "Form FR"): the way regulators label the live version.
     for (let words = 2; words >= 1; words -= 1) {
-      const prefixes = Array.from(new Set(chosen.map(link => firstWords(link.text, words).toLowerCase())));
+      const prefixes = Array.from(new Set(chosen.map(link => firstWords(link.text || link.title, words).toLowerCase())));
       if (prefixes.length === 1 && prefixes[0].length >= 4 && !/^(the|a|an|download|view|click|link)$/.test(prefixes[0])) {
-        const prefix = firstWords(chosen[0].text, words);
-        rules.push({ id: "text:" + prefix, label: "All " + kind + " starting “" + prefix + "”", pattern: "^" + escapeRegex(prefix), test: link => (!format || link.format === format) && firstWords(link.text, words).toLowerCase() === prefixes[0] });
+        const prefix = firstWords(chosen[0].text || chosen[0].title, words);
+        rules.push({ id: "text:" + prefix, label: "All " + kind + " starting “" + prefix + "”", pattern: "^" + escapeRegex(prefix), test: link => (!format || link.format === format) && firstWords(link.text || link.title, words).toLowerCase() === prefixes[0] });
         break;
       }
     }
@@ -2247,19 +2247,190 @@
     try { host = new URL(pageUrl).host; } catch (_) { return null; }
     const docs = (picked || []).filter(link => link && link.format !== "Web page");
     if (!docs.length) return null;
-    const similar = pickSimilar(docs, links);
-    const textRule = similar.find(rule => rule.pattern);
+    // The label the picked documents share: "Current", "Current FR Y-9C"…
+    let textPattern = "";
+    for (let words = 3; words >= 1 && !textPattern; words -= 1) {
+      const prefixes = Array.from(new Set(docs.map(link => firstWords(link.text || link.title, words).toLowerCase())));
+      if (prefixes.length === 1 && prefixes[0].length >= 4 && firstWords(docs[0].text || docs[0].title, words + 1).split(/\s+/).length > words &&
+        !/^(the|a|an|download|view|click|link|pdf|file)$/.test(prefixes[0])) {
+        textPattern = "^" + escapeRegex(firstWords(docs[0].text || docs[0].title, words));
+      }
+    }
+    // A shared first word alone is often the version marker ("Current", "Final"): prefer it when every pick has it.
+    const firstWord = Array.from(new Set(docs.map(link => firstWords(link.text || link.title, 1).toLowerCase())));
+    if (firstWord.length === 1 && /^(current|final|latest|new|revised|updated|effective)$/.test(firstWord[0])) {
+      textPattern = "^" + escapeRegex(firstWords(docs[0].text || docs[0].title, 1));
+    }
+    const textRule = textPattern ? { pattern: textPattern } : null;
     const sameHost = docs.every(link => { try { return new URL(link.url).host === host; } catch (_) { return false; } });
     const folders = Array.from(new Set(docs.map(link => folderOf(link.url))));
     const prefix = sameHost && folders.length === 1 ? folders[0] : "";
     const matches = (links || []).filter(link => link && !link.chrome && link.format !== "Web page" &&
-      (!textRule || new RegExp(textRule.pattern, "i").test(String(link.text || ""))) && (!prefix || String(link.url).indexOf(prefix) === 0));
+      (!textRule || new RegExp(textRule.pattern, "i").test(String(link.text || link.title || ""))) && (!prefix || String(link.url).indexOf(prefix) === 0));
     return { url: pageUrl, depth: 1, textPattern: textRule ? textRule.pattern : "", prefix, count: matches.length };
+  }
+
+  // The links on a page a document rule would monitor today: documents (not web
+  // pages) under one of the folders whose link text matches the pattern, the way
+  // the monitor's discovery reads them (case-insensitive search, folder prefix).
+  function pickRuleMatches(links, rule) {
+    const r = rule || {};
+    let pattern = null;
+    const text = String(r.pattern || "").trim();
+    if (text.length > 200) return { error: "Use a pattern of at most 200 characters.", keys: [], count: 0 };
+    if (text) {
+      try { pattern = new RegExp(text, "i"); } catch (error) { return { error: "That pattern isn't valid: " + String(error.message || error), keys: [], count: 0 }; }
+    }
+    const folders = (Array.isArray(r.folders) ? r.folders : [r.folder]).map(pickRuleFolder).filter(Boolean);
+    if (r.folder && !folders.length) return { error: "Enter the folder as a full address beginning with https://.", keys: [], count: 0 };
+    const keys = [];
+    (links || []).forEach(link => {
+      if (!link || link.format === "Web page") return;
+      const url = String(link.url || "");
+      if (folders.length && !folders.some(folder => url.indexOf(folder) === 0)) return;
+      if (pattern && !pattern.test(String(link.text || link.title || ""))) return;
+      const key = urlKey(url);
+      if (keys.indexOf(key) < 0) keys.push(key);
+    });
+    return { error: "", keys, count: keys.length, folders };
+  }
+  // A folder address as the owner workflow stores it: "…/forms/" for "…/forms",
+  // "…/forms/" for "…/forms/FR_Y9C.pdf".
+  function pickRuleFolder(value) {
+    let u;
+    try { u = new URL(String(value || "").trim()); } catch (_) { return ""; }
+    if (!/^https?:$/.test(u.protocol) || !u.hostname) return "";
+    const last = u.pathname.split("/").pop();
+    const path = u.pathname.endsWith("/") || last.indexOf(".") < 0 ? u.pathname.replace(/\/*$/, "/") : u.pathname.replace(/[^/]*$/, "");
+    return u.origin + path;
+  }
+  // The owner-approved request for a document rule. The rule fields sit before
+  // "Include selector", where the workflow reads them.
+  function pickRuleRequest(options) {
+    const o = options || {};
+    const folders = (o.folders || [o.folder]).map(pickRuleFolder).filter(Boolean).slice(0, 5);
+    const ignore = (o.ignore || []).map(value => String(value).replace(/[\r\n]+/g, " ").trim()).filter(Boolean).slice(0, 20);
+    const body = [
+      "<!-- changesentinel:add-monitor:v1 -->", "",
+      "Please register this page with a document rule: watch the page and the documents it links to that match the rule, and nothing else on the site.", "",
+      "URL: " + o.url,
+      "Name: " + String(o.name || "").replace(/[\r\n]+/g, " ").trim().slice(0, 100),
+      "Crawl depth: 1",
+      "Scout discovery: no",
+      "Documents under: " + folders.join(" "),
+      "Document link text matches: " + String(o.pattern || "").replace(/[\r\n]+/g, " ").trim(),
+      "Include selector: " + String(o.include || "").replace(/[\r\n]+/g, " ").trim(),
+      "Ignore selectors:"
+    ].concat(ignore.length ? ignore.map(value => "- " + value) : ["(none)"], ["", "This request was created from the ChangeSentinel dashboard."]);
+    return { title: "[ChangeSentinel] Add monitor request: document rule", body: body.join("\n") };
+  }
+
+
+  /* ---------- Cadence: filing planner, weekly load, calendar links ---------- */
+  function isoAdd(iso, days) {
+    const d = isoDayToDate(iso);
+    if (!d) return "";
+    d.setDate(d.getDate() + days);
+    return localIsoDate(d);
+  }
+  function isWeekend(iso) { const d = isoDayToDate(iso); return !!d && (d.getDay() === 0 || d.getDay() === 6); }
+  // Move forward (or back, for negative counts) by business days: Monday–Friday.
+  // Public holidays differ by jurisdiction and are not modelled.
+  function businessShift(iso, count) {
+    let date = iso;
+    const step = count < 0 ? -1 : 1;
+    let left = Math.abs(count);
+    while (left > 0) { date = isoAdd(date, step); if (!isWeekend(date)) left -= 1; }
+    return date;
+  }
+  function nextBusinessDay(iso) { let date = iso; while (isWeekend(date)) date = isoAdd(date, 1); return date; }
+  function monthEnd(year, month) { return localIsoDate(new Date(year, month + 1, 0)); }
+  // The next filing cycles of a periodic return: period end, due date and the
+  // team's preparation milestones before it.
+  // options: { frequency: "monthly"|"quarterly"|"yearly", yearEndMonth (0-11), lag (days),
+  //   lagLast (days for the year-end period), business (roll weekends), milestones: [{ label, offset }]
+  //   (business days before the due date), cycles, from (ISO day: plan periods due on/after it) }
+  function cadencePlan(options) {
+    const o = options || {};
+    const frequency = ["monthly", "quarterly", "yearly"].indexOf(o.frequency) >= 0 ? o.frequency : "quarterly";
+    const step = frequency === "monthly" ? 1 : frequency === "quarterly" ? 3 : 12;
+    const yearEnd = Number.isInteger(o.yearEndMonth) ? ((o.yearEndMonth % 12) + 12) % 12 : 11;
+    const lag = Math.max(0, Math.min(365, Number(o.lag) || 0));
+    const lagLast = Math.max(0, Math.min(365, Number(o.lagLast) || lag));
+    const cycles = Math.max(1, Math.min(24, Number(o.cycles) || 4));
+    const from = ISO_DAY.test(String(o.from || "")) ? o.from : localIsoDate(new Date());
+    const start = isoDayToDate(from);
+    // Walk period ends aligned to the year end, starting a year back so periods
+    // already closed but not yet due are included.
+    let year = start.getFullYear() - 1;
+    let month = yearEnd;
+    while (true) { const next = month - step; if (next < 0) break; month = next; }
+    const plan = [];
+    for (let guard = 0; guard < 400 && plan.length < cycles; guard += 1) {
+      const end = monthEnd(year, month);
+      const isLast = month === yearEnd;
+      let due = isoAdd(end, isLast ? lagLast : lag);
+      const rolled = o.business && isWeekend(due);
+      if (o.business) due = nextBusinessDay(due);
+      if (due >= from) {
+        const endDate = isoDayToDate(end);
+        const fiscalOffset = (endDate.getMonth() - yearEnd + 12) % 12;
+        const label = frequency === "monthly" ? endDate.toLocaleDateString("en-GB", { month: "short", year: "numeric" })
+          : frequency === "yearly" ? "Year to " + endDate.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+          : "Q" + (Math.floor(((fiscalOffset + 11) % 12) / 3) + 1) + " · " + endDate.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+        const milestones = (o.milestones || []).filter(m => m && String(m.label || "").trim() && Number(m.offset) > 0).map(m => ({
+          label: String(m.label).trim().slice(0, 80), offset: Math.min(120, Math.round(Number(m.offset))),
+          date: businessShift(due, -Math.min(120, Math.round(Number(m.offset))))
+        })).sort((a, b) => a.date.localeCompare(b.date));
+        plan.push({ period: label, periodEnd: end, due, rolled: !!rolled, milestones });
+      }
+      month += step;
+      if (month > 11) { month -= 12; year += 1; }
+    }
+    return plan;
+  }
+  // Open work per week, for the load strip: entries and dates in each of the
+  // next weeks (weeks start on Monday), with deadlines counted apart.
+  function cadenceWeeks(events, today, weeks) {
+    const base = isoDayToDate(today);
+    if (!base) return [];
+    const monday = isoAdd(today, -((base.getDay() + 6) % 7));
+    const rows = [];
+    for (let i = 0; i < Math.max(1, Math.min(26, weeks || 12)); i += 1) rows.push({ start: isoAdd(monday, i * 7), end: isoAdd(monday, i * 7 + 6), total: 0, deadlines: 0, titles: [] });
+    const seen = new Set();
+    (events || []).forEach(event => {
+      if (!event || !event.date || event.completed) return;
+      const key = event.key || (event.date + "|" + event.title);
+      if (seen.has(key)) return;
+      seen.add(key);
+      const row = rows.find(week => event.date >= week.start && event.date <= week.end);
+      if (!row) return;
+      row.total += 1;
+      if (event.deadline) row.deadlines += 1;
+      if (row.titles.length < 6) row.titles.push(String(event.title || ""));
+    });
+    const peak = Math.max(1, ...rows.map(row => row.total));
+    rows.forEach(row => { row.level = row.total ? Math.max(1, Math.round(4 * row.total / peak)) : 0; row.busy = row.deadlines >= 3; });
+    return rows;
+  }
+  // A one-click "add to Google Calendar" link for an all-day entry.
+  function googleCalendarLink(entry) {
+    const e = entry || {};
+    const start = String(e.date || "").replace(/-/g, "");
+    if (!/^\d{8}$/.test(start)) return "";
+    const end = String(isoAdd(e.endDate || e.date, 1)).replace(/-/g, "");
+    const params = new URLSearchParams();
+    params.set("action", "TEMPLATE");
+    params.set("text", String(e.title || "Regulatory date").slice(0, 200));
+    params.set("dates", start + "/" + end);
+    const details = [String(e.details || "").slice(0, 1200), e.url ? String(e.url) : ""].filter(Boolean).join("\n\n");
+    if (details) params.set("details", details);
+    return "https://calendar.google.com/calendar/render?" + params.toString();
   }
 
   return {
     pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
-    pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe,
+    pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe, pickRuleMatches, pickRuleFolder, pickRuleRequest,
     diffSequences, alignLines, changedWords, readWorkbook, workbookDiff, csvWorkbook, parseCsv, zipListing, zipFile, readDocx, columnName, cellRef,
     esc, nextScheduledScan, scanCycle, runColumns, slotColumns, columnCellState, pendingScan,
     fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, regulatorFor, jurisdictionForHost, hostOf, pageKind, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
@@ -2271,6 +2442,7 @@
     SCOUT_FILTERS, SCOUT_OUTCOMES, SCOUT_CONFIDENCE, SCOUT_STATUS, SCOUT_CHANNEL_STATUS, SCOUT_NOUNS, SCOUT_REVIEW_MARKER,
     scoutSlug, splitList, splitLines, parsePathHints, pathHintsText, scoutSourceRequest, SCOUT_SOURCE_MARKER, SCOUT_TOPIC_IDS, SCOUT_REGIONS,
     renderWordEdit, describeItemCodes, lineageFor, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
-    changeReviewRequest, CHANGE_REVIEW_MARKER, REVIEW_DECISIONS, csvCell, toCsv, fileSlug
+    changeReviewRequest, CHANGE_REVIEW_MARKER, REVIEW_DECISIONS, csvCell, toCsv, fileSlug,
+    cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink
   };
 }));

@@ -122,14 +122,15 @@ const state = {
   // Add a link: the page being explored, links found by level, and the ticked links.
   add: { step: "start", method: "explore", url: "", history: [], at: -1, page: null, pages: new Map(), loading: 0,
     tab: "selected", selectMode: false, candidates: [], picked: new Map(), anchor: "", origin: "explore", notes: [], info: "",
-    crawl: null, query: "", format: "ALL", show: "ALL", limit: 300, opened: {}, weekly: false, scope: "" },
+    crawl: null, query: "", format: "ALL", show: "ALL", limit: 300, opened: {}, weekly: false, scope: "",
+    rules: {}, area: null, picking: false, showOlder: false, ruleDrafts: {}, ruleRequests: {}, ruleOpen: false, similar: [], hideOlder: true, reviewSimilar: [] },
   scoutSourceMode: "add",
   calendar: null, lineage: null, reviews: null, reviewTarget: "", integrity: {},
   cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
   cadenceLoading: null, cadenceMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
   cadenceSelectedDate: L.localIsoDate(new Date()), cadenceSignInBusy: false,
   cadenceRecoveryMode: false, cadenceRecoveryBusy: false,
-  cadenceSearch: "", cadenceFilter: "ALL", cadencePanel: "month"
+  cadenceSearch: "", cadenceFilter: "ALL", cadencePanel: "month", cadenceOwner: "ALL", cadenceLinkEvents: {}
 };
 const compactQuery = window.matchMedia ? window.matchMedia("(max-width: 980px)") : null;
 function isCompact() { return !!(compactQuery && compactQuery.matches); }
@@ -3247,6 +3248,7 @@ function cadenceFilterEvents(allEvents) {
     if (state.cadenceFilter === "DETECTED" && event.kind !== "derived") return false;
     if (state.cadenceFilter === "EXPECTED" && !(event.kind === "manual" && ["expected_update", "deadline"].includes(event.category))) return false;
     if (state.cadenceFilter === "TEAM" && !(event.kind === "manual" && !["expected_update", "deadline"].includes(event.category))) return false;
+    if (state.cadenceOwner && state.cadenceOwner !== "ALL" && !(event.kind === "manual" && String(event.entry.owner_name || "").trim().toLocaleLowerCase() === state.cadenceOwner.toLocaleLowerCase())) return false;
     if (!search) return true;
     // Include the same fields exposed in the agenda and upcoming rows, without
     // ever indexing private reminder-recipient addresses.
@@ -3267,6 +3269,9 @@ function renderCadenceView() {
   const grid = $("cadenceMonthGrid");
   if (!grid) return;
   renderCadenceAccess();
+  state.cadenceLinkEvents = {};
+  syncCadenceOwnerFilter();
+  renderCadenceLoad();
   const panel = state.cadencePanel === "upcoming" ? "upcoming" : "month";
   $("cadenceMonthView").hidden = panel !== "month";
   $("cadenceUpcomingView").hidden = panel !== "upcoming";
@@ -3299,6 +3304,7 @@ function renderCadenceView() {
     if (day.getMonth() !== month.getMonth()) classes.push("is-outside");
     if (iso === today) classes.push("is-today");
     if (iso === state.cadenceSelectedDate) classes.push("is-selected");
+    if (dayEvents.filter(event => event.kind === "derived" || event.category === "deadline").length >= 2) classes.push("is-clash");
     const bars = dayEvents.slice(0, 3).map(event => '<span class="cadence-day-event ' + cadenceClass(event) + (event.completed ? " is-done" : "") + '" title="' + esc(cadenceEventLabel(event)) + '">' + esc(cadenceEventLabel(event)) + '</span>').join("");
     const more = dayEvents.length > 3 ? '<span class="cadence-day-more">+' + (dayEvents.length - 3) + " more</span>" : "";
     cells += '<button type="button" role="gridcell" class="' + classes.join(" ") + '" data-calendar-day="' + iso + '" aria-label="' + esc(day.toLocaleDateString([], { weekday: "long", month: "long", day: "numeric", year: "numeric" }) + ", " + dayEvents.length + " entries") + '"><span class="cadence-day-number">' + day.getDate() + '</span><span class="cadence-day-events">' + bars + more + "</span></button>";
@@ -3314,7 +3320,9 @@ function renderCadenceView() {
       return '<article class="cadence-agenda-item"><div class="cadence-agenda-row"><i class="cadence-agenda-dot is-derived"></i><div class="cadence-agenda-content"><span class="cadence-agenda-title">' + esc(event.title) + '</span><div class="cadence-agenda-meta"><span class="cadence-tag">Detected date</span><span>ChangeSentinel</span></div>' +
         (event.item && event.item.description ? '<p class="cadence-agenda-notes">' + esc(String(event.item.description)) + "</p>" : "") + '</div></div><div class="cadence-agenda-actions">' +
         (event.sourceUrl ? '<a href="' + esc(event.sourceUrl) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' : "") +
-        (linked ? '<button type="button" data-calendar-open-change="' + esc(event.eventId) + '">View change →</button>' : "") + "</div></article>";
+        (linked ? '<button type="button" data-calendar-open-change="' + esc(event.eventId) + '">View change →</button>' : "") +
+        (cadenceIsEditor() ? '<button type="button" data-calendar-track="' + esc(event.eventId) + '" data-calendar-date="' + esc(event.date) + '" title="Add this date to the team calendar with an owner and a reminder">Track this</button>' : "") +
+        cadenceCalendarLinks(event) + "</div></article>";
     }
     const entry = event.entry, isEditor = state.cadenceMember && ["admin", "editor"].includes(state.cadenceMember.role);
     const isDone = !!event.completed;
@@ -3322,9 +3330,9 @@ function renderCadenceView() {
     return '<article class="cadence-agenda-item"><div class="cadence-agenda-row"><i class="cadence-agenda-dot ' + cadenceClass(event) + '"></i><div class="cadence-agenda-content"><span class="cadence-agenda-title">' + esc(event.title) + '</span><div class="cadence-agenda-meta"><span class="cadence-tag">' + esc(cadenceTag(event.category)) + '</span>' +
       (entry.regulator ? '<span>' + esc(entry.regulator) + '</span>' : "") + (entry.owner_name ? '<span>Owner: ' + esc(entry.owner_name) + '</span>' : "") + reminder + (entry.recurrence && entry.recurrence !== "none" ? '<span>↻ ' + esc(entry.recurrence) + '</span>' : "") +
       '</div>' + (entry.description ? '<p class="cadence-agenda-notes">' + esc(entry.description) + "</p>" : "") + '</div></div><div class="cadence-agenda-actions">' +
-      (event.sourceUrl ? '<a href="' + esc(event.sourceUrl) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' : "") +
+      (event.sourceUrl ? '<a href="' + esc(event.sourceUrl) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' + cadenceSourceFlag(event.sourceUrl) : "") +
       (isEditor ? '<button type="button" data-calendar-complete="' + esc(event.entryId) + '" data-calendar-date="' + esc(event.occurrenceDate) + '" data-calendar-done="' + String(isDone) + '">' + (isDone ? "Reopen occurrence" : "Mark done") + '</button><button type="button" data-calendar-edit="' + esc(event.entryId) + '">Edit</button><button type="button" data-calendar-delete="' + esc(event.entryId) + '">Archive</button>' : (isDone ? '<span>Completed</span>' : "")) +
-      "</div></article>";
+      cadenceCalendarLinks(event) + "</div></article>";
   }).join("") : (search || state.cadenceFilter !== "ALL" ? '<div class="cadence-empty">No entries match these filters on this day. Try another date or clear the search and type filter.</div>' : '<div class="cadence-empty">Nothing is scheduled for this day.<br>Use <strong>New entry</strong> to log an expected release, filing deadline or internal follow-up.</div>');
   if (panel === "upcoming") renderCadenceUpcomingView(today);
   renderCadenceAccess();
@@ -3408,7 +3416,7 @@ function cadenceUpcomingItemMarkup(event, today) {
     '<div class="cadence-upcoming-meta"><span class="cadence-tag">' + esc(category) + '</span>' + regulator + owner + recurrence +
     (urgency ? '<span class="cadence-upcoming-urgency' + statusClass + '">' + esc(urgency) + '</span>' : "") + '</div>' +
     (notes ? '<p class="cadence-upcoming-notes">' + esc(String(notes)) + '</p>' : "") +
-    '<div class="cadence-upcoming-actions">' + source + changeAction + editActions + '</div></div></article>';
+    '<div class="cadence-upcoming-actions">' + source + (manual && event.sourceUrl ? cadenceSourceFlag(event.sourceUrl) : changeAction) + editActions + cadenceCalendarLinks(event) + '</div></div></article>';
 }
 function renderCadenceUpcomingView(today) {
   const list = $("cadenceUpcomingList");
@@ -3452,7 +3460,7 @@ function shiftCadenceMonth(delta) {
   if (state.cadenceSelectedDate.slice(0, 7) !== cadenceDateISO(first).slice(0, 7)) state.cadenceSelectedDate = cadenceDateISO(first);
   renderCadenceView();
 }
-function openCadenceEntry(id) {
+function openCadenceEntry(id, preset) {
   if (!state.cadenceMember) {
     showToast(state.cadenceSession ? "This email is not on the Cadence team list yet." : "Sign in with your team email before adding shared entries.");
     $("cadenceSignInEmail").focus();
@@ -3481,7 +3489,14 @@ function openCadenceEntry(id) {
   $("cadenceReminderDays").disabled = !$("cadenceReminderEnabled").checked;
   $("cadenceReminderEmails").disabled = !$("cadenceReminderEnabled").checked;
   $("cadenceEntryError").hidden = true;
-  $("cadenceEntryHeading").textContent = entry ? "Edit regulatory entry" : "New regulatory entry";
+  if (!entry && preset) {
+    $("cadenceEntryTitle").value = preset.title || "";
+    $("cadenceEntryCategory").value = preset.category || "deadline";
+    $("cadenceEntryStart").value = preset.start_date || $("cadenceEntryStart").value;
+    $("cadenceEntrySource").value = preset.source_url || "";
+    $("cadenceEntryDescription").value = preset.description || "";
+  }
+  $("cadenceEntryHeading").textContent = entry ? "Edit regulatory entry" : preset ? "Track this date" : "New regulatory entry";
   $("cadenceEntrySave").textContent = entry ? "Save changes" : "Save entry";
   $("cadenceEntryDialog").showModal();
 }
@@ -3590,6 +3605,227 @@ function exportCadenceCalendar() {
   lines.push("END:VCALENDAR");
   downloadTextFile("cadence-regulatory-calendar.ics", "text/calendar;charset=utf-8", lines.join("\r\n") + "\r\n");
   showToast("Exported the next 12 months of calendar entries.");
+}
+
+
+
+/* ---------- Cadence: load strip, source flags, calendar links, filing planner ---------- */
+
+function cadenceIsEditor() { return !!(state.cadenceMember && ["admin", "editor"].includes(state.cadenceMember.role)); }
+function cadenceOwners() {
+  const owners = new Map();
+  (state.cadenceEntries || []).forEach(entry => {
+    const name = String(entry && !entry.archived && entry.owner_name || "").trim();
+    if (name) owners.set(name.toLocaleLowerCase(), name);
+  });
+  return Array.from(owners.values()).sort((a, b) => a.localeCompare(b));
+}
+function syncCadenceOwnerFilter() {
+  const select = $("cadenceOwnerFilter");
+  if (!select) return;
+  const owners = cadenceOwners();
+  if (state.cadenceOwner !== "ALL" && owners.indexOf(state.cadenceOwner) < 0) state.cadenceOwner = "ALL";
+  const html = '<option value="ALL">Every owner</option>' + owners.map(name => '<option value="' + esc(name) + '">' + esc(name) + "</option>").join("");
+  if (select.dataset.options !== html) { select.innerHTML = html; select.dataset.options = html; }
+  select.value = state.cadenceOwner;
+  select.hidden = !owners.length;
+}
+// What ChangeSentinel knows about an entry's source page: changed lately,
+// monitored and quiet, or not monitored yet (with a way to start).
+function cadenceSourceFlag(url) {
+  const key = url ? L.urlKey(url) : "";
+  if (!key) return "";
+  const monitored = (state.items || []).some(item => L.urlKey(item.canonical_url || "") === key);
+  const changes = changeLogEntries().filter(change => change.url && L.urlKey(change.url) === key && CHANGE_EVENT_TYPES.indexOf(change.event_type) >= 0)
+    .sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+  const latest = changes[0];
+  const age = latest ? (Date.now() - new Date(latest.timestamp).getTime()) / 86400000 : Infinity;
+  if (latest && age <= 45) {
+    return '<span class="cadence-flag is-changed" title="ChangeSentinel saw this source change">Source changed ' + esc(relativeTime(latest.timestamp)) + "</span>" +
+      '<button type="button" data-calendar-open-change="' + esc(latest.event_id) + '">View change →</button>';
+  }
+  if (monitored) return '<span class="cadence-flag is-watched" title="ChangeSentinel checks this page on every scan">Source monitored · no recent change</span>';
+  return '<button type="button" data-calendar-monitor="' + esc(url) + '" title="Ask ChangeSentinel to watch this page so a change shows here">Monitor this source</button>';
+}
+// One-off calendar links for an entry: Google Calendar and a single .ics file.
+function cadenceCalendarLinks(event) {
+  const day = event.kind === "manual" ? (event.occurrenceDate || event.date) : event.date;
+  const entry = event.entry || {};
+  const endDate = event.kind === "manual" && entry.end_date ? cadenceAddDays(day, cadenceEntryDurationDays(entry)) : day;
+  const details = event.kind === "manual" ? [cadenceTag(event.category), entry.regulator, entry.owner_name ? "Owner: " + entry.owner_name : "", entry.description].filter(Boolean).join("\n")
+    : [(event.item && event.item.description) || "Detected by ChangeSentinel"].join("\n");
+  const google = L.googleCalendarLink({ date: day, endDate, title: cadenceEventLabel(event), details, url: event.sourceUrl });
+  const key = (event.kind === "manual" ? event.entryId : "derived-" + (event.eventId || event.title)) + "|" + day;
+  state.cadenceLinkEvents[key] = { day, endDate, title: cadenceEventLabel(event), details, url: event.sourceUrl, uid: key };
+  return (google ? '<a href="' + esc(google) + '" target="_blank" rel="noopener noreferrer" title="Add to Google Calendar">Google Calendar ↗</a>' : "") +
+    '<button type="button" data-calendar-ics="' + esc(key) + '" title="Download this entry for Outlook or Apple Calendar">.ics</button>';
+}
+function downloadCadenceEvent(key) {
+  const e = state.cadenceLinkEvents[key];
+  if (!e) return;
+  const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//ChangeSentinel//Cadence Regulatory Calendar//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+    "BEGIN:VEVENT", "UID:" + cadenceIcsEscape(e.uid + "@changesentinel"), "DTSTAMP:" + stamp,
+    "DTSTART;VALUE=DATE:" + e.day.replace(/-/g, ""), "DTEND;VALUE=DATE:" + cadenceAddDays(e.endDate || e.day, 1).replace(/-/g, ""),
+    "SUMMARY:" + cadenceIcsEscape(e.title), "DESCRIPTION:" + cadenceIcsEscape(e.details)]
+    .concat(e.url ? ["URL:" + String(e.url).replace(/[\r\n]/g, "")] : [], ["END:VEVENT", "END:VCALENDAR"]);
+  downloadTextFile(L.fileSlug ? L.fileSlug(e.title) + ".ics" : "cadence-entry.ics", "text/calendar;charset=utf-8", lines.join("\r\n") + "\r\n");
+}
+// The next twelve weeks at a glance: how much is due each week, with weeks
+// carrying three or more deadlines marked as clashes.
+function renderCadenceLoad() {
+  const host = $("cadenceLoad");
+  if (!host) return;
+  const today = cadenceDateISO(new Date());
+  const events = cadenceFilterEvents(cadenceEventsBetween(today, cadenceAddDays(today, 7 * 12))).map(event => ({
+    key: event.kind === "manual" ? event.entryId + "|" + event.occurrenceDate : "derived|" + event.date + "|" + event.title,
+    date: event.kind === "manual" ? event.occurrenceDate || event.date : event.date,
+    title: cadenceEventLabel(event), completed: !!event.completed,
+    deadline: event.kind === "manual" ? event.category === "deadline" : true
+  }));
+  const weeks = L.cadenceWeeks(events, today, 12);
+  const busy = weeks.filter(week => week.busy);
+  const total = weeks.reduce((sum, week) => sum + week.total, 0);
+  const label = iso => { const d = cadenceDate(iso); return d ? d.toLocaleDateString([], { day: "numeric", month: "short" }) : iso; };
+  host.innerHTML = '<div class="cadence-load-head"><div><span class="cadence-eyebrow">NEXT 12 WEEKS</span><strong>' + plural(total, "open date", "open dates") + "</strong>" +
+      (busy.length ? '<span class="cadence-load-warn">' + plural(busy.length, "week has", "weeks have") + " three or more deadlines</span>" : "") + "</div>" +
+      '<span class="cadence-load-key"><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> more due</span></div>' +
+    '<div class="cadence-load-strip" role="list">' + weeks.map(week =>
+      '<button type="button" role="listitem" class="cadence-load-week lv' + week.level + (week.busy ? " is-busy" : "") + (week.start <= today && today <= week.end ? " is-now" : "") +
+        '" data-calendar-jump-date="' + esc(week.start <= today ? today : week.start) + '" title="' + esc("Week of " + label(week.start) + ": " + (week.total ? plural(week.total, "date", "dates") + (week.deadlines ? ", " + plural(week.deadlines, "deadline", "deadlines") : "") + "\n" + week.titles.join("\n") : "nothing scheduled")) + '">' +
+        '<span class="cadence-load-bar"><i style="height:' + (week.level * 25) + '%"></i></span><span class="cadence-load-count">' + (week.total || "") + "</span>" +
+        '<span class="cadence-load-date">' + esc(label(week.start)) + "</span></button>").join("") + "</div>";
+}
+function trackDetectedDate(eventId, date) {
+  const item = state.calendar && Array.isArray(state.calendar.entries)
+    ? state.calendar.entries.find(entry => String(entry.event_id || "") === eventId && String(entry.date || "") === date) : null;
+  if (!item) return;
+  openCadenceEntry("", {
+    title: String(item.title || "Regulatory date").slice(0, 160), category: "deadline", start_date: date,
+    source_url: String(item.url || ""), description: [item.description ? String(item.description) : "", "Detected by ChangeSentinel."].filter(Boolean).join("\n\n").slice(0, 4000)
+  });
+}
+
+/* Filing planner: a periodic return's next due dates and the team's steps before each. */
+const PLAN_MILESTONES = [["Data cut-off", 10], ["Review", 5], ["Sign-off", 2]];
+function openCadencePlanner() {
+  const dialog = $("cadencePlanDialog");
+  const list = $("cadencePlanRegulators");
+  if (list && !list.children.length) {
+    list.innerHTML = regulatorProfiles().map(profile => '<option value="' + esc(profile.short_name ? profile.short_name + " · " + profile.name : profile.name) + '"></option>').join("");
+  }
+  $("cadencePlanMilestones").innerHTML = PLAN_MILESTONES.map(([label, offset], index) =>
+    '<div class="plan-milestone"><input type="checkbox" id="planStep' + index + '" checked aria-label="Include ' + esc(label) + '">' +
+    '<input class="field-input" id="planStepLabel' + index + '" maxlength="80" value="' + esc(label) + '" aria-label="Step name">' +
+    '<input class="field-input" id="planStepOffset' + index + '" type="number" min="1" max="120" value="' + offset + '" aria-label="Business days before the due date"><span>business days before</span></div>').join("");
+  $("cadencePlanStatus").textContent = "";
+  $("cadencePlanStatus").classList.remove("is-error");
+  if (!$("cadencePlanOwner").value && state.cadenceMember && state.cadenceMember.email) $("cadencePlanOwner").placeholder = "Regulatory Reporting";
+  syncCadencePlanner();
+  dialog.showModal();
+  window.setTimeout(() => $("cadencePlanName").focus(), 30);
+}
+function cadencePlanOptions() {
+  const frequency = $("cadencePlanFrequency").value;
+  return {
+    name: $("cadencePlanName").value.replace(/[\r\n]+/g, " ").trim().slice(0, 100),
+    regulator: $("cadencePlanRegulator").value.trim().slice(0, 160),
+    owner: $("cadencePlanOwner").value.trim().slice(0, 120),
+    source: $("cadencePlanSource").value.trim(),
+    frequency, yearEndMonth: Number($("cadencePlanYearEnd").value),
+    lag: Number($("cadencePlanLag").value), lagLast: Number($("cadencePlanLagLast").value || $("cadencePlanLag").value),
+    business: $("cadencePlanBusiness").checked, cycles: Number($("cadencePlanCycles").value),
+    reminder: $("cadencePlanReminder").checked,
+    milestones: PLAN_MILESTONES.map((_, index) => $("planStep" + index).checked ? { label: $("planStepLabel" + index).value, offset: Number($("planStepOffset" + index).value) } : null).filter(Boolean),
+    from: cadenceDateISO(new Date())
+  };
+}
+function cadencePlanRows(o) {
+  const plan = L.cadencePlan(o);
+  const name = o.name || "Return";
+  const rows = [];
+  plan.forEach(cycle => {
+    rows.push({ title: name + " due · " + cycle.period, category: "deadline", start_date: cycle.due, cycle, main: true,
+      description: "Filing for the period ending " + cycle.periodEnd + "." + (cycle.rolled ? " The due date fell on a weekend and was moved to the next business day." : "") + " Planned with the Cadence filing planner." });
+    cycle.milestones.forEach(step => rows.push({ title: name + " · " + step.label + " · " + cycle.period, category: "internal_task", start_date: step.date, cycle,
+      description: step.offset + " business days before the " + cycle.due + " filing." }));
+  });
+  return { plan, rows };
+}
+function syncCadencePlanner() {
+  const o = cadencePlanOptions();
+  $("cadencePlanYearEndWrap").hidden = o.frequency === "monthly";
+  $("cadencePlanLagLastWrap").hidden = o.frequency === "yearly";
+  const cycles = $("cadencePlanCycles");
+  const choices = o.frequency === "monthly" ? [3, 6, 12] : o.frequency === "yearly" ? [1, 2, 3] : [2, 4, 8];
+  const wanted = choices.indexOf(Number(cycles.value)) >= 0 ? Number(cycles.value) : choices[1];
+  const html = choices.map(n => '<option value="' + n + '"' + (n === wanted ? " selected" : "") + ">Next " + n + "</option>").join("");
+  if (cycles.dataset.options !== html) { cycles.innerHTML = html; cycles.dataset.options = html; }
+  const { plan, rows } = cadencePlanRows(cadencePlanOptions());
+  const existing = new Set((state.cadenceEntries || []).filter(entry => !entry.archived).map(entry => entry.title + "|" + entry.start_date));
+  const fmtDay = iso => { const d = cadenceDate(iso); return d ? d.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short", year: "numeric" }) : iso; };
+  $("cadencePlanPreview").innerHTML = plan.length ? plan.map(cycle =>
+    '<div class="plan-cycle"><div class="plan-cycle-head"><strong>' + esc(cycle.period) + '</strong><span class="plan-due">Due ' + esc(fmtDay(cycle.due)) + (cycle.rolled ? ' <em title="Moved off a weekend">moved to Monday</em>' : "") + "</span></div>" +
+      (cycle.milestones.length ? '<ol class="plan-steps">' + cycle.milestones.map(step => "<li><span>" + esc(step.label) + "</span><time>" + esc(fmtDay(step.date)) + "</time></li>").join("") + "</ol>" : "") + "</div>").join("")
+    : '<p class="cadence-empty">Enter how many days after the period end the return is due.</p>';
+  const fresh = rows.filter(row => !existing.has(row.title + "|" + row.start_date));
+  const save = $("cadencePlanSave");
+  save.disabled = !o.name || !rows.length || !fresh.length || !cadenceIsEditor();
+  save.textContent = fresh.length ? "Add " + plural(fresh.length, "entry", "entries") + " to Cadence" : rows.length ? "Already on the calendar" : "Add to Cadence";
+  $("cadencePlanIcs").disabled = !o.name || !rows.length;
+  const note = !cadenceIsEditor() ? "Sign in as a Cadence editor to add these to the shared calendar; you can still download them." :
+    rows.length > fresh.length ? plural(rows.length - fresh.length, "entry is", "entries are") + " already on the calendar and will be skipped." : "";
+  $("cadencePlanNote").textContent = note;
+}
+async function saveCadencePlan() {
+  const o = cadencePlanOptions();
+  const status = $("cadencePlanStatus");
+  if (!o.name) { $("cadencePlanName").reportValidity(); return; }
+  if (o.source && !safeHttpUrl(o.source)) { status.textContent = "Enter the source as a full https:// address, or leave it empty."; status.classList.add("is-error"); return; }
+  if (!cadenceIsEditor()) return;
+  const existing = new Set((state.cadenceEntries || []).filter(entry => !entry.archived).map(entry => entry.title + "|" + entry.start_date));
+  const rows = cadencePlanRows(o).rows.filter(row => !existing.has(row.title + "|" + row.start_date));
+  const save = $("cadencePlanSave");
+  save.disabled = true;
+  status.classList.remove("is-error");
+  let done = 0;
+  try {
+    for (const row of rows) {
+      status.textContent = "Adding " + (done + 1) + " of " + rows.length + "…";
+      const reminder = o.reminder && row.main;
+      await cadenceApi("POST", { action: "save", entry: {
+        title: row.title.slice(0, 160), category: row.category, recurrence: "none", start_date: row.start_date, end_date: null,
+        regulator: o.regulator, owner_name: o.owner, source_url: o.source, description: row.description.slice(0, 4000),
+        reminder_enabled: reminder, reminder_days_before: 7, reminder_emails: reminder && state.cadenceMember.email ? [state.cadenceMember.email] : []
+      } });
+      done += 1;
+    }
+    $("cadencePlanDialog").close();
+    const first = rows[0];
+    if (first) { state.cadenceSelectedDate = first.start_date; state.cadenceMonth = cadenceDate(first.start_date); state.cadenceMonth.setDate(1); }
+    await refreshCadence(true);
+    showToast(plural(done, "entry", "entries") + " added to Cadence for " + o.name + ".");
+  } catch (error) {
+    status.textContent = (done ? plural(done, "entry was", "entries were") + " added before this error: " : "") + String(error.message || error);
+    status.classList.add("is-error");
+    if (done) refreshCadence(true);
+  } finally { save.disabled = false; }
+}
+function downloadCadencePlan() {
+  const o = cadencePlanOptions();
+  const rows = cadencePlanRows(o).rows;
+  if (!o.name || !rows.length) return;
+  const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//ChangeSentinel//Cadence Filing Planner//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
+  rows.forEach(row => {
+    lines.push("BEGIN:VEVENT", "UID:" + cadenceIcsEscape(L.fileSlug(o.name) + "-" + row.category + "-" + row.start_date + "-" + L.fileSlug(row.title).slice(0, 40) + "@changesentinel"), "DTSTAMP:" + stamp,
+      "DTSTART;VALUE=DATE:" + row.start_date.replace(/-/g, ""), "DTEND;VALUE=DATE:" + cadenceAddDays(row.start_date, 1).replace(/-/g, ""),
+      "SUMMARY:" + cadenceIcsEscape(row.title), "DESCRIPTION:" + cadenceIcsEscape([row.description, o.regulator, o.owner ? "Owner: " + o.owner : ""].filter(Boolean).join("\n")));
+    if (o.source && safeHttpUrl(o.source)) lines.push("URL:" + o.source.replace(/[\r\n]/g, ""));
+    lines.push("END:VEVENT");
+  });
+  lines.push("END:VCALENDAR");
+  downloadTextFile(L.fileSlug(o.name) + "-filing-plan.ics", "text/calendar;charset=utf-8", lines.join("\r\n") + "\r\n");
 }
 
 
@@ -3973,7 +4209,8 @@ function addSaveDraft() {
   try {
     localStorage.setItem(ADD_DRAFT_STORAGE, JSON.stringify({
       url: a.url, method: a.method, origin: a.origin, scope: a.scope, notes: a.notes.slice(0, 6), info: a.info,
-      candidates: a.candidates.slice(0, 6000), picked: Array.from(a.picked.keys()), opened: a.opened, savedAt: new Date().toISOString()
+      candidates: a.candidates.slice(0, 6000), picked: Array.from(a.picked.keys()), opened: a.opened, rules: a.rules, ruleRequests: a.ruleRequests,
+      savedAt: new Date().toISOString()
     }));
   } catch (_) {
     // Without browser storage the work is kept for this visit only.
@@ -4007,10 +4244,28 @@ function addRestoreDraft() {
   a.notes = Array.isArray(saved.notes) ? saved.notes.map(String).slice(0, 6) : [];
   a.info = typeof saved.info === "string" ? saved.info.slice(0, 200) : "";
   a.opened = saved.opened && typeof saved.opened === "object" ? saved.opened : {};
+  a.rules = {};
+  if (saved.rules && typeof saved.rules === "object") {
+    Object.keys(saved.rules).slice(0, 200).forEach(key => {
+      const rule = saved.rules[key] || {};
+      const include = typeof rule.include === "string" ? rule.include.slice(0, RULE_LIMITS.selector) : "";
+      const ignore = Array.isArray(rule.ignore) ? rule.ignore.filter(value => typeof value === "string" && value.length <= RULE_LIMITS.selector).slice(0, RULE_LIMITS.ignore) : [];
+      if (include || ignore.length) a.rules[key] = { include, ignore };
+    });
+  }
+  a.ruleRequests = {};
+  if (saved.ruleRequests && typeof saved.ruleRequests === "object") {
+    Object.keys(saved.ruleRequests).slice(0, 50).forEach(key => {
+      const request = saved.ruleRequests[key] || {};
+      if (Array.isArray(request.keys)) a.ruleRequests[key] = { url: String(request.url || ""), title: String(request.title || "").slice(0, 200), folder: String(request.folder || ""),
+        pattern: String(request.pattern || "").slice(0, 200), keys: request.keys.map(String).slice(0, 5000), at: String(request.at || "") };
+    });
+  }
 }
 function addClearDraft() {
   const a = state.add;
   a.candidates = []; a.picked = new Map(); a.opened = {}; a.notes = []; a.history = []; a.at = -1; a.page = null; a.anchor = "";
+  a.rules = {}; a.area = null; a.ruleDrafts = {}; a.ruleRequests = {}; a.ruleOpen = false;
   try { localStorage.removeItem(ADD_DRAFT_STORAGE); } catch (_) {}
 }
 
@@ -4018,7 +4273,7 @@ function addClearDraft() {
 
 const ADD_STEP_COPY = {
   start: ["Add a link", "Open a page and pick the links on it you want ChangeSentinel to monitor."],
-  explore: ["Explore the page", "Click a link to open it here. Shift-click a link to select it for monitoring."],
+  explore: ["Explore the page", "Click a link to open it here. Shift-click to select it, Shift-drag to box an area, or pick a part of the page to watch or ignore."],
   crawl: ["Following links", "Reading the page and the pages it links to. You choose what to monitor next."],
   review: ["Confirm the links to monitor", "Only ticked links are requested. Nothing is monitored until the owner workflow registers them."]
 };
@@ -4204,7 +4459,10 @@ async function exploreOpen(url, push) {
     a.at = a.history.length - 1;
   }
   a.page = data;
-  a.tab = a.picked.size ? a.tab : "page";
+  a.area = null;
+  a.ruleOpen = false;
+  if (a.picking) a.picking = false;
+  a.tab = a.picked.size ? a.tab : (exploreSuggestions().items.length ? "suggested" : "page");
   $("exploreAddress").textContent = displayUrl(data.url);
   $("exploreNewTab").href = safeHttpUrl(data.url) || "#";
   a.frameToken = exploreRandom(16);
@@ -4226,6 +4484,11 @@ async function exploreOpen(url, push) {
 function exploreBridge(token) {
   var root = document.documentElement;
   var shift = false;
+  var picking = false;
+  var drag = null;
+  var swallowClick = false;
+  var hovered = null;
+  var BLOCKS = "main,article,section,aside,nav,header,footer,form,table,tbody,ul,ol,dl,figure,fieldset,details,div,p,li,tr";
   function send(message) {
     message.cs = "cs-explore";
     message.token = token;
@@ -4239,7 +4502,124 @@ function exploreBridge(token) {
     shift = !!on;
     root.classList.toggle("cs-shift", shift);
   }
+  function setPicking(on) {
+    picking = !!on;
+    root.classList.toggle("cs-picking", picking);
+    if (!picking) setHover(null);
+  }
+  function setHover(node) {
+    if (hovered === node) return;
+    if (hovered) hovered.removeAttribute("data-cs-hover");
+    hovered = node;
+    if (hovered) hovered.setAttribute("data-cs-hover", "");
+  }
+  // A short, stable CSS selector for a part of the page: an id when it has a
+  // readable one, otherwise tags and classes, with :nth-of-type only where needed.
+  function stableClass(name) { return /^[A-Za-z_-][\w-]{1,40}$/.test(name) && !/^cs-/.test(name) && !/\d{3,}/.test(name) && !/^(active|open|show|hidden|selected|current|visible|focus|hover)$|^(is|has)-/.test(name); }
+  function esc(value) { return window.CSS && CSS.escape ? CSS.escape(value) : String(value).replace(/[^\w-]/g, "\\$&"); }
+  function unique(selector) { try { return document.querySelectorAll(selector).length === 1; } catch (e) { return false; } }
+  function selectorFor(node) {
+    if (!node || node.nodeType !== 1) return "";
+    var parts = [];
+    var current = node;
+    while (current && current.nodeType === 1 && current !== document.body && current !== root) {
+      var id = current.getAttribute("id");
+      if (id && /^[A-Za-z][\w-]{1,60}$/.test(id) && !/\d{4,}/.test(id)) {
+        parts.unshift("#" + esc(id));
+        var byId = parts.join(" > ");
+        if (unique(byId)) return byId;
+      } else {
+        var part = current.tagName.toLowerCase();
+        var classes = Array.prototype.filter.call(current.classList || [], stableClass).slice(0, 2);
+        if (classes.length) part += "." + classes.map(esc).join(".");
+        var parentNode = current.parentElement;
+        if (parentNode) {
+          var same = Array.prototype.filter.call(parentNode.children, function (child) { return child.tagName === current.tagName; });
+          if (same.length > 1 && !(classes.length && Array.prototype.filter.call(parentNode.children, function (child) { return child.matches && child.matches(part); }).length === 1)) {
+            part += ":nth-of-type(" + (same.indexOf(current) + 1) + ")";
+          }
+        }
+        parts.unshift(part);
+        var path = parts.join(" > ");
+        // Stop at the first unique path anchored on a class, so a bare "ul" or
+        // "div:nth-of-type(3)" isn't left to break when the page grows.
+        if (classes.length && unique(path)) return path;
+      }
+      current = current.parentElement;
+    }
+    var full = parts.length ? "body > " + parts.join(" > ") : "body";
+    var short = parts.join(" > ");
+    return short && unique(short) ? short : full;
+  }
+  function labelFor(node) {
+    var heading = node.querySelector && node.querySelector("h1,h2,h3,h4,caption,legend,summary");
+    var name = node.getAttribute("aria-label") || (heading && heading.textContent) || "";
+    var kind = { TABLE: "Table", UL: "List", OL: "List", NAV: "Menu", FORM: "Form", HEADER: "Header", FOOTER: "Footer", ASIDE: "Side panel", SECTION: "Section", ARTICLE: "Article", MAIN: "Main content", P: "Paragraph" }[node.tagName] || "Part of the page";
+    name = String(name).replace(/\s+/g, " ").trim();
+    return name ? kind + " · " + name.slice(0, 70) : kind;
+  }
+  function linksIn(node) {
+    var indexes = [];
+    var nodes = node.querySelectorAll ? node.querySelectorAll("[data-cs-link]") : [];
+    if (node.hasAttribute && node.hasAttribute("data-cs-link")) nodes = [node].concat(Array.prototype.slice.call(nodes));
+    for (var i = 0; i < nodes.length; i++) {
+      var index = Number(nodes[i].getAttribute("data-cs-link"));
+      if (indexes.indexOf(index) < 0) indexes.push(index);
+    }
+    return indexes;
+  }
+  function report(node, indexes, how) {
+    var marked = document.querySelectorAll("[data-cs-area]");
+    for (var i = 0; i < marked.length; i++) marked[i].removeAttribute("data-cs-area");
+    if (node && node !== document.body) node.setAttribute("data-cs-area", "");
+    var text = node ? String(node.innerText || node.textContent || "").replace(/\s+/g, " ").trim() : "";
+    send({ type: "area", how: how, indexes: indexes, selector: node && node !== document.body ? selectorFor(node) : "",
+      label: node ? labelFor(node) : "Selected area", text: text.slice(0, 220), words: text ? text.split(" ").length : 0 });
+  }
+  function commonAncestor(nodes) {
+    if (!nodes.length) return null;
+    var ancestor = nodes[0];
+    for (var i = 1; i < nodes.length; i++) {
+      while (ancestor && !ancestor.contains(nodes[i])) ancestor = ancestor.parentElement;
+    }
+    return ancestor && ancestor.nodeType === 1 && ancestor.nodeName !== "A" ? ancestor : ancestor && ancestor.parentElement;
+  }
+  function finishDrag(box) {
+    drag.box.parentNode && drag.box.parentNode.removeChild(drag.box);
+    var left = Math.min(drag.x, box.x), right = Math.max(drag.x, box.x), top = Math.min(drag.y, box.y), bottom = Math.max(drag.y, box.y);
+    var all = document.querySelectorAll("[data-cs-link]");
+    var inside = [], indexes = [];
+    for (var i = 0; i < all.length; i++) {
+      var r = all[i].getBoundingClientRect();
+      if (!r.width && !r.height) continue;
+      var cx = r.left + scrollX + r.width / 2, cy = r.top + scrollY + r.height / 2;
+      if (cx >= left && cx <= right && cy >= top && cy <= bottom) {
+        inside.push(all[i]);
+        var index = Number(all[i].getAttribute("data-cs-link"));
+        if (indexes.indexOf(index) < 0) indexes.push(index);
+      }
+    }
+    var node = commonAncestor(inside);
+    if (!node) {
+      node = document.elementFromPoint((left + right) / 2 - scrollX, (top + bottom) / 2 - scrollY);
+      var area = (right - left) * (bottom - top);
+      while (node && node.parentElement && node !== document.body) {
+        var nr = node.getBoundingClientRect();
+        if (nr.width * nr.height >= area * 0.6) break;
+        node = node.parentElement;
+      }
+    }
+    report(node, indexes, "drag");
+  }
   document.addEventListener("click", function (event) {
+    if (swallowClick) { swallowClick = false; event.preventDefault(); event.stopPropagation(); return; }
+    if (picking) {
+      event.preventDefault();
+      event.stopPropagation();
+      var target = event.target && event.target.closest ? event.target.closest(BLOCKS) : null;
+      if (target) report(target, linksIn(target), "pick");
+      return;
+    }
     var link = linkOf(event.target);
     if (!link) return;
     var href = link.getAttribute("href") || "";
@@ -4250,18 +4630,62 @@ function exploreBridge(token) {
     send({ type: "click", index: Number(link.getAttribute("data-cs-link")), shift: !!(event.shiftKey || shift) });
   }, true);
   ["auxclick", "dragstart"].forEach(function (name) {
-    document.addEventListener(name, function (event) { if (linkOf(event.target)) event.preventDefault(); }, true);
+    document.addEventListener(name, function (event) { if (linkOf(event.target) || drag) event.preventDefault(); }, true);
   });
   document.addEventListener("submit", function (event) { event.preventDefault(); }, true);
-  // Shift+mousedown would otherwise extend a text selection across the page.
-  document.addEventListener("mousedown", function (event) { if (event.shiftKey && linkOf(event.target)) event.preventDefault(); }, true);
+  // Shift+drag draws a box: the links inside it and the part of the page that
+  // holds them are reported. Shift+mousedown would otherwise select text.
+  document.addEventListener("mousedown", function (event) {
+    if (!event.shiftKey || event.button !== 0) return;
+    event.preventDefault();
+    drag = { x: event.pageX, y: event.pageY, moved: false, box: null };
+  }, true);
+  document.addEventListener("mousemove", function (event) {
+    if (!!event.shiftKey !== shift) setShift(event.shiftKey);
+    if (picking) {
+      var block = event.target && event.target.closest ? event.target.closest(BLOCKS) : null;
+      setHover(block && block !== document.body ? block : null);
+    }
+    if (!drag) return;
+    if (!drag.moved && Math.abs(event.pageX - drag.x) + Math.abs(event.pageY - drag.y) < 8) return;
+    if (!drag.moved) {
+      drag.moved = true;
+      drag.box = document.createElement("div");
+      drag.box.className = "cs-drag-box";
+      document.body.appendChild(drag.box);
+    }
+    var s = drag.box.style;
+    s.left = Math.min(drag.x, event.pageX) + "px";
+    s.top = Math.min(drag.y, event.pageY) + "px";
+    s.width = Math.abs(event.pageX - drag.x) + "px";
+    s.height = Math.abs(event.pageY - drag.y) + "px";
+  }, true);
+  document.addEventListener("mouseup", function (event) {
+    if (!drag) return;
+    var moved = drag.moved;
+    if (moved) { finishDrag({ x: event.pageX, y: event.pageY }); swallowClick = true; setTimeout(function () { swallowClick = false; }, 0); }
+    drag = null;
+  }, true);
   document.addEventListener("keydown", function (event) {
     if (event.key === "Shift") setShift(true);
-    if (event.key === "Escape") send({ type: "escape" });
+    if (event.key === "Escape") {
+      if (drag && drag.box && drag.box.parentNode) drag.box.parentNode.removeChild(drag.box);
+      drag = null;
+      if (picking) { setPicking(false); send({ type: "pickoff" }); } else send({ type: "escape" });
+    }
   }, true);
   document.addEventListener("keyup", function (event) { if (event.key === "Shift") setShift(false); }, true);
-  document.addEventListener("mousemove", function (event) { if (!!event.shiftKey !== shift) setShift(event.shiftKey); }, true);
   window.addEventListener("blur", function () { setShift(false); });
+  function markRules(include, ignore) {
+    var marked = document.querySelectorAll("[data-cs-watch],[data-cs-ignore]");
+    for (var i = 0; i < marked.length; i++) { marked[i].removeAttribute("data-cs-watch"); marked[i].removeAttribute("data-cs-ignore"); }
+    function mark(selector, name) {
+      if (!selector) return;
+      try { var nodes = document.querySelectorAll(selector); for (var j = 0; j < nodes.length; j++) nodes[j].setAttribute(name, ""); } catch (e) {}
+    }
+    mark(include, "data-cs-watch");
+    (ignore || []).forEach(function (selector) { mark(selector, "data-cs-ignore"); });
+  }
   window.addEventListener("message", function (event) {
     if (event.source !== parent) return;
     var data = event.data || {};
@@ -4277,6 +4701,13 @@ function exploreBridge(token) {
       root.classList.toggle("cs-select", !!data.select);
     } else if (data.type === "shift") {
       setShift(data.on);
+    } else if (data.type === "pick") {
+      setPicking(data.on);
+    } else if (data.type === "rules") {
+      markRules(data.include, data.ignore);
+    } else if (data.type === "area-clear") {
+      var areas = document.querySelectorAll("[data-cs-area]");
+      for (var k = 0; k < areas.length; k++) areas[k].removeAttribute("data-cs-area");
     } else if (data.type === "locate") {
       var target = document.querySelector('[data-cs-link="' + Number(data.index) + '"]');
       if (!target) return;
@@ -4301,7 +4732,13 @@ function exploreDocument(html, token, nonce) {
     "[data-cs-picked]{outline:2px solid #e8890a!important;outline-offset:2px;background:rgba(232,137,10,.16)!important;border-radius:2px}" +
     "html.cs-shift [data-cs-link],html.cs-select [data-cs-link]{cursor:copy!important;outline:1px dashed rgba(232,137,10,.85);outline-offset:2px}" +
     "@keyframes csFlash{0%,100%{box-shadow:0 0 0 0 rgba(232,137,10,0)}30%{box-shadow:0 0 0 6px rgba(232,137,10,.45)}}" +
-    ".cs-flash{animation:csFlash 1.2s ease 2}</style>";
+    ".cs-flash{animation:csFlash 1.2s ease 2}" +
+    ".cs-drag-box{position:absolute;z-index:2147483646;pointer-events:none;border:1.5px dashed #e8890a;background:rgba(232,137,10,.10);border-radius:3px}" +
+    "html.cs-picking,html.cs-picking *{cursor:crosshair!important}" +
+    "[data-cs-hover]{outline:2px dashed #3d7bd9!important;outline-offset:2px;background:rgba(61,123,217,.07)!important}" +
+    "[data-cs-area]{outline:2px solid #e8890a!important;outline-offset:3px}" +
+    "[data-cs-watch]{outline:2px solid #2f9e6b!important;outline-offset:4px;box-shadow:0 0 0 9999px rgba(20,24,30,.18)!important;position:relative;z-index:1}" +
+    "[data-cs-ignore]{opacity:.35!important;filter:grayscale(1)!important;outline:1px dashed #c0392b!important}</style>";
   const script = '<script nonce="' + nonce + '">(' + exploreBridge.toString() + ")(" + JSON.stringify(token) + ");<\/script>";
   // Only the policy written here may apply: the reader's own (script-src 'none') would block the bridge.
   let doc = String(html || "").replace(/<meta\b[^>]*http-equiv\s*=\s*["']?content-security-policy["']?[^>]*>/gi, "");
@@ -4318,6 +4755,8 @@ function explorePost(message) {
 function exploreSync() {
   explorePost({ type: "mode", select: state.add.selectMode });
   exploreMarkPicked();
+  exploreSendRules();
+  exploreSetPicking(state.add.picking);
 }
 function exploreShift(on) {
   if (state.add.step === "explore") explorePost({ type: "shift", on: !!on });
@@ -4374,6 +4813,8 @@ window.addEventListener("message", event => {
   if (data.cs !== "cs-explore" || !state.add.frameToken || data.token !== state.add.frameToken) return;
   if (data.type === "ready") exploreSync();
   else if (data.type === "click") exploreLinkClick(Number(data.index), !!data.shift);
+  else if (data.type === "area") exploreAreaMessage(data);
+  else if (data.type === "pickoff") exploreSetPicking(false);
   // Escape inside the page closes the dialog, as it does anywhere else in it; the draft is kept.
   else if (data.type === "escape" && $("addMonitorDialog").open) $("addMonitorDialog").close();
 });
@@ -4408,6 +4849,10 @@ function addPickRow(item, options) {
   const tags = ['<span class="tag">' + esc(item.format) + "</span>"];
   if (o.monitored) tags.push('<span class="tag is-monitoring">Already monitored</span>');
   else if (o.stopped) tags.push('<span class="tag is-irrelevant">Monitoring stopped</span>');
+  else if (o.covered) tags.push('<span class="tag is-rule">In your document rule</span>');
+  if (o.part) tags.push('<span class="tag is-part">' + esc(o.part) + "</span>");
+  if (o.older) tags.push('<span class="tag is-older">Older version</span>');
+  (o.reasons || []).filter(reason => !/ file$/.test(reason)).slice(0, 2).forEach(reason => tags.push('<span class="reason">' + esc(reason) + "</span>"));
   return '<div class="link-pick' + (on && !o.locked ? " is-on" : "") + '" data-link-row="' + esc(item.key) + '">' +
     '<label class="link-pick-check"><input type="checkbox" data-link-toggle="' + esc(item.key) + '"' + (on && !o.locked ? " checked" : "") + (o.locked ? " disabled" : "") +
       ' aria-label="' + esc((o.locked ? "Already monitored: " : "Select ") + item.title) + '"><i aria-hidden="true"></i></label>' +
@@ -4420,12 +4865,18 @@ function renderExploreSide() {
   const picked = Array.from(a.picked.values());
   $("exploreSelectedCount").textContent = String(picked.length);
   $("explorePageCount").textContent = a.page ? String(a.page.links.filter(link => !link.chrome).length) : "";
+  const suggestions = a.page ? exploreSuggestions() : { items: [] };
+  $("exploreSuggestedCount").textContent = a.page ? String(suggestions.items.length) : "";
   document.querySelectorAll("[data-explore-tab]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.exploreTab === a.tab)));
   $("exploreSelectMode").checked = a.selectMode;
-  $("exploreHint").innerHTML = a.selectMode
+  const pickButton = document.querySelector("[data-explore-pick]");
+  if (pickButton) { pickButton.disabled = !a.page; pickButton.setAttribute("aria-pressed", String(a.picking)); pickButton.textContent = a.picking ? "Picking… (Esc)" : "Pick a part"; }
+  $("exploreHint").innerHTML = a.picking
+    ? "Click any part of the page — a table, a list, a section — to select it."
+    : a.selectMode
     ? "Tap selects is on: clicking or tapping a link selects it. Turn it off to browse."
-    : coarsePointer && coarsePointer.matches ? "Tap a link to open it here. Turn on <strong>Tap selects</strong> to select links."
-      : "<kbd>Shift</kbd>-click a link to select it. Click it to open it here.";
+    : coarsePointer && coarsePointer.matches ? "Tap a link to open it here. Turn on <strong>Tap selects</strong> to select links, or use <strong>Pick a part</strong>."
+      : "<kbd>Shift</kbd>-click a link to select it. <kbd>Shift</kbd>-drag to box an area. Click a link to open it here.";
   const thisPage = a.page ? a.picked.has(L.urlKey(a.page.url)) : false;
   const thisButton = document.querySelector("[data-explore-this]");
   thisButton.setAttribute("aria-pressed", String(thisPage));
@@ -4434,9 +4885,14 @@ function renderExploreSide() {
   document.querySelector("[data-explore-back]").disabled = a.at <= 0;
   document.querySelector("[data-explore-forward]").disabled = a.at >= a.history.length - 1;
   const list = $("exploreList");
+  const tools = exploreToolsHtml();
+  const covered = addRuleCoveredKeys();
+  const rowOptions = item => ({ covered: covered.has(item.key), part: addRulesFor(item.key).include ? "Watching one part" : addRulesFor(item.key).ignore.length ? "Ignoring " + plural(addRulesFor(item.key).ignore.length, "part", "parts") : "" });
   if (a.tab === "selected") {
-    list.innerHTML = picked.length ? picked.slice().reverse().map(item => addPickRow(item)).join("")
-      : emptyState("Nothing selected yet", "Shift-click links on the page, or tick them under “On this page”.");
+    list.innerHTML = tools + (picked.length ? picked.slice().reverse().map(item => addPickRow(item, rowOptions(item))).join("")
+      : emptyState("Nothing selected yet", "Shift-click links on the page, Shift-drag a box around several, or tick them under “Suggested” and “On this page”."));
+  } else if (a.tab === "suggested" && a.page) {
+    list.innerHTML = tools + exploreSuggestedHtml();
   } else if (!a.page) {
     list.innerHTML = '<div class="loading">Reading the page…</div>';
   } else if (!a.page.links.length) {
@@ -4444,7 +4900,7 @@ function renderExploreSide() {
   } else {
     const content = a.page.links.filter(link => !link.chrome);
     const menus = a.page.links.length - content.length;
-    list.innerHTML = L.pickSections(content.map(link => addLinkItem(link, a.page, null)).filter(Boolean)).map((group, index) =>
+    list.innerHTML = tools + L.pickSections(content.map(link => addLinkItem(link, a.page, null)).filter(Boolean)).map((group, index) =>
       '<div class="link-group"><span class="link-group-name"><strong>' + esc(group.section || "On this page") + "</strong> · " + group.items.length + "</span></div>" +
       group.items.map(item => addPickRow(item, { open: item.format === "Web page" })).join("")).join("") +
       (menus ? '<p class="note-strip">' + plural(menus, "link", "links") + " in the site’s menus, header and footer " + (menus === 1 ? "is" : "are") +
@@ -4455,6 +4911,284 @@ function renderExploreSide() {
   button.disabled = !picked.length;
   button.textContent = picked.length ? "Review " + plural(picked.length, "link", "links") : "Review links";
   $("exploreFootNote").textContent = picked.length ? plural(picked.length, "link", "links") + " selected · " + plural(a.history.length, "page", "pages") + " visited" : "";
+}
+
+/* ---------- Smarter picking: areas, page rules, suggestions, similar links, document rules ---------- */
+
+const RULE_LIMITS = { selector: 500, ignore: 20 };
+function addPageKey() { return state.add.page ? L.urlKey(state.add.page.url) : ""; }
+function addRulesFor(key) {
+  const rules = state.add.rules[key];
+  return rules && typeof rules === "object" ? { include: String(rules.include || ""), ignore: Array.isArray(rules.ignore) ? rules.ignore.map(String) : [] } : { include: "", ignore: [] };
+}
+function addSetRules(key, rules) {
+  const a = state.add;
+  if (!rules.include && !rules.ignore.length) delete a.rules[key];
+  else a.rules[key] = { include: rules.include, ignore: rules.ignore.slice(0, RULE_LIMITS.ignore) };
+  // A document rule already requested for this page carries the old checking rules.
+  if (a.ruleRequests[key]) a.ruleRequests[key].stale = true;
+  exploreSendRules();
+  addSaveDraft();
+}
+function exploreSendRules() {
+  const rules = addRulesFor(addPageKey());
+  explorePost({ type: "rules", include: rules.include, ignore: rules.ignore });
+}
+function exploreSetPicking(on) {
+  const a = state.add;
+  a.picking = !!on;
+  explorePost({ type: "pick", on: a.picking });
+  const button = document.querySelector("[data-explore-pick]");
+  if (button) {
+    button.setAttribute("aria-pressed", String(a.picking));
+    button.textContent = a.picking ? "Picking… (Esc)" : "Pick a part";
+  }
+}
+function exploreContentLinks() {
+  const a = state.add;
+  return a.page ? a.page.links.filter(link => !link.chrome) : [];
+}
+// Suggestions for the page being explored: documents and pages a compliance team
+// would most likely monitor, best first, with older versions of the same document
+// held back.
+function exploreSuggestions() {
+  const a = state.add;
+  if (!a.page) return { items: [], older: [] };
+  const links = a.page.links;
+  const olderIndexes = L.pickVersions(links);
+  const rows = [];
+  const older = [];
+  const seen = new Set();
+  links.forEach((link, index) => {
+    if (link.chrome) return;
+    const key = L.urlKey(link.url);
+    if (seen.has(key)) return;
+    seen.add(key);
+    const score = L.pickScore(link);
+    const isOlder = score.older || olderIndexes.has(index);
+    const row = { link, index, key, score: score.score, reasons: score.reasons, older: isOlder };
+    if (isOlder) { if (score.score >= 2) older.push(row); return; }
+    if (score.score >= 3) rows.push(row);
+  });
+  rows.sort((x, y) => y.score - x.score || x.index - y.index);
+  return { items: rows, older };
+}
+function explorePickedOnPage() {
+  const a = state.add;
+  return exploreContentLinks().filter(link => a.picked.has(L.urlKey(link.url)));
+}
+function addSelectKeys(keys, links) {
+  const a = state.add;
+  const byKey = new Map();
+  (links || []).forEach(link => { const key = L.urlKey(link.url); if (!byKey.has(key)) byKey.set(key, link); });
+  let added = 0;
+  keys.forEach(key => {
+    if (a.picked.has(key)) return;
+    const link = byKey.get(key);
+    const item = link ? (link.key ? link : addLinkItem(link, a.page, null)) : a.candidates.find(candidate => candidate.key === key);
+    if (!item) return;
+    if (!a.candidates.some(candidate => candidate.key === item.key)) a.candidates.push(item);
+    a.picked.set(item.key, a.candidates.find(candidate => candidate.key === item.key) || item);
+    added += 1;
+  });
+  return added;
+}
+function ruleDraftFor(key) {
+  const a = state.add;
+  if (!a.ruleDrafts[key]) {
+    const recipe = L.pickRecipe(a.page.url, explorePickedOnPage(), a.page.links) || {};
+    a.ruleDrafts[key] = { folder: recipe.prefix || "", pattern: recipe.textPattern || "" };
+  }
+  return a.ruleDrafts[key];
+}
+function ruleSummaryHtml(matches) {
+  if (matches.error) return '<span class="rule-error">' + esc(matches.error) + "</span>";
+  return "Today that’s <strong>" + plural(matches.count, "document", "documents") + "</strong> on this page. New ones that match are picked up automatically; no other page on the site is followed.";
+}
+function exploreToolsHtml() {
+  const a = state.add;
+  if (!a.page) return "";
+  const key = addPageKey();
+  const parts = [];
+  // The part of the page last boxed or picked.
+  if (a.area && a.area.pageKey === key) {
+    const area = a.area;
+    const free = (area.indexes || []).filter(index => a.page.links[index] && !a.picked.has(L.urlKey(a.page.links[index].url)));
+    parts.push('<section class="smart-card area-card" aria-label="Selected area">' +
+      '<div class="smart-card-head"><span class="smart-kicker">Selected area</span><button class="text-button" type="button" data-area-clear aria-label="Clear the selected area">Clear</button></div>' +
+      '<strong class="area-label">' + esc(area.label || "Part of the page") + "</strong>" +
+      (area.text ? '<p class="area-text">' + esc(area.text) + (area.words > 36 ? "…" : "") + "</p>" : "") +
+      '<div class="smart-actions">' +
+        (area.indexes && area.indexes.length ? '<button class="btn btn-primary" type="button" data-area-select' + (free.length ? "" : " disabled") + ">" +
+          (free.length ? "Select its " + plural(free.length, "link", "links") : "Its links are selected") + "</button>" : "") +
+        (area.selector ? '<button class="btn" type="button" data-area-watch title="Compare only this part when the page is checked">Watch only this part</button>' +
+          '<button class="btn" type="button" data-area-ignore title="Leave this part out when the page is checked (menus, banners, dates that change every day)">Ignore this part</button>' : "") +
+      "</div>" +
+      (area.selector ? '<code class="area-selector" title="CSS selector">' + esc(area.selector) + "</code>" : "") +
+      "</section>");
+  }
+  // Rules already set for this page.
+  const rules = addRulesFor(key);
+  if (rules.include || rules.ignore.length) {
+    parts.push('<section class="smart-card rules-card" aria-label="How this page is checked">' +
+      '<div class="smart-card-head"><span class="smart-kicker">How this page is checked</span></div>' +
+      (rules.include ? '<div class="rule-chip is-watch"><span>Only</span><code>' + esc(rules.include) + '</code><button type="button" data-rule-remove="include" aria-label="Remove">×</button></div>' : "") +
+      rules.ignore.map((selector, index) => '<div class="rule-chip is-ignore"><span>Ignore</span><code>' + esc(selector) + '</code><button type="button" data-rule-remove="' + index + '" aria-label="Remove">×</button></div>').join("") +
+      (a.ruleRequests[key] && a.ruleRequests[key].stale
+        ? '<p class="smart-note is-warning">Your document rule for this page was requested before this change.</p><div class="smart-actions"><button class="btn btn-primary" type="button" data-rule-request>Update the rule request</button></div>'
+        : '<p class="smart-note">Applies when this page is requested as a monitor.</p>') + "</section>");
+  }
+  // More like what was picked here.
+  const picked = explorePickedOnPage();
+  if (picked.length) {
+    const similar = L.pickSimilar(picked, exploreContentLinks(), link => L.urlKey(link.url)).slice(0, 3);
+    a.similar = similar;
+    if (similar.length) {
+      parts.push('<div class="similar-row" role="group" aria-label="Select similar links"><span class="smart-kicker">Select similar</span>' +
+        similar.map((rule, index) => '<button class="similar-chip" type="button" data-similar="' + index + '"><b>+' + rule.extra + "</b> " + esc(rule.label) + "</button>").join("") + "</div>");
+    }
+    // Teach the monitor the pattern instead of a fixed list.
+    const docs = picked.filter(link => link.format !== "Web page");
+    if (docs.length) {
+      const request = a.ruleRequests[key];
+      if (!a.ruleOpen) {
+        parts.push('<button class="rule-open" type="button" data-rule-open><span class="rule-open-mark" aria-hidden="true">↻</span><span><strong>' +
+          (request ? "Document rule requested" : "Make this a monitoring rule") + "</strong><small>" +
+          (request ? "Open it again or change it" : "Watch this page and every document like these, including future ones") + "</small></span></button>");
+      } else {
+        const draft = ruleDraftFor(key);
+        const matches = L.pickRuleMatches(a.page.links, draft);
+        parts.push('<section class="smart-card rule-card" aria-label="Monitoring rule">' +
+          '<div class="smart-card-head"><span class="smart-kicker">Monitoring rule</span><button class="text-button" type="button" data-rule-close>Close</button></div>' +
+          '<p class="rule-lede">Watch <strong>' + esc(a.page.title || displayUrl(a.page.url)) + "</strong> and the documents it links to:</p>" +
+          '<label class="rule-field"><span>In this folder</span><input class="field-input" id="ruleFolder" type="url" spellcheck="false" autocomplete="off" value="' + esc(draft.folder) + '" placeholder="Anywhere on this site"></label>' +
+          '<label class="rule-field"><span>Whose link text matches</span><input class="field-input" id="rulePattern" type="text" spellcheck="false" autocomplete="off" value="' + esc(draft.pattern) + '" placeholder="Any link text (for example ^Current)"></label>' +
+          '<p class="rule-count" id="ruleCount" aria-live="polite">' + ruleSummaryHtml(matches) + "</p>" +
+          (rules.include || rules.ignore.length ? '<p class="smart-note">The page is checked with the rules above.</p>' : "") +
+          '<div class="smart-actions"><button class="btn btn-primary" type="button" data-rule-request' + (matches.error ? " disabled" : "") + ">" + (request ? "Open the rule request again" : "Request this rule on GitHub") + "</button>" +
+          '<button class="text-button" type="button" data-rule-show>Show matches</button></div>' +
+          (request ? '<p class="smart-note">Requested ' + esc(when(request.at)) + ". Its documents are left out of the link requests, so nothing is registered twice.</p>" : "") +
+          "</section>");
+      }
+    }
+  }
+  return parts.length ? '<div class="smart-tools">' + parts.join("") + "</div>" : "";
+}
+function exploreSuggestedHtml() {
+  const a = state.add;
+  const suggestions = exploreSuggestions();
+  const free = suggestions.items.filter(row => !a.picked.has(row.key));
+  if (!suggestions.items.length) {
+    return emptyState("No clear suggestions", "Nothing on this page looks like a form, template, instructions or a regulatory document. See “On this page” for every link.");
+  }
+  const row = item => {
+    const entry = addLinkItem(item.link, a.page, null);
+    return entry ? addPickRow(entry, { open: entry.format === "Web page", reasons: item.reasons, older: item.older }) : "";
+  };
+  return '<div class="link-group"><span class="link-group-name"><strong>Likely worth monitoring</strong> · ' + suggestions.items.length + "</span>" +
+      (free.length ? '<button class="text-button" type="button" data-suggest-all>Select all ' + free.length + "</button>" : "") + "</div>" +
+    suggestions.items.map(row).join("") +
+    (suggestions.older.length ? '<div class="link-group"><span class="link-group-name"><strong>Older versions</strong> · ' + suggestions.older.length + "</span>" +
+      '<button class="text-button" type="button" data-older-toggle>' + (a.showOlder ? "Hide" : "Show") + "</button></div>" +
+      (a.showOlder ? suggestions.older.map(row).join("") : '<p class="note-strip">Earlier years and superseded copies of the documents above are held back.</p>') : "");
+}
+function exploreAreaMessage(data) {
+  const a = state.add;
+  if (!a.page) return;
+  const indexes = (Array.isArray(data.indexes) ? data.indexes : []).map(Number).filter(index => Number.isInteger(index) && a.page.links[index]).slice(0, 2000);
+  a.area = { pageKey: addPageKey(), indexes, selector: String(data.selector || "").slice(0, 1000), label: String(data.label || "").slice(0, 120),
+    text: String(data.text || "").slice(0, 240), words: Number(data.words) || 0, how: data.how === "pick" ? "pick" : "drag" };
+  if (a.picking) exploreSetPicking(false);
+  renderExploreSide();
+  const list = $("exploreList");
+  if (list) list.scrollTop = 0;
+}
+function exploreAreaAction(kind) {
+  const a = state.add;
+  const area = a.area;
+  if (!area || !a.page || area.pageKey !== addPageKey()) return;
+  if (kind === "select") {
+    const added = addSelectKeys(area.indexes.map(index => L.urlKey(a.page.links[index].url)), area.indexes.map(index => a.page.links[index]));
+    exploreMarkPicked();
+    renderExploreSide();
+    addSaveDraft();
+    showToast(added ? plural(added, "link", "links") + " selected from the area." : "Those links were already selected.");
+    return;
+  }
+  if (!area.selector) return;
+  if (area.selector.length > RULE_LIMITS.selector) { showToast("That part of the page has no short selector. Pick a smaller or more distinct part."); return; }
+  const key = addPageKey();
+  const rules = addRulesFor(key);
+  if (kind === "watch") {
+    rules.include = area.selector;
+    rules.ignore = rules.ignore.filter(selector => selector !== area.selector);
+    const previous = a.at > 0 ? a.pages.get(L.urlKey(a.history[a.at - 1])) : null;
+    const pageItem = addItem({ url: a.page.url, title: a.page.title, parentUrl: previous ? previous.url : "", parentTitle: previous ? previous.title : "" });
+    if (pageItem && !a.picked.has(pageItem.key)) addToggle(pageItem, true);
+    showToast("This page will be compared only within “" + area.label + "”. The page is selected for monitoring.");
+  } else {
+    if (rules.ignore.length >= RULE_LIMITS.ignore) { showToast("A page can ignore at most " + RULE_LIMITS.ignore + " parts."); return; }
+    if (rules.ignore.indexOf(area.selector) < 0) rules.ignore.push(area.selector);
+    if (rules.include === area.selector) rules.include = "";
+    showToast("“" + area.label + "” will be left out when this page is checked.");
+  }
+  a.area = null;
+  explorePost({ type: "area-clear" });
+  addSetRules(key, rules);
+  renderExploreSide();
+}
+function exploreRuleInput() {
+  const a = state.add;
+  const key = addPageKey();
+  if (!key || !a.ruleDrafts[key]) return;
+  a.ruleDrafts[key].folder = ($("ruleFolder") || {}).value || "";
+  a.ruleDrafts[key].pattern = ($("rulePattern") || {}).value || "";
+  const matches = L.pickRuleMatches(a.page.links, a.ruleDrafts[key]);
+  $("ruleCount").innerHTML = ruleSummaryHtml(matches);
+  const button = document.querySelector("[data-rule-request]");
+  if (button) button.disabled = !!matches.error;
+}
+function exploreRuleShow() {
+  const a = state.add;
+  const key = addPageKey();
+  const matches = L.pickRuleMatches(a.page.links, ruleDraftFor(key));
+  const indexes = [];
+  a.page.links.forEach((link, index) => { if (matches.keys.indexOf(L.urlKey(link.url)) >= 0) indexes.push(index); });
+  explorePost({ type: "picked", indexes });
+  if (indexes.length) explorePost({ type: "locate", index: indexes[0] });
+  showToast(indexes.length ? "Matching documents are outlined on the page for a moment." : "Nothing on this page matches the rule yet.");
+  window.setTimeout(exploreMarkPicked, 2600);
+}
+function exploreRuleRequest() {
+  const a = state.add;
+  const key = addPageKey();
+  if (!a.page || !key) return;
+  const draft = ruleDraftFor(key);
+  const matches = L.pickRuleMatches(a.page.links, draft);
+  if (matches.error) { showToast(matches.error); return; }
+  const rules = addRulesFor(key);
+  const request = L.pickRuleRequest({ url: a.page.url, name: a.page.title || "", folder: draft.folder, pattern: draft.pattern, include: rules.include, ignore: rules.ignore });
+  const params = new URLSearchParams();
+  params.set("title", request.title);
+  params.set("body", request.body);
+  const target = REPO + "/issues/new?" + params.toString();
+  if (target.length > MAX_BULK_REQUEST_URL_LENGTH) { showToast("This rule is too long for a GitHub request. Shorten the pattern or selectors."); return; }
+  a.ruleRequests[key] = { url: a.page.url, title: a.page.title || "", folder: draft.folder, pattern: draft.pattern, keys: matches.keys.concat([key]), at: new Date().toISOString() };
+  addSaveDraft();
+  renderExploreSide();
+  const githubWindow = window.open(target, "_blank");
+  if (githubWindow) {
+    try { githubWindow.opener = null; } catch (_) {}
+    showToast("Submit the rule request on GitHub. Once the owner workflow accepts it, the page and its matching documents are monitored.");
+  } else {
+    showToast("Your browser blocked the new tab. Allow pop-ups for this dashboard and press the button again.");
+  }
+}
+// Keys a requested document rule already covers: left out of the link requests.
+function addRuleCoveredKeys() {
+  const covered = new Set();
+  Object.values(state.add.ruleRequests || {}).forEach(request => (request.keys || []).forEach(key => covered.add(key)));
+  return covered;
 }
 
 /* ---------- Follow links by level ---------- */
@@ -4546,7 +5280,10 @@ function renderCrawl() {
 /* ---------- Confirm ---------- */
 
 function addRequestRows(items) {
-  return items.map(item => ({ url: item.url, name: L.pickMonitorName(item), include_selector: "", ignore_selectors: [] }));
+  return items.map(item => {
+    const rules = addRulesFor(item.key);
+    return { url: item.url, name: L.pickMonitorName(item), include_selector: rules.include, ignore_selectors: rules.ignore };
+  });
 }
 function addPlan() {
   const a = state.add;
@@ -4554,22 +5291,48 @@ function addPlan() {
   const stopped = addStoppedKeys(monitored);
   const picked = Array.from(a.picked.values());
   const summary = L.pickSummary(picked, monitored);
-  const pending = summary.pending.filter(item => !stopped.has(item.key));
-  const leftStopped = summary.pending.length - pending.length;
+  const covered = addRuleCoveredKeys();
+  const notStopped = summary.pending.filter(item => !stopped.has(item.key));
+  const leftStopped = summary.pending.length - notStopped.length;
+  const pending = notStopped.filter(item => !covered.has(item.key));
+  const leftCovered = notStopped.length - pending.length;
   const prepared = L.pickBatches(addRequestRows(pending), makeBulkGitHubIssueUrl, MAX_BULK_LINKS, MAX_BULK_REQUEST_URL_LENGTH);
-  return { monitored, stopped, picked, summary, pending, leftStopped, prepared };
+  return { monitored, stopped, covered, picked, summary, pending, leftStopped, leftCovered, prepared };
 }
 function renderReview() {
   const a = state.add;
   const plan = addPlan();
   const filters = { query: a.query, format: a.format, show: a.show, selectedKeys: new Set(a.picked.keys()) };
-  const groups = L.pickGroupBy(a.candidates, filters);
+  // Scores and older versions, worked out once per candidate list.
+  if (a.scored !== a.candidates || a.scoredCount !== a.candidates.length) {
+    const olderIndexes = L.pickVersions(a.candidates);
+    a.scores = new Map();
+    a.candidates.forEach((item, index) => {
+      const score = L.pickScore(item);
+      a.scores.set(item.key, { score: score.score, reasons: score.reasons, older: score.older || olderIndexes.has(index) });
+    });
+    a.scored = a.candidates;
+    a.scoredCount = a.candidates.length;
+  }
+  const scoreOf = item => a.scores.get(item.key) || { score: 0, reasons: [], older: false };
+  const pool = a.candidates.filter(item => {
+    const score = scoreOf(item);
+    if (a.picked.has(item.key)) return a.show !== "SUGGESTED" || score.score >= 3;
+    if (a.hideOlder && score.older) return false;
+    return a.show !== "SUGGESTED" || score.score >= 3;
+  });
+  const hiddenOlder = a.hideOlder ? a.candidates.filter(item => !a.picked.has(item.key) && scoreOf(item).older).length : 0;
+  const groups = L.pickGroupBy(pool, Object.assign({}, filters, { show: a.show === "SUGGESTED" ? "ALL" : a.show }));
   const total = groups.reduce((sum, group) => sum + group.items.length, 0);
   const notes = a.origin === "crawl"
     ? ["Found " + plural(a.candidates.length, "link", "links") + (a.crawl ? " on " + plural(a.crawl.read, "page", "pages") : "") + ". Nothing is ticked yet: tick the ones to monitor. Historical and unrelated links are listed too, so you decide.", a.info || ""]
     : a.origin === "scout" ? ["These are the Scout findings you selected. Untick any you don't want; each one is requested as its own monitor."]
     : ["These are the links you selected while exploring. Untick any you don't want."];
+  if (hiddenOlder) notes.push(plural(hiddenOlder, "older version is", "older versions are") + " hidden.");
+  const rulesRequested = Object.values(a.ruleRequests || {});
+  if (rulesRequested.length) notes.push(plural(rulesRequested.length, "document rule was", "document rules were") + " requested; the links " + (rulesRequested.length === 1 ? "it covers are" : "they cover are") + " left out of these requests.");
   $("reviewNote").textContent = notes.concat(a.notes).filter(Boolean).join(" ");
+  if ($("reviewHideOlder")) $("reviewHideOlder").checked = a.hideOlder;
   $("reviewNote").classList.toggle("is-warning", a.notes.length > 0);
   document.querySelectorAll("[data-review-show]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.reviewShow === a.show)));
   $("reviewFormat").value = a.format;
@@ -4582,6 +5345,12 @@ function renderReview() {
   } else {
     let shown = 0;
     let html = "";
+    const tickedItems = Array.from(a.picked.values()).filter(item => !plan.monitored.has(item.key));
+    a.reviewSimilar = tickedItems.length ? L.pickSimilar(tickedItems.slice(0, 200), a.candidates.filter(item => !plan.monitored.has(item.key) && !plan.stopped.has(item.key) && !(a.hideOlder && scoreOf(item).older)), item => item.key).slice(0, 3) : [];
+    if (a.reviewSimilar.length) {
+      html += '<div class="review-similar" role="group" aria-label="Tick similar links"><span class="smart-kicker">Tick similar</span>' +
+        a.reviewSimilar.map((rule, index) => '<button class="similar-chip" type="button" data-review-similar="' + index + '"><b>+' + rule.extra + "</b> " + esc(rule.label) + "</button>").join("") + "</div>";
+    }
     groups.forEach((group, index) => {
       if (shown >= a.limit) return;
       const rows = group.items.slice(0, a.limit - shown);
@@ -4590,7 +5359,13 @@ function renderReview() {
       html += '<div class="link-group"><span class="link-group-name"><strong>' + esc(group.parentTitle || "Starting page") + "</strong>" +
         (group.section ? " · " + esc(group.section) : "") + " · " + group.items.length + "</span>" +
         (free.length ? '<button class="text-button" type="button" data-review-group="' + index + '">' + (all ? "Untick these" : "Tick these") + "</button>" : "") + "</div>" +
-        rows.map(item => addPickRow(item, { monitored: plan.monitored.has(item.key), stopped: plan.stopped.has(item.key), locked: plan.monitored.has(item.key) || plan.stopped.has(item.key) })).join("");
+        rows.map(item => {
+          const score = scoreOf(item);
+          const rules = addRulesFor(item.key);
+          return addPickRow(item, { monitored: plan.monitored.has(item.key), stopped: plan.stopped.has(item.key), locked: plan.monitored.has(item.key) || plan.stopped.has(item.key),
+            covered: plan.covered.has(item.key), reasons: score.reasons, older: score.older,
+            part: rules.include ? "Watching one part" : rules.ignore.length ? "Ignoring " + plural(rules.ignore.length, "part", "parts") : "" });
+        }).join("");
       shown += rows.length;
     });
     if (shown < total) html += '<div class="link-more"><button class="btn" type="button" data-review-more>Show ' + Math.min(REVIEW_PAGE, total - shown) + " more · " + (total - shown).toLocaleString() + " not shown</button></div>";
@@ -4606,6 +5381,7 @@ function renderReviewFoot(plan) {
   const parts = ["<strong>" + p.summary.selected + "</strong> ticked"];
   if (p.summary.monitored) parts.push(p.summary.monitored + " already monitored, left out");
   if (p.leftStopped) parts.push(p.leftStopped + " stopped earlier, left out");
+  if (p.leftCovered) parts.push(p.leftCovered + " covered by your document rule");
   parts.push("<strong>" + p.pending.length + "</strong> new " + (p.pending.length === 1 ? "monitor" : "monitors") +
     (batches.length ? " in " + plural(batches.length, "request", "requests") : ""));
   const tooLong = p.prepared.tooLong.length ? " " + esc(plural(p.prepared.tooLong.length, "address is", "addresses are")) + " too long for a GitHub request and left out." : "";
@@ -5214,7 +5990,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout]");
+  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -5231,6 +6007,15 @@ $("workspace").addEventListener("click", event => {
     showToast("This automatic date is no longer linked to a current change."); return;
   }
   if (data.calendarEdit) return openCadenceEntry(data.calendarEdit);
+  if (data.calendarPlan !== undefined) return openCadencePlanner();
+  if (data.calendarTrack !== undefined) return trackDetectedDate(data.calendarTrack, data.calendarDate);
+  if (data.calendarIcs) return downloadCadenceEvent(data.calendarIcs);
+  if (data.calendarMonitor) {
+    openAddMonitor();
+    $("newMonitorUrl").value = data.calendarMonitor;
+    $("addExact").open = true;
+    return;
+  }
   if (data.calendarDelete) return archiveCadenceEntry(data.calendarDelete);
   if (data.calendarComplete) return toggleCadenceOccurrence(data.calendarComplete, data.calendarDate, data.calendarDone === "true");
   if (data.calendarTest !== undefined) return sendCadenceTestEmail();
@@ -5518,6 +6303,12 @@ $("scoutFormatFilter").addEventListener("change", () => {
 });
 $("cadenceSearch").addEventListener("input", () => { state.cadenceSearch = $("cadenceSearch").value; renderCadenceView(); });
 $("cadenceTypeFilter").addEventListener("change", () => { state.cadenceFilter = $("cadenceTypeFilter").value; renderCadenceView(); });
+$("cadenceOwnerFilter").addEventListener("change", () => { state.cadenceOwner = $("cadenceOwnerFilter").value || "ALL"; renderCadenceView(); });
+$("cadencePlanForm").addEventListener("input", syncCadencePlanner);
+$("cadencePlanForm").addEventListener("change", syncCadencePlanner);
+$("cadencePlanForm").addEventListener("submit", event => { event.preventDefault(); saveCadencePlan(); });
+$("cadencePlanIcs").addEventListener("click", downloadCadencePlan);
+document.querySelectorAll("[data-plan-close]").forEach(button => button.addEventListener("click", () => $("cadencePlanDialog").close()));
 $("cadenceSignInForm").addEventListener("submit", signInCadence);
 $("cadenceForgotPassword").addEventListener("click", requestCadencePasswordReset);
 $("cadenceRecoveryForm").addEventListener("submit", updateCadencePassword);
@@ -5580,7 +6371,39 @@ document.querySelector(".add-explore").addEventListener("click", event => {
   const retry = event.target.closest("[data-explore-retry]");
   if (retry) { a.pages.delete(L.urlKey(retry.dataset.exploreRetry)); return exploreOpen(retry.dataset.exploreRetry, !a.page || a.history[a.at] !== retry.dataset.exploreRetry); }
   const tab = event.target.closest("[data-explore-tab]");
-  if (tab) { a.tab = tab.dataset.exploreTab === "page" ? "page" : "selected"; return renderExploreSide(); }
+  if (tab) { a.tab = ["page", "suggested"].indexOf(tab.dataset.exploreTab) >= 0 ? tab.dataset.exploreTab : "selected"; return renderExploreSide(); }
+  if (event.target.closest("[data-explore-pick]")) return exploreSetPicking(!a.picking), renderExploreSide();
+  if (event.target.closest("[data-area-clear]")) { a.area = null; explorePost({ type: "area-clear" }); return renderExploreSide(); }
+  if (event.target.closest("[data-area-select]")) return exploreAreaAction("select");
+  if (event.target.closest("[data-area-watch]")) return exploreAreaAction("watch");
+  if (event.target.closest("[data-area-ignore]")) return exploreAreaAction("ignore");
+  const ruleRemove = event.target.closest("[data-rule-remove]");
+  if (ruleRemove) {
+    const key = addPageKey();
+    const rules = addRulesFor(key);
+    if (ruleRemove.dataset.ruleRemove === "include") rules.include = "";
+    else rules.ignore.splice(Number(ruleRemove.dataset.ruleRemove), 1);
+    addSetRules(key, rules);
+    return renderExploreSide();
+  }
+  const similar = event.target.closest("[data-similar]");
+  if (similar) {
+    const rule = (a.similar || [])[Number(similar.dataset.similar)];
+    if (!rule) return;
+    const added = addSelectKeys(rule.keys, exploreContentLinks());
+    exploreMarkPicked(); addSaveDraft(); renderExploreSide();
+    return showToast(plural(added, "more link", "more links") + " selected: " + rule.label.replace(/^All |^Every /, "").toLowerCase() + ".");
+  }
+  if (event.target.closest("[data-suggest-all]")) {
+    const added = addSelectKeys(exploreSuggestions().items.map(row => row.key), exploreContentLinks());
+    exploreMarkPicked(); addSaveDraft(); renderExploreSide();
+    return showToast(plural(added, "suggested link", "suggested links") + " selected.");
+  }
+  if (event.target.closest("[data-older-toggle]")) { a.showOlder = !a.showOlder; return renderExploreSide(); }
+  if (event.target.closest("[data-rule-open]")) { a.ruleOpen = true; renderExploreSide(); const input = $("rulePattern"); if (input) input.focus({ preventScroll: true }); return; }
+  if (event.target.closest("[data-rule-close]")) { a.ruleOpen = false; return renderExploreSide(); }
+  if (event.target.closest("[data-rule-show]")) return exploreRuleShow();
+  if (event.target.closest("[data-rule-request]")) return exploreRuleRequest();
   const go = event.target.closest("[data-explore-go]");
   if (go) return exploreOpen(go.dataset.exploreGo, true);
   const toggle = event.target.closest("input[data-link-toggle]");
@@ -5608,6 +6431,9 @@ document.querySelector(".add-explore").addEventListener("click", event => {
   if (locate) return exploreLocate(locate.dataset.exploreLocate);
   const goto = event.target.closest("[data-add-goto]");
   if (goto) addGoto(goto.dataset.addGoto);
+});
+document.querySelector(".add-explore").addEventListener("input", event => {
+  if (event.target.id === "ruleFolder" || event.target.id === "rulePattern") exploreRuleInput();
 });
 $("exploreSelectMode").addEventListener("change", () => {
   state.add.selectMode = $("exploreSelectMode").checked;
@@ -5653,7 +6479,16 @@ document.querySelector(".add-review").addEventListener("click", event => {
   }
   if (event.target.closest("[data-review-more]")) { a.limit += REVIEW_PAGE; return renderReview(); }
   const show = event.target.closest("[data-review-show]");
-  if (show) { a.show = show.dataset.reviewShow === "SELECTED" ? "SELECTED" : "ALL"; a.limit = REVIEW_PAGE; return renderReview(); }
+  if (show) { a.show = ["SELECTED", "SUGGESTED"].indexOf(show.dataset.reviewShow) >= 0 ? show.dataset.reviewShow : "ALL"; a.limit = REVIEW_PAGE; return renderReview(); }
+  const similar = event.target.closest("[data-review-similar]");
+  if (similar) {
+    const rule = (a.reviewSimilar || [])[Number(similar.dataset.reviewSimilar)];
+    if (!rule) return;
+    const added = addSelectKeys(rule.keys, a.candidates);
+    addSaveDraft();
+    renderReview();
+    return showToast(plural(added, "more link", "more links") + " ticked.");
+  }
   const batch = event.target.closest("[data-review-batch]");
   if (batch) return reviewOpenBatch(Number(batch.dataset.reviewBatch));
   if (event.target.closest("[data-review-weekly]")) return reviewOpenWeekly();
@@ -5661,6 +6496,7 @@ document.querySelector(".add-review").addEventListener("click", event => {
 });
 document.querySelector(".add-review").addEventListener("change", event => {
   if (event.target.id === "reviewWeekly") { state.add.weekly = event.target.checked; renderReviewFoot(); }
+  if (event.target.id === "reviewHideOlder") { state.add.hideOlder = event.target.checked; state.add.limit = REVIEW_PAGE; renderReview(); }
 });
 document.querySelector(".add-review").addEventListener("mousedown", event => { if (event.shiftKey && event.target.closest(".link-pick")) event.preventDefault(); });
 $("reviewSearch").addEventListener("input", () => { state.add.query = $("reviewSearch").value; state.add.limit = REVIEW_PAGE; renderReview(); });
