@@ -48,6 +48,17 @@ The ledger is saved after each successful delivery, so a cancelled or crashed jo
 
 Persistent fetch or extraction errors alert once per episode (URL + error class + onset), not on every run; each observation still writes its own evidence. A failed workflow run sends a "Regulatory Monitor run failed" ntfy alert, and the **Monitor Freshness Check** workflow alerts when no scan has been saved for 14 hours (two missed six-hourly slots; GitHub routinely delays scheduled runs by an hour or more).
 
+## Per-monitor alert conditions
+
+A single-page monitor can carry a plain-language condition, set in **Add a link → Monitor only this exact address → Alert me when** (or `alert_condition` in `config/sources.json`). Detection is unchanged: every technical change is still detected, saved and diffed. The AI additionally returns `condition_met` and `condition_reason`, kept beside (not inside) the nine-key analysis.
+
+- Condition met: the change alerts, even if the AI judged it not relevant in general (the owner asked for it). The alert carries an "Alert condition" line.
+- Condition not met, **Alert only when it is met** ticked (`alert_only_on_condition`): no alert; the change is recorded at low priority and shows "Condition not met" in the dashboard. If a generic alert was already delivered, a low-priority follow-up says the condition was not met.
+- Condition not met, box unticked: the normal relevance rule applies.
+- AI unavailable or invalid: the generic "Technical change detected" alert still goes out, so a monitor never goes silent because the model failed.
+
+Resubmitting the same address with a new condition updates it; an empty **Alert me when** line clears it. Conditions can only be set on monitors that watch one page.
+
 ## Legacy canonical URL collisions
 
 Run `python scripts/migrate_legacy_url_collisions.py --source eba-consumer-protection` for a read-only preflight. It groups inventory IDs using the current canonicalization rule and reports the survivor it would choose, whether normalized hashes/snapshots agree, and any reason a group is unsafe. The tool is dry-run by default.

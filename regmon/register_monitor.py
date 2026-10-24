@@ -607,6 +607,38 @@ def _optional_field(body: str, label: str) -> str | None:
 MAX_DOCUMENT_HOSTS = 10
 
 
+def _alert_condition_fields(body: str) -> tuple[str | None, bool | None]:
+    """Optional "Alert me when" condition and "Alert only when condition met" flag.
+
+    An empty "Alert me when:" line clears a monitor's condition; a missing line
+    leaves it unchanged.
+    """
+    raw = _optional_field(body, "Alert me when")
+    only = _yes_no_field(body, "Alert only when condition met")
+    condition = None if raw is None else " ".join(raw.split())
+    if condition is not None and len(condition) > 500:
+        raise ValueError("Alert me when must be at most 500 characters.")
+    if only and not condition:
+        raise ValueError("Alert only when condition met: yes needs an Alert me when condition.")
+    return condition, only
+
+
+def _apply_alert_condition(source: dict, condition: str | None, only: bool | None) -> bool:
+    before = (source.get("alert_condition", ""), source.get("alert_only_on_condition", False))
+    if condition is not None:
+        if condition:
+            source["alert_condition"] = condition
+        else:
+            source.pop("alert_condition", None)
+            source.pop("alert_only_on_condition", None)
+    if only is not None and source.get("alert_condition"):
+        if only:
+            source["alert_only_on_condition"] = True
+        else:
+            source.pop("alert_only_on_condition", None)
+    return (source.get("alert_condition", ""), source.get("alert_only_on_condition", False)) != before
+
+
 def _discovery_scope(body: str, url: str) -> tuple[list[str] | None, list[str] | None]:
     """Optional Scout discovery scope: where pages may be read, which other hosts may supply documents.
 
@@ -824,6 +856,7 @@ def register_request(
     explore_prefixes, document_hosts = _discovery_scope(body, url)
     if (discovery_only or explore_prefixes is not None or document_hosts is not None) and not scout_enabled:
         raise ValueError("Discovery only, Explore within and Document hosts require Scout discovery: yes.")
+    alert_condition, alert_only = _alert_condition_fields(body)
     document_rule = _document_rule(body, url)
     if document_rule is not None:
         if scout_enabled:
@@ -979,6 +1012,33 @@ def register_request(
             scout_data, url, str(source_result["name"] or display_name or url), crawl_depth,
             explore_prefixes, document_hosts,
         )
+
+    if alert_condition is not None or alert_only is not None:
+        target = next(
+            (source for source in sources if str(source.get("id")) == str(source_result["source_id"])),
+            None,
+        )
+        if target is not None:
+            seeds = [str(seed) for seed in (target.get("seed_urls") or [])]
+            try:
+                own_page = len(seeds) == 1 and canonicalize_url(seeds[0]) == url
+            except (TypeError, ValueError):
+                own_page = False
+            if not own_page:
+                raise ValueError(
+                    "An alert condition can only be set on a page monitored on its own; this page "
+                    "belongs to a source with other pages."
+                )
+        if target is not None and _apply_alert_condition(target, alert_condition, alert_only):
+            source_changed = True
+            if target.get("alert_condition"):
+                mode = " It alerts only when the condition is met." if target.get("alert_only_on_condition") else ""
+                source_result["message"] += f" Alert condition set: {target['alert_condition']}.{mode}"
+            else:
+                source_result["message"] += " Alert condition cleared."
+        if target is not None:
+            source_result["alert_condition"] = target.get("alert_condition", "")
+            source_result["alert_only_on_condition"] = bool(target.get("alert_only_on_condition", False))
 
     # Validate both proposed files before replacing either one. GitHub commits
     # the two config files together in a single owner-approved workflow run.

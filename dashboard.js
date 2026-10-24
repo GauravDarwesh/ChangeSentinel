@@ -546,7 +546,8 @@ function verdictFor(event) {
   const result = aiResultForEvent(event);
   const ai = result && result.ai && typeof result.ai === "object" ? result.ai : null;
   if (ai && ai.status === "ok" && ai.analysis && typeof ai.analysis === "object") {
-    return { state: ai.analysis.relevant === true ? "relevant" : "irrelevant", analysis: ai.analysis };
+    const condition = ai.condition && typeof ai.condition === "object" && typeof ai.condition.met === "boolean" ? ai.condition : null;
+    return { state: ai.analysis.relevant === true ? "relevant" : "irrelevant", analysis: ai.analysis, condition };
   }
   if (event && typeof event.ai_relevant === "boolean") {
     return { state: event.ai_relevant ? "relevant" : "irrelevant", analysis: { relevant: event.ai_relevant, topic: event.ai_topic, summary: event.ai_summary } };
@@ -1706,10 +1707,13 @@ function renderVerdict(event) {
   }
   if (verdict.state === "relevant" || verdict.state === "irrelevant") {
     const a = verdict.analysis || {};
-    const facts = [["Topic", a.topic], ["Kind of change", a.change_type], ["Impact", a.impact], ["Effective date", a.effective_date], ["Who it affects", a.affected_scope], ["Suggested action", a.actions]]
+    const condition = verdict.condition;
+    const facts = [["Topic", a.topic], ["Kind of change", a.change_type], ["Impact", a.impact], ["Effective date", a.effective_date], ["Who it affects", a.affected_scope], ["Suggested action", a.actions],
+      ["Alert condition", condition ? (condition.met ? "Met: " : "Not met: ") + String(condition.text || "") + (condition.reason ? " (" + String(condition.reason) + ")" : "") : ""]]
       .filter(([, value]) => value && String(value).trim() && !/^not stated$/i.test(String(value).trim()));
     return '<section class="sheet" aria-label="AI assessment"><div class="verdict">' +
-      '<div class="verdict-head"><span class="verdict-label">AI assessment</span>' + (verdict.state === "relevant" ? '<span class="tag is-relevant">Relevant</span>' : '<span class="tag is-irrelevant">Not relevant</span>') + "</div>" +
+      '<div class="verdict-head"><span class="verdict-label">AI assessment</span>' + (verdict.state === "relevant" ? '<span class="tag is-relevant">Relevant</span>' : '<span class="tag is-irrelevant">Not relevant</span>') +
+      (condition ? (condition.met ? '<span class="tag is-relevant">Condition met</span>' : '<span class="tag is-irrelevant">Condition not met</span>') : "") + "</div>" +
       (a.summary ? '<p class="verdict-summary">' + esc(a.summary) + "</p>" : "") +
       // A relevant change shows impact, dates and actions straight away; for a
       // change judged not relevant they fold away so the redline stays in view.
@@ -5465,18 +5469,31 @@ function submitExactAddress() {
     showToast("Use one selector of up to 500 characters to compare, and up to 20 selectors to ignore.");
     return;
   }
-  const target = makeGitHubIssueUrl(parsed.toString(), name, includeSelector, ignoreSelectors, 0, false);
-  ["newMonitorName", "newMonitorIncludeSelector", "newMonitorIgnoreSelectors"].forEach(id => { $(id).value = ""; });
+  const alertCondition = $("newMonitorAlertCondition").value.replace(/\s+/g, " ").trim().slice(0, 500);
+  const alertOnly = $("newMonitorAlertOnly").checked;
+  if (alertOnly && !alertCondition) {
+    showToast("Describe the condition to alert on, or untick “Alert only when it is met”.");
+    return;
+  }
+  const target = makeGitHubIssueUrl(parsed.toString(), name, includeSelector, ignoreSelectors, 0, false, { condition: alertCondition, only: alertOnly });
+  ["newMonitorName", "newMonitorIncludeSelector", "newMonitorIgnoreSelectors", "newMonitorAlertCondition"].forEach(id => { $(id).value = ""; });
+  $("newMonitorAlertOnly").checked = false;
   $("newMonitorMetadataStatus").textContent = "";
   openGitHubRequest(target, "Submit the prefilled request on GitHub. The page is scanned once the request is accepted.");
 }
 
-function makeGitHubIssueUrl(url, name, includeSelector, ignoreSelectors, crawlDepth, scoutEnabled) {
+function makeGitHubIssueUrl(url, name, includeSelector, ignoreSelectors, crawlDepth, scoutEnabled, alert) {
   const bodyLines = [
     "<!-- changesentinel:add-monitor:v1 -->", "",
     "Please register this URL as a ChangeSentinel monitor.", "",
-    "URL: " + url, "Name: " + (name || ""), "Crawl depth: " + String(Number.isInteger(Number(crawlDepth)) ? Math.max(0, Math.min(3, Number(crawlDepth))) : 0), "Scout discovery: " + (scoutEnabled ? "yes" : "no"), "Include selector: " + (includeSelector || ""), "Ignore selectors:"
+    "URL: " + url, "Name: " + (name || ""), "Crawl depth: " + String(Number.isInteger(Number(crawlDepth)) ? Math.max(0, Math.min(3, Number(crawlDepth))) : 0), "Scout discovery: " + (scoutEnabled ? "yes" : "no")
   ];
+  // Optional per-monitor alert condition; omitted entirely when not set so an
+  // existing monitor's condition is left unchanged.
+  if (alert && alert.condition) {
+    bodyLines.push("Alert me when: " + alert.condition, "Alert only when condition met: " + (alert.only ? "yes" : "no"));
+  }
+  bodyLines.push("Include selector: " + (includeSelector || ""), "Ignore selectors:");
   if (ignoreSelectors.length) ignoreSelectors.forEach(selector => bodyLines.push("- " + selector));
   else bodyLines.push("(none)");
   bodyLines.push("", "This request was created from the ChangeSentinel dashboard.");
