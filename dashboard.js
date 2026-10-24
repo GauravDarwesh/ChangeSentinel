@@ -1186,12 +1186,13 @@ function renderTimeline(columns) {
       esc(mark.today && !atEnd ? "Today" : top) + '</span><span class="tl-day-date">' + esc(date.getDate()) + "</span></span>";
   }).join("");
   const nowMark = '<i class="tl-now" style="left:' + pct(bounds.now) + '"></i>';
-  const nextMark = '<i class="tl-next" style="left:calc(100% - 1px)" aria-hidden="true"></i><span class="tl-next-label" title="' + esc("Next scheduled scan") + '">Next scan · ' + esc(clock(new Date(bounds.end))) + '</span>';
+  const nextMark = '<i class="tl-next" style="left:calc(100% - 1px)" aria-hidden="true"></i>';
+  const nextLabel = '<span class="tl-next-label" title="' + esc("Next scheduled scan") + '">Next scan · ' + esc(clock(new Date(bounds.end))) + '</span>';
   const rangeShort = { "2d": "Last 2 days", "7d": "Last 7 days", "30d": "Last 30 days", all: "All history" }[prefs.range];
   const c = model.counts;
   let html = '<div class="tl-board" style="--label-w:' + labelWidth + 'px">' +
     '<div class="tl-row tl-head"><div class="tl-corner"><span>' + esc(rangeShort) + "</span><small>" + esc(c.total ? plural(c.total, "event", "events") : "Nothing in range") + "</small></div>" +
-    '<div class="tl-track tl-axis">' + bands + labels + nowMark + nextMark + "</div></div>";
+    '<div class="tl-track tl-axis">' + bands + labels + nowMark + nextMark + nextLabel + "</div></div>";
   if (!model.lanes.length) {
     const words = prefs.query ? "No event matches “" + prefs.query + "” in this range." : prefs.lens === "problems" ? "No problems in this range." :
       prefs.lens === "changed" ? "No page changed in this range." : prefs.lens === "new" ? "No page was added in this range." : "Nothing happened in this range.";
