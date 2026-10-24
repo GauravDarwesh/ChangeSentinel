@@ -17,7 +17,7 @@
   <a href="https://gauravdarwesh.github.io/ChangeSentinel/">Open dashboard</a> ·
   <a href="#how-it-works">How it works</a> ·
   <a href="#scout-discover-new-regulatory-publications">Scout discovery</a> ·
-  <a href="#development">Development</a>
+  <a href="#run-it-locally">Development</a>
 </p>
 
 ---
