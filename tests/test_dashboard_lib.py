@@ -974,3 +974,53 @@ class TestCadencePlanning(unittest.TestCase):
         self.assertEqual(out["weeks"], [["2026-10-19", 0, 0, False, 0], ["2026-10-26", 3, 3, True, 4], ["2026-11-02", 1, 0, False, 1]])
         self.assertIn("dates=20261109%2F20261110", out["link"])
         self.assertEqual(out["bad"], "")
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestTimelineModel(unittest.TestCase):
+    """The timeline places events on lanes and tells them as a story."""
+
+    SETUP = """
+const H = 3600e3, s = Date.UTC(2026, 9, 17), e = s + 7 * 24 * H;
+const ev = (id, h, kind, lane, page) => ({ id, at: s + h * H, kind, laneKey: lane, laneLabel: lane.toUpperCase(), pageId: page || id, title: id });
+"""
+
+    def model(self, body, lens="activity", gap_hours=6):
+        return run_js(self.SETUP + "const E = [" + body + "];\n"
+                      "const m = L.timelineModel(E, { start: s, end: e, gapMs: " + str(gap_hours) + " * H, lens: " + json.dumps(lens) + " });\n"
+                      "console.log(JSON.stringify(m));")
+
+    def test_changes_far_apart_keep_their_own_beads(self):
+        m = self.model("ev('a', 30, 'on', 'fr'), ev('b', 78, 'on', 'fr')", gap_hours=24)
+        self.assertEqual([b["count"] for b in m["lanes"][0]["beads"]], [1, 1])
+
+    def test_events_close_together_share_one_bead_led_by_the_worst(self):
+        m = self.model("ev('a', 30, 'new', 'fr'), ev('b', 31, 'bad', 'fr')")
+        bead = m["lanes"][0]["beads"][0]
+        self.assertEqual((bead["count"], bead["top"]), (2, "bad"))
+
+    def test_lanes_with_real_changes_lead_a_more_recent_burst_of_new_pages(self):
+        m = self.model("ev('a', 10, 'on', 'fr'), ev('n', 150, 'new', 'osfi')")
+        self.assertEqual([lane["key"] for lane in m["lanes"]], ["fr", "osfi"])
+
+    def test_a_burst_of_new_pages_is_one_story_row(self):
+        m = self.model(",".join("ev('n%d', 100, 'new', 'fr')" % i for i in range(10)))
+        rows = [row for day in m["days"] for row in day["rows"]]
+        self.assertEqual(len(rows), 1)
+        self.assertEqual((rows[0]["type"], rows[0]["count"]), ("burst", 10))
+
+    def test_repeated_markup_edits_on_one_page_are_one_line_per_day(self):
+        m = self.model("ev('m1', 100, 'markup', 'fr', 'p'), ev('m2', 103, 'markup', 'fr', 'p'), ev('c', 104, 'on', 'fr', 'q')")
+        rows = [row for day in m["days"] for row in day["rows"]]
+        self.assertEqual(sorted(row.get("repeat", 1) for row in rows), [1, 2])
+
+    def test_changed_lens_leaves_out_markup_only_edits(self):
+        m = self.model("ev('m', 100, 'markup', 'fr'), ev('c', 104, 'on', 'fr')", lens="changed")
+        self.assertEqual(m["counts"]["total"], 1)
+
+    def test_every_story_row_points_at_a_bead_that_exists(self):
+        m = self.model("ev('a', 30, 'on', 'fr'), ev('b', 31, 'new', 'fr'), ev('c', 120, 'bad', 'osfi')")
+        beads = {b["key"] for lane in m["lanes"] for b in lane["beads"]}
+        for day in m["days"]:
+            for row in day["rows"]:
+                self.assertTrue(set(row["beadKeys"]) <= beads)

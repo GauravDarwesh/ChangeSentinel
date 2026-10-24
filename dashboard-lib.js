@@ -369,6 +369,118 @@
     return { rows, lens, counts: fieldCounts(matching) };
   }
 
+  /* ---------- Timeline ----------
+   * The field answers "which page, which scan"; the timeline answers "what
+   * happened, and when". Each event sits at its own time on its section's lane;
+   * events too close to tell apart at the current zoom share a bead, and a
+   * burst of new pages from one scan is told once in the story.
+   */
+  const TIMELINE_KINDS = ["bad", "on", "removed", "new", "markup"];
+  const TIMELINE_LENS_KINDS = {
+    activity: ["bad", "on", "removed", "new", "markup"], all: ["bad", "on", "removed", "new", "markup"],
+    changed: ["on", "removed"], problems: ["bad"], new: ["new"]
+  };
+  function timelineTopKind(kinds) {
+    return TIMELINE_KINDS.find(kind => kinds[kind]) || "markup";
+  }
+  function timelineModel(entries, options = {}) {
+    const start = Number(options.start), end = Number(options.end);
+    const span = Math.max(1, end - start);
+    // Events on one lane closer than this share a bead; further apart, each
+    // keeps its own place, so two changes two days apart never merge.
+    const gapMs = Number(options.gapMs) || Number(options.bucketMs) || PERIOD_MS;
+    const allowed = TIMELINE_LENS_KINDS[options.lens] || TIMELINE_LENS_KINDS.activity;
+    const burstMin = Number(options.burstMin) || 4;
+    const inRange = (entries || []).filter(entry => entry && Number.isFinite(entry.at) && entry.at >= start && entry.at <= end && allowed.indexOf(entry.kind) >= 0);
+    const counts = { bad: 0, on: 0, removed: 0, new: 0, markup: 0, total: inRange.length };
+    const lanes = new Map();
+    inRange.forEach(entry => {
+      counts[entry.kind] = (counts[entry.kind] || 0) + 1;
+      const key = String(entry.laneKey || "all");
+      if (!lanes.has(key)) lanes.set(key, { key, label: String(entry.laneLabel || "All pages"), note: String(entry.laneNote || ""), latest: 0, counts: { bad: 0, on: 0, removed: 0, new: 0, markup: 0 }, members: [] });
+      const lane = lanes.get(key);
+      lane.latest = Math.max(lane.latest, entry.at);
+      lane.counts[entry.kind] += 1;
+      lane.members.push(entry);
+    });
+    const beadOf = new Map();
+    const weight = lane => (lane.counts.bad + lane.counts.on + lane.counts.removed) > 0 ? 1 : 0;
+    const laneList = Array.from(lanes.values()).sort((a, b) => weight(b) - weight(a) || b.latest - a.latest || a.label.localeCompare(b.label)).map(lane => {
+      const beads = [];
+      lane.members.slice().sort((a, b) => a.at - b.at).forEach(entry => {
+        let bead = beads[beads.length - 1];
+        if (!bead || entry.at - bead.first >= gapMs) {
+          bead = { key: lane.key + "|" + beads.length, first: entry.at, last: entry.at, sum: 0, count: 0, kinds: {}, ids: [] };
+          beads.push(bead);
+        }
+        bead.last = entry.at;
+        bead.sum += entry.at - start;
+        bead.count += 1;
+        bead.kinds[entry.kind] = (bead.kinds[entry.kind] || 0) + 1;
+        bead.ids.push(entry.id);
+        beadOf.set(entry.id, bead.key);
+      });
+      beads.forEach(bead => {
+        bead.at = start + bead.sum / bead.count;
+        bead.x = Math.max(0, Math.min(1, (bead.at - start) / span));
+        bead.top = timelineTopKind(bead.kinds);
+        delete bead.sum;
+      });
+      return { key: lane.key, label: lane.label, note: lane.note, latest: lane.latest, counts: lane.counts, beads };
+    });
+    // The story: newest first, one heading per local day. A scan that added
+    // many pages to one lane is one expandable row, and markup-only edits that
+    // repeat on a page through a day are one line.
+    const sorted = inRange.slice().sort((a, b) => b.at - a.at || String(a.title || "").localeCompare(String(b.title || "")));
+    const groupsOf = (kind, keyOf) => {
+      const groups = new Map();
+      sorted.forEach(entry => {
+        if (entry.kind !== kind) return;
+        const key = keyOf(entry);
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(entry);
+      });
+      return groups;
+    };
+    const burstKey = entry => String(entry.laneKey || "all") + "|" + Math.floor(entry.at / PERIOD_MS);
+    const repeatKey = entry => String(entry.pageId || entry.id) + "|" + localIsoDate(new Date(entry.at));
+    const bursts = groupsOf("new", burstKey);
+    const repeats = groupsOf("markup", repeatKey);
+    const keysOf = members => Array.from(new Set(members.map(member => beadOf.get(member.id))));
+    const told = new Set();
+    const rows = [];
+    sorted.forEach(entry => {
+      if (entry.kind === "new") {
+        const key = burstKey(entry);
+        const members = bursts.get(key);
+        if (members.length >= burstMin) {
+          if (told.has("n|" + key)) return;
+          told.add("n|" + key);
+          rows.push({ type: "burst", key: "burst|" + key, at: members[0].at, kind: "new", laneKey: entry.laneKey, laneLabel: entry.laneLabel, count: members.length, members, beadKeys: keysOf(members) });
+          return;
+        }
+      }
+      if (entry.kind === "markup") {
+        const key = repeatKey(entry);
+        const members = repeats.get(key);
+        if (members.length > 1) {
+          if (told.has("m|" + key)) return;
+          told.add("m|" + key);
+          rows.push({ type: "event", key: "markup|" + key, at: entry.at, kind: "markup", entry, repeat: members.length, beadKeys: keysOf(members) });
+          return;
+        }
+      }
+      rows.push({ type: "event", key: "event|" + entry.id, at: entry.at, kind: entry.kind, entry, beadKeys: [beadOf.get(entry.id)] });
+    });
+    const days = [];
+    rows.forEach(row => {
+      const day = localIsoDate(new Date(row.at));
+      if (!days.length || days[days.length - 1].day !== day) days.push({ day, at: row.at, rows: [] });
+      days[days.length - 1].rows.push(row);
+    });
+    return { lanes: laneList, days, counts, gapMs, start, end };
+  }
+
   /* ---------- Who publishes a page ----------
    * Monitors added from the dashboard carry only their host name, so the field
    * groups pages by the regulator behind the host: config/regulators.json first,
@@ -2433,6 +2545,7 @@
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe, pickRuleMatches, pickRuleFolder, pickRuleRequest,
     diffSequences, alignLines, changedWords, readWorkbook, workbookDiff, csvWorkbook, parseCsv, zipListing, zipFile, readDocx, columnName, cellRef,
     esc, nextScheduledScan, scanCycle, runColumns, slotColumns, columnCellState, pendingScan,
+    timelineModel, TIMELINE_KINDS,
     fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, regulatorFor, jurisdictionForHost, hostOf, pageKind, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,
     parseUnifiedDiff, tokenize, wordDiff, similarity, redlineRows, redlineSummary, renderRedline, renderUnifiedDiff,
