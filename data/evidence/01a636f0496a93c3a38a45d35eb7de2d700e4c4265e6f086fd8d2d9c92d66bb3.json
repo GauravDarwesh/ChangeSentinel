@@ -1,0 +1,33 @@
+{
+  "event_id": "01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3",
+  "event_type": "HTML_SOURCE_CHANGED",
+  "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+  "timestamp": "2026-10-24T14:34:05.726322+00:00",
+  "before": {
+    "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
+    "html_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
+    "html_comparison_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
+    "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
+    "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207.html",
+    "file_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
+    "html_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
+    "html_comparison_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
+    "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
+    "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21.html",
+    "file_snapshot_location": null
+  },
+  "diff": "",
+  "html_diff": "--- before\n+++ after\n@@ -345,7 +345,7 @@\n    \u2705 views-view.html.twig\n -->\n       <!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/views/views-view.html.twig' -->\n-      <div class=\"bg-img parallax view view-site-section view-id-site_section view-display-id-block_1 js-view-dom-id-c4191d52fd1b36145bf0fd2cb35bffd865334cc1791d89f431f26eeb63851369\" id=\"site_section-block_1\">\n+      <div class=\"bg-img parallax view view-site-section view-id-site_section view-display-id-block_1 js-view-dom-id-0222007c06b3f282aeb9263fb6885d523893dd51a5e3d9908d00b3d3fd10ea4b\" id=\"site_section-block_1\">\n        <div class=\"view-content\">\n         <!-- THEME DEBUG -->\n         <!-- THEME HOOK: 'views_view_unformatted' -->\n@@ -1618,7 +1618,7 @@\n    \u2705 input.html.twig\n -->\n              <!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->\n-             <input data-drupal-selector=\"form-sxbps-ncj7yn0pli71-7rsp-nsufxt6ixkswetdzzt0\" name=\"form_build_id\" type=\"hidden\" value=\"form-SxBps-nCJ7yn0PLI71_7rSP_nsufxt6IxKSwEtdzZT0\"/>\n+             <input data-drupal-selector=\"form-zfvn2mo5ggc63yidkpeyqdamk3b4a-p7l5ihxlepsuk\" name=\"form_build_id\" type=\"hidden\" value=\"form-ZFvN2mO5ggC63YIDKPEyQdAmK3B4A-p7l5iHXlEPSuk\"/>\n              <!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->\n              <!-- THEME DEBUG -->\n              <!-- THEME HOOK: 'input__hidden' -->",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body."
+}

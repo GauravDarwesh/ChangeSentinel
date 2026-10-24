@@ -1,0 +1,4787 @@
+{
+  "schema_version": 2,
+  "run_id": "20261024T142955Z-32122afd",
+  "generated_at": "2026-10-24T14:34:05.726322+00:00",
+  "sources": [
+    {
+      "id": "fed-reporting-forms-pilot",
+      "name": "Federal Reserve \u2014 Reporting Forms Pilot (Exact URL Allowlist)",
+      "regulator": "Board of Governors of the Federal Reserve System",
+      "seeds": [
+        "https://www.federalreserve.gov/apps/reportingforms/review",
+        "https://www.federalreserve.gov/apps/reportingforms/recentupdates"
+      ],
+      "allowed_prefixes": [
+        "https://www.federalreserve.gov/apps/reportingforms/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "fed-reporting-forms-detail-pilot",
+      "name": "Federal Reserve \u2014 Recently Updated Forms Detail Pilot (Exact URL Allowlist)",
+      "regulator": "Board of Governors of the Federal Reserve System",
+      "seeds": [
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C",
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028bs",
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D",
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M",
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q"
+      ],
+      "allowed_prefixes": [
+        "https://www.federalreserve.gov/apps/reportingforms/Report/Index/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-f1df3c7d3e94",
+      "name": "OSFI BCAR 2027",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "seeds": [
+        "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-87ca438373d9",
+      "name": "Reporting Central External User Guide (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/external-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-f96402c06d32",
+      "name": "Structure Central External User Guide (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/structure-central-external-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-d73abfb2e7f2",
+      "name": "XML User Guide (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/reporting-central-xml-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-c02ec80775c2",
+      "name": "XML Format: FFIEC 009 (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec009-file-transfer-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-81edf0641cc2",
+      "name": "XML Format: FFIEC 009 (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec009-sample-input-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-ccbb8cabeb99",
+      "name": "XML Format: FFIEC 009a (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec009a-file-transfer-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-3c168c3e601a",
+      "name": "XML Format: FFIEC 009a (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec009a-sample-input-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-31ada48e215e",
+      "name": "XML Format: FFIEC 019 (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec-019-file-upload-user-guide-xml.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-96da24f54032",
+      "name": "XML Format: FFIEC 019 (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec019-sample-input-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-db5b7b1c66c0",
+      "name": "FFIEC 030/FFIEC 030S (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec030-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-c3954390bf91",
+      "name": "FFIEC 030 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec030-sample-input-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-ad2f7c55bf07",
+      "name": "FFIEC 030S Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec030s-sample-input-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-07fead54d9d1",
+      "name": "XML Format: FR Q-1 (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/frq-1-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-49e6cffbe46b",
+      "name": "XML Format: FR VV-1 (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/frvv1-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-e49444f7481c",
+      "name": "FR VV-1 Supplemental Information (Off-site)",
+      "regulator": "www.federalreserve.gov",
+      "seeds": [
+        "https://www.federalreserve.gov/apps/ReportingForms"
+      ],
+      "allowed_prefixes": [
+        "https://www.federalreserve.gov/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-e2a6f65d42aa",
+      "name": "Annual Report XML File Format in Structure Central (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-xml-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-4d35aa9f9fa5",
+      "name": "FR Y-6 Securities Sample file (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-item3-sample-template.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-4ceffe75326c",
+      "name": "FR Y-6 Insiders Sample XML file (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-item4-sample-template.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-ce0c1bcab763",
+      "name": "Annual Report XLXS File Format in Structure Central (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-xlsx-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-9d4f8768e197",
+      "name": "FR Y-6 Securities Template file (XLSX)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-appendix-a-template-xlsx-file-for-securities-holders.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-73c10748e127",
+      "name": "FR Y-6 Securities Sample file (XLSX)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-appendix-b-sample-xlsx-file-for-securities-holders.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-3cde87b01727",
+      "name": "FR Y-6 Insiders Template file (XLSX)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-appendix-c-template-xlsx-file-for-insiders.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-15294ab2d815",
+      "name": "FR Y-6 Insiders Sample file (XLSX)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-6-appendix-d-sample-xlsx-file-for-insiders.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-9d2a0cc1d61f",
+      "name": "FR Y-7 XML User Guide (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr-y-7-xml-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-b6a213ed4639",
+      "name": "FR Y-7 XLSX User Guide (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr-y-7-xlsx-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-c8ecced11490",
+      "name": "TXT Format: FR Y-9C* (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr-y-9c-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-d1cf513f7f00",
+      "name": "TXT Format: FR Y-9ES* (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-9-es-upload-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-3e884254c2f1",
+      "name": "TXT Format: FR Y-9LP* (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-9lp-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-d22911c410fc",
+      "name": "TXT Format: FR Y-9SP* (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-9-sp-upload-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-8e5bda39a33e",
+      "name": "FR Y-11/FR Y-11S (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry11-fry11s-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-7adab8f358bc",
+      "name": "TXT Format: FR Y-15* (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry15-transfer-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-f3c955eb0656",
+      "name": "TXT Format: FXVOLUME (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fxvolume-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-053af629e35a",
+      "name": "FR Y-7 Item 2a2 Standard Template (XLSX)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/item-2a2-standard-template.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-7003af051289",
+      "name": "FR Y-7 Item 2b Standard Template (XLSX)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/item-2b-standard-template.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-e5da1f71e903",
+      "name": "FR Y-7 Additional Entities Template (XLSX)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/item-2a2-addl-entities-sample-data.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-215a82c132cd",
+      "name": "FR Y-7 Additional Entities Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry7-Item2a2-sample-template.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-3b1e1f88b570",
+      "name": "FR Y-7 Foreign Companies Template (XLSX)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/item-2b-foreign-co-sample-data.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-e3f60bc85420",
+      "name": "FR Y-7 Foreign Companies Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry7-item2b-sample-template.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-2b3ee4b0e158",
+      "name": "XML Format: FR Y-7Q** (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-7q-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-16625bb5e529",
+      "name": "FR Y-7Q Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-7q-sample-input-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-a81bf7248131",
+      "name": "XML Format: FR Y-12** (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry12-file-transfer.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-bb542f59562b",
+      "name": "FR Y-12 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry12-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-9f4eeee473f4",
+      "name": "XML Format: FR Y-12A (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry12a-file-upload-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-29de64d1db61",
+      "name": "FR Y-12A Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry12a-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-d4603522a989",
+      "name": "XML Format: FR Y-14A/Q (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-14aq-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-8588993b9c05",
+      "name": "FR Y-14Q Supplemental Information (ZIP)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-14q-ti.zip"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-ddc3e02572f3",
+      "name": "FR Y-14A Supplemental Information (ZIP)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry-14a-ti.zip"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-26375675a7ba",
+      "name": "FR 2028B/FR 2028S (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2028-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-1f06400ec592",
+      "name": "FR 2028B Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2028b-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-7b0addc7e307",
+      "name": "FR 2028S Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2028s-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-e2cab0e0f486",
+      "name": "XML Format: FR 2028D (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2028d-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-fcf8b514162c",
+      "name": "XML Format: FR2004* (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2004-file-transfer-guide-xml.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-559ac45a9a23",
+      "name": "FR 2004SD Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2004sd-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-95e85c0ac861",
+      "name": "FR 2004SI Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2004si-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-01e6eb794d40",
+      "name": "FR 2004WI Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2004wi-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-a51425ec0d12",
+      "name": "XML Format: FR 2420* (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2420-xml-file-transfer-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-d2ffa46a0ee0",
+      "name": "FR 2420CD Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2420cd-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-e175ab40ef57",
+      "name": "FR 2420FE Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2420fe-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-c09e86fd8af6",
+      "name": "FR 2420IB Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2420ib-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-1cd6b0d5a010",
+      "name": "XML Format: FR 2510 (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr-2510-user-guide-12-31-2022.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-1aac59bf8879",
+      "name": "XML Format: FR 2590 (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2590-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-039877cf9cc2",
+      "name": "FR 2590 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2590-sample-input-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-b553a47e37a5",
+      "name": "XML Format: FR 2644** (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr-2644-upload-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-0fc1eaed317c",
+      "name": "FR 2644 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2644-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-901da0d88c3d",
+      "name": "FR 2900* & ** (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr-2900-upload-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-6d6a2e2a7268",
+      "name": "FR 2900 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2900-xml-sample-includes-annual-items.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-4fd0bc460269",
+      "name": "I to I Credit Exposure (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr-ii-xml-monthly-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-fb5555ba428f",
+      "name": "I to I Credit Exposure Weekly (IICW) Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/iicw-sample-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-046ab329cdfd",
+      "name": "I to I Credit Exposure Monthly (IICM) Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/iicm-sample-file.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-ee0509645c47",
+      "name": "I to I Funding (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr-iifd-xml-userguide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-7c05d7f77240",
+      "name": "Benchmark Series XML File Format Specification (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/benchmark-series-xml-file-format.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-7f304946ceb3",
+      "name": "Benchmark Claims SHC (A) Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/shca-newinputlayout-alloptional.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-47a6282d259a",
+      "name": "Benchmark Schema (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/benchmark-schema.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-96fe00e867bc",
+      "name": "Benchmark Claims SHC (A) Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/shca-newinputlayout-nooptional.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-14fa96fdd6f3",
+      "name": "Benchmark Liabilities SHL (A) Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/shla-newinputlayout-alloptional.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-4e0334d82fed",
+      "name": "Benchmark Liabilities SHL (A) Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/shla-newinputlayout-nooptional.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-cd48c4a982a0",
+      "name": "XML Format: TFC (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/tfc-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-20d93b4bbd85",
+      "name": "TFC-2 (Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/tfc2-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-63f9053192c2",
+      "name": "TFC-1 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/tfc1-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-e1d7c5d57155",
+      "name": "TFC-3 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/tfc3-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-487f8c72cdde",
+      "name": "XML Format: TIC/TIC SLT (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/tic-forms-file-transfer-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-d2d0fcac25ec",
+      "name": "TIC BC Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ticbc-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-402b469209b8",
+      "name": "TIC BL-1 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ticbl1-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-453a6875f704",
+      "name": "TIC BL-2 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ticbl2-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-67fce0ca2005",
+      "name": "TIC BQ-1 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ticbq1-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-77ad1b54bab6",
+      "name": "TIC BQ-3 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ticbq3-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-e49d5dac5ef1",
+      "name": "TIC BQ-2 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ticbq2-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-ad7be2fd023c",
+      "name": "TIC CQ-1 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ticcq1-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-f7443cb8f9e1",
+      "name": "TIC CQ-2 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ticcq2-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-5d1702b4b2cc",
+      "name": "TIC D Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ticd-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-27ffffaeabd2",
+      "name": "TIC SLT Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ticslt-xml-sample.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-41ddf2bfed6b",
+      "name": "XML Format: TPRX Series (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/tri-party-repo-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-269906856d86",
+      "name": "FFIEC 002/FFIEC 002S (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec-002-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-bf0ce15f4647",
+      "name": "TXT Format: FFIEC 101 (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec-101-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-23abd061ae1e",
+      "name": "TXT Format: FFIEC 102 (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/ffiec-102-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-cc3cad4938af",
+      "name": "FR2004*A/B/C/FA/FB/FC/FM (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2004-file-transfer-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-f83b4590d2a4",
+      "name": "TXT Format: FR 2248 (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2248-file-transfer-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-a61735026ca7",
+      "name": "FR 2314/FR 2314S (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2314-fr2314s-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-820a6d4ac8f7",
+      "name": "TXT Format: FR 2436 (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2436-spreadsheet-file-transfer-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-e7cbd658db35",
+      "name": "TXT Format: FR 2835 (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2835-file-upload-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-20a5a7fcb6d5",
+      "name": "TXT Format: FR 2835A (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2835a-file-upload-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-51e8b541fd12",
+      "name": "TXT Format: FR 2886b (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2886b-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-315fd3d9ba06",
+      "name": "TXT Format: FR 2915 (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr2915-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-d34e7c77f55c",
+      "name": "TXT Format: FR 3036 (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fr3036-transfer-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-b93ecc826c69",
+      "name": "TXT Format: FR XX-1* (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/frxx1-file-transfer-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-0efe314fb13e",
+      "name": "FR Y-7N / FR Y-7NS (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry7n-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-9e2c4b1f8ea2",
+      "name": "TXT Format: FR Y-8* (PDF)",
+      "regulator": "www.frbservices.org",
+      "seeds": [
+        "https://www.frbservices.org/wp-content/uploads/fry8-user-guide.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.frbservices.org/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-fcb1777378d0",
+      "name": "BA - 2027 BCAR sample return (clean) (XLSX, 2.80 MB)",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "seeds": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-en.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-87b1ac938a3f",
+      "name": "BA - 2027 BCAR sample return (tracked changes) (XLSX, 2.81 MB)",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "seeds": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/2027-bcar-rnfpb-rtn-rel-2026-09-10-trck-en.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-db3db09fda63",
+      "name": "BA - 2027 BCAR technical specification (XLSX, 3.41 MB)",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "seeds": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-tech-spec-data-2026-09-10-en.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-5b8c86f37ebc",
+      "name": "BA - 2027 BCAR sample XML (XML, 479 KB)",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "seeds": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xml"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-2673ea372676",
+      "name": "BA - 2027 BCAR sample XSD (XSD, 4.74 MB)",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "seeds": [
+        "https://www.osfi-bsif.gc.ca/sites/default/files/documents/bcar27-rnfpb27-2026-09-10-bil.xsd"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "initial_baseline": false
+    },
+    {
+      "id": "manual-b7f72aa87973",
+      "name": "Technical specification - frequently asked questions (BCAR)",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "seeds": [
+        "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification"
+      ],
+      "allowed_prefixes": [
+        "https://www.osfi-bsif.gc.ca/"
+      ],
+      "initial_baseline": false
+    }
+  ],
+  "source_runs": {
+    "fed-reporting-forms-pilot": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:29:55.953454+00:00",
+      "trigger": "manual"
+    },
+    "fed-reporting-forms-detail-pilot": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:29:56.706322+00:00",
+      "trigger": "manual"
+    },
+    "manual-f1df3c7d3e94": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:55.353435+00:00",
+      "trigger": "manual"
+    },
+    "manual-87ca438373d9": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:55.753681+00:00",
+      "trigger": "manual"
+    },
+    "manual-f96402c06d32": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:55.807866+00:00",
+      "trigger": "manual"
+    },
+    "manual-d73abfb2e7f2": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:55.863779+00:00",
+      "trigger": "manual"
+    },
+    "manual-c02ec80775c2": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:55.920182+00:00",
+      "trigger": "manual"
+    },
+    "manual-81edf0641cc2": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:55.974321+00:00",
+      "trigger": "manual"
+    },
+    "manual-ccbb8cabeb99": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:56.029420+00:00",
+      "trigger": "manual"
+    },
+    "manual-3c168c3e601a": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:56.083310+00:00",
+      "trigger": "manual"
+    },
+    "manual-31ada48e215e": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:56.136824+00:00",
+      "trigger": "manual"
+    },
+    "manual-96da24f54032": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:56.189950+00:00",
+      "trigger": "manual"
+    },
+    "manual-db5b7b1c66c0": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:56.244167+00:00",
+      "trigger": "manual"
+    },
+    "manual-c3954390bf91": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:56.300379+00:00",
+      "trigger": "manual"
+    },
+    "manual-ad2f7c55bf07": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:56.353054+00:00",
+      "trigger": "manual"
+    },
+    "manual-07fead54d9d1": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:56.408685+00:00",
+      "trigger": "manual"
+    },
+    "manual-49e6cffbe46b": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:56.463004+00:00",
+      "trigger": "manual"
+    },
+    "manual-e49444f7481c": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:56.518696+00:00",
+      "trigger": "manual"
+    },
+    "manual-e2a6f65d42aa": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:56.896469+00:00",
+      "trigger": "manual"
+    },
+    "manual-4d35aa9f9fa5": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:56.950077+00:00",
+      "trigger": "manual"
+    },
+    "manual-4ceffe75326c": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.003297+00:00",
+      "trigger": "manual"
+    },
+    "manual-ce0c1bcab763": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.056570+00:00",
+      "trigger": "manual"
+    },
+    "manual-9d4f8768e197": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.110605+00:00",
+      "trigger": "manual"
+    },
+    "manual-73c10748e127": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.163141+00:00",
+      "trigger": "manual"
+    },
+    "manual-3cde87b01727": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.218988+00:00",
+      "trigger": "manual"
+    },
+    "manual-15294ab2d815": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.272182+00:00",
+      "trigger": "manual"
+    },
+    "manual-9d2a0cc1d61f": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.326000+00:00",
+      "trigger": "manual"
+    },
+    "manual-b6a213ed4639": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.379319+00:00",
+      "trigger": "manual"
+    },
+    "manual-c8ecced11490": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.433803+00:00",
+      "trigger": "manual"
+    },
+    "manual-d1cf513f7f00": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.487765+00:00",
+      "trigger": "manual"
+    },
+    "manual-3e884254c2f1": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.540897+00:00",
+      "trigger": "manual"
+    },
+    "manual-d22911c410fc": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.595205+00:00",
+      "trigger": "manual"
+    },
+    "manual-8e5bda39a33e": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.648985+00:00",
+      "trigger": "manual"
+    },
+    "manual-7adab8f358bc": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.702561+00:00",
+      "trigger": "manual"
+    },
+    "manual-f3c955eb0656": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.755209+00:00",
+      "trigger": "manual"
+    },
+    "manual-053af629e35a": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.811399+00:00",
+      "trigger": "manual"
+    },
+    "manual-7003af051289": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.864640+00:00",
+      "trigger": "manual"
+    },
+    "manual-e5da1f71e903": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.919077+00:00",
+      "trigger": "manual"
+    },
+    "manual-215a82c132cd": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:57.972628+00:00",
+      "trigger": "manual"
+    },
+    "manual-3b1e1f88b570": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.026124+00:00",
+      "trigger": "manual"
+    },
+    "manual-e3f60bc85420": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.079958+00:00",
+      "trigger": "manual"
+    },
+    "manual-2b3ee4b0e158": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.210507+00:00",
+      "trigger": "manual"
+    },
+    "manual-16625bb5e529": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.265794+00:00",
+      "trigger": "manual"
+    },
+    "manual-a81bf7248131": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.318904+00:00",
+      "trigger": "manual"
+    },
+    "manual-bb542f59562b": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.374179+00:00",
+      "trigger": "manual"
+    },
+    "manual-9f4eeee473f4": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.427193+00:00",
+      "trigger": "manual"
+    },
+    "manual-29de64d1db61": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.483651+00:00",
+      "trigger": "manual"
+    },
+    "manual-d4603522a989": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.537407+00:00",
+      "trigger": "manual"
+    },
+    "manual-8588993b9c05": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.591281+00:00",
+      "trigger": "manual"
+    },
+    "manual-ddc3e02572f3": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.646263+00:00",
+      "trigger": "manual"
+    },
+    "manual-26375675a7ba": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.700383+00:00",
+      "trigger": "manual"
+    },
+    "manual-1f06400ec592": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.755468+00:00",
+      "trigger": "manual"
+    },
+    "manual-7b0addc7e307": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.810100+00:00",
+      "trigger": "manual"
+    },
+    "manual-e2cab0e0f486": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.864346+00:00",
+      "trigger": "manual"
+    },
+    "manual-fcf8b514162c": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.918662+00:00",
+      "trigger": "manual"
+    },
+    "manual-559ac45a9a23": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:58.972006+00:00",
+      "trigger": "manual"
+    },
+    "manual-95e85c0ac861": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.025413+00:00",
+      "trigger": "manual"
+    },
+    "manual-01e6eb794d40": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.080766+00:00",
+      "trigger": "manual"
+    },
+    "manual-a51425ec0d12": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.135702+00:00",
+      "trigger": "manual"
+    },
+    "manual-d2ffa46a0ee0": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.192031+00:00",
+      "trigger": "manual"
+    },
+    "manual-e175ab40ef57": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.248289+00:00",
+      "trigger": "manual"
+    },
+    "manual-c09e86fd8af6": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.301437+00:00",
+      "trigger": "manual"
+    },
+    "manual-1cd6b0d5a010": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.358747+00:00",
+      "trigger": "manual"
+    },
+    "manual-1aac59bf8879": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.413084+00:00",
+      "trigger": "manual"
+    },
+    "manual-039877cf9cc2": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.465803+00:00",
+      "trigger": "manual"
+    },
+    "manual-b553a47e37a5": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.518402+00:00",
+      "trigger": "manual"
+    },
+    "manual-0fc1eaed317c": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.571693+00:00",
+      "trigger": "manual"
+    },
+    "manual-901da0d88c3d": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.625858+00:00",
+      "trigger": "manual"
+    },
+    "manual-6d6a2e2a7268": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.681817+00:00",
+      "trigger": "manual"
+    },
+    "manual-4fd0bc460269": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.737323+00:00",
+      "trigger": "manual"
+    },
+    "manual-fb5555ba428f": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.791067+00:00",
+      "trigger": "manual"
+    },
+    "manual-046ab329cdfd": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.844434+00:00",
+      "trigger": "manual"
+    },
+    "manual-ee0509645c47": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.899271+00:00",
+      "trigger": "manual"
+    },
+    "manual-7c05d7f77240": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:32:59.953297+00:00",
+      "trigger": "manual"
+    },
+    "manual-7f304946ceb3": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.006729+00:00",
+      "trigger": "manual"
+    },
+    "manual-47a6282d259a": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.061973+00:00",
+      "trigger": "manual"
+    },
+    "manual-96fe00e867bc": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.116341+00:00",
+      "trigger": "manual"
+    },
+    "manual-14fa96fdd6f3": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.169249+00:00",
+      "trigger": "manual"
+    },
+    "manual-4e0334d82fed": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.222324+00:00",
+      "trigger": "manual"
+    },
+    "manual-cd48c4a982a0": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.274980+00:00",
+      "trigger": "manual"
+    },
+    "manual-20d93b4bbd85": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.328056+00:00",
+      "trigger": "manual"
+    },
+    "manual-63f9053192c2": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.382598+00:00",
+      "trigger": "manual"
+    },
+    "manual-e1d7c5d57155": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.437455+00:00",
+      "trigger": "manual"
+    },
+    "manual-487f8c72cdde": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.492610+00:00",
+      "trigger": "manual"
+    },
+    "manual-d2d0fcac25ec": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.547595+00:00",
+      "trigger": "manual"
+    },
+    "manual-402b469209b8": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.602325+00:00",
+      "trigger": "manual"
+    },
+    "manual-453a6875f704": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.657747+00:00",
+      "trigger": "manual"
+    },
+    "manual-67fce0ca2005": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.711868+00:00",
+      "trigger": "manual"
+    },
+    "manual-77ad1b54bab6": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.765198+00:00",
+      "trigger": "manual"
+    },
+    "manual-e49d5dac5ef1": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.818076+00:00",
+      "trigger": "manual"
+    },
+    "manual-ad7be2fd023c": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.872012+00:00",
+      "trigger": "manual"
+    },
+    "manual-f7443cb8f9e1": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.924417+00:00",
+      "trigger": "manual"
+    },
+    "manual-5d1702b4b2cc": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:00.978111+00:00",
+      "trigger": "manual"
+    },
+    "manual-27ffffaeabd2": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.036111+00:00",
+      "trigger": "manual"
+    },
+    "manual-41ddf2bfed6b": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.091052+00:00",
+      "trigger": "manual"
+    },
+    "manual-269906856d86": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.211677+00:00",
+      "trigger": "manual"
+    },
+    "manual-bf0ce15f4647": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.265304+00:00",
+      "trigger": "manual"
+    },
+    "manual-23abd061ae1e": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.320517+00:00",
+      "trigger": "manual"
+    },
+    "manual-cc3cad4938af": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.373890+00:00",
+      "trigger": "manual"
+    },
+    "manual-f83b4590d2a4": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.427889+00:00",
+      "trigger": "manual"
+    },
+    "manual-a61735026ca7": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.481030+00:00",
+      "trigger": "manual"
+    },
+    "manual-820a6d4ac8f7": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.535235+00:00",
+      "trigger": "manual"
+    },
+    "manual-e7cbd658db35": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.590556+00:00",
+      "trigger": "manual"
+    },
+    "manual-20a5a7fcb6d5": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.644424+00:00",
+      "trigger": "manual"
+    },
+    "manual-51e8b541fd12": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.698103+00:00",
+      "trigger": "manual"
+    },
+    "manual-315fd3d9ba06": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.751194+00:00",
+      "trigger": "manual"
+    },
+    "manual-d34e7c77f55c": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.806960+00:00",
+      "trigger": "manual"
+    },
+    "manual-b93ecc826c69": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.860226+00:00",
+      "trigger": "manual"
+    },
+    "manual-0efe314fb13e": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.915857+00:00",
+      "trigger": "manual"
+    },
+    "manual-9e2c4b1f8ea2": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:01.970710+00:00",
+      "trigger": "manual"
+    },
+    "manual-fcb1777378d0": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:02.024711+00:00",
+      "trigger": "manual"
+    },
+    "manual-87b1ac938a3f": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:18.415116+00:00",
+      "trigger": "manual"
+    },
+    "manual-db3db09fda63": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:33:35.115849+00:00",
+      "trigger": "manual"
+    },
+    "manual-5b8c86f37ebc": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:34:02.684431+00:00",
+      "trigger": "manual"
+    },
+    "manual-2673ea372676": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:34:03.074736+00:00",
+      "trigger": "manual"
+    },
+    "manual-b7f72aa87973": {
+      "run_id": "20261024T142955Z-32122afd",
+      "generated_at": "2026-10-24T14:34:05.726322+00:00",
+      "trigger": "manual"
+    }
+  },
+  "counts": {
+    "ai_backlog_pending": 0,
+    "ai_deferred": 0,
+    "ai_error": 0,
+    "ai_invalid": 0,
+    "ai_ok": 0,
+    "ai_skipped": 0,
+    "baseline_migration": 0,
+    "changed": 0,
+    "crawl_paused": 0,
+    "discovered": 130,
+    "extraction_drift": 0,
+    "extraction_error": 0,
+    "fetch_error": 0,
+    "forced_full_fetch": 0,
+    "new": 0,
+    "not_modified": 106,
+    "relevance_candidates": 0,
+    "removal_held": 0,
+    "removal_pending_confirmation": 0,
+    "removed": 0,
+    "source_changed": 2,
+    "unchanged": 128
+  },
+  "discovery": [
+    {
+      "source_id": "fed-reporting-forms-pilot",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 2,
+      "html_processed": 2,
+      "successful_pages": 2,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "5d911c0d2c2f19e0faf60e514dffc3abf5a2e07fdfc54926a9275ad434d7d063",
+      "inventory": "data/discovery/fed-reporting-forms-pilot-inventory-*.txt",
+      "failure_ledger": "data/discovery/fed-reporting-forms-pilot-failures.jsonl"
+    },
+    {
+      "source_id": "fed-reporting-forms-detail-pilot",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 14,
+      "html_processed": 5,
+      "successful_pages": 5,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "da76983ccc4888706d05a6f3790af3f986e6e1e8a5890cc44590ba45e1304075",
+      "inventory": "data/discovery/fed-reporting-forms-detail-pilot-inventory-*.txt",
+      "failure_ledger": "data/discovery/fed-reporting-forms-detail-pilot-failures.jsonl"
+    },
+    {
+      "source_id": "manual-f1df3c7d3e94",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 1,
+      "successful_pages": 1,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "af310001c6d2c0874771a8e2d7500abfb0fc388324ff6627dfd5be44b65f9e8f",
+      "inventory": "data/discovery/manual-f1df3c7d3e94-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-f1df3c7d3e94-failures.jsonl"
+    },
+    {
+      "source_id": "manual-87ca438373d9",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "dba20f735b5c95e03bc394c58815355ba4e670520ed7fea0bfe5e21be0b882e1",
+      "inventory": "data/discovery/manual-87ca438373d9-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-87ca438373d9-failures.jsonl"
+    },
+    {
+      "source_id": "manual-f96402c06d32",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "594bc87b93d39295dd670fcb9a494b8ecf7d3603d2671d9e673065f78e09faca",
+      "inventory": "data/discovery/manual-f96402c06d32-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-f96402c06d32-failures.jsonl"
+    },
+    {
+      "source_id": "manual-d73abfb2e7f2",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "a6b3a8778b52769fde9caa8b8425283a837f77f63c6e5c532984260b63a8c669",
+      "inventory": "data/discovery/manual-d73abfb2e7f2-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-d73abfb2e7f2-failures.jsonl"
+    },
+    {
+      "source_id": "manual-c02ec80775c2",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "383b25ec0d8612402d955036bd600e80dfea1cbd02a4dee3d4bf2a78bb56a792",
+      "inventory": "data/discovery/manual-c02ec80775c2-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-c02ec80775c2-failures.jsonl"
+    },
+    {
+      "source_id": "manual-81edf0641cc2",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "623d07fdc208e8de36e60dd5c4eced23d09f7297d8a7457e4bfe9b72931a36c3",
+      "inventory": "data/discovery/manual-81edf0641cc2-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-81edf0641cc2-failures.jsonl"
+    },
+    {
+      "source_id": "manual-ccbb8cabeb99",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "c2965f550228765ecf971ecf2849941a3f8b6def2a5b33c9e5f3c36a19420736",
+      "inventory": "data/discovery/manual-ccbb8cabeb99-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-ccbb8cabeb99-failures.jsonl"
+    },
+    {
+      "source_id": "manual-3c168c3e601a",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "8c6aff9bf6f9ff48f304928c8b2e5f20169bd18232f0e747e116ef0a2b78796b",
+      "inventory": "data/discovery/manual-3c168c3e601a-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-3c168c3e601a-failures.jsonl"
+    },
+    {
+      "source_id": "manual-31ada48e215e",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "2184b3595016118f92998d10f90b497659fd2ee23c0de9f253080e82f4a01fea",
+      "inventory": "data/discovery/manual-31ada48e215e-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-31ada48e215e-failures.jsonl"
+    },
+    {
+      "source_id": "manual-96da24f54032",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "82993764d64684f265058ebaccff68a86b1341d527a4290adb2079b1b282bd7d",
+      "inventory": "data/discovery/manual-96da24f54032-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-96da24f54032-failures.jsonl"
+    },
+    {
+      "source_id": "manual-db5b7b1c66c0",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "84707ffeab3ce977c20e805414fa3ff5c5f48fe78e785f603649f88c1d15f4b9",
+      "inventory": "data/discovery/manual-db5b7b1c66c0-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-db5b7b1c66c0-failures.jsonl"
+    },
+    {
+      "source_id": "manual-c3954390bf91",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "7d6ac89e4333fecc194acac4d1b9ad12b97c9b2e0e31fe4e7d8604cae549d4c3",
+      "inventory": "data/discovery/manual-c3954390bf91-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-c3954390bf91-failures.jsonl"
+    },
+    {
+      "source_id": "manual-ad2f7c55bf07",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "a26e63a2e6527948443c29293138603294d5a20bb39b8736f9fa6d688e54c6c1",
+      "inventory": "data/discovery/manual-ad2f7c55bf07-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-ad2f7c55bf07-failures.jsonl"
+    },
+    {
+      "source_id": "manual-07fead54d9d1",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "75416dd9ee2d8dbae40069e940542d8af41122441930adeb8adf6befa1c49372",
+      "inventory": "data/discovery/manual-07fead54d9d1-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-07fead54d9d1-failures.jsonl"
+    },
+    {
+      "source_id": "manual-49e6cffbe46b",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "7379b95a9ff65f2d1ae77c553670d739a86953e29bf49dfbab1f0773d9c78cf0",
+      "inventory": "data/discovery/manual-49e6cffbe46b-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-49e6cffbe46b-failures.jsonl"
+    },
+    {
+      "source_id": "manual-e49444f7481c",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "081e5d58f84fdf029197362fe0dcebc3a150f708542b065d3927ba6d76dfd5b5",
+      "inventory": "data/discovery/manual-e49444f7481c-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-e49444f7481c-failures.jsonl"
+    },
+    {
+      "source_id": "manual-e2a6f65d42aa",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "a162f5b24c08e61829645e311f54729d6f1e14d8fde7f318a9ff1352a73c4e9a",
+      "inventory": "data/discovery/manual-e2a6f65d42aa-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-e2a6f65d42aa-failures.jsonl"
+    },
+    {
+      "source_id": "manual-4d35aa9f9fa5",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "ea8a290e9ca82578db298b535927cdb46a3ad08215db933c394f6deaba9b9ea3",
+      "inventory": "data/discovery/manual-4d35aa9f9fa5-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-4d35aa9f9fa5-failures.jsonl"
+    },
+    {
+      "source_id": "manual-4ceffe75326c",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "dd234b0bf2d7afbd25aea1ee923a95d91aee62da32e9dacb5f0b9e26382ed182",
+      "inventory": "data/discovery/manual-4ceffe75326c-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-4ceffe75326c-failures.jsonl"
+    },
+    {
+      "source_id": "manual-ce0c1bcab763",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "28832917bc7fbbe2ed45f85d1f89f487c985f7134301bc144e6ab70f0eebd675",
+      "inventory": "data/discovery/manual-ce0c1bcab763-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-ce0c1bcab763-failures.jsonl"
+    },
+    {
+      "source_id": "manual-9d4f8768e197",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "de3807bed54940d08fc17cc30ec23aa756521bd8366291156b546a7ab4280410",
+      "inventory": "data/discovery/manual-9d4f8768e197-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-9d4f8768e197-failures.jsonl"
+    },
+    {
+      "source_id": "manual-73c10748e127",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "bf8fb9b6f18da9ae8af6f3b287a833d04d945682270557b992dcbe251ad710ae",
+      "inventory": "data/discovery/manual-73c10748e127-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-73c10748e127-failures.jsonl"
+    },
+    {
+      "source_id": "manual-3cde87b01727",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "691966f56707a65e3dbb49a1e9c5035ed0614fba04af74acfd9e65f856a12111",
+      "inventory": "data/discovery/manual-3cde87b01727-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-3cde87b01727-failures.jsonl"
+    },
+    {
+      "source_id": "manual-15294ab2d815",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "efa19a855449f32d80af49ba879f555f2e1dcbba3b1680b0d10cbb3e95c1f81a",
+      "inventory": "data/discovery/manual-15294ab2d815-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-15294ab2d815-failures.jsonl"
+    },
+    {
+      "source_id": "manual-9d2a0cc1d61f",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "7a78c7597649a27bfb149e5ffdc29dea9fc866b33136f81e9deca33e5fd72f33",
+      "inventory": "data/discovery/manual-9d2a0cc1d61f-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-9d2a0cc1d61f-failures.jsonl"
+    },
+    {
+      "source_id": "manual-b6a213ed4639",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "1725aef2cbeb78e2bce0005a6cdc140bb1e2ee70a837a87f785ae340ef7a49c7",
+      "inventory": "data/discovery/manual-b6a213ed4639-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-b6a213ed4639-failures.jsonl"
+    },
+    {
+      "source_id": "manual-c8ecced11490",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "1950c63ef5e18d3923c63ff2289a81c38c7d7b03f51843017d567cb0a3e97746",
+      "inventory": "data/discovery/manual-c8ecced11490-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-c8ecced11490-failures.jsonl"
+    },
+    {
+      "source_id": "manual-d1cf513f7f00",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "72e3ee29924a8f1934ad36013ce6aa85c42e93a65a1f1985203bea7a2ad92b57",
+      "inventory": "data/discovery/manual-d1cf513f7f00-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-d1cf513f7f00-failures.jsonl"
+    },
+    {
+      "source_id": "manual-3e884254c2f1",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "b115134e2c18d58edb9275c99a52dbc41a10b2c6d72c94a76cf1ea521ab813f1",
+      "inventory": "data/discovery/manual-3e884254c2f1-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-3e884254c2f1-failures.jsonl"
+    },
+    {
+      "source_id": "manual-d22911c410fc",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "1d86210f7b6b55c44aacf6b1c2f5d02afce2695bad618d6a3cc901c194618499",
+      "inventory": "data/discovery/manual-d22911c410fc-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-d22911c410fc-failures.jsonl"
+    },
+    {
+      "source_id": "manual-8e5bda39a33e",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "a79562ee490ab34a43c6f5d443d4be9a58012998290c1e9c038cce9f22fc30cd",
+      "inventory": "data/discovery/manual-8e5bda39a33e-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-8e5bda39a33e-failures.jsonl"
+    },
+    {
+      "source_id": "manual-7adab8f358bc",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "7f1a769332a4ca968d36597d5175c99b6105733df3fca3d87ade9be30af2ee1d",
+      "inventory": "data/discovery/manual-7adab8f358bc-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-7adab8f358bc-failures.jsonl"
+    },
+    {
+      "source_id": "manual-f3c955eb0656",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "0a036fc4bfd98f27956df0ad553bc2342eee09eec9277100fdd75fc6cb2af790",
+      "inventory": "data/discovery/manual-f3c955eb0656-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-f3c955eb0656-failures.jsonl"
+    },
+    {
+      "source_id": "manual-053af629e35a",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "a35ac7c2f4ceb1414f4445132f522c17c4466c7dea82f202cf16765d90b2caa6",
+      "inventory": "data/discovery/manual-053af629e35a-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-053af629e35a-failures.jsonl"
+    },
+    {
+      "source_id": "manual-7003af051289",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "4f2b079faebc36afe2ab9e216fd0ce7260dc4c9b13bfc9caa739277781493320",
+      "inventory": "data/discovery/manual-7003af051289-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-7003af051289-failures.jsonl"
+    },
+    {
+      "source_id": "manual-e5da1f71e903",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "4582b81c156ebfe804386222eda9a434682f86699b0000851d6ccc4a6fac539f",
+      "inventory": "data/discovery/manual-e5da1f71e903-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-e5da1f71e903-failures.jsonl"
+    },
+    {
+      "source_id": "manual-215a82c132cd",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "2d2f08e5ab61922a10a106fe0097d7aa0b3e09e4e5345dc328fdfeb2a41bea3b",
+      "inventory": "data/discovery/manual-215a82c132cd-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-215a82c132cd-failures.jsonl"
+    },
+    {
+      "source_id": "manual-3b1e1f88b570",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "7fb20d3264e131757ab6d4d56b85b1df8d33a51b789f5900ec25200ddc74e6d5",
+      "inventory": "data/discovery/manual-3b1e1f88b570-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-3b1e1f88b570-failures.jsonl"
+    },
+    {
+      "source_id": "manual-e3f60bc85420",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "32e2f94ea24730a86fcb1ad4073e6018cbf5b0d356df82e5b43aa7fd0659a8a6",
+      "inventory": "data/discovery/manual-e3f60bc85420-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-e3f60bc85420-failures.jsonl"
+    },
+    {
+      "source_id": "manual-2b3ee4b0e158",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "446a5008567b8edbb355f66e94d09ec204e025ae31de96de3dd8e57833cf7832",
+      "inventory": "data/discovery/manual-2b3ee4b0e158-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-2b3ee4b0e158-failures.jsonl"
+    },
+    {
+      "source_id": "manual-16625bb5e529",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "681d4416dbe14d2ed7c0add0fd6302e34550a5e108925967e992c84623c84805",
+      "inventory": "data/discovery/manual-16625bb5e529-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-16625bb5e529-failures.jsonl"
+    },
+    {
+      "source_id": "manual-a81bf7248131",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "242e615818ceb55b9ac78079e60aa31f02da7b6004c7ef708b1a6bc51f6b087d",
+      "inventory": "data/discovery/manual-a81bf7248131-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-a81bf7248131-failures.jsonl"
+    },
+    {
+      "source_id": "manual-bb542f59562b",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "24c42e7e64fb4b0f28d76cb55dc24a364d693210058add9fa9d72d997ee102ce",
+      "inventory": "data/discovery/manual-bb542f59562b-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-bb542f59562b-failures.jsonl"
+    },
+    {
+      "source_id": "manual-9f4eeee473f4",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "173e99b06b9ddfc201c39c9da7b7725a0a33fb51981ebdf3323f2a08ea596a85",
+      "inventory": "data/discovery/manual-9f4eeee473f4-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-9f4eeee473f4-failures.jsonl"
+    },
+    {
+      "source_id": "manual-29de64d1db61",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "e25d4e2c53a1e955d94885b670eb0caa5686702e2db870cc17171e4266e6575c",
+      "inventory": "data/discovery/manual-29de64d1db61-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-29de64d1db61-failures.jsonl"
+    },
+    {
+      "source_id": "manual-d4603522a989",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "9b861e83a34d074e2d1ab8c457fcbbb5e38985415203caae48b63522b634dd65",
+      "inventory": "data/discovery/manual-d4603522a989-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-d4603522a989-failures.jsonl"
+    },
+    {
+      "source_id": "manual-8588993b9c05",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "8db9ffb3f9ed09c2798a515ce1822bdaf79cb510f5cea2eba36c1e7caf5f3375",
+      "inventory": "data/discovery/manual-8588993b9c05-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-8588993b9c05-failures.jsonl"
+    },
+    {
+      "source_id": "manual-ddc3e02572f3",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "3fbef91226f2e4f3b5512c278a0f4e1f05f3e9f5578050f7231295d09418516e",
+      "inventory": "data/discovery/manual-ddc3e02572f3-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-ddc3e02572f3-failures.jsonl"
+    },
+    {
+      "source_id": "manual-26375675a7ba",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "684deebc7e08c05011028bef77e63fcfd2f17dc8ace22a992319b981615da539",
+      "inventory": "data/discovery/manual-26375675a7ba-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-26375675a7ba-failures.jsonl"
+    },
+    {
+      "source_id": "manual-1f06400ec592",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "38759aee24c0c689cd23576d98845dc6faf1813898ed8025f5886661152b640e",
+      "inventory": "data/discovery/manual-1f06400ec592-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-1f06400ec592-failures.jsonl"
+    },
+    {
+      "source_id": "manual-7b0addc7e307",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "370168f66bdc45c815c22da170535658762f4be8322caf4202c5003eb2dee1e3",
+      "inventory": "data/discovery/manual-7b0addc7e307-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-7b0addc7e307-failures.jsonl"
+    },
+    {
+      "source_id": "manual-e2cab0e0f486",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "326323fa7680058fd8d1cbbf537d34015ced33037a88aeb0a2a30996a57a6130",
+      "inventory": "data/discovery/manual-e2cab0e0f486-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-e2cab0e0f486-failures.jsonl"
+    },
+    {
+      "source_id": "manual-fcf8b514162c",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "d7ec638d309d8db39a23bba479efbd0b5dadaa5a32df55a777ef5100c7fba304",
+      "inventory": "data/discovery/manual-fcf8b514162c-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-fcf8b514162c-failures.jsonl"
+    },
+    {
+      "source_id": "manual-559ac45a9a23",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "d9e94bec44c0aa99121b7665da7e8d9aa6c0db6dd343533773c0d01854fedb8d",
+      "inventory": "data/discovery/manual-559ac45a9a23-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-559ac45a9a23-failures.jsonl"
+    },
+    {
+      "source_id": "manual-95e85c0ac861",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "fb91da0ca2c1cac4d164102694f3f164edf831292ba12a26a6deb75df1cd9327",
+      "inventory": "data/discovery/manual-95e85c0ac861-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-95e85c0ac861-failures.jsonl"
+    },
+    {
+      "source_id": "manual-01e6eb794d40",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "b726259efb4b56e01d02a5fd47463248f140d8dc6c2c6b5777f65cf594420f94",
+      "inventory": "data/discovery/manual-01e6eb794d40-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-01e6eb794d40-failures.jsonl"
+    },
+    {
+      "source_id": "manual-a51425ec0d12",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "2d35e22accc7795087e9b09ec12ba1fe21bd8fd1174371061e090a5be8036199",
+      "inventory": "data/discovery/manual-a51425ec0d12-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-a51425ec0d12-failures.jsonl"
+    },
+    {
+      "source_id": "manual-d2ffa46a0ee0",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "dc9650ff79c9759c70460e9ff36a1497c1d0716509f4a970fa7c83336e14a0af",
+      "inventory": "data/discovery/manual-d2ffa46a0ee0-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-d2ffa46a0ee0-failures.jsonl"
+    },
+    {
+      "source_id": "manual-e175ab40ef57",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "44abe168428a0edd2a6b3d81c6862bc14e76ce9fe1e54b47cc4ed75ddb85d820",
+      "inventory": "data/discovery/manual-e175ab40ef57-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-e175ab40ef57-failures.jsonl"
+    },
+    {
+      "source_id": "manual-c09e86fd8af6",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "5d762c39368bb3e6a2c95e2f860d412e13fd0fa57acd1025beaee395df4c0482",
+      "inventory": "data/discovery/manual-c09e86fd8af6-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-c09e86fd8af6-failures.jsonl"
+    },
+    {
+      "source_id": "manual-1cd6b0d5a010",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "969bde627246749ebe40642a606a242a1f69ecc43639505afc000ec48b01ff3e",
+      "inventory": "data/discovery/manual-1cd6b0d5a010-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-1cd6b0d5a010-failures.jsonl"
+    },
+    {
+      "source_id": "manual-1aac59bf8879",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "e52a2429f04a7af4caa142c8aff7dab318d5f84130de2a6028b64beb6658a1b5",
+      "inventory": "data/discovery/manual-1aac59bf8879-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-1aac59bf8879-failures.jsonl"
+    },
+    {
+      "source_id": "manual-039877cf9cc2",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "3f8c91153b6389709ccc309f50c9b52ba4ae9125fbdfc20f87e6cb61ab422940",
+      "inventory": "data/discovery/manual-039877cf9cc2-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-039877cf9cc2-failures.jsonl"
+    },
+    {
+      "source_id": "manual-b553a47e37a5",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "13489cb06c6946ba4cddd446bc389991d5cab7eceafb87e770b66ac86f644328",
+      "inventory": "data/discovery/manual-b553a47e37a5-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-b553a47e37a5-failures.jsonl"
+    },
+    {
+      "source_id": "manual-0fc1eaed317c",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "60ce39c962c446c77531a1fa31048d9c157b604030f7d5e3a01fcab899a62861",
+      "inventory": "data/discovery/manual-0fc1eaed317c-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-0fc1eaed317c-failures.jsonl"
+    },
+    {
+      "source_id": "manual-901da0d88c3d",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "268ef0f2e147d661264c9c7e856257ef2aee64b9b1e32a7bd952999b754ba5b2",
+      "inventory": "data/discovery/manual-901da0d88c3d-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-901da0d88c3d-failures.jsonl"
+    },
+    {
+      "source_id": "manual-6d6a2e2a7268",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "76b56bf169fe772645b43e955f22673491afc78f5dd61f3e73da86e65dc250a3",
+      "inventory": "data/discovery/manual-6d6a2e2a7268-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-6d6a2e2a7268-failures.jsonl"
+    },
+    {
+      "source_id": "manual-4fd0bc460269",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "a38f5fe6b389853c035720de7f83b21308f5774946bc349a5b503a245037a215",
+      "inventory": "data/discovery/manual-4fd0bc460269-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-4fd0bc460269-failures.jsonl"
+    },
+    {
+      "source_id": "manual-fb5555ba428f",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "1d142cefbfc9e04901013cf75af6b38da57b77b6a5b9d09d8a7130f30f0b3742",
+      "inventory": "data/discovery/manual-fb5555ba428f-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-fb5555ba428f-failures.jsonl"
+    },
+    {
+      "source_id": "manual-046ab329cdfd",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "6dae1b84def6dce0e00bf337514b6a00337c6fb1fa1a3c5d4b73510b63612c52",
+      "inventory": "data/discovery/manual-046ab329cdfd-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-046ab329cdfd-failures.jsonl"
+    },
+    {
+      "source_id": "manual-ee0509645c47",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "8f1a4b96bff62895ff8f180cd65e5202966db253c8a7426d4e751af7c9cf1c0c",
+      "inventory": "data/discovery/manual-ee0509645c47-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-ee0509645c47-failures.jsonl"
+    },
+    {
+      "source_id": "manual-7c05d7f77240",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "a021c3b7b29e1a032f4087537f8364e9d5a8f7f7772deeb309b9ec5290461b6e",
+      "inventory": "data/discovery/manual-7c05d7f77240-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-7c05d7f77240-failures.jsonl"
+    },
+    {
+      "source_id": "manual-7f304946ceb3",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "cf83374415f2f96c9035620f2f0270d394532e62f86db924d66478d7dbbc1cc9",
+      "inventory": "data/discovery/manual-7f304946ceb3-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-7f304946ceb3-failures.jsonl"
+    },
+    {
+      "source_id": "manual-47a6282d259a",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "102d523fefc4ffa5884852c020be45201608ab9a54674c9074cd7af5623bbe55",
+      "inventory": "data/discovery/manual-47a6282d259a-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-47a6282d259a-failures.jsonl"
+    },
+    {
+      "source_id": "manual-96fe00e867bc",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "d7c519c2815b72c37022ecc9df6cb0de7c2c66f051749c5e9dedca0a968c54ae",
+      "inventory": "data/discovery/manual-96fe00e867bc-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-96fe00e867bc-failures.jsonl"
+    },
+    {
+      "source_id": "manual-14fa96fdd6f3",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "b62190cc87f5ca0d6b97658552d8251160d7ae4b767741820e0c76bc2851826d",
+      "inventory": "data/discovery/manual-14fa96fdd6f3-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-14fa96fdd6f3-failures.jsonl"
+    },
+    {
+      "source_id": "manual-4e0334d82fed",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "ffca0429a19570a16c57178377a04ed6fb47bdf856658e06231c5efe82196b7f",
+      "inventory": "data/discovery/manual-4e0334d82fed-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-4e0334d82fed-failures.jsonl"
+    },
+    {
+      "source_id": "manual-cd48c4a982a0",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "480698216da19d8ebbdd89173f433f1513c064724a28e749ed525b5e0739a675",
+      "inventory": "data/discovery/manual-cd48c4a982a0-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-cd48c4a982a0-failures.jsonl"
+    },
+    {
+      "source_id": "manual-20d93b4bbd85",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "2f3998ce984ae2fbe76c9e00bebcb79726bf1a691a1430ef7cd3e55c910e53b5",
+      "inventory": "data/discovery/manual-20d93b4bbd85-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-20d93b4bbd85-failures.jsonl"
+    },
+    {
+      "source_id": "manual-63f9053192c2",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "b1f7c542f8591841ff3a26341ea362c17e2bc1a1532d4e2b43c4e4c9473f9dff",
+      "inventory": "data/discovery/manual-63f9053192c2-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-63f9053192c2-failures.jsonl"
+    },
+    {
+      "source_id": "manual-e1d7c5d57155",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "05c1496d7cec8cd5cf3e3f994ff181a617252f46d329c20d5c7b7f525e075146",
+      "inventory": "data/discovery/manual-e1d7c5d57155-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-e1d7c5d57155-failures.jsonl"
+    },
+    {
+      "source_id": "manual-487f8c72cdde",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "7d05546e1cf6b2b34e43b7cbdf2d7bb9e9e31b58a50d6875958ad0dfda03d1bd",
+      "inventory": "data/discovery/manual-487f8c72cdde-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-487f8c72cdde-failures.jsonl"
+    },
+    {
+      "source_id": "manual-d2d0fcac25ec",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "57cd4876f4063e92aad4236cf5cc6041f8bd72e596c23e247908b0d246fccaab",
+      "inventory": "data/discovery/manual-d2d0fcac25ec-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-d2d0fcac25ec-failures.jsonl"
+    },
+    {
+      "source_id": "manual-402b469209b8",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "a1686f931832c8df68096ef44d0ad387f3e28fbd85382e097ad6b1c9343946f9",
+      "inventory": "data/discovery/manual-402b469209b8-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-402b469209b8-failures.jsonl"
+    },
+    {
+      "source_id": "manual-453a6875f704",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "9871eb005daaaddfe24f9a35bece7e372cba27f5cd05fb8b99e99cdf34898b1a",
+      "inventory": "data/discovery/manual-453a6875f704-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-453a6875f704-failures.jsonl"
+    },
+    {
+      "source_id": "manual-67fce0ca2005",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "229f402bf5e17626fb55a0d3159f4aaecfe1192e0663d2f5f7e6e725f3e14284",
+      "inventory": "data/discovery/manual-67fce0ca2005-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-67fce0ca2005-failures.jsonl"
+    },
+    {
+      "source_id": "manual-77ad1b54bab6",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "8f80eb55588ac7944a57637b6c6925962a0d0c810a06a5fb44779119fb7de428",
+      "inventory": "data/discovery/manual-77ad1b54bab6-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-77ad1b54bab6-failures.jsonl"
+    },
+    {
+      "source_id": "manual-e49d5dac5ef1",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "e34f1aa03ed6ca2fbe0d1b5db97da861f53fa57d4356b6e131599d014a4ab6b2",
+      "inventory": "data/discovery/manual-e49d5dac5ef1-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-e49d5dac5ef1-failures.jsonl"
+    },
+    {
+      "source_id": "manual-ad7be2fd023c",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "2981453b8af28ab36567b83ac0ee1961041eefc02760bb3a5525e16186143367",
+      "inventory": "data/discovery/manual-ad7be2fd023c-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-ad7be2fd023c-failures.jsonl"
+    },
+    {
+      "source_id": "manual-f7443cb8f9e1",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "a025b1ebf58154e0c5f7bdba95117b86a4a4d502d8789b0660c8f1aa93456cb9",
+      "inventory": "data/discovery/manual-f7443cb8f9e1-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-f7443cb8f9e1-failures.jsonl"
+    },
+    {
+      "source_id": "manual-5d1702b4b2cc",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "801f6a67590d43cf39d369bf1524b837ae3c55f657620a439c9c2f75bcd421fa",
+      "inventory": "data/discovery/manual-5d1702b4b2cc-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-5d1702b4b2cc-failures.jsonl"
+    },
+    {
+      "source_id": "manual-27ffffaeabd2",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "85058a2c984bbe88701fb71ac58b85a1b08bfaeb267bbc94f94b75bf0e54dd9d",
+      "inventory": "data/discovery/manual-27ffffaeabd2-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-27ffffaeabd2-failures.jsonl"
+    },
+    {
+      "source_id": "manual-41ddf2bfed6b",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "951074f885d2654d105ca8453f41f3d8c47df224554e887025c1ad5c553ba5f5",
+      "inventory": "data/discovery/manual-41ddf2bfed6b-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-41ddf2bfed6b-failures.jsonl"
+    },
+    {
+      "source_id": "manual-269906856d86",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "cffdf5eee08472511fef828dfa3f40ce323cffce4febffcb69021840b08cb3a6",
+      "inventory": "data/discovery/manual-269906856d86-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-269906856d86-failures.jsonl"
+    },
+    {
+      "source_id": "manual-bf0ce15f4647",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "377fa93a4eabc171f508a44cbe3caeade94e1b57a6d7c363cad7c9a72de8795e",
+      "inventory": "data/discovery/manual-bf0ce15f4647-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-bf0ce15f4647-failures.jsonl"
+    },
+    {
+      "source_id": "manual-23abd061ae1e",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "65210b53e724bbc3dfd7076993401fe34f097431d8e7c88b83a527eb383b3354",
+      "inventory": "data/discovery/manual-23abd061ae1e-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-23abd061ae1e-failures.jsonl"
+    },
+    {
+      "source_id": "manual-cc3cad4938af",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "585906ed7ae3db64b0681d450614cff5d1173dcdb1aee7b046cf7559acfb66af",
+      "inventory": "data/discovery/manual-cc3cad4938af-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-cc3cad4938af-failures.jsonl"
+    },
+    {
+      "source_id": "manual-f83b4590d2a4",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "534303a101ef51fae9bbb3e10639748c08951e5f5de94973dae824b7f608703d",
+      "inventory": "data/discovery/manual-f83b4590d2a4-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-f83b4590d2a4-failures.jsonl"
+    },
+    {
+      "source_id": "manual-a61735026ca7",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "0fd6820dd5dd5e271af960748e00c7402e76e948280f2f7335f43c722b28723e",
+      "inventory": "data/discovery/manual-a61735026ca7-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-a61735026ca7-failures.jsonl"
+    },
+    {
+      "source_id": "manual-820a6d4ac8f7",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "3952d0776d17e5501aa3304b161a9c4ea95856e0b030640752970acfa9e692f9",
+      "inventory": "data/discovery/manual-820a6d4ac8f7-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-820a6d4ac8f7-failures.jsonl"
+    },
+    {
+      "source_id": "manual-e7cbd658db35",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "f3acbd2becf6ca4bb85ca4c73977faf9bba8528e14d85924dd7c46c6e8ca445b",
+      "inventory": "data/discovery/manual-e7cbd658db35-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-e7cbd658db35-failures.jsonl"
+    },
+    {
+      "source_id": "manual-20a5a7fcb6d5",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "e4c825886f3d965bec49c4dc0aea01ebb1bebe5245e8893490bfb47a1fbab9e7",
+      "inventory": "data/discovery/manual-20a5a7fcb6d5-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-20a5a7fcb6d5-failures.jsonl"
+    },
+    {
+      "source_id": "manual-51e8b541fd12",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "4082837beff35844d04c9bed557edd23820c711d955cb7cbab256e0f027220e5",
+      "inventory": "data/discovery/manual-51e8b541fd12-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-51e8b541fd12-failures.jsonl"
+    },
+    {
+      "source_id": "manual-315fd3d9ba06",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "2c2f057b4da707aa7a13cf9bad9eca45ddd0d212ddf4f4522a3e432945be811e",
+      "inventory": "data/discovery/manual-315fd3d9ba06-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-315fd3d9ba06-failures.jsonl"
+    },
+    {
+      "source_id": "manual-d34e7c77f55c",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "69136157af478b82c889676c63a4eed7c745699d2ec3af671b51e1fbcf61c50b",
+      "inventory": "data/discovery/manual-d34e7c77f55c-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-d34e7c77f55c-failures.jsonl"
+    },
+    {
+      "source_id": "manual-b93ecc826c69",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "72b39e49312e5ace2c569e9adee2fee305d163fa26615edec14b500f0bd0fc43",
+      "inventory": "data/discovery/manual-b93ecc826c69-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-b93ecc826c69-failures.jsonl"
+    },
+    {
+      "source_id": "manual-0efe314fb13e",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "9d0d38a5f5191a0101e13de3600d8e4a6b9a35dd48c1e1002b6747d1f63e59a9",
+      "inventory": "data/discovery/manual-0efe314fb13e-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-0efe314fb13e-failures.jsonl"
+    },
+    {
+      "source_id": "manual-9e2c4b1f8ea2",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "d6ad6b80d7ea90274e595207653e945e0ce8dc8de067e6cc0c95ac2b35babf50",
+      "inventory": "data/discovery/manual-9e2c4b1f8ea2-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-9e2c4b1f8ea2-failures.jsonl"
+    },
+    {
+      "source_id": "manual-fcb1777378d0",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "3b13da05add5a315beab27e745330fd9ed20eeef51dba96fedf2ba0b561e664c",
+      "inventory": "data/discovery/manual-fcb1777378d0-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-fcb1777378d0-failures.jsonl"
+    },
+    {
+      "source_id": "manual-87b1ac938a3f",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "106a5bf18049ce9c083bc78b98e9ee68c286a34596a7cb7175c4f690b61f2689",
+      "inventory": "data/discovery/manual-87b1ac938a3f-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-87b1ac938a3f-failures.jsonl"
+    },
+    {
+      "source_id": "manual-db3db09fda63",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "e140ea2fa1d3edb2b4b69acd8174636f3809859fd4349d30be6cabcc8dbf7e75",
+      "inventory": "data/discovery/manual-db3db09fda63-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-db3db09fda63-failures.jsonl"
+    },
+    {
+      "source_id": "manual-5b8c86f37ebc",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "2d8eb3d94200dc9ebe624e8084bdf4aa3e7e606518eafda9fba5e041a305c65d",
+      "inventory": "data/discovery/manual-5b8c86f37ebc-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-5b8c86f37ebc-failures.jsonl"
+    },
+    {
+      "source_id": "manual-2673ea372676",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "7abc4d33895fd1a949cfbf0fac95cdb2c966cc57866cce28f63d7bcb6b56784e",
+      "inventory": "data/discovery/manual-2673ea372676-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-2673ea372676-failures.jsonl"
+    },
+    {
+      "source_id": "manual-b7f72aa87973",
+      "method": "http-resumable",
+      "state": "COMPLETE",
+      "discovered": 1,
+      "html_processed": 0,
+      "successful_pages": 0,
+      "failed_pages": 0,
+      "capped": false,
+      "pending": 0,
+      "unresolved_failures": 0,
+      "checkpoint_schema_version": 3,
+      "config_fingerprint": "0d75191462434aadb59f54cc02a88a3bf053a2c76fab76d01bf4cb4e538e2d03",
+      "inventory": "data/discovery/manual-b7f72aa87973-inventory-*.txt",
+      "failure_ledger": "data/discovery/manual-b7f72aa87973-failures.jsonl"
+    }
+  ],
+  "removal_guards": [],
+  "baseline_update_allowed": true,
+  "change_detector": {
+    "classification_hash": "normalized_hash",
+    "html_hash": "SHA-256 of the saved HTML snapshot (reused when only volatile tokens changed; raw_hash is always the fetched response)",
+    "html_comparison_hash": "Versioned HTML signature; known Cloudflare challenge tokens and pageConfig.cacheBuster are normalized",
+    "html_comparison_hash_version": 2,
+    "http_validators": "ETag/Last-Modified are optimization hints only"
+  },
+  "relevance_gate": {
+    "mode": "high_recall",
+    "ai_final_semantic_decision": true
+  },
+  "ai_contract": {
+    "required_keys": [
+      "relevant",
+      "topic",
+      "change_type",
+      "summary",
+      "impact",
+      "effective_date",
+      "affected_scope",
+      "actions",
+      "reason"
+    ],
+    "strict": true
+  },
+  "new_urls": [],
+  "changed_urls": [],
+  "source_changed_urls": [
+    {
+      "before": {
+        "schema_version": 2,
+        "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
+        "source_id": "manual-e49444f7481c",
+        "regulator": "www.federalreserve.gov",
+        "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
+        "first_seen": "2026-10-23T08:14:35.781047+00:00",
+        "last_seen": "2026-10-24T10:47:56.959055+00:00",
+        "last_checked": "2026-10-24T10:47:56.959055+00:00",
+        "last_full_fetch": "2026-10-24T10:47:56.959055+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "content_length": null,
+        "etag": null,
+        "last_modified": null,
+        "raw_hash": "027f50677e5d818c2b2fb5420e70490e903ed77b16750b433f213db16a43ebbd",
+        "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
+        "html_hash": "027f50677e5d818c2b2fb5420e70490e903ed77b16750b433f213db16a43ebbd",
+        "html_comparison_hash": "5850524080eea4c86af8d0b278f9280ad3d518aeb98c2ca10c2b947645ebbb7b",
+        "html_comparison_hash_version": 2,
+        "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-027f50677e5d818c2b2fb5420e70490e903ed77b16750b433f213db16a43ebbd.html",
+        "file_snapshot_location": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
+        "evidence_location": "data/evidence/d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "Regulatory signal detected",
+          "signals": [
+            "policy",
+            "report"
+          ]
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T10:47:56.959055+00:00",
+            "evidence_location": "data/evidence/d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856.json"
+          },
+          {
+            "event_id": "758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T09:07:44.643212+00:00",
+            "evidence_location": "data/evidence/758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92.json"
+          },
+          {
+            "event_id": "54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T04:25:07.055801+00:00",
+            "evidence_location": "data/evidence/54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035.json"
+          },
+          {
+            "event_id": "5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T04:18:15.031283+00:00",
+            "evidence_location": "data/evidence/5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516.json"
+          },
+          {
+            "event_id": "4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T21:22:14.496468+00:00",
+            "evidence_location": "data/evidence/4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2.json"
+          },
+          {
+            "event_id": "5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T17:07:50.274469+00:00",
+            "evidence_location": "data/evidence/5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc.json"
+          },
+          {
+            "event_id": "641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T17:00:50.692419+00:00",
+            "evidence_location": "data/evidence/641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c.json"
+          },
+          {
+            "event_id": "141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T12:53:05.491782+00:00",
+            "evidence_location": "data/evidence/141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254.json"
+          },
+          {
+            "event_id": "6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T11:30:35.930519+00:00",
+            "evidence_location": "data/evidence/6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47.json"
+          },
+          {
+            "event_id": "59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T09:56:43.050307+00:00",
+            "evidence_location": "data/evidence/59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999.json"
+          },
+          {
+            "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T09:47:43.429866+00:00",
+            "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
+          },
+          {
+            "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T08:22:54.837336+00:00",
+            "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false
+      },
+      "after": {
+        "schema_version": 2,
+        "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
+        "source_id": "manual-e49444f7481c",
+        "regulator": "www.federalreserve.gov",
+        "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
+        "first_seen": "2026-10-23T08:14:35.781047+00:00",
+        "last_seen": "2026-10-24T14:32:56.518696+00:00",
+        "last_checked": "2026-10-24T14:32:56.518696+00:00",
+        "last_full_fetch": "2026-10-24T14:32:56.518696+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "content_length": null,
+        "etag": null,
+        "last_modified": null,
+        "raw_hash": "5feb545cbb013b6a75ed5ed785af91cb8e6e74a2c1ca3575dd83ce75a27e62a4",
+        "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
+        "html_hash": "5feb545cbb013b6a75ed5ed785af91cb8e6e74a2c1ca3575dd83ce75a27e62a4",
+        "html_comparison_hash": "90d36fb88673526ef8ea0833a5a46fce337075b248a84311fe8fec0176efc88d",
+        "html_comparison_hash_version": 2,
+        "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-5feb545cbb013b6a75ed5ed785af91cb8e6e74a2c1ca3575dd83ce75a27e62a4.html",
+        "file_snapshot_location": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
+        "evidence_location": "data/evidence/e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "Regulatory signal detected",
+          "signals": [
+            "policy",
+            "report"
+          ]
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T14:32:56.518696+00:00",
+            "evidence_location": "data/evidence/e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01.json"
+          },
+          {
+            "event_id": "d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T10:47:56.959055+00:00",
+            "evidence_location": "data/evidence/d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856.json"
+          },
+          {
+            "event_id": "758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T09:07:44.643212+00:00",
+            "evidence_location": "data/evidence/758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92.json"
+          },
+          {
+            "event_id": "54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T04:25:07.055801+00:00",
+            "evidence_location": "data/evidence/54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035.json"
+          },
+          {
+            "event_id": "5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T04:18:15.031283+00:00",
+            "evidence_location": "data/evidence/5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516.json"
+          },
+          {
+            "event_id": "4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T21:22:14.496468+00:00",
+            "evidence_location": "data/evidence/4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2.json"
+          },
+          {
+            "event_id": "5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T17:07:50.274469+00:00",
+            "evidence_location": "data/evidence/5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc.json"
+          },
+          {
+            "event_id": "641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T17:00:50.692419+00:00",
+            "evidence_location": "data/evidence/641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c.json"
+          },
+          {
+            "event_id": "141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T12:53:05.491782+00:00",
+            "evidence_location": "data/evidence/141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254.json"
+          },
+          {
+            "event_id": "6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T11:30:35.930519+00:00",
+            "evidence_location": "data/evidence/6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47.json"
+          },
+          {
+            "event_id": "59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T09:56:43.050307+00:00",
+            "evidence_location": "data/evidence/59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999.json"
+          },
+          {
+            "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T09:47:43.429866+00:00",
+            "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
+          },
+          {
+            "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T08:22:54.837336+00:00",
+            "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false
+      }
+    },
+    {
+      "before": {
+        "schema_version": 2,
+        "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
+        "source_id": "manual-b7f72aa87973",
+        "regulator": "www.osfi-bsif.gc.ca",
+        "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+        "first_seen": "2026-10-23T12:53:48.284742+00:00",
+        "last_seen": "2026-10-24T10:52:01.947864+00:00",
+        "last_checked": "2026-10-24T10:52:01.947864+00:00",
+        "last_full_fetch": "2026-10-24T10:52:01.947864+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": 21443,
+        "etag": "W/\"1792838729\"",
+        "last_modified": "Sat, 24 Oct 2026 10:45:29 GMT",
+        "raw_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
+        "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
+        "html_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
+        "html_comparison_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
+        "html_comparison_hash_version": 2,
+        "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207.html",
+        "file_snapshot_location": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
+        "evidence_location": "data/evidence/38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "Regulatory signal detected",
+          "signals": [
+            "regulatory",
+            "report",
+            "requirement",
+            "risk",
+            "rule",
+            "supervisory"
+          ]
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T10:52:01.947864+00:00",
+            "evidence_location": "data/evidence/38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14.json"
+          },
+          {
+            "event_id": "d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T09:10:03.324362+00:00",
+            "evidence_location": "data/evidence/d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41.json"
+          },
+          {
+            "event_id": "8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T04:19:05.675116+00:00",
+            "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json"
+          },
+          {
+            "event_id": "5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T21:22:52.826902+00:00",
+            "evidence_location": "data/evidence/5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441.json"
+          },
+          {
+            "event_id": "07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T17:08:37.020091+00:00",
+            "evidence_location": "data/evidence/07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201.json"
+          },
+          {
+            "event_id": "1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T17:01:28.049800+00:00",
+            "evidence_location": "data/evidence/1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false
+      },
+      "after": {
+        "schema_version": 2,
+        "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
+        "source_id": "manual-b7f72aa87973",
+        "regulator": "www.osfi-bsif.gc.ca",
+        "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+        "first_seen": "2026-10-23T12:53:48.284742+00:00",
+        "last_seen": "2026-10-24T14:34:05.726322+00:00",
+        "last_checked": "2026-10-24T14:34:05.726322+00:00",
+        "last_full_fetch": "2026-10-24T14:34:05.726322+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": 21447,
+        "etag": "W/\"1792852186\"",
+        "last_modified": "Sat, 24 Oct 2026 14:29:46 GMT",
+        "raw_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
+        "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
+        "html_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
+        "html_comparison_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
+        "html_comparison_hash_version": 2,
+        "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21.html",
+        "file_snapshot_location": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
+        "evidence_location": "data/evidence/01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "Regulatory signal detected",
+          "signals": [
+            "regulatory",
+            "report",
+            "requirement",
+            "risk",
+            "rule",
+            "supervisory"
+          ]
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T14:34:05.726322+00:00",
+            "evidence_location": "data/evidence/01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3.json"
+          },
+          {
+            "event_id": "38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T10:52:01.947864+00:00",
+            "evidence_location": "data/evidence/38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14.json"
+          },
+          {
+            "event_id": "d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T09:10:03.324362+00:00",
+            "evidence_location": "data/evidence/d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41.json"
+          },
+          {
+            "event_id": "8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T04:19:05.675116+00:00",
+            "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json"
+          },
+          {
+            "event_id": "5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T21:22:52.826902+00:00",
+            "evidence_location": "data/evidence/5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441.json"
+          },
+          {
+            "event_id": "07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T17:08:37.020091+00:00",
+            "evidence_location": "data/evidence/07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201.json"
+          },
+          {
+            "event_id": "1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T17:01:28.049800+00:00",
+            "evidence_location": "data/evidence/1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false
+      }
+    }
+  ],
+  "removed_urls": [],
+  "baseline_migrations": [],
+  "events": [
+    {
+      "event_id": "e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01",
+      "event_type": "HTML_SOURCE_CHANGED",
+      "url": "https://www.federalreserve.gov/apps/ReportingForms",
+      "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
+      "source_id": "manual-e49444f7481c",
+      "timestamp": "2026-10-24T14:32:56.518696+00:00",
+      "evidence_location": "data/evidence/e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01.json",
+      "evidence": {
+        "previous": {
+          "schema_version": 2,
+          "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
+          "source_id": "manual-e49444f7481c",
+          "regulator": "www.federalreserve.gov",
+          "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
+          "first_seen": "2026-10-23T08:14:35.781047+00:00",
+          "last_seen": "2026-10-24T10:47:56.959055+00:00",
+          "last_checked": "2026-10-24T10:47:56.959055+00:00",
+          "last_full_fetch": "2026-10-24T10:47:56.959055+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8",
+          "content_length": null,
+          "etag": null,
+          "last_modified": null,
+          "raw_hash": "027f50677e5d818c2b2fb5420e70490e903ed77b16750b433f213db16a43ebbd",
+          "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
+          "html_hash": "027f50677e5d818c2b2fb5420e70490e903ed77b16750b433f213db16a43ebbd",
+          "html_comparison_hash": "5850524080eea4c86af8d0b278f9280ad3d518aeb98c2ca10c2b947645ebbb7b",
+          "html_comparison_hash_version": 2,
+          "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-027f50677e5d818c2b2fb5420e70490e903ed77b16750b433f213db16a43ebbd.html",
+          "file_snapshot_location": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
+          "evidence_location": "data/evidence/d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "Regulatory signal detected",
+            "signals": [
+              "policy",
+              "report"
+            ]
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T10:47:56.959055+00:00",
+              "evidence_location": "data/evidence/d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856.json"
+            },
+            {
+              "event_id": "758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T09:07:44.643212+00:00",
+              "evidence_location": "data/evidence/758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92.json"
+            },
+            {
+              "event_id": "54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T04:25:07.055801+00:00",
+              "evidence_location": "data/evidence/54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035.json"
+            },
+            {
+              "event_id": "5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T04:18:15.031283+00:00",
+              "evidence_location": "data/evidence/5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516.json"
+            },
+            {
+              "event_id": "4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T21:22:14.496468+00:00",
+              "evidence_location": "data/evidence/4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2.json"
+            },
+            {
+              "event_id": "5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T17:07:50.274469+00:00",
+              "evidence_location": "data/evidence/5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc.json"
+            },
+            {
+              "event_id": "641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T17:00:50.692419+00:00",
+              "evidence_location": "data/evidence/641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c.json"
+            },
+            {
+              "event_id": "141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T12:53:05.491782+00:00",
+              "evidence_location": "data/evidence/141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254.json"
+            },
+            {
+              "event_id": "6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T11:30:35.930519+00:00",
+              "evidence_location": "data/evidence/6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47.json"
+            },
+            {
+              "event_id": "59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T09:56:43.050307+00:00",
+              "evidence_location": "data/evidence/59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999.json"
+            },
+            {
+              "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T09:47:43.429866+00:00",
+              "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
+            },
+            {
+              "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T08:22:54.837336+00:00",
+              "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
+        },
+        "current": {
+          "schema_version": 2,
+          "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
+          "source_id": "manual-e49444f7481c",
+          "regulator": "www.federalreserve.gov",
+          "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
+          "first_seen": "2026-10-23T08:14:35.781047+00:00",
+          "last_seen": "2026-10-24T14:32:56.518696+00:00",
+          "last_checked": "2026-10-24T14:32:56.518696+00:00",
+          "last_full_fetch": "2026-10-24T14:32:56.518696+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8",
+          "content_length": null,
+          "etag": null,
+          "last_modified": null,
+          "raw_hash": "5feb545cbb013b6a75ed5ed785af91cb8e6e74a2c1ca3575dd83ce75a27e62a4",
+          "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
+          "html_hash": "5feb545cbb013b6a75ed5ed785af91cb8e6e74a2c1ca3575dd83ce75a27e62a4",
+          "html_comparison_hash": "90d36fb88673526ef8ea0833a5a46fce337075b248a84311fe8fec0176efc88d",
+          "html_comparison_hash_version": 2,
+          "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-5feb545cbb013b6a75ed5ed785af91cb8e6e74a2c1ca3575dd83ce75a27e62a4.html",
+          "file_snapshot_location": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
+          "evidence_location": "data/evidence/e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "Regulatory signal detected",
+            "signals": [
+              "policy",
+              "report"
+            ]
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T14:32:56.518696+00:00",
+              "evidence_location": "data/evidence/e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01.json"
+            },
+            {
+              "event_id": "d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T10:47:56.959055+00:00",
+              "evidence_location": "data/evidence/d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856.json"
+            },
+            {
+              "event_id": "758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T09:07:44.643212+00:00",
+              "evidence_location": "data/evidence/758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92.json"
+            },
+            {
+              "event_id": "54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T04:25:07.055801+00:00",
+              "evidence_location": "data/evidence/54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035.json"
+            },
+            {
+              "event_id": "5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T04:18:15.031283+00:00",
+              "evidence_location": "data/evidence/5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516.json"
+            },
+            {
+              "event_id": "4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T21:22:14.496468+00:00",
+              "evidence_location": "data/evidence/4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2.json"
+            },
+            {
+              "event_id": "5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T17:07:50.274469+00:00",
+              "evidence_location": "data/evidence/5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc.json"
+            },
+            {
+              "event_id": "641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T17:00:50.692419+00:00",
+              "evidence_location": "data/evidence/641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c.json"
+            },
+            {
+              "event_id": "141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T12:53:05.491782+00:00",
+              "evidence_location": "data/evidence/141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254.json"
+            },
+            {
+              "event_id": "6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T11:30:35.930519+00:00",
+              "evidence_location": "data/evidence/6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47.json"
+            },
+            {
+              "event_id": "59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T09:56:43.050307+00:00",
+              "evidence_location": "data/evidence/59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999.json"
+            },
+            {
+              "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T09:47:43.429866+00:00",
+              "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
+            },
+            {
+              "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T08:22:54.837336+00:00",
+              "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
+        }
+      }
+    },
+    {
+      "event_id": "01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3",
+      "event_type": "HTML_SOURCE_CHANGED",
+      "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+      "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
+      "source_id": "manual-b7f72aa87973",
+      "timestamp": "2026-10-24T14:34:05.726322+00:00",
+      "evidence_location": "data/evidence/01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3.json",
+      "evidence": {
+        "previous": {
+          "schema_version": 2,
+          "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
+          "source_id": "manual-b7f72aa87973",
+          "regulator": "www.osfi-bsif.gc.ca",
+          "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+          "first_seen": "2026-10-23T12:53:48.284742+00:00",
+          "last_seen": "2026-10-24T10:52:01.947864+00:00",
+          "last_checked": "2026-10-24T10:52:01.947864+00:00",
+          "last_full_fetch": "2026-10-24T10:52:01.947864+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=UTF-8",
+          "content_length": 21443,
+          "etag": "W/\"1792838729\"",
+          "last_modified": "Sat, 24 Oct 2026 10:45:29 GMT",
+          "raw_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
+          "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
+          "html_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
+          "html_comparison_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
+          "html_comparison_hash_version": 2,
+          "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207.html",
+          "file_snapshot_location": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
+          "evidence_location": "data/evidence/38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "Regulatory signal detected",
+            "signals": [
+              "regulatory",
+              "report",
+              "requirement",
+              "risk",
+              "rule",
+              "supervisory"
+            ]
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T10:52:01.947864+00:00",
+              "evidence_location": "data/evidence/38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14.json"
+            },
+            {
+              "event_id": "d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T09:10:03.324362+00:00",
+              "evidence_location": "data/evidence/d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41.json"
+            },
+            {
+              "event_id": "8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T04:19:05.675116+00:00",
+              "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json"
+            },
+            {
+              "event_id": "5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T21:22:52.826902+00:00",
+              "evidence_location": "data/evidence/5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441.json"
+            },
+            {
+              "event_id": "07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T17:08:37.020091+00:00",
+              "evidence_location": "data/evidence/07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201.json"
+            },
+            {
+              "event_id": "1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T17:01:28.049800+00:00",
+              "evidence_location": "data/evidence/1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
+        },
+        "current": {
+          "schema_version": 2,
+          "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
+          "source_id": "manual-b7f72aa87973",
+          "regulator": "www.osfi-bsif.gc.ca",
+          "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+          "first_seen": "2026-10-23T12:53:48.284742+00:00",
+          "last_seen": "2026-10-24T14:34:05.726322+00:00",
+          "last_checked": "2026-10-24T14:34:05.726322+00:00",
+          "last_full_fetch": "2026-10-24T14:34:05.726322+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=UTF-8",
+          "content_length": 21447,
+          "etag": "W/\"1792852186\"",
+          "last_modified": "Sat, 24 Oct 2026 14:29:46 GMT",
+          "raw_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
+          "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
+          "html_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
+          "html_comparison_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
+          "html_comparison_hash_version": 2,
+          "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21.html",
+          "file_snapshot_location": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
+          "evidence_location": "data/evidence/01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "Regulatory signal detected",
+            "signals": [
+              "regulatory",
+              "report",
+              "requirement",
+              "risk",
+              "rule",
+              "supervisory"
+            ]
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T14:34:05.726322+00:00",
+              "evidence_location": "data/evidence/01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3.json"
+            },
+            {
+              "event_id": "38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T10:52:01.947864+00:00",
+              "evidence_location": "data/evidence/38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14.json"
+            },
+            {
+              "event_id": "d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T09:10:03.324362+00:00",
+              "evidence_location": "data/evidence/d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41.json"
+            },
+            {
+              "event_id": "8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T04:19:05.675116+00:00",
+              "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json"
+            },
+            {
+              "event_id": "5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T21:22:52.826902+00:00",
+              "evidence_location": "data/evidence/5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441.json"
+            },
+            {
+              "event_id": "07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T17:08:37.020091+00:00",
+              "evidence_location": "data/evidence/07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201.json"
+            },
+            {
+              "event_id": "1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T17:01:28.049800+00:00",
+              "evidence_location": "data/evidence/1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
+        }
+      }
+    }
+  ],
+  "ai_results": [],
+  "error_alert_after_runs": 2
+}
