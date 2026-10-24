@@ -325,6 +325,9 @@ def attach_ai_to_history(current: dict[str, dict], ai_results: list[dict]) -> No
                 entry["ai_relevant"] = analysis.get("relevant")
                 entry["ai_topic"] = analysis.get("topic")
                 entry["ai_summary"] = analysis.get("summary")
+                condition = ai.get("condition")
+                if isinstance(condition, dict) and isinstance(condition.get("met"), bool):
+                    entry["ai_condition_met"] = condition["met"]
 
 
 def mark_error_episode(kind: str, item: dict, old: dict | None, now: str) -> str:
@@ -1058,7 +1061,7 @@ def process_source(
                     item.get("normalized_hash"),
                 )
             )
-        return {
+        result = {
             "event": event,
             "event_id": event_id,
             "url": item["canonical_url"],
@@ -1071,8 +1074,15 @@ def process_source(
                 context["diff"],
                 context["current_text"],
                 ai_cfg,
+                condition=source.alert_condition,
             ),
         }
+        if source.alert_condition:
+            # Recorded with the result so the notifier and dashboard apply the
+            # condition that was actually judged, not a later edit of it.
+            result["alert_condition"] = source.alert_condition
+            result["alert_only_on_condition"] = source.alert_only_on_condition
+        return result
 
     if not dry_run and candidates:
         with ThreadPoolExecutor(max_workers=int(DEFAULTS.get("ai_concurrency",4))) as pool:

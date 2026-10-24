@@ -674,6 +674,8 @@
     select.field-input:disabled { cursor: not-allowed; opacity: .65; }
     textarea.field-input { resize: vertical; font: 400 12.5px/1.6 var(--font-code); }
     .field-help { margin-top: 5px; color: var(--ink-3); font-size: 12.5px; line-height: 1.5; }
+    .field-check { display: flex; align-items: center; gap: 8px; margin-top: 8px; color: var(--ink-2); font-size: 13px; cursor: pointer; }
+    .field-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent, currentColor); }
     .modal-info { color: var(--ink-3); font-size: 12.5px; line-height: 1.55; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
     .bulk-import { display: grid; gap: 9px; padding-top: 15px; border-top: 1px solid var(--line); }
@@ -2451,6 +2453,12 @@
             <label class="field-label-text" for="newMonitorIgnoreSelectors">Ignore these parts <span>One selector per line</span></label>
             <textarea class="field-input" id="newMonitorIgnoreSelectors" name="ignoreSelectors" rows="3" maxlength="10000" placeholder=".cookie-banner&#10;.breadcrumb"></textarea>
             <div class="field-help">Up to 20 selectors, removed before the text is compared.</div>
+          </div>
+          <div>
+            <label class="field-label-text" for="newMonitorAlertCondition">Alert me when <span>Optional, plain language</span></label>
+            <textarea class="field-input" id="newMonitorAlertCondition" name="alertCondition" rows="2" maxlength="500" placeholder="A new XML user guide is added, or a guide&#8217;s effective date changes"></textarea>
+            <label class="field-check"><input type="checkbox" id="newMonitorAlertOnly" name="alertOnly"> Alert only when it is met</label>
+            <div class="field-help">Every change is still detected and saved with its evidence. The AI says whether each change meets this condition; with the box ticked, changes that do not meet it are recorded without an alert.</div>
           </div>
           <div class="modal-actions"><button class="btn" id="addExactSubmit" type="button">Continue on GitHub</button></div>
         </div>

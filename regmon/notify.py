@@ -112,7 +112,10 @@ def save_outbox(outbox: dict, path: Path = OUTBOX_PATH) -> bool:
     return _save_if_changed(path, outbox)
 
 
-AI_VARIANTS = {"ai", "ai_irrelevant"}
+AI_VARIANTS = {"ai", "ai_irrelevant", "condition_not_met"}
+# Variants that never alert on their own: they only follow up a generic alert
+# that was already delivered, and replace one still waiting in the outbox.
+QUIET_VARIANTS = {"ai_irrelevant", "condition_not_met"}
 
 
 def _follow_up(notification: dict, key: str) -> dict:
@@ -124,7 +127,11 @@ def _follow_up(notification: dict, key: str) -> dict:
         "source_event_id": key,
         "kind": "AI_ASSESSMENT",
         "topic": ("AI assessment: " + str(notification.get("topic") or "change reviewed")) if relevant
-        else "AI assessment: not relevant",
+        else (
+            "AI assessment: alert condition not met"
+            if notification.get("variant") == "condition_not_met"
+            else "AI assessment: not relevant"
+        ),
         "priority": 4 if relevant else 2,
     }
 
@@ -164,7 +171,7 @@ def enqueue_notifications(outbox: dict, candidates: list[dict], sent_events: dic
             if follow_up["event_id"] not in sent_events:
                 pending.setdefault(follow_up["event_id"], follow_up)
             continue
-        if variant == "ai_irrelevant":
+        if variant in QUIET_VARIANTS:
             # Only meaningful as a follow-up to a delivered generic alert.
             queued = pending.get(event_id)
             if isinstance(queued, dict) and queued.get("variant") == "generic":
@@ -211,10 +218,44 @@ def build_notifications(report: dict) -> list[dict]:
             continue
         ai = result.get("ai", {})
         analysis = ai.get("analysis", {}) if isinstance(ai, dict) else {}
+        condition = ai.get("condition") if isinstance(ai, dict) and ai.get("status") == "ok" else None
+        condition_met = condition.get("met") if isinstance(condition, dict) else None
+        if not isinstance(condition_met, bool):
+            condition_met = None
+        condition_line = ""
+        if condition_met is not None:
+            condition_line = (
+                ("Met" if condition_met else "Not met")
+                + f" — {condition.get('text') or result.get('alert_condition') or ''}".rstrip(" —")
+            )
+            if str(condition.get("reason") or "").strip():
+                condition_line += f" ({str(condition['reason']).strip()})"
+        if (
+            ai.get("status") == "ok"
+            and isinstance(analysis, dict)
+            and condition_met is False
+            and result.get("alert_only_on_condition") is True
+            and result.get("event_id")
+        ):
+            # The owner asked to be alerted only when their condition is met.
+            # The change and its evidence stay recorded; nothing alerts.
+            explicitly_irrelevant.add(result["event_id"])
+            output.append({
+                "event_id": result["event_id"], "kind": result.get("event", "CHANGED_URL"),
+                "variant": "condition_not_met", "url": result.get("url"),
+                "topic": str(analysis.get("topic") or "Change reviewed"),
+                "summary": str(analysis.get("summary") or ""),
+                "reason": str(condition.get("reason") or "The AI found the monitor's alert condition was not met."),
+                "impact": "Recorded without an alert because this monitor alerts only when its condition is met.",
+                "condition": condition_line,
+                "priority": 2, "tags": ["information_source", "regulatory"],
+            })
+            continue
         if (
             ai.get("status") == "ok"
             and isinstance(analysis, dict)
             and analysis.get("relevant") is False
+            and condition_met is not True
             and result.get("event_id")
         ):
             explicitly_irrelevant.add(result["event_id"])
@@ -227,7 +268,7 @@ def build_notifications(report: dict) -> list[dict]:
                 "impact": "No action suggested by the AI review; the evidence remains available.",
                 "priority": 2, "tags": ["information_source", "regulatory"],
             })
-        if ai.get("status") == "ok" and analysis.get("relevant") is True:
+        if ai.get("status") == "ok" and (analysis.get("relevant") is True or condition_met is True):
             item = {
                 "event_id": result["event_id"], "kind": result.get("event", "CHANGED_URL"),
                 "variant": "ai", "url": result.get("url"), "topic": analysis["topic"],
@@ -238,6 +279,8 @@ def build_notifications(report: dict) -> list[dict]:
             }
             if result["event_id"] in item_lines:
                 item["reporting_items"] = item_lines[result["event_id"]]
+            if condition_line:
+                item["condition"] = condition_line
             output.append(item)
             seen.add(item["event_id"])
 
@@ -371,6 +414,8 @@ def publish(notification: dict, topic: str, server: str, dashboard_url: str = ""
         details += f"Effective: {_stated(notification.get('effective_date'))}\n"
     if _stated(notification.get("actions")):
         details += f"Suggested action: {_stated(notification.get('actions'))}\n"
+    if _stated(notification.get("condition")):
+        details += f"Alert condition: {_stated(notification.get('condition'))}\n"
     if _stated(notification.get("reporting_items")):
         details += f"Reporting items: {_stated(notification.get('reporting_items'))}\n"
     message = (
