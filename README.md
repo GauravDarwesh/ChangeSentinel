@@ -1,6 +1,5 @@
-<!-- ChangeSentinel README rewrite: documentation-only change -->
 <p align="center">
-  <img src="assets/changesentinel-logo.svg" alt="ChangeSentinel" width="680" />
+  <img src="assets/changesentinel-logo.png" alt="ChangeSentinel" width="798" />
 </p>
 
 <p align="center">
@@ -84,6 +83,8 @@ The scheduled monitor and Scout solve different problems:
 ### 1. Configuration and discovery
 
 Source definitions live in `config/sources.json`. The engine starts from configured seeds and discovers resources within the source's allowed scope. Active configuration determines what is run; a source described in history or retained as inactive is not automatically monitored.
+
+The active fleet includes two Federal Reserve reporting-forms pilots (overview and recently updated form details), plus individually registered pages and documents such as Federal Reserve/FRB Services reporting materials and OSFI's BCAR materials. The older EBA monitoring configurations are inactive; EBA remains present as a separate Scout discovery profile. The exact active scope is defined by the configuration, not by this summary.
 
 The discovery layer canonicalizes URLs and applies source-specific rules to avoid treating superficial URL differences as separate resources. Discovery results and failures are recorded so an incomplete crawl is not confused with a complete inventory.
 
@@ -195,7 +196,7 @@ python -m unittest discover -s tests -p "test*.py" -v
 python -m compileall -q regmon
 ```
 
-Some extraction integration checks require system OCR tooling; CI installs Tesseract and exercises document extraction against synthetic and saved golden-corpus inputs. The dashboard can be served as static files, or opened through the configured GitHub Pages deployment.
+Some extraction integration checks require system OCR tooling; CI installs Tesseract and exercises document extraction against synthetic and saved golden-corpus inputs. The dashboard can be served via a local static HTTP server or the configured GitHub Pages deployment.
 
 Do not run a production scan or commit generated monitoring state unintentionally while experimenting. Review the workflow and configuration before using commands that write under `data/`.
 
@@ -232,6 +233,6 @@ ChangeSentinel monitors public sources configured in the repository; it is not a
 
 An inactive source is not scheduled for routine monitoring. Scout candidates are suggestions until reviewed. The project is designed to make evidence and uncertainty inspectable rather than claim perfect coverage or automated regulatory compliance.
 
-## License
+## Licensing note
 
-See the repository's [LICENSE](LICENSE) file.
+There is currently no `LICENSE` file in the repository. Do not assume the code is available for reuse or redistribution under an open-source license until the repository owner adds or clarifies licensing terms.
