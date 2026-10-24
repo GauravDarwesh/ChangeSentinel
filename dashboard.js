@@ -1186,13 +1186,12 @@ function renderTimeline(columns) {
       esc(mark.today && !atEnd ? "Today" : top) + '</span><span class="tl-day-date">' + esc(date.getDate()) + "</span></span>";
   }).join("");
   const nowMark = '<i class="tl-now" style="left:' + pct(bounds.now) + '"></i>';
-  const nextMark = '<i class="tl-next" style="left:calc(100% - 1px)" aria-hidden="true"></i>';
-  const nextLabel = '<span class="tl-next-label" title="' + esc("Next scheduled scan") + '">Next scan · ' + esc(clock(new Date(bounds.end))) + '</span>';
+  const nextMark = '<i class="tl-next" style="left:' + pct(bounds.end) + '" title="' + esc("Next scheduled scan, " + clock(new Date(bounds.end))) + '"></i>';
   const rangeShort = { "2d": "Last 2 days", "7d": "Last 7 days", "30d": "Last 30 days", all: "All history" }[prefs.range];
   const c = model.counts;
   let html = '<div class="tl-board" style="--label-w:' + labelWidth + 'px">' +
     '<div class="tl-row tl-head"><div class="tl-corner"><span>' + esc(rangeShort) + "</span><small>" + esc(c.total ? plural(c.total, "event", "events") : "Nothing in range") + "</small></div>" +
-    '<div class="tl-track tl-axis">' + bands + labels + nowMark + nextMark + nextLabel + "</div></div>";
+    '<div class="tl-track tl-axis">' + bands + labels + nowMark + nextMark + "</div></div>";
   if (!model.lanes.length) {
     const words = prefs.query ? "No event matches “" + prefs.query + "” in this range." : prefs.lens === "problems" ? "No problems in this range." :
       prefs.lens === "changed" ? "No page changed in this range." : prefs.lens === "new" ? "No page was added in this range." : "Nothing happened in this range.";
@@ -1216,7 +1215,7 @@ function renderTimeline(columns) {
   });
   html += '<div class="tl-tip" id="tlTip" hidden></div></div>';
   html += renderTimelineStory(model, prefs);
-  host.innerHTML = '<div class="tl-explainer"><strong>When updates arrived</strong><span>Each row is a regulator or page group. Colored dots mark changes, new pages, or problems; the line shows the time between updates.</span></div>' + html;
+  host.innerHTML = html;
   $("fieldNote").textContent = "Each bead is something that happened, at the time it was found" +
     (model.gapMs > 6 * 3600000 ? "; at this zoom, events on a lane less than " + timelineSpanWords(model.gapMs) + " apart share a bead" : "") +
     ". Lanes with content changes or problems come first. The story below tells the same events in words; select a bead to find them." +
@@ -1311,7 +1310,6 @@ function syncFieldTools(counts) {
   });
   const range = $("fieldRange");
   if (range && range.value !== prefs.range) range.value = prefs.range;
-  if (range) range.setAttribute("aria-label", prefs.view === "timeline" ? "Timeline time range" : "Grid time range");
   const group = $("fieldGroup");
   if (group && group.value !== prefs.groupBy) group.value = prefs.groupBy;
 }
@@ -7119,7 +7117,7 @@ function renderMoreSheet() {
       tile("scout", "Scout", review ? "<b>" + esc(review) + "</b>" : "0", esc(review ? "pages to review" : "nothing to review")) +
       tile("calendar", "Cadence", esc(cadence), esc(cadence === 1 ? "date coming up" : "dates coming up")) +
     "</div>" +
-    '<div class="more-actions"><button class="m-action" type="button" data-theme-toggle></button></div>';
+    '<div class="more-actions"><button class="m-action is-scan" type="button" data-add-monitor data-more-dismiss>Add link</button><button class="m-action" type="button" data-refresh data-more-dismiss>Reload</button><button class="m-action" type="button" data-theme-toggle></button></div>';
   syncThemeLabels();
 }
 let moreReturnFocus = null;
