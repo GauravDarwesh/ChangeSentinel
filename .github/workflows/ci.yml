@@ -80,6 +80,11 @@ jobs:
         run: |
           npm install --no-save --no-package-lock --ignore-scripts playwright@1.56.0
           npx playwright install --with-deps chromium
+      # Health is written by scans; build it from this commit's committed state
+      # (standard library only) so the Health view is exercised before the first
+      # production scan that writes it.
+      - name: Build fleet health from committed state
+        run: test -f data/health.json || python3 -m regmon.health --data-dir data --config config/sources.json
       - name: Dashboard browser smoke test
         env:
           SMOKE_ARTIFACTS: smoke-artifacts
