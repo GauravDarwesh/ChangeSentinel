@@ -834,7 +834,7 @@ function fieldGeometry(columnCount) {
   const compact = isCompact();
   const gap = compact ? 3 : 4;
   const tile = compact ? 14 : 16;
-  const lights = ((columnCount || 0) + 1) * (tile + gap) + 18;
+  const lights = ((columnCount || 0) + 1) * (tile + gap) + 18 + 16;
   const min = compact ? 116 : 180;
   const max = compact ? 168 : 380;
   const labelWidth = Math.round(Math.min(max, Math.max(min, width - lights)));
@@ -919,6 +919,7 @@ function renderMonitoringSignal() {
   state.fieldColumns = columns;
   state.pendingScan = pending;
   field.style.setProperty("--cols", columns.length + 1);
+  field.style.setProperty("--windows", columns.length);
   field.style.setProperty("--tile", geometry.tile + "px");
   field.style.setProperty("--gap", geometry.gap + "px");
   field.style.setProperty("--label-w", geometry.labelWidth + "px");
@@ -1272,8 +1273,15 @@ const ledField = (() => {
     gapPx = parseFloat(getComputedStyle(field).columnGap) || 3;
     const corner = field.querySelector(".field-corner");
     const pulse = field.querySelector(".field-pulse-label");
-    clipLeft = corner ? corner.offsetWidth + ox : 0;
-    clipTop = pulse ? pulse.offsetTop + pulse.offsetHeight + oy : corner ? corner.offsetTop + corner.offsetHeight + oy : 0;
+    // The clip is in the canvas's own (viewport) coordinates. The header and
+    // label column are sticky, and a sticky element's offsetTop includes how
+    // far it is stuck, so measuring it while scrolled down (after "Show more",
+    // say) put the clip below the visible area and blanked every light.
+    // Their on-screen edges are where the lights stop, whatever the scroll.
+    const frameBox = viewport.getBoundingClientRect();
+    const head = pulse || corner;
+    clipLeft = corner ? Math.max(0, corner.getBoundingClientRect().right - frameBox.left - viewport.clientLeft) : 0;
+    clipTop = head ? Math.max(0, head.getBoundingClientRect().bottom - frameBox.top - viewport.clientTop) : 0;
     dayBands = Array.from(field.querySelectorAll(".field-day:not(.is-next)")).map((el, index) => ({
       x: el.offsetLeft + ox, w: el.offsetWidth, odd: index % 2 === 1, today: el.classList.contains("is-today")
     }));
@@ -2027,6 +2035,15 @@ function previewSource(source, url) {
   if (/<head\b[^>]*>/i.test(source)) return source.replace(/<head\b[^>]*>/i, match => match + baseTag);
   return '<!doctype html><html><head><meta charset="utf-8">' + baseTag + "</head><body>" + source + "</body></html>";
 }
+// The PDF goes truly full screen where the browser allows it (the Fullscreen
+// API puts it in the top layer, above every pane); elsewhere, such as iPhone
+// Safari, it falls back to a fixed overlay covering the window.
+function fullscreenElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+function exitFullscreen() {
+  const exit = document.exitFullscreen || document.webkitExitFullscreen;
+  if (!exit || !fullscreenElement()) return;
+  try { const pending = exit.call(document); if (pending && pending.catch) pending.catch(() => {}); } catch (_) {}
+}
 function setPdfViewerExpanded(expanded) {
   const shell = $("pdfViewerShell");
   if (!shell) return;
@@ -2036,9 +2053,22 @@ function setPdfViewerExpanded(expanded) {
   const closeButton = shell.querySelector('[data-pdf-action="close"]');
   if (expandButton) expandButton.hidden = expanded;
   if (closeButton) closeButton.hidden = !expanded;
+  if (expanded) {
+    const request = shell.requestFullscreen || shell.webkitRequestFullscreen;
+    if (request && fullscreenElement() !== shell) {
+      try { const pending = request.call(shell); if (pending && pending.catch) pending.catch(() => {}); } catch (_) {}
+    }
+  } else if (fullscreenElement() === shell) {
+    exitFullscreen();
+  }
   if (expanded && closeButton) closeButton.focus();
   if (!expanded && expandButton) expandButton.focus();
 }
+// Leaving full screen with the browser's own Esc or gesture closes the viewer too.
+["fullscreenchange", "webkitfullscreenchange"].forEach(name => document.addEventListener(name, () => {
+  const shell = $("pdfViewerShell");
+  if (shell && shell.classList.contains("is-expanded") && fullscreenElement() !== shell) setPdfViewerExpanded(false);
+}));
 function defaultDetailTab(item) {
   return itemChangeEntries(item).length ? "changes" : "snapshot";
 }
@@ -2102,6 +2132,7 @@ function fillHistoryItem(item, details) {
 }
 async function loadSnapshot(item) {
   document.body.classList.remove("pdf-viewer-open");
+  exitFullscreen();
   const body = $("detailBody");
   if (state.pdfPreviewUrl) {
     URL.revokeObjectURL(state.pdfPreviewUrl);

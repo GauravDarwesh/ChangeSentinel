@@ -389,6 +389,7 @@
     .pdf-snapshot-frame { height: min(76dvh, 940px); }
     .pdf-viewer-shell.is-expanded { position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; background: var(--pane); }
     .pdf-viewer-shell.is-expanded .pdf-snapshot-frame { flex: 1; height: auto; }
+    .pdf-viewer-shell:fullscreen, .pdf-viewer-shell:-webkit-full-screen { width: 100%; height: 100%; background: var(--pane); }
     body.pdf-viewer-open { overflow: hidden; }
     .doc-text { padding: 18px 24px 26px; font-family: var(--font-doc); font-size: 15.5px; line-height: 1.66; color: var(--ink); }
     .doc-text p { max-width: 76ch; margin: 0 0 6px; }
@@ -489,19 +490,19 @@
     .field-viewport:focus-visible { outline-offset: -2px; }
     .field-stage { position: relative; width: max-content; min-width: 100%; padding: 0 12px 10px 0; }
     .change-field {
-      --cols: 14; --tile: 16px; --gap: 4px; --label-w: 200px; --head-h: 38px; --pulse-h: 24px;
+      --cols: 14; --windows: 13; --next-gap: 16px; --tile: 16px; --gap: 4px; --label-w: 200px; --head-h: 46px; --pulse-h: 24px;
       position: relative; z-index: 1;
-      display: grid; grid-template-columns: var(--label-w) repeat(var(--cols), var(--tile)); grid-template-rows: var(--head-h) var(--pulse-h); grid-auto-rows: minmax(var(--tile), auto);
+      display: grid; grid-template-columns: var(--label-w) repeat(var(--windows, 13), var(--tile)) calc(var(--tile) + var(--next-gap)); grid-template-rows: var(--head-h) var(--pulse-h); grid-auto-rows: minmax(var(--tile), auto);
       gap: var(--gap); align-items: center; justify-content: start;
     }
     .change-field > .loading, .change-field > .empty { grid-column: 1 / -1; }
     /* Pinned day header, activity ribbon and label column: opaque, so the lights
        scroll under them; each covers the gap below it as well. */
     .field-corner, .field-day, .field-pulse { position: sticky; top: 0; z-index: 3; align-self: stretch; background: var(--raise); box-shadow: 0 var(--gap) 0 var(--raise); }
-    .field-corner { left: 0; z-index: 5; display: flex; flex-direction: column; justify-content: flex-end; gap: 1px; min-width: 0; padding: 0 12px 6px 14px; overflow: hidden; white-space: nowrap; }
+    .field-corner { left: 0; z-index: 5; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; min-width: 0; padding: 10px 12px 7px 14px; overflow: hidden; white-space: nowrap; }
     .field-corner span { color: var(--ink-2); font-size: 11.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
     .field-corner small { color: var(--ink-3); font-size: 10.5px; overflow: hidden; text-overflow: ellipsis; }
-    .field-day { display: flex; flex-direction: column; justify-content: flex-end; min-width: 0; padding: 0 0 6px 3px; overflow: visible; white-space: nowrap; }
+    .field-day { display: flex; flex-direction: column; justify-content: flex-end; min-width: 0; padding: 10px 0 7px 3px; overflow: visible; white-space: nowrap; }
     /* The day's hairline sits in the middle of the gap before its first window,
        exactly where the canvas draws it under the lights. */
     .field-day:not(.is-next)::before { content: ""; position: absolute; top: 5px; bottom: calc(var(--gap) * -1); left: calc(var(--gap) / -2 - .5px); width: 1px; background: var(--line-2); }
@@ -509,7 +510,10 @@
     .field-day-date { color: var(--ink); font-size: 13px; font-weight: 500; line-height: 1.2; font-variant-numeric: tabular-nums; }
     .field-day.is-today .field-day-week, .field-day.is-today .field-day-date { color: var(--accent); }
     .field-day.is-today::before { background: var(--accent); }
-    .field-day.is-next { padding-left: 0; overflow: visible; }
+    /* The "Next" column sits a little apart, so today's date never runs into it. */
+    .field-day.is-next { align-items: flex-end; padding-left: 0; overflow: visible; }
+    .field-pulse.is-next, .led.s-pending { justify-self: end; }
+    .field-pulse.is-next { width: var(--tile); }
     .field-day.is-next .field-day-week { font-size: 8.5px; letter-spacing: .04em; overflow: visible; }
     .field-manual { position: absolute; bottom: 1px; left: calc(var(--k) * (var(--tile) + var(--gap))); width: var(--tile); height: 2px; border-radius: 1px; background: var(--ink-2); }
     .field-pulse { top: var(--head-h); display: flex; align-items: flex-end; justify-content: center; gap: 1px; padding-bottom: 3px; border-bottom: 1px solid var(--line); }
@@ -973,10 +977,12 @@
     .nav-button-ask.active .nav-ai { border-color: var(--accent); color: var(--accent); }
     .scan-now::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 6px; vertical-align: 1px; background: var(--accent); box-shadow: var(--glow); }
     @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-    .detail-inner > *, #detailHeader > *, #detailBody > * { animation: rise .38s var(--ease) both; }
+    /* backwards, not both: a finished animation that keeps its transform makes the
+       element a containing block, which trapped the full-screen PDF inside its panel. */
+    .detail-inner > *, #detailHeader > *, #detailBody > * { animation: rise .38s var(--ease) backwards; }
     .detail-inner > *:nth-child(2), #detailBody > * { animation-delay: .05s; }
     .detail-inner > *:nth-child(3) { animation-delay: .1s; }
-    .list-body .row { animation: rise .32s var(--ease) both; }
+    .list-body .row { animation: rise .32s var(--ease) backwards; }
     .list-body .row:nth-child(2) { animation-delay: .02s; } .list-body .row:nth-child(3) { animation-delay: .04s; }
     .list-body .row:nth-child(4) { animation-delay: .06s; } .list-body .row:nth-child(5) { animation-delay: .08s; }
     .list-body .row:nth-child(n+6) { animation-delay: .1s; }
@@ -1155,7 +1161,7 @@
       .field-controls .field-input { width: 100%; }
       .field-section-text small { display: none; }
       .field-chips { display: none; }
-      .change-field { --head-h: 34px; --pulse-h: 20px; }
+      .change-field { --head-h: 42px; --pulse-h: 20px; }
       .field-search input { width: 100%; }
       .field-viewport { max-height: 68svh; overscroll-behavior-y: auto; }
       .field-label { font-size: 12px; padding: 0 8px 0 10px; }
@@ -2977,8 +2983,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261023-smart-add-cadence-1"></script>
-  <script src="dashboard.js?v=20261023-smart-add-cadence-1"></script>
+  <script src="dashboard-lib.js?v=20261024-fullscreen-field-1"></script>
+  <script src="dashboard.js?v=20261024-fullscreen-field-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.
