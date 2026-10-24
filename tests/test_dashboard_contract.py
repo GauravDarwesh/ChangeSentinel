@@ -1016,7 +1016,7 @@ if __name__ == "__main__":
 class TestScanHistoryResponsiveFixes(unittest.TestCase):
     def test_scan_history_switch_and_legend_have_stable_header_layout(self):
         html = read("index.html")
-        self.assertRegex(html, r"\.field-head \\{ display: grid; grid-template-columns: minmax\\(0, 1fr\\)")
+        self.assertIn(".field-head { display: grid; grid-template-columns: minmax(0, 1fr);", html)
         self.assertIn(".field-heading { display: flex; flex-wrap: wrap;", html)
         self.assertIn('data-legend-for="grid"', html)
         self.assertIn('data-legend-for="timeline"', html)
