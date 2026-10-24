@@ -317,6 +317,13 @@ def _office_kind(ctype: str, suffix: str) -> str | None:
 
 
 MAX_ZIP_MEMBERS = 256
+# An Office Open XML file (XLSX/DOCX/PPTX) is itself a ZIP package. A real
+# regulatory workbook carries one part per sheet plus its relationships, so a
+# 150-sheet return template has 380+ parts (OSFI 2027 BCAR, Sept 2026). The
+# 256-entry bundle limit made those workbooks permanent extraction errors.
+# Packages get a wider entry cap; every other guard (paths, links, encryption,
+# per-part size, total size, compression ratio) is unchanged.
+MAX_OFFICE_PACKAGE_PARTS = 4096
 MAX_ZIP_MEMBER_BYTES = 32 * 1024 * 1024
 MAX_ZIP_TOTAL_BYTES = 128 * 1024 * 1024
 MAX_ZIP_COMPRESSION_RATIO = 1000
@@ -335,8 +342,12 @@ ZIP_MEMBER_MEDIA_TYPES = {
 }
 
 
-def _validated_zip_infos(body: bytes):
-    """Return validated archive metadata without extracting members to disk."""
+def _validated_zip_infos(body: bytes, *, allow_office_package: bool = False):
+    """Return validated archive metadata without extracting members to disk.
+
+    With ``allow_office_package`` an Office Open XML package may hold up to
+    MAX_OFFICE_PACKAGE_PARTS entries; generic bundles keep MAX_ZIP_MEMBERS.
+    """
     try:
         archive = zipfile.ZipFile(io.BytesIO(body))
     except (OSError, zipfile.BadZipFile, zipfile.LargeZipFile) as exc:
@@ -346,8 +357,13 @@ def _validated_zip_infos(body: bytes):
         infos = archive.infolist()
         if not infos:
             raise ValueError("ZIP archive contains no entries")
-        if len(infos) > MAX_ZIP_MEMBERS:
-            raise ValueError(f"ZIP archive contains more than {MAX_ZIP_MEMBERS} entries")
+        limit = MAX_ZIP_MEMBERS
+        if allow_office_package and _office_open_xml_suffix(
+            {info.filename.replace(chr(92), "/") for info in infos}
+        ):
+            limit = MAX_OFFICE_PACKAGE_PARTS
+        if len(infos) > limit:
+            raise ValueError(f"ZIP archive contains more than {limit} entries")
 
         seen_names = set()
         total_uncompressed = 0
@@ -1163,7 +1179,7 @@ def extract_content(
     zip_signature = body.startswith(b"PK")
     if "zip" in ctype or suffix == ".zip" or zip_signature:
         try:
-            archive, infos = _validated_zip_infos(body)
+            archive, infos = _validated_zip_infos(body, allow_office_package=True)
             try:
                 names = {info.filename.replace(chr(92), "/") for info in infos}
                 office_suffix = _office_open_xml_suffix(names)

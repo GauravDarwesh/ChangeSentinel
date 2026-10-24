@@ -125,6 +125,56 @@ class TestOfficeExtraction(unittest.TestCase):
         self.assertEqual(kind, "zip")
         self.assertIn("USD 10 billion", text)
 
+    def test_workbook_with_more_parts_than_the_bundle_cap_extracts(self):
+        """OSFI's 2027 BCAR return (Sept 2026) is an XLSX of 385 package parts.
+
+        The 256-entry ZIP bundle cap was applied to Office packages too, so both
+        BCAR monitors were permanent extraction errors.
+        """
+        from openpyxl import Workbook
+
+        from regmon.content import MAX_ZIP_MEMBERS
+
+        workbook = Workbook()
+        workbook.active.title = "Sheet 0"
+        workbook.active["A1"] = "Schedule 0"
+        for index in range(1, MAX_ZIP_MEMBERS + 20):
+            workbook.create_sheet(f"Sheet {index}")["A1"] = f"Schedule {index}"
+        buffer = io.BytesIO()
+        workbook.save(buffer)
+        body = buffer.getvalue()
+        with zipfile.ZipFile(io.BytesIO(body)) as archive:
+            self.assertGreater(len(archive.infolist()), MAX_ZIP_MEMBERS)
+        text, kind, error = extract_content("https://example.test/return.xlsx", OFFICE_TYPES["xlsx"], body)
+        self.assertIsNone(error)
+        self.assertEqual(kind, "xlsx")
+        self.assertIn(f"Schedule {MAX_ZIP_MEMBERS + 19}", text)
+
+    def test_generic_bundle_keeps_its_entry_cap(self):
+        from regmon.content import MAX_ZIP_MEMBERS
+
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as archive:
+            for index in range(MAX_ZIP_MEMBERS + 1):
+                archive.writestr(f"notes/{index}.txt", f"note {index}")
+        text, kind, error = extract_content("https://example.test/bundle.zip", "application/zip", buffer.getvalue())
+        self.assertIsNone(text)
+        self.assertEqual(kind, "zip")
+        self.assertIn(f"more than {MAX_ZIP_MEMBERS} entries", error)
+
+    def test_office_package_part_cap_still_applies(self):
+        from regmon.content import MAX_OFFICE_PACKAGE_PARTS
+
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as archive:
+            archive.writestr("[Content_Types].xml", "<Types/>")
+            archive.writestr("xl/workbook.xml", "<workbook/>")
+            for index in range(MAX_OFFICE_PACKAGE_PARTS):
+                archive.writestr(f"xl/worksheets/sheet{index}.xml", "<worksheet/>")
+        text, kind, error = extract_content("https://example.test/huge.xlsx", OFFICE_TYPES["xlsx"], buffer.getvalue())
+        self.assertIsNone(text)
+        self.assertIn(f"more than {MAX_OFFICE_PACKAGE_PARTS} entries", error)
+
 
 class TestHtmlNoiseAndMarkup(unittest.TestCase):
     def test_page_state_classes_on_structural_tags_never_empty_the_page(self):
