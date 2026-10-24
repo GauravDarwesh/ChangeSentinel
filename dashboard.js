@@ -818,13 +818,14 @@ function fieldPrefs() {
     lens: L.FIELD_LENSES.indexOf(saved.lens) >= 0 ? saved.lens : "activity",
     range: Object.prototype.hasOwnProperty.call(L.FIELD_RANGES, saved.range) ? saved.range : isCompact() ? "2d" : "7d",
     groupBy: Object.prototype.hasOwnProperty.call(FIELD_GROUPS, saved.groupBy) ? saved.groupBy : "regulator",
-    query: "", open: new Set(), closed: new Set(), limit: 60, limits: {}
+    view: saved.view === "timeline" ? "timeline" : "grid",
+    query: "", open: new Set(), closed: new Set(), limit: 60, limits: {}, storyLimit: 60
   };
   return state.field;
 }
 function saveFieldPrefs() {
   const f = fieldPrefs();
-  try { localStorage.setItem(FIELD_STORAGE, JSON.stringify({ lens: f.lens, range: f.range, groupBy: f.groupBy })); } catch (_) {}
+  try { localStorage.setItem(FIELD_STORAGE, JSON.stringify({ lens: f.lens, range: f.range, groupBy: f.groupBy, view: f.view })); } catch (_) {}
 }
 // Lights keep a fixed size; the label column takes whatever width the lights
 // leave, within limits, so long page names show in full when there is room.
@@ -1043,8 +1044,244 @@ function renderMonitoringSignal() {
       c.new ? plural(c.new, "new page", "new pages") : ""].filter(Boolean).join(", ")) + ". Markup-only edits don't count as changes.";
   const manualLegend = document.querySelector(".field-legend .manual");
   if (manualLegend) manualLegend.parentElement.hidden = !manual;
-  ledField.measure();
+  syncFieldView();
+  if (prefs.view === "timeline") renderTimeline(columns);
+  else ledField.measure();
   updateNextRunCountdown();
+}
+/* ---------- Timeline view ----------
+ * The same pages, range, grouping, search and lens as the field, laid on a
+ * continuous time axis: one lane per section, a lit bead where something
+ * happened, and below it the story of those events in words, newest first.
+ */
+const TIMELINE_KIND_OF = { CHANGED_URL: "on", NEW_URL: "new", REMOVED_URL: "removed", HTML_SOURCE_CHANGED: "markup", FETCH_ERROR: "bad", EXTRACTION_ERROR: "bad" };
+const TIMELINE_KIND_WORDS = { on: ["change", "changes"], new: ["new page", "new pages"], bad: ["problem", "problems"], removed: ["removal", "removals"], markup: ["markup edit", "markup edits"] };
+function syncFieldView() {
+  const view = fieldPrefs().view;
+  document.querySelectorAll("[data-field-view]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.fieldView === view)));
+  $("fieldFrame").hidden = view === "timeline";
+  $("timelineView").hidden = view !== "timeline";
+  document.querySelectorAll("[data-legend-for]").forEach(legend => { legend.hidden = legend.dataset.legendFor !== view; });
+}
+function timelineEntries(prefs) {
+  const sourceById = new Map(configuredSources().map(source => [source.id, source]));
+  const itemById = new Map((state.items || []).map(item => [item.url_id, item]));
+  const out = [];
+  const seenNew = new Set();
+  const seenBad = new Set();
+  const lane = item => {
+    const source = sourceById.get(item.source_id) || { id: item.source_id };
+    const label = shortSourceLabel(source);
+    const group = prefs.groupBy === "none" ? {} : fieldGroupOf(item, prefs.groupBy, label);
+    return { laneKey: group.groupKey || "all", laneLabel: group.groupLabel || "All pages", laneNote: group.groupNote || "", sourceLabel: label };
+  };
+  const matches = (item, place) => fieldMatchesQuery({ title: itemTitle(item), url: item.canonical_url, sourceLabel: place.sourceLabel, groupLabel: place.laneLabel });
+  const add = (item, kind, at, extra) => {
+    const time = new Date(at).getTime();
+    if (!item || !Number.isFinite(time)) return;
+    const place = lane(item);
+    if (!matches(item, place)) return;
+    out.push(Object.assign({ at: time, kind, pageId: item.url_id, title: itemTitle(item), url: item.canonical_url }, place, extra));
+  };
+  changeLogEntries().forEach(event => {
+    const kind = TIMELINE_KIND_OF[event.event_type];
+    const item = itemById.get(event.url_id) || itemForEvent(event);
+    if (!kind || !item) return;
+    if (kind === "new") seenNew.add(item.url_id);
+    if (kind === "bad") seenBad.add(item.url_id);
+    const verdict = verdictFor(event);
+    const analysis = verdict && verdict.analysis ? verdict.analysis : null;
+    add(item, kind, event.timestamp, {
+      id: event.event_id, type: event.event_type,
+      summary: analysis && analysis.summary ? String(analysis.summary) : "",
+      relevant: verdict && (verdict.state === "relevant" || verdict.state === "irrelevant") ? verdict.state === "relevant" : null
+    });
+  });
+  // Pages first saved without a NEW_URL event (a quiet first baseline) still
+  // arrived on a day, and a page failing right now is a problem even before
+  // its error event reaches the change log.
+  (state.items || []).forEach(item => {
+    if (item.first_seen && !seenNew.has(item.url_id)) add(item, "new", item.first_seen, { id: "first:" + item.url_id, type: "NEW_URL", summary: "", relevant: null });
+    if ((item.fetch_error || item.extraction_error) && item.last_checked && !seenBad.has(item.url_id)) {
+      add(item, "bad", item.last_checked, { id: "problem:" + item.url_id, type: item.fetch_error ? "FETCH_ERROR" : "EXTRACTION_ERROR", summary: String(item.fetch_error || item.extraction_error), relevant: null });
+    }
+  });
+  return out;
+}
+function timelineBounds(prefs, columns, entries) {
+  const now = Date.now();
+  const end = Math.max(now + 60000, L.nextScheduledScan(new Date(now)).getTime());
+  const days = L.FIELD_RANGES[prefs.range];
+  if (days) return { start: now - days * 86400000, end, now };
+  const earliest = Math.min(columns.length ? columns[0].start : now, ...entries.map(entry => entry.at));
+  return { start: Math.min(now - 86400000, Number.isFinite(earliest) ? earliest : now), end, now };
+}
+function timelineKindWords(kinds) {
+  return L.TIMELINE_KINDS.filter(kind => kinds[kind]).map(kind => plural(kinds[kind], TIMELINE_KIND_WORDS[kind][0], TIMELINE_KIND_WORDS[kind][1])).join(", ");
+}
+function renderTimeline(columns) {
+  const host = $("timelineView");
+  const prefs = fieldPrefs();
+  const entries = timelineEntries(prefs);
+  const bounds = timelineBounds(prefs, columns, entries);
+  const compact = isCompact();
+  const labelWidth = compact ? 0 : Math.round(Math.min(280, Math.max(210, (host.clientWidth || 900) * .28)));
+  const trackPx = Math.max(240, (host.clientWidth || 900) - labelWidth - 40);
+  const gapMs = (bounds.end - bounds.start) * (compact ? 20 : 24) / trackPx;
+  const model = L.timelineModel(entries, { start: bounds.start, end: bounds.end, gapMs, lens: prefs.lens });
+  state.timeline = { model, entries: new Map(entries.map(entry => [entry.id, entry])) };
+  const span = bounds.end - bounds.start;
+  const pct = at => ((Math.max(bounds.start, Math.min(bounds.end, at)) - bounds.start) / span * 100).toFixed(3) + "%";
+  const dayStarts = [];
+  const cursor = new Date(bounds.start);
+  cursor.setHours(0, 0, 0, 0);
+  while (cursor.getTime() < bounds.end) { dayStarts.push(cursor.getTime()); cursor.setDate(cursor.getDate() + 1); }
+  const pxPerDay = trackPx * 86400000 / span;
+  const todayKey = new Date().toDateString();
+  // Bands alternate by day when a day is wide enough to read, otherwise by
+  // week (from Monday) or month, so long ranges don't turn into a barcode.
+  const unit = pxPerDay >= 28 ? "day" : pxPerDay * 7 >= 28 ? "week" : "month";
+  const bandStarts = dayStarts.filter((day, index) => unit === "day" || index === 0 || (unit === "week" ? new Date(day).getDay() === 1 : new Date(day).getDate() === 1));
+  const bands = bandStarts.map((day, index) => {
+    const from = Math.max(day, bounds.start);
+    const to = Math.min(index + 1 < bandStarts.length ? bandStarts[index + 1] : bounds.end, bounds.end);
+    const today = unit === "day" && new Date(day).toDateString() === todayKey;
+    return to > from ? '<i class="tl-band' + (index % 2 ? " is-odd" : "") + (today ? " is-today" : "") + '" style="left:' + pct(from) + ";width:" + ((to - from) / span * 100).toFixed(3) + '%"></i>' : "";
+  }).join("");
+  // Labels sit at band starts (and on today), at least ~48 px apart; today wins
+  // a collision. A label whose start falls before the range sits at its edge.
+  const xOf = at => (Math.max(at, bounds.start) - bounds.start) / span * trackPx;
+  const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
+  let marks = bandStarts.map(day => ({ day, x: xOf(day), today: day === todayStart.getTime() }))
+    .filter(mark => mark.day >= bounds.start || mark.x === 0 && (xOf(mark.day + 86400000) >= 40 || unit !== "day"));
+  if (unit !== "day" && todayStart.getTime() >= bounds.start && !marks.some(mark => mark.today)) marks.push({ day: todayStart.getTime(), x: xOf(todayStart.getTime()), today: true });
+  marks.sort((m1, m2) => m1.x - m2.x);
+  const kept = [];
+  marks.forEach(mark => {
+    const last = kept[kept.length - 1];
+    if (!last || mark.x - last.x >= 48) kept.push(mark);
+    else if (mark.today) kept[kept.length - 1] = mark;
+  });
+  const labels = kept.map(mark => {
+    const date = new Date(mark.day);
+    const atEnd = trackPx - mark.x < 40;
+    const top = unit === "day" ? date.toLocaleDateString([], { weekday: "short" }) : date.toLocaleDateString([], { month: "short" });
+    return '<span class="tl-day' + (mark.today ? " is-today" : "") + (atEnd ? " is-end" : "") + '" style="' + (atEnd ? "right:0" : "left:" + pct(Math.max(mark.day, bounds.start))) + '"><span class="tl-day-week">' +
+      esc(mark.today && !atEnd ? "Today" : top) + '</span><span class="tl-day-date">' + esc(date.getDate()) + "</span></span>";
+  }).join("");
+  const nowMark = '<i class="tl-now" style="left:' + pct(bounds.now) + '"></i>';
+  const nextMark = '<i class="tl-next" style="left:' + pct(bounds.end) + '" title="' + esc("Next scheduled scan, " + clock(new Date(bounds.end))) + '"></i>';
+  const rangeShort = { "2d": "Last 2 days", "7d": "Last 7 days", "30d": "Last 30 days", all: "All history" }[prefs.range];
+  const c = model.counts;
+  let html = '<div class="tl-board" style="--label-w:' + labelWidth + 'px">' +
+    '<div class="tl-row tl-head"><div class="tl-corner"><span>' + esc(rangeShort) + "</span><small>" + esc(c.total ? plural(c.total, "event", "events") : "Nothing in range") + "</small></div>" +
+    '<div class="tl-track tl-axis">' + bands + labels + nowMark + nextMark + "</div></div>";
+  if (!model.lanes.length) {
+    const words = prefs.query ? "No event matches “" + prefs.query + "” in this range." : prefs.lens === "problems" ? "No problems in this range." :
+      prefs.lens === "changed" ? "No page changed in this range." : prefs.lens === "new" ? "No page was added in this range." : "Nothing happened in this range.";
+    html += '<div class="tl-empty">' + esc(words) + (prefs.range !== "all" ? ' <button class="text-button" type="button" data-tl-range="all">Show all history</button>' : "") + "</div>";
+  }
+  model.lanes.forEach((lane, laneIndex) => {
+    const chips = [lane.counts.bad ? '<i class="field-chip is-bad">' + esc(lane.counts.bad) + "</i>" : "", lane.counts.on + lane.counts.removed ? '<i class="field-chip is-on">' + esc(lane.counts.on + lane.counts.removed) + "</i>" : "",
+      lane.counts.new ? '<i class="field-chip is-new">' + esc(lane.counts.new) + "</i>" : ""].join("");
+    const beads = lane.beads.map((bead, beadIndex) => {
+      const size = bead.count === 1 ? 1 : bead.count < 10 ? 2 : 3;
+      const mixed = Object.keys(bead.kinds).filter(kind => kind !== bead.top);
+      const when = bead.count === 1 ? new Date(bead.first).toLocaleString([], { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })
+        : new Date(bead.first).toLocaleString([], { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }) + (bead.last - bead.first > 60000 ? " – " + clock(new Date(bead.last)) : "");
+      return '<button class="tl-bead k-' + esc(bead.top) + " sz-" + size + (mixed.length ? " is-mixed k2-" + esc(L.TIMELINE_KINDS.find(kind => bead.kinds[kind] && kind !== bead.top)) : "") +
+        '" type="button" style="left:' + (bead.x * 100).toFixed(3) + "%;--i:" + (laneIndex * 3 + beadIndex) + '" data-tl-bead="' + esc(bead.key) + '" aria-label="' + esc(lane.label + ", " + when + ": " + timelineKindWords(bead.kinds)) + '">' +
+        (bead.count > 1 ? '<span class="num">' + esc(bead.count > 99 ? "99+" : bead.count) + "</span>" : "") + "</button>";
+    }).join("");
+    html += '<div class="tl-row tl-lane" data-tl-lane="' + esc(lane.key) + '"><div class="tl-label" title="' + esc(lane.label + (lane.note ? " · " + lane.note : "")) + '">' + fieldBadge(lane.label) +
+      '<span class="field-section-text"><span class="field-name">' + esc(lane.label) + "</span><small>" + esc(lane.note || timelineKindWords(lane.counts)) + '</small></span><span class="field-chips">' + chips + "</span></div>" +
+      '<div class="tl-track">' + bands + '<i class="tl-rail"></i>' + nowMark + nextMark + beads + "</div></div>";
+  });
+  html += '<div class="tl-tip" id="tlTip" hidden></div></div>';
+  html += renderTimelineStory(model, prefs);
+  host.innerHTML = html;
+  $("fieldNote").textContent = "Each bead is something that happened, at the time it was found" +
+    (model.gapMs > 6 * 3600000 ? "; at this zoom, events on a lane less than " + timelineSpanWords(model.gapMs) + " apart share a bead" : "") +
+    ". Lanes with content changes or problems come first. The story below tells the same events in words; select a bead to find them." +
+    (c.markup ? " Hollow beads are markup-only edits, which don't count as changes." : "");
+}
+function renderTimelineStory(model, prefs) {
+  if (!model.days.length) return "";
+  let budget = prefs.storyLimit || 60;
+  let shown = 0, total = 0;
+  model.days.forEach(day => { total += day.rows.length; });
+  let html = '<section class="tl-story" aria-label="What happened, newest first">';
+  model.days.forEach(day => {
+    if (budget <= 0) return;
+    const rows = day.rows.slice(0, budget);
+    budget -= rows.length;
+    shown += rows.length;
+    const heading = L.dayHeading(day.at);
+    html += '<div class="tl-story-day"><h3 class="tl-story-head">' + esc(heading) + (heading === "Today" || heading === "Yesterday" ? "<span>" + esc(new Date(day.at).toLocaleDateString([], { weekday: "long", day: "numeric", month: "long" })) + "</span>" : "") + "</h3>";
+    rows.forEach(row => {
+      const time = '<time class="tl-time" datetime="' + esc(new Date(row.at).toISOString()) + '">' + esc(clock(new Date(row.at))) + "</time>";
+      if (row.type === "burst") {
+        html += '<details class="tl-item tl-burst" data-tl-row="' + esc(row.beadKeys.join(" ")) + '"><summary>' + time + '<i class="tl-dot k-new"></i><span class="tl-item-main"><span class="tl-item-title">' +
+          esc(plural(row.count, "new page", "new pages")) + ' saved for the first time</span><span class="tl-item-meta">' + esc(row.laneLabel) + " · one scan · select to list them</span></span></summary>" +
+          '<div class="tl-burst-list">' + row.members.map(member => '<button type="button" class="tl-burst-page" data-monitor-id="' + esc(member.pageId) + '" title="' + esc(member.url || "") + '">' + esc(member.title) + "</button>").join("") + "</div></details>";
+        return;
+      }
+      const entry = row.entry;
+      const verdict = entry.relevant === true ? '<span class="tl-verdict is-yes">Relevant</span>' : entry.relevant === false ? '<span class="tl-verdict">Not relevant</span>' : "";
+      const what = row.repeat ? L.eventLabel(entry.type) + " " + row.repeat + " times this day" : L.eventLabel(entry.type);
+      html += '<button type="button" class="tl-item' + (row.kind === "markup" ? " is-quiet" : "") + '" data-tl-row="' + esc(row.beadKeys.join(" ")) + '" data-monitor-id="' + esc(entry.pageId) + '">' + time + '<i class="tl-dot k-' + esc(row.kind) + '"></i>' +
+        '<span class="tl-item-main"><span class="tl-item-title">' + esc(entry.title) + '</span><span class="tl-item-meta">' + esc(what) + " · " + esc(entry.laneLabel) + "</span>" +
+        (entry.summary ? '<span class="tl-item-sum">' + esc(entry.summary.length > 260 ? entry.summary.slice(0, 259) + "…" : entry.summary) + "</span>" : "") + "</span>" + verdict + "</button>";
+    });
+    html += "</div>";
+  });
+  if (shown < total) html += '<button class="field-more tl-more" type="button" data-tl-more>Show ' + esc(Math.min(60, total - shown)) + " more · " + esc(plural(total - shown, "event", "events")) + " not shown</button>";
+  return html + "</section>";
+}
+function showTimelineTip(bead) {
+  const tip = $("tlTip");
+  const board = bead && bead.closest(".tl-board");
+  if (!tip || !board || !state.timeline) return;
+  const [laneKey] = bead.dataset.tlBead.split("|");
+  const lane = state.timeline.model.lanes.find(item => item.key === laneKey);
+  const found = lane && lane.beads.find(item => item.key === bead.dataset.tlBead);
+  if (!found) return;
+  const items = found.ids.map(id => state.timeline.entries.get(id)).filter(Boolean);
+  const when = new Date(found.first).toLocaleString([], { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }) + (found.last - found.first > 60000 ? " – " + clock(new Date(found.last)) : "");
+  tip.innerHTML = '<div class="tl-tip-when">' + esc(when) + '</div><div class="tl-tip-what">' + esc(timelineKindWords(found.kinds)) + " · " + esc(lane.label) + "</div>" +
+    '<ul class="tl-tip-list">' + items.slice(0, 4).map(item => '<li><i class="tl-dot k-' + esc(item.kind) + '"></i>' + esc(item.title) + "</li>").join("") +
+    (items.length > 4 ? '<li class="tl-tip-more">and ' + esc(items.length - 4) + " more</li>" : "") + "</ul>";
+  tip.hidden = false;
+  const b = bead.getBoundingClientRect(), host = board.getBoundingClientRect();
+  const width = tip.offsetWidth;
+  const left = Math.max(8, Math.min(host.width - width - 8, b.left - host.left + b.width / 2 - width / 2));
+  const above = b.top - host.top - tip.offsetHeight - 10;
+  tip.style.left = left + "px";
+  tip.style.top = (above > 4 ? above : b.bottom - host.top + 10) + "px";
+}
+function timelineSpanWords(ms) {
+  const hours = Math.max(1, Math.round(ms / 3600000));
+  if (hours < 36) return plural(hours, "hour", "hours");
+  const days = Math.round(hours / 24);
+  return days < 14 ? plural(days, "day", "days") : plural(Math.round(days / 7), "week", "weeks");
+}
+function hideTimelineTip() { const tip = $("tlTip"); if (tip) tip.hidden = true; }
+function focusTimelineBead(key) {
+  const host = $("timelineView");
+  host.querySelectorAll(".tl-bead.is-active, [data-tl-row].is-hit").forEach(el => el.classList.remove("is-active", "is-hit"));
+  const bead = host.querySelector('[data-tl-bead="' + CSS.escape(key) + '"]');
+  if (bead) bead.classList.add("is-active");
+  let rows = Array.from(host.querySelectorAll('[data-tl-row~="' + CSS.escape(key) + '"]'));
+  if (!rows.length) {
+    // The story is paged; open enough of it to reach these events.
+    fieldPrefs().storyLimit = 100000;
+    renderMonitoringSignal();
+    rows = Array.from(host.querySelectorAll('[data-tl-row~="' + CSS.escape(key) + '"]'));
+    const again = host.querySelector('[data-tl-bead="' + CSS.escape(key) + '"]');
+    if (again) again.classList.add("is-active");
+  }
+  rows.forEach(row => row.classList.add("is-hit"));
+  if (rows[0]) rows[0].scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
 }
 function syncFieldTools(counts) {
   const prefs = fieldPrefs();
@@ -6568,6 +6805,30 @@ $("fieldRange").addEventListener("change", () => {
   $("fieldViewport").dataset.initialized = "";
   renderMonitoringSignal();
 });
+document.querySelectorAll("[data-field-view]").forEach(button => button.addEventListener("click", () => {
+  const prefs = fieldPrefs();
+  prefs.view = button.dataset.fieldView === "timeline" ? "timeline" : "grid";
+  prefs.storyLimit = 60;
+  saveFieldPrefs();
+  hideFieldTip();
+  renderMonitoringSignal();
+}));
+$("timelineView").addEventListener("click", event => {
+  const bead = event.target.closest("[data-tl-bead]");
+  if (bead) { event.stopPropagation(); hideTimelineTip(); return focusTimelineBead(bead.dataset.tlBead); }
+  if (event.target.closest("[data-tl-more]")) { event.stopPropagation(); fieldPrefs().storyLimit = (fieldPrefs().storyLimit || 60) + 60; return renderMonitoringSignal(); }
+  const range = event.target.closest("[data-tl-range]");
+  if (range) { event.stopPropagation(); const prefs = fieldPrefs(); prefs.range = "all"; saveFieldPrefs(); return renderMonitoringSignal(); }
+});
+$("timelineView").addEventListener("pointerover", event => {
+  const bead = event.target.closest("[data-tl-bead]");
+  if (bead && event.pointerType === "mouse") showTimelineTip(bead);
+});
+$("timelineView").addEventListener("pointerout", event => {
+  if (event.target.closest("[data-tl-bead]") && !(event.relatedTarget && event.relatedTarget.closest && event.relatedTarget.closest("[data-tl-bead]"))) hideTimelineTip();
+});
+$("timelineView").addEventListener("focusin", event => { const bead = event.target.closest("[data-tl-bead]"); if (bead) showTimelineTip(bead); });
+$("timelineView").addEventListener("focusout", hideTimelineTip);
 let fieldSearchTimer = 0;
 $("fieldSearch").addEventListener("input", () => {
   clearTimeout(fieldSearchTimer);
@@ -6591,6 +6852,14 @@ if (typeof ResizeObserver === "function") {
     }, 120);
   });
   resizeObserver.observe($("signalVisual"));
+  let timelineWidth = 0;
+  new ResizeObserver(entries => {
+    const width = Math.round(entries[0].contentRect.width);
+    if (!width || Math.abs(width - timelineWidth) < 24) return;
+    timelineWidth = width;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => { if (state.loaded && state.view === "overview" && fieldPrefs().view === "timeline") renderMonitoringSignal(); }, 120);
+  }).observe($("timelineView"));
   if ($("fieldViewport")) resizeObserver.observe($("fieldViewport"));
 }
 // Scrolling moves the viewport, not the cells relative to their canvas stage.
