@@ -490,9 +490,9 @@
     .field-viewport:focus-visible { outline-offset: -2px; }
     .field-stage { position: relative; width: max-content; min-width: 100%; padding: 0 12px 10px 0; }
     .change-field {
-      --cols: 14; --tile: 16px; --gap: 4px; --label-w: 200px; --head-h: 46px; --pulse-h: 24px;
+      --cols: 14; --windows: 13; --next-gap: 16px; --tile: 16px; --gap: 4px; --label-w: 200px; --head-h: 46px; --pulse-h: 24px;
       position: relative; z-index: 1;
-      display: grid; grid-template-columns: var(--label-w) repeat(var(--cols), var(--tile)); grid-template-rows: var(--head-h) var(--pulse-h); grid-auto-rows: minmax(var(--tile), auto);
+      display: grid; grid-template-columns: var(--label-w) repeat(var(--windows, 13), var(--tile)) calc(var(--tile) + var(--next-gap)); grid-template-rows: var(--head-h) var(--pulse-h); grid-auto-rows: minmax(var(--tile), auto);
       gap: var(--gap); align-items: center; justify-content: start;
     }
     .change-field > .loading, .change-field > .empty { grid-column: 1 / -1; }
@@ -510,7 +510,10 @@
     .field-day-date { color: var(--ink); font-size: 13px; font-weight: 500; line-height: 1.2; font-variant-numeric: tabular-nums; }
     .field-day.is-today .field-day-week, .field-day.is-today .field-day-date { color: var(--accent); }
     .field-day.is-today::before { background: var(--accent); }
-    .field-day.is-next { padding-left: 0; overflow: visible; }
+    /* The "Next" column sits a little apart, so today's date never runs into it. */
+    .field-day.is-next { align-items: flex-end; padding-left: 0; overflow: visible; }
+    .field-pulse.is-next, .led.s-pending { justify-self: end; }
+    .field-pulse.is-next { width: var(--tile); }
     .field-day.is-next .field-day-week { font-size: 8.5px; letter-spacing: .04em; overflow: visible; }
     .field-manual { position: absolute; bottom: 1px; left: calc(var(--k) * (var(--tile) + var(--gap))); width: var(--tile); height: 2px; border-radius: 1px; background: var(--ink-2); }
     .field-pulse { top: var(--head-h); display: flex; align-items: flex-end; justify-content: center; gap: 1px; padding-bottom: 3px; border-bottom: 1px solid var(--line); }

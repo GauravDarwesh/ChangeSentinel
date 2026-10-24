@@ -834,7 +834,7 @@ function fieldGeometry(columnCount) {
   const compact = isCompact();
   const gap = compact ? 3 : 4;
   const tile = compact ? 14 : 16;
-  const lights = ((columnCount || 0) + 1) * (tile + gap) + 18;
+  const lights = ((columnCount || 0) + 1) * (tile + gap) + 18 + 16;
   const min = compact ? 116 : 180;
   const max = compact ? 168 : 380;
   const labelWidth = Math.round(Math.min(max, Math.max(min, width - lights)));
@@ -919,6 +919,7 @@ function renderMonitoringSignal() {
   state.fieldColumns = columns;
   state.pendingScan = pending;
   field.style.setProperty("--cols", columns.length + 1);
+  field.style.setProperty("--windows", columns.length);
   field.style.setProperty("--tile", geometry.tile + "px");
   field.style.setProperty("--gap", geometry.gap + "px");
   field.style.setProperty("--label-w", geometry.labelWidth + "px");
