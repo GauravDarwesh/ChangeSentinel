@@ -46,7 +46,9 @@ Every run queues its notification candidates in the durable outbox and commits t
 
 The ledger is saved after each successful delivery, so a cancelled or crashed job can re-send at most one message. Delivery is at-least-once: interruption after ntfy accepts a message but before the ledger commit can still cause a duplicate.
 
-Persistent fetch or extraction errors alert once per episode (URL + error class + onset), not on every run; each observation still writes its own evidence. A failed workflow run sends a "Regulatory Monitor run failed" ntfy alert, and the **Monitor Freshness Check** workflow alerts when no scan has been saved for 14 hours (two missed six-hourly slots; GitHub routinely delays scheduled runs by an hour or more).
+Persistent fetch or extraction errors alert once per episode (URL + error class + onset), not on every run; each observation still writes its own evidence. `defaults.error_alert_after_runs` (1–28, default 1; production uses 2) sets how many consecutive failing scans of a resource are needed before its episode alerts, so a one-off timeout on a regulator site is recorded without paging anyone. The alert then states how many scans have failed and since when.
+
+Every scan also rebuilds `data/health.json` (`python -m regmon.health`): totals, 7- and 30-day check/failure/change/alert volumes, a 14-day daily series, and rosters of failing monitors (with onset and failing-scan count), stale monitors (no saved scan for 14 hours), inactive monitors (no content change for 45+ days) and monitors whose address carries a past year (e.g. `circulares-2025`) and has been quiet for 30+ days. It is derived from committed state only and never affects detection; Pages publishes it with the dashboard. A failed workflow run sends a "Regulatory Monitor run failed" ntfy alert, and the **Monitor Freshness Check** workflow alerts when no scan has been saved for 14 hours (two missed six-hourly slots; GitHub routinely delays scheduled runs by an hour or more).
 
 ## Per-monitor alert conditions
 
