@@ -7219,8 +7219,10 @@ function renderMoreSheet() {
   const review = state.scout ? scoutBuckets().REVIEW.length : 0;
   const lastRunAt = state.report && state.report.generated_at;
   const cadence = Number(text("navCadenceCount")) || 0;
-  const tile = (view, label, value, sub) => '<button type="button" class="more-tile' + (state.view === view ? " is-current" : "") + '" data-more-go="' + view + '">' +
-    '<span class="more-label">' + esc(label) + '</span><span class="more-value">' + value + '</span><span class="more-sub">' + sub + "</span></button>";
+  const tile = (view, label, value, sub, logo = "") => '<button type="button" class="more-tile' + (state.view === view ? " is-current" : "") + '" data-more-go="' + view + '">' +
+    '<span class="more-label">' + logo + esc(label) + '</span><span class="more-value">' + value + '</span><span class="more-sub">' + sub + "</span></button>";
+  const scoutLogo = '<span class="scout-avatar-wrap more-logo" aria-hidden="true">' + ($("scoutLaunch")?.querySelector(".scout-avatar")?.outerHTML || "") + "</span>";
+  const cadenceLogo = '<span class="cadence-nav-mark more-logo" aria-hidden="true">' + ($("cadenceLaunch")?.querySelector(".cadence-calendar-avatar")?.outerHTML || "") + "</span>";
   body.innerHTML =
     '<button type="button" class="more-health tone-' + tone + (state.view === "health" ? " is-current" : "") + '" data-more-go="health">' +
       '<span class="more-label">Monitor health<span class="more-go">Health ›</span></span>' +
@@ -7228,8 +7230,8 @@ function renderMoreSheet() {
       '<span class="more-health-cells" aria-hidden="true">' + cells + "</span></button>" +
     '<div class="more-grid">' +
       tile("runs", "Runs", esc(lastRunAt ? relativeTime(lastRunAt) : "None"), esc(text("navRunCount") ? "last scan · " + text("navRunCount") + " saved" : "since the last scan")) +
-      tile("scout", "Scout", review ? "<b>" + esc(review) + "</b>" : "0", esc(review ? "pages to review" : "nothing to review")) +
-      tile("calendar", "Cadence", esc(cadence), esc(cadence === 1 ? "date coming up" : "dates coming up")) +
+      tile("scout", "Scout", review ? "<b>" + esc(review) + "</b>" : "0", esc(review ? "pages to review" : "nothing to review"), scoutLogo) +
+      tile("calendar", "Cadence", esc(cadence), esc(cadence === 1 ? "date coming up" : "dates coming up"), cadenceLogo) +
     "</div>";
 }
 let moreReturnFocus = null;
