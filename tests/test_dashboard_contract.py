@@ -1011,3 +1011,34 @@ class TestCadenceCalendarContract(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestScanHistoryResponsiveFixes(unittest.TestCase):
+    def test_scan_history_switch_and_legend_have_stable_header_layout(self):
+        html = read("index.html")
+        self.assertRegex(html, r"\.field-head \\{ display: grid; grid-template-columns: minmax\\(0, 1fr\\)")
+        self.assertIn(".field-heading { display: flex; flex-wrap: wrap;", html)
+        self.assertIn('data-legend-for="grid"', html)
+        self.assertIn('data-legend-for="timeline"', html)
+
+    def test_timeline_explains_the_axis_and_shows_next_scan(self):
+        html = read("index.html")
+        self.assertIn(".tl-next-label", html)
+        source = read("dashboard.js")
+        self.assertIn('Next scan · ', source)
+        self.assertIn("When updates arrived", source)
+        self.assertIn('data-tl-range="all"', source)
+
+    def test_phone_overview_hides_duplicate_actions_and_health_strip(self):
+        html = read("index.html")
+        self.assertIn('.overview-text > .mobile-head .mobile-actions,', html)
+        self.assertIn('.overview-text > .mobile-head .m-health { display: none !important; }', html)
+        source = read("dashboard.js")
+        self.assertIn('<div class="more-actions"><button class="m-action" type="button" data-theme-toggle></button></div>', source)
+        self.assertNotIn('data-add-monitor data-more-dismiss>Add link', source)
+        self.assertNotIn('data-refresh data-more-dismiss>Reload', source)
+
+    def test_timeline_next_scan_is_not_placed_on_an_invisible_endpoint(self):
+        source = read("dashboard.js")
+        self.assertIn('left:calc(100% - 1px)', source)
+        self.assertIn('class="tl-next-label"', source)
