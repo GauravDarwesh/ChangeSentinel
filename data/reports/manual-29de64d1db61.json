@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261024T041555Z-d7ba41b9",
-  "generated_at": "2026-10-24T04:18:17.304480+00:00",
+  "run_id": "20261024T042136Z-dca955fa",
+  "generated_at": "2026-10-24T04:25:09.027902+00:00",
   "source": {
     "id": "manual-29de64d1db61",
     "name": "FR Y-12A Sample File (XML)",
@@ -90,6 +90,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "40061536933"
+  "trigger": "scheduled",
+  "workflow_run_id": "40061762905"
 }
