@@ -208,6 +208,11 @@ jobs:
           REQUIRE_NTFY: "0"
           NTFY_SERVER: https://ntfy.sh
           DASHBOARD_URL: ${{ env.DASHBOARD_URL }}
+          # Optional extra channels; each is enabled by setting its secret.
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+          ALERT_WEBHOOK_SECRET: ${{ secrets.ALERT_WEBHOOK_SECRET }}
         run: |
           set -euo pipefail
           echo "base=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
@@ -227,6 +232,10 @@ jobs:
           REQUIRE_NTFY: "1"
           NTFY_SERVER: https://ntfy.sh
           DASHBOARD_URL: ${{ env.DASHBOARD_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+          ALERT_WEBHOOK_SECRET: ${{ secrets.ALERT_WEBHOOK_SECRET }}
         run: python -m regmon.notify --test
 
       - name: Publish latest monitoring data to Pages

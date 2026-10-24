@@ -1,4 +1,4 @@
-"""Publish regulatory monitoring events to ntfy with a durable retry outbox."""
+"""Publish regulatory monitoring events (ntfy, Slack, Teams, webhook) with a durable retry outbox."""
 from __future__ import annotations
 
 import argparse
@@ -13,6 +13,7 @@ import tempfile
 
 import requests
 
+from regmon import channels as alert_channels
 from regmon import item_codes
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -149,6 +150,19 @@ def enqueue_notifications(outbox: dict, candidates: list[dict], sent_events: dic
                 follow_up = _follow_up(notification, event_id)
                 if follow_up["event_id"] not in sent_events:
                     pending.setdefault(follow_up["event_id"], follow_up)
+            continue
+        queued = pending.get(event_id)
+        if (
+            variant in AI_VARIANTS
+            and isinstance(queued, dict)
+            and queued.get("variant") == "generic"
+            and queued.get("delivered_channels")
+        ):
+            # The generic alert already reached some channels; keep it queued
+            # for the rest and send the assessment as a follow-up everywhere.
+            follow_up = _follow_up(notification, event_id)
+            if follow_up["event_id"] not in sent_events:
+                pending.setdefault(follow_up["event_id"], follow_up)
             continue
         if variant == "ai_irrelevant":
             # Only meaningful as a follow-up to a delivered generic alert.
@@ -396,6 +410,20 @@ def ledger_record(notification: dict) -> dict:
     }
 
 
+def ntfy_channel(topic: str, server: str) -> alert_channels.Channel:
+    return alert_channels.Channel("ntfy", lambda notification, dashboard: publish(notification, topic, server, dashboard))
+
+
+def enabled_channels(topic: str, server: str, dashboard_url: str = "", env=None) -> list[alert_channels.Channel]:
+    """ntfy (when NTFY_TOPIC is set) plus every webhook channel configured in the environment."""
+    found = [ntfy_channel(topic, server)] if topic else []
+    found.extend(alert_channels.configured_channels(
+        os.environ if env is None else env,
+        lambda notification: dashboard_link(notification, dashboard_url),
+    ))
+    return found
+
+
 def deliver_pending(
     outbox: dict,
     state: dict,
@@ -403,13 +431,20 @@ def deliver_pending(
     server: str,
     dashboard_url: str = "",
     persist=None,
+    channels: list | None = None,
 ) -> dict:
-    """Deliver queued notifications, persisting state after every success.
+    """Deliver queued notifications to every enabled channel, persisting after each send.
 
-    Saving after each delivery bounds the duplicate window to one message if
-    the job is cancelled or crashes mid-loop (previously every message already
-    delivered in that loop would be sent again on the next run).
+    Delivery is tracked per channel on the queued notification
+    ("delivered_channels"), so a Slack outage neither blocks nor re-sends the
+    ntfy copy: the notification stays queued with what was delivered, and the
+    next run sends only the missing channels. It moves to the sent ledger once
+    every enabled channel has it. Saving after every send bounds the duplicate
+    window to one message per channel if the job is cancelled mid-loop.
     """
+    if channels is None:
+        channels = [ntfy_channel(topic, server)] if topic else []
+    names = [channel.name for channel in channels]
     sent = skipped = failed = 0
     pending = outbox["pending_events"]
     for event_id, notification in list(pending.items()):
@@ -419,13 +454,32 @@ def deliver_pending(
             if persist:
                 persist()
             continue
-        try:
-            publish(notification, topic, server, dashboard_url)
-        except Exception as exc:
-            failed += 1
-            print(f"notification failed for {event_id}; retained in outbox: {exc}")
+        if not channels:
             continue
-        state["sent_events"][event_id] = ledger_record(notification)
+        delivered = notification.get("delivered_channels")
+        delivered = dict(delivered) if isinstance(delivered, dict) else {}
+        had_failure = False
+        for channel in channels:
+            if channel.name in delivered:
+                continue
+            try:
+                channel.send(notification, dashboard_url)
+            except Exception as exc:
+                had_failure = True
+                print(f"notification failed on {channel.name} for {event_id}; retained in outbox: {exc}")
+                continue
+            delivered[channel.name] = datetime.now(timezone.utc).isoformat()
+            notification["delivered_channels"] = delivered
+            # Record a partial delivery durably; when this was the last channel
+            # the ledger write below persists it instead.
+            if persist and any(name not in delivered for name in names):
+                persist()
+        if had_failure or any(name not in delivered for name in names):
+            failed += 1
+            continue
+        record = ledger_record(notification)
+        record["channels"] = sorted(delivered)
+        state["sent_events"][event_id] = record
         pending.pop(event_id, None)
         sent += 1
         if persist:
@@ -451,21 +505,30 @@ def main() -> None:
     require_delivery = os.getenv("REQUIRE_NTFY", "0").strip() == "1"
     dashboard_url = os.getenv("DASHBOARD_URL", "").strip()
 
+    channels = enabled_channels(topic, server, dashboard_url)
     if args.test:
-        if not topic:
-            print(json.dumps({"enabled": False, "reason": "NTFY_TOPIC is not configured"}, indent=2))
+        if not channels:
+            print(json.dumps({"enabled": False, "reason": "No alert channel is configured"}, indent=2))
             if require_delivery:
-                raise RuntimeError("NTFY_TOPIC is required for this notification test")
+                raise RuntimeError("NTFY_TOPIC or another alert channel is required for this notification test")
             return
         notification = {
             "event_id": f"test-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}",
             "kind": "TEST", "url": dashboard_url, "topic": "Controlled notification test",
-            "summary": "This is a controlled end-to-end ntfy delivery test. No monitoring baseline is changed.",
+            "summary": "This is a controlled end-to-end alert delivery test. No monitoring baseline is changed.",
             "reason": "Manual GitHub Actions test requested.", "impact": "None",
             "priority": 3, "tags": ["white_check_mark", "test"],
         }
-        publish(notification, topic, server, dashboard_url)
-        print(json.dumps({"test": True, "sent": True, "event_id": notification["event_id"]}, indent=2))
+        results = {}
+        for channel in channels:
+            try:
+                channel.send(notification, dashboard_url)
+                results[channel.name] = "sent"
+            except Exception as exc:
+                results[channel.name] = f"failed: {exc}"
+        print(json.dumps({"test": True, "event_id": notification["event_id"], "channels": results}, indent=2))
+        if require_delivery and any(value != "sent" for value in results.values()):
+            raise RuntimeError("The notification test failed on at least one channel")
         return
 
     state = load_state()
@@ -487,11 +550,11 @@ def main() -> None:
         }, indent=2))
         return
 
-    if not topic:
+    if not channels:
         save_outbox(outbox)
         print(json.dumps({
             "enabled": False,
-            "reason": "NTFY_TOPIC is not configured; candidates remain queued",
+            "reason": "No alert channel (NTFY_TOPIC, SLACK_WEBHOOK_URL, TEAMS_WEBHOOK_URL, ALERT_WEBHOOK_URL) is configured; candidates remain queued",
             "pending": len(outbox["pending_events"]),
         }, indent=2))
         if require_delivery:
@@ -502,9 +565,11 @@ def main() -> None:
         save_state(state)
         save_outbox(outbox)
 
-    result = deliver_pending(outbox, state, topic, server, dashboard_url, persist=persist)
+    result = deliver_pending(outbox, state, topic, server, dashboard_url, persist=persist, channels=channels)
     persist()
-    print(json.dumps({"candidate_notifications": len(candidates), **result}, indent=2))
+    print(json.dumps({
+        "candidate_notifications": len(candidates), **result, "channels": [channel.name for channel in channels],
+    }, indent=2))
     if result["failed"] and require_delivery:
         raise RuntimeError(f"{result['failed']} notification(s) failed; failed events remain queued")
 
