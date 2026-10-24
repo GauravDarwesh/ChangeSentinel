@@ -39,6 +39,19 @@
       "event_type": "CHANGED_URL",
       "url": "https://www.federalreserve.gov/apps/reportingforms/review",
       "detected_at": "2026-10-22T04:23:52.384181+00:00"
+    },
+    "01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3": {
+      "decision": "not_material",
+      "label": "Not material",
+      "rationale": "HTML markup change not important",
+      "owner": "",
+      "ticket": "",
+      "reviewed_by": "GauravDarwesh",
+      "reviewed_at": "2026-10-24T14:46:54+00:00",
+      "request": "issue #180",
+      "event_type": "HTML_SOURCE_CHANGED",
+      "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+      "detected_at": "2026-10-24T14:34:05.726322+00:00"
     }
   },
   "log": [
@@ -83,7 +96,21 @@
       "event_type": "CHANGED_URL",
       "url": "https://www.federalreserve.gov/apps/reportingforms/review",
       "detected_at": "2026-10-22T04:23:52.384181+00:00"
+    },
+    {
+      "event_id": "01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3",
+      "decision": "not_material",
+      "label": "Not material",
+      "rationale": "HTML markup change not important",
+      "owner": "",
+      "ticket": "",
+      "reviewed_by": "GauravDarwesh",
+      "reviewed_at": "2026-10-24T14:46:54+00:00",
+      "request": "issue #180",
+      "event_type": "HTML_SOURCE_CHANGED",
+      "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+      "detected_at": "2026-10-24T14:34:05.726322+00:00"
     }
   ],
-  "updated_at": "2026-10-22T07:29:12+00:00"
+  "updated_at": "2026-10-24T14:46:54+00:00"
 }
