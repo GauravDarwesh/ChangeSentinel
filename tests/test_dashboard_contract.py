@@ -101,6 +101,21 @@ class TestDashboardEvidenceContract(unittest.TestCase):
         self.assertIn("function renderTimeline(columns)", source)
         self.assertIn("view: f.view", source)
 
+    def test_phone_bar_has_four_tabs_and_more_with_health(self):
+        html = read("index.html")
+        for token in ('id="navMore"', 'id="moreSheet"', 'id="mobileHealth"', 'grid-template-columns: repeat(5, minmax(0, 1fr))'):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+        source = read("dashboard.js")
+        self.assertIn('const MORE_VIEWS = { health: "Health"', source)
+        self.assertIn('data-more-go="health"', source)
+
+    def test_health_view_is_interactive(self):
+        source = read("dashboard.js")
+        for token in ("function healthMatrix(health)", "function healthInsightSheet(health)", "function showHealthCellTip(cell)", "function showHealthChartTip(group)"):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+
     def test_scan_history_clip_ignores_sticky_scroll_offsets(self):
         # offsetTop of a sticky header includes how far it is stuck, so the clip
         # must come from on-screen edges or the lights vanish after "Show more".

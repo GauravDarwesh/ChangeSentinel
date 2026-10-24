@@ -481,6 +481,80 @@
     return { lanes: laneList, days, counts, gapMs, start, end };
   }
 
+  /* ---------- Fleet health insights ----------
+   * A short, ordered list of what stands out in data/health.json: problems
+   * first, then what is about to need attention, then context. Each line
+   * names its monitors so the view can link to them; nothing is guessed.
+   */
+  function healthInsights(health, options = {}) {
+    const h = health || {};
+    const monitors = Array.isArray(h.monitors) ? h.monitors : [];
+    const daily = Array.isArray(h.daily) ? h.daily : [];
+    const week = h.last_7_days || {};
+    const quietAfter = Number((h.thresholds || {}).inactive_after_days) || 45;
+    const staleAfter = Number((h.thresholds || {}).stale_after_hours) || 14;
+    const nameOf = options.nameOf || (m => String(m.name || m.source_id));
+    const dayOf = options.dayLabel || (d => String(d));
+    const now = options.now instanceof Date ? options.now.getTime() : Number(options.now || Date.now());
+    const out = [];
+    const names = list => {
+      const shown = list.slice(0, 2).map(nameOf);
+      return list.length > 2 ? shown.join(", ") + " and " + (list.length - 2) + " more" : shown.join(" and ");
+    };
+    const many = (n, one, other) => n + " " + (n === 1 ? one : other);
+    const ids = list => list.map(m => String(m.source_id));
+    const failing = monitors.filter(m => m.status === "failing");
+    if (failing.length) out.push({ tone: "bad", key: "failing", targets: ids(failing), text: many(failing.length, "monitor is", "monitors are") + " failing now: " + names(failing) + ". Their last good copy stays as the baseline." });
+    const recovered = monitors.filter(m => m.status !== "failing" && Number(m.failures_7d) > 0).sort((a, b) => b.failures_7d - a.failures_7d);
+    if (recovered.length) {
+      const total = recovered.reduce((sum, m) => sum + Number(m.failures_7d || 0), 0);
+      out.push({ tone: "warn", key: "recovered", targets: ids(recovered), text: names(recovered) + (recovered.length === 1 ? " had " : " had ") + many(total, "failed check", "failed checks") + " this week and " + (recovered.length === 1 ? "is" : "are") + " working again." });
+    }
+    const failDays = daily.filter(d => Number(d.failed_checks) > 0);
+    const failTotal = failDays.reduce((sum, d) => sum + Number(d.failed_checks || 0), 0);
+    if (failTotal >= 3 && failDays.length) {
+      const worst = failDays.slice().sort((a, b) => b.failed_checks - a.failed_checks)[0];
+      if (worst.failed_checks / failTotal >= .8 && failDays.length <= 2) out.push({ tone: "info", key: "fail-day", day: worst.date, text: "Failures were concentrated on " + dayOf(worst.date) + " (" + worst.failed_checks + " of " + failTotal + "), not spread across the period." });
+    }
+    const stale = monitors.filter(m => m.status === "stale");
+    if (stale.length) out.push({ tone: "warn", key: "stale", targets: ids(stale), text: many(stale.length, "monitor hasn't", "monitors haven't") + " been scanned in over " + staleAfter + " hours: " + names(stale) + "." });
+    const quiet = monitors.filter(m => m.status === "inactive");
+    if (quiet.length) out.push({ tone: "warn", key: "quiet", targets: ids(quiet), text: many(quiet.length, "monitor has", "monitors have") + " been quiet for " + quietAfter + "+ days. The page may have moved; check the regulator's site." });
+    const soon = monitors.filter(m => m.status !== "inactive" && Number(m.days_without_change) >= quietAfter - 14 && Number(m.days_without_change) < quietAfter)
+      .sort((a, b) => b.days_without_change - a.days_without_change);
+    if (soon.length) out.push({ tone: "info", key: "soon-quiet", targets: ids(soon), text: many(soon.length, "monitor reaches", "monitors reach") + " the " + quietAfter + "-day quiet mark within two weeks: " + names(soon) + "." });
+    const year = Array.isArray(h.year_bound) ? h.year_bound : [];
+    if (year.length) out.push({ tone: "info", key: "year", targets: year.map(y => String(y.source_id)), text: many(year.length, "address carries", "addresses carry") + " a past year. Next year's list may be published at a new address." });
+    const changed = monitors.filter(m => m.last_change).sort((a, b) => new Date(b.last_change) - new Date(a.last_change));
+    if (changed.length) {
+      const latest = changed[0];
+      const days = Math.max(0, Math.floor((now - new Date(latest.last_change).getTime()) / 86400000));
+      out.push({ tone: "on", key: "latest-change", targets: [String(latest.source_id)], text: "Most recent content change: " + nameOf(latest) + ", " + (days === 0 ? "today" : days === 1 ? "yesterday" : days + " days ago") + "." + (changed.length > 1 ? " " + changed.length + " monitors have changed at least once." : "") });
+    }
+    const never = monitors.filter(m => !m.last_change);
+    if (monitors.length && never.length / monitors.length >= .5) {
+      const ages = never.map(m => Number(m.days_without_change) || 0).sort((a, b) => a - b);
+      const median = ages[Math.floor(ages.length / 2)];
+      out.push({ tone: "info", key: "never", text: never.length + " of " + monitors.length + " monitors haven't changed since they were added" + (median <= 1 ? "; most were added in the last day, so that is expected." : median <= 14 ? "; most are " + many(median, "day", "days") + " old, so that is expected." : ".") });
+    }
+    if (Number(week.checks) > 0 && !failing.length && !stale.length) {
+      const scans = monitors.map(m => new Date(m.last_scan).getTime()).filter(Number.isFinite);
+      const spread = scans.length ? (Math.max(...scans) - Math.min(...scans)) / 60000 : 0;
+      out.push({ tone: "ok", key: "coverage", text: "Every monitor was covered by the last scan" + (scans.length > 1 ? ", all within " + Math.max(1, Math.round(spread)) + " min of each other" : "") + "; " + (Math.round(Number(week.success_rate || 0) * 1000) / 10) + "% of " + Number(week.checks).toLocaleString() + " checks succeeded this week." });
+    }
+    return out;
+  }
+  // The colour a monitor's light takes in the fleet matrix.
+  function healthLight(monitor, now = Date.now()) {
+    const m = monitor || {};
+    if (m.status === "failing") return "bad";
+    if (m.status === "stale") return "stale";
+    if (m.status === "inactive") return "quiet";
+    if (m.last_change && (now - new Date(m.last_change).getTime()) <= 7 * 86400000) return "on";
+    if (Number(m.failures_7d) > 0) return "warn";
+    return "ok";
+  }
+
   /* ---------- Who publishes a page ----------
    * Monitors added from the dashboard carry only their host name, so the field
    * groups pages by the regulator behind the host: config/regulators.json first,
@@ -2545,7 +2619,7 @@
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe, pickRuleMatches, pickRuleFolder, pickRuleRequest,
     diffSequences, alignLines, changedWords, readWorkbook, workbookDiff, csvWorkbook, parseCsv, zipListing, zipFile, readDocx, columnName, cellRef,
     esc, nextScheduledScan, scanCycle, runColumns, slotColumns, columnCellState, pendingScan,
-    timelineModel, TIMELINE_KINDS,
+    timelineModel, TIMELINE_KINDS, healthInsights, healthLight,
     fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, regulatorFor, jurisdictionForHost, hostOf, pageKind, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,
     parseUnifiedDiff, tokenize, wordDiff, similarity, redlineRows, redlineSummary, renderRedline, renderUnifiedDiff,
