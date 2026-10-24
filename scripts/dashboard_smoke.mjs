@@ -107,15 +107,36 @@ try {
   if (pdf.skipped) console.log("skip " + pdf.skipped);
   else check(!pdf.error && pdf.pages > 0 && pdf.items > 0, "pdf.js " + (pdf.version || "") + " loads under its integrity hash and renders a saved PDF " + JSON.stringify(pdf));
 
-  for (const view of ["changes", "monitors", "runs", "notifications", "scout", "calendar", "overview"]) {
+  for (const view of ["changes", "monitors", "runs", "health", "notifications", "scout", "calendar", "overview"]) {
     await page.click('.rail [data-view="' + view + '"]');
     await page.waitForTimeout(400);
     const visible = await page.evaluate(name => {
-      const id = { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", scout: "scoutView", calendar: "calendarView" }[name];
+      const id = { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", health: "healthView", notifications: "notificationsView", scout: "scoutView", calendar: "calendarView" }[name];
       const section = document.getElementById(id);
       return !!section && !section.hidden && section.getBoundingClientRect().height > 0;
     }, view);
     check(visible, "the " + view + " view renders");
+    if (view === "health") {
+      const health = await page.evaluate(() => ({
+        rows: document.querySelectorAll("#healthItems .row").length,
+        detail: (document.getElementById("healthDetail") || {}).textContent || ""
+      }));
+      check(health.rows > 0 && health.detail.length > 0, "Health lists monitors and shows a detail pane (" + health.rows + " rows)");
+    }
+    if (view === "notifications") {
+      check(await page.isVisible("#channelBar"), "Alerts shows the delivery channels");
+    }
+    if (view === "monitors") {
+      // An alert condition can be opened from a single-page monitor's header.
+      const editable = await page.$("#detailHeader [data-edit-condition]");
+      if (editable) {
+        await editable.click();
+        check(await page.evaluate(() => document.getElementById("conditionDialog").open), "the alert condition dialog opens from a page");
+        await page.evaluate(() => document.getElementById("conditionDialog").close());
+      } else {
+        console.log("skip the first page belongs to a multi-page source");
+      }
+    }
     await page.screenshot({ path: path.join(OUT, "view-" + view + ".png") });
     if (view === "overview") {
       // A closed dialog must not be drawn: it would cover the page and swallow clicks.
@@ -329,11 +350,21 @@ try {
     await explorePage.click("[data-field-lens=all]");
     await explorePage.waitForTimeout(600);
     // The newest light of the first page row: in view, since the field opens on the newest scan.
-    const firstRow = await explorePage.$eval("#signalVisual .led[data-monitor-id]:not(.s-none):not(.s-pending)", el => el.dataset.y).catch(() => null);
-    const lights = firstRow === null ? [] : await explorePage.$$('#signalVisual .led[data-y="' + firstRow + '"][data-monitor-id]:not(.s-none):not(.s-pending)');
-    const light = lights[lights.length - 1];
-    if (light) await light.scrollIntoViewIfNeeded();
-    const box = light ? await light.boundingBox() : null;
+    // The field redraws while page titles load, which can detach a light between
+    // finding it and scrolling to it; find it again rather than fail on the race.
+    let box = null;
+    for (let attempt = 0; attempt < 4 && !box; attempt += 1) {
+      const firstRow = await explorePage.$eval("#signalVisual .led[data-monitor-id]:not(.s-none):not(.s-pending)", el => el.dataset.y).catch(() => null);
+      const lights = firstRow === null ? [] : await explorePage.$$('#signalVisual .led[data-y="' + firstRow + '"][data-monitor-id]:not(.s-none):not(.s-pending)');
+      const light = lights[lights.length - 1];
+      if (!light) break;
+      try {
+        await light.scrollIntoViewIfNeeded({ timeout: 3000 });
+        box = await light.boundingBox();
+      } catch (_) {
+        await explorePage.waitForTimeout(400);
+      }
+    }
     if (box) {
       await explorePage.mouse.move(box.x + 3, box.y + 3);
       await explorePage.mouse.move(box.x + 5, box.y + 5);

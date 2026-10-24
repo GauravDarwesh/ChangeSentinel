@@ -674,6 +674,41 @@
     select.field-input:disabled { cursor: not-allowed; opacity: .65; }
     textarea.field-input { resize: vertical; font: 400 12.5px/1.6 var(--font-code); }
     .field-help { margin-top: 5px; color: var(--ink-3); font-size: 12.5px; line-height: 1.5; }
+    .health-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+    .health-tile { min-width: 0; padding: 14px 18px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .health-tile-label { color: var(--ink-3); font-size: 12px; }
+    .health-tile-value { margin-top: 4px; font-size: 24px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+    .health-tile-note { margin-top: 2px; color: var(--ink-3); font-size: 12px; }
+    .health-chart { margin: 0; padding: 12px 18px 14px; }
+    .health-chart svg { display: block; width: 100%; height: auto; }
+    .health-chart .hc-bar { fill: var(--led-dim); }
+    .health-chart .hc-fail { fill: var(--state-bad); }
+    .health-chart .hc-change { fill: var(--state-change); }
+    .health-chart .hc-axis { stroke: var(--line-2); stroke-width: 1; }
+    .health-chart .hc-day { fill: var(--ink-3); font-size: 10px; text-anchor: middle; font-variant-numeric: tabular-nums; }
+    .health-chart figcaption { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; color: var(--ink-3); font-size: 12px; }
+    .health-chart figcaption i { display: inline-block; width: 9px; height: 9px; margin-right: 6px; border-radius: 2px; vertical-align: -1px; }
+    .hc-key-bar { background: var(--led-dim); } .hc-key-fail { background: var(--state-bad); } .hc-key-change { background: var(--state-change); border-radius: 50% !important; }
+    .health-sub { color: var(--ink-3); font-size: 12px; }
+    .health-line { margin: 6px 0 0; color: var(--ink-2); font-size: 13.5px; line-height: 1.5; }
+    .health-line strong { color: var(--problem); font-weight: 500; }
+    span.is-code { font-family: var(--font-code); font-size: 12px; overflow-wrap: anywhere; }
+    .chip { display: inline-flex; align-items: center; min-height: 26px; padding: 3px 10px; border: 1px solid var(--line-2); border-radius: 999px; background: transparent; color: var(--ink-2); font: inherit; font-size: 12.5px; line-height: 1.3; text-align: left; cursor: pointer; }
+    .chip:hover { border-color: var(--accent); color: var(--ink); }
+    .chip.is-static { cursor: default; border-color: var(--line-2); color: var(--ink); }
+    .condition-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .channel-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 12.5px; }
+    .channel-label, .channel-none { color: var(--ink-3); }
+    .channel-bar .text-button { margin-left: auto; font-size: 12.5px; }
+    .channel-guide { border-top: 1px solid var(--line); }
+    .channel-guide summary { padding: 12px 20px; color: var(--link); font-size: 13px; cursor: pointer; }
+    .channel-guide-body { padding: 0 20px 18px; color: var(--ink-2); font-size: 13px; line-height: 1.55; }
+    .channel-guide-body .facts { margin: 10px 0; border: 1px solid var(--line); border-radius: var(--radius); grid-template-columns: 1fr; }
+    .channel-guide-body .facts div { padding: 9px 12px; }
+    .review-condition { margin: 0 20px; border-top: 1px solid var(--line); }
+    .review-condition summary { padding: 10px 0; color: var(--ink); font-size: 13px; cursor: pointer; }
+    .review-condition summary span { margin-left: 6px; color: var(--ink-3); font-size: 12px; }
+    .review-condition-body { padding: 0 0 12px; }
     .field-check { display: flex; align-items: center; gap: 8px; margin-top: 8px; color: var(--ink-2); font-size: 13px; cursor: pointer; }
     .field-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent, currentColor); }
     .modal-info { color: var(--ink-3); font-size: 12.5px; line-height: 1.55; }
@@ -1070,6 +1105,8 @@
       .nav-button { flex-direction: column; align-items: center; justify-content: center; gap: 0; height: 100%; padding: 8px 0 0; font-size: 12.5px; text-align: center; }
       .nav-button::before { left: 50%; top: 9px; width: 18px; height: 3px; margin: 0 0 0 -9px; }
       .nav-count { display: none; }
+      /* Eight tabs fill the phone bar; Health opens from the Overview block instead. */
+      .nav-health { display: none; }
       .mobile-head { display: flex !important; }
       .view-split { display: block; }
       .view-split .detail-pane { display: none; }
@@ -1101,6 +1138,7 @@
       .scan-pair .cycle-bar { gap: 1.5px; margin-top: 10px; padding-bottom: 2px; }
       .field-wrap { order: 4; flex: none; overflow: visible; margin-top: 20px; padding: 16px 18px 18px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
       .block-changes { order: 5; }
+      .block-health { order: 5; }
       .block-sources { order: 6; }
       .block-dates { order: 7; padding-bottom: 32px; }
       .overview-text .block { margin-top: 22px; }
@@ -1898,6 +1936,7 @@
         <li><button class="nav-button" data-view="changes" type="button">Changes<span class="nav-count" id="navChangeCount"></span></button></li>
         <li><button class="nav-button" data-view="monitors" type="button">Pages<span class="nav-count" id="navMonitorCount"></span></button></li>
         <li><button class="nav-button" data-view="runs" type="button">Runs<span class="nav-count" id="navRunCount"></span></button></li>
+        <li class="nav-health"><button class="nav-button" data-view="health" type="button" title="Failing, stale and quiet monitors, and check and alert volumes">Health<span class="nav-count" id="navHealthCount"></span></button></li>
         <li><button class="nav-button" data-view="notifications" type="button">Alerts<span class="nav-count" id="navNotificationCount"></span></button></li>
         <li class="nav-scout"><button class="nav-button nav-button-scout" id="scoutLaunch" data-view="scout" aria-controls="scoutView" type="button" title="New regulator pages found by the weekly Scout sweep"><span class="scout-avatar-wrap" aria-hidden="true">
             <svg class="scout-avatar" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
@@ -2021,6 +2060,10 @@
           <div class="block block-dates">
             <div class="block-label"><span>Dates ahead</span><button class="sheet-link" type="button" data-copy-calendar title="Copy the address of the calendar feed to subscribe to it in a calendar app">Calendar feed</button></div>
             <div id="upcomingDates"><div class="loading">Reading dates…</div></div>
+          </div>
+          <div class="block block-health">
+            <div class="block-label"><span>Monitor health</span><button class="sheet-link" type="button" data-go="health">Health</button></div>
+            <p class="health-line" id="overviewHealth">Reading monitor health…</p>
           </div>
           <div class="block block-sources">
             <div class="block-label"><span>Sources</span></div>
@@ -2296,14 +2339,37 @@
           </section>
         </div>
       </section>
+      <section id="healthView" class="view view-split" hidden aria-label="Health">
+        <div class="list-pane">
+          <div class="list-head"><div class="list-title-row"><h1 class="list-title">Health</h1><span class="list-count" id="healthCount"></span></div></div>
+          <div class="list-body" id="healthItems" aria-label="Monitor health"><div class="loading">Reading monitor health…</div></div>
+        </div>
+        <div class="detail-pane" id="healthDetail" aria-live="polite"></div>
+      </section>
+
       <section id="notificationsView" class="view view-split" hidden aria-label="Alerts">
         <div class="list-pane">
-          <div class="list-head"><div class="list-title-row"><h1 class="list-title">Alerts</h1><span class="list-count" id="notificationCounts"></span></div></div>
+          <div class="list-head"><div class="list-title-row"><h1 class="list-title">Alerts</h1><span class="list-count" id="notificationCounts"></span></div>
+            <div class="channel-bar" id="channelBar"></div></div>
           <div class="list-body">
             <div class="list-group-label" id="notificationPendingHeading">Waiting to send <span id="notificationPendingCount"></span></div>
             <div id="notificationPendingItems"><div class="loading">Loading queued alerts…</div></div>
             <div class="list-group-label" id="notificationSentHeading">Sent <span id="notificationSentCount"></span></div>
             <div id="notificationSentItems"><div class="loading">Loading delivery history…</div></div>
+            <details class="channel-guide" id="channelGuide">
+              <summary>Add Slack, Teams or a webhook</summary>
+              <div class="channel-guide-body">
+                <p>Alert channels are GitHub secrets, so the dashboard never holds their addresses. Add one under <strong>Settings → Secrets and variables → Actions</strong> in the repository; the next run delivers to it.</p>
+                <dl class="facts">
+                  <div><dt>Slack</dt><dd><span class="is-code">SLACK_WEBHOOK_URL</span> — an incoming-webhook URL for the channel.</dd></div>
+                  <div><dt>Microsoft Teams</dt><dd><span class="is-code">TEAMS_WEBHOOK_URL</span> — the URL of a Teams workflow “Post to a channel when a webhook request is received”.</dd></div>
+                  <div><dt>Webhook</dt><dd><span class="is-code">ALERT_WEBHOOK_URL</span> — any https endpoint (n8n, Zapier, a ticketing bridge); add <span class="is-code">ALERT_WEBHOOK_SECRET</span> to sign each alert.</dd></div>
+                  <div><dt>ntfy</dt><dd><span class="is-code">NTFY_TOPIC</span> — the phone push channel used so far.</dd></div>
+                </dl>
+                <p>Each alert is tracked per channel: if one is down, the others still get it and only the missed channel is retried.</p>
+                <a class="btn" id="channelSecretsLink" target="_blank" rel="noopener noreferrer" href="#">Open repository secrets</a>
+              </div>
+            </details>
           </div>
         </div>
         <div class="detail-pane" id="notificationDetail" aria-live="polite"></div>
@@ -2553,12 +2619,32 @@
         </div>
       </div>
       <div class="review-list" id="reviewList" aria-label="Links found"></div>
+      <details class="review-condition">
+        <summary>Alert me when <span>Optional, for every new monitor in these requests</span></summary>
+        <div class="review-condition-body">
+          <textarea class="field-input" id="reviewCondition" rows="2" maxlength="500" placeholder="A new XML user guide is added, or a guide&#8217;s effective date changes"></textarea>
+          <label class="field-check"><input type="checkbox" id="reviewConditionOnly"> Alert only when it is met</label>
+          <p class="field-help">Every change is still detected and saved. The AI says whether each change meets this; with the box ticked, changes that don&#8217;t are recorded without an alert. You can change it later from each page.</p>
+        </div>
+      </details>
       <div class="add-foot review-foot">
         <button class="btn" type="button" id="reviewBack">Back</button>
         <div class="review-summary" id="reviewSummary" aria-live="polite"></div>
         <div class="review-requests" id="reviewRequests"></div>
       </div>
     </section>
+  </dialog>
+  <dialog class="modal" id="conditionDialog" aria-labelledby="conditionHeading">
+    <div class="modal-head"><div><h2 id="conditionHeading">Alert me when…</h2><p id="conditionTarget"></p></div><button class="btn btn-quiet" id="closeCondition" type="button" aria-label="Close">Close</button></div>
+    <form class="modal-body" id="conditionForm" novalidate>
+      <label class="field-label-text" for="conditionText">Condition <span>Plain language, up to 500 characters</span></label>
+      <textarea class="field-input" id="conditionText" rows="3" maxlength="500" placeholder="A new XML user guide is added, or a guide&#8217;s effective date changes"></textarea>
+      <div class="condition-suggestions" id="conditionSuggestions" aria-label="Starting points"></div>
+      <label class="field-check"><input type="checkbox" id="conditionOnly"> Alert only when it is met</label>
+      <p class="field-help">Every change is still detected and saved with its evidence. The AI states whether each change meets this condition. Ticked: changes that don&#8217;t meet it are recorded without an alert. Unticked: they still alert when the AI judges them relevant. If the AI is unavailable, the change alerts as before.</p>
+      <p class="modal-info">The dashboard cannot change monitoring directly. Continue opens a prefilled GitHub request; the owner-only workflow applies it.</p>
+      <div class="modal-actions"><button class="btn btn-quiet" id="conditionClear" type="button">Remove condition</button><button class="btn" id="cancelCondition" type="button">Cancel</button><button class="btn btn-primary" type="submit">Continue on GitHub</button></div>
+    </form>
   </dialog>
   <dialog class="modal" id="deleteMonitorDialog" aria-labelledby="deleteMonitorHeading">
     <div class="modal-head"><div><h2 id="deleteMonitorHeading">Stop monitoring this page?</h2><p id="deleteMonitorExplanation">The page will no longer be checked. Existing reports and saved evidence are kept.</p></div><button class="btn btn-quiet" id="closeDeleteMonitor" type="button" aria-label="Close">Close</button></div>

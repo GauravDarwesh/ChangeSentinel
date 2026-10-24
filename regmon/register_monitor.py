@@ -463,6 +463,10 @@ def _existing_source_for_request(
 def register_bulk_request(event: dict, config_path: Path, repository: str) -> dict:
     """Register a set of exact-page URLs atomically; invalid/conflicting rows write nothing."""
     requests_to_add = bulk_requests_from_issue(event, repository)
+    # One optional alert condition for every link in the request (the review
+    # step of Add a link sets it once for the whole batch).
+    bulk_body = str(((event.get("issue") or {}).get("body")) or "").split("BULK_DATA_JSON:", 1)[0]
+    alert_condition, alert_only = _alert_condition_fields(bulk_body)
     config = json.loads(config_path.read_text(encoding="utf-8"))
     sources = config.setdefault("sources", [])
     if not isinstance(sources, list):
@@ -549,9 +553,27 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
         if source_id not in source_ids:
             source_ids.append(source_id)
 
+    conditions_changed = 0
+    conditions_skipped = 0
+    if alert_condition is not None or alert_only is not None:
+        by_id = {str(source.get("id")): source for source in sources}
+        for item in items:
+            target = by_id.get(str(item["source_id"]))
+            seeds = [str(seed) for seed in ((target or {}).get("seed_urls") or [])]
+            try:
+                own_page = len(seeds) == 1 and canonicalize_url(seeds[0]) == item["url"]
+            except (TypeError, ValueError):
+                own_page = False
+            if target is None or not own_page:
+                # A page inside a multi-page source keeps that source's settings.
+                conditions_skipped += 1
+                continue
+            if _apply_alert_condition(target, alert_condition, alert_only):
+                conditions_changed += 1
+
     created_count = sum(1 for item in items if item["created"])
     existing_count = len(items) - created_count
-    if created_count:
+    if created_count or conditions_changed:
         config_path.write_text(
             json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
         )
@@ -569,7 +591,10 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
         "message": (
             f"Processed {len(items)} unique links: {created_count} new "
             f"and {existing_count} already configured."
+            + (f" Alert condition updated on {conditions_changed}." if conditions_changed else "")
+            + (f" {conditions_skipped} belong to multi-page sources and kept their settings." if conditions_skipped else "")
         ),
+        "alert_conditions_changed": conditions_changed,
     }
 
 def _scout_discovery_flag(body: str) -> bool:

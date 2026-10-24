@@ -58,7 +58,8 @@ const DATA_PATHS = {
   calendar: "data/calendar.json",
   lineage: "config/lineage.json",
   reviews: "data/reviews/ledger.json",
-  regulators: "config/regulators.json"
+  regulators: "config/regulators.json",
+  health: "data/health.json"
 };
 // Load core state from the same origin as GitHub Pages first. Keep the raw GitHub
 // URL as a fallback so older deployments can still recover while Pages publishes.
@@ -75,12 +76,13 @@ const ENDPOINTS = {
   calendar: new URL("./data/calendar.json", document.baseURI).href,
   lineage: new URL("./config/lineage.json", document.baseURI).href,
   reviews: new URL("./data/reviews/ledger.json", document.baseURI).href,
-  regulators: new URL("./config/regulators.json", document.baseURI).href
+  regulators: new URL("./config/regulators.json", document.baseURI).href,
+  health: new URL("./data/health.json", document.baseURI).href
 };
 // The calendar feed is served from Pages so calendar apps can subscribe to it.
 const CALENDAR_FEED = new URL("./data/calendar.ics", document.baseURI).href;
-const VIEWS = ["overview", "changes", "monitors", "runs", "notifications", "scout", "calendar", "askSentinel"];
-const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", notifications: "alerts", scout: "scout", calendar: "cadence", askSentinel: "ask-sentinel" };
+const VIEWS = ["overview", "changes", "monitors", "runs", "health", "notifications", "scout", "calendar", "askSentinel"];
+const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", health: "health", notifications: "alerts", scout: "scout", calendar: "cadence", askSentinel: "ask-sentinel" };
 const $ = id => document.getElementById(id);
 const esc = L.esc;
 // Snapshot text, saved HTML and evidence are cached for the session, but only
@@ -109,7 +111,7 @@ function boundedCache(limit) {
 const state = {
   report: {}, inventory: {}, history: [], notifications: {}, outbox: {}, config: {},
   items: [], view: "overview", loaded: false,
-  selectedId: "", selectedChangeId: "", selectedRunId: "", selectedNotificationId: "",
+  selectedId: "", selectedChangeId: "", selectedRunId: "", selectedNotificationId: "", selectedHealthKey: "", health: null, pendingCondition: null,
   mobileDetail: false,
   filter: "ALL", changeFilter: "ALL", detailTab: "", diffMode: "compare", snapshotMode: "preview",
   docInfo: {}, titleQueue: [], titleWorkers: 0, titleTimer: null,
@@ -215,6 +217,9 @@ function isValidDataAssetShape(key, value) {
       return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.mappings);
     case "reviews":
       return isPlainObject(value) && value.schema_version === 1 && isPlainObject(value.reviews) && Array.isArray(value.log);
+    // Fleet health is rebuilt by every scan; before the first one it is absent.
+    case "health":
+      return isPlainObject(value) && value.schema_version === 1 && isPlainObject(value.totals) && Array.isArray(value.monitors);
     // Who publishes each host; without it pages are grouped by their domain.
     case "regulators":
       return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.regulators);
@@ -692,6 +697,7 @@ function overviewStatement(totals, recentChanges) {
   return subject + changes + problems;
 }
 function renderOverview() {
+  renderOverviewHealth();
   const totals = statusTotals();
   const sources = activeSources();
   const recentChanges = changeLogEntries().filter(entry =>
@@ -731,6 +737,19 @@ function renderOverview() {
   renderLatestPreview();
 }
 // Deadlines and effective dates read from recorded changes, soonest first.
+function renderOverviewHealth() {
+  const line = $("overviewHealth");
+  if (!line) return;
+  if (!state.health) { line.textContent = "Health appears after the next scan."; return; }
+  const totals = healthTotals();
+  const week = state.health.last_7_days || {};
+  const parts = [healthNumber(totals.healthy) + " of " + healthNumber(totals.monitors) + " monitors healthy"];
+  if (totals.failing) parts.push("<strong>" + esc(plural(totals.failing, "failing", "failing")) + "</strong>");
+  if (totals.stale) parts.push(esc(totals.stale + " not scanned recently"));
+  if (totals.inactive) parts.push(esc(totals.inactive + " quiet for weeks"));
+  parts.push(esc(healthPercent(week.success_rate) + " of checks succeeded this week"));
+  line.innerHTML = parts.map((part, index) => index === 0 ? esc(part) : part).join(" · ") + ".";
+}
 function renderUpcomingDates() {
   const today = L.localIsoDate();
   const dates = L.upcomingDates(state.calendar, today, 5);
@@ -1633,6 +1652,7 @@ function renderNotifications() {
   $("notificationPendingCount").textContent = pending.length ? "(" + pending.length + ")" : "";
   $("notificationSentCount").textContent = sent.length ? "(" + sent.length + ")" : "";
   $("notificationCounts").textContent = pending.length ? pending.length + " waiting" : "Nothing waiting";
+  renderChannelBar();
 
   $("notificationPendingItems").innerHTML = pending.length ? pending.map(item =>
     '<button class="row" type="button" data-select-notification="' + esc(item.eventId) + '"' + (item.eventId === state.selectedNotificationId ? ' aria-selected="true"' : "") + ">" +
@@ -1661,6 +1681,7 @@ function renderLists() {
   renderChangeRoute();
   renderMonitorList();
   renderRuns();
+  renderHealth();
   renderNotifications();
   renderScout();
   renderCadenceView();
@@ -1670,6 +1691,12 @@ function renderNavCounts() {
   const changes = changeLogEntries().filter(entry => CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0).length;
   $("navChangeCount").textContent = changes;
   $("navMonitorCount").textContent = state.items.length;
+  const healthCount = $("navHealthCount");
+  if (healthCount) {
+    const failing = healthTotals().failing || 0;
+    healthCount.textContent = failing ? String(failing) : "";
+    healthCount.classList.toggle("is-alert", failing > 0);
+  }
   const toReview = scoutBuckets().REVIEW.length;
   $("navScoutCount").textContent = toReview ? toReview : "";
   $("navScoutCount").classList.toggle("is-fresh", toReview > 0);
@@ -2025,10 +2052,12 @@ function renderDetailHeader(item) {
   const savedFileLabel = filePath && item.extraction_type === "pdf" ? "Saved PDF" : filePath && item.extraction_type === "zip" ? "Saved ZIP" : "Saved file";
   const subtitle = itemSubtitle(item);
   const meta = '<span class="tag tone-' + esc(status.tone) + '">' + esc(status.label) + "</span>" +
+    (source && source.alert_condition ? '<span class="tag" title="' + esc(conditionSummary(source)) + '">' + esc(source.alert_only_on_condition ? "Alerts only when: " : "Alert me when: ") + esc(String(source.alert_condition).length > 60 ? String(source.alert_condition).slice(0, 59) + "\u2026" : String(source.alert_condition)) + "</span>" : "") +
     "<span>Checked " + esc(relativeTime(item.last_checked).toLowerCase()) + "</span>" + urlMeta(item.canonical_url);
   const actions = externalLink(item.canonical_url, "Open live page") +
     (snapshotPath ? externalLink(REPO + "/blob/main/" + snapshotPath, savedFileLabel) : "") +
     (item.source_id ? '<button class="btn" type="button" data-run-scan="' + esc(item.source_id) + '" title="Scan this page\'s source now">Scan this source</button>' : "") +
+    (conditionEditable(source) ? '<button class="btn" type="button" data-edit-condition="' + esc(source.id) + '" title="Set what should raise an alert for this monitor">' + (source.alert_condition ? "Edit alert condition" : "Alert me when…") + "</button>" : "") +
     (item.source_id ? '<button class="btn btn-quiet" type="button" data-stop-monitor="' + esc(item.url_id) +
       '" data-stop-url="' + esc(item.canonical_url) + '" data-stop-source="' + esc(item.source_id) +
       '" data-stop-name="' + esc(itemTitle(item)) + '" title="Stop monitoring this URL">Stop monitoring</button>' : "");
@@ -2173,6 +2202,7 @@ function renderDetails(item) {
     ["ETag", item.etag || "Not supplied"], ["Last-Modified", item.last_modified || "Not supplied"],
     ["Compare only", source.include_selector || "Main content, detected automatically"],
     ["Ignore", (source.ignore_selectors || []).join(", ") || "Nothing"],
+    ["Alert me when", conditionSummary(source) || "No condition; AI relevance decides"],
     ["Fetch error", item.fetch_error || "None"], ["Extraction error", item.extraction_error || "None"],
     ["Text fingerprint (SHA-256)", item.normalized_hash || "Not available", true], ["Saved HTML fingerprint", item.html_hash || "Not available", true],
     ["Response fingerprint", item.raw_hash || "Not available", true],
@@ -2238,7 +2268,7 @@ function renderNotificationDetail() {
   if (!item) {
     pane.innerHTML = '<div class="detail-inner">' + emptyState(
       pending.length || sent.length ? "Select an alert" : "No alerts yet",
-      pending.length || sent.length ? "Choose an alert to see what was sent." : "Alerts are sent to your ntfy topic when a scan finds a change or a problem."
+      pending.length || sent.length ? "Choose an alert to see what was sent." : "Alerts go to ntfy, Slack, Teams or a webhook when a scan finds a change or a problem."
     ) + "</div>";
     return;
   }
@@ -2250,7 +2280,276 @@ function renderNotificationDetail() {
   pane.innerHTML = '<div class="detail-inner">' +
     detailHeading({ back: true, source: notificationKind(item.kind), title: item.topic || notificationKind(item.kind), meta, actions: externalLink(item.url, "Open page") }) +
     '<section class="sheet"><dl class="facts">' + fields.filter(([, value]) => value).map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") +
-    '<div><dt>Event ID</dt><dd class="is-code">' + esc(item.eventId) + "</dd></div></dl></section></div>";
+    '<div><dt>' + esc(item.queued ? "Delivered so far" : "Delivered to") + "</dt><dd>" + esc(deliveredChannels(item).map(channelLabel).join(", ") || (item.queued ? "Not yet" : "ntfy")) + "</dd></div>" +
+    (item.condition ? "<div><dt>Alert condition</dt><dd>" + esc(item.condition) + "</dd></div>" : "") +
+    '<div><dt>Event ID</dt><dd class="is-code">' + esc(item.eventId) + "</dd></div></dl>" +
+    (item.queued && deliveredChannels(item).length ? '<p class="note-strip">Already delivered to ' + esc(deliveredChannels(item).map(channelLabel).join(", ")) + ". The next run sends it only to the channels that missed it.</p>" : "") +
+    "</section></div>";
+}
+
+/* ================= Health: is every monitor still working? =================
+ * data/health.json is rebuilt by every scan from committed state (regmon/health.py).
+ * The dashboard only reads it; before the first scan that writes it the view
+ * explains that it is coming.
+ */
+const HEALTH_STATUS = {
+  failing: { label: "Failing", tone: "problem", order: 0 },
+  stale: { label: "Not scanned recently", tone: "pending", order: 1 },
+  inactive: { label: "Quiet for weeks", tone: "pending", order: 2 },
+  healthy: { label: "Healthy", tone: "ok", order: 3 }
+};
+function healthTotals() { return state.health && isPlainObject(state.health.totals) ? state.health.totals : {}; }
+function healthMonitors() { return state.health && Array.isArray(state.health.monitors) ? state.health.monitors : []; }
+function healthKeys() { return ["fleet"].concat(healthMonitors().map(monitor => String(monitor.source_id))); }
+function healthYearFlag(sourceId) {
+  const flags = state.health && Array.isArray(state.health.year_bound) ? state.health.year_bound : [];
+  return flags.find(flag => String(flag.source_id) === String(sourceId)) || null;
+}
+function healthFailures(sourceId) {
+  const rows = state.health && Array.isArray(state.health.failing) ? state.health.failing : [];
+  return rows.filter(row => String(row.source_id) === String(sourceId));
+}
+function healthPercent(value) {
+  return typeof value === "number" && isFinite(value) ? (Math.round(value * 1000) / 10).toLocaleString() + "%" : "—";
+}
+function healthNumber(value) { return typeof value === "number" && isFinite(value) ? value.toLocaleString() : "0"; }
+// Days are counted from the last content change, or from when monitoring
+// started for a monitor that has never changed.
+function healthDays(monitor) {
+  const days = monitor.days_without_change;
+  if (!monitor.last_change) return typeof days === "number" && days > 0 ? "No change since it was added " + plural(days, "day", "days") + " ago" : "No change since it was added";
+  return typeof days === "number" ? (days === 0 ? "Changed today" : "Last changed " + plural(days, "day", "days") + " ago") : "Last change not recorded";
+}
+function healthRow(monitor) {
+  const status = HEALTH_STATUS[monitor.status] || HEALTH_STATUS.healthy;
+  const key = String(monitor.source_id);
+  const failures = monitor.status === "failing" ? healthFailures(key) : [];
+  const summary = monitor.status === "failing" && failures[0]
+    ? failures[0].error
+    : monitor.status === "stale" ? "Last saved scan " + (monitor.last_scan ? relativeTime(monitor.last_scan).toLowerCase() : "not recorded")
+    : healthDays(monitor);
+  const year = healthYearFlag(key);
+  return '<button class="row" type="button" data-select-health="' + esc(key) + '"' + (key === state.selectedHealthKey ? ' aria-selected="true"' : "") + ">" +
+    '<span class="row-mark tone-' + status.tone + '" aria-hidden="true"></span>' +
+    '<span class="row-title">' + esc(monitor.name || key) + "</span>" +
+    '<span class="row-time">' + esc(plural(Number(monitor.pages || 0), "page", "pages")) + "</span>" +
+    '<span class="row-summary">' + esc(summary) + "</span>" +
+    ((year || monitor.alert_condition) ? '<span class="row-sub">' + (year ? '<span class="tag">Year ' + esc(year.years.join(", ")) + " in address</span>" : "") +
+      (monitor.alert_condition ? '<span class="tag">Alert condition</span>' : "") + "</span>" : "") +
+    "</button>";
+}
+function renderHealth() {
+  const list = $("healthItems");
+  if (!list) return;
+  const totals = healthTotals();
+  $("healthCount").textContent = state.health ? (totals.failing ? totals.failing + " failing" : "All monitors working") : "";
+  if (!state.health) {
+    list.innerHTML = emptyState("Health appears after the next scan", "Every scan writes data/health.json. Once the first one has run, failing, stale and quiet monitors are listed here.");
+    list.dataset.rendered = "";
+    return;
+  }
+  const fleetSelected = state.selectedHealthKey === "fleet" || !state.selectedHealthKey;
+  const week = state.health.last_7_days || {};
+  let html = '<button class="row" type="button" data-select-health="fleet"' + (fleetSelected ? ' aria-selected="true"' : "") + ">" +
+    '<span class="row-mark tone-' + (totals.failing ? "problem" : "ok") + '" aria-hidden="true"></span>' +
+    '<span class="row-title">All monitors</span><span class="row-time">' + esc(healthPercent(week.success_rate)) + "</span>" +
+    '<span class="row-summary">' + esc(healthNumber(totals.monitors) + " monitors, " + healthNumber(week.checks) + " checks and " + healthNumber(week.alerts_sent) + " alerts in 7 days") + "</span></button>";
+  const groups = {};
+  healthMonitors().forEach(monitor => { (groups[monitor.status] = groups[monitor.status] || []).push(monitor); });
+  Object.keys(HEALTH_STATUS).sort((a, b) => HEALTH_STATUS[a].order - HEALTH_STATUS[b].order).forEach(status => {
+    const rows = (groups[status] || []).slice().sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+    if (!rows.length) return;
+    html += '<div class="list-group-label">' + esc(HEALTH_STATUS[status].label) + " <span>(" + rows.length + ")</span></div>" + rows.map(healthRow).join("");
+  });
+  // Lists are redrawn while page titles load; an unchanged list is left in
+  // place so its rows do not replay their entrance animation.
+  if (list.dataset.rendered !== html) { list.innerHTML = html; list.dataset.rendered = html; }
+}
+function healthChart(days) {
+  if (!Array.isArray(days) || !days.length) return "";
+  const width = 640, height = 150, pad = 22, gap = 4;
+  const max = Math.max(1, ...days.map(day => Number(day.checks || 0)));
+  const bar = (width - pad * 2 - gap * (days.length - 1)) / days.length;
+  const y = value => height - pad - (value / max) * (height - pad * 2);
+  const bars = days.map((day, index) => {
+    const x = pad + index * (bar + gap);
+    const checks = Number(day.checks || 0), failed = Number(day.failed_checks || 0), changes = Number(day.changes || 0), alerts = Number(day.alerts_sent || 0);
+    const label = shortDate(day.date + "T12:00:00Z") + ": " + plural(checks, "check", "checks") + ", " + plural(failed, "failure", "failures") + ", " + plural(changes, "change", "changes") + ", " + plural(alerts, "alert", "alerts");
+    return "<g><title>" + esc(label) + "</title>" +
+      '<rect class="hc-bar" x="' + x.toFixed(1) + '" y="' + y(checks).toFixed(1) + '" width="' + bar.toFixed(1) + '" height="' + (height - pad - y(checks)).toFixed(1) + '" rx="2"/>' +
+      (failed ? '<rect class="hc-fail" x="' + x.toFixed(1) + '" y="' + y(failed).toFixed(1) + '" width="' + bar.toFixed(1) + '" height="' + (height - pad - y(failed)).toFixed(1) + '" rx="2"/>' : "") +
+      (changes ? '<circle class="hc-change" cx="' + (x + bar / 2).toFixed(1) + '" cy="' + (pad - 8) + '" r="' + Math.min(6, 2 + Math.log2(1 + changes)).toFixed(1) + '"/>' : "") +
+      (index % 2 === days.length % 2 ? "" : '<text class="hc-day" x="' + (x + bar / 2).toFixed(1) + '" y="' + (height - 6) + '">' + esc(String(day.date).slice(8)) + "</text>") +
+      "</g>";
+  }).join("");
+  return '<figure class="health-chart"><svg viewBox="0 0 ' + width + " " + height + '" role="img" aria-label="Checks per day for the last ' + days.length + ' days">' +
+    '<line class="hc-axis" x1="' + pad + '" x2="' + (width - pad) + '" y1="' + (height - pad) + '" y2="' + (height - pad) + '"/>' + bars + "</svg>" +
+    '<figcaption><span><i class="hc-key-bar"></i>Checks</span><span><i class="hc-key-fail"></i>Failed checks</span><span><i class="hc-key-change"></i>Content changes</span></figcaption></figure>';
+}
+function healthTiles(window, label) {
+  const w = window || {};
+  const tiles = [
+    ["Checks", healthNumber(w.checks), plural(Number(w.source_runs || 0), "monitor run", "monitor runs")],
+    ["Success rate", healthPercent(w.success_rate), healthNumber(w.failed_checks) + " failed"],
+    ["Content changes", healthNumber(w.changes), "Changed or removed pages"],
+    ["Alerts sent", healthNumber(w.alerts_sent), "Test alerts excluded"]
+  ];
+  return '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">' + esc(label) + '</h3></div><div class="health-tiles">' +
+    tiles.map(([name, value, note]) => '<div class="health-tile"><div class="health-tile-label">' + esc(name) + '</div><div class="health-tile-value">' + esc(value) + '</div><div class="health-tile-note">' + esc(note) + "</div></div>").join("") +
+    "</div></section>";
+}
+function itemForSource(sourceId) { return state.items.find(item => item.source_id === sourceId) || null; }
+function renderHealthDetail() {
+  state.detailKeys.health = detailRenderKey("health");
+  const pane = $("healthDetail");
+  if (!pane) return;
+  if (!state.health) {
+    pane.innerHTML = '<div class="detail-inner">' + emptyState("No health data yet", "The next scan writes data/health.json. Nothing about monitoring changes; this view only reads it.") + "</div>";
+    return;
+  }
+  const health = state.health;
+  const totals = healthTotals();
+  const key = state.selectedHealthKey || "fleet";
+  if (key === "fleet") {
+    const facts = [
+      ["Monitors", healthNumber(totals.monitors)], ["Pages and documents", healthNumber(totals.pages)],
+      ["Healthy", healthNumber(totals.healthy)], ["Failing", healthNumber(totals.failing)],
+      ["Not scanned recently", healthNumber(totals.stale)], ["Quiet for " + ((health.thresholds || {}).inactive_after_days || 45) + "+ days", healthNumber(totals.inactive)],
+      ["Year in the address", healthNumber(totals.year_bound)], ["With an alert condition", healthNumber(totals.with_alert_condition)]
+    ];
+    const failing = Array.isArray(health.failing) ? health.failing : [];
+    pane.innerHTML = '<div class="detail-inner">' +
+      detailHeading({ back: true, source: "Fleet health", title: "All monitors", meta: "<span>Updated " + esc(relativeTime(health.generated_at).toLowerCase()) + "</span>" }) +
+      healthTiles(health.last_7_days, "Last 7 days") +
+      '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Daily activity</h3><span class="sheet-note">Last ' + esc(String((health.daily || []).length)) + " days, UTC</span></div>" + healthChart(health.daily) + "</section>" +
+      healthTiles(health.last_30_days, "Last 30 days") +
+      '<section class="sheet"><dl class="facts">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl></section>" +
+      (failing.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Failing now</h3></div>' + failing.map(row =>
+        '<button class="row" type="button" data-select-health="' + esc(row.source_id) + '"><span class="row-mark tone-problem" aria-hidden="true"></span>' +
+        '<span class="row-title">' + esc(row.name || row.source_id) + '</span><span class="row-time">' + esc(row.since ? relativeTime(row.since) : "") + "</span>" +
+        '<span class="row-summary">' + esc(row.error || "") + "</span></button>").join("") + "</section>" : "") +
+      '<p class="note-strip">An error alerts only after it has failed ' + esc(plural(Number((state.config.defaults || {}).error_alert_after_runs || 1), "scan", "consecutive scans")) +
+      ". Health is rebuilt from the committed scan history after every scan and never changes what is monitored.</p></div>";
+    return;
+  }
+  const monitor = healthMonitors().find(candidate => String(candidate.source_id) === key);
+  if (!monitor) { pane.innerHTML = '<div class="detail-inner">' + emptyState("Select a monitor", "Choose a monitor to see its health.") + "</div>"; return; }
+  const status = HEALTH_STATUS[monitor.status] || HEALTH_STATUS.healthy;
+  const source = configuredSources().find(candidate => candidate.id === key) || {};
+  const item = itemForSource(key);
+  const year = healthYearFlag(key);
+  const failures = healthFailures(key);
+  const facts = [
+    ["Status", status.label], ["Pages and documents", healthNumber(monitor.pages)],
+    ["Last saved scan", monitor.last_scan ? fmt(monitor.last_scan) : "Not recorded"],
+    ["Last content change", monitor.last_change ? fmt(monitor.last_change) : "None recorded"],
+    ["Quiet for", healthDays(monitor)],
+    ["Checks in 7 days", healthNumber(monitor.checks_7d)], ["Failed checks in 7 days", healthNumber(monitor.failures_7d)],
+    ["Alert me when", source.alert_condition ? source.alert_condition + (source.alert_only_on_condition ? " (alerts only when met)" : "") : "No condition; AI relevance decides"]
+  ];
+  const actions = (item ? '<button class="btn" type="button" data-monitor-id="' + esc(item.url_id) + '">Open page</button>' : "") +
+    '<button class="btn" type="button" data-run-scan="' + esc(key) + '">Scan this source</button>' +
+    (conditionEditable(source) ? '<button class="btn" type="button" data-edit-condition="' + esc(key) + '">' + (source.alert_condition ? "Edit alert condition" : "Add alert condition") + "</button>" : "");
+  const failureSheet = failures.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">What is failing</h3></div><dl class="facts">' + failures.map(row =>
+    "<div><dt>" + esc(row.kind === "FETCH_ERROR" ? "Couldn't fetch" : "Couldn't read content") + '</dt><dd>' + esc(row.error || "") +
+    '<br><span class="health-sub">' + esc((row.since ? "Since " + fmt(row.since) : "") + (row.runs ? " · " + plural(row.runs, "failing scan", "failing scans") : "")) + "</span>" +
+    (safeHttpUrl(row.url) ? '<br><span class="health-sub is-code">' + esc(displayUrl(row.url)) + "</span>" : "") + "</dd></div>").join("") +
+    '</dl><p class="note-strip">The last good copy is kept as the baseline while this lasts.</p></section>' : "";
+  const yearSheet = year ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Year in the address</h3></div><p class="note-strip">This address carries ' +
+    esc(year.years.join(", ")) + " and has not changed for " + esc(typeof year.days_without_change === "number" ? plural(year.days_without_change, "day", "days") : "a while") +
+    ". Regulators often publish the next year's list at a new address" + (healthNextYearUrl(year.url, year.years) ? ", for example <span class=\"is-code\">" + esc(displayUrl(healthNextYearUrl(year.url, year.years))) + "</span>" : "") +
+    ". Check the regulator's site and add the new page if it exists.</p></section>" : "";
+  pane.innerHTML = '<div class="detail-inner">' +
+    detailHeading({ back: true, source: "Monitor health", title: monitor.name || key, meta: '<span class="tag tone-' + status.tone + '">' + esc(status.label) + "</span><span>" + esc(monitor.regulator || "") + "</span>", actions }) +
+    failureSheet + yearSheet +
+    '<section class="sheet"><dl class="facts">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl></section></div>";
+}
+function healthNextYearUrl(url, years) {
+  const year = Math.max(...(years || []));
+  if (!url || !isFinite(year)) return "";
+  const next = String(new Date().getUTCFullYear());
+  return String(url).replace(new RegExp("(^|[^0-9])" + year + "(?![0-9])", "g"), "$1" + next);
+}
+
+/* ================= Alert conditions ("Alert me when …") =================
+ * Stored per monitor in config/sources.json. The dashboard cannot write config:
+ * editing opens a prefilled request that the owner-only workflow applies.
+ */
+function conditionEditable(source) {
+  if (!source || !source.id || source.active === false) return false;
+  const seeds = Array.isArray(source.seed_urls) ? source.seed_urls : [];
+  const depth = Number(source.crawl_depth == null ? 0 : source.crawl_depth);
+  return seeds.length === 1 && depth >= 0 && depth <= 3;
+}
+function conditionSummary(source) {
+  if (!source || !source.alert_condition) return "";
+  return source.alert_condition + (source.alert_only_on_condition ? " (alerts only when met)" : "");
+}
+function openConditionDialog(sourceId) {
+  const source = configuredSources().find(candidate => candidate.id === sourceId);
+  if (!conditionEditable(source)) { showToast("Alert conditions can be set on monitors that watch one page."); return; }
+  state.pendingCondition = sourceId;
+  let host = "";
+  try { host = new URL(source.seed_urls[0]).hostname.replace(/^www\./, ""); } catch (_) {}
+  $("conditionTarget").textContent = (source.name || source.id) + (host ? " · " + host : "");
+  $("conditionTarget").title = source.seed_urls[0];
+  $("conditionText").value = source.alert_condition || "";
+  $("conditionOnly").checked = !!source.alert_only_on_condition;
+  $("conditionClear").hidden = !source.alert_condition;
+  renderConditionSuggestions(source);
+  $("conditionDialog").showModal();
+}
+// Starting points shaped like the requests regulatory reporting teams make;
+// the owner edits or replaces them. Nothing is generated from the page itself.
+function conditionSuggestions(source) {
+  const url = String((source.seed_urls || [])[0] || "").toLowerCase();
+  const list = [];
+  if (/\.(pdf|docx?|xlsx?|zip)(\?|$)/.test(url)) list.push("A field, schedule, instruction or validation rule in this document changes", "The effective date or reporting period changes");
+  else list.push("A new document, form or user guide is added to this page", "An existing document is replaced with a new version", "A reporting deadline or effective date changes");
+  list.push("A requirement, threshold or reporting scope changes");
+  return list;
+}
+function renderConditionSuggestions(source) {
+  $("conditionSuggestions").innerHTML = conditionSuggestions(source).map(text => '<button class="chip" type="button" data-condition-suggestion="' + esc(text) + '">' + esc(text) + "</button>").join("");
+}
+function submitCondition(clear) {
+  const source = configuredSources().find(candidate => candidate.id === state.pendingCondition);
+  if (!conditionEditable(source)) { $("conditionDialog").close(); return; }
+  const condition = clear ? "" : $("conditionText").value.replace(/\s+/g, " ").trim().slice(0, 500);
+  const only = !clear && $("conditionOnly").checked;
+  if (!clear && !condition) { showToast("Describe what should raise an alert, or use Remove condition."); return; }
+  const target = makeGitHubIssueUrl(source.seed_urls[0], source.name || "", source.include_selector || "", (source.ignore_selectors || []).filter(Boolean),
+    Number(source.crawl_depth || 0), false, { condition, only, clear: !!clear });
+  $("conditionDialog").close();
+  openGitHubRequest(target, clear
+    ? "Submit the prefilled request on GitHub to remove this monitor's alert condition."
+    : "Submit the prefilled request on GitHub. The condition applies from the next scan.");
+}
+
+/* ================= Alert channels ================= */
+const CHANNEL_LABELS = { ntfy: "ntfy", slack: "Slack", teams: "Microsoft Teams", webhook: "Webhook" };
+function channelLabel(name) { return CHANNEL_LABELS[name] || String(name || ""); }
+// Webhook URLs are GitHub secrets the dashboard never sees, so the channels in
+// use are read from the delivery ledger: what recent alerts were delivered to.
+function channelSummary() {
+  const recent = Object.values(notificationMap(state.notifications, "sent_events"))
+    .filter(item => item && typeof item === "object" && item.kind !== "TEST")
+    .sort((a, b) => new Date(b.sent_at || 0) - new Date(a.sent_at || 0)).slice(0, 25);
+  const seen = new Set();
+  recent.forEach(item => (Array.isArray(item.channels) && item.channels.length ? item.channels : ["ntfy"]).forEach(name => seen.add(name)));
+  return Array.from(seen).sort((a, b) => Object.keys(CHANNEL_LABELS).indexOf(a) - Object.keys(CHANNEL_LABELS).indexOf(b));
+}
+function deliveredChannels(item) {
+  if (item.queued) return isPlainObject(item.delivered_channels) ? Object.keys(item.delivered_channels) : [];
+  return Array.isArray(item.channels) && item.channels.length ? item.channels : ["ntfy"];
+}
+function renderChannelBar() {
+  const bar = $("channelBar");
+  if (!bar) return;
+  const channels = channelSummary();
+  bar.innerHTML = '<span class="channel-label">Delivering to</span>' +
+    (channels.length ? channels.map(name => '<span class="chip is-static">' + esc(channelLabel(name)) + "</span>").join("") : '<span class="channel-none">No delivery recorded yet</span>') +
+    '<button class="text-button" type="button" data-channel-guide>Add Slack, Teams or a webhook</button>';
 }
 
 /* ================= Scout: new pages worth monitoring =================
@@ -3836,11 +4135,12 @@ function downloadCadencePlan() {
 /* ================= Navigation ================= */
 
 function viewSection(view) {
-  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", notifications: "notificationsView", scout: "scoutView", calendar: "calendarView", askSentinel: "askSentinelView" }[view] || "overviewView";
+  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", health: "healthView", notifications: "notificationsView", scout: "scoutView", calendar: "calendarView", askSentinel: "askSentinelView" }[view] || "overviewView";
 }
 function hasSelection(view) {
   return view === "changes" ? !!state.selectedChangeId : view === "monitors" ? !!state.selectedId
     : view === "runs" ? !!state.selectedRunId : view === "notifications" ? !!state.selectedNotificationId
+    : view === "health" ? !!state.selectedHealthKey
     : view === "scout" ? !!state.selectedScoutKey : false;
 }
 function renderViews() {
@@ -3856,7 +4156,7 @@ function renderViews() {
   const askLauncher = $("askSentinelLaunch");
   askLauncher.classList.toggle("active", state.view === "askSentinel");
   askLauncher.setAttribute("aria-current", state.view === "askSentinel" ? "page" : "false");
-  const titles = { overview: "Overview", changes: "Changes", monitors: "Pages", runs: "Runs", notifications: "Alerts", scout: "Scout", calendar: "Cadence", askSentinel: "Ask Sentinel" };
+  const titles = { overview: "Overview", changes: "Changes", monitors: "Pages", runs: "Runs", health: "Health", notifications: "Alerts", scout: "Scout", calendar: "Cadence", askSentinel: "Ask Sentinel" };
   document.title = titles[state.view] + " | ChangeSentinel";
 }
 // On wide screens the first row is selected automatically, so opening a view
@@ -3875,6 +4175,7 @@ function ensureSelection(view) {
   if (view === "runs" && !state.history.some(run => runKey(run) === state.selectedRunId)) {
     state.selectedRunId = state.history[0] ? runKey(state.history[0]) : "";
   }
+  if (view === "health" && !healthKeys().includes(state.selectedHealthKey)) state.selectedHealthKey = "fleet";
   if (view === "notifications") {
     const { pending, sent } = notificationLists();
     if (!pending.concat(sent).some(item => item.eventId === state.selectedNotificationId)) {
@@ -3909,8 +4210,9 @@ function detailRenderKey(view) {
     if (view === "notifications") {
       const { pending, sent } = notificationLists();
       const item = pending.concat(sent).find(candidate => candidate.eventId === state.selectedNotificationId);
-      return item ? JSON.stringify(item) : "none";
+      return item ? JSON.stringify([item, channelSummary()]) : "none";
     }
+    if (view === "health") return JSON.stringify([state.selectedHealthKey, state.assetSignatures.health || "", state.assetSignatures.config || ""]);
     if (view === "scout") {
       if (state.selectedScoutKey === "coverage") return "coverage|" + (state.assetSignatures.scoutLatest || "") + "|" + (state.assetSignatures.scoutConfig || "");
       const item = scoutSelected();
@@ -3933,17 +4235,19 @@ function renderDetailFor(view) {
   else if (view === "monitors") renderDetailBody();
   else if (view === "runs") renderRunDetail();
   else if (view === "notifications") renderNotificationDetail();
+  else if (view === "health") renderHealthDetail();
   else if (view === "scout") renderScoutDetail();
   else if (view === "calendar") { renderCadenceView(); refreshCadence(); }
 }
 function resetDetailScroll(view) {
-  const pane = { changes: "changeDetail", monitors: "detailView", runs: "runDetail", notifications: "notificationDetail", scout: "scoutDetail", calendar: "calendarView" }[view];
+  const pane = { changes: "changeDetail", monitors: "detailView", runs: "runDetail", health: "healthDetail", notifications: "notificationDetail", scout: "scoutDetail", calendar: "calendarView" }[view];
   if (pane && $(pane)) $(pane).scrollTop = 0;
   if (view === "overview") $("overviewView").scrollTop = 0;
 }
 function writeHash() {
   const id = state.view === "changes" ? state.selectedChangeId : state.view === "monitors" ? state.selectedId
     : state.view === "runs" ? state.selectedRunId : state.view === "notifications" ? state.selectedNotificationId
+    : state.view === "health" ? (state.selectedHealthKey === "fleet" ? "" : state.selectedHealthKey)
     : state.view === "scout" ? state.selectedScoutKey : "";
   const hash = "#" + (HASH_NAMES[state.view] || (state.view === "askSentinel" ? "ask-sentinel" : "overview")) + (id ? "/" + encodeURIComponent(id) : "");
   try { history.replaceState(null, "", state.view === "overview" ? location.pathname + location.search : hash); } catch (_) {}
@@ -3987,6 +4291,7 @@ function select(view, id, options) {
   }
   if (view === "runs") state.selectedRunId = id;
   if (view === "notifications") state.selectedNotificationId = id;
+  if (view === "health") state.selectedHealthKey = id;
   if (view === "scout") state.selectedScoutKey = id;
   state.view = view;
   state.mobileDetail = true;
@@ -4002,9 +4307,9 @@ function setSelected(id) { select("monitors", id); }
 /* ================= Data refresh ================= */
 
 // Review decisions arrive between scans, so the ledger is polled with the small files.
-const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "reviews", "regulators"];
+const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health"];
 const LARGE_ASSETS = ["inventory", "history", "scoutReview"];
-const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews", "regulators"]);
+const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health"]);
 const FULL_REFRESH_MS = 10 * 60 * 1000;
 function assetsSignature() {
   return SMALL_ASSETS.concat(LARGE_ASSETS).map(key => key + "=" + (state.assetSignatures[key] || "")).join("|");
@@ -4066,6 +4371,7 @@ async function loadDataOnce(showErrors) {
     state.lineage = values.lineage;
     state.reviews = values.reviews;
     state.regulators = values.regulators;
+    state.health = values.health;
     state.regulatorProfiles = null;
     state.items = makeItems();
     state.scoutMonitored = null;
@@ -4081,6 +4387,7 @@ async function loadDataOnce(showErrors) {
           if (route.view === "monitors" && state.items.some(item => item.url_id === route.id)) state.selectedId = route.id;
           if (route.view === "runs") state.selectedRunId = route.id;
           if (route.view === "notifications") state.selectedNotificationId = route.id;
+          if (route.view === "health") state.selectedHealthKey = route.id;
           if (route.view === "scout") {
             state.selectedScoutKey = route.id;
             // A deep link to a finding outside the default list opens the list that holds it.
@@ -5421,12 +5728,22 @@ function reviewToggleRange(key) {
   });
   a.anchor = key;
 }
+// One optional condition for every new monitor in the review step's requests.
+function reviewAlertCondition() {
+  const field = $("reviewCondition");
+  const condition = field ? field.value.replace(/\s+/g, " ").trim().slice(0, 500) : "";
+  const only = !!($("reviewConditionOnly") && $("reviewConditionOnly").checked);
+  if (only && !condition) { showToast("Describe the condition to alert on, or untick \u201cAlert only when it is met\u201d."); return null; }
+  return condition ? { condition, only } : {};
+}
 function reviewOpenBatch(index) {
   const a = state.add;
   const plan = addPlan();
   const batch = plan.prepared.batches[index];
   if (!batch) return renderReviewFoot(plan);
-  const target = makeBulkGitHubIssueUrl(batch);
+  const alert = reviewAlertCondition();
+  if (alert === null) return;
+  const target = makeBulkGitHubIssueUrl(batch, alert);
   if (target.length > MAX_BULK_REQUEST_URL_LENGTH) { showToast("This request is too long for GitHub; nothing was opened."); return; }
   const now = new Date().toISOString();
   batch.forEach(row => { a.opened[L.urlKey(row.url)] = now; });
@@ -5492,6 +5809,8 @@ function makeGitHubIssueUrl(url, name, includeSelector, ignoreSelectors, crawlDe
   // existing monitor's condition is left unchanged.
   if (alert && alert.condition) {
     bodyLines.push("Alert me when: " + alert.condition, "Alert only when condition met: " + (alert.only ? "yes" : "no"));
+  } else if (alert && alert.clear) {
+    bodyLines.push("Alert me when: ");
   }
   bodyLines.push("Include selector: " + (includeSelector || ""), "Ignore selectors:");
   if (ignoreSelectors.length) ignoreSelectors.forEach(selector => bodyLines.push("- " + selector));
@@ -5757,15 +6076,18 @@ async function readBulkFile(file) {
     }
   }
 }
-function makeBulkGitHubIssueUrl(rows) {
+function makeBulkGitHubIssueUrl(rows, alert) {
   const bodyLines = [
     BULK_REQUEST_MARKER, "",
-    "Please register the URLs listed below as ChangeSentinel monitors.", "",
+    "Please register the URLs listed below as ChangeSentinel monitors.", ""
+  ];
+  if (alert && alert.condition) bodyLines.push("Alert me when: " + alert.condition, "Alert only when condition met: " + (alert.only ? "yes" : "no"), "");
+  bodyLines.push(
     "BULK_DATA_JSON:",
     JSON.stringify(rows),
     "",
     "This request was created from the ChangeSentinel dashboard bulk upload."
-  ];
+  );
   const params = new URLSearchParams();
   params.set("title", "[ChangeSentinel] Add monitor bulk request");
   params.set("body", bodyLines.join("\n"));
@@ -6007,7 +6329,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -6076,6 +6398,9 @@ $("workspace").addEventListener("click", event => {
   if (data.selectChange) return select("changes", data.selectChange);
   if (data.monitorId) return select("monitors", data.monitorId);
   if (data.selectRun) return select("runs", data.selectRun);
+  if (data.selectHealth) return select("health", data.selectHealth);
+  if (data.editCondition) return openConditionDialog(data.editCondition);
+  if (data.channelGuide !== undefined) { const guide = $("channelGuide"); if (guide) { guide.open = true; guide.scrollIntoView({ block: "nearest" }); } return; }
   if (data.selectNotification) return select("notifications", data.selectNotification);
   if (data.go) return setView(data.go);
   if (data.openPage) return select("monitors", data.openPage, { tab: "changes" });
@@ -6523,6 +6848,16 @@ $("reviewBack").addEventListener("click", () => {
   if (a.origin === "explore" && a.page) addGoto("explore");
   else addGoto("start");
 });
+$("closeCondition").addEventListener("click", () => $("conditionDialog").close());
+$("cancelCondition").addEventListener("click", () => $("conditionDialog").close());
+$("conditionClear").addEventListener("click", () => submitCondition(true));
+$("conditionForm").addEventListener("submit", event => { event.preventDefault(); submitCondition(false); });
+$("conditionDialog").addEventListener("click", event => {
+  if (event.target === $("conditionDialog")) return $("conditionDialog").close();
+  const chip = event.target.closest("[data-condition-suggestion]");
+  if (chip) { $("conditionText").value = chip.dataset.conditionSuggestion; $("conditionText").focus(); }
+});
+if ($("channelSecretsLink")) $("channelSecretsLink").href = REPO + "/settings/secrets/actions";
 $("closeDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog").close());
 $("cancelDeleteMonitor").addEventListener("click", () => $("deleteMonitorDialog").close());
 $("deleteMonitorDialog").addEventListener("click", event => { if (event.target === $("deleteMonitorDialog")) $("deleteMonitorDialog").close(); });
