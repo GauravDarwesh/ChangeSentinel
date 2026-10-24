@@ -1,0 +1,33 @@
+{
+  "event_id": "8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93",
+  "event_type": "HTML_SOURCE_CHANGED",
+  "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+  "timestamp": "2026-10-24T04:19:05.675116+00:00",
+  "before": {
+    "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "5d79c4ad95f5eb4b5020a154a8326559bf372b87a31094ff4253c3354329390f",
+    "html_hash": "5d79c4ad95f5eb4b5020a154a8326559bf372b87a31094ff4253c3354329390f",
+    "html_comparison_hash": "5d79c4ad95f5eb4b5020a154a8326559bf372b87a31094ff4253c3354329390f",
+    "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
+    "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-5d79c4ad95f5eb4b5020a154a8326559bf372b87a31094ff4253c3354329390f.html",
+    "file_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "5934b36c7a859ba4ad08fd26776c05a31efc0bc05a29f4ed6335bfd5b4dc277f",
+    "html_hash": "5934b36c7a859ba4ad08fd26776c05a31efc0bc05a29f4ed6335bfd5b4dc277f",
+    "html_comparison_hash": "5934b36c7a859ba4ad08fd26776c05a31efc0bc05a29f4ed6335bfd5b4dc277f",
+    "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
+    "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-5934b36c7a859ba4ad08fd26776c05a31efc0bc05a29f4ed6335bfd5b4dc277f.html",
+    "file_snapshot_location": null
+  },
+  "diff": "",
+  "html_diff": "--- before\n+++ after\n@@ -23,9 +23,9 @@\n   <meta content=\"Office of the Superintendent of Financial Institutions\" name=\"dcterms.creator\"/>\n   <meta content=\"1. IntroductionOSFI has specified a return for the Basel Capital Adequacy Reporting (BCAR) data call. This return must be submitted to OSFI through the Tri-Agency Database System called RRS (Regulatory Reporting System). This document highlights the technical file layout and format for that submission file.BibliographyPlease note that the \u201cXX\u201d in the year denotes the start of the next fiscal reporting period.These files are available for download at:\" name=\"dcterms.description\"/>\n   <meta content=\"eng\" name=\"dcterms.language\" title=\"ISO639-2/T\"/>\n+  <meta content=\"2023-12-02\" name=\"dcterms.issued\" title=\"W3CDTF\"/>\n+  <meta content=\"2026-09-10\" name=\"dcterms.modified\" title=\"W3CDTF\"/>\n   <meta content=\"2\" name=\"dcterms.accessRights\"/>\n-  <meta content=\"2026-09-10\" name=\"dcterms.modified\" title=\"W3CDTF\"/>\n-  <meta content=\"2023-12-02\" name=\"dcterms.issued\" title=\"W3CDTF\"/>\n   <meta content=\"OSFI-BSIF_BSIF-OSFI\" name=\"dcterms.service\"/>\n   <meta content=\"Drupal 11 (https://www.drupal.org)\" name=\"Generator\"/>\n   <meta content=\"width\" name=\"MobileOptimized\"/>\n@@ -345,7 +345,7 @@\n    \u2705 views-view.html.twig\n -->\n       <!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/views/views-view.html.twig' -->\n-      <div class=\"bg-img parallax view view-site-section view-id-site_section view-display-id-block_1 js-view-dom-id-d12f3d45e827c8863588f4fc38db280f15c99ab09a43ab47c426b76d39ae19a7\" id=\"site_section-block_1\">\n+      <div class=\"bg-img parallax view view-site-section view-id-site_section view-display-id-block_1 js-view-dom-id-f34c6fb9524054ced80bc1972e95018c5e1bf74b5f6d09a9a1911359e4cc0aa3\" id=\"site_section-block_1\">\n        <div class=\"view-content\">\n         <!-- THEME DEBUG -->\n         <!-- THEME HOOK: 'views_view_unformatted' -->\n@@ -1618,7 +1618,7 @@\n    \u2705 input.html.twig\n -->\n              <!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->\n-             <input data-drupal-selector=\"form-acxg2bibp9gcsk6n9hioq-t9ljq564rbqehep0p4aqg\" name=\"form_build_id\" type=\"hidden\" value=\"form-ACXG2BiBP9GCsk6N9hioq-T9LjQ564RbQEhep0P4AQg\"/>\n+             <input data-drupal-selector=\"form-m-yuflcazdon-odyhpwmohufxrryd2p34c-jkkxbyfg\" name=\"form_build_id\" type=\"hidden\" value=\"form-m_YUflcAZDOn-OdYhpWmOHufxRryD2p34C_JkKXByfg\"/>\n              <!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->\n              <!-- THEME DEBUG -->\n              <!-- THEME HOOK: 'input__hidden' -->",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body."
+}
