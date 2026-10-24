@@ -2908,7 +2908,7 @@ function healthHero(health) {
   const pending = state.pendingScan ? pendingWords(state.pendingScan) : null;
   const scans = healthMonitors().map(m => new Date(m.last_scan).getTime()).filter(Number.isFinite);
   const lastScan = scans.length ? Math.max(...scans) : null;
-  const stat = (label, value, spark, note) => '<div class="hx-stat"><div class="hx-stat-label">' + esc(label) + '</div><div class="hx-stat-row"><span class="hx-stat-value num">' + esc(value) + "</span>" + spark + '</div><div class="hx-stat-note">' + esc(note) + "</div></div>";
+  const stat = (label, value, dial, note) => '<div class="hx-stat">' + dial + '<div class="hx-stat-label">' + esc(label) + '</div><span class="hx-stat-value num">' + esc(value) + '</span><div class="hx-stat-note">' + esc(note) + "</div></div>";
   // The same lit squares as the scan cycle bar: one per thirtieth of the
   // week's checks, red for the share that failed (at least one if any did).
   const segments = 30;
