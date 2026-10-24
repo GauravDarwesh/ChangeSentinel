@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261024T142955Z-32122afd",
-  "generated_at": "2026-10-24T14:34:05.726322+00:00",
+  "run_id": "20261024T154854Z-60bd2731",
+  "generated_at": "2026-10-24T15:53:43.632142+00:00",
   "sources": [
     {
       "id": "fed-reporting-forms-pilot",
@@ -1403,584 +1403,584 @@
   ],
   "source_runs": {
     "fed-reporting-forms-pilot": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:29:55.953454+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:48:54.195014+00:00",
+      "trigger": "scheduled"
     },
     "fed-reporting-forms-detail-pilot": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:29:56.706322+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:48:55.999393+00:00",
+      "trigger": "scheduled"
     },
     "manual-f1df3c7d3e94": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:55.353435+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:23.773542+00:00",
+      "trigger": "scheduled"
     },
     "manual-87ca438373d9": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:55.753681+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:24.335147+00:00",
+      "trigger": "scheduled"
     },
     "manual-f96402c06d32": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:55.807866+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:24.418005+00:00",
+      "trigger": "scheduled"
     },
     "manual-d73abfb2e7f2": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:55.863779+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:24.499828+00:00",
+      "trigger": "scheduled"
     },
     "manual-c02ec80775c2": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:55.920182+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:24.580787+00:00",
+      "trigger": "scheduled"
     },
     "manual-81edf0641cc2": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:55.974321+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:24.662295+00:00",
+      "trigger": "scheduled"
     },
     "manual-ccbb8cabeb99": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:56.029420+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:24.744901+00:00",
+      "trigger": "scheduled"
     },
     "manual-3c168c3e601a": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:56.083310+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:24.837926+00:00",
+      "trigger": "scheduled"
     },
     "manual-31ada48e215e": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:56.136824+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:24.919780+00:00",
+      "trigger": "scheduled"
     },
     "manual-96da24f54032": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:56.189950+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:25.002378+00:00",
+      "trigger": "scheduled"
     },
     "manual-db5b7b1c66c0": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:56.244167+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:25.084951+00:00",
+      "trigger": "scheduled"
     },
     "manual-c3954390bf91": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:56.300379+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:25.175025+00:00",
+      "trigger": "scheduled"
     },
     "manual-ad2f7c55bf07": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:56.353054+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:25.259185+00:00",
+      "trigger": "scheduled"
     },
     "manual-07fead54d9d1": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:56.408685+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:25.344313+00:00",
+      "trigger": "scheduled"
     },
     "manual-49e6cffbe46b": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:56.463004+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:25.428952+00:00",
+      "trigger": "scheduled"
     },
     "manual-e49444f7481c": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:56.518696+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:25.510426+00:00",
+      "trigger": "scheduled"
     },
     "manual-e2a6f65d42aa": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:56.896469+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:26.440755+00:00",
+      "trigger": "scheduled"
     },
     "manual-4d35aa9f9fa5": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:56.950077+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:26.520701+00:00",
+      "trigger": "scheduled"
     },
     "manual-4ceffe75326c": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.003297+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:26.601862+00:00",
+      "trigger": "scheduled"
     },
     "manual-ce0c1bcab763": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.056570+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:26.685643+00:00",
+      "trigger": "scheduled"
     },
     "manual-9d4f8768e197": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.110605+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:26.772605+00:00",
+      "trigger": "scheduled"
     },
     "manual-73c10748e127": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.163141+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:26.854424+00:00",
+      "trigger": "scheduled"
     },
     "manual-3cde87b01727": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.218988+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:26.938052+00:00",
+      "trigger": "scheduled"
     },
     "manual-15294ab2d815": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.272182+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:27.018805+00:00",
+      "trigger": "scheduled"
     },
     "manual-9d2a0cc1d61f": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.326000+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:27.100748+00:00",
+      "trigger": "scheduled"
     },
     "manual-b6a213ed4639": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.379319+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:27.186343+00:00",
+      "trigger": "scheduled"
     },
     "manual-c8ecced11490": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.433803+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:27.267713+00:00",
+      "trigger": "scheduled"
     },
     "manual-d1cf513f7f00": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.487765+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:27.349845+00:00",
+      "trigger": "scheduled"
     },
     "manual-3e884254c2f1": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.540897+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:27.432819+00:00",
+      "trigger": "scheduled"
     },
     "manual-d22911c410fc": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.595205+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:27.528784+00:00",
+      "trigger": "scheduled"
     },
     "manual-8e5bda39a33e": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.648985+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:27.609700+00:00",
+      "trigger": "scheduled"
     },
     "manual-7adab8f358bc": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.702561+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:27.691822+00:00",
+      "trigger": "scheduled"
     },
     "manual-f3c955eb0656": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.755209+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:27.774872+00:00",
+      "trigger": "scheduled"
     },
     "manual-053af629e35a": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.811399+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:27.858139+00:00",
+      "trigger": "scheduled"
     },
     "manual-7003af051289": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.864640+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:27.949186+00:00",
+      "trigger": "scheduled"
     },
     "manual-e5da1f71e903": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.919077+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:28.033986+00:00",
+      "trigger": "scheduled"
     },
     "manual-215a82c132cd": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:57.972628+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:28.119223+00:00",
+      "trigger": "scheduled"
     },
     "manual-3b1e1f88b570": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.026124+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:28.204451+00:00",
+      "trigger": "scheduled"
     },
     "manual-e3f60bc85420": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.079958+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:28.286799+00:00",
+      "trigger": "scheduled"
     },
     "manual-2b3ee4b0e158": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.210507+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:28.367274+00:00",
+      "trigger": "scheduled"
     },
     "manual-16625bb5e529": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.265794+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:28.450815+00:00",
+      "trigger": "scheduled"
     },
     "manual-a81bf7248131": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.318904+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:28.534836+00:00",
+      "trigger": "scheduled"
     },
     "manual-bb542f59562b": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.374179+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:28.615919+00:00",
+      "trigger": "scheduled"
     },
     "manual-9f4eeee473f4": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.427193+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:28.697137+00:00",
+      "trigger": "scheduled"
     },
     "manual-29de64d1db61": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.483651+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:28.779804+00:00",
+      "trigger": "scheduled"
     },
     "manual-d4603522a989": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.537407+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:28.864630+00:00",
+      "trigger": "scheduled"
     },
     "manual-8588993b9c05": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.591281+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:28.948560+00:00",
+      "trigger": "scheduled"
     },
     "manual-ddc3e02572f3": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.646263+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:29.029631+00:00",
+      "trigger": "scheduled"
     },
     "manual-26375675a7ba": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.700383+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:29.111914+00:00",
+      "trigger": "scheduled"
     },
     "manual-1f06400ec592": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.755468+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:29.202701+00:00",
+      "trigger": "scheduled"
     },
     "manual-7b0addc7e307": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.810100+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:29.286173+00:00",
+      "trigger": "scheduled"
     },
     "manual-e2cab0e0f486": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.864346+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:29.367981+00:00",
+      "trigger": "scheduled"
     },
     "manual-fcf8b514162c": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.918662+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:29.775793+00:00",
+      "trigger": "scheduled"
     },
     "manual-559ac45a9a23": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:58.972006+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:29.865684+00:00",
+      "trigger": "scheduled"
     },
     "manual-95e85c0ac861": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.025413+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:29.960182+00:00",
+      "trigger": "scheduled"
     },
     "manual-01e6eb794d40": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.080766+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:30.042345+00:00",
+      "trigger": "scheduled"
     },
     "manual-a51425ec0d12": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.135702+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:30.124891+00:00",
+      "trigger": "scheduled"
     },
     "manual-d2ffa46a0ee0": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.192031+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:30.206870+00:00",
+      "trigger": "scheduled"
     },
     "manual-e175ab40ef57": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.248289+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:30.289793+00:00",
+      "trigger": "scheduled"
     },
     "manual-c09e86fd8af6": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.301437+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:30.375634+00:00",
+      "trigger": "scheduled"
     },
     "manual-1cd6b0d5a010": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.358747+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:30.457932+00:00",
+      "trigger": "scheduled"
     },
     "manual-1aac59bf8879": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.413084+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:30.538388+00:00",
+      "trigger": "scheduled"
     },
     "manual-039877cf9cc2": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.465803+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:30.625715+00:00",
+      "trigger": "scheduled"
     },
     "manual-b553a47e37a5": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.518402+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:30.711447+00:00",
+      "trigger": "scheduled"
     },
     "manual-0fc1eaed317c": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.571693+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:30.791846+00:00",
+      "trigger": "scheduled"
     },
     "manual-901da0d88c3d": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.625858+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:30.874833+00:00",
+      "trigger": "scheduled"
     },
     "manual-6d6a2e2a7268": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.681817+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:30.955700+00:00",
+      "trigger": "scheduled"
     },
     "manual-4fd0bc460269": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.737323+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:31.037527+00:00",
+      "trigger": "scheduled"
     },
     "manual-fb5555ba428f": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.791067+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:31.120887+00:00",
+      "trigger": "scheduled"
     },
     "manual-046ab329cdfd": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.844434+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:31.201063+00:00",
+      "trigger": "scheduled"
     },
     "manual-ee0509645c47": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.899271+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:31.286266+00:00",
+      "trigger": "scheduled"
     },
     "manual-7c05d7f77240": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:32:59.953297+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:31.371884+00:00",
+      "trigger": "scheduled"
     },
     "manual-7f304946ceb3": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.006729+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:31.454974+00:00",
+      "trigger": "scheduled"
     },
     "manual-47a6282d259a": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.061973+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:31.536944+00:00",
+      "trigger": "scheduled"
     },
     "manual-96fe00e867bc": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.116341+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:31.621067+00:00",
+      "trigger": "scheduled"
     },
     "manual-14fa96fdd6f3": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.169249+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:31.703044+00:00",
+      "trigger": "scheduled"
     },
     "manual-4e0334d82fed": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.222324+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:31.784239+00:00",
+      "trigger": "scheduled"
     },
     "manual-cd48c4a982a0": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.274980+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:31.867044+00:00",
+      "trigger": "scheduled"
     },
     "manual-20d93b4bbd85": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.328056+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:31.949936+00:00",
+      "trigger": "scheduled"
     },
     "manual-63f9053192c2": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.382598+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:32.030627+00:00",
+      "trigger": "scheduled"
     },
     "manual-e1d7c5d57155": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.437455+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:32.112245+00:00",
+      "trigger": "scheduled"
     },
     "manual-487f8c72cdde": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.492610+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:32.195348+00:00",
+      "trigger": "scheduled"
     },
     "manual-d2d0fcac25ec": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.547595+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:32.275816+00:00",
+      "trigger": "scheduled"
     },
     "manual-402b469209b8": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.602325+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:32.357642+00:00",
+      "trigger": "scheduled"
     },
     "manual-453a6875f704": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.657747+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:32.439525+00:00",
+      "trigger": "scheduled"
     },
     "manual-67fce0ca2005": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.711868+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:32.523555+00:00",
+      "trigger": "scheduled"
     },
     "manual-77ad1b54bab6": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.765198+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:32.607608+00:00",
+      "trigger": "scheduled"
     },
     "manual-e49d5dac5ef1": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.818076+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:32.691527+00:00",
+      "trigger": "scheduled"
     },
     "manual-ad7be2fd023c": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.872012+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:32.774083+00:00",
+      "trigger": "scheduled"
     },
     "manual-f7443cb8f9e1": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.924417+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:32.853651+00:00",
+      "trigger": "scheduled"
     },
     "manual-5d1702b4b2cc": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:00.978111+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:32.935521+00:00",
+      "trigger": "scheduled"
     },
     "manual-27ffffaeabd2": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.036111+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:33.014959+00:00",
+      "trigger": "scheduled"
     },
     "manual-41ddf2bfed6b": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.091052+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:33.101303+00:00",
+      "trigger": "scheduled"
     },
     "manual-269906856d86": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.211677+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:33.187836+00:00",
+      "trigger": "scheduled"
     },
     "manual-bf0ce15f4647": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.265304+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:33.272069+00:00",
+      "trigger": "scheduled"
     },
     "manual-23abd061ae1e": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.320517+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:33.352866+00:00",
+      "trigger": "scheduled"
     },
     "manual-cc3cad4938af": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.373890+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:33.433272+00:00",
+      "trigger": "scheduled"
     },
     "manual-f83b4590d2a4": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.427889+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:33.518611+00:00",
+      "trigger": "scheduled"
     },
     "manual-a61735026ca7": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.481030+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:33.604644+00:00",
+      "trigger": "scheduled"
     },
     "manual-820a6d4ac8f7": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.535235+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:33.688211+00:00",
+      "trigger": "scheduled"
     },
     "manual-e7cbd658db35": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.590556+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:33.772135+00:00",
+      "trigger": "scheduled"
     },
     "manual-20a5a7fcb6d5": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.644424+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:33.861387+00:00",
+      "trigger": "scheduled"
     },
     "manual-51e8b541fd12": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.698103+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:33.946368+00:00",
+      "trigger": "scheduled"
     },
     "manual-315fd3d9ba06": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.751194+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:34.031899+00:00",
+      "trigger": "scheduled"
     },
     "manual-d34e7c77f55c": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.806960+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:34.112649+00:00",
+      "trigger": "scheduled"
     },
     "manual-b93ecc826c69": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.860226+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:34.202428+00:00",
+      "trigger": "scheduled"
     },
     "manual-0efe314fb13e": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.915857+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:34.285616+00:00",
+      "trigger": "scheduled"
     },
     "manual-9e2c4b1f8ea2": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:01.970710+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:34.366627+00:00",
+      "trigger": "scheduled"
     },
     "manual-fcb1777378d0": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:02.024711+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:34.448161+00:00",
+      "trigger": "scheduled"
     },
     "manual-87b1ac938a3f": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:18.415116+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:52:52.078778+00:00",
+      "trigger": "scheduled"
     },
     "manual-db3db09fda63": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:33:35.115849+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:53:10.093054+00:00",
+      "trigger": "scheduled"
     },
     "manual-5b8c86f37ebc": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:34:02.684431+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:53:40.477750+00:00",
+      "trigger": "scheduled"
     },
     "manual-2673ea372676": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:34:03.074736+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:53:40.924598+00:00",
+      "trigger": "scheduled"
     },
     "manual-b7f72aa87973": {
-      "run_id": "20261024T142955Z-32122afd",
-      "generated_at": "2026-10-24T14:34:05.726322+00:00",
-      "trigger": "manual"
+      "run_id": "20261024T154854Z-60bd2731",
+      "generated_at": "2026-10-24T15:53:43.632142+00:00",
+      "trigger": "scheduled"
     }
   },
   "counts": {
@@ -2004,8 +2004,8 @@
     "removal_held": 0,
     "removal_pending_confirmation": 0,
     "removed": 0,
-    "source_changed": 2,
-    "unchanged": 128
+    "source_changed": 0,
+    "unchanged": 130
   },
   "discovery": [
     {
@@ -3894,895 +3894,11 @@
   },
   "new_urls": [],
   "changed_urls": [],
-  "source_changed_urls": [
-    {
-      "before": {
-        "schema_version": 2,
-        "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
-        "source_id": "manual-e49444f7481c",
-        "regulator": "www.federalreserve.gov",
-        "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
-        "first_seen": "2026-10-23T08:14:35.781047+00:00",
-        "last_seen": "2026-10-24T10:47:56.959055+00:00",
-        "last_checked": "2026-10-24T10:47:56.959055+00:00",
-        "last_full_fetch": "2026-10-24T10:47:56.959055+00:00",
-        "active": true,
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=utf-8",
-        "content_length": null,
-        "etag": null,
-        "last_modified": null,
-        "raw_hash": "027f50677e5d818c2b2fb5420e70490e903ed77b16750b433f213db16a43ebbd",
-        "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
-        "html_hash": "027f50677e5d818c2b2fb5420e70490e903ed77b16750b433f213db16a43ebbd",
-        "html_comparison_hash": "5850524080eea4c86af8d0b278f9280ad3d518aeb98c2ca10c2b947645ebbb7b",
-        "html_comparison_hash_version": 2,
-        "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-027f50677e5d818c2b2fb5420e70490e903ed77b16750b433f213db16a43ebbd.html",
-        "file_snapshot_location": null,
-        "extraction_type": "html",
-        "extractor_version": "content-extractor-v7",
-        "extraction_error": null,
-        "fetch_error": null,
-        "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
-        "evidence_location": "data/evidence/d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856.json",
-        "relevance": {
-          "candidate": true,
-          "reason": "Regulatory signal detected",
-          "signals": [
-            "policy",
-            "report"
-          ]
-        },
-        "ai_pending": null,
-        "last_changed_at": null,
-        "change_history": [
-          {
-            "event_id": "d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T10:47:56.959055+00:00",
-            "evidence_location": "data/evidence/d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856.json"
-          },
-          {
-            "event_id": "758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T09:07:44.643212+00:00",
-            "evidence_location": "data/evidence/758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92.json"
-          },
-          {
-            "event_id": "54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T04:25:07.055801+00:00",
-            "evidence_location": "data/evidence/54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035.json"
-          },
-          {
-            "event_id": "5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T04:18:15.031283+00:00",
-            "evidence_location": "data/evidence/5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516.json"
-          },
-          {
-            "event_id": "4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T21:22:14.496468+00:00",
-            "evidence_location": "data/evidence/4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2.json"
-          },
-          {
-            "event_id": "5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T17:07:50.274469+00:00",
-            "evidence_location": "data/evidence/5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc.json"
-          },
-          {
-            "event_id": "641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T17:00:50.692419+00:00",
-            "evidence_location": "data/evidence/641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c.json"
-          },
-          {
-            "event_id": "141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T12:53:05.491782+00:00",
-            "evidence_location": "data/evidence/141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254.json"
-          },
-          {
-            "event_id": "6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T11:30:35.930519+00:00",
-            "evidence_location": "data/evidence/6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47.json"
-          },
-          {
-            "event_id": "59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T09:56:43.050307+00:00",
-            "evidence_location": "data/evidence/59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999.json"
-          },
-          {
-            "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T09:47:43.429866+00:00",
-            "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
-          },
-          {
-            "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T08:22:54.837336+00:00",
-            "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
-          }
-        ],
-        "not_modified": false,
-        "full_fetch_forced": false,
-        "html_baseline_forced": false,
-        "file_baseline_forced": false,
-        "extractor_baseline_forced": false
-      },
-      "after": {
-        "schema_version": 2,
-        "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
-        "source_id": "manual-e49444f7481c",
-        "regulator": "www.federalreserve.gov",
-        "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
-        "first_seen": "2026-10-23T08:14:35.781047+00:00",
-        "last_seen": "2026-10-24T14:32:56.518696+00:00",
-        "last_checked": "2026-10-24T14:32:56.518696+00:00",
-        "last_full_fetch": "2026-10-24T14:32:56.518696+00:00",
-        "active": true,
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=utf-8",
-        "content_length": null,
-        "etag": null,
-        "last_modified": null,
-        "raw_hash": "5feb545cbb013b6a75ed5ed785af91cb8e6e74a2c1ca3575dd83ce75a27e62a4",
-        "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
-        "html_hash": "5feb545cbb013b6a75ed5ed785af91cb8e6e74a2c1ca3575dd83ce75a27e62a4",
-        "html_comparison_hash": "90d36fb88673526ef8ea0833a5a46fce337075b248a84311fe8fec0176efc88d",
-        "html_comparison_hash_version": 2,
-        "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-5feb545cbb013b6a75ed5ed785af91cb8e6e74a2c1ca3575dd83ce75a27e62a4.html",
-        "file_snapshot_location": null,
-        "extraction_type": "html",
-        "extractor_version": "content-extractor-v7",
-        "extraction_error": null,
-        "fetch_error": null,
-        "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
-        "evidence_location": "data/evidence/e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01.json",
-        "relevance": {
-          "candidate": true,
-          "reason": "Regulatory signal detected",
-          "signals": [
-            "policy",
-            "report"
-          ]
-        },
-        "ai_pending": null,
-        "last_changed_at": null,
-        "change_history": [
-          {
-            "event_id": "e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T14:32:56.518696+00:00",
-            "evidence_location": "data/evidence/e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01.json"
-          },
-          {
-            "event_id": "d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T10:47:56.959055+00:00",
-            "evidence_location": "data/evidence/d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856.json"
-          },
-          {
-            "event_id": "758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T09:07:44.643212+00:00",
-            "evidence_location": "data/evidence/758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92.json"
-          },
-          {
-            "event_id": "54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T04:25:07.055801+00:00",
-            "evidence_location": "data/evidence/54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035.json"
-          },
-          {
-            "event_id": "5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T04:18:15.031283+00:00",
-            "evidence_location": "data/evidence/5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516.json"
-          },
-          {
-            "event_id": "4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T21:22:14.496468+00:00",
-            "evidence_location": "data/evidence/4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2.json"
-          },
-          {
-            "event_id": "5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T17:07:50.274469+00:00",
-            "evidence_location": "data/evidence/5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc.json"
-          },
-          {
-            "event_id": "641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T17:00:50.692419+00:00",
-            "evidence_location": "data/evidence/641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c.json"
-          },
-          {
-            "event_id": "141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T12:53:05.491782+00:00",
-            "evidence_location": "data/evidence/141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254.json"
-          },
-          {
-            "event_id": "6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T11:30:35.930519+00:00",
-            "evidence_location": "data/evidence/6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47.json"
-          },
-          {
-            "event_id": "59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T09:56:43.050307+00:00",
-            "evidence_location": "data/evidence/59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999.json"
-          },
-          {
-            "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T09:47:43.429866+00:00",
-            "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
-          },
-          {
-            "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T08:22:54.837336+00:00",
-            "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
-          }
-        ],
-        "not_modified": false,
-        "full_fetch_forced": false,
-        "html_baseline_forced": false,
-        "file_baseline_forced": false,
-        "extractor_baseline_forced": false
-      }
-    },
-    {
-      "before": {
-        "schema_version": 2,
-        "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
-        "source_id": "manual-b7f72aa87973",
-        "regulator": "www.osfi-bsif.gc.ca",
-        "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
-        "first_seen": "2026-10-23T12:53:48.284742+00:00",
-        "last_seen": "2026-10-24T10:52:01.947864+00:00",
-        "last_checked": "2026-10-24T10:52:01.947864+00:00",
-        "last_full_fetch": "2026-10-24T10:52:01.947864+00:00",
-        "active": true,
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_length": 21443,
-        "etag": "W/\"1792838729\"",
-        "last_modified": "Sat, 24 Oct 2026 10:45:29 GMT",
-        "raw_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
-        "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
-        "html_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
-        "html_comparison_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
-        "html_comparison_hash_version": 2,
-        "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207.html",
-        "file_snapshot_location": null,
-        "extraction_type": "html",
-        "extractor_version": "content-extractor-v7",
-        "extraction_error": null,
-        "fetch_error": null,
-        "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
-        "evidence_location": "data/evidence/38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14.json",
-        "relevance": {
-          "candidate": true,
-          "reason": "Regulatory signal detected",
-          "signals": [
-            "regulatory",
-            "report",
-            "requirement",
-            "risk",
-            "rule",
-            "supervisory"
-          ]
-        },
-        "ai_pending": null,
-        "last_changed_at": null,
-        "change_history": [
-          {
-            "event_id": "38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T10:52:01.947864+00:00",
-            "evidence_location": "data/evidence/38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14.json"
-          },
-          {
-            "event_id": "d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T09:10:03.324362+00:00",
-            "evidence_location": "data/evidence/d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41.json"
-          },
-          {
-            "event_id": "8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T04:19:05.675116+00:00",
-            "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json"
-          },
-          {
-            "event_id": "5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T21:22:52.826902+00:00",
-            "evidence_location": "data/evidence/5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441.json"
-          },
-          {
-            "event_id": "07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T17:08:37.020091+00:00",
-            "evidence_location": "data/evidence/07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201.json"
-          },
-          {
-            "event_id": "1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T17:01:28.049800+00:00",
-            "evidence_location": "data/evidence/1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5.json"
-          }
-        ],
-        "not_modified": false,
-        "full_fetch_forced": false,
-        "html_baseline_forced": false,
-        "file_baseline_forced": false,
-        "extractor_baseline_forced": false
-      },
-      "after": {
-        "schema_version": 2,
-        "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
-        "source_id": "manual-b7f72aa87973",
-        "regulator": "www.osfi-bsif.gc.ca",
-        "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
-        "first_seen": "2026-10-23T12:53:48.284742+00:00",
-        "last_seen": "2026-10-24T14:34:05.726322+00:00",
-        "last_checked": "2026-10-24T14:34:05.726322+00:00",
-        "last_full_fetch": "2026-10-24T14:34:05.726322+00:00",
-        "active": true,
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=UTF-8",
-        "content_length": 21447,
-        "etag": "W/\"1792852186\"",
-        "last_modified": "Sat, 24 Oct 2026 14:29:46 GMT",
-        "raw_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
-        "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
-        "html_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
-        "html_comparison_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
-        "html_comparison_hash_version": 2,
-        "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21.html",
-        "file_snapshot_location": null,
-        "extraction_type": "html",
-        "extractor_version": "content-extractor-v7",
-        "extraction_error": null,
-        "fetch_error": null,
-        "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
-        "evidence_location": "data/evidence/01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3.json",
-        "relevance": {
-          "candidate": true,
-          "reason": "Regulatory signal detected",
-          "signals": [
-            "regulatory",
-            "report",
-            "requirement",
-            "risk",
-            "rule",
-            "supervisory"
-          ]
-        },
-        "ai_pending": null,
-        "last_changed_at": null,
-        "change_history": [
-          {
-            "event_id": "01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T14:34:05.726322+00:00",
-            "evidence_location": "data/evidence/01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3.json"
-          },
-          {
-            "event_id": "38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T10:52:01.947864+00:00",
-            "evidence_location": "data/evidence/38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14.json"
-          },
-          {
-            "event_id": "d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T09:10:03.324362+00:00",
-            "evidence_location": "data/evidence/d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41.json"
-          },
-          {
-            "event_id": "8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-24T04:19:05.675116+00:00",
-            "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json"
-          },
-          {
-            "event_id": "5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T21:22:52.826902+00:00",
-            "evidence_location": "data/evidence/5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441.json"
-          },
-          {
-            "event_id": "07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T17:08:37.020091+00:00",
-            "evidence_location": "data/evidence/07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201.json"
-          },
-          {
-            "event_id": "1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-23T17:01:28.049800+00:00",
-            "evidence_location": "data/evidence/1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5.json"
-          }
-        ],
-        "not_modified": false,
-        "full_fetch_forced": false,
-        "html_baseline_forced": false,
-        "file_baseline_forced": false,
-        "extractor_baseline_forced": false
-      }
-    }
-  ],
+  "source_changed_urls": [],
   "removed_urls": [],
   "baseline_migrations": [],
-  "events": [
-    {
-      "event_id": "e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01",
-      "event_type": "HTML_SOURCE_CHANGED",
-      "url": "https://www.federalreserve.gov/apps/ReportingForms",
-      "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
-      "source_id": "manual-e49444f7481c",
-      "timestamp": "2026-10-24T14:32:56.518696+00:00",
-      "evidence_location": "data/evidence/e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01.json",
-      "evidence": {
-        "previous": {
-          "schema_version": 2,
-          "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
-          "source_id": "manual-e49444f7481c",
-          "regulator": "www.federalreserve.gov",
-          "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
-          "first_seen": "2026-10-23T08:14:35.781047+00:00",
-          "last_seen": "2026-10-24T10:47:56.959055+00:00",
-          "last_checked": "2026-10-24T10:47:56.959055+00:00",
-          "last_full_fetch": "2026-10-24T10:47:56.959055+00:00",
-          "active": true,
-          "terminal_file": false,
-          "http_status": 200,
-          "content_type": "text/html; charset=utf-8",
-          "content_length": null,
-          "etag": null,
-          "last_modified": null,
-          "raw_hash": "027f50677e5d818c2b2fb5420e70490e903ed77b16750b433f213db16a43ebbd",
-          "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
-          "html_hash": "027f50677e5d818c2b2fb5420e70490e903ed77b16750b433f213db16a43ebbd",
-          "html_comparison_hash": "5850524080eea4c86af8d0b278f9280ad3d518aeb98c2ca10c2b947645ebbb7b",
-          "html_comparison_hash_version": 2,
-          "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-027f50677e5d818c2b2fb5420e70490e903ed77b16750b433f213db16a43ebbd.html",
-          "file_snapshot_location": null,
-          "extraction_type": "html",
-          "extractor_version": "content-extractor-v7",
-          "extraction_error": null,
-          "fetch_error": null,
-          "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
-          "evidence_location": "data/evidence/d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856.json",
-          "relevance": {
-            "candidate": true,
-            "reason": "Regulatory signal detected",
-            "signals": [
-              "policy",
-              "report"
-            ]
-          },
-          "ai_pending": null,
-          "last_changed_at": null,
-          "change_history": [
-            {
-              "event_id": "d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T10:47:56.959055+00:00",
-              "evidence_location": "data/evidence/d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856.json"
-            },
-            {
-              "event_id": "758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T09:07:44.643212+00:00",
-              "evidence_location": "data/evidence/758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92.json"
-            },
-            {
-              "event_id": "54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T04:25:07.055801+00:00",
-              "evidence_location": "data/evidence/54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035.json"
-            },
-            {
-              "event_id": "5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T04:18:15.031283+00:00",
-              "evidence_location": "data/evidence/5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516.json"
-            },
-            {
-              "event_id": "4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T21:22:14.496468+00:00",
-              "evidence_location": "data/evidence/4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2.json"
-            },
-            {
-              "event_id": "5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T17:07:50.274469+00:00",
-              "evidence_location": "data/evidence/5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc.json"
-            },
-            {
-              "event_id": "641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T17:00:50.692419+00:00",
-              "evidence_location": "data/evidence/641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c.json"
-            },
-            {
-              "event_id": "141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T12:53:05.491782+00:00",
-              "evidence_location": "data/evidence/141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254.json"
-            },
-            {
-              "event_id": "6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T11:30:35.930519+00:00",
-              "evidence_location": "data/evidence/6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47.json"
-            },
-            {
-              "event_id": "59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T09:56:43.050307+00:00",
-              "evidence_location": "data/evidence/59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999.json"
-            },
-            {
-              "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T09:47:43.429866+00:00",
-              "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
-            },
-            {
-              "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T08:22:54.837336+00:00",
-              "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
-            }
-          ],
-          "not_modified": false,
-          "full_fetch_forced": false,
-          "html_baseline_forced": false,
-          "file_baseline_forced": false,
-          "extractor_baseline_forced": false
-        },
-        "current": {
-          "schema_version": 2,
-          "url_id": "e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b",
-          "source_id": "manual-e49444f7481c",
-          "regulator": "www.federalreserve.gov",
-          "canonical_url": "https://www.federalreserve.gov/apps/ReportingForms",
-          "first_seen": "2026-10-23T08:14:35.781047+00:00",
-          "last_seen": "2026-10-24T14:32:56.518696+00:00",
-          "last_checked": "2026-10-24T14:32:56.518696+00:00",
-          "last_full_fetch": "2026-10-24T14:32:56.518696+00:00",
-          "active": true,
-          "terminal_file": false,
-          "http_status": 200,
-          "content_type": "text/html; charset=utf-8",
-          "content_length": null,
-          "etag": null,
-          "last_modified": null,
-          "raw_hash": "5feb545cbb013b6a75ed5ed785af91cb8e6e74a2c1ca3575dd83ce75a27e62a4",
-          "normalized_hash": "a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e",
-          "html_hash": "5feb545cbb013b6a75ed5ed785af91cb8e6e74a2c1ca3575dd83ce75a27e62a4",
-          "html_comparison_hash": "90d36fb88673526ef8ea0833a5a46fce337075b248a84311fe8fec0176efc88d",
-          "html_comparison_hash_version": 2,
-          "html_snapshot_location": "data/snapshots/html/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-5feb545cbb013b6a75ed5ed785af91cb8e6e74a2c1ca3575dd83ce75a27e62a4.html",
-          "file_snapshot_location": null,
-          "extraction_type": "html",
-          "extractor_version": "content-extractor-v7",
-          "extraction_error": null,
-          "fetch_error": null,
-          "snapshot_location": "data/snapshots/e49444f7481cb3cf52689d03b31595ba07376d9fff8762dbf762fb5679aad94b-a3df2c00e3546d3efc6c5bf678e658ff57157816bc145d1e032abbf524558d1e.txt",
-          "evidence_location": "data/evidence/e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01.json",
-          "relevance": {
-            "candidate": true,
-            "reason": "Regulatory signal detected",
-            "signals": [
-              "policy",
-              "report"
-            ]
-          },
-          "ai_pending": null,
-          "last_changed_at": null,
-          "change_history": [
-            {
-              "event_id": "e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T14:32:56.518696+00:00",
-              "evidence_location": "data/evidence/e278d37f9b308fbd05589bb251c7f92509a8690721f659652e25db63b09c8f01.json"
-            },
-            {
-              "event_id": "d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T10:47:56.959055+00:00",
-              "evidence_location": "data/evidence/d196c32bd4be21fafaa794edf9258f7698e5feec26994914db9e813fc8d23856.json"
-            },
-            {
-              "event_id": "758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T09:07:44.643212+00:00",
-              "evidence_location": "data/evidence/758e5519e84e73b36d059422a7e15a8f015a191b9f75cb3b5f50703dc064be92.json"
-            },
-            {
-              "event_id": "54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T04:25:07.055801+00:00",
-              "evidence_location": "data/evidence/54f102c43d03b8a37d18ab58f829f664fb6f93f5b535ab76598f210ccdc2d035.json"
-            },
-            {
-              "event_id": "5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T04:18:15.031283+00:00",
-              "evidence_location": "data/evidence/5920c4822110d2bed4cecd99565d315ef843b60cc6c896b49b8ab7e0c771b516.json"
-            },
-            {
-              "event_id": "4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T21:22:14.496468+00:00",
-              "evidence_location": "data/evidence/4c8b0428899023ca4d5f8b281d56ce0497163e0edb7bafc321acec35ded8b2b2.json"
-            },
-            {
-              "event_id": "5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T17:07:50.274469+00:00",
-              "evidence_location": "data/evidence/5105a30dd22cfa287f316c7931543ef7461be02dbf0ef45890de27b4c11a9efc.json"
-            },
-            {
-              "event_id": "641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T17:00:50.692419+00:00",
-              "evidence_location": "data/evidence/641d9cf352737ef597fd1b723a20cb8e4ef5f52f175b75eb2985e1fc6df1589c.json"
-            },
-            {
-              "event_id": "141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T12:53:05.491782+00:00",
-              "evidence_location": "data/evidence/141290a5edf0e12bb345e81e38ff7feba2c36f72ff5b3eba287ca9e9d0005254.json"
-            },
-            {
-              "event_id": "6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T11:30:35.930519+00:00",
-              "evidence_location": "data/evidence/6f80b0cd0d7e0f3951bbabdd351583f1a7f221ce7e11819a20a9cada1afd2a47.json"
-            },
-            {
-              "event_id": "59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T09:56:43.050307+00:00",
-              "evidence_location": "data/evidence/59f1dfd32ba783b5a1a3fbf2052b4e8d5425b88832b10c5e72300298d3be6999.json"
-            },
-            {
-              "event_id": "e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T09:47:43.429866+00:00",
-              "evidence_location": "data/evidence/e31b27c788e3108f8015ea691e08788da115be09b8a426efb0fcd357a5bc4852.json"
-            },
-            {
-              "event_id": "52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T08:22:54.837336+00:00",
-              "evidence_location": "data/evidence/52a8f64b60d91f2874e9280802f29e312fed7cb3d8e4cb8f22ae11be7dfe6cd3.json"
-            }
-          ],
-          "not_modified": false,
-          "full_fetch_forced": false,
-          "html_baseline_forced": false,
-          "file_baseline_forced": false,
-          "extractor_baseline_forced": false
-        }
-      }
-    },
-    {
-      "event_id": "01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3",
-      "event_type": "HTML_SOURCE_CHANGED",
-      "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
-      "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
-      "source_id": "manual-b7f72aa87973",
-      "timestamp": "2026-10-24T14:34:05.726322+00:00",
-      "evidence_location": "data/evidence/01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3.json",
-      "evidence": {
-        "previous": {
-          "schema_version": 2,
-          "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
-          "source_id": "manual-b7f72aa87973",
-          "regulator": "www.osfi-bsif.gc.ca",
-          "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
-          "first_seen": "2026-10-23T12:53:48.284742+00:00",
-          "last_seen": "2026-10-24T10:52:01.947864+00:00",
-          "last_checked": "2026-10-24T10:52:01.947864+00:00",
-          "last_full_fetch": "2026-10-24T10:52:01.947864+00:00",
-          "active": true,
-          "terminal_file": false,
-          "http_status": 200,
-          "content_type": "text/html; charset=UTF-8",
-          "content_length": 21443,
-          "etag": "W/\"1792838729\"",
-          "last_modified": "Sat, 24 Oct 2026 10:45:29 GMT",
-          "raw_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
-          "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
-          "html_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
-          "html_comparison_hash": "3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207",
-          "html_comparison_hash_version": 2,
-          "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-3c8a3f69cd393b4812cefaaae9ee18fd49d1982fe1e6011be69269bdd5afa207.html",
-          "file_snapshot_location": null,
-          "extraction_type": "html",
-          "extractor_version": "content-extractor-v7",
-          "extraction_error": null,
-          "fetch_error": null,
-          "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
-          "evidence_location": "data/evidence/38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14.json",
-          "relevance": {
-            "candidate": true,
-            "reason": "Regulatory signal detected",
-            "signals": [
-              "regulatory",
-              "report",
-              "requirement",
-              "risk",
-              "rule",
-              "supervisory"
-            ]
-          },
-          "ai_pending": null,
-          "last_changed_at": null,
-          "change_history": [
-            {
-              "event_id": "38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T10:52:01.947864+00:00",
-              "evidence_location": "data/evidence/38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14.json"
-            },
-            {
-              "event_id": "d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T09:10:03.324362+00:00",
-              "evidence_location": "data/evidence/d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41.json"
-            },
-            {
-              "event_id": "8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T04:19:05.675116+00:00",
-              "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json"
-            },
-            {
-              "event_id": "5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T21:22:52.826902+00:00",
-              "evidence_location": "data/evidence/5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441.json"
-            },
-            {
-              "event_id": "07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T17:08:37.020091+00:00",
-              "evidence_location": "data/evidence/07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201.json"
-            },
-            {
-              "event_id": "1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T17:01:28.049800+00:00",
-              "evidence_location": "data/evidence/1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5.json"
-            }
-          ],
-          "not_modified": false,
-          "full_fetch_forced": false,
-          "html_baseline_forced": false,
-          "file_baseline_forced": false,
-          "extractor_baseline_forced": false
-        },
-        "current": {
-          "schema_version": 2,
-          "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
-          "source_id": "manual-b7f72aa87973",
-          "regulator": "www.osfi-bsif.gc.ca",
-          "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
-          "first_seen": "2026-10-23T12:53:48.284742+00:00",
-          "last_seen": "2026-10-24T14:34:05.726322+00:00",
-          "last_checked": "2026-10-24T14:34:05.726322+00:00",
-          "last_full_fetch": "2026-10-24T14:34:05.726322+00:00",
-          "active": true,
-          "terminal_file": false,
-          "http_status": 200,
-          "content_type": "text/html; charset=UTF-8",
-          "content_length": 21447,
-          "etag": "W/\"1792852186\"",
-          "last_modified": "Sat, 24 Oct 2026 14:29:46 GMT",
-          "raw_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
-          "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
-          "html_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
-          "html_comparison_hash": "548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21",
-          "html_comparison_hash_version": 2,
-          "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-548ea234c736ce2821aad2ba94da58f38998d285aa0c434035aa5563ac51fb21.html",
-          "file_snapshot_location": null,
-          "extraction_type": "html",
-          "extractor_version": "content-extractor-v7",
-          "extraction_error": null,
-          "fetch_error": null,
-          "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
-          "evidence_location": "data/evidence/01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3.json",
-          "relevance": {
-            "candidate": true,
-            "reason": "Regulatory signal detected",
-            "signals": [
-              "regulatory",
-              "report",
-              "requirement",
-              "risk",
-              "rule",
-              "supervisory"
-            ]
-          },
-          "ai_pending": null,
-          "last_changed_at": null,
-          "change_history": [
-            {
-              "event_id": "01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T14:34:05.726322+00:00",
-              "evidence_location": "data/evidence/01a636f0496a93c3a38a45d35eb7de2d700e4c4265e6f086fd8d2d9c92d66bb3.json"
-            },
-            {
-              "event_id": "38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T10:52:01.947864+00:00",
-              "evidence_location": "data/evidence/38085549f494e79c60e83fdf37a25aedbc6efc7c47397c1baa4ac0af1cc5ef14.json"
-            },
-            {
-              "event_id": "d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T09:10:03.324362+00:00",
-              "evidence_location": "data/evidence/d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41.json"
-            },
-            {
-              "event_id": "8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-24T04:19:05.675116+00:00",
-              "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json"
-            },
-            {
-              "event_id": "5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T21:22:52.826902+00:00",
-              "evidence_location": "data/evidence/5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441.json"
-            },
-            {
-              "event_id": "07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T17:08:37.020091+00:00",
-              "evidence_location": "data/evidence/07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201.json"
-            },
-            {
-              "event_id": "1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-23T17:01:28.049800+00:00",
-              "evidence_location": "data/evidence/1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5.json"
-            }
-          ],
-          "not_modified": false,
-          "full_fetch_forced": false,
-          "html_baseline_forced": false,
-          "file_baseline_forced": false,
-          "extractor_baseline_forced": false
-        }
-      }
-    }
-  ],
+  "events": [],
   "ai_results": [],
   "error_alert_after_runs": 2,
-  "trigger": "manual"
+  "trigger": "scheduled"
 }
