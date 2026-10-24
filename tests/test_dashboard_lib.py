@@ -1018,6 +1018,27 @@ const ev = (id, h, kind, lane, page) => ({ id, at: s + h * H, kind, laneKey: lan
         m = self.model("ev('m', 100, 'markup', 'fr'), ev('c', 104, 'on', 'fr')", lens="changed")
         self.assertEqual(m["counts"]["total"], 1)
 
+    def test_each_bead_knows_how_long_after_the_previous_one_it_came(self):
+        m = self.model("ev('a', 10, 'on', 'p1'), ev('b', 58, 'on', 'p1'), ev('c', 60, 'on', 'p2')", gap_hours=1)
+        lanes = {lane["key"]: lane for lane in m["lanes"]}
+        self.assertEqual([b["after"] for b in lanes["p1"]["beads"]], [None, 48 * 3600e3])
+        self.assertEqual([b["after"] for b in lanes["p2"]["beads"]], [None])
+
+    def test_markup_lens_shows_only_markup_edits(self):
+        m = self.model("ev('m', 100, 'markup', 'fr'), ev('c', 104, 'on', 'fr')", lens="markup")
+        self.assertEqual((m["counts"]["total"], m["counts"]["markup"]), (1, 1))
+
+    def test_new_pages_on_page_lanes_still_burst_per_regulator(self):
+        body = ",".join("Object.assign(ev('n%d', 100, 'new', 'p%d'), { burstKey: 'fr', burstLabel: 'FR' })" % (i, i) for i in range(6))
+        m = self.model(body)
+        rows = [row for day in m["days"] for row in day["rows"]]
+        self.assertEqual([(r["type"], r["count"], r["laneLabel"]) for r in rows], [("burst", 6, "FR")])
+
+    def test_gap_words_are_short(self):
+        out = run_js("console.log(JSON.stringify([5, 90, 7 * 60, 50 * 60, 26 * 60 * 24 / 24 * 24 + 0].map(m => L.timelineGapWords(m * 60000)).concat([L.timelineGapWords(10 * 86400000)])));")
+        self.assertEqual(out[:4], ["5 min", "2 h", "7 h", "2 d 2 h"])
+        self.assertEqual(out[-1], "10 d")
+
     def test_every_story_row_points_at_a_bead_that_exists(self):
         m = self.model("ev('a', 30, 'on', 'fr'), ev('b', 31, 'new', 'fr'), ev('c', 120, 'bad', 'osfi')")
         beads = {b["key"] for lane in m["lanes"] for b in lane["beads"]}

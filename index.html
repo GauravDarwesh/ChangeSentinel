@@ -460,6 +460,11 @@
     .field-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; }
     .field-title { font-size: 14px; font-weight: 500; }
     .field-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--ink-3); font-size: 12px; }
+    /* Both legends share one cell on their own row, so switching Grid and
+       Timeline never moves the header or the filters below it. */
+    .field-legends { display: grid; width: 100%; min-width: 0; }
+    .field-legends > .field-legend { grid-area: 1 / 1; }
+    .field-legends > .field-legend[data-off] { visibility: hidden; }
     .field-legend span { display: inline-flex; align-items: center; gap: 6px; }
     .field-legend i { width: 9px; height: 9px; border-radius: 1.5px; background: var(--idle-lo); }
     .field-legend i.dim { background: linear-gradient(135deg, var(--idle-lo), var(--idle-hi)); }
@@ -471,6 +476,11 @@
     /* Lenses, search and range sit on one line above the field. */
     .field-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin-top: 14px; }
     .field-lenses { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+    /* Grid and Timeline each have their own filters; both share one cell so
+       switching views never changes the row's size or moves what follows. */
+    .field-swap { display: grid; min-width: 0; }
+    .field-swap > * { grid-area: 1 / 1; min-width: 0; }
+    .field-swap > [data-off] { visibility: hidden; }
     .field-lenses button {
       display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 3px 10px; border: 1px solid var(--line-2); border-radius: 999px;
       background: transparent; color: var(--ink-2); font-size: 12.5px; white-space: nowrap; transition: border-color .15s var(--ease), background-color .15s var(--ease), color .15s var(--ease);
@@ -587,7 +597,7 @@
     .tl-corner span { color: var(--ink-2); font-size: 11.5px; font-weight: 500; }
     .tl-corner small { color: var(--ink-3); font-size: 10.5px; }
     .tl-track { position: relative; min-width: 0; margin-right: 26px; }
-    .tl-axis { height: 52px; }
+    .tl-axis { height: 58px; }
     .tl-band { position: absolute; top: 0; bottom: 0; background: transparent; pointer-events: none; }
     .tl-band.is-odd { background: color-mix(in srgb, var(--ink) 3.5%, transparent); }
     .tl-band.is-today { background: color-mix(in srgb, var(--accent) 8%, transparent); }
@@ -603,6 +613,18 @@
     .tl-axis .tl-now { top: auto; height: 10px; }
     .tl-now-label { position: absolute; top: 6px; transform: translateX(-50%); color: var(--accent); font: 600 9.5px/1 var(--font-code); letter-spacing: .1em; text-transform: uppercase; pointer-events: none; }
     .tl-next { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px dashed var(--ink-3); opacity: .55; pointer-events: none; }
+    .tl-axis .tl-next { top: 20px; }
+    /* Now to the next scan: nothing can have been found there yet. */
+    .tl-upcoming { position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink) 7%, transparent) 0 1px, transparent 1px 5px); pointer-events: none; }
+    .tl-next-label { position: absolute; top: 5px; right: -5px; display: inline-flex; align-items: center; gap: 5px; color: var(--ink-2); font: 500 9.5px/1 var(--font-code); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+    .tl-next-label i { width: 8px; height: 8px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--ink-3); }
+    .tl-next-dot { position: absolute; top: 50%; left: 100%; z-index: 1; width: 9px; height: 9px; transform: translate(-50%, -50%); background: var(--raise); box-shadow: inset 0 0 0 1px var(--ink-3); }
+    /* One update to the next on a lane, labelled with the time between them. */
+    .tl-link { position: absolute; top: 50%; height: 1.5px; margin-top: -.75px; background: color-mix(in srgb, var(--ink) 34%, transparent); pointer-events: none; }
+    .tl-gap { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); padding: 0 3px; border-radius: 2px; background: var(--raise); color: var(--ink-3); font: 500 10px/1.3 var(--font-ui); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .tl-lane:hover .tl-gap { color: var(--ink-2); }
+    .tl-tail { position: absolute; top: 50%; height: 0; margin-top: -.75px; border-top: 1.5px dashed color-mix(in srgb, var(--ink) 24%, transparent); pointer-events: none; }
+    .tl-lanes-more { position: static; display: block; width: 100%; height: auto; padding: 10px 14px; border-top: 1px solid var(--line); }
     .tl-lane { min-height: var(--lane-h); border-top: 1px solid var(--line); }
     .tl-lane:first-of-type { border-top: 0; }
     .tl-lane:hover { background: color-mix(in srgb, var(--accent) 4%, transparent); }
@@ -830,14 +852,24 @@
     .hx-sub { margin-top: 4px; color: var(--ink-3); font-size: 12.5px; line-height: 1.5; }
     .hx-stats { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding-top: 14px; border-top: 1px solid var(--line); }
     .hx-stat-label { color: var(--ink-3); font-size: 11.5px; }
-    .hx-stat-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; margin-top: 2px; }
+    /* The dial sits beside its number, with the label and note stacked next to it. */
+    .hx-stat { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "dial label" "dial value" "dial note"; align-items: center; column-gap: 14px; }
+    .hx-stat .hx-dial { grid-area: dial; }
+    .hx-stat-label { grid-area: label; }
+    .hx-stat-value { grid-area: value; margin-top: 2px; }
+    .hx-stat-note { grid-area: note; }
     .hx-stat-value { font-size: 20px; font-weight: 500; letter-spacing: -.01em; }
     .hx-stat-note { margin-top: 1px; color: var(--ink-3); font-size: 11.5px; }
-    .hx-spark { flex: 0 1 96px; width: 96px; min-width: 40px; height: 26px; overflow: visible; }
-    .hx-spark polyline { fill: none; stroke: var(--ink-3); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-    .hx-spark circle { fill: var(--ink-2); }
-    .hx-spark.is-on polyline { stroke: var(--state-change); } .hx-spark.is-on circle { fill: var(--state-change); filter: drop-shadow(0 0 3px var(--state-change-glow)); }
-    .hx-spark.is-accent polyline { stroke: var(--accent); } .hx-spark.is-accent circle { fill: var(--accent); }
+    .hx-dial { --c: var(--ink-2); --g: transparent; flex: none; width: 44px; height: 44px; overflow: visible; }
+    .hx-dial path { fill: none; stroke-width: 5; stroke-linecap: butt; }
+    .hx-dial-track { stroke: var(--line); }
+    .hx-dial-arc { stroke: var(--c); transition: opacity .15s var(--ease); }
+    .hx-dial-arc.is-today { filter: drop-shadow(0 0 3px var(--g)); }
+    .hx-dial-arc.is-bad { stroke: var(--state-bad); filter: drop-shadow(0 0 3px var(--state-bad-glow)); }
+    .hx-dial path:hover { stroke-width: 6.5; }
+    .hx-dial-text { fill: var(--ink-3); font: 500 9px var(--font-code); letter-spacing: .02em; text-anchor: middle; dominant-baseline: central; }
+    .hx-dial.is-on { --c: var(--state-change); --g: var(--state-change-glow); }
+    .hx-dial.is-accent { --c: var(--accent); --g: var(--accent); }
     .hx-insights { margin: 0; padding: 4px 0; list-style: none; }
     .hx-insight { display: grid; grid-template-columns: 7px minmax(0, 1fr) auto; gap: 12px; align-items: start; width: 100%; padding: 10px 18px; border: 0; background: none; color: var(--ink-2); font: 13.5px/1.55 var(--font-ui); text-align: left; text-wrap: pretty; }
     button.hx-insight { cursor: pointer; transition: background .15s var(--ease), color .15s var(--ease); }
@@ -921,8 +953,9 @@
       .hx-hero { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 14px 14px 16px; }
       .hx-headline { font-size: 18px; }
       .hx-stats { gap: 12px; }
-      .hx-stat-row { flex-direction: column; align-items: flex-start; gap: 4px; }
-      .hx-spark { width: 100%; flex-basis: auto; height: 20px; }
+      .hx-stat { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "label label" "value dial" "note note"; column-gap: 8px; }
+      .hx-stat .hx-dial { justify-self: start; }
+      .hx-dial { width: 38px; height: 38px; }
       .hx-stat-value { font-size: 18px; }
       .hx-insight { padding: 10px 16px; font-size: 13px; }
       .hx-matrix { padding: 12px 16px 4px; }
@@ -1374,8 +1407,8 @@
       .overview-text > * { padding-left: 18px; padding-right: 18px; }
       .overview-text > .mobile-head { order: 1; padding: 14px 18px; }
       .overview-statement { order: 2; font-size: 17px; line-height: 1.45; }
-      .scan-pair { order: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 18px; }
-      .scan-pair .block { min-width: 0; margin-top: 0; padding: 12px 13px 11px; border: 1px solid var(--line); border-radius: 6px; background: var(--raise); }
+      .scan-pair { order: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 16px; }
+      .overview-text .scan-pair .block { min-width: 0; margin-top: 0; padding: 12px 13px 11px; border: 1px solid var(--line); border-radius: 6px; background: var(--raise); }
       .scan-pair .block-label { flex-wrap: wrap; gap: 2px 8px; white-space: nowrap; }
       .scan-pair .block-next .block-label span:last-child { color: var(--accent); }
       .scan-pair .block-value { font-size: 16px; font-weight: 500; }
@@ -1427,13 +1460,8 @@
       .facts { grid-template-columns: 1fr; }
       .toast { bottom: calc(68px + env(safe-area-inset-bottom)); }
     }
-    /* ---------- Phone: More sheet and health strip (same panels and LEDs as the overview) ---------- */
+    /* ---------- Phone: More sheet (same panels and LEDs as the overview) ---------- */
     .nav-more, .more-sheet[hidden] { display: none; }
-    .m-health { display: grid; grid-template-columns: 7px minmax(0, 1fr) auto; align-items: center; gap: 10px; width: 100%; padding: 10px 13px; border: 1px solid var(--line); border-radius: 6px; background: var(--raise); color: var(--ink-2); font: 13px/1.4 var(--font-ui); text-align: left; cursor: pointer; }
-    .m-health .hx-dot { margin-top: 0; }
-    .m-health-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .m-health-go { color: var(--link); white-space: nowrap; }
-    .m-health:active { border-color: var(--accent); }
     .more-sheet { position: fixed; inset: 0; z-index: 80; }
     .more-backdrop { position: absolute; inset: 0; background: rgba(8, 5, 3, .55); animation: moreFade .2s var(--ease) backwards; }
     .more-panel { position: absolute; left: 0; right: 0; bottom: 0; max-height: 86dvh; overflow: auto; padding: 0 18px calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line-2); background: var(--pane); animation: moreUp .26s var(--ease) backwards; overscroll-behavior: contain; }
@@ -1463,7 +1491,6 @@
     .more-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
     .more-tile .more-value { font-size: 15px; }
     .more-tile .scout-avatar-wrap, .more-tile .cadence-nav-mark { display: none; }
-    .more-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
     .mobile-head { display: none; flex-direction: column; gap: 14px; padding: 0 0 20px; }
     .mobile-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .mobile-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -1777,6 +1804,9 @@
 @media (max-width: 380px) {
   .rail-nav .nav-button { font-size: 11.5px; letter-spacing: -.01em; }
 }
+@media (max-width: 340px) {
+  .rail-nav .nav-button { font-size: 10.5px; }
+}
 @media (max-width: 360px) {
   /* Eight tabs no longer fit side by side: the bar scrolls sideways instead of clipping "Ask". */
   .rail-nav { justify-content: start; gap: 0 12px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
@@ -1792,7 +1822,13 @@
   .nav-add { display: none; }
   /* Five destinations and More (Health, Runs, Scout, Cadence) in the same
      text-and-LED tabs as before; More takes the name of the view it holds. */
-  .rail-nav { grid-template-columns: repeat(6, auto); justify-content: space-between; gap: 0; padding: 0 6px; overflow: visible; }
+  .rail-nav { grid-template-columns: repeat(6, minmax(0, 1fr)); justify-content: stretch; gap: 0; padding: 0 4px; overflow: visible; }
+  /* Six equal tabs: this outranks the older eight-column rule further down. */
+  .rail .rail-nav { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .rail-nav > li { min-width: 0; }
+  .rail-nav .nav-button { width: 100%; padding-left: 0; padding-right: 0; justify-content: center; }
+  /* In the bar Ask is a tab like the others, so it gets the same LED. */
+  .nav-button-ask::before { background: var(--led-off); box-shadow: none; }
   .rail-nav > li { display: none; }
   .rail-nav > li:nth-child(-n+3), .rail-nav > .nav-alerts, .rail-nav > .nav-ask, .rail-nav > .nav-more { display: block; }
   .nav-button.is-more-active { color: var(--ink); }
@@ -2006,6 +2042,7 @@
     .cadence-load-week.is-busy::after { content: "!"; position: absolute; top: 1px; right: 3px; color: var(--accent); font: 600 10px/1 var(--font-code); }
     .cadence-load-count { min-height: 13px; color: var(--ink); font: 500 11px/1.2 var(--font-code); }
     .cadence-load-date { color: var(--ink-3); font: 9.5px/1.2 var(--font-code); white-space: nowrap; }
+    .cadence-load-date .cl-short { display: none; }
     .cadence-day.is-clash::after { content: ""; position: absolute; top: 9px; right: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
     .cadence-flag { display: inline-flex; align-items: center; gap: 5px; color: var(--ink-3); font-size: 11px; }
     .cadence-flag::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); }
@@ -2163,7 +2200,7 @@
       .cadence-filter-search, .cadence-filter-type { flex: 1 1 100%; max-width: none; width: 100%; }
       .cadence-shell { padding: 17px 12px 24px; }
       .cadence-header { display: block; }
-      .cadence-header-actions { justify-content: flex-start; margin-top: 15px; }
+      .cadence-header-actions { margin-top: 15px; }
       .cadence-access { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 10px; }
       .cadence-access-copy { min-width: 0; }
       /* The sign-in form and the signed-in line take the full width under the copy;
@@ -2172,10 +2209,23 @@
       .cadence-signed-in { justify-content: flex-start; gap: 8px 14px; }
       .cadence-member { flex-basis: 100%; overflow-wrap: anywhere; }
       .cadence-signin-form .field-input { flex: 1 1 140px; width: auto; }
-      .cadence-stat-row { gap: 5px; }
-      .cadence-stat { min-height: 75px; padding: 9px 8px; }
-      .cadence-stat-label, .cadence-stat-note { font-size: 9.5px; }
-      .cadence-stat strong { font-size: 20px; }
+      /* Three stats as rows of one card: label and note on the left, the number on the right. */
+      .cadence-stat-row { grid-template-columns: minmax(0, 1fr); gap: 0; margin-bottom: 18px; border: 1px solid var(--line); background: var(--pane); }
+      .cadence-stat { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label value" "note value"; align-items: center; gap: 1px 12px; min-height: 0; padding: 9px 14px; border: 0; background: none; }
+      .cadence-stat + .cadence-stat { border-top: 1px solid var(--line); }
+      .cadence-stat-label { grid-area: label; color: var(--ink-2); font-size: 12.5px; }
+      .cadence-stat-note { grid-area: note; font-size: 11.5px; }
+      .cadence-stat strong { grid-area: value; font-size: 20px; font-variant-numeric: tabular-nums; }
+      .cadence-header-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+      .cadence-header-actions .btn { justify-content: center; min-width: 0; padding-left: 6px; padding-right: 6px; white-space: nowrap; }
+      .cadence-load { padding: 12px 12px 10px; }
+      .cadence-load-head { flex-wrap: wrap; align-items: flex-start; }
+      .cadence-load-strip { gap: 2px; }
+      .cadence-load-week { grid-template-rows: 32px auto auto; padding: 3px 0 2px; }
+      .cadence-load-bar { max-width: 18px; height: 32px; }
+      .cadence-load-date .cl-full { display: none; }
+      .cadence-load-date .cl-short { display: grid; justify-items: center; line-height: 1.25; }
+      .cadence-load-date .cl-short i { min-height: 1.25em; font-style: normal; font-size: 8.5px; letter-spacing: .02em; color: var(--ink-3); }
       .cadence-month-toolbar { display: block; }
       .cadence-month-nav { gap: 4px; }
       .cadence-month-nav h2 { flex: 1; margin: 0 4px; font-size: 19px; }
@@ -2347,7 +2397,6 @@
               <button class="m-action is-scan" type="button" data-run-scan="all">Scan now</button>
               <button class="m-action" type="button" data-add-monitor>Add link</button>
             </div>
-            <button class="m-health" type="button" data-go="health" id="mobileHealth" aria-label="Monitor health"><i class="hx-dot is-ok" aria-hidden="true"></i><span class="m-health-text">Reading monitor health…</span><span class="m-health-go" aria-hidden="true">Health ›</span></button>
           </div>
           <h1 class="visually-hidden">Overview</h1>
           <p class="overview-statement" id="overviewLede">Reading the latest stored scan…</p>
@@ -2388,24 +2437,38 @@
                 <button type="button" data-field-view="timeline" aria-pressed="false" title="Events on a time axis, one lane per section, told in words below"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 6h10" stroke-width="1.2"/><circle cx="3" cy="6" r="1.6"/><circle cx="7.5" cy="6" r="2.2"/></svg>Timeline</button>
               </div>
             </div>
+            <div class="field-legends">
             <div class="field-legend" aria-label="Legend" data-legend-for="grid">
               <span><i class="on"></i>Changed</span><span><i class="new"></i>New page</span><span><i class="bad"></i>Problem</span><span><i class="dim"></i>No change</span><span><i class="next"></i>Next scan</span><span><i class="manual"></i>Manual run in window</span>
             </div>
-            <div class="field-legend" aria-label="Legend" data-legend-for="timeline" hidden>
+            <div class="field-legend" aria-label="Legend" data-legend-for="timeline" data-off aria-hidden="true">
               <span><i class="on"></i>Changed</span><span><i class="new"></i>New page</span><span><i class="bad"></i>Problem</span><span><i class="ring"></i>Markup only</span><span><i class="nowline"></i>Now</span><span><i class="next"></i>Next scan</span>
+            </div>
             </div>
           </div>
           <div class="field-tools">
-            <div class="field-lenses" role="group" aria-label="Which pages to show">
+            <div class="field-swap">
+            <div class="field-lenses" role="group" aria-label="Which pages to show" data-tools-for="grid">
               <button type="button" data-field-lens="activity" aria-pressed="true" title="Pages that changed or had problems get their own row; the rest are folded into summary rows">Activity <span class="num" data-lens-count="activity"></span></button>
               <button type="button" data-field-lens="changed" aria-pressed="false">Changed <span class="num" data-lens-count="changed"></span></button>
               <button type="button" data-field-lens="problems" aria-pressed="false">Problems <span class="num" data-lens-count="problems"></span></button>
               <button type="button" data-field-lens="new" aria-pressed="false">New <span class="num" data-lens-count="new"></span></button>
               <button type="button" data-field-lens="all" aria-pressed="false">All pages <span class="num" data-lens-count="all"></span></button>
             </div>
+            <div class="field-lenses" role="group" aria-label="Which events to show" data-tools-for="timeline" data-off aria-hidden="true" inert>
+              <button type="button" data-tl-show="changed" aria-pressed="true" title="Content changes and removed pages">Changes <span class="num" data-tl-count="changed"></span></button>
+              <button type="button" data-tl-show="problems" aria-pressed="false" title="Pages that failed to fetch or read">Problems <span class="num" data-tl-count="problems"></span></button>
+              <button type="button" data-tl-show="new" aria-pressed="false" title="Pages saved for the first time">New pages <span class="num" data-tl-count="new"></span></button>
+              <button type="button" data-tl-show="markup" aria-pressed="false" title="Markup-only edits: a page's code changed but its text did not">Markup <span class="num" data-tl-count="markup"></span></button>
+              <button type="button" data-tl-show="all" aria-pressed="false" title="Every event in range">All <span class="num" data-tl-count="all"></span></button>
+            </div>
+            </div>
             <div class="field-controls">
               <label class="search-field field-search" for="fieldSearch"><span class="visually-hidden">Find a page in the scan history</span><input id="fieldSearch" type="search" placeholder="Find a page" autocomplete="off"></label>
-              <label for="fieldGroup"><span class="visually-hidden">Group pages by</span><select class="field-input" id="fieldGroup" aria-label="Group pages by"><option value="regulator">By regulator</option><option value="jurisdiction">By jurisdiction</option><option value="kind">By kind of document</option><option value="source">By monitor</option><option value="none">No grouping</option></select></label>
+              <div class="field-swap">
+              <label for="fieldGroup" data-tools-for="grid"><span class="visually-hidden">Group pages by</span><select class="field-input" id="fieldGroup" aria-label="Group pages by"><option value="regulator">By regulator</option><option value="jurisdiction">By jurisdiction</option><option value="kind">By kind of document</option><option value="source">By monitor</option><option value="none">No grouping</option></select></label>
+              <label for="tlLanes" data-tools-for="timeline" data-off aria-hidden="true" inert><span class="visually-hidden">Timeline lanes</span><select class="field-input" id="tlLanes" aria-label="Timeline lanes"><option value="page">One lane per page</option><option value="regulator">By regulator</option><option value="jurisdiction">By jurisdiction</option><option value="kind">By kind of document</option><option value="source">By monitor</option><option value="none">One lane</option></select></label>
+              </div>
               <label for="fieldRange"><span class="visually-hidden">Time range</span><select class="field-input" id="fieldRange" aria-label="Time range"><option value="2d">Last 2 days</option><option value="7d" selected>Last 7 days</option><option value="30d">Last 30 days</option><option value="all">All history</option></select></label>
             </div>
           </div>

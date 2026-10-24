@@ -103,12 +103,46 @@ class TestDashboardEvidenceContract(unittest.TestCase):
 
     def test_phone_bar_keeps_ask_and_puts_health_in_more(self):
         html = read("index.html")
-        for token in ('id="navMore"', 'id="moreSheet"', 'id="mobileHealth"', ".rail-nav > .nav-ask, .rail-nav > .nav-more { display: block; }"):
+        for token in ('id="navMore"', 'id="moreSheet"', ".rail-nav > .nav-ask, .rail-nav > .nav-more { display: block; }",
+                      ".rail-nav { grid-template-columns: repeat(6, minmax(0, 1fr));"):
             with self.subTest(token=token):
                 self.assertIn(token, html)
         source = read("dashboard.js")
         self.assertIn('const MORE_VIEWS = { health: "Health"', source)
         self.assertIn('data-more-go="health"', source)
+
+    def test_phone_overview_and_more_sheet_do_not_repeat_each_other(self):
+        # Health lives in More; Reload, Scan now, Add link and the theme live at
+        # the top of the phone Overview. Neither place repeats the other.
+        html = read("index.html")
+        self.assertNotIn('id="mobileHealth"', html)
+        self.assertIn('<div class="mobile-actions">', html)
+        source = read("dashboard.js")
+        self.assertNotIn("more-actions", source)
+        # The scan cards sit under the lede without the generic block margin.
+        self.assertIn(".overview-text .scan-pair .block { min-width: 0; margin-top: 0;", html)
+
+    def test_scan_history_legend_does_not_move_between_views(self):
+        html = read("index.html")
+        self.assertIn('<div class="field-legends">', html)
+        # [hidden] is display: none !important here, so the idle legend is only made invisible.
+        self.assertIn(".field-legends > .field-legend[data-off] { visibility: hidden; }", html)
+        self.assertIn('legend.toggleAttribute("data-off", off);', read("dashboard.js"))
+
+    def test_timeline_has_its_own_filters_and_shows_the_next_scan(self):
+        html = read("index.html")
+        for token in ('data-tools-for="timeline"', 'data-tl-show="changed"', 'data-tl-show="markup"', 'id="tlLanes"', '<option value="page">One lane per page</option>'):
+            with self.subTest(token=token):
+                self.assertIn(token, html)
+        source = read("dashboard.js")
+        for token in ('class="tl-next-label"', 'class="tl-next-dot"', 'class="tl-link"', 'class="tl-tail"', "L.timelineGapWords(bead.after)"):
+            with self.subTest(token=token):
+                self.assertIn(token, source)
+
+    def test_health_week_numbers_use_dials(self):
+        source = read("dashboard.js")
+        self.assertIn("function healthDial(days, field, cls, words)", source)
+        self.assertNotIn("healthSpark", source)
 
     def test_health_view_is_interactive(self):
         source = read("dashboard.js")
@@ -747,7 +781,9 @@ class TestScoutView(unittest.TestCase):
     def test_phone_bar_fits_seven_tabs_without_rules(self):
         html = read("index.html")
         self.assertIn(".rail-nav { grid-template-columns: repeat(8, auto); justify-content: space-between; padding: 0 6px; }", html)
-        self.assertNotIn("grid-template-columns: repeat(6, minmax(0, 1fr))", html)
+        # The phone shows six tabs (five and More) in equal columns, so every
+        # label and its light sit centred in the same width.
+        self.assertIn(".rail .rail-nav { grid-template-columns: repeat(6, minmax(0, 1fr)); }", html)
         self.assertIn(".nav-scout, .nav-calendar, .nav-ask { margin-top: 0; padding-top: 0; border-top: 0; }", html)
 
     def test_scout_is_a_split_view_with_review_filters_and_coverage(self):

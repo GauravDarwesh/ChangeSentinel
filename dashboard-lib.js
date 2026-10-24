@@ -378,7 +378,7 @@
   const TIMELINE_KINDS = ["bad", "on", "removed", "new", "markup"];
   const TIMELINE_LENS_KINDS = {
     activity: ["bad", "on", "removed", "new", "markup"], all: ["bad", "on", "removed", "new", "markup"],
-    changed: ["on", "removed"], problems: ["bad"], new: ["new"]
+    changed: ["on", "removed"], problems: ["bad"], new: ["new"], markup: ["markup"]
   };
   function timelineTopKind(kinds) {
     return TIMELINE_KINDS.find(kind => kinds[kind]) || "markup";
@@ -397,7 +397,7 @@
     inRange.forEach(entry => {
       counts[entry.kind] = (counts[entry.kind] || 0) + 1;
       const key = String(entry.laneKey || "all");
-      if (!lanes.has(key)) lanes.set(key, { key, label: String(entry.laneLabel || "All pages"), note: String(entry.laneNote || ""), latest: 0, counts: { bad: 0, on: 0, removed: 0, new: 0, markup: 0 }, members: [] });
+      if (!lanes.has(key)) lanes.set(key, { key, label: String(entry.laneLabel || "All pages"), note: String(entry.laneNote || ""), badge: String(entry.laneBadge || entry.laneLabel || "All pages"), latest: 0, counts: { bad: 0, on: 0, removed: 0, new: 0, markup: 0 }, members: [] });
       const lane = lanes.get(key);
       lane.latest = Math.max(lane.latest, entry.at);
       lane.counts[entry.kind] += 1;
@@ -420,13 +420,17 @@
         bead.ids.push(entry.id);
         beadOf.set(entry.id, bead.key);
       });
-      beads.forEach(bead => {
+      // Each bead also knows how long after the one before it on its lane it
+      // came, which is what the timeline is for: when an update came, and
+      // when the next one followed.
+      beads.forEach((bead, index) => {
+        bead.after = index ? bead.first - beads[index - 1].last : null;
         bead.at = start + bead.sum / bead.count;
         bead.x = Math.max(0, Math.min(1, (bead.at - start) / span));
         bead.top = timelineTopKind(bead.kinds);
         delete bead.sum;
       });
-      return { key: lane.key, label: lane.label, note: lane.note, latest: lane.latest, counts: lane.counts, beads };
+      return { key: lane.key, label: lane.label, note: lane.note, badge: lane.badge, latest: lane.latest, counts: lane.counts, beads };
     });
     // The story: newest first, one heading per local day. A scan that added
     // many pages to one lane is one expandable row, and markup-only edits that
@@ -442,7 +446,8 @@
       });
       return groups;
     };
-    const burstKey = entry => String(entry.laneKey || "all") + "|" + Math.floor(entry.at / PERIOD_MS);
+    // With one lane per page, a scan's new pages still read as one burst per regulator.
+    const burstKey = entry => String(entry.burstKey || entry.laneKey || "all") + "|" + Math.floor(entry.at / PERIOD_MS);
     const repeatKey = entry => String(entry.pageId || entry.id) + "|" + localIsoDate(new Date(entry.at));
     const bursts = groupsOf("new", burstKey);
     const repeats = groupsOf("markup", repeatKey);
@@ -456,7 +461,7 @@
         if (members.length >= burstMin) {
           if (told.has("n|" + key)) return;
           told.add("n|" + key);
-          rows.push({ type: "burst", key: "burst|" + key, at: members[0].at, kind: "new", laneKey: entry.laneKey, laneLabel: entry.laneLabel, count: members.length, members, beadKeys: keysOf(members) });
+          rows.push({ type: "burst", key: "burst|" + key, at: members[0].at, kind: "new", laneKey: entry.laneKey, laneLabel: entry.burstLabel || entry.laneLabel, count: members.length, members, beadKeys: keysOf(members) });
           return;
         }
       }
@@ -479,6 +484,16 @@
       days[days.length - 1].rows.push(row);
     });
     return { lanes: laneList, days, counts, gapMs, start, end };
+  }
+  // The time between two updates, short enough to sit on the line joining them.
+  function timelineGapWords(ms) {
+    const minutes = Math.max(1, Math.round(Number(ms) / 60000));
+    if (!Number.isFinite(minutes)) return "";
+    if (minutes < 60) return minutes + " min";
+    const hours = Math.round(minutes / 60);
+    if (hours < 48) return hours + " h";
+    const days = Math.floor(hours / 24), rest = hours % 24;
+    return days + " d" + (rest && days < 7 ? " " + rest + " h" : "");
   }
 
   /* ---------- Fleet health insights ----------
@@ -2619,7 +2634,7 @@
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe, pickRuleMatches, pickRuleFolder, pickRuleRequest,
     diffSequences, alignLines, changedWords, readWorkbook, workbookDiff, csvWorkbook, parseCsv, zipListing, zipFile, readDocx, columnName, cellRef,
     esc, nextScheduledScan, scanCycle, runColumns, slotColumns, columnCellState, pendingScan,
-    timelineModel, TIMELINE_KINDS, healthInsights, healthLight,
+    timelineModel, timelineGapWords, TIMELINE_KINDS, healthInsights, healthLight,
     fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, regulatorFor, jurisdictionForHost, hostOf, pageKind, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,
     parseUnifiedDiff, tokenize, wordDiff, similarity, redlineRows, redlineSummary, renderRedline, renderUnifiedDiff,

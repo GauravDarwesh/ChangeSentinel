@@ -738,7 +738,6 @@ function renderOverview() {
 }
 // Deadlines and effective dates read from recorded changes, soonest first.
 function renderOverviewHealth() {
-  renderMobileHealth();
   const line = $("overviewHealth");
   if (!line) return;
   if (!state.health) { line.textContent = "Health appears after the next scan."; return; }
@@ -750,21 +749,6 @@ function renderOverviewHealth() {
   if (totals.inactive) parts.push(esc(totals.inactive + " quiet for weeks"));
   parts.push(esc(healthPercent(week.success_rate) + " of checks succeeded this week"));
   line.innerHTML = parts.map((part, index) => index === 0 ? esc(part) : part).join(" · ") + ".";
-}
-// Phone: health sits as one tappable line under the overview's actions.
-function renderMobileHealth() {
-  const strip = $("mobileHealth");
-  if (!strip) return;
-  const text = strip.querySelector(".m-health-text");
-  const dot = strip.querySelector(".hx-dot");
-  if (!state.health) { text.textContent = "Health appears after the next scan"; dot.className = "hx-dot is-info"; return; }
-  const totals = healthTotals();
-  const week = state.health.last_7_days || {};
-  const tone = totals.failing ? "bad" : totals.stale || totals.inactive ? "warn" : "ok";
-  dot.className = "hx-dot is-" + tone;
-  text.textContent = totals.failing ? plural(totals.failing, "monitor failing", "monitors failing") + " · " + healthPercent(week.success_rate) + " of checks ok"
-    : totals.stale ? plural(totals.stale, "monitor overdue", "monitors overdue") + " for a scan"
-    : healthNumber(totals.healthy) + "/" + healthNumber(totals.monitors) + " healthy · " + healthPercent(week.success_rate) + " of checks ok";
 }
 function renderUpcomingDates() {
   const today = L.localIsoDate();
@@ -826,6 +810,11 @@ function renderLatestPreview() {
 const FIELD_STORAGE = "cs-field-v1";
 const FIELD_LENS_WORDS = { activity: "Activity", changed: "Changed", problems: "Problems", new: "New", all: "All pages" };
 const FIELD_GROUPS = { regulator: "Regulator", jurisdiction: "Jurisdiction", kind: "Kind of document", source: "Monitor", none: "No grouping" };
+// The timeline filters events, not pages, and by default gives each page its
+// own lane so one page's updates read left to right with the time between them.
+const TL_SHOWS = ["changed", "problems", "new", "markup", "all"];
+const TL_LANES = ["page", "regulator", "jurisdiction", "kind", "source", "none"];
+const TL_LANE_LIMIT = 10;
 function fieldPrefs() {
   if (state.field) return state.field;
   let saved = {};
@@ -835,13 +824,15 @@ function fieldPrefs() {
     range: Object.prototype.hasOwnProperty.call(L.FIELD_RANGES, saved.range) ? saved.range : isCompact() ? "2d" : "7d",
     groupBy: Object.prototype.hasOwnProperty.call(FIELD_GROUPS, saved.groupBy) ? saved.groupBy : "regulator",
     view: saved.view === "timeline" ? "timeline" : "grid",
-    query: "", open: new Set(), closed: new Set(), limit: 60, limits: {}, storyLimit: 60
+    tlShow: TL_SHOWS.indexOf(saved.tlShow) >= 0 ? saved.tlShow : "changed",
+    tlLanes: TL_LANES.indexOf(saved.tlLanes) >= 0 ? saved.tlLanes : "page",
+    query: "", open: new Set(), closed: new Set(), limit: 60, limits: {}, storyLimit: 60, tlLaneLimit: TL_LANE_LIMIT
   };
   return state.field;
 }
 function saveFieldPrefs() {
   const f = fieldPrefs();
-  try { localStorage.setItem(FIELD_STORAGE, JSON.stringify({ lens: f.lens, range: f.range, groupBy: f.groupBy, view: f.view })); } catch (_) {}
+  try { localStorage.setItem(FIELD_STORAGE, JSON.stringify({ lens: f.lens, range: f.range, groupBy: f.groupBy, view: f.view, tlShow: f.tlShow, tlLanes: f.tlLanes })); } catch (_) {}
 }
 // Lights keep a fixed size; the label column takes whatever width the lights
 // leave, within limits, so long page names show in full when there is room.
@@ -1062,7 +1053,7 @@ function renderMonitoringSignal() {
   if (manualLegend) manualLegend.parentElement.hidden = !manual;
   syncFieldView();
   if (prefs.view === "timeline") renderTimeline(columns);
-  else ledField.measure();
+  else { timelineCounts(columns); ledField.measure(); }
   updateNextRunCountdown();
 }
 /* ---------- Timeline view ----------
@@ -1077,7 +1068,18 @@ function syncFieldView() {
   document.querySelectorAll("[data-field-view]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.fieldView === view)));
   $("fieldFrame").hidden = view === "timeline";
   $("timelineView").hidden = view !== "timeline";
-  document.querySelectorAll("[data-legend-for]").forEach(legend => { legend.hidden = legend.dataset.legendFor !== view; });
+  // The other view's legend keeps its space (see .field-legends) so nothing below moves.
+  document.querySelectorAll("[data-legend-for]").forEach(legend => {
+    const off = legend.dataset.legendFor !== view;
+    legend.toggleAttribute("data-off", off);
+    if (off) legend.setAttribute("aria-hidden", "true"); else legend.removeAttribute("aria-hidden");
+  });
+  document.querySelectorAll("[data-tools-for]").forEach(tool => {
+    const off = tool.dataset.toolsFor !== view;
+    tool.toggleAttribute("data-off", off);
+    tool.inert = off;
+    if (off) tool.setAttribute("aria-hidden", "true"); else tool.removeAttribute("aria-hidden");
+  });
 }
 function timelineEntries(prefs) {
   const sourceById = new Map(configuredSources().map(source => [source.id, source]));
@@ -1088,8 +1090,14 @@ function timelineEntries(prefs) {
   const lane = item => {
     const source = sourceById.get(item.source_id) || { id: item.source_id };
     const label = shortSourceLabel(source);
-    const group = prefs.groupBy === "none" ? {} : fieldGroupOf(item, prefs.groupBy, label);
-    return { laneKey: group.groupKey || "all", laneLabel: group.groupLabel || "All pages", laneNote: group.groupNote || "", sourceLabel: label };
+    if (prefs.tlLanes === "page") {
+      const regulator = fieldGroupOf(item, "regulator", label);
+      return { laneKey: "p:" + item.url_id, laneLabel: itemTitle(item), laneNote: regulator.groupLabel || label, laneBadge: regulator.groupLabel || label, sourceLabel: label, regulatorLabel: regulator.groupLabel || label,
+        burstKey: regulator.groupKey || "all", burstLabel: regulator.groupLabel || label };
+    }
+    const group = prefs.tlLanes === "none" ? {} : fieldGroupOf(item, prefs.tlLanes, label);
+    const regulator = prefs.tlLanes === "regulator" ? group : fieldGroupOf(item, "regulator", label);
+    return { laneKey: group.groupKey || "all", laneLabel: group.groupLabel || "All pages", laneNote: group.groupNote || "", laneBadge: group.groupLabel || "All pages", sourceLabel: label, regulatorLabel: regulator.groupLabel || label };
   };
   const matches = (item, place) => fieldMatchesQuery({ title: itemTitle(item), url: item.canonical_url, sourceLabel: place.sourceLabel, groupLabel: place.laneLabel });
   const add = (item, kind, at, extra) => {
@@ -1126,8 +1134,13 @@ function timelineEntries(prefs) {
 }
 function timelineBounds(prefs, columns, entries) {
   const now = Date.now();
-  const end = Math.max(now + 60000, L.nextScheduledScan(new Date(now)).getTime());
+  // The axis ends at the scan the Overview counts down to. While that scan is
+  // late, queued or running it ends just past now, rather than at a later slot.
+  const pending = state.pendingScan;
+  const waiting = !pending || pending.phase === "waiting";
   const days = L.FIELD_RANGES[prefs.range];
+  const due = waiting ? (pending ? pending.due.getTime() : L.nextScheduledScan(new Date(now)).getTime()) : 0;
+  const end = waiting ? Math.max(now + 60000, due) : now + Math.max(30 * 60000, (days || 7) * 86400000 * .025);
   if (days) return { start: now - days * 86400000, end, now };
   const earliest = Math.min(columns.length ? columns[0].start : now, ...entries.map(entry => entry.at));
   return { start: Math.min(now - 86400000, Number.isFinite(earliest) ? earliest : now), end, now };
@@ -1135,17 +1148,45 @@ function timelineBounds(prefs, columns, entries) {
 function timelineKindWords(kinds) {
   return L.TIMELINE_KINDS.filter(kind => kinds[kind]).map(kind => plural(kinds[kind], TIMELINE_KIND_WORDS[kind][0], TIMELINE_KIND_WORDS[kind][1])).join(", ");
 }
-function renderTimeline(columns) {
-  const host = $("timelineView");
+const TL_SHOW_WORDS = { changed: "content changes", problems: "problems", new: "new pages", markup: "markup edits", all: "events" };
+// The timeline's event filters show their counts in either view, so the
+// filter row is the same size whichever view is open.
+function timelineCounts(columns) {
   const prefs = fieldPrefs();
   const entries = timelineEntries(prefs);
   const bounds = timelineBounds(prefs, columns, entries);
+  const showCounts = { changed: 0, problems: 0, new: 0, markup: 0, all: 0 };
+  entries.forEach(entry => {
+    if (entry.at < bounds.start || entry.at > bounds.end) return;
+    showCounts.all += 1;
+    if (entry.kind === "on" || entry.kind === "removed") showCounts.changed += 1;
+    else if (entry.kind === "bad") showCounts.problems += 1;
+    else if (entry.kind === "new") showCounts.new += 1;
+    else if (entry.kind === "markup") showCounts.markup += 1;
+  });
+  document.querySelectorAll("[data-tl-count]").forEach(count => { count.textContent = String(showCounts[count.dataset.tlCount] || 0); });
+  return { prefs, entries, bounds, showCounts };
+}
+function renderTimeline(columns) {
+  const host = $("timelineView");
+  const { prefs, entries, bounds, showCounts } = timelineCounts(columns);
   const compact = isCompact();
-  const labelWidth = compact ? 0 : Math.round(Math.min(280, Math.max(210, (host.clientWidth || 900) * .28)));
+  const labelWidth = compact ? 0 : Math.round(Math.min(300, Math.max(220, (host.clientWidth || 900) * .3)));
   const trackPx = Math.max(240, (host.clientWidth || 900) - labelWidth - 40);
-  const gapMs = (bounds.end - bounds.start) * (compact ? 20 : 24) / trackPx;
-  const model = L.timelineModel(entries, { start: bounds.start, end: bounds.end, gapMs, lens: prefs.lens });
-  state.timeline = { model, entries: new Map(entries.map(entry => [entry.id, entry])) };
+  // Beads closer than this share one, so neighbouring beads never overlap.
+  const gapMs = (bounds.end - bounds.start) * (compact ? 22 : 30) / trackPx;
+  const model = L.timelineModel(entries, { start: bounds.start, end: bounds.end, gapMs, lens: prefs.tlShow });
+  // For the story: how long after the previous update of the same sort on the same page each one came.
+  const afterById = new Map();
+  const groupOfKind = kind => kind === "removed" ? "on" : kind;
+  const byPage = new Map();
+  entries.slice().sort((e1, e2) => e1.at - e2.at).forEach(entry => {
+    const key = entry.pageId + "|" + groupOfKind(entry.kind);
+    const prev = byPage.get(key);
+    if (prev != null && entry.kind !== "new") afterById.set(entry.id, L.timelineGapWords(entry.at - prev) + " after the previous " + (groupOfKind(entry.kind) === "on" ? "change" : entry.kind === "bad" ? "problem" : "edit"));
+    byPage.set(key, entry.at);
+  });
+  state.timeline = { model, entries: new Map(entries.map(entry => [entry.id, entry])), afterById };
   const span = bounds.end - bounds.start;
   const pct = at => ((Math.max(bounds.start, Math.min(bounds.end, at)) - bounds.start) / span * 100).toFixed(3) + "%";
   const dayStarts = [];
@@ -1185,41 +1226,69 @@ function renderTimeline(columns) {
     return '<span class="tl-day' + (mark.today ? " is-today" : "") + (atEnd ? " is-end" : "") + '" style="' + (atEnd ? "right:0" : "left:" + pct(Math.max(mark.day, bounds.start))) + '"><span class="tl-day-week">' +
       esc(mark.today && !atEnd ? "Today" : top) + '</span><span class="tl-day-date">' + esc(date.getDate()) + "</span></span>";
   }).join("");
+  const pendingNow = state.pendingScan;
+  const nextWords = pendingNow ? pendingWords(pendingNow) : null;
+  const nextWhen = !pendingNow || pendingNow.phase === "waiting" ? clock(new Date(bounds.end)) :
+    pendingNow.phase === "late" ? nextWords.time + " · late" : pendingNow.phase === "due" ? nextWords.time + " · due now" : nextWords.time.toLowerCase();
   const nowMark = '<i class="tl-now" style="left:' + pct(bounds.now) + '"></i>';
-  const nextMark = '<i class="tl-next" style="left:' + pct(bounds.end) + '" title="' + esc("Next scheduled scan, " + clock(new Date(bounds.end))) + '"></i>';
+  // From now to the next scheduled scan: the stretch nothing can have happened in yet.
+  const upcoming = '<i class="tl-upcoming" style="left:' + pct(bounds.now) + ";width:" + ((bounds.end - Math.min(bounds.end, bounds.now)) / span * 100).toFixed(3) + '%"></i>';
+  const nextAxis = '<span class="tl-next-label" title="' + esc("Next scheduled scan, " + nextWhen) + '"><i aria-hidden="true"></i>' + esc(!pendingNow || ["waiting", "late", "due"].indexOf(pendingNow.phase) >= 0 ? "Next scan " + nextWhen : nextWords.time) + "</span>";
+  const nextMark = '<i class="tl-next" style="left:100%"></i>';
   const rangeShort = { "2d": "Last 2 days", "7d": "Last 7 days", "30d": "Last 30 days", all: "All history" }[prefs.range];
   const c = model.counts;
+  const lanesShown = model.lanes.slice(0, prefs.tlLaneLimit || TL_LANE_LIMIT);
   let html = '<div class="tl-board" style="--label-w:' + labelWidth + 'px">' +
-    '<div class="tl-row tl-head"><div class="tl-corner"><span>' + esc(rangeShort) + "</span><small>" + esc(c.total ? plural(c.total, "event", "events") : "Nothing in range") + "</small></div>" +
-    '<div class="tl-track tl-axis">' + bands + labels + nowMark + nextMark + "</div></div>";
+    '<div class="tl-row tl-head"><div class="tl-corner"><span>' + esc(rangeShort) + "</span><small>" + esc(c.total ? plural(c.total, TL_SHOW_WORDS[prefs.tlShow].replace(/s$/, ""), TL_SHOW_WORDS[prefs.tlShow]) : "Nothing in range") + "</small></div>" +
+    '<div class="tl-track tl-axis">' + bands + upcoming + labels + nowMark + nextMark + nextAxis + "</div></div>";
   if (!model.lanes.length) {
-    const words = prefs.query ? "No event matches “" + prefs.query + "” in this range." : prefs.lens === "problems" ? "No problems in this range." :
-      prefs.lens === "changed" ? "No page changed in this range." : prefs.lens === "new" ? "No page was added in this range." : "Nothing happened in this range.";
-    html += '<div class="tl-empty">' + esc(words) + (prefs.range !== "all" ? ' <button class="text-button" type="button" data-tl-range="all">Show all history</button>' : "") + "</div>";
+    const what = TL_SHOW_WORDS[prefs.tlShow];
+    const words = prefs.query ? "No " + what + " match “" + prefs.query + "” in this range." : "No " + what + " in " + rangeShort.toLowerCase() + ".";
+    html += '<div class="tl-empty">' + esc(words) +
+      (prefs.tlShow !== "all" && showCounts.all ? ' <button class="text-button" type="button" data-tl-show="all">Show all events</button>' : "") +
+      (prefs.range !== "all" ? ' <button class="text-button" type="button" data-tl-range="all">Show all history</button>' : "") + "</div>";
   }
-  model.lanes.forEach((lane, laneIndex) => {
+  lanesShown.forEach((lane, laneIndex) => {
     const chips = [lane.counts.bad ? '<i class="field-chip is-bad">' + esc(lane.counts.bad) + "</i>" : "", lane.counts.on + lane.counts.removed ? '<i class="field-chip is-on">' + esc(lane.counts.on + lane.counts.removed) + "</i>" : "",
-      lane.counts.new ? '<i class="field-chip is-new">' + esc(lane.counts.new) + "</i>" : ""].join("");
+      lane.counts.new ? '<i class="field-chip is-new">' + esc(lane.counts.new) + "</i>" : "", lane.counts.markup ? '<i class="field-chip is-markup">' + esc(lane.counts.markup) + "</i>" : ""].join("");
+    // Each update is joined to the next one on its lane, labelled with the time
+    // between them; a dashed tail runs on from the latest to the next scan.
+    let links = "";
+    lane.beads.forEach((bead, index) => {
+      if (!index) return;
+      const prev = lane.beads[index - 1];
+      const width = bead.x - prev.x;
+      const words = L.timelineGapWords(bead.after);
+      links += '<i class="tl-link" style="left:' + (prev.x * 100).toFixed(3) + "%;width:" + (width * 100).toFixed(3) + '%">' +
+        (width * trackPx >= (compact ? 54 : 62) ? '<span class="tl-gap">' + esc(words) + "</span>" : "") + "</i>";
+    });
+    const last = lane.beads[lane.beads.length - 1];
+    if (last && last.x < 1) links += '<i class="tl-tail" style="left:' + (last.x * 100).toFixed(3) + "%;width:" + ((1 - last.x) * 100).toFixed(3) + '%"></i>';
     const beads = lane.beads.map((bead, beadIndex) => {
       const size = bead.count === 1 ? 1 : bead.count < 10 ? 2 : 3;
       const mixed = Object.keys(bead.kinds).filter(kind => kind !== bead.top);
-      const when = bead.count === 1 ? new Date(bead.first).toLocaleString([], { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })
-        : new Date(bead.first).toLocaleString([], { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }) + (bead.last - bead.first > 60000 ? " – " + clock(new Date(bead.last)) : "");
+      const when = new Date(bead.first).toLocaleString([], { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }) +
+        (bead.count > 1 && bead.last - bead.first > 60000 ? " – " + clock(new Date(bead.last)) : "");
       return '<button class="tl-bead k-' + esc(bead.top) + " sz-" + size + (mixed.length ? " is-mixed k2-" + esc(L.TIMELINE_KINDS.find(kind => bead.kinds[kind] && kind !== bead.top)) : "") +
-        '" type="button" style="left:' + (bead.x * 100).toFixed(3) + "%;--i:" + (laneIndex * 3 + beadIndex) + '" data-tl-bead="' + esc(bead.key) + '" aria-label="' + esc(lane.label + ", " + when + ": " + timelineKindWords(bead.kinds)) + '">' +
+        '" type="button" style="left:' + (bead.x * 100).toFixed(3) + "%;--i:" + (laneIndex * 3 + beadIndex) + '" data-tl-bead="' + esc(bead.key) + '" aria-label="' + esc(lane.label + ", " + when + ": " + timelineKindWords(bead.kinds) + (bead.after != null ? ", " + L.timelineGapWords(bead.after) + " after the one before" : "")) + '">' +
         (bead.count > 1 ? '<span class="num">' + esc(bead.count > 99 ? "99+" : bead.count) + "</span>" : "") + "</button>";
     }).join("");
-    html += '<div class="tl-row tl-lane" data-tl-lane="' + esc(lane.key) + '"><div class="tl-label" title="' + esc(lane.label + (lane.note ? " · " + lane.note : "")) + '">' + fieldBadge(lane.label) +
+    html += '<div class="tl-row tl-lane" data-tl-lane="' + esc(lane.key) + '"><div class="tl-label" title="' + esc(lane.label + (lane.note ? " · " + lane.note : "")) + '">' + fieldBadge(lane.badge || lane.label) +
       '<span class="field-section-text"><span class="field-name">' + esc(lane.label) + "</span><small>" + esc(lane.note || timelineKindWords(lane.counts)) + '</small></span><span class="field-chips">' + chips + "</span></div>" +
-      '<div class="tl-track">' + bands + '<i class="tl-rail"></i>' + nowMark + nextMark + beads + "</div></div>";
+      '<div class="tl-track">' + bands + upcoming + '<i class="tl-rail"></i>' + links + nowMark + nextMark + '<i class="tl-next-dot" title="' + esc("Next scan, " + nextWhen) + '"></i>' + beads + "</div></div>";
   });
+  if (model.lanes.length > lanesShown.length) {
+    const rest = model.lanes.length - lanesShown.length;
+    html += '<button class="field-more tl-lanes-more" type="button" data-tl-lanes-more>Show ' + esc(Math.min(rest, TL_LANE_LIMIT * 2)) + " more · " +
+      esc(plural(rest, prefs.tlLanes === "page" ? "page" : "lane", prefs.tlLanes === "page" ? "pages" : "lanes")) + " not shown</button>";
+  }
   html += '<div class="tl-tip" id="tlTip" hidden></div></div>';
   html += renderTimelineStory(model, prefs);
   host.innerHTML = html;
-  $("fieldNote").textContent = "Each bead is something that happened, at the time it was found" +
-    (model.gapMs > 6 * 3600000 ? "; at this zoom, events on a lane less than " + timelineSpanWords(model.gapMs) + " apart share a bead" : "") +
-    ". Lanes with content changes or problems come first. The story below tells the same events in words; select a bead to find them." +
-    (c.markup ? " Hollow beads are markup-only edits, which don't count as changes." : "");
+  $("fieldNote").textContent = (prefs.tlLanes === "page" ? "One lane per page. " : "") +
+    "Each bead is an update at the time it was found; the line to the next bead on a lane shows how long until the next update came, and the dashed tail runs to the next scan (" + nextWhen + ")." +
+    (model.gapMs > 6 * 3600000 ? " At this zoom, updates less than " + timelineSpanWords(model.gapMs) + " apart share a bead." : "") +
+    " Select a bead to find it in the story below." + (prefs.tlShow === "all" || prefs.tlShow === "markup" ? " Hollow beads are markup-only edits, which don't count as changes." : "");
 }
 function renderTimelineStory(model, prefs) {
   if (!model.days.length) return "";
@@ -1246,7 +1315,7 @@ function renderTimelineStory(model, prefs) {
       const verdict = entry.relevant === true ? '<span class="tl-verdict is-yes">Relevant</span>' : entry.relevant === false ? '<span class="tl-verdict">Not relevant</span>' : "";
       const what = row.repeat ? L.eventLabel(entry.type) + " " + row.repeat + " times this day" : L.eventLabel(entry.type);
       html += '<button type="button" class="tl-item' + (row.kind === "markup" ? " is-quiet" : "") + '" data-tl-row="' + esc(row.beadKeys.join(" ")) + '" data-monitor-id="' + esc(entry.pageId) + '">' + time + '<i class="tl-dot k-' + esc(row.kind) + '"></i>' +
-        '<span class="tl-item-main"><span class="tl-item-title">' + esc(entry.title) + '</span><span class="tl-item-meta">' + esc(what) + " · " + esc(entry.laneLabel) + "</span>" +
+        '<span class="tl-item-main"><span class="tl-item-title">' + esc(entry.title) + '</span><span class="tl-item-meta">' + esc(what) + (!row.repeat && state.timeline && state.timeline.afterById.get(entry.id) ? " · " + esc(state.timeline.afterById.get(entry.id)) : "") + " · " + esc(entry.regulatorLabel || entry.laneLabel) + "</span>" +
         (entry.summary ? '<span class="tl-item-sum">' + esc(entry.summary.length > 260 ? entry.summary.slice(0, 259) + "…" : entry.summary) + "</span>" : "") + "</span>" + verdict + "</button>";
     });
     html += "</div>";
@@ -1312,6 +1381,9 @@ function syncFieldTools(counts) {
   if (range && range.value !== prefs.range) range.value = prefs.range;
   const group = $("fieldGroup");
   if (group && group.value !== prefs.groupBy) group.value = prefs.groupBy;
+  document.querySelectorAll("[data-tl-show]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.tlShow === prefs.tlShow)));
+  const lanes = $("tlLanes");
+  if (lanes && lanes.value !== prefs.tlLanes) lanes.value = prefs.tlLanes;
 }
 function fieldMatchesQuery(page) {
   const q = String(fieldPrefs().query || "").trim().toLowerCase();
@@ -2801,16 +2873,29 @@ function healthRegulator(monitor) {
   return regulator && regulator.short ? { key: regulator.id || regulator.short, short: regulator.short, name: regulator.name || regulator.short }
     : { key: String(monitor.regulator || "other"), short: String(monitor.regulator || "Other"), name: String(monitor.regulator || "Other") };
 }
-function healthSpark(values, cls) {
-  const list = (values || []).map(Number);
-  if (list.length < 2) return "";
-  const max = Math.max(1, ...list), w = 96, h = 26;
-  const points = list.map((value, index) => (index * w / (list.length - 1)).toFixed(1) + "," + (h - 2 - value / max * (h - 4)).toFixed(1));
-  return '<svg class="hx-spark ' + cls + '" viewBox="0 0 ' + w + " " + h + '" aria-hidden="true" preserveAspectRatio="none"><polyline points="' + points.join(" ") + '"/>' +
-    '<circle cx="' + points[points.length - 1].split(",")[0] + '" cy="' + points[points.length - 1].split(",")[1] + '" r="2.2"/></svg>';
+// A week dial: seven arcs round a ring, one per day clockwise from the top,
+// today last. Each is lit in proportion to that day's count; a day whose
+// checks failed is lit red. Hover an arc for its day.
+function healthDial(days, field, cls, words) {
+  const list = (days || []).slice(-7);
+  if (!list.length) return "";
+  const values = list.map(day => Number(day[field]) || 0);
+  const max = Math.max(1, ...values);
+  const c = 22, r = 17, step = 360 / list.length, gap = list.length > 1 ? 7 : 0;
+  const point = deg => { const rad = (deg - 90) * Math.PI / 180; return (c + r * Math.cos(rad)).toFixed(2) + " " + (c + r * Math.sin(rad)).toFixed(2); };
+  const arc = index => { const from = index * step + gap / 2, to = (index + 1) * step - gap / 2; return "M" + point(from) + " A" + r + " " + r + " 0 " + (to - from > 180 ? 1 : 0) + " 1 " + point(to); };
+  const arcs = list.map((day, index) => {
+    const value = values[index];
+    const failed = field === "checks" && Number(day.failed_checks) > 0;
+    const date = new Date(String(day.date) + "T12:00:00");
+    const label = (Number.isFinite(date.getTime()) ? date.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" }) + ": " : "") + words(day);
+    return '<path class="hx-dial-track" d="' + arc(index) + '"><title>' + esc(label) + "</title></path>" +
+      (value ? '<path class="hx-dial-arc' + (failed ? " is-bad" : "") + (index === list.length - 1 ? " is-today" : "") + '" d="' + arc(index) + '" style="opacity:' + (.32 + .68 * value / max).toFixed(2) + '"><title>' + esc(label) + "</title></path>" : "");
+  }).join("");
+  return '<svg class="hx-dial ' + cls + '" viewBox="0 0 44 44" role="img" aria-label="' + esc("Last " + list.length + " days, " + list.map(words).join("; ")) + '">' + arcs + '<text class="hx-dial-text" x="22" y="22">' + esc(list.length + "d") + "</text></svg>";
 }
-// The headline: a success-rate ring, what that means in words, and the
-// three week numbers with their daily shape.
+// The headline: the week's success rate, what that means in words, and the
+// three week numbers with a dial of their last seven days.
 function healthHero(health) {
   const totals = healthTotals();
   const week = health.last_7_days || {};
@@ -2823,7 +2908,7 @@ function healthHero(health) {
   const pending = state.pendingScan ? pendingWords(state.pendingScan) : null;
   const scans = healthMonitors().map(m => new Date(m.last_scan).getTime()).filter(Number.isFinite);
   const lastScan = scans.length ? Math.max(...scans) : null;
-  const stat = (label, value, spark, note) => '<div class="hx-stat"><div class="hx-stat-label">' + esc(label) + '</div><div class="hx-stat-row"><span class="hx-stat-value num">' + esc(value) + "</span>" + spark + '</div><div class="hx-stat-note">' + esc(note) + "</div></div>";
+  const stat = (label, value, dial, note) => '<div class="hx-stat">' + dial + '<div class="hx-stat-label">' + esc(label) + '</div><span class="hx-stat-value num">' + esc(value) + '</span><div class="hx-stat-note">' + esc(note) + "</div></div>";
   // The same lit squares as the scan cycle bar: one per thirtieth of the
   // week's checks, red for the share that failed (at least one if any did).
   const segments = 30;
@@ -2835,9 +2920,9 @@ function healthHero(health) {
     '<div class="hx-hero-text"><div class="hx-kicker"><i class="hx-pulse"></i>Fleet status</div><div class="hx-headline">' + esc(headline) + "</div>" +
       '<div class="hx-sub">' + esc([lastScan ? "Last scan " + relativeTime(lastScan).toLowerCase() : "", healthNextScanWords(state.pendingScan), healthNumber(totals.pages) + " pages and documents"].filter(Boolean).join(" · ")) + "</div></div>" +
     '<div class="hx-stats">' +
-      stat("Checks, 7 days", healthNumber(week.checks), healthSpark(daily.map(d => d.checks), "is-ink"), healthNumber(week.failed_checks) + " failed") +
-      stat("Changes", healthNumber(week.changes), healthSpark(daily.map(d => d.changes), "is-on"), "pages changed") +
-      stat("Alerts sent", healthNumber(week.alerts_sent), healthSpark(daily.map(d => d.alerts_sent), "is-accent"), "tests excluded") +
+      stat("Checks, 7 days", healthNumber(week.checks), healthDial(daily, "checks", "is-ink", d => plural(Number(d.checks) || 0, "check", "checks") + (Number(d.failed_checks) ? ", " + d.failed_checks + " failed" : "")), healthNumber(week.failed_checks) + " failed") +
+      stat("Changes", healthNumber(week.changes), healthDial(daily, "changes", "is-on", d => plural(Number(d.changes) || 0, "change", "changes")), "pages changed") +
+      stat("Alerts sent", healthNumber(week.alerts_sent), healthDial(daily, "alerts_sent", "is-accent", d => plural(Number(d.alerts_sent) || 0, "alert", "alerts")), "tests excluded") +
     "</div></section>";
 }
 function healthNextScanWords(pending) {
@@ -4473,14 +4558,23 @@ function renderCadenceLoad() {
   const busy = weeks.filter(week => week.busy);
   const total = weeks.reduce((sum, week) => sum + week.total, 0);
   const label = iso => { const d = cadenceDate(iso); return d ? d.toLocaleDateString([], { day: "numeric", month: "short" }) : iso; };
+  // On a phone twelve weeks share ~330 px, so each shows its day under the
+  // month, and the month only where it changes.
+  const shortLabel = (iso, index) => {
+    const d = cadenceDate(iso);
+    if (!d) return esc(iso);
+    const prev = index ? cadenceDate(weeks[index - 1].start) : null;
+    const month = !prev || prev.getMonth() !== d.getMonth() ? d.toLocaleDateString([], { month: "short" }) : "";
+    return "<i>" + esc(month) + "</i>" + esc(d.getDate());
+  };
   host.innerHTML = '<div class="cadence-load-head"><div><span class="cadence-eyebrow">NEXT 12 WEEKS</span><strong>' + plural(total, "open date", "open dates") + "</strong>" +
       (busy.length ? '<span class="cadence-load-warn">' + plural(busy.length, "week has", "weeks have") + " three or more deadlines</span>" : "") + "</div>" +
       '<span class="cadence-load-key"><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> more due</span></div>' +
-    '<div class="cadence-load-strip" role="list">' + weeks.map(week =>
+    '<div class="cadence-load-strip" role="list">' + weeks.map((week, index) =>
       '<button type="button" role="listitem" class="cadence-load-week lv' + week.level + (week.busy ? " is-busy" : "") + (week.start <= today && today <= week.end ? " is-now" : "") +
         '" data-calendar-jump-date="' + esc(week.start <= today ? today : week.start) + '" title="' + esc("Week of " + label(week.start) + ": " + (week.total ? plural(week.total, "date", "dates") + (week.deadlines ? ", " + plural(week.deadlines, "deadline", "deadlines") : "") + "\n" + week.titles.join("\n") : "nothing scheduled")) + '">' +
         '<span class="cadence-load-bar"><i style="height:' + (week.level * 25) + '%"></i></span><span class="cadence-load-count">' + (week.total || "") + "</span>" +
-        '<span class="cadence-load-date">' + esc(label(week.start)) + "</span></button>").join("") + "</div>";
+        '<span class="cadence-load-date"><span class="cl-full">' + esc(label(week.start)) + '</span><span class="cl-short" aria-hidden="true">' + shortLabel(week.start, index) + "</span></span></button>").join("") + "</div>";
 }
 function trackDetectedDate(eventId, date) {
   const item = state.calendar && Array.isArray(state.calendar.entries)
@@ -7031,7 +7125,27 @@ document.querySelectorAll("[data-field-view]").forEach(button => button.addEvent
   hideFieldTip();
   renderMonitoringSignal();
 }));
+$("tlLanes").addEventListener("change", () => {
+  const prefs = fieldPrefs();
+  prefs.tlLanes = TL_LANES.indexOf($("tlLanes").value) >= 0 ? $("tlLanes").value : "page";
+  prefs.tlLaneLimit = TL_LANE_LIMIT;
+  saveFieldPrefs();
+  hideTimelineTip();
+  renderMonitoringSignal();
+});
+document.querySelector(".field-wrap").addEventListener("click", event => {
+  const show = event.target.closest("[data-tl-show]");
+  if (!show) return;
+  const prefs = fieldPrefs();
+  prefs.tlShow = TL_SHOWS.indexOf(show.dataset.tlShow) >= 0 ? show.dataset.tlShow : "changed";
+  prefs.tlLaneLimit = TL_LANE_LIMIT;
+  prefs.storyLimit = 60;
+  saveFieldPrefs();
+  hideTimelineTip();
+  renderMonitoringSignal();
+});
 $("timelineView").addEventListener("click", event => {
+  if (event.target.closest("[data-tl-lanes-more]")) { event.stopPropagation(); fieldPrefs().tlLaneLimit = (fieldPrefs().tlLaneLimit || TL_LANE_LIMIT) + TL_LANE_LIMIT * 2; return renderMonitoringSignal(); }
   const bead = event.target.closest("[data-tl-bead]");
   if (bead) { event.stopPropagation(); hideTimelineTip(); return focusTimelineBead(bead.dataset.tlBead); }
   if (event.target.closest("[data-tl-more]")) { event.stopPropagation(); fieldPrefs().storyLimit = (fieldPrefs().storyLimit || 60) + 60; return renderMonitoringSignal(); }
@@ -7116,9 +7230,7 @@ function renderMoreSheet() {
       tile("runs", "Runs", esc(lastRunAt ? relativeTime(lastRunAt) : "None"), esc(text("navRunCount") ? "last scan · " + text("navRunCount") + " saved" : "since the last scan")) +
       tile("scout", "Scout", review ? "<b>" + esc(review) + "</b>" : "0", esc(review ? "pages to review" : "nothing to review")) +
       tile("calendar", "Cadence", esc(cadence), esc(cadence === 1 ? "date coming up" : "dates coming up")) +
-    "</div>" +
-    '<div class="more-actions"><button class="m-action is-scan" type="button" data-add-monitor data-more-dismiss>Add link</button><button class="m-action" type="button" data-refresh data-more-dismiss>Reload</button><button class="m-action" type="button" data-theme-toggle></button></div>';
-  syncThemeLabels();
+    "</div>";
 }
 let moreReturnFocus = null;
 function openMoreSheet() {
