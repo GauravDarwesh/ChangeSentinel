@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261024T042136Z-dca955fa",
-  "generated_at": "2026-10-24T04:26:23.448215+00:00",
+  "run_id": "20261024T090322Z-f4095c41",
+  "generated_at": "2026-10-24T09:10:03.324362+00:00",
   "source": {
     "id": "manual-b7f72aa87973",
     "name": "Technical specification - frequently asked questions (BCAR)",
@@ -63,11 +63,11 @@
     "discovered": 1,
     "new": 0,
     "changed": 0,
-    "source_changed": 0,
+    "source_changed": 1,
     "removed": 0,
     "removal_held": 0,
     "removal_pending_confirmation": 0,
-    "unchanged": 1,
+    "unchanged": 0,
     "baseline_migration": 0,
     "extraction_drift": 0,
     "fetch_error": 0,
@@ -83,13 +83,344 @@
     "ai_backlog_pending": 0,
     "crawl_paused": 0
   },
-  "events": [],
+  "events": [
+    {
+      "event_id": "d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41",
+      "event_type": "HTML_SOURCE_CHANGED",
+      "url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+      "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
+      "source_id": "manual-b7f72aa87973",
+      "timestamp": "2026-10-24T09:10:03.324362+00:00",
+      "evidence_location": "data/evidence/d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41.json",
+      "evidence": {
+        "previous": {
+          "schema_version": 2,
+          "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
+          "source_id": "manual-b7f72aa87973",
+          "regulator": "www.osfi-bsif.gc.ca",
+          "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+          "first_seen": "2026-10-23T12:53:48.284742+00:00",
+          "last_seen": "2026-10-24T04:26:23.448215+00:00",
+          "last_checked": "2026-10-24T04:26:23.448215+00:00",
+          "last_full_fetch": "2026-10-24T04:26:23.448215+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=UTF-8",
+          "content_length": 21443,
+          "etag": "W/\"1792815342\"",
+          "last_modified": "Sat, 24 Oct 2026 04:15:42 GMT",
+          "raw_hash": "5934b36c7a859ba4ad08fd26776c05a31efc0bc05a29f4ed6335bfd5b4dc277f",
+          "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
+          "html_hash": "5934b36c7a859ba4ad08fd26776c05a31efc0bc05a29f4ed6335bfd5b4dc277f",
+          "html_comparison_hash": "5934b36c7a859ba4ad08fd26776c05a31efc0bc05a29f4ed6335bfd5b4dc277f",
+          "html_comparison_hash_version": 2,
+          "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-5934b36c7a859ba4ad08fd26776c05a31efc0bc05a29f4ed6335bfd5b4dc277f.html",
+          "file_snapshot_location": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
+          "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "Regulatory signal detected",
+            "signals": [
+              "regulatory",
+              "report",
+              "requirement",
+              "risk",
+              "rule",
+              "supervisory"
+            ]
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T04:19:05.675116+00:00",
+              "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json"
+            },
+            {
+              "event_id": "5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T21:22:52.826902+00:00",
+              "evidence_location": "data/evidence/5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441.json"
+            },
+            {
+              "event_id": "07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T17:08:37.020091+00:00",
+              "evidence_location": "data/evidence/07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201.json"
+            },
+            {
+              "event_id": "1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T17:01:28.049800+00:00",
+              "evidence_location": "data/evidence/1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
+        },
+        "current": {
+          "schema_version": 2,
+          "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
+          "source_id": "manual-b7f72aa87973",
+          "regulator": "www.osfi-bsif.gc.ca",
+          "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+          "first_seen": "2026-10-23T12:53:48.284742+00:00",
+          "last_seen": "2026-10-24T09:10:03.324362+00:00",
+          "last_checked": "2026-10-24T09:10:03.324362+00:00",
+          "last_full_fetch": "2026-10-24T09:10:03.324362+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=UTF-8",
+          "content_length": 21449,
+          "etag": "W/\"1792832592\"",
+          "last_modified": "Sat, 24 Oct 2026 09:03:12 GMT",
+          "raw_hash": "148685a8d39526759d146c18a3b9f4a2ac0aeb8619b8232a051da10069c59ebe",
+          "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
+          "html_hash": "148685a8d39526759d146c18a3b9f4a2ac0aeb8619b8232a051da10069c59ebe",
+          "html_comparison_hash": "148685a8d39526759d146c18a3b9f4a2ac0aeb8619b8232a051da10069c59ebe",
+          "html_comparison_hash_version": 2,
+          "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-148685a8d39526759d146c18a3b9f4a2ac0aeb8619b8232a051da10069c59ebe.html",
+          "file_snapshot_location": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
+          "evidence_location": "data/evidence/d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "Regulatory signal detected",
+            "signals": [
+              "regulatory",
+              "report",
+              "requirement",
+              "risk",
+              "rule",
+              "supervisory"
+            ]
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T09:10:03.324362+00:00",
+              "evidence_location": "data/evidence/d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41.json"
+            },
+            {
+              "event_id": "8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-24T04:19:05.675116+00:00",
+              "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json"
+            },
+            {
+              "event_id": "5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T21:22:52.826902+00:00",
+              "evidence_location": "data/evidence/5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441.json"
+            },
+            {
+              "event_id": "07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T17:08:37.020091+00:00",
+              "evidence_location": "data/evidence/07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201.json"
+            },
+            {
+              "event_id": "1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-23T17:01:28.049800+00:00",
+              "evidence_location": "data/evidence/1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
+        }
+      }
+    }
+  ],
   "new_urls": [],
   "changed_urls": [],
-  "source_changed_urls": [],
+  "source_changed_urls": [
+    {
+      "before": {
+        "schema_version": 2,
+        "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
+        "source_id": "manual-b7f72aa87973",
+        "regulator": "www.osfi-bsif.gc.ca",
+        "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+        "first_seen": "2026-10-23T12:53:48.284742+00:00",
+        "last_seen": "2026-10-24T04:26:23.448215+00:00",
+        "last_checked": "2026-10-24T04:26:23.448215+00:00",
+        "last_full_fetch": "2026-10-24T04:26:23.448215+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": 21443,
+        "etag": "W/\"1792815342\"",
+        "last_modified": "Sat, 24 Oct 2026 04:15:42 GMT",
+        "raw_hash": "5934b36c7a859ba4ad08fd26776c05a31efc0bc05a29f4ed6335bfd5b4dc277f",
+        "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
+        "html_hash": "5934b36c7a859ba4ad08fd26776c05a31efc0bc05a29f4ed6335bfd5b4dc277f",
+        "html_comparison_hash": "5934b36c7a859ba4ad08fd26776c05a31efc0bc05a29f4ed6335bfd5b4dc277f",
+        "html_comparison_hash_version": 2,
+        "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-5934b36c7a859ba4ad08fd26776c05a31efc0bc05a29f4ed6335bfd5b4dc277f.html",
+        "file_snapshot_location": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
+        "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "Regulatory signal detected",
+          "signals": [
+            "regulatory",
+            "report",
+            "requirement",
+            "risk",
+            "rule",
+            "supervisory"
+          ]
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T04:19:05.675116+00:00",
+            "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json"
+          },
+          {
+            "event_id": "5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T21:22:52.826902+00:00",
+            "evidence_location": "data/evidence/5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441.json"
+          },
+          {
+            "event_id": "07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T17:08:37.020091+00:00",
+            "evidence_location": "data/evidence/07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201.json"
+          },
+          {
+            "event_id": "1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T17:01:28.049800+00:00",
+            "evidence_location": "data/evidence/1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false
+      },
+      "after": {
+        "schema_version": 2,
+        "url_id": "b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7",
+        "source_id": "manual-b7f72aa87973",
+        "regulator": "www.osfi-bsif.gc.ca",
+        "canonical_url": "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification",
+        "first_seen": "2026-10-23T12:53:48.284742+00:00",
+        "last_seen": "2026-10-24T09:10:03.324362+00:00",
+        "last_checked": "2026-10-24T09:10:03.324362+00:00",
+        "last_full_fetch": "2026-10-24T09:10:03.324362+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": 21449,
+        "etag": "W/\"1792832592\"",
+        "last_modified": "Sat, 24 Oct 2026 09:03:12 GMT",
+        "raw_hash": "148685a8d39526759d146c18a3b9f4a2ac0aeb8619b8232a051da10069c59ebe",
+        "normalized_hash": "0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532",
+        "html_hash": "148685a8d39526759d146c18a3b9f4a2ac0aeb8619b8232a051da10069c59ebe",
+        "html_comparison_hash": "148685a8d39526759d146c18a3b9f4a2ac0aeb8619b8232a051da10069c59ebe",
+        "html_comparison_hash_version": 2,
+        "html_snapshot_location": "data/snapshots/html/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-148685a8d39526759d146c18a3b9f4a2ac0aeb8619b8232a051da10069c59ebe.html",
+        "file_snapshot_location": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/b7f72aa8797327c87650c80ad74fb3a71f68d13c43aa6bffd00a0f296a90ccf7-0b120b03a87d451eb08df423eccfad0cd5e5bbe7d29266364eaa0b28b15e2532.txt",
+        "evidence_location": "data/evidence/d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "Regulatory signal detected",
+          "signals": [
+            "regulatory",
+            "report",
+            "requirement",
+            "risk",
+            "rule",
+            "supervisory"
+          ]
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T09:10:03.324362+00:00",
+            "evidence_location": "data/evidence/d669b504911556b9b84fe7cb3565b6e276cba3892928eb08f5165deeacd7fd41.json"
+          },
+          {
+            "event_id": "8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-24T04:19:05.675116+00:00",
+            "evidence_location": "data/evidence/8f6eebf258d8553031ca6c69128940f31e82fbd5867b65c3404b7d7eef1ead93.json"
+          },
+          {
+            "event_id": "5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T21:22:52.826902+00:00",
+            "evidence_location": "data/evidence/5fd4a73ab3a5e30b7476c393ea713f3640f9785a7db003d03e7b54be286e2441.json"
+          },
+          {
+            "event_id": "07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T17:08:37.020091+00:00",
+            "evidence_location": "data/evidence/07668907cf006b6e30c3985cf99f5f17d5f791590d00e68e27910e685589f201.json"
+          },
+          {
+            "event_id": "1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-23T17:01:28.049800+00:00",
+            "evidence_location": "data/evidence/1da05c0f431aee9a116ddd3675b93215f370629ec1ee5431d157e20ec97b33e5.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false
+      }
+    }
+  ],
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "scheduled",
-  "workflow_run_id": "40061762905"
+  "trigger": "manual",
+  "workflow_run_id": "40080327373"
 }
