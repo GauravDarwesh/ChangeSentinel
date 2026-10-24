@@ -788,11 +788,18 @@
     .health-tile-label { color: var(--ink-3); font-size: 12px; }
     .health-tile-value { margin-top: 4px; font-size: 24px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
     .health-tile-note { margin-top: 2px; color: var(--ink-3); font-size: 12px; }
-    .health-chart { margin: 0; padding: 12px 18px 14px; }
+    .health-chart { position: relative; margin: 0; padding: 12px 18px 14px; }
     .health-chart svg { display: block; width: 100%; height: auto; }
-    .health-chart .hc-bar { fill: var(--led-dim); }
+    .health-chart .hc-bar { fill: var(--led-dim); transition: fill .15s var(--ease); }
+    .health-chart .hc-hit { fill: transparent; }
+    .health-chart .hc-day-group { cursor: default; outline: none; }
+    .health-chart .hc-day-group.is-today .hc-bar { fill: color-mix(in srgb, var(--accent) 45%, var(--led-dim)); }
+    .health-chart .hc-day-group:hover .hc-hit, .health-chart .hc-day-group.is-hot .hc-hit, .health-chart .hc-day-group:focus-visible .hc-hit { fill: color-mix(in srgb, var(--accent) 10%, transparent); }
+    .health-chart .hc-day-group:hover .hc-bar, .health-chart .hc-day-group.is-hot .hc-bar { fill: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
+    .health-chart .hc-grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 3; }
+    .health-chart .hc-tick { fill: var(--ink-3); font-size: 9.5px; text-anchor: end; font-variant-numeric: tabular-nums; }
     .health-chart .hc-fail { fill: var(--state-bad); }
-    .health-chart .hc-change { fill: var(--state-change); }
+    .health-chart .hc-change { fill: var(--state-change); filter: drop-shadow(0 0 3px var(--state-change-glow)); }
     .health-chart .hc-axis { stroke: var(--line-2); stroke-width: 1; }
     .health-chart .hc-day { fill: var(--ink-3); font-size: 10px; text-anchor: middle; font-variant-numeric: tabular-nums; }
     .health-chart figcaption { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; color: var(--ink-3); font-size: 12px; }
@@ -801,6 +808,130 @@
     .health-sub { color: var(--ink-3); font-size: 12px; }
     .health-line { margin: 6px 0 0; color: var(--ink-2); font-size: 13.5px; line-height: 1.5; }
     .health-line strong { color: var(--problem); font-weight: 500; }
+
+    /* ---------- Health: hero, insights, fleet matrix, meters ---------- */
+    .health-detail .sheet { overflow: visible; }
+    .hx-hero { display: grid; grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); gap: 16px 28px; align-items: center; margin-top: 18px; padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--raise); }
+    .hx-hero.tone-ok { --hx-tone: var(--state-new); --hx-glow: var(--state-new-glow); }
+    .hx-hero.tone-warn { --hx-tone: var(--accent); --hx-glow: rgba(255, 159, 28, .5); }
+    .hx-hero.tone-bad { --hx-tone: var(--state-bad); --hx-glow: var(--state-bad-glow); }
+    .hx-score-label { color: var(--ink-3); font-size: 12.5px; }
+    .hx-score-value { margin-top: 2px; font-size: 30px; font-weight: 500; letter-spacing: -.02em; line-height: 1.15; }
+    .hx-score-value small { margin-left: 2px; color: var(--ink-3); font-size: 15px; font-weight: 400; }
+    .hx-score-leds { display: grid; grid-template-columns: repeat(30, minmax(0, 1fr)); gap: 2px; margin-top: 10px; }
+    .hx-score-leds i { aspect-ratio: 1; background: var(--led-off); animation: hxLed .35s var(--ease) backwards; animation-delay: calc(var(--i) * 14ms); }
+    .hx-score-leds i.is-ok { background: var(--state-new); box-shadow: 0 0 5px var(--state-new-glow); }
+    .hx-score-leds i.is-bad { background: var(--state-bad); box-shadow: 0 0 6px var(--state-bad-glow); }
+    @keyframes hxLed { from { opacity: 0; } }
+    .hx-hero-text { min-width: 0; }
+    .hx-kicker { display: flex; align-items: center; gap: 8px; color: var(--ink-3); font-size: 12.5px; }
+    .hx-pulse { flex: none; width: 7px; height: 7px; background: var(--hx-tone); box-shadow: 0 0 8px var(--hx-glow); animation: pulse 2.4s var(--ease) infinite; }
+    .hx-headline { margin-top: 4px; font-size: 20px; font-weight: 500; letter-spacing: -.015em; line-height: 1.25; }
+    .hx-sub { margin-top: 4px; color: var(--ink-3); font-size: 12.5px; line-height: 1.5; }
+    .hx-stats { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding-top: 14px; border-top: 1px solid var(--line); }
+    .hx-stat-label { color: var(--ink-3); font-size: 11.5px; }
+    .hx-stat-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; margin-top: 2px; }
+    .hx-stat-value { font-size: 20px; font-weight: 500; letter-spacing: -.01em; }
+    .hx-stat-note { margin-top: 1px; color: var(--ink-3); font-size: 11.5px; }
+    .hx-spark { flex: 0 1 96px; width: 96px; min-width: 40px; height: 26px; overflow: visible; }
+    .hx-spark polyline { fill: none; stroke: var(--ink-3); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+    .hx-spark circle { fill: var(--ink-2); }
+    .hx-spark.is-on polyline { stroke: var(--state-change); } .hx-spark.is-on circle { fill: var(--state-change); filter: drop-shadow(0 0 3px var(--state-change-glow)); }
+    .hx-spark.is-accent polyline { stroke: var(--accent); } .hx-spark.is-accent circle { fill: var(--accent); }
+    .hx-insights { margin: 0; padding: 4px 0; list-style: none; }
+    .hx-insight { display: grid; grid-template-columns: 7px minmax(0, 1fr) auto; gap: 12px; align-items: start; width: 100%; padding: 10px 18px; border: 0; background: none; color: var(--ink-2); font: 13.5px/1.55 var(--font-ui); text-align: left; text-wrap: pretty; }
+    button.hx-insight { cursor: pointer; transition: background .15s var(--ease), color .15s var(--ease); }
+    button.hx-insight:hover, button.hx-insight:focus-visible { background: var(--raise-2); color: var(--ink); }
+    .hx-go { color: var(--ink-3); font-size: 16px; line-height: 1.3; transition: transform .15s var(--ease), color .15s var(--ease); }
+    button.hx-insight:hover .hx-go { transform: translateX(3px); color: var(--accent); }
+    .hx-dot { display: inline-block; flex: none; width: 7px; height: 7px; margin-top: 7px; background: var(--led-dim); }
+    .hx-dot.is-bad { background: var(--state-bad); box-shadow: 0 0 7px var(--state-bad-glow); }
+    .hx-dot.is-warn { background: var(--accent); box-shadow: 0 0 7px color-mix(in srgb, var(--accent) 55%, transparent); }
+    .hx-dot.is-on { background: var(--state-change); box-shadow: 0 0 7px var(--state-change-glow); }
+    .hx-dot.is-ok { background: var(--state-new); box-shadow: 0 0 7px var(--state-new-glow); }
+    .hx-dot.is-info { background: var(--led-off); box-shadow: inset 0 0 0 1px var(--led-dim); }
+    .hx-matrix { position: relative; display: grid; gap: 14px; padding: 14px 18px 6px; }
+    .hx-group-head { display: flex; align-items: center; gap: 9px; min-width: 0; margin-bottom: 8px; }
+    .hx-group-name { overflow: hidden; color: var(--ink); font-size: 13px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+    .hx-group-head small { overflow: hidden; color: var(--ink-3); font-size: 11.5px; text-overflow: ellipsis; white-space: nowrap; }
+    .hx-group-head small b { font-weight: 500; }
+    .hx-group-head .is-warn { color: var(--accent); }
+    .hx-group-head .is-bad { color: var(--problem); }
+    .hx-cells { display: flex; flex-wrap: wrap; gap: 5px; }
+    .hx-cell {
+      --c: var(--idle-hi); width: 16px; height: 16px; padding: 0; border: 0; border-radius: 2px; cursor: pointer;
+      background: var(--c); box-shadow: 0 0 0 0 transparent;
+      animation: hxCell .45s var(--ease) backwards; animation-delay: calc(var(--i) * 6ms);
+      transition: transform .12s var(--ease), box-shadow .15s var(--ease);
+    }
+    .hx-cell.l-ok { --c: color-mix(in srgb, var(--idle-hi) 45%, var(--idle-lo)); }
+    .hx-cell.l-on { --c: var(--state-change); box-shadow: 0 0 9px var(--state-change-glow); }
+    .hx-cell.l-bad { --c: var(--state-bad); box-shadow: 0 0 10px var(--state-bad-glow); animation: hxCell .45s var(--ease) backwards, hxBad 1.6s ease-in-out infinite; }
+    .hx-cell.l-warn { --c: var(--accent); box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 45%, transparent); }
+    .hx-cell.l-stale { --c: transparent; background: transparent; box-shadow: inset 0 0 0 1.5px var(--accent); }
+    .hx-cell.l-quiet { --c: var(--idle-lo); box-shadow: inset 0 0 0 1px var(--line-2); }
+    .hx-cell:hover, .hx-cell:focus-visible { z-index: 2; transform: scale(1.3); box-shadow: 0 0 0 1.5px var(--raise), 0 0 0 2.5px var(--accent), 0 0 10px var(--c); outline: none; }
+    .hx-cell.is-key { display: inline-block; width: 10px; height: 10px; border-radius: 2px; animation: none; cursor: default; vertical-align: -1px; margin-right: 6px; }
+    @keyframes hxCell { from { opacity: 0; transform: scale(.3); } }
+    @keyframes hxBad { 50% { box-shadow: 0 0 16px var(--state-bad-glow); } }
+    .hx-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 10px 18px 14px; color: var(--ink-3); font-size: 12px; }
+    .hx-tip { position: absolute; z-index: 8; width: max-content; max-width: min(300px, calc(100% - 8px)); padding: 10px 12px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--raise-2); color: var(--ink); font-size: 12px; line-height: 1.45; box-shadow: 0 12px 32px -12px rgba(0,0,0,.55); pointer-events: none; }
+    .hx-tip-when { display: flex; align-items: center; gap: 7px; color: var(--ink-3); font: 500 10.5px var(--font-code); letter-spacing: .04em; }
+    .hx-tip-when .hx-dot { margin-top: 0; }
+    .hx-tip-title { margin: 3px 0 6px; font-weight: 500; }
+    .hx-tip-grid { display: grid; grid-template-columns: auto auto; gap: 2px 14px; margin: 6px 0 0; }
+    .hx-tip-grid dt { display: flex; align-items: center; gap: 6px; color: var(--ink-3); }
+    .hx-tip-grid dd { margin: 0; color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+    .hx-tip-grid .is-bad { color: var(--problem); }
+    .hx-key { width: 7px; height: 7px; }
+    .hx-key.is-bad { background: var(--state-bad); } .hx-key.is-on { background: var(--state-change); }
+    .hx-meters { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .hx-meter { padding: 14px 18px 16px; }
+    .hx-meter + .hx-meter { border-left: 1px solid var(--line); }
+    .hx-meter-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; color: var(--ink-3); font-size: 12px; }
+    .hx-meter-head span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .hx-meter-head b { flex: none; white-space: nowrap; }
+    .hx-meter-head b { color: var(--ink); font-size: 18px; font-weight: 500; }
+    .hx-meter-head small { color: var(--ink-3); font-size: 12px; font-weight: 400; }
+    .hx-bar { display: flex; height: 5px; margin-top: 10px; overflow: hidden; background: var(--led-off); }
+    .hx-bar i { display: block; height: 100%; animation: hxGrow .8s var(--ease) backwards; transform-origin: left; }
+    .hx-bar-ok { background: var(--state-new); box-shadow: 0 0 8px var(--state-new-glow); }
+    .hx-bar-bad { background: var(--state-bad); }
+    .hx-bar-quiet { background: var(--idle-hi); }
+    .hx-bar-quiet.is-near { background: var(--accent); } .hx-bar-quiet.is-full { background: var(--state-bad); }
+    @keyframes hxGrow { from { transform: scaleX(0); } }
+    .hx-meter-note { margin-top: 7px; color: var(--ink-3); font-size: 11.5px; }
+    .hx-strip { padding: 6px 0 8px; }
+    .hx-strip-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 14px; width: 100%; padding: 5px 18px; border: 0; background: none; color: var(--ink-2); font: 12.5px var(--font-ui); text-align: left; cursor: pointer; }
+    .hx-strip-row:hover { background: var(--raise-2); color: var(--ink); }
+    .hx-strip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .hx-strip-cells { display: grid; grid-template-columns: repeat(var(--n), 9px); gap: 2px; }
+    .hx-led { width: 9px; height: 9px; background: var(--led-off); }
+    .hx-led.s-dim, .hx-led.s-markup { background: var(--led-dim); }
+    .hx-led.s-on { background: var(--state-change); box-shadow: 0 0 5px var(--state-change-glow); }
+    .hx-led.s-new { background: var(--state-new); box-shadow: 0 0 5px var(--state-new-glow); }
+    .hx-led.s-bad { background: var(--state-bad); box-shadow: 0 0 5px var(--state-bad-glow); }
+    .hx-led.s-skip, .hx-led.s-none { background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
+    @media (prefers-reduced-motion: reduce) { .hx-cell, .hx-bar i, .hx-score-leds i, .hx-pulse { animation: none !important; } }
+    .hx-strip-row.is-single { grid-template-columns: auto minmax(0, 1fr); }
+    .hx-strip-row.is-single .hx-strip-name { color: var(--link); }
+    .hx-strip-row.is-single .hx-strip-cells { justify-self: end; }
+    .hc-fail-mark { fill: var(--state-bad); filter: drop-shadow(0 0 3px var(--state-bad-glow)); }
+    @media (max-width: 640px) {
+      .hx-hero { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 14px 14px 16px; }
+      .hx-headline { font-size: 18px; }
+      .hx-stats { gap: 12px; }
+      .hx-stat-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .hx-spark { width: 100%; flex-basis: auto; height: 20px; }
+      .hx-stat-value { font-size: 18px; }
+      .hx-insight { padding: 10px 16px; font-size: 13px; }
+      .hx-matrix { padding: 12px 16px 4px; }
+      .hx-cells { gap: 4px; }
+      .hx-meter + .hx-meter { border-left: 0; border-top: 1px solid var(--line); }
+      .hx-strip-row { padding: 6px 16px; }
+      .hx-strip-cells { grid-template-columns: repeat(var(--n), 6px); gap: 1.5px; }
+      .hx-led { width: 6px; height: 6px; border-radius: 1.5px; }
+    }
     span.is-code { font-family: var(--font-code); font-size: 12px; overflow-wrap: anywhere; }
     .chip { display: inline-flex; align-items: center; min-height: 26px; padding: 3px 10px; border: 1px solid var(--line-2); border-radius: 999px; background: transparent; color: var(--ink-2); font: inherit; font-size: 12.5px; line-height: 1.3; text-align: left; cursor: pointer; }
     .chip:hover { border-color: var(--accent); color: var(--ink); }
@@ -808,7 +939,10 @@
     .condition-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     .channel-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 12.5px; }
     .channel-label, .channel-none { color: var(--ink-3); }
-    .channel-bar .text-button { margin-left: auto; font-size: 12.5px; }
+    .channel-bar { margin-top: 10px; }
+    .chip-add { display: inline-flex; align-items: center; gap: 4px; border-style: dashed; color: var(--link); cursor: pointer; }
+    .chip-add svg { width: 11px; height: 11px; margin: 0; }
+    .chip-add:hover, .chip-add:focus-visible { border-style: solid; border-color: var(--accent); color: var(--ink); }
     .channel-guide { border-top: 1px solid var(--line); }
     .channel-guide summary { padding: 12px 20px; color: var(--link); font-size: 13px; cursor: pointer; }
     .channel-guide-body { padding: 0 20px 18px; color: var(--ink-2); font-size: 13px; line-height: 1.55; }
@@ -1249,7 +1383,8 @@
       .scan-pair .cycle-bar { gap: 1.5px; margin-top: 10px; padding-bottom: 2px; }
       .field-wrap { order: 4; flex: none; overflow: visible; margin-top: 20px; padding: 16px 18px 18px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
       .block-changes { order: 5; }
-      .block-health { order: 5; }
+      /* The health strip under the actions carries this on a phone. */
+      .block-health { display: none; }
       .block-sources { order: 6; }
       .block-dates { order: 7; padding-bottom: 32px; }
       .overview-text .block { margin-top: 22px; }
@@ -1292,6 +1427,43 @@
       .facts { grid-template-columns: 1fr; }
       .toast { bottom: calc(68px + env(safe-area-inset-bottom)); }
     }
+    /* ---------- Phone: More sheet and health strip (same panels and LEDs as the overview) ---------- */
+    .nav-more, .more-sheet[hidden] { display: none; }
+    .m-health { display: grid; grid-template-columns: 7px minmax(0, 1fr) auto; align-items: center; gap: 10px; width: 100%; padding: 10px 13px; border: 1px solid var(--line); border-radius: 6px; background: var(--raise); color: var(--ink-2); font: 13px/1.4 var(--font-ui); text-align: left; cursor: pointer; }
+    .m-health .hx-dot { margin-top: 0; }
+    .m-health-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .m-health-go { color: var(--link); white-space: nowrap; }
+    .m-health:active { border-color: var(--accent); }
+    .more-sheet { position: fixed; inset: 0; z-index: 80; }
+    .more-backdrop { position: absolute; inset: 0; background: rgba(8, 5, 3, .55); animation: moreFade .2s var(--ease) backwards; }
+    .more-panel { position: absolute; left: 0; right: 0; bottom: 0; max-height: 86dvh; overflow: auto; padding: 0 18px calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line-2); background: var(--pane); animation: moreUp .26s var(--ease) backwards; overscroll-behavior: contain; }
+    .more-sheet.is-closing .more-panel { animation: moreDown .2s var(--ease) forwards; }
+    .more-sheet.is-closing .more-backdrop { animation: moreFade .2s var(--ease) reverse forwards; }
+    @keyframes moreUp { from { transform: translateY(100%); } }
+    @keyframes moreDown { to { transform: translateY(100%); } }
+    @keyframes moreFade { from { opacity: 0; } }
+    .more-grip { width: 36px; height: 3px; margin: 8px auto 2px; background: var(--line-2); }
+    .more-head { display: flex; align-items: center; justify-content: space-between; padding: 8px 0 12px; }
+    .more-head h2 { font-size: 15px; font-weight: 500; }
+    .more-health, .more-tile { display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; width: 100%; min-width: 0; padding: 12px 13px 11px; border: 1px solid var(--line); border-radius: 6px; background: var(--raise); color: var(--ink); text-align: left; font: inherit; cursor: pointer; transition: border-color .15s var(--ease); }
+    .more-health:active, .more-tile:active, .more-tile.is-current { border-color: var(--accent); }
+    .more-label { display: flex; align-items: center; gap: 8px; color: var(--ink-3); font-size: 12.5px; }
+    .more-label::before { content: ""; flex: none; width: 7px; height: 7px; background: var(--led-off); box-shadow: inset 0 0 0 1px var(--led-dim); }
+    .more-tile.is-current .more-label::before, .more-health .more-label::before { background: var(--accent); box-shadow: var(--glow); }
+    .more-health.tone-bad .more-label::before { background: var(--state-bad); box-shadow: 0 0 8px var(--state-bad-glow); }
+    .more-label .more-go { margin-left: auto; color: var(--link); }
+    .more-value { display: block; margin-top: 4px; font-size: 16px; font-weight: 500; }
+    .more-sub { display: block; margin-top: 2px; color: var(--ink-3); font-size: 12px; line-height: 1.4; }
+    .more-sub b { color: var(--accent); font-weight: 500; }
+    .more-health-cells { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 10px; }
+    .more-health-cells i { width: 6px; height: 6px; background: var(--led-dim); }
+    .more-health-cells i.l-bad { background: var(--state-bad); box-shadow: 0 0 4px var(--state-bad-glow); }
+    .more-health-cells i.l-warn { background: var(--accent); } .more-health-cells i.l-on { background: var(--state-change); }
+    .more-health-cells i.l-stale { background: transparent; box-shadow: inset 0 0 0 1px var(--accent); } .more-health-cells i.l-quiet { background: var(--led-off); }
+    .more-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+    .more-tile .more-value { font-size: 15px; }
+    .more-tile .scout-avatar-wrap, .more-tile .cadence-nav-mark { display: none; }
+    .more-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
     .mobile-head { display: none; flex-direction: column; gap: 14px; padding: 0 0 20px; }
     .mobile-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .mobile-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -1618,6 +1790,15 @@
   .nav-ask-full, .nav-ai { display: none; }
   .nav-ask-short { display: inline; }
   .nav-add { display: none; }
+  /* Five destinations and More (Health, Runs, Scout, Cadence) in the same
+     text-and-LED tabs as before; More takes the name of the view it holds. */
+  .rail-nav { grid-template-columns: repeat(6, auto); justify-content: space-between; gap: 0; padding: 0 6px; overflow: visible; }
+  .rail-nav > li { display: none; }
+  .rail-nav > li:nth-child(-n+3), .rail-nav > .nav-alerts, .rail-nav > .nav-ask, .rail-nav > .nav-more { display: block; }
+  .nav-button.is-more-active { color: var(--ink); }
+  .nav-button.is-more-active::before { background: var(--accent); box-shadow: var(--glow); }
+  .nav-more-dot { position: absolute; top: 9px; left: calc(50% + 12px); width: 6px; height: 6px; background: var(--state-bad); box-shadow: 0 0 6px var(--state-bad-glow); }
+  .nav-more-dot.is-fresh { background: var(--accent); box-shadow: var(--glow); }
   .ask-sentinel-header { min-height: 0; padding: 12px 16px; }
   .ask-sentinel-title p { display: none; }
   .ask-sentinel-messages { padding: 18px 16px 8px; }
@@ -2014,6 +2195,7 @@
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
+      <symbol id="i-plus" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
       <symbol id="i-external" viewBox="0 0 16 16"><path d="M9.5 2.75h3.75V6.5M13 3l-5.5 5.5M11.5 9.5v3.25H3.25V4.5H6.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     </defs>
   </svg>
@@ -2062,7 +2244,7 @@
         <li><button class="nav-button" data-view="monitors" type="button">Pages<span class="nav-count" id="navMonitorCount"></span></button></li>
         <li><button class="nav-button" data-view="runs" type="button">Runs<span class="nav-count" id="navRunCount"></span></button></li>
         <li class="nav-health"><button class="nav-button" data-view="health" type="button" title="Failing, stale and quiet monitors, and check and alert volumes">Health<span class="nav-count" id="navHealthCount"></span></button></li>
-        <li><button class="nav-button" data-view="notifications" type="button">Alerts<span class="nav-count" id="navNotificationCount"></span></button></li>
+        <li class="nav-alerts"><button class="nav-button" data-view="notifications" type="button">Alerts<span class="nav-count" id="navNotificationCount"></span></button></li>
         <li class="nav-scout"><button class="nav-button nav-button-scout" id="scoutLaunch" data-view="scout" aria-controls="scoutView" type="button" title="New regulator pages found by the weekly Scout sweep"><span class="scout-avatar-wrap" aria-hidden="true">
             <svg class="scout-avatar" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
               <defs>
@@ -2132,6 +2314,7 @@
             </svg>
           </span>Cadence<span class="nav-count" id="navCadenceCount"></span></button></li>
         <li class="nav-ask"><button class="nav-button nav-button-ask" id="askSentinelLaunch" data-view="askSentinel" aria-label="Ask Sentinel" aria-controls="askSentinelView" type="button"><span class="nav-ask-full">Ask Sentinel</span><span class="nav-ask-short">Ask</span><span class="nav-ai">AI</span></button></li>
+        <li class="nav-more"><button class="nav-button" id="navMore" type="button" aria-haspopup="dialog" aria-controls="moreSheet" aria-expanded="false"><span id="navMoreLabel">More</span><i class="nav-more-dot" id="navMoreDot" hidden></i></button></li>
         <li class="nav-add"><button class="nav-button nav-button-add" type="button" data-add-monitor title="Add a web page or document link to monitor">Add a link<span class="nav-plus" aria-hidden="true">+</span></button></li>
       </ul>
 
@@ -2164,6 +2347,7 @@
               <button class="m-action is-scan" type="button" data-run-scan="all">Scan now</button>
               <button class="m-action" type="button" data-add-monitor>Add link</button>
             </div>
+            <button class="m-health" type="button" data-go="health" id="mobileHealth" aria-label="Monitor health"><i class="hx-dot is-ok" aria-hidden="true"></i><span class="m-health-text">Reading monitor health…</span><span class="m-health-go" aria-hidden="true">Health ›</span></button>
           </div>
           <h1 class="visually-hidden">Overview</h1>
           <p class="overview-statement" id="overviewLede">Reading the latest stored scan…</p>
@@ -2937,6 +3121,15 @@
     </form>
   </dialog>
   <div class="field-tip" id="fieldTip" role="tooltip" hidden></div>
+  <!-- Phone: the destinations that don't fit the bottom bar, with live status. -->
+  <div class="more-sheet" id="moreSheet" hidden>
+    <div class="more-backdrop" data-more-close></div>
+    <section class="more-panel" role="dialog" aria-modal="true" aria-labelledby="moreTitle">
+      <div class="more-grip" aria-hidden="true"></div>
+      <div class="more-head"><h2 id="moreTitle">More</h2><button class="text-button" type="button" data-more-close>Close</button></div>
+      <div class="more-body" id="moreBody"></div>
+    </section>
+  </div>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 
@@ -3112,8 +3305,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261024-timeline-1"></script>
-  <script src="dashboard.js?v=20261024-timeline-1"></script>
+  <script src="dashboard-lib.js?v=20261024-health-mobile-1"></script>
+  <script src="dashboard.js?v=20261024-health-mobile-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

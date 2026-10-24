@@ -1024,3 +1024,39 @@ const ev = (id, h, kind, lane, page) => ({ id, at: s + h * H, kind, laneKey: lan
         for day in m["days"]:
             for row in day["rows"]:
                 self.assertTrue(set(row["beadKeys"]) <= beads)
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestHealthInsights(unittest.TestCase):
+    """What stands out on the Health page comes only from health.json."""
+
+    def insights(self, health):
+        return run_js("console.log(JSON.stringify(L.healthInsights(" + json.dumps(health) + ", { now: new Date('2026-10-24T05:00:00Z') })));")
+
+    def monitor(self, sid, **extra):
+        base = {"source_id": sid, "name": sid, "status": "healthy", "pages": 1, "last_scan": "2026-10-24T04:00:00Z",
+                "last_change": None, "days_without_change": 3, "checks_7d": 20, "failures_7d": 0}
+        base.update(extra)
+        return base
+
+    def test_failing_monitors_lead_and_name_their_targets(self):
+        out = self.insights({"monitors": [self.monitor("a"), self.monitor("b", status="failing")], "last_7_days": {"checks": 40}})
+        self.assertEqual(out[0]["tone"], "bad")
+        self.assertEqual(out[0]["targets"], ["b"])
+
+    def test_recovered_monitors_are_reported_but_not_as_failing(self):
+        out = self.insights({"monitors": [self.monitor("a", failures_7d=4)], "last_7_days": {"checks": 20, "success_rate": .8}})
+        self.assertIn("recovered", [i["key"] for i in out])
+        self.assertNotIn("failing", [i["key"] for i in out])
+
+    def test_monitors_nearing_the_quiet_mark_are_flagged(self):
+        out = self.insights({"thresholds": {"inactive_after_days": 45}, "monitors": [self.monitor("a", days_without_change=40)], "last_7_days": {}})
+        self.assertIn("soon-quiet", [i["key"] for i in out])
+
+    def test_a_quiet_healthy_fleet_says_so(self):
+        out = self.insights({"monitors": [self.monitor("a"), self.monitor("b")], "last_7_days": {"checks": 40, "success_rate": 1}})
+        self.assertEqual(out[-1]["key"], "coverage")
+
+    def test_health_light_ranks_failing_over_a_recent_change(self):
+        out = run_js("console.log(JSON.stringify([L.healthLight({status:'failing', last_change:'2026-10-24T00:00:00Z'}, Date.parse('2026-10-24T05:00:00Z')), L.healthLight({status:'healthy', failures_7d: 2}), L.healthLight({status:'healthy'})]));")
+        self.assertEqual(out, ["bad", "warn", "ok"])

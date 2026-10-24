@@ -738,6 +738,7 @@ function renderOverview() {
 }
 // Deadlines and effective dates read from recorded changes, soonest first.
 function renderOverviewHealth() {
+  renderMobileHealth();
   const line = $("overviewHealth");
   if (!line) return;
   if (!state.health) { line.textContent = "Health appears after the next scan."; return; }
@@ -749,6 +750,21 @@ function renderOverviewHealth() {
   if (totals.inactive) parts.push(esc(totals.inactive + " quiet for weeks"));
   parts.push(esc(healthPercent(week.success_rate) + " of checks succeeded this week"));
   line.innerHTML = parts.map((part, index) => index === 0 ? esc(part) : part).join(" · ") + ".";
+}
+// Phone: health sits as one tappable line under the overview's actions.
+function renderMobileHealth() {
+  const strip = $("mobileHealth");
+  if (!strip) return;
+  const text = strip.querySelector(".m-health-text");
+  const dot = strip.querySelector(".hx-dot");
+  if (!state.health) { text.textContent = "Health appears after the next scan"; dot.className = "hx-dot is-info"; return; }
+  const totals = healthTotals();
+  const week = state.health.last_7_days || {};
+  const tone = totals.failing ? "bad" : totals.stale || totals.inactive ? "warn" : "ok";
+  dot.className = "hx-dot is-" + tone;
+  text.textContent = totals.failing ? plural(totals.failing, "monitor failing", "monitors failing") + " · " + healthPercent(week.success_rate) + " of checks ok"
+    : totals.stale ? plural(totals.stale, "monitor overdue", "monitors overdue") + " for a scan"
+    : healthNumber(totals.healthy) + "/" + healthNumber(totals.monitors) + " healthy · " + healthPercent(week.success_rate) + " of checks ok";
 }
 function renderUpcomingDates() {
   const today = L.localIsoDate();
@@ -1943,6 +1959,7 @@ function renderNavCounts() {
     healthCount.classList.toggle("is-alert", failing > 0);
   }
   const toReview = scoutBuckets().REVIEW.length;
+  syncMoreTab();
   $("navScoutCount").textContent = toReview ? toReview : "";
   $("navScoutCount").classList.toggle("is-fresh", toReview > 0);
   const cadenceCount = $("navCadenceCount");
@@ -1957,7 +1974,7 @@ function renderNavCounts() {
 /* ================= Detail: a change ================= */
 
 function detailHeading(options) {
-  return (options.back ? '<button class="text-button detail-back" type="button" data-back>Back to the list</button>' : "") +
+  return (options.back ? '<button class="text-button detail-back" type="button" data-back>' + esc(options.backLabel || "Back to the list") + "</button>" : "") +
     (options.source ? '<div class="detail-source">' + esc(options.source) + "</div>" : "") +
     '<h2 class="detail-title">' + esc(options.title) + "</h2>" +
     (options.subtitle ? '<p class="detail-subtitle">' + esc(options.subtitle) + "</p>" : "") +
@@ -2588,21 +2605,29 @@ function healthDays(monitor) {
   if (!monitor.last_change) return typeof days === "number" && days > 0 ? "No change since it was added " + plural(days, "day", "days") + " ago" : "No change since it was added";
   return typeof days === "number" ? (days === 0 ? "Changed today" : "Last changed " + plural(days, "day", "days") + " ago") : "Last change not recorded";
 }
-function healthRow(monitor) {
-  const status = HEALTH_STATUS[monitor.status] || HEALTH_STATUS.healthy;
+function healthRowSummary(monitor, light) {
+  if (monitor.status === "failing") { const f = healthFailures(String(monitor.source_id))[0]; return f ? f.error : "Failing"; }
+  if (monitor.status === "stale") return "Last saved scan " + (monitor.last_scan ? relativeTime(monitor.last_scan).toLowerCase() : "not recorded");
+  const checks = Number(monitor.checks_7d || 0), failed = Number(monitor.failures_7d || 0);
+  const checkWords = failed ? failed + " of " + checks + " checks failed this week" : checks ? "All " + checks + " checks ok this week" : "Not checked this week";
+  if (light === "on" || light === "warn") return checkWords + " · " + healthDays(monitor).replace(/^No change since it was added/, "never changed");
+  return checkWords + " · " + (monitor.last_change ? healthDays(monitor).toLowerCase() : "never changed");
+}
+const HEALTH_LIST_GROUPS = [
+  ["attention", "Needs attention", ["bad", "stale"]], ["recovered", "Recovered this week", ["warn"]],
+  ["changed", "Changed this week", ["on"]], ["quiet", "Quiet for weeks", ["quiet"]], ["ok", "Healthy", ["ok"]]
+];
+function healthRow(monitor, light) {
   const key = String(monitor.source_id);
-  const failures = monitor.status === "failing" ? healthFailures(key) : [];
-  const summary = monitor.status === "failing" && failures[0]
-    ? failures[0].error
-    : monitor.status === "stale" ? "Last saved scan " + (monitor.last_scan ? relativeTime(monitor.last_scan).toLowerCase() : "not recorded")
-    : healthDays(monitor);
+  const tone = { bad: "problem", stale: "pending", quiet: "pending", warn: "pending", on: "change", ok: "ok" }[light] || "ok";
   const year = healthYearFlag(key);
-  return '<button class="row" type="button" data-select-health="' + esc(key) + '"' + (key === state.selectedHealthKey ? ' aria-selected="true"' : "") + ">" +
-    '<span class="row-mark tone-' + status.tone + '" aria-hidden="true"></span>' +
-    '<span class="row-title">' + esc(monitor.name || key) + "</span>" +
-    '<span class="row-time">' + esc(plural(Number(monitor.pages || 0), "page", "pages")) + "</span>" +
-    '<span class="row-summary">' + esc(summary) + "</span>" +
-    ((year || monitor.alert_condition) ? '<span class="row-sub">' + (year ? '<span class="tag">Year ' + esc(year.years.join(", ")) + " in address</span>" : "") +
+  return '<button class="row hx-row" type="button" data-select-health="' + esc(key) + '"' + (key === state.selectedHealthKey ? ' aria-selected="true"' : "") + ">" +
+    '<span class="row-mark hx-row-mark l-' + esc(light) + ' tone-' + tone + '" aria-hidden="true"></span>' +
+    '<span class="row-title">' + esc(healthName(monitor)) + "</span>" +
+    '<span class="row-time">' + esc(monitor.last_scan ? relativeTime(monitor.last_scan).replace(/ ago$/, "") : "") + "</span>" +
+    '<span class="row-summary">' + esc(healthRowSummary(monitor, light)) + "</span>" +
+    ((year || monitor.alert_condition || Number(monitor.pages) > 1) ? '<span class="row-sub">' + (Number(monitor.pages) > 1 ? '<span class="tag">' + esc(plural(Number(monitor.pages), "page", "pages")) + "</span>" : "") +
+      (year ? '<span class="tag">Year ' + esc(year.years.join(", ")) + " in address</span>" : "") +
       (monitor.alert_condition ? '<span class="tag">Alert condition</span>' : "") + "</span>" : "") +
     "</button>";
 }
@@ -2622,37 +2647,74 @@ function renderHealth() {
     '<span class="row-mark tone-' + (totals.failing ? "problem" : "ok") + '" aria-hidden="true"></span>' +
     '<span class="row-title">All monitors</span><span class="row-time">' + esc(healthPercent(week.success_rate)) + "</span>" +
     '<span class="row-summary">' + esc(healthNumber(totals.monitors) + " monitors, " + healthNumber(week.checks) + " checks and " + healthNumber(week.alerts_sent) + " alerts in 7 days") + "</span></button>";
-  const groups = {};
-  healthMonitors().forEach(monitor => { (groups[monitor.status] = groups[monitor.status] || []).push(monitor); });
-  Object.keys(HEALTH_STATUS).sort((a, b) => HEALTH_STATUS[a].order - HEALTH_STATUS[b].order).forEach(status => {
-    const rows = (groups[status] || []).slice().sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+  const now = Date.now();
+  const lit = healthMonitors().map(monitor => ({ monitor, light: L.healthLight(monitor, now) }));
+  HEALTH_LIST_GROUPS.forEach(([, label, lights]) => {
+    const rows = lit.filter(entry => lights.indexOf(entry.light) >= 0).sort((a, b) => healthName(a.monitor).localeCompare(healthName(b.monitor)));
     if (!rows.length) return;
-    html += '<div class="list-group-label">' + esc(HEALTH_STATUS[status].label) + " <span>(" + rows.length + ")</span></div>" + rows.map(healthRow).join("");
+    html += '<div class="list-group-label">' + esc(label) + " <span>(" + rows.length + ")</span></div>" + rows.map(entry => healthRow(entry.monitor, entry.light)).join("");
   });
   // Lists are redrawn while page titles load; an unchanged list is left in
   // place so its rows do not replay their entrance animation.
   if (list.dataset.rendered !== html) { list.innerHTML = html; list.dataset.rendered = html; }
 }
+// Daily checks as bars (failed checks in red inside them), content changes
+// as lit dots along the top. Hovering or focusing a day shows its numbers.
 function healthChart(days) {
   if (!Array.isArray(days) || !days.length) return "";
-  const width = 640, height = 150, pad = 22, gap = 4;
+  const compact = isCompact();
+  const width = compact ? 360 : 640, height = compact ? 190 : 176, padX = compact ? 34 : 40, padTop = 34, padBottom = 22, gap = compact ? 3 : 4;
   const max = Math.max(1, ...days.map(day => Number(day.checks || 0)));
-  const bar = (width - pad * 2 - gap * (days.length - 1)) / days.length;
-  const y = value => height - pad - (value / max) * (height - pad * 2);
+  const nice = Math.pow(10, Math.floor(Math.log10(max))) * ([1, 2, 2.5, 5, 10].find(step => step * Math.pow(10, Math.floor(Math.log10(max))) >= max) || 10);
+  const bar = (width - padX * 2 - gap * (days.length - 1)) / days.length;
+  const y = value => height - padBottom - (value / nice) * (height - padTop - padBottom);
+  const grid = [0, .5, 1].map(f => '<line class="hc-grid" x1="' + padX + '" x2="' + (width - padX) + '" y1="' + y(nice * f).toFixed(1) + '" y2="' + y(nice * f).toFixed(1) + '"/>' +
+    '<text class="hc-tick" x="' + (padX - 6) + '" y="' + (y(nice * f) + 3).toFixed(1) + '">' + esc(Math.round(nice * f).toLocaleString()) + "</text>").join("");
+  const labelEvery = Math.max(1, Math.ceil(days.length / (compact ? 7 : 10)));
   const bars = days.map((day, index) => {
-    const x = pad + index * (bar + gap);
-    const checks = Number(day.checks || 0), failed = Number(day.failed_checks || 0), changes = Number(day.changes || 0), alerts = Number(day.alerts_sent || 0);
-    const label = shortDate(day.date + "T12:00:00Z") + ": " + plural(checks, "check", "checks") + ", " + plural(failed, "failure", "failures") + ", " + plural(changes, "change", "changes") + ", " + plural(alerts, "alert", "alerts");
-    return "<g><title>" + esc(label) + "</title>" +
-      '<rect class="hc-bar" x="' + x.toFixed(1) + '" y="' + y(checks).toFixed(1) + '" width="' + bar.toFixed(1) + '" height="' + (height - pad - y(checks)).toFixed(1) + '" rx="2"/>' +
-      (failed ? '<rect class="hc-fail" x="' + x.toFixed(1) + '" y="' + y(failed).toFixed(1) + '" width="' + bar.toFixed(1) + '" height="' + (height - pad - y(failed)).toFixed(1) + '" rx="2"/>' : "") +
-      (changes ? '<circle class="hc-change" cx="' + (x + bar / 2).toFixed(1) + '" cy="' + (pad - 8) + '" r="' + Math.min(6, 2 + Math.log2(1 + changes)).toFixed(1) + '"/>' : "") +
-      (index % 2 === days.length % 2 ? "" : '<text class="hc-day" x="' + (x + bar / 2).toFixed(1) + '" y="' + (height - 6) + '">' + esc(String(day.date).slice(8)) + "</text>") +
+    const x = padX + index * (bar + gap);
+    const checks = Number(day.checks || 0), failed = Number(day.failed_checks || 0), changes = Number(day.changes || 0);
+    const last = index === days.length - 1;
+    return '<g class="hc-day-group' + (last ? " is-today" : "") + '" data-hc-i="' + index + '" tabindex="0">' +
+      '<rect class="hc-hit" x="' + (x - gap / 2).toFixed(1) + '" y="0" width="' + (bar + gap).toFixed(1) + '" height="' + height + '"/>' +
+      '<rect class="hc-bar" x="' + x.toFixed(1) + '" y="' + y(checks).toFixed(1) + '" width="' + bar.toFixed(1) + '" height="' + Math.max(0, height - padBottom - y(checks)).toFixed(1) + '" rx="2"/>' +
+      (failed ? '<rect class="hc-fail" x="' + x.toFixed(1) + '" y="' + y(failed).toFixed(1) + '" width="' + bar.toFixed(1) + '" height="' + Math.max(1.5, height - padBottom - y(failed)).toFixed(1) + '" rx="2"/>' : "") +
+      (changes ? '<circle class="hc-change" cx="' + (x + bar / 2).toFixed(1) + '" cy="' + (padTop - 22) + '" r="' + Math.min(5.5, 2.5 + Math.log2(1 + changes)).toFixed(1) + '"/>' : "") +
+      (failed ? '<rect class="hc-fail-mark" x="' + (x + bar / 2 - 3).toFixed(1) + '" y="' + (padTop - 12) + '" width="6" height="6" rx="1.2"/>' : "") +
+      ((days.length - 1 - index) % labelEvery === 0 ? '<text class="hc-day" x="' + (x + bar / 2).toFixed(1) + '" y="' + (height - 6) + '">' + esc(String(day.date).slice(8).replace(/^0/, "")) + "</text>" : "") +
       "</g>";
   }).join("");
-  return '<figure class="health-chart"><svg viewBox="0 0 ' + width + " " + height + '" role="img" aria-label="Checks per day for the last ' + days.length + ' days">' +
-    '<line class="hc-axis" x1="' + pad + '" x2="' + (width - pad) + '" y1="' + (height - pad) + '" y2="' + (height - pad) + '"/>' + bars + "</svg>" +
-    '<figcaption><span><i class="hc-key-bar"></i>Checks</span><span><i class="hc-key-fail"></i>Failed checks</span><span><i class="hc-key-change"></i>Content changes</span></figcaption></figure>';
+  return '<figure class="health-chart" data-hc-days="' + esc(JSON.stringify(days.map(day => [day.date, Number(day.checks || 0), Number(day.failed_checks || 0), Number(day.changes || 0), Number(day.alerts_sent || 0)]))) + '">' +
+    '<svg viewBox="0 0 ' + width + " " + height + '" role="img" aria-label="Checks per day for the last ' + days.length + ' days">' + grid +
+    '<line class="hc-axis" x1="' + padX + '" x2="' + (width - padX) + '" y1="' + (height - padBottom) + '" y2="' + (height - padBottom) + '"/>' + bars + "</svg>" +
+    '<div class="hx-tip hc-tip" hidden></div>' +
+    '<figcaption><span><i class="hc-key-bar"></i>Checks</span><span><i class="hc-key-fail"></i>A day with failed checks</span><span><i class="hc-key-change"></i>Content changes</span></figcaption></figure>';
+}
+function showHealthChartTip(group) {
+  const figure = group.closest(".health-chart");
+  const tip = figure && figure.querySelector(".hc-tip");
+  if (!tip) return;
+  let days = [];
+  try { days = JSON.parse(figure.dataset.hcDays || "[]"); } catch (_) { days = []; }
+  const day = days[Number(group.dataset.hcI)];
+  if (!day) return;
+  const [date, checks, failed, changes, alerts] = day;
+  figure.querySelectorAll(".hc-day-group.is-hot").forEach(el => el.classList.remove("is-hot"));
+  group.classList.add("is-hot");
+  const rate = checks ? Math.round((1 - failed / checks) * 1000) / 10 : null;
+  tip.innerHTML = '<div class="hx-tip-when">' + esc(new Date(date + "T12:00:00Z").toLocaleDateString([], { weekday: "long", day: "numeric", month: "short" })) + "</div>" +
+    '<dl class="hx-tip-grid"><dt>Checks</dt><dd>' + esc(checks.toLocaleString()) + "</dd><dt>Succeeded</dt><dd>" + esc(rate == null ? "—" : rate + "%") + "</dd>" +
+    '<dt><i class="hx-key is-bad"></i>Failed</dt><dd>' + esc(failed) + '</dd><dt><i class="hx-key is-on"></i>Changes</dt><dd>' + esc(changes) + "</dd><dt>Alerts sent</dt><dd>" + esc(alerts) + "</dd></dl>";
+  tip.hidden = false;
+  // Beside the day, not over it, so its bar and change dot stay visible.
+  const fb = figure.getBoundingClientRect(), gb = group.getBoundingClientRect();
+  const right = gb.right - fb.left + 8;
+  const left = right + tip.offsetWidth <= fb.width - 4 ? right : Math.max(4, gb.left - fb.left - tip.offsetWidth - 8);
+  tip.style.left = left + "px";
+  tip.style.top = "8px";
+}
+function healthSameWindow(a, b) {
+  return !!a && !!b && Number(a.checks) === Number(b.checks) && Number(a.changes) === Number(b.changes) && Number(a.alerts_sent) === Number(b.alerts_sent);
 }
 function healthTiles(window, label) {
   const w = window || {};
@@ -2679,24 +2741,19 @@ function renderHealthDetail() {
   const totals = healthTotals();
   const key = state.selectedHealthKey || "fleet";
   if (key === "fleet") {
-    const facts = [
-      ["Monitors", healthNumber(totals.monitors)], ["Pages and documents", healthNumber(totals.pages)],
-      ["Healthy", healthNumber(totals.healthy)], ["Failing", healthNumber(totals.failing)],
-      ["Not scanned recently", healthNumber(totals.stale)], ["Quiet for " + ((health.thresholds || {}).inactive_after_days || 45) + "+ days", healthNumber(totals.inactive)],
-      ["Year in the address", healthNumber(totals.year_bound)], ["With an alert condition", healthNumber(totals.with_alert_condition)]
-    ];
     const failing = Array.isArray(health.failing) ? health.failing : [];
-    pane.innerHTML = '<div class="detail-inner">' +
-      detailHeading({ back: true, source: "Fleet health", title: "All monitors", meta: "<span>Updated " + esc(relativeTime(health.generated_at).toLowerCase()) + "</span>" }) +
-      healthTiles(health.last_7_days, "Last 7 days") +
-      '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Daily activity</h3><span class="sheet-note">Last ' + esc(String((health.daily || []).length)) + " days, UTC</span></div>" + healthChart(health.daily) + "</section>" +
-      healthTiles(health.last_30_days, "Last 30 days") +
-      '<section class="sheet"><dl class="facts">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl></section>" +
+    pane.innerHTML = '<div class="detail-inner health-detail">' +
+      detailHeading({ back: true, backLabel: "Every monitor, one by one", source: "Fleet health", title: "All monitors", meta: "<span>Updated " + esc(relativeTime(health.generated_at).toLowerCase()) + "</span>" }) +
+      healthHero(health) +
+      healthInsightSheet(health) +
+      healthMatrix(health) +
+      '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Daily activity</h3><span class="sheet-note">Last ' + esc(String((health.daily || []).length)) + " days, UTC · " + (isCompact() ? "tap" : "hover") + " a day</span></div>" + healthChart(health.daily) + "</section>" +
       (failing.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Failing now</h3></div>' + failing.map(row =>
         '<button class="row" type="button" data-select-health="' + esc(row.source_id) + '"><span class="row-mark tone-problem" aria-hidden="true"></span>' +
         '<span class="row-title">' + esc(row.name || row.source_id) + '</span><span class="row-time">' + esc(row.since ? relativeTime(row.since) : "") + "</span>" +
         '<span class="row-summary">' + esc(row.error || "") + "</span></button>").join("") + "</section>" : "") +
-      '<p class="note-strip">An error alerts only after it has failed ' + esc(plural(Number((state.config.defaults || {}).error_alert_after_runs || 1), "scan", "consecutive scans")) +
+      (healthSameWindow(health.last_7_days, health.last_30_days) ? "" : healthTiles(health.last_30_days, "Last 30 days")) +
+      '<p class="note-strip">' + (healthSameWindow(health.last_7_days, health.last_30_days) ? "History so far covers under a week, so the 30-day totals match the 7-day ones. " : "") + 'An error alerts only after it has failed ' + esc(plural(Number((state.config.defaults || {}).error_alert_after_runs || 1), "scan", "consecutive scans")) +
       ". Health is rebuilt from the committed scan history after every scan and never changes what is monitored.</p></div>";
     return;
   }
@@ -2708,11 +2765,9 @@ function renderHealthDetail() {
   const year = healthYearFlag(key);
   const failures = healthFailures(key);
   const facts = [
-    ["Status", status.label], ["Pages and documents", healthNumber(monitor.pages)],
+    ["Pages and documents", healthNumber(monitor.pages)],
     ["Last saved scan", monitor.last_scan ? fmt(monitor.last_scan) : "Not recorded"],
     ["Last content change", monitor.last_change ? fmt(monitor.last_change) : "None recorded"],
-    ["Quiet for", healthDays(monitor)],
-    ["Checks in 7 days", healthNumber(monitor.checks_7d)], ["Failed checks in 7 days", healthNumber(monitor.failures_7d)],
     ["Alert me when", source.alert_condition ? source.alert_condition + (source.alert_only_on_condition ? " (alerts only when met)" : "") : "No condition; AI relevance decides"]
   ];
   const actions = (item ? '<button class="btn" type="button" data-monitor-id="' + esc(item.url_id) + '">Open page</button>' : "") +
@@ -2727,10 +2782,170 @@ function renderHealthDetail() {
     esc(year.years.join(", ")) + " and has not changed for " + esc(typeof year.days_without_change === "number" ? plural(year.days_without_change, "day", "days") : "a while") +
     ". Regulators often publish the next year's list at a new address" + (healthNextYearUrl(year.url, year.years) ? ", for example <span class=\"is-code\">" + esc(displayUrl(healthNextYearUrl(year.url, year.years))) + "</span>" : "") +
     ". Check the regulator's site and add the new page if it exists.</p></section>" : "";
-  pane.innerHTML = '<div class="detail-inner">' +
-    detailHeading({ back: true, source: "Monitor health", title: monitor.name || key, meta: '<span class="tag tone-' + status.tone + '">' + esc(status.label) + "</span><span>" + esc(monitor.regulator || "") + "</span>", actions }) +
-    failureSheet + yearSheet +
+  pane.innerHTML = '<div class="detail-inner health-detail">' +
+    detailHeading({ back: true, source: "Monitor health", title: healthName(monitor) || key, meta: '<span class="tag tone-' + status.tone + '">' + esc(status.label) + "</span>" +
+      (monitor.status !== "failing" && Number(monitor.failures_7d) > 0 ? '<span class="tag tone-pending">Recovered · ' + esc(plural(Number(monitor.failures_7d), "failure", "failures")) + " this week</span>" : "") +
+      "<span>" + esc(healthRegulator(monitor).name || monitor.regulator || "") + "</span>", actions }) +
+    healthMonitorPulse(monitor, health) + failureSheet + yearSheet + healthPageStrip(key) +
     '<section class="sheet"><dl class="facts">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl></section></div>";
+}
+// Monitor names carry file details ("(XLSX, 2.81 MB)") and scope notes that
+// are noise in a sentence or a tooltip title.
+function healthName(monitor) {
+  return String((monitor && (monitor.name || monitor.source_id)) || "")
+    .replace(/\s*\((?:PDF|XLSX?|ZIP|CSV|XML|DOCX?|HTML)[^)]*\)/gi, "").replace(/\s*\([^)]*allowlist[^)]*\)/gi, "").trim();
+}
+function healthRegulator(monitor) {
+  const item = itemForSource(String(monitor.source_id));
+  const regulator = item ? itemRegulator(item) : null;
+  return regulator && regulator.short ? { key: regulator.id || regulator.short, short: regulator.short, name: regulator.name || regulator.short }
+    : { key: String(monitor.regulator || "other"), short: String(monitor.regulator || "Other"), name: String(monitor.regulator || "Other") };
+}
+function healthSpark(values, cls) {
+  const list = (values || []).map(Number);
+  if (list.length < 2) return "";
+  const max = Math.max(1, ...list), w = 96, h = 26;
+  const points = list.map((value, index) => (index * w / (list.length - 1)).toFixed(1) + "," + (h - 2 - value / max * (h - 4)).toFixed(1));
+  return '<svg class="hx-spark ' + cls + '" viewBox="0 0 ' + w + " " + h + '" aria-hidden="true" preserveAspectRatio="none"><polyline points="' + points.join(" ") + '"/>' +
+    '<circle cx="' + points[points.length - 1].split(",")[0] + '" cy="' + points[points.length - 1].split(",")[1] + '" r="2.2"/></svg>';
+}
+// The headline: a success-rate ring, what that means in words, and the
+// three week numbers with their daily shape.
+function healthHero(health) {
+  const totals = healthTotals();
+  const week = health.last_7_days || {};
+  const daily = (health.daily || []).slice(-14);
+  const rate = typeof week.success_rate === "number" ? week.success_rate : null;
+  const tone = totals.failing ? "bad" : totals.stale || totals.inactive ? "warn" : "ok";
+  const headline = totals.failing ? plural(totals.failing, "monitor failing", "monitors failing") + " of " + healthNumber(totals.monitors)
+    : totals.stale ? plural(totals.stale, "monitor overdue", "monitors overdue") + " for a scan"
+    : "All " + healthNumber(totals.monitors) + " monitors healthy";
+  const pending = state.pendingScan ? pendingWords(state.pendingScan) : null;
+  const scans = healthMonitors().map(m => new Date(m.last_scan).getTime()).filter(Number.isFinite);
+  const lastScan = scans.length ? Math.max(...scans) : null;
+  const stat = (label, value, spark, note) => '<div class="hx-stat"><div class="hx-stat-label">' + esc(label) + '</div><div class="hx-stat-row"><span class="hx-stat-value num">' + esc(value) + "</span>" + spark + '</div><div class="hx-stat-note">' + esc(note) + "</div></div>";
+  // The same lit squares as the scan cycle bar: one per thirtieth of the
+  // week's checks, red for the share that failed (at least one if any did).
+  const segments = 30;
+  const failedShare = rate == null ? 0 : Number(week.failed_checks) > 0 ? Math.max(1, Math.round((1 - rate) * segments)) : 0;
+  const leds = Array.from({ length: segments }, (_, i) => '<i class="' + (rate == null ? "" : i >= segments - failedShare ? "is-bad" : "is-ok") + '" style="--i:' + i + '"></i>').join("");
+  return '<section class="hx-hero tone-' + tone + '">' +
+    '<div class="hx-score"><div class="hx-score-label">Checks ok, last 7 days</div><div class="hx-score-value num">' + esc(rate == null ? "—" : (Math.round(rate * 1000) / 10).toString()) + "<small>%</small></div>" +
+      '<div class="hx-score-leds" role="img" aria-label="' + esc((rate == null ? "No" : healthPercent(rate)) + " of checks succeeded in the last 7 days") + '">' + leds + "</div></div>" +
+    '<div class="hx-hero-text"><div class="hx-kicker"><i class="hx-pulse"></i>Fleet status</div><div class="hx-headline">' + esc(headline) + "</div>" +
+      '<div class="hx-sub">' + esc([lastScan ? "Last scan " + relativeTime(lastScan).toLowerCase() : "", healthNextScanWords(state.pendingScan), healthNumber(totals.pages) + " pages and documents"].filter(Boolean).join(" · ")) + "</div></div>" +
+    '<div class="hx-stats">' +
+      stat("Checks, 7 days", healthNumber(week.checks), healthSpark(daily.map(d => d.checks), "is-ink"), healthNumber(week.failed_checks) + " failed") +
+      stat("Changes", healthNumber(week.changes), healthSpark(daily.map(d => d.changes), "is-on"), "pages changed") +
+      stat("Alerts sent", healthNumber(week.alerts_sent), healthSpark(daily.map(d => d.alerts_sent), "is-accent"), "tests excluded") +
+    "</div></section>";
+}
+function healthNextScanWords(pending) {
+  if (!pending) return "";
+  if (pending.phase === "waiting") return "next scan in " + L.formatDuration(pending.remainingMinutes);
+  if (pending.phase === "late") return "next scan due " + timeOnlyShort(pending.due) + ", not started yet";
+  if (pending.phase === "due") return "next scan due now";
+  return pending.phase === "running" ? "a scan is running now" : pending.phase === "queued" ? "a scan is queued" : "saving the latest scan";
+}
+function healthInsightSheet(health) {
+  const byId = new Map(healthMonitors().map(m => [String(m.source_id), m]));
+  const insights = L.healthInsights(health, {
+    nameOf: healthName,
+    dayLabel: date => new Date(date + "T12:00:00Z").toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" })
+  });
+  if (!insights.length) return "";
+  return '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">What stands out</h3><span class="sheet-note">From this week\'s scans</span></div><ul class="hx-insights">' +
+    insights.map(insight => {
+      const target = (insight.targets || []).find(id => byId.has(id));
+      const body = '<i class="hx-dot is-' + esc(insight.tone) + '" aria-hidden="true"></i><span>' + esc(insight.text) + "</span>";
+      return "<li>" + (target ? '<button type="button" class="hx-insight" data-select-health="' + esc(target) + '">' + body + '<span class="hx-go" aria-hidden="true">›</span></button>' : '<div class="hx-insight">' + body + "</div>") + "</li>";
+    }).join("") + "</ul></section>";
+}
+const HEALTH_LIGHT_WORDS = { bad: "Failing", stale: "Overdue for a scan", quiet: "Quiet for weeks", on: "Changed this week", warn: "Recovered from failures", ok: "Healthy" };
+// Every monitor as one light, grouped by regulator: the whole fleet at a glance.
+function healthMatrix(health) {
+  const monitors = healthMonitors();
+  if (!monitors.length) return "";
+  const groups = new Map();
+  monitors.forEach(monitor => {
+    const regulator = healthRegulator(monitor);
+    if (!groups.has(regulator.key)) groups.set(regulator.key, { regulator, monitors: [] });
+    groups.get(regulator.key).monitors.push(monitor);
+  });
+  const rank = { bad: 0, stale: 1, warn: 2, quiet: 3, on: 4, ok: 5 };
+  const now = Date.now();
+  const used = new Set();
+  const body = Array.from(groups.values()).sort((a, b) => b.monitors.length - a.monitors.length || a.regulator.short.localeCompare(b.regulator.short)).map(group => {
+    const lights = group.monitors.map(monitor => ({ monitor, light: L.healthLight(monitor, now) }))
+      .sort((a, b) => rank[a.light] - rank[b.light] || healthName(a.monitor).localeCompare(healthName(b.monitor)));
+    lights.forEach(entry => used.add(entry.light));
+    const pages = group.monitors.reduce((sum, m) => sum + Number(m.pages || 0), 0);
+    const issues = lights.filter(entry => entry.light === "bad" || entry.light === "stale").length;
+    const recovered = lights.filter(entry => entry.light === "warn").length;
+    return '<div class="hx-group"><div class="hx-group-head">' + fieldBadge(group.regulator.short) + '<span class="hx-group-name" title="' + esc(group.regulator.name) + '">' + esc(group.regulator.short) + "</span>" +
+      '<small>' + esc(plural(group.monitors.length, "monitor", "monitors") + " · " + plural(pages, "page", "pages")) + (issues ? ' · <b class="is-bad">' + esc(plural(issues, "needs a look", "need a look")) + "</b>" : "") + (recovered ? ' · <b class="is-warn">' + esc(recovered + " recovered") + "</b>" : "") + "</small></div>" +
+      '<div class="hx-cells">' + lights.map((entry, index) => '<button type="button" class="hx-cell l-' + entry.light + '" style="--i:' + index + '" data-select-health="' + esc(entry.monitor.source_id) + '" data-hx="' + esc(entry.monitor.source_id) + '" aria-label="' +
+        esc(healthName(entry.monitor) + ": " + HEALTH_LIGHT_WORDS[entry.light]) + '"></button>').join("") + "</div></div>";
+  }).join("");
+  const legend = ["bad", "stale", "warn", "quiet", "on", "ok"].filter(light => used.has(light) || light === "ok").map(light => '<span><i class="hx-cell l-' + light + ' is-key"></i>' + esc(HEALTH_LIGHT_WORDS[light]) + "</span>").join("");
+  return '<section class="sheet hx-matrix-sheet"><div class="sheet-head"><h3 class="sheet-title">Every monitor</h3><span class="sheet-note">' + esc(plural(monitors.length, "light", "lights")) + ", one per monitor · " + (isCompact() ? "tap one to open it" : "hover for details") + "</span></div>" +
+    '<div class="hx-matrix">' + body + '<div class="hx-tip hx-matrix-tip" hidden></div></div><div class="hx-legend">' + legend + "</div></section>";
+}
+function showHealthCellTip(cell) {
+  const host = cell.closest(".hx-matrix");
+  const tip = host && host.querySelector(".hx-matrix-tip");
+  const monitor = healthMonitors().find(m => String(m.source_id) === cell.dataset.hx);
+  if (!tip || !monitor) return;
+  const light = L.healthLight(monitor);
+  tip.innerHTML = '<div class="hx-tip-when"><i class="hx-dot is-' + esc(light === "quiet" || light === "stale" ? "warn" : light) + '"></i>' + esc(HEALTH_LIGHT_WORDS[light]) + "</div>" +
+    '<div class="hx-tip-title">' + esc(healthName(monitor)) + "</div>" +
+    '<dl class="hx-tip-grid"><dt>Pages</dt><dd>' + esc(healthNumber(monitor.pages)) + "</dd><dt>Last scan</dt><dd>" + esc(monitor.last_scan ? relativeTime(monitor.last_scan).toLowerCase() : "—") + "</dd>" +
+    "<dt>Checks, 7 days</dt><dd>" + esc(healthNumber(monitor.checks_7d)) + (Number(monitor.failures_7d) ? ' <span class="is-bad">· ' + esc(monitor.failures_7d) + " failed</span>" : "") + "</dd>" +
+    "<dt>Content</dt><dd>" + esc(healthDays(monitor)) + "</dd></dl>";
+  tip.hidden = false;
+  const hb = host.getBoundingClientRect(), cb = cell.getBoundingClientRect();
+  const left = Math.max(4, Math.min(hb.width - tip.offsetWidth - 4, cb.left - hb.left + cb.width / 2 - tip.offsetWidth / 2));
+  const above = cb.top - hb.top - tip.offsetHeight - 8;
+  tip.style.left = left + "px";
+  tip.style.top = (above >= 0 ? above : cb.bottom - hb.top + 8) + "px";
+}
+function hideHealthTips() { document.querySelectorAll("#healthDetail .hx-tip").forEach(tip => { tip.hidden = true; }); document.querySelectorAll("#healthDetail .hc-day-group.is-hot").forEach(el => el.classList.remove("is-hot")); }
+// One monitor: checks this week as a success meter, and how close it is to
+// the quiet mark.
+function healthMonitorPulse(monitor, health) {
+  const checks = Number(monitor.checks_7d || 0), failed = Number(monitor.failures_7d || 0);
+  const rate = checks ? (checks - failed) / checks : null;
+  const quietAfter = Number((health.thresholds || {}).inactive_after_days) || 45;
+  const days = Number(monitor.days_without_change || 0);
+  const quiet = Math.min(1, days / quietAfter);
+  return '<section class="sheet hx-pulse-sheet"><div class="hx-meters">' +
+    '<div class="hx-meter"><div class="hx-meter-head"><span>Checks ok, 7 days</span><b class="num">' + esc(rate == null ? "—" : healthPercent(rate)) + '</b></div>' +
+      '<div class="hx-bar"><i class="hx-bar-ok" style="width:' + (rate == null ? 0 : rate * 100).toFixed(1) + '%"></i><i class="hx-bar-bad" style="width:' + (rate == null ? 0 : (1 - rate) * 100).toFixed(1) + '%"></i></div>' +
+      '<div class="hx-meter-note">' + esc(healthNumber(checks) + " checks · " + plural(failed, "failure", "failures")) + "</div></div>" +
+    '<div class="hx-meter"><div class="hx-meter-head"><span>Days unchanged</span><b class="num">' + esc(days) + '<small> / ' + esc(quietAfter) + '</small></b></div>' +
+      '<div class="hx-bar"><i class="hx-bar-quiet' + (quiet >= 1 ? " is-full" : quiet >= .7 ? " is-near" : "") + '" style="width:' + (quiet * 100).toFixed(1) + '%"></i></div>' +
+      '<div class="hx-meter-note">' + esc(quiet >= 1 ? "Counted as quiet; check the page still lives at this address" : "Flagged as quiet at " + quietAfter + " days") + "</div></div>" +
+    "</div></section>";
+}
+// The monitor's pages over the last seven days, one light per scan window,
+// in the same colours as the scan history.
+function healthPageStrip(sourceId) {
+  const items = (state.items || []).filter(item => item.source_id === sourceId);
+  if (!items.length) return "";
+  const columns = L.fieldWindow(L.slotColumns(state.history, { workflowRuns: state.workflowRuns }), "7d", new Date());
+  if (!columns.length) return "";
+  const events = allEvents();
+  const shown = items.slice(0, 24);
+  const rows = shown.map(item => {
+    const page = fieldPage(item, events);
+    const cells = columns.map(column => {
+      const s = L.columnCellState(column, page);
+      return '<i class="hx-led s-' + esc(s) + '" title="' + esc(windowSpan(column) + ": " + stateWords(s)) + '"></i>';
+    }).join("");
+    return '<button type="button" class="hx-strip-row' + (shown.length === 1 ? " is-single" : "") + '" data-monitor-id="' + esc(item.url_id) + '"><span class="hx-strip-name">' + esc(shown.length === 1 ? "Open the page" : itemTitle(item)) + '</span><span class="hx-strip-cells" style="--n:' + columns.length + '">' + cells + "</span></button>";
+  }).join("");
+  return '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Last 7 days, scan by scan</h3><span class="sheet-note">' + esc(plural(columns.length, "scan window", "scan windows")) + " · newest on the right</span></div>" +
+    '<div class="hx-strip">' + rows + "</div>" + (items.length > shown.length ? '<p class="note-strip">' + esc(plural(items.length - shown.length, "more page", "more pages")) + " in this monitor; see Pages.</p>" : "") + "</section>";
 }
 function healthNextYearUrl(url, years) {
   const year = Math.max(...(years || []));
@@ -2817,7 +3032,7 @@ function renderChannelBar() {
   const channels = channelSummary();
   bar.innerHTML = '<span class="channel-label">Delivering to</span>' +
     (channels.length ? channels.map(name => '<span class="chip is-static">' + esc(channelLabel(name)) + "</span>").join("") : '<span class="channel-none">No delivery recorded yet</span>') +
-    '<button class="text-button" type="button" data-channel-guide>Add Slack, Teams or a webhook</button>';
+    '<button class="chip chip-add" type="button" data-channel-guide title="Add Slack, Teams or a webhook">' + icon("plus") + "Add channel</button>";
 }
 
 /* ================= Scout: new pages worth monitoring =================
@@ -4421,6 +4636,7 @@ function renderViews() {
     button.classList.toggle("active", button.dataset.view === state.view);
     button.setAttribute("aria-current", button.dataset.view === state.view ? "page" : "false");
   });
+  syncMoreTab();
   const askLauncher = $("askSentinelLaunch");
   askLauncher.classList.toggle("active", state.view === "askSentinel");
   askLauncher.setAttribute("aria-current", state.view === "askSentinel" ? "page" : "false");
@@ -4538,6 +4754,8 @@ function setView(view, options) {
   hideFieldTip();
   if (state.scoutPreview.expanded && view !== "scout") setScoutPreviewExpanded(false);
   state.view = VIEWS.indexOf(view) >= 0 ? view : "overview";
+  // On a phone Health opens on the fleet view, not a list of 116 monitors.
+  if (state.view === "health" && options.detail === undefined && isCompact()) { state.selectedHealthKey = state.selectedHealthKey || "fleet"; options.detail = true; }
   state.mobileDetail = !!options.detail;
   ensureSelection(state.view);
   renderLists();
@@ -6829,6 +7047,122 @@ $("timelineView").addEventListener("pointerout", event => {
 });
 $("timelineView").addEventListener("focusin", event => { const bead = event.target.closest("[data-tl-bead]"); if (bead) showTimelineTip(bead); });
 $("timelineView").addEventListener("focusout", hideTimelineTip);
+// Health: hover or focus a monitor light or a chart day to read it.
+(() => {
+  const pane = $("healthDetail");
+  if (!pane) return;
+  const show = target => {
+    const cell = target.closest && target.closest("[data-hx]");
+    if (cell) return showHealthCellTip(cell);
+    const day = target.closest && target.closest("[data-hc-i]");
+    if (day) return showHealthChartTip(day);
+  };
+  pane.addEventListener("pointerover", event => { if (event.pointerType !== "touch") show(event.target); });
+  pane.addEventListener("pointerout", event => {
+    const from = event.target.closest && event.target.closest("[data-hx], [data-hc-i]");
+    const to = event.relatedTarget && event.relatedTarget.closest && event.relatedTarget.closest("[data-hx], [data-hc-i]");
+    if (from && from !== to) hideHealthTips();
+  });
+  pane.addEventListener("focusin", event => show(event.target));
+  pane.addEventListener("focusout", hideHealthTips);
+  // Touch: a tap on a chart day shows its numbers (cells open their monitor).
+  pane.addEventListener("click", event => { const day = event.target.closest("[data-hc-i]"); if (day) showHealthChartTip(day); });
+})();
+/* ---------- Phone: More sheet ----------
+ * The bottom bar keeps four destinations; everything else opens from More,
+ * each with its live status. While one of those views is open, the More tab
+ * takes its name, so the bar always says where you are.
+ */
+const MORE_VIEWS = { health: "Health", runs: "Runs", scout: "Scout", calendar: "Cadence" };
+function syncMoreTab() {
+  const button = $("navMore");
+  if (!button) return;
+  const inMore = Object.prototype.hasOwnProperty.call(MORE_VIEWS, state.view);
+  button.classList.toggle("is-more-active", inMore);
+  button.setAttribute("aria-current", inMore ? "page" : "false");
+  $("navMoreLabel").textContent = inMore ? MORE_VIEWS[state.view] : "More";
+  const dot = $("navMoreDot");
+  const failing = healthTotals().failing || 0;
+  const review = state.scout ? scoutBuckets().REVIEW.length : 0;
+  dot.hidden = !(failing || review);
+  dot.classList.toggle("is-fresh", !failing && review > 0);
+  dot.title = failing ? plural(failing, "monitor failing", "monitors failing") : review ? plural(review, "Scout suggestion", "Scout suggestions") + " to review" : "";
+}
+function renderMoreSheet() {
+  const body = $("moreBody");
+  if (!body) return;
+  const totals = healthTotals();
+  const week = (state.health && state.health.last_7_days) || {};
+  const tone = totals.failing ? "bad" : totals.stale || totals.inactive ? "warn" : "ok";
+  const now = Date.now();
+  const order = ["bad", "stale", "warn", "quiet", "on", "ok"];
+  const cells = healthMonitors().map(m => L.healthLight(m, now)).sort((a, b) => order.indexOf(a) - order.indexOf(b))
+    .slice(0, 200).map(light => '<i class="l-' + light + '"></i>').join("");
+  const healthValue = !state.health ? "Not written yet" : totals.failing ? plural(totals.failing, "monitor failing", "monitors failing")
+    : totals.stale ? plural(totals.stale, "monitor overdue", "monitors overdue") : healthNumber(totals.healthy) + " of " + healthNumber(totals.monitors) + " monitors healthy";
+  const healthSub = !state.health ? "Appears after the next scan" : healthPercent(week.success_rate) + " of " + healthNumber(week.checks) + " checks ok this week";
+  const text = id => { const el = $(id); return el ? el.textContent.trim() : ""; };
+  const review = state.scout ? scoutBuckets().REVIEW.length : 0;
+  const lastRunAt = state.report && state.report.generated_at;
+  const cadence = Number(text("navCadenceCount")) || 0;
+  const tile = (view, label, value, sub) => '<button type="button" class="more-tile' + (state.view === view ? " is-current" : "") + '" data-more-go="' + view + '">' +
+    '<span class="more-label">' + esc(label) + '</span><span class="more-value">' + value + '</span><span class="more-sub">' + sub + "</span></button>";
+  body.innerHTML =
+    '<button type="button" class="more-health tone-' + tone + (state.view === "health" ? " is-current" : "") + '" data-more-go="health">' +
+      '<span class="more-label">Monitor health<span class="more-go">Health ›</span></span>' +
+      '<span class="more-value">' + esc(healthValue) + '</span><span class="more-sub">' + esc(healthSub) + "</span>" +
+      '<span class="more-health-cells" aria-hidden="true">' + cells + "</span></button>" +
+    '<div class="more-grid">' +
+      tile("runs", "Runs", esc(lastRunAt ? relativeTime(lastRunAt) : "None"), esc(text("navRunCount") ? "last scan · " + text("navRunCount") + " saved" : "since the last scan")) +
+      tile("scout", "Scout", review ? "<b>" + esc(review) + "</b>" : "0", esc(review ? "pages to review" : "nothing to review")) +
+      tile("calendar", "Cadence", esc(cadence), esc(cadence === 1 ? "date coming up" : "dates coming up")) +
+    "</div>" +
+    '<div class="more-actions"><button class="m-action is-scan" type="button" data-add-monitor data-more-dismiss>Add link</button><button class="m-action" type="button" data-refresh data-more-dismiss>Reload</button><button class="m-action" type="button" data-theme-toggle></button></div>';
+  syncThemeLabels();
+}
+let moreReturnFocus = null;
+function openMoreSheet() {
+  const sheet = $("moreSheet");
+  renderMoreSheet();
+  moreReturnFocus = document.activeElement;
+  sheet.classList.remove("is-closing");
+  sheet.hidden = false;
+  $("navMore").setAttribute("aria-expanded", "true");
+  const first = sheet.querySelector(".more-health");
+  if (first) first.focus({ preventScroll: true });
+}
+function closeMoreSheet(immediate) {
+  const sheet = $("moreSheet");
+  if (!sheet || sheet.hidden) return;
+  $("navMore").setAttribute("aria-expanded", "false");
+  const done = () => { sheet.hidden = true; sheet.classList.remove("is-closing"); };
+  if (immediate || matchMedia("(prefers-reduced-motion: reduce)").matches) done();
+  else { sheet.classList.add("is-closing"); setTimeout(done, 190); }
+  if (moreReturnFocus && moreReturnFocus.focus && !immediate) moreReturnFocus.focus({ preventScroll: true });
+}
+$("navMore").addEventListener("click", () => { if ($("moreSheet").hidden) openMoreSheet(); else closeMoreSheet(); });
+$("moreSheet").addEventListener("click", event => {
+  const go = event.target.closest("[data-more-go]");
+  if (go) { closeMoreSheet(true); return setView(go.dataset.moreGo); }
+  if (event.target.closest("[data-more-close]")) return closeMoreSheet();
+  if (event.target.closest("[data-more-dismiss]")) closeMoreSheet(true);
+});
+document.addEventListener("keydown", event => { if (event.key === "Escape" && !$("moreSheet").hidden) { event.stopPropagation(); closeMoreSheet(); } }, true);
+// Swipe the sheet down to close it.
+(() => {
+  const panel = document.querySelector(".more-panel");
+  if (!panel) return;
+  let startY = null, dy = 0;
+  panel.addEventListener("touchstart", event => { startY = panel.scrollTop <= 0 ? event.touches[0].clientY : null; dy = 0; }, { passive: true });
+  panel.addEventListener("touchmove", event => {
+    if (startY == null) return;
+    dy = Math.max(0, event.touches[0].clientY - startY);
+    panel.style.transform = dy ? "translateY(" + dy + "px)" : "";
+  }, { passive: true });
+  panel.addEventListener("touchend", () => { panel.style.transform = ""; if (dy > 90) closeMoreSheet(true); startY = null; dy = 0; });
+})();
+// Leaving the phone layout closes the sheet.
+if (compactQuery && compactQuery.addEventListener) compactQuery.addEventListener("change", () => { if (!isCompact()) closeMoreSheet(true); });
 let fieldSearchTimer = 0;
 $("fieldSearch").addEventListener("input", () => {
   clearTimeout(fieldSearchTimer);
