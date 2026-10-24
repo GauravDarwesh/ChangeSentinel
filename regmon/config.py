@@ -114,7 +114,7 @@ DEFAULT_KEYS = {
     "fetch_timeout_seconds", "fetch_attempts", "fetch_backoff_seconds", "ai_concurrency",
     "ai_timeout_seconds", "ai_attempts", "max_ai_candidates", "max_diff_lines", "max_ai_chars",
     "history_runs", "fetch_workers", "conditional_refresh_interval_hours", "max_removal_ratio",
-    "max_response_bytes",
+    "max_response_bytes", "error_alert_after_runs",
 }
 
 
@@ -164,6 +164,9 @@ def validate_config(payload: dict[str, Any], sources: list[SourceConfig]) -> Non
     unknown_defaults = sorted(set(defaults) - DEFAULT_KEYS)
     if unknown_defaults:
         raise ValueError(f"Unknown defaults keys: {', '.join(unknown_defaults)}")
+    threshold = defaults.get("error_alert_after_runs", 1)
+    if isinstance(threshold, bool) or not isinstance(threshold, int) or not 1 <= threshold <= 28:
+        raise ValueError("defaults.error_alert_after_runs must be an integer from 1 to 28 (one week of scans)")
     seen: set[str] = set()
     for source in sources:
         if source.id in seen:
