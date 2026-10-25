@@ -20,6 +20,11 @@ on:
         required: false
         default: false
         type: boolean
+      due_only:
+        description: With source "all", scan only monitors that are due by their scan schedule (never-scanned monitors are always due)
+        required: false
+        default: false
+        type: boolean
   schedule:
     - cron: "0 */6 * * *"
 
@@ -177,7 +182,12 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           REGMON_ALLOW_MASS_REMOVAL: ${{ inputs.allow_mass_removal || '' }}
-        run: python -u -m regmon.monitor --source "$REGMON_SOURCE"
+          # Scheduled runs scan only the monitors their cadence makes due
+          # (regmon/schedule.py); a manual run scans everything it names unless
+          # it asks for due_only (the scan a registration starts does, so new
+          # monitors get their first baseline without a full-fleet scan).
+          REGMON_DUE_ONLY: ${{ (github.event_name == 'schedule' || inputs.due_only == true) && '--due-only' || '' }}
+        run: python -u -m regmon.monitor --source "$REGMON_SOURCE" $REGMON_DUE_ONLY
 
       - name: Validate monitoring state
         id: crawl-status

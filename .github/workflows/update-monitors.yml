@@ -1,0 +1,98 @@
+name: Update Monitor Settings
+
+# Owner-submitted settings changes from the dashboard: scan cadence for one
+# monitor, or a settings preset applied to many. The dashboard holds no token;
+# it opens a prefilled issue and this workflow applies it (regmon/monitor_settings.py).
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: update-monitor-settings-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    if: ${{ github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, '[ChangeSentinel] Update monitors') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      # Configuration validation imports BeautifulSoup and requests only.
+      - name: Install validation dependencies
+        run: python -m pip install --disable-pip-version-check beautifulsoup4==4.14.3 requests==2.34.2
+
+      - name: Apply settings and commit source configuration
+        id: update
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "changesentinel-bot"
+          git config user.email "actions@users.noreply.github.com"
+          success=false
+          for attempt in 1 2 3 4 5 6; do
+            git fetch origin main --quiet
+            git checkout -B main origin/main
+            python -m regmon.monitor_settings \
+              --event "$GITHUB_EVENT_PATH" \
+              --config config/sources.json \
+              --output "$RUNNER_TEMP/monitor-settings.json"
+            if git diff --quiet -- config/sources.json; then
+              success=true
+              break
+            fi
+            COUNT="$(python -c 'import json,os; print(len(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-settings.json"))["changed"]))')"
+            git add config/sources.json
+            git commit -m "Update settings of $COUNT monitor(s) (issue #${{ github.event.issue.number }})"
+            if git push origin HEAD:main; then
+              success=true
+              break
+            fi
+            echo "Push attempt $attempt did not publish; refreshing main and retrying."
+            sleep $((attempt * 2 + RANDOM % 3))
+          done
+          if [ "$success" != true ]; then
+            echo "Could not publish monitor settings after six attempts."
+            exit 1
+          fi
+
+      - name: Publish updated source configuration to Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main
+
+      - name: Confirm on the request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+          message="$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-settings.json"))["message"])')"
+          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$message The next scheduled scan applies it."
+          gh issue close "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY"
+
+      - name: Explain failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "The settings were not applied. Check the Update Monitor Settings run logs; nothing in config/sources.json was changed. Only the repository owner can change monitor settings."

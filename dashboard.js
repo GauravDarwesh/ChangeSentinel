@@ -1508,6 +1508,10 @@ function showFieldTip(target, x, y, pinned) {
     const column = (state.fieldColumns || []).find(candidate => candidate.id === target.dataset.col);
     label = column ? (target.dataset.source ? columnLabel(column, target.dataset.source) : windowSpan(column)) : "";
     detail = target.dataset.summary || stateWords(target.dataset.state);
+    // A monitor on a slower scan schedule is simply not due in most windows.
+    if (target.dataset.state === "skip" && target.dataset.source && !L.scanScheduleIsDefault(sourceScanSchedule(target.dataset.source))) {
+      detail = "not due in this window; scanned " + scanScheduleWords(target.dataset.source).toLowerCase();
+    }
   }
   let actions = "";
   if (pinned) {
@@ -2409,11 +2413,13 @@ function renderDetailHeader(item) {
   const subtitle = itemSubtitle(item);
   const meta = '<span class="tag tone-' + esc(status.tone) + '">' + esc(status.label) + "</span>" +
     (source && source.alert_condition ? '<span class="tag" title="' + esc(conditionSummary(source)) + '">' + esc(source.alert_only_on_condition ? "Alerts only when: " : "Alert me when: ") + esc(String(source.alert_condition).length > 60 ? String(source.alert_condition).slice(0, 59) + "\u2026" : String(source.alert_condition)) + "</span>" : "") +
+    (source && !L.scanScheduleIsDefault(sourceScanSchedule(source)) ? '<span class="tag" title="Scan schedule">' + esc(scanScheduleWords(source)) + "</span>" : "") +
     "<span>Checked " + esc(relativeTime(item.last_checked).toLowerCase()) + "</span>" + urlMeta(item.canonical_url);
   const actions = externalLink(item.canonical_url, "Open live page") +
     (snapshotPath ? externalLink(REPO + "/blob/main/" + snapshotPath, savedFileLabel) : "") +
     (item.source_id ? '<button class="btn" type="button" data-run-scan="' + esc(item.source_id) + '" title="Scan this page\'s source now">Scan this source</button>' : "") +
     (conditionEditable(source) ? '<button class="btn" type="button" data-edit-condition="' + esc(source.id) + '" title="Set what should raise an alert for this monitor">' + (source.alert_condition ? "Edit alert condition" : "Alert me when…") + "</button>" : "") +
+    (source && source.id && source.active !== false ? '<button class="btn" type="button" data-edit-schedule="' + esc(source.id) + '" title="How often and when this monitor is scanned">Scan schedule</button>' : "") +
     (item.source_id ? '<button class="btn btn-quiet" type="button" data-stop-monitor="' + esc(item.url_id) +
       '" data-stop-url="' + esc(item.canonical_url) + '" data-stop-source="' + esc(item.source_id) +
       '" data-stop-name="' + esc(itemTitle(item)) + '" title="Stop monitoring this URL">Stop monitoring</button>' : "");
@@ -2560,6 +2566,7 @@ function renderDetails(item) {
     ["Compare only", source.include_selector || "Main content, detected automatically"],
     ["Ignore", (source.ignore_selectors || []).join(", ") || "Nothing"],
     ["Alert me when", conditionSummary(source) || "No condition; AI relevance decides"],
+    ["Scan schedule", scanScheduleWords(source) + (nextScanWords(item.source_id) ? " · next " + nextScanWords(item.source_id) : "")],
     ["Fetch error", item.fetch_error || "None"], ["Extraction error", item.extraction_error || "None"],
     ["Text fingerprint (SHA-256)", item.normalized_hash || "Not available", true], ["Saved HTML fingerprint", item.html_hash || "Not available", true],
     ["Response fingerprint", item.raw_hash || "Not available", true],
@@ -2679,7 +2686,7 @@ function healthDays(monitor) {
 }
 function healthRowSummary(monitor, light) {
   if (monitor.status === "failing") { const f = healthFailures(String(monitor.source_id))[0]; return f ? f.error : "Failing"; }
-  if (monitor.status === "stale") return "Last saved scan " + (monitor.last_scan ? relativeTime(monitor.last_scan).toLowerCase() : "not recorded");
+  if (monitor.status === "stale") return "Overdue · last saved scan " + (monitor.last_scan ? relativeTime(monitor.last_scan).toLowerCase() : "not recorded") + (monitor.cadence && monitor.cadence.every_hours > 6 ? " · " + monitor.cadence.label.toLowerCase() : "");
   const checks = Number(monitor.checks_7d || 0), failed = Number(monitor.failures_7d || 0);
   const checkWords = failed ? failed + " of " + checks + " checks failed this week" : checks ? "All " + checks + " checks ok this week" : "Not checked this week";
   if (light === "on" || light === "warn") return checkWords + " · " + healthDays(monitor).replace(/^No change since it was added/, "never changed");
@@ -2785,6 +2792,37 @@ function showHealthChartTip(group) {
   tip.style.left = left + "px";
   tip.style.top = "8px";
 }
+// Expected page checks in each six-hour scan slot over the next week, from
+// every monitor's scan schedule: the fleet's load before it happens.
+function healthScheduleSheet(health) {
+  const load = health && health.schedule_load;
+  const slots = load && Array.isArray(load.slots) ? load.slots : [];
+  if (!slots.length) return "";
+  const compact = isCompact();
+  const width = compact ? 360 : 640, height = compact ? 150 : 140, padX = compact ? 34 : 40, padTop = 14, padBottom = 22, gap = 2;
+  const max = Math.max(1, ...slots.map(slot => Number(slot.pages || 0)));
+  const bar = (width - padX * 2 - gap * (slots.length - 1)) / slots.length;
+  const y = value => height - padBottom - (value / max) * (height - padTop - padBottom);
+  const busiest = load.busiest && Number(load.busiest.pages) ? load.busiest : null;
+  const bars = slots.map((slot, index) => {
+    const x = padX + index * (bar + gap);
+    const at = new Date(slot.at);
+    const pages = Number(slot.pages || 0), monitors = Number(slot.monitors || 0);
+    const label = at.toLocaleString([], { weekday: "short", hour: "2-digit", minute: "2-digit" }) + ": " + plural(monitors, "monitor", "monitors") + ", " + plural(pages, "page", "pages");
+    return '<g class="hc-day-group' + (busiest && slot.at === busiest.at ? " is-today" : "") + '"><title>' + esc(label) + "</title>" +
+      '<rect class="hc-bar" x="' + x.toFixed(1) + '" y="' + y(pages).toFixed(1) + '" width="' + bar.toFixed(1) + '" height="' + Math.max(pages ? 1.5 : 0, height - padBottom - y(pages)).toFixed(1) + '" rx="1.5"/>' +
+      (at.getUTCHours() === 0 ? '<text class="hc-day" x="' + (x + bar * 2).toFixed(1) + '" y="' + (height - 6) + '">' + esc(at.toLocaleDateString([], { weekday: "short" })) + "</text>" : "") + "</g>";
+  }).join("");
+  const grid = [0, 1].map(f => '<line class="hc-grid" x1="' + padX + '" x2="' + (width - padX) + '" y1="' + y(max * f).toFixed(1) + '" y2="' + y(max * f).toFixed(1) + '"/>' +
+    '<text class="hc-tick" x="' + (padX - 6) + '" y="' + (y(max * f) + 3).toFixed(1) + '">' + esc(Math.round(max * f).toLocaleString()) + "</text>").join("");
+  const mix = (load.by_cadence || []).map(entry => '<span class="chip is-static">' + esc(entry.label) + " · " + esc(entry.monitors) + "</span>").join("");
+  return '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Scan schedule, next 7 days</h3><span class="sheet-note">' +
+    esc(Math.round(Number(load.page_checks_per_day || 0)).toLocaleString() + " page checks a day · one bar per 6-hour scan slot") + "</span></div>" +
+    '<figure class="health-chart"><svg viewBox="0 0 ' + width + " " + height + '" role="img" aria-label="' + esc("Pages checked per scan slot over the next 7 days; busiest slot " + (busiest ? busiest.pages + " pages" : "empty")) + '">' + grid +
+    '<line class="hc-axis" x1="' + padX + '" x2="' + (width - padX) + '" y1="' + (height - padBottom) + '" y2="' + (height - padBottom) + '"/>' + bars + "</svg>" +
+    '<figcaption><span><i class="hc-key-bar"></i>Pages checked in the slot</span>' + (busiest ? '<span>Busiest: ' + esc(new Date(busiest.at).toLocaleString([], { weekday: "short", hour: "2-digit", minute: "2-digit" }) + ", " + plural(Number(busiest.pages), "page", "pages")) + "</span>" : "") + "</figcaption></figure>" +
+    (mix ? '<div class="schedule-mix">' + mix + "</div>" : "") + "</section>";
+}
 function healthSameWindow(a, b) {
   return !!a && !!b && Number(a.checks) === Number(b.checks) && Number(a.changes) === Number(b.changes) && Number(a.alerts_sent) === Number(b.alerts_sent);
 }
@@ -2820,6 +2858,7 @@ function renderHealthDetail() {
       healthInsightSheet(health) +
       healthMatrix(health) +
       '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Daily activity</h3><span class="sheet-note">Last ' + esc(String((health.daily || []).length)) + " days, UTC · " + (isCompact() ? "tap" : "hover") + " a day</span></div>" + healthChart(health.daily) + "</section>" +
+      healthScheduleSheet(health) +
       (failing.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Failing now</h3></div>' + failing.map(row =>
         '<button class="row" type="button" data-select-health="' + esc(row.source_id) + '"><span class="row-mark tone-problem" aria-hidden="true"></span>' +
         '<span class="row-title">' + esc(row.name || row.source_id) + '</span><span class="row-time">' + esc(row.since ? relativeTime(row.since) : "") + "</span>" +
@@ -2840,10 +2879,13 @@ function renderHealthDetail() {
     ["Pages and documents", healthNumber(monitor.pages)],
     ["Last saved scan", monitor.last_scan ? fmt(monitor.last_scan) : "Not recorded"],
     ["Last content change", monitor.last_change ? fmt(monitor.last_change) : "None recorded"],
-    ["Alert me when", source.alert_condition ? source.alert_condition + (source.alert_only_on_condition ? " (alerts only when met)" : "") : "No condition; AI relevance decides"]
+    ["Alert me when", source.alert_condition ? source.alert_condition + (source.alert_only_on_condition ? " (alerts only when met)" : "") : "No condition; AI relevance decides"],
+    ["Scan schedule", (monitor.cadence && monitor.cadence.label) || scanScheduleWords(source)],
+    ["Next scan", nextScanWords(key) || "Not recorded"]
   ];
   const actions = (item ? '<button class="btn" type="button" data-monitor-id="' + esc(item.url_id) + '">Open page</button>' : "") +
     '<button class="btn" type="button" data-run-scan="' + esc(key) + '">Scan this source</button>' +
+    (source.id && source.active !== false ? '<button class="btn" type="button" data-edit-schedule="' + esc(key) + '">Scan schedule</button>' : "") +
     (conditionEditable(source) ? '<button class="btn" type="button" data-edit-condition="' + esc(key) + '">' + (source.alert_condition ? "Edit alert condition" : "Add alert condition") + "</button>" : "");
   const failureSheet = failures.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">What is failing</h3></div><dl class="facts">' + failures.map(row =>
     "<div><dt>" + esc(row.kind === "FETCH_ERROR" ? "Couldn't fetch" : "Couldn't read content") + '</dt><dd>' + esc(row.error || "") +
@@ -3025,7 +3067,8 @@ function healthPageStrip(sourceId) {
     const page = fieldPage(item, events);
     const cells = columns.map(column => {
       const s = L.columnCellState(column, page);
-      return '<i class="hx-led s-' + esc(s) + '" title="' + esc(windowSpan(column) + ": " + stateWords(s)) + '"></i>';
+      const words = s === "skip" && !L.scanScheduleIsDefault(sourceScanSchedule(sourceId)) ? "not due; scanned " + scanScheduleWords(sourceId).toLowerCase() : stateWords(s);
+      return '<i class="hx-led s-' + esc(s) + '" title="' + esc(windowSpan(column) + ": " + words) + '"></i>';
     }).join("");
     return '<button type="button" class="hx-strip-row' + (shown.length === 1 ? " is-single" : "") + '" data-monitor-id="' + esc(item.url_id) + '"><span class="hx-strip-name">' + esc(shown.length === 1 ? "Open the page" : itemTitle(item)) + '</span><span class="hx-strip-cells" style="--n:' + columns.length + '">' + cells + "</span></button>";
   }).join("");
@@ -3092,6 +3135,115 @@ function submitCondition(clear) {
   openGitHubRequest(target, clear
     ? "Submit the prefilled request on GitHub to remove this monitor's alert condition."
     : "Submit the prefilled request on GitHub. The condition applies from the next scan.");
+}
+
+/* ================= Scan schedule (per-monitor cadence) =================
+ * Stored per monitor in config/sources.json (check_every_hours, check_days,
+ * check_hours, check_timezone) and read by regmon/schedule.py. The dialog
+ * edits one monitor or many (a preset); like every settings change it opens a
+ * prefilled request that the owner-only Update Monitor Settings workflow applies.
+ */
+const SCAN_ZONES = ["UTC", "America/New_York", "America/Chicago", "America/Toronto", "America/Mexico_City", "America/Bogota", "America/Lima",
+  "America/Santiago", "America/Sao_Paulo", "America/Argentina/Buenos_Aires", "Europe/London", "Europe/Dublin", "Europe/Paris", "Europe/Berlin",
+  "Europe/Madrid", "Europe/Zurich", "Africa/Johannesburg", "Asia/Dubai", "Asia/Kolkata", "Asia/Singapore", "Asia/Hong_Kong", "Asia/Tokyo", "Australia/Sydney"];
+const SCAN_DAY_WORDS = { mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat", sun: "Sun" };
+function sourceScanSchedule(sourceOrId) {
+  const source = typeof sourceOrId === "string" ? configuredSources().find(candidate => candidate.id === sourceOrId) : sourceOrId;
+  return L.scanSchedule(source || {});
+}
+function scanScheduleWords(sourceOrId) { return L.scanScheduleLabel(sourceScanSchedule(sourceOrId)); }
+function healthMonitorFor(sourceId) { return healthMonitors().find(monitor => String(monitor.source_id) === String(sourceId)) || null; }
+// "Next scan 18:00 Tue" from the engine's own answer in health.json.
+function nextScanWords(sourceId) {
+  const monitor = healthMonitorFor(sourceId);
+  if (!monitor || !monitor.next_due) return "";
+  const due = new Date(monitor.next_due);
+  if (!Number.isFinite(due.getTime())) return "";
+  if (due.getTime() <= Date.now()) return "due in the current scan window";
+  return due.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" }) + ", " + timeOnlyShort(due) + " window";
+}
+function scanDialogState() {
+  const mode = (document.querySelector("[data-scan-days][aria-pressed='true']") || {}).dataset || {};
+  const picked = Array.from(document.querySelectorAll("[data-scan-day][aria-pressed='true']")).map(button => button.dataset.scanDay);
+  const days = mode.scanDays === "weekdays" ? L.SCAN_BUSINESS_DAYS.slice() : mode.scanDays === "custom" ? L.SCAN_WEEKDAYS.filter(day => picked.indexOf(day) >= 0) : L.SCAN_WEEKDAYS.slice();
+  const windowOn = $("scanWindowOn").checked;
+  return {
+    every: Number($("scanEvery").value) || 6,
+    days,
+    hours: windowOn ? [Number($("scanFrom").value), Number($("scanUntil").value)] : null,
+    timezone: $("scanZone").value || "UTC"
+  };
+}
+function setScanDayMode(mode) {
+  document.querySelectorAll("[data-scan-days]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.scanDays === mode)));
+  $("scanDayPicks").hidden = mode !== "custom";
+}
+function renderScanPreview() {
+  const schedule = scanDialogState();
+  const zoneNeeded = schedule.days.length !== 7 || !!schedule.hours;
+  $("scanZoneRow").hidden = !zoneNeeded;
+  $("scanWindow").hidden = !schedule.hours;
+  const problems = [];
+  if (!schedule.days.length) problems.push("Pick at least one day.");
+  if (schedule.hours && schedule.hours[1] - schedule.hours[0] < 6) problems.push("A window must span at least six hours, or it could miss every scan slot.");
+  const slots = problems.length ? [] : L.scanSlots(schedule, Date.now(), 7);
+  const checks = slots.filter(slot => slot.due).length;
+  const pages = (state.pendingScanSchedule || []).reduce((sum, id) => sum + Math.max(1, Number((healthMonitorFor(id) || {}).pages) || 1), 0);
+  // One column per day, four lights per day (the 00, 06, 12 and 18 UTC slots),
+  // lit where a scan would run: the scan field's LED language at week scale.
+  const byDay = [];
+  slots.forEach((slot, index) => { const day = Math.floor(index / 4); (byDay[day] = byDay[day] || []).push(slot); });
+  const week = byDay.map(daySlots => {
+    const label = new Date(daySlots[0].at).toLocaleDateString([], { weekday: "short" });
+    return '<div class="scan-week-day"><span class="scan-week-slots">' + daySlots.map(slot => '<i class="' + (slot.due ? "is-on" : "") + '" title="' +
+      esc(new Date(slot.at).toLocaleString([], { weekday: "short", hour: "2-digit", minute: "2-digit" }) + (slot.due ? ": scan" : ": not scheduled")) + '"></i>').join("") + "</span>" + esc(label) + "</div>";
+  }).join("");
+  $("scanPreview").innerHTML = problems.length
+    ? '<div class="scan-preview-head"><b>' + esc(problems[0]) + "</b></div>"
+    : '<div class="scan-preview-head"><b>' + esc(L.scanScheduleLabel(schedule)) + "</b><span>" + esc(plural(checks, "scan", "scans") + " in the next 7 days" +
+        (pages > 1 ? " · about " + Math.round(checks * pages / 7).toLocaleString() + " page checks a day" : "")) + "</span></div>" +
+      '<div class="scan-week" role="img" aria-label="' + esc(plural(checks, "scan", "scans") + " in the next 7 days") + '">' + week + "</div>";
+  const submit = $("scanScheduleForm").querySelector("[type=submit]");
+  if (submit) submit.disabled = !!problems.length;
+}
+function openScanSchedule(ids) {
+  const list = Array.from(new Set((ids || []).filter(id => configuredSources().some(source => source.id === id && source.active !== false))));
+  if (!list.length) { showToast("Choose at least one active monitor."); return; }
+  state.pendingScanSchedule = list;
+  const first = configuredSources().find(source => source.id === list[0]) || {};
+  const schedules = list.map(id => sourceScanSchedule(id));
+  const same = schedules.every(schedule => L.scanScheduleLabel(schedule) === L.scanScheduleLabel(schedules[0]));
+  const schedule = same ? schedules[0] : L.scanSchedule({});
+  $("scanScheduleTarget").textContent = list.length === 1 ? (first.name || first.id) + " · currently " + L.scanScheduleLabel(schedule).toLowerCase()
+    : plural(list.length, "monitor", "monitors") + (same ? " · currently " + L.scanScheduleLabel(schedule).toLowerCase() : " with different schedules");
+  $("scanEvery").value = String(schedule.every);
+  const hourOptions = (from, to) => Array.from({ length: to - from + 1 }, (_, i) => '<option value="' + (from + i) + '">' + String(from + i).padStart(2, "0") + ":00</option>").join("");
+  $("scanFrom").innerHTML = hourOptions(0, 23);
+  $("scanUntil").innerHTML = hourOptions(1, 24);
+  $("scanFrom").value = String(schedule.hours ? schedule.hours[0] : 8);
+  $("scanUntil").value = String(schedule.hours ? schedule.hours[1] : 18);
+  $("scanWindowOn").checked = !!schedule.hours;
+  const zones = SCAN_ZONES.indexOf(schedule.timezone) >= 0 ? SCAN_ZONES : [schedule.timezone].concat(SCAN_ZONES);
+  $("scanZone").innerHTML = zones.map(zone => '<option value="' + esc(zone) + '">' + esc(zone.replace(/_/g, " ")) + "</option>").join("");
+  $("scanZone").value = schedule.timezone;
+  $("scanDayPicks").innerHTML = L.SCAN_WEEKDAYS.map(day => '<button class="chip" type="button" data-scan-day="' + day + '" aria-pressed="' + (schedule.days.indexOf(day) >= 0) + '">' + SCAN_DAY_WORDS[day] + "</button>").join("");
+  setScanDayMode(schedule.days.length === 7 ? "all" : schedule.days.join() === L.SCAN_BUSINESS_DAYS.join() ? "weekdays" : "custom");
+  renderScanPreview();
+  $("scanScheduleDialog").showModal();
+}
+function submitScanSchedule(reset) {
+  const ids = state.pendingScanSchedule || [];
+  const schedule = reset ? L.scanSchedule({}) : scanDialogState();
+  const requests = L.settingsRequests(L.scanSchedulePayload(ids, schedule), "scan schedule → " + L.scanScheduleLabel(schedule));
+  if (!requests.length) return;
+  $("scanScheduleDialog").close();
+  requests.slice(1).forEach(request => {
+    const params = new URLSearchParams(); params.set("title", request.title); params.set("body", request.body);
+    window.open(REPO + "/issues/new?" + params.toString(), "_blank");
+  });
+  const params = new URLSearchParams(); params.set("title", requests[0].title); params.set("body", requests[0].body);
+  openGitHubRequest(REPO + "/issues/new?" + params.toString(), (requests.length > 1 ? "Submit each of the " + requests.length + " prefilled requests on GitHub." : "Submit the prefilled request on GitHub.") +
+    " The new schedule applies from the next scheduled scan.");
 }
 
 /* ================= Alert channels ================= */
@@ -6909,7 +7061,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -6980,6 +7132,7 @@ $("workspace").addEventListener("click", event => {
   if (data.selectRun) return select("runs", data.selectRun);
   if (data.selectHealth) return select("health", data.selectHealth);
   if (data.editCondition) return openConditionDialog(data.editCondition);
+  if (data.editSchedule) return openScanSchedule(data.editSchedule.split(","));
   if (data.channelGuide !== undefined) { const guide = $("channelGuide"); if (guide) { guide.open = true; guide.scrollIntoView({ block: "nearest" }); } return; }
   if (data.selectNotification) return select("notifications", data.selectNotification);
   if (data.go) return setView(data.go);
@@ -7595,6 +7748,18 @@ $("reviewBack").addEventListener("click", () => {
   const a = state.add;
   if (a.origin === "explore" && a.page) addGoto("explore");
   else addGoto("start");
+});
+$("closeScanSchedule").addEventListener("click", () => $("scanScheduleDialog").close());
+$("cancelScanSchedule").addEventListener("click", () => $("scanScheduleDialog").close());
+$("scanScheduleReset").addEventListener("click", () => submitScanSchedule(true));
+$("scanScheduleForm").addEventListener("submit", event => { event.preventDefault(); submitScanSchedule(false); });
+["scanEvery", "scanWindowOn", "scanFrom", "scanUntil", "scanZone"].forEach(id => $(id).addEventListener("change", renderScanPreview));
+$("scanScheduleDialog").addEventListener("click", event => {
+  if (event.target === $("scanScheduleDialog")) return $("scanScheduleDialog").close();
+  const mode = event.target.closest("[data-scan-days]");
+  if (mode) { setScanDayMode(mode.dataset.scanDays); return renderScanPreview(); }
+  const day = event.target.closest("[data-scan-day]");
+  if (day) { day.setAttribute("aria-pressed", String(day.getAttribute("aria-pressed") !== "true")); renderScanPreview(); }
 });
 $("closeCondition").addEventListener("click", () => $("conditionDialog").close());
 $("cancelCondition").addEventListener("click", () => $("conditionDialog").close());
