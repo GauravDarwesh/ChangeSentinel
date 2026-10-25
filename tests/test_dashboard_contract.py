@@ -1074,12 +1074,16 @@ class TestCheckeredFrameGlints(unittest.TestCase):
         self.assertIn('css.getPropertyValue("--idle-hi")', script)
         self.assertIn("CSLib.fbm(col * .26 + t * .22, row * .26 + t * .08, t * .11)", script)
         self.assertIn("Math.pow(wave, 1.5) * .92", script)
-        self.assertIn("const xAt = col => 1 + col * (width - cell - 1) / (columns - 1);", script)
-        self.assertIn("const yAt = row => 1 + row * (height - cell - 1) / (rows - 1);", script)
-        self.assertIn("const right = width - cell;", script)
-        self.assertIn("const bottom = height - cell;", script)
-        self.assertIn("ctx.fillRect(0, bottom, width, cell);", script)
-        self.assertIn("ctx.fillRect(right, cell, cell, Math.max(0, height - cell * 2));", script)
+        self.assertIn("const columns = Math.max(2, Math.ceil((width - 1) / cell));", script)
+        self.assertIn("const rows = Math.max(2, Math.ceil((height - 1) / cell));", script)
+        self.assertIn("const xAt = col => 1 + col * cell;", script)
+        self.assertIn("const yAt = row => 1 + row * cell;", script)
+        self.assertIn("const right = xAt(columns - 1);", script)
+        self.assertIn("const bottom = yAt(rows - 1);", script)
+        self.assertIn("const rightBand = width - cell;", script)
+        self.assertIn("const bottomBand = height - cell;", script)
+        self.assertIn("ctx.fillRect(0, bottomBand, width, cell);", script)
+        self.assertIn("ctx.fillRect(rightBand, cell, cell, Math.max(0, height - cell * 2));", script)
         self.assertIn("paintTile(x, 1, col, 0, t, tile);", script)
         self.assertIn("paintTile(x, bottom, col, rows - 1, t, tile);", script)
         self.assertIn("paintTile(1, y, 0, row, t, tile);", script)
@@ -1088,3 +1092,22 @@ class TestCheckeredFrameGlints(unittest.TestCase):
         self.assertIn('attributeFilter: ["data-theme"]', script)
         self.assertNotIn("Math.random()", script)
         self.assertNotIn("frameTileBreathe", script)
+
+    def test_edge_tile_anchors_remain_grid_aligned_for_irregular_viewports(self):
+        cell = 20
+        # Include dimensions just over a cell boundary and ordinary nonmultiples.
+        for width, height in ((1441, 901), (1459, 899), (1281, 721), (1440, 900)):
+            with self.subTest(width=width, height=height):
+                columns = max(2, (width - 1 + cell - 1) // cell)
+                rows = max(2, (height - 1 + cell - 1) // cell)
+                x_anchors = [1 + col * cell for col in range(columns)]
+                y_anchors = [1 + row * cell for row in range(rows)]
+
+                self.assertTrue(all((x - 1) % cell == 0 for x in x_anchors))
+                self.assertTrue(all((y - 1) % cell == 0 for y in y_anchors))
+                self.assertTrue(all(b - a == cell for a, b in zip(x_anchors, x_anchors[1:])))
+                self.assertTrue(all(b - a == cell for a, b in zip(y_anchors, y_anchors[1:])))
+                self.assertGreaterEqual(x_anchors[-1], width - cell)
+                self.assertLess(x_anchors[-1], width)
+                self.assertGreaterEqual(y_anchors[-1], height - cell)
+                self.assertLess(y_anchors[-1], height)
