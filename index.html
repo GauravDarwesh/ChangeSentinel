@@ -1057,6 +1057,23 @@
     .bulk-preview-name { min-width: 0; overflow: hidden; color: var(--ink); text-overflow: ellipsis; white-space: nowrap; }
     .bulk-preview-url { flex: none; max-width: 48%; overflow: hidden; color: var(--ink-3); font-family: var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
     .bulk-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+    .bulk-summary { display: flex; flex-wrap: wrap; gap: 6px; }
+    .shadow-upload { display: grid; gap: 10px; padding: 16px 20px 18px; }
+    .shadow-upload ol { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 13px; line-height: 1.6; }
+    .shadow-table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+    .shadow-table th, .shadow-table td { padding: 8px 18px; border-bottom: 1px solid var(--line); text-align: right; }
+    .shadow-table th:first-child, .shadow-table td:first-child { text-align: left; }
+    .shadow-table th { color: var(--ink-3); font-weight: 400; }
+    .shadow-bar { display: flex; height: 8px; margin: 4px 18px 14px; overflow: hidden; border-radius: 2px; background: var(--led-off); }
+    .shadow-bar i { display: block; height: 100%; }
+    .shadow-bar .is-both { background: var(--good); }
+    .shadow-bar .is-theirs { background: var(--state-bad); }
+    .shadow-bar .is-ours { background: var(--state-change); }
+    .shadow-key { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 0 18px 14px; color: var(--ink-3); font-size: 12px; }
+    .shadow-key i { display: inline-block; width: 9px; height: 9px; margin-right: 6px; border-radius: 2px; vertical-align: -1px; }
+    .bulk-options { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+    .bulk-options .field-check, .bulk-options .field-help { grid-column: 1 / -1; margin: 0; }
+    @media (max-width: 640px) { .bulk-options { grid-template-columns: minmax(0, 1fr); } }
     /* Scout's search row keeps a file-type filter beside it. */
     .discovery-filter-row { display: grid; grid-template-columns: minmax(0, 1fr) 124px; gap: 8px; }
     .discovery-filter-row .field-input { min-width: 0; min-height: 32px; margin-top: 0; padding: 5px 25px 5px 8px; font-size: 12.5px; }
@@ -2802,6 +2819,7 @@
           <div class="list-head"><div class="list-title-row"><h1 class="list-title">Alerts</h1><span class="list-count" id="notificationCounts"></span></div>
             <div class="channel-bar" id="channelBar"></div></div>
           <div class="list-body">
+            <div id="shadowEntry"></div>
             <div class="list-group-label" id="notificationPendingHeading">Waiting to send <span id="notificationPendingCount"></span></div>
             <div id="notificationPendingItems"><div class="loading">Loading queued alerts…</div></div>
             <div class="list-group-label" id="notificationSentHeading">Sent <span id="notificationSentCount"></span></div>
@@ -2979,23 +2997,30 @@
           <div class="modal-actions"><button class="btn" id="addExactSubmit" type="button">Continue on GitHub</button></div>
         </div>
       </details>
-      <details class="add-more add-bulk-wrap">
-        <summary>Upload a spreadsheet of links <span>CSV or XLSX</span></summary>
+      <details class="add-more add-bulk-wrap" id="addBulk">
+        <summary>Upload a spreadsheet or import from Visualping <span>CSV or XLSX</span></summary>
         <div class="add-more-body">
       <section class="bulk-import add-bulk" aria-labelledby="bulkImportHeading">
         <div class="bulk-import-head">
           <div>
-            <div class="field-label-text" id="bulkImportHeading">Bulk upload <span>CSV or XLSX</span></div>
-            <p class="field-help">Import up to 25 links from a spreadsheet. Use one URL per row; names and selectors are optional.</p>
+            <div class="field-label-text" id="bulkImportHeading">Import links <span>CSV or XLSX</span></div>
+            <p class="field-help">One URL per row, or another tool's export (Visualping and similar). URL, name, workspace, labels, check frequency and status columns are read when present; paused pages and pages already monitored are left out. Large files are sent as requests of 25 links.</p>
           </div>
-          <a class="bulk-template" id="bulkTemplateLink" download="changesentinel-links-template.csv" href="data:text/csv;charset=utf-8,URL%2CName%2CInclude%20Selector%2CIgnore%20Selectors%0Ahttps%3A%2F%2Fwww.example.com%2Fpolicy%2CPolicy%20page%2C%2C.cookie-banner%3B.breadcrumb%0A">Download template</a>
+          <a class="bulk-template" id="bulkTemplateLink" download="changesentinel-links-template.csv" href="data:text/csv;charset=utf-8,URL%2CName%2CWorkspace%2CLabels%2CFrequency%2CInclude%20Selector%2CIgnore%20Selectors%0Ahttps%3A%2F%2Fwww.example.com%2Fpolicy%2CPolicy%20page%2CNAM%2CSpecs%2CDaily%2C%2C.cookie-banner%3B.breadcrumb%0A">Download template</a>
         </div>
         <input class="field-input bulk-file-input" id="bulkMonitorFile" name="bulkFile" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" aria-label="Choose a CSV or Excel spreadsheet">
-        <p class="bulk-status" id="bulkImportStatus" role="status" aria-live="polite">Accepted columns: URL (required), Name, Include Selector, Ignore Selectors.</p>
+        <p class="bulk-status" id="bulkImportStatus" role="status" aria-live="polite">Accepted columns: URL (required), Name, Workspace, Labels, Frequency, Status, Include Selector, Ignore Selectors.</p>
+        <div class="bulk-summary" id="bulkImportSummary" hidden></div>
         <div class="bulk-preview" id="bulkImportPreview" aria-label="Spreadsheet preview" hidden></div>
+        <div class="bulk-options" id="bulkImportOptions" hidden>
+          <label><span class="visually-hidden">Workspace</span><input class="field-input" id="bulkWorkspace" type="text" maxlength="40" placeholder="Workspace for rows without one" autocomplete="off" list="reviewWorkspaceList"></label>
+          <label><span class="visually-hidden">Labels</span><input class="field-input" id="bulkLabels" type="text" maxlength="300" placeholder="Labels for every row, e.g. Imported" autocomplete="off"></label>
+          <label class="field-check bulk-shadow"><input type="checkbox" id="bulkShadow"> Shadow mode: record changes without sending alerts</label>
+          <p class="field-help">Shadow mode runs the new monitors beside the old tool so their alerts can be compared (Alerts → Compare with Visualping) without anyone being alerted twice. Turn it off from Labels when you switch.</p>
+        </div>
         <div class="bulk-actions" id="bulkImportActions" hidden>
           <button class="btn" id="clearBulkImport" type="button">Clear file</button>
-          <button class="btn btn-primary" id="submitBulkMonitor" type="button" disabled>Continue with links</button>
+          <span class="review-requests" id="bulkRequests"></span>
         </div>
       </section>
         </div>
@@ -3157,6 +3182,10 @@
       <div id="organiseRemoveRow" hidden>
         <div class="field-label-text">Remove labels <span>Tap to mark for removal</span></div>
         <div class="condition-suggestions" id="organiseRemove"></div>
+      </div>
+      <div>
+        <label class="field-label-text" for="organiseAlerts">Alerts <span>Shadow mode records changes without alerting</span></label>
+        <select class="field-input" id="organiseAlerts"><option value="keep">Keep as is</option><option value="on">Send alerts</option><option value="shadow">Shadow mode: record only, no change alerts</option></select>
       </div>
       <p class="field-help" id="organiseError" role="alert"></p>
       <p class="modal-info">Workspaces and labels group and filter monitors and their alerts; what is detected is unchanged. Continue opens a prefilled GitHub request; the owner-only workflow applies it.</p>
@@ -3516,8 +3545,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261025-workspaces-1"></script>
-  <script src="dashboard.js?v=20261025-workspaces-1"></script>
+  <script src="dashboard-lib.js?v=20261025-visualping-1"></script>
+  <script src="dashboard.js?v=20261025-visualping-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

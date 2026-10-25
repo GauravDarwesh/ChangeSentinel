@@ -30,7 +30,7 @@ ISSUE_TITLE_PREFIX = "[ChangeSentinel] Update monitors"
 MAX_MONITORS = 200
 # Settings a request may set or clear. Clearing returns a key to its default.
 SETTABLE_KEYS = {
-    "check_every_hours", "check_days", "check_hours", "check_timezone", "workspace", "labels",
+    "check_every_hours", "check_days", "check_hours", "check_timezone", "workspace", "labels", "shadow",
 }
 # Label edits that keep each monitor's other labels (a preset adds "Spec" to
 # fifty monitors without wiping what each already carries).
@@ -53,7 +53,7 @@ def _validated_body(event: dict, repository: str) -> str:
 
 def request_from_issue(event: dict, repository: str) -> dict:
     body = _validated_body(event, repository).replace("\r\n", "\n")
-    match = re.search(r"(?ms)^SETTINGS_JSON:[ \t]*\n(\{.*?\})[ \t]*(?:\n\n|\Z)", body)
+    match = re.search(r"(?ms)^SETTINGS_JSON:[ \t]*\n(\{.*?\})[ \t]*(?:\n\n|\n?\Z)", body)
     if not match:
         raise ValueError("No SETTINGS_JSON payload was found in the request.")
     try:
@@ -121,6 +121,8 @@ def apply_settings(config: dict, request: dict) -> list[str]:
             source.pop("labels")
         if "workspace" in source and not str(source["workspace"]).strip():
             source.pop("workspace")
+        if source.get("shadow") is False:
+            source.pop("shadow")
         # Defaults are not written out: a six-hourly, every-day monitor keeps the
         # same configuration it had before cadences existed.
         if source.get("check_every_hours") == 6:

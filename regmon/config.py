@@ -58,6 +58,9 @@ class SourceConfig:
     # unaffected. Without a workspace, the dashboard groups by region.
     workspace: str = ""
     labels: tuple[str, ...] = ()
+    # Shadow mode: scan, detect and record as usual, but send no change alerts.
+    # Used while running beside another tool (e.g. Visualping) to compare.
+    shadow: bool = False
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "SourceConfig":
@@ -112,11 +115,12 @@ class SourceConfig:
             check_timezone=str(value.get("check_timezone", "") or "").strip(),
             workspace=str(value.get("workspace", "") or "").strip(),
             labels=tuple(str(x).strip() for x in value.get("labels", [])),
+            shadow=bool(value.get("shadow", False)),
         )
 
 
 SOURCE_KEYS = {field.name for field in fields(SourceConfig)}
-BOOL_KEYS = {"active", "baseline_on_first_run", "use_http_discovery", "alert_only_on_condition"}
+BOOL_KEYS = {"active", "baseline_on_first_run", "use_http_discovery", "alert_only_on_condition", "shadow"}
 MAX_ALERT_CONDITION_CHARS = 500
 MAX_LABELS = 12
 MAX_TAG_CHARS = 40

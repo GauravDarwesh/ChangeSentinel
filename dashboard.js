@@ -2010,6 +2010,7 @@ function renderNotifications() {
   $("notificationSentCount").textContent = sent.length ? "(" + sent.length + ")" : "";
   $("notificationCounts").textContent = pending.length ? pending.length + " waiting" : "Nothing waiting";
   renderChannelBar();
+  if ($("shadowEntry")) $("shadowEntry").innerHTML = shadowEntryRow();
 
   $("notificationPendingItems").innerHTML = pending.length ? pending.map(item =>
     '<button class="row" type="button" data-select-notification="' + esc(item.eventId) + '"' + (item.eventId === state.selectedNotificationId ? ' aria-selected="true"' : "") + ">" +
@@ -2591,6 +2592,7 @@ function renderDetails(item) {
     ["Scan schedule", scanScheduleWords(source) + (nextScanWords(item.source_id) ? " · next " + nextScanWords(item.source_id) : "")],
     ["Workspace", (ws => ws.name + (ws.auto ? " (from the regulator's region)" : ""))(sourceWorkspace(source))],
     ["Labels", sourceLabels(source).join(", ") || "None"],
+    ["Alerts", source.shadow ? "Shadow mode: changes are recorded without alerts" : "Sent for relevant changes"],
     ["Fetch error", item.fetch_error || "None"], ["Extraction error", item.extraction_error || "None"],
     ["Text fingerprint (SHA-256)", item.normalized_hash || "Not available", true], ["Saved HTML fingerprint", item.html_hash || "Not available", true],
     ["Response fingerprint", item.raw_hash || "Not available", true],
@@ -2651,6 +2653,7 @@ function renderRunDetail() {
 function renderNotificationDetail() {
   state.detailKeys.notifications = detailRenderKey("notifications");
   const pane = $("notificationDetail");
+  if (state.selectedNotificationId === SHADOW_KEY) return renderShadowDetail(pane);
   const { pending, sent } = notificationLists();
   const item = pending.concat(sent).find(candidate => candidate.eventId === state.selectedNotificationId);
   if (!item) {
@@ -3347,7 +3350,8 @@ function renderDetailForView(view) {
 }
 function organiseTags(source) {
   const ws = sourceWorkspace(source);
-  return (!ws.auto ? '<span class="tag" title="Workspace">' + esc(ws.name) + "</span>" : "") +
+  return (source && source.shadow ? '<span class="tag tone-pending" title="Shadow mode: changes are recorded without alerts">Shadow</span>' : "") +
+    (!ws.auto ? '<span class="tag" title="Workspace">' + esc(ws.name) + "</span>" : "") +
     sourceLabels(source).map(label => '<span class="tag is-label" title="Label">#' + esc(label) + "</span>").join("");
 }
 // Selection: settings apply per monitor (source), so picking a page picks its monitor.
@@ -3414,6 +3418,7 @@ function openOrganise(ids) {
   $("organiseRemoveRow").hidden = !present.size;
   $("organiseRemove").innerHTML = Array.from(present.values()).sort().map(label => '<button class="chip" type="button" data-remove-label="' + esc(label) + '" aria-pressed="false">#' + esc(label) + "</button>").join("");
   $("organiseError").textContent = "";
+  $("organiseAlerts").value = "keep";
   $("organiseDialog").showModal();
 }
 function submitOrganise() {
@@ -3431,11 +3436,13 @@ function submitOrganise() {
   const payload = L.organisePayload(state.pendingOrganise, {
     workspace: choice === "__new" ? newName : choice.indexOf("__") === 0 ? "" : choice,
     clearWorkspace: choice === "__clear",
-    add, remove: Array.from(state.organiseRemove.values())
+    add, remove: Array.from(state.organiseRemove.values()),
+    shadow: $("organiseAlerts").value === "shadow" ? true : $("organiseAlerts").value === "on" ? false : undefined
   });
   if (L.payloadIsEmpty(payload)) { $("organiseError").textContent = "Nothing to change yet: pick a workspace, or add or remove a label."; return; }
   const words = [payload.set.workspace ? "workspace → " + payload.set.workspace : payload.clear.indexOf("workspace") >= 0 ? "workspace → by region" : "",
-    payload.add_labels ? "add " + payload.add_labels.join(", ") : "", payload.remove_labels ? "remove " + payload.remove_labels.join(", ") : ""].filter(Boolean).join("; ");
+    payload.add_labels ? "add " + payload.add_labels.join(", ") : "", payload.remove_labels ? "remove " + payload.remove_labels.join(", ") : "",
+    payload.set.shadow ? "shadow mode on" : payload.clear.indexOf("shadow") >= 0 ? "alerts on" : ""].filter(Boolean).join("; ");
   $("organiseDialog").close();
   openSettingsRequests(payload, words, "Workspaces and labels apply as soon as it is processed.");
 }
@@ -3478,6 +3485,138 @@ function submitPreset() {
   const payload = presetPayloadFor(ids);
   $("presetDialog").close();
   openSettingsRequests(payload, "preset “" + preset.name + "” → " + L.scanScheduleLabel(L.scanSchedule(payload.set)), "The preset applies from the next scheduled scan.");
+}
+
+/* ================= Shadow comparison with Visualping =================
+ * The owner exports Visualping's alert history (CSV or XLSX) and drops it here.
+ * It is read in this browser only and compared with the changes ChangeSentinel
+ * recorded for the same pages and period: which both caught, which only one
+ * did, and which Visualping pages are not monitored here yet.
+ */
+const SHADOW_KEY = "__shadow";
+state.shadow = null;
+function shadowOurChanges() {
+  return changeLogEntries().filter(entry => ["CHANGED_URL", "NEW_URL", "REMOVED_URL"].indexOf(entry.event_type) >= 0)
+    .map(entry => ({ url: entry.url, at: Date.parse(entry.timestamp), event_type: entry.event_type, event_id: entry.event_id, source_id: entrySourceId(entry) }))
+    .filter(row => row.url && Number.isFinite(row.at));
+}
+function shadowMonitoredUrls() {
+  return new Set(state.items.map(item => item.canonical_url).filter(Boolean));
+}
+function shadowOurAlerts(period) {
+  return Object.values(notificationMap(state.notifications, "sent_events")).filter(item => item && item.kind !== "TEST" && ["CHANGED_URL", "NEW_URL", "REMOVED_URL"].indexOf(item.kind) >= 0)
+    .filter(item => { const at = Date.parse(item.sent_at); return Number.isFinite(at) && (!period || (at >= period.from - 86400000 && at <= period.to + 86400000)); }).length;
+}
+async function readShadowFile(file) {
+  if (!file) return;
+  state.shadow = { name: file.name, loading: true };
+  renderNotifications(); renderNotificationDetail();
+  try {
+    if (file.size > 25 * 1024 * 1024) throw new Error("This file is larger than 25 MB.");
+    const extension = file.name.toLowerCase().split(".").pop();
+    const matrix = extension === "xlsx" ? await L.xlsxFirstSheetRows(await file.arrayBuffer()) : extension === "csv" ? parseCsvMatrix(await file.text()) : null;
+    if (!matrix) throw new Error("Choose a .csv or .xlsx file.");
+    const parsed = L.shadowRows(matrix);
+    if (parsed.error) throw new Error(parsed.error);
+    const result = L.shadowCompare(parsed.rows, shadowOurChanges(), shadowMonitoredUrls(), { windowHours: 36 });
+    state.shadow = { name: file.name, rows: parsed.rows.length, unreadable: parsed.unreadable, result, at: Date.now() };
+  } catch (error) {
+    state.shadow = { name: file.name, error: String(error && error.message || error) };
+  }
+  renderNotifications(); renderNotificationDetail();
+}
+function shadowEntryRow() {
+  const r = state.shadow && state.shadow.result;
+  const summary = r ? r.totals.both + " matched, " + r.totals.theirsOnly + " only in Visualping, " + r.totals.oursOnly + " only here" : "Drop Visualping's alert export to compare both tools";
+  return '<button class="row" type="button" data-select-notification="' + SHADOW_KEY + '"' + (state.selectedNotificationId === SHADOW_KEY ? ' aria-selected="true"' : "") + ">" +
+    '<span class="row-mark tone-' + (r ? (r.totals.theirsOnly ? "problem" : "ok") : "pending") + '" aria-hidden="true"></span>' +
+    '<span class="row-title">Compare with Visualping</span><span class="row-time">' + esc(r ? "shadow run" : "") + "</span>" +
+    '<span class="row-summary">' + esc(summary) + "</span></button>";
+}
+// A row that opens the page here when it is monitored, else the live page.
+function shadowRow(url, body) {
+  const item = state.items.find(candidate => L.urlKey(candidate.canonical_url) === L.urlKey(url));
+  return item ? '<button class="row" type="button" data-monitor-id="' + esc(item.url_id) + '">' + body + "</button>"
+    : '<a class="row" href="' + esc(safeHttpUrl(url) ? url : "#") + '" target="_blank" rel="noopener noreferrer">' + body + "</a>";
+}
+function shadowList(title, rows, note, render) {
+  if (!rows.length) return "";
+  const shown = rows.slice(0, 40);
+  return '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">' + esc(title) + '</h3><span class="sheet-note">' + esc(note) + "</span></div>" +
+    shown.map(render).join("") + (rows.length > shown.length ? '<p class="note-strip">' + esc(plural(rows.length - shown.length, "more row", "more rows")) + " in the downloaded comparison.</p>" : "") + "</section>";
+}
+function renderShadowDetail(pane) {
+  const shadow = state.shadow;
+  const intro = '<section class="sheet"><div class="shadow-upload">' +
+    '<p class="field-help">Run both tools on the same pages for a few weeks (import them with <b>Shadow mode</b> so only Visualping alerts), then compare what each caught.</p>' +
+    "<ol><li>In Visualping, export the alert or change history for the period as CSV or Excel. It needs a page URL column and a date column.</li>" +
+    "<li>Choose the file here. It is read in this browser and never uploaded.</li></ol>" +
+    '<input class="field-input" type="file" id="shadowFile" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" aria-label="Visualping alert export">' +
+    (shadow && shadow.error ? '<p class="bulk-status is-error">' + esc(shadow.error) + "</p>" : shadow && shadow.loading ? '<p class="bulk-status">Reading ' + esc(shadow.name) + "…</p>" : "") +
+    "</div></section>";
+  const heading = detailHeading({ back: true, source: "Shadow comparison", title: "Compare with Visualping",
+    meta: shadow && shadow.result ? "<span>" + esc(shadow.name) + "</span><span>" + esc(shortDate(new Date(shadow.result.period.from)) + " – " + shortDate(new Date(shadow.result.period.to))) + "</span>" : "<span>Nothing loaded</span>",
+    actions: shadow && shadow.result ? '<button class="btn" type="button" data-shadow-download>Download comparison</button>' : "" });
+  if (!shadow || !shadow.result) { pane.innerHTML = '<div class="detail-inner">' + heading + intro + "</div>"; return; }
+  const r = shadow.result, t = r.totals;
+  const alertsHere = shadowOurAlerts(r.period);
+  const tiles = [
+    ["Visualping alerts", t.theirs.toLocaleString(), plural(t.pagesTheirs, "monitored page", "monitored pages") + (t.notMonitored ? " + " + t.notMonitored + " not monitored here" : "")],
+    ["Changes recorded here", t.ours.toLocaleString(), plural(alertsHere, "alert", "alerts") + " sent in the period"],
+    ["Caught by both", t.both.toLocaleString(), r.medianLagHours == null ? "" : "median " + (r.medianLagHours >= 0 ? "+" : "") + r.medianLagHours.toFixed(1) + " h vs Visualping"],
+    ["Only in Visualping", t.theirsOnly.toLocaleString(), "possible misses to check"]
+  ];
+  const watched = t.both + t.theirsOnly + t.oursOnly || 1;
+  const bar = '<div class="shadow-bar" role="img" aria-label="' + esc(t.both + " matched, " + t.theirsOnly + " only in Visualping, " + t.oursOnly + " only here") + '">' +
+    '<i class="is-both" style="width:' + (t.both / watched * 100).toFixed(1) + '%"></i><i class="is-theirs" style="width:' + (t.theirsOnly / watched * 100).toFixed(1) + '%"></i><i class="is-ours" style="width:' + (t.oursOnly / watched * 100).toFixed(1) + '%"></i></div>' +
+    '<div class="shadow-key"><span><i style="background:var(--good)"></i>Both</span><span><i style="background:var(--state-bad)"></i>Only Visualping</span><span><i style="background:var(--state-change)"></i>Only ChangeSentinel</span></div>';
+  // Per workspace: Visualping's own column when the export has one, else ours.
+  const groups = new Map();
+  const bump = (name, key) => { const row = groups.get(name) || { name, both: 0, theirsOnly: 0, oursOnly: 0 }; row[key]++; groups.set(name, row); };
+  const ourWorkspace = url => { const item = state.items.find(candidate => L.urlKey(candidate.canonical_url) === L.urlKey(url)); return item ? sourceWorkspace(String(item.source_id)).name : "Other"; };
+  r.both.forEach(pair => bump(pair.theirs.workspace || ourWorkspace(pair.theirs.url), "both"));
+  r.theirsOnly.forEach(row => bump(row.workspace || ourWorkspace(row.url), "theirsOnly"));
+  r.oursOnly.forEach(row => bump(ourWorkspace(row.url), "oursOnly"));
+  const table = groups.size > 1 ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">By workspace</h3></div><table class="shadow-table"><thead><tr><th>Workspace</th><th>Both</th><th>Only Visualping</th><th>Only here</th></tr></thead><tbody>' +
+    Array.from(groups.values()).sort((a, b) => a.name.localeCompare(b.name)).map(row => "<tr><td>" + esc(row.name) + "</td><td>" + row.both + "</td><td>" + row.theirsOnly + "</td><td>" + row.oursOnly + "</td></tr>").join("") + "</tbody></table></section>" : "";
+  const when = at => new Date(at).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  const notMonitored = Array.from(new Map(r.notMonitored.map(row => [L.urlKey(row.url), row])).values());
+  pane.innerHTML = '<div class="detail-inner">' + heading +
+    '<section class="sheet"><div class="health-tiles">' + tiles.map(([name, value, note]) => '<div class="health-tile"><div class="health-tile-label">' + esc(name) + '</div><div class="health-tile-value">' + esc(value) + '</div><div class="health-tile-note">' + esc(note) + "</div></div>").join("") + "</div>" + bar + "</section>" +
+    table +
+    shadowList("Only in Visualping", r.theirsOnly, "No change recorded here within 36 h · open the page to check", row => shadowRow(row.url,
+      '<span class="row-mark tone-problem" aria-hidden="true"></span><span class="row-title">' + esc(displayUrl(row.url)) + '</span><span class="row-time">' + esc(when(row.at)) + "</span>")) +
+    shadowList("Only in ChangeSentinel", r.oursOnly, "Changes Visualping did not alert on", row => shadowRow(row.url,
+      '<span class="row-mark tone-change" aria-hidden="true"></span><span class="row-title">' + esc(displayUrl(row.url)) + '</span><span class="row-time">' + esc(when(row.at)) + '</span><span class="row-summary">' + esc(L.eventLabel(row.event_type)) + "</span>")) +
+    (notMonitored.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Visualping pages not monitored here</h3><span class="sheet-note">' + esc(plural(notMonitored.length, "page", "pages")) + '</span></div><p class="note-strip">These alerted in Visualping but have no monitor here, so they cannot be compared. Import them to include them in the next comparison.</p>' +
+      '<div class="modal-actions" style="padding:0 18px 14px"><button class="btn btn-primary" type="button" data-shadow-import>Import ' + esc(plural(notMonitored.length, "page", "pages")) + " in shadow mode</button></div></section>" : "") +
+    intro.replace("Choose the file here.", "Choose another file to compare again.") +
+    '<p class="note-strip">' + esc((shadow.unreadable ? shadow.unreadable + " rows without a URL or date were skipped. " : "") + "A Visualping alert matches a change here when both concern the same page within 36 hours. Several Visualping alerts for one change count once each; only one can match it.") + "</p></div>";
+}
+function downloadShadowComparison() {
+  const r = state.shadow && state.shadow.result;
+  if (!r) return;
+  const iso = at => new Date(at).toISOString();
+  const rows = [["Outcome", "Page", "Visualping alert", "ChangeSentinel change", "Lag (hours)"]]
+    .concat(r.both.map(pair => ["Both", pair.theirs.url, iso(pair.theirs.at), iso(pair.ours.at), pair.lagHours.toFixed(1)]))
+    .concat(r.theirsOnly.map(row => ["Only Visualping", row.url, iso(row.at), "", ""]))
+    .concat(r.oursOnly.map(row => ["Only ChangeSentinel", row.url, "", iso(row.at), ""]))
+    .concat(r.notMonitored.map(row => ["Not monitored here", row.url, iso(row.at), "", ""]));
+  downloadFile("changesentinel-vs-visualping-" + L.localIsoDate() + ".csv", "text/csv;charset=utf-8", "﻿" + L.toCsv(rows));
+}
+function importShadowPages() {
+  const r = state.shadow && state.shadow.result;
+  if (!r) return;
+  const urls = Array.from(new Map(r.notMonitored.map(row => [L.urlKey(row.url), row])).values());
+  openAddMonitor();
+  const bulk = $("addBulk");
+  if (bulk) bulk.open = true;
+  const result = bulkRowsFromMatrix([["URL", "Workspace"]].concat(urls.map(row => [row.url, row.workspace || ""])));
+  bulkImport = result; bulkImportRows = result.rows; bulkImportErrors = result.errors; bulkOpened = new Set();
+  $("bulkShadow").checked = true;
+  if (!$("bulkLabels").value) $("bulkLabels").value = "Visualping import";
+  setBulkStatus(result.errors.length ? result.errors.slice(0, 3).join(" ") : "Ready to import " + result.rows.length + " pages from the comparison, in shadow mode.", !!result.errors.length);
+  renderBulkPreview();
 }
 
 /* ================= Alert channels ================= */
@@ -5142,7 +5281,7 @@ function ensureSelection(view) {
   if (view === "health" && !healthKeys().includes(state.selectedHealthKey)) state.selectedHealthKey = "fleet";
   if (view === "notifications") {
     const { pending, sent } = notificationLists();
-    if (!pending.concat(sent).some(item => item.eventId === state.selectedNotificationId)) {
+    if (state.selectedNotificationId !== SHADOW_KEY && !pending.concat(sent).some(item => item.eventId === state.selectedNotificationId)) {
       const first = pending[0] || sent[0];
       state.selectedNotificationId = first ? first.eventId : "";
     }
@@ -5172,6 +5311,7 @@ function detailRenderKey(view) {
       return run ? JSON.stringify(run) : "none";
     }
     if (view === "notifications") {
+      if (state.selectedNotificationId === SHADOW_KEY) return "shadow|" + (state.shadow ? state.shadow.at || state.shadow.name || "" : "") + "|" + (state.shadow && state.shadow.loading ? 1 : 0);
       const { pending, sent } = notificationLists();
       const item = pending.concat(sent).find(candidate => candidate.eventId === state.selectedNotificationId);
       return item ? JSON.stringify([item, channelSummary()]) : "none";
@@ -5429,6 +5569,11 @@ function reportScanStatus() {
 
 const BULK_REQUEST_MARKER = "<!-- changesentinel:add-monitor-bulk:v1 -->";
 const MAX_BULK_LINKS = 25;
+// An import is split into requests of MAX_BULK_LINKS links each.
+const MAX_IMPORT_LINKS = 2500;
+const BULK_ACCEPTED = "Accepted columns: URL (required), Name, Workspace, Labels, Frequency, Status, Include Selector, Ignore Selectors.";
+let bulkImport = null;
+let bulkOpened = new Set();
 const MAX_BULK_REQUEST_URL_LENGTH = 7000;
 let bulkImportRows = [];
 let bulkImportErrors = [];
@@ -6906,95 +7051,63 @@ function parseCsvMatrix(text) {
 function bulkHeaderKey(value) {
   return String(value || "").replace(/^\uFEFF/, "").trim().toLowerCase().replace(/[\s_-]+/g, " ");
 }
+// Reads URL, name, selectors, and (from another tool's export) workspace,
+// labels, check frequency and status; see L.importRows.
 function bulkRowsFromMatrix(matrix) {
-  const empty = row => !row || row.every(cell => !String(cell == null ? "" : cell).trim());
-  const rows = (matrix || []).map(row => Array.isArray(row) ? row.map(value => String(value == null ? "" : value).trim()) : []).filter(row => !empty(row));
-  if (!rows.length) throw new Error("The spreadsheet has no link rows.");
-  const aliases = {
-    url: ["url", "urls", "link", "links", "website", "website url", "webpage", "web page", "page url", "address"],
-    name: ["name", "display name", "title", "monitor name", "label"],
-    include_selector: ["include selector", "include css selector", "selector", "css selector"],
-    ignore_selectors: ["ignore selectors", "ignore css selectors"]
-  };
-  const first = rows[0].map(bulkHeaderKey);
-  const urlColumn = first.findIndex(value => aliases.url.includes(value));
-  const hasHeader = urlColumn >= 0;
-  const columns = {};
-  if (hasHeader) {
-    for (const key of Object.keys(aliases)) columns[key] = first.findIndex(value => aliases[key].includes(value));
-    rows.shift();
-  } else {
-    columns.url = 0;
-    columns.name = 1;
-    columns.include_selector = 2;
-    columns.ignore_selectors = 3;
-  }
-  const parsed = [];
-  const errors = [];
-  const seen = new Map();
-  rows.forEach((row, index) => {
-    const rowNumber = index + (hasHeader ? 2 : 1);
-    const cell = column => column >= 0 && column < row.length ? row[column] : "";
-    const rawUrl = cell(columns.url);
-    if (!rawUrl) {
-      if (!empty(row)) errors.push("Row " + rowNumber + ": missing URL.");
-      return;
-    }
-    let url;
-    try {
-      const candidate = new URL(rawUrl);
-      if (!["http:", "https:"].includes(candidate.protocol) || !candidate.hostname || candidate.username || candidate.password) throw new Error();
-      // The engine's canonical form, so duplicates differing only in tracking
-      // parameters or query order collapse to one request row.
-      url = L.canonicalUrl(candidate.toString());
-    } catch (_) {
-      errors.push("Row " + rowNumber + ": enter a complete public http:// or https:// URL.");
-      return;
-    }
-    const name = cell(columns.name).replace(/[\r\n]+/g, " ").trim().slice(0, 100);
-    const includeSelector = cell(columns.include_selector).trim();
-    const rawIgnore = cell(columns.ignore_selectors);
-    const ignoreSelectors = rawIgnore ? rawIgnore.split(/[;\r\n]+/).map(value => value.trim()).filter(Boolean) : [];
-    if (includeSelector.length > 500) errors.push("Row " + rowNumber + ": include selector exceeds 500 characters.");
-    if (ignoreSelectors.length > 20 || ignoreSelectors.some(value => value.length > 500)) errors.push("Row " + rowNumber + ": use at most 20 ignore selectors, each at most 500 characters.");
-    const previous = seen.get(url);
-    if (previous) {
-      if (previous.include_selector !== includeSelector || previous.ignore_selectors.join("\n") !== ignoreSelectors.join("\n")) {
-        errors.push("Row " + rowNumber + ": duplicate URL has different selectors from an earlier row.");
-      }
-      return;
-    }
-    const item = { url, name, include_selector: includeSelector, ignore_selectors: ignoreSelectors };
-    seen.set(url, item);
-    parsed.push(item);
-  });
-  if (!parsed.length && !errors.length) errors.push("No valid URLs were found. Add a URL column or place one URL in the first column.");
-  if (parsed.length > MAX_BULK_LINKS) errors.push("This request supports up to " + MAX_BULK_LINKS + " unique links. Split this file into smaller batches.");
-  return { rows: parsed, errors, rowCount: rows.length, duplicateCount: Math.max(0, rows.length - parsed.length - errors.length) };
+  const known = new Set(state.items.map(item => L.canonicalUrl(item.canonical_url)).concat(
+    activeSources().filter(source => (source.seed_urls || []).length === 1).map(source => L.canonicalUrl(source.seed_urls[0]))));
+  const result = L.importRows(matrix, known);
+  if (result.rows.length > MAX_IMPORT_LINKS) result.errors.push("An import can hold up to " + MAX_IMPORT_LINKS.toLocaleString() + " new links. Split this file.");
+  return result;
 }
 function setBulkStatus(message, isError) {
   const status = $("bulkImportStatus");
   status.textContent = message;
   status.classList.toggle("is-error", !!isError);
 }
+function bulkOrganise() {
+  const workspace = $("bulkWorkspace").value.trim();
+  const labels = L.parseLabels($("bulkLabels").value);
+  const bad = (workspace ? [workspace] : []).concat(labels).filter(text => !L.validTag(text));
+  return { workspace, labels, shadow: $("bulkShadow").checked, bad };
+}
+function bulkBatches() {
+  const batches = [];
+  for (let i = 0; i < bulkImportRows.length; i += MAX_BULK_LINKS) batches.push(bulkImportRows.slice(i, i + MAX_BULK_LINKS));
+  return batches;
+}
 function renderBulkPreview() {
   const preview = $("bulkImportPreview");
   const actions = $("bulkImportActions");
+  const summary = $("bulkImportSummary");
   preview.replaceChildren();
-  if (!bulkImportRows.length) {
-    preview.hidden = true;
-    actions.hidden = true;
-    $("submitBulkMonitor").disabled = true;
-    return;
+  const skipped = bulkImport ? bulkImport.skipped : { existing: [], paused: [] };
+  const anything = bulkImportRows.length || skipped.existing.length || skipped.paused.length;
+  summary.hidden = !anything;
+  $("bulkImportOptions").hidden = !bulkImportRows.length;
+  actions.hidden = !anything;
+  if (anything) {
+    const chips = [plural(bulkImportRows.length, "new link", "new links")];
+    if (skipped.existing.length) chips.push(skipped.existing.length + " already monitored");
+    if (skipped.paused.length) chips.push(skipped.paused.length + " paused, left out");
+    const workspaces = new Map(), cadences = new Map();
+    bulkImportRows.forEach(row => {
+      if (row.workspace) workspaces.set(row.workspace, (workspaces.get(row.workspace) || 0) + 1);
+      const label = L.scanScheduleLabel(L.scanSchedule({ check_every_hours: row.check_every_hours || 6 }));
+      cadences.set(label, (cadences.get(label) || 0) + 1);
+    });
+    workspaces.forEach((count, name) => chips.push(name + " · " + count));
+    if (cadences.size > 1 || !cadences.has("Every 6 hours")) cadences.forEach((count, label) => chips.push(label + " · " + count));
+    if (bulkImport && bulkImport.conditions) chips.push(bulkImport.conditions + " alert conditions not imported");
+    summary.innerHTML = chips.map(text => '<span class="chip is-static">' + esc(text) + "</span>").join("");
   }
-  preview.hidden = false;
-  actions.hidden = false;
+  preview.hidden = !bulkImportRows.length;
   bulkImportRows.slice(0, 5).forEach(item => {
     const line = document.createElement("div");
     line.className = "bulk-preview-row";
     const name = document.createElement("span");
     name.className = "bulk-preview-name";
-    name.textContent = item.name || item.url;
+    name.textContent = (item.name || item.url) + (item.workspace ? " \u00b7 " + item.workspace : "");
     const url = document.createElement("span");
     url.className = "bulk-preview-url";
     try { url.textContent = new URL(item.url).hostname; } catch (_) { url.textContent = item.url; }
@@ -7004,17 +7117,41 @@ function renderBulkPreview() {
   if (bulkImportRows.length > 5) {
     const more = document.createElement("div");
     more.className = "field-help";
-    more.textContent = "+ " + (bulkImportRows.length - 5) + " more links";
+    more.textContent = "+ " + (bulkImportRows.length - 5).toLocaleString() + " more links";
     preview.appendChild(more);
   }
-  $("submitBulkMonitor").disabled = !!bulkImportErrors.length;
+  const batches = bulkBatches();
+  const blocked = !!bulkImportErrors.length;
+  $("bulkRequests").innerHTML = !batches.length ? "" : batches.map((batch, index) => {
+    const opened = bulkOpened.has(index);
+    const label = batches.length === 1 ? (opened ? "Open again" : "Continue with " + plural(batch.length, "link", "links"))
+      : (opened ? "Open again " : "Request ") + (index + 1) + " of " + batches.length;
+    return '<button class="btn' + (opened ? "" : " btn-primary") + '" type="button" data-bulk-batch="' + index + '"' + (blocked ? " disabled" : "") + ' title="' + esc(plural(batch.length, "link", "links")) + '">' + esc(label) + "</button>";
+  }).join("");
+}
+function openBulkBatch(index) {
+  const batch = bulkBatches()[index];
+  if (!batch || bulkImportErrors.length) return;
+  const organise = bulkOrganise();
+  if (organise.bad.length) { setBulkStatus("Use 1\u201340 letters, digits, spaces or & / + . - _ in: " + organise.bad.join(", "), true); return; }
+  const target = makeBulkGitHubIssueUrl(batch, null, organise);
+  if (target.length > MAX_BULK_REQUEST_URL_LENGTH) { setBulkStatus("Request " + (index + 1) + " is too long for GitHub; shorten names or labels in the file.", true); return; }
+  bulkOpened.add(index);
+  renderBulkPreview();
+  const githubWindow = window.open(target, "_blank");
+  if (githubWindow) {
+    try { githubWindow.opener = null; } catch (_) {}
+    showToast("Request " + (index + 1) + " of " + bulkBatches().length + " opened on GitHub. Submit it there; nothing is registered until you do.");
+  } else {
+    showToast("Your browser blocked the new tab. Allow pop-ups for this dashboard and press the button again.");
+  }
 }
 async function readBulkFile(file) {
   bulkImportRows = [];
   bulkImportErrors = [];
   renderBulkPreview();
   if (!file) {
-    setBulkStatus("Accepted columns: URL (required), Name, Include Selector, Ignore Selectors.", false);
+    setBulkStatus(BULK_ACCEPTED, false);
     return;
   }
   if (file.size > 5 * 1024 * 1024) {
@@ -7034,29 +7171,27 @@ async function readBulkFile(file) {
       throw new Error("Choose a .csv or .xlsx file.");
     }
     const result = bulkRowsFromMatrix(matrix);
+    bulkImport = result;
     bulkImportRows = result.rows;
     bulkImportErrors = result.errors;
+    bulkOpened = new Set();
     if (bulkImportErrors.length) {
       setBulkStatus("Found " + bulkImportErrors.length + " issue(s): " + bulkImportErrors.slice(0, 3).join(" ") + (bulkImportErrors.length > 3 ? " …" : ""), true);
+    } else if (!bulkImportRows.length) {
+      setBulkStatus("Nothing new to import: every link in the file is already monitored or paused.", false);
     } else {
-      setBulkStatus("Ready to import " + bulkImportRows.length + " unique links" + (result.duplicateCount ? " (" + result.duplicateCount + " duplicate row(s) removed)" : "") + ". " + (extension === "xlsx" ? "Reading the first worksheet." : "CSV parsed locally."), false);
+      const batches = Math.ceil(bulkImportRows.length / MAX_BULK_LINKS);
+      setBulkStatus("Ready to import " + bulkImportRows.length.toLocaleString() + " new links" + (batches > 1 ? " in " + batches + " requests of up to " + MAX_BULK_LINKS : "") + ". " +
+        (result.columns && result.columns.frequency >= 0 ? "Check frequencies were matched to the nearest scan schedule (fastest every 6 hours). " : "") +
+        (extension === "xlsx" ? "Read from the first worksheet." : "Parsed in this browser."), false);
     }
   } catch (error) {
+    bulkImport = null;
     bulkImportRows = [];
     bulkImportErrors = [String(error && error.message || error)];
     setBulkStatus(bulkImportErrors[0], true);
   }
   renderBulkPreview();
-  if (!bulkImportErrors.length && bulkImportRows.length) {
-    const target = makeBulkGitHubIssueUrl(bulkImportRows);
-    if (target.length > MAX_BULK_REQUEST_URL_LENGTH) {
-      bulkImportErrors.push("The prefilled GitHub request is too long. Split the spreadsheet into smaller batches.");
-      setBulkStatus(bulkImportErrors[0], true);
-      $("submitBulkMonitor").disabled = true;
-    } else {
-      $("submitBulkMonitor").textContent = "Continue with " + bulkImportRows.length + (bulkImportRows.length === 1 ? " link" : " links");
-    }
-  }
 }
 function makeBulkGitHubIssueUrl(rows, alert, organise) {
   const bodyLines = [
@@ -7066,7 +7201,8 @@ function makeBulkGitHubIssueUrl(rows, alert, organise) {
   if (alert && alert.condition) bodyLines.push("Alert me when: " + alert.condition, "Alert only when condition met: " + (alert.only ? "yes" : "no"), "");
   if (organise && organise.workspace) bodyLines.push("Workspace: " + organise.workspace);
   if (organise && organise.labels && organise.labels.length) bodyLines.push("Labels: " + organise.labels.join(", "));
-  if (organise && (organise.workspace || (organise.labels || []).length)) bodyLines.push("");
+  if (organise && organise.shadow) bodyLines.push("Shadow mode: yes");
+  if (organise && (organise.workspace || (organise.labels || []).length || organise.shadow)) bodyLines.push("");
   bodyLines.push(
     "BULK_DATA_JSON:",
     JSON.stringify(rows),
@@ -7078,21 +7214,14 @@ function makeBulkGitHubIssueUrl(rows, alert, organise) {
   params.set("body", bodyLines.join("\n"));
   return REPO + "/issues/new?" + params.toString();
 }
-function submitBulkMonitor() {
-  if (!bulkImportRows.length || bulkImportErrors.length) return;
-  const target = makeBulkGitHubIssueUrl(bulkImportRows);
-  if (target.length > MAX_BULK_REQUEST_URL_LENGTH) {
-    setBulkStatus("The prefilled GitHub request is too long. Split the spreadsheet into smaller batches.", true);
-    return;
-  }
-  openGitHubRequest(target, "Submit the prefilled bulk request on GitHub. The owner-only workflow will validate the links, register the sources and queue their first scans.");
-}
 function clearBulkImport() {
   $("bulkMonitorFile").value = "";
+  bulkImport = null;
   bulkImportRows = [];
   bulkImportErrors = [];
+  bulkOpened = new Set();
   renderBulkPreview();
-  setBulkStatus("Accepted columns: URL (required), Name, Include Selector, Ignore Selectors.", false);
+  setBulkStatus(BULK_ACCEPTED, false);
 }
 /* ================= Review decisions, exports, saved-copy integrity ================= */
 
@@ -7314,7 +7443,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -7401,6 +7530,8 @@ $("workspace").addEventListener("click", event => {
     return openPreset(ids);
   }
   if (data.scopeClear !== undefined) return setScope(null);
+  if (data.shadowDownload !== undefined) return downloadShadowComparison();
+  if (data.shadowImport !== undefined) return importShadowPages();
   if (data.channelGuide !== undefined) { const guide = $("channelGuide"); if (guide) { guide.open = true; guide.scrollIntoView({ block: "nearest" }); } return; }
   if (data.selectNotification) return select("notifications", data.selectNotification);
   if (data.go) return setView(data.go);
@@ -8020,7 +8151,8 @@ $("reviewBack").addEventListener("click", () => {
 $("selectMonitorsBtn").addEventListener("click", () => setPicking(!state.picking));
 $("workspace").addEventListener("change", event => {
   const select = event.target.closest("[data-scope]");
-  if (select) setScope(select.dataset.scope, select.value);
+  if (select) return setScope(select.dataset.scope, select.value);
+  if (event.target.id === "shadowFile") readShadowFile(event.target.files && event.target.files[0]);
 });
 $("closeOrganise").addEventListener("click", () => $("organiseDialog").close());
 $("cancelOrganise").addEventListener("click", () => $("organiseDialog").close());
@@ -8112,7 +8244,10 @@ $("reviewDialog").addEventListener("click", event => {
   if (event.target === $("reviewDialog")) $("reviewDialog").close();
 });
 $("bulkMonitorFile").addEventListener("change", event => readBulkFile(event.target.files && event.target.files[0]));
-$("submitBulkMonitor").addEventListener("click", submitBulkMonitor);
+$("bulkRequests").addEventListener("click", event => {
+  const button = event.target.closest("[data-bulk-batch]");
+  if (button) openBulkBatch(Number(button.dataset.bulkBatch));
+});
 $("clearBulkImport").addEventListener("click", clearBulkImport);
 if (compactQuery && typeof compactQuery.addEventListener === "function") {
   compactQuery.addEventListener("change", () => { if (state.loaded) setView(state.view, { detail: state.mobileDetail }); });

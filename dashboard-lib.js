@@ -182,6 +182,8 @@
     if (add.length) payload.add_labels = add;
     if (remove.length) payload.remove_labels = remove.filter(label => !add.some(other => other.toLowerCase() === label.toLowerCase()));
     if (payload.remove_labels && !payload.remove_labels.length) delete payload.remove_labels;
+    if (c.shadow === true) payload.set.shadow = true;
+    else if (c.shadow === false) payload.clear.push("shadow");
     return payload;
   }
   function payloadIsEmpty(payload) {
@@ -214,6 +216,177 @@
     const payload = scanSchedulePayload(ids, schedule);
     if (p.labels && p.labels.length) payload.add_labels = p.labels.slice();
     return payload;
+  }
+
+  /* ---------- Importing from another monitoring tool ----------
+   * A spreadsheet export (Visualping or any similar tool) becomes monitor
+   * requests. Columns are found by their header; nothing about the file is
+   * sent anywhere until the owner submits the prefilled requests.
+   */
+  const IMPORT_ALIASES = {
+    url: ["url", "urls", "link", "links", "website", "website url", "webpage", "web page", "page url", "page", "address", "monitored url", "target url", "job url"],
+    name: ["name", "display name", "title", "monitor name", "description", "job name", "page name", "page title"],
+    include_selector: ["include selector", "include css selector", "selector", "css selector"],
+    ignore_selectors: ["ignore selectors", "ignore css selectors"],
+    workspace: ["workspace", "workspace name", "folder", "project", "group", "team"],
+    labels: ["labels", "label", "tags", "tag"],
+    frequency: ["frequency", "check frequency", "interval", "check interval", "schedule", "checks every", "check every"],
+    status: ["status", "active", "state", "paused", "job status"],
+    condition: ["alert me when", "ai condition", "alert condition", "condition", "ai alert"]
+  };
+  function importHeaderKey(value) {
+    return String(value || "").replace(/^\uFEFF/, "").trim().toLowerCase().replace(/[\s_-]+/g, " ").replace(/[()]/g, "").trim();
+  }
+  function importColumns(header) {
+    const keys = (header || []).map(importHeaderKey);
+    const out = {};
+    Object.keys(IMPORT_ALIASES).forEach(field => { out[field] = keys.findIndex(key => IMPORT_ALIASES[field].indexOf(key) >= 0); });
+    return out;
+  }
+  // "Every 12 hours", "Daily", "1 week", "720" (minutes) -> the nearest
+  // ChangeSentinel cadence that is not more frequent than every 6 hours.
+  function importFrequencyHours(text) {
+    const raw = String(text == null ? "" : text).trim().toLowerCase();
+    if (!raw) return null;
+    let hours = null;
+    if (/^\d+(\.\d+)?$/.test(raw)) hours = Number(raw) / 60;
+    else if (/hourly/.test(raw)) hours = 1;
+    else if (/twice a day|twice daily/.test(raw)) hours = 12;
+    else if (/daily|every day|once a day/.test(raw)) hours = 24;
+    else if (/weekly|every week|once a week/.test(raw)) hours = 168;
+    else if (/monthly|every month/.test(raw)) hours = 720;
+    else {
+      const match = raw.match(/(\d+(?:\.\d+)?)\s*(min|minute|h|hr|hour|d|day|w|wk|week|month)/);
+      if (match) hours = Number(match[1]) * ({ min: 1 / 60, minute: 1 / 60, h: 1, hr: 1, hour: 1, d: 24, day: 24, w: 168, wk: 168, week: 168, month: 720 }[match[2]] || 1);
+      else if (/every\s+(hour|day|week)/.test(raw)) hours = { hour: 1, day: 24, week: 168 }[raw.match(/every\s+(hour|day|week)/)[1]];
+    }
+    if (!Number.isFinite(hours) || hours <= 0) return null;
+    const fit = SCAN_INTERVALS.filter(interval => interval >= hours * 0.9)[0];
+    return fit || SCAN_INTERVALS[SCAN_INTERVALS.length - 1];
+  }
+  // A "Status" or "Active" column says what is running ("No" = paused); a
+  // "Paused" column says the opposite ("Yes" = paused).
+  function importIsPaused(text, pausedColumn) {
+    const raw = String(text == null ? "" : text).trim().toLowerCase();
+    if (pausedColumn) return /^(paused|yes|y|true|1)$/.test(raw);
+    return /^(paused|inactive|disabled|stopped|off|no|false|archived)$/.test(raw);
+  }
+  // matrix: rows of cells, the first holding headers when a URL column is named.
+  // known: Set of canonical URLs already monitored.
+  function importRows(matrix, known, options = {}) {
+    const blank = row => !row || row.every(cell => !String(cell == null ? "" : cell).trim());
+    const rows = (matrix || []).map(row => Array.isArray(row) ? row.map(value => String(value == null ? "" : value).trim()) : []).filter(row => !blank(row));
+    if (!rows.length) return { rows: [], errors: ["The spreadsheet has no link rows."], skipped: { existing: [], paused: [] }, columns: {}, header: false, conditions: 0 };
+    let columns = importColumns(rows[0]);
+    const header = columns.url >= 0;
+    const pausedColumn = header && columns.status >= 0 && importHeaderKey(rows[0][columns.status]) === "paused";
+    if (header) rows.shift();
+    else columns = { url: 0, name: 1, include_selector: 2, ignore_selectors: 3, workspace: -1, labels: -1, frequency: -1, status: -1, condition: -1 };
+    const out = [], errors = [], existing = [], paused = [];
+    const seen = new Map();
+    let conditions = 0;
+    rows.forEach((row, index) => {
+      const number = index + (header ? 2 : 1);
+      const cell = column => column >= 0 && column < row.length ? row[column] : "";
+      const rawUrl = cell(columns.url);
+      if (!rawUrl) { errors.push("Row " + number + ": missing URL."); return; }
+      let url;
+      try {
+        const candidate = new URL(rawUrl);
+        if (["http:", "https:"].indexOf(candidate.protocol) < 0 || !candidate.hostname || candidate.username || candidate.password) throw new Error();
+        url = canonicalUrl(candidate.toString());
+      } catch (_) { errors.push("Row " + number + ": enter a complete public http:// or https:// URL."); return; }
+      const name = cell(columns.name).replace(/[\r\n]+/g, " ").trim().slice(0, 100);
+      if (importIsPaused(cell(columns.status), pausedColumn) && !options.includePaused) { paused.push({ url, name, row: number }); return; }
+      if (known && known.has(url)) { existing.push({ url, name, row: number }); return; }
+      const includeSelector = cell(columns.include_selector).trim();
+      const rawIgnore = cell(columns.ignore_selectors);
+      const ignoreSelectors = rawIgnore ? rawIgnore.split(/[;\r\n]+/).map(value => value.trim()).filter(Boolean) : [];
+      if (includeSelector.length > 500) errors.push("Row " + number + ": include selector exceeds 500 characters.");
+      if (ignoreSelectors.length > 20 || ignoreSelectors.some(value => value.length > 500)) errors.push("Row " + number + ": use at most 20 ignore selectors, each at most 500 characters.");
+      const previous = seen.get(url);
+      if (previous) {
+        if (previous.include_selector !== includeSelector || previous.ignore_selectors.join("\n") !== ignoreSelectors.join("\n")) errors.push("Row " + number + ": duplicate URL has different selectors from an earlier row.");
+        return;
+      }
+      const item = { url, name, include_selector: includeSelector, ignore_selectors: ignoreSelectors };
+      const workspace = cell(columns.workspace).trim();
+      if (workspace && !validTag(workspace)) { errors.push("Row " + number + ": workspace \u201c" + workspace + "\u201d has characters that can't be used."); return; }
+      if (workspace) item.workspace = workspace;
+      const labels = parseLabels(cell(columns.labels).replace(/[;|]/g, ","));
+      const badLabels = labels.filter(label => !validTag(label));
+      if (badLabels.length) { errors.push("Row " + number + ": labels with characters that can't be used: " + badLabels.join(", ")); return; }
+      if (labels.length > LABEL_MAX) { errors.push("Row " + number + ": at most " + LABEL_MAX + " labels."); return; }
+      if (labels.length) item.labels = labels;
+      const every = importFrequencyHours(cell(columns.frequency));
+      if (every && every !== 6) item.check_every_hours = every;
+      if (cell(columns.condition)) conditions++;
+      seen.set(url, item);
+      out.push(item);
+    });
+    if (!out.length && !errors.length && !existing.length && !paused.length) errors.push("No valid URLs were found. Add a URL column or place one URL in the first column.");
+    return { rows: out, errors, skipped: { existing, paused }, columns, header, conditions };
+  }
+
+  /* ---------- Shadow comparison with another tool ----------
+   * Visualping (or any tool) alert history against ChangeSentinel's recorded
+   * changes for the same pages and period. A pair matches when both saw the
+   * same page change within `windowHours` of each other.
+   *   other:   [{ url, at (ms), workspace? }]
+   *   ours:    [{ url, at (ms), event_type, source_id }]
+   *   monitored: Set of canonical URLs ChangeSentinel watches
+   */
+  function shadowCompare(other, ours, monitored, options = {}) {
+    const windowMs = (Number(options.windowHours) || 36) * 3600000;
+    const theirs = (other || []).filter(row => row && row.url && Number.isFinite(row.at)).map(row => Object.assign({}, row, { key: urlKey(row.url) }));
+    if (!theirs.length) return null;
+    const from = Math.min(...theirs.map(row => row.at)) - windowMs, to = Math.max(...theirs.map(row => row.at)) + windowMs;
+    const mine = (ours || []).filter(row => row && row.url && row.at >= from && row.at <= to).map(row => Object.assign({}, row, { key: urlKey(row.url), used: false }));
+    const watched = new Set(Array.from(monitored || []).map(urlKey));
+    const byKey = new Map();
+    mine.forEach(row => { const list = byKey.get(row.key) || []; list.push(row); byKey.set(row.key, list); });
+    const both = [], theirsOnly = [], notMonitored = [];
+    theirs.sort((a, b) => a.at - b.at).forEach(row => {
+      if (!watched.has(row.key)) { notMonitored.push(row); return; }
+      const candidates = (byKey.get(row.key) || []).filter(entry => !entry.used && Math.abs(entry.at - row.at) <= windowMs)
+        .sort((a, b) => Math.abs(a.at - row.at) - Math.abs(b.at - row.at));
+      if (candidates.length) { candidates[0].used = true; both.push({ theirs: row, ours: candidates[0], lagHours: (candidates[0].at - row.at) / 3600000 }); }
+      else theirsOnly.push(row);
+    });
+    const oursOnly = mine.filter(row => !row.used && watched.has(row.key));
+    // Several alerts from the other tool for one change of ours are counted once.
+    const pagesTheirs = new Set(theirs.filter(row => watched.has(row.key)).map(row => row.key));
+    const lags = both.map(pair => pair.lagHours).sort((a, b) => a - b);
+    return {
+      period: { from: from + windowMs, to: to - windowMs },
+      totals: { theirs: theirs.length, ours: mine.length, both: both.length, theirsOnly: theirsOnly.length, oursOnly: oursOnly.length, notMonitored: notMonitored.length,
+        pagesTheirs: pagesTheirs.size, pagesNotMonitored: new Set(notMonitored.map(row => row.key)).size },
+      medianLagHours: lags.length ? lags[Math.floor(lags.length / 2)] : null,
+      both, theirsOnly, oursOnly, notMonitored
+    };
+  }
+  // Rows of an alert-history export: a URL column and a date/time column.
+  const SHADOW_TIME_ALIASES = ["date", "time", "timestamp", "datetime", "date time", "created", "created at", "detected", "detected at", "alert date", "alert time", "changed at", "change date", "sent at", "triggered at", "date sent", "notification date"];
+  function shadowRows(matrix) {
+    const rows = (matrix || []).filter(row => Array.isArray(row) && row.some(cell => String(cell == null ? "" : cell).trim()));
+    if (rows.length < 2) return { rows: [], error: "The file needs a header row and at least one alert." };
+    const keys = rows[0].map(importHeaderKey);
+    const urlCol = keys.findIndex(key => IMPORT_ALIASES.url.indexOf(key) >= 0);
+    const timeCol = keys.findIndex(key => SHADOW_TIME_ALIASES.indexOf(key) >= 0);
+    const wsCol = keys.findIndex(key => IMPORT_ALIASES.workspace.indexOf(key) >= 0);
+    if (urlCol < 0 || timeCol < 0) return { rows: [], error: "Couldn't find " + [urlCol < 0 ? "a URL column" : "", timeCol < 0 ? "a date or time column" : ""].filter(Boolean).join(" or ") + " in the header row." };
+    const out = [];
+    let unreadable = 0;
+    rows.slice(1).forEach(row => {
+      const url = String(row[urlCol] || "").trim();
+      const raw = row[timeCol];
+      let at = typeof raw === "number" ? Math.round((raw - 25569) * 86400000) : Date.parse(String(raw || "").trim().replace(/^(\d{4}-\d{2}-\d{2}) (\d)/, "$1T$2"));
+      if (!url || !Number.isFinite(at)) { unreadable++; return; }
+      let canonical;
+      try { canonical = canonicalUrl(new URL(url).toString()); } catch (_) { unreadable++; return; }
+      out.push({ url: canonical, at, workspace: wsCol >= 0 ? String(row[wsCol] || "").trim() : "" });
+    });
+    return { rows: out, unreadable, error: out.length ? "" : "No alert rows had both a URL and a readable date." };
   }
 
   /* ---------- Scan columns ---------- */
@@ -2811,7 +2984,7 @@
     pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe, pickRuleMatches, pickRuleFolder, pickRuleRequest,
     diffSequences, alignLines, changedWords, readWorkbook, workbookDiff, csvWorkbook, parseCsv, zipListing, zipFile, readDocx, columnName, cellRef,
-    esc, nextScheduledScan, scanCycle, runColumns, validTag, parseLabels, workspaceOf, labelsOf, scopeMatches, organisePayload, payloadIsEmpty, SETTINGS_PRESETS, presetPayload, LABEL_MAX, scanSchedule, scanScheduleIsDefault, scanScheduleLabel, scanAllows, scanIsDue, scanSlots, scanSchedulePayload, settingsRequests, SETTINGS_MARKER, SCAN_WEEKDAYS, SCAN_BUSINESS_DAYS, SCAN_INTERVALS, slotColumns, columnCellState, pendingScan,
+    esc, nextScheduledScan, scanCycle, runColumns, importColumns, importFrequencyHours, importIsPaused, importRows, shadowCompare, shadowRows, IMPORT_ALIASES, validTag, parseLabels, workspaceOf, labelsOf, scopeMatches, organisePayload, payloadIsEmpty, SETTINGS_PRESETS, presetPayload, LABEL_MAX, scanSchedule, scanScheduleIsDefault, scanScheduleLabel, scanAllows, scanIsDue, scanSlots, scanSchedulePayload, settingsRequests, SETTINGS_MARKER, SCAN_WEEKDAYS, SCAN_BUSINESS_DAYS, SCAN_INTERVALS, slotColumns, columnCellState, pendingScan,
     timelineModel, timelineGapWords, TIMELINE_KINDS, healthInsights, healthLight,
     fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, regulatorFor, jurisdictionForHost, hostOf, pageKind, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,
