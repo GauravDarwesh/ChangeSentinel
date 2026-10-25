@@ -2453,6 +2453,7 @@ function renderDetailHeader(item) {
     (conditionEditable(source) ? '<button class="btn" type="button" data-edit-condition="' + esc(source.id) + '" title="Set what should raise an alert for this monitor">' + (source.alert_condition ? "Edit alert condition" : "Alert me when…") + "</button>" : "") +
     (source && source.id && source.active !== false ? '<button class="btn" type="button" data-edit-schedule="' + esc(source.id) + '" title="How often and when this monitor is scanned">Scan schedule</button>' : "") +
     (source && source.id && source.active !== false ? '<button class="btn" type="button" data-edit-organise="' + esc(source.id) + '" title="Workspace and labels">Labels</button>' : "") +
+    '<button class="btn" type="button" data-find-similar="' + esc(item.url_id) + '" title="Find pages like this one on the regulator\'s site">Find similar</button>' +
     (item.source_id ? '<button class="btn btn-quiet" type="button" data-stop-monitor="' + esc(item.url_id) +
       '" data-stop-url="' + esc(item.canonical_url) + '" data-stop-source="' + esc(item.source_id) +
       '" data-stop-name="' + esc(itemTitle(item)) + '" title="Stop monitoring this URL">Stop monitoring</button>' : "");
@@ -5877,6 +5878,7 @@ function addRestoreDraft() {
   }
 }
 function addClearDraft() {
+  state.add.similarTo = null;
   const a = state.add;
   a.candidates = []; a.picked = new Map(); a.opened = {}; a.notes = []; a.history = []; a.at = -1; a.page = null; a.anchor = "";
   a.rules = {}; a.area = null; a.ruleDrafts = {}; a.ruleRequests = {}; a.ruleOpen = false;
@@ -6891,6 +6893,51 @@ function renderCrawl() {
   $("crawlReview").disabled = crawl.running || !crawl.found.size;
 }
 
+/* ---------- Find similar: pages like one monitored page ----------
+ * Starts from where the page is listed (Scout's record of the page that
+ * linked it, the monitor's own start page, or the nearest section page),
+ * follows links two levels within that section, and lists the most similar
+ * links first in the usual review step. Nothing is ticked for the owner.
+ */
+async function findSimilar(urlId) {
+  const item = state.items.find(candidate => candidate.url_id === urlId);
+  if (!item) return;
+  const source = sourceForItem(item);
+  const target = { url: item.canonical_url, title: healthName({ name: itemTitle(item) }), format: L.pickFormat(item.canonical_url, item.content_type) };
+  const scoutParents = scoutCandidates().filter(candidate => L.urlKey(candidate.url) === L.urlKey(item.canonical_url))
+    .map(candidate => candidate.evidence && candidate.evidence.parent_url).filter(Boolean);
+  const seeds = (source.seed_urls || []).filter(seed => L.urlKey(seed) !== L.urlKey(item.canonical_url));
+  const starts = L.similarStarts(target, { parents: scoutParents.concat(seeds) });
+  openAddMonitor();
+  const a = state.add;
+  a.similarTo = target;
+  $("newMonitorUrl").value = starts[0] || item.canonical_url;
+  showToast("Looking for pages like \u201c" + target.title + "\u201d\u2026");
+  let start = "";
+  for (const url of starts) {
+    try {
+      const page = await addReadPage(url);
+      if (page.kind === "page" && (page.links || []).filter(link => !link.chrome).length >= 3) { start = page.url || url; break; }
+    } catch (_) { /* try the next place it may be listed */ }
+  }
+  if (!start) { a.similarTo = null; showToast("Couldn't find a page that lists this one. Open its section in Add a link instead."); return; }
+  a.url = start;
+  $("newMonitorUrl").value = start;
+  const options = L.pickScopeOptions(start);
+  const scope = (options.find(option => option.id === "section") || options[0] || {}).prefix || "";
+  await crawlStart(start, 2, scope);
+  a.similarTo = target;
+  if (a.step === "review") renderReview();
+}
+function similarEntries(plan, scoreOf) {
+  const a = state.add;
+  if (!a.similarTo) return [];
+  const free = a.candidates.filter(item => !plan.monitored.has(item.key) && !plan.stopped.has(item.key));
+  return L.rankSimilar(a.similarTo, free.map(item => Object.assign({}, item, { title: item.title }))).map(entry => ({
+    item: a.candidates.find(candidate => candidate.key === entry.link.key) || entry.link, score: entry.score, reasons: entry.reasons
+  })).filter(entry => entry.item && entry.item.key);
+}
+
 /* ---------- Confirm ---------- */
 
 function addRequestRows(items) {
@@ -6934,7 +6981,10 @@ function renderReview() {
     a.scoredCount = a.candidates.length;
   }
   const scoreOf = item => a.scores.get(item.key) || { score: 0, reasons: [], older: false };
+  const similar = similarEntries(plan, scoreOf);
+  const similarKeys = new Set(similar.map(entry => entry.item.key));
   const pool = a.candidates.filter(item => {
+    if (similarKeys.has(item.key)) return false;
     const score = scoreOf(item);
     if (a.picked.has(item.key)) return a.show !== "SUGGESTED" || score.score >= 3;
     if (a.hideOlder && score.older) return false;
@@ -6947,6 +6997,7 @@ function renderReview() {
     ? ["Found " + plural(a.candidates.length, "link", "links") + (a.crawl ? " on " + plural(a.crawl.read, "page", "pages") : "") + ". Nothing is ticked yet: tick the ones to monitor. Historical and unrelated links are listed too, so you decide.", a.info || ""]
     : a.origin === "scout" ? ["These are the Scout findings you selected. Untick any you don't want; each one is requested as its own monitor."]
     : ["These are the links you selected while exploring. Untick any you don't want."];
+  if (a.similarTo) notes.unshift("Looking for pages like \u201c" + a.similarTo.title + "\u201d: " + (similar.length ? plural(similar.length, "close match is", "close matches are") + " listed first." : "no close match was found, so every link found nearby is listed."));
   if (hiddenOlder) notes.push(plural(hiddenOlder, "older version is", "older versions are") + " hidden.");
   const rulesRequested = Object.values(a.ruleRequests || {});
   if (rulesRequested.length) notes.push(plural(rulesRequested.length, "document rule was", "document rules were") + " requested; the links " + (rulesRequested.length === 1 ? "it covers are" : "they cover are") + " left out of these requests.");
@@ -6959,7 +7010,7 @@ function renderReview() {
   const list = $("reviewList");
   if (!a.candidates.length) {
     list.innerHTML = emptyState("No links yet", a.origin === "crawl" ? "Nothing was found. Go back and try another page or level." : "Go back and Shift-click the links you want.");
-  } else if (!total) {
+  } else if (!total && !similar.length) {
     list.innerHTML = emptyState("No links match", "Try a different search, or show all links.");
   } else {
     let shown = 0;
@@ -6969,6 +7020,10 @@ function renderReview() {
     if (a.reviewSimilar.length) {
       html += '<div class="review-similar" role="group" aria-label="Tick similar links"><span class="smart-kicker">Tick similar</span>' +
         a.reviewSimilar.map((rule, index) => '<button class="similar-chip" type="button" data-review-similar="' + index + '"><b>+' + rule.extra + "</b> " + esc(rule.label) + "</button>").join("") + "</div>";
+    }
+    if (similar.length) {
+      html += '<div class="link-group"><span class="link-group-name"><strong>Most like \u201c' + esc(a.similarTo.title) + "\u201d</strong> · " + similar.length + "</span></div>" +
+        similar.map(entry => addPickRow(entry.item, { reasons: entry.reasons.concat(scoreOf(entry.item).reasons || []).slice(0, 4), older: scoreOf(entry.item).older, monitored: false, stopped: false, locked: false, covered: plan.covered.has(entry.item.key), part: "" })).join("");
     }
     groups.forEach((group, index) => {
       if (shown >= a.limit) return;
@@ -7635,7 +7690,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -7722,6 +7777,7 @@ $("workspace").addEventListener("click", event => {
     return openPreset(ids);
   }
   if (data.scopeClear !== undefined) return setScope(null);
+  if (data.findSimilar) return findSimilar(data.findSimilar);
   if (data.shadowDownload !== undefined) return downloadShadowComparison();
   if (data.shadowImport !== undefined) return importShadowPages();
   if (data.digestEdit !== undefined) return openDigestDialog();
@@ -8186,7 +8242,7 @@ $("newMonitorUrl").addEventListener("input", () => {
   if (state.add.method === "crawl") syncAddScope();
 });
 $("addMonitorForm").addEventListener("change", event => { if (event.target.name === "addMethod") syncAddMethod(); });
-$("addMonitorForm").addEventListener("submit", startAddLink);
+$("addMonitorForm").addEventListener("submit", event => { state.add.similarTo = null; startAddLink(event); });
 $("addExactSubmit").addEventListener("click", submitExactAddress);
 $("autofillMonitorMetadata").addEventListener("click", suggestMonitorMetadata);
 $("addResume").addEventListener("click", event => {

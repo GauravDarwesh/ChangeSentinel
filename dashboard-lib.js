@@ -2745,6 +2745,76 @@
   function escapeRegex(text) { return String(text).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
   // Rules that describe the picked links and find more like them on the page.
   // Returns [{ id, label, keys: [...] }] for rules that would add at least one link.
+  /* ---------- Find similar: pages like one monitored page ----------
+   * Ranks links found around a monitored page by how much they resemble it:
+   * another edition of the same address (a different year), the same report
+   * code (FR Y-9C, BCAR, 5050), the same folder and file type, and shared
+   * words in the title and address. Nothing is ticked; the owner decides.
+   */
+  const SIMILAR_STOP = new Set(["the", "and", "for", "with", "from", "this", "that", "page", "pages", "www", "http", "https", "html", "htm", "php", "aspx",
+    "pdf", "xlsx", "xls", "zip", "csv", "doc", "docx", "index", "default", "files", "file", "content", "uploads", "sites", "documents", "document",
+    "download", "view", "data", "apps", "report", "reports", "gov", "org", "com", "los", "las", "del", "des", "der", "die", "und", "por", "para"]);
+  const REPORT_CODE = /\b(FR|FFIEC|BCAR|LCR|NSFR|SUCAVE|COSIF|DPM|BIRD|COREP|FINREP|CCAR|LRR|CAR)(?:[ -]?(?=[A-Z0-9-]*\d)[A-Z0-9]{1,6}(?:-[A-Z0-9]{1,4})?)?\b/gi;
+  function similarWords(text) {
+    return Array.from(new Set(String(text || "").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+      .split(/[^a-z0-9]+/).filter(word => word.length >= 3 && !SIMILAR_STOP.has(word) && !/^\d+$/.test(word))));
+  }
+  function reportCodes(text) {
+    // A trailing year is an edition, not a different report: BCAR 2027 is BCAR.
+    return Array.from(new Set((String(text || "").match(REPORT_CODE) || []).map(code => code.toUpperCase().replace(/[\s-]+/g, "").replace(/(?<=[A-Z])20\d{2}$/, ""))))
+      .filter(code => code.length >= 3);
+  }
+  function yearless(url) {
+    try {
+      const u = new URL(url);
+      return u.hostname.replace(/^www\./, "") + u.pathname.toLowerCase().replace(/(?<![0-9])20\d{2}(?![0-9])/g, "{y}").replace(/\.(pdf|xlsx?|zip|csv|docx?)$/, "");
+    } catch (_) { return ""; }
+  }
+  function pathOf(url) { try { return new URL(url).pathname; } catch (_) { return ""; } }
+  function similarityTo(target, link) {
+    const t = target || {}, l = link || {};
+    const reasons = [];
+    let score = 0;
+    if (!l.url || urlKey(l.url) === urlKey(t.url)) return { score: -1, reasons };
+    const ty = yearless(t.url), ly = yearless(l.url);
+    if (ty && ty === ly && ty.indexOf("{y}") >= 0) { score += 6; reasons.push("another year's edition"); }
+    const codes = reportCodes((t.title || "") + " " + pathOf(t.url).replace(/[-_/]+/g, " "));
+    const shared = codes.filter(code => reportCodes((l.title || l.text || "") + " " + pathOf(l.url).replace(/[-_/]+/g, " ")).indexOf(code) >= 0);
+    if (shared.length) { score += 4; reasons.push("same report " + shared[0]); }
+    if (folderOf(t.url) && folderOf(t.url) === folderOf(l.url)) { score += 2; reasons.push("same folder"); }
+    if (t.format && l.format === t.format) { score += 1.5; if (t.format !== "Web page") reasons.push("also a " + t.format); }
+    const a = similarWords((t.title || "") + " " + pathOf(t.url)), b = similarWords((l.title || l.text || "") + " " + pathOf(l.url));
+    const common = a.filter(word => b.indexOf(word) >= 0);
+    const jaccard = a.length && b.length ? common.length / new Set(a.concat(b)).size : 0;
+    if (jaccard > 0) { score += jaccard * 8; if (common.length >= 2) reasons.push("shares \u201c" + common.slice(0, 3).join(" ") + "\u201d"); }
+    return { score: Math.round(score * 10) / 10, reasons };
+  }
+  // links: [{ key?, url, title|text, format }] -> the most similar first, above a floor.
+  function rankSimilar(target, links, options = {}) {
+    const floor = options.floor == null ? 4 : options.floor;
+    const limit = options.limit || 30;
+    return (links || []).map(link => Object.assign({ link }, similarityTo(target, link)))
+      .filter(entry => entry.score >= floor).sort((x, y) => y.score - x.score || String(x.link.url).localeCompare(String(y.link.url))).slice(0, limit);
+  }
+  // Pages to start looking from, best first.
+  function similarStarts(target, options = {}) {
+    const out = [];
+    const add = url => { if (url && out.indexOf(url) < 0 && url !== target.url) out.push(url); };
+    (options.parents || []).forEach(add);
+    if (target.format === "Web page") out.push(target.url);
+    try {
+      const u = new URL(target.url);
+      const parts = u.pathname.split("/").filter(Boolean);
+      // File-store folders (wp-content/uploads, sites/default/files) rarely list their files.
+      for (let depth = parts.length - 1; depth >= 1; depth--) {
+        const folder = "/" + parts.slice(0, depth).join("/") + "/";
+        if (!/\/(wp-content|uploads|sites|files|media|assets|documents|docs)\//i.test(folder)) add(u.origin + folder);
+      }
+      add(u.origin + "/");
+    } catch (_) {}
+    return out.slice(0, 6);
+  }
+
   function pickSimilar(picked, links, keyOf) {
     const key = keyOf || (link => urlKey(link.url));
     const chosen = (picked || []).filter(Boolean);
@@ -2977,7 +3047,7 @@
     pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe, pickRuleMatches, pickRuleFolder, pickRuleRequest,
     diffSequences, alignLines, changedWords, readWorkbook, workbookDiff, csvWorkbook, parseCsv, zipListing, zipFile, readDocx, columnName, cellRef,
-    esc, nextScheduledScan, scanCycle, runColumns, importColumns, importFrequencyHours, importIsPaused, importRows, shadowCompare, shadowRows, IMPORT_ALIASES, validTag, parseLabels, workspaceOf, labelsOf, scopeMatches, organisePayload, payloadIsEmpty, SETTINGS_PRESETS, presetPayload, LABEL_MAX, scanSchedule, scanScheduleIsDefault, scanScheduleLabel, scanAllows, scanIsDue, scanSlots, scanSchedulePayload, settingsRequests, SETTINGS_MARKER, SCAN_WEEKDAYS, SCAN_BUSINESS_DAYS, SCAN_INTERVALS, slotColumns, columnCellState, pendingScan,
+    esc, nextScheduledScan, scanCycle, runColumns, similarityTo, rankSimilar, similarStarts, reportCodes, importColumns, importFrequencyHours, importIsPaused, importRows, shadowCompare, shadowRows, IMPORT_ALIASES, validTag, parseLabels, workspaceOf, labelsOf, scopeMatches, organisePayload, payloadIsEmpty, SETTINGS_PRESETS, presetPayload, LABEL_MAX, scanSchedule, scanScheduleIsDefault, scanScheduleLabel, scanAllows, scanIsDue, scanSlots, scanSchedulePayload, settingsRequests, SETTINGS_MARKER, SCAN_WEEKDAYS, SCAN_BUSINESS_DAYS, SCAN_INTERVALS, slotColumns, columnCellState, pendingScan,
     timelineModel, timelineGapWords, TIMELINE_KINDS, healthInsights, healthLight,
     fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, regulatorFor, jurisdictionForHost, hostOf, pageKind, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,
