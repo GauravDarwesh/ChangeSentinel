@@ -34,6 +34,7 @@ MAX_MONITORS = 200
 # Settings a request may set or clear. Clearing returns a key to its default.
 SETTABLE_KEYS = {
     "check_every_hours", "check_days", "check_hours", "check_timezone", "workspace", "labels", "shadow",
+    "fetch_mode", "browser_wait_seconds", "browser_wait_selector", "browser_dismiss_cookies",
 }
 # Label edits that keep each monitor's other labels (a preset adds "Spec" to
 # fifty monitors without wiping what each already carries).
@@ -133,6 +134,9 @@ def apply_settings(config: dict, request: dict) -> list[str]:
             source.pop("workspace")
         if source.get("shadow") is False:
             source.pop("shadow")
+        for key, default in (("fetch_mode", "http"), ("browser_wait_seconds", 3), ("browser_wait_selector", ""), ("browser_dismiss_cookies", True)):
+            if key in source and source[key] == default:
+                source.pop(key)
         # Defaults are not written out: a six-hourly, every-day monitor keeps the
         # same configuration it had before cadences existed.
         if source.get("check_every_hours") == 6:

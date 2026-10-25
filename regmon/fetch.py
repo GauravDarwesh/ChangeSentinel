@@ -15,6 +15,20 @@ from regmon.security import REDIRECT_STATUSES, USER_AGENT, DNSResolutionError, r
 
 RETRYABLE = {408, 425, 429, 500, 502, 503, 504}
 MAX_REDIRECTS = 5
+# Challenge pages (Cloudflare, Akamai, captcha walls) usually arrive as 403/429/503.
+# Their body is kept, capped, so the engine can recognise and save them.
+CHALLENGE_STATUSES = {401, 403, 429, 503}
+MAX_ERROR_BODY_BYTES = 2 * 1024 * 1024
+
+
+class HTTPStatusError(requests.HTTPError):
+    """An HTTP error status, with the response body when it may be a challenge page."""
+
+    def __init__(self, message: str, status_code: int, content_type: str = "", body: bytes = b""):
+        super().__init__(message)
+        self.status_code = status_code
+        self.content_type = content_type
+        self.body = body
 
 
 def _redirect_key(url: str) -> str:
@@ -189,8 +203,15 @@ def fetch(
             )
 
         if response.status_code >= 400:
+            body = b""
+            if response.status_code in CHALLENGE_STATUSES and "html" in response.headers.get("content-type", "").lower():
+                try:
+                    body = _read_body(response, MAX_ERROR_BODY_BYTES, current_url)
+                except Exception:
+                    body = b""
             response.close()
-            exc = requests.HTTPError(f"HTTP {response.status_code} for {current_url}")
+            exc = HTTPStatusError(f"HTTP {response.status_code} for {current_url}", response.status_code,
+                                  response.headers.get("content-type", ""), body)
             last_error = exc
             if response.status_code not in RETRYABLE or attempt == attempts:
                 raise exc
