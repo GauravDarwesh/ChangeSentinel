@@ -170,7 +170,10 @@ console.log(JSON.stringify({ totals: r.totals, lag: r.medianLagHours, only: r.th
 """)
         self.assertEqual(out["totals"]["both"], 1)
         self.assertEqual(out["totals"]["ours"], 2)  # the change a month later is outside the period
-        self.assertEqual(sorted(out["only"]), ["https://reg.test/a", "https://reg.test/b"])
+        # Visualping's second alert on /a two hours later is a repeat of the
+        # change already matched, not a miss.
+        self.assertEqual(out["only"], ["https://reg.test/b"])
+        self.assertEqual(out["totals"]["repeats"], 1)
         self.assertEqual(out["mine"], ["https://reg.test/c"])
         self.assertEqual(out["totals"]["notMonitored"], 1)
         # The earliest Visualping alert is paired first, so the lag is from it.

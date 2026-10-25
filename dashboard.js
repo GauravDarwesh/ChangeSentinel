@@ -3637,7 +3637,8 @@ function renderShadowDetail(pane) {
   const tiles = [
     ["Visualping alerts", t.theirs.toLocaleString(), plural(t.pagesTheirs, "monitored page", "monitored pages") + (t.notMonitored ? " + " + t.notMonitored + " not monitored here" : "")],
     ["Changes recorded here", t.ours.toLocaleString(), plural(alertsHere, "alert", "alerts") + " sent in the period"],
-    ["Caught by both", t.both.toLocaleString(), r.medianLagHours == null ? "" : "median " + (r.medianLagHours >= 0 ? "+" : "") + r.medianLagHours.toFixed(1) + " h vs Visualping"],
+    ["Caught by both", t.both.toLocaleString(), [r.medianLagHours == null ? "" : "median " + (r.medianLagHours >= 0 ? "+" : "") + r.medianLagHours.toFixed(1) + " h vs Visualping",
+      t.repeats ? plural(t.repeats, "repeat Visualping alert", "repeat Visualping alerts") + " for the same changes" : ""].filter(Boolean).join(" · ")],
     ["Only in Visualping", t.theirsOnly.toLocaleString(), "possible misses to check"]
   ];
   const watched = t.both + t.theirsOnly + t.oursOnly || 1;

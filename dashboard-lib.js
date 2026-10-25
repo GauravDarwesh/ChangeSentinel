@@ -345,12 +345,16 @@
     const watched = new Set(Array.from(monitored || []).map(urlKey));
     const byKey = new Map();
     mine.forEach(row => { const list = byKey.get(row.key) || []; list.push(row); byKey.set(row.key, list); });
-    const both = [], theirsOnly = [], notMonitored = [];
+    const both = [], theirsOnly = [], notMonitored = [], repeats = [];
     theirs.sort((a, b) => a.at - b.at).forEach(row => {
       if (!watched.has(row.key)) { notMonitored.push(row); return; }
-      const candidates = (byKey.get(row.key) || []).filter(entry => !entry.used && Math.abs(entry.at - row.at) <= windowMs)
+      const near = (byKey.get(row.key) || []).filter(entry => Math.abs(entry.at - row.at) <= windowMs)
         .sort((a, b) => Math.abs(a.at - row.at) - Math.abs(b.at - row.at));
+      const candidates = near.filter(entry => !entry.used);
       if (candidates.length) { candidates[0].used = true; both.push({ theirs: row, ours: candidates[0], lagHours: (candidates[0].at - row.at) / 3600000 }); }
+      // Another alert from the other tool for a change already matched is a
+      // repeat, not a change ChangeSentinel missed.
+      else if (near.length) repeats.push({ theirs: row, ours: near[0] });
       else theirsOnly.push(row);
     });
     const oursOnly = mine.filter(row => !row.used && watched.has(row.key));
@@ -359,10 +363,10 @@
     const lags = both.map(pair => pair.lagHours).sort((a, b) => a - b);
     return {
       period: { from: from + windowMs, to: to - windowMs },
-      totals: { theirs: theirs.length, ours: mine.length, both: both.length, theirsOnly: theirsOnly.length, oursOnly: oursOnly.length, notMonitored: notMonitored.length,
+      totals: { theirs: theirs.length, ours: mine.length, both: both.length, theirsOnly: theirsOnly.length, oursOnly: oursOnly.length, notMonitored: notMonitored.length, repeats: repeats.length,
         pagesTheirs: pagesTheirs.size, pagesNotMonitored: new Set(notMonitored.map(row => row.key)).size },
       medianLagHours: lags.length ? lags[Math.floor(lags.length / 2)] : null,
-      both, theirsOnly, oursOnly, notMonitored
+      both, theirsOnly, oursOnly, notMonitored, repeats
     };
   }
   // Rows of an alert-history export: a URL column and a date/time column.
