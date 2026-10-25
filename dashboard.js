@@ -8135,8 +8135,7 @@ if (typeof ResizeObserver === "function") {
 // Scrolling moves the viewport, not the cells relative to their canvas stage.
 // Do not re-size/repaint the canvas on every scroll event: resetting its backing
 // store caused visible flashes while users moved through the heatmap.
-// Theme: every visit opens in light (index.html sets it before first paint, by
-// design); the toggle switches theme for the rest of the visit.
+// Theme: index.html restores the saved choice before first paint; toggles persist the next choice.
 function currentTheme() { return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark"; }
 function syncThemeLabels() {
   document.querySelectorAll("[data-theme-toggle]").forEach(button => {

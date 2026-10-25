@@ -219,11 +219,13 @@ class TestDashboardWorkspaceLayout(unittest.TestCase):
         html = read("index.html")
         self.assertIn('<html lang="en" data-theme="light">', html)
         self.assertIn(':root[data-theme="light"]', html)
-        # Every visitor starts in light mode before the dashboard stylesheet renders,
-        # even if this browser previously stored a dark-theme preference.
-        self.assertIn('document.documentElement.setAttribute("data-theme", "light")', html)
-        self.assertIn('localStorage.setItem("cs-theme", "light")', html)
-        self.assertLess(html.index('document.documentElement.setAttribute("data-theme", "light")'), html.index("<style"))
+        # Restore the saved preference before CSS paints; use light only when no
+        # valid dark preference exists or browser storage is unavailable.
+        self.assertIn('const savedTheme = localStorage.getItem("cs-theme");', html)
+        self.assertIn('document.documentElement.setAttribute("data-theme", savedTheme === "dark" ? "dark" : "light")', html)
+        self.assertIn('catch (_) {\n      document.documentElement.setAttribute("data-theme", "light");\n    }', html)
+        self.assertNotIn('localStorage.setItem("cs-theme", "light")', html)
+        self.assertLess(html.index('const savedTheme = localStorage.getItem("cs-theme");'), html.index("<style"))
         source = read("dashboard.js")
         self.assertIn("data-theme-toggle", source)
         self.assertIn('localStorage.setItem("cs-theme", next)', source)

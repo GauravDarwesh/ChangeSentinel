@@ -7,9 +7,13 @@
   <meta name="description" content="See what changed on monitored Federal Reserve pages, scan by scan, with the saved evidence behind every change.">
   <meta name="theme-color" content="#e4e0da">
   <script>
-    // Always start in light mode, regardless of this browser's saved theme.
-    document.documentElement.setAttribute("data-theme", "light");
-    try { localStorage.setItem("cs-theme", "light"); } catch (_) {}
+    // Restore the saved theme before the dashboard stylesheet renders.
+    try {
+      const savedTheme = localStorage.getItem("cs-theme");
+      document.documentElement.setAttribute("data-theme", savedTheme === "dark" ? "dark" : "light");
+    } catch (_) {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
     // Lock until the development key is entered once in this browser tab.
     try {
       document.documentElement.classList.add(sessionStorage.getItem("cs-dev-access-v1") === "granted" ? "cs-open" : "cs-locked");
