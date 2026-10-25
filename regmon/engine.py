@@ -1222,7 +1222,7 @@ def process_source(
     return {
         "report":{
             "schema_version":2,"run_id":run_id,"generated_at":now,
-            "source":{"id":source.id,"name":source.name,"regulator":source.regulator,"seeds":list(source.seed_urls),"allowed_prefixes":list(source.allowed_prefixes),"initial_baseline":initial_baseline},
+            "source":{"id":source.id,"name":source.name,"regulator":source.regulator,"seeds":list(source.seed_urls),"allowed_prefixes":list(source.allowed_prefixes),"initial_baseline":initial_baseline,**({"shadow":True} if source.shadow else {})},
             "discovery":discovery,
             "removal_guard":removal_guard,
             "baseline_update_allowed":discovery.get("state") == "COMPLETE",

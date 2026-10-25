@@ -509,6 +509,7 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
     bulk_body = str(((event.get("issue") or {}).get("body")) or "").split("BULK_DATA_JSON:", 1)[0]
     alert_condition, alert_only = _alert_condition_fields(bulk_body)
     batch_workspace, batch_labels = _organisation_fields(bulk_body)
+    batch_shadow = bool(_yes_no_field(bulk_body, "Shadow mode"))
     row_settings = bulk_row_settings(event, repository)
     config = json.loads(config_path.read_text(encoding="utf-8"))
     sources = config.setdefault("sources", [])
@@ -628,6 +629,9 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
         _apply_organisation(target, extra.get("workspace") or batch_workspace, (batch_labels or []) + (extra.get("labels") or []))
         if extra.get("check_every_hours"):
             target["check_every_hours"] = extra["check_every_hours"]
+        if batch_shadow and item["created"]:
+            # Only new monitors start in shadow mode; existing ones keep alerting.
+            target["shadow"] = True
         if json.dumps(target, sort_keys=True) != before:
             from regmon.config import SourceConfig
 

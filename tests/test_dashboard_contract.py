@@ -534,7 +534,7 @@ class TestCrossRunChangeLog(unittest.TestCase):
         html = read("index.html")
         js = read("dashboard.js")
         for token in ('id="bulkMonitorFile"', 'accept=".csv,.xlsx', 'id="bulkImportPreview"',
-                      'id="submitBulkMonitor"', 'id="bulkTemplateLink"', 'BULK_REQUEST_MARKER'):
+                      'id="bulkRequests"', 'id="bulkTemplateLink"', 'BULK_REQUEST_MARKER'):
             with self.subTest(token=token):
                 self.assertIn(token, html + js)
         for token in ("function parseCsvMatrix(", "function bulkRowsFromMatrix(", "function makeBulkGitHubIssueUrl(",
