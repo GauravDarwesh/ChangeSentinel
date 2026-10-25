@@ -7,7 +7,11 @@ this module and commits the result.
 
     <!-- changesentinel:update-monitors:v1 -->
     SETTINGS_JSON:
-    {"monitors": ["id-1", "id-2"], "set": {"check_every_hours": 24}, "clear": ["check_hours"]}
+    {"monitors": ["id-1", "id-2"], "set": {"check_every_hours": 24}, "clear": ["check_hours"],
+     "add_labels": ["Spec"], "remove_labels": ["Draft"]}
+
+A request may instead carry {"digests": [...]}: the whole scheduled-digest
+list (config/digests.json, see regmon/digest.py).
 
 Only the keys in SETTABLE_KEYS can be changed this way: scope, selectors and
 URLs stay with the add/delete requests that validate them. Every changed
@@ -29,8 +33,12 @@ ISSUE_TITLE_PREFIX = "[ChangeSentinel] Update monitors"
 MAX_MONITORS = 200
 # Settings a request may set or clear. Clearing returns a key to its default.
 SETTABLE_KEYS = {
-    "check_every_hours", "check_days", "check_hours", "check_timezone",
+    "check_every_hours", "check_days", "check_hours", "check_timezone", "workspace", "labels", "shadow",
+    "fetch_mode", "browser_wait_seconds", "browser_wait_selector", "browser_dismiss_cookies",
 }
+# Label edits that keep each monitor's other labels (a preset adds "Spec" to
+# fifty monitors without wiping what each already carries).
+LABEL_OPS = ("add_labels", "remove_labels")
 
 
 def _validated_body(event: dict, repository: str) -> str:
@@ -49,7 +57,7 @@ def _validated_body(event: dict, repository: str) -> str:
 
 def request_from_issue(event: dict, repository: str) -> dict:
     body = _validated_body(event, repository).replace("\r\n", "\n")
-    match = re.search(r"(?ms)^SETTINGS_JSON:[ \t]*\n(\{.*?\})[ \t]*(?:\n\n|\Z)", body)
+    match = re.search(r"(?ms)^SETTINGS_JSON:[ \t]*\n(\{.*?\})[ \t]*(?:\n\n|\n?\Z)", body)
     if not match:
         raise ValueError("No SETTINGS_JSON payload was found in the request.")
     try:
@@ -58,7 +66,14 @@ def request_from_issue(event: dict, repository: str) -> dict:
         raise ValueError(f"The settings request contains invalid JSON: {exc.msg}.") from exc
     if not isinstance(payload, dict):
         raise ValueError("SETTINGS_JSON must be an object.")
-    unknown = sorted(set(payload) - {"monitors", "set", "clear"})
+    if "digests" in payload:
+        # The whole digest list (config/digests.json), validated as the engine reads it.
+        if set(payload) != {"digests"}:
+            raise ValueError("A digests request carries only the digests list.")
+        from regmon.digest import validate_digests
+
+        return {"digests": validate_digests({"version": 1, "digests": payload["digests"]})}
+    unknown = sorted(set(payload) - {"monitors", "set", "clear", *LABEL_OPS})
     if unknown:
         raise ValueError(f"Unknown SETTINGS_JSON fields: {', '.join(unknown)}")
     monitors = payload.get("monitors")
@@ -76,9 +91,17 @@ def request_from_issue(event: dict, repository: str) -> dict:
     both = sorted(set(changes) & set(clear))
     if both:
         raise ValueError(f"A setting cannot be both set and cleared: {', '.join(both)}")
-    if not changes and not clear:
+    label_ops = {}
+    for op in LABEL_OPS:
+        values = payload.get(op) or []
+        if not isinstance(values, list) or not all(isinstance(item, str) and item.strip() for item in values):
+            raise ValueError(f"{op} must be a list of labels.")
+        label_ops[op] = [item.strip() for item in values]
+    if (label_ops["add_labels"] or label_ops["remove_labels"]) and ("labels" in changes or "labels" in clear):
+        raise ValueError("Use either labels or add_labels/remove_labels, not both.")
+    if not changes and not clear and not any(label_ops.values()):
         raise ValueError("The request does not set or clear any setting.")
-    return {"monitors": list(dict.fromkeys(monitors)), "set": changes, "clear": clear}
+    return {"monitors": list(dict.fromkeys(monitors)), "set": changes, "clear": clear, **label_ops}
 
 
 def apply_settings(config: dict, request: dict) -> list[str]:
@@ -97,7 +120,23 @@ def apply_settings(config: dict, request: dict) -> list[str]:
         for key in request["clear"]:
             source.pop(key, None)
         for key, value in request["set"].items():
-            source[key] = value
+            source[key] = value.strip() if isinstance(value, str) else value
+        if request.get("add_labels") or request.get("remove_labels"):
+            removed = {label.casefold() for label in request.get("remove_labels") or []}
+            labels = [label for label in source.get("labels") or [] if label.casefold() not in removed]
+            for label in request.get("add_labels") or []:
+                if label.casefold() not in {existing.casefold() for existing in labels}:
+                    labels.append(label)
+            source["labels"] = labels
+        if "labels" in source and not source["labels"]:
+            source.pop("labels")
+        if "workspace" in source and not str(source["workspace"]).strip():
+            source.pop("workspace")
+        if source.get("shadow") is False:
+            source.pop("shadow")
+        for key, default in (("fetch_mode", "http"), ("browser_wait_seconds", 3), ("browser_wait_selector", ""), ("browser_dismiss_cookies", True)):
+            if key in source and source[key] == default:
+                source.pop(key)
         # Defaults are not written out: a six-hourly, every-day monitor keeps the
         # same configuration it had before cadences existed.
         if source.get("check_every_hours") == 6:
@@ -116,15 +155,26 @@ def apply_settings(config: dict, request: dict) -> list[str]:
     return changed
 
 
-def update_from_issue(event: dict, config_path: Path, repository: str) -> dict:
+def update_from_issue(event: dict, config_path: Path, repository: str, digests_path: Path | None = None) -> dict:
     request = request_from_issue(event, repository)
+    if "digests" in request:
+        path = Path(digests_path or Path(config_path).with_name("digests.json"))
+        before = path.read_text(encoding="utf-8") if path.exists() else ""
+        text = json.dumps({"version": 1, "digests": request["digests"]}, indent=2, ensure_ascii=False) + "\n"
+        if text != before:
+            path.write_text(text, encoding="utf-8")
+        names = ", ".join(f"{item['id']} ({item['frequency']}, {item['workspace']})" for item in request["digests"]) or "none"
+        return {"requested": len(request["digests"]), "changed": ["digests"] if text != before else [], "settings": "digests",
+                "message": f"Digests are now: {names}." if text != before else f"Digests were already: {names}."}
     config = json.loads(Path(config_path).read_text(encoding="utf-8"))
     changed = apply_settings(config, request)
     if changed:
         Path(config_path).write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     described = ", ".join(
-        [f"{key} = {json.dumps(value)}" for key, value in request["set"].items()]
+        [f"{key} = {json.dumps(value, ensure_ascii=False)}" for key, value in request["set"].items()]
         + [f"{key} back to its default" for key in request["clear"]]
+        + ([f"labels added: {', '.join(request['add_labels'])}"] if request.get("add_labels") else [])
+        + ([f"labels removed: {', '.join(request['remove_labels'])}"] if request.get("remove_labels") else [])
     )
     return {
         "requested": len(request["monitors"]),

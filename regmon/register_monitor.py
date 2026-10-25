@@ -396,6 +396,47 @@ def bulk_requests_from_issue(event: dict, repository: str) -> list[tuple[str, st
     return validated
 
 
+def bulk_row_settings(event: dict, repository: str) -> dict[str, dict]:
+    """Optional per-row workspace, labels and check_every_hours, keyed by canonical URL."""
+    from regmon.config import validate_tag
+    from regmon.schedule import ALLOWED_INTERVALS
+
+    body = _validated_issue_body(event, repository, BULK_REQUEST_MARKER)
+    match = re.search(
+        r"(?ms)^BULK_DATA_JSON:[ \t]*\n(.*?)(?=\n\nThis request was created from the ChangeSentinel dashboard bulk upload\.|\Z)",
+        body,
+    )
+    rows = json.loads(match.group(1)) if match else []
+    out: dict[str, dict] = {}
+    for index, row in enumerate(rows if isinstance(rows, list) else [], start=1):
+        if not isinstance(row, dict):
+            continue
+        extra: dict = {}
+        workspace = str(row.get("workspace") or "").strip()
+        if workspace:
+            validate_tag(workspace, "workspace", f"bulk row {index}")
+            extra["workspace"] = workspace
+        labels = row.get("labels") or []
+        if isinstance(labels, str):
+            labels = [item for item in labels.split(",")]
+        if not isinstance(labels, list):
+            raise ValueError(f"Bulk row {index}: labels must be a list or comma-separated text.")
+        labels = [str(item).strip() for item in labels if str(item).strip()]
+        for label in labels:
+            validate_tag(label, "label", f"bulk row {index}")
+        if labels:
+            extra["labels"] = labels
+        if row.get("check_every_hours") not in (None, ""):
+            every = row.get("check_every_hours")
+            if isinstance(every, bool) or every not in ALLOWED_INTERVALS:
+                raise ValueError(f"Bulk row {index}: check_every_hours must be one of {', '.join(map(str, ALLOWED_INTERVALS))}.")
+            if every != 6:
+                extra["check_every_hours"] = every
+        if extra:
+            out[canonicalize_url(str(row.get("url") or ""))] = extra
+    return out
+
+
 def _existing_source_for_request(
     sources: list[dict],
     url: str,
@@ -467,6 +508,9 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
     # step of Add a link sets it once for the whole batch).
     bulk_body = str(((event.get("issue") or {}).get("body")) or "").split("BULK_DATA_JSON:", 1)[0]
     alert_condition, alert_only = _alert_condition_fields(bulk_body)
+    batch_workspace, batch_labels = _organisation_fields(bulk_body)
+    batch_shadow = bool(_yes_no_field(bulk_body, "Shadow mode"))
+    row_settings = bulk_row_settings(event, repository)
     config = json.loads(config_path.read_text(encoding="utf-8"))
     sources = config.setdefault("sources", [])
     if not isinstance(sources, list):
@@ -571,9 +615,32 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
             if _apply_alert_condition(target, alert_condition, alert_only):
                 conditions_changed += 1
 
+    # Workspace, labels and scan schedule: one value for the whole request, or
+    # per row (an import from another tool carries each page's own). They are
+    # applied to monitors this request created, and to pages monitored on their own.
+    organised = 0
+    by_id = {str(source.get("id")): source for source in sources}
+    for item in items:
+        target = by_id.get(str(item["source_id"]))
+        if target is None or not (item["created"] or len(target.get("seed_urls") or []) == 1):
+            continue
+        extra = row_settings.get(item.get("redirected_from") or item["url"]) or row_settings.get(item["url"]) or {}
+        before = json.dumps(target, sort_keys=True)
+        _apply_organisation(target, extra.get("workspace") or batch_workspace, (batch_labels or []) + (extra.get("labels") or []))
+        if extra.get("check_every_hours"):
+            target["check_every_hours"] = extra["check_every_hours"]
+        if batch_shadow and item["created"]:
+            # Only new monitors start in shadow mode; existing ones keep alerting.
+            target["shadow"] = True
+        if json.dumps(target, sort_keys=True) != before:
+            from regmon.config import SourceConfig
+
+            SourceConfig.from_dict(target)
+            organised += 1
+
     created_count = sum(1 for item in items if item["created"])
     existing_count = len(items) - created_count
-    if created_count or conditions_changed:
+    if created_count or conditions_changed or organised:
         config_path.write_text(
             json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
         )
@@ -593,6 +660,7 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
             f"and {existing_count} already configured."
             + (f" Alert condition updated on {conditions_changed}." if conditions_changed else "")
             + (f" {conditions_skipped} belong to multi-page sources and kept their settings." if conditions_skipped else "")
+            + (f" Workspace, labels or schedule set on {organised}." if organised else "")
         ),
         "alert_conditions_changed": conditions_changed,
     }
@@ -662,6 +730,37 @@ def _apply_alert_condition(source: dict, condition: str | None, only: bool | Non
         else:
             source.pop("alert_only_on_condition", None)
     return (source.get("alert_condition", ""), source.get("alert_only_on_condition", False)) != before
+
+
+def _organisation_fields(body: str) -> tuple[str | None, list[str] | None]:
+    """Optional "Workspace:" and "Labels:" (comma-separated) for a new monitor."""
+    from regmon.config import validate_tag
+
+    workspace = _optional_field(body, "Workspace")
+    raw_labels = _optional_field(body, "Labels")
+    workspace = workspace.strip() if workspace else None
+    labels = [item.strip() for item in raw_labels.split(",") if item.strip()] if raw_labels else None
+    if workspace:
+        validate_tag(workspace, "workspace", "request")
+    for label in labels or []:
+        validate_tag(label, "label", "request")
+    return workspace or None, labels or None
+
+
+def _apply_organisation(source: dict, workspace: str | None, labels: list[str] | None) -> bool:
+    """Set the workspace and add labels (existing labels are kept)."""
+    before = (source.get("workspace"), tuple(source.get("labels") or []))
+    if workspace:
+        source["workspace"] = workspace
+    if labels:
+        current = list(source.get("labels") or [])
+        for label in labels:
+            if label.casefold() not in {existing.casefold() for existing in current}:
+                current.append(label)
+        if len(current) > 12:
+            raise ValueError("A monitor can carry at most 12 labels.")
+        source["labels"] = current
+    return (source.get("workspace"), tuple(source.get("labels") or [])) != before
 
 
 def _discovery_scope(body: str, url: str) -> tuple[list[str] | None, list[str] | None]:
@@ -882,6 +981,7 @@ def register_request(
     if (discovery_only or explore_prefixes is not None or document_hosts is not None) and not scout_enabled:
         raise ValueError("Discovery only, Explore within and Document hosts require Scout discovery: yes.")
     alert_condition, alert_only = _alert_condition_fields(body)
+    workspace, labels = _organisation_fields(body)
     document_rule = _document_rule(body, url)
     if document_rule is not None:
         if scout_enabled:
@@ -1064,6 +1164,16 @@ def register_request(
         if target is not None:
             source_result["alert_condition"] = target.get("alert_condition", "")
             source_result["alert_only_on_condition"] = bool(target.get("alert_only_on_condition", False))
+
+    if workspace or labels:
+        target = next(
+            (source for source in sources if str(source.get("id")) == str(source_result["source_id"])),
+            None,
+        )
+        if target is not None and (source_result.get("created") or len(target.get("seed_urls") or []) == 1):
+            if _apply_organisation(target, workspace, labels):
+                source_changed = True
+                source_result["message"] += " Workspace and labels updated."
 
     # Validate both proposed files before replacing either one. GitHub commits
     # the two config files together in a single owner-approved workflow run.

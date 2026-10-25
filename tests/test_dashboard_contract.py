@@ -534,7 +534,7 @@ class TestCrossRunChangeLog(unittest.TestCase):
         html = read("index.html")
         js = read("dashboard.js")
         for token in ('id="bulkMonitorFile"', 'accept=".csv,.xlsx', 'id="bulkImportPreview"',
-                      'id="submitBulkMonitor"', 'id="bulkTemplateLink"', 'BULK_REQUEST_MARKER'):
+                      'id="bulkRequests"', 'id="bulkTemplateLink"', 'BULK_REQUEST_MARKER'):
             with self.subTest(token=token):
                 self.assertIn(token, html + js)
         for token in ("function parseCsvMatrix(", "function bulkRowsFromMatrix(", "function makeBulkGitHubIssueUrl(",
@@ -841,9 +841,9 @@ class TestReviewLayerContract(unittest.TestCase):
                 self.assertIn(key + ': "' + path + '"', js)
                 self.assertIn('new URL("./' + path + '", document.baseURI)', js)
                 self.assertIn('case "' + key + '":', js)
-        self.assertIn('const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health"]);', js)
+        self.assertIn('const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health", "digests", "digestConfig"]);', js)
         self.assertIn("cp config/regulators.json", read(".github/workflows/pages.yml"))
-        self.assertRegex(js, r'const SMALL_ASSETS = \[[^\]]*"calendar", "lineage", "reviews", "regulators", "health"\]')
+        self.assertRegex(js, r'const SMALL_ASSETS = \[[^\]]*"calendar", "lineage", "reviews", "regulators", "health", "digests", "digestConfig"\]')
         pages = read(".github/workflows/pages.yml")
         for path in ("config/lineage.json", "data/calendar.json", "data/calendar.ics", "data/reviews/ledger.json", "data/health.json"):
             with self.subTest(path=path):

@@ -395,7 +395,30 @@ def build_notifications(report: dict) -> list[dict]:
             "impact": "Change and removal detection is not authoritative until discovery completes successfully.",
             "priority": 4, "tags": ["warning", "monitoring", "discovery"],
         })
-    return output
+    return _without_shadow_changes(report, output)
+
+
+# Content alerts a shadow-mode source does not send. Operational alerts
+# (fetch and extraction failures, held removals) still go out: they are about
+# ChangeSentinel itself, which a trial run needs to know.
+SHADOW_MUTED_KINDS = {"CHANGED_URL", "NEW_URL", "REMOVED_URL"}
+
+
+def _without_shadow_changes(report: dict, output: list[dict]) -> list[dict]:
+    shadow_sources = {
+        str(source.get("id")) for source in report.get("sources") or []
+        if isinstance(source, dict) and source.get("shadow") is True
+    }
+    if not shadow_sources:
+        return output
+    event_sources = {
+        str(event.get("event_id")): str(event.get("source_id") or "")
+        for event in report.get("events") or [] if isinstance(event, dict)
+    }
+    return [
+        item for item in output
+        if not (item.get("kind") in SHADOW_MUTED_KINDS and event_sources.get(str(item.get("event_id"))) in shadow_sources)
+    ]
 
 
 CHANGE_LINK_KINDS = {"CHANGED_URL", "NEW_URL", "REMOVED_URL", "FETCH_ERROR", "EXTRACTION_ERROR", "AI_ASSESSMENT"}
@@ -419,6 +442,8 @@ def dashboard_link(notification: dict, dashboard_url: str) -> str:
             return base + "#changes/" + quote(event_id, safe="")
     if kind in RUN_LINK_KINDS:
         return base + "#runs"
+    if kind == "DIGEST" and notification.get("digest_id"):
+        return base + "#alerts/" + quote("digest:" + str(notification["digest_id"]), safe="")
     return base
 
 
@@ -442,7 +467,7 @@ def publish(notification: dict, topic: str, server: str, dashboard_url: str = ""
         f"Topic: {notification['topic']}\n"
         f"URL: {notification.get('url') or '(not available)'}\n\n"
         f"{notification['summary']}\n\n"
-        f"Impact: {notification.get('impact', '')}\n\n"
+        f"{alert_channels.impact_label(notification)}: {notification.get('impact', '')}\n\n"
         + (details + "\n" if details else "") +
         f"Why: {notification['reason']}\n\n"
         f"Event ID: {notification['event_id']}"
@@ -471,6 +496,7 @@ def ledger_record(notification: dict) -> dict:
         "summary": notification.get("summary"),
         "source_event_id": notification.get("source_event_id"),
         "variant": notification.get("variant"),
+        **({"digest_id": notification["digest_id"]} if notification.get("digest_id") else {}),
     }
 
 

@@ -176,6 +176,7 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
             "checks_7d": checks_7d,
             "failures_7d": failures_7d,
             "alert_condition": bool(source.get("alert_condition")),
+            "shadow": source.get("shadow") is True,
             "cadence": cadence.as_dict(),
             "next_due": _iso(schedule.next_due(cadence, last_scan, now)),
             "overdue_after": _iso(overdue_at),

@@ -971,11 +971,46 @@
     .chip.is-static { cursor: default; border-color: var(--line-2); color: var(--ink); }
     .condition-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     .chip[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+    .list-actions { display: inline-flex; align-items: center; gap: 14px; }
+    #selectMonitorsBtn[aria-pressed="true"] { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: 5px; }
+    .scope-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; margin-top: -2px; font-size: 12.5px; }
+    .scope-bar label { display: inline-flex; align-items: center; gap: 6px; min-width: 0; color: var(--ink-3); }
+    .scope-select { max-width: 140px; padding: 2px 16px 2px 0; border: 0; border-bottom: 1px dashed var(--line-2); border-radius: 0; background: transparent; color: var(--ink-2); font: inherit; font-size: 12.5px; cursor: pointer; }
+    .scope-select:hover, .scope-select:focus-visible { color: var(--ink); border-bottom-color: var(--accent); outline: none; }
+    .scope-select.is-set { color: var(--ink); border-bottom: 1.5px solid var(--accent); }
+    .scope-clear { padding: 0; border: 0; background: none; color: var(--link); font: inherit; font-size: 12.5px; cursor: pointer; }
+    .row-sub .tag.is-label { color: var(--ink-2); }
+    .row-mark.is-pick { background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); }
+    .row-mark.is-picked { background: var(--accent); box-shadow: var(--glow); }
+    .list-pane { position: relative; }
+    .select-bar { position: sticky; bottom: 0; z-index: 3; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 10px 16px 12px; border-top: 1px solid var(--line-2); background: var(--pane); box-shadow: 0 -10px 24px -18px rgba(0,0,0,.45); }
+    .select-count { color: var(--ink); font-size: 13px; font-variant-numeric: tabular-nums; }
+    .select-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+    .select-actions .btn { min-height: 30px; padding: 4px 10px; font-size: 12.5px; }
+    .organise-new { margin-top: 8px; }
+    #organiseForm, #presetForm { grid-template-columns: minmax(0, 1fr); }
+    #organiseForm .field-input, #presetForm .field-input { width: 100%; min-width: 0; }
+    #organiseForm .modal-actions, #presetForm .modal-actions { flex-wrap: wrap; }
+    #organiseError:empty { display: none; }
+    #organiseError { color: var(--state-bad); }
+    .chip.is-remove { border-color: var(--state-bad); color: var(--ink); text-decoration: line-through; text-decoration-color: var(--state-bad); }
+    .preset-list { display: grid; gap: 0; min-width: 0; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius); }
+    .preset-option { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 2px 10px; padding: 10px 12px; border-bottom: 1px solid var(--line); cursor: pointer; }
+    .preset-option:last-child { border-bottom: 0; }
+    .preset-option:hover { background: var(--raise); }
+    .preset-option input { width: 15px; height: 15px; margin: 2px 0 0; accent-color: var(--accent); }
+    .preset-option b { font-weight: 500; font-size: 13.5px; }
+    .preset-option small { grid-column: 2; color: var(--ink-3); font-size: 12px; line-height: 1.45; }
     .schedule-mix { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 18px 14px; }
     #scanScheduleForm { grid-template-columns: minmax(0, 1fr); }
     #scanScheduleForm .field-input { width: 100%; min-width: 0; }
     #scanScheduleForm .modal-actions { flex-wrap: wrap; }
     .scan-days { min-width: 0; margin: 0; padding: 0; border: 0; }
+    .scan-loading { border-top: 1px solid var(--line); }
+    .scan-browser { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 10px; }
+    .scan-browser .field-check { grid-column: 1 / -1; margin: 0; }
+    .scan-browser[hidden] { display: none; }
+    @media (max-width: 640px) { .scan-browser { grid-template-columns: minmax(0, 1fr); } }
     .scan-day-modes, .scan-day-picks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
     .scan-day-picks .chip { min-width: 46px; justify-content: center; }
     .scan-window { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
@@ -1005,6 +1040,9 @@
     .review-condition summary { padding: 10px 0; color: var(--ink); font-size: 13px; cursor: pointer; }
     .review-condition summary span { margin-left: 6px; color: var(--ink-3); font-size: 12px; }
     .review-condition-body { padding: 0 0 12px; }
+    .review-organise-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 8px; }
+    .review-organise-body .field-help { grid-column: 1 / -1; margin: 0; }
+    @media (max-width: 640px) { .review-organise-body { grid-template-columns: minmax(0, 1fr); } }
     .field-check { display: flex; align-items: center; gap: 8px; margin-top: 8px; color: var(--ink-2); font-size: 13px; cursor: pointer; }
     .field-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent, currentColor); }
     .modal-info { color: var(--ink-3); font-size: 12.5px; line-height: 1.55; }
@@ -1024,6 +1062,40 @@
     .bulk-preview-name { min-width: 0; overflow: hidden; color: var(--ink); text-overflow: ellipsis; white-space: nowrap; }
     .bulk-preview-url { flex: none; max-width: 48%; overflow: hidden; color: var(--ink-3); font-family: var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
     .bulk-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+    .bulk-summary { display: flex; flex-wrap: wrap; gap: 6px; }
+    .shadow-upload { display: grid; gap: 10px; padding: 16px 20px 18px; }
+    #digestForm { grid-template-columns: minmax(0, 1fr); }
+    #digestForm .modal-actions { flex-wrap: wrap; }
+    #digestError:empty { display: none; }
+    #digestError { color: var(--state-bad); }
+    .digest-rows { display: grid; gap: 8px; }
+    .digest-row { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, .9fr) minmax(0, .9fr) minmax(0, 1.7fr) auto; gap: 6px; align-items: center; padding: 8px; border: 1px solid var(--line); border-radius: var(--radius); }
+    #digestDialog { width: min(760px, calc(100vw - 32px)); }
+    .digest-row .field-input { width: 100%; min-width: 0; font-size: 12.5px; }
+    .digest-row [data-digest-remove] { padding: 0 4px; border: 0; background: none; color: var(--link); font-size: 12.5px; cursor: pointer; }
+    @media (max-width: 640px) { .digest-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .digest-row [data-digest-remove] { justify-self: end; } }
+    .digest-overview { margin: 0; padding: 16px 20px; color: var(--ink); font-size: 14px; line-height: 1.6; }
+    .digest-item { display: grid; gap: 6px; padding: 12px 20px 14px; border-bottom: 1px solid var(--line); }
+    .digest-item:last-child { border-bottom: 0; }
+    .digest-item-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+    .digest-item-head b { font-size: 13.5px; font-weight: 500; }
+    .digest-item p { margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.55; }
+    .digest-quote { margin: 0; padding: 4px 0 4px 12px; border-left: 2px solid var(--accent); color: var(--ink-2); font-size: 12.5px; font-style: italic; line-height: 1.5; overflow-wrap: anywhere; }
+    .shadow-upload ol { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 13px; line-height: 1.6; }
+    .shadow-table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+    .shadow-table th, .shadow-table td { padding: 8px 18px; border-bottom: 1px solid var(--line); text-align: right; }
+    .shadow-table th:first-child, .shadow-table td:first-child { text-align: left; }
+    .shadow-table th { color: var(--ink-3); font-weight: 400; }
+    .shadow-bar { display: flex; height: 8px; margin: 4px 18px 14px; overflow: hidden; border-radius: 2px; background: var(--led-off); }
+    .shadow-bar i { display: block; height: 100%; }
+    .shadow-bar .is-both { background: var(--good); }
+    .shadow-bar .is-theirs { background: var(--state-bad); }
+    .shadow-bar .is-ours { background: var(--state-change); }
+    .shadow-key { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 0 18px 14px; color: var(--ink-3); font-size: 12px; }
+    .shadow-key i { display: inline-block; width: 9px; height: 9px; margin-right: 6px; border-radius: 2px; vertical-align: -1px; }
+    .bulk-options { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+    .bulk-options .field-check, .bulk-options .field-help { grid-column: 1 / -1; margin: 0; }
+    @media (max-width: 640px) { .bulk-options { grid-template-columns: minmax(0, 1fr); } }
     /* Scout's search row keeps a file-type filter beside it. */
     .discovery-filter-row { display: grid; grid-template-columns: minmax(0, 1fr) 124px; gap: 8px; }
     .discovery-filter-row .field-input { min-width: 0; min-height: 32px; margin-top: 0; padding: 5px 25px 5px 8px; font-size: 12.5px; }
@@ -2490,8 +2562,8 @@
             <div class="field-controls">
               <label class="search-field field-search" for="fieldSearch"><span class="visually-hidden">Find a page in the scan history</span><input id="fieldSearch" type="search" placeholder="Find a page" autocomplete="off"></label>
               <div class="field-swap">
-              <label for="fieldGroup" data-tools-for="grid"><span class="visually-hidden">Group pages by</span><select class="field-input" id="fieldGroup" aria-label="Group pages by"><option value="regulator">By regulator</option><option value="jurisdiction">By jurisdiction</option><option value="kind">By kind of document</option><option value="source">By monitor</option><option value="none">No grouping</option></select></label>
-              <label for="tlLanes" data-tools-for="timeline" data-off aria-hidden="true" inert><span class="visually-hidden">Timeline lanes</span><select class="field-input" id="tlLanes" aria-label="Timeline lanes"><option value="page">One lane per page</option><option value="regulator">By regulator</option><option value="jurisdiction">By jurisdiction</option><option value="kind">By kind of document</option><option value="source">By monitor</option><option value="none">One lane</option></select></label>
+              <label for="fieldGroup" data-tools-for="grid"><span class="visually-hidden">Group pages by</span><select class="field-input" id="fieldGroup" aria-label="Group pages by"><option value="regulator">By regulator</option><option value="jurisdiction">By jurisdiction</option><option value="workspace">By workspace</option><option value="kind">By kind of document</option><option value="source">By monitor</option><option value="none">No grouping</option></select></label>
+              <label for="tlLanes" data-tools-for="timeline" data-off aria-hidden="true" inert><span class="visually-hidden">Timeline lanes</span><select class="field-input" id="tlLanes" aria-label="Timeline lanes"><option value="page">One lane per page</option><option value="regulator">By regulator</option><option value="jurisdiction">By jurisdiction</option><option value="workspace">By workspace</option><option value="kind">By kind of document</option><option value="source">By monitor</option><option value="none">One lane</option></select></label>
               </div>
               <label for="fieldRange"><span class="visually-hidden">Time range</span><select class="field-input" id="fieldRange" aria-label="Time range"><option value="2d">Last 2 days</option><option value="7d" selected>Last 7 days</option><option value="30d">Last 30 days</option><option value="all">All history</option></select></label>
             </div>
@@ -2526,6 +2598,7 @@
               </div>
               <button class="sheet-link" type="button" data-export-changes title="Download the changes in this list as a CSV file">Export</button>
             </div>
+            <div class="scope-bar" data-scope-bar hidden></div>
           </div>
           <div class="list-body" id="changeItems" aria-label="Change list"><div class="loading">Loading changes…</div></div>
         </div>
@@ -2543,10 +2616,20 @@
                 <button type="button" data-filter="CHANGES" aria-pressed="false">Changed</button>
                 <button type="button" data-filter="ERRORS" aria-pressed="false">Problems</button>
               </div>
-              <button class="sheet-link" id="addMonitorBtn" type="button">Add page</button>
+              <span class="list-actions"><button class="sheet-link" id="selectMonitorsBtn" type="button" aria-pressed="false" title="Pick monitors to change their schedule, workspace or labels together">Select</button><button class="sheet-link" id="addMonitorBtn" type="button">Add page</button></span>
             </div>
+            <div class="scope-bar" data-scope-bar hidden></div>
           </div>
           <div class="list-body" id="monitorList" aria-label="Page list"><div class="loading">Loading pages…</div></div>
+          <div class="select-bar" id="selectBar" hidden role="region" aria-label="Selected monitors">
+            <span class="select-count" id="selectCount" aria-live="polite"></span>
+            <button class="sheet-link" type="button" data-select-shown>Select all shown</button>
+            <span class="select-actions">
+              <button class="btn" type="button" data-bulk="schedule" title="Scan schedule">Schedule</button>
+              <button class="btn" type="button" data-bulk="organise" title="Workspace and labels">Labels</button>
+              <button class="btn btn-primary" type="button" data-bulk="preset" title="Apply a settings preset">Preset</button>
+            </span>
+          </div>
         </div>
         <div class="detail-pane" id="detailView" aria-live="polite">
           <div class="detail-inner">
@@ -2747,7 +2830,7 @@
       </section>
       <section id="healthView" class="view view-split" hidden aria-label="Health">
         <div class="list-pane">
-          <div class="list-head"><div class="list-title-row"><h1 class="list-title">Health</h1><span class="list-count" id="healthCount"></span></div></div>
+          <div class="list-head"><div class="list-title-row"><h1 class="list-title">Health</h1><span class="list-count" id="healthCount"></span></div><div class="scope-bar" data-scope-bar hidden></div></div>
           <div class="list-body" id="healthItems" aria-label="Monitor health"><div class="loading">Reading monitor health…</div></div>
         </div>
         <div class="detail-pane" id="healthDetail" aria-live="polite"></div>
@@ -2758,6 +2841,8 @@
           <div class="list-head"><div class="list-title-row"><h1 class="list-title">Alerts</h1><span class="list-count" id="notificationCounts"></span></div>
             <div class="channel-bar" id="channelBar"></div></div>
           <div class="list-body">
+            <div id="shadowEntry"></div>
+            <div id="digestEntries"></div>
             <div class="list-group-label" id="notificationPendingHeading">Waiting to send <span id="notificationPendingCount"></span></div>
             <div id="notificationPendingItems"><div class="loading">Loading queued alerts…</div></div>
             <div class="list-group-label" id="notificationSentHeading">Sent <span id="notificationSentCount"></span></div>
@@ -2935,23 +3020,30 @@
           <div class="modal-actions"><button class="btn" id="addExactSubmit" type="button">Continue on GitHub</button></div>
         </div>
       </details>
-      <details class="add-more add-bulk-wrap">
-        <summary>Upload a spreadsheet of links <span>CSV or XLSX</span></summary>
+      <details class="add-more add-bulk-wrap" id="addBulk">
+        <summary>Upload a spreadsheet or import from Visualping <span>CSV or XLSX</span></summary>
         <div class="add-more-body">
       <section class="bulk-import add-bulk" aria-labelledby="bulkImportHeading">
         <div class="bulk-import-head">
           <div>
-            <div class="field-label-text" id="bulkImportHeading">Bulk upload <span>CSV or XLSX</span></div>
-            <p class="field-help">Import up to 25 links from a spreadsheet. Use one URL per row; names and selectors are optional.</p>
+            <div class="field-label-text" id="bulkImportHeading">Import links <span>CSV or XLSX</span></div>
+            <p class="field-help">One URL per row, or another tool's export (Visualping and similar). URL, name, workspace, labels, check frequency and status columns are read when present; paused pages and pages already monitored are left out. Large files are sent as requests of 25 links.</p>
           </div>
-          <a class="bulk-template" id="bulkTemplateLink" download="changesentinel-links-template.csv" href="data:text/csv;charset=utf-8,URL%2CName%2CInclude%20Selector%2CIgnore%20Selectors%0Ahttps%3A%2F%2Fwww.example.com%2Fpolicy%2CPolicy%20page%2C%2C.cookie-banner%3B.breadcrumb%0A">Download template</a>
+          <a class="bulk-template" id="bulkTemplateLink" download="changesentinel-links-template.csv" href="data:text/csv;charset=utf-8,URL%2CName%2CWorkspace%2CLabels%2CFrequency%2CInclude%20Selector%2CIgnore%20Selectors%0Ahttps%3A%2F%2Fwww.example.com%2Fpolicy%2CPolicy%20page%2CNAM%2CSpecs%2CDaily%2C%2C.cookie-banner%3B.breadcrumb%0A">Download template</a>
         </div>
         <input class="field-input bulk-file-input" id="bulkMonitorFile" name="bulkFile" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" aria-label="Choose a CSV or Excel spreadsheet">
-        <p class="bulk-status" id="bulkImportStatus" role="status" aria-live="polite">Accepted columns: URL (required), Name, Include Selector, Ignore Selectors.</p>
+        <p class="bulk-status" id="bulkImportStatus" role="status" aria-live="polite">Accepted columns: URL (required), Name, Workspace, Labels, Frequency, Status, Include Selector, Ignore Selectors.</p>
+        <div class="bulk-summary" id="bulkImportSummary" hidden></div>
         <div class="bulk-preview" id="bulkImportPreview" aria-label="Spreadsheet preview" hidden></div>
+        <div class="bulk-options" id="bulkImportOptions" hidden>
+          <label><span class="visually-hidden">Workspace</span><input class="field-input" id="bulkWorkspace" type="text" maxlength="40" placeholder="Workspace for rows without one" autocomplete="off" list="reviewWorkspaceList"></label>
+          <label><span class="visually-hidden">Labels</span><input class="field-input" id="bulkLabels" type="text" maxlength="300" placeholder="Labels for every row, e.g. Imported" autocomplete="off"></label>
+          <label class="field-check bulk-shadow"><input type="checkbox" id="bulkShadow"> Shadow mode: record changes without sending alerts</label>
+          <p class="field-help">Shadow mode runs the new monitors beside the old tool so their alerts can be compared (Alerts → Compare with Visualping) without anyone being alerted twice. Turn it off from Labels when you switch.</p>
+        </div>
         <div class="bulk-actions" id="bulkImportActions" hidden>
           <button class="btn" id="clearBulkImport" type="button">Clear file</button>
-          <button class="btn btn-primary" id="submitBulkMonitor" type="button" disabled>Continue with links</button>
+          <span class="review-requests" id="bulkRequests"></span>
         </div>
       </section>
         </div>
@@ -3029,8 +3121,18 @@
         <summary>Alert me when <span>Optional, for every new monitor in these requests</span></summary>
         <div class="review-condition-body">
           <textarea class="field-input" id="reviewCondition" rows="2" maxlength="500" placeholder="A new XML user guide is added, or a guide&#8217;s effective date changes"></textarea>
+          <div class="condition-suggestions" id="reviewConditionSuggestions" aria-label="Suggested from these pages"></div>
           <label class="field-check"><input type="checkbox" id="reviewConditionOnly"> Alert only when it is met</label>
           <p class="field-help">Every change is still detected and saved. The AI says whether each change meets this; with the box ticked, changes that don&#8217;t are recorded without an alert. You can change it later from each page.</p>
+        </div>
+      </details>
+      <details class="review-condition review-organise">
+        <summary>Workspace and labels <span>Optional, for every new monitor in these requests</span></summary>
+        <div class="review-condition-body review-organise-body">
+          <label><span class="visually-hidden">Workspace</span><input class="field-input" id="reviewWorkspace" type="text" maxlength="40" placeholder="Workspace, e.g. LATAM" autocomplete="off" list="reviewWorkspaceList"></label>
+          <datalist id="reviewWorkspaceList"></datalist>
+          <label><span class="visually-hidden">Labels</span><input class="field-input" id="reviewLabels" type="text" maxlength="300" placeholder="Labels, comma-separated" autocomplete="off"></label>
+          <p class="field-help">Groups the new monitors in the dashboard's filters; without a workspace they are grouped by their regulator's region.</p>
         </div>
       </details>
       <div class="add-foot review-foot">
@@ -3045,7 +3147,7 @@
     <form class="modal-body" id="conditionForm" novalidate>
       <label class="field-label-text" for="conditionText">Condition <span>Plain language, up to 500 characters</span></label>
       <textarea class="field-input" id="conditionText" rows="3" maxlength="500" placeholder="A new XML user guide is added, or a guide&#8217;s effective date changes"></textarea>
-      <div class="condition-suggestions" id="conditionSuggestions" aria-label="Starting points"></div>
+      <div class="condition-suggestions" id="conditionSuggestions" aria-label="Suggested from this page"></div>
       <label class="field-check"><input type="checkbox" id="conditionOnly"> Alert only when it is met</label>
       <p class="field-help">Every change is still detected and saved with its evidence. The AI states whether each change meets this condition. Ticked: changes that don&#8217;t meet it are recorded without an alert. Unticked: they still alert when the AI judges them relevant. If the AI is unavailable, the change alerts as before.</p>
       <p class="modal-info">The dashboard cannot change monitoring directly. Continue opens a prefilled GitHub request; the owner-only workflow applies it.</p>
@@ -3081,9 +3183,86 @@
         <select class="field-input" id="scanZone"></select>
       </div>
       <div class="scan-preview" id="scanPreview" aria-live="polite"></div>
+      <details class="add-more scan-loading" id="scanLoading">
+        <summary>How pages are loaded <span id="scanLoadingNow">Plain HTTP</span></summary>
+        <div class="add-more-body">
+          <div>
+            <label class="field-label-text" for="scanFetchMode">Load HTML pages with</label>
+            <select class="field-input" id="scanFetchMode">
+              <option value="http">A plain request (fastest; the default)</option>
+              <option value="auto">A browser, only when a bot check blocks the plain request</option>
+              <option value="browser">A browser on every scan, for pages built with JavaScript</option>
+            </select>
+            <div class="field-help">Documents (PDF, spreadsheets, ZIP) are always downloaded directly. A bot-check page is never compared as content: it is saved for review and the last good copy stays the baseline.</div>
+          </div>
+          <div class="scan-browser" id="scanBrowserOptions">
+            <div>
+              <label class="field-label-text" for="scanWait">Wait <span>0–20 s</span></label>
+              <input class="field-input" id="scanWait" type="number" min="0" max="20" step="1" value="3">
+            </div>
+            <div>
+              <label class="field-label-text" for="scanWaitSelector">Or until this appears <span>CSS selector, optional</span></label>
+              <input class="field-input" id="scanWaitSelector" type="text" maxlength="200" placeholder="main table" autocomplete="off">
+            </div>
+            <label class="field-check"><input type="checkbox" id="scanDismiss" checked> Answer cookie banners with their privacy-preserving choice (reject or necessary only)</label>
+          </div>
+        </div>
+      </details>
       <p class="field-help">Scans start at 00, 06, 12 and 18 UTC. A monitor is checked on the first of those slots that falls inside its schedule, so a window must span at least six hours. Detection, evidence and alerts work the same at any cadence.</p>
       <p class="modal-info">The dashboard cannot change monitoring directly. Continue opens a prefilled GitHub request; the owner-only workflow applies it.</p>
       <div class="modal-actions"><button class="btn btn-quiet" id="scanScheduleReset" type="button" title="Back to the default: every 6 hours, every day">Reset to default</button><button class="btn" id="cancelScanSchedule" type="button">Cancel</button><button class="btn btn-primary" type="submit">Continue on GitHub</button></div>
+    </form>
+  </dialog>
+  <dialog class="modal" id="organiseDialog" aria-labelledby="organiseHeading">
+    <div class="modal-head"><div><h2 id="organiseHeading">Workspace and labels</h2><p id="organiseTarget"></p></div><button class="btn btn-quiet" id="closeOrganise" type="button" aria-label="Close">Close</button></div>
+    <form class="modal-body" id="organiseForm" novalidate>
+      <div>
+        <label class="field-label-text" for="organiseWorkspace">Workspace <span>A team's area, e.g. NAM, EMEA, LATAM</span></label>
+        <select class="field-input" id="organiseWorkspace"></select>
+        <input class="field-input organise-new" id="organiseWorkspaceNew" type="text" maxlength="40" placeholder="New workspace name" autocomplete="off" hidden>
+        <div class="field-help">Without one, a monitor is grouped by its regulator's region.</div>
+      </div>
+      <div>
+        <label class="field-label-text" for="organiseAdd">Add labels <span>Comma-separated</span></label>
+        <input class="field-input" id="organiseAdd" type="text" maxlength="300" placeholder="FR Y-9C, Specs, Q1 2027" autocomplete="off" list="organiseLabelList">
+        <datalist id="organiseLabelList"></datalist>
+        <div class="condition-suggestions" id="organiseSuggestions" aria-label="Labels in use"></div>
+      </div>
+      <div id="organiseRemoveRow" hidden>
+        <div class="field-label-text">Remove labels <span>Tap to mark for removal</span></div>
+        <div class="condition-suggestions" id="organiseRemove"></div>
+      </div>
+      <div>
+        <label class="field-label-text" for="organiseAlerts">Alerts <span>Shadow mode records changes without alerting</span></label>
+        <select class="field-input" id="organiseAlerts"><option value="keep">Keep as is</option><option value="on">Send alerts</option><option value="shadow">Shadow mode: record only, no change alerts</option></select>
+      </div>
+      <p class="field-help" id="organiseError" role="alert"></p>
+      <p class="modal-info">Workspaces and labels group and filter monitors and their alerts; what is detected is unchanged. Continue opens a prefilled GitHub request; the owner-only workflow applies it.</p>
+      <div class="modal-actions"><button class="btn" id="cancelOrganise" type="button">Cancel</button><button class="btn btn-primary" type="submit">Continue on GitHub</button></div>
+    </form>
+  </dialog>
+  <dialog class="modal" id="presetDialog" aria-labelledby="presetHeading">
+    <div class="modal-head"><div><h2 id="presetHeading">Apply a preset</h2><p id="presetTarget"></p></div><button class="btn btn-quiet" id="closePreset" type="button" aria-label="Close">Close</button></div>
+    <form class="modal-body" id="presetForm" novalidate>
+      <fieldset class="preset-list" id="presetList" aria-label="Presets"></fieldset>
+      <div class="preset-copy" id="presetCopyRow" hidden>
+        <label class="field-label-text" for="presetCopyFrom">Copy from</label>
+        <select class="field-input" id="presetCopyFrom"></select>
+      </div>
+      <div class="scan-preview" id="presetPreview" aria-live="polite"></div>
+      <p class="modal-info">A preset sets the scan schedule, and the workspace or labels where it names them; other settings are kept. Continue opens a prefilled GitHub request; the owner-only workflow applies it.</p>
+      <div class="modal-actions"><button class="btn" id="cancelPreset" type="button">Cancel</button><button class="btn btn-primary" type="submit">Continue on GitHub</button></div>
+    </form>
+  </dialog>
+  <dialog class="modal" id="digestDialog" aria-labelledby="digestHeading">
+    <div class="modal-head"><div><h2 id="digestHeading">Scheduled digests</h2><p>One AI summary of a workspace's changes, sent to the alert channels.</p></div><button class="btn btn-quiet" id="closeDigest" type="button" aria-label="Close">Close</button></div>
+    <form class="modal-body" id="digestForm" novalidate>
+      <div class="digest-rows" id="digestRows"></div>
+      <button class="chip chip-add" type="button" data-digest-add>+ Add a digest</button>
+      <p class="field-help">Each change in a digest carries the AI's English summary and a short quote of the changed text in the regulator's own language. A digest is built by the first scan after its time, from the changes that scan history recorded in the period; with AI unavailable it is still sent, with a plain count instead of the overview.</p>
+      <p class="field-help" id="digestError" role="alert"></p>
+      <p class="modal-info">Continue opens a prefilled GitHub request; the owner-only workflow saves config/digests.json.</p>
+      <div class="modal-actions"><button class="btn" id="cancelDigest" type="button">Cancel</button><button class="btn btn-primary" type="submit">Continue on GitHub</button></div>
     </form>
   </dialog>
   <dialog class="modal" id="deleteMonitorDialog" aria-labelledby="deleteMonitorHeading">
@@ -3426,8 +3605,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261025-scan-schedule-1"></script>
-  <script src="dashboard.js?v=20261025-scan-schedule-1"></script>
+  <script src="dashboard-lib.js?v=20261025-conditions-1"></script>
+  <script src="dashboard.js?v=20261025-conditions-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

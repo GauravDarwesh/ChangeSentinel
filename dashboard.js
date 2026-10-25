@@ -59,7 +59,9 @@ const DATA_PATHS = {
   lineage: "config/lineage.json",
   reviews: "data/reviews/ledger.json",
   regulators: "config/regulators.json",
-  health: "data/health.json"
+  health: "data/health.json",
+  digests: "data/digests/index.json",
+  digestConfig: "config/digests.json"
 };
 // Load core state from the same origin as GitHub Pages first. Keep the raw GitHub
 // URL as a fallback so older deployments can still recover while Pages publishes.
@@ -77,7 +79,9 @@ const ENDPOINTS = {
   lineage: new URL("./config/lineage.json", document.baseURI).href,
   reviews: new URL("./data/reviews/ledger.json", document.baseURI).href,
   regulators: new URL("./config/regulators.json", document.baseURI).href,
-  health: new URL("./data/health.json", document.baseURI).href
+  health: new URL("./data/health.json", document.baseURI).href,
+  digests: new URL("./data/digests/index.json", document.baseURI).href,
+  digestConfig: new URL("./config/digests.json", document.baseURI).href
 };
 // The calendar feed is served from Pages so calendar apps can subscribe to it.
 const CALENDAR_FEED = new URL("./data/calendar.ics", document.baseURI).href;
@@ -220,6 +224,11 @@ function isValidDataAssetShape(key, value) {
     // Fleet health is rebuilt by every scan; before the first one it is absent.
     case "health":
       return isPlainObject(value) && value.schema_version === 1 && isPlainObject(value.totals) && Array.isArray(value.monitors);
+    // Scheduled digests (regmon/digest.py) and their configuration; optional.
+    case "digests":
+      return isPlainObject(value) && value.schema_version === 1 && isPlainObject(value.digests);
+    case "digestConfig":
+      return isPlainObject(value) && Array.isArray(value.digests);
     // Who publishes each host; without it pages are grouped by their domain.
     case "regulators":
       return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.regulators);
@@ -809,11 +818,11 @@ function renderLatestPreview() {
 // lights scroll under them.
 const FIELD_STORAGE = "cs-field-v1";
 const FIELD_LENS_WORDS = { activity: "Activity", changed: "Changed", problems: "Problems", new: "New", all: "All pages" };
-const FIELD_GROUPS = { regulator: "Regulator", jurisdiction: "Jurisdiction", kind: "Kind of document", source: "Monitor", none: "No grouping" };
+const FIELD_GROUPS = { regulator: "Regulator", jurisdiction: "Jurisdiction", workspace: "Workspace", kind: "Kind of document", source: "Monitor", none: "No grouping" };
 // The timeline filters events, not pages, and by default gives each page its
 // own lane so one page's updates read left to right with the time between them.
 const TL_SHOWS = ["changed", "problems", "new", "markup", "all"];
-const TL_LANES = ["page", "regulator", "jurisdiction", "kind", "source", "none"];
+const TL_LANES = ["page", "regulator", "jurisdiction", "workspace", "kind", "source", "none"];
 const TL_LANE_LIMIT = 10;
 function fieldPrefs() {
   if (state.field) return state.field;
@@ -881,6 +890,10 @@ function itemRegulator(item) {
 function fieldGroupOf(item, groupBy, sourceLabelText) {
   if (groupBy === "none") return {};
   if (groupBy === "source") return { groupKey: "src:" + item.source_id, groupLabel: sourceLabelText, groupNote: "" };
+  if (groupBy === "workspace") {
+    const ws = sourceWorkspace(String(item.source_id || ""));
+    return { groupKey: "ws:" + ws.name, groupLabel: ws.name, groupNote: ws.auto ? "by region" : "workspace" };
+  }
   if (groupBy === "kind") {
     const kind = L.pageKind(itemTitle(item), item.canonical_url, item.extraction_type);
     return { groupKey: "kind:" + kind, groupLabel: kind, groupNote: "" };
@@ -1849,6 +1862,7 @@ function changeRow(entry, options) {
 }
 function filteredChanges() {
   return changeLogEntries().filter(entry => {
+    if (!inScope(entrySourceId(entry))) return false;
     if (state.changeFilter === "RELEVANT") return verdictFor(entry).state === "relevant";
     if (state.changeFilter === "PROBLEMS") return L.eventTone(entry.event_type) === "problem";
     if (state.changeFilter === "UNDECIDED") return CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0 && !reviewFor(entry.event_id);
@@ -1856,6 +1870,7 @@ function filteredChanges() {
   });
 }
 function renderChangeRoute() {
+  renderScopeBars();
   const all = changeLogEntries();
   const events = filteredChanges();
   const migrations = migrationCount();
@@ -1886,23 +1901,37 @@ function pageRow(item) {
   const status = itemStatus(item);
   const selected = item.url_id === state.selectedId;
   const subtitle = itemSubtitle(item);
+  const source = sourceForItem(item);
+  if (state.picking) {
+    const picked = state.picked.has(item.source_id);
+    return '<button class="row monitor-row" type="button" data-pick-source="' + esc(item.source_id) + '" aria-pressed="' + picked + '">' +
+      '<span class="row-mark ' + (picked ? "is-picked" : "is-pick") + '" aria-hidden="true"></span>' +
+      '<span class="row-title">' + esc(itemTitle(item)) + "</span>" +
+      '<span class="row-time">' + esc(scanScheduleWords(source).replace(/^Every 6 hours$/, "")) + "</span>" +
+      '<span class="row-sub">' + organiseTags(source) + '<span class="row-host">' + esc(subtitle || displayUrl(item.canonical_url)) + "</span></span></button>";
+  }
   return '<button class="row monitor-row" type="button" data-monitor-id="' + esc(item.url_id) + '" data-status-kind="' + esc(status.kind) + '"' + (selected ? ' aria-selected="true"' : "") + ">" +
     '<span class="row-mark tone-' + esc(status.tone) + '" aria-hidden="true"></span>' +
     '<span class="row-title">' + esc(itemTitle(item)) + "</span>" +
     '<span class="row-time">' + esc(item.last_checked ? relativeTime(item.last_checked) : "") + "</span>" +
-    '<span class="row-sub">' + (status.kind === "ok" ? "" : '<span class="tag tone-' + esc(status.tone) + '">' + esc(status.label) + "</span>") +
+    '<span class="row-sub">' + (status.kind === "ok" ? "" : '<span class="tag tone-' + esc(status.tone) + '">' + esc(status.label) + "</span>") + organiseTags(source) +
     '<span class="row-host">' + esc(subtitle || displayUrl(item.canonical_url)) + "</span></span></button>";
 }
-function renderMonitorList() {
+function filteredMonitorItems() {
   const query = $("monitorSearch").value.trim().toLowerCase();
-  const all = state.items.filter(item => {
+  return state.items.filter(item => {
     const status = itemStatus(item);
     if (state.filter === "CHANGES" && status.kind !== "change") return false;
     if (state.filter === "ERRORS" && status.kind !== "error") return false;
+    if (!inScope(item.source_id)) return false;
     const source = sourceForItem(item);
-    const haystack = [itemTitle(item), itemSubtitle(item), item.canonical_url, item.source_id, source.name, source.regulator].join(" ").toLowerCase();
+    const haystack = [itemTitle(item), itemSubtitle(item), item.canonical_url, item.source_id, source.name, source.regulator, source.workspace || "", (source.labels || []).join(" ")].join(" ").toLowerCase();
     return !query || haystack.includes(query);
   });
+}
+function renderMonitorList() {
+  renderScopeBars();
+  const all = filteredMonitorItems();
   $("monitorCount").textContent = all.length === state.items.length ? plural(all.length, "page", "pages") : all.length + " of " + state.items.length;
   if (!all.length) {
     $("monitorList").innerHTML = emptyState(
@@ -1990,6 +2019,8 @@ function renderNotifications() {
   $("notificationSentCount").textContent = sent.length ? "(" + sent.length + ")" : "";
   $("notificationCounts").textContent = pending.length ? pending.length + " waiting" : "Nothing waiting";
   renderChannelBar();
+  if ($("shadowEntry")) $("shadowEntry").innerHTML = shadowEntryRow();
+  if ($("digestEntries")) $("digestEntries").innerHTML = digestEntryRows();
 
   $("notificationPendingItems").innerHTML = pending.length ? pending.map(item =>
     '<button class="row" type="button" data-select-notification="' + esc(item.eventId) + '"' + (item.eventId === state.selectedNotificationId ? ' aria-selected="true"' : "") + ">" +
@@ -2414,12 +2445,15 @@ function renderDetailHeader(item) {
   const meta = '<span class="tag tone-' + esc(status.tone) + '">' + esc(status.label) + "</span>" +
     (source && source.alert_condition ? '<span class="tag" title="' + esc(conditionSummary(source)) + '">' + esc(source.alert_only_on_condition ? "Alerts only when: " : "Alert me when: ") + esc(String(source.alert_condition).length > 60 ? String(source.alert_condition).slice(0, 59) + "\u2026" : String(source.alert_condition)) + "</span>" : "") +
     (source && !L.scanScheduleIsDefault(sourceScanSchedule(source)) ? '<span class="tag" title="Scan schedule">' + esc(scanScheduleWords(source)) + "</span>" : "") +
+    (source && source.id ? organiseTags(source) : "") +
     "<span>Checked " + esc(relativeTime(item.last_checked).toLowerCase()) + "</span>" + urlMeta(item.canonical_url);
   const actions = externalLink(item.canonical_url, "Open live page") +
     (snapshotPath ? externalLink(REPO + "/blob/main/" + snapshotPath, savedFileLabel) : "") +
     (item.source_id ? '<button class="btn" type="button" data-run-scan="' + esc(item.source_id) + '" title="Scan this page\'s source now">Scan this source</button>' : "") +
     (conditionEditable(source) ? '<button class="btn" type="button" data-edit-condition="' + esc(source.id) + '" title="Set what should raise an alert for this monitor">' + (source.alert_condition ? "Edit alert condition" : "Alert me when…") + "</button>" : "") +
     (source && source.id && source.active !== false ? '<button class="btn" type="button" data-edit-schedule="' + esc(source.id) + '" title="How often and when this monitor is scanned">Scan schedule</button>' : "") +
+    (source && source.id && source.active !== false ? '<button class="btn" type="button" data-edit-organise="' + esc(source.id) + '" title="Workspace and labels">Labels</button>' : "") +
+    '<button class="btn" type="button" data-find-similar="' + esc(item.url_id) + '" title="Find pages like this one on the regulator\'s site">Find similar</button>' +
     (item.source_id ? '<button class="btn btn-quiet" type="button" data-stop-monitor="' + esc(item.url_id) +
       '" data-stop-url="' + esc(item.canonical_url) + '" data-stop-source="' + esc(item.source_id) +
       '" data-stop-name="' + esc(itemTitle(item)) + '" title="Stop monitoring this URL">Stop monitoring</button>' : "");
@@ -2567,11 +2601,17 @@ function renderDetails(item) {
     ["Ignore", (source.ignore_selectors || []).join(", ") || "Nothing"],
     ["Alert me when", conditionSummary(source) || "No condition; AI relevance decides"],
     ["Scan schedule", scanScheduleWords(source) + (nextScanWords(item.source_id) ? " · next " + nextScanWords(item.source_id) : "")],
+    ["Workspace", (ws => ws.name + (ws.auto ? " (from the regulator's region)" : ""))(sourceWorkspace(source))],
+    ["Labels", sourceLabels(source).join(", ") || "None"],
+    ["Alerts", source.shadow ? "Shadow mode: changes are recorded without alerts" : "Sent for relevant changes"],
+    ["Loaded with", FETCH_MODE_WORDS[sourceLoading(source).fetch_mode] + (item.rendered_by === "browser" && item.browser ? " · last render blocked " + plural(Number(item.browser.blocked_requests || 0), "request", "requests") + (item.browser.consent ? ", cookie banner: " + item.browser.consent.replace(/^\w+:/, "") : "") : "")],
+    ["Bot check", item.bot_check ? item.bot_check.vendor + " challenge, " + fmt(item.bot_check.captured_at) + " (" + (item.bot_check.via === "browser" ? "after a browser render" : "plain request") + ")" : "None seen"],
     ["Fetch error", item.fetch_error || "None"], ["Extraction error", item.extraction_error || "None"],
     ["Text fingerprint (SHA-256)", item.normalized_hash || "Not available", true], ["Saved HTML fingerprint", item.html_hash || "Not available", true],
     ["Response fingerprint", item.raw_hash || "Not available", true],
     ["Text snapshot", item.snapshot_location || "Not saved", true], ["HTML snapshot", item.html_snapshot_location || "Not saved", true],
-    ["Original file", item.file_snapshot_location || "Not saved", true]
+    ["Original file", item.file_snapshot_location || "Not saved", true],
+    ["Saved bot-check page", item.bot_check && item.bot_check.location ? item.bot_check.location : "None", true]
   ];
   $("detailBody").innerHTML = integritySheet(item) + '<section class="sheet"><dl class="facts">' + rows.map(([key, value, code]) =>
     "<div><dt>" + esc(key) + '</dt><dd class="' + (code ? "is-code" : "") + '">' + esc(value == null || value === "" ? "Not recorded" : value) + "</dd></div>"
@@ -2627,6 +2667,8 @@ function renderRunDetail() {
 function renderNotificationDetail() {
   state.detailKeys.notifications = detailRenderKey("notifications");
   const pane = $("notificationDetail");
+  if (state.selectedNotificationId === SHADOW_KEY) return renderShadowDetail(pane);
+  if (state.selectedNotificationId.indexOf(DIGEST_PREFIX) === 0) return renderDigestDetail(pane);
   const { pending, sent } = notificationLists();
   const item = pending.concat(sent).find(candidate => candidate.eventId === state.selectedNotificationId);
   if (!item) {
@@ -2727,7 +2769,8 @@ function renderHealth() {
     '<span class="row-title">All monitors</span><span class="row-time">' + esc(healthPercent(week.success_rate)) + "</span>" +
     '<span class="row-summary">' + esc(healthNumber(totals.monitors) + " monitors, " + healthNumber(week.checks) + " checks and " + healthNumber(week.alerts_sent) + " alerts in 7 days") + "</span></button>";
   const now = Date.now();
-  const lit = healthMonitors().map(monitor => ({ monitor, light: L.healthLight(monitor, now) }));
+  renderScopeBars();
+  const lit = healthMonitors().filter(monitor => inScope(String(monitor.source_id))).map(monitor => ({ monitor, light: L.healthLight(monitor, now) }));
   HEALTH_LIST_GROUPS.forEach(([, label, lights]) => {
     const rows = lit.filter(entry => lights.indexOf(entry.light) >= 0).sort((a, b) => healthName(a.monitor).localeCompare(healthName(b.monitor)));
     if (!rows.length) return;
@@ -2881,11 +2924,14 @@ function renderHealthDetail() {
     ["Last content change", monitor.last_change ? fmt(monitor.last_change) : "None recorded"],
     ["Alert me when", source.alert_condition ? source.alert_condition + (source.alert_only_on_condition ? " (alerts only when met)" : "") : "No condition; AI relevance decides"],
     ["Scan schedule", (monitor.cadence && monitor.cadence.label) || scanScheduleWords(source)],
-    ["Next scan", nextScanWords(key) || "Not recorded"]
+    ["Next scan", nextScanWords(key) || "Not recorded"],
+    ["Workspace", (ws => ws.name + (ws.auto ? " (region)" : ""))(sourceWorkspace(source))],
+    ["Labels", sourceLabels(source).join(", ") || "None"]
   ];
   const actions = (item ? '<button class="btn" type="button" data-monitor-id="' + esc(item.url_id) + '">Open page</button>' : "") +
     '<button class="btn" type="button" data-run-scan="' + esc(key) + '">Scan this source</button>' +
     (source.id && source.active !== false ? '<button class="btn" type="button" data-edit-schedule="' + esc(key) + '">Scan schedule</button>' : "") +
+    (source.id && source.active !== false ? '<button class="btn" type="button" data-edit-organise="' + esc(key) + '">Labels</button>' : "") +
     (conditionEditable(source) ? '<button class="btn" type="button" data-edit-condition="' + esc(key) + '">' + (source.alert_condition ? "Edit alert condition" : "Add alert condition") + "</button>" : "");
   const failureSheet = failures.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">What is failing</h3></div><dl class="facts">' + failures.map(row =>
     "<div><dt>" + esc(row.kind === "FETCH_ERROR" ? "Couldn't fetch" : "Couldn't read content") + '</dt><dd>' + esc(row.error || "") +
@@ -3110,18 +3156,35 @@ function openConditionDialog(sourceId) {
   renderConditionSuggestions(source);
   $("conditionDialog").showModal();
 }
-// Starting points shaped like the requests regulatory reporting teams make;
-// the owner edits or replaces them. Nothing is generated from the page itself.
-function conditionSuggestions(source) {
-  const url = String((source.seed_urls || [])[0] || "").toLowerCase();
-  const list = [];
-  if (/\.(pdf|docx?|xlsx?|zip)(\?|$)/.test(url)) list.push("A field, schedule, instruction or validation rule in this document changes", "The effective date or reporting period changes");
-  else list.push("A new document, form or user guide is added to this page", "An existing document is replaced with a new version", "A reporting deadline or effective date changes");
-  list.push("A requirement, threshold or reporting scope changes");
-  return list;
+// Suggestions drawn from the page itself (its saved text and the links on it,
+// see L.conditionSuggestionsFrom); shown at once from the address and
+// refined when the saved copy has loaded. The owner edits or replaces them.
+function conditionChips(list) {
+  return list.map(text => '<button class="chip" type="button" data-condition-suggestion="' + esc(text) + '">' + esc(text) + "</button>").join("");
 }
 function renderConditionSuggestions(source) {
-  $("conditionSuggestions").innerHTML = conditionSuggestions(source).map(text => '<button class="chip" type="button" data-condition-suggestion="' + esc(text) + '">' + esc(text) + "</button>").join("");
+  const item = state.items.find(candidate => candidate.source_id === source.id);
+  const format = L.pickFormat(String((source.seed_urls || [])[0] || ""));
+  $("conditionSuggestions").innerHTML = conditionChips(L.conditionSuggestionsFrom({ title: item ? itemTitle(item) : source.name }, { format }));
+  if (!item || !item.snapshot_location) return;
+  readSnapshotFile(item.snapshot_location, state.snapshotCache).then(text => {
+    if (state.pendingCondition !== source.id || !$("conditionDialog").open) return;
+    $("conditionSuggestions").innerHTML = conditionChips(L.conditionSuggestionsFrom({ title: itemTitle(item), text }, { format }));
+  }).catch(() => {});
+}
+function renderReviewConditionSuggestions() {
+  const box = $("reviewConditionSuggestions");
+  if (!box) return;
+  const a = state.add;
+  const page = a.page || a.pages.get(L.urlKey(a.url || "")) || {};
+  const ticked = Array.from(a.picked.values());
+  // The ticked links speak loudest; the starting page and the other links found give context.
+  const source = ticked.length ? ticked : a.candidates.slice(0, 400);
+  const links = source.map(item => ({ text: item.title, format: item.format })).concat((page.links || []).slice(0, 200));
+  const formats = Array.from(new Set(ticked.map(item => item.format)));
+  const html = conditionChips(L.conditionSuggestionsFrom({ title: page.title || "", text: ticked.map(item => item.title).join("\n"), links },
+    { format: formats.length === 1 && formats[0] !== "Web page" ? formats[0] : "" }));
+  if (box.dataset.rendered !== html) { box.innerHTML = html; box.dataset.rendered = html; }
 }
 function submitCondition(clear) {
   const source = configuredSources().find(candidate => candidate.id === state.pendingCondition);
@@ -3228,13 +3291,55 @@ function openScanSchedule(ids) {
   $("scanZone").value = schedule.timezone;
   $("scanDayPicks").innerHTML = L.SCAN_WEEKDAYS.map(day => '<button class="chip" type="button" data-scan-day="' + day + '" aria-pressed="' + (schedule.days.indexOf(day) >= 0) + '">' + SCAN_DAY_WORDS[day] + "</button>").join("");
   setScanDayMode(schedule.days.length === 7 ? "all" : schedule.days.join() === L.SCAN_BUSINESS_DAYS.join() ? "weekdays" : "custom");
+  // Page loading: prefilled from the first monitor; only sent when changed.
+  const loading = sourceLoading(first);
+  state.scanLoadingBase = JSON.stringify(loading);
+  $("scanFetchMode").value = loading.fetch_mode;
+  $("scanWait").value = String(loading.browser_wait_seconds);
+  $("scanWaitSelector").value = loading.browser_wait_selector;
+  $("scanDismiss").checked = loading.browser_dismiss_cookies;
+  $("scanLoading").open = loading.fetch_mode !== "http";
+  renderScanLoading();
   renderScanPreview();
   $("scanScheduleDialog").showModal();
+}
+const FETCH_MODE_WORDS = { http: "Plain HTTP", auto: "Browser on bot checks", browser: "Browser every scan" };
+function sourceLoading(source) {
+  const s = source || {};
+  return {
+    fetch_mode: ["http", "auto", "browser"].indexOf(s.fetch_mode) >= 0 ? s.fetch_mode : "http",
+    browser_wait_seconds: Number.isInteger(s.browser_wait_seconds) ? s.browser_wait_seconds : 3,
+    browser_wait_selector: String(s.browser_wait_selector || ""),
+    browser_dismiss_cookies: s.browser_dismiss_cookies !== false
+  };
+}
+function scanLoadingState() {
+  return {
+    fetch_mode: $("scanFetchMode").value,
+    browser_wait_seconds: Math.max(0, Math.min(20, Math.round(Number($("scanWait").value) || 0))),
+    browser_wait_selector: $("scanWaitSelector").value.trim().slice(0, 200),
+    browser_dismiss_cookies: $("scanDismiss").checked
+  };
+}
+function renderScanLoading() {
+  const loading = scanLoadingState();
+  $("scanBrowserOptions").hidden = loading.fetch_mode === "http";
+  $("scanLoadingNow").textContent = FETCH_MODE_WORDS[loading.fetch_mode];
 }
 function submitScanSchedule(reset) {
   const ids = state.pendingScanSchedule || [];
   const schedule = reset ? L.scanSchedule({}) : scanDialogState();
-  const requests = L.settingsRequests(L.scanSchedulePayload(ids, schedule), "scan schedule → " + L.scanScheduleLabel(schedule));
+  const payload = L.scanSchedulePayload(ids, schedule);
+  const loading = scanLoadingState();
+  let words = "scan schedule → " + L.scanScheduleLabel(schedule);
+  if (!reset && JSON.stringify(loading) !== state.scanLoadingBase) {
+    const defaults = { fetch_mode: "http", browser_wait_seconds: 3, browser_wait_selector: "", browser_dismiss_cookies: true };
+    Object.keys(defaults).forEach(key => {
+      if (loading[key] === defaults[key]) payload.clear.push(key); else payload.set[key] = loading[key];
+    });
+    words += "; pages loaded with " + FETCH_MODE_WORDS[loading.fetch_mode].toLowerCase();
+  }
+  const requests = L.settingsRequests(payload, words);
   if (!requests.length) return;
   $("scanScheduleDialog").close();
   requests.slice(1).forEach(request => {
@@ -3244,6 +3349,481 @@ function submitScanSchedule(reset) {
   const params = new URLSearchParams(); params.set("title", requests[0].title); params.set("body", requests[0].body);
   openGitHubRequest(REPO + "/issues/new?" + params.toString(), (requests.length > 1 ? "Submit each of the " + requests.length + " prefilled requests on GitHub." : "Submit the prefilled request on GitHub.") +
     " The new schedule applies from the next scheduled scan.");
+}
+
+/* ================= Workspaces, labels and presets =================
+ * Workspace and labels live per monitor in config/sources.json. The scope
+ * bar above Pages, Changes and Health filters all three at once (remembered in
+ * this browser). Select in Pages picks monitors for a bulk change: scan
+ * schedule, workspace and labels, or a preset. Every change goes through a
+ * prefilled request the owner-only Update Monitor Settings workflow applies.
+ */
+const SCOPE_STORAGE = "cs-scope-v1";
+state.scope = (() => { try { const saved = JSON.parse(localStorage.getItem(SCOPE_STORAGE) || "{}") || {}; return { workspace: saved.workspace || "ALL", label: saved.label || "ALL" }; } catch (_) { return { workspace: "ALL", label: "ALL" }; } })();
+state.picking = false;
+state.picked = new Set();
+function sourceRegion(source) {
+  const seed = source && Array.isArray(source.seed_urls) ? source.seed_urls[0] : "";
+  return seed ? L.regulatorFor(seed, regulatorProfiles(), source.regulator || "").region : "";
+}
+function sourceWorkspace(sourceOrId) {
+  const source = typeof sourceOrId === "string" ? configuredSources().find(candidate => candidate.id === sourceOrId) : sourceOrId;
+  return L.workspaceOf(source || {}, source ? sourceRegion(source) : "");
+}
+function sourceLabels(sourceOrId) {
+  const source = typeof sourceOrId === "string" ? configuredSources().find(candidate => candidate.id === sourceOrId) : sourceOrId;
+  return L.labelsOf(source || {});
+}
+function inScope(sourceId) {
+  if (state.scope.workspace === "ALL" && state.scope.label === "ALL") return true;
+  return L.scopeMatches(state.scope, sourceWorkspace(String(sourceId || "")), sourceLabels(String(sourceId || "")));
+}
+function entrySourceId(entry) {
+  if (entry && entry.source_id) return entry.source_id;
+  const item = entry && state.items.find(candidate => candidate.canonical_url === entry.url);
+  return item ? item.source_id : "";
+}
+function scopeOptions() {
+  const workspaces = new Map(), labels = new Map();
+  activeSources().forEach(source => {
+    const ws = sourceWorkspace(source);
+    const entry = workspaces.get(ws.name) || { name: ws.name, count: 0, auto: true };
+    entry.count++; entry.auto = entry.auto && ws.auto;
+    workspaces.set(ws.name, entry);
+    sourceLabels(source).forEach(label => { const key = label.toLowerCase(); const hit = labels.get(key) || { name: label, count: 0 }; hit.count++; labels.set(key, hit); });
+  });
+  const byName = (a, b) => (a.name === "Other") - (b.name === "Other") || a.name.localeCompare(b.name);
+  return { workspaces: Array.from(workspaces.values()).sort(byName), labels: Array.from(labels.values()).sort(byName) };
+}
+function renderScopeBars() {
+  const { workspaces, labels } = scopeOptions();
+  if (state.scope.workspace !== "ALL" && !workspaces.some(ws => ws.name === state.scope.workspace)) state.scope.workspace = "ALL";
+  if (state.scope.label !== "ALL" && !labels.some(label => label.name.toLowerCase() === String(state.scope.label).toLowerCase())) state.scope.label = "ALL";
+  const show = workspaces.length > 1 || labels.length > 0;
+  const option = (value, text, current) => '<option value="' + esc(value) + '"' + (value === current ? " selected" : "") + ">" + esc(text) + "</option>";
+  const html = !show ? "" :
+    '<label>Workspace <select class="scope-select' + (state.scope.workspace !== "ALL" ? " is-set" : "") + '" data-scope="workspace" aria-label="Workspace">' +
+      option("ALL", "All", state.scope.workspace) + workspaces.map(ws => option(ws.name, ws.name + (ws.auto ? " (region)" : "") + " · " + ws.count, state.scope.workspace)).join("") + "</select></label>" +
+    (labels.length ? '<label>Label <select class="scope-select' + (state.scope.label !== "ALL" ? " is-set" : "") + '" data-scope="label" aria-label="Label">' +
+      option("ALL", "All", state.scope.label) + labels.map(label => option(label.name, label.name + " · " + label.count, state.scope.label)).join("") + "</select></label>" : "") +
+    (state.scope.workspace !== "ALL" || state.scope.label !== "ALL" ? '<button class="scope-clear" type="button" data-scope-clear>Clear</button>' : "");
+  document.querySelectorAll("[data-scope-bar]").forEach(bar => {
+    bar.hidden = !show;
+    if (bar.dataset.rendered !== html) { bar.innerHTML = html; bar.dataset.rendered = html; }
+  });
+}
+function setScope(key, value) {
+  if (key) state.scope[key] = value || "ALL";
+  else state.scope = { workspace: "ALL", label: "ALL" };
+  try { localStorage.setItem(SCOPE_STORAGE, JSON.stringify(state.scope)); } catch (_) {}
+  renderLists();
+  renderDetailForView(state.view);
+}
+function renderDetailForView(view) {
+  if (view === "health") renderHealthDetail();
+}
+function organiseTags(source) {
+  const ws = sourceWorkspace(source);
+  return (source && source.shadow ? '<span class="tag tone-pending" title="Shadow mode: changes are recorded without alerts">Shadow</span>' : "") +
+    (!ws.auto ? '<span class="tag" title="Workspace">' + esc(ws.name) + "</span>" : "") +
+    sourceLabels(source).map(label => '<span class="tag is-label" title="Label">#' + esc(label) + "</span>").join("");
+}
+// Selection: settings apply per monitor (source), so picking a page picks its monitor.
+function setPicking(on) {
+  state.picking = !!on;
+  if (!state.picking) state.picked.clear();
+  $("selectMonitorsBtn").setAttribute("aria-pressed", String(state.picking));
+  $("selectMonitorsBtn").textContent = state.picking ? "Done" : "Select";
+  renderMonitorList();
+  renderSelectBar();
+}
+function togglePicked(sourceId) {
+  if (!sourceId) return;
+  if (state.picked.has(sourceId)) state.picked.delete(sourceId); else state.picked.add(sourceId);
+  renderMonitorList();
+  renderSelectBar();
+}
+function shownMonitorIds() {
+  return Array.from(new Set(filteredMonitorItems().map(item => item.source_id).filter(id => configuredSources().some(source => source.id === id && source.active !== false))));
+}
+function renderSelectBar() {
+  const bar = $("selectBar");
+  if (!bar) return;
+  bar.hidden = !state.picking;
+  const n = state.picked.size;
+  $("selectCount").textContent = n ? plural(n, "monitor", "monitors") + " selected" : "Tap pages to select their monitors";
+  bar.querySelectorAll("[data-bulk]").forEach(button => { button.disabled = !n; });
+  const shown = shownMonitorIds();
+  const all = shown.length && shown.every(id => state.picked.has(id));
+  bar.querySelector("[data-select-shown]").textContent = all ? "Clear selection" : "Select all shown (" + shown.length + ")";
+}
+function openSettingsRequests(payload, describe, toast) {
+  const requests = L.settingsRequests(payload, describe);
+  if (!requests.length) return;
+  requests.slice(1).forEach(request => {
+    const params = new URLSearchParams(); params.set("title", request.title); params.set("body", request.body);
+    window.open(REPO + "/issues/new?" + params.toString(), "_blank");
+  });
+  const params = new URLSearchParams(); params.set("title", requests[0].title); params.set("body", requests[0].body);
+  openGitHubRequest(REPO + "/issues/new?" + params.toString(), (requests.length > 1 ? "Submit each of the " + requests.length + " prefilled requests on GitHub. " : "Submit the prefilled request on GitHub. ") + toast);
+}
+function openOrganise(ids) {
+  const list = Array.from(new Set((ids || []).filter(id => configuredSources().some(source => source.id === id && source.active !== false))));
+  if (!list.length) { showToast("Choose at least one active monitor."); return; }
+  state.pendingOrganise = list;
+  state.organiseRemove = new Map();
+  const first = configuredSources().find(source => source.id === list[0]) || {};
+  $("organiseTarget").textContent = list.length === 1 ? (first.name || first.id) : plural(list.length, "monitor", "monitors");
+  const { workspaces, labels } = scopeOptions();
+  const current = Array.from(new Set(list.map(id => { const ws = sourceWorkspace(id); return ws.auto ? "" : ws.name; })));
+  const explicit = workspaces.filter(ws => !ws.auto).map(ws => ws.name);
+  const suggestions = Array.from(new Set(explicit.concat(["NAM", "EMEA", "LATAM", "APAC"])));
+  $("organiseWorkspace").innerHTML = '<option value="__keep">' + (current.length === 1 ? "Keep: " + (current[0] || "by region") : "Keep each monitor's own") + "</option>" +
+    suggestions.map(name => '<option value="' + esc(name) + '">' + esc(name) + "</option>").join("") +
+    '<option value="__new">New workspace…</option><option value="__clear">None (group by region)</option>';
+  $("organiseWorkspace").value = "__keep";
+  $("organiseWorkspaceNew").hidden = true;
+  $("organiseWorkspaceNew").value = "";
+  $("organiseAdd").value = "";
+  $("organiseLabelList").innerHTML = labels.map(label => '<option value="' + esc(label.name) + '"></option>').join("");
+  $("organiseSuggestions").innerHTML = labels.slice(0, 12).map(label => '<button class="chip" type="button" data-add-label="' + esc(label.name) + '">+ ' + esc(label.name) + "</button>").join("");
+  const present = new Map();
+  list.forEach(id => sourceLabels(id).forEach(label => present.set(label.toLowerCase(), label)));
+  $("organiseRemoveRow").hidden = !present.size;
+  $("organiseRemove").innerHTML = Array.from(present.values()).sort().map(label => '<button class="chip" type="button" data-remove-label="' + esc(label) + '" aria-pressed="false">#' + esc(label) + "</button>").join("");
+  $("organiseError").textContent = "";
+  $("organiseAlerts").value = "keep";
+  $("organiseDialog").showModal();
+}
+function submitOrganise() {
+  const choice = $("organiseWorkspace").value;
+  const newName = $("organiseWorkspaceNew").value.trim();
+  const add = L.parseLabels($("organiseAdd").value);
+  const bad = add.concat(choice === "__new" ? [newName] : []).filter(text => !L.validTag(text));
+  if (choice === "__new" && !newName) { $("organiseError").textContent = "Name the new workspace."; return; }
+  if (bad.length) { $("organiseError").textContent = "Use 1–40 letters, digits, spaces or & / + . - _ in names: " + bad.join(", "); return; }
+  const overflow = state.pendingOrganise.filter(id => {
+    const kept = sourceLabels(id).filter(label => !state.organiseRemove.has(label.toLowerCase()));
+    return kept.concat(add.filter(label => !kept.some(other => other.toLowerCase() === label.toLowerCase()))).length > L.LABEL_MAX;
+  });
+  if (overflow.length) { $("organiseError").textContent = "A monitor can carry at most " + L.LABEL_MAX + " labels; " + plural(overflow.length, "monitor", "monitors") + " would exceed that."; return; }
+  const payload = L.organisePayload(state.pendingOrganise, {
+    workspace: choice === "__new" ? newName : choice.indexOf("__") === 0 ? "" : choice,
+    clearWorkspace: choice === "__clear",
+    add, remove: Array.from(state.organiseRemove.values()),
+    shadow: $("organiseAlerts").value === "shadow" ? true : $("organiseAlerts").value === "on" ? false : undefined
+  });
+  if (L.payloadIsEmpty(payload)) { $("organiseError").textContent = "Nothing to change yet: pick a workspace, or add or remove a label."; return; }
+  const words = [payload.set.workspace ? "workspace → " + payload.set.workspace : payload.clear.indexOf("workspace") >= 0 ? "workspace → by region" : "",
+    payload.add_labels ? "add " + payload.add_labels.join(", ") : "", payload.remove_labels ? "remove " + payload.remove_labels.join(", ") : "",
+    payload.set.shadow ? "shadow mode on" : payload.clear.indexOf("shadow") >= 0 ? "alerts on" : ""].filter(Boolean).join("; ");
+  $("organiseDialog").close();
+  openSettingsRequests(payload, words, "Workspaces and labels apply as soon as it is processed.");
+}
+function openPreset(ids) {
+  const list = Array.from(new Set((ids || []).filter(id => configuredSources().some(source => source.id === id && source.active !== false))));
+  if (!list.length) { showToast("Choose at least one active monitor."); return; }
+  state.pendingPreset = list;
+  $("presetTarget").textContent = plural(list.length, "monitor", "monitors");
+  $("presetList").innerHTML = L.SETTINGS_PRESETS.map((preset, index) => '<label class="preset-option"><input type="radio" name="preset" value="' + esc(preset.id) + '"' + (index === 1 ? " checked" : "") + '><b>' + esc(preset.name) + "</b><small>" + esc(preset.note) +
+    (preset.labels ? " Adds the label " + preset.labels.map(label => "#" + label).join(", ") + "." : "") + "</small></label>").join("");
+  const others = activeSources().filter(source => list.indexOf(source.id) < 0).sort((a, b) => sourceLabel(a).localeCompare(sourceLabel(b)));
+  $("presetCopyFrom").innerHTML = others.map(source => '<option value="' + esc(source.id) + '">' + esc(sourceLabel(source) + " — " + scanScheduleWords(source)) + "</option>").join("");
+  renderPresetPreview();
+  $("presetDialog").showModal();
+}
+// The regulator's time zone for "business hours", from its region; the owner can refine it per monitor.
+const REGION_ZONES = { NAM: "America/New_York", LATAM: "America/Sao_Paulo", EMEA: "Europe/London", APAC: "Asia/Singapore" };
+function presetChoice() {
+  const picked = (document.querySelector("#presetList input:checked") || {}).value;
+  return L.SETTINGS_PRESETS.find(preset => preset.id === picked) || L.SETTINGS_PRESETS[0];
+}
+function presetPayloadFor(ids) {
+  const preset = presetChoice();
+  if (preset.copy) return L.presetPayload(ids, preset, { from: configuredSources().find(source => source.id === $("presetCopyFrom").value) || {} });
+  const regions = Array.from(new Set(ids.map(id => sourceWorkspace(id)).filter(ws => ws.auto).map(ws => ws.name)));
+  return L.presetPayload(ids, preset, { timezone: REGION_ZONES[regions.length === 1 ? regions[0] : ""] || "UTC" });
+}
+function renderPresetPreview() {
+  const preset = presetChoice();
+  $("presetCopyRow").hidden = !preset.copy;
+  const payload = presetPayloadFor(state.pendingPreset || []);
+  const schedule = L.scanSchedule(payload.set);
+  const extras = [payload.set.workspace ? "workspace " + payload.set.workspace : "", payload.add_labels ? "adds " + payload.add_labels.map(label => "#" + label).join(", ") : ""].filter(Boolean);
+  $("presetPreview").innerHTML = '<div class="scan-preview-head"><b>' + esc(L.scanScheduleLabel(schedule)) + "</b><span>" + esc(extras.join(" · ") || "schedule only") + "</span></div>";
+}
+function submitPreset() {
+  const ids = state.pendingPreset || [];
+  const preset = presetChoice();
+  if (preset.copy && !$("presetCopyFrom").value) { showToast("Pick the monitor to copy from."); return; }
+  const payload = presetPayloadFor(ids);
+  $("presetDialog").close();
+  openSettingsRequests(payload, "preset “" + preset.name + "” → " + L.scanScheduleLabel(L.scanSchedule(payload.set)), "The preset applies from the next scheduled scan.");
+}
+
+/* ================= Shadow comparison with Visualping =================
+ * The owner exports Visualping's alert history (CSV or XLSX) and drops it here.
+ * It is read in this browser only and compared with the changes ChangeSentinel
+ * recorded for the same pages and period: which both caught, which only one
+ * did, and which Visualping pages are not monitored here yet.
+ */
+const SHADOW_KEY = "__shadow";
+state.shadow = null;
+function shadowOurChanges() {
+  return changeLogEntries().filter(entry => ["CHANGED_URL", "NEW_URL", "REMOVED_URL"].indexOf(entry.event_type) >= 0)
+    .map(entry => ({ url: entry.url, at: Date.parse(entry.timestamp), event_type: entry.event_type, event_id: entry.event_id, source_id: entrySourceId(entry) }))
+    .filter(row => row.url && Number.isFinite(row.at));
+}
+function shadowMonitoredUrls() {
+  return new Set(state.items.map(item => item.canonical_url).filter(Boolean));
+}
+function shadowOurAlerts(period) {
+  return Object.values(notificationMap(state.notifications, "sent_events")).filter(item => item && item.kind !== "TEST" && ["CHANGED_URL", "NEW_URL", "REMOVED_URL"].indexOf(item.kind) >= 0)
+    .filter(item => { const at = Date.parse(item.sent_at); return Number.isFinite(at) && (!period || (at >= period.from - 86400000 && at <= period.to + 86400000)); }).length;
+}
+async function readShadowFile(file) {
+  if (!file) return;
+  state.shadow = { name: file.name, loading: true };
+  renderNotifications(); renderNotificationDetail();
+  try {
+    if (file.size > 25 * 1024 * 1024) throw new Error("This file is larger than 25 MB.");
+    const extension = file.name.toLowerCase().split(".").pop();
+    const matrix = extension === "xlsx" ? await L.xlsxFirstSheetRows(await file.arrayBuffer()) : extension === "csv" ? parseCsvMatrix(await file.text()) : null;
+    if (!matrix) throw new Error("Choose a .csv or .xlsx file.");
+    const parsed = L.shadowRows(matrix);
+    if (parsed.error) throw new Error(parsed.error);
+    const result = L.shadowCompare(parsed.rows, shadowOurChanges(), shadowMonitoredUrls(), { windowHours: 36 });
+    state.shadow = { name: file.name, rows: parsed.rows.length, unreadable: parsed.unreadable, result, at: Date.now() };
+  } catch (error) {
+    state.shadow = { name: file.name, error: String(error && error.message || error) };
+  }
+  renderNotifications(); renderNotificationDetail();
+}
+function shadowEntryRow() {
+  const r = state.shadow && state.shadow.result;
+  const summary = r ? r.totals.both + " matched, " + r.totals.theirsOnly + " only in Visualping, " + r.totals.oursOnly + " only here" : "Drop Visualping's alert export to compare both tools";
+  return '<button class="row" type="button" data-select-notification="' + SHADOW_KEY + '"' + (state.selectedNotificationId === SHADOW_KEY ? ' aria-selected="true"' : "") + ">" +
+    '<span class="row-mark tone-' + (r ? (r.totals.theirsOnly ? "problem" : "ok") : "pending") + '" aria-hidden="true"></span>' +
+    '<span class="row-title">Compare with Visualping</span><span class="row-time">' + esc(r ? "shadow run" : "") + "</span>" +
+    '<span class="row-summary">' + esc(summary) + "</span></button>";
+}
+// A row that opens the page here when it is monitored, else the live page.
+function shadowRow(url, body) {
+  const item = state.items.find(candidate => L.urlKey(candidate.canonical_url) === L.urlKey(url));
+  return item ? '<button class="row" type="button" data-monitor-id="' + esc(item.url_id) + '">' + body + "</button>"
+    : '<a class="row" href="' + esc(safeHttpUrl(url) ? url : "#") + '" target="_blank" rel="noopener noreferrer">' + body + "</a>";
+}
+function shadowList(title, rows, note, render) {
+  if (!rows.length) return "";
+  const shown = rows.slice(0, 40);
+  return '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">' + esc(title) + '</h3><span class="sheet-note">' + esc(note) + "</span></div>" +
+    shown.map(render).join("") + (rows.length > shown.length ? '<p class="note-strip">' + esc(plural(rows.length - shown.length, "more row", "more rows")) + " in the downloaded comparison.</p>" : "") + "</section>";
+}
+function renderShadowDetail(pane) {
+  const shadow = state.shadow;
+  const intro = '<section class="sheet"><div class="shadow-upload">' +
+    '<p class="field-help">Run both tools on the same pages for a few weeks (import them with <b>Shadow mode</b> so only Visualping alerts), then compare what each caught.</p>' +
+    "<ol><li>In Visualping, export the alert or change history for the period as CSV or Excel. It needs a page URL column and a date column.</li>" +
+    "<li>Choose the file here. It is read in this browser and never uploaded.</li></ol>" +
+    '<input class="field-input" type="file" id="shadowFile" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" aria-label="Visualping alert export">' +
+    (shadow && shadow.error ? '<p class="bulk-status is-error">' + esc(shadow.error) + "</p>" : shadow && shadow.loading ? '<p class="bulk-status">Reading ' + esc(shadow.name) + "…</p>" : "") +
+    "</div></section>";
+  const heading = detailHeading({ back: true, source: "Shadow comparison", title: "Compare with Visualping",
+    meta: shadow && shadow.result ? "<span>" + esc(shadow.name) + "</span><span>" + esc(shortDate(new Date(shadow.result.period.from)) + " – " + shortDate(new Date(shadow.result.period.to))) + "</span>" : "<span>Nothing loaded</span>",
+    actions: shadow && shadow.result ? '<button class="btn" type="button" data-shadow-download>Download comparison</button>' : "" });
+  if (!shadow || !shadow.result) { pane.innerHTML = '<div class="detail-inner">' + heading + intro + "</div>"; return; }
+  const r = shadow.result, t = r.totals;
+  const alertsHere = shadowOurAlerts(r.period);
+  const tiles = [
+    ["Visualping alerts", t.theirs.toLocaleString(), plural(t.pagesTheirs, "monitored page", "monitored pages") + (t.notMonitored ? " + " + t.notMonitored + " not monitored here" : "")],
+    ["Changes recorded here", t.ours.toLocaleString(), plural(alertsHere, "alert", "alerts") + " sent in the period"],
+    ["Caught by both", t.both.toLocaleString(), [r.medianLagHours == null ? "" : "median " + (r.medianLagHours >= 0 ? "+" : "") + r.medianLagHours.toFixed(1) + " h vs Visualping",
+      t.repeats ? plural(t.repeats, "repeat Visualping alert", "repeat Visualping alerts") + " for the same changes" : ""].filter(Boolean).join(" · ")],
+    ["Only in Visualping", t.theirsOnly.toLocaleString(), "possible misses to check"]
+  ];
+  const watched = t.both + t.theirsOnly + t.oursOnly || 1;
+  const bar = '<div class="shadow-bar" role="img" aria-label="' + esc(t.both + " matched, " + t.theirsOnly + " only in Visualping, " + t.oursOnly + " only here") + '">' +
+    '<i class="is-both" style="width:' + (t.both / watched * 100).toFixed(1) + '%"></i><i class="is-theirs" style="width:' + (t.theirsOnly / watched * 100).toFixed(1) + '%"></i><i class="is-ours" style="width:' + (t.oursOnly / watched * 100).toFixed(1) + '%"></i></div>' +
+    '<div class="shadow-key"><span><i style="background:var(--good)"></i>Both</span><span><i style="background:var(--state-bad)"></i>Only Visualping</span><span><i style="background:var(--state-change)"></i>Only ChangeSentinel</span></div>';
+  // Per workspace: Visualping's own column when the export has one, else ours.
+  const groups = new Map();
+  const bump = (name, key) => { const row = groups.get(name) || { name, both: 0, theirsOnly: 0, oursOnly: 0 }; row[key]++; groups.set(name, row); };
+  const ourWorkspace = url => { const item = state.items.find(candidate => L.urlKey(candidate.canonical_url) === L.urlKey(url)); return item ? sourceWorkspace(String(item.source_id)).name : "Other"; };
+  r.both.forEach(pair => bump(pair.theirs.workspace || ourWorkspace(pair.theirs.url), "both"));
+  r.theirsOnly.forEach(row => bump(row.workspace || ourWorkspace(row.url), "theirsOnly"));
+  r.oursOnly.forEach(row => bump(ourWorkspace(row.url), "oursOnly"));
+  const table = groups.size > 1 ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">By workspace</h3></div><table class="shadow-table"><thead><tr><th>Workspace</th><th>Both</th><th>Only Visualping</th><th>Only here</th></tr></thead><tbody>' +
+    Array.from(groups.values()).sort((a, b) => a.name.localeCompare(b.name)).map(row => "<tr><td>" + esc(row.name) + "</td><td>" + row.both + "</td><td>" + row.theirsOnly + "</td><td>" + row.oursOnly + "</td></tr>").join("") + "</tbody></table></section>" : "";
+  const when = at => new Date(at).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  const notMonitored = Array.from(new Map(r.notMonitored.map(row => [L.urlKey(row.url), row])).values());
+  pane.innerHTML = '<div class="detail-inner">' + heading +
+    '<section class="sheet"><div class="health-tiles">' + tiles.map(([name, value, note]) => '<div class="health-tile"><div class="health-tile-label">' + esc(name) + '</div><div class="health-tile-value">' + esc(value) + '</div><div class="health-tile-note">' + esc(note) + "</div></div>").join("") + "</div>" + bar + "</section>" +
+    table +
+    shadowList("Only in Visualping", r.theirsOnly, "No change recorded here within 36 h · open the page to check", row => shadowRow(row.url,
+      '<span class="row-mark tone-problem" aria-hidden="true"></span><span class="row-title">' + esc(displayUrl(row.url)) + '</span><span class="row-time">' + esc(when(row.at)) + "</span>")) +
+    shadowList("Only in ChangeSentinel", r.oursOnly, "Changes Visualping did not alert on", row => shadowRow(row.url,
+      '<span class="row-mark tone-change" aria-hidden="true"></span><span class="row-title">' + esc(displayUrl(row.url)) + '</span><span class="row-time">' + esc(when(row.at)) + '</span><span class="row-summary">' + esc(L.eventLabel(row.event_type)) + "</span>")) +
+    (notMonitored.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Visualping pages not monitored here</h3><span class="sheet-note">' + esc(plural(notMonitored.length, "page", "pages")) + '</span></div><p class="note-strip">These alerted in Visualping but have no monitor here, so they cannot be compared. Import them to include them in the next comparison.</p>' +
+      '<div class="modal-actions" style="padding:0 18px 14px"><button class="btn btn-primary" type="button" data-shadow-import>Import ' + esc(plural(notMonitored.length, "page", "pages")) + " in shadow mode</button></div></section>" : "") +
+    intro.replace("Choose the file here.", "Choose another file to compare again.") +
+    '<p class="note-strip">' + esc((shadow.unreadable ? shadow.unreadable + " rows without a URL or date were skipped. " : "") + "A Visualping alert matches a change here when both concern the same page within 36 hours. Several Visualping alerts for one change count once each; only one can match it.") + "</p></div>";
+}
+function downloadShadowComparison() {
+  const r = state.shadow && state.shadow.result;
+  if (!r) return;
+  const iso = at => new Date(at).toISOString();
+  const rows = [["Outcome", "Page", "Visualping alert", "ChangeSentinel change", "Lag (hours)"]]
+    .concat(r.both.map(pair => ["Both", pair.theirs.url, iso(pair.theirs.at), iso(pair.ours.at), pair.lagHours.toFixed(1)]))
+    .concat(r.theirsOnly.map(row => ["Only Visualping", row.url, iso(row.at), "", ""]))
+    .concat(r.oursOnly.map(row => ["Only ChangeSentinel", row.url, "", iso(row.at), ""]))
+    .concat(r.notMonitored.map(row => ["Not monitored here", row.url, iso(row.at), "", ""]));
+  downloadFile("changesentinel-vs-visualping-" + L.localIsoDate() + ".csv", "text/csv;charset=utf-8", "﻿" + L.toCsv(rows));
+}
+function importShadowPages() {
+  const r = state.shadow && state.shadow.result;
+  if (!r) return;
+  const urls = Array.from(new Map(r.notMonitored.map(row => [L.urlKey(row.url), row])).values());
+  openAddMonitor();
+  const bulk = $("addBulk");
+  if (bulk) bulk.open = true;
+  const result = bulkRowsFromMatrix([["URL", "Workspace"]].concat(urls.map(row => [row.url, row.workspace || ""])));
+  bulkImport = result; bulkImportRows = result.rows; bulkImportErrors = result.errors; bulkOpened = new Set();
+  $("bulkShadow").checked = true;
+  if (!$("bulkLabels").value) $("bulkLabels").value = "Visualping import";
+  setBulkStatus(result.errors.length ? result.errors.slice(0, 3).join(" ") : "Ready to import " + result.rows.length + " pages from the comparison, in shadow mode.", !!result.errors.length);
+  renderBulkPreview();
+}
+
+/* ================= Scheduled digests =================
+ * config/digests.json lists them; regmon/digest.py builds each one in the first
+ * scan after its time and queues it with that run's alerts. data/digests/index.json
+ * holds the latest digest of each in full and a short history.
+ */
+const DIGEST_PREFIX = "digest:";
+state.digests = null;
+state.digestConfig = null;
+state.digestCache = boundedCache(12);
+function digestList() { return state.digestConfig && Array.isArray(state.digestConfig.digests) ? state.digestConfig.digests : []; }
+function digestEntry(id) { return state.digests && isPlainObject(state.digests.digests) ? state.digests.digests[id] || null : null; }
+function digestScope(workspace) { return workspace === "*" ? "All workspaces" : workspace; }
+function digestWhen(digest) {
+  const day = { mon: "Mondays", tue: "Tuesdays", wed: "Wednesdays", thu: "Thursdays", fri: "Fridays", sat: "Saturdays", sun: "Sundays" }[digest.day || "mon"];
+  return (digest.frequency === "weekly" ? "Weekly, " + day : "Daily") + " at " + String(digest.hour == null ? 8 : digest.hour).padStart(2, "0") + ":00 " + (digest.timezone || "UTC").replace(/_/g, " ");
+}
+function digestEntryRows() {
+  const digests = digestList();
+  const rows = digests.map(digest => {
+    const entry = digestEntry(digest.id);
+    const latest = entry && entry.latest;
+    const key = DIGEST_PREFIX + digest.id;
+    const summary = latest ? plural(latest.counts.changes, "change", "changes") + (latest.counts.relevant ? ", " + latest.counts.relevant + " relevant" : "") + " · " + digestWhen(digest) : "First digest after " + digestWhen(digest).toLowerCase();
+    return '<button class="row" type="button" data-select-notification="' + esc(key) + '"' + (state.selectedNotificationId === key ? ' aria-selected="true"' : "") + ">" +
+      '<span class="row-mark tone-' + (latest && latest.counts.relevant ? "change" : latest ? "ok" : "pending") + '" aria-hidden="true"></span>' +
+      '<span class="row-title">' + esc((digest.frequency === "weekly" ? "Weekly" : "Daily") + " digest · " + digestScope(digest.workspace)) + "</span>" +
+      '<span class="row-time">' + esc(latest ? shortDate(latest.period.to) : "") + "</span>" +
+      '<span class="row-summary">' + esc(summary) + "</span></button>";
+  }).join("");
+  return '<div class="list-group-label">Digests' + (digests.length ? " <span>(" + digests.length + ")</span>" : "") + "</div>" + rows +
+    '<div class="channel-bar" style="padding:8px 20px 12px"><button class="chip chip-add" type="button" data-digest-edit>' + icon("plus") + (digests.length ? "Edit digests" : "Set up a daily or weekly digest") + "</button></div>";
+}
+function renderDigestRecord(record, digest, history) {
+  const counts = record.counts || {};
+  const items = Array.isArray(record.items) ? record.items : [];
+  const tag = item => item.relevant === true ? '<span class="tag tone-change">Relevant</span>' : item.relevant === false ? '<span class="tag">Not relevant</span>' : '<span class="tag tone-pending">Not assessed</span>';
+  const itemHtml = items.map(item => '<div class="digest-item"><div class="digest-item-head">' + tag(item) + "<b>" + esc(item.monitor) + "</b>" +
+    '<span class="sheet-note">' + esc(L.eventLabel(item.event_type) + " · " + shortDate(item.at)) + "</span></div>" +
+    (item.summary ? "<p>" + esc(item.summary) + "</p>" : "") +
+    (item.quote ? '<blockquote class="digest-quote">' + esc(item.quote) + "</blockquote>" : "") +
+    (item.effective_date && !/^not stated$/i.test(item.effective_date) ? '<p class="sheet-note">Effective: ' + esc(item.effective_date) + "</p>" : "") +
+    '<div class="channel-bar" style="margin:0"><button class="sheet-link" type="button" data-select-change="' + esc(item.event_id) + '">Open the change</button>' +
+    (safeHttpUrl(item.url) ? externalLink(item.url, "Live page", "sheet-link") : "") + "</div></div>").join("");
+  const tiles = [["Changes", counts.changes || 0, plural(counts.monitors || 0, "monitor", "monitors")], ["Relevant", counts.relevant || 0, "judged by the AI"],
+    ["Not relevant", counts.not_relevant || 0, "recorded, no action"], ["Not assessed", counts.unassessed || 0, "AI was unavailable"]];
+  const older = (history || []).filter(entry => entry.id !== record.id);
+  return '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Overview</h3><span class="sheet-note">' + esc(record.overview_status === "ok" ? "Written by the AI from the changes below" : "AI overview unavailable; plain count") + "</span></div>" +
+    '<p class="digest-overview">' + esc(record.overview || "") + "</p>" +
+    '<div class="health-tiles">' + tiles.map(([name, value, note]) => '<div class="health-tile"><div class="health-tile-label">' + esc(name) + '</div><div class="health-tile-value">' + esc(String(value)) + '</div><div class="health-tile-note">' + esc(note) + "</div></div>").join("") + "</div></section>" +
+    (items.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Changes</h3><span class="sheet-note">English summary, then the changed text as published</span></div>' + itemHtml + "</section>"
+      : '<section class="sheet"><p class="note-strip">Nothing changed on these monitors in this period.</p></section>') +
+    (older.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Earlier digests</h3></div>' + older.slice(0, 12).map(entry =>
+      '<button class="row" type="button" data-digest-open="' + esc(entry.path || "") + '" data-digest-of="' + esc(digest.id) + '"><span class="row-mark tone-' + ((entry.counts || {}).relevant ? "change" : "ok") + '" aria-hidden="true"></span>' +
+      '<span class="row-title">' + esc(shortDate(entry.period.from) + " – " + shortDate(entry.period.to)) + '</span><span class="row-time">' + esc(plural((entry.counts || {}).changes || 0, "change", "changes")) + "</span>" +
+      '<span class="row-summary">' + esc(entry.overview || "") + "</span></button>").join("") + "</section>" : "");
+}
+function renderDigestDetail(pane) {
+  const id = state.selectedNotificationId.slice(DIGEST_PREFIX.length);
+  const digest = digestList().find(candidate => candidate.id === id);
+  const entry = digestEntry(id);
+  const record = state.digestOpen && state.digestOpen.of === id ? state.digestOpen.record : entry && entry.latest;
+  const heading = detailHeading({ back: true, source: "Scheduled digest", title: digest ? (digest.frequency === "weekly" ? "Weekly" : "Daily") + " digest · " + digestScope(digest.workspace) : "Digest",
+    meta: (record ? "<span>" + esc(shortDate(record.period.from) + " – " + shortDate(record.period.to)) + "</span>" : "") + (digest ? "<span>" + esc(digestWhen(digest)) + "</span>" : ""),
+    actions: '<button class="btn" type="button" data-digest-edit>Edit digests</button>' + (state.digestOpen && state.digestOpen.of === id ? '<button class="btn" type="button" data-digest-latest>Latest digest</button>' : "") });
+  if (!digest) { pane.innerHTML = '<div class="detail-inner">' + heading + emptyState("This digest is no longer configured", "Edit digests to set one up again.") + "</div>"; return; }
+  pane.innerHTML = '<div class="detail-inner">' + heading + (record ? renderDigestRecord(record, digest, entry ? entry.history : [])
+    : '<section class="sheet"><p class="note-strip">No digest yet. The first is built by the first scan after ' + esc(digestWhen(digest).toLowerCase()) + ", and sent with that scan's alerts.</p></section>") + "</div>";
+}
+async function openOlderDigest(path, of) {
+  if (!path) return;
+  try {
+    const record = JSON.parse(await readSnapshotFile(path, state.digestCache));
+    state.digestOpen = { of, record };
+  } catch (error) { showToast("Couldn't load that digest: " + String(error.message || error)); return; }
+  renderNotificationDetail();
+  resetDetailScroll("notifications");
+}
+function digestRowHtml(digest, index) {
+  const { workspaces } = scopeOptions();
+  const names = Array.from(new Set(workspaces.map(ws => ws.name).concat(digest.workspace && digest.workspace !== "*" ? [digest.workspace] : [])));
+  const option = (value, text, current) => '<option value="' + esc(value) + '"' + (String(value) === String(current) ? " selected" : "") + ">" + esc(text) + "</option>";
+  const zones = SCAN_ZONES.indexOf(digest.timezone || "UTC") >= 0 ? SCAN_ZONES : [digest.timezone].concat(SCAN_ZONES);
+  return '<div class="digest-row" data-digest-row="' + index + '">' +
+    '<label><span class="visually-hidden">Workspace</span><select class="field-input" data-digest-field="workspace">' + option("*", "All workspaces", digest.workspace) + names.map(name => option(name, name, digest.workspace)).join("") + "</select></label>" +
+    '<label><span class="visually-hidden">How often</span><select class="field-input" data-digest-field="frequency">' + option("daily", "Daily", digest.frequency) + option("weekly", "Weekly", digest.frequency) + "</select></label>" +
+    '<label><span class="visually-hidden">Day</span><select class="field-input" data-digest-field="day"' + (digest.frequency === "weekly" ? "" : " disabled") + ">" + L.SCAN_WEEKDAYS.map(day => option(day, SCAN_DAY_WORDS[day], digest.day || "mon")).join("") + "</select></label>" +
+    '<label><span class="visually-hidden">Hour</span><select class="field-input" data-digest-field="hour">' + Array.from({ length: 24 }, (_, h) => option(h, String(h).padStart(2, "0") + ":00", digest.hour == null ? 8 : digest.hour)).join("") + "</select></label>" +
+    '<label><span class="visually-hidden">Time zone</span><select class="field-input" data-digest-field="timezone">' + zones.map(zone => option(zone, zone.replace(/_/g, " "), digest.timezone || "UTC")).join("") + "</select></label>" +
+    '<button type="button" data-digest-remove="' + index + '" aria-label="Remove this digest">Remove</button></div>';
+}
+function openDigestDialog() {
+  state.digestDraft = digestList().map(digest => Object.assign({}, digest));
+  renderDigestRows();
+  $("digestError").textContent = "";
+  $("digestDialog").showModal();
+}
+function renderDigestRows() {
+  $("digestRows").innerHTML = state.digestDraft.length ? state.digestDraft.map(digestRowHtml).join("") : '<p class="field-help">No digests yet.</p>';
+}
+function readDigestRows() {
+  document.querySelectorAll("#digestRows [data-digest-row]").forEach(row => {
+    const digest = state.digestDraft[Number(row.dataset.digestRow)];
+    row.querySelectorAll("[data-digest-field]").forEach(field => { digest[field.dataset.digestField] = field.dataset.digestField === "hour" ? Number(field.value) : field.value; });
+    if (digest.frequency !== "weekly") delete digest.day;
+  });
+}
+function digestId(digest, taken) {
+  const base = (String(digest.workspace === "*" ? "all" : digest.workspace).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 28) || "digest") + "-" + digest.frequency;
+  let id = base, n = 2;
+  while (taken.has(id)) id = base + "-" + n++;
+  taken.add(id);
+  return id;
+}
+function submitDigests() {
+  readDigestRows();
+  const seen = new Set();
+  const dupes = state.digestDraft.filter(digest => { const key = digest.workspace + "|" + digest.frequency; const hit = seen.has(key); seen.add(key); return hit; });
+  if (dupes.length) { $("digestError").textContent = "Two digests cover the same workspace at the same frequency."; return; }
+  const kept = new Set(state.digestDraft.filter(digest => digest.id).map(digest => digest.id));
+  const digests = state.digestDraft.map(digest => {
+    const out = { id: digest.id || digestId(digest, kept), workspace: digest.workspace, frequency: digest.frequency, hour: digest.hour == null ? 8 : digest.hour, timezone: digest.timezone || "UTC" };
+    if (digest.frequency === "weekly") out.day = digest.day || "mon";
+    return out;
+  });
+  const body = [L.SETTINGS_MARKER, "", "Please apply these monitor settings in ChangeSentinel.", "",
+    "Change: scheduled digests \u2192 " + (digests.map(d => d.frequency + " " + digestScope(d.workspace)).join(", ") || "none"), "",
+    "SETTINGS_JSON:", JSON.stringify({ digests }), "", "This request was created from the ChangeSentinel dashboard."].join("\n");
+  $("digestDialog").close();
+  const params = new URLSearchParams(); params.set("title", "[ChangeSentinel] Update monitors (digests)"); params.set("body", body);
+  openGitHubRequest(REPO + "/issues/new?" + params.toString(), "Submit the prefilled request on GitHub. Digests are sent from the first scan after their time.");
 }
 
 /* ================= Alert channels ================= */
@@ -4908,7 +5488,8 @@ function ensureSelection(view) {
   if (view === "health" && !healthKeys().includes(state.selectedHealthKey)) state.selectedHealthKey = "fleet";
   if (view === "notifications") {
     const { pending, sent } = notificationLists();
-    if (!pending.concat(sent).some(item => item.eventId === state.selectedNotificationId)) {
+    const special = state.selectedNotificationId === SHADOW_KEY || (state.selectedNotificationId.indexOf(DIGEST_PREFIX) === 0 && digestList().some(d => DIGEST_PREFIX + d.id === state.selectedNotificationId));
+    if (!special && !pending.concat(sent).some(item => item.eventId === state.selectedNotificationId)) {
       const first = pending[0] || sent[0];
       state.selectedNotificationId = first ? first.eventId : "";
     }
@@ -4938,6 +5519,8 @@ function detailRenderKey(view) {
       return run ? JSON.stringify(run) : "none";
     }
     if (view === "notifications") {
+      if (state.selectedNotificationId.indexOf(DIGEST_PREFIX) === 0) return "digest|" + state.selectedNotificationId + "|" + (state.assetSignatures.digests || "") + "|" + (state.assetSignatures.digestConfig || "") + "|" + (state.digestOpen ? state.digestOpen.record.id : "");
+      if (state.selectedNotificationId === SHADOW_KEY) return "shadow|" + (state.shadow ? state.shadow.at || state.shadow.name || "" : "") + "|" + (state.shadow && state.shadow.loading ? 1 : 0);
       const { pending, sent } = notificationLists();
       const item = pending.concat(sent).find(candidate => candidate.eventId === state.selectedNotificationId);
       return item ? JSON.stringify([item, channelSummary()]) : "none";
@@ -5039,9 +5622,9 @@ function setSelected(id) { select("monitors", id); }
 /* ================= Data refresh ================= */
 
 // Review decisions arrive between scans, so the ledger is polled with the small files.
-const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health"];
+const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health", "digests", "digestConfig"];
 const LARGE_ASSETS = ["inventory", "history", "scoutReview"];
-const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health"]);
+const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health", "digests", "digestConfig"]);
 const FULL_REFRESH_MS = 10 * 60 * 1000;
 function assetsSignature() {
   return SMALL_ASSETS.concat(LARGE_ASSETS).map(key => key + "=" + (state.assetSignatures[key] || "")).join("|");
@@ -5104,6 +5687,8 @@ async function loadDataOnce(showErrors) {
     state.reviews = values.reviews;
     state.regulators = values.regulators;
     state.health = values.health;
+    state.digests = values.digests;
+    state.digestConfig = values.digestConfig;
     state.regulatorProfiles = null;
     state.items = makeItems();
     state.scoutMonitored = null;
@@ -5195,6 +5780,11 @@ function reportScanStatus() {
 
 const BULK_REQUEST_MARKER = "<!-- changesentinel:add-monitor-bulk:v1 -->";
 const MAX_BULK_LINKS = 25;
+// An import is split into requests of MAX_BULK_LINKS links each.
+const MAX_IMPORT_LINKS = 2500;
+const BULK_ACCEPTED = "Accepted columns: URL (required), Name, Workspace, Labels, Frequency, Status, Include Selector, Ignore Selectors.";
+let bulkImport = null;
+let bulkOpened = new Set();
 const MAX_BULK_REQUEST_URL_LENGTH = 7000;
 let bulkImportRows = [];
 let bulkImportErrors = [];
@@ -5306,6 +5896,7 @@ function addRestoreDraft() {
   }
 }
 function addClearDraft() {
+  state.add.similarTo = null;
   const a = state.add;
   a.candidates = []; a.picked = new Map(); a.opened = {}; a.notes = []; a.history = []; a.at = -1; a.page = null; a.anchor = "";
   a.rules = {}; a.area = null; a.ruleDrafts = {}; a.ruleRequests = {}; a.ruleOpen = false;
@@ -6320,6 +6911,51 @@ function renderCrawl() {
   $("crawlReview").disabled = crawl.running || !crawl.found.size;
 }
 
+/* ---------- Find similar: pages like one monitored page ----------
+ * Starts from where the page is listed (Scout's record of the page that
+ * linked it, the monitor's own start page, or the nearest section page),
+ * follows links two levels within that section, and lists the most similar
+ * links first in the usual review step. Nothing is ticked for the owner.
+ */
+async function findSimilar(urlId) {
+  const item = state.items.find(candidate => candidate.url_id === urlId);
+  if (!item) return;
+  const source = sourceForItem(item);
+  const target = { url: item.canonical_url, title: healthName({ name: itemTitle(item) }), format: L.pickFormat(item.canonical_url, item.content_type) };
+  const scoutParents = scoutCandidates().filter(candidate => L.urlKey(candidate.url) === L.urlKey(item.canonical_url))
+    .map(candidate => candidate.evidence && candidate.evidence.parent_url).filter(Boolean);
+  const seeds = (source.seed_urls || []).filter(seed => L.urlKey(seed) !== L.urlKey(item.canonical_url));
+  const starts = L.similarStarts(target, { parents: scoutParents.concat(seeds) });
+  openAddMonitor();
+  const a = state.add;
+  a.similarTo = target;
+  $("newMonitorUrl").value = starts[0] || item.canonical_url;
+  showToast("Looking for pages like \u201c" + target.title + "\u201d\u2026");
+  let start = "";
+  for (const url of starts) {
+    try {
+      const page = await addReadPage(url);
+      if (page.kind === "page" && (page.links || []).filter(link => !link.chrome).length >= 3) { start = page.url || url; break; }
+    } catch (_) { /* try the next place it may be listed */ }
+  }
+  if (!start) { a.similarTo = null; showToast("Couldn't find a page that lists this one. Open its section in Add a link instead."); return; }
+  a.url = start;
+  $("newMonitorUrl").value = start;
+  const options = L.pickScopeOptions(start);
+  const scope = (options.find(option => option.id === "section") || options[0] || {}).prefix || "";
+  await crawlStart(start, 2, scope);
+  a.similarTo = target;
+  if (a.step === "review") renderReview();
+}
+function similarEntries(plan, scoreOf) {
+  const a = state.add;
+  if (!a.similarTo) return [];
+  const free = a.candidates.filter(item => !plan.monitored.has(item.key) && !plan.stopped.has(item.key));
+  return L.rankSimilar(a.similarTo, free.map(item => Object.assign({}, item, { title: item.title }))).map(entry => ({
+    item: a.candidates.find(candidate => candidate.key === entry.link.key) || entry.link, score: entry.score, reasons: entry.reasons
+  })).filter(entry => entry.item && entry.item.key);
+}
+
 /* ---------- Confirm ---------- */
 
 function addRequestRows(items) {
@@ -6343,6 +6979,11 @@ function addPlan() {
   return { monitored, stopped, covered, picked, summary, pending, leftStopped, leftCovered, prepared };
 }
 function renderReview() {
+  const workspaceList = $("reviewWorkspaceList");
+  if (workspaceList && !workspaceList.childElementCount) {
+    const names = Array.from(new Set(scopeOptions().workspaces.filter(ws => !ws.auto).map(ws => ws.name).concat(["NAM", "EMEA", "LATAM", "APAC"])));
+    workspaceList.innerHTML = names.map(name => '<option value="' + esc(name) + '"></option>').join("");
+  }
   const a = state.add;
   const plan = addPlan();
   const filters = { query: a.query, format: a.format, show: a.show, selectedKeys: new Set(a.picked.keys()) };
@@ -6358,7 +6999,10 @@ function renderReview() {
     a.scoredCount = a.candidates.length;
   }
   const scoreOf = item => a.scores.get(item.key) || { score: 0, reasons: [], older: false };
+  const similar = similarEntries(plan, scoreOf);
+  const similarKeys = new Set(similar.map(entry => entry.item.key));
   const pool = a.candidates.filter(item => {
+    if (similarKeys.has(item.key)) return false;
     const score = scoreOf(item);
     if (a.picked.has(item.key)) return a.show !== "SUGGESTED" || score.score >= 3;
     if (a.hideOlder && score.older) return false;
@@ -6371,6 +7015,7 @@ function renderReview() {
     ? ["Found " + plural(a.candidates.length, "link", "links") + (a.crawl ? " on " + plural(a.crawl.read, "page", "pages") : "") + ". Nothing is ticked yet: tick the ones to monitor. Historical and unrelated links are listed too, so you decide.", a.info || ""]
     : a.origin === "scout" ? ["These are the Scout findings you selected. Untick any you don't want; each one is requested as its own monitor."]
     : ["These are the links you selected while exploring. Untick any you don't want."];
+  if (a.similarTo) notes.unshift("Looking for pages like \u201c" + a.similarTo.title + "\u201d: " + (similar.length ? plural(similar.length, "close match is", "close matches are") + " listed first." : "no close match was found, so every link found nearby is listed."));
   if (hiddenOlder) notes.push(plural(hiddenOlder, "older version is", "older versions are") + " hidden.");
   const rulesRequested = Object.values(a.ruleRequests || {});
   if (rulesRequested.length) notes.push(plural(rulesRequested.length, "document rule was", "document rules were") + " requested; the links " + (rulesRequested.length === 1 ? "it covers are" : "they cover are") + " left out of these requests.");
@@ -6383,7 +7028,7 @@ function renderReview() {
   const list = $("reviewList");
   if (!a.candidates.length) {
     list.innerHTML = emptyState("No links yet", a.origin === "crawl" ? "Nothing was found. Go back and try another page or level." : "Go back and Shift-click the links you want.");
-  } else if (!total) {
+  } else if (!total && !similar.length) {
     list.innerHTML = emptyState("No links match", "Try a different search, or show all links.");
   } else {
     let shown = 0;
@@ -6393,6 +7038,10 @@ function renderReview() {
     if (a.reviewSimilar.length) {
       html += '<div class="review-similar" role="group" aria-label="Tick similar links"><span class="smart-kicker">Tick similar</span>' +
         a.reviewSimilar.map((rule, index) => '<button class="similar-chip" type="button" data-review-similar="' + index + '"><b>+' + rule.extra + "</b> " + esc(rule.label) + "</button>").join("") + "</div>";
+    }
+    if (similar.length) {
+      html += '<div class="link-group"><span class="link-group-name"><strong>Most like \u201c' + esc(a.similarTo.title) + "\u201d</strong> · " + similar.length + "</span></div>" +
+        similar.map(entry => addPickRow(entry.item, { reasons: entry.reasons.concat(scoreOf(entry.item).reasons || []).slice(0, 4), older: scoreOf(entry.item).older, monitored: false, stopped: false, locked: false, covered: plan.covered.has(entry.item.key), part: "" })).join("");
     }
     groups.forEach((group, index) => {
       if (shown >= a.limit) return;
@@ -6415,6 +7064,7 @@ function renderReview() {
     list.innerHTML = html;
   }
   state.add.groups = groups;
+  renderReviewConditionSuggestions();
   renderReviewFoot(plan);
 }
 function renderReviewFoot(plan) {
@@ -6468,6 +7118,15 @@ function reviewAlertCondition() {
   if (only && !condition) { showToast("Describe the condition to alert on, or untick \u201cAlert only when it is met\u201d."); return null; }
   return condition ? { condition, only } : {};
 }
+// Workspace and labels for every new monitor in the review step's requests.
+function reviewOrganise() {
+  const workspace = ($("reviewWorkspace") ? $("reviewWorkspace").value : "").trim();
+  const labels = L.parseLabels($("reviewLabels") ? $("reviewLabels").value : "");
+  const bad = (workspace ? [workspace] : []).concat(labels).filter(text => !L.validTag(text));
+  if (bad.length) { showToast("Use 1\u201340 letters, digits, spaces or & / + . - _ in: " + bad.join(", ")); return null; }
+  if (labels.length > L.LABEL_MAX) { showToast("At most " + L.LABEL_MAX + " labels."); return null; }
+  return { workspace, labels };
+}
 function reviewOpenBatch(index) {
   const a = state.add;
   const plan = addPlan();
@@ -6475,7 +7134,9 @@ function reviewOpenBatch(index) {
   if (!batch) return renderReviewFoot(plan);
   const alert = reviewAlertCondition();
   if (alert === null) return;
-  const target = makeBulkGitHubIssueUrl(batch, alert);
+  const organise = reviewOrganise();
+  if (organise === null) return;
+  const target = makeBulkGitHubIssueUrl(batch, alert, organise);
   if (target.length > MAX_BULK_REQUEST_URL_LENGTH) { showToast("This request is too long for GitHub; nothing was opened."); return; }
   const now = new Date().toISOString();
   batch.forEach(row => { a.opened[L.urlKey(row.url)] = now; });
@@ -6656,95 +7317,63 @@ function parseCsvMatrix(text) {
 function bulkHeaderKey(value) {
   return String(value || "").replace(/^\uFEFF/, "").trim().toLowerCase().replace(/[\s_-]+/g, " ");
 }
+// Reads URL, name, selectors, and (from another tool's export) workspace,
+// labels, check frequency and status; see L.importRows.
 function bulkRowsFromMatrix(matrix) {
-  const empty = row => !row || row.every(cell => !String(cell == null ? "" : cell).trim());
-  const rows = (matrix || []).map(row => Array.isArray(row) ? row.map(value => String(value == null ? "" : value).trim()) : []).filter(row => !empty(row));
-  if (!rows.length) throw new Error("The spreadsheet has no link rows.");
-  const aliases = {
-    url: ["url", "urls", "link", "links", "website", "website url", "webpage", "web page", "page url", "address"],
-    name: ["name", "display name", "title", "monitor name", "label"],
-    include_selector: ["include selector", "include css selector", "selector", "css selector"],
-    ignore_selectors: ["ignore selectors", "ignore css selectors"]
-  };
-  const first = rows[0].map(bulkHeaderKey);
-  const urlColumn = first.findIndex(value => aliases.url.includes(value));
-  const hasHeader = urlColumn >= 0;
-  const columns = {};
-  if (hasHeader) {
-    for (const key of Object.keys(aliases)) columns[key] = first.findIndex(value => aliases[key].includes(value));
-    rows.shift();
-  } else {
-    columns.url = 0;
-    columns.name = 1;
-    columns.include_selector = 2;
-    columns.ignore_selectors = 3;
-  }
-  const parsed = [];
-  const errors = [];
-  const seen = new Map();
-  rows.forEach((row, index) => {
-    const rowNumber = index + (hasHeader ? 2 : 1);
-    const cell = column => column >= 0 && column < row.length ? row[column] : "";
-    const rawUrl = cell(columns.url);
-    if (!rawUrl) {
-      if (!empty(row)) errors.push("Row " + rowNumber + ": missing URL.");
-      return;
-    }
-    let url;
-    try {
-      const candidate = new URL(rawUrl);
-      if (!["http:", "https:"].includes(candidate.protocol) || !candidate.hostname || candidate.username || candidate.password) throw new Error();
-      // The engine's canonical form, so duplicates differing only in tracking
-      // parameters or query order collapse to one request row.
-      url = L.canonicalUrl(candidate.toString());
-    } catch (_) {
-      errors.push("Row " + rowNumber + ": enter a complete public http:// or https:// URL.");
-      return;
-    }
-    const name = cell(columns.name).replace(/[\r\n]+/g, " ").trim().slice(0, 100);
-    const includeSelector = cell(columns.include_selector).trim();
-    const rawIgnore = cell(columns.ignore_selectors);
-    const ignoreSelectors = rawIgnore ? rawIgnore.split(/[;\r\n]+/).map(value => value.trim()).filter(Boolean) : [];
-    if (includeSelector.length > 500) errors.push("Row " + rowNumber + ": include selector exceeds 500 characters.");
-    if (ignoreSelectors.length > 20 || ignoreSelectors.some(value => value.length > 500)) errors.push("Row " + rowNumber + ": use at most 20 ignore selectors, each at most 500 characters.");
-    const previous = seen.get(url);
-    if (previous) {
-      if (previous.include_selector !== includeSelector || previous.ignore_selectors.join("\n") !== ignoreSelectors.join("\n")) {
-        errors.push("Row " + rowNumber + ": duplicate URL has different selectors from an earlier row.");
-      }
-      return;
-    }
-    const item = { url, name, include_selector: includeSelector, ignore_selectors: ignoreSelectors };
-    seen.set(url, item);
-    parsed.push(item);
-  });
-  if (!parsed.length && !errors.length) errors.push("No valid URLs were found. Add a URL column or place one URL in the first column.");
-  if (parsed.length > MAX_BULK_LINKS) errors.push("This request supports up to " + MAX_BULK_LINKS + " unique links. Split this file into smaller batches.");
-  return { rows: parsed, errors, rowCount: rows.length, duplicateCount: Math.max(0, rows.length - parsed.length - errors.length) };
+  const known = new Set(state.items.map(item => L.canonicalUrl(item.canonical_url)).concat(
+    activeSources().filter(source => (source.seed_urls || []).length === 1).map(source => L.canonicalUrl(source.seed_urls[0]))));
+  const result = L.importRows(matrix, known);
+  if (result.rows.length > MAX_IMPORT_LINKS) result.errors.push("An import can hold up to " + MAX_IMPORT_LINKS.toLocaleString() + " new links. Split this file.");
+  return result;
 }
 function setBulkStatus(message, isError) {
   const status = $("bulkImportStatus");
   status.textContent = message;
   status.classList.toggle("is-error", !!isError);
 }
+function bulkOrganise() {
+  const workspace = $("bulkWorkspace").value.trim();
+  const labels = L.parseLabels($("bulkLabels").value);
+  const bad = (workspace ? [workspace] : []).concat(labels).filter(text => !L.validTag(text));
+  return { workspace, labels, shadow: $("bulkShadow").checked, bad };
+}
+function bulkBatches() {
+  const batches = [];
+  for (let i = 0; i < bulkImportRows.length; i += MAX_BULK_LINKS) batches.push(bulkImportRows.slice(i, i + MAX_BULK_LINKS));
+  return batches;
+}
 function renderBulkPreview() {
   const preview = $("bulkImportPreview");
   const actions = $("bulkImportActions");
+  const summary = $("bulkImportSummary");
   preview.replaceChildren();
-  if (!bulkImportRows.length) {
-    preview.hidden = true;
-    actions.hidden = true;
-    $("submitBulkMonitor").disabled = true;
-    return;
+  const skipped = bulkImport ? bulkImport.skipped : { existing: [], paused: [] };
+  const anything = bulkImportRows.length || skipped.existing.length || skipped.paused.length;
+  summary.hidden = !anything;
+  $("bulkImportOptions").hidden = !bulkImportRows.length;
+  actions.hidden = !anything;
+  if (anything) {
+    const chips = [plural(bulkImportRows.length, "new link", "new links")];
+    if (skipped.existing.length) chips.push(skipped.existing.length + " already monitored");
+    if (skipped.paused.length) chips.push(skipped.paused.length + " paused, left out");
+    const workspaces = new Map(), cadences = new Map();
+    bulkImportRows.forEach(row => {
+      if (row.workspace) workspaces.set(row.workspace, (workspaces.get(row.workspace) || 0) + 1);
+      const label = L.scanScheduleLabel(L.scanSchedule({ check_every_hours: row.check_every_hours || 6 }));
+      cadences.set(label, (cadences.get(label) || 0) + 1);
+    });
+    workspaces.forEach((count, name) => chips.push(name + " · " + count));
+    if (cadences.size > 1 || !cadences.has("Every 6 hours")) cadences.forEach((count, label) => chips.push(label + " · " + count));
+    if (bulkImport && bulkImport.conditions) chips.push(bulkImport.conditions + " alert conditions not imported");
+    summary.innerHTML = chips.map(text => '<span class="chip is-static">' + esc(text) + "</span>").join("");
   }
-  preview.hidden = false;
-  actions.hidden = false;
+  preview.hidden = !bulkImportRows.length;
   bulkImportRows.slice(0, 5).forEach(item => {
     const line = document.createElement("div");
     line.className = "bulk-preview-row";
     const name = document.createElement("span");
     name.className = "bulk-preview-name";
-    name.textContent = item.name || item.url;
+    name.textContent = (item.name || item.url) + (item.workspace ? " \u00b7 " + item.workspace : "");
     const url = document.createElement("span");
     url.className = "bulk-preview-url";
     try { url.textContent = new URL(item.url).hostname; } catch (_) { url.textContent = item.url; }
@@ -6754,17 +7383,41 @@ function renderBulkPreview() {
   if (bulkImportRows.length > 5) {
     const more = document.createElement("div");
     more.className = "field-help";
-    more.textContent = "+ " + (bulkImportRows.length - 5) + " more links";
+    more.textContent = "+ " + (bulkImportRows.length - 5).toLocaleString() + " more links";
     preview.appendChild(more);
   }
-  $("submitBulkMonitor").disabled = !!bulkImportErrors.length;
+  const batches = bulkBatches();
+  const blocked = !!bulkImportErrors.length;
+  $("bulkRequests").innerHTML = !batches.length ? "" : batches.map((batch, index) => {
+    const opened = bulkOpened.has(index);
+    const label = batches.length === 1 ? (opened ? "Open again" : "Continue with " + plural(batch.length, "link", "links"))
+      : (opened ? "Open again " : "Request ") + (index + 1) + " of " + batches.length;
+    return '<button class="btn' + (opened ? "" : " btn-primary") + '" type="button" data-bulk-batch="' + index + '"' + (blocked ? " disabled" : "") + ' title="' + esc(plural(batch.length, "link", "links")) + '">' + esc(label) + "</button>";
+  }).join("");
+}
+function openBulkBatch(index) {
+  const batch = bulkBatches()[index];
+  if (!batch || bulkImportErrors.length) return;
+  const organise = bulkOrganise();
+  if (organise.bad.length) { setBulkStatus("Use 1\u201340 letters, digits, spaces or & / + . - _ in: " + organise.bad.join(", "), true); return; }
+  const target = makeBulkGitHubIssueUrl(batch, null, organise);
+  if (target.length > MAX_BULK_REQUEST_URL_LENGTH) { setBulkStatus("Request " + (index + 1) + " is too long for GitHub; shorten names or labels in the file.", true); return; }
+  bulkOpened.add(index);
+  renderBulkPreview();
+  const githubWindow = window.open(target, "_blank");
+  if (githubWindow) {
+    try { githubWindow.opener = null; } catch (_) {}
+    showToast("Request " + (index + 1) + " of " + bulkBatches().length + " opened on GitHub. Submit it there; nothing is registered until you do.");
+  } else {
+    showToast("Your browser blocked the new tab. Allow pop-ups for this dashboard and press the button again.");
+  }
 }
 async function readBulkFile(file) {
   bulkImportRows = [];
   bulkImportErrors = [];
   renderBulkPreview();
   if (!file) {
-    setBulkStatus("Accepted columns: URL (required), Name, Include Selector, Ignore Selectors.", false);
+    setBulkStatus(BULK_ACCEPTED, false);
     return;
   }
   if (file.size > 5 * 1024 * 1024) {
@@ -6784,36 +7437,38 @@ async function readBulkFile(file) {
       throw new Error("Choose a .csv or .xlsx file.");
     }
     const result = bulkRowsFromMatrix(matrix);
+    bulkImport = result;
     bulkImportRows = result.rows;
     bulkImportErrors = result.errors;
+    bulkOpened = new Set();
     if (bulkImportErrors.length) {
       setBulkStatus("Found " + bulkImportErrors.length + " issue(s): " + bulkImportErrors.slice(0, 3).join(" ") + (bulkImportErrors.length > 3 ? " …" : ""), true);
+    } else if (!bulkImportRows.length) {
+      setBulkStatus("Nothing new to import: every link in the file is already monitored or paused.", false);
     } else {
-      setBulkStatus("Ready to import " + bulkImportRows.length + " unique links" + (result.duplicateCount ? " (" + result.duplicateCount + " duplicate row(s) removed)" : "") + ". " + (extension === "xlsx" ? "Reading the first worksheet." : "CSV parsed locally."), false);
+      const batches = Math.ceil(bulkImportRows.length / MAX_BULK_LINKS);
+      setBulkStatus("Ready to import " + bulkImportRows.length.toLocaleString() + " new links" + (batches > 1 ? " in " + batches + " requests of up to " + MAX_BULK_LINKS : "") + ". " +
+        (result.columns && result.columns.frequency >= 0 ? "Check frequencies were matched to the nearest scan schedule (fastest every 6 hours). " : "") +
+        (extension === "xlsx" ? "Read from the first worksheet." : "Parsed in this browser."), false);
     }
   } catch (error) {
+    bulkImport = null;
     bulkImportRows = [];
     bulkImportErrors = [String(error && error.message || error)];
     setBulkStatus(bulkImportErrors[0], true);
   }
   renderBulkPreview();
-  if (!bulkImportErrors.length && bulkImportRows.length) {
-    const target = makeBulkGitHubIssueUrl(bulkImportRows);
-    if (target.length > MAX_BULK_REQUEST_URL_LENGTH) {
-      bulkImportErrors.push("The prefilled GitHub request is too long. Split the spreadsheet into smaller batches.");
-      setBulkStatus(bulkImportErrors[0], true);
-      $("submitBulkMonitor").disabled = true;
-    } else {
-      $("submitBulkMonitor").textContent = "Continue with " + bulkImportRows.length + (bulkImportRows.length === 1 ? " link" : " links");
-    }
-  }
 }
-function makeBulkGitHubIssueUrl(rows, alert) {
+function makeBulkGitHubIssueUrl(rows, alert, organise) {
   const bodyLines = [
     BULK_REQUEST_MARKER, "",
     "Please register the URLs listed below as ChangeSentinel monitors.", ""
   ];
   if (alert && alert.condition) bodyLines.push("Alert me when: " + alert.condition, "Alert only when condition met: " + (alert.only ? "yes" : "no"), "");
+  if (organise && organise.workspace) bodyLines.push("Workspace: " + organise.workspace);
+  if (organise && organise.labels && organise.labels.length) bodyLines.push("Labels: " + organise.labels.join(", "));
+  if (organise && organise.shadow) bodyLines.push("Shadow mode: yes");
+  if (organise && (organise.workspace || (organise.labels || []).length || organise.shadow)) bodyLines.push("");
   bodyLines.push(
     "BULK_DATA_JSON:",
     JSON.stringify(rows),
@@ -6825,21 +7480,14 @@ function makeBulkGitHubIssueUrl(rows, alert) {
   params.set("body", bodyLines.join("\n"));
   return REPO + "/issues/new?" + params.toString();
 }
-function submitBulkMonitor() {
-  if (!bulkImportRows.length || bulkImportErrors.length) return;
-  const target = makeBulkGitHubIssueUrl(bulkImportRows);
-  if (target.length > MAX_BULK_REQUEST_URL_LENGTH) {
-    setBulkStatus("The prefilled GitHub request is too long. Split the spreadsheet into smaller batches.", true);
-    return;
-  }
-  openGitHubRequest(target, "Submit the prefilled bulk request on GitHub. The owner-only workflow will validate the links, register the sources and queue their first scans.");
-}
 function clearBulkImport() {
   $("bulkMonitorFile").value = "";
+  bulkImport = null;
   bulkImportRows = [];
   bulkImportErrors = [];
+  bulkOpened = new Set();
   renderBulkPreview();
-  setBulkStatus("Accepted columns: URL (required), Name, Include Selector, Ignore Selectors.", false);
+  setBulkStatus(BULK_ACCEPTED, false);
 }
 /* ================= Review decisions, exports, saved-copy integrity ================= */
 
@@ -7061,7 +7709,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -7133,6 +7781,27 @@ $("workspace").addEventListener("click", event => {
   if (data.selectHealth) return select("health", data.selectHealth);
   if (data.editCondition) return openConditionDialog(data.editCondition);
   if (data.editSchedule) return openScanSchedule(data.editSchedule.split(","));
+  if (data.editOrganise) return openOrganise(data.editOrganise.split(","));
+  if (data.pickSource) return togglePicked(data.pickSource);
+  if (data.selectShown !== undefined) {
+    const shown = shownMonitorIds();
+    const all = shown.length && shown.every(id => state.picked.has(id));
+    shown.forEach(id => all ? state.picked.delete(id) : state.picked.add(id));
+    renderMonitorList(); renderSelectBar(); return;
+  }
+  if (data.bulk) {
+    const ids = Array.from(state.picked);
+    if (data.bulk === "schedule") return openScanSchedule(ids);
+    if (data.bulk === "organise") return openOrganise(ids);
+    return openPreset(ids);
+  }
+  if (data.scopeClear !== undefined) return setScope(null);
+  if (data.findSimilar) return findSimilar(data.findSimilar);
+  if (data.shadowDownload !== undefined) return downloadShadowComparison();
+  if (data.shadowImport !== undefined) return importShadowPages();
+  if (data.digestEdit !== undefined) return openDigestDialog();
+  if (data.digestOpen !== undefined) return openOlderDigest(data.digestOpen, data.digestOf);
+  if (data.digestLatest !== undefined) { state.digestOpen = null; renderNotificationDetail(); return; }
   if (data.channelGuide !== undefined) { const guide = $("channelGuide"); if (guide) { guide.open = true; guide.scrollIntoView({ block: "nearest" }); } return; }
   if (data.selectNotification) return select("notifications", data.selectNotification);
   if (data.go) return setView(data.go);
@@ -7580,6 +8249,8 @@ $("cancelAddMonitor").addEventListener("click", () => $("addMonitorDialog").clos
 // Only the first step closes on a backdrop click; the larger steps hold work in progress.
 $("addMonitorDialog").addEventListener("click", event => {
   if (event.target === $("addMonitorDialog") && state.add.step === "start") $("addMonitorDialog").close();
+  const chip = event.target.closest("#reviewConditionSuggestions [data-condition-suggestion]");
+  if (chip) { $("reviewCondition").value = chip.dataset.conditionSuggestion; $("reviewCondition").focus(); }
 });
 $("addMonitorDialog").addEventListener("close", () => {
   if (state.add.crawl && state.add.crawl.running) state.add.crawl.stop = true;
@@ -7592,7 +8263,7 @@ $("newMonitorUrl").addEventListener("input", () => {
   if (state.add.method === "crawl") syncAddScope();
 });
 $("addMonitorForm").addEventListener("change", event => { if (event.target.name === "addMethod") syncAddMethod(); });
-$("addMonitorForm").addEventListener("submit", startAddLink);
+$("addMonitorForm").addEventListener("submit", event => { state.add.similarTo = null; startAddLink(event); });
 $("addExactSubmit").addEventListener("click", submitExactAddress);
 $("autofillMonitorMetadata").addEventListener("click", suggestMonitorMetadata);
 $("addResume").addEventListener("click", event => {
@@ -7749,11 +8420,55 @@ $("reviewBack").addEventListener("click", () => {
   if (a.origin === "explore" && a.page) addGoto("explore");
   else addGoto("start");
 });
+$("selectMonitorsBtn").addEventListener("click", () => setPicking(!state.picking));
+$("workspace").addEventListener("change", event => {
+  const select = event.target.closest("[data-scope]");
+  if (select) return setScope(select.dataset.scope, select.value);
+  if (event.target.id === "shadowFile") readShadowFile(event.target.files && event.target.files[0]);
+});
+$("closeOrganise").addEventListener("click", () => $("organiseDialog").close());
+$("cancelOrganise").addEventListener("click", () => $("organiseDialog").close());
+$("organiseForm").addEventListener("submit", event => { event.preventDefault(); submitOrganise(); });
+$("organiseWorkspace").addEventListener("change", () => { $("organiseWorkspaceNew").hidden = $("organiseWorkspace").value !== "__new"; if (!$("organiseWorkspaceNew").hidden) $("organiseWorkspaceNew").focus(); });
+$("organiseDialog").addEventListener("click", event => {
+  if (event.target === $("organiseDialog")) return $("organiseDialog").close();
+  const add = event.target.closest("[data-add-label]");
+  if (add) { const labels = L.parseLabels($("organiseAdd").value + "," + add.dataset.addLabel); $("organiseAdd").value = labels.join(", "); return; }
+  const remove = event.target.closest("[data-remove-label]");
+  if (remove) {
+    const key = remove.dataset.removeLabel.toLowerCase();
+    if (state.organiseRemove.has(key)) state.organiseRemove.delete(key); else state.organiseRemove.set(key, remove.dataset.removeLabel);
+    remove.setAttribute("aria-pressed", String(state.organiseRemove.has(key)));
+    remove.classList.toggle("is-remove", state.organiseRemove.has(key));
+  }
+});
+$("closeDigest").addEventListener("click", () => $("digestDialog").close());
+$("cancelDigest").addEventListener("click", () => $("digestDialog").close());
+$("digestForm").addEventListener("submit", event => { event.preventDefault(); submitDigests(); });
+$("digestDialog").addEventListener("change", event => {
+  if (event.target.dataset.digestField === "frequency") { readDigestRows(); renderDigestRows(); }
+});
+$("digestDialog").addEventListener("click", event => {
+  if (event.target === $("digestDialog")) return $("digestDialog").close();
+  if (event.target.closest("[data-digest-add]")) {
+    readDigestRows();
+    state.digestDraft.push({ workspace: "*", frequency: "weekly", day: "mon", hour: 8, timezone: "UTC" });
+    return renderDigestRows();
+  }
+  const remove = event.target.closest("[data-digest-remove]");
+  if (remove) { readDigestRows(); state.digestDraft.splice(Number(remove.dataset.digestRemove), 1); renderDigestRows(); }
+});
+$("closePreset").addEventListener("click", () => $("presetDialog").close());
+$("cancelPreset").addEventListener("click", () => $("presetDialog").close());
+$("presetForm").addEventListener("submit", event => { event.preventDefault(); submitPreset(); });
+$("presetForm").addEventListener("change", renderPresetPreview);
+$("presetDialog").addEventListener("click", event => { if (event.target === $("presetDialog")) $("presetDialog").close(); });
 $("closeScanSchedule").addEventListener("click", () => $("scanScheduleDialog").close());
 $("cancelScanSchedule").addEventListener("click", () => $("scanScheduleDialog").close());
 $("scanScheduleReset").addEventListener("click", () => submitScanSchedule(true));
 $("scanScheduleForm").addEventListener("submit", event => { event.preventDefault(); submitScanSchedule(false); });
 ["scanEvery", "scanWindowOn", "scanFrom", "scanUntil", "scanZone"].forEach(id => $(id).addEventListener("change", renderScanPreview));
+["scanFetchMode", "scanWait", "scanWaitSelector", "scanDismiss"].forEach(id => $(id).addEventListener("change", renderScanLoading));
 $("scanScheduleDialog").addEventListener("click", event => {
   if (event.target === $("scanScheduleDialog")) return $("scanScheduleDialog").close();
   const mode = event.target.closest("[data-scan-days]");
@@ -7818,7 +8533,10 @@ $("reviewDialog").addEventListener("click", event => {
   if (event.target === $("reviewDialog")) $("reviewDialog").close();
 });
 $("bulkMonitorFile").addEventListener("change", event => readBulkFile(event.target.files && event.target.files[0]));
-$("submitBulkMonitor").addEventListener("click", submitBulkMonitor);
+$("bulkRequests").addEventListener("click", event => {
+  const button = event.target.closest("[data-bulk-batch]");
+  if (button) openBulkBatch(Number(button.dataset.bulkBatch));
+});
 $("clearBulkImport").addEventListener("click", clearBulkImport);
 if (compactQuery && typeof compactQuery.addEventListener === "function") {
   compactQuery.addEventListener("change", () => { if (state.loaded) setView(state.view, { detail: state.mobileDetail }); });
