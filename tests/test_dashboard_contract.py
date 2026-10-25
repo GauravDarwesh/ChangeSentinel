@@ -1047,3 +1047,22 @@ class TestCadenceCalendarContract(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestCheckeredFrameGlints(unittest.TestCase):
+    def test_edge_glints_are_theme_aware_visible_and_motion_safe(self):
+        html = read("index.html")
+        self.assertIn('<div class="frame-glints" aria-hidden="true"></div>', html)
+
+        start = html.index("/* Soft, independent glints confined to the existing checkered outer edge. */")
+        end = html.index("/* ---------- Shell ---------- */", start)
+        css = html[start:end]
+        self.assertRegex(css, r"\.frame-glints\s*\{[^}]*z-index:\s*2;")
+        self.assertIn("var(--glint-color, var(--led-on))", css)
+        self.assertIn("@media (prefers-reduced-motion: reduce)", css)
+
+        script_start = html.index("// Randomly light only tiles along the existing outer frame.")
+        script_end = html.index("</script>", script_start)
+        script = html[script_start:script_end]
+        self.assertIn("Math.random()", script)
+        self.assertIn("layer.appendChild(glint)", script)
