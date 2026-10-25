@@ -1054,7 +1054,7 @@ class TestCheckeredFrameGlints(unittest.TestCase):
         html = read("index.html")
         self.assertIn('<div class="frame-glints" aria-hidden="true"></div>', html)
 
-        start = html.index("/* Soft, independent glints confined to the existing checkered outer edge. */")
+        start = html.index("/* Soft, square LED-tile glints confined to the existing checkered outer frame. */")
         end = html.index("/* ---------- Shell ---------- */", start)
         css = html[start:end]
         self.assertRegex(css, r"\.frame-glints\s*\{[^}]*z-index:\s*2;")
