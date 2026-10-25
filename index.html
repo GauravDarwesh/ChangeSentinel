@@ -146,11 +146,12 @@
     .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
     .num { font-variant-numeric: tabular-nums; }
 
-    /* Soft, independent glints confined to the existing checkered outer edge. */
+    /* Soft, square LED-tile glints confined to the existing checkered outer frame. */
     .frame-glints {
       position: fixed;
       inset: 0;
-      z-index: 0;
+      /* Above the workspace so edge lights are never hidden by the app shell. */
+      z-index: 2;
       pointer-events: none;
       overflow: hidden;
     }
@@ -159,20 +160,21 @@
       display: block;
       width: var(--tile);
       height: var(--tile);
+      border-radius: 0;
       opacity: 0;
       pointer-events: none;
-      background: radial-gradient(circle, var(--glint-color, var(--led-on)) 0%, transparent 72%);
+      background: var(--glint-color, var(--led-on));
       will-change: opacity, transform;
     }
     .frame-glint.is-lit {
       animation: frameTileBlink var(--duration, 720ms) ease-in-out forwards;
     }
     @keyframes frameTileBlink {
-      0%, 100% { opacity: 0; transform: scale(.78); box-shadow: none; }
-      22% { opacity: var(--peak, .2); transform: scale(1); box-shadow: 0 0 7px var(--glint-color, var(--led-on)); }
-      45% { opacity: .035; transform: scale(.9); box-shadow: 0 0 2px var(--glint-color, var(--led-on)); }
-      63% { opacity: var(--peak, .2); transform: scale(1.02); box-shadow: 0 0 6px var(--glint-color, var(--led-on)); }
-      82% { opacity: 0; transform: scale(.84); box-shadow: none; }
+      0%, 100% { opacity: 0; transform: scale(.92); box-shadow: none; }
+      22% { opacity: var(--peak, .34); transform: scale(1); box-shadow: 0 0 0 1px var(--glint-color, var(--led-on)), 0 0 7px 1px var(--glint-color, var(--led-on)); }
+      45% { opacity: .07; transform: scale(.96); box-shadow: 0 0 0 1px var(--glint-color, var(--led-on)), 0 0 2px var(--glint-color, var(--led-on)); }
+      63% { opacity: var(--peak, .34); transform: scale(1.01); box-shadow: 0 0 0 1px var(--glint-color, var(--led-on)), 0 0 7px 1px var(--glint-color, var(--led-on)); }
+      82% { opacity: 0; transform: scale(.94); box-shadow: none; }
     }
     @media (prefers-reduced-motion: reduce) {
       .frame-glint { animation: none !important; opacity: 0 !important; }
@@ -3676,7 +3678,7 @@
       function schedule() {
         window.clearTimeout(timer);
         if (!motion.matches && !document.hidden) {
-          timer = window.setTimeout(blink, 550 + Math.random() * 1850);
+          timer = window.setTimeout(blink, 400 + Math.random() * 1400);
         }
       }
 
@@ -3699,12 +3701,12 @@
 
           const glint = document.createElement("span");
           glint.className = "frame-glint is-lit";
-          glint.style.left = (col * cell) + "px";
-          glint.style.top = (row * cell) + "px";
+          glint.style.left = (col * cell + 1) + "px";
+          glint.style.top = (row * cell + 1) + "px";
           glint.style.width = tile + "px";
           glint.style.height = tile + "px";
           glint.style.setProperty("--glint-color", palette[Math.floor(Math.random() * palette.length)]);
-          glint.style.setProperty("--peak", (0.12 + Math.random() * 0.16).toFixed(2));
+          glint.style.setProperty("--peak", (0.24 + Math.random() * 0.17).toFixed(2));
           glint.style.setProperty("--duration", Math.round(520 + Math.random() * 760) + "ms");
           glint.addEventListener("animationend", () => glint.remove(), { once: true });
           layer.appendChild(glint);
