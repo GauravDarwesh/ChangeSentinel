@@ -146,15 +146,16 @@
     .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
     .num { font-variant-numeric: tabular-nums; }
 
-    /* Slow, square breathing LEDs, clipped to the outer checker frame. */
+    /* Slow, square breathing LEDs, confined to the existing outer checker frame. */
     .frame-glints {
       position: fixed;
       inset: 0;
       z-index: 2;
       pointer-events: none;
       overflow: hidden;
-      /* The glow uses inset-only shadows, so no light spills beyond a frame tile. */
     }
+    /* The access gate covers the dashboard, but not its intended edge LEDs. */
+    html.cs-locked .frame-glints { z-index: 10001; }
     .frame-glint {
       position: absolute;
       display: block;
@@ -167,13 +168,13 @@
       will-change: opacity;
     }
     .frame-glint.is-lit {
-      animation: frameTileBreathe var(--duration, 5.2s) ease-in-out forwards;
+      animation: frameTileBreathe var(--duration, 5.4s) ease-in-out both;
     }
     @keyframes frameTileBreathe {
       0%, 100% { opacity: 0; box-shadow: inset 0 0 0 0 transparent; }
-      28% { opacity: 0.12; box-shadow: inset 0 0 0 1px var(--glint-color, var(--led-on)), inset 0 0 5px var(--glint-color, var(--led-on)); }
-      52% { opacity: var(--peak, .78); box-shadow: inset 0 0 0 1px var(--glint-color, var(--led-on)), inset 0 0 9px var(--glint-color, var(--led-on)); }
-      76% { opacity: 0.12; box-shadow: inset 0 0 0 1px var(--glint-color, var(--led-on)), inset 0 0 5px var(--glint-color, var(--led-on)); }
+      30% { opacity: .18; box-shadow: inset 0 0 0 1px var(--glint-color, var(--led-on)), inset 0 0 7px var(--glint-color, var(--led-on)); }
+      52% { opacity: var(--peak, .92); box-shadow: inset 0 0 0 1px var(--glint-color, var(--led-on)), inset 0 0 12px var(--glint-color, var(--led-on)); }
+      74% { opacity: .18; box-shadow: inset 0 0 0 1px var(--glint-color, var(--led-on)), inset 0 0 7px var(--glint-color, var(--led-on)); }
     }
     @media (prefers-reduced-motion: reduce) {
       .frame-glint { animation: none !important; opacity: 0 !important; }
@@ -3664,28 +3665,39 @@
   </script>
 
   <script>
-    // One slow, softly breathing square LED at a time; all light stays on the frame.
+    // One square LED slowly breathes on the outer frame; no dashboard state is touched.
     (() => {
       const layer = document.querySelector(".frame-glints");
       if (!layer || !window.matchMedia) return;
-      const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-      let timer = 0;
-      const palette = ["var(--led-on)", "var(--accent)"];
 
-      function schedule() {
+      const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const palette = ["var(--led-on)", "var(--accent)"];
+      let timer = 0;
+      let watchdog = 0;
+
+      // Below this breakpoint the existing responsive layout intentionally removes the frame.
+      const frameIsVisible = () => window.innerWidth > 980;
+      const canAnimate = () => !motion.matches && !document.hidden && frameIsVisible();
+
+      function clearTimers() {
         window.clearTimeout(timer);
-        if (!motion.matches && !document.hidden) {
-          timer = window.setTimeout(breathe, 1800 + Math.random() * 2600);
-        }
+        window.clearTimeout(watchdog);
+      }
+
+      function schedule(delay = 1200 + Math.random() * 1600) {
+        window.clearTimeout(timer);
+        if (canAnimate()) timer = window.setTimeout(breathe, delay);
       }
 
       function breathe() {
-        if (motion.matches || document.hidden) return;
+        if (!canAnimate()) return;
         const rootStyle = getComputedStyle(document.documentElement);
         const cell = parseFloat(rootStyle.getPropertyValue("--cell")) || 20;
         const tile = Math.min(parseFloat(rootStyle.getPropertyValue("--tile")) || 19, cell - 1);
         const lastCol = Math.max(0, Math.floor((window.innerWidth - 1) / cell));
         const lastRow = Math.max(0, Math.floor((window.innerHeight - 1) / cell));
+
+        // Choose exactly one tile from one of the four existing frame edges.
         const side = Math.floor(Math.random() * 4);
         let col, row;
         if (side === 0) { col = Math.floor(Math.random() * (lastCol + 1)); row = 0; }
@@ -3693,6 +3705,7 @@
         else if (side === 2) { col = 0; row = Math.floor(Math.random() * (lastRow + 1)); }
         else { col = lastCol; row = Math.floor(Math.random() * (lastRow + 1)); }
 
+        const duration = Math.round(5000 + Math.random() * 1500);
         const glint = document.createElement("span");
         glint.className = "frame-glint is-lit";
         glint.style.left = (col * cell + 1) + "px";
@@ -3700,24 +3713,41 @@
         glint.style.width = tile + "px";
         glint.style.height = tile + "px";
         glint.style.setProperty("--glint-color", palette[Math.floor(Math.random() * palette.length)]);
-        glint.style.setProperty("--peak", (0.72 + Math.random() * 0.16).toFixed(2));
-        glint.style.setProperty("--duration", (4800 + Math.random() * 1800).toFixed(0) + "ms");
-        glint.addEventListener("animationend", () => { glint.remove(); schedule(); }, { once: true });
+        glint.style.setProperty("--peak", (0.88 + Math.random() * 0.1).toFixed(2));
+        glint.style.setProperty("--duration", duration + "ms");
+
+        let finished = false;
+        function finishBreath() {
+          if (finished) return;
+          finished = true;
+          window.clearTimeout(watchdog);
+          glint.remove();
+          schedule();
+        }
+        glint.addEventListener("animationend", finishBreath, { once: true });
         layer.appendChild(glint);
+        // A fallback keeps the effect cycling even if a browser skips animationend.
+        watchdog = window.setTimeout(finishBreath, duration + 350);
       }
 
       document.addEventListener("visibilitychange", () => {
-        window.clearTimeout(timer);
+        clearTimers();
         layer.replaceChildren();
-        schedule();
+        schedule(350);
       });
-      window.addEventListener("resize", () => layer.replaceChildren());
+      window.addEventListener("resize", () => {
+        clearTimers();
+        layer.replaceChildren();
+        schedule(350);
+      });
       motion.addEventListener?.("change", () => {
-        window.clearTimeout(timer);
+        clearTimers();
         layer.replaceChildren();
-        schedule();
+        schedule(350);
       });
-      schedule();
+
+      // Start soon on first load; subsequent LEDs have a quiet gap between breaths.
+      schedule(350);
     })();
   </script>
 
