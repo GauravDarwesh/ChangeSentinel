@@ -1050,32 +1050,81 @@ if __name__ == "__main__":
 
 
 class TestCheckeredFrameGlints(unittest.TestCase):
-    def test_edge_glints_are_theme_aware_visible_and_motion_safe(self):
+    def test_edge_reuses_heatmap_wave_and_keeps_all_sides_symmetric(self):
         html = read("index.html")
-        self.assertIn('<div class="frame-glints" aria-hidden="true"></div>', html)
+        self.assertIn('<canvas class="frame-glints" aria-hidden="true"></canvas>', html)
 
-        start = html.index("/* Slow, square breathing LEDs, confined to the existing outer checker frame. */")
-        end = html.index("/* ---------- Shell ---------- */", start)
-        css = html[start:end]
-        self.assertRegex(css, r"\.frame-glints\s*\{[^}]*z-index:\s*2;")
-        self.assertIn("var(--glint-color, var(--led-on))", css)
-        self.assertIn("border-radius: 0;", css)
-        self.assertIn("background: var(--glint-color, var(--led-on));", css)
-        self.assertIn("frameTileBreathe", css)
-        self.assertIn("inset 0 0 12px var(--glint-color, var(--led-on))", css)
+        css_start = html.index("/* The perimeter borrows the change-field heatmap's exact drifting warm wave. */")
+        css_end = html.index("/* ---------- Shell ---------- */", css_start)
+        css = html[css_start:css_end]
+        self.assertRegex(css, r"\.frame-glints\s*\{[^}]*position:\s*fixed;")
+        self.assertIn("inset: 0;", css)
+        self.assertIn("z-index: 2;", css)
         self.assertIn("html.cs-locked .frame-glints { z-index: 10001; }", css)
-        self.assertNotIn("box-shadow: 0 0", css)
-        self.assertNotIn("radial-gradient(circle", css)
-        self.assertIn("@media (prefers-reduced-motion: reduce)", css)
+        self.assertIn("@media (max-width: 980px)", css)
+        self.assertIn(".frame-glints { display: none; }", css)
 
-        script_start = html.index("// One square LED slowly breathes on the outer frame; no dashboard state is touched.")
+        script_start = html.index("// Paint the same drifting heatmap wave over a symmetric, edge-only tile grid.")
         script_end = html.index("</script>", script_start)
         script = html[script_start:script_end]
-        self.assertIn("Math.random()", script)
-        self.assertIn("5000 + Math.random() * 1500", script)
-        self.assertIn("1200 + Math.random() * 1600", script)
-        self.assertIn("schedule(350)", script)
-        self.assertIn("setTimeout(finishBreath, duration + 350)", script)
-        self.assertIn("window.innerWidth > 980", script)
-        self.assertIn("const side = Math.floor(Math.random() * 4)", script)
-        self.assertIn("layer.appendChild(glint)", script)
+        self.assertIn("const CSLib = window.CSLib;", script)
+        self.assertIn('typeof CSLib.fbm !== "function"', script)
+        self.assertIn('css.getPropertyValue("--bg")', script)
+        self.assertIn('css.getPropertyValue("--idle-lo")', script)
+        self.assertIn('css.getPropertyValue("--idle-hi")', script)
+        self.assertIn("CSLib.fbm(col * .26 + t * .22, row * .26 + t * .08, t * .11)", script)
+        self.assertIn("Math.pow(wave, 1.5) * .92", script)
+        self.assertIn("function edgeAnchors(length)", script)
+        self.assertIn("if (end - position > 1) anchors.push(position);", script)
+        self.assertIn("function paintTile(x, y, col, row, t, tileWidth, tileHeight)", script)
+        self.assertIn("const tileWidthAt = col => col < columns - 1", script)
+        self.assertIn("const tileHeightAt = row => row < rows - 1", script)
+        self.assertIn("const xPositions = edgeAnchors(width);", script)
+        self.assertIn("const yPositions = edgeAnchors(height);", script)
+        self.assertIn("const xAt = col => xPositions[col];", script)
+        self.assertIn("const yAt = row => yPositions[row];", script)
+        self.assertIn("const right = xAt(columns - 1);", script)
+        self.assertIn("const bottom = yAt(rows - 1);", script)
+        self.assertIn("const rightBand = width - cell;", script)
+        self.assertIn("const bottomBand = height - cell;", script)
+        self.assertIn("ctx.fillRect(0, bottomBand, width, cell);", script)
+        self.assertIn("ctx.fillRect(rightBand, cell, cell, Math.max(0, height - cell * 2));", script)
+        self.assertIn("paintTile(x, 1, spatialCol, 0, t, tileWidth, tile);", script)
+        self.assertIn("paintTile(x, bottom, spatialCol, (bottom - 1) / cell, t, tileWidth, tile);", script)
+        self.assertIn("paintTile(1, y, 0, spatialRow, t, tile, tileHeight);", script)
+        self.assertIn("paintTile(right, y, (right - 1) / cell, spatialRow, t, tile, tileHeight);", script)
+        self.assertIn("window.requestAnimationFrame(paint)", script)
+        self.assertIn('attributeFilter: ["data-theme"]', script)
+        self.assertNotIn("Math.random()", script)
+        self.assertNotIn("frameTileBreathe", script)
+
+    def test_edge_tile_anchors_cover_irregular_viewports_without_overlap(self):
+        cell, tile = 20, 19
+
+        def edge_anchors(length):
+            end = length - cell + 1
+            anchors = [position for position in range(1, end, cell)
+                       if end - position > 1]
+            if not anchors or anchors[-1] != end:
+                anchors.append(end)
+            return anchors
+
+        # Include the awkward remainder of two pixels that previously left the
+        # right/bottom LED mostly outside the frame, as well as other remainders.
+        for width, height in ((1422, 722), (1438, 718), (1441, 901), (1459, 899), (1281, 721), (1440, 900)):
+            with self.subTest(width=width, height=height):
+                x_anchors = edge_anchors(width)
+                y_anchors = edge_anchors(height)
+                self.assertEqual(x_anchors[-1], width - cell + 1)
+                self.assertEqual(y_anchors[-1], height - cell + 1)
+                self.assertTrue(all(1 <= x and x + tile <= width for x in x_anchors))
+                self.assertTrue(all(1 <= y and y + tile <= height for y in y_anchors))
+                self.assertTrue(all(b > a for a, b in zip(x_anchors, x_anchors[1:])))
+                self.assertTrue(all(b > a for a, b in zip(y_anchors, y_anchors[1:])))
+                # Shorten the regular tile immediately before the pinned edge tile
+                # when necessary, preserving a one- or two-pixel separator.
+                x_widths = [min(tile, b - a - 1) for a, b in zip(x_anchors, x_anchors[1:])]
+                y_heights = [min(tile, b - a - 1) for a, b in zip(y_anchors, y_anchors[1:])]
+                self.assertTrue(all(size > 0 for size in x_widths + y_heights))
+                self.assertLessEqual(max(b - (a + size) for a, size, b in zip(x_anchors, x_widths, x_anchors[1:])), 2)
+                self.assertLessEqual(max(b - (a + size) for a, size, b in zip(y_anchors, y_heights, y_anchors[1:])), 2)

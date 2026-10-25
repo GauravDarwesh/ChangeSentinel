@@ -55,7 +55,10 @@ function fakeReaderPage(url) {
   return { kind: "page", url, title: "Reader copy", html, links, truncated: false };
 }
 async function openDashboard(viewport, options = {}) {
-  const context = await browser.newContext({ viewport, hasTouch: !!options.touch, isMobile: !!options.touch });
+  const context = await browser.newContext({
+    viewport, hasTouch: !!options.touch, isMobile: !!options.touch,
+    ...(options.reducedMotion ? { reducedMotion: options.reducedMotion } : {})
+  });
   await context.route(/\/functions\/v1\/page-reader/, async route => {
     const body = JSON.parse(route.request().postData() || "{}");
     await route.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(fakeReaderPage(body.url || "")) });
@@ -83,6 +86,109 @@ try {
   check(await page.evaluate(() => !!(window.supabase && typeof window.supabase.createClient === "function")),
     "supabase-js loads under its integrity hash");
   await page.screenshot({ path: path.join(OUT, "overview-desktop.png") });
+
+  // Exercise both common and awkward dimensions. A viewport just two pixels
+  // beyond a grid boundary used to leave the right/bottom tile mostly off-frame.
+  const edgeViewports = [
+    { width: 1422, height: 722 },
+    { width: 1438, height: 718 },
+    { width: 1441, height: 901 },
+    { width: 1459, height: 899 },
+    { width: 1281, height: 721 },
+    { width: 1440, height: 900 }
+  ];
+  for (const viewport of edgeViewports) {
+    await page.setViewportSize(viewport);
+    await page.waitForTimeout(50);
+    const edgeGrid = await page.evaluate(() => {
+      const canvas = document.querySelector("canvas.frame-glints");
+      const ctx = canvas && canvas.getContext("2d");
+      if (!ctx) return { error: "frame canvas unavailable" };
+      const cell = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--cell")) || 20;
+      const tile = Math.min(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--tile")) || 19, cell - 1);
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const pixel = (x, y) => Array.from(ctx.getImageData(Math.round(x * dpr), Math.round(y * dpr), 1, 1).data).slice(0, 3);
+      const same = (a, b) => a.every((channel, index) => channel === b[index]);
+      const bg = pixel(0, 1);
+      const rightBand = window.innerWidth - cell;
+      const bottomBand = window.innerHeight - cell;
+      const rightAnchor = rightBand + 1;
+      const bottomAnchor = bottomBand + 1;
+      const anchors = length => {
+        const end = length - cell + 1;
+        const positions = [];
+        for (let position = 1; position < end; position += cell) {
+          if (end - position > 1) positions.push(position);
+        }
+        if (!positions.length || positions[positions.length - 1] !== end) positions.push(end);
+        return positions;
+      };
+      const xs = anchors(window.innerWidth);
+      const ys = anchors(window.innerHeight);
+      const xGap = xs[xs.length - 2] + Math.min(tile, xs[xs.length - 1] - xs[xs.length - 2] - 1);
+      const yGap = ys[ys.length - 2] + Math.min(tile, ys[ys.length - 1] - ys[ys.length - 2] - 1);
+      const insideY = cell + 1;
+      const insideX = cell + 1;
+      return {
+        width: window.innerWidth, height: window.innerHeight, cell,
+        topGapIsBackground: same(pixel(cell, 1), bg),
+        topTileIsWave: !same(pixel(cell + 1, 1), bg),
+        leftGapIsBackground: same(pixel(1, cell), bg),
+        leftTileIsWave: !same(pixel(1, cell + 1), bg),
+        rightGapIsBackground: same(pixel(rightBand, insideY), bg),
+        rightTileIsWave: !same(pixel(rightAnchor, insideY), bg),
+        bottomGapIsBackground: same(pixel(insideX, bottomBand), bg),
+        bottomTileIsWave: !same(pixel(insideX, bottomAnchor), bg),
+        topTerminalGapIsBackground: same(pixel(xGap, 1), bg),
+        bottomTerminalGapIsBackground: same(pixel(xGap, bottomAnchor), bg),
+        leftTerminalGapIsBackground: same(pixel(1, yGap), bg),
+        rightTerminalGapIsBackground: same(pixel(rightAnchor, yGap), bg),
+        bottomRightCornerIsWave: !same(pixel(rightAnchor, bottomAnchor), bg),
+        rightAnchor, bottomAnchor
+      };
+    });
+    const edgePass = !edgeGrid.error &&
+      edgeGrid.width === viewport.width && edgeGrid.height === viewport.height &&
+      edgeGrid.topGapIsBackground && edgeGrid.topTileIsWave &&
+      edgeGrid.leftGapIsBackground && edgeGrid.leftTileIsWave &&
+      edgeGrid.rightGapIsBackground && edgeGrid.rightTileIsWave &&
+      edgeGrid.bottomGapIsBackground && edgeGrid.bottomTileIsWave &&
+      edgeGrid.topTerminalGapIsBackground && edgeGrid.bottomTerminalGapIsBackground &&
+      edgeGrid.leftTerminalGapIsBackground && edgeGrid.rightTerminalGapIsBackground &&
+      edgeGrid.bottomRightCornerIsWave;
+    check(edgePass, "edge tiles cover all four frame sides at " + viewport.width + "x" + viewport.height + " (" + JSON.stringify(edgeGrid) + ")");
+    if (viewport.width === 1441 && viewport.height === 901) {
+      await page.screenshot({ path: path.join(OUT, "edge-irregular-viewport.png") });
+    }
+  }
+  await page.setViewportSize({ width: 1440, height: 900 });
+
+  // A separate reduced-motion context verifies that the canvas stops changing
+  // after its initial frame rather than only checking the source-level guard.
+  const reducedWave = await openDashboard({ width: 1441, height: 901 }, { reducedMotion: "reduce" });
+  const sampleFrameEdge = () => reducedWave.page.evaluate(() => {
+    const canvas = document.querySelector("canvas.frame-glints");
+    const ctx = canvas && canvas.getContext("2d");
+    if (!ctx) return "missing-canvas";
+    const cell = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--cell")) || 20;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const pixel = (x, y) => Array.from(ctx.getImageData(Math.round(x * dpr), Math.round(y * dpr), 1, 1).data).slice(0, 3).join(",");
+    const samples = [];
+    for (let y = 1; y < window.innerHeight; y += cell) {
+      for (let x = 1; x < window.innerWidth; x += cell) {
+        if (x < cell || x >= window.innerWidth - cell || y < cell || y >= window.innerHeight - cell) {
+          samples.push(pixel(x, y));
+        }
+      }
+    }
+    return samples.join("|");
+  });
+  const reducedBefore = await sampleFrameEdge();
+  await reducedWave.page.waitForTimeout(220);
+  const reducedAfter = await sampleFrameEdge();
+  check(reducedBefore !== "missing-canvas" && reducedBefore === reducedAfter,
+    "edge wave freezes after one frame when Reduce Motion is enabled");
+  await reducedWave.context.close();
 
   const pdf = await page.evaluate(async () => {
     try {

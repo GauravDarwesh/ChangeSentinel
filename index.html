@@ -146,38 +146,23 @@
     .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
     .num { font-variant-numeric: tabular-nums; }
 
-    /* Slow, square breathing LEDs, confined to the existing outer checker frame. */
+    /* The perimeter borrows the change-field heatmap's exact drifting warm wave. */
     .frame-glints {
       position: fixed;
       inset: 0;
       z-index: 2;
+      display: block;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
       overflow: hidden;
+      background: transparent;
     }
-    /* The access gate covers the dashboard, but not its intended edge LEDs. */
+    /* Keep the wave over the frame of the locked screen without covering its card. */
     html.cs-locked .frame-glints { z-index: 10001; }
-    .frame-glint {
-      position: absolute;
-      display: block;
-      width: var(--tile);
-      height: var(--tile);
-      border-radius: 0;
-      opacity: 0;
-      pointer-events: none;
-      background: var(--glint-color, var(--led-on));
-      will-change: opacity;
-    }
-    .frame-glint.is-lit {
-      animation: frameTileBreathe var(--duration, 5.4s) ease-in-out both;
-    }
-    @keyframes frameTileBreathe {
-      0%, 100% { opacity: 0; box-shadow: inset 0 0 0 0 transparent; }
-      30% { opacity: .18; box-shadow: inset 0 0 0 1px var(--glint-color, var(--led-on)), inset 0 0 7px var(--glint-color, var(--led-on)); }
-      52% { opacity: var(--peak, .92); box-shadow: inset 0 0 0 1px var(--glint-color, var(--led-on)), inset 0 0 12px var(--glint-color, var(--led-on)); }
-      74% { opacity: .18; box-shadow: inset 0 0 0 1px var(--glint-color, var(--led-on)), inset 0 0 7px var(--glint-color, var(--led-on)); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .frame-glint { animation: none !important; opacity: 0 !important; }
+    /* The narrow layout deliberately has no outer checker frame. */
+    @media (max-width: 980px) {
+      .frame-glints { display: none; }
     }
 
     /* ---------- Shell ---------- */
@@ -2411,7 +2396,7 @@
     </div>
   </section>
 
-  <div class="frame-glints" aria-hidden="true"></div>
+  <canvas class="frame-glints" aria-hidden="true"></canvas>
   <div class="app" id="app">
     <nav class="rail" aria-label="Workspace">
       <a class="brand" href="./" aria-label="ChangeSentinel overview">
@@ -3665,89 +3650,165 @@
   </script>
 
   <script>
-    // One square LED slowly breathes on the outer frame; no dashboard state is touched.
+    // Paint the same drifting heatmap wave over a symmetric, edge-only tile grid.
+    // Reuse CSLib.fbm and the active theme's palette; no dashboard state is touched.
     (() => {
-      const layer = document.querySelector(".frame-glints");
-      if (!layer || !window.matchMedia) return;
+      const canvas = document.querySelector(".frame-glints");
+      const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
+      const CSLib = window.CSLib;
+      if (!ctx || !CSLib || typeof CSLib.fbm !== "function") return;
 
       const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-      const palette = ["var(--led-on)", "var(--accent)"];
-      let timer = 0;
-      let watchdog = 0;
+      let frame = 0, lastPaint = 0, width = 0, height = 0, dpr = 1, colors = null;
 
-      // Below this breakpoint the existing responsive layout intentionally removes the frame.
-      const frameIsVisible = () => window.innerWidth > 980;
-      const canAnimate = () => !motion.matches && !document.hidden && frameIsVisible();
-
-      function clearTimers() {
-        window.clearTimeout(timer);
-        window.clearTimeout(watchdog);
+      function parseColor(value) {
+        const raw = String(value || "").trim();
+        const hex = raw.match(/^#([0-9a-f]{6})$/i);
+        if (hex) return [
+          parseInt(hex[1].slice(0, 2), 16),
+          parseInt(hex[1].slice(2, 4), 16),
+          parseInt(hex[1].slice(4, 6), 16)
+        ];
+        const rgb = raw.match(/^rgba?\(([^)]+)\)$/i);
+        if (rgb) return rgb[1].split(",").slice(0, 3).map(Number);
+        return [128, 128, 128];
       }
 
-      function schedule(delay = 1200 + Math.random() * 1600) {
-        window.clearTimeout(timer);
-        if (canAnimate()) timer = window.setTimeout(breathe, delay);
+      const mix = (a, b, amount) => [
+        a[0] + (b[0] - a[0]) * amount,
+        a[1] + (b[1] - a[1]) * amount,
+        a[2] + (b[2] - a[2]) * amount
+      ];
+      const clamp01 = value => Math.max(0, Math.min(1, value));
+      const rgb = color => "rgb(" + color.map(channel => channel | 0).join(",") + ")";
+
+      function readColors() {
+        const css = getComputedStyle(document.documentElement);
+        colors = {
+          bg: parseColor(css.getPropertyValue("--bg")),
+          lo: parseColor(css.getPropertyValue("--idle-lo")),
+          hi: parseColor(css.getPropertyValue("--idle-hi"))
+        };
       }
 
-      function breathe() {
-        if (!canAnimate()) return;
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        dpr = Math.min(2, window.devicePixelRatio || 1);
+        canvas.width = Math.max(1, Math.round(width * dpr));
+        canvas.height = Math.max(1, Math.round(height * dpr));
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        lastPaint = 0;
+      }
+
+      function isVisible() {
+        return !document.hidden && window.innerWidth > 980 && window.innerHeight > 0;
+      }
+
+      function paintTile(x, y, col, row, t, tileWidth, tileHeight) {
+        // Identical space/time sampling and warm colour interpolation to dashboard.js.
+        const n = CSLib.fbm(col * .26 + t * .22, row * .26 + t * .08, t * .11);
+        const wave = clamp01((n - .3) / .42);
+        const color = mix(colors.lo, colors.hi, Math.pow(wave, 1.5) * .92);
+        ctx.fillStyle = rgb(color);
+        ctx.fillRect(x, y, tileWidth, tileHeight);
+      }
+
+      function paint(now) {
+        frame = 0;
+        if (!isVisible()) {
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          return;
+        }
+        if (!motion.matches && now - lastPaint < 32) {
+          frame = window.requestAnimationFrame(paint);
+          return;
+        }
+        lastPaint = now;
+        if (!colors) readColors();
+
         const rootStyle = getComputedStyle(document.documentElement);
         const cell = parseFloat(rootStyle.getPropertyValue("--cell")) || 20;
         const tile = Math.min(parseFloat(rootStyle.getPropertyValue("--tile")) || 19, cell - 1);
-        const lastCol = Math.max(0, Math.floor((window.innerWidth - 1) / cell));
-        const lastRow = Math.max(0, Math.floor((window.innerHeight - 1) / cell));
-
-        // Choose exactly one tile from one of the four existing frame edges.
-        const side = Math.floor(Math.random() * 4);
-        let col, row;
-        if (side === 0) { col = Math.floor(Math.random() * (lastCol + 1)); row = 0; }
-        else if (side === 1) { col = Math.floor(Math.random() * (lastCol + 1)); row = lastRow; }
-        else if (side === 2) { col = 0; row = Math.floor(Math.random() * (lastRow + 1)); }
-        else { col = lastCol; row = Math.floor(Math.random() * (lastRow + 1)); }
-
-        const duration = Math.round(5000 + Math.random() * 1500);
-        const glint = document.createElement("span");
-        glint.className = "frame-glint is-lit";
-        glint.style.left = (col * cell + 1) + "px";
-        glint.style.top = (row * cell + 1) + "px";
-        glint.style.width = tile + "px";
-        glint.style.height = tile + "px";
-        glint.style.setProperty("--glint-color", palette[Math.floor(Math.random() * palette.length)]);
-        glint.style.setProperty("--peak", (0.88 + Math.random() * 0.1).toFixed(2));
-        glint.style.setProperty("--duration", duration + "ms");
-
-        let finished = false;
-        function finishBreath() {
-          if (finished) return;
-          finished = true;
-          window.clearTimeout(watchdog);
-          glint.remove();
-          schedule();
+        const t = now / 1000;
+        // Preserve 20px grid anchors for regular cells, but pin the final
+        // tile to the frame edge when the viewport ends between grid lines.
+        // Skip a regular anchor if its tile would overlap the pinned end tile.
+        function edgeAnchors(length) {
+          const end = length - cell + 1;
+          const anchors = [];
+          for (let position = 1; position < end; position += cell) {
+            // Keep a regular terminal-neighbour tile when it can retain at
+            // least a one-pixel width and a separator before the pinned tile.
+            if (end - position > 1) anchors.push(position);
+          }
+          if (!anchors.length || anchors[anchors.length - 1] !== end) anchors.push(end);
+          return anchors;
         }
-        glint.addEventListener("animationend", finishBreath, { once: true });
-        layer.appendChild(glint);
-        // A fallback keeps the effect cycling even if a browser skips animationend.
-        watchdog = window.setTimeout(finishBreath, duration + 350);
+        const xPositions = edgeAnchors(width);
+        const yPositions = edgeAnchors(height);
+        const columns = xPositions.length;
+        const rows = yPositions.length;
+        const xAt = col => xPositions[col];
+        const yAt = row => yPositions[row];
+        const right = xAt(columns - 1);
+        const bottom = yAt(rows - 1);
+        const rightBand = width - cell;
+        const bottomBand = height - cell;
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        // Rebuild only the 20px outer ring so all four edges, including corners,
+        // have matching tile rows and no pixels can bleed onto the dashboard.
+        ctx.fillStyle = rgb(colors.bg);
+        ctx.fillRect(0, 0, width, cell);
+        ctx.fillRect(0, bottomBand, width, cell);
+        ctx.fillRect(0, cell, cell, Math.max(0, height - cell * 2));
+        ctx.fillRect(rightBand, cell, cell, Math.max(0, height - cell * 2));
+
+        // Top and bottom share identical x positions; left and right share y positions.
+        // Endpoints are anchored to each side so non-20px viewport sizes remain symmetric.
+        const tileWidthAt = col => col < columns - 1
+          ? Math.min(tile, xAt(col + 1) - xAt(col) - 1) : tile;
+        const tileHeightAt = row => row < rows - 1
+          ? Math.min(tile, yAt(row + 1) - yAt(row) - 1) : tile;
+        for (let col = 0; col < columns; col++) {
+          const x = xAt(col);
+          const spatialCol = (x - 1) / cell;
+          const tileWidth = tileWidthAt(col);
+          paintTile(x, 1, spatialCol, 0, t, tileWidth, tile);
+          paintTile(x, bottom, spatialCol, (bottom - 1) / cell, t, tileWidth, tile);
+        }
+        for (let row = 1; row < rows - 1; row++) {
+          const y = yAt(row);
+          const spatialRow = (y - 1) / cell;
+          const tileHeight = tileHeightAt(row);
+          paintTile(1, y, 0, spatialRow, t, tile, tileHeight);
+          paintTile(right, y, (right - 1) / cell, spatialRow, t, tile, tileHeight);
+        }
+
+        if (!motion.matches) frame = window.requestAnimationFrame(paint);
       }
 
-      document.addEventListener("visibilitychange", () => {
-        clearTimers();
-        layer.replaceChildren();
-        schedule(350);
-      });
-      window.addEventListener("resize", () => {
-        clearTimers();
-        layer.replaceChildren();
-        schedule(350);
-      });
-      motion.addEventListener?.("change", () => {
-        clearTimers();
-        layer.replaceChildren();
-        schedule(350);
-      });
+      function start() {
+        if (frame) window.cancelAnimationFrame(frame);
+        frame = 0;
+        resize();
+        readColors();
+        paint(performance.now());
+      }
 
-      // Start soon on first load; subsequent LEDs have a quiet gap between breaths.
-      schedule(350);
+      document.addEventListener("visibilitychange", start);
+      window.addEventListener("resize", start);
+      motion.addEventListener?.("change", start);
+      if (typeof MutationObserver === "function") {
+        new MutationObserver(() => {
+          readColors();
+          if (motion.matches) start();
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+      }
+      start();
     })();
   </script>
 
