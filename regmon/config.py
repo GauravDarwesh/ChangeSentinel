@@ -53,6 +53,11 @@ class SourceConfig:
     check_days: tuple[str, ...] = ()
     check_hours: tuple[int, ...] = ()
     check_timezone: str = ""
+    # Organisation: a workspace (a team's area, e.g. NAM, EMEA, LATAM) and free
+    # labels. They group and filter monitors and their alerts; detection is
+    # unaffected. Without a workspace, the dashboard groups by region.
+    workspace: str = ""
+    labels: tuple[str, ...] = ()
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "SourceConfig":
@@ -105,12 +110,28 @@ class SourceConfig:
             check_days=tuple(str(x) for x in value.get("check_days", [])),
             check_hours=tuple(int(x) for x in value.get("check_hours", [])),
             check_timezone=str(value.get("check_timezone", "") or "").strip(),
+            workspace=str(value.get("workspace", "") or "").strip(),
+            labels=tuple(str(x).strip() for x in value.get("labels", [])),
         )
 
 
 SOURCE_KEYS = {field.name for field in fields(SourceConfig)}
 BOOL_KEYS = {"active", "baseline_on_first_run", "use_http_discovery", "alert_only_on_condition"}
 MAX_ALERT_CONDITION_CHARS = 500
+MAX_LABELS = 12
+MAX_TAG_CHARS = 40
+# Letters (any script), digits, spaces and a few separators; no markup or commas.
+TAG_PATTERN = re.compile(r"^[^\W_](?:[\w &/+.\-]*[^\W_])?$")
+
+
+def validate_tag(value: str, what: str, source_id: str) -> None:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"Source {source_id}: {what} must be a non-empty string")
+    text = value.strip()
+    if len(text) > MAX_TAG_CHARS or not TAG_PATTERN.match(text) or "  " in text:
+        raise ValueError(
+            f"Source {source_id}: {what} {value!r} must be 1-{MAX_TAG_CHARS} letters, digits, spaces or & / + . - _"
+        )
 INT_KEYS = {
     "max_urls", "crawl_depth", "discovery_attempts", "discovery_timeout_seconds", "discovery_retry_delay_seconds",
     "discovery_http_timeout_seconds", "discovery_http_workers", "discovery_http_attempts",
@@ -118,7 +139,7 @@ INT_KEYS = {
 }
 LIST_KEYS = {
     "seed_urls", "allowed_prefixes", "allowed_domains", "allowed_urls", "excluded_urls", "allowed_resource_prefixes",
-    "resource_link_text_patterns", "ignore_selectors", "excluded_prefixes", "check_days",
+    "resource_link_text_patterns", "ignore_selectors", "excluded_prefixes", "check_days", "labels",
 }
 TOP_LEVEL_KEYS = {"version", "defaults", "sources"}
 DEFAULT_KEYS = {
@@ -158,6 +179,16 @@ def _validate_source_types(value: dict[str, Any]) -> None:
             raise ValueError(f"Source {sid}: alert_condition must be at most {MAX_ALERT_CONDITION_CHARS} characters")
     if value.get("alert_only_on_condition") is True and not str(value.get("alert_condition") or "").strip():
         raise ValueError(f"Source {sid}: alert_only_on_condition needs a non-empty alert_condition")
+    if "workspace" in value:
+        validate_tag(value["workspace"], "workspace", sid)
+    if "labels" in value:
+        labels = value["labels"]
+        if len(labels) > MAX_LABELS:
+            raise ValueError(f"Source {sid}: at most {MAX_LABELS} labels")
+        for label in labels:
+            validate_tag(label, "label", sid)
+        if len({label.strip().casefold() for label in labels}) != len(labels):
+            raise ValueError(f"Source {sid}: labels repeat")
     from regmon.schedule import validate_cadence
 
     validate_cadence(value, sid)
