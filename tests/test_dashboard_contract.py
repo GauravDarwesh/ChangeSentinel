@@ -1059,6 +1059,9 @@ class TestCheckeredFrameGlints(unittest.TestCase):
         css = html[start:end]
         self.assertRegex(css, r"\.frame-glints\s*\{[^}]*z-index:\s*2;")
         self.assertIn("var(--glint-color, var(--led-on))", css)
+        self.assertIn("border-radius: 0;", css)
+        self.assertIn("background: var(--glint-color, var(--led-on));", css)
+        self.assertNotIn("radial-gradient(circle", css)
         self.assertIn("@media (prefers-reduced-motion: reduce)", css)
 
         script_start = html.index("// Randomly light only tiles along the existing outer frame.")
