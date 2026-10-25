@@ -3650,8 +3650,8 @@
   </script>
 
   <script>
-    // Paint the same drifting heatmap wave over the perimeter tiles only.
-    // Reuse CSLib.fbm and the active theme's idle palette; no dashboard state is touched.
+    // Paint the same drifting heatmap wave over a symmetric, edge-only tile grid.
+    // Reuse CSLib.fbm and the active theme's palette; no dashboard state is touched.
     (() => {
       const canvas = document.querySelector(".frame-glints");
       const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
@@ -3680,10 +3680,12 @@
         a[2] + (b[2] - a[2]) * amount
       ];
       const clamp01 = value => Math.max(0, Math.min(1, value));
+      const rgb = color => "rgb(" + color.map(channel => channel | 0).join(",") + ")";
 
       function readColors() {
         const css = getComputedStyle(document.documentElement);
         colors = {
+          bg: parseColor(css.getPropertyValue("--bg")),
           lo: parseColor(css.getPropertyValue("--idle-lo")),
           hi: parseColor(css.getPropertyValue("--idle-hi"))
         };
@@ -3704,6 +3706,15 @@
         return !document.hidden && window.innerWidth > 980 && window.innerHeight > 0;
       }
 
+      function paintTile(x, y, col, row, t, tile) {
+        // Identical space/time sampling and warm colour interpolation to dashboard.js.
+        const n = CSLib.fbm(col * .26 + t * .22, row * .26 + t * .08, t * .11);
+        const wave = clamp01((n - .3) / .42);
+        const color = mix(colors.lo, colors.hi, Math.pow(wave, 1.5) * .92);
+        ctx.fillStyle = rgb(color);
+        ctx.fillRect(x, y, tile, tile);
+      }
+
       function paint(now) {
         frame = 0;
         if (!isVisible()) {
@@ -3716,45 +3727,43 @@
           return;
         }
         lastPaint = now;
-
         if (!colors) readColors();
+
         const rootStyle = getComputedStyle(document.documentElement);
         const cell = parseFloat(rootStyle.getPropertyValue("--cell")) || 20;
         const tile = Math.min(parseFloat(rootStyle.getPropertyValue("--tile")) || 19, cell - 1);
         const t = now / 1000;
+        const columns = Math.max(2, Math.ceil(width / cell));
+        const rows = Math.max(2, Math.ceil(height / cell));
+        const xAt = col => 1 + col * (width - cell - 1) / (columns - 1);
+        const yAt = row => 1 + row * (height - cell - 1) / (rows - 1);
+        const right = width - cell;
+        const bottom = height - cell;
 
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, width, height);
-        ctx.save();
 
-        // Exact 20px perimeter ring from the app inset; all wave paint is clipped here.
-        ctx.beginPath();
-        ctx.rect(0, 0, width, Math.min(cell, height));
-        ctx.rect(0, Math.max(0, height - cell), width, Math.min(cell, height));
-        ctx.rect(0, Math.min(cell, height), Math.min(cell, width), Math.max(0, height - cell * 2));
-        ctx.rect(Math.max(0, width - cell), Math.min(cell, height), Math.min(cell, width), Math.max(0, height - cell * 2));
-        ctx.clip();
+        // Rebuild only the 20px outer ring so all four edges, including corners,
+        // have matching tile rows and no pixels can bleed onto the dashboard.
+        ctx.fillStyle = rgb(colors.bg);
+        ctx.fillRect(0, 0, width, cell);
+        ctx.fillRect(0, bottom, width, cell);
+        ctx.fillRect(0, cell, cell, Math.max(0, height - cell * 2));
+        ctx.fillRect(right, cell, cell, Math.max(0, height - cell * 2));
 
-        const columns = Math.ceil(width / cell);
-        const rows = Math.ceil(height / cell);
-        for (let row = 0; row < rows; row++) {
-          const y = row * cell + 1;
-          for (let col = 0; col < columns; col++) {
-            const x = col * cell + 1;
-            // Skip the interior. The clip also trims partial right/bottom tiles to the frame.
-            if (!(x < cell || y < cell || x + tile > width - cell || y + tile > height - cell)) continue;
-
-            // Same spatial/time sampling and warm-colour blend as paintLight() in dashboard.js.
-            const n = CSLib.fbm(col * .26 + t * .22, row * .26 + t * .08, t * .11);
-            const wave = clamp01((n - .3) / .42);
-            const color = mix(colors.lo, colors.hi, Math.pow(wave, 1.5) * .92);
-            ctx.fillStyle = "rgb(" + color.map(channel => channel | 0).join(",") + ")";
-            ctx.fillRect(x, y, tile, tile);
-          }
+        // Top and bottom share identical x positions; left and right share y positions.
+        // Endpoints are anchored to each side so non-20px viewport sizes remain symmetric.
+        for (let col = 0; col < columns; col++) {
+          const x = xAt(col);
+          paintTile(x, 1, col, 0, t, tile);
+          paintTile(x, bottom, col, rows - 1, t, tile);
         }
-        ctx.restore();
+        for (let row = 1; row < rows - 1; row++) {
+          const y = yAt(row);
+          paintTile(1, y, 0, row, t, tile);
+          paintTile(right, y, columns - 1, row, t, tile);
+        }
 
-        // Like the change-field canvas, reduced motion freezes on one warm-wave frame.
         if (!motion.matches) frame = window.requestAnimationFrame(paint);
       }
 
