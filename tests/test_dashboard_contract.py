@@ -1050,32 +1050,35 @@ if __name__ == "__main__":
 
 
 class TestCheckeredFrameGlints(unittest.TestCase):
-    def test_edge_glints_are_theme_aware_visible_and_motion_safe(self):
+    def test_edge_reuses_heatmap_wave_and_clips_to_all_four_sides(self):
         html = read("index.html")
-        self.assertIn('<div class="frame-glints" aria-hidden="true"></div>', html)
+        self.assertIn('<canvas class="frame-glints" aria-hidden="true"></canvas>', html)
 
-        start = html.index("/* Slow, square breathing LEDs, confined to the existing outer checker frame. */")
-        end = html.index("/* ---------- Shell ---------- */", start)
-        css = html[start:end]
-        self.assertRegex(css, r"\.frame-glints\s*\{[^}]*z-index:\s*2;")
-        self.assertIn("var(--glint-color, var(--led-on))", css)
-        self.assertIn("border-radius: 0;", css)
-        self.assertIn("background: var(--glint-color, var(--led-on));", css)
-        self.assertIn("frameTileBreathe", css)
-        self.assertIn("inset 0 0 12px var(--glint-color, var(--led-on))", css)
+        css_start = html.index("/* The perimeter borrows the change-field heatmap's exact drifting warm wave. */")
+        css_end = html.index("/* ---------- Shell ---------- */", css_start)
+        css = html[css_start:css_end]
+        self.assertRegex(css, r"\.frame-glints\s*\{[^}]*position:\s*fixed;")
+        self.assertIn("inset: 0;", css)
+        self.assertIn("z-index: 2;", css)
         self.assertIn("html.cs-locked .frame-glints { z-index: 10001; }", css)
-        self.assertNotIn("box-shadow: 0 0", css)
-        self.assertNotIn("radial-gradient(circle", css)
-        self.assertIn("@media (prefers-reduced-motion: reduce)", css)
+        self.assertIn("@media (max-width: 980px)", css)
+        self.assertIn(".frame-glints { display: none; }", css)
 
-        script_start = html.index("// One square LED slowly breathes on the outer frame; no dashboard state is touched.")
+        script_start = html.index("// Paint the same drifting heatmap wave over the perimeter tiles only.")
         script_end = html.index("</script>", script_start)
         script = html[script_start:script_end]
-        self.assertIn("Math.random()", script)
-        self.assertIn("5000 + Math.random() * 1500", script)
-        self.assertIn("1200 + Math.random() * 1600", script)
-        self.assertIn("schedule(350)", script)
-        self.assertIn("setTimeout(finishBreath, duration + 350)", script)
-        self.assertIn("window.innerWidth > 980", script)
-        self.assertIn("const side = Math.floor(Math.random() * 4)", script)
-        self.assertIn("layer.appendChild(glint)", script)
+        self.assertIn("const CSLib = window.CSLib;", script)
+        self.assertIn('typeof CSLib.fbm !== "function"', script)
+        self.assertIn("css.getPropertyValue(\"--idle-lo\")", script)
+        self.assertIn("css.getPropertyValue(\"--idle-hi\")", script)
+        self.assertIn("CSLib.fbm(col * .26 + t * .22, row * .26 + t * .08, t * .11)", script)
+        self.assertIn("Math.pow(wave, 1.5) * .92", script)
+        self.assertIn("ctx.rect(0, 0, width, Math.min(cell, height));", script)
+        self.assertIn("ctx.rect(0, Math.max(0, height - cell), width, Math.min(cell, height));", script)
+        self.assertIn("ctx.rect(Math.max(0, width - cell)", script)
+        self.assertIn("ctx.clip();", script)
+        self.assertIn("x + tile > width - cell || y + tile > height - cell", script)
+        self.assertIn("window.requestAnimationFrame(paint)", script)
+        self.assertIn('attributeFilter: ["data-theme"]', script)
+        self.assertNotIn("Math.random()", script)
+        self.assertNotIn("frameTileBreathe", script)
