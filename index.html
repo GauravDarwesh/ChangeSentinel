@@ -3741,8 +3741,6 @@
         const bottom = height - cell;
 
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.clearRect(0, 0, width, height);
-
         // Rebuild only the 20px outer ring so all four edges, including corners,
         // have matching tile rows and no pixels can bleed onto the dashboard.
         ctx.fillStyle = rgb(colors.bg);
