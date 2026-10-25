@@ -1074,10 +1074,12 @@ class TestCheckeredFrameGlints(unittest.TestCase):
         self.assertIn('css.getPropertyValue("--idle-hi")', script)
         self.assertIn("CSLib.fbm(col * .26 + t * .22, row * .26 + t * .08, t * .11)", script)
         self.assertIn("Math.pow(wave, 1.5) * .92", script)
-        self.assertIn("const columns = Math.max(2, Math.ceil((width - 1) / cell));", script)
-        self.assertIn("const rows = Math.max(2, Math.ceil((height - 1) / cell));", script)
-        self.assertIn("const xAt = col => 1 + col * cell;", script)
-        self.assertIn("const yAt = row => 1 + row * cell;", script)
+        self.assertIn("function edgeAnchors(length)", script)
+        self.assertIn("if (position + tile <= end) anchors.push(position);", script)
+        self.assertIn("const xPositions = edgeAnchors(width);", script)
+        self.assertIn("const yPositions = edgeAnchors(height);", script)
+        self.assertIn("const xAt = col => xPositions[col];", script)
+        self.assertIn("const yAt = row => yPositions[row];", script)
         self.assertIn("const right = xAt(columns - 1);", script)
         self.assertIn("const bottom = yAt(rows - 1);", script)
         self.assertIn("const rightBand = width - cell;", script)
@@ -1093,21 +1095,29 @@ class TestCheckeredFrameGlints(unittest.TestCase):
         self.assertNotIn("Math.random()", script)
         self.assertNotIn("frameTileBreathe", script)
 
-    def test_edge_tile_anchors_remain_grid_aligned_for_irregular_viewports(self):
-        cell = 20
-        # Include dimensions just over a cell boundary and ordinary nonmultiples.
-        for width, height in ((1441, 901), (1459, 899), (1281, 721), (1440, 900)):
-            with self.subTest(width=width, height=height):
-                columns = max(2, (width - 1 + cell - 1) // cell)
-                rows = max(2, (height - 1 + cell - 1) // cell)
-                x_anchors = [1 + col * cell for col in range(columns)]
-                y_anchors = [1 + row * cell for row in range(rows)]
+    def test_edge_tile_anchors_cover_irregular_viewports_without_overlap(self):
+        cell, tile = 20, 19
 
-                self.assertTrue(all((x - 1) % cell == 0 for x in x_anchors))
-                self.assertTrue(all((y - 1) % cell == 0 for y in y_anchors))
-                self.assertTrue(all(b - a == cell for a, b in zip(x_anchors, x_anchors[1:])))
-                self.assertTrue(all(b - a == cell for a, b in zip(y_anchors, y_anchors[1:])))
-                self.assertGreaterEqual(x_anchors[-1], width - cell)
-                self.assertLess(x_anchors[-1], width)
-                self.assertGreaterEqual(y_anchors[-1], height - cell)
-                self.assertLess(y_anchors[-1], height)
+        def edge_anchors(length):
+            end = length - cell + 1
+            anchors = [position for position in range(1, end, cell)
+                       if position + tile <= end]
+            if not anchors or anchors[-1] != end:
+                anchors.append(end)
+            return anchors
+
+        # Include the awkward remainder of two pixels that previously left the
+        # right/bottom LED mostly outside the frame, as well as other remainders.
+        for width, height in ((1422, 722), (1441, 901), (1459, 899), (1281, 721), (1440, 900)):
+            with self.subTest(width=width, height=height):
+                x_anchors = edge_anchors(width)
+                y_anchors = edge_anchors(height)
+                self.assertEqual(x_anchors[-1], width - cell + 1)
+                self.assertEqual(y_anchors[-1], height - cell + 1)
+                self.assertTrue(all(1 <= x and x + tile <= width for x in x_anchors))
+                self.assertTrue(all(1 <= y and y + tile <= height for y in y_anchors))
+                self.assertTrue(all(b >= a + tile for a, b in zip(x_anchors, x_anchors[1:])))
+                self.assertTrue(all(b >= a + tile for a, b in zip(y_anchors, y_anchors[1:])))
+                # The only non-20px gaps are the intentionally clipped terminal cells.
+                self.assertLessEqual(max(b - (a + tile) for a, b in zip(x_anchors, x_anchors[1:])), 3)
+                self.assertLessEqual(max(b - (a + tile) for a, b in zip(y_anchors, y_anchors[1:])), 3)
