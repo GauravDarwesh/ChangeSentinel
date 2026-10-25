@@ -3706,13 +3706,13 @@
         return !document.hidden && window.innerWidth > 980 && window.innerHeight > 0;
       }
 
-      function paintTile(x, y, col, row, t, tile) {
+      function paintTile(x, y, col, row, t, tileWidth, tileHeight) {
         // Identical space/time sampling and warm colour interpolation to dashboard.js.
         const n = CSLib.fbm(col * .26 + t * .22, row * .26 + t * .08, t * .11);
         const wave = clamp01((n - .3) / .42);
         const color = mix(colors.lo, colors.hi, Math.pow(wave, 1.5) * .92);
         ctx.fillStyle = rgb(color);
-        ctx.fillRect(x, y, tile, tile);
+        ctx.fillRect(x, y, tileWidth, tileHeight);
       }
 
       function paint(now) {
@@ -3767,17 +3767,23 @@
 
         // Top and bottom share identical x positions; left and right share y positions.
         // Endpoints are anchored to each side so non-20px viewport sizes remain symmetric.
+        const tileWidthAt = col => col < columns - 1
+          ? Math.min(tile, xAt(col + 1) - xAt(col) - 1) : tile;
+        const tileHeightAt = row => row < rows - 1
+          ? Math.min(tile, yAt(row + 1) - yAt(row) - 1) : tile;
         for (let col = 0; col < columns; col++) {
           const x = xAt(col);
           const spatialCol = (x - 1) / cell;
-          paintTile(x, 1, spatialCol, 0, t, tile);
-          paintTile(x, bottom, spatialCol, (bottom - 1) / cell, t, tile);
+          const tileWidth = tileWidthAt(col);
+          paintTile(x, 1, spatialCol, 0, t, tileWidth, tile);
+          paintTile(x, bottom, spatialCol, (bottom - 1) / cell, t, tileWidth, tile);
         }
         for (let row = 1; row < rows - 1; row++) {
           const y = yAt(row);
           const spatialRow = (y - 1) / cell;
-          paintTile(1, y, 0, spatialRow, t, tile);
-          paintTile(right, y, (right - 1) / cell, spatialRow, t, tile);
+          const tileHeight = tileHeightAt(row);
+          paintTile(1, y, 0, spatialRow, t, tile, tileHeight);
+          paintTile(right, y, (right - 1) / cell, spatialRow, t, tile, tileHeight);
         }
 
         if (!motion.matches) frame = window.requestAnimationFrame(paint);
