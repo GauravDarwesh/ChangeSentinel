@@ -1054,18 +1054,24 @@ class TestCheckeredFrameGlints(unittest.TestCase):
         html = read("index.html")
         self.assertIn('<div class="frame-glints" aria-hidden="true"></div>', html)
 
-        start = html.index("/* Soft, square LED-tile glints confined to the existing checkered outer frame. */")
+        start = html.index("/* Slow, square breathing LEDs, clipped to the outer checker frame. */")
         end = html.index("/* ---------- Shell ---------- */", start)
         css = html[start:end]
         self.assertRegex(css, r"\.frame-glints\s*\{[^}]*z-index:\s*2;")
         self.assertIn("var(--glint-color, var(--led-on))", css)
         self.assertIn("border-radius: 0;", css)
         self.assertIn("background: var(--glint-color, var(--led-on));", css)
+        self.assertIn("frameTileBreathe", css)
+        self.assertIn("inset 0 0 9px var(--glint-color, var(--led-on))", css)
+        self.assertNotIn("box-shadow: 0 0", css)
         self.assertNotIn("radial-gradient(circle", css)
         self.assertIn("@media (prefers-reduced-motion: reduce)", css)
 
-        script_start = html.index("// Randomly light only tiles along the existing outer frame.")
+        script_start = html.index("// One slow, softly breathing square LED at a time; all light stays on the frame.")
         script_end = html.index("</script>", script_start)
         script = html[script_start:script_end]
         self.assertIn("Math.random()", script)
+        self.assertIn("4800 + Math.random() * 1800", script)
+        self.assertIn("1800 + Math.random() * 2600", script)
+        self.assertIn("const side = Math.floor(Math.random() * 4)", script)
         self.assertIn("layer.appendChild(glint)", script)
