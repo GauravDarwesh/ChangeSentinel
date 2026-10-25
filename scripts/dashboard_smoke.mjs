@@ -104,6 +104,7 @@ try {
       const ctx = canvas && canvas.getContext("2d");
       if (!ctx) return { error: "frame canvas unavailable" };
       const cell = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--cell")) || 20;
+      const tile = Math.min(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--tile")) || 19, cell - 1);
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       const pixel = (x, y) => Array.from(ctx.getImageData(Math.round(x * dpr), Math.round(y * dpr), 1, 1).data).slice(0, 3);
       const same = (a, b) => a.every((channel, index) => channel === b[index]);
@@ -112,6 +113,19 @@ try {
       const bottomBand = window.innerHeight - cell;
       const rightAnchor = rightBand + 1;
       const bottomAnchor = bottomBand + 1;
+      const anchors = length => {
+        const end = length - cell + 1;
+        const positions = [];
+        for (let position = 1; position < end; position += cell) {
+          if (position + tile <= end) positions.push(position);
+        }
+        if (!positions.length || positions[positions.length - 1] !== end) positions.push(end);
+        return positions;
+      };
+      const xs = anchors(window.innerWidth);
+      const ys = anchors(window.innerHeight);
+      const xGap = xs[xs.length - 2] + Math.min(tile, xs[xs.length - 1] - xs[xs.length - 2] - 1);
+      const yGap = ys[ys.length - 2] + Math.min(tile, ys[ys.length - 1] - ys[ys.length - 2] - 1);
       const insideY = cell + 1;
       const insideX = cell + 1;
       return {
@@ -124,6 +138,10 @@ try {
         rightTileIsWave: !same(pixel(rightAnchor, insideY), bg),
         bottomGapIsBackground: same(pixel(insideX, bottomBand), bg),
         bottomTileIsWave: !same(pixel(insideX, bottomAnchor), bg),
+        topTerminalGapIsBackground: same(pixel(xGap, 1), bg),
+        bottomTerminalGapIsBackground: same(pixel(xGap, bottomAnchor), bg),
+        leftTerminalGapIsBackground: same(pixel(1, yGap), bg),
+        rightTerminalGapIsBackground: same(pixel(rightAnchor, yGap), bg),
         bottomRightCornerIsWave: !same(pixel(rightAnchor, bottomAnchor), bg),
         rightAnchor, bottomAnchor
       };
@@ -134,6 +152,8 @@ try {
       edgeGrid.leftGapIsBackground && edgeGrid.leftTileIsWave &&
       edgeGrid.rightGapIsBackground && edgeGrid.rightTileIsWave &&
       edgeGrid.bottomGapIsBackground && edgeGrid.bottomTileIsWave &&
+      edgeGrid.topTerminalGapIsBackground && edgeGrid.bottomTerminalGapIsBackground &&
+      edgeGrid.leftTerminalGapIsBackground && edgeGrid.rightTerminalGapIsBackground &&
       edgeGrid.bottomRightCornerIsWave;
     check(edgePass, "edge tiles cover all four frame sides at " + viewport.width + "x" + viewport.height + " (" + JSON.stringify(edgeGrid) + ")");
     if (viewport.width === 1441 && viewport.height === 901) {
