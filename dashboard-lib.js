@@ -145,6 +145,77 @@
     return out;
   }
 
+  /* ---------- Workspaces, labels and settings presets ----------
+   * A monitor's workspace is the one set in config/sources.json, or else the
+   * region of its regulator (marked auto). Labels are free tags. Both group
+   * and filter the dashboard; neither changes what is detected.
+   */
+  const LABEL_MAX = 12;
+  const TAG_RE = /^[\p{L}\p{N}](?:[\p{L}\p{N}_ &/+.\-]*[\p{L}\p{N}])?$/u;
+  function validTag(text) { const t = String(text || "").trim(); return t.length > 0 && t.length <= 40 && TAG_RE.test(t) && t.indexOf("  ") < 0; }
+  function parseLabels(text) {
+    const out = [];
+    String(text || "").split(",").map(part => part.trim()).filter(Boolean).forEach(label => {
+      if (!out.some(existing => existing.toLowerCase() === label.toLowerCase())) out.push(label);
+    });
+    return out;
+  }
+  function workspaceOf(source, region) {
+    const own = String((source && source.workspace) || "").trim();
+    if (own) return { name: own, auto: false };
+    return region ? { name: region, auto: true } : { name: "Other", auto: true };
+  }
+  function labelsOf(source) { return Array.isArray(source && source.labels) ? source.labels.filter(Boolean) : []; }
+  // scope: { workspace: "ALL" | name, label: "ALL" | name }
+  function scopeMatches(scope, workspace, labels) {
+    const s = scope || {};
+    if (s.workspace && s.workspace !== "ALL" && (workspace || {}).name !== s.workspace) return false;
+    if (s.label && s.label !== "ALL" && !(labels || []).some(label => label.toLowerCase() === String(s.label).toLowerCase())) return false;
+    return true;
+  }
+  function organisePayload(ids, change) {
+    const c = change || {};
+    const payload = { monitors: Array.from(new Set(ids || [])), set: {}, clear: [] };
+    if (c.clearWorkspace) payload.clear.push("workspace");
+    else if (c.workspace) payload.set.workspace = String(c.workspace).trim();
+    const add = parseLabels((c.add || []).join(",")), remove = parseLabels((c.remove || []).join(","));
+    if (add.length) payload.add_labels = add;
+    if (remove.length) payload.remove_labels = remove.filter(label => !add.some(other => other.toLowerCase() === label.toLowerCase()));
+    if (payload.remove_labels && !payload.remove_labels.length) delete payload.remove_labels;
+    return payload;
+  }
+  function payloadIsEmpty(payload) {
+    const p = payload || {};
+    return !Object.keys(p.set || {}).length && !(p.clear || []).length && !(p.add_labels || []).length && !(p.remove_labels || []).length;
+  }
+  // Built-in presets shaped like a regulatory reporting team's monitors.
+  const SETTINGS_PRESETS = [
+    { id: "release", name: "Release notes and update pages", note: "Every 6 hours, every day. For pages that announce new forms, versions and errata.", schedule: { check_every_hours: 6 } },
+    { id: "spec", name: "Specifications and user guides", note: "Daily on weekdays. Technical specs, layouts, taxonomies and validation rules change by planned release.", schedule: { check_every_hours: 24, check_days: SCAN_BUSINESS_DAYS }, labels: ["Specs"] },
+    // Every scan slot inside the window. Scans start every six hours, so a
+    // ten-hour window holds one or two slots, six hours apart; a 12-hour
+    // cadence would need nine hours between scans and always scan once a day.
+    { id: "office", name: "Regulator business hours", note: "Weekdays, every scan between 08:00 and 18:00 in the regulator's time zone (once or twice a day).", schedule: { check_every_hours: 6, check_days: SCAN_BUSINESS_DAYS, check_hours: [8, 18] }, zoned: true },
+    { id: "archive", name: "Annual and archived documents", note: "Weekly. Year-stamped lists, historical instructions and pages that rarely move.", schedule: { check_every_hours: 168 }, labels: ["Archive"] },
+    { id: "copy", name: "Copy from another monitor", note: "Its scan schedule, workspace and labels.", copy: true }
+  ];
+  function presetPayload(ids, preset, options = {}) {
+    const p = preset || {};
+    if (p.copy) {
+      const from = options.from || {};
+      const schedule = scanSchedulePayload(ids, scanSchedule(from));
+      const own = String(from.workspace || "").trim();
+      if (own) schedule.set.workspace = own;
+      const labels = labelsOf(from);
+      if (labels.length) schedule.add_labels = labels.slice();
+      return schedule;
+    }
+    const schedule = scanSchedule(Object.assign({}, p.schedule, p.zoned && options.timezone ? { check_timezone: options.timezone } : {}));
+    const payload = scanSchedulePayload(ids, schedule);
+    if (p.labels && p.labels.length) payload.add_labels = p.labels.slice();
+    return payload;
+  }
+
   /* ---------- Scan columns ---------- */
 
   // What started a run: "scheduled", "manual", "continuation" (a paused crawl
@@ -2740,7 +2811,7 @@
     pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe, pickRuleMatches, pickRuleFolder, pickRuleRequest,
     diffSequences, alignLines, changedWords, readWorkbook, workbookDiff, csvWorkbook, parseCsv, zipListing, zipFile, readDocx, columnName, cellRef,
-    esc, nextScheduledScan, scanCycle, runColumns, scanSchedule, scanScheduleIsDefault, scanScheduleLabel, scanAllows, scanIsDue, scanSlots, scanSchedulePayload, settingsRequests, SETTINGS_MARKER, SCAN_WEEKDAYS, SCAN_BUSINESS_DAYS, SCAN_INTERVALS, slotColumns, columnCellState, pendingScan,
+    esc, nextScheduledScan, scanCycle, runColumns, validTag, parseLabels, workspaceOf, labelsOf, scopeMatches, organisePayload, payloadIsEmpty, SETTINGS_PRESETS, presetPayload, LABEL_MAX, scanSchedule, scanScheduleIsDefault, scanScheduleLabel, scanAllows, scanIsDue, scanSlots, scanSchedulePayload, settingsRequests, SETTINGS_MARKER, SCAN_WEEKDAYS, SCAN_BUSINESS_DAYS, SCAN_INTERVALS, slotColumns, columnCellState, pendingScan,
     timelineModel, timelineGapWords, TIMELINE_KINDS, healthInsights, healthLight,
     fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, regulatorFor, jurisdictionForHost, hostOf, pageKind, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,

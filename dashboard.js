@@ -809,11 +809,11 @@ function renderLatestPreview() {
 // lights scroll under them.
 const FIELD_STORAGE = "cs-field-v1";
 const FIELD_LENS_WORDS = { activity: "Activity", changed: "Changed", problems: "Problems", new: "New", all: "All pages" };
-const FIELD_GROUPS = { regulator: "Regulator", jurisdiction: "Jurisdiction", kind: "Kind of document", source: "Monitor", none: "No grouping" };
+const FIELD_GROUPS = { regulator: "Regulator", jurisdiction: "Jurisdiction", workspace: "Workspace", kind: "Kind of document", source: "Monitor", none: "No grouping" };
 // The timeline filters events, not pages, and by default gives each page its
 // own lane so one page's updates read left to right with the time between them.
 const TL_SHOWS = ["changed", "problems", "new", "markup", "all"];
-const TL_LANES = ["page", "regulator", "jurisdiction", "kind", "source", "none"];
+const TL_LANES = ["page", "regulator", "jurisdiction", "workspace", "kind", "source", "none"];
 const TL_LANE_LIMIT = 10;
 function fieldPrefs() {
   if (state.field) return state.field;
@@ -881,6 +881,10 @@ function itemRegulator(item) {
 function fieldGroupOf(item, groupBy, sourceLabelText) {
   if (groupBy === "none") return {};
   if (groupBy === "source") return { groupKey: "src:" + item.source_id, groupLabel: sourceLabelText, groupNote: "" };
+  if (groupBy === "workspace") {
+    const ws = sourceWorkspace(String(item.source_id || ""));
+    return { groupKey: "ws:" + ws.name, groupLabel: ws.name, groupNote: ws.auto ? "by region" : "workspace" };
+  }
   if (groupBy === "kind") {
     const kind = L.pageKind(itemTitle(item), item.canonical_url, item.extraction_type);
     return { groupKey: "kind:" + kind, groupLabel: kind, groupNote: "" };
@@ -1849,6 +1853,7 @@ function changeRow(entry, options) {
 }
 function filteredChanges() {
   return changeLogEntries().filter(entry => {
+    if (!inScope(entrySourceId(entry))) return false;
     if (state.changeFilter === "RELEVANT") return verdictFor(entry).state === "relevant";
     if (state.changeFilter === "PROBLEMS") return L.eventTone(entry.event_type) === "problem";
     if (state.changeFilter === "UNDECIDED") return CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0 && !reviewFor(entry.event_id);
@@ -1856,6 +1861,7 @@ function filteredChanges() {
   });
 }
 function renderChangeRoute() {
+  renderScopeBars();
   const all = changeLogEntries();
   const events = filteredChanges();
   const migrations = migrationCount();
@@ -1886,23 +1892,37 @@ function pageRow(item) {
   const status = itemStatus(item);
   const selected = item.url_id === state.selectedId;
   const subtitle = itemSubtitle(item);
+  const source = sourceForItem(item);
+  if (state.picking) {
+    const picked = state.picked.has(item.source_id);
+    return '<button class="row monitor-row" type="button" data-pick-source="' + esc(item.source_id) + '" aria-pressed="' + picked + '">' +
+      '<span class="row-mark ' + (picked ? "is-picked" : "is-pick") + '" aria-hidden="true"></span>' +
+      '<span class="row-title">' + esc(itemTitle(item)) + "</span>" +
+      '<span class="row-time">' + esc(scanScheduleWords(source).replace(/^Every 6 hours$/, "")) + "</span>" +
+      '<span class="row-sub">' + organiseTags(source) + '<span class="row-host">' + esc(subtitle || displayUrl(item.canonical_url)) + "</span></span></button>";
+  }
   return '<button class="row monitor-row" type="button" data-monitor-id="' + esc(item.url_id) + '" data-status-kind="' + esc(status.kind) + '"' + (selected ? ' aria-selected="true"' : "") + ">" +
     '<span class="row-mark tone-' + esc(status.tone) + '" aria-hidden="true"></span>' +
     '<span class="row-title">' + esc(itemTitle(item)) + "</span>" +
     '<span class="row-time">' + esc(item.last_checked ? relativeTime(item.last_checked) : "") + "</span>" +
-    '<span class="row-sub">' + (status.kind === "ok" ? "" : '<span class="tag tone-' + esc(status.tone) + '">' + esc(status.label) + "</span>") +
+    '<span class="row-sub">' + (status.kind === "ok" ? "" : '<span class="tag tone-' + esc(status.tone) + '">' + esc(status.label) + "</span>") + organiseTags(source) +
     '<span class="row-host">' + esc(subtitle || displayUrl(item.canonical_url)) + "</span></span></button>";
 }
-function renderMonitorList() {
+function filteredMonitorItems() {
   const query = $("monitorSearch").value.trim().toLowerCase();
-  const all = state.items.filter(item => {
+  return state.items.filter(item => {
     const status = itemStatus(item);
     if (state.filter === "CHANGES" && status.kind !== "change") return false;
     if (state.filter === "ERRORS" && status.kind !== "error") return false;
+    if (!inScope(item.source_id)) return false;
     const source = sourceForItem(item);
-    const haystack = [itemTitle(item), itemSubtitle(item), item.canonical_url, item.source_id, source.name, source.regulator].join(" ").toLowerCase();
+    const haystack = [itemTitle(item), itemSubtitle(item), item.canonical_url, item.source_id, source.name, source.regulator, source.workspace || "", (source.labels || []).join(" ")].join(" ").toLowerCase();
     return !query || haystack.includes(query);
   });
+}
+function renderMonitorList() {
+  renderScopeBars();
+  const all = filteredMonitorItems();
   $("monitorCount").textContent = all.length === state.items.length ? plural(all.length, "page", "pages") : all.length + " of " + state.items.length;
   if (!all.length) {
     $("monitorList").innerHTML = emptyState(
@@ -2414,12 +2434,14 @@ function renderDetailHeader(item) {
   const meta = '<span class="tag tone-' + esc(status.tone) + '">' + esc(status.label) + "</span>" +
     (source && source.alert_condition ? '<span class="tag" title="' + esc(conditionSummary(source)) + '">' + esc(source.alert_only_on_condition ? "Alerts only when: " : "Alert me when: ") + esc(String(source.alert_condition).length > 60 ? String(source.alert_condition).slice(0, 59) + "\u2026" : String(source.alert_condition)) + "</span>" : "") +
     (source && !L.scanScheduleIsDefault(sourceScanSchedule(source)) ? '<span class="tag" title="Scan schedule">' + esc(scanScheduleWords(source)) + "</span>" : "") +
+    (source && source.id ? organiseTags(source) : "") +
     "<span>Checked " + esc(relativeTime(item.last_checked).toLowerCase()) + "</span>" + urlMeta(item.canonical_url);
   const actions = externalLink(item.canonical_url, "Open live page") +
     (snapshotPath ? externalLink(REPO + "/blob/main/" + snapshotPath, savedFileLabel) : "") +
     (item.source_id ? '<button class="btn" type="button" data-run-scan="' + esc(item.source_id) + '" title="Scan this page\'s source now">Scan this source</button>' : "") +
     (conditionEditable(source) ? '<button class="btn" type="button" data-edit-condition="' + esc(source.id) + '" title="Set what should raise an alert for this monitor">' + (source.alert_condition ? "Edit alert condition" : "Alert me when…") + "</button>" : "") +
     (source && source.id && source.active !== false ? '<button class="btn" type="button" data-edit-schedule="' + esc(source.id) + '" title="How often and when this monitor is scanned">Scan schedule</button>' : "") +
+    (source && source.id && source.active !== false ? '<button class="btn" type="button" data-edit-organise="' + esc(source.id) + '" title="Workspace and labels">Labels</button>' : "") +
     (item.source_id ? '<button class="btn btn-quiet" type="button" data-stop-monitor="' + esc(item.url_id) +
       '" data-stop-url="' + esc(item.canonical_url) + '" data-stop-source="' + esc(item.source_id) +
       '" data-stop-name="' + esc(itemTitle(item)) + '" title="Stop monitoring this URL">Stop monitoring</button>' : "");
@@ -2567,6 +2589,8 @@ function renderDetails(item) {
     ["Ignore", (source.ignore_selectors || []).join(", ") || "Nothing"],
     ["Alert me when", conditionSummary(source) || "No condition; AI relevance decides"],
     ["Scan schedule", scanScheduleWords(source) + (nextScanWords(item.source_id) ? " · next " + nextScanWords(item.source_id) : "")],
+    ["Workspace", (ws => ws.name + (ws.auto ? " (from the regulator's region)" : ""))(sourceWorkspace(source))],
+    ["Labels", sourceLabels(source).join(", ") || "None"],
     ["Fetch error", item.fetch_error || "None"], ["Extraction error", item.extraction_error || "None"],
     ["Text fingerprint (SHA-256)", item.normalized_hash || "Not available", true], ["Saved HTML fingerprint", item.html_hash || "Not available", true],
     ["Response fingerprint", item.raw_hash || "Not available", true],
@@ -2727,7 +2751,8 @@ function renderHealth() {
     '<span class="row-title">All monitors</span><span class="row-time">' + esc(healthPercent(week.success_rate)) + "</span>" +
     '<span class="row-summary">' + esc(healthNumber(totals.monitors) + " monitors, " + healthNumber(week.checks) + " checks and " + healthNumber(week.alerts_sent) + " alerts in 7 days") + "</span></button>";
   const now = Date.now();
-  const lit = healthMonitors().map(monitor => ({ monitor, light: L.healthLight(monitor, now) }));
+  renderScopeBars();
+  const lit = healthMonitors().filter(monitor => inScope(String(monitor.source_id))).map(monitor => ({ monitor, light: L.healthLight(monitor, now) }));
   HEALTH_LIST_GROUPS.forEach(([, label, lights]) => {
     const rows = lit.filter(entry => lights.indexOf(entry.light) >= 0).sort((a, b) => healthName(a.monitor).localeCompare(healthName(b.monitor)));
     if (!rows.length) return;
@@ -2881,11 +2906,14 @@ function renderHealthDetail() {
     ["Last content change", monitor.last_change ? fmt(monitor.last_change) : "None recorded"],
     ["Alert me when", source.alert_condition ? source.alert_condition + (source.alert_only_on_condition ? " (alerts only when met)" : "") : "No condition; AI relevance decides"],
     ["Scan schedule", (monitor.cadence && monitor.cadence.label) || scanScheduleWords(source)],
-    ["Next scan", nextScanWords(key) || "Not recorded"]
+    ["Next scan", nextScanWords(key) || "Not recorded"],
+    ["Workspace", (ws => ws.name + (ws.auto ? " (region)" : ""))(sourceWorkspace(source))],
+    ["Labels", sourceLabels(source).join(", ") || "None"]
   ];
   const actions = (item ? '<button class="btn" type="button" data-monitor-id="' + esc(item.url_id) + '">Open page</button>' : "") +
     '<button class="btn" type="button" data-run-scan="' + esc(key) + '">Scan this source</button>' +
     (source.id && source.active !== false ? '<button class="btn" type="button" data-edit-schedule="' + esc(key) + '">Scan schedule</button>' : "") +
+    (source.id && source.active !== false ? '<button class="btn" type="button" data-edit-organise="' + esc(key) + '">Labels</button>' : "") +
     (conditionEditable(source) ? '<button class="btn" type="button" data-edit-condition="' + esc(key) + '">' + (source.alert_condition ? "Edit alert condition" : "Add alert condition") + "</button>" : "");
   const failureSheet = failures.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">What is failing</h3></div><dl class="facts">' + failures.map(row =>
     "<div><dt>" + esc(row.kind === "FETCH_ERROR" ? "Couldn't fetch" : "Couldn't read content") + '</dt><dd>' + esc(row.error || "") +
@@ -3244,6 +3272,212 @@ function submitScanSchedule(reset) {
   const params = new URLSearchParams(); params.set("title", requests[0].title); params.set("body", requests[0].body);
   openGitHubRequest(REPO + "/issues/new?" + params.toString(), (requests.length > 1 ? "Submit each of the " + requests.length + " prefilled requests on GitHub." : "Submit the prefilled request on GitHub.") +
     " The new schedule applies from the next scheduled scan.");
+}
+
+/* ================= Workspaces, labels and presets =================
+ * Workspace and labels live per monitor in config/sources.json. The scope
+ * bar above Pages, Changes and Health filters all three at once (remembered in
+ * this browser). Select in Pages picks monitors for a bulk change: scan
+ * schedule, workspace and labels, or a preset. Every change goes through a
+ * prefilled request the owner-only Update Monitor Settings workflow applies.
+ */
+const SCOPE_STORAGE = "cs-scope-v1";
+state.scope = (() => { try { const saved = JSON.parse(localStorage.getItem(SCOPE_STORAGE) || "{}") || {}; return { workspace: saved.workspace || "ALL", label: saved.label || "ALL" }; } catch (_) { return { workspace: "ALL", label: "ALL" }; } })();
+state.picking = false;
+state.picked = new Set();
+function sourceRegion(source) {
+  const seed = source && Array.isArray(source.seed_urls) ? source.seed_urls[0] : "";
+  return seed ? L.regulatorFor(seed, regulatorProfiles(), source.regulator || "").region : "";
+}
+function sourceWorkspace(sourceOrId) {
+  const source = typeof sourceOrId === "string" ? configuredSources().find(candidate => candidate.id === sourceOrId) : sourceOrId;
+  return L.workspaceOf(source || {}, source ? sourceRegion(source) : "");
+}
+function sourceLabels(sourceOrId) {
+  const source = typeof sourceOrId === "string" ? configuredSources().find(candidate => candidate.id === sourceOrId) : sourceOrId;
+  return L.labelsOf(source || {});
+}
+function inScope(sourceId) {
+  if (state.scope.workspace === "ALL" && state.scope.label === "ALL") return true;
+  return L.scopeMatches(state.scope, sourceWorkspace(String(sourceId || "")), sourceLabels(String(sourceId || "")));
+}
+function entrySourceId(entry) {
+  if (entry && entry.source_id) return entry.source_id;
+  const item = entry && state.items.find(candidate => candidate.canonical_url === entry.url);
+  return item ? item.source_id : "";
+}
+function scopeOptions() {
+  const workspaces = new Map(), labels = new Map();
+  activeSources().forEach(source => {
+    const ws = sourceWorkspace(source);
+    const entry = workspaces.get(ws.name) || { name: ws.name, count: 0, auto: true };
+    entry.count++; entry.auto = entry.auto && ws.auto;
+    workspaces.set(ws.name, entry);
+    sourceLabels(source).forEach(label => { const key = label.toLowerCase(); const hit = labels.get(key) || { name: label, count: 0 }; hit.count++; labels.set(key, hit); });
+  });
+  const byName = (a, b) => (a.name === "Other") - (b.name === "Other") || a.name.localeCompare(b.name);
+  return { workspaces: Array.from(workspaces.values()).sort(byName), labels: Array.from(labels.values()).sort(byName) };
+}
+function renderScopeBars() {
+  const { workspaces, labels } = scopeOptions();
+  if (state.scope.workspace !== "ALL" && !workspaces.some(ws => ws.name === state.scope.workspace)) state.scope.workspace = "ALL";
+  if (state.scope.label !== "ALL" && !labels.some(label => label.name.toLowerCase() === String(state.scope.label).toLowerCase())) state.scope.label = "ALL";
+  const show = workspaces.length > 1 || labels.length > 0;
+  const option = (value, text, current) => '<option value="' + esc(value) + '"' + (value === current ? " selected" : "") + ">" + esc(text) + "</option>";
+  const html = !show ? "" :
+    '<label>Workspace <select class="scope-select' + (state.scope.workspace !== "ALL" ? " is-set" : "") + '" data-scope="workspace" aria-label="Workspace">' +
+      option("ALL", "All", state.scope.workspace) + workspaces.map(ws => option(ws.name, ws.name + (ws.auto ? " (region)" : "") + " · " + ws.count, state.scope.workspace)).join("") + "</select></label>" +
+    (labels.length ? '<label>Label <select class="scope-select' + (state.scope.label !== "ALL" ? " is-set" : "") + '" data-scope="label" aria-label="Label">' +
+      option("ALL", "All", state.scope.label) + labels.map(label => option(label.name, label.name + " · " + label.count, state.scope.label)).join("") + "</select></label>" : "") +
+    (state.scope.workspace !== "ALL" || state.scope.label !== "ALL" ? '<button class="scope-clear" type="button" data-scope-clear>Clear</button>' : "");
+  document.querySelectorAll("[data-scope-bar]").forEach(bar => {
+    bar.hidden = !show;
+    if (bar.dataset.rendered !== html) { bar.innerHTML = html; bar.dataset.rendered = html; }
+  });
+}
+function setScope(key, value) {
+  if (key) state.scope[key] = value || "ALL";
+  else state.scope = { workspace: "ALL", label: "ALL" };
+  try { localStorage.setItem(SCOPE_STORAGE, JSON.stringify(state.scope)); } catch (_) {}
+  renderLists();
+  renderDetailForView(state.view);
+}
+function renderDetailForView(view) {
+  if (view === "health") renderHealthDetail();
+}
+function organiseTags(source) {
+  const ws = sourceWorkspace(source);
+  return (!ws.auto ? '<span class="tag" title="Workspace">' + esc(ws.name) + "</span>" : "") +
+    sourceLabels(source).map(label => '<span class="tag is-label" title="Label">#' + esc(label) + "</span>").join("");
+}
+// Selection: settings apply per monitor (source), so picking a page picks its monitor.
+function setPicking(on) {
+  state.picking = !!on;
+  if (!state.picking) state.picked.clear();
+  $("selectMonitorsBtn").setAttribute("aria-pressed", String(state.picking));
+  $("selectMonitorsBtn").textContent = state.picking ? "Done" : "Select";
+  renderMonitorList();
+  renderSelectBar();
+}
+function togglePicked(sourceId) {
+  if (!sourceId) return;
+  if (state.picked.has(sourceId)) state.picked.delete(sourceId); else state.picked.add(sourceId);
+  renderMonitorList();
+  renderSelectBar();
+}
+function shownMonitorIds() {
+  return Array.from(new Set(filteredMonitorItems().map(item => item.source_id).filter(id => configuredSources().some(source => source.id === id && source.active !== false))));
+}
+function renderSelectBar() {
+  const bar = $("selectBar");
+  if (!bar) return;
+  bar.hidden = !state.picking;
+  const n = state.picked.size;
+  $("selectCount").textContent = n ? plural(n, "monitor", "monitors") + " selected" : "Tap pages to select their monitors";
+  bar.querySelectorAll("[data-bulk]").forEach(button => { button.disabled = !n; });
+  const shown = shownMonitorIds();
+  const all = shown.length && shown.every(id => state.picked.has(id));
+  bar.querySelector("[data-select-shown]").textContent = all ? "Clear selection" : "Select all shown (" + shown.length + ")";
+}
+function openSettingsRequests(payload, describe, toast) {
+  const requests = L.settingsRequests(payload, describe);
+  if (!requests.length) return;
+  requests.slice(1).forEach(request => {
+    const params = new URLSearchParams(); params.set("title", request.title); params.set("body", request.body);
+    window.open(REPO + "/issues/new?" + params.toString(), "_blank");
+  });
+  const params = new URLSearchParams(); params.set("title", requests[0].title); params.set("body", requests[0].body);
+  openGitHubRequest(REPO + "/issues/new?" + params.toString(), (requests.length > 1 ? "Submit each of the " + requests.length + " prefilled requests on GitHub. " : "Submit the prefilled request on GitHub. ") + toast);
+}
+function openOrganise(ids) {
+  const list = Array.from(new Set((ids || []).filter(id => configuredSources().some(source => source.id === id && source.active !== false))));
+  if (!list.length) { showToast("Choose at least one active monitor."); return; }
+  state.pendingOrganise = list;
+  state.organiseRemove = new Map();
+  const first = configuredSources().find(source => source.id === list[0]) || {};
+  $("organiseTarget").textContent = list.length === 1 ? (first.name || first.id) : plural(list.length, "monitor", "monitors");
+  const { workspaces, labels } = scopeOptions();
+  const current = Array.from(new Set(list.map(id => { const ws = sourceWorkspace(id); return ws.auto ? "" : ws.name; })));
+  const explicit = workspaces.filter(ws => !ws.auto).map(ws => ws.name);
+  const suggestions = Array.from(new Set(explicit.concat(["NAM", "EMEA", "LATAM", "APAC"])));
+  $("organiseWorkspace").innerHTML = '<option value="__keep">' + (current.length === 1 ? "Keep: " + (current[0] || "by region") : "Keep each monitor's own") + "</option>" +
+    suggestions.map(name => '<option value="' + esc(name) + '">' + esc(name) + "</option>").join("") +
+    '<option value="__new">New workspace…</option><option value="__clear">None (group by region)</option>';
+  $("organiseWorkspace").value = "__keep";
+  $("organiseWorkspaceNew").hidden = true;
+  $("organiseWorkspaceNew").value = "";
+  $("organiseAdd").value = "";
+  $("organiseLabelList").innerHTML = labels.map(label => '<option value="' + esc(label.name) + '"></option>').join("");
+  $("organiseSuggestions").innerHTML = labels.slice(0, 12).map(label => '<button class="chip" type="button" data-add-label="' + esc(label.name) + '">+ ' + esc(label.name) + "</button>").join("");
+  const present = new Map();
+  list.forEach(id => sourceLabels(id).forEach(label => present.set(label.toLowerCase(), label)));
+  $("organiseRemoveRow").hidden = !present.size;
+  $("organiseRemove").innerHTML = Array.from(present.values()).sort().map(label => '<button class="chip" type="button" data-remove-label="' + esc(label) + '" aria-pressed="false">#' + esc(label) + "</button>").join("");
+  $("organiseError").textContent = "";
+  $("organiseDialog").showModal();
+}
+function submitOrganise() {
+  const choice = $("organiseWorkspace").value;
+  const newName = $("organiseWorkspaceNew").value.trim();
+  const add = L.parseLabels($("organiseAdd").value);
+  const bad = add.concat(choice === "__new" ? [newName] : []).filter(text => !L.validTag(text));
+  if (choice === "__new" && !newName) { $("organiseError").textContent = "Name the new workspace."; return; }
+  if (bad.length) { $("organiseError").textContent = "Use 1–40 letters, digits, spaces or & / + . - _ in names: " + bad.join(", "); return; }
+  const overflow = state.pendingOrganise.filter(id => {
+    const kept = sourceLabels(id).filter(label => !state.organiseRemove.has(label.toLowerCase()));
+    return kept.concat(add.filter(label => !kept.some(other => other.toLowerCase() === label.toLowerCase()))).length > L.LABEL_MAX;
+  });
+  if (overflow.length) { $("organiseError").textContent = "A monitor can carry at most " + L.LABEL_MAX + " labels; " + plural(overflow.length, "monitor", "monitors") + " would exceed that."; return; }
+  const payload = L.organisePayload(state.pendingOrganise, {
+    workspace: choice === "__new" ? newName : choice.indexOf("__") === 0 ? "" : choice,
+    clearWorkspace: choice === "__clear",
+    add, remove: Array.from(state.organiseRemove.values())
+  });
+  if (L.payloadIsEmpty(payload)) { $("organiseError").textContent = "Nothing to change yet: pick a workspace, or add or remove a label."; return; }
+  const words = [payload.set.workspace ? "workspace → " + payload.set.workspace : payload.clear.indexOf("workspace") >= 0 ? "workspace → by region" : "",
+    payload.add_labels ? "add " + payload.add_labels.join(", ") : "", payload.remove_labels ? "remove " + payload.remove_labels.join(", ") : ""].filter(Boolean).join("; ");
+  $("organiseDialog").close();
+  openSettingsRequests(payload, words, "Workspaces and labels apply as soon as it is processed.");
+}
+function openPreset(ids) {
+  const list = Array.from(new Set((ids || []).filter(id => configuredSources().some(source => source.id === id && source.active !== false))));
+  if (!list.length) { showToast("Choose at least one active monitor."); return; }
+  state.pendingPreset = list;
+  $("presetTarget").textContent = plural(list.length, "monitor", "monitors");
+  $("presetList").innerHTML = L.SETTINGS_PRESETS.map((preset, index) => '<label class="preset-option"><input type="radio" name="preset" value="' + esc(preset.id) + '"' + (index === 1 ? " checked" : "") + '><b>' + esc(preset.name) + "</b><small>" + esc(preset.note) +
+    (preset.labels ? " Adds the label " + preset.labels.map(label => "#" + label).join(", ") + "." : "") + "</small></label>").join("");
+  const others = activeSources().filter(source => list.indexOf(source.id) < 0).sort((a, b) => sourceLabel(a).localeCompare(sourceLabel(b)));
+  $("presetCopyFrom").innerHTML = others.map(source => '<option value="' + esc(source.id) + '">' + esc(sourceLabel(source) + " — " + scanScheduleWords(source)) + "</option>").join("");
+  renderPresetPreview();
+  $("presetDialog").showModal();
+}
+// The regulator's time zone for "business hours", from its region; the owner can refine it per monitor.
+const REGION_ZONES = { NAM: "America/New_York", LATAM: "America/Sao_Paulo", EMEA: "Europe/London", APAC: "Asia/Singapore" };
+function presetChoice() {
+  const picked = (document.querySelector("#presetList input:checked") || {}).value;
+  return L.SETTINGS_PRESETS.find(preset => preset.id === picked) || L.SETTINGS_PRESETS[0];
+}
+function presetPayloadFor(ids) {
+  const preset = presetChoice();
+  if (preset.copy) return L.presetPayload(ids, preset, { from: configuredSources().find(source => source.id === $("presetCopyFrom").value) || {} });
+  const regions = Array.from(new Set(ids.map(id => sourceWorkspace(id)).filter(ws => ws.auto).map(ws => ws.name)));
+  return L.presetPayload(ids, preset, { timezone: REGION_ZONES[regions.length === 1 ? regions[0] : ""] || "UTC" });
+}
+function renderPresetPreview() {
+  const preset = presetChoice();
+  $("presetCopyRow").hidden = !preset.copy;
+  const payload = presetPayloadFor(state.pendingPreset || []);
+  const schedule = L.scanSchedule(payload.set);
+  const extras = [payload.set.workspace ? "workspace " + payload.set.workspace : "", payload.add_labels ? "adds " + payload.add_labels.map(label => "#" + label).join(", ") : ""].filter(Boolean);
+  $("presetPreview").innerHTML = '<div class="scan-preview-head"><b>' + esc(L.scanScheduleLabel(schedule)) + "</b><span>" + esc(extras.join(" · ") || "schedule only") + "</span></div>";
+}
+function submitPreset() {
+  const ids = state.pendingPreset || [];
+  const preset = presetChoice();
+  if (preset.copy && !$("presetCopyFrom").value) { showToast("Pick the monitor to copy from."); return; }
+  const payload = presetPayloadFor(ids);
+  $("presetDialog").close();
+  openSettingsRequests(payload, "preset “" + preset.name + "” → " + L.scanScheduleLabel(L.scanSchedule(payload.set)), "The preset applies from the next scheduled scan.");
 }
 
 /* ================= Alert channels ================= */
@@ -6343,6 +6577,11 @@ function addPlan() {
   return { monitored, stopped, covered, picked, summary, pending, leftStopped, leftCovered, prepared };
 }
 function renderReview() {
+  const workspaceList = $("reviewWorkspaceList");
+  if (workspaceList && !workspaceList.childElementCount) {
+    const names = Array.from(new Set(scopeOptions().workspaces.filter(ws => !ws.auto).map(ws => ws.name).concat(["NAM", "EMEA", "LATAM", "APAC"])));
+    workspaceList.innerHTML = names.map(name => '<option value="' + esc(name) + '"></option>').join("");
+  }
   const a = state.add;
   const plan = addPlan();
   const filters = { query: a.query, format: a.format, show: a.show, selectedKeys: new Set(a.picked.keys()) };
@@ -6468,6 +6707,15 @@ function reviewAlertCondition() {
   if (only && !condition) { showToast("Describe the condition to alert on, or untick \u201cAlert only when it is met\u201d."); return null; }
   return condition ? { condition, only } : {};
 }
+// Workspace and labels for every new monitor in the review step's requests.
+function reviewOrganise() {
+  const workspace = ($("reviewWorkspace") ? $("reviewWorkspace").value : "").trim();
+  const labels = L.parseLabels($("reviewLabels") ? $("reviewLabels").value : "");
+  const bad = (workspace ? [workspace] : []).concat(labels).filter(text => !L.validTag(text));
+  if (bad.length) { showToast("Use 1\u201340 letters, digits, spaces or & / + . - _ in: " + bad.join(", ")); return null; }
+  if (labels.length > L.LABEL_MAX) { showToast("At most " + L.LABEL_MAX + " labels."); return null; }
+  return { workspace, labels };
+}
 function reviewOpenBatch(index) {
   const a = state.add;
   const plan = addPlan();
@@ -6475,7 +6723,9 @@ function reviewOpenBatch(index) {
   if (!batch) return renderReviewFoot(plan);
   const alert = reviewAlertCondition();
   if (alert === null) return;
-  const target = makeBulkGitHubIssueUrl(batch, alert);
+  const organise = reviewOrganise();
+  if (organise === null) return;
+  const target = makeBulkGitHubIssueUrl(batch, alert, organise);
   if (target.length > MAX_BULK_REQUEST_URL_LENGTH) { showToast("This request is too long for GitHub; nothing was opened."); return; }
   const now = new Date().toISOString();
   batch.forEach(row => { a.opened[L.urlKey(row.url)] = now; });
@@ -6808,12 +7058,15 @@ async function readBulkFile(file) {
     }
   }
 }
-function makeBulkGitHubIssueUrl(rows, alert) {
+function makeBulkGitHubIssueUrl(rows, alert, organise) {
   const bodyLines = [
     BULK_REQUEST_MARKER, "",
     "Please register the URLs listed below as ChangeSentinel monitors.", ""
   ];
   if (alert && alert.condition) bodyLines.push("Alert me when: " + alert.condition, "Alert only when condition met: " + (alert.only ? "yes" : "no"), "");
+  if (organise && organise.workspace) bodyLines.push("Workspace: " + organise.workspace);
+  if (organise && organise.labels && organise.labels.length) bodyLines.push("Labels: " + organise.labels.join(", "));
+  if (organise && (organise.workspace || (organise.labels || []).length)) bodyLines.push("");
   bodyLines.push(
     "BULK_DATA_JSON:",
     JSON.stringify(rows),
@@ -7061,7 +7314,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -7133,6 +7386,21 @@ $("workspace").addEventListener("click", event => {
   if (data.selectHealth) return select("health", data.selectHealth);
   if (data.editCondition) return openConditionDialog(data.editCondition);
   if (data.editSchedule) return openScanSchedule(data.editSchedule.split(","));
+  if (data.editOrganise) return openOrganise(data.editOrganise.split(","));
+  if (data.pickSource) return togglePicked(data.pickSource);
+  if (data.selectShown !== undefined) {
+    const shown = shownMonitorIds();
+    const all = shown.length && shown.every(id => state.picked.has(id));
+    shown.forEach(id => all ? state.picked.delete(id) : state.picked.add(id));
+    renderMonitorList(); renderSelectBar(); return;
+  }
+  if (data.bulk) {
+    const ids = Array.from(state.picked);
+    if (data.bulk === "schedule") return openScanSchedule(ids);
+    if (data.bulk === "organise") return openOrganise(ids);
+    return openPreset(ids);
+  }
+  if (data.scopeClear !== undefined) return setScope(null);
   if (data.channelGuide !== undefined) { const guide = $("channelGuide"); if (guide) { guide.open = true; guide.scrollIntoView({ block: "nearest" }); } return; }
   if (data.selectNotification) return select("notifications", data.selectNotification);
   if (data.go) return setView(data.go);
@@ -7749,6 +8017,32 @@ $("reviewBack").addEventListener("click", () => {
   if (a.origin === "explore" && a.page) addGoto("explore");
   else addGoto("start");
 });
+$("selectMonitorsBtn").addEventListener("click", () => setPicking(!state.picking));
+$("workspace").addEventListener("change", event => {
+  const select = event.target.closest("[data-scope]");
+  if (select) setScope(select.dataset.scope, select.value);
+});
+$("closeOrganise").addEventListener("click", () => $("organiseDialog").close());
+$("cancelOrganise").addEventListener("click", () => $("organiseDialog").close());
+$("organiseForm").addEventListener("submit", event => { event.preventDefault(); submitOrganise(); });
+$("organiseWorkspace").addEventListener("change", () => { $("organiseWorkspaceNew").hidden = $("organiseWorkspace").value !== "__new"; if (!$("organiseWorkspaceNew").hidden) $("organiseWorkspaceNew").focus(); });
+$("organiseDialog").addEventListener("click", event => {
+  if (event.target === $("organiseDialog")) return $("organiseDialog").close();
+  const add = event.target.closest("[data-add-label]");
+  if (add) { const labels = L.parseLabels($("organiseAdd").value + "," + add.dataset.addLabel); $("organiseAdd").value = labels.join(", "); return; }
+  const remove = event.target.closest("[data-remove-label]");
+  if (remove) {
+    const key = remove.dataset.removeLabel.toLowerCase();
+    if (state.organiseRemove.has(key)) state.organiseRemove.delete(key); else state.organiseRemove.set(key, remove.dataset.removeLabel);
+    remove.setAttribute("aria-pressed", String(state.organiseRemove.has(key)));
+    remove.classList.toggle("is-remove", state.organiseRemove.has(key));
+  }
+});
+$("closePreset").addEventListener("click", () => $("presetDialog").close());
+$("cancelPreset").addEventListener("click", () => $("presetDialog").close());
+$("presetForm").addEventListener("submit", event => { event.preventDefault(); submitPreset(); });
+$("presetForm").addEventListener("change", renderPresetPreview);
+$("presetDialog").addEventListener("click", event => { if (event.target === $("presetDialog")) $("presetDialog").close(); });
 $("closeScanSchedule").addEventListener("click", () => $("scanScheduleDialog").close());
 $("cancelScanSchedule").addEventListener("click", () => $("scanScheduleDialog").close());
 $("scanScheduleReset").addEventListener("click", () => submitScanSchedule(true));
