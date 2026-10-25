@@ -1075,7 +1075,7 @@ class TestCheckeredFrameGlints(unittest.TestCase):
         self.assertIn("CSLib.fbm(col * .26 + t * .22, row * .26 + t * .08, t * .11)", script)
         self.assertIn("Math.pow(wave, 1.5) * .92", script)
         self.assertIn("function edgeAnchors(length)", script)
-        self.assertIn("if (position + tile <= end) anchors.push(position);", script)
+        self.assertIn("if (end - position > 1) anchors.push(position);", script)
         self.assertIn("function paintTile(x, y, col, row, t, tileWidth, tileHeight)", script)
         self.assertIn("const tileWidthAt = col => col < columns - 1", script)
         self.assertIn("const tileHeightAt = row => row < rows - 1", script)
@@ -1104,14 +1104,14 @@ class TestCheckeredFrameGlints(unittest.TestCase):
         def edge_anchors(length):
             end = length - cell + 1
             anchors = [position for position in range(1, end, cell)
-                       if position + tile <= end]
+                       if end - position > 1]
             if not anchors or anchors[-1] != end:
                 anchors.append(end)
             return anchors
 
         # Include the awkward remainder of two pixels that previously left the
         # right/bottom LED mostly outside the frame, as well as other remainders.
-        for width, height in ((1422, 722), (1441, 901), (1459, 899), (1281, 721), (1440, 900)):
+        for width, height in ((1422, 722), (1438, 718), (1441, 901), (1459, 899), (1281, 721), (1440, 900)):
             with self.subTest(width=width, height=height):
                 x_anchors = edge_anchors(width)
                 y_anchors = edge_anchors(height)
@@ -1121,6 +1121,10 @@ class TestCheckeredFrameGlints(unittest.TestCase):
                 self.assertTrue(all(1 <= y and y + tile <= height for y in y_anchors))
                 self.assertTrue(all(b >= a + tile for a, b in zip(x_anchors, x_anchors[1:])))
                 self.assertTrue(all(b >= a + tile for a, b in zip(y_anchors, y_anchors[1:])))
-                # The only non-20px gaps are the intentionally clipped terminal cells.
-                self.assertLessEqual(max(b - (a + tile) for a, b in zip(x_anchors, x_anchors[1:])), 3)
-                self.assertLessEqual(max(b - (a + tile) for a, b in zip(y_anchors, y_anchors[1:])), 3)
+                # Shorten the regular tile immediately before the pinned edge tile
+                # when necessary, preserving a one- or two-pixel separator.
+                x_widths = [min(tile, b - a - 1) for a, b in zip(x_anchors, x_anchors[1:])]
+                y_heights = [min(tile, b - a - 1) for a, b in zip(y_anchors, y_anchors[1:])]
+                self.assertTrue(all(size > 0 for size in x_widths + y_heights))
+                self.assertLessEqual(max(b - (a + size) for a, size, b in zip(x_anchors, x_widths, x_anchors[1:])), 2)
+                self.assertLessEqual(max(b - (a + size) for a, size, b in zip(y_anchors, y_heights, y_anchors[1:])), 2)
