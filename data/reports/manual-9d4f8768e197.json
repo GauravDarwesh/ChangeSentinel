@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261024T203638Z-3ba23ebc",
-  "generated_at": "2026-10-24T20:40:08.266376+00:00",
+  "run_id": "20261025T042315Z-30741745",
+  "generated_at": "2026-10-25T04:25:38.413276+00:00",
   "source": {
     "id": "manual-9d4f8768e197",
     "name": "FR Y-6 Securities Template file (XLSX)",
@@ -72,8 +72,8 @@
     "extraction_drift": 0,
     "fetch_error": 0,
     "extraction_error": 0,
-    "not_modified": 0,
-    "forced_full_fetch": 1,
+    "not_modified": 1,
+    "forced_full_fetch": 0,
     "relevance_candidates": 0,
     "ai_ok": 0,
     "ai_invalid": 0,
@@ -91,5 +91,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "scheduled",
-  "workflow_run_id": "40130397749"
+  "workflow_run_id": "40161552177"
 }

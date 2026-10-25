@@ -1,0 +1,1852 @@
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'html' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ html--node--1912.html.twig
+   ▪️ html--node--%.html.twig
+   ▪️ html--node.html.twig
+   ✅ html.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/html.html.twig' -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+<noscript><style>form.antibot > * { display: none !important; } form.antibot noscript { display: block !important; }</style>
+</noscript><meta name="description" content="1. IntroductionOSFI has specified a return for the Basel Capital Adequacy Reporting (BCAR) data call. This return must be submitted to OSFI through the Tri-Agency Database System called RRS (Regulatory Reporting System). This document highlights the technical file layout and format for that submission file.BibliographyPlease note that the “XX” in the year denotes the start of the next fiscal reporting period.These files are available for download at:" />
+<link rel="canonical" href="https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification" />
+<meta name="generator" content="OSFI_BSIF_WCMS" />
+<meta name="dcterms.title" content="Basel Capital Adequacy Reporting (BCAR) FAQ Technical Specification" />
+<meta name="dcterms.creator" content="Office of the Superintendent of Financial Institutions" />
+<meta name="dcterms.description" content="1. IntroductionOSFI has specified a return for the Basel Capital Adequacy Reporting (BCAR) data call. This return must be submitted to OSFI through the Tri-Agency Database System called RRS (Regulatory Reporting System). This document highlights the technical file layout and format for that submission file.BibliographyPlease note that the “XX” in the year denotes the start of the next fiscal reporting period.These files are available for download at:" />
+<meta name="dcterms.language" content="eng" title="ISO639-2/T" />
+<meta name="dcterms.accessRights" content="2" />
+<meta name="dcterms.modified" content="2026-09-10" title="W3CDTF" />
+<meta name="dcterms.issued" content="2023-12-02" title="W3CDTF" />
+<meta name="dcterms.service" content="OSFI-BSIF_BSIF-OSFI" />
+<meta name="Generator" content="Drupal 11 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script src="//assets.adobedtm.com/be5dfd287373/0127575cd23a/launch-f7c3e6060667.min.js" type="text/javascript" async></script>
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<style media="all and (max-width: 767px)">.site-section.banner {background-image:  url('/sites/default/files/styles/narrow_banner_xs/public/2023-06/Data-Forms_Bannerop.jpg?itok=TK7chxB5') ;background-size: cover ;-webkit-background-size: cover ;-moz-background-size: cover ;-o-background-size: cover ;}</style>
+<style media="all and (min-width: 768px)">.site-section.banner {background-image:  url('/sites/default/files/styles/narrow_banner_sm/public/2023-06/Data-Forms_Bannerop.jpg?itok=w5bU0jh7') ;background-size: cover ;-webkit-background-size: cover ;-moz-background-size: cover ;-o-background-size: cover ;}</style>
+<style media="all and (min-width: 992px)">.site-section.banner {background-image:  url('/sites/default/files/styles/narrow_banner_md/public/2023-06/Data-Forms_Bannerop.jpg?itok=tXTRo7Nu') ;background-size: cover ;-webkit-background-size: cover ;-moz-background-size: cover ;-o-background-size: cover ;}</style>
+<style media="all and (min-width: 1200px)">.site-section.banner {background-image:  url('/sites/default/files/styles/narrow_banner_lg/public/2023-06/Data-Forms_Bannerop.jpg?itok=P120HHfB') ;background-size: cover ;-webkit-background-size: cover ;-moz-background-size: cover ;-o-background-size: cover ;}</style>
+<link rel="icon" href="/themes/custom/osfi_wxt/favicon.ico" type="image/vnd.microsoft.icon" />
+<link rel="alternate" hreflang="en" href="https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification" />
+<link rel="alternate" hreflang="fr" href="https://www.osfi-bsif.gc.ca/fr/donnees-formulaires/rapports-releves/produire-releve-financier/guides-production-releves-financiers/releve-normes-fonds-propres-bale-rnfpb-faq-specifications-techniques" />
+
+    <title>Basel Capital Adequacy Reporting (BCAR) FAQ Technical Specification - Office of the Superintendent of Financial Institutions</title>
+    <link rel="stylesheet" media="all" href="/sites/default/files/css/css_l8nXGw18-CSrtMZZOpMLwvKH3QR_dZz16jkq2x6Y8u0.css?delta=0&amp;language=en&amp;theme=osfi_wxt&amp;include=eJx1UAtuwyAMvRCBIyEDbuYFMLLdJt3pR7tOqpRN8v89-QfdKLEF-PH-wtJcgrxF4ykjvMWRMneXNyxkLJF6wW6pct7CW-wyC4Yi1wHVGx4GgrAIKn2hY71Q3A8LUxe-oQgVVKd3NWxzlqK7Ee4antY3LteKbsf02Cu8vIdPOE7FzG2wkp3pWLHN7XxBA6rqjdf1j66_tIaqsP6P8zDirif8-bpXEhOzqQmMcKq4eXuslATkHuxjNl3WPFnf3yKbMw" />
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_TwTiZqJ_GWLaJeFOkVHC5tsw3rTeVbzfeXoisz1ujo4.css?delta=1&amp;language=en&amp;theme=osfi_wxt&amp;include=eJx1UAtuwyAMvRCBIyEDbuYFMLLdJt3pR7tOqpRN8v89-QfdKLEF-PH-wtJcgrxF4ykjvMWRMneXNyxkLJF6wW6pct7CW-wyC4Yi1wHVGx4GgrAIKn2hY71Q3A8LUxe-oQgVVKd3NWxzlqK7Ee4antY3LteKbsf02Cu8vIdPOE7FzG2wkp3pWLHN7XxBA6rqjdf1j66_tIaqsP6P8zDirif8-bpXEhOzqQmMcKq4eXuslATkHuxjNl3WPFnf3yKbMw" />
+
+
+          <noscript><link rel="stylesheet" href="/libraries/wet-boew/css/noscript.min.css"></noscript>
+    
+    <script src="/modules/contrib/adobe_launch/js/adobe_launch_dtm_init.js?tndjer"></script>
+
+  </head>
+  <body class="lang-en node-1912 path-node page-node-type-data-and-forms has-glyphicons osfi-wxt theme-gcweb">
+    <nav>
+      <ul id="wb-tphp">
+        <li class="wb-slc">
+          <a class="wb-sl" href="#wb-cont">
+            Skip to main content
+          </a>
+        </li>
+        <li class="wb-slc">
+          <a class="wb-sl" href="#wb-info">
+            Skip to &quot;About this site&quot;
+          </a>
+        </li>
+      </ul>
+    </nav>
+    
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'off_canvas_page_wrapper' -->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/off-canvas-page-wrapper.html.twig' -->
+  <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'page' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ page--node--1912--gcweb.html.twig
+   ▪️ page--data-and-forms--gcweb.html.twig
+   ✅ page--gcweb.html.twig
+   ▪️ page--data-and-forms.html.twig
+   ▪️ page--node--1912.html.twig
+   ▪️ page--node--%.html.twig
+   ▪️ page--node.html.twig
+   ▪️ page.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/page/page--gcweb.html.twig' -->
+
+    <header class="navbar navbar-default" id="navbar">
+    <div id="wb-bnr" class="container-fluid padded-sm">
+      <div class="row">
+        <div class="col-xs-12 col-sm-6">
+          <img class="canada-signature" src="/libraries/theme-gcweb/assets/sig-blk-en.svg" alt="Government of Canada" height="30">
+        </div>
+        <div class="col-xs-12 col-sm-6 text-right">
+          
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ region--topbar--gcweb.html.twig
+   ▪️ region--topbar.html.twig
+   ✅ region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region.html.twig' -->
+  <div class="region region-topbar">
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ block--topbar--gcweb--osfi-wxt-customsearchblock.html.twig
+   ▪️ block--topbar--osfi-wxt-customsearchblock.html.twig
+   ▪️ block--osfi-wxt-customsearchblock.html.twig
+   ▪️ block--ngage-search-block.html.twig
+   ▪️ block--ngage-search.html.twig
+   ✅ block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block.html.twig' -->
+
+<section id="block-osfi-wxt-customsearchblock" class="wb-srch block block-ngage-search block-ngage-search-block clearfix" data-block-plugin-id="ngage_search_block">
+  
+      <h2 class="wb-inv">Search</h2>
+    
+
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'search_block' -->
+<!-- BEGIN OUTPUT from 'modules/custom/ngage_extensions/modules/ngage_search/templates/search-block.html.twig' -->
+<form action="/en/node/648" method="get" class="search-form form-inline" role="search">
+  <div class="form-item form-group">
+    <label for="wb-srch-q" class="sr-only">Enter your keywords</label>
+    <input type="search" placeholder="Search website" name="search-keys" id="wb-srch-q" class="search-input form-control" />
+  </div>
+  <button id="wb-srch-sub"><span class="sr-only">submit</span></button>
+</form>
+<!-- END OUTPUT from 'modules/custom/ngage_extensions/modules/ngage_search/templates/search-block.html.twig' -->
+
+
+  </section>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ block--topbar--gcweb--osfi-wxt-languageswitcher.html.twig
+   ▪️ block--topbar--osfi-wxt-languageswitcher.html.twig
+   ▪️ block--osfi-wxt-languageswitcher.html.twig
+   ✅ block--wxt-language-block--language-interface.html.twig
+   ▪️ block--wxt-language-block.html.twig
+   ▪️ block--wxt-library.html.twig
+   ▪️ block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block--wxt-language-block--language-interface.html.twig' -->
+<section class="language-switcher-language-url wb-lng block block-wxt-library block-wxt-language-blocklanguage-interface clearfix" id="block-osfi-wxt-languageswitcher" data-block-plugin-id="wxt_language_block:language_interface">
+  
+      <h2 class="wb-inv">Language selection</h2>
+    
+
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'links__language_block__gcweb' -->
+<!-- FILE NAME SUGGESTIONS:
+   ✅ links--language-block--gcweb.html.twig
+   ▪️ links--language-block.html.twig
+   ✅ links--language-block--gcweb.html.twig
+   ▪️ links.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/links--language-block--gcweb.html.twig' -->
+<ul class="links list-inline mrgn-bttm-0">                    <li><a href="/fr/donnees-formulaires/rapports-releves/produire-releve-financier/guides-production-releves-financiers/releve-normes-fonds-propres-bale-rnfpb-faq-specifications-techniques" class="language-link" lang="fr" hreflang="fr" data-drupal-link-system-path="node/1912"><span class="hidden-xs">Français</span><abbr title="Français" class="visible-xs h3 mrgn-tp-sm mrgn-bttm-0 text-uppercase">fr</abbr></a></li></ul>
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/links--language-block--gcweb.html.twig' -->
+
+
+  </section>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block--wxt-language-block--language-interface.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region.html.twig' -->
+
+
+        </div>
+      </div>
+    </div>
+
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ region--branding--gcweb.html.twig
+   ✅ region--branding.html.twig
+   ▪️ region.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/system/region--branding.html.twig' -->
+  <div class="region region-branding container-fluid">
+    <div class="row wb-eqht-grd grow">
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ block--branding--gcweb--osfi-wxt-branding.html.twig
+   ▪️ block--branding--osfi-wxt-branding.html.twig
+   ▪️ block--osfi-wxt-branding.html.twig
+   ✅ block--system-branding-block.html.twig
+   ▪️ block--system.html.twig
+   ▪️ block.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/block/block--system-branding-block.html.twig' -->
+  <a class="main-site col-xs-12 col-sm-8 col-md-9 no-padding-x" href="/en" title="Home" rel="home">
+    <span class="logo col-sm-2 padded-sm hght-inhrt">
+      <img src="/themes/custom/osfi_wxt/logo.svg" alt="Home" />
+    </span>
+    <span class="name navbar-text padded-sm hght-inhrt col-sm-10">Office of the Superintendent of Financial Institutions</span>
+  </a>
+  <a class="cross-site-link navbar-btn col-sm-4 col-md-3 padded-sm hidden-xs" href="/en/oca" title="Office of the Chief Actuary">Office of the Chief Actuary</a>
+  
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/block/block--system-branding-block.html.twig' -->
+
+
+    </div>
+  </div>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/system/region--branding.html.twig' -->
+
+
+
+    <div class="clearfix navbar-header visible-xs">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse">
+        Menu
+        <span class="icon-wrapper">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </span>
+      </button>
+    </div>
+    <div class="clearfix navbar-collapse collapse" id="navbar-collapse">
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ region--navigation--gcweb.html.twig
+   ✅ region--navigation.html.twig
+   ▪️ region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region--navigation.html.twig' -->
+  
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ block--navigation--gcweb--osfi-wxt-main-menu.html.twig
+   ▪️ block--navigation--osfi-wxt-main-menu.html.twig
+   ▪️ block--osfi-wxt-main-menu.html.twig
+   ✅ block--system-menu-block--main.html.twig
+   ▪️ block--system-menu-block.html.twig
+   ▪️ block--system.html.twig
+   ▪️ block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block--system-menu-block--main.html.twig' -->
+<nav aria-labelledby="block-osfi-wxt-main-menumainmenu" id="block-osfi-wxt-main-menu" data-block-plugin-id="system_menu_block:main">
+            <h2 class="sr-only hidden" id="block-osfi-wxt-main-menumainmenu">Main navigation</h2>
+
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu__main' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ menu--main.html.twig
+   ✅ menu--main--gcweb.html.twig
+   ▪️ menu--main.html.twig
+   ▪️ menu.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/menu/menu--main--gcweb.html.twig' -->
+
+              <ul role="menu" class="nav navbar-nav">
+                            
+              <li role="presentation">
+        <a href="/en/risks" role="menuitem" title="Risks" data-drupal-link-system-path="node/750">Risks</a>
+                  </li>
+                        
+              <li role="presentation">
+        <a href="/en/guidance" role="menuitem" title="Guidance" data-drupal-link-system-path="node/379">Guidance</a>
+                  </li>
+                        
+              <li role="presentation">
+        <a href="/en/supervision" role="menuitem" title="Supervision" data-drupal-link-system-path="node/217">Supervision</a>
+                  </li>
+                        
+              <li role="presentation">
+        <a href="/en/consultations" role="menuitem" title="Consultations" data-drupal-link-system-path="node/223">Consultations</a>
+                  </li>
+                        
+              <li role="presentation">
+        <a href="/en/data-forms" role="menuitem" title="Data and forms" data-drupal-link-system-path="node/752">Data and forms</a>
+                  </li>
+                        
+              <li role="presentation">
+        <a href="/en/careers" role="menuitem" title="Careers" data-drupal-link-system-path="node/209">Careers</a>
+                  </li>
+        </ul>
+  
+
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/menu/menu--main--gcweb.html.twig' -->
+
+
+  </nav>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block--system-menu-block--main.html.twig' -->
+
+
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region--navigation.html.twig' -->
+
+
+      <a class="cross-site-link navbar-btn padded-sm visible-xs" href="/en/oca" title="Office of the Chief Actuary">Office of the Chief Actuary</a>
+    </div>
+  </header>
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   ✅ region--banner--gcweb.html.twig
+   ▪️ region--banner.html.twig
+   ▪️ region.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/system/region--banner--gcweb.html.twig' -->
+  <div class="region region-banner clearfix">
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ block--banner--gcweb--views-block--site-section-block-1.html.twig
+   ▪️ block--banner--views-block--site-section-block-1.html.twig
+   ▪️ block--views-block--site-section-block-1.html.twig
+   ▪️ block--views-block.html.twig
+   ▪️ block--views.html.twig
+   ✅ block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block.html.twig' -->
+
+<div class="views-element-container block block-views block-views-blocksite-section-block-1 clearfix" id="block-views-block-site-section-block-1" data-block-plugin-id="views_block:site_section-block_1">
+  
+    
+
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'container' -->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/container.html.twig' -->
+<div class="form-group">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'views_view' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ views-view--site-section--block-1.html.twig
+   ▪️ views-view--site-section.html.twig
+   ✅ views-view.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/views/views-view.html.twig' -->
+<div class="bg-img parallax view view-site-section view-id-site_section view-display-id-block_1 js-view-dom-id-31f92e97c396a79bd2b1a6ca2f14d9646c51dc2c9e829b7bb1722efd736bdc33" id="site_section-block_1">
+  
+    
+      
+      <div class="view-content">
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'views_view_unformatted' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ views-view-unformatted--site-section--block-1.html.twig
+   ▪️ views-view-unformatted--site-section.html.twig
+   ✅ views-view-unformatted.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/views/templates/views-view-unformatted.html.twig' -->
+    <div class="views-row">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'taxonomy_term' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ taxonomy-term--site-section--default.html.twig
+   ▪️ taxonomy-term--67.html.twig
+   ✅ taxonomy-term--site-section.html.twig
+   ▪️ taxonomy-term.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/taxonomy/taxonomy-term--site-section.html.twig' -->
+<div class="site-section banner vertical-padding">
+    <div class="container">
+        <div class="row">
+            
+              <div class="col-xs-12">
+                <p class="h1">Data and forms</p>
+              </div>
+            
+            
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ field--taxonomy-term--field-image--site-section.html.twig
+   ▪️ field--taxonomy-term--field-image.html.twig
+   ▪️ field--taxonomy-term--site-section.html.twig
+   ▪️ field--field-image.html.twig
+   ▪️ field--image.html.twig
+   ✅ field.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/field/field.html.twig' -->
+
+            <div class="field field--name-field-image field--type-image field--label-hidden field--item"></div>
+      
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/field/field.html.twig' -->
+
+
+        </div>
+    </div>
+</div>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/taxonomy/taxonomy-term--site-section.html.twig' -->
+
+</div>
+
+<!-- END OUTPUT from 'core/modules/views/templates/views-view-unformatted.html.twig' -->
+
+
+    </div>
+  
+          </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/views/views-view.html.twig' -->
+
+</div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/container.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block.html.twig' -->
+
+
+  </div>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/system/region--banner--gcweb.html.twig' -->
+
+
+
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ region--breadcrumb--gcweb.html.twig
+   ▪️ region--breadcrumb.html.twig
+   ✅ region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region.html.twig' -->
+  <div class="region region-breadcrumb">
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ block--breadcrumb--gcweb--breadcrumbs.html.twig
+   ▪️ block--breadcrumb--breadcrumbs.html.twig
+   ▪️ block--breadcrumbs.html.twig
+   ✅ block--system-breadcrumb-block.html.twig
+   ▪️ block--system.html.twig
+   ▪️ block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block--system-breadcrumb-block.html.twig' -->
+  
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'breadcrumb' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ breadcrumb--gcweb.html.twig
+   ✅ breadcrumb.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/system/breadcrumb.html.twig' -->
+      <nav id="wb-bc" property="breadcrumb" aria-labelledby="breadcrumbTitle">
+      <h2 id="breadcrumbTitle">You are here</h2>
+      <ol class="breadcrumb">
+                              <li >
+                              <a href="/en" title="Home">Home</a>
+                          </li>
+                      <li >
+                              <a href="/en/data-forms" title="Data and forms">Data and forms</a>
+                          </li>
+                      <li >
+                              <a href="/en/data-forms/reporting-returns" title="Reporting and returns">Reporting and returns</a>
+                          </li>
+                      <li >
+                              <a href="/en/data-forms/reporting-returns/filing-financial-returns" title="Filing financial returns">Filing financial returns</a>
+                          </li>
+                      <li >
+                              <a href="/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions" title="Financial reporting instructions">Financial reporting instructions</a>
+                          </li>
+                      <li  class="active">
+                              Basel Capital Adequacy Reporting (BCAR) FAQ Technical Specification
+                          </li>
+                        </ol>
+    </nav>
+  
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/system/breadcrumb.html.twig' -->
+
+
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block--system-breadcrumb-block.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region.html.twig' -->
+
+
+  
+      <div class="highlighted clearfix">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ region--highlighted--gcweb.html.twig
+   ▪️ region--highlighted.html.twig
+   ✅ region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region.html.twig' -->
+  <div class="region region-highlighted">
+    
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region.html.twig' -->
+
+</div>
+  
+
+    <main property="mainContentOfPage"  class="full-width js-quickedit-main-content">
+
+              
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ region--content--gcweb.html.twig
+   ▪️ region--content.html.twig
+   ✅ region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region.html.twig' -->
+  <div class="region region-content">
+    <div data-drupal-messages-fallback class="hidden"></div>
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ block--content--gcweb--osfi-wxt-content.html.twig
+   ▪️ block--content--osfi-wxt-content.html.twig
+   ▪️ block--osfi-wxt-content.html.twig
+   ▪️ block--system-main-block.html.twig
+   ✅ block--system.html.twig
+   ▪️ block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block--system.html.twig' -->
+  
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'node' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ node--1912--full.html.twig
+   ▪️ node--1912.html.twig
+   ✅ node--data-and-forms--full.html.twig
+   ▪️ node--data-and-forms.html.twig
+   ▪️ node--full.html.twig
+   ▪️ node.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/node/node--data-and-forms--full.html.twig' -->
+
+
+
+
+
+  <article class="data-and-forms full clearfix">
+
+        <div class="container">
+      
+      <h1 id="wb-cont" class="text-center clearfix">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ field--node--title--data-and-forms.html.twig
+   ✅ field--node--title.html.twig
+   ▪️ field--node--data-and-forms.html.twig
+   ▪️ field--title.html.twig
+   ▪️ field--string.html.twig
+   ▪️ field.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/node/templates/field--node--title.html.twig' -->
+
+<span>Basel Capital Adequacy Reporting (BCAR) FAQ Technical Specification</span>
+
+<!-- END OUTPUT from 'core/modules/node/templates/field--node--title.html.twig' -->
+
+</h1>
+      
+    </div>
+  
+    
+        <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="wb-tabs ignore-session">
+            <div class="tabpanels">
+                      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field_group_html_element' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ field-group-html-element--node--data-and-forms--group-information.html.twig
+   ▪️ field-group-html-element--node--data-and-forms--details.html.twig
+   ▪️ field-group-html-element--node--group-information.html.twig
+   ▪️ field-group-html-element--node--data-and-forms.html.twig
+   ▪️ field-group-html-element--node--details.html.twig
+   ▪️ field-group-html-element--group-information.html.twig
+   ▪️ field-group-html-element--data-and-forms.html.twig
+   ▪️ field-group-html-element--node.html.twig
+   ▪️ field-group-html-element--details.html.twig
+   ✅ field-group-html-element.html.twig
+-->
+<!-- BEGIN OUTPUT from 'modules/contrib/field_group/templates/field-group-html-element.html.twig' -->
+
+<details  id="tab-information">
+  <summary>Information</summary>
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field_group_html_element' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ field-group-html-element--node--data-and-forms--group-box.html.twig
+   ▪️ field-group-html-element--node--data-and-forms--div.html.twig
+   ▪️ field-group-html-element--node--group-box.html.twig
+   ▪️ field-group-html-element--node--data-and-forms.html.twig
+   ▪️ field-group-html-element--node--div.html.twig
+   ▪️ field-group-html-element--group-box.html.twig
+   ▪️ field-group-html-element--data-and-forms.html.twig
+   ▪️ field-group-html-element--node.html.twig
+   ▪️ field-group-html-element--div.html.twig
+   ✅ field-group-html-element.html.twig
+-->
+<!-- BEGIN OUTPUT from 'modules/contrib/field_group/templates/field-group-html-element.html.twig' -->
+
+<div  class="info-grid wb-eqht-grd grow clearfix">
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field_group_html_element' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ field-group-html-element--node--data-and-forms--group-left.html.twig
+   ▪️ field-group-html-element--node--data-and-forms--div.html.twig
+   ▪️ field-group-html-element--node--group-left.html.twig
+   ▪️ field-group-html-element--node--data-and-forms.html.twig
+   ▪️ field-group-html-element--node--div.html.twig
+   ▪️ field-group-html-element--group-left.html.twig
+   ▪️ field-group-html-element--data-and-forms.html.twig
+   ▪️ field-group-html-element--node.html.twig
+   ▪️ field-group-html-element--div.html.twig
+   ✅ field-group-html-element.html.twig
+-->
+<!-- BEGIN OUTPUT from 'modules/contrib/field_group/templates/field-group-html-element.html.twig' -->
+
+<div  class="col-xs-12 col-sm-8 info-left">
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ field--node--field-publication-type--data-and-forms.html.twig
+   ▪️ field--node--field-publication-type.html.twig
+   ▪️ field--node--data-and-forms.html.twig
+   ▪️ field--field-publication-type.html.twig
+   ▪️ field--entity-reference.html.twig
+   ✅ field.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/field/field.html.twig' -->
+
+  <div class="field field--name-field-publication-type field--type-entity-reference field--label-inline">
+    <div class="field--label">Type of document</div>
+              <div class="field--item">FAQs</div>
+          </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/field/field.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ field--node--field-industry--data-and-forms.html.twig
+   ▪️ field--node--field-industry.html.twig
+   ▪️ field--node--data-and-forms.html.twig
+   ▪️ field--field-industry.html.twig
+   ▪️ field--entity-reference.html.twig
+   ✅ field.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/field/field.html.twig' -->
+
+  <div class="field field--name-field-industry field--type-entity-reference field--label-inline">
+    <div class="field--label">Industry</div>
+              <div class="field--item">Deposit-taking institutions</div>
+          </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/field/field.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ field--node--field-return--data-and-forms.html.twig
+   ▪️ field--node--field-return.html.twig
+   ▪️ field--node--data-and-forms.html.twig
+   ▪️ field--field-return.html.twig
+   ▪️ field--entity-reference.html.twig
+   ✅ field.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/field/field.html.twig' -->
+
+  <div class="field field--name-field-return field--type-entity-reference field--label-inline">
+    <div class="field--label">Return</div>
+              <div class="field--item">Basel Capital Adequacy Reporting (BCAR)</div>
+          </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/field/field.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ field--node--field-last-updated--data-and-forms.html.twig
+   ▪️ field--node--field-last-updated.html.twig
+   ▪️ field--node--data-and-forms.html.twig
+   ▪️ field--field-last-updated.html.twig
+   ▪️ field--string.html.twig
+   ✅ field.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/field/field.html.twig' -->
+
+  <div class="field field--name-field-last-updated field--type-string field--label-inline">
+    <div class="field--label">Last updated</div>
+              <div class="field--item">February 26, 2024</div>
+          </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/field/field.html.twig' -->
+
+
+  </div>
+<!-- END OUTPUT from 'modules/contrib/field_group/templates/field-group-html-element.html.twig' -->
+
+
+  </div>
+<!-- END OUTPUT from 'modules/contrib/field_group/templates/field-group-html-element.html.twig' -->
+
+
+  </details>
+<!-- END OUTPUT from 'modules/contrib/field_group/templates/field-group-html-element.html.twig' -->
+
+
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field' -->
+<!-- FILE NAME SUGGESTIONS:
+   ✅ field--node--field-toc--data-and-forms.html.twig
+   ▪️ field--node--field-toc.html.twig
+   ▪️ field--node--data-and-forms.html.twig
+   ▪️ field--field-toc.html.twig
+   ▪️ field--boolean.html.twig
+   ▪️ field.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/field/field--node--field-toc--data-and-forms.html.twig' -->
+
+
+  
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/field/field--node--field-toc--data-and-forms.html.twig' -->
+
+
+      
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ field--node--field-related-documents--data-and-forms.html.twig
+   ▪️ field--node--field-related-documents.html.twig
+   ▪️ field--node--data-and-forms.html.twig
+   ✅ field--field-related-documents.html.twig
+   ▪️ field--link.html.twig
+   ▪️ field.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/field/field--field-related-documents.html.twig' -->
+
+  <details class="field field--name-field-related-documents field--type-link field--label-above" id="field-related-documents">
+    <summary class="field--label">Related documents</summary>
+    <div class="details-wrapper">
+      			<ul>
+									<li class="field--item">
+						<a href="/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2026-basel-capital-adequacy-reporting-bcar">
+							Basel Capital Adequacy Reporting (BCAR) 2026
+						</a>
+					</li>
+									<li class="field--item">
+						<a href="/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar">
+							Basel Capital Adequacy Reporting (BCAR) 2027
+						</a>
+					</li>
+							</ul>
+		    </div>
+  </details>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/field/field--field-related-documents.html.twig' -->
+
+
+  
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
+          <div class="content">
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field' -->
+<!-- FILE NAME SUGGESTIONS:
+   ✅ field--body-container.html.twig
+   ▪️ field--node--body--data-and-forms.html.twig
+   ▪️ field--node--body.html.twig
+   ▪️ field--node--data-and-forms.html.twig
+   ▪️ field--body.html.twig
+   ▪️ field--text-with-summary.html.twig
+   ▪️ field.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/field/field--body-container.html.twig' -->
+
+  <div class="field field--name-body field--type-text-with-summary field--label-hidden container body-wrapper">
+    <div class="row">
+      <div class="col-xs-12"><h2 id="toc1.0">1. Introduction</h2><p>OSFI has specified a return for the Basel Capital Adequacy Reporting (BCAR) data call. This return must be submitted to OSFI through the Tri-Agency Database System called RRS (Regulatory Reporting System). This document highlights the technical file layout and format for that submission file.</p><h3>Bibliography</h3><p>Please note that the “XX” in the year denotes the start of the next fiscal reporting period.</p><p>These files are available for download at:</p><p><a href="/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar" data-entity-type="node" data-entity-uuid="46bc3bdd-e4cb-442c-aa23-dd742b85e35a" data-entity-substitution="canonical" title="2027 Basel Capital Adequacy Reporting (BCAR)">Basel Capital Adequacy Reporting (BCAR)</a></p><h2 id="toc2.0">2. Basic concepts and terms</h2><p>In this section, we explain a number of concepts and terms related to the way that Return data is organized within a Return data file. We begin with a description of how to read the new BCAR template then move to dimensions and measurement records. Then these concepts are related to record types, which specify a grouping of dimensional records that you will provide in your Return data file.</p><p>The most significant change to the return data file is that it is being collected in an XML format rather than the existing .dat format. Extensible Markup Language (XML)&nbsp;lets you define and store data in a shareable manner. XML supports information exchange between computer systems such as websites, databases, and third-party applications.</p><h3 id="toc2.1">2.1. How to read the new BCAR templates</h3><p>The BCAR return can be divided into two concepts. The conventional format of data collection and the dimensional format of data collection.</p><p>The conventional cells are represented by a single location or cell where a value is required.</p><p>There is no additional dimensionality. These are identified with a 4- or 5-digit DPA numbers.</p><p>An example is DPA 1001 which exists on Schedule 10.010 and has a label of Tier 1 Capital Ratio (%). The representation of these 4- or 5-digit DPAs is unchanged in the new definition of BCAR.</p><p>The dimensional cells do not have a unique number attached to them. They are represented as a cross section of dimension codes and a measure. The cells are not individually numbered.</p><h2 id="toc3.0">3. Dimensions, measures, and information categories (record types)</h2><h3 id="toc3.1">3.1. Dimensions</h3><p>A dimension is a list of business categories that are grouped under a single business concept. BCAR contains 8 dimensions as highlighted in the list below. Note that previously DD Double Default Framework was a dimension but is no longer reported.</p><figure class="margin-left-medium"><figcaption>Dimension ID</figcaption><ul><li>Approach type (APPROACH_TYPE)</li><li>Exposure class (EXP_CL)</li><li>Risk type (RISK_TYPE)</li><li>Equity type (EQUITY_TYPE)</li><li>Exposure Type (EXP_TYPE)</li><li>PD Bands (PD)</li><li>Risk weight (RISK_WEIGHT)</li><li>Country (COUNTRY)</li></ul></figure><h3 id="toc3.2">3.2. Dimension codes</h3><p>Dimension codes are the specific values associated with each dimension. Each dimension code is identified by a label and a dimension ID.</p><p>For instance, the following dimension codes are part of the Exposure Class but not limited to these:</p><ul><li>Sovereign (106)</li><li>Public Sector Entities (PSEs) (120)</li><li>Multilateral Development Banks (MDB) (121)</li><li>Bank (excluding Covered Bonds) (107)</li></ul><p>The number of dimension codes used can change with every housekeeping cycle.</p><p>For a complete list of all the dimension codes and how they are used please refer to:</p><p>OSFI, “Technical Specifications (Technical Specification - Effective QX 20XX)”, Microsoft Excel Spreadsheet, Unclassified OSFI Publication.</p><h3 id="toc3.3">3.3. Measures</h3><p>Measures are specific addresses or cells that represent a value that needs to be reported.</p><p>Typically, a measure will be a unique cell in valid combination of dimension codes.</p><p>For a complete list of all the measures and how they are used please refer to:</p><p>OSFI, “Technical Specifications (Technical Specification - Effective QX 20XX)”, Microsoft Excel Spreadsheet, Unclassified OSFI Publication.</p><h3 id="toc3.4">3.4. Information categories (record types)</h3><p>OSFI is responsible for collecting and evaluating several general categories of information. Each information category is defined by a set of dimensions and measures.</p><p>Note that Record Type 025 is no longer collected.</p><div class="table-responsive"><table class="table table-hover table-striped table-bordered"><caption class="wb-invisible">Record types</caption><thead><tr><th scope="col">Record type code</th><th scope="col">Description</th></tr></thead><tbody><tr><td>005</td><td>The standardized approach to calculating credit risk-weighted assets</td></tr><tr><td>010</td><td>Exposures reported under the general IRB approach</td></tr><tr><td>015</td><td>Specialized lending is a subclass of Corporate for which the reporting institution does not meet the requirements for estimating PDs and cannot use the risk-weight formulas. In these cases, it must use a Supervisory Slotting approach to calculate risk-weighted assets.</td></tr><tr><td>030</td><td>Within the corporate and retail exposure classes, eligible purchased receivables are given unique treatment, whereby risk-weighted assets are calculated separately for default and for dilution risk.</td></tr><tr><td>035</td><td>Measures relating to eligible purchased receivables qualifying for special treatment are captured in this record type as well as in Purchased Receivables</td></tr><tr><td>040</td><td>Data collected by Reverse mortgages are given special capital treatment set out in the Advisory on Capital Treatment of Reverse Mortgages</td></tr><tr><td>045</td><td>Reverse Mortgages to be deducted from capital as set out in the Advisory on the Capital Treatment of Reverse Mortgages</td></tr><tr><td>050</td><td>Countercyclical Buffer (CCyB) Requirement</td></tr><tr><td>055</td><td>Countercyclical Buffer (CCyB) Requirement for Category III SMSBs</td></tr></tbody></table></div><p>For a complete list of all the Record types and how they are used please refer to:</p><p>OSFI, “Technical Specifications (Technical Specification - Effective QX 20XX)”, Microsoft Excel Spreadsheet, Unclassified OSFI Publication.</p><h3 id="toc3.5">3.5. Invalid Combinations (holes)</h3><p>An invalid combination otherwise known as a hole is an instance where a value is not required. Currently this applies to BCAR returns only, although in the future it may apply to other returns as well.</p><p><strong>Measure Holes</strong> – a measure hole is a single cell where a value is not required.</p><p><strong>Dimensional Holes</strong> – A dimensional hole is a series of measure holes that may or may not appear on the table. It is often represented by its absence. In the example Schedule 40.050 record Type 005 is defined as having multiple Exposure Types (EXP_TYPE) yet only three are displayed for data entry:</p><ul><li>Exposure Types (EXP_TYPE) = Drawn (501)</li><li>Exposure Types (EXP_TYPE) = Undrawn commitment (502)</li><li>Exposure Types (EXP_TYPE) = Other off-balance sheet (505)</li></ul><p>There are several exposure types that are not required in this schedule:</p><p>Note that Exposure Type (EXP_TYPE)= Repo-Style Transaction (503) is absent from Schedule 40.150 – Record Type 005 although it is on the list of allowed values.</p><p>Since there are no values required across the full range of all the measures for this Exposure Type it is not even displayed on the schedule. Had it been displayed all its values would have been greyed out. This is a dimensional hole.</p><p>Do not submit data for any measure or dimensional holes otherwise you will receive a validation error.</p><h2 id="toc4.0">4. Submission file requirements</h2><p>The following sections describe the BCAR Return extract file layout required by RRS.</p><h3 id="toc4.1">4.1. File type and naming convention</h3><p>The BCAR submission is collected in an XML Format.</p><p>XML&nbsp;supports information exchange between computer systems such as websites, databases, and third-party applications.&nbsp;</p><p>There are no requirements for the name of the file submission.</p><p>An XSD and a Sample XML file are provided on the OSFI web site. An XSD is An XML schema definition (XSD), which is a framework document that&nbsp;defines the rules and constraints for XML documents.</p><p>For an exact listing of all the Record Types, Dimensions, Dimension Codes and Measures please refer to:</p><p>OSFI, “Technical Specifications (Technical Specification - Effective QX 20XX)”, Microsoft Excel Spreadsheet, Unclassified OSFI Publication.</p><h3 id="toc4.2">4.2. Submission file structure – Conventional datapoints</h3><p>When creating a submission file for a conventional 4- or 5-digit DPA please note the following</p><ol><li><p>Identify the datapoint for which you wish to submit a value. You can review</p><p>OSFI, “BCAR 20XX Return (BCAR 20XX return - Effective QX 20XX)”, Microsoft Excel Spreadsheet, Unclassified OSFI Publication.</p></li><li>As an example, datapoint 5615 exists on schedule 10.050 (Cell D27).</li><li>In the document “BCAR XML Sample File (BCAR Sample XML - Effective QX&nbsp;20XX)”, for sample purposes only, the value represents the datapoint number.</li><li>The tags around the value identify the datapoint number by the formula of “_x003” + first datapoint digit + underscore + remaining 3 or 4 datapoint digits. (Example line #’s 35-37).</li></ol><pre><code class="language-plaintext">
+35 &lt;_x0035_615&gt;
+36   &lt;value&gt;5615&lt;/value&gt;
+37 &lt;/_x0035_615&gt;
+</code></pre><div class="clear">&nbsp;</div><ol start="5"><li>In the document BCAR Return XSD (BCAR Sample XSD - Effective QX 20XX), this tag value can be linked back to the XSD to find the details such as datatype and hierarchy of other parent elements. For example, line #’s 82633, 82639 &amp; 82645.</li></ol><pre><code class="language-plaintext">
+82633 &lt;xs:element minOccurs="0" maxOccurs="1" name="BA-6"&gt;
+82634   &lt;xs:annotation&gt;
+82635    &lt;xs:documentation&gt;BA-6&lt;/xs:documentation&gt;
+82636  &lt;/xs:annotation&gt;
+82637  &lt;xs:complexType&gt;
+82638     &lt;xs:all&gt;
+82639      &lt;xs:element minOccurs="0" maxOccurs="1" name="_x0035_615"&gt;
+82640         &lt;xs:annotation&gt;
+...
+82642        &lt;/xs:annotation&gt;
+82643        &lt;xs:complexType&gt;
+82644          &lt;xs:complexContent mixed="false"&gt;
+82645            &lt;xs:extension base="Whole_x0020_Number"&gt;
+</code></pre><div class="clear">&nbsp;</div><h3 id="toc4.3">4.3. Submission file structure - Dimensional datapoints</h3><p>The dimensional submission section of the XML can be created and defined by following the same line of logic as the conventional submissions.</p><ol><li><p>Identify the dimensional range that you wish to submit data.</p><p>OSFI, “BCAR 20XX Return (BCAR 20XX return - Effective QX 20XX)”, Microsoft Excel Spreadsheet, Unclassified OSFI Publication.</p></li><li>In Schedule 40.010 we are aware that we wish to submit data for the following dimensional codes:<ul><li>Record Type = 005 (Reference cell A4)</li><li>Exposure Class = Sovereign (106) (Reference cell A3)</li><li>Exposure Type = Undrawn Commitments (502)(Reference cell A4)</li><li>Risk Weight = 20% Rated (804)(Reference cell A22)</li><li>Measure = Notional Principal Amount (M12) (Reference cell B7)</li></ul></li><li>The sample XML file: BCAR XML Sample File (BCAR Sample XML - Effective QX 20XX) can be reviewed to see how the elements are laid out on lines #s 18191, 18199, 18202 &amp; 18205.</li></ol><p>An example taken from the BCAR XML Sample File document, showing the following XML tags: at line 18191, &nbsp;value tag around 106; at line 18199, value tag around 502; at line 18202, value tage around 804; and at line 18205 value tag around 120.</p><pre><code class="language-plaintext">
+18187 &lt;BCAR&gt;
+18188   &lt;_x0030_05&gt;
+18189     &lt;_x0030_05_x0020_Repeat_x0020_Group&gt;
+18190       &lt;EXP_CL&gt;
+18191         &lt;value&gt;106&lt;/value&gt;
+18192       &lt;/EXP_CL&gt;
+18193       &lt;Standardized&gt;
+18194         &lt;StandardizedTable&gt;
+...
+18197        &lt;StandardizedTable_x0020_Repeat_x0020_Group&gt;
+18198              &lt;EXP_TYPE&gt;
+18199                &lt;value&gt;502&lt;/value&gt;
+18200      &lt;/EXP_TYPE&gt;
+18201               &lt;RISK_WEIGHT&gt;
+18202                 &lt;value&gt;804&lt;/value&gt;
+18203       &lt;/RISK_WEIGHT&gt;
+18204       &lt;M12&gt;
+18205                  &lt;value&gt;120&lt;/value&gt;
+18206       &lt;/M12&gt;
+18207       &lt;M13&gt;
+18208         &lt;value&gt;130&lt;/value&gt;
+18209       &lt;/M13&gt; 
+</code></pre><div class="clear">&nbsp;</div><p>In the document BCAR Return XSD (BCAR Sample XSD - Effective QX 20XX), this tag value can be linked back to the XSD to find the details such as datatype and hierarchy of other parent elements. For example, line #’s 154318 &amp; 154324. The hierarchy can be different for each record type.</p><p>BCAR Return XSD (BCAR Sample XSD - Effective QX 20XX)</p><p>An example from the BCAR Return XSD document, showing the following XML tags: at line 154318, &lt;xs:element minOccurs=“0” maxOccurs=“1” name=“EXP_CL”&gt;, and at line 154324, &lt;xs:extension base=“EXP_CL”&gt;.</p><pre><code class="language-plaintext">
+154311  &lt;xs:all&gt;
+154312    &lt;xs:element minOccurs="0" maxOccurs="1" name="_x0030_05"&gt;
+154313      &lt;xs:complexType&gt;
+154314        &lt;xs:sequence minOccurs="0" maxOccurs="unbounded"&gt;
+154315          &lt;xs:element minOccurs="1" maxOccurs="1" name="_x0030_05_x0020_Repeat_x0020_Group"&gt;
+154316        &lt;xs:complexType&gt;
+154317       &lt;xs:all&gt;
+154318         &lt;xs:element minOccurs="0" maxOccurs="1" name="EXP_CL"&gt;
+154319        &lt;xs:annotation&gt;
+154320          &lt;xs:documentation&gt;BCAR Exposure Classes / RNFPB - Catégories d'exposition&lt;/xs:documentation&gt;
+154321        &lt;/xs:annotation&gt;
+154322        &lt;xs:complexType&gt;
+154323          &lt;xs:complexContent mixed="false"&gt;
+154324         &lt;xs:extension base="EXP_CL"&gt;
+154325           &lt;xs:attribute default="item" name="type" /&gt;
+154326         &lt;/xs:extension&gt;
+154327       &lt;/xs:complexContent&gt;
+154328        &lt;/xs:complexType&gt;
+154329      &lt;/xs:element&gt;
+154330        &lt;xs:element minOccurs="0" maxOccurs="1" name="Standardized"&gt;
+154331          &lt;xs:annotation&gt;
+154332         &lt;xs:documentation&gt;Standardized&lt;/xs:documentation&gt;
+154333       &lt;/xs:annotation&gt;
+154334       &lt;xs:complexType&gt;
+154335         &lt;xs:all&gt;               
+</code></pre><div class="clear">&nbsp;</div><h2 id="toc5.0">5. Frequently asked questions</h2><h3>Q: What if I have nothing to submit for a particular datapoint or measure?</h3><p>A: For instance, if you do not wish to submit a value for datapoint 5615 then just omit the element tags and the value tags. Do not submit empty value tags as this will result in a structural error</p><p>Invalid - will throw an error</p><pre><code class="language-plaintext">
+35 &lt;_x0035_615&gt;
+36   &lt;value&gt;|&lt;/value&gt;
+37 &lt;/_x0035_615&gt;
+</code></pre><div class="clear">&nbsp;</div><p>Instead omit the elements and value tags completely</p><h3>Q: For dimensional submission, is the structure of all the record types the same?</h3><p>A: No Record Types 005, 010, 030, 035 use a different hierarchy in the way the elements are laid out. Please refer the sample XML file and the XSD for details.</p><p>OSFI, “BCAR XML Sample File (BCAR Sample XML - Effective QX 20XX)”, XML File, Unclassified OSFI Publication.</p><p>This is an XML file that can be used as a sample submission file</p><p>OSFI, “BCAR Return XSD (BCAR Sample XSD - Effective QX 20XX)”, XSD File, Unclassified OSFI Publication.</p><p>This is an XSD file that defines the submission sample file.</p><h3>Q: Why does it seems that certain XML element tags are mapped to the reporting schedules while others seem to be more arbitrary?</h3><p>A: The RRS system, as with other internal systems, are shared between the Tri Agency – OSFI, Bank of Canada and CDIC. The different XML elements are used for compatibility between the Tri Agency’s internal systems. Please refer the sample XML file and the XSD for the correct elements to use.</p><h3>Q: What if I receive a rule or structural error that I don’t understand?</h3><p>A: Please send an email to <a href="mailto:RRSsupport-SDRsoutien@osfi-bsif.gc.ca">RRSsupport-SDRsoutien@osfi-bsif.gc.ca</a>.</p><h2 id="toc6.0">6. Version control</h2><div class="table-responsive"><table class="table table-hover table-striped table-bordered"><caption class="wb-invisible">Version control</caption><thead><tr><th scope="col">Version</th><th scope="col">Date</th><th scope="col">Author</th><th scope="col">Description</th></tr></thead><tbody><tr><td>1.0</td><td>July 14, 2023</td><td>Deniz Berkin</td><td>Document created</td></tr><tr><td>1.1</td><td>February 26,2024</td><td>Deniz Berkin</td><td>Updated for BCAR 2024</td></tr></tbody></table></div></div>
+    </div>
+  </div>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/field/field--body-container.html.twig' -->
+
+
+      </div>
+    
+  </article>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/node/node--data-and-forms--full.html.twig' -->
+
+
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block--system.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region.html.twig' -->
+
+
+    
+                      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ region--content-footer--gcweb.html.twig
+   ✅ region--content-footer.html.twig
+   ▪️ region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region--content-footer.html.twig' -->
+  <div class="pagedetails region region-content-footer">
+    <div class="row">
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ block--content-footer--gcweb--osfi-wxt-reportproblemblock.html.twig
+   ▪️ block--content-footer--osfi-wxt-reportproblemblock.html.twig
+   ▪️ block--osfi-wxt-reportproblemblock.html.twig
+   ✅ block--report-problem-block.html.twig
+   ▪️ block--wxt-ext-webform.html.twig
+   ▪️ block.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/block/block--report-problem-block.html.twig' -->
+
+<div id="block-osfi-wxt-reportproblemblock" class="col-xs-12 col-sm-6 block block-wxt-ext-webform block-report-problem-block clearfix" data-block-plugin-id="report_problem_block">
+  
+    
+
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'gcweb-inline-webform' -->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/webform/gcweb-inline-webform.html.twig' -->
+<details class="brdr-0">
+  <summary class="btn btn-default text-center"> Report a problem or mistake on this page</summary>
+  <div class="well row">
+    <div class="gc-rprt-prblm">
+      <div id="webform-submission-gcweb-report-a-problem-node-1912-form-ajax-content" tabindex="-1"><div id="webform-submission-gcweb-report-a-problem-node-1912-form-ajax" class="webform-ajax-form-wrapper" data-effect="none" data-progress-type="throbber">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'webform' -->
+<!-- FILE NAME SUGGESTIONS:
+   ✅ webform--gcweb-report-a-problem.html.twig
+   ▪️ webform.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/webform/webform--gcweb-report-a-problem.html.twig' -->
+<form class="webform-submission-form webform-submission-add-form webform-submission-gcweb-report-a-problem-form webform-submission-gcweb-report-a-problem-add-form webform-submission-gcweb-report-a-problem-node-1912-form webform-submission-gcweb-report-a-problem-node-1912-add-form js-webform-details-toggle webform-details-toggle antibot" novalidate="novalidate" data-drupal-selector="webform-submission-gcweb-report-a-problem-node-1912-add-form" data-action="/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification" action="/antibot" method="post" id="webform-submission-gcweb-report-a-problem-node-1912-add-form" accept-charset="UTF-8">
+	
+	
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'webform_submission_form' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ webform-submission-form--gcweb-report-a-problem.html.twig
+   ✅ webform-submission-form.html.twig
+-->
+<!-- BEGIN OUTPUT from 'modules/contrib/webform/templates/webform-submission-form.html.twig' -->
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'antibot_no_js' -->
+<!-- BEGIN OUTPUT from 'modules/contrib/antibot/templates/antibot-no-js.html.twig' -->
+<noscript>
+  <div class="antibot-no-js antibot-message antibot-message-warning">You must have JavaScript enabled to use this form.</div>
+</noscript>
+
+<!-- END OUTPUT from 'modules/contrib/antibot/templates/antibot-no-js.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'fieldset' -->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/system/fieldset.html.twig' -->
+<fieldset data-drupal-selector="edit-report-issue-types" class="checkboxes--wrapper fieldgroup form-composite webform-composite-visible-title required js-webform-type-checkboxes webform-type-checkboxes chkbxrdio-grp js-form-item form-item js-form-wrapper form-wrapper" id="edit-report-issue-types--wrapper">
+      <legend class="fieldset-legend js-form-required required">
+    <span>Please select all that apply:<strong class="required" aria-hidden="true"> (required)</strong></span>
+      </legend>
+  <div class="fieldset-wrapper">
+        
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'checkboxes' -->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/checkboxes.html.twig' -->
+<div id="edit-report-issue-types" class="js-webform-checkboxes webform-options-display-one-column form-checkboxes">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ form-element--webform-checkbox.html.twig
+   ✅ form-element.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+<div class="js-webform-type-checkbox webform-type-checkbox form-item js-form-item form-type-checkbox js-form-type-checkbox form-item-report-issue-types-a-link-button-or-video-is-not-working js-form-item-report-issue-types-a-link-button-or-video-is-not-working checkbox">
+    
+    
+  
+  
+
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element_label' -->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+<label for="edit-report-issue-types-a-link-button-or-video-is-not-working" class="control-label option">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'input__checkbox' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ input--checkbox.html.twig
+   ▪️ input--checkbox.html.twig
+   ✅ input.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+<input data-drupal-selector="edit-report-issue-types-a-link-button-or-video-is-not-working" class="form-checkbox js-wet-group-report-issue-types" type="checkbox" id="edit-report-issue-types-a-link-button-or-video-is-not-working" name="report_issue_types[A link, button or video is not working]" value="A link, button or video is not working" data-rule-require_from_group="[1,&quot;.js-wet-group-report-issue-types&quot;]" data-rule-required="false" />
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+
+A link, button or video is not working</label>
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+
+
+  
+  
+
+  </div>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ form-element--webform-checkbox.html.twig
+   ✅ form-element.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+<div class="js-webform-type-checkbox webform-type-checkbox form-item js-form-item form-type-checkbox js-form-type-checkbox form-item-report-issue-types-it-has-a-spelling-mistake js-form-item-report-issue-types-it-has-a-spelling-mistake checkbox">
+    
+    
+  
+  
+
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element_label' -->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+<label for="edit-report-issue-types-it-has-a-spelling-mistake" class="control-label option">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'input__checkbox' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ input--checkbox.html.twig
+   ▪️ input--checkbox.html.twig
+   ✅ input.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+<input data-drupal-selector="edit-report-issue-types-it-has-a-spelling-mistake" class="form-checkbox js-wet-group-report-issue-types" type="checkbox" id="edit-report-issue-types-it-has-a-spelling-mistake" name="report_issue_types[It has a spelling mistake]" value="It has a spelling mistake" data-rule-require_from_group="[1,&quot;.js-wet-group-report-issue-types&quot;]" data-rule-required="false" />
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+
+It has a spelling mistake</label>
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+
+
+  
+  
+
+  </div>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ form-element--webform-checkbox.html.twig
+   ✅ form-element.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+<div class="js-webform-type-checkbox webform-type-checkbox form-item js-form-item form-type-checkbox js-form-type-checkbox form-item-report-issue-types-information-is-missing js-form-item-report-issue-types-information-is-missing checkbox">
+    
+    
+  
+  
+
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element_label' -->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+<label for="edit-report-issue-types-information-is-missing" class="control-label option">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'input__checkbox' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ input--checkbox.html.twig
+   ▪️ input--checkbox.html.twig
+   ✅ input.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+<input data-drupal-selector="edit-report-issue-types-information-is-missing" class="form-checkbox js-wet-group-report-issue-types" type="checkbox" id="edit-report-issue-types-information-is-missing" name="report_issue_types[Information is missing]" value="Information is missing" data-rule-require_from_group="[1,&quot;.js-wet-group-report-issue-types&quot;]" data-rule-required="false" />
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+
+Information is missing</label>
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+
+
+  
+  
+
+  </div>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ form-element--webform-checkbox.html.twig
+   ✅ form-element.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+<div class="js-webform-type-checkbox webform-type-checkbox form-item js-form-item form-type-checkbox js-form-type-checkbox form-item-report-issue-types-information-is-outdated-or-wrong js-form-item-report-issue-types-information-is-outdated-or-wrong checkbox">
+    
+    
+  
+  
+
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element_label' -->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+<label for="edit-report-issue-types-information-is-outdated-or-wrong" class="control-label option">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'input__checkbox' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ input--checkbox.html.twig
+   ▪️ input--checkbox.html.twig
+   ✅ input.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+<input data-drupal-selector="edit-report-issue-types-information-is-outdated-or-wrong" class="form-checkbox js-wet-group-report-issue-types" type="checkbox" id="edit-report-issue-types-information-is-outdated-or-wrong" name="report_issue_types[Information is outdated or wrong]" value="Information is outdated or wrong" data-rule-require_from_group="[1,&quot;.js-wet-group-report-issue-types&quot;]" data-rule-required="false" />
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+
+Information is outdated or wrong</label>
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+
+
+  
+  
+
+  </div>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ form-element--webform-checkbox.html.twig
+   ✅ form-element.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+<div class="js-webform-type-checkbox webform-type-checkbox form-item js-form-item form-type-checkbox js-form-type-checkbox form-item-report-issue-types-i-cant-find-what-im-looking-for js-form-item-report-issue-types-i-cant-find-what-im-looking-for checkbox">
+    
+    
+  
+  
+
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element_label' -->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+<label for="edit-report-issue-types-i-cant-find-what-im-looking-for" class="control-label option">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'input__checkbox' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ input--checkbox.html.twig
+   ▪️ input--checkbox.html.twig
+   ✅ input.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+<input data-drupal-selector="edit-report-issue-types-i-cant-find-what-im-looking-for" class="form-checkbox js-wet-group-report-issue-types" type="checkbox" id="edit-report-issue-types-i-cant-find-what-im-looking-for" name="report_issue_types[I can&#039;t find what I&#039;m looking for]" value="I can&#039;t find what I&#039;m looking for" data-rule-require_from_group="[1,&quot;.js-wet-group-report-issue-types&quot;]" data-rule-required="false" />
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+
+I can't find what I'm looking for</label>
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+
+
+  
+  
+
+  </div>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ form-element--webform-checkbox.html.twig
+   ✅ form-element.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+<div class="js-webform-type-checkbox webform-type-checkbox form-item js-form-item form-type-checkbox js-form-type-checkbox form-item-report-issue-types-other-issue-not-in-this-list js-form-item-report-issue-types-other-issue-not-in-this-list checkbox">
+    
+    
+  
+  
+
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element_label' -->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+<label for="edit-report-issue-types-other-issue-not-in-this-list" class="control-label option">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'input__checkbox' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ input--checkbox.html.twig
+   ▪️ input--checkbox.html.twig
+   ✅ input.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+<input data-drupal-selector="edit-report-issue-types-other-issue-not-in-this-list" class="form-checkbox js-wet-group-report-issue-types" type="checkbox" id="edit-report-issue-types-other-issue-not-in-this-list" name="report_issue_types[Other issue not in this list]" value="Other issue not in this list" data-rule-require_from_group="[1,&quot;.js-wet-group-report-issue-types&quot;]" data-rule-required="false" />
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+
+Other issue not in this list</label>
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+
+
+  
+  
+
+  </div>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+
+</div>
+
+<!-- END OUTPUT from 'core/modules/system/templates/checkboxes.html.twig' -->
+
+
+          </div>
+</fieldset>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/system/fieldset.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ form-element--gcweb-report-a-problem--additional-information.html.twig
+   ▪️ form-element--webform-textarea.html.twig
+   ✅ form-element.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+<div class="js-webform-type-textarea webform-type-textarea form-item js-form-item form-type-textarea js-form-type-textarea form-item-additional-information js-form-item-additional-information form-group">
+    
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element_label' -->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+  <label for="edit-additional-information" class="control-label js-form-required required">    Additional information<strong class="required" aria-hidden="true"> (required)</strong>
+  </label>
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+
+
+    
+  
+  
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'textarea' -->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/textarea.html.twig' -->
+<div class="form-textarea-wrapper">
+  <textarea data-drupal-selector="edit-additional-information" class="form-textarea required resize-vertical form-control" id="edit-additional-information" name="additional_information" rows="5" cols="60" required="required"></textarea>
+</div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/textarea.html.twig' -->
+
+
+
+  
+  
+
+  </div>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'input__hidden' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ input--hidden.html.twig
+   ▪️ input--hidden.html.twig
+   ✅ input.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+<input data-drupal-selector="edit-antibot-key" type="hidden" name="antibot_key" value="" />
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'input__hidden' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ input--hidden.html.twig
+   ▪️ input--hidden.html.twig
+   ✅ input.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+<input data-drupal-selector="form-xwubjzkq3kwu4jxaradrzuy7mrgt15kxclez4ca72se" type="hidden" name="form_build_id" value="form-xwubjzKQ3kWU4JxArADRZuY7MRgT15KXcleZ4cA72sE" />
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'input__hidden' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ input--hidden.html.twig
+   ▪️ input--hidden.html.twig
+   ✅ input.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+<input data-drupal-selector="edit-webform-submission-gcweb-report-a-problem-node-1912-add-form" type="hidden" name="form_id" value="webform_submission_gcweb_report_a_problem_node_1912_add_form" />
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'container' -->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/container.html.twig' -->
+<div data-drupal-selector="edit-actions" class="form-actions form-group js-form-wrapper form-wrapper" id="edit-actions">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'webform_actions' -->
+<!-- BEGIN OUTPUT from 'modules/contrib/webform/templates/webform-actions.html.twig' -->
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'input__submit' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ input--submit.html.twig
+   ▪️ input--submit.html.twig
+   ✅ input--button--submit.html.twig
+   ▪️ input--button.html.twig
+   ▪️ input.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/input--button--submit.html.twig' -->
+  <input class="webform-button--submit button button--primary js-form-submit form-submit btn btn-primary" data-drupal-selector="edit-submit" data-disable-refocus="true" type="submit" id="edit-submit" name="op" value="Submit"/>
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/input--button--submit.html.twig' -->
+
+
+
+<!-- END OUTPUT from 'modules/contrib/webform/templates/webform-actions.html.twig' -->
+
+</div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/container.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'container' -->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/container.html.twig' -->
+<div class="url-textfield form-group js-form-wrapper form-wrapper" style="display: none !important;">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element' -->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+<div class="form-item js-form-item form-type-textfield js-form-type-textfield form-item-url js-form-item-url form-group">
+    
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element_label' -->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+<label for="edit-url" class="control-label">Leave this field blank</label>
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element-label.html.twig' -->
+
+
+    
+  
+  
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'input__textfield' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ input--textfield.html.twig
+   ▪️ input--textfield.html.twig
+   ▪️ input--form-control--textfield.html.twig
+   ✅ input--form-control.html.twig
+   ▪️ input.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input--form-control.html.twig' -->
+<input autocomplete="off" data-drupal-selector="edit-url" class="form-text form-control" type="text" id="edit-url" name="url" value="" size="20" maxlength="128" />
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/input/input--form-control.html.twig' -->
+
+
+
+  
+  
+
+  </div>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/input/form-element.html.twig' -->
+
+</div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/container.html.twig' -->
+
+
+
+<!-- END OUTPUT from 'modules/contrib/webform/templates/webform-submission-form.html.twig' -->
+
+
+	
+</form>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/webform/webform--gcweb-report-a-problem.html.twig' -->
+
+</div></div>
+    </div>
+   </div>
+</details>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/webform/gcweb-inline-webform.html.twig' -->
+
+
+  </div>
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/block/block--report-problem-block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ block--content-footer--gcweb--osfi-wxt-datemodifiedblock.html.twig
+   ▪️ block--content-footer--osfi-wxt-datemodifiedblock.html.twig
+   ▪️ block--osfi-wxt-datemodifiedblock.html.twig
+   ▪️ block--date-modified-block.html.twig
+   ▪️ block--wxt-library.html.twig
+   ✅ block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block.html.twig' -->
+
+<div id="block-osfi-wxt-datemodifiedblock" class="col-xs-12 block block-wxt-library block-date-modified-block clearfix" data-block-plugin-id="date_modified_block">
+  
+    
+
+      <dl id="wb-dtmd">
+<dt>Date modified:</dt>
+<dd><time property="dateModified">2024-02-26</time></dd></dl>
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ block--content-footer--gcweb--osfi-wxt-sharewidgetblock.html.twig
+   ▪️ block--content-footer--osfi-wxt-sharewidgetblock.html.twig
+   ▪️ block--osfi-wxt-sharewidgetblock.html.twig
+   ▪️ block--share-widget-block.html.twig
+   ▪️ block--wxt-library.html.twig
+   ✅ block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block.html.twig' -->
+
+<div id="block-osfi-wxt-sharewidgetblock" class="pull-right col-xs-12 col-sm-4 block block-wxt-library block-share-widget-block clearfix" data-block-plugin-id="share_widget_block">
+  
+    
+
+      <div class="wb-share mrgn-bttm-sm pull-right" data-wb-share='{"filter":["blogger","diigo","email","facebook","gmail","linkedin","myspace","pinterest","reddit","tinyurl","tumblr","twitter","whatsapp","yahoomail"],"pnlId":"pnl1","lnkClass":"btn btn-default"}'></div>
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/block/block.html.twig' -->
+
+
+    </div>
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region--content-footer.html.twig' -->
+
+
+          
+  </main>
+
+
+
+            <footer id="wb-info">
+        <div class="container">
+          <div class="row">
+                        <div class="col-xs-12">
+              
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ region--footer--gcweb.html.twig
+   ▪️ region--footer.html.twig
+   ✅ region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region.html.twig' -->
+  <div class="region region-footer">
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ block--footer--gcweb--footer.html.twig
+   ▪️ block--footer--footer.html.twig
+   ▪️ block--footer.html.twig
+   ✅ block--menu-block--footer.html.twig
+   ▪️ block--menu-block.html.twig
+   ▪️ block--system-menu-block.html.twig
+   ▪️ block.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/block/block--menu-block--footer.html.twig' -->
+
+<nav aria-labelledby="aboutThisSite" id="block-footer" data-block-plugin-id="menu_block:footer" class="wb-eqht-grd row">
+  
+  <h2 id="aboutThisSite">About this site</h2>
+  
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ menu--gcweb.html.twig
+   ✅ menu--footer.html.twig
+   ▪️ menu.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/menu/menu--footer.html.twig' -->
+
+                          <section class="col-xs-12 col-sm-4">
+        <h3>News</h3>
+                                  <ul role="menu" class="nav menu">
+                                                
+        <li role="presentation">
+        <a href="/en/news?type=5" role="menuitem" title="News releases" data-drupal-link-query="{&quot;type&quot;:&quot;5&quot;}" data-drupal-link-system-path="node/23">News releases</a>
+                          </li>
+                                                  
+        <li role="presentation">
+        <a href="/en/news?type=4" role="menuitem" title="Speeches" data-drupal-link-query="{&quot;type&quot;:&quot;4&quot;}" data-drupal-link-system-path="node/23">Speeches</a>
+                          </li>
+                                                  
+        <li role="presentation">
+        <a href="/en/media-contacts" role="menuitem" title="Media relations" data-drupal-link-system-path="node/26">Media relations</a>
+                          </li>
+                                                  
+        <li role="presentation">
+        <a href="/en/news/speaking-engagements-0" role="menuitem" title="Speaking engagements" data-drupal-link-system-path="node/2976">Speaking engagements</a>
+                          </li>
+                                                    
+        <li role="presentation">
+        <a href="/en/scams-fraud" title="Scams and fraud" role="menuitem" data-drupal-link-system-path="node/1262">Scams and fraud</a>
+                          </li>
+                    </ul>
+      
+                    </section>
+                        <section class="col-xs-12 col-sm-4">
+        <h3>About us</h3>
+                                  <ul role="menu" class="nav menu">
+                                                  
+        <li role="presentation">
+        <a href="/en/about-osfi" title="Office of the Superintendent of Financial Institutions" role="menuitem" data-drupal-link-system-path="node/1291">OSFI</a>
+                          </li>
+                                                    
+        <li role="presentation">
+        <a href="/en/oca/about-office-chief-actuary" title="Office of the Chief Actuary" role="menuitem" data-drupal-link-system-path="node/1362">OCA</a>
+                          </li>
+                    </ul>
+      
+                    </section>
+                        <section class="col-xs-12 col-sm-4">
+        <h3>Stay connected</h3>
+                                  <ul role="menu" class="nav menu">
+                                                
+        <li role="presentation">
+        <a href="/en/contact-us" role="menuitem" title="Contact us" data-drupal-link-system-path="node/1689">Contact us</a>
+                          </li>
+                                                  
+        <li role="presentation">
+        <a href="/en/contact-us/email-notifications" role="menuitem" title="Email notifications" data-drupal-link-system-path="node/1747">Email notifications</a>
+                          </li>
+                                                  
+        <li role="presentation">
+        <a href="https://twitter.com/OSFICanada" role="menuitem" title="X (formerly Twitter)">X (formerly Twitter)</a>
+                          </li>
+                                                  
+        <li role="presentation">
+        <a href="https://www.youtube.com/user/OSFIBSIF" role="menuitem" title="YouTube">YouTube</a>
+                          </li>
+                                                  
+        <li role="presentation">
+        <a href="https://www.linkedin.com/company/office-of-the-superintendent-of-financial-institutions-of-canada" role="menuitem" title="LinkedIn">LinkedIn</a>
+                          </li>
+                    </ul>
+      
+                    </section>
+                
+
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/menu/menu--footer.html.twig' -->
+
+
+  </nav>
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/block/block--menu-block--footer.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region.html.twig' -->
+
+
+            </div>
+          </div>
+        </div>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-xs-12 col-sm-9">
+              
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ region--footer-legal--gcweb.html.twig
+   ▪️ region--footer-legal.html.twig
+   ✅ region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region.html.twig' -->
+  <div class="region region-footer-legal">
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ block--footer-legal--gcweb--legal.html.twig
+   ▪️ block--footer-legal--legal.html.twig
+   ▪️ block--legal.html.twig
+   ▪️ block--menu-block--legal.html.twig
+   ▪️ block--menu-block.html.twig
+   ✅ block--system-menu-block.html.twig
+   ▪️ block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+<nav role="navigation" aria-labelledby="block-legal-menu" id="block-legal" class="block-legal" data-block-plugin-id="menu_block:legal">
+      
+  <h2 id="block-legal-menu">Corporate</h2>
+  
+
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu' -->
+<!-- FILE NAME SUGGESTIONS:
+   ▪️ menu--gcweb.html.twig
+   ✅ menu--legal.html.twig
+   ▪️ menu.html.twig
+-->
+<!-- 💡 BEGIN CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/menu/menu--legal.html.twig' -->
+
+              <ul role="menu" class="menu nav nav-pills legal">
+                                              
+        <li role="presentation">
+        <a href="https://canada.ca" role="menuitem" title="Canada.ca">Canada.ca</a>
+                  </li>
+                                          
+        <li role="presentation">
+        <a href="/en/terms-conditions" role="menuitem" title="Terms and conditions" data-drupal-link-system-path="node/429">Terms and conditions</a>
+                  </li>
+                                          
+        <li role="presentation">
+        <a href="/en/transparency" role="menuitem" title="Transparency" data-drupal-link-system-path="node/1399">Transparency</a>
+                  </li>
+                                          
+        <li role="presentation">
+        <a href="/en/accessibility" role="menuitem" title="Accessibility" data-drupal-link-system-path="node/647">Accessibility</a>
+                  </li>
+        </ul>
+  
+
+
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/menu/menu--legal.html.twig' -->
+
+
+  </nav>
+
+<!-- END OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/region.html.twig' -->
+
+
+            </div>
+            <div class="col-xs-12 col-sm-3 canada-logo">
+              <img height="40" src='/libraries/theme-gcweb/assets/wmms-blk.svg' alt='Symbol of the Government of Canada' />
+            </div>
+          </div>
+        </div>
+      </footer>
+      
+<!-- END CUSTOM TEMPLATE OUTPUT from 'themes/custom/osfi_wxt/templates/page/page--gcweb.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'core/modules/system/templates/off-canvas-page-wrapper.html.twig' -->
+
+
+    
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","pathPrefix":"en\/","currentPath":"node\/1912","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"ajaxPageState":{"libraries":"eJx1UQFuwyAM_BANT0IG3ISGYGY7TbLXl7WplimrhOB8d9jGQCSPLsNcwmDhEBgomjyp3c_uSjwZD2F0Sm1Ve8AuBSrGE6koQ5PeyFVGl0rSg1ip0h35wChR1lRNGDEmJW43Ihb1mcJoD9gEYrSR5wq5U1wVGOHCKOkbX1oqilyaevuakbdX0y_sIi2lZ4hodyJjD2EzE-hwg9UK6lwNyTW5ZVWrA054kcCpqhjZRHFqbxY094SL2OfeTRTnjGZB_1PK7mcHLeGJDDRVkqRnO-ZWq2gXBgyjpxXloyWiQsrSCdw_53mblPr-n-7etglFoP-sU9VE5dzLc6p74H6_8cSYNkeXk2fgbZ9nH5rrD7-gXjzh8gCc9f-w","theme":"osfi_wxt","theme_token":null},"ajaxTrustedUrl":{"form_action_p_pvdeGsVG5zNF_XLGPTvYSKCf43t8qZYSwcfZl2uzM":true,"\/en\/data-forms\/reporting-returns\/filing-financial-returns\/financial-reporting-instructions\/basel-capital-adequacy-reporting-bcar-faq-technical-specification?ajax_form=1":true},"back_to_top":{"back_to_top_button_trigger":400,"back_to_top_speed":1200,"back_to_top_prevent_on_mobile":false,"back_to_top_prevent_in_admin":true,"back_to_top_button_type":"image","back_to_top_button_text":"Top"},"mathjax":{"config_type":1,"config":{"tex2jax":{"inlineMath":[["$$$","$$$"],["\\(","\\)"]],"processEscapes":"true"},"showProcessingMessages":"false","messageStyle":"none"}},"bootstrap":{"forms_has_error_value_toggle":1,"modal_animation":1,"modal_backdrop":"true","modal_focus_input":1,"modal_keyboard":1,"modal_select_text":1,"modal_show":1,"modal_size":"","popover_enabled":1,"popover_animation":1,"popover_auto_close":1,"popover_container":"body","popover_content":"","popover_delay":"0","popover_html":0,"popover_placement":"right","popover_selector":"","popover_title":"","popover_trigger":"click","tooltip_enabled":1,"tooltip_animation":1,"tooltip_container":"body","tooltip_delay":"0","tooltip_html":0,"tooltip_placement":"auto left","tooltip_selector":"","tooltip_trigger":"hover"},"field_group":{"html_element":{"mode":"default","context":"view","settings":{"classes":"col-xs-12 col-sm-8 info-left","show_empty_fields":false,"id":"","element":"div","show_label":false,"label_element":"h3","label_element_classes":"","attributes":"","effect":"none","speed":"fast"}}},"webform":{"xss":{"allowedTags":["a","abbr","acronym","address","article","aside","b","bdi","bdo","big","blockquote","br","caption","cite","code","col","colgroup","command","dd","del","details","dfn","div","dl","dt","em","figcaption","figure","footer","h1","h2","h3","h4","h5","h6","header","hgroup","hr","i","img","ins","kbd","li","mark","menu","meter","nav","ol","output","p","pre","progress","q","rp","rt","ruby","s","samp","section","small","span","strong","sub","summary","sup","table","tbody","td","tfoot","th","thead","time","tr","tt","u","ul","var","wbr","label","fieldset","legend","font"]}},"antibot":{"forms":{"webform-submission-gcweb-report-a-problem-node-1912-add-form":{"id":"webform-submission-gcweb-report-a-problem-node-1912-add-form","key":"Qkj4LFnjdq9vC69cO7XXIr6ZCRjyz7f8SSqCbXZGo47"}}},"ajax":{"edit-submit":{"callback":"::submitAjaxForm","event":"click","effect":"none","speed":500,"progress":{"type":"throbber","message":""},"disable-refocus":true,"url":"\/en\/data-forms\/reporting-returns\/filing-financial-returns\/financial-reporting-instructions\/basel-capital-adequacy-reporting-bcar-faq-technical-specification?ajax_form=1","httpMethod":"POST","dialogType":"ajax","submit":{"_triggering_element_name":"op","_triggering_element_value":"Submit"}}},"user":{"uid":0,"permissionsHash":"948b17b44e21fbbdf33d5fd143628912a823ca4231d0e9e94c73388fbb69dc9d"}}</script>
+<script src="/core/assets/vendor/jquery/jquery.min.js?v=4.0.0"></script>
+<script src="/core/assets/vendor/underscore/underscore-min.js?v=1.13.8"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="/core/assets/vendor/once/once.min.js?v=1.0.1"></script>
+<script src="/core/misc/drupalSettingsLoader.js?v=11.3.20"></script>
+<script src="/core/misc/drupal.js?v=11.3.20"></script>
+<script src="/core/misc/drupal.init.js?v=11.3.20"></script>
+<script src="/core/misc/debounce.js?v=11.3.20"></script>
+<script src="/core/assets/vendor/tabbable/index.umd.min.js?v=6.3.0"></script>
+<script src="/libraries/wet-boew/js/wet-boew.min.js?tndjer"></script>
+<script src="/modules/contrib/antibot/js/antibot.js?tndjer"></script>
+<script src="/themes/contrib/bootstrap/js/bootstrap-pre-init.js?tndjer"></script>
+<script src="/themes/contrib/wxt_bootstrap/js/bootstrap/alert.js?tndjer"></script>
+<script src="/themes/contrib/wxt_bootstrap/js/bootstrap/collapse.js?tndjer"></script>
+<script src="/themes/contrib/wxt_bootstrap/js/bootstrap/dropdown.js?tndjer"></script>
+<script src="/themes/contrib/wxt_bootstrap/js/bootstrap/modal.js?tndjer"></script>
+<script src="/themes/contrib/wxt_bootstrap/js/bootstrap/tooltip.js?tndjer"></script>
+<script src="/themes/contrib/wxt_bootstrap/js/bootstrap/popover.js?tndjer"></script>
+<script src="/themes/contrib/wxt_bootstrap/js/drupal.wxt_bootstrap.js?tndjer"></script>
+<script src="/themes/contrib/bootstrap/js/drupal.bootstrap.js?tndjer"></script>
+<script src="/themes/contrib/bootstrap/js/attributes.js?tndjer"></script>
+<script src="/themes/contrib/bootstrap/js/theme.js?tndjer"></script>
+<script src="/themes/contrib/bootstrap/js/popover.js?tndjer"></script>
+<script src="/themes/contrib/bootstrap/js/tooltip.js?tndjer"></script>
+<script src="/core/misc/jquery.form.js?v=4.3.0"></script>
+<script src="/modules/contrib/mathjax/js/config.js?v=11.3.20"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML,Safe"></script>
+<script src="/modules/contrib/mathjax/js/setup.js?v=11.3.20"></script>
+<script src="/themes/custom/osfi_wxt/vendors/bootstrap/assets/javascripts/bootstrap/transition.js?tndjer"></script>
+<script src="/themes/custom/osfi_wxt/js/scripts.js?tndjer"></script>
+<script src="/themes/custom/osfi_wxt/js/adobe.analytics.footer.js?tndjer"></script>
+<script src="/core/misc/progress.js?v=11.3.20"></script>
+<script src="/themes/contrib/bootstrap/js/misc/progress.js?tndjer"></script>
+<script src="/core/assets/vendor/loadjs/loadjs.min.js?v=4.3.0"></script>
+<script src="/core/misc/announce.js?v=11.3.20"></script>
+<script src="/core/misc/message.js?v=11.3.20"></script>
+<script src="/themes/contrib/bootstrap/js/misc/message.js?tndjer"></script>
+<script src="/core/misc/ajax.js?v=11.3.20"></script>
+<script src="/themes/contrib/bootstrap/js/misc/ajax.js?tndjer"></script>
+<script src="/modules/contrib/webform/js/webform.scroll.js?tndjer"></script>
+<script src="/modules/contrib/webform/js/webform.ajax.js?tndjer"></script>
+<script src="/modules/contrib/webform/js/webform.element.checkboxes.js?tndjer"></script>
+<script src="/modules/contrib/webform/js/webform.element.details.save.js?tndjer"></script>
+<script src="/modules/contrib/webform/js/webform.element.details.toggle.js?tndjer"></script>
+<script src="/modules/contrib/webform/js/webform.element.message.js?tndjer"></script>
+<script src="/modules/contrib/webform/js/webform.element.options.js?tndjer"></script>
+<script src="/core/misc/form.js?v=11.3.20"></script>
+<script src="/themes/contrib/bootstrap/js/misc/form.js?tndjer"></script>
+<script src="/modules/contrib/webform/js/webform.behaviors.js?tndjer"></script>
+<script src="/core/misc/states.js?v=11.3.20"></script>
+<script src="/themes/contrib/bootstrap/js/misc/states.js?tndjer"></script>
+<script src="/modules/contrib/webform/js/webform.states.js?tndjer"></script>
+<script src="/modules/contrib/webform/js/webform.form.js?tndjer"></script>
+<script src="/modules/contrib/webform/modules/webform_bootstrap/js/webform_bootstrap.states.js?tndjer"></script>
+<script src="/libraries/theme-gcweb/js/theme.min.js?tndjer"></script>
+
+  </body>
+</html>
+
+<!-- END OUTPUT from 'themes/contrib/wxt_bootstrap/templates/system/html.html.twig' -->
+
