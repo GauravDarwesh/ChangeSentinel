@@ -53,6 +53,11 @@ def _https(url: str, label: str) -> str:
     return url
 
 
+def impact_label(notification: dict) -> str:
+    """A digest's "impact" field is its list of changes."""
+    return "Changes" if notification.get("kind") == "DIGEST" else "Impact"
+
+
 def _title(notification: dict) -> str:
     return f"{notification.get('kind') or 'ALERT'}: {notification.get('topic') or 'Regulatory change'}"
 
@@ -76,7 +81,7 @@ def _escape_slack(text: str) -> str:
 def slack_payload(notification: dict, link: str) -> dict:
     lines = [f"*{_escape_slack(notification.get('summary') or '')}*"] if notification.get("summary") else []
     if _stated(notification.get("impact")):
-        lines.append(f"*Impact:* {_escape_slack(notification['impact'])}")
+        lines.append(f"*{impact_label(notification)}:* {_escape_slack(notification['impact'])}")
     for label, value in _details(notification):
         lines.append(f"*{label}:* {_escape_slack(value)}")
     if _stated(notification.get("reason")):
@@ -105,7 +110,7 @@ def teams_payload(notification: dict, link: str) -> dict:
     if notification.get("summary"):
         body.append({"type": "TextBlock", "text": str(notification["summary"]), "wrap": True})
     if _stated(notification.get("impact")):
-        body.append({"type": "TextBlock", "text": "Impact: " + str(notification["impact"]), "wrap": True, "isSubtle": True})
+        body.append({"type": "TextBlock", "text": impact_label(notification) + ": " + str(notification["impact"]), "wrap": True, "isSubtle": True})
     if facts:
         body.append({"type": "FactSet", "facts": facts})
     if _stated(notification.get("reason")):

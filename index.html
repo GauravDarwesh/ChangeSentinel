@@ -1059,6 +1059,23 @@
     .bulk-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
     .bulk-summary { display: flex; flex-wrap: wrap; gap: 6px; }
     .shadow-upload { display: grid; gap: 10px; padding: 16px 20px 18px; }
+    #digestForm { grid-template-columns: minmax(0, 1fr); }
+    #digestForm .modal-actions { flex-wrap: wrap; }
+    #digestError:empty { display: none; }
+    #digestError { color: var(--state-bad); }
+    .digest-rows { display: grid; gap: 8px; }
+    .digest-row { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, .9fr) minmax(0, .9fr) minmax(0, 1.7fr) auto; gap: 6px; align-items: center; padding: 8px; border: 1px solid var(--line); border-radius: var(--radius); }
+    #digestDialog { width: min(760px, calc(100vw - 32px)); }
+    .digest-row .field-input { width: 100%; min-width: 0; font-size: 12.5px; }
+    .digest-row [data-digest-remove] { padding: 0 4px; border: 0; background: none; color: var(--link); font-size: 12.5px; cursor: pointer; }
+    @media (max-width: 640px) { .digest-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .digest-row [data-digest-remove] { justify-self: end; } }
+    .digest-overview { margin: 0; padding: 16px 20px; color: var(--ink); font-size: 14px; line-height: 1.6; }
+    .digest-item { display: grid; gap: 6px; padding: 12px 20px 14px; border-bottom: 1px solid var(--line); }
+    .digest-item:last-child { border-bottom: 0; }
+    .digest-item-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+    .digest-item-head b { font-size: 13.5px; font-weight: 500; }
+    .digest-item p { margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.55; }
+    .digest-quote { margin: 0; padding: 4px 0 4px 12px; border-left: 2px solid var(--accent); color: var(--ink-2); font-size: 12.5px; font-style: italic; line-height: 1.5; overflow-wrap: anywhere; }
     .shadow-upload ol { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 13px; line-height: 1.6; }
     .shadow-table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
     .shadow-table th, .shadow-table td { padding: 8px 18px; border-bottom: 1px solid var(--line); text-align: right; }
@@ -2820,6 +2837,7 @@
             <div class="channel-bar" id="channelBar"></div></div>
           <div class="list-body">
             <div id="shadowEntry"></div>
+            <div id="digestEntries"></div>
             <div class="list-group-label" id="notificationPendingHeading">Waiting to send <span id="notificationPendingCount"></span></div>
             <div id="notificationPendingItems"><div class="loading">Loading queued alerts…</div></div>
             <div class="list-group-label" id="notificationSentHeading">Sent <span id="notificationSentCount"></span></div>
@@ -3205,6 +3223,17 @@
       <div class="modal-actions"><button class="btn" id="cancelPreset" type="button">Cancel</button><button class="btn btn-primary" type="submit">Continue on GitHub</button></div>
     </form>
   </dialog>
+  <dialog class="modal" id="digestDialog" aria-labelledby="digestHeading">
+    <div class="modal-head"><div><h2 id="digestHeading">Scheduled digests</h2><p>One AI summary of a workspace's changes, sent to the alert channels.</p></div><button class="btn btn-quiet" id="closeDigest" type="button" aria-label="Close">Close</button></div>
+    <form class="modal-body" id="digestForm" novalidate>
+      <div class="digest-rows" id="digestRows"></div>
+      <button class="chip chip-add" type="button" data-digest-add>+ Add a digest</button>
+      <p class="field-help">Each change in a digest carries the AI's English summary and a short quote of the changed text in the regulator's own language. A digest is built by the first scan after its time, from the changes that scan history recorded in the period; with AI unavailable it is still sent, with a plain count instead of the overview.</p>
+      <p class="field-help" id="digestError" role="alert"></p>
+      <p class="modal-info">Continue opens a prefilled GitHub request; the owner-only workflow saves config/digests.json.</p>
+      <div class="modal-actions"><button class="btn" id="cancelDigest" type="button">Cancel</button><button class="btn btn-primary" type="submit">Continue on GitHub</button></div>
+    </form>
+  </dialog>
   <dialog class="modal" id="deleteMonitorDialog" aria-labelledby="deleteMonitorHeading">
     <div class="modal-head"><div><h2 id="deleteMonitorHeading">Stop monitoring this page?</h2><p id="deleteMonitorExplanation">The page will no longer be checked. Existing reports and saved evidence are kept.</p></div><button class="btn btn-quiet" id="closeDeleteMonitor" type="button" aria-label="Close">Close</button></div>
     <div class="modal-body"><p id="deleteMonitorTarget" class="field-help"></p><p class="modal-info">The dashboard cannot stop monitoring directly. Continue opens a prefilled GitHub request; you must submit it there. The owner-only workflow then updates the monitoring configuration. Existing reports and saved evidence are retained.</p><div class="modal-actions"><button class="btn" id="cancelDeleteMonitor" type="button">Cancel</button><button class="btn btn-primary" id="confirmDeleteMonitor" type="button">Continue on GitHub</button></div></div>
@@ -3545,8 +3574,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261025-visualping-1"></script>
-  <script src="dashboard.js?v=20261025-visualping-1"></script>
+  <script src="dashboard-lib.js?v=20261025-digests-1"></script>
+  <script src="dashboard.js?v=20261025-digests-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

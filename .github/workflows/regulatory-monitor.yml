@@ -186,6 +186,13 @@ jobs:
         id: crawl-status
         run: python -m regmon.validate_state --source "$REGMON_SOURCE" --data-dir data --config config/sources.json --github-output "$GITHUB_OUTPUT"
 
+      # Scheduled digests (config/digests.json) whose time has passed are written to
+      # data/digests/ and queued with this run's alerts. Never fails the run.
+      - name: Build due digests
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -m regmon.digest --due
+
       # Queue notification candidates before the state commit, including when discovery
       # is paused, so valid events from completed sources are not lost.
       - name: Queue notifications
