@@ -13,11 +13,12 @@ The active production scope consists of two bounded Federal Reserve sources: the
 ## Workflow behavior
 
 - **RegMonitor CI** tests code pushes to main and pull requests. Pushes affecting only monitoring data are intentionally excluded from CI.
-- **Regulatory Monitor** runs every six hours or on manual dispatch. Post-run validation considers only active sources selected for that run; inactive historical metadata must not block an active run.
+- **Regulatory Monitor** wakes every six hours or on manual dispatch. A scheduled run scans only the monitors their scan schedule makes due (see *Scan schedules* below); a manual run scans every source it names. Post-run validation considers only active sources selected for that run; inactive historical metadata must not block an active run.
 - A paused discovery source must have a valid, non-empty resumable checkpoint. The workflow queues continuation runs for every selected source that is paused.
 - Monitoring state, snapshots, history, notification delivery state, and pending notifications are committed under the data directory.
 - **Deploy Monitoring Console** publishes index.html, dashboard.js, dashboard-lib.js and the core JSON files (`dashboard-v2.html` now only redirects to the main page). Snapshot and evidence files are read from the repository's raw-content endpoints.
-- **Monitor Freshness Check** runs every three hours and alerts (ntfy) when no scan has been saved for 14 hours.
+- **Monitor Freshness Check** runs every three hours and alerts (ntfy) when any monitor is overdue: 8 hours past the scan slot its schedule expected it in (14 hours after the last scan for the default six-hourly schedule).
+- **Update Monitor Settings** applies owner-submitted `[ChangeSentinel] Update monitors` requests from the dashboard (scan schedules for one monitor or a preset for many) to `config/sources.json`.
 - **RegMonitor CI** also runs the golden extraction corpus check and full persisted-state validation.
 
 ## Scout
@@ -49,7 +50,7 @@ The ledger is saved after each successful delivery, so a cancelled or crashed jo
 
 Persistent fetch or extraction errors alert once per episode (URL + error class + onset), not on every run; each observation still writes its own evidence. `defaults.error_alert_after_runs` (1–28, default 1; production uses 2) sets how many consecutive failing scans of a resource are needed before its episode alerts, so a one-off timeout on a regulator site is recorded without paging anyone. The alert then states how many scans have failed and since when.
 
-Every scan also rebuilds `data/health.json` (`python -m regmon.health`): totals, 7- and 30-day check/failure/change/alert volumes, a 14-day daily series, and rosters of failing monitors (with onset and failing-scan count), stale monitors (no saved scan for 14 hours), inactive monitors (no content change for 45+ days) and monitors whose address carries a past year (e.g. `circulares-2025`) and has been quiet for 30+ days. It is derived from committed state only and never affects detection; Pages publishes it with the dashboard, where the **Health** view (rail; on phones, from the Overview's *Monitor health* block) lists failing, stale, quiet and year-stamped monitors with 7- and 30-day volumes and a 14-day chart. The **Alerts** view shows which channels recent alerts reached and how to add Slack, Teams or a webhook. A failed workflow run sends a "Regulatory Monitor run failed" ntfy alert, and the **Monitor Freshness Check** workflow alerts when no scan has been saved for 14 hours (two missed six-hourly slots; GitHub routinely delays scheduled runs by an hour or more).
+Every scan also rebuilds `data/health.json` (`python -m regmon.health`): totals, 7- and 30-day check/failure/change/alert volumes, a 14-day daily series, and rosters of failing monitors (with onset and failing-scan count), stale monitors (overdue against their own scan schedule), each monitor's schedule and next due slot, the expected schedule load for the next 7 days, inactive monitors (no content change for 45+ days) and monitors whose address carries a past year (e.g. `circulares-2025`) and has been quiet for 30+ days. It is derived from committed state only and never affects detection; Pages publishes it with the dashboard, where the **Health** view (rail; on phones, from the Overview's *Monitor health* block) lists failing, stale, quiet and year-stamped monitors with 7- and 30-day volumes and a 14-day chart. The **Alerts** view shows which channels recent alerts reached and how to add Slack, Teams or a webhook. A failed workflow run sends a "Regulatory Monitor run failed" ntfy alert, and the **Monitor Freshness Check** workflow alerts when a monitor is overdue for its scheduled scan (for six-hourly monitors, 14 hours: two missed slots, since GitHub routinely delays scheduled runs by an hour or more).
 
 ## Per-monitor alert conditions
 
@@ -106,3 +107,16 @@ Redirect targets are checked and discovery redirects must stay within the curren
 - **Source flags**: an entry whose source link is a monitored page shows whether ChangeSentinel saw it change in the last 45 days (with **View change**), or that it is monitored and quiet; an unmonitored source offers **Monitor this source**.
 - **Track this** turns a date ChangeSentinel detected into a team entry (owner, reminder) in one step.
 - Every entry can be added to **Google Calendar** or downloaded as a single **.ics** for Outlook or Apple Calendar.
+
+## Scan schedules
+
+Each source may set its own cadence in `config/sources.json`; all fields are optional and the defaults keep the six-hourly scan (`regmon/schedule.py`):
+
+| Field | Values | Meaning |
+|---|---|---|
+| `check_every_hours` | 6, 12, 24, 48, 72, 168 | Minimum spacing between scans. A run counts as on time if it starts up to 3 hours early relative to the last scan, so GitHub's late starts never push a daily check to the next day. |
+| `check_days` | list of `mon` … `sun` | Weekdays a scan may run on. |
+| `check_hours` | `[start, end]`, whole hours, at least 6 apart | Local hour window a scan slot must start in. |
+| `check_timezone` | IANA name, e.g. `America/Sao_Paulo` | Zone the days and hours are read in (default UTC). |
+
+A scheduled run passes `--due-only`: a source is scanned when it has never been scanned, its discovery is paused mid-crawl, or its cadence makes it due. Sources left for later are listed under `schedule.not_due` in `data/report.json`, with their next due slot. If no source is due, the run writes nothing. Set schedules from the dashboard (**Scan schedule** on a page or in Health); the dashboard opens a prefilled request that the Update Monitor Settings workflow validates and commits.

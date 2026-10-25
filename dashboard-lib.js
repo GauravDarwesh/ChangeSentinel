@@ -48,6 +48,103 @@
   const PERIOD_MS = SCAN_INTERVAL_HOURS * 3600 * 1000;
   function slotStartOf(time) { return Math.floor(time / PERIOD_MS) * PERIOD_MS; }
 
+  /* ---------- Per-monitor scan cadence ----------
+   * Mirrors regmon/schedule.py, which decides what a scheduled run scans. The
+   * dashboard uses it to describe a monitor's schedule, preview a new one and
+   * build the settings request; health.json carries the engine's own answer
+   * (next_due, overdue_after) for every monitor.
+   */
+  const SCAN_WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+  const SCAN_BUSINESS_DAYS = SCAN_WEEKDAYS.slice(0, 5);
+  const SCAN_INTERVALS = [6, 12, 24, 48, 72, 168];
+  const SCAN_EVERY_WORDS = { 6: "Every 6 hours", 12: "Every 12 hours", 24: "Daily", 48: "Every 2 days", 72: "Every 3 days", 168: "Weekly" };
+  // A source's cadence settings with defaults filled in.
+  function scanSchedule(source) {
+    const s = source || {};
+    const every = SCAN_INTERVALS.indexOf(Number(s.check_every_hours)) >= 0 ? Number(s.check_every_hours) : 6;
+    const picked = Array.isArray(s.check_days) && s.check_days.length ? SCAN_WEEKDAYS.filter(day => s.check_days.indexOf(day) >= 0) : SCAN_WEEKDAYS.slice();
+    const hours = Array.isArray(s.check_hours) && s.check_hours.length === 2 ? [Number(s.check_hours[0]), Number(s.check_hours[1])] : null;
+    return { every, days: picked.length ? picked : SCAN_WEEKDAYS.slice(), hours, timezone: String(s.check_timezone || "") || "UTC" };
+  }
+  function scanScheduleIsDefault(schedule) {
+    const c = schedule || {};
+    return c.every === 6 && (c.days || []).length === 7 && !c.hours;
+  }
+  // The same words as Cadence.describe(): "Daily, weekdays, 08:00–18:00 America/Sao_Paulo".
+  function scanScheduleLabel(schedule) {
+    const c = schedule || scanSchedule({});
+    let words = SCAN_EVERY_WORDS[c.every] || "Every " + c.every + " hours";
+    const days = c.days || SCAN_WEEKDAYS;
+    if (days.join() === SCAN_BUSINESS_DAYS.join()) words += ", weekdays";
+    else if (days.length !== 7) words += ", " + days.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join("/");
+    const pad = n => String(n).padStart(2, "0");
+    if (c.hours) words += ", " + pad(c.hours[0]) + ":00\u2013" + pad(c.hours[1]) + ":00";
+    if ((days.length !== 7 || c.hours) && c.timezone && c.timezone !== "UTC") words += " " + c.timezone;
+    else if (c.hours) words += " UTC";
+    return words;
+  }
+  // Weekday ("mon") and hour of a moment in a time zone.
+  function zonedParts(time, zone) {
+    try {
+      const parts = new Intl.DateTimeFormat("en-GB", { timeZone: zone || "UTC", weekday: "short", hour: "2-digit", hourCycle: "h23" }).formatToParts(new Date(time));
+      const get = type => (parts.find(part => part.type === type) || {}).value || "";
+      return { day: get("weekday").slice(0, 3).toLowerCase(), hour: Number(get("hour")) % 24 };
+    } catch (_) {
+      const d = new Date(time);
+      return { day: SCAN_WEEKDAYS[(d.getUTCDay() + 6) % 7], hour: d.getUTCHours() };
+    }
+  }
+  function scanAllows(schedule, slot) {
+    const local = zonedParts(slot, schedule.timezone);
+    if ((schedule.days || SCAN_WEEKDAYS).indexOf(local.day) < 0) return false;
+    return !schedule.hours || (local.hour >= schedule.hours[0] && local.hour < schedule.hours[1]);
+  }
+  // Whether a run in `slot` scans the monitor (regmon.schedule.is_due).
+  function scanIsDue(schedule, lastScan, slot) {
+    if (lastScan == null) return true;
+    if (!scanAllows(schedule, slot)) return false;
+    if (schedule.every === 6) return true;
+    return slot >= lastScan + (schedule.every - 3) * 3600000;
+  }
+  // The slots in the next `days` days that would scan the monitor, assuming
+  // each run starts on time. Used for the week preview in the schedule dialog.
+  function scanSlots(schedule, from, days = 7, lastScan = null) {
+    const start = slotStartOf(typeof from === "number" ? from : new Date(from || Date.now()).getTime()) + PERIOD_MS;
+    const out = [];
+    let last = lastScan;
+    for (let i = 0; i < days * 24 / SCAN_INTERVAL_HOURS; i++) {
+      const slot = start + i * PERIOD_MS;
+      // With no last scan (a preview of a new schedule) the window still applies.
+      const due = last == null ? scanAllows(schedule, slot) : slot > slotStartOf(last) && scanIsDue(schedule, last, slot);
+      out.push({ at: slot, due });
+      if (due) last = slot;
+    }
+    return out;
+  }
+  // The settings request body: unset what equals the default, set the rest.
+  function scanSchedulePayload(ids, schedule) {
+    const c = schedule || {};
+    const set = {}, clear = [];
+    if (c.every === 6) clear.push("check_every_hours"); else set.check_every_hours = c.every;
+    if ((c.days || []).length === 7) clear.push("check_days"); else set.check_days = c.days.slice();
+    if (c.hours) set.check_hours = [c.hours[0], c.hours[1]]; else clear.push("check_hours");
+    if ((c.hours || (c.days || []).length !== 7) && c.timezone && c.timezone !== "UTC") set.check_timezone = c.timezone; else clear.push("check_timezone");
+    return { monitors: Array.from(new Set(ids || [])), set, clear };
+  }
+  const SETTINGS_MARKER = "<!-- changesentinel:update-monitors:v1 -->";
+  // A prefilled "[ChangeSentinel] Update monitors" issue, split so each stays
+  // well inside the length GitHub accepts in a new-issue address.
+  function settingsRequests(payload, describe, perRequest = 120) {
+    const ids = (payload && payload.monitors) || [];
+    const out = [];
+    for (let i = 0; i < ids.length; i += perRequest) {
+      const part = Object.assign({}, payload, { monitors: ids.slice(i, i + perRequest) });
+      const body = [SETTINGS_MARKER, "", "Please apply these monitor settings in ChangeSentinel.", "", describe ? "Change: " + describe : "", "", "SETTINGS_JSON:", JSON.stringify(part), "", "This request was created from the ChangeSentinel dashboard."].join("\n");
+      out.push({ title: "[ChangeSentinel] Update monitors (" + part.monitors.length + ")", body, count: part.monitors.length });
+    }
+    return out;
+  }
+
   /* ---------- Scan columns ---------- */
 
   // What started a run: "scheduled", "manual", "continuation" (a paused crawl
@@ -507,7 +604,6 @@
     const daily = Array.isArray(h.daily) ? h.daily : [];
     const week = h.last_7_days || {};
     const quietAfter = Number((h.thresholds || {}).inactive_after_days) || 45;
-    const staleAfter = Number((h.thresholds || {}).stale_after_hours) || 14;
     const nameOf = options.nameOf || (m => String(m.name || m.source_id));
     const dayOf = options.dayLabel || (d => String(d));
     const now = options.now instanceof Date ? options.now.getTime() : Number(options.now || Date.now());
@@ -532,7 +628,9 @@
       if (worst.failed_checks / failTotal >= .8 && failDays.length <= 2) out.push({ tone: "info", key: "fail-day", day: worst.date, text: "Failures were concentrated on " + dayOf(worst.date) + " (" + worst.failed_checks + " of " + failTotal + "), not spread across the period." });
     }
     const stale = monitors.filter(m => m.status === "stale");
-    if (stale.length) out.push({ tone: "warn", key: "stale", targets: ids(stale), text: many(stale.length, "monitor hasn't", "monitors haven't") + " been scanned in over " + staleAfter + " hours: " + names(stale) + "." });
+    // Overdue is judged against each monitor's own scan schedule (health.json
+    // carries it); a weekly monitor scanned four days ago is on time.
+    if (stale.length) out.push({ tone: "warn", key: "stale", targets: ids(stale), text: many(stale.length, "monitor is", "monitors are") + " overdue for a scan: " + names(stale) + "." });
     const quiet = monitors.filter(m => m.status === "inactive");
     if (quiet.length) out.push({ tone: "warn", key: "quiet", targets: ids(quiet), text: many(quiet.length, "monitor has", "monitors have") + " been quiet for " + quietAfter + "+ days. The page may have moved; check the regulator's site." });
     const soon = monitors.filter(m => m.status !== "inactive" && Number(m.days_without_change) >= quietAfter - 14 && Number(m.days_without_change) < quietAfter)
@@ -540,6 +638,12 @@
     if (soon.length) out.push({ tone: "info", key: "soon-quiet", targets: ids(soon), text: many(soon.length, "monitor reaches", "monitors reach") + " the " + quietAfter + "-day quiet mark within two weeks: " + names(soon) + "." });
     const year = Array.isArray(h.year_bound) ? h.year_bound : [];
     if (year.length) out.push({ tone: "info", key: "year", targets: year.map(y => String(y.source_id)), text: many(year.length, "address carries", "addresses carry") + " a past year. Next year's list may be published at a new address." });
+    const load = h.schedule_load || {};
+    const mixes = Array.isArray(load.by_cadence) ? load.by_cadence : [];
+    if (mixes.length > 1) {
+      const slower = mixes.filter(mix => !/^Every 6 hours$/.test(mix.label)).reduce((sum, mix) => sum + Number(mix.monitors || 0), 0);
+      if (slower) out.push({ tone: "info", key: "cadence", text: many(slower, "monitor is", "monitors are") + " on a slower scan schedule; the fleet runs about " + Math.round(Number(load.page_checks_per_day || 0)).toLocaleString() + " page checks a day." });
+    }
     const changed = monitors.filter(m => m.last_change).sort((a, b) => new Date(b.last_change) - new Date(a.last_change));
     if (changed.length) {
       const latest = changed[0];
@@ -555,7 +659,7 @@
     if (Number(week.checks) > 0 && !failing.length && !stale.length) {
       const scans = monitors.map(m => new Date(m.last_scan).getTime()).filter(Number.isFinite);
       const spread = scans.length ? (Math.max(...scans) - Math.min(...scans)) / 60000 : 0;
-      out.push({ tone: "ok", key: "coverage", text: "Every monitor was covered by the last scan" + (scans.length > 1 ? ", all within " + Math.max(1, Math.round(spread)) + " min of each other" : "") + "; " + (Math.round(Number(week.success_rate || 0) * 1000) / 10) + "% of " + Number(week.checks).toLocaleString() + " checks succeeded this week." });
+      out.push({ tone: "ok", key: "coverage", text: (mixes.length > 1 ? "Every monitor is on schedule" : "Every monitor was covered by the last scan" + (scans.length > 1 ? ", all within " + Math.max(1, Math.round(spread)) + " min of each other" : "")) + "; " + (Math.round(Number(week.success_rate || 0) * 1000) / 10) + "% of " + Number(week.checks).toLocaleString() + " checks succeeded this week." });
     }
     return out;
   }
@@ -646,7 +750,10 @@
     const cols = Array.isArray(columns) ? columns : [];
     const runs = Array.isArray(workflowRuns) ? workflowRuns : [];
     const slot = slotStartOf(now);
-    const scheduledDone = cols.some(column => column.at >= slot && (column.trigger === "scheduled" || column.trigger === "unknown"));
+    // A scheduled run in which no monitor was due (every monitor on a slower
+    // scan schedule) saves nothing, so its finished workflow run also counts.
+    const scheduledDone = cols.some(column => column.at >= slot && (column.trigger === "scheduled" || column.trigger === "unknown")) ||
+      runs.some(run => run.event === "schedule" && run.status === "completed" && run.conclusion === "success" && (runTime(run, "created_at") || 0) >= slot);
     const due = scheduledDone ? slot + PERIOD_MS : slot;
     const result = {
       due: new Date(due), slot, phase: scheduledDone ? "waiting" : (now - slot < 20 * 60000 ? "due" : "late"),
@@ -2633,7 +2740,7 @@
     pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe, pickRuleMatches, pickRuleFolder, pickRuleRequest,
     diffSequences, alignLines, changedWords, readWorkbook, workbookDiff, csvWorkbook, parseCsv, zipListing, zipFile, readDocx, columnName, cellRef,
-    esc, nextScheduledScan, scanCycle, runColumns, slotColumns, columnCellState, pendingScan,
+    esc, nextScheduledScan, scanCycle, runColumns, scanSchedule, scanScheduleIsDefault, scanScheduleLabel, scanAllows, scanIsDue, scanSlots, scanSchedulePayload, settingsRequests, SETTINGS_MARKER, SCAN_WEEKDAYS, SCAN_BUSINESS_DAYS, SCAN_INTERVALS, slotColumns, columnCellState, pendingScan,
     timelineModel, timelineGapWords, TIMELINE_KINDS, healthInsights, healthLight,
     fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, regulatorFor, jurisdictionForHost, hostOf, pageKind, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,

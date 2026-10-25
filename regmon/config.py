@@ -46,6 +46,13 @@ class SourceConfig:
     # meet it is recorded at low priority instead of raising an alert.
     alert_condition: str = ""
     alert_only_on_condition: bool = False
+    # Scan cadence (regmon/schedule.py). The scheduled workflow wakes every six
+    # hours; a monitor may ask to be checked less often, on some weekdays only,
+    # or inside a local hour window. Defaults keep the six-hourly scan.
+    check_every_hours: int = 6
+    check_days: tuple[str, ...] = ()
+    check_hours: tuple[int, ...] = ()
+    check_timezone: str = ""
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "SourceConfig":
@@ -94,6 +101,10 @@ class SourceConfig:
             discovery_max_pages_per_slice=max(1, int(value.get("discovery_max_pages_per_slice", 2000))),
             alert_condition=" ".join(str(value.get("alert_condition", "") or "").split()),
             alert_only_on_condition=bool(value.get("alert_only_on_condition", False)),
+            check_every_hours=int(value.get("check_every_hours", 6)),
+            check_days=tuple(str(x) for x in value.get("check_days", [])),
+            check_hours=tuple(int(x) for x in value.get("check_hours", [])),
+            check_timezone=str(value.get("check_timezone", "") or "").strip(),
         )
 
 
@@ -103,11 +114,11 @@ MAX_ALERT_CONDITION_CHARS = 500
 INT_KEYS = {
     "max_urls", "crawl_depth", "discovery_attempts", "discovery_timeout_seconds", "discovery_retry_delay_seconds",
     "discovery_http_timeout_seconds", "discovery_http_workers", "discovery_http_attempts",
-    "discovery_slice_seconds", "discovery_max_pages_per_slice",
+    "discovery_slice_seconds", "discovery_max_pages_per_slice", "check_every_hours",
 }
 LIST_KEYS = {
     "seed_urls", "allowed_prefixes", "allowed_domains", "allowed_urls", "excluded_urls", "allowed_resource_prefixes",
-    "resource_link_text_patterns", "ignore_selectors", "excluded_prefixes",
+    "resource_link_text_patterns", "ignore_selectors", "excluded_prefixes", "check_days",
 }
 TOP_LEVEL_KEYS = {"version", "defaults", "sources"}
 DEFAULT_KEYS = {
@@ -147,6 +158,9 @@ def _validate_source_types(value: dict[str, Any]) -> None:
             raise ValueError(f"Source {sid}: alert_condition must be at most {MAX_ALERT_CONDITION_CHARS} characters")
     if value.get("alert_only_on_condition") is True and not str(value.get("alert_condition") or "").strip():
         raise ValueError(f"Source {sid}: alert_only_on_condition needs a non-empty alert_condition")
+    from regmon.schedule import validate_cadence
+
+    validate_cadence(value, sid)
     for pattern in value.get("resource_link_text_patterns", []):
         try:
             re.compile(pattern)

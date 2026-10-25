@@ -175,7 +175,7 @@ GitHub Actions orchestrates monitoring, testing, discovery, and publishing.
 | `Scout Source Request` | Validates and applies owner-submitted Scout source/profile requests. |
 | `Deploy Monitoring Console` (`pages.yml`) | Publishes the dashboard to GitHub Pages. |
 
-The standard monitoring cadence is configured in the workflow (currently every six hours) and can also be triggered manually. Scout has its own weekly schedule. Check the workflow files for the authoritative schedules and required secrets.
+The scheduled scan wakes every six hours and can also be triggered manually; each monitor may ask to be checked less often, on some weekdays or within local hours (see the scan schedules section of `docs/OPERATIONS.md`). Scout has its own weekly schedule. Check the workflow files for the authoritative schedules and required secrets.
 
 ## Run it locally
 

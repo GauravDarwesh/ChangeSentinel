@@ -19,6 +19,7 @@ import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from regmon import schedule
 from regmon.fsutil import atomic_write_text
 
 HEALTH_SCHEMA_VERSION = 1
@@ -93,6 +94,7 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
 
     week_ago = now - timedelta(days=7)
     monitors, failing, stale, inactive, year_flags = [], [], [], [], []
+    cadences: dict[str, tuple] = {}
     for source_id in sorted(sources):
         source = sources[source_id]
         rows = [
@@ -135,12 +137,17 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
                 "hours": round((now - since).total_seconds() / 3600, 1) if since else None,
                 "runs": runs_failing,
             })
+        # Overdue is judged against the monitor's own cadence: a weekly monitor
+        # scanned four days ago is on time.
+        cadence = schedule.Cadence.from_source(source)
+        overdue_at = schedule.overdue_after(cadence, last_scan)
         if errors:
             status = "failing"
             failing.extend(errors)
-        elif last_scan is None or now - last_scan > timedelta(hours=STALE_AFTER_HOURS):
+        elif last_scan is None or (overdue_at is not None and now > overdue_at):
             status = "stale"
-            stale.append({"source_id": source_id, "name": name, "last_scan": _iso(last_scan)})
+            stale.append({"source_id": source_id, "name": name, "last_scan": _iso(last_scan),
+                          "cadence": cadence.describe(), "overdue_since": _iso(overdue_at)})
         elif watched_since and days_quiet is not None and days_quiet >= INACTIVE_AFTER_DAYS \
                 and (now - watched_since).days >= INACTIVE_AFTER_DAYS:
             status = "inactive"
@@ -169,7 +176,11 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
             "checks_7d": checks_7d,
             "failures_7d": failures_7d,
             "alert_condition": bool(source.get("alert_condition")),
+            "cadence": cadence.as_dict(),
+            "next_due": _iso(schedule.next_due(cadence, last_scan, now)),
+            "overdue_after": _iso(overdue_at),
         })
+        cadences[source_id] = (cadence, last_scan, len(rows))
 
     def window(days: int) -> dict:
         start = now - timedelta(days=days)
@@ -213,13 +224,36 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
             "alerts_sent": alerts,
         })
 
+    # Expected scans per six-hour slot over the next week, so a heavy cadence
+    # mix shows up before it makes a run slow.
+    slots = schedule.load_slots(cadences, now)
+    by_cadence: dict[str, int] = {}
+    for cadence, _last, _pages in cadences.values():
+        label = cadence.describe()
+        by_cadence[label] = by_cadence.get(label, 0) + 1
+    schedule_load = {
+        "slot_hours": schedule.SLOT_HOURS,
+        "slots": slots,
+        "page_checks_per_day": round(sum(slot["pages"] for slot in slots) / 7, 1),
+        "monitor_checks_per_day": round(sum(slot["monitors"] for slot in slots) / 7, 1),
+        "busiest": max(slots, key=lambda slot: slot["pages"], default=None),
+        "by_cadence": [
+            {"label": label, "monitors": count}
+            for label, count in sorted(by_cadence.items(), key=lambda pair: (-pair[1], pair[0]))
+        ],
+    }
+
     statuses = [monitor["status"] for monitor in monitors]
     failing.sort(key=lambda item: (item.get("since") or "", item.get("source_id")))
     inactive.sort(key=lambda item: (-(item.get("days_without_change") or 0), item["source_id"]))
     return {
         "schema_version": HEALTH_SCHEMA_VERSION,
         "generated_at": _iso(now),
-        "thresholds": {"inactive_after_days": INACTIVE_AFTER_DAYS, "stale_after_hours": STALE_AFTER_HOURS},
+        "thresholds": {
+            "inactive_after_days": INACTIVE_AFTER_DAYS,
+            "stale_after_hours": STALE_AFTER_HOURS,
+            "overdue_grace_hours": int(schedule.OVERDUE_GRACE.total_seconds() // 3600),
+        },
         "totals": {
             "monitors": len(monitors),
             "pages": sum(monitor["pages"] for monitor in monitors),
@@ -237,6 +271,7 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
         "stale": stale,
         "inactive": inactive,
         "year_bound": year_flags,
+        "schedule_load": schedule_load,
         "monitors": monitors,
     }
 

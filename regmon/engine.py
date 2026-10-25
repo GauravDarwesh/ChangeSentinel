@@ -33,7 +33,7 @@ from regmon.docling_extractor import configure_timeout_registry
 from regmon.fetch import fetch
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import deadlines, health, item_codes, reviews
+from regmon import deadlines, health, item_codes, reviews, schedule
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -1316,7 +1316,7 @@ def error_alert_after_runs() -> int:
         return 1
 
 
-def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -> dict:
+def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, not_due: list[dict] | None = None) -> dict:
     if dry_run:
         return {"dry_run":True}
     for path in (DATA,SNAPSHOTS,HISTORY,REPORTS):
@@ -1364,8 +1364,17 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
     all_reports = reports + carried
     aggregate = _aggregate_report(all_reports, run_id, generated_at=max(report["generated_at"] for report in reports))
     aggregate["trigger"] = run_trigger()["trigger"]
+    # Which active sources this run scanned and which were left for a later run
+    # because their cadence did not make them due.
+    run_schedule = {
+        "scanned": sorted(report["source"]["id"] for report in reports),
+        "not_due": sorted(not_due or [], key=lambda entry: entry["source_id"]),
+    }
+    aggregate["schedule"] = run_schedule
     atomic_write_text(DATA / "report.json", json.dumps(aggregate,indent=2))
-    atomic_write_text(HISTORY / f"{run_id}.json", json.dumps(_aggregate_report(reports, run_id), indent=2))
+    run_report = _aggregate_report(reports, run_id)
+    run_report["schedule"] = run_schedule
+    atomic_write_text(HISTORY / f"{run_id}.json", json.dumps(run_report, indent=2))
     aggregate_counts = aggregate["counts"]
     md = ["# Regulatory Monitoring Report","",f"Run: {run_id}",f"Generated: {aggregate['generated_at']}","","## Aggregate counts","","| Metric | Value |","| --- | ---: |"]
     md += [f"| {k} | {v} |" for k,v in aggregate_counts.items()]
@@ -1388,12 +1397,58 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False) -
         print(f"Fleet health ledger not rebuilt: {type(exc).__name__}: {exc}")
     return {"dry_run":False,"sources":[r["report"]["source"]["id"] for r in source_results],"run_id":run_id}
 
-def run(source_id: str="all", dry_run: bool=False) -> dict:
+def last_scan_at(source_id: str, reports_dir: Path | None = None) -> datetime | None:
+    """When this source's last report was saved, from data/reports/<id>.json."""
+    path = (reports_dir or REPORTS) / f"{source_id}.json"
+    try:
+        report = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    if not isinstance(report, dict) or (report.get("source") or {}).get("id") != source_id:
+        return None
+    return schedule.parse_time(report.get("generated_at"))
+
+
+def due_sources(
+    sources: list[SourceConfig], now: datetime, data_dir: Path | None = None
+) -> tuple[list[SourceConfig], list[dict]]:
+    """Split active sources into those a scheduled run should scan and those not due yet.
+
+    A source whose discovery is paused mid-crawl, or that has never been
+    scanned, is always due.
+    """
+    data_dir = data_dir or DATA
+    due, waiting = [], []
+    for source in sources:
+        cadence = schedule.Cadence.from_source(source)
+        last = last_scan_at(source.id, data_dir / "reports")
+        paused = str(load_discovery_metadata(source.id, data_dir).get("state") or "").upper() == "PAUSED"
+        if schedule.is_due(cadence, last, now, paused=paused):
+            due.append(source)
+        else:
+            waiting.append({
+                "source_id": source.id,
+                "cadence": cadence.describe(),
+                "last_scan": last.isoformat() if last else None,
+                "next_due": schedule.next_due(cadence, last, now).isoformat(),
+            })
+    return due, waiting
+
+
+def run(source_id: str="all", dry_run: bool=False, due_only: bool=False, now: datetime | None = None) -> dict:
     _, sources = load_config()
     selected = [source for source in sources.values() if source.active] if source_id in {"all","*"} else [sources[source_id]]
     if not selected:
         raise ValueError("No active monitoring sources are configured")
     run_id = f"{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:8]}"
+    waiting: list[dict] = []
+    if due_only and source_id in {"all", "*"}:
+        selected, waiting = due_sources(selected, now or datetime.now(timezone.utc))
+        print(f"Scan cadence: {len(selected)} source(s) due, {len(waiting)} not due yet")
+        if not selected:
+            # Nothing is due: no state is written, so the next due run still sees
+            # the same last-scan times.
+            return {"run_id": run_id, "results": [], "outcome": {"dry_run": dry_run, "sources": [], "not_due": waiting}}
     # Learned Docling timeouts are read on every run; dry runs never write them back.
     configure_timeout_registry(DATA / "docling-timeouts.json", persist=not dry_run)
 
@@ -1412,14 +1467,19 @@ def run(source_id: str="all", dry_run: bool=False) -> dict:
     else:
         results = [process_source(source, run_id, dry_run=False) for source in selected]
 
-    return {"run_id":run_id,"results":results,"outcome":save_outputs(results,run_id,dry_run=dry_run)}
+    outcome = save_outputs(results, run_id, dry_run=dry_run, not_due=waiting)
+    if waiting:
+        outcome["not_due"] = waiting
+    return {"run_id":run_id,"results":results,"outcome":outcome}
 
 def main() -> None:
     parser=argparse.ArgumentParser()
     parser.add_argument("--source",default=os.getenv("REGMON_SOURCE","all"))
     parser.add_argument("--dry-run",action="store_true")
+    parser.add_argument("--due-only",action="store_true",
+                        help="With --source all, scan only the sources whose cadence makes them due (scheduled runs)")
     args=parser.parse_args()
-    result=run(args.source,args.dry_run)
+    result=run(args.source,args.dry_run,due_only=args.due_only)
     print(json.dumps({"run_id":result["run_id"],"sources":args.source,"outcome":result["outcome"]},indent=2))
 
 if __name__ == "__main__":

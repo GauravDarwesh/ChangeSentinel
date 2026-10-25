@@ -970,6 +970,26 @@
     .chip:hover { border-color: var(--accent); color: var(--ink); }
     .chip.is-static { cursor: default; border-color: var(--line-2); color: var(--ink); }
     .condition-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+    .schedule-mix { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 18px 14px; }
+    #scanScheduleForm { grid-template-columns: minmax(0, 1fr); }
+    #scanScheduleForm .field-input { width: 100%; min-width: 0; }
+    #scanScheduleForm .modal-actions { flex-wrap: wrap; }
+    .scan-days { min-width: 0; margin: 0; padding: 0; border: 0; }
+    .scan-day-modes, .scan-day-picks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .scan-day-picks .chip { min-width: 46px; justify-content: center; }
+    .scan-window { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+    .scan-window label { flex: 1; min-width: 0; }
+    .scan-window-to { color: var(--ink-3); font-size: 12.5px; }
+    .scan-preview { display: grid; gap: 8px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--raise); }
+    .scan-preview-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; font-size: 13px; }
+    .scan-preview-head b { font-weight: 500; }
+    .scan-preview-head span { color: var(--ink-3); font-size: 12.5px; }
+    .scan-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .scan-week-day { display: grid; gap: 3px; justify-items: center; color: var(--ink-3); font-size: 10.5px; }
+    .scan-week-slots { display: grid; grid-template-columns: repeat(4, 7px); gap: 2px; }
+    .scan-week-slots i { width: 7px; height: 7px; border-radius: 1.5px; background: var(--led-off); }
+    .scan-week-slots i.is-on { background: var(--accent); box-shadow: 0 0 5px var(--accent); }
     .channel-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 12.5px; }
     .channel-label, .channel-none { color: var(--ink-3); }
     .channel-bar { margin-top: 10px; }
@@ -2291,7 +2311,7 @@
         <span class="brand-mark" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
         ChangeSentinel
       </a>
-      <p class="rail-intro">Scans regulator pages every six hours and shows exactly what changed.</p>
+      <p class="rail-intro">Scans regulator pages as often as every six hours and shows exactly what changed.</p>
       <ul class="rail-nav">
         <li><button class="nav-button active" data-view="overview" type="button">Overview<span class="nav-count"></span></button></li>
         <li><button class="nav-button" data-view="changes" type="button">Changes<span class="nav-count" id="navChangeCount"></span></button></li>
@@ -3032,6 +3052,40 @@
       <div class="modal-actions"><button class="btn btn-quiet" id="conditionClear" type="button">Remove condition</button><button class="btn" id="cancelCondition" type="button">Cancel</button><button class="btn btn-primary" type="submit">Continue on GitHub</button></div>
     </form>
   </dialog>
+  <dialog class="modal" id="scanScheduleDialog" aria-labelledby="scanScheduleHeading">
+    <div class="modal-head"><div><h2 id="scanScheduleHeading">Scan schedule</h2><p id="scanScheduleTarget"></p></div><button class="btn btn-quiet" id="closeScanSchedule" type="button" aria-label="Close">Close</button></div>
+    <form class="modal-body" id="scanScheduleForm" novalidate>
+      <div>
+        <label class="field-label-text" for="scanEvery">Check</label>
+        <select class="field-input" id="scanEvery"><option value="6">Every 6 hours</option><option value="12">Every 12 hours</option><option value="24">Daily</option><option value="48">Every 2 days</option><option value="72">Every 3 days</option><option value="168">Weekly</option></select>
+      </div>
+      <fieldset class="scan-days">
+        <legend class="field-label-text">On</legend>
+        <div class="scan-day-modes" role="group" aria-label="Days">
+          <button class="chip" type="button" data-scan-days="all" aria-pressed="true">Every day</button>
+          <button class="chip" type="button" data-scan-days="weekdays" aria-pressed="false">Weekdays</button>
+          <button class="chip" type="button" data-scan-days="custom" aria-pressed="false">Choose days</button>
+        </div>
+        <div class="scan-day-picks" id="scanDayPicks" role="group" aria-label="Weekdays" hidden></div>
+      </fieldset>
+      <div>
+        <label class="field-check"><input type="checkbox" id="scanWindowOn"> Only during local hours</label>
+        <div class="scan-window" id="scanWindow" hidden>
+          <label><span class="visually-hidden">From</span><select class="field-input" id="scanFrom"></select></label>
+          <span class="scan-window-to">to</span>
+          <label><span class="visually-hidden">Until</span><select class="field-input" id="scanUntil"></select></label>
+        </div>
+      </div>
+      <div id="scanZoneRow" hidden>
+        <label class="field-label-text" for="scanZone">Time zone <span>Days and hours are read here</span></label>
+        <select class="field-input" id="scanZone"></select>
+      </div>
+      <div class="scan-preview" id="scanPreview" aria-live="polite"></div>
+      <p class="field-help">Scans start at 00, 06, 12 and 18 UTC. A monitor is checked on the first of those slots that falls inside its schedule, so a window must span at least six hours. Detection, evidence and alerts work the same at any cadence.</p>
+      <p class="modal-info">The dashboard cannot change monitoring directly. Continue opens a prefilled GitHub request; the owner-only workflow applies it.</p>
+      <div class="modal-actions"><button class="btn btn-quiet" id="scanScheduleReset" type="button" title="Back to the default: every 6 hours, every day">Reset to default</button><button class="btn" id="cancelScanSchedule" type="button">Cancel</button><button class="btn btn-primary" type="submit">Continue on GitHub</button></div>
+    </form>
+  </dialog>
   <dialog class="modal" id="deleteMonitorDialog" aria-labelledby="deleteMonitorHeading">
     <div class="modal-head"><div><h2 id="deleteMonitorHeading">Stop monitoring this page?</h2><p id="deleteMonitorExplanation">The page will no longer be checked. Existing reports and saved evidence are kept.</p></div><button class="btn btn-quiet" id="closeDeleteMonitor" type="button" aria-label="Close">Close</button></div>
     <div class="modal-body"><p id="deleteMonitorTarget" class="field-help"></p><p class="modal-info">The dashboard cannot stop monitoring directly. Continue opens a prefilled GitHub request; you must submit it there. The owner-only workflow then updates the monitoring configuration. Existing reports and saved evidence are retained.</p><div class="modal-actions"><button class="btn" id="cancelDeleteMonitor" type="button">Cancel</button><button class="btn btn-primary" id="confirmDeleteMonitor" type="button">Continue on GitHub</button></div></div>
@@ -3372,8 +3426,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261024-health-mobile-1"></script>
-  <script src="dashboard.js?v=20261024-health-mobile-1"></script>
+  <script src="dashboard-lib.js?v=20261025-scan-schedule-1"></script>
+  <script src="dashboard.js?v=20261025-scan-schedule-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

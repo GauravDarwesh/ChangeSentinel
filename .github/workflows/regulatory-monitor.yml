@@ -177,7 +177,10 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           REGMON_ALLOW_MASS_REMOVAL: ${{ inputs.allow_mass_removal || '' }}
-        run: python -u -m regmon.monitor --source "$REGMON_SOURCE"
+          # Scheduled runs scan only the monitors their cadence makes due
+          # (regmon/schedule.py); a manual run scans everything it names.
+          REGMON_DUE_ONLY: ${{ github.event_name == 'schedule' && '--due-only' || '' }}
+        run: python -u -m regmon.monitor --source "$REGMON_SOURCE" $REGMON_DUE_ONLY
 
       - name: Validate monitoring state
         id: crawl-status

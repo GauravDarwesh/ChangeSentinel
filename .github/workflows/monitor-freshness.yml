@@ -23,22 +23,12 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
 
-      - name: Check age of the latest saved scan
+      # Each monitor has its own cadence (regmon/schedule.py), so freshness is
+      # judged per monitor: overdue once the slot it was due in passed 8 hours
+      # ago. With the default six-hourly cadence that is 14 hours, as before.
+      - name: Find monitors overdue for a scan
         id: age
-        run: |
-          python3 - <<'PY'
-          import json, os
-          from datetime import datetime, timezone
-          report = json.load(open("data/report.json", encoding="utf-8"))
-          generated = datetime.fromisoformat(report["generated_at"])
-          age_hours = (datetime.now(timezone.utc) - generated).total_seconds() / 3600
-          print(f"latest scan {report.get('run_id')} is {age_hours:.1f} h old")
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
-              out.write(f"hours={age_hours:.1f}\n")
-              # GitHub delays scheduled runs (gaps of 8.5 h were observed on
-              # 19 Oct 2026 for a 6-hourly cron); alert after two missed slots.
-              out.write(f"stale={'true' if age_hours > 14 else 'false'}\n")
-          PY
+        run: python3 -m regmon.schedule --config config/sources.json --data-dir data
 
       - name: Alert on stale monitoring data
         if: ${{ steps.age.outputs.stale == 'true' }}
@@ -46,7 +36,7 @@ jobs:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           ACTIONS_URL: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/regulatory-monitor.yml
         run: |
-          message="No monitoring scan has been saved for ${{ steps.age.outputs.hours }} hours. Check the Regulatory Monitor runs: $ACTIONS_URL"
+          message="${{ steps.age.outputs.count }} monitor(s) are overdue for a scan; the oldest was last scanned ${{ steps.age.outputs.hours }} hours ago. Check the Regulatory Monitor runs: $ACTIONS_URL"
           echo "$message"
           if [ -n "${NTFY_TOPIC:-}" ]; then
             curl -fsS -m 20 --retry 3 \
