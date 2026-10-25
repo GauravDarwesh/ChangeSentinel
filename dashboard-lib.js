@@ -2752,6 +2752,51 @@
   function escapeRegex(text) { return String(text).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
   // Rules that describe the picked links and find more like them on the page.
   // Returns [{ id, label, keys: [...] }] for rules that would add at least one link.
+  /* ---------- Alert-condition suggestions generated from a page ----------
+   * Plain-language "Alert me when" starting points drawn from what the page
+   * actually holds: its report codes, the kinds of documents it links, and
+   * words about deadlines, versions, validation rules, layouts or
+   * consultations, in the languages regulators publish in. The owner edits or
+   * replaces them; nothing is saved until they submit the request.
+   */
+  const CONDITION_SIGNALS = [
+    ["validation", /validation rule|edit check|validaç(ão|oes|ões)|regras? de valida|reglas? de valida|validierungsregel|contrôles? de validation|quality check/i,
+      "A validation rule is added or removed, or its severity changes"],
+    ["taxonomy", /\bxsd\b|xbrl|taxonom|schema|esquema|leiaute|layout|formato|data point model|\bdpm\b/i,
+      "The file layout, schema or taxonomy changes (fields added, removed or renamed)"],
+    ["deadline", /deadline|due date|filing date|effective|as-of date|reporting date|vig[eê]ncia|prazo|data-base|fecha de|plazo|entr[ée]e en vigueur|date limite|stichtag|frist/i,
+      "A filing deadline, reporting date or effective date changes"],
+    ["version", /\bversion\b|\brelease\b|\bv\d+(\.\d+)+\b|vers[ãa]o|versi[oó]n|release notes|errata|change log|changelog|revis(ed|ion)/i,
+      "A new version, release or errata is published"],
+    ["consultation", /consultation|request for comment|proposed|draft|consulta p[uú]blica|audiencia p[uú]blica|proyecto de/i,
+      "A consultation or proposal opens, or its comment deadline changes"],
+    ["instructions", /instruction|guidance|manual|user guide|guia|gu[ií]a|orientaç|circular|carta circular|notice/i,
+      "Instructions or guidance for a report change"]
+  ];
+  function conditionSuggestionsFrom(page, options = {}) {
+    const p = page || {};
+    const links = Array.isArray(p.links) ? p.links.filter(link => link && !link.chrome) : [];
+    const text = [p.title, String(p.text || "").slice(0, 60000), links.slice(0, 400).map(link => link.text || link.title || "").join(" \n ")].join(" \n ");
+    const out = [];
+    const add = value => { if (value && out.indexOf(value) < 0) out.push(value); };
+    const codes = reportCodes(text).filter(code => code.length >= 4).slice(0, 2);
+    const pretty = code => code.replace(/^FRY/, "FR Y-").replace(/^FR(?=\d)/, "FR ").replace(/^FFIEC(?=\d)/, "FFIEC ");
+    if (codes.length) add("A field, schedule or instruction for " + codes.map(pretty).join(" or ") + " changes");
+    const formats = {};
+    links.forEach(link => { if (link.format && link.format !== "Web page") formats[link.format] = (formats[link.format] || 0) + 1; });
+    const topFormat = Object.keys(formats).sort((a, b) => formats[b] - formats[a])[0];
+    const isDocument = options.format && options.format !== "Web page";
+    if (!isDocument && topFormat) {
+      const noun = { PDF: "PDF", Spreadsheet: "spreadsheet", Word: "Word document", ZIP: "ZIP bundle", XML: "XML file", CSV: "CSV file" }[topFormat] || topFormat.toLowerCase();
+      add("A new " + noun + " is added to this page, or an existing one is replaced");
+    }
+    CONDITION_SIGNALS.forEach(([, pattern, sentence]) => { if (pattern.test(text)) add(sentence); });
+    if (isDocument) add("A field, schedule, instruction or validation rule in this document changes");
+    if (!out.length) add(isDocument ? "The effective date or reporting period changes" : "A new document, form or user guide is added to this page");
+    add("A requirement, threshold or reporting scope changes");
+    return out.slice(0, options.limit || 4);
+  }
+
   /* ---------- Find similar: pages like one monitored page ----------
    * Ranks links found around a monitored page by how much they resemble it:
    * another edition of the same address (a different year), the same report
@@ -3054,7 +3099,7 @@
     pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe, pickRuleMatches, pickRuleFolder, pickRuleRequest,
     diffSequences, alignLines, changedWords, readWorkbook, workbookDiff, csvWorkbook, parseCsv, zipListing, zipFile, readDocx, columnName, cellRef,
-    esc, nextScheduledScan, scanCycle, runColumns, similarityTo, rankSimilar, similarStarts, reportCodes, importColumns, importFrequencyHours, importIsPaused, importRows, shadowCompare, shadowRows, IMPORT_ALIASES, validTag, parseLabels, workspaceOf, labelsOf, scopeMatches, organisePayload, payloadIsEmpty, SETTINGS_PRESETS, presetPayload, LABEL_MAX, scanSchedule, scanScheduleIsDefault, scanScheduleLabel, scanAllows, scanIsDue, scanSlots, scanSchedulePayload, settingsRequests, SETTINGS_MARKER, SCAN_WEEKDAYS, SCAN_BUSINESS_DAYS, SCAN_INTERVALS, slotColumns, columnCellState, pendingScan,
+    esc, nextScheduledScan, scanCycle, runColumns, conditionSuggestionsFrom, similarityTo, rankSimilar, similarStarts, reportCodes, importColumns, importFrequencyHours, importIsPaused, importRows, shadowCompare, shadowRows, IMPORT_ALIASES, validTag, parseLabels, workspaceOf, labelsOf, scopeMatches, organisePayload, payloadIsEmpty, SETTINGS_PRESETS, presetPayload, LABEL_MAX, scanSchedule, scanScheduleIsDefault, scanScheduleLabel, scanAllows, scanIsDue, scanSlots, scanSchedulePayload, settingsRequests, SETTINGS_MARKER, SCAN_WEEKDAYS, SCAN_BUSINESS_DAYS, SCAN_INTERVALS, slotColumns, columnCellState, pendingScan,
     timelineModel, timelineGapWords, TIMELINE_KINDS, healthInsights, healthLight,
     fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, regulatorFor, jurisdictionForHost, hostOf, pageKind, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,
