@@ -1,4 +1,13 @@
 {
   "version": 1,
-  "digests": []
+  "digests": [
+    {
+      "id": "all-weekly",
+      "workspace": "*",
+      "frequency": "weekly",
+      "hour": 8,
+      "timezone": "Asia/Kolkata",
+      "day": "mon"
+    }
+  ]
 }
