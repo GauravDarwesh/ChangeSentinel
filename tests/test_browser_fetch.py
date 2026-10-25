@@ -27,12 +27,23 @@ class DetectTests(unittest.TestCase):
                                          b"https://errors.edgesuite.net/18.abc</body></html>"), "Akamai")
         self.assertEqual(botcheck.detect(b"<html><body><div class='g-recaptcha'></div>Please verify you are a human</body></html>"), "Captcha")
         self.assertEqual(botcheck.detect(b"<html><body>Incapsula incident ID: 123</body></html>"), "Imperva")
+        self.assertEqual(botcheck.detect(b"<html><head><title>Blocked</title></head><body>"
+                                         b"<script src='https://ct.captcha-delivery.com/c.js'></script></body></html>", 403), "DataDome")
+        self.assertEqual(botcheck.detect(b"<html><body><script>window.awsWafCookieDomainList=[]</script></body></html>", 405), "AWS WAF")
 
     def test_ordinary_pages_are_not(self):
         self.assertIsNone(botcheck.detect(REAL_PAGE_WITH_BEACON))
         self.assertIsNone(botcheck.detect(b"<html><head><title>Access Denied</title></head><body>You need to log in.</body></html>"))
         self.assertIsNone(botcheck.detect(html("<form><div class='g-recaptcha'></div></form>" + "<p>Contact the supervisor about filing. </p>" * 50)))
         self.assertIsNone(botcheck.detect(b""))
+        # The gate applies to every monitor, and a false hit freezes the
+        # baseline, so short real pages must not trip it either.
+        self.assertIsNone(botcheck.detect(b"<html><head><title>Blocked Persons List</title></head><body>"
+                                          + b"<p>Designated entity, address and programme.</p>" * 60 + b"</body></html>"))
+        self.assertIsNone(botcheck.detect(b"<html><head><title>Subscribe to updates</title></head><body><p>Get email "
+                                          b"updates on reporting forms.</p><form><div class='g-recaptcha'></div></form></body></html>"))
+        self.assertIsNone(botcheck.detect(b"<html><head><title>Release notes</title><script src='/js/challenge.js'></script>"
+                                          b"</head><body><p>Version 2.1 released.</p></body></html>"))
 
     def test_saved_pages_in_the_repository_are_not_flagged(self):
         files = [path for path in (ROOT / "data" / "snapshots" / "html").rglob("*") if path.is_file()]

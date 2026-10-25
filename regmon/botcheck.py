@@ -30,9 +30,15 @@ MARKERS = (
     ("Imperva", re.compile(r"incapsula incident id|_incapsula_resource", re.I)),
     ("PerimeterX", re.compile(r"px-captcha|_pxcaptcha|perimeterx", re.I)),
     ("DataDome", re.compile(r"captcha-delivery\.com|datadome", re.I)),
-    ("AWS WAF", re.compile(r"awswafcookiedomainlist|aws-waf-token|/challenge\.js", re.I)),
-    ("Captcha", re.compile(r"g-recaptcha|h-captcha|cf-turnstile|please (verify|confirm) you are (a )?human|enable javascript and cookies to continue", re.I)),
+    # Vendor-specific names only: any site may serve its own /js/challenge.js,
+    # and a short subscribe or contact page may embed a reCAPTCHA/hCaptcha
+    # widget. A real captcha wall also says so ("verify you are human").
+    ("AWS WAF", re.compile(r"awswafcookiedomainlist|aws-waf-token|awswaf", re.I)),
+    ("Captcha", re.compile(r"cf-turnstile|please (verify|confirm) you are (a )?human|enable javascript and cookies to continue", re.I)),
 )
+# Titles that ordinary pages also use ("Blocked Persons List", "Access Denied"
+# from a plain 403) only count with that vendor's own marker in the page.
+TITLE_NEEDS_MARKER = {"Akamai", "DataDome"}
 MAX_TEXT_FOR_MARKERS = 1500
 _TITLE = re.compile(r"<title[^>]*>(.*?)</title>", re.I | re.S)
 _STRIP = re.compile(r"<(script|style|noscript|template)\b.*?</\1\s*>|<[^>]+>", re.I | re.S)
@@ -49,11 +55,13 @@ def detect(body: bytes | str | None, status: int | None = None) -> str | None:
     html = body if isinstance(body, str) else body[:600_000].decode("utf-8", "replace")
     title_match = _TITLE.search(html[:20_000])
     title = " ".join((title_match.group(1) if title_match else "").split())
+    markers = dict(MARKERS)
     for vendor, pattern in TITLES:
         if title and pattern.search(title):
-            # "Access Denied" is also an honest 403 from many servers; only
-            # Akamai's own reference marks it as a challenge.
-            if vendor == "Akamai" and not MARKERS[1][1].search(html):
+            # "Access Denied" is also an honest 403 from many servers, and
+            # "Blocked …" an ordinary title (sanctions lists); only the
+            # vendor's own marker makes them a challenge.
+            if vendor in TITLE_NEEDS_MARKER and not markers[vendor].search(html):
                 continue
             return vendor
     if visible_text_length(html) > MAX_TEXT_FOR_MARKERS:
