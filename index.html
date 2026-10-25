@@ -146,14 +146,23 @@
     .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
     .num { font-variant-numeric: tabular-nums; }
 
-    /* Soft, square LED-tile glints confined to the existing checkered outer frame. */
+    /* Slow, square breathing LEDs, clipped to the outer checker frame. */
     .frame-glints {
       position: fixed;
       inset: 0;
-      /* Above the workspace so edge lights are never hidden by the app shell. */
       z-index: 2;
       pointer-events: none;
       overflow: hidden;
+      /* Even-odd polygon forms a frame-shaped ring; no light can overlap the app. */
+      clip-path: polygon(
+        0 0, 100% 0, 100% 100%, 0 100%,
+        0 0,
+        var(--cell) var(--cell),
+        var(--cell) calc(100% - var(--cell)),
+        calc(100% - var(--cell)) calc(100% - var(--cell)),
+        calc(100% - var(--cell)) var(--cell),
+        var(--cell) var(--cell)
+      );
     }
     .frame-glint {
       position: absolute;
@@ -164,17 +173,16 @@
       opacity: 0;
       pointer-events: none;
       background: var(--glint-color, var(--led-on));
-      will-change: opacity, transform;
+      will-change: opacity;
     }
     .frame-glint.is-lit {
-      animation: frameTileBlink var(--duration, 720ms) ease-in-out forwards;
+      animation: frameTileBreathe var(--duration, 5.2s) ease-in-out forwards;
     }
-    @keyframes frameTileBlink {
-      0%, 100% { opacity: 0; transform: scale(.92); box-shadow: none; }
-      22% { opacity: var(--peak, .34); transform: scale(1); box-shadow: 0 0 0 1px var(--glint-color, var(--led-on)), 0 0 7px 1px var(--glint-color, var(--led-on)); }
-      45% { opacity: .07; transform: scale(.96); box-shadow: 0 0 0 1px var(--glint-color, var(--led-on)), 0 0 2px var(--glint-color, var(--led-on)); }
-      63% { opacity: var(--peak, .34); transform: scale(1.01); box-shadow: 0 0 0 1px var(--glint-color, var(--led-on)), 0 0 7px 1px var(--glint-color, var(--led-on)); }
-      82% { opacity: 0; transform: scale(.94); box-shadow: none; }
+    @keyframes frameTileBreathe {
+      0%, 100% { opacity: 0; box-shadow: inset 0 0 0 0 transparent; }
+      28% { opacity: 0.12; box-shadow: inset 0 0 0 1px var(--glint-color, var(--led-on)), inset 0 0 5px var(--glint-color, var(--led-on)); }
+      52% { opacity: var(--peak, .78); box-shadow: inset 0 0 0 1px var(--glint-color, var(--led-on)), inset 0 0 9px var(--glint-color, var(--led-on)); }
+      76% { opacity: 0.12; box-shadow: inset 0 0 0 1px var(--glint-color, var(--led-on)), inset 0 0 5px var(--glint-color, var(--led-on)); }
     }
     @media (prefers-reduced-motion: reduce) {
       .frame-glint { animation: none !important; opacity: 0 !important; }
@@ -3665,56 +3673,53 @@
   </script>
 
   <script>
-    // Randomly light only tiles along the existing outer frame. Colours come
-    // from the active dashboard theme; no layout or dashboard state is touched.
+    // One slow, softly breathing square LED at a time; all light stays on the frame.
     (() => {
       const layer = document.querySelector(".frame-glints");
       if (!layer || !window.matchMedia) return;
-
       const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
       let timer = 0;
-      const palette = ["var(--led-on)", "var(--led-new)", "var(--accent)"];
+      const palette = ["var(--led-on)", "var(--accent)"];
 
       function schedule() {
         window.clearTimeout(timer);
         if (!motion.matches && !document.hidden) {
-          timer = window.setTimeout(blink, 400 + Math.random() * 1400);
+          timer = window.setTimeout(breathe, 1800 + Math.random() * 2600);
         }
       }
 
-      function blink() {
+      function breathe() {
         if (motion.matches || document.hidden) return;
         const rootStyle = getComputedStyle(document.documentElement);
         const cell = parseFloat(rootStyle.getPropertyValue("--cell")) || 20;
         const tile = Math.min(parseFloat(rootStyle.getPropertyValue("--tile")) || 19, cell - 1);
         const lastCol = Math.max(0, Math.floor((window.innerWidth - 1) / cell));
         const lastRow = Math.max(0, Math.floor((window.innerHeight - 1) / cell));
-        const amount = 1 + Math.floor(Math.random() * 3);
+        const side = Math.floor(Math.random() * 4);
+        let col, row;
+        if (side === 0) { col = Math.floor(Math.random() * (lastCol + 1)); row = 0; }
+        else if (side === 1) { col = Math.floor(Math.random() * (lastCol + 1)); row = lastRow; }
+        else if (side === 2) { col = 0; row = Math.floor(Math.random() * (lastRow + 1)); }
+        else { col = lastCol; row = Math.floor(Math.random() * (lastRow + 1)); }
 
-        for (let i = 0; i < amount; i++) {
-          const side = Math.floor(Math.random() * 4);
-          let col, row;
-          if (side === 0) { col = Math.floor(Math.random() * (lastCol + 1)); row = 0; }
-          else if (side === 1) { col = Math.floor(Math.random() * (lastCol + 1)); row = lastRow; }
-          else if (side === 2) { col = 0; row = Math.floor(Math.random() * (lastRow + 1)); }
-          else { col = lastCol; row = Math.floor(Math.random() * (lastRow + 1)); }
-
-          const glint = document.createElement("span");
-          glint.className = "frame-glint is-lit";
-          glint.style.left = (col * cell + 1) + "px";
-          glint.style.top = (row * cell + 1) + "px";
-          glint.style.width = tile + "px";
-          glint.style.height = tile + "px";
-          glint.style.setProperty("--glint-color", palette[Math.floor(Math.random() * palette.length)]);
-          glint.style.setProperty("--peak", (0.24 + Math.random() * 0.17).toFixed(2));
-          glint.style.setProperty("--duration", Math.round(520 + Math.random() * 760) + "ms");
-          glint.addEventListener("animationend", () => glint.remove(), { once: true });
-          layer.appendChild(glint);
-        }
-        schedule();
+        const glint = document.createElement("span");
+        glint.className = "frame-glint is-lit";
+        glint.style.left = (col * cell + 1) + "px";
+        glint.style.top = (row * cell + 1) + "px";
+        glint.style.width = tile + "px";
+        glint.style.height = tile + "px";
+        glint.style.setProperty("--glint-color", palette[Math.floor(Math.random() * palette.length)]);
+        glint.style.setProperty("--peak", (0.72 + Math.random() * 0.16).toFixed(2));
+        glint.style.setProperty("--duration", (4800 + Math.random() * 1800).toFixed(0) + "ms");
+        glint.addEventListener("animationend", () => { glint.remove(); schedule(); }, { once: true });
+        layer.appendChild(glint);
       }
 
-      document.addEventListener("visibilitychange", schedule);
+      document.addEventListener("visibilitychange", () => {
+        window.clearTimeout(timer);
+        layer.replaceChildren();
+        schedule();
+      });
       window.addEventListener("resize", () => layer.replaceChildren());
       motion.addEventListener?.("change", () => {
         window.clearTimeout(timer);
