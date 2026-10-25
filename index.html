@@ -153,16 +153,7 @@
       z-index: 2;
       pointer-events: none;
       overflow: hidden;
-      /* Even-odd polygon forms a frame-shaped ring; no light can overlap the app. */
-      clip-path: polygon(
-        0 0, 100% 0, 100% 100%, 0 100%,
-        0 0,
-        var(--cell) var(--cell),
-        var(--cell) calc(100% - var(--cell)),
-        calc(100% - var(--cell)) calc(100% - var(--cell)),
-        calc(100% - var(--cell)) var(--cell),
-        var(--cell) var(--cell)
-      );
+      /* The glow uses inset-only shadows, so no light spills beyond a frame tile. */
     }
     .frame-glint {
       position: absolute;
