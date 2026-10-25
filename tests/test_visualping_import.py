@@ -123,6 +123,16 @@ class ImportTests(unittest.TestCase):
         self.assertEqual(out["conditions"], 1)
         self.assertEqual(len(out["errors"]), 2)
 
+    def test_a_paused_column_means_yes_is_paused(self):
+        # "Paused: Yes" is paused; "Active: No" / "Status: Paused" are paused too.
+        out = run_js(
+            "const rows = h => L.importRows([['URL', h], ['https://www.bcb.gov.br/a', 'Yes'], ['https://www.bcb.gov.br/b', 'No'], ['https://www.bcb.gov.br/c', 'false']], new Set());"
+            "const names = r => [r.rows.map(x => x.url.slice(-1)), r.skipped.paused.map(x => x.url.slice(-1))];"
+            "console.log(JSON.stringify([names(rows('Paused')), names(rows('Active'))]));"
+        )
+        self.assertEqual(out[0], [["b", "c"], ["a"]])
+        self.assertEqual(out[1], [["a"], ["b", "c"]])
+
     def test_a_plain_list_still_imports(self):
         out = run_js("console.log(JSON.stringify(L.importRows([['https://www.bcb.gov.br/a', 'Page A']], new Set())));")
         self.assertEqual(out["rows"][0]["name"], "Page A")
