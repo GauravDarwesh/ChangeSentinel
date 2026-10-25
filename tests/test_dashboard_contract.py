@@ -1050,7 +1050,7 @@ if __name__ == "__main__":
 
 
 class TestCheckeredFrameGlints(unittest.TestCase):
-    def test_edge_reuses_heatmap_wave_and_clips_to_all_four_sides(self):
+    def test_edge_reuses_heatmap_wave_and_keeps_all_sides_symmetric(self):
         html = read("index.html")
         self.assertIn('<canvas class="frame-glints" aria-hidden="true"></canvas>', html)
 
@@ -1064,20 +1064,26 @@ class TestCheckeredFrameGlints(unittest.TestCase):
         self.assertIn("@media (max-width: 980px)", css)
         self.assertIn(".frame-glints { display: none; }", css)
 
-        script_start = html.index("// Paint the same drifting heatmap wave over the perimeter tiles only.")
+        script_start = html.index("// Paint the same drifting heatmap wave over a symmetric, edge-only tile grid.")
         script_end = html.index("</script>", script_start)
         script = html[script_start:script_end]
         self.assertIn("const CSLib = window.CSLib;", script)
         self.assertIn('typeof CSLib.fbm !== "function"', script)
-        self.assertIn("css.getPropertyValue(\"--idle-lo\")", script)
-        self.assertIn("css.getPropertyValue(\"--idle-hi\")", script)
+        self.assertIn('css.getPropertyValue("--bg")', script)
+        self.assertIn('css.getPropertyValue("--idle-lo")', script)
+        self.assertIn('css.getPropertyValue("--idle-hi")', script)
         self.assertIn("CSLib.fbm(col * .26 + t * .22, row * .26 + t * .08, t * .11)", script)
         self.assertIn("Math.pow(wave, 1.5) * .92", script)
-        self.assertIn("ctx.rect(0, 0, width, Math.min(cell, height));", script)
-        self.assertIn("ctx.rect(0, Math.max(0, height - cell), width, Math.min(cell, height));", script)
-        self.assertIn("ctx.rect(Math.max(0, width - cell)", script)
-        self.assertIn("ctx.clip();", script)
-        self.assertIn("x + tile > width - cell || y + tile > height - cell", script)
+        self.assertIn("const xAt = col => 1 + col * (width - cell - 1) / (columns - 1);", script)
+        self.assertIn("const yAt = row => 1 + row * (height - cell - 1) / (rows - 1);", script)
+        self.assertIn("const right = width - cell;", script)
+        self.assertIn("const bottom = height - cell;", script)
+        self.assertIn("ctx.fillRect(0, bottom, width, cell);", script)
+        self.assertIn("ctx.fillRect(right, cell, cell, Math.max(0, height - cell * 2));", script)
+        self.assertIn("paintTile(x, 1, col, 0, t, tile);", script)
+        self.assertIn("paintTile(x, bottom, col, rows - 1, t, tile);", script)
+        self.assertIn("paintTile(1, y, 0, row, t, tile);", script)
+        self.assertIn("paintTile(right, y, columns - 1, row, t, tile);", script)
         self.assertIn("window.requestAnimationFrame(paint)", script)
         self.assertIn('attributeFilter: ["data-theme"]', script)
         self.assertNotIn("Math.random()", script)
