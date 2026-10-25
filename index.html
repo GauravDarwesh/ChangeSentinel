@@ -3748,7 +3748,7 @@
             const n = CSLib.fbm(col * .26 + t * .22, row * .26 + t * .08, t * .11);
             const wave = clamp01((n - .3) / .42);
             const color = mix(colors.lo, colors.hi, Math.pow(wave, 1.5) * .92);
-            ctx.fillStyle = "rgb(" + color.map(channel => Math.round(channel)).join(",") + ")";
+            ctx.fillStyle = "rgb(" + color.map(channel => channel | 0).join(",") + ")";
             ctx.fillRect(x, y, tile, tile);
           }
         }
