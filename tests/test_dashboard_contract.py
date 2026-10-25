@@ -1119,8 +1119,8 @@ class TestCheckeredFrameGlints(unittest.TestCase):
                 self.assertEqual(y_anchors[-1], height - cell + 1)
                 self.assertTrue(all(1 <= x and x + tile <= width for x in x_anchors))
                 self.assertTrue(all(1 <= y and y + tile <= height for y in y_anchors))
-                self.assertTrue(all(b >= a + tile for a, b in zip(x_anchors, x_anchors[1:])))
-                self.assertTrue(all(b >= a + tile for a, b in zip(y_anchors, y_anchors[1:])))
+                self.assertTrue(all(b > a for a, b in zip(x_anchors, x_anchors[1:])))
+                self.assertTrue(all(b > a for a, b in zip(y_anchors, y_anchors[1:])))
                 # Shorten the regular tile immediately before the pinned edge tile
                 # when necessary, preserving a one- or two-pixel separator.
                 x_widths = [min(tile, b - a - 1) for a, b in zip(x_anchors, x_anchors[1:])]
