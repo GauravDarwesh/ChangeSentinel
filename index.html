@@ -160,7 +160,12 @@
     }
     /* Keep the wave over the frame of the locked screen without covering its card. */
     html.cs-locked .frame-glints { z-index: 10001; }
-    /* The narrow layout deliberately has no outer checker frame. */
+    /* On wide screens, let transparent tile seams reveal the frame surface,
+       not the old CSS grid strokes underneath the animated checker tiles. */
+    @media (min-width: 981px) {
+      body { background-image: linear-gradient(var(--led-frame), var(--led-frame)); }
+    }
+    /* The narrow layout keeps its existing background and hides the edge wave. */
     @media (max-width: 980px) {
       .frame-glints { display: none; }
     }
