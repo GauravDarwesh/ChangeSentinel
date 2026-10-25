@@ -3740,7 +3740,9 @@
           const end = length - cell + 1;
           const anchors = [];
           for (let position = 1; position < end; position += cell) {
-            if (position + tile <= end) anchors.push(position);
+            // Keep a regular terminal-neighbour tile when it can retain at
+            // least a one-pixel width and a separator before the pinned tile.
+            if (end - position > 1) anchors.push(position);
           }
           if (!anchors.length || anchors[anchors.length - 1] !== end) anchors.push(end);
           return anchors;
