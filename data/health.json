@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-25T11:23:13.541000+00:00",
+  "generated_at": "2026-10-25T11:25:23.271303+00:00",
   "thresholds": {
     "inactive_after_days": 45,
     "stale_after_hours": 14,
     "overdue_grace_hours": 8
   },
   "totals": {
-    "monitors": 116,
-    "pages": 130,
-    "healthy": 116,
+    "monitors": 117,
+    "pages": 131,
+    "healthy": 117,
     "failing": 0,
     "stale": 0,
     "inactive": 0,
     "year_bound": 0,
-    "with_alert_condition": 0
+    "with_alert_condition": 1
   },
   "last_7_days": {
-    "source_runs": 2036,
-    "checks": 2647,
+    "source_runs": 2037,
+    "checks": 2648,
     "failed_checks": 8,
     "success_rate": 0.997,
     "changes": 17,
     "alerts_sent": 19
   },
   "last_30_days": {
-    "source_runs": 2039,
-    "checks": 2665,
+    "source_runs": 2040,
+    "checks": 2666,
     "failed_checks": 8,
     "success_rate": 0.997,
     "changes": 17,
@@ -126,7 +126,7 @@
     },
     {
       "date": "2026-10-25",
-      "checks": 390,
+      "checks": 391,
       "failed_checks": 0,
       "changes": 0,
       "alerts_sent": 0
@@ -141,156 +141,156 @@
     "slots": [
       {
         "at": "2026-10-25T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-25T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-26T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-26T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-26T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-26T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-27T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-27T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-27T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-27T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-28T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-28T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-28T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-28T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-29T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-29T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-29T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-29T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-30T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-30T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-30T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-30T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-31T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-31T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-31T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-10-31T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-11-01T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       },
       {
         "at": "2026-11-01T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 117,
+        "pages": 131
       }
     ],
-    "page_checks_per_day": 520.0,
-    "monitor_checks_per_day": 464.0,
+    "page_checks_per_day": 524.0,
+    "monitor_checks_per_day": 468.0,
     "busiest": {
       "at": "2026-10-25T12:00:00+00:00",
-      "monitors": 116,
-      "pages": 130
+      "monitors": 117,
+      "pages": 131
     },
     "by_cadence": [
       {
         "label": "Every 6 hours",
-        "monitors": 116
+        "monitors": 117
       }
     ]
   },
@@ -2588,6 +2588,37 @@
       },
       "next_due": "2026-10-25T12:00:00+00:00",
       "overdue_after": "2026-10-26T01:20:13.850376+00:00"
+    },
+    {
+      "source_id": "manual-b482c4e3197f",
+      "name": "Press Releases | Official Website of Reserve Bank of India",
+      "regulator": "rbi.org.in",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-25T11:25:21.562775+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 0,
+      "alert_condition": true,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-25T12:00:00+00:00",
+      "overdue_after": "2026-10-26T01:25:21.562775+00:00"
     },
     {
       "source_id": "manual-b553a47e37a5",

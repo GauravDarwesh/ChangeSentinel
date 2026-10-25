@@ -7184,6 +7184,52 @@
         "file_baseline_forced": false,
         "extractor_baseline_forced": false
       }
+    },
+    "manual-b482c4e3197f": {
+      "b482c4e3197ffe60d7f21f4e8afbcd52e156c0c4e2977b8686239019d65ba2a6": {
+        "schema_version": 2,
+        "url_id": "b482c4e3197ffe60d7f21f4e8afbcd52e156c0c4e2977b8686239019d65ba2a6",
+        "source_id": "manual-b482c4e3197f",
+        "regulator": "rbi.org.in",
+        "canonical_url": "https://rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx",
+        "first_seen": "2026-10-25T11:25:21.562775+00:00",
+        "last_seen": "2026-10-25T11:25:21.562775+00:00",
+        "last_checked": "2026-10-25T11:25:21.562775+00:00",
+        "last_full_fetch": "2026-10-25T11:25:21.562775+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "content_length": null,
+        "etag": null,
+        "last_modified": null,
+        "raw_hash": "c4e0eea3d8d2612c4f1e1d0fc640f2fa2148fbf98a95e87b34aafd3c43af0781",
+        "normalized_hash": "f4c40255bc73462205edee8a6e529181337900b3746ea3a874d088a8f5904a4a",
+        "html_hash": "c4e0eea3d8d2612c4f1e1d0fc640f2fa2148fbf98a95e87b34aafd3c43af0781",
+        "html_comparison_hash": "c4e0eea3d8d2612c4f1e1d0fc640f2fa2148fbf98a95e87b34aafd3c43af0781",
+        "html_comparison_hash_version": 2,
+        "html_snapshot_location": "data/snapshots/html/b482c4e3197ffe60d7f21f4e8afbcd52e156c0c4e2977b8686239019d65ba2a6-c4e0eea3d8d2612c4f1e1d0fc640f2fa2148fbf98a95e87b34aafd3c43af0781.html",
+        "file_snapshot_location": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/b482c4e3197ffe60d7f21f4e8afbcd52e156c0c4e2977b8686239019d65ba2a6-f4c40255bc73462205edee8a6e529181337900b3746ea3a874d088a8f5904a4a.txt",
+        "evidence_location": null,
+        "relevance": {
+          "candidate": true,
+          "reason": "No exclusion signal; retained for high-recall review",
+          "signals": []
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [],
+        "not_modified": false,
+        "full_fetch_forced": true,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false
+      }
     }
   }
 }
