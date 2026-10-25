@@ -4194,6 +4194,46 @@
       "allowed_domains": [
         "www.osfi-bsif.gc.ca"
       ]
+    },
+    {
+      "id": "manual-b482c4e3197f",
+      "name": "Press Releases | Official Website of Reserve Bank of India",
+      "regulator": "rbi.org.in",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx"
+      ],
+      "allowed_prefixes": [
+        "https://rbi.org.in/"
+      ],
+      "allowed_urls": [
+        "https://rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx"
+      ],
+      "allowed_domains": [
+        "rbi.org.in"
+      ],
+      "alert_condition": "A new version, release or errata is published",
+      "workspace": "APAC",
+      "labels": [
+        "RBI"
+      ]
     }
   ]
 }
