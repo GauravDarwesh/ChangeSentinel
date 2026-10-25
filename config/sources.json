@@ -4199,7 +4199,7 @@
       "id": "manual-b482c4e3197f",
       "name": "Press Releases | Official Website of Reserve Bank of India",
       "regulator": "rbi.org.in",
-      "active": true,
+      "active": false,
       "baseline_on_first_run": true,
       "include_selector": "",
       "ignore_selectors": [],
