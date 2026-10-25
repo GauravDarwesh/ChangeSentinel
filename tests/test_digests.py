@@ -79,7 +79,8 @@ class ScheduleTests(unittest.TestCase):
                 digest.validate_digests({"version": 1, "digests": [bad]})
         with self.assertRaises(ValueError):
             digest.validate_digests({"version": 1, "digests": [good, good]})
-        self.assertEqual(json.loads((ROOT / "config" / "digests.json").read_text(encoding="utf-8"))["digests"], [])
+        configured = json.loads((ROOT / "config" / "digests.json").read_text(encoding="utf-8"))
+        self.assertEqual(digest.validate_digests(configured), configured["digests"])
 
 
 class BuildTests(unittest.TestCase):
