@@ -55,7 +55,10 @@ function fakeReaderPage(url) {
   return { kind: "page", url, title: "Reader copy", html, links, truncated: false };
 }
 async function openDashboard(viewport, options = {}) {
-  const context = await browser.newContext({ viewport, hasTouch: !!options.touch, isMobile: !!options.touch });
+  const context = await browser.newContext({
+    viewport, hasTouch: !!options.touch, isMobile: !!options.touch,
+    ...(options.reducedMotion ? { reducedMotion: options.reducedMotion } : {})
+  });
   await context.route(/\/functions\/v1\/page-reader/, async route => {
     const body = JSON.parse(route.request().postData() || "{}");
     await route.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(fakeReaderPage(body.url || "")) });
@@ -102,6 +105,8 @@ try {
       width: window.innerWidth, height: window.innerHeight, cell,
       topGapIsBackground: same(pixel(cell, 1), bg),
       topTileIsWave: !same(pixel(cell + 1, 1), bg),
+      leftGapIsBackground: same(pixel(1, cell), bg),
+      leftTileIsWave: !same(pixel(1, cell + 1), bg),
       rightGapIsBackground: same(pixel(rightAnchor - 1, 1), bg),
       rightTileIsWave: !same(pixel(rightAnchor, 1), bg),
       bottomGapIsBackground: same(pixel(1, bottomAnchor - 1), bg),
@@ -111,11 +116,39 @@ try {
   });
   check(!edgeGrid.error && edgeGrid.width === 1441 && edgeGrid.height === 901 &&
     edgeGrid.topGapIsBackground && edgeGrid.topTileIsWave &&
+    edgeGrid.leftGapIsBackground && edgeGrid.leftTileIsWave &&
     edgeGrid.rightGapIsBackground && edgeGrid.rightTileIsWave &&
     edgeGrid.bottomGapIsBackground && edgeGrid.bottomTileIsWave,
     "edge tiles remain on the 20px grid at 1441x901 (" + JSON.stringify(edgeGrid) + ")");
   await page.screenshot({ path: path.join(OUT, "edge-irregular-viewport.png") });
   await page.setViewportSize({ width: 1440, height: 900 });
+
+  // A separate reduced-motion context verifies that the canvas stops changing
+  // after its initial frame rather than only checking the source-level guard.
+  const reducedWave = await openDashboard({ width: 1441, height: 901 }, { reducedMotion: "reduce" });
+  const sampleFrameEdge = () => reducedWave.page.evaluate(() => {
+    const canvas = document.querySelector("canvas.frame-glints");
+    const ctx = canvas && canvas.getContext("2d");
+    if (!ctx) return "missing-canvas";
+    const cell = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--cell")) || 20;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const pixel = (x, y) => Array.from(ctx.getImageData(Math.round(x * dpr), Math.round(y * dpr), 1, 1).data).slice(0, 3).join(",");
+    const samples = [];
+    for (let y = 1; y < window.innerHeight; y += cell) {
+      for (let x = 1; x < window.innerWidth; x += cell) {
+        if (x < cell || x >= window.innerWidth - cell || y < cell || y >= window.innerHeight - cell) {
+          samples.push(pixel(x, y));
+        }
+      }
+    }
+    return samples.join("|");
+  });
+  const reducedBefore = await sampleFrameEdge();
+  await reducedWave.page.waitForTimeout(220);
+  const reducedAfter = await sampleFrameEdge();
+  check(reducedBefore !== "missing-canvas" && reducedBefore === reducedAfter,
+    "edge wave freezes after one frame when Reduce Motion is enabled");
+  await reducedWave.context.close();
 
   const pdf = await page.evaluate(async () => {
     try {
