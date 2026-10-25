@@ -1061,6 +1061,8 @@ class TestCheckeredFrameGlints(unittest.TestCase):
         self.assertIn("inset: 0;", css)
         self.assertIn("z-index: 2;", css)
         self.assertIn("html.cs-locked .frame-glints { z-index: 10001; }", css)
+        self.assertIn("@media (min-width: 981px)", css)
+        self.assertIn("body { background-image: linear-gradient(var(--led-frame), var(--led-frame)); }", css)
         self.assertIn("@media (max-width: 980px)", css)
         self.assertIn(".frame-glints { display: none; }", css)
 
