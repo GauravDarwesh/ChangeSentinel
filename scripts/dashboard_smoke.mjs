@@ -84,6 +84,39 @@ try {
     "supabase-js loads under its integrity hash");
   await page.screenshot({ path: path.join(OUT, "overview-desktop.png") });
 
+  // Exercise the checker-frame perimeter at dimensions that are not multiples
+  // of its 20px cell. The final partial cell should be clipped, not redistributed.
+  await page.setViewportSize({ width: 1441, height: 901 });
+  const edgeGrid = await page.evaluate(() => {
+    const canvas = document.querySelector("canvas.frame-glints");
+    const ctx = canvas && canvas.getContext("2d");
+    if (!ctx) return { error: "frame canvas unavailable" };
+    const cell = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--cell")) || 20;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const pixel = (x, y) => Array.from(ctx.getImageData(Math.round(x * dpr), Math.round(y * dpr), 1, 1).data).slice(0, 3);
+    const same = (a, b) => a.every((channel, index) => channel === b[index]);
+    const bg = pixel(0, 1);
+    const rightAnchor = 1 + Math.floor((window.innerWidth - 2) / cell) * cell;
+    const bottomAnchor = 1 + Math.floor((window.innerHeight - 2) / cell) * cell;
+    return {
+      width: window.innerWidth, height: window.innerHeight, cell,
+      topGapIsBackground: same(pixel(cell, 1), bg),
+      topTileIsWave: !same(pixel(cell + 1, 1), bg),
+      rightGapIsBackground: same(pixel(rightAnchor - 1, 1), bg),
+      rightTileIsWave: !same(pixel(rightAnchor, 1), bg),
+      bottomGapIsBackground: same(pixel(1, bottomAnchor - 1), bg),
+      bottomTileIsWave: !same(pixel(1, bottomAnchor), bg),
+      rightAnchor, bottomAnchor
+    };
+  });
+  check(!edgeGrid.error && edgeGrid.width === 1441 && edgeGrid.height === 901 &&
+    edgeGrid.topGapIsBackground && edgeGrid.topTileIsWave &&
+    edgeGrid.rightGapIsBackground && edgeGrid.rightTileIsWave &&
+    edgeGrid.bottomGapIsBackground && edgeGrid.bottomTileIsWave,
+    "edge tiles remain on the 20px grid at 1441x901 (" + JSON.stringify(edgeGrid) + ")");
+  await page.screenshot({ path: path.join(OUT, "edge-irregular-viewport.png") });
+  await page.setViewportSize({ width: 1440, height: 900 });
+
   const pdf = await page.evaluate(async () => {
     try {
       const lib = await loadPdfJs();
