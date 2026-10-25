@@ -194,7 +194,10 @@
   const SETTINGS_PRESETS = [
     { id: "release", name: "Release notes and update pages", note: "Every 6 hours, every day. For pages that announce new forms, versions and errata.", schedule: { check_every_hours: 6 } },
     { id: "spec", name: "Specifications and user guides", note: "Daily on weekdays. Technical specs, layouts, taxonomies and validation rules change by planned release.", schedule: { check_every_hours: 24, check_days: SCAN_BUSINESS_DAYS }, labels: ["Specs"] },
-    { id: "office", name: "Regulator business hours", note: "Every 12 hours on weekdays, 08:00\u201318:00 in the regulator's time zone.", schedule: { check_every_hours: 12, check_days: SCAN_BUSINESS_DAYS, check_hours: [8, 18] }, zoned: true },
+    // Every scan slot inside the window. Scans start every six hours, so a
+    // ten-hour window holds one or two slots, six hours apart; a 12-hour
+    // cadence would need nine hours between scans and always scan once a day.
+    { id: "office", name: "Regulator business hours", note: "Weekdays, every scan between 08:00 and 18:00 in the regulator's time zone (once or twice a day).", schedule: { check_every_hours: 6, check_days: SCAN_BUSINESS_DAYS, check_hours: [8, 18] }, zoned: true },
     { id: "archive", name: "Annual and archived documents", note: "Weekly. Year-stamped lists, historical instructions and pages that rarely move.", schedule: { check_every_hours: 168 }, labels: ["Archive"] },
     { id: "copy", name: "Copy from another monitor", note: "Its scan schedule, workspace and labels.", copy: true }
   ];

@@ -208,6 +208,21 @@ class DashboardLibTests(unittest.TestCase):
         self.assertNotIn("Draft", final["a"]["labels"])
         self.assertIn("Q1 2027", final["b"]["labels"])
 
+    def test_business_hours_preset_scans_more_than_once_a_day_where_the_window_allows(self):
+        # A 10-hour window holds one or two six-hourly slots; the preset must
+        # scan every one of them, not collapse to a daily scan.
+        from datetime import datetime, timezone
+        from regmon import schedule
+
+        payload = run_js(
+            "console.log(JSON.stringify(L.presetPayload(['a'], L.SETTINGS_PRESETS.find(p => p.id === 'office'), { timezone: 'America/Sao_Paulo' })));"
+        )
+        settings = payload["set"]
+        cadence = schedule.Cadence(settings.get("check_every_hours", 6), settings["check_days"], settings["check_hours"], settings["check_timezone"])
+        now = datetime(2026, 10, 26, 1, tzinfo=timezone.utc)
+        slots = schedule.load_slots({"a": (cadence, datetime(2026, 10, 25, 12, tzinfo=timezone.utc), 1)}, now)
+        self.assertEqual(sum(slot["monitors"] for slot in slots), 10)  # two a weekday in São Paulo
+
 
 class DashboardContractTests(unittest.TestCase):
     def test_scope_selection_and_dialogs_are_wired(self):
