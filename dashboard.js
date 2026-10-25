@@ -2603,11 +2603,14 @@ function renderDetails(item) {
     ["Workspace", (ws => ws.name + (ws.auto ? " (from the regulator's region)" : ""))(sourceWorkspace(source))],
     ["Labels", sourceLabels(source).join(", ") || "None"],
     ["Alerts", source.shadow ? "Shadow mode: changes are recorded without alerts" : "Sent for relevant changes"],
+    ["Loaded with", FETCH_MODE_WORDS[sourceLoading(source).fetch_mode] + (item.rendered_by === "browser" && item.browser ? " · last render blocked " + plural(Number(item.browser.blocked_requests || 0), "request", "requests") + (item.browser.consent ? ", cookie banner: " + item.browser.consent.replace(/^\w+:/, "") : "") : "")],
+    ["Bot check", item.bot_check ? item.bot_check.vendor + " challenge, " + fmt(item.bot_check.captured_at) + " (" + (item.bot_check.via === "browser" ? "after a browser render" : "plain request") + ")" : "None seen"],
     ["Fetch error", item.fetch_error || "None"], ["Extraction error", item.extraction_error || "None"],
     ["Text fingerprint (SHA-256)", item.normalized_hash || "Not available", true], ["Saved HTML fingerprint", item.html_hash || "Not available", true],
     ["Response fingerprint", item.raw_hash || "Not available", true],
     ["Text snapshot", item.snapshot_location || "Not saved", true], ["HTML snapshot", item.html_snapshot_location || "Not saved", true],
-    ["Original file", item.file_snapshot_location || "Not saved", true]
+    ["Original file", item.file_snapshot_location || "Not saved", true],
+    ["Saved bot-check page", item.bot_check && item.bot_check.location ? item.bot_check.location : "None", true]
   ];
   $("detailBody").innerHTML = integritySheet(item) + '<section class="sheet"><dl class="facts">' + rows.map(([key, value, code]) =>
     "<div><dt>" + esc(key) + '</dt><dd class="' + (code ? "is-code" : "") + '">' + esc(value == null || value === "" ? "Not recorded" : value) + "</dd></div>"
@@ -3270,13 +3273,55 @@ function openScanSchedule(ids) {
   $("scanZone").value = schedule.timezone;
   $("scanDayPicks").innerHTML = L.SCAN_WEEKDAYS.map(day => '<button class="chip" type="button" data-scan-day="' + day + '" aria-pressed="' + (schedule.days.indexOf(day) >= 0) + '">' + SCAN_DAY_WORDS[day] + "</button>").join("");
   setScanDayMode(schedule.days.length === 7 ? "all" : schedule.days.join() === L.SCAN_BUSINESS_DAYS.join() ? "weekdays" : "custom");
+  // Page loading: prefilled from the first monitor; only sent when changed.
+  const loading = sourceLoading(first);
+  state.scanLoadingBase = JSON.stringify(loading);
+  $("scanFetchMode").value = loading.fetch_mode;
+  $("scanWait").value = String(loading.browser_wait_seconds);
+  $("scanWaitSelector").value = loading.browser_wait_selector;
+  $("scanDismiss").checked = loading.browser_dismiss_cookies;
+  $("scanLoading").open = loading.fetch_mode !== "http";
+  renderScanLoading();
   renderScanPreview();
   $("scanScheduleDialog").showModal();
+}
+const FETCH_MODE_WORDS = { http: "Plain HTTP", auto: "Browser on bot checks", browser: "Browser every scan" };
+function sourceLoading(source) {
+  const s = source || {};
+  return {
+    fetch_mode: ["http", "auto", "browser"].indexOf(s.fetch_mode) >= 0 ? s.fetch_mode : "http",
+    browser_wait_seconds: Number.isInteger(s.browser_wait_seconds) ? s.browser_wait_seconds : 3,
+    browser_wait_selector: String(s.browser_wait_selector || ""),
+    browser_dismiss_cookies: s.browser_dismiss_cookies !== false
+  };
+}
+function scanLoadingState() {
+  return {
+    fetch_mode: $("scanFetchMode").value,
+    browser_wait_seconds: Math.max(0, Math.min(20, Math.round(Number($("scanWait").value) || 0))),
+    browser_wait_selector: $("scanWaitSelector").value.trim().slice(0, 200),
+    browser_dismiss_cookies: $("scanDismiss").checked
+  };
+}
+function renderScanLoading() {
+  const loading = scanLoadingState();
+  $("scanBrowserOptions").hidden = loading.fetch_mode === "http";
+  $("scanLoadingNow").textContent = FETCH_MODE_WORDS[loading.fetch_mode];
 }
 function submitScanSchedule(reset) {
   const ids = state.pendingScanSchedule || [];
   const schedule = reset ? L.scanSchedule({}) : scanDialogState();
-  const requests = L.settingsRequests(L.scanSchedulePayload(ids, schedule), "scan schedule → " + L.scanScheduleLabel(schedule));
+  const payload = L.scanSchedulePayload(ids, schedule);
+  const loading = scanLoadingState();
+  let words = "scan schedule → " + L.scanScheduleLabel(schedule);
+  if (!reset && JSON.stringify(loading) !== state.scanLoadingBase) {
+    const defaults = { fetch_mode: "http", browser_wait_seconds: 3, browser_wait_selector: "", browser_dismiss_cookies: true };
+    Object.keys(defaults).forEach(key => {
+      if (loading[key] === defaults[key]) payload.clear.push(key); else payload.set[key] = loading[key];
+    });
+    words += "; pages loaded with " + FETCH_MODE_WORDS[loading.fetch_mode].toLowerCase();
+  }
+  const requests = L.settingsRequests(payload, words);
   if (!requests.length) return;
   $("scanScheduleDialog").close();
   requests.slice(1).forEach(request => {
@@ -8346,6 +8391,7 @@ $("cancelScanSchedule").addEventListener("click", () => $("scanScheduleDialog").
 $("scanScheduleReset").addEventListener("click", () => submitScanSchedule(true));
 $("scanScheduleForm").addEventListener("submit", event => { event.preventDefault(); submitScanSchedule(false); });
 ["scanEvery", "scanWindowOn", "scanFrom", "scanUntil", "scanZone"].forEach(id => $(id).addEventListener("change", renderScanPreview));
+["scanFetchMode", "scanWait", "scanWaitSelector", "scanDismiss"].forEach(id => $(id).addEventListener("change", renderScanLoading));
 $("scanScheduleDialog").addEventListener("click", event => {
   if (event.target === $("scanScheduleDialog")) return $("scanScheduleDialog").close();
   const mode = event.target.closest("[data-scan-days]");

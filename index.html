@@ -1006,6 +1006,11 @@
     #scanScheduleForm .field-input { width: 100%; min-width: 0; }
     #scanScheduleForm .modal-actions { flex-wrap: wrap; }
     .scan-days { min-width: 0; margin: 0; padding: 0; border: 0; }
+    .scan-loading { border-top: 1px solid var(--line); }
+    .scan-browser { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 10px; }
+    .scan-browser .field-check { grid-column: 1 / -1; margin: 0; }
+    .scan-browser[hidden] { display: none; }
+    @media (max-width: 640px) { .scan-browser { grid-template-columns: minmax(0, 1fr); } }
     .scan-day-modes, .scan-day-picks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
     .scan-day-picks .chip { min-width: 46px; justify-content: center; }
     .scan-window { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
@@ -3177,6 +3182,31 @@
         <select class="field-input" id="scanZone"></select>
       </div>
       <div class="scan-preview" id="scanPreview" aria-live="polite"></div>
+      <details class="add-more scan-loading" id="scanLoading">
+        <summary>How pages are loaded <span id="scanLoadingNow">Plain HTTP</span></summary>
+        <div class="add-more-body">
+          <div>
+            <label class="field-label-text" for="scanFetchMode">Load HTML pages with</label>
+            <select class="field-input" id="scanFetchMode">
+              <option value="http">A plain request (fastest; the default)</option>
+              <option value="auto">A browser, only when a bot check blocks the plain request</option>
+              <option value="browser">A browser on every scan, for pages built with JavaScript</option>
+            </select>
+            <div class="field-help">Documents (PDF, spreadsheets, ZIP) are always downloaded directly. A bot-check page is never compared as content: it is saved for review and the last good copy stays the baseline.</div>
+          </div>
+          <div class="scan-browser" id="scanBrowserOptions">
+            <div>
+              <label class="field-label-text" for="scanWait">Wait <span>0–20 s</span></label>
+              <input class="field-input" id="scanWait" type="number" min="0" max="20" step="1" value="3">
+            </div>
+            <div>
+              <label class="field-label-text" for="scanWaitSelector">Or until this appears <span>CSS selector, optional</span></label>
+              <input class="field-input" id="scanWaitSelector" type="text" maxlength="200" placeholder="main table" autocomplete="off">
+            </div>
+            <label class="field-check"><input type="checkbox" id="scanDismiss" checked> Answer cookie banners with their privacy-preserving choice (reject or necessary only)</label>
+          </div>
+        </div>
+      </details>
       <p class="field-help">Scans start at 00, 06, 12 and 18 UTC. A monitor is checked on the first of those slots that falls inside its schedule, so a window must span at least six hours. Detection, evidence and alerts work the same at any cadence.</p>
       <p class="modal-info">The dashboard cannot change monitoring directly. Continue opens a prefilled GitHub request; the owner-only workflow applies it.</p>
       <div class="modal-actions"><button class="btn btn-quiet" id="scanScheduleReset" type="button" title="Back to the default: every 6 hours, every day">Reset to default</button><button class="btn" id="cancelScanSchedule" type="button">Cancel</button><button class="btn btn-primary" type="submit">Continue on GitHub</button></div>
@@ -3574,8 +3604,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261025-digests-1"></script>
-  <script src="dashboard.js?v=20261025-digests-1"></script>
+  <script src="dashboard-lib.js?v=20261025-browser-1"></script>
+  <script src="dashboard.js?v=20261025-browser-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

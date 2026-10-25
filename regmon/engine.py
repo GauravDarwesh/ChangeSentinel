@@ -30,7 +30,8 @@ from regmon.config import DEFAULT_CONFIG_PATH, SourceConfig, load_config
 from regmon.content import CONTENT_EXTRACTOR_VERSION, extract_content
 from regmon.discovery import canonical, discover
 from regmon.docling_extractor import configure_timeout_registry
-from regmon.fetch import fetch
+from regmon.fetch import FetchResult, HTTPStatusError, fetch
+from regmon import botcheck
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
 from regmon import deadlines, health, item_codes, reviews, schedule
@@ -409,6 +410,64 @@ def candidate_event_type(item: dict, new_ids: set[str], changed_ids: set[str]) -
     return "CHANGED_URL"
 
 
+class BotCheckError(RuntimeError):
+    """The response was a bot-check or challenge page, not the monitored page."""
+
+
+def capture_bot_check(uid: str, body: bytes, vendor: str, now: str, via: str) -> dict:
+    """Save the challenge page (content-addressed, never overwritten) for review."""
+    digest = hashlib.sha256(body).hexdigest()
+    path = SNAPSHOTS / "botcheck" / f"{uid}-{digest[:16]}.html"
+    if not path.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        atomic_write_bytes(path, body)
+    return {"vendor": vendor, "captured_at": now, "via": via, "location": str(path.relative_to(ROOT)), "sha256": digest}
+
+
+def _is_html(content_type: str, body: bytes) -> bool:
+    kind = str(content_type or "").lower()
+    if "html" in kind:
+        return True
+    return not kind and body[:512].lstrip().lower().startswith((b"<!doctype html", b"<html"))
+
+
+def _browser_pass(url: str, source: SourceConfig, result: FetchResult, item: dict, now: str) -> FetchResult:
+    """Render in a browser when the source asks for it, and refuse challenge pages.
+
+    Returns the result to extract; raises BotCheckError when what came back,
+    plain or rendered, is a bot-check page (the challenge is saved first).
+    """
+    if result.not_modified or not _is_html(result.content_type, result.body):
+        return result
+    vendor = botcheck.detect(result.body, result.status_code)
+    if source.fetch_mode == "browser" or (source.fetch_mode == "auto" and vendor):
+        from regmon import browser_fetch
+        from regmon.discovery import in_scope
+
+        try:
+            rendered = browser_fetch.render(
+                url, wait_seconds=source.browser_wait_seconds, wait_selector=source.browser_wait_selector,
+                dismiss_cookies=source.browser_dismiss_cookies, in_scope=lambda target: in_scope(canonical(target), source),
+            )
+        except Exception as exc:
+            if vendor:
+                item["bot_check"] = capture_bot_check(item["url_id"], result.body, vendor, now, "http")
+                raise BotCheckError(f"{vendor} bot check returned instead of the page; browser render failed: {type(exc).__name__}: {exc}") from exc
+            raise
+        rendered_vendor = botcheck.detect(rendered.html, 200)
+        if rendered_vendor:
+            item["bot_check"] = capture_bot_check(item["url_id"], rendered.html, rendered_vendor, now, "browser")
+            raise BotCheckError(f"{rendered_vendor} bot check still shown after rendering in a browser")
+        item["rendered_by"] = "browser"
+        item["browser"] = {"blocked_requests": rendered.blocked, "consent": rendered.consent[:80], "final_url": rendered.final_url}
+        return FetchResult(200 if result.status_code >= 400 else result.status_code, "text/html; charset=utf-8", len(rendered.html),
+                           result.etag, result.last_modified, hashlib.sha256(rendered.html).hexdigest(), rendered.html)
+    if vendor:
+        item["bot_check"] = capture_bot_check(item["url_id"], result.body, vendor, now, "http")
+        raise BotCheckError(f"{vendor} bot check returned instead of the page (set fetch_mode to auto to try a browser)")
+    return result
+
+
 def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str):
     item = base_item(url, old, now, source)
     try:
@@ -441,26 +500,38 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             or file_baseline_missing
             or extractor_baseline_missing
             or error_retry_required
+            # A rendered page can change while the HTML the server sends does not.
+            or source.fetch_mode == "browser"
         )
         item["full_fetch_forced"] = force_full_fetch
         item["html_baseline_forced"] = html_baseline_missing and not refresh_required
         item["file_baseline_forced"] = file_baseline_missing
         item["extractor_baseline_forced"] = extractor_baseline_missing
-        result = fetch(
-            url,
-            timeout=int(DEFAULTS.get("fetch_timeout_seconds", 30)),
-            attempts=int(DEFAULTS.get("fetch_attempts", 3)),
-            backoff_seconds=float(DEFAULTS.get("fetch_backoff_seconds", 2)),
-            etag=None if force_full_fetch else (old or {}).get("etag"),
-            last_modified=None if force_full_fetch else (old or {}).get("last_modified"),
-            allowed_domains=source.allowed_domains,
-            allowed_prefixes=source.allowed_prefixes,
-            allowed_urls=source.allowed_urls,
-            allowed_resource_prefixes=source.allowed_resource_prefixes,
-            excluded_prefixes=source.excluded_prefixes,
-            excluded_urls=source.excluded_urls,
-            max_bytes=int(DEFAULTS.get("max_response_bytes", 200 * 1024 * 1024)),
-        )
+        try:
+            result = fetch(
+                url,
+                timeout=int(DEFAULTS.get("fetch_timeout_seconds", 30)),
+                attempts=int(DEFAULTS.get("fetch_attempts", 3)),
+                backoff_seconds=float(DEFAULTS.get("fetch_backoff_seconds", 2)),
+                etag=None if force_full_fetch else (old or {}).get("etag"),
+                last_modified=None if force_full_fetch else (old or {}).get("last_modified"),
+                allowed_domains=source.allowed_domains,
+                allowed_prefixes=source.allowed_prefixes,
+                allowed_urls=source.allowed_urls,
+                allowed_resource_prefixes=source.allowed_resource_prefixes,
+                excluded_prefixes=source.excluded_prefixes,
+                excluded_urls=source.excluded_urls,
+                max_bytes=int(DEFAULTS.get("max_response_bytes", 200 * 1024 * 1024)),
+            )
+        except HTTPStatusError as exc:
+            # A challenge served with 403/429/503 is a bot check, not an outage;
+            # an "auto" or "browser" source gets one rendered attempt.
+            vendor = botcheck.detect(exc.body, exc.status_code)
+            if not vendor:
+                raise
+            result = FetchResult(exc.status_code, exc.content_type, len(exc.body), None, None,
+                                 hashlib.sha256(exc.body).hexdigest(), exc.body)
+        result = _browser_pass(url, source, result, item, now)
         item.update({
             "http_status": result.status_code,
             "content_type": result.content_type,

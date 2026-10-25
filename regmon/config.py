@@ -61,6 +61,13 @@ class SourceConfig:
     # Shadow mode: scan, detect and record as usual, but send no change alerts.
     # Used while running beside another tool (e.g. Visualping) to compare.
     shadow: bool = False
+    # How HTML pages are fetched (regmon/browser_fetch.py). "http" (default) is a
+    # plain request; "browser" renders every HTML page in headless Chrome;
+    # "auto" renders only when the plain response is a bot-check page.
+    fetch_mode: str = "http"
+    browser_wait_seconds: int = 3
+    browser_wait_selector: str = ""
+    browser_dismiss_cookies: bool = True
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "SourceConfig":
@@ -116,13 +123,18 @@ class SourceConfig:
             workspace=str(value.get("workspace", "") or "").strip(),
             labels=tuple(str(x).strip() for x in value.get("labels", [])),
             shadow=bool(value.get("shadow", False)),
+            fetch_mode=str(value.get("fetch_mode", "http") or "http"),
+            browser_wait_seconds=int(value.get("browser_wait_seconds", 3)),
+            browser_wait_selector=str(value.get("browser_wait_selector", "") or "").strip(),
+            browser_dismiss_cookies=bool(value.get("browser_dismiss_cookies", True)),
         )
 
 
 SOURCE_KEYS = {field.name for field in fields(SourceConfig)}
-BOOL_KEYS = {"active", "baseline_on_first_run", "use_http_discovery", "alert_only_on_condition", "shadow"}
+BOOL_KEYS = {"active", "baseline_on_first_run", "use_http_discovery", "alert_only_on_condition", "shadow", "browser_dismiss_cookies"}
 MAX_ALERT_CONDITION_CHARS = 500
 MAX_LABELS = 12
+FETCH_MODES = ("http", "browser", "auto")
 MAX_TAG_CHARS = 40
 # Letters (any script), digits, spaces and a few separators; no markup or commas.
 TAG_PATTERN = re.compile(r"^[^\W_](?:[\w &/+.\-]*[^\W_])?$")
@@ -139,7 +151,7 @@ def validate_tag(value: str, what: str, source_id: str) -> None:
 INT_KEYS = {
     "max_urls", "crawl_depth", "discovery_attempts", "discovery_timeout_seconds", "discovery_retry_delay_seconds",
     "discovery_http_timeout_seconds", "discovery_http_workers", "discovery_http_attempts",
-    "discovery_slice_seconds", "discovery_max_pages_per_slice", "check_every_hours",
+    "discovery_slice_seconds", "discovery_max_pages_per_slice", "check_every_hours", "browser_wait_seconds",
 }
 LIST_KEYS = {
     "seed_urls", "allowed_prefixes", "allowed_domains", "allowed_urls", "excluded_urls", "allowed_resource_prefixes",
@@ -183,6 +195,14 @@ def _validate_source_types(value: dict[str, Any]) -> None:
             raise ValueError(f"Source {sid}: alert_condition must be at most {MAX_ALERT_CONDITION_CHARS} characters")
     if value.get("alert_only_on_condition") is True and not str(value.get("alert_condition") or "").strip():
         raise ValueError(f"Source {sid}: alert_only_on_condition needs a non-empty alert_condition")
+    if "fetch_mode" in value and value["fetch_mode"] not in FETCH_MODES:
+        raise ValueError(f"Source {sid}: fetch_mode must be one of {', '.join(FETCH_MODES)}")
+    if "browser_wait_seconds" in value and not 0 <= value["browser_wait_seconds"] <= 20:
+        raise ValueError(f"Source {sid}: browser_wait_seconds must be 0 to 20")
+    if "browser_wait_selector" in value:
+        selector = value["browser_wait_selector"]
+        if not isinstance(selector, str) or len(selector) > 200 or any(ch in selector for ch in "\r\n"):
+            raise ValueError(f"Source {sid}: browser_wait_selector must be a CSS selector of at most 200 characters")
     if "workspace" in value:
         validate_tag(value["workspace"], "workspace", sid)
     if "labels" in value:
