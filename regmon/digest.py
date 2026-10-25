@@ -173,9 +173,11 @@ def _quote(evidence: dict | None, event_type: str) -> str:
 
 
 def collect_items(digest: dict, start: datetime, end: datetime, data_dir: Path, config: dict, regions: Regions) -> list[dict]:
+    # A shadow-mode monitor sends no content alerts (it runs beside another
+    # tool for comparison), and a digest is a content alert on every channel.
     sources = {
         str(source.get("id")): source for source in config.get("sources") or []
-        if isinstance(source, dict) and source.get("active", True)
+        if isinstance(source, dict) and source.get("active", True) and source.get("shadow") is not True
     }
     wanted = {
         sid for sid, source in sources.items()

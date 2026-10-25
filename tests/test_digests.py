@@ -120,6 +120,16 @@ class BuildTests(unittest.TestCase):
         self.assertEqual([item["event_id"] for item in everything["items"]], ["e1", "e2"])  # relevant first
         self.assertIn("2 changes on 2 monitors, 1 judged relevant", everything["overview"])
 
+    def test_shadow_monitors_are_left_out(self):
+        config_path = self.fx.config / "sources.json"
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+        for item in config["sources"]:
+            if item["id"] == "fed":
+                item["shadow"] = True
+        config_path.write_text(json.dumps(config), encoding="utf-8")
+        self.assertEqual([item["event_id"] for item in self.build("*")["items"]], ["e1"])
+        self.assertEqual(self.build("NTS")["items"], [])
+
     def test_notification_lists_changes_with_quotes(self):
         note = digest.notification_for(self.build("*"))
         self.assertEqual(note["kind"], "DIGEST")
