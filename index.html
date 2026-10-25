@@ -3733,21 +3733,26 @@
         const cell = parseFloat(rootStyle.getPropertyValue("--cell")) || 20;
         const tile = Math.min(parseFloat(rootStyle.getPropertyValue("--tile")) || 19, cell - 1);
         const t = now / 1000;
-        const columns = Math.max(2, Math.ceil(width / cell));
-        const rows = Math.max(2, Math.ceil(height / cell));
-        const xAt = col => 1 + col * (width - cell - 1) / (columns - 1);
-        const yAt = row => 1 + row * (height - cell - 1) / (rows - 1);
-        const right = width - cell;
-        const bottom = height - cell;
+        // Keep tile anchors on the existing 20px checker grid. The final grid
+        // cell may be clipped by the viewport; do not redistribute anchors to
+        // force a fractional interval between the first and last tiles.
+        const columns = Math.max(2, Math.ceil((width - 1) / cell));
+        const rows = Math.max(2, Math.ceil((height - 1) / cell));
+        const xAt = col => 1 + col * cell;
+        const yAt = row => 1 + row * cell;
+        const right = xAt(columns - 1);
+        const bottom = yAt(rows - 1);
+        const rightBand = width - cell;
+        const bottomBand = height - cell;
 
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         // Rebuild only the 20px outer ring so all four edges, including corners,
         // have matching tile rows and no pixels can bleed onto the dashboard.
         ctx.fillStyle = rgb(colors.bg);
         ctx.fillRect(0, 0, width, cell);
-        ctx.fillRect(0, bottom, width, cell);
+        ctx.fillRect(0, bottomBand, width, cell);
         ctx.fillRect(0, cell, cell, Math.max(0, height - cell * 2));
-        ctx.fillRect(right, cell, cell, Math.max(0, height - cell * 2));
+        ctx.fillRect(rightBand, cell, cell, Math.max(0, height - cell * 2));
 
         // Top and bottom share identical x positions; left and right share y positions.
         // Endpoints are anchored to each side so non-20px viewport sizes remain symmetric.
