@@ -91,6 +91,7 @@ try {
   // beyond a grid boundary used to leave the right/bottom tile mostly off-frame.
   const edgeViewports = [
     { width: 1422, height: 722 },
+    { width: 1438, height: 718 },
     { width: 1441, height: 901 },
     { width: 1459, height: 899 },
     { width: 1281, height: 721 },
@@ -117,7 +118,7 @@ try {
         const end = length - cell + 1;
         const positions = [];
         for (let position = 1; position < end; position += cell) {
-          if (position + tile <= end) positions.push(position);
+          if (end - position > 1) positions.push(position);
         }
         if (!positions.length || positions[positions.length - 1] !== end) positions.push(end);
         return positions;
