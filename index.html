@@ -3733,13 +3733,24 @@
         const cell = parseFloat(rootStyle.getPropertyValue("--cell")) || 20;
         const tile = Math.min(parseFloat(rootStyle.getPropertyValue("--tile")) || 19, cell - 1);
         const t = now / 1000;
-        // Keep tile anchors on the existing 20px checker grid. The final grid
-        // cell may be clipped by the viewport; do not redistribute anchors to
-        // force a fractional interval between the first and last tiles.
-        const columns = Math.max(2, Math.ceil((width - 1) / cell));
-        const rows = Math.max(2, Math.ceil((height - 1) / cell));
-        const xAt = col => 1 + col * cell;
-        const yAt = row => 1 + row * cell;
+        // Preserve 20px grid anchors for regular cells, but pin the final
+        // tile to the frame edge when the viewport ends between grid lines.
+        // Skip a regular anchor if its tile would overlap the pinned end tile.
+        function edgeAnchors(length) {
+          const end = length - cell + 1;
+          const anchors = [];
+          for (let position = 1; position < end; position += cell) {
+            if (position + tile <= end) anchors.push(position);
+          }
+          if (!anchors.length || anchors[anchors.length - 1] !== end) anchors.push(end);
+          return anchors;
+        }
+        const xPositions = edgeAnchors(width);
+        const yPositions = edgeAnchors(height);
+        const columns = xPositions.length;
+        const rows = yPositions.length;
+        const xAt = col => xPositions[col];
+        const yAt = row => yPositions[row];
         const right = xAt(columns - 1);
         const bottom = yAt(rows - 1);
         const rightBand = width - cell;
@@ -3758,13 +3769,15 @@
         // Endpoints are anchored to each side so non-20px viewport sizes remain symmetric.
         for (let col = 0; col < columns; col++) {
           const x = xAt(col);
-          paintTile(x, 1, col, 0, t, tile);
-          paintTile(x, bottom, col, rows - 1, t, tile);
+          const spatialCol = (x - 1) / cell;
+          paintTile(x, 1, spatialCol, 0, t, tile);
+          paintTile(x, bottom, spatialCol, (bottom - 1) / cell, t, tile);
         }
         for (let row = 1; row < rows - 1; row++) {
           const y = yAt(row);
-          paintTile(1, y, 0, row, t, tile);
-          paintTile(right, y, columns - 1, row, t, tile);
+          const spatialRow = (y - 1) / cell;
+          paintTile(1, y, 0, spatialRow, t, tile);
+          paintTile(right, y, (right - 1) / cell, spatialRow, t, tile);
         }
 
         if (!motion.matches) frame = window.requestAnimationFrame(paint);
