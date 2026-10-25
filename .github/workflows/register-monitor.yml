@@ -151,11 +151,15 @@ jobs:
           fi
           TARGET="${ids[0]}"
           if [ "${#ids[@]}" -gt 1 ]; then TARGET="all"; fi
+          # An "all" run here only needs the new monitors (never scanned, so
+          # always due); due_only leaves the rest of the fleet to its schedule.
+          # Without it, each 25-link import batch forced a full-fleet scan.
           gh workflow run regulatory-monitor.yml \
             --repo "$GITHUB_REPOSITORY" \
             --ref main \
             -f source_id="$TARGET" \
-            -f test_notification=false
+            -f test_notification=false \
+            -f due_only=true
 
       - name: Start initial Scout discovery baseline
         if: steps.register.outputs.scout_enabled == 'true'

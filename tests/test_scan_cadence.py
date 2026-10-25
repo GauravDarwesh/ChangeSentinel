@@ -255,8 +255,16 @@ class SettingsRequestTests(unittest.TestCase):
 class WorkflowCadenceTests(unittest.TestCase):
     def test_scheduled_runs_scan_only_due_monitors(self):
         workflow = (ROOT / ".github" / "workflows" / "regulatory-monitor.yml").read_text(encoding="utf-8")
-        self.assertIn("github.event_name == 'schedule' && '--due-only'", workflow)
+        self.assertIn("(github.event_name == 'schedule' || inputs.due_only == true) && '--due-only'", workflow)
         self.assertIn('--source "$REGMON_SOURCE" $REGMON_DUE_ONLY', workflow)
+
+    def test_registration_scan_does_not_force_a_full_fleet_scan(self):
+        # A bulk import is up to 100 registrations; each starts an "all" scan,
+        # which must cover the new (never-scanned, so due) monitors only.
+        workflow = (ROOT / ".github" / "workflows" / "register-monitor.yml").read_text(encoding="utf-8")
+        self.assertIn("-f due_only=true", workflow)
+        monitor = (ROOT / ".github" / "workflows" / "regulatory-monitor.yml").read_text(encoding="utf-8")
+        self.assertRegex(monitor, r"(?m)^      due_only:\n")
 
     def test_freshness_is_judged_per_monitor(self):
         workflow = (ROOT / ".github" / "workflows" / "monitor-freshness.yml").read_text(encoding="utf-8")
