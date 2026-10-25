@@ -194,7 +194,10 @@
   const SETTINGS_PRESETS = [
     { id: "release", name: "Release notes and update pages", note: "Every 6 hours, every day. For pages that announce new forms, versions and errata.", schedule: { check_every_hours: 6 } },
     { id: "spec", name: "Specifications and user guides", note: "Daily on weekdays. Technical specs, layouts, taxonomies and validation rules change by planned release.", schedule: { check_every_hours: 24, check_days: SCAN_BUSINESS_DAYS }, labels: ["Specs"] },
-    { id: "office", name: "Regulator business hours", note: "Every 12 hours on weekdays, 08:00\u201318:00 in the regulator's time zone.", schedule: { check_every_hours: 12, check_days: SCAN_BUSINESS_DAYS, check_hours: [8, 18] }, zoned: true },
+    // Every scan slot inside the window. Scans start every six hours, so a
+    // ten-hour window holds one or two slots, six hours apart; a 12-hour
+    // cadence would need nine hours between scans and always scan once a day.
+    { id: "office", name: "Regulator business hours", note: "Weekdays, every scan between 08:00 and 18:00 in the regulator's time zone (once or twice a day).", schedule: { check_every_hours: 6, check_days: SCAN_BUSINESS_DAYS, check_hours: [8, 18] }, zoned: true },
     { id: "archive", name: "Annual and archived documents", note: "Weekly. Year-stamped lists, historical instructions and pages that rarely move.", schedule: { check_every_hours: 168 }, labels: ["Archive"] },
     { id: "copy", name: "Copy from another monitor", note: "Its scan schedule, workspace and labels.", copy: true }
   ];
@@ -261,8 +264,11 @@
     const fit = SCAN_INTERVALS.filter(interval => interval >= hours * 0.9)[0];
     return fit || SCAN_INTERVALS[SCAN_INTERVALS.length - 1];
   }
-  function importIsPaused(text) {
+  // A "Status" or "Active" column says what is running ("No" = paused); a
+  // "Paused" column says the opposite ("Yes" = paused).
+  function importIsPaused(text, pausedColumn) {
     const raw = String(text == null ? "" : text).trim().toLowerCase();
+    if (pausedColumn) return /^(paused|yes|y|true|1)$/.test(raw);
     return /^(paused|inactive|disabled|stopped|off|no|false|archived)$/.test(raw);
   }
   // matrix: rows of cells, the first holding headers when a URL column is named.
@@ -273,6 +279,7 @@
     if (!rows.length) return { rows: [], errors: ["The spreadsheet has no link rows."], skipped: { existing: [], paused: [] }, columns: {}, header: false, conditions: 0 };
     let columns = importColumns(rows[0]);
     const header = columns.url >= 0;
+    const pausedColumn = header && columns.status >= 0 && importHeaderKey(rows[0][columns.status]) === "paused";
     if (header) rows.shift();
     else columns = { url: 0, name: 1, include_selector: 2, ignore_selectors: 3, workspace: -1, labels: -1, frequency: -1, status: -1, condition: -1 };
     const out = [], errors = [], existing = [], paused = [];
@@ -290,7 +297,7 @@
         url = canonicalUrl(candidate.toString());
       } catch (_) { errors.push("Row " + number + ": enter a complete public http:// or https:// URL."); return; }
       const name = cell(columns.name).replace(/[\r\n]+/g, " ").trim().slice(0, 100);
-      if (importIsPaused(cell(columns.status)) && !options.includePaused) { paused.push({ url, name, row: number }); return; }
+      if (importIsPaused(cell(columns.status), pausedColumn) && !options.includePaused) { paused.push({ url, name, row: number }); return; }
       if (known && known.has(url)) { existing.push({ url, name, row: number }); return; }
       const includeSelector = cell(columns.include_selector).trim();
       const rawIgnore = cell(columns.ignore_selectors);
