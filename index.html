@@ -3121,6 +3121,7 @@
         <summary>Alert me when <span>Optional, for every new monitor in these requests</span></summary>
         <div class="review-condition-body">
           <textarea class="field-input" id="reviewCondition" rows="2" maxlength="500" placeholder="A new XML user guide is added, or a guide&#8217;s effective date changes"></textarea>
+          <div class="condition-suggestions" id="reviewConditionSuggestions" aria-label="Suggested from these pages"></div>
           <label class="field-check"><input type="checkbox" id="reviewConditionOnly"> Alert only when it is met</label>
           <p class="field-help">Every change is still detected and saved. The AI says whether each change meets this; with the box ticked, changes that don&#8217;t are recorded without an alert. You can change it later from each page.</p>
         </div>
@@ -3146,7 +3147,7 @@
     <form class="modal-body" id="conditionForm" novalidate>
       <label class="field-label-text" for="conditionText">Condition <span>Plain language, up to 500 characters</span></label>
       <textarea class="field-input" id="conditionText" rows="3" maxlength="500" placeholder="A new XML user guide is added, or a guide&#8217;s effective date changes"></textarea>
-      <div class="condition-suggestions" id="conditionSuggestions" aria-label="Starting points"></div>
+      <div class="condition-suggestions" id="conditionSuggestions" aria-label="Suggested from this page"></div>
       <label class="field-check"><input type="checkbox" id="conditionOnly"> Alert only when it is met</label>
       <p class="field-help">Every change is still detected and saved with its evidence. The AI states whether each change meets this condition. Ticked: changes that don&#8217;t meet it are recorded without an alert. Unticked: they still alert when the AI judges them relevant. If the AI is unavailable, the change alerts as before.</p>
       <p class="modal-info">The dashboard cannot change monitoring directly. Continue opens a prefilled GitHub request; the owner-only workflow applies it.</p>
@@ -3604,8 +3605,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261025-similar-1"></script>
-  <script src="dashboard.js?v=20261025-similar-1"></script>
+  <script src="dashboard-lib.js?v=20261025-conditions-1"></script>
+  <script src="dashboard.js?v=20261025-conditions-1"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.

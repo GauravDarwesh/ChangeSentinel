@@ -3156,18 +3156,35 @@ function openConditionDialog(sourceId) {
   renderConditionSuggestions(source);
   $("conditionDialog").showModal();
 }
-// Starting points shaped like the requests regulatory reporting teams make;
-// the owner edits or replaces them. Nothing is generated from the page itself.
-function conditionSuggestions(source) {
-  const url = String((source.seed_urls || [])[0] || "").toLowerCase();
-  const list = [];
-  if (/\.(pdf|docx?|xlsx?|zip)(\?|$)/.test(url)) list.push("A field, schedule, instruction or validation rule in this document changes", "The effective date or reporting period changes");
-  else list.push("A new document, form or user guide is added to this page", "An existing document is replaced with a new version", "A reporting deadline or effective date changes");
-  list.push("A requirement, threshold or reporting scope changes");
-  return list;
+// Suggestions drawn from the page itself (its saved text and the links on it,
+// see L.conditionSuggestionsFrom); shown at once from the address and
+// refined when the saved copy has loaded. The owner edits or replaces them.
+function conditionChips(list) {
+  return list.map(text => '<button class="chip" type="button" data-condition-suggestion="' + esc(text) + '">' + esc(text) + "</button>").join("");
 }
 function renderConditionSuggestions(source) {
-  $("conditionSuggestions").innerHTML = conditionSuggestions(source).map(text => '<button class="chip" type="button" data-condition-suggestion="' + esc(text) + '">' + esc(text) + "</button>").join("");
+  const item = state.items.find(candidate => candidate.source_id === source.id);
+  const format = L.pickFormat(String((source.seed_urls || [])[0] || ""));
+  $("conditionSuggestions").innerHTML = conditionChips(L.conditionSuggestionsFrom({ title: item ? itemTitle(item) : source.name }, { format }));
+  if (!item || !item.snapshot_location) return;
+  readSnapshotFile(item.snapshot_location, state.snapshotCache).then(text => {
+    if (state.pendingCondition !== source.id || !$("conditionDialog").open) return;
+    $("conditionSuggestions").innerHTML = conditionChips(L.conditionSuggestionsFrom({ title: itemTitle(item), text }, { format }));
+  }).catch(() => {});
+}
+function renderReviewConditionSuggestions() {
+  const box = $("reviewConditionSuggestions");
+  if (!box) return;
+  const a = state.add;
+  const page = a.page || a.pages.get(L.urlKey(a.url || "")) || {};
+  const ticked = Array.from(a.picked.values());
+  // The ticked links speak loudest; the starting page and the other links found give context.
+  const source = ticked.length ? ticked : a.candidates.slice(0, 400);
+  const links = source.map(item => ({ text: item.title, format: item.format })).concat((page.links || []).slice(0, 200));
+  const formats = Array.from(new Set(ticked.map(item => item.format)));
+  const html = conditionChips(L.conditionSuggestionsFrom({ title: page.title || "", text: ticked.map(item => item.title).join("\n"), links },
+    { format: formats.length === 1 && formats[0] !== "Web page" ? formats[0] : "" }));
+  if (box.dataset.rendered !== html) { box.innerHTML = html; box.dataset.rendered = html; }
 }
 function submitCondition(clear) {
   const source = configuredSources().find(candidate => candidate.id === state.pendingCondition);
@@ -7046,6 +7063,7 @@ function renderReview() {
     list.innerHTML = html;
   }
   state.add.groups = groups;
+  renderReviewConditionSuggestions();
   renderReviewFoot(plan);
 }
 function renderReviewFoot(plan) {
@@ -8230,6 +8248,8 @@ $("cancelAddMonitor").addEventListener("click", () => $("addMonitorDialog").clos
 // Only the first step closes on a backdrop click; the larger steps hold work in progress.
 $("addMonitorDialog").addEventListener("click", event => {
   if (event.target === $("addMonitorDialog") && state.add.step === "start") $("addMonitorDialog").close();
+  const chip = event.target.closest("#reviewConditionSuggestions [data-condition-suggestion]");
+  if (chip) { $("reviewCondition").value = chip.dataset.conditionSuggestion; $("reviewCondition").focus(); }
 });
 $("addMonitorDialog").addEventListener("close", () => {
   if (state.add.crawl && state.add.crawl.running) state.add.crawl.stop = true;

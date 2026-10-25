@@ -146,3 +146,7 @@ Whatever the mode, a recognised challenge page (Cloudflare, Akamai, Imperva, Per
 ## Find similar
 
 **Find similar** on a page (Pages → page header) looks for pages like it on demand, in the browser. It starts from where the page is listed: Scout's record of the page that linked it, the monitor's own start page, or the nearest section page (file-store folders are skipped). It follows links two levels within that section and opens the usual Add a link review with the closest matches first. Matches are ranked by another year's edition of the same address, the same report code (FR Y-9C, BCAR, …), the same folder and file type, and shared title words. Nothing is ticked; ticked links become requests as usual, and "Also check weekly for new links" sets up a Scout channel for the section.
+
+## Alert-condition suggestions
+
+The *Alert me when* fields (a monitor's condition dialog, and Add a link's review step) offer starting points drawn from the page itself: report codes found in it (FR Y-9C, BCAR, …), the kind of document it mostly links, and wording about deadlines and effective dates, versions and errata, validation rules, layouts and schemas, consultations and instructions, in English, Portuguese, Spanish, French and German. A monitor's suggestions use its saved text; the review step uses the ticked links (or every link found) and the starting page. They only fill the text box; nothing is saved until the request is submitted.
