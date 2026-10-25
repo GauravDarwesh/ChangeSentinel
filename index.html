@@ -146,6 +146,41 @@
     .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
     .num { font-variant-numeric: tabular-nums; }
 
+    /* Subtle, asynchronous glints on the existing checkered frame only. */
+    .frame-glints {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background-image:
+        radial-gradient(circle, var(--led-on) 0 1px, transparent 1.8px),
+        radial-gradient(circle, var(--led-new) 0 1px, transparent 1.8px),
+        radial-gradient(circle, var(--accent) 0 1px, transparent 1.8px);
+      background-size: 20px 20px, 20px 20px, 20px 20px;
+      background-position: 7px 3px, 13px 11px, 2px 17px;
+      opacity: 0;
+      animation: frameGlint 7.3s steps(1, end) infinite;
+      mask-image: linear-gradient(#000, #000);
+      -webkit-mask-image: linear-gradient(#000, #000);
+    }
+    @keyframes frameGlint {
+      0%, 13%, 17%, 42%, 46%, 71%, 75%, 100% { opacity: 0; }
+      14% { opacity: .12; }
+      15% { opacity: .035; }
+      16% { opacity: .16; }
+      43% { opacity: .08; }
+      44% { opacity: .18; }
+      45% { opacity: .025; }
+      72% { opacity: .13; }
+      73% { opacity: .045; }
+      74% { opacity: .1; }
+    }
+    /* Never animate when a visitor asks for reduced motion. */
+    @media (prefers-reduced-motion: reduce) {
+      .frame-glints { animation: none !important; opacity: 0 !important; }
+    }
+
     /* ---------- Shell ---------- */
     .app {
       position: fixed;
@@ -2377,6 +2412,7 @@
     </div>
   </section>
 
+  <div class="frame-glints" aria-hidden="true"></div>
   <div class="app" id="app">
     <nav class="rail" aria-label="Workspace">
       <a class="brand" href="./" aria-label="ChangeSentinel overview">
