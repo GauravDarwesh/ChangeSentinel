@@ -3685,7 +3685,6 @@
       function readColors() {
         const css = getComputedStyle(document.documentElement);
         colors = {
-          bg: parseColor(css.getPropertyValue("--bg")),
           lo: parseColor(css.getPropertyValue("--idle-lo")),
           hi: parseColor(css.getPropertyValue("--idle-hi"))
         };
@@ -3759,13 +3758,12 @@
         const bottomBand = height - cell;
 
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        // Rebuild only the 20px outer ring so all four edges, including corners,
-        // have matching tile rows and no pixels can bleed onto the dashboard.
-        ctx.fillStyle = rgb(colors.bg);
-        ctx.fillRect(0, 0, width, cell);
-        ctx.fillRect(0, bottomBand, width, cell);
-        ctx.fillRect(0, cell, cell, Math.max(0, height - cell * 2));
-        ctx.fillRect(rightBand, cell, cell, Math.max(0, height - cell * 2));
+        // Clear only the 20px outer ring before repainting. The one-pixel seams
+        // stay transparent and reveal the existing frame beneath the animated tiles.
+        ctx.clearRect(0, 0, width, cell);
+        ctx.clearRect(0, bottomBand, width, cell);
+        ctx.clearRect(0, cell, cell, Math.max(0, height - cell * 2));
+        ctx.clearRect(rightBand, cell, cell, Math.max(0, height - cell * 2));
 
         // Top and bottom share identical x positions; left and right share y positions.
         // Endpoints are anchored to each side so non-20px viewport sizes remain symmetric.
