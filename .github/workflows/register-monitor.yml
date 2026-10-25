@@ -19,7 +19,7 @@ concurrency:
 jobs:
   register:
     if: ${{ github.event.issue.user.login == github.repository_owner && (startsWith(github.event.issue.title, '[ChangeSentinel] Add monitor') || startsWith(github.event.issue.title, '[ChangeSentinel] Delete monitor')) }}
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, macOS, ARM64, changesentinel]
     timeout-minutes: 10
     steps:
       - name: Checkout latest main

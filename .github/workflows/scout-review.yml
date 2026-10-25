@@ -16,7 +16,7 @@ permissions:
 jobs:
   review:
     if: ${{ github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, '[ChangeSentinel] Scout review') }}
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, macOS, ARM64, changesentinel]
     timeout-minutes: 10
     # Job-level so unrelated issues (for example "Add monitor" requests) never
     # wait behind a running sweep; only real Scout decisions join its queue.

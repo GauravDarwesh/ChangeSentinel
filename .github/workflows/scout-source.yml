@@ -18,7 +18,7 @@ permissions:
 jobs:
   source:
     if: ${{ github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, '[ChangeSentinel] Scout source') }}
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, macOS, ARM64, changesentinel]
     timeout-minutes: 10
     # Shares Scout's queue so the configuration never changes under a running sweep.
     concurrency:

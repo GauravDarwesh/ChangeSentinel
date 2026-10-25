@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   send-reminders:
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, macOS, ARM64, changesentinel]
     timeout-minutes: 5
     env:
       CALENDAR_API_URL: https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/calendar-api

@@ -35,7 +35,7 @@ concurrency:
 
 jobs:
   live-health:
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, macOS, ARM64, changesentinel]
     timeout-minutes: 10
     steps:
       - name: Check the deployed OpenRouter-backed endpoint
@@ -46,7 +46,7 @@ jobs:
           set -euo pipefail
           curl --silent --show-error --fail --retry 3 --retry-all-errors --retry-delay 2 --connect-timeout 5 --max-time 20 \
             "$HEALTH_URL" --output "$RUNNER_TEMP/ask-sentinel-health.json"
-          python - "$RUNNER_TEMP/ask-sentinel-health.json" <<'PY'
+          python3 - "$RUNNER_TEMP/ask-sentinel-health.json" <<'PY'
           import json
           import sys
           from pathlib import Path
@@ -77,7 +77,7 @@ jobs:
           ASK_SENTINEL_URL: https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel
         run: |
           set -euo pipefail
-          python - <<'PY'
+          python3 - <<'PY'
           import json
           import os
           import urllib.error
@@ -164,4 +164,4 @@ jobs:
         env:
           ASK_SENTINEL_URL: https://pysoukwmnwwgilkwafdy.supabase.co/functions/v1/ask-sentinel
           SUPABASE_PUBLISHABLE_KEY: sb_publishable_t_0AGIVpjAkilfaN9ic1WQ_muQWzZTV
-        run: python scripts/ask_sentinel_live_eval.py
+        run: python3 scripts/ask_sentinel_live_eval.py

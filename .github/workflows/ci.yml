@@ -13,13 +13,13 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, macOS, ARM64, changesentinel]
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           persist-credentials: false
       - name: Install OCR fallback used by the golden extraction corpus
-        run: sudo apt-get update && sudo apt-get install --yes tesseract-ocr
+        run: command -v tesseract >/dev/null || brew install tesseract
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.13"
@@ -48,7 +48,7 @@ jobs:
   # of Supabase and OpenRouter: quotas, network and service limits, refunds and the
   # wording of errors, without touching the deployed function or its budget.
   edge-function:
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, macOS, ARM64, changesentinel]
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
@@ -70,7 +70,7 @@ jobs:
   # saved PDF, each view must draw without a script error, and the phone layout
   # must not scroll sideways. Screenshots are kept for review.
   dashboard-smoke:
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, macOS, ARM64, changesentinel]
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0

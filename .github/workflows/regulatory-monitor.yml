@@ -40,7 +40,7 @@ permissions:
 
 jobs:
   monitor:
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, macOS, ARM64, changesentinel]
     timeout-minutes: 75
     env:
       REGMON_SOURCE: ${{ inputs.source_id || 'all' }}
@@ -169,8 +169,7 @@ jobs:
       - name: Ensure OCR fallback is available
         run: |
           if ! command -v tesseract >/dev/null 2>&1; then
-            sudo apt-get update -qq
-            sudo apt-get install -y -qq tesseract-ocr
+            brew install tesseract
           fi
           tesseract --version | head -n 1
 
