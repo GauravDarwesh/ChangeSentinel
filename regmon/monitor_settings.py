@@ -10,6 +10,9 @@ this module and commits the result.
     {"monitors": ["id-1", "id-2"], "set": {"check_every_hours": 24}, "clear": ["check_hours"],
      "add_labels": ["Spec"], "remove_labels": ["Draft"]}
 
+A request may instead carry {"digests": [...]}: the whole scheduled-digest
+list (config/digests.json, see regmon/digest.py).
+
 Only the keys in SETTABLE_KEYS can be changed this way: scope, selectors and
 URLs stay with the add/delete requests that validate them. Every changed
 source is re-validated with the same rules the engine loads configuration with,
@@ -62,6 +65,13 @@ def request_from_issue(event: dict, repository: str) -> dict:
         raise ValueError(f"The settings request contains invalid JSON: {exc.msg}.") from exc
     if not isinstance(payload, dict):
         raise ValueError("SETTINGS_JSON must be an object.")
+    if "digests" in payload:
+        # The whole digest list (config/digests.json), validated as the engine reads it.
+        if set(payload) != {"digests"}:
+            raise ValueError("A digests request carries only the digests list.")
+        from regmon.digest import validate_digests
+
+        return {"digests": validate_digests({"version": 1, "digests": payload["digests"]})}
     unknown = sorted(set(payload) - {"monitors", "set", "clear", *LABEL_OPS})
     if unknown:
         raise ValueError(f"Unknown SETTINGS_JSON fields: {', '.join(unknown)}")
@@ -141,8 +151,17 @@ def apply_settings(config: dict, request: dict) -> list[str]:
     return changed
 
 
-def update_from_issue(event: dict, config_path: Path, repository: str) -> dict:
+def update_from_issue(event: dict, config_path: Path, repository: str, digests_path: Path | None = None) -> dict:
     request = request_from_issue(event, repository)
+    if "digests" in request:
+        path = Path(digests_path or Path(config_path).with_name("digests.json"))
+        before = path.read_text(encoding="utf-8") if path.exists() else ""
+        text = json.dumps({"version": 1, "digests": request["digests"]}, indent=2, ensure_ascii=False) + "\n"
+        if text != before:
+            path.write_text(text, encoding="utf-8")
+        names = ", ".join(f"{item['id']} ({item['frequency']}, {item['workspace']})" for item in request["digests"]) or "none"
+        return {"requested": len(request["digests"]), "changed": ["digests"] if text != before else [], "settings": "digests",
+                "message": f"Digests are now: {names}." if text != before else f"Digests were already: {names}."}
     config = json.loads(Path(config_path).read_text(encoding="utf-8"))
     changed = apply_settings(config, request)
     if changed:

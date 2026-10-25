@@ -59,7 +59,9 @@ const DATA_PATHS = {
   lineage: "config/lineage.json",
   reviews: "data/reviews/ledger.json",
   regulators: "config/regulators.json",
-  health: "data/health.json"
+  health: "data/health.json",
+  digests: "data/digests/index.json",
+  digestConfig: "config/digests.json"
 };
 // Load core state from the same origin as GitHub Pages first. Keep the raw GitHub
 // URL as a fallback so older deployments can still recover while Pages publishes.
@@ -77,7 +79,9 @@ const ENDPOINTS = {
   lineage: new URL("./config/lineage.json", document.baseURI).href,
   reviews: new URL("./data/reviews/ledger.json", document.baseURI).href,
   regulators: new URL("./config/regulators.json", document.baseURI).href,
-  health: new URL("./data/health.json", document.baseURI).href
+  health: new URL("./data/health.json", document.baseURI).href,
+  digests: new URL("./data/digests/index.json", document.baseURI).href,
+  digestConfig: new URL("./config/digests.json", document.baseURI).href
 };
 // The calendar feed is served from Pages so calendar apps can subscribe to it.
 const CALENDAR_FEED = new URL("./data/calendar.ics", document.baseURI).href;
@@ -220,6 +224,11 @@ function isValidDataAssetShape(key, value) {
     // Fleet health is rebuilt by every scan; before the first one it is absent.
     case "health":
       return isPlainObject(value) && value.schema_version === 1 && isPlainObject(value.totals) && Array.isArray(value.monitors);
+    // Scheduled digests (regmon/digest.py) and their configuration; optional.
+    case "digests":
+      return isPlainObject(value) && value.schema_version === 1 && isPlainObject(value.digests);
+    case "digestConfig":
+      return isPlainObject(value) && Array.isArray(value.digests);
     // Who publishes each host; without it pages are grouped by their domain.
     case "regulators":
       return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.regulators);
@@ -2011,6 +2020,7 @@ function renderNotifications() {
   $("notificationCounts").textContent = pending.length ? pending.length + " waiting" : "Nothing waiting";
   renderChannelBar();
   if ($("shadowEntry")) $("shadowEntry").innerHTML = shadowEntryRow();
+  if ($("digestEntries")) $("digestEntries").innerHTML = digestEntryRows();
 
   $("notificationPendingItems").innerHTML = pending.length ? pending.map(item =>
     '<button class="row" type="button" data-select-notification="' + esc(item.eventId) + '"' + (item.eventId === state.selectedNotificationId ? ' aria-selected="true"' : "") + ">" +
@@ -2654,6 +2664,7 @@ function renderNotificationDetail() {
   state.detailKeys.notifications = detailRenderKey("notifications");
   const pane = $("notificationDetail");
   if (state.selectedNotificationId === SHADOW_KEY) return renderShadowDetail(pane);
+  if (state.selectedNotificationId.indexOf(DIGEST_PREFIX) === 0) return renderDigestDetail(pane);
   const { pending, sent } = notificationLists();
   const item = pending.concat(sent).find(candidate => candidate.eventId === state.selectedNotificationId);
   if (!item) {
@@ -3617,6 +3628,138 @@ function importShadowPages() {
   if (!$("bulkLabels").value) $("bulkLabels").value = "Visualping import";
   setBulkStatus(result.errors.length ? result.errors.slice(0, 3).join(" ") : "Ready to import " + result.rows.length + " pages from the comparison, in shadow mode.", !!result.errors.length);
   renderBulkPreview();
+}
+
+/* ================= Scheduled digests =================
+ * config/digests.json lists them; regmon/digest.py builds each one in the first
+ * scan after its time and queues it with that run's alerts. data/digests/index.json
+ * holds the latest digest of each in full and a short history.
+ */
+const DIGEST_PREFIX = "digest:";
+state.digests = null;
+state.digestConfig = null;
+state.digestCache = boundedCache(12);
+function digestList() { return state.digestConfig && Array.isArray(state.digestConfig.digests) ? state.digestConfig.digests : []; }
+function digestEntry(id) { return state.digests && isPlainObject(state.digests.digests) ? state.digests.digests[id] || null : null; }
+function digestScope(workspace) { return workspace === "*" ? "All workspaces" : workspace; }
+function digestWhen(digest) {
+  const day = { mon: "Mondays", tue: "Tuesdays", wed: "Wednesdays", thu: "Thursdays", fri: "Fridays", sat: "Saturdays", sun: "Sundays" }[digest.day || "mon"];
+  return (digest.frequency === "weekly" ? "Weekly, " + day : "Daily") + " at " + String(digest.hour == null ? 8 : digest.hour).padStart(2, "0") + ":00 " + (digest.timezone || "UTC").replace(/_/g, " ");
+}
+function digestEntryRows() {
+  const digests = digestList();
+  const rows = digests.map(digest => {
+    const entry = digestEntry(digest.id);
+    const latest = entry && entry.latest;
+    const key = DIGEST_PREFIX + digest.id;
+    const summary = latest ? plural(latest.counts.changes, "change", "changes") + (latest.counts.relevant ? ", " + latest.counts.relevant + " relevant" : "") + " · " + digestWhen(digest) : "First digest after " + digestWhen(digest).toLowerCase();
+    return '<button class="row" type="button" data-select-notification="' + esc(key) + '"' + (state.selectedNotificationId === key ? ' aria-selected="true"' : "") + ">" +
+      '<span class="row-mark tone-' + (latest && latest.counts.relevant ? "change" : latest ? "ok" : "pending") + '" aria-hidden="true"></span>' +
+      '<span class="row-title">' + esc((digest.frequency === "weekly" ? "Weekly" : "Daily") + " digest · " + digestScope(digest.workspace)) + "</span>" +
+      '<span class="row-time">' + esc(latest ? shortDate(latest.period.to) : "") + "</span>" +
+      '<span class="row-summary">' + esc(summary) + "</span></button>";
+  }).join("");
+  return '<div class="list-group-label">Digests' + (digests.length ? " <span>(" + digests.length + ")</span>" : "") + "</div>" + rows +
+    '<div class="channel-bar" style="padding:8px 20px 12px"><button class="chip chip-add" type="button" data-digest-edit>' + icon("plus") + (digests.length ? "Edit digests" : "Set up a daily or weekly digest") + "</button></div>";
+}
+function renderDigestRecord(record, digest, history) {
+  const counts = record.counts || {};
+  const items = Array.isArray(record.items) ? record.items : [];
+  const tag = item => item.relevant === true ? '<span class="tag tone-change">Relevant</span>' : item.relevant === false ? '<span class="tag">Not relevant</span>' : '<span class="tag tone-pending">Not assessed</span>';
+  const itemHtml = items.map(item => '<div class="digest-item"><div class="digest-item-head">' + tag(item) + "<b>" + esc(item.monitor) + "</b>" +
+    '<span class="sheet-note">' + esc(L.eventLabel(item.event_type) + " · " + shortDate(item.at)) + "</span></div>" +
+    (item.summary ? "<p>" + esc(item.summary) + "</p>" : "") +
+    (item.quote ? '<blockquote class="digest-quote">' + esc(item.quote) + "</blockquote>" : "") +
+    (item.effective_date && !/^not stated$/i.test(item.effective_date) ? '<p class="sheet-note">Effective: ' + esc(item.effective_date) + "</p>" : "") +
+    '<div class="channel-bar" style="margin:0"><button class="sheet-link" type="button" data-select-change="' + esc(item.event_id) + '">Open the change</button>' +
+    (safeHttpUrl(item.url) ? externalLink(item.url, "Live page", "sheet-link") : "") + "</div></div>").join("");
+  const tiles = [["Changes", counts.changes || 0, plural(counts.monitors || 0, "monitor", "monitors")], ["Relevant", counts.relevant || 0, "judged by the AI"],
+    ["Not relevant", counts.not_relevant || 0, "recorded, no action"], ["Not assessed", counts.unassessed || 0, "AI was unavailable"]];
+  const older = (history || []).filter(entry => entry.id !== record.id);
+  return '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Overview</h3><span class="sheet-note">' + esc(record.overview_status === "ok" ? "Written by the AI from the changes below" : "AI overview unavailable; plain count") + "</span></div>" +
+    '<p class="digest-overview">' + esc(record.overview || "") + "</p>" +
+    '<div class="health-tiles">' + tiles.map(([name, value, note]) => '<div class="health-tile"><div class="health-tile-label">' + esc(name) + '</div><div class="health-tile-value">' + esc(String(value)) + '</div><div class="health-tile-note">' + esc(note) + "</div></div>").join("") + "</div></section>" +
+    (items.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Changes</h3><span class="sheet-note">English summary, then the changed text as published</span></div>' + itemHtml + "</section>"
+      : '<section class="sheet"><p class="note-strip">Nothing changed on these monitors in this period.</p></section>') +
+    (older.length ? '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Earlier digests</h3></div>' + older.slice(0, 12).map(entry =>
+      '<button class="row" type="button" data-digest-open="' + esc(entry.path || "") + '" data-digest-of="' + esc(digest.id) + '"><span class="row-mark tone-' + ((entry.counts || {}).relevant ? "change" : "ok") + '" aria-hidden="true"></span>' +
+      '<span class="row-title">' + esc(shortDate(entry.period.from) + " – " + shortDate(entry.period.to)) + '</span><span class="row-time">' + esc(plural((entry.counts || {}).changes || 0, "change", "changes")) + "</span>" +
+      '<span class="row-summary">' + esc(entry.overview || "") + "</span></button>").join("") + "</section>" : "");
+}
+function renderDigestDetail(pane) {
+  const id = state.selectedNotificationId.slice(DIGEST_PREFIX.length);
+  const digest = digestList().find(candidate => candidate.id === id);
+  const entry = digestEntry(id);
+  const record = state.digestOpen && state.digestOpen.of === id ? state.digestOpen.record : entry && entry.latest;
+  const heading = detailHeading({ back: true, source: "Scheduled digest", title: digest ? (digest.frequency === "weekly" ? "Weekly" : "Daily") + " digest · " + digestScope(digest.workspace) : "Digest",
+    meta: (record ? "<span>" + esc(shortDate(record.period.from) + " – " + shortDate(record.period.to)) + "</span>" : "") + (digest ? "<span>" + esc(digestWhen(digest)) + "</span>" : ""),
+    actions: '<button class="btn" type="button" data-digest-edit>Edit digests</button>' + (state.digestOpen && state.digestOpen.of === id ? '<button class="btn" type="button" data-digest-latest>Latest digest</button>' : "") });
+  if (!digest) { pane.innerHTML = '<div class="detail-inner">' + heading + emptyState("This digest is no longer configured", "Edit digests to set one up again.") + "</div>"; return; }
+  pane.innerHTML = '<div class="detail-inner">' + heading + (record ? renderDigestRecord(record, digest, entry ? entry.history : [])
+    : '<section class="sheet"><p class="note-strip">No digest yet. The first is built by the first scan after ' + esc(digestWhen(digest).toLowerCase()) + ", and sent with that scan's alerts.</p></section>") + "</div>";
+}
+async function openOlderDigest(path, of) {
+  if (!path) return;
+  try {
+    const record = JSON.parse(await readSnapshotFile(path, state.digestCache));
+    state.digestOpen = { of, record };
+  } catch (error) { showToast("Couldn't load that digest: " + String(error.message || error)); return; }
+  renderNotificationDetail();
+  resetDetailScroll("notifications");
+}
+function digestRowHtml(digest, index) {
+  const { workspaces } = scopeOptions();
+  const names = Array.from(new Set(workspaces.map(ws => ws.name).concat(digest.workspace && digest.workspace !== "*" ? [digest.workspace] : [])));
+  const option = (value, text, current) => '<option value="' + esc(value) + '"' + (String(value) === String(current) ? " selected" : "") + ">" + esc(text) + "</option>";
+  const zones = SCAN_ZONES.indexOf(digest.timezone || "UTC") >= 0 ? SCAN_ZONES : [digest.timezone].concat(SCAN_ZONES);
+  return '<div class="digest-row" data-digest-row="' + index + '">' +
+    '<label><span class="visually-hidden">Workspace</span><select class="field-input" data-digest-field="workspace">' + option("*", "All workspaces", digest.workspace) + names.map(name => option(name, name, digest.workspace)).join("") + "</select></label>" +
+    '<label><span class="visually-hidden">How often</span><select class="field-input" data-digest-field="frequency">' + option("daily", "Daily", digest.frequency) + option("weekly", "Weekly", digest.frequency) + "</select></label>" +
+    '<label><span class="visually-hidden">Day</span><select class="field-input" data-digest-field="day"' + (digest.frequency === "weekly" ? "" : " disabled") + ">" + L.SCAN_WEEKDAYS.map(day => option(day, SCAN_DAY_WORDS[day], digest.day || "mon")).join("") + "</select></label>" +
+    '<label><span class="visually-hidden">Hour</span><select class="field-input" data-digest-field="hour">' + Array.from({ length: 24 }, (_, h) => option(h, String(h).padStart(2, "0") + ":00", digest.hour == null ? 8 : digest.hour)).join("") + "</select></label>" +
+    '<label><span class="visually-hidden">Time zone</span><select class="field-input" data-digest-field="timezone">' + zones.map(zone => option(zone, zone.replace(/_/g, " "), digest.timezone || "UTC")).join("") + "</select></label>" +
+    '<button type="button" data-digest-remove="' + index + '" aria-label="Remove this digest">Remove</button></div>';
+}
+function openDigestDialog() {
+  state.digestDraft = digestList().map(digest => Object.assign({}, digest));
+  renderDigestRows();
+  $("digestError").textContent = "";
+  $("digestDialog").showModal();
+}
+function renderDigestRows() {
+  $("digestRows").innerHTML = state.digestDraft.length ? state.digestDraft.map(digestRowHtml).join("") : '<p class="field-help">No digests yet.</p>';
+}
+function readDigestRows() {
+  document.querySelectorAll("#digestRows [data-digest-row]").forEach(row => {
+    const digest = state.digestDraft[Number(row.dataset.digestRow)];
+    row.querySelectorAll("[data-digest-field]").forEach(field => { digest[field.dataset.digestField] = field.dataset.digestField === "hour" ? Number(field.value) : field.value; });
+    if (digest.frequency !== "weekly") delete digest.day;
+  });
+}
+function digestId(digest, taken) {
+  const base = (String(digest.workspace === "*" ? "all" : digest.workspace).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 28) || "digest") + "-" + digest.frequency;
+  let id = base, n = 2;
+  while (taken.has(id)) id = base + "-" + n++;
+  taken.add(id);
+  return id;
+}
+function submitDigests() {
+  readDigestRows();
+  const seen = new Set();
+  const dupes = state.digestDraft.filter(digest => { const key = digest.workspace + "|" + digest.frequency; const hit = seen.has(key); seen.add(key); return hit; });
+  if (dupes.length) { $("digestError").textContent = "Two digests cover the same workspace at the same frequency."; return; }
+  const kept = new Set(state.digestDraft.filter(digest => digest.id).map(digest => digest.id));
+  const digests = state.digestDraft.map(digest => {
+    const out = { id: digest.id || digestId(digest, kept), workspace: digest.workspace, frequency: digest.frequency, hour: digest.hour == null ? 8 : digest.hour, timezone: digest.timezone || "UTC" };
+    if (digest.frequency === "weekly") out.day = digest.day || "mon";
+    return out;
+  });
+  const body = [L.SETTINGS_MARKER, "", "Please apply these monitor settings in ChangeSentinel.", "",
+    "Change: scheduled digests \u2192 " + (digests.map(d => d.frequency + " " + digestScope(d.workspace)).join(", ") || "none"), "",
+    "SETTINGS_JSON:", JSON.stringify({ digests }), "", "This request was created from the ChangeSentinel dashboard."].join("\n");
+  $("digestDialog").close();
+  const params = new URLSearchParams(); params.set("title", "[ChangeSentinel] Update monitors (digests)"); params.set("body", body);
+  openGitHubRequest(REPO + "/issues/new?" + params.toString(), "Submit the prefilled request on GitHub. Digests are sent from the first scan after their time.");
 }
 
 /* ================= Alert channels ================= */
@@ -5281,7 +5424,8 @@ function ensureSelection(view) {
   if (view === "health" && !healthKeys().includes(state.selectedHealthKey)) state.selectedHealthKey = "fleet";
   if (view === "notifications") {
     const { pending, sent } = notificationLists();
-    if (state.selectedNotificationId !== SHADOW_KEY && !pending.concat(sent).some(item => item.eventId === state.selectedNotificationId)) {
+    const special = state.selectedNotificationId === SHADOW_KEY || (state.selectedNotificationId.indexOf(DIGEST_PREFIX) === 0 && digestList().some(d => DIGEST_PREFIX + d.id === state.selectedNotificationId));
+    if (!special && !pending.concat(sent).some(item => item.eventId === state.selectedNotificationId)) {
       const first = pending[0] || sent[0];
       state.selectedNotificationId = first ? first.eventId : "";
     }
@@ -5311,6 +5455,7 @@ function detailRenderKey(view) {
       return run ? JSON.stringify(run) : "none";
     }
     if (view === "notifications") {
+      if (state.selectedNotificationId.indexOf(DIGEST_PREFIX) === 0) return "digest|" + state.selectedNotificationId + "|" + (state.assetSignatures.digests || "") + "|" + (state.assetSignatures.digestConfig || "") + "|" + (state.digestOpen ? state.digestOpen.record.id : "");
       if (state.selectedNotificationId === SHADOW_KEY) return "shadow|" + (state.shadow ? state.shadow.at || state.shadow.name || "" : "") + "|" + (state.shadow && state.shadow.loading ? 1 : 0);
       const { pending, sent } = notificationLists();
       const item = pending.concat(sent).find(candidate => candidate.eventId === state.selectedNotificationId);
@@ -5413,9 +5558,9 @@ function setSelected(id) { select("monitors", id); }
 /* ================= Data refresh ================= */
 
 // Review decisions arrive between scans, so the ledger is polled with the small files.
-const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health"];
+const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health", "digests", "digestConfig"];
 const LARGE_ASSETS = ["inventory", "history", "scoutReview"];
-const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health"]);
+const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health", "digests", "digestConfig"]);
 const FULL_REFRESH_MS = 10 * 60 * 1000;
 function assetsSignature() {
   return SMALL_ASSETS.concat(LARGE_ASSETS).map(key => key + "=" + (state.assetSignatures[key] || "")).join("|");
@@ -5478,6 +5623,8 @@ async function loadDataOnce(showErrors) {
     state.reviews = values.reviews;
     state.regulators = values.regulators;
     state.health = values.health;
+    state.digests = values.digests;
+    state.digestConfig = values.digestConfig;
     state.regulatorProfiles = null;
     state.items = makeItems();
     state.scoutMonitored = null;
@@ -7443,7 +7590,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -7532,6 +7679,9 @@ $("workspace").addEventListener("click", event => {
   if (data.scopeClear !== undefined) return setScope(null);
   if (data.shadowDownload !== undefined) return downloadShadowComparison();
   if (data.shadowImport !== undefined) return importShadowPages();
+  if (data.digestEdit !== undefined) return openDigestDialog();
+  if (data.digestOpen !== undefined) return openOlderDigest(data.digestOpen, data.digestOf);
+  if (data.digestLatest !== undefined) { state.digestOpen = null; renderNotificationDetail(); return; }
   if (data.channelGuide !== undefined) { const guide = $("channelGuide"); if (guide) { guide.open = true; guide.scrollIntoView({ block: "nearest" }); } return; }
   if (data.selectNotification) return select("notifications", data.selectNotification);
   if (data.go) return setView(data.go);
@@ -8169,6 +8319,22 @@ $("organiseDialog").addEventListener("click", event => {
     remove.setAttribute("aria-pressed", String(state.organiseRemove.has(key)));
     remove.classList.toggle("is-remove", state.organiseRemove.has(key));
   }
+});
+$("closeDigest").addEventListener("click", () => $("digestDialog").close());
+$("cancelDigest").addEventListener("click", () => $("digestDialog").close());
+$("digestForm").addEventListener("submit", event => { event.preventDefault(); submitDigests(); });
+$("digestDialog").addEventListener("change", event => {
+  if (event.target.dataset.digestField === "frequency") { readDigestRows(); renderDigestRows(); }
+});
+$("digestDialog").addEventListener("click", event => {
+  if (event.target === $("digestDialog")) return $("digestDialog").close();
+  if (event.target.closest("[data-digest-add]")) {
+    readDigestRows();
+    state.digestDraft.push({ workspace: "*", frequency: "weekly", day: "mon", hour: 8, timezone: "UTC" });
+    return renderDigestRows();
+  }
+  const remove = event.target.closest("[data-digest-remove]");
+  if (remove) { readDigestRows(); state.digestDraft.splice(Number(remove.dataset.digestRemove), 1); renderDigestRows(); }
 });
 $("closePreset").addEventListener("click", () => $("presetDialog").close());
 $("cancelPreset").addEventListener("click", () => $("presetDialog").close());

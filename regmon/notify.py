@@ -442,6 +442,8 @@ def dashboard_link(notification: dict, dashboard_url: str) -> str:
             return base + "#changes/" + quote(event_id, safe="")
     if kind in RUN_LINK_KINDS:
         return base + "#runs"
+    if kind == "DIGEST" and notification.get("digest_id"):
+        return base + "#alerts/" + quote("digest:" + str(notification["digest_id"]), safe="")
     return base
 
 
@@ -465,7 +467,7 @@ def publish(notification: dict, topic: str, server: str, dashboard_url: str = ""
         f"Topic: {notification['topic']}\n"
         f"URL: {notification.get('url') or '(not available)'}\n\n"
         f"{notification['summary']}\n\n"
-        f"Impact: {notification.get('impact', '')}\n\n"
+        f"{alert_channels.impact_label(notification)}: {notification.get('impact', '')}\n\n"
         + (details + "\n" if details else "") +
         f"Why: {notification['reason']}\n\n"
         f"Event ID: {notification['event_id']}"
@@ -494,6 +496,7 @@ def ledger_record(notification: dict) -> dict:
         "summary": notification.get("summary"),
         "source_event_id": notification.get("source_event_id"),
         "variant": notification.get("variant"),
+        **({"digest_id": notification["digest_id"]} if notification.get("digest_id") else {}),
     }
 
 

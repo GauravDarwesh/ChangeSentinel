@@ -55,13 +55,13 @@ jobs:
               --event "$GITHUB_EVENT_PATH" \
               --config config/sources.json \
               --output "$RUNNER_TEMP/monitor-settings.json"
-            if git diff --quiet -- config/sources.json; then
+            if git diff --quiet -- config/sources.json config/digests.json; then
               success=true
               break
             fi
             COUNT="$(python -c 'import json,os; print(len(json.load(open(os.environ["RUNNER_TEMP"] + "/monitor-settings.json"))["changed"]))')"
-            git add config/sources.json
-            git commit -m "Update settings of $COUNT monitor(s) (issue #${{ github.event.issue.number }})"
+            git add config/sources.json config/digests.json
+            git commit -m "Update monitor settings (issue #${{ github.event.issue.number }}, $COUNT changed)"
             if git push origin HEAD:main; then
               success=true
               break
