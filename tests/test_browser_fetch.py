@@ -402,6 +402,9 @@ class SafetyTests(unittest.TestCase):
         from challenge_site import PAGE, PDF as BIG_PDF, serve
 
         with serve() as (site, _widget, _hits), patch("regmon.browser_fetch.validate_public_http_url"), \
+                tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as profile, \
+                patch.object(browser_fetch, "profile_dir", return_value=profile), \
+                patch.object(browser_fetch, "_COOKIE_JAR", []), \
                 patch.object(browser_fetch, "CHALLENGE_FRAME_HOSTS", frozenset({"localhost"})):
             in_scope = lambda target: target.startswith(site + "/")
             first = browser_fetch.render(site + "/forms/big.pdf", want="resource", in_scope=in_scope)
@@ -417,8 +420,9 @@ class SafetyTests(unittest.TestCase):
     def test_a_real_browser_finishes_a_check_that_hands_back_through_the_url_of_an_exact_monitor(self):
         from challenge_site import PAGE, PDF as BIG_PDF, serve
 
-        with serve() as (site, _widget, hits), tempfile.TemporaryDirectory() as profile, \
+        with serve() as (site, _widget, hits), tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as profile, \
                 patch("regmon.browser_fetch.validate_public_http_url"), \
+                patch.object(browser_fetch, "_COOKIE_JAR", []), \
                 patch.object(browser_fetch, "profile_dir", return_value=profile), \
                 patch.object(browser_fetch, "CHALLENGE_FRAME_HOSTS", frozenset({"localhost"})):
             page_url, pdf_url = site + "/cf/reporting-forms", site + "/cf/FFIEC002_202609_f.pdf"
@@ -435,8 +439,9 @@ class SafetyTests(unittest.TestCase):
 
         with (
             serve() as (site, _widget, _hits),
-            tempfile.TemporaryDirectory() as profile,
+            tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as profile,
             patch("regmon.browser_fetch.validate_public_http_url"),
+            patch.object(browser_fetch, "_COOKIE_JAR", []),
             patch.object(browser_fetch, "CHALLENGE_FRAME_HOSTS", frozenset({"localhost"})),
             patch.object(browser_fetch, "profile_dir", return_value=profile),
             patch("regmon.browser_fetch._render", side_effect=RuntimeError("Pydoll could not start Chrome")),
@@ -455,8 +460,9 @@ class SafetyTests(unittest.TestCase):
         initial_challenge = browser_fetch.ChallengeNotPassed("Cloudflare", CLOUDFLARE)
         with (
             serve() as (site, _widget, _hits),
-            tempfile.TemporaryDirectory() as profile,
+            tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as profile,
             patch("regmon.browser_fetch.validate_public_http_url"),
+            patch.object(browser_fetch, "_COOKIE_JAR", []),
             patch.object(browser_fetch, "CHALLENGE_FRAME_HOSTS", frozenset({"localhost"})),
             patch.object(browser_fetch, "profile_dir", return_value=profile),
             patch("regmon.browser_fetch._render", side_effect=initial_challenge),
@@ -474,6 +480,7 @@ class SafetyTests(unittest.TestCase):
         original = browser_fetch.launch_arguments
         local = lambda binary: original(binary) + [f"--host-resolver-rules=MAP {HCAPTCHA_HOST} 127.0.0.1", "--proxy-bypass-list=<-loopback>"]
         with serve() as (site, _widget, hits), patch("regmon.browser_fetch.validate_public_http_url"), \
+                patch.object(browser_fetch, "_COOKIE_JAR", []), \
                 patch.object(browser_fetch, "launch_arguments", local):
             in_scope = lambda target: target.startswith(site + "/")
             imperva = browser_fetch.render(site + "/imperva/x.pdf", want="resource", in_scope=in_scope)

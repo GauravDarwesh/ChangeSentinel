@@ -479,6 +479,46 @@ async def _read_stream(page: _Page, handle: str, max_bytes: int) -> bytes:
             pass
 
 
+# Cookies from earlier loads in this run. A passed check's clearance cookie
+# (cf_clearance, datadome ...) is put back before the next load, so one pass
+# serves every URL on that site. Chrome writes cookies to its profile only
+# lazily, and Pydoll 3 closes it before that happens, so the profile alone
+# does not carry them over. Kept in memory for this process only.
+_COOKIE_JAR: list[dict] = []
+_MAX_COOKIES = 500
+_COOKIE_FIELDS = ("name", "value", "domain", "path", "secure", "httpOnly", "sameSite", "expires")
+
+
+async def _restore_cookies(page: _Page) -> None:
+    if not _COOKIE_JAR:
+        return
+    try:
+        await page.send("Network.setCookies", {"cookies": list(_COOKIE_JAR)})
+    except Exception:
+        # One cookie Chrome will not take must not cost the others.
+        for cookie in list(_COOKIE_JAR):
+            try:
+                await page.send("Network.setCookie", cookie)
+            except Exception:
+                pass  # a fresh check is the worst case
+
+
+async def _remember_cookies(page: _Page) -> None:
+    try:
+        cookies = (await page.send("Network.getAllCookies")).get("cookies") or []
+    except Exception:
+        return
+    kept = []
+    for cookie in cookies:
+        if not cookie.get("name") or not cookie.get("domain"):
+            continue
+        entry = {key: cookie[key] for key in _COOKIE_FIELDS if key in cookie}
+        if cookie.get("session") or float(entry.get("expires") or -1) <= 0:
+            entry.pop("expires", None)
+        kept.append(entry)
+    _COOKIE_JAR[:] = kept[-_MAX_COOKIES:]
+
+
 async def _drive(page: _Page, url: str, *, want: str = "dom", wait_seconds: float = 0, wait_selector: str = "",
                  dismiss: bool = True, in_scope=None, steps: list[dict] | None = None, screenshot: bool = False,
                  challenge_wait: float | None = None, max_bytes: int = MAX_RESOURCE_BYTES,
@@ -594,62 +634,66 @@ async def _drive(page: _Page, url: str, *, want: str = "dom", wait_seconds: floa
         {"urlPattern": "*", "requestStage": "Request"},
         {"urlPattern": "*", "resourceType": "Document", "requestStage": "Response"},
     ]})
-    navigation = await page.send("Page.navigate", {"url": url})
-    if navigation.get("errorText") and navigation["errorText"] != "net::ERR_ABORTED":
-        raise RuntimeError(f"Browser could not load the page: {navigation['errorText']}")
+    await _restore_cookies(page)
+    try:
+        navigation = await page.send("Page.navigate", {"url": url})
+        if navigation.get("errorText") and navigation["errorText"] != "net::ERR_ABORTED":
+            raise RuntimeError(f"Browser could not load the page: {navigation['errorText']}")
 
-    # Wait for the real document: at once without a check, after the check otherwise.
-    deadline = loop.time() + RENDER_TIMEOUT_SECONDS
-    check_started = False
-    while not arrived.is_set():
-        if seen and not check_started:
-            check_started = True
-            deadline = min(deadline, loop.time() + challenge_wait)
-        if loop.time() >= deadline:
-            break
-        try:
-            await asyncio.wait_for(arrived.wait(), timeout=0.5)
-        except asyncio.TimeoutError:
-            pass
-    if failure:
-        raise RuntimeError(f"Browser could not read the response: {type(failure[0]).__name__}: {failure[0]}")
-    if not captured:
-        page_now = await source()
-        vendor = (seen[0] if seen else "") or botcheck.detect(page_now) or ""
-        if vendor:
-            raise ChallengeNotPassed(vendor, page_now, cleared=await cleared(), waited=challenge_wait)
-        raise RuntimeError("Browser got no response for the page in time")
-    challenge = seen[0] if seen else ""
-    is_file = bool(captured["content_type"]) and "html" not in captured["content_type"].lower()
-    if want == "resource" or is_file:
-        return Rendered(html=captured["body"] if not is_file else b"", final_url=captured["url"], blocked=blocked, consent="",
-                        status=captured["status"], content_type=captured["content_type"] or "text/html; charset=utf-8",
-                        body=captured["body"], headers=captured["headers"], challenge=challenge)
-
-    # Rendered page: let it finish loading, then the usual settle, consent and steps.
-    ready_by = loop.time() + 15
-    while loop.time() < ready_by and str(await evaluate("document.readyState") or "") != "complete":
-        await sleep(0.25)
-    consent_text = ""
-    if dismiss:
-        await sleep(0.8)
-        consent_text = str(await evaluate(DISMISS_SCRIPT) or "")
-    settle_by = loop.time() + wait_seconds
-    if wait_selector:
-        import json
-
-        while loop.time() < settle_by:
-            if await evaluate("!!document.querySelector(" + json.dumps(str(wait_selector)) + ")"):
+        # Wait for the real document: at once without a check, after the check otherwise.
+        deadline = loop.time() + RENDER_TIMEOUT_SECONDS
+        check_started = False
+        while not arrived.is_set():
+            if seen and not check_started:
+                check_started = True
+                deadline = min(deadline, loop.time() + challenge_wait)
+            if loop.time() >= deadline:
                 break
+            try:
+                await asyncio.wait_for(arrived.wait(), timeout=0.5)
+            except asyncio.TimeoutError:
+                pass
+        if failure:
+            raise RuntimeError(f"Browser could not read the response: {type(failure[0]).__name__}: {failure[0]}")
+        if not captured:
+            page_now = await source()
+            vendor = (seen[0] if seen else "") or botcheck.detect(page_now) or ""
+            if vendor:
+                raise ChallengeNotPassed(vendor, page_now, cleared=await cleared(), waited=challenge_wait)
+            raise RuntimeError("Browser got no response for the page in time")
+        challenge = seen[0] if seen else ""
+        is_file = bool(captured["content_type"]) and "html" not in captured["content_type"].lower()
+        if want == "resource" or is_file:
+            return Rendered(html=captured["body"] if not is_file else b"", final_url=captured["url"], blocked=blocked, consent="",
+                            status=captured["status"], content_type=captured["content_type"] or "text/html; charset=utf-8",
+                            body=captured["body"], headers=captured["headers"], challenge=challenge)
+
+        # Rendered page: let it finish loading, then the usual settle, consent and steps.
+        ready_by = loop.time() + 15
+        while loop.time() < ready_by and str(await evaluate("document.readyState") or "") != "complete":
             await sleep(0.25)
-    else:
-        await sleep(max(0.0, wait_seconds))
-    replayed = await run_steps(evaluate, steps or [], sleep=sleep)
-    image = await _screenshot(page, evaluate) if screenshot else None
-    html = await source()
-    final = str(await evaluate("location.href") or url)
-    return Rendered(html=html, final_url=final, blocked=blocked, consent=consent_text, screenshot=image, steps=replayed,
-                    status=captured["status"], headers=captured["headers"], challenge=challenge)
+        consent_text = ""
+        if dismiss:
+            await sleep(0.8)
+            consent_text = str(await evaluate(DISMISS_SCRIPT) or "")
+        settle_by = loop.time() + wait_seconds
+        if wait_selector:
+            import json
+
+            while loop.time() < settle_by:
+                if await evaluate("!!document.querySelector(" + json.dumps(str(wait_selector)) + ")"):
+                    break
+                await sleep(0.25)
+        else:
+            await sleep(max(0.0, wait_seconds))
+        replayed = await run_steps(evaluate, steps or [], sleep=sleep)
+        image = await _screenshot(page, evaluate) if screenshot else None
+        html = await source()
+        final = str(await evaluate("location.href") or url)
+        return Rendered(html=html, final_url=final, blocked=blocked, consent=consent_text, screenshot=image, steps=replayed,
+                        status=captured["status"], headers=captured["headers"], challenge=challenge)
+    finally:
+        await _remember_cookies(page)
 
 
 async def _screenshot(page: _Page, evaluate) -> bytes | None:

@@ -146,6 +146,35 @@ class SeleniumBaseFallbackTests(unittest.TestCase):
 
         self.assertIs(caught.exception, challenge)
 
+    def test_a_passed_check_is_carried_to_the_next_browser_launch(self):
+        # Pydoll 3 closes Chrome before it writes cookies to the profile, so a
+        # passed check (cf_clearance) is carried over in memory instead.
+        class FakePage:
+            def __init__(self, cookies):
+                self.cookies, self.sent = cookies, []
+
+            async def send(self, method, params=None):
+                self.sent.append((method, params))
+                if method == "Network.getAllCookies":
+                    return {"cookies": self.cookies}
+                return {}
+
+        first = FakePage([
+            {"name": "cf_clearance", "value": "ok", "domain": ".www.ffiec.gov", "path": "/", "expires": 1793000000,
+             "size": 14, "httpOnly": True, "secure": True, "session": False, "sameSite": "None", "priority": "Medium"},
+            {"name": "sid", "value": "x", "domain": "www.ffiec.gov", "path": "/", "expires": -1, "session": True},
+        ])
+        second = FakePage([])
+        with patch.object(browser_fetch, "_COOKIE_JAR", []):
+            asyncio.run(browser_fetch._remember_cookies(first))
+            asyncio.run(browser_fetch._restore_cookies(second))
+        method, params = second.sent[0]
+        self.assertEqual(method, "Network.setCookies")
+        clearance, session = params["cookies"]
+        self.assertEqual(clearance, {"name": "cf_clearance", "value": "ok", "domain": ".www.ffiec.gov", "path": "/",
+                                     "secure": True, "httpOnly": True, "sameSite": "None", "expires": 1793000000})
+        self.assertNotIn("expires", session)
+
     def test_raw_cdp_command_preserves_method_params_and_result(self):
         command = browser_fetch._raw_cdp_command("Page.navigate", {"url": URL})
         self.assertEqual(next(command), {"method": "Page.navigate", "params": {"url": URL}})
