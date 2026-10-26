@@ -135,7 +135,20 @@
       "summary": "The current run could not fully process a monitored regulator resource.",
       "source_event_id": "ed7b26ee381208c698c901af10e98fb7a11f4ada46efaa96f5c34f3d1861d27b",
       "variant": null
+    },
+    "digest:all-weekly-20261026T0230Z": {
+      "kind": "DIGEST",
+      "sent_at": "2026-10-26T04:30:03.769269+00:00",
+      "url": null,
+      "topic": "Weekly digest, all workspaces: 10 changes, 6 relevant",
+      "summary": "Several Federal Reserve reporting forms have been streamlined: FR 2028B, FR 2028S, FR 2028D and the CVA Sub\u2011schedule L.1 all received simplified table structures, column consolidations and reorganized layouts while keeping the same data fields. In addition, a guidance document removed a table and paragraphs covering CECL transitional amounts, AOCI opt\u2011out, supplementary leverage ratio and insurance underwriting definitions, and another form was reduced to only a legal citation, burden estimate and a brief table. The approved\u2011forms list also dropped entries for FFIEC 031 and FR Y\u20119C R\u20111867. The highest priority is the truncated reporting form that eliminates detailed schedules, as its loss of granular sections could impact reporting completeness and compliance.",
+      "source_event_id": null,
+      "variant": "digest",
+      "digest_id": "all-weekly-20261026T0230Z",
+      "channels": [
+        "ntfy"
+      ]
     }
   },
-  "updated_at": "2026-10-23T12:53:55.347939+00:00"
+  "updated_at": "2026-10-26T04:30:03.769765+00:00"
 }
