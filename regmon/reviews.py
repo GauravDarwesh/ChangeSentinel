@@ -14,6 +14,11 @@ Decisions: ``material`` (it changes what we must do), ``not_material`` (a
 rationale is required), ``acknowledged`` (seen, assessment pending) and
 ``action_required`` (material, with work to track; an owner or ticket link is
 expected). A decision names changes by id only; it never becomes a rule.
+
+A reviewer can also report a change the monitor missed entirely (a
+``missed-change`` request naming the monitor, the page, when it was seen and
+what changed). Reports are kept in ``misses``, append-only, and count against
+the monitor's recall (regmon/precision.py).
 """
 from __future__ import annotations
 
@@ -26,6 +31,7 @@ from pathlib import Path
 from regmon.fsutil import atomic_write_text
 
 MARKER = "<!-- changesentinel:change-review:v1 -->"
+MISSED_MARKER = "<!-- changesentinel:missed-change:v1 -->"
 TITLE_PREFIX = "[ChangeSentinel] Change review"
 MAX_EVENTS = 50
 MAX_TEXT = 600
@@ -56,7 +62,33 @@ def load_ledger(data_dir: Path) -> dict:
         raise ReviewError(f"Refusing to overwrite an unreadable review ledger at {path}") from exc
     if not isinstance(ledger, dict) or ledger.get("schema_version") != 1 or not isinstance(ledger.get("reviews"), dict) or not isinstance(ledger.get("log"), list):
         raise ReviewError(f"Refusing to overwrite a review ledger with an unexpected shape at {path}")
+    if not isinstance(ledger.get("misses", []), list):
+        raise ReviewError(f"Refusing to overwrite a review ledger whose misses are not a list at {path}")
     return ledger
+
+
+def parse_missed(body: str) -> dict:
+    """A missed-change report: Monitor, URL, Seen on, What was missed."""
+    text = str(body or "").replace("\r\n", "\n")
+    if MISSED_MARKER not in text:
+        raise ReviewError("The issue is not a missed-change report (marker missing)")
+    fields = {"monitor": "", "url": "", "seen on": "", "what was missed": "", "evidence": ""}
+    for line in text.split("\n"):
+        key, separator, value = line.strip().partition(":")
+        if separator and key.strip().lower() in fields:
+            fields[key.strip().lower()] = _field(value)
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,119}", fields["monitor"]):
+        raise ReviewError("The report needs the monitor id (Monitor: ...)")
+    if fields["url"] and not re.match(r"^https?://\S+$", fields["url"]):
+        raise ReviewError("URL must be a link (https://…)")
+    if fields["evidence"] and not re.match(r"^https?://\S+$", fields["evidence"]):
+        raise ReviewError("Evidence must be a link (https://…)")
+    if fields["seen on"] and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", fields["seen on"]):
+        raise ReviewError("Seen on must be a date such as 2026-10-20")
+    if len(fields["what was missed"]) < 10:
+        raise ReviewError("Say what was missed (at least 10 characters)")
+    return {"source_id": fields["monitor"], "url": fields["url"], "seen_on": fields["seen on"],
+            "description": fields["what was missed"], "evidence": fields["evidence"]}
 
 
 def _field(value: str) -> str:
@@ -157,6 +189,8 @@ def apply_event(event: dict, data_dir: Path, now: str | None = None) -> dict:
         raise ReviewError("Only the repository owner can record review decisions")
     if not str(issue.get("title") or "").startswith(TITLE_PREFIX):
         raise ReviewError("The issue title is not a change review request")
+    if MISSED_MARKER in str(issue.get("body") or ""):
+        return _apply_missed(issue, actor, data_dir, now)
     request = parse_request(issue.get("body") or "")
     known = known_changes(data_dir)
     for item in request["events"]:
@@ -180,6 +214,26 @@ def apply_event(event: dict, data_dir: Path, now: str | None = None) -> dict:
     path.parent.mkdir(parents=True, exist_ok=True)
     atomic_write_text(path, json.dumps(ledger, indent=2) + "\n")
     return {"decision": request["decision"], "label": LABELS[request["decision"]], "count": len(request["events"])}
+
+
+def _apply_missed(issue: dict, actor: str, data_dir: Path, now: str | None) -> dict:
+    report = parse_missed(issue.get("body") or "")
+    try:
+        sources = json.loads((Path(data_dir).parent / "config" / "sources.json").read_text(encoding="utf-8")).get("sources") or []
+        known = {str(source.get("id")) for source in sources if isinstance(source, dict)}
+    except (OSError, ValueError):
+        known = set()
+    if known and report["source_id"] not in known:
+        raise ReviewError(f"Monitor {report['source_id']!r} is not in config/sources.json")
+    ledger = load_ledger(data_dir)
+    now = now or datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    reference = f"issue #{issue.get('number')}" if issue.get("number") else "issue"
+    ledger.setdefault("misses", []).append({**report, "reported_by": actor, "reported_at": now, "request": reference})
+    ledger["updated_at"] = now
+    path = ledger_path(data_dir)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    atomic_write_text(path, json.dumps(ledger, indent=2) + "\n")
+    return {"decision": "missed", "label": "Missed change", "count": 1}
 
 
 def main() -> None:
