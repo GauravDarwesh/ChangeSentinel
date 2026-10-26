@@ -1179,7 +1179,7 @@
    "tracking_since": "2026-10-25T11:25:21.562775+00:00"
   },
   "https://www.federalreserve.gov/apps/ReportingForms": {
-   "last_scan": "2026-10-26T06:16:53.570308+00:00",
+   "last_scan": "2026-10-26T12:48:03.967922+00:00",
    "links": {
     "http://www.ffiec.gov/ffiec_report_forms.htm": {
      "first_seen": "2026-10-23T08:14:35.781047+00:00",
@@ -2270,7 +2270,7 @@
    "tracking_since": "2026-10-23T08:14:35.781047+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D": {
-   "last_scan": "2026-10-26T06:13:18.167328+00:00",
+   "last_scan": "2026-10-26T12:45:26.417696+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -3331,7 +3331,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028bs": {
-   "last_scan": "2026-10-26T06:13:18.167328+00:00",
+   "last_scan": "2026-10-26T12:45:26.417696+00:00",
    "links": {
     "http://www.federalreserve.gov/releases/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -4447,7 +4447,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M": {
-   "last_scan": "2026-10-26T06:13:18.167328+00:00",
+   "last_scan": "2026-10-26T12:45:26.417696+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -5563,7 +5563,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q": {
-   "last_scan": "2026-10-26T06:13:18.167328+00:00",
+   "last_scan": "2026-10-26T12:45:26.417696+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -6859,7 +6859,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C": {
-   "last_scan": "2026-10-26T06:13:18.167328+00:00",
+   "last_scan": "2026-10-26T12:45:26.417696+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -9585,7 +9585,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/recentupdates": {
-   "last_scan": "2026-10-26T06:13:16.492215+00:00",
+   "last_scan": "2026-10-26T12:45:25.831678+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -10566,7 +10566,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/review": {
-   "last_scan": "2026-10-26T06:13:16.492215+00:00",
+   "last_scan": "2026-10-26T12:45:25.831678+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -12497,7 +12497,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar": {
-   "last_scan": "2026-10-26T06:16:52.329302+00:00",
+   "last_scan": "2026-10-26T12:47:32.757422+00:00",
    "links": {
     "http://www.bis.org/bcbs/ccyb/index.htm": {
      "first_seen": "2026-10-21T03:47:47.510475+00:00",
@@ -12723,7 +12723,7 @@
    "tracking_since": "2026-10-21T03:47:47.510475+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification": {
-   "last_scan": "2026-10-26T06:18:10.159346+00:00",
+   "last_scan": "2026-10-26T12:52:39.533516+00:00",
    "links": {
     "https://canada.ca/": {
      "first_seen": "2026-10-23T12:53:48.284742+00:00",
@@ -12880,5 +12880,5 @@
   }
  },
  "schema_version": 1,
- "updated_at": "2026-10-26T10:11:03.000051+00:00"
+ "updated_at": "2026-10-26T12:52:48.173405+00:00"
 }

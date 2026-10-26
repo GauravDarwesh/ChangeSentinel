@@ -1,0 +1,36 @@
+{
+  "event_id": "d37955ccc8ca31350a8b1f5a4bb129b37c5927dfe4d293997802cb435ae86598",
+  "event_type": "FETCH_ERROR",
+  "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec019",
+  "timestamp": "2026-10-26T12:52:46.418260+00:00",
+  "before": {
+    "normalized_hash": "bd7c77468d14c3a13cc2a18f096c7b8bb7c7daa8f50940836d15919accbff29d",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "98d402909347bca645153b4178506241b3b7be60477f78963a7d8c7d8a892297",
+    "html_hash": "98d402909347bca645153b4178506241b3b7be60477f78963a7d8c7d8a892297",
+    "html_comparison_hash": "2efba254b5e5a7e7779870c77049c96c6c1d6e8c7a21e40fc9bd030f667603a1",
+    "snapshot_location": "data/snapshots/8e3ac9d98d330fd80621c4dd52be16564d5fa85504060e415f55f08b3f43a95e-bd7c77468d14c3a13cc2a18f096c7b8bb7c7daa8f50940836d15919accbff29d.txt",
+    "html_snapshot_location": "data/snapshots/html/8e3ac9d98d330fd80621c4dd52be16564d5fa85504060e415f55f08b3f43a95e-98d402909347bca645153b4178506241b3b7be60477f78963a7d8c7d8a892297.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "bd7c77468d14c3a13cc2a18f096c7b8bb7c7daa8f50940836d15919accbff29d",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "98d402909347bca645153b4178506241b3b7be60477f78963a7d8c7d8a892297",
+    "html_hash": "98d402909347bca645153b4178506241b3b7be60477f78963a7d8c7d8a892297",
+    "html_comparison_hash": "2efba254b5e5a7e7779870c77049c96c6c1d6e8c7a21e40fc9bd030f667603a1",
+    "snapshot_location": "data/snapshots/8e3ac9d98d330fd80621c4dd52be16564d5fa85504060e415f55f08b3f43a95e-bd7c77468d14c3a13cc2a18f096c7b8bb7c7daa8f50940836d15919accbff29d.txt",
+    "html_snapshot_location": "data/snapshots/html/8e3ac9d98d330fd80621c4dd52be16564d5fa85504060e415f55f08b3f43a95e-98d402909347bca645153b4178506241b3b7be60477f78963a7d8c7d8a892297.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "--- before\n+++ after\n@@ -1 +0,0 @@\n-Last updated on 5/20/2025",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "error": "BotCheckError: Cloudflare bot check: the browser could not get past it on www.ffiec.gov earlier in this scan; this URL keeps its last good copy and is tried again next scan"
+}

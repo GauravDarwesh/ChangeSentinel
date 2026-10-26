@@ -1,0 +1,36 @@
+{
+  "event_id": "93000d87f1d37b94324dc38885be05cb2fea205c525ce4ced9b4d3cafd3d8f91",
+  "event_type": "FETCH_ERROR",
+  "url": "https://www.ffiec.gov/resources/reporting-forms",
+  "timestamp": "2026-10-26T12:52:40.075052+00:00",
+  "before": {
+    "normalized_hash": null,
+    "extraction_type": null,
+    "extractor_version": null,
+    "extraction_failed": false,
+    "raw_hash": null,
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": null,
+    "extraction_type": null,
+    "extractor_version": null,
+    "extraction_failed": false,
+    "raw_hash": null,
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "error": "BotCheckError: Cloudflare bot check returned instead of the page; the browser could not load it: ArgumentAlreadyExistsInOptions: Argument already exists: --no-first-run"
+}
