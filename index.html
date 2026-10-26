@@ -162,10 +162,11 @@
       overflow: hidden;
       background: transparent;
     }
-    /* Keep the wave over the frame of the locked screen without covering its card. */
-    html.cs-locked .frame-glints { z-index: 10001; }
-    /* On wide screens, let transparent tile seams reveal the frame surface,
-       not the old CSS grid strokes underneath the animated checker tiles. */
+    /* The locked screen has its own full-screen wall; a second ring on top of it,
+       in the dashboard theme's colours and grid, would not line up with it. */
+    html.cs-locked .frame-glints { display: none; }
+    /* On wide screens the animated tiles cover the ring edge to edge; no grid
+       strokes are drawn under them. */
     @media (min-width: 981px) {
       body { background-image: linear-gradient(var(--led-frame), var(--led-frame)); }
     }
@@ -552,7 +553,10 @@
     .field-day.is-next { align-items: flex-end; padding-left: 0; overflow: visible; }
     .field-pulse.is-next, .led.s-pending { justify-self: end; }
     .field-pulse.is-next { width: var(--tile); }
-    .field-day.is-next .field-day-week { font-size: 8.5px; letter-spacing: .04em; overflow: visible; }
+    .field-next-mark { display: block; width: 9px; height: 9px; margin: 0 calc((var(--tile) - 9px) / 2) 3px 0; background: var(--raise); box-shadow: inset 0 0 0 1px var(--ink-3); }
+    /* Today's label may use the room the narrow next-scan column leaves free. */
+    .field-day.is-today { z-index: 4; }
+    .field-day.is-today .field-day-week { overflow: visible; }
     .field-manual { position: absolute; bottom: 1px; left: calc(var(--k) * (var(--tile) + var(--gap))); width: var(--tile); height: 2px; border-radius: 1px; background: var(--ink-2); }
     .field-pulse { top: var(--head-h); display: flex; align-items: flex-end; justify-content: center; gap: 1px; padding-bottom: 3px; border-bottom: 1px solid var(--line); }
     .field-pulse.field-pulse-label, .field-corner.field-pulse-label { top: var(--head-h); z-index: 5; flex-direction: row; align-items: center; justify-content: flex-start; padding: 0 12px 0 14px; border-bottom: 1px solid var(--line); color: var(--ink-3); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; }
@@ -644,8 +648,9 @@
     .tl-axis .tl-next { top: 20px; }
     /* Now to the next scan: nothing can have been found there yet. */
     .tl-upcoming { position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink) 7%, transparent) 0 1px, transparent 1px 5px); pointer-events: none; }
-    .tl-next-label { position: absolute; top: 5px; right: -5px; display: inline-flex; align-items: center; gap: 5px; color: var(--ink-2); font: 500 9.5px/1 var(--font-code); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
-    .tl-next-label i { width: 8px; height: 8px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--ink-3); }
+    /* The next scan is named with the range, not floated over the day labels. */
+    .tl-next-label { display: inline-flex; align-items: center; gap: 5px; margin-top: 3px; color: var(--ink-2); font: 500 9.5px/1.2 var(--font-code); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tl-next-label i { flex: none; width: 8px; height: 8px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--ink-3); }
     .tl-next-dot { position: absolute; top: 50%; left: 100%; z-index: 1; width: 9px; height: 9px; transform: translate(-50%, -50%); background: var(--raise); box-shadow: inset 0 0 0 1px var(--ink-3); }
     /* One update to the next on a lane, labelled with the time between them. */
     .tl-link { position: absolute; top: 50%; height: 1.5px; margin-top: -.75px; background: color-mix(in srgb, var(--ink) 34%, transparent); pointer-events: none; }
@@ -1565,7 +1570,10 @@
       .field-heading { width: 100%; justify-content: space-between; }
       .tl-board { --lane-h: 40px; }
       .tl-row { grid-template-columns: minmax(0, 1fr); }
-      .tl-head .tl-corner { display: none; }
+      /* On a phone the corner becomes one line above the axis: range and count left, next scan right. */
+      .tl-head .tl-corner { flex-direction: row; align-items: baseline; justify-content: flex-start; flex-wrap: wrap; gap: 2px 8px; padding: 9px 14px 2px; border-bottom: 0; }
+      .tl-head .tl-corner small::before { content: "· "; }
+      .tl-head .tl-corner .tl-next-label { margin: 0 0 0 auto; }
       .tl-track { margin: 0 18px 0 14px; }
       .tl-lane { padding-top: 6px; }
       .tl-label { padding: 0 14px; box-shadow: none; }
@@ -3832,8 +3840,10 @@
         lastPaint = 0;
       }
 
+      // The locked screen paints its own full-screen wall; the frame waits for the unlock.
       function isVisible() {
-        return !document.hidden && window.innerWidth > 980 && window.innerHeight > 0;
+        return !document.hidden && window.innerWidth > 980 && window.innerHeight > 0 &&
+          !document.documentElement.classList.contains("cs-locked");
       }
 
       function paintTile(x, y, col, row, t, tileWidth, tileHeight) {
@@ -3861,60 +3871,44 @@
 
         const rootStyle = getComputedStyle(document.documentElement);
         const cell = parseFloat(rootStyle.getPropertyValue("--cell")) || 20;
-        const tile = Math.min(parseFloat(rootStyle.getPropertyValue("--tile")) || 19, cell - 1);
         const t = now / 1000;
-        // Preserve 20px grid anchors for regular cells, but pin the final
-        // tile to the frame edge when the viewport ends between grid lines.
-        // Skip a regular anchor if its tile would overlap the pinned end tile.
-        function edgeAnchors(length) {
-          const end = length - cell + 1;
-          const anchors = [];
-          for (let position = 1; position < end; position += cell) {
-            // Keep a regular terminal-neighbour tile when it can retain at
-            // least a one-pixel width and a separator before the pinned tile.
-            if (end - position > 1) anchors.push(position);
-          }
-          if (!anchors.length || anchors[anchors.length - 1] !== end) anchors.push(end);
-          return anchors;
+        // The ring is the 1px-inset band outside the workspace. Each side is cut
+        // into equal tiles (the count that keeps them closest to one grid cell),
+        // so every tile on a side is the same size, corners included, at any
+        // viewport size. Tiles meet edge to edge: no seam lines between them.
+        const thickness = cell - 1;
+        function cuts(length) {
+          const span = length - 2;
+          const count = Math.max(1, Math.round(span / cell));
+          const step = span / count;
+          // Edges snapped to device pixels so neighbours share an edge exactly.
+          return Array.from({ length: count + 1 }, (_, i) => Math.round((1 + i * step) * dpr) / dpr);
         }
-        const xPositions = edgeAnchors(width);
-        const yPositions = edgeAnchors(height);
-        const columns = xPositions.length;
-        const rows = yPositions.length;
-        const xAt = col => xPositions[col];
-        const yAt = row => yPositions[row];
-        const right = xAt(columns - 1);
-        const bottom = yAt(rows - 1);
-        const rightBand = width - cell;
-        const bottomBand = height - cell;
+        const xs = cuts(width);
+        const ys = cuts(height);
+        const bottom = height - 1 - thickness;
+        const right = width - 1 - thickness;
 
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        // Clear only the 20px outer ring before repainting. The one-pixel seams
-        // stay transparent and reveal the existing frame beneath the animated tiles.
         ctx.clearRect(0, 0, width, cell);
-        ctx.clearRect(0, bottomBand, width, cell);
+        ctx.clearRect(0, height - cell, width, cell);
         ctx.clearRect(0, cell, cell, Math.max(0, height - cell * 2));
-        ctx.clearRect(rightBand, cell, cell, Math.max(0, height - cell * 2));
+        ctx.clearRect(width - cell, cell, cell, Math.max(0, height - cell * 2));
 
-        // Top and bottom share identical x positions; left and right share y positions.
-        // Endpoints are anchored to each side so non-20px viewport sizes remain symmetric.
-        const tileWidthAt = col => col < columns - 1
-          ? Math.min(tile, xAt(col + 1) - xAt(col) - 1) : tile;
-        const tileHeightAt = row => row < rows - 1
-          ? Math.min(tile, yAt(row + 1) - yAt(row) - 1) : tile;
-        for (let col = 0; col < columns; col++) {
-          const x = xAt(col);
+        // Top and bottom rows run corner to corner; the sides fill between them.
+        // Positions are sampled in grid cells, as the change field does.
+        for (let col = 0; col < xs.length - 1; col++) {
+          const x = xs[col], w = xs[col + 1] - x;
           const spatialCol = (x - 1) / cell;
-          const tileWidth = tileWidthAt(col);
-          paintTile(x, 1, spatialCol, 0, t, tileWidth, tile);
-          paintTile(x, bottom, spatialCol, (bottom - 1) / cell, t, tileWidth, tile);
+          paintTile(x, 1, spatialCol, 0, t, w, thickness);
+          paintTile(x, bottom, spatialCol, (bottom - 1) / cell, t, w, thickness);
         }
-        for (let row = 1; row < rows - 1; row++) {
-          const y = yAt(row);
-          const spatialRow = (y - 1) / cell;
-          const tileHeight = tileHeightAt(row);
-          paintTile(1, y, 0, spatialRow, t, tile, tileHeight);
-          paintTile(right, y, (right - 1) / cell, spatialRow, t, tile, tileHeight);
+        for (let row = 0; row < ys.length - 1; row++) {
+          const y = Math.max(ys[row], 1 + thickness), end = Math.min(ys[row + 1], bottom);
+          if (end - y < 1) continue;
+          const spatialRow = (ys[row] - 1) / cell;
+          paintTile(1, y, 0, spatialRow, t, thickness, end - y);
+          paintTile(right, y, (right - 1) / cell, spatialRow, t, thickness, end - y);
         }
 
         if (!motion.matches) frame = window.requestAnimationFrame(paint);
@@ -3936,6 +3930,12 @@
           readColors();
           if (motion.matches) start();
         }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+        // Unlocking removes cs-locked: start painting then.
+        let wasLocked = document.documentElement.classList.contains("cs-locked");
+        new MutationObserver(() => {
+          const locked = document.documentElement.classList.contains("cs-locked");
+          if (locked !== wasLocked) { wasLocked = locked; start(); }
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
       }
       start();
     })();
