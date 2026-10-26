@@ -6,6 +6,11 @@ from pathlib import Path
 
 from regmon import link_lineage as ll
 
+try:
+    from test_dashboard_lib import NODE, run_js
+except ImportError:  # run as tests.test_link_lineage
+    from tests.test_dashboard_lib import NODE, run_js
+
 PAGE = "https://www.example.gov/reporting/central"
 
 
@@ -107,6 +112,35 @@ class TestEngineHook(unittest.TestCase):
         self.assertIn('link_observations.append({"page": url, "at": now, "links": None})', engine)
         self.assertIn('if result["report"].get("baseline_update_allowed")', engine)
         self.assertIn("link_lineage.apply(DATA, observations)", engine)
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestLinkLineageDashboard(unittest.TestCase):
+    LINEAGE = {
+        "pages": {
+            "https://www.example.gov/central": {
+                "tracking_since": "2026-10-01T00:00:00+00:00", "last_scan": "2026-10-26T06:00:00+00:00",
+                "links": {
+                    "https://www.example.gov/fr2028-user-guide-xml.pdf": {"text": "FR 2028B/S user guide (XML)", "first_seen": "2026-10-01T00:00:00+00:00", "removed_at": "2026-10-26T06:00:00+00:00"},
+                    "https://www.example.gov/fr2028b-xml-sample.xml": {"text": "Sample", "first_seen": "2026-10-01T00:00:00+00:00"},
+                    "https://www.example.gov/new.pdf": {"text": "New", "first_seen": "2026-10-26T06:00:00+00:00"},
+                },
+            },
+        },
+        "events": [{"at": "2026-10-26T06:00:00+00:00", "page": "https://www.example.gov/central", "url": "https://www.example.gov/fr2028-user-guide-xml.pdf", "change": "removed", "text": "FR 2028B/S user guide (XML)"}],
+    }
+
+    def test_an_address_is_traced_to_the_page_it_was_removed_from(self):
+        out = run_js("const lin = " + json.dumps(self.LINEAGE) + ";console.log(JSON.stringify(["
+                     "L.linkListings(lin, 'https://www.example.gov/fr2028-user-guide-xml.pdf'),"
+                     "L.linkLineageSearch(lin, '2028 guide').map(r => r.url),"
+                     "(p => [p.current.length, p.removed.map(r => r.url), p.added.map(r => r.url)])(L.pageLinkLineage(lin, 'https://www.example.gov/central/')),"
+                     "L.linkEventsAt(lin, 'https://www.example.gov/central', '2026-10-26T06:00:00.000Z').length]));")
+        listing = out[0][0]
+        self.assertEqual((listing["page"], listing["removedAt"], listing["text"]), ("https://www.example.gov/central", "2026-10-26T06:00:00+00:00", "FR 2028B/S user guide (XML)"))
+        self.assertEqual(out[1], ["https://www.example.gov/fr2028-user-guide-xml.pdf"])
+        self.assertEqual(out[2], [2, ["https://www.example.gov/fr2028-user-guide-xml.pdf"], ["https://www.example.gov/new.pdf"]])
+        self.assertEqual(out[3], 1)
 
 
 if __name__ == "__main__":
