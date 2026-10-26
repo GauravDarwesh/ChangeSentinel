@@ -1891,6 +1891,18 @@
 .precision-row .num { text-align: right; font-variant-numeric: tabular-nums; }
 .precision-row .text-button { justify-self: start; padding: 0; text-align: left; font-size: 13px; }
 @media (max-width: 560px) { .precision-row { grid-template-columns: minmax(0, 1fr) 54px 54px; } .precision-row .counts { display: none; } }
+.scan-steps { display: grid; gap: 12px; grid-column: 1 / -1; }
+.field-input.is-code { font: 400 12px/1.5 var(--font-code); }
+.field-help.is-error { color: var(--problem); }
+.recorder-link { color: var(--link); cursor: grab; }
+.visual-diff { padding: 12px 18px 16px; }
+.visual-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin-bottom: 10px; }
+.visual-range { flex: 1 1 220px; accent-color: var(--accent); }
+.visual-stage { position: relative; overflow: hidden; border: 1px solid var(--line); background: #fff; }
+.visual-stage img { display: block; width: 100%; height: auto; }
+.visual-after { position: absolute; inset: 0; }
+.visual-divider { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--accent); box-shadow: var(--glow); pointer-events: none; }
+.visual-legend { display: flex; justify-content: space-between; margin-top: 6px; color: var(--ink-3); font-size: 12px; }
 .integrity-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 16px; padding: 11px 18px; border-top: 1px solid var(--line); }
 .integrity-row:first-child { border-top: 0; }
 .integrity-name { font-size: 13.5px; }
@@ -3299,6 +3311,19 @@
               <input class="field-input" id="scanWaitSelector" type="text" maxlength="200" placeholder="main table" autocomplete="off">
             </div>
             <label class="field-check"><input type="checkbox" id="scanDismiss" checked> Answer cookie banners with their privacy-preserving choice (reject or necessary only)</label>
+            <div class="scan-steps" id="scanBrowserOnly">
+              <div>
+                <label class="field-label-text" for="scanSteps">Steps before reading the page <span>Optional, for portals that need a choice or a click</span></label>
+                <textarea class="field-input is-code" id="scanSteps" rows="5" spellcheck="false" placeholder='[{"action": "select", "selector": "#report", "value": "FFIEC 031"}, {"action": "click", "selector": "button#search"}]'></textarea>
+                <div class="field-help" id="scanStepsHelp">No steps: the page is read as it loads.</div>
+                <div class="field-help">Record them on the portal: drag <a class="recorder-link" id="scanRecorder" href="#">ChangeSentinel recorder</a> to your bookmarks bar, open the portal, click it, use the page as usual, then <em>Copy steps</em> and paste them here. It runs only in your browser, keeps the steps in that tab across page loads (click it again after a page loads) and never records password fields.</div>
+              </div>
+              <label class="field-check"><input type="checkbox" id="scanVisual"> Save a screenshot of each render and compare it visually</label>
+              <div id="scanVisualThresholdRow" hidden>
+                <label class="field-label-text" for="scanVisualThreshold">Alert when the page looks this different, even if its text is the same <span>% of the page, optional</span></label>
+                <input class="field-input" id="scanVisualThreshold" type="number" min="0.1" max="100" step="0.1" placeholder="Never alert on looks alone">
+              </div>
+            </div>
           </div>
         </div>
       </details>

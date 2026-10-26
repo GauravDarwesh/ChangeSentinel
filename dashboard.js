@@ -42,7 +42,7 @@ function repositoryFromLocation() {
 const REPOSITORY = repositoryFromLocation();
 const RAW = "https://raw.githubusercontent.com/" + REPOSITORY.owner + "/" + REPOSITORY.repo + "/main";
 const REPO = "https://github.com/" + REPOSITORY.owner + "/" + REPOSITORY.repo;
-const CHANGE_EVENT_TYPES = ["CHANGED_URL", "NEW_URL", "REMOVED_URL", "HTML_SOURCE_CHANGED"];
+const CHANGE_EVENT_TYPES = ["CHANGED_URL", "NEW_URL", "REMOVED_URL", "HTML_SOURCE_CHANGED", "VISUAL_CHANGED"];
 const ALERT_EVENT_TYPES = ["REMOVED_URL", "FETCH_ERROR", "EXTRACTION_ERROR"];
 const RECENT_CHANGE_MS = 7 * 24 * 60 * 60 * 1000;
 const DATA_PATHS = {
@@ -586,6 +586,10 @@ function eventHeadline(event) {
   if (event.evidence && event.evidence.error) return event.evidence.error;
   if (isPlainObject(event.spec) && event.spec.headline) return String(event.spec.headline);
   if (event.event_type === "HTML_SOURCE_CHANGED") return "The page markup changed; the extracted text is the same.";
+  if (event.event_type === "VISUAL_CHANGED") {
+    const share = isPlainObject(event.visual) ? Number(event.visual.changed_ratio) : NaN;
+    return "The page looks different" + (Number.isFinite(share) ? " (" + (share * 100).toFixed(1) + "% of it)" : "") + " while its text and markup are the same.";
+  }
   if (event.event_type === "REMOVED_URL") return "This page was no longer found in a complete scan.";
   if (event.event_type === "NEW_URL") return "A new page entered the monitored scope.";
   return "The extracted text changed since the previous saved copy.";
@@ -2141,9 +2145,11 @@ function renderVerdict(event) {
   return "";
 }
 function diffModes(event) {
+  if (event.event_type === "VISUAL_CHANGED") return '<div class="segmented" role="group" aria-label="Diff view"><button type="button" data-diff-mode="visual" aria-pressed="true">Visual</button></div>';
   const modes = [["redline", "Redline"], ["text", "Text diff"]];
   if (event.event_type === "CHANGED_URL" || event.event_type === "HTML_SOURCE_CHANGED") modes.unshift(["compare", "Compare"]);
   if (event.event_type !== "REMOVED_URL") modes.push(["html", "HTML diff"]);
+  if (isPlainObject(event.visual)) modes.push(["visual", "Visual"]);
   return '<div class="segmented" role="group" aria-label="Diff view">' + modes.map(([key, label]) =>
     '<button type="button" data-diff-mode="' + key + '" aria-pressed="' + String(state.diffMode === key) + '">' + label + "</button>"
   ).join("") + "</div>";
@@ -2169,7 +2175,8 @@ async function fillEvidence(event, boxId, stillCurrent) {
     const target = document.getElementById(boxId);
     const summary = document.getElementById(boxId + "-summary");
     if (!target) return;
-    const mode = state.diffMode === "compare" && !compareSources(evidence) ? "redline" : state.diffMode;
+    const wanted = event.event_type === "VISUAL_CHANGED" ? "visual" : state.diffMode;
+    const mode = wanted === "compare" && !compareSources(evidence) ? "redline" : wanted === "visual" && !isPlainObject(evidence.visual) ? "redline" : wanted;
     if (mode !== state.diffMode) {
       // Older evidence has no saved versions to overlay: drop the Compare option for it.
       const group = target.parentElement && target.parentElement.querySelector('[data-diff-mode="compare"]');
@@ -2179,7 +2186,10 @@ async function fillEvidence(event, boxId, stillCurrent) {
         else button.setAttribute("aria-pressed", String(button.dataset.diffMode === mode));
       });
     }
-    if (mode === "compare") {
+    if (mode === "visual") {
+      target.innerHTML = visualCompare(evidence.visual);
+      if (summary) summary.textContent = visualSummary(evidence.visual);
+    } else if (mode === "compare") {
       if (summary) summary.textContent = "Drag the divider to move between the previous and new version.";
       renderCompare(target, evidence, event, stillCurrent);
     } else if (mode === "html") {
@@ -2876,6 +2886,44 @@ function submitMissed(event) {
   openGitHubRequest(REPO + "/issues/new?" + params.toString(), "Submit the prefilled request on GitHub. The miss counts in this monitor's recall about a minute after it is recorded.");
 }
 
+/* ================= Visual diff ================= */
+
+// Screenshots of a browser-rendered page (regmon/visual.py): the previous and
+// new render under a divider, with the changed regions marked on the new one.
+function visualSummary(visual) {
+  const share = Number(visual.changed_ratio);
+  return (Number.isFinite(share) ? (share < 0.001 ? "Under 0.1%" : (share * 100).toFixed(share < 0.1 ? 1 : 0) + "%") + " of the page looks different" : "Visual comparison") +
+    " · " + plural(Number(visual.region_count) || 0, "region", "regions") + ". Drag the divider; Marked regions outlines what moved.";
+}
+function visualCompare(visual) {
+  const before = visual.before ? snapshotURL(visual.before) : "", after = visual.after ? snapshotURL(visual.after) : "", overlay = visual.overlay ? snapshotURL(visual.overlay) : "";
+  if (!before || !after) return '<p class="rl-empty">This change has no pair of screenshots to compare.</p>';
+  // Open with the divider just left of the first changed region, so the change shows on the new side.
+  const width = Array.isArray(visual.size_after) ? Number(visual.size_after[0]) : 0;
+  const first = Array.isArray(visual.regions) && visual.regions.length ? visual.regions.slice().sort((a, b) => a[0] - b[0])[0] : null;
+  const start = width && first ? Math.max(2, Math.min(90, Math.floor(first[0] / width * 100) - 2)) : 50;
+  return '<div class="visual-diff" data-visual-diff><div class="visual-tools"><label class="field-check"><input type="checkbox" data-visual-marks' + (overlay ? " checked" : " disabled") + "> Marked regions</label>" +
+    '<input class="visual-range" type="range" min="0" max="100" value="' + start + '" aria-label="Divider between the previous and the new screenshot" data-visual-range></div>' +
+    '<div class="visual-stage"><img class="visual-before" alt="Previous screenshot" loading="lazy" src="' + esc(before) + '">' +
+    '<img class="visual-after" alt="New screenshot" src="' + esc(overlay || after) + '" data-plain="' + esc(after) + '" data-marked="' + esc(overlay) + '" style="clip-path: inset(0 0 0 ' + start + '%)">' +
+    '<span class="visual-divider" style="left:' + start + '%" aria-hidden="true"></span></div>' +
+    '<div class="visual-legend"><span>Previous</span><span>New</span></div></div>';
+}
+document.addEventListener("input", event => {
+  const range = event.target.closest && event.target.closest("[data-visual-range]");
+  if (!range) return;
+  const box = range.closest("[data-visual-diff]");
+  const value = Number(range.value);
+  box.querySelector(".visual-after").style.clipPath = "inset(0 0 0 " + value + "%)";
+  box.querySelector(".visual-divider").style.left = value + "%";
+});
+document.addEventListener("change", event => {
+  const marks = event.target.closest && event.target.closest("[data-visual-marks]");
+  if (!marks) return;
+  const image = marks.closest("[data-visual-diff]").querySelector(".visual-after");
+  image.src = marks.checked && image.dataset.marked ? image.dataset.marked : image.dataset.plain;
+});
+
 /* ================= Detail: a page ================= */
 
 function renderSnapshotText(text) {
@@ -3145,7 +3193,9 @@ function renderDetails(item) {
     ["Workspace", (ws => ws.name + (ws.auto ? " (from the regulator's region)" : ""))(sourceWorkspace(source))],
     ["Labels", sourceLabels(source).join(", ") || "None"],
     ["Alerts", source.shadow ? "Shadow mode: changes are recorded without alerts" : "Sent for relevant changes"],
-    ["Loaded with", FETCH_MODE_WORDS[sourceLoading(source).fetch_mode] + (item.rendered_by === "browser" && item.browser ? " · last render blocked " + plural(Number(item.browser.blocked_requests || 0), "request", "requests") + (item.browser.consent ? ", cookie banner: " + item.browser.consent.replace(/^\w+:/, "") : "") : "")],
+    ["Loaded with", FETCH_MODE_WORDS[sourceLoading(source).fetch_mode] + (item.rendered_by === "browser" && item.browser ? " · last render blocked " + plural(Number(item.browser.blocked_requests || 0), "request", "requests") + (item.browser.consent ? ", cookie banner: " + item.browser.consent.replace(/^\w+:/, "") : "") : "") +
+      (sourceLoading(source).browser_actions.length ? " · " + plural(sourceLoading(source).browser_actions.length, "recorded step", "recorded steps") : "") +
+      (item.visual && Number.isFinite(Number(item.visual.changed_ratio)) && item.visual.changed_ratio !== null ? " · last screenshot " + (Number(item.visual.changed_ratio) * 100).toFixed(1) + "% different" : "")],
     ["Bot check", item.bot_check ? item.bot_check.vendor + " challenge, " + fmt(item.bot_check.captured_at) + " (" + (item.bot_check.via === "browser" ? "after a browser render" : "plain request") + ")" : "None seen"],
     ["Fetch error", item.fetch_error || "None"], ["Extraction error", item.extraction_error || "None"],
     ["Text fingerprint (SHA-256)", item.normalized_hash || "Not available", true], ["Saved HTML fingerprint", item.html_hash || "Not available", true],
@@ -3841,6 +3891,10 @@ function openScanSchedule(ids) {
   $("scanWait").value = String(loading.browser_wait_seconds);
   $("scanWaitSelector").value = loading.browser_wait_selector;
   $("scanDismiss").checked = loading.browser_dismiss_cookies;
+  $("scanSteps").value = loading.browser_actions.length ? JSON.stringify(loading.browser_actions, null, 2) : "";
+  $("scanVisual").checked = loading.visual_compare;
+  $("scanVisualThreshold").value = loading.visual_alert_threshold ? String(Math.round(loading.visual_alert_threshold * 1000) / 10) : "";
+  $("scanRecorder").href = L.recorderBookmarklet();
   $("scanLoading").open = loading.fetch_mode !== "http";
   renderScanLoading();
   renderScanPreview();
@@ -3853,21 +3907,40 @@ function sourceLoading(source) {
     fetch_mode: ["http", "auto", "browser"].indexOf(s.fetch_mode) >= 0 ? s.fetch_mode : "http",
     browser_wait_seconds: Number.isInteger(s.browser_wait_seconds) ? s.browser_wait_seconds : 3,
     browser_wait_selector: String(s.browser_wait_selector || ""),
-    browser_dismiss_cookies: s.browser_dismiss_cookies !== false
+    browser_dismiss_cookies: s.browser_dismiss_cookies !== false,
+    browser_actions: Array.isArray(s.browser_actions) ? s.browser_actions : [],
+    visual_compare: s.visual_compare === true,
+    visual_alert_threshold: typeof s.visual_alert_threshold === "number" ? s.visual_alert_threshold : null
   };
+}
+function scanStepsValue() {
+  const raw = $("scanSteps").value.trim();
+  if (!raw) return { steps: [], error: "" };
+  let parsed;
+  try { parsed = JSON.parse(raw); } catch (_) { return { steps: [], error: "The steps are not valid JSON. Paste what the recorder copied." }; }
+  return L.validateBrowserSteps(parsed);
 }
 function scanLoadingState() {
   return {
     fetch_mode: $("scanFetchMode").value,
     browser_wait_seconds: Math.max(0, Math.min(20, Math.round(Number($("scanWait").value) || 0))),
     browser_wait_selector: $("scanWaitSelector").value.trim().slice(0, 200),
-    browser_dismiss_cookies: $("scanDismiss").checked
+    browser_dismiss_cookies: $("scanDismiss").checked,
+    browser_actions: $("scanFetchMode").value === "browser" ? scanStepsValue().steps : [],
+    visual_compare: $("scanFetchMode").value === "browser" && $("scanVisual").checked,
+    visual_alert_threshold: $("scanFetchMode").value === "browser" && $("scanVisual").checked && Number($("scanVisualThreshold").value) > 0
+      ? Math.min(1, Math.max(0.001, Number($("scanVisualThreshold").value) / 100)) : null
   };
 }
 function renderScanLoading() {
   const loading = scanLoadingState();
   $("scanBrowserOptions").hidden = loading.fetch_mode === "http";
-  $("scanLoadingNow").textContent = FETCH_MODE_WORDS[loading.fetch_mode];
+  $("scanBrowserOnly").hidden = loading.fetch_mode !== "browser";
+  $("scanVisualThresholdRow").hidden = !$("scanVisual").checked;
+  const steps = scanStepsValue();
+  $("scanStepsHelp").textContent = steps.error || (steps.steps.length ? steps.steps.map((step, index) => (index + 1) + ". " + L.describeBrowserStep(step)).join("  ") : "No steps: the page is read as it loads.");
+  $("scanStepsHelp").classList.toggle("is-error", !!steps.error);
+  $("scanLoadingNow").textContent = FETCH_MODE_WORDS[loading.fetch_mode] + (loading.browser_actions.length ? " · " + plural(loading.browser_actions.length, "step", "steps") : "") + (loading.visual_compare ? " · screenshots" : "");
 }
 function submitScanSchedule(reset) {
   const ids = state.pendingScanSchedule || [];
@@ -3875,10 +3948,12 @@ function submitScanSchedule(reset) {
   const payload = L.scanSchedulePayload(ids, schedule);
   const loading = scanLoadingState();
   let words = "scan schedule → " + L.scanScheduleLabel(schedule);
+  if (!reset && $("scanFetchMode").value === "browser" && scanStepsValue().error) { showToast(scanStepsValue().error); return; }
   if (!reset && JSON.stringify(loading) !== state.scanLoadingBase) {
-    const defaults = { fetch_mode: "http", browser_wait_seconds: 3, browser_wait_selector: "", browser_dismiss_cookies: true };
+    const defaults = { fetch_mode: "http", browser_wait_seconds: 3, browser_wait_selector: "", browser_dismiss_cookies: true,
+      browser_actions: [], visual_compare: false, visual_alert_threshold: null };
     Object.keys(defaults).forEach(key => {
-      if (loading[key] === defaults[key]) payload.clear.push(key); else payload.set[key] = loading[key];
+      if (JSON.stringify(loading[key]) === JSON.stringify(defaults[key])) payload.clear.push(key); else payload.set[key] = loading[key];
     });
     words += "; pages loaded with " + FETCH_MODE_WORDS[loading.fetch_mode].toLowerCase();
   }
@@ -9039,6 +9114,9 @@ $("scanScheduleReset").addEventListener("click", () => submitScanSchedule(true))
 $("scanScheduleForm").addEventListener("submit", event => { event.preventDefault(); submitScanSchedule(false); });
 ["scanEvery", "scanWindowOn", "scanFrom", "scanUntil", "scanZone"].forEach(id => $(id).addEventListener("change", renderScanPreview));
 ["scanFetchMode", "scanWait", "scanWaitSelector", "scanDismiss"].forEach(id => $(id).addEventListener("change", renderScanLoading));
+["scanVisual", "scanVisualThreshold"].forEach(id => $(id).addEventListener("change", renderScanLoading));
+$("scanSteps").addEventListener("input", renderScanLoading);
+$("scanRecorder").addEventListener("click", event => { event.preventDefault(); showToast("Drag this link to your bookmarks bar, then click it on the portal you want to record."); });
 $("scanScheduleDialog").addEventListener("click", event => {
   if (event.target === $("scanScheduleDialog")) return $("scanScheduleDialog").close();
   const mode = event.target.closest("[data-scan-days]");

@@ -340,6 +340,19 @@ def build_notifications(report: dict) -> list[dict]:
             if event_id in impact_lines:
                 generic["downstream"] = impact_lines[event_id]
             output.append(generic)
+        elif kind == "VISUAL_CHANGED":
+            # Opt-in per monitor (visual_alert_threshold): the page looks different
+            # while its text and markup are the same, e.g. a chart or image changed.
+            share = (event.get("visual") or {}).get("changed_ratio")
+            output.append({
+                "event_id": event_id, "kind": kind, "variant": "generic", "url": event.get("url"),
+                "topic": "Page looks different",
+                "summary": "The rendered page differs visually from the last screenshot while its text and markup are unchanged"
+                           + (f" ({share:.1%} of the page)." if isinstance(share, (int, float)) else "."),
+                "reason": "The monitor compares a screenshot of each render and alerts above its visual threshold.",
+                "impact": "Open the change to see the marked regions on the before and after screenshots.",
+                "priority": 3, "tags": ["eyes", "regulatory"],
+            })
         elif kind in {"FETCH_ERROR", "EXTRACTION_ERROR"}:
             # A failure alerts only once it has persisted for the configured
             # number of consecutive scans, so a one-off timeout on a regulator
@@ -421,7 +434,7 @@ def build_notifications(report: dict) -> list[dict]:
 # Content alerts a shadow-mode source does not send. Operational alerts
 # (fetch and extraction failures, held removals) still go out: they are about
 # ChangeSentinel itself, which a trial run needs to know.
-SHADOW_MUTED_KINDS = {"CHANGED_URL", "NEW_URL", "REMOVED_URL"}
+SHADOW_MUTED_KINDS = {"CHANGED_URL", "NEW_URL", "REMOVED_URL", "VISUAL_CHANGED"}
 
 
 def _without_shadow_changes(report: dict, output: list[dict]) -> list[dict]:
@@ -441,7 +454,7 @@ def _without_shadow_changes(report: dict, output: list[dict]) -> list[dict]:
     ]
 
 
-CHANGE_LINK_KINDS = {"CHANGED_URL", "NEW_URL", "REMOVED_URL", "FETCH_ERROR", "EXTRACTION_ERROR", "AI_ASSESSMENT"}
+CHANGE_LINK_KINDS = {"CHANGED_URL", "NEW_URL", "REMOVED_URL", "VISUAL_CHANGED", "FETCH_ERROR", "EXTRACTION_ERROR", "AI_ASSESSMENT"}
 RUN_LINK_KINDS = {"REMOVAL_HELD", "DISCOVERY_DEGRADED", "DISCOVERY_FAILED"}
 
 

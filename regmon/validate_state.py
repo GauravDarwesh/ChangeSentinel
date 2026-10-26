@@ -7,7 +7,7 @@ import os
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-POINTER_KEYS = ("snapshot_location", "html_snapshot_location", "file_snapshot_location", "evidence_location")
+POINTER_KEYS = ("snapshot_location", "html_snapshot_location", "file_snapshot_location", "visual_snapshot_location", "evidence_location")
 
 
 def _has_prior_source_state(source_id: str, discovery_dir: Path) -> bool:

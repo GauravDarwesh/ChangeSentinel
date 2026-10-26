@@ -68,6 +68,14 @@ class SourceConfig:
     browser_wait_seconds: int = 3
     browser_wait_selector: str = ""
     browser_dismiss_cookies: bool = True
+    # Recorded steps replayed in the browser before the page is read
+    # (regmon/browser_actions.py), and a screenshot per render compared
+    # visually (regmon/visual.py). visual_alert_threshold, when set, is the
+    # share of the page (0.001-1) that must look different to raise
+    # VISUAL_CHANGED when the text and markup are unchanged.
+    browser_actions: tuple = ()
+    visual_compare: bool = False
+    visual_alert_threshold: float | None = None
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "SourceConfig":
@@ -127,11 +135,14 @@ class SourceConfig:
             browser_wait_seconds=int(value.get("browser_wait_seconds", 3)),
             browser_wait_selector=str(value.get("browser_wait_selector", "") or "").strip(),
             browser_dismiss_cookies=bool(value.get("browser_dismiss_cookies", True)),
+            browser_actions=tuple(dict(step) for step in value.get("browser_actions") or []),
+            visual_compare=bool(value.get("visual_compare", False)),
+            visual_alert_threshold=(float(value["visual_alert_threshold"]) if value.get("visual_alert_threshold") is not None else None),
         )
 
 
 SOURCE_KEYS = {field.name for field in fields(SourceConfig)}
-BOOL_KEYS = {"active", "baseline_on_first_run", "use_http_discovery", "alert_only_on_condition", "shadow", "browser_dismiss_cookies"}
+BOOL_KEYS = {"active", "baseline_on_first_run", "use_http_discovery", "alert_only_on_condition", "shadow", "browser_dismiss_cookies", "visual_compare"}
 MAX_ALERT_CONDITION_CHARS = 500
 MAX_LABELS = 12
 FETCH_MODES = ("http", "browser", "auto")
@@ -203,6 +214,23 @@ def _validate_source_types(value: dict[str, Any]) -> None:
         selector = value["browser_wait_selector"]
         if not isinstance(selector, str) or len(selector) > 200 or any(ch in selector for ch in "\r\n"):
             raise ValueError(f"Source {sid}: browser_wait_selector must be a CSS selector of at most 200 characters")
+    if "browser_actions" in value:
+        from regmon.browser_actions import ActionError, validate_actions
+
+        try:
+            validate_actions(value["browser_actions"], f"Source {sid}: browser_actions")
+        except ActionError as exc:
+            raise ValueError(str(exc)) from exc
+        if value["browser_actions"] and value.get("fetch_mode") != "browser":
+            raise ValueError(f"Source {sid}: browser_actions need fetch_mode \"browser\"")
+    if value.get("visual_compare") is True and value.get("fetch_mode") != "browser":
+        raise ValueError(f"Source {sid}: visual_compare needs fetch_mode \"browser\"")
+    if value.get("visual_alert_threshold") is not None:
+        threshold = value["visual_alert_threshold"]
+        if isinstance(threshold, bool) or not isinstance(threshold, (int, float)) or not 0.001 <= threshold <= 1:
+            raise ValueError(f"Source {sid}: visual_alert_threshold must be a share of the page from 0.001 to 1")
+        if value.get("visual_compare") is not True:
+            raise ValueError(f"Source {sid}: visual_alert_threshold needs visual_compare")
     if "workspace" in value:
         validate_tag(value["workspace"], "workspace", sid)
     if "labels" in value:

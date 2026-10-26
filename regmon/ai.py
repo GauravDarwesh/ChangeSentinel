@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import random
 import re
 import time
 from dataclasses import dataclass
@@ -107,11 +108,17 @@ def condition_prompt(condition: str) -> str:
 
 
 def _retry_after_seconds(response, attempt: int, cap: float = 30.0) -> float:
+    """The provider's Retry-After, else a growing, jittered wait (5 s, 15 s, 30 s).
+
+    The free router rate-limits bursts (several CI runs or a scan's backlog at
+    once) and often sends no Retry-After: a one-second pause retried inside the
+    same burst and failed again. Jitter keeps parallel runs from retrying in step.
+    """
     value = response.headers.get("retry-after") if response is not None else None
     try:
         return max(0.0, min(cap, float(value)))
     except (TypeError, ValueError):
-        return float(attempt)
+        return min(cap, 5.0 * 3 ** (max(1, attempt) - 1)) + random.uniform(0.0, 2.0)
 
 def analyze(
     regulator: str,

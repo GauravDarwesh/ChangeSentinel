@@ -39,7 +39,7 @@ from pathlib import Path
 
 POSITIVE = {"material", "action_required"}
 NEGATIVE = {"not_material"}
-ALERTABLE = {"CHANGED_URL", "NEW_URL", "REMOVED_URL"}
+ALERTABLE = {"CHANGED_URL", "NEW_URL", "REMOVED_URL", "VISUAL_CHANGED"}
 SCORED = ALERTABLE | {"HTML_SOURCE_CHANGED"}
 QUIET_VARIANTS = {"ai_irrelevant", "condition_not_met"}  # as regmon/notify.py names them
 STOPWORDS = frozenset("""
