@@ -14,7 +14,7 @@ import tempfile
 import requests
 
 from regmon import channels as alert_channels
-from regmon import item_codes
+from regmon import item_codes, spec_diff
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -213,6 +213,12 @@ def build_notifications(report: dict) -> list[dict]:
         line = item_codes.describe(event.get("item_codes")) if isinstance(event.get("item_codes"), dict) else ""
         if line and event.get("event_id"):
             item_lines[event["event_id"]] = line
+    # Structured rule/field changes ride along the same way.
+    spec_lines = {}
+    for event in report.get("events", []):
+        line = spec_diff.describe(event.get("spec")) if isinstance(event.get("spec"), dict) else ""
+        if line and event.get("event_id"):
+            spec_lines[event["event_id"]] = line
 
     output = []
     seen = set()
@@ -283,6 +289,8 @@ def build_notifications(report: dict) -> list[dict]:
             }
             if result["event_id"] in item_lines:
                 item["reporting_items"] = item_lines[result["event_id"]]
+            if result["event_id"] in spec_lines:
+                item["spec_changes"] = spec_lines[result["event_id"]]
             if condition_line:
                 item["condition"] = condition_line
             output.append(item)
@@ -319,6 +327,8 @@ def build_notifications(report: dict) -> list[dict]:
             }
             if event_id in item_lines:
                 generic["reporting_items"] = item_lines[event_id]
+            if event_id in spec_lines:
+                generic["spec_changes"] = spec_lines[event_id]
             output.append(generic)
         elif kind in {"FETCH_ERROR", "EXTRACTION_ERROR"}:
             # A failure alerts only once it has persisted for the configured
@@ -462,6 +472,8 @@ def publish(notification: dict, topic: str, server: str, dashboard_url: str = ""
         details += f"Alert condition: {_stated(notification.get('condition'))}\n"
     if _stated(notification.get("reporting_items")):
         details += f"Reporting items: {_stated(notification.get('reporting_items'))}\n"
+    if _stated(notification.get("spec_changes")):
+        details += f"Spec changes: {_stated(notification.get('spec_changes'))}\n"
     message = (
         f"Event: {notification['kind']}\n"
         f"Topic: {notification['topic']}\n"

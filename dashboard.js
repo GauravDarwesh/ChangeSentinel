@@ -117,7 +117,7 @@ const state = {
   items: [], view: "overview", loaded: false,
   selectedId: "", selectedChangeId: "", selectedRunId: "", selectedNotificationId: "", selectedHealthKey: "", health: null, pendingCondition: null,
   mobileDetail: false,
-  filter: "ALL", changeFilter: "ALL", detailTab: "", diffMode: "compare", snapshotMode: "preview",
+  filter: "ALL", changeFilter: "ALL", specFilter: "attention", detailTab: "", diffMode: "compare", snapshotMode: "preview",
   docInfo: {}, titleQueue: [], titleWorkers: 0, titleTimer: null,
   snapshotCache: boundedCache(24), htmlCache: boundedCache(12), evidenceCache: boundedCache(80), pdfPreviewUrl: "", toastTimer: null,
   assetSignatures: {}, renderedSignature: "", lastFullLoad: 0, loading: null, detailKeys: {},
@@ -580,6 +580,7 @@ function eventHeadline(event) {
   const verdict = verdictFor(event);
   if (verdict.analysis && verdict.analysis.summary) return verdict.analysis.summary;
   if (event.evidence && event.evidence.error) return event.evidence.error;
+  if (isPlainObject(event.spec) && event.spec.headline) return String(event.spec.headline);
   if (event.event_type === "HTML_SOURCE_CHANGED") return "The page markup changed; the extracted text is the same.";
   if (event.event_type === "REMOVED_URL") return "This page was no longer found in a complete scan.";
   if (event.event_type === "NEW_URL") return "A new page entered the monitored scope.";
@@ -1857,7 +1858,7 @@ function changeRow(entry, options) {
     '<span class="row-mark ' + toneClass(entry) + '" aria-hidden="true"></span>' +
     '<span class="row-title">' + esc(eventTitle(entry)) + "</span>" +
     '<span class="row-time">' + esc(rowTime(entry.timestamp)) + "</span>" +
-    '<span class="row-sub"><span class="tag ' + toneClass(entry) + '">' + esc(L.eventLabel(entry.event_type)) + "</span>" + verdictTag(verdict, entry) + reviewTag(reviewFor(entry.event_id)) + "</span>" +
+    '<span class="row-sub"><span class="tag ' + toneClass(entry) + '">' + esc(L.eventLabel(entry.event_type)) + "</span>" + verdictTag(verdict, entry) + reviewTag(reviewFor(entry.event_id)) + specTag(entry) + "</span>" +
     '<span class="row-summary">' + esc(eventHeadline(entry)) + "</span></button>";
 }
 function filteredChanges() {
@@ -2209,11 +2210,12 @@ function renderChangeDetail() {
   const boxId = "change-evidence";
   pane.innerHTML = '<div class="detail-inner">' +
     detailHeading({ back: true, source, title: eventTitle(entry), meta, actions }) +
-    renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id="change-items"></div>' + evidenceSheet(entry, boxId) + "</div>";
+    renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id="change-spec"></div><div id="change-items"></div>' + evidenceSheet(entry, boxId) + "</div>";
   const eventId = entry.event_id;
   const stillCurrent = () => state.view === "changes" && state.selectedChangeId === eventId;
   fillEvidence(entry, boxId, stillCurrent);
   fillReportingItems(entry, "change-items", stillCurrent);
+  fillSpecChanges(entry, "change-spec", stillCurrent);
 }
 
 /* ================= Review decisions, dates, reporting items ================= */
@@ -2269,7 +2271,10 @@ function calendarDay(iso, withYear) {
   const day = L.isoDayToDate(iso);
   return day ? dateLabel(day, withYear) : String(iso || "");
 }
-function dateBasis(entry) { return entry.basis === "ai" ? "From the AI reading of the change" : "Stated in the text the change added"; }
+function dateBasis(entry) {
+  return entry.basis === "ai" ? "From the AI reading of the change"
+    : entry.basis === "spec" ? "From the effective dates of the changed rows in the specification file" : "Stated in the text the change added";
+}
 function datesSheet(entry) {
   const dates = L.datesForChange(state.calendar, entry.event_id);
   if (!dates.length) return "";
@@ -2333,6 +2338,187 @@ async function fillReportingItems(entry, slotId, stillCurrent) {
   const slot = document.getElementById(slotId);
   if (!slot || !stillCurrent() || !codes || !L.describeItemCodes(codes)) return;
   slot.innerHTML = reportingItemsSheet(codes);
+}
+
+/* ================= Structured spec changes ================= */
+
+// Rule, field and schema changes row by row (regmon/spec_diff.py): which rules
+// are new or retired and from when, which logic changed, which checks became
+// blocking, and where the regulator's own annotation disagrees with the change.
+const SPEC_ROWS_SHOWN = 40;
+const SPEC_GROUP_TONES = { added: "is-added", added_version: "is-added", reinstated: "is-added", removed: "is-removed", retired: "is-removed",
+  metadata: "", cosmetic: "" };
+const SPEC_FILTERS = [["attention", "Needs attention"], ["mismatch", "Mismatches"], ["all", "Everything"]];
+function specTag(entry) {
+  const spec = isPlainObject(entry.spec) ? entry.spec : null;
+  if (!spec) return "";
+  const line = L.describeSpec(spec);
+  if (!line) return "";
+  return (spec.escalated ? '<span class="tag is-warn" title="' + esc(line) + '">Escalated</span>' : "") +
+    '<span class="tag is-rule" title="' + esc(line) + '">' + esc(spec.declared && !Object.keys(spec.counts || {}).length ? "Declared changes" : "Spec changes") + "</span>";
+}
+function specValueText(change) {
+  const values = isPlainObject(change.values) ? change.values : {};
+  const main = values.logic || values.message || values.description || values.dtype || "";
+  return main;
+}
+function specColumns(change) {
+  const columns = (Array.isArray(change.columns) ? change.columns : []).filter(column => column && column.kind !== "systematic");
+  return columns.map(column => '<div class="spec-col"><span class="spec-col-name">' + esc(column.column || "") +
+    (column.kind === "cosmetic" ? ' <span class="spec-col-kind">cosmetic</span>' : "") + "</span>" +
+    '<span class="item-text">' + L.renderWordEdit(column.before || "", column.after || "") + "</span></div>").join("");
+}
+function specRow(table, change) {
+  const meta = [];
+  if (change.severity) {
+    const tone = change.severity.direction === "escalated" ? "is-warn" : "";
+    meta.push('<span class="tag ' + tone + '">' + esc((change.severity.before || "(blank)") + " → " + (change.severity.after || "(blank)")) +
+      (change.severity.direction !== "changed" ? " · " + esc(change.severity.direction) : "") + "</span>");
+  }
+  if (change.version && table.kind === "rules") meta.push('<span class="tag">' + esc("v" + (change.version.before || "–") + " → v" + (change.version.after || "–")) + "</span>");
+  if (change.effective) meta.push('<span class="spec-when">' + esc(change.effective) + (change.quarter && change.effective.indexOf(change.quarter) < 0 ? " (" + esc(change.quarter) + ")" : "") + "</span>");
+  if (change.field && change.field !== change.label) meta.push('<span class="spec-field">' + esc(change.field) + "</span>");
+  if (change.table && table.kind !== "codes") meta.push('<span class="spec-field">' + esc(change.table) + "</span>");
+  (Array.isArray(change.also) ? change.also : []).forEach(name => meta.push('<span class="tag is-older">' + esc(L.specCategoryLabel(table.kind, name)) + "</span>"));
+  const body = Array.isArray(change.columns) && change.columns.length ? specColumns(change)
+    : (specValueText(change) ? '<span class="item-text">' + esc(specValueText(change)) + "</span>" : "");
+  return '<li class="spec-row"><span class="item-code">' + esc(change.label || "") + "</span>" +
+    '<div class="spec-main">' + (meta.length ? '<div class="spec-meta">' + meta.join("") + "</div>" : "") + body +
+    (change.note ? '<span class="item-assets">' + esc(change.note) + "</span>" : "") +
+    (change.declared && !change.mismatch ? '<span class="spec-declared">Declared: ' + esc(change.declared) + "</span>" : "") +
+    (change.mismatch ? '<span class="spec-mismatch">' + esc(change.mismatch) + "</span>" : "") + "</div></li>";
+}
+function specTableBlock(table, filter) {
+  const nouns = L.SPEC_KIND_NOUNS[table.kind] || "Table";
+  const key = Array.isArray(table.key) && table.key.length ? " · aligned by " + table.key.join(", ") : "";
+  const rows = table.table_added ? "new in this version, " + plural(Number(table.rows_after) || 0, "row", "rows")
+    : table.table_removed ? "no longer in this version, " + plural(Number(table.rows_before) || 0, "row", "rows")
+    : (Number(table.rows_before) || 0).toLocaleString() + " → " + (Number(table.rows_after) || 0).toLocaleString() + " rows";
+  const notes = [];
+  (Array.isArray(table.patterns) ? table.patterns : []).forEach(pattern => notes.push('<p class="note-strip">' + esc(pattern.column) + ": “" + esc(pattern.from) + "” → “" +
+    esc(pattern.to) + "” in " + esc(Number(pattern.rows).toLocaleString()) + " rows. The same edit everywhere, so it is shown once rather than row by row.</p>"));
+  const reconciliation = isPlainObject(table.reconciliation) ? table.reconciliation : null;
+  if (reconciliation) {
+    const bits = [];
+    if (reconciliation.changed_not_declared_count) bits.push(plural(reconciliation.changed_not_declared_count, "row changed without being marked as changed", "rows changed without being marked as changed"));
+    if (reconciliation.declared_not_changed_count) bits.push(plural(reconciliation.declared_not_changed_count, "row marked new or updated with nothing else changed", "rows marked new or updated with nothing else changed"));
+    notes.push('<p class="note-strip is-warning">' + esc(bits.join(" · ")) + ". Check these with the regulator's change log.</p>");
+  }
+  (Array.isArray(table.warnings) ? table.warnings : []).forEach(warning => notes.push('<p class="note-strip">' + esc(warning) + "</p>"));
+  if (table.columns_added && table.columns_added.length) notes.push('<p class="note-strip">New columns: ' + esc(table.columns_added.join(", ")) + "</p>");
+  if (table.columns_removed && table.columns_removed.length) notes.push('<p class="note-strip">Columns no longer present: ' + esc(table.columns_removed.join(", ")) + "</p>");
+  if (Array.isArray(table.columns_renamed) && table.columns_renamed.length) notes.push('<p class="note-strip">Columns renamed and still compared: ' +
+    esc(table.columns_renamed.map(pair => "“" + (pair.before || "") + "” → “" + (pair.after || "") + "”").join(", ")) + "</p>");
+  const groups = L.specGroups(table, filter).map(group => '<div class="items-group"><div class="items-group-label ' + (SPEC_GROUP_TONES[group.category] === undefined ? "is-amended" : SPEC_GROUP_TONES[group.category]) + '">' +
+    esc(group.label) + " <span>" + esc(filter === "mismatch" ? group.changes.length : (table.counts && table.counts[group.category] || group.changes.length)) + "</span></div>" +
+    '<ul class="items-list">' + group.changes.slice(0, SPEC_ROWS_SHOWN).map(change => specRow(table, change)).join("") + "</ul>" +
+    (group.changes.length > SPEC_ROWS_SHOWN ? '<p class="note-strip">And ' + esc(group.changes.length - SPEC_ROWS_SHOWN) + " more in the evidence file and the CSV.</p>" : "") + "</div>").join("");
+  const empty = !groups && !table.table_added && !table.table_removed
+    ? '<p class="note-strip">' + (filter === "mismatch" ? "No mismatches in this table." : "Only metadata or cosmetic changes. Choose Everything to see them.") + "</p>" : "";
+  return '<div class="spec-table"><div class="spec-table-head"><span class="spec-table-name">' + esc(table.name || "Table") + "</span>" +
+    '<span class="sheet-note">' + esc(nouns + " · " + rows + key) + "</span></div>" + notes.join("") + groups + empty + (table.truncated ? '<p class="note-strip">The list is capped; the counts are complete.</p>' : "") +
+    (Number(table.quiet_hidden) > 0 && filter === "all" ? '<p class="note-strip">' + esc(plural(Number(table.quiet_hidden), "further metadata or cosmetic row is", "further metadata or cosmetic rows are")) + " counted but not listed.</p>" : "") + "</div>";
+}
+// The file's own change log ("Version" sheet) checked claim by claim against
+// what the comparison found (regmon/spec_diff.release_notes).
+const NOTE_ACTION_WORDS = { added: "Added", retired: "Deprecated", updated: "Updated" };
+const NOTE_FOUND_WORDS = { added: "new", added_version: "new version", updated_version: "re-versioned", retired: "retired", removed: "removed",
+  logic: "logic changed", severity: "severity changed", message: "message changed", definition: "redefined", description: "description changed",
+  effective: "dates changed", reinstated: "reinstated" };
+function releaseNotesBlock(notes) {
+  if (!isPlainObject(notes) || !Array.isArray(notes.entries) || !notes.entries.length) return "";
+  const rows = [];
+  notes.entries.forEach(entry => {
+    const where = (Array.isArray(entry.tables) && entry.tables.length ? entry.tables.join(", ") : entry.worksheet) || "";
+    (Array.isArray(entry.claims) ? entry.claims : []).forEach(claim => {
+      const differs = claim.status === "differs";
+      const found = claim.status === "unchecked" ? "no table to check against" : "found " + Number(claim.detected || 0).toLocaleString();
+      const noun = String(claim.noun || "").replace(/'s$/, "s").replace(/^dpa$/, "DPAs").replace(/^dpas$/, "DPAs");
+      rows.push('<li class="spec-row"><span class="item-code">' + esc((NOTE_ACTION_WORDS[claim.action] || claim.action) + " " + Number(claim.count).toLocaleString() + " " + noun) + "</span>" +
+        '<div class="spec-main"><div class="spec-meta"><span class="tag ' + (differs ? "is-warn" : "") + '">' + esc(differs ? "Differs · " + found : claim.status === "matches" ? "Matches" : found) + "</span>" +
+        (where ? '<span class="spec-field">' + esc(where) + "</span>" : "") + "</div></div></li>");
+    });
+    if (Number(entry.ids_listed) > 0) {
+      const missing = Number(entry.ids_not_changed_count) || 0;
+      rows.push('<li class="spec-row"><span class="item-code">' + esc(plural(Number(entry.ids_listed), "listed item", "listed items")) + "</span>" +
+        '<div class="spec-main"><div class="spec-meta"><span class="tag ' + (missing ? "is-warn" : "") + '">' + esc(missing ? missing + " not changed as described" : "All changed as described") + "</span>" +
+        (where ? '<span class="spec-field">' + esc(where) + "</span>" : "") + "</div>" +
+        (missing ? '<span class="spec-mismatch">Listed in the notes but not changed that way in the file: ' + esc((entry.ids_not_changed || []).map(id => id + (entry.ids_found_as && entry.ids_found_as[id] ? " (" + (NOTE_FOUND_WORDS[entry.ids_found_as[id]] || entry.ids_found_as[id]) + ")" : " (unchanged)")).join(", ")) + (missing > (entry.ids_not_changed || []).length ? ", …" : "") + "</span>" : "") +
+        "</div></li>");
+    }
+  });
+  (Array.isArray(notes.undocumented) ? notes.undocumented : []).forEach(item => {
+    rows.push('<li class="spec-row"><span class="item-code">' + esc(plural(Number(item.count), "unlisted change", "unlisted changes")) + "</span>" +
+      '<div class="spec-main"><div class="spec-meta"><span class="tag is-warn">Not in the notes</span><span class="spec-field">' + esc(item.table || "") + "</span></div>" +
+      '<span class="spec-mismatch">' + esc((NOTE_ACTION_WORDS[item.action] || item.action) + " in the file but missing from the notes' list: " + (item.labels || []).join(", ") +
+        (Number(item.count) > (item.labels || []).length ? ", …" : "")) + "</span></div></li>");
+  });
+  if (!rows.length) return "";
+  const differs = Number(notes.differs) || 0;
+  return '<div class="spec-table"><div class="spec-table-head"><span class="spec-table-name">' + esc("Release notes v" + (notes.version || "?")) + "</span>" +
+    '<span class="sheet-note">' + esc((notes.date ? notes.date + " · " : "") + (differs ? plural(differs, "point the file does not bear out", "points the file does not bear out") : "every claim matches the file")) + "</span></div>" +
+    '<p class="note-strip' + (differs ? " is-warning" : "") + '">The file’s own change log, checked against the rows that actually changed.' + (differs ? " Raise the differences with the regulator before relying on the notes." : "") + "</p>" +
+    '<ul class="items-list">' + rows.join("") + "</ul></div>";
+}
+function specSheet(spec, eventId) {
+  const filter = state.specFilter || "attention";
+  const tables = Array.isArray(spec.tables) ? spec.tables : [];
+  const mismatches = (Number(spec.mismatches) || 0) + (spec.release_notes ? Number(spec.release_notes.differs) || 0 : 0);
+  const note = (L.describeSpec({ counts: spec.counts || {}, escalated: spec.escalated, labels: [] }) || "Only metadata or cosmetic changes") +
+    " · " + plural(tables.length, "table", "tables") + (mismatches ? " · " + plural(mismatches, "mismatch", "mismatches") : "");
+  const filters = '<div class="segmented" role="group" aria-label="Show">' + SPEC_FILTERS.filter(([key]) => key !== "mismatch" || mismatches)
+    .map(([key, label]) => '<button type="button" data-spec-filter="' + key + '" aria-pressed="' + String(filter === key) + '">' + label + "</button>").join("") + "</div>";
+  return '<section class="sheet" aria-labelledby="change-spec-title"><div class="sheet-head"><div><h3 class="sheet-title" id="change-spec-title">Specification changes</h3>' +
+    '<div class="sheet-note">' + esc(note) + "</div></div>" + filters + "</div>" +
+    '<div class="items-body">' + (filter !== "mismatch" || (spec.release_notes && spec.release_notes.differs) ? releaseNotesBlock(spec.release_notes) : "") +
+    tables.filter(table => filter !== "mismatch" || L.specGroups(table, filter).length).map(table => specTableBlock(table, filter)).join("") + "</div>" +
+    '<div class="sheet-foot"><span class="sheet-note">Rows are aligned by their rule or field key, so an inserted row is one new item. Read from the saved texts, the same on every run.</span>' +
+    '<button class="sheet-link" type="button" data-spec-csv="' + esc(eventId) + '">Download CSV</button></div></section>';
+}
+function specInventorySheet(inventory) {
+  const tables = (Array.isArray(inventory.tables) ? inventory.tables : []).filter(table => table && table.declared && Object.keys(table.declared).length);
+  if (!tables.length) return "";
+  const words = { new: "marked new", updated: "marked updated", retired: "marked retired" };
+  const totals = inventory.declared || {};
+  const note = ["new", "updated", "retired"].filter(key => totals[key]).map(key => totals[key] + " " + words[key]).join(", ");
+  const body = tables.map(table => {
+    const declared = table.declared || {};
+    return '<div class="spec-table"><div class="spec-table-head"><span class="spec-table-name">' + esc(table.name || "Table") + "</span>" +
+      '<span class="sheet-note">' + esc((L.SPEC_KIND_NOUNS[table.kind] || "Table") + " · " + Number(table.rows || 0).toLocaleString() + " rows · " +
+        ["new", "updated", "retired"].filter(key => declared[key]).map(key => declared[key] + " " + words[key]).join(", ")) + "</span></div>" +
+      '<ul class="items-list">' + (Array.isArray(table.items) ? table.items : []).slice(0, SPEC_ROWS_SHOWN).map(item => '<li class="spec-row"><span class="item-code">' + esc(item.label || "") + "</span>" +
+        '<div class="spec-main"><div class="spec-meta"><span class="tag ' + (item.action === "retired" ? "" : "is-warn") + '">' + esc(item.declared || "") + "</span>" +
+        (item.effective ? '<span class="spec-when">' + esc(item.effective) + "</span>" : "") + "</div></div></li>").join("") + "</ul></div>";
+  }).join("");
+  return '<section class="sheet" aria-labelledby="change-spec-title"><div class="sheet-head"><div><h3 class="sheet-title" id="change-spec-title">Declared in this file</h3>' +
+    '<div class="sheet-note">' + esc(note) + ". The first saved copy has nothing to compare with, so this is what the file says about itself.</div></div></div>" +
+    '<div class="items-body">' + body + "</div></section>";
+}
+async function fillSpecChanges(entry, slotId, stillCurrent) {
+  if (!entry.evidence_location || (!isPlainObject(entry.spec) && entry.event_type !== "CHANGED_URL" && entry.event_type !== "NEW_URL")) return;
+  let evidence;
+  try { evidence = await loadEvidence(entry.evidence_location); } catch (_) { return; }
+  const slot = document.getElementById(slotId);
+  if (!slot || !stillCurrent()) return;
+  if (isPlainObject(evidence.spec_diff) && Array.isArray(evidence.spec_diff.tables) && evidence.spec_diff.tables.length) {
+    slot.innerHTML = specSheet(evidence.spec_diff, entry.event_id);
+  } else if (isPlainObject(evidence.spec_inventory)) {
+    slot.innerHTML = specInventorySheet(evidence.spec_inventory);
+  }
+}
+async function downloadSpecCsv(eventId) {
+  const entry = changeById(eventId);
+  if (!entry || !entry.evidence_location) { showToast("That change is no longer in the record."); return; }
+  try {
+    const evidence = await loadEvidence(entry.evidence_location);
+    if (!isPlainObject(evidence.spec_diff)) { showToast("This change has no structured spec changes."); return; }
+    const rows = L.specCsvRows(evidence.spec_diff);
+    downloadFile("changesentinel-spec-" + L.fileSlug(eventTitle(entry), 40) + "-" + String(entry.timestamp || "").slice(0, 10) + ".csv",
+      "text/csv;charset=utf-8", "\ufeff" + L.toCsv(rows));
+    showToast("Exported " + plural(rows.length - 1, "changed item", "changed items") + ".");
+  } catch (error) {
+    showToast("Couldn't load the evidence file: " + String(error.message || error));
+  }
 }
 
 /* ================= Detail: a page ================= */
@@ -7569,7 +7755,7 @@ function exportChanges() {
   const entries = filteredChanges();
   if (!entries.length) { showToast("Nothing to export: the list is empty."); return; }
   const rows = [["Detected (UTC)", "Event", "Page", "URL", "Source", "AI assessment", "AI topic", "Review decision", "Reviewed by", "Reviewed at (UTC)",
-    "Rationale", "Owner", "Ticket", "Reporting items", "Dates", "Dashboard link", "Evidence file", "Event ID"]];
+    "Rationale", "Owner", "Ticket", "Reporting items", "Spec changes", "Dates", "Dashboard link", "Evidence file", "Event ID"]];
   entries.forEach(entry => {
     const item = itemForEvent(entry);
     const verdict = verdictFor(entry);
@@ -7581,6 +7767,7 @@ function exportChanges() {
       analysis.topic || "", review ? L.REVIEW_DECISIONS[review.decision] || review.label || "" : "", review ? review.reviewed_by || "" : "", review ? review.reviewed_at || "" : "",
       review ? review.rationale || "" : "", review ? review.owner || "" : "", review ? review.ticket || "" : "",
       L.describeItemCodes(entry.item_codes),
+      L.describeSpec(entry.spec),
       L.datesForChange(state.calendar, entry.event_id).map(date => date.date + " " + (date.label || "")).join("; "),
       changeDashboardLink(entry), entry.evidence_location ? REPO + "/blob/main/" + entry.evidence_location : "", entry.event_id || ""
     ]);
@@ -7629,6 +7816,7 @@ async function downloadEvidencePack(eventId) {
     review: { current: reviewFor(entry.event_id), history: reviewLog(entry.event_id) },
     dates: L.datesForChange(state.calendar, entry.event_id),
     reporting_items: codes,
+    spec_changes: evidence && isPlainObject(evidence.spec_diff) ? evidence.spec_diff : (evidence && isPlainObject(evidence.spec_inventory) ? evidence.spec_inventory : null),
     lineage: codeList.length ? codeList.map(code => ({ code, assets: L.lineageFor(code, state.lineage) })).filter(row => row.assets.length) : [],
     files,
     verification: "Each sha256 is the fingerprint recorded when the file was saved; the file name carries it too. Recompute it (for example `shasum -a 256 <file>`) to confirm the saved copy is unchanged, and use the history link for when it was committed.",
@@ -7709,7 +7897,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -7739,6 +7927,13 @@ $("workspace").addEventListener("click", event => {
   if (data.calendarComplete) return toggleCadenceOccurrence(data.calendarComplete, data.calendarDate, data.calendarDone === "true");
   if (data.calendarTest !== undefined) return sendCadenceTestEmail();
   if (data.calendarSignout !== undefined) return signOutCadence();
+  if (data.specFilter) {
+    state.specFilter = data.specFilter;
+    const entry = changeById(state.selectedChangeId);
+    if (entry) fillSpecChanges(entry, "change-spec", () => state.view === "changes" && state.selectedChangeId === entry.event_id);
+    return;
+  }
+  if (data.specCsv) return downloadSpecCsv(data.specCsv);
   if (data.reviewChange) return openReview(data.reviewChange);
   if (data.evidencePack) return downloadEvidencePack(data.evidencePack);
   if (data.exportChanges !== undefined) return exportChanges();

@@ -34,7 +34,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import deadlines, health, item_codes, reviews, schedule
+from regmon import deadlines, health, item_codes, reviews, schedule, spec_diff
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -292,6 +292,19 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
     }
 
 
+def structured_spec(event_type: str, before_text: str | None, after_text: str | None) -> tuple[dict | None, dict | None]:
+    """Row-level rule/field/schema changes, never allowed to break a scan."""
+    try:
+        if event_type == "CHANGED_URL":
+            return spec_diff.diff(before_text, after_text), None
+        if event_type == "NEW_URL":
+            inventory = spec_diff.inventory(after_text)
+            return None, inventory if inventory and inventory.get("declared") else None
+    except Exception as exc:  # pragma: no cover - defensive: insights never break detection
+        print(f"Structured spec diff skipped: {type(exc).__name__}: {exc}")
+    return None, None
+
+
 CHANGE_HISTORY_LIMIT = 20
 CONTENT_CHANGE_EVENTS = {"NEW_URL", "CHANGED_URL"}
 
@@ -306,6 +319,8 @@ def record_change(item: dict, event: dict) -> None:
     }
     if event.get("item_codes"):
         entry["item_codes"] = event["item_codes"]
+    if event.get("spec"):
+        entry["spec"] = event["spec"]
     history = [old for old in (item.get("change_history") or []) if old.get("event_id") != entry["event_id"]]
     item["change_history"] = [entry, *history][:CHANGE_HISTORY_LIMIT]
     if event["event_type"] in CONTENT_CHANGE_EVENTS:
@@ -865,11 +880,15 @@ def process_source(
                     event_id = build_event_id(event_type, uid, before_hash, after_hash)
                     evidence = None
                     codes = None
+                    spec = spec_inventory = None
                     if event_type in {"NEW_URL","CHANGED_URL","HTML_SOURCE_CHANGED"}:
                         before_text = old_text if old_text is not None else read_snapshot(old)
                         # Which reporting items the change added, retired or redefined
                         # (deterministic, from the full texts rather than the capped diff).
                         codes = item_codes.diff(before_text, text) if event_type == "CHANGED_URL" else None
+                        # Rule, field and schema changes row by row (regmon/spec_diff.py);
+                        # for a file seen for the first time, what it declares about itself.
+                        spec, spec_inventory = structured_spec(event_type, before_text, text)
                         evidence = (
                             _write_evidence(
                                 ROOT, event_type, event_id, url, now, old, item,
@@ -878,6 +897,8 @@ def process_source(
                                 before_html=read_html_snapshot(old),
                                 after_html=html_body.decode("utf-8", "replace") if html_body is not None else None,
                                 item_codes=codes,
+                                spec_diff=spec,
+                                spec_inventory=spec_inventory,
                             )
                             if not dry_run
                             else None
@@ -888,6 +909,9 @@ def process_source(
                     codes_summary = item_codes.summary(codes)
                     if codes_summary:
                         event["item_codes"] = codes_summary
+                    spec_summary = spec_diff.summary(spec) or spec_diff.inventory_summary(spec_inventory)
+                    if spec_summary:
+                        event["spec"] = spec_summary
                     if item.get("migration_reason"):
                         event["migration_reason"] = item["migration_reason"]
                     if event_type in {"NEW_URL", "CHANGED_URL", "HTML_SOURCE_CHANGED"}:

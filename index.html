@@ -1839,6 +1839,24 @@
 .item-text ins { color: var(--ins); background: var(--ins-soft); text-decoration: underline; text-decoration-thickness: 1.25px; text-underline-offset: 3px; }
 .item-assets { grid-column: 2; color: var(--ink-3); font-size: 12.5px; line-height: 1.55; }
 .item-asset { color: var(--ink); font: 400 12px/1.6 var(--font-code); }
+.spec-table + .spec-table { border-top: 1px solid var(--line); }
+.spec-table-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 14px 18px 2px; }
+.spec-table-name { color: var(--ink); font-size: 13px; font-weight: 500; }
+.spec-table .note-strip { padding: 6px 18px; }
+.spec-table .items-group + .items-group { border-top: 0; }
+.spec-row { display: grid; grid-template-columns: minmax(88px, 156px) minmax(0, 1fr); gap: 2px 14px; padding: 7px 18px; }
+.spec-row .item-code { overflow-wrap: anywhere; }
+.spec-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
+.spec-main > * { grid-column: 1; }
+.spec-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 12px; }
+.spec-when { color: var(--ink-2); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.spec-field { color: var(--ink-3); font: 400 12px/1.6 var(--font-code); }
+.spec-col { display: grid; grid-template-columns: minmax(96px, max-content) minmax(0, 1fr); gap: 2px 12px; align-items: baseline; }
+.spec-col-name { color: var(--ink-3); font-size: 12px; }
+.spec-col-kind { color: var(--ink-3); font-style: italic; }
+.spec-declared { color: var(--ink-3); font-size: 12px; }
+.spec-mismatch { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-size: 12.5px; }
+.spec-mismatch::before { content: ""; width: 6px; height: 6px; background: var(--accent); box-shadow: var(--glow); }
 .integrity-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 16px; padding: 11px 18px; border-top: 1px solid var(--line); }
 .integrity-row:first-child { border-top: 0; }
 .integrity-name { font-size: 13.5px; }
@@ -1847,7 +1865,7 @@
 .integrity-path { color: var(--ink-3); font: 400 11.5px/1.6 var(--font-code); }
 .integrity-detail { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--ink-3); font-size: 12px; }
 @media (max-width: 560px) {
-  .date-row, .item-row { grid-template-columns: 1fr; }
+  .date-row, .item-row, .spec-row, .spec-col { grid-template-columns: 1fr; }
   .date-quote, .date-basis, .item-assets { grid-column: 1; }
 }
 

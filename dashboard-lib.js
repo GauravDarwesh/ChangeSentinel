@@ -2388,6 +2388,73 @@
     return parts.join(", ") + (shown ? " (" + shown + ")" : "");
   }
 
+  /* ---------- Structured spec changes (regmon/spec_diff.py) ---------- */
+
+  const SPEC_CATEGORIES = ["added", "added_version", "severity", "logic", "retired", "reinstated", "effective", "message",
+    "definition", "description", "removed", "metadata", "cosmetic"];
+  const SPEC_LABELS_BASE = {
+    added: "New field", added_version: "New version of existing field", severity: "Severity changed", logic: "Derivation changed",
+    retired: "Retired", reinstated: "Reinstated", effective: "Effective dates changed", message: "Message changed",
+    definition: "Definition changed", description: "Description changed", removed: "Removed from file", metadata: "Metadata only", cosmetic: "Cosmetic only"
+  };
+  // Mirrors CATEGORY_LABELS in regmon/spec_diff.py.
+  const SPEC_LABELS = {
+    rules: Object.assign({}, SPEC_LABELS_BASE, { added: "New rule", added_version: "New version of existing rule", logic: "Logic changed" }),
+    fields: SPEC_LABELS_BASE,
+    concepts: Object.assign({}, SPEC_LABELS_BASE, { added: "New element", removed: "Element removed" }),
+    types: Object.assign({}, SPEC_LABELS_BASE, { added: "New type", removed: "Type removed" }),
+    codes: { added: "New code", removed: "Code removed", description: "Label changed", definition: "Definition changed", metadata: "Metadata only", cosmetic: "Cosmetic only" },
+    labels: { added: "New label", removed: "Label removed", description: "Label changed", definition: "Definition changed", metadata: "Metadata only", cosmetic: "Cosmetic only" }
+  };
+  const SPEC_KIND_NOUNS = { rules: "Rule table", fields: "Field table", concepts: "Schema elements", types: "Schema types", codes: "Code list", labels: "Labels" };
+  const SPEC_QUIET = ["metadata", "cosmetic"];
+  function specCategoryLabel(kind, category) {
+    const labels = SPEC_LABELS[kind] || SPEC_LABELS.fields;
+    return labels[category] || SPEC_LABELS_BASE[category] || String(category || "");
+  }
+  // Group a table's changes by category in importance order; filter is
+  // "all", "attention" (no metadata/cosmetic) or "mismatch".
+  function specGroups(table, filter) {
+    const changes = (table && Array.isArray(table.changes) ? table.changes : []).filter(change => change && typeof change === "object")
+      .filter(change => filter === "attention" ? SPEC_QUIET.indexOf(change.category) < 0 : filter === "mismatch" ? !!change.mismatch : true);
+    const order = SPEC_CATEGORIES.concat(Array.from(new Set(changes.map(change => change.category))).filter(name => SPEC_CATEGORIES.indexOf(name) < 0));
+    return order.map(category => ({ category, label: specCategoryLabel(table.kind, category), changes: changes.filter(change => change.category === category) }))
+      .filter(group => group.changes.length);
+  }
+  // "2 new, 1 retired (1 escalated) — 531 v1, …": the line alerts carry,
+  // worded exactly as regmon/spec_diff.py describe() words it.
+  function describeSpec(spec) {
+    if (!spec || typeof spec !== "object") return "";
+    const counts = spec.counts || {};
+    if (spec.declared && !Object.keys(counts).length) return String(spec.headline || "");
+    const names = [["added", "new"], ["added_version", "new versions"], ["severity", "severity changed"], ["logic", "logic changed"],
+      ["retired", "retired"], ["reinstated", "reinstated"], ["effective", "dates changed"], ["message", "message changed"],
+      ["definition", "redefined"], ["description", "description changed"], ["removed", "removed"]];
+    const parts = names.filter(([key]) => counts[key]).map(([key, label]) => counts[key] + " " + (key === "added_version" && counts[key] === 1 ? "new version" : label));
+    if (!parts.length) return "";
+    const labels = Array.isArray(spec.labels) ? spec.labels : [];
+    const shown = labels.slice(0, 4).join(", ") + (labels.length > 4 ? ", …" : "");
+    let text = parts.join(", ");
+    if (spec.escalated) text += " (" + spec.escalated + " escalated)";
+    return text + (shown ? " — " + shown : "");
+  }
+  // One CSV row per changed item, for the analyst's own sign-off sheet.
+  function specCsvRows(spec) {
+    const rows = [["Table", "Category", "Item", "Field", "Effective", "Severity", "What changed", "Note", "Declared in file", "Mismatch", "Also"]];
+    (spec && Array.isArray(spec.tables) ? spec.tables : []).forEach(table => {
+      (Array.isArray(table.changes) ? table.changes : []).forEach(change => {
+        const severity = change.severity ? change.severity.before + " → " + change.severity.after + " (" + change.severity.direction + ")" : "";
+        const what = (Array.isArray(change.columns) ? change.columns : []).filter(column => column.kind !== "systematic")
+          .map(column => column.column + ": " + (column.before || "(blank)") + " → " + (column.after || "(blank)")).join("; ") ||
+          Object.keys(change.values || {}).map(key => key + ": " + change.values[key]).join(" · ");
+        rows.push([table.name || "", specCategoryLabel(table.kind, change.category), change.label || "", change.field || "", change.effective || "",
+          severity, what, change.note || "", change.declared || "", change.mismatch || "",
+          (change.also || []).map(name => specCategoryLabel(table.kind, name)).join(", ")]);
+      });
+    });
+    return rows;
+  }
+
   // What config/lineage.json says consumes an item code: exact-code mappings
   // before whole-series ones, each asset once. Mirrors regmon/lineage.py assets_for.
   function lineageFor(code, lineage) {
@@ -3113,7 +3180,7 @@
     canonicalUrl, urlKey, scoutBucket, scoutBuckets, scoutSentence, scoutReviewIssue, nextScoutSweep, scoutStrength, scoutGroups,
     SCOUT_FILTERS, SCOUT_OUTCOMES, SCOUT_CONFIDENCE, SCOUT_STATUS, SCOUT_CHANNEL_STATUS, SCOUT_NOUNS, SCOUT_REVIEW_MARKER,
     scoutSlug, splitList, splitLines, parsePathHints, pathHintsText, scoutSourceRequest, SCOUT_SOURCE_MARKER, SCOUT_TOPIC_IDS, SCOUT_REGIONS,
-    renderWordEdit, describeItemCodes, lineageFor, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
+    renderWordEdit, describeItemCodes, lineageFor, describeSpec, specGroups, specCategoryLabel, specCsvRows, SPEC_CATEGORIES, SPEC_KIND_NOUNS, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
     changeReviewRequest, CHANGE_REVIEW_MARKER, REVIEW_DECISIONS, csvCell, toCsv, fileSlug,
     cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink
   };

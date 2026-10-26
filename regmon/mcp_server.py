@@ -173,7 +173,7 @@ def list_changes(record: Record, args: dict) -> dict:
             "event_id": change["event_id"], "event_type": change.get("event_type"), "timestamp": change.get("timestamp"),
             "url": change.get("url"), "source_id": change.get("source_id"),
             "verdict": verdict["state"], "summary": verdict.get("summary"), "item_codes": change.get("item_codes"),
-            "evidence_location": change.get("evidence_location"),
+            "spec": change.get("spec"), "evidence_location": change.get("evidence_location"),
         })
         if len(out) >= limit:
             break
@@ -196,6 +196,7 @@ def get_change(record: Record, args: dict) -> dict:
         "verdict": _verdict(record.analyses().get(event_id), change),
         "diff": "\n".join(diff[:MAX_DIFF_LINES]) + ("\n… (truncated)" if len(diff) > MAX_DIFF_LINES else ""),
         "item_codes": (evidence or {}).get("item_codes"),
+        "spec_diff": (evidence or {}).get("spec_diff") or (evidence or {}).get("spec_inventory"),
         "dates": [entry for entry in calendar.get("entries", []) if entry.get("event_id") == event_id],
         "before": (evidence or {}).get("before"), "after": (evidence or {}).get("after"),
         "error": (evidence or {}).get("error"), "evidence_location": change.get("evidence_location"),

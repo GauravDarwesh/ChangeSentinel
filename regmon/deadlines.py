@@ -50,7 +50,12 @@ PATTERNS = [
 LABELS = {
     "comments_due": "Comments due", "report_date": "First report date", "effective": "Effective",
     "due": "Due", "ai_effective": "Effective (AI review)",
+    "spec_effective": "Spec rows apply", "spec_last": "Spec rows end", "spec_quarter": "Spec rows take effect",
 }
+SPEC_QUIET = {"metadata", "cosmetic", "removed"}
+SPEC_WORDS = {"added": "new", "added_version": "new version", "severity": "severity changed", "logic": "logic changed",
+              "retired": "retired", "reinstated": "reinstated", "effective": "dates changed", "message": "message changed",
+              "definition": "redefined", "description": "description changed", "new": "marked new", "updated": "marked updated"}
 MAX_QUOTE = 220
 MAX_ENTRIES = 500
 CHANGE_TYPES = {"CHANGED_URL", "NEW_URL"}
@@ -148,6 +153,67 @@ def page_title(url: str) -> str:
     return re.sub(r"[-_]+", " ", re.sub(r"\.(html?|pdf|aspx?)$", "", last, flags=re.I)).strip().title() or url
 
 
+def _quarter_end(quarter: str) -> date | None:
+    match = re.fullmatch(r"Q([1-4]) (\d{4})", quarter or "")
+    if not match:
+        return None
+    month = int(match.group(1)) * 3
+    return date(int(match.group(2)), month, 30 if month in (6, 9) else 31)
+
+
+def _spec_when(effective: str, quarter: str) -> tuple[str, date | None]:
+    """("spec_effective" | "spec_last" | "spec_quarter", day) for one row's effective text."""
+    match = re.search(r"(\d{4}-\d{2}-\d{2})", effective or "")
+    if match:
+        try:
+            day = date.fromisoformat(match.group(1))
+        except ValueError:
+            return "", None
+        return ("spec_last" if effective.startswith("last applies") else "spec_effective"), day
+    day = _quarter_end(quarter)
+    return ("spec_quarter", day) if day else ("", None)
+
+
+def spec_dates(evidence: dict, today: date, floor: str) -> list[dict]:
+    """Calendar hits from a structured spec diff: one per table, date and kind, naming the rows."""
+    groups: dict[tuple[str, str, str], dict] = {}
+    spec = evidence.get("spec_diff") if isinstance(evidence.get("spec_diff"), dict) else None
+    tables = []
+    if spec:
+        tables = [(table.get("name") or "Table", table.get("kind") or "", table.get("changes") or []) for table in spec.get("tables") or []
+                  if isinstance(table, dict)]
+    inventory = evidence.get("spec_inventory") if isinstance(evidence.get("spec_inventory"), dict) else None
+    if inventory and not tables:
+        # A file seen for the first time: what it declares new, updated or retired.
+        tables = [(table.get("name") or "Table", table.get("kind") or "",
+                   [{"category": "retired" if item.get("action") == "retired" else item.get("action"), "label": item.get("label"),
+                     "effective": item.get("effective", "")} for item in table.get("items") or [] if isinstance(item, dict)])
+                  for table in inventory.get("tables") or [] if isinstance(table, dict)]
+    for name, kind, changes in tables:
+        for change in changes:
+            if not isinstance(change, dict) or change.get("category") in SPEC_QUIET:
+                continue
+            when, day = _spec_when(str(change.get("effective") or ""), str(change.get("quarter") or ""))
+            if not day or not _plausible(day, today) or day.isoformat() < floor:
+                continue
+            group = groups.setdefault((name, when, day.isoformat()), {"table": name, "kind": when, "date": day.isoformat(), "counts": {}, "labels": []})
+            category = str(change.get("category") or "")
+            group["counts"][category] = group["counts"].get(category, 0) + 1
+            if len(group["labels"]) < 4 and change.get("label"):
+                group["labels"].append(str(change["label"]))
+    hits = []
+    for group in groups.values():
+        total = sum(group["counts"].values())
+        parts = ", ".join(f"{count} {SPEC_WORDS.get(category, category)}" for category, count in
+                          sorted(group["counts"].items(), key=lambda item: -item[1]))
+        verb = {"spec_last": "last apply on", "spec_quarter": "take effect for the quarter ending", "spec_effective": "apply from"}[group["kind"]]
+        quote = f"{group['table']}: {total} changed {'row' if total == 1 else 'rows'} {verb} {group['date']} — {parts}"
+        if group["labels"]:
+            quote += " (" + ", ".join(group["labels"]) + (", …" if total > len(group["labels"]) else "") + ")"
+        hits.append({"kind": group["kind"], "date": group["date"], "quote": quote[:MAX_QUOTE], "basis": "spec", "table": group["table"]})
+    return hits
+
+
 def _ai_results(data_dir: Path) -> dict[str, dict]:
     """Latest successful AI analysis per event id, from every saved run."""
     analyses: dict[str, dict] = {}
@@ -214,9 +280,10 @@ def build(data_dir: Path, config_path: Path, today: date | None = None) -> dict:
                     for hit in dates_in_text(added_lines(evidence.get("diff", "")), today):
                         if hit["date"] >= floor:
                             found.append({**hit, "basis": "text"})
+                    found.extend(spec_dates(evidence, today, floor))
                 title = str((analysis or {}).get("topic") or change.get("ai_topic") or page_title(url))
                 for hit in found:
-                    identity = "|".join([url_id, hit["kind"].replace("ai_", ""), hit["date"]])
+                    identity = "|".join([url_id, hit["kind"].replace("ai_", ""), hit["date"]] + ([hit["table"]] if hit.get("table") else []))
                     entry_id = hashlib.sha256(identity.encode("utf-8")).hexdigest()[:24]
                     previous = entries.get(entry_id)
                     if previous and previous["detected_at"] <= str(change.get("timestamp") or ""):
@@ -269,7 +336,8 @@ def to_ics(calendar: dict, generated_at: str, base_url: str) -> str:
     for entry in calendar.get("entries", []):
         day = date.fromisoformat(entry["date"])
         link = base_url + "#changes/" + entry["event_id"] if entry.get("event_id") else base_url
-        basis = "the AI review of the change" if entry["basis"] == "ai" else "the text the change added"
+        basis = {"ai": "the AI review of the change", "spec": "the row-by-row comparison of the specification file"}.get(
+            entry["basis"], "the text the change added")
         description = (entry.get("quote") or "") + "\n\nRead from " + basis + " detected on " + str(entry.get("detected_at", ""))[:10] + \
             ". Page: " + entry.get("url", "") + "\nChange and evidence: " + link
         lines += [
