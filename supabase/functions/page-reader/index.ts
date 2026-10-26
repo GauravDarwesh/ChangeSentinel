@@ -475,12 +475,63 @@ export function extractDataLinks(html: string, pageUrl: string, known: Set<strin
   return links;
 }
 
-export function readHtml(html: string, pageUrl: string): { title: string; html: string; links: PageLink[]; truncated: boolean; notice?: string } {
+// React and Next.js stream a page: the server sends a placeholder (a skeleton,
+// a spinner) inside <!--$?--><template id="B:1"></template>…<!--/$-->, and the
+// finished part later as <div hidden id="S:1">…</div> plus a tiny script that
+// swaps them. With scripting off the swap never happens, so it is done here.
+export function resolveStreamedBoundaries(document: Node): number {
+  let swapped = 0;
+  for (const hidden of Array.from(document.querySelectorAll('div[hidden][id^="S:"]')) as Node[]) {
+    const id = String(hidden.getAttribute('id') || '').slice(2);
+    if (!/^[\w:.-]{1,40}$/.test(id)) continue;
+    const marker = document.querySelector('template[id="B:' + id + '"]');
+    if (!marker || !marker.parentNode) continue;
+    let node = marker.nextSibling;
+    while (node && !(node.nodeType === 8 && String(node.data || node.textContent || '').trim() === '/$')) {
+      const next = node.nextSibling;
+      node.remove();
+      node = next;
+    }
+    while (hidden.firstChild) marker.parentNode.insertBefore(hidden.firstChild, marker);
+    marker.remove();
+    hidden.remove();
+    swapped += 1;
+  }
+  return swapped;
+}
+
+// How much of the page its own script draws. A page can carry its whole
+// content as data for a script (Next.js flight data, Nuxt state, JSON) while
+// its HTML holds only a skeleton; the dashboard then offers the live page.
+export function scriptBuiltScore(html: string, visibleTextLength: number): { scripted: boolean; reason: string } {
+  const source = String(html || '');
+  let inlineScript = 0;
+  const scriptPattern = /<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script\s*>/gi;
+  let match: RegExpExecArray | null;
+  while ((match = scriptPattern.exec(source)) !== null) inlineScript += match[1].length;
+  const skeletons = (source.match(/class=["'][^"']*\b(?:animate-pulse|skeleton|shimmer|placeholder-glow|loading-placeholder)\b/gi) || []).length;
+  const clientOnly = (source.match(/<!--\$!-->/g) || []).length;
+  if (inlineScript > 40_000 && inlineScript > visibleTextLength * 4) return { scripted: true, reason: 'data' };
+  if (skeletons >= 4 || (clientOnly >= 1 && skeletons >= 1)) return { scripted: true, reason: 'skeleton' };
+  return { scripted: false, reason: '' };
+}
+
+export type ReadCopy = { title: string; html: string; links: PageLink[]; truncated: boolean; notice?: string; scripted?: boolean; reader?: string };
+export function readHtml(html: string, pageUrl: string): ReadCopy {
   const document: Node = new (DOMParser as Node)().parseFromString(html, 'text/html');
   const baseTag = document.querySelector('base[href]');
   const base = (baseTag && absolute(baseTag.getAttribute('href') || '', pageUrl)) || pageUrl;
   const title = clean(document.querySelector('title')?.textContent || document.querySelector('h1')?.textContent || '', 300);
 
+  resolveStreamedBoundaries(document);
+  // Sites mark <html class="no-js"> and swap it for "js" from script; their
+  // stylesheets hide menus and whole layouts under .no-js (Foundation,
+  // Modernizr, Drupal and WordPress themes). The copy is the page as script
+  // would have left it, so it carries "js".
+  const rootElement = document.documentElement;
+  if (rootElement && /(?:^|\s)no-?js(?:\s|$)/i.test(String(rootElement.getAttribute('class') || ''))) {
+    rootElement.setAttribute('class', String(rootElement.getAttribute('class')).replace(/(^|\s)no-?js(?=\s|$)/gi, '$1js'));
+  }
   enableDeferredStylesheets(document);
   unwrapNoscript(document);
   for (const element of Array.from(document.querySelectorAll(REMOVE)) as Node[]) element.remove();
@@ -605,7 +656,8 @@ export function readHtml(html: string, pageUrl: string): { title: string; html: 
   // A page that builds itself with script arrives nearly empty. Say so, and list the
   // addresses its embedded data carries so there is still something to pick from.
   let notice = '';
-  const visibleText = clean(document.querySelector('body')?.textContent || '', 2000);
+  const bodyText = clean(document.querySelector('body')?.textContent || '', 200_000);
+  const visibleText = bodyText.slice(0, 2000);
   const contentLinks = links.filter(link => !link.chrome).length;
   const scriptBuilt = /id=["'](?:root|app|__next|__nuxt|main-app|application|svelte)["']|data-reactroot|ng-app|ng-version|data-server-rendered|<app-root|<script\b[^>]*type=["']module["']/i.test(html) ||
     (String(html).match(/<script\b/gi) || []).length >= 5;
@@ -634,10 +686,202 @@ export function readHtml(html: string, pageUrl: string): { title: string; html: 
   charset.setAttribute('charset', 'utf-8');
   head.insertBefore(charset, head.firstChild);
 
-  const page: { title: string; html: string; links: PageLink[]; truncated: boolean; notice?: string } =
-    { title, html: '<!doctype html>\n' + document.documentElement.outerHTML, links, truncated };
+  const page: ReadCopy = { title, html: '<!doctype html>\n' + document.documentElement.outerHTML, links, truncated };
   if (notice) page.notice = notice;
+  const scripted = notice ? { scripted: true } : scriptBuiltScore(html, bodyText.length);
+  if (scripted.scripted) page.scripted = true;
+  // A plain reading view of the same content, for when the site's own layout
+  // cannot be drawn without its scripts or its styles.
+  page.reader = readerView(document, title, pageUrl);
   return page;
+}
+
+/* ---------------------------------------------------------------- reading view
+ *
+ * The page's text, headings, lists, tables, images and links (keeping their
+ * numbers, so selecting works the same) without the site's own layout. It is
+ * what the dashboard shows when the copy comes out blank.
+ */
+
+const READER_KEEP = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
+  'caption', 'blockquote', 'pre', 'code', 'strong', 'b', 'em', 'i', 'u', 'small', 'sub', 'sup', 'br', 'hr', 'figure', 'figcaption', 'a', 'img', 'span', 'time', 'abbr', 'mark']);
+const READER_BLOCK = new Set(['div', 'section', 'article', 'main', 'header', 'footer', 'nav', 'aside', 'form', 'fieldset', 'details', 'summary', 'address', 'center', 'label']);
+const READER_SKIP = new Set(['script', 'style', 'noscript', 'template', 'svg', 'canvas', 'video', 'audio', 'iframe', 'object', 'embed', 'select', 'input', 'textarea', 'button', 'link', 'meta', 'head', 'title']);
+const READER_LIMIT = 1_500_000;
+
+function escapeText(value: string): string {
+  return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function escapeAttr(value: string): string {
+  return escapeText(value).replace(/"/g, '&quot;');
+}
+
+function readerHidden(element: Node): boolean {
+  if (element.hasAttribute && (element.hasAttribute('hidden') || element.getAttribute('aria-hidden') === 'true')) return true;
+  const style = String(element.getAttribute && element.getAttribute('style') || '');
+  return /display\s*:\s*none|visibility\s*:\s*hidden/i.test(style);
+}
+
+export function readerView(document: Node, title: string, pageUrl: string): string {
+  const body = document.querySelector('body');
+  if (!body) return '';
+  let size = 0;
+  const out: string[] = [];
+  const push = (value: string) => { if (size < READER_LIMIT) { out.push(value); size += value.length; } };
+  const walk = (node: Node) => {
+    if (size >= READER_LIMIT) return;
+    if (node.nodeType === 3) { push(escapeText(node.textContent || '')); return; }
+    if (node.nodeType !== 1) return;
+    const tag = String(node.tagName || '').toLowerCase();
+    if (READER_SKIP.has(tag) || readerHidden(node)) return;
+    if (tag === 'img') {
+      const src = String(node.getAttribute('src') || '');
+      if (/^(https?:|data:image\/)/i.test(src)) push('<img src="' + escapeAttr(src) + '" alt="' + escapeAttr(String(node.getAttribute('alt') || '')) + '" loading="lazy">');
+      return;
+    }
+    const keep = READER_KEEP.has(tag);
+    const block = READER_BLOCK.has(tag);
+    if (keep) {
+      let attributes = '';
+      if (tag === 'a') {
+        const href = String(node.getAttribute('href') || '');
+        if (/^https?:/i.test(href)) attributes += ' href="' + escapeAttr(href) + '"';
+      }
+      const number = node.getAttribute('data-cs-link');
+      if (number !== null && number !== undefined && /^\d+$/.test(String(number))) attributes += ' data-cs-link="' + number + '"';
+      for (const name of ['colspan', 'rowspan']) {
+        const value = node.getAttribute(name);
+        if (value && /^\d{1,3}$/.test(value)) attributes += ' ' + name + '="' + value + '"';
+      }
+      push('<' + tag + attributes + '>');
+      if (tag !== 'br' && tag !== 'hr') {
+        for (const child of Array.from(node.childNodes || []) as Node[]) walk(child);
+        push('</' + tag + '>');
+      }
+      return;
+    }
+    // A clickable block that is not a link (onclick, data-href) keeps its number.
+    const number = node.getAttribute('data-cs-link');
+    if (number !== null && number !== undefined && /^\d+$/.test(String(number))) {
+      push('<div class="cs-r-link" data-cs-link="' + number + '">');
+      for (const child of Array.from(node.childNodes || []) as Node[]) walk(child);
+      push('</div>');
+      return;
+    }
+    if (block) push('<div class="cs-r-' + tag + '">');
+    for (const child of Array.from(node.childNodes || []) as Node[]) walk(child);
+    if (block) push('</div>');
+  };
+  walk(body);
+  const content = out.join('');
+  let host = '';
+  try { host = new URL(pageUrl).hostname; } catch (_) { /* shown without a host */ }
+  return '<!doctype html>\n<html><head><meta charset="utf-8">' +
+    '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+    '<title>' + escapeText(title || host || 'Page') + '</title>' +
+    '<style>' +
+    'html{background:#fbfaf7}body{max-width:980px;margin:0 auto;padding:22px 26px 60px;font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;color:#26221e;overflow-wrap:anywhere}' +
+    '.cs-r-head{margin:0 0 18px;padding:0 0 12px;border-bottom:1px solid #e6e0d6;color:#8a8177;font-size:12px;letter-spacing:.04em;text-transform:uppercase}' +
+    'h1{font-size:1.6rem;line-height:1.25}h2{font-size:1.3rem}h3{font-size:1.1rem}h1,h2,h3,h4{margin:1.4em 0 .5em}' +
+    'a{color:#a3510f}img{max-width:100%;height:auto}table{border-collapse:collapse;margin:12px 0;font-size:14px;display:block;overflow-x:auto}' +
+    'th,td{border:1px solid #e1dacf;padding:5px 9px;vertical-align:top;text-align:left}th{background:#f2ede5}' +
+    '.cs-r-nav,.cs-r-header,.cs-r-footer{font-size:13px;color:#6b635a}.cs-r-nav a,.cs-r-header a,.cs-r-footer a{margin-right:10px}' +
+    '.cs-r-nav ul,.cs-r-header ul,.cs-r-footer ul{display:flex;flex-wrap:wrap;gap:2px 12px;padding-left:0;list-style:none}' +
+    '.cs-r-link{cursor:pointer;text-decoration:underline;color:#a3510f}pre{white-space:pre-wrap}' +
+    '</style></head><body><div class="cs-r-head">Reading view · ' + escapeText(host) + '</div>' + content + '</body></html>';
+}
+
+/* ---------------------------------------------------------------- styles and images inside the copy
+ *
+ * The copy is shown from an opaque origin, so a site that refuses requests
+ * from other sites (Cross-Origin-Resource-Policy: same-site, hotlink or
+ * Referer checks, session cookies) sends no stylesheets or images, and the
+ * copy looks like bare HTML. The reader fetches them as the page itself would
+ * and writes them into the copy: stylesheets always, images when the site
+ * refuses cross-site requests. Bounded in count, size and time.
+ */
+
+export type AssetFetcher = (url: string, accept: string, limit: number) => Promise<{ type: string; bytes: Uint8Array } | null>;
+const STYLE_LIMIT = 40, STYLE_BYTES = 1_500_000, STYLE_TOTAL = 6_000_000;
+const IMAGE_LIMIT = 80, IMAGE_BYTES = 300_000, IMAGE_TOTAL = 4_000_000;
+const ASSET_CONCURRENCY = 6;
+
+function toBase64(bytes: Uint8Array): string {
+  let binary = '';
+  for (let offset = 0; offset < bytes.length; offset += 0x8000) binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
+  return btoa(binary);
+}
+async function pool<T>(items: T[], worker: (item: T) => Promise<void>, deadline: number) {
+  let next = 0;
+  const run = async () => {
+    while (next < items.length && Date.now() < deadline) await worker(items[next++]);
+  };
+  await Promise.all(Array.from({ length: Math.min(ASSET_CONCURRENCY, items.length) }, run));
+}
+function sameSite(a: string, b: string): boolean {
+  try {
+    const x = new URL(a).hostname.split('.').slice(-2).join('.');
+    const y = new URL(b).hostname.split('.').slice(-2).join('.');
+    return x === y;
+  } catch (_) {
+    return false;
+  }
+}
+
+export async function inlineAssets(html: string, pageUrl: string, fetchAsset: AssetFetcher, options: { images: boolean; deadline: number }): Promise<string> {
+  const document: Node = new (DOMParser as Node)().parseFromString(html, 'text/html');
+  let styleTotal = 0;
+  const links = (Array.from(document.querySelectorAll('link[rel~="stylesheet"][href]')) as Node[])
+    .filter(link => !/^\s*print\s*$/i.test(String(link.getAttribute('media') || '')))
+    .slice(0, STYLE_LIMIT);
+  await pool(links, async link => {
+    const href = String(link.getAttribute('href') || '');
+    if (!/^https?:/i.test(href)) return;
+    const asset = await fetchAsset(href, 'text/css,*/*;q=0.1', STYLE_BYTES).catch(() => null);
+    if (!asset || /html/i.test(asset.type) || styleTotal + asset.bytes.length > STYLE_TOTAL) return;
+    styleTotal += asset.bytes.length;
+    let css = new TextDecoder('utf-8').decode(asset.bytes);
+    css = absoluteCssUrls(css, href).replace(/<\/style/gi, '<\\/style');
+    const style = document.createElement('style');
+    style.setAttribute('data-cs-from', href);
+    const media = link.getAttribute('media');
+    if (media) style.setAttribute('media', media);
+    style.textContent = css;
+    link.parentNode && link.parentNode.replaceChild(style, link);
+  }, options.deadline);
+
+  if (options.images) {
+    let imageTotal = 0;
+    const cache = new Map<string, string>();
+    const images = (Array.from(document.querySelectorAll('img[src]')) as Node[])
+      .filter(img => /^https?:/i.test(String(img.getAttribute('src') || '')) && sameSite(String(img.getAttribute('src')), pageUrl))
+      .slice(0, IMAGE_LIMIT);
+    await pool(images, async img => {
+      const src = String(img.getAttribute('src'));
+      let data = cache.get(src);
+      if (data === undefined) {
+        const asset = await fetchAsset(src, 'image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8', IMAGE_BYTES).catch(() => null);
+        data = asset && /^image\//i.test(asset.type) && imageTotal + asset.bytes.length <= IMAGE_TOTAL
+          ? 'data:' + asset.type.split(';')[0] + ';base64,' + toBase64(asset.bytes) : '';
+        if (data) imageTotal += asset!.bytes.length;
+        cache.set(src, data);
+      }
+      if (data) { img.setAttribute('src', data); img.removeAttribute('srcset'); }
+    }, options.deadline);
+  }
+  return '<!doctype html>\n' + document.documentElement.outerHTML;
+}
+
+// The original page, for the dashboard's "live" view: the site's own scripts
+// run in the dashboard's sandbox (an opaque origin with no access to the
+// dashboard), with a <base> so its relative addresses resolve.
+export function liveDocument(html: string, pageUrl: string): string {
+  let doc = String(html || '')
+    .replace(/<meta\b[^>]*http-equiv\s*=\s*["']?(?:content-security-policy|refresh)["']?[^>]*>/gi, '')
+    .replace(/<base\b[^>]*>/gi, '');
+  const base = '<base href="' + escapeAttr(pageUrl) + '">';
+  doc = /<head\b[^>]*>/i.test(doc) ? doc.replace(/<head\b[^>]*>/i, match => match + base) : base + doc;
+  return doc;
 }
 
 /* ---------------------------------------------------------------- fetching */
@@ -766,7 +1010,7 @@ function requestHeaders(browser: boolean, cookies: string): Record<string, strin
 
 // With { file: true } a document comes back whole as { kind: 'file', bytes } for the
 // dashboard's viewers instead of { kind: 'document' }. A web page is still read as a page.
-export async function readPage(raw: string, fetcher: typeof fetch = fetch, options: { file?: boolean } = {}) {
+export async function readPage(raw: string, fetcher: typeof fetch = fetch, options: { file?: boolean; live?: boolean; assets?: boolean } = {}) {
   let url = checkUrl(raw);
   const started = Date.now();
   const jar: Cookie[] = [];
@@ -851,7 +1095,45 @@ export async function readPage(raw: string, fetcher: typeof fetch = fetch, optio
       }
       return { kind: 'error', url: url.href, status: response.status, message: blocked };
     }
+    if (options.live) return { kind: 'live', url: url.href, html: liveDocument(text, url.href) };
     const page = readHtml(text, url.href);
+    if (options.assets !== false) {
+      // Fetch the copy's stylesheets (and, for sites that refuse cross-site
+      // requests, its images) the way the page itself would, within the time left.
+      const pageUrl = url.href;
+      const corp = String(response.headers.get('cross-origin-resource-policy') || '').toLowerCase();
+      const deadline = started + TOTAL_BUDGET_MS - 2500;
+      const fetchAsset: AssetFetcher = async (asset, accept, limit) => {
+        let target = checkUrl(asset);
+        for (let hop = 0; hop < 4; hop += 1) {
+          await checkResolvesPublic(target);
+          const left = deadline - Date.now();
+          if (left < 800) return null;
+          const headers: Record<string, string> = { ...requestHeaders(true, cookieHeader(jar, target)), Accept: accept, Referer: pageUrl,
+            'Sec-Fetch-Dest': /css/.test(accept) ? 'style' : 'image', 'Sec-Fetch-Mode': 'no-cors', 'Sec-Fetch-Site': sameSite(target.href, pageUrl) ? 'same-site' : 'cross-site' };
+          delete headers['Sec-Fetch-User'];
+          delete headers['Upgrade-Insecure-Requests'];
+          const reply = await fetcher(target.href, { redirect: 'manual', headers, signal: AbortSignal.timeout(Math.min(6000, left)) });
+          if ([301, 302, 303, 307, 308].includes(reply.status)) {
+            const location = reply.headers.get('location');
+            await reply.body?.cancel();
+            if (!location) return null;
+            target = checkUrl(new URL(location, target).href);
+            continue;
+          }
+          if (!reply.ok) { await reply.body?.cancel(); return null; }
+          const content = await readBody(reply, limit);
+          if (content.truncated) return null;
+          return { type: String(reply.headers.get('content-type') || ''), bytes: content.bytes };
+        }
+        return null;
+      };
+      try {
+        page.html = await inlineAssets(page.html, pageUrl, fetchAsset, { images: /same-(site|origin)/.test(corp), deadline });
+      } catch (error) {
+        console.warn('page-reader asset inlining skipped', String(error));
+      }
+    }
     return { kind: 'page', url: url.href, ...page, truncated: page.truncated || body.truncated };
   }
 }
@@ -936,7 +1218,8 @@ export async function handle(req: Request): Promise<Response> {
     if (wantFile && !spend('file:' + actor, FILE_BUDGET)) {
       return respond(req, { error: 'Too many documents opened in a short time. Wait a few minutes and retry.' }, 429, { 'Retry-After': '120' });
     }
-    const result = await readPage(String(body.url || ''), fetch, { file: wantFile }) as Record<string, unknown>;
+    // "links": following links by level needs only the links, not the page's styles.
+    const result = await readPage(String(body.url || ''), fetch, { file: wantFile, live: body.mode === 'live', assets: body.mode !== 'links' }) as Record<string, unknown>;
     if (result.kind === 'file') {
       // Bytes for the dashboard's script to read, never a document to render: always
       // octet-stream, with the detected format in a header.

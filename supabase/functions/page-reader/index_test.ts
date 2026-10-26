@@ -1,6 +1,6 @@
 // Tests for the page reader. Network calls go to a fake fetcher; nothing leaves the machine.
 (Deno as any).serve = () => ({ finished: Promise.resolve(), shutdown: async () => {}, ref() {}, unref() {}, addr: { hostname: 'test', port: 0 } });
-const { checkUrl, isPrivateAddress, readHtml, readPage, formatOf, spend, handle, PublicError, absoluteCssUrls, clientRedirect, botCheck, USER_AGENT, BROWSER_USER_AGENT, documentFormat, MAX_FILE_BYTES } = await import('./index.ts');
+const { checkUrl, isPrivateAddress, readHtml, readPage, formatOf, spend, handle, PublicError, absoluteCssUrls, clientRedirect, botCheck, USER_AGENT, BROWSER_USER_AGENT, documentFormat, MAX_FILE_BYTES, resolveStreamedBoundaries, scriptBuiltScore, liveDocument, inlineAssets } = await import('./index.ts');
 
 function assert(condition: unknown, message: string) { if (!condition) throw new Error(message); }
 function eq(a: unknown, b: unknown, message: string) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error(message + ': ' + JSON.stringify(a) + ' !== ' + JSON.stringify(b)); }
@@ -239,4 +239,75 @@ Deno.test('documents can be read whole for the dashboard viewers', async () => {
   assert(/larger than 25 MB/.test(refused), 'oversized documents are refused: ' + refused);
   eq([documentFormat('https://x.gov/a.xlsx', ''), documentFormat('https://x.gov/a.csv', 'text/csv'), documentFormat('https://x.gov/a.docx', ''),
       documentFormat('https://x.gov/a', 'application/zip'), documentFormat('https://x.gov/page', 'text/html')], ['Spreadsheet', 'CSV', 'Word', 'ZIP', ''], 'formats');
+});
+
+
+Deno.test('streamed React boundaries are swapped in, so the copy is not a skeleton', () => {
+  const html = '<html><body><main><h1>Models</h1><!--$?--><template id="B:0"></template><div class="animate-pulse">Loading…</div><!--/$-->' +
+    '<footer><a href="/about">About</a></footer></main><div hidden id="S:0"><ul><li><a href="/models/a">Model A</a></li><li><a href="/models/b">Model B</a></li></ul></div></body></html>';
+  const page = readHtml(html, 'https://8.8.8.8/models');
+  assert(!page.html.includes('animate-pulse'), 'the loading placeholder is gone');
+  assert(!/<div hidden id="S:0"/.test(page.html), 'the hidden segment is gone');
+  assert(page.html.indexOf('Model A') < page.html.indexOf('About'), 'the content sits where the placeholder was');
+  eq(page.links.map((link: any) => link.url), ['https://8.8.8.8/models/a', 'https://8.8.8.8/models/b', 'https://8.8.8.8/about'], 'links in page order');
+});
+
+Deno.test('pages drawn by script are flagged for the live view', () => {
+  eq(scriptBuiltScore('<html><body><p>' + 'x'.repeat(2000) + '</p></body></html>', 2000).scripted, false, 'an ordinary page');
+  const data = '<html><body><nav>Home</nav><script>self.__next_f.push([1,"' + 'y'.repeat(60_000) + '"])</script></body></html>';
+  eq(scriptBuiltScore(data, 20).scripted, true, 'content carried as script data');
+  const skeleton = '<html><body><!--$!--><template data-dgst=""></template><div class="h-5 w-24 animate-pulse"></div></body></html>';
+  eq(scriptBuiltScore(skeleton, 10).scripted, true, 'a client-only boundary showing a skeleton');
+  const page = readHtml(data, 'https://8.8.8.8/app');
+  eq(page.scripted, true, 'readHtml reports it');
+});
+
+Deno.test('every copy carries a reading view with the same link numbers', () => {
+  const html = '<html><head><title>Forms</title><style>body{display:none}</style></head><body><div class="wrap" style="display:none">hidden menu</div>' +
+    '<main><h2>Current</h2><table><tr><th>Form</th><th>File</th></tr><tr><td>BC</td><td><a href="/bc.pdf" onclick="x()">BC form</a></td></tr></table>' +
+    '<p>Text <script>evil()</script><b>bold</b></p></main></body></html>';
+  const page = readHtml(html, 'https://8.8.8.8/forms');
+  const reader = String(page.reader);
+  assert(reader.includes('Reading view'), 'labelled');
+  assert(reader.includes('<a href="https://8.8.8.8/bc.pdf" data-cs-link="0">BC form</a>'), 'the link keeps its number: ' + reader);
+  assert(reader.includes('<th>Form</th>') && reader.includes('<td>BC</td>'), 'tables are kept');
+  for (const banned of ['<script', 'evil', 'onclick', 'display:none}', 'hidden menu']) assert(!reader.includes(banned), 'reading view still has ' + banned);
+});
+
+Deno.test('stylesheets are written into the copy, images too when the site refuses cross-site requests', async () => {
+  const html = '<!doctype html><html><head><link rel="stylesheet" href="https://8.8.8.8/s.css"><link rel="stylesheet" media="print" href="https://8.8.8.8/p.css">' +
+    '</head><body><img src="https://8.8.8.8/logo.png" srcset="https://8.8.8.8/logo2.png 2x"><img src="https://9.9.9.9/other.png"></body></html>';
+  const asked: string[] = [];
+  const fetchAsset = async (url: string) => {
+    asked.push(url);
+    if (url.endsWith('.css')) return { type: 'text/css', bytes: new TextEncoder().encode('body{background:url(bg.png)}</style><script>') };
+    if (url.endsWith('.png')) return { type: 'image/png', bytes: new Uint8Array([137, 80, 78, 71]) };
+    return null;
+  };
+  const styled = await inlineAssets(html, 'https://8.8.8.8/page', fetchAsset, { images: false, deadline: Date.now() + 5000 });
+  assert(styled.includes('data-cs-from="https://8.8.8.8/s.css"'), 'stylesheet inlined');
+  assert(styled.includes('url("https://8.8.8.8/bg.png")'), 'its url() is absolute');
+  assert(!/<\/style><script>/i.test(styled), 'a stylesheet cannot close its own style element');
+  assert(!asked.includes('https://8.8.8.8/p.css'), 'print stylesheets are skipped');
+  assert(styled.includes('src="https://8.8.8.8/logo.png"'), 'images stay addresses by default');
+  const both = await inlineAssets(html, 'https://8.8.8.8/page', fetchAsset, { images: true, deadline: Date.now() + 5000 });
+  assert(both.includes('src="data:image/png;base64,iVBORw=="'), 'same-site image inlined: ' + both);
+  assert(!both.includes('logo2.png'), 'its srcset is dropped');
+  assert(both.includes('src="https://9.9.9.9/other.png"'), 'other sites\' images are left alone');
+});
+
+Deno.test('the live view is the original page with a base address and no policy of its own', async () => {
+  const doc = liveDocument('<html><head><meta http-equiv="Content-Security-Policy" content="x"><base href="/x/"><script src="/app.js"></script></head><body></body></html>', 'https://8.8.8.8/p?q=1');
+  assert(doc.includes('<base href="https://8.8.8.8/p?q=1">'), 'base added');
+  assert(!/content-security-policy/i.test(doc) && !doc.includes('href="/x/"'), 'old policy and base removed');
+  assert(doc.includes('<script src="/app.js"></script>'), 'scripts kept for the sandboxed live view');
+  const fake = (async () => new Response('<html><head></head><body><a href="/a">A</a></body></html>', { headers: { 'content-type': 'text/html' } })) as typeof fetch;
+  const live = await readPage('https://8.8.8.8/p', fake, { live: true }) as any;
+  eq(live.kind, 'live', 'live answer');
+  assert(live.html.includes('<base href="https://8.8.8.8/p">'), 'live html has its base');
+});
+
+Deno.test('a no-js page is shown as script would have left it', () => {
+  const page = readHtml('<html class="no-js lang-es"><head><style>.no-js .wrapper{display:none}</style></head><body><div class="wrapper"><a href="/a">A</a></div></body></html>', 'https://8.8.8.8/p');
+  assert(/<html[^>]*class="js lang-es"/.test(page.html), 'no-js became js: ' + page.html.slice(0, 120));
 });
