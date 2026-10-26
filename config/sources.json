@@ -4272,7 +4272,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-012b686cf57b",
@@ -4311,7 +4313,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-47419b7dd994",
@@ -4350,7 +4354,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-403c08e13235",
@@ -4389,7 +4395,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-d09046c3b1dc",
@@ -4428,7 +4436,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-4167a1e8a83d",
@@ -4467,7 +4477,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-94b0979b4f5c",
@@ -4506,7 +4518,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-647ef318c5c0",
@@ -4545,7 +4559,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-ad9192b4d686",
@@ -4584,7 +4600,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-14c6e397c427",
@@ -4623,7 +4641,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-5036ad8e77b6",
@@ -4662,7 +4682,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-904a98ffb46c",
@@ -4701,7 +4723,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-c98ec0ceacb2",
@@ -4740,7 +4764,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-9fb9a1a5cb69",
@@ -4779,7 +4805,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-cb107f57bdac",
@@ -4818,7 +4846,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-fc4db311d1cc",
@@ -4857,7 +4887,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-4dbc26b2a93c",
@@ -4896,7 +4928,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-af7385979aae",
@@ -4935,7 +4969,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-48d992a217df",
@@ -4974,7 +5010,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-46d420bc72fe",
@@ -5013,7 +5051,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-37d7c549c9bf",
@@ -5052,7 +5092,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-22de7db10ba9",
@@ -5091,7 +5133,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-b89bd18abaf1",
@@ -5130,7 +5174,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-021cfcf8895a",
@@ -5169,7 +5215,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-58dc3b1d4e54",
@@ -5208,7 +5256,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-4ec015045fb6",
@@ -5247,7 +5297,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-805558eb6728",
@@ -5286,7 +5338,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-60bbdc7648d1",
@@ -5325,7 +5379,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-8e3ac9d98d33",
@@ -5364,7 +5420,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-2dd662f1976a",
@@ -5403,7 +5461,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-6771dbf1dd2f",
@@ -5442,7 +5502,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-53c5ed4bcc68",
@@ -5481,7 +5543,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-07a75daa7b90",
@@ -5520,7 +5584,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-4d61dbbf9926",
@@ -5559,7 +5625,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-4ba29007d88a",
@@ -5598,7 +5666,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-1d7f76c3a5dd",
@@ -5637,7 +5707,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-4de97ed3cfca",
@@ -5676,7 +5748,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-e0579cc3eaee",
@@ -5715,7 +5789,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-4a8f75a5137d",
@@ -5754,7 +5830,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-812e79092256",
@@ -5793,7 +5871,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-1a4108fb1a78",
@@ -5832,7 +5912,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-bddb877ff505",
@@ -5871,7 +5953,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     },
     {
       "id": "manual-02077f2a6e12",
@@ -5910,7 +5994,9 @@
       "workspace": "NAM",
       "labels": [
         "FFIEC Forms/Instructions/Validations"
-      ]
+      ],
+      "fetch_mode": "auto",
+      "browser_wait_seconds": 10
     }
   ]
 }
