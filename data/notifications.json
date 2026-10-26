@@ -664,7 +664,31 @@
       "channels": [
         "ntfy"
       ]
+    },
+    "5ad5a0765f00fa65032954d48a1b4130bc2387840462d2b0652f432019154a9f": {
+      "kind": "CHANGED_URL",
+      "sent_at": "2026-10-26T22:47:46.099098+00:00",
+      "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
+      "topic": "Information Collections Under Review",
+      "summary": "The Information Collections Under Review page was updated with new information collection entries (FR 28 and FR O) and the last update date was changed from October 08, 2026 to October 26, 2026.",
+      "source_event_id": null,
+      "variant": "ai",
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "08ec7c74957ed241229530b16b6f932c71962931be754593e090faa0e0da60b4": {
+      "kind": "CHANGED_URL",
+      "sent_at": "2026-10-26T22:47:46.228037+00:00",
+      "url": "https://www.federalreserve.gov/apps/reportingforms/review",
+      "topic": "Technical change detected",
+      "summary": "A monitored regulator resource changed and was detected by deterministic content comparison.",
+      "source_event_id": null,
+      "variant": "generic",
+      "channels": [
+        "ntfy"
+      ]
     }
   },
-  "updated_at": "2026-10-26T06:27:28.878890+00:00"
+  "updated_at": "2026-10-26T22:47:46.228809+00:00"
 }

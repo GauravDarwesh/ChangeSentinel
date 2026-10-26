@@ -1,39 +1,4 @@
 {
-  "pending_events": {
-    "5ad5a0765f00fa65032954d48a1b4130bc2387840462d2b0652f432019154a9f": {
-      "event_id": "5ad5a0765f00fa65032954d48a1b4130bc2387840462d2b0652f432019154a9f",
-      "kind": "CHANGED_URL",
-      "variant": "ai",
-      "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
-      "topic": "Information Collections Under Review",
-      "summary": "The Information Collections Under Review page was updated with new information collection entries (FR 28 and FR O) and the last update date was changed from October 08, 2026 to October 26, 2026.",
-      "reason": "The changes include the addition of new information collection updates (FR 28 OMB supporting statement, FR O draft instructions) and a revision of the last update date to October 26, 2026, which are substantive changes to the information collection page.",
-      "impact": "Stakeholders will see updated information collection statuses and new reporting forms (FR 28, FR O) on the page. The last update date reflects the most recent information collection update.",
-      "priority": 4,
-      "effective_date": "October 26, 2026",
-      "actions": "Maintain and update the Information Collections Under Review page with new information collection entries and last update dates.",
-      "tags": [
-        "warning",
-        "bank",
-        "regulatory"
-      ]
-    },
-    "08ec7c74957ed241229530b16b6f932c71962931be754593e090faa0e0da60b4": {
-      "event_id": "08ec7c74957ed241229530b16b6f932c71962931be754593e090faa0e0da60b4",
-      "kind": "CHANGED_URL",
-      "variant": "generic",
-      "url": "https://www.federalreserve.gov/apps/reportingforms/review",
-      "topic": "Technical change detected",
-      "summary": "A monitored regulator resource changed and was detected by deterministic content comparison.",
-      "reason": "The change remains visible even when semantic AI review is unavailable, invalid, or deferred.",
-      "impact": "Review the evidence and diff to determine regulatory significance.",
-      "priority": 3,
-      "tags": [
-        "warning",
-        "change",
-        "regulatory"
-      ]
-    }
-  },
-  "updated_at": "2026-10-26T22:47:42.857055+00:00"
+  "pending_events": {},
+  "updated_at": "2026-10-26T22:47:46.230544+00:00"
 }
