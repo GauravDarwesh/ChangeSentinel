@@ -2230,7 +2230,7 @@ async function fillEvidence(event, boxId, stillCurrent) {
       target.innerHTML = L.renderUnifiedDiff(evidence.html_diff || "");
       if (summary) summary.textContent = "Formatted HTML markup diff. The fetched response is saved separately.";
     } else if (mode === "text") {
-      target.innerHTML = L.renderUnifiedDiff(evidence.diff || "");
+      target.innerHTML = L.renderUnifiedDiff(evidence.diff || "", { tables: true });
       if (summary) summary.textContent = "Unified diff of the extracted text.";
     } else {
       const redline = L.renderRedline(evidence.diff || "");

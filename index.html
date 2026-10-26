@@ -379,6 +379,27 @@
     }
     .rl-truncated { color: var(--accent); }
     .rl-empty { padding: 18px; color: var(--ink-2); font-size: 14px; }
+    /* Page tables in the extracted text are drawn as tables, with changed rows marked in place. */
+    .rl-table-wrap, .cd-table-wrap { margin: 4px 24px 8px 0; overflow-x: auto; }
+    .rl-table, .cd-table { border-collapse: separate; border-spacing: 0; min-width: min(100%, 640px); font-size: 13.5px; line-height: 1.45; }
+    .rl-table .rl-cell, .cd-table .rl-cell { padding: 5px 10px; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); vertical-align: top; text-align: left; overflow-wrap: break-word; min-width: 6.5em; max-width: 28em; }
+    .rl-table tr > .rl-cell:nth-child(2), .cd-table tr > .rl-cell:nth-child(2) { border-left: 1px solid var(--line); }
+    .rl-table tr:first-child > .rl-cell, .cd-table tr:first-child > .rl-cell { border-top: 1px solid var(--line); }
+    .rl-table th.rl-cell, .cd-table th.rl-cell { background: var(--raise-2); color: var(--ink); font-weight: 500; }
+    .rl-table .rl-title, .cd-table .rl-title { font-family: var(--font-ui); font-size: 12.5px; letter-spacing: .01em; }
+    .rl-table td.rl-no { position: relative; width: 54px; min-width: 54px; padding: 5px 16px 0 0; vertical-align: top; color: var(--ink-3); font: 400 11px/1.8 var(--font-code); text-align: right; -webkit-user-select: none; user-select: none; opacity: .7; }
+    .rl-tr.is-changed td.rl-no::before { content: ""; position: absolute; left: 0; top: 3px; bottom: 3px; width: 2px; }
+    .rl-tr.is-del td.rl-no::before { background: var(--del); }
+    .rl-tr.is-add td.rl-no::before { background: var(--ins); }
+    .rl-tr.is-edit td.rl-no::before { background: var(--accent); box-shadow: var(--glow); }
+    .rl-tr.is-del > .rl-cell { background: var(--del-soft); }
+    .rl-tr.is-add > .rl-cell { background: var(--ins-soft); }
+    .rl-tr.is-edit > .rl-cell-changed { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+    .cd-table-wrap { margin: 2px 18px 6px; }
+    .cd-table { font: 400 12.5px/1.55 var(--font-code); color: var(--ink-2); }
+    .cd-table td.cd-mark { width: 16px; padding: 4px 6px 0 0; vertical-align: top; text-align: center; }
+    .cd-tr.cd-add > td { background: var(--ins-soft); color: var(--ins); }
+    .cd-tr.cd-del > td { background: var(--del-soft); color: var(--del); }
     .redline-legend { display: flex; flex-wrap: wrap; gap: 16px; color: var(--ink-3); font-size: 12px; }
     .legend-del { color: var(--del); text-decoration: line-through; font-family: var(--font-doc); font-size: 13.5px; }
     .legend-ins { color: var(--ins); text-decoration: underline; text-underline-offset: 2px; font-family: var(--font-doc); font-size: 13.5px; }
@@ -1522,6 +1543,9 @@
       .rl-line { grid-template-columns: 34px minmax(0, 1fr); padding-right: 14px; }
       .rl-no { padding-right: 9px; }
       .rl-gap { margin-left: 34px; margin-right: 14px; }
+      .rl-table-wrap { margin-right: 14px; }
+      .rl-table td.rl-no { width: 34px; min-width: 34px; padding-right: 9px; }
+      .rl-table .rl-cell { min-width: 6em; padding: 4px 8px; }
       /* Phone overview: status, then the change field, then lists. One idea per band. */
       .view-overview { display: flex; flex-direction: column; height: 100%; overflow-y: auto; }
       .overview-text { display: contents; }
