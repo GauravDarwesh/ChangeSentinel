@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T060111Z-8961d334",
-  "generated_at": "2026-10-26T06:06:10.224954+00:00",
+  "run_id": "20261026T061316Z-9575850f",
+  "generated_at": "2026-10-26T06:23:34.428500+00:00",
   "source": {
     "id": "manual-4ec015045fb6",
     "name": "FFIEC 009a Instructions",
@@ -12,7 +12,7 @@
     "allowed_prefixes": [
       "https://www.ffiec.gov/"
     ],
-    "initial_baseline": true
+    "initial_baseline": false
   },
   "discovery": {
     "source_id": "manual-4ec015045fb6",
@@ -86,18 +86,18 @@
   },
   "events": [
     {
-      "event_id": "f53ed78fd58251f46da45f0bb56942a0284ddc3cdc58949efa70989af9dc2734",
+      "event_id": "8487004a6538f7cfb14fe97c9e7e0e2662fea15e24f5fd1135b5f46d7804ba46",
       "event_type": "FETCH_ERROR",
       "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009a-Form-Instructions.pdf",
       "url_id": "4ec015045fb61b913a48875a9b761cc44114f145de71e89c79c8cc85d4a2eda3",
       "source_id": "manual-4ec015045fb6",
-      "timestamp": "2026-10-26T06:06:10.224954+00:00",
-      "evidence_location": "data/evidence/f53ed78fd58251f46da45f0bb56942a0284ddc3cdc58949efa70989af9dc2734.json",
+      "timestamp": "2026-10-26T06:23:34.428500+00:00",
+      "evidence_location": "data/evidence/8487004a6538f7cfb14fe97c9e7e0e2662fea15e24f5fd1135b5f46d7804ba46.json",
       "notification_id": "op-72b5d700bcb6ae38ff48a950af51ad6e52aef0f8303e8d0725ff67599fc2bdb1",
       "error_since": "2026-10-26T06:06:10.224954+00:00",
-      "error_runs": 1,
+      "error_runs": 2,
       "evidence": {
-        "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)"
+        "error": "BotCheckError: Cloudflare bot check still shown after rendering in a browser"
       }
     }
   ],
@@ -107,6 +107,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "continuation",
-  "workflow_run_id": "40276660199"
+  "trigger": "manual",
+  "workflow_run_id": "40278371512"
 }

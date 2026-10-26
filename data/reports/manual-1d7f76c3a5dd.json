@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T060111Z-8961d334",
-  "generated_at": "2026-10-26T06:06:11.249453+00:00",
+  "run_id": "20261026T061316Z-9575850f",
+  "generated_at": "2026-10-26T06:25:40.936672+00:00",
   "source": {
     "id": "manual-1d7f76c3a5dd",
     "name": "FFIEC 031 and FFIEC 041 Call Report Instructions Update",
@@ -12,7 +12,7 @@
     "allowed_prefixes": [
       "https://www.ffiec.gov/"
     ],
-    "initial_baseline": true
+    "initial_baseline": false
   },
   "discovery": {
     "source_id": "manual-1d7f76c3a5dd",
@@ -86,18 +86,18 @@
   },
   "events": [
     {
-      "event_id": "7b2743feaaf02abd72af7cb8ea200e3cdf79b55f68d09639d1910c8d3a2be73f",
+      "event_id": "6380b2759b2477c10429238125c53949c1a36a06cf2268135e177186aa9ac448",
       "event_type": "FETCH_ERROR",
       "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_202609_i_updates.pdf",
       "url_id": "1d7f76c3a5dd0ecf779a8ef1c84ef815545f83851031a222a1439e184d1cad3f",
       "source_id": "manual-1d7f76c3a5dd",
-      "timestamp": "2026-10-26T06:06:11.249453+00:00",
-      "evidence_location": "data/evidence/7b2743feaaf02abd72af7cb8ea200e3cdf79b55f68d09639d1910c8d3a2be73f.json",
+      "timestamp": "2026-10-26T06:25:40.936672+00:00",
+      "evidence_location": "data/evidence/6380b2759b2477c10429238125c53949c1a36a06cf2268135e177186aa9ac448.json",
       "notification_id": "op-4254ded70557c423c7c868450d5208988040d33c033fbe5107241fbba3e47d5d",
       "error_since": "2026-10-26T06:06:11.249453+00:00",
-      "error_runs": 1,
+      "error_runs": 2,
       "evidence": {
-        "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)"
+        "error": "BotCheckError: Cloudflare bot check still shown after rendering in a browser"
       }
     }
   ],
@@ -107,6 +107,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "continuation",
-  "workflow_run_id": "40276660199"
+  "trigger": "manual",
+  "workflow_run_id": "40278371512"
 }

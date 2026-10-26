@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T060111Z-8961d334",
-  "generated_at": "2026-10-26T06:06:11.553625+00:00",
+  "run_id": "20261026T061316Z-9575850f",
+  "generated_at": "2026-10-26T06:26:18.902117+00:00",
   "source": {
     "id": "manual-4a8f75a5137d",
     "name": "FFIEC 101 Validation",
@@ -12,7 +12,7 @@
     "allowed_prefixes": [
       "https://www.ffiec.gov/"
     ],
-    "initial_baseline": true
+    "initial_baseline": false
   },
   "discovery": {
     "source_id": "manual-4a8f75a5137d",
@@ -86,18 +86,18 @@
   },
   "events": [
     {
-      "event_id": "e426bc15af676617231e3a34fd88d30d2d662477e90a9a86302b12533fc41128",
+      "event_id": "ec80c02aea354c5b72f9e9d8bec7eb3ccf45c89b6ee74676341cea016c7884f3",
       "event_type": "FETCH_ERROR",
       "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
       "url_id": "4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e",
       "source_id": "manual-4a8f75a5137d",
-      "timestamp": "2026-10-26T06:06:11.553625+00:00",
-      "evidence_location": "data/evidence/e426bc15af676617231e3a34fd88d30d2d662477e90a9a86302b12533fc41128.json",
+      "timestamp": "2026-10-26T06:26:18.902117+00:00",
+      "evidence_location": "data/evidence/ec80c02aea354c5b72f9e9d8bec7eb3ccf45c89b6ee74676341cea016c7884f3.json",
       "notification_id": "op-1155d643b5b7c178238065ce5d94872b0516f94a14ee8005960619bbeb9cb403",
       "error_since": "2026-10-26T06:06:11.553625+00:00",
-      "error_runs": 1,
+      "error_runs": 2,
       "evidence": {
-        "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)"
+        "error": "BotCheckError: Cloudflare bot check still shown after rendering in a browser"
       }
     }
   ],
@@ -107,6 +107,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "continuation",
-  "workflow_run_id": "40276660199"
+  "trigger": "manual",
+  "workflow_run_id": "40278371512"
 }

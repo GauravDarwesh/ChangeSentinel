@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T060111Z-8961d334",
-  "generated_at": "2026-10-26T06:06:10.665367+00:00",
+  "run_id": "20261026T061316Z-9575850f",
+  "generated_at": "2026-10-26T06:24:25.027129+00:00",
   "source": {
     "id": "manual-2dd662f1976a",
     "name": "FFIEC 030 and FFIEC 030S Instructions",
@@ -12,7 +12,7 @@
     "allowed_prefixes": [
       "https://www.ffiec.gov/"
     ],
-    "initial_baseline": true
+    "initial_baseline": false
   },
   "discovery": {
     "source_id": "manual-2dd662f1976a",
@@ -86,18 +86,18 @@
   },
   "events": [
     {
-      "event_id": "fe99aa1f0270070ea4a5740df8e25492cc70d75f2994e462fd3e66e6a26557f2",
+      "event_id": "b1f3b8f91c86cf1068ffc85fb99eb097286da8ef2848fcc3d42552ce100bc95d",
       "event_type": "FETCH_ERROR",
       "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_FFIEC030S_202503_i.pdf",
       "url_id": "2dd662f1976afdd63d1922c9344e9c8121cbd216a999d00c067e490a51a04409",
       "source_id": "manual-2dd662f1976a",
-      "timestamp": "2026-10-26T06:06:10.665367+00:00",
-      "evidence_location": "data/evidence/fe99aa1f0270070ea4a5740df8e25492cc70d75f2994e462fd3e66e6a26557f2.json",
+      "timestamp": "2026-10-26T06:24:25.027129+00:00",
+      "evidence_location": "data/evidence/b1f3b8f91c86cf1068ffc85fb99eb097286da8ef2848fcc3d42552ce100bc95d.json",
       "notification_id": "op-f8ff61cbff79c2567cac0b9e74c347b9e29a99adaf1ff97b68585390828597eb",
       "error_since": "2026-10-26T06:06:10.665367+00:00",
-      "error_runs": 1,
+      "error_runs": 2,
       "evidence": {
-        "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)"
+        "error": "BotCheckError: Cloudflare bot check still shown after rendering in a browser"
       }
     }
   ],
@@ -107,6 +107,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "continuation",
-  "workflow_run_id": "40276660199"
+  "trigger": "manual",
+  "workflow_run_id": "40278371512"
 }

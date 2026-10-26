@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T060111Z-8961d334",
-  "generated_at": "2026-10-26T06:06:10.128912+00:00",
+  "run_id": "20261026T061316Z-9575850f",
+  "generated_at": "2026-10-26T06:23:21.766884+00:00",
   "source": {
     "id": "manual-58dc3b1d4e54",
     "name": "FFIEC 009 Instructions",
@@ -86,18 +86,18 @@
   },
   "events": [
     {
-      "event_id": "69a61ad7f1691d2b3f8164a49493ab5f4ecb42a9612c685e11585710a0b61f73",
+      "event_id": "0277386cb5bc93363d3a096a9302f61b5948d9d339fb7cca847af9c295d2a85c",
       "event_type": "FETCH_ERROR",
       "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/ffiec009-report-form-instructions.pdf",
       "url_id": "58dc3b1d4e547426e451fe1e0c2559e8bbdf45e2e89282d095f7edaeed37fa87",
       "source_id": "manual-58dc3b1d4e54",
-      "timestamp": "2026-10-26T06:06:10.128912+00:00",
-      "evidence_location": "data/evidence/69a61ad7f1691d2b3f8164a49493ab5f4ecb42a9612c685e11585710a0b61f73.json",
+      "timestamp": "2026-10-26T06:23:21.766884+00:00",
+      "evidence_location": "data/evidence/0277386cb5bc93363d3a096a9302f61b5948d9d339fb7cca847af9c295d2a85c.json",
       "notification_id": "op-e76c8919c944b4774ebf8d2eb3b5d9c3816d7b27bc3df448b090d9d831829468",
       "error_since": "2026-10-26T05:58:59.010700+00:00",
-      "error_runs": 2,
+      "error_runs": 3,
       "evidence": {
-        "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)"
+        "error": "BotCheckError: Cloudflare bot check still shown after rendering in a browser"
       }
     }
   ],
@@ -107,6 +107,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "continuation",
-  "workflow_run_id": "40276660199"
+  "trigger": "manual",
+  "workflow_run_id": "40278371512"
 }
