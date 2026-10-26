@@ -2428,7 +2428,10 @@ function specTableBlock(table, filter) {
 }
 // The file's own change log ("Version" sheet) checked claim by claim against
 // what the comparison found (regmon/spec_diff.release_notes).
-const NOTE_ACTION_WORDS = { added: "Added", retired: "Deprecated or removed", updated: "Updated" };
+const NOTE_ACTION_WORDS = { added: "Added", retired: "Deprecated", updated: "Updated" };
+const NOTE_FOUND_WORDS = { added: "new", added_version: "new version", updated_version: "re-versioned", retired: "retired", removed: "removed",
+  logic: "logic changed", severity: "severity changed", message: "message changed", definition: "redefined", description: "description changed",
+  effective: "dates changed", reinstated: "reinstated" };
 function releaseNotesBlock(notes) {
   if (!isPlainObject(notes) || !Array.isArray(notes.entries) || !notes.entries.length) return "";
   const rows = [];
@@ -2437,17 +2440,17 @@ function releaseNotesBlock(notes) {
     (Array.isArray(entry.claims) ? entry.claims : []).forEach(claim => {
       const differs = claim.status === "differs";
       const found = claim.status === "unchecked" ? "no table to check against" : "found " + Number(claim.detected || 0).toLocaleString();
-      rows.push('<li class="spec-row"><span class="item-code">' + esc((NOTE_ACTION_WORDS[claim.action] || claim.action) + " " + Number(claim.count).toLocaleString()) + "</span>" +
+      const noun = String(claim.noun || "").replace(/'s$/, "s").replace(/^dpa$/, "DPAs").replace(/^dpas$/, "DPAs");
+      rows.push('<li class="spec-row"><span class="item-code">' + esc((NOTE_ACTION_WORDS[claim.action] || claim.action) + " " + Number(claim.count).toLocaleString() + " " + noun) + "</span>" +
         '<div class="spec-main"><div class="spec-meta"><span class="tag ' + (differs ? "is-warn" : "") + '">' + esc(differs ? "Differs · " + found : claim.status === "matches" ? "Matches" : found) + "</span>" +
-        (where ? '<span class="spec-field">' + esc(where) + "</span>" : "") + "</div>" +
-        '<span class="item-text">' + esc(claim.noun || "") + "</span></div></li>");
+        (where ? '<span class="spec-field">' + esc(where) + "</span>" : "") + "</div></div></li>");
     });
     if (Number(entry.ids_listed) > 0) {
       const missing = Number(entry.ids_not_changed_count) || 0;
       rows.push('<li class="spec-row"><span class="item-code">' + esc(plural(Number(entry.ids_listed), "listed item", "listed items")) + "</span>" +
         '<div class="spec-main"><div class="spec-meta"><span class="tag ' + (missing ? "is-warn" : "") + '">' + esc(missing ? missing + " not changed as described" : "All changed as described") + "</span>" +
         (where ? '<span class="spec-field">' + esc(where) + "</span>" : "") + "</div>" +
-        (missing ? '<span class="spec-mismatch">Listed in the notes but not changed that way in the file: ' + esc((entry.ids_not_changed || []).join(", ")) + (missing > (entry.ids_not_changed || []).length ? ", …" : "") + "</span>" : "") +
+        (missing ? '<span class="spec-mismatch">Listed in the notes but not changed that way in the file: ' + esc((entry.ids_not_changed || []).map(id => id + (entry.ids_found_as && entry.ids_found_as[id] ? " (" + (NOTE_FOUND_WORDS[entry.ids_found_as[id]] || entry.ids_found_as[id]) + ")" : " (unchanged)")).join(", ")) + (missing > (entry.ids_not_changed || []).length ? ", …" : "") + "</span>" : "") +
         "</div></li>");
     }
   });
