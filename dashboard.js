@@ -2278,7 +2278,10 @@ function calendarDay(iso, withYear) {
   const day = L.isoDayToDate(iso);
   return day ? dateLabel(day, withYear) : String(iso || "");
 }
-function dateBasis(entry) { return entry.basis === "ai" ? "From the AI reading of the change" : "Stated in the text the change added"; }
+function dateBasis(entry) {
+  return entry.basis === "ai" ? "From the AI reading of the change"
+    : entry.basis === "spec" ? "From the effective dates of the changed rows in the specification file" : "Stated in the text the change added";
+}
 function datesSheet(entry) {
   const dates = L.datesForChange(state.calendar, entry.event_id);
   if (!dates.length) return "";
@@ -2379,6 +2382,7 @@ function specRow(table, change) {
     meta.push('<span class="tag ' + tone + '">' + esc((change.severity.before || "(blank)") + " → " + (change.severity.after || "(blank)")) +
       (change.severity.direction !== "changed" ? " · " + esc(change.severity.direction) : "") + "</span>");
   }
+  if (change.version && table.kind === "rules") meta.push('<span class="tag">' + esc("v" + (change.version.before || "–") + " → v" + (change.version.after || "–")) + "</span>");
   if (change.effective) meta.push('<span class="spec-when">' + esc(change.effective) + (change.quarter && change.effective.indexOf(change.quarter) < 0 ? " (" + esc(change.quarter) + ")" : "") + "</span>");
   if (change.field && change.field !== change.label) meta.push('<span class="spec-field">' + esc(change.field) + "</span>");
   if (change.table && table.kind !== "codes") meta.push('<span class="spec-field">' + esc(change.table) + "</span>");
@@ -2410,6 +2414,8 @@ function specTableBlock(table, filter) {
   (Array.isArray(table.warnings) ? table.warnings : []).forEach(warning => notes.push('<p class="note-strip">' + esc(warning) + "</p>"));
   if (table.columns_added && table.columns_added.length) notes.push('<p class="note-strip">New columns: ' + esc(table.columns_added.join(", ")) + "</p>");
   if (table.columns_removed && table.columns_removed.length) notes.push('<p class="note-strip">Columns no longer present: ' + esc(table.columns_removed.join(", ")) + "</p>");
+  if (Array.isArray(table.columns_renamed) && table.columns_renamed.length) notes.push('<p class="note-strip">Columns renamed and still compared: ' +
+    esc(table.columns_renamed.map(pair => "“" + (pair.before || "") + "” → “" + (pair.after || "") + "”").join(", ")) + "</p>");
   const groups = L.specGroups(table, filter).map(group => '<div class="items-group"><div class="items-group-label ' + (SPEC_GROUP_TONES[group.category] === undefined ? "is-amended" : SPEC_GROUP_TONES[group.category]) + '">' +
     esc(group.label) + " <span>" + esc(filter === "mismatch" ? group.changes.length : (table.counts && table.counts[group.category] || group.changes.length)) + "</span></div>" +
     '<ul class="items-list">' + group.changes.slice(0, SPEC_ROWS_SHOWN).map(change => specRow(table, change)).join("") + "</ul>" +
@@ -2417,19 +2423,59 @@ function specTableBlock(table, filter) {
   const empty = !groups && !table.table_added && !table.table_removed
     ? '<p class="note-strip">' + (filter === "mismatch" ? "No mismatches in this table." : "Only metadata or cosmetic changes. Choose Everything to see them.") + "</p>" : "";
   return '<div class="spec-table"><div class="spec-table-head"><span class="spec-table-name">' + esc(table.name || "Table") + "</span>" +
-    '<span class="sheet-note">' + esc(nouns + " · " + rows + key) + "</span></div>" + notes.join("") + groups + empty + (table.truncated ? '<p class="note-strip">The list is capped; the counts are complete.</p>' : "") + "</div>";
+    '<span class="sheet-note">' + esc(nouns + " · " + rows + key) + "</span></div>" + notes.join("") + groups + empty + (table.truncated ? '<p class="note-strip">The list is capped; the counts are complete.</p>' : "") +
+    (Number(table.quiet_hidden) > 0 && filter === "all" ? '<p class="note-strip">' + esc(plural(Number(table.quiet_hidden), "further metadata or cosmetic row is", "further metadata or cosmetic rows are")) + " counted but not listed.</p>" : "") + "</div>";
+}
+// The file's own change log ("Version" sheet) checked claim by claim against
+// what the comparison found (regmon/spec_diff.release_notes).
+const NOTE_ACTION_WORDS = { added: "Added", retired: "Deprecated or removed", updated: "Updated" };
+function releaseNotesBlock(notes) {
+  if (!isPlainObject(notes) || !Array.isArray(notes.entries) || !notes.entries.length) return "";
+  const rows = [];
+  notes.entries.forEach(entry => {
+    const where = (Array.isArray(entry.tables) && entry.tables.length ? entry.tables.join(", ") : entry.worksheet) || "";
+    (Array.isArray(entry.claims) ? entry.claims : []).forEach(claim => {
+      const differs = claim.status === "differs";
+      const found = claim.status === "unchecked" ? "no table to check against" : "found " + Number(claim.detected || 0).toLocaleString();
+      rows.push('<li class="spec-row"><span class="item-code">' + esc((NOTE_ACTION_WORDS[claim.action] || claim.action) + " " + Number(claim.count).toLocaleString()) + "</span>" +
+        '<div class="spec-main"><div class="spec-meta"><span class="tag ' + (differs ? "is-warn" : "") + '">' + esc(differs ? "Differs · " + found : claim.status === "matches" ? "Matches" : found) + "</span>" +
+        (where ? '<span class="spec-field">' + esc(where) + "</span>" : "") + "</div>" +
+        '<span class="item-text">' + esc(claim.noun || "") + "</span></div></li>");
+    });
+    if (Number(entry.ids_listed) > 0) {
+      const missing = Number(entry.ids_not_changed_count) || 0;
+      rows.push('<li class="spec-row"><span class="item-code">' + esc(plural(Number(entry.ids_listed), "listed item", "listed items")) + "</span>" +
+        '<div class="spec-main"><div class="spec-meta"><span class="tag ' + (missing ? "is-warn" : "") + '">' + esc(missing ? missing + " not changed as described" : "All changed as described") + "</span>" +
+        (where ? '<span class="spec-field">' + esc(where) + "</span>" : "") + "</div>" +
+        (missing ? '<span class="spec-mismatch">Listed in the notes but not changed that way in the file: ' + esc((entry.ids_not_changed || []).join(", ")) + (missing > (entry.ids_not_changed || []).length ? ", …" : "") + "</span>" : "") +
+        "</div></li>");
+    }
+  });
+  (Array.isArray(notes.undocumented) ? notes.undocumented : []).forEach(item => {
+    rows.push('<li class="spec-row"><span class="item-code">' + esc(plural(Number(item.count), "unlisted change", "unlisted changes")) + "</span>" +
+      '<div class="spec-main"><div class="spec-meta"><span class="tag is-warn">Not in the notes</span><span class="spec-field">' + esc(item.table || "") + "</span></div>" +
+      '<span class="spec-mismatch">' + esc((NOTE_ACTION_WORDS[item.action] || item.action) + " in the file but missing from the notes' list: " + (item.labels || []).join(", ") +
+        (Number(item.count) > (item.labels || []).length ? ", …" : "")) + "</span></div></li>");
+  });
+  if (!rows.length) return "";
+  const differs = Number(notes.differs) || 0;
+  return '<div class="spec-table"><div class="spec-table-head"><span class="spec-table-name">' + esc("Release notes v" + (notes.version || "?")) + "</span>" +
+    '<span class="sheet-note">' + esc((notes.date ? notes.date + " · " : "") + (differs ? plural(differs, "point the file does not bear out", "points the file does not bear out") : "every claim matches the file")) + "</span></div>" +
+    '<p class="note-strip' + (differs ? " is-warning" : "") + '">The file’s own change log, checked against the rows that actually changed.' + (differs ? " Raise the differences with the regulator before relying on the notes." : "") + "</p>" +
+    '<ul class="items-list">' + rows.join("") + "</ul></div>";
 }
 function specSheet(spec, eventId) {
   const filter = state.specFilter || "attention";
   const tables = Array.isArray(spec.tables) ? spec.tables : [];
-  const mismatches = Number(spec.mismatches) || 0;
+  const mismatches = (Number(spec.mismatches) || 0) + (spec.release_notes ? Number(spec.release_notes.differs) || 0 : 0);
   const note = (L.describeSpec({ counts: spec.counts || {}, escalated: spec.escalated, labels: [] }) || "Only metadata or cosmetic changes") +
     " · " + plural(tables.length, "table", "tables") + (mismatches ? " · " + plural(mismatches, "mismatch", "mismatches") : "");
   const filters = '<div class="segmented" role="group" aria-label="Show">' + SPEC_FILTERS.filter(([key]) => key !== "mismatch" || mismatches)
     .map(([key, label]) => '<button type="button" data-spec-filter="' + key + '" aria-pressed="' + String(filter === key) + '">' + label + "</button>").join("") + "</div>";
   return '<section class="sheet" aria-labelledby="change-spec-title"><div class="sheet-head"><div><h3 class="sheet-title" id="change-spec-title">Specification changes</h3>' +
     '<div class="sheet-note">' + esc(note) + "</div></div>" + filters + "</div>" +
-    '<div class="items-body">' + tables.filter(table => filter !== "mismatch" || L.specGroups(table, filter).length).map(table => specTableBlock(table, filter)).join("") + "</div>" +
+    '<div class="items-body">' + (filter !== "mismatch" || (spec.release_notes && spec.release_notes.differs) ? releaseNotesBlock(spec.release_notes) : "") +
+    tables.filter(table => filter !== "mismatch" || L.specGroups(table, filter).length).map(table => specTableBlock(table, filter)).join("") + "</div>" +
     '<div class="sheet-foot"><span class="sheet-note">Rows are aligned by their rule or field key, so an inserted row is one new item. Read from the saved texts, the same on every run.</span>' +
     '<button class="sheet-link" type="button" data-spec-csv="' + esc(eventId) + '">Download CSV</button></div></section>';
 }
