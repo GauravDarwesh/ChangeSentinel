@@ -377,7 +377,7 @@ class SafetyTests(unittest.TestCase):
         # Force the primary backend to report the challenge so this exercises
         # the real SeleniumBase fallback, not just Pydoll's happy path.
         initial_challenge = browser_fetch.ChallengeNotPassed("Cloudflare", CLOUDFLARE)
-        with serve() as (site, _widget, _hits), tempfile.TemporaryDirectory() as profile, \\
+        with serve() as (site, _widget, _hits), tempfile.TemporaryDirectory() as profile, \
                 patch("regmon.browser_fetch.validate_public_http_url"), \\
                 patch.object(browser_fetch, "CHALLENGE_FRAME_HOSTS", frozenset({"localhost"})), \\
                 patch.object(browser_fetch, "profile_dir", return_value=profile), \\
