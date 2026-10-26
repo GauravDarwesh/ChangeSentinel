@@ -412,6 +412,38 @@
         "The monthly report is selected through a form and View button, not exposed as a normal HTML link on the search page.",
         "The annual index PDFs contain communication entries, but this listing source does not convert those entries into individual communication PDF URLs."
       ]
+    },
+    {
+      "id": "ffiec",
+      "name": "Federal Financial Institutions Examination Council",
+      "short_name": "FFIEC",
+      "region": "NAM",
+      "jurisdiction": "US",
+      "hosts": [
+        "www.ffiec.gov"
+      ],
+      "prefer_https": true,
+      "languages": [
+        "en"
+      ],
+      "review_languages": [
+        "en"
+      ],
+      "channels": [
+        {
+          "id": "ffiec-ffiec-forms-instructions-validations",
+          "type": "listing",
+          "label": "FFIEC - Forms, Instructions, Validations",
+          "url": "https://www.ffiec.gov/resources/reporting-forms",
+          "link_prefixes": [
+            "https://www.ffiec.gov/resources/reporting-forms"
+          ]
+        }
+      ],
+      "path_hints": [],
+      "known_gaps": [
+        "Reads only the channels listed for this regulator; pages announced anywhere else are not covered."
+      ]
     }
   ]
 }
