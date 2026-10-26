@@ -35,6 +35,7 @@ MAX_MONITORS = 200
 SETTABLE_KEYS = {
     "check_every_hours", "check_days", "check_hours", "check_timezone", "workspace", "labels", "shadow",
     "fetch_mode", "browser_wait_seconds", "browser_wait_selector", "browser_dismiss_cookies",
+    "browser_actions", "visual_compare", "visual_alert_threshold",
 }
 # Label edits that keep each monitor's other labels (a preset adds "Spec" to
 # fifty monitors without wiping what each already carries).

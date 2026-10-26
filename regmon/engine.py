@@ -34,7 +34,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import deadlines, health, item_codes, registry, reviews, schedule, spec_diff
+from regmon import deadlines, health, item_codes, registry, reviews, schedule, spec_diff, visual
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -274,6 +274,8 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         "html_comparison_hash_version": old.get("html_comparison_hash_version") if old else None,
         "html_snapshot_location": old.get("html_snapshot_location") if old else None,
         "file_snapshot_location": old.get("file_snapshot_location") if old else None,
+        "visual_snapshot_location": old.get("visual_snapshot_location") if old else None,
+        "visual_hash": old.get("visual_hash") if old else None,
         "extraction_type": None,
         "extractor_version": old.get("extractor_version") if old else None,
         "extraction_error": None,
@@ -359,6 +361,8 @@ def record_change(item: dict, event: dict) -> None:
         entry["spec"] = event["spec"]
     if event.get("impact"):
         entry["impact"] = event["impact"]
+    if event.get("visual"):
+        entry["visual"] = event["visual"]
     history = [old for old in (item.get("change_history") or []) if old.get("event_id") != entry["event_id"]]
     item["change_history"] = [entry, *history][:CHANGE_HISTORY_LIMIT]
     if event["event_type"] in CONTENT_CHANGE_EVENTS:
@@ -484,6 +488,66 @@ def _is_html(content_type: str, body: bytes) -> bool:
     return not kind and body[:512].lstrip().lower().startswith((b"<!doctype html", b"<html"))
 
 
+# Screenshots taken by browser renders (fetch workers) wait here, by URL id,
+# until the scan loop stores and compares them; they never enter the inventory.
+_SCREENSHOTS: dict[str, bytes] = {}
+_SCREENSHOTS_LOCK = __import__("threading").Lock()
+VISUAL_REUSE_BELOW = 0.0005  # a render this close to the last one reuses its file
+
+
+def take_screenshot(uid: str) -> bytes | None:
+    with _SCREENSHOTS_LOCK:
+        return _SCREENSHOTS.pop(uid, None)
+
+
+def _store_png(name: str, body: bytes) -> str:
+    path = ROOT / "data" / "snapshots" / "visual" / name
+    if not path.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        atomic_write_bytes(path, body)
+    return str(path.relative_to(ROOT))
+
+
+def apply_visual(uid: str, shot: bytes, old: dict | None, item: dict, now: str, dry_run: bool) -> dict | None:
+    """Store this render's screenshot and compare it with the last one.
+
+    Returns the evidence block (before/after/overlay locations, share of the
+    page that looks different, regions), or None for a first screenshot or
+    when no comparison could be made. Nearly identical renders reuse the
+    previous file so a scan does not commit a new image every six hours.
+    """
+    digest = visual.digest(shot)
+    previous_location = (old or {}).get("visual_snapshot_location")
+    previous_png = None
+    if previous_location:
+        try:
+            previous_png = (ROOT / previous_location).read_bytes()
+        except OSError:
+            previous_png = None
+    comparison = None
+    if previous_png is not None and visual.available():
+        try:
+            comparison = visual.compare(previous_png, shot)
+        except Exception as exc:  # pragma: no cover - a bad image never breaks a scan
+            print(f"Visual comparison skipped for {uid}: {type(exc).__name__}: {exc}")
+    if comparison is not None and comparison["changed_ratio"] < VISUAL_REUSE_BELOW:
+        item["visual_snapshot_location"], item["visual_hash"] = previous_location, (old or {}).get("visual_hash")
+        item["visual"] = {"changed_ratio": comparison["changed_ratio"], "region_count": comparison["region_count"], "compared_at": now}
+        return None
+    if not dry_run:
+        item["visual_snapshot_location"] = _store_png(f"{uid}-{digest[:16]}.png", shot)
+    item["visual_hash"] = digest
+    if comparison is None:
+        item["visual"] = {"changed_ratio": None, "region_count": 0, "compared_at": now}
+        return None
+    overlay = None if dry_run else _store_png(f"{uid}-{digest[:16]}-overlay.png", comparison["overlay_png"])
+    item["visual"] = {"changed_ratio": comparison["changed_ratio"], "region_count": comparison["region_count"], "compared_at": now}
+    return {"before": previous_location, "after": item.get("visual_snapshot_location"), "overlay": overlay,
+            "before_hash": (old or {}).get("visual_hash"), "after_hash": digest,
+            "changed_ratio": comparison["changed_ratio"], "region_count": comparison["region_count"],
+            "regions": comparison["regions"], "size_before": comparison["size_before"], "size_after": comparison["size_after"]}
+
+
 def _browser_pass(url: str, source: SourceConfig, result: FetchResult, item: dict, now: str) -> FetchResult:
     """Render in a browser when the source asks for it, and refuse challenge pages.
 
@@ -501,6 +565,7 @@ def _browser_pass(url: str, source: SourceConfig, result: FetchResult, item: dic
             rendered = browser_fetch.render(
                 url, wait_seconds=source.browser_wait_seconds, wait_selector=source.browser_wait_selector,
                 dismiss_cookies=source.browser_dismiss_cookies, in_scope=lambda target: in_scope(canonical(target), source),
+                steps=list(source.browser_actions), screenshot=source.visual_compare,
             )
         except Exception as exc:
             if vendor:
@@ -513,6 +578,11 @@ def _browser_pass(url: str, source: SourceConfig, result: FetchResult, item: dic
             raise BotCheckError(f"{rendered_vendor} bot check still shown after rendering in a browser")
         item["rendered_by"] = "browser"
         item["browser"] = {"blocked_requests": rendered.blocked, "consent": rendered.consent[:80], "final_url": rendered.final_url}
+        if rendered.steps:
+            item["browser"]["steps"] = rendered.steps
+        if rendered.screenshot and source.visual_compare:
+            with _SCREENSHOTS_LOCK:
+                _SCREENSHOTS[item["url_id"]] = rendered.screenshot
         return FetchResult(200 if result.status_code >= 400 else result.status_code, "text/html; charset=utf-8", len(rendered.html),
                            result.etag, result.last_modified, hashlib.sha256(rendered.html).hexdigest(), rendered.html)
     if vendor:
@@ -888,11 +958,22 @@ def process_source(
             # same cosmetic HTML churn on every subsequent fetch.
             if event_type == "HTML_SOURCE_CHANGED" and canonical(url) in suppressed_markup_urls:
                 event_type = "UNCHANGED_URL"
+            # A screenshot of this render (visual_compare monitors): stored, and
+            # compared with the last one. On its own a visual difference raises
+            # VISUAL_CHANGED only above the monitor's threshold.
+            visual_block = None
+            shot = take_screenshot(uid)
+            if shot is not None and source.visual_compare:
+                visual_block = apply_visual(uid, shot, old, item, now, dry_run)
+                threshold = source.visual_alert_threshold
+                if (event_type == "UNCHANGED_URL" and not migrated and visual_block and threshold
+                        and visual_block["changed_ratio"] >= threshold):
+                    event_type = "VISUAL_CHANGED"
             if event_type == "NEW_URL":
                 new_items.append(item)
             elif event_type == "CHANGED_URL":
                 changed_items.append({"before":old,"after":item})
-            elif event_type == "HTML_SOURCE_CHANGED":
+            elif event_type in {"HTML_SOURCE_CHANGED", "VISUAL_CHANGED"}:
                 source_changed_items.append({"before":old,"after":item})
             elif event_type == "BASELINE_MIGRATION":
                 migration_items.append({"before":old,"after":item})
@@ -912,6 +993,8 @@ def process_source(
                     if event_type == "HTML_SOURCE_CHANGED":
                         before_hash = (old or {}).get("html_hash") or (old or {}).get("raw_hash")
                         after_hash = item.get("html_hash") or item.get("raw_hash")
+                    elif event_type == "VISUAL_CHANGED":
+                        before_hash, after_hash = (visual_block or {}).get("before_hash"), (visual_block or {}).get("after_hash")
                     else:
                         before_hash = (old or {}).get("normalized_hash") or (old or {}).get("raw_hash") or (old or {}).get("content_hash")
                         after_hash = item.get("normalized_hash")
@@ -941,9 +1024,17 @@ def process_source(
                                 spec_diff=spec,
                                 spec_inventory=spec_inventory,
                                 impact=impact,
+                                visual=visual_block,
                             )
                             if not dry_run
                             else None
+                        )
+                        item["evidence_location"] = evidence
+                        current[uid] = item
+                    elif event_type == "VISUAL_CHANGED":
+                        evidence = (
+                            _write_evidence(ROOT, event_type, event_id, url, now, old, item, None, None, visual=visual_block)
+                            if not dry_run else None
                         )
                         item["evidence_location"] = evidence
                         current[uid] = item
@@ -959,7 +1050,9 @@ def process_source(
                         event["impact"] = impact_summary
                     if item.get("migration_reason"):
                         event["migration_reason"] = item["migration_reason"]
-                    if event_type in {"NEW_URL", "CHANGED_URL", "HTML_SOURCE_CHANGED"}:
+                    if visual_block:
+                        event["visual"] = {"changed_ratio": visual_block["changed_ratio"], "region_count": visual_block["region_count"]}
+                    if event_type in {"NEW_URL", "CHANGED_URL", "HTML_SOURCE_CHANGED", "VISUAL_CHANGED"}:
                         record_change(item, event)
                         current[uid] = item
                     events.append(event)
@@ -1337,6 +1430,7 @@ def process_source(
         "new":len(new_items),
         "changed":len(changed_items),
         "source_changed":len(source_changed_items),
+        "visual_changed":sum(1 for event in events if event.get("event_type") == "VISUAL_CHANGED"),
         "removed":len(removed_items),
         "removal_held":removal_guard["held_removals"] if removal_guard else 0,
         "removal_pending_confirmation":len(removal_pending),

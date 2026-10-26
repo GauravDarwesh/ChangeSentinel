@@ -1081,6 +1081,7 @@
     NEW_URL: "New page",
     REMOVED_URL: "Page removed",
     HTML_SOURCE_CHANGED: "Markup changed",
+    VISUAL_CHANGED: "Looks different",
     FETCH_ERROR: "Couldn't fetch",
     EXTRACTION_ERROR: "Couldn't read content",
     BASELINE_MIGRATION: "Parser re-baseline"
@@ -1095,7 +1096,7 @@
   function eventTone(type) {
     if (type === "FETCH_ERROR" || type === "EXTRACTION_ERROR") return "problem";
     if (type === "HTML_SOURCE_CHANGED") return "markup";
-    if (type === "CHANGED_URL" || type === "NEW_URL" || type === "REMOVED_URL") return "change";
+    if (type === "CHANGED_URL" || type === "NEW_URL" || type === "REMOVED_URL" || type === "VISUAL_CHANGED") return "change";
     return "info";
   }
 
@@ -2648,7 +2649,7 @@
 
   const PRECISION_POSITIVE = ["material", "action_required"];
   const PRECISION_NEGATIVE = ["not_material"];
-  const PRECISION_ALERTABLE = ["CHANGED_URL", "NEW_URL", "REMOVED_URL"];
+  const PRECISION_ALERTABLE = ["CHANGED_URL", "NEW_URL", "REMOVED_URL", "VISUAL_CHANGED"];
   const PRECISION_SCORED = PRECISION_ALERTABLE.concat(["HTML_SOURCE_CHANGED"]);
   const PRECISION_QUIET = ["ai_irrelevant", "condition_not_met"];
   const PRECISION_STOPWORDS = new Set(("a an and are as at be been by for from has have in into is it its of on or that the this to was were will with not no new " +
@@ -2814,6 +2815,99 @@
       "This request was created from the ChangeSentinel dashboard."].join("\n");
     return { errors, title: "[ChangeSentinel] Change review: missed change on " + monitor, body };
   }
+
+  /* ---------- Recorded browser steps (regmon/browser_actions.py) ---------- */
+
+  const BROWSER_ACTIONS = ["click", "type", "select", "check", "uncheck", "press", "scroll", "wait", "wait_for"];
+  const BROWSER_KEYS = ["Enter", "Tab", "Escape", "ArrowDown", "ArrowUp", "Space"];
+  // Mirrors validate_actions(): the steps in canonical form, or the first problem.
+  function validateBrowserSteps(value) {
+    if (value === null || value === undefined || (Array.isArray(value) && !value.length)) return { steps: [], error: "" };
+    if (!Array.isArray(value)) return { steps: [], error: "Steps must be a list." };
+    if (value.length > 20) return { steps: [], error: "At most 20 steps." };
+    const steps = [];
+    let wait = 0;
+    const okSelector = text => typeof text === "string" && text.trim() && text.length <= 200 && !/[\r\n]/.test(text);
+    for (let index = 0; index < value.length; index += 1) {
+      const step = value[index];
+      const at = "Step " + (index + 1) + ": ";
+      if (!step || typeof step !== "object" || Array.isArray(step)) return { steps: [], error: at + "must be an object." };
+      if (BROWSER_ACTIONS.indexOf(step.action) < 0) return { steps: [], error: at + "action must be one of " + BROWSER_ACTIONS.join(", ") + "." };
+      const clean = { action: step.action };
+      const needs = ["click", "type", "select", "check", "uncheck", "wait_for"].indexOf(step.action) >= 0;
+      if (needs || step.selector !== undefined) {
+        if (!okSelector(step.selector)) return { steps: [], error: at + "needs a CSS selector of at most 200 characters." };
+        if (step.action !== "wait") clean.selector = step.selector.trim();
+      }
+      if (step.action === "type") {
+        if (typeof step.text !== "string" || step.text.length > 200 || /[\r\n]/.test(step.text)) return { steps: [], error: at + "text must be one line of at most 200 characters." };
+        clean.text = step.text;
+      }
+      if (step.action === "select") {
+        if (typeof step.value !== "string" || !step.value || step.value.length > 200) return { steps: [], error: at + "needs the option's value or text." };
+        clean.value = step.value;
+      }
+      if (step.action === "press") {
+        const key = step.key === undefined ? "Enter" : step.key;
+        if (BROWSER_KEYS.indexOf(key) < 0) return { steps: [], error: at + "key must be one of " + BROWSER_KEYS.join(", ") + "." };
+        clean.key = key;
+      }
+      if (step.action === "wait" || step.action === "wait_for") {
+        const seconds = step.seconds === undefined ? (step.action === "wait_for" ? 10 : 1) : step.seconds;
+        if (typeof seconds !== "number" || !(seconds > 0 && seconds <= 30)) return { steps: [], error: at + "seconds must be more than 0 and at most 30." };
+        clean.seconds = seconds;
+        wait += seconds;
+      }
+      if (typeof step.note === "string" && step.note) clean.note = step.note.slice(0, 200);
+      steps.push(clean);
+    }
+    if (wait > 90) return { steps: [], error: "The steps wait " + wait + " seconds in total; the limit is 90." };
+    return { steps, error: "" };
+  }
+  function describeBrowserStep(step) {
+    const target = step.selector || "";
+    switch (step.action) {
+      case "click": return "Click " + target;
+      case "type": return "Type “" + step.text + "” into " + target;
+      case "select": return "Choose “" + step.value + "” in " + target;
+      case "check": return "Tick " + target;
+      case "uncheck": return "Untick " + target;
+      case "press": return "Press " + (step.key || "Enter") + (target ? " in " + target : "");
+      case "scroll": return target ? "Scroll to " + target : "Scroll to the bottom";
+      case "wait": return "Wait " + (step.seconds || 1) + " s";
+      case "wait_for": return "Wait up to " + (step.seconds || 10) + " s for " + target;
+      default: return String(step.action || "");
+    }
+  }
+  // The recorder: run on the portal (as a bookmarklet) in the reviewer's own
+  // browser, it writes down clicks, choices and typing as steps. It keeps the
+  // steps across page loads in that tab (click the bookmarklet again after a
+  // page loads), never records what is typed into a password field, and only
+  // copies the list; it sends nothing anywhere.
+  const RECORDER_SOURCE = String.raw`(()=>{const K="cs-recorder-steps";if(window.__csRec){window.__csRec.show();return}
+let steps=[];try{steps=JSON.parse(sessionStorage.getItem(K)||"[]")}catch(e){}
+const q=v=>window.CSS&&CSS.escape?CSS.escape(v):String(v).replace(/[^\w-]/g,"\\$&");
+const one=s=>{try{return document.querySelectorAll(s).length===1}catch(e){return false}};
+const sel=el=>{if(el.id&&one("#"+q(el.id)))return"#"+q(el.id);for(const a of["name","data-testid","aria-label","title","value"]){const v=el.getAttribute&&el.getAttribute(a);if(v&&v.length<80){const s=el.tagName.toLowerCase()+"["+a+"=\""+v.replace(/"/g,"\\\"")+"\"]";if(one(s))return s}}const parts=[];let n=el;while(n&&n.nodeType===1&&n!==document.body&&parts.length<6){if(n.id&&one("#"+q(n.id))){parts.unshift("#"+q(n.id));break}let p=n.tagName.toLowerCase();const sib=n.parentElement?Array.from(n.parentElement.children).filter(c=>c.tagName===n.tagName):[];if(sib.length>1)p+=":nth-of-type("+(sib.indexOf(n)+1)+")";parts.unshift(p);n=n.parentElement}return parts.join(" > ")};
+const box=document.createElement("div");box.setAttribute("data-cs-recorder","");box.style.cssText="position:fixed;right:16px;bottom:16px;z-index:2147483647;width:320px;max-height:50vh;overflow:auto;background:#1c130d;color:#fff4e4;font:13px/1.45 system-ui,sans-serif;border:1px solid #4a3626;box-shadow:0 12px 40px rgba(0,0,0,.4);padding:12px";
+const say=t=>{const m=box.querySelector("[data-m]");if(m)m.textContent=t};
+const render=()=>{box.innerHTML="<b style=\"color:#ff9f1c\">ChangeSentinel recorder</b> · "+steps.length+" step"+(steps.length===1?"":"s")+"<ol style=\"margin:8px 0;padding-left:18px\">"+steps.map(s=>"<li>"+(s.action+" "+(s.selector||"")+(s.value?" = "+s.value:"")+(s.text!==undefined?" = "+s.text:"")).replace(/[<&]/g,c=>c==="<"?"&lt;":"&amp;")+"</li>").join("")+"</ol><div data-m style=\"color:#a08a74\">Use the page as usual. Steps are kept in this tab.</div><p style=\"display:flex;gap:8px;margin:8px 0 0\"><button data-a=\"copy\">Copy steps</button><button data-a=\"wait\">+ Wait for…</button><button data-a=\"undo\">Undo</button><button data-a=\"clear\">Clear</button><button data-a=\"stop\">Stop</button></p>"};
+const save=()=>{try{sessionStorage.setItem(K,JSON.stringify(steps))}catch(e){}render()};
+const add=s=>{const last=steps[steps.length-1];if(last&&s.action==="type"&&last.action==="type"&&last.selector===s.selector)steps.pop();steps.push(s);save()};
+const mine=e=>e.target&&e.target.closest&&e.target.closest("[data-cs-recorder]");
+const onClick=e=>{if(mine(e)){const a=e.target.getAttribute("data-a");if(!a)return;e.preventDefault();if(a==="copy"){const t=JSON.stringify(steps,null,2);(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>say("Copied. Paste into Steps before reading."),()=>{prompt("Copy the steps:",t)})}if(a==="undo"){steps.pop();save()}if(a==="clear"){steps=[];save()}if(a==="wait"){const s=prompt("CSS selector of what to wait for (for example table.results):");if(s)add({action:"wait_for",selector:s,seconds:10})}if(a==="stop")stop();return}
+const t=e.target;if(!(t instanceof Element))return;const tag=t.tagName.toLowerCase(),type=String(t.type||"").toLowerCase();
+if(tag==="select"||tag==="option"||tag==="textarea"||(tag==="input"&&["checkbox","radio","submit","button","image","reset"].indexOf(type)<0))return;
+if(tag==="input"&&(type==="checkbox"||type==="radio")){add({action:t.checked?"check":"uncheck",selector:sel(t)});return}
+const target=t.closest("a,button,[role=button],[role=tab],[role=option],[role=menuitem],input[type=submit],summary,label,[onclick]")||t;add({action:"click",selector:sel(target)})};
+const onChange=e=>{if(mine(e))return;const t=e.target;if(!(t instanceof Element))return;const tag=t.tagName.toLowerCase(),type=String(t.type||"").toLowerCase();
+if(tag==="select"){add({action:"select",selector:sel(t),value:t.value});return}
+if((tag==="input"&&["checkbox","radio","submit","button","image","reset","file"].indexOf(type)<0)||tag==="textarea"){if(type==="password"){say("Password fields are never recorded.");return}add({action:"type",selector:sel(t),text:String(t.value).slice(0,200)})}};
+const onKey=e=>{if(mine(e))return;if(e.key==="Enter"&&e.target instanceof Element&&e.target.tagName==="INPUT"&&String(e.target.type||"").toLowerCase()!=="password"){onChange(e);add({action:"press",key:"Enter",selector:sel(e.target)})}};
+const stop=()=>{document.removeEventListener("click",onClick,true);document.removeEventListener("change",onChange,true);document.removeEventListener("keydown",onKey,true);box.remove();delete window.__csRec};
+document.addEventListener("click",onClick,true);document.addEventListener("change",onChange,true);document.addEventListener("keydown",onKey,true);
+window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);render()},steps:()=>steps.slice()};window.__csRec.show()})();`;
+  function recorderBookmarklet() { return "javascript:" + encodeURIComponent(RECORDER_SOURCE); }
 
   // What config/lineage.json says consumes an item code: exact-code mappings
   // before whole-series ones, each asset once. Mirrors regmon/lineage.py assets_for.
@@ -3540,7 +3634,7 @@
     canonicalUrl, urlKey, scoutBucket, scoutBuckets, scoutSentence, scoutReviewIssue, nextScoutSweep, scoutStrength, scoutGroups,
     SCOUT_FILTERS, SCOUT_OUTCOMES, SCOUT_CONFIDENCE, SCOUT_STATUS, SCOUT_CHANNEL_STATUS, SCOUT_NOUNS, SCOUT_REVIEW_MARKER,
     scoutSlug, splitList, splitLines, parsePathHints, pathHintsText, scoutSourceRequest, SCOUT_SOURCE_MARKER, SCOUT_TOPIC_IDS, SCOUT_REGIONS,
-    renderWordEdit, describeItemCodes, lineageFor, precisionBuild, precisionOutcomes, precisionScores, precisionSuggestions, wilson, missedChangeRequest, MISSED_CHANGE_MARKER, registryModel, registryTouched, registryImpact, registryRuleConsumers, registrySentence, registryConsumerLink, registryNorm, registryEntryCodes, REGISTRY_SCHEMES, REGISTRY_CHANGE_WORDS, REGISTRY_KIND_NOUNS, describeSpec, specGroups, specCategoryLabel, specCsvRows, SPEC_CATEGORIES, SPEC_KIND_NOUNS, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
+    renderWordEdit, describeItemCodes, lineageFor, validateBrowserSteps, describeBrowserStep, recorderBookmarklet, RECORDER_SOURCE, precisionBuild, precisionOutcomes, precisionScores, precisionSuggestions, wilson, missedChangeRequest, MISSED_CHANGE_MARKER, registryModel, registryTouched, registryImpact, registryRuleConsumers, registrySentence, registryConsumerLink, registryNorm, registryEntryCodes, REGISTRY_SCHEMES, REGISTRY_CHANGE_WORDS, REGISTRY_KIND_NOUNS, describeSpec, specGroups, specCategoryLabel, specCsvRows, SPEC_CATEGORIES, SPEC_KIND_NOUNS, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
     changeReviewRequest, CHANGE_REVIEW_MARKER, REVIEW_DECISIONS, csvCell, toCsv, fileSlug,
     cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink
   };

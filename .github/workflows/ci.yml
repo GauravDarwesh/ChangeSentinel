@@ -91,6 +91,8 @@ jobs:
         env:
           SMOKE_ARTIFACTS: smoke-artifacts
         run: node scripts/dashboard_smoke.mjs
+      - name: Recorded browser steps (record on a test portal, replay with the engine's script)
+        run: node scripts/browser_steps_check.mjs
       - name: Keep the screenshots
         if: ${{ always() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

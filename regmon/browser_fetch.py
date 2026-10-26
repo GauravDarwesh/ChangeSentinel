@@ -12,6 +12,11 @@ Every request the page makes is intercepted: only public http(s)
 destinations are allowed, and a top-level navigation must stay inside the
 monitor's scope. As with plain fetching, DNS checks reduce but do not
 eliminate rebinding risk; high-assurance deployments need egress controls.
+
+A monitor can add recorded steps (``browser_actions``, regmon/browser_actions.py)
+replayed after the page loads, for portals that show their content only after
+a choice or a click, and can keep a screenshot of each render for a visual
+comparison (``visual_compare``, regmon/visual.py).
 """
 from __future__ import annotations
 
@@ -21,11 +26,15 @@ import shutil
 import threading
 from dataclasses import dataclass
 
+from regmon.browser_actions import describe as describe_step
+from regmon.browser_actions import step_expression
 from regmon.security import validate_public_http_url
 
 MAX_WAIT_SECONDS = 20
 DEFAULT_WAIT_SECONDS = 3
 RENDER_TIMEOUT_SECONDS = 60
+SCREENSHOT_WIDTH = 1366
+SCREENSHOT_MAX_HEIGHT = 8000
 _LOCK = threading.Lock()  # One browser at a time: renders are rare and heavy.
 
 # Consent banners: reject/necessary-only first, then a plain close. Matching is
@@ -55,6 +64,45 @@ class Rendered:
     final_url: str
     blocked: int
     consent: str
+    screenshot: bytes | None = None
+    steps: int = 0
+
+
+def _value(response) -> object:
+    """The value of a Runtime.evaluate answer."""
+    return ((response or {}).get("result") or {}).get("result", {}).get("value")
+
+
+async def run_steps(evaluate, steps: list[dict], sleep=asyncio.sleep, clock=None) -> int:
+    """Replay recorded steps through ``evaluate(expression)``; raise RuntimeError naming the failing step."""
+    clock = clock or (lambda: asyncio.get_running_loop().time())
+    for index, step in enumerate(steps, start=1):
+        label = f"Step {index} ({describe_step(step)})"
+        if step["action"] == "wait":
+            await sleep(float(step["seconds"]))
+            continue
+        if step["action"] == "wait_for":
+            deadline = clock() + float(step["seconds"])
+            while True:
+                outcome = str(await evaluate(step_expression(step)) or "")
+                if outcome == "ok":
+                    break
+                if outcome.startswith("error"):
+                    raise RuntimeError(f"{label}: {outcome[7:]}")
+                if clock() >= deadline:
+                    raise RuntimeError(f"{label}: nothing appeared within {step['seconds']} s")
+                await sleep(0.25)
+            continue
+        outcome = str(await evaluate(step_expression(step)) or "")
+        if outcome != "ok":
+            raise RuntimeError(f"{label}: {outcome[7:] if outcome.startswith('error') else outcome or 'no answer from the page'}")
+        if step["action"] in {"click", "press", "select", "check", "uncheck"}:
+            # Let a click that loads a page or refreshes a table settle.
+            await sleep(0.6)
+            deadline = clock() + 10
+            while clock() < deadline and str(await evaluate("document.readyState") or "") != "complete":
+                await sleep(0.25)
+    return len(steps)
 
 
 def browser_binary() -> str:
@@ -82,7 +130,8 @@ def _allowed(url: str, resource_type: str, in_scope) -> bool:
     return True
 
 
-async def _render(url: str, wait_seconds: float, wait_selector: str, dismiss: bool, in_scope, binary: str) -> Rendered:
+async def _render(url: str, wait_seconds: float, wait_selector: str, dismiss: bool, in_scope, binary: str,
+                  steps: list[dict] | None = None, screenshot: bool = False) -> Rendered:
     from pydoll.browser.chrome import Chrome
     from pydoll.browser.options import Options
     from pydoll.commands.fetch import FetchCommands
@@ -131,9 +180,34 @@ async def _render(url: str, wait_seconds: float, wait_selector: str, dismiss: bo
                 await asyncio.sleep(0.25)
         else:
             await asyncio.sleep(max(0.0, wait_seconds))
+        async def evaluate(expression: str):
+            return _value(await page._execute_command(RuntimeCommands.evaluate_script(expression)))
+
+        replayed = await run_steps(evaluate, steps or [])
+        image = None
+        if screenshot:
+            image = await _screenshot(page, evaluate)
         html = await page.page_source
         final = await page.current_url
-        return Rendered(html=html.encode("utf-8"), final_url=str(final or url), blocked=blocked, consent=consent_text)
+        return Rendered(html=html.encode("utf-8"), final_url=str(final or url), blocked=blocked, consent=consent_text,
+                        screenshot=image, steps=replayed)
+
+
+async def _screenshot(page, evaluate) -> bytes | None:
+    """A PNG of the whole page (up to SCREENSHOT_MAX_HEIGHT), or None when Chrome declines."""
+    import base64
+
+    try:
+        height = int(float(await evaluate("Math.max(document.documentElement.scrollHeight, document.body ? document.body.scrollHeight : 0)") or 0))
+        height = max(1, min(height or 900, SCREENSHOT_MAX_HEIGHT))
+        await evaluate("window.scrollTo(0, 0)")
+        response = await page._execute_command({"method": "Page.captureScreenshot", "params": {
+            "format": "png", "captureBeyondViewport": True, "fromSurface": True,
+            "clip": {"x": 0, "y": 0, "width": SCREENSHOT_WIDTH, "height": height, "scale": 1}}})
+        data = ((response or {}).get("result") or {}).get("data")
+        return base64.b64decode(data) if data else None
+    except Exception:
+        return None
 
 
 def _js_string(value: str) -> str:
@@ -143,7 +217,7 @@ def _js_string(value: str) -> str:
 
 
 def render(url: str, *, wait_seconds: float = DEFAULT_WAIT_SECONDS, wait_selector: str = "", dismiss_cookies: bool = True,
-           in_scope=None) -> Rendered:
+           in_scope=None, steps: list[dict] | None = None, screenshot: bool = False) -> Rendered:
     """Render one page in headless Chrome. Raises RuntimeError when no browser is available."""
     validate_public_http_url(url, resolve_dns=True)
     binary = browser_binary()
@@ -153,9 +227,10 @@ def render(url: str, *, wait_seconds: float = DEFAULT_WAIT_SECONDS, wait_selecto
     with _LOCK:
         loop = asyncio.new_event_loop()
         try:
+            step_wait = sum(float(step.get("seconds", 0)) for step in steps or []) + 12 * len(steps or [])
             return loop.run_until_complete(asyncio.wait_for(
-                _render(url, wait, wait_selector, dismiss_cookies, in_scope, binary),
-                timeout=RENDER_TIMEOUT_SECONDS + wait + 15,
+                _render(url, wait, wait_selector, dismiss_cookies, in_scope, binary, steps, screenshot),
+                timeout=RENDER_TIMEOUT_SECONDS + wait + step_wait + 15,
             ))
         finally:
             loop.close()

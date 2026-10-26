@@ -156,6 +156,7 @@ def write_evidence(
     spec_diff: dict | None = None,
     spec_inventory: dict | None = None,
     impact: dict | None = None,
+    visual: dict | None = None,
 ) -> str:
     path = root / "data" / "evidence" / f"{event_id}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -178,6 +179,7 @@ def write_evidence(
             "snapshot_location": (before_record or {}).get("snapshot_location"),
             "html_snapshot_location": (before_record or {}).get("html_snapshot_location"),
             "file_snapshot_location": (before_record or {}).get("file_snapshot_location"),
+            "visual_snapshot_location": (before_record or {}).get("visual_snapshot_location"),
         },
         "after": {
             "normalized_hash": (after_record or {}).get("normalized_hash"),
@@ -190,6 +192,7 @@ def write_evidence(
             "snapshot_location": (after_record or {}).get("snapshot_location"),
             "html_snapshot_location": (after_record or {}).get("html_snapshot_location"),
             "file_snapshot_location": (after_record or {}).get("file_snapshot_location"),
+            "visual_snapshot_location": (after_record or {}).get("visual_snapshot_location"),
         },
         "diff": make_diff(before_text, after_text, max_diff_lines),
         "html_diff": make_diff(_format_html_for_diff(before_html), _format_html_for_diff(after_html), MAX_HTML_DIFF_LINES)
@@ -206,5 +209,7 @@ def write_evidence(
         payload["spec_inventory"] = spec_inventory
     if impact:
         payload["impact"] = impact
+    if visual:
+        payload["visual"] = visual
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     return str(path.relative_to(root))
