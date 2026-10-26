@@ -159,6 +159,12 @@ Each changed row gets one category, most important first: new / new version, sev
 
 **Declared vs detected.** Regulators annotate rows ("New Rule - Effective Q1 2027", "Updated", "Deprecated", Status "Archived"). Each row's newly declared action is reconciled with what changed, and two kinds of mismatch are listed: a row that changed while still marked as unchanged ("Existing Rule - Remains Effective"), and a row newly marked new or updated with nothing else different. A file seen for the first time shows what it declares about itself instead (**Declared in this file**).
 
+Columns are paired by header, then by role, then by position with a similar header, so a renamed column ("Edit Logic" → "Edit Logic (Excel format)") is still compared and listed as renamed instead of dropped. Punctuation counts in logic, data types, dates, IDs and severities (`X > 0` → `X >= 0` is a logic change, not cosmetic); in messages and descriptions only words count. A version bumped in place with nothing else changed is shown as a new version. In data dictionaries a "Level" or "Severity" column is part of the item's definition, not an edit severity. Metadata and cosmetic rows are capped at 50 listed per table (counts stay exact), so a re-save that touches every row cannot crowd out a logic change.
+
+**Release-notes audit.** When the current file carries its own change log (OSFI's "Version" sheet, a "Revision history" table: version, date, details of change, worksheet), the entries new since the previous copy are checked against what actually changed: counted claims ("Added: 58 rules Deprecated: 8 rules Updated: 33 rules", "-Schedule 10.020 : 16 DPA's …" summed) against the detected counts for the worksheet named, rule or item IDs listed under an action ("Updated rules: IR-1564-20.01-001 …") against how each actually changed, and — when an action lists its IDs — changes of that kind the list leaves out. Differences show at the top of the Specification changes sheet, in the headline and in the workbook's **Release Notes Audit** sheet. On OSFI's BCAR v4 file the notes say 33 conventional rules were updated while 34 rows are marked "Updated Rule".
+
+**Dates in the calendar.** Changed rows that carry dates (Effective Start, End, "Effective Q1 2027") become calendar entries, one per table, date and kind ("Edits: 12 changed rows apply from 2027-03-31 — 10 new, 2 logic changed (0101 v2, …)"), in the dashboard and the .ics feed, marked as read from the specification file.
+
 The result is deterministic, stored in the change's evidence (`spec_diff`, or `spec_inventory` for a new file), summarised on the change (`spec`) and in alerts ("Spec changes: 2 new, 3 retired (1 escalated) — 531 v1, …"), and never stops a scan if it fails. Structure depends on extraction: a PDF whose table comes out as plain prose has no table to compare, and the ordinary redline still applies.
 
 **Offline compare.** The same comparison runs on any two local files, for the quarterly cycle the Excel Compare and Taxonomy Compare tools cover today:
@@ -167,4 +173,12 @@ The result is deterministic, stored in the change's evidence (`spec_diff`, or `s
 python -m regmon.spec_diff FRY14Q_2026Q2_CIL_Edits_V1.xlsx FRY14Q_2026Q3_CIL_Edits_V2.xlsx -o Spec_Compare.xlsx --json out.json
 ```
 
-It reads .xlsx/.xlsm, .csv, .pdf, .docx, .xsd/.xml and .zip packages the way the monitor does, prints the headline, and writes an analyst workbook: **Summary** (both files with SHA-256, counts per table and category), **Spec Changes** (one row per changed item with effective date, severity, before/after, note, the regulator's own annotation, a mismatch flag, an Impact drop-down and Analyst comment), **Cell Changes** and **Patterns**. `--exit-code` exits 2 when substantive changes are found.
+It reads .xlsx/.xlsm, .csv, .pdf, .docx, .xsd/.xml and .zip packages the way the monitor does, prints the headline, and writes an analyst workbook: **Summary** (both files with SHA-256, counts per table and category), **Spec Changes** (one row per changed item with effective date, severity, before/after, note, the regulator's own annotation, a mismatch flag, an Impact drop-down and Analyst comment), **Cell Changes**, **Patterns**, **Columns** (added, removed, renamed) and **Release Notes Audit**. `--exit-code` exits 2 when substantive changes are found.
+
+**Conformance: our implementation against the spec.** `regmon/spec_conformance.py` compares two *different* files that describe the same rules or items — the regulator's edit checks or data dictionary, and our own rule library, data dictionary or mapping sheet — paired by rule ID or item code whatever their columns and sheet names:
+
+```bash
+python -m regmon.spec_conformance FR_Y-9C_edits_2027Q1.xlsx our_edit_library.xlsx -o Gaps.xlsx
+```
+
+Findings, most urgent first: **retired in spec, still implemented**; **in spec, not implemented** (live rows only); **implemented differently** (logic, severity, data type, dates or line item disagree — severity compared by rank, so the spec's "Validity" matches our "Error"; for rules with several versions the live one is compared); **implemented, not in spec**. The **Gaps** sheet has Owner, Status (Open / In progress / Fixed / Accepted difference / Not applicable) and Comment columns. `--exit-code` exits 2 when any gap is found, for use in a release pipeline.

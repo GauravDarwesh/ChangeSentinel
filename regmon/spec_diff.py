@@ -70,6 +70,8 @@ VERSION = 1
 MAX_TABLES = 60
 MAX_CHANGES_PER_TABLE = 400
 MAX_TOTAL_CHANGES = 2000
+MAX_QUIET_PER_TABLE = 50      # metadata/cosmetic rows kept per table; their counts stay exact
+QUIET = {"metadata", "cosmetic"}
 MAX_VALUE = 600
 MAX_TEXT_CHARS = 40_000_000
 HEADER_SCAN_ROWS = 40
@@ -106,7 +108,7 @@ ROLE_PATTERNS: list[tuple[str, str]] = [
     ("line_item", r"(report )?(form )?line item( number| no)?|line( no| number)?|item (no|number)|row( code)?|cell( reference| id)?"
                   r"|column code|schedule line"),
     ("table", r"database table|table( name)?|schedule( reference| code| no| number)?|template( code| id)?|xml table|worksheet"
-              r"|collection( id)?|record (type|reference)( code)?|module|anexo|reporte|documento|owner"),
+              r"|collection( id)?|record (type|reference)( code)?|module|anexo|reporte|documento"),
     ("series", r"series|report( code| name)?|form( code| name| number)?|return( code)?|survey"),
     ("dtype", r"(data |field |item )?type|attributes( format.*)?|format.*|fieldtype.*|length|precision|scale|decimal point.*|data format"
               r"|allowable values|valid values|mandatory|required|nullable|nillable|primary key|unit|base|facets|period type|balance"
@@ -115,6 +117,9 @@ ROLE_PATTERNS: list[tuple[str, str]] = [
     ("comments", r"comments?|notes?|remarks|change (description|details|notes)|details of change|observaciones|observa[cç][oõ]es"),
 ]
 _ROLE_RE = [(role, re.compile(pattern)) for role, pattern in ROLE_PATTERNS]
+# Bare words that only take a role no other column claims: in a sheet with
+# both "Rule" (the expression) and "Rule ID", the id is "Rule ID".
+WEAK_HEADERS = {"rule", "edit", "id", "identifier", "code", "level", "action", "test", "type", "category", "line", "row"}
 
 # Category order is importance order: a row is listed under its first match.
 CATEGORIES = ["added", "added_version", "severity", "logic", "retired", "reinstated", "effective", "message",
@@ -298,18 +303,31 @@ def _grids(doc: str, body: str) -> list[tuple[str, list[list[str]], str]]:
     return grids
 
 
+def _role_for(normalized: str, taken: dict[str, int]) -> str:
+    for role, pattern in _ROLE_RE:
+        if role not in taken and pattern.fullmatch(normalized):
+            return role
+    return ""
+
+
 def _roles(header: list[str]) -> dict[str, int]:
     roles: dict[str, int] = {}
-    for index, name in enumerate(header):
+    names = []
+    for name in header:
         normalized = _norm_header(name)
-        if not normalized or len(normalized) > 80:
-            continue
-        for role, pattern in _ROLE_RE:
-            if role in roles:
+        names.append(normalized if normalized and len(normalized) <= 80 else "")
+    weak = [index for index, name in enumerate(names) if name in WEAK_HEADERS]
+    for passes in ("strong", "weak"):
+        for index, normalized in enumerate(names):
+            if not normalized or (index in weak) != (passes == "weak") or index in roles.values():
                 continue
-            if pattern.fullmatch(normalized):
+            role = _role_for(normalized, roles)
+            if not role and "(" in header[index]:
+                # "Edit Logic (Excel format)", "Severity (2026)": the bracketed note is not part of the name.
+                stripped = _norm_header(re.sub(r"\([^)]*\)", " ", header[index]))
+                role = _role_for(stripped, roles) if stripped else ""
+            if role:
                 roles[role] = index
-                break
     return roles
 
 
@@ -599,6 +617,21 @@ def _loose(value: str) -> str:
     return re.sub(r"[^0-9a-z]+", "", _canon(value).casefold())
 
 
+# Columns where punctuation is meaning: "X > 0" → "X >= 0", "-5" → "5", "(A+B)*C" → "A+(B*C)".
+EXPRESSION_ROLES = {"logic", "dtype", "start", "end", "version", "id", "field", "line_item", "severity"}
+
+
+def _loose_expr(value: str) -> str:
+    """Case and spacing don't matter in an expression; operators, signs and brackets do."""
+    text = re.sub(r"\s+", "", _canon(value).casefold())
+    return text.replace("“", '"').replace("”", '"').replace("‘", "'").replace("’", "'")
+
+
+def _same_loosely(before: str, after: str, role: str, table: "Table") -> bool:
+    expression = role in EXPRESSION_ROLES or (role == "description" and table.kind == "rules" and "logic" not in table.roles)
+    return (_loose_expr if expression else _loose)(before) == (_loose_expr if expression else _loose)(after)
+
+
 def _as_date(value: str) -> date | None:
     text = _canon(value)
     match = re.fullmatch(r"(\d{4})-?(\d{2})-?(\d{2})", text)
@@ -731,6 +764,32 @@ def _side(table: Table, key_roles: list[str]) -> Side:
     return Side(table=table, columns=columns, keyed=keyed, order=order, duplicates=duplicates)
 
 
+def _column_pairs(old_side: Side, new_side: Side) -> list[tuple[str, str]]:
+    """(after column, before column) pairs: same header, else same role, else same place with a similar header."""
+    pairs = {name: name for name in new_side.columns if name in old_side.columns}
+    free_old = [name for name in old_side.columns if name not in pairs.values()]
+    for name in new_side.columns:
+        role = _role_of(new_side, name)
+        if name in pairs or not role:
+            continue
+        twins = [old for old in free_old if _role_of(old_side, old) == role]
+        if len(twins) == 1:
+            pairs[name] = twins[0]
+            free_old.remove(twins[0])
+    for name, index in new_side.columns.items():
+        if name in pairs:
+            continue
+        for old in free_old:
+            if old_side.columns[old] != index:
+                continue
+            similar = old.startswith(name) or name.startswith(old) or difflib.SequenceMatcher(a=old, b=name).ratio() >= 0.6
+            if similar:
+                pairs[name] = old
+                free_old.remove(old)
+            break
+    return [(name, pairs[name]) for name in new_side.columns if name in pairs]
+
+
 def _match_tables(before: list[Table], after: list[Table]) -> list[tuple[Table | None, Table | None]]:
     def identity(table: Table) -> tuple:
         return (_doc_identity(table.doc), _norm_header(table.sheet), table.kind)
@@ -829,20 +888,23 @@ def _is_retired(table: Table, row: list[str]) -> bool:
     return _declared(_cell(table, row, "comments")) in {"retired", "retired_state"}
 
 
-def _classify_pair(before_side: Side, after_side: Side, old: list[str], new: list[str], systematic: set) -> dict | None:
+def _classify_pair(before_side: Side, after_side: Side, old: list[str], new: list[str], systematic: set,
+                   pairs: list[tuple[str, str]] | None = None) -> dict | None:
     table = after_side.table
     columns = []
     roles_changed: set[str] = set()
     substantive = False
-    for column, after_index in after_side.columns.items():
-        if column not in before_side.columns:
-            continue
-        before_value = old[before_side.columns[column]] if before_side.columns[column] < len(old) else ""
+    if pairs is None:
+        pairs = _column_pairs(before_side, after_side)
+    for column, before_column in pairs:
+        after_index = after_side.columns[column]
+        before_index = before_side.columns[before_column]
+        before_value = old[before_index] if before_index < len(old) else ""
         after_value = new[after_index] if after_index < len(new) else ""
         if _canon(before_value) == _canon(after_value):
             continue
-        role = _role_of(after_side, column)
-        if _loose(before_value) == _loose(after_value):
+        role = _role_of(after_side, column) or _role_of(before_side, before_column)
+        if _same_loosely(before_value, after_value, role, table):
             kind = "cosmetic"
         elif (column, _word_signature(before_value, after_value)) in systematic:
             kind = "systematic"
@@ -859,7 +921,7 @@ def _classify_pair(before_side: Side, after_side: Side, old: list[str], new: lis
         return None
     categories: list[str] = []
     severity = None
-    if "severity" in roles_changed or "etype" in roles_changed:
+    if table.kind == "rules" and ("severity" in roles_changed or "etype" in roles_changed):
         role = "severity" if "severity" in roles_changed else "etype"
         old_value, new_value = _cell(before_side.table, old, role), _cell(table, new, role)
         old_rank, new_rank = _severity_rank(old_value), _severity_rank(new_value)
@@ -880,11 +942,20 @@ def _classify_pair(before_side: Side, after_side: Side, old: list[str], new: lis
         categories.append("effective")
     if "message" in roles_changed:
         categories.append("message")
-    for role in ("dtype", "line_item", "etype", "field"):
+    # A "Level" or "Severity" column in a data dictionary is the item's hierarchy or
+    # classification, not an edit's severity: it redefines the item.
+    defining = ("dtype", "line_item", "etype", "field") if table.kind == "rules" else ("dtype", "line_item", "etype", "field", "severity")
+    for role in defining:
         if role in roles_changed and "definition" not in categories and not (role == "etype" and "severity" in categories):
             categories.append("definition")
     if "description" in roles_changed and "logic" not in categories:
         categories.append("description")
+    version = None
+    if table.kind == "rules" and "version" in roles_changed:
+        version = {"before": _short(_cell(before_side.table, old, "version"), 40), "after": _short(_cell(table, new, "version"), 40)}
+        if not categories:
+            # Re-versioned in place with nothing else changed: an issuer bumps a version for a reason.
+            categories.append("added_version")
     if not categories:
         categories.append("metadata" if substantive else ("cosmetic" if all(c["kind"] == "cosmetic" for c in columns) else "systematic"))
     ordered = sorted(set(categories), key=lambda name: CATEGORIES.index(name) if name in CATEGORIES else len(CATEGORIES))
@@ -894,6 +965,10 @@ def _classify_pair(before_side: Side, after_side: Side, old: list[str], new: lis
     change = {"category": ordered[0], "also": ordered[1:], "label": _label(table, new), "columns": columns}
     if severity:
         change["severity"] = severity
+    if version:
+        change["version"] = version
+        change["note"] = f"Version {version['before'] or '-'} → {version['after'] or '-'} in place" + (
+            " with no other column changed" if change["category"] == "added_version" else "")
     if effective:
         change["effective"] = effective
     if quarter:
@@ -905,18 +980,19 @@ def _diff_tables(before: Table, after: Table) -> dict:
     key_roles = _choose_key(before, after)
     old_side, new_side = _side(before, key_roles), _side(after, key_roles)
     shared = [key for key in new_side.order if key in old_side.keyed]
+    pairs = _column_pairs(old_side, new_side)
     # Systematic edits: the same small token swap in one column across many rows.
     signatures: Counter = Counter()
     for key in shared:
         old, new = old_side.keyed[key], new_side.keyed[key]
-        for column, index in new_side.columns.items():
-            if column in old_side.columns:
-                before_value = old[old_side.columns[column]] if old_side.columns[column] < len(old) else ""
-                after_value = new[index] if index < len(new) else ""
-                if _canon(before_value) != _canon(after_value) and _loose(before_value) != _loose(after_value):
-                    signature = _word_signature(before_value, after_value)
-                    if signature and _role_of(new_side, column) in {"comments", "modified", ""}:
-                        signatures[(column, signature)] += 1
+        for column, before_column in pairs:
+            index, before_index = new_side.columns[column], old_side.columns[before_column]
+            before_value = old[before_index] if before_index < len(old) else ""
+            after_value = new[index] if index < len(new) else ""
+            if _canon(before_value) != _canon(after_value) and not _same_loosely(before_value, after_value, _role_of(new_side, column), after):
+                signature = _word_signature(before_value, after_value)
+                if signature and _role_of(new_side, column) in {"comments", "modified", ""}:
+                    signatures[(column, signature)] += 1
     threshold = max(SYSTEMATIC_MIN_ROWS, int(len(shared) * SYSTEMATIC_SHARE))
     systematic = {item for item, count in signatures.items() if count >= threshold}
     patterns = [{"column": after.header[new_side.columns[column]], "from": " ".join(signature[0]) or "(nothing)",
@@ -971,7 +1047,7 @@ def _diff_tables(before: Table, after: Table) -> dict:
             if _is_retired(after, new):
                 change["also"].append("retired")
         else:
-            change = _classify_pair(old_side, new_side, old, new, systematic)
+            change = _classify_pair(old_side, new_side, old, new, systematic, pairs)
             old_action, old_declared = declared_of(before, old)
             newly_declared = action and (declared_text != old_declared)
             if change and change.get("systematic_only"):
@@ -1000,6 +1076,8 @@ def _diff_tables(before: Table, after: Table) -> dict:
         if declared_text and action in {"new", "updated", "retired"} and (old is None or declared_text != declared_of(before, old)[1]):
             declared_counts[action] += 1
         change["key"] = key
+        if after.kind == "rules" and _cell(after, new, "id"):
+            change["id"] = _canon(_cell(after, new, "id"))
         if declared_text:
             change["declared"] = declared_text
         if _cell(after, new, "table"):
@@ -1013,6 +1091,8 @@ def _diff_tables(before: Table, after: Table) -> dict:
             continue
         old = old_side.keyed[key]
         change = {"category": "removed", "also": [], "label": _label(before, old), "values": _values(before, old), "key": key}
+        if before.kind == "rules" and _cell(before, old, "id"):
+            change["id"] = _canon(_cell(before, old, "id"))
         if after.kind == "rules":
             identifier = _canon(_cell(before, old, "id")).upper()
             live = [row for row in new_ids.get(identifier, [])]
@@ -1026,18 +1106,30 @@ def _diff_tables(before: Table, after: Table) -> dict:
     _mark_rekeyed(changes)
     changes.sort(key=lambda item: (CATEGORIES.index(item["category"]) if item["category"] in CATEGORIES else 99))
     counts = Counter(change["category"] for change in changes)
+    # A re-save that touches every row's metadata must not crowd out the rows that matter.
+    quiet_rows = [change for change in changes if change["category"] in QUIET and not change.get("mismatch")]
+    quiet_hidden = max(0, len(quiet_rows) - MAX_QUIET_PER_TABLE)
+    dropped = {id(change) for change in quiet_rows[MAX_QUIET_PER_TABLE:]}
+    kept = [change for change in changes if id(change) not in dropped]
     escalated = sum(1 for change in changes if (change.get("severity") or {}).get("direction") == "escalated")
-    old_columns, new_columns = set(old_side.columns), set(new_side.columns)
+    paired_new = {after_name for after_name, _ in pairs}
+    paired_old = {before_name for _, before_name in pairs}
+    renamed = [{"before": before.header[old_side.columns[before_name]], "after": after.header[new_side.columns[after_name]]}
+               for after_name, before_name in pairs if after_name != before_name]
     result = {
         "doc": after.doc, "sheet": after.sheet, "name": after.name, "kind": after.kind,
         "key": [after.header[after.roles[role]] for role in key_roles if role in after.roles],
         "rows_before": len(old_side.keyed), "rows_after": len(new_side.keyed),
         "counts": dict(counts),
-        "columns_added": [after.header[new_side.columns[name]] for name in new_side.columns if name not in old_columns][:40],
-        "columns_removed": [before.header[old_side.columns[name]] for name in old_side.columns if name not in new_columns][:40],
+        "columns_added": [after.header[new_side.columns[name]] for name in new_side.columns if name not in paired_new][:40],
+        "columns_removed": [before.header[old_side.columns[name]] for name in old_side.columns if name not in paired_old][:40],
         "patterns": patterns[:10],
-        "changes": changes[:MAX_CHANGES_PER_TABLE],
+        "changes": kept[:MAX_CHANGES_PER_TABLE],
     }
+    if quiet_hidden:
+        result["quiet_hidden"] = quiet_hidden
+    if renamed:
+        result["columns_renamed"] = renamed[:40]
     if escalated:
         result["escalated"] = escalated
     if declared_counts:
@@ -1046,7 +1138,7 @@ def _diff_tables(before: Table, after: Table) -> dict:
         result["reconciliation"] = {key: value[:50] for key, value in reconciliation.items()} | {
             "changed_not_declared_count": len(reconciliation["changed_not_declared"]),
             "declared_not_changed_count": len(reconciliation["declared_not_changed"])}
-    if len(changes) > MAX_CHANGES_PER_TABLE:
+    if len(kept) > MAX_CHANGES_PER_TABLE:
         result["truncated"] = True
     warnings = []
     if old_side.duplicates or new_side.duplicates:
@@ -1106,16 +1198,20 @@ def diff(before_text: str | None, after_text: str | None) -> dict | None:
     for old, new in _match_tables(before_tables, after_tables):
         if old is not None and new is not None:
             result = _diff_tables(old, new)
-            if not result["changes"] and not result["columns_added"] and not result["columns_removed"] and not result["patterns"]:
+            if not (result["changes"] or result["columns_added"] or result["columns_removed"] or result["patterns"]
+                    or result.get("columns_renamed")):
                 continue
         elif new is not None:
             result = _whole_table(new, "added")
         else:
             result = _whole_table(old, "removed")
         if total >= MAX_TOTAL_CHANGES:
-            result["changes"] = []
-            result["truncated"] = True
-        total += len(result["changes"])
+            # Over budget: keep only what an analyst must see.
+            loud = [change for change in result["changes"] if change["category"] not in QUIET or change.get("mismatch")]
+            if len(loud[:50]) != len(result["changes"]):
+                result["truncated"] = True
+            result["changes"] = loud[:50]
+        total += sum(1 for change in result["changes"] if change["category"] not in QUIET)
         tables.append(result)
         if len(tables) >= MAX_TABLES:
             break
@@ -1130,6 +1226,13 @@ def diff(before_text: str | None, after_text: str | None) -> dict | None:
            "escalated": sum(table.get("escalated", 0) for table in tables),
            "mismatches": sum(table.get("reconciliation", {}).get("changed_not_declared_count", 0)
                              + table.get("reconciliation", {}).get("declared_not_changed_count", 0) for table in tables)}
+    universe: dict[str, set[str]] = {}
+    for table in before_tables + after_tables:
+        role = "id" if table.kind == "rules" else "field"
+        universe.setdefault(table.name, set()).update(_canon(_cell(table, row, role)).upper() for row in table.rows if _cell(table, row, role))
+    notes = release_notes(before_text, after_text, out, universe)
+    if notes:
+        out["release_notes"] = notes
     out["headline"] = headline(out)
     return out
 
@@ -1215,6 +1318,9 @@ def headline(result: dict | None) -> str:
             parts.append(f"{table['name']}: " + "; ".join(bits))
     if result.get("mismatches"):
         parts.append(f"{result['mismatches']} declared/detected mismatch{'es' if result['mismatches'] != 1 else ''}")
+    notes = result.get("release_notes") or {}
+    if notes.get("differs"):
+        parts.append(f"Release notes v{notes.get('version')}: {notes['differs']} point{'s' if notes['differs'] != 1 else ''} the file does not bear out")
     text = ". ".join(parts)
     return text if len(text) <= 600 else text[:599] + "…"
 
@@ -1258,6 +1364,167 @@ def describe(result_or_summary: dict | None) -> str:
     if result_or_summary.get("escalated"):
         text += f" ({result_or_summary['escalated']} escalated)"
     return text + (f" — {shown}" if shown else "")
+
+
+# --------------------------------------------------------------------------- release-notes audit
+
+# A spec's own change log ("Version" sheet, "Revision history" table) says what
+# the issuer changed: "Added: 58 rules Deprecated: 8 rules", "Updated rules:
+# IR-1564-20.01-001 …". Each claim is checked against what actually changed,
+# both ways: claims the file doesn't bear out, and changes the notes never mention.
+NOTE_ACTIONS = {"added": "added", "new": "added", "introduced": "added", "deprecated": "retired", "disabled": "retired",
+                "retired": "retired", "removed": "retired", "deleted": "retired", "updated": "updated", "revised": "updated",
+                "modified": "updated", "amended": "updated", "changed": "updated"}
+ACTION_CATEGORIES = {"added": {"added", "added_version"}, "retired": {"retired", "removed"},
+                     "updated": {"logic", "severity", "message", "definition", "description", "effective", "reinstated", "added_version"}}
+_NOTE_SPLIT = re.compile(r"\b(" + "|".join(NOTE_ACTIONS) + r")\b", re.I)
+_NOTE_COUNT = re.compile(r"^\s*(?:[-:–]\s*)?(?:new\s+)?(\d{1,5})\s+(?:new\s+)?(rules?|edits?|checks?|validations?|dpa'?s?|data ?points?|fields?|items?"
+                         r"|elements?|codes?|mdrms?)\b", re.I)
+_NOTE_NOUNS = r"(rules?|edits?|checks?|validations?|dpa'?s?|data ?points?|fields?|items?|elements?|codes?|mdrms?)"
+_NOTE_EACH = re.compile(r"\b(\d{1,5})\s+" + _NOTE_NOUNS + r"\b", re.I)
+_NOTE_ID = re.compile(r"\b[A-Z]{1,6}(?:-[A-Za-z0-9.]+)+\b|\b[A-Z]{0,6}\d{3,8}\b")
+_LOG_DETAILS = re.compile(r"details?( of)? changes?|change (description|details|summary)|changes?|description( of change)?|summary|comments?|notes?")
+_LOG_VERSION = re.compile(r"(edit |rule |file |spec )?(version|ver|release|revision)( no| number| #)?")
+_LOG_DATE = re.compile(r".*\bdate\b.*|published|issued")
+_LOG_PLACE = re.compile(r"worksheets?|tabs?|sheets?|sections?|schedules?|area|component|affected.*")
+
+
+def _version_tuple(value: str) -> tuple:
+    return tuple(int(part) for part in re.findall(r"\d+", value or "")[:4])
+
+
+def _change_log(text: str | None) -> list[dict]:
+    """Rows of the first change-log table in a text: version, date, details, worksheet."""
+    for doc, _kind_name, body in _documents(text or ""):
+        for sheet, rows, _mode in _grids(doc, body):
+            for start, row in enumerate(rows[:HEADER_SCAN_ROWS]):
+                names = [_norm_header(cell) for cell in row]
+                version = next((i for i, n in enumerate(names) if n and _LOG_VERSION.fullmatch(n)), None)
+                details = next((i for i, n in enumerate(names) if n and _LOG_DETAILS.fullmatch(n)), None)
+                if version is None or details is None:
+                    continue
+                when = next((i for i, n in enumerate(names) if n and i not in (version, details) and _LOG_DATE.fullmatch(n)), None)
+                place = next((i for i, n in enumerate(names) if n and _LOG_PLACE.fullmatch(n)), None)
+                entries = []
+                for data in rows[start + 1:]:
+                    cell = lambda index: data[index] if index is not None and index < len(data) else ""
+                    if not cell(details) or not _version_tuple(cell(version)):
+                        continue
+                    entries.append({"version": _canon(cell(version)), "date": _day_text(cell(when)) if cell(when) else "",
+                                    "details": _clean(cell(details)), "worksheet": _clean(cell(place)), "sheet": sheet})
+                if entries:
+                    return entries
+    return []
+
+
+def _table_for(worksheet: str, noun: str, tables: list[dict]) -> list[dict]:
+    def stem(value: str) -> str:
+        return " ".join(word.rstrip("s") for word in _norm_header(value).replace("dpa s", "dpa").split())
+
+    wanted = stem(worksheet)
+    if wanted:
+        named = [table for table in tables if stem(table.get("sheet") or table.get("name") or "") and
+                 (stem(table.get("sheet") or "") in wanted or (wanted and wanted in stem(table.get("sheet") or "")))]
+        if named:
+            # "Conventional Rules" must not also claim "Conventional DPAs": prefer the closest names.
+            best = max(len(stem(table.get("sheet") or "")) for table in named)
+            return [table for table in named if len(stem(table.get("sheet") or "")) == best] if len(named) > 1 else named
+    kind = "rules" if re.match(r"rule|edit|check|validation", noun or "", re.I) else ("fields" if noun else "")
+    same = [table for table in tables if table.get("kind") == kind] if kind else []
+    return same if len(same) == 1 else []
+
+
+def _item_id(table: dict, change: dict) -> str:
+    return (change.get("id") or ("" if table.get("kind") == "rules" else change.get("label") or "")).upper()
+
+
+def release_notes(before_text: str | None, after_text: str | None, result: dict, universe: dict[str, set[str]]) -> dict | None:
+    """Audit the newest change-log entries of the current file against the detected changes."""
+    log = _change_log(after_text)
+    if not log:
+        return None
+    previous = {(_version_tuple(entry["version"]), _loose(entry["details"])) for entry in _change_log(before_text)}
+    fresh = [entry for entry in log if (_version_tuple(entry["version"]), _loose(entry["details"])) not in previous]
+    if not previous:
+        latest = max(_version_tuple(entry["version"]) for entry in log)
+        fresh = [entry for entry in log if _version_tuple(entry["version"]) == latest]
+    if not fresh or len(fresh) == len(log) and previous:
+        return None
+    tables = [table for table in result.get("tables", []) if not table.get("table_added") and not table.get("table_removed")]
+    entries, differs = [], 0
+    listed_ids: dict[tuple[str, str], set[str]] = defaultdict(set)
+    for entry in fresh[:40]:
+        parts = _NOTE_SPLIT.split(entry["details"])
+        claims, ids = [], []
+        for index in range(1, len(parts) - 1, 2):
+            action = NOTE_ACTIONS[parts[index].lower()]
+            segment = parts[index + 1]
+            count = _NOTE_COUNT.match(segment)
+            if count:
+                claims.append({"action": action, "count": int(count.group(1)), "noun": count.group(2).lower()})
+            else:
+                # "Added DPA's to the following schedules: -Schedule 10.020 : 16 DPA's -Schedule 10.030 : 12 DPA's"
+                each = _NOTE_EACH.findall(segment)
+                if each and re.match(r"\s*(?:new\s+)?" + _NOTE_NOUNS, segment, re.I):
+                    claims.append({"action": action, "count": sum(int(number) for number, _ in each), "noun": each[0][1].lower()})
+            for token in _NOTE_ID.findall(segment):
+                ids.append((action, token.upper()))
+        noun = claims[0]["noun"] if claims else ("rules" if ids else "")
+        targets = _table_for(entry["worksheet"], noun, tables)
+        item = {"version": entry["version"], "date": entry["date"], "worksheet": entry["worksheet"], "text": _short(entry["details"], 300),
+                "tables": [table["name"] for table in targets]}
+        if ids:
+            known: set[str] = set().union(*(universe.get(table["name"], set()) for table in targets)) if targets else \
+                set().union(*universe.values()) if universe else set()
+            # Only tokens that name a real row count: "Schedule 20.010" and "2026" are not ids.
+            ids = [(action, token) for action, token in ids if token in known]
+        if not claims and not ids:
+            continue
+        for claim in claims:
+            if targets:
+                detected = sum(table["counts"].get(category, 0) for table in targets for category in ACTION_CATEGORIES[claim["action"]])
+                claim["detected"] = detected
+                claim["status"] = "matches" if detected == claim["count"] else "differs"
+                differs += claim["status"] == "differs"
+            else:
+                claim["status"] = "unchecked"
+        if claims:
+            item["claims"] = claims
+        if ids:
+            changed = {}
+            for table in targets or tables:
+                for change in table.get("changes", []):
+                    if _item_id(table, change) and change["category"] not in QUIET:
+                        changed.setdefault(_item_id(table, change), change["category"])
+            # "Updated rules: IR-3" when IR-3 was in fact retired is a claim the file doesn't bear out either.
+            missing = sorted({token for action, token in ids if changed.get(token) not in ACTION_CATEGORIES[action]})
+            item["ids_listed"] = len({token for _, token in ids})
+            if missing:
+                item["ids_not_changed"] = missing[:20]
+                item["ids_not_changed_count"] = len(missing)
+                differs += 1
+            for action, token in ids:
+                for table in targets:
+                    listed_ids[(table["name"], action)].add(token)
+        entries.append(item)
+    if not entries:
+        return None
+    # Changes the notes never mention, for tables whose entries list their ids one by one.
+    undocumented = []
+    for (name, action), listed in listed_ids.items():
+        table = next((table for table in tables if table["name"] == name), None)
+        if table is None:
+            continue
+        # Every id listed under one action ("Updated rules: …") reads as the complete list for that action.
+        silent = [change["label"] for change in table.get("changes", [])
+                  if _item_id(table, change) and change["category"] in ACTION_CATEGORIES[action] and _item_id(table, change) not in listed]
+        if silent:
+            undocumented.append({"table": name, "action": action, "count": len(silent), "labels": silent[:20]})
+            differs += 1
+    out = {"version": fresh[0]["version"], "date": fresh[0]["date"], "entries": entries, "differs": differs}
+    if undocumented:
+        out["undocumented"] = undocumented
+    return out
 
 
 # --------------------------------------------------------------------------- offline compare (CLI)
