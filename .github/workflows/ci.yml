@@ -36,10 +36,14 @@ jobs:
       # Exercise the existing Pydoll path and the SeleniumBase CDP fallback
       # against a simulated Cloudflare site (tests/challenge_site.py).
       # A skip here would mean no browser was found, so it fails the step.
+      # `shell: bash` turns on pipefail: without it `| tee` hid every test
+      # failure, which let a Pydoll 3 launch crash reach production (26 Oct 2026).
       - name: Real-browser bot-check paths (Pydoll + SeleniumBase CDP)
+        shell: bash
         env:
           CHANGESENTINEL_BROWSER_TEST: "1"
         run: |
+          set -o pipefail
           python -m unittest discover -s tests -p "test_browser_fetch.py" -k real -v 2>&1 | tee browser-test.log
           if grep -q "skipped" browser-test.log; then echo "The real-browser tests were skipped"; exit 1; fi
       - name: Exercise real Docling table reconstruction on a synthetic PDF

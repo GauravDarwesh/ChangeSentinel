@@ -41,7 +41,7 @@ class SeleniumBaseFallbackTests(unittest.TestCase):
         primary.assert_awaited_once_with(URL, "/usr/bin/chrome", want="resource")
         fallback.assert_not_awaited()
 
-    def test_seleniumbase_is_used_only_after_pydoll_reports_a_challenge(self):
+    def test_seleniumbase_is_used_after_pydoll_reports_a_challenge(self):
         challenge = browser_fetch.ChallengeNotPassed("Cloudflare", b"Just a moment")
         expected = rendered()
         with (
@@ -99,6 +99,52 @@ class SeleniumBaseFallbackTests(unittest.TestCase):
 
         self.assertIs(caught.exception, primary_challenge)
         self.assertIs(caught.exception.__cause__, fallback_error)
+
+    def test_seleniumbase_takes_over_when_pydoll_itself_fails(self):
+        # 26 Oct 2026: Pydoll 3 refused a duplicate launch switch before Chrome
+        # started, and SeleniumBase was never tried because no challenge was reported.
+        expected = rendered()
+        with (
+            patch.object(browser_fetch, "_pydoll_available", return_value=True),
+            patch.object(browser_fetch, "_seleniumbase_available", return_value=True),
+            patch.object(browser_fetch, "_render", new_callable=AsyncMock,
+                         side_effect=RuntimeError("Argument already exists: --no-first-run")),
+            patch.object(browser_fetch, "_render_seleniumbase", new_callable=AsyncMock, return_value=expected) as fallback,
+        ):
+            actual = asyncio.run(browser_fetch._render_with_fallback(URL, "/usr/bin/chrome", want="resource"))
+
+        self.assertIs(actual, expected)
+        fallback.assert_awaited_once_with(URL, "/usr/bin/chrome", want="resource")
+
+    def test_when_both_browsers_fail_the_error_names_both(self):
+        primary_error = RuntimeError("Pydoll could not start")
+        fallback_error = RuntimeError("SeleniumBase could not start")
+        with (
+            patch.object(browser_fetch, "_pydoll_available", return_value=True),
+            patch.object(browser_fetch, "_seleniumbase_available", return_value=True),
+            patch.object(browser_fetch, "_render", new_callable=AsyncMock, side_effect=primary_error),
+            patch.object(browser_fetch, "_render_seleniumbase", new_callable=AsyncMock, side_effect=fallback_error),
+        ):
+            with self.assertRaises(RuntimeError) as caught:
+                asyncio.run(browser_fetch._render_with_fallback(URL, "/usr/bin/chrome", want="resource"))
+
+        self.assertNotIsInstance(caught.exception, browser_fetch.ChallengeNotPassed)
+        self.assertIn("Pydoll could not start", str(caught.exception))
+        self.assertIn("SeleniumBase could not start", str(caught.exception))
+        self.assertIs(caught.exception.__cause__, fallback_error)
+
+    def test_a_pydoll_fault_followed_by_an_unpassed_check_is_reported_as_the_check(self):
+        challenge = browser_fetch.ChallengeNotPassed("Cloudflare", b"saved by SeleniumBase")
+        with (
+            patch.object(browser_fetch, "_pydoll_available", return_value=True),
+            patch.object(browser_fetch, "_seleniumbase_available", return_value=True),
+            patch.object(browser_fetch, "_render", new_callable=AsyncMock, side_effect=RuntimeError("protocol error")),
+            patch.object(browser_fetch, "_render_seleniumbase", new_callable=AsyncMock, side_effect=challenge),
+        ):
+            with self.assertRaises(browser_fetch.ChallengeNotPassed) as caught:
+                asyncio.run(browser_fetch._render_with_fallback(URL, "/usr/bin/chrome", want="resource"))
+
+        self.assertIs(caught.exception, challenge)
 
     def test_raw_cdp_command_preserves_method_params_and_result(self):
         command = browser_fetch._raw_cdp_command("Page.navigate", {"url": URL})

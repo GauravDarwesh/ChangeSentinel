@@ -10,6 +10,12 @@
   itself as headless or automated, then the page reloads itself;
 * with the cookie, pages and a PDF larger than one DevTools message are served.
 
+``/cf/...`` hands the browser back the way Cloudflare's managed challenge
+actually does: while checking, the page's URL carries ``?__cf_chl_rt_tk=``;
+once solved, the page POSTs a form to ``<url>?__cf_chl_f_tk=<token>``, which
+sets ``cf_clearance`` (Path=/cf/) and redirects to the clean URL. A monitor
+scoped to one exact URL must let that return through.
+
 Other vendors and blocks, by path prefix:
 
 * ``/hard/...``    a check that wants a person: its widget never succeeds.
@@ -36,9 +42,10 @@ PAGE = (b"<!DOCTYPE html><html><head><title>Reporting Forms | FFIEC</title></hea
         b"<p>Instructions for the September 2026 report date are available.</p><a href='/forms/big.pdf'>Instructions (PDF)</a>"
         b"</main><script>document.body.insertAdjacentHTML('beforeend','<p id=rendered>Rendered by script</p>')</script></body></html>")
 TOKEN = "cleared-token"
+RETURN_TOKEN = "returned-token"  # the /cf/ area's clearance, set on Cloudflare's form return
 HCAPTCHA_HOST = "newassets.hcaptcha.com"
 # Clearance cookie per protected area.
-COOKIES = {"/forms/": "cf_clearance", "/hard/": "cf_clearance", "/imperva/": "incap_ses_1", "/waf/": "aws-waf-token", "/kasada/": "KP_UIDz"}
+COOKIES = {"/cf/": "cf_clearance", "/forms/": "cf_clearance", "/hard/": "cf_clearance", "/imperva/": "incap_ses_1", "/waf/": "aws-waf-token", "/kasada/": "KP_UIDz"}
 
 # Every check below ends the same way: the page's script asks the site to
 # verify, which only succeeds for a browser that is not flagged as headless or
@@ -57,6 +64,19 @@ def challenge_page(widget_origin: str, path: str) -> bytes:
 <div style="display:none">Verification successful. Waiting for site.test to respond</div></div>
 <script src="/cdn-cgi/challenge-platform/h/b/orchestrate/chl_page/v1"></script>
 {_ON_SOLVED}</body></html>""".encode("utf-8")
+
+
+def cloudflare_return_page(widget_origin: str, path: str) -> bytes:
+    """Cloudflare's own flow: a token in the URL while checking, then a form POST back to the page."""
+    hand_back = ("var f = document.createElement('form'); f.method = 'POST'; "
+                 "f.action = location.pathname + '?__cf_chl_f_tk=ft.' + Date.now(); "
+                 "document.body.appendChild(f); f.submit();")
+    verify = ("fetch('/cdn-cgi/challenge-platform/verify?wd=' + String(navigator.webdriver) + '&path=' + encodeURIComponent(location.pathname), "
+              "{method: 'POST'}).then(function (r) { if (r.ok) { " + hand_back + " } });")
+    return (challenge_page(widget_origin, path)
+            .replace(b"</head>", b"<script>history.replaceState(null, '', location.pathname + '?__cf_chl_rt_tk=rt.1-abc');</script></head>")
+            .replace(_ON_SOLVED.encode(), ("<script>window.addEventListener('message', function (event) { if (event.data === 'solved') { "
+                                           + verify + " } });</script>").encode()))
 
 
 def imperva_page(widget_port: int, path: str) -> bytes:
@@ -85,7 +105,7 @@ def _area(path: str) -> str:
 def serve():
     """Yield (site_origin, widget_origin, hits). The two origins are different sites."""
     hits: list[tuple[str, str]] = []
-    holder = {}
+    holder = {"verified": set()}
 
     class Site(http.server.BaseHTTPRequestHandler):
         def log_message(self, *_args):
@@ -101,7 +121,8 @@ def serve():
             self.wfile.write(body)
 
         def cleared(self, path):
-            return f"{COOKIES[_area(path)]}={TOKEN}" in (self.headers.get("Cookie") or "")
+            token = RETURN_TOKEN if path.startswith("/cf/") else TOKEN
+            return f"{COOKIES[_area(path)]}={token}" in (self.headers.get("Cookie") or "")
 
         def content(self, path):
             if path.endswith(".pdf"):
@@ -115,8 +136,16 @@ def serve():
                 if "HeadlessChrome" in agent or "wd=true" in self.path:
                     return self.send(403, b"denied")
                 path = unquote(parse_qs(urlsplit(self.path).query).get("path", ["/forms/"])[0])
+                if path.startswith("/cf/"):
+                    holder["verified"].add(path)  # the clearance comes with the form return
+                    return self.send(200, b"ok", "text/plain")
                 cookie = COOKIES[_area(path)]
                 return self.send(200, b"ok", "text/plain", [("Set-Cookie", f"{cookie}={TOKEN}; Path=/; Max-Age=1800; HttpOnly; SameSite=Lax")])
+            path, _, query = self.path.partition("?")
+            if path.startswith("/cf/") and "__cf_chl_f_tk=" in query and path in holder["verified"]:
+                return self.send(303, b"", "text/plain", [
+                    ("Set-Cookie", f"cf_clearance={RETURN_TOKEN}; Path=/cf/; Max-Age=1800; HttpOnly; SameSite=Lax"),
+                    ("Location", path)])
             self.send(404, b"")
 
         def do_GET(self):
@@ -139,6 +168,8 @@ def serve():
                 return self.send(202, WAF_PAGE, extra=[("x-amzn-waf-action", "challenge")])
             if path.startswith("/kasada/") and not self.cleared(path):
                 return self.send(429, KASADA_PAGE, extra=[("x-kpsdk-ct", "0abc"), ("x-kpsdk-r", "1-AA")])
+            if path.startswith("/cf/") and not self.cleared(path):
+                return self.send(403, cloudflare_return_page(holder["widget"], path), extra=[("cf-mitigated", "challenge")])
             if not self.cleared(path) or path.startswith("/hard/"):
                 return self.send(403, challenge_page(holder["widget"], path), extra=[("cf-mitigated", "challenge")])
             return self.content(path)
