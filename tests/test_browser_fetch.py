@@ -66,22 +66,32 @@ def source(**extra):
     return dataclasses.replace(SOURCE, **extra)
 
 
+PDF = b"%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n"
+
+
+def resource(body, content_type="text/html; charset=utf-8", status=200, challenge="Cloudflare", url="https://example.test/policy", **headers):
+    return browser_fetch.Rendered(body if "html" in content_type else b"", url, 0, "", status=status, content_type=content_type,
+                                  body=body, headers=headers, challenge=challenge)
+
+
 class EngineTests(unittest.TestCase):
-    def scan_twice(self, src, second, render=None):
+    def scan_twice(self, src, second, render=None, browser=True):
         with Sandbox(source=src) as sandbox:
             sandbox.scan(lambda *a, **k: ok(html("<p>Reporting deadline: 30 days.</p>")))
-            with patch("regmon.browser_fetch.render", side_effect=render or AssertionError("no render expected")):
+            with patch("regmon.browser_fetch.render", side_effect=render or AssertionError("no render expected")), \
+                    patch("regmon.browser_fetch.available", return_value=browser):
                 result = sandbox.scan(second)
             record = next(iter(result["inventory"].values()))
             events = [event["event_type"] for event in result["report"]["events"]]
             files = list((sandbox.data / "snapshots" / "botcheck").glob("*.html"))
             return record, events, files
 
-    def test_plain_mode_turns_a_challenge_into_a_fetch_problem_and_saves_it(self):
-        record, events, files = self.scan_twice(SOURCE, lambda *a, **k: ok(CLOUDFLARE))
+    def test_without_a_browser_a_challenge_is_a_fetch_problem_and_is_saved(self):
+        record, events, files = self.scan_twice(SOURCE, lambda *a, **k: ok(CLOUDFLARE), browser=False)
         self.assertNotIn("CHANGED_URL", events)
         self.assertIn("FETCH_ERROR", events)
         self.assertIn("Cloudflare bot check", record["fetch_error"])
+        self.assertIn("no browser", record["fetch_error"])
         self.assertEqual(record["bot_check"]["vendor"], "Cloudflare")
         self.assertEqual(len(files), 1)
         self.assertTrue(record["normalized_hash"])  # the last good baseline is kept
@@ -89,17 +99,40 @@ class EngineTests(unittest.TestCase):
     def test_a_challenge_with_an_error_status_is_also_captured(self):
         def challenge(*_a, **_k):
             raise HTTPStatusError("HTTP 503", 503, "text/html", CLOUDFLARE)
-        record, events, files = self.scan_twice(SOURCE, challenge)
+        record, events, files = self.scan_twice(SOURCE, challenge, browser=False)
         self.assertEqual(record["bot_check"]["vendor"], "Cloudflare")
         self.assertEqual(len(files), 1)
 
-    def test_auto_mode_renders_only_on_a_challenge(self):
-        rendered = browser_fetch.Rendered(html("<p>Reporting deadline: 15 days.</p>"), "https://example.test/policy", 2, "text:Reject all")
-        record, events, _files = self.scan_twice(source(fetch_mode="auto"), lambda *a, **k: ok(CLOUDFLARE), render=lambda *a, **k: rendered)
-        self.assertIn("CHANGED_URL", events)
-        self.assertEqual(record["rendered_by"], "browser")
-        self.assertEqual(record["browser"]["blocked_requests"], 2)
-        self.assertNotIn("bot_check", record)
+    def test_any_monitor_gets_past_a_challenge_in_the_browser_without_a_setting(self):
+        calls = []
+        def render(url, **kwargs):
+            calls.append(kwargs)
+            return resource(html("<p>Reporting deadline: 15 days.</p>"))
+        def challenge(*_a, **_k):
+            raise HTTPStatusError("HTTP 403", 403, "text/html", CLOUDFLARE)
+        for mode in ("http", "auto"):
+            with self.subTest(mode=mode):
+                calls.clear()
+                record, events, _files = self.scan_twice(source(fetch_mode=mode), challenge, render=render)
+                self.assertIn("CHANGED_URL", events)
+                self.assertEqual(calls[0]["want"], "resource")
+                self.assertEqual(record["rendered_by"], "browser")
+                self.assertEqual(record["browser"]["passed_check"], "Cloudflare")
+                self.assertEqual(record["http_status"], 200)
+                self.assertNotIn("bot_check", record)
+                self.assertIsNone(record.get("fetch_error"))
+
+    def test_a_pdf_behind_a_challenge_is_kept_as_the_pdf(self):
+        rendered = resource(PDF, "application/pdf", **{"last-modified": "Mon, 26 Oct 2026 06:00:00 GMT"})
+        with Sandbox(source=SOURCE) as sandbox, patch("regmon.browser_fetch.available", return_value=True), \
+                patch("regmon.browser_fetch.render", return_value=rendered), \
+                patch("regmon.engine.extract_content", return_value=("Instructions text", "pdf", None)) as extract:
+            result = sandbox.scan(lambda *a, **k: ok(CLOUDFLARE))
+        record = next(iter(result["inventory"].values()))
+        self.assertEqual(extract.call_args[0][1:3], ("application/pdf", PDF))
+        self.assertEqual(record["content_type"], "application/pdf")
+        self.assertEqual(record["last_modified"], "Mon, 26 Oct 2026 06:00:00 GMT")
+        self.assertIsNone(record.get("fetch_error"))
 
     def test_browser_mode_renders_every_html_page_and_skips_validators(self):
         calls = []
@@ -116,15 +149,44 @@ class EngineTests(unittest.TestCase):
                 sandbox.scan(first)
                 sandbox.scan(first)
         self.assertEqual(len(calls), 2)
-        self.assertEqual((calls[0]["wait_seconds"], calls[0]["wait_selector"]), (5, "main"))
+        self.assertEqual((calls[0]["wait_seconds"], calls[0]["wait_selector"], calls[0]["want"]), (5, "main", "dom"))
         self.assertTrue(all(call.get("etag") is None for call in fetches))
 
-    def test_a_challenge_after_rendering_is_still_refused(self):
-        rendered = browser_fetch.Rendered(CLOUDFLARE, "https://example.test/policy", 0, "")
-        record, events, files = self.scan_twice(source(fetch_mode="auto"), lambda *a, **k: ok(CLOUDFLARE), render=lambda *a, **k: rendered)
+    def test_a_check_the_browser_cannot_pass_keeps_the_baseline_and_saves_what_it_saw(self):
+        def render(*_a, **_k):
+            raise browser_fetch.ChallengeNotPassed("Cloudflare", CLOUDFLARE + b"<!-- browser -->")
+        record, events, files = self.scan_twice(SOURCE, lambda *a, **k: ok(CLOUDFLARE), render=render)
         self.assertNotIn("CHANGED_URL", events)
         self.assertEqual(record["bot_check"]["via"], "browser")
-        self.assertIn("still shown after rendering", record["fetch_error"])
+        self.assertIn("still asked for a check", record["fetch_error"])
+        self.assertTrue(record["normalized_hash"])
+        self.assertEqual(len(files), 1)
+
+    def test_a_challenge_after_loading_is_still_refused(self):
+        record, events, _files = self.scan_twice(SOURCE, lambda *a, **k: ok(CLOUDFLARE), render=lambda *a, **k: resource(CLOUDFLARE))
+        self.assertNotIn("CHANGED_URL", events)
+        self.assertEqual(record["bot_check"]["via"], "browser")
+        self.assertIn("still shown after loading in a browser", record["fetch_error"])
+
+    def test_an_error_status_behind_the_check_is_an_ordinary_fetch_error(self):
+        record, _events, _files = self.scan_twice(SOURCE, lambda *a, **k: ok(CLOUDFLARE), render=lambda *a, **k: resource(b"gone", "text/plain", 404))
+        self.assertIn("HTTP 404", record["fetch_error"])
+        self.assertNotIn("bot_check", record)
+
+    def test_a_site_that_refuses_the_browser_twice_is_left_for_the_next_scan(self):
+        urls = [f"https://example.test/policy/{index}" for index in range(5)]
+        attempts = []
+        def render(url, **_k):
+            attempts.append(url)
+            raise browser_fetch.ChallengeNotPassed("Cloudflare", CLOUDFLARE)
+        with Sandbox(source=source(seed_urls=urls)) as sandbox:
+            sandbox.discovered = urls
+            with patch("regmon.browser_fetch.render", side_effect=render), patch("regmon.browser_fetch.available", return_value=True):
+                result = sandbox.scan(lambda *a, **k: ok(CLOUDFLARE))
+        self.assertEqual(len(attempts), 2)
+        errors = [record["fetch_error"] for record in result["inventory"].values()]
+        self.assertEqual(sum("earlier in this scan" in error for error in errors), 3)
+        self.assertTrue(all(record.get("bot_check") for record in result["inventory"].values()))
 
     def test_documents_are_never_rendered(self):
         pdf = ok(b"%PDF-1.4 not really", "application/pdf")
@@ -144,13 +206,31 @@ class SafetyTests(unittest.TestCase):
             self.assertFalse(browser_fetch._allowed("file:///etc/passwd", "Document", in_scope))
             self.assertTrue(browser_fetch._allowed("data:image/png;base64,AA", "Image", in_scope))
 
+    def test_only_a_frame_may_come_from_a_challenge_host(self):
+        in_scope = lambda url: url.startswith("https://www.ffiec.gov/")
+        widget = "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/if/ov2/av0/rcv/abc"
+        with patch("regmon.browser_fetch.validate_public_http_url"):
+            self.assertTrue(browser_fetch._allowed(widget, "Document", in_scope, main_frame=False))
+            self.assertFalse(browser_fetch._allowed(widget, "Document", in_scope, main_frame=True))
+            self.assertFalse(browser_fetch._allowed("https://evil.test/frame", "Document", in_scope, main_frame=False))
+
+    def test_the_browser_presents_as_ordinary_chrome_with_one_profile(self):
+        with patch("regmon.browser_fetch.subprocess.run", return_value=MagicMock(stdout="Google Chrome 141.0.7390.122\n")):
+            browser_fetch._VERSIONS.pop("/fake/chrome", None)
+            arguments = browser_fetch.launch_arguments("/fake/chrome")
+        agent = next(a for a in arguments if a.startswith("--user-agent="))
+        self.assertIn("Chrome/141.0.0.0", agent)
+        self.assertNotIn("Headless", agent)
+        self.assertIn("--disable-blink-features=AutomationControlled", arguments)
+        self.assertEqual(browser_fetch.launch_arguments("/fake/chrome")[-2], arguments[-2])  # same profile all run
+
     def test_render_needs_a_browser(self):
         with patch("regmon.browser_fetch.validate_public_http_url"), patch.dict(os.environ, {"CHANGESENTINEL_CHROME": ""}), \
                 patch("regmon.browser_fetch.shutil.which", return_value=None):
             with self.assertRaises(RuntimeError):
                 browser_fetch.render("https://example.test/")
 
-    @unittest.skipUnless(os.environ.get("CHANGESENTINEL_BROWSER_TEST") and browser_fetch.browser_binary(), "set CHANGESENTINEL_BROWSER_TEST=1 to render in a real browser")
+    @unittest.skipUnless(os.environ.get("CHANGESENTINEL_BROWSER_TEST") and browser_fetch.available(), "set CHANGESENTINEL_BROWSER_TEST=1 to render in a real browser")
     def test_a_real_render(self):
         import http.server
         import socketserver
@@ -173,6 +253,22 @@ class SafetyTests(unittest.TestCase):
         self.assertIn(b"Circular 4,321", result.html)
         self.assertNotIn(b"cookie-banner", result.html)
         self.assertGreaterEqual(result.blocked, 1)
+
+    @unittest.skipUnless(os.environ.get("CHANGESENTINEL_BROWSER_TEST") and browser_fetch.available(), "set CHANGESENTINEL_BROWSER_TEST=1 to load pages in a real browser")
+    def test_a_real_browser_gets_past_a_managed_challenge(self):
+        from challenge_site import PAGE, PDF as BIG_PDF, serve
+
+        with serve() as (site, _widget, _hits), patch("regmon.browser_fetch.validate_public_http_url"), \
+                patch.object(browser_fetch, "CHALLENGE_FRAME_HOSTS", frozenset({"localhost"})):
+            in_scope = lambda target: target.startswith(site + "/")
+            first = browser_fetch.render(site + "/forms/big.pdf", want="resource", in_scope=in_scope)
+            second = browser_fetch.render(site + "/forms/page", want="resource", in_scope=in_scope)
+            with patch.object(browser_fetch, "CHALLENGE_WAIT_SECONDS", 4):
+                with self.assertRaises(browser_fetch.ChallengeNotPassed):
+                    browser_fetch.render(site + "/hard/x.pdf", want="resource", in_scope=in_scope)
+        self.assertEqual((first.challenge, first.status, first.body), ("Cloudflare", 200, BIG_PDF))
+        self.assertIn("pdf", first.content_type)
+        self.assertEqual((second.challenge, second.body), ("", PAGE))  # the clearance carried over
 
 
 class ConfigTests(unittest.TestCase):

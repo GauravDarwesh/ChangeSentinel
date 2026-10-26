@@ -86,6 +86,7 @@ jobs:
           from pathlib import Path
           from urllib.parse import urljoin
 
+          from regmon import botcheck
           from regmon.config import SourceConfig
           from regmon.discovery import in_scope, _redirect_key
           from regmon.safe_http import public_destinations_only
@@ -155,6 +156,10 @@ jobs:
                           "type=", response.headers.get("content-type"),
                       )
                       if response.status_code < 400:
+                          reachable += 1
+                      elif response.headers.get("cf-mitigated") == "challenge" or botcheck.detect(response.content, response.status_code):
+                          # A bot check means the site is up; the scan loads it in a browser.
+                          print("  ", url, "is behind a bot check; the scan will load it in a browser")
                           reachable += 1
                   except Exception as exc:
                       print(url, "ERROR", type(exc).__name__, exc)

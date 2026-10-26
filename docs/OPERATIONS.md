@@ -139,9 +139,29 @@ A scheduled run passes `--due-only`: a source is scanned when it has never been 
 
 ## Browser rendering and bot-check pages
 
-`fetch_mode` decides how a source's HTML pages are loaded: `http` (default, a plain request), `auto` (a headless-Chrome render only when the plain response is a bot-check page) or `browser` (render every HTML page, for pages built with JavaScript; validators are not used, since the rendered page can change while the served HTML does not). `browser_wait_seconds` (0–20, default 3) or `browser_wait_selector` decide when the page is read, and `browser_dismiss_cookies` (default on) answers a consent banner with its reject/necessary-only choice. Documents are always downloaded directly. Every request a rendered page makes must go to a public http(s) host, and every document load must stay inside the monitor's scope (`regmon/browser_fetch.py`); as with plain fetching, DNS checks reduce but do not remove rebinding risk.
+`fetch_mode` decides how a source's HTML pages are loaded: `http` (default: a plain request) or `browser` (render every HTML page in headless Chrome, for pages built with JavaScript; validators are not used, since the rendered page can change while the served HTML does not). `browser_wait_seconds` (0–20, default 3) or `browser_wait_selector` decide when a rendered page is read, and `browser_dismiss_cookies` (default on) answers a consent banner with its reject/necessary-only choice. Every request a browser page makes must go to a public http(s) host, and every document load must stay inside the monitor's scope (`regmon/browser_fetch.py`); as with plain fetching, DNS checks reduce but do not remove rebinding risk.
 
-Whatever the mode, a recognised challenge page (Cloudflare, Akamai, Imperva, PerimeterX, DataDome, AWS WAF, captcha walls; `regmon/botcheck.py`) is never compared as content: the fetch is recorded as a problem, the challenge HTML is saved under `data/snapshots/botcheck/` (named in the record's `bot_check`), and the last good copy stays the baseline. Set the mode per monitor or in bulk from **Scan schedule → How pages are loaded**. `CHANGESENTINEL_CHROME` points at a Chrome or Chromium binary when it is not on PATH; set `CHANGESENTINEL_BROWSER_TEST=1` to run the real-browser test locally.
+**Bot checks are handled automatically, for every monitor.** When a plain request gets a recognised challenge page (Cloudflare, Akamai, Imperva, PerimeterX, DataDome, AWS WAF, captcha walls; `regmon/botcheck.py`), the URL is opened in headless Chrome straight away. The vendor's check runs there, and once it lets the browser through, the server's own response is kept: a PDF as the PDF, a page as the same HTML a plain request would have got, so the baseline does not depend on how the copy was obtained. To make that work the browser:
+
+- presents itself as ordinary Chrome (no `HeadlessChrome` user agent, no automation flag);
+- lets the check's widget frame load from the vendor's host (`CHALLENGE_FRAME_HOSTS`, frames only);
+- waits up to 35 s for the check to clear;
+- keeps one profile for the run, so after one check the other URLs on that site load at once;
+- reads large files in chunks.
+
+It never solves an interactive puzzle. The old `auto` setting is accepted and now means the same as `http`.
+
+When a site keeps showing its check:
+
+- The URL records a `BotCheckError`, and the challenge HTML is saved under `data/snapshots/botcheck/` (named in the record's `bot_check`).
+- The last good copy stays the baseline, and every scan tries again.
+- After two refusals in a scan, the other URLs on that host wait for the next scan instead of each spending the full wait.
+- For `GRACE_HOURS` (24 h) the monitor is *protected, retrying* rather than failing: Health lists it under *Retrying automatically* (`protected` in `data/health.json`), its page shows *Protected site · retrying*, the retries stay out of Changes, and no alert is sent.
+- After that it is a failure, alerted **once per site** ("www.ffiec.gov is blocking automatic checks … 43 monitored pages wait"), not once per page.
+
+The scan's URL preflight counts a challenge as reachable. Scout does the same for its channels (`regmon/scout/net.py`): a 403/429/503 that is a bot check is read once through the browser, and a host whose check the browser cannot pass is not retried in that sweep.
+
+`CHANGESENTINEL_CHROME` points at a Chrome or Chromium binary when it is not on PATH. `scripts/browser_challenge_check.py` runs the bot-check path in Playwright's Chromium against a simulated Cloudflare site (`tests/challenge_site.py`): a managed challenge with a widget frame on another host, a clearance cookie only for a non-headless, non-automated browser, and a PDF larger than one DevTools message. CI runs the pydoll path against the same site (`CHANGESENTINEL_BROWSER_TEST=1`).
 
 ## Find similar
 

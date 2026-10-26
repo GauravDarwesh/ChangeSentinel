@@ -930,6 +930,7 @@
     .hx-cell.l-warn { --c: var(--accent); box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 45%, transparent); }
     .hx-cell.l-stale { --c: transparent; background: transparent; box-shadow: inset 0 0 0 1.5px var(--accent); }
     .hx-cell.l-quiet { --c: var(--idle-lo); box-shadow: inset 0 0 0 1px var(--line-2); }
+    .hx-cell.l-guard { --c: var(--idle-lo); box-shadow: inset 0 0 0 1.5px var(--line-2); }
     .hx-cell:hover, .hx-cell:focus-visible { z-index: 2; transform: scale(1.3); box-shadow: 0 0 0 1.5px var(--raise), 0 0 0 2.5px var(--accent), 0 0 10px var(--c); outline: none; }
     .hx-cell.is-key { display: inline-block; width: 10px; height: 10px; border-radius: 2px; animation: none; cursor: default; vertical-align: -1px; margin-right: 6px; }
     @keyframes hxCell { from { opacity: 0; transform: scale(.3); } }
@@ -1607,7 +1608,7 @@
     .more-health-cells i { width: 6px; height: 6px; background: var(--led-dim); }
     .more-health-cells i.l-bad { background: var(--state-bad); box-shadow: 0 0 4px var(--state-bad-glow); }
     .more-health-cells i.l-warn { background: var(--accent); } .more-health-cells i.l-on { background: var(--state-change); }
-    .more-health-cells i.l-stale { background: transparent; box-shadow: inset 0 0 0 1px var(--accent); } .more-health-cells i.l-quiet { background: var(--led-off); }
+    .more-health-cells i.l-stale { background: transparent; box-shadow: inset 0 0 0 1px var(--accent); } .more-health-cells i.l-quiet { background: var(--led-off); } .more-health-cells i.l-guard { background: var(--led-off); box-shadow: inset 0 0 0 1px var(--line-2); }
     .more-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
     .more-tile .more-value { font-size: 15px; }
     .more-tile[data-more-go="scout"] .more-label::before,
@@ -3290,16 +3291,15 @@
       </div>
       <div class="scan-preview" id="scanPreview" aria-live="polite"></div>
       <details class="add-more scan-loading" id="scanLoading">
-        <summary>How pages are loaded <span id="scanLoadingNow">Plain HTTP</span></summary>
+        <summary>How pages are loaded <span id="scanLoadingNow">Automatic</span></summary>
         <div class="add-more-body">
           <div>
             <label class="field-label-text" for="scanFetchMode">Load HTML pages with</label>
             <select class="field-input" id="scanFetchMode">
-              <option value="http">A plain request (fastest; the default)</option>
-              <option value="auto">A browser, only when a bot check blocks the plain request</option>
+              <option value="http">Automatically (recommended): a plain request, and a browser only when a site shows a bot check</option>
               <option value="browser">A browser on every scan, for pages built with JavaScript</option>
             </select>
-            <div class="field-help">Documents (PDF, spreadsheets, ZIP) are always downloaded directly. A bot-check page is never compared as content: it is saved for review and the last good copy stays the baseline.</div>
+            <div class="field-help">Nothing to set for sites behind Cloudflare or similar checks: when one appears, the page or file is opened in a browser that gets past the check, and the real page or file is kept. If a site keeps blocking, the last good copy stays the baseline, every scan tries again, and you are alerted once per site only if it lasts a day.</div>
           </div>
           <div class="scan-browser" id="scanBrowserOptions">
             <div>

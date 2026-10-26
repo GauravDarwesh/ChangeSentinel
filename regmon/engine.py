@@ -548,47 +548,97 @@ def apply_visual(uid: str, shot: bytes, old: dict | None, item: dict, now: str, 
             "regions": comparison["regions"], "size_before": comparison["size_before"], "size_after": comparison["size_after"]}
 
 
-def _browser_pass(url: str, source: SourceConfig, result: FetchResult, item: dict, now: str) -> FetchResult:
-    """Render in a browser when the source asks for it, and refuse challenge pages.
+# Sites whose bot check the browser could not pass during this scan. After
+# BROWSER_GIVE_UP_AFTER refusals the remaining URLs on that host wait for the
+# next scan instead of each spending a full challenge wait.
+BROWSER_GIVE_UP_AFTER = 2
+_BROWSER_GIVEN_UP: dict[str, int] = {}
+_BROWSER_GATE = __import__("threading").Lock()
 
-    Returns the result to extract; raises BotCheckError when what came back,
-    plain or rendered, is a bot-check page (the challenge is saved first).
+
+def _host_of(url: str) -> str:
+    from urllib.parse import urlsplit
+
+    try:
+        return (urlsplit(url).hostname or "").lower()
+    except ValueError:
+        return ""
+
+
+def _browser_pass(url: str, source: SourceConfig, result: FetchResult, item: dict, now: str) -> FetchResult:
+    """Use a browser when the source asks for one or a bot check blocks the plain request.
+
+    Any monitor whose plain request gets a challenge page is loaded in a
+    browser automatically, whatever its fetch mode: the check runs there and
+    the server's own response (a PDF as the PDF, a page as its HTML) is kept.
+    ``fetch_mode: "browser"`` sources are rendered on every scan.
+
+    Returns the result to extract; raises BotCheckError when the site keeps
+    showing its check (the challenge page is saved first, and the last good
+    copy stays the baseline).
     """
     if result.not_modified or not _is_html(result.content_type, result.body):
         return result
     vendor = botcheck.detect(result.body, result.status_code)
-    if source.fetch_mode == "browser" or (source.fetch_mode == "auto" and vendor):
-        from regmon import browser_fetch
-        from regmon.discovery import in_scope
+    if source.fetch_mode != "browser" and not vendor:
+        return result
+    from regmon import browser_fetch
+    from regmon.discovery import in_scope
 
+    host = _host_of(url)
+
+    def refuse(message: str, page: bytes | None = None, page_vendor: str | None = None, via: str = "http", cause=None):
+        item["bot_check"] = capture_bot_check(item["url_id"], page or result.body, page_vendor or vendor or "Bot check", now, via)
+        raise BotCheckError(message) from cause
+
+    if vendor and not browser_fetch.available():
+        refuse(f"{vendor} bot check returned instead of the page; no browser is available to get past it")
+    # Rendered pages keep the DOM; a page only blocked by a check keeps the
+    # server's own response, so the baseline matches a plain request's.
+    want = "dom" if source.fetch_mode == "browser" else "resource"
+    with _BROWSER_GATE:
+        if vendor and _BROWSER_GIVEN_UP.get(host, 0) >= BROWSER_GIVE_UP_AFTER:
+            refuse(f"{vendor} bot check: the browser could not get past it on {host} earlier in this scan; "
+                   "this URL keeps its last good copy and is tried again next scan")
         try:
             rendered = browser_fetch.render(
                 url, wait_seconds=source.browser_wait_seconds, wait_selector=source.browser_wait_selector,
                 dismiss_cookies=source.browser_dismiss_cookies, in_scope=lambda target: in_scope(canonical(target), source),
-                steps=list(source.browser_actions), screenshot=source.visual_compare,
+                steps=list(source.browser_actions), screenshot=source.visual_compare, want=want,
+                max_bytes=int(DEFAULTS.get("max_response_bytes", 200 * 1024 * 1024)),
             )
+        except browser_fetch.ChallengeNotPassed as exc:
+            _BROWSER_GIVEN_UP[host] = _BROWSER_GIVEN_UP.get(host, 0) + 1
+            refuse(str(exc), exc.page or None, exc.vendor, "browser", exc)
         except Exception as exc:
             if vendor:
-                item["bot_check"] = capture_bot_check(item["url_id"], result.body, vendor, now, "http")
-                raise BotCheckError(f"{vendor} bot check returned instead of the page; browser render failed: {type(exc).__name__}: {exc}") from exc
+                _BROWSER_GIVEN_UP[host] = _BROWSER_GIVEN_UP.get(host, 0) + 1
+                refuse(f"{vendor} bot check returned instead of the page; the browser could not load it: {type(exc).__name__}: {exc}", cause=exc)
             raise
-        rendered_vendor = botcheck.detect(rendered.html, 200)
+        _BROWSER_GIVEN_UP.pop(host, None)
+    body = rendered.body if rendered.body is not None else rendered.html
+    content_type = rendered.content_type if rendered.body is not None else "text/html; charset=utf-8"
+    if "html" in content_type.lower():
+        rendered_vendor = botcheck.detect(body, 200)
         if rendered_vendor:
-            item["bot_check"] = capture_bot_check(item["url_id"], rendered.html, rendered_vendor, now, "browser")
-            raise BotCheckError(f"{rendered_vendor} bot check still shown after rendering in a browser")
-        item["rendered_by"] = "browser"
-        item["browser"] = {"blocked_requests": rendered.blocked, "consent": rendered.consent[:80], "final_url": rendered.final_url}
-        if rendered.steps:
-            item["browser"]["steps"] = rendered.steps
-        if rendered.screenshot and source.visual_compare:
-            with _SCREENSHOTS_LOCK:
-                _SCREENSHOTS[item["url_id"]] = rendered.screenshot
-        return FetchResult(200 if result.status_code >= 400 else result.status_code, "text/html; charset=utf-8", len(rendered.html),
-                           result.etag, result.last_modified, hashlib.sha256(rendered.html).hexdigest(), rendered.html)
-    if vendor:
-        item["bot_check"] = capture_bot_check(item["url_id"], result.body, vendor, now, "http")
-        raise BotCheckError(f"{vendor} bot check returned instead of the page (set fetch_mode to auto to try a browser)")
-    return result
+            refuse(f"{rendered_vendor} bot check still shown after loading in a browser", body, rendered_vendor, "browser")
+    if rendered.status >= 400:
+        raise HTTPStatusError(f"HTTP {rendered.status} for {url} (loaded in a browser)", rendered.status, content_type, body)
+    item["rendered_by"] = "browser"
+    item["browser"] = {"blocked_requests": rendered.blocked, "consent": rendered.consent[:80], "final_url": rendered.final_url}
+    if rendered.challenge or vendor:
+        item["browser"]["passed_check"] = rendered.challenge or vendor
+    if rendered.steps:
+        item["browser"]["steps"] = rendered.steps
+    if rendered.screenshot and source.visual_compare:
+        with _SCREENSHOTS_LOCK:
+            _SCREENSHOTS[item["url_id"]] = rendered.screenshot
+    if rendered.body is not None:
+        headers = rendered.headers or {}
+        return FetchResult(rendered.status or 200, content_type, len(body), headers.get("etag") or None,
+                           headers.get("last-modified") or None, hashlib.sha256(body).hexdigest(), body)
+    return FetchResult(200 if result.status_code >= 400 else result.status_code, content_type, len(body),
+                       result.etag, result.last_modified, hashlib.sha256(body).hexdigest(), body)
 
 
 def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str):
@@ -648,7 +698,7 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             )
         except HTTPStatusError as exc:
             # A challenge served with 403/429/503 is a bot check, not an outage;
-            # an "auto" or "browser" source gets one rendered attempt.
+            # the browser gets one attempt at it.
             vendor = botcheck.detect(exc.body, exc.status_code)
             if not vendor:
                 raise

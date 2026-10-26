@@ -10,6 +10,12 @@ Every request goes through the same gates, in order:
 Errors are typed so a channel can say *why* it stopped: a budget limit, a
 robots rule, an access block (401/403/451), a server asking Scout to come
 back later (429/503 with a long Retry-After), or an ordinary failure.
+
+A 403/429/503 that is really a bot-check page (Cloudflare "Just a moment…",
+regmon/botcheck.py) is not a refusal: the page is loaded once in a headless
+browser (regmon/browser_fetch.py), which runs the check and returns the
+server's own response. That load counts against the request budget, and a
+host whose check the browser cannot pass is not tried again in the sweep.
 """
 from __future__ import annotations
 
@@ -30,6 +36,8 @@ RETRYABLE_SERVER = {500, 502, 504}
 DEFERRING = {429, 503}
 BLOCKING = {401, 403, 451}
 ROBOTS_MAX_BYTES = 512_000
+CHALLENGE_STATUSES = {403, 429, 503}
+CHALLENGE_MAX_BYTES = 600_000  # enough of an error body to recognise a bot check
 
 
 class ScoutFetchError(Exception):
@@ -88,6 +96,14 @@ def requests_transport(url: str, headers: dict, timeout: float, max_bytes: int):
     try:
         status = response.status_code
         response_headers = {str(key).lower(): str(value) for key, value in response.headers.items()}
+        if status in CHALLENGE_STATUSES:
+            # Keep the start of the body: a bot-check page is not a refusal.
+            body = b""
+            for chunk in response.iter_content(chunk_size=64 * 1024):
+                body += chunk or b""
+                if len(body) >= CHALLENGE_MAX_BYTES:
+                    break
+            return status, response_headers, body[:CHALLENGE_MAX_BYTES]
         if status in REDIRECT_STATUSES or status >= 400:
             return status, response_headers, b""
         declared = response_headers.get("content-length", "")
@@ -122,6 +138,36 @@ def retry_after_seconds(value, now: datetime) -> float | None:
     return max(0.0, (when - now).total_seconds())
 
 
+def is_challenge(status: int | None, headers: dict, body: bytes) -> str | None:
+    """The bot-check vendor when an error response is a challenge page, else None."""
+    if status not in CHALLENGE_STATUSES:
+        return None
+    from regmon import botcheck
+
+    vendor = botcheck.detect(body, status)
+    if vendor:
+        return vendor
+    return "Cloudflare" if str(headers.get("cf-mitigated", "")).lower() == "challenge" else None
+
+
+def browser_loader():
+    """``load(url, in_scope, max_bytes)`` through headless Chrome, or None when no browser is installed."""
+    try:
+        from regmon import browser_fetch
+    except ImportError:  # pragma: no cover - the review workflow has no browser
+        return None
+    if not browser_fetch.available():
+        return None
+
+    def load(url: str, in_scope, max_bytes: int):
+        return browser_fetch.render(url, want="resource", in_scope=in_scope, max_bytes=max_bytes)
+
+    return load
+
+
+_DEFAULT = object()
+
+
 class PoliteClient:
     def __init__(
         self,
@@ -129,6 +175,7 @@ class PoliteClient:
         defaults: Defaults,
         *,
         transport=None,
+        browser=_DEFAULT,
         resolve_dns: bool = True,
         monotonic=time.monotonic,
         sleep=time.sleep,
@@ -137,6 +184,10 @@ class PoliteClient:
         self.regulator = regulator
         self.defaults = defaults
         self.transport = transport or requests_transport
+        # Tests passing their own transport get no browser unless they ask.
+        self.browser = (browser_loader() if transport is None else None) if browser is _DEFAULT else browser
+        self.browser_refused: set[str] = set()
+        self.browser_loads = 0
         self.resolve_dns = resolve_dns
         self.monotonic = monotonic
         self.sleep = sleep
@@ -259,6 +310,9 @@ class PoliteClient:
                     if attempt == 1 and self.can_afford(host):
                         continue
                     raise FetchFailed(f"Request to {current} failed: {type(exc).__name__}: {exc}") from exc
+                vendor = is_challenge(status, headers, body)
+                if vendor:
+                    return self._through_browser(current, host, status, vendor, cap)
                 if status in DEFERRING:
                     wait = retry_after_seconds(headers.get("retry-after"), self.wall_clock())
                     wait = 30.0 if wait is None else wait
@@ -285,3 +339,27 @@ class PoliteClient:
                 raise FetchFailed(f"HTTP {status} for {current}", status=status)
             return Response(url=current, status=status, headers=headers, body=body)
         raise FetchFailed(f"More than {MAX_REDIRECTS} redirects for {url}")
+
+    def _through_browser(self, url: str, host: str, status: int, vendor: str, cap: int) -> Response:
+        """Load a URL that answered with a bot check in the browser; the check runs there."""
+        if self.browser is None:
+            raise AccessBlocked(f"{host} showed a {vendor} bot check (HTTP {status}) and no browser is available to get past it", status=status)
+        if host in self.browser_refused:
+            raise AccessBlocked(f"{host} kept showing its {vendor} bot check to the browser earlier in this sweep", status=status)
+        self._spend(host)
+        self.browser_loads += 1
+        try:
+            rendered = self.browser(url, lambda target: host_of(target) in self.regulator.hosts, cap)
+        except Exception as exc:
+            if type(exc).__name__ == "ChallengeNotPassed":
+                self.browser_refused.add(host)
+                raise AccessBlocked(f"{host} showed a {vendor} bot check that the browser could not get past", status=status) from exc
+            raise FetchFailed(f"Browser load of {url} failed: {type(exc).__name__}: {exc}", status=status) from exc
+        if rendered.status >= 400:
+            raise FetchFailed(f"HTTP {rendered.status} for {url} (loaded in a browser)", status=rendered.status)
+        response_headers = {str(k).lower(): str(v) for k, v in (rendered.headers or {}).items()}
+        response_headers.setdefault("content-type", rendered.content_type)
+        final = rendered.final_url or url
+        if host_of(final) not in self.regulator.hosts:
+            raise FetchFailed(f"{url} ended outside the hosts declared for {self.regulator.short_name}: {final}")
+        return Response(url=final, status=rendered.status, headers=response_headers, body=rendered.body or b"")

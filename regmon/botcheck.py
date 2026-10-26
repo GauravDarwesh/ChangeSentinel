@@ -70,3 +70,28 @@ def detect(body: bytes | str | None, status: int | None = None) -> str | None:
         if pattern.search(html):
             return vendor
     return None
+
+
+# ---- A site that keeps showing its check -------------------------------------
+# The engine records such a URL as a fetch problem whose message starts with
+# "BotCheckError" (regmon/engine.py), keeps the last good copy and retries every
+# scan. A check the browser cannot pass usually clears on its own (another
+# runner address, the site relaxing a rule), so for GRACE_HOURS it is shown as
+# "retrying automatically" and nobody is alerted; after that it is a failure,
+# alerted once per site rather than once per page (regmon/notify.py).
+GRACE_HOURS = 24
+_VENDOR_IN_MESSAGE = re.compile(r"^BotCheckError:\s*(.+?) bot check\b")
+
+
+def is_error(message) -> bool:
+    """Whether a recorded fetch error is a bot check rather than an outage."""
+    return str(message or "").startswith("BotCheckError")
+
+
+def vendor_in(message) -> str:
+    match = _VENDOR_IN_MESSAGE.match(str(message or ""))
+    return match.group(1) if match else "bot"
+
+
+def within_grace(hours: float | None) -> bool:
+    return hours is None or hours < GRACE_HOURS
