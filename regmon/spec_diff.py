@@ -1376,7 +1376,20 @@ NOTE_ACTIONS = {"added": "added", "new": "added", "introduced": "added", "deprec
                 "retired": "retired", "removed": "retired", "deleted": "retired", "updated": "updated", "revised": "updated",
                 "modified": "updated", "amended": "updated", "changed": "updated"}
 ACTION_CATEGORIES = {"added": {"added", "added_version"}, "retired": {"retired", "removed"},
-                     "updated": {"logic", "severity", "message", "definition", "description", "effective", "reinstated", "added_version"}}
+                     "updated": {"logic", "severity", "message", "definition", "description", "effective", "reinstated", "updated_version"}}
+
+
+def _note_category(change: dict) -> str:
+    """A version bumped in place (same row, new version number) is an update to the notes, not an addition."""
+    return "updated_version" if change["category"] == "added_version" and change.get("version") else change["category"]
+
+
+def _note_counts(table: dict) -> Counter:
+    counts = Counter(table.get("counts") or {})
+    in_place = sum(1 for change in table.get("changes", []) if _note_category(change) == "updated_version")
+    counts["added_version"] -= in_place
+    counts["updated_version"] += in_place
+    return counts
 _NOTE_SPLIT = re.compile(r"\b(" + "|".join(NOTE_ACTIONS) + r")\b", re.I)
 _NOTE_COUNT = re.compile(r"^\s*(?:[-:–]\s*)?(?:new\s+)?(\d{1,5})\s+(?:new\s+)?(rules?|edits?|checks?|validations?|dpa'?s?|data ?points?|fields?|items?"
                          r"|elements?|codes?|mdrms?)\b", re.I)
@@ -1482,7 +1495,7 @@ def release_notes(before_text: str | None, after_text: str | None, result: dict,
             continue
         for claim in claims:
             if targets:
-                detected = sum(table["counts"].get(category, 0) for table in targets for category in ACTION_CATEGORIES[claim["action"]])
+                detected = sum(_note_counts(table).get(category, 0) for table in targets for category in ACTION_CATEGORIES[claim["action"]])
                 claim["detected"] = detected
                 claim["status"] = "matches" if detected == claim["count"] else "differs"
                 differs += claim["status"] == "differs"
@@ -1495,12 +1508,15 @@ def release_notes(before_text: str | None, after_text: str | None, result: dict,
             for table in targets or tables:
                 for change in table.get("changes", []):
                     if _item_id(table, change) and change["category"] not in QUIET:
-                        changed.setdefault(_item_id(table, change), change["category"])
+                        changed.setdefault(_item_id(table, change), _note_category(change))
             # "Updated rules: IR-3" when IR-3 was in fact retired is a claim the file doesn't bear out either.
             missing = sorted({token for action, token in ids if changed.get(token) not in ACTION_CATEGORIES[action]})
             item["ids_listed"] = len({token for _, token in ids})
             if missing:
                 item["ids_not_changed"] = missing[:20]
+                found_as = {token: changed[token] for token in missing[:20] if token in changed}
+                if found_as:
+                    item["ids_found_as"] = found_as
                 item["ids_not_changed_count"] = len(missing)
                 differs += 1
             for action, token in ids:
@@ -1517,7 +1533,7 @@ def release_notes(before_text: str | None, after_text: str | None, result: dict,
             continue
         # Every id listed under one action ("Updated rules: …") reads as the complete list for that action.
         silent = [change["label"] for change in table.get("changes", [])
-                  if _item_id(table, change) and change["category"] in ACTION_CATEGORIES[action] and _item_id(table, change) not in listed]
+                  if _item_id(table, change) and _note_category(change) in ACTION_CATEGORIES[action] and _item_id(table, change) not in listed]
         if silent:
             undocumented.append({"table": name, "action": action, "count": len(silent), "labels": silent[:20]})
             differs += 1
