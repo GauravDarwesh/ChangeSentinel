@@ -262,5 +262,25 @@ class TestAIEvaluationWorkflowContract(unittest.TestCase):
         self.assertIn('"scripts/ai_eval_cases.json"', workflow)
 
 
+class TestStealthCrawlerIsolation(unittest.TestCase):
+    """stealth-crawler needs pydoll 1.x; SeleniumBase forces pydoll 3 (websockets>=16)."""
+
+    def test_stealth_crawler_is_installed_apart_from_the_pydoll_3_environment(self):
+        root = WORKFLOWS.parent.parent
+        main = (root / "requirements.txt").read_text(encoding="utf-8")
+        stealth = (root / "requirements-stealth.txt").read_text(encoding="utf-8")
+        self.assertIn("pydoll-python==3.0.0", main)
+        self.assertNotIn("stealth-crawler", main)
+        self.assertIn("stealth-crawler==0.9.0", stealth)
+        self.assertIn("pydoll-python==1.3.3", stealth)
+        workflow = (WORKFLOWS / "regulatory-monitor.yml").read_text(encoding="utf-8")
+        install = workflow.index("-r requirements.txt")
+        isolated = workflow.index('python -m venv "$RUNNER_TEMP/stealth-venv"')
+        self.assertLess(install, isolated)
+        self.assertIn("-r requirements-stealth.txt", workflow)
+        self.assertIn('echo "$RUNNER_TEMP/stealth-bin" >> "$GITHUB_PATH"', workflow)
+        self.assertLess(isolated, workflow.index("-m regmon.monitor --source"))
+
+
 if __name__ == "__main__":
     unittest.main()

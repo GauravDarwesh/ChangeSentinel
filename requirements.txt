@@ -3,7 +3,6 @@
 # never a silent side effect of a scheduled run resolving a newer release.
 pydoll-python==3.0.0
 seleniumbase==4.56.2
-stealth-crawler==0.9.0
 requests==2.34.2
 beautifulsoup4==4.15.0
 pypdf==6.21.1

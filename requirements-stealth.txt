@@ -1,0 +1,7 @@
+# stealth-crawler (the browser discovery fallback in regmon/discovery_browser.py)
+# imports the pydoll 1.x API, which pydoll 3 removed. SeleniumBase needs
+# websockets>=16 and pydoll 1.3.3 needs websockets<14, so the two cannot share
+# one environment. This file is installed into its own virtual environment and
+# only its `stealth-crawler` command is put on PATH (see regulatory-monitor.yml).
+stealth-crawler==0.9.0
+pydoll-python==1.3.3

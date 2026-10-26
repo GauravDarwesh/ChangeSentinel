@@ -77,6 +77,18 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
 
+      # stealth-crawler needs pydoll 1.x, which cannot coexist with the
+      # SeleniumBase/pydoll 3 browser fallback; give it its own environment and
+      # expose only its command, so discovery keeps its browser fallback.
+      - name: Install isolated stealth-crawler for discovery fallback
+        run: |
+          python -m venv "$RUNNER_TEMP/stealth-venv"
+          "$RUNNER_TEMP/stealth-venv/bin/python" -m pip install --disable-pip-version-check -r requirements-stealth.txt
+          mkdir -p "$RUNNER_TEMP/stealth-bin"
+          ln -sf "$RUNNER_TEMP/stealth-venv/bin/stealth-crawler" "$RUNNER_TEMP/stealth-bin/stealth-crawler"
+          echo "$RUNNER_TEMP/stealth-bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/stealth-bin/stealth-crawler" --help > /dev/null
+
       # CI validates code changes and pull requests. Keep per-scan work focused on monitoring.
       - name: Selected source URL preflight
         run: |
