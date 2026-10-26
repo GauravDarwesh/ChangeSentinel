@@ -1,0 +1,36 @@
+{
+  "event_id": "f6f47428eb3c3da573e4083b9a1b39f6a158d2c3137cdd4130cbd848957afbe5",
+  "event_type": "FETCH_ERROR",
+  "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec002s",
+  "timestamp": "2026-10-26T06:06:10.436096+00:00",
+  "before": {
+    "normalized_hash": null,
+    "extraction_type": null,
+    "extractor_version": null,
+    "extraction_failed": false,
+    "raw_hash": null,
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": null,
+    "extraction_type": null,
+    "extractor_version": null,
+    "extraction_failed": false,
+    "raw_hash": null,
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)"
+}

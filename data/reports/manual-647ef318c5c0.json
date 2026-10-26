@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T055435Z-13c0fc8a",
-  "generated_at": "2026-10-26T05:58:56.707241+00:00",
+  "run_id": "20261026T060111Z-8961d334",
+  "generated_at": "2026-10-26T06:06:08.138970+00:00",
   "source": {
     "id": "manual-647ef318c5c0",
     "name": "Reporting Forms: FFIEC 030S",
@@ -12,7 +12,7 @@
     "allowed_prefixes": [
       "https://www.ffiec.gov/"
     ],
-    "initial_baseline": true
+    "initial_baseline": false
   },
   "discovery": {
     "source_id": "manual-647ef318c5c0",
@@ -86,16 +86,16 @@
   },
   "events": [
     {
-      "event_id": "d23c2c052b0af8fc3b015d8cd6eedd88e82669c2146992f2a7a8ab16f9b0931e",
+      "event_id": "bbf740b3c6455c74d1b2cc009f0ecf8ae74cce1352120c63429ab1324711b6c9",
       "event_type": "FETCH_ERROR",
       "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030S_202503_f.pdf",
       "url_id": "647ef318c5c06d96492ca11c10224222a23f0ecce7f469700d52e12a6921dba4",
       "source_id": "manual-647ef318c5c0",
-      "timestamp": "2026-10-26T05:58:56.707241+00:00",
-      "evidence_location": "data/evidence/d23c2c052b0af8fc3b015d8cd6eedd88e82669c2146992f2a7a8ab16f9b0931e.json",
+      "timestamp": "2026-10-26T06:06:08.138970+00:00",
+      "evidence_location": "data/evidence/bbf740b3c6455c74d1b2cc009f0ecf8ae74cce1352120c63429ab1324711b6c9.json",
       "notification_id": "op-6da5b2aac4635bedb9a77beb35434eb1c577dd29bd1bc17b8bfaa950875a8eea",
       "error_since": "2026-10-26T05:58:56.707241+00:00",
-      "error_runs": 1,
+      "error_runs": 2,
       "evidence": {
         "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)"
       }
@@ -108,5 +108,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "continuation",
-  "workflow_run_id": "40276604275"
+  "workflow_run_id": "40276660199"
 }

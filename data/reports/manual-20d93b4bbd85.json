@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T055435Z-13c0fc8a",
-  "generated_at": "2026-10-26T05:57:49.484858+00:00",
+  "run_id": "20261026T060111Z-8961d334",
+  "generated_at": "2026-10-26T06:04:52.895336+00:00",
   "source": {
     "id": "manual-20d93b4bbd85",
     "name": "TFC-2 (Sample File (XML)",
@@ -92,5 +92,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "continuation",
-  "workflow_run_id": "40276604275"
+  "workflow_run_id": "40276660199"
 }

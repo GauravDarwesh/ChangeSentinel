@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T055435Z-13c0fc8a",
-  "generated_at": "2026-10-26T05:58:59.010700+00:00",
+  "run_id": "20261026T060111Z-8961d334",
+  "generated_at": "2026-10-26T06:06:10.128912+00:00",
   "source": {
     "id": "manual-58dc3b1d4e54",
     "name": "FFIEC 009 Instructions",
@@ -12,7 +12,7 @@
     "allowed_prefixes": [
       "https://www.ffiec.gov/"
     ],
-    "initial_baseline": true
+    "initial_baseline": false
   },
   "discovery": {
     "source_id": "manual-58dc3b1d4e54",
@@ -86,16 +86,16 @@
   },
   "events": [
     {
-      "event_id": "2e49682b8dde8885ada7cde81d6a45099e52a0bacc5144b69c1211f370cbf38b",
+      "event_id": "69a61ad7f1691d2b3f8164a49493ab5f4ecb42a9612c685e11585710a0b61f73",
       "event_type": "FETCH_ERROR",
       "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/ffiec009-report-form-instructions.pdf",
       "url_id": "58dc3b1d4e547426e451fe1e0c2559e8bbdf45e2e89282d095f7edaeed37fa87",
       "source_id": "manual-58dc3b1d4e54",
-      "timestamp": "2026-10-26T05:58:59.010700+00:00",
-      "evidence_location": "data/evidence/2e49682b8dde8885ada7cde81d6a45099e52a0bacc5144b69c1211f370cbf38b.json",
+      "timestamp": "2026-10-26T06:06:10.128912+00:00",
+      "evidence_location": "data/evidence/69a61ad7f1691d2b3f8164a49493ab5f4ecb42a9612c685e11585710a0b61f73.json",
       "notification_id": "op-e76c8919c944b4774ebf8d2eb3b5d9c3816d7b27bc3df448b090d9d831829468",
       "error_since": "2026-10-26T05:58:59.010700+00:00",
-      "error_runs": 1,
+      "error_runs": 2,
       "evidence": {
         "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)"
       }
@@ -108,5 +108,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "continuation",
-  "workflow_run_id": "40276604275"
+  "workflow_run_id": "40276660199"
 }
