@@ -150,3 +150,21 @@ Whatever the mode, a recognised challenge page (Cloudflare, Akamai, Imperva, Per
 ## Alert-condition suggestions
 
 The *Alert me when* fields (a monitor's condition dialog, and Add a link's review step) offer starting points drawn from the page itself: report codes found in it (FR Y-9C, BCAR, …), the kind of document it mostly links, and wording about deadlines and effective dates, versions and errata, validation rules, layouts and schemas, consultations and instructions, in English, Portuguese, Spanish, French and German. A monitor's suggestions use its saved text; the review step uses the ticked links (or every link found) and the starting page. They only fill the text box; nothing is saved until the request is submitted.
+
+## Structured spec diffs and the offline compare
+
+When a monitored edit-check workbook, data dictionary, PDF field-spec table, XSD or XBRL linkbase changes, `regmon/spec_diff.py` compares it row by row and the change shows a **Specification changes** sheet (Changes → a change). Tables are recognised by their headers, not positions: a rule table has a rule identifier (Edit No, Rule ID, Check ID, …) and logic, a message or a description; a field table has a field code (Technical Field Name / MDRM, Item code, Data element, Measure name, DPM, formato, campo, …). Rows are aligned by the smallest key that is unique in both versions (rule ID; ID + version; table + ID + version; series + table + ID + version), so an inserted rule is one new rule. XSD elements are keyed by path, code lists by list and value, XBRL assertions by ID (with test, messages, severity and the FFIEC ruleType).
+
+Each changed row gets one category, most important first: new / new version, severity changed (escalated or relaxed, from a Severity column or an edit-type change such as Quality → Validity), logic changed, retired (end date set from 99991231, or Archived / Deprecated / Deleted status), reinstated, effective dates changed, message changed, definition changed, description changed, removed, metadata only, cosmetic only. Retired rules are checked for a live replacement version; added and removed rows that agree on everything but their key are shown as likely re-keyed. The same token swap in a commentary column across many rows (every comment going from "Q1 2026" to "Q1 2027") is shown once as a pattern.
+
+**Declared vs detected.** Regulators annotate rows ("New Rule - Effective Q1 2027", "Updated", "Deprecated", Status "Archived"). Each row's newly declared action is reconciled with what changed, and two kinds of mismatch are listed: a row that changed while still marked as unchanged ("Existing Rule - Remains Effective"), and a row newly marked new or updated with nothing else different. A file seen for the first time shows what it declares about itself instead (**Declared in this file**).
+
+The result is deterministic, stored in the change's evidence (`spec_diff`, or `spec_inventory` for a new file), summarised on the change (`spec`) and in alerts ("Spec changes: 2 new, 3 retired (1 escalated) — 531 v1, …"), and never stops a scan if it fails. Structure depends on extraction: a PDF whose table comes out as plain prose has no table to compare, and the ordinary redline still applies.
+
+**Offline compare.** The same comparison runs on any two local files, for the quarterly cycle the Excel Compare and Taxonomy Compare tools cover today:
+
+```bash
+python -m regmon.spec_diff FRY14Q_2026Q2_CIL_Edits_V1.xlsx FRY14Q_2026Q3_CIL_Edits_V2.xlsx -o Spec_Compare.xlsx --json out.json
+```
+
+It reads .xlsx/.xlsm, .csv, .pdf, .docx, .xsd/.xml and .zip packages the way the monitor does, prints the headline, and writes an analyst workbook: **Summary** (both files with SHA-256, counts per table and category), **Spec Changes** (one row per changed item with effective date, severity, before/after, note, the regulator's own annotation, a mismatch flag, an Impact drop-down and Analyst comment), **Cell Changes** and **Patterns**. `--exit-code` exits 2 when substantive changes are found.
