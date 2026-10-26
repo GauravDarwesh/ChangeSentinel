@@ -1,6 +1,6 @@
 """Browser loading: JavaScript-built pages, and getting past bot checks.
 
-Two jobs share one headless Chrome (pydoll, already used for crawl discovery):
+Two jobs use the browser: Pydoll is primary (already used for crawl discovery), with SeleniumBase CDP as a fallback only when Pydoll still sees a bot check:
 
 * ``fetch_mode: "browser"`` pages are loaded, given ``browser_wait_seconds``
   to settle (or until ``browser_wait_selector`` appears), a cookie or consent
@@ -186,15 +186,28 @@ def browser_binary() -> str:
     return ""
 
 
-def available() -> bool:
-    """Whether a browser load can be attempted at all (Chrome and pydoll present)."""
-    if not browser_binary():
-        return False
+def _pydoll_available() -> bool:
+    """Whether the primary Pydoll backend is installed."""
     try:
         import pydoll  # noqa: F401
     except ImportError:
         return False
     return True
+
+
+def _seleniumbase_available() -> bool:
+    """Whether SeleniumBase's pure-CDP backend is installed."""
+    try:
+        from seleniumbase.undetected.cdp_driver import cdp_util  # noqa: F401
+        import mycdp.fetch  # noqa: F401
+    except ImportError:
+        return False
+    return True
+
+
+def available() -> bool:
+    """Whether Chrome and at least one supported browser backend are available."""
+    return bool(browser_binary()) and (_pydoll_available() or _seleniumbase_available())
 
 
 _VERSIONS: dict[str, str] = {}
@@ -330,6 +343,95 @@ class _PydollPage(_Page):
             await handler((message or {}).get("params") or {})
 
         await self.page.on(event, wrapped)
+
+
+def _raw_cdp_command(method: str, params: dict | None = None):
+    """Build a MyCDP command from the same raw method/params pair used by Pydoll."""
+    result = yield {"method": method, "params": params or {}}
+    return result
+
+
+def _enum_value(value: object) -> str:
+    """Return the protocol value of a MyCDP enum or a plain value."""
+    if value is None:
+        return ""
+    enum_value = getattr(value, "value", None)
+    if isinstance(enum_value, str) and enum_value:
+        return enum_value
+    enum_name = getattr(value, "name", None)
+    if isinstance(enum_name, str) and enum_name:
+        return enum_name.replace("_", " ").title()
+    return str(value)
+
+
+class _SeleniumBasePage(_Page):
+    """Adapt SeleniumBase's CDP tab to browser_fetch's small raw-CDP interface.
+
+    Keeping _drive as the shared implementation preserves its URL-scope and
+    public-destination checks, response capture, size limits, and challenge
+    detection for both browser backends.
+    """
+
+    def __init__(self, page):
+        self.page = page
+
+    async def send(self, method, params=None):
+        return await self.page.send(_raw_cdp_command(method, params or {}))
+
+    @staticmethod
+    def _request_paused_params(event) -> dict:
+        request = getattr(event, "request", None)
+        resource_type = _enum_value(getattr(event, "resource_type", ""))
+        if resource_type.lower() == "document":
+            resource_type = "Document"
+        params = {
+            "requestId": str(getattr(event, "request_id", "")),
+            "request": {"url": str(getattr(request, "url", "") or "")},
+            "frameId": str(getattr(event, "frame_id", "") or ""),
+            "resourceType": resource_type,
+        }
+        status = getattr(event, "response_status_code", None)
+        if status is not None:
+            params["responseStatusCode"] = status
+        error = getattr(event, "response_error_reason", None)
+        if error is not None:
+            params["responseErrorReason"] = _enum_value(error)
+        headers = getattr(event, "response_headers", None) or []
+        params["responseHeaders"] = [
+            {"name": str(getattr(item, "name", "")), "value": str(getattr(item, "value", ""))}
+            for item in headers
+        ]
+        return params
+
+    @staticmethod
+    def _auth_required_params(event) -> dict:
+        challenge = getattr(event, "auth_challenge", None)
+        params = {
+            "requestId": str(getattr(event, "request_id", "")),
+            "authChallenge": {
+                "source": _enum_value(getattr(challenge, "source", "")),
+                "origin": str(getattr(challenge, "origin", "") or ""),
+                "scheme": str(getattr(challenge, "scheme", "") or ""),
+                "realm": str(getattr(challenge, "realm", "") or ""),
+            },
+        }
+        return params
+
+    async def on(self, event, handler):
+        import mycdp.fetch as cdp_fetch
+
+        event_types = {
+            "Fetch.requestPaused": (cdp_fetch.RequestPaused, self._request_paused_params),
+            "Fetch.authRequired": (cdp_fetch.AuthRequired, self._auth_required_params),
+        }
+        if event not in event_types:
+            raise RuntimeError(f"Unsupported SeleniumBase CDP event: {event}")
+        event_type, convert = event_types[event]
+
+        async def wrapped(payload):
+            await handler(convert(payload))
+
+        self.page.add_handler(event_type, wrapped)
 
 
 async def _read_stream(page: _Page, handle: str, max_bytes: int) -> bytes:
@@ -541,41 +643,105 @@ async def _screenshot(page: _Page, evaluate) -> bytes | None:
 
 
 async def _render(url: str, binary: str, **options) -> Rendered:
-    from pydoll.browser.chrome import Chrome
-    from pydoll.browser.options import Options
+    # Pydoll 3 exposes Chrome/ChromiumOptions at the package level. Its
+    # start() returns the initial Tab directly; _drive still uses the same
+    # raw CDP commands and scope checks through _PydollPage.
+    from pydoll import Chrome, ChromiumOptions
 
-    chrome_options = Options()
+    chrome_options = ChromiumOptions()
     if binary:
         chrome_options.binary_location = binary
     for argument in launch_arguments(binary):
         chrome_options.add_argument(argument)
     async with Chrome(options=chrome_options) as browser:
-        await browser.start()
-        page = await browser.get_page()
+        page = await browser.start()
         return await _drive(_PydollPage(page), url, **options)
+
+
+async def _render_seleniumbase(url: str, binary: str, **options) -> Rendered:
+    """Use SeleniumBase CDP as a second browser backend, sharing the run profile."""
+    from seleniumbase.undetected.cdp_driver import cdp_util
+
+    arguments = [
+        argument for argument in launch_arguments(binary)
+        if not argument.startswith("--user-data-dir=")
+        and argument not in {"--headless=new", "--no-sandbox"}
+    ]
+    browser = await cdp_util.start_async(
+        user_data_dir=profile_dir(),
+        headless=True,
+        browser_executable_path=binary,
+        browser_args=arguments,
+        sandbox=False,
+        lang="en-US",
+    )
+    try:
+        page = await browser.get("about:blank")
+        return await _drive(_SeleniumBasePage(page), url, **options)
+    finally:
+        # stop() also terminates the browser process; the profile persists for
+        # this run so clearance cookies can be reused by later URLs. A cleanup
+        # hiccup must not mask a successful capture or the original challenge.
+        try:
+            browser.stop()
+        except Exception:
+            pass
+
+
+async def _render_with_fallback(url: str, binary: str, **options) -> Rendered:
+    """Try Pydoll first; try SeleniumBase CDP only if the first browser sees a challenge."""
+    if not _pydoll_available():
+        if _seleniumbase_available():
+            return await _render_seleniumbase(url, binary, **options)
+        raise RuntimeError("Browser fetch needs Pydoll or SeleniumBase CDP to be installed")
+
+    try:
+        return await _render(url, binary, **options)
+    except ChallengeNotPassed as primary:
+        if not _seleniumbase_available():
+            raise
+        try:
+            return await _render_seleniumbase(url, binary, **options)
+        except ChallengeNotPassed:
+            # Prefer the last backend's evidence; it may have progressed further
+            # through the challenge than the primary browser.
+            raise
+        except Exception as fallback_error:
+            # Keep the known bot-check classification and saved challenge page.
+            # The chained exception retains the SeleniumBase failure for debugging.
+            raise primary from fallback_error
 
 
 def render(url: str, *, wait_seconds: float = DEFAULT_WAIT_SECONDS, wait_selector: str = "", dismiss_cookies: bool = True,
            in_scope=None, steps: list[dict] | None = None, screenshot: bool = False, want: str = "dom",
            max_bytes: int = MAX_RESOURCE_BYTES) -> Rendered:
-    """Load one URL in headless Chrome. Raises RuntimeError when no browser is available.
+    """Load one URL in headless Chrome, using SeleniumBase CDP if Pydoll cannot pass a challenge.
 
-    ``want="resource"`` returns the server's own response once any bot check
-    has let the browser through; raises ChallengeNotPassed when it does not.
+    ``want="resource"`` returns the server's original response (including PDFs)
+    when the browser clears the check; unresolved challenges remain fetch errors.
     """
     validate_public_http_url(url, resolve_dns=True)
     binary = browser_binary()
     if not binary:
         raise RuntimeError("Browser fetch needs Chrome or Chromium (set CHANGESENTINEL_CHROME)")
+    if not available():
+        raise RuntimeError("Browser fetch needs Pydoll or SeleniumBase CDP to be installed")
     wait = 0.0 if want == "resource" else max(0.0, min(float(wait_seconds), MAX_WAIT_SECONDS))
     with _LOCK:
         loop = asyncio.new_event_loop()
         try:
             step_wait = sum(float(step.get("seconds", 0)) for step in steps or []) + 12 * len(steps or [])
+            timeout = RENDER_TIMEOUT_SECONDS + CHALLENGE_WAIT_SECONDS + wait + step_wait + 30
+            # The fallback only starts after Pydoll reports a challenge. Reserve
+            # a second bounded attempt without increasing normal successful scans.
+            if _pydoll_available() and _seleniumbase_available():
+                timeout *= 2
             return loop.run_until_complete(asyncio.wait_for(
-                _render(url, binary, want=want, wait_seconds=wait, wait_selector=wait_selector, dismiss=dismiss_cookies,
-                        in_scope=in_scope, steps=steps, screenshot=screenshot, max_bytes=max_bytes),
-                timeout=RENDER_TIMEOUT_SECONDS + CHALLENGE_WAIT_SECONDS + wait + step_wait + 30,
+                _render_with_fallback(
+                    url, binary, want=want, wait_seconds=wait, wait_selector=wait_selector, dismiss=dismiss_cookies,
+                    in_scope=in_scope, steps=steps, screenshot=screenshot, max_bytes=max_bytes,
+                ),
+                timeout=timeout,
             ))
         finally:
             loop.close()

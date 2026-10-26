@@ -198,7 +198,9 @@ class TestScoutWorkflowContract(unittest.TestCase):
         self.assertIn("group: scout", workflow)
         self.assertIn("queue: max", workflow)
         self.assertIn("persist-credentials: false", workflow)
-        self.assertIn("requests==2.34.2 beautifulsoup4==4.14.3", workflow)
+        # Scout installs browser dependencies separately from requirements.txt,
+        # so it must include the CDP fallback and its compatible BeautifulSoup pin.
+        self.assertIn("requests==2.34.2 beautifulsoup4==4.15.0 pydoll-python==3.0.0 seleniumbase==4.56.2", workflow)
         sweep = workflow.index("- name: Sweep regulator channels")
         validate = workflow.index("- name: Validate Scout state")
         commit = workflow.index("- name: Commit Scout state")
