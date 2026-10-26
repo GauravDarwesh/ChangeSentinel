@@ -2455,6 +2455,195 @@
     return rows;
   }
 
+  /* ---------- Item registry (regmon/registry.py) ---------- */
+
+  const REGISTRY_KIND_NOUNS = { table: ["table", "tables"], view: ["view", "views"], model: ["model", "models"], pipeline: ["pipeline", "pipelines"],
+    report: ["report", "reports"], code: ["code path", "code paths"], check: ["check", "checks"], dashboard: ["dashboard", "dashboards"],
+    submission: ["submission", "submissions"], other: ["asset", "assets"] };
+  const REGISTRY_SCHEMES = { MDRM: "Federal Reserve MDRM", FRY14: "FR Y-14 data-dictionary field", FFIEC: "FFIEC Call Report item / edit",
+    DPM: "EBA DPM data point / template cell", BIRD: "ECB BIRD variable", OSFI: "OSFI return data point (DPA, measure)",
+    SUCAVE: "SBS Peru SUCAVE code", BCB5050: "Banco Central do Brasil document 5050 account", OTHER: "Other identifier" };
+  const REGISTRY_CHANGE_WORDS = { added: "added", added_version: "new version", removed: "removed", amended: "amended", retired: "retired",
+    reinstated: "reinstated", severity: "severity changed", logic: "logic changed", effective: "dates changed", message: "message changed",
+    definition: "redefined", description: "relabelled", mentioned: "named in the change" };
+  function registryNorm(code) { return String(code || "").replace(/\s+/g, "").toUpperCase(); }
+  function globMatch(value, pattern) {
+    const source = "^" + String(pattern).replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\?/g, ".") + "$";
+    return new RegExp(source).test(value);
+  }
+  // The registry as the dashboard reads it, with lineage.json mappings folded in
+  // as rules (mirrors regmon/registry.py load()).
+  function registryModel(registry, lineage) {
+    const consumers = new Map();
+    const items = [];
+    const rules = [];
+    if (registry && typeof registry === "object") {
+      (Array.isArray(registry.consumers) ? registry.consumers : []).forEach(consumer => {
+        if (consumer && consumer.id) consumers.set(String(consumer.id), Object.assign({ kind: "other", name: consumer.id }, consumer));
+      });
+      (Array.isArray(registry.items) ? registry.items : []).forEach(item => {
+        if (!item || !item.code) return;
+        items.push(Object.assign({ scheme: "OTHER", aliases: [], equivalents: [], consumers: [] }, item));
+      });
+      (Array.isArray(registry.rules) ? registry.rules : []).forEach(rule => { if (rule && rule.match) rules.push(Object.assign({ consumers: [] }, rule)); });
+    }
+    (lineage && Array.isArray(lineage.mappings) ? lineage.mappings : []).forEach(mapping => {
+      if (!mapping || typeof mapping !== "object") return;
+      const ids = (Array.isArray(mapping.assets) ? mapping.assets : []).map(asset => {
+        const id = "lineage:" + String(asset).replace(/[^A-Za-z0-9_.:-]+/g, "-").slice(0, 70);
+        if (!consumers.has(id)) consumers.set(id, { id, kind: "other", name: String(asset), owner: String(mapping.owner || ""), note: String(mapping.note || "") });
+        return id;
+      });
+      (mapping.codes || []).forEach(code => rules.push({ match: code, scheme: "MDRM", consumers: ids }));
+      (mapping.series || []).forEach(series => rules.push({ match: series + "*", scheme: "MDRM", consumers: ids }));
+    });
+    const byCode = new Map();
+    items.forEach(item => [item.code].concat(item.aliases || []).forEach(name => {
+      const key = registryNorm(name);
+      if (!byCode.has(key)) byCode.set(key, []);
+      if (byCode.get(key).indexOf(item) < 0) byCode.get(key).push(item);
+    }));
+    return { consumers, items, rules, byCode };
+  }
+  function registryConsumerLink(consumer) {
+    if (!consumer) return "";
+    if (consumer.url) return String(consumer.url);
+    if (consumer.repo && consumer.path) return "https://github.com/" + consumer.repo + "/blob/" + (consumer.ref || "HEAD") + "/" + String(consumer.path).replace(/^\/+/, "");
+    return "";
+  }
+  function registryRuleConsumers(model, code, scheme) {
+    const value = registryNorm(code);
+    const out = [];
+    model.rules.forEach(rule => {
+      if (rule.scheme && scheme && rule.scheme !== scheme) return;
+      if (globMatch(value, registryNorm(rule.match))) (rule.consumers || []).forEach(id => { if (out.indexOf(id) < 0) out.push(id); });
+    });
+    return out;
+  }
+  function registryQuarterKey(quarter) {
+    const match = /Q(\d) (\d{4})/.exec(quarter || "");
+    return match ? Number(match[2]) * 10 + Number(match[1]) : 99999;
+  }
+  function registryQuarterOf(value) {
+    const text = String(value || "");
+    let match = /\b(?:Q([1-4])\s*(20\d\d)|(20\d\d)\s*Q([1-4]))\b/i.exec(text);
+    if (match) return "Q" + (match[1] || match[4]) + " " + (match[2] || match[3]);
+    match = /\b(20\d\d)-(\d\d)-(\d\d)\b/.exec(text);
+    return match ? "Q" + (Math.floor((Number(match[2]) - 1) / 3) + 1) + " " + match[1] : "";
+  }
+  // What a change touched (mirrors touched_codes): item codes, then spec rows.
+  function registryTouched(itemCodes, spec) {
+    const touched = new Map();
+    const add = (code, change, quarter, effective) => {
+      code = String(code || "").replace(/\s+/g, " ").trim();
+      if (!code) return;
+      const key = registryNorm(code);
+      if (touched.has(key) && touched.get(key).change !== "mentioned") return;
+      touched.set(key, { code, change, quarter: quarter || "", effective: effective || "" });
+    };
+    ["added", "removed", "amended"].forEach(kind => ((itemCodes && itemCodes[kind]) || []).forEach(entry => { if (entry && entry.code) add(entry.code, kind); }));
+    ((spec && spec.tables) || []).forEach(table => (table.changes || []).forEach(change => {
+      if (change.category === "metadata" || change.category === "cosmetic") return;
+      let code = change.field || (["fields", "concepts", "codes"].indexOf(table.kind) >= 0 ? change.label : "");
+      if (table.kind === "concepts" && code) code = String(code).split("/").pop();
+      add(code, change.category || "amended", change.quarter || registryQuarterOf(change.effective), change.effective);
+    }));
+    return Array.from(touched.values());
+  }
+  function registryWhere(item) {
+    if (item.form && item.schedule) return item.form + " " + item.schedule;
+    return item.form || item.schedule || REGISTRY_SCHEMES[item.scheme] || item.scheme || "";
+  }
+  // Registered items a change touched, who reads them, and the sentence (mirrors impact()).
+  function registryImpact(touched, model, effective) {
+    if (!Array.isArray(touched) || !touched.length || !model) return null;
+    const items = [];
+    const consumers = new Map();
+    const unregistered = [];
+    touched.forEach(entry => {
+      const matches = model.byCode.get(registryNorm(entry.code)) || [];
+      const ruleIds = registryRuleConsumers(model, entry.code, matches.length ? matches[0].scheme : "");
+      if (!matches.length && !ruleIds.length) { unregistered.push(entry.code); return; }
+      const records = matches.length ? matches : [{ code: entry.code, scheme: "", jurisdiction: "", form: "", schedule: "", line: "", label: "", equivalents: [], consumers: [], owner: "" }];
+      records.forEach(record => {
+        const ids = Array.from(new Set((record.consumers || []).concat(ruleIds)));
+        items.push({ code: record.code, scheme: record.scheme || "", jurisdiction: record.jurisdiction || "", form: record.form || "", schedule: record.schedule || "",
+          line: record.line || "", label: record.label || "", registered: !!matches.length, equivalents: record.equivalents || [], change: entry.change,
+          quarter: entry.quarter || "", effective: entry.effective || "", consumers: ids, owner: record.owner || "" });
+        ids.forEach(id => {
+          const consumer = model.consumers.get(id);
+          if (!consumer) return;
+          if (!consumers.has(id)) consumers.set(id, Object.assign({}, consumer, { link: registryConsumerLink(consumer), codes: [] }));
+          const row = consumers.get(id);
+          if (row.codes.indexOf(record.code) < 0) row.codes.push(record.code);
+        });
+      });
+    });
+    const result = { items, consumers: Array.from(consumers.values()), unregistered, unregistered_count: unregistered.length };
+    result.sentence = registrySentence(result, effective || "");
+    return result;
+  }
+  function registrySentence(result, effective) {
+    const items = (result && result.items) || [];
+    if (!items.length) return "";
+    const groups = new Map();
+    items.forEach(item => { const where = registryWhere(item) || "registered items"; if (!groups.has(where)) groups.set(where, []); groups.get(where).push(item); });
+    const fallback = registryQuarterOf(effective);
+    const parts = [];
+    Array.from(groups.entries()).slice(0, 3).forEach(([where, group]) => {
+      const many = group.length > 1;
+      const changes = new Set(group.map(item => item.change));
+      const quarters = Array.from(new Set(group.map(item => item.quarter).filter(Boolean))).sort((a, b) => registryQuarterKey(a) - registryQuarterKey(b));
+      const when = quarters[0] || fallback;
+      const only = allowed => Array.from(changes).every(change => allowed.indexOf(change) >= 0);
+      const head = many ? "These " + group.length + " fields" : "This field";
+      const codes = group.slice(0, 6).map(item => item.code).join(", ") + (group.length > 6 ? ", …" : "");
+      if (only(["retired", "removed"])) parts.push(head + " in " + where + " " + (many ? "are" : "is") + " retired" + (when && changes.has("retired") ? " (last reported " + when + ")" : "") + ": " + codes);
+      else if (only(["added", "added_version"])) parts.push(head + " in " + where + " " + (many ? "are" : "is") + " new" + (when ? " from " + when : "") + ": " + codes);
+      else if (changes.size === 1 && changes.has("mentioned")) parts.push(head + " in " + where + " " + (many ? "are" : "is") + " named in the change: " + codes);
+      else if (!["retired", "removed", "added", "added_version"].some(kind => changes.has(kind))) parts.push(head + " in " + where + " " + (many ? "change" : "changes") + (when ? " from " + when : "") + ": " + codes);
+      else {
+        const clauses = [];
+        [["retired", ["retired", "removed"], "is retired", "are retired"], ["new", ["added", "added_version"], "is new", "are new"], ["changed", null, "changes", "change"]].forEach(([label, kinds, one, more]) => {
+          const members = group.filter(item => kinds ? kinds.indexOf(item.change) >= 0 : ["retired", "removed", "added", "added_version"].indexOf(item.change) < 0);
+          if (!members.length) return;
+          const memberQuarters = Array.from(new Set(members.map(item => item.quarter).filter(Boolean))).sort((a, b) => registryQuarterKey(a) - registryQuarterKey(b));
+          const memberWhen = memberQuarters[0] || (label !== "retired" ? fallback : "");
+          const suffix = memberWhen ? (label === "retired" ? " (last reported " + memberWhen + ")" : " from " + memberWhen) : "";
+          const names = members.slice(0, 4).map(item => item.code).join(", ") + (members.length > 4 ? ", …" : "");
+          clauses.push(names + " " + (members.length > 1 ? more : one) + suffix);
+        });
+        parts.push(head + " in " + where + " change: " + clauses.join("; "));
+      }
+    });
+    if (groups.size > 3) parts.push((groups.size - 3) + " more forms or schedules are affected");
+    let text = parts.join(". ") + ".";
+    const consumers = result.consumers || [];
+    if (consumers.length) {
+      const byKind = new Map();
+      consumers.forEach(consumer => { if (!byKind.has(consumer.kind)) byKind.set(consumer.kind, []); byKind.get(consumer.kind).push(consumer.name); });
+      const bits = Array.from(byKind.entries()).map(([kind, names]) => {
+        const nouns = REGISTRY_KIND_NOUNS[kind] || REGISTRY_KIND_NOUNS.other;
+        return names.length + " " + (names.length === 1 ? nouns[0] : nouns[1]) + " (" + names.slice(0, 3).join(", ") + (names.length > 3 ? ", …" : "") + ")";
+      });
+      text += " " + (items.length === 1 ? "It is" : "They are") + " read by " + (bits.length > 1 ? bits.slice(0, -1).join(", ") + " and " + bits[bits.length - 1] : bits[0]) + ".";
+    } else {
+      text += " No consumer is mapped yet.";
+    }
+    const equivalents = Array.from(new Set([].concat(...items.map(item => item.equivalents || []))));
+    if (equivalents.length) text += " Equivalent items elsewhere: " + equivalents.slice(0, 4).join(", ") + (equivalents.length > 4 ? ", …" : "") + ".";
+    return text.slice(0, 900);
+  }
+  // Codes a timeline entry is known to have touched (from its stored summaries).
+  function registryEntryCodes(entry) {
+    const codes = [];
+    const add = code => { const key = registryNorm(code); if (key && codes.indexOf(key) < 0) codes.push(key); };
+    if (entry && entry.impact && Array.isArray(entry.impact.codes)) entry.impact.codes.forEach(add);
+    if (entry && entry.item_codes && Array.isArray(entry.item_codes.codes)) entry.item_codes.codes.forEach(add);
+    if (entry && entry.spec && Array.isArray(entry.spec.fields)) entry.spec.fields.forEach(add);
+    return codes;
+  }
+
   // What config/lineage.json says consumes an item code: exact-code mappings
   // before whole-series ones, each asset once. Mirrors regmon/lineage.py assets_for.
   function lineageFor(code, lineage) {
@@ -3180,7 +3369,7 @@
     canonicalUrl, urlKey, scoutBucket, scoutBuckets, scoutSentence, scoutReviewIssue, nextScoutSweep, scoutStrength, scoutGroups,
     SCOUT_FILTERS, SCOUT_OUTCOMES, SCOUT_CONFIDENCE, SCOUT_STATUS, SCOUT_CHANNEL_STATUS, SCOUT_NOUNS, SCOUT_REVIEW_MARKER,
     scoutSlug, splitList, splitLines, parsePathHints, pathHintsText, scoutSourceRequest, SCOUT_SOURCE_MARKER, SCOUT_TOPIC_IDS, SCOUT_REGIONS,
-    renderWordEdit, describeItemCodes, lineageFor, describeSpec, specGroups, specCategoryLabel, specCsvRows, SPEC_CATEGORIES, SPEC_KIND_NOUNS, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
+    renderWordEdit, describeItemCodes, lineageFor, registryModel, registryTouched, registryImpact, registryRuleConsumers, registrySentence, registryConsumerLink, registryNorm, registryEntryCodes, REGISTRY_SCHEMES, REGISTRY_CHANGE_WORDS, REGISTRY_KIND_NOUNS, describeSpec, specGroups, specCategoryLabel, specCsvRows, SPEC_CATEGORIES, SPEC_KIND_NOUNS, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
     changeReviewRequest, CHANGE_REVIEW_MARKER, REVIEW_DECISIONS, csvCell, toCsv, fileSlug,
     cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink
   };

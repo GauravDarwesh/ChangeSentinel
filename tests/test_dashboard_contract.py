@@ -843,11 +843,11 @@ class TestReviewLayerContract(unittest.TestCase):
                 self.assertIn(key + ': "' + path + '"', js)
                 self.assertIn('new URL("./' + path + '", document.baseURI)', js)
                 self.assertIn('case "' + key + '":', js)
-        self.assertIn('const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health", "digests", "digestConfig"]);', js)
+        self.assertIn('const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "registry", "reviews", "regulators", "health", "digests", "digestConfig"]);', js)
         self.assertIn("cp config/regulators.json", read(".github/workflows/pages.yml"))
-        self.assertRegex(js, r'const SMALL_ASSETS = \[[^\]]*"calendar", "lineage", "reviews", "regulators", "health", "digests", "digestConfig"\]')
+        self.assertRegex(js, r'const SMALL_ASSETS = \[[^\]]*"calendar", "lineage", "registry", "reviews", "regulators", "health", "digests", "digestConfig"\]')
         pages = read(".github/workflows/pages.yml")
-        for path in ("config/lineage.json", "data/calendar.json", "data/calendar.ics", "data/reviews/ledger.json", "data/health.json"):
+        for path in ("config/lineage.json", "config/registry.json", "data/calendar.json", "data/calendar.ics", "data/reviews/ledger.json", "data/health.json"):
             with self.subTest(path=path):
                 self.assertIn(path, pages)
 
@@ -875,7 +875,7 @@ class TestReviewLayerContract(unittest.TestCase):
 
     def test_change_detail_shows_review_dates_and_items(self):
         js = read("dashboard.js")
-        self.assertIn("renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id=\"change-spec\"></div><div id=\"change-items\"></div>' + evidenceSheet(entry, boxId)", js)
+        self.assertIn("renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id=\"change-impact\"></div><div id=\"change-spec\"></div><div id=\"change-items\"></div>' + evidenceSheet(entry, boxId)", js)
         self.assertIn("fillReportingItems(entry, \"change-items\", stillCurrent);", js)
         self.assertIn("L.lineageFor(", js)
         # A new decision or date redraws the open change.
