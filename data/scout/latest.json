@@ -1,5 +1,5 @@
 {
- "finished_at": "2026-10-21T09:36:24Z",
+ "finished_at": "2026-10-26T05:58:43Z",
  "objective": {
   "description": "New regulator publications a compliance reviewer may want ChangeSentinel to monitor: rules, consultations, guidance, technical standards, reporting forms and instructions, supervisory letters and notices, Q&A, enforcement actions, decisions and opinions.",
   "id": "regulatory-publications-v1"
@@ -445,20 +445,73 @@
    "status_reason": "Every declared channel was read as planned",
    "sweep_id": "20261021T093520Z-135485",
    "time_budget_seconds": 900
+  },
+  {
+   "channels": [
+    {
+     "error": "www.ffiec.gov refused access (HTTP 403)",
+     "id": "ffiec-ffiec-forms-instructions-validations",
+     "items": 0,
+     "label": "FFIEC - Forms, Instructions, Validations",
+     "new": 0,
+     "note": "",
+     "observed": 0,
+     "out_of_scope": 0,
+     "pages_read": 0,
+     "required": true,
+     "status": "blocked",
+     "type": "listing",
+     "url": "https://www.ffiec.gov/resources/reporting-forms"
+    }
+   ],
+   "counts": {
+    "baseline_added": 0,
+    "enriched": 0,
+    "new": 0,
+    "new_irrelevant": 0,
+    "new_relevant": 0,
+    "new_uncertain": 0,
+    "observed": 0,
+    "registry_size": 0,
+    "translations_linked": 0
+   },
+   "finished_at": "2026-10-26T05:58:43Z",
+   "id": "ffiec",
+   "jurisdiction": "US",
+   "known_gaps": [
+    "Reads only the channels listed for this regulator; pages announced anywhere else are not covered."
+   ],
+   "name": "Federal Financial Institutions Examination Council",
+   "region": "NAM",
+   "request_budget": 60,
+   "requests": 2,
+   "robots": {
+    "www.ffiec.gov": {
+     "crawl_delay": null,
+     "status": "unavailable"
+    }
+   },
+   "seconds": 3.1,
+   "short_name": "FFIEC",
+   "status": "BLOCKED",
+   "status_reason": "Every required channel was refused by robots.txt or the server",
+   "sweep_id": "20261026T055840Z-8a8a88",
+   "time_budget_seconds": 900.0
   }
  ],
  "schema_version": 1,
- "started_at": "2026-10-21T09:35:20Z",
- "status": "COMPLETE",
- "sweep_id": "20261021T093520Z-135485",
+ "scope": "ffiec",
+ "started_at": "2026-10-26T05:58:40Z",
+ "status": "BLOCKED",
+ "sweep_id": "20261026T055840Z-8a8a88",
  "totals": {
   "baseline_added": 0,
-  "new": 1,
-  "new_irrelevant": 1,
+  "new": 0,
+  "new_irrelevant": 0,
   "new_relevant": 0,
   "new_uncertain": 0,
-  "observed": 4370,
-  "requests": 22
+  "observed": 0,
+  "requests": 2
  },
  "trigger": "manual"
 }

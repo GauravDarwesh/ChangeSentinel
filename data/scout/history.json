@@ -1,5 +1,21 @@
 [
  {
+  "finished_at": "2026-10-26T05:58:43Z",
+  "regulators": [
+   {
+    "id": "ffiec",
+    "new": 0,
+    "observed": 0,
+    "requests": 2,
+    "status": "BLOCKED"
+   }
+  ],
+  "started_at": "2026-10-26T05:58:40Z",
+  "status": "BLOCKED",
+  "sweep_id": "20261026T055840Z-8a8a88",
+  "trigger": "manual"
+ },
+ {
   "finished_at": "2026-10-21T09:36:24Z",
   "regulators": [
    {
