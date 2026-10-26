@@ -1868,6 +1868,29 @@
 .registry-changes .row { border-bottom: 1px solid var(--line); }
 .row-title.is-code { font-family: var(--font-code); font-size: 13px; }
 .items-list .text-button.item-code { justify-self: start; padding: 0; text-align: left; color: var(--link); }
+.precision-figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px 24px; padding: 16px 18px 6px; }
+.precision-figure dt { color: var(--ink-3); font-size: 12px; }
+.precision-figure dd { margin: 2px 0 0; color: var(--ink); font-size: 22px; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.precision-figure dd span { display: block; margin-top: 2px; color: var(--ink-3); font-size: 12px; letter-spacing: 0; }
+.precision-figure dd.is-empty { color: var(--ink-3); font-size: 15px; }
+.precision-bar { position: relative; height: 4px; margin-top: 8px; background: var(--line); }
+.precision-bar i { position: absolute; top: 0; bottom: 0; background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+.precision-bar b { position: absolute; top: -3px; width: 2px; height: 10px; background: var(--accent); }
+.precision-matrix { display: grid; grid-template-columns: auto repeat(2, minmax(0, 1fr)); gap: 1px; margin: 10px 18px 14px; background: var(--line); border: 1px solid var(--line); font-size: 12.5px; }
+.precision-matrix > * { padding: 7px 10px; background: var(--raise); }
+.precision-matrix .is-head { color: var(--ink-3); }
+.precision-matrix .is-num { font-variant-numeric: tabular-nums; }
+.precision-tip { display: grid; gap: 6px; padding: 12px 18px; border-top: 1px solid var(--line); }
+.precision-tip-title { display: flex; align-items: center; gap: 8px; color: var(--ink); font-size: 13.5px; }
+.precision-tip-title::before { content: ""; width: 6px; height: 6px; background: var(--accent); box-shadow: var(--glow); }
+.precision-tip p { max-width: 72ch; margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.55; }
+.precision-tip q { display: block; max-width: 72ch; color: var(--ink); font-family: var(--font-doc); font-size: 14px; line-height: 1.55; quotes: "“" "”"; }
+.precision-tip .review-actions { margin-top: 2px; }
+.precision-row { display: grid; grid-template-columns: minmax(0, 1fr) 64px 64px 92px; gap: 4px 12px; align-items: baseline; padding: 9px 18px; border-top: 1px solid var(--line); font-size: 13px; }
+.precision-row.is-head { color: var(--ink-3); font-size: 12px; }
+.precision-row .num { text-align: right; font-variant-numeric: tabular-nums; }
+.precision-row .text-button { justify-self: start; padding: 0; text-align: left; font-size: 13px; }
+@media (max-width: 560px) { .precision-row { grid-template-columns: minmax(0, 1fr) 54px 54px; } .precision-row .counts { display: none; } }
 .integrity-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 16px; padding: 11px 18px; border-top: 1px solid var(--line); }
 .integrity-row:first-child { border-top: 0; }
 .integrity-name { font-size: 13.5px; }
@@ -3487,6 +3510,38 @@
       <p class="modal-info">This opens a prefilled request on GitHub. Only requests the repository owner opens are recorded; the decision is added to data/reviews/ledger.json with who made it and when, and every earlier decision is kept.</p>
       <div class="modal-actions">
         <button class="btn" id="cancelReview" type="button">Cancel</button>
+        <button class="btn btn-primary" type="submit">Continue on GitHub</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog class="modal" id="missedDialog" aria-labelledby="missedHeading">
+    <div class="modal-head">
+      <div><h2 id="missedHeading">Report a missed change</h2><p id="missedLede">A change this monitor should have caught but did not.</p></div>
+      <button class="btn btn-quiet" id="closeMissed" type="button" aria-label="Close">Close</button>
+    </div>
+    <form id="missedForm" class="modal-body" novalidate>
+      <div>
+        <label class="field-label-text" for="missedWhat">What was missed</label>
+        <textarea class="field-input" id="missedWhat" rows="3" maxlength="600" placeholder="The FR Y-14Q CIL edit checks added edits 531 and 532; no alert was sent."></textarea>
+      </div>
+      <div class="form-grid">
+        <div>
+          <label class="field-label-text" for="missedUrl">Page <span>Optional link</span></label>
+          <input class="field-input" id="missedUrl" type="url" maxlength="600" autocomplete="off">
+        </div>
+        <div>
+          <label class="field-label-text" for="missedSeen">Seen on <span>Optional</span></label>
+          <input class="field-input" id="missedSeen" type="date">
+        </div>
+      </div>
+      <div>
+        <label class="field-label-text" for="missedEvidence">Evidence <span>Optional link</span></label>
+        <input class="field-input" id="missedEvidence" type="url" maxlength="600" placeholder="https://www.federalreserve.gov/…" autocomplete="off">
+      </div>
+      <div class="bulk-status is-error" id="missedStatus" role="alert" hidden></div>
+      <p class="modal-info">This opens a prefilled request on GitHub. Only requests the repository owner opens are recorded, in data/reviews/ledger.json, and a missed change counts against this monitor's recall.</p>
+      <div class="modal-actions">
+        <button class="btn" id="cancelMissed" type="button">Cancel</button>
         <button class="btn btn-primary" type="submit">Continue on GitHub</button>
       </div>
     </form>

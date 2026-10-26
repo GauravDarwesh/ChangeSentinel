@@ -2780,6 +2780,102 @@ async function fillImpact(entry, slotId, stillCurrent) {
   }
 }
 
+/* ================= Measured precision ================= */
+
+// Reviewer verdicts against what each monitor alerted (regmon/precision.py):
+// precision and recall with a 95% range, the changes behind them, and how to
+// tune the monitor's alert condition. Read in the browser from the inventory,
+// the delivery ledger and the review ledger, so a new decision counts at once.
+let precisionCache = { key: "", value: null };
+function precisionModel() {
+  const key = [state.assetSignatures.inventory, state.assetSignatures.notifications, state.assetSignatures.reviews, state.assetSignatures.config].join("|");
+  if (precisionCache.key === key && precisionCache.value) return precisionCache.value;
+  const value = L.precisionBuild(state.inventory, (state.notifications && state.notifications.sent_events) || {}, state.reviews || {}, configuredSources());
+  precisionCache = { key, value };
+  return value;
+}
+function percent(value) { return value === null || value === undefined ? "—" : Math.round(value * 100) + "%"; }
+function precisionFigure(label, value, ci, detail) {
+  if (value === null || value === undefined) return '<div class="precision-figure"><dt>' + esc(label) + '</dt><dd class="is-empty">Not measured yet<span>' + esc(detail) + "</span></dd></div>";
+  const range = Array.isArray(ci) ? '<div class="precision-bar" aria-hidden="true"><i style="left:' + (ci[0] * 100).toFixed(1) + "%;right:" + (100 - ci[1] * 100).toFixed(1) + '%"></i><b style="left:calc(' +
+    (value * 100).toFixed(1) + '% - 1px)"></b></div>' : "";
+  return '<div class="precision-figure"><dt>' + esc(label) + "</dt><dd>" + esc(percent(value)) + "<span>" + esc(detail + (Array.isArray(ci) ? " · likely " + percent(ci[0]) + "–" + percent(ci[1]) : "")) + "</span>" + range + "</dd></div>";
+}
+const OUTCOME_WORDS = { tp: "Alerted · material", fp: "Alerted · not material", fn: "Quiet · material", tn: "Quiet · not material", unreviewed_alert: "Alerted · no decision", unreviewed: "Quiet · no decision" };
+function precisionSheet(score, sourceId, rows) {
+  if (!score) {
+    return '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Alert precision</h3><div class="sheet-note">Measured from review decisions</div></div>' +
+      '<button class="sheet-link" type="button" data-report-missed="' + esc(sourceId) + '">Report a missed change</button></div>' +
+      '<p class="note-strip">No change on this monitor has a review decision yet. Record decisions on its changes (Material or Not material) and its precision and recall appear here.</p></section>';
+  }
+  const tips = (score.suggestions || []).map((tip, index) => '<div class="precision-tip"><span class="precision-tip-title">' + esc(tip.title) + "</span><p>" + esc(tip.why) + "</p>" +
+    (tip.condition ? "<q>" + esc(tip.condition) + "</q>" + (tip.only ? '<p class="health-sub">Suggested with “alerts only when met”.</p>' : "") +
+      '<div class="review-actions"><button class="btn" type="button" data-precision-apply="' + esc(sourceId) + '" data-precision-index="' + index + '">Use this condition</button></div>' : "") + "</div>").join("");
+  const matrix = '<div class="precision-matrix" role="table" aria-label="Alerts against review decisions">' +
+    '<span class="is-head" role="columnheader"></span><span class="is-head" role="columnheader">Material</span><span class="is-head" role="columnheader">Not material</span>' +
+    '<span class="is-head" role="rowheader">Alerted</span><span class="is-num">' + esc(score.tp) + '</span><span class="is-num">' + esc(score.fp) + "</span>" +
+    '<span class="is-head" role="rowheader">Quiet</span><span class="is-num">' + esc(score.fn) + '</span><span class="is-num">' + esc(score.tn) + "</span>" +
+    (score.missed ? '<span class="is-head" role="rowheader">Missed</span><span class="is-num">' + esc(score.missed) + "</span><span></span>" : "") + "</div>";
+  const recent = rows.filter(row => row.outcome !== "unreviewed").slice(0, 8);
+  return '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Alert precision</h3><div class="sheet-note">' +
+    esc(plural(score.reviewed, "reviewed change", "reviewed changes") + (score.unreviewed_alerts ? " · " + plural(score.unreviewed_alerts, "alert", "alerts") + " still without a decision" : "")) + "</div></div>" +
+    '<button class="sheet-link" type="button" data-report-missed="' + esc(sourceId) + '">Report a missed change</button></div>' +
+    '<dl class="precision-figures">' +
+      precisionFigure("Precision", score.precision, score.precision_ci, score.tp + " of " + (score.tp + score.fp) + " alerts were material") +
+      precisionFigure("Recall", score.recall, score.recall_ci, score.tp + " of " + (score.tp + score.fn + score.missed) + " material changes alerted") +
+    "</dl>" + matrix + tips +
+    (recent.length ? '<div class="registry-changes">' + recent.map(row => {
+      const entry = changeById(row.event_id);
+      return entry ? changeRow(entry, { compact: true }).replace('<span class="row-summary">', '<span class="row-summary"><span class="tag ' + (row.outcome === "fp" || row.outcome === "fn" ? "is-warn" : "") + '">' + esc(OUTCOME_WORDS[row.outcome] || row.outcome) + "</span> ") : "";
+    }).join("") + "</div>" : "") +
+    '<p class="note-strip">The range is a 95% interval: with few reviews it is wide, and it narrows as decisions accumulate. Acknowledged decisions are not counted.</p></section>';
+}
+function precisionFleetSheet() {
+  const model = precisionModel();
+  const measured = model.monitors.filter(row => row.reviewed || row.missed);
+  if (!measured.length) return "";
+  const totals = model.totals || {};
+  return '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Alert precision</h3><div class="sheet-note">' +
+    esc(plural(totals.reviewed || 0, "reviewed change", "reviewed changes") + " across " + plural(measured.length, "monitor", "monitors")) + "</div></div></div>" +
+    '<dl class="precision-figures">' + precisionFigure("Precision", totals.precision, totals.precision_ci, (totals.tp || 0) + " of " + ((totals.tp || 0) + (totals.fp || 0)) + " alerts were material") +
+      precisionFigure("Recall", totals.recall, totals.recall_ci, (totals.tp || 0) + " of " + ((totals.tp || 0) + (totals.fn || 0) + (totals.missed || 0)) + " material changes alerted") + "</dl>" +
+    '<div class="precision-row is-head"><span>Monitor</span><span class="num">Precision</span><span class="num">Recall</span><span class="num counts">TP · FP · FN</span></div>' +
+    measured.slice(0, 40).map(row => '<div class="precision-row"><button class="text-button" type="button" data-select-health="' + esc(row.source_id) + '">' + esc(row.name) + "</button>" +
+      '<span class="num">' + esc(percent(row.precision)) + '</span><span class="num">' + esc(percent(row.recall)) + '</span><span class="num counts">' +
+      esc(row.tp + " · " + row.fp + " · " + (row.fn + row.missed)) + "</span></div>").join("") +
+    (measured.some(row => row.suggestions.length) ? '<p class="note-strip">' + esc(plural(measured.filter(row => row.suggestions.length).length, "monitor has", "monitors have")) + " a tuning suggestion. Open one to see it.</p>" : "") + "</section>";
+}
+function applyPrecisionSuggestion(sourceId, index) {
+  const score = precisionModel().monitors.find(row => row.source_id === sourceId);
+  const tip = score && score.suggestions[Number(index)];
+  if (!tip || !tip.condition) return;
+  openConditionDialog(sourceId);
+  if (!$("conditionDialog").open) return;
+  $("conditionText").value = tip.condition;
+  $("conditionOnly").checked = !!tip.only;
+}
+let missedTarget = "";
+function openMissedDialog(sourceId) {
+  const source = configuredSources().find(candidate => candidate.id === sourceId) || {};
+  missedTarget = sourceId;
+  $("missedLede").textContent = (source.name || sourceId) + " · a change it should have caught but did not.";
+  ["missedWhat", "missedEvidence", "missedSeen"].forEach(id => { $(id).value = ""; });
+  $("missedUrl").value = (source.seed_urls || [])[0] || "";
+  $("missedStatus").hidden = true;
+  $("missedDialog").showModal();
+  window.setTimeout(() => $("missedWhat").focus(), 30);
+}
+function submitMissed(event) {
+  event.preventDefault();
+  const request = L.missedChangeRequest({ monitor: missedTarget, url: $("missedUrl").value, seenOn: $("missedSeen").value, what: $("missedWhat").value, evidence: $("missedEvidence").value });
+  if (request.errors.length) { $("missedStatus").textContent = request.errors.join(" "); $("missedStatus").hidden = false; return; }
+  const params = new URLSearchParams();
+  params.set("title", request.title);
+  params.set("body", request.body);
+  $("missedDialog").close();
+  openGitHubRequest(REPO + "/issues/new?" + params.toString(), "Submit the prefilled request on GitHub. The miss counts in this monitor's recall about a minute after it is recorded.");
+}
+
 /* ================= Detail: a page ================= */
 
 function renderSnapshotText(text) {
@@ -3344,6 +3440,7 @@ function renderHealthDetail() {
       detailHeading({ back: true, backLabel: "Every monitor, one by one", source: "Fleet health", title: "All monitors", meta: "<span>Updated " + esc(relativeTime(health.generated_at).toLowerCase()) + "</span>" }) +
       healthHero(health) +
       healthInsightSheet(health) +
+      precisionFleetSheet() +
       healthMatrix(health) +
       '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Daily activity</h3><span class="sheet-note">Last ' + esc(String((health.daily || []).length)) + " days, UTC · " + (isCompact() ? "tap" : "hover") + " a day</span></div>" + healthChart(health.daily) + "</section>" +
       healthScheduleSheet(health) +
@@ -3391,7 +3488,8 @@ function renderHealthDetail() {
     detailHeading({ back: true, source: "Monitor health", title: healthName(monitor) || key, meta: '<span class="tag tone-' + status.tone + '">' + esc(status.label) + "</span>" +
       (monitor.status !== "failing" && Number(monitor.failures_7d) > 0 ? '<span class="tag tone-pending">Recovered · ' + esc(plural(Number(monitor.failures_7d), "failure", "failures")) + " this week</span>" : "") +
       "<span>" + esc(healthRegulator(monitor).name || monitor.regulator || "") + "</span>", actions }) +
-    healthMonitorPulse(monitor, health) + failureSheet + yearSheet + healthPageStrip(key) +
+    healthMonitorPulse(monitor, health) + failureSheet + yearSheet +
+    precisionSheet(precisionModel().monitors.find(row => row.source_id === key) || null, key, precisionModel().outcomes.filter(row => row.source_id === key)) + healthPageStrip(key) +
     '<section class="sheet"><dl class="facts">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl></section></div>";
 }
 // Monitor names carry file details ("(XLSX, 2.81 MB)") and scope notes that
@@ -5972,7 +6070,8 @@ function detailRenderKey(view) {
       const item = pending.concat(sent).find(candidate => candidate.eventId === state.selectedNotificationId);
       return item ? JSON.stringify([item, channelSummary()]) : "none";
     }
-    if (view === "health") return JSON.stringify([state.selectedHealthKey, state.assetSignatures.health || "", state.assetSignatures.config || ""]);
+    if (view === "health") return JSON.stringify([state.selectedHealthKey, state.assetSignatures.health || "", state.assetSignatures.config || "",
+      state.assetSignatures.reviews || "", state.assetSignatures.notifications || "", state.assetSignatures.inventory || ""]);
     if (view === "registry") return JSON.stringify([state.selectedRegistryKey, state.assetSignatures.registry || "", state.assetSignatures.lineage || "", state.assetSignatures.inventory || ""]);
     if (view === "scout") {
       if (state.selectedScoutKey === "coverage") return "coverage|" + (state.assetSignatures.scoutLatest || "") + "|" + (state.assetSignatures.scoutConfig || "");
@@ -8167,7 +8266,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-select-registry],[data-registry-scheme],[data-registry-copy],[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-precision-apply],[data-report-missed],[data-select-registry],[data-registry-scheme],[data-registry-copy],[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -8205,6 +8304,8 @@ $("workspace").addEventListener("click", event => {
   }
   if (data.specCsv) return downloadSpecCsv(data.specCsv);
   if (data.selectRegistry) return select("registry", data.selectRegistry);
+  if (data.precisionApply) return applyPrecisionSuggestion(data.precisionApply, data.precisionIndex);
+  if (data.reportMissed) return openMissedDialog(data.reportMissed);
   if (data.registryScheme) { state.registryScheme = data.registryScheme; renderRegistry(); return; }
   if (data.registryCopy !== undefined) return copyRegistryStarter();
   if (data.reviewChange) return openReview(data.reviewChange);
@@ -8995,6 +9096,9 @@ document.addEventListener("click", event => {
 });
 
 $("reviewForm").addEventListener("submit", submitReview);
+$("missedForm").addEventListener("submit", submitMissed);
+$("closeMissed").addEventListener("click", () => $("missedDialog").close());
+$("cancelMissed").addEventListener("click", () => $("missedDialog").close());
 $("reviewForm").addEventListener("change", event => { if (event.target.name === "reviewDecision") syncReviewForm(); });
 $("closeReview").addEventListener("click", () => $("reviewDialog").close());
 $("cancelReview").addEventListener("click", () => $("reviewDialog").close());

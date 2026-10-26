@@ -2644,6 +2644,177 @@
     return codes;
   }
 
+  /* ---------- Measured precision (regmon/precision.py) ---------- */
+
+  const PRECISION_POSITIVE = ["material", "action_required"];
+  const PRECISION_NEGATIVE = ["not_material"];
+  const PRECISION_ALERTABLE = ["CHANGED_URL", "NEW_URL", "REMOVED_URL"];
+  const PRECISION_SCORED = PRECISION_ALERTABLE.concat(["HTML_SOURCE_CHANGED"]);
+  const PRECISION_QUIET = ["ai_irrelevant", "condition_not_met"];
+  const PRECISION_STOPWORDS = new Set(("a an and are as at be been by for from has have in into is it its of on or that the this to was were will with not no new " +
+    "change changes changed update updates updated page pages webpage website site content text entry entries item items section " +
+    "document documents file files link links list removal removed added addition date dates version minor federal reserve board " +
+    "regulator regulatory report reports reporting form forms the www html pdf xlsx after before about other its their than also").split(/\s+/));
+  function round3(value) { return Math.round(value * 1000) / 1000; }
+  function wilson(successes, total) {
+    if (total <= 0) return null;
+    const z = 1.96, p = successes / total, denominator = 1 + z * z / total;
+    const centre = (p + z * z / (2 * total)) / denominator;
+    const margin = z * Math.sqrt(p * (1 - p) / total + z * z / (4 * total * total)) / denominator;
+    return [round3(Math.max(0, centre - margin)), round3(Math.min(1, centre + margin))];
+  }
+  function precisionAlerted(eventId, sent) {
+    for (const key of [eventId, eventId + "#ai"]) {
+      if (!Object.prototype.hasOwnProperty.call(sent || {}, key)) continue;
+      const record = sent[key];
+      const variant = record && typeof record === "object" ? record.variant : null;
+      if (PRECISION_QUIET.indexOf(variant) >= 0) continue;
+      return [true, String(variant || "alert")];
+    }
+    return [false, ""];
+  }
+  function precisionOutcomes(inventory, sent, ledger, sources) {
+    const shadow = new Set((sources || []).filter(source => source && source.shadow === true).map(source => String(source.id)));
+    const reviews = (ledger && ledger.reviews) || {};
+    const rows = new Map();
+    Object.entries((inventory && inventory.sources) || {}).forEach(([sourceId, group]) => {
+      if (!group || typeof group !== "object") return;
+      Object.values(group).forEach(item => {
+        if (!item || typeof item !== "object") return;
+        (item.change_history || []).forEach(entry => {
+          if (!entry || PRECISION_SCORED.indexOf(entry.event_type) < 0 || !entry.event_id) return;
+          const eventId = String(entry.event_id);
+          if (rows.has(eventId)) return;
+          let [alerted, variant] = PRECISION_ALERTABLE.indexOf(entry.event_type) >= 0 ? precisionAlerted(eventId, sent || {}) : [false, ""];
+          if (!alerted && shadow.has(String(sourceId)) && PRECISION_ALERTABLE.indexOf(entry.event_type) >= 0) {
+            alerted = entry.ai_relevant === true || entry.ai_condition_met === true;
+            variant = alerted ? "would_alert" : "";
+          }
+          const review = reviews[eventId] && typeof reviews[eventId] === "object" ? reviews[eventId] : null;
+          const decision = review ? review.decision : null;
+          const outcome = PRECISION_POSITIVE.indexOf(decision) >= 0 ? (alerted ? "tp" : "fn")
+            : PRECISION_NEGATIVE.indexOf(decision) >= 0 ? (alerted ? "fp" : "tn") : (alerted ? "unreviewed_alert" : "unreviewed");
+          rows.set(eventId, { event_id: eventId, source_id: String(sourceId), event_type: entry.event_type, timestamp: entry.timestamp,
+            url: item.canonical_url, alerted, variant, decision: decision === undefined ? null : decision, outcome,
+            ai_relevant: entry.ai_relevant === undefined ? null : entry.ai_relevant, condition_met: entry.ai_condition_met === undefined ? null : entry.ai_condition_met,
+            topic: String(entry.ai_topic || ""), summary: String(entry.ai_summary || ""), rationale: String((review && review.rationale) || "") });
+        });
+      });
+    });
+    return Array.from(rows.values()).sort((a, b) => String(b.timestamp || "").localeCompare(String(a.timestamp || "")));
+  }
+  function precisionScores(rows, misses) {
+    const counts = new Map();
+    const bump = (id, key) => { if (!counts.has(id)) counts.set(id, {}); const c = counts.get(id); c[key] = (c[key] || 0) + 1; };
+    rows.forEach(row => bump(row.source_id, row.outcome));
+    (misses || []).forEach(miss => { if (miss && miss.source_id) bump(String(miss.source_id), "missed"); });
+    const out = {};
+    counts.forEach((c, id) => {
+      const tp = c.tp || 0, fp = c.fp || 0, fn = c.fn || 0, tn = c.tn || 0, missed = c.missed || 0;
+      const precision = tp + fp ? round3(tp / (tp + fp)) : null;
+      const recall = tp + fn + missed ? round3(tp / (tp + fn + missed)) : null;
+      out[id] = { tp, fp, fn, tn, missed, alerts: tp + fp + (c.unreviewed_alert || 0), unreviewed_alerts: c.unreviewed_alert || 0,
+        reviewed: tp + fp + fn + tn, unreviewed: c.unreviewed || 0, precision, precision_ci: wilson(tp, tp + fp),
+        recall, recall_ci: wilson(tp, tp + fn + missed), f1: precision && recall ? round3(2 * precision * recall / (precision + recall)) : null };
+    });
+    return out;
+  }
+  function precisionWords(text) {
+    return (String(text || "").toLowerCase().match(/[a-z][a-z0-9-]{2,}/g) || []).filter(word => !PRECISION_STOPWORDS.has(word) && !/^\d+$/.test(word));
+  }
+  function precisionDistinct(group, other, limit) {
+    if (!group.length) return [];
+    const otherWords = new Set([].concat(...other.map(row => precisionWords(row.topic + " " + row.summary))));
+    const counts = new Map();
+    const order = [];
+    group.forEach(row => Array.from(new Set(precisionWords(row.topic + " " + row.summary))).forEach(word => {
+      if (!counts.has(word)) { counts.set(word, 0); order.push(word); }
+      counts.set(word, counts.get(word) + 1);
+    }));
+    const needed = group.length >= 2 ? 2 : 1;
+    // Most frequent first; ties keep first-seen order (as Python's Counter.most_common).
+    return order.map((word, index) => [word, counts.get(word), index]).sort((a, b) => b[1] - a[1] || a[2] - b[2])
+      .filter(([word, count]) => !otherWords.has(word) && count >= needed).map(([word]) => word).slice(0, limit || 3);
+  }
+  function precisionJoin(words) { return words.length === 1 ? words[0] : words.slice(0, -1).join(", ") + " or " + words[words.length - 1]; }
+  function precisionSuggestions(source, rows, score) {
+    if (!score) return [];
+    const out = [];
+    source = source || {};
+    const condition = String(source.alert_condition || "").split(/\s+/).filter(Boolean).join(" ");
+    const only = !!source.alert_only_on_condition;
+    const tps = rows.filter(row => row.outcome === "tp"), fps = rows.filter(row => row.outcome === "fp"), fns = rows.filter(row => row.outcome === "fn");
+    const noise = precisionDistinct(fps, tps.concat(fns)), signal = precisionDistinct(tps.concat(fns), fps), hidden = precisionDistinct(fns, fps);
+    const trimEnd = text => text.replace(/[. ]+$/, "");
+    if (fps.length >= 2 && (score.precision === null || score.precision < 0.6)) {
+      const generic = fps.filter(row => row.variant === "generic").length;
+      if (!condition) {
+        let text = signal.length ? "Alert me when the change concerns " + precisionJoin(signal) + "." : "Alert me when requirements, deadlines, data items or validation rules change.";
+        if (noise.length) text += " Ignore changes about " + precisionJoin(noise) + ".";
+        out.push({ kind: "add_condition", title: "Add an alert condition",
+          why: fps.length + " of " + (score.tp + score.fp) + " reviewed alerts were not material" + (noise.length ? "; they kept mentioning " + precisionJoin(noise) : "") + ".",
+          condition: text.slice(0, 500), only: fps.length >= 3 });
+      } else if (fps.some(row => row.condition_met === true)) {
+        const text = trimEnd(condition) + "." + (noise.length ? " Ignore changes about " + precisionJoin(noise) + "." : " Only when it changes what must be reported or by when.");
+        out.push({ kind: "narrow_condition", title: "Narrow the alert condition",
+          why: "The condition was met on " + fps.filter(row => row.condition_met === true).length + " change(s) reviewed as not material.", condition: text.slice(0, 500), only });
+      }
+      if (generic) out.push({ kind: "ai_unavailable", title: "Some false alarms were technical-change alerts",
+        why: "AI review was unavailable for " + generic + " of the false alarms, so the change alerted without being read. Nothing to change in the condition; check the AI Smoke Test if this keeps happening." });
+    }
+    if (fns.length) {
+      const suppressed = fns.filter(row => row.condition_met === false);
+      if (condition && only && suppressed.length) {
+        const text = trimEnd(condition) + "." + (hidden.length ? " Also alert when it concerns " + precisionJoin(hidden) + "." : "");
+        out.push({ kind: "broaden_condition", title: "Broaden the alert condition",
+          why: suppressed.length + " material change(s) stayed quiet because the condition was not met.", condition: text.slice(0, 500), only: hidden.length ? only : false });
+      } else if (!condition && out.some(tip => tip.kind === "add_condition")) {
+        const tip = out.find(candidate => candidate.kind === "add_condition");
+        tip.why += " It would also have alerted on " + fns.length + " material change(s) that stayed quiet.";
+      } else if (!condition) {
+        const text = "Alert me when the change concerns " + (hidden.length ? precisionJoin(hidden) : "requirements, deadlines or data items") + ".";
+        out.push({ kind: "add_condition", title: "Name what must always alert",
+          why: fns.length + " material change(s) were judged not relevant and stayed quiet. A condition makes these alert whatever the general relevance.",
+          condition: text.slice(0, 500), only: false });
+      }
+    }
+    if (score.missed) {
+      const every = source.check_every_hours;
+      out.push({ kind: "missed", title: "Changes were missed", why: score.missed + " change(s) were reported as missed. Check the monitor's scope and selectors" +
+        (typeof every === "number" && every > 6 ? ", and whether scanning every " + every + " hours is often enough" : "") + "." });
+    }
+    if (score.fp >= 5 && score.tp === 0 && !source.shadow) out.push({ kind: "shadow", title: "Consider shadow mode",
+      why: "None of " + score.fp + " reviewed alerts was material. Shadow mode keeps recording changes without sending them." });
+    return out;
+  }
+  function precisionBuild(inventory, sent, ledger, sources) {
+    const rows = precisionOutcomes(inventory, sent, ledger, sources);
+    const misses = ((ledger && ledger.misses) || []).filter(miss => miss && typeof miss === "object");
+    const perSource = precisionScores(rows, misses);
+    const byId = new Map((sources || []).filter(Boolean).map(source => [String(source.id), source]));
+    const monitors = Object.entries(perSource).map(([id, score]) => Object.assign({ source_id: id, name: (byId.get(id) || {}).name || id }, score,
+      { suggestions: precisionSuggestions(byId.get(id) || {}, rows.filter(row => row.source_id === id), score) }));
+    const totals = precisionScores(rows.map(row => Object.assign({}, row, { source_id: "all" })), misses.map(miss => Object.assign({}, miss, { source_id: "all" }))).all || null;
+    monitors.sort((a, b) => (b.reviewed + b.missed) - (a.reviewed + a.missed) || String(a.name).localeCompare(String(b.name)));
+    return { schema_version: 1, monitors, totals, outcomes: rows.slice(0, 500) };
+  }
+  const MISSED_CHANGE_MARKER = "<!-- changesentinel:missed-change:v1 -->";
+  function missedChangeRequest(values) {
+    const v = values || {};
+    const errors = [];
+    const monitor = oneLine(v.monitor, 120), url = oneLine(v.url, 600), seen = oneLine(v.seenOn, 10), what = oneLine(v.what, 600), evidence = oneLine(v.evidence, 600);
+    if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,119}$/.test(monitor)) errors.push("This monitor has no id that can be reported against.");
+    if (url && !/^https?:\/\/\S+$/.test(url)) errors.push("The page must be a link beginning with https://.");
+    if (evidence && !/^https?:\/\/\S+$/.test(evidence)) errors.push("The evidence must be a link beginning with https://.");
+    if (seen && !/^\d{4}-\d{2}-\d{2}$/.test(seen)) errors.push("Seen on must be a date such as 2026-10-20.");
+    if (what.length < 10) errors.push("Say what was missed (at least 10 characters).");
+    const body = [MISSED_CHANGE_MARKER, "", "Please record this missed change.", "", "Monitor: " + monitor, "URL: " + (url || "(none)"),
+      "Seen on: " + (seen || "(none)"), "What was missed: " + what, "Evidence: " + (evidence || "(none)"), "",
+      "Only requests opened by the repository owner are recorded. A missed change counts against the monitor's recall.", "",
+      "This request was created from the ChangeSentinel dashboard."].join("\n");
+    return { errors, title: "[ChangeSentinel] Change review: missed change on " + monitor, body };
+  }
+
   // What config/lineage.json says consumes an item code: exact-code mappings
   // before whole-series ones, each asset once. Mirrors regmon/lineage.py assets_for.
   function lineageFor(code, lineage) {
@@ -3369,7 +3540,7 @@
     canonicalUrl, urlKey, scoutBucket, scoutBuckets, scoutSentence, scoutReviewIssue, nextScoutSweep, scoutStrength, scoutGroups,
     SCOUT_FILTERS, SCOUT_OUTCOMES, SCOUT_CONFIDENCE, SCOUT_STATUS, SCOUT_CHANNEL_STATUS, SCOUT_NOUNS, SCOUT_REVIEW_MARKER,
     scoutSlug, splitList, splitLines, parsePathHints, pathHintsText, scoutSourceRequest, SCOUT_SOURCE_MARKER, SCOUT_TOPIC_IDS, SCOUT_REGIONS,
-    renderWordEdit, describeItemCodes, lineageFor, registryModel, registryTouched, registryImpact, registryRuleConsumers, registrySentence, registryConsumerLink, registryNorm, registryEntryCodes, REGISTRY_SCHEMES, REGISTRY_CHANGE_WORDS, REGISTRY_KIND_NOUNS, describeSpec, specGroups, specCategoryLabel, specCsvRows, SPEC_CATEGORIES, SPEC_KIND_NOUNS, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
+    renderWordEdit, describeItemCodes, lineageFor, precisionBuild, precisionOutcomes, precisionScores, precisionSuggestions, wilson, missedChangeRequest, MISSED_CHANGE_MARKER, registryModel, registryTouched, registryImpact, registryRuleConsumers, registrySentence, registryConsumerLink, registryNorm, registryEntryCodes, REGISTRY_SCHEMES, REGISTRY_CHANGE_WORDS, REGISTRY_KIND_NOUNS, describeSpec, specGroups, specCategoryLabel, specCsvRows, SPEC_CATEGORIES, SPEC_KIND_NOUNS, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
     changeReviewRequest, CHANGE_REVIEW_MARKER, REVIEW_DECISIONS, csvCell, toCsv, fileSlug,
     cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink
   };
