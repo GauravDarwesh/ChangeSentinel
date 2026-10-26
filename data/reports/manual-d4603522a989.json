@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T042603Z-38fcc6be",
-  "generated_at": "2026-10-26T04:28:48.253750+00:00",
+  "run_id": "20261026T055435Z-13c0fc8a",
+  "generated_at": "2026-10-26T05:57:47.633151+00:00",
   "source": {
     "id": "manual-d4603522a989",
     "name": "XML Format: FR Y-14A/Q (PDF)",
@@ -64,6 +64,7 @@
     "new": 0,
     "changed": 0,
     "source_changed": 0,
+    "visual_changed": 0,
     "removed": 0,
     "removal_held": 0,
     "removal_pending_confirmation": 0,
@@ -90,6 +91,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "scheduled",
-  "workflow_run_id": "40268905862"
+  "trigger": "continuation",
+  "workflow_run_id": "40276604275"
 }

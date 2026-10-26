@@ -1,0 +1,16 @@
+{
+  "source_id": "manual-cb107f57bdac",
+  "method": "http-resumable",
+  "state": "COMPLETE",
+  "discovered": 1,
+  "html_processed": 0,
+  "successful_pages": 0,
+  "failed_pages": 0,
+  "capped": false,
+  "pending": 0,
+  "unresolved_failures": 0,
+  "checkpoint_schema_version": 3,
+  "config_fingerprint": "28a542797dc79c95d2692a1ee743cce91127fe5cc4cc0494863bee7e285c412e",
+  "inventory": "data/discovery/manual-cb107f57bdac-inventory-*.txt",
+  "failure_ledger": "data/discovery/manual-cb107f57bdac-failures.jsonl"
+}

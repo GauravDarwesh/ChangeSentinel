@@ -1,0 +1,16 @@
+{
+  "source_id": "manual-fc4db311d1cc",
+  "method": "http-resumable",
+  "state": "COMPLETE",
+  "discovered": 1,
+  "html_processed": 0,
+  "successful_pages": 0,
+  "failed_pages": 0,
+  "capped": false,
+  "pending": 0,
+  "unresolved_failures": 0,
+  "checkpoint_schema_version": 3,
+  "config_fingerprint": "0a9bf3b329c2a939b41d8fe6ee1f4449e9287289bc8398903f39363298242fa9",
+  "inventory": "data/discovery/manual-fc4db311d1cc-inventory-*.txt",
+  "failure_ledger": "data/discovery/manual-fc4db311d1cc-failures.jsonl"
+}

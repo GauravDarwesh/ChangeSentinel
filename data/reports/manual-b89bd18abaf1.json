@@ -1,0 +1,112 @@
+{
+  "schema_version": 2,
+  "run_id": "20261026T055435Z-13c0fc8a",
+  "generated_at": "2026-10-26T05:58:58.761217+00:00",
+  "source": {
+    "id": "manual-b89bd18abaf1",
+    "name": "FFIEC 002 Instructions",
+    "regulator": "www.ffiec.gov",
+    "seeds": [
+      "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_202512_i.pdf"
+    ],
+    "allowed_prefixes": [
+      "https://www.ffiec.gov/"
+    ],
+    "initial_baseline": true
+  },
+  "discovery": {
+    "source_id": "manual-b89bd18abaf1",
+    "method": "http-resumable",
+    "state": "COMPLETE",
+    "discovered": 1,
+    "html_processed": 0,
+    "successful_pages": 0,
+    "failed_pages": 0,
+    "capped": false,
+    "pending": 0,
+    "unresolved_failures": 0,
+    "checkpoint_schema_version": 3,
+    "config_fingerprint": "b14212a844f27c9667692c7676210c65cbe7d59a2f8e56c60e76f21a8b165f46",
+    "inventory": "data/discovery/manual-b89bd18abaf1-inventory-*.txt",
+    "failure_ledger": "data/discovery/manual-b89bd18abaf1-failures.jsonl"
+  },
+  "removal_guard": null,
+  "baseline_update_allowed": true,
+  "change_detector": {
+    "raw_hash": "SHA-256 retrieved response bytes",
+    "html_hash": "SHA-256 of the saved HTML snapshot; when only volatile Cloudflare tokens changed, the previous equivalent snapshot is reused (raw_hash is always this response)",
+    "html_comparison_hash": "Versioned HTML signature; known Cloudflare challenge tokens and pageConfig.cacheBuster are normalized",
+    "html_comparison_hash_version": 2,
+    "normalized_hash": "SHA-256 extracted normalized content",
+    "classification_hash": "normalized_hash with separate HTML_SOURCE_CHANGED events",
+    "http_validators": "ETag/Last-Modified used only for conditional fetch optimization"
+  },
+  "relevance_gate": {
+    "mode": "high_recall",
+    "ai_final_semantic_decision": true
+  },
+  "ai_contract": {
+    "required_keys": [
+      "relevant",
+      "topic",
+      "change_type",
+      "summary",
+      "impact",
+      "effective_date",
+      "affected_scope",
+      "actions",
+      "reason"
+    ],
+    "strict": true
+  },
+  "counts": {
+    "discovered": 1,
+    "new": 0,
+    "changed": 0,
+    "source_changed": 0,
+    "visual_changed": 0,
+    "removed": 0,
+    "removal_held": 0,
+    "removal_pending_confirmation": 0,
+    "unchanged": 0,
+    "baseline_migration": 0,
+    "extraction_drift": 0,
+    "fetch_error": 1,
+    "extraction_error": 0,
+    "not_modified": 0,
+    "forced_full_fetch": 1,
+    "relevance_candidates": 0,
+    "ai_ok": 0,
+    "ai_invalid": 0,
+    "ai_error": 0,
+    "ai_skipped": 0,
+    "ai_deferred": 0,
+    "ai_backlog_pending": 0,
+    "crawl_paused": 0
+  },
+  "events": [
+    {
+      "event_id": "46bacd90883cd9365d3d6eb475bfba7db5894e2dd2bb7502795b4085dcce9271",
+      "event_type": "FETCH_ERROR",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_202512_i.pdf",
+      "url_id": "b89bd18abaf10c8423e5c982073a17e153d4ea0f9e920e4f674084aa1eb85db2",
+      "source_id": "manual-b89bd18abaf1",
+      "timestamp": "2026-10-26T05:58:58.761217+00:00",
+      "evidence_location": "data/evidence/46bacd90883cd9365d3d6eb475bfba7db5894e2dd2bb7502795b4085dcce9271.json",
+      "notification_id": "op-485f7aaab2a3a990c700bd1bf58884bc228827256e97f51e77afb3b67119232e",
+      "error_since": "2026-10-26T05:58:58.761217+00:00",
+      "error_runs": 1,
+      "evidence": {
+        "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)"
+      }
+    }
+  ],
+  "new_urls": [],
+  "changed_urls": [],
+  "source_changed_urls": [],
+  "removed_urls": [],
+  "baseline_migrations": [],
+  "ai_results": [],
+  "trigger": "continuation",
+  "workflow_run_id": "40276604275"
+}

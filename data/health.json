@@ -1,36 +1,36 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-26T04:29:51.589578+00:00",
+  "generated_at": "2026-10-26T05:58:59.335422+00:00",
   "thresholds": {
     "inactive_after_days": 45,
     "stale_after_hours": 14,
     "overdue_grace_hours": 8
   },
   "totals": {
-    "monitors": 116,
-    "pages": 130,
+    "monitors": 141,
+    "pages": 155,
     "healthy": 116,
-    "failing": 0,
+    "failing": 25,
     "stale": 0,
     "inactive": 0,
     "year_bound": 0,
     "with_alert_condition": 0
   },
   "last_7_days": {
-    "source_runs": 2612,
-    "checks": 3265,
-    "failed_checks": 8,
-    "success_rate": 0.9975,
-    "changes": 10,
-    "alerts_sent": 12
+    "source_runs": 2751,
+    "checks": 3404,
+    "failed_checks": 33,
+    "success_rate": 0.9903,
+    "changes": 2,
+    "alerts_sent": 13
   },
   "last_30_days": {
-    "source_runs": 2619,
-    "checks": 3315,
-    "failed_checks": 8,
-    "success_rate": 0.9976,
+    "source_runs": 2760,
+    "checks": 3470,
+    "failed_checks": 33,
+    "success_rate": 0.9905,
     "changes": 17,
-    "alerts_sent": 19
+    "alerts_sent": 20
   },
   "daily": [
     {
@@ -126,13 +126,264 @@
     },
     {
       "date": "2026-10-26",
-      "checks": 260,
-      "failed_checks": 0,
+      "checks": 415,
+      "failed_checks": 25,
       "changes": 0,
-      "alerts_sent": 0
+      "alerts_sent": 1
     }
   ],
-  "failing": [],
+  "failing": [
+    {
+      "source_id": "manual-cb192b726833",
+      "name": "Reporting Forms | FFIEC",
+      "url": "https://www.ffiec.gov/resources/reporting-forms",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:55.736817+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-012b686cf57b",
+      "name": "Reporting Forms: FFIEC 002",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_202609_f.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:55.878025+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-47419b7dd994",
+      "name": "Reporting Forms: FFIEC 002S",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002S_202609_f.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:56.003077+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-403c08e13235",
+      "name": "Reporting Forms: FFIEC 009",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009_202603_f.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:56.135549+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-d09046c3b1dc",
+      "name": "Reporting Forms: FFIEC 009A",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009a_202603_f.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:56.273526+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-4167a1e8a83d",
+      "name": "Reporting Forms: FFIEC 019",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/ffiec019-report-form.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:56.451902+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-94b0979b4f5c",
+      "name": "Reporting Forms: FFIEC 030",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_202503_f_0.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:56.583378+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-647ef318c5c0",
+      "name": "Reporting Forms: FFIEC 030S",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030S_202503_f.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:56.707241+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-ad9192b4d686",
+      "name": "Reporting Forms: FFIEC 101",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC101_202609_f.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:56.891968+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-14c6e397c427",
+      "name": "Reporting Forms: FFIEC 102",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC102_202603_f.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:57.023742+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-5036ad8e77b6",
+      "name": "Reporting Forms: FFIEC 101 Current",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:57.161014+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-904a98ffb46c",
+      "name": "Reporting Forms: FFIEC 102 Current",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec102",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:57.284498+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-c98ec0ceacb2",
+      "name": "FFIEC 030S Current",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec030s",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:57.409006+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-9fb9a1a5cb69",
+      "name": "Reporting Forms: FFIEC 030 Current",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec030",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:57.533413+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-cb107f57bdac",
+      "name": "Reporting Forms: FFIEC 009 Current",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec009",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:57.667232+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-fc4db311d1cc",
+      "name": "Reporting Forms: FFIEC 002 Current",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec002",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:57.808383+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-4dbc26b2a93c",
+      "name": "Call Report Forms: FFIEC 031",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_202609_f.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:57.945702+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-af7385979aae",
+      "name": "Call Report Forms: FFIEC 041",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC041_202609_f.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:58.076228+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-48d992a217df",
+      "name": "Call Report Forms: FFIEC 051",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_202609_f.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:58.215698+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-46d420bc72fe",
+      "name": "Call Report Forms: FFIEC 051 Current",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec051",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:58.355132+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-37d7c549c9bf",
+      "name": "Call Report Forms: FFIEC 041 Current",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec041",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:58.479476+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-22de7db10ba9",
+      "name": "Call Report Forms: FFIEC 031 Current",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec031",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:58.630471+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-b89bd18abaf1",
+      "name": "FFIEC 002 Instructions",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002_202512_i.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:58.761217+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-021cfcf8895a",
+      "name": "FFIEC 002S Instructions",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC002S_202403_i.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:58.883887+00:00",
+      "hours": 0.0,
+      "runs": 1
+    },
+    {
+      "source_id": "manual-58dc3b1d4e54",
+      "name": "FFIEC 009 Instructions",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/ffiec009-report-form-instructions.pdf",
+      "kind": "FETCH_ERROR",
+      "error": "BotCheckError: Cloudflare bot check returned instead of the page (set fetch_mode to auto to try a browser)",
+      "since": "2026-10-26T05:58:59.010700+00:00",
+      "hours": 0.0,
+      "runs": 1
+    }
+  ],
   "stale": [],
   "inactive": [],
   "year_bound": [],
@@ -141,156 +392,156 @@
     "slots": [
       {
         "at": "2026-10-26T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-26T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-26T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-27T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-27T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-27T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-27T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-28T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-28T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-28T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-28T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-29T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-29T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-29T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-29T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-30T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-30T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-30T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-30T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-31T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-31T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-31T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-10-31T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-11-01T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-11-01T06:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-11-01T12:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-11-01T18:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       },
       {
         "at": "2026-11-02T00:00:00+00:00",
-        "monitors": 116,
-        "pages": 130
+        "monitors": 141,
+        "pages": 155
       }
     ],
-    "page_checks_per_day": 520.0,
-    "monitor_checks_per_day": 464.0,
+    "page_checks_per_day": 620.0,
+    "monitor_checks_per_day": 564.0,
     "busiest": {
       "at": "2026-10-26T06:00:00+00:00",
-      "monitors": 116,
-      "pages": 130
+      "monitors": 141,
+      "pages": 155
     },
     "by_cadence": [
       {
         "label": "Every 6 hours",
-        "monitors": 116
+        "monitors": 141
       }
     ]
   },
@@ -301,7 +552,7 @@
       "regulator": "Board of Governors of the Federal Reserve System",
       "status": "healthy",
       "pages": 14,
-      "last_scan": "2026-10-26T04:26:05.300826+00:00",
+      "last_scan": "2026-10-26T05:54:36.430678+00:00",
       "last_change": null,
       "days_without_change": 7,
       "checks_7d": 658,
@@ -324,7 +575,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:26:05.300826+00:00"
+      "overdue_after": "2026-10-26T19:54:36.430678+00:00"
     },
     {
       "source_id": "fed-reporting-forms-pilot",
@@ -332,7 +583,7 @@
       "regulator": "Board of Governors of the Federal Reserve System",
       "status": "healthy",
       "pages": 2,
-      "last_scan": "2026-10-26T04:26:03.702866+00:00",
+      "last_scan": "2026-10-26T05:54:35.614004+00:00",
       "last_change": "2026-10-22T04:23:52.384181+00:00",
       "days_without_change": 4,
       "checks_7d": 94,
@@ -355,7 +606,38 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:26:03.702866+00:00"
+      "overdue_after": "2026-10-26T19:54:35.614004+00:00"
+    },
+    {
+      "source_id": "manual-012b686cf57b",
+      "name": "Reporting Forms: FFIEC 002",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:55.878025+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:55.878025+00:00"
     },
     {
       "source_id": "manual-01e6eb794d40",
@@ -363,10 +645,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.611032+00:00",
+      "last_scan": "2026-10-26T05:57:48.212157+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -386,7 +668,38 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.611032+00:00"
+      "overdue_after": "2026-10-26T19:57:48.212157+00:00"
+    },
+    {
+      "source_id": "manual-021cfcf8895a",
+      "name": "FFIEC 002S Instructions",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:58.883887+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:58.883887+00:00"
     },
     {
       "source_id": "manual-039877cf9cc2",
@@ -394,10 +707,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.845514+00:00",
+      "last_scan": "2026-10-26T05:57:48.595284+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -417,7 +730,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.845514+00:00"
+      "overdue_after": "2026-10-26T19:57:48.595284+00:00"
     },
     {
       "source_id": "manual-046ab329cdfd",
@@ -425,10 +738,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.093952+00:00",
+      "last_scan": "2026-10-26T05:57:48.989283+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -448,7 +761,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.093952+00:00"
+      "overdue_after": "2026-10-26T19:57:48.989283+00:00"
     },
     {
       "source_id": "manual-053af629e35a",
@@ -456,10 +769,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.827136+00:00",
+      "last_scan": "2026-10-26T05:57:46.962343+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -479,7 +792,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.827136+00:00"
+      "overdue_after": "2026-10-26T19:57:46.962343+00:00"
     },
     {
       "source_id": "manual-07fead54d9d1",
@@ -487,10 +800,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.920795+00:00",
+      "last_scan": "2026-10-26T05:57:45.592675+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -510,7 +823,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.920795+00:00"
+      "overdue_after": "2026-10-26T19:57:45.592675+00:00"
     },
     {
       "source_id": "manual-0efe314fb13e",
@@ -518,10 +831,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.935414+00:00",
+      "last_scan": "2026-10-26T05:57:51.065077+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -541,7 +854,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.935414+00:00"
+      "overdue_after": "2026-10-26T19:57:51.065077+00:00"
     },
     {
       "source_id": "manual-0fc1eaed317c",
@@ -549,10 +862,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.911996+00:00",
+      "last_scan": "2026-10-26T05:57:48.708610+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -572,7 +885,38 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.911996+00:00"
+      "overdue_after": "2026-10-26T19:57:48.708610+00:00"
+    },
+    {
+      "source_id": "manual-14c6e397c427",
+      "name": "Reporting Forms: FFIEC 102",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:57.023742+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:57.023742+00:00"
     },
     {
       "source_id": "manual-14fa96fdd6f3",
@@ -580,10 +924,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.326427+00:00",
+      "last_scan": "2026-10-26T05:57:49.320557+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -603,7 +947,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.326427+00:00"
+      "overdue_after": "2026-10-26T19:57:49.320557+00:00"
     },
     {
       "source_id": "manual-15294ab2d815",
@@ -611,10 +955,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.463042+00:00",
+      "last_scan": "2026-10-26T05:57:46.408956+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -634,7 +978,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.463042+00:00"
+      "overdue_after": "2026-10-26T19:57:46.408956+00:00"
     },
     {
       "source_id": "manual-16625bb5e529",
@@ -642,10 +986,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.077315+00:00",
+      "last_scan": "2026-10-26T05:57:47.352527+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -665,7 +1009,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.077315+00:00"
+      "overdue_after": "2026-10-26T19:57:47.352527+00:00"
     },
     {
       "source_id": "manual-1aac59bf8879",
@@ -673,10 +1017,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.812477+00:00",
+      "last_scan": "2026-10-26T05:57:48.539320+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -696,7 +1040,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.812477+00:00"
+      "overdue_after": "2026-10-26T19:57:48.539320+00:00"
     },
     {
       "source_id": "manual-1cd6b0d5a010",
@@ -704,10 +1048,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.781516+00:00",
+      "last_scan": "2026-10-26T05:57:48.484989+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -727,7 +1071,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.781516+00:00"
+      "overdue_after": "2026-10-26T19:57:48.484989+00:00"
     },
     {
       "source_id": "manual-1f06400ec592",
@@ -735,10 +1079,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.389089+00:00",
+      "last_scan": "2026-10-26T05:57:47.870358+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -758,7 +1102,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.389089+00:00"
+      "overdue_after": "2026-10-26T19:57:47.870358+00:00"
     },
     {
       "source_id": "manual-20a5a7fcb6d5",
@@ -766,10 +1110,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.764096+00:00",
+      "last_scan": "2026-10-26T05:57:50.777355+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -789,7 +1133,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.764096+00:00"
+      "overdue_after": "2026-10-26T19:57:50.777355+00:00"
     },
     {
       "source_id": "manual-20d93b4bbd85",
@@ -797,10 +1141,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.438954+00:00",
+      "last_scan": "2026-10-26T05:57:49.484858+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -820,7 +1164,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.438954+00:00"
+      "overdue_after": "2026-10-26T19:57:49.484858+00:00"
     },
     {
       "source_id": "manual-215a82c132cd",
@@ -828,10 +1172,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.943085+00:00",
+      "last_scan": "2026-10-26T05:57:47.133988+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -851,7 +1195,38 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.943085+00:00"
+      "overdue_after": "2026-10-26T19:57:47.133988+00:00"
+    },
+    {
+      "source_id": "manual-22de7db10ba9",
+      "name": "Call Report Forms: FFIEC 031 Current",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:58.630471+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:58.630471+00:00"
     },
     {
       "source_id": "manual-23abd061ae1e",
@@ -859,10 +1234,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.552018+00:00",
+      "last_scan": "2026-10-26T05:57:50.436733+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -882,7 +1257,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.552018+00:00"
+      "overdue_after": "2026-10-26T19:57:50.436733+00:00"
     },
     {
       "source_id": "manual-26375675a7ba",
@@ -890,10 +1265,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.355591+00:00",
+      "last_scan": "2026-10-26T05:57:47.811403+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -913,7 +1288,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.355591+00:00"
+      "overdue_after": "2026-10-26T19:57:47.811403+00:00"
     },
     {
       "source_id": "manual-2673ea372676",
@@ -921,10 +1296,10 @@
       "regulator": "www.osfi-bsif.gc.ca",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:29:48.715203+00:00",
+      "last_scan": "2026-10-26T05:58:53.000989+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 19,
+      "checks_7d": 20,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -944,7 +1319,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:29:48.715203+00:00"
+      "overdue_after": "2026-10-26T19:58:53.000989+00:00"
     },
     {
       "source_id": "manual-269906856d86",
@@ -952,10 +1327,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.470838+00:00",
+      "last_scan": "2026-10-26T05:57:50.321432+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -975,7 +1350,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.470838+00:00"
+      "overdue_after": "2026-10-26T19:57:50.321432+00:00"
     },
     {
       "source_id": "manual-27ffffaeabd2",
@@ -983,10 +1358,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.401694+00:00",
+      "last_scan": "2026-10-26T05:57:50.209310+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1006,7 +1381,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.401694+00:00"
+      "overdue_after": "2026-10-26T19:57:50.209310+00:00"
     },
     {
       "source_id": "manual-29de64d1db61",
@@ -1014,10 +1389,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.220588+00:00",
+      "last_scan": "2026-10-26T05:57:47.576232+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1037,7 +1412,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.220588+00:00"
+      "overdue_after": "2026-10-26T19:57:47.576232+00:00"
     },
     {
       "source_id": "manual-2b3ee4b0e158",
@@ -1045,10 +1420,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.043192+00:00",
+      "last_scan": "2026-10-26T05:57:47.298106+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1068,7 +1443,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.043192+00:00"
+      "overdue_after": "2026-10-26T19:57:47.298106+00:00"
     },
     {
       "source_id": "manual-315fd3d9ba06",
@@ -1076,10 +1451,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.831529+00:00",
+      "last_scan": "2026-10-26T05:57:50.887952+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1099,7 +1474,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.831529+00:00"
+      "overdue_after": "2026-10-26T19:57:50.887952+00:00"
     },
     {
       "source_id": "manual-31ada48e215e",
@@ -1107,10 +1482,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.749119+00:00",
+      "last_scan": "2026-10-26T05:57:45.298883+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1130,7 +1505,38 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.749119+00:00"
+      "overdue_after": "2026-10-26T19:57:45.298883+00:00"
+    },
+    {
+      "source_id": "manual-37d7c549c9bf",
+      "name": "Call Report Forms: FFIEC 041 Current",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:58.479476+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:58.479476+00:00"
     },
     {
       "source_id": "manual-3b1e1f88b570",
@@ -1138,10 +1544,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.976232+00:00",
+      "last_scan": "2026-10-26T05:57:47.186864+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1161,7 +1567,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.976232+00:00"
+      "overdue_after": "2026-10-26T19:57:47.186864+00:00"
     },
     {
       "source_id": "manual-3c168c3e601a",
@@ -1169,10 +1575,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.714917+00:00",
+      "last_scan": "2026-10-26T05:57:45.246397+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1192,7 +1598,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.714917+00:00"
+      "overdue_after": "2026-10-26T19:57:45.246397+00:00"
     },
     {
       "source_id": "manual-3cde87b01727",
@@ -1200,10 +1606,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.425877+00:00",
+      "last_scan": "2026-10-26T05:57:46.355457+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1223,7 +1629,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.425877+00:00"
+      "overdue_after": "2026-10-26T19:57:46.355457+00:00"
     },
     {
       "source_id": "manual-3e884254c2f1",
@@ -1231,10 +1637,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.644076+00:00",
+      "last_scan": "2026-10-26T05:57:46.691769+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 23,
+      "checks_7d": 24,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1254,7 +1660,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.644076+00:00"
+      "overdue_after": "2026-10-26T19:57:46.691769+00:00"
     },
     {
       "source_id": "manual-402b469209b8",
@@ -1262,10 +1668,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.817601+00:00",
+      "last_scan": "2026-10-26T05:57:49.764232+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1285,7 +1691,69 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.817601+00:00"
+      "overdue_after": "2026-10-26T19:57:49.764232+00:00"
+    },
+    {
+      "source_id": "manual-403c08e13235",
+      "name": "Reporting Forms: FFIEC 009",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:56.135549+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:56.135549+00:00"
+    },
+    {
+      "source_id": "manual-4167a1e8a83d",
+      "name": "Reporting Forms: FFIEC 019",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:56.451902+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:56.451902+00:00"
     },
     {
       "source_id": "manual-41ddf2bfed6b",
@@ -1293,10 +1761,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.437682+00:00",
+      "last_scan": "2026-10-26T05:57:50.264601+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1316,7 +1784,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.437682+00:00"
+      "overdue_after": "2026-10-26T19:57:50.264601+00:00"
     },
     {
       "source_id": "manual-453a6875f704",
@@ -1324,10 +1792,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.849599+00:00",
+      "last_scan": "2026-10-26T05:57:49.818956+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1347,7 +1815,69 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.849599+00:00"
+      "overdue_after": "2026-10-26T19:57:49.818956+00:00"
+    },
+    {
+      "source_id": "manual-46d420bc72fe",
+      "name": "Call Report Forms: FFIEC 051 Current",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:58.355132+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:58.355132+00:00"
+    },
+    {
+      "source_id": "manual-47419b7dd994",
+      "name": "Reporting Forms: FFIEC 002S",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:56.003077+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:56.003077+00:00"
     },
     {
       "source_id": "manual-47a6282d259a",
@@ -1355,10 +1885,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.234485+00:00",
+      "last_scan": "2026-10-26T05:57:49.207058+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1378,7 +1908,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.234485+00:00"
+      "overdue_after": "2026-10-26T19:57:49.207058+00:00"
     },
     {
       "source_id": "manual-487f8c72cdde",
@@ -1386,10 +1916,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.548186+00:00",
+      "last_scan": "2026-10-26T05:57:49.654907+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1409,7 +1939,38 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.548186+00:00"
+      "overdue_after": "2026-10-26T19:57:49.654907+00:00"
+    },
+    {
+      "source_id": "manual-48d992a217df",
+      "name": "Call Report Forms: FFIEC 051",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:58.215698+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:58.215698+00:00"
     },
     {
       "source_id": "manual-49e6cffbe46b",
@@ -1417,10 +1978,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.953647+00:00",
+      "last_scan": "2026-10-26T05:57:45.654317+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1440,7 +2001,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.953647+00:00"
+      "overdue_after": "2026-10-26T19:57:45.654317+00:00"
     },
     {
       "source_id": "manual-4ceffe75326c",
@@ -1448,10 +2009,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.291348+00:00",
+      "last_scan": "2026-10-26T05:57:46.129053+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1471,7 +2032,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.291348+00:00"
+      "overdue_after": "2026-10-26T19:57:46.129053+00:00"
     },
     {
       "source_id": "manual-4d35aa9f9fa5",
@@ -1479,10 +2040,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.253365+00:00",
+      "last_scan": "2026-10-26T05:57:46.070170+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1502,7 +2063,38 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.253365+00:00"
+      "overdue_after": "2026-10-26T19:57:46.070170+00:00"
+    },
+    {
+      "source_id": "manual-4dbc26b2a93c",
+      "name": "Call Report Forms: FFIEC 031",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:57.945702+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:57.945702+00:00"
     },
     {
       "source_id": "manual-4e0334d82fed",
@@ -1510,10 +2102,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.360349+00:00",
+      "last_scan": "2026-10-26T05:57:49.378697+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1533,7 +2125,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.360349+00:00"
+      "overdue_after": "2026-10-26T19:57:49.378697+00:00"
     },
     {
       "source_id": "manual-4fd0bc460269",
@@ -1541,10 +2133,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.012495+00:00",
+      "last_scan": "2026-10-26T05:57:48.873928+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1564,7 +2156,38 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.012495+00:00"
+      "overdue_after": "2026-10-26T19:57:48.873928+00:00"
+    },
+    {
+      "source_id": "manual-5036ad8e77b6",
+      "name": "Reporting Forms: FFIEC 101 Current",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:57.161014+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:57.161014+00:00"
     },
     {
       "source_id": "manual-51e8b541fd12",
@@ -1572,10 +2195,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.797461+00:00",
+      "last_scan": "2026-10-26T05:57:50.833378+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1595,7 +2218,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.797461+00:00"
+      "overdue_after": "2026-10-26T19:57:50.833378+00:00"
     },
     {
       "source_id": "manual-559ac45a9a23",
@@ -1603,10 +2226,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.543772+00:00",
+      "last_scan": "2026-10-26T05:57:48.097141+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1626,7 +2249,38 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.543772+00:00"
+      "overdue_after": "2026-10-26T19:57:48.097141+00:00"
+    },
+    {
+      "source_id": "manual-58dc3b1d4e54",
+      "name": "FFIEC 009 Instructions",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:59.010700+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:59.010700+00:00"
     },
     {
       "source_id": "manual-5b8c86f37ebc",
@@ -1634,10 +2288,10 @@
       "regulator": "www.osfi-bsif.gc.ca",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:29:48.358971+00:00",
+      "last_scan": "2026-10-26T05:58:52.584946+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 19,
+      "checks_7d": 20,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1657,7 +2311,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:29:48.358971+00:00"
+      "overdue_after": "2026-10-26T19:58:52.584946+00:00"
     },
     {
       "source_id": "manual-5d1702b4b2cc",
@@ -1665,10 +2319,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.365318+00:00",
+      "last_scan": "2026-10-26T05:57:50.152501+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1688,7 +2342,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.365318+00:00"
+      "overdue_after": "2026-10-26T19:57:50.152501+00:00"
     },
     {
       "source_id": "manual-63f9053192c2",
@@ -1696,10 +2350,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.472152+00:00",
+      "last_scan": "2026-10-26T05:57:49.538086+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1719,7 +2373,38 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.472152+00:00"
+      "overdue_after": "2026-10-26T19:57:49.538086+00:00"
+    },
+    {
+      "source_id": "manual-647ef318c5c0",
+      "name": "Reporting Forms: FFIEC 030S",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:56.707241+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:56.707241+00:00"
     },
     {
       "source_id": "manual-67fce0ca2005",
@@ -1727,10 +2412,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.882950+00:00",
+      "last_scan": "2026-10-26T05:57:49.873038+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1750,7 +2435,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.882950+00:00"
+      "overdue_after": "2026-10-26T19:57:49.873038+00:00"
     },
     {
       "source_id": "manual-6d6a2e2a7268",
@@ -1758,10 +2443,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.979927+00:00",
+      "last_scan": "2026-10-26T05:57:48.820501+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1781,7 +2466,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.979927+00:00"
+      "overdue_after": "2026-10-26T19:57:48.820501+00:00"
     },
     {
       "source_id": "manual-7003af051289",
@@ -1789,10 +2474,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.870284+00:00",
+      "last_scan": "2026-10-26T05:57:47.021774+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1812,7 +2497,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.870284+00:00"
+      "overdue_after": "2026-10-26T19:57:47.021774+00:00"
     },
     {
       "source_id": "manual-73c10748e127",
@@ -1820,10 +2505,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.393935+00:00",
+      "last_scan": "2026-10-26T05:57:46.298927+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1843,7 +2528,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.393935+00:00"
+      "overdue_after": "2026-10-26T19:57:46.298927+00:00"
     },
     {
       "source_id": "manual-77ad1b54bab6",
@@ -1851,10 +2536,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.220537+00:00",
+      "last_scan": "2026-10-26T05:57:49.935327+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1874,7 +2559,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.220537+00:00"
+      "overdue_after": "2026-10-26T19:57:49.935327+00:00"
     },
     {
       "source_id": "manual-7adab8f358bc",
@@ -1882,10 +2567,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.752439+00:00",
+      "last_scan": "2026-10-26T05:57:46.854454+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 23,
+      "checks_7d": 24,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1905,7 +2590,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.752439+00:00"
+      "overdue_after": "2026-10-26T19:57:46.854454+00:00"
     },
     {
       "source_id": "manual-7b0addc7e307",
@@ -1913,10 +2598,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.428420+00:00",
+      "last_scan": "2026-10-26T05:57:47.925566+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1936,7 +2621,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.428420+00:00"
+      "overdue_after": "2026-10-26T19:57:47.925566+00:00"
     },
     {
       "source_id": "manual-7c05d7f77240",
@@ -1944,10 +2629,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.161778+00:00",
+      "last_scan": "2026-10-26T05:57:49.097479+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1967,7 +2652,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.161778+00:00"
+      "overdue_after": "2026-10-26T19:57:49.097479+00:00"
     },
     {
       "source_id": "manual-7f304946ceb3",
@@ -1975,10 +2660,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.193436+00:00",
+      "last_scan": "2026-10-26T05:57:49.152772+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -1998,7 +2683,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.193436+00:00"
+      "overdue_after": "2026-10-26T19:57:49.152772+00:00"
     },
     {
       "source_id": "manual-81edf0641cc2",
@@ -2006,10 +2691,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.647163+00:00",
+      "last_scan": "2026-10-26T05:57:45.137914+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2029,7 +2714,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.647163+00:00"
+      "overdue_after": "2026-10-26T19:57:45.137914+00:00"
     },
     {
       "source_id": "manual-820a6d4ac8f7",
@@ -2037,10 +2722,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.691260+00:00",
+      "last_scan": "2026-10-26T05:57:50.667359+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2060,7 +2745,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.691260+00:00"
+      "overdue_after": "2026-10-26T19:57:50.667359+00:00"
     },
     {
       "source_id": "manual-8588993b9c05",
@@ -2068,10 +2753,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.287342+00:00",
+      "last_scan": "2026-10-26T05:57:47.693914+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2091,7 +2776,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.287342+00:00"
+      "overdue_after": "2026-10-26T19:57:47.693914+00:00"
     },
     {
       "source_id": "manual-87b1ac938a3f",
@@ -2099,10 +2784,10 @@
       "regulator": "www.osfi-bsif.gc.ca",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:29:06.904815+00:00",
+      "last_scan": "2026-10-26T05:58:07.676762+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 19,
+      "checks_7d": 20,
       "failures_7d": 4,
       "alert_condition": false,
       "shadow": false,
@@ -2122,7 +2807,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:29:06.904815+00:00"
+      "overdue_after": "2026-10-26T19:58:07.676762+00:00"
     },
     {
       "source_id": "manual-87ca438373d9",
@@ -2130,10 +2815,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.506131+00:00",
+      "last_scan": "2026-10-26T05:57:44.919320+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2153,7 +2838,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.506131+00:00"
+      "overdue_after": "2026-10-26T19:57:44.919320+00:00"
     },
     {
       "source_id": "manual-8e5bda39a33e",
@@ -2161,10 +2846,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.715639+00:00",
+      "last_scan": "2026-10-26T05:57:46.800231+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 23,
+      "checks_7d": 24,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2184,7 +2869,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.715639+00:00"
+      "overdue_after": "2026-10-26T19:57:46.800231+00:00"
     },
     {
       "source_id": "manual-901da0d88c3d",
@@ -2192,10 +2877,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.946089+00:00",
+      "last_scan": "2026-10-26T05:57:48.765224+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2215,7 +2900,69 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.946089+00:00"
+      "overdue_after": "2026-10-26T19:57:48.765224+00:00"
+    },
+    {
+      "source_id": "manual-904a98ffb46c",
+      "name": "Reporting Forms: FFIEC 102 Current",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:57.284498+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:57.284498+00:00"
+    },
+    {
+      "source_id": "manual-94b0979b4f5c",
+      "name": "Reporting Forms: FFIEC 030",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:56.583378+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:56.583378+00:00"
     },
     {
       "source_id": "manual-95e85c0ac861",
@@ -2223,10 +2970,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.576488+00:00",
+      "last_scan": "2026-10-26T05:57:48.156319+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2246,7 +2993,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.576488+00:00"
+      "overdue_after": "2026-10-26T19:57:48.156319+00:00"
     },
     {
       "source_id": "manual-96da24f54032",
@@ -2254,10 +3001,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.782251+00:00",
+      "last_scan": "2026-10-26T05:57:45.361620+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2277,7 +3024,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.782251+00:00"
+      "overdue_after": "2026-10-26T19:57:45.361620+00:00"
     },
     {
       "source_id": "manual-96fe00e867bc",
@@ -2285,10 +3032,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.276495+00:00",
+      "last_scan": "2026-10-26T05:57:49.260701+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2308,7 +3055,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.276495+00:00"
+      "overdue_after": "2026-10-26T19:57:49.260701+00:00"
     },
     {
       "source_id": "manual-9d2a0cc1d61f",
@@ -2316,10 +3063,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.497954+00:00",
+      "last_scan": "2026-10-26T05:57:46.464685+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2339,7 +3086,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.497954+00:00"
+      "overdue_after": "2026-10-26T19:57:46.464685+00:00"
     },
     {
       "source_id": "manual-9d4f8768e197",
@@ -2347,10 +3094,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.359788+00:00",
+      "last_scan": "2026-10-26T05:57:46.243830+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2370,7 +3117,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.359788+00:00"
+      "overdue_after": "2026-10-26T19:57:46.243830+00:00"
     },
     {
       "source_id": "manual-9e2c4b1f8ea2",
@@ -2378,10 +3125,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.966869+00:00",
+      "last_scan": "2026-10-26T05:57:51.120074+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2401,7 +3148,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.966869+00:00"
+      "overdue_after": "2026-10-26T19:57:51.120074+00:00"
     },
     {
       "source_id": "manual-9f4eeee473f4",
@@ -2409,10 +3156,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.185210+00:00",
+      "last_scan": "2026-10-26T05:57:47.517973+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2432,7 +3179,38 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.185210+00:00"
+      "overdue_after": "2026-10-26T19:57:47.517973+00:00"
+    },
+    {
+      "source_id": "manual-9fb9a1a5cb69",
+      "name": "Reporting Forms: FFIEC 030 Current",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:57.533413+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:57.533413+00:00"
     },
     {
       "source_id": "manual-a51425ec0d12",
@@ -2440,10 +3218,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.643562+00:00",
+      "last_scan": "2026-10-26T05:57:48.266069+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2463,7 +3241,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.643562+00:00"
+      "overdue_after": "2026-10-26T19:57:48.266069+00:00"
     },
     {
       "source_id": "manual-a61735026ca7",
@@ -2471,10 +3249,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.658013+00:00",
+      "last_scan": "2026-10-26T05:57:50.611296+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2494,7 +3272,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.658013+00:00"
+      "overdue_after": "2026-10-26T19:57:50.611296+00:00"
     },
     {
       "source_id": "manual-a81bf7248131",
@@ -2502,10 +3280,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.111311+00:00",
+      "last_scan": "2026-10-26T05:57:47.407073+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2525,7 +3303,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.111311+00:00"
+      "overdue_after": "2026-10-26T19:57:47.407073+00:00"
     },
     {
       "source_id": "manual-ad2f7c55bf07",
@@ -2533,10 +3311,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.887590+00:00",
+      "last_scan": "2026-10-26T05:57:45.534463+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2556,7 +3334,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.887590+00:00"
+      "overdue_after": "2026-10-26T19:57:45.534463+00:00"
     },
     {
       "source_id": "manual-ad7be2fd023c",
@@ -2564,10 +3342,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.291858+00:00",
+      "last_scan": "2026-10-26T05:57:50.045647+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2587,7 +3365,69 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.291858+00:00"
+      "overdue_after": "2026-10-26T19:57:50.045647+00:00"
+    },
+    {
+      "source_id": "manual-ad9192b4d686",
+      "name": "Reporting Forms: FFIEC 101",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:56.891968+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:56.891968+00:00"
+    },
+    {
+      "source_id": "manual-af7385979aae",
+      "name": "Call Report Forms: FFIEC 041",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:58.076228+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:58.076228+00:00"
     },
     {
       "source_id": "manual-b553a47e37a5",
@@ -2595,10 +3435,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.880453+00:00",
+      "last_scan": "2026-10-26T05:57:48.651338+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2618,7 +3458,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.880453+00:00"
+      "overdue_after": "2026-10-26T19:57:48.651338+00:00"
     },
     {
       "source_id": "manual-b6a213ed4639",
@@ -2626,10 +3466,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.534418+00:00",
+      "last_scan": "2026-10-26T05:57:46.523622+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2649,7 +3489,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.534418+00:00"
+      "overdue_after": "2026-10-26T19:57:46.523622+00:00"
     },
     {
       "source_id": "manual-b7f72aa87973",
@@ -2657,10 +3497,10 @@
       "regulator": "www.osfi-bsif.gc.ca",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:29:51.291408+00:00",
+      "last_scan": "2026-10-26T05:58:55.645476+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 19,
+      "checks_7d": 20,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2680,7 +3520,38 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:29:51.291408+00:00"
+      "overdue_after": "2026-10-26T19:58:55.645476+00:00"
+    },
+    {
+      "source_id": "manual-b89bd18abaf1",
+      "name": "FFIEC 002 Instructions",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:58.761217+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:58.761217+00:00"
     },
     {
       "source_id": "manual-b93ecc826c69",
@@ -2688,10 +3559,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.899318+00:00",
+      "last_scan": "2026-10-26T05:57:51.007561+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2711,7 +3582,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.899318+00:00"
+      "overdue_after": "2026-10-26T19:57:51.007561+00:00"
     },
     {
       "source_id": "manual-bb542f59562b",
@@ -2719,10 +3590,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.148455+00:00",
+      "last_scan": "2026-10-26T05:57:47.461867+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2742,7 +3613,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.148455+00:00"
+      "overdue_after": "2026-10-26T19:57:47.461867+00:00"
     },
     {
       "source_id": "manual-bf0ce15f4647",
@@ -2750,10 +3621,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.517740+00:00",
+      "last_scan": "2026-10-26T05:57:50.378344+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2773,7 +3644,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.517740+00:00"
+      "overdue_after": "2026-10-26T19:57:50.378344+00:00"
     },
     {
       "source_id": "manual-c02ec80775c2",
@@ -2781,10 +3652,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.611017+00:00",
+      "last_scan": "2026-10-26T05:57:45.082828+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2804,7 +3675,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.611017+00:00"
+      "overdue_after": "2026-10-26T19:57:45.082828+00:00"
     },
     {
       "source_id": "manual-c09e86fd8af6",
@@ -2812,10 +3683,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.748688+00:00",
+      "last_scan": "2026-10-26T05:57:48.429077+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2835,7 +3706,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.748688+00:00"
+      "overdue_after": "2026-10-26T19:57:48.429077+00:00"
     },
     {
       "source_id": "manual-c3954390bf91",
@@ -2843,10 +3714,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.851694+00:00",
+      "last_scan": "2026-10-26T05:57:45.476116+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2866,7 +3737,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.851694+00:00"
+      "overdue_after": "2026-10-26T19:57:45.476116+00:00"
     },
     {
       "source_id": "manual-c8ecced11490",
@@ -2874,10 +3745,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.573209+00:00",
+      "last_scan": "2026-10-26T05:57:46.578958+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 23,
+      "checks_7d": 24,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2897,7 +3768,100 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.573209+00:00"
+      "overdue_after": "2026-10-26T19:57:46.578958+00:00"
+    },
+    {
+      "source_id": "manual-c98ec0ceacb2",
+      "name": "FFIEC 030S Current",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:57.409006+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:57.409006+00:00"
+    },
+    {
+      "source_id": "manual-cb107f57bdac",
+      "name": "Reporting Forms: FFIEC 009 Current",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:57.667232+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:57.667232+00:00"
+    },
+    {
+      "source_id": "manual-cb192b726833",
+      "name": "Reporting Forms | FFIEC",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:55.736817+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:55.736817+00:00"
     },
     {
       "source_id": "manual-cc3cad4938af",
@@ -2905,10 +3869,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.586941+00:00",
+      "last_scan": "2026-10-26T05:57:50.497975+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2928,7 +3892,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.586941+00:00"
+      "overdue_after": "2026-10-26T19:57:50.497975+00:00"
     },
     {
       "source_id": "manual-ccbb8cabeb99",
@@ -2936,10 +3900,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.681195+00:00",
+      "last_scan": "2026-10-26T05:57:45.192381+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2959,7 +3923,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.681195+00:00"
+      "overdue_after": "2026-10-26T19:57:45.192381+00:00"
     },
     {
       "source_id": "manual-cd48c4a982a0",
@@ -2967,10 +3931,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.400951+00:00",
+      "last_scan": "2026-10-26T05:57:49.431797+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -2990,7 +3954,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.400951+00:00"
+      "overdue_after": "2026-10-26T19:57:49.431797+00:00"
     },
     {
       "source_id": "manual-ce0c1bcab763",
@@ -2998,10 +3962,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.327098+00:00",
+      "last_scan": "2026-10-26T05:57:46.185367+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 24,
+      "checks_7d": 25,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -3021,7 +3985,38 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.327098+00:00"
+      "overdue_after": "2026-10-26T19:57:46.185367+00:00"
+    },
+    {
+      "source_id": "manual-d09046c3b1dc",
+      "name": "Reporting Forms: FFIEC 009A",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:56.273526+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:56.273526+00:00"
     },
     {
       "source_id": "manual-d1cf513f7f00",
@@ -3029,10 +4024,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.609146+00:00",
+      "last_scan": "2026-10-26T05:57:46.637062+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 23,
+      "checks_7d": 24,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -3052,7 +4047,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.609146+00:00"
+      "overdue_after": "2026-10-26T19:57:46.637062+00:00"
     },
     {
       "source_id": "manual-d22911c410fc",
@@ -3060,10 +4055,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.678037+00:00",
+      "last_scan": "2026-10-26T05:57:46.748280+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 23,
+      "checks_7d": 24,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -3083,7 +4078,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.678037+00:00"
+      "overdue_after": "2026-10-26T19:57:46.748280+00:00"
     },
     {
       "source_id": "manual-d2d0fcac25ec",
@@ -3091,10 +4086,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.781803+00:00",
+      "last_scan": "2026-10-26T05:57:49.709874+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -3114,7 +4109,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.781803+00:00"
+      "overdue_after": "2026-10-26T19:57:49.709874+00:00"
     },
     {
       "source_id": "manual-d2ffa46a0ee0",
@@ -3122,565 +4117,7 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.679760+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 22,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.679760+00:00"
-    },
-    {
-      "source_id": "manual-d34e7c77f55c",
-      "name": "TXT Format: FR 3036 (PDF)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.865272+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 21,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.865272+00:00"
-    },
-    {
-      "source_id": "manual-d4603522a989",
-      "name": "XML Format: FR Y-14A/Q (PDF)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.253750+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 22,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.253750+00:00"
-    },
-    {
-      "source_id": "manual-d73abfb2e7f2",
-      "name": "XML User Guide (PDF)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.576258+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 24,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.576258+00:00"
-    },
-    {
-      "source_id": "manual-db3db09fda63",
-      "name": "BA - 2027 BCAR technical specification (XLSX, 3.41 MB)",
-      "regulator": "www.osfi-bsif.gc.ca",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:29:22.044334+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 19,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:29:22.044334+00:00"
-    },
-    {
-      "source_id": "manual-db5b7b1c66c0",
-      "name": "FFIEC 030/FFIEC 030S (PDF)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.815278+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 24,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.815278+00:00"
-    },
-    {
-      "source_id": "manual-ddc3e02572f3",
-      "name": "FR Y-14A Supplemental Information (ZIP)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.322652+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 22,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.322652+00:00"
-    },
-    {
-      "source_id": "manual-e175ab40ef57",
-      "name": "FR 2420FE Sample File (XML)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.713531+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 21,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.713531+00:00"
-    },
-    {
-      "source_id": "manual-e1d7c5d57155",
-      "name": "TFC-3 Sample File (XML)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.508566+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 21,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.508566+00:00"
-    },
-    {
-      "source_id": "manual-e2a6f65d42aa",
-      "name": "Annual Report XML File Format in Structure Central (PDF)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.204191+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 24,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.204191+00:00"
-    },
-    {
-      "source_id": "manual-e2cab0e0f486",
-      "name": "XML Format: FR 2028D (PDF)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.473419+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 22,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.473419+00:00"
-    },
-    {
-      "source_id": "manual-e3f60bc85420",
-      "name": "FR Y-7 Foreign Companies Sample File (XML)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.010863+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 22,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.010863+00:00"
-    },
-    {
-      "source_id": "manual-e49444f7481c",
-      "name": "FR VV-1 Supplemental Information (Off-site)",
-      "regulator": "www.federalreserve.gov",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.989029+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 24,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.989029+00:00"
-    },
-    {
-      "source_id": "manual-e49d5dac5ef1",
-      "name": "TIC BQ-2 Sample File (XML)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.255271+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 21,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.255271+00:00"
-    },
-    {
-      "source_id": "manual-e5da1f71e903",
-      "name": "FR Y-7 Additional Entities Template (XLSX)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.902902+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 22,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.902902+00:00"
-    },
-    {
-      "source_id": "manual-e7cbd658db35",
-      "name": "TXT Format: FR 2835 (PDF)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.723466+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 21,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.723466+00:00"
-    },
-    {
-      "source_id": "manual-ee0509645c47",
-      "name": "I to I Funding (PDF)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.126060+00:00",
-      "last_change": null,
-      "days_without_change": 2,
-      "checks_7d": 21,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.126060+00:00"
-    },
-    {
-      "source_id": "manual-f1df3c7d3e94",
-      "name": "OSFI BCAR 2027",
-      "regulator": "www.osfi-bsif.gc.ca",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.078877+00:00",
-      "last_change": null,
-      "days_without_change": 5,
-      "checks_7d": 38,
-      "failures_7d": 0,
-      "alert_condition": false,
-      "shadow": false,
-      "cadence": {
-        "every_hours": 6,
-        "days": [
-          "mon",
-          "tue",
-          "wed",
-          "thu",
-          "fri",
-          "sat",
-          "sun"
-        ],
-        "hours": null,
-        "timezone": "UTC",
-        "label": "Every 6 hours"
-      },
-      "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.078877+00:00"
-    },
-    {
-      "source_id": "manual-f3c955eb0656",
-      "name": "TXT Format: FXVOLUME (PDF)",
-      "regulator": "www.frbservices.org",
-      "status": "healthy",
-      "pages": 1,
-      "last_scan": "2026-10-26T04:28:47.788790+00:00",
+      "last_scan": "2026-10-26T05:57:48.318925+00:00",
       "last_change": null,
       "days_without_change": 2,
       "checks_7d": 23,
@@ -3703,18 +4140,18 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:47.788790+00:00"
+      "overdue_after": "2026-10-26T19:57:48.318925+00:00"
     },
     {
-      "source_id": "manual-f7443cb8f9e1",
-      "name": "TIC CQ-2 Sample File (XML)",
+      "source_id": "manual-d34e7c77f55c",
+      "name": "TXT Format: FR 3036 (PDF)",
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.326117+00:00",
+      "last_scan": "2026-10-26T05:57:50.946605+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -3734,18 +4171,18 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.326117+00:00"
+      "overdue_after": "2026-10-26T19:57:50.946605+00:00"
     },
     {
-      "source_id": "manual-f83b4590d2a4",
-      "name": "TXT Format: FR 2248 (PDF)",
+      "source_id": "manual-d4603522a989",
+      "name": "XML Format: FR Y-14A/Q (PDF)",
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.620149+00:00",
+      "last_scan": "2026-10-26T05:57:47.633151+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -3765,15 +4202,480 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.620149+00:00"
+      "overdue_after": "2026-10-26T19:57:47.633151+00:00"
     },
     {
-      "source_id": "manual-f96402c06d32",
-      "name": "Structure Central External User Guide (PDF)",
+      "source_id": "manual-d73abfb2e7f2",
+      "name": "XML User Guide (PDF)",
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:46.543663+00:00",
+      "last_scan": "2026-10-26T05:57:45.025979+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 25,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:45.025979+00:00"
+    },
+    {
+      "source_id": "manual-db3db09fda63",
+      "name": "BA - 2027 BCAR technical specification (XLSX, 3.41 MB)",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:24.313355+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 20,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:24.313355+00:00"
+    },
+    {
+      "source_id": "manual-db5b7b1c66c0",
+      "name": "FFIEC 030/FFIEC 030S (PDF)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:45.419519+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 25,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:45.419519+00:00"
+    },
+    {
+      "source_id": "manual-ddc3e02572f3",
+      "name": "FR Y-14A Supplemental Information (ZIP)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:47.750887+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 23,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:47.750887+00:00"
+    },
+    {
+      "source_id": "manual-e175ab40ef57",
+      "name": "FR 2420FE Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:48.372964+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 22,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:48.372964+00:00"
+    },
+    {
+      "source_id": "manual-e1d7c5d57155",
+      "name": "TFC-3 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:49.598705+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 22,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:49.598705+00:00"
+    },
+    {
+      "source_id": "manual-e2a6f65d42aa",
+      "name": "Annual Report XML File Format in Structure Central (PDF)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:46.010142+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 25,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:46.010142+00:00"
+    },
+    {
+      "source_id": "manual-e2cab0e0f486",
+      "name": "XML Format: FR 2028D (PDF)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:47.980302+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 23,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:47.980302+00:00"
+    },
+    {
+      "source_id": "manual-e3f60bc85420",
+      "name": "FR Y-7 Foreign Companies Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:47.242802+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 23,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:47.242802+00:00"
+    },
+    {
+      "source_id": "manual-e49444f7481c",
+      "name": "FR VV-1 Supplemental Information (Off-site)",
+      "regulator": "www.federalreserve.gov",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:45.707352+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 25,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:45.707352+00:00"
+    },
+    {
+      "source_id": "manual-e49d5dac5ef1",
+      "name": "TIC BQ-2 Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:49.989197+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 22,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:49.989197+00:00"
+    },
+    {
+      "source_id": "manual-e5da1f71e903",
+      "name": "FR Y-7 Additional Entities Template (XLSX)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:47.076127+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 23,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:47.076127+00:00"
+    },
+    {
+      "source_id": "manual-e7cbd658db35",
+      "name": "TXT Format: FR 2835 (PDF)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:50.721072+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 22,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:50.721072+00:00"
+    },
+    {
+      "source_id": "manual-ee0509645c47",
+      "name": "I to I Funding (PDF)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:49.042097+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 22,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:49.042097+00:00"
+    },
+    {
+      "source_id": "manual-f1df3c7d3e94",
+      "name": "OSFI BCAR 2027",
+      "regulator": "www.osfi-bsif.gc.ca",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:43.974639+00:00",
+      "last_change": null,
+      "days_without_change": 5,
+      "checks_7d": 39,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:43.974639+00:00"
+    },
+    {
+      "source_id": "manual-f3c955eb0656",
+      "name": "TXT Format: FXVOLUME (PDF)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:46.908376+00:00",
       "last_change": null,
       "days_without_change": 2,
       "checks_7d": 24,
@@ -3796,18 +4698,18 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:46.543663+00:00"
+      "overdue_after": "2026-10-26T19:57:46.908376+00:00"
     },
     {
-      "source_id": "manual-fb5555ba428f",
-      "name": "I to I Credit Exposure Weekly (IICW) Sample File (XML)",
+      "source_id": "manual-f7443cb8f9e1",
+      "name": "TIC CQ-2 Sample File (XML)",
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:49.059224+00:00",
+      "last_scan": "2026-10-26T05:57:50.098280+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 21,
+      "checks_7d": 22,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -3827,7 +4729,131 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:49.059224+00:00"
+      "overdue_after": "2026-10-26T19:57:50.098280+00:00"
+    },
+    {
+      "source_id": "manual-f83b4590d2a4",
+      "name": "TXT Format: FR 2248 (PDF)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:50.552435+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 22,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:50.552435+00:00"
+    },
+    {
+      "source_id": "manual-f96402c06d32",
+      "name": "Structure Central External User Guide (PDF)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:44.973088+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 25,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:44.973088+00:00"
+    },
+    {
+      "source_id": "manual-fb5555ba428f",
+      "name": "I to I Credit Exposure Weekly (IICW) Sample File (XML)",
+      "regulator": "www.frbservices.org",
+      "status": "healthy",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:57:48.931716+00:00",
+      "last_change": null,
+      "days_without_change": 2,
+      "checks_7d": 22,
+      "failures_7d": 0,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:57:48.931716+00:00"
+    },
+    {
+      "source_id": "manual-fc4db311d1cc",
+      "name": "Reporting Forms: FFIEC 002 Current",
+      "regulator": "www.ffiec.gov",
+      "status": "failing",
+      "pages": 1,
+      "last_scan": "2026-10-26T05:58:57.808383+00:00",
+      "last_change": null,
+      "days_without_change": 0,
+      "checks_7d": 1,
+      "failures_7d": 1,
+      "alert_condition": false,
+      "shadow": false,
+      "cadence": {
+        "every_hours": 6,
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ],
+        "hours": null,
+        "timezone": "UTC",
+        "label": "Every 6 hours"
+      },
+      "next_due": "2026-10-26T06:00:00+00:00",
+      "overdue_after": "2026-10-26T19:58:57.808383+00:00"
     },
     {
       "source_id": "manual-fcb1777378d0",
@@ -3835,10 +4861,10 @@
       "regulator": "www.osfi-bsif.gc.ca",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:50.999898+00:00",
+      "last_scan": "2026-10-26T05:57:51.176321+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 19,
+      "checks_7d": 20,
       "failures_7d": 4,
       "alert_condition": false,
       "shadow": false,
@@ -3858,7 +4884,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:50.999898+00:00"
+      "overdue_after": "2026-10-26T19:57:51.176321+00:00"
     },
     {
       "source_id": "manual-fcf8b514162c",
@@ -3866,10 +4892,10 @@
       "regulator": "www.frbservices.org",
       "status": "healthy",
       "pages": 1,
-      "last_scan": "2026-10-26T04:28:48.509653+00:00",
+      "last_scan": "2026-10-26T05:57:48.037338+00:00",
       "last_change": null,
       "days_without_change": 2,
-      "checks_7d": 22,
+      "checks_7d": 23,
       "failures_7d": 0,
       "alert_condition": false,
       "shadow": false,
@@ -3889,7 +4915,7 @@
         "label": "Every 6 hours"
       },
       "next_due": "2026-10-26T06:00:00+00:00",
-      "overdue_after": "2026-10-26T18:28:48.509653+00:00"
+      "overdue_after": "2026-10-26T19:57:48.037338+00:00"
     }
   ]
 }

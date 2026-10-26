@@ -1,0 +1,16 @@
+{
+  "source_id": "manual-cb192b726833",
+  "method": "http-resumable",
+  "state": "COMPLETE",
+  "discovered": 1,
+  "html_processed": 0,
+  "successful_pages": 0,
+  "failed_pages": 0,
+  "capped": false,
+  "pending": 0,
+  "unresolved_failures": 0,
+  "checkpoint_schema_version": 3,
+  "config_fingerprint": "0a3089bece820b3598e3397362c9f54788735fa8eeab2a491ec310810a57cc28",
+  "inventory": "data/discovery/manual-cb192b726833-inventory-*.txt",
+  "failure_ledger": "data/discovery/manual-cb192b726833-failures.jsonl"
+}
