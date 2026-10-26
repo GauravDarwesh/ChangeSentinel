@@ -44,7 +44,23 @@ jobs:
           CHANGESENTINEL_BROWSER_TEST: "1"
         run: |
           set -o pipefail
-          python -m unittest discover -s tests -p "test_browser_fetch.py" -k real -v 2>&1 | tee browser-test.log
+          if ! python -m unittest discover -s tests -p "test_browser_fetch.py" -k real -v 2>&1 | tee browser-test.log; then
+            # Put the failing tests and their tracebacks on the check run, so
+            # they are readable from the checks API without the job log.
+            python - <<'PY'
+          import re
+          log = open("browser-test.log", encoding="utf-8", errors="replace").read()
+          blocks = re.split(r"\n(?==+\n(?:FAIL|ERROR): )", log)
+          failures = [b.strip("=\n") for b in blocks if re.match(r"=*\n?(FAIL|ERROR): ", b.lstrip("\n"))] or [log[-6000:]]
+          outcomes = [line for line in log.splitlines() if re.search(r" \.\.\. (ok|FAIL|ERROR|skipped)", line)]
+          print("::error title=Real-browser test outcomes::" + "%0A".join(line.replace("%", "%25") for line in outcomes))
+          for block in failures[:8]:
+              title = block.splitlines()[0][:200].replace("%", "%25").replace(":", "%3A").replace(",", "%2C")
+              body = "\n".join(block.splitlines()[-60:])[-6000:]
+              print(f"::error title={title}::" + body.replace("%", "%25").replace("\r", "").replace("\n", "%0A"))
+          PY
+            exit 1
+          fi
           if grep -q "skipped" browser-test.log; then echo "The real-browser tests were skipped"; exit 1; fi
       - name: Exercise real Docling table reconstruction on a synthetic PDF
         run: python scripts/docling_integration_smoke.py
