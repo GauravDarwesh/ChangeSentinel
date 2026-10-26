@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T145658Z-ed33329a",
-  "generated_at": "2026-10-26T15:00:04.593470+00:00",
+  "run_id": "20261026T152608Z-64b232c5",
+  "generated_at": "2026-10-26T15:30:10.621750+00:00",
   "source": {
     "id": "manual-5b8c86f37ebc",
     "name": "BA - 2027 BCAR sample XML (XML, 479 KB)",
@@ -92,5 +92,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "manual",
-  "workflow_run_id": "40344087782"
+  "workflow_run_id": "40348901151"
 }
