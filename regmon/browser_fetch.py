@@ -679,8 +679,12 @@ async def _render_seleniumbase(url: str, binary: str, **options) -> Rendered:
         return await _drive(_SeleniumBasePage(page), url, **options)
     finally:
         # stop() also terminates the browser process; the profile persists for
-        # this run so clearance cookies can be reused by later URLs.
-        browser.stop()
+        # this run so clearance cookies can be reused by later URLs. A cleanup
+        # hiccup must not mask a successful capture or the original challenge.
+        try:
+            browser.stop()
+        except Exception:
+            pass
 
 
 async def _render_with_fallback(url: str, binary: str, **options) -> Rendered:
