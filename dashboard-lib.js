@@ -3788,6 +3788,70 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     return "https://calendar.google.com/calendar/render?" + params.toString();
   }
 
+  /* ---------- Link lineage (data/link-lineage.json) ---------- */
+
+  // Every monitored page that lists, or listed, this exact address.
+  function linkListings(lineage, url) {
+    const key = urlKey(url);
+    const out = [];
+    const pages = (lineage && lineage.pages) || {};
+    Object.keys(pages).forEach(pageUrl => {
+      const page = pages[pageUrl] || {};
+      Object.keys(page.links || {}).forEach(linkUrl => {
+        if (urlKey(linkUrl) !== key) return;
+        const entry = page.links[linkUrl] || {};
+        out.push({ page: pageUrl, url: linkUrl, text: entry.text || "", firstSeen: entry.first_seen || "", removedAt: entry.removed_at || "",
+          restoredAt: entry.restored_at || "", trackingSince: page.tracking_since || "", lastScan: page.last_scan || "" });
+      });
+    });
+    // Removed listings first (newest removal first), then current ones.
+    return out.sort((a, b) => (b.removedAt ? 1 : 0) - (a.removedAt ? 1 : 0) || String(b.removedAt).localeCompare(String(a.removedAt)) || a.page.localeCompare(b.page));
+  }
+  // Addresses or link texts containing every word typed, across every page.
+  function linkLineageSearch(lineage, query, limit) {
+    const words = String(query || "").toLowerCase().split(/\s+/).filter(Boolean);
+    const out = [];
+    if (!words.length) return out;
+    const pages = (lineage && lineage.pages) || {};
+    Object.keys(pages).forEach(pageUrl => {
+      const page = pages[pageUrl] || {};
+      Object.keys(page.links || {}).forEach(linkUrl => {
+        const entry = page.links[linkUrl] || {};
+        const hay = (linkUrl + " " + (entry.text || "")).toLowerCase();
+        if (!words.every(word => hay.indexOf(word) >= 0)) return;
+        out.push({ page: pageUrl, url: linkUrl, text: entry.text || "", firstSeen: entry.first_seen || "", removedAt: entry.removed_at || "", trackingSince: page.tracking_since || "" });
+      });
+    });
+    out.sort((a, b) => (b.removedAt ? 1 : 0) - (a.removedAt ? 1 : 0) || String(b.removedAt).localeCompare(String(a.removedAt)) || a.url.localeCompare(b.url));
+    return out.slice(0, limit || 200);
+  }
+  // What one page lists: current links, removed links (newest first), and the
+  // links added after tracking began.
+  function pageLinkLineage(lineage, pageUrl) {
+    const pages = (lineage && lineage.pages) || {};
+    const key = urlKey(pageUrl);
+    const found = Object.keys(pages).find(url => urlKey(url) === key);
+    if (!found) return null;
+    const page = pages[found] || {};
+    const current = [], removed = [], added = [];
+    Object.keys(page.links || {}).forEach(url => {
+      const entry = page.links[url] || {};
+      const row = { url, text: entry.text || "", menu: !!entry.menu, firstSeen: entry.first_seen || "", removedAt: entry.removed_at || "" };
+      if (row.removedAt) removed.push(row);
+      else current.push(row);
+      if (!row.removedAt && row.firstSeen && page.tracking_since && row.firstSeen > page.tracking_since) added.push(row);
+    });
+    removed.sort((a, b) => String(b.removedAt).localeCompare(String(a.removedAt)));
+    added.sort((a, b) => String(b.firstSeen).localeCompare(String(a.firstSeen)));
+    return { page: found, trackingSince: page.tracking_since || "", lastScan: page.last_scan || "", current, removed, added };
+  }
+  // The links a page gained and lost in the scan at `at` (one change event).
+  function linkEventsAt(lineage, pageUrl, at) {
+    const key = urlKey(pageUrl);
+    const when = new Date(at).getTime();
+    return ((lineage && lineage.events) || []).filter(event => urlKey(event.page) === key && Math.abs(new Date(event.at).getTime() - when) < 1000);
+  }
+
   return {
     pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe, pickRuleMatches, pickRuleFolder, pickRuleRequest,
@@ -3804,6 +3868,7 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     scoutSlug, splitList, splitLines, parsePathHints, pathHintsText, scoutSourceRequest, SCOUT_SOURCE_MARKER, SCOUT_TOPIC_IDS, SCOUT_REGIONS,
     renderWordEdit, describeItemCodes, lineageFor, validateBrowserSteps, describeBrowserStep, recorderBookmarklet, RECORDER_SOURCE, precisionBuild, precisionOutcomes, precisionScores, precisionSuggestions, wilson, missedChangeRequest, MISSED_CHANGE_MARKER, registryModel, registryTouched, registryImpact, registryRuleConsumers, registrySentence, registryConsumerLink, registryNorm, registryEntryCodes, REGISTRY_SCHEMES, REGISTRY_CHANGE_WORDS, REGISTRY_KIND_NOUNS, describeSpec, specGroups, specCategoryLabel, specCsvRows, SPEC_CATEGORIES, SPEC_KIND_NOUNS, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
     changeReviewRequest, CHANGE_REVIEW_MARKER, REVIEW_DECISIONS, csvCell, toCsv, fileSlug,
-    cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink
+    cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink,
+    linkListings, linkLineageSearch, pageLinkLineage, linkEventsAt
   };
 }));

@@ -34,7 +34,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import deadlines, health, item_codes, registry, reviews, schedule, spec_diff, visual
+from regmon import deadlines, health, item_codes, link_lineage, registry, reviews, schedule, spec_diff, visual
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -983,6 +983,8 @@ def process_source(
     # actually need before/after evidence or AI context.
     current = {}
     events, new_items, changed_items, source_changed_items, migration_items, unchanged_items = [], [], [], [], [], []
+    # The links each HTML page lists this scan (None: checked, not re-read), for data/link-lineage.json.
+    link_observations: list[dict] = []
     resolved = {url: resolve_previous(url, previous) for url in urls}
 
     workers = min(int(DEFAULTS.get("fetch_workers", 8)), max(1, len(urls)))
@@ -1012,6 +1014,14 @@ def process_source(
                 )
             current[uid] = item
             old_text = None
+            if not item.get("fetch_error") and not item.get("extraction_error"):
+                if html_body is not None:
+                    try:
+                        link_observations.append({"page": url, "at": now, "links": link_lineage.extract_links(html_body, url)})
+                    except Exception as exc:  # a page whose links can't be read must not stop the scan
+                        print(f"Link lineage skipped for {url}: {type(exc).__name__}: {exc}")
+                elif item.get("not_modified") and "html" in str(item.get("content_type") or "").lower():
+                    link_observations.append({"page": url, "at": now, "links": None})
 
             if item.get("fetch_error"):
                 event_id = build_event_id("FETCH_ERROR", uid, (old or {}).get("normalized_hash") or (old or {}).get("raw_hash"), error=item["fetch_error"], observation_id=now)
@@ -1598,7 +1608,8 @@ def process_source(
             "ai_contract":{"required_keys":["relevant","topic","change_type","summary","impact","effective_date","affected_scope","actions","reason"],"strict":True},
             "counts":counts,"events":events,"new_urls":[] if initial_baseline else new_items,"changed_urls":changed_items,"source_changed_urls":source_changed_items,"removed_urls":removed_items,"baseline_migrations":migration_items,"ai_results":sorted(ai_results,key=lambda x:x.get("event_id",""))
         },
-        "inventory":current
+        "inventory":current,
+        "link_observations":link_observations,
     }
 
 def _active_source_reports(exclude: set[str]) -> list[dict]:
@@ -1750,6 +1761,15 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, n
         c=report["counts"]; src=report["source"]
         md += [f"### {src['name']}","",f"- Regulator: {src['regulator']}",f"- Report run: {report.get('run_id')} ({report.get('generated_at')})",f"- Discovered: {c.get('discovered',0)}",f"- Changed content: {c.get('changed',0)}",f"- HTML source-only changes: {c.get('source_changed',0)}",f"- New: {c.get('new',0)}",f"- Removed: {c.get('removed',0)}",f"- Fetch errors: {c.get('fetch_error',0)}", ""]
     atomic_write_text(DATA / "report.md", "\n".join(md))
+    # Which page lists which link, and when links leave a page (data/link-lineage.json).
+    # Only sources whose crawl completed are trusted; never allowed to fail a scan.
+    try:
+        observations = [observation for result in source_results if result["report"].get("baseline_update_allowed")
+                        for observation in result.get("link_observations") or []]
+        if observations:
+            link_lineage.apply(DATA, observations)
+    except Exception as exc:
+        print(f"Link lineage not updated: {type(exc).__name__}: {exc}")
     # Dates stated in detected changes, as data/calendar.json and a subscribable
     # .ics feed. Rebuilt from the committed records; never allowed to fail a scan.
     try:

@@ -2262,11 +2262,12 @@ function renderChangeDetail() {
   const boxId = "change-evidence";
   pane.innerHTML = '<div class="detail-inner">' +
     detailHeading({ back: true, source, title: eventTitle(entry), meta, actions }) +
-    renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id="change-impact"></div><div id="change-spec"></div><div id="change-items"></div>' + evidenceSheet(entry, boxId) + "</div>";
+    renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id="change-impact"></div><div id="change-spec"></div><div id="change-items"></div><div id="change-links"></div>' + evidenceSheet(entry, boxId) + "</div>";
   const eventId = entry.event_id;
   const stillCurrent = () => state.view === "changes" && state.selectedChangeId === eventId;
   fillEvidence(entry, boxId, stillCurrent);
   fillReportingItems(entry, "change-items", stillCurrent);
+  fillChangeLinks(entry, "change-links", stillCurrent);
   fillSpecChanges(entry, "change-spec", stillCurrent);
   fillImpact(entry, "change-impact", stillCurrent);
 }
@@ -3264,8 +3265,126 @@ function renderDetailBody() {
   if (state.detailTab === "snapshot") loadSnapshot(item);
   else if (state.detailTab === "source") loadHtmlSource(item);
   else if (state.detailTab === "changes") renderPageChanges(item);
+  else if (state.detailTab === "links") renderPageLinks(item);
   else renderDetails(item);
   if (pane) pane.scrollTop = 0;
+}
+
+/* ================= Link lineage =================
+ * data/link-lineage.json records, for every HTML page the scans read, each link
+ * it lists: when it was first seen there and, once the page drops it, when it
+ * was removed. The Links tab shows where a page's address is (or was) listed,
+ * what the page itself lists and has dropped, and looks up any address, so a
+ * link a regulator deletes can always be traced to the page it was on.
+ */
+let linkLineagePromise = null, linkLineageAt = 0;
+function loadLinkLineage() {
+  if (linkLineagePromise && Date.now() - linkLineageAt < 5 * 60 * 1000) return linkLineagePromise;
+  linkLineageAt = Date.now();
+  const read = url => fetch(url, { cache: "no-cache" }).then(response => {
+    if (response.status === 404) return null;
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    return response.json();
+  });
+  linkLineagePromise = read(new URL("./data/link-lineage.json", document.baseURI).href)
+    .catch(() => read(RAW + "/data/link-lineage.json"))
+    .then(data => data && typeof data === "object" && data.pages ? data : { pages: {}, events: [] })
+    .catch(error => { linkLineagePromise = null; throw error; });
+  return linkLineagePromise;
+}
+function lineageDay(value) {
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? "" : d.toLocaleDateString([], { day: "numeric", month: "short", year: "numeric" });
+}
+function lineagePageLabel(url) {
+  const item = state.items.find(candidate => L.urlKey(candidate.canonical_url) === L.urlKey(url));
+  const label = item ? itemTitle(item) : displayUrl(url);
+  return item ? '<button class="text-button lineage-page" type="button" data-open-page="' + esc(item.url_id) + '" data-open-tab="links">' + esc(label) + "</button>"
+    : '<span class="lineage-page">' + esc(label) + "</span>";
+}
+function lineageListingRow(row) {
+  const when = row.removedAt
+    ? '<span class="tag tone-problem">Removed ' + esc(lineageDay(row.removedAt)) + "</span>"
+    : '<span class="tag tone-new">Listed now</span>';
+  const since = row.firstSeen && row.firstSeen === row.trackingSince ? "listed when tracking began, " + lineageDay(row.firstSeen) : "first listed " + lineageDay(row.firstSeen);
+  return '<li class="lineage-row">' + when + '<div class="lineage-main"><span>on ' + lineagePageLabel(row.page) + "</span>" +
+    '<small>' + (row.text ? "as “" + esc(row.text) + "” · " : "") + esc(since) + (row.removedAt ? " · last seen in the scan before " + esc(lineageDay(row.removedAt)) : "") + "</small></div>" +
+    externalLink(row.page, "Open page", "sheet-link") + "</li>";
+}
+function lineageLinkRow(row, kind) {
+  const tag = kind === "removed" ? '<span class="tag tone-problem">Removed ' + esc(lineageDay(row.removedAt)) + "</span>"
+    : kind === "added" ? '<span class="tag tone-new">Added ' + esc(lineageDay(row.firstSeen)) + "</span>" : "";
+  return '<li class="lineage-row">' + tag + '<div class="lineage-main"><span class="lineage-link-text">' + esc(row.text || L.pickSlug(row.url)) + "</span>" +
+    '<small class="lineage-url">' + esc(displayUrl(row.url)) + "</small></div>" + externalLink(row.url, "Open", "sheet-link") + "</li>";
+}
+function lineageSearchHtml(rows, query) {
+  if (!String(query || "").trim()) return '<p class="lineage-hint">Type part of an address or link text, for example <code>fr2028</code> or <code>user guide</code>.</p>';
+  if (!rows.length) return '<p class="lineage-hint">No monitored page lists, or has listed since tracking began, an address matching “' + esc(query) + "”. Pages are tracked from the first scan that reads them.</p>";
+  return '<ul class="lineage-list">' + rows.map(row => '<li class="lineage-row">' +
+    (row.removedAt ? '<span class="tag tone-problem">Removed ' + esc(lineageDay(row.removedAt)) + "</span>" : '<span class="tag tone-new">Listed now</span>') +
+    '<div class="lineage-main"><span class="lineage-link-text">' + esc(row.text || L.pickSlug(row.url)) + '</span><small class="lineage-url">' + esc(displayUrl(row.url)) + "</small>" +
+    "<small>on " + lineagePageLabel(row.page) + "</small></div>" + externalLink(row.url, "Open", "sheet-link") + "</li>").join("") + "</ul>";
+}
+async function renderPageLinks(item) {
+  const body = $("detailBody");
+  const id = item.url_id;
+  const still = () => state.view === "monitors" && selectedItem() && selectedItem().url_id === id && state.detailTab === "links";
+  body.innerHTML = '<section class="sheet"><div class="loading">Reading the link record…</div></section>';
+  let lineage;
+  try { lineage = await loadLinkLineage(); } catch (error) {
+    if (still()) body.innerHTML = '<section class="sheet">' + emptyState("The link record couldn't be loaded", String(error.message || error)) + "</section>";
+    return;
+  }
+  if (!still()) return;
+  const listings = L.linkListings(lineage, item.canonical_url);
+  const own = L.pageLinkLineage(lineage, item.canonical_url);
+  const sheets = [];
+  sheets.push('<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Where this address is listed</h3>' +
+    '<div class="sheet-note">Monitored pages that link here now, or did and then dropped the link.</div></div></div><div class="sheet-body lineage-body">' +
+    (listings.length ? '<ul class="lineage-list">' + listings.map(lineageListingRow).join("") + "</ul>"
+      : '<p class="lineage-hint">No monitored page links to this address. Monitor the page that lists it (for example the regulator\'s forms page) and its removal will be recorded here.</p>') +
+    "</div></section>");
+  if (own) {
+    const content = own.current.filter(row => !row.menu);
+    sheets.push('<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Links on this page</h3>' +
+      '<div class="sheet-note">' + esc(plural(content.length, "link", "links")) + " in its content, " + esc(plural(own.current.length - content.length, "menu link", "menu links")) +
+      " · tracked since " + esc(lineageDay(own.trackingSince)) + " · read " + esc(relativeTime(own.lastScan).toLowerCase()) + "</div></div></div><div class=\"sheet-body lineage-body\">" +
+      '<h4 class="lineage-h">Removed from this page · ' + own.removed.length + "</h4>" +
+      (own.removed.length ? '<ul class="lineage-list">' + own.removed.slice(0, 200).map(row => lineageLinkRow(row, "removed")).join("") + "</ul>" : '<p class="lineage-hint">No link has been removed since tracking began.</p>') +
+      '<h4 class="lineage-h">Added since tracking began · ' + own.added.length + "</h4>" +
+      (own.added.length ? '<ul class="lineage-list">' + own.added.slice(0, 200).map(row => lineageLinkRow(row, "added")).join("") + "</ul>" : '<p class="lineage-hint">No new links since tracking began.</p>') +
+      '<details class="lineage-all"><summary>Every link it lists now (' + own.current.length + ")</summary>" +
+      '<ul class="lineage-list">' + own.current.slice(0, 1500).map(row => lineageLinkRow(row, "")).join("") + "</ul></details>" +
+      "</div></section>");
+  }
+  sheets.push('<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Look up any address</h3>' +
+    '<div class="sheet-note">Find which monitored page listed a link, and when it was removed.</div></div></div><div class="sheet-body lineage-body">' +
+    '<input class="field-input lineage-search" id="lineageSearch" type="search" placeholder="Part of an address or link text" autocomplete="off" spellcheck="false">' +
+    '<div id="lineageResults">' + lineageSearchHtml([], "") + "</div></div></section>");
+  body.innerHTML = sheets.join("");
+  const input = $("lineageSearch");
+  let timer = 0;
+  input.addEventListener("input", () => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => { $("lineageResults").innerHTML = lineageSearchHtml(L.linkLineageSearch(lineage, input.value, 200), input.value); }, 150);
+  });
+}
+// A change to a page: the links it gained and lost in that scan.
+async function fillChangeLinks(entry, slotId, stillCurrent) {
+  if (!entry || ["CHANGED_URL", "HTML_SOURCE_CHANGED"].indexOf(entry.event_type) < 0) return;
+  let lineage;
+  try { lineage = await loadLinkLineage(); } catch (_) { return; }
+  const slot = document.getElementById(slotId);
+  if (!slot || !stillCurrent()) return;
+  const events = L.linkEventsAt(lineage, entry.url, entry.timestamp);
+  if (!events.length) return;
+  const removed = events.filter(event => event.change === "removed");
+  const added = events.filter(event => event.change !== "removed");
+  const row = (event, kind) => lineageLinkRow({ url: event.url, text: event.text, firstSeen: event.at, removedAt: event.at }, kind);
+  slot.innerHTML = '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Links in this change</h3>' +
+    '<div class="sheet-note">' + esc([removed.length ? plural(removed.length, "link removed", "links removed") : "", added.length ? plural(added.length, "link added", "links added") : ""].filter(Boolean).join(", ")) +
+    " · kept in the link record, so each can be traced to this page later</div></div></div><div class=\"sheet-body lineage-body\"><ul class=\"lineage-list\">" +
+    removed.map(event => row(event, "removed")).join("") + added.map(event => row(event, "added")).join("") + "</ul></div></section>";
 }
 
 /* ================= Detail: a run, an alert ================= */
@@ -8522,7 +8641,7 @@ $("workspace").addEventListener("click", event => {
   if (data.channelGuide !== undefined) { const guide = $("channelGuide"); if (guide) { guide.open = true; guide.scrollIntoView({ block: "nearest" }); } return; }
   if (data.selectNotification) return select("notifications", data.selectNotification);
   if (data.go) return setView(data.go);
-  if (data.openPage) return select("monitors", data.openPage, { tab: "changes" });
+  if (data.openPage) return select("monitors", data.openPage, { tab: data.openTab === "links" ? "links" : "changes" });
   if (data.back !== undefined) { state.mobileDetail = false; renderViews(); return; }
   if (data.refresh !== undefined) return loadData(true);
   if (data.addMonitor !== undefined) return openAddMonitor();

@@ -1134,3 +1134,4 @@ console.log(JSON.stringify([
         self.assertEqual((out[1]["waiting"], out[1]["hasBaseline"]), (False, True))
         self.assertIsNone(out[2])
         self.assertEqual(out[3], "guard")
+
