@@ -128,7 +128,7 @@ const state = {
   scoutGroupBy: "", scoutStrongOnly: false, scoutOpenGroups: new Set(), scoutPicked: new Map(),
   scoutPreview: { mode: "page", device: "desktop", expanded: false, key: "", serial: 0, token: "", page: null, locate: "", trail: [] },
   // Add a link: the page being explored, links found by level, and the ticked links.
-  add: { step: "start", method: "explore", url: "", history: [], at: -1, page: null, pages: new Map(), loading: 0,
+  add: { step: "start", method: "explore", url: "", history: [], at: -1, page: null, pages: new Map(), livePages: new Map(), view: "copy", viewWhy: "", viewByHost: {}, areas: [], loading: 0,
     tab: "selected", selectMode: false, candidates: [], picked: new Map(), anchor: "", origin: "explore", notes: [], info: "",
     crawl: null, query: "", format: "ALL", show: "ALL", limit: 300, opened: {}, weekly: false, scope: "",
     rules: {}, area: null, picking: false, showOlder: false, ruleDrafts: {}, ruleRequests: {}, ruleOpen: false, similar: [], hideOlder: true, reviewSimilar: [] },
@@ -6598,7 +6598,7 @@ function addClearDraft() {
   state.add.similarTo = null;
   const a = state.add;
   a.candidates = []; a.picked = new Map(); a.opened = {}; a.notes = []; a.history = []; a.at = -1; a.page = null; a.anchor = "";
-  a.rules = {}; a.area = null; a.ruleDrafts = {}; a.ruleRequests = {}; a.ruleOpen = false;
+  a.rules = {}; a.areas = []; a.ruleDrafts = {}; a.ruleRequests = {}; a.ruleOpen = false;
   try { localStorage.removeItem(ADD_DRAFT_STORAGE); } catch (_) {}
 }
 
@@ -6724,16 +6724,21 @@ function timeoutSignal(ms) {
   }, ms);
   return controller.signal;
 }
-async function addReadPage(url) {
+// mode "links": links only (following links by level), no stylesheets fetched.
+// mode "live": the original page, for the live view; kept apart from the copies.
+async function addReadPage(url, options) {
   const a = state.add;
+  const mode = options && options.mode === "live" ? "live" : options && options.mode === "links" ? "links" : "";
   const key = L.urlKey(url);
-  if (a.pages.has(key)) return a.pages.get(key);
+  const cache = mode === "live" ? a.livePages : a.pages;
+  const cached = cache.get(key);
+  if (cached && !(mode === "" && cached.linksOnly)) return cached;
   if (!PAGE_READER_ENDPOINT) throw new Error("The page reader isn't set up for this dashboard yet");
   const identity = await askSentinelIdentity();
   const headers = Object.assign(askSentinelIdentityHeaders(identity), { "Content-Type": "application/json" });
   let response;
   try {
-    response = await fetch(PAGE_READER_ENDPOINT, { method: "POST", headers, body: JSON.stringify({ url }), signal: timeoutSignal(40000) });
+    response = await fetch(PAGE_READER_ENDPOINT, { method: "POST", headers, body: JSON.stringify(mode ? { url, mode } : { url }), signal: timeoutSignal(40000) });
   } catch (error) {
     throw new Error(error && (error.name === "TimeoutError" || error.name === "AbortError") ? "The page took too long to read" : "The page reader could not be reached");
   }
@@ -6741,9 +6746,11 @@ async function addReadPage(url) {
   try { data = await response.json(); } catch (_) {}
   if (!response.ok) throw new Error(data.error || "The page reader answered HTTP " + response.status);
   if (data.kind === "page" && (!Array.isArray(data.links) || typeof data.html !== "string")) throw new Error("The page reader returned an unexpected answer");
-  a.pages.set(key, data);
-  if (data.url) a.pages.set(L.urlKey(data.url), data);
-  while (a.pages.size > 60) a.pages.delete(a.pages.keys().next().value);
+  if (data.kind === "live" && typeof data.html !== "string") throw new Error("The page reader returned an unexpected answer");
+  if (mode === "links") data.linksOnly = true;
+  cache.set(key, data);
+  if (data.url) cache.set(L.urlKey(data.url), data);
+  while (cache.size > (mode === "live" ? 8 : 60)) cache.delete(cache.keys().next().value);
   return data;
 }
 
@@ -6792,19 +6799,145 @@ async function exploreOpen(url, push) {
     a.at = a.history.length - 1;
   }
   a.page = data;
-  a.area = null;
+  a.areas = [];
   a.ruleOpen = false;
+  a.autoTried = {};
   if (a.picking) a.picking = false;
   a.tab = a.picked.size ? a.tab : (exploreSuggestions().items.length ? "suggested" : "page");
   $("exploreAddress").textContent = displayUrl(data.url);
   $("exploreNewTab").href = safeHttpUrl(data.url) || "#";
-  a.frameToken = exploreRandom(16);
-  $("exploreFrame").srcdoc = exploreDocument(data.html, a.frameToken, exploreRandom(18));
-  const notice = $("exploreNotice");
-  notice.textContent = typeof data.notice === "string" ? data.notice.slice(0, 400) : "";
-  notice.hidden = !notice.textContent;
-  exploreStatus("", "ok");
+  // A view the person chose for this site is kept as they browse it.
+  const chosen = a.viewByHost[exploreHost(data.url)];
+  exploreRender(chosen || "copy", "");
   renderExploreSide();
+}
+
+/* ---------- Three ways to show a page ----------
+ * "Copy": the reader's script-free copy, with the site's stylesheets (and, for
+ * sites that refuse cross-site requests, its images) written into it.
+ * "Live": the original page with its own scripts, in the same sandbox, for pages
+ * that draw their content with script.
+ * "Reading view": the page's text, tables and links without the site's layout.
+ * After a page is drawn the frame reports how much of it is visible; a copy that
+ * comes out blank or as a loading skeleton moves on to the live page, and a live
+ * page that stays blank moves on to the reading view. Links keep working in all three.
+ */
+const EXPLORE_VIEWS = [["copy", "Page"], ["live", "Live"], ["reader", "Reading view"]];
+function exploreHost(url) { try { return new URL(url).hostname; } catch (_) { return ""; } }
+async function exploreRender(view, why) {
+  const a = state.add;
+  const page = a.page;
+  if (!page) return;
+  a.view = EXPLORE_VIEWS.some(([key]) => key === view) ? view : "copy";
+  if (a.view === "reader" && !page.reader) a.view = "copy";
+  a.viewWhy = why || "";
+  a.frameToken = exploreRandom(16);
+  a.frameLoads = 0;
+  a.areas = [];
+  const frame = $("exploreFrame");
+  if (a.view === "live") {
+    const token = ++a.loading;
+    exploreStatus('<div class="loading">Starting the live page…</div>', "loading");
+    let live;
+    try {
+      live = await addReadPage(page.url, { mode: "live" });
+    } catch (error) {
+      if (token !== a.loading || a.page !== page) return;
+      exploreStatus("", "ok");
+      return exploreRender(page.reader ? "reader" : "copy", "The live page couldn't be loaded (" + String(error.message || error) + ").");
+    }
+    if (token !== a.loading || a.page !== page) return;
+    exploreStatus("", "ok");
+    if (!live || live.kind !== "live") return exploreRender(page.reader ? "reader" : "copy", (live && live.message) || "The live page couldn't be loaded.");
+    frame.srcdoc = exploreLiveDocument(live.html, a.frameToken);
+  } else {
+    exploreStatus("", "ok");
+    frame.srcdoc = exploreDocument(a.view === "reader" ? page.reader : page.html, a.frameToken, exploreRandom(18));
+  }
+  renderExploreViewBar();
+}
+function renderExploreViewBar() {
+  const a = state.add;
+  const page = a.page;
+  const bar = $("exploreViewBar");
+  if (!bar) return;
+  const words = a.viewWhy || (a.view === "live" ? "The live page runs the site's own scripts, sealed off from this dashboard."
+    : a.view === "reader" ? "The page's text, tables and links, without the site's layout."
+    : page && typeof page.notice === "string" ? page.notice.slice(0, 400) : "");
+  $("exploreNotice").textContent = words;
+  $("exploreNotice").hidden = !words;
+  bar.hidden = !page;
+  bar.querySelectorAll("[data-explore-view]").forEach(button => {
+    const key = button.dataset.exploreView;
+    button.setAttribute("aria-pressed", String(key === a.view));
+    button.disabled = !page || (key === "reader" && !page.reader);
+  });
+}
+// The frame's own report on what it drew: visible text, and how many sample
+// points across the view land on something with text or an image.
+function exploreRenderReport(data) {
+  const a = state.add;
+  const page = a.page;
+  if (!page) return;
+  const visible = Number(data.visible) || 0;
+  const skeleton = Number(data.skeleton) || 0;
+  const blank = visible < 20;
+  const tried = a.autoTried || (a.autoTried = {});
+  if (a.viewByHost[exploreHost(page.url)]) return; // the person chose this view
+  // A copy still showing loading placeholders, with little else to read, is
+  // waiting for script that never runs here.
+  const waiting = skeleton >= 3 && visible < 300;
+  if (a.view === "copy" && !tried.live && (blank || (page.scripted && waiting))) {
+    tried.live = true;
+    return exploreRender("live", page.scripted || waiting
+      ? "This page draws its content with script, so the live page is shown. Switch to Page or Reading view at any time."
+      : "The copy of this page came out blank, so the live page is shown. Switch to Page or Reading view at any time.");
+  }
+  if (a.view === "live" && data.final && blank && !tried.reader && page.reader) {
+    tried.reader = true;
+    return exploreRender("reader", "Neither the copy nor the live page drew this site's layout here, so its reading view is shown: the same text, tables and links.");
+  }
+}
+// Links the live page drew with script join the page's list.
+function exploreLiveLinks(list) {
+  const a = state.add;
+  if (!a.page || !Array.isArray(list)) return;
+  const known = new Set(a.page.links.map(link => L.urlKey(link.url)));
+  let added = 0;
+  list.slice(0, 4000).forEach(raw => {
+    const url = safeHttpUrl(raw && raw.url);
+    if (!url || known.has(L.urlKey(url)) || a.page.links.length >= 6000) return;
+    known.add(L.urlKey(url));
+    a.page.links.push({ url, text: String(raw.text || "").replace(/\s+/g, " ").trim().slice(0, 300), section: String(raw.section || "").slice(0, 160),
+      format: L.pickFormat(url), chrome: !!raw.chrome });
+    added += 1;
+  });
+  if (added) renderExploreSide();
+}
+function exploreLinkIndexFor(url, text) {
+  const a = state.add;
+  const safe = safeHttpUrl(url);
+  if (!a.page || !safe) return -1;
+  const key = L.urlKey(safe);
+  let index = a.page.links.findIndex(link => L.urlKey(link.url) === key);
+  if (index < 0) {
+    a.page.links.push({ url: safe, text: String(text || "").replace(/\s+/g, " ").trim().slice(0, 300), section: "", format: L.pickFormat(safe), chrome: false });
+    index = a.page.links.length - 1;
+  }
+  return index;
+}
+// The live page: the site's own document and scripts. The frame stays sandboxed
+// (scripts only: no same-origin, forms, pop-ups or top navigation), so whatever
+// runs there cannot reach the dashboard, its storage or its session.
+function exploreLiveDocument(html, token) {
+  const policy = '<meta http-equiv="Content-Security-Policy" content="default-src * data: blob: \'unsafe-inline\' \'unsafe-eval\'; ' +
+    "form-action 'none'; object-src 'none'\">";
+  const script = "<script>(" + exploreBridge.toString() + ")(" + JSON.stringify(token) + ", true);<\/script>";
+  let doc = String(html || "").replace(/<meta\b[^>]*http-equiv\s*=\s*["']?content-security-policy["']?[^>]*>/gi, "");
+  doc = /<head\b[^>]*>/i.test(doc) ? doc.replace(/<head\b[^>]*>/i, match => match + policy) : policy + doc;
+  doc = /<\/head>/i.test(doc) ? doc.replace(/<\/head>/i, exploreFrameStyle() + "</head>") : exploreFrameStyle() + doc;
+  doc = /<\/body>/i.test(doc) ? doc.replace(/<\/body>(?![\s\S]*<\/body>)/i, script + "</body>") : doc + script;
+  return doc;
 }
 // The reader's copy, shown in a frame sandboxed with allow-scripts but without
 // allow-same-origin: it runs in an opaque origin, so nothing in it can reach the
@@ -6813,9 +6946,12 @@ async function exploreOpen(url, push) {
 // below, by nonce. The bridge reports link clicks (with Shift) by postMessage and
 // draws the selection marks. Safari never runs event listeners that the parent
 // page attaches inside a script-less sandboxed frame, so clicks are handled from
-// within the frame instead.
-function exploreBridge(token) {
+// within the frame instead. In the live view (live = true) the page's own links
+// carry no numbers, so clicks, areas and selection marks also go by address,
+// and the links the page draws are reported as they appear.
+function exploreBridge(token, live) {
   var root = document.documentElement;
+  var areaSeq = 0;
   var shift = false;
   var picking = false;
   var drag = null;
@@ -6831,6 +6967,13 @@ function exploreBridge(token) {
     while (node && node.nodeType !== 1) node = node.parentNode;
     return node && node.closest ? node.closest("[data-cs-link], a[href], area[href]") : null;
   }
+  // The address a link opens, absolute and without its #fragment.
+  function addressOf(link) {
+    var href = "";
+    try { href = link.href && typeof link.href === "string" ? link.href : new URL(link.getAttribute("href") || "", document.baseURI).href; } catch (e) { href = ""; }
+    return /^https?:/i.test(href) ? href.split("#")[0] : "";
+  }
+  function textOf(node) { return String(node.innerText || node.textContent || node.getAttribute("aria-label") || node.getAttribute("title") || "").replace(/\s+/g, " ").trim().slice(0, 300); }
   function setShift(on) {
     shift = !!on;
     root.classList.toggle("cs-shift", shift);
@@ -6901,13 +7044,53 @@ function exploreBridge(token) {
     }
     return indexes;
   }
-  function report(node, indexes, how) {
-    var marked = document.querySelectorAll("[data-cs-area]");
+  // Links with no number (the live view): reported by address and text.
+  function plainLinksIn(nodes) {
+    var out = [], seen = {};
+    for (var i = 0; i < nodes.length && out.length < 2000; i++) {
+      if (nodes[i].hasAttribute("data-cs-link")) continue;
+      var url = addressOf(nodes[i]);
+      if (!url || seen[url]) continue;
+      seen[url] = 1;
+      out.push({ url: url, text: textOf(nodes[i]) });
+    }
+    return out;
+  }
+  // Each boxed or picked part stays marked, numbered, until it is removed:
+  // several areas of one page can be selected at once.
+  function tagArea(node, id) {
+    var tag = document.querySelector('.cs-area-tag[data-for="' + id + '"]');
+    if (!tag) { tag = document.createElement("span"); tag.className = "cs-area-tag"; tag.setAttribute("data-for", id); document.body.appendChild(tag); }
+    var r = node.getBoundingClientRect();
+    tag.textContent = String(id);
+    tag.style.left = Math.max(0, r.left + scrollX) + "px";
+    tag.style.top = Math.max(0, r.top + scrollY - 18) + "px";
+  }
+  function clearAreas(id) {
+    var marked = document.querySelectorAll(id ? '[data-cs-area="' + id + '"]' : "[data-cs-area]");
     for (var i = 0; i < marked.length; i++) marked[i].removeAttribute("data-cs-area");
-    if (node && node !== document.body) node.setAttribute("data-cs-area", "");
+    var tags = document.querySelectorAll(id ? '.cs-area-tag[data-for="' + id + '"]' : ".cs-area-tag");
+    for (var j = 0; j < tags.length; j++) tags[j].parentNode.removeChild(tags[j]);
+  }
+  function report(node, indexes, how, plain) {
+    if (!node || node === document.body || node === root) node = null;
+    var id = node && node.getAttribute("data-cs-area") ? Number(node.getAttribute("data-cs-area")) : ++areaSeq;
+    if (node) { node.setAttribute("data-cs-area", String(id)); tagArea(node, id); }
     var text = node ? String(node.innerText || node.textContent || "").replace(/\s+/g, " ").trim() : "";
-    send({ type: "area", how: how, indexes: indexes, selector: node && node !== document.body ? selectorFor(node) : "",
+    if (!plain && node && node.querySelectorAll) plain = plainLinksIn(node.querySelectorAll("a[href], area[href]"));
+    send({ type: "area", id: id, how: how, indexes: indexes, links: plain || [], selector: node ? selectorFor(node) : "",
       label: node ? labelFor(node) : "Selected area", text: text.slice(0, 220), words: text ? text.split(" ").length : 0 });
+  }
+  // A link laid out with display: contents has no box of its own; its first
+  // child with one stands in for it.
+  function rectOf(node) {
+    var r = node.getBoundingClientRect();
+    if (r.width || r.height) return r;
+    for (var child = node.firstElementChild; child; child = child.nextElementSibling) {
+      var c = child.getBoundingClientRect();
+      if (c.width || c.height) return c;
+    }
+    return null;
   }
   function commonAncestor(nodes) {
     if (!nodes.length) return null;
@@ -6920,14 +7103,15 @@ function exploreBridge(token) {
   function finishDrag(box) {
     drag.box.parentNode && drag.box.parentNode.removeChild(drag.box);
     var left = Math.min(drag.x, box.x), right = Math.max(drag.x, box.x), top = Math.min(drag.y, box.y), bottom = Math.max(drag.y, box.y);
-    var all = document.querySelectorAll("[data-cs-link]");
+    var all = document.querySelectorAll("[data-cs-link], a[href], area[href]");
     var inside = [], indexes = [];
     for (var i = 0; i < all.length; i++) {
-      var r = all[i].getBoundingClientRect();
-      if (!r.width && !r.height) continue;
+      var r = rectOf(all[i]);
+      if (!r) continue;
       var cx = r.left + scrollX + r.width / 2, cy = r.top + scrollY + r.height / 2;
       if (cx >= left && cx <= right && cy >= top && cy <= bottom) {
         inside.push(all[i]);
+        if (!all[i].hasAttribute("data-cs-link")) continue;
         var index = Number(all[i].getAttribute("data-cs-link"));
         if (indexes.indexOf(index) < 0) indexes.push(index);
       }
@@ -6942,7 +7126,7 @@ function exploreBridge(token) {
         node = node.parentElement;
       }
     }
-    report(node, indexes, "drag");
+    report(node, indexes, "drag", plainLinksIn(inside));
   }
   document.addEventListener("click", function (event) {
     if (swallowClick) { swallowClick = false; event.preventDefault(); event.stopPropagation(); return; }
@@ -6959,8 +7143,9 @@ function exploreBridge(token) {
     if (!link.hasAttribute("data-cs-link") && href.charAt(0) === "#") return;
     event.preventDefault();
     event.stopPropagation();
-    if (!link.hasAttribute("data-cs-link")) return;
-    send({ type: "click", index: Number(link.getAttribute("data-cs-link")), shift: !!(event.shiftKey || shift) });
+    if (link.hasAttribute("data-cs-link")) { send({ type: "click", index: Number(link.getAttribute("data-cs-link")), shift: !!(event.shiftKey || shift) }); return; }
+    var url = addressOf(link);
+    if (url) send({ type: "click", url: url, text: textOf(link), shift: !!(event.shiftKey || shift) });
   }, true);
   ["auxclick", "dragstart"].forEach(function (name) {
     document.addEventListener(name, function (event) { if (linkOf(event.target) || drag) event.preventDefault(); }, true);
@@ -7030,6 +7215,12 @@ function exploreBridge(token) {
         var nodes = document.querySelectorAll('[data-cs-link="' + Number(index) + '"]');
         for (var j = 0; j < nodes.length; j++) nodes[j].setAttribute("data-cs-picked", "");
       });
+      if (data.urls && data.urls.length) {
+        var wanted = {};
+        data.urls.forEach(function (url) { wanted[url] = 1; });
+        var anchors = document.querySelectorAll("a[href]:not([data-cs-link])");
+        for (var k = 0; k < anchors.length; k++) if (wanted[addressOf(anchors[k])]) anchors[k].setAttribute("data-cs-picked", "");
+      }
     } else if (data.type === "mode") {
       root.classList.toggle("cs-select", !!data.select);
     } else if (data.type === "shift") {
@@ -7039,10 +7230,13 @@ function exploreBridge(token) {
     } else if (data.type === "rules") {
       markRules(data.include, data.ignore);
     } else if (data.type === "area-clear") {
-      var areas = document.querySelectorAll("[data-cs-area]");
-      for (var k = 0; k < areas.length; k++) areas[k].removeAttribute("data-cs-area");
+      clearAreas(data.id ? Number(data.id) : 0);
     } else if (data.type === "locate") {
       var target = document.querySelector('[data-cs-link="' + Number(data.index) + '"]');
+      if (!target && data.url) {
+        var all = document.querySelectorAll("a[href]");
+        for (var n = 0; n < all.length && !target; n++) if (addressOf(all[n]) === data.url) target = all[n];
+      }
       if (!target) return;
       try { target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) { target.scrollIntoView(); }
       target.classList.remove("cs-flash");
@@ -7050,6 +7244,52 @@ function exploreBridge(token) {
       target.classList.add("cs-flash");
     }
   });
+  // How much of the page is actually visible on the first screen: text and
+  // images that are inside the view and not covered by something else. The
+  // dashboard moves on to another view when a page comes out blank or stuck
+  // on a loading skeleton.
+  function health(final) {
+    var body = document.body;
+    var text = body ? String(body.innerText || "").replace(/\s+/g, " ").trim().length : 0;
+    var W = innerWidth, H = innerHeight, visible = 0;
+    var nodes = document.querySelectorAll("h1,h2,h3,h4,h5,h6,p,li,td,th,a,span,div,dd,dt,label,button,strong,em,b,img,svg,canvas,picture,video");
+    for (var i = 0; i < nodes.length && i < 4000 && visible < 400; i++) {
+      var el = nodes[i];
+      var r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2 || r.bottom <= 0 || r.right <= 0 || r.top >= H || r.left >= W) continue;
+      var weight = 0;
+      if (/^(IMG|SVG|CANVAS|PICTURE|VIDEO|svg)$/.test(el.tagName)) weight = r.width >= 40 && r.height >= 40 ? 50 : 0;
+      else for (var c = el.firstChild; c; c = c.nextSibling) if (c.nodeType === 3) weight += String(c.nodeValue || "").trim().length;
+      if (!weight) continue;
+      var x = Math.min(W - 1, Math.max(0, r.left + Math.min(r.width, 40) / 2)), y = Math.min(H - 1, Math.max(0, r.top + Math.min(r.height, 20) / 2));
+      var hit = document.elementFromPoint(x, y);
+      // A card is often covered by one link stretched over it; that still counts as seen.
+      if (hit && (hit === el || el.contains(hit) || hit.contains(el) || (hit !== body && hit !== root && hit.closest && hit.closest("a[href], button, label")))) visible += weight;
+    }
+    var skeleton = document.querySelectorAll('.animate-pulse, [class*="skeleton"], [class*="Skeleton"], [class*="shimmer"]').length;
+    send({ type: "render", text: text, visible: visible, skeleton: skeleton, final: !!final });
+  }
+  function reportLinks() {
+    var anchors = document.querySelectorAll("a[href]");
+    var out = [], seen = {};
+    for (var i = 0; i < anchors.length && out.length < 4000; i++) {
+      var url = addressOf(anchors[i]);
+      if (!url || seen[url]) continue;
+      seen[url] = 1;
+      var chrome = !!(anchors[i].closest("header, nav, footer, [role=navigation], [role=banner], [role=contentinfo]") && !anchors[i].closest("main, article, [role=main]"));
+      var heading = "";
+      out.push({ url: url, text: textOf(anchors[i]), section: heading, chrome: chrome });
+    }
+    send({ type: "links", links: out });
+  }
+  var settled = false;
+  function settle() {
+    if (settled) return;
+    settled = true;
+    setTimeout(function () { health(!live); if (live) reportLinks(); }, live ? 2500 : 900);
+    if (live) setTimeout(function () { health(true); reportLinks(); }, 6000);
+  }
+  if (document.readyState === "complete") settle(); else { window.addEventListener("load", settle); setTimeout(settle, 7000); }
   send({ type: "ready" });
 }
 function exploreRandom(bytes) {
@@ -7061,7 +7301,17 @@ function exploreDocument(html, token, nonce) {
   const policy = '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'nonce-' + nonce + '\'; ' +
     "style-src * data: blob: 'unsafe-inline'; img-src * data: blob:; font-src * data:; media-src * data: blob:; connect-src 'none'; " +
     "frame-src 'none'; child-src 'none'; worker-src 'none'; object-src 'none'; form-action 'none'; base-uri 'none'\">";
-  const style = "<style>[data-cs-link]{cursor:pointer}" +
+  const style = exploreFrameStyle();
+  const script = '<script nonce="' + nonce + '">(' + exploreBridge.toString() + ")(" + JSON.stringify(token) + ", false);<\/script>";
+  // Only the policy written here may apply: the reader's own (script-src 'none') would block the bridge.
+  let doc = String(html || "").replace(/<meta\b[^>]*http-equiv\s*=\s*["']?content-security-policy["']?[^>]*>/gi, "");
+  doc = /<head\b[^>]*>/i.test(doc) ? doc.replace(/<head\b[^>]*>/i, match => match + policy) : policy + doc;
+  doc = /<\/head>/i.test(doc) ? doc.replace(/<\/head>/i, style + "</head>") : style + doc;
+  doc = /<\/body>/i.test(doc) ? doc.replace(/<\/body>(?![\s\S]*<\/body>)/i, script + "</body>") : doc + script;
+  return doc;
+}
+function exploreFrameStyle() {
+  return "<style>[data-cs-link]{cursor:pointer}" +
     "[data-cs-picked]{outline:2px solid #e8890a!important;outline-offset:2px;background:rgba(232,137,10,.16)!important;border-radius:2px}" +
     "html.cs-shift [data-cs-link],html.cs-select [data-cs-link]{cursor:copy!important;outline:1px dashed rgba(232,137,10,.85);outline-offset:2px}" +
     "@keyframes csFlash{0%,100%{box-shadow:0 0 0 0 rgba(232,137,10,0)}30%{box-shadow:0 0 0 6px rgba(232,137,10,.45)}}" +
@@ -7069,16 +7319,10 @@ function exploreDocument(html, token, nonce) {
     ".cs-drag-box{position:absolute;z-index:2147483646;pointer-events:none;border:1.5px dashed #e8890a;background:rgba(232,137,10,.10);border-radius:3px}" +
     "html.cs-picking,html.cs-picking *{cursor:crosshair!important}" +
     "[data-cs-hover]{outline:2px dashed #3d7bd9!important;outline-offset:2px;background:rgba(61,123,217,.07)!important}" +
-    "[data-cs-area]{outline:2px solid #e8890a!important;outline-offset:3px}" +
     "[data-cs-watch]{outline:2px solid #2f9e6b!important;outline-offset:4px;box-shadow:0 0 0 9999px rgba(20,24,30,.18)!important;position:relative;z-index:1}" +
-    "[data-cs-ignore]{opacity:.35!important;filter:grayscale(1)!important;outline:1px dashed #c0392b!important}</style>";
-  const script = '<script nonce="' + nonce + '">(' + exploreBridge.toString() + ")(" + JSON.stringify(token) + ");<\/script>";
-  // Only the policy written here may apply: the reader's own (script-src 'none') would block the bridge.
-  let doc = String(html || "").replace(/<meta\b[^>]*http-equiv\s*=\s*["']?content-security-policy["']?[^>]*>/gi, "");
-  doc = /<head\b[^>]*>/i.test(doc) ? doc.replace(/<head\b[^>]*>/i, match => match + policy) : policy + doc;
-  doc = /<\/head>/i.test(doc) ? doc.replace(/<\/head>/i, style + "</head>") : style + doc;
-  doc = /<\/body>/i.test(doc) ? doc.replace(/<\/body>(?![\s\S]*<\/body>)/i, script + "</body>") : doc + script;
-  return doc;
+    "[data-cs-ignore]{opacity:.35!important;filter:grayscale(1)!important;outline:1px dashed #c0392b!important}" +
+    "[data-cs-area]{outline:2px solid #e8890a!important;outline-offset:3px;background-color:rgba(232,137,10,.06)!important}" +
+    ".cs-area-tag{position:absolute;z-index:2147483645;pointer-events:none;padding:1px 6px;border-radius:3px;background:#e8890a;color:#fff;font:600 11px/1.5 system-ui,sans-serif}</style>";
 }
 function explorePost(message) {
   const frame = $("exploreFrame");
@@ -7145,25 +7389,42 @@ window.addEventListener("message", event => {
   const data = event.data || {};
   if (data.cs !== "cs-explore" || !state.add.frameToken || data.token !== state.add.frameToken) return;
   if (data.type === "ready") exploreSync();
-  else if (data.type === "click") exploreLinkClick(Number(data.index), !!data.shift);
+  else if (data.type === "click") exploreLinkClick(typeof data.url === "string" ? exploreLinkIndexFor(data.url, data.text) : Number(data.index), !!data.shift);
   else if (data.type === "area") exploreAreaMessage(data);
+  else if (data.type === "render") exploreRenderReport(data);
+  else if (data.type === "links" && state.add.view === "live") exploreLiveLinks(data.links);
   else if (data.type === "pickoff") exploreSetPicking(false);
   // Escape inside the page closes the dialog, as it does anywhere else in it; the draft is kept.
   else if (data.type === "escape" && $("addMonitorDialog").open) $("addMonitorDialog").close();
 });
+// The live page runs the site's scripts; if they move the frame to another
+// address, the bridge is gone, so the page is shown another way instead.
+(() => {
+  const frame = $("exploreFrame");
+  if (!frame) return;
+  frame.addEventListener("load", () => {
+    const a = state.add;
+    a.frameLoads = (a.frameLoads || 0) + 1;
+    if (a.view === "live" && a.frameLoads > 1 && a.page) {
+      (a.autoTried || (a.autoTried = {})).live = true;
+      exploreRender(a.page.reader ? "reader" : "copy", "The live page tried to open another address inside this view, so its " + (a.page.reader ? "reading view" : "copy") + " is shown instead.");
+    }
+  });
+})();
 function exploreMarkPicked() {
   const a = state.add;
   if (!a.page) return;
   const indexes = [];
-  a.page.links.forEach((link, index) => { if (a.picked.has(L.urlKey(link.url))) indexes.push(index); });
-  explorePost({ type: "picked", indexes });
+  const urls = [];
+  a.page.links.forEach((link, index) => { if (a.picked.has(L.urlKey(link.url))) { indexes.push(index); urls.push(link.url); } });
+  explorePost({ type: "picked", indexes, urls: a.view === "live" ? urls : [] });
 }
 function exploreLocate(url) {
   const a = state.add;
   if (!a.page || a.step !== "explore") return;
   const key = L.urlKey(url);
   const index = a.page.links.findIndex(link => L.urlKey(link.url) === key);
-  if (index >= 0) explorePost({ type: "locate", index });
+  if (index >= 0) explorePost({ type: "locate", index, url: a.page.links[index].url });
 }
 function addToggle(item, force) {
   const a = state.add;
@@ -7209,7 +7470,7 @@ function renderExploreSide() {
     : a.selectMode
     ? "Tap selects is on: clicking or tapping a link selects it. Turn it off to browse."
     : coarsePointer && coarsePointer.matches ? "Tap a link to open it here. Turn on <strong>Tap selects</strong> to select links, or use <strong>Pick a part</strong>."
-      : "<kbd>Shift</kbd>-click a link to select it. <kbd>Shift</kbd>-drag to box an area. Click a link to open it here.";
+      : "<kbd>Shift</kbd>-click a link to select it. <kbd>Shift</kbd>-drag to box an area (again for more areas). Click a link to open it here.";
   const thisPage = a.page ? a.picked.has(L.urlKey(a.page.url)) : false;
   const thisButton = document.querySelector("[data-explore-this]");
   thisButton.setAttribute("aria-pressed", String(thisPage));
@@ -7343,23 +7604,9 @@ function exploreToolsHtml() {
   if (!a.page) return "";
   const key = addPageKey();
   const parts = [];
-  // The part of the page last boxed or picked.
-  if (a.area && a.area.pageKey === key) {
-    const area = a.area;
-    const free = (area.indexes || []).filter(index => a.page.links[index] && !a.picked.has(L.urlKey(a.page.links[index].url)));
-    parts.push('<section class="smart-card area-card" aria-label="Selected area">' +
-      '<div class="smart-card-head"><span class="smart-kicker">Selected area</span><button class="text-button" type="button" data-area-clear aria-label="Clear the selected area">Clear</button></div>' +
-      '<strong class="area-label">' + esc(area.label || "Part of the page") + "</strong>" +
-      (area.text ? '<p class="area-text">' + esc(area.text) + (area.words > 36 ? "…" : "") + "</p>" : "") +
-      '<div class="smart-actions">' +
-        (area.indexes && area.indexes.length ? '<button class="btn btn-primary" type="button" data-area-select' + (free.length ? "" : " disabled") + ">" +
-          (free.length ? "Select its " + plural(free.length, "link", "links") : "Its links are selected") + "</button>" : "") +
-        (area.selector ? '<button class="btn" type="button" data-area-watch title="Compare only this part when the page is checked">Watch only this part</button>' +
-          '<button class="btn" type="button" data-area-ignore title="Leave this part out when the page is checked (menus, banners, dates that change every day)">Ignore this part</button>' : "") +
-      "</div>" +
-      (area.selector ? '<code class="area-selector" title="CSS selector">' + esc(area.selector) + "</code>" : "") +
-      "</section>");
-  }
+  // The parts of the page boxed or picked so far (several at once).
+  const areas = exploreAreasHere();
+  if (areas.length) parts.push(exploreAreasHtml(areas));
   // Rules already set for this page.
   const rules = addRulesFor(key);
   if (rules.include || rules.ignore.length) {
@@ -7425,48 +7672,120 @@ function exploreSuggestedHtml() {
       '<button class="text-button" type="button" data-older-toggle>' + (a.showOlder ? "Hide" : "Show") + "</button></div>" +
       (a.showOlder ? suggestions.older.map(row).join("") : '<p class="note-strip">Earlier years and superseded copies of the documents above are held back.</p>') : "");
 }
+/* ---------- Selected areas: Shift-drag or Pick a part, as many as needed ---------- */
+
+const AREA_LIMIT = 12;
+function exploreAreasHere() {
+  const a = state.add;
+  const key = addPageKey();
+  return (a.areas || []).filter(area => area.pageKey === key);
+}
+function exploreAreaFree(area) {
+  const a = state.add;
+  return (area.indexes || []).filter(index => a.page.links[index] && !a.picked.has(L.urlKey(a.page.links[index].url)));
+}
+function exploreAreasHtml(areas) {
+  const a = state.add;
+  const allFree = new Set();
+  areas.forEach(area => exploreAreaFree(area).forEach(index => allFree.add(index)));
+  const selectors = areas.map(area => area.selector).filter(Boolean);
+  const several = areas.length > 1;
+  const one = area => {
+    const free = exploreAreaFree(area);
+    return '<div class="area-item" data-area-id="' + area.id + '">' +
+      '<div class="area-item-head"><span class="area-num" aria-hidden="true">' + area.id + '</span><strong class="area-label">' + esc(area.label || "Part of the page") + "</strong>" +
+        '<span class="area-count">' + plural((area.indexes || []).length, "link", "links") + "</span>" +
+        '<button class="area-remove" type="button" data-area-remove="' + area.id + '" aria-label="Remove this area" title="Remove this area">×</button></div>' +
+      (area.text ? '<p class="area-text">' + esc(area.text) + (area.words > 36 ? "…" : "") + "</p>" : "") +
+      '<div class="smart-actions">' +
+        (area.indexes && area.indexes.length ? '<button class="btn' + (several ? "" : " btn-primary") + '" type="button" data-area-select="' + area.id + '"' + (free.length ? "" : " disabled") + ">" +
+          (free.length ? "Select its " + plural(free.length, "link", "links") : "Its links are selected") + "</button>" : "") +
+        (area.selector ? '<button class="btn" type="button" data-area-watch="' + area.id + '" title="Compare only this part when the page is checked">Watch only this part</button>' +
+          '<button class="btn" type="button" data-area-ignore="' + area.id + '" title="Leave this part out when the page is checked (menus, banners, dates that change every day)">Ignore this part</button>' : "") +
+      "</div>" +
+      (area.selector ? '<code class="area-selector" title="CSS selector">' + esc(area.selector) + "</code>" : "") + "</div>";
+  };
+  return '<section class="smart-card area-card" aria-label="Selected areas">' +
+    '<div class="smart-card-head"><span class="smart-kicker">' + (several ? areas.length + " selected areas" : "Selected area") + "</span>" +
+      '<button class="text-button" type="button" data-area-clear aria-label="Clear every selected area">' + (several ? "Clear all" : "Clear") + "</button></div>" +
+    (several ? '<div class="smart-actions area-all">' +
+      '<button class="btn btn-primary" type="button" data-area-select="all"' + (allFree.size ? "" : " disabled") + ">" +
+        (allFree.size ? "Select links in all " + areas.length + " areas (" + allFree.size + ")" : "Their links are selected") + "</button>" +
+      (selectors.length > 1 ? '<button class="btn" type="button" data-area-watch="all" title="Compare only these parts when the page is checked">Watch only these ' + selectors.length + " parts</button>" +
+        '<button class="btn" type="button" data-area-ignore="all" title="Leave these parts out when the page is checked">Ignore these ' + selectors.length + " parts</button>" : "") +
+      "</div>" : "") +
+    areas.map(one).join("") +
+    (several ? "" : '<p class="smart-note">Shift-drag again (or Pick a part) to add another area.</p>') +
+    "</section>";
+}
 function exploreAreaMessage(data) {
   const a = state.add;
   if (!a.page) return;
-  const indexes = (Array.isArray(data.indexes) ? data.indexes : []).map(Number).filter(index => Number.isInteger(index) && a.page.links[index]).slice(0, 2000);
-  a.area = { pageKey: addPageKey(), indexes, selector: String(data.selector || "").slice(0, 1000), label: String(data.label || "").slice(0, 120),
+  const indexes = (Array.isArray(data.indexes) ? data.indexes : []).map(Number).filter(index => Number.isInteger(index) && a.page.links[index]);
+  // Links the page drew with script (live view) are found by address.
+  (Array.isArray(data.links) ? data.links : []).slice(0, 2000).forEach(link => {
+    const index = exploreLinkIndexFor(link && link.url, link && link.text);
+    if (index >= 0 && indexes.indexOf(index) < 0) indexes.push(index);
+  });
+  const id = Number(data.id) || ((a.areas || []).reduce((max, area) => Math.max(max, area.id), 0) + 1);
+  const area = { id, pageKey: addPageKey(), indexes: indexes.slice(0, 2000), selector: String(data.selector || "").slice(0, 1000), label: String(data.label || "").slice(0, 120),
     text: String(data.text || "").slice(0, 240), words: Number(data.words) || 0, how: data.how === "pick" ? "pick" : "drag" };
+  a.areas = (a.areas || []).filter(existing => existing.id !== id && !(area.selector && existing.selector === area.selector && existing.pageKey === area.pageKey));
+  a.areas.push(area);
+  while (a.areas.length > AREA_LIMIT) {
+    const dropped = a.areas.shift();
+    explorePost({ type: "area-clear", id: dropped.id });
+  }
   if (a.picking) exploreSetPicking(false);
   renderExploreSide();
   const list = $("exploreList");
   if (list) list.scrollTop = 0;
 }
-function exploreAreaAction(kind) {
+function exploreAreaRemove(id) {
   const a = state.add;
-  const area = a.area;
-  if (!area || !a.page || area.pageKey !== addPageKey()) return;
+  a.areas = (a.areas || []).filter(area => !(id === "all" || area.id === Number(id)));
+  explorePost({ type: "area-clear", id: id === "all" ? 0 : Number(id) });
+  renderExploreSide();
+}
+function exploreAreaAction(kind, which) {
+  const a = state.add;
+  if (!a.page) return;
+  const here = exploreAreasHere();
+  const chosen = which === "all" ? here : here.filter(area => area.id === Number(which));
+  if (!chosen.length) return;
   if (kind === "select") {
-    const added = addSelectKeys(area.indexes.map(index => L.urlKey(a.page.links[index].url)), area.indexes.map(index => a.page.links[index]));
+    const indexes = Array.from(new Set([].concat(...chosen.map(area => area.indexes || []))));
+    const added = addSelectKeys(indexes.map(index => L.urlKey(a.page.links[index].url)), indexes.map(index => a.page.links[index]));
     exploreMarkPicked();
     renderExploreSide();
     addSaveDraft();
-    showToast(added ? plural(added, "link", "links") + " selected from the area." : "Those links were already selected.");
+    showToast(added ? plural(added, "link", "links") + " selected from " + (chosen.length > 1 ? chosen.length + " areas." : "the area.") : "Those links were already selected.");
     return;
   }
-  if (!area.selector) return;
-  if (area.selector.length > RULE_LIMITS.selector) { showToast("That part of the page has no short selector. Pick a smaller or more distinct part."); return; }
+  const selectors = chosen.map(area => area.selector).filter(Boolean);
+  if (!selectors.length) return;
   const key = addPageKey();
   const rules = addRulesFor(key);
+  const names = chosen.length > 1 ? chosen.length + " parts" : "“" + chosen[0].label + "”";
   if (kind === "watch") {
-    rules.include = area.selector;
-    rules.ignore = rules.ignore.filter(selector => selector !== area.selector);
+    // Several parts are watched together: a CSS selector list matches all of them.
+    const combined = selectors.join(", ");
+    if (combined.length > RULE_LIMITS.selector) { showToast("Those parts have no short enough selector together. Pick fewer or more distinct parts."); return; }
+    rules.include = combined;
+    rules.ignore = rules.ignore.filter(selector => selectors.indexOf(selector) < 0);
     const previous = a.at > 0 ? a.pages.get(L.urlKey(a.history[a.at - 1])) : null;
     const pageItem = addItem({ url: a.page.url, title: a.page.title, parentUrl: previous ? previous.url : "", parentTitle: previous ? previous.title : "" });
     if (pageItem && !a.picked.has(pageItem.key)) addToggle(pageItem, true);
-    showToast("This page will be compared only within “" + area.label + "”. The page is selected for monitoring.");
+    showToast("This page will be compared only within " + names + ". The page is selected for monitoring.");
   } else {
-    if (rules.ignore.length >= RULE_LIMITS.ignore) { showToast("A page can ignore at most " + RULE_LIMITS.ignore + " parts."); return; }
-    if (rules.ignore.indexOf(area.selector) < 0) rules.ignore.push(area.selector);
-    if (rules.include === area.selector) rules.include = "";
-    showToast("“" + area.label + "” will be left out when this page is checked.");
+    const fresh = selectors.filter(selector => selector.length <= RULE_LIMITS.selector && rules.ignore.indexOf(selector) < 0);
+    if (rules.ignore.length + fresh.length > RULE_LIMITS.ignore) { showToast("A page can ignore at most " + RULE_LIMITS.ignore + " parts."); return; }
+    rules.ignore = rules.ignore.concat(fresh);
+    if (selectors.indexOf(rules.include) >= 0) rules.include = "";
+    showToast(names.charAt(0).toUpperCase() + names.slice(1) + " will be left out when this page is checked.");
   }
-  a.area = null;
-  explorePost({ type: "area-clear" });
+  chosen.forEach(area => explorePost({ type: "area-clear", id: area.id }));
+  a.areas = a.areas.filter(area => chosen.indexOf(area) < 0);
   addSetRules(key, rules);
   renderExploreSide();
 }
@@ -7546,7 +7865,7 @@ async function crawlStart(startUrl, level, prefix) {
         const job = crawl.queue.shift();
         active += 1;
         crawl.current = job.url;
-        addReadPage(job.url).then(data => {
+        addReadPage(job.url, { mode: "links" }).then(data => {
           if (data.kind !== "page") {
             if (data.kind === "error") { crawl.failed += 1; crawl.failures.push(displayUrl(job.url) + " (" + (data.message || "error") + ")"); }
             return;
@@ -7633,7 +7952,7 @@ async function findSimilar(urlId) {
   let start = "";
   for (const url of starts) {
     try {
-      const page = await addReadPage(url);
+      const page = await addReadPage(url, { mode: "links" });
       if (page.kind === "page" && (page.links || []).filter(link => !link.chrome).length >= 3) { start = page.url || url; break; }
     } catch (_) { /* try the next place it may be listed */ }
   }
@@ -9003,10 +9322,20 @@ document.querySelector(".add-explore").addEventListener("click", event => {
   const tab = event.target.closest("[data-explore-tab]");
   if (tab) { a.tab = ["page", "suggested"].indexOf(tab.dataset.exploreTab) >= 0 ? tab.dataset.exploreTab : "selected"; return renderExploreSide(); }
   if (event.target.closest("[data-explore-pick]")) return exploreSetPicking(!a.picking), renderExploreSide();
-  if (event.target.closest("[data-area-clear]")) { a.area = null; explorePost({ type: "area-clear" }); return renderExploreSide(); }
-  if (event.target.closest("[data-area-select]")) return exploreAreaAction("select");
-  if (event.target.closest("[data-area-watch]")) return exploreAreaAction("watch");
-  if (event.target.closest("[data-area-ignore]")) return exploreAreaAction("ignore");
+  if (event.target.closest("[data-area-clear]")) return exploreAreaRemove("all");
+  const areaRemove = event.target.closest("[data-area-remove]");
+  if (areaRemove) return exploreAreaRemove(areaRemove.dataset.areaRemove);
+  const areaButton = event.target.closest("[data-area-select], [data-area-watch], [data-area-ignore]");
+  if (areaButton) {
+    const kind = areaButton.hasAttribute("data-area-select") ? "select" : areaButton.hasAttribute("data-area-watch") ? "watch" : "ignore";
+    return exploreAreaAction(kind, areaButton.getAttribute("data-area-" + kind));
+  }
+  const viewButton = event.target.closest("[data-explore-view]");
+  if (viewButton && a.page) {
+    // A view the person picks is kept for the rest of this site.
+    a.viewByHost[exploreHost(a.page.url)] = viewButton.dataset.exploreView;
+    return exploreRender(viewButton.dataset.exploreView, "");
+  }
   const ruleRemove = event.target.closest("[data-rule-remove]");
   if (ruleRemove) {
     const key = addPageKey();

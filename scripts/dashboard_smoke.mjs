@@ -446,6 +446,25 @@ try {
       await explorePage.waitForTimeout(300);
       check(await explorePage.evaluate(() => state.add.picked.size) === 1, "Shift-click inside the explored page selects the link");
       check(await frame.evaluate(() => document.querySelectorAll("[data-cs-picked]").length) === 1, "the selected link is marked in the page");
+      // Two Shift-drags, one around each link: two areas, both kept and numbered.
+      const frameBox = await (await explorePage.$("#exploreFrame")).boundingBox();
+      for (const id of ["#l0", "#l1"]) {
+        const r = await (await frame.$(id)).boundingBox();
+        await explorePage.keyboard.down("Shift");
+        await explorePage.mouse.move(r.x - 6, r.y - 6);
+        await explorePage.mouse.down();
+        await explorePage.mouse.move(r.x + r.width / 2, r.y + r.height / 2, { steps: 3 });
+        await explorePage.mouse.move(r.x + r.width + 6, r.y + r.height + 6, { steps: 3 });
+        await explorePage.mouse.up();
+        await explorePage.keyboard.up("Shift");
+        await explorePage.waitForTimeout(250);
+      }
+      const areas = await explorePage.evaluate(() => state.add.areas.map(area => area.indexes.length));
+      check(areas.length === 2 && areas.every(count => count === 1) && !!frameBox, "two Shift-drags keep two areas (" + JSON.stringify(areas) + ")");
+      check(await frame.evaluate(() => document.querySelectorAll("[data-cs-area]").length) === 2, "both areas stay marked in the page");
+      await explorePage.click('[data-area-select="all"]');
+      check(await explorePage.evaluate(() => state.add.picked.size) === 2, "one click selects the links in every area");
+      check(await explorePage.isVisible("#exploreViewBar") && await explorePage.isVisible('[data-explore-view="live"]'), "the page, live and reading views can be switched");
       await frame.click("#l1");
       const navigated = await explorePage.waitForFunction(() => /guidance/.test(document.getElementById("exploreAddress").textContent), null, { timeout: 10000 }).then(() => true, () => false);
       check(navigated, "a plain click opens the linked page in the explorer");
