@@ -643,17 +643,18 @@ async def _screenshot(page: _Page, evaluate) -> bytes | None:
 
 
 async def _render(url: str, binary: str, **options) -> Rendered:
-    from pydoll.browser.chrome import Chrome
-    from pydoll.browser.options import Options
+    # Pydoll 3 exposes Chrome/ChromiumOptions at the package level. Its
+    # start() returns the initial Tab directly; _drive still uses the same
+    # raw CDP commands and scope checks through _PydollPage.
+    from pydoll import Chrome, ChromiumOptions
 
-    chrome_options = Options()
+    chrome_options = ChromiumOptions()
     if binary:
         chrome_options.binary_location = binary
     for argument in launch_arguments(binary):
         chrome_options.add_argument(argument)
     async with Chrome(options=chrome_options) as browser:
-        await browser.start()
-        page = await browser.get_page()
+        page = await browser.start()
         return await _drive(_PydollPage(page), url, **options)
 
 
