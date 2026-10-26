@@ -1323,13 +1323,15 @@
   }
 
   // Render the redline sheet. Deleted text is struck, inserted text underlined,
-  // and every changed line carries a change bar in the margin.
+  // and every changed line carries a change bar in the margin. Runs of lines
+  // that are rows of a Markdown table (how the extractor writes page tables)
+  // are drawn as a real table, with the changed rows marked in place.
   function renderRedline(diffText) {
     const model = redlineRows(parseUnifiedDiff(diffText));
     if (!model.rows.length) {
       return { html: '<p class="rl-empty">No line-level text differences were recorded for this event.</p>', stats: model.stats, summary: redlineSummary(model.stats), truncated: model.truncated };
     }
-    const html = model.rows.map(row => {
+    const lineHtml = row => {
       if (row.kind === "gap") {
         return '<div class="rl-gap" role="separator">' + esc(plural(row.count, "unchanged line", "unchanged lines")) + (row.leading ? " before this change" : "") + "</div>";
       }
@@ -1342,24 +1344,160 @@
       const tag = row.kind === "del" ? "del" : "ins";
       const label = row.kind === "del" ? "Removed line" : "Added line";
       return '<div class="rl-line rl-changed rl-' + row.kind + '">' + gutter + '<span class="rl-text"><' + tag + ' aria-label="' + label + '">' + (esc(row.text) || "&nbsp;") + "</" + tag + "></span></div>";
-    }).join("");
+    };
+    let html = "";
+    let index = 0;
+    const rows = model.rows;
+    while (index < rows.length) {
+      if (redlineTableRow(rows[index])) {
+        let end = index;
+        while (end < rows.length && redlineTableRow(rows[end])) end++;
+        const run = rows.slice(index, end);
+        // One stray line that merely starts and ends with a pipe stays a line.
+        if (run.length >= 2 || run.some(row => row.kind !== "ctx")) {
+          html += renderRedlineTable(run);
+          index = end;
+          continue;
+        }
+      }
+      html += lineHtml(rows[index]);
+      index++;
+    }
     const tail = model.truncated
       ? '<div class="rl-gap rl-truncated" role="note">The stored diff stops after ' + esc(model.truncatedAfter) + " lines. Open the evidence file for the full before and after text.</div>"
       : "";
     return { html: html + tail, stats: model.stats, summary: redlineSummary(model.stats), truncated: model.truncated };
   }
 
+  /* ---------- Tables inside a diff ---------- */
+
+  // "| a | b |": a row of a Markdown table as the extractor writes it.
+  function isTableLine(text) {
+    const value = String(text == null ? "" : text).trim();
+    return value.length >= 3 && value.charAt(0) === "|" && value.charAt(value.length - 1) === "|" && splitMarkdownTableRow(value).length >= 2;
+  }
+  function segmentsSide(segments, want) {
+    return (segments || []).filter(segment => segment.type === "same" || segment.type === want).map(segment => segment.text).join("");
+  }
+  function redlineTableRow(row) {
+    if (!row || row.kind === "gap") return false;
+    if (row.kind === "edit") return isTableLine(segmentsSide(row.segments, "del")) && isTableLine(segmentsSide(row.segments, "add"));
+    return isTableLine(row.text);
+  }
+  // A header row whose only text is in its first cell is the table's title
+  // ("| Recently Approved and Implemented | | | |"): it spans the table.
+  function titleOnly(cells) {
+    return cells.length > 1 && String(cells[0] || "").trim() && cells.slice(1).every(cell => !String(cell || "").trim());
+  }
+  function tableCellsHtml(cells, columns, tag, wrap) {
+    if (tag === "th" && titleOnly(cells)) return "<th colspan=\"" + columns + "\" class=\"rl-cell rl-title\">" + wrap(cells[0]) + "</th>";
+    let html = "";
+    for (let k = 0; k < columns; k++) {
+      const cell = k < cells.length ? cells[k] : "";
+      html += "<" + tag + ' class="rl-cell">' + (String(cell).trim() ? wrap(cell) : "") + "</" + tag + ">";
+    }
+    return html;
+  }
+  function renderRedlineTable(run) {
+    // Every row as cells; an edited row keeps both sides.
+    const parsed = run.map(row => {
+      if (row.kind === "edit") {
+        const before = splitMarkdownTableRow(segmentsSide(row.segments, "del"));
+        const after = splitMarkdownTableRow(segmentsSide(row.segments, "add"));
+        return { row, before, after, separator: isMarkdownTableSeparator(before) && isMarkdownTableSeparator(after) };
+      }
+      const cells = splitMarkdownTableRow(row.text);
+      return { row, cells, separator: isMarkdownTableSeparator(cells) };
+    });
+    const columns = Math.max(1, ...parsed.map(entry => Math.max((entry.cells || []).length, (entry.before || []).length, (entry.after || []).length)));
+    // The row just above a separator is the header, as in Markdown.
+    const header = new Set();
+    parsed.forEach((entry, k) => { if (entry.separator && k > 0 && !parsed[k - 1].separator) header.add(k - 1); });
+    const plain = text => esc(text);
+    const gutter = number => '<td class="rl-no" aria-hidden="true">' + (number == null ? "" : esc(number)) + "</td>";
+    let body = "";
+    parsed.forEach((entry, k) => {
+      const row = entry.row;
+      if (entry.separator && row.kind === "ctx") return;
+      const tag = header.has(k) ? "th" : "td";
+      if (row.kind === "ctx") {
+        body += '<tr class="rl-tr' + (tag === "th" ? " is-head" : "") + '">' + gutter(row.newLine) + tableCellsHtml(entry.cells, columns, tag, plain) + "</tr>";
+      } else if (row.kind === "del" || row.kind === "add") {
+        const mark = row.kind === "del" ? "del" : "ins";
+        const label = row.kind === "del" ? "Removed row" : "Added row";
+        body += '<tr class="rl-tr is-changed is-' + row.kind + (tag === "th" ? " is-head" : "") + '" aria-label="' + label + '">' + gutter(row.kind === "del" ? null : row.newLine) +
+          tableCellsHtml(entry.cells, columns, tag, text => "<" + mark + ">" + esc(text) + "</" + mark + ">") + "</tr>";
+      } else if (entry.before.length === entry.after.length) {
+        // The same columns on both sides: mark the edit inside each changed cell.
+        let cellsHtml = "";
+        if (tag === "th" && titleOnly(entry.before) && titleOnly(entry.after)) {
+          cellsHtml = '<th colspan="' + columns + '" class="rl-cell rl-title">' + renderSegments(wordDiff(entry.before[0], entry.after[0])) + "</th>";
+        } else {
+          for (let c = 0; c < columns; c++) {
+            const before = c < entry.before.length ? entry.before[c] : "";
+            const after = c < entry.after.length ? entry.after[c] : "";
+            const changed = before !== after;
+            cellsHtml += "<" + tag + ' class="rl-cell' + (changed ? " rl-cell-changed" : "") + '">' + (changed ? renderSegments(wordDiff(before, after)) : esc(after)) + "</" + tag + ">";
+          }
+        }
+        body += '<tr class="rl-tr is-changed is-edit' + (tag === "th" ? " is-head" : "") + '">' + gutter(row.newLine) + cellsHtml + "</tr>";
+      } else {
+        // A column was added or removed: show the old row struck and the new row underlined.
+        body += '<tr class="rl-tr is-changed is-del" aria-label="Removed row">' + gutter(null) + tableCellsHtml(entry.before, columns, tag, text => "<del>" + esc(text) + "</del>") + "</tr>" +
+          '<tr class="rl-tr is-changed is-add" aria-label="Added row">' + gutter(row.newLine) + tableCellsHtml(entry.after, columns, tag, text => "<ins>" + esc(text) + "</ins>") + "</tr>";
+      }
+    });
+    return '<div class="rl-table-wrap"><table class="rl-table"><tbody>' + body + "</tbody></table></div>";
+  }
+
   // Plain unified diff for technical review (HTML source and raw text diffs).
-  function renderUnifiedDiff(diffText) {
+  // With { tables: true } (the extracted-text diff) runs of Markdown table rows
+  // are laid out as a table, each row keeping its +, - or blank marker.
+  function renderUnifiedDiff(diffText, options) {
     const text = String(diffText || "");
     if (!text.trim()) return '<p class="rl-empty">No differences were recorded in this evidence file.</p>';
-    return '<div class="code-diff">' + text.split(/\r?\n/).map(line => {
-      const cls = line.startsWith("+++") || line.startsWith("---") ? "cd-file"
-        : line.startsWith("@@") ? "cd-hunk"
-        : line.startsWith("+") ? "cd-add"
-        : line.startsWith("-") ? "cd-del" : "";
-      return '<div class="cd-line ' + cls + '">' + (esc(line) || "&nbsp;") + "</div>";
-    }).join("") + "</div>";
+    const lines = text.split(/\r?\n/);
+    const tables = !!(options && options.tables);
+    const kindOf = line => line.startsWith("+++") || line.startsWith("---") ? "cd-file"
+      : line.startsWith("@@") ? "cd-hunk"
+      : line.startsWith("+") ? "cd-add"
+      : line.startsWith("-") ? "cd-del" : "";
+    const tableLine = line => {
+      const kind = kindOf(line);
+      if (kind === "cd-file" || kind === "cd-hunk") return false;
+      const body = /^[ +-]/.test(line) ? line.slice(1) : line;
+      return isTableLine(body);
+    };
+    let html = "";
+    let index = 0;
+    while (index < lines.length) {
+      if (tables && tableLine(lines[index])) {
+        let end = index;
+        while (end < lines.length && tableLine(lines[end])) end++;
+        if (end - index >= 2) {
+          const run = lines.slice(index, end).map(line => {
+            const marker = /^[ +-]/.test(line) ? line.charAt(0) : " ";
+            const cells = splitMarkdownTableRow(/^[ +-]/.test(line) ? line.slice(1) : line);
+            return { marker, cells, kind: kindOf(line), separator: isMarkdownTableSeparator(cells) };
+          });
+          const columns = Math.max(1, ...run.map(entry => entry.cells.length));
+          const header = new Set();
+          run.forEach((entry, k) => { if (entry.separator && k > 0 && !run[k - 1].separator) header.add(k - 1); });
+          html += '<div class="cd-table-wrap"><table class="cd-table"><tbody>' + run.map((entry, k) => {
+            if (entry.separator && !entry.kind) return "";
+            const tag = header.has(k) ? "th" : "td";
+            return '<tr class="cd-tr ' + entry.kind + '"><td class="cd-mark" aria-hidden="true">' + (entry.marker === " " ? "" : esc(entry.marker)) + "</td>" +
+              tableCellsHtml(entry.cells, columns, tag, cell => esc(cell)) + "</tr>";
+          }).join("") + "</tbody></table></div>";
+          index = end;
+          continue;
+        }
+      }
+      const line = lines[index];
+      html += '<div class="cd-line ' + kindOf(line) + '">' + (esc(line) || "&nbsp;") + "</div>";
+      index++;
+    }
+    return '<div class="code-diff">' + html + "</div>";
   }
 
   /* ---------- Markdown tables in extracted text ---------- */
@@ -3722,7 +3860,7 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     timelineModel, timelineGapWords, TIMELINE_KINDS, healthInsights, healthLight, botCheckWait, BOT_CHECK_GRACE_HOURS,
     fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, regulatorFor, jurisdictionForHost, hostOf, pageKind, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,
-    parseUnifiedDiff, tokenize, wordDiff, similarity, redlineRows, redlineSummary, renderRedline, renderUnifiedDiff,
+    parseUnifiedDiff, tokenize, wordDiff, similarity, redlineRows, redlineSummary, renderRedline, renderUnifiedDiff, isTableLine,
     splitMarkdownTableRow, isMarkdownTableSeparator, relativeTime, dayHeading,
     foldWhitespace, inlineMarkdown, xlsxFirstSheetRows, normalizeForMatch, changedPartOffsets, tableCellsMatch,
     canonicalUrl, urlKey, scoutBucket, scoutBuckets, scoutSentence, scoutReviewIssue, nextScoutSweep, scoutStrength, scoutGroups,

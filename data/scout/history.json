@@ -1,5 +1,70 @@
 [
  {
+  "finished_at": "2026-10-26T10:16:03Z",
+  "regulators": [
+   {
+    "id": "fed",
+    "new": 0,
+    "observed": 124,
+    "requests": 5,
+    "status": "COMPLETE"
+   },
+   {
+    "id": "osfi",
+    "new": 12,
+    "observed": 3767,
+    "requests": 16,
+    "status": "COMPLETE"
+   },
+   {
+    "id": "eba",
+    "new": 7,
+    "observed": 32,
+    "requests": 5,
+    "status": "COMPLETE"
+   },
+   {
+    "id": "boe-pra",
+    "new": 3,
+    "observed": 100,
+    "requests": 3,
+    "status": "COMPLETE"
+   },
+   {
+    "id": "apra",
+    "new": 4,
+    "observed": 10,
+    "requests": 6,
+    "status": "COMPLETE"
+   },
+   {
+    "id": "banxico",
+    "new": 0,
+    "observed": 323,
+    "requests": 3,
+    "status": "COMPLETE"
+   },
+   {
+    "id": "bcra",
+    "new": 0,
+    "observed": 17,
+    "requests": 2,
+    "status": "COMPLETE"
+   },
+   {
+    "id": "ffiec",
+    "new": 0,
+    "observed": 28,
+    "requests": 3,
+    "status": "COMPLETE"
+   }
+  ],
+  "started_at": "2026-10-26T10:13:37Z",
+  "status": "COMPLETE",
+  "sweep_id": "20261026T101337Z-cc8b56",
+  "trigger": "scheduled"
+ },
+ {
   "finished_at": "2026-10-26T05:58:43Z",
   "regulators": [
    {

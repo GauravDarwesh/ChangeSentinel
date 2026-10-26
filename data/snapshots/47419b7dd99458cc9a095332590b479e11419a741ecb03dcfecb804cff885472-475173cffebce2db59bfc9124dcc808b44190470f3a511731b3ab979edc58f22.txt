@@ -1,0 +1,81 @@
+Federal Financial Institutions Examination Council Report of Assets and Liabilities of a Non-U.S. Branch that is Managed or Controlled by a U.S. Branch or Agency of a Foreign (Non-U.S.) Bank—FFIEC 002S OMB Number 7100-0032 Approval expires September 30, 2028 Page 1 of 3 Board of Governors of the Federal Reserve System Report at the close of business September 30, 2026 (20260930) (RCON 9999) This report is required by law 12 U.S.C. § 3105(c)(2); 12 U.S.C.
+§ 1817(a); and 12 U.S.C. § 3102(b).
+Please read carefully "Instructions for Preparation of the Report of Assets and Liabilities of a Non-U.S. Branch that is Managed or Controlled by a U.S. Branch or Agency of a Foreign (Non-U.S.) Bank." Return original and 2 copies to the Federal Reserve Bank in whose district the branch or agency is located.
+FDIC-insured branches should file one copy with the appropriate FDIC Regional Office (Supervision).
+Public reporting burden associated with the FFIEC 002S is estimated to average 6 hours per response including time to gather and maintain data in the required form and to review instructions and complete the information collection. A Federal agency may not conduct or sponsor, and an organization (or a person) is not required to respond to a collection of information, unless it displays a currently valid OMB control number. Comments regarding this burden estimate or any other aspect of this information collection, including suggestions for reducing the burden, may be sent to Secretary, Board of Governors of the Federal Reserve System, 20th and C Streets, NW, Washington, DC 20551 and to Office of Information and Regulatory Affairs, Office of Management and Budget, Washington, DC 20503.
+09/2026
+THE FFIEC REGARDS THE INFORMATION REPORTED IN THIS SUPPLEMENT AS CONFIDENTIAL.
+SUPPLEMENT
+Report of Assets and Liabilities
+FFIEC 002S
+Page 2 of 3
+Non-U.S. Branch Licensed in
+by Legal Title of U.S. Branch or Agency (TEXT 9010)
+Country (TEXT 9031) at close of business on
+Month / Day / Year
+that is managed or controlled
+| Item | Line item | | |
+| --- | --- | --- | --- |
+| | Please read instructions carefully. | Total Reporting Non-U.S. Branch | |
+| | Dollar Amounts in Thousands | CRCB | Amount |
+| | Assets | | |
+| 1. | 1. Claims on U.S.-domiciled offices of related depository institutions denominated in U.S. dollars.. | 5527 | |
+| | 2. Claims on all other U.S. addressees (including related nondepository institutions) denominated in U.S. dollars: | | |
+| | a. Balances due from nonrelated depository institutions: | | |
+| 2.a.(1) | (1) With remaining maturities of one day or under continuing contract ("overnight") | 5528 | |
+| 2.a.(2) | (2) All other maturities ("term") | 5529 | |
+| | b. Securities not held for trading: | | |
+| 2.b.(1) | (1) U.S. Treasury securities and U.S. Government agency and corporation obligations | 1918 | |
+| 2.b.(2) | (2) All other securities | 0373 | |
+| | c. Loans held for investment and held for sale: | | |
+| 2.c.(1) | (1) Loans secured by real estate | 1410 | |
+| 2.c.(2) | (2) Loans to nonrelated depository institutions in the United States | 5530 | |
+| 2.c.(3) | (3) Commercial and industrial loans | 1763 | |
+| 2.c.(4) | (4) All other loans | 5531 | |
+| 2.c.(5) | (5) Less: Any unearned income on loans reflected in items 2.c.(1) through 2.c.(4) above | 2123 | |
+| 2.c.(6) | (6) Total loans held for investment and held for sale (sum of items 2.c.(1) through 2.c.(4) minus item 2.c.(5)) | 2122 | |
+| 2.d. | d. All other claims (including trading assets) | 5532 | |
+| 2.e. | e. Total claims on U.S. addressees other than related depository institutions, denominated in U.S. dollars (sum of items 2.a, 2.b, 2.c.(6), and 2.d) | 5533 | |
+| 3. | 3. Claims on all U.S. addressees denominated in currencies other than U.S. dollars | 5534 | |
+| | 4. Claims on home-country addressees denominated in any currency: | | |
+| 4.a. | a. Related depository institutions | 3173 | |
+| 4.b. | b. Nonrelated depository institutions | 5536 | |
+| 4.c. | c. Home-country government and official institutions (including home-country central bank) | 5537 | |
+| 4.d. | d. All other home-country addressees | 5538 | |
+| 5. | 5. Claims on all other non-U.S. addressees denominated in any currency | 5539 | |
+| 6. | 6. All other assets | 2151 | |
+| 7. | 7. Total assets (sum of items 1, 2.e, 3, 4, 5, and 6) | 2170 | |
+| | Liabilities | | |
+| 8. | 8. Liabilities to U.S.-domiciled offices of related depository institutions denominated in U.S. dollars | 5540 | |
+| | 9. Liabilities to all other U.S. addressees (including related nondepository institutions) denomi- nated in U.S. dollars: | | |
+| | a. Liabilities to nonrelated depository institutions in the U.S.: | | |
+| 9.a.(1) | (1) With remaining maturities of one day or under continuing contract ("overnight") | 5541 | |
+| 9.a.(2) | (2) All other maturities ("term") | 5542 | |
+| | b. Liabilities to all other U.S. addressees denominated in U.S. dollars: | | |
+| 9.b.(1) | (1) With remaining maturities of one day or under continuing contract ("overnight") | 5544 | |
+| 9.b.(2) | (2) All other maturities ("term") | 5545 | |
+| 10. | 10. Liabilities to all U.S. addressees denominated in currencies other than U.S. dollars | 5546 | |
+| | 11. Liabilities to home-country addressees denominated in any currency: | | |
+| 11.a. | a. Related depository institutions | 3174 | |
+| 11.b. | b. Nonrelated depository institutions | 5548 | |
+| 11.c. | c. Home-country government and official institutions (including home-country central bank) | 5549 | |
+| 11.d. | d. All other home-country addressees | 5550 | |
+| 12. | 12. Liabilities to all other non-U.S. addressees denominated in any currency | 5551 | |
+| 13. | 13. All other liabilities | 2916 | |
+| 14. | 14. Total liabilities (sum of items 8 through 13) | 2950 | |
+06/2018
+FFIEC 002S
+Page 3 of 3 Non-U.S. Branch Licensed in Country Memoranda—Transactions with U.S. Addressees Denominated in U.S. Dollars Dollar Amounts in Thousands CRCB Amount
+1. Amount included in items 1 and 2.d above for U.S. Government securities purchased under agreements to resell: a. With original maturities of one day or under continuing contract ("overnight")..................... 5552 M1.a.
+b. All other maturities ("term")...................................................................................... 5553 M1.b.
+2. Amount included in items 8 and 9 above for U.S. Government securities sold under agreements to repurchase: a. With depository institutions in the U.S. (related and nonrelated) (included in items 8 and 9.a. above):
+(1) With original maturities of one day or under continuing contract ("overnight")................ 5554 M.2.a.(1)
+(2) All other maturities ("term") ................................................................................ 5555 M.2.a.(2) b. With all other U.S. addressees (included in item 9.b above):
+(1) With original maturities of one day or under continuing contract ("overnight")................ 5556 M.2.b.(1)
+(2) All other maturities ("term")................................................................................. 5557 M.2.b.(2)
+3. Amount included in item 9.b above for negotiable certificates of deposit issued by the reporting foreign branch: a. Held in custody by the reporting foreign branch or by the managing U.S. branch or agency .. 5558 M.3.a.
+b. All other negotiable certificates of deposit................................................................... 5559 M.3.b.
+4. Amount included in item 9.b above for deposits that are guaranteed payable in the U.S. or for which the depositor is guaranteed payment by a U.S. office: a. With original maturities of one day or under continuing contract ("overnight")..................... 5560 M.4.a.
+b. All other maturities ("term")...................................................................................... 5561 M.4.b.
+Does this supplement include data covering other related U.S. agencies or branches? ..................
+If yes, list the city and state of each other related U.S. agency and branch included in the report: City (TEX1 9130) State (TEX1 9200) City (TEX2 9130) State (TEX2 9200) City (TEX3 9130) State (TEX3 9200) City (TEX4 9130) State (TEX4 9200) City (TEX5 9130) State (TEX5 9200) City (TEX6 9130) State (TEX6 9200) 06/2012 CRCB 6862 Yes No

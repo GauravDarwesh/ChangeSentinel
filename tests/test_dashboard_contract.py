@@ -1062,7 +1062,8 @@ class TestCheckeredFrameGlints(unittest.TestCase):
         self.assertRegex(css, r"\.frame-glints\s*\{[^}]*position:\s*fixed;")
         self.assertIn("inset: 0;", css)
         self.assertIn("z-index: 2;", css)
-        self.assertIn("html.cs-locked .frame-glints { z-index: 10001; }", css)
+        self.assertIn("html.cs-locked .frame-glints { display: none; }", css)
+        self.assertNotIn("z-index: 10001", css)
         self.assertIn("@media (min-width: 981px)", css)
         self.assertIn("body { background-image: linear-gradient(var(--led-frame), var(--led-frame)); }", css)
         self.assertIn("@media (max-width: 980px)", css)
@@ -1078,62 +1079,42 @@ class TestCheckeredFrameGlints(unittest.TestCase):
         self.assertIn('css.getPropertyValue("--idle-hi")', script)
         self.assertIn("CSLib.fbm(col * .26 + t * .22, row * .26 + t * .08, t * .11)", script)
         self.assertIn("Math.pow(wave, 1.5) * .92", script)
-        self.assertIn("function edgeAnchors(length)", script)
-        self.assertIn("if (end - position > 1) anchors.push(position);", script)
-        self.assertIn("function paintTile(x, y, col, row, t, tileWidth, tileHeight)", script)
-        self.assertIn("const tileWidthAt = col => col < columns - 1", script)
-        self.assertIn("const tileHeightAt = row => row < rows - 1", script)
-        self.assertIn("const xPositions = edgeAnchors(width);", script)
-        self.assertIn("const yPositions = edgeAnchors(height);", script)
-        self.assertIn("const xAt = col => xPositions[col];", script)
-        self.assertIn("const yAt = row => yPositions[row];", script)
-        self.assertIn("const right = xAt(columns - 1);", script)
-        self.assertIn("const bottom = yAt(rows - 1);", script)
-        self.assertIn("const rightBand = width - cell;", script)
-        self.assertIn("const bottomBand = height - cell;", script)
-        self.assertIn("ctx.clearRect(0, 0, width, cell);", script)
-        self.assertIn("ctx.clearRect(0, bottomBand, width, cell);", script)
-        self.assertIn("ctx.clearRect(rightBand, cell, cell, Math.max(0, height - cell * 2));", script)
-        self.assertIn("The one-pixel seams", script)
-        self.assertIn("paintTile(x, 1, spatialCol, 0, t, tileWidth, tile);", script)
-        self.assertIn("paintTile(x, bottom, spatialCol, (bottom - 1) / cell, t, tileWidth, tile);", script)
-        self.assertIn("paintTile(1, y, 0, spatialRow, t, tile, tileHeight);", script)
-        self.assertIn("paintTile(right, y, (right - 1) / cell, spatialRow, t, tile, tileHeight);", script)
+        # Equal tiles per side, edge to edge (no seam lines), hidden while locked.
+        self.assertIn("function cuts(length)", script)
+        self.assertIn("const count = Math.max(1, Math.round(span / cell));", script)
+        self.assertIn("const thickness = cell - 1;", script)
+        self.assertIn("paintTile(x, 1, spatialCol, 0, t, w, thickness);", script)
+        self.assertIn("paintTile(x, bottom, spatialCol, (bottom - 1) / cell, t, w, thickness);", script)
+        self.assertIn("paintTile(1, y, 0, spatialRow, t, thickness, end - y);", script)
+        self.assertIn("paintTile(right, y, (right - 1) / cell, spatialRow, t, thickness, end - y);", script)
+        self.assertIn('!document.documentElement.classList.contains("cs-locked")', script)
+        self.assertIn('attributeFilter: ["class"]', script)
         self.assertIn("window.requestAnimationFrame(paint)", script)
         self.assertIn('attributeFilter: ["data-theme"]', script)
         self.assertNotIn("Math.random()", script)
         self.assertNotIn("frameTileBreathe", script)
 
-    def test_edge_tile_anchors_cover_irregular_viewports_without_overlap(self):
-        cell, tile = 20, 19
+    def test_edge_tiles_are_equal_and_seamless_at_irregular_viewports(self):
+        cell = 20
 
-        def edge_anchors(length):
-            end = length - cell + 1
-            anchors = [position for position in range(1, end, cell)
-                       if end - position > 1]
-            if not anchors or anchors[-1] != end:
-                anchors.append(end)
-            return anchors
+        def cuts(length, dpr):
+            span = length - 2
+            count = max(1, round(span / cell))
+            step = span / count
+            return [round((1 + i * step) * dpr) / dpr for i in range(count + 1)]
 
-        # Include the awkward remainder of two pixels that previously left the
-        # right/bottom LED mostly outside the frame, as well as other remainders.
-        for width, height in ((1422, 722), (1438, 718), (1441, 901), (1459, 899), (1281, 721), (1440, 900)):
-            with self.subTest(width=width, height=height):
-                x_anchors = edge_anchors(width)
-                y_anchors = edge_anchors(height)
-                self.assertEqual(x_anchors[-1], width - cell + 1)
-                self.assertEqual(y_anchors[-1], height - cell + 1)
-                self.assertTrue(all(1 <= x and x + tile <= width for x in x_anchors))
-                self.assertTrue(all(1 <= y and y + tile <= height for y in y_anchors))
-                self.assertTrue(all(b > a for a, b in zip(x_anchors, x_anchors[1:])))
-                self.assertTrue(all(b > a for a, b in zip(y_anchors, y_anchors[1:])))
-                # Shorten the regular tile immediately before the pinned edge tile
-                # when necessary, preserving a one- or two-pixel separator.
-                x_widths = [min(tile, b - a - 1) for a, b in zip(x_anchors, x_anchors[1:])]
-                y_heights = [min(tile, b - a - 1) for a, b in zip(y_anchors, y_anchors[1:])]
-                self.assertTrue(all(size > 0 for size in x_widths + y_heights))
-                self.assertLessEqual(max(b - (a + size) for a, size, b in zip(x_anchors, x_widths, x_anchors[1:])), 2)
-                self.assertLessEqual(max(b - (a + size) for a, size, b in zip(y_anchors, y_heights, y_anchors[1:])), 2)
+        for dpr in (1, 2):
+            for width, height in ((1422, 722), (1438, 718), (1441, 901), (1459, 899), (1281, 721), (1440, 900)):
+                with self.subTest(width=width, height=height, dpr=dpr):
+                    for length in (width, height):
+                        edges = cuts(length, dpr)
+                        sizes = [b - a for a, b in zip(edges, edges[1:])]
+                        # The ring runs from 1px in to 1px in, with nothing left over.
+                        self.assertEqual(edges[0], 1)
+                        self.assertEqual(edges[-1], length - 1)
+                        # Every tile on a side has the same size (to one device pixel) and is close to a grid cell.
+                        self.assertLessEqual(max(sizes) - min(sizes), 1 / dpr + 1e-9)
+                        self.assertTrue(all(abs(size - cell) <= 1.5 for size in sizes))
 
 
 class TestLinkLineageView(unittest.TestCase):

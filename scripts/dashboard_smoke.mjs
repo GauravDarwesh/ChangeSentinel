@@ -105,58 +105,36 @@ try {
       const ctx = canvas && canvas.getContext("2d");
       if (!ctx) return { error: "frame canvas unavailable" };
       const cell = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--cell")) || 20;
-      const tile = Math.min(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--tile")) || 19, cell - 1);
       const dpr = Math.min(2, window.devicePixelRatio || 1);
-      const pixel = (x, y) => Array.from(ctx.getImageData(Math.round(x * dpr), Math.round(y * dpr), 1, 1).data).slice(0, 3);
-      const same = (a, b) => a.every((channel, index) => channel === b[index]);
-      const bg = pixel(0, 1);
-      const rightBand = window.innerWidth - cell;
-      const bottomBand = window.innerHeight - cell;
-      const rightAnchor = rightBand + 1;
-      const bottomAnchor = bottomBand + 1;
-      const anchors = length => {
-        const end = length - cell + 1;
-        const positions = [];
-        for (let position = 1; position < end; position += cell) {
-          if (end - position > 1) positions.push(position);
-        }
-        if (!positions.length || positions[positions.length - 1] !== end) positions.push(end);
-        return positions;
+      const W = window.innerWidth, H = window.innerHeight;
+      const alpha = (x, y) => ctx.getImageData(Math.floor(x * dpr), Math.floor(y * dpr), 1, 1).data[3];
+      // The ring (1px in from the screen edge, cell - 1 thick) is painted edge to
+      // edge with no transparent seams; the screen's outer pixel and the
+      // workspace inside the ring are left alone.
+      let seams = 0;
+      for (let x = 1.5; x < W - 1; x += 1) { if (alpha(x, cell / 2) !== 255) seams++; if (alpha(x, H - cell / 2) !== 255) seams++; }
+      for (let y = 1.5; y < H - 1; y += 1) { if (alpha(cell / 2, y) !== 255) seams++; if (alpha(W - cell / 2, y) !== 255) seams++; }
+      // Equal tiles: the same cut the painter uses, every tile within one device pixel.
+      const cuts = length => {
+        const span = length - 2, count = Math.max(1, Math.round(span / cell)), step = span / count;
+        return Array.from({ length: count + 1 }, (_, i) => Math.round((1 + i * step) * dpr) / dpr);
       };
-      const xs = anchors(window.innerWidth);
-      const ys = anchors(window.innerHeight);
-      const xGap = xs[xs.length - 2] + Math.min(tile, xs[xs.length - 1] - xs[xs.length - 2] - 1);
-      const yGap = ys[ys.length - 2] + Math.min(tile, ys[ys.length - 1] - ys[ys.length - 2] - 1);
-      const insideY = cell + 1;
-      const insideX = cell + 1;
+      const sizes = list => list.slice(1).map((value, i) => value - list[i]);
+      const xs = sizes(cuts(W)), ys = sizes(cuts(H));
+      const spread = list => Math.max(...list) - Math.min(...list);
       return {
-        width: window.innerWidth, height: window.innerHeight, cell,
-        topGapIsBackground: same(pixel(cell, 1), bg),
-        topTileIsWave: !same(pixel(cell + 1, 1), bg),
-        leftGapIsBackground: same(pixel(1, cell), bg),
-        leftTileIsWave: !same(pixel(1, cell + 1), bg),
-        rightGapIsBackground: same(pixel(rightBand, insideY), bg),
-        rightTileIsWave: !same(pixel(rightAnchor, insideY), bg),
-        bottomGapIsBackground: same(pixel(insideX, bottomBand), bg),
-        bottomTileIsWave: !same(pixel(insideX, bottomAnchor), bg),
-        topTerminalGapIsBackground: same(pixel(xGap, 1), bg),
-        bottomTerminalGapIsBackground: same(pixel(xGap, bottomAnchor), bg),
-        leftTerminalGapIsBackground: same(pixel(1, yGap), bg),
-        rightTerminalGapIsBackground: same(pixel(rightAnchor, yGap), bg),
-        bottomRightCornerIsWave: !same(pixel(rightAnchor, bottomAnchor), bg),
-        rightAnchor, bottomAnchor
+        width: W, height: H, seams,
+        outerEdgeClear: alpha(0, H / 2) === 0 && alpha(W / 2, 0) === 0,
+        workspaceClear: alpha(cell + 2, cell + 2) === 0 && alpha(W - cell - 2, H - cell - 2) === 0,
+        tileSpreadX: spread(xs), tileSpreadY: spread(ys), tileX: xs[0], tileY: ys[0]
       };
     });
     const edgePass = !edgeGrid.error &&
       edgeGrid.width === viewport.width && edgeGrid.height === viewport.height &&
-      edgeGrid.topGapIsBackground && edgeGrid.topTileIsWave &&
-      edgeGrid.leftGapIsBackground && edgeGrid.leftTileIsWave &&
-      edgeGrid.rightGapIsBackground && edgeGrid.rightTileIsWave &&
-      edgeGrid.bottomGapIsBackground && edgeGrid.bottomTileIsWave &&
-      edgeGrid.topTerminalGapIsBackground && edgeGrid.bottomTerminalGapIsBackground &&
-      edgeGrid.leftTerminalGapIsBackground && edgeGrid.rightTerminalGapIsBackground &&
-      edgeGrid.bottomRightCornerIsWave;
-    check(edgePass, "edge tiles cover all four frame sides at " + viewport.width + "x" + viewport.height + " (" + JSON.stringify(edgeGrid) + ")");
+      edgeGrid.seams === 0 && edgeGrid.outerEdgeClear && edgeGrid.workspaceClear &&
+      edgeGrid.tileSpreadX <= 1 && edgeGrid.tileSpreadY <= 1 &&
+      Math.abs(edgeGrid.tileX - 20) <= 1.5 && Math.abs(edgeGrid.tileY - 20) <= 1.5;
+    check(edgePass, "edge tiles cover all four frame sides without seams, in equal sizes, at " + viewport.width + "x" + viewport.height + " (" + JSON.stringify(edgeGrid) + ")");
     if (viewport.width === 1441 && viewport.height === 901) {
       await page.screenshot({ path: path.join(OUT, "edge-irregular-viewport.png") });
     }
@@ -189,6 +167,21 @@ try {
   check(reducedBefore !== "missing-canvas" && reducedBefore === reducedAfter,
     "edge wave freezes after one frame when Reduce Motion is enabled");
   await reducedWave.context.close();
+
+  // The locked screen paints its own wall; the dashboard's edge ring must not sit on top of it.
+  {
+    const lockedContext = await browser.newContext({ viewport: { width: 1441, height: 901 } });
+    const locked = await lockedContext.newPage();
+    await locked.goto(base);
+    await locked.waitForTimeout(400);
+    const lockState = await locked.evaluate(() => ({
+      locked: document.documentElement.classList.contains("cs-locked"),
+      frame: getComputedStyle(document.querySelector("canvas.frame-glints")).display
+    }));
+    check(lockState.locked && lockState.frame === "none", "the edge ring is hidden on the locked screen (" + JSON.stringify(lockState) + ")");
+    await locked.screenshot({ path: path.join(OUT, "locked-screen.png") });
+    await lockedContext.close();
+  }
 
   const pdf = await page.evaluate(async () => {
     try {

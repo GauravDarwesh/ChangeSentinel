@@ -1,5 +1,5 @@
 {
- "finished_at": "2026-10-26T05:58:43Z",
+ "finished_at": "2026-10-26T10:16:03Z",
  "objective": {
   "description": "New regulator publications a compliance reviewer may want ChangeSentinel to monitor: rules, consultations, guidance, technical standards, reporting forms and instructions, supervisory letters and notices, Q&A, enforcement actions, decisions and opinions.",
   "id": "regulatory-publications-v1"
@@ -55,12 +55,12 @@
     {
      "error": "",
      "id": "fed-collections-review",
-     "items": 80,
+     "items": 79,
      "label": "Information collections under review",
      "new": 0,
      "note": "",
-     "observed": 80,
-     "out_of_scope": 108,
+     "observed": 79,
+     "out_of_scope": 99,
      "pages_read": 1,
      "required": true,
      "status": "ok",
@@ -75,11 +75,11 @@
     "new_irrelevant": 0,
     "new_relevant": 0,
     "new_uncertain": 0,
-    "observed": 125,
+    "observed": 124,
     "registry_size": 125,
     "translations_linked": 0
    },
-   "finished_at": "2026-10-21T09:35:32Z",
+   "finished_at": "2026-10-26T10:13:51Z",
    "id": "fed",
    "jurisdiction": "United States",
    "known_gaps": [
@@ -95,23 +95,23 @@
      "status": "unavailable"
     }
    },
-   "seconds": 12.5,
+   "seconds": 13.6,
    "short_name": "Federal Reserve",
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
-   "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 900
+   "sweep_id": "20261026T101337Z-cc8b56",
+   "time_budget_seconds": 900.0
   },
   {
    "channels": [
     {
      "error": "",
      "id": "osfi-sitemap",
-     "items": 3763,
+     "items": 3767,
      "label": "Site map (English and French)",
-     "new": 0,
+     "new": 12,
      "note": "",
-     "observed": 3763,
+     "observed": 3767,
      "out_of_scope": 0,
      "pages_read": 3,
      "required": true,
@@ -122,16 +122,16 @@
    ],
    "counts": {
     "baseline_added": 0,
-    "enriched": 0,
-    "new": 0,
+    "enriched": 12,
+    "new": 12,
     "new_irrelevant": 0,
-    "new_relevant": 0,
-    "new_uncertain": 0,
-    "observed": 3763,
-    "registry_size": 3763,
-    "translations_linked": 0
+    "new_relevant": 4,
+    "new_uncertain": 2,
+    "observed": 3767,
+    "registry_size": 3775,
+    "translations_linked": 6
    },
-   "finished_at": "2026-10-21T09:35:43Z",
+   "finished_at": "2026-10-26T10:14:38Z",
    "id": "osfi",
    "jurisdiction": "Canada",
    "known_gaps": [
@@ -140,19 +140,19 @@
    "name": "Office of the Superintendent of Financial Institutions",
    "region": "NAM",
    "request_budget": 60,
-   "requests": 4,
+   "requests": 16,
    "robots": {
     "www.osfi-bsif.gc.ca": {
      "crawl_delay": null,
      "status": "parsed"
     }
    },
-   "seconds": 11,
+   "seconds": 47.0,
    "short_name": "OSFI",
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
-   "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 900
+   "sweep_id": "20261026T101337Z-cc8b56",
+   "time_budget_seconds": 900.0
   },
   {
    "channels": [
@@ -161,7 +161,7 @@
      "id": "eba-publications",
      "items": 17,
      "label": "Publications",
-     "new": 1,
+     "new": 5,
      "note": "Caught up with items seen before on page 1",
      "observed": 17,
      "out_of_scope": 9,
@@ -176,7 +176,7 @@
      "id": "eba-press-releases",
      "items": 15,
      "label": "Press releases",
-     "new": 0,
+     "new": 2,
      "note": "Caught up with items seen before on page 1",
      "observed": 15,
      "out_of_scope": 9,
@@ -189,16 +189,16 @@
    ],
    "counts": {
     "baseline_added": 0,
-    "enriched": 0,
-    "new": 1,
-    "new_irrelevant": 1,
-    "new_relevant": 0,
-    "new_uncertain": 0,
+    "enriched": 2,
+    "new": 7,
+    "new_irrelevant": 2,
+    "new_relevant": 1,
+    "new_uncertain": 4,
     "observed": 32,
-    "registry_size": 46,
+    "registry_size": 53,
     "translations_linked": 0
    },
-   "finished_at": "2026-10-21T09:36:06Z",
+   "finished_at": "2026-10-26T10:15:19Z",
    "id": "eba",
    "jurisdiction": "European Union",
    "known_gaps": [
@@ -208,19 +208,19 @@
    "name": "European Banking Authority",
    "region": "EMEA",
    "request_budget": 40,
-   "requests": 3,
+   "requests": 5,
    "robots": {
     "www.eba.europa.eu": {
-     "crawl_delay": 10,
+     "crawl_delay": 10.0,
      "status": "parsed"
     }
    },
-   "seconds": 22.6,
+   "seconds": 40.9,
    "short_name": "EBA",
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
-   "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 1200
+   "sweep_id": "20261026T101337Z-cc8b56",
+   "time_budget_seconds": 1200.0
   },
   {
    "channels": [
@@ -229,7 +229,7 @@
      "id": "boe-pra-publications",
      "items": 50,
      "label": "Prudential regulation publications",
-     "new": 0,
+     "new": 1,
      "note": "",
      "observed": 50,
      "out_of_scope": 0,
@@ -244,7 +244,7 @@
      "id": "boe-news",
      "items": 50,
      "label": "News",
-     "new": 0,
+     "new": 2,
      "note": "",
      "observed": 50,
      "out_of_scope": 0,
@@ -258,15 +258,15 @@
    "counts": {
     "baseline_added": 0,
     "enriched": 0,
-    "new": 0,
+    "new": 3,
     "new_irrelevant": 0,
-    "new_relevant": 0,
-    "new_uncertain": 0,
+    "new_relevant": 2,
+    "new_uncertain": 1,
     "observed": 100,
-    "registry_size": 100,
+    "registry_size": 103,
     "translations_linked": 0
    },
-   "finished_at": "2026-10-21T09:36:12Z",
+   "finished_at": "2026-10-26T10:15:25Z",
    "id": "boe-pra",
    "jurisdiction": "United Kingdom",
    "known_gaps": [
@@ -282,12 +282,12 @@
      "status": "parsed"
     }
    },
-   "seconds": 6.4,
+   "seconds": 6.5,
    "short_name": "Bank of England (PRA)",
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
-   "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 900
+   "sweep_id": "20261026T101337Z-cc8b56",
+   "time_budget_seconds": 900.0
   },
   {
    "channels": [
@@ -296,7 +296,7 @@
      "id": "apra-news-publications",
      "items": 10,
      "label": "News and publications",
-     "new": 0,
+     "new": 4,
      "note": "Caught up with items seen before on page 1",
      "observed": 10,
      "out_of_scope": 4,
@@ -309,16 +309,16 @@
    ],
    "counts": {
     "baseline_added": 0,
-    "enriched": 0,
-    "new": 0,
+    "enriched": 4,
+    "new": 4,
     "new_irrelevant": 0,
-    "new_relevant": 0,
-    "new_uncertain": 0,
+    "new_relevant": 2,
+    "new_uncertain": 2,
     "observed": 10,
-    "registry_size": 30,
+    "registry_size": 34,
     "translations_linked": 0
    },
-   "finished_at": "2026-10-21T09:36:16Z",
+   "finished_at": "2026-10-26T10:15:41Z",
    "id": "apra",
    "jurisdiction": "Australia",
    "known_gaps": [
@@ -327,19 +327,19 @@
    "name": "Australian Prudential Regulation Authority",
    "region": "APAC",
    "request_budget": 60,
-   "requests": 2,
+   "requests": 6,
    "robots": {
     "www.apra.gov.au": {
      "crawl_delay": null,
      "status": "parsed"
     }
    },
-   "seconds": 3.6,
+   "seconds": 15.6,
    "short_name": "APRA",
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
-   "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 900
+   "sweep_id": "20261026T101337Z-cc8b56",
+   "time_budget_seconds": 900.0
   },
   {
    "channels": [
@@ -370,7 +370,7 @@
     "registry_size": 323,
     "translations_linked": 0
    },
-   "finished_at": "2026-10-21T09:36:21Z",
+   "finished_at": "2026-10-26T10:15:46Z",
    "id": "banxico",
    "jurisdiction": "Mexico",
    "known_gaps": [
@@ -386,12 +386,12 @@
      "status": "parsed"
     }
    },
-   "seconds": 4.6,
+   "seconds": 4.9,
    "short_name": "Banxico",
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
-   "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 900
+   "sweep_id": "20261026T101337Z-cc8b56",
+   "time_budget_seconds": 900.0
   },
   {
    "channels": [
@@ -422,7 +422,7 @@
     "registry_size": 17,
     "translations_linked": 0
    },
-   "finished_at": "2026-10-21T09:36:24Z",
+   "finished_at": "2026-10-26T10:15:49Z",
    "id": "bcra",
    "jurisdiction": "Argentina",
    "known_gaps": [
@@ -439,43 +439,44 @@
      "status": "parsed"
     }
    },
-   "seconds": 3.1,
+   "seconds": 3.4,
    "short_name": "BCRA",
    "status": "COMPLETE",
    "status_reason": "Every declared channel was read as planned",
-   "sweep_id": "20261021T093520Z-135485",
-   "time_budget_seconds": 900
+   "sweep_id": "20261026T101337Z-cc8b56",
+   "time_budget_seconds": 900.0
   },
   {
+   "browser_loads": 1,
    "channels": [
     {
-     "error": "www.ffiec.gov refused access (HTTP 403)",
+     "error": "",
      "id": "ffiec-ffiec-forms-instructions-validations",
-     "items": 0,
+     "items": 28,
      "label": "FFIEC - Forms, Instructions, Validations",
      "new": 0,
      "note": "",
-     "observed": 0,
-     "out_of_scope": 0,
-     "pages_read": 0,
+     "observed": 28,
+     "out_of_scope": 22,
+     "pages_read": 1,
      "required": true,
-     "status": "blocked",
+     "status": "ok",
      "type": "listing",
      "url": "https://www.ffiec.gov/resources/reporting-forms"
     }
    ],
    "counts": {
-    "baseline_added": 0,
+    "baseline_added": 28,
     "enriched": 0,
     "new": 0,
     "new_irrelevant": 0,
     "new_relevant": 0,
     "new_uncertain": 0,
-    "observed": 0,
-    "registry_size": 0,
+    "observed": 28,
+    "registry_size": 28,
     "translations_linked": 0
    },
-   "finished_at": "2026-10-26T05:58:43Z",
+   "finished_at": "2026-10-26T10:16:03Z",
    "id": "ffiec",
    "jurisdiction": "US",
    "known_gaps": [
@@ -484,34 +485,34 @@
    "name": "Federal Financial Institutions Examination Council",
    "region": "NAM",
    "request_budget": 60,
-   "requests": 2,
+   "requests": 3,
    "robots": {
     "www.ffiec.gov": {
      "crawl_delay": null,
      "status": "unavailable"
     }
    },
-   "seconds": 3.1,
+   "seconds": 13.6,
    "short_name": "FFIEC",
-   "status": "BLOCKED",
-   "status_reason": "Every required channel was refused by robots.txt or the server",
-   "sweep_id": "20261026T055840Z-8a8a88",
+   "status": "COMPLETE",
+   "status_reason": "Every declared channel was read as planned",
+   "sweep_id": "20261026T101337Z-cc8b56",
    "time_budget_seconds": 900.0
   }
  ],
  "schema_version": 1,
- "scope": "ffiec",
- "started_at": "2026-10-26T05:58:40Z",
- "status": "BLOCKED",
- "sweep_id": "20261026T055840Z-8a8a88",
+ "scope": "all",
+ "started_at": "2026-10-26T10:13:37Z",
+ "status": "COMPLETE",
+ "sweep_id": "20261026T101337Z-cc8b56",
  "totals": {
-  "baseline_added": 0,
-  "new": 0,
-  "new_irrelevant": 0,
-  "new_relevant": 0,
-  "new_uncertain": 0,
-  "observed": 0,
-  "requests": 2
+  "baseline_added": 28,
+  "new": 26,
+  "new_irrelevant": 2,
+  "new_relevant": 9,
+  "new_uncertain": 9,
+  "observed": 4401,
+  "requests": 43
  },
- "trigger": "manual"
+ "trigger": "scheduled"
 }

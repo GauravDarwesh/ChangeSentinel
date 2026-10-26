@@ -1,0 +1,22 @@
+FFIEC 102 Validation Criteria
+Effective for report dates June 2026 through current:
+- Validity Edits: Excel | PDF - Final (updated July 7, 2026)
+- Quality Edits: Excel | PDF- Final (updated July 7, 2026)
+Effective for report dates March 2018 to March 2026
+- Validity Edits: Excel | PDF - Final (updated April 19, 2018)
+- Quality Edits: Excel | PDF- Final (updated April 19, 2018)
+Effective for report dates March 2017 through December 2017:
+- Validity Edits: Excel | PDF - Final (updated April 14, 2017)
+- Quality Edits: Excel | PDF- Final (updated April 14, 2017)
+Effective for report dates December 2016:
+- Validity Edits: Excel | PDF - Final (updated December 22, 2016)
+- Quality Edits: Excel | PDF- Final (updated December 22, 2016)
+Effective for report dates June 2016 through September 2016:
+- Validity Edits: Excel | PDF - Final (updated June 23, 2016)
+- Quality Edits: Excel | PDF- Final (updated June 23, 2016)
+Effective for report date June 2015 through March 2016:
+- Validity Edits: Excel | PDF - Final (updated July 7, 2015)
+- Quality Edits: Excel | PDF- Final (updated July 7, 2015)
+Effective for report date March 2015:
+- Validity Edits: Excel | PDF- Final (updated April 14, 2015)
+Last updated on 7/7/2026

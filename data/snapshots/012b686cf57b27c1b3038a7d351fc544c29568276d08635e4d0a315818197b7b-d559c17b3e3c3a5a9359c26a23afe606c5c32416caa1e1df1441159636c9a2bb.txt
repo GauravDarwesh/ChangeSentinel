@@ -1,0 +1,784 @@
+Federal Financial Institutions Examination Council Report of Assets and Liabilities of U.S. Branches and Agencies of Foreign Banks—FFIEC 002 Report at the close of business September 30, 2026 This report is required by law 12 U.S.C. § 3105(c)(2); 12 U.S.C.
+§ 1817(a); and 12 U.S.C. § 3102(b).
+(RCON 9999) (20260930) Please read carefully "Instructions for Preparation of the Report of Assets and Liabilities of U.S. Branches and Agencies of Foreign Banks." Please indicate legal status: Branch Agency Indicate FDIC insurance status: Insured Uninsured Indicate the number of branches or agencies included in this report: (RCON 9395) Legal Title(s) and Address(es) of Branch(es) or Agency(ies) included in this report: Legal Title Street Address City County State Zip Code Legal Title Street Address City County State Zip Code Legal Title Street Address City County State Zip Code Legal Title of Foreign Bank Parent City Country NOTE: This report must be signed by the Chief Financial Officer (CFO) (or by the individual performing an equivalent function) and attested by the senior executive officer.
+I, the undersigned CFO (or equivalent) of the branch or agency specified do hereby declare that this Report of Assets and Liabilities (including the supporting schedules and supplement) has been prepared in conformance with the instructions issued by the Federal Financial Institutions Examination Council and is true to the best of my knowledge and belief.
+Signature of Chief Financial Officer (or Equivalent) I, Name of Senior Executive Officer Title of Senior Executive Officer attest the correctness of this Report of Assets and Liabilities (including the supporting schedules and supplement) and declare that it has been examined by us, and to the best of our knowledge and belief, has been prepared in conformance with the instructions issued by the Federal Financial Institutions Examination Council and is true and correct.
+Signature of Senior Executive Officer Return original and 2 copies to the Federal Reserve Bank in whose district the branch or agency is located.
+FDIC-insured branches should file one copy with the appropriate FDIC Regional Office (Supervision).
+(RCON H018) (RCON H019) Public reporting burden associated with the FFIEC 002 is estimated to average 24.67 hours per response including time to gather and maintain data in the required form and to review instructions and complete the information collection. A Federal agency may not conduct or sponsor, and an organization (or a person) is not required to respond to a collection of information, unless it displays a currently valid OMB control number. Comments regarding this burden estimate or any other aspect of this information collection, including suggestions for reducing the burden, may be sent to Secretary, Board of Governors of the Federal Reserve System, 20th and C Streets, NW, Washington, DC 20551 and to Office of Information and Regulatory Affairs, Office of Management and Budget, Washington, DC 20503.
+09/2026 OMB Number 7100-0032 Approval expires September 30, 2028 Page 1 of 32 Board of Governors of the Federal Reserve System
+FFIEC 002
+Page 2 of 32 Contact Information To facilitate communication between the Agencies and the branch or agency concerning the FFIEC 002, please provide contact information for (1) the Chief Financial Officer (or equivalent) of the branch or agency signing the reports for this quarter and (2) the person at the branch or agency — other than the Chief Financial Officer (or equivalent) — to whom questions about the reports should be directed. If the Chief Financial Officer (or equivalent) is the primary contact for questions about the reports, please provide contact information for another person at the branch or agency who will serve as a secondary contact for communications between the Agencies and the branch or agency concerning the FFIEC 002. Enter "none" for the contact's e-mail address or fax number if not available.
+Contact information for the FFIEC 002 is for the confidential use of the Agencies and will not be released to the public.
+Chief Financial Officer (or Equivalent) Signing the Reports Name (TEXT C490) Title (TEXT C491) E-mail Address (TEXT C492) Area Code / Phone Number / Extension (TEXT C493) FAX Number (TEXT C494) Other Person to Whom Questions about the Reports Should be Directed Name (TEXT C495) Title (TEXT C496) E-mail Address (TEXT 4086) Area Code / Phone Number / Extension (TEXT 8902) FAX Number (TEXT 9116) Emergency Contact Information This information is being requested so the Agencies can distribute critical, time sensitive information to emergency contacts at U.S.
+branches or agencies. Please provide primary contact information for a senior official of the branch or agency who has decision-making authority. Also provide information for a secondary contact if available. Enter "none" for the contact's e-mail address or fax number if not available. Emergency contact information is for the confidential use of the Agencies and will not be released to the public.
+Primary Contact Name (TEXT C366) Title (TEXT C367) E-mail Address (TEXT C368) Area Code / Phone Number / Extension (TEXT C369) Area Code / FAX Number (TEXT C370) Secondary Contact Name (TEXT C371) Title (TEXT C372) E-mail Address (TEXT C373) Area Code / Phone Number / Extension (TEXT C374) Area Code / FAX Number (TEXT C375) 06/2012
+FFIEC 002
+Page 3 of 32 USA PATRIOT Act Section 314(a) Anti-Money Laundering Contact Information This information is being requested to identify points-of-contact who are in charge of your branch's or agency's USA PATRIOT Act Section 314(a) information requests. Branch or agency personnel listed could be contacted by law enforcement officers or the Financial Crimes Enforcement Network (FinCEN) for additional information related to specific Section 314(a) search requests or other anti-terrorist financing and anti-money-laundering matters. Communications sent by FinCEN to the branch or agency for purposes other than Section 314(a) notifications will state the intended purpose and should be directed to the appropriate branch or agency personnel for review. Any disclosure of customer records to law enforcement officers or FinCEN must be done in compliance with applicable law, including the Right to Financial Privacy Act (12 U.S.C. § 3401 et seq.).
+Please provide information for a primary and secondary contact. Information for a third and fourth contact may be provided at the branch's or agency's option. Enter "none" for the contact's e-mail address if not available. This contact information is for the confidential use of the Agencies, FinCEN, and law enforcement officers and will not be released to the public.
+Primary Contact Name (TEXT C437) Title (TEXT C438) E-mail Address (TEXT C439) Area Code / Phone Number / Extension (TEXT C440) Secondary Contact Name (TEXT C442) Title (TEXT C443) E-mail Address (TEXT C444) Area Code / Phone Number / Extension (TEXT C445) Third Contact Name (TEXT C870) Title (TEXT C871) E-mail Address (TEXT C872) Area Code / Phone Number / Extension (TEXT C873) Fourth Contact Name (TEXT C875) Title (TEXT C876) E-mail Address (TEXT C877) Area Code / Phone Number / Extension (TEXT C878) 06/2012
+(a) Issued or guaranteed by U.S. Government agencies ..........
+f. Trading assets: g. Not applicable h. Other assets including other claims on nonrelated parties ............. 1.h.
+i. Total claims on nonrelated parties (sum of items 1.a through 1.h) ... 1.i.
+2. Net due from related depository institutions: a. For the reporting branch or agency including its IBF: Net due from head office and other related depository institutions (item 4.g minus item 1.i of Column A if item 4.g is greater than item 1.i; otherwise enter -0-).................................................... 2.a.
+b. For the IBF of the reporting branch or agency: Net due from establishing entity, head office and other related depository institutions (item 4.g minus item 1.i of Column B if item 4.g is greater than item 1.i; otherwise enter -0-)................................... 2.b.
+2151 2151 2171 2171 2154 2154
+(1) U.S. Treasury and Agency securities .................................... 1.f.(1)K479 K479
+(2) Mortgage-backed securities:
+(3) Other asset-backed securities.............................................
+(4) Other securities ............................................................... 1.f.(4)L193L193 (b) Other ........................................................................
+1.f.(2)(a) 1.f.(3) 1.f.(2)(b) K298 K298 K299K299 3536 3536
+(5) Other trading assets ......................................................... 1.f.(5)K302K302 (Column A) Total Reporting Branch or Agency Including Its IBF (Column B) IBF Only Dollar Amounts in Thousands RCFD Amount RCFN Assets
+1. Claims on nonrelated parties: (Excludes all claims on related depository institutions but includes claims on related nondepository institutions. See instructions for coverage and treatment of ''nonrelated'' and ''related'' institutions.) a. Cash and balances due from depository institutions (from Schedule A, item 6) ................................................................................ 0010 0010 1.a.
+b. U.S. Government securities:
+(1) U.S. Treasury securities .................................................... 0260 1.b.(1)
+(2) U.S. Government agency obligations ................................... 0371 1.b.(2) c. Other bonds, notes, debentures, and corporate stock (including state and local securities):
+(1) Securities of foreign governments and official institutions.......... A003 A003 1.c.(1)
+(2) Mortgage-backed securities: (a) Issued or guaranteed by U.S. Government agencies .......... C416 C416 1.c.(2)(a) (b) Other ........................................................................ C417 C417 1.c.(2)(b)
+(3) Other asset-backed securities............................................. C036 C036 1.c.(3)
+(4) All other ......................................................................... C037 C037 1.c.(4) d. Federal funds sold and securities purchased under agreements to resell:
+(1) Federal funds sold: (a) With commercial banks in the U.S................................... C412 C412 1.d.(1)(a) (b) With nonbank brokers and dealers in securities ................. F856 F856 1.d.(1)(b) (c) With others................................................................. C413 C413 1.d.(1)(c)
+(2) Securities purchased under agreements to resell: (a) With commercial banks in the U.S................................... C414 C414 1.d.(2)(a) (b) With nonbank brokers and dealers in securities ................. F857 F857 1.d.(2)(b) (c) With others................................................................. C415 C415 1.d.(2)(c) e. Loans and leases held for investment and held for sale (from Schedule C, item 11)........................................................ 2122 2122 1.e.
+Amount FFIEC 002 Page 4 of 32 Schedule RAL—Assets and Liabilities All schedules are to be reported in thousands of U.S. dollars. Unless otherwise indicated, report the amount outstanding as of the last calendar day of the quarter.
+06/2018
+FFIEC 002
+Page 5 of 32
+Schedule RAL—Continued
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Total Reporting Branch or Agency Including Its IBF | | (Column B) IBF Only | |
+| | Dollar Amounts in Thousands | RCFD | Amount | RCFN | Amount |
+| | Assets—Continued | | | | |
+| 3. | 3. Total assets (for Column A, sum of items 1.i and 2.a; for Column B, sum of items 1.i and 2.b) | 2170 | | 2170 | |
+| | Liabilities | | | | |
+| | 4. Liabilities to nonrelated parties: (Excludes all liabilities to related depository institutions but includes all liabilities to related nondepository institutions. See instructions for coverage and treatment of "nonrelated" and "related" institutions.) | | | | |
+| 4.a. | a. Total deposits and credit balances (from Schedule E, item 7) | 2205 | | 2205 | |
+| | b. Federal funds purchased and securities sold under agreements to repurchase: | | | | |
+| | (1) Federal funds purchased: | | | | |
+| 4.b.(1)(a) | (a) With commercial banks in the U.S | C420 | | C420 | |
+| 4.b.(1)(b) | (b) With others | C421 | | C421 | |
+| | (2) Securities sold under agreements to repurchase: | | | | |
+| 4.b.(2)(a) | (a) With commercial banks in the U.S | C422 | | C422 | |
+| 4.b.(2)(b) | (b) With others | C423 | | C423 | |
+| 4.c. | c. Other borrowed money (from Schedule P, item 4) | 3190 | | 3190 | |
+| | d. Not applicable | | | | |
+| 4.e. | e. Trading liabilities | 3548 | | 3548 | |
+| 4.f. | f. Other liabilities to nonrelated parties | 2916 | | 2916 | |
+| 4.g. | g. Total liabilities to nonrelated parties (sum of items 4.a through 4.f) | 2927 | | 2927 | |
+| | 5. Net due to related depository institutions: | | | | |
+| 5.a. | a. For the reporting branch or agency including its IBF: Net due to head office and other related depository institutions (item 1.i minus item 4.g of Column A if item 1.i is greater than item 4.g; otherwise enter -0-) | 2944 | | | |
+| 5.b. | b. For the IBF of the reporting branch or agency: Net due to establishing entity, head office, and other related depository institutions (item 1.i minus item 4.g of Column B if item 1.i is greater than item 4.g; otherwise enter -0-) | | | 2944 | |
+| 6. | 6. Total liabilities (for Column A, sum of items 4.g and 5.a; for Column B, sum of items 4.g and 5.b) | 2950 | | 2950 | |
+| | Memoranda | | | | |
+| M.1. | 1. Fair value of held-to-maturity securities | 1771 | | 1771 | |
+| M.2. | 2. Amortized cost of held-to-maturity securities | 1754 | | 1754 | |
+| | 3. Available-for-sale debt securities: | | | | |
+| M.3.a. | a. Fair value of available-for-sale debt securities | 1773 | | 1773 | |
+| M.3.b. | b. Amortized cost of available-for-sale debt securities | 1772 | | 1772 | |
+| M.4. | 4. Fair value of equity securities with readily determinable fair values not held for trading1 | JA22 | | JA22 | |
+1. Memorandum item 4 is to be completed by all institutions. See the instructions for this item and the Glossary entry for "Securities Activities" for further detail on accounting for investments in equity securities.
+12/2020
+FFIEC 002
+Page 6 of 32
+Schedule RAL—Continued
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Total Reporting Branch or Agency Including Its IBF | | (Column B) IBF Only | |
+| | Dollar Amounts in Thousands | RCFD | Amount | RCFN | Amount |
+| | Memoranda—Continued | | | | |
+| | 5. Loans held for trading (included in Schedule RAL, item 1.f.(5)): | | | | |
+| | a. Loans secured by real estate: | | | | |
+| M.5.a.(1) | (1) Loans secured by 1–4 family residential properties | HT63 | | HT63 | |
+| M.5.a.(2) | (2) All other loans secured by real estate | HT64 | | HT64 | |
+| M.5.b. | b. Commercial and industrial loans | F614 | | F614 | |
+| M.5.c. | c. Other loans | G007 | | G007 | |
+| | 6. Unpaid principal balance of loans held for trading (reported in Schedule RAL, Memorandum item 5): | | | | |
+| | a. Loans secured by real estate: | | | | |
+| M.6.a.(1) | (1) Loans secured by 1–4 family residential properties | HT66 | | HT66 | |
+| M.6.a.(2) | (2) All other loans secured by real estate | HT67 | | HT67 | |
+| M.6.b. | b. Commercial and industrial loans | F632 | | F632 | |
+| M.6.c. | c. Other loans | G009 | | G009 | |
+| M.7. | 7. Fair value of structured notes | 8783 | | 8783 | |
+| M.8. | 8. Amortized cost of structured notes | 8782 | | 8782 | |
+| M.9. | 9. Assets under the reporting branch or agency's management in proprietary mutual funds and annuities | B570 | | B570 | |
+| M.10. | 10. Derivatives with a positive fair value held for trading purposes | 3543 | | 3543 | |
+| M.11. | 11. Derivatives with a negative fair value held for trading purposes | 3547 | | 3547 | |
+| | 12. Not applicable | | | | |
+| M.13. | 13. Pledged U.S. government securities1 | 2785 | | | |
+1. Includes held-to-maturity securities at amortized cost and available-for-sale securities at fair value.
+06/2018
+FFIEC 002
+Page 7 of 32
+Schedule RAL—Continued
+| Item | Line item | | | |
+| --- | --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | | Total Reporting Branch or Agency Including its IBF RCFD | Amount |
+| | Memoranda—Continued | | | |
+| M.14.a. | 14. If other assets including other claims on nonrelated parties (item 1.h) exceed 5 percent of total assets (item 3), itemize and describe amounts that exceed 25 percent of item 1.h. a. | TEXT A539 | A539 | |
+| M.14.b. | b. | TEXT A540 | A540 | |
+| M.14.c. | c. | TEXT A541 | A541 | |
+| M.15.a. | 15. If other liabilities to nonrelated parties (item 4.f) exceed 5 percent of total liabilities (item 6), itemize and describe amounts that exceed 25 percent of item 4.f. a. | TEXT A542 | A542 | |
+| M.15.b. | b. | TEXT A543 | A543 | |
+| M.15.c. | c. | TEXT A544 | A544 | |
+16. Number of full-time equivalent employees of the branch or agency at end of current period RCFD (round to nearest whole number) .................................................................................. 4150
+Number M.16.
+To be reported only with the March Report
+17. Indicate in the box at the right the number of the statement below that best describes
+the most comprehensive level of auditing work performed for the branch or agency by RCFD independent external auditors during the preceding year ................................................... 6724
+Number M.17.
+1a= An integrated audit of the branch or agency and its internal control over financial reporting conducted in accordance with the auditing standards of the American Institute of Certified Public Accountants (AICPA) or the Public Company Accounting Oversight Board (PCAOB) by an independent public accountant (e.g., as required for FDIC-insured branches subject to Part 363 of the FDIC's regulations that have $1 billion or more in total claims on nonrelated parties) 1b= An audit of the branch or agency conducted in accordance with the auditing standards of the AICPA or the PCAOB by an independent public accountant
+2= An audit of the branch or agency conducted in accordance with home-country auditing standards by an independent public accountant 3= Review of the financial statements of the branch or agency by external auditors, as part of the audit of the parent organization 4= Review of the financial statements of the branch or agency by external auditors 5= Compilation of the financial statements of the branch or agency by external auditors 6= Other audit procedures 7= No audit or independent review
+| Item | Line item | | |
+| --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | Total Reporting Branch or Agency Including its IBF RCFD | Amount |
+| | Statutory or Regulatory Requirement as appropriate for the reporting institution (see instructions) | | |
+| S.1. | 1. Asset maintenance requirement | 3343 | |
+| S.2. | 2. Asset pledge requirement/Capital equivalency deposit | 3349 | |
+| | 3. FDIC asset maintenance requirement (for FDIC insured branches only): | | |
+| S.3.a. | a. Average liabilities for the preceding calendar quarter | 2334 | |
+| S.3.b. | b. Eligible assets as of the report date | 2387 | |
+06/2018
+FFIEC 002
+Page 8 of 32
+Schedule A—Cash and Balances Due from Depository Institutions
+NOTE: Exclude all transactions with related depository institutions.
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Total Reporting Branch or Agency Including Its IBF | | (Column B) IBF Only | |
+| | Dollar Amounts in Thousands | | Amount | | Amount |
+| 1. | 1. Cash items in process of collection and unposted debits | RCFD 0020 | | RCFN 0020 | |
+| 2. | 2. Currency and coin (U.S. and foreign) | 0080 | | | |
+| 3. | 3. Balances due from depository institutions in the U.S | 0082 | | 0082 | |
+| 4. | 4. Balances due from banks in foreign countries and foreign central banks | 0070 | | 0070 | |
+| 5. | 5. Balances due from Federal Reserve Banks | 0090 | | | |
+| 6. | 6. Total (sum of items 1 through 5) (must equal Schedule RAL, item 1.a) | RCXX 0010 | | RCXY 0010 | |
+06/2018
+FFIEC 002
+Page 9 of 32
+Schedule C—Loans
+Part I. Loans and Leases
+Held for investment and held for sale.
+NOTE: Exclude all transactions with related depository institutions.
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Total Reporting Branch or Agency Including Its IBF | | (Column B) IBF Only | |
+| | Dollar Amounts in Thousands | RCFD | Amount | RCFN | Amount |
+| | 1. Loans secured by real estate: | | | | |
+| 1.a. | a. Construction, land development, and other land loans | 1415 | | 1415 | |
+| 1.b. | b. Secured by farmland (including farm residential and other improvements) | 1420 | | 1420 | |
+| | c. Secured by 1–4 family residential properties: | | | | |
+| 1.c.(1) | (1) Revolving, open-end loans secured by 1–4 family residential properties and extended under lines of credit | 1797 | | 1797 | |
+| 1.c.(2) | (2) Closed-end loans secured by 1–4 family residential properties | 1798 | | 1798 | |
+| 1.d. | d. Secured by multifamily (5 or more) residential properties | 1460 | | 1460 | |
+| 1.e. | e. Secured by nonfarm nonresidential properties | 1480 | | 1480 | |
+| | 2. Loans to depository institutions and acceptances of other banks: | | | | |
+| | a. To commercial banks in the U.S. (including their IBFs): | | | | |
+| 2.a.(1) | (1) To U.S. branches and agencies of other foreign banks | B532 | | B532 | |
+| 2.a.(2) | (2) To other commercial banks in the U.S | B533 | | B533 | |
+| 2.b. | b. To other depository institutions in the U.S. (including their IBFs) | B534 | | B534 | |
+| | c. To banks in foreign countries: | | | | |
+| 2.c.(1) | (1) To foreign branches of U.S. banks | B536 | | B536 | |
+| 2.c.(2) | (2) To other banks in foreign countries | B537 | | B537 | |
+| 3. | 3. Loans to other financial institutions | 1520 | | 1520 | |
+| | 4. Commercial and industrial loans: | | | | |
+| 4.a. | a. To U.S. addressees (domicile) | 1763 | | 1763 | |
+| 4.b. | b. To non-U.S. addressees (domicile) | 1764 | | 1764 | |
+| | 5. Not applicable | | | | |
+| 6. | 6. Loans to foreign governments and official institutions (including foreign central banks) | 2081 | | 2081 | |
+| 7. | 7. Loans for purchasing or carrying securities, including margin loans | 1545 | | 1545 | |
+| 8. | 8. All other loans (include state and local obligations other than securities and loans to individuals) | 1885 | | 1885 | |
+| | 9. Lease financing receivables (net of unearned income): | | | | |
+| 9.a. | a. Of U.S. addressees (domicile) | 2182 | | 2182 | |
+| 9.b. | b. Of non-U.S. addressees (domicile) | 2183 | | 2183 | |
+| 10. | 10. Less: Any unearned income on loans reflected in items 1–8 above | 2123 | | 2123 | |
+| 11. | 11. Total loans and leases, held for investment and held for sale (sum of items 1 through 9 minus item 10) (must equal Schedule RAL, item 1.e).. | RCXX 2122 | | RCXY 2122 | |
+| | Memoranda 1.–2. Not applicable | | | | |
+| | 3. Commercial and industrial loans with remaining maturity of one year or less (excluding those in nonaccrual status): | | | | |
+| M.3.a. | a. With predetermined interest rates | RCFD 6119 | | | |
+| M.3.b. | b. With floating interest rates | 6120 | | | |
+| | 4. Commercial and industrial loans with remaining maturity of more than one year (excluding those in nonaccrual status): | | | | |
+| M.4.a. | a. With predetermined interest rates | 6122 | | | |
+| M.4.b. | b. With floating interest rates | 6123 | | | |
+12/2024
+FFIEC 002
+Page 10 of 32
+Schedule C—Continued
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Total Reporting Branch or Agency Including Its IBF | | (Column B) IBF Only | |
+| | Dollar Amounts in Thousands | RCON | Number | RCFN | Amount |
+| | Memoranda—Continued Amounts reported in Memorandum items 5.a and 5.b will not be made available to the public on an individual U.S. branch-and-agency basis. | | | | |
+| | 5. Eligible loan modifications under Section 4013, Temporary Relief from Troubled Debt Restructurings of the 2020 Coronavirus Aid, Relief, and Economic Security Act: | | | | |
+| M.5.a. | a. Number of outstanding Section 4013 loans | LG24 | | | |
+| M.5.b. | b. Outstanding balance of Section 4013 loans | LG25 | Amount | | |
+Part II. Loans to Small Businesses and Small Farms
+Part II of Schedule C is to be completed annually as of the June 30 report date only by branches whose deposits are insured by the FDIC.
+Report the number and amount currently outstanding as of June 30 of business loans with "original amounts" of $1,000,000 or less and farm loans with "original amounts" of $500,000 or less. The following guidelines should be used to determine the "original amount" of a loan: (1) For loans drawn down under lines of credit or loan commitments, the "original amount" of the loan is the size of the line of credit or loan commitment when the line of credit or loan commitment was most recently approved, extended, or renewed prior to the report date. However, if the amount currently outstanding as of the report date exceeds this size, the "original amount" is the amount currently outstanding on the report date. (2) For loan participations and syndications, the "original amount" of the loan participation or syndication is the entire amount of the credit originated by the lead lender. (3) For all other loans, the "original amount" is the total amount of the loan at origination or the amount currently outstanding as of the report date, whichever is larger.
+Loans to Small Businesses
+1. Not applicable
+| Item | Line item | | | |
+| --- | --- | --- | --- | --- |
+| | | (Column A) Number of Loans | (Column B) Amount Currently Outstanding | |
+| | Dollar Amounts in Thousands | RCON | RCON | Amount |
+| | 2. Number and amount currently outstanding of "Loans secured by nonfarm nonresi- dential properties" (excluding those held in the branch's IBF) reported in Schedule C, part I, item 1, column A, "Loans secured by real estate" (sum of items 2.a through 2.c must be less than or equal to Schedule C, part I, item 1, column A minus column B): | | | |
+| 2.a. | a. With original amounts of $100,000 or less | 5564 | 5565 | |
+| 2.b. | b. With original amounts of more than $100,000 through $250,000 | 5566 | 5567 | |
+| 2.c. | c. With original amounts of more than $250,000 through $1,000,000 | 5568 | 5569 | |
+| | 3. Number and amount currently outstanding of "Commercial and industrial loans to U.S. addressees" (excluding those held in the branch's IBF) reported in Schedule C, part I, item 4.a, column A (sum of items 3.a through 3.c must be less than or equal to Schedule C, part I, item 4.a, column A minus column B): | | | |
+| 3.a. | a. With original amounts of $100,000 or less | 5570 | 5571 | |
+| 3.b. | b. With original amounts of more than $100,000 through $250,000 | 5572 | 5573 | |
+| 3.c. | c. With original amounts of more than $250,000 through $1,000,000 | 5574 | 5575 | |
+06/2020
+FFIEC 002
+Page 11 of 32 Schedule C—Continued Part II—Continued Agricultural Loans to Small Farms (Column A) Number of Loans (Column B) Amount Currently Outstanding Dollar Amounts in Thousands
+4. Number and amount currently outstanding of "Loans secured by farmland (including farm residential and other improvements)" (excluding those held in the branch's IBF) reported in Schedule C, part I, item 1, column A, "Loans secured by real estate" (sum of items 4.a through 4.c must be less than or equal to Schedule C, part I, item 1, column A minus column B): a. With original amounts of $100,000 or less ......................................... 5578 5579 4.a.
+b. With original amounts of more than $100,000 through $250,000 ............. 5580 5581 4.b.
+c. With original amounts of more than $250,000 through $500,000 ............. 5582 5583 4.c.
+5. Number and amount currently outstanding of "Loans to finance agricultural production and other loans to farmers" (excluding those held in the branch's IBF) reported in Schedule C, part I, item 8, column A, "All other loans" (sum of items 5.a through 5.c must be less than or equal to Schedule C, part I, item 8, column A minus column B): a. With original amounts of $100,000 or less ......................................... 5584 5585 5.a.
+b. With original amounts of more than $100,000 through $250,000 ............. 5586 5587 5.b.
+c. With original amounts of more than $250,000 through $500,000 ............. 5588 5589 RCON RCON 5.c.
+Amount 06/2012
+FFIEC 002
+Page 12 of 32
+Schedule E—Deposit Liabilities and Credit Balances NOTE: Exclude all transactions with related depository institutions.
+| Item | Line item | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Total Deposit Liabilities and Credit Balances, Excluding IBF | | | | | | (Column D) IBF Deposit Liabilities2 | |
+| | | Transaction Accounts | | | | Nontransactions Accounts | | | |
+| | | (Column A) Total Transaction Accounts and Credit Balances (Excluding IBF) | | (Column B) Memo: Total Demand Deposits1 (Included in Column A) | | (Column C) Total Nontransaction Accounts (Including MMDAs) (Excluding IBF) | | | |
+| | Dollar Amounts in Thousands | | | | | | | | |
+| | 1. Individuals, partnerships, and corporations (include all certified and official checks): | | Amount | RCON | Amount | | Amount | | Amount |
+| 1.a. | a. U.S. addressees (domicile) | RCON C040 | | | | RCON C041 | | RCFN C042 | |
+| 1.b. | b. Non-U.S. addressees (domicile) | C043 | | | | C044 | | C045 | |
+| | 2. Commercial banks in the U.S. (including their IBFs): | | | | | | | | |
+| 2.a. | a. U.S. branches and agencies of other foreign banks | 1643 | | | | 2347 | | 1668 | |
+| 2.b. | b. Other commercial banks in the U.S | 1645 | | | | 2348 | | 1669 | |
+| | 3. Banks in foreign countries: | | | | | | | | |
+| 3.a. | a. Foreign branches of U.S. banks | 1646 | | | | 2367 | | 1671 | |
+| 3.b. | b. Other banks in foreign countries | 1647 | | | | 2373 | | 1672 | |
+| 4. | 4. Foreign governments and official institutions (includ- ing foreign central banks). | 1649 | | | | 2377 | | 2650 | |
+| 5. | 5. All other deposits and credit balances | 1650 | | | | 2259 | | 2261 | |
+| | 6. Not applicable | | | | | | | | |
+| 7. | 7. Total deposits and credit balances (sum of Columns A, C, and D must equal Schedule RAL, item 4.a, Column A. Column D must equal Schedule RAL, item 4.a, Column B) | 1653 | | 2210 | | 2385 | | RCXY 2205 | |
+1. Includes interest-bearing and noninterest-bearing demand deposits.
+2. Amounts in this column should exclude those IBF liabilities to be reported as "Federal funds purchased and securities sold under agreements to repurchase" or as "Other borrowed money."
+06/2012
+FFIEC 002
+Page 13 of 32 Schedule K—Quarterly Averages1 NOTE: Exclude all transactions with related depository institutions.
+Total Reporting Branch or Agency Including Its IBF Dollar Amounts in Thousands RCFD Assets
+1. Interest-bearing balances due from depository institutions (corresponds to part of Schedule RAL, item 1.a, Column A) ...................................................................................................... 3381 1.
+2. Federal funds sold and securities purchased under agreements to resell (corresponds to Schedule RAL, item 1.d, Column A) ................................................................................. 3365 2.
+3. Total loans and leases held for investment and held for sale (corresponds to Schedule RAL, item 1.e, Column A) ...................................................................................................... 3360 3.
+4. Loans to and acceptances of banks in foreign countries (corresponds to Schedule C, item 2.c, Column A) .................................................................................................................. 3105 4.
+5. Total claims on nonrelated parties (corresponds to Schedule RAL, item 1.i, Column A) ............... 3106 5.
+Liabilities
+6. Time certificates of deposit of $100,000 or more (corresponds to part of Schedule E, Memorandum item 1.a) ................................................................................................. 3345 6.
+7. Interest-bearing deposits2 and credit balances (corresponds to part of Schedule RAL, item 4.a, Column A) ...................................................................................................... 3107 7.
+8. Federal funds purchased and securities sold under agreements to repurchase (corresponds to Schedule RAL, item 4.b, Column A) ................................................................................. 3353 8.
+9. Other borrowed money (corresponds to Schedule RAL, item 4.c, Column A) ............................ 3355 9.
+Total Reporting Branch or Agency Excluding Its IBF Memoranda Dollar Amounts in Thousands RCON
+1. Components of total nontransaction accounts (included in item 7, Column C): a. Time deposits of $100,000 or more............................................................................... 2604 M.1.a.
+b. Individual Retirement Accounts (IRAs) and Keogh Plan accounts included in Memorandum item 1.a, "Time deposits of $100,000 or more," above ...................................................... F233 M.1.b.
+c. Time deposit of $100,000 or more with remaining maturity of more than 12 months included in Memorandum item 1.a, "Time deposits of $100,000 or more," above ................................... 6643 M.1.c.
+Schedule E—Continued Amount Amount
+1. For all items, branches and agencies have the option of reporting either (1) an average of daily figures for the quarter or (2) an average of weekly figures (i.e., the Wednesday of each week of the quarter).
+2. Includes interest-bearing demand deposits.
+06/2018
+FFIEC 002
+Page 14 of 32
+Schedule L—Derivatives and Off-Balance-Sheet Items
+NOTE: Exclude all transactions with related depository institutions.
+| Item | Line item | | |
+| --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | Total Reporting Branch or Agency Including Its IBF RCFD | Amount |
+| 1. | 1. Commitments to make or purchase loans | 3423 | |
+| 2. | 2. Spot foreign exchange contracts | 8765 | |
+| | 3. Standby letters of credit: | | |
+| 3.a. | a. Total | 3375 | |
+| 3.a.(1) | (1) To U.S. addressees (domicile) | 3376 | |
+| 3.a.(2) | (2) To non-U.S. addressees (domicile) | 3377 | |
+| 3.b. | b. Amount of total standby letters of credit in item 3.a conveyed to others through participations | 3378 | |
+| 4. | 4. Commercial and similar letters of credit | 3411 | |
+5. Not applicable
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | 6. Credit derivatives: | (Column A) Guarantor | | (Column B) Beneficiary | |
+| | a. Notional amounts: | | Amount | | Amount |
+| 6.a.(1) | (1) Credit default swaps | RCFD C968 | | RCFD C969 | |
+| 6.a.(2) | (2) Total return swaps | C970 | | C971 | |
+| 6.a.(3) | (3) Credit options | C972 | | C973 | |
+| 6.a.(4) | (4) Other credit derivatives | C974 | | C975 | |
+| | b. Gross fair values: | | | | |
+| 6.b.(1) | (1) Gross positive fair value | C219 | | C221 | |
+| 6.b.(2) | (2) Gross negative fair value | C220 | | C222 | |
+| Item | Line item | | | | | |
+| --- | --- | --- | --- | --- | --- | --- |
+| 7. | 7. All other off-balance-sheet contingent liabilities greater than or equal to 1/2 percent of total claims on nonrelated parties as reported on Schedule RAL, item 1.i | | | | Total Reporting Branch or Agency Including Its IBF RCFD 5602 | Amount |
+| | List below each component of this item greater than or equal to 1 percent of total claims on nonrelated parties as reported on Schedule RAL, item 1.i: RCFD Amount | | | | | |
+| 7.a. | a. TEXT 5598 | | | | | |
+| 7.a. | 5598 | | | | | |
+| 7.b. | b. TEXT 5600 | | | | | |
+| 7.b. | 5600 | | | | | |
+| 7.c. | c. TEXT 5601 | | | | | |
+| 7.c. | 5601 | | | | | |
+| 8. | 8. All other off-balance-sheet contingent claims (assets) greater than or equal to 1/2 percent of total claims on nonrelated parties as reported on Schedule RAL, item 1.i | | | | 5603 | |
+| | List below each component of this item greater than or equal to 1 percent of total claims on nonrelated parties as reported on Schedule RAL, item 1.i: | | | Amount | | |
+| 8.a. | a. | TEXT 5604 | RCFD 5604 | | | |
+| 8.b. | b. | TEXT 5605 | 5605 | | | |
+| 8.c. | c. | TEXT 5606 | 5606 | | | |
+| Item | nonrelated parties as reported on Schedule RAL, item 1.i: | | RCFD | Amount |
+| --- | --- | --- | --- | --- |
+| 7.a. | a. | TEXT 5598 | 5598 | |
+| 7.b. | b. | TEXT 5600 | 5600 | |
+| 7.c. | c. | TEXT 5601 | 5601 | |
+06/2012
+FFIEC 002
+Page 15 of 32
+Schedule L—Continued
+NOTE: Exclude all transactions with related depository institutions.
+| Item | Line item | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | | (Column A) Interest Rate Contracts | | (Column B) Foreign Exchange Contracts2 | | (Column C) Equity Derivative Contracts | | (Column D) Commodity and Other Contracts | |
+| | | Derivatives Position Indicators1 | RCFD | Amount | RCFD | Amount | RCFD | Amount | RCFD | Amount |
+| | 9. Gross amounts (e.g., notional amounts): | | | | | | | | | |
+| 9.a. | a. Futures contracts | | 8693 | | 8694 | | 8695 | | 8696 | |
+| 9.b. | b. Forward contracts | | 8697 | | 8698 | | 8699 | | 8700 | |
+| | c. Exchange-traded option contracts: | | | | | | | | | |
+| 9.c.(1) | (1) Written options | | 8701 | | 8702 | | 8703 | | 8704 | |
+| 9.c.(2) | (2) Purchased options | | 8705 | | 8706 | | 8707 | | 8708 | |
+| | d. Over-the-counter option contracts: | | | | | | | | | |
+| 9.d.(1) | (1) Written options | | 8709 | | 8710 | | 8711 | | 8712 | |
+| 9.d.(2) | (2) Purchased options | | 8713 | | 8714 | | 8715 | | 8716 | |
+| 9.e. | e. Swaps | | 3450 | | 3826 | | 8719 | | 8720 | |
+| 10. | 10. Total gross notional amount of derivative contracts held for trading . | | A126 | | A127 | | 8723 | | 8724 | |
+| 11. | 11. Total gross notional amount of derivative contracts held for pur- poses other than trading. | | 8725 | | 8726 | | 8727 | | 8728 | |
+| | 12. Gross fair values of deriv- ative contracts: | | | | | | | | | |
+| | a. Contracts held for trading: | | | | | | | | | |
+| 12.a.(1) | (1) Gross positive fair value | | 8733 | | 8734 | | 8735 | | 8736 | |
+| 12.a.(2) | (2) Gross negative fair value | | 8737 | | 8738 | | 8739 | | 8740 | |
+| | b. Contracts held for purposes other than trading: | | | | | | | | | |
+| 12.b.(1) | (1) Gross positive fair value | | 8741 | | 8742 | | 8743 | | 8744 | |
+| 12.b.(2) | (2) Gross negative fair value | | 8745 | | 8746 | | 8747 | | 8748 | |
+1. For each column, sum of items 9.a through 9.e must equal sum of items 10 and 11.
+2. Spot foreign exchange is reported in Schedule L, item 2.
+06/2012
+FFIEC 002
+Page 16 of 32 Schedule M—Due from/Due to Related Institutions in the U.S. and in Foreign Countries (CONFIDENTIAL) The Federal Financial Institutions Examination Council regards the individual respondent information provided by each reporting institution on this schedule as confidential. If it should be determined subsequently that any information collected on this schedule must be released, respondents will be notified.
+(Column A) Gross due from (Column B) Gross due to Dollar Amounts in Thousands RCFD RCFD Part I: Transactions of reporting institution including its IBF with related depository institutions, reflected in net due from/due to items (items 2.a and 5.a; Column A) in Schedule RAL.
+Amounts outstanding as of report date:
+1. U.S. domiciled offices of related depository institutions (including their IBFs): a. Related branches and agencies in the U.S.:
+(1) In same state as the reporting office..................................... 3008 3007 1.a.(1)
+(2) In other states ................................................................. 3010 3009 1.a.(2) b. Offices in the U.S. of other related depository institutions (including Edge and Agreement corporations and New York investment companies).......................................................................... 3171 3172 1.b.
+2. Non-U.S. domiciled offices of related depository institutions: a. Head office of parent bank ...................................................... 3173 3174 2.a.
+b. Non-U.S. branches and agencies of the parent bank:
+(1) Offices in the Caribbean .................................................... 3175 3176 2.b.(1)
+(2) Other offices ................................................................... 3177 3178 2.b.(2) c. Other non-U.S. offices of related depository institutions................. 3179 3180 2.c.
+3. Total (sum of items 1.a, 1.b, and 2.a through 2.c) ............................. 3002 3001 3.
+4. Net due from head office and other related depository institutions (item 3, Column A minus Column B — enter the amount with a minus sign (–) if Column B is greater than Column A. The absolute value of item 4 must equal Schedule RAL, item 2.a if item 3 Column A above is greater than Column B, or Schedule RAL, item 5.a if item 3 Column B above is greater than Column A) .......................................... 3035 4.
+Memoranda
+1. Average daily (or weekly) amounts for the quarter ending with the report date: a. Related depository offices domiciled in the U.S. (corresponds to items 1.a and 1.b of Part I above)...................................................... 3026 3025 M.1.a.
+b. Related depository offices domiciled outside of the U.S. (corresponds to items 2.a through 2.c of Part I above) ..................................... 3028 3027 M.1.b.
+2. Sum of those parts of items 1.b and 2.c of Part I above that are with wholly owned depository subsidiaries of the parent bank ..................... 3181 3182 M.2.
+3. Trading assets and liabilities, related parties (amount is included in item 3 above, and in Schedule RAL, items 2.a and 5.a, respectively) ................. A006 A007 M.3.
+Total Reporting Branch or Agency Including Its IBF AmountAmount 06/2012
+FFIEC 002
+Page 17 of 32
+Schedule M (CONFIDENTIAL)—Continued
+| Item | Line item | | | | | |
+| --- | --- | --- | --- | --- | --- | --- |
+| | | | IBF Only (Column A) Gross due from | | (Column B) Gross due to | |
+| | Dollar Amounts in Thousands | | RCFN | Amount | RCFN | Amount |
+| | Part II: Transactions of reporting institution's IBF with related depository institutions. Amounts outstanding as of report date: | | | | | |
+| | 1. IBF transactions with related depository institutions other than transactions with establishing entity: | | | | | |
+| 1.a. | a. IBF transactions with IBFs of related depository institutions domiciled in the U.S. (included in Part I, item 1) | | 3004 | | 3003 | |
+| | b. IBF transactions with related depository institutions domiciled outside the U.S. (included in Part I, item 2): | | | | | |
+| 1.b.(1) | (1) Head office of parent bank | | 3173 | | 3174 | |
+| | (2) Non-U.S. branches and agencies of the parent bank: | | | | | |
+| 1.b.(2)(a) | (a) Offices in the Caribbean | | 3175 | | 3176 | |
+| 1.b.(2)(b) | (b) Other offices | | 3177 | | 3178 | |
+| 1.b.(3) | (3) Other related depository institutions domiciled outside the U.S | | 3179 | | 3180 | |
+| 1.c. | c. Total (sum of items 1.a and 1.b.(1) through 1.b.(3) above) | | 3002 | | 3001 | |
+| 1.d. | d. IBF net due from related depository institutions other than establishing entity (item 1.c, Column A minus Column B—enter the amount with a minus sign (–) if Column B is greater than Column A | 3193 | | | | |
+| 2. | 2. IBF net due from establishing entity (if net due to, enter the amount with a minus sign (–)) | 1888 | | | | |
+| 3. | 3. IBF net due from all related depository institu- tions (sum of items 1.d and 2 above; if negative, enter the amount with a minus sign (–)). (If this item is positive, it must equal Schedule RAL, item 2.b; if this item is negative, its absolute value must equal Schedule RAL, item 5.b.) | 3194 | | | | |
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | Total Reporting Branch or Agency Including Its IBF (Column A) Gross due from | | (Column B) Gross due to | |
+| | Dollar Amounts in Thousands | RCFD | Amount | RCFD | Amount |
+| | Part III: Transactions of reporting institution including its IBF with related nondepository subsidiaries. These are not reflected in the net due from/due to items (items 2.a and 5.a) in Schedule RAL. Amounts outstanding as of report date with: | | | | |
+| 1. | 1. Related nondepository majority-owned subsidiaries in the U.S | 3030 | | 3029 | |
+| 2. | 2. Related nondepository majority-owned subsidiaries in foreign countries.. | 3032 | | 3031 | |
+| | Memorandum | | | | |
+| M.1. | 1. Amount of items 1 and 2 above for wholly owned related nondepository subsidiaries | 3034 | | 3033 | |
+06/2012
+FFIEC 002
+Page 18 of 32
+Schedule M (CONFIDENTIAL)—Continued
+| Item | Line item | | |
+| --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | Total Reporting Branch or Agency Including Its IBF RCFD | Amount |
+| | Part IV: Confidential Loan Information. | | |
+| 1. | 1. Amount of allowance for credit losses on loans and leases, if any, carried on the books of the reporting branch or agency including its IBF | 3195 | |
+| 2. | 2. Other real estate owned | 2150 | |
+| | Part V: Derivatives and off-balance-sheet items: with related depository institutions. | | |
+| 1. | 1. Commitments to make or purchase loans | 5766 | |
+| 2. | 2. Spot foreign exchange contracts | A125 | |
+| 3. | 3. Total standby letters of credit | 5770 | |
+| 4. | 4. Commercial and similar letters of credit | 5771 | |
+5. Not applicable
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | 6. Credit derivatives: | (Column A) Guarantor | | (Column B) Beneficiary | |
+| | a. Notional amounts: | | Amount | | Amount |
+| 6.a.(1) | (1) Credit default swaps | RCFD G014 | | RCFD G015 | |
+| 6.a.(2) | (2) Total return swaps | G016 | | G017 | |
+| 6.a.(3) | (3) Credit options | G018 | | G019 | |
+| 6.a.(4) | (4) Other credit derivatives | G020 | | G021 | |
+| | b. Gross fair values: | | | | |
+| 6.b.(1) | (1) Gross positive fair value | C484 | | C488 | |
+| 6.b.(2) | (2) Gross negative fair value | C487 | | C489 | |
+| Item | Line item | | | | | |
+| --- | --- | --- | --- | --- | --- | --- |
+| 7. | 7. All other off-balance-sheet contingent liabilities greater than or equal to 1/2 percent of total claims on related depository institutions as reported in Schedule M, Part I, Item 3, Column A | | | | Total Reporting Branch or Agency Including Its IBF RCFD 8569 | Amount |
+| | List below each component of this item greater than or equal to 1 percent of total claims on related depository institutions as reported on Schedule M, Part I, Item 3, Column A: RCFD Amount | | | | | |
+| 7.a. | a. TEXT 8570 | | | | | |
+| 7.a. | 8570 | | | | | |
+| 7.b. | b. TEXT 8571 | | | | | |
+| 7.b. | 8571 | | | | | |
+| 7.c. | c. TEXT 8572 | | | | | |
+| 7.c. | 8572 | | | | | |
+| 8. | 8. All other off-balance-sheet contingent claims (assets) greater than or equal to 1/2 percent of total claims on related depository institutions as reported in Schedule M, Part I, Item 3, Column A | | | | 8573 | |
+| | List below each component of this item greater than or equal to 1 percent of total claims on related depository institutions as reported on Schedule M, Part I, Item 3, Column A: | | | Amount | | |
+| 8.a. | a. | TEXT 8574 | RCFD 8574 | | | |
+| 8.b. | b. | TEXT 8575 | 8575 | | | |
+| 8.c. | c. | TEXT 8576 | 8576 | | | |
+| Item | M, Part I, Item 3, Column A: | | RCFD | Amount |
+| --- | --- | --- | --- | --- |
+| 7.a. | a. | TEXT 8570 | 8570 | |
+| 7.b. | b. | TEXT 8571 | 8571 | |
+| 7.c. | c. | TEXT 8572 | 8572 | |
+03/2024
+FFIEC 002
+Page 19 of 32
+Schedule M (CONFIDENTIAL)—Continued
+| Item | Line item | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | | (Column A) Interest Rate Contracts | | (Column B) Foreign Exchange Contracts2 | | (Column C) Equity Derivative Contracts | | (Column D) Commodity and Other Contracts | |
+| | | Derivatives Position Indicators1 | RCFD | Amount | RCFD | Amount | RCFD | Amount | RCFD | Amount |
+| | 9. Gross amounts (e.g., notional amounts): | | | | | | | | | |
+| 9.a. | a. Futures contracts | | A008 | | A009 | | A010 | | A037 | |
+| 9.b. | b. Forward contracts | | A038 | | A039 | | A040 | | A041 | |
+| | c. Exchange-traded option contracts: | | | | | | | | | |
+| 9.c.(1) | (1) Written options .. | | A042 | | A043 | | A044 | | A045 | |
+| 9.c.(2) | (2) Purchased options | | A046 | | A047 | | A048 | | A049 | |
+| | d. Over-the-counter option contracts: | | | | | | | | | |
+| 9.d.(1) | (1) Written options | | A050 | | A051 | | A052 | | A053 | |
+| 9.d.(2) | (2) Purchased options | | A054 | | A055 | | A056 | | A057 | |
+| 9.e. | e. Swaps | | A058 | | A059 | | A060 | | A061 | |
+| 10. | 10. Total gross notional amount of derivative contracts held for trading | | A062 | | A063 | | A064 | | A065 | |
+| 11. | 11. Total gross notional amount of derivative contracts held for purposes other than trading | | A066 | | A067 | | A068 | | A069 | |
+| | 12. Gross fair values of derivative contracts: | | | | | | | | | |
+| | a. Contracts held for trading: | | | | | | | | | |
+| 12.a.(1) | (1) Gross positive fair value | | A074 | | A075 | | A076 | | A077 | |
+| 12.a.(2) | (2) Gross negative fair value | | A078 | | A079 | | A080 | | A081 | |
+| | b. Contracts held for purposes other than trading: | | | | | | | | | |
+| 12.b.(1) | (1) Gross positive fair value | | A082 | | A083 | | A084 | | A085 | |
+| 12.b.(2) | (2) Gross negative fair value | | A086 | | A087 | | A088 | | A089 | |
+1. For each column, sum of items 9.a through 9.e must equal sum of items 10 and 11.
+2. Spot foreign exchange is reported in Schedule M, Part V, item 2.
+06/2012
+FFIEC 002
+Page 20 of 32
+Schedule N—Past Due, Nonaccrual, and Modified Loans
+NOTE: Exclude all transactions with related depository institutions.
+| Item | Line item | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Total Reporting Branch or Agency Including Its IBF (Column A) Past Due 30 Through 89 Days and Still Accruing | | (Column B) Past Due 90 Days or More and Still Accruing | | (Column C) Nonaccrual | | (Column D) Modified and in Compliance with Modified Terms | |
+| | Dollar Amounts in Thousands | RCFD | Amount | RCFD | Amount | RCFD | Amount | RCFD | Amount |
+| | 1. Total loans to U.S. addressees (domicile): | | | | | | | | |
+| 1.a. | a. Commercial and industrial loans | 1606 | | 1607 | | 1608 | | 1609 | |
+| 1.b. | b. Loans secured by real estate | 1421 | | 1422 | | 1423 | | 1424 | |
+| 1.c. | c. All other loans(including all lease financing receivables) | 3183 | | 3184 | | 3185 | | 3186 | |
+| 2. | 2. Total loans to non-U.S. addressees (domicile) | 1623 | | 1624 | | 1625 | | 1627 | |
+| 3. | 3. Total (sum of items 1.a through 1.c and 2) | 1406 | | 1407 | | 1403 | | 1404 | |
+| | Memoranda | | | | | | | | |
+| M.1. | 1. Book value of loans sold or otherwise transferred to head office or to related institutions and still serviced by the reporting branch or agency | 1628 | | 1629 | | 1582 | | 1637 | |
+| M.2. | 2. Interest rate, foreign exchange rate, and other commodity and equity contracts: Fair value of amounts carried as assets | 3529 | | 3530 | | | | | |
+12/2025
+FFIEC 002
+Page 21 of 32
+Schedule O—Other Data for Deposit Insurance Assessments
+This schedule is to be completed only by branches whose deposits are insured by the FDIC. Each FDIC-insured branch must complete items 1 and 2, 4 through 6, Memorandum items 1 and 6, and, if applicable, item 3 and Memorandum items 2, 3, 8, and 9 each quarter.
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | | | Reporting Branch Including Its IBF RCFD | Amount |
+| 1. | 1. Total deposit liabilities before exclusions (gross) as defined in Section 3(l) of the Federal Deposit Insurance Act and FDIC regulations | | | F236 | |
+| 2. | 2. Total allowable exclusions, including interest accrued and unpaid on allowable exclusions (including foreign deposits) | | | F237 | |
+| 3. | 3. Total foreign deposits, including interest accrued and unpaid thereon (included in item 2 above) | | | RCFN F234 | |
+| 4. | 4. Average consolidated total assets for the calendar quarter | | | RCFD K652 | |
+| 4.a. | a. Averaging method used (for daily averaging, enter 1; for weekly averaging, enter 2) | K653 | Number | | |
+| 5. | 5. Average tangible equity for the calendar quarter1 | | | K654 | |
+| 6. | 6. Holdings of long-term unsecured debt issued by other FDIC-insured depository institutions | | | K655 | |
+1. See instructions for averaging methods. Tangible equity is defined as eligible assets (determined in accordance with Section 347.210 of the FDIC’s regulations) less the book value of liabilities (exclusive of liabilities due to the foreign bank’s head office, other branches, agencies, offices, or wholly owned subsidiaries).
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | Memoranda | | | Reporting Branch Excluding Its IBF | |
+| | Dollar Amounts in Thousands | | | RCON | Amount |
+| | 1. Total deposit liabilities of the branch (including related interest accrued and unpaid) less allowable exclusions (sum of Memorandum items 1.a.(1), 1.b.(1), 1.c.(1), and 1.d.(1) must equal Schedule O, item 1 less item 2): | | | | |
+| | a. Deposit accounts (excluding retirement accounts) of $250,000 or less:1 | | | | |
+| M.1.a.(1) | (1) Amount of deposit accounts (excluding retirement accounts) of $250,000 or less | | | F049 | |
+| M.1.a.(2) | (2) Number of deposit accounts (excluding retirement accounts) of $250,000 or less (to be completed for the June report only) | F050 | Number | | |
+| | b. Deposit accounts (excluding retirement accounts) of more than $250,000:1 | | | | |
+| M.1.b.(1) | (1) Amount of deposit accounts (excluding retirement accounts) of more than $250,000 | | | F051 | |
+| M.1.b.(2) | (2) Number of deposit accounts (excluding retirement accounts) of more than $250,000 | F052 | Number | | |
+| | c. Retirement deposit accounts of $250,000 or less:1 | | | | |
+| M.1.c.(1) | (1) Amount of retirement deposit accounts of $250,000 or less | | | F045 | |
+| M.1.c.(2) | (2) Number of retirement deposit accounts of $250,000 or less (to be completed for the June report only) | F046 | Number | | |
+| | d. Retirement deposit accounts of more than $250,000:1 | | | | |
+| M.1.d.(1) | (1) Amount of retirement deposit accounts of more than $250,000 | | | F047 | |
+| M.1.d.(2) | (2) Number of retirement deposit accounts of more than $250,000 | F048 | Number | | |
+1. The dollar amounts used as the basis for reporting in Memoranda items 1.a. through 1.d. reflect the deposit insurance limits in effect on the report date.
+09/2023
+FFIEC 002
+Page 22 of 32
+Schedule O—Continued
+| Item | Line item | | |
+| --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | Reporting Branch Excluding Its IBF | |
+| | Memorandum item 2 is to be completed by branches with $1 billion or more in total claims on | RCON | Amount |
+| | nonrelated parties.2 | | |
+| M.2. | 2. Estimated amount of uninsured deposits in the branch, including related interest accrued and unpaid3 | 5597 | |
+| M.3. | 3. Preferred deposits (to be completed for the December report only) | 5590 | |
+| | 4. and 5. Not applicable | | |
+| M.6. | 6. Outstanding balance of Paycheck Protection Program (PPP) loans | LG27 | |
+| | 7. Not applicable | | |
+| | 8. Sweep deposits: | | |
+| M.8.(a) | (a) Fully insured, affiliate sweep deposits | MT87 | |
+| M.8.(b) | (b) Not fully insured, affiliate sweep deposits | MT89 | |
+| M.8.(c) | (c) Fully insured, non-affiliate sweep deposits | MT91 | |
+| M.8.(d) | (d) Not fully insured, non-affiliate sweep deposits | MT93 | |
+| M.9. | 9. Total sweep deposits that are not brokered deposits | MT95 | |
+2. The $1 billion size test is generally based on the total claims on nonrelated parties (Schedule RAL, item 1.i, column A) reported in the preceding calendar year's June 30 FFIEC 002.
+3. Uninsured deposits should be estimated based on the deposit insurance limits set forth in Memorandum items 1.a through 1.d.
+Schedule P—Other Borrowed Money
+NOTE: Exclude all transactions with related depository institutions.
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Total Reporting Branch or Agency Including Its IBF | | (Column B) IBF Only | |
+| | Dollar Amounts in Thousands | RCFD | Amount | RCFN | Amount |
+| | 1. Owed to nonrelated commercial banks in the U.S. (including their IBFs): | | | | |
+| 1.a. | a. Owed to U.S. offices of nonrelated U.S. banks | 3312 | | 3312 | |
+| 1.b. | b. Owed to U.S. branches and agencies of nonrelated foreign banks .. | 3313 | | 3313 | |
+| | 2. Owed to nonrelated banks in foreign countries: | | | | |
+| 2.a. | a. Owed to foreign branches of nonrelated U.S. banks | 3314 | | 3314 | |
+| 2.b. | b. Owed to foreign offices of nonrelated foreign banks | 3315 | | 3315 | |
+| 3. | 3. Owed to others | 2869 | | 2869 | |
+| 4. | 4. Total (sum of items 1 through 3) (must equal Schedule RAL, item 4.c).. | RCXX 3190 | | RCXY 3190 | |
+| | Memorandum | | | | |
+| M.1. | 1. Immediately available funds with a maturity greater than one day included in other borrowed money | RCFD 2805 | | | |
+09/2023
+FFIEC 002
+Page 23 of 32
+Schedule Q—Financial Assets and Liabilities Measured at Fair Value on a Recurring Basis
+Schedule Q is to be completed by branches and agencies that:
+(1) Have elected to report financial instruments or servicing assets and liabilities at fair value under a fair value option with changes in fair value recognized in earnings, or
+(2) Reported total trading assets of $10 million or more in any of the four preceding calendar quarters.
+| Item | Line item | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Total Fair Value Reported on Schedule RAL | | (Column B) LESS: Amounts Netted in the Determination of Total Fair Value | | (Column C) Level 1 Fair Value Measurements | | (Column D) Level 2 Fair Value Measurements | | (Column E) Level 3 Fair Value Measurements | |
+| | Dollar Amounts in Thousands | RCFD | Amount | RCFD | Amount | RCFD | Amount | RCFD | Amount | RCFD | Amount |
+| | Assets | | | | | | | | | | |
+| 1. | 1. Available-for-sale debt securities and equity securities with readily determinable fair values not held for trading1 | JA36 | | G474 | | G475 | | G476 | | G477 | |
+| 2. | 2. Federal funds sold and securities purchased under agreements to resell | G478 | | G479 | | G480 | | G481 | | G482 | |
+| 3. | 3. Loans and leases held for sale | G483 | | G484 | | G485 | | G486 | | G487 | |
+| 4. | 4. Loans and leases held for investment | G488 | | G489 | | G490 | | G491 | | G492 | |
+| | 5. Trading assets: | | | | | | | | | | |
+| 5.a. | a. Derivative assets | RCXX 3543 | | G493 | | G494 | | G495 | | G496 | |
+| 5.b. | b. Other trading assets | RCFD G497 | | G498 | | G499 | | G500 | | G501 | |
+| 5.b.(1) | (1) Nontrading securities at fair value with changes in fair value reported in current earnings (included in Schedule Q, item 5.b above) | F240 | | F684 | | F692 | | F241 | | F242 | |
+| 6. | 6. All other assets | G391 | | G392 | | G395 | | G396 | | G804 | |
+| 7. | 7. Total assets measured at fair value on a recurring basis (sum of items 1 through 5.b plus item 6) | G502 | | G503 | | G504 | | G505 | | G506 | |
+1. The amount reported in item 1, column A, must equal the sum of Schedule RAL, Memorandum items 3.a and 4.
+12/2020
+FFIEC 002
+Page 24 of 32 Schedule Q—Continued (Column A) (Column B) (Column C) (Column D) (Column E)
+[TABLE]
+| | | (Column | A) | | (Column | B) | (Column C) | (Column D) | (Column E) | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Total Fair | Value | LESS: | Amounts | Netted in | Level 1 Fair Value | Level 2 Fair Value | Level 3 Fair Value | |
+| | | Reporte | d on | the | Determin | ation | Measurements | Measurements | Measurements | |
+| | | Schedule | RAL | of | Total Fair | Value | | | | |
+| | Dollar Amounts in Thousands | RCFD Am | ount | RCFD | Am | ount | RCFD Amount | RCFD Amount | RCFD Amount | |
+| Lia | bilities | | | | | | | | | |
+| 8. | Deposits.................................................. | F252 | | F686 | | | F694 | F253 | F254 | 8. |
+| 9. | Federal funds purchased and securities | | | | | | | | | |
+| | sold under agreements to repurchase............ | G507 | | G508 | | | G509 | G510 | G511 | 9. |
+| 10. | Trading liabilities: | RCXX | | | | | | | | |
+| | a. Derivative liabilities................................. | 3547 | | G512 | | | G513 | G514 | G515 | 10.a. |
+| | | RCFD | | | | | | | | |
+| | b. Other trading liabilities............................ | G516 | | G517 | | | G518 | G519 | G520 | 10.b. |
+| 11. | Other borrowed money............................... | G521 | | G522 | | | G523 | G524 | G525 | 11. |
+| 12. | Subordinated notes and debentures.............. | G526 | | G527 | | | G528 | G529 | G530 | 12. |
+| 13. | All other liabilities...................................... | G805 | | G806 | | | G807 | G808 | G809 | 13. |
+| 14. | Total liabilities measured at fair value on a | | | | | | | | | |
+| | recurring basis (sum of items 8 through 13).... | G531 | | G532 | | | G533 | G534 | G535 | 14. |
+| | | | | | | | | | | 06/2018 |
+06/2018
+FFIEC 002
+Page 25 of 32
+Schedule Q—Continued
+| Item | Line item | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | | (Column A) Total Fair Value Reported on Schedule RAL | | (Column B) LESS: Amounts Netted in the Determination of Total Fair Value | | (Column C) Level 1 Fair Value Measurements | | (Column D) Level 2 Fair Value Measurements | | (Column E) Level 3 Fair Value Measurements | |
+| | Dollar Amounts in Thousands | | RCFD | Amount | RCFD | Amount | RCFD | Amount | RCFD | Amount | RCFD | Amount |
+| | Memoranda | | | | | | | | | | | |
+| | 1. All other assets (itemize and describe amounts included in Schedule Q, item 6, that are greater than $100,000 and exceed 25% of item 6) | | | | | | | | | | | |
+| M.1.a. | a. Mortgage servicing assets | | G536 | | G537 | | G538 | | G539 | | G540 | |
+| M.1.b. | b. Nontrading derivative assets | | G541 | | G542 | | G543 | | G544 | | G545 | |
+| M.1.c. | c. | TEXT G546 | G546 | | G547 | | G548 | | G549 | | G550 | |
+| M.1.d. | d. | TEXT G551 | G551 | | G552 | | G553 | | G554 | | G555 | |
+| M.1.e. | e. | TEXT G556 | G556 | | G557 | | G558 | | G559 | | G560 | |
+| M.1.f. | f. | TEXT G561 | G561 | | G562 | | G563 | | G564 | | G565 | |
+| | 2. All other liabilities (itemize and describe amounts included in Schedule Q, item 13, that are greater than $100,000 and exceed 25% of item 13): | | | | | | | | | | | |
+| M.2.a. | a. Loan commitments (not accounted for as derivatives) | | F261 | | F689 | | F697 | | F262 | | F263 | |
+| M.2.b. | b. Nontrading derivative liabilities | | G566 | | G567 | | G568 | | G569 | | G570 | |
+| M.2.c. | c. | TEXT G571 | G571 | | G572 | | G573 | | G574 | | G575 | |
+| M.2.d. | d. | TEXT G576 | G576 | | G577 | | G578 | | G579 | | G580 | |
+| M.2.e. | e. | TEXT G581 | G581 | | G582 | | G583 | | G584 | | G585 | |
+| M.2.f. | f. | TEXT G586 | G586 | | G587 | | G588 | | G589 | | G590 | |
+06/2018
+FFIEC 002
+Page 26 of 32
+Schedule Q—Continued
+Memorandum items 3 and 4 are to be completed by branches and agencies that have elected to measure loans included in Schedule C, part I, items 1 through 8, at fair value under a fair value option.
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Total Reporting Branch or Agency Including Its IBF | | (Column B) IBF Only | |
+| | Dollar Amounts in Thousands | RCFD | Amount | RCFN | Amount |
+| | Memoranda—Continued | | | | |
+| | 3. Loans measured at fair value (included in Schedule C, part I, items 1 through 8): | | | | |
+| | a. Loans secured by real estate: | | | | |
+| M.3.a.(1) | (1) Loans secured by 1–4 family residential properties | HT87 | | HT87 | |
+| M.3.a.(2) | (2) All other loans secured by real estate | HT88 | | HT88 | |
+| M.3.b. | b. Commercial and industrial loans | F585 | | F585 | |
+| M.3.c. | c. Other loans | G011 | | G011 | |
+| | 4. Unpaid principal balance of loans measured at fair value (reported in Schedule Q, Memorandum item 3): | | | | |
+| | a. Loans secured by real estate: | | | | |
+| M.4.a.(1) | (1) Loans secured by 1–4 family residential properties | HT91 | | HT91 | |
+| M.4.a.(2) | (2) All other loans secured by real estate | HT92 | | HT92 | |
+| M.4.b. | b. Commercial and industrial loans | F597 | | F597 | |
+| M.4.c. | c. Other loans | G013 | | G013 | |
+06/2018
+FFIEC 002
+Page 27 of 32
+Schedule S—Servicing, Securitization, and Asset Sale Activities
+| Item | Line item | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) 1-4 Family Residential Loans | (Column B) Home Equity Lines | (Column C) Credit Card Receivables | (Column D) Auto Loans | (Column E) Other Consumer Loans | (Column F) Commercial and Industrial Loans | (Column G) All Other Loans, All Leases, and All Other Assets |
+| | Dollar Amounts in Thousands Securitization Activities | | | | | | | |
+| 1. | 1. Outstanding principal balance of assets sold and securitized by the reporting institution with servicing retained or with recourse or other seller-provided credit enhancements | Amount RCFD B705 | Amount RCFD B706 | Amount RCFD B707 | Amount RCFD B708 | Amount RCFD B709 | Amount RCFD B710 | Amount RCFD B711 |
+| 2. | 2. Maximum amount of credit exposure arising from recourse or other seller- provided credit enhancements provided to structures reported in item 1 | RCFD HU09 | RCFD HU10 | RCFD HU11 | RCFD HU12 | RCFD HU13 | RCFD HU14 | RCFD HU15 |
+| | Item 3 is to be reported by branches and agen- cies with $100 billion or more in total assets.1 | | | | | | | |
+| 3. | 3. Reporting institution's unused commitments to provide liquidity to structures reported in item 1 | RCFD B726 | RCFD B727 | RCFD B728 | RCFD B729 | RCFD B730 | RCFD B731 | RCFD B732 |
+| 4.a. | 4. Past due loan amounts included in item 1: | RCFD B733 | RCFD B734 | RCFD B735 | RCFD B736 | RCFD B737 | RCFD B738 | RCFD B739 |
+| 4.a. | a. 30-89 days past due | | | | | | | |
+| 4.b. | b. 90 days or more past due | RCFD B740 | RCFD B741 | RCFD B742 | RCFD B743 | RCFD B744 | RCFD B745 | RCFD B746 |
+| | 5. Not applicable Item 6 is to be reported by branches and agen- cies with $10 billion or more in total assets.1 | | | | | | | |
+| 6. | 6. Total amount of ownership (or seller's) interest carried as securities or loans | | RCFD HU16 | RCFD HU17 | | | RCFD HU18 | |
+7. and 8. Not applicable
+1. The asset size tests are based on the total assets reported in the preceding calendar year's June 30 FFIEC 002.
+06/2018
+FFIEC 002
+Page 28 of 32
+Schedule S—Continued
+| Item | Line item | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) 1-4 Family Residential Loans | (Column B) Home Equity Lines | (Column C) Credit Card Receivables | (Column D) Auto Loans | (Column E) Other Consumer Loans | (Column F) Commercial and Industrial Loans | (Column G) All Other Loans, All Leases, and All Other Assets |
+| | Dollar Amounts in Thousands For Securitization Facilities Sponsored By or Otherwise Established By Other Institutions | | | | | | | |
+| 9. | 9. Maximum amount of credit exposure arising from credit enhancements provided by the reporting institution to other institutions' securitization structures in the form of standby letters of credit, purchased subordinated securities, and other enhancements | Amount RCFD B776 | Amount | Amount | Amount RCFD B779 | Amount RCFD B780 | Amount RCFD B781 | Amount RCFD B782 |
+| | Item 10 is to be reported by branches and agencies that have $10 billion or more in total assets.1 | | | | | | | |
+| 10. | 10. Reporting institution's unused commitments to provide liquidity to other institutions' securitization structures | RCFD B783 | | | RCFD B786 | RCFD B787 | RCFD B788 | RCFD B789 |
+| | Asset Sales | | | | | | | |
+| 11. | 11. Assets sold with recourse or other seller provided credit enhancements and not securitized by the reporting institution | RCFD B790 | | | | | | RCFD B796 |
+| 12. | 12. Maximum amount of credit exposure arising from recourse or other seller provided credit enhancements provided to assets reported in item 11 | RCFD B797 | | | | | | RCFD B803 |
+1. The asset size tests are based on the total assets reported in the preceding calendar year's June 30 FFIEC 002.
+06/2018
+Memorandum Dollar Amounts in Thousands RCFD
+1. Asset-backed commercial paper conduits: a. Maximum amount of credit exposure arising from credit enhancements provided to conduit structures in the form of standby letters of credit, subordinated securities, and other enhancements:
+(1) Conduits sponsored by the reporting institution or related institution ...................................................................................... B806 M.1.a.(1)
+(2) Conduits sponsored by other unrelated institutions ........................................................................................................... B807 M.1.a.(2) b. Unused commitments to provide liquidity to conduit structures:
+(1) Conduits sponsored by the reporting institution or related institution ..................................................................................... B808 M.1.b.(1)
+(2) Conduits sponsored by other unrelated institutions ............................................................................................................ B809 M.1.b.(2) Amount Memorandum item 1 is to be reported by branches and agencies that have $10 billion or more in total assets.1 FFIEC 002 Page 29 of 32 Schedule S—Continued 06/2018
+1. The asset size tests are based on the total assets reported in the preceding calendar year's June 30 FFIEC 002.
+FFIEC 002
+Page 30 of 32
+Schedule T—Fiduciary and Related Services
+Schedule T is to be completed annually as of the December 31 report date.
+RCFD Yes
+1. Does the institution have fiduciary powers? (If "NO," do not complete Schedule T.) ............................... A345
+No 1.
+RCFD Yes
+2. Does the institution exercise the fiduciary powers it has been granted? .............................................. A346
+No 2.
+3. Does the institution have any fiduciary or related activity (in the form of assets or accounts)? RCFD Yes (If "NO," do not complete the rest of Schedule T.)........................................................................... B867
+No 3.
+If the answer to item 3 is "YES," complete all applicable items of Schedule T.
+| Item | Line item | | | | |
+| --- | --- | --- | --- | --- | --- |
+| | | (Column A) Managed Assets | (Column B) Non-Managed Assets | (Column C) Number of Managed Accounts | (Column D) Number of Non-Managed Accounts |
+| | Dollar Amounts in Thousands | Amount | Amount | | |
+| | Fiduciary and Related Assets | | | | |
+| 4. | 4. Personal trust and agency accounts | RCFD B868 | RCFD B869 | RCFD B870 | RCFD B871 |
+| | 5. Retirement related trust and agency accounts: | | | | |
+| 5.a. | a. Employee benefit-defined contribution | RCFD B872 | RCFD B873 | RCFD B874 | RCFD B875 |
+| 5.b. | b. Employee benefit-defined benefit | RCFD B876 | RCFD B877 | RCFD B878 | RCFD B879 |
+| 5.c. | c. Other retirement accounts | RCFD B880 | RCFD B881 | RCFD B882 | RCFD B883 |
+| 6. | 6. Corporate trust and agency accounts .. | RCFD B884 | RCFD B885 | RCFD C001 | RCFD C002 |
+| 7. | 7. Investment management agency accounts | RCFD B886 | | RCFD B888 | |
+| 8. | 8. Other fiduciary accounts | RCFD B890 | RCFD B891 | RCFD B892 | RCFD B893 |
+| 9. | 9. Total fiduciary accounts (sum of items 4 through 8) | RCFD B894 | RCFD B895 | RCFD B896 | RCFD B897 |
+| 10. | 10. Custody and safekeeping accounts | | RCFD B898 | | RCFD B899 |
+06/2012
+FFIEC 002
+Page 31 of 32
+Schedule T—Continued
+| Item | Line item | | |
+| --- | --- | --- | --- |
+| | Memoranda | Managed Assets | |
+| | Dollar Amounts in Thousands | RCFD | Amount |
+| | 1. Managed assets held in personal trust and agency accounts: | | |
+| M.1.a. | a. Noninterest-bearing deposits | B913 | |
+| M.1.b. | b. Interest-bearing deposits | B914 | |
+| M.1.c. | c. U.S. Treasury and U.S. Government agency obligations | B915 | |
+| M.1.d. | d. State, county and municipal obligations | B916 | |
+| M.1.e. | e. Money market mutual funds | B917 | |
+| M.1.f. | f. Other short-term obligations | B918 | |
+| M.1.g. | g. Other notes and bonds | B919 | |
+| M.1.h. | h. Common and preferred stocks | B920 | |
+| M.1.i. | i. Real estate mortgages | B921 | |
+| M.1.j. | j. Real estate | B922 | |
+| M.1.k. | k. Miscellaneous asset | B923 | |
+Amount
+l. Total managed assets held in personal trust and agency accounts (sum of Memorandum items 1.a through 1.k) (must equal Schedule T, item 4, column A)...............................................
+RCXX B868
+M.1.l.
+(Column A) Number of Issues Dollar Amounts in Thousands RCFD
+2. Corporate trust and agency accounts: a. Corporate and municipal trusteeships................................................... B927 b. Transfer agent, registrar, paying agent, and other corporate agency ........... B929
+(Column B) Principal Amount Outstanding Amount RCFD B928 M.2.a.
+M.2.b.
+| Item | Line item | | |
+| --- | --- | --- | --- |
+| | | (Column A) Number of Funds | (Column B) Market Value of Fund Assets |
+| | Dollar Amounts in Thousands | | Amount |
+| M.3.a. | 3. Collective investment funds and common trust funds: | RCFD B931 | RCFD B932 |
+| M.3.a. | a. Domestic equity | | |
+| M.3.b. | b. International/Global equity | RCFD B933 | RCFD B934 |
+| M.3.c. | c. Stock/Bond blend | RCFDB935 | RCFD B936 |
+| M.3.d. | d. Taxable bond | RCFD B937 | RCFD B938 |
+| M.3.e. | e. Municipal bond | RCFD B939 | RCFD B940 |
+| M.3.f. | f. Short term investments/Money market | RCFD B941 | RCFD B942 |
+| M.3.g. | g. Specialty/Other | RCFD B943 | RCFD B944 |
+| M.3.h. | h. Total collective investment funds (sum of Memorandum items 3.a through 3.g) | RCFD B945 | RCFD B946 |
+06/2012
+FFIEC 002
+Page 32 of 32 Person to whom questions about Schedule T–Fiduciary and Related Services should be directed: Name and Title (TEXT B962) E-mail Address (TEXT B926) Area Code / Phone Number / Extension (TEXT B963) FAX Number (TEXT B964) 06/2012

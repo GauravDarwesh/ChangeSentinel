@@ -1,0 +1,30 @@
+Name of Bank Name (FORB 9017) Street Address (FORB 9028) City (FORB 9130) State (FORB 9200) Foreign Branch Name (FORB Q050) Street Address (FORB W913) City / Town (FORB W914) Country (FORB 9005) Board of Governors of the Federal Reserve System OMB Number 7100-0071 Federal Deposit Insurance Corporation OMB Number 3064-0011 Office of the Comptroller of the Currency OMB Number 1557-0099 Approval Expires December 31, 2027 Page 1 of 2 Federal Financial Institutions Examination Council Abbreviated Foreign Branch Report of Condition— FFIEC 030S Report at the close of business December 31, Year This report is required by law (12 U.S.C. § 321, 324, and 602 (FRB);
+12 U.S.C.§ 161 and 602 (OCC); and 12 U.S.C. § 1828 (FDIC)).
+The Federal Financial Institutions Examination Council regards the information provided by each respondent as confidential. If it should subsequently be determined that any information collected on this form must be released, respondents will be notified.
+A Federal agency may not conduct or sponsor, and an organization is not required to respond to, a collection of information unless it displays a currently valid OMB control number.
+Public reporting burden for this collection of information is estimated to average 0.5 hours per response, including the time for reviewing instructions, searching existing data sources, gathering and maintaining the data needed, and completing and reviewing the collection of information. Send comments regarding this burden estimate, including suggestions for reducing this burden, to the Office of Information and Regulatory Affairs, Office of Management and Budget, Washington, DC 20503, and to one of the following: Secretary, Board of Governors of the Federal Reserve System, 20th and C Streets, NW, Washington, DC 20551; Legislative and Regulatory Activities, Office of the Comptroller of the Currency, 250 E Street, SW, Washington, DC 20219; Assistant Executive Secretary, Federal Deposit Insurance Corporation, 550 17th Street, NW, Washington, DC 20429.
+03/2025 The FFIEC 030S is to be prepared in accordance with federal regulatory authority instructions and must be signed by an authorized officer of the parent U.S. institution. The authorized officer may be the chief financial officer or equivalent senior officer.
+I, the undersigned authorized officer of the named parent U.S.
+institution attest that the FFIEC 030S report (including any consolidated branches) for this report date has been prepared in conformance with the instructions issued by the federal regulatory authority and is true and correct to the best of my knowledge and belief.
+Printed Name of Authorized Officer (FORB C490) Title of Authorized Officer (FORB C491) Signature of Authorized Officer (FORB H321) Date of Signature (MM/DD/YYYY) (FORB J196) Unless this report is submitted electronically, the completed and signed original hard copy report form should be submitted to the appropriate Federal Reserve District Bank.
+FFIEC 030S
+Page 2 of 2
+Consolidation Option Banks may, at their option, consolidate the figures for all other branches located in the same country on the report form, using the name and address of the principal branch. If the bank elects to consolidate, complete the following statement.
+Figures reported in this report are a consolidation of all branches in Number (FORB 2991) Country (FORB W917)
+Please list the consolidated branches on the lines below:
+Street Address (FORB FS64) City (FORB FS65)
+Street Address (FORB FS64) City (FORB FS65)
+Street Address (FORB FS64) City (FORB FS65)
+Street Address (FORB FS64) City (FORB FS65)
+Street Address (FORB FS64) City (FORB FS65)
+Street Address (FORB FS64) City (FORB FS65)
+(If more space is needed, please list addresses for the other branches on a separate page.)
+| Item | U.S. Dollar Amounts in Thousands | FORB | Amount |
+| --- | --- | --- | --- |
+| | Financial Data | | |
+| 1. | 1. Gross due from related institutions | 3002 | |
+| 2. | 2. Total assets | 2170 | |
+| 3. | 3. Gross due to related institutions | 3001 | |
+| 4. | 4. Total gross notional amount of derivative contracts | F156 | |
+| 5. | 5. Commercial and similar letters of credit, standby letters of credit, and foreign office guarantees | F157 | |
+12/2017

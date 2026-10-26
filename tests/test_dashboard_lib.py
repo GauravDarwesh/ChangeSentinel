@@ -341,6 +341,45 @@ class TestEventWording(unittest.TestCase):
         self.assertIn("FFIEC 031", out["html"])
         self.assertIn("FR Y-9C R-1867", out["html"])
 
+    def test_table_rows_in_the_redline_render_as_a_table(self):
+        evidence = ROOT / "data/evidence/c89216e3b00e847563d351357b43772920c29a2266cccb68a8a651736f928219.json"
+        if not evidence.exists():
+            self.skipTest("current Federal Reserve evidence not present in this checkout")
+        record = json.loads(evidence.read_text(encoding="utf-8"))
+        html = run_js("console.log(JSON.stringify(L.renderRedline(" + json.dumps(record["diff"]) + ").html));")
+        self.assertIn('<table class="rl-table">', html)
+        # The title row spans the table; the separator row is not drawn.
+        self.assertIn('<th colspan="7" class="rl-cell rl-title">Recently Approved and Implemented</th>', html)
+        self.assertNotIn("---", html)
+        # Each removed row is one struck table row, one cell per column, with no current line number.
+        self.assertIn('<tr class="rl-tr is-changed is-del" aria-label="Removed row"><td class="rl-no" aria-hidden="true"></td><td class="rl-cell"><del>FFIEC 031</del></td>', html)
+        self.assertEqual(html.count('aria-label="Removed row"'), 2)
+        # Text after the table stays an ordinary line.
+        self.assertIn('<span class="rl-text">Last Update: Oct 16, 2026</span>', html)
+        text = run_js("console.log(JSON.stringify(L.renderUnifiedDiff(" + json.dumps(record["diff"]) + ", { tables: true })));")
+        self.assertIn('<table class="cd-table">', text)
+        self.assertIn('<tr class="cd-tr cd-del"><td class="cd-mark" aria-hidden="true">-</td><td class="rl-cell">FFIEC 031</td>', text)
+        # The HTML source diff is never re-laid out.
+        raw = run_js("console.log(JSON.stringify(L.renderUnifiedDiff(" + json.dumps(record["diff"]) + ")));")
+        self.assertNotIn("<table", raw)
+
+    def test_an_edited_table_cell_is_marked_inside_its_cell(self):
+        diff = "\n".join([
+            "--- before", "+++ after", "@@ -1,4 +1,4 @@",
+            " | Form | Due |", " | --- | --- |",
+            "-| FR 2052a | 30 days after quarter end |",
+            "+| FR 2052a | 15 days after quarter end |",
+            " | FR Y-9C | 40 days |",
+        ])
+        html = run_js("console.log(JSON.stringify(L.renderRedline(" + json.dumps(diff) + ").html));")
+        self.assertIn('<th class="rl-cell">Form</th><th class="rl-cell">Due</th>', html)
+        self.assertIn('<tr class="rl-tr is-changed is-edit"><td class="rl-no" aria-hidden="true">3</td><td class="rl-cell">FR 2052a</td><td class="rl-cell rl-cell-changed"><del>30</del><ins>15</ins> days after quarter end</td></tr>', html)
+
+    def test_a_lone_pipe_line_is_not_turned_into_a_table(self):
+        diff = "--- before\n+++ after\n@@ -1,2 +1,2 @@\n-Old text\n+New text\n | just | one |"
+        html = run_js("console.log(JSON.stringify(L.renderRedline(" + json.dumps(diff) + ").html));")
+        self.assertNotIn("<table", html)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,934 @@
+Board of Governors of the Federal Reserve System OMB Number 7100-0319 Federal Deposit Insurance Corporation OMB Number 3064-0159 Office of the Comptroller of the Currency OMB Number 1557-0239 Approval expires December 31, 2026 Page 1 of 38 Federal Financial Institutions Examination Council Regulatory Capital Reporting for Institutions Subject to the Advanced Capital Adequacy Framework—FFIEC 101 Report at the close of business September 30, 2026 This report is required by law: 12 U.S.C. § 161 (National banks), 12 U.S.C. § 324 and 12 U.S.C. § 1844(c) (State member banks and BHCs, respectively), 12 U.S.C. § 1817 (Insured state nonmember commercial and savings banks), (20260930) (AAXX 9999) 12 U.S.C. § 1467a(b)(2) (Savings and loan holding companies), 12 U.S.C. § 1844(c), 12 U.S.C. §§ 3106 and 3108(a), 12 U.S.C.
+§ 5365, 12 CFR 252.153(b)(2) (Intermediate holding companies), and 12 U.S.C. § 1464 (Savings associations).
+The FFIEC 101 is to be prepared in accordance with federal regulatory authority instructions. The report must be signed by a senior officer of the reporting entity who can attest that the risk estimates and other information submitted in this report meet the requirements set forth in 12 CFR Part 3 (OCC); 12 CFR Part 217 (Federal Reserve); 12 CFR Part 324 (FDIC) and the FFIEC 101 reporting instructions. The senior officer may be the chief financial officer, the chief risk officer, or the equivalent senior officer.
+I, the undersigned senior officer of the named reporting institution attest that the FFIEC 101 report for this report date has been prepared in conformance with the instructions issued by the federal regulatory authority and that the reported risk estimates meet the requirements set forth in the advanced approaches rule to the best of my knowledge and belief.
+To fulfill the signature and attestation requirement for the FFIEC 101 for this report date, attach the reporting institution's completed signature page (or a photocopy or a computer-generated version of this page) to the hard-copy records of the data file submitted electronically that the reporting institution must place in its files.
+The appearance of the reporting institution's hard-copy record of the submitted data file need not match exactly the appearance of the FFIEC's sample report forms, but should show the caption of each reported item and the reported amount.
+Legal Title of Reporting Institution (AAXX J197) Mailing Address of the Reporting Institution Street / PO Box (AAXX 9110) City (AAXX 9130) State Abbreviation (AAXX 9200) Zip Code (AAXX 9220) Printed Name of Senior Officer (AAXX C490) Signature of Senior Officer (AAXX H321) Title of Officer (AAXX C491) Date of Signature (MM/DD/YYYY) (AAXX J196) Person to whom questions about this report should be directed: Name / Title (AAXX 8901) Area Code / Phone Number (AAXX 8902) Area Code / FAX Number (AAXX 9116) E-mail Address of Contact (AAXX 4086) The estimated average reporting burden for this information collection is 674 hours per response for insured depository institutions, 677 hours per response for bank holding companies and savings and loan holding companies, and 3 hours per response for intermediate holding companies, bank holding companies, savings and loan holding companies, and insured depository institutions that complete Supplementary Leverage Ratio (SLR) Tables 1 and 2 only, including time to gather and maintain data in the required form and to review instructions and complete the information collection. A federal agency may not conduct or sponsor, and an organization (or a person) is not required to respond to a collection of information, unless it displays a currently valid OMB control number. Comments regarding this burden estimate or any other aspect of this information collection, including suggestions for reducing the burden, may be sent to Secretary, Board of Governors of the Federal Reserve System, 20th and C Streets, NW, Washington, DC 20551; Assistant Executive Secretary, Federal Deposit Insurance Corporation, Washington, DC 20429; Legislative and Regulatory Analysis Division, Office of the Comptroller of the Currency, Washington, DC 20219; and Office of Information and Regulatory Affairs, Office of Management and Budget, Washington, DC 20503.
+For Federal Reserve Bank Use Only BHC RSSD ID SUB RSSD ID C.I.
+09/2026 Legal Entity Identifier (LEI) of the Reporting Institution (Report only if the reporting institution already has an LEI.) (AAXX 9224)
+FFIEC 101
+Page 2 of 38 A-1 For Federal Reserve Bank Use Only C.I.
+Schedule A—Advanced Approaches Regulatory Capital Dollar Amounts in Thousands AAAB Amount P742 3247 P842 P843 P849 P886 J161 Q258 P887 P888 P889 P851 P853 P854 P855 P856 P890 P891 P892 P857 P858 P859 B530 P839 P840 P841 Common equity tier 1 capital
+1. Common stock plus related surplus, net of treasury stock ........................................................ 1.
+2. Retained earnings1 .......................................................................................................... 2.
+3. Accumulated other comprehensive income (AOCI).................................................................
+9.
+10.
+11.
+12.
+13.
+10. Deferred tax assets (DTAs) that arise from net operating loss and tax credit carryforwards, net of any related valuation allowances and net of DTLs ..................................................................
+14.
+11. Accumulated net gain or loss on cash-flow hedges included in AOCI, net of applicable income taxes, that relate to the hedging of items that are not recognized at fair value on the balance sheet.......................
+15.
+16.
+13. Gain-on-sale associated with a securitization exposure ...........................................................
+17.
+14. Unrealized gain or loss related to changes in the fair value of liabilities that are due to changes in own credit risk ................................................................................................................
+18.
+15. Defined-benefit pension fund assets, net of associated DTLs ...................................................
+19.
+16. Investments in own shares to the extent not excluded above as part of treasury stock ...................
+20.
+21.
+22.
+23.
+21. DTAs arising from temporary differences that could not be realized through net operating loss carrybacks, net of related valuation allowances and net of DTLs, that exceed the 10 percent common equity tier 1 capital deduction threshold ...................................................................
+22. Amount of significant investments in the capital of unconsolidated financial institutions in the form of common stock, net of associated DTLs; MSAs net of associated DTLs; and DTAs arising from temporary differences that could not be realized through net operating loss carrybacks, net of related valuation allowances and net of DTLs, that exceeds the 15 percent common equity tier 1 capital deduction threshold................................................................................................
+23. of which: significant investments in the capital of unconsolidated financial institutions in the form of common stock, net of associated DTLs ..........................................................................
+24. of which: MSAs, net of associated DTLs ............................................................................ 24.
+17. Reciprocal cross-holdings in the common equity of financial institutions......................................
+18. Non-significant investments in the capital of unconsolidated financial institutions in the form of common stock that exceed the 10 percent threshold for non-significant investments .....................
+19. Significant investments in the capital of unconsolidated financial institutions in the form of common stock, net of associated DTLs, that exceed the 10 percent common equity tier 1 capital deduction threshold......
+20. MSAs, net of associated DTLs, that exceed the 10 percent common equity tier 1 capital deduction threshold.........................................................................................................
+12. Expected credit loss that exceeds eligible credit reserves ........................................................
+25. of which: DTAs arising from temporary differences that could not be realized through net operating loss carrybacks, net of related valuation allowances and net of DTLs ......................... 25.
+26. National specific regulatory adjustments (not applicable)
+27. Deductions applied to common equity tier 1 capital due to insufficient amounts of additional tier 1 capital and tier 2 capital to cover deductions ......................................................................... 27.
+28. Total adjustments and deductions for common equity tier 1 capital (sum of items 8 through 22, plus item 27)......................................................................................................................... 28.
+29. Common equity tier 1 capital (item 6 less item 28).................................................................. 29.
+3.
+4. Directly issued capital subject to phase out from common equity tier 1 capital (not applicable)
+5. Common equity tier 1 minority interest includable in common equity tier 1 capital ......................... 5.
+6. Common equity tier 1 capital before regulatory deductions and adjustments (sum of items 1, 2, 3, and 5).. 6.
+7. Prudential valuation adjustments (not applicable)
+8. Goodwill net of associated deferred tax liabilities (DTLs) ......................................................... 8.
+9. Other intangible assets, net of associated DTLs, other than goodwill and mortgage servicing assets (MSAs) ................................................................................................................
+Common equity tier 1 capital: adjustments and deductions 03/2024 This schedule is to be submitted on a consolidated basis.
+1. Institutions have elected to apply the CECL transition provision should include the applicable portion of the CECL transitional amount in this item.
+FFIEC 101
+For Federal Reserve Bank Use Only Page 3 of 38 A-2 C.I.
+Schedule A—Continued This schedule is to be submitted on a consolidated basis.
+| Item | Dollar Amounts in Thousands | AAAB | Amount |
+| --- | --- | --- | --- |
+| | Additional tier 1 capital | | |
+| 30. | 30. Additional tier 1 capital instruments plus related surplus | P860 | |
+| | 31. of which: classified as equity under GAPP (not applicable) | | |
+| | 32. of which: classified as liabilities under GAAP (not applicable) | | |
+| 33. | 33. Non-qualifying capital instruments subject to phase out from additional tier 1 capital | P861 | |
+| 34. | 34. Tier 1 minority interest not included in common equity tier 1 capital | P862 | |
+| 35. | 35. of which: amount subject to phase out | P893 | |
+| 36. | 36. Additional tier 1 capital before deductions (sum of items 30, 33, and 34) | P863 | |
+| | Additional tier 1 capital deductions | | |
+| 37. | 37. Investments in own additional tier 1 capital instruments | P894 | |
+| 38. | 38. Reciprocal cross-holdings in the additional tier 1 capital of financial institutions | P895 | |
+| 39. | 39. Non-significant investments in additional tier 1 capital of unconsolidated financial institutions that exceed the 10 percent threshold for non-significant investments | P896 | |
+| 40. | 40. Significant investments in financial institutions not in the form of common stock to be deducted from additional tier 1 capital | P897 | |
+| 41. | 41. Other deductions from additional tier 1 capital | P898 | |
+| 42. | 42. Deductions applied to additional tier 1 capital due to insufficient tier 2 capital to cover deductions | P899 | |
+| 43. | 43. Total additional tier 1 capital deductions (sum of items 37 through 42) | P864 | |
+| 44. | 44. Additional tier 1 capital (greater of item 36 less item 43 or zero) | P865 | |
+| | Tier 1 capital | | |
+| 45. | 45. Tier 1 capital (sum of items 29 and 44) | 8274 | |
+| | Tier 2 capital | | |
+| 46. | 46. Tier 2 capital instruments plus related surplus | P866 | |
+| 47. | 47. Non-qualifying capital instruments subject to phase out from tier 2 capital | P867 | |
+| 48. | 48. Total capital minority interest that is not included in tier 1 capital | P868 | |
+| 49. | 49. of which: instruments subject to phase out | P900 | |
+| 50. | 50. Eligible credit reserves includable in tier 2 capital1 | 5310 | |
+| 51. | 51. Tier 2 capital before deductions (sum of items 46, 47, 48, and 50) | P870 | |
+| | Tier 2 capital deductions | | |
+| 52. | 52. Investments in own tier 2 capital instruments | P902 | |
+| 53. | 53. Reciprocal cross-holdings in the tier 2 capital of unconsolidated financial institutions | P903 | |
+| 54. | 54. Non-significant investments in the tier 2 capital and covered debt instruments of unconsolidated financial institutions that exceed the 10 percent threshold for non-significant investments | P904 | |
+| 55. | 55. Significant investments in financial institutions not in the form of common stock to be deducted from tier 2 capital | P905 | |
+| | 56. Other deductions from tier 2 capital: | | |
+| 56.a. | a. Investments in excluded covered debt instruments | LB40 | |
+| 56.b. | b. All other deductions from tier 2 capital | P906 | |
+| 57. | 57. Total tier 2 capital deductions (sum of items 52 through 56) | P872 | |
+| 58. | 58. Tier 2 capital (greater of item 51 less item 57 or zero) | 5311 | |
+| | Total capital | | |
+| 59. | 59. Total capital (sum of items 45 and 58) | 3792 | |
+| | Total risk-weighted assets | | |
+| 60. | 60. Total risk-weighted assets (RWAs) | A223 | |
+1. Institutions have elected to apply the CECL transition provision should subtract the applicable portion of the eligible credit reserves transitional amount from this item.
+03/2024
+FFIEC 101
+For Federal Reserve Bank Use Only Page 4 of 38 A-3 C.I.
+Schedule A—Continued This schedule is to be submitted on a consolidated basis.
+| Item | Line item | AAAB | Percentage1 |
+| --- | --- | --- | --- |
+| | Capital ratios and buffers | | |
+| 61. | 61. Common equity tier 1 capital ratio (item 29 divided by item 60) | P793 | |
+| 62. | 62. Tier 1 capital ratio (item 45 divided by item 60) | 7206 | |
+| 63. | 63. Total capital ratio (item 59 divided by item 60) | 7205 | |
+| 64. | 64. Institution-specific common equity tier 1 capital ratio necessary to avoid limitations on capital distributions and discretionary bonus payments | Y933 | |
+| 65. | 65. of which: capital conservation buffer | FB52 | |
+| 66. | 66. of which: countercyclical capital buffer (if applicable) | FB53 | |
+| 67. | 67. of which: G-SIB surcharge (if applicable) | FB54 | |
+| 68. | 68. Common equity tier 1 capital available to meet items 65 through 67 (as a percentage of RWA) | FB55 | |
+| | Regulatory minimums if different from Basel III (not applicable) 69. Minimum common equity tier 1 capital ratio: 4.5% 70. Minimum tier 1 capital ratio: 6.0% 71. Minimum total capital ratio: 8.0% | | |
+| Item | Dollar Amounts in Thousands | AAAB | Amount |
+| --- | --- | --- | --- |
+| | Amounts not deducted as a result of applicable thresholds (before risk-weighting) | | |
+| 72. | 72. Non-significant investments in the capital of unconsolidated financial institutions that are not deducted | P907 | |
+| 73. | 73. Significant investments in the capital of unconsolidated financial institutions in the form of common stock, net of associated DTLs, that are not deducted | P908 | |
+| 74. | 74. MSAs, net of associated DTLs, that are not deducted | P909 | |
+| 75. | 75. DTAs arising from temporary differences that could not be realized through net operating loss carrybacks, net of related valuation allowances and net of DTLs, that are not deducted | P910 | |
+| | Limitations on the amount of provisions included in tier 2 capital | | |
+| 76. | 76. Total adjusted allowances for credit losses (AACL) under the standardized approach | AAAA P911 | |
+| 77. | 77. Amount of AACL includable in tier 2 capital under the standardized approach | 5310 | |
+| | (Items 78 and 79 are kept confidential on reports filed during an institution's parallel run process.) | | |
+| 78. | 78. Total eligible credit reserves (calculated using advanced approaches) | J183 | |
+| 79. | 79. Amount of eligible credit reserves includable in tier 2 capital | J173 | |
+| | Non-qualifying capital instruments | | |
+| 80. | 80. Cap on common equity tier 1 non-qualifying capital instruments subject to phase-out | AAAB P913 | |
+| 81. | 81. Amount of common equity tier 1 non-qualifying capital instruments excluded | P914 | |
+| 82. | 82. Cap on additional tier 1 non-qualifying capital instruments subject to phase-out | P915 | |
+| 83. | 83. Amount of additional tier 1 non-qualifying capital instruments excluded | P916 | |
+| 84. | 84. Cap on tier 2 non-qualifying capital instruments subject to phase-out | P917 | |
+| 85. | 85. Amount of tier 2 non-qualifying capital instruments excluded | P918 | |
+| | Memoranda (These items are kept confidential on reports filed during an institution’s parallel run process.) | | |
+| 86. | 86. Expected credit loss that exceeds eligible credit reserves | AAAA P886 | |
+| 87. | 87. Advanced approaches RWA (from FFIEC 101, Schedule B, item 36) | AABG A223 | |
+| | | | Percentage1 |
+| 88. | 88. Common equity tier 1 capital ratio (calculated using advanced approaches) | AAAA P793 | |
+| 89. | 89. Tier 1 capital ratio (calculated using advanced approaches) | 7206 | |
+| 90. | 90. Total capital ratio (calculated using advanced approaches) | 7205 | |
+1. Report each ratio and buffer as a percentage, rounded to four decimal places.
+03/2024
+For Federal Reserve Bank Use Only
+C.I.
+Schedule A—Continued
+FFIEC 101
+Page 5 of 38 A-4
+Top-tier advanced approaches and Category III banking organizations should complete Supplementary Leverage Ratio (SLR) Tables 1 and 2 on a consolidated basis. An advanced approaches or Category III banking organization that is a consolidated subsidiary of a top-tier banking organization should not complete SLR Tables 1 and 2.
+| Item | Dollar Amounts in Thousands | AAAA | Amount |
+| --- | --- | --- | --- |
+| 1.1. | SLR Table 1 Summary comparison of accounting assets and total leverage exposure 1.1. Total consolidated assets as reported in published financial statements | 2170 | |
+| 1.2. | 1.2. Adjustment for investments in banking, financial, insurance, and commercial entities that are consolidated for accounting purposes but outside the scope of regulatory consolidation | FS87 | |
+| 1.4. | 1.3. Adjustment for fiduciary assets recognized on-balance sheet but excluded from total leverage exposure (not applicable) 1.4. Adjustment for derivative transactions | FS88 | |
+| 1.5. | 1.5. Adjustment for repo-style transactions | FS89 | |
+| 1.6. | 1.6. Adjustment for off-balance sheet exposures | FS90 | |
+| | 1.7. Other adjustments: | | |
+| 1.7.a. | a. Adjustments for deductions from tier 1 capital (report as a positive amount) | FS91 | |
+| 1.7.b. | b. Adjustments for frequency calculations | FS92 | |
+| 1.7.c. | c. Adjustments for deductions of qualifying central bank deposits for custodial banking organizations | LB41 | |
+| 1.8. | 1.8. Total leverage exposure (sum items 1.1 through 1.6 minus items 1.7.a, 1.7.b, and 1.7.c)1 | H015 | |
+| 2.1. | SLR Table 2 Supplementary leverage ratio On-balance sheet exposures 2.1. The balance sheet carrying value of all on-balance sheet assets (excluding on-balance sheet assets for derivative transactions and repo-style transactions, but including collateral) | Y830 | |
+| | 2.2. Deductions (report as a positive amount): | | |
+| 2.2.a. | a. Deductions from common equity tier 1 capital and additional tier 1 capital | M349 | |
+| 2.2.b. | b. Deductions of qualifying central bank deposits from total on-balance sheet exposures for custodial banking organizations | LB42 | |
+| 2.3. | 2.3. Total on-balance sheet exposures (item 2.1 minus items 2.2.a and 2.2.b) | D956 | |
+| 2.4. | Derivative transactions 2.4. Replacement cost for all derivative transactions | M337 | |
+| 2.5. | 2.5. Add-on amounts for potential future exposure (PFE) for all derivative transactions | M339 | |
+| 2.6. | 2.6. Gross-up for collateral posted in derivative transactions if collateral is deducted from on-balance sheet assets | Y822 | |
+| 2.7. | 2.7. Deduction of receivable assets for qualifying cash variation margin posted in derivative transactions (report as a positive amount) | Y823 | |
+| 2.8. | 2.8. Exempted exposures to central counterparties (CCPs) in cleared transactions (report as a positive amount) | Y824 | |
+| 2.9. | 2.9. Adjusted effective notional principal amount of sold credit protection | M340 | |
+| 2.10. | 2.10. Adjusted effective notional principal amount offsets and PFE deductions for sold credit protection (report as a positive amount) | Y825 | |
+| 2.11. | 2.11. Total derivative exposures (sum of items 2.4, 2.5, 2.6 and 2.9, minus items 2.7, 2.8, and 2.10) | Y826 | |
+| 2.12. | Repo-style transactions 2.12. Gross assets for repo-style transactions, with no recognition of netting | M334 | |
+| 2.13. | 2.13. Reduction of the gross value of receivables in reverse repurchase transactions by cash payables in repurchase transactions (report as a positive value) | Y828 | |
+| 2.14. | 2.14. Counterparty credit risk for all repo-style transactions | N507 | |
+| 2.15. | 2.15. Exposure amount for repo-style transactions where an institution acts as an agent | Y827 | |
+| 2.16. | 2.16. Total exposures for repo-style transactions (sum of items 2.12, 2.14, and 2.15, minus item 2.13).. | Y829 | |
+1. Institutions have elected to apply the CECL transition provision should include the applicable portion of the CECL transitional amount in this item.
+03/2024
+FFIEC 101
+For Federal Reserve Bank Use Only Page 6 of 38 A-5 C.I.
+Schedule A—Continued
+| Item | Dollar Amounts in Thousands | AAAA | Amount |
+| --- | --- | --- | --- |
+| 2.17. | Off-balance sheet exposures 2.17. Off-balance sheet exposures at gross notional amounts | H012 | |
+| 2.18. | 2.18. Adjustments for conversion to credit equivalent amounts (report as a positive amount) | H013 | |
+| 2.19. | 2.19. Total off-balance sheet exposures (item 2.17 minus item 2.18) | Y831 | |
+| 2.20. | Capital and total leverage exposure 2.20. Tier 1 capital | 8274 | |
+| 2.21. | 2.21. Total leverage exposure (sum of items 2.3, 2.11, 2.16, and 2.19) | AAAB H015 | |
+| | | | Percentage1 |
+| 2.22. | Supplementary leverage ratio 2.22. Supplementary leverage ratio (item 2.20 divided by item 2.21) | AAAA H036 | |
+| 2.23. | 2.23. Holding companies subject to enhanced SLR standards only: Leverage buffer | FS93 | |
+1. Report each ratio and buffer as a percentage, rounded to four decimal places.
+03/2020
+For Federal Reserve Bank Use Only
+C.I.
+Schedule B—Summary Risk-Weighted Asset Information for Banks Approved to Use
+FFIEC 101
+Page 7 of 38 B-1
+Advanced Internal Ratings-Based and Advanced Measurement Approaches for Regulatory Capital Purposes
+| Item | Line item | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | Non-Defaulted and Defaulted Exposures | | | | | | | |
+| | Exposure Category | (Column A) Weighted-Average Probability of Default | (Column B) Balance Sheet Amount | (Column C) Total Undrawn Amount | (Column D) Exposure at Default | (Column E) Weighted-Average Maturity (Years) | (Column F) Wtd-Avg LGD after Consideration of Credit Risk Mitigants | (Column G) Risk-Weighted Assets | (Column H) Expected Credit Loss |
+| | | Percentage | Amount | Amount | Amount | Number | Percentage | Amount | Amount |
+| | Wholesale Exposures | | | | | | | | |
+| 1. | 1. Corporate | AABA J124 | AABB J124 | AABC J124 | AABD J124 | AABE J124 | AABF J124 | AABG J124 | AABH J124 |
+| 2. | 2. Bank | AABA J125 | AABB J125 | AABC J125 | AABD J125 | AABE J125 | AABF J125 | AABG J125 | AABH J125 |
+| 3. | 3. Sovereign | AABA J126 | AABB J126 | AABC J126 | AABD J126 | AABE J126 | AABF J126 | AABG J126 | AABH J126 |
+| 4. | 4. IPRE | AABA J127 | AABB J127 | AABC J127 | AABD J127 | AABE J127 | AABF J127 | AABG J127 | AABH J127 |
+| 5. | 5. HVCRE | AABA J128 | AABB J128 | AABC J128 | AABD J128 | AABE J128 | AABF J128 | AABG J128 | AABH J128 |
+| 6. | 6. Eligible margin loans, repo- style transactions and OTC derivatives with cross- product netting—EAD adjustment method | AABA J129 | | | AABD J129 | AABE J129 | AABF J129 | AABG J129 | AABH J129 |
+| 7. | 7. Eligible margin loans, repo- style transactions and OTC derivatives with cross- product netting—collateral reflected in LGD | AABA J130 | | | AABD J130 | AABE J130 | AABF J130 | AABG J130 | AABH J130 |
+| 8. | 8. Eligible margin loans, repo- style transactions—no cross- product netting—EAD adjustment method | AABA J131 | | | AABD J131 | AABE J131 | AABF J131 | AABG J131 | AABH J131 |
+| 9. | 9. Eligible margin loans, repo- style transactions—no cross- product netting—collateral reflected in LGD | AABA J132 | | | AABD J132 | AABE J132 | AABF J132 | AABG J132 | AABH J132 |
+| 10. | 10. OTC derivatives—no cross- product netting—EAD adjustment method | AABA J133 | | | AABD J133 | AABE J133 | AABF J133 | AABG J133 | AABH J133 |
+| 11. | 11. OTC derivatives—no cross- product netting—collateral reflected in LGD | AABA J134 | | | AABD J134 | AABE J134 | AABF J134 | AABG J134 | AABH J134 |
+06/2008
+FFIEC 101
+For Federal Reserve Bank Use Only Page 8 of 38 B-2 C.I.
+Schedule B—Continued
+| Item | Line item | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | Non-Defaulted and Defaulted Exposures | | | | | | | |
+| | Exposure Category | (Column A) Weighted-Average Probability of Default | (Column B) Balance Sheet Amount | (Column C) Total Undrawn Amount | (Column D) Exposure at Default | (Column E) Weighted-Average Maturity (Years) | (Column F) Weighted-Average LGD after Consideration of Credit Risk Mitigants | (Column G) Risk-Weighted Assets | (Column H) Expected Credit Loss |
+| | Retail Exposures | | | | | | | | |
+| 12. | 12. Residential mortgage— closed-end first lien exposures | Percentage AABA J135 | Amount AABB J135 | Amount AABC J135 | Amount AABD J135 | Number | Percentage AABF J135 | Amount AABG J135 | Amount AABH J135 |
+| 13. | 13. Residential mortgage— closed-end junior lien exposures | AABA J136 | AABB J136 | AABC J136 | AABD J136 | | AABF J136 | AABG J136 | AABH J136 |
+| 14. | 14. Residential mortgage— revolving exposures | AABA J137 | AABB J137 | AABC J137 | AABD J137 | | AABF J137 | AABG J137 | AABH J137 |
+| 15. | 15. Qualifying revolving exposures | AABA J138 | AABB J138 | AABC J138 | AABD J138 | | AABF J138 | AABG J138 | AABH J138 |
+| 16. | 16. Other retail exposures | AABA J139 | AABB J139 | AABC J139 | AABD J139 | | AABF J139 | AABG J139 | AABH J139 |
+| | Securitization Exposures | | | | | | | | |
+| 17. | 17. Subject to the supervisory formula approach | | AABB J142 | | | | | AABG J142 | |
+| 18. | 18. Subject to simplified Supervisory formula approach | | AABB P920 | | | | | AABG P920 | |
+| 19. | 19. Subject to 1,250% risk weight | | AABB P921 | | | | | AABG P921 | |
+| | Cleared transactions | | | | | | | | |
+| 20. | 20. Derivative contracts and netting sets to derivatives | | AABB P922 | | | | | AABG P922 | |
+| 21. | 21. Repo-style transactions | | AABB P923 | | | | | AABG P923 | |
+| 22. | 22. Default fund contributions | | AABB P924 | | | | | AABG P924 | |
+03/2014
+FFIEC 101
+For Federal Reserve Bank Use Only Page 9 of 38 B-3 C.I.
+Schedule B—Continued
+| Item | Line item | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | Dollar Amounts in Thousands | Non-Defaulted and Defaulted Exposures | | | | | | | |
+| | Exposure Category | (Column A) Weighted-Average Probability of Default | (Column B) Balance Sheet Amount | (Column C) Total Undrawn Amount | (Column D) Exposure at Default | (Column E) Weighted-Average Maturity (Years) | (Column F) Weighted-Average LGD after Consideration of Credit Risk Mitigants | (Column G) Risk-Weighted Assets | (Column H) Expected Credit Loss |
+| | Equity Exposures | Percentage | Amount | Amount | Amount | Number | Percentage | Amount | Amount |
+| 23. | 23. Simple risk-weight method (SRWA) | | | | | | | AABG J144 | |
+| 24. | 24. Full internal models approach (IMA) | | | | | | | AABG J145 | |
+| 25. | 25. Partial IMA, partial SRWA | | | | | | | AABG J146 | |
+| | Other Assets | | | | | | | | |
+| 26. | 26. Unsettled transactions | | AABB J147 | | | | | AABG J147 | |
+| 27. | 27. Assets not included in a defined exposure category .. | | AABB J148 | | | | | AABG J148 | |
+| 28. | 28. Non-material portfolios of exposures | | AABB J149 | | | | | AABG J149 | |
+| 29. | 29. Sum of Column G, 1 through 28 | | | | | | | AABG J150 | |
+| 30. | 30. Total credit risk weighted assets (cell G-29 x 1.06) | | | | | | | AABG J151 | |
+| 31.a. | 31. Credit Valuation Adjustments: | | | | | | | AABG P925 | |
+| 31.a. | a. Simple | | | | | | | | |
+| 31.b. | b. Advanced | | | | | | | AABG P926 | |
+| 32. | 32. Assets subject to the general risk-based capital requirements | | | | | | | AABG J198 | |
+| 33. | 33. Excess eligible credit reserves not included in Tier 2 capital | | | | | | | AABG J152 | |
+| 34. | 34. Advanced market risk equivalent assets | | | | | | | AABG J153 | |
+| 35. | 35. Operational risk | | | | | | | AABG J154 | |
+| 36. | 36. Total (add cells G-30, G-31, G-32, G-34 and G-35, and subtract G-33) | | | | | | | AABG A223 | |
+09/2017
+FFIEC 101
+Page 10 of 38 C-1
+Schedule C—Wholesale Exposure: Corporate Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | PD Range | (Column A) Weighted- Average Obligor PD2 | (Column B) Number of Obligors | (Column C) Balance Sheet Amount | (Column D) Total Undrawn Amount | (Column E) EAD | (Column F) Weighted- Average Effective Maturity (Years)2 | (Column G) Weighted- Average LGD before Consideration of Eligible Guarantees and Credit Derivatives2 | (Column H) Weighted- Average LGD after Consideration of Credit Risk Mitigants2 | (Column I) Effect of PD Substitution and LGD Adjustment Approaches on RWA | (Column J) Effect of Double Default Treatment on RWA | (Column K) Risk- Weighted Assets3 | (Column L) Expected Credit Loss |
+| | Percentage | Percentage | Number | Amount | Amount | Amount | Number | Percentage | Percentage | Amount | Amount | Amount | Amount |
+| 1. | 1. 0.00 to < 0.15 | AACA J005 | AACB J005 | AACC J005 | AACD J005 | AACE J005 | AACF J005 | AACG J005 | AACH J005 | AACI J005 | AACJ J005 | AACK J005 | AACL J005 |
+| 2. | 2. 0.15 to < 0.25 | AACA J008 | AACB J008 | AACC J008 | AACD J008 | AACE J008 | AACF J008 | AACG J008 | AACH J008 | AACI J008 | AACJ J008 | AACK J008 | AACL J008 |
+| 3. | 3. 0.25 to < 0.35 | AACA J010 | AACB J010 | AACC J010 | AACD J010 | AACE J010 | AACF J010 | AACG J010 | AACH J010 | AACI J010 | AACJ J010 | AACK J010 | AACL J010 |
+| 4. | 4. 0.35 to < 0.50 | AACA J013 | AACB J013 | AACC J013 | AACD J013 | AACE J013 | AACF J013 | AACG J013 | AACH J013 | AACI J013 | AACJ J013 | AACK J013 | AACL J013 |
+| 5. | 5. 0.50 to < 0.75 | AACA J014 | AACB J014 | AACC J014 | AACD J014 | AACE J014 | AACF J014 | AACG J014 | AACH J014 | AACI J014 | AACJ J014 | AACK J014 | AACL J014 |
+| 6. | 6. 0.75 to < 1.35 | AACA J016 | AACB J016 | AACC J016 | AACD J016 | AACE J016 | AACF J016 | AACG J016 | AACH J016 | AACI J016 | AACJ J016 | AACK J016 | AACL J016 |
+| 7. | 7. 1.35 to < 2.50 | AACA J019 | AACB J019 | AACC J019 | AACD J019 | AACE J019 | AACF J019 | AACG J019 | AACH J019 | AACI J019 | AACJ J019 | AACK J019 | AACL J019 |
+| 8. | 8. 2.50 to < 5.50 | AACA J025 | AACB J025 | AACC J025 | AACD J025 | AACE J025 | AACF J025 | AACG J025 | AACH J025 | AACI J025 | AACJ J025 | AACK J025 | AACL J025 |
+| 9. | 9. 5.50 to < 10.00 .. | AACA J029 | AACB J029 | AACC J029 | AACD J029 | AACE J029 | AACF J029 | AACG J029 | AACH J029 | AACI J029 | AACJ J029 | AACK J029 | AACL J029 |
+| 10. | 10. 10.00 to < 20.00.. | AACA J031 | AACB J031 | AACC J031 | AACD J031 | AACE J031 | AACF J031 | AACG J031 | AACH J031 | AACI J031 | AACJ J031 | AACK J031 | AACL J031 |
+| 11. | 11. 20.00 to < 100 | AACA J033 | AACB J033 | AACC J033 | AACD J033 | AACE J033 | AACF J033 | AACG J033 | AACH J033 | AACI J033 | AACJ J033 | AACK J033 | AACL J033 |
+| | | AACA J034 | AACB J034 | AACC J034 | AACD J034 | AACE J034 | AACF J034 | AACG J034 | AACH J034 | AACI J034 | AACJ J034 | AACK J034 | AACL J034 |
+| 12. | 12. 100.00 (default).. | 100.00 | | | | | | | | | | | |
+| 13. | 13. Total1 | AACA J035 | AACB J035 | AACC J035 | AACD J035 | AACE J035 | AACF J035 | AACG J035 | AACH J035 | AACI J035 | AACJ J035 | AACK J035 | AACL J035 |
+Memoranda Dollar Amounts in Thousands
+1. Risk-weighted assets associated with non-material portfolios not included above..................................................................................................................
+Amount AACX J036 M.1.
+1. Cells in line 13 are calculated.
+2. Report weighted averages rounded to two decimal places.
+3. Not calculated from previous column entries. 10/2022
+FFIEC 101
+Page 11 of 38 C-2
+Schedule C—Continued
+Memoranda–Continued
+Exposures subject to a wholesale correlation factor multiplier of 1.25.
+Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Weighted- Average Obligor PD1 | (Column B) Number of Obligors | (Column C) Balance Sheet Amounts | (Column D) Total Undrawn Amount | (Column E) EAD | (Column F) Weighted- Average Effective Maturity (Years)1 | (Column G) Weighted- Average LGD before Consideration of Eligible Guarantees and Credit Derivatives1 | (Column H) Weighted- Average LGD after Consideration of Credit Risk Mitigants1 | (Column I) Effect of PD Substitution and LGD Adjustment Approaches on RWA | (Column J) Effect of Double Default Treatment on RWA | (Column K) Risk- Weighted Assets | (Column L) Expected Credit Loss |
+| | | Percentage | Number | Amount | Amount | Amount | Number | Percentage | Percentage | Amount | Amount | Amount | Amount |
+| M.2. | 2. Regulated financial institutions | AACA P929 | AACB P929 | AACC P929 | AACD P929 | AACE P929 | AACF P929 | AACG P929 | AACH P929 | AACI P929 | AACJ P929 | AACK P929 | AACL P929 |
+| M.3. | 3. Unregulated financial institutions | AACA P930 | AACB P930 | AACC P930 | AACD P930 | AACE P930 | AACF P930 | AACG P930 | AACH P930 | AACI P930 | AACJ P930 | AACK P930 | AACL P930 |
+1. Report weighted averages rounded to two decimal places.
+03/2016
+FFIEC 101
+Page 12 of 38 D-1
+Schedule D—Wholesale Exposure: Bank Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | PD Range | (Column A) Weighted- Average Obligor PD2 | (Column B) Number of Obligors | (Column C) Balance Sheet Amount | (Column D) Total Undrawn Amount | (Column E) EAD | (Column F) Weighted- Average Effective Maturity (Years)2 | (Column G) Weighted- Average LGD before Consideration of Eligible Guarantees and Credit Derivatives2 | (Column H) Weighted- Average LGD after Consideration of Credit Risk Mitigants2 | (Column I) Effect of PD Substitution and LGD Adjustment Approaches on RWA | (Column J) Risk- Weighted Assets3 | (Column K) Expected Credit Loss |
+| | Percentage | Percentage | Number | Amount | Amount | Amount | Number | Percentage | Percentage | Amount | Amount | Amount |
+| 1. | 1. 0.00 to < 0.15 | AADA J005 | AADB J005 | AADC J005 | AADD J005 | AADE J005 | AADF J005 | AADG J005 | AADH J005 | AADI J005 | AADJ J005 | AADK J005 |
+| 2. | 2. 0.15 to < 0.25 | AADA J008 | AADB J008 | AADC J008 | AADD J008 | AADE J008 | AADF J008 | AADG J008 | AADH J008 | AADI J008 | AADJ J008 | AADK J008 |
+| 3. | 3. 0.25 to < 0.35 | AADA J010 | AADB J010 | AADC J010 | AADD J010 | AADE J010 | AADF J010 | AADG J010 | AADH J010 | AADI J010 | AADJ J010 | AADK J010 |
+| 4. | 4. 0.35 to < 0.50 | AADA J013 | AADB J013 | AADC J013 | AADD J013 | AADE J013 | AADF J013 | AADG J013 | AADH J013 | AADI J013 | AADJ J013 | AADK J013 |
+| 5. | 5. 0.50 to < 0.75 | AADA J014 | AADB J014 | AADC J014 | AADD J014 | AADE J014 | AADF J014 | AADG J014 | AADH J014 | AADI J014 | AADJ J014 | AADK J014 |
+| 6. | 6. 0.75 to < 1.35 | AADA J016 | AADB J016 | AADC J016 | AADD J016 | AADE J016 | AADF J016 | AADG J016 | AADH J016 | AADI J016 | AADJ J016 | AADK J016 |
+| 7. | 7. 1.35 to < 2.50 | AADA J019 | AADB J019 | AADC J019 | AADD J019 | AADE J019 | AADF J019 | AADG J019 | AADH J019 | AADI J019 | AADJ J019 | AADK J019 |
+| 8. | 8. 2.50 to < 5.50 | AADA J025 | AADB J025 | AADC J025 | AADD J025 | AADE J025 | AADF J025 | AADG J025 | AADH J025 | AADI J025 | AADJ J025 | AADK J025 |
+| 9. | 9. 5.50 to < 10.00 | AADA J029 | AADB J029 | AADC J029 | AADD J029 | AADE J029 | AADF J029 | AADG J029 | AADH J029 | AADI J029 | AADJ J029 | AADK J029 |
+| 10. | 10. 10.00 to < 20.00 | AADA J031 | AADB J031 | AADC J031 | AADD J031 | AADE J031 | AADF J031 | AADG J031 | AADH J031 | AADI J031 | AADJ J031 | AADK J031 |
+| 11. | 11. 20.00 to < 100 | AADA J033 | AADB J033 | AADC J033 | AADD J033 | AADE J033 | AADF J033 | AADG J033 | AADH J033 | AADI J033 | AADJ J033 | AADK J033 |
+| | | AADA J034 | AADB J034 | AADC J034 | AADD J034 | AADE J034 | AADF J034 | AADG J034 | AADH J034 | AADI J034 | AADJ J034 | AADK J034 |
+| 12. | 12. 100.00 (default) | 100.00 | | | | | | | | | | |
+| 13. | 13. Total1 | AADA J035 | AADB J035 | AADC J035 | AADD J035 | AADE J035 | AADF J035 | AADG J035 | AADH J035 | AADI J035 | AADJ J035 | AADK J035 |
+Memoranda Dollar Amounts in Thousands
+1. Risk-weighted assets associated with non-material portfolios not included above..................................................................................................................
+Amount AADX J036 M.1.
+1. Cells in line 13 are calculated.
+2. Report weighted averages rounded to two decimal places.
+3. Not calculated from previous column entries. 10/2022
+FFIEC 101
+Page 13 of 38 D-2
+Schedule D—Continued
+Memoranda–Continued
+Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | (Column A) Weighted- Average Obligor PD1 | (Column B) Number of Obligors | (Column C) Balance Sheet Amount | (Column D) Total Undrawn Amount | (Column E) EAD | (Column F) Weighted- Average Effective Maturity (Years)1 | (Column G) Weighted- Average LGD before Consideration of Eligible Guarantees and Credit Derivatives1 | (Column H) Weighted- Average LGD after Consideration of Credit Risk Mitigants1 | (Column I) Effect of PD Substitution and LGD Adjustment Approaches on RWA | (Column J) Risk- Weighted Assets | (Column K) Expected Credit Loss |
+| | | Percentage | Number | Amount | Amount | Amount | Number | Percentage | Percentage | Amount | Amount | Amount |
+| M.2. | 2. Regulated financial institutions .. | AADA P929 | AADB P929 | AADC P929 | AADD P929 | AADE P929 | AADF P929 | AADG P929 | AADH P929 | AADI P929 | AADJ P929 | AADK P929 |
+| M.3. | 3. Unregulated financial institutions .. | AADA P930 | AADB P930 | AADC P930 | AADD P930 | AADE P930 | AADF P930 | AADG P930 | AADH P930 | AADI P930 | AADJ P930 | AADK P930 |
+1. Report weighted averages rounded to two decimal places.
+03/2016
+FFIEC 101
+Page 14 of 38 E-1
+Schedule E—Wholesale Exposure: Sovereign Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | PD Range | (Column A) Weighted- Average Obligor PD2 | (Column B) Number of Obligors | (Column C) Balance Sheet Amount | (Column D) Total Undrawn Amount | (Column E) EAD | (Column F) Weighted- Average Effective Maturity (Years)2 | (Column G) Weighted- Average LGD before Consideration of Eligible Guarantees and Credit Derivatives2 | (Column H) Weighted- Average LGD after Consideration of Credit Risk Mitigants2 | (Column I) Effect of PD Substitution and LGD Adjustment Approaches on RWA | (Column J) Risk- Weighted Assets3 | (Column K) Expected Credit Loss |
+| | Percentage | Percentage | Number | Amount | Amount | Amount | Number | Percentage | Percentage | Amount | Amount | Amount |
+| 1. | 1. 0.00 to < 0.15 | AAEA J005 | AAEB J005 | AAEC J005 | AAED J005 | AAEE J005 | AAEF J005 | AAEG J005 | AAEH J005 | AAEI J005 | AAEJ J005 | AAEK J005 |
+| 2. | 2. 0.15 to < 0.25 | AAEA J008 | AAEB J008 | AAEC J008 | AAED J008 | AAEE J008 | AAEF J008 | AAEG J008 | AAEH J008 | AAEI J008 | AAEJ J008 | AAEK J008 |
+| 3. | 3. 0.25 to < 0.35 | AAEA J010 | AAEB J010 | AAEC J010 | AAED J010 | AAEE J010 | AAEF J010 | AAEG J010 | AAEH J010 | AAEI J010 | AAEJ J010 | AAEK J010 |
+| 4. | 4. 0.35 to < 0.50 | AAEA J013 | AAEB J013 | AAEC J013 | AAED J013 | AAEE J013 | AAEF J013 | AAEG J013 | AAEH J013 | AAEI J013 | AAEJ J013 | AAEK J013 |
+| 5. | 5. 0.50 to < 0.75 | AAEA J014 | AAEB J014 | AAEC J014 | AAED J014 | AAEE J014 | AAEF J014 | AAEG J014 | AAEH J014 | AAEI J014 | AAEJ J014 | AAEK J014 |
+| 6. | 6. 0.75 to < 1.35 | AAEA J016 | AAEB J016 | AAEC J016 | AAED J016 | AAEE J016 | AAEF J016 | AAEG J016 | AAEH J016 | AAEI J016 | AAEJ J016 | AAEK J016 |
+| 7. | 7. 1.35 to < 2.50 | AAEA J019 | AAEB J019 | AAEC J019 | AAED J019 | AAEE J019 | AAEF J019 | AAEG J019 | AAEH J019 | AAEI J019 | AAEJ J019 | AAEK J019 |
+| 8. | 8. 2.50 to < 5.50 | AAEA J025 | AAEB J025 | AAEC J025 | AAED J025 | AAEE J025 | AAEF J025 | AAEG J025 | AAEH J025 | AAEI J025 | AAEJ J025 | AAEK J025 |
+| 9. | 9. 5.50 to < 10.00 | AAEA J029 | AAEB J029 | AAEC J029 | AAED J029 | AAEE J029 | AAEF J029 | AAEG J029 | AAEH J029 | AAEI J029 | AAEJ J029 | AAEK J029 |
+| 10. | 10. 10.00 to < 20.00 | AAEA J031 | AAEB J031 | AAEC J031 | AAED J031 | AAEE J031 | AAEF J031 | AAEG J031 | AAEH J031 | AAEI J031 | AAEJ J031 | AAEK J031 |
+| 11. | 11. 20.00 to < 100 | AAEA J033 | AAEB J033 | AAEC J033 | AAED J033 | AAEE J033 | AAEF J033 | AAEG J033 | AAEH J033 | AAEI J033 | AAEJ J033 | AAEK J033 |
+| 12. | 12. 100.00 (default) | AAEA J034 | AAEB J034 | AAEC J034 | AAED J034 | AAEE J034 | AAEF J034 | AAEG J034 | AAEH J034 | AAEI J034 | AAEJ J034 | AAEK J034 |
+| 13. | 13. Total1 | AAEA J035 | AAEB J035 | AAEC J035 | AAED J035 | AAEE J035 | AAEF J035 | AAEG J035 | AAEH J035 | AAEI J035 | AAEJ J035 | AAEK J035 |
+Memoranda Dollar Amounts in Thousands
+1. Risk-weighted assets associated with non-material portfolios not included above.................................................................................................................
+Amount AAEX J036 M.1.
+1. Cells in line 13 are calculated.
+2. Report weighted averages rounded to two decimal places.
+3. Not calculated from previous column entries. 10/2022
+FFIEC 101
+Page 15 of 38 F-1
+Schedule F—Wholesale Exposure: IPRE Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | PD Range | (Column A) Weighted- Average Obligor PD2 | (Column B) Number of Obligors | (Column C) Balance Sheet Amount | (Column D) Total Undrawn Amount | (Column E) EAD | (Column F) Weighted- Average Effective Maturity (Years)2 | (Column G) Weighted- Average LGD before Consideration of Eligible Guarantees and Credit Derivatives2 | (Column H) Weighted- Average LGD after Consideration of Credit Risk Mitigants2 | (Column I) Effect of PD Substitution and LGD Adjustment Approaches on RWA | (Column J) Effect of Double Default Treatment on RWA | (Column K) Risk- Weighted Assets3 | (Column L) Expected Credit Loss |
+| | Percentage | Percentage | Number | Amount | Amount | Amount | Number | Percentage | Percentage | Amount | Amount | Amount | Amount |
+| 1. | 1. 0.00 to < 0.15 | AAFA J005 | AAFB J005 | AAFC J005 | AAFD J005 | AAFE J005 | AAFF J005 | AAFG J005 | AAFH J005 | AAFI J005 | AAFJ J005 | AAFK J005 | AAFL J005 |
+| 2. | 2. 0.15 to < 0.25 | AAFA J008 | AAFB J008 | AAFC J008 | AAFD J008 | AAFE J008 | AAFF J008 | AAFG J008 | AAFH J008 | AAFI J008 | AAFJ J008 | AAFK J008 | AAFL J008 |
+| 3. | 3. 0.25 to < 0.35 | AAFA J010 | AAFB J010 | AAFC J010 | AAFD J010 | AAFE J010 | AAFF J010 | AAFG J010 | AAFH J010 | AAFI J010 | AAFJ J010 | AAFK J010 | AAFL J010 |
+| 4. | 4. 0.35 to < 0.50 | AAFA J013 | AAFB J013 | AAFC J013 | AAFD J013 | AAFE J013 | AAFF J013 | AAFG J013 | AAFH J013 | AAFI J013 | AAFJ J013 | AAFK J013 | AAFL J013 |
+| 5. | 5. 0.50 to < 0.75 | AAFA J014 | AAFB J014 | AAFC J014 | AAFD J014 | AAFE J014 | AAFF J014 | AAFG J014 | AAFH J014 | AAFI J014 | AAFJ J014 | AAFK J014 | AAFL J014 |
+| 6. | 6. 0.75 to < 1.35 | AAFA J016 | AAFB J016 | AAFC J016 | AAFD J016 | AAFE J016 | AAFF J016 | AAFG J016 | AAFH J016 | AAFI J016 | AAFJ J016 | AAFK J016 | AAFL J016 |
+| 7. | 7. 1.35 to < 2.50 | AAFA J019 | AAFB J019 | AAFC J019 | AAFD J019 | AAFE J019 | AAFF J019 | AAFG J019 | AAFH J019 | AAFI J019 | AAFJ J019 | AAFK J019 | AAFL J019 |
+| 8. | 8. 2.50 to < 5.50 | AAFA J025 | AAFB J025 | AAFC J025 | AAFD J025 | AAFE J025 | AAFF J025 | AAFG J025 | AAFH J025 | AAFI J025 | AAFJ J025 | AAFK J025 | AAFL J025 |
+| 9. | 9. 5.50 to < 10.00 .. | AAFA J029 | AAFB J029 | AAFC J029 | AAFD J029 | AAFE J029 | AAFF J029 | AAFG J029 | AAFH J029 | AAFI J029 | AAFJ J029 | AAFK J029 | AAFL J029 |
+| 10. | 10. 10.00 to < 20.00.. | AAFA J031 | AAFB J031 | AAFC J031 | AAFD J031 | AAFE J031 | AAFF J031 | AAFG J031 | AAFH J031 | AAFI J031 | AAFJ J031 | AAFK J031 | AAFL J031 |
+| 11. | 11. 20.00 to < 100 | AAFA J033 | AAFB J033 | AAFC J033 | AAFD J033 | AAFE J033 | AAFF J033 | AAFG J033 | AAFH J033 | AAFI J033 | AAFJ J033 | AAFK J033 | AAFL J033 |
+| 12. | 12. 100.00 (default).. | AAFA J034 | AAFB J034 | AAFC J034 | AAFD J034 | AAFE J034 | AAFF J034 | AAFG J034 | AAFH J034 | AAFI J034 | AAFJ J034 | AAFK J034 | AAFL J034 |
+| 13. | 13. Total1 | AAFA J035 | AAFB J035 | AAFC J035 | AAFD J035 | AAFE J035 | AAFF J035 | AAFG J035 | AAFH J035 | AAFI J035 | AAFJ J035 | AAFK J035 | AAFL J035 |
+Memoranda Dollar Amounts in Thousands
+1. Risk-weighted assets associated with non-material portfolios not included above.................................................................................................................
+Amount AAFX J036 M.1.
+1. Cells in line 13 are calculated.
+2. Report weighted averages rounded to two decimal places.
+3. Not calculated from previous column entries. 10/2022
+FFIEC 101
+Page 16 of 38 G-1
+Schedule G—Wholesale Exposure: HVCRE Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | PD Range | (Column A) Weighted- Average Obligor PD2 | (Column B) Number of Obligors | (Column C) Balance Sheet Amount | (Column D) Total Undrawn Amount | (Column E) EAD | (Column F) Weighted- Average Effective Maturity (Years)2 | (Column G) Weighted- Average LGD before Consideration of Eligible Guarantees and Credit Derivatives2 | (Column H) Weighted- Average LGD after Consideration of Credit Risk Mitigants2 | (Column I) Effect of PD Substitution and LGD Adjustment Approaches on RWA | (Column J) Effect of Double Default Treatment on RWA | (Column K) Risk- Weighted Assets3 | (Column L) Expected Credit Loss |
+| | Percentage | Percentage | Number | Amount | Amount | Amount | Number | Percentage | Percentage | Amount | Amount | Amount | Amount |
+| 1. | 1. 0.00 to < 0.15 | AAGA J005 | AAGB J005 | AAGC J005 | AAGD J005 | AAGE J005 | AAGF J005 | AAGG J005 | AAGH J005 | AAGI J005 | AAGJ J005 | AAGK J005 | AAGL J005 |
+| 2. | 2. 0.15 to < 0.25 | AAGA J008 | AAGB J008 | AAGC J008 | AAGD J008 | AAGE J008 | AAGF J008 | AAGG J008 | AAGH J008 | AAGI J008 | AAGJ J008 | AAGK J008 | AAGL J008 |
+| 3. | 3. 0.25 to < 0.35 | AAGA J010 | AAGB J010 | AAGC J010 | AAGD J010 | AAGE J010 | AAGF J010 | AAGG J010 | AAGH J010 | AAGI J010 | AAGJ J010 | AAGK J010 | AAGL J010 |
+| 4. | 4. 0.35 to < 0.50 | AAGA J013 | AAGB J013 | AAGC J013 | AAGD J013 | AAGE J013 | AAGF J013 | AAGG J013 | AAGH J013 | AAGI J013 | AAGJ J013 | AAGK J013 | AAGL J013 |
+| 5. | 5. 0.50 to < 0.75 | AAGA J014 | AAGB J014 | AAGC J014 | AAGD J014 | AAGE J014 | AAGF J014 | AAGG J014 | AAGH J014 | AAGI J014 | AAGJ J014 | AAGK J014 | AAGL J014 |
+| 6. | 6. 0.75 to < 1.35 | AAGA J016 | AAGB J016 | AAGC J016 | AAGD J016 | AAGE J016 | AAGF J016 | AAGG J016 | AAGH J016 | AAGI J016 | AAGJ J016 | AAGK J016 | AAGL J016 |
+| 7. | 7. 1.35 to < 2.50 | AAGA J019 | AAGB J019 | AAGC J019 | AAGD J019 | AAGE J019 | AAGF J019 | AAGG J019 | AAGH J019 | AAGI J019 | AAGJ J019 | AAGK J019 | AAGL J019 |
+| 8. | 8. 2.50 to < 5.50 | AAGA J025 | AAGB J025 | AAGC J025 | AAGD J025 | AAGE J025 | AAGF J025 | AAGG J025 | AAGH J025 | AAGI J025 | AAGJ J025 | AAGK J025 | AAGL J025 |
+| 9. | 9. 5.50 to < 10.00 .. | AAGA J029 | AAGB J029 | AAGC J029 | AAGD J029 | AAGE J029 | AAGF J029 | AAGG J029 | AAGH J029 | AAGI J029 | AAGJ J029 | AAGK J029 | AAGL J029 |
+| 10. | 10. 10.00 to < 20.00.. | AAGA J031 | AAGB J031 | AAGC J031 | AAGD J031 | AAGE J031 | AAGF J031 | AAGG J031 | AAGH J031 | AAGI J031 | AAGJ J031 | AAGK J031 | AAGL J031 |
+| 11. | 11. 20.00 to < 100 | AAGA J033 | AAGB J033 | AAGC J033 | AAGD J033 | AAGE J033 | AAGF J033 | AAGG J033 | AAGH J033 | AAGI J033 | AAGJ J033 | AAGK J033 | AAGL J033 |
+| 12. | 12. 100.00 (default).. | AAGA J034 | AAGB J034 | AAGC J034 | AAGD J034 | AAGE J034 | AAGF J034 | AAGG J034 | AAGH J034 | AAGI J034 | AAGJ J034 | AAGK J034 | AAGL J034 |
+| 13. | 13. Total1 | AAGA J035 | AAGB J035 | AAGC J035 | AAGD J035 | AAGE J035 | AAGF J035 | AAGG J035 | AAGH J035 | AAGI J035 | AAGJ J035 | AAGK J035 | AAGL J035 |
+Memoranda Dollar Amounts in Thousands
+1. Risk-weighted assets associated with non-material portfolios not included above.................................................................................................................
+Amount AAGX J036 M.1.
+1. Cells in line 13 are calculated.
+2. Report weighted averages rounded to two decimal places.
+3. Not calculated from previous column entries. 10/2022
+FFIEC 101
+Page 17 of 38 H-1
+Schedule H—Wholesale Exposure: Eligible Margin Loans, Repo-Style Transactions, and OTC Derivatives with Cross-Product Netting Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Exposures with EAD Adjustment | | | | | | Exposures Where Collateral Is Reflected in LGD | | | | | |
+| | PD Range | (Column A) Weighted- Average PD2 | (Column B) Weighted- Average Effective Maturity (Years)2 | (Column C) EAD | (Column D) Weighted- Average LGD2 | (Column E) Risk- Weighted Assets3 | (Column F) Expected Credit Loss | (Column G) Weighted- Average PD2 | (Column H) Weighted- Average Maturity (Years)2 | (Column I) EAD | (Column J) Weighted- Average LGD2 | (Column K) Risk- Weighted Assets3 | (Column L) Expected Credit Loss |
+| | Percentage | Percentage | Number | Amount | Percentage | Amount | Amount | Percentage | Number | Amount | Percentage | Amount | Amount |
+| 1. | 1. 0.00 to < 0.03 | AAHA J001 | AAHB J001 | AAHC J001 | AAHD J001 | AAHE J001 | AAHF J001 | AAHG J001 | AAHH J001 | AAHI J001 | AAHJ J001 | AAHK J001 | AAHL J001 |
+| 2. | 2. 0.03 to < 0.10 | AAHA J003 | AAHB J003 | AAHC J003 | AAHD J003 | AAHE J003 | AAHF J003 | AAHG J003 | AAHH J003 | AAHI J003 | AAHJ J003 | AAHK J003 | AAHL J003 |
+| 3. | 3. 0.10 to < 0.15 | AAHA J006 | AAHB J006 | AAHC J006 | AAHD J006 | AAHE J006 | AAHF J006 | AAHG J006 | AAHH J006 | AAHI J006 | AAHJ J006 | AAHK J006 | AAHL J006 |
+| 4. | 4. 0.15 to < 0.25 | AAHA J008 | AAHB J008 | AAHC J008 | AAHD J008 | AAHE J008 | AAHF J008 | AAHG J008 | AAHH J008 | AAHI J008 | AAHJ J008 | AAHK J008 | AAHL J008 |
+| 5. | 5. 0.25 to < 0.50 | AAHA J012 | AAHB J012 | AAHC J012 | AAHD J012 | AAHE J012 | AAHF J012 | AAHG J012 | AAHH J012 | AAHI J012 | AAHJ J012 | AAHK J012 | AAHL J012 |
+| 6. | 6. 0.50 to < 0.75 | AAHA J014 | AAHB J014 | AAHC J014 | AAHD J014 | AAHE J014 | AAHF J014 | AAHG J014 | AAHH J014 | AAHI J014 | AAHJ J014 | AAHK J014 | AAHL J014 |
+| 7. | 7. 0.75 to < 1.35 | AAHA J016 | AAHB J016 | AAHC J016 | AAHD J016 | AAHE J016 | AAHF J016 | AAHG J016 | AAHH J016 | AAHI J016 | AAHJ J016 | AAHK J016 | AAHL J016 |
+| 8. | 8. 1.35 to < 2.50 | AAHA J019 | AAHB J019 | AAHC J019 | AAHD J019 | AAHE J019 | AAHF J019 | AAHG J019 | AAHH J019 | AAHI J019 | AAHJ J019 | AAHK J019 | AAHL J019 |
+| 9. | 9. 2.50 to < 5.50 | AAHA J025 | AAHB J025 | AAHC J025 | AAHD J025 | AAHE J025 | AAHF J025 | AAHG J025 | AAHH J025 | AAHI J025 | AAHJ J025 | AAHK J025 | AAHL J025 |
+| 10. | 10. 5.50 to < 10.00 | AAHA J029 | AAHB J029 | AAHC J029 | AAHD J029 | AAHE J029 | AAHF J029 | AAHG J029 | AAHH J029 | AAHI J029 | AAHJ J029 | AAHK J029 | AAHL J029 |
+| 11. | 11. 10.00 to < 100 | AAHA J032 | AAHB J032 | AAHC J032 | AAHD J032 | AAHE J032 | AAHF J032 | AAHG J032 | AAHH J032 | AAHI J032 | AAHJ J032 | AAHK J032 | AAHL J032 |
+| 12. | 12. 100.00 (default) | AAHA J034 | AAHB J034 | AAHC J034 | AAHD J034 | AAHE J034 | AAHF J034 | AAHG J034 | AAHH J034 | AAHI J034 | AAHJ J034 | AAHK J034 | AAHL J034 |
+| 13. | 13. Eligible margin loans where a 300% risk weight has been applied | | | AAHC J037 | | AAHE J037 | | | | | | | |
+| 14. | 14. Total1 | AAHA J035 | AAHB J035 | AAHC J035 | AAHD J035 | AAHE J035 | AAHF J035 | AAHG J035 | AAHH J035 | AAHI J035 | AAHJ J035 | AAHK J035 | AAHL J035 |
+1. Cells in line 14 are calculated.
+2. Report weighted averages rounded to two decimal places.
+3. Not calculated from previous column entries. 10/2022
+FFIEC 101
+Page 18 of 38 H-2
+Schedule H—Continued
+Memoranda
+Exposures subject to a wholesale correlation factor multiplier of 1.25.
+Dollar Amounts in Thousands
+1. Regulated
+institutions..........
+2. Unregulated institutions..........
+M.1.
+M.2.
+| Exposures with EAD Adjustment › (Column A) Weighted- Average PD1 › Percentage › AAHA P929 › AAHA P930 | Exposures with EAD Adjustment › (Column B) Weighted- Average Effective Maturity (Years)1 › Number › AAHB P929 › AAHB P930 | Exposures with EAD Adjustment › (Column C) EAD › Amount › AAHC P929 › AAHC P930 | Exposures with EAD Adjustment › (Column D) Weighted- Average LGD1 › Percentage › AAHD P929 › AAHD P930 | Exposures with EAD Adjustment › (Column E) Risk- Weighted Assets › Amount › AAHE P929 › AAHE P930 | Exposures with EAD Adjustment › (Column F) Expected Credit Loss › Amount › AAHF P929 › AAHF P930 | Exposures Where Collateral Is Reflected in LGD › (Column G) Weighted- Average PD1 › Percentage › AAHG P929 › AAHG P930 | Exposures Where Collateral Is Reflected in LGD › (Column H) Weighted- Average Maturity (Years)1 › Number › AAHH P929 › AAHH P930 | Exposures Where Collateral Is Reflected in LGD › (Column I) EAD › Amount › AAHI P929 › AAHI P930 | Exposures Where Collateral Is Reflected in LGD › (Column J) Weighted- Average LGD1 › Percentage › AAHJ P929 › AAHJ P930 | Exposures Where Collateral Is Reflected in LGD › (Column K) Risk- Weighted Assets › Amount › AAHK P929 › AAHK P930 | Exposures Where Collateral Is Reflected in LGD › (Column L) Expected Credit Loss › Amount › AAHL P929 › AAHL P930 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+(1 blank entry rows)
+IMM Margin Period of Risk and Specific Wrong Way Risk.
+Dollar Amounts in Thousands
+| Item | Line item | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Holding Period or Margin Period of risk set for 20 days | | Holding period or Margin Period of risk set for at least twice the minimum holding period that would otherwise be used (due to at least 3 disputes) | | Exposures with specific wrong-way risk for which the bank would otherwise apply the IMM. | |
+| | Holding Period, Margin Period of Risk and Specific Wrong Way Risk | (Column A) Exposure Amount | (Column B) Risk-Weighted Assets | (Column C) Exposure Amount | (Column D) Risk-Weighted Assets | (Column E) Exposure Amount | (Column F) Risk-Weighted Assets |
+| | | Amount | Amount | Amount | Amount | Amount | Amount |
+| M.3. | 3. Exposure amount and risk-weighted assets | AAHM P931 | AAHN P931 | AAHO P931 | AAHP P931 | AAHQ P931 | AAHR P931 |
+1. Report weighted averages rounded to two decimal places.
+03/2016
+FFIEC 101
+Page 19 of 38 I-1
+Schedule I—Wholesale Exposure: Eligible Margin Loans and Repo-Style Transactions with No Cross-Product Netting Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Exposures with EAD Adjustment | | | | | | Exposures Where Collateral Is Reflected in LGD | | | | | |
+| | PD Range | (Column A) Weighted- Average PD2 | (Column B) Weighted- Average Effective Maturity (Years)2 | (Column C) EAD | (Column D) Weighted- Average LGD2 | (Column E) Risk- Weighted Assets3 | (Column F) Expected Credit Loss | (Column G) Weighted- Average PD2 | (Column H) Weighted- Average Maturity (Years)2 | (Column I) EAD | (Column J) Weighted- Average LGD2 | (Column K) Risk- Weighted Assets3 | (Column L) Expected Credit Loss |
+| | Percentage | Percentage | Number | Amount | Percentage | Amount | Amount | Percentage | Number | Amount | Percentage | Amount | Amount |
+| 1. | 1. 0.00 to < 0.03 | AAIA J001 | AAIB J001 | AAIC J001 | AAID J001 | AAIE J001 | AAIF J001 | AAIG J001 | AAIH J001 | AAII J001 | AAIJ J001 | AAIK J001 | AAIL J001 |
+| 2. | 2. 0.03 to < 0.10 | AAIA J003 | AAIB J003 | AAIC J003 | AAID J003 | AAIE J003 | AAIF J003 | AAIG J003 | AAIH J003 | AAII J003 | AAIJ J003 | AAIK J003 | AAIL J003 |
+| 3. | 3. 0.10 to < 0.15 | AAIA J006 | AAIB J006 | AAIC J006 | AAID J006 | AAIE J006 | AAIF J006 | AAIG J006 | AAIH J006 | AAII J006 | AAIJ J006 | AAIK J006 | AAIL J006 |
+| 4. | 4. 0.15 to < 0.25 | AAIA J008 | AAIB J008 | AAIC J008 | AAID J008 | AAIE J008 | AAIF J008 | AAIG J008 | AAIH J008 | AAII J008 | AAIJ J008 | AAIK J008 | AAIL J008 |
+| 5. | 5. 0.25 to < 0.50 | AAIA J012 | AAIB J012 | AAIC J012 | AAID J012 | AAIE J012 | AAIF J012 | AAIG J012 | AAIH J012 | AAII J012 | AAIJ J012 | AAIK J012 | AAIL J012 |
+| 6. | 6. 0.50 to < 0.75 | AAIA J014 | AAIB J014 | AAIC J014 | AAID J014 | AAIE J014 | AAIF J014 | AAIG J014 | AAIH J014 | AAII J014 | AAIJ J014 | AAIK J014 | AAIL J014 |
+| 7. | 7. 0.75 to < 1.35 | AAIA J016 | AAIB J016 | AAIC J016 | AAID J016 | AAIE J016 | AAIF J016 | AAIG J016 | AAIH J016 | AAII J016 | AAIJ J016 | AAIK J016 | AAIL J016 |
+| 8. | 8. 1.35 to < 2.50 | AAIA J019 | AAIB J019 | AAIC J019 | AAID J019 | AAIE J019 | AAIF J019 | AAIG J019 | AAIH J019 | AAII J019 | AAIJ J019 | AAIK J019 | AAIL J019 |
+| 9. | 9. 2.50 to < 5.50 | AAIA J025 | AAIB J025 | AAIC J025 | AAID J025 | AAIE J025 | AAIF J025 | AAIG J025 | AAIH J025 | AAII J025 | AAIJ J025 | AAIK J025 | AAIL J025 |
+| 10. | 10. 5.50 to < 10.00 | AAIA J029 | AAIB J029 | AAIC J029 | AAID J029 | AAIE J029 | AAIF J029 | AAIG J029 | AAIH J029 | AAII J029 | AAIJ J029 | AAIK J029 | AAIL J029 |
+| 11. | 11. 10.00 to < 100 | AAIA J032 | AAIB J032 | AAIC J032 | AAID J032 | AAIE J032 | AAIF J032 | AAIG J032 | AAIH J032 | AAII J032 | AAIJ J032 | AAIK J032 | AAIL J032 |
+| 12. | 12. 100.00 (default) | AAIA J034 | AAIB J034 | AAIC J034 | AAID J034 | AAIE J034 | AAIF J034 | AAIG J034 | AAIH J034 | AAII J034 | AAIJ J034 | AAIK J034 | AAIL J034 |
+| 13. | 13. Eligible margin loans where a 300% risk weight has been applied.. | | | AAIC J037 | | AAIE J037 | | | | | | | |
+| 14. | 14. Total1 | AAIA J035 | AAIB J035 | AAIC J035 | AAID J035 | AAIE J035 | AAIF J035 | AAIG J035 | AAIH J035 | AAII J035 | AAIJ J035 | AAIK J035 | AAIL J035 |
+1. Cells in line 14 are calculated.
+2. Report weighted averages rounded to two decimal places.
+3. Not calculated from previous column entries 10/2022
+FFIEC 101
+Page 20 of 38 I-2
+Schedule I—Continued
+Memoranda
+(Column A)
+EAD Adjustment Method
+Collateral Haircut AAIX J038
+1. Percent of line 14, column C calculated using1........................................................................................................................
+(Column B) Simple VaR AAIX J039
+(Column C) Internal Models AAIX J040 M.1.
+Exposures subject to a wholesale correlation factor multiplier of 1.25.
+Dollar Amounts in Thousands
+2. Regulated
+institutions .........
+3. Unregulated institutions .........
+M.2.
+M.3.
+| Exposures with EAD Adjustment › (Column A) Weighted- Average PD2 › Percentage › AAIA P929 › AAIA P930 | Exposures with EAD Adjustment › (Column B) Weighted- Average Effective Maturity (Years)2 › Number › AAIB P929 › AAIB P930 | Exposures with EAD Adjustment › (Column C) EAD › Amount › AAIC P929 › AAIC P930 | Exposures with EAD Adjustment › (Column D) Weighted- Average LGD2 › Percentage › AAID P929 › AAID P930 | Exposures with EAD Adjustment › (Column E) Risk- Weighted Assets › Amount › AAIE P929 › AAIE P930 | Exposures with EAD Adjustment › (Column F) Expected Credit Loss › Amount › AAIF P929 › AAIF P930 | Exposures Where Collateral Is Reflected in LGD › (Column G) Weighted- Average PD2 › Percentage › AAIG P929 › AAIG P930 | Exposures Where Collateral Is Reflected in LGD › (Column H) Weighted- Average Maturity (Years)2 › Number › AAIH P929 › AAIH P930 | Exposures Where Collateral Is Reflected in LGD › (Column I) EAD › Amount › AAII P929 › AAII P930 | Exposures Where Collateral Is Reflected in LGD › (Column J) Weighted- Average LGD2 › Percentage › AAIJ P929 › AAIJ P930 | Exposures Where Collateral Is Reflected in LGD › (Column K) Risk- Weighted Assets › Amount › AAIK P929 › AAIK P930 | Exposures Where Collateral Is Reflected in LGD › (Column L) Expected Credit Loss › Amount › AAIL P929 › AAIL P930 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+(1 blank entry rows)
+IMM Margin Period of Risk and Specific Wrong Way Risk.
+Dollar Amounts in Thousands
+| Item | Line item | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Holding Period or Margin Period of risk set for 20 days | | Holding period or Margin Period of risk set for at least twice the minimum holding period that would otherwise be used (due to at least 3 disputes) | | Exposures with specific wrong-way risk for which the bank would otherwise apply the IMM. | |
+| | Holding Period, Margin Period of Risk and Specific Wrong Way Risk | (Column A) Exposure Amount | (Column B) Risk-Weighted Assets | (Column C) Exposure Amount | (Column D) Risk-Weighted Assets | (Column E) Exposure Amount | (Column F) Risk-Weighted Assets |
+| | | Amount | Amount | Amount | Amount | Amount | Amount |
+| M.4. | 4. Exposure amount and risk-weighted assets | AAIM P931 | AAIN P931 | AAIO P931 | AAIP P931 | AAIQ P931 | AAIR P931 |
+1. Report each percentage rounded to one decimal place.
+2. Report weighted averages rounded to two decimal places.
+03/2016
+FFIEC 101
+Page 21 of 38 J-1
+Schedule J—Wholesale Exposure: OTC Derivatives with No Cross-Product Netting Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Exposures with EAD Adjustment | | | | | | Exposures Where Collateral Is Reflected in LGD4 | | | | | |
+| | PD Range | (Column A) Weighted- Average PD2 | (Column B) Weighted- Average Effective Maturity (Years)2 | (Column C) EAD | (Column D) Weighted- Average LGD2 | (Column E) Risk- Weighted Assets3 | (Column F) Expected Credit Loss | (Column G) Weighted- Average PD2 | (Column H) Weighted- Average Maturity (Years)2 | (Column I) EAD | (Column J) Weighted- Average LGD2 | (Column K) Risk- Weighted Assets3 | (Column L) Expected Credit Loss |
+| | Percentage | Percentage | Number | Amount | Percentage | Amount | Amount | Percentage | Number | Amount | Percentage | Amount | Amount |
+| 1. | 1. 0.00 to < 0.03 | AAJA J001 | AAJB J001 | AAJC J001 | AAJD J001 | AAJE J001 | AAJF J001 | AAJG J001 | AAJH J001 | AAJI J001 | AAJJ J001 | AAJK J001 | AAJL J001 |
+| 2. | 2. 0.03 to < 0.10 | AAJA J003 | AAJB J003 | AAJC J003 | AAJD J003 | AAJE J003 | AAJF J003 | AAJG J003 | AAJH J003 | AAJI J003 | AAJJ J003 | AAJK J003 | AAJL J003 |
+| 3. | 3. 0.10 to < 0.15 | AAJA J006 | AAJB J006 | AAJC J006 | AAJD J006 | AAJE J006 | AAJF J006 | AAJG J006 | AAJH J006 | AAJI J006 | AAJJ J006 | AAJK J006 | AAJL J006 |
+| 4. | 4. 0.15 to < 0.25 | AAJA J008 | AAJB J008 | AAJC J008 | AAJD J008 | AAJE J008 | AAJF J008 | AAJG J008 | AAJH J008 | AAJI J008 | AAJJ J008 | AAJK J008 | AAJL J008 |
+| 5. | 5. 0.25 to < 0.50 | AAJA J012 | AAJB J012 | AAJC J012 | AAJD J012 | AAJE J012 | AAJF J012 | AAJG J012 | AAJH J012 | AAJI J012 | AAJJ J012 | AAJK J012 | AAJL J012 |
+| 6. | 6. 0.50 to < 0.75 | AAJA J014 | AAJB J014 | AAJC J014 | AAJD J014 | AAJE J014 | AAJF J014 | AAJG J014 | AAJH J014 | AAJI J014 | AAJJ J014 | AAJK J014 | AAJL J014 |
+| 7. | 7. 0.75 to < 1.35 | AAJA J016 | AAJB J016 | AAJC J016 | AAJD J016 | AAJE J016 | AAJF J016 | AAJG J016 | AAJH J016 | AAJI J016 | AAJJ J016 | AAJK J016 | AAJL J016 |
+| 8. | 8. 1.35 to < 2.50 | AAJA J019 | AAJB J019 | AAJC J019 | AAJD J019 | AAJE J019 | AAJF J019 | AAJG J019 | AAJH J019 | AAJI J019 | AAJJ J019 | AAJK J019 | AAJL J019 |
+| 9. | 9. 2.50 to < 5.50 | AAJA J025 | AAJB J025 | AAJC J025 | AAJD J025 | AAJE J025 | AAJF J025 | AAJG J025 | AAJH J025 | AAJI J025 | AAJJ J025 | AAJK J025 | AAJL J025 |
+| 10. | 10. 5.50 to < 10.00 | AAJA J029 | AAJB J029 | AAJC J029 | AAJD J029 | AAJE J029 | AAJF J029 | AAJG J029 | AAJH J029 | AAJI J029 | AAJJ J029 | AAJK J029 | AAJL J029 |
+| 11. | 11. 10.00 to < 100 | AAJA J032 | AAJB J032 | AAJC J032 | AAJD J032 | AAJE J032 | AAJF J032 | AAJG J032 | AAJH J032 | AAJI J032 | AAJJ J032 | AAJK J032 | AAJL J032 |
+| 12. | 12. 100.00 (default) | AAJA J034 | AAJB J034 | AAJC J034 | AAJD J034 | AAJE J034 | AAJF J034 | AAJG J034 | AAJH J034 | AAJI J034 | AAJJ J034 | AAJK J034 | AAJL J034 |
+| 13. | 13. Total1 | AAJA J035 | AAJB J035 | AAJC J035 | AAJD J035 | AAJE J035 | AAJF J035 | AAJG J035 | AAJH J035 | AAJI J035 | AAJJ J035 | AAJK J035 | AAJL J035 |
+1. Cells in line 13 are calculated.
+2. Report weighted averages rounded to two decimal places.
+3. Not calculated from previous column entries.
+4. Report exposures for which the bank uses the current exposure methodology to determine EAD and reflects collateral, if any, in LGD.
+10/2022
+FFIEC 101
+Page 22 of 38 J-2
+Schedule J—Continued
+Memoranda
+(Column A) (Column B)
+EAD Adjustment Method
+Collateral Haircut Internal Models AAJX J038 AAJX J040
+1. Percent of line 13, column C calculated using1........................................................................................................................................ M.1.
+Exposures subject to a wholesale correlation factor multiplier of 1.25.
+Dollar Amounts in Thousands
+2. Regulated
+institutions .........
+3. Unregulated institutions .........
+M.2.
+M.3.
+| Exposures with EAD Adjustment › (Column A) Weighted- Average PD2 › Percentage › AAJA P929 › AAJA P930 | Exposures with EAD Adjustment › (Column B) Weighted- Average Effective Maturity (Years)2 › Number › AAJB P929 › AAJB P930 | Exposures with EAD Adjustment › (Column C) EAD › Amount › AAJC P929 › AAJC P930 | Exposures with EAD Adjustment › (Column D) Weighted- Average LGD2 › Percentage › AAJD P929 › AAJD P930 | Exposures with EAD Adjustment › (Column E) Risk- Weighted Assets › Amount › AAJE P929 › AAJE P930 | Exposures with EAD Adjustment › (Column F) Expected Credit Loss › Amount › AAJF P929 › AAJF P930 | Exposures Where Collateral Is Reflected in LGD › (Column G) Weighted- Average PD2 › Percentage › AAJG P929 › AAJG P930 | Exposures Where Collateral Is Reflected in LGD › (Column H) Weighted- Average Maturity (Years)2 › Number › AAJH P929 › AAJH P930 | Exposures Where Collateral Is Reflected in LGD › (Column I) EAD › Amount › AAJI P929 › AAJI P930 | Exposures Where Collateral Is Reflected in LGD › (Column J) Weighted- Average LGD2 › Percentage › AAJJ P929 › AAJJ P930 | Exposures Where Collateral Is Reflected in LGD › (Column K) Risk- Weighted Assets › Amount › AAJK P929 › AAJK P930 | Exposures Where Collateral Is Reflected in LGD › (Column L) Expected Credit Loss › Amount › AAJL P929 › AAJL P930 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+(1 blank entry rows)
+IMM Margin Period of Risk and Specific Wrong Way Risk.
+Dollar Amounts in Thousands
+| Item | Line item | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Holding Period or Margin Period of risk set for 20 days | | Holding period or Margin Period of risk set for at least twice the minimum holding period that would otherwise be used (due to at least 3 disputes) | | Exposures with specific wrong-way risk for which the bank would otherwise apply the IMM. | |
+| | Holding Period, Margin Period of Risk and Specific Wrong Way Risk | (Column A) Exposure Amount | (Column B) Risk-Weighted Assets | (Column C) Exposure Amount | (Column D) Risk-Weighted Assets | (Column E) Exposure Amount | (Column F) Risk-Weighted Assets |
+| | | Amount | Amount | Amount | Amount | Amount | Amount |
+| M.4. | 4. Exposure amount and risk-weighted assets | AAJM P931 | AAJN P931 | AAJO P931 | AAJP P931 | AAJQ P931 | AAJR P931 |
+1. Report each percentage rounded to one decimal place.
+2. Report weighted averages rounded to two decimal places.
+03/2016
+FFIEC 101
+Page 23 of 38 K-1
+Schedule K—Retail Exposure: Residential Mortgage—Closed-End First Lien Exposures Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | PD Range | (Column A) Weighted- Average PD2 | (Column B) Number of Exposures | (Column C) Total Balance Sheet Amount | (Column D) Total Undrawn Amount | (Column E) EAD | (Column F) Weighted- Average Age (Months)2 | (Column G) Weighted- Average LGD2 | (Column H) Risk-Weighted Assets3 | (Column I) Expected Credit Loss | LTV4 (Column J) Less Than 70% | (Column K) At Least 70% but Less Than 80% | (Column L) At Least 80% but Less Than 90% | (Column M) At Least 90% but Less Than 100% | (Column N) Greater than or Equal to 100% | (Column O) Weighted- Average Bureau Score5 | (Column P) EAD of Accounts with Updated LTV |
+| | Percentage | Percentage | Number | Amount | Amount | Amount | Number | Percentage | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Number | Amount |
+| 1. | 1. 0.00 to < 0.05 | AAKA J002 | AAKB J002 | AAKC J002 | AAKD J002 | AAKE J002 | AAKF J002 | AAKG J002 | AAKH J002 | AAKI J002 | AAKJ J002 | AAKK J002 | AAKL J002 | AAKM J002 | AAKN J002 | AAKO J002 | AAKP J002 |
+| 2. | 2. 0.05 to < 0.10 | AAKA J004 | AAKB J004 | AAKC J004 | AAKD J004 | AAKE J004 | AAKF J004 | AAKG J004 | AAKH J004 | AAKI J004 | AAKJ J004 | AAKK J004 | AAKL J004 | AAKM J004 | AAKN J004 | AAKO J004 | AAKP J004 |
+| 3. | 3. 0.10 to < 0.15 | AAKA J006 | AAKB J006 | AAKC J006 | AAKD J006 | AAKE J006 | AAKF J006 | AAKG J006 | AAKH J006 | AAKI J006 | AAKJ J006 | AAKK J006 | AAKL J006 | AAKM J006 | AAKN J006 | AAKO J006 | AAKP J006 |
+| 4. | 4. 0.15 to < 0.20 | AAKA J007 | AAKB J007 | AAKC J007 | AAKD J007 | AAKE J007 | AAKF J007 | AAKG J007 | AAKH J007 | AAKI J007 | AAKJ J007 | AAKK J007 | AAKL J007 | AAKM J007 | AAKN J007 | AAKO J007 | AAKP J007 |
+| 5. | 5. 0.20 to < 0.25 | AAKA J009 | AAKB J009 | AAKC J009 | AAKD J009 | AAKE J009 | AAKF J009 | AAKG J009 | AAKH J009 | AAKI J009 | AAKJ J009 | AAKK J009 | AAKL J009 | AAKM J009 | AAKN J009 | AAKO J009 | AAKP J009 |
+| 6. | 6. 0.25 to < 0.35 | AAKA J010 | AAKB J010 | AAKC J010 | AAKD J010 | AAKE J010 | AAKF J010 | AAKG J010 | AAKH J010 | AAKI J010 | AAKJ J010 | AAKK J010 | AAKL J010 | AAKM J010 | AAKN J010 | AAKO J010 | AAKP J010 |
+| 7. | 7. 0.35 to < 0.50 | AAKA J013 | AAKB J013 | AAKC J013 | AAKD J013 | AAKE J013 | AAKF J013 | AAKG J013 | AAKH J013 | AAKI J013 | AAKJ J013 | AAKK J013 | AAKL J013 | AAKM J013 | AAKN J013 | AAKO J013 | AAKP J013 |
+| 8. | 8. 0.50 to < 0.75 | AAKA J014 | AAKB J014 | AAKC J014 | AAKD J014 | AAKE J014 | AAKF J014 | AAKG J014 | AAKH J014 | AAKI J014 | AAKJ J014 | AAKK J014 | AAKL J014 | AAKM J014 | AAKN J014 | AAKO J014 | AAKP J014 |
+| 9. | 9. 0.75 to < 1.35 | AAKA J016 | AAKB J016 | AAKC J016 | AAKD J016 | AAKE J016 | AAKF J016 | AAKG J016 | AAKH J016 | AAKI J016 | AAKJ J016 | AAKK J016 | AAKL J016 | AAKM J016 | AAKN J016 | AAKO J016 | AAKP J016 |
+| 10. | 10. 1.35 to < 2.50 | AAKA J019 | AAKB J019 | AAKC J019 | AAKD J019 | AAKE J019 | AAKF J019 | AAKG J019 | AAKH J019 | AAKI J019 | AAKJ J019 | AAKK J019 | AAKL J019 | AAKM J019 | AAKN J019 | AAKO J019 | AAKP J019 |
+| 11. | 11. 2.50 to < 5.50 | AAKA J025 | AAKB J025 | AAKC J025 | AAKD J025 | AAKE J025 | AAKF J025 | AAKG J025 | AAKH J025 | AAKI J025 | AAKJ J025 | AAKK J025 | AAKL J025 | AAKM J025 | AAKN J025 | AAKO J025 | AAKP J025 |
+| 12. | 12. 5.50 to < 10.00 | AAKA J029 | AAKB J029 | AAKC J029 | AAKD J029 | AAKE J029 | AAKF J029 | AAKG J029 | AAKH J029 | AAKI J029 | AAKJ J029 | AAKK J029 | AAKL J029 | AAKM J029 | AAKN J029 | AAKO J029 | AAKP J029 |
+| 13. | 13. 10.00 to < 20.00.. | AAKA J031 | AAKB J031 | AAKC J031 | AAKD J031 | AAKE J031 | AAKF J031 | AAKG J031 | AAKH J031 | AAKI J031 | AAKJ J031 | AAKK J031 | AAKL J031 | AAKM J031 | AAKN J031 | AAKO J031 | AAKP J031 |
+| 14. | 14. 20.00 to < 100 | AAKA J033 | AAKB J033 | AAKC J033 | AAKD J033 | AAKE J033 | AAKF J033 | AAKG J033 | AAKH J033 | AAKI J033 | AAKJ J033 | AAKK J033 | AAKL J033 | AAKM J033 | AAKN J033 | AAKO J033 | AAKP J033 |
+| 15. | 15. 100.00 Default | AAKA J034 | AAKB J034 | AAKC J034 | AAKD J034 | AAKE J034 | AAKF J034 | AAKG J034 | AAKH J034 | AAKI J034 | AAKJ J034 | AAKK J034 | AAKL J034 | AAKM J034 | AAKN J034 | AAKO J034 | AAKP J034 |
+| 16. | 16. Total1 | AAKA J035 | AAKB J035 | AAKC J035 | AAKD J035 | AAKE J035 | AAKF J035 | AAKG J035 | AAKH J035 | AAKI J035 | AAKJ J035 | AAKK J035 | AAKL J035 | AAKM J035 | AAKN J035 | AAKO J035 | AAKP J035 |
+1. Cells in line 16 are calculated, except for Column O. 2. Report weighted averages in Columns A, F, and G rounded to two decimal places. 3. Not calculated from previous column entries.
+4. LTV values should be calculated using only first lien exposures. Where LTV information is available for all accounts, the sum of EADs reported in Columns J through N for a given PD range should equal the amount reported in Column E for that same PD range. Otherwise, the sum of EADs reported in Columns J through N for a given PD range will be less than the EAD reported in Column E for that same PD range. 5. Report weighted averages in Column O rounded to one decimal place, except in item 16, which should be rounded to the nearest whole number. 10/2022
+FFIEC 101
+Page 24 of 38 K-2 Schedule K—Continued Dollar Amounts in Thousands Amount AAKX J036 AAKX J041
+1. Risk-weighted assets associated with non-material portfolios not included above................................................................................................ M.1.
+2. Credit scores shown in Column O are from which credit scoring system(s)? ............ M.2.
+Memoranda 03/2014
+FFIEC 101
+Page 25 of 38 L-1
+Schedule L—Retail Exposure: Residential Mortgage—Closed-end Junior Lien Exposures Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | PD Range | (Column A) Weighted- Average PD2 | (Column B) Number of Exposures | (Column C) Total Balance Sheet Amount | (Column D) Total Undrawn Amount | (Column E) EAD | (Column F) Weighted- Average Age (Months)2 | (Column G) Weighted- Average LGD2 | (Column H) Risk-Weighted Assets3 | (Column I) Expected Credit Loss | LTV4 (Column J) Less Than 70% | (Column K) At Least 70% but Less Than 80% | (Column L) At Least 80% but Less Than 90% | (Column M) At Least 90% but Less Than 100% | (Column N) Greater than or Equal to 100% | (Column O) Weighted- Average Bureau Score5 | (Column P) EAD of Accounts with Updated LTV |
+| | Percentage | Percentage | Number | Amount | Amount | Amount | Number | Percentage | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Number | Amount |
+| 1. | 1. 0.00 to < 0.05 | AALA J002 | AALB J002 | AALC J002 | AALD J002 | AALE J002 | AALF J002 | AALG J002 | AALH J002 | AALI J002 | AALJ J002 | AALK J002 | AALL J002 | AALM J002 | AALN J002 | AALO J002 | AALP J002 |
+| 2. | 2. 0.05 to < 0.10 | AALA J004 | AALB J004 | AALC J004 | AALD J004 | AALE J004 | AALF J004 | AALG J004 | AALH J004 | AALI J004 | AALJ J004 | AALK J004 | AALL J004 | AALM J004 | AALN J004 | AALO J004 | AALP J004 |
+| 3. | 3. 0.10 to < 0.15 | AALA J006 | AALB J006 | AALC J006 | AALD J006 | AALE J006 | AALF J006 | AALG J006 | AALH J006 | AALI J006 | AALJ J006 | AALK J006 | AALL J006 | AALM J006 | AALN J006 | AALO J006 | AALP J006 |
+| 4. | 4. 0.15 to < 0.20 | AALA J007 | AALB J007 | AALC J007 | AALD J007 | AALE J007 | AALF J007 | AALG J007 | AALH J007 | AALI J007 | AALJ J007 | AALK J007 | AALL J007 | AALM J007 | AALN J007 | AALO J007 | AALP J007 |
+| 5. | 5. 0.20 to < 0.25 | AALA J009 | AALB J009 | AALC J009 | AALD J009 | AALE J009 | AALF J009 | AALG J009 | AALH J009 | AALI J009 | AALJ J009 | AALK J009 | AALL J009 | AALM J009 | AALN J009 | AALO J009 | AALP J009 |
+| 6. | 6. 0.25 to < 0.35 | AALA J010 | AALB J010 | AALC J010 | AALD J010 | AALE J010 | AALF J010 | AALG J010 | AALH J010 | AALI J010 | AALJ J010 | AALK J010 | AALL J010 | AALM J010 | AALN J010 | AALO J010 | AALP J010 |
+| 7. | 7. 0.35 to < 0.50 | AALA J013 | AALB J013 | AALC J013 | AALD J013 | AALE J013 | AALF J013 | AALG J013 | AALH J013 | AALI J013 | AALJ J013 | AALK J013 | AALL J013 | AALM J013 | AALN J013 | AALO J013 | AALP J013 |
+| 8. | 8. 0.50 to < 0.75 | AALA J014 | AALB J014 | AALC J014 | AALD J014 | AALE J014 | AALF J014 | AALG J014 | AALH J014 | AALI J014 | AALJ J014 | AALK J014 | AALL J014 | AALM J014 | AALN J014 | AALO J014 | AALP J014 |
+| 9. | 9. 0.75 to < 1.35 | AALA J016 | AALB J016 | AALC J016 | AALD J016 | AALE J016 | AALF J016 | AALG J016 | AALH J016 | AALI J016 | AALJ J016 | AALK J016 | AALL J016 | AALM J016 | AALN J016 | AALO J016 | AALP J016 |
+| 10. | 10. 1.35 to < 2.50 | AALA J019 | AALB J019 | AALC J019 | AALD J019 | AALE J019 | AALF J019 | AALG J019 | AALH J019 | AALI J019 | AALJ J019 | AALK J019 | AALL J019 | AALM J019 | AALN J019 | AALO J019 | AALP J019 |
+| 11. | 11. 2.50 to < 5.50 | AALA J025 | AALB J025 | AALC J025 | AALD J025 | AALE J025 | AALF J025 | AALG J025 | AALH J025 | AALI J025 | AALJ J025 | AALK J025 | AALL J025 | AALM J025 | AALN J025 | AALO J025 | AALP J025 |
+| 12. | 12. 5.50 to < 10.00 | AALA J029 | AALB J029 | AALC J029 | AALD J029 | AALE J029 | AALF J029 | AALG J029 | AALH J029 | AALI J029 | AALJ J029 | AALK J029 | AALL J029 | AALM J029 | AALN J029 | AALO J029 | AALP J029 |
+| 13. | 13. 10.00 to < 20.00.. | AALA J031 | AALB J031 | AALC J031 | AALD J031 | AALE J031 | AALF J031 | AALG J031 | AALH J031 | AALI J031 | AALJ J031 | AALK J031 | AALL J031 | AALM J031 | AALN J031 | AALO J031 | AALP J031 |
+| 14. | 14. 20.00 to < 100 | AALA J033 | AALB J033 | AALC J033 | AALD J033 | AALE J033 | AALF J033 | AALG J033 | AALH J033 | AALI J033 | AALJ J033 | AALK J033 | AALL J033 | AALM J033 | AALN J033 | AALO J033 | AALP J033 |
+| 15. | 15. 100.00 Default | AALA J034 | AALB J034 | AALC J034 | AALD J034 | AALE J034 | AALF J034 | AALG J034 | AALH J034 | AALI J034 | AALJ J034 | AALK J034 | AALL J034 | AALM J034 | AALN J034 | AALO J034 | AALP J034 |
+| 16. | 16. Total1 | AALA J035 | AALB J035 | AALC J035 | AALD J035 | AALE J035 | AALF J035 | AALG J035 | AALH J035 | AALI J035 | AALJ J035 | AALK J035 | AALL J035 | AALM J035 | AALN J035 | AALO J035 | AALP J035 |
+1. Cells in line 16 are calculated, except for Column O. 2. Report weighted averages in Columns A, F, and G rounded to two decimal places. 3. Not calculated from previous column entries.
+4. LTV values should be calculated by combining junior liens applicable to amounts on this schedule with prior lien amounts. Where LTV information is available for all accounts, the sum of EADs reported in Columns J through N for a given PD range should equal the amount reported in Column E for that same PD range. Otherwise, the sum of EADs reported in Columns J through N for a given PD range will be
+less than the EAD reported in Column E for that same PD range.
+nearest whole number.
+5. Report weighted averages in Column O rounded to one decimal place, except in item 16, which should be rounded to the 10/2022
+FFIEC 101
+Page 26 of 38 L-2 Schedule L—Continued 03/2014 Dollar Amounts in Thousands Amount AALX J036
+1. Risk-weighted assets associated with non-material portfolios not included above................................................................................................ M.1.
+2. Credit scores shown in Column O are from which credit scoring system(s)? ............ M.2.
+Memoranda AALX J041
+FFIEC 101
+Page 27 of 38 M-1
+Schedule M—Retail Exposure: Residential Mortgage—Revolving Exposures Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | PD Range | (Column A) Weighted- Average PD2 | (Column B) Number of Exposures | (Column C) Total Balance Sheet Amount | (Column D) Total Undrawn Amount | (Column E) EAD | (Column F) Weighted- Average Age (Months)2 | (Column G) Weighted- Average LGD2 | (Column H) Risk-Weighted Assets3 | (Column I) Expected Credit Loss | LTV4 (Column J) Less Than 70% | (Column K) At Least 70% but Less Than 80% | (Column L) At Least 80% but Less Than 90% | (Column M) At Least 90% but Less Than 100% | (Column N) Greater than or Equal to 100% | (Column O) Weighted- Average Bureau Score5 | (Column P) EAD of Accounts with Updated LTV |
+| | Percentage | Percentage | Number | Amount | Amount | Amount | Number | Percentage | Amount | Amount | Amount | Amount | Amount | Amount | Amount | Number | Amount |
+| 1. | 1. 0.00 to < 0.05 | AAMA J002 | AAMB J002 | AAMC J002 | AAMD J002 | AAME J002 | AAMF J002 | AAMG J002 | AAMH J002 | AAMI J002 | AAMJ J002 | AAMK J002 | AAML J002 | AAMM J002 | AAMN J002 | AAMO J002 | AAMP J002 |
+| 1. 2. | 2. 0.05 to < 0.10 | AAMA J004 | AAMB J004 | AAMC J004 | AAMD J004 | AAME J004 | AAMF J004 | AAMG J004 | AAMH J004 | AAMI J004 | AAMJ J004 | AAMK J004 | AAML J004 | AAMM J004 | AAMN J004 | AAMO J004 | AAMP J004 |
+| 2. 3. | 3. 0.10 to < 0.15 | AAMA J006 | AAMB J006 | AAMC J006 | AAMD J006 | AAME J006 | AAMF J006 | AAMG J006 | AAMH J006 | AAMI J006 | AAMJ J006 | AAMK J006 | AAML J006 | AAMM J006 | AAMN J006 | AAMO J006 | AAMP J006 |
+| 3. 4. | 4. 0.15 to < 0.20 | AAMA J007 | AAMB J007 | AAMC J007 | AAMD J007 | AAME J007 | AAMF J007 | AAMG J007 | AAMH J007 | AAMI J007 | AAMJ J007 | AAMK J007 | AAML J007 | AAMM J007 | AAMN J007 | AAMO J007 | AAMP J007 |
+| 4. 5. | 5. 0.20 to < 0.25 | AAMA J009 | AAMB J009 | AAMC J009 | AAMD J009 | AAME J009 | AAMF J009 | AAMG J009 | AAMH J009 | AAMI J009 | AAMJ J009 | AAMK J009 | AAML J009 | AAMM J009 | AAMN J009 | AAMO J009 | AAMP J009 |
+| 5. 6. | 6. 0.25 to < 0.35 | AAMA J010 | AAMB J010 | AAMC J010 | AAMD J010 | AAME J010 | AAMF J010 | AAMG J010 | AAMH J010 | AAMI J010 | AAMJ J010 | AAMK J010 | AAML J010 | AAMM J010 | AAMN J010 | AAMO J010 | AAMP J010 |
+| 6. 7. | 7. 0.35 to < 0.50 | AAMA J013 | AAMB J013 | AAMC J013 | AAMD J013 | AAME J013 | AAMF J013 | AAMG J013 | AAMH J013 | AAMI J013 | AAMJ J013 | AAMK J013 | AAML J013 | AAMM J013 | AAMN J013 | AAMO J013 | AAMP J013 |
+| 7. 8. | 8. 0.50 to < 0.75 | AAMA J014 | AAMB J014 | AAMC J014 | AAMD J014 | AAME J014 | AAMF J014 | AAMG J014 | AAMH J014 | AAMI J014 | AAMJ J014 | AAMK J014 | AAML J014 | AAMM J014 | AAMN J014 | AAMO J014 | AAMP J014 |
+| 8. 9. | 9. 0.75 to < 1.35 | AAMA J016 | AAMB J016 | AAMC J016 | AAMD J016 | AAME J016 | AAMF J016 | AAMG J016 | AAMH J016 | AAMI J016 | AAMJ J016 | AAMK J016 | AAML J016 | AAMM J016 | AAMN J016 | AAMO J016 | AAMP J016 |
+| 9. 10. | 10. 1.35 to < 2.50 | AAMA J019 | AAMB J019 | AAMC J019 | AAMD J019 | AAME J019 | AAMF J019 | AAMG J019 | AAMH J019 | AAMI J019 | AAMJ J019 | AAMK J019 | AAML J019 | AAMM J019 | AAMN J019 | AAMO J019 | AAMP J019 |
+| 10. 11. | 11. 2.50 to < 5.50 | AAMA J025 | AAMB J025 | AAMC J025 | AAMD J025 | AAME J025 | AAMF J025 | AAMG J025 | AAMH J025 | AAMI J025 | AAMJ J025 | AAMK J025 | AAML J025 | AAMM J025 | AAMN J025 | AAMO J025 | AAMP J025 |
+| 11. 12. | 12. 5.50 to < 10.00 | AAMA J029 | AAMB J029 | AAMC J029 | AAMD J029 | AAME J029 | AAMF J029 | AAMG J029 | AAMH J029 | AAMI J029 | AAMJ J029 | AAMK J029 | AAML J029 | AAMM J029 | AAMN J029 | AAMO J029 | AAMP J029 |
+| 12. 13. | 13. 10.00 to < 20.00.. | AAMA J031 | AAMB J031 | AAMC J031 | AAMD J031 | AAME J031 | AAMF J031 | AAMG J031 | AAMH J031 | AAMI J031 | AAMJ J031 | AAMK J031 | AAML J031 | AAMM J031 | AAMN J031 | AAMO J031 | AAMP J031 |
+| 13. 14. | 14. 20.00 to < 100 | AAMA J033 | AAMB J033 | AAMC J033 | AAMD J033 | AAME J033 | AAMF J033 | AAMG J033 | AAMH J033 | AAMI J033 | AAMJ J033 | AAMK J033 | AAML J033 | AAMM J033 | AAMN J033 | AAMO J033 | AAMP J033 |
+| 14. 15. | 15. 100.00 Default | AAMA J034 | AAMB J034 | AAMC J034 | AAMD J034 | AAME J034 | AAMF J034 | AAMG J034 | AAMH J034 | AAMI J034 | AAMJ J034 | AAMK J034 | AAML J034 | AAMM J034 | AAMN J034 | AAMO J034 | AAMP J034 |
+| 15. 16. | 16. Total1 | AAMA J035 | AAMB J035 | AAMC J035 | AAMD J035 | AAME J035 | AAMF J035 | AAMG J035 | AAMH J035 | AAMI J035 | AAMJ J035 | AAMK J035 | AAML J035 | AAMM J035 | AAMN J035 | AAMO J035 | AAMP J035 |
+1. Cells in line 16 are calculated, except for Column O. 2. Report weighted averages in Columns A, F, and G rounded to two decimal places. 3. Not calculated from previous column entries.
+4. LTV values should be calculated by combining junior liens applicable to amounts on this schedule with prior lien amounts. Where LTV information is available for all accounts, the sum of EADs reported in Columns J through N for a given PD range should equal the amount reported in Column E for that same PD range. Otherwise, the sum of EADs reported in Columns J through N for a given PD range will be
+less than the EAD reported in Column E for that same PD range.
+nearest whole number.
+5. Report weighted averages in Column O rounded to one decimal place, except in item 16, which should be rounded to the 10/2022
+FFIEC 101
+Page 28 of 38 M-2 Schedule M—Continued 03/2014 Dollar Amounts in Thousands Amount AAMX J036
+1. Risk-weighted assets associated with non-material portfolios not included above................................................................................................ M.1.
+2. Credit scores shown in Column O are from which credit scoring system(s)? ............ M.2.
+Memoranda AAMX J041
+FFIEC 101
+Page 29 of 38 N-1
+Schedule N—Retail Exposure: Qualifying Revolving Exposures Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | PD Range | (Column A) Weighted- Average PD2 | (Column B) Number of Exposures | (Column C) Total Balance Sheet Amount | (Column D) Total Undrawn Amount | (Column E) EAD | (Column F) EAD of Accounts < Two Years Old | (Column G) Weighted- Average LGD2 | (Column H) Risk- Weighted Assets3 | (Column I) Expected Credit Loss | (Column J) Weighted- Average Bureau Score4 |
+| | Percentage | Percentage | Number | Amount | Amount | Amount | Amount | Percentage | Amount | Amount | Number |
+| 1. | 1. 0.00 to < 0.50 | AANA J011 | AANB J011 | AANC J011 | AAND J011 | AANE J011 | AANF J011 | AANG J011 | AANH J011 | AANI J011 | AANJ J011 |
+| 2. | 2. 0.50 to < 1.00 | AANA J015 | AANB J015 | AANC J015 | AAND J015 | AANE J015 | AANF J015 | AANG J015 | AANH J015 | AANI J015 | AANJ J015 |
+| 3. | 3. 1.00 to < 1.50 | AANA J017 | AANB J017 | AANC J017 | AAND J017 | AANE J017 | AANF J017 | AANG J017 | AANH J017 | AANI J017 | AANJ J017 |
+| 4. | 4. 1.50 to < 2.00 | AANA J018 | AANB J018 | AANC J018 | AAND J018 | AANE J018 | AANF J018 | AANG J018 | AANH J018 | AANI J018 | AANJ J018 |
+| 5. | 5. 2.00 to < 2.50 | AANA J020 | AANB J020 | AANC J020 | AAND J020 | AANE J020 | AANF J020 | AANG J020 | AANH J020 | AANI J020 | AANJ J020 |
+| 6. | 6. 2.50 to < 3.00 | AANA J021 | AANB J021 | AANC J021 | AAND J021 | AANE J021 | AANF J021 | AANG J021 | AANH J021 | AANI J021 | AANJ J021 |
+| 7. | 7. 3.00 to < 3.50 | AANA J022 | AANB J022 | AANC J022 | AAND J022 | AANE J022 | AANF J022 | AANG J022 | AANH J022 | AANI J022 | AANJ J022 |
+| 8. | 8. 3.50 to < 4.00 | AANA J023 | AANB J023 | AANC J023 | AAND J023 | AANE J023 | AANF J023 | AANG J023 | AANH J023 | AANI J023 | AANJ J023 |
+| 9. | 9. 4.00 to < 5.00 | AANA J024 | AANB J024 | AANC J024 | AAND J024 | AANE J024 | AANF J024 | AANG J024 | AANH J024 | AANI J024 | AANJ J024 |
+| 10. | 10. 5.00 to < 6.00 | AANA J026 | AANB J026 | AANC J026 | AAND J026 | AANE J026 | AANF J026 | AANG J026 | AANH J026 | AANI J026 | AANJ J026 |
+| 11. | 11. 6.00 to < 7.00 | AANA J027 | AANB J027 | AANC J027 | AAND J027 | AANE J027 | AANF J027 | AANG J027 | AANH J027 | AANI J027 | AANJ J027 |
+| 12. | 12. 7.00 to < 8.00 | AANA J028 | AANB J028 | AANC J028 | AAND J028 | AANE J028 | AANF J028 | AANG J028 | AANH J028 | AANI J028 | AANJ J028 |
+| 13. | 13. 8.00 to < 10.00 | AANA J030 | AANB J030 | AANC J030 | AAND J030 | AANE J030 | AANF J030 | AANG J030 | AANH J030 | AANI J030 | AANJ J030 |
+| 14. | 14. 10.00 to < 100 | AANA J032 | AANB J032 | AANC J032 | AAND J032 | AANE J032 | AANF J032 | AANG J032 | AANH J032 | AANI J032 | AANJ J032 |
+| 15. | 15. 100.00 (default) | AANA J034 | AANB J034 | AANC J034 | AAND J034 | AANE J034 | AANF J034 | AANG J034 | AANH J034 | AANI J034 | AANJ J034 |
+| 16. | 16. Total1 | AANA J035 | AANB J035 | AANC J035 | AAND J035 | AANE J035 | AANF J035 | AANG J035 | AANH J035 | AANI J035 | AANJ J035 |
+1. Cells in line 16 are calculated, except for Column J.
+2. Report weighted averages in Columns A and G rounded to two decimal places.
+3. Not calculated from previous column entries.
+4. Report weighted averages in Column J rounded to one decimal place, except for item 16, which should be rounded to the nearest whole number. 10/2022
+FFIEC 101
+Page 30 of 38 N-2 Schedule N—Continued 03/2014 Dollar Amounts in Thousands Amount AANX J036
+1. Risk-weighted assets associated with non-material portfolios not included above................................................................................................ M.1.
+2. Credit scores shown in Column J are from which credit scoring system(s)? ............. M.2.
+Memoranda AANX J041
+FFIEC 101
+Page 31 of 38 O-1
+Schedule O—Retail Exposure: Other Retail Exposures Dollar Amounts in Thousands
+| Item | Line item | | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | PD Range | (Column A) Weighted- Average PD2 | (Column B) Number of Exposures | (Column C) Total Balance Sheet Amount | (Column D) Total Undrawn Amount | (Column E) EAD | (Column F) EAD of Accounts < Two Years Old | (Column G) Weighted- Average LGD2 | (Column H) Risk- Weighted Assets3 | (Column I) Expected Credit Loss | (Column J) Weighted- Average Bureau Score4 |
+| | Percentage | Percentage | Number | Amount | Amount | Amount | Amount | Percentage | Amount | Amount | Number |
+| 1. | 1. 0.00 to < 0.50 | AAOA J011 | AAOB J011 | AAOC J011 | AAOD J011 | AAOE J011 | AAOF J011 | AAOG J011 | AAOH J011 | AAOI J011 | AAOJ J011 |
+| 2. | 2. 0.50 to < 1.00 | AAOA J015 | AAOB J015 | AAOC J015 | AAOD J015 | AAOE J015 | AAOF J015 | AAOG J015 | AAOH J015 | AAOI J015 | AAOJ J015 |
+| 3. | 3. 1.00 to < 1.50 | AAOA J017 | AAOB J017 | AAOC J017 | AAOD J017 | AAOE J017 | AAOF J017 | AAOG J017 | AAOH J017 | AAOI J017 | AAOJ J017 |
+| 4. | 4. 1.50 to < 2.00 | AAOA J018 | AAOB J018 | AAOC J018 | AAOD J018 | AAOE J018 | AAOF J018 | AAOG J018 | AAOH J018 | AAOI J018 | AAOJ J018 |
+| 5. | 5. 2.00 to < 2.50 | AAOA J020 | AAOB J020 | AAOC J020 | AAOD J020 | AAOE J020 | AAOF J020 | AAOG J020 | AAOH J020 | AAOI J020 | AAOJ J020 |
+| 6. | 6. 2.50 to < 3.00 | AAOA J021 | AAOB J021 | AAOC J021 | AAOD J021 | AAOE J021 | AAOF J021 | AAOG J021 | AAOH J021 | AAOI J021 | AAOJ J021 |
+| 7. | 7. 3.00 to < 3.50 | AAOA J022 | AAOB J022 | AAOC J022 | AAOD J022 | AAOE J022 | AAOF J022 | AAOG J022 | AAOH J022 | AAOI J022 | AAOJ J022 |
+| 8. | 8. 3.50 to < 4.00 | AAOA J023 | AAOB J023 | AAOC J023 | AAOD J023 | AAOE J023 | AAOF J023 | AAOG J023 | AAOH J023 | AAOI J023 | AAOJ J023 |
+| 9. | 9. 4.00 to < 5.00 | AAOA J024 | AAOB J024 | AAOC J024 | AAOD J024 | AAOE J024 | AAOF J024 | AAOG J024 | AAOH J024 | AAOI J024 | AAOJ J024 |
+| 10. | 10. 5.00 to < 6.00 | AAOA J026 | AAOB J026 | AAOC J026 | AAOD J026 | AAOE J026 | AAOF J026 | AAOG J026 | AAOH J026 | AAOI J026 | AAOJ J026 |
+| 11. | 11. 6.00 to < 7.00 | AAOA J027 | AAOB J027 | AAOC J027 | AAOD J027 | AAOE J027 | AAOF J027 | AAOG J027 | AAOH J027 | AAOI J027 | AAOJ J027 |
+| 12. | 12. 7.00 to < 8.00 | AAOA J028 | AAOB J028 | AAOC J028 | AAOD J028 | AAOE J028 | AAOF J028 | AAOG J028 | AAOH J028 | AAOI J028 | AAOJ J028 |
+| 13. | 13. 8.00 to < 10.00 | AAOA J030 | AAOB J030 | AAOC J030 | AAOD J030 | AAOE J030 | AAOF J030 | AAOG J030 | AAOH J030 | AAOI J030 | AAOJ J030 |
+| 14. | 14. 10.00 to < 100 | AAOA J032 | AAOB J032 | AAOC J032 | AAOD J032 | AAOE J032 | AAOF J032 | AAOG J032 | AAOH J032 | AAOI J032 | AAOJ J032 |
+| 15. | 15. 100.00 (default) | AAOA J034 | AAOB J034 | AAOC J034 | AAOD J034 | AAOE J034 | AAOF J034 | AAOG J034 | AAOH J034 | AAOI J034 | AAOJ J034 |
+| 16. | 16. Total1 | AAOA J035 | AAOB J035 | AAOC J035 | AAOD J035 | AAOE J035 | AAOF J035 | AAOG J035 | AAOH J035 | AAOI J035 | AAOJ J035 |
+1. Cells in line 16 are calculated, except for Column J.
+2. Report weighted averages in Columns A and G rounded to two decimal places.
+3. Not calculated from previous column entries.
+4. Report weighted averages in Column J rounded to one decimal place, except for item 16, which should be rounded to the nearest whole number. 10/2022
+FFIEC 101
+Page 32 of 38 O-2 Schedule O—Continued 03/2014 Dollar Amounts in Thousands Amount AAOX J036
+1. Risk-weighted assets associated with non-material portfolios not included above................................................................................................ M.1.
+2. Credit scores shown in Column J are from which credit scoring system(s)? ............. M.2.
+Memoranda AAOX J041
+FFIEC 101
+Page 33 of 38 P-1
+Schedule P—Securitization Exposures
+| Item | Line item | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Securitizations (excluding resecuritizations) | | | Resecuritizations | | |
+| | | (Column A) Exposure Amount | (Column B) Risk-Weighted Assets | (Column C) Deduction | (Column D) Exposure Amount | (Column E) Risk-Weighted Assets | (Column F) Deduction |
+| | Dollar Amounts in Thousands | Amount | Amount | Amount | Amount | Amount | Amount |
+| 1. | 1. Exposures subject to the supervisory formula approach | AAPP P932 | AAPP P933 | | AAPP P934 | AAPP P935 | |
+| 2. | 2. Exposures subject to the simplified supervisory formula approach.. | AAPP P936 | AAPP P937 | | AAPP P938 | AAPP P939 | |
+| 3. | 3. Exposures subject to 1,250 percent risk weight | AAPP P940 | AAPP P941 | | AAPP P942 | AAPP P943 | |
+| 4. | 4. Exposures subject to deduction | | | AAPP P944 | | | AAPP P945 |
+| 5. | 5. Total securitization exposures and risk-weighted assets | AAPP P946 | AAPP P947 | | AAPP P948 | AAPP P949 | |
+03/2014
+FFIEC 101
+Page 34 of 38 Q-1 Schedule Q—Cleared Transactions 1.
+2.
+3.
+4.
+5.
+AAQQ P963
+5. Default fund contributions to non-QCCP1 ............................................................................
+AAQQ P961AAQQ P959 AAQQ P960
+3. Derivative contracts or netting sets of derivative contracts ......................................................
+4. Repo-style transactions...................................................................................................
+6.
+AAQQ P964 AAQQ P965
+6. Default fund contributions to QCCP ...................................................................................
+7.
+AAQQ P968 AAQQ P969AAQQ P966 AAQQ P967
+7. Total clearing member exposures and risk weighted assets ....................................................
+Total
+1. QCCP: qualifying central counterparty AAQQ P952AAQQ P950 AAQQ P951 AAQQ P955AAQQ P953 AAQQ P954
+1. Derivative contracts or netting sets of derivative contracts ......................................................
+2. Repo-style transactions...................................................................................................
+Clearing Member Bank AAQQ P958AAQQ P956 AAQQ P957 (Column D) Risk-Weighted Assets (Column A) Exposure amount with QCCP qualifying for 2% risk weight (Column B) Exposure amount not qualifying for 2% risk weight (Column C) Exposure amount for default fund contributions AmountAmount AmountDollar Amounts in Thousands 03/2014 Clearing Member Client Bank Amount AAQQ P962
+[TABLE]
+| (Column A) Exposure amount with QCCP qualifying for 2% risk weight | (Column B) Exposure amount not qualifying for 2% risk weight | (Column C) Exposure amount for default fund contributions | (Column D) Risk-Weighted Assets |
+| --- | --- | --- | --- |
+| Amount | Amount | Amount | Amount |
+| AAQQ P950 | AAQQ P951 | | AAQQ P952 |
+| AAQQ P953 | AAQQ P954 | | AAQQ P955 |
+| AAQQ P956 | AAQQ P957 | | AAQQ P958 |
+| AAQQ P959 | AAQQ P960 | | AAQQ P961 |
+| | | AAQQ P962 | AAQQ P963 |
+| | | AAQQ P964 | AAQQ P965 |
+| AAQQ P966 | AAQQ P967 | AAQQ P968 | AAQQ P969 |
+FFIEC 101
+Page 35 of 38 R-1
+Schedule R—Equity Exposures
+| Item | Line item | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Simple Risk Weight Approach | | | Full Internal Models Approach | | | Publicly Traded Internal Models Approach | | |
+| | | (Column A) Exposure | Risk Weight or Multiplier | (Column B) Risk- Weighted Assets | (Column C) Exposure | Risk Weight or Multiplier | (Column D) Risk- Weighted Assets | (Column E) Exposure | Risk Weight or Multiplier | (Column F) Risk- Weighted Assets |
+| | Dollar Amounts in Thousands | Amount | | Amount | Amount | | Amount | Amount | | Amount |
+| 1. | 1. Total equity exposures | AARA J053 | | | AARC J053 | | | AARE J053 | | |
+| | | AARA J054 | | AARB J054 | AARC J054 | | AARD J054 | AARE J054 | | AARF J054 |
+| 2. | 2. 0% risk weight | | 0% | | | 0% | | | 0% | |
+| | | AARA J055 | | AARB J055 | AARC J055 | | AARD J055 | AARE J055 | | AARF J055 |
+| 3. | 3. 20% risk weight | | 20% | | | 20% | | | 20% | |
+| | | AARA J056 | | AARB J056 | AARC J056 | | AARD J056 | AARE J056 | | AARF J056 |
+| 4. | 4. Community development equity exposures | | 100% | | | 100% | | | 100% | |
+| | Simple Risk Weight Approach (SRWA) | AARA J057 | | AARB J057 | | | | | | |
+| 5. | 5. Effective portion of hedge pairs | | 100% | | | | | | | |
+| | | AARA J058 | | AARB J058 | | | | | | |
+| 6. | 6. Non-significant equity exposures | | 100% | | | | | | | |
+| 7. | 7. Significant investments in unconsolidated financial institutions | AARA P970 | 250% | AARB P970 | | | | | | |
+| 8. | 8. Publicly traded equity exposures under the SRWA | AARA J059 | 300% | AARB J059 | | | | | | |
+| 9. | 9. Non-publicly traded equity exposures under the SRWA | AARA J060 | 400% | AARB J060 | | | | AARE J060 | 400% | AARF J060 |
+| 10. | 10. 600% risk-weight equity exposures under the SRWA | AARA J061 | 600% | AARB J061 | | | | AARE J061 | 600% | AARF J061 |
+| 11. | 11. Total RWA under the SRWA (sum column B, lines 2 through 10) | | | AARB J062 | | | | | | |
+| | Equity Exposures to Investment Funds | | | | | | | | | |
+| 12. | 12. Full look-through approach | AARA J063 | | AARB J063 | AARC J063 | | AARD J063 | AARE J063 | | AARF J063 |
+| 13. | 13. Simple modified look-through approach | AARA J064 | | AARB J064 | AARC J064 | | AARD J064 | AARE J064 | | AARF J064 |
+| 14. | 14. Alternative modified look-through approach | AARA J065 | | AARB J065 | AARC J065 | | AARD J065 | AARE J065 | | AARF J065 |
+03/2018
+FFIEC 101
+Page 36 of 38 R-2
+Schedule R—Continued
+| Item | Line item | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| | | Simple Risk Weight Approach | | | Full Internal Models Approach | | | Publicly Traded Internal Models Approach | | |
+| | | (Column A) Exposure | Risk Weight or Multiplier | (Column B) Risk- Weighted Assets | (Column C) Exposure | Risk Weight or Multiplier | (Column D) Risk- Weighted Assets | (Column E) Exposure | Risk Weight or Multiplier | (Column F) Risk- Weighted Assets |
+| | Dollar Amounts in Thousands | Amount | | Amount | Amount | | Amount | Amount | | Amount |
+| 15. | 15. Total RWA for investment funds (sum columns B, D, and F, lines 12 through 14) | | | AARB J067 | | | AARD J067 | | | AARF J067 |
+| 16. | 16. Total: SRWA (column B, lines 11 and 15) | | | AARB J068 | | | | | | |
+| | Full Internal Models Approach (Full IMA) | | | | AARC J069 | | AARD J069 | | | |
+| 17. | 17. Estimate of potential losses on equity exposures | | | | | 12.5 | | | | |
+| | Floors (Full IMA) | | | | AARC J070 | | AARD J070 | | | |
+| 18. | 18. Publicly traded | | | | | 200% | | | | |
+| | | | | | AARC J071 | | AARD J071 | | | |
+| 19. | 19. Non-publicly traded | | | | | 300% | | | | |
+| 20. | 20. RWA floors (add from column D, lines 18 and 19) .. | | | | | | AARD J072 | | | |
+| 21. | 21. Total RWA—Full IMA (larger of column D, lines 17 and 20) | | | | | | AARD J073 | | | |
+| 22. | 22. Total: Full IMA (add from column D lines 3, 4, 15, and 21) | | | | | | AARD J074 | | | |
+| | Publicly Traded Internal Models Approach (Partial IMA) | | | | | | | | | |
+| 23. | 23. Estimate of potential losses on publicly traded equity | | | | | | | AARE J075 | 12.5 | AARF J075 |
+| | Floors (Partial IMA) | | | | | | | AARE J076 | | AARF J076 |
+| 24. | 24. Publicly traded | | | | | | | | 200% | |
+| 25. | 25. Total RWA—Partial IMA (larger of column F, lines 23 and 24) | | | | | | | | | AARF J077 |
+| 26. | 26. Total: Partial IMA, partial SRWA (add from column F, lines 3, 4, 9, 10, 15, and 25) .. | | | | | | | | | AARF J078 |
+03/2014
+FFIEC 101
+For Federal Reserve Bank Use Only Page 37 of 38 C.I. S-1
+Schedule S—Operational Risk
+Dollar Amounts in Thousands AASA PUBLIC ITEMS Operational Risk Capital
+1. Risk-based capital requirement for operational risk................................................................ J079
+Amount
+1.
+2. Is item 1 generated from an "alternative operational risk quantification system?" (Enter "1" for Yes; 0=No AASA enter "0" for No.) .................................................................................................................... 1=Yes J080 2.
+CONFIDENTIAL ITEMS
+| Item | Expected Operational Loss (EOL) and Eligible Operational Risk Offsets | AASA | Amount |
+| --- | --- | --- | --- |
+| 3. | 3. Expected operational loss (EOL) | J081 | |
+| | 4. Total eligible operational risk offsets | | |
+| 4.a. | a. Eligible GAAP reserves | J082 | |
+| 4.b. | b. Other eligible offsets | J083 | |
+| | Total Risk-Based Capital Requirement for Operational Risk without: | | |
+| 5. | 5. Dependence assumptions | J084 | |
+| 6. | 6. Adjustments reflecting business environment and internal control factors | J085 | |
+| 7. | 7. Risk mitigants (e.g., insurance) | J086 | |
+Internal Operational Loss Event Data Characteristics
+8. Date ranges of internal operational loss event data used in modeling operational risk capital: AASA a. Starting date for frequency distribution (if applicable) ......................................................... J087 b. Ending date for frequency distribution (if applicable)........................................................... J088 c. Starting date for severity distribution (if applicable) ............................................................ J089 d. Ending date for severity distribution (if applicable) ............................................................. J090
+Date1 8.a.
+8.b.
+8.c.
+8.d.
+AASA
+9. Highest dollar threshold applied in modeling internal operational loss event data ........................ J091
+Amount 9.
+0=No AASA
+10. Does the dollar threshold change across units of measure? (Enter "1" for Yes; enter "0" for No.)............ 1=Yes J092 10.
+AASA
+11. Total number of loss events ............................................................................................. J093
+Number 11.
+AASA
+12. Total dollar amount of loss events ..................................................................................... J094
+13. Dollar amount of largest loss event ................................................................................... J095
+Amount 12.
+13.
+| Item | 14. Number of loss events in the following ranges (e.g., ≥ 10,000 and < $100,000): | AASA | Number |
+| --- | --- | --- | --- |
+| 14.a. | a. Less than $10,000 | J096 | |
+| 14.b. | b. $10,000–$100,000 | J097 | |
+| 14.c. | c. $100,000–$1 million | J098 | |
+| 14.d. | d. $1 million–$10 million | J099 | |
+| 14.e. | e. $10 million–$100 million | J100 | |
+| 14.f. | f. $100 million–$1 billion | J101 | |
+| 14.g. | g. $1 billion + | J102 | |
+1. Report the date in MMYYYY format.
+03/2016
+FFIEC 101
+Page 38 of 38 S-2 For Federal Reserve Bank Use Only C.I.
+Schedule S—Continued Dollar Amounts in Thousands AASA Amount
+15. Total dollar amount of losses in the following ranges (e.g., ≥ $10,000 and < $100,000): a. Less than $10,000 ...................................................................................................... J103 15.a b. $10,000–$100,000 ...................................................................................................... J104 15.b.
+c. $100,000–$1 million .................................................................................................... J105 15.c.
+d. $1 million–$10 million .................................................................................................. J106 15.d.
+e. $10 million–$100 million ............................................................................................... J107 15.e.
+f. $100 million–$1 billion.................................................................................................. J108 15.f.
+g. $1 billion + ................................................................................................................ J109 15.g.
+Scenario Analysis AASA Number
+16. How many individual scenarios were used in calculating the risk-based capital requirement for operational risk? ............................................................................................................ J110 16.
+AASA Amount
+17. What is the dollar value of the largest individual scenario? ...................................................... J111 17.
+18. Number of scenarios in the following ranges (e.g., ≥ $1 million and < $10 million): AASA Number a. Less than $1 million..................................................................................................... J112 18.a.
+b. $1 million–$10 million .................................................................................................. J113 18.b.
+c. $10 million–$100 million ............................................................................................... J114 18.c.
+d. $100 million–$500 million ............................................................................................. J115 18.d.
+e. $500 million–$1 billion.................................................................................................. J116 18.e.
+f. $1 billion +................................................................................................................. J117 18.f.
+Distributional Assumptions
+19. How many units of measure were used in calculating the risk-based capital requirement for operational risk? ............................................................................................................ J118 19.
+20. Frequency Distribution: Across how many individual units of measure did the choice of frequency distribution change since the last reporting period (if applicable)? ............................................ J119 20.
+21. Severity Distribution: Across how many individual units of measure did the choice of severity distribution change since the last reporting period (if applicable)? ............................................ J120 21.
+Loss Caps
+22. How many loss caps are used in calculating the risk-based capital requirement for operational risk?.. J121 22.
+AASA Amount
+23. What is the dollar amount of the smallest cap used (if applicable)? .......................................... J122 23.
+24. What is the dollar amount of the largest cap used (if applicable)? ............................................ J123 24.
+06/2008
