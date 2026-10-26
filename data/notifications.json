@@ -448,7 +448,223 @@
       "channels": [
         "ntfy"
       ]
+    },
+    "op-34e7f8070104dfcbfbcefe4e6671d9b3c10753fa16d1a5daa9ab99a439b28e92": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.045793+00:00",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec002s",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:10.436096+00:00).",
+      "source_event_id": "85f8d56e032a0cb31402765496e9d11eb7f967f59b45a6b2bd76322c5be4ac75",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-aad0b4ad7fcb5af2d8711ec66c27f2bc36e894f4edf7cae5ab2d085c154194bd": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.098173+00:00",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec019",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:10.534507+00:00).",
+      "source_event_id": "1ffc889666fb2b4690dceb103c9f542d0ec1c7d501698f2a904d940b71ca56b9",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-9f8b28f68efc50017b437830305b909b7be9a6494c9da73a1e7a660da28906c1": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.145815+00:00",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec031-supplemental",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:11.745043+00:00).",
+      "source_event_id": "84a660d2dc3ffff5d31c8cca02f89cdf92c9653525c8401cc1a322dab64e3b94",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-519b54f8c2f0b2c731efb9a28a07831f8ac82f4c0e21baa80c5a2a01c1726555": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.194441+00:00",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec041-supplemental",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:11.843134+00:00).",
+      "source_event_id": "26b64b7cc7ecd15d32b5ab9762b3d88a4d087d63b536048f7982ff68c72d8f85",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-76f4f943674d8a6a4acebcc1ff2266903d047d8952537275401c25a2fc82fa46": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.242812+00:00",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec051-supplemental",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:11.958755+00:00).",
+      "source_event_id": "e92dde5cf934c2c61f67fe163c90c50b9a91c8b01709c7dcecfc15c38cf215df",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-1155d643b5b7c178238065ce5d94872b0516f94a14ee8005960619bbeb9cb403": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.290566+00:00",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:11.553625+00:00).",
+      "source_event_id": "ec80c02aea354c5b72f9e9d8bec7eb3ccf45c89b6ee74676341cea016c7884f3",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-904cbf14e5f89e14ed72771e3b245c1d2055660b74d514a53a51b52ce61d8084": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.343095+00:00",
+      "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec102-validation",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:11.648125+00:00).",
+      "source_event_id": "cf01d36e9d2261702e76486463191a1f21bc09ac9798c16679b8e8ce10920242",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-72b5d700bcb6ae38ff48a950af51ad6e52aef0f8303e8d0725ff67599fc2bdb1": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.391752+00:00",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009a-Form-Instructions.pdf",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:10.224954+00:00).",
+      "source_event_id": "8487004a6538f7cfb14fe97c9e7e0e2662fea15e24f5fd1135b5f46d7804ba46",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-4fac2375c3dc03a6b84d46b2e81303d093bfe56f84376a37cc5764c8642f8521": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.441167+00:00",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_202503_f.pdf",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:10.764928+00:00).",
+      "source_event_id": "f7c305a615351b1ef4da1b6575ef64cff56ac208b52ffb67bb3b88147c973a98",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-f8ff61cbff79c2567cac0b9e74c347b9e29a99adaf1ff97b68585390828597eb": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.493489+00:00",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_FFIEC030S_202503_i.pdf",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:10.665367+00:00).",
+      "source_event_id": "b1f3b8f91c86cf1068ffc85fb99eb097286da8ef2848fcc3d42552ce100bc95d",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-2dba26d1e827ac0863544e1b35f20b7404727659a04e48ad965b6472f19bdd75": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.541458+00:00",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_202609_i_0.pdf",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:11.067985+00:00).",
+      "source_event_id": "699604b99a1fe126c9cdd2808bcb7614705a06b18e65edbc47bc56e8777b76d8",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-4254ded70557c423c7c868450d5208988040d33c033fbe5107241fbba3e47d5d": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.589687+00:00",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_202609_i_updates.pdf",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:11.249453+00:00).",
+      "source_event_id": "6380b2759b2477c10429238125c53949c1a36a06cf2268135e177186aa9ac448",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-a9c8a508fe6a3381b572d4b7c14e32700430954af1e07917eb8a5f6d2b22e8b9": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.636990+00:00",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_suppinst_202609.pdf",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:11.158069+00:00).",
+      "source_event_id": "ed626b2937c0670c1ff3871702ed4d69b9b0b6a754ed0d2bb3fc4f37fa8f0c6d",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-c1dd6d60689c8ed1f1c66bf792adb9f00407e50c29fbf6611c92b002d4be7ce0": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.685007+00:00",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_202609_i.pdf",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:11.352708+00:00).",
+      "source_event_id": "5b7b55a1b144302a958543522d546c4f4d67e0ff79d9800071161ae7efb1c8b2",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-8161032e58bed16af0298edf6c8d900f491295d91431b5e352d65b7162dd68d4": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.733636+00:00",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_202609_i_updates.pdf",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:11.447995+00:00).",
+      "source_event_id": "36edd262c406c0c3e2aed85b2bf32cf575afdee6cbad7073fda085fe720f2d5d",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-64f14f95c0d92f3ad5f141dbf14fc770d792567d50c6acb6bfd93d53098bd013": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.782080+00:00",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/ffiec019-form-instructions.pdf",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:10.332559+00:00).",
+      "source_event_id": "dcc77bc80db4fff51a841489a226443d5ef430db38cfbe12926ae0d47f561e87",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-1d8c62c3a1e5fc5295795aec9ee1cb404e4765463d687d205e2a6d6914776032": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.829740+00:00",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/ffiec101-form-instructions.pdf",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:10.861970+00:00).",
+      "source_event_id": "0528ebd225349a25f7268e7a32ab093cef5e44738108f7d5e6e641516fa063f7",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
+    },
+    "op-b835ff0ec061b5610b00b6f85a29348379da89640233285218ebe2dd440d7950": {
+      "kind": "FETCH_ERROR",
+      "sent_at": "2026-10-26T06:27:28.878055+00:00",
+      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/ffiec102-form-instructions.pdf",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-26T06:06:10.967537+00:00).",
+      "source_event_id": "9ac6c549f45c21a299e51ac1672fd49cee8d4b041d5ed78c86717401f3e8fdc9",
+      "variant": null,
+      "channels": [
+        "ntfy"
+      ]
     }
   },
-  "updated_at": "2026-10-26T06:06:21.807478+00:00"
+  "updated_at": "2026-10-26T06:27:28.878890+00:00"
 }
