@@ -875,7 +875,7 @@ class TestReviewLayerContract(unittest.TestCase):
 
     def test_change_detail_shows_review_dates_and_items(self):
         js = read("dashboard.js")
-        self.assertIn("renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id=\"change-impact\"></div><div id=\"change-spec\"></div><div id=\"change-items\"></div>' + evidenceSheet(entry, boxId)", js)
+        self.assertIn("renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id=\"change-impact\"></div><div id=\"change-spec\"></div><div id=\"change-items\"></div><div id=\"change-links\"></div>' + evidenceSheet(entry, boxId)", js)
         self.assertIn("fillReportingItems(entry, \"change-items\", stillCurrent);", js)
         self.assertIn("L.lineageFor(", js)
         # A new decision or date redraws the open change.
@@ -1134,3 +1134,15 @@ class TestCheckeredFrameGlints(unittest.TestCase):
                 self.assertTrue(all(size > 0 for size in x_widths + y_heights))
                 self.assertLessEqual(max(b - (a + size) for a, size, b in zip(x_anchors, x_widths, x_anchors[1:])), 2)
                 self.assertLessEqual(max(b - (a + size) for a, size, b in zip(y_anchors, y_heights, y_anchors[1:])), 2)
+
+
+class TestLinkLineageView(unittest.TestCase):
+    def test_pages_have_a_links_tab_and_changes_list_their_links(self):
+        html = read("index.html")
+        script = read("dashboard.js")
+        self.assertIn('data-detail-tab="links"', html)
+        self.assertIn('else if (state.detailTab === "links") renderPageLinks(item);', script)
+        self.assertIn('"./data/link-lineage.json"', script)
+        self.assertIn("Where this address is listed", script)
+        self.assertIn("Look up any address", script)
+        self.assertIn('fillChangeLinks(entry, "change-links", stillCurrent);', script)
