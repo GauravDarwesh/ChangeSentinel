@@ -34,7 +34,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import deadlines, health, item_codes, reviews, schedule, spec_diff
+from regmon import deadlines, health, item_codes, registry, reviews, schedule, spec_diff
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -305,6 +305,42 @@ def structured_spec(event_type: str, before_text: str | None, after_text: str | 
     return None, None
 
 
+_REGISTRY_CACHE: dict = {}
+
+
+def load_registry() -> dict | None:
+    """config/registry.json (with lineage.json folded in), read once per scan; never fatal."""
+    path = ROOT / "config" / "registry.json"
+    lineage_path = ROOT / "config" / "lineage.json"
+    try:
+        stamp = tuple((str(p), p.stat().st_mtime_ns, p.stat().st_size) if p.exists() else (str(p), 0, 0) for p in (path, lineage_path))
+        if _REGISTRY_CACHE.get("stamp") != stamp:
+            _REGISTRY_CACHE.update(stamp=stamp, value=registry.load(path, lineage_path))
+        return _REGISTRY_CACHE["value"]
+    except Exception as exc:
+        print(f"Item registry skipped: {type(exc).__name__}: {exc}")
+        return None
+
+
+def registry_impact(codes: dict | None, spec: dict | None, before_text: str | None, after_text: str | None,
+                    effective: str = "") -> dict | None:
+    """Registered items the change touched and what reads them (regmon/registry.py)."""
+    try:
+        current = load_registry()
+        if not current or not (current["items"] or current["rules"]):
+            return None
+        index = registry.Index(current)
+        before_lines = set((before_text or "").splitlines())
+        after_lines = set((after_text or "").splitlines())
+        changed = "\n".join(["+" + line for line in after_lines - before_lines] + ["-" + line for line in before_lines - after_lines])
+        touched = registry.touched_codes(codes, spec, changed, index)
+        result = registry.impact(touched, current, effective=effective)
+        return result if result and result.get("items") else None
+    except Exception as exc:  # pragma: no cover - defensive: insights never break detection
+        print(f"Registry impact skipped: {type(exc).__name__}: {exc}")
+        return None
+
+
 CHANGE_HISTORY_LIMIT = 20
 CONTENT_CHANGE_EVENTS = {"NEW_URL", "CHANGED_URL"}
 
@@ -321,6 +357,8 @@ def record_change(item: dict, event: dict) -> None:
         entry["item_codes"] = event["item_codes"]
     if event.get("spec"):
         entry["spec"] = event["spec"]
+    if event.get("impact"):
+        entry["impact"] = event["impact"]
     history = [old for old in (item.get("change_history") or []) if old.get("event_id") != entry["event_id"]]
     item["change_history"] = [entry, *history][:CHANGE_HISTORY_LIMIT]
     if event["event_type"] in CONTENT_CHANGE_EVENTS:
@@ -880,7 +918,7 @@ def process_source(
                     event_id = build_event_id(event_type, uid, before_hash, after_hash)
                     evidence = None
                     codes = None
-                    spec = spec_inventory = None
+                    spec = spec_inventory = impact = None
                     if event_type in {"NEW_URL","CHANGED_URL","HTML_SOURCE_CHANGED"}:
                         before_text = old_text if old_text is not None else read_snapshot(old)
                         # Which reporting items the change added, retired or redefined
@@ -889,6 +927,9 @@ def process_source(
                         # Rule, field and schema changes row by row (regmon/spec_diff.py);
                         # for a file seen for the first time, what it declares about itself.
                         spec, spec_inventory = structured_spec(event_type, before_text, text)
+                        # Which registered items that touches, and what reads them.
+                        impact = registry_impact(codes, spec, before_text if event_type == "CHANGED_URL" else "", text) \
+                            if event_type in {"NEW_URL", "CHANGED_URL"} else None
                         evidence = (
                             _write_evidence(
                                 ROOT, event_type, event_id, url, now, old, item,
@@ -899,6 +940,7 @@ def process_source(
                                 item_codes=codes,
                                 spec_diff=spec,
                                 spec_inventory=spec_inventory,
+                                impact=impact,
                             )
                             if not dry_run
                             else None
@@ -912,6 +954,9 @@ def process_source(
                     spec_summary = spec_diff.summary(spec) or spec_diff.inventory_summary(spec_inventory)
                     if spec_summary:
                         event["spec"] = spec_summary
+                    impact_summary = registry.summary(impact)
+                    if impact_summary:
+                        event["impact"] = impact_summary
                     if item.get("migration_reason"):
                         event["migration_reason"] = item["migration_reason"]
                     if event_type in {"NEW_URL", "CHANGED_URL", "HTML_SOURCE_CHANGED"}:

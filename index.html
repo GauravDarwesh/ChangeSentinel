@@ -1857,6 +1857,17 @@
 .spec-declared { color: var(--ink-3); font-size: 12px; }
 .spec-mismatch { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-size: 12.5px; }
 .spec-mismatch::before { content: ""; width: 6px; height: 6px; background: var(--accent); box-shadow: var(--glow); }
+.impact-sentence { margin: 0; padding: 12px 18px 4px; max-width: 76ch; color: var(--ink); font-size: 14px; line-height: 1.6; }
+.registry-consumer { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; align-items: baseline; padding: 8px 18px; }
+.registry-consumer-name { min-width: 0; font-size: 13.5px; overflow-wrap: anywhere; }
+.registry-consumer-name .text-button { padding: 0; font-size: 13.5px; }
+.registry-consumer-meta, .registry-codes { grid-column: 2; color: var(--ink-3); font-size: 12.5px; overflow-wrap: anywhere; }
+.registry-copy { padding: 6px 18px 12px; }
+.registry-copy p { max-width: 76ch; margin: 8px 0; color: var(--ink-2); font-size: 13.5px; line-height: 1.6; }
+.registry-unregistered { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 18px 16px; }
+.registry-changes .row { border-bottom: 1px solid var(--line); }
+.row-title.is-code { font-family: var(--font-code); font-size: 13px; }
+.items-list .text-button.item-code { justify-self: start; padding: 0; text-align: left; color: var(--link); }
 .integrity-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 16px; padding: 11px 18px; border-top: 1px solid var(--line); }
 .integrity-row:first-child { border-top: 0; }
 .integrity-name { font-size: 13.5px; }
@@ -2438,6 +2449,7 @@
         <li><button class="nav-button" data-view="runs" type="button">Runs<span class="nav-count" id="navRunCount"></span></button></li>
         <li class="nav-health"><button class="nav-button" data-view="health" type="button" title="Failing, stale and quiet monitors, and check and alert volumes">Health<span class="nav-count" id="navHealthCount"></span></button></li>
         <li class="nav-alerts"><button class="nav-button" data-view="notifications" type="button">Alerts<span class="nav-count" id="navNotificationCount"></span></button></li>
+        <li class="nav-registry"><button class="nav-button" data-view="registry" type="button" title="Reporting items you report across jurisdictions, and the tables, models and code that read them">Registry<span class="nav-count" id="navRegistryCount"></span></button></li>
         <li class="nav-scout"><button class="nav-button nav-button-scout" id="scoutLaunch" data-view="scout" aria-controls="scoutView" type="button" title="New regulator pages found by the weekly Scout sweep"><span class="scout-avatar-wrap" aria-hidden="true">
             <svg class="scout-avatar" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
               <defs>
@@ -2881,6 +2893,18 @@
           <div class="list-body" id="healthItems" aria-label="Monitor health"><div class="loading">Reading monitor health…</div></div>
         </div>
         <div class="detail-pane" id="healthDetail" aria-live="polite"></div>
+      </section>
+
+      <section id="registryView" class="view view-split" hidden aria-label="Registry">
+        <div class="list-pane">
+          <div class="list-head">
+            <div class="list-title-row"><h1 class="list-title">Registry</h1><span class="list-count" id="registryCount"></span></div>
+            <label class="search-field" for="registrySearch"><span class="visually-hidden">Search the registry</span><input id="registrySearch" type="search" placeholder="Search codes, forms or consumers" autocomplete="off"></label>
+            <div class="list-tools"><div class="filters" role="group" aria-label="Scheme" id="registryFilters"></div></div>
+          </div>
+          <div class="list-body" id="registryItems" aria-label="Registered items"><div class="loading">Reading the registry…</div></div>
+        </div>
+        <div class="detail-pane" id="registryDetail" aria-live="polite"></div>
       </section>
 
       <section id="notificationsView" class="view view-split" hidden aria-label="Alerts">

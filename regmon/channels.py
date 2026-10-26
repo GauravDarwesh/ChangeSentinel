@@ -32,6 +32,7 @@ FIELDS = (
     ("Alert condition", "condition"),
     ("Reporting items", "reporting_items"),
     ("Spec changes", "spec_changes"),
+    ("Downstream", "downstream"),
 )
 
 
@@ -130,7 +131,7 @@ def teams_payload(notification: dict, link: str) -> dict:
 def webhook_payload(notification: dict, link: str) -> dict:
     keep = (
         "event_id", "source_event_id", "kind", "variant", "url", "topic", "summary", "impact", "reason",
-        "effective_date", "actions", "condition", "reporting_items", "spec_changes", "priority", "tags",
+        "effective_date", "actions", "condition", "reporting_items", "spec_changes", "downstream", "priority", "tags",
     )
     return {
         "schema": ALERT_SCHEMA,

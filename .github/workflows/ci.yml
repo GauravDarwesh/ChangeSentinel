@@ -39,6 +39,8 @@ jobs:
         run: python scripts/golden_corpus_check.py
       - name: Validate active-source state against committed history
         run: python -m regmon.validate_state --source all --data-dir data --config config/sources.json
+      - name: Validate the item registry and lineage map
+        run: python -m regmon.registry check
       - run: python -m compileall -q regmon
       - name: Dashboard JavaScript syntax checks
         run: |

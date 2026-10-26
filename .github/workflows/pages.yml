@@ -18,6 +18,7 @@ on:
       - "data/scout/review.json"
       - "config/scout.json"
       - "config/lineage.json"
+      - "config/registry.json"
       - "config/regulators.json"
       - "data/calendar.json"
       - "data/health.json"
@@ -73,7 +74,7 @@ jobs:
           # The .ics is served from Pages so calendar apps can subscribe to it.
           mkdir -p site/data/reviews
           mkdir -p site/data/digests
-          for f in data/calendar.json data/calendar.ics data/reviews/ledger.json data/health.json data/digests/index.json config/digests.json; do
+          for f in data/calendar.json data/calendar.ics data/reviews/ledger.json data/health.json data/digests/index.json config/digests.json config/registry.json; do
             if [ -f "$f" ]; then cp "$f" "site/$f"; fi
           done
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1

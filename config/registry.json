@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "about": "Cross-jurisdiction reporting-item registry: the regulatory data points you report (MDRM, FR Y-14 fields, EBA DPM/BIRD, OSFI, SUCAVE, BCB 5050, ...) linked to the tables, models, pipelines and code paths that read them. A change that touches a registered item then names what it affects. consumers: [{id, kind, name, owner, system, repo, path, ref, url, note}]; items: [{code, scheme, jurisdiction, regulator, form, schedule, line, label, aliases, equivalents, consumers, owner, note}]; rules: [{match: 'BHCK*', consumers, scheme, note}]. Fill it directly or with python -m regmon.registry import mapping.csv --write. config/lineage.json mappings are still read. See regmon/registry.py.",
+  "consumers": [],
+  "items": [],
+  "rules": []
+}

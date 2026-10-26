@@ -57,6 +57,7 @@ const DATA_PATHS = {
   scoutConfig: "config/scout.json",
   calendar: "data/calendar.json",
   lineage: "config/lineage.json",
+  registry: "config/registry.json",
   reviews: "data/reviews/ledger.json",
   regulators: "config/regulators.json",
   health: "data/health.json",
@@ -77,6 +78,7 @@ const ENDPOINTS = {
   scoutConfig: new URL("./config/scout.json", document.baseURI).href,
   calendar: new URL("./data/calendar.json", document.baseURI).href,
   lineage: new URL("./config/lineage.json", document.baseURI).href,
+  registry: new URL("./config/registry.json", document.baseURI).href,
   reviews: new URL("./data/reviews/ledger.json", document.baseURI).href,
   regulators: new URL("./config/regulators.json", document.baseURI).href,
   health: new URL("./data/health.json", document.baseURI).href,
@@ -85,8 +87,8 @@ const ENDPOINTS = {
 };
 // The calendar feed is served from Pages so calendar apps can subscribe to it.
 const CALENDAR_FEED = new URL("./data/calendar.ics", document.baseURI).href;
-const VIEWS = ["overview", "changes", "monitors", "runs", "health", "notifications", "scout", "calendar", "askSentinel"];
-const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", health: "health", notifications: "alerts", scout: "scout", calendar: "cadence", askSentinel: "ask-sentinel" };
+const VIEWS = ["overview", "changes", "monitors", "runs", "health", "notifications", "registry", "scout", "calendar", "askSentinel"];
+const HASH_NAMES = { overview: "overview", changes: "changes", monitors: "pages", runs: "runs", health: "health", notifications: "alerts", registry: "registry", scout: "scout", calendar: "cadence", askSentinel: "ask-sentinel" };
 const $ = id => document.getElementById(id);
 const esc = L.esc;
 // Snapshot text, saved HTML and evidence are cached for the session, but only
@@ -131,7 +133,7 @@ const state = {
     crawl: null, query: "", format: "ALL", show: "ALL", limit: 300, opened: {}, weekly: false, scope: "",
     rules: {}, area: null, picking: false, showOlder: false, ruleDrafts: {}, ruleRequests: {}, ruleOpen: false, similar: [], hideOlder: true, reviewSimilar: [] },
   scoutSourceMode: "add",
-  calendar: null, lineage: null, reviews: null, reviewTarget: "", integrity: {},
+  calendar: null, lineage: null, registry: null, registryModel: null, selectedRegistryKey: "", registryScheme: "ALL", reviews: null, reviewTarget: "", integrity: {},
   cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
   cadenceLoading: null, cadenceMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
   cadenceSelectedDate: L.localIsoDate(new Date()), cadenceSignInBusy: false,
@@ -217,6 +219,8 @@ function isValidDataAssetShape(key, value) {
     // scan that writes a calendar, or the first recorded review, they are absent.
     case "calendar":
       return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.entries);
+    case "registry":
+      return isPlainObject(value) && value.schema_version === 1 && (value.items === undefined || Array.isArray(value.items));
     case "lineage":
       return isPlainObject(value) && value.schema_version === 1 && Array.isArray(value.mappings);
     case "reviews":
@@ -2052,6 +2056,7 @@ function renderLists() {
   renderRuns();
   renderHealth();
   renderNotifications();
+  renderRegistry();
   renderScout();
   renderCadenceView();
   renderNavCounts();
@@ -2059,6 +2064,7 @@ function renderLists() {
 function renderNavCounts() {
   const changes = changeLogEntries().filter(entry => CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0).length;
   $("navChangeCount").textContent = changes;
+  if ($("navRegistryCount")) $("navRegistryCount").textContent = registryItems().length || "";
   $("navMonitorCount").textContent = state.items.length;
   const healthCount = $("navHealthCount");
   if (healthCount) {
@@ -2210,12 +2216,13 @@ function renderChangeDetail() {
   const boxId = "change-evidence";
   pane.innerHTML = '<div class="detail-inner">' +
     detailHeading({ back: true, source, title: eventTitle(entry), meta, actions }) +
-    renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id="change-spec"></div><div id="change-items"></div>' + evidenceSheet(entry, boxId) + "</div>";
+    renderVerdict(entry) + reviewSheet(entry) + datesSheet(entry) + '<div id="change-impact"></div><div id="change-spec"></div><div id="change-items"></div>' + evidenceSheet(entry, boxId) + "</div>";
   const eventId = entry.event_id;
   const stillCurrent = () => state.view === "changes" && state.selectedChangeId === eventId;
   fillEvidence(entry, boxId, stillCurrent);
   fillReportingItems(entry, "change-items", stillCurrent);
   fillSpecChanges(entry, "change-spec", stillCurrent);
+  fillImpact(entry, "change-impact", stillCurrent);
 }
 
 /* ================= Review decisions, dates, reporting items ================= */
@@ -2469,6 +2476,258 @@ async function downloadSpecCsv(eventId) {
     showToast("Exported " + plural(rows.length - 1, "changed item", "changed items") + ".");
   } catch (error) {
     showToast("Couldn't load the evidence file: " + String(error.message || error));
+  }
+}
+
+/* ================= Item registry ================= */
+
+// config/registry.json: the regulatory data points reported (MDRM, FR Y-14
+// fields, DPM/BIRD, OSFI, SUCAVE, BCB 5050) linked to the tables, models,
+// pipelines and code that read them. A change that touches a registered item
+// names what it affects; this view browses the registry from either side.
+const REGISTRY_UNREGISTERED_SHOWN = 60;
+function registryModelNow() { return state.registryModel || L.registryModel(state.registry, state.lineage); }
+function registryItems() { return registryModelNow().items; }
+function registryItemKey(item) { return "item:" + item.scheme + ":" + L.registryNorm(item.code) + "|" + L.registryNorm(item.form || ""); }
+function registryItemByKey(key) { return registryItems().find(item => registryItemKey(item) === key) || null; }
+// Every change the record holds, with the codes it is known to have touched.
+function registryTouches() {
+  const touches = new Map();
+  changeLogEntries().forEach(entry => {
+    if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0) return;
+    L.registryEntryCodes(entry).forEach(code => {
+      if (!touches.has(code)) touches.set(code, []);
+      touches.get(code).push(entry);
+    });
+  });
+  return touches;
+}
+function registryUnregistered(touches) {
+  const model = registryModelNow();
+  return Array.from(touches.entries()).filter(([code]) => !model.byCode.has(code))
+    .map(([code, entries]) => ({ code, entries })).sort((a, b) => b.entries.length - a.entries.length || a.code.localeCompare(b.code));
+}
+function registryKeys() {
+  const model = registryModelNow();
+  const keys = [];
+  if (!model.items.length && !model.consumers.size) keys.push("about");
+  model.consumers.forEach((_consumer, id) => keys.push("consumer:" + id));
+  model.items.forEach(item => keys.push(registryItemKey(item)));
+  registryUnregistered(registryTouches()).slice(0, REGISTRY_UNREGISTERED_SHOWN).forEach(row => keys.push("code:" + row.code));
+  if (model.items.length || model.consumers.size) keys.push("about");
+  return keys;
+}
+function consumerItems(id) {
+  const model = registryModelNow();
+  const direct = model.items.filter(item => (item.consumers || []).indexOf(id) >= 0);
+  const rules = model.rules.filter(rule => (rule.consumers || []).indexOf(id) >= 0);
+  return { direct, rules };
+}
+function registryRowTime(entries) {
+  const latest = (entries || [])[0];
+  return latest ? rowTime(latest.timestamp) : "";
+}
+function renderRegistry() {
+  const list = $("registryItems");
+  if (!list) return;
+  const model = registryModelNow();
+  const touches = registryTouches();
+  const query = ($("registrySearch") ? $("registrySearch").value : "").trim().toLowerCase();
+  const schemes = Array.from(new Set(model.items.map(item => item.scheme))).sort();
+  if (state.registryScheme !== "ALL" && schemes.indexOf(state.registryScheme) < 0) state.registryScheme = "ALL";
+  $("registryCount").textContent = model.items.length || model.consumers.size
+    ? plural(model.items.length, "item", "items") + " · " + plural(model.consumers.size, "consumer", "consumers") : "Empty";
+  const filters = $("registryFilters");
+  if (filters) filters.innerHTML = schemes.length > 1 ? ["ALL"].concat(schemes).map(scheme => '<button type="button" data-registry-scheme="' + esc(scheme) + '" aria-pressed="' +
+    String(state.registryScheme === scheme) + '">' + esc(scheme === "ALL" ? "All" : scheme) + "</button>").join("") : "";
+  const matches = text => !query || String(text || "").toLowerCase().indexOf(query) >= 0;
+  const selected = key => (!isCompact() || state.mobileDetail) && state.selectedRegistryKey === key ? ' aria-selected="true"' : "";
+  let html = "";
+  if (!model.items.length && !model.consumers.size) {
+    html += '<button class="row" type="button" data-select-registry="about"' + selected("about") + '><span class="row-mark tone-markup" aria-hidden="true"></span>' +
+      '<span class="row-title">Start the registry</span><span class="row-summary">List the items you report and what reads them; changes then name what they affect.</span></button>';
+  }
+  const consumers = Array.from(model.consumers.values()).filter(consumer => matches(consumer.name + " " + consumer.id + " " + (consumer.owner || "") + " " + (consumer.path || "")));
+  if (consumers.length && state.registryScheme === "ALL") {
+    html += '<div class="list-group-label">Consumers <span>(' + consumers.length + ")</span></div>" + consumers.map(consumer => {
+      const reads = consumerItems(consumer.id);
+      const count = reads.direct.length;
+      const hit = reads.direct.some(item => touches.has(L.registryNorm(item.code)));
+      return '<button class="row" type="button" data-select-registry="consumer:' + esc(consumer.id) + '"' + selected("consumer:" + consumer.id) + ">" +
+        '<span class="row-mark ' + (hit ? "tone-change" : "tone-markup") + '" aria-hidden="true"></span><span class="row-title">' + esc(consumer.name) + "</span>" +
+        '<span class="row-sub"><span class="tag">' + esc((L.REGISTRY_KIND_NOUNS[consumer.kind] || L.REGISTRY_KIND_NOUNS.other)[0]) + "</span>" +
+        '<span class="row-host">' + esc([plural(count, "item", "items") + (reads.rules.length ? " + " + plural(reads.rules.length, "pattern", "patterns") : ""), consumer.owner].filter(Boolean).join(" · ")) + "</span></span></button>";
+    }).join("");
+  }
+  const groups = new Map();
+  model.items.filter(item => state.registryScheme === "ALL" || item.scheme === state.registryScheme)
+    .filter(item => matches([item.code, item.label, item.form, item.schedule, item.scheme, item.jurisdiction].concat(item.aliases || []).join(" ")))
+    .forEach(item => {
+      const where = [item.jurisdiction, item.form || L.REGISTRY_SCHEMES[item.scheme] || item.scheme, item.schedule].filter(Boolean).join(" · ");
+      if (!groups.has(where)) groups.set(where, []);
+      groups.get(where).push(item);
+    });
+  groups.forEach((items, where) => {
+    html += '<div class="list-group-label">' + esc(where || "Items") + " <span>(" + items.length + ")</span></div>" + items.map(item => {
+      const entries = touches.get(L.registryNorm(item.code)) || [];
+      const key = registryItemKey(item);
+      const consumerCount = new Set((item.consumers || []).concat(L.registryRuleConsumers(model, item.code, item.scheme))).size;
+      return '<button class="row" type="button" data-select-registry="' + esc(key) + '"' + selected(key) + ">" +
+        '<span class="row-mark ' + (entries.length ? "tone-change" : "tone-markup") + '" aria-hidden="true"></span><span class="row-title is-code">' + esc(item.code) + "</span>" +
+        '<span class="row-time">' + esc(registryRowTime(entries)) + "</span>" +
+        '<span class="row-sub"><span class="tag">' + esc(item.scheme) + "</span>" + (consumerCount ? '<span class="row-host">' + esc(plural(consumerCount, "consumer", "consumers")) + "</span>" : '<span class="row-host">No consumer mapped</span>') + "</span>" +
+        (item.label ? '<span class="row-summary">' + esc(item.label) + "</span>" : "") + "</button>";
+    }).join("");
+  });
+  const unregistered = registryUnregistered(touches).filter(row => matches(row.code)).slice(0, REGISTRY_UNREGISTERED_SHOWN);
+  if (unregistered.length && state.registryScheme === "ALL") {
+    html += '<div class="list-group-label">Seen in changes, not registered <span>(' + unregistered.length + ")</span></div>" + unregistered.map(row =>
+      '<button class="row" type="button" data-select-registry="code:' + esc(row.code) + '"' + selected("code:" + row.code) + ">" +
+      '<span class="row-mark tone-markup" aria-hidden="true"></span><span class="row-title is-code">' + esc(row.code) + "</span>" +
+      '<span class="row-time">' + esc(registryRowTime(row.entries)) + '</span><span class="row-sub"><span class="row-host">' + esc(plural(row.entries.length, "change", "changes")) + "</span></span></button>").join("");
+  }
+  if (model.items.length || model.consumers.size) {
+    html += '<button class="row" type="button" data-select-registry="about"' + selected("about") + '><span class="row-mark tone-markup" aria-hidden="true"></span>' +
+      '<span class="row-title">How the registry works</span><span class="row-summary">Editing it, CSV import and what a change says.</span></button>';
+  }
+  if (!html) html = emptyState("Nothing matches", "Try another search or scheme.");
+  if (list.dataset.rendered !== html) { list.innerHTML = html; list.dataset.rendered = html; }
+}
+function registryChangesSheet(entries, title) {
+  if (!entries.length) {
+    return '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">' + esc(title) + '</h3></div><p class="note-strip">No recorded change has named it yet. Changes are matched by reporting-item code, spec field and the codes on changed lines.</p></section>';
+  }
+  return '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">' + esc(title) + '</h3><div class="sheet-note">' + esc(plural(entries.length, "change", "changes")) + " in the record</div></div></div>" +
+    '<div class="registry-changes">' + entries.slice(0, 30).map(entry => changeRow(entry, { compact: true })).join("") + "</div></section>";
+}
+function consumerLine(consumer, codes) {
+  const link = L.registryConsumerLink(consumer);
+  const nouns = L.REGISTRY_KIND_NOUNS[consumer.kind] || L.REGISTRY_KIND_NOUNS.other;
+  return '<li class="registry-consumer"><span class="tag">' + esc(nouns[0]) + "</span>" +
+    '<span class="registry-consumer-name">' + (link ? '<a class="detail-url" href="' + esc(safeHttpUrl(link)) + '" target="_blank" rel="noopener noreferrer"><span>' + esc(consumer.name) + "</span>" + icon("external") + "</a>" :
+      '<button class="text-button" type="button" data-select-registry="consumer:' + esc(consumer.id) + '">' + esc(consumer.name) + "</button>") + "</span>" +
+    '<span class="registry-consumer-meta">' + esc([consumer.owner, consumer.system, consumer.repo && consumer.path ? consumer.repo + "/" + consumer.path : consumer.path].filter(Boolean).join(" · ")) + "</span>" +
+    (codes && codes.length ? '<span class="registry-codes">' + codes.slice(0, 12).map(code => '<span class="item-asset">' + esc(code) + "</span>").join(" ") + (codes.length > 12 ? " …" : "") + "</span>" : "") + "</li>";
+}
+function registryStarter() {
+  const unregistered = registryUnregistered(registryTouches()).slice(0, 12);
+  return JSON.stringify({
+    schema_version: 1,
+    consumers: [{ id: "example-pipeline", kind: "pipeline", name: "Example load pipeline", owner: "Regulatory Reporting", repo: "your-org/your-repo", path: "pipelines/example.py" }],
+    items: (unregistered.length ? unregistered : [{ code: "BHCK2170" }]).map(row => ({ code: row.code, scheme: /^[A-Z]{4}[A-Z0-9]{4}$/.test(row.code) ? "MDRM" : "OTHER",
+      form: "", schedule: "", label: "", consumers: ["example-pipeline"] })),
+    rules: []
+  }, null, 2);
+}
+async function copyRegistryStarter() {
+  const text = registryStarter();
+  try { await navigator.clipboard.writeText(text); showToast("Starter registry copied. Paste it into config/registry.json and fill in the details."); }
+  catch (_) { window.prompt("Copy the starter registry:", text); }
+}
+function renderRegistryDetail() {
+  state.detailKeys.registry = detailRenderKey("registry");
+  const pane = $("registryDetail");
+  if (!pane) return;
+  const model = registryModelNow();
+  const key = state.selectedRegistryKey || "about";
+  const touches = registryTouches();
+  const fileLink = externalLink(REPO + "/blob/main/config/registry.json", "config/registry.json", "btn");
+  if (key === "about") {
+    const unregistered = registryUnregistered(touches);
+    pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: "Registry", title: "Items you report, and what reads them",
+        actions: fileLink + '<button class="btn" type="button" data-registry-copy>Copy a starter file</button>' }) +
+      '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">What it does</h3></div><div class="registry-copy">' +
+      "<p>Each item is a regulatory data point you report: an MDRM such as BHCK2170, an FR Y-14 field, an EBA DPM data point or BIRD variable, an OSFI DPA, a SUCAVE code or a BCB 5050 account. Link it to the tables, models, pipelines and code paths that read it.</p>" +
+      "<p>When a change adds, retires or redefines a registered item (from the reporting-item codes, the specification changes, or a code named on a changed line), the change and its alert say so in one sentence: which fields in which form and schedule change, from which quarter, and what reads them. Equivalent items in other jurisdictions are listed alongside.</p>" +
+      "<p>Fill it directly in <span class=\"is-code\">config/registry.json</span>, or merge a mapping spreadsheet: <span class=\"is-code\">python -m regmon.registry import mapping.csv --write</span> (one row per item and consumer; columns are found by header). <span class=\"is-code\">python -m regmon.registry check</span> validates it, and CI runs the same check. Mappings in config/lineage.json are still read.</p></div></section>" +
+      (unregistered.length ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Seen in changes, not registered</h3><div class="sheet-note">Codes recorded changes touched that the registry does not list yet. The starter file includes the first twelve.</div></div></div>' +
+        '<div class="registry-unregistered">' + unregistered.slice(0, 40).map(row => '<button class="chip" type="button" data-select-registry="code:' + esc(row.code) + '">' + esc(row.code) + " · " + esc(row.entries.length) + "</button>").join("") + "</div></section>" : "") +
+      "</div>";
+    return;
+  }
+  if (key.indexOf("consumer:") === 0) {
+    const id = key.slice(9);
+    const consumer = model.consumers.get(id);
+    if (!consumer) { pane.innerHTML = '<div class="detail-inner">' + emptyState("Not in the registry", "This consumer is no longer listed.") + "</div>"; return; }
+    const reads = consumerItems(id);
+    const entries = [];
+    const seen = new Set();
+    reads.direct.forEach(item => (touches.get(L.registryNorm(item.code)) || []).forEach(entry => { if (!seen.has(entry.event_id)) { seen.add(entry.event_id); entries.push(entry); } }));
+    touches.forEach((list, code) => {
+      if (!reads.rules.some(rule => new RegExp("^" + L.registryNorm(rule.match).replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\?/g, ".") + "$").test(code))) return;
+      list.forEach(entry => { if (!seen.has(entry.event_id)) { seen.add(entry.event_id); entries.push(entry); } });
+    });
+    entries.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+    const link = L.registryConsumerLink(consumer);
+    const facts = [["Kind", (L.REGISTRY_KIND_NOUNS[consumer.kind] || L.REGISTRY_KIND_NOUNS.other)[0]], ["Owner", consumer.owner], ["System", consumer.system],
+      ["Repository", consumer.repo], ["Path", consumer.path], ["Note", consumer.note]].filter(([, value]) => value);
+    pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: "Consumer", title: consumer.name, actions: link ? externalLink(link, consumer.repo ? "Open the code" : "Open", "btn") : "" }) +
+      '<section class="sheet"><dl class="facts">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl></section>" +
+      '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">What it reads</h3><div class="sheet-note">' + esc(plural(reads.direct.length, "registered item", "registered items") +
+        (reads.rules.length ? " and every item matching " + reads.rules.map(rule => rule.match).join(", ") : "")) + "</div></div></div>" +
+      '<ul class="items-list">' + reads.direct.slice(0, 200).map(item => '<li class="item-row"><button class="text-button item-code" type="button" data-select-registry="' + esc(registryItemKey(item)) + '">' + esc(item.code) + "</button>" +
+        '<span class="item-text">' + esc([item.label, [item.form, item.schedule].filter(Boolean).join(" ")].filter(Boolean).join(" · ")) + "</span></li>").join("") + "</ul></section>" +
+      registryChangesSheet(entries, "Changes that touched what it reads") + "</div>";
+    return;
+  }
+  if (key.indexOf("code:") === 0) {
+    const code = key.slice(5);
+    const entries = touches.get(code) || [];
+    pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: "Not registered", title: code, actions: fileLink + '<button class="btn" type="button" data-registry-copy>Copy a starter file</button>' }) +
+      '<section class="sheet"><p class="note-strip">Recorded changes touched this code, but the registry does not list it, so they cannot say what reads it. Add it to config/registry.json with its form, schedule and consumers.</p></section>' +
+      registryChangesSheet(entries, "Changes that touched it") + "</div>";
+    return;
+  }
+  const item = registryItemByKey(key);
+  if (!item) { pane.innerHTML = '<div class="detail-inner">' + emptyState("Not in the registry", "This item is no longer listed.") + "</div>"; return; }
+  const resolved = L.registryImpact([{ code: item.code, change: "amended" }], model, "");
+  const consumers = resolved ? resolved.consumers : [];
+  const facts = [["Scheme", L.REGISTRY_SCHEMES[item.scheme] || item.scheme], ["Jurisdiction", item.jurisdiction], ["Regulator", item.regulator], ["Form", item.form],
+    ["Schedule", item.schedule], ["Line", item.line], ["Aliases", (item.aliases || []).join(", ")], ["Owner", item.owner], ["Note", item.note]].filter(([, value]) => value);
+  const equivalents = (item.equivalents || []).map(equivalent => {
+    const code = String(equivalent).replace(/^[A-Z0-9_]+:/, "");
+    const match = model.byCode.get(L.registryNorm(code)) || model.byCode.get(L.registryNorm(equivalent));
+    return match && match.length ? '<button class="chip" type="button" data-select-registry="' + esc(registryItemKey(match[0])) + '">' + esc(equivalent) + "</button>" : '<span class="chip is-static">' + esc(equivalent) + "</span>";
+  }).join("");
+  pane.innerHTML = '<div class="detail-inner">' + detailHeading({ back: true, source: [L.REGISTRY_SCHEMES[item.scheme] || item.scheme, item.jurisdiction].filter(Boolean).join(" · "),
+      title: item.code, subtitle: item.label || "" }) +
+    '<section class="sheet"><dl class="facts">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl></section>" +
+    '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">What reads it</h3><div class="sheet-note">' + esc(consumers.length ? plural(consumers.length, "consumer", "consumers") : "No consumer is mapped yet") + "</div></div></div>" +
+    (consumers.length ? '<ul class="items-list">' + consumers.map(consumer => consumerLine(consumer, [])).join("") + "</ul>" : '<p class="note-strip">Add consumer ids to this item, or a rule whose pattern matches it.</p>') + "</section>" +
+    (equivalents ? '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Equivalent items elsewhere</h3><div class="sheet-note">The same data point under another regulator\'s scheme</div></div></div><div class="registry-unregistered">' + equivalents + "</div></section>" : "") +
+    registryChangesSheet(touches.get(L.registryNorm(item.code)) || [], "Changes that touched it") + "</div>";
+}
+function impactSheet(impact) {
+  const items = Array.isArray(impact.items) ? impact.items : [];
+  const consumers = Array.isArray(impact.consumers) ? impact.consumers : [];
+  if (!items.length) return "";
+  return '<section class="sheet" aria-labelledby="change-impact-title"><div class="sheet-head"><div><h3 class="sheet-title" id="change-impact-title">Downstream impact</h3>' +
+    '<div class="sheet-note">From the item registry, as configured when this change was recorded</div></div>' +
+    '<button class="sheet-link" type="button" data-go="registry">Registry</button></div>' +
+    '<p class="impact-sentence">' + esc(impact.sentence || "") + "</p>" +
+    (consumers.length ? '<div class="items-group"><div class="items-group-label is-amended">What reads them <span>' + esc(consumers.length) + "</span></div>" +
+      '<ul class="items-list">' + consumers.map(consumer => consumerLine(consumer, consumer.codes || [])).join("") + "</ul></div>" : "") +
+    '<div class="items-group"><div class="items-group-label">Registered items touched <span>' + esc(items.length) + "</span></div>" +
+    '<ul class="items-list">' + items.slice(0, 60).map(item => '<li class="item-row"><span class="item-code">' + esc(item.code) + "</span>" +
+      '<span class="item-text">' + esc([L.REGISTRY_CHANGE_WORDS[item.change] || item.change, [item.form, item.schedule].filter(Boolean).join(" "), item.label, item.quarter].filter(Boolean).join(" · ")) + "</span></li>").join("") + "</ul></div>" +
+    (impact.unregistered_count ? '<p class="note-strip">' + esc(plural(impact.unregistered_count, "other code was", "other codes were")) + " touched but is not registered.</p>" : "") + "</section>";
+}
+async function fillImpact(entry, slotId, stillCurrent) {
+  if (!entry.evidence_location || CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0) return;
+  let evidence;
+  try { evidence = await loadEvidence(entry.evidence_location); } catch (_) { return; }
+  const slot = document.getElementById(slotId);
+  if (!slot || !stillCurrent()) return;
+  let impact = isPlainObject(evidence.impact) ? evidence.impact : null;
+  if (!impact) {
+    // Recorded before the registry existed (or before an item was added): read it now.
+    const model = registryModelNow();
+    if (!model.items.length && !model.rules.length) return;
+    impact = L.registryImpact(L.registryTouched(evidence.item_codes, evidence.spec_diff), model, "");
+    if (impact && impact.items.length) impact.live = true;
+  }
+  if (impact && Array.isArray(impact.items) && impact.items.length) {
+    slot.innerHTML = impactSheet(impact).replace("as configured when this change was recorded", impact.live ? "as configured now; this change was recorded before these items were registered" : "as configured when this change was recorded");
   }
 }
 
@@ -5581,12 +5840,13 @@ function downloadCadencePlan() {
 /* ================= Navigation ================= */
 
 function viewSection(view) {
-  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", health: "healthView", notifications: "notificationsView", scout: "scoutView", calendar: "calendarView", askSentinel: "askSentinelView" }[view] || "overviewView";
+  return { overview: "overviewView", changes: "changesView", monitors: "monitorsView", runs: "runsView", health: "healthView", notifications: "notificationsView", registry: "registryView", scout: "scoutView", calendar: "calendarView", askSentinel: "askSentinelView" }[view] || "overviewView";
 }
 function hasSelection(view) {
   return view === "changes" ? !!state.selectedChangeId : view === "monitors" ? !!state.selectedId
     : view === "runs" ? !!state.selectedRunId : view === "notifications" ? !!state.selectedNotificationId
     : view === "health" ? !!state.selectedHealthKey
+    : view === "registry" ? !!state.selectedRegistryKey
     : view === "scout" ? !!state.selectedScoutKey : false;
 }
 function renderViews() {
@@ -5603,7 +5863,7 @@ function renderViews() {
   const askLauncher = $("askSentinelLaunch");
   askLauncher.classList.toggle("active", state.view === "askSentinel");
   askLauncher.setAttribute("aria-current", state.view === "askSentinel" ? "page" : "false");
-  const titles = { overview: "Overview", changes: "Changes", monitors: "Pages", runs: "Runs", health: "Health", notifications: "Alerts", scout: "Scout", calendar: "Cadence", askSentinel: "Ask Sentinel" };
+  const titles = { overview: "Overview", changes: "Changes", monitors: "Pages", runs: "Runs", health: "Health", notifications: "Alerts", registry: "Registry", scout: "Scout", calendar: "Cadence", askSentinel: "Ask Sentinel" };
   document.title = titles[state.view] + " | ChangeSentinel";
 }
 // On wide screens the first row is selected automatically, so opening a view
@@ -5623,6 +5883,7 @@ function ensureSelection(view) {
     state.selectedRunId = state.history[0] ? runKey(state.history[0]) : "";
   }
   if (view === "health" && !healthKeys().includes(state.selectedHealthKey)) state.selectedHealthKey = "fleet";
+  if (view === "registry" && !registryKeys().includes(state.selectedRegistryKey)) state.selectedRegistryKey = registryKeys()[0] || "";
   if (view === "notifications") {
     const { pending, sent } = notificationLists();
     const special = state.selectedNotificationId === SHADOW_KEY || (state.selectedNotificationId.indexOf(DIGEST_PREFIX) === 0 && digestList().some(d => DIGEST_PREFIX + d.id === state.selectedNotificationId));
@@ -5644,7 +5905,7 @@ function detailRenderKey(view) {
     if (view === "changes") {
       const entry = changeLogEntries().find(candidate => candidate.event_id === state.selectedChangeId);
       return entry ? JSON.stringify([entry.event_id, entry.evidence_location, verdictFor(entry), state.diffMode, reviewLog(entry.event_id),
-        L.datesForChange(state.calendar, entry.event_id), state.assetSignatures.lineage || ""]) : "none";
+        L.datesForChange(state.calendar, entry.event_id), state.assetSignatures.lineage || "", state.assetSignatures.registry || ""]) : "none";
     }
     if (view === "monitors") {
       const item = selectedItem();
@@ -5663,6 +5924,7 @@ function detailRenderKey(view) {
       return item ? JSON.stringify([item, channelSummary()]) : "none";
     }
     if (view === "health") return JSON.stringify([state.selectedHealthKey, state.assetSignatures.health || "", state.assetSignatures.config || ""]);
+    if (view === "registry") return JSON.stringify([state.selectedRegistryKey, state.assetSignatures.registry || "", state.assetSignatures.lineage || "", state.assetSignatures.inventory || ""]);
     if (view === "scout") {
       if (state.selectedScoutKey === "coverage") return "coverage|" + (state.assetSignatures.scoutLatest || "") + "|" + (state.assetSignatures.scoutConfig || "");
       const item = scoutSelected();
@@ -5686,11 +5948,12 @@ function renderDetailFor(view) {
   else if (view === "runs") renderRunDetail();
   else if (view === "notifications") renderNotificationDetail();
   else if (view === "health") renderHealthDetail();
+  else if (view === "registry") renderRegistryDetail();
   else if (view === "scout") renderScoutDetail();
   else if (view === "calendar") { renderCadenceView(); refreshCadence(); }
 }
 function resetDetailScroll(view) {
-  const pane = { changes: "changeDetail", monitors: "detailView", runs: "runDetail", health: "healthDetail", notifications: "notificationDetail", scout: "scoutDetail", calendar: "calendarView" }[view];
+  const pane = { changes: "changeDetail", monitors: "detailView", runs: "runDetail", health: "healthDetail", notifications: "notificationDetail", registry: "registryDetail", scout: "scoutDetail", calendar: "calendarView" }[view];
   if (pane && $(pane)) $(pane).scrollTop = 0;
   if (view === "overview") $("overviewView").scrollTop = 0;
 }
@@ -5698,6 +5961,7 @@ function writeHash() {
   const id = state.view === "changes" ? state.selectedChangeId : state.view === "monitors" ? state.selectedId
     : state.view === "runs" ? state.selectedRunId : state.view === "notifications" ? state.selectedNotificationId
     : state.view === "health" ? (state.selectedHealthKey === "fleet" ? "" : state.selectedHealthKey)
+    : state.view === "registry" ? state.selectedRegistryKey
     : state.view === "scout" ? state.selectedScoutKey : "";
   const hash = "#" + (HASH_NAMES[state.view] || (state.view === "askSentinel" ? "ask-sentinel" : "overview")) + (id ? "/" + encodeURIComponent(id) : "");
   try { history.replaceState(null, "", state.view === "overview" ? location.pathname + location.search : hash); } catch (_) {}
@@ -5744,6 +6008,7 @@ function select(view, id, options) {
   if (view === "runs") state.selectedRunId = id;
   if (view === "notifications") state.selectedNotificationId = id;
   if (view === "health") state.selectedHealthKey = id;
+  if (view === "registry") state.selectedRegistryKey = id;
   if (view === "scout") state.selectedScoutKey = id;
   state.view = view;
   state.mobileDetail = true;
@@ -5759,9 +6024,9 @@ function setSelected(id) { select("monitors", id); }
 /* ================= Data refresh ================= */
 
 // Review decisions arrive between scans, so the ledger is polled with the small files.
-const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health", "digests", "digestConfig"];
+const SMALL_ASSETS = ["report", "notifications", "outbox", "config", "scoutLatest", "scoutConfig", "calendar", "lineage", "registry", "reviews", "regulators", "health", "digests", "digestConfig"];
 const LARGE_ASSETS = ["inventory", "history", "scoutReview"];
-const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "reviews", "regulators", "health", "digests", "digestConfig"]);
+const OPTIONAL_ASSETS = new Set(["scoutLatest", "scoutReview", "scoutConfig", "calendar", "lineage", "registry", "reviews", "regulators", "health", "digests", "digestConfig"]);
 const FULL_REFRESH_MS = 10 * 60 * 1000;
 function assetsSignature() {
   return SMALL_ASSETS.concat(LARGE_ASSETS).map(key => key + "=" + (state.assetSignatures[key] || "")).join("|");
@@ -5821,6 +6086,8 @@ async function loadDataOnce(showErrors) {
     state.scoutConfig = values.scoutConfig;
     state.calendar = values.calendar;
     state.lineage = values.lineage;
+    state.registry = values.registry;
+    state.registryModel = L.registryModel(state.registry, state.lineage);
     state.reviews = values.reviews;
     state.regulators = values.regulators;
     state.health = values.health;
@@ -5842,6 +6109,7 @@ async function loadDataOnce(showErrors) {
           if (route.view === "runs") state.selectedRunId = route.id;
           if (route.view === "notifications") state.selectedNotificationId = route.id;
           if (route.view === "health") state.selectedHealthKey = route.id;
+          if (route.view === "registry") state.selectedRegistryKey = route.id;
           if (route.view === "scout") {
             state.selectedScoutKey = route.id;
             // A deep link to a finding outside the default list opens the list that holds it.
@@ -7706,7 +7974,7 @@ function exportChanges() {
   const entries = filteredChanges();
   if (!entries.length) { showToast("Nothing to export: the list is empty."); return; }
   const rows = [["Detected (UTC)", "Event", "Page", "URL", "Source", "AI assessment", "AI topic", "Review decision", "Reviewed by", "Reviewed at (UTC)",
-    "Rationale", "Owner", "Ticket", "Reporting items", "Spec changes", "Dates", "Dashboard link", "Evidence file", "Event ID"]];
+    "Rationale", "Owner", "Ticket", "Reporting items", "Spec changes", "Downstream", "Dates", "Dashboard link", "Evidence file", "Event ID"]];
   entries.forEach(entry => {
     const item = itemForEvent(entry);
     const verdict = verdictFor(entry);
@@ -7719,6 +7987,7 @@ function exportChanges() {
       review ? review.rationale || "" : "", review ? review.owner || "" : "", review ? review.ticket || "" : "",
       L.describeItemCodes(entry.item_codes),
       L.describeSpec(entry.spec),
+      isPlainObject(entry.impact) ? String(entry.impact.sentence || "") : "",
       L.datesForChange(state.calendar, entry.event_id).map(date => date.date + " " + (date.label || "")).join("; "),
       changeDashboardLink(entry), entry.evidence_location ? REPO + "/blob/main/" + entry.evidence_location : "", entry.event_id || ""
     ]);
@@ -7767,6 +8036,7 @@ async function downloadEvidencePack(eventId) {
     review: { current: reviewFor(entry.event_id), history: reviewLog(entry.event_id) },
     dates: L.datesForChange(state.calendar, entry.event_id),
     reporting_items: codes,
+    downstream_impact: evidence && isPlainObject(evidence.impact) ? evidence.impact : null,
     spec_changes: evidence && isPlainObject(evidence.spec_diff) ? evidence.spec_diff : (evidence && isPlainObject(evidence.spec_inventory) ? evidence.spec_inventory : null),
     lineage: codeList.length ? codeList.map(code => ({ code, assets: L.lineageFor(code, state.lineage) })).filter(row => row.assets.length) : [],
     files,
@@ -7848,7 +8118,7 @@ async function verifyFingerprints(urlId) {
 
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
 $("workspace").addEventListener("click", event => {
-  const target = event.target.closest("[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
+  const target = event.target.closest("[data-select-registry],[data-registry-scheme],[data-registry-copy],[data-spec-filter],[data-spec-csv],[data-review-change],[data-evidence-pack],[data-export-changes],[data-copy-calendar],[data-verify-fingerprints],[data-select-change],[data-monitor-id],[data-select-run],[data-select-health],[data-edit-condition],[data-edit-schedule],[data-edit-organise],[data-pick-source],[data-select-shown],[data-bulk],[data-scope-clear],[data-shadow-download],[data-shadow-import],[data-find-similar],[data-digest-edit],[data-digest-open],[data-digest-latest],[data-channel-guide],[data-select-notification],[data-go],[data-open-page],[data-back],[data-diff-mode],[data-detail-tab],[data-snapshot-mode],[data-pdf-action],[data-refresh],[data-add-monitor],[data-change-filter],[data-filter],[data-scout-key],[data-scout-filter],[data-scout-coverage],[data-scout-monitor],[data-scout-dismiss],[data-scout-restore],[data-scout-run],[data-scout-add-source],[data-scout-add-channel],[data-scout-edit],[data-calendar-mode],[data-calendar-jump-date],[data-calendar-prev],[data-calendar-next],[data-calendar-today],[data-calendar-new],[data-calendar-export],[data-calendar-day],[data-calendar-edit],[data-calendar-delete],[data-calendar-complete],[data-calendar-open-change],[data-calendar-test],[data-calendar-signout],[data-calendar-plan],[data-calendar-track],[data-calendar-ics],[data-calendar-monitor]");
   if (!target) return;
   const data = target.dataset;
   if (data.calendarMode) { state.cadencePanel = data.calendarMode === "upcoming" ? "upcoming" : "month"; return renderCadenceView(); }
@@ -7885,6 +8155,9 @@ $("workspace").addEventListener("click", event => {
     return;
   }
   if (data.specCsv) return downloadSpecCsv(data.specCsv);
+  if (data.selectRegistry) return select("registry", data.selectRegistry);
+  if (data.registryScheme) { state.registryScheme = data.registryScheme; renderRegistry(); return; }
+  if (data.registryCopy !== undefined) return copyRegistryStarter();
   if (data.reviewChange) return openReview(data.reviewChange);
   if (data.evidencePack) return downloadEvidencePack(data.evidencePack);
   if (data.exportChanges !== undefined) return exportChanges();
@@ -8155,7 +8428,7 @@ $("timelineView").addEventListener("focusout", hideTimelineTip);
  * each with its live status. While one of those views is open, the More tab
  * takes its name, so the bar always says where you are.
  */
-const MORE_VIEWS = { health: "Health", runs: "Runs", scout: "Scout", calendar: "Cadence" };
+const MORE_VIEWS = { health: "Health", runs: "Runs", registry: "Registry", scout: "Scout", calendar: "Cadence" };
 function syncMoreTab() {
   const button = $("navMore");
   if (!button) return;
@@ -8200,6 +8473,7 @@ function renderMoreSheet() {
       tile("runs", "Runs", esc(lastRunAt ? relativeTime(lastRunAt) : "None"), esc(text("navRunCount") ? "last scan · " + text("navRunCount") + " saved" : "since the last scan")) +
       tile("scout", "Scout", review ? "<b>" + esc(review) + "</b>" : "0", esc(review ? "pages to review" : "nothing to review"), scoutLogo) +
       tile("calendar", "Cadence", esc(cadence), esc(cadence === 1 ? "date coming up" : "dates coming up"), cadenceLogo) +
+      tile("registry", "Registry", esc(registryItems().length), esc(registryItems().length === 1 ? "registered item" : "registered items")) +
     "</div>";
 }
 let moreReturnFocus = null;
@@ -8353,6 +8627,7 @@ $("scoutItems").addEventListener("change", event => {
 });
 $("scoutStrongOnly").addEventListener("change", () => { state.scoutStrongOnly = $("scoutStrongOnly").checked; renderScout(); });
 $("monitorSearch").addEventListener("input", renderMonitorList);
+if ($("registrySearch")) $("registrySearch").addEventListener("input", renderRegistry);
 $("scoutSearch").addEventListener("input", renderScout);
 $("scoutFormatFilter").addEventListener("change", () => {
   state.scoutFormatFilter = $("scoutFormatFilter").value || "ALL";

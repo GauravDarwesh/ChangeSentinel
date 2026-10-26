@@ -155,6 +155,7 @@ def write_evidence(
     item_codes: dict | None = None,
     spec_diff: dict | None = None,
     spec_inventory: dict | None = None,
+    impact: dict | None = None,
 ) -> str:
     path = root / "data" / "evidence" / f"{event_id}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -203,5 +204,7 @@ def write_evidence(
         payload["spec_diff"] = spec_diff
     if spec_inventory:
         payload["spec_inventory"] = spec_inventory
+    if impact:
+        payload["impact"] = impact
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     return str(path.relative_to(root))
