@@ -533,18 +533,43 @@ function isSuppressedMarkupOnly(entry) {
     && review.event_type === "HTML_SOURCE_CHANGED"
     && review.url && review.url === entry.url);
 }
+// A bot check, or a refusal that covers a whole site, is retried automatically.
+// One refused page on an otherwise working site is more likely removed or made
+// private, so it stays an ordinary problem (regmon/health.py does the same).
+function blockWait(item) {
+  const wait = L.botCheckWait(item);
+  if (!wait || wait.kind !== "refusal") return wait;
+  let host = "";
+  try { host = new URL(String(item.canonical_url || "")).hostname; } catch (_) { return null; }
+  const refused = (state.items || []).filter(other => {
+    if (!/^AccessRefusedError/.test(String(other.fetch_error || ""))) return false;
+    try { return new URL(String(other.canonical_url || "")).hostname === host; } catch (_) { return false; }
+  }).length;
+  return refused >= 2 ? wait : null;
+}
+// Bot-check attempts the scan retries by itself are not changes or problems to
+// review: Health lists them under "Retrying automatically". Once a block has
+// outlasted its grace period the events show again, as failures.
+function isRoutineBotCheck(event, itemsById) {
+  if (!event || event.event_type !== "FETCH_ERROR") return false;
+  if (!/^(BotCheckError|AccessRefusedError)/.test(String((event.evidence && event.evidence.error) || ""))) return false;
+  const wait = blockWait(itemsById.get(event.url_id) || {});
+  return !(wait && !wait.waiting);
+}
 function changeLogEntries() {
   const entries = [];
   const seen = new Set();
+  const itemsById = new Map(state.items.map(item => [item.url_id, item]));
   state.items.forEach(item => itemChangeEntries(item).forEach(entry => {
     if (seen.has(entry.event_id)) return;
     if (CHANGE_EVENT_TYPES.indexOf(entry.event_type) < 0 && ALERT_EVENT_TYPES.indexOf(entry.event_type) < 0) return;
-    if (isSuppressedMarkupOnly(entry)) return;
+    if (isSuppressedMarkupOnly(entry) || isRoutineBotCheck(entry, itemsById)) return;
     seen.add(entry.event_id);
     entries.push(entry);
   }));
   allEvents().forEach(event => {
     if (seen.has(event.event_id) || ALERT_EVENT_TYPES.indexOf(event.event_type) < 0) return;
+    if (isRoutineBotCheck(event, itemsById)) return;
     seen.add(event.event_id);
     entries.push(event);
   });
@@ -596,6 +621,14 @@ function eventHeadline(event) {
 }
 function itemStatus(item) {
   if (item.pending_registration) return { label: "Awaiting first scan", tone: "pending", kind: "pending" };
+  const botCheck = blockWait(item);
+  if (botCheck) {
+    // A bot check is retried automatically every scan; it only becomes a
+    // problem once it has outlasted the grace period.
+    return botCheck.waiting
+      ? { label: botCheck.hasBaseline ? "Protected site · retrying" : "Protected site · first copy pending", tone: "pending", kind: "pending" }
+      : { label: botCheck.kind === "refusal" ? "Blocked by the site" : "Blocked by bot check", tone: "problem", kind: "error" };
+  }
   if (item.fetch_error || item.extraction_error || (item.http_status && Number(item.http_status) >= 400)) {
     return { label: item.fetch_error ? "Couldn't fetch" : item.extraction_error ? "Couldn't read content" : "HTTP " + item.http_status, tone: "problem", kind: "error" };
   }
@@ -1148,7 +1181,8 @@ function timelineEntries(prefs) {
   // its error event reaches the change log.
   (state.items || []).forEach(item => {
     if (item.first_seen && !seenNew.has(item.url_id)) add(item, "new", item.first_seen, { id: "first:" + item.url_id, type: "NEW_URL", summary: "", relevant: null });
-    if ((item.fetch_error || item.extraction_error) && item.last_checked && !seenBad.has(item.url_id)) {
+    const waitingOnCheck = blockWait(item);
+    if ((item.fetch_error || item.extraction_error) && item.last_checked && !seenBad.has(item.url_id) && !(waitingOnCheck && waitingOnCheck.waiting)) {
       add(item, "bad", item.last_checked, { id: "problem:" + item.url_id, type: item.fetch_error ? "FETCH_ERROR" : "EXTRACTION_ERROR", summary: String(item.fetch_error || item.extraction_error), relevant: null });
     }
   });
@@ -3196,7 +3230,11 @@ function renderDetails(item) {
     ["Loaded with", FETCH_MODE_WORDS[sourceLoading(source).fetch_mode] + (item.rendered_by === "browser" && item.browser ? " · last render blocked " + plural(Number(item.browser.blocked_requests || 0), "request", "requests") + (item.browser.consent ? ", cookie banner: " + item.browser.consent.replace(/^\w+:/, "") : "") : "") +
       (sourceLoading(source).browser_actions.length ? " · " + plural(sourceLoading(source).browser_actions.length, "recorded step", "recorded steps") : "") +
       (item.visual && Number.isFinite(Number(item.visual.changed_ratio)) && item.visual.changed_ratio !== null ? " · last screenshot " + (Number(item.visual.changed_ratio) * 100).toFixed(1) + "% different" : "")],
-    ["Bot check", item.bot_check ? item.bot_check.vendor + " challenge, " + fmt(item.bot_check.captured_at) + " (" + (item.bot_check.via === "browser" ? "after a browser render" : "plain request") + ")" : "None seen"],
+    ["Bot check", item.browser && item.browser.passed_check && !item.fetch_error ? (/^HTTP \d/.test(item.browser.passed_check)
+        ? "Plain requests were refused (" + item.browser.passed_check.replace(/ refusal$/, "") + "); loaded in a browser on the last scan"
+        : item.browser.passed_check + " check passed automatically in a browser on the last scan")
+      : item.bot_check ? item.bot_check.vendor + " challenge, " + fmt(item.bot_check.captured_at) + " (" + (item.bot_check.via === "browser" ? "still shown in the browser" : "plain request") + ")" +
+        (blockWait(item) && blockWait(item).waiting ? " · retrying automatically every scan" : "") : "None seen"],
     ["Fetch error", item.fetch_error || "None"], ["Extraction error", item.extraction_error || "None"],
     ["Text fingerprint (SHA-256)", item.normalized_hash || "Not available", true], ["Saved HTML fingerprint", item.html_hash || "Not available", true],
     ["Response fingerprint", item.raw_hash || "Not available", true],
@@ -3291,6 +3329,7 @@ function renderNotificationDetail() {
  */
 const HEALTH_STATUS = {
   failing: { label: "Failing", tone: "problem", order: 0 },
+  protected: { label: "Protected site · retrying", tone: "pending", order: 1 },
   stale: { label: "Not scanned recently", tone: "pending", order: 1 },
   inactive: { label: "Quiet for weeks", tone: "pending", order: 2 },
   healthy: { label: "Healthy", tone: "ok", order: 3 }
@@ -3301,6 +3340,14 @@ function healthKeys() { return ["fleet"].concat(healthMonitors().map(monitor => 
 function healthYearFlag(sourceId) {
   const flags = state.health && Array.isArray(state.health.year_bound) ? state.health.year_bound : [];
   return flags.find(flag => String(flag.source_id) === String(sourceId)) || null;
+}
+function healthProtected(sourceId) {
+  const rows = state.health && Array.isArray(state.health.protected) ? state.health.protected : [];
+  return sourceId == null ? rows : rows.filter(row => String(row.source_id) === String(sourceId));
+}
+function protectedWords(rows) {
+  const first = rows[0] || {};
+  return "Blocked by " + (first.reason || "a " + (first.vendor || "bot") + " bot check") + " · retrying automatically every scan" + (first.has_baseline === false ? " · first copy pending" : " · last good copy kept");
 }
 function healthFailures(sourceId) {
   const rows = state.health && Array.isArray(state.health.failing) ? state.health.failing : [];
@@ -3319,6 +3366,7 @@ function healthDays(monitor) {
 }
 function healthRowSummary(monitor, light) {
   if (monitor.status === "failing") { const f = healthFailures(String(monitor.source_id))[0]; return f ? f.error : "Failing"; }
+  if (monitor.status === "protected") return protectedWords(healthProtected(String(monitor.source_id)));
   if (monitor.status === "stale") return "Overdue · last saved scan " + (monitor.last_scan ? relativeTime(monitor.last_scan).toLowerCase() : "not recorded") + (monitor.cadence && monitor.cadence.every_hours > 6 ? " · " + monitor.cadence.label.toLowerCase() : "");
   const checks = Number(monitor.checks_7d || 0), failed = Number(monitor.failures_7d || 0);
   const checkWords = failed ? failed + " of " + checks + " checks failed this week" : checks ? "All " + checks + " checks ok this week" : "Not checked this week";
@@ -3326,12 +3374,12 @@ function healthRowSummary(monitor, light) {
   return checkWords + " · " + (monitor.last_change ? healthDays(monitor).toLowerCase() : "never changed");
 }
 const HEALTH_LIST_GROUPS = [
-  ["attention", "Needs attention", ["bad", "stale"]], ["recovered", "Recovered this week", ["warn"]],
+  ["attention", "Needs attention", ["bad", "stale"]], ["retrying", "Retrying automatically", ["guard"]], ["recovered", "Recovered this week", ["warn"]],
   ["changed", "Changed this week", ["on"]], ["quiet", "Quiet for weeks", ["quiet"]], ["ok", "Healthy", ["ok"]]
 ];
 function healthRow(monitor, light) {
   const key = String(monitor.source_id);
-  const tone = { bad: "problem", stale: "pending", quiet: "pending", warn: "pending", on: "change", ok: "ok" }[light] || "ok";
+  const tone = { bad: "problem", stale: "pending", quiet: "pending", warn: "pending", guard: "pending", on: "change", ok: "ok" }[light] || "ok";
   const year = healthYearFlag(key);
   return '<button class="row hx-row" type="button" data-select-health="' + esc(key) + '"' + (key === state.selectedHealthKey ? ' aria-selected="true"' : "") + ">" +
     '<span class="row-mark hx-row-mark l-' + esc(light) + ' tone-' + tone + '" aria-hidden="true"></span>' +
@@ -3498,6 +3546,7 @@ function renderHealthDetail() {
         '<button class="row" type="button" data-select-health="' + esc(row.source_id) + '"><span class="row-mark tone-problem" aria-hidden="true"></span>' +
         '<span class="row-title">' + esc(row.name || row.source_id) + '</span><span class="row-time">' + esc(row.since ? relativeTime(row.since) : "") + "</span>" +
         '<span class="row-summary">' + esc(row.error || "") + "</span></button>").join("") + "</section>" : "") +
+      protectedSheet(healthProtected()) +
       (healthSameWindow(health.last_7_days, health.last_30_days) ? "" : healthTiles(health.last_30_days, "Last 30 days")) +
       '<p class="note-strip">' + (healthSameWindow(health.last_7_days, health.last_30_days) ? "History so far covers under a week, so the 30-day totals match the 7-day ones. " : "") + 'An error alerts only after it has failed ' + esc(plural(Number((state.config.defaults || {}).error_alert_after_runs || 1), "scan", "consecutive scans")) +
       ". Health is rebuilt from the committed scan history after every scan and never changes what is monitored.</p></div>";
@@ -3536,11 +3585,31 @@ function renderHealthDetail() {
     ". Check the regulator's site and add the new page if it exists.</p></section>" : "";
   pane.innerHTML = '<div class="detail-inner health-detail">' +
     detailHeading({ back: true, source: "Monitor health", title: healthName(monitor) || key, meta: '<span class="tag tone-' + status.tone + '">' + esc(status.label) + "</span>" +
-      (monitor.status !== "failing" && Number(monitor.failures_7d) > 0 ? '<span class="tag tone-pending">Recovered · ' + esc(plural(Number(monitor.failures_7d), "failure", "failures")) + " this week</span>" : "") +
+      (monitor.status !== "failing" && monitor.status !== "protected" && Number(monitor.failures_7d) > 0 ? '<span class="tag tone-pending">Recovered · ' + esc(plural(Number(monitor.failures_7d), "failure", "failures")) + " this week</span>" : "") +
       "<span>" + esc(healthRegulator(monitor).name || monitor.regulator || "") + "</span>", actions }) +
-    healthMonitorPulse(monitor, health) + failureSheet + yearSheet +
+    healthMonitorPulse(monitor, health) + failureSheet + protectedSheet(healthProtected(key)) + yearSheet +
     precisionSheet(precisionModel().monitors.find(row => row.source_id === key) || null, key, precisionModel().outcomes.filter(row => row.source_id === key)) + healthPageStrip(key) +
     '<section class="sheet"><dl class="facts">' + facts.map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") + "</dl></section></div>";
+}
+// Sites showing a bot check, grouped by host: calm, because the scan retries
+// them itself and keeps the last good copy; an alert follows only if it lasts.
+function protectedSheet(rows) {
+  if (!rows.length) return "";
+  const sites = new Map();
+  rows.forEach(row => {
+    let host = "";
+    try { host = new URL(String(row.url || "")).hostname; } catch (_) { host = String(row.url || ""); }
+    if (!sites.has(host)) sites.set(host, []);
+    sites.get(host).push(row);
+  });
+  const grace = Number(((state.health || {}).thresholds || {}).bot_check_grace_hours || L.BOT_CHECK_GRACE_HOURS);
+  return '<section class="sheet"><div class="sheet-head"><h3 class="sheet-title">Retrying automatically</h3><span class="sheet-note">Nothing to do yet</span></div><dl class="facts">' +
+    Array.from(sites.entries()).map(([host, group]) => {
+      const since = group.map(row => row.since).filter(Boolean).sort()[0];
+      const pending = group.filter(row => row.has_baseline === false).length;
+      return "<div><dt>" + esc(host) + "</dt><dd>" + esc(plural(group.length, "page", "pages") + " blocked by " + (group[0].reason || "a " + (group[0].vendor || "bot") + " bot check") + (since ? ", since " + relativeTime(since).toLowerCase() : "")) +
+        '<br><span class="health-sub">' + esc("Each scan opens these in a browser to get past it" + (pending ? "; " + plural(pending, "page is", "pages are") + " still waiting for a first copy" : "; the last good copy stays the baseline meanwhile")) + "</span></dd></div>";
+    }).join("") + '</dl><p class="note-strip">You are alerted once per site, and only if a block lasts ' + esc(plural(grace, "hour", "hours")) + ".</p></section>";
 }
 // Monitor names carry file details ("(XLSX, 2.81 MB)") and scope notes that
 // are noise in a sentence or a tooltip title.
@@ -3585,6 +3654,7 @@ function healthHero(health) {
   const tone = totals.failing ? "bad" : totals.stale || totals.inactive ? "warn" : "ok";
   const headline = totals.failing ? plural(totals.failing, "monitor failing", "monitors failing") + " of " + healthNumber(totals.monitors)
     : totals.stale ? plural(totals.stale, "monitor overdue", "monitors overdue") + " for a scan"
+    : totals.protected ? (Number(totals.monitors) - Number(totals.protected)) + " of " + healthNumber(totals.monitors) + " monitors healthy · " + plural(totals.protected, "retrying a bot check", "retrying bot checks")
     : "All " + healthNumber(totals.monitors) + " monitors healthy";
   const pending = state.pendingScan ? pendingWords(state.pendingScan) : null;
   const scans = healthMonitors().map(m => new Date(m.last_scan).getTime()).filter(Number.isFinite);
@@ -3900,11 +3970,12 @@ function openScanSchedule(ids) {
   renderScanPreview();
   $("scanScheduleDialog").showModal();
 }
-const FETCH_MODE_WORDS = { http: "Plain HTTP", auto: "Browser on bot checks", browser: "Browser every scan" };
+const FETCH_MODE_WORDS = { http: "Automatic", auto: "Automatic", browser: "Browser every scan" };
 function sourceLoading(source) {
   const s = source || {};
   return {
-    fetch_mode: ["http", "auto", "browser"].indexOf(s.fetch_mode) >= 0 ? s.fetch_mode : "http",
+    // "auto" (browser on bot checks) is now what every monitor does: shown as automatic.
+    fetch_mode: s.fetch_mode === "browser" ? "browser" : "http",
     browser_wait_seconds: Number.isInteger(s.browser_wait_seconds) ? s.browser_wait_seconds : 3,
     browser_wait_selector: String(s.browser_wait_selector || ""),
     browser_dismiss_cookies: s.browser_dismiss_cookies !== false,

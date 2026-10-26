@@ -142,6 +142,63 @@ class TestErrorAlertThreshold(unittest.TestCase):
         self.assertEqual(len(build_notifications({"events": [dict(event, error_runs=1)]})), 1)
         self.assertEqual(len(build_notifications({"error_alert_after_runs": 3, "events": [event]})), 1)
 
+    def test_bot_checks_alert_once_per_site_and_only_after_the_grace_period(self):
+        def bot(index, hours, runs=3, host="www.ffiec.gov"):
+            return {"event_id": f"b{index}", "event_type": "FETCH_ERROR", "url": f"https://{host}/forms/{index}.pdf",
+                    "timestamp": "2026-12-15T12:00:00+00:00", "error_since": iso(timedelta(hours=hours)),
+                    "error_runs": runs, "notification_id": f"episode-{index}",
+                    "evidence": {"error": "BotCheckError: Cloudflare bot check: it still asked for a check after 35 s"}}
+        report = {"error_alert_after_runs": 2, "events": [bot(index, 6) for index in range(43)]}
+        self.assertEqual(build_notifications(report), [])  # 6 h: still retrying, nobody is alerted
+        report = {"error_alert_after_runs": 2, "events": [bot(index, 30) for index in range(43)] + [bot(99, 30, host="other.test")]}
+        alerts = build_notifications(report)
+        self.assertEqual(len(alerts), 2)  # one per site, not 44
+        ffiec = next(alert for alert in alerts if "www.ffiec.gov" in alert["topic"])
+        self.assertIn("43 monitored pages wait", ffiec["summary"])
+        self.assertIn("Cloudflare", ffiec["summary"])
+        self.assertEqual(build_notifications(report)[0]["event_id"], alerts[0]["event_id"])  # stable: the ledger sends it once
+        self.assertEqual(build_notifications({"error_alert_after_runs": 5, "events": [bot(1, 30, runs=3)]}), [])
+
+    def test_a_bot_check_is_a_wait_not_a_failure_until_the_grace_period_ends(self):
+        message = "BotCheckError: Cloudflare bot check: it still asked for a check after 35 s"
+        config = {"sources": [source("fresh", "https://www.ffiec.gov/a"), source("long", "https://www.ffiec.gov/b")]}
+        latest = {"sources": {
+            "fresh": {"1": row("https://www.ffiec.gov/a", fetch_error=message, error_since=iso(timedelta(hours=3)))},
+            "long": {"2": row("https://www.ffiec.gov/b", fetch_error=message, error_since=iso(timedelta(hours=30)),
+                              normalized_hash="abc")},
+        }}
+        history = [run("fresh", timedelta(hours=1), fetch_error=1), run("long", timedelta(hours=1), fetch_error=1)]
+        result = health.build_health(config, latest, history, {}, NOW)
+        statuses = {monitor["source_id"]: monitor["status"] for monitor in result["monitors"]}
+        self.assertEqual(statuses, {"fresh": "protected", "long": "failing"})
+        self.assertEqual((result["totals"]["protected"], result["totals"]["failing"]), (1, 1))
+        self.assertEqual(result["protected"][0]["vendor"], "Cloudflare")
+        self.assertFalse(result["protected"][0]["has_baseline"])
+        self.assertIn("Blocked by a Cloudflare bot check for 30 h", result["failing"][0]["error"])
+
+    def test_a_refusal_is_a_site_block_only_when_several_pages_on_the_host_are_refused(self):
+        message = "AccessRefusedError: HTTP 403 refusal: refused this URL in a browser too"
+        config = {"sources": [source("a", "https://blocked.test/a"), source("b", "https://blocked.test/b"), source("c", "https://files.test/old.pdf")]}
+        latest = {"sources": {
+            "a": {"1": row("https://blocked.test/a", fetch_error=message, error_since=iso(timedelta(hours=2)))},
+            "b": {"2": row("https://blocked.test/b", fetch_error=message, error_since=iso(timedelta(hours=2)))},
+            "c": {"3": row("https://files.test/old.pdf", fetch_error=message, error_since=iso(timedelta(hours=2)))},
+        }}
+        result = health.build_health(config, latest, [], {}, NOW)
+        statuses = {monitor["source_id"]: monitor["status"] for monitor in result["monitors"]}
+        self.assertEqual(statuses, {"a": "protected", "b": "protected", "c": "failing"})
+        self.assertEqual(result["protected"][0]["reason"], "an HTTP 403 refusal")
+        self.assertIn("may have been removed or made private", result["failing"][0]["error"])
+
+        def refused(index, url, runs):
+            return {"event_id": f"r{index}", "event_type": "FETCH_ERROR", "url": url, "timestamp": "2026-12-15T12:00:00+00:00",
+                    "error_since": iso(timedelta(hours=2)), "error_runs": runs, "notification_id": f"episode-r{index}",
+                    "evidence": {"error": message}}
+        alerts = build_notifications({"error_alert_after_runs": 2, "events": [
+            refused(1, "https://blocked.test/a", 2), refused(2, "https://blocked.test/b", 2), refused(3, "https://files.test/old.pdf", 2)]})
+        # The blocked site waits out its grace period; the lone refused file alerts like any failing page.
+        self.assertEqual([alert["event_id"] for alert in alerts], ["episode-r3"])
+
     def test_threshold_is_validated(self):
         base = SourceConfig.from_dict({
             "id": "x", "name": "x", "regulator": "r", "seed_urls": ["https://a.test/"],

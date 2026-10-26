@@ -200,6 +200,65 @@ class TestPoliteClient(unittest.TestCase):
         with self.assertRaises(AccessBlocked):
             site.client(self.regulator, self.defaults).get("https://reg.example.org/a")
 
+    def test_a_bot_check_is_read_through_the_browser_once_per_host(self):
+        from regmon.browser_fetch import ChallengeNotPassed, Rendered
+
+        challenge = (403, {"content-type": "text/html", "cf-mitigated": "challenge"},
+                     b"<html><head><title>Just a moment...</title></head><body>cType: 'managed'</body></html>")
+        listing = b"<html><body><a href='/forms/ffiec031'>FFIEC 031</a></body></html>"
+        site = FakeSite({"https://reg.example.org/a": challenge, "https://reg.example.org/b": challenge})
+        loads = []
+        def browser(url, in_scope, cap):
+            loads.append(url)
+            self.assertTrue(in_scope("https://reg.example.org/x") and not in_scope("https://elsewhere.example.com/"))
+            return Rendered(listing, url, 0, "", body=listing, headers={"content-type": "text/html"}, challenge="Cloudflare")
+        client = PoliteClient(self.regulator, self.defaults, transport=site.transport, browser=browser, resolve_dns=False,
+                              monotonic=site.monotonic, sleep=site.sleep)
+        response = client.get("https://reg.example.org/a")
+        self.assertEqual((response.status, response.body, response.content_type), (200, listing, "text/html"))
+        self.assertEqual((loads, client.browser_loads), (["https://reg.example.org/a"], 1))
+        # A host whose check the browser cannot pass is not retried in the sweep.
+        def refuse(url, in_scope, cap):
+            loads.append(url)
+            raise ChallengeNotPassed("Cloudflare", b"")
+        client = PoliteClient(self.regulator, self.defaults, transport=site.transport, browser=refuse, resolve_dns=False,
+                              monotonic=site.monotonic, sleep=site.sleep)
+        for url in ("https://reg.example.org/a", "https://reg.example.org/b"):
+            with self.assertRaises(AccessBlocked):
+                client.get(url)
+        self.assertEqual(loads.count("https://reg.example.org/b"), 0)
+        # Without a browser the block names the bot check; an honest 403 stays a plain block.
+        client = site.client(self.regulator, self.defaults)
+        with self.assertRaisesRegex(AccessBlocked, "bot check"):
+            client.get("https://reg.example.org/a")
+
+    def test_a_bare_refusal_gets_one_browser_attempt_per_host(self):
+        from regmon.browser_fetch import Rendered
+
+        listing = b"<html><body><a href='/forms/ffiec031'>FFIEC 031</a></body></html>"
+        site = FakeSite({"https://reg.example.org/a": (403, {"content-type": "text/plain"}, b"Forbidden"),
+                         "https://reg.example.org/b": (403, {"content-type": "text/plain"}, b"Forbidden")})
+        answers = iter([Rendered(listing, "https://reg.example.org/a", 0, "", body=listing, headers={"content-type": "text/html"}),
+                        Rendered(b"", "https://reg.example.org/b", 0, "", status=403, body=b"Forbidden", headers={})])
+        loads = []
+        def browser(url, in_scope, cap):
+            loads.append(url)
+            return next(answers)
+        client = PoliteClient(self.regulator, self.defaults, transport=site.transport, browser=browser, resolve_dns=False,
+                              monotonic=site.monotonic, sleep=site.sleep)
+        self.assertEqual(client.get("https://reg.example.org/a").body, listing)
+        with self.assertRaisesRegex(AccessBlocked, "also in a browser"):
+            client.get("https://reg.example.org/b")
+        with self.assertRaises(AccessBlocked):
+            client.get("https://reg.example.org/b")
+        self.assertEqual(len(loads), 2)  # refused in the browser once: not tried again this sweep
+
+    def test_an_aws_waf_challenge_with_status_202_is_recognised(self):
+        from regmon.scout.net import is_challenge
+
+        self.assertEqual(is_challenge(202, {"x-amzn-waf-action": "challenge"}, b"<html></html>"), "AWS WAF")
+        self.assertIsNone(is_challenge(200, {}, b"<html><title>Just a moment...</title></html>"))
+
     def test_private_destinations_are_refused(self):
         config = config_for([{"id": "c", "type": "feed", "label": "F", "url": "https://reg.example.org/feed"}])
         site = FakeSite({})

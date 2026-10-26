@@ -62,8 +62,9 @@ class SourceConfig:
     # Used while running beside another tool (e.g. Visualping) to compare.
     shadow: bool = False
     # How HTML pages are fetched (regmon/browser_fetch.py). "http" (default) is a
-    # plain request; "browser" renders every HTML page in headless Chrome;
-    # "auto" renders only when the plain response is a bot-check page.
+    # plain request; "browser" renders every HTML page in headless Chrome. In
+    # either, a bot-check page sends the URL to the browser automatically, so
+    # "auto" (the old opt-in for that) now behaves like "http".
     fetch_mode: str = "http"
     browser_wait_seconds: int = 3
     browser_wait_selector: str = ""

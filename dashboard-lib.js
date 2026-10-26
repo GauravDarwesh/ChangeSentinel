@@ -864,7 +864,16 @@
     const ids = list => list.map(m => String(m.source_id));
     const failing = monitors.filter(m => m.status === "failing");
     if (failing.length) out.push({ tone: "bad", key: "failing", targets: ids(failing), text: many(failing.length, "monitor is", "monitors are") + " failing now: " + names(failing) + ". Their last good copy stays as the baseline." });
-    const recovered = monitors.filter(m => m.status !== "failing" && Number(m.failures_7d) > 0).sort((a, b) => b.failures_7d - a.failures_7d);
+    const protectedRows = Array.isArray(h.protected) ? h.protected : [];
+    const retrying = monitors.filter(m => m.status === "protected");
+    if (retrying.length) {
+      const hosts = Array.from(new Set(protectedRows.map(row => { try { return new URL(String(row.url)).hostname; } catch (_) { return ""; } }).filter(Boolean)));
+      const reason = (protectedRows[0] || {}).reason || "a " + ((protectedRows[0] || {}).vendor || "bot") + " bot check";
+      out.push({ tone: "info", key: "retrying", targets: ids(retrying), text: many(retrying.length, "monitor is", "monitors are") + " blocked by " + reason +
+        (hosts.length ? " on " + hosts.slice(0, 2).join(" and ") + (hosts.length > 2 ? " and " + (hosts.length - 2) + " more sites" : "") : "") +
+        ". Each scan opens them in a browser to get past it; nothing to do unless it lasts a day." });
+    }
+    const recovered = monitors.filter(m => m.status !== "failing" && m.status !== "protected" && Number(m.failures_7d) > 0).sort((a, b) => b.failures_7d - a.failures_7d);
     if (recovered.length) {
       const total = recovered.reduce((sum, m) => sum + Number(m.failures_7d || 0), 0);
       out.push({ tone: "warn", key: "recovered", targets: ids(recovered), text: names(recovered) + (recovered.length === 1 ? " had " : " had ") + many(total, "failed check", "failed checks") + " this week and " + (recovered.length === 1 ? "is" : "are") + " working again." });
@@ -912,9 +921,30 @@
     return out;
   }
   // The colour a monitor's light takes in the fleet matrix.
+  /* ---------- A site showing a bot check ----------
+   * The scan retries such a page in a browser and keeps its last good copy
+   * (regmon/botcheck.py). For BOT_CHECK_GRACE_HOURS it is "retrying
+   * automatically", not a failure; null when the page has no bot-check error.
+   */
+  const BOT_CHECK_GRACE_HOURS = 24;
+  // A bare refusal ("AccessRefusedError: HTTP 403 refusal …") is handled the
+  // same way when it covers a whole site; kind tells the two apart.
+  function botCheckWait(item, now = Date.now(), graceHours = BOT_CHECK_GRACE_HOURS) {
+    const message = String((item && item.fetch_error) || "");
+    const refusal = /^AccessRefusedError:\s*HTTP (\d{3})/.exec(message);
+    if (!refusal && !/^BotCheckError/.test(message)) return null;
+    const vendorMatch = /^BotCheckError:\s*(.+?) bot check\b/.exec(message);
+    const vendor = refusal ? "HTTP " + refusal[1] : vendorMatch ? vendorMatch[1] : "bot";
+    const since = item.error_since ? new Date(item.error_since).getTime() : NaN;
+    const hours = Number.isFinite(since) ? Math.max(0, (now - since) / 3600000) : null;
+    return { kind: refusal ? "refusal" : "check", vendor, reason: refusal ? "an HTTP " + refusal[1] + " refusal" : "a " + vendor + " bot check",
+      since: item.error_since || null, hours, waiting: hours === null || hours < graceHours, hasBaseline: !!item.normalized_hash };
+  }
+
   function healthLight(monitor, now = Date.now()) {
     const m = monitor || {};
     if (m.status === "failing") return "bad";
+    if (m.status === "protected") return "guard";
     if (m.status === "stale") return "stale";
     if (m.status === "inactive") return "quiet";
     if (m.last_change && (now - new Date(m.last_change).getTime()) <= 7 * 86400000) return "on";
@@ -3625,7 +3655,7 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe, pickRuleMatches, pickRuleFolder, pickRuleRequest,
     diffSequences, alignLines, changedWords, readWorkbook, workbookDiff, csvWorkbook, parseCsv, zipListing, zipFile, readDocx, columnName, cellRef,
     esc, nextScheduledScan, scanCycle, runColumns, conditionSuggestionsFrom, similarityTo, rankSimilar, similarStarts, reportCodes, importColumns, importFrequencyHours, importIsPaused, importRows, shadowCompare, shadowRows, IMPORT_ALIASES, validTag, parseLabels, workspaceOf, labelsOf, scopeMatches, organisePayload, payloadIsEmpty, SETTINGS_PRESETS, presetPayload, LABEL_MAX, scanSchedule, scanScheduleIsDefault, scanScheduleLabel, scanAllows, scanIsDue, scanSlots, scanSchedulePayload, settingsRequests, SETTINGS_MARKER, SCAN_WEEKDAYS, SCAN_BUSINESS_DAYS, SCAN_INTERVALS, slotColumns, columnCellState, pendingScan,
-    timelineModel, timelineGapWords, TIMELINE_KINDS, healthInsights, healthLight,
+    timelineModel, timelineGapWords, TIMELINE_KINDS, healthInsights, healthLight, botCheckWait, BOT_CHECK_GRACE_HOURS,
     fieldWindow, mergeCellStates, rowActivity, fieldCounts, fieldRows, FIELD_RANGES, FIELD_LENSES, regulatorFor, jurisdictionForHost, hostOf, pageKind, normalizeTrigger, workflowRunTrigger, fbm, formatDuration, SCAN_INTERVAL_HOURS,
     eventLabel, eventTone, EVENT_LABELS,
     parseUnifiedDiff, tokenize, wordDiff, similarity, redlineRows, redlineSummary, renderRedline, renderUnifiedDiff,

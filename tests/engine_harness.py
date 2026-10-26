@@ -78,6 +78,7 @@ class Sandbox:
         for name, value in paths.items():
             self._stack.enter_context(patch(f"regmon.engine.{name}", value))
         self._stack.enter_context(patch("regmon.engine.DEFAULTS", self.defaults))
+        self._stack.enter_context(patch.dict("regmon.engine._BROWSER_GIVEN_UP", clear=True))
         self._stack.enter_context(patch("regmon.engine.discover", side_effect=lambda *_a, **_k: list(self.discovered)))
         self._stack.enter_context(
             patch("regmon.engine.load_discovery_metadata", side_effect=lambda *_a, **_k: dict(self.discovery_meta))

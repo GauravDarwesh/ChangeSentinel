@@ -527,6 +527,8 @@ def sweep_regulator(regulator: Regulator, config: ScoutConfig, data_dir: Path, *
         "jurisdiction": regulator.jurisdiction, "sweep_id": sweep_id, "finished_at": iso(utc_now()),
         "status": status, "status_reason": reason,
         "requests": client.requests, "request_budget": client.max_requests,
+        # Pages that answered with a bot check and were read through a browser.
+        **({"browser_loads": client.browser_loads} if getattr(client, "browser_loads", 0) else {}),
         "seconds": round(time.monotonic() - started, 1), "time_budget_seconds": client.max_seconds,
         "robots": robots,
         "counts": {

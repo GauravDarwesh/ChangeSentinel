@@ -34,6 +34,10 @@ MARKERS = (
     # and a short subscribe or contact page may embed a reCAPTCHA/hCaptcha
     # widget. A real captcha wall also says so ("verify you are human").
     ("AWS WAF", re.compile(r"awswafcookiedomainlist|aws-waf-token|awswaf", re.I)),
+    # Kasada's challenge is a near-empty page that starts window.KPSDK and loads /…/ips.js.
+    ("Kasada", re.compile(r"window\.KPSDK|KPSDK\.start|/ips\.js\?", re.I)),
+    ("Akamai", re.compile(r"bm-verify|/_sec/cp_challenge|sec-if-cpt-container", re.I)),
+    ("PerimeterX", re.compile(r"_pxAppId|press (&|&amp;|and) hold", re.I)),
     ("Captcha", re.compile(r"cf-turnstile|please (verify|confirm) you are (a )?human|enable javascript and cookies to continue", re.I)),
 )
 # Titles that ordinary pages also use ("Blocked Persons List", "Access Denied"
@@ -48,8 +52,30 @@ def visible_text_length(html: str) -> int:
     return len(" ".join(_STRIP.sub(" ", html).split()))
 
 
-def detect(body: bytes | str | None, status: int | None = None) -> str | None:
-    """The challenge vendor when ``body`` is a bot-check page, else None."""
+def detect_headers(headers, status: int | None = None) -> str | None:
+    """The vendor when response headers announce a challenge (whatever the body says).
+
+    Cloudflare marks challenge responses ``cf-mitigated: challenge``; AWS WAF
+    sends ``x-amzn-waf-action: challenge`` (HTTP 202) or ``captcha`` (405);
+    Kasada answers a bare 403/429 carrying ``x-kpsdk-*`` headers.
+    """
+    lowered = {str(key).lower(): str(value).lower() for key, value in dict(headers or {}).items()}
+    if lowered.get("cf-mitigated") == "challenge":
+        return "Cloudflare"
+    if lowered.get("x-amzn-waf-action") in {"challenge", "captcha"}:
+        return "AWS WAF"
+    if status in {403, 429} and any(key.startswith("x-kpsdk-") for key in lowered):
+        return "Kasada"
+    if status == 403 and "x-datadome" in lowered:
+        return "DataDome"
+    return None
+
+
+def detect(body: bytes | str | None, status: int | None = None, headers=None) -> str | None:
+    """The challenge vendor when the response is a bot-check page, else None."""
+    from_headers = detect_headers(headers, status) if headers else None
+    if from_headers:
+        return from_headers
     if not body:
         return None
     html = body if isinstance(body, str) else body[:600_000].decode("utf-8", "replace")
@@ -70,3 +96,47 @@ def detect(body: bytes | str | None, status: int | None = None) -> str | None:
         if pattern.search(html):
             return vendor
     return None
+
+
+# ---- A site that keeps showing its check -------------------------------------
+# The engine records such a URL as a fetch problem whose message starts with
+# "BotCheckError" (regmon/engine.py), keeps the last good copy and retries every
+# scan. A check the browser cannot pass usually clears on its own (another
+# runner address, the site relaxing a rule), so for GRACE_HOURS it is shown as
+# "retrying automatically" and nobody is alerted; after that it is a failure,
+# alerted once per site rather than once per page (regmon/notify.py).
+#
+# A site that refuses automated requests outright (a bare HTTP 403, 406 or
+# 429 with no challenge page) is handled the same way, recorded as
+# "AccessRefusedError: HTTP 403 refusal …".
+GRACE_HOURS = 24
+_VENDOR_IN_MESSAGE = re.compile(r"^BotCheckError:\s*(.+?) bot check\b")
+_STATUS_IN_REFUSAL = re.compile(r"^AccessRefusedError:\s*HTTP (\d{3})")
+ERROR_PREFIXES = ("BotCheckError", "AccessRefusedError")
+
+
+def is_error(message) -> bool:
+    """Whether a recorded fetch error is a bot check or a refusal, not an outage."""
+    return str(message or "").startswith(ERROR_PREFIXES)
+
+
+def vendor_in(message) -> str:
+    text = str(message or "")
+    match = _VENDOR_IN_MESSAGE.match(text)
+    if match:
+        return match.group(1)
+    refusal = _STATUS_IN_REFUSAL.match(text)
+    return f"HTTP {refusal.group(1)}" if refusal else "bot"
+
+
+def reason(message) -> str:
+    """Plain words for what is blocking: "a Cloudflare bot check", "an HTTP 403 refusal"."""
+    text = str(message or "")
+    refusal = _STATUS_IN_REFUSAL.match(text)
+    if refusal:
+        return f"an HTTP {refusal.group(1)} refusal"
+    return f"a {vendor_in(text)} bot check"
+
+
+def within_grace(hours: float | None) -> bool:
+    return hours is None or hours < GRACE_HOURS

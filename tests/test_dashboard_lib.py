@@ -1081,3 +1081,17 @@ class TestHealthInsights(unittest.TestCase):
     def test_health_light_ranks_failing_over_a_recent_change(self):
         out = run_js("console.log(JSON.stringify([L.healthLight({status:'failing', last_change:'2026-10-24T00:00:00Z'}, Date.parse('2026-10-24T05:00:00Z')), L.healthLight({status:'healthy', failures_7d: 2}), L.healthLight({status:'healthy'})]));")
         self.assertEqual(out, ["bad", "warn", "ok"])
+
+    def test_a_bot_check_is_a_calm_wait_until_its_grace_period_ends(self):
+        out = run_js("""const now = Date.parse('2026-10-26T12:00:00Z');
+const err = 'BotCheckError: Cloudflare bot check: it still asked for a check after 35 s';
+console.log(JSON.stringify([
+  L.botCheckWait({fetch_error: err, error_since: '2026-10-26T06:00:00Z'}, now),
+  L.botCheckWait({fetch_error: err, error_since: '2026-10-25T06:00:00Z', normalized_hash: 'x'}, now),
+  L.botCheckWait({fetch_error: 'HTTPError: 503'}, now),
+  L.healthLight({status: 'protected'})
+]));""")
+        self.assertEqual((out[0]["vendor"], out[0]["hours"], out[0]["waiting"], out[0]["hasBaseline"]), ("Cloudflare", 6, True, False))
+        self.assertEqual((out[1]["waiting"], out[1]["hasBaseline"]), (False, True))
+        self.assertIsNone(out[2])
+        self.assertEqual(out[3], "guard")

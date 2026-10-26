@@ -86,6 +86,7 @@ jobs:
           from pathlib import Path
           from urllib.parse import urljoin
 
+          from regmon import botcheck
           from regmon.config import SourceConfig
           from regmon.discovery import in_scope, _redirect_key
           from regmon.safe_http import public_destinations_only
@@ -156,6 +157,10 @@ jobs:
                       )
                       if response.status_code < 400:
                           reachable += 1
+                      elif response.headers.get("cf-mitigated") == "challenge" or botcheck.detect(response.content, response.status_code):
+                          # A bot check means the site is up; the scan loads it in a browser.
+                          print("  ", url, "is behind a bot check; the scan will load it in a browser")
+                          reachable += 1
                   except Exception as exc:
                       print(url, "ERROR", type(exc).__name__, exc)
 
@@ -181,6 +186,9 @@ jobs:
       - name: Run monitoring engine
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          # Optional: the owner's own route out (office proxy or gateway) for
+          # sites that refuse cloud addresses; used only for browser loads.
+          CHANGESENTINEL_BROWSER_PROXY: ${{ secrets.CHANGESENTINEL_BROWSER_PROXY }}
           REGMON_ALLOW_MASS_REMOVAL: ${{ inputs.allow_mass_removal || '' }}
           # Scheduled runs scan only the monitors their cadence makes due
           # (regmon/schedule.py); a manual run scans everything it names unless

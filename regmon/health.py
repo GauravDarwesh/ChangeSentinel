@@ -19,7 +19,7 @@ import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from regmon import schedule
+from regmon import botcheck, schedule
 from regmon.fsutil import atomic_write_text
 
 HEALTH_SCHEMA_VERSION = 1
@@ -48,6 +48,15 @@ def _parse_time(value) -> datetime | None:
     except ValueError:
         return None
     return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+
+
+def _host(url) -> str:
+    from urllib.parse import urlsplit
+
+    try:
+        return (urlsplit(str(url or "")).hostname or "").lower()
+    except ValueError:
+        return ""
 
 
 def _iso(value: datetime | None) -> str | None:
@@ -93,7 +102,15 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
         entries.sort(key=lambda entry: str(entry.get("generated_at") or ""), reverse=True)
 
     week_ago = now - timedelta(days=7)
-    monitors, failing, stale, inactive, year_flags = [], [], [], [], []
+    monitors, failing, stale, inactive, year_flags, protected = [], [], [], [], [], []
+    # A refusal is the site blocking us only when several pages on that host
+    # are refused; one refused page is more likely removed or made private.
+    refused_pages: dict[str, int] = {}
+    for source_id in sources:
+        for row in (inventories.get(source_id) or {}).values():
+            if isinstance(row, dict) and row.get("active", True) and str(row.get("fetch_error") or "").startswith("AccessRefusedError"):
+                host = _host(row.get("canonical_url"))
+                refused_pages[host] = refused_pages.get(host, 0) + 1
     cadences: dict[str, tuple] = {}
     for source_id in sorted(sources):
         source = sources[source_id]
@@ -119,6 +136,7 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
         name = str(source.get("name") or source_id)
         status = "healthy"
         errors = []
+        waiting = []
         for row in rows:
             message = row.get("fetch_error") or row.get("extraction_error")
             if not message:
@@ -127,6 +145,27 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
             runs_failing = sum(
                 1 for run in runs if since and (_parse_time(run.get("generated_at")) or now) >= since
             ) if since else None
+            lone_refusal = (str(row.get("fetch_error") or "").startswith("AccessRefusedError")
+                            and refused_pages.get(_host(row.get("canonical_url")), 0) < 2)
+            if lone_refusal:
+                message = (f"{botcheck.vendor_in(row['fetch_error'])} for this page, also in a browser, while other pages on "
+                           f"{_host(row.get('canonical_url'))} are not refused: it may have been removed or made private")
+            elif row.get("fetch_error") and botcheck.is_error(row["fetch_error"]):
+                # A site showing a bot check (or refusing every page): the scan
+                # retries in a browser and keeps the last good copy, so it is a
+                # wait, not yet a failure.
+                hours = round((now - since).total_seconds() / 3600, 1) if since else None
+                vendor = botcheck.vendor_in(row["fetch_error"])
+                what = botcheck.reason(row["fetch_error"])
+                if botcheck.within_grace(hours):
+                    waiting.append({
+                        "source_id": source_id, "name": name, "url": row.get("canonical_url"),
+                        "vendor": vendor, "reason": what, "since": _iso(since), "hours": hours, "runs": runs_failing,
+                        "has_baseline": bool(row.get("normalized_hash")),
+                    })
+                    continue
+                message = (f"Blocked by {what} for {round(hours or 0)} h that the automatic browser "
+                           "could not get past; the last good copy is kept and every scan retries")
             errors.append({
                 "source_id": source_id,
                 "name": name,
@@ -141,9 +180,12 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
         # scanned four days ago is on time.
         cadence = schedule.Cadence.from_source(source)
         overdue_at = schedule.overdue_after(cadence, last_scan)
+        protected.extend(waiting)
         if errors:
             status = "failing"
             failing.extend(errors)
+        elif waiting:
+            status = "protected"
         elif last_scan is None or (overdue_at is not None and now > overdue_at):
             status = "stale"
             stale.append({"source_id": source_id, "name": name, "last_scan": _iso(last_scan),
@@ -254,12 +296,15 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
             "inactive_after_days": INACTIVE_AFTER_DAYS,
             "stale_after_hours": STALE_AFTER_HOURS,
             "overdue_grace_hours": int(schedule.OVERDUE_GRACE.total_seconds() // 3600),
+            "bot_check_grace_hours": botcheck.GRACE_HOURS,
         },
         "totals": {
             "monitors": len(monitors),
             "pages": sum(monitor["pages"] for monitor in monitors),
             "healthy": statuses.count("healthy"),
             "failing": statuses.count("failing"),
+            # Monitors whose only problem is a bot check still being retried.
+            "protected": statuses.count("protected"),
             "stale": statuses.count("stale"),
             "inactive": statuses.count("inactive"),
             "year_bound": len(year_flags),
@@ -269,6 +314,7 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
         "last_30_days": window(30),
         "daily": series,
         "failing": failing,
+        "protected": sorted(protected, key=lambda item: (item.get("since") or "", item.get("source_id"), item.get("url") or "")),
         "stale": stale,
         "inactive": inactive,
         "year_bound": year_flags,
