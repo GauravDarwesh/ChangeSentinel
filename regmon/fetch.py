@@ -11,24 +11,27 @@ from urllib.parse import urljoin, urlsplit, urlunsplit
 from regmon.discovery import canonical
 
 from regmon.safe_http import public_destinations_only
-from regmon.security import REDIRECT_STATUSES, USER_AGENT, DNSResolutionError, retry_delay, validate_public_http_url
+from regmon import botcheck
+from regmon.security import BROWSER_HEADERS, REDIRECT_STATUSES, USER_AGENT, DNSResolutionError, retry_delay, validate_public_http_url
 
 RETRYABLE = {408, 425, 429, 500, 502, 503, 504}
 MAX_REDIRECTS = 5
-# Challenge pages (Cloudflare, Akamai, captcha walls) usually arrive as 403/429/503.
-# Their body is kept, capped, so the engine can recognise and save them.
-CHALLENGE_STATUSES = {401, 403, 429, 503}
+# Challenge pages (Cloudflare, Akamai, captcha walls) usually arrive as 403/429/503;
+# AWS WAF's CAPTCHA as 405, and some firewalls refuse with 406. Their body is
+# kept, capped, so the engine can recognise and save them.
+CHALLENGE_STATUSES = {401, 403, 405, 406, 429, 503}
 MAX_ERROR_BODY_BYTES = 2 * 1024 * 1024
 
 
 class HTTPStatusError(requests.HTTPError):
     """An HTTP error status, with the response body when it may be a challenge page."""
 
-    def __init__(self, message: str, status_code: int, content_type: str = "", body: bytes = b""):
+    def __init__(self, message: str, status_code: int, content_type: str = "", body: bytes = b"", headers: dict | None = None):
         super().__init__(message)
         self.status_code = status_code
         self.content_type = content_type
         self.body = body
+        self.headers = dict(headers or {})
 
 
 def _redirect_key(url: str) -> str:
@@ -47,6 +50,8 @@ class FetchResult:
     raw_hash: str
     body: bytes
     not_modified: bool = False
+    # A challenge announced only in the headers (AWS WAF answers 202 with one).
+    challenge: str = ""
 
 
 def _content_length(headers: dict) -> int | None:
@@ -89,9 +94,10 @@ def fetch(
     excluded_prefixes: tuple[str, ...] | list[str] | None = None,
     excluded_urls: tuple[str, ...] | list[str] | None = None,
     max_bytes: int | None = None,
+    browser_headers: bool = False,
 ) -> FetchResult:
     last_error = None
-    headers = {"User-Agent": USER_AGENT}
+    headers = dict(BROWSER_HEADERS) if browser_headers else {"User-Agent": USER_AGENT}
     if etag:
         headers["If-None-Match"] = etag
     if last_modified:
@@ -170,7 +176,7 @@ def fetch(
                 visited.add(target_key)
                 current_url = target
                 # Validators apply to the original response, not an unrelated redirect.
-                request_headers = {"User-Agent": headers["User-Agent"]}
+                request_headers = {key: value for key, value in headers.items() if key not in {"If-None-Match", "If-Modified-Since"}}
         except DNSResolutionError as exc:
             last_error = exc
             if attempt == attempts:
@@ -204,16 +210,21 @@ def fetch(
 
         if response.status_code >= 400:
             body = b""
-            if response.status_code in CHALLENGE_STATUSES and "html" in response.headers.get("content-type", "").lower():
+            response_headers = {str(key).lower(): str(value) for key, value in response.headers.items()}
+            announced = botcheck.detect_headers(response_headers, response.status_code)
+            content_type = response.headers.get("content-type", "").lower()
+            if response.status_code in CHALLENGE_STATUSES and ("html" in content_type or not content_type or announced):
                 try:
                     body = _read_body(response, MAX_ERROR_BODY_BYTES, current_url)
                 except Exception:
                     body = b""
             response.close()
             exc = HTTPStatusError(f"HTTP {response.status_code} for {current_url}", response.status_code,
-                                  response.headers.get("content-type", ""), body)
+                                  response.headers.get("content-type", ""), body, response_headers)
             last_error = exc
-            if response.status_code not in RETRYABLE or attempt == attempts:
+            # A challenge (Kasada answers 429) is not rate limiting: retrying it
+            # only repeats the challenge, so it goes straight to the engine.
+            if response.status_code not in RETRYABLE or attempt == attempts or announced:
                 raise exc
             time.sleep(retry_delay(response, backoff_seconds * attempt))
             continue
@@ -232,6 +243,7 @@ def fetch(
             raw_hash=hashlib.sha256(body).hexdigest(),
             body=body,
             not_modified=False,
+            challenge=botcheck.detect_headers({str(k).lower(): str(v) for k, v in response.headers.items()}, response.status_code) or "",
         )
 
     raise last_error or RuntimeError("fetch failed")

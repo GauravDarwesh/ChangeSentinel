@@ -176,6 +176,29 @@ class TestErrorAlertThreshold(unittest.TestCase):
         self.assertFalse(result["protected"][0]["has_baseline"])
         self.assertIn("Blocked by a Cloudflare bot check for 30 h", result["failing"][0]["error"])
 
+    def test_a_refusal_is_a_site_block_only_when_several_pages_on_the_host_are_refused(self):
+        message = "AccessRefusedError: HTTP 403 refusal: refused this URL in a browser too"
+        config = {"sources": [source("a", "https://blocked.test/a"), source("b", "https://blocked.test/b"), source("c", "https://files.test/old.pdf")]}
+        latest = {"sources": {
+            "a": {"1": row("https://blocked.test/a", fetch_error=message, error_since=iso(timedelta(hours=2)))},
+            "b": {"2": row("https://blocked.test/b", fetch_error=message, error_since=iso(timedelta(hours=2)))},
+            "c": {"3": row("https://files.test/old.pdf", fetch_error=message, error_since=iso(timedelta(hours=2)))},
+        }}
+        result = health.build_health(config, latest, [], {}, NOW)
+        statuses = {monitor["source_id"]: monitor["status"] for monitor in result["monitors"]}
+        self.assertEqual(statuses, {"a": "protected", "b": "protected", "c": "failing"})
+        self.assertEqual(result["protected"][0]["reason"], "an HTTP 403 refusal")
+        self.assertIn("may have been removed or made private", result["failing"][0]["error"])
+
+        def refused(index, url, runs):
+            return {"event_id": f"r{index}", "event_type": "FETCH_ERROR", "url": url, "timestamp": "2026-12-15T12:00:00+00:00",
+                    "error_since": iso(timedelta(hours=2)), "error_runs": runs, "notification_id": f"episode-r{index}",
+                    "evidence": {"error": message}}
+        alerts = build_notifications({"error_alert_after_runs": 2, "events": [
+            refused(1, "https://blocked.test/a", 2), refused(2, "https://blocked.test/b", 2), refused(3, "https://files.test/old.pdf", 2)]})
+        # The blocked site waits out its grace period; the lone refused file alerts like any failing page.
+        self.assertEqual([alert["event_id"] for alert in alerts], ["episode-r3"])
+
     def test_threshold_is_validated(self):
         base = SourceConfig.from_dict({
             "id": "x", "name": "x", "regulator": "r", "seed_urls": ["https://a.test/"],

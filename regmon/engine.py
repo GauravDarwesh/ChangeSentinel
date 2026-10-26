@@ -565,6 +565,84 @@ def _host_of(url: str) -> str:
         return ""
 
 
+class AccessRefusedError(RuntimeError):
+    """The site refused the request outright (bare 403/406/429), also when asked as a browser."""
+
+
+# Bare refusals worth a second try: 403/406 often mean "not your user agent" or
+# "not your network"; 429 means slow down and is never pushed through a browser.
+REFUSAL_STATUSES = {403, 406, 429}
+
+
+def _challenge_result(exc: HTTPStatusError, vendor: str) -> FetchResult:
+    return FetchResult(exc.status_code, exc.content_type or "text/html", len(exc.body), None, None,
+                       hashlib.sha256(exc.body).hexdigest(), exc.body, challenge=vendor)
+
+
+def _after_refusal(url: str, source: SourceConfig, exc: HTTPStatusError, item: dict, now: str, fetch_options: dict) -> FetchResult:
+    """What to do when a site refuses a URL with no challenge page.
+
+    1. Ask once more the way an ordinary browser asks (its headers); many sites
+       refuse any agent that is not a browser.
+    2. Load it in the browser, which may also take the owner's own route out
+       (CHANGESENTINEL_BROWSER_PROXY) for sites that refuse cloud addresses.
+    3. Otherwise record an AccessRefusedError: the last good copy stays and the
+       next scan tries again (regmon/botcheck.py explains how it is reported).
+    A 429 is the site asking to slow down: it is recorded, never pushed harder.
+    """
+    from regmon import browser_fetch
+    from regmon.discovery import in_scope
+
+    host = _host_of(url)
+    status = exc.status_code
+    if status == 429:
+        raise AccessRefusedError(f"HTTP 429 refusal: {host} asked the scanner to slow down; "
+                                 "this URL keeps its last good copy and is tried again next scan")
+    try:
+        retried = fetch(url, **dict(fetch_options, browser_headers=True, attempts=1, etag=None, last_modified=None))
+    except HTTPStatusError as again:
+        vendor = botcheck.detect(again.body, again.status_code, again.headers)
+        if vendor:
+            return _challenge_result(again, vendor)
+        if again.status_code not in REFUSAL_STATUSES:
+            raise
+        status = again.status_code
+    else:
+        item["fetched_with"] = "browser headers"
+        return retried
+    if not browser_fetch.available():
+        raise AccessRefusedError(f"HTTP {status} refusal: {host} refuses automated requests and no browser is available")
+    with _BROWSER_GATE:
+        if _BROWSER_GIVEN_UP.get(host, 0) >= BROWSER_GIVE_UP_AFTER:
+            raise AccessRefusedError(f"HTTP {status} refusal: {host} refused the browser earlier in this scan; "
+                                     "this URL keeps its last good copy and is tried again next scan")
+        try:
+            rendered = browser_fetch.render(url, want="resource", in_scope=lambda target: in_scope(canonical(target), source),
+                                            max_bytes=int(DEFAULTS.get("max_response_bytes", 200 * 1024 * 1024)))
+        except browser_fetch.ChallengeNotPassed as challenge:
+            _BROWSER_GIVEN_UP[host] = _BROWSER_GIVEN_UP.get(host, 0) + 1
+            item["bot_check"] = capture_bot_check(item["url_id"], challenge.page or b"", challenge.vendor, now, "browser")
+            raise BotCheckError(str(challenge)) from challenge
+        except Exception as failure:
+            _BROWSER_GIVEN_UP[host] = _BROWSER_GIVEN_UP.get(host, 0) + 1
+            raise AccessRefusedError(f"HTTP {status} refusal: {host} refuses automated requests and the browser could not load it: "
+                                     f"{type(failure).__name__}: {failure}") from failure
+        if rendered.status in REFUSAL_STATUSES or rendered.status == 401:
+            _BROWSER_GIVEN_UP[host] = _BROWSER_GIVEN_UP.get(host, 0) + 1
+            raise AccessRefusedError(f"HTTP {rendered.status} refusal: {host} refused this URL in a browser too "
+                                     "(the site may block this network, or the file was removed or made private)")
+        _BROWSER_GIVEN_UP.pop(host, None)
+    body = rendered.body if rendered.body is not None else rendered.html
+    if rendered.status >= 400:
+        raise HTTPStatusError(f"HTTP {rendered.status} for {url} (loaded in a browser)", rendered.status, rendered.content_type, body)
+    item["rendered_by"] = "browser"
+    item["browser"] = {"blocked_requests": rendered.blocked, "consent": "", "final_url": rendered.final_url,
+                       "passed_check": rendered.challenge or f"HTTP {exc.status_code} refusal"}
+    headers = rendered.headers or {}
+    return FetchResult(rendered.status or 200, rendered.content_type, len(body), headers.get("etag") or None,
+                       headers.get("last-modified") or None, hashlib.sha256(body).hexdigest(), body)
+
+
 def _browser_pass(url: str, source: SourceConfig, result: FetchResult, item: dict, now: str) -> FetchResult:
     """Use a browser when the source asks for one or a bot check blocks the plain request.
 
@@ -577,9 +655,11 @@ def _browser_pass(url: str, source: SourceConfig, result: FetchResult, item: dic
     showing its check (the challenge page is saved first, and the last good
     copy stays the baseline).
     """
-    if result.not_modified or not _is_html(result.content_type, result.body):
+    announced = getattr(result, "challenge", "")
+    announced = announced if isinstance(announced, str) else ""
+    if result.not_modified or not (announced or _is_html(result.content_type, result.body)):
         return result
-    vendor = botcheck.detect(result.body, result.status_code)
+    vendor = announced or botcheck.detect(result.body, result.status_code)
     if source.fetch_mode != "browser" and not vendor:
         return result
     from regmon import browser_fetch
@@ -680,30 +760,33 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         item["html_baseline_forced"] = html_baseline_missing and not refresh_required
         item["file_baseline_forced"] = file_baseline_missing
         item["extractor_baseline_forced"] = extractor_baseline_missing
+        fetch_options = dict(
+            timeout=int(DEFAULTS.get("fetch_timeout_seconds", 30)),
+            attempts=int(DEFAULTS.get("fetch_attempts", 3)),
+            backoff_seconds=float(DEFAULTS.get("fetch_backoff_seconds", 2)),
+            etag=None if force_full_fetch else (old or {}).get("etag"),
+            last_modified=None if force_full_fetch else (old or {}).get("last_modified"),
+            allowed_domains=source.allowed_domains,
+            allowed_prefixes=source.allowed_prefixes,
+            allowed_urls=source.allowed_urls,
+            allowed_resource_prefixes=source.allowed_resource_prefixes,
+            excluded_prefixes=source.excluded_prefixes,
+            excluded_urls=source.excluded_urls,
+            max_bytes=int(DEFAULTS.get("max_response_bytes", 200 * 1024 * 1024)),
+        )
         try:
-            result = fetch(
-                url,
-                timeout=int(DEFAULTS.get("fetch_timeout_seconds", 30)),
-                attempts=int(DEFAULTS.get("fetch_attempts", 3)),
-                backoff_seconds=float(DEFAULTS.get("fetch_backoff_seconds", 2)),
-                etag=None if force_full_fetch else (old or {}).get("etag"),
-                last_modified=None if force_full_fetch else (old or {}).get("last_modified"),
-                allowed_domains=source.allowed_domains,
-                allowed_prefixes=source.allowed_prefixes,
-                allowed_urls=source.allowed_urls,
-                allowed_resource_prefixes=source.allowed_resource_prefixes,
-                excluded_prefixes=source.excluded_prefixes,
-                excluded_urls=source.excluded_urls,
-                max_bytes=int(DEFAULTS.get("max_response_bytes", 200 * 1024 * 1024)),
-            )
+            result = fetch(url, **fetch_options)
         except HTTPStatusError as exc:
-            # A challenge served with 403/429/503 is a bot check, not an outage;
-            # the browser gets one attempt at it.
-            vendor = botcheck.detect(exc.body, exc.status_code)
-            if not vendor:
+            # A challenge served with 403/405/429/503 is a bot check, not an
+            # outage; the browser gets one attempt at it. A bare refusal gets a
+            # retry with browser headers, then the browser too.
+            vendor = botcheck.detect(exc.body, exc.status_code, exc.headers)
+            if vendor:
+                result = _challenge_result(exc, vendor)
+            elif exc.status_code in REFUSAL_STATUSES:
+                result = _after_refusal(url, source, exc, item, now, fetch_options)
+            else:
                 raise
-            result = FetchResult(exc.status_code, exc.content_type, len(exc.body), None, None,
-                                 hashlib.sha256(exc.body).hexdigest(), exc.body)
         result = _browser_pass(url, source, result, item, now)
         item.update({
             "http_status": result.status_code,

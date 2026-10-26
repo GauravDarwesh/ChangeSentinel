@@ -63,6 +63,7 @@ jobs:
       - name: Sweep regulator channels
         id: sweep
         env:
+          CHANGESENTINEL_BROWSER_PROXY: ${{ secrets.CHANGESENTINEL_BROWSER_PROXY }}
           SCOUT_REGULATOR: ${{ inputs.regulator || 'all' }}
           SCOUT_TRIGGER: ${{ github.event_name == 'schedule' && 'scheduled' || 'manual' }}
         run: python -u -m regmon.scout sweep --regulator "$SCOUT_REGULATOR" --trigger "$SCOUT_TRIGGER"

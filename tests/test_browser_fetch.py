@@ -31,6 +31,24 @@ class DetectTests(unittest.TestCase):
                                          b"<script src='https://ct.captcha-delivery.com/c.js'></script></body></html>", 403), "DataDome")
         self.assertEqual(botcheck.detect(b"<html><body><script>window.awsWafCookieDomainList=[]</script></body></html>", 405), "AWS WAF")
 
+    def test_challenges_announced_in_headers_are_recognised(self):
+        self.assertEqual(botcheck.detect(b"", 403, {"cf-mitigated": "challenge"}), "Cloudflare")
+        self.assertEqual(botcheck.detect(b"<html></html>", 202, {"X-Amzn-Waf-Action": "challenge"}), "AWS WAF")
+        self.assertEqual(botcheck.detect(b"", 405, {"x-amzn-waf-action": "captcha"}), "AWS WAF")
+        self.assertEqual(botcheck.detect(b"", 429, {"x-kpsdk-ct": "abc", "x-kpsdk-r": "1-AA"}), "Kasada")
+        self.assertIsNone(botcheck.detect(b"", 200, {"x-kpsdk-ct": "abc"}))  # a passed Kasada session sends them too
+        self.assertIsNone(botcheck.detect(b"", 429, {"retry-after": "60"}))
+        self.assertEqual(botcheck.detect(b"<html><body><script>window.KPSDK={};KPSDK.start=1</script></body></html>", 429), "Kasada")
+        self.assertEqual(botcheck.detect(b"<html><body><div id='sec-if-cpt-container'></div><script src='/_sec/cp_challenge/ak.js'></script></body></html>", 403), "Akamai")
+        self.assertEqual(botcheck.detect(b"<html><body><p>Press &amp; Hold to confirm you are a human</p></body></html>", 403), "PerimeterX")
+
+    def test_errors_are_described_in_plain_words(self):
+        self.assertEqual(botcheck.reason("BotCheckError: Cloudflare bot check: it still asked"), "a Cloudflare bot check")
+        self.assertEqual(botcheck.reason("AccessRefusedError: HTTP 403 refusal: www.x.gov refused"), "an HTTP 403 refusal")
+        self.assertEqual(botcheck.vendor_in("AccessRefusedError: HTTP 429 refusal: slow down"), "HTTP 429")
+        self.assertTrue(botcheck.is_error("AccessRefusedError: HTTP 403 refusal"))
+        self.assertFalse(botcheck.is_error("HTTPError: HTTP 404"))
+
     def test_ordinary_pages_are_not(self):
         self.assertIsNone(botcheck.detect(REAL_PAGE_WITH_BEACON))
         self.assertIsNone(botcheck.detect(b"<html><head><title>Access Denied</title></head><body>You need to log in.</body></html>"))
@@ -51,6 +69,26 @@ class DetectTests(unittest.TestCase):
 
 
 class FetchBodyTests(unittest.TestCase):
+    def test_a_challenge_announced_in_headers_is_not_retried_and_keeps_its_headers(self):
+        response = MagicMock(status_code=429, headers={"content-type": "text/html", "x-kpsdk-ct": "abc"})
+        response.iter_content.return_value = [b"<html></html>"]
+        with patch("regmon.fetch.validate_public_http_url"), patch("regmon.fetch.requests.get", return_value=response) as get, \
+                patch("regmon.fetch.time.sleep") as sleep:
+            with self.assertRaises(HTTPStatusError) as caught:
+                fetch("https://example.test/policy", attempts=3, max_bytes=10_000_000)
+        self.assertEqual(get.call_count, 1)  # a Kasada 429 is a challenge, not rate limiting
+        sleep.assert_not_called()
+        self.assertEqual(caught.exception.headers.get("x-kpsdk-ct"), "abc")
+
+    def test_browser_headers_are_used_when_asked(self):
+        response = MagicMock(status_code=202, headers={"content-type": "text/html", "x-amzn-waf-action": "challenge"})
+        response.iter_content.return_value = [b"<html></html>"]
+        with patch("regmon.fetch.validate_public_http_url"), patch("regmon.fetch.requests.get", return_value=response) as get:
+            result = fetch("https://example.test/policy", attempts=1, max_bytes=10_000_000, browser_headers=True)
+        self.assertIn("Chrome/", get.call_args.kwargs["headers"]["User-Agent"])
+        self.assertEqual(result.challenge, "AWS WAF")
+
+
     def test_challenge_status_keeps_the_body(self):
         response = MagicMock(status_code=403, headers={"content-type": "text/html"})
         response.iter_content.return_value = [CLOUDFLARE]
@@ -188,6 +226,42 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(sum("earlier in this scan" in error for error in errors), 3)
         self.assertTrue(all(record.get("bot_check") for record in result["inventory"].values()))
 
+    def refused(self, *statuses):
+        """A fetch that answers each call with the next bare refusal status (then the last one)."""
+        calls = []
+        def side_effect(*_a, **kwargs):
+            calls.append(kwargs)
+            status = statuses[min(len(calls), len(statuses)) - 1]
+            if status == 200:
+                return ok(html("<p>Reporting deadline: 10 days.</p>"))
+            raise HTTPStatusError(f"HTTP {status}", status, "text/plain", b"Forbidden", {})
+        return side_effect, calls
+
+    def test_a_bare_refusal_is_retried_with_browser_headers_first(self):
+        side_effect, calls = self.refused(403, 200)
+        record, events, _files = self.scan_twice(SOURCE, side_effect, browser=False)
+        self.assertIsNone(record.get("fetch_error"))
+        self.assertEqual(record["fetched_with"], "browser headers")
+        self.assertTrue(calls[-1]["browser_headers"])
+
+    def test_a_refusal_that_persists_goes_to_the_browser_then_becomes_a_calm_error(self):
+        side_effect, _calls = self.refused(403, 403)
+        rendered = resource(html("<p>Reporting deadline: 12 days.</p>"), challenge="")
+        record, events, _files = self.scan_twice(SOURCE, side_effect, render=lambda *a, **k: rendered)
+        self.assertIn("CHANGED_URL", events)
+        self.assertEqual(record["browser"]["passed_check"], "HTTP 403 refusal")
+        record, _events, _files = self.scan_twice(SOURCE, side_effect, render=lambda *a, **k: resource(b"Forbidden", "text/html", 403, challenge=""))
+        self.assertTrue(record["fetch_error"].startswith("AccessRefusedError: HTTP 403 refusal"))
+        self.assertTrue(record["normalized_hash"])  # the last good copy stays
+        record, _events, _files = self.scan_twice(SOURCE, side_effect, browser=False)
+        self.assertIn("no browser is available", record["fetch_error"])
+
+    def test_a_429_is_never_pushed_harder(self):
+        side_effect, calls = self.refused(429)
+        record, _events, _files = self.scan_twice(SOURCE, side_effect)  # render would raise AssertionError if used
+        self.assertTrue(record["fetch_error"].startswith("AccessRefusedError: HTTP 429 refusal"))
+        self.assertFalse(any(call.get("browser_headers") for call in calls))
+
     def test_documents_are_never_rendered(self):
         pdf = ok(b"%PDF-1.4 not really", "application/pdf")
         with Sandbox(source=source(fetch_mode="browser")) as sandbox:
@@ -213,6 +287,31 @@ class SafetyTests(unittest.TestCase):
             self.assertTrue(browser_fetch._allowed(widget, "Document", in_scope, main_frame=False))
             self.assertFalse(browser_fetch._allowed(widget, "Document", in_scope, main_frame=True))
             self.assertFalse(browser_fetch._allowed("https://evil.test/frame", "Document", in_scope, main_frame=False))
+
+    def test_every_known_vendor_may_draw_its_widget_in_a_frame(self):
+        in_scope = lambda url: url.startswith("https://www.ffiec.gov/")
+        with patch("regmon.browser_fetch.validate_public_http_url"):
+            for widget in ("https://newassets.hcaptcha.com/captcha/v1/abc/static/hcaptcha.html", "https://geo.captcha-delivery.com/captcha/?x=1",
+                           "https://c.captcha-delivery.com/c.html", "https://www.google.com/recaptcha/api2/anchor?k=x",
+                           "https://www.recaptcha.net/recaptcha/api2/anchor", "https://client-api.arkoselabs.com/fc/gc/",
+                           "https://abc.token.awswaf.com/abc/challenge", "https://captcha.px-cdn.net/PX123/captcha.js"):
+                with self.subTest(widget=widget):
+                    self.assertTrue(browser_fetch._allowed(widget, "Document", in_scope, main_frame=False))
+                    self.assertFalse(browser_fetch._allowed(widget, "Document", in_scope, main_frame=True))
+            self.assertFalse(browser_fetch._allowed("https://www.google.com/search?q=x", "Document", in_scope, main_frame=False))
+            self.assertFalse(browser_fetch._allowed("https://nothcaptcha.com/x", "Document", in_scope, main_frame=False))
+
+    def test_the_owners_proxy_is_used_for_browser_loads_with_its_credentials_kept_out_of_the_command_line(self):
+        with patch.dict(os.environ, {"CHANGESENTINEL_BROWSER_PROXY": "http://owner:p%40ss@proxy.example.org:3128"}):
+            self.assertEqual(browser_fetch.proxy_setting(), ("http://proxy.example.org:3128", "owner", "p@ss"))
+            with patch("regmon.browser_fetch.subprocess.run", return_value=MagicMock(stdout="Chrome 141.0.1.2")):
+                arguments = browser_fetch.launch_arguments("/fake/chrome")
+        self.assertIn("--proxy-server=http://proxy.example.org:3128", arguments)
+        self.assertFalse(any("p@ss" in argument or "owner" in argument for argument in arguments))
+        with patch.dict(os.environ, {"CHANGESENTINEL_BROWSER_PROXY": "ftp://x"}), self.assertRaises(RuntimeError):
+            browser_fetch.proxy_setting()
+        with patch.dict(os.environ, {"CHANGESENTINEL_BROWSER_PROXY": ""}):
+            self.assertEqual(browser_fetch.proxy_setting(), ("", "", ""))
 
     def test_the_browser_presents_as_ordinary_chrome_with_one_profile(self):
         with patch("regmon.browser_fetch.subprocess.run", return_value=MagicMock(stdout="Google Chrome 141.0.7390.122\n")):
@@ -269,6 +368,28 @@ class SafetyTests(unittest.TestCase):
         self.assertEqual((first.challenge, first.status, first.body), ("Cloudflare", 200, BIG_PDF))
         self.assertIn("pdf", first.content_type)
         self.assertEqual((second.challenge, second.body), ("", PAGE))  # the clearance carried over
+
+    @unittest.skipUnless(os.environ.get("CHANGESENTINEL_BROWSER_TEST") and browser_fetch.available(), "set CHANGESENTINEL_BROWSER_TEST=1 to load pages in a real browser")
+    def test_a_real_browser_handles_other_vendors_and_the_owners_proxy(self):
+        from challenge_site import HCAPTCHA_HOST, PAGE, PDF as BIG_PDF, serve, serve_proxy
+
+        original = browser_fetch.launch_arguments
+        local = lambda binary: original(binary) + [f"--host-resolver-rules=MAP {HCAPTCHA_HOST} 127.0.0.1", "--proxy-bypass-list=<-loopback>"]
+        with serve() as (site, _widget, hits), patch("regmon.browser_fetch.validate_public_http_url"), \
+                patch.object(browser_fetch, "launch_arguments", local):
+            in_scope = lambda target: target.startswith(site + "/")
+            imperva = browser_fetch.render(site + "/imperva/x.pdf", want="resource", in_scope=in_scope)
+            waf = browser_fetch.render(site + "/waf/page", want="resource", in_scope=in_scope)
+            kasada = browser_fetch.render(site + "/kasada/x.pdf", want="resource", in_scope=in_scope)
+            blocked = browser_fetch.render(site + "/net/x.pdf", want="resource", in_scope=in_scope)
+            with serve_proxy() as (proxy_url, seen), patch.dict(os.environ, {"CHANGESENTINEL_BROWSER_PROXY": proxy_url}):
+                proxied = browser_fetch.render(site + "/net/x.pdf", want="resource", in_scope=in_scope)
+        self.assertEqual((imperva.challenge, imperva.body), ("Imperva", BIG_PDF))
+        self.assertEqual((waf.challenge, waf.body), ("AWS WAF", PAGE))
+        self.assertEqual((kasada.challenge, kasada.body), ("Kasada", BIG_PDF))
+        self.assertEqual(blocked.status, 403)
+        self.assertEqual((proxied.status, proxied.body), (200, BIG_PDF))
+        self.assertTrue(seen)
 
 
 class ConfigTests(unittest.TestCase):

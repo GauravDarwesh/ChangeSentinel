@@ -533,13 +533,27 @@ function isSuppressedMarkupOnly(entry) {
     && review.event_type === "HTML_SOURCE_CHANGED"
     && review.url && review.url === entry.url);
 }
+// A bot check, or a refusal that covers a whole site, is retried automatically.
+// One refused page on an otherwise working site is more likely removed or made
+// private, so it stays an ordinary problem (regmon/health.py does the same).
+function blockWait(item) {
+  const wait = L.botCheckWait(item);
+  if (!wait || wait.kind !== "refusal") return wait;
+  let host = "";
+  try { host = new URL(String(item.canonical_url || "")).hostname; } catch (_) { return null; }
+  const refused = (state.items || []).filter(other => {
+    if (!/^AccessRefusedError/.test(String(other.fetch_error || ""))) return false;
+    try { return new URL(String(other.canonical_url || "")).hostname === host; } catch (_) { return false; }
+  }).length;
+  return refused >= 2 ? wait : null;
+}
 // Bot-check attempts the scan retries by itself are not changes or problems to
 // review: Health lists them under "Retrying automatically". Once a block has
 // outlasted its grace period the events show again, as failures.
 function isRoutineBotCheck(event, itemsById) {
   if (!event || event.event_type !== "FETCH_ERROR") return false;
-  if (!/^BotCheckError/.test(String((event.evidence && event.evidence.error) || ""))) return false;
-  const wait = L.botCheckWait(itemsById.get(event.url_id) || {});
+  if (!/^(BotCheckError|AccessRefusedError)/.test(String((event.evidence && event.evidence.error) || ""))) return false;
+  const wait = blockWait(itemsById.get(event.url_id) || {});
   return !(wait && !wait.waiting);
 }
 function changeLogEntries() {
@@ -607,13 +621,13 @@ function eventHeadline(event) {
 }
 function itemStatus(item) {
   if (item.pending_registration) return { label: "Awaiting first scan", tone: "pending", kind: "pending" };
-  const botCheck = L.botCheckWait(item);
+  const botCheck = blockWait(item);
   if (botCheck) {
     // A bot check is retried automatically every scan; it only becomes a
     // problem once it has outlasted the grace period.
     return botCheck.waiting
       ? { label: botCheck.hasBaseline ? "Protected site · retrying" : "Protected site · first copy pending", tone: "pending", kind: "pending" }
-      : { label: "Blocked by bot check", tone: "problem", kind: "error" };
+      : { label: botCheck.kind === "refusal" ? "Blocked by the site" : "Blocked by bot check", tone: "problem", kind: "error" };
   }
   if (item.fetch_error || item.extraction_error || (item.http_status && Number(item.http_status) >= 400)) {
     return { label: item.fetch_error ? "Couldn't fetch" : item.extraction_error ? "Couldn't read content" : "HTTP " + item.http_status, tone: "problem", kind: "error" };
@@ -1167,7 +1181,7 @@ function timelineEntries(prefs) {
   // its error event reaches the change log.
   (state.items || []).forEach(item => {
     if (item.first_seen && !seenNew.has(item.url_id)) add(item, "new", item.first_seen, { id: "first:" + item.url_id, type: "NEW_URL", summary: "", relevant: null });
-    const waitingOnCheck = L.botCheckWait(item);
+    const waitingOnCheck = blockWait(item);
     if ((item.fetch_error || item.extraction_error) && item.last_checked && !seenBad.has(item.url_id) && !(waitingOnCheck && waitingOnCheck.waiting)) {
       add(item, "bad", item.last_checked, { id: "problem:" + item.url_id, type: item.fetch_error ? "FETCH_ERROR" : "EXTRACTION_ERROR", summary: String(item.fetch_error || item.extraction_error), relevant: null });
     }
@@ -3216,9 +3230,11 @@ function renderDetails(item) {
     ["Loaded with", FETCH_MODE_WORDS[sourceLoading(source).fetch_mode] + (item.rendered_by === "browser" && item.browser ? " · last render blocked " + plural(Number(item.browser.blocked_requests || 0), "request", "requests") + (item.browser.consent ? ", cookie banner: " + item.browser.consent.replace(/^\w+:/, "") : "") : "") +
       (sourceLoading(source).browser_actions.length ? " · " + plural(sourceLoading(source).browser_actions.length, "recorded step", "recorded steps") : "") +
       (item.visual && Number.isFinite(Number(item.visual.changed_ratio)) && item.visual.changed_ratio !== null ? " · last screenshot " + (Number(item.visual.changed_ratio) * 100).toFixed(1) + "% different" : "")],
-    ["Bot check", item.browser && item.browser.passed_check && !item.fetch_error ? item.browser.passed_check + " check passed automatically in a browser on the last scan"
+    ["Bot check", item.browser && item.browser.passed_check && !item.fetch_error ? (/^HTTP \d/.test(item.browser.passed_check)
+        ? "Plain requests were refused (" + item.browser.passed_check.replace(/ refusal$/, "") + "); loaded in a browser on the last scan"
+        : item.browser.passed_check + " check passed automatically in a browser on the last scan")
       : item.bot_check ? item.bot_check.vendor + " challenge, " + fmt(item.bot_check.captured_at) + " (" + (item.bot_check.via === "browser" ? "still shown in the browser" : "plain request") + ")" +
-        (L.botCheckWait(item) && L.botCheckWait(item).waiting ? " · retrying automatically every scan" : "") : "None seen"],
+        (blockWait(item) && blockWait(item).waiting ? " · retrying automatically every scan" : "") : "None seen"],
     ["Fetch error", item.fetch_error || "None"], ["Extraction error", item.extraction_error || "None"],
     ["Text fingerprint (SHA-256)", item.normalized_hash || "Not available", true], ["Saved HTML fingerprint", item.html_hash || "Not available", true],
     ["Response fingerprint", item.raw_hash || "Not available", true],
@@ -3331,7 +3347,7 @@ function healthProtected(sourceId) {
 }
 function protectedWords(rows) {
   const first = rows[0] || {};
-  return "Behind a " + (first.vendor || "bot") + " check · retrying automatically every scan" + (first.has_baseline === false ? " · first copy pending" : " · last good copy kept");
+  return "Blocked by " + (first.reason || "a " + (first.vendor || "bot") + " bot check") + " · retrying automatically every scan" + (first.has_baseline === false ? " · first copy pending" : " · last good copy kept");
 }
 function healthFailures(sourceId) {
   const rows = state.health && Array.isArray(state.health.failing) ? state.health.failing : [];
@@ -3591,8 +3607,8 @@ function protectedSheet(rows) {
     Array.from(sites.entries()).map(([host, group]) => {
       const since = group.map(row => row.since).filter(Boolean).sort()[0];
       const pending = group.filter(row => row.has_baseline === false).length;
-      return "<div><dt>" + esc(host) + "</dt><dd>" + esc(plural(group.length, "page", "pages") + " behind a " + (group[0].vendor || "bot") + " check" + (since ? ", since " + relativeTime(since).toLowerCase() : "")) +
-        '<br><span class="health-sub">' + esc("Each scan opens these in a browser to get past the check" + (pending ? "; " + plural(pending, "page is", "pages are") + " still waiting for a first copy" : "; the last good copy stays the baseline meanwhile")) + "</span></dd></div>";
+      return "<div><dt>" + esc(host) + "</dt><dd>" + esc(plural(group.length, "page", "pages") + " blocked by " + (group[0].reason || "a " + (group[0].vendor || "bot") + " bot check") + (since ? ", since " + relativeTime(since).toLowerCase() : "")) +
+        '<br><span class="health-sub">' + esc("Each scan opens these in a browser to get past it" + (pending ? "; " + plural(pending, "page is", "pages are") + " still waiting for a first copy" : "; the last good copy stays the baseline meanwhile")) + "</span></dd></div>";
     }).join("") + '</dl><p class="note-strip">You are alerted once per site, and only if a block lasts ' + esc(plural(grace, "hour", "hours")) + ".</p></section>";
 }
 // Monitor names carry file details ("(XLSX, 2.81 MB)") and scope notes that

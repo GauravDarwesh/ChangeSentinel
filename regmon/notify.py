@@ -194,6 +194,43 @@ def _hours_between(start, end) -> float | None:
     return max(0.0, (last - first).total_seconds() / 3600)
 
 
+def _operational_alert(event: dict, threshold: int, seen: set) -> dict | None:
+    """The once-per-episode alert for a page that keeps failing, or None while it is too early."""
+    # A failure alerts only once it has persisted for the configured number
+    # of consecutive scans, so a one-off timeout on a regulator site is
+    # recorded (and visible in data/health.json) without an alert. The
+    # notification ID is per episode, so it alerts once.
+    try:
+        failing_runs = int(event.get("error_runs") or threshold)
+    except (TypeError, ValueError):
+        failing_runs = threshold
+    if failing_runs < threshold:
+        return None
+    error = (event.get("evidence") or {}).get("error", "Unknown operational error")
+    # Operational events get a unique ID per observation (so evidence is never
+    # overwritten), but an unchanged, persistent error must alert once per
+    # episode, not on every scheduled run. The engine supplies an onset-based
+    # notification ID; older reports fall back to the event ID.
+    event_id = event.get("event_id")
+    notification_id = str(event.get("notification_id") or event_id)
+    if notification_id in seen:
+        return None
+    seen.add(notification_id)
+    return {
+        "event_id": notification_id, "source_event_id": event_id,
+        "kind": event.get("event_type"), "url": event.get("url"),
+        "topic": "Monitoring operational alert",
+        "summary": (
+            "The current run could not fully process a monitored regulator resource."
+            if failing_runs <= 1 else
+            f"A monitored regulator resource has failed {failing_runs} consecutive scans"
+            + (f" (since {event.get('error_since')})." if event.get("error_since") else ".")
+        ),
+        "reason": error, "impact": "The previous known-good baseline was preserved.",
+        "priority": 3, "tags": ["warning", "monitoring"],
+    }
+
+
 def _bot_check_alerts(events: list[dict], threshold: int, seen: set) -> list[dict]:
     """One operational alert per site whose bot check has outlasted the grace period.
 
@@ -210,6 +247,15 @@ def _bot_check_alerts(events: list[dict], threshold: int, seen: set) -> list[dic
         sites.setdefault(host, []).append(event)
     alerts = []
     for host, group in sorted(sites.items()):
+        refusals_only = all(str((event.get("evidence") or {}).get("error") or "").startswith("AccessRefusedError") for event in group)
+        if refusals_only and len({event.get("url") for event in group}) < 2:
+            # One refused page on a site is more likely a removed or private
+            # file than a block: it alerts like any other failing page.
+            for event in group:
+                alert = _operational_alert(event, threshold, seen)
+                if alert:
+                    alerts.append(alert)
+            continue
         since = min(str(event.get("error_since") or event.get("timestamp") or "") for event in group)
         latest = max(str(event.get("timestamp") or "") for event in group)
         hours = _hours_between(since, latest)
@@ -220,13 +266,13 @@ def _bot_check_alerts(events: list[dict], threshold: int, seen: set) -> list[dic
         if notification_id in seen:
             continue
         seen.add(notification_id)
-        vendor = botcheck.vendor_in((group[0].get("evidence") or {}).get("error"))
+        what = botcheck.reason((group[0].get("evidence") or {}).get("error"))
         pages = len({event.get("url") for event in group})
         alerts.append({
             "event_id": notification_id, "source_event_id": group[0].get("event_id"),
             "kind": "FETCH_ERROR", "url": group[0].get("url"),
             "topic": f"{host} is blocking automatic checks",
-            "summary": (f"{host} has shown a {vendor} bot check for {round(hours)} hours that the automatic browser could not get past. "
+            "summary": (f"{host} has answered with {what} for {round(hours)} hours that the automatic browser could not get past. "
                         f"{pages} monitored {'page waits' if pages == 1 else 'pages wait'} with the last good copy kept, and every scan tries again."),
             "reason": str((group[0].get("evidence") or {}).get("error") or "Bot check"),
             "impact": ("Changes on these pages can be missed while the block lasts. Nothing needs doing if it clears on its own; "
@@ -406,42 +452,13 @@ def build_notifications(report: dict) -> list[dict]:
                 "priority": 3, "tags": ["eyes", "regulatory"],
             })
         elif kind == "FETCH_ERROR" and botcheck.is_error((event.get("evidence") or {}).get("error")):
-            # Bot checks are retried automatically and collected per site
-            # below: one alert for the site, and only once the block has lasted.
+            # Bot checks and refusals are retried automatically and collected
+            # per site below: one alert for the site, once the block has lasted.
             bot_checks.append(event)
         elif kind in {"FETCH_ERROR", "EXTRACTION_ERROR"}:
-            # A failure alerts only once it has persisted for the configured
-            # number of consecutive scans, so a one-off timeout on a regulator
-            # site is recorded (and visible in data/health.json) without an
-            # alert. The notification ID is per episode, so it alerts once.
-            try:
-                failing_runs = int(event.get("error_runs") or threshold)
-            except (TypeError, ValueError):
-                failing_runs = threshold
-            if failing_runs < threshold:
-                continue
-            error = (event.get("evidence") or {}).get("error", "Unknown operational error")
-            # Operational events get a unique ID per observation (so evidence is
-            # never overwritten), but an unchanged, persistent error must alert
-            # once per episode, not on every scheduled run. The engine supplies an
-            # onset-based notification ID; older reports fall back to the event ID.
-            notification_id = str(event.get("notification_id") or event_id)
-            if notification_id in seen:
-                continue
-            seen.add(notification_id)
-            output.append({
-                "event_id": notification_id, "source_event_id": event_id,
-                "kind": kind, "url": event.get("url"),
-                "topic": "Monitoring operational alert",
-                "summary": (
-                    "The current run could not fully process a monitored regulator resource."
-                    if failing_runs <= 1 else
-                    f"A monitored regulator resource has failed {failing_runs} consecutive scans"
-                    + (f" (since {event.get('error_since')})." if event.get("error_since") else ".")
-                ),
-                "reason": error, "impact": "The previous known-good baseline was preserved.",
-                "priority": 3, "tags": ["warning", "monitoring"],
-            })
+            alert = _operational_alert(event, threshold, seen)
+            if alert:
+                output.append(alert)
 
     output.extend(_bot_check_alerts(bot_checks, threshold, seen))
 

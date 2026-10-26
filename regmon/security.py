@@ -7,6 +7,13 @@ from urllib.parse import urlsplit
 
 REDIRECT_STATUSES = {301, 302, 303, 307, 308}
 USER_AGENT = "Mozilla/5.0 (compatible; ChangeSentinel/0.6; +https://github.com/GauravDarwesh/ChangeSentinel)"
+# The headers an ordinary browser sends, for one retry when a site refuses the
+# monitor's own agent outright (the page reader does the same).
+BROWSER_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,application/pdf;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+}
 
 
 class DNSResolutionError(ValueError):

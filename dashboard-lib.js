@@ -868,8 +868,8 @@
     const retrying = monitors.filter(m => m.status === "protected");
     if (retrying.length) {
       const hosts = Array.from(new Set(protectedRows.map(row => { try { return new URL(String(row.url)).hostname; } catch (_) { return ""; } }).filter(Boolean)));
-      const vendor = (protectedRows[0] || {}).vendor || "bot";
-      out.push({ tone: "info", key: "retrying", targets: ids(retrying), text: many(retrying.length, "monitor is", "monitors are") + " behind a " + vendor + " check" +
+      const reason = (protectedRows[0] || {}).reason || "a " + ((protectedRows[0] || {}).vendor || "bot") + " bot check";
+      out.push({ tone: "info", key: "retrying", targets: ids(retrying), text: many(retrying.length, "monitor is", "monitors are") + " blocked by " + reason +
         (hosts.length ? " on " + hosts.slice(0, 2).join(" and ") + (hosts.length > 2 ? " and " + (hosts.length - 2) + " more sites" : "") : "") +
         ". Each scan opens them in a browser to get past it; nothing to do unless it lasts a day." });
     }
@@ -927,13 +927,18 @@
    * automatically", not a failure; null when the page has no bot-check error.
    */
   const BOT_CHECK_GRACE_HOURS = 24;
+  // A bare refusal ("AccessRefusedError: HTTP 403 refusal …") is handled the
+  // same way when it covers a whole site; kind tells the two apart.
   function botCheckWait(item, now = Date.now(), graceHours = BOT_CHECK_GRACE_HOURS) {
     const message = String((item && item.fetch_error) || "");
-    if (!/^BotCheckError/.test(message)) return null;
+    const refusal = /^AccessRefusedError:\s*HTTP (\d{3})/.exec(message);
+    if (!refusal && !/^BotCheckError/.test(message)) return null;
     const vendorMatch = /^BotCheckError:\s*(.+?) bot check\b/.exec(message);
+    const vendor = refusal ? "HTTP " + refusal[1] : vendorMatch ? vendorMatch[1] : "bot";
     const since = item.error_since ? new Date(item.error_since).getTime() : NaN;
     const hours = Number.isFinite(since) ? Math.max(0, (now - since) / 3600000) : null;
-    return { vendor: vendorMatch ? vendorMatch[1] : "bot", since: item.error_since || null, hours, waiting: hours === null || hours < graceHours, hasBaseline: !!item.normalized_hash };
+    return { kind: refusal ? "refusal" : "check", vendor, reason: refusal ? "an HTTP " + refusal[1] + " refusal" : "a " + vendor + " bot check",
+      since: item.error_since || null, hours, waiting: hours === null || hours < graceHours, hasBaseline: !!item.normalized_hash };
   }
 
   function healthLight(monitor, now = Date.now()) {

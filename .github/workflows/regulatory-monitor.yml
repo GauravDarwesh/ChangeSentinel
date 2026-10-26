@@ -186,6 +186,9 @@ jobs:
       - name: Run monitoring engine
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          # Optional: the owner's own route out (office proxy or gateway) for
+          # sites that refuse cloud addresses; used only for browser loads.
+          CHANGESENTINEL_BROWSER_PROXY: ${{ secrets.CHANGESENTINEL_BROWSER_PROXY }}
           REGMON_ALLOW_MASS_REMOVAL: ${{ inputs.allow_mass_removal || '' }}
           # Scheduled runs scan only the monitors their cadence makes due
           # (regmon/schedule.py); a manual run scans everything it names unless

@@ -64,12 +64,22 @@ MAX_RESOURCE_BYTES = 200 * 1024 * 1024
 READ_CHUNK_BYTES = 4 * 1024 * 1024  # IO.read answers stay well under pydoll's 10 MB message limit
 _LOCK = threading.Lock()  # One browser at a time: renders are rare and heavy.
 
-# Hosts whose frames carry a bot check's widget. Frames only: the page itself
-# can never be navigated to them.
+# Where bot checks draw their widgets, from each vendor's own Content-Security-
+# Policy guidance (the frame-src entries a protected site must allow). A host
+# matches itself and its subdomains. Frames only: the page itself can never be
+# navigated to them.
 CHALLENGE_FRAME_HOSTS = frozenset({
-    "challenges.cloudflare.com",                          # Cloudflare Turnstile / managed challenge
-    "geo.captcha-delivery.com", "ct.captcha-delivery.com",  # DataDome
+    "challenges.cloudflare.com",            # Cloudflare Turnstile / managed challenge
+    "captcha-delivery.com",                 # DataDome (*.captcha-delivery.com)
+    "hcaptcha.com",                         # hCaptcha (Imperva, others)
+    "recaptcha.net", "recaptcha.google.com",  # Google reCAPTCHA
+    "arkoselabs.com",                       # Arkose Labs
+    "awswaf.com",                           # AWS WAF CAPTCHA
+    "perimeterx.net", "px-cdn.net", "px-cloud.net", "pxchk.net", "px-client.net",  # HUMAN / PerimeterX
+    "frcapi.com",                           # Friendly Captcha
 })
+# reCAPTCHA also frames from www.google.com, but only under /recaptcha/.
+CHALLENGE_FRAME_PREFIXES = ("https://www.google.com/recaptcha/",)
 # Cookies a vendor sets once the browser has passed its check.
 CLEARANCE_COOKIES = ("cf_clearance", "datadome")
 # Response headers that describe the original transfer, not the body we pass on.
@@ -221,6 +231,26 @@ def profile_dir() -> str:
     return _PROFILE[0]
 
 
+def proxy_setting() -> tuple[str, str, str]:
+    """(server, user, password) from CHANGESENTINEL_BROWSER_PROXY, or empty strings.
+
+    The owner's own route out (an office proxy, a gateway on their network) for
+    sites that refuse cloud addresses; only browser loads use it.
+    """
+    from urllib.parse import unquote
+
+    value = os.environ.get("CHANGESENTINEL_BROWSER_PROXY", "").strip()
+    if not value:
+        return "", "", ""
+    if "://" not in value:
+        value = "http://" + value
+    parts = urlsplit(value)
+    if parts.scheme not in {"http", "https", "socks5"} or not parts.hostname:
+        raise RuntimeError("CHANGESENTINEL_BROWSER_PROXY must look like http://host:port (optionally user:password@)")
+    server = f"{parts.scheme}://{parts.hostname}" + (f":{parts.port}" if parts.port else "")
+    return server, unquote(parts.username or ""), unquote(parts.password or "")
+
+
 def launch_arguments(binary: str) -> list[str]:
     arguments = ["--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage", "--no-first-run",
                  "--disable-extensions", "--disable-background-networking", "--mute-audio", "--window-size=1366,900",
@@ -228,6 +258,9 @@ def launch_arguments(binary: str) -> list[str]:
     agent = user_agent(binary)
     if agent:
         arguments.append(f"--user-agent={agent}")
+    server = proxy_setting()[0]
+    if server:
+        arguments.append(f"--proxy-server={server}")
     return arguments
 
 
@@ -236,6 +269,13 @@ def _host(url: str) -> str:
         return (urlsplit(url).hostname or "").lower()
     except ValueError:
         return ""
+
+
+def is_challenge_frame(url: str) -> bool:
+    host = _host(url)
+    if any(host == known or host.endswith("." + known) for known in CHALLENGE_FRAME_HOSTS):
+        return True
+    return url.startswith(CHALLENGE_FRAME_PREFIXES)
 
 
 def _allowed(url: str, resource_type: str, in_scope, main_frame: bool = True) -> bool:
@@ -249,7 +289,7 @@ def _allowed(url: str, resource_type: str, in_scope, main_frame: bool = True) ->
     if resource_type == "Document" and in_scope is not None and not in_scope(url):
         # A bot check draws its widget in a frame from the vendor's host;
         # blocking that frame means the check can never pass.
-        return not main_frame and _host(url) in CHALLENGE_FRAME_HOSTS
+        return not main_frame and is_challenge_frame(url)
     return True
 
 
@@ -360,7 +400,7 @@ async def _drive(page: _Page, url: str, *, want: str = "dom", wait_seconds: floa
             if "html" in content_type.lower() or not content_type:
                 answer = await page.send("Fetch.getResponseBody", {"requestId": request_id})
                 body = base64.b64decode(answer.get("body") or "") if answer.get("base64Encoded") else str(answer.get("body") or "").encode("utf-8")
-                vendor = botcheck.detect(body, status)
+                vendor = botcheck.detect(body, status, {str(h.get("name", "")).lower(): str(h.get("value", "")) for h in headers})
                 if vendor:
                     # Leave the check alone so its script can run.
                     if vendor not in seen:
@@ -403,8 +443,27 @@ async def _drive(page: _Page, url: str, *, want: str = "dom", wait_seconds: floa
         host = _host(url)
         return any(c.get("name") in CLEARANCE_COOKIES and host.endswith(str(c.get("domain", "")).lstrip(".")) for c in cookies)
 
+    _server, proxy_user, proxy_password = proxy_setting()
+    auth_answered: set[str] = set()
+
+    async def on_auth(params):
+        # Only the configured proxy gets credentials, and only once per request;
+        # a site's own login prompt is cancelled.
+        request_id = params.get("requestId")
+        challenge = params.get("authChallenge") or {}
+        if challenge.get("source") == "Proxy" and proxy_user and request_id not in auth_answered:
+            auth_answered.add(request_id)
+            answer = {"response": "ProvideCredentials", "username": proxy_user, "password": proxy_password}
+        else:
+            answer = {"response": "CancelAuth"}
+        try:
+            await page.send("Fetch.continueWithAuth", {"requestId": request_id, "authChallengeResponse": answer})
+        except Exception:
+            pass
+
     await page.on("Fetch.requestPaused", on_paused)
-    await page.send("Fetch.enable", {"patterns": [
+    await page.on("Fetch.authRequired", on_auth)
+    await page.send("Fetch.enable", {"handleAuthRequests": True, "patterns": [
         {"urlPattern": "*", "requestStage": "Request"},
         {"urlPattern": "*", "resourceType": "Document", "requestStage": "Response"},
     ]})

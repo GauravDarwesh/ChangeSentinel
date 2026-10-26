@@ -36,7 +36,8 @@ RETRYABLE_SERVER = {500, 502, 504}
 DEFERRING = {429, 503}
 BLOCKING = {401, 403, 451}
 ROBOTS_MAX_BYTES = 512_000
-CHALLENGE_STATUSES = {403, 429, 503}
+CHALLENGE_STATUSES = {403, 405, 406, 429, 503}
+REFUSALS = {403, 406}  # a bare refusal gets one browser attempt per host
 CHALLENGE_MAX_BYTES = 600_000  # enough of an error body to recognise a bot check
 
 
@@ -139,15 +140,19 @@ def retry_after_seconds(value, now: datetime) -> float | None:
 
 
 def is_challenge(status: int | None, headers: dict, body: bytes) -> str | None:
-    """The bot-check vendor when an error response is a challenge page, else None."""
-    if status not in CHALLENGE_STATUSES:
-        return None
+    """The bot-check vendor when a response is a challenge, else None.
+
+    Headers count whatever the status (AWS WAF challenges with a 202); a page
+    body only on the statuses challenges use.
+    """
     from regmon import botcheck
 
-    vendor = botcheck.detect(body, status)
-    if vendor:
-        return vendor
-    return "Cloudflare" if str(headers.get("cf-mitigated", "")).lower() == "challenge" else None
+    announced = botcheck.detect_headers(headers, status)
+    if announced:
+        return announced
+    if status not in CHALLENGE_STATUSES:
+        return None
+    return botcheck.detect(body, status)
 
 
 def browser_loader():
@@ -333,6 +338,10 @@ class PoliteClient:
                 visited.add(target)
                 current = target
                 continue
+            if status in REFUSALS and self.browser is not None and host not in self.browser_refused:
+                # A bare refusal is often aimed at non-browser clients (or at
+                # cloud addresses, which the browser's own route may avoid).
+                return self._through_browser(current, host, status, f"HTTP {status} refusal", cap)
             if status in BLOCKING:
                 raise AccessBlocked(f"{host} refused access (HTTP {status})", status=status)
             if status is None or status >= 400:
@@ -343,9 +352,9 @@ class PoliteClient:
     def _through_browser(self, url: str, host: str, status: int, vendor: str, cap: int) -> Response:
         """Load a URL that answered with a bot check in the browser; the check runs there."""
         if self.browser is None:
-            raise AccessBlocked(f"{host} showed a {vendor} bot check (HTTP {status}) and no browser is available to get past it", status=status)
+            raise AccessBlocked(f"{host} answered with {vendor if vendor.startswith('HTTP') else 'a ' + vendor + ' bot check'} (HTTP {status}) and no browser is available to get past it", status=status)
         if host in self.browser_refused:
-            raise AccessBlocked(f"{host} kept showing its {vendor} bot check to the browser earlier in this sweep", status=status)
+            raise AccessBlocked(f"{host} kept blocking the browser earlier in this sweep ({vendor})", status=status)
         self._spend(host)
         self.browser_loads += 1
         try:
@@ -355,6 +364,9 @@ class PoliteClient:
                 self.browser_refused.add(host)
                 raise AccessBlocked(f"{host} showed a {vendor} bot check that the browser could not get past", status=status) from exc
             raise FetchFailed(f"Browser load of {url} failed: {type(exc).__name__}: {exc}", status=status) from exc
+        if rendered.status in BLOCKING | REFUSALS | {429}:
+            self.browser_refused.add(host)
+            raise AccessBlocked(f"{host} refused access (HTTP {rendered.status}), also in a browser", status=rendered.status)
         if rendered.status >= 400:
             raise FetchFailed(f"HTTP {rendered.status} for {url} (loaded in a browser)", status=rendered.status)
         response_headers = {str(k).lower(): str(v) for k, v in (rendered.headers or {}).items()}
