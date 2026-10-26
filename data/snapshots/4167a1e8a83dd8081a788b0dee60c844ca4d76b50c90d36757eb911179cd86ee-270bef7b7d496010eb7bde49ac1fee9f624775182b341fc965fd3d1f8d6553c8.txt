@@ -1,0 +1,319 @@
+Board of Governors of the Federal Reserve System OMB Number 7100–0213 Federal Deposit Insurance Corporation Office of the Comptroller of the Currency Approval expires September 30, 2027 Page 1 of 10 Federal Financial Institutions Examination Council Country Exposure Report for U.S. Branches and Agencies of Foreign Banks—FFIEC 019 Month / Day / Year Report at the close of business This report is required to be filed by U.S. branches and agencies of foreign banks pursuant to authority contained in the following statutes: Board of Governors of the Federal Reserve System—Sections 7 and 13 of the International Banking Act (12 U.S.C. §§ 3105, 3108); Federal Deposit Insurance Corporation—Section 7 of the Federal Deposit Insurance Act (12 U.S.C. § 1817);
+and Office of the Comptroller of the Currency—the National Bank Act, as amended (12 U.S.C. § 161).
+The Federal Reserve System, the Federal Deposit Insurance Corporation, and the Office of the Comptroller of the Currency consider individual office information reported on this form to be exempt from public disclosure under Section (b)(8) of the Freedom of Information Act (5 U.S.C. § 552(b)(8)) and will not voluntarily disclose such information to the public.
+Name, title, and telephone number of person to whom inquiries regarding this report may be directed: Name Title Area Code / Phone Number Name of Reporting Institution City State Zip Code I, Name Title an authorized officer of the U.S. branch or agency named, hereby certify on the day of , , that this report had been examined by me and is true and complete to the best of my knowledge and belief.
+Signature of Authorized Officer Title Day Month Year Public reporting burden for this collection of information is estimated to average 10 hours per response, including the time for reviewing instructions, searching existing data sources, gathering and maintaining the data needed, and completing and reviewing the collection of information. A Federal agency may not conduct or sponsor, and an organization (or a person) is not required to respond to a collection of information, unless it displays a currently valid OMB control number. Send comments regarding this burden estimate or any other aspect of the collection of information, including suggestions for reducing this burden, to Secretary, Board of Governors of the Federal Reserve System, 20th and C Streets, NW, Washington, DC 20551; and to the Office of Management and Budget, Paperwork Reduction Project (7100–0213), Washington, DC 20503.
+09/2024
+FFIEC 019
+Page 2 of 10
+To be completed for the home country and other countries to which adjusted exposure (as calculated for column 4) is greater than or equal to $20 million.
+Report U.S. Dollar Amounts in Millions
+| Country › Name | Country › Name | Country › Code | (Column 1) Total Direct Claims on Foreign Residents | Adjustment for Guarantees and Other Indirect Claims › (Column 2) Claims in Column 1 on Borrowers with a Head Office or Guarantor in Another Country | Adjustment for Guarantees and Other Indirect Claims › (Column 3) Guarantees and Other Indirect Claims for which Country Listed is Country of Head Office or Guarantor | Adjusted Claims on Foreign Residents › (Column 4) Total Adjusted Claims (Column 1 – 2 + 3) | Adjusted Claims on Foreign Residents › (Column 5) Claims on Related Non- U.S. Offices of the Reporter Included in Column 4 | Adjusted Claims on Foreign Residents › (Column 6) Total Adjusted Claims on Unrelated Foreign Borrowers Columns (Column 4 – 5) | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 7) Foreign Public | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 8) Unrelated Foreign Banks | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 9) Other Unrelated Foreign Residents | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 10) One Year or Less | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 11) More than One Year | Commitments › (Column 12) Commercial and Standby Letters of Credit and Legally Binding Loan Commitments |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CEB1 | 9005 | 9207 | MV96 | MV97 | MV98 | MV99 | MW00 | MW01 | MW02 | MW03 | MW04 | MW05 | MW06 | MW07 |
+| Home Country | | | | | | | | | | | | | | |
+| CEBA | 9005 | 9207 | MV96 | MV97 | MV98 | MV99 | MW00 | MW01 | MW02 | MW03 | MW04 | MW05 | MW06 | MW07 |
+| Foreign Countries:1 Europe Albania | | 151 05 | | | | | | | | | | | | |
+| Andorra | | 10103 | | | | | | | | | | | | |
+| Armenia | | 16519 | | | | | | | | | | | | |
+| Austria | | 10189 | | | | | | | | | | | | |
+| Azerbaijan | | 16527 | | | | | | | | | | | | |
+| Bank of International Settlements | | 13307 | | | | | | | | | | | | |
+| Belarus | | 16209 | | | | | | | | | | | | |
+| Belgium | | 10251 | | | | | | | | | | | | |
+| Bosnia and Herzegovina | | 14109 | | | | | | | | | | | | |
+| Bulgaria | | 15202 | | | | | | | | | | | | |
+| Croatia | | 14214 | | | | | | | | | | | | |
+| Cyprus | | 10405 | | | | | | | | | | | | |
+| Czech Republic | | 15288 | | | | | | | | | | | | |
+| Denmark | | 10502 | | | | | | | | | | | | |
+| Estonia | | 15407 | | | | | | | | | | | | |
+| European Central Bank | | 13501 | | | | | | | | | | | | |
+| Faroe Islands | | 10618 | | | | | | | | | | | | |
+| Finland | | 10707 | | | | | | | | | | | | |
+| France | | 10804 | | | | | | | | | | | | |
+| Georgia | | 16535 | | | | | | | | | | | | |
+(2 blank entry rows)
+1. The United States is not to be reported as one of the foreign countries. Do not report any countries for which Column 4 is less than $20 million.
+03/2022
+FFIEC 019
+Page 3 of 10 Report U.S. Dollar Amounts in Millions
+| Country › Name | Country › Name | Country › Code | (Column 1) Total Direct Claims on Foreign Residents | Adjustment for Guarantees and Other Indirect Claims › (Column 2) Claims in Column 1 on Borrowers with a Head Office or Guarantor in Another Country | Adjustment for Guarantees and Other Indirect Claims › (Column 3) Guarantees and Other Indirect Claims for which Country Listed is Country of Head Office or Guarantor | Adjusted Claims on Foreign Residents › (Column 4) Total Adjusted Claims (Column 1 – 2 + 3) | Adjusted Claims on Foreign Residents › (Column 5) Claims on Related Non- U.S. Offices of the Reporter Included in Column 4 | Adjusted Claims on Foreign Residents › (Column 6) Total Adjusted Claims on Unrelated Foreign Borrowers Columns (Column 4 – 5) | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 7) Foreign Public | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 8) Unrelated Foreign Banks | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 9) Other Unrelated Foreign Residents | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 10) One Year or Less | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 11) More than One Year | Commitments › (Column 12) Commercial and Standby Letters of Credit and Legally Binding Loan Commitments |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CEBA | 9005 | 9207 | MV96 | MV97 | MV98 | MV99 | MW00 | MW01 | MW02 | MW03 | MW04 | MW05 | MW06 | MW07 |
+| Europe—Continued Germany | | 11002 | | | | | | | | | | | | |
+| Gibraltar | | 11088 | | | | | | | | | | | | |
+| Greece | | 11207 | | | | | | | | | | | | |
+| Greenland | | 10545 | | | | | | | | | | | | |
+| Guernsey | | 13006 | | | | | | | | | | | | |
+| Holy See | | 13102 | | | | | | | | | | | | |
+| Hungary | | 15504 | | | | | | | | | | | | |
+| Iceland | | 11304 | | | | | | | | | | | | |
+| Ireland | | 11401 | | | | | | | | | | | | |
+| Isle of Man | | 13008 | | | | | | | | | | | | |
+| Italy | | 11509 | | | | | | | | | | | | |
+| Jersey | | 13007 | | | | | | | | | | | | |
+| Kazakhstan | | 16543 | | | | | | | | | | | | |
+| Kosovo | | 13471 | | | | | | | | | | | | |
+| Kyrgyzstan | | 16551 | | | | | | | | | | | | |
+| Latvia | | 15601 | | | | | | | | | | | | |
+| Liechtenstein | | 11606 | | | | | | | | | | | | |
+| Lithuania | | 15709 | | | | | | | | | | | | |
+| Luxembourg | | 11703 | | | | | | | | | | | | |
+| Macedonia | | 14419 | | | | | | | | | | | | |
+| Malta | | 11819 | | | | | | | | | | | | |
+| Moldova | | 16306 | | | | | | | | | | | | |
+| Monaco | | 12009 | | | | | | | | | | | | |
+| Montenegro | | 13625 | | | | | | | | | | | | |
+| Netherlands | | 12106 | | | | | | | | | | | | |
+| Norway | | 12203 | | | | | | | | | | | | |
+| Poland | | 15768 | | | | | | | | | | | | |
+| Portugal | | 12319 | | | | | | | | | | | | |
+| Romania | | 15806 | | | | | | | | | | | | |
+| Russia | | 16101 | | | | | | | | | | | | |
+| San Marino | | 12408 | | | | | | | | | | | | |
+(1 blank entry rows)
+03/2022
+FFIEC 019
+Page 4 of 10 Report U.S. Dollar Amounts in Millions
+| Country › Name | Country › Name | Country › Code | (Column 1) Total Direct Claims on Foreign Residents | Adjustment for Guarantees and Other Indirect Claims › (Column 2) Claims in Column 1 on Borrowers with a Head Office or Guarantor in Another Country | Adjustment for Guarantees and Other Indirect Claims › (Column 3) Guarantees and Other Indirect Claims for which Country Listed is Country of Head Office or Guarantor | Adjusted Claims on Foreign Residents › (Column 4) Total Adjusted Claims (Column 1 – 2 + 3) | Adjusted Claims on Foreign Residents › (Column 5) Claims on Related Non- U.S. Offices of the Reporter Included in Column 4 | Adjusted Claims on Foreign Residents › (Column 6) Total Adjusted Claims on Unrelated Foreign Borrowers Columns (Column 4 – 5) | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 7) Foreign Public | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 8) Unrelated Foreign Banks | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 9) Other Unrelated Foreign Residents | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 10) One Year or Less | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 11) More than One Year | Commitments › (Column 12) Commercial and Standby Letters of Credit and Legally Binding Loan Commitments |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CEBA | 9005 | 9207 | MV96 | MV97 | MV98 | MV99 | MW00 | MW01 | MW02 | MW03 | MW04 | MW05 | MW06 | MW07 |
+| Europe—Continued Serbia | | 13218 | | | | | | | | | | | | |
+| Slovakia | | 15318 | | | | | | | | | | | | |
+| Slovenia | | 14338 | | | | | | | | | | | | |
+| Spain | | 12505 | | | | | | | | | | | | |
+| Sweden | | 12602 | | | | | | | | | | | | |
+| Switzerland | | 12688 | | | | | | | | | | | | |
+| Tajikistan | | 16578 | | | | | | | | | | | | |
+| Turkey | | 12807 | | | | | | | | | | | | |
+| Turkmenistan | | 16616 | | | | | | | | | | | | |
+| Ukraine | | 16403 | | | | | | | | | | | | |
+| United Kingdom | | 13005 | | | | | | | | | | | | |
+| Uzbekistan | | 16705 | | | | | | | | | | | | |
+| Latin America Argentina | | 30104 | | | | | | | | | | | | |
+| Belize | | 35718 | | | | | | | | | | | | |
+| Bolivia | | 30201 | | | | | | | | | | | | |
+| Brazil | | 30309 | | | | | | | | | | | | |
+| Chile | | 30406 | | | | | | | | | | | | |
+| Colombia | | 30503 | | | | | | | | | | | | |
+| Costa Rica | | 30589 | | | | | | | | | | | | |
+| Ecuador | | 31003 | | | | | | | | | | | | |
+| El Salvador | | 31089 | | | | | | | | | | | | |
+| Falkland Islands | | 36307 | | | | | | | | | | | | |
+| French Guiana | | 36404 | | | | | | | | | | | | |
+| Guatemala | | 31208 | | | | | | | | | | | | |
+| Guyana | | 31305 | | | | | | | | | | | | |
+| Honduras | | 31488 | | | | | | | | | | | | |
+| Mexico | | 31704 | | | | | | | | | | | | |
+| Nicaragua | | 31801 | | | | | | | | | | | | |
+| Panama | | 31887 | | | | | | | | | | | | |
+| Paraguay | | 32107 | | | | | | | | | | | | |
+(2 blank entry rows)
+03/2022
+FFIEC 019
+Page 5 of 10 Report U.S. Dollar Amounts in Millions
+| Country › Name | Country › Name | Country › Code | (Column 1) Total Direct Claims on Foreign Residents | Adjustment for Guarantees and Other Indirect Claims › (Column 2) Claims in Column 1 on Borrowers with a Head Office or Guarantor in Another Country | Adjustment for Guarantees and Other Indirect Claims › (Column 3) Guarantees and Other Indirect Claims for which Country Listed is Country of Head Office or Guarantor | Adjusted Claims on Foreign Residents › (Column 4) Total Adjusted Claims (Column 1 – 2 + 3) | Adjusted Claims on Foreign Residents › (Column 5) Claims on Related Non- U.S. Offices of the Reporter Included in Column 4 | Adjusted Claims on Foreign Residents › (Column 6) Total Adjusted Claims on Unrelated Foreign Borrowers Columns (Column 4 – 5) | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 7) Foreign Public | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 8) Unrelated Foreign Banks | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 9) Other Unrelated Foreign Residents | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 10) One Year or Less | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 11) More than One Year | Commitments › (Column 12) Commercial and Standby Letters of Credit and Legally Binding Loan Commitments |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CEBA | 9005 | 9207 | MV96 | MV97 | MV98 | MV99 | MW00 | MW01 | MW02 | MW03 | MW04 | MW05 | MW06 | MW07 |
+| Latin America—Continued Peru | | 32204 | | | | | | | | | | | | |
+| Suriname | | 37702 | | | | | | | | | | | | |
+| Uruguay | | 32603 | | | | | | | | | | | | |
+| Venezuela | | 32719 | | | | | | | | | | | | |
+| Caribbean Anguilla | | 30228 | | | | | | | | | | | | |
+| Antigua and Barbuda | | 35203 | | | | | | | | | | | | |
+| Aruba | | 35254 | | | | | | | | | | | | |
+| Bahamas | | 35319 | | | | | | | | | | | | |
+| Barbados | | 30155 | | | | | | | | | | | | |
+| Bermuda | | 35602 | | | | | | | | | | | | |
+| Bonaire, St. Eustatius and Saba | | 36161 | | | | | | | | | | | | |
+| Cayman Islands | | 36137 | | | | | | | | | | | | |
+| Cuba | | 30708 | | | | | | | | | | | | |
+| Curacao | | 36188 | | | | | | | | | | | | |
+| Dominica | | 36218 | | | | | | | | | | | | |
+| Dominican Republic | | 30805 | | | | | | | | | | | | |
+| Eastern Caribbean Central Bank | | 35416 | | | | | | | | | | | | |
+| Grenada | | 36706 | | | | | | | | | | | | |
+| Guadeloupe (and smaller French islands) | | 36803 | | | | | | | | | | | | |
+| Haiti | | 31402 | | | | | | | | | | | | |
+| Jamaica | | 31607 | | | | | | | | | | | | |
+| Martinique | | 37001 | | | | | | | | | | | | |
+| Montserrat | | 37109 | | | | | | | | | | | | |
+| St. Martin and St. Barthelemy | | 36471 | | | | | | | | | | | | |
+| St. Kitts and Nevis | | 37303 | | | | | | | | | | | | |
+| St. Lucia | | 37508 | | | | | | | | | | | | |
+| St. Maarten | | 36196 | | | | | | | | | | | | |
+| St. Vincent and the Grenadines | | 37605 | | | | | | | | | | | | |
+| Trinidad and Tobago | | 32409 | | | | | | | | | | | | |
+| Turks and Caicos Islands | | 37818 | | | | | | | | | | | | |
+| Virgin Islands, British | | 35807 | | | | | | | | | | | | |
+(2 blank entry rows)
+03/2022
+FFIEC 019
+Page 6 of 10 Report U.S. Dollar Amounts in Millions
+| Country › Name | Country › Name | Country › Code | (Column 1) Total Direct Claims on Foreign Residents | Adjustment for Guarantees and Other Indirect Claims › (Column 2) Claims in Column 1 on Borrowers with a Head Office or Guarantor in Another Country | Adjustment for Guarantees and Other Indirect Claims › (Column 3) Guarantees and Other Indirect Claims for which Country Listed is Country of Head Office or Guarantor | Adjusted Claims on Foreign Residents › (Column 4) Total Adjusted Claims (Column 1 – 2 + 3) | Adjusted Claims on Foreign Residents › (Column 5) Claims on Related Non- U.S. Offices of the Reporter Included in Column 4 | Adjusted Claims on Foreign Residents › (Column 6) Total Adjusted Claims on Unrelated Foreign Borrowers Columns (Column 4 – 5) | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 7) Foreign Public | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 8) Unrelated Foreign Banks | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 9) Other Unrelated Foreign Residents | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 10) One Year or Less | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 11) More than One Year | Commitments › (Column 12) Commercial and Standby Letters of Credit and Legally Binding Loan Commitments |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CEBA | 9005 | 9207 | MV96 | MV97 | MV98 | MV99 | MW00 | MW01 | MW02 | MW03 | MW04 | MW05 | MW06 | MW07 |
+| Asia Afghanistan | | 40401 | | | | | | | | | | | | |
+| Bahrain | | 40703 | | | | | | | | | | | | |
+| Bangladesh | | 40746 | | | | | | | | | | | | |
+| Bhutan | | 40819 | | | | | | | | | | | | |
+| Brunei | | 41009 | | | | | | | | | | | | |
+| Burma | | 41106 | | | | | | | | | | | | |
+| Cambodia | | 41203 | | | | | | | | | | | | |
+| China: Mainland | | 41408 | | | | | | | | | | | | |
+| East Timor | | 45004 | | | | | | | | | | | | |
+| Hong Kong | | 42005 | | | | | | | | | | | | |
+| India | | 42102 | | | | | | | | | | | | |
+| Indonesia | | 42218 | | | | | | | | | | | | |
+| Iran | | 42307 | | | | | | | | | | | | |
+| Iraq | | 42404 | | | | | | | | | | | | |
+| Israel | | 42501 | | | | | | | | | | | | |
+| Japan | | 42609 | | | | | | | | | | | | |
+| Jordan | | 42706 | | | | | | | | | | | | |
+| Korea, North | | 44407 | | | | | | | | | | | | |
+| Korea, South | | 43001 | | | | | | | | | | | | |
+| Kuwait | | 43109 | | | | | | | | | | | | |
+| Laos | | 43303 | | | | | | | | | | | | |
+| Lebanon | | 43419 | | | | | | | | | | | | |
+| Macau | | 43508 | | | | | | | | | | | | |
+| Malaysia | | 43605 | | | | | | | | | | | | |
+| Maldives | | 43702 | | | | | | | | | | | | |
+| Mongolia | | 43818 | | | | | | | | | | | | |
+| Nepal | | 44202 | | | | | | | | | | | | |
+| Oman | | 44105 | | | | | | | | | | | | |
+| Pakistan | | 44709 | | | | | | | | | | | | |
+| Philippines | | 44806 | | | | | | | | | | | | |
+| Qatar | | 45101 | | | | | | | | | | | | |
+(1 blank entry rows)
+03/2022
+FFIEC 019
+Page 7 of 10 Report U.S. Dollar Amounts in Millions
+| Country › Name | Country › Name | Country › Code | (Column 1) Total Direct Claims on Foreign Residents | Adjustment for Guarantees and Other Indirect Claims › (Column 2) Claims in Column 1 on Borrowers with a Head Office or Guarantor in Another Country | Adjustment for Guarantees and Other Indirect Claims › (Column 3) Guarantees and Other Indirect Claims for which Country Listed is Country of Head Office or Guarantor | Adjusted Claims on Foreign Residents › (Column 4) Total Adjusted Claims (Column 1 – 2 + 3) | Adjusted Claims on Foreign Residents › (Column 5) Claims on Related Non- U.S. Offices of the Reporter Included in Column 4 | Adjusted Claims on Foreign Residents › (Column 6) Total Adjusted Claims on Unrelated Foreign Borrowers Columns (Column 4 – 5) | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 7) Foreign Public | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 8) Unrelated Foreign Banks | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 9) Other Unrelated Foreign Residents | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 10) One Year or Less | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 11) More than One Year | Commitments › (Column 12) Commercial and Standby Letters of Credit and Legally Binding Loan Commitments |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CEBA | 9005 | 9207 | MV96 | MV97 | MV98 | MV99 | MW00 | MW01 | MW02 | MW03 | MW04 | MW05 | MW06 | MW07 |
+| Asia—Continued Saudi Arabia | | 45608 | | | | | | | | | | | | |
+| Singapore | | 46019 | | | | | | | | | | | | |
+| Sri Lanka | | 41319 | | | | | | | | | | | | |
+| Syria | | 46205 | | | | | | | | | | | | |
+| Taiwan | | 46302 | | | | | | | | | | | | |
+| Thailand | | 46418 | | | | | | | | | | | | |
+| United Arab Emirates | | 46604 | | | | | | | | | | | | |
+| Vietnam | | 46906 | | | | | | | | | | | | |
+| West Bank and Gaza | | 47201 | | | | | | | | | | | | |
+| Yemen | | 47104 | | | | | | | | | | | | |
+| Africa Algeria | | 50105 | | | | | | | | | | | | |
+| Angola | | 50202 | | | | | | | | | | | | |
+| Bank of Central African States (BEAC) | | 50318 | | | | | | | | | | | | |
+| Benin | | 51802 | | | | | | | | | | | | |
+| Botswana | | 50504 | | | | | | | | | | | | |
+| Burkina Faso | | 57118 | | | | | | | | | | | | |
+| Burundi | | 50806 | | | | | | | | | | | | |
+| Cameroon | | 51004 | | | | | | | | | | | | |
+| Cape Verde | | 51209 | | | | | | | | | | | | |
+| Central African Republic | | 51306 | | | | | | | | | | | | |
+| Central Bank of West African States (BCEAO) | | 50644 | | | | | | | | | | | | |
+| Chad | | 51403 | | | | | | | | | | | | |
+| Comoros | | 51519 | | | | | | | | | | | | |
+| Congo (Brazzaville) | | 51608 | | | | | | | | | | | | |
+| Congo (Kinshasa) | | 51705 | | | | | | | | | | | | |
+| Cote d'Ivoire (Ivory Coast) | | 53007 | | | | | | | | | | | | |
+| Djibouti | | 52302 | | | | | | | | | | | | |
+| Egypt | | 57002 | | | | | | | | | | | | |
+| Equatorial Guinea | | 51942 | | | | | | | | | | | | |
+| Eritrea | | 52019 | | | | | | | | | | | | |
+(2 blank entry rows)
+03/2022
+FFIEC 019
+Page 8 of 10 Report U.S. Dollar Amounts in Millions
+| Country › Name | Country › Name | Country › Code | (Column 1) Total Direct Claims on Foreign Residents | Adjustment for Guarantees and Other Indirect Claims › (Column 2) Claims in Column 1 on Borrowers with a Head Office or Guarantor in Another Country | Adjustment for Guarantees and Other Indirect Claims › (Column 3) Guarantees and Other Indirect Claims for which Country Listed is Country of Head Office or Guarantor | Adjusted Claims on Foreign Residents › (Column 4) Total Adjusted Claims (Column 1 – 2 + 3) | Adjusted Claims on Foreign Residents › (Column 5) Claims on Related Non- U.S. Offices of the Reporter Included in Column 4 | Adjusted Claims on Foreign Residents › (Column 6) Total Adjusted Claims on Unrelated Foreign Borrowers Columns (Column 4 – 5) | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 7) Foreign Public | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 8) Unrelated Foreign Banks | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 9) Other Unrelated Foreign Residents | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 10) One Year or Less | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 11) More than One Year | Commitments › (Column 12) Commercial and Standby Letters of Credit and Legally Binding Loan Commitments |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CEBA | 9005 | 9207 | MV96 | MV97 | MV98 | MV99 | MW00 | MW01 | MW02 | MW03 | MW04 | MW05 | MW06 | MW07 |
+| Africa—Continued Eswatini | | 56219 | | | | | | | | | | | | |
+| Ethiopia | | 52108 | | | | | | | | | | | | |
+| Gabon | | 52418 | | | | | | | | | | | | |
+| Gambia, The | | 52507 | | | | | | | | | | | | |
+| Ghana | | 52604 | | | | | | | | | | | | |
+| Guinea | | 52701 | | | | | | | | | | | | |
+| Guinea-Bissau | | 54402 | | | | | | | | | | | | |
+| Kenya | | 53104 | | | | | | | | | | | | |
+| Lesotho | | 53155 | | | | | | | | | | | | |
+| Liberia | | 53201 | | | | | | | | | | | | |
+| Libya | | 53309 | | | | | | | | | | | | |
+| Madagascar | | 53406 | | | | | | | | | | | | |
+| Malawi | | 53503 | | | | | | | | | | | | |
+| Mali | | 53589 | | | | | | | | | | | | |
+| Mauritania | | 53708 | | | | | | | | | | | | |
+| Mauritius | | 53805 | | | | | | | | | | | | |
+| Mayotte | | 54518 | | | | | | | | | | | | |
+| Morocco | | 54003 | | | | | | | | | | | | |
+| Mozambique | | 54089 | | | | | | | | | | | | |
+| Namibia | | 54127 | | | | | | | | | | | | |
+| Niger | | 54208 | | | | | | | | | | | | |
+| Nigeria | | 54305 | | | | | | | | | | | | |
+| Reunion | | 54607 | | | | | | | | | | | | |
+| Rwanda | | 55018 | | | | | | | | | | | | |
+| Saint Helena | | 55107 | | | | | | | | | | | | |
+| Sao Tome and Principe | | 55204 | | | | | | | | | | | | |
+| Senegal | | 55301 | | | | | | | | | | | | |
+| Seychelles | | 55409 | | | | | | | | | | | | |
+| Sierra Leone | | 55506 | | | | | | | | | | | | |
+| Somalia | | 55603 | | | | | | | | | | | | |
+| South Africa | | 55719 | | | | | | | | | | | | |
+(1 blank entry rows)
+03/2023
+FFIEC 019
+Page 9 of 10 Report U.S. Dollar Amounts in Millions
+| Country › Name | Country › Name | Country › Code | (Column 1) Total Direct Claims on Foreign Residents | Adjustment for Guarantees and Other Indirect Claims › (Column 2) Claims in Column 1 on Borrowers with a Head Office or Guarantor in Another Country | Adjustment for Guarantees and Other Indirect Claims › (Column 3) Guarantees and Other Indirect Claims for which Country Listed is Country of Head Office or Guarantor | Adjusted Claims on Foreign Residents › (Column 4) Total Adjusted Claims (Column 1 – 2 + 3) | Adjusted Claims on Foreign Residents › (Column 5) Claims on Related Non- U.S. Offices of the Reporter Included in Column 4 | Adjusted Claims on Foreign Residents › (Column 6) Total Adjusted Claims on Unrelated Foreign Borrowers Columns (Column 4 – 5) | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 7) Foreign Public | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 8) Unrelated Foreign Banks | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 9) Other Unrelated Foreign Residents | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 10) One Year or Less | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 11) More than One Year | Commitments › (Column 12) Commercial and Standby Letters of Credit and Legally Binding Loan Commitments |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CEBA | 9005 | 9207 | MV96 | MV97 | MV98 | MV99 | MW00 | MW01 | MW02 | MW03 | MW04 | MW05 | MW06 | MW07 |
+| Africa—Continued South Sudan | | 53392 | | | | | | | | | | | | |
+| Sudan | | 56103 | | | | | | | | | | | | |
+| Tanzania | | 56405 | | | | | | | | | | | | |
+| Togo | | 56502 | | | | | | | | | | | | |
+| Tunisia | | 56707 | | | | | | | | | | | | |
+| Uganda | | 56804 | | | | | | | | | | | | |
+| Western Sahara | | 56006 | | | | | | | | | | | | |
+| Zambia | | 57207 | | | | | | | | | | | | |
+| Zimbabwe | | 54704 | | | | | | | | | | | | |
+| Other Countries Australia | | 60089 | | | | | | | | | | | | |
+| British Indian Ocean Territory | | 60208 | | | | | | | | | | | | |
+| Canada | | 29998 | | | | | | | | | | | | |
+| Cook Islands | | 60402 | | | | | | | | | | | | |
+| Fiji | | 60607 | | | | | | | | | | | | |
+| French Polynesia | | 60704 | | | | | | | | | | | | |
+| Kiribati | | 60526 | | | | | | | | | | | | |
+| Marshall Islands | | 61204 | | | | | | | | | | | | |
+| Micronesia, Federated States of | | 60305 | | | | | | | | | | | | |
+| Nauru | | 61301 | | | | | | | | | | | | |
+| New Caledonia | | 61409 | | | | | | | | | | | | |
+| New Zealand | | 61689 | | | | | | | | | | | | |
+| Niue | | 61808 | | | | | | | | | | | | |
+| Palau | | 62502 | | | | | | | | | | | | |
+| Papua New Guinea | | 61751 | | | | | | | | | | | | |
+| Pitcairn Islands | | 62103 | | | | | | | | | | | | |
+| St. Pierre and Miquelon | | 62219 | | | | | | | | | | | | |
+| Samoa | | 62618 | | | | | | | | | | | | |
+| Solomon Islands | | 62308 | | | | | | | | | | | | |
+| Tokelau Islands | | 62405 | | | | | | | | | | | | |
+| Tonga | | 62448 | | | | | | | | | | | | |
+(2 blank entry rows)
+03/2023
+FFIEC 019
+Page 10 of 10 Report U.S. Dollar Amounts in Millions
+| Country › Name | Country › Name | Country › Code | (Column 1) Total Direct Claims on Foreign Residents | Adjustment for Guarantees and Other Indirect Claims › (Column 2) Claims in Column 1 on Borrowers with a Head Office or Guarantor in Another Country | Adjustment for Guarantees and Other Indirect Claims › (Column 3) Guarantees and Other Indirect Claims for which Country Listed is Country of Head Office or Guarantor | Adjusted Claims on Foreign Residents › (Column 4) Total Adjusted Claims (Column 1 – 2 + 3) | Adjusted Claims on Foreign Residents › (Column 5) Claims on Related Non- U.S. Offices of the Reporter Included in Column 4 | Adjusted Claims on Foreign Residents › (Column 6) Total Adjusted Claims on Unrelated Foreign Borrowers Columns (Column 4 – 5) | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 7) Foreign Public | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 8) Unrelated Foreign Banks | Distribution of Claims on Unrelated Foreign Residents › By Sector of Borrower or Guarantor › (Column 9) Other Unrelated Foreign Residents | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 10) One Year or Less | Distribution of Claims on Unrelated Foreign Residents › By Remaining Maturity › (Column 11) More than One Year | Commitments › (Column 12) Commercial and Standby Letters of Credit and Legally Binding Loan Commitments |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| CEBA | 9005 | 9207 | MV96 | MV97 | MV98 | MV99 | MW00 | MW01 | MW02 | MW03 | MW04 | MW05 | MW06 | MW07 |
+| Other Countries—Continued Tuvalu | | 60518 | | | | | | | | | | | | |
+| Vanuatu | | 61603 | | | | | | | | | | | | |
+| Wallis and Futuna | | 60119 | | | | | | | | | | | | |
+| International & Regional Organizations International | | | | | | | | | | | | | | |
+| | | 72907 | | | | | | | | | | | | |
+| European | | 73903 | | | | | | | | | | | | |
+| Latin American | | 74918 | | | | | | | | | | | | |
+| Caribbean | | 74942 | | | | | | | | | | | | |
+| Asian | | 75906 | | | | | | | | | | | | |
+| African | | 76902 | | | | | | | | | | | | |
+| Middle Eastern | | 77909 | | | | | | | | | | | | |
+(1 blank entry rows)
+03/2022

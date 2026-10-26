@@ -1,0 +1,197 @@
+Federal Financial Institutions Examination Council Instructions for the Preparation of Report of Assets and Liabilities of a Non-U.S. Branch That is Managed or Controlled by a U.S. Branch or Agency of a Foreign (Non-U.S.) Bank Reporting Form FFIEC 002S Effective March 2024
+INSTRUCTIONS FOR PREPARATION OF
+Report of Assets and Liabilities of a Non-U.S.
+Branch That is Managed or Controlled by a U.S.
+Branch or Agency of a Foreign (Non-U.S.) Bank FFIEC 002S—Supplement General Instructions Who Must Report The Supplement must be completed by any U.S.
+branch or agency of a foreign (non-U.S.) bank that “manages or controls” a banking branch of its parent bank that is licensed outside the 50 states of the United States or the District of Columbia (hereafter referred to as a “foreign branch”). “Manages or controls” means that a majority of the responsibility for business decisions, including but not limited to decisions with regard to lending or asset management or funding or liability management, or the responsibility for recordkeeping in respect of assets or liabilities for that foreign branch resides at the U.S. branch or agency.
+Examples of a need to complete the Supplement would be if: (1) the branch manager for both the U.S. branch or agency and the foreign branch are the same person or there is other significant overlap in personnel; or
+(2) substantial responsibility for decisions regarding either assets or liabilities of the foreign branch reside with staff in the U.S. office; or (3) recordkeeping systems for either assets or liabilities of the foreign branch are maintained in the U.S. office. The supplement, however, generally need not be completed in respect of foreign branches that maintain full-service facilities, that is, foreign branches that are managed and controlled by staff located at the foreign branch or at locations other than in the United States. Further, the fact that a foreign branch manager may report to a U.S.
+branch manager pursuant to reporting lines established by the foreign bank will not, by itself, necessitate the completion of the supplement by the U.S. branch.
+All U.S. branches and agencies should consider carefully whether the Supplement should be completed. If there are any questions regarding the need to complete form FFIEC 002S, the local Reserve Bank should be contacted. Determinations regarding which U.S.
+branches or agencies should complete form FFIEC 002S will be made by the Board of Governors of the Federal Reserve System, in consultation with the Office of the Comptroller of the Currency for federal branches and agencies and with the Federal Deposit Insurance Corporation for insured state-licensed branches. These determinations will be made with reference to where substantive decisionmaking authority lies.
+A separate Supplement must be completed for each applicable foreign branch. No consolidation of statements for multiple branches is permitted.
+Supplements shall be filed with the U.S. branch or agency’s FFIEC 002. Please refer to the FFIEC 002 General Instructions, “Where and When to Submit the Report.” Scope Of The Supplement The Supplement covers all of the foreign branch’s assets and liabilities, regardless of the currency in which they are payable. The Supplement also covers transactions with all entities, both related and nonrelated, regardless of their location.
+All due from/due to relationships with related institutions (both depository and nondepository) are to be reported on a gross basis—i.e., without netting duefrom and due-to items against each other. This reporting treatment of due to/due from transactions with related institutions parallels the treatment called for in Schedule M of the FFIEC 002, “Due From/Due to Related Institutions in the U.S. and in Foreign Countries.” That is, the gross due from and gross due to items to be reported will include all claims between the GEN-1 FFIEC 002S September 2008
+foreign branch and any related institutions (whether depository or nondepository) arising in connection with:
+(1) Deposits of any kind.
+(2) Loans and borrowings of any kind.
+(3) Overdrafts, federal funds and repurchase and resale agreements.
+(4) Claims resulting from clearing activities, foreign exchange transactions, bankers acceptance transactions, and other activities.
+(5) Capital flows and contributions.
+(6) Gross unremitted profits and any accounting or regulatory allocation entered on the books of the reporting foreign branch that ultimately affect unremitted profits such as statutory or regulatory capital requirements, reserve accounts, and allowance for credit losses on loans and leases.
+(7) Any other transactions or entries resulting in claims between the reporting foreign branch and its head office and other related institutions.
+Report Date Reports are to be prepared as of the close of business on the last calendar day of the quarter (March, June, September, and December).
+How To Report Accounting Basis The report may be prepared on either an accrual or a cash basis of accounting. The accounting basis used for an individual foreign branch should be consistent from quarter to quarter.
+Currency Translation For some line items, the report distinguishes between transactions denominated in U.S. dollars and transactions denominated in other currencies. However, all items shall be reported in U.S. dollars. Transactions or balances denominated in currencies other than the U.S.
+dollar shall be converted to U.S. dollar equivalents prior to their incorporation in the report.
+If an asset or liability may be paid optionally in either U.S. dollars or in another currency, report that transaction as denominated in U.S. dollars.
+Rounding See the entry for “Rounding” in the General Instructions for preparation of the FFIEC 002.
+Negative Entries Negative entries are not permitted for any item.
+Total Assets Must Equal Total Liabilities In order to report on this form, exchange rates are used to convert non-U.S. currency values into equivalent U.S. dollar values. Changes in those exchange rates may create unrealized gains or unrealized losses. If such a gain or loss is not reflected in, for example, an equity or unremitted profit account on the foreign branch’s own books, there will be a discrepancy between total assets and total liabilities on this report unless an adjustment is made. In such cases, the foreign branch’s liabilities to its parent bank, which would be included in item 11(a), should be increased to reflect unrealized gains and should be reduced to reflect unrealized losses.
+General Definitions Related and Nonrelated Institutions In certain line items, the Supplement distinguishes between transactions of the reporting foreign branch with related and nonrelated depository institutions. For purposes of the Supplement, the definition of related depository institution corresponds to that used for the FFIEC 002 itself. Please refer to the entry for “Related Institutions” in the Glossary section of the FFIEC 002 instructions and to the reporting instructions for Schedule M of that report.
+U.S. and Non-U.S. Addressees (Domicile) The Supplement also distinguishes between transactions of the reporting foreign branch with U.S.
+addressees and non-U.S. addressees.
+For related institutions (whether depository or nondepository), the definitions of U.S. and non-U.S.
+FFIEC 002S
+GEN-2
+March 2024 FFIEC 002S
+addressees (domicile) correspond to those used for Schedule M of the FFIEC 002. That is, U.S. addressees encompasses offices domiciled in the 50 states of the United States and the District of Columbia. Non-U.S.
+addressees encompasses offices domiciled in a foreign country, in Puerto Rico, or in a U.S. territory or possession. For additional information, see the detailed instructions for preparation of Schedule M.
+For nonrelated parties, the definitions of U.S. and non- U.S. addressees correspond to those used in the FFIEC 002 for determining the domicile of customers of the respondent. That is, U.S. addressees encompasses residents of the 50 states of the United States, the District of Columbia, Puerto Rico, and U.S. territories and possessions. Non-U.S. addressees encompasses residents of any foreign country. For additional information, see the entry for “Domicile” in the Glossary section of the FFIEC 002 instructions.
+Transactions with International Banking Facilities (IBFs), whether related or nonrelated, are regarded as transactions with U.S. addressees.
+Maturities Several items call for a maturity breakdown between those transactions with maturities of one day or under continuing contract (“overnight”) and those transactions with all other maturities (“term”).
+One-day transactions are those that are (1) made on one business day and maturing on the next business day, (2) made on Friday to mature on Monday, or
+(3) made on the last business day prior to a holiday (for either or both parties to the transaction) that mature on the first business day after the holiday.
+A continuing contract is a contract or agreement that remains in effect for more than one business day but has no specified maturity and that does not require advance notice of either party to terminate. Such contracts may also be known as rollovers or as open-end agreements.
+All other maturities. This maturity category encompasses transactions maturing in more than one business day that are not under continuing contract.
+Item Instructions Both the assets and liabilities sections of the Supplement call for detail by location and type of the other party to the transaction and by whether the transaction is denominated in U.S. or non-U.S. currency.
+In addition, for claims on U.S. addressees (other than related depository institutions) denominated in U.S.
+dollars, detail on type of claim is required. In general, the definitions of the specific types of claims (i.e., portfolio items) called for, and their reporting treatment, correspond to the FFIEC 002 definitions of those items. As appropriate, references to specific FFIEC 002 line items are provided.
+Assets Item 1 Claims on U.S.-domiciled offices of related depository institutions denominated in U.S. dollars.
+Report, on a gross basis, all claims on U.S.-domiciled offices of related depository institutions (including their IBFs), as defined for Schedule M, Column A, items 1(a) and 1(b), that are denominated in U.S. dollars. Please refer to the instructions for Schedule M and to the entries in the General Definitions section of this Supplement for “Related and Nonrelated Institutions” and “U.S. and Non-U.S. Addressees.” As noted, U.S.domiciled offices of related depository institutions are those offices located in the 50 states of the U.S. and the District of Columbia.
+Item 2 Claims on all other U.S. addressees (including related nondepository institutions) denominated in U.S.
+dollars.
+As noted in the General Definitions section above, for related nondepository institutions, “U.S. addressees” encompasses institutions domiciled in the 50 states of the United States and the District of Columbia. For all nonrelated entities (both depository and nondepository), “U.S. addressees” encompasses residents of the 50 states of the United States, the District of Columbia, Puerto Rico, and U.S. territories and possessions.
+Item 2(a) Balances due from nonrelated depository institutions in the U.S.
+Report by remaining maturity in the appropriate category below all balances due from non-related depository institutions domiciled in the U.S., as defined for FFIEC 002S GEN-3 FFIEC 002S September 2008
+Schedule A, item 3, that are denominated in U.S.
+dollars.
+For definitions of the maturity categories called for below, see the entry for “Maturities” in the General Definitions section above.
+Item 2(a)(1) With remaining maturities of one day or under continuing contract (“overnight”).
+Item 2(a)(2) All other maturities (“term”).
+Item 2(b) Securities not held for trading.
+Include in this item all securities not held for trading, as defined for Schedule RAL, items 1(b) and 1(c), that are issued by U.S. addressees and denominated in U.S.
+dollars. Please note that as stated in those definitions, securities purchased under agreements to resell are not reported as securities.
+For purposes of this Supplement, such transactions shall be included in item 2(d) below.
+Item 2(b)(1) U.S. Treasury securities and U.S.
+Government agency and corporation obligations.
+Report those securities as defined for Schedule RAL, items 1(b)(1) and 1(b)(2), that are denominated in U.S.
+dollars.
+Item 2(b)(2) All other securities.
+Report all other bonds, notes, debentures, and corporate stock (including securities of state and local governments in the U.S.), as defined for Schedule RAL, items 1(c)(1) and 1(c)(2), that are issued by U.S.
+addressees and denominated in U.S. dollars.
+Item 2(c) Loans held for investment and held for sale.
+Report in the appropriate subitem below the aggregate book value of all U.S. dollar-denominated loans (and leases) to U.S. addressees (other than related depository institutions) that are held for investment and held for sale, before deduction of any allowance for credit losses on loans and leases (which is to be reported in item 4(a) or 11(a)) but net of any specific reserves.
+Each subitem should be reported net of (1) unearned income (to the extent possible) and (2) deposits accumulated for the payment of personal loans (hypothecated deposits). For additional general information on loans, please refer to the general instructions for FFIEC 002 Schedule C, Loans. References to specific line items in Schedule C, part I are provided for each subitem below.
+Item 2(c)(1) Loans secured by real estate.
+Report all loans secured by real estate, as defined for Schedule C, part I, item 1, that are made to U.S.
+addressees (other than related depository institutions) and denominated in U.S. dollars. (Also see the Glossary entry in the FFIEC 002 instructions for “Loans Secured by Real Estate.”) Item 2(c)(2) Loans to nonrelated depository institutions in the U.S.
+Report all loans to nonrelated depository institutions in the U.S., as defined for Schedule C, part I, items 2(a)(1), 2(a)(2), and 2(b), that are denominated in U.S.
+dollars.
+Item 2(c)(3) Commercial and industrial loans.
+Report all commercial and industrial loans to U.S.
+addressees, as defined for Schedule C, part I, item 4(a), that are denominated in U.S. dollars.
+Item 2(c)(4) All other loans.
+Report all other loans to U.S. addressees (other than related depository institutions) denominated in U.S.
+dollars that cannot properly be reported in one of the preceding loan items, including such loans that are called for in the following items on Schedule C, part I of the FFIEC 002:
+• Item 3, Loans to other financial institutions.
+• Item 7, Loans for purchasing or carrying securities (secured and unsecured).
+• Item 8, All other loans (including obligations other than securities of state and local governments in the U.S., and loans to individuals).
+• Item 9, Lease financing receivables (net of unearned income).
+Item 2(c)(5) Less: Any unearned income on loans reflected in Items 2(c)(1)–2(c)(4) above.
+As noted earlier, to the extent possible, the preferred treatment is to report the specific loan categories net of unearned income. A reporting institution should enter here unearned income only to the extent that it is included in (i.e., not deducted from) the various loan FFIEC 002S GEN-4 March 2024 FFIEC 002S
+items (items 2(c)(1) through 2(c)(4)) above. If a respondent reports each loan item above net of unearned income, enter a zero or the word “none” for item 2(c)(5).
+Item 2(c)(6) Total loans held for investment and held for sale.
+Report the sum of items 2(c)(1) through 2(c)(4) minus item 2(c)(5).
+Item 2(d) Other claims.
+Report any remaining U.S. dollar-denominated claims on U.S. addressees (other than related depository institutions) that cannot properly be reported in items 2(a) through 2(c) above, such as:
+• Federal funds sold and securities purchased under agreements to resell, as defined for Schedule RAL, item 1(d), that are transacted with U.S. addressees and denominated in U.S. dollars.
+• Trading assets, as defined for Schedule RAL, item 1(f), that are U.S. dollar-denominated claims on U.S. addressees.
+• Customers liability to the reporting foreign branch on acceptances outstanding—to U.S. addressees, as defined for Schedule RAL, item 1(h), denominated in U.S. dollars.
+• Any other claims, as defined for Schedule RAL, item 1(h), on U.S. addressees denominated in U.S.
+dollars.
+Exclude cash items in process of collection and unposted debits. All cash items in process of collection and unposted debits shall be reported in item 6 below, “All other assets.” Item 2(e) Total claims on U.S. addressees other than related depository institutions, denominated in U.S.
+dollars.
+Report the sum of items 2(a), 2(b), 2(c)(6), and 2(d) above.
+Item 3 Claims on all U.S. addressees denominated in currencies other than U.S. dollars.
+Report, on a gross basis, all claims on all U.S. addressees (including U.S.-domiciled offices of all related institutions, both depository and nondepository) that are not denominated in U.S. dollars. Please refer to the entry for “Related Institutions” in the Glossary section of the FFIEC 002 instructions and to the entries in the General Definitions section of this Supplement for “Related and Nonrelated Institutions” and “U.S. and Non-U.S. Addressees.” As noted, for related institutions (both depository and nondepository), U.S.
+addressees are those entities domiciled in the 50 states of the United States and the District of Columbia. For nonrelated entities, U.S. addressees are those parties domiciled in the 50 states of the United States, the District of Columbia, Puerto Rico, and U.S. territories and possessions.
+Item 4 Claims on home-country addressees denominated in any currency.
+Report in the appropriate subitem all claims (on a gross basis), regardless of the currency in which they are payable, on addressees of the home country of the reporting foreign branch’s parent bank.
+Item 4(a) Related depository institutions.
+Report all claims on related depository institutions, as defined for Schedule M, items 2(a), 2(b)(1), 2(b)(2), and 2(c), that are domiciled in the home country of the reporting foreign branch’s parent bank.
+Item 4(b) Nonrelated depository institutions.
+Report all claims on nonrelated depository institutions that are domiciled in the home country of the reporting foreign branch’s parent bank.
+Item 4(c) Home-country government and official institutions (including home-country central bank).
+Report all claims on those governments and official institutions, as defined in the entry for “Foreign Governments and Official Institutions” in the Glossary section of the FFIEC 002 instructions, that are domiciled in the home country of the reporting foreign branch’s parent bank.
+Item 4(d) All other home-country addressees.
+Report all claims on any remaining home-country addressees that cannot properly be reported in items 4(a), 4(b), or 4(c) above.
+FFIEC 002S
+GEN-5
+FFIEC 002S June 2018
+Item 5 Claims on all other non-U.S. addressees, denominated in any currency.
+Report all claims on all other non-U.S. addressees (i.e., other than the home country of the foreign branch’s parent bank), regardless of the currency in which they are payable.
+Item 6 All other assets.
+Report all other assets that cannot properly be reported in items 1 through 5 above. Also include all cash items in process of collection and unposted debits, which are excluded from items 1 through 5 above.
+Item 7 Total assets (gross).
+Report the sum of items 1, 2(e), 3, 4, 5, and 6.
+Liabilities Item 8 Liabilities to U.S.-domiciled offices of related depository institutions denominated in U.S. dollars.
+Report, on a gross basis, all liabilities to U.S.-domiciled offices of related depository institutions, as defined for Schedule M, Column B, items 1(a)(1), 1(a)(2), and 1(b), that are denominated in U.S. dollars. Please refer to the instructions for Schedule M and to the entries in the General Definitions section of this supplement for “Related and Nonrelated Institutions” and “U.S. and Non-U.S. Addressees.” As noted, U.S.-domiciled offices of related depository institutions are those offices located in the 50 states of the United States and the District of Columbia.
+Item 9 Liabilities to all other U.S. addressees (including related nondepository institutions) denominated in U.S. dollars.
+As noted earlier, for related nondepository institutions, U.S. addressees encompasses institutions domiciled in the 50 states of the United States and the District of Columbia. For all nonrelated entities (both depository and nondepository), U.S. addressees encompasses residents of the 50 states of the United States, the District of Columbia, Puerto Rico, and U.S. territories and possessions.
+Item 9(a) Liabilities to nonrelated depository institutions in the U.S.
+Report by remaining maturity in the appropriate category below all liabilities (gross) to nonrelated depository institutions in the U.S. that are denominated in U.S. dollars.
+For definitions of the maturity categories called for below, see the entry for “Maturities” in the General Definitions section above.
+Item 9(a)(1) With remaining maturities of one day or under continuing contract (“overnight”).
+Item 9(a)(2) All other maturities (“term”).
+Item 9(b) Liabilities to all other U.S. addressees denominated in U.S. dollars.
+Report by remaining maturity in the appropriate category below all liabilities (gross) to all other U.S.
+addressees (including related nondepository institutions), that are denominated in U.S. dollars.
+For definitions of the maturity categories called for below, see the entry for “Maturities” in the General Definitions section above.
+Item 9(b)(1) With remaining maturities of one day or under continuing contract (“overnight”).
+Item 9(b)(2) All other maturities (“term”).
+Item 10 Liabilities to all U.S. addressees denominated in currencies other than U.S. dollars.
+Report, on a gross basis, all liabilities to all U.S.
+addressees (including U.S.-domiciled offices of all related institutions, both depository and nondepository) that are not denominated in U.S. dollars. Please refer to the entry for “Related Institutions” in the Glossary section of the FFIEC 002 instructions and to the entries in the General Definitions section of this Supplement for “Related and Nonrelated Institutions” and “U.S. and Non-U.S. addressees.” As noted, for related institutions (both depository and nondepository), U.S. addressees are those entities domiciled in the 50 states of the United States and the District of Columbia. For nonrelated entities, U.S. addressees are those parties domiciled in the 50 states of the United States, the District of Columbia, Puerto Rico, and U.S.
+territories and possessions.
+FFIEC 002S
+GEN-6
+September 2008 FFIEC 002S
+Item 11 Liabilities to home-country addressees denominated in any currency.
+Report in the appropriate subitem all liabilities (on a gross basis), regardless of the currency in which they are payable, to addressees of the home country of the reporting foreign branch’s parent bank.
+Item 11(a) Related depository institutions.
+Report all liabilities to related depository institutions, as defined for Schedule M, items 2(a), 2(b)(1), 2(b)(2), and 2(c), that are located in the home country of the reporting foreign branch’s parent bank.
+Item 11(b) Nonrelated depository institutions.
+Report all liabilities to nonrelated depository institutions that are domiciled in the home country of the reporting foreign branch’s parent bank.
+Item 11(c) Home-country government and official institutions (including home-country central bank).
+Report all liabilities to those governments and official institutions, as defined in the entry for “Foreign Governments and Official Institutions” in the Glossary section of the FFIEC 002 instructions, that are located in the home country of the reporting foreign branch’s parent bank.
+Item 11(d) All other home-country addressees.
+Report all liabilities to any remaining home-country addressees that cannot properly be reported in items 11(a), 11(b), or 11(c) above.
+Item 12 Liabilities to all other non-U.S. addressees denominated in any currency.
+Report all liabilities to all other non-U.S. addressees (i.e., other than the home country of the reporting foreign branch’s parent bank), regardless of the currency in which they are payable.
+Item 13 All other liabilities.
+Report all other liabilities that cannot properly be reported in items 8 through 12 above.
+Item 14 Total liabilities.
+Report the sum of items 8 through 13 above.
+Memoranda—Transactions with U.S.
+addressees denominated in U.S. dollars Items M1 and M2 Memoranda items 1 and 2 below call for information on resale and repurchase agreements on U.S. Government securities transacted with U.S. addressees and denominated in U.S. dollars, which are included in certain asset and liability items above. For additional information on security repurchase and resale agreements, see the entry for “Repurchase/Resale Agreements” in the Glossary section of the FFIEC 002 instructions.
+U.S. Government securities include U.S. Treasury securities and U.S. Government agency and corporation obligations. For a partial listing of the U.S. Government agencies and corporations whose obligations are to be included, see the instructions for Schedule RAL, item 1(b)(2).
+For definitions of the maturity categories called for under Memoranda items 1 and 2 below, see the entry for “Maturities” in the General Definitions section above.
+Item M1 Amount included in items 1 and 2(d) above for U.S. Government securities purchased under agreements to resell.
+Report by original maturity in the appropriate category below all resale agreements involving U.S. Government securities (including U.S. Treasury securities and obligations of U.S. Government agencies and corporations) transacted with U.S. addressees and denominated in U.S. dollars.
+Item M1(a) With original maturities of one business day or under continuing contract (“overnight”).
+Item M1(b) All other maturities (“term”).
+Item M2 Amount included in items 8 and 9 above for U.S. Government securities sold under agreements to repurchase.
+Report by original maturity in the appropriate category below all repurchase agreements involving U.S. Government securities (including U.S. Treasury securities and obligations of U.S. Government agencies and corporations) denominated in U.S. dollars.
+FFIEC 002S
+GEN-7
+FFIEC 002S September 2008
+Item M2(a) Transacted with depository institutions in the U.S. (related and nonrelated (included in items 8 and 9(a) above).
+Item M2(a)(1) With original maturities of one day or under continuing contract (“overnight”).
+Item M2(a)(2) All other maturities (“term”).
+Item M2(b) Transacted with all other U.S. addressees (included in item 9(b) above).
+Item M2(b)(1) With original maturities of one day or under continuing contract (“overnight”).
+Item M2(b)(2) All other maturities (“term”).
+Item M3 Amount included in item 9(b) above for negotiable certificates of deposit issued by the reporting foreign branch.
+Report in the appropriate subitem below all negotiable certificates of deposit denominated in U.S. dollars that were issued to U.S. addressees other than depository institutions (related or unrelated).
+Item M3(a) Held in custody by the reporting foreign branch or by the managing U.S. branch or agency.
+Item M3(b) All other negotiable certificates of deposit.
+Item M4 Amount included in item 9(b) above for deposits that are guaranteed payable in the U.S. or for which the depositor is guaranteed payment by a U.S.
+office.
+Report by original maturity in the appropriate category below all deposits, as defined for Schedule E, denominated in U.S. dollars that were issued to U.S. addressees other than depository institutions or (related or unrelated) and that are payable in the U.S. or for which the depositor is guaranteed payment by a U.S. office.
+For definitions of the maturity categories called for below, see the entry for “Maturities” in the General Definitions section above.
+Item M4(a) With original maturities of one day or under continuing contract (“overnight”).
+Item M4(b) All other maturities.
+FFIEC 002S
+GEN-8
+September 2008 FFIEC 002S

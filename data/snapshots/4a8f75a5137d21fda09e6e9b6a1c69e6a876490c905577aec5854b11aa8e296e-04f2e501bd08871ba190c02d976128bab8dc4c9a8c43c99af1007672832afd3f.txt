@@ -1,0 +1,75 @@
+FFIEC 101 Validation Criteria
+Effective for report dates December 2025 through current:
+- Validity Edits: Excel | PDF - Final (updated January 22, 2026)
+- Quality Edits: Excel | PDF- Final (updated January 22, 2026)
+Effective for report dates June 2025 through September 2025:
+- Validity Edits: Excel | PDF - Final (updated July 9, 2025)
+- Quality Edits: Excel | PDF- Final (updated July 9, 2025)
+Effective for report dates June 2021 through March 2024:
+- Validity Edits: Excel | PDF - Final (updated August 12, 2021)
+- Quality Edits: Excel | PDF- Final (updated August 12, 2021)
+Effective for report dates March 2020 through March 2021:
+- Validity Edits: Excel | PDF - Final (updated April 20, 2020)
+- Quality Edits: Excel | PDF- Final (updated April 20, 2020)
+Effective for report dates September 2019 through December 2019:
+- Validity Edits: Excel | PDF - Final (updated October 17, 2019)
+- Quality Edits: Excel | PDF- Final (updated October 17, 2019)
+Effective for report dates March 2019 through June 2019:
+- Validity Edits: Excel | PDF - Final (updated April 12, 2019)
+- Quality Edits: Excel | PDF- Final (updated April 12, 2019)
+Effective for report dates March 2018 through December 2018:
+- Validity Edits: Excel | PDF - Final (updated April 19, 2018)
+- Quality Edits: Excel | PDF- Final (updated April 19, 2018)
+Effective dates March 2017 through December 2017:
+- Validity Edits: Excel | PDF - Final (updated April 14, 2017)
+- Quality Edits: Excel | PDF- Final (updated April 14, 2017)
+- Post Submission Interseries Edits: Excel | PDF- Final (updated April 14, 2017)
+Effective for report dates September 2016 through December 2016:
+- Validity Edits: Excel | PDF - Final (updated October 6, 2016)
+- Quality, Intraseries, and Interseries Edits: Excel | PDF - Final (updated October 6, 2016))
+- Post Submission Interseries Edits: Excel | PDF- Final (updated October 6, 2016)
+Effective for report dates March 2016 through June 2016:
+- Validity Edits: Excel | PDF - Final (updated March 28, 2016)
+- Quality, Intraseries, and Interseries Edits: Excel | PDF - Final (updated March 28, 2016)
+- Post Submission Interseries Edits: Excel | PDF- Final (updated March 28, 2016)
+Effective for report date December 2015:
+- Validity Edits: Excel | PDF - Final
+- Quality, Intraseries, and Interseries Edits: Excel | PDF - Final
+- Post Submission Interseries Edits: Excel | PDF- Final
+Effective for report dates March 2015 through September 2015:
+- Validity Edits: Excel | PDF - Final (updated April 7, 2015)
+- Quality, Intraseries, and Interseries Edits: Excel | PDF - Final (updated April 7, 2015)
+- Post Submission Interseries Edits: Excel | PDF- Final (updated April 7, 2015)
+Effective for report date June 2014:
+- Validity Edits: Excel | PDF - Final (updated June 16, 2014)
+- Quality, Intraseries, and Interseries Edits: Excel | PDF - Final (updated June 16, 2014)
+- Post Submission Interseries Edits: Excel | PDF- Final (updated June 16, 2014)
+Effective for report date March 2014:
+- Validity Edits: Excel | PDF - Final (updated June 2, 2014)
+- Quality, Intraseries, and Interseries Edits: Excel | PDF - Final (updated April 9, 2014)
+- Post Submission Interseries Edits: Excel | PDF- Final (updated April 9, 2014)
+Effective for report dates June 2013 through December 2013:
+- Validity Edits: Excel | PDF - Final (updated July 3, 2013)
+- Quality, Intraseries, and Interseries Edits: Excel | PDF - Final (updated July 3, 2013)
+- Post Submission Interseries Edits: Excel | PDF- Final (updated July 3, 2013)
+Effective for report date March 2013:
+- Validity Edits: Excel | PDF - Final (updated March 22, 2013)
+- Quality, Intraseries, and Interseries Edits: Excel | PDF - Final (updated March 22, 2013)
+- Post Submission Interseries Edits: Excel | PDF- Final (updated March 22, 2013)
+Effective for report date June 2011 through December 2012:
+- Validity Edits: Excel | PDF - Final (updated June 1, 2011)
+- Quality, Intraseries, and Interseries Edits: Excel | PDF - Final (updated June 1, 2011)
+- Post Submission Interseries Edits: Excel | PDF- Final (updated June 1, 2011)
+Effective for report date March 2011:
+- Validity Edits: Excel | PDF - Final (updated March 21, 2011)
+- Quality, Intraseries, and Interseries Edits: Excel | PDF - Final (updated March 21, 2011)
+- Post Submission Interseries Edits: Excel | PDF- Final (updated March 21, 2011)
+Effective for report dates June 2010 through December 2010:
+- Validity Edits: Excel | PDF - Final (updated May 28, 2010)
+- Quality, Intraseries, and Interseries Edits: Excel | PDF - Final (updated May 28, 2010)
+- Post Submission Interseries Edits: Excel | PDF- Final (updated May 28, 2010)
+Effective for report dates December 2008 through March 2010:
+- Validity Edits: Excel | PDF - Final (updated July 22, 2009)
+- Quality, Intraseries, and Interseries Edits: Excel | PDF - Final (updated July 22, 2009)
+- Post Submission Interseries Edits: Excel | PDF- Final (updated July 22, 2009)
+Last updated on 2/3/2026

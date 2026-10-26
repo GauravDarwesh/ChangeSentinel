@@ -1,0 +1,773 @@
+<!-- image -->
+Instructions for the Preparation of
+## Country Exposure Report
+Reporting Form FFIEC 009
+Effective December 2022
+## Contents
+## General Instructions for the Preparation of the Country Exposure Report
+| I. General Instructions ........................................................................................................................ | GEN-1 |
+| --- | --- |
+| A. Introduction and Purpose .............................................................................................................. | GEN-1 |
+| B. Summary Description of this Report .............................................................................................. | GEN-1 |
+| C. Administrative Issues ..................................................................................................................... | GEN-2 |
+| D. Who Must Report ......................................................................................................................... | GEN-2 |
+| E. Accounting Issues .......................................................................................................................... | GEN-4 |
+| F. Submission of Reports ................................................................................................................... | GEN-4 |
+| G. Legal Entity Identifier (LEI) .......................................................................................................... | GEN-5 |
+| II. Reporting Definitions ..................................................................................................................... | GEN-5 |
+| A. Claims .......................................................................................................................................... | GEN-5 |
+| B. Liabilities ...................................................................................................................................... | GEN-5 |
+| C. "Immediate-Counterparty" and "Guarantor Basis" Claims ............................................................. | GEN-6 |
+| D. Sector Definitions ......................................................................................................................... | GEN-6 |
+| E. Cross-Border Claims and Claims on Local Residents ....................................................................... | GEN-7 |
+| F. Required Risk Transfers ................................................................................................................. | GEN-8 |
+| G. Netting and Offsetting ................................................................................................................... | GEN-9 |
+| H. Reporting Credit Derivatives ........................................................................................................ | GEN-10 |
+| III. Specific Instructions for Allocating Claims to the Rows .................................................................. | GEN-11 |
+| A. The United States ........................................................................................................................ | GEN-11 |
+| B. Foreign Countries ........................................................................................................................ | GEN-11 |
+| C. International and Regional Organizations ..................................................................................... | GEN-12 |
+| Line Item Instructions for the Preparation of the Country Exposure Report | |
+| Schedule C-Claims ................................................................................................................................ | C-1 |
+| Schedule L-Foreign-Office Liabilities ...................................................................................................... | L-1 |
+| Schedule O-Off-Balance-Sheet Items ...................................................................................................... | O-1 |
+| Schedule D-Claims from Positions in Derivative Contracts ...................................................................... | D-1 |
+| Appendix A-Summary of Reporting Bases by Schedule and Column ................................................ | App A-1 |
+<!-- image -->
+## INSTRUCTIONS FOR PREPARATION OF THE
+## Country Exposure Report
+## I. General Instructions
+## A. Introduction and Purpose
+The FFIEC 009 provides information on the distribution, by country, of claims on, and liabilities to, the United States (U.S.) and foreign residents held by U.S. reporting entities. The data collected are used to determine the presence of credit and related risks, including transfer and country risk. These data are also aggregated and released to the public. Aggregate data are provided to the Bank for International Settlements (BIS), as part of an international cooperative effort to compile and publish global data on claims on local and foreign residents. The aggregated data, along with applicable individual data reported on the FFIEC 009a, are available electronically through the E.16 Statistical Release (http://www.ffiec.gov/E16.htm).
+## B. Summary Description of this Report
+The FFIEC 009 consists of four schedules (with one, Schedule C, containing two parts).
+Schedule C, Part I, collects information on the claims on an "immediate-counterparty" basis, i.e., on the basis of the country of residence of the borrower (except claims resulting from the fair value of derivative contracts). Part I also includes the redistribution of immediate-counterparty claims to a "Guarantor" basis, i.e., on the basis of the country of residence of the guarantor or collateral provided (i.e., the "ultimate obligor"). In Columns 1 through 12 of Part I, data are collected on an immediate-counterparty basis. In Columns 13 through 22 of Part I, the inward and outward redistribution of claims from an immediatecounterparty basis to a guarantor is shown. These redistributions arise from arrangements such as formal guarantees, the provision of collateral, and the purchase of credit protection as defined in Sections II.F and II.H.
+Schedule C, Part II, collects information on the reporter's claims on a guarantor basis and memorandum items providing additional details related to those claims. Claims on a guarantor basis are shown in Columns 1 through 11 of Schedule C, Part II. Schedule C, Part II, also contains memorandum items relating to claims reported on a guarantor basis. Column 12 shows the amounts reported in Columns 1 through 10 of Schedule C, Part II, that are held-to-maturity and available-for-sale securities. Columns 13 through 18 collect information on collateral mitigants that do not meet the criteria for the purposes of risk transfers of claims as defined in this report. Column 19 shows the amount of claims, on a guarantor basis (reported in Columns 1 through 10 of Part II), that are held for trading. Column 20 provides any offsetting positions held for the trading book, where an effective offset exists (see Section II.G for a discussion of effective netting and offsetting).
+Schedule L collects information on foreign-office liabilities. Columns 1 and 2 show, by country and currency, foreign-office liabilities for which no payment is guaranteed at locations outside the country of the office, reported by the country of the foreign office. Column 3 shows all liabilities booked at foreign offices by the country of the creditor. Column 4 shows the net positions of the foreign office with related offices in other countries. These net positions are not reported elsewhere on this report, due to the consolidation rules.
+Schedule O collects information on off-balance-sheet exposures from commitments, guarantees, and credit derivatives. Column 1 collects any unused or undrawn commitments, on a guarantor basis, by country of the ultimate obligor of the commitment. In Column 2, the amount of all legally binding guarantees provided,
+## General Instructions
+except credit derivatives written, are reported by country of the counterparty to whom the guarantee is being provided. Columns 3 through 6 provide a breakdown of the notional amount of credit derivatives positions purchased and sold (by country of the reference entity), on a gross gross and gross-net basis (see Section II.H for definitions of these terms). Credit derivatives purchased that result in a risk transfer on Schedule C, Parts I and II, are excluded from this schedule. Column 7 shows the claims, on a guarantor basis (reported in Columns 1 through 10 of Schedule C, Part II, and Columns 1 and 2 of Schedule O), that are trade finance related.
+Schedule D collects information on the fair value of derivative contracts of the reporter by country of counterparty (including the United States). A sector distribution and the total are collected in Columns 1 through 5. In Column 6, claims on bank branches that are not formally and legally guaranteed by the head office are reported in the country rows corresponding to the country in which the branch is located (instead of the country of the head office). These claims represent risk that could potentially remain in the countries in which the branches are located.
+## C. Administrative Issues
+## 1. Authority
+This report is required to be filed by national banks, federal savings associations, state member banks, Edge and/or Agreement corporations, bank holding companies, savings and loan holding companies, intermediate holding companies, insured state nonmember commercial and savings banks, and insured state savings associations pursuant to authority contained in the following statutes:
+- Board of Governors of the Federal Reserve System - Section 11a of the Federal Reserve Act (12 U.S.C. 248a), Section 5c of the Bank Holding Company Act (12 U.S.C. 1844c), and Section 907 of the International Lending Supervision Act of 1983 (12 U.S.C. 3906), and Section 165(a) of the Dodd-Frank Act (12 U.S.C. 5365(a)); and
+- Office of the Comptroller of the Currency - the National Bank Act, as amended (12 U.S.C. 161) and Home Owners Loan Act (12 U.S.C. 1464);
+- Federal Deposit Insurance Corporation - Sections 7 and 10 of the Federal Deposit Insurance Act (12 U.S.C. 1817 and 1820)
+## 2. Confidentiality
+The individual FFIEC 009 reports are given confidential treatment under 5 U.S.C. 552(b)(4) and (b)(8). However, aggregated data that do not reveal the activities of individual reporting entities do not receive confidential treatment and are made public. Portions of the aggregated data are also reported to the Bank for International Settlements as part of an international cooperative effort to compile and publish worldwide data on cross-border claims.
+## D. Who Must Report
+## Reporting Entities
+The Country Exposure Report (FFIEC 009) is required to be filed quarterly by banks, savings associations, Edge and/or Agreement corporations, bank holding companies, intermediate holding companies, and savings and loan holding companies meeting the criteria listed below:
+Schedules C, L, and Omust be completed by:
+- (1) Every U.S. chartered insured bank or savings association in the 50 States of the United States, the District of Columbia, Puerto Rico, and U.S. territories and possessions, that has, on a fully consolidated basis, total outstanding claims on residents of foreign countries exceeding $30 million in the aggregate, and has at least one of the following:
+- A branch in a foreign country;
+- A consolidated subsidiary in a foreign country;
+- An Edge or Agreement subsidiary;
+- A branch in Puerto Rico or in any U.S. territory or possession (except that a bank or savings association with its head office in Puerto Rico or any U.S. territory or possession need not report if it meets only this criterion); or
+- An International Banking Facility (IBF).
+## General Instructions
+All references to "bank(s)" are inclusive of "savings association(s)," unless otherwise noted.
+- (2) Every Edge and/or Agreement corporation that has total outstanding claims on residents of foreign countries exceeding $30 million, unless it is majority owned by a bank or savings association that is required to file a report.
+- (3) Every institution that meets the Schedule D reporting requirements (see below).
+- (4) Every U.S. bank holding company that is required to file the FR Y-6 report (Bank Holding Company Annual Report) and has a subsidiary bank that is required to file this report.
+- (5) Every savings and loan holding company and intermediate holding company that meets the criteria for banks in (1) above. All references to "bank holding company(s)" are inclusive of "savings and loan holding company(s)," and "intermediate holding company(s)" unless otherwise noted. 1
+However, to reduce reporting burden:
+- (1) If a bank holding company has only one subsidiary bank that meets the reporting requirements and that subsidiary bank accounts for 90 percent or more of the consolidated holding company's total claims on foreigners, either the holding company or the bank (but not both) should prepare a report. However, if the only subsidiary bank that is required to report accounts for less than 90 percent of the consolidated holding company's claims, only the holding company should prepare a (consolidated) report
+- (2) If a bank holding company has two or more subsidiary banks that meet the reporting requirements and these subsidiary banks, together, account for 90 percent or more of the consolidated holding company's total claims on foreign-
+1. Savings and loan holding companies (SLHCs) do not include any trust (other than a pension, profit-sharing, stockholders' voting, or business trust) which controls a savings association if such trust by its terms must terminate within 25 years or not later than 21 years and 10 months after the death of individuals living on the effective date of the trust, and (a) was in existence and in control of a savings association on June 26, 1967, or, (b) is a testamentary trust.
+ers, the holding company need not file a separate report.
+Column 3 of Schedule L-Total Liabilities Booked at Foreign Offices (by country of creditor)-is required to be reported only by those reporters that have one or more branches or subsidiaries located outside the fifty states of the United States, the District of Columbia, or a U.S. military facility (regardless of where located) that meet the following criteria:
+- Branches filing the Foreign Branch Report of Condition (FFIEC 030) that report total assets of $500 million or more (denominated in all currencies) on Line Item 11 on a report date,
+- Subsidiaries filing the quarterly Financial Statements of Foreign Subsidiaries of U.S. Banking Organizations (FR 2314) that have a banking charter and engage in banking business, and that report $2 billion or more in total assets in Schedule BS, item 10, and $10 million or more in total deposits in Schedule BS-M, item 6.
+The total assets test defined above applies to the total of the foreign branch's or subsidiary's international and local assets, regardless of the currency in which the assets are payable. If any foreign office of a reporter exceeds the reporting threshold, then column 3 should be completed for the reporter's entire organization and not just for the offices exceeding the threshold.
+A Schedule D must be completed by every institution whose FFIEC 031 or FR Y-9C (or for Edge and/or Agreement corporations the FR 2886b) as of December 31 of the previous year shows:
+- (1) Total gross notional values of derivative contracts (the sum of items 7.a.(1) through 7.a.(4), Columns A and B, and items 12.a. through 12e., Columns A through D, on Schedule RC-L of the FFIEC 031 or the sum of items 7.a.(1) through 7.a.(4), Columns A and B, and items 11.a. through 11.e., Columns A through D, on Schedule HC-L of the FR Y-9C) in excess of $10 billion.
+or
+- (2) Total gross fair values of derivative contracts (the sum of items 7.b.(1) and 7.b.(2), Columns A and B and items 15.a. and 15.b., Columns A through D, on Schedule RC-L of the FFIEC 031 or the sum of items 7.b.(1) and 7.b.(2), Columns A and
+## General Instructions
+B, and items 14.a. and 14.b., Columns A through D, on Schedule HC-L of the FR Y-9C) in an amount greater than 5 percent of their total assets.
+In addition, the bank regulatory authorities may specifically require a report (or any specific schedule therein) to be filed by other banking organizations that the authorities deem to have significant country exposures.
+## Consolidation Rules
+The information should be reported on a fully consolidated basis. For reports from banks, the scope of coverage and the consolidation of information should be in accordance with the procedures and tests of significance set forth in the instructions for preparation of the FFIEC 031. For reports from bank holding companies, the information should be consolidated in accordance with the principles set forth in the instructions for the preparation of the FR Y-9C. For Edge and/or Agreement corporations, the information should be consolidated in accordance with the principles set forth in the instructions for the preparation of the FR 2886b.
+As a best practice, the data reported on the FFIEC 009 can be reconciled to the FR Y-9C (or Call Report). However, there are no requirements to perform such a reconciliation.
+## E. Accounting Issues
+All amounts should be reported in U.S. dollars regardless of the currencies in which the balances are denominated. The translations should be made on the same basis used to prepare its (or its subsidiary bank's) FFIEC 031 and the FR Y-9C.
+Claims, liabilities, and unused commitments should be reported using the same accounting basis as used on the FFIEC 031 and FR Y-9C, unless stated otherwise in these instructions.
+Edge and/or Agreement corporations should reference the instructions for the preparation of the FFIEC 031 for further information on reporting definitions and generally accepted accounting principles.
+Round all amounts reported on this form to the nearest million dollars. Negative amounts are only permissible in Column 4 of Schedule L.
+## 1. Differences between FFIEC 009 Reporting and U.S. GAAP
+The differences in accounting treatment between the FFIEC 009 and U.S. GAAP are as follows:
+| Reporting Item | U.S. GAAP | FFIEC 009 |
+| --- | --- | --- |
+| Netting of Deriva- tive Contracts | Offsetting of positive and negative fair val- ues are permitted when a "right of set- off" exists under ASC Subtopic 210- 20, Balance Sheet- Offsetting (formerly FASB Interpretation No. 39, Offsetting of Amounts Related to Certain Contracts). | Offsetting of positive and negative fair values is permitted, consistent with U.S. GAAP. How- ever, only net positive fair values are reported on the FFIEC 009. |
+| Netting of Trading Assets | Although there is no official FASB pro- nouncement, it is industry practice to net trading assets against trading liabilities in the same security (i.e., with the same CUSIP or ISIN). | CUSIP netting is allowed for the FFIEC 009 report. In addition, short posi- tions in the same issuer and asset class of the trading asset may be reported as an offset- ting position on Sched- ule C, Part II, Col- umn 18. |
+## F. Submission of Reports
+The FFIEC 009 report is to be prepared quarterly, as of the last calendar day of March, June, September, and December. For each quarter the reporting requirements are met (according to Section I.D), all reporting entities must use the Federal Reserve System's Reporting Central system to submit their completed report to the Federal Reserve Bank of New York (FRBNY). The submission deadline is 45 calendar days after the March 31, June 30, and September 30 as of date. The submission deadline is 50 calendar days after the December 31 as of date.
+If the submission deadline falls on a weekend or holiday, the report must be received on the first business day after the Saturday, Sunday, or holiday.
+## General Instructions
+The Federal Reserve System Website ( https:// www.frbservices.org/central-bank/reporting-central/ index.html) provides additional information on Reporting Central. The Website also includes a link that reporters may use to contact FRBNY for technical assistance.
+Each reporting entity should keep a copy of each report. This copy should be signed and certified by an Executive Officer (as defined in 12 CFR 215.2(e)(1)) of the reporting entity.
+## G. Legal Entity Identifier (LEI)
+The LEI is a 20-digit alpha-numeric code that uniquely identifies entities that engage in financial transactions. A reporting institution must provide its LEI on the cover page of this report only if it already has an LEI. The LEI must be a currently issued, maintained, and valid LEI, not an LEI that has lapsed. If a reporting institution does not have an LEI, it is not required to obtain one for purposes of reporting it on this report.
+## II. Reporting Definitions
+For the September 30, 2019, and the December 31, 2019, report dates, reporting entities may report "claims" and "liabilities" using either the definitions as they have been revised as of September 30, 2019, or the previously existing definitions.
+## A. Claims
+The term "claims" follows the definition for assets in the instructions for preparation of the FFIEC 031 and FR Y-9C and includes, but is not limited to, the following types of assets:
+- Vault Cash
+- Deposit balances, both interest bearing and noninterest bearing, held at banks
+- Balances with central banks and official institutions
+- Securities
+- Federal funds sold
+- Loans
+- Holdings of acceptances of banks
+- Direct lease financing
+- Investments in unconsolidated subsidiaries and associated companies
+- Positive fair value of interest rate, foreign exchange, equity, commodity and other derivative contracts (reported in Schedule D)
+- Customers' liability on acceptances outstanding
+- Accrued income receivables (including interest, commissions and income earned or accrued and applicable to current or prior periods, but not yet collected)
+- Resale agreements and other financing agreements (reported net if permitted under ASC Topic 210-20, previously FIN 41)
+- Asset sales with recourse
+- Participations and syndications of loans
+- Deferred tax assets
+Exclude:
+Premises, right-of-use assets, other real estate owned, bank-owned life insurance, company-owned life insurance, physical commodities held in inventory, pension assets, goodwill, and other intangible assets.
+## B. Liabilities
+The term "liabilities" follows the definition in the instructions for preparation of the FFIEC 031 and FR Y-9C and includes, but is not limited to, the following types of liabilities:
+- Deposit balances, both interest bearing and noninterest bearing.
+- Brokerage balances
+- Debt securities
+- Borrowings
+- Short sales
+- Repurchase agreements and other financing agreements (reported net if permitted under ASC Topic 210-20, previously FIN 41)
+- Lease liabilities for finance and operating leases
+- Trade date payables
+- Deferred tax liabilities
+## General Instructions
+## C. "Immediate-Counterparty" and "Guarantor Basis" Claims
+Claims are to be reported on an "immediatecounterparty" basis in Columns 1 through 12 of Schedule C, Part I, and on a guarantor basis in Columns 1 through 10 of Schedule C, Part II. The obligor on an immediate-counterparty basis is the entity that issued the security or otherwise incurred the liability. The obligor of a claim on a guarantor basis is any person, business, institution, or instrument that provides any of the types of credit protection described in Section II.F, "Required Risk Transfers" and Section II.H "Reporting Credit Derivatives."
+## D. Sector Definitions
+Reporting sectors are determined based on the legal entity of the counterparty. The following sector definitions are used for all columns of this report that require sector distinctions:
+## 1. Banks
+The definition of banks encompasses all institutions included in "Banks, U.S. and Foreign" in the Report of Condition as well as savings banks, savings associations, discount houses, and other similar depository institutions. Banks also include banking institutions owned by foreign governments, unless such institutions function as central banks or banks of issue, in which case they are treated as "public" institutions.
+Exposures to banks are to be reported in Columns 1, 6, 13, and 18 of Schedule C, Part I; Columns 1 and 6 of Schedule C, Part II; and Column 1 of Schedule D.
+## 2. Public
+The definition of the public sector is similar to "Foreign Governments and Official Institutions" in the Report of Condition, but also includes public sector institutions in the U.S. Public sector institutions include:
+- Central, state, provincial and local governments and their departments, and agencies
+- Treasuries, ministries of finance, central banks, stabilization funds, exchange authorities, and diplomatic establishments
+- Those government owned banks, including development banks, that perform as an important part of their activities, the functions of a treasury, central bank, exchange control office, or stabilization fund
+- International or regional organizations or subordinate or affiliated agencies thereof, created by treaty or convention between sovereign states, including the International Monetary Fund, the International Bank for Reconstruction and Development (World Bank), the Bank for International Settlements, the Inter-American Development Bank, and the United Nations
+## 3. Non-Bank Financial Institutions (NBFIs)
+Non-bank financial institutions are defined as businesses and institutions other than "banks" and "public," as defined above, that are primarily engaged in proprietary investments and/or in the provision of financial services to other organizations and households. These services include, but are not limited to, financial intermediation services whose functions are predominantly: the extension of credit for business purposes, brokerage services (engaged in the brokering of securities, commodities or other financial instruments), underwriting services, financial management services, credit origination services, credit card services, insurance services, and pension services. Types of nonbank financial organizations include, but are not limited to:
+- Securities firms
+- Bank holding companies (BHCs)
+- Insurance firms
+- Money market funds
+- Pension funds
+- Investment banks
+- Private equity companies
+- Credit card issuers
+- Hedge funds
+- Trusts
+- Finance companies
+- Mortgage companies
+## General Instructions
+- Factors and other financial intermediaries who extend short-term business credit to finance inventories or carry accounts receivable
+This sector excludes federal, state, and local governments; however, it includes agencies and instrumentalities of governments such as pension funds and insurance companies that provide nonbank financial services that are not directly governmental in nature.
+Exposures to NBFIs are to be reported in Columns 3, 8, 15, and 20 of Schedule C, Part I; Columns 3 and 8 of Schedule C, Part II; and Column 3 of Schedule D.
+## 4. Corporate
+The corporate sector is defined as any organization, including a non-profit, that is principally engaged in producing goods or non-financial services. This sector excludes federal, state, and local governments; however, it includes agencies and instrumentalities of governments such as utilities that produce goods or nonfinancial services that are not strictly governmental in nature.
+Report as Corporate any organization that cannot be classified as "Bank," "Public," "NBFI," or "Household."
+Exposures to corporate counterparties are to be reported in Columns 4, 9, 16 and 21 of Schedule C, Part I; Columns 4 and 9 of Schedule C, Part II; and Column 4 (under "Other") of Schedule D.
+## 5. Households
+Include in the household sector all claims on households, families, and individuals for personal expenditures (using the same definition of households as used in the FR Y-9C, Schedule HC-C, item 6, "Loans to individuals for household, family, and other personal expenditures"). Therefore, any reportable claims on households should be reported, regardless of the product type (e.g., loans and consumer leases).
+Exposures to households would be reported in Columns 5, 10, 17, and 22 of Schedule C, Part I; Columns 5 and 10 of Schedule C, Part II; and Column 4 (under "Other") of Schedule D.
+## 6. Other
+The "Other" sector applies only for reporting on Schedule D and the FFIEC 009a "Country Exposure Information Report." The "Other" sector refers to those counterparties classified as Corporate or Households, as defined above.
+## E. Cross-Border Claims and Claims on Local Residents
+## 1. Cross-Border Claims
+Cross-border claims of each reporter cover:
+- All claims of its U.S. offices (including IBFs, Edge and Agreement corporations, and offices in Puerto Rico and U.S. territories and possessions) with residents of foreign countries, regardless of the currency in which the claim is denominated; and,
+- All claims of each of its offices in a foreign country with residents of other countries (i.e., countries other than the country in which the office is located, including the United States), regardless of the currency in which the claim is denominated.
+Since the reports are on a fully consolidated bank (or bank holding company) basis, cross-border claims exclude any claims against those branches or subsidiaries that are part of the consolidated bank (or bank holding company). However, claims on unconsolidated subsidiaries or associated companies of the reporter should be reported. Thus, a banking subsidiary that submits an FFIEC 009 report should include claims on subsidiaries of the bank's parent holding company.
+## 2. Claims on Local Residents
+Claims on local residents are all claims of the institution's offices, regardless of location (including the U.S.), on residents of the country in which the office is located. The definition of "cross-border claims" and "claims on local residents" is the same on an "immediate-counterparty" basis and a "guarantor" basis. However, some claims may be categorized differently, or be placed in different sectors or country rows, because the sector or country of residence of the immediate obligor may differ from that of the ultimate obligor.
+## General Instructions
+Claims of the institution's U.S. office(s) on a resident of the United States should be reported as a claim on a local resident, while claims of the institution's foreign office(s) on a resident of the United States should be reported as a cross-border claim.
+## 3. "Local" vs. "Non-Local" Currency
+A currency is considered to be a "local" currency of a country only if the country, directly or through a currency union, has the authority to issue that currency. Thus, U.S. dollars would not be considered to be the local currency of any country other than the United States, whereas euros would be considered to be the local currency of any country that is a member of the European Monetary Union, but of no other country.
+## F. Required Risk Transfers
+The outward and inward redistribution of claims from an "immediate-counterparty" basis to a "guarantor" basis is reported in Columns 13 through 22 of Schedule C, Part I. Outward claims with guarantors in other sectors and jurisdictions are reported in Columns 13 through 17, and inward claims with guarantors in other sectors and jurisdictions are reported in Columns 18 through 22.
+If full credit protection is provided by more than one source, e.g., from multiple guarantors or multiple forms of collateral, the guarantor claim should be determined by the sector and residence of the highest rated credit enhancer (using the reporter's internal rating system). For instance, for a claim on a bank branch for which eligible collateral is posted, it should be determined whether the counterparty's parent bank or the collateral has a higher credit rating. The claim should then be reported, accordingly, on a guarantor basis.
+## 1. Guarantees
+Guarantees are legally binding commitments by a third party to repay a debt if the direct obligor fails to do so. Guarantees include financial and performance standby letters of credit and acceptances (for the amount of the participation sold). Documents that do not establish legal obligations, such as "comfort" letters, letters of awareness, or letters of intent, are not guarantees for the purpose of this report.
+Guarantees provided by the reporter's head office or other consolidated units of the reporter should not be considered guarantees for the purposes of this report.
+Guarantees providing protection to the reporter should result in the reallocation of the claim from the sector and country row of the immediate borrower (in Columns 13 through 17 of Schedule C, Part I) to the sector and country row of the provider of the guarantee (in Columns 18 through 22 of Schedule C, Part I). Conversely, if the reporter provides a guarantee on a foreign credit, the amount of the guarantee should be reported in Column 2 of Schedule O, "Guarantees (Excluding Credit Derivatives Sold)."
+See Section II.F.5 for treatment of guarantees provided in the form of cash and debt or equity securities held as collateral. See Section II.H.1 for treatment of guarantees in the form of purchased credit derivatives.
+Ownership of fund shares in an unconsolidated investment entity should be reported on an immediate and guarantor basis according to the country and sector of the investment entity. The underlying assets of the investment fund do not provide an effective guarantee for purposes of the FFIEC 009 report.
+## 2. Insurance Policies
+Insurance policies that guarantee payment of a claim if the borrower defaults or if non-convertibility occurs should be reallocated to the non-bank sector of the country of residence of the entity providing the insurance. However, limited purpose policies, such as "political risk insurance" policies should not be used as a basis for reallocation. Conversely, if a reporter issues an insurance policy guaranteeing the payment of a claim if a foreign borrower defaults, the amount of the protection sold should be reported in Column 2 of Schedule O, "Guarantees (Excluding Credit Derivatives Sold)."
+## 3. Head Offices
+For the purposes of this report, claims on a bank branch (but not on a subsidiary) of a banking organization are considered to be guaranteed by the head office of the organization, even without a legally binding agreement. Therefore, claims on bank branches should be reallocated to the bank sector in the country in which the parent institution is chartered.
+## General Instructions
+## 4. Credit Derivatives
+See Section II.H.
+## 5. Collateralized Claims
+Eligible collateral for risk transfers on the FFIEC 009 includes collateral that is:
+- (1) Liquid and readily realizable, and
+- (2) Is realizable outside of the country of residence of the borrower.
+Eligible collateral includes:
+## Cash
+If collateral is in the form of cash, the sector and country of the "guaranteeing" party is the sector and country of residence of the legal entity where the cash is held (i.e., the legal entity that has the liability for the cash collateral). Cash collateral posted to the same sector and country as the immediate claim should result in no risk transfer.
+## Debt and Equity Securities
+If collateral is in the form of investment grade debt or marketable equity securities, the sector and country of the "guaranteeing" party is the sector and country of residence of the party issuing the security.
+However, in the case of resale agreements, securities lending arrangements, and other similar financing agreements, the claims should be allocated based on the counterparty, not the underlying collateral (i.e., no risktransfer should be made). These should be reported at the value of the outstanding claim, regardless of the amount of collateral provided. Resale agreements should also be reported by country of the counterparty in the memorandum section of Schedule C, Part II in Column 17. The same collateral should be allocated based on the underlying collateral in Column 18. (See Section V.B.2.)
+If the collateral consists of a basket of convertible currencies or investment grade securities of different countries in an amount equal to the immediate claim, break out the underlying exposures on a pro-rata basis and report opposite the appropriate country and sector.
+Collateral provided in the form of cash or securities in excess of the amount of the outstanding claim (e.g., a margin loan collateralized by securities with a fair value that exceeds the amount of the margin loan) should only be risk-transferred up to the amount of the underlying claim (see Example 22 of Section V.C). The guarantor basis claim should be reported by the sector and country of the highest rated credit enhancer(s) (using the reporter's internal rating system).
+Collateral provided by obligors to offset positive fair value positions of derivative contracts should be reported in Schedule D, using the same methodology for reporting securities and cash collateral as stated above. If the reporter has a derivative contract with a positive fair value, and cash (or securities) collateral is provided, the collateralized portion of the fair value should be reported on Schedule D according to the sector and country of the institution holding (or issuing) the collateral, and the uncollateralized portion should be reported according to the sector and country of the counterparty.
+Assets such as real estate are not liquid or readily realizable and thus cannot be used for a risk transfer.
+## 6. Risk Participations
+Loans and acceptances, where the reporting bank has sold a legally binding risk participation, are considered to be guaranteed by the purchaser of the participation for the amount of the participation sold.
+## G. Netting and Offsetting
+Netting and offsetting of long and short positions is not permitted on the FFIEC 009 report with the exception of the following:
+- (1) "CUSIP netting" 2 may be conducted and reported on Schedule C, Parts I and II, or Schedule L, as appropriate. CUSIP netting should only be applied when the office of the reporter with the position, the country of the issuer of the underlying security, and the counterparty to a short position are in the same country.
+- (2) On Schedule C, Part II, report in Column 20 positions entered into for the purpose of offsetting the
+2. "CUSIP netting" refers to the industry practice where trading assets and trading liabilities in the same exact security (based on its security identifier) may be reported on a net basis.
+## General Instructions
+trading positions reported in Column 19, "Trading Assets." See Section V.B.3.
+- (3) On Schedule O, report in Columns 5 and 6, as appropriate, the net notional value of credit derivative contracts purchased from and sold to the same counterparty and on the same underlying reference entity. See Section VII.C.2.
+- (4) On Schedule D, the positive fair values of derivative contracts may be offset against negative fair values of derivatives contracts if, and only if, the positions were executed with the same counterparty under a legally enforceable master netting agreement and the offsetting meets the ASC Subtopic 210-20 criteria. Otherwise, positive fair values must be reported gross.
+In addition, reverse repurchase agreements may be offset by repurchase agreements if, and only if, the transactions were executed with the same counterparty under a legally enforceable master repurchase agreement (including multijurisdictional and multi-branch master netting agreements) and the offsetting meets the criteria in ASC Subtopic 210-20, Balance SheetOffsetting. When repurchase agreements are covered by master repurchase agreements, net claim positions should be reported on Schedule C, Parts I and II. In addition, for purposes of the FFIEC 009, net claims resulting from repurchase agreements under multi-jurisdictional and/or multi-branch master repurchase agreements are considered guaranteed by counterparty's head office, or the designated office ("the counterparty") subject to the agreement, and should be reported in the country of the counterparty on both an immediate and guarantor basis.
+## H. Reporting Credit Derivatives
+## 1. Risk Transfers
+Reporters should report credit derivative contracts purchased, (including, but not limited to, credit default swaps and options, total return swaps and sovereign risk options), as guarantees for purposes of this report, provided the institution considers the arrangement to be an effective credit risk mitigant based on its internal criteria and provided the contract contains provisions to pass the credit risk to the counterparty. A reporter's internal criteria should, at a minimum, include provisions that ensure the terms of credit derivatives provide an effective guarantee, even in the case of a maturity mismatch, prohibit clauses that reduce the effectiveness of the guarantee in the case of default, contain effectual events of default, and reference the same legal entity as the obligor.
+Claims for which credit derivatives form an effective risk transfer should be reallocated to the sector and country of residence of the entity that is providing the protection.
+Credit protection purchased to guarantee a claim reported on an immediate counterparty basis should only be reported on Schedule C, Parts I and II. Credit protection purchased to hedge or offset credit protection sold, or for trading purposes, should be excluded from Schedule C and reported in Columns 3 and 5 of Schedule O, as appropriate.
+If the notional amount of the credit protection purchased is less than the amount of the immediate claim, the notional amount of the guaranteed portion should be reallocated to the sector and country of the credit protection seller, and the non-guaranteed portion should be reported opposite the sector and country of the immediate obligor in Columns 1 through 10 of Schedule C, Part II.
+If the notional amount of the credit protection purchased exceeds the value of the immediate claim, the immediate claim should be reported in Columns 13 through 17 and reallocated, at the same amount of the immediate claim, to the sector and country of the seller of the credit derivative in Columns 18 through 22 of Schedule C, Part I, and in Columns 1 through 10 of Schedule C, Part II. The excess or residual amount (the full notional amount minus the amount risktransferred) should be reported in Column 3 of Schedule O (and in Column 5, if appropriate).
+Contracts with a positive fair value should be reported on Schedule D. For contracts with variable notional principal amounts, report the notional principal amounts as-of the report date.
+## 2. Treatment of Multi-Name Credit Derivatives
+Purchases and sales of credit derivatives guaranteeing multiple underlying reference entities (i.e., multi-name
+## General Instructions
+instruments, including portfolio or basket credit default swaps (CDS), CDS indexes, and "tranched" CDS contracts) should be reported on the FFIEC 009. However, only non-tranche index and single name CDS contracts may be used to risk transfer an immediate claim on Schedule C, Parts I and II. Contracts purchased and sold which cannot be used for risk transfer purposes as noted above are to be reported in Columns 3 and 4 of Schedule O, according to the country of residence of the underlying reference entities. Do not report on Schedule O according to the counterparty to the contract or the location of the company that establishes the index.
+Regardless of whether reported on Schedule C or Schedule O, if the underlying basket is composed of reference entities located in one country, report the full notional amount of the contract opposite the country of the reference entity. If the underlying basket is composed of several securities from several countries, the underlying reference entities should be reported on a pro-rata basis.
+CDS tranches, and bespoke CDS such as Nth-todefault contracts, and similar credit derivative contracts, should be reported on Schedule O. For these types of contracts, if the underlying reference entities are domiciled in multiple countries and payments to the protection buyer are not triggered by a credit event in a particular reference entity, but are triggered by a default past a predetermined threshold, the notional value of the contract should be reported in the "Unallocated" row.
+## 3. Gross-Gross and Gross-Net Reporting
+Purchases and sales of credit derivatives are reported on a "gross-gross" and "gross-net" basis on Schedule O (excluding the portion included as a hedge on Schedule C, Parts I and II) by country of the reference entity. The residual notional amount of credit derivatives purchased to hedge a claim reported in Schedule C, Part I that is in excess of the underlying hedged claim should be reported on Schedule O.
+The gross notional value of credit derivatives purchased and sold should be reported on Schedule O, Columns 3 and 4, as appropriate.
+Report in Columns 5 and 6, as appropriate, the net position of credit derivative contracts included in Column 3 and 4 where netting may be done only when all the following apply:
+- (1) There are offsetting purchased and sold positions on the same reference entity (on a legal entity basis),
+- (2) The contracts are with the same counterparty,
+- (3) The contracts are subject to a legally enforceable master netting agreement.
+Contracts that do not qualify to be netted should be reported gross.
+## III. Specific Instructions for Allocating Claims to the Rows
+This report form contains rows for: (a) the United States; (b) individual foreign countries; and (c) international or regional organizations. Subtotals for each region (e.g., Total Europe, Total Asia) are to be reported, in addition to the Total Foreign Countries row which captures the sum of all data reported, excluding the United States. Data should be allocated to the rows as described below.
+## A. The United States
+The "United States" is defined as the 50 states of the United States, the District of Columbia, the Commonwealth of Puerto Rico, as well as U.S. territories and possessions. 3
+## B. Foreign Countries
+A foreign country is any country other than the United States as defined above. For claims reported on an immediate-counterparty basis, report claims for the corresponding country of legal residence (i.e., the country of incorporation or charter, or, for a bank branch, the country where the branch is licensed) of the immediate counterparty. For claims reported on a guarantor basis, report claims in the row corresponding to the country of legal residence (i.e., the country of incorporation or, for a bank branch, the country where the parent bank is chartered) of the ultimate obligor.
+3. For purposes of the FFIEC 009 report, IBFs are considered a U.S. entity.
+## General Instructions
+(See Section II.C for definitions of immediate counterparty and ultimate obligor.)
+The "Unallocated" row of Schedule L should only be used for negotiable securities issued by the reporter, where the country of the holder is unknown on the report as-of date. The "Unallocated" row of Schedule O should only be used for credit default contracts such as guarantees provided by selling protection on "tranched" credit default swaps in which the ultimate obligors of the referenced credits do not all reside in the same country and the complexity of the product makes allocating the countries of the reference credits on a pro-rata basis, as could be done with index products, an inaccurate measure of the likely geographic distribution of the guarantee.
+Exposures on NBFIs should be reported for the country where the institution is incorporated, or otherwise chartered. Institutions such as hedge funds and Special Purpose Vehicles (SPV) should be reported according to the country of legal residence (country of incorporation) of the fund/vehicle, not according to the location of the fund managers or beneficial owners of the fund/vehicle.
+## C. International and Regional Organizations
+Claims on international and regional organizations, even if located in the United States, should be reported opposite the appropriate region: (a) International; (b) European; (c) Latin American; (d) Caribbean (e) Asian; (f) African; or (g) Middle Eastern. The "International" entry covers most organizations of a global character, such as the International Monetary Fund and the World Bank. The regional entries cover organizations that are regional in scope such as the European Coal and Steel Community (European), the Inter-American Development Bank (Latin American) or the Asian Development Bank (Asian).
+All international and regional institutions are considered to be "public" sector organizations.
+## SPECIFIC INSTRUCTIONS FOR PREPARATION OF
+## Claims Schedule C
+## IV. Specific Instructions for Schedule C, Part I-Claims on an ImmediateCounterparty Basis
+## A. Immediate-Counterparty Claims (Columns 1 through 12)
+All data in Columns 1 through 12 should be based only upon the immediate obligor; do not consider any guarantees or other risk transfers.
+## Claims by Sector
+In Columns 1 through 5 report all cross-border claims, as defined in Section II.E.1, denominated in any currency.
+In Columns 6 through 10 report all claims on local residents in currencies other than the official currency of the country in which the local office exists, as defined in Sections II.E.2 and II.E.3.
+For Columns 1 through 12, allocate the claims to each sector (see Section II.D) and each country row (see Section III) based upon the country of residence and sector of the direct obligor.
+## Remaining Maturity of One Year or Less
+In Column 11, show all claims reported in Columns 1 through 10 that have a remaining contractual maturity of one year or less except as described below. The definition of "one year" should be consistent with the definition used in the FFIEC 031 and the FR Y-9C.
+Marketable equity investments, both trading and available-for-sale, should be reported as maturing in less than one year.
+Debt securities held for trading should be reported as maturing in less than one year. All other debt securities should be reported according to the remaining maturity.
+## Claims on Local Residents in the Local Currency
+In Column 12, report all claims on local residents in the official currency of the country in which the local office exists (see Sections II.E.2 and II.E.3).
+The claims that are reflected in Column 12 should be included in the total claims reported in Columns 1 and 2 of the FFIEC 009a.
+All claims on residents of another country and claims in a non-local currency on residents of the same country as the office holding the claim should be reported in Columns 1 through 10 and excluded from this column.
+## Examples for Columns 1 through 12 only:
+- (1) The London branch of the respondent has a claim of $10 million, denominated in Brazilian reais, and another claim of $20 million, denominated in U.S. dollars, on a bank located in Brazil. The claims mature in 8 months. Entries would be:
+- (2) The Brazilian branch of the respondent has a claim worth $10 million, denominated in a currency other than reais, on a bank located in Brazil. Entries would be:
+| | Part I - Column 1 - Banks | Part I - Column 11 - Rem Maturity |
+| --- | --- | --- |
+| Brazil | 30 | 30 |
+| | Part I |
+| --- | --- |
+| | Col. 6 - Banks |
+| Brazil | 10 |
+## Schedule C
+- (3) The Brazilian branch of the respondent issued a loan worth $10 million, denominated in Brazilian reais, to a bank located in Brazil. Entries would be:
+| | Part I - Column 6 - Banks | Part I - Column 12 - Cl Lcl Cur |
+| --- | --- | --- |
+| Brazil | - - - | 10 |
+## B. Redistribution of Claims for Required Risk Transfers (Columns 13 through 22)
+Redistribute all claims subject to a required risk transfer (see Sections II.F and II.H) from the sector and country of the immediate counterparty and to the sector and country of the ultimate obligor. Show the required risk transfers between different countries or between different sectors in the same country. Exclude risk transfers within the same country and sector.
+The sum of the outward claims with guarantors in other sectors and jurisdictions (in Columns 13 through 17) on a grand-total basis should equal the sum of the inward claims with guarantors in other sectors and jurisdictions (in Columns 18 through 22), because all transfers froma sector or country must also be transfers to another sector or country.
+## 1. Outward Claims with Guarantors in Other Sectors and Jurisdictions
+In Column 13, show (as a positive number), for each country, all required risk transfers of claims reported in Columns 1, 6, and 12 from banks located in that country.
+In Column 14, show (as a positive number), for each country, all required risk transfers of claims reported in Columns 2, 7, and 12 from the public sector located in that country.
+In Column 15, show (as a positive number), for each country, all required risk transfers of claims reported in Columns 3, 8, and 12 from NBFIs located in that country.
+In Column 16, show (as a positive number), for each country, all required risk transfers of claims reported in Columns 4, 9 and 12 from non-financial corporations located in that country.
+In Column 17, show (as a positive number), for each country, all required risk transfers of claims reported in Columns 5, 10 and 12 from households located in that country.
+## 2. Inward Claims with Guarantors in Other Sectors and Jurisdictions
+Report in Columns 18 through 22 required risk transfers as defined in Section II.F by country and sector of the ultimate obligor-i.e., of the guarantor or issuer/ holder of collateral.
+In Column 18, show, for each country row, all required risk transfers of claims reported in Columns 13 through 17 to banks located in that country.
+In Column 19, show, for each country row, all required transfers of claimsreported in Columns 13 through 17 to the public sector located in that country.
+In Column 20, show, for each country row, all required transfers of claims reported in Columns 13 through 17 to NBFIs located in that country.
+In Column 21, show, for each country, all required transfers of claims reported in Columns 13 through 17 to non-financial corporations located in that country.
+In Column 22, show, for each country, all required transfers of claims reported in Columns 13 through 17 to individuals located in that country.
+## V. Specific Instructions for Schedule C, Part II-Claims on a Guarantor Basis and Memorandum Items
+## A. Guarantor Basis Claims (Columns 1 through 11)
+## 1. Cross-border Claims
+In Columns 1 through 5, report all claims that, on a guarantor basis, are cross-border claims, i.e., claims for which the ultimate obligor, after required risk transfers, is a resident of a country other than the country of the office that holds the claim.
+The claims should be allocated to each column based upon the sector of the ultimate obligor (see Section II.C)
+## Schedule C
+and to each row based upon the country in which the ultimate obligor is located (see Section III).
+## 2. Claims on Local Residents
+In Columns 6 through 10, report all claims that, on a guarantor basis, are claims on local residents, i.e., claims for which the ultimate obligor, after required risk transfers, is a resident of the country in which the reporter's office is located.
+The claims should be allocated to each column based upon the sector of the ultimate obligor and to each row based upon the country in which the ultimate obligor is located.
+## 3. Claims on Local Residents in Non-Local Currencies
+In Column 11, show all claims reported in Columns 6 through 10 that are claims in currencies other than the official currency (see Section II.E.3) of the country in which the office is located.
+## B. Memorandum Items for Schedule C, Part II
+## 1. Securities (HTM and AFS) (Column 12)
+Report in Column 12, by country of issuer, securities the reporter owns and reports in Columns 1 through 10 of Schedule C, Part II, that are classified as held-tomaturity or available-for-sale. Held-to-maturity securities should be reported at amortized cost and availablefor-sale securities should be reported at fair value.
+## 2. Collateral Held Against Claims with No Risk Transfers (Columns 13 through 18)
+In Columns 13 through 18 of Schedule C, Part II, report claims included in Columns 1 through 10 of Schedule C, Part II, that are not subject to risk transfer and for which the obligor provided collateral that did not meet the definition of collateral for the risktransfers of claims (See Section II.F).
+In Column 13, report total claims, by country of the counterparty, included in Columns 1 through 10 of Schedule C, Part II, for which the obligor provided collateral that did not meet the definition of collateral for the risk-transfers of claims, namely through resale agreements, securities lending arrangements and other similar financing agreements. Reverse repurchase agreements and securities borrowed may be reported net, consistent with ASC Topic 210-20. Also include any other collateralized claims that do not result in a risk transfer of claims. Collateral in the form of real estate should be excluded from this report.
+In Column 14, report, by country of the counterparty, claims (regardless of whether cross-border or on local residents, or currency denomination) where cash collateral was provided and held as part of a securities lending arrangement or other similar financing agreement.
+In Column 15, report claims held where the country of the ultimate obligor (i.e., the issuer of the collateral or, for cash collateral, the legal entity where the cash is held, which is the legal entity with the liability for the cash collateral) is the same as the country of the immediate counterparty. Also include in this column claims where collateral was provided as part of a resale or securities lending agreement where the country of issuer of the collateral is the same as the country of the counterparty to the agreement. If multiple securities are provided as collateral, only include in Column 15 the amount attributable to the same country.
+In Column 16, report claims held where the country of the ultimate obligor (i.e., the issuer of the collateral, or for cash collateral, the legal entity where the cash is held, which is the legal entity with the liability for the cash collateral) is the U.S. Also include in this column claims where U.S.-issued collateral was provided as part of a resale or securities lending agreement. If multiple securities are provided as collateral, only include in Column 16 the amount attributable to the U.S.
+In both Columns 17 and 18 report claims reported in Columns 1 through 10 of Schedule C, Part II, that arise from resale agreements, securities lending transactions, or similar financing agreements. These claims should be reported on a guarantor basis. In Column 17, claims should be reported based on the country of the counterparty, and in Column 18, claims should be reported based on the issuing country of the collateral. Do not report claims secured by cash collateral in columns 17 and 18. The sum total of column 17 should equal the sum total of column 18.
+## Schedule C
+Columns 14 through 18 are not mutually exclusive (i.e., the same claim may be reported in more than one of these columns). If the value of the collateral exceeds that of the underlying claim, report the amount of the claim in Columns 13 through 18. If the claim is partially collateralized, only report the amount of the claim that is collateralized.
+## 3. Trading Assets (Columns 19 and 20)
+In Column 19, report the fair value of the reporter's trading account assets that are included in Columns 1 through 10 of Schedule C, Part II. Exclude from this
+## C. Examples for Schedule C, Part II
+- (1) The respondent's offices located outside of Hong Kong and Japan have $50 million in claims, denominated in U.S. dollars, on a private manufacturer in Hong Kong that are guaranteed by a bank located in Japan. Entries would be:
+- (2) The respondent's offices in Japan have $50 million in claims, denominated in Hong Kong dollars, on a securities company in Hong Kong that are guaranteed by a bank located in Japan. Entries would be:
+- (3) The reporter's U.S. branch parent bank issues a $75 million loan (held for investment) to a construction company incorporated in Japan. The loan is denominated in Japanese yen. As collateral, the Japanese company posts $50 million in Japanese government debt. Entries would be:
+| | Part I - Col. 4 - Corp | Part I - Col. 16 - Outw Corp | Part I - Col. 18 - Inw Banks | Part II - Col. 1 - Banks | Part II - Col. 4 - Corp |
+| --- | --- | --- | --- | --- | --- |
+| Hong Kong | 50 | 50 | - - - | - - - | - - - |
+| Japan | - - - | - - - | 50 | 50 | - - - |
+| | Part I - Col. 3 - NBFIs | Part I - Col. 15 - Cl on NBFIs | Part I - Col. 18 - Cl on Banks | Part II - Col. 1 - Banks | Part II - Col. 6 - Banks | Part II - Col. 11 - Cl Non- Lcl Curr |
+| --- | --- | --- | --- | --- | --- | --- |
+| Hong Kong | 50 | 50 | - - - | - - - | - - - | - - - |
+| Japan | - - - | - - - | 50 | - - - | 50 | 50 |
+| | Part I - Col. 4 - Corp | Part I - Col. 16 - Outw Corp | Part I - Col. 19 - Inw Pub- lic | Part II - Col. 2 - Public | Part II - Col. 4 - Corp |
+| --- | --- | --- | --- | --- | --- |
+| Japan | 75 | 50 | 50 | 50 | 25 |
+column derivative claims, as these should be reported on Schedule D. "CUSIP netting" is permissible if the position was reported net on Schedule C, Part II, Columns 1 through 10.
+In Column 20, report short positions in securities that have the same issuer (on a legal entity basis) and broad instrument type (i.e., debt versus debt and equity versus equity), as the long positions reported in Column 19. In addition, for each instrument type for each issuer, if the short position in Column 20 exceeds the long positions in Column 19, report only up to the amount of the long position reported in Column 19.
+## Schedule C
+- (4) The respondent's offices located outside of Denmark and Greece have a total of $100 million in claims, all denominated in U.S. dollars, on residents of Denmark, $70 million on banks, $20 million on public sector entities and $10 million on households. Of the claims on banks, $20 million is guaranteed (legally binding) by the counterparties' parent bank located in Greece. Entries would be:
+- (5) The respondent's offices located outside of the Bahamas and the United States have $10 million in claims, not denominated in Bahamian dollars, on the Nassau, Bahamas branch of a U.S. bank. Entries would be:
+- (6) The respondent's office in Spain has $10 million in claims, not denominated in euros, on a manufacturing company in Spain, guaranteed by a bank located in Denmark. Entries would be:
+- (7) The respondent's U.S. office has a $10 million claim, denominated in U.S. dollars, on a U.S. bank that has a parent in the United Kingdom. The parent provides a legally binding guarantee of payment. Entries would be:
+- (8) The respondent's Italian office has a $10 million claim, not denominated in euros, on a U.S. branch of an Italian bank. Entries would be:
+| | Col. 1 - Banks | Part I - Col. 2 - Public | Part I - Col. 5 - House- holds | Part I - Col. 13 - Outw Banks | Part I - Col. 18 - Inw Banks | Part II - Col. 1 - Banks | Part II - Col. 2 - Public | Part II - Col. 5 - Households |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Denmark | 70 | 20 | 10 | 20 | - - | 50 | 20 | 10 |
+| Greece | - - | - - | - - | - - | 20 | 20 | - - | - - |
+| | Part I - Col. 1 - Banks | Col. 13 - Outw Banks | Col. 18 - Inw Banks | Part II - Col. 1 - Banks |
+| --- | --- | --- | --- | --- |
+| Bahamas | 10 | 10 | - - - | - - - |
+| United States | - - - | - - - | 10 | 10 |
+| | Part I - Col. 9 - Corp | Part I - Col. 16 - Outw Corp | Part I - Col. 18 - Inw Banks | Part II - Col. 1 - Banks | Part II - Col. 9 - Corp |
+| --- | --- | --- | --- | --- | --- |
+| Spain | 10 | 10 | - - - | - - - | - - - |
+| Denmark | - - - | - - - | 10 | 10 | - - - |
+| | Part - Col. 12 - Cl Lcl Cur | I - Col. 13 - Outw Banks | Col. 18 - Inw Banks | Part II - Col. 1 - Banks |
+| --- | --- | --- | --- | --- |
+| United Kingdom | - - - | - - - | 10 | 10 |
+| United States | 10 | 10 | - - - | - - - |
+| | Part I - Col. 1 - Banks | Part I - Col. 13 - Outw Banks | Part I - Col. 18 - Inw Banks | Part II - Col. 6 - Banks | Part II - Col. 11 - Cl Non- Lcl Curr |
+| --- | --- | --- | --- | --- | --- |
+| Italy | - - - | - - - | 10 | 10 | 10 |
+| United States | 10 | 10 | - - - | - - - | - - - |
+## Schedule C
+- (9) The respondent's U.S. office has a $10 million claim, denominated in euros, on a household in France that is fully guaranteed by collateral in the form of securities issued by a French bank. Entries would be:
+- (10) The respondent's Hong Kong office has a $10 million claim, denominated in Hong Kong dollars, on a bank in Hong Kong that is a wholly-owned subsidiary of a Japanese bank. There is no legally-binding guarantee. Entries would be:
+- (11) The respondent's U.S. office has a $10 million claim, denominated in U.S. dollars, on a U.S. manufacturing company that is guaranteed by a U.K. bank. Entries would be:
+- (12) The Brazilian branch of the respondent has a $10 million claim, not denominated in reais, on a Brazilian manufacturer guaranteed by the United States Export-Import Bank. Entries would be:
+- (13) The Brazilian branch of the respondent has issued loans for $50 million, denominated in Brazilian reais, to a Brazilian non-banking subsidiary of a Belgian financial services company. The counterparty's parent provides a legally binding guarantee for only $20 million of the claims. Entries would be:
+| | Col. 5 - Households | Part I - Col. 17 - Outw Households | Col. 18 - Inw Banks | Part II - Col. 1 - Banks |
+| --- | --- | --- | --- | --- |
+| France | 10 | 10 | 10 | 10 |
+| | Col. 12 - Cl Lcl Cur | Part I - Col. 13 - Outw Banks | Col. 18 - Inw Banks | Part II - Col. 6 - Banks |
+| --- | --- | --- | --- | --- |
+| Hong Kong | 10 | - - - | - - - | 10 |
+| Japan | - - - | - - - | - - - | - - - |
+| | Part I - Col. 12 - Cl Lcl Cur | Col. 16 - Outw Corp | Col. 18 - Inw Banks | Part II - Col. 1 - Banks |
+| --- | --- | --- | --- | --- |
+| United Kingdom | - - - | - - - | 10 | 10 |
+| United States | 10 | 10 | - - - | - - - |
+| | Part - Col. 9 - Corp | I - Col. 16 - Outw Corp | Col. 19 - Inw Public | Part II - Col. 2 - Public |
+| --- | --- | --- | --- | --- |
+| Brazil | 10 | 10 | - - - | - - - |
+| United States | - - - | - - - | 10 | 10 |
+| | Part I - Col. 12 - Cl Lcl Cur | Part I - Col. 15 - Outw NBFIs | Part I - Col. 20 - Inw NBFIs | Part II - Col. 3 - NBFIs | Part II - Col. 8 - NBFIs | Part II - Col. 11 - Cl Non- Lcl Cur |
+| --- | --- | --- | --- | --- | --- | --- |
+| Brazil | 50 | 20 | - - - | - - - | 30 | - - - |
+| Belgium | - - - | - - - | 20 | 20 | - - - | - - - |
+## Schedule C
+- (14) The reporter's Cayman Islands branch enters into an overnight reverse repurchase agreement (for $50 million, denominated in U.S. dollars) with an NBFI domiciled in the U.K. The underlying collateral is U.K. corporate debt securities. Entries would be:
+- (15) The reporter's Cayman Islands branch enters into an overnight reverse repurchase agreement (for $50 million, denominated in U.S. dollars) with an NBFI domiciled in the U.K. The underlying collateral is $25 million in U.K. corporate debt securities and $25 million in U.S. Treasuries. Entries would be:
+- (16) The reporter enters into a securities lending transaction (for $100 million, denominated in U.S. dollars) with an NBFI domiciled in the Cayman Islands. The underlying collateral is $25 million in Singaporean corporate debt securities and $75 million in Japanese corporate debt securities. Entries would be:
+| | Part I - Col. 3 - NBFIs | Part I - Col. 11 - Rem Maturity | Part I - Col. 3 - NBFIs | Part II - Col. 13 - Total Coll | Part II - Col. 15 - Same Country | Part II - Col. 17 - Resale & Sec Lend | Col. 18 - Resale & Sec. Lending (Country of collateral) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| United Kingdom | 50 | 50 | 50 | 50 | 50 | 50 | 50 |
+| | Part I - Col. 3 - NBFIs | Part I - Col. 11 - Rem Maturity | Col. 3 - NBFIs | Part - Col. 13 - Total Coll | Part - Col. 15 - Same Country | Part - II Col. 16 - U.S. | Part - Col. 17 - Resale & Sec Lending (Country of coun- terparty) | Part - Col. 18 - Resale & Sec. Lending (Country of collateral) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| United Kingdom United States | 50 | 50 | 50 | 50 | 25 | 25 | 50 | 25 25 |
+| Part I | Part I - Col. 3 - NBFIs | Part I - Col. 11 - Rem Maturity | Part I - Col. 3 - NBFIs | Part II - Col. 13 - Total Coll | Part II - Col. 15 - Same Country | Part II - Col. 16 - U.S. | Part II - Col. 17 - Resale & Sec Lending (Country of coun- terparty) | Part II - Col. 18 - Resale & Sec. Lending (Country of collateral) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Cayman Islands | 100 | 100 | 100 | 100 | | | 100 | |
+| Singapore | | | | | | | | 25 |
+| Japan | | | | | | | | 75 |
+## Schedule C
+- (17) The respondent's U.S. office has a $20 million claim, denominated in U.S. dollars, on a Malaysian financial services company. The respondent purchased credit protection from a German bank against the risk of default by the Malaysian obligor through a credit derivative. The credit derivative has a notional value of $20 million. The arrangement is considered an effective risk transfer based on the respondent's internal criteria. Entries would be:
+- (18) The respondent's U.S. office has a $20 million claim, denominated in Brazilian reais, on a Brazilian financial company. The respondent purchased credit protection from a German bank against the risk of default by the Brazilian financial company through a credit derivative. The credit derivative has a notional value of $30 million, exceeding the value of a guaranteed claim. The arrangement is considered an effective risk transfer based on the respondent's internal criteria. Entries would be:
+| | Col. 3 - NBFIs | Part I - Col. 15 - Outw NBFIs | Col. 18 - Inw Banks | Part II - Col. 1 - Banks |
+| --- | --- | --- | --- | --- |
+| Malaysia | 20 | 20 | - - - | - - - |
+| Germany | - - - | - - - | 20 | 20 |
+| | Col. 3 - NBFIs | Part I - Col. 15 - Outw NBFIs | Col. 18 - Inw Banks | Part II - Col. 1 - Banks |
+| --- | --- | --- | --- | --- |
+| Brazil | 20 | 20 | - - - | - - - |
+| Germany | - - - | - - - | 20 | 20 |
+In addition, the excess $10 million (the difference between the $30 million notional amount and the $20 million underlying claim) should be reported on Schedule O, Column 3, and, if appropriate after netting, in Column 5 against Germany.
+Note regarding Schedule D (applies to examples 19 and 20):
+If the credit derivative has a positive fair value of $2 million, the positive fair value would be reported in Schedule D in the country row of the country of residence of the counterparty to the credit derivative contract. Entries would be:
+| | Schedule D - Col. 1 - Banks | Schedule D - Col. 5 - Total |
+| --- | --- | --- |
+| Germany | 2 | 2 |
+- (19) The respondent's Japanese office has a $100 million claim, denominated in Korean Won, on a Korean branch of a Hong Kong bank. The Korean obligor provides $60 million in Japanese government bonds as collateral. Entries would be:
+| | Part I - Col. 1 - Banks | Part I - Col. 13 - Outw Banks | Part I - Col. 18 - Inw Banks | Part II - Col. 19 - Inw Public | Part II - Col. 1 - Banks | Part II - Col. 7 - Public |
+| --- | --- | --- | --- | --- | --- | --- |
+| Hong Kong | - - - | - - - | 40 | - - - | 40 | - - - |
+| Korea | 100 | 100 | - - - | - - - | - - - | - - - |
+| Japan | - - - | - - - | - - - | 60 | - - - | 60 |
+## Schedule C
+- (20) The respondent's German office engages in an overnight resale agreement with a hedge fund located in the Cayman Islands for $50 million, denominated in U.S. dollars. $50 million in cash is exchanged for $52 million in U.K. government securities. Entries would be:
+- (21) The reporter's branch in Brazil issues a mortgage for a private residence to an individual, also in Brazil. The mortgage is for $2 million (denominated in Brazilian reais) and is secured by the residence. Entries would be:
+| | Part I - Col. 3 - NBFIs | Part I - Col. 11 - Rem Maturity | Part II - Col. 3 - NBFIs | Col. 13 - Total Coll | Col. 17 - Resale & Sec Lend | Col. 18 - Resale & Sec. Lending (Country of collateral) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Cayman Islands | 50 | 50 | 50 | 50 | 50 | |
+| United Kingdom | | | | | | 50 |
+| | Part I - Col. 12 - Cl Lcl Cur | Part II - Col. 10 - Households |
+| --- | --- | --- |
+| Brazil | 2 | 2 |
+Collateral in the form of real-estate is not considered eligible collateral (see Section II.F.5) for the purposes of the FFIEC 009 and would not result in a risk transfer or be included as "Collateral Held Against Claims with No Risk Transfer."
+- (22) The reporter's Cayman Islands branch issues a (short-term) margin loan to an insurance company domiciled in Switzerland. The loan is for $50 million (denominated in euros). For collateral, the insurance company posts $10 million in cash (denominated in euros) that is held at a bank domiciled in Switzerland and $25 million in German government debt (denominated in euros). Entries would be:
+- (23) The reporter's Cayman Islands branch issues a (short-term) margin loan to a bank domiciled in the Bahamas. The loan is for $50 million (denominated in euros). For collateral, $20 million in cash (denominated in euros) is posted to a third-party bank domiciled in the Bahamas. Entries would be:
+| | Col. 3 - NBFIs | Part I - Col. 11 - Rem Maturity | Part I - Col. 15 - Outw NBFIs | Part I - Col. 18 - Inw Banks | Part I - Col. 19 - Inw Public | Part II - Col. 1 - Banks | Part II - Col. 2 - Public | Part II - Col. 3 - NBFIs |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Switzerland | 50 | 50 | 35 | 10 | - - | 10 | - - | 15 |
+| Germany | - - | - - | - - | - - | 25 | - - | 25 | - - |
+| | Part I - Col. 1 - Banks | Part I - Col. 11 - Rem Maturity | Part II - Col. 1 - Banks |
+| --- | --- | --- | --- |
+| Bahamas | 50 | 50 | 50 |
+## Schedule C
+- (24) The reporter's U.K. office makes a short-term margin loan to a non-bank financial services client domiciled in Germany for $50 million (denominated in euros). The client posts $55 million in U.K. government debt as collateral. Entries would be:
+| | Part I - Col. 3 - NBFIs | Part I - Col. 11 - Rem Maturity | Part I - Col. 15 - Outw NBFIs | Part II - Col. 19 - Inw Pub- lic | Part II - Col. 7 - Public |
+| --- | --- | --- | --- | --- | --- |
+| Germany | 50 | 50 | 50 | - - - | - - - |
+| United Kingdom | - - - | - - - | - - - | 50 | 50 |
+## SPECIFIC INSTRUCTIONS FOR PREPARATION OF
+## Foreign-Office Liabilities Schedule L
+## A. Foreign-Office Liabilities by Country of Foreign Office (Columns 1 and 2)
+Report in Columns 1 and 2, the liabilities of the reporter's foreign offices by country of each foreign office that represent liabilities of the foreign offices to all creditors, regardless of location, for which no payment is guaranteed at locations outside the country of the office. Deposits of a foreign branch are assumed to be the liabilities of the foreign branch, unless they are explicitly redeemable outside the country in which the branch is located. Exclude the negative fair value of derivative contracts.
+In Column 1, report foreign-office liabilities that are in a currency other than one which the country's government has authority to issue. (See Section II.E.)
+In Column 2, report foreign-office liabilities that are in a currency which the country's government has authority to issue. (See Section II.E.)
+## B. Foreign-Office Liabilities by Country of Creditor (Column 3)
+Column 3-total liabilities booked at foreign offices-is required to be reported only by those reporters meeting certain conditions described in Section I.D of these instructions.
+In Column 3, report by country of the creditor, all liabilities that are booked at any of the reporter's foreign offices, regardless of the currency and regardless of whether payment is guaranteed at locations outside the country of the office. Liabilities in Column 3 should be reported against the country where the counterparty is located (i.e., on an immediate-counterparty basis) and not the location of the parent of the creditor. Liabilities to creditors located in the United States should be reported. Exclude the negative fair value of derivative contracts.
+Short sales by a foreign office should be reported in Column 3 opposite the country of the issuer of the financial instrument that has been sold short until the settlement date. For the September 30, 2019, and the December 31, 2019, report dates, reporting entities may report short sales by a foreign office using either the short sale instructions as they have been revised as of September 30, 2019, or the previously existing short sale instructions.
+If the country of the creditor cannot be determinedbecause the customer was not known to the bank (as would be the case with negotiable certificates of deposit)-then these liabilities should be reported in the "Unallocated" row.
+In any row and on a grand-total basis, the amount in Column 3 (which is by country of creditor) may not equal the sum of amounts in Column 1 and 2 (which are by country of foreign office).
+## C. Net Due To (or Due From) Own Related Offices in Other Countries (Column 4)
+Report for each country in which the reporter has an office or offices, that office's (or those offices') net liabilities to (or claims on) all other offices of the respondent that are located in other countries, including offices in the United States (e.g., the net amount a German branch has "due to" or "due from" the head office and all other consolidated non-German offices of the parent). Only a single net figure should be reported for all the offices of the reporter in a given country. If the offices in a given country taken together have a net "due to" position with all related offices in all other countries combined, a positive figure should
+## Schedule L
+be reported; a net "due from" position should be indicated by a negative sign.
+For the purposes of this report, the computation of net due to or due from should include unremitted profits and capital contribution accounts of branch offices and the equity investment in consolidated subsidiaries. Include all claims and liabilities that are reflected as
+## D. Examples for Schedule L
+- (1) The reporter's branch located in the U.K. holds $10 million in interest-bearing deposits placed by a non-bank financial company located in the U.K. (denominated in GBP). The funds are not payable outside the U.K. Entries would be:
+- (2) The reporter's parent bank takes out a loan directly from a third-party bank domiciled in Japan. The amount of the loan is $5 million and is denominated in U.S. dollars. Entries would be:
+| | Schedule L - Col. 2 - FO Liab Non-Lcl Cur | Schedule L - Col. 3 - Total Liab at FO |
+| --- | --- | --- |
+| United Kingdom | 10 | 10 |
+None. Only liabilities incurred by the reporter's offices located outside the U.S. should be reported in Columns 1 through 3 of Schedule L.
+- (3) The reporter's branch located in the U.K. holds $100 million in deposits (denominated in euros) placed by a U.K. branch of a German bank. The funds are payable anywhere the reporter has an office. Entries would be:
+| | Schedule L Col. 3 - Total Liab at FO |
+| --- | --- |
+| United Kingdom | 100 |
+Since the deposits are payable outside the country of the office, there are no foreign-office liabilities to report in Columns 1 and 2 of Schedule L. However, the deposit should be reported in Column 3 against the country where the (immediate) counterparty is located, regardless of whether payment can be made at locations outside the country of the office (see Section VI.B).
+- (4) The reporter's German securities broker subsidiary has a trade date payable for the purchase of $25 million of U.K. sovereign debt, denominated in GBP, with an insurance company counterparty located in Switzerland. Entries would be:
+| | Schedule L - Col. 1 - FO Liab Lcl Cur | Schedule L - Col. 3 - Total Liab at FO |
+| --- | --- | --- |
+| Germany | 25 | - - - |
+| Switzerland | - - - | 25 |
+balance sheet items (e.g., loans, borrowings, derivative contracts).
+The amounts reported in Column 4 represent the internal position of offices within the consolidated bank or the consolidated holding company. They are, therefore, not reflected in any other columns of the report.
+## Schedule L
+- (5) The reporter's Cayman Islands branch enters into a repurchase agreement for $2 million (denominated in U.S. dollars) with a hedge fund counterparty located in the Bahamas. Entries would be:
+- (6) The reporter's U.K. branch enters into a securities lending arrangement (U.K. government securities were lent) for $5 million (denominated in GBP) with a pension fund domiciled in the Netherlands. Entries would be:
+- (7) The reporter's U.K. branch sold a put option on a German manufacturer's equity securities. The counterparty is a non-bank financial institution domiciled in Luxembourg. The notional value of the derivative is $100 million and has a negative fair value of $2 million, denominated in U.S. dollars. Entries would be:
+| | Schedule L - Col. 1 - FO Liab Lcl Cur | Schedule L - Col. 3 - Total Liab at FO |
+| --- | --- | --- |
+| Cayman Islands | 2 | - - - |
+| Bahamas | - - - | 2 |
+| | Schedule L - Col. 2 - Liab Non-Lcl Cur | Schedule L - Col. 3 - Total Liab at FO |
+| --- | --- | --- |
+| United Kingdom | 5 | - - - |
+| Netherlands | - - - | 5 |
+No entries. Liabilities from derivative contracts are not reported on Schedule L of the FFIEC009 report.
+- (8) The reporter's U.K. broker/dealer subsidiary receives an intracompany loan from the Cayman branch of the reporter (for $10 million, denominated in euros). In addition, the U.K. branch of the reporter placed deposits of $4 million (denominated in U.S. dollars) with the reporter. Entries would be:
+| | Schedule L Col. 4 - Net Due to Own Rel Off |
+| --- | --- |
+| United Kingdom | 6 |
+| Cayman Islands | (10) |
+| United States | 4 |
+| Grand Total | 0 |
+The U.K. offices have a combined net due to position of $6 million ($10 million due to the Cayman Islands and a $4 million due from the U.S.). See Section VI.C.
+- (9) The reporter's security subsidiary located in Germany sells short $20 million in U.K. government debt it does not own to a fund manager domiciled in Luxembourg. Assume the settlement date is the day after the FFIEC 009 report as-of date. Entries would be:
+| | Schedule L - Col. 1 - FO Liab Lcl Cur | Schedule L - Col. 3 - Total Liab at FO |
+| --- | --- | --- |
+| Germany | 20 | - - - |
+| United Kingdom | - - - | 20 |
+## Schedule L
+"Short sales" are to be reported opposite the country of the office entering into the short sale in Columns 1 and 2 (in this example, Germany), and in Column 3 opposite the country of the issuer of the securities that have been sold short (in this example, the U.K.). Do not report according to the country of the counterparty to whom delivery is owed. (See the instructions for reporting short sales on page L-1 for information on reporting as of September 30, 2019, and December 31, 2019.)
+## SPECIFIC INSTRUCTIONS FOR PREPARATION OF
+## Off-Balance-Sheet Items Schedule O
+## A. Unused Commitments (Column 1)
+In Column 1, report, on an "guarantor" basis (i.e., after risk transfers due to head offices of bank branches or credit protection provided by third parties), the unused portions of all outstanding crossborder and local office commitments to provide credit, by country of residence of the ultimate obligor if the commitment were to be drawn. Include the unused portion of all outstanding letters of credit and amounts outstanding of purchases of risk participations.
+The definition of commitments is identical to that used for Schedule HC-L of the FR Y-9C.
+Exclude "best efforts" letters and letters in which the pricing is indicative and not determined until launch date, or for which the banking institution has no commitment to buy the assets for its own account. Exclude cross- border commitments (such as those under commercial letters of credit) that can be cancelled, at the option of the reporter, upon the occurrence of a sovereign event. Also exclude financial and performance standby letters of credit. (Outstanding and unused financial and performance standby letters of credit should be reported as guarantees in Column 2.)
+In cases of commitments for syndicated loans, the lead underwriter should report only the underwriter's proportional share of the unused commitment. Similarly, contractual underwriting commitments (e.g., revolving underwriting facilities) and other underwriting agreements may be shown net of firm commitments from other parties to purchase the assets without recourse within a short and specific period of time. Accordingly, the reporter should also include its unused obligations to participate in syndicated loans and underwritings managed by other institutions.
+Commitments of U.S. and foreign offices to local residents should be included.
+## B. Guarantees (Excluding Credit Derivatives Sold) (Column 2)
+In Column 2, report, on an guarantor basis, all legally binding guarantees and insurance contracts (see Sections II.F.1 and II.F.2) issued by the reporter's U.S. or foreign offices, excluding credit derivatives sold. Do not include guarantees which provide protection only between consolidated units of the reporter. Include the full amount of outstanding and unused financial and performance standby letters of credit in Column 2. Guarantees and insurance contracts of foreign offices to local residents should also be included.
+## C. Credit Derivatives Purchased and Sold (Columns 3 through 6)
+Report in Columns 3 through 6, by country of the underlying reference entity, the notional value of all outstanding credit derivatives sold and of those credit derivatives purchased that are not reported as a risk transfer in Schedule C, Parts 1 and II (see Section II.H.1).
+Credit protection purchased to hedge/offset credit protection sold, or for speculative purposes, should be excluded as a risk transfer from Schedule C, Parts I and II, and reported in Columns 3 and 5 of Schedule O, as appropriate.
+## 1. Gross-Gross (Columns 3 and 4)
+Report in Columns 3 and 4 the gross notional value of credit derivatives purchased and sold opposite the country of the underlying reference entity.
+## Schedule O
+Report in Column 3, by country of the ultimate obligor of the reference credit, credit derivatives where the reporter (or its consolidated offices) is a protection purchaser (see Section II.H) and that were not used as part of a risk transfer on Schedule C, Parts I and II. Include in Column 3 any residual notional value of credit derivatives purchased, in excess of the amount of the underlying claim where the credit derivative was used as part of a risk transfer on Schedule C, Parts I and II.
+Report in Column 4, by country of the ultimate obligor of the reference credit, all credit derivatives where the respondent is a protection seller (see Section II.H). For example, if a reporter is a guarantor providing credit risk protection to a U.K. bank for a claim on an Argentine bank, by means of a credit derivative, the reporter would report the notional amount in Column 4 in the row for Argentina.
+## 2. Gross-Net (Columns 5 and 6)
+Report in Columns 5 and 6, as appropriate, the consolidated net position of credit derivative contracts included in Column 3 and 4. Netting may be done only when all the following apply:
+## E. Examples for Schedule O
+- (1) The respondent (through any office) issued a $10 million loan commitment, denominated in U.S. dollars, to a manufacturing company located in Ireland. Entry would be:
+- (2) The respondent (through any office) has provided credit protection to a German bank, against the risk of default by a French non-financial company through a credit derivative. The credit derivative has a notional value of $10 million, denominated in euros. Entry would be:
+- (1) there are offsetting purchased and sold positions on the same reference entity (on a legal entity basis),
+- (2) the contracts are with the same counterparty,
+- (3) the contracts are subject to a legally enforceable master netting agreement.
+| | Schedule O Unused Commitments |
+| --- | --- |
+| Ireland | 10 |
+| | Schedule O - Col. 4 - Gr - Gr Cred Deriv Sold | Schedule O - Col. 6 - Gr - Net Cred Deriv Sold |
+| --- | --- | --- |
+| France | 10 | 10 |
+Contracts that do not meet all three conditions above should be reported on a gross basis in Columns 5 and 6.
+## D. Trade Finance (Column 7)
+In Column 7, report total extensions of credit with maturities one year and under that are included in Columns 1 through 10 of Schedule C, Part II, or Columns 1 or 2 of Schedule O and that: (1) are directly related to imports or exports and (2) will be liquidated through the proceeds of international trade. Provided these two conditions are met, such credit extensions may include customers' liability on acceptances outstanding, own acceptances discounted, acceptances of other banks purchased, pre-export financing where there is a firm export sales order, commercial letters of credit, as well as other loans and advances whenever such extensions directly relate to international trade. Include credit extensions for pre-export financing when there is a firm export sales order and the proceeds of the order will pay off indebtedness.
+## Schedule O
+## Note regarding Schedule D:
+If the credit derivative has a positive fair value of $1 million, the positive fair value would be reported in Schedule D in the country row of the country of residence of the counterparty to the credit derivative contract. Entries would be:
+| | Schedule D - Col. 1 - Banks | Schedule D - Col. 5 - Total |
+| --- | --- | --- |
+| Germany | 1 | 1 |
+- (3) The respondent's U.S. office has provided a company in Brazil with a $20 million line of credit, denominated in Brazilian reais, and has provided a bank in the United Kingdom with a $30 million (notional value) credit derivative, denominated in GBP, based upon the credit of a German industrial company. Entries would be:
+| | Schedule O - Col. 1 - Unused Comm | Schedule O - Col. 4 - Gr- Gr Cred Deriv Sold | Schedule O - Col. 6 - Gr - Net Cred Deriv Sold |
+| --- | --- | --- | --- |
+| Brazil | 20 | - - - | - - - |
+| United Kingdom | - - - | - - - | - - - |
+| Germany | - - - | 30 | 30 |
+Note regarding Schedule D:
+If the credit derivative has a negative fair value of $2 million, the fair value would not be reported on Schedule D.
+- (4) The Brazilian branch of the respondent has a loan commitment of $10 million, denominated in Brazilian reais, to a Brazilian manufacturer. The United States Export-Import Bank has written a guarantee that would guarantee $7 million of the loan, should it be extended. Entries would be:
+- (5) The reporter purchases a CDS index (notional value of $150 million, denominated in U.S. dollars) with 15 equally-weighted reference entities, 5 in Germany, 5 in the U.K. and 5 in Japan. Assuming the reporter has no other CDS contracts, entries would be:
+| | Schedule O Col. 1 - Unused Comm |
+| --- | --- |
+| Brazil | 3 |
+| United States | - - - |
+| | Schedule O - Col. 3 - Gr-Gr Cred Deriv Purch | Schedule O - Col. 5 - Gr-Net Cred Deriv Purch |
+| --- | --- | --- |
+| Germany | 50 | 50 |
+| United Kingdom | 50 | 50 |
+| Japan | 50 | 50 |
+## Schedule O
+- (6) The reporter enters into the following transactions with bank B (located in Germany) and bank C (located in Spain). The reporter has legally enforceable master netting agreements with banks B and C and all contracts are executed under the agreements as follows (all contracts denominated in U.S. dollars).
+- a. The reporter buys from bank B $100 million notional of CDS protection referencing sovereign debt issued by Germany.
+- b. The reporter sells to bank B $90 million notional of CDS protection referencing sovereign debt issued by Germany (different CUSIP from transaction 1).
+- c. The reporter buys from bank C $50 million of CDS protection referencing the debt of Company XYZ in the U.K.
+- d. The reporter sells to bank C $70 million of CDS protection referencing the debt of Company XYZ in the U.K.
+- e. The reporter buys from bank C $30 million of CDS protection referencing sovereign debt issued by the U.K. government.
+These transactions would be reported as follows:
+| | Schedule O - Col. 3 - Gr-Gr Cred Deriv Purch | Schedule O - Col. 4 - Gr- Gr Cred Deriv Sold | Schedule O - Col. 5 - Gr-Net Cred Deriv Purch | Schedule O - Col. 6 - Gr - Net Cred Deriv Sold |
+| --- | --- | --- | --- | --- |
+| Germany | 100 | 90 | 10 | - - - |
+| United Kingdom | 80 | 70 | 30 | 20 |
+- (7) The reporter enters into the following transactions with bank E (located in France), bank F (located in Germany) and a central counterparty located in the U.K. (Company G) as follows (all contracts denominated in euros).
+- a. The reporter sells to bank E $50 million notional of CDS protection referencing the sovereign debt of France and $100 million notional of CDS protection referencing corporate debt issued by Company ABC domiciled in Ireland. The contracts are cleared through Company G.
+- b. The reporter purchases from bank F $30 million notional of CDS protection referencing the sovereign debt of France. The contract is cleared through Company G.
+These transactions would be reported as follows:
+| | Schedule O - Col. 3 - Gr-Gr Cred Deriv Purch | Schedule O - Col. 4 - Gr- Gr Cred Deriv Sold | Schedule O - Col. 5 - Gr-Net Cred Deriv Purch | Schedule O - Col. 6 - Gr - Net Cred Deriv Sold |
+| --- | --- | --- | --- | --- |
+| France | 30 | 50 | - - - | 20 |
+| Ireland | - - - | 100 | - - - | 100 |
+## SPECIFIC INSTRUCTIONS FOR PREPARATION OF
+## Claims from Positions in Derivative Contracts Schedule D
+Report by country of the counterparty, the positive fair value of all derivative contracts. Positive fair values can be offset against negative fair values if, and only if, the transactions were executed with the same counterparty under a legally enforceable master netting agreement under ASC Subtopic 210-20, Balance SheetOffsetting (formerly FASB Interpretation No. 39, "Offsetting of Amounts Related to Certain Contracts"). When contracts are covered by master netting agreements, the net residual amount, if positive, is reported in the country of residence of the ultimate counterparty.
+All claims reported on Schedule D are to be reported on an guarantor basis (see Section II.C). Therefore, amounts that are guaranteed are reported in the sector and country of the guarantor. Similarly, if cash collateral is held, amounts that are collateralized are reported in the sector and country of the legal entity where the cash collateral is held; when securities are held as collateral, the exposure is reported in the sector and country of the issuer of the securities (see Section II.F).
+## A. Positive Fair Value of Derivative Contracts (Columns 1 through 5)
+Report the positive fair value of derivative contracts by sector (see Section II.D) in Columns 1 through 4, and the total in Column 5. For Schedule D, sectors consist of Banks, Public, NBFIs, and "Other." "Other" consists of the residual claims which cannot be classified in the other three categories.
+Contracts not covered by a master netting agreement must be reported gross.
+The positive fair value of derivative contracts can be offset against the negative fair value of derivative contracts and cash collateral held by the reporter if the transactions are executed under a legally enforceable master netting agreement and the offsetting is in accordance with ASC Subtopics 815-10 and 210-20. For derivative contracts executed under such a master netting agreement, only the net residual fair value, if positive, is reported in Schedule D according to the sector and country of residence of the ultimate counterparty.
+For contracts covered by a multi-branch or multijurisdiction master netting agreement, the net positive residual amount (i.e., the larger of zero or the gross positive fair value less the gross negative fair value of those contracts covered by the same master netting agreement) must be reported in Columns 1 through 4, as appropriate, as well as in Column 5. (The term multi-jurisdiction or multi-branch agreement refers to a master netting agreement that covers the head office and other offices of the reporter.)
+For contracts covered by a single netting agreement (a master netting agreement entered into by a single office of the reporter with another party), the net positive residual amount qualifies to be reported in Columns 1 through 5.
+When a contract is entered into with a branch of a commercial bank, a claim (i.e., positive fair value) is reported in the country of the head office because claims on a bank's branches are assumed to have an implicit credit guarantee of the head office. Claims on (i.e., contracts having a positive fair value) U.S. branches of foreign banks are reported in the country of the head office. (Refer also to instructions for Column 6, which treats claims on bank branches differently.)
+## B. Claims on Branches with No Guarantee from Parent (Column 6)
+In memorandum Column 6, reporters are asked to identify claims on bank branches according to the
+## Schedule D
+country of residence of the branch in those instances in which the claim is not formally and legally guaranteed by the head office of the branch (and in which the country of residence of the branch is different than the country of residence of the head office). Amounts reported in Column 6 are also reported in Columns 1 and 5 (although in Columns 1 and 5 they are reported in the country row of the head office). If the claims on a bank branch are formally and legally guaranteed by the head office of the branch (or if the branch is located in the same country as the head office) then the claims are not reported in Column 6. Contracts covered by master netting agreements are deemed to carry the legal guarantee of the head office and are therefore not reported in Column 6.
+For example, an unguaranteed claim on a branch of a foreign bank would be reported in Columns 1 and 5 in the country of the head office and in Column 6 in the country of the branch.
+## C. Examples for Schedule D
+- (1) The reporter's U.K. securities broker subsidiary has a portfolio of OTC derivative trades with a notional value of $1 billion and a positive fair value of $150 million with the U.K. securities broker subsidiary of a bank domiciled in Germany. The German bank posts $120 million in cash as collateral which is held by a thirdparty bank domiciled in the U.K. Assuming there is no master netting agreement in place, the entries would be:
+- (2) The same fact pattern as Example 1, except the reporter and the German bank have a multi-jurisdiction master netting agreement encompassing all the subsidiaries and branches of the two counterparties.
+| | Schedule D - Col. 1 - Banks | Schedule D - Col. 5 - Total |
+| --- | --- | --- |
+| Germany | 30 | 30 |
+| United Kingdom | 120 | 120 |
+| | Schedule D - Col. 1 - Banks | Schedule D - Col. 5 - NBFIs | Schedule D - Col. 4 - Total |
+| --- | --- | --- | --- |
+| Germany | 30 | - - - | 30 |
+The amount in Column 1 against Germany represents the uncollateralized portion of the positive fair value position against the parent bank under the master netting agreement. Because a master netting agreement is in place, the positive fair value can be netted with the cash collateral.
+- (3) The reporter's U.K. securities broker subsidiary has a foreign exchange swap contract with a notional value of $500 billion and a positive fair value of $100 million with the Cayman Islands nonbank subsidiary of a bank domiciled in the U.K. The reporter and the U.K. bank have a multi-jurisdiction master netting agreement
+For example, the German office of the respondent has a contract with a positive fair value of $100 million with the German branch of a U.S. bank.
+| | Schedule D - Col. 1 - Banks | Schedule D - Col. 5 - Total | Schedule D - Col. 6 - Cl With No Guar |
+| --- | --- | --- | --- |
+| Germany | - - - | - - - | 100 |
+| United States | 100 | 100 | - - - |
+If parties to a multi-branch netting agreement specify that transactions with branches in certain jurisdictions are subject to transfer risk, any exposure in that jurisdiction is reported in memorandum Column 6 in order to reflect the transfer risk in that location.
+## Schedule D
+encompassing all the subsidiaries and branches of the two counterparties. For collateral, the Cayman Islands subsidiary posts $50 million in U.K. sovereign debt and $20 million in cash as collateral which is held directly by the reporter's U.K. subsidiary. Entries would be:
+| | Schedule D - Col. 1 - Banks | Schedule D - Col. 2 - Public | Schedule D - Col. 3 - NBFIs | Schedule D - Col. 5 - Total |
+| --- | --- | --- | --- | --- |
+| United Kingdom | 30 | 50 | - - - | 80 |
+The amount in Column 2 represents the sovereign debt posted as collateral (collateral in the form of securities are reported opposite the country and sector of the issuer). The amount in Column 1 represents the uncollateralized portion of the positive fair value position against the parent bank of the counterparty under the master netting agreement. The cash collateral held by the reporter's U.K. subsidiary is not reportable since a multijurisdiction master agreement is in place and the cash is held directly by the reporter.
+## Assume the following fact pattern for Examples 4 through 6:
+The respondent (U.S. Bank), and its consolidated U.S. and foreign offices, enters into various derivative contracts with a counterparty (Japan Bank and its various branches). The balances with the various branches of Japan Bank on the books of U.S. Bank's various locations as of the reporting date are shown below, in millions of dollars:
+| | Gross Positive Fair Value | Gross Negative Fair Value | Net by Location | Net Aggregate Residual Amount |
+| --- | --- | --- | --- | --- |
+| U.S. Bank - Hong Kong branch with: | | | | |
+| Japan Bank - Hong Kong branch | 15 | 11 | 4 | |
+| Japan Bank - London branch | 45 | 75 | -30 | |
+| Japan Bank - Tokyo branch | 60 | 40 | 20 | |
+| Total | 120 | 126 | -6 | -6 |
+| U.S. Bank - London branch with: | | | | |
+| Japan Bank - Hong Kong branch | 190 | 70 | 120 | |
+| Japan Bank - London branch | 79 | 41 | 38 | |
+| Japan Bank - Tokyo branch | 67 | 34 | 33 | |
+| Total | 336 | 145 | 191 | 191 |
+| U.S. Bank - New York branch with: | | | | |
+| Japan Bank - London branch | 57 | 75 | -18 | |
+| Japan Bank - New York branch | 10 | 85 | -75 | |
+| Japan Bank - Tokyo branch | 41 | 40 | 1 | |
+| Total | 108 | 200 | -92 | -92 |
+| U.S. Bank - Tokyo branch with: | | | | |
+| Japan Bank - Hong Kong branch | 115 | 225 | -110 | |
+| Japan Bank - London branch | 75 | 25 | 50 | |
+| Japan Bank - New York branch | 15 | 100 | -85 | |
+| Japan Bank - Tokyo branch | 144 | 64 | 80 | |
+| Total | 349 | 414 | -65 | -65 |
+| Grand Total | 913 | 885 | | |
+| Total Net Aggregate Residual | | | | 28 |
+## Schedule D
+- (4) Assuming the respondent has no master netting agreement and that claims on bank branches are not formally and legally guaranteed by the head office. Entries would be:
+- (5) Assuming the respondent has a master netting agreement and with Japan Bank. Entries would be:
+- (6) Assuming the same fact pattern as Example 5, but that the parties have also agreed to a bilateral collateralization agreement under which exposures greater than $10 million are collateralized with cash or liquid U.K. government securities. Assume that collateral is pledged in minimum incremental amounts of $5 million and that U.K. government securities were pledged. Entries would be:
+| | Schedule D - Col. 1 - Banks | Schedule D - Col. 5 - Total | Schedule D - Col. 6 - Cl With No Guar |
+| --- | --- | --- | --- |
+| Japan | 913 | 913 | - - - |
+| Hong Kong | - - - | - - - | 320 |
+| United Kingdom | - - - | - - - | 256 |
+| United States | - - - | - - - | 25 |
+| | Schedule D - Col. 1 - Banks | Schedule D - Col. 5 - Total | Schedule D - Col. 6 - Cl With No Guar |
+| --- | --- | --- | --- |
+| Japan | 28 | 28 | - - - |
+| Hong Kong | - - - | - - - | - - - |
+| United Kingdom | - - - | - - - | - - - |
+| United States | - - - | - - - | - - - |
+| | Schedule D - Col. 1 - Banks | Schedule D - Col. 2 - Public | Schedule D - Col. 5 - Total | Schedule D - Col. 6 - Cl With No Guar |
+| --- | --- | --- | --- | --- |
+| Japan | 8 | - - - | 8 | - - - |
+| Hong Kong | - - - | - - - | - - - | - - - |
+| United Kingdom | - - - | 20 | 20 | - - - |
+| United States | - - - | - - - | - - - | - - - |
+Assume the following fact pattern for Examples 7 and 8 for Schedule D:
+The respondent, and its consolidated U.S. and foreign offices, enters into various derivative contracts with foreign corporate customers and banks. Assume the corporate customers are non-financial companies. The balances with these parties on the books of the respondent's various locations as of the reporting date are shown below, in millions of dollars:
+## Schedule D
+| | Gross Positive Fair Value | Gross Negative Fair Value | Net by Location | Net Aggregate Residual Amount |
+| --- | --- | --- | --- | --- |
+| U.S. Bank - Hong Kong branch with: | | | | |
+| Hong Kong Corporate | 15 | 11 | 4 | |
+| Singapore Corporate | 45 | 75 | -30 | |
+| U.K. Bank - Hong Kong branch | 60 | 40 | 20 | |
+| Total | 120 | 126 | -6 | -6 |
+| U.S. Bank - London branch with: | | | | |
+| U.K. Corporate | 190 | 70 | 120 | |
+| Hong Kong Bank - London branch | 79 | 41 | 38 | |
+| Total | 269 | 111 | 158 | 158 |
+| U.S. Bank - New York branch with: | | | | |
+| Argentine Corporate | 57 | 75 | -18 | |
+| Venezuela Bank | 10 | 85 | -75 | |
+| Total | 67 | 160 | -93 | -93 |
+| Grand Total | 456 | 397 | | |
+| Total Net Aggregate Residual | | | | 59 |
+- (7) Assuming the respondent has no master netting agreement and claims on bank branches are not formally and legally guaranteed by the head office.
+- (8) Assuming the respondent has no master netting agreement but that claims on bank branches are formally and legally guaranteed by the head office. Also assume that the liabilities of the Argentine corporate customer are legally guaranteed by its U.S. parent. Entries would be:
+| | Schedule D - Col. 1 - Banks | Schedule D - Col. 4 - Other | Schedule D - Col. 5 - Total | Schedule D - Col. 6 - Cl With No Guar |
+| --- | --- | --- | --- | --- |
+| United Kingdom | 60 | 190 | 250 | 79 |
+| Argentina | - - - | 57 | 57 | - - - |
+| Venezuela | 10 | - - - | 10 | - - - |
+| Hong Kong | 79 | 15 | 94 | 60 |
+| Singapore | - - - | 45 | 45 | - - - |
+| | Schedule D - Col. 1 - Banks | Schedule D - Col. 4 - Other | Schedule D - Col. 5 - Total |
+| --- | --- | --- | --- |
+| United Kingdom | 60 | 190 | 250 |
+| Argentina | - - - | - - - | - - - |
+| Venezuela | 10 | - - - | 10 |
+| Hong Kong | 79 | 15 | 94 |
+| Singapore | - - - | 57 | 57 |
+## Summary of Reporting Bases by Schedule and Column Appendix A
+| Schedule | Column/s | Reporting Criteria | Reporting Basis |
+| --- | --- | --- | --- |
+| Schedule C, Part I | 1 through 12 | Country/sector of obligor | Immediate |
+| Schedule C, Part I | 13 through 17 | Country/Sector of outward claims with guarantors in other sectors and jurisdictions | Immediate |
+| Schedule C, Part I | 18 through 22 | Country/Sector of inward claims with guarantors in other sectors and jurisdictions | Guarantor |
+| Schedule C, Part II | 1 through 11 | Country/sector of ultimate obligor/issuer of guarantee | Guarantor |
+| Schedule C, Part II | 12 | Country of issuer of HTM and AFS securities | Guarantor |
+| Schedule C, Part II | 13 through 17 | Location of counterparty | Guarantor |
+| Schedule C, Part II | 18 | Location of collateral | Guarantor |
+| Schedule C, Part II | 19 | Location of issuer of trading assets | Guarantor |
+| Schedule C, Part II | 20 | Issuer of offsetting position for trading book | Guarantor |
+| Schedule L | 1, 2 | Location of foreign-office obligor | |
+| Schedule L | 3 | Location of creditor | Immediate |
+| Schedule L | 4 | Location of affiliated counterparty | Immediate |
+| Schedule O | 1 | Location of party (after risk transfers) receiving commitment | Guarantor |
+| Schedule O | 2 | Country of issuer of obligor for guarantees/insurance contracts | Guarantor |
+| Schedule O | 3, 4 | Gross position of credit derivatives purchased and sold (by country of reference entity) | Guarantor |
+| Schedule O | 5, 6 | Net position of offsetting credit derivatives purchased and sold (by country of refer- ence entity) | Guarantor |
+| Schedule O | 7 | Location of recipient of trade financing | Guarantor |
+| Schedule D | 1 through 5 | Location of counterparty or issuer of collateral | Guarantor |
+| Schedule D | 6 | Location of branch if not guaranteed by parent | Immediate |

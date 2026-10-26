@@ -1,0 +1,2216 @@
+Board of Governors of the Federal Reserve System OMB Number 7100-0035 Federal Deposit Insurance Corporation OMB Number 3064-0017 Office of the Comptroller of the Currency OMB Number 1557-0100 Approval expires January 31, 2029 Page 1 of 34 Federal Financial Institutions Examination Council Country Exposure Report—FFIEC 009 Report at the close of business Month / Day / Year This report is required to be filed pursuant to authority contained in the following statutes: 12 U.S.C. §§ 161 and 1817 (national banks), 12 U.S.C. § 1464 (federal savings associations), 12 U.S.C. §§ 248(a), 1844(c), and 3906 (state member banks and bank holding companies); 12 U.S.C. §§ 1467a(b)(2) and 5412 (savings and loan holding companies); 12 U.S.C. 5365(a) (intermediate holding companies); and 12 U.S.C. §§ 1817 and 1820 (insured state nonmember commercial and savings banks and insured state savings associations).
+Name, title, and phone number of the person to whom inquiries regarding this report may be directed: Name (FCEX 8901) Title (FCEX C496) Area Code / Phone Number (FCEX 8902) All FFIEC 009 respondents must submit their completed report via the Federal Reserve System's Reporting Central application within 45 days of the reporting date for March 31, June 30, and September 30, and within 50 calendar days of the December 31 reporting date. Any FFIEC 009 respondent who needs guidance on Reporting Central is encouraged to visit the Federal Reserve System website http://www.frbservices.org/centralbank/reportingcentral/index.html, for additional information.
+Each report submitted should be signed and certified by an executive officer of the reporting institution. "Executive Officer" is defined in 12 C.F.R. § 215.2 (e)(1). To fulfill the signature and attestation requirement for the Country Exposure Report for this report date, attach a signed copy of this page (or a photocopy or a computer-generated version of this page) to the paper-copy record of the completed report that the respondent places in its files.
+Charter Number (National Banks Only) (FCEX 9055) Reporting Institution (FCEX 9017) City (FCEX 9130) State (FCEX 9200) The Board of Governors of the Federal Reserve System, the Office of the Comptroller of the Currency, and the Federal Deposit Insurance Corporation are of the view that individual respondent information reported on this form is exempt from public disclosure under Section (b)(8) of the Freedom of Information Act (5 U.S.C. § 552 (b)(8)). Accordingly, individual respondent information reported on this form will be considered confidential and will not be voluntarily disclosed by the Office of the Comptroller of the Currency, the Federal Reserve System, or the Federal Deposit Insurance Corporation.
+I, , Name (FCEX C490) Title (FCEX C491) , an authorized officer of the reporting institution named above, hereby certify on the Day (FCEX FT23) day of Month (FCEX FT24) Year (FCEX FT25) , that this report has been examined by me and is true and complete to the best of my knowledge and belief.
+Signature (FCEX H321) Public reporting burden for this collection of information is estimated to average 135 hours per response, including the time for reviewing instructions, searching existing data sources, gathering and maintaining the data needed, and completing and reviewing the collection of information. A federal agency may not conduct or sponsor, and an organization (or a person) is not required to respond to a collection of information, unless it displays a currently valid OMB control number. Comments concerning the accuracy of this burden estimate and suggestions for reducing this burden should be directed to the Office of Information and Regulatory Affairs, Office of Management and Budget, Paperwork Reduction Project, Washington, DC 20503, and to one of the following: Secretary, Board of Governors of the Federal Reserve System, 20th and C Streets, NW, Washington, DC 20551; Assistant Executive Secretary, Federal Deposit Insurance Corporation, Washington, DC 20429; and Legislative and Regulatory Analysis Division, Office of the Comptroller of the Currency, Washington, DC 20219.
+03/2026 Legal Entity Identifier (LEI) of the Reporting Institution (Report only if the reporting institution already has an LEI.) (FCEX 9224)
+Schedule C, Part I: Claims on an Immediate-Counterparty Basis
+FFIEC 009
+Page 2 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Immediate-Counterparty Basis › Cross-Border Claims › Banks › C915 › (1) | Immediate-Counterparty Basis › Cross-Border Claims › Public › C916 › (2) | Immediate-Counterparty Basis › Cross-Border Claims › NBFIs › M851 › (3) | Immediate-Counterparty Basis › Cross-Border Claims › Corporate › M852 › (4) | Immediate-Counterparty Basis › Cross-Border Claims › Households › M853 › (5) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Banks › C918 › (6) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Public › C919 › (7) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › NBFIs › M854 › (8) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Corporate › M855 › (9) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Households › M856 › (10) | Immediate-Counterparty Basis › Breakdown of Total of Columns 1 through 10 › Remaining Maturity Up to and Including 1 Year › C921 › (11) | Immediate-Counterparty Basis › Claims on Local Residents in Local Currency › C922 › (12) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Banks › C923 › (13) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Public › C924 › (14) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on NBFIs › M857 › (15) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Corporate › M858 › (16) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Households › M859 › (17) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Banks › C926 › (18) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Public › C927 › (19) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on NBFIs › M860 › (20) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Corporate › M861 › (21) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Households › M862 › (22) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Europe Albania | | 15105 | | | | | | | | | | | | | | | | | | | | | | |
+| Andorra | | 10103 | | | | | | | | | | | | | | | | | | | | | | |
+| Armenia | | 16519 | | | | | | | | | | | | | | | | | | | | | | |
+| Austria | | 10189 | | | | | | | | | | | | | | | | | | | | | | |
+| Azerbaijan | | 16527 | | | | | | | | | | | | | | | | | | | | | | |
+| Bank of International Settlements | | 13307 | | | | | | | | | | | | | | | | | | | | | | |
+| Belarus | | 16209 | | | | | | | | | | | | | | | | | | | | | | |
+| Belgium | | 10251 | | | | | | | | | | | | | | | | | | | | | | |
+| Bosnia and Herzegovina | | 14109 | | | | | | | | | | | | | | | | | | | | | | |
+| Bulgaria | | 15202 | | | | | | | | | | | | | | | | | | | | | | |
+| Croatia | | 14214 | | | | | | | | | | | | | | | | | | | | | | |
+| Cyprus | | 10405 | | | | | | | | | | | | | | | | | | | | | | |
+| Czech Republic | | 15288 | | | | | | | | | | | | | | | | | | | | | | |
+| Denmark | | 10502 | | | | | | | | | | | | | | | | | | | | | | |
+| Estonia | | 15407 | | | | | | | | | | | | | | | | | | | | | | |
+| European Central Bank | | 13501 | | | | | | | | | | | | | | | | | | | | | | |
+| Faroe Islands | | 10618 | | | | | | | | | | | | | | | | | | | | | | |
+| Finland | | 10707 | | | | | | | | | | | | | | | | | | | | | | |
+| France | | 10804 | | | | | | | | | | | | | | | | | | | | | | |
+| Georgia | | 16535 | | | | | | | | | | | | | | | | | | | | | | |
+| Germany | | 11002 | | | | | | | | | | | | | | | | | | | | | | |
+| Gibraltar | | 11088 | | | | | | | | | | | | | | | | | | | | | | |
+| Greece | | 11207 | | | | | | | | | | | | | | | | | | | | | | |
+| Greenland | | 10545 | | | | | | | | | | | | | | | | | | | | | | |
+| Guernsey | | 13006 | | | | | | | | | | | | | | | | | | | | | | |
+| Holy See | | 13102 | | | | | | | | | | | | | | | | | | | | | | |
+| Hungary | | 15504 | | | | | | | | | | | | | | | | | | | | | | |
+| Iceland | | 11304 | | | | | | | | | | | | | | | | | | | | | | |
+| Ireland | | 11401 | | | | | | | | | | | | | | | | | | | | | | |
+| Isle of Man | | 13008 | | | | | | | | | | | | | | | | | | | | | | |
+| Italy | | 11509 | | | | | | | | | | | | | | | | | | | | | | |
+| Jersey | | 13007 | | | | | | | | | | | | | | | | | | | | | | |
+12/2022
+Schedule C, Part I: Claims on an Immediate-Counterparty Basis
+FFIEC 009
+Page 3 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Immediate-Counterparty Basis › Cross-Border Claims › Banks › C915 › (1) | Immediate-Counterparty Basis › Cross-Border Claims › Public › C916 › (2) | Immediate-Counterparty Basis › Cross-Border Claims › NBFIs › M851 › (3) | Immediate-Counterparty Basis › Cross-Border Claims › Corporate › M852 › (4) | Immediate-Counterparty Basis › Cross-Border Claims › Households › M853 › (5) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Banks › C918 › (6) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Public › C919 › (7) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › NBFIs › M854 › (8) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Corporate › M855 › (9) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Households › M856 › (10) | Immediate-Counterparty Basis › Breakdown of Total of Columns 1 through 10 › Remaining Maturity Up to and Including 1 Year › C921 › (11) | Immediate-Counterparty Basis › Claims on Local Residents in Local Currency › C922 › (12) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Banks › C923 › (13) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Public › C924 › (14) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on NBFIs › M857 › (15) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Corporate › M858 › (16) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Households › M859 › (17) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Banks › C926 › (18) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Public › C927 › (19) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on NBFIs › M860 › (20) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Corporate › M861 › (21) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Households › M862 › (22) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Europe—Continued Kazakhstan | | 16543 | | | | | | | | | | | | | | | | | | | | | | |
+| Kosovo | | 13471 | | | | | | | | | | | | | | | | | | | | | | |
+| Kyrgyzstan | | 16551 | | | | | | | | | | | | | | | | | | | | | | |
+| Latvia | | 15601 | | | | | | | | | | | | | | | | | | | | | | |
+| Liechtenstein | | 11606 | | | | | | | | | | | | | | | | | | | | | | |
+| Lithuania | | 15709 | | | | | | | | | | | | | | | | | | | | | | |
+| Luxembourg | | 11703 | | | | | | | | | | | | | | | | | | | | | | |
+| Macedonia | | 14419 | | | | | | | | | | | | | | | | | | | | | | |
+| Malta | | 11819 | | | | | | | | | | | | | | | | | | | | | | |
+| Moldova | | 16306 | | | | | | | | | | | | | | | | | | | | | | |
+| Monaco | | 12009 | | | | | | | | | | | | | | | | | | | | | | |
+| Montenegro | | 13625 | | | | | | | | | | | | | | | | | | | | | | |
+| Netherlands | | 12106 | | | | | | | | | | | | | | | | | | | | | | |
+| Norway | | 12203 | | | | | | | | | | | | | | | | | | | | | | |
+| Poland | | 15768 | | | | | | | | | | | | | | | | | | | | | | |
+| Portugal | | 12319 | | | | | | | | | | | | | | | | | | | | | | |
+| Romania | | 15806 | | | | | | | | | | | | | | | | | | | | | | |
+| Russia | | 16101 | | | | | | | | | | | | | | | | | | | | | | |
+| San Marino | | 12408 | | | | | | | | | | | | | | | | | | | | | | |
+| Serbia | | 13218 | | | | | | | | | | | | | | | | | | | | | | |
+| Slovakia | | 15318 | | | | | | | | | | | | | | | | | | | | | | |
+| Slovenia | | 14338 | | | | | | | | | | | | | | | | | | | | | | |
+| Spain | | 12505 | | | | | | | | | | | | | | | | | | | | | | |
+| Sweden | | 12602 | | | | | | | | | | | | | | | | | | | | | | |
+| Switzerland | | 12688 | | | | | | | | | | | | | | | | | | | | | | |
+| Tajikistan | | 16578 | | | | | | | | | | | | | | | | | | | | | | |
+| Turkey | | 12807 | | | | | | | | | | | | | | | | | | | | | | |
+| Turkmenistan | | 16616 | | | | | | | | | | | | | | | | | | | | | | |
+| Ukraine | | 16403 | | | | | | | | | | | | | | | | | | | | | | |
+| United Kingdom | | 13005 | | | | | | | | | | | | | | | | | | | | | | |
+| Uzbekistan | | 16705 | | | | | | | | | | | | | | | | | | | | | | |
+| TOTAL EUROPE | | 19992 | | | | | | | | | | | | | | | | | | | | | | |
+12/2022
+Schedule C, Part I: Claims on an Immediate-Counterparty Basis
+FFIEC 009
+Page 4 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Immediate-Counterparty Basis › Cross-Border Claims › Banks › C915 › (1) | Immediate-Counterparty Basis › Cross-Border Claims › Public › C916 › (2) | Immediate-Counterparty Basis › Cross-Border Claims › NBFIs › M851 › (3) | Immediate-Counterparty Basis › Cross-Border Claims › Corporate › M852 › (4) | Immediate-Counterparty Basis › Cross-Border Claims › Households › M853 › (5) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Banks › C918 › (6) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Public › C919 › (7) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › NBFIs › M854 › (8) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Corporate › M855 › (9) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Households › M856 › (10) | Immediate-Counterparty Basis › Breakdown of Total of Columns 1 through 10 › Remaining Maturity Up to and Including 1 Year › C921 › (11) | Immediate-Counterparty Basis › Claims on Local Residents in Local Currency › C922 › (12) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Banks › C923 › (13) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Public › C924 › (14) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on NBFIs › M857 › (15) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Corporate › M858 › (16) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Households › M859 › (17) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Banks › C926 › (18) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Public › C927 › (19) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on NBFIs › M860 › (20) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Corporate › M861 › (21) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Households › M862 › (22) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Latin America Argentina | | 30104 | | | | | | | | | | | | | | | | | | | | | | |
+| Belize | | 35718 | | | | | | | | | | | | | | | | | | | | | | |
+| Bolivia | | 30201 | | | | | | | | | | | | | | | | | | | | | | |
+| Brazil | | 30309 | | | | | | | | | | | | | | | | | | | | | | |
+| Chile | | 30406 | | | | | | | | | | | | | | | | | | | | | | |
+| Colombia | | 30503 | | | | | | | | | | | | | | | | | | | | | | |
+| Costa Rica | | 30589 | | | | | | | | | | | | | | | | | | | | | | |
+| Ecuador | | 31003 | | | | | | | | | | | | | | | | | | | | | | |
+| El Salvador | | 31089 | | | | | | | | | | | | | | | | | | | | | | |
+| Falkland Islands | | 36307 | | | | | | | | | | | | | | | | | | | | | | |
+| French Guiana | | 36404 | | | | | | | | | | | | | | | | | | | | | | |
+| Guatemala | | 31208 | | | | | | | | | | | | | | | | | | | | | | |
+| Guyana | | 31305 | | | | | | | | | | | | | | | | | | | | | | |
+| Honduras | | 31488 | | | | | | | | | | | | | | | | | | | | | | |
+| Mexico | | 31704 | | | | | | | | | | | | | | | | | | | | | | |
+| Nicaragua | | 31801 | | | | | | | | | | | | | | | | | | | | | | |
+| Panama | | 31887 | | | | | | | | | | | | | | | | | | | | | | |
+| Paraguay | | 32107 | | | | | | | | | | | | | | | | | | | | | | |
+| Peru | | 32204 | | | | | | | | | | | | | | | | | | | | | | |
+| Suriname | | 37702 | | | | | | | | | | | | | | | | | | | | | | |
+| Uruguay | | 32603 | | | | | | | | | | | | | | | | | | | | | | |
+| Venezuela | | 32719 | | | | | | | | | | | | | | | | | | | | | | |
+| TOTAL LATIN AMERICA | | 39942 | | | | | | | | | | | | | | | | | | | | | | |
+| Caribbean Anguilla | | 30228 | | | | | | | | | | | | | | | | | | | | | | |
+| Antigua and Barbuda | | 35203 | | | | | | | | | | | | | | | | | | | | | | |
+| Aruba | | 35254 | | | | | | | | | | | | | | | | | | | | | | |
+| Bahamas | | 35319 | | | | | | | | | | | | | | | | | | | | | | |
+| Barbados | | 30155 | | | | | | | | | | | | | | | | | | | | | | |
+| Bermuda | | 35602 | | | | | | | | | | | | | | | | | | | | | | |
+(1 blank entry rows)
+12/2022
+Schedule C, Part I: Claims on an Immediate-Counterparty Basis
+FFIEC 009
+Page 5 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Immediate-Counterparty Basis › Cross-Border Claims › Banks › C915 › (1) | Immediate-Counterparty Basis › Cross-Border Claims › Public › C916 › (2) | Immediate-Counterparty Basis › Cross-Border Claims › NBFIs › M851 › (3) | Immediate-Counterparty Basis › Cross-Border Claims › Corporate › M852 › (4) | Immediate-Counterparty Basis › Cross-Border Claims › Households › M853 › (5) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Banks › C918 › (6) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Public › C919 › (7) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › NBFIs › M854 › (8) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Corporate › M855 › (9) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Households › M856 › (10) | Immediate-Counterparty Basis › Breakdown of Total of Columns 1 through 10 › Remaining Maturity Up to and Including 1 Year › C921 › (11) | Immediate-Counterparty Basis › Claims on Local Residents in Local Currency › C922 › (12) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Banks › C923 › (13) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Public › C924 › (14) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on NBFIs › M857 › (15) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Corporate › M858 › (16) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Households › M859 › (17) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Banks › C926 › (18) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Public › C927 › (19) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on NBFIs › M860 › (20) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Corporate › M861 › (21) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Households › M862 › (22) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Caribbean—Continued Bonaire, St. Eustatius and Saba | | 36161 | | | | | | | | | | | | | | | | | | | | | | |
+| Cayman Islands | | 36137 | | | | | | | | | | | | | | | | | | | | | | |
+| Cuba | | 30708 | | | | | | | | | | | | | | | | | | | | | | |
+| Curacao | | 36188 | | | | | | | | | | | | | | | | | | | | | | |
+| Dominica | | 36218 | | | | | | | | | | | | | | | | | | | | | | |
+| Dominican Republic | | 30805 | | | | | | | | | | | | | | | | | | | | | | |
+| Eastern Caribbean Central Bank | | 35416 | | | | | | | | | | | | | | | | | | | | | | |
+| Grenada | | 36706 | | | | | | | | | | | | | | | | | | | | | | |
+| Guadeloupe (and smaller French islands) | | 36803 | | | | | | | | | | | | | | | | | | | | | | |
+| Haiti | | 31402 | | | | | | | | | | | | | | | | | | | | | | |
+| Jamaica | | 31607 | | | | | | | | | | | | | | | | | | | | | | |
+| Martinique | | 37001 | | | | | | | | | | | | | | | | | | | | | | |
+| Montserrat | | 37109 | | | | | | | | | | | | | | | | | | | | | | |
+| St. Martin and St. Barthelemy | | 36471 | | | | | | | | | | | | | | | | | | | | | | |
+| St. Kitts and Nevis | | 37303 | | | | | | | | | | | | | | | | | | | | | | |
+| St. Lucia | | 37508 | | | | | | | | | | | | | | | | | | | | | | |
+| St. Maarten | | 36196 | | | | | | | | | | | | | | | | | | | | | | |
+| St. Vincent and the Grenadines | | 37605 | | | | | | | | | | | | | | | | | | | | | | |
+| Trinidad and Tobago | | 32409 | | | | | | | | | | | | | | | | | | | | | | |
+| Turks and Caicos Islands | | 37818 | | | | | | | | | | | | | | | | | | | | | | |
+| Virgin Islands, British | | 35807 | | | | | | | | | | | | | | | | | | | | | | |
+| TOTAL CARIBBEAN | | 34401 | | | | | | | | | | | | | | | | | | | | | | |
+| Asia Afghanistan | | 40401 | | | | | | | | | | | | | | | | | | | | | | |
+| Bahrain | | 40703 | | | | | | | | | | | | | | | | | | | | | | |
+| Bangladesh | | 40746 | | | | | | | | | | | | | | | | | | | | | | |
+| Bhutan | | 40819 | | | | | | | | | | | | | | | | | | | | | | |
+| Brunei | | 41009 | | | | | | | | | | | | | | | | | | | | | | |
+| Burma | | 41106 | | | | | | | | | | | | | | | | | | | | | | |
+| Cambodia | | 41203 | | | | | | | | | | | | | | | | | | | | | | |
+(1 blank entry rows)
+12/2022
+Schedule C, Part I: Claims on an Immediate-Counterparty Basis
+FFIEC 009
+Page 6 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Immediate-Counterparty Basis › Cross-Border Claims › Banks › C915 › (1) | Immediate-Counterparty Basis › Cross-Border Claims › Public › C916 › (2) | Immediate-Counterparty Basis › Cross-Border Claims › NBFIs › M851 › (3) | Immediate-Counterparty Basis › Cross-Border Claims › Corporate › M852 › (4) | Immediate-Counterparty Basis › Cross-Border Claims › Households › M853 › (5) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Banks › C918 › (6) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Public › C919 › (7) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › NBFIs › M854 › (8) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Corporate › M855 › (9) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Households › M856 › (10) | Immediate-Counterparty Basis › Breakdown of Total of Columns 1 through 10 › Remaining Maturity Up to and Including 1 Year › C921 › (11) | Immediate-Counterparty Basis › Claims on Local Residents in Local Currency › C922 › (12) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Banks › C923 › (13) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Public › C924 › (14) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on NBFIs › M857 › (15) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Corporate › M858 › (16) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Households › M859 › (17) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Banks › C926 › (18) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Public › C927 › (19) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on NBFIs › M860 › (20) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Corporate › M861 › (21) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Households › M862 › (22) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Asia—Continued China: Mainland | | 41408 | | | | | | | | | | | | | | | | | | | | | | |
+| East Timor | | 45004 | | | | | | | | | | | | | | | | | | | | | | |
+| Hong Kong | | 42005 | | | | | | | | | | | | | | | | | | | | | | |
+| India | | 42102 | | | | | | | | | | | | | | | | | | | | | | |
+| Indonesia | | 42218 | | | | | | | | | | | | | | | | | | | | | | |
+| Iran | | 42307 | | | | | | | | | | | | | | | | | | | | | | |
+| Iraq | | 42404 | | | | | | | | | | | | | | | | | | | | | | |
+| Israel | | 42501 | | | | | | | | | | | | | | | | | | | | | | |
+| Japan | | 42609 | | | | | | | | | | | | | | | | | | | | | | |
+| Jordan | | 42706 | | | | | | | | | | | | | | | | | | | | | | |
+| Korea, North | | 44407 | | | | | | | | | | | | | | | | | | | | | | |
+| Korea, South | | 43001 | | | | | | | | | | | | | | | | | | | | | | |
+| Kuwait | | 43109 | | | | | | | | | | | | | | | | | | | | | | |
+| Laos | | 43303 | | | | | | | | | | | | | | | | | | | | | | |
+| Lebanon | | 43419 | | | | | | | | | | | | | | | | | | | | | | |
+| Macau | | 43508 | | | | | | | | | | | | | | | | | | | | | | |
+| Malaysia | | 43605 | | | | | | | | | | | | | | | | | | | | | | |
+| Maldives | | 43702 | | | | | | | | | | | | | | | | | | | | | | |
+| Mongolia | | 43818 | | | | | | | | | | | | | | | | | | | | | | |
+| Nepal | | 44202 | | | | | | | | | | | | | | | | | | | | | | |
+| Oman | | 44105 | | | | | | | | | | | | | | | | | | | | | | |
+| Pakistan | | 44709 | | | | | | | | | | | | | | | | | | | | | | |
+| Philippines | | 44806 | | | | | | | | | | | | | | | | | | | | | | |
+| Qatar | | 45101 | | | | | | | | | | | | | | | | | | | | | | |
+| Saudi Arabia | | 45608 | | | | | | | | | | | | | | | | | | | | | | |
+| Singapore | | 46019 | | | | | | | | | | | | | | | | | | | | | | |
+| Sri Lanka | | 41319 | | | | | | | | | | | | | | | | | | | | | | |
+| Syria | | 46205 | | | | | | | | | | | | | | | | | | | | | | |
+| Taiwan | | 46302 | | | | | | | | | | | | | | | | | | | | | | |
+| Thailand | | 46418 | | | | | | | | | | | | | | | | | | | | | | |
+| United Arab Emirates | | 46604 | | | | | | | | | | | | | | | | | | | | | | |
+12/2022
+Schedule C, Part I: Claims on an Immediate-Counterparty Basis
+FFIEC 009
+Page 7 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Immediate-Counterparty Basis › Cross-Border Claims › Banks › C915 › (1) | Immediate-Counterparty Basis › Cross-Border Claims › Public › C916 › (2) | Immediate-Counterparty Basis › Cross-Border Claims › NBFIs › M851 › (3) | Immediate-Counterparty Basis › Cross-Border Claims › Corporate › M852 › (4) | Immediate-Counterparty Basis › Cross-Border Claims › Households › M853 › (5) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Banks › C918 › (6) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Public › C919 › (7) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › NBFIs › M854 › (8) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Corporate › M855 › (9) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Households › M856 › (10) | Immediate-Counterparty Basis › Breakdown of Total of Columns 1 through 10 › Remaining Maturity Up to and Including 1 Year › C921 › (11) | Immediate-Counterparty Basis › Claims on Local Residents in Local Currency › C922 › (12) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Banks › C923 › (13) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Public › C924 › (14) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on NBFIs › M857 › (15) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Corporate › M858 › (16) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Households › M859 › (17) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Banks › C926 › (18) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Public › C927 › (19) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on NBFIs › M860 › (20) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Corporate › M861 › (21) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Households › M862 › (22) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Asia—Continued Vietnam | | 46906 | | | | | | | | | | | | | | | | | | | | | | |
+| West Bank and Gaza | | 47201 | | | | | | | | | | | | | | | | | | | | | | |
+| Yemen | | 47104 | | | | | | | | | | | | | | | | | | | | | | |
+| TOTAL ASIA | | 49999 | | | | | | | | | | | | | | | | | | | | | | |
+| Africa Algeria | | 50105 | | | | | | | | | | | | | | | | | | | | | | |
+| Angola | | 50202 | | | | | | | | | | | | | | | | | | | | | | |
+| Bank of Central African States (BEAC) | | 50318 | | | | | | | | | | | | | | | | | | | | | | |
+| Benin | | 51802 | | | | | | | | | | | | | | | | | | | | | | |
+| Botswana | | 50504 | | | | | | | | | | | | | | | | | | | | | | |
+| Burkina Faso | | 57118 | | | | | | | | | | | | | | | | | | | | | | |
+| Burundi | | 50806 | | | | | | | | | | | | | | | | | | | | | | |
+| Cameroon | | 51004 | | | | | | | | | | | | | | | | | | | | | | |
+| Cape Verde | | 51209 | | | | | | | | | | | | | | | | | | | | | | |
+| Central African Republic | | 51306 | | | | | | | | | | | | | | | | | | | | | | |
+| Central Bank of West African States (BCEAO) | | 50644 | | | | | | | | | | | | | | | | | | | | | | |
+| Chad | | 51403 | | | | | | | | | | | | | | | | | | | | | | |
+| Comoros | | 51519 | | | | | | | | | | | | | | | | | | | | | | |
+| Congo (Brazzaville) | | 51608 | | | | | | | | | | | | | | | | | | | | | | |
+| Congo (Kinshasa) | | 51705 | | | | | | | | | | | | | | | | | | | | | | |
+| Cote d'Ivoire (Ivory Coast) | | 53007 | | | | | | | | | | | | | | | | | | | | | | |
+| Djibouti | | 52302 | | | | | | | | | | | | | | | | | | | | | | |
+| Egypt | | 57002 | | | | | | | | | | | | | | | | | | | | | | |
+| Equatorial Guinea | | 51942 | | | | | | | | | | | | | | | | | | | | | | |
+| Eritrea | | 52019 | | | | | | | | | | | | | | | | | | | | | | |
+| Eswatini | | 56219 | | | | | | | | | | | | | | | | | | | | | | |
+| Ethiopia | | 52108 | | | | | | | | | | | | | | | | | | | | | | |
+| Gabon | | 52418 | | | | | | | | | | | | | | | | | | | | | | |
+| Gambia, The | | 52507 | | | | | | | | | | | | | | | | | | | | | | |
+| Ghana | | 52604 | | | | | | | | | | | | | | | | | | | | | | |
+(1 blank entry rows)
+12/2022
+Schedule C, Part I: Claims on an Immediate-Counterparty Basis
+FFIEC 009
+Page 8 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Immediate-Counterparty Basis › Cross-Border Claims › Banks › C915 › (1) | Immediate-Counterparty Basis › Cross-Border Claims › Public › C916 › (2) | Immediate-Counterparty Basis › Cross-Border Claims › NBFIs › M851 › (3) | Immediate-Counterparty Basis › Cross-Border Claims › Corporate › M852 › (4) | Immediate-Counterparty Basis › Cross-Border Claims › Households › M853 › (5) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Banks › C918 › (6) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Public › C919 › (7) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › NBFIs › M854 › (8) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Corporate › M855 › (9) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Households › M856 › (10) | Immediate-Counterparty Basis › Breakdown of Total of Columns 1 through 10 › Remaining Maturity Up to and Including 1 Year › C921 › (11) | Immediate-Counterparty Basis › Claims on Local Residents in Local Currency › C922 › (12) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Banks › C923 › (13) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Public › C924 › (14) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on NBFIs › M857 › (15) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Corporate › M858 › (16) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Households › M859 › (17) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Banks › C926 › (18) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Public › C927 › (19) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on NBFIs › M860 › (20) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Corporate › M861 › (21) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Households › M862 › (22) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Africa—Continued Guinea | | 52701 | | | | | | | | | | | | | | | | | | | | | | |
+| Guinea-Bissau | | 54402 | | | | | | | | | | | | | | | | | | | | | | |
+| Kenya | | 53104 | | | | | | | | | | | | | | | | | | | | | | |
+| Lesotho | | 53155 | | | | | | | | | | | | | | | | | | | | | | |
+| Liberia | | 53201 | | | | | | | | | | | | | | | | | | | | | | |
+| Libya | | 53309 | | | | | | | | | | | | | | | | | | | | | | |
+| Madagascar | | 53406 | | | | | | | | | | | | | | | | | | | | | | |
+| Malawi | | 53503 | | | | | | | | | | | | | | | | | | | | | | |
+| Mali | | 53589 | | | | | | | | | | | | | | | | | | | | | | |
+| Mauritania | | 53708 | | | | | | | | | | | | | | | | | | | | | | |
+| Mauritius | | 53805 | | | | | | | | | | | | | | | | | | | | | | |
+| Mayotte | | 54518 | | | | | | | | | | | | | | | | | | | | | | |
+| Morocco | | 54003 | | | | | | | | | | | | | | | | | | | | | | |
+| Mozambique | | 54089 | | | | | | | | | | | | | | | | | | | | | | |
+| Namibia | | 54127 | | | | | | | | | | | | | | | | | | | | | | |
+| Niger | | 54208 | | | | | | | | | | | | | | | | | | | | | | |
+| Nigeria | | 54305 | | | | | | | | | | | | | | | | | | | | | | |
+| Reunion | | 54607 | | | | | | | | | | | | | | | | | | | | | | |
+| Rwanda | | 55018 | | | | | | | | | | | | | | | | | | | | | | |
+| Saint Helena | | 55107 | | | | | | | | | | | | | | | | | | | | | | |
+| Sao Tome and Principe | | 55204 | | | | | | | | | | | | | | | | | | | | | | |
+| Senegal | | 55301 | | | | | | | | | | | | | | | | | | | | | | |
+| Seychelles | | 55409 | | | | | | | | | | | | | | | | | | | | | | |
+| Sierra Leone | | 55506 | | | | | | | | | | | | | | | | | | | | | | |
+| Somalia | | 55603 | | | | | | | | | | | | | | | | | | | | | | |
+| South Africa | | 55719 | | | | | | | | | | | | | | | | | | | | | | |
+| South Sudan | | 53392 | | | | | | | | | | | | | | | | | | | | | | |
+| Sudan | | 56103 | | | | | | | | | | | | | | | | | | | | | | |
+| Tanzania | | 56405 | | | | | | | | | | | | | | | | | | | | | | |
+| Togo | | 56502 | | | | | | | | | | | | | | | | | | | | | | |
+| Tunisia | | 56707 | | | | | | | | | | | | | | | | | | | | | | |
+12/2022
+Schedule C, Part I: Claims on an Immediate-Counterparty Basis
+FFIEC 009
+Page 9 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Immediate-Counterparty Basis › Cross-Border Claims › Banks › C915 › (1) | Immediate-Counterparty Basis › Cross-Border Claims › Public › C916 › (2) | Immediate-Counterparty Basis › Cross-Border Claims › NBFIs › M851 › (3) | Immediate-Counterparty Basis › Cross-Border Claims › Corporate › M852 › (4) | Immediate-Counterparty Basis › Cross-Border Claims › Households › M853 › (5) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Banks › C918 › (6) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Public › C919 › (7) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › NBFIs › M854 › (8) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Corporate › M855 › (9) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Households › M856 › (10) | Immediate-Counterparty Basis › Breakdown of Total of Columns 1 through 10 › Remaining Maturity Up to and Including 1 Year › C921 › (11) | Immediate-Counterparty Basis › Claims on Local Residents in Local Currency › C922 › (12) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Banks › C923 › (13) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Public › C924 › (14) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on NBFIs › M857 › (15) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Corporate › M858 › (16) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Households › M859 › (17) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Banks › C926 › (18) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Public › C927 › (19) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on NBFIs › M860 › (20) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Corporate › M861 › (21) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Households › M862 › (22) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Africa—Continued Uganda | | 56804 | | | | | | | | | | | | | | | | | | | | | | |
+| Western Sahara | | 56006 | | | | | | | | | | | | | | | | | | | | | | |
+| Zambia | | 57207 | | | | | | | | | | | | | | | | | | | | | | |
+| Zimbabwe | | 54704 | | | | | | | | | | | | | | | | | | | | | | |
+| TOTAL AFRICA | | 59994 | | | | | | | | | | | | | | | | | | | | | | |
+| Other Countries Australia | | 60089 | | | | | | | | | | | | | | | | | | | | | | |
+| British Indian Ocean Territory | | 60208 | | | | | | | | | | | | | | | | | | | | | | |
+| Cook Islands | | 60402 | | | | | | | | | | | | | | | | | | | | | | |
+| Fiji | | 60607 | | | | | | | | | | | | | | | | | | | | | | |
+| French Polynesia | | 60704 | | | | | | | | | | | | | | | | | | | | | | |
+| Kiribati | | 60526 | | | | | | | | | | | | | | | | | | | | | | |
+| Marshall Islands | | 61204 | | | | | | | | | | | | | | | | | | | | | | |
+| Micronesia, Federated States of | | 60305 | | | | | | | | | | | | | | | | | | | | | | |
+| Nauru | | 61301 | | | | | | | | | | | | | | | | | | | | | | |
+| New Caledonia | | 61409 | | | | | | | | | | | | | | | | | | | | | | |
+| New Zealand | | 61689 | | | | | | | | | | | | | | | | | | | | | | |
+| Niue | | 61808 | | | | | | | | | | | | | | | | | | | | | | |
+| Palau | | 62502 | | | | | | | | | | | | | | | | | | | | | | |
+| Papua New Guinea | | 61751 | | | | | | | | | | | | | | | | | | | | | | |
+| Pitcairn Islands | | 62103 | | | | | | | | | | | | | | | | | | | | | | |
+| St. Pierre and Miquelon | | 62219 | | | | | | | | | | | | | | | | | | | | | | |
+| Samoa | | 62618 | | | | | | | | | | | | | | | | | | | | | | |
+| Solomon Islands | | 62308 | | | | | | | | | | | | | | | | | | | | | | |
+| Tokelau Islands | | 62405 | | | | | | | | | | | | | | | | | | | | | | |
+| Tonga | | 62448 | | | | | | | | | | | | | | | | | | | | | | |
+| Tuvalu | | 60518 | | | | | | | | | | | | | | | | | | | | | | |
+| Vanuatu | | 61603 | | | | | | | | | | | | | | | | | | | | | | |
+| Wallis and Futuna | | 60119 | | | | | | | | | | | | | | | | | | | | | | |
+| TOTAL OTHER COUNTRIES | | 69906 | | | | | | | | | | | | | | | | | | | | | | |
+(1 blank entry rows)
+12/2022
+Schedule C, Part I: Claims on an Immediate-Counterparty Basis
+FFIEC 009
+Page 10 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Immediate-Counterparty Basis › Cross-Border Claims › Banks › C915 › (1) | Immediate-Counterparty Basis › Cross-Border Claims › Public › C916 › (2) | Immediate-Counterparty Basis › Cross-Border Claims › NBFIs › M851 › (3) | Immediate-Counterparty Basis › Cross-Border Claims › Corporate › M852 › (4) | Immediate-Counterparty Basis › Cross-Border Claims › Households › M853 › (5) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Banks › C918 › (6) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Public › C919 › (7) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › NBFIs › M854 › (8) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Corporate › M855 › (9) | Immediate-Counterparty Basis › Claims on Local Residents in Non-Local Currency › Households › M856 › (10) | Immediate-Counterparty Basis › Breakdown of Total of Columns 1 through 10 › Remaining Maturity Up to and Including 1 Year › C921 › (11) | Immediate-Counterparty Basis › Claims on Local Residents in Local Currency › C922 › (12) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Banks › C923 › (13) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Public › C924 › (14) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on NBFIs › M857 › (15) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Corporate › M858 › (16) | Redistribution of Claims to Adjust for Guarantor Basis › Outward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 1 through 10 and 12 › Claims on Households › M859 › (17) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Banks › C926 › (18) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Public › C927 › (19) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on NBFIs › M860 › (20) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Corporate › M861 › (21) | Redistribution of Claims to Adjust for Guarantor Basis › Inward Claims with Guarantors in Other Sectors or Jurisdictions Reported in Columns 13 through 17 › Claims on Households › M862 › (22) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Canada | | 29998 | | | | | | | | | | | | | | | | | | | | | | |
+| International & Regional Organizations International | | 72907 | | | | | | | | | | | | | | | | | | | | | | |
+| European | | 73903 | | | | | | | | | | | | | | | | | | | | | | |
+| Latin American | | 74918 | | | | | | | | | | | | | | | | | | | | | | |
+| Caribbean | | 74942 | | | | | | | | | | | | | | | | | | | | | | |
+| Asian | | 75906 | | | | | | | | | | | | | | | | | | | | | | |
+| African | | 76902 | | | | | | | | | | | | | | | | | | | | | | |
+| Middle Eastern | | 77909 | | | | | | | | | | | | | | | | | | | | | | |
+| TOTAL INT'L & REGIONAL ORGANIZATIONS | | 79995 | | | | | | | | | | | | | | | | | | | | | | |
+| TOTAL FOREIGN COUNTRIES | | 69995 | | | | | | | | | | | | | | | | | | | | | | |
+| United States | | 01007 | | | | | | | | | | | | | | | | | | | | | | |
+| GRAND TOTAL | | 99996 | | | | | | | | | | | | | | | | | | | | | | |
+(4 blank entry rows)
+12/2022
+Schedule C, Part II: Claims on a Guarantor Basis and Memorandum Items
+FFIEC 009
+Page 11 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Guarantor Basis › Cross-Border Claims › Banks › C929 › (1) | Guarantor Basis › Cross-Border Claims › Public › C930 › (2) | Guarantor Basis › Cross-Border Claims › NBFIs › M863 › (3) | Guarantor Basis › Cross-Border Claims › Corporate › M864 › (4) | Guarantor Basis › Cross-Border Claims › Households › M865 › (5) | Guarantor Basis › Claims on Local Residents › Banks › C932 › (6) | Guarantor Basis › Claims on Local Residents › Public › C933 › (7) | Guarantor Basis › Claims on Local Residents › NBFIs › M866 › (8) | Guarantor Basis › Claims on Local Residents › Corporate › M867 › (9) | Guarantor Basis › Claims on Local Residents › Households › M868 › (10) | Guarantor Basis › Claims on Local Residents › Breakdown of Total of Columns 6 through 10 › Claims in Non-Local Currency › C935 › (11) | Memorandum › Breakdown of Total of Columns 1 through 10 › Securities (HTM and AFS) › M869 › (12) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Total Collateral › M870 › (13) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Cash › M871 › (14) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Same Country › M872 › (15) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, U.S. › PG76 › (16) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Counterparty) › M873 › (17) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Collateral) › PG77 › (18) | Trading Assets › Trading Assets (Reported in Columns 1 through 10) › M956 › (19) | Trading Assets › Offsetting Positions for Trading Book › M874 › (20) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Europe Albania | | 15105 | | | | | | | | | | | | | | | | | | | | |
+| Andorra | | 10103 | | | | | | | | | | | | | | | | | | | | |
+| Armenia | | 16519 | | | | | | | | | | | | | | | | | | | | |
+| Austria | | 10189 | | | | | | | | | | | | | | | | | | | | |
+| Azerbaijan | | 16527 | | | | | | | | | | | | | | | | | | | | |
+| Bank of International Settlements | | 13307 | | | | | | | | | | | | | | | | | | | | |
+| Belarus | | 16209 | | | | | | | | | | | | | | | | | | | | |
+| Belgium | | 10251 | | | | | | | | | | | | | | | | | | | | |
+| Bosnia and Herzegovina | | 14109 | | | | | | | | | | | | | | | | | | | | |
+| Bulgaria | | 15202 | | | | | | | | | | | | | | | | | | | | |
+| Croatia | | 14214 | | | | | | | | | | | | | | | | | | | | |
+| Cyprus | | 10405 | | | | | | | | | | | | | | | | | | | | |
+| Czech Republic | | 15288 | | | | | | | | | | | | | | | | | | | | |
+| Denmark | | 10502 | | | | | | | | | | | | | | | | | | | | |
+| Estonia | | 15407 | | | | | | | | | | | | | | | | | | | | |
+| European Central Bank | | 13501 | | | | | | | | | | | | | | | | | | | | |
+| Faroe Islands | | 10618 | | | | | | | | | | | | | | | | | | | | |
+| Finland | | 10707 | | | | | | | | | | | | | | | | | | | | |
+| France | | 10804 | | | | | | | | | | | | | | | | | | | | |
+| Georgia | | 16535 | | | | | | | | | | | | | | | | | | | | |
+| Germany | | 11002 | | | | | | | | | | | | | | | | | | | | |
+| Gibraltar | | 11088 | | | | | | | | | | | | | | | | | | | | |
+| Greece | | 11207 | | | | | | | | | | | | | | | | | | | | |
+| Greenland | | 10545 | | | | | | | | | | | | | | | | | | | | |
+| Guernsey | | 13006 | | | | | | | | | | | | | | | | | | | | |
+| Holy See | | 13102 | | | | | | | | | | | | | | | | | | | | |
+| Hungary | | 15504 | | | | | | | | | | | | | | | | | | | | |
+| Iceland | | 11304 | | | | | | | | | | | | | | | | | | | | |
+| Ireland | | 11401 | | | | | | | | | | | | | | | | | | | | |
+| Isle of Man | | 13008 | | | | | | | | | | | | | | | | | | | | |
+| Italy | | 11509 | | | | | | | | | | | | | | | | | | | | |
+| Jersey | | 13007 | | | | | | | | | | | | | | | | | | | | |
+12/2022
+Schedule C, Part II: Claims on a Guarantor Basis and Memorandum Items
+FFIEC 009
+Page 12 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Guarantor Basis › Cross-Border Claims › Banks › C929 › (1) | Guarantor Basis › Cross-Border Claims › Public › C930 › (2) | Guarantor Basis › Cross-Border Claims › NBFIs › M863 › (3) | Guarantor Basis › Cross-Border Claims › Corporate › M864 › (4) | Guarantor Basis › Cross-Border Claims › Households › M865 › (5) | Guarantor Basis › Claims on Local Residents › Banks › C932 › (6) | Guarantor Basis › Claims on Local Residents › Public › C933 › (7) | Guarantor Basis › Claims on Local Residents › NBFIs › M866 › (8) | Guarantor Basis › Claims on Local Residents › Corporate › M867 › (9) | Guarantor Basis › Claims on Local Residents › Households › M868 › (10) | Guarantor Basis › Claims on Local Residents › Breakdown of Total of Columns 6 through 10 › Claims in Non-Local Currency › C935 › (11) | Memorandum › Breakdown of Total of Columns 1 through 10 › Securities (HTM and AFS) › M869 › (12) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Total Collateral › M870 › (13) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Cash › M871 › (14) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Same Country › M872 › (15) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, U.S. › PG76 › (16) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Counterparty) › M873 › (17) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Collateral) › PG77 › (18) | Trading Assets › Trading Assets (Reported in Columns 1 through 10) › M956 › (19) | Trading Assets › Offsetting Positions for Trading Book › M874 › (20) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Europe—Continued Kazakhstan | | 16543 | | | | | | | | | | | | | | | | | | | | |
+| Kosovo | | 13471 | | | | | | | | | | | | | | | | | | | | |
+| Kyrgyzstan | | 16551 | | | | | | | | | | | | | | | | | | | | |
+| Latvia | | 15601 | | | | | | | | | | | | | | | | | | | | |
+| Liechtenstein | | 11606 | | | | | | | | | | | | | | | | | | | | |
+| Lithuania | | 15709 | | | | | | | | | | | | | | | | | | | | |
+| Luxembourg | | 11703 | | | | | | | | | | | | | | | | | | | | |
+| Macedonia | | 14419 | | | | | | | | | | | | | | | | | | | | |
+| Malta | | 11819 | | | | | | | | | | | | | | | | | | | | |
+| Moldova | | 16306 | | | | | | | | | | | | | | | | | | | | |
+| Monaco | | 12009 | | | | | | | | | | | | | | | | | | | | |
+| Montenegro | | 13625 | | | | | | | | | | | | | | | | | | | | |
+| Netherlands | | 12106 | | | | | | | | | | | | | | | | | | | | |
+| Norway | | 12203 | | | | | | | | | | | | | | | | | | | | |
+| Poland | | 15768 | | | | | | | | | | | | | | | | | | | | |
+| Portugal | | 12319 | | | | | | | | | | | | | | | | | | | | |
+| Romania | | 15806 | | | | | | | | | | | | | | | | | | | | |
+| Russia | | 16101 | | | | | | | | | | | | | | | | | | | | |
+| San Marino | | 12408 | | | | | | | | | | | | | | | | | | | | |
+| Serbia | | 13218 | | | | | | | | | | | | | | | | | | | | |
+| Slovakia | | 15318 | | | | | | | | | | | | | | | | | | | | |
+| Slovenia | | 14338 | | | | | | | | | | | | | | | | | | | | |
+| Spain | | 12505 | | | | | | | | | | | | | | | | | | | | |
+| Sweden | | 12602 | | | | | | | | | | | | | | | | | | | | |
+| Switzerland | | 12688 | | | | | | | | | | | | | | | | | | | | |
+| Tajikistan | | 16578 | | | | | | | | | | | | | | | | | | | | |
+| Turkey | | 12807 | | | | | | | | | | | | | | | | | | | | |
+| Turkmenistan | | 16616 | | | | | | | | | | | | | | | | | | | | |
+| Ukraine | | 16403 | | | | | | | | | | | | | | | | | | | | |
+| United Kingdom | | 13005 | | | | | | | | | | | | | | | | | | | | |
+| Uzbekistan | | 16705 | | | | | | | | | | | | | | | | | | | | |
+| TOTAL EUROPE | | 19992 | | | | | | | | | | | | | | | | | | | | |
+12/2022
+Schedule C, Part II: Claims on a Guarantor Basis and Memorandum Items
+FFIEC 009
+Page 13 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Guarantor Basis › Cross-Border Claims › Banks › C929 › (1) | Guarantor Basis › Cross-Border Claims › Public › C930 › (2) | Guarantor Basis › Cross-Border Claims › NBFIs › M863 › (3) | Guarantor Basis › Cross-Border Claims › Corporate › M864 › (4) | Guarantor Basis › Cross-Border Claims › Households › M865 › (5) | Guarantor Basis › Claims on Local Residents › Banks › C932 › (6) | Guarantor Basis › Claims on Local Residents › Public › C933 › (7) | Guarantor Basis › Claims on Local Residents › NBFIs › M866 › (8) | Guarantor Basis › Claims on Local Residents › Corporate › M867 › (9) | Guarantor Basis › Claims on Local Residents › Households › M868 › (10) | Guarantor Basis › Claims on Local Residents › Breakdown of Total of Columns 6 through 10 › Claims in Non-Local Currency › C935 › (11) | Memorandum › Breakdown of Total of Columns 1 through 10 › Securities (HTM and AFS) › M869 › (12) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Total Collateral › M870 › (13) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Cash › M871 › (14) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Same Country › M872 › (15) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, U.S. › PG76 › (16) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Counterparty) › M873 › (17) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Collateral) › PG77 › (18) | Trading Assets › Trading Assets (Reported in Columns 1 through 10) › M956 › (19) | Trading Assets › Offsetting Positions for Trading Book › M874 › (20) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Latin America Argentina | | 30104 | | | | | | | | | | | | | | | | | | | | |
+| Belize | | 35718 | | | | | | | | | | | | | | | | | | | | |
+| Bolivia | | 30201 | | | | | | | | | | | | | | | | | | | | |
+| Brazil | | 30309 | | | | | | | | | | | | | | | | | | | | |
+| Chile | | 30406 | | | | | | | | | | | | | | | | | | | | |
+| Colombia | | 30503 | | | | | | | | | | | | | | | | | | | | |
+| Costa Rica | | 30589 | | | | | | | | | | | | | | | | | | | | |
+| Ecuador | | 31003 | | | | | | | | | | | | | | | | | | | | |
+| El Salvador | | 31089 | | | | | | | | | | | | | | | | | | | | |
+| Falkland Islands | | 36307 | | | | | | | | | | | | | | | | | | | | |
+| French Guiana | | 36404 | | | | | | | | | | | | | | | | | | | | |
+| Guatemala | | 31208 | | | | | | | | | | | | | | | | | | | | |
+| Guyana | | 31305 | | | | | | | | | | | | | | | | | | | | |
+| Honduras | | 31488 | | | | | | | | | | | | | | | | | | | | |
+| Mexico | | 31704 | | | | | | | | | | | | | | | | | | | | |
+| Nicaragua | | 31801 | | | | | | | | | | | | | | | | | | | | |
+| Panama | | 31887 | | | | | | | | | | | | | | | | | | | | |
+| Paraguay | | 32107 | | | | | | | | | | | | | | | | | | | | |
+| Peru | | 32204 | | | | | | | | | | | | | | | | | | | | |
+| Suriname | | 37702 | | | | | | | | | | | | | | | | | | | | |
+| Uruguay | | 32603 | | | | | | | | | | | | | | | | | | | | |
+| Venezuela | | 32719 | | | | | | | | | | | | | | | | | | | | |
+| TOTAL LATIN AMERICA | | 39942 | | | | | | | | | | | | | | | | | | | | |
+| Caribbean Anguilla | | 30228 | | | | | | | | | | | | | | | | | | | | |
+| Antigua and Barbuda | | 35203 | | | | | | | | | | | | | | | | | | | | |
+| Aruba | | 35254 | | | | | | | | | | | | | | | | | | | | |
+| Bahamas | | 35319 | | | | | | | | | | | | | | | | | | | | |
+| Barbados | | 30155 | | | | | | | | | | | | | | | | | | | | |
+| Bermuda | | 35602 | | | | | | | | | | | | | | | | | | | | |
+(1 blank entry rows)
+12/2022
+Schedule C, Part II: Claims on a Guarantor Basis and Memorandum Items
+FFIEC 009
+Page 14 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Guarantor Basis › Cross-Border Claims › Banks › C929 › (1) | Guarantor Basis › Cross-Border Claims › Public › C930 › (2) | Guarantor Basis › Cross-Border Claims › NBFIs › M863 › (3) | Guarantor Basis › Cross-Border Claims › Corporate › M864 › (4) | Guarantor Basis › Cross-Border Claims › Households › M865 › (5) | Guarantor Basis › Claims on Local Residents › Banks › C932 › (6) | Guarantor Basis › Claims on Local Residents › Public › C933 › (7) | Guarantor Basis › Claims on Local Residents › NBFIs › M866 › (8) | Guarantor Basis › Claims on Local Residents › Corporate › M867 › (9) | Guarantor Basis › Claims on Local Residents › Households › M868 › (10) | Guarantor Basis › Claims on Local Residents › Breakdown of Total of Columns 6 through 10 › Claims in Non-Local Currency › C935 › (11) | Memorandum › Breakdown of Total of Columns 1 through 10 › Securities (HTM and AFS) › M869 › (12) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Total Collateral › M870 › (13) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Cash › M871 › (14) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Same Country › M872 › (15) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, U.S. › PG76 › (16) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Counterparty) › M873 › (17) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Collateral) › PG77 › (18) | Trading Assets › Trading Assets (Reported in Columns 1 through 10) › M956 › (19) | Trading Assets › Offsetting Positions for Trading Book › M874 › (20) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Caribbean—Continued Bonaire, St. Eustatius and Saba | | 36161 | | | | | | | | | | | | | | | | | | | | |
+| Cayman Islands | | 36137 | | | | | | | | | | | | | | | | | | | | |
+| Cuba | | 30708 | | | | | | | | | | | | | | | | | | | | |
+| Curacao | | 36188 | | | | | | | | | | | | | | | | | | | | |
+| Dominica | | 36218 | | | | | | | | | | | | | | | | | | | | |
+| Dominican Republic | | 30805 | | | | | | | | | | | | | | | | | | | | |
+| Eastern Caribbean Central Bank | | 35416 | | | | | | | | | | | | | | | | | | | | |
+| Grenada | | 36706 | | | | | | | | | | | | | | | | | | | | |
+| Guadeloupe (and smaller French islands) | | 36803 | | | | | | | | | | | | | | | | | | | | |
+| Haiti | | 31402 | | | | | | | | | | | | | | | | | | | | |
+| Jamaica | | 31607 | | | | | | | | | | | | | | | | | | | | |
+| Martinique | | 37001 | | | | | | | | | | | | | | | | | | | | |
+| Montserrat | | 37109 | | | | | | | | | | | | | | | | | | | | |
+| St. Martin and St. Barthelemy | | 36471 | | | | | | | | | | | | | | | | | | | | |
+| St. Kitts and Nevis | | 37303 | | | | | | | | | | | | | | | | | | | | |
+| St. Lucia | | 37508 | | | | | | | | | | | | | | | | | | | | |
+| St. Maarten | | 36196 | | | | | | | | | | | | | | | | | | | | |
+| St. Vincent and the Grenadines | | 37605 | | | | | | | | | | | | | | | | | | | | |
+| Trinidad and Tobago | | 32409 | | | | | | | | | | | | | | | | | | | | |
+| Turks and Caicos Islands | | 37818 | | | | | | | | | | | | | | | | | | | | |
+| Virgin Islands, British | | 35807 | | | | | | | | | | | | | | | | | | | | |
+| TOTAL CARIBBEAN | | 34401 | | | | | | | | | | | | | | | | | | | | |
+| Asia Afghanistan | | 40401 | | | | | | | | | | | | | | | | | | | | |
+| Bahrain | | 40703 | | | | | | | | | | | | | | | | | | | | |
+| Bangladesh | | 40746 | | | | | | | | | | | | | | | | | | | | |
+| Bhutan | | 40819 | | | | | | | | | | | | | | | | | | | | |
+| Brunei | | 41009 | | | | | | | | | | | | | | | | | | | | |
+| Burma | | 41106 | | | | | | | | | | | | | | | | | | | | |
+| Cambodia | | 41203 | | | | | | | | | | | | | | | | | | | | |
+(1 blank entry rows)
+12/2022
+Schedule C, Part II: Claims on a Guarantor Basis and Memorandum Items
+FFIEC 009
+Page 15 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Guarantor Basis › Cross-Border Claims › Banks › C929 › (1) | Guarantor Basis › Cross-Border Claims › Public › C930 › (2) | Guarantor Basis › Cross-Border Claims › NBFIs › M863 › (3) | Guarantor Basis › Cross-Border Claims › Corporate › M864 › (4) | Guarantor Basis › Cross-Border Claims › Households › M865 › (5) | Guarantor Basis › Claims on Local Residents › Banks › C932 › (6) | Guarantor Basis › Claims on Local Residents › Public › C933 › (7) | Guarantor Basis › Claims on Local Residents › NBFIs › M866 › (8) | Guarantor Basis › Claims on Local Residents › Corporate › M867 › (9) | Guarantor Basis › Claims on Local Residents › Households › M868 › (10) | Guarantor Basis › Claims on Local Residents › Breakdown of Total of Columns 6 through 10 › Claims in Non-Local Currency › C935 › (11) | Memorandum › Breakdown of Total of Columns 1 through 10 › Securities (HTM and AFS) › M869 › (12) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Total Collateral › M870 › (13) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Cash › M871 › (14) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Same Country › M872 › (15) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, U.S. › PG76 › (16) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Counterparty) › M873 › (17) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Collateral) › PG77 › (18) | Trading Assets › Trading Assets (Reported in Columns 1 through 10) › M956 › (19) | Trading Assets › Offsetting Positions for Trading Book › M874 › (20) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Asia—Continued China: Mainland | | 41408 | | | | | | | | | | | | | | | | | | | | |
+| East Timor | | 45004 | | | | | | | | | | | | | | | | | | | | |
+| Hong Kong | | 42005 | | | | | | | | | | | | | | | | | | | | |
+| India | | 42102 | | | | | | | | | | | | | | | | | | | | |
+| Indonesia | | 42218 | | | | | | | | | | | | | | | | | | | | |
+| Iran | | 42307 | | | | | | | | | | | | | | | | | | | | |
+| Iraq | | 42404 | | | | | | | | | | | | | | | | | | | | |
+| Israel | | 42501 | | | | | | | | | | | | | | | | | | | | |
+| Japan | | 42609 | | | | | | | | | | | | | | | | | | | | |
+| Jordan | | 42706 | | | | | | | | | | | | | | | | | | | | |
+| Korea, North | | 44407 | | | | | | | | | | | | | | | | | | | | |
+| Korea, South | | 43001 | | | | | | | | | | | | | | | | | | | | |
+| Kuwait | | 43109 | | | | | | | | | | | | | | | | | | | | |
+| Laos | | 43303 | | | | | | | | | | | | | | | | | | | | |
+| Lebanon | | 43419 | | | | | | | | | | | | | | | | | | | | |
+| Macau | | 43508 | | | | | | | | | | | | | | | | | | | | |
+| Malaysia | | 43605 | | | | | | | | | | | | | | | | | | | | |
+| Maldives | | 43702 | | | | | | | | | | | | | | | | | | | | |
+| Mongolia | | 43818 | | | | | | | | | | | | | | | | | | | | |
+| Nepal | | 44202 | | | | | | | | | | | | | | | | | | | | |
+| Oman | | 44105 | | | | | | | | | | | | | | | | | | | | |
+| Pakistan | | 44709 | | | | | | | | | | | | | | | | | | | | |
+| Philippines | | 44806 | | | | | | | | | | | | | | | | | | | | |
+| Qatar | | 45101 | | | | | | | | | | | | | | | | | | | | |
+| Saudi Arabia | | 45608 | | | | | | | | | | | | | | | | | | | | |
+| Singapore | | 46019 | | | | | | | | | | | | | | | | | | | | |
+| Sri Lanka | | 41319 | | | | | | | | | | | | | | | | | | | | |
+| Syria | | 46205 | | | | | | | | | | | | | | | | | | | | |
+| Taiwan | | 46302 | | | | | | | | | | | | | | | | | | | | |
+| Thailand | | 46418 | | | | | | | | | | | | | | | | | | | | |
+| United Arab Emirates | | 46604 | | | | | | | | | | | | | | | | | | | | |
+12/2022
+Schedule C, Part II: Claims on a Guarantor Basis and Memorandum Items
+FFIEC 009
+Page 16 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Guarantor Basis › Cross-Border Claims › Banks › C929 › (1) | Guarantor Basis › Cross-Border Claims › Public › C930 › (2) | Guarantor Basis › Cross-Border Claims › NBFIs › M863 › (3) | Guarantor Basis › Cross-Border Claims › Corporate › M864 › (4) | Guarantor Basis › Cross-Border Claims › Households › M865 › (5) | Guarantor Basis › Claims on Local Residents › Banks › C932 › (6) | Guarantor Basis › Claims on Local Residents › Public › C933 › (7) | Guarantor Basis › Claims on Local Residents › NBFIs › M866 › (8) | Guarantor Basis › Claims on Local Residents › Corporate › M867 › (9) | Guarantor Basis › Claims on Local Residents › Households › M868 › (10) | Guarantor Basis › Claims on Local Residents › Breakdown of Total of Columns 6 through 10 › Claims in Non-Local Currency › C935 › (11) | Memorandum › Breakdown of Total of Columns 1 through 10 › Securities (HTM and AFS) › M869 › (12) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Total Collateral › M870 › (13) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Cash › M871 › (14) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Same Country › M872 › (15) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, U.S. › PG76 › (16) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Counterparty) › M873 › (17) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Collateral) › PG77 › (18) | Trading Assets › Trading Assets (Reported in Columns 1 through 10) › M956 › (19) | Trading Assets › Offsetting Positions for Trading Book › M874 › (20) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Asia—Continued Vietnam | | 46906 | | | | | | | | | | | | | | | | | | | | |
+| West Bank and Gaza | | 47201 | | | | | | | | | | | | | | | | | | | | |
+| Yemen | | 47104 | | | | | | | | | | | | | | | | | | | | |
+| TOTAL ASIA | | 49999 | | | | | | | | | | | | | | | | | | | | |
+| Africa Algeria | | 50105 | | | | | | | | | | | | | | | | | | | | |
+| Angola | | 50202 | | | | | | | | | | | | | | | | | | | | |
+| Bank of Central African States (BEAC) | | 50318 | | | | | | | | | | | | | | | | | | | | |
+| Benin | | 51802 | | | | | | | | | | | | | | | | | | | | |
+| Botswana | | 50504 | | | | | | | | | | | | | | | | | | | | |
+| Burkina Faso | | 57118 | | | | | | | | | | | | | | | | | | | | |
+| Burundi | | 50806 | | | | | | | | | | | | | | | | | | | | |
+| Cameroon | | 51004 | | | | | | | | | | | | | | | | | | | | |
+| Cape Verde | | 51209 | | | | | | | | | | | | | | | | | | | | |
+| Central African Republic | | 51306 | | | | | | | | | | | | | | | | | | | | |
+| Central Bank of West African States (BCEAO) | | 50644 | | | | | | | | | | | | | | | | | | | | |
+| Chad | | 51403 | | | | | | | | | | | | | | | | | | | | |
+| Comoros | | 51519 | | | | | | | | | | | | | | | | | | | | |
+| Congo (Brazzaville) | | 51608 | | | | | | | | | | | | | | | | | | | | |
+| Congo (Kinshasa) | | 51705 | | | | | | | | | | | | | | | | | | | | |
+| Cote d'Ivoire (Ivory Coast) | | 53007 | | | | | | | | | | | | | | | | | | | | |
+| Djibouti | | 52302 | | | | | | | | | | | | | | | | | | | | |
+| Egypt | | 57002 | | | | | | | | | | | | | | | | | | | | |
+| Equatorial Guinea | | 51942 | | | | | | | | | | | | | | | | | | | | |
+| Eritrea | | 52019 | | | | | | | | | | | | | | | | | | | | |
+| Eswatini | | 56219 | | | | | | | | | | | | | | | | | | | | |
+| Ethiopia | | 52108 | | | | | | | | | | | | | | | | | | | | |
+| Gabon | | 52418 | | | | | | | | | | | | | | | | | | | | |
+| Gambia, The | | 52507 | | | | | | | | | | | | | | | | | | | | |
+| Ghana | | 52604 | | | | | | | | | | | | | | | | | | | | |
+(1 blank entry rows)
+12/2022
+Schedule C, Part II: Claims on a Guarantor Basis and Memorandum Items
+FFIEC 009
+Page 17 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Guarantor Basis › Cross-Border Claims › Banks › C929 › (1) | Guarantor Basis › Cross-Border Claims › Public › C930 › (2) | Guarantor Basis › Cross-Border Claims › NBFIs › M863 › (3) | Guarantor Basis › Cross-Border Claims › Corporate › M864 › (4) | Guarantor Basis › Cross-Border Claims › Households › M865 › (5) | Guarantor Basis › Claims on Local Residents › Banks › C932 › (6) | Guarantor Basis › Claims on Local Residents › Public › C933 › (7) | Guarantor Basis › Claims on Local Residents › NBFIs › M866 › (8) | Guarantor Basis › Claims on Local Residents › Corporate › M867 › (9) | Guarantor Basis › Claims on Local Residents › Households › M868 › (10) | Guarantor Basis › Claims on Local Residents › Breakdown of Total of Columns 6 through 10 › Claims in Non-Local Currency › C935 › (11) | Memorandum › Breakdown of Total of Columns 1 through 10 › Securities (HTM and AFS) › M869 › (12) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Total Collateral › M870 › (13) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Cash › M871 › (14) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Same Country › M872 › (15) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, U.S. › PG76 › (16) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Counterparty) › M873 › (17) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Collateral) › PG77 › (18) | Trading Assets › Trading Assets (Reported in Columns 1 through 10) › M956 › (19) | Trading Assets › Offsetting Positions for Trading Book › M874 › (20) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Africa—Continued Guinea | | 52701 | | | | | | | | | | | | | | | | | | | | |
+| Guinea-Bissau | | 54402 | | | | | | | | | | | | | | | | | | | | |
+| Kenya | | 53104 | | | | | | | | | | | | | | | | | | | | |
+| Lesotho | | 53155 | | | | | | | | | | | | | | | | | | | | |
+| Liberia | | 53201 | | | | | | | | | | | | | | | | | | | | |
+| Libya | | 53309 | | | | | | | | | | | | | | | | | | | | |
+| Madagascar | | 53406 | | | | | | | | | | | | | | | | | | | | |
+| Malawi | | 53503 | | | | | | | | | | | | | | | | | | | | |
+| Mali | | 53589 | | | | | | | | | | | | | | | | | | | | |
+| Mauritania | | 53708 | | | | | | | | | | | | | | | | | | | | |
+| Mauritius | | 53805 | | | | | | | | | | | | | | | | | | | | |
+| Mayotte | | 54518 | | | | | | | | | | | | | | | | | | | | |
+| Morocco | | 54003 | | | | | | | | | | | | | | | | | | | | |
+| Mozambique | | 54089 | | | | | | | | | | | | | | | | | | | | |
+| Namibia | | 54127 | | | | | | | | | | | | | | | | | | | | |
+| Niger | | 54208 | | | | | | | | | | | | | | | | | | | | |
+| Nigeria | | 54305 | | | | | | | | | | | | | | | | | | | | |
+| Reunion | | 54607 | | | | | | | | | | | | | | | | | | | | |
+| Rwanda | | 55018 | | | | | | | | | | | | | | | | | | | | |
+| Saint Helena | | 55107 | | | | | | | | | | | | | | | | | | | | |
+| Sao Tome and Principe | | 55204 | | | | | | | | | | | | | | | | | | | | |
+| Senegal | | 55301 | | | | | | | | | | | | | | | | | | | | |
+| Seychelles | | 55409 | | | | | | | | | | | | | | | | | | | | |
+| Sierra Leone | | 55506 | | | | | | | | | | | | | | | | | | | | |
+| Somalia | | 55603 | | | | | | | | | | | | | | | | | | | | |
+| South Africa | | 55719 | | | | | | | | | | | | | | | | | | | | |
+| South Sudan | | 53392 | | | | | | | | | | | | | | | | | | | | |
+| Sudan | | 56103 | | | | | | | | | | | | | | | | | | | | |
+| Tanzania | | 56405 | | | | | | | | | | | | | | | | | | | | |
+| Togo | | 56502 | | | | | | | | | | | | | | | | | | | | |
+| Tunisia | | 56707 | | | | | | | | | | | | | | | | | | | | |
+12/2022
+Schedule C, Part II: Claims on a Guarantor Basis and Memorandum Items
+FFIEC 009
+Page 18 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Guarantor Basis › Cross-Border Claims › Banks › C929 › (1) | Guarantor Basis › Cross-Border Claims › Public › C930 › (2) | Guarantor Basis › Cross-Border Claims › NBFIs › M863 › (3) | Guarantor Basis › Cross-Border Claims › Corporate › M864 › (4) | Guarantor Basis › Cross-Border Claims › Households › M865 › (5) | Guarantor Basis › Claims on Local Residents › Banks › C932 › (6) | Guarantor Basis › Claims on Local Residents › Public › C933 › (7) | Guarantor Basis › Claims on Local Residents › NBFIs › M866 › (8) | Guarantor Basis › Claims on Local Residents › Corporate › M867 › (9) | Guarantor Basis › Claims on Local Residents › Households › M868 › (10) | Guarantor Basis › Claims on Local Residents › Breakdown of Total of Columns 6 through 10 › Claims in Non-Local Currency › C935 › (11) | Memorandum › Breakdown of Total of Columns 1 through 10 › Securities (HTM and AFS) › M869 › (12) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Total Collateral › M870 › (13) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Cash › M871 › (14) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Same Country › M872 › (15) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, U.S. › PG76 › (16) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Counterparty) › M873 › (17) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Collateral) › PG77 › (18) | Trading Assets › Trading Assets (Reported in Columns 1 through 10) › M956 › (19) | Trading Assets › Offsetting Positions for Trading Book › M874 › (20) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Africa—Continued Uganda | | 56804 | | | | | | | | | | | | | | | | | | | | |
+| Western Sahara | | 56006 | | | | | | | | | | | | | | | | | | | | |
+| Zambia | | 57207 | | | | | | | | | | | | | | | | | | | | |
+| Zimbabwe | | 54704 | | | | | | | | | | | | | | | | | | | | |
+| TOTAL AFRICA | | 59994 | | | | | | | | | | | | | | | | | | | | |
+| Other Countries Australia | | 60089 | | | | | | | | | | | | | | | | | | | | |
+| British Indian Ocean Territory | | 60208 | | | | | | | | | | | | | | | | | | | | |
+| Cook Islands | | 60402 | | | | | | | | | | | | | | | | | | | | |
+| Fiji | | 60607 | | | | | | | | | | | | | | | | | | | | |
+| French Polynesia | | 60704 | | | | | | | | | | | | | | | | | | | | |
+| Kiribati | | 60526 | | | | | | | | | | | | | | | | | | | | |
+| Marshall Islands | | 61204 | | | | | | | | | | | | | | | | | | | | |
+| Micronesia, Federated States of | | 60305 | | | | | | | | | | | | | | | | | | | | |
+| Nauru | | 61301 | | | | | | | | | | | | | | | | | | | | |
+| New Caledonia | | 61409 | | | | | | | | | | | | | | | | | | | | |
+| New Zealand | | 61689 | | | | | | | | | | | | | | | | | | | | |
+| Niue | | 61808 | | | | | | | | | | | | | | | | | | | | |
+| Palau | | 62502 | | | | | | | | | | | | | | | | | | | | |
+| Papua New Guinea | | 61751 | | | | | | | | | | | | | | | | | | | | |
+| Pitcairn Islands | | 62103 | | | | | | | | | | | | | | | | | | | | |
+| St. Pierre and Miquelon | | 62219 | | | | | | | | | | | | | | | | | | | | |
+| Samoa | | 62618 | | | | | | | | | | | | | | | | | | | | |
+| Solomon Islands | | 62308 | | | | | | | | | | | | | | | | | | | | |
+| Tokelau Islands | | 62405 | | | | | | | | | | | | | | | | | | | | |
+| Tonga | | 62448 | | | | | | | | | | | | | | | | | | | | |
+| Tuvalu | | 60518 | | | | | | | | | | | | | | | | | | | | |
+| Vanuatu | | 61603 | | | | | | | | | | | | | | | | | | | | |
+| Wallis and Futuna | | 60119 | | | | | | | | | | | | | | | | | | | | |
+| TOTAL OTHER COUNTRIES | | 69906 | | | | | | | | | | | | | | | | | | | | |
+(1 blank entry rows)
+12/2022
+Schedule C, Part II: Claims on a Guarantor Basis and Memorandum Items
+FFIEC 009
+Page 19 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Guarantor Basis › Cross-Border Claims › Banks › C929 › (1) | Guarantor Basis › Cross-Border Claims › Public › C930 › (2) | Guarantor Basis › Cross-Border Claims › NBFIs › M863 › (3) | Guarantor Basis › Cross-Border Claims › Corporate › M864 › (4) | Guarantor Basis › Cross-Border Claims › Households › M865 › (5) | Guarantor Basis › Claims on Local Residents › Banks › C932 › (6) | Guarantor Basis › Claims on Local Residents › Public › C933 › (7) | Guarantor Basis › Claims on Local Residents › NBFIs › M866 › (8) | Guarantor Basis › Claims on Local Residents › Corporate › M867 › (9) | Guarantor Basis › Claims on Local Residents › Households › M868 › (10) | Guarantor Basis › Claims on Local Residents › Breakdown of Total of Columns 6 through 10 › Claims in Non-Local Currency › C935 › (11) | Memorandum › Breakdown of Total of Columns 1 through 10 › Securities (HTM and AFS) › M869 › (12) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Total Collateral › M870 › (13) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Cash › M871 › (14) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Same Country › M872 › (15) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, U.S. › PG76 › (16) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Counterparty) › M873 › (17) | Memorandum › Collateral Held Against Claims With No Risk Transfer › Of Which, Resale and Reverse Repurchase Agreements and Securities Lending (Collateral) › PG77 › (18) | Trading Assets › Trading Assets (Reported in Columns 1 through 10) › M956 › (19) | Trading Assets › Offsetting Positions for Trading Book › M874 › (20) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Canada | | 29998 | | | | | | | | | | | | | | | | | | | | |
+| International & Regional Organizations International | | 72907 | | | | | | | | | | | | | | | | | | | | |
+| European | | 73903 | | | | | | | | | | | | | | | | | | | | |
+| Latin American | | 74918 | | | | | | | | | | | | | | | | | | | | |
+| Caribbean | | 74942 | | | | | | | | | | | | | | | | | | | | |
+| Asian | | 75906 | | | | | | | | | | | | | | | | | | | | |
+| African | | 76902 | | | | | | | | | | | | | | | | | | | | |
+| Middle Eastern | | 77909 | | | | | | | | | | | | | | | | | | | | |
+| TOTAL INT'L & REGIONAL ORGANIZATIONS | | 79995 | | | | | | | | | | | | | | | | | | | | |
+| TOTAL FOREIGN COUNTRIES | | 69995 | | | | | | | | | | | | | | | | | | | | |
+| United States | | 01007 | | | | | | | | | | | | | | | | | | | | |
+| GRAND TOTAL | | 99996 | | | | | | | | | | | | | | | | | | | | |
+(4 blank entry rows)
+12/2022
+FFIEC 009
+Schedule L: Foreign-Office Liabilities Page 20 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+Foreign-Office Liabilities
+By Country of Foreign Office
+Foreign- Office
+Foreign- Office
+By Country of Creditor Net Due to (or Due From)
+Total Liabilities
+Own Related
+Liabilities in Liabilities in Booked at
+Non-Local
+U.S. Dollar Amounts in Millions FCEX 9151 9207
+Currency C938
+Local Currency C939
+Foreign Offices C940
+Offices in Other Countries 8595
+Country (a) Europe—Continued Kazakhstan Kosovo Kyrgyzstan Latvia Liechtenstein Lithuania Luxembourg Macedonia Malta Moldova Monaco Montenegro Netherlands Norway Poland Portugal Romania Russia San Marino Serbia Slovakia Slovenia Spain Sweden Switzerland Tajikistan Turkey Turkmenistan Ukraine United Kingdom Uzbekistan TOTAL EUROPE
+Code (b)
+16543 13471
+16551
+15601
+11606
+15709
+11703
+14419
+11819
+16306
+12009
+13625
+12106
+12203
+15768
+12319
+15806
+16101
+12408
+13218
+15318
+14338
+12505
+12602
+12688
+16578 12807
+16616
+16403
+13005
+16705
+19992
+(1)
+(2)
+(3)
+(4)
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Non-Local Currency › C938 › (1) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Local Currency › C939 › (2) | Foreign-Office Liabilities › By Country of Creditor › Total Liabilities Booked at Foreign Offices › C940 › (3) | Net Due to (or Due From) Own Related Offices in Other Countries › 8595 › (4) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Europe Albania | | 15105 | | | | |
+| Andorra | | 10103 | | | | |
+| Armenia | | 16519 | | | | |
+| Austria | | 10189 | | | | |
+| Azerbaijan | | 16527 | | | | |
+| Bank of International Settlements | | 13307 | | | | |
+| Belarus | | 16209 | | | | |
+| Belgium | | 10251 | | | | |
+| Bosnia and Herzegovina | | 14109 | | | | |
+| Bulgaria | | 15202 | | | | |
+| Croatia | | 14214 | | | | |
+| Cyprus | | 10405 | | | | |
+| Czech Republic | | 15288 | | | | |
+| Denmark | | 10502 | | | | |
+| Estonia | | 15407 | | | | |
+| European Central Bank | | 13501 | | | | |
+| Faroe Islands | | 10618 | | | | |
+| Finland | | 10707 | | | | |
+| France | | 10804 | | | | |
+| Georgia | | 16535 | | | | |
+| Germany | | 11002 | | | | |
+| Gibraltar | | 11088 | | | | |
+| Greece | | 11207 | | | | |
+| Greenland | | 10545 | | | | |
+| Guernsey | | 13006 | | | | |
+| Holy See | | 13102 | | | | |
+| Hungary | | 15504 | | | | |
+| Iceland | | 11304 | | | | |
+| Ireland | | 11401 | | | | |
+| Isle of Man | | 13008 | | | | |
+| Italy | | 11509 | | | | |
+| Jersey | | 13007 | | | | |
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Non-Local Currency › C938 › (1) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Local Currency › C939 › (2) | Foreign-Office Liabilities › By Country of Creditor › Total Liabilities Booked at Foreign Offices › C940 › (3) | Net Due to (or Due From) Own Related Offices in Other Countries › 8595 › (4) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Europe—Continued Kazakhstan | | 16543 | | | | |
+| Kosovo | | 13471 | | | | |
+| Kyrgyzstan | | 16551 | | | | |
+| Latvia | | 15601 | | | | |
+| Liechtenstein | | 11606 | | | | |
+| Lithuania | | 15709 | | | | |
+| Luxembourg | | 11703 | | | | |
+| Macedonia | | 14419 | | | | |
+| Malta | | 11819 | | | | |
+| Moldova | | 16306 | | | | |
+| Monaco | | 12009 | | | | |
+| Montenegro | | 13625 | | | | |
+| Netherlands | | 12106 | | | | |
+| Norway | | 12203 | | | | |
+| Poland | | 15768 | | | | |
+| Portugal | | 12319 | | | | |
+| Romania | | 15806 | | | | |
+| Russia | | 16101 | | | | |
+| San Marino | | 12408 | | | | |
+| Serbia | | 13218 | | | | |
+| Slovakia | | 15318 | | | | |
+| Slovenia | | 14338 | | | | |
+| Spain | | 12505 | | | | |
+| Sweden | | 12602 | | | | |
+| Switzerland | | 12688 | | | | |
+| Tajikistan | | 16578 | | | | |
+| Turkey | | 12807 | | | | |
+| Turkmenistan | | 16616 | | | | |
+| Ukraine | | 16403 | | | | |
+| United Kingdom | | 13005 | | | | |
+| Uzbekistan | | 16705 | | | | |
+| TOTAL EUROPE | | 19992 | | | | |
+12/2013
+FFIEC 009
+Schedule L: Foreign-Office Liabilities Page 21 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+Foreign-Office Liabilities
+By Country of Foreign Office
+Foreign- Office
+Foreign- Office
+By Country of Creditor Net Due to (or Due From)
+Total Liabilities
+Own Related
+Liabilities in Liabilities in Booked at
+Non-Local
+U.S. Dollar Amounts in Millions FCEX 9151 9207
+Currency C938
+Local Currency C939
+Foreign Offices C940
+Offices in Other Countries 8595
+Country (a) Caribbean—Continued Bonaire, St. Eustatius and Saba Cayman Islands Cuba Curacao Dominica Dominican Republic Eastern Caribbean Central Bank Grenada Guadeloupe (and smaller French islands) Haiti Jamaica Martinique Montserrat St. Martin and St. Barthelemy St. Kitts and Nevis St. Lucia St. Maarten St. Vincent and the Grenadines Trinidad and Tobago Turks and Caicos Islands Virgin Islands, British TOTAL CARIBBEAN
+Code (b)
+36161
+36137
+30708
+36188
+36218
+30805
+35416
+36706
+36803
+31402
+31607
+37001
+37109
+36471
+37303
+37508
+36196
+37605
+32409
+37818
+35807
+34401
+(1)
+(2)
+(3)
+(4)
+Asia
+Afghanistan Bahrain Bangladesh Bhutan Brunei Burma Cambodia
+40401
+40703
+40746
+40819
+41009
+41106
+41203
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Non-Local Currency › C938 › (1) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Local Currency › C939 › (2) | Foreign-Office Liabilities › By Country of Creditor › Total Liabilities Booked at Foreign Offices › C940 › (3) | Net Due to (or Due From) Own Related Offices in Other Countries › 8595 › (4) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Latin America Argentina | | 30104 | | | | |
+| Belize | | 35718 | | | | |
+| Bolivia | | 30201 | | | | |
+| Brazil | | 30309 | | | | |
+| Chile | | 30406 | | | | |
+| Colombia | | 30503 | | | | |
+| Costa Rica | | 30589 | | | | |
+| Ecuador | | 31003 | | | | |
+| El Salvador | | 31089 | | | | |
+| Falkland Islands | | 36307 | | | | |
+| French Guiana | | 36404 | | | | |
+| Guatemala | | 31208 | | | | |
+| Guyana | | 31305 | | | | |
+| Honduras | | 31488 | | | | |
+| Mexico | | 31704 | | | | |
+| Nicaragua | | 31801 | | | | |
+| Panama | | 31887 | | | | |
+| Paraguay | | 32107 | | | | |
+| Peru | | 32204 | | | | |
+| Suriname | | 37702 | | | | |
+| Uruguay | | 32603 | | | | |
+| Venezuela | | 32719 | | | | |
+| TOTAL LATIN AMERICA | | 39942 | | | | |
+| Caribbean Anguilla | | 30228 | | | | |
+| Antigua and Barbuda | | 35203 | | | | |
+| Aruba | | 35254 | | | | |
+| Bahamas | | 35319 | | | | |
+| Barbados | | 30155 | | | | |
+| Bermuda | | 35602 | | | | |
+(1 blank entry rows)
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Non-Local Currency › C938 › (1) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Local Currency › C939 › (2) | Foreign-Office Liabilities › By Country of Creditor › Total Liabilities Booked at Foreign Offices › C940 › (3) | Net Due to (or Due From) Own Related Offices in Other Countries › 8595 › (4) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Caribbean—Continued Bonaire, St. Eustatius and Saba | | 36161 | | | | |
+| Cayman Islands | | 36137 | | | | |
+| Cuba | | 30708 | | | | |
+| Curacao | | 36188 | | | | |
+| Dominica | | 36218 | | | | |
+| Dominican Republic | | 30805 | | | | |
+| Eastern Caribbean Central Bank | | 35416 | | | | |
+| Grenada | | 36706 | | | | |
+| Guadeloupe (and smaller French islands) | | 36803 | | | | |
+| Haiti | | 31402 | | | | |
+| Jamaica | | 31607 | | | | |
+| Martinique | | 37001 | | | | |
+| Montserrat | | 37109 | | | | |
+| St. Martin and St. Barthelemy | | 36471 | | | | |
+| St. Kitts and Nevis | | 37303 | | | | |
+| St. Lucia | | 37508 | | | | |
+| St. Maarten | | 36196 | | | | |
+| St. Vincent and the Grenadines | | 37605 | | | | |
+| Trinidad and Tobago | | 32409 | | | | |
+| Turks and Caicos Islands | | 37818 | | | | |
+| Virgin Islands, British | | 35807 | | | | |
+| TOTAL CARIBBEAN | | 34401 | | | | |
+| Asia Afghanistan | | 40401 | | | | |
+| Bahrain | | 40703 | | | | |
+| Bangladesh | | 40746 | | | | |
+| Bhutan | | 40819 | | | | |
+| Brunei | | 41009 | | | | |
+| Burma | | 41106 | | | | |
+| Cambodia | | 41203 | | | | |
+(1 blank entry rows)
+12/2013
+FFIEC 009
+Schedule L: Foreign-Office Liabilities Page 22 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+Foreign-Office Liabilities
+By Country of Foreign Office
+Foreign- Office
+Foreign- Office
+By Country of Creditor Net Due to (or Due From)
+Total Liabilities
+Own Related
+Liabilities in Liabilities in Booked at
+Non-Local
+U.S. Dollar Amounts in Millions FCEX 9151 9207
+Currency C938
+Local Currency C939
+Foreign Offices C940
+Offices in Other Countries 8595
+Country (a) Asia—Continued Vietnam West Bank and Gaza Yemen TOTAL ASIA
+Code (b)
+46906
+47201
+47104
+49999
+(1)
+(2)
+(3)
+(4)
+Africa
+Algeria Angola Bank of Central African States (BEAC) Benin Botswana Burkina Faso Burundi Cameroon Cape Verde Central African Republic Central Bank of West African States (BCEAO) Chad Comoros Congo (Brazzaville) Congo (Kinshasa) Cote d'Ivoire (Ivory Coast) Djibouti Egypt Equatorial Guinea Eritrea Eswatini Ethiopia Gabon Gambia, The Ghana
+50105
+50202
+50318
+51802
+50504
+57118
+50806
+51004
+51209
+51306
+50644
+51403
+51519
+51608
+51705
+53007
+52302
+57002
+51942
+52019
+56219
+52108
+52418
+52507
+52604
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Non-Local Currency › C938 › (1) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Local Currency › C939 › (2) | Foreign-Office Liabilities › By Country of Creditor › Total Liabilities Booked at Foreign Offices › C940 › (3) | Net Due to (or Due From) Own Related Offices in Other Countries › 8595 › (4) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Asia—Continued China: Mainland | | 41408 | | | | |
+| East Timor | | 45004 | | | | |
+| Hong Kong | | 42005 | | | | |
+| India | | 42102 | | | | |
+| Indonesia | | 42218 | | | | |
+| Iran | | 42307 | | | | |
+| Iraq | | 42404 | | | | |
+| Israel | | 42501 | | | | |
+| Japan | | 42609 | | | | |
+| Jordan | | 42706 | | | | |
+| Korea, North | | 44407 | | | | |
+| Korea, South | | 43001 | | | | |
+| Kuwait | | 43109 | | | | |
+| Laos | | 43303 | | | | |
+| Lebanon | | 43419 | | | | |
+| Macau | | 43508 | | | | |
+| Malaysia | | 43605 | | | | |
+| Maldives | | 43702 | | | | |
+| Mongolia | | 43818 | | | | |
+| Nepal | | 44202 | | | | |
+| Oman | | 44105 | | | | |
+| Pakistan | | 44709 | | | | |
+| Philippines | | 44806 | | | | |
+| Qatar | | 45101 | | | | |
+| Saudi Arabia | | 45608 | | | | |
+| Singapore | | 46019 | | | | |
+| Sri Lanka | | 41319 | | | | |
+| Syria | | 46205 | | | | |
+| Taiwan | | 46302 | | | | |
+| Thailand | | 46418 | | | | |
+| United Arab Emirates | | 46604 | | | | |
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Non-Local Currency › C938 › (1) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Local Currency › C939 › (2) | Foreign-Office Liabilities › By Country of Creditor › Total Liabilities Booked at Foreign Offices › C940 › (3) | Net Due to (or Due From) Own Related Offices in Other Countries › 8595 › (4) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Asia—Continued Vietnam | | 46906 | | | | |
+| West Bank and Gaza | | 47201 | | | | |
+| Yemen | | 47104 | | | | |
+| TOTAL ASIA | | 49999 | | | | |
+| Africa Algeria | | 50105 | | | | |
+| Angola | | 50202 | | | | |
+| Bank of Central African States (BEAC) | | 50318 | | | | |
+| Benin | | 51802 | | | | |
+| Botswana | | 50504 | | | | |
+| Burkina Faso | | 57118 | | | | |
+| Burundi | | 50806 | | | | |
+| Cameroon | | 51004 | | | | |
+| Cape Verde | | 51209 | | | | |
+| Central African Republic | | 51306 | | | | |
+| Central Bank of West African States (BCEAO) | | 50644 | | | | |
+| Chad | | 51403 | | | | |
+| Comoros | | 51519 | | | | |
+| Congo (Brazzaville) | | 51608 | | | | |
+| Congo (Kinshasa) | | 51705 | | | | |
+| Cote d'Ivoire (Ivory Coast) | | 53007 | | | | |
+| Djibouti | | 52302 | | | | |
+| Egypt | | 57002 | | | | |
+| Equatorial Guinea | | 51942 | | | | |
+| Eritrea | | 52019 | | | | |
+| Eswatini | | 56219 | | | | |
+| Ethiopia | | 52108 | | | | |
+| Gabon | | 52418 | | | | |
+| Gambia, The | | 52507 | | | | |
+| Ghana | | 52604 | | | | |
+(1 blank entry rows)
+12/2022
+FFIEC 009
+Schedule L: Foreign-Office Liabilities Page 23 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+Foreign-Office Liabilities
+By Country of Foreign Office
+Foreign- Office
+Foreign- Office
+By Country of Creditor Net Due to (or Due From)
+Total Liabilities
+Own Related
+Liabilities in Liabilities in Booked at
+Non-Local
+U.S. Dollar Amounts in Millions FCEX 9151 9207
+Currency C938
+Local Currency C939
+Foreign Offices C940
+Offices in Other Countries 8595
+Country (a) Africa—Continued Uganda Western Sahara Zambia Zimbabwe TOTAL AFRICA
+Code (b)
+56804
+56006
+57207
+54704
+59994
+(1)
+(2)
+(3)
+(4)
+Other Countries
+Australia British Indian Ocean Territory Cook Islands Fiji French Polynesia Kiribati Marshall Islands Micronesia, Federated States of Nauru New Caledonia New Zealand Niue Palau Papua New Guinea Pitcairn Islands St. Pierre and Miquelon Samoa Solomon Islands Tokelau Islands Tonga Tuvalu Vanuatu Wallis and Futuna TOTAL OTHER COUNTRIES
+60089
+60208
+60402
+60607
+60704
+60526
+61204
+60305
+61301
+61409
+61689
+61808
+62502
+61751
+62103
+62219
+62618
+62308
+62405
+62448
+60518
+61603
+60119
+69906
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Non-Local Currency › C938 › (1) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Local Currency › C939 › (2) | Foreign-Office Liabilities › By Country of Creditor › Total Liabilities Booked at Foreign Offices › C940 › (3) | Net Due to (or Due From) Own Related Offices in Other Countries › 8595 › (4) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Africa—Continued Guinea | | 52701 | | | | |
+| Guinea-Bissau | | 54402 | | | | |
+| Kenya | | 53104 | | | | |
+| Lesotho | | 53155 | | | | |
+| Liberia | | 53201 | | | | |
+| Libya | | 53309 | | | | |
+| Madagascar | | 53406 | | | | |
+| Malawi | | 53503 | | | | |
+| Mali | | 53589 | | | | |
+| Mauritania | | 53708 | | | | |
+| Mauritius | | 53805 | | | | |
+| Mayotte | | 54518 | | | | |
+| Morocco | | 54003 | | | | |
+| Mozambique | | 54089 | | | | |
+| Namibia | | 54127 | | | | |
+| Niger | | 54208 | | | | |
+| Nigeria | | 54305 | | | | |
+| Reunion | | 54607 | | | | |
+| Rwanda | | 55018 | | | | |
+| Saint Helena | | 55107 | | | | |
+| Sao Tome and Principe | | 55204 | | | | |
+| Senegal | | 55301 | | | | |
+| Seychelles | | 55409 | | | | |
+| Sierra Leone | | 55506 | | | | |
+| Somalia | | 55603 | | | | |
+| South Africa | | 55719 | | | | |
+| South Sudan | | 53392 | | | | |
+| Sudan | | 56103 | | | | |
+| Tanzania | | 56405 | | | | |
+| Togo | | 56502 | | | | |
+| Tunisia | | 56707 | | | | |
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Non-Local Currency › C938 › (1) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Local Currency › C939 › (2) | Foreign-Office Liabilities › By Country of Creditor › Total Liabilities Booked at Foreign Offices › C940 › (3) | Net Due to (or Due From) Own Related Offices in Other Countries › 8595 › (4) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Africa—Continued Uganda | | 56804 | | | | |
+| Western Sahara | | 56006 | | | | |
+| Zambia | | 57207 | | | | |
+| Zimbabwe | | 54704 | | | | |
+| TOTAL AFRICA | | 59994 | | | | |
+| Other Countries Australia | | 60089 | | | | |
+| British Indian Ocean Territory | | 60208 | | | | |
+| Cook Islands | | 60402 | | | | |
+| Fiji | | 60607 | | | | |
+| French Polynesia | | 60704 | | | | |
+| Kiribati | | 60526 | | | | |
+| Marshall Islands | | 61204 | | | | |
+| Micronesia, Federated States of | | 60305 | | | | |
+| Nauru | | 61301 | | | | |
+| New Caledonia | | 61409 | | | | |
+| New Zealand | | 61689 | | | | |
+| Niue | | 61808 | | | | |
+| Palau | | 62502 | | | | |
+| Papua New Guinea | | 61751 | | | | |
+| Pitcairn Islands | | 62103 | | | | |
+| St. Pierre and Miquelon | | 62219 | | | | |
+| Samoa | | 62618 | | | | |
+| Solomon Islands | | 62308 | | | | |
+| Tokelau Islands | | 62405 | | | | |
+| Tonga | | 62448 | | | | |
+| Tuvalu | | 60518 | | | | |
+| Vanuatu | | 61603 | | | | |
+| Wallis and Futuna | | 60119 | | | | |
+| TOTAL OTHER COUNTRIES | | 69906 | | | | |
+(1 blank entry rows)
+12/2022
+FFIEC 009
+Schedule L: Foreign-Office Liabilities Page 24 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Non-Local Currency › C938 › (1) | Foreign-Office Liabilities › By Country of Foreign Office › Foreign- Office Liabilities in Local Currency › C939 › (2) | Foreign-Office Liabilities › By Country of Creditor › Total Liabilities Booked at Foreign Offices › C940 › (3) | Net Due to (or Due From) Own Related Offices in Other Countries › 8595 › (4) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Canada | | 29998 | | | | |
+| Unallocated | | 88862 | | | | |
+| International & Regional Organizations International | | 72907 | | | | |
+| European | | 73903 | | | | |
+| Latin American | | 74918 | | | | |
+| Caribbean | | 74942 | | | | |
+| Asian | | 75906 | | | | |
+| African | | 76902 | | | | |
+| Middle Eastern | | 77909 | | | | |
+| TOTAL INT'L & REGIONAL ORGANIZATIONS | | 79995 | | | | |
+| TOTAL FOREIGN COUNTRIES | | 69995 | | | | |
+| United States | | 01007 | | | | |
+| GRAND TOTAL | | 99996 | | | | |
+(5 blank entry rows)
+12/2013
+FFIEC 009
+Schedule O: Off-Balance-Sheet Items Page 25 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+Cross-Border and Foreign-Office Commitments and Guarantees
+Guarantees (Excluding
+Credit Derivatives (By Reference Entity)
+Gross-Gross Gross-Net
+Amounts Reported in Columns 1 through 10 of Schedule C, Part II and Columns 1 and 2 of Schedule O
+Credit Total Credit Total Credit Total Credit Total Credit Unused Derivatives Derivatives Derivatives Derivatives Derivatives
+U.S. Dollar Amounts in Millions Commitments FCEX 9151 9207 C936
+Sold) M875
+Purchased M876
+Sold M877
+Purchased M878
+Sold M879
+that are Trade Finance C941
+Country (a) Code (b) (1) (2) (3) (4) (5) (6) (7)
+Europe—Continued
+Kazakhstan Kosovo Kyrgyzstan Latvia Liechtenstein Lithuania Luxembourg Macedonia Malta Moldova Monaco Montenegro Netherlands Norway Poland Portugal Romania Russia San Marino Serbia Slovakia Slovenia Spain Sweden Switzerland Tajikistan Turkey Turkmenistan Ukraine United Kingdom Uzbekistan TOTAL EUROPE
+16543 13471
+16551
+15601
+11606
+15709
+11703
+14419
+11819
+16306
+12009
+13625
+12106
+12203
+15768
+12319
+15806
+16101
+12408
+13218
+15318
+14338
+12505
+12602
+12688
+16578 12807
+16616
+16403
+13005
+16705
+19992
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Cross-Border and Foreign-Office Commitments and Guarantees › Unused Commitments › C936 › (1) | Cross-Border and Foreign-Office Commitments and Guarantees › Guarantees (Excluding Credit Derivatives Sold) › M875 › (2) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Purchased › M876 › (3) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Sold › M877 › (4) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Purchased › M878 › (5) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Sold › M879 › (6) | Amounts Reported in Columns 1 through 10 of Schedule C, Part II and Columns 1 and 2 of Schedule O that are Trade Finance › C941 › (7) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Europe Albania | | 15105 | | | | | | | |
+| Andorra | | 10103 | | | | | | | |
+| Armenia | | 16519 | | | | | | | |
+| Austria | | 10189 | | | | | | | |
+| Azerbaijan | | 16527 | | | | | | | |
+| Bank of International Settlements | | 13307 | | | | | | | |
+| Belarus | | 16209 | | | | | | | |
+| Belgium | | 10251 | | | | | | | |
+| Bosnia and Herzegovina | | 14109 | | | | | | | |
+| Bulgaria | | 15202 | | | | | | | |
+| Croatia | | 14214 | | | | | | | |
+| Cyprus | | 10405 | | | | | | | |
+| Czech Republic | | 15288 | | | | | | | |
+| Denmark | | 10502 | | | | | | | |
+| Estonia | | 15407 | | | | | | | |
+| European Central Bank | | 13501 | | | | | | | |
+| Faroe Islands | | 10618 | | | | | | | |
+| Finland | | 10707 | | | | | | | |
+| France | | 10804 | | | | | | | |
+| Georgia | | 16535 | | | | | | | |
+| Germany | | 11002 | | | | | | | |
+| Gibraltar | | 11088 | | | | | | | |
+| Greece | | 11207 | | | | | | | |
+| Greenland | | 10545 | | | | | | | |
+| Guernsey | | 13006 | | | | | | | |
+| Holy See | | 13102 | | | | | | | |
+| Hungary | | 15504 | | | | | | | |
+| Iceland | | 11304 | | | | | | | |
+| Ireland | | 11401 | | | | | | | |
+| Isle of Man | | 13008 | | | | | | | |
+| Italy | | 11509 | | | | | | | |
+| Jersey | | 13007 | | | | | | | |
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Cross-Border and Foreign-Office Commitments and Guarantees › Unused Commitments › C936 › (1) | Cross-Border and Foreign-Office Commitments and Guarantees › Guarantees (Excluding Credit Derivatives Sold) › M875 › (2) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Purchased › M876 › (3) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Sold › M877 › (4) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Purchased › M878 › (5) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Sold › M879 › (6) | Amounts Reported in Columns 1 through 10 of Schedule C, Part II and Columns 1 and 2 of Schedule O that are Trade Finance › C941 › (7) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Europe—Continued Kazakhstan | | 16543 | | | | | | | |
+| Kosovo | | 13471 | | | | | | | |
+| Kyrgyzstan | | 16551 | | | | | | | |
+| Latvia | | 15601 | | | | | | | |
+| Liechtenstein | | 11606 | | | | | | | |
+| Lithuania | | 15709 | | | | | | | |
+| Luxembourg | | 11703 | | | | | | | |
+| Macedonia | | 14419 | | | | | | | |
+| Malta | | 11819 | | | | | | | |
+| Moldova | | 16306 | | | | | | | |
+| Monaco | | 12009 | | | | | | | |
+| Montenegro | | 13625 | | | | | | | |
+| Netherlands | | 12106 | | | | | | | |
+| Norway | | 12203 | | | | | | | |
+| Poland | | 15768 | | | | | | | |
+| Portugal | | 12319 | | | | | | | |
+| Romania | | 15806 | | | | | | | |
+| Russia | | 16101 | | | | | | | |
+| San Marino | | 12408 | | | | | | | |
+| Serbia | | 13218 | | | | | | | |
+| Slovakia | | 15318 | | | | | | | |
+| Slovenia | | 14338 | | | | | | | |
+| Spain | | 12505 | | | | | | | |
+| Sweden | | 12602 | | | | | | | |
+| Switzerland | | 12688 | | | | | | | |
+| Tajikistan | | 16578 | | | | | | | |
+| Turkey | | 12807 | | | | | | | |
+| Turkmenistan | | 16616 | | | | | | | |
+| Ukraine | | 16403 | | | | | | | |
+| United Kingdom | | 13005 | | | | | | | |
+| Uzbekistan | | 16705 | | | | | | | |
+| TOTAL EUROPE | | 19992 | | | | | | | |
+12/2013
+FFIEC 009
+Schedule O: Off-Balance-Sheet Items Page 26 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+Cross-Border and Foreign-Office Commitments and Guarantees
+Guarantees (Excluding
+Credit Derivatives (By Reference Entity)
+Gross-Gross Gross-Net
+Amounts Reported in Columns 1 through 10 of Schedule C, Part II and Columns 1 and 2 of Schedule O
+Credit Total Credit Total Credit Total Credit Total Credit Unused Derivatives Derivatives Derivatives Derivatives Derivatives
+U.S. Dollar Amounts in Millions Commitments FCEX 9151 9207 C936
+Sold) M875
+Purchased M876
+Sold M877
+Purchased M878
+Sold M879
+that are Trade Finance C941
+Country (a) Caribbean—Continued Bonaire, St. Eustatius and Saba Cayman Islands Cuba Curacao Dominica Dominican Republic Eastern Caribbean Central Bank Grenada Guadeloupe (and smaller French islands) Haiti Jamaica Martinique Montserrat St. Martin and St. Barthelemy St. Kitts and Nevis St. Lucia St. Maarten St. Vincent and the Grenadines Trinidad and Tobago Turks and Caicos Islands Virgin Islands, British TOTAL CARIBBEAN
+Code (b)
+36161
+36137
+30708
+36188
+36218
+30805
+35416
+36706
+36803
+31402
+31607
+37001
+37109
+36471
+37303
+37508
+36196
+37605
+32409
+37818
+35807
+34401
+(1)
+(2)
+(3)
+(4)
+(5)
+(6)
+(7)
+Asia
+Afghanistan Bahrain Bangladesh Bhutan Brunei Burma Cambodia
+40401
+40703
+40746
+40819
+41009
+41106
+41203
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Cross-Border and Foreign-Office Commitments and Guarantees › Unused Commitments › C936 › (1) | Cross-Border and Foreign-Office Commitments and Guarantees › Guarantees (Excluding Credit Derivatives Sold) › M875 › (2) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Purchased › M876 › (3) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Sold › M877 › (4) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Purchased › M878 › (5) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Sold › M879 › (6) | Amounts Reported in Columns 1 through 10 of Schedule C, Part II and Columns 1 and 2 of Schedule O that are Trade Finance › C941 › (7) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Latin America Argentina | | 30104 | | | | | | | |
+| Belize | | 35718 | | | | | | | |
+| Bolivia | | 30201 | | | | | | | |
+| Brazil | | 30309 | | | | | | | |
+| Chile | | 30406 | | | | | | | |
+| Colombia | | 30503 | | | | | | | |
+| Costa Rica | | 30589 | | | | | | | |
+| Ecuador | | 31003 | | | | | | | |
+| El Salvador | | 31089 | | | | | | | |
+| Falkland Islands | | 36307 | | | | | | | |
+| French Guiana | | 36404 | | | | | | | |
+| Guatemala | | 31208 | | | | | | | |
+| Guyana | | 31305 | | | | | | | |
+| Honduras | | 31488 | | | | | | | |
+| Mexico | | 31704 | | | | | | | |
+| Nicaragua | | 31801 | | | | | | | |
+| Panama | | 31887 | | | | | | | |
+| Paraguay | | 32107 | | | | | | | |
+| Peru | | 32204 | | | | | | | |
+| Suriname | | 37702 | | | | | | | |
+| Uruguay | | 32603 | | | | | | | |
+| Venezuela | | 32719 | | | | | | | |
+| TOTAL LATIN AMERICA | | 39942 | | | | | | | |
+| Caribbean Anguilla | | 30228 | | | | | | | |
+| Antigua and Barbuda | | 35203 | | | | | | | |
+| Aruba | | 35254 | | | | | | | |
+| Bahamas | | 35319 | | | | | | | |
+| Barbados | | 30155 | | | | | | | |
+| Bermuda | | 35602 | | | | | | | |
+(1 blank entry rows)
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Cross-Border and Foreign-Office Commitments and Guarantees › Unused Commitments › C936 › (1) | Cross-Border and Foreign-Office Commitments and Guarantees › Guarantees (Excluding Credit Derivatives Sold) › M875 › (2) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Purchased › M876 › (3) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Sold › M877 › (4) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Purchased › M878 › (5) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Sold › M879 › (6) | Amounts Reported in Columns 1 through 10 of Schedule C, Part II and Columns 1 and 2 of Schedule O that are Trade Finance › C941 › (7) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Caribbean—Continued Bonaire, St. Eustatius and Saba | | 36161 | | | | | | | |
+| Cayman Islands | | 36137 | | | | | | | |
+| Cuba | | 30708 | | | | | | | |
+| Curacao | | 36188 | | | | | | | |
+| Dominica | | 36218 | | | | | | | |
+| Dominican Republic | | 30805 | | | | | | | |
+| Eastern Caribbean Central Bank | | 35416 | | | | | | | |
+| Grenada | | 36706 | | | | | | | |
+| Guadeloupe (and smaller French islands) | | 36803 | | | | | | | |
+| Haiti | | 31402 | | | | | | | |
+| Jamaica | | 31607 | | | | | | | |
+| Martinique | | 37001 | | | | | | | |
+| Montserrat | | 37109 | | | | | | | |
+| St. Martin and St. Barthelemy | | 36471 | | | | | | | |
+| St. Kitts and Nevis | | 37303 | | | | | | | |
+| St. Lucia | | 37508 | | | | | | | |
+| St. Maarten | | 36196 | | | | | | | |
+| St. Vincent and the Grenadines | | 37605 | | | | | | | |
+| Trinidad and Tobago | | 32409 | | | | | | | |
+| Turks and Caicos Islands | | 37818 | | | | | | | |
+| Virgin Islands, British | | 35807 | | | | | | | |
+| TOTAL CARIBBEAN | | 34401 | | | | | | | |
+| Asia Afghanistan | | 40401 | | | | | | | |
+| Bahrain | | 40703 | | | | | | | |
+| Bangladesh | | 40746 | | | | | | | |
+| Bhutan | | 40819 | | | | | | | |
+| Brunei | | 41009 | | | | | | | |
+| Burma | | 41106 | | | | | | | |
+| Cambodia | | 41203 | | | | | | | |
+(1 blank entry rows)
+12/2013
+FFIEC 009
+Schedule O: Off-Balance-Sheet Items Page 27 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+Cross-Border and Foreign-Office Commitments and Guarantees
+Guarantees (Excluding
+Credit Derivatives (By Reference Entity)
+Gross-Gross Gross-Net
+Amounts Reported in Columns 1 through 10 of Schedule C, Part II and Columns 1 and 2 of Schedule O
+Credit Total Credit Total Credit Total Credit Total Credit Unused Derivatives Derivatives Derivatives Derivatives Derivatives
+U.S. Dollar Amounts in Millions Commitments FCEX 9151 9207 C936
+Sold) M875
+Purchased M876
+Sold M877
+Purchased M878
+Sold M879
+that are Trade Finance C941
+Country (a) Asia—Continued Vietnam West Bank and Gaza Yemen TOTAL ASIA
+Code (b)
+46906
+47201
+47104
+49999
+(1)
+(2)
+(3)
+(4)
+(5)
+(6)
+(7)
+Africa
+Algeria Angola Bank of Central African States (BEAC) Benin Botswana Burkina Faso Burundi Cameroon Cape Verde Central African Republic Central Bank of West African States (BCEAO) Chad Comoros Congo (Brazzaville) Congo (Kinshasa) Cote d'Ivoire (Ivory Coast) Djibouti Egypt Equatorial Guinea Eritrea Eswatini Ethiopia Gabon Gambia, The Ghana
+50105
+50202
+50318
+51802
+50504
+57118
+50806
+51004
+51209
+51306
+50644
+51403
+51519
+51608
+51705
+53007
+52302
+57002
+51942
+52019
+56219
+52108
+52418
+52507
+52604
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Cross-Border and Foreign-Office Commitments and Guarantees › Unused Commitments › C936 › (1) | Cross-Border and Foreign-Office Commitments and Guarantees › Guarantees (Excluding Credit Derivatives Sold) › M875 › (2) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Purchased › M876 › (3) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Sold › M877 › (4) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Purchased › M878 › (5) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Sold › M879 › (6) | Amounts Reported in Columns 1 through 10 of Schedule C, Part II and Columns 1 and 2 of Schedule O that are Trade Finance › C941 › (7) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Asia—Continued China: Mainland | | 41408 | | | | | | | |
+| East Timor | | 45004 | | | | | | | |
+| Hong Kong | | 42005 | | | | | | | |
+| India | | 42102 | | | | | | | |
+| Indonesia | | 42218 | | | | | | | |
+| Iran | | 42307 | | | | | | | |
+| Iraq | | 42404 | | | | | | | |
+| Israel | | 42501 | | | | | | | |
+| Japan | | 42609 | | | | | | | |
+| Jordan | | 42706 | | | | | | | |
+| Korea, North | | 44407 | | | | | | | |
+| Korea, South | | 43001 | | | | | | | |
+| Kuwait | | 43109 | | | | | | | |
+| Laos | | 43303 | | | | | | | |
+| Lebanon | | 43419 | | | | | | | |
+| Macau | | 43508 | | | | | | | |
+| Malaysia | | 43605 | | | | | | | |
+| Maldives | | 43702 | | | | | | | |
+| Mongolia | | 43818 | | | | | | | |
+| Nepal | | 44202 | | | | | | | |
+| Oman | | 44105 | | | | | | | |
+| Pakistan | | 44709 | | | | | | | |
+| Philippines | | 44806 | | | | | | | |
+| Qatar | | 45101 | | | | | | | |
+| Saudi Arabia | | 45608 | | | | | | | |
+| Singapore | | 46019 | | | | | | | |
+| Sri Lanka | | 41319 | | | | | | | |
+| Syria | | 46205 | | | | | | | |
+| Taiwan | | 46302 | | | | | | | |
+| Thailand | | 46418 | | | | | | | |
+| United Arab Emirates | | 46604 | | | | | | | |
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Cross-Border and Foreign-Office Commitments and Guarantees › Unused Commitments › C936 › (1) | Cross-Border and Foreign-Office Commitments and Guarantees › Guarantees (Excluding Credit Derivatives Sold) › M875 › (2) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Purchased › M876 › (3) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Sold › M877 › (4) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Purchased › M878 › (5) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Sold › M879 › (6) | Amounts Reported in Columns 1 through 10 of Schedule C, Part II and Columns 1 and 2 of Schedule O that are Trade Finance › C941 › (7) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Asia—Continued Vietnam | | 46906 | | | | | | | |
+| West Bank and Gaza | | 47201 | | | | | | | |
+| Yemen | | 47104 | | | | | | | |
+| TOTAL ASIA | | 49999 | | | | | | | |
+| Africa Algeria | | 50105 | | | | | | | |
+| Angola | | 50202 | | | | | | | |
+| Bank of Central African States (BEAC) | | 50318 | | | | | | | |
+| Benin | | 51802 | | | | | | | |
+| Botswana | | 50504 | | | | | | | |
+| Burkina Faso | | 57118 | | | | | | | |
+| Burundi | | 50806 | | | | | | | |
+| Cameroon | | 51004 | | | | | | | |
+| Cape Verde | | 51209 | | | | | | | |
+| Central African Republic | | 51306 | | | | | | | |
+| Central Bank of West African States (BCEAO) | | 50644 | | | | | | | |
+| Chad | | 51403 | | | | | | | |
+| Comoros | | 51519 | | | | | | | |
+| Congo (Brazzaville) | | 51608 | | | | | | | |
+| Congo (Kinshasa) | | 51705 | | | | | | | |
+| Cote d'Ivoire (Ivory Coast) | | 53007 | | | | | | | |
+| Djibouti | | 52302 | | | | | | | |
+| Egypt | | 57002 | | | | | | | |
+| Equatorial Guinea | | 51942 | | | | | | | |
+| Eritrea | | 52019 | | | | | | | |
+| Eswatini | | 56219 | | | | | | | |
+| Ethiopia | | 52108 | | | | | | | |
+| Gabon | | 52418 | | | | | | | |
+| Gambia, The | | 52507 | | | | | | | |
+| Ghana | | 52604 | | | | | | | |
+(1 blank entry rows)
+12/2022
+FFIEC 009
+Schedule O: Off-Balance-Sheet Items Page 28 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+Cross-Border and Foreign-Office Commitments and Guarantees
+Guarantees (Excluding
+Credit Derivatives (By Reference Entity)
+Gross-Gross Gross-Net
+Amounts Reported in Columns 1 through 10 of Schedule C, Part II and Columns 1 and 2 of Schedule O
+Credit Total Credit Total Credit Total Credit Total Credit Unused Derivatives Derivatives Derivatives Derivatives Derivatives
+U.S. Dollar Amounts in Millions Commitments FCEX 9151 9207 C936
+Sold) M875
+Purchased M876
+Sold M877
+Purchased M878
+Sold M879
+that are Trade Finance C941
+Country (a) Africa—Continued Uganda Western Sahara Zambia Zimbabwe TOTAL AFRICA
+Code (b)
+56804
+56006
+57207
+54704
+59994
+(1)
+(2)
+(3)
+(4)
+(5)
+(6)
+(7)
+Other Countries
+Australia British Indian Ocean Territory Cook Islands Fiji French Polynesia Kiribati Marshall Islands Micronesia, Federated States of Nauru New Caledonia New Zealand Niue Palau Papua New Guinea Pitcairn Islands St. Pierre and Miquelon Samoa Solomon Islands Tokelau Islands Tonga Tuvalu Vanuatu Wallis and Futuna TOTAL OTHER COUNTRIES
+60089
+60208
+60402
+60607
+60704
+60526
+61204
+60305
+61301
+61409
+61689 61808
+62502
+61751
+62103
+62219
+62618
+62308
+62405
+62448
+60518
+61603
+60119
+69906
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Cross-Border and Foreign-Office Commitments and Guarantees › Unused Commitments › C936 › (1) | Cross-Border and Foreign-Office Commitments and Guarantees › Guarantees (Excluding Credit Derivatives Sold) › M875 › (2) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Purchased › M876 › (3) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Sold › M877 › (4) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Purchased › M878 › (5) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Sold › M879 › (6) | Amounts Reported in Columns 1 through 10 of Schedule C, Part II and Columns 1 and 2 of Schedule O that are Trade Finance › C941 › (7) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Africa—Continued Guinea | | 52701 | | | | | | | |
+| Guinea-Bissau | | 54402 | | | | | | | |
+| Kenya | | 53104 | | | | | | | |
+| Lesotho | | 53155 | | | | | | | |
+| Liberia | | 53201 | | | | | | | |
+| Libya | | 53309 | | | | | | | |
+| Madagascar | | 53406 | | | | | | | |
+| Malawi | | 53503 | | | | | | | |
+| Mali | | 53589 | | | | | | | |
+| Mauritania | | 53708 | | | | | | | |
+| Mauritius | | 53805 | | | | | | | |
+| Mayotte | | 54518 | | | | | | | |
+| Morocco | | 54003 | | | | | | | |
+| Mozambique | | 54089 | | | | | | | |
+| Namibia | | 54127 | | | | | | | |
+| Niger | | 54208 | | | | | | | |
+| Nigeria | | 54305 | | | | | | | |
+| Reunion | | 54607 | | | | | | | |
+| Rwanda | | 55018 | | | | | | | |
+| Saint Helena | | 55107 | | | | | | | |
+| Sao Tome and Principe | | 55204 | | | | | | | |
+| Senegal | | 55301 | | | | | | | |
+| Seychelles | | 55409 | | | | | | | |
+| Sierra Leone | | 55506 | | | | | | | |
+| Somalia | | 55603 | | | | | | | |
+| South Africa | | 55719 | | | | | | | |
+| South Sudan | | 53392 | | | | | | | |
+| Sudan | | 56103 | | | | | | | |
+| Tanzania | | 56405 | | | | | | | |
+| Togo | | 56502 | | | | | | | |
+| Tunisia | | 56707 | | | | | | | |
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Cross-Border and Foreign-Office Commitments and Guarantees › Unused Commitments › C936 › (1) | Cross-Border and Foreign-Office Commitments and Guarantees › Guarantees (Excluding Credit Derivatives Sold) › M875 › (2) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Purchased › M876 › (3) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Sold › M877 › (4) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Purchased › M878 › (5) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Sold › M879 › (6) | Amounts Reported in Columns 1 through 10 of Schedule C, Part II and Columns 1 and 2 of Schedule O that are Trade Finance › C941 › (7) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Africa—Continued Uganda | | 56804 | | | | | | | |
+| Western Sahara | | 56006 | | | | | | | |
+| Zambia | | 57207 | | | | | | | |
+| Zimbabwe | | 54704 | | | | | | | |
+| TOTAL AFRICA | | 59994 | | | | | | | |
+| Other Countries Australia | | 60089 | | | | | | | |
+| British Indian Ocean Territory | | 60208 | | | | | | | |
+| Cook Islands | | 60402 | | | | | | | |
+| Fiji | | 60607 | | | | | | | |
+| French Polynesia | | 60704 | | | | | | | |
+| Kiribati | | 60526 | | | | | | | |
+| Marshall Islands | | 61204 | | | | | | | |
+| Micronesia, Federated States of | | 60305 | | | | | | | |
+| Nauru | | 61301 | | | | | | | |
+| New Caledonia | | 61409 | | | | | | | |
+| New Zealand | | 61689 | | | | | | | |
+| Niue | | 61808 | | | | | | | |
+| Palau | | 62502 | | | | | | | |
+| Papua New Guinea | | 61751 | | | | | | | |
+| Pitcairn Islands | | 62103 | | | | | | | |
+| St. Pierre and Miquelon | | 62219 | | | | | | | |
+| Samoa | | 62618 | | | | | | | |
+| Solomon Islands | | 62308 | | | | | | | |
+| Tokelau Islands | | 62405 | | | | | | | |
+| Tonga | | 62448 | | | | | | | |
+| Tuvalu | | 60518 | | | | | | | |
+| Vanuatu | | 61603 | | | | | | | |
+| Wallis and Futuna | | 60119 | | | | | | | |
+| TOTAL OTHER COUNTRIES | | 69906 | | | | | | | |
+(1 blank entry rows)
+12/2022
+FFIEC 009
+Schedule O: Off-Balance-Sheet Items Page 29 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Cross-Border and Foreign-Office Commitments and Guarantees › Unused Commitments › C936 › (1) | Cross-Border and Foreign-Office Commitments and Guarantees › Guarantees (Excluding Credit Derivatives Sold) › M875 › (2) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Purchased › M876 › (3) | Credit Derivatives (By Reference Entity) › Gross-Gross › Total Credit Derivatives Sold › M877 › (4) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Purchased › M878 › (5) | Credit Derivatives (By Reference Entity) › Gross-Net › Total Credit Derivatives Sold › M879 › (6) | Amounts Reported in Columns 1 through 10 of Schedule C, Part II and Columns 1 and 2 of Schedule O that are Trade Finance › C941 › (7) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Canada | | 29998 | | | | | | | |
+| Unallocated | | 88862 | | | | | | | |
+| International & Regional Organizations International | | 72907 | | | | | | | |
+| European | | 73903 | | | | | | | |
+| Latin American | | 74918 | | | | | | | |
+| Caribbean | | 74942 | | | | | | | |
+| Asian | | 75906 | | | | | | | |
+| African | | 76902 | | | | | | | |
+| Middle Eastern | | 77909 | | | | | | | |
+| TOTAL INT'L & REGIONAL ORGANIZATIONS | | 79995 | | | | | | | |
+| TOTAL FOREIGN COUNTRIES | | 69995 | | | | | | | |
+| United States | | 01007 | | | | | | | |
+| GRAND TOTAL | | 99996 | | | | | | | |
+(5 blank entry rows)
+12/2013
+Schedule D: Claims from Positions in Derivative Contracts
+FFIEC 009
+Page 30 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+Fair Value of Foreign Exchange and Derivative Products Memorandum
+Claims on Branches with No Guarantee
+U.S. Dollar Amounts in Millions FCEX 9151 9207
+Banks A334
+Public A335
+NBFIs M880
+Other A336
+Total A337
+from Parent A338
+Country (a) Europe—Continued Kazakhstan Kosovo Kyrgyzstan Latvia Liechtenstein Lithuania Luxembourg Macedonia Malta Moldova Monaco Montenegro Netherlands Norway Poland Portugal Romania Russia San Marino Serbia Slovakia Slovenia Spain Sweden Switzerland Tajikistan Turkey Turkmenistan Ukraine United Kingdom Uzbekistan TOTAL EUROPE
+Code (b)
+16543 13471
+16551
+15601
+11606
+15709
+11703
+14419
+11819
+16306
+12009
+13625
+12106
+12203
+15768
+12319
+15806
+16101
+12408
+13218
+15318
+14338
+12505
+12602
+12688
+16578 12807
+16616
+16403
+13005
+16705
+19992
+(1)
+(2)
+(3)
+(4)
+(5)
+(6)
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Fair Value of Foreign Exchange and Derivative Products › Banks › A334 › (1) | Fair Value of Foreign Exchange and Derivative Products › Public › A335 › (2) | Fair Value of Foreign Exchange and Derivative Products › NBFIs › M880 › (3) | Fair Value of Foreign Exchange and Derivative Products › Other › A336 › (4) | Fair Value of Foreign Exchange and Derivative Products › Total › A337 › (5) | Memorandum › Claims on Branches with No Guarantee from Parent › A338 › (6) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Europe Albania | | 15105 | | | | | | |
+| Andorra | | 10103 | | | | | | |
+| Armenia | | 16519 | | | | | | |
+| Austria | | 10189 | | | | | | |
+| Azerbaijan | | 16527 | | | | | | |
+| Bank of International Settlements | | 13307 | | | | | | |
+| Belarus | | 16209 | | | | | | |
+| Belgium | | 10251 | | | | | | |
+| Bosnia and Herzegovina | | 14109 | | | | | | |
+| Bulgaria | | 15202 | | | | | | |
+| Croatia | | 14214 | | | | | | |
+| Cyprus | | 10405 | | | | | | |
+| Czech Republic | | 15288 | | | | | | |
+| Denmark | | 10502 | | | | | | |
+| Estonia | | 15407 | | | | | | |
+| European Central Bank | | 13501 | | | | | | |
+| Faroe Islands | | 10618 | | | | | | |
+| Finland | | 10707 | | | | | | |
+| France | | 10804 | | | | | | |
+| Georgia | | 16535 | | | | | | |
+| Germany | | 11002 | | | | | | |
+| Gibraltar | | 11088 | | | | | | |
+| Greece | | 11207 | | | | | | |
+| Greenland | | 10545 | | | | | | |
+| Guernsey | | 13006 | | | | | | |
+| Holy See | | 13102 | | | | | | |
+| Hungary | | 15504 | | | | | | |
+| Iceland | | 11304 | | | | | | |
+| Ireland | | 11401 | | | | | | |
+| Isle of Man | | 13008 | | | | | | |
+| Italy | | 11509 | | | | | | |
+| Jersey | | 13007 | | | | | | |
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Fair Value of Foreign Exchange and Derivative Products › Banks › A334 › (1) | Fair Value of Foreign Exchange and Derivative Products › Public › A335 › (2) | Fair Value of Foreign Exchange and Derivative Products › NBFIs › M880 › (3) | Fair Value of Foreign Exchange and Derivative Products › Other › A336 › (4) | Fair Value of Foreign Exchange and Derivative Products › Total › A337 › (5) | Memorandum › Claims on Branches with No Guarantee from Parent › A338 › (6) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Europe—Continued Kazakhstan | | 16543 | | | | | | |
+| Kosovo | | 13471 | | | | | | |
+| Kyrgyzstan | | 16551 | | | | | | |
+| Latvia | | 15601 | | | | | | |
+| Liechtenstein | | 11606 | | | | | | |
+| Lithuania | | 15709 | | | | | | |
+| Luxembourg | | 11703 | | | | | | |
+| Macedonia | | 14419 | | | | | | |
+| Malta | | 11819 | | | | | | |
+| Moldova | | 16306 | | | | | | |
+| Monaco | | 12009 | | | | | | |
+| Montenegro | | 13625 | | | | | | |
+| Netherlands | | 12106 | | | | | | |
+| Norway | | 12203 | | | | | | |
+| Poland | | 15768 | | | | | | |
+| Portugal | | 12319 | | | | | | |
+| Romania | | 15806 | | | | | | |
+| Russia | | 16101 | | | | | | |
+| San Marino | | 12408 | | | | | | |
+| Serbia | | 13218 | | | | | | |
+| Slovakia | | 15318 | | | | | | |
+| Slovenia | | 14338 | | | | | | |
+| Spain | | 12505 | | | | | | |
+| Sweden | | 12602 | | | | | | |
+| Switzerland | | 12688 | | | | | | |
+| Tajikistan | | 16578 | | | | | | |
+| Turkey | | 12807 | | | | | | |
+| Turkmenistan | | 16616 | | | | | | |
+| Ukraine | | 16403 | | | | | | |
+| United Kingdom | | 13005 | | | | | | |
+| Uzbekistan | | 16705 | | | | | | |
+| TOTAL EUROPE | | 19992 | | | | | | |
+12/2013
+Schedule D: Claims from Positions in Derivative Contracts
+FFIEC 009
+Page 31 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+Fair Value of Foreign Exchange and Derivative Products Memorandum
+Claims on Branches with No Guarantee
+U.S. Dollar Amounts in Millions
+FCEX
+9151
+Country (a)
+Caribbean—Continued Bonaire, St. Eustatius and Saba Cayman Islands Cuba Curacao Dominica Dominican Republic Eastern Caribbean Central Bank Grenada Guadeloupe (and smaller French islands) Haiti Jamaica Martinique Montserrat St. Martin and St. Barthelemy St. Kitts and Nevis St. Lucia St. Maarten St. Vincent and the Grenadines Trinidad and Tobago Turks and Caicos Islands Virgin Islands, British TOTAL CARIBBEAN
+9207
+Code (b)
+36161
+36137
+30708
+36188
+36218
+30805
+35416
+36706
+36803
+31402
+31607
+37001
+37109
+36471
+37303
+37508
+36196
+37605
+32409
+37818
+35807
+34401
+Banks A334
+(1)
+Public A335
+(2)
+NBFIs M880
+(3)
+Other A336
+(4)
+Total A337
+(5)
+from Parent A338
+(6)
+Asia
+Afghanistan Bahrain Bangladesh Bhutan Brunei Burma Cambodia
+40401
+40703
+40746
+40819
+41009
+41106
+41203
+| FCEX › Country (a) | 9151 › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Fair Value of Foreign Exchange and Derivative Products › Banks › A334 › (1) | Fair Value of Foreign Exchange and Derivative Products › Public › A335 › (2) | Fair Value of Foreign Exchange and Derivative Products › NBFIs › M880 › (3) | Fair Value of Foreign Exchange and Derivative Products › Other › A336 › (4) | Fair Value of Foreign Exchange and Derivative Products › Total › A337 › (5) | Memorandum › Claims on Branches with No Guarantee from Parent › A338 › (6) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Latin America Argentina | | | 30104 | | | | | | |
+| Belize | | | 35718 | | | | | | |
+| Bolivia | | | 30201 | | | | | | |
+| Brazil | | | 30309 | | | | | | |
+| Chile | | | 30406 | | | | | | |
+| Colombia | | | 30503 | | | | | | |
+| Costa Rica | | | 30589 | | | | | | |
+| Ecuador | | | 31003 | | | | | | |
+| El Salvador | | | 31089 | | | | | | |
+| Falkland Islands | | | 36307 | | | | | | |
+| French Guiana | | | 36404 | | | | | | |
+| Guatemala | | | 31208 | | | | | | |
+| Guyana | | | 31305 | | | | | | |
+| Honduras | | | 31488 | | | | | | |
+| Mexico | | | 31704 | | | | | | |
+| Nicaragua | | | 31801 | | | | | | |
+| Panama | | | 31887 | | | | | | |
+| Paraguay | | | 32107 | | | | | | |
+| Peru | | | 32204 | | | | | | |
+| Suriname | | | 37702 | | | | | | |
+| Uruguay | | | 32603 | | | | | | |
+| Venezuela | | | 32719 | | | | | | |
+| TOTAL LATIN AMERICA | | | 39942 | | | | | | |
+| Caribbean Anguilla | | | 30228 | | | | | | |
+| Antigua and Barbuda | | | 35203 | | | | | | |
+| Aruba | | | 35254 | | | | | | |
+| Bahamas | | | 35319 | | | | | | |
+| Barbados | | | 30155 | | | | | | |
+| Bermuda | | | 35602 | | | | | | |
+(1 blank entry rows)
+| FCEX › Country (a) | 9151 › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Fair Value of Foreign Exchange and Derivative Products › Banks › A334 › (1) | Fair Value of Foreign Exchange and Derivative Products › Public › A335 › (2) | Fair Value of Foreign Exchange and Derivative Products › NBFIs › M880 › (3) | Fair Value of Foreign Exchange and Derivative Products › Other › A336 › (4) | Fair Value of Foreign Exchange and Derivative Products › Total › A337 › (5) | Memorandum › Claims on Branches with No Guarantee from Parent › A338 › (6) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Caribbean—Continued Bonaire, St. Eustatius and Saba | | | 36161 | | | | | | |
+| Cayman Islands | | | 36137 | | | | | | |
+| Cuba | | | 30708 | | | | | | |
+| Curacao | | | 36188 | | | | | | |
+| Dominica | | | 36218 | | | | | | |
+| Dominican Republic | | | 30805 | | | | | | |
+| Eastern Caribbean Central Bank | | | 35416 | | | | | | |
+| Grenada | | | 36706 | | | | | | |
+| Guadeloupe (and smaller French islands) | | | 36803 | | | | | | |
+| Haiti | | | 31402 | | | | | | |
+| Jamaica | | | 31607 | | | | | | |
+| Martinique | | | 37001 | | | | | | |
+| Montserrat | | | 37109 | | | | | | |
+| St. Martin and St. Barthelemy | | | 36471 | | | | | | |
+| St. Kitts and Nevis | | | 37303 | | | | | | |
+| St. Lucia | | | 37508 | | | | | | |
+| St. Maarten | | | 36196 | | | | | | |
+| St. Vincent and the Grenadines | | | 37605 | | | | | | |
+| Trinidad and Tobago | | | 32409 | | | | | | |
+| Turks and Caicos Islands | | | 37818 | | | | | | |
+| Virgin Islands, British | | | 35807 | | | | | | |
+| TOTAL CARIBBEAN | | | 34401 | | | | | | |
+| Asia Afghanistan | | | 40401 | | | | | | |
+| Bahrain | | | 40703 | | | | | | |
+| Bangladesh | | | 40746 | | | | | | |
+| Bhutan | | | 40819 | | | | | | |
+| Brunei | | | 41009 | | | | | | |
+| Burma | | | 41106 | | | | | | |
+| Cambodia | | | 41203 | | | | | | |
+(1 blank entry rows)
+12/2013
+Schedule D: Claims from Positions in Derivative Contracts
+FFIEC 009
+Page 32 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+Fair Value of Foreign Exchange and Derivative Products Memorandum
+Claims on Branches with No Guarantee
+U.S. Dollar Amounts in Millions FCEX 9151 9207
+Banks A334
+Public A335
+NBFIs M880
+Other A336
+Total A337
+from Parent A338
+Country (a) Asia—Continued Vietnam West Bank and Gaza Yemen TOTAL ASIA
+Code (b)
+46906
+47201
+47104
+49999
+(1)
+(2)
+(3)
+(4)
+(5)
+(6)
+Africa
+Algeria Angola Bank of Central African States (BEAC) Benin Botswana Burkina Faso Burundi Cameroon Cape Verde Central African Republic Central Bank of West African States (BCEAO) Chad Comoros Congo (Brazzaville) Congo (Kinshasa) Cote d'Ivoire (Ivory Coast) Djibouti Egypt Equatorial Guinea Eritrea Eswatini Ethiopia Gabon Gambia, The Ghana
+50105
+50202
+50318
+51802
+50504
+57118
+50806
+51004
+51209
+51306
+50644
+51403
+51519
+51608
+51705
+53007
+52302
+57002
+51942
+52019
+56219
+52108
+52418
+52507
+52604
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Fair Value of Foreign Exchange and Derivative Products › Banks › A334 › (1) | Fair Value of Foreign Exchange and Derivative Products › Public › A335 › (2) | Fair Value of Foreign Exchange and Derivative Products › NBFIs › M880 › (3) | Fair Value of Foreign Exchange and Derivative Products › Other › A336 › (4) | Fair Value of Foreign Exchange and Derivative Products › Total › A337 › (5) | Memorandum › Claims on Branches with No Guarantee from Parent › A338 › (6) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Asia—Continued China: Mainland | | 41408 | | | | | | |
+| East Timor | | 45004 | | | | | | |
+| Hong Kong | | 42005 | | | | | | |
+| India | | 42102 | | | | | | |
+| Indonesia | | 42218 | | | | | | |
+| Iran | | 42307 | | | | | | |
+| Iraq | | 42404 | | | | | | |
+| Israel | | 42501 | | | | | | |
+| Japan | | 42609 | | | | | | |
+| Jordan | | 42706 | | | | | | |
+| Korea, North | | 44407 | | | | | | |
+| Korea, South | | 43001 | | | | | | |
+| Kuwait | | 43109 | | | | | | |
+| Laos | | 43303 | | | | | | |
+| Lebanon | | 43419 | | | | | | |
+| Macau | | 43508 | | | | | | |
+| Malaysia | | 43605 | | | | | | |
+| Maldives | | 43702 | | | | | | |
+| Mongolia | | 43818 | | | | | | |
+| Nepal | | 44202 | | | | | | |
+| Oman | | 44105 | | | | | | |
+| Pakistan | | 44709 | | | | | | |
+| Philippines | | 44806 | | | | | | |
+| Qatar | | 45101 | | | | | | |
+| Saudi Arabia | | 45608 | | | | | | |
+| Singapore | | 46019 | | | | | | |
+| Sri Lanka | | 41319 | | | | | | |
+| Syria | | 46205 | | | | | | |
+| Taiwan | | 46302 | | | | | | |
+| Thailand | | 46418 | | | | | | |
+| United Arab Emirates | | 46604 | | | | | | |
+| FCEX › Country (a) | 9151 › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Fair Value of Foreign Exchange and Derivative Products › Banks › A334 › (1) | Fair Value of Foreign Exchange and Derivative Products › Public › A335 › (2) | Fair Value of Foreign Exchange and Derivative Products › NBFIs › M880 › (3) | Fair Value of Foreign Exchange and Derivative Products › Other › A336 › (4) | Fair Value of Foreign Exchange and Derivative Products › Total › A337 › (5) | Memorandum › Claims on Branches with No Guarantee from Parent › A338 › (6) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Asia—Continued Vietnam | | | 46906 | | | | | | |
+| West Bank and Gaza | | | 47201 | | | | | | |
+| Yemen | | | 47104 | | | | | | |
+| TOTAL ASIA | | | 49999 | | | | | | |
+| Africa Algeria | | | 50105 | | | | | | |
+| Angola | | | 50202 | | | | | | |
+| Bank of Central African States (BEAC) | | | 50318 | | | | | | |
+| Benin | | | 51802 | | | | | | |
+| Botswana | | | 50504 | | | | | | |
+| Burkina Faso | | | 57118 | | | | | | |
+| Burundi | | | 50806 | | | | | | |
+| Cameroon | | | 51004 | | | | | | |
+| Cape Verde | | | 51209 | | | | | | |
+| Central African Republic | | | 51306 | | | | | | |
+| Central Bank of West African States (BCEAO) | | | 50644 | | | | | | |
+| Chad | | | 51403 | | | | | | |
+| Comoros | | | 51519 | | | | | | |
+| Congo (Brazzaville) | | | 51608 | | | | | | |
+| Congo (Kinshasa) | | | 51705 | | | | | | |
+| Cote d'Ivoire (Ivory Coast) | | | 53007 | | | | | | |
+| Djibouti | | | 52302 | | | | | | |
+| Egypt | | | 57002 | | | | | | |
+| Equatorial Guinea | | | 51942 | | | | | | |
+| Eritrea | | | 52019 | | | | | | |
+| Eswatini | | | 56219 | | | | | | |
+| Ethiopia | | | 52108 | | | | | | |
+| Gabon | | | 52418 | | | | | | |
+| Gambia, The | | | 52507 | | | | | | |
+| Ghana | | | 52604 | | | | | | |
+(1 blank entry rows)
+12/2022
+Schedule D: Claims from Positions in Derivative Contracts
+FFIEC 009
+Page 33 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+Fair Value of Foreign Exchange and Derivative Products Memorandum
+Claims on Branches with No Guarantee
+U.S. Dollar Amounts in Millions FCEX 9151 9207
+Banks A334
+Public A335
+NBFIs M880
+Other A336
+Total A337
+from Parent A338
+Country (a) Africa—Continued Uganda Western Sahara Zambia Zimbabwe TOTAL AFRICA
+Code (b)
+56804
+56006
+57207
+54704
+59994
+(1)
+(2)
+(3)
+(4)
+(5)
+(6)
+Other Countries
+Australia British Indian Ocean Territory Cook Islands Fiji French Polynesia Kiribati Marshall Islands Micronesia, Federated States of Nauru New Caledonia New Zealand Niue Palau Papua New Guinea Pitcairn Islands St. Pierre and Miquelon Samoa Solomon Islands Tokelau Islands Tonga Tuvalu Vanuatu Wallis and Futuna TOTAL OTHER COUNTRIES
+60089
+60208
+60402
+60607
+60704
+60526
+61204
+60305
+61301
+61409
+61689 61808
+62502
+61751
+62103
+62219
+62618
+62308
+62405
+62448
+60518
+61603
+60119
+69906
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Fair Value of Foreign Exchange and Derivative Products › Banks › A334 › (1) | Fair Value of Foreign Exchange and Derivative Products › Public › A335 › (2) | Fair Value of Foreign Exchange and Derivative Products › NBFIs › M880 › (3) | Fair Value of Foreign Exchange and Derivative Products › Other › A336 › (4) | Fair Value of Foreign Exchange and Derivative Products › Total › A337 › (5) | Memorandum › Claims on Branches with No Guarantee from Parent › A338 › (6) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Africa—Continued Guinea | | 52701 | | | | | | |
+| Guinea-Bissau | | 54402 | | | | | | |
+| Kenya | | 53104 | | | | | | |
+| Lesotho | | 53155 | | | | | | |
+| Liberia | | 53201 | | | | | | |
+| Libya | | 53309 | | | | | | |
+| Madagascar | | 53406 | | | | | | |
+| Malawi | | 53503 | | | | | | |
+| Mali | | 53589 | | | | | | |
+| Mauritania | | 53708 | | | | | | |
+| Mauritius | | 53805 | | | | | | |
+| Mayotte | | 54518 | | | | | | |
+| Morocco | | 54003 | | | | | | |
+| Mozambique | | 54089 | | | | | | |
+| Namibia | | 54127 | | | | | | |
+| Niger | | 54208 | | | | | | |
+| Nigeria | | 54305 | | | | | | |
+| Reunion | | 54607 | | | | | | |
+| Rwanda | | 55018 | | | | | | |
+| Saint Helena | | 55107 | | | | | | |
+| Sao Tome and Principe | | 55204 | | | | | | |
+| Senegal | | 55301 | | | | | | |
+| Seychelles | | 55409 | | | | | | |
+| Sierra Leone | | 55506 | | | | | | |
+| Somalia | | 55603 | | | | | | |
+| South Africa | | 55719 | | | | | | |
+| South Sudan | | 53392 | | | | | | |
+| Sudan | | 56103 | | | | | | |
+| Tanzania | | 56405 | | | | | | |
+| Togo | | 56502 | | | | | | |
+| Tunisia | | 56707 | | | | | | |
+| FCEX › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Fair Value of Foreign Exchange and Derivative Products › Banks › A334 › (1) | Fair Value of Foreign Exchange and Derivative Products › Public › A335 › (2) | Fair Value of Foreign Exchange and Derivative Products › NBFIs › M880 › (3) | Fair Value of Foreign Exchange and Derivative Products › Other › A336 › (4) | Fair Value of Foreign Exchange and Derivative Products › Total › A337 › (5) | Memorandum › Claims on Branches with No Guarantee from Parent › A338 › (6) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Africa—Continued Uganda | | 56804 | | | | | | |
+| Western Sahara | | 56006 | | | | | | |
+| Zambia | | 57207 | | | | | | |
+| Zimbabwe | | 54704 | | | | | | |
+| TOTAL AFRICA | | 59994 | | | | | | |
+| Other Countries Australia | | 60089 | | | | | | |
+| British Indian Ocean Territory | | 60208 | | | | | | |
+| Cook Islands | | 60402 | | | | | | |
+| Fiji | | 60607 | | | | | | |
+| French Polynesia | | 60704 | | | | | | |
+| Kiribati | | 60526 | | | | | | |
+| Marshall Islands | | 61204 | | | | | | |
+| Micronesia, Federated States of | | 60305 | | | | | | |
+| Nauru | | 61301 | | | | | | |
+| New Caledonia | | 61409 | | | | | | |
+| New Zealand | | 61689 | | | | | | |
+| Niue | | 61808 | | | | | | |
+| Palau | | 62502 | | | | | | |
+| Papua New Guinea | | 61751 | | | | | | |
+| Pitcairn Islands | | 62103 | | | | | | |
+| St. Pierre and Miquelon | | 62219 | | | | | | |
+| Samoa | | 62618 | | | | | | |
+| Solomon Islands | | 62308 | | | | | | |
+| Tokelau Islands | | 62405 | | | | | | |
+| Tonga | | 62448 | | | | | | |
+| Tuvalu | | 60518 | | | | | | |
+| Vanuatu | | 61603 | | | | | | |
+| Wallis and Futuna | | 60119 | | | | | | |
+| TOTAL OTHER COUNTRIES | | 69906 | | | | | | |
+(1 blank entry rows)
+12/2022
+Schedule D: Claims from Positions in Derivative Contracts
+FFIEC 009
+Page 34 of 34
+Before completing this form, please read carefully the instructions and definitions for preparation of this report.
+Name of Reporting Institution
+As of Month / Day / Year
+| FCEX › Country (a) | 9151 › Country (a) | 9151 › Country (a) | 9207 › Code (b) | Fair Value of Foreign Exchange and Derivative Products › Banks › A334 › (1) | Fair Value of Foreign Exchange and Derivative Products › Public › A335 › (2) | Fair Value of Foreign Exchange and Derivative Products › NBFIs › M880 › (3) | Fair Value of Foreign Exchange and Derivative Products › Other › A336 › (4) | Fair Value of Foreign Exchange and Derivative Products › Total › A337 › (5) | Memorandum › Claims on Branches with No Guarantee from Parent › A338 › (6) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Canada | | | 29998 | | | | | | |
+| International & Regional Organizations International | | | 72907 | | | | | | |
+| European | | | 73903 | | | | | | |
+| Latin American | | | 74918 | | | | | | |
+| Caribbean | | | 74942 | | | | | | |
+| Asian | | | 75906 | | | | | | |
+| African | | | 76902 | | | | | | |
+| Middle Eastern | | | 77909 | | | | | | |
+| TOTAL INT'L & REGIONAL ORGANIZATIONS | | | 79995 | | | | | | |
+| TOTAL FOREIGN COUNTRIES | | | 69995 | | | | | | |
+| United States | | | 01007 | | | | | | |
+| GRAND TOTAL | | | 99996 | | | | | | |
+(4 blank entry rows)
+12/2013
