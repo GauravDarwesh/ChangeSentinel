@@ -180,8 +180,58 @@ def write_workbook(outcome: dict, path: Path) -> Path:
         validation = DataValidation(type="list", formula1=IMPACT_CHOICES, allow_blank=True)
         validation.add(f"O2:O{row}")
         changes_sheet.add_data_validation(validation)
+
+    # Structure: columns that appeared, went or were renamed (and are still compared under the new name).
+    structure_sheet = book.create_sheet("Columns")
+    _header(structure_sheet, 1, ["Table", "Change", "Before", "After"])
+    structure_row = 1
+    for table in result.get("tables", []):
+        entries = [("Renamed", pair.get("before"), pair.get("after")) for pair in table.get("columns_renamed") or []]
+        entries += [("Added", None, name) for name in table.get("columns_added") or []]
+        entries += [("Removed", name, None) for name in table.get("columns_removed") or []]
+        for change, before_name, after_name in entries:
+            structure_row += 1
+            for column, value in enumerate([table["name"], change, before_name, after_name], start=1):
+                _put(structure_sheet, structure_row, column, value)
+
+    # Release notes: the file's own change log, claim by claim, against what changed.
+    notes = result.get("release_notes") or {}
+    notes_sheet = book.create_sheet("Release Notes Audit")
+    _header(notes_sheet, 1, ["Version", "Date", "Worksheet", "Matched table", "Claim", "Claimed", "Detected", "Result", "Notes text"])
+    notes_row = 1
+    result_fills = {"matches": "E2F0D9", "differs": "FCE4D6", "unchecked": "F2F2F2"}
+    for entry in notes.get("entries") or []:
+        lines = [(f"{claim['action']} {claim['noun']}", claim["count"], claim.get("detected"), claim["status"]) for claim in entry.get("claims") or []]
+        if entry.get("ids_listed"):
+            missing = entry.get("ids_not_changed_count", 0)
+            lines.append(("listed ids", entry["ids_listed"], entry["ids_listed"] - missing,
+                          "differs" if missing else "matches"))
+            if missing:
+                lines.append(("listed but not changed as described: " + ", ".join(entry.get("ids_not_changed") or []), missing, None, "differs"))
+        for claim, claimed, detected, status in lines:
+            notes_row += 1
+            values = [entry.get("version"), entry.get("date"), entry.get("worksheet"), ", ".join(entry.get("tables") or []) or "(no table matched)",
+                      claim, claimed, detected, status, entry.get("text")]
+            for column, value in enumerate(values, start=1):
+                written = _put(notes_sheet, notes_row, column, value)
+                if column == 8:
+                    written.fill = PatternFill("solid", fgColor=result_fills.get(status, "FFFFFF"))
+                if column == 9:
+                    written.alignment = Alignment(wrap_text=True, vertical="top")
+    for item in notes.get("undocumented") or []:
+        notes_row += 1
+        values = [notes.get("version"), notes.get("date"), None, item["table"], f"{item['action']} but not listed: " + ", ".join(item["labels"]),
+                  None, item["count"], "differs", "Changed in the file, missing from the release notes' list"]
+        for column, value in enumerate(values, start=1):
+            written = _put(notes_sheet, notes_row, column, value)
+            if column == 8:
+                written.fill = PatternFill("solid", fgColor=result_fills["differs"])
+    if notes_row == 1:
+        _put(notes_sheet, 2, 1, "The current file has no change-log table, or none of its newest entries make a checkable claim.")
+
     for sheet, widths in ((changes_sheet, [24, 26, 24, 18, 26, 10, 22, 60, 50, 50, 36, 30, 36, 20, 16, 40]),
-                          (cells_sheet, [26, 24, 22, 12, 60, 60, 12]), (patterns_sheet, [26, 22, 30, 30, 8])):
+                          (cells_sheet, [26, 24, 22, 12, 60, 60, 12]), (patterns_sheet, [26, 22, 30, 30, 8]),
+                          (structure_sheet, [30, 12, 40, 40]), (notes_sheet, [10, 12, 26, 26, 50, 10, 10, 12, 80])):
         for index, width in enumerate(widths, start=1):
             sheet.column_dimensions[sheet.cell(row=1, column=index).column_letter].width = width
         sheet.freeze_panes = "A2"
