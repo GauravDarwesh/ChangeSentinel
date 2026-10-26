@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T131041Z-d76c10fe",
-  "generated_at": "2026-10-26T13:13:39.245830+00:00",
+  "run_id": "20261026T145658Z-ed33329a",
+  "generated_at": "2026-10-26T14:59:17.770464+00:00",
   "source": {
     "id": "manual-3b1e1f88b570",
     "name": "FR Y-7 Foreign Companies Template (XLSX)",
@@ -92,5 +92,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "manual",
-  "workflow_run_id": "40327543055"
+  "workflow_run_id": "40344087782"
 }

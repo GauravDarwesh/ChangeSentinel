@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T131041Z-d76c10fe",
-  "generated_at": "2026-10-26T13:14:53.468033+00:00",
+  "run_id": "20261026T145658Z-ed33329a",
+  "generated_at": "2026-10-26T15:07:03.685241+00:00",
   "source": {
     "id": "manual-4de97ed3cfca",
     "name": "FFIEC 051 Instructions",
@@ -68,10 +68,10 @@
     "removed": 0,
     "removal_held": 0,
     "removal_pending_confirmation": 0,
-    "unchanged": 0,
+    "unchanged": 1,
     "baseline_migration": 0,
     "extraction_drift": 0,
-    "fetch_error": 1,
+    "fetch_error": 0,
     "extraction_error": 0,
     "not_modified": 0,
     "forced_full_fetch": 0,
@@ -84,23 +84,7 @@
     "ai_backlog_pending": 0,
     "crawl_paused": 0
   },
-  "events": [
-    {
-      "event_id": "5764e6ba913e6a650c51fe18abf2fd1cff1631cc3d83ae884c232f6f26f566fb",
-      "event_type": "FETCH_ERROR",
-      "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_202609_i.pdf",
-      "url_id": "4de97ed3cfcad2dab0d43ad391598be8ad375a631b1d83f7b16d48681409b098",
-      "source_id": "manual-4de97ed3cfca",
-      "timestamp": "2026-10-26T13:14:53.468033+00:00",
-      "evidence_location": "data/evidence/5764e6ba913e6a650c51fe18abf2fd1cff1631cc3d83ae884c232f6f26f566fb.json",
-      "notification_id": "op-8242a044750640a8d335d78c2e0daea6f799d930ba8fd31945e90d8e3ed815c5",
-      "error_since": "2026-10-26T12:52:47.318165+00:00",
-      "error_runs": 2,
-      "evidence": {
-        "error": "BotCheckError: Cloudflare bot check: the browser could not get past it on www.ffiec.gov earlier in this scan; this URL keeps its last good copy and is tried again next scan"
-      }
-    }
-  ],
+  "events": [],
   "new_urls": [],
   "changed_urls": [],
   "source_changed_urls": [],
@@ -108,5 +92,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "manual",
-  "workflow_run_id": "40327543055"
+  "workflow_run_id": "40344087782"
 }

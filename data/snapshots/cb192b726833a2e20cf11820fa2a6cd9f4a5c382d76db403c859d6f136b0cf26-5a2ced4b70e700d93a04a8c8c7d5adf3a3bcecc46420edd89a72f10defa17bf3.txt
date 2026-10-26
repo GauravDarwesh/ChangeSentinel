@@ -1,0 +1,19 @@
+Reporting Forms
+| Form | Description | Current Forms, Instructions and FRNs | Historical Versions |
+| --- | --- | --- | --- |
+| FFIEC 002 | Report of Assets and Liabilities of U.S. Branches and Agencies of Foreign Banks | FFIEC 002 Current | FFIEC 002 Historic |
+| FFIEC 002S | Report of Assets and Liabilities of a Non-U.S. Branch that is Managed or Controlled by a U.S. Branch or Agency of a Foreign (Non-U.S.) Bank | FFIEC 002S Current | FFIEC 002S Historic |
+| FFIEC 009 | Country Exposure Report | FFIEC 009 Current | FFIEC 009 Historic |
+| FFIEC 009A | Country Exposure Information Report | | FFIEC 009A Historic |
+| FFIEC 019 | Country Exposure Report for U.S. Branches and Agencies of Foreign Banks | FFIEC 019 Current | FFIEC 019 Historic |
+| FFIEC 030 | Foreign Branch Report of Condition | FFIEC 030 Current | FFIEC 030 Historic |
+| FFIEC 030S | Abbreviated Foreign Branch Report of Condition | FFIEC 030S Current | FFIEC 030S Historic |
+| FFIEC 101 | Regulatory Capital Reporting for Institutions Subject to the Advanced Capital Adequacy Framework | FFIEC 101 Current | FFIEC 101 Historic FFIEC 101 Validation |
+| FFIEC 102 | Market Risk Regulatory Report for Institutions Subject to the Market Risk Capital Rule | FFIEC 102 Current | FFIEC 102 Historic FFIEC 102 Validation |
+Call Report Forms
+| Form | Description | Current Forms, Instructions and FRNs | Historical Version |
+| --- | --- | --- | --- |
+| FFIEC 031 | Consolidated Reports of Condition and Income for a Bank with Domestic and Foreign Offices | FFIEC 031 Current | FFIEC 031 Historic FFIEC 031 Supplemental |
+| FFIEC 041 | Consolidated Reports of Condition and Income for a Bank with Domestic Offices Only - replaces FFIEC 032, FFIEC 033, FFIEC 034 | FFIEC 041 Current | FFIEC 041 Historic FFIEC 041 Supplemental |
+| FFIEC 051 | Consolidated Reports of Condition and Income for a Bank with Domestic Offices Only and Total Assets Less than $5 Billion | FFIEC 051 Current | FFIEC 051 Historic FFIEC 051 Supplemental |
+Last updated on 10/19/2026
