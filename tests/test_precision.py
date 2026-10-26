@@ -46,6 +46,8 @@ def fixture():
     sent = {event_id(n): {"kind": "CHANGED_URL", "variant": "ai"} for n in (1, 2, 3, 4, 13)}
     sent[event_id(8)] = {"kind": "CHANGED_URL", "variant": "generic"}
     sent[event_id(8) + "#ai"] = {"kind": "AI_ASSESSMENT", "variant": "ai"}
+    # A change whose generic alert never went out but whose quiet follow-up did is not an alert.
+    sent[event_id(6) + "#ai"] = {"kind": "AI_ASSESSMENT", "variant": "ai_irrelevant"}
     decisions = {1: "not_material", 2: "not_material", 3: "not_material", 4: "material", 5: "action_required", 6: "not_material",
                  7: "not_material", 8: "acknowledged", 11: "material", 12: "material", 13: "material", 21: "not_material", 22: "material"}
     ledger = {"schema_version": 1, "reviews": {event_id(n): {"decision": d, "rationale": "x" * 12} for n, d in decisions.items()}, "log": [],
@@ -55,6 +57,13 @@ def fixture():
                 "check_every_hours": 24},
                {"id": "shadowed", "name": "Shadow page", "shadow": True}]
     return inventory, sent, ledger, sources
+
+
+class TestQuietFollowUps(unittest.TestCase):
+    def test_variant_names_match_the_notifier(self):
+        from regmon import notify
+
+        self.assertEqual(precision.QUIET_VARIANTS, notify.QUIET_VARIANTS)
 
 
 class TestScores(unittest.TestCase):

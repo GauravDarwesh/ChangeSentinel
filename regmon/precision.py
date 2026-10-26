@@ -41,7 +41,7 @@ POSITIVE = {"material", "action_required"}
 NEGATIVE = {"not_material"}
 ALERTABLE = {"CHANGED_URL", "NEW_URL", "REMOVED_URL"}
 SCORED = ALERTABLE | {"HTML_SOURCE_CHANGED"}
-QUIET_VARIANTS = {"irrelevant", "condition_not_met"}
+QUIET_VARIANTS = {"ai_irrelevant", "condition_not_met"}  # as regmon/notify.py names them
 STOPWORDS = frozenset("""
 a an and are as at be been by for from has have in into is it its of on or that the this to was were will with not no new
 change changes changed update updates updated page pages webpage website site content text entry entries item items section

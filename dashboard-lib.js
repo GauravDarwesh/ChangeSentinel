@@ -2650,7 +2650,7 @@
   const PRECISION_NEGATIVE = ["not_material"];
   const PRECISION_ALERTABLE = ["CHANGED_URL", "NEW_URL", "REMOVED_URL"];
   const PRECISION_SCORED = PRECISION_ALERTABLE.concat(["HTML_SOURCE_CHANGED"]);
-  const PRECISION_QUIET = ["irrelevant", "condition_not_met"];
+  const PRECISION_QUIET = ["ai_irrelevant", "condition_not_met"];
   const PRECISION_STOPWORDS = new Set(("a an and are as at be been by for from has have in into is it its of on or that the this to was were will with not no new " +
     "change changes changed update updates updated page pages webpage website site content text entry entries item items section " +
     "document documents file files link links list removal removed added addition date dates version minor federal reserve board " +
