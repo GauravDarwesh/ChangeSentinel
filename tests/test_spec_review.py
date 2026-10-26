@@ -149,6 +149,7 @@ class TestReleaseNotesAudit(unittest.TestCase):
         notes = result["release_notes"]
         self.assertEqual(notes["entries"][0]["ids_listed"], 2)
         self.assertEqual(notes["entries"][0]["ids_not_changed"], ["IR-3"])  # IR-3 was retired, not updated
+        self.assertEqual(notes["entries"][0]["ids_found_as"], {"IR-3": "retired"})
         self.assertEqual(notes["undocumented"][0]["labels"], ["IR-2"])
         self.assertIn("Release notes v2", result["headline"])
 
@@ -175,6 +176,18 @@ class TestReleaseNotesAudit(unittest.TestCase):
             self.assertIn("Columns", book.sheetnames)
             values = [cell.value for row in book["Release Notes Audit"].iter_rows() for cell in row]
             self.assertTrue(any(isinstance(value, str) and value.startswith("updated but not listed: IR-2") for value in values))
+
+
+class TestInPlaceVersionsInNotes(unittest.TestCase):
+    def test_a_version_bumped_in_place_counts_as_updated_not_added(self):
+        header = ["Rule ID", "Version", "Rule Logic", "Status"]
+        before = sheet(header, [["IR-1", "1", "A > 0", "x"], ["IR-5", "1", "E > 0", "x"]], name="Rules") + "\n" + \
+            change_log([["1", "", "Initial", "Rules"]])
+        after = sheet(header, [["IR-1", "1", "A > 0", "x"], ["IR-5", "2", "E > 0", "x"], ["IR-6", "1", "F > 0", "x"]], name="Rules") + "\n" + \
+            change_log([["2", "", "Added: 1 rule Updated: 1 rule", "Rules"], ["1", "", "Initial", "Rules"]])
+        claims = {claim["action"]: claim for claim in spec_diff.diff(before, after)["release_notes"]["entries"][0]["claims"]}
+        self.assertEqual((claims["added"]["detected"], claims["updated"]["detected"]), (1, 1))
+        self.assertEqual({claim["status"] for claim in claims.values()}, {"matches"})
 
 
 class TestRealOsfiReleaseNotes(unittest.TestCase):
