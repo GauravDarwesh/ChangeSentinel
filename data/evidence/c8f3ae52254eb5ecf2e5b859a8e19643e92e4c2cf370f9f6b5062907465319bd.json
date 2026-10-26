@@ -1,0 +1,36 @@
+{
+  "event_id": "c8f3ae52254eb5ecf2e5b859a8e19643e92e4c2cf370f9f6b5062907465319bd",
+  "event_type": "FETCH_ERROR",
+  "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec102-validation",
+  "timestamp": "2026-10-26T13:14:53.821023+00:00",
+  "before": {
+    "normalized_hash": "62599f7f7d590c1d33115af8c0a22b120dd045bb474fb42432858127434e69e8",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "ec766a674df29f9aa1761ddcb391306c3318f1cda91ef16480e4f0a356369b05",
+    "html_hash": "ec766a674df29f9aa1761ddcb391306c3318f1cda91ef16480e4f0a356369b05",
+    "html_comparison_hash": "d5c5266ef4f85665a03880a414a3df6e8ab6af2c472e1d709c6a2fa3b585f67e",
+    "snapshot_location": "data/snapshots/812e7909225602108123e61f9c4e4f8622c8eb8785cf4cc5a5d9d6e46b82fa4f-62599f7f7d590c1d33115af8c0a22b120dd045bb474fb42432858127434e69e8.txt",
+    "html_snapshot_location": "data/snapshots/html/812e7909225602108123e61f9c4e4f8622c8eb8785cf4cc5a5d9d6e46b82fa4f-ec766a674df29f9aa1761ddcb391306c3318f1cda91ef16480e4f0a356369b05.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "62599f7f7d590c1d33115af8c0a22b120dd045bb474fb42432858127434e69e8",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "ec766a674df29f9aa1761ddcb391306c3318f1cda91ef16480e4f0a356369b05",
+    "html_hash": "ec766a674df29f9aa1761ddcb391306c3318f1cda91ef16480e4f0a356369b05",
+    "html_comparison_hash": "d5c5266ef4f85665a03880a414a3df6e8ab6af2c472e1d709c6a2fa3b585f67e",
+    "snapshot_location": "data/snapshots/812e7909225602108123e61f9c4e4f8622c8eb8785cf4cc5a5d9d6e46b82fa4f-62599f7f7d590c1d33115af8c0a22b120dd045bb474fb42432858127434e69e8.txt",
+    "html_snapshot_location": "data/snapshots/html/812e7909225602108123e61f9c4e4f8622c8eb8785cf4cc5a5d9d6e46b82fa4f-ec766a674df29f9aa1761ddcb391306c3318f1cda91ef16480e4f0a356369b05.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "--- before\n+++ after\n@@ -1,22 +0,0 @@\n-FFIEC 102 Validation Criteria\n-Effective for report dates June 2026 through current:\n-- Validity Edits: Excel | PDF - Final (updated July 7, 2026)\n-- Quality Edits: Excel | PDF- Final (updated July 7, 2026)\n-Effective for report dates March 2018 to March 2026\n-- Validity Edits: Excel | PDF - Final (updated April 19, 2018)\n-- Quality Edits: Excel | PDF- Final (updated April 19, 2018)\n-Effective for report dates March 2017 through December 2017:\n-- Validity Edits: Excel | PDF - Final (updated April 14, 2017)\n-- Quality Edits: Excel | PDF- Final (updated April 14, 2017)\n-Effective for report dates December 2016:\n-- Validity Edits: Excel | PDF - Final (updated December 22, 2016)\n-- Quality Edits: Excel | PDF- Final (updated December 22, 2016)\n-Effective for report dates June 2016 through September 2016:\n-- Validity Edits: Excel | PDF - Final (updated June 23, 2016)\n-- Quality Edits: Excel | PDF- Final (updated June 23, 2016)\n-Effective for report date June 2015 through March 2016:\n-- Validity Edits: Excel | PDF - Final (updated July 7, 2015)\n-- Quality Edits: Excel | PDF- Final (updated July 7, 2015)\n-Effective for report date March 2015:\n-- Validity Edits: Excel | PDF- Final (updated April 14, 2015)\n-Last updated on 7/7/2026",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "error": "BotCheckError: Cloudflare bot check: the browser could not get past it on www.ffiec.gov earlier in this scan; this URL keeps its last good copy and is tried again next scan"
+}

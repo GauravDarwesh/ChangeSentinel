@@ -1,0 +1,36 @@
+{
+  "event_id": "5e43a337fe2f6f0c3394508e9585563b43da80f74555418e8039a0e96a57ceb5",
+  "event_type": "FETCH_ERROR",
+  "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_202609_i_updates.pdf",
+  "timestamp": "2026-10-26T13:14:53.358084+00:00",
+  "before": {
+    "normalized_hash": "69b8e9eb5872c714eb73c23375e595d8a946bda37dbf33143e8bf58b2ee0d1a4",
+    "extraction_type": "pdf",
+    "extractor_version": "content-extractor-v7-fallback",
+    "extraction_failed": false,
+    "raw_hash": "02493f56340d966e2c251121202fdcc74de8552ea460f31ac74cfcad2f9fed63",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": "data/snapshots/1d7f76c3a5dd0ecf779a8ef1c84ef815545f83851031a222a1439e184d1cad3f-69b8e9eb5872c714eb73c23375e595d8a946bda37dbf33143e8bf58b2ee0d1a4.txt",
+    "html_snapshot_location": null,
+    "file_snapshot_location": "data/snapshots/files/1d7f76c3a5dd0ecf779a8ef1c84ef815545f83851031a222a1439e184d1cad3f-02493f56340d966e2c251121202fdcc74de8552ea460f31ac74cfcad2f9fed63.pdf",
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "69b8e9eb5872c714eb73c23375e595d8a946bda37dbf33143e8bf58b2ee0d1a4",
+    "extraction_type": "pdf",
+    "extractor_version": "content-extractor-v7-fallback",
+    "extraction_failed": false,
+    "raw_hash": "02493f56340d966e2c251121202fdcc74de8552ea460f31ac74cfcad2f9fed63",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": "data/snapshots/1d7f76c3a5dd0ecf779a8ef1c84ef815545f83851031a222a1439e184d1cad3f-69b8e9eb5872c714eb73c23375e595d8a946bda37dbf33143e8bf58b2ee0d1a4.txt",
+    "html_snapshot_location": null,
+    "file_snapshot_location": "data/snapshots/files/1d7f76c3a5dd0ecf779a8ef1c84ef815545f83851031a222a1439e184d1cad3f-02493f56340d966e2c251121202fdcc74de8552ea460f31ac74cfcad2f9fed63.pdf",
+    "visual_snapshot_location": null
+  },
+  "diff": "--- before\n+++ after\n@@ -1,24 +0,0 @@\n-FFIEC 031 AND FFIEC 041\n-CALL REPORT INSTRUCTIONS UPDATE\n-SEPTEMBER 2026\n-NOTE: The pages listed below are updated in the FFIEC 031 and FFIEC 041 Call Report instructions for September 2026.\n-Schedule RC-E RC-E-6 RC-E-8a \u2013 RC-E-10d RC-E-19 \u2013 RC-E-20b Schedule RC-O RC-O-8 \u2013 RC-O-8b Schedule RC-R, Part I RC-R-1 \u2013 RC-R-2b Schedule RC-S RC-S-1 General Instructions 10 \u2013 10a Glossary A-20a A-78 A-102 A-118a \u2013 A-119\n-[TABLE]\n-| Schedule | RC-E |\n-| --- | --- |\n-| RC-E-6 | |\n-| RC-E-8a | \u2013 RC-E-1 |\n-| RC-E-19 | \u2013 RC-E-2 |\n-| Schedule | RC-O |\n-| RC-O-8 \u2013 | RC-O-8b |\n-| Schedule | RC-R, Pa |\n-| RC-R-1 \u2013 | RC-R-2b |\n-| Schedule | RC-S |\n-| RC-S-1 | |\n-| General In | struction |\n-| 10 \u2013 10a | |\n-| Glossary | |\n-| A-20a | |\n-| A-78 | |\n-| A-102 | |\n-| A-118a \u2013 | A-119 |",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "error": "BotCheckError: Cloudflare bot check: the browser could not get past it on www.ffiec.gov earlier in this scan; this URL keeps its last good copy and is tried again next scan"
+}

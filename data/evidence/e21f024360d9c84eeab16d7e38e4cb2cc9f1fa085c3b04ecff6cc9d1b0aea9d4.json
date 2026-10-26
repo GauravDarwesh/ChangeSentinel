@@ -1,0 +1,36 @@
+{
+  "event_id": "e21f024360d9c84eeab16d7e38e4cb2cc9f1fa085c3b04ecff6cc9d1b0aea9d4",
+  "event_type": "FETCH_ERROR",
+  "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030S_202503_f.pdf",
+  "timestamp": "2026-10-26T13:14:50.212451+00:00",
+  "before": {
+    "normalized_hash": "eaecdd67381d099941c96818a8c9e26b2fbb7293d3538a867b0d58ddfa4bfa80",
+    "extraction_type": "pdf",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "6a601eb76d94dc605c7f2e51b9829e17275c078102a1afe2bc4277fc7c2de2f8",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": "data/snapshots/647ef318c5c06d96492ca11c10224222a23f0ecce7f469700d52e12a6921dba4-eaecdd67381d099941c96818a8c9e26b2fbb7293d3538a867b0d58ddfa4bfa80.txt",
+    "html_snapshot_location": null,
+    "file_snapshot_location": "data/snapshots/files/647ef318c5c06d96492ca11c10224222a23f0ecce7f469700d52e12a6921dba4-6a601eb76d94dc605c7f2e51b9829e17275c078102a1afe2bc4277fc7c2de2f8.pdf",
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "eaecdd67381d099941c96818a8c9e26b2fbb7293d3538a867b0d58ddfa4bfa80",
+    "extraction_type": "pdf",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "6a601eb76d94dc605c7f2e51b9829e17275c078102a1afe2bc4277fc7c2de2f8",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": "data/snapshots/647ef318c5c06d96492ca11c10224222a23f0ecce7f469700d52e12a6921dba4-eaecdd67381d099941c96818a8c9e26b2fbb7293d3538a867b0d58ddfa4bfa80.txt",
+    "html_snapshot_location": null,
+    "file_snapshot_location": "data/snapshots/files/647ef318c5c06d96492ca11c10224222a23f0ecce7f469700d52e12a6921dba4-6a601eb76d94dc605c7f2e51b9829e17275c078102a1afe2bc4277fc7c2de2f8.pdf",
+    "visual_snapshot_location": null
+  },
+  "diff": "--- before\n+++ after\n@@ -1,30 +0,0 @@\n-Name of Bank Name (FORB 9017) Street Address (FORB 9028) City (FORB 9130) State (FORB 9200) Foreign Branch Name (FORB Q050) Street Address (FORB W913) City / Town (FORB W914) Country (FORB 9005) Board of Governors of the Federal Reserve System OMB Number 7100-0071 Federal Deposit Insurance Corporation OMB Number 3064-0011 Office of the Comptroller of the Currency OMB Number 1557-0099 Approval Expires December 31, 2027 Page 1 of 2 Federal Financial Institutions Examination Council Abbreviated Foreign Branch Report of Condition\u2014 FFIEC 030S Report at the close of business December 31, Year This report is required by law (12 U.S.C. \u00a7 321, 324, and 602 (FRB);\n-12 U.S.C.\u00a7 161 and 602 (OCC); and 12 U.S.C. \u00a7 1828 (FDIC)).\n-The Federal Financial Institutions Examination Council regards the information provided by each respondent as confidential. If it should subsequently be determined that any information collected on this form must be released, respondents will be notified.\n-A Federal agency may not conduct or sponsor, and an organization is not required to respond to, a collection of information unless it displays a currently valid OMB control number.\n-Public reporting burden for this collection of information is estimated to average 0.5 hours per response, including the time for reviewing instructions, searching existing data sources, gathering and maintaining the data needed, and completing and reviewing the collection of information. Send comments regarding this burden estimate, including suggestions for reducing this burden, to the Office of Information and Regulatory Affairs, Office of Management and Budget, Washington, DC 20503, and to one of the following: Secretary, Board of Governors of the Federal Reserve System, 20th and C Streets, NW, Washington, DC 20551; Legislative and Regulatory Activities, Office of the Comptroller of the Currency, 250 E Street, SW, Washington, DC 20219; Assistant Executive Secretary, Federal Deposit Insurance Corporation, 550 17th Street, NW, Washington, DC 20429.\n-03/2025 The FFIEC 030S is to be prepared in accordance with federal regulatory authority instructions and must be signed by an authorized officer of the parent U.S. institution. The authorized officer may be the chief financial officer or equivalent senior officer.\n-I, the undersigned authorized officer of the named parent U.S.\n-institution attest that the FFIEC 030S report (including any consolidated branches) for this report date has been prepared in conformance with the instructions issued by the federal regulatory authority and is true and correct to the best of my knowledge and belief.\n-Printed Name of Authorized Officer (FORB C490) Title of Authorized Officer (FORB C491) Signature of Authorized Officer (FORB H321) Date of Signature (MM/DD/YYYY) (FORB J196) Unless this report is submitted electronically, the completed and signed original hard copy report form should be submitted to the appropriate Federal Reserve District Bank.\n-FFIEC 030S\n-Page 2 of 2\n-Consolidation Option Banks may, at their option, consolidate the figures for all other branches located in the same country on the report form, using the name and address of the principal branch. If the bank elects to consolidate, complete the following statement.\n-Figures reported in this report are a consolidation of all branches in Number (FORB 2991) Country (FORB W917)\n-Please list the consolidated branches on the lines below:\n-Street Address (FORB FS64) City (FORB FS65)\n-Street Address (FORB FS64) City (FORB FS65)\n-Street Address (FORB FS64) City (FORB FS65)\n-Street Address (FORB FS64) City (FORB FS65)\n-Street Address (FORB FS64) City (FORB FS65)\n-Street Address (FORB FS64) City (FORB FS65)\n-(If more space is needed, please list addresses for the other branches on a separate page.)\n-| Item | U.S. Dollar Amounts in Thousands | FORB | Amount |\n-| --- | --- | --- | --- |\n-| | Financial Data | | |\n-| 1. | 1. Gross due from related institutions | 3002 | |\n-| 2. | 2. Total assets | 2170 | |\n-| 3. | 3. Gross due to related institutions | 3001 | |\n-| 4. | 4. Total gross notional amount of derivative contracts | F156 | |\n-| 5. | 5. Commercial and similar letters of credit, standby letters of credit, and foreign office guarantees | F157 | |\n-12/2017",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "error": "BotCheckError: Cloudflare bot check: the browser could not get past it on www.ffiec.gov earlier in this scan; this URL keeps its last good copy and is tried again next scan"
+}

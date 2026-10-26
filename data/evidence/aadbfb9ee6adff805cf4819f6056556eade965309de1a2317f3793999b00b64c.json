@@ -1,0 +1,36 @@
+{
+  "event_id": "aadbfb9ee6adff805cf4819f6056556eade965309de1a2317f3793999b00b64c",
+  "event_type": "FETCH_ERROR",
+  "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec031-supplemental",
+  "timestamp": "2026-10-26T13:14:53.943633+00:00",
+  "before": {
+    "normalized_hash": "ff32b88e24b00fb05baa4144fc440afa7b05e564209c60cd61c9a0881d616d01",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "a2112937ed6f1db4f585a6fd5ec24fbc216f5f426c56218966c4cd748d24a425",
+    "html_hash": "a2112937ed6f1db4f585a6fd5ec24fbc216f5f426c56218966c4cd748d24a425",
+    "html_comparison_hash": "1d87ba9052968778fee2d44d5d64421248d859ab6e7cdd2ec9bee824f3390681",
+    "snapshot_location": "data/snapshots/1a4108fb1a78f81034b8208e9509f19863a6002bc233d552002cad85f8370aaf-ff32b88e24b00fb05baa4144fc440afa7b05e564209c60cd61c9a0881d616d01.txt",
+    "html_snapshot_location": "data/snapshots/html/1a4108fb1a78f81034b8208e9509f19863a6002bc233d552002cad85f8370aaf-a2112937ed6f1db4f585a6fd5ec24fbc216f5f426c56218966c4cd748d24a425.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "ff32b88e24b00fb05baa4144fc440afa7b05e564209c60cd61c9a0881d616d01",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "a2112937ed6f1db4f585a6fd5ec24fbc216f5f426c56218966c4cd748d24a425",
+    "html_hash": "a2112937ed6f1db4f585a6fd5ec24fbc216f5f426c56218966c4cd748d24a425",
+    "html_comparison_hash": "1d87ba9052968778fee2d44d5d64421248d859ab6e7cdd2ec9bee824f3390681",
+    "snapshot_location": "data/snapshots/1a4108fb1a78f81034b8208e9509f19863a6002bc233d552002cad85f8370aaf-ff32b88e24b00fb05baa4144fc440afa7b05e564209c60cd61c9a0881d616d01.txt",
+    "html_snapshot_location": "data/snapshots/html/1a4108fb1a78f81034b8208e9509f19863a6002bc233d552002cad85f8370aaf-a2112937ed6f1db4f585a6fd5ec24fbc216f5f426c56218966c4cd748d24a425.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "--- before\n+++ after\n@@ -1,29 +0,0 @@\n-FFIEC 031 Quarterly Call Report Supplemental Instructions\n-Documents are in Portable Document Format (PDF).\n-| | | | June | March |\n-| --- | --- | --- | --- | --- |\n-| 2025 | December | September | June | March |\n-| 2024 | December | September | June | March |\n-| 2023 | December | September | June | March |\n-| 2022 | December | September | June | March |\n-| 2021 | December | September | June | March |\n-| 2020 | December | | June | March |\n-| 2019 | December | September | June | March |\n-| 2018 | December | September | June | March |\n-| 2017 | December | September | June | March |\n-| 2016 | December | September | June | March |\n-| 2015 | December | September | June | March |\n-| 2014 | December | September | June | March |\n-| 2013 | December | September | June | March |\n-| 2012 | December | September | June | March |\n-| 2011 | December | September | June | March |\n-| 2010 | December | September | June | March |\n-| 2009 | December | September | June | March |\n-| 2008 | December | September | June | March |\n-| 2007 | December | September | June | March |\n-| 2006 | December | September | June | March |\n-| 2005 | December | September | June | March |\n-| 2004 | December | September | June | March |\n-| 2003 | December | September | June | March |\n-| 2002 | December | September | June | March |\n-Last updated on 10/6/2026",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "error": "BotCheckError: Cloudflare bot check: the browser could not get past it on www.ffiec.gov earlier in this scan; this URL keeps its last good copy and is tried again next scan"
+}

@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T124525Z-b4bddc14",
-  "generated_at": "2026-10-26T12:49:09.115139+00:00",
+  "run_id": "20261026T131041Z-d76c10fe",
+  "generated_at": "2026-10-26T13:13:39.464650+00:00",
   "source": {
     "id": "manual-a81bf7248131",
     "name": "XML Format: FR Y-12** (PDF)",
@@ -73,8 +73,8 @@
     "extraction_drift": 0,
     "fetch_error": 0,
     "extraction_error": 0,
-    "not_modified": 0,
-    "forced_full_fetch": 1,
+    "not_modified": 1,
+    "forced_full_fetch": 0,
     "relevance_candidates": 0,
     "ai_ok": 0,
     "ai_invalid": 0,
@@ -91,6 +91,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "scheduled",
-  "workflow_run_id": "40324713423"
+  "trigger": "manual",
+  "workflow_run_id": "40327543055"
 }

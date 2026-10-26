@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T124525Z-b4bddc14",
-  "generated_at": "2026-10-26T12:52:46.966678+00:00",
+  "run_id": "20261026T131041Z-d76c10fe",
+  "generated_at": "2026-10-26T13:14:53.118663+00:00",
   "source": {
     "id": "manual-4d61dbbf9926",
     "name": "FFIEC 031 and FFIEC 041 Instructions",
@@ -86,16 +86,16 @@
   },
   "events": [
     {
-      "event_id": "0f5113318b1e0dcf5a66129d2c4e54f53175f1871959e5e15c727166f08063c4",
+      "event_id": "9249d3d02411afa24fe8e226b032eb038423acd90a374c33d5da65b9e3bbd684",
       "event_type": "FETCH_ERROR",
       "url": "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_202609_i_0.pdf",
       "url_id": "4d61dbbf9926a5854a2fcca3322d8cfe1f09f2346aec69d87969eeb9be4daf84",
       "source_id": "manual-4d61dbbf9926",
-      "timestamp": "2026-10-26T12:52:46.966678+00:00",
-      "evidence_location": "data/evidence/0f5113318b1e0dcf5a66129d2c4e54f53175f1871959e5e15c727166f08063c4.json",
+      "timestamp": "2026-10-26T13:14:53.118663+00:00",
+      "evidence_location": "data/evidence/9249d3d02411afa24fe8e226b032eb038423acd90a374c33d5da65b9e3bbd684.json",
       "notification_id": "op-9b5b224c1aa6026bf5320113c3cafeea7f71de35ec32e93801711afc3798215c",
       "error_since": "2026-10-26T12:52:46.966678+00:00",
-      "error_runs": 1,
+      "error_runs": 2,
       "evidence": {
         "error": "BotCheckError: Cloudflare bot check: the browser could not get past it on www.ffiec.gov earlier in this scan; this URL keeps its last good copy and is tried again next scan"
       }
@@ -107,6 +107,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "scheduled",
-  "workflow_run_id": "40324713423"
+  "trigger": "manual",
+  "workflow_run_id": "40327543055"
 }
