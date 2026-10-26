@@ -435,7 +435,7 @@ class TestAnalystWorkbook(unittest.TestCase):
                 code = spec_diff.main([str(before), str(after), "-o", str(output), "--json", str(folder / "out.json"), "--exit-code"])
             self.assertEqual(code, 2)
             book = load_workbook(output)
-            self.assertEqual(book.sheetnames, ["Summary", "Spec Changes", "Cell Changes", "Patterns"])
+            self.assertEqual(book.sheetnames, ["Summary", "Spec Changes", "Cell Changes", "Patterns", "Columns", "Release Notes Audit"])
             sheet = book["Spec Changes"]
             header = [cell.value for cell in sheet[1]]
             self.assertIn("Impact", header)
