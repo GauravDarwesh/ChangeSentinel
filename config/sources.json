@@ -5209,6 +5209,708 @@
       "labels": [
         "FFIEC Forms/Instructions/Validations"
       ]
+    },
+    {
+      "id": "manual-4ec015045fb6",
+      "name": "FFIEC 009a Instructions",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009a-Form-Instructions.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC009a-Form-Instructions.pdf"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-805558eb6728",
+      "name": "FFIEC 019 Instructions",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/ffiec019-form-instructions.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/ffiec019-form-instructions.pdf"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-60bbdc7648d1",
+      "name": "FFIEC 002S Current",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "#block-uswds-ffiec-lastupdateddateblock",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec002s"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec002s"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-8e3ac9d98d33",
+      "name": "Reporting Forms: FFIEC 019 Current",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "#block-uswds-ffiec-lastupdateddateblock",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec019"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec019"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-2dd662f1976a",
+      "name": "FFIEC 030 and FFIEC 030S Instructions",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_FFIEC030S_202503_i.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_FFIEC030S_202503_i.pdf"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-6771dbf1dd2f",
+      "name": "FFIEC 030 Reporting Form",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_202503_f.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC030_202503_f.pdf"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-53c5ed4bcc68",
+      "name": "FFIEC 101 Instructions",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/ffiec101-form-instructions.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/ffiec101-form-instructions.pdf"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-07a75daa7b90",
+      "name": "FFIEC 102 Instructions",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/ffiec102-form-instructions.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/ffiec102-form-instructions.pdf"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-4d61dbbf9926",
+      "name": "FFIEC 031 and FFIEC 041 Instructions",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_202609_i_0.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_202609_i_0.pdf"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-4ba29007d88a",
+      "name": "Quarterly Call Report Supplemental Instructions",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_suppinst_202609.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_FFIEC051_suppinst_202609.pdf"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-1d7f76c3a5dd",
+      "name": "FFIEC 031 and FFIEC 041 Call Report Instructions Update",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_202609_i_updates.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC031_FFIEC041_202609_i_updates.pdf"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-4de97ed3cfca",
+      "name": "FFIEC 051 Instructions",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_202609_i.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_202609_i.pdf"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-e0579cc3eaee",
+      "name": "FFIEC 051 Call Report Instructions Update -",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_202609_i_updates.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/sites/default/files/data/reporting-forms/FFIEC051_202609_i_updates.pdf"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-4a8f75a5137d",
+      "name": "FFIEC 101 Validation",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-812e79092256",
+      "name": "FFIEC 102 Validation",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec102-validation"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec102-validation"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-1a4108fb1a78",
+      "name": "FFIEC 031 Supplemental",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec031-supplemental"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec031-supplemental"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-bddb877ff505",
+      "name": "FFIEC 041 Supplemental",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec041-supplemental"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec041-supplemental"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
+    },
+    {
+      "id": "manual-02077f2a6e12",
+      "name": "FFIEC 051 Supplemental",
+      "regulator": "www.ffiec.gov",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec051-supplemental"
+      ],
+      "allowed_prefixes": [
+        "https://www.ffiec.gov/"
+      ],
+      "allowed_urls": [
+        "https://www.ffiec.gov/resources/reporting-forms/ffiec051-supplemental"
+      ],
+      "allowed_domains": [
+        "www.ffiec.gov"
+      ],
+      "workspace": "NAM",
+      "labels": [
+        "FFIEC Forms/Instructions/Validations"
+      ]
     }
   ]
 }
