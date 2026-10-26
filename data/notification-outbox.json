@@ -1,4 +1,21 @@
 {
-  "pending_events": {},
-  "updated_at": "2026-10-23T12:53:55.349201+00:00"
+  "pending_events": {
+    "digest:all-weekly-20261026T0230Z": {
+      "event_id": "digest:all-weekly-20261026T0230Z",
+      "kind": "DIGEST",
+      "variant": "digest",
+      "url": null,
+      "digest_id": "all-weekly-20261026T0230Z",
+      "topic": "Weekly digest, all workspaces: 10 changes, 6 relevant",
+      "summary": "Several Federal Reserve reporting forms have been streamlined: FR 2028B, FR 2028S, FR 2028D and the CVA Sub\u2011schedule L.1 all received simplified table structures, column consolidations and reorganized layouts while keeping the same data fields. In addition, a guidance document removed a table and paragraphs covering CECL transitional amounts, AOCI opt\u2011out, supplementary leverage ratio and insurance underwriting definitions, and another form was reduced to only a legal citation, burden estimate and a brief table. The approved\u2011forms list also dropped entries for FFIEC 031 and FR Y\u20119C R\u20111867. The highest priority is the truncated reporting form that eliminates detailed schedules, as its loss of granular sections could impact reporting completeness and compliance.",
+      "impact": "\u25cf Federal Reserve \u2014 Recently Updated Forms Detail Pilot: FR 2028B and FR 2028S forms restructured; many table columns removed; QTFL reference labels incorporated; OMB control number 7100-0061 retained; approval expiration updated to January 31, 2027. \u2014 \u201c9912 Insured or Guaranteed by Consolidated Farm Service Agency Insured or Guaranteed by Other U.S. Agencies or Departments Not Insured by U.\u201d\n\u25cf Federal Reserve \u2014 Recently Updated Forms Detail Pilot: The Federal Reserve's Small Business Lending Survey form FR 2028D has been updated with revised formatting, including simplified table structures and reorganized layout for reporting questions on small business loan volumes and terms. \u2014 \u201cQSBL Yes No --- --- --- ---\u201d\n\u25cf Federal Reserve \u2014 Recently Updated Forms Detail Pilot: The Board of Governors restructured the layout of the CVA reporting form (Sub-schedule L.1), simplifying and reorganizing table headers across multiple sub-schedules including L.1.a, L.1.b.1, L.1.e, L.1.e.1, L.1.e.2, L.1.e.3, L.1.e.4, L.1.f.1, and L.1.f.2, consolidating and renaming columns while retaining the same underlying data fields. \u2014 \u201cStressed --- --- --- --- --- --- ---\u201d\n\u25cf Federal Reserve \u2014 Recently Updated Forms Detail Pilot: The updated document removes a table and several paragraphs that detailed adjustments for CECL transitional amounts, AOCI opt-out, supplementary leverage ratio, and insurance underwriting company definitions.\n\u25cf Federal Reserve \u2014 Recently Updated Forms Detail Pilot: The reporting form has been amended to a truncated version, removing detailed schedules and sections, retaining only legal citation, burden estimate, and a brief table. \u2014 \u201cCapital Assessments and Stress Testing Report FR Y-14Q GENERAL INSTRUCTIONS\u201d\n\u25cf Federal Reserve \u2014 Reporting Forms Pilot: Removal of FFIEC 031 and FR Y-9C R-1867 entries from the Recently Approved and Implemented forms table\n\u25cb Federal Reserve \u2014 Recently Updated Forms Detail Pilot: changed url\n\u25cb Federal Reserve \u2014 Recently Updated Forms Detail Pilot: changed url \u2014 \u201cBHCK Amount --- --- --- ---\u201d\n+ 2 more in the dashboard",
+      "reason": "Changes recorded 2026-10-19 to 2026-10-26 (UTC) on monitors in all workspaces.",
+      "priority": 3,
+      "tags": [
+        "newspaper",
+        "regulatory"
+      ]
+    }
+  },
+  "updated_at": "2026-10-26T04:30:00.943235+00:00"
 }

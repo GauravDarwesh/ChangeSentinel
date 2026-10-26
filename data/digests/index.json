@@ -2,8 +2,190 @@
   "schema_version": 1,
   "digests": {
     "all-weekly": {
-      "latest_moment": "2026-10-19T02:30:00+00:00",
-      "history": []
+      "latest_moment": "2026-10-26T02:30:00+00:00",
+      "history": [
+        {
+          "id": "all-weekly-20261026T0230Z",
+          "path": "data/digests/all-weekly/20261026T0230Z.json",
+          "period": {
+            "from": "2026-10-19T02:30:00+00:00",
+            "to": "2026-10-26T02:30:00+00:00"
+          },
+          "counts": {
+            "changes": 10,
+            "relevant": 6,
+            "not_relevant": 1,
+            "unassessed": 3,
+            "monitors": 2
+          },
+          "overview": "Several Federal Reserve reporting forms have been streamlined: FR 2028B, FR 2028S, FR 2028D and the CVA Sub‑schedule L.1 all received simplified table structures, column consolidations and reorganized layouts while keeping the same data fields. In addition, a guidance document removed a table and paragraphs covering CECL transitional amounts, AOCI opt‑out, supplementary leverage ratio and insurance underwriting definitions, and another form was reduced to only a legal citation, burden estimate and a brief table. The approved‑forms list also dropped entries for FFIEC 031 and FR Y‑9C R‑1867. The highest priority is the truncated reporting form that eliminates detailed schedules, as its loss of granular sections could impact reporting completeness and compliance."
+        }
+      ],
+      "workspace": "*",
+      "frequency": "weekly",
+      "latest": {
+        "schema_version": 1,
+        "id": "all-weekly-20261026T0230Z",
+        "digest_id": "all-weekly",
+        "workspace": "*",
+        "frequency": "weekly",
+        "period": {
+          "from": "2026-10-19T02:30:00+00:00",
+          "to": "2026-10-26T02:30:00+00:00"
+        },
+        "generated_at": "2026-10-26T04:30:00.936837+00:00",
+        "overview": "Several Federal Reserve reporting forms have been streamlined: FR 2028B, FR 2028S, FR 2028D and the CVA Sub‑schedule L.1 all received simplified table structures, column consolidations and reorganized layouts while keeping the same data fields. In addition, a guidance document removed a table and paragraphs covering CECL transitional amounts, AOCI opt‑out, supplementary leverage ratio and insurance underwriting definitions, and another form was reduced to only a legal citation, burden estimate and a brief table. The approved‑forms list also dropped entries for FFIEC 031 and FR Y‑9C R‑1867. The highest priority is the truncated reporting form that eliminates detailed schedules, as its loss of granular sections could impact reporting completeness and compliance.",
+        "overview_status": "ok",
+        "counts": {
+          "changes": 10,
+          "relevant": 6,
+          "not_relevant": 1,
+          "unassessed": 3,
+          "monitors": 2
+        },
+        "items": [
+          {
+            "event_id": "0259741aab372c486a138e87e485cfa10b2ce8c4eee40ce3c4f19bad0c915a8f",
+            "event_type": "CHANGED_URL",
+            "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=58f18be6-92e4-497c-ad0d-db006caa2e03",
+            "source_id": "fed-reporting-forms-detail-pilot",
+            "monitor": "Federal Reserve — Recently Updated Forms Detail Pilot",
+            "labels": [],
+            "at": "2026-10-19T05:58:07.879944+00:00",
+            "relevant": true,
+            "topic": "Federal Reserve forms FR 2028B and FR 2028S revision",
+            "summary": "FR 2028B and FR 2028S forms restructured; many table columns removed; QTFL reference labels incorporated; OMB control number 7100-0061 retained; approval expiration updated to January 31, 2027.",
+            "effective_date": "Not stated",
+            "quote": "9912 Insured or Guaranteed by Consolidated Farm Service Agency Insured or Guaranteed by Other U.S. Agencies or Departments Not Insured by U.S. Agencies or Departments Farm Real Estate Other Collateral Not Secured Originated by Your Bank Or…"
+          },
+          {
+            "event_id": "750e75b31da1971d71dd936c702181ce977230706a479e4cba8eecfe2091d07e",
+            "event_type": "CHANGED_URL",
+            "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=f59446fb-8250-4fbe-9db3-411d107bda3a",
+            "source_id": "fed-reporting-forms-detail-pilot",
+            "monitor": "Federal Reserve — Recently Updated Forms Detail Pilot",
+            "labels": [],
+            "at": "2026-10-19T05:58:07.879944+00:00",
+            "relevant": true,
+            "topic": "FR 2028D Small Business Lending Survey form layout revision",
+            "summary": "The Federal Reserve's Small Business Lending Survey form FR 2028D has been updated with revised formatting, including simplified table structures and reorganized layout for reporting questions on small business loan volumes and terms.",
+            "effective_date": "Not stated",
+            "quote": "QSBL Yes No --- --- --- ---"
+          },
+          {
+            "event_id": "50b008eb2ae1f4448e23376f388b8f6d684a54745c6bb2dfd8d735595029add2",
+            "event_type": "CHANGED_URL",
+            "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=6e93d22f-8c4d-434b-8236-93f29216776e",
+            "source_id": "fed-reporting-forms-detail-pilot",
+            "monitor": "Federal Reserve — Recently Updated Forms Detail Pilot",
+            "labels": [],
+            "at": "2026-10-19T05:58:07.879944+00:00",
+            "relevant": true,
+            "topic": "CVA counterparty exposure and credit valuation adjustment reporting (Sub-schedules L.1.a, L.1.b.1, L.1.e, L.1.e.1, L.1.e.2, L.1.e.3, L.1.e.4, L.1.f.1, L.1.f.2)",
+            "summary": "The Board of Governors restructured the layout of the CVA reporting form (Sub-schedule L.1), simplifying and reorganizing table headers across multiple sub-schedules including L.1.a, L.1.b.1, L.1.e, L.1.e.1, L.1.e.2, L.1.e.3, L.1.e.4, L.1.f.1, and L.1.f.2, consolidating and renaming columns while retaining the same underlying data fields.",
+            "effective_date": "Not stated",
+            "quote": "Stressed --- --- --- --- --- --- ---"
+          },
+          {
+            "event_id": "d63f24035c41c76857dd5c90ecfa9222b5d8d3d3c914626f192a47345a678e32",
+            "event_type": "CHANGED_URL",
+            "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=698a2ee2-3603-4151-ac3e-49d695e29e8f",
+            "source_id": "fed-reporting-forms-detail-pilot",
+            "monitor": "Federal Reserve — Recently Updated Forms Detail Pilot",
+            "labels": [],
+            "at": "2026-10-19T05:58:07.879944+00:00",
+            "relevant": true,
+            "topic": "Schedule HC-R instructions for FR Y-9C",
+            "summary": "The updated document removes a table and several paragraphs that detailed adjustments for CECL transitional amounts, AOCI opt-out, supplementary leverage ratio, and insurance underwriting company definitions.",
+            "effective_date": "Not stated",
+            "quote": ""
+          },
+          {
+            "event_id": "b1c1bf4b5044c6432e7c26591f0ca3999af309ab58a82d90de7d9cf69dd652b5",
+            "event_type": "CHANGED_URL",
+            "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=e19f2e85-cab1-48b7-a4f6-33d93bd4be12",
+            "source_id": "fed-reporting-forms-detail-pilot",
+            "monitor": "Federal Reserve — Recently Updated Forms Detail Pilot",
+            "labels": [],
+            "at": "2026-10-19T05:58:07.879944+00:00",
+            "relevant": true,
+            "topic": "Bank Holding Company reporting (FR Y-9C)",
+            "summary": "The reporting form has been amended to a truncated version, removing detailed schedules and sections, retaining only legal citation, burden estimate, and a brief table.",
+            "effective_date": "Not stated",
+            "quote": "Capital Assessments and Stress Testing Report FR Y-14Q GENERAL INSTRUCTIONS"
+          },
+          {
+            "event_id": "c89216e3b00e847563d351357b43772920c29a2266cccb68a8a651736f928219",
+            "event_type": "CHANGED_URL",
+            "url": "https://www.federalreserve.gov/apps/reportingforms/review",
+            "source_id": "fed-reporting-forms-pilot",
+            "monitor": "Federal Reserve — Reporting Forms Pilot",
+            "labels": [],
+            "at": "2026-10-22T04:23:52.384181+00:00",
+            "relevant": true,
+            "topic": "Federal Reserve reporting forms recently approved and implemented list",
+            "summary": "Removal of FFIEC 031 and FR Y-9C R-1867 entries from the Recently Approved and Implemented forms table",
+            "effective_date": "Not stated",
+            "quote": ""
+          },
+          {
+            "event_id": "c2f9da22155df2c4cecbe549ccd4015844ff3cb8fea8062d3439b0d3434aeb24",
+            "event_type": "CHANGED_URL",
+            "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=6914ef8d-789b-4b36-a636-06960f6c3972",
+            "source_id": "fed-reporting-forms-detail-pilot",
+            "monitor": "Federal Reserve — Recently Updated Forms Detail Pilot",
+            "labels": [],
+            "at": "2026-10-19T05:58:07.879944+00:00",
+            "relevant": null,
+            "topic": "",
+            "summary": "",
+            "effective_date": "",
+            "quote": ""
+          },
+          {
+            "event_id": "0c9cb7869d0a905f0197518bed2501c0eecd573b0c048002db1196ebea04dc0e",
+            "event_type": "CHANGED_URL",
+            "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=dd598245-8cad-4674-917a-56235b919d88",
+            "source_id": "fed-reporting-forms-detail-pilot",
+            "monitor": "Federal Reserve — Recently Updated Forms Detail Pilot",
+            "labels": [],
+            "at": "2026-10-19T05:58:07.879944+00:00",
+            "relevant": null,
+            "topic": "",
+            "summary": "",
+            "effective_date": "",
+            "quote": "BHCK Amount --- --- --- ---"
+          },
+          {
+            "event_id": "6f080f1161178961144a36431c8453eded773ccaabc29b7e9b4b4f923784a467",
+            "event_type": "CHANGED_URL",
+            "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=4fb13ec8-042d-4abd-89c6-4a9608a1e82a",
+            "source_id": "fed-reporting-forms-detail-pilot",
+            "monitor": "Federal Reserve — Recently Updated Forms Detail Pilot",
+            "labels": [],
+            "at": "2026-10-19T05:58:07.879944+00:00",
+            "relevant": null,
+            "topic": "",
+            "summary": "",
+            "effective_date": "",
+            "quote": "Line Line Item Name MDRM (CCFL) Detailed Description Allowed Values Format, Line Item Length --- --- --- --- --- --- --- ---"
+          },
+          {
+            "event_id": "1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1",
+            "event_type": "CHANGED_URL",
+            "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
+            "source_id": "fed-reporting-forms-pilot",
+            "monitor": "Federal Reserve — Reporting Forms Pilot",
+            "labels": [],
+            "at": "2026-10-20T04:32:57.616576+00:00",
+            "relevant": false,
+            "topic": "Reporting forms updates webpage content removal",
+            "summary": "Removal of entry regarding FR 3033p/FR 3033s final OMB supporting statement and July 21, 2026 date from the Federal Reserve reporting forms recent updates page.",
+            "effective_date": "Not stated",
+            "quote": ""
+          }
+        ]
+      }
     }
   }
 }
