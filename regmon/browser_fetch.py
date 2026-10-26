@@ -1,6 +1,6 @@
 """Browser loading: JavaScript-built pages, and getting past bot checks.
 
-Two jobs use the browser: Pydoll is primary (already used for crawl discovery), with SeleniumBase CDP as a fallback only when Pydoll still sees a bot check:
+Two jobs use the browser. Pydoll is the primary backend; SeleniumBase CDP takes over whenever Pydoll does not deliver the page (it still sees a bot check, or it fails to start or talk to Chrome):
 
 * ``fetch_mode: "browser"`` pages are loaded, given ``browser_wait_seconds``
   to settle (or until ``browser_wait_selector`` appears), a cookie or consent
@@ -291,6 +291,31 @@ def is_challenge_frame(url: str) -> bool:
     return url.startswith(CHALLENGE_FRAME_PREFIXES)
 
 
+# Query parameters a bot check adds to the page's own URL while it runs and
+# when it hands the browser back (Cloudflare: __cf_chl_rt_tk while checking,
+# __cf_chl_f_tk / __cf_chl_tk on the return). They are the vendor's, not the
+# site's, so scope is judged on the URL without them; otherwise a monitor
+# scoped to one exact URL blocks the return and the check can never finish.
+CHALLENGE_QUERY_PREFIXES = ("__cf_chl_",)
+
+
+def without_challenge_tokens(url: str) -> str:
+    """``url`` with any bot-check query parameters removed (other parameters kept in order)."""
+    from urllib.parse import parse_qsl, urlencode, urlunsplit
+
+    try:
+        parts = urlsplit(url)
+    except ValueError:
+        return url
+    if not parts.query or "__" not in parts.query:
+        return url
+    pairs = parse_qsl(parts.query, keep_blank_values=True)
+    kept = [(key, value) for key, value in pairs if not key.lower().startswith(CHALLENGE_QUERY_PREFIXES)]
+    if len(kept) == len(pairs):
+        return url
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(kept), parts.fragment))
+
+
 def _allowed(url: str, resource_type: str, in_scope, main_frame: bool = True) -> bool:
     if not url.startswith(("http://", "https://")):
         # data:, blob: and about: never leave the browser.
@@ -299,7 +324,7 @@ def _allowed(url: str, resource_type: str, in_scope, main_frame: bool = True) ->
         validate_public_http_url(url, resolve_dns=True)
     except Exception:
         return False
-    if resource_type == "Document" and in_scope is not None and not in_scope(url):
+    if resource_type == "Document" and in_scope is not None and not in_scope(without_challenge_tokens(url)):
         # A bot check draws its widget in a frame from the vendor's host;
         # blocking that frame means the check can never pass.
         return not main_frame and is_challenge_frame(url)
@@ -454,6 +479,46 @@ async def _read_stream(page: _Page, handle: str, max_bytes: int) -> bytes:
             pass
 
 
+# Cookies from earlier loads in this run. A passed check's clearance cookie
+# (cf_clearance, datadome ...) is put back before the next load, so one pass
+# serves every URL on that site. Chrome writes cookies to its profile only
+# lazily, and Pydoll 3 closes it before that happens, so the profile alone
+# does not carry them over. Kept in memory for this process only.
+_COOKIE_JAR: list[dict] = []
+_MAX_COOKIES = 500
+_COOKIE_FIELDS = ("name", "value", "domain", "path", "secure", "httpOnly", "sameSite", "expires")
+
+
+async def _restore_cookies(page: _Page) -> None:
+    if not _COOKIE_JAR:
+        return
+    try:
+        await page.send("Network.setCookies", {"cookies": list(_COOKIE_JAR)})
+    except Exception:
+        # One cookie Chrome will not take must not cost the others.
+        for cookie in list(_COOKIE_JAR):
+            try:
+                await page.send("Network.setCookie", cookie)
+            except Exception:
+                pass  # a fresh check is the worst case
+
+
+async def _remember_cookies(page: _Page) -> None:
+    try:
+        cookies = (await page.send("Network.getAllCookies")).get("cookies") or []
+    except Exception:
+        return
+    kept = []
+    for cookie in cookies:
+        if not cookie.get("name") or not cookie.get("domain"):
+            continue
+        entry = {key: cookie[key] for key in _COOKIE_FIELDS if key in cookie}
+        if cookie.get("session") or float(entry.get("expires") or -1) <= 0:
+            entry.pop("expires", None)
+        kept.append(entry)
+    _COOKIE_JAR[:] = kept[-_MAX_COOKIES:]
+
+
 async def _drive(page: _Page, url: str, *, want: str = "dom", wait_seconds: float = 0, wait_selector: str = "",
                  dismiss: bool = True, in_scope=None, steps: list[dict] | None = None, screenshot: bool = False,
                  challenge_wait: float | None = None, max_bytes: int = MAX_RESOURCE_BYTES,
@@ -514,7 +579,7 @@ async def _drive(page: _Page, url: str, *, want: str = "dom", wait_seconds: floa
                 stream = await page.send("Fetch.takeResponseBodyAsStream", {"requestId": request_id})
                 body = await _read_stream(page, stream["stream"], max_bytes)
                 shown = PLACEHOLDER  # a file shown as a page would become a download
-            captured.update(status=status, url=target, content_type=content_type, body=body,
+            captured.update(status=status, url=without_challenge_tokens(target), content_type=content_type, body=body,
                             headers={str(h.get("name", "")).lower(): str(h.get("value", "")) for h in headers})
             passed = [h for h in headers if str(h.get("name", "")).lower() not in _HOP_HEADERS]
             if shown is PLACEHOLDER:
@@ -569,62 +634,66 @@ async def _drive(page: _Page, url: str, *, want: str = "dom", wait_seconds: floa
         {"urlPattern": "*", "requestStage": "Request"},
         {"urlPattern": "*", "resourceType": "Document", "requestStage": "Response"},
     ]})
-    navigation = await page.send("Page.navigate", {"url": url})
-    if navigation.get("errorText") and navigation["errorText"] != "net::ERR_ABORTED":
-        raise RuntimeError(f"Browser could not load the page: {navigation['errorText']}")
+    await _restore_cookies(page)
+    try:
+        navigation = await page.send("Page.navigate", {"url": url})
+        if navigation.get("errorText") and navigation["errorText"] != "net::ERR_ABORTED":
+            raise RuntimeError(f"Browser could not load the page: {navigation['errorText']}")
 
-    # Wait for the real document: at once without a check, after the check otherwise.
-    deadline = loop.time() + RENDER_TIMEOUT_SECONDS
-    check_started = False
-    while not arrived.is_set():
-        if seen and not check_started:
-            check_started = True
-            deadline = min(deadline, loop.time() + challenge_wait)
-        if loop.time() >= deadline:
-            break
-        try:
-            await asyncio.wait_for(arrived.wait(), timeout=0.5)
-        except asyncio.TimeoutError:
-            pass
-    if failure:
-        raise RuntimeError(f"Browser could not read the response: {type(failure[0]).__name__}: {failure[0]}")
-    if not captured:
-        page_now = await source()
-        vendor = (seen[0] if seen else "") or botcheck.detect(page_now) or ""
-        if vendor:
-            raise ChallengeNotPassed(vendor, page_now, cleared=await cleared(), waited=challenge_wait)
-        raise RuntimeError("Browser got no response for the page in time")
-    challenge = seen[0] if seen else ""
-    is_file = bool(captured["content_type"]) and "html" not in captured["content_type"].lower()
-    if want == "resource" or is_file:
-        return Rendered(html=captured["body"] if not is_file else b"", final_url=captured["url"], blocked=blocked, consent="",
-                        status=captured["status"], content_type=captured["content_type"] or "text/html; charset=utf-8",
-                        body=captured["body"], headers=captured["headers"], challenge=challenge)
-
-    # Rendered page: let it finish loading, then the usual settle, consent and steps.
-    ready_by = loop.time() + 15
-    while loop.time() < ready_by and str(await evaluate("document.readyState") or "") != "complete":
-        await sleep(0.25)
-    consent_text = ""
-    if dismiss:
-        await sleep(0.8)
-        consent_text = str(await evaluate(DISMISS_SCRIPT) or "")
-    settle_by = loop.time() + wait_seconds
-    if wait_selector:
-        import json
-
-        while loop.time() < settle_by:
-            if await evaluate("!!document.querySelector(" + json.dumps(str(wait_selector)) + ")"):
+        # Wait for the real document: at once without a check, after the check otherwise.
+        deadline = loop.time() + RENDER_TIMEOUT_SECONDS
+        check_started = False
+        while not arrived.is_set():
+            if seen and not check_started:
+                check_started = True
+                deadline = min(deadline, loop.time() + challenge_wait)
+            if loop.time() >= deadline:
                 break
+            try:
+                await asyncio.wait_for(arrived.wait(), timeout=0.5)
+            except asyncio.TimeoutError:
+                pass
+        if failure:
+            raise RuntimeError(f"Browser could not read the response: {type(failure[0]).__name__}: {failure[0]}")
+        if not captured:
+            page_now = await source()
+            vendor = (seen[0] if seen else "") or botcheck.detect(page_now) or ""
+            if vendor:
+                raise ChallengeNotPassed(vendor, page_now, cleared=await cleared(), waited=challenge_wait)
+            raise RuntimeError("Browser got no response for the page in time")
+        challenge = seen[0] if seen else ""
+        is_file = bool(captured["content_type"]) and "html" not in captured["content_type"].lower()
+        if want == "resource" or is_file:
+            return Rendered(html=captured["body"] if not is_file else b"", final_url=captured["url"], blocked=blocked, consent="",
+                            status=captured["status"], content_type=captured["content_type"] or "text/html; charset=utf-8",
+                            body=captured["body"], headers=captured["headers"], challenge=challenge)
+
+        # Rendered page: let it finish loading, then the usual settle, consent and steps.
+        ready_by = loop.time() + 15
+        while loop.time() < ready_by and str(await evaluate("document.readyState") or "") != "complete":
             await sleep(0.25)
-    else:
-        await sleep(max(0.0, wait_seconds))
-    replayed = await run_steps(evaluate, steps or [], sleep=sleep)
-    image = await _screenshot(page, evaluate) if screenshot else None
-    html = await source()
-    final = str(await evaluate("location.href") or url)
-    return Rendered(html=html, final_url=final, blocked=blocked, consent=consent_text, screenshot=image, steps=replayed,
-                    status=captured["status"], headers=captured["headers"], challenge=challenge)
+        consent_text = ""
+        if dismiss:
+            await sleep(0.8)
+            consent_text = str(await evaluate(DISMISS_SCRIPT) or "")
+        settle_by = loop.time() + wait_seconds
+        if wait_selector:
+            import json
+
+            while loop.time() < settle_by:
+                if await evaluate("!!document.querySelector(" + json.dumps(str(wait_selector)) + ")"):
+                    break
+                await sleep(0.25)
+        else:
+            await sleep(max(0.0, wait_seconds))
+        replayed = await run_steps(evaluate, steps or [], sleep=sleep)
+        image = await _screenshot(page, evaluate) if screenshot else None
+        html = await source()
+        final = str(await evaluate("location.href") or url)
+        return Rendered(html=html, final_url=final, blocked=blocked, consent=consent_text, screenshot=image, steps=replayed,
+                        status=captured["status"], headers=captured["headers"], challenge=challenge)
+    finally:
+        await _remember_cookies(page)
 
 
 async def _screenshot(page: _Page, evaluate) -> bytes | None:
@@ -642,18 +711,44 @@ async def _screenshot(page: _Page, evaluate) -> bytes | None:
         return None
 
 
-async def _render(url: str, binary: str, **options) -> Rendered:
-    # Pydoll 3 exposes Chrome/ChromiumOptions at the package level. Its
-    # start() returns the initial Tab directly; _drive still uses the same
-    # raw CDP commands and scope checks through _PydollPage.
-    from pydoll import Chrome, ChromiumOptions
+def _pydoll_default_arguments() -> set[str]:
+    """The switches Pydoll adds by itself when it starts Chrome.
+
+    Pydoll 3 appends them after ours and refuses any it finds already present
+    (ArgumentAlreadyExistsInOptions), so they must not be passed twice.
+    """
+    try:
+        from pydoll import ChromiumOptions
+        from pydoll.browser.managers import ChromiumOptionsManager
+
+        probe = ChromiumOptions()
+        ChromiumOptionsManager(probe).add_default_arguments()
+        return set(probe.arguments)
+    except Exception:
+        return {"--no-first-run", "--no-default-browser-check"}
+
+
+def pydoll_options(binary: str):
+    """Pydoll ChromiumOptions carrying launch_arguments() without the switches Pydoll adds itself."""
+    from pydoll import ChromiumOptions
 
     chrome_options = ChromiumOptions()
     if binary:
         chrome_options.binary_location = binary
+    skip = _pydoll_default_arguments()
     for argument in launch_arguments(binary):
-        chrome_options.add_argument(argument)
-    async with Chrome(options=chrome_options) as browser:
+        if argument not in skip and argument not in chrome_options.arguments:
+            chrome_options.add_argument(argument)
+    return chrome_options
+
+
+async def _render(url: str, binary: str, **options) -> Rendered:
+    # Pydoll 3 exposes Chrome/ChromiumOptions at the package level. Its
+    # start() returns the initial Tab directly; _drive still uses the same
+    # raw CDP commands and scope checks through _PydollPage.
+    from pydoll import Chrome
+
+    async with Chrome(options=pydoll_options(binary)) as browser:
         page = await browser.start()
         return await _drive(_PydollPage(page), url, **options)
 
@@ -689,7 +784,12 @@ async def _render_seleniumbase(url: str, binary: str, **options) -> Rendered:
 
 
 async def _render_with_fallback(url: str, binary: str, **options) -> Rendered:
-    """Try Pydoll first; try SeleniumBase CDP only if the first browser sees a challenge."""
+    """Try Pydoll first; use SeleniumBase CDP whenever Pydoll does not deliver the page.
+
+    That covers a challenge Pydoll could not pass and also Pydoll failing on
+    its own (a launch or protocol error after a library upgrade): one broken
+    backend must not leave every protected monitor without a browser.
+    """
     if not _pydoll_available():
         if _seleniumbase_available():
             return await _render_seleniumbase(url, binary, **options)
@@ -697,7 +797,9 @@ async def _render_with_fallback(url: str, binary: str, **options) -> Rendered:
 
     try:
         return await _render(url, binary, **options)
-    except ChallengeNotPassed as primary:
+    except asyncio.CancelledError:
+        raise
+    except Exception as primary:
         if not _seleniumbase_available():
             raise
         try:
@@ -707,15 +809,18 @@ async def _render_with_fallback(url: str, binary: str, **options) -> Rendered:
             # through the challenge than the primary browser.
             raise
         except Exception as fallback_error:
-            # Keep the known bot-check classification and saved challenge page.
-            # The chained exception retains the SeleniumBase failure for debugging.
-            raise primary from fallback_error
+            if isinstance(primary, ChallengeNotPassed):
+                # Keep the known bot-check classification and saved challenge page.
+                # The chained exception retains the SeleniumBase failure for debugging.
+                raise primary from fallback_error
+            raise RuntimeError(f"both browsers failed: Pydoll {type(primary).__name__}: {primary}; "
+                               f"SeleniumBase {type(fallback_error).__name__}: {fallback_error}") from fallback_error
 
 
 def render(url: str, *, wait_seconds: float = DEFAULT_WAIT_SECONDS, wait_selector: str = "", dismiss_cookies: bool = True,
            in_scope=None, steps: list[dict] | None = None, screenshot: bool = False, want: str = "dom",
            max_bytes: int = MAX_RESOURCE_BYTES) -> Rendered:
-    """Load one URL in headless Chrome, using SeleniumBase CDP if Pydoll cannot pass a challenge.
+    """Load one URL in headless Chrome, using SeleniumBase CDP if Pydoll cannot deliver it.
 
     ``want="resource"`` returns the server's original response (including PDFs)
     when the browser clears the check; unresolved challenges remain fetch errors.

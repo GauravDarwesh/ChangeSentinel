@@ -227,6 +227,17 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(sum("earlier in this scan" in error for error in errors), 3)
         self.assertTrue(all(record.get("bot_check") for record in result["inventory"].values()))
 
+    def test_urls_left_for_the_next_scan_say_why_the_browser_failed(self):
+        urls = [f"https://example.test/policy/{index}" for index in range(4)]
+        with Sandbox(source=source(seed_urls=urls)) as sandbox:
+            sandbox.discovered = urls
+            with patch("regmon.browser_fetch.render", side_effect=RuntimeError("Chrome would not start")), \
+                    patch("regmon.browser_fetch.available", return_value=True):
+                result = sandbox.scan(lambda *a, **k: ok(CLOUDFLARE))
+        left = [record["fetch_error"] for record in result["inventory"].values() if "earlier in this scan" in record["fetch_error"]]
+        self.assertEqual(len(left), 2)
+        self.assertTrue(all("the browser failed: RuntimeError: Chrome would not start" in error for error in left))
+
     def refused(self, *statuses):
         """A fetch that answers each call with the next bare refusal status (then the last one)."""
         calls = []
@@ -280,6 +291,38 @@ class SafetyTests(unittest.TestCase):
             self.assertTrue(browser_fetch._allowed("https://public.test/scope/page", "Document", in_scope))
             self.assertFalse(browser_fetch._allowed("file:///etc/passwd", "Document", in_scope))
             self.assertTrue(browser_fetch._allowed("data:image/png;base64,AA", "Image", in_scope))
+
+    def test_a_challenge_return_to_an_exact_url_monitor_stays_in_scope(self):
+        # FFIEC, 26 Oct 2026: monitors scoped to one exact URL blocked
+        # Cloudflare's hand-back (?__cf_chl_f_tk=...), so the check never ended.
+        page = "https://www.ffiec.gov/resources/reporting-forms"
+        in_scope = lambda url: url == page
+        with patch("regmon.browser_fetch.validate_public_http_url"):
+            for token in ("__cf_chl_f_tk", "__cf_chl_rt_tk", "__cf_chl_tk", "__cf_chl_jschl_tk__"):
+                with self.subTest(token=token):
+                    self.assertTrue(browser_fetch._allowed(f"{page}?{token}=abc.123-0", "Document", in_scope))
+            # Only the vendor's parameters are set aside; anything else still counts.
+            self.assertFalse(browser_fetch._allowed(f"{page}?other=1&__cf_chl_f_tk=x", "Document", in_scope))
+            self.assertFalse(browser_fetch._allowed("https://www.ffiec.gov/elsewhere?__cf_chl_f_tk=x", "Document", in_scope))
+        self.assertEqual(browser_fetch.without_challenge_tokens(f"{page}?a=1&__cf_chl_tk=x&b=2"), f"{page}?a=1&b=2")
+        self.assertEqual(browser_fetch.without_challenge_tokens(f"{page}?a=1"), f"{page}?a=1")
+        self.assertEqual(browser_fetch.without_challenge_tokens(page), page)
+
+    @unittest.skipUnless(browser_fetch._pydoll_available(), "Pydoll is not installed")
+    def test_pydoll_accepts_the_launch_options(self):
+        # Pydoll 3 adds --no-first-run itself and raised ArgumentAlreadyExistsInOptions
+        # before Chrome started, on every protected URL (26 Oct 2026).
+        from pydoll import Chrome
+
+        with patch("regmon.browser_fetch.subprocess.run", return_value=MagicMock(stdout="Google Chrome 141.0.7390.122\n")):
+            browser_fetch._VERSIONS.pop("/fake/chrome", None)
+            options = browser_fetch.pydoll_options("/fake/chrome")
+            wanted = browser_fetch.launch_arguments("/fake/chrome")
+        browser = Chrome(options=options)  # applies Pydoll's own defaults; nothing is launched
+        arguments = browser.options.arguments
+        self.assertEqual(len(arguments), len(set(arguments)))
+        for argument in wanted:
+            self.assertIn(argument, arguments)
 
     def test_only_a_frame_may_come_from_a_challenge_host(self):
         in_scope = lambda url: url.startswith("https://www.ffiec.gov/")
@@ -359,6 +402,9 @@ class SafetyTests(unittest.TestCase):
         from challenge_site import PAGE, PDF as BIG_PDF, serve
 
         with serve() as (site, _widget, _hits), patch("regmon.browser_fetch.validate_public_http_url"), \
+                tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as profile, \
+                patch.object(browser_fetch, "profile_dir", return_value=profile), \
+                patch.object(browser_fetch, "_COOKIE_JAR", []), \
                 patch.object(browser_fetch, "CHALLENGE_FRAME_HOSTS", frozenset({"localhost"})):
             in_scope = lambda target: target.startswith(site + "/")
             first = browser_fetch.render(site + "/forms/big.pdf", want="resource", in_scope=in_scope)
@@ -371,6 +417,41 @@ class SafetyTests(unittest.TestCase):
         self.assertEqual((second.challenge, second.body), ("", PAGE))  # the clearance carried over
 
     @unittest.skipUnless(os.environ.get("CHANGESENTINEL_BROWSER_TEST") and browser_fetch.available(), "set CHANGESENTINEL_BROWSER_TEST=1 to load pages in a real browser")
+    def test_a_real_browser_finishes_a_check_that_hands_back_through_the_url_of_an_exact_monitor(self):
+        from challenge_site import PAGE, PDF as BIG_PDF, serve
+
+        with serve() as (site, _widget, hits), tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as profile, \
+                patch("regmon.browser_fetch.validate_public_http_url"), \
+                patch.object(browser_fetch, "_COOKIE_JAR", []), \
+                patch.object(browser_fetch, "profile_dir", return_value=profile), \
+                patch.object(browser_fetch, "CHALLENGE_FRAME_HOSTS", frozenset({"localhost"})):
+            page_url, pdf_url = site + "/cf/reporting-forms", site + "/cf/FFIEC002_202609_f.pdf"
+            page = browser_fetch.render(page_url, want="resource", in_scope=lambda target: target == page_url)
+            pdf = browser_fetch.render(pdf_url, want="resource", in_scope=lambda target: target == pdf_url)
+        self.assertTrue(any(method == "POST" and "__cf_chl_f_tk=" in path for method, path in hits))
+        self.assertEqual((page.challenge, page.status, page.body), ("Cloudflare", 200, PAGE))
+        self.assertEqual(page.final_url, page_url)
+        self.assertEqual((pdf.status, pdf.body), (200, BIG_PDF))
+
+    @unittest.skipUnless(os.environ.get("CHANGESENTINEL_BROWSER_TEST") and browser_fetch.available(), "set CHANGESENTINEL_BROWSER_TEST=1 to load pages in a real browser")
+    def test_a_real_seleniumbase_takes_over_when_pydoll_fails_to_start(self):
+        from challenge_site import PDF as BIG_PDF, serve
+
+        with (
+            serve() as (site, _widget, _hits),
+            tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as profile,
+            patch("regmon.browser_fetch.validate_public_http_url"),
+            patch.object(browser_fetch, "_COOKIE_JAR", []),
+            patch.object(browser_fetch, "CHALLENGE_FRAME_HOSTS", frozenset({"localhost"})),
+            patch.object(browser_fetch, "profile_dir", return_value=profile),
+            patch("regmon.browser_fetch._render", side_effect=RuntimeError("Pydoll could not start Chrome")),
+        ):
+            url = site + "/cf/FFIEC009_202603_f.pdf"
+            result = browser_fetch.render(url, want="resource", in_scope=lambda target: target == url)
+
+        self.assertEqual((result.challenge, result.status, result.body), ("Cloudflare", 200, BIG_PDF))
+
+    @unittest.skipUnless(os.environ.get("CHANGESENTINEL_BROWSER_TEST") and browser_fetch.available(), "set CHANGESENTINEL_BROWSER_TEST=1 to load pages in a real browser")
     def test_a_real_seleniumbase_fallback_gets_the_original_pdf_after_a_challenge(self):
         from challenge_site import PDF as BIG_PDF, serve
 
@@ -379,8 +460,9 @@ class SafetyTests(unittest.TestCase):
         initial_challenge = browser_fetch.ChallengeNotPassed("Cloudflare", CLOUDFLARE)
         with (
             serve() as (site, _widget, _hits),
-            tempfile.TemporaryDirectory() as profile,
+            tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as profile,
             patch("regmon.browser_fetch.validate_public_http_url"),
+            patch.object(browser_fetch, "_COOKIE_JAR", []),
             patch.object(browser_fetch, "CHALLENGE_FRAME_HOSTS", frozenset({"localhost"})),
             patch.object(browser_fetch, "profile_dir", return_value=profile),
             patch("regmon.browser_fetch._render", side_effect=initial_challenge),
@@ -398,6 +480,7 @@ class SafetyTests(unittest.TestCase):
         original = browser_fetch.launch_arguments
         local = lambda binary: original(binary) + [f"--host-resolver-rules=MAP {HCAPTCHA_HOST} 127.0.0.1", "--proxy-bypass-list=<-loopback>"]
         with serve() as (site, _widget, hits), patch("regmon.browser_fetch.validate_public_http_url"), \
+                patch.object(browser_fetch, "_COOKIE_JAR", []), \
                 patch.object(browser_fetch, "launch_arguments", local):
             in_scope = lambda target: target.startswith(site + "/")
             imperva = browser_fetch.render(site + "/imperva/x.pdf", want="resource", in_scope=in_scope)

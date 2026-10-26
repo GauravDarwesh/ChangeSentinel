@@ -553,7 +553,25 @@ def apply_visual(uid: str, shot: bytes, old: dict | None, item: dict, now: str, 
 # next scan instead of each spending a full challenge wait.
 BROWSER_GIVE_UP_AFTER = 2
 _BROWSER_GIVEN_UP: dict[str, int] = {}
+# Why the browser last failed on each host, so the URLs left for the next scan
+# say what actually happened (a check it could not pass, or a browser fault).
+_BROWSER_LAST_FAILURE: dict[str, str] = {}
 _BROWSER_GATE = __import__("threading").Lock()
+
+
+def _browser_failed(host: str, reason: str) -> None:
+    _BROWSER_GIVEN_UP[host] = _BROWSER_GIVEN_UP.get(host, 0) + 1
+    _BROWSER_LAST_FAILURE[host] = reason[:300]
+
+
+def _browser_recovered(host: str) -> None:
+    _BROWSER_GIVEN_UP.pop(host, None)
+    _BROWSER_LAST_FAILURE.pop(host, None)
+
+
+def _given_up_reason(host: str) -> str:
+    reason = _BROWSER_LAST_FAILURE.get(host, "")
+    return f" (last attempt: {reason})" if reason else ""
 
 
 def _host_of(url: str) -> str:
@@ -614,24 +632,24 @@ def _after_refusal(url: str, source: SourceConfig, exc: HTTPStatusError, item: d
         raise AccessRefusedError(f"HTTP {status} refusal: {host} refuses automated requests and no browser is available")
     with _BROWSER_GATE:
         if _BROWSER_GIVEN_UP.get(host, 0) >= BROWSER_GIVE_UP_AFTER:
-            raise AccessRefusedError(f"HTTP {status} refusal: {host} refused the browser earlier in this scan; "
+            raise AccessRefusedError(f"HTTP {status} refusal: {host} refused the browser earlier in this scan{_given_up_reason(host)}; "
                                      "this URL keeps its last good copy and is tried again next scan")
         try:
             rendered = browser_fetch.render(url, want="resource", in_scope=lambda target: in_scope(canonical(target), source),
                                             max_bytes=int(DEFAULTS.get("max_response_bytes", 200 * 1024 * 1024)))
         except browser_fetch.ChallengeNotPassed as challenge:
-            _BROWSER_GIVEN_UP[host] = _BROWSER_GIVEN_UP.get(host, 0) + 1
+            _browser_failed(host, str(challenge))
             item["bot_check"] = capture_bot_check(item["url_id"], challenge.page or b"", challenge.vendor, now, "browser")
             raise BotCheckError(str(challenge)) from challenge
         except Exception as failure:
-            _BROWSER_GIVEN_UP[host] = _BROWSER_GIVEN_UP.get(host, 0) + 1
+            _browser_failed(host, f"the browser failed: {type(failure).__name__}: {failure}")
             raise AccessRefusedError(f"HTTP {status} refusal: {host} refuses automated requests and the browser could not load it: "
                                      f"{type(failure).__name__}: {failure}") from failure
         if rendered.status in REFUSAL_STATUSES or rendered.status == 401:
-            _BROWSER_GIVEN_UP[host] = _BROWSER_GIVEN_UP.get(host, 0) + 1
+            _browser_failed(host, f"HTTP {rendered.status} in the browser")
             raise AccessRefusedError(f"HTTP {rendered.status} refusal: {host} refused this URL in a browser too "
                                      "(the site may block this network, or the file was removed or made private)")
-        _BROWSER_GIVEN_UP.pop(host, None)
+        _browser_recovered(host)
     body = rendered.body if rendered.body is not None else rendered.html
     if rendered.status >= 400:
         raise HTTPStatusError(f"HTTP {rendered.status} for {url} (loaded in a browser)", rendered.status, rendered.content_type, body)
@@ -678,7 +696,7 @@ def _browser_pass(url: str, source: SourceConfig, result: FetchResult, item: dic
     want = "dom" if source.fetch_mode == "browser" else "resource"
     with _BROWSER_GATE:
         if vendor and _BROWSER_GIVEN_UP.get(host, 0) >= BROWSER_GIVE_UP_AFTER:
-            refuse(f"{vendor} bot check: the browser could not get past it on {host} earlier in this scan; "
+            refuse(f"{vendor} bot check: the browser could not get past it on {host} earlier in this scan{_given_up_reason(host)}; "
                    "this URL keeps its last good copy and is tried again next scan")
         try:
             rendered = browser_fetch.render(
@@ -688,14 +706,14 @@ def _browser_pass(url: str, source: SourceConfig, result: FetchResult, item: dic
                 max_bytes=int(DEFAULTS.get("max_response_bytes", 200 * 1024 * 1024)),
             )
         except browser_fetch.ChallengeNotPassed as exc:
-            _BROWSER_GIVEN_UP[host] = _BROWSER_GIVEN_UP.get(host, 0) + 1
+            _browser_failed(host, str(exc))
             refuse(str(exc), exc.page or None, exc.vendor, "browser", exc)
         except Exception as exc:
             if vendor:
-                _BROWSER_GIVEN_UP[host] = _BROWSER_GIVEN_UP.get(host, 0) + 1
+                _browser_failed(host, f"the browser failed: {type(exc).__name__}: {exc}")
                 refuse(f"{vendor} bot check returned instead of the page; the browser could not load it: {type(exc).__name__}: {exc}", cause=exc)
             raise
-        _BROWSER_GIVEN_UP.pop(host, None)
+        _browser_recovered(host)
     body = rendered.body if rendered.body is not None else rendered.html
     content_type = rendered.content_type if rendered.body is not None else "text/html; charset=utf-8"
     if "html" in content_type.lower():
