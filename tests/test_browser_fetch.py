@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import dataclasses
 import json
+import tempfile
 import os
 import unittest
 from pathlib import Path
@@ -368,6 +369,24 @@ class SafetyTests(unittest.TestCase):
         self.assertEqual((first.challenge, first.status, first.body), ("Cloudflare", 200, BIG_PDF))
         self.assertIn("pdf", first.content_type)
         self.assertEqual((second.challenge, second.body), ("", PAGE))  # the clearance carried over
+
+    @unittest.skipUnless(os.environ.get("CHANGESENTINEL_BROWSER_TEST") and browser_fetch.available(), "set CHANGESENTINEL_BROWSER_TEST=1 to load pages in a real browser")
+    def test_a_real_seleniumbase_fallback_gets_the_original_pdf_after_a_challenge(self):
+        from challenge_site import PDF as BIG_PDF, serve
+
+        # Force the primary backend to report the challenge so this exercises
+        # the real SeleniumBase fallback, not just Pydoll's happy path.
+        initial_challenge = browser_fetch.ChallengeNotPassed("Cloudflare", CLOUDFLARE)
+        with serve() as (site, _widget, _hits), tempfile.TemporaryDirectory() as profile, \\
+                patch("regmon.browser_fetch.validate_public_http_url"), \\
+                patch.object(browser_fetch, "CHALLENGE_FRAME_HOSTS", frozenset({"localhost"})), \\
+                patch.object(browser_fetch, "profile_dir", return_value=profile), \\
+                patch("regmon.browser_fetch._render", side_effect=initial_challenge):
+            in_scope = lambda target: target.startswith(site + "/")
+            result = browser_fetch.render(site + "/forms/big.pdf", want="resource", in_scope=in_scope)
+
+        self.assertEqual((result.challenge, result.status, result.body), ("Cloudflare", 200, BIG_PDF))
+        self.assertIn("pdf", result.content_type.lower())
 
     @unittest.skipUnless(os.environ.get("CHANGESENTINEL_BROWSER_TEST") and browser_fetch.available(), "set CHANGESENTINEL_BROWSER_TEST=1 to load pages in a real browser")
     def test_a_real_browser_handles_other_vendors_and_the_owners_proxy(self):
