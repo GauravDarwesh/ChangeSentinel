@@ -69,8 +69,18 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           AI_TIMEOUT_SECONDS: "60"
-          AI_ATTEMPTS: "2"
-        run: python -m regmon.ai --smoke-test
+          # Stacked PRs run this gate at the same moment and the free router
+          # answers bursts with HTTP 429; four attempts wait out the burst.
+          AI_ATTEMPTS: "4"
+        run: |
+          set -o pipefail
+          if ! python -m regmon.ai --smoke-test | tee smoke-test.json; then
+            # Surface the provider's reason as an annotation: it is readable from
+            # the checks API and the PR page without downloading the job log.
+            reason="$(python -c 'import json; d = json.load(open("smoke-test.json")); print(d.get("ai_status", "?"), "-", d.get("reason", ""))' 2>/dev/null || echo "no result written")"
+            echo "::error title=AI smoke test failed::${reason}"
+            exit 1
+          fi
 
       # Each of the 12 model-routed fixtures is evaluated twice; invalid provider
       # responses can retry once. Keep the free route as the default.

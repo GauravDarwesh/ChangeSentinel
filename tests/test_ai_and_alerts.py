@@ -161,6 +161,17 @@ class TestAIRobustness(unittest.TestCase):
         sleep.assert_called_once_with(7.0)
 
     @patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"})
+    @patch("regmon.ai.time.sleep")
+    @patch("regmon.ai.requests.post")
+    def test_rate_limit_without_retry_after_backs_off_past_the_burst(self, post, sleep):
+        post.side_effect = [self.response(status=429), self.response(status=429), self.response(content=json.dumps(ANALYSIS))]
+        result = analyze("R", "https://example.test", "CHANGED_URL", "-a\n+b", "b", AIConfig(attempts=3))
+        self.assertEqual(result["status"], "ok")
+        waits = [call.args[0] for call in sleep.call_args_list]
+        self.assertEqual(len(waits), 2)
+        self.assertTrue(5.0 <= waits[0] <= 7.0 and 15.0 <= waits[1] <= 17.0, waits)
+
+    @patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"})
     @patch("regmon.ai.requests.post")
     def test_scraped_text_cannot_close_the_evidence_block(self, post):
         post.return_value = self.response(content=json.dumps(ANALYSIS))
