@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261026T152608Z-64b232c5",
-  "generated_at": "2026-10-26T15:40:28.092993+00:00",
+  "run_id": "20261026T223608Z-cccaefcb",
+  "generated_at": "2026-10-26T22:47:35.898857+00:00",
   "source": {
     "id": "manual-4a8f75a5137d",
     "name": "FFIEC 101 Validation",
@@ -86,70 +86,15 @@
   },
   "events": [
     {
-      "event_id": "a3845d7a5fc378bb2d5a81253a70de41b7cb543a414084d192222e52c251bbbb",
+      "event_id": "5f99f13a8817ddd2e8331fca21fc61d1d96ef092fc8ebdcca02166ea1a70bd7d",
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
       "url_id": "4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e",
       "source_id": "manual-4a8f75a5137d",
-      "timestamp": "2026-10-26T15:40:28.092993+00:00",
-      "evidence_location": "data/evidence/a3845d7a5fc378bb2d5a81253a70de41b7cb543a414084d192222e52c251bbbb.json",
+      "timestamp": "2026-10-26T22:47:35.898857+00:00",
+      "evidence_location": "data/evidence/5f99f13a8817ddd2e8331fca21fc61d1d96ef092fc8ebdcca02166ea1a70bd7d.json",
       "evidence": {
         "previous": {
-          "schema_version": 2,
-          "url_id": "4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e",
-          "source_id": "manual-4a8f75a5137d",
-          "regulator": "www.ffiec.gov",
-          "canonical_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
-          "first_seen": "2026-10-26T06:06:11.553625+00:00",
-          "last_seen": "2026-10-26T15:07:46.971720+00:00",
-          "last_checked": "2026-10-26T15:07:46.971720+00:00",
-          "last_full_fetch": "2026-10-26T15:07:46.971720+00:00",
-          "active": true,
-          "terminal_file": false,
-          "http_status": 200,
-          "content_type": "text/html; charset=utf-8",
-          "content_length": 66440,
-          "etag": null,
-          "last_modified": null,
-          "raw_hash": "87c306867d944b8cdb2f1636098d961b0de4c91f8c777d8e61124fa7e0eeaaf7",
-          "normalized_hash": "04f2e501bd08871ba190c02d976128bab8dc4c9a8c43c99af1007672832afd3f",
-          "html_hash": "493d585f0beb8df1e858d7813ce1596a3ba6cbd2ff59ec99de3f6dc1a20b3bdf",
-          "html_comparison_hash": "a43934f481269132ef568a6186736d9e13c46c756847d3e0c65bba0a9b3a0fe5",
-          "html_comparison_hash_version": 2,
-          "html_snapshot_location": "data/snapshots/html/4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e-493d585f0beb8df1e858d7813ce1596a3ba6cbd2ff59ec99de3f6dc1a20b3bdf.html",
-          "file_snapshot_location": null,
-          "visual_snapshot_location": null,
-          "visual_hash": null,
-          "extraction_type": "html",
-          "extractor_version": "content-extractor-v7",
-          "extraction_error": null,
-          "fetch_error": null,
-          "snapshot_location": "data/snapshots/4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e-04f2e501bd08871ba190c02d976128bab8dc4c9a8c43c99af1007672832afd3f.txt",
-          "evidence_location": "data/evidence/1d4507903dc82fea698d0f8f6bfb45e83dd2b30660e9bf5968bdd7d678f0d0ea.json",
-          "relevance": {
-            "candidate": true,
-            "reason": "Regulatory signal detected",
-            "signals": [
-              "report"
-            ]
-          },
-          "ai_pending": null,
-          "last_changed_at": null,
-          "change_history": [],
-          "not_modified": false,
-          "full_fetch_forced": false,
-          "html_baseline_forced": false,
-          "file_baseline_forced": false,
-          "extractor_baseline_forced": false,
-          "rendered_by": "browser",
-          "browser": {
-            "blocked_requests": 0,
-            "consent": "",
-            "final_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
-            "passed_check": "Cloudflare"
-          }
-        },
-        "current": {
           "schema_version": 2,
           "url_id": "4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e",
           "source_id": "manual-4a8f75a5137d",
@@ -210,6 +155,74 @@
             "final_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
             "passed_check": "Cloudflare"
           }
+        },
+        "current": {
+          "schema_version": 2,
+          "url_id": "4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e",
+          "source_id": "manual-4a8f75a5137d",
+          "regulator": "www.ffiec.gov",
+          "canonical_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
+          "first_seen": "2026-10-26T06:06:11.553625+00:00",
+          "last_seen": "2026-10-26T22:47:35.898857+00:00",
+          "last_checked": "2026-10-26T22:47:35.898857+00:00",
+          "last_full_fetch": "2026-10-26T22:47:35.898857+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8",
+          "content_length": 66440,
+          "etag": null,
+          "last_modified": null,
+          "raw_hash": "34bcfd6df3b28c9f61d80dcec0b89b6664af4e009cf47e6ce9ceb33fb1b98957",
+          "normalized_hash": "04f2e501bd08871ba190c02d976128bab8dc4c9a8c43c99af1007672832afd3f",
+          "html_hash": "34bcfd6df3b28c9f61d80dcec0b89b6664af4e009cf47e6ce9ceb33fb1b98957",
+          "html_comparison_hash": "a9a482407a543e12443d12eaefc2cfed9980a3be800ad9240b6d359b2cf52db3",
+          "html_comparison_hash_version": 2,
+          "html_snapshot_location": "data/snapshots/html/4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e-34bcfd6df3b28c9f61d80dcec0b89b6664af4e009cf47e6ce9ceb33fb1b98957.html",
+          "file_snapshot_location": null,
+          "visual_snapshot_location": null,
+          "visual_hash": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e-04f2e501bd08871ba190c02d976128bab8dc4c9a8c43c99af1007672832afd3f.txt",
+          "evidence_location": "data/evidence/5f99f13a8817ddd2e8331fca21fc61d1d96ef092fc8ebdcca02166ea1a70bd7d.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "Regulatory signal detected",
+            "signals": [
+              "report"
+            ]
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "5f99f13a8817ddd2e8331fca21fc61d1d96ef092fc8ebdcca02166ea1a70bd7d",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-26T22:47:35.898857+00:00",
+              "evidence_location": "data/evidence/5f99f13a8817ddd2e8331fca21fc61d1d96ef092fc8ebdcca02166ea1a70bd7d.json"
+            },
+            {
+              "event_id": "a3845d7a5fc378bb2d5a81253a70de41b7cb543a414084d192222e52c251bbbb",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-26T15:40:28.092993+00:00",
+              "evidence_location": "data/evidence/a3845d7a5fc378bb2d5a81253a70de41b7cb543a414084d192222e52c251bbbb.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false,
+          "rendered_by": "browser",
+          "browser": {
+            "blocked_requests": 0,
+            "consent": "",
+            "final_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
+            "passed_check": "Cloudflare"
+          }
         }
       }
     }
@@ -219,61 +232,6 @@
   "source_changed_urls": [
     {
       "before": {
-        "schema_version": 2,
-        "url_id": "4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e",
-        "source_id": "manual-4a8f75a5137d",
-        "regulator": "www.ffiec.gov",
-        "canonical_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
-        "first_seen": "2026-10-26T06:06:11.553625+00:00",
-        "last_seen": "2026-10-26T15:07:46.971720+00:00",
-        "last_checked": "2026-10-26T15:07:46.971720+00:00",
-        "last_full_fetch": "2026-10-26T15:07:46.971720+00:00",
-        "active": true,
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=utf-8",
-        "content_length": 66440,
-        "etag": null,
-        "last_modified": null,
-        "raw_hash": "87c306867d944b8cdb2f1636098d961b0de4c91f8c777d8e61124fa7e0eeaaf7",
-        "normalized_hash": "04f2e501bd08871ba190c02d976128bab8dc4c9a8c43c99af1007672832afd3f",
-        "html_hash": "493d585f0beb8df1e858d7813ce1596a3ba6cbd2ff59ec99de3f6dc1a20b3bdf",
-        "html_comparison_hash": "a43934f481269132ef568a6186736d9e13c46c756847d3e0c65bba0a9b3a0fe5",
-        "html_comparison_hash_version": 2,
-        "html_snapshot_location": "data/snapshots/html/4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e-493d585f0beb8df1e858d7813ce1596a3ba6cbd2ff59ec99de3f6dc1a20b3bdf.html",
-        "file_snapshot_location": null,
-        "visual_snapshot_location": null,
-        "visual_hash": null,
-        "extraction_type": "html",
-        "extractor_version": "content-extractor-v7",
-        "extraction_error": null,
-        "fetch_error": null,
-        "snapshot_location": "data/snapshots/4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e-04f2e501bd08871ba190c02d976128bab8dc4c9a8c43c99af1007672832afd3f.txt",
-        "evidence_location": "data/evidence/1d4507903dc82fea698d0f8f6bfb45e83dd2b30660e9bf5968bdd7d678f0d0ea.json",
-        "relevance": {
-          "candidate": true,
-          "reason": "Regulatory signal detected",
-          "signals": [
-            "report"
-          ]
-        },
-        "ai_pending": null,
-        "last_changed_at": null,
-        "change_history": [],
-        "not_modified": false,
-        "full_fetch_forced": false,
-        "html_baseline_forced": false,
-        "file_baseline_forced": false,
-        "extractor_baseline_forced": false,
-        "rendered_by": "browser",
-        "browser": {
-          "blocked_requests": 0,
-          "consent": "",
-          "final_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
-          "passed_check": "Cloudflare"
-        }
-      },
-      "after": {
         "schema_version": 2,
         "url_id": "4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e",
         "source_id": "manual-4a8f75a5137d",
@@ -334,12 +292,80 @@
           "final_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
           "passed_check": "Cloudflare"
         }
+      },
+      "after": {
+        "schema_version": 2,
+        "url_id": "4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e",
+        "source_id": "manual-4a8f75a5137d",
+        "regulator": "www.ffiec.gov",
+        "canonical_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
+        "first_seen": "2026-10-26T06:06:11.553625+00:00",
+        "last_seen": "2026-10-26T22:47:35.898857+00:00",
+        "last_checked": "2026-10-26T22:47:35.898857+00:00",
+        "last_full_fetch": "2026-10-26T22:47:35.898857+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "content_length": 66440,
+        "etag": null,
+        "last_modified": null,
+        "raw_hash": "34bcfd6df3b28c9f61d80dcec0b89b6664af4e009cf47e6ce9ceb33fb1b98957",
+        "normalized_hash": "04f2e501bd08871ba190c02d976128bab8dc4c9a8c43c99af1007672832afd3f",
+        "html_hash": "34bcfd6df3b28c9f61d80dcec0b89b6664af4e009cf47e6ce9ceb33fb1b98957",
+        "html_comparison_hash": "a9a482407a543e12443d12eaefc2cfed9980a3be800ad9240b6d359b2cf52db3",
+        "html_comparison_hash_version": 2,
+        "html_snapshot_location": "data/snapshots/html/4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e-34bcfd6df3b28c9f61d80dcec0b89b6664af4e009cf47e6ce9ceb33fb1b98957.html",
+        "file_snapshot_location": null,
+        "visual_snapshot_location": null,
+        "visual_hash": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/4a8f75a5137d21fda09e6e9b6a1c69e6a876490c905577aec5854b11aa8e296e-04f2e501bd08871ba190c02d976128bab8dc4c9a8c43c99af1007672832afd3f.txt",
+        "evidence_location": "data/evidence/5f99f13a8817ddd2e8331fca21fc61d1d96ef092fc8ebdcca02166ea1a70bd7d.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "Regulatory signal detected",
+          "signals": [
+            "report"
+          ]
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "5f99f13a8817ddd2e8331fca21fc61d1d96ef092fc8ebdcca02166ea1a70bd7d",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-26T22:47:35.898857+00:00",
+            "evidence_location": "data/evidence/5f99f13a8817ddd2e8331fca21fc61d1d96ef092fc8ebdcca02166ea1a70bd7d.json"
+          },
+          {
+            "event_id": "a3845d7a5fc378bb2d5a81253a70de41b7cb543a414084d192222e52c251bbbb",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-26T15:40:28.092993+00:00",
+            "evidence_location": "data/evidence/a3845d7a5fc378bb2d5a81253a70de41b7cb543a414084d192222e52c251bbbb.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false,
+        "rendered_by": "browser",
+        "browser": {
+          "blocked_requests": 0,
+          "consent": "",
+          "final_url": "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation",
+          "passed_check": "Cloudflare"
+        }
       }
     }
   ],
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "40348901151"
+  "trigger": "scheduled",
+  "workflow_run_id": "40413354106"
 }

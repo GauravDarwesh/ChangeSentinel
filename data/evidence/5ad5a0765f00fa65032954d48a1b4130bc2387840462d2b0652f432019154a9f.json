@@ -1,0 +1,35 @@
+{
+  "event_id": "5ad5a0765f00fa65032954d48a1b4130bc2387840462d2b0652f432019154a9f",
+  "event_type": "CHANGED_URL",
+  "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
+  "timestamp": "2026-10-26T22:36:08.862878+00:00",
+  "before": {
+    "normalized_hash": "fa00286b0d400d61641e1387592468374015d38fe34ed152c9178e43c7f21f5d",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "bb3325264af8edd66a3d60b9e6b50b2bfc023ce52d4127a800d71b65aa95aebe",
+    "html_hash": "aa2b846b43218e6750847474e2f298bb9d30cb247245ba0ebce8c5a4949bfd71",
+    "html_comparison_hash": "bc6b2c92fde0ef98cddcd4473ca30be0168611764f6ffce48303e4fefdc64ad8",
+    "snapshot_location": "data/snapshots/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-fa00286b0d400d61641e1387592468374015d38fe34ed152c9178e43c7f21f5d.txt",
+    "html_snapshot_location": "data/snapshots/html/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-aa2b846b43218e6750847474e2f298bb9d30cb247245ba0ebce8c5a4949bfd71.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "94ba728b9fdf4ca5bc29176036c01abafef25efd99d1754b3709da7d1a967db0",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "b08ebbad40dcc03cd9f852d0608cf8f57502869567287579edf82463051e4c43",
+    "html_hash": "b08ebbad40dcc03cd9f852d0608cf8f57502869567287579edf82463051e4c43",
+    "html_comparison_hash": "9368a690c3611a96960304826888af54e13f5e5b757784215b3b105e7056f8ad",
+    "snapshot_location": "data/snapshots/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-94ba728b9fdf4ca5bc29176036c01abafef25efd99d1754b3709da7d1a967db0.txt",
+    "html_snapshot_location": "data/snapshots/html/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-b08ebbad40dcc03cd9f852d0608cf8f57502869567287579edf82463051e4c43.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "--- before\n+++ after\n@@ -2,6 +2,10 @@\n Information collections under review Recent Reporting Form Updates Application filing information Micro Data Reference Manual Savings and Loan Holding Company Reporting Forms Incorporating FASB Accounting Standards Codification References into Federal Reserve Report (16 KB PDF)\n Listed below are recent updates related to Federal Reserve information collections over the past three months. Some of these updates are related to proposed information collections, while other updates are related to finalized information collections and/or reporting forms and instructions.\n Updates to reporting forms and the Information Collections Under Review page are generally posted on Wednesdays and Fridays.\n+October 26, 2026\n+The following information collection was updated on the Data Collections Currently under Review by the Board of Governors of the Federal Reserve System webpage:\n+- FR 28\n+Final OMB supporting statement was posted.\n October 08, 2026\n The following information collection was updated on the Data Collections Currently under Review by the Board of Governors of the Federal Reserve System webpage:\n - FR O\n@@ -59,4 +63,4 @@\n Draft reporting instructions, links to press release and initial Federal Register notice were posted.\n - FR O\n Links to Press release and initial Federal Register notice were posted.\n-Last Update: October 08, 2026\n+Last Update: October 26, 2026",
+  "html_diff": "--- before\n+++ after\n@@ -1731,6 +1731,28 @@\n      </p>\n      <br/>\n      <h4>\n+      October 26, 2026\n+     </h4>\n+     <p>\n+      The following information collection was updated on the\n+      <a href=\"/apps/reportingforms/review\">\n+       Data Collections Currently under Review by the Board of Governors of the Federal Reserve System\n+      </a>\n+      webpage:\n+     </p>\n+     <ul>\n+      <li>\n+       <strong>\n+        FR 28\n+       </strong>\n+       <br/>\n+       Final OMB supporting statement was posted.\n+      </li>\n+     </ul>\n+     <p>\n+     </p>\n+     <br/>\n+     <h4>\n       October 08, 2026\n      </h4>\n      <p>\n@@ -2067,7 +2089,7 @@\n    </div>\n    <div class=\"row\">\n     <p class=\"lastUpdate\">\n-     Last Update: October 08, 2026\n+     Last Update: October 26, 2026\n     </p>\n    </div>\n   </div>\n@@ -2306,7 +2328,7 @@\n         });\n   </script>\n   <script>\n-   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a4d54d39a9b1d68c',t:'MTc5MjQ3MDc3Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n+   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a50cf038a80daccf',t:'MTc5MzA1NDE3MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n   </script>\n  </body>\n </html>",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body."
+}

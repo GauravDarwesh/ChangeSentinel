@@ -1,6 +1,22 @@
 {
  "events": [
   {
+   "at": "2026-10-26T22:36:08.862878+00:00",
+   "change": "removed",
+   "menu": false,
+   "page": "https://www.federalreserve.gov/apps/reportingforms/review",
+   "text": "378 KB",
+   "url": "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=5E5C648A-A012-4D6E-AC55-F8CA11C29984"
+  },
+  {
+   "at": "2026-10-26T22:36:08.862878+00:00",
+   "change": "added",
+   "menu": false,
+   "page": "https://www.federalreserve.gov/apps/reportingforms/review",
+   "text": "FR 28 \u00b7 link",
+   "url": "https://www.reginfo.gov/public/do/PRAViewDocument?ref_nbr=202610-7100-003"
+  },
+  {
    "at": "2026-10-22T04:23:52.384181+00:00",
    "change": "removed",
    "menu": false,
@@ -1179,7 +1195,7 @@
    "tracking_since": "2026-10-25T11:25:21.562775+00:00"
   },
   "https://www.federalreserve.gov/apps/ReportingForms": {
-   "last_scan": "2026-10-26T15:29:03.505897+00:00",
+   "last_scan": "2026-10-26T22:38:27.766482+00:00",
    "links": {
     "http://www.ffiec.gov/ffiec_report_forms.htm": {
      "first_seen": "2026-10-23T08:14:35.781047+00:00",
@@ -2270,7 +2286,7 @@
    "tracking_since": "2026-10-23T08:14:35.781047+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D": {
-   "last_scan": "2026-10-26T15:26:09.112569+00:00",
+   "last_scan": "2026-10-26T22:36:15.447167+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -3331,7 +3347,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028bs": {
-   "last_scan": "2026-10-26T15:26:09.112569+00:00",
+   "last_scan": "2026-10-26T22:36:15.447167+00:00",
    "links": {
     "http://www.federalreserve.gov/releases/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -4447,7 +4463,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M": {
-   "last_scan": "2026-10-26T15:26:09.112569+00:00",
+   "last_scan": "2026-10-26T22:36:15.447167+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -5563,7 +5579,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q": {
-   "last_scan": "2026-10-26T15:26:09.112569+00:00",
+   "last_scan": "2026-10-26T22:36:15.447167+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -6859,7 +6875,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C": {
-   "last_scan": "2026-10-26T15:26:09.112569+00:00",
+   "last_scan": "2026-10-26T22:36:15.447167+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -9585,7 +9601,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/recentupdates": {
-   "last_scan": "2026-10-26T15:26:08.211203+00:00",
+   "last_scan": "2026-10-26T22:36:08.862878+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -10566,7 +10582,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/review": {
-   "last_scan": "2026-10-26T15:26:08.211203+00:00",
+   "last_scan": "2026-10-26T22:36:08.862878+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -11271,6 +11287,7 @@
     "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=5E5C648A-A012-4D6E-AC55-F8CA11C29984": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
      "menu": false,
+     "removed_at": "2026-10-26T22:36:08.862878+00:00",
      "text": "378 KB"
     },
     "https://www.federalreserve.gov/apps/reportingforms/Download/DownloadAttachment?guid=665665D8-D615-4F5C-8AB1-FDE6145B7AC9": {
@@ -12478,6 +12495,11 @@
      "menu": false,
      "text": "FR Y-14A/Q/M \u00b7 link"
     },
+    "https://www.reginfo.gov/public/do/PRAViewDocument?ref_nbr=202610-7100-003": {
+     "first_seen": "2026-10-26T22:36:08.862878+00:00",
+     "menu": false,
+     "text": "FR 28 \u00b7 link"
+    },
     "https://www.threads.net/@federalreserveboard": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
      "menu": false,
@@ -12497,7 +12519,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms": {
-   "last_scan": "2026-10-26T15:30:14.399447+00:00",
+   "last_scan": "2026-10-26T22:39:21.771889+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:00:06.673518+00:00",
@@ -12858,7 +12880,7 @@
    "tracking_since": "2026-10-26T15:00:06.673518+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec002": {
-   "last_scan": "2026-10-26T15:31:52.008311+00:00",
+   "last_scan": "2026-10-26T22:41:02.369011+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:27.272160+00:00",
@@ -13259,7 +13281,7 @@
    "tracking_since": "2026-10-26T15:01:27.272160+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec002s": {
-   "last_scan": "2026-10-26T15:35:36.318688+00:00",
+   "last_scan": "2026-10-26T22:43:56.625758+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:04:27.794662+00:00",
@@ -13485,7 +13507,7 @@
    "tracking_since": "2026-10-26T15:04:27.794662+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec009": {
-   "last_scan": "2026-10-26T15:31:51.247203+00:00",
+   "last_scan": "2026-10-26T22:41:01.705562+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:26.610109+00:00",
@@ -13766,7 +13788,7 @@
    "tracking_since": "2026-10-26T15:01:26.610109+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec019": {
-   "last_scan": "2026-10-26T15:35:37.499895+00:00",
+   "last_scan": "2026-10-26T22:43:57.395988+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:04:28.514827+00:00",
@@ -14012,7 +14034,7 @@
    "tracking_since": "2026-10-26T15:04:28.514827+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec030": {
-   "last_scan": "2026-10-26T15:31:50.196904+00:00",
+   "last_scan": "2026-10-26T22:41:00.844868+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:26.019828+00:00",
@@ -14268,7 +14290,7 @@
    "tracking_since": "2026-10-26T15:01:26.019828+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec030s": {
-   "last_scan": "2026-10-26T15:31:49.038909+00:00",
+   "last_scan": "2026-10-26T22:41:00.176937+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:25.478862+00:00",
@@ -14524,7 +14546,7 @@
    "tracking_since": "2026-10-26T15:01:25.478862+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec031": {
-   "last_scan": "2026-10-26T15:32:29.400437+00:00",
+   "last_scan": "2026-10-26T22:41:31.170467+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:49.113203+00:00",
@@ -15255,7 +15277,7 @@
    "tracking_since": "2026-10-26T15:01:49.113203+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec031-supplemental": {
-   "last_scan": "2026-10-26T15:40:30.301522+00:00",
+   "last_scan": "2026-10-26T22:47:37.235537+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:48.448764+00:00",
@@ -15906,7 +15928,7 @@
    "tracking_since": "2026-10-26T15:07:48.448764+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec041": {
-   "last_scan": "2026-10-26T15:32:28.560569+00:00",
+   "last_scan": "2026-10-26T22:41:30.454169+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:48.512561+00:00",
@@ -16617,7 +16639,7 @@
    "tracking_since": "2026-10-26T15:01:48.512561+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec041-supplemental": {
-   "last_scan": "2026-10-26T15:40:31.558691+00:00",
+   "last_scan": "2026-10-26T22:47:37.900602+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:49.024277+00:00",
@@ -17273,7 +17295,7 @@
    "tracking_since": "2026-10-26T15:07:49.024277+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec051": {
-   "last_scan": "2026-10-26T15:32:27.690985+00:00",
+   "last_scan": "2026-10-26T22:41:29.706964+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:47.899264+00:00",
@@ -17964,7 +17986,7 @@
    "tracking_since": "2026-10-26T15:01:47.899264+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec051-supplemental": {
-   "last_scan": "2026-10-26T15:40:32.257252+00:00",
+   "last_scan": "2026-10-26T22:47:38.573152+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:49.612314+00:00",
@@ -18320,7 +18342,7 @@
    "tracking_since": "2026-10-26T15:07:49.612314+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec101": {
-   "last_scan": "2026-10-26T15:31:46.665782+00:00",
+   "last_scan": "2026-10-26T22:40:58.794851+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:24.388391+00:00",
@@ -18666,7 +18688,7 @@
    "tracking_since": "2026-10-26T15:01:24.388391+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation": {
-   "last_scan": "2026-10-26T15:40:28.092993+00:00",
+   "last_scan": "2026-10-26T22:47:35.898857+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:46.971720+00:00",
@@ -19352,7 +19374,7 @@
    "tracking_since": "2026-10-26T15:07:46.971720+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec102": {
-   "last_scan": "2026-10-26T15:31:47.761829+00:00",
+   "last_scan": "2026-10-26T22:40:59.516097+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:24.939213+00:00",
@@ -19593,7 +19615,7 @@
    "tracking_since": "2026-10-26T15:01:24.939213+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec102-validation": {
-   "last_scan": "2026-10-26T15:40:28.946497+00:00",
+   "last_scan": "2026-10-26T22:47:36.608177+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:47.734872+00:00",
@@ -19889,7 +19911,7 @@
    "tracking_since": "2026-10-26T15:07:47.734872+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar": {
-   "last_scan": "2026-10-26T15:29:01.443587+00:00",
+   "last_scan": "2026-10-26T22:38:26.274220+00:00",
    "links": {
     "http://www.bis.org/bcbs/ccyb/index.htm": {
      "first_seen": "2026-10-21T03:47:47.510475+00:00",
@@ -20115,7 +20137,7 @@
    "tracking_since": "2026-10-21T03:47:47.510475+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification": {
-   "last_scan": "2026-10-26T15:30:13.633638+00:00",
+   "last_scan": "2026-10-26T22:39:21.615985+00:00",
    "links": {
     "https://canada.ca/": {
      "first_seen": "2026-10-23T12:53:48.284742+00:00",
@@ -20272,5 +20294,5 @@
   }
  },
  "schema_version": 1,
- "updated_at": "2026-10-26T15:40:33.426222+00:00"
+ "updated_at": "2026-10-26T22:47:39.451424+00:00"
 }
