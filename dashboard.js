@@ -1021,7 +1021,9 @@ function renderMonitoringSignal() {
       esc(day.date.toLocaleDateString([], { weekday: "long", day: "numeric", month: "long" })) + '"><span class="field-day-week">' + esc(weekday) + '</span><span class="field-day-date">' +
       esc(span >= 2 || index === days.length - 1 ? day.date.getDate() : "") + "</span>" + marks + "</span>";
   });
-  html += '<span class="field-day is-next" role="columnheader" title="The next scan"><span class="field-day-week">Next</span></span>';
+  // The next-scan column is one light wide, so its header is the legend's hollow
+  // square rather than a word that would crowd today's date on a phone.
+  html += '<span class="field-day is-next" role="columnheader" title="The next scan" aria-label="Next scan"><i class="field-next-mark" aria-hidden="true"></i></span>';
   // Activity ribbon: how many pages in view changed, failed or were new in each window.
   const scope = pages.filter(fieldMatchesQuery);
   const tallies = columns.map((_, x) => {
@@ -1295,8 +1297,8 @@ function renderTimeline(columns) {
   const c = model.counts;
   const lanesShown = model.lanes.slice(0, prefs.tlLaneLimit || TL_LANE_LIMIT);
   let html = '<div class="tl-board" style="--label-w:' + labelWidth + 'px">' +
-    '<div class="tl-row tl-head"><div class="tl-corner"><span>' + esc(rangeShort) + "</span><small>" + esc(c.total ? plural(c.total, TL_SHOW_WORDS[prefs.tlShow].replace(/s$/, ""), TL_SHOW_WORDS[prefs.tlShow]) : "Nothing in range") + "</small></div>" +
-    '<div class="tl-track tl-axis">' + bands + upcoming + labels + nowMark + nextMark + nextAxis + "</div></div>";
+    '<div class="tl-row tl-head"><div class="tl-corner"><span>' + esc(rangeShort) + "</span><small>" + esc(c.total ? plural(c.total, TL_SHOW_WORDS[prefs.tlShow].replace(/s$/, ""), TL_SHOW_WORDS[prefs.tlShow]) : "Nothing in range") + "</small>" + nextAxis + "</div>" +
+    '<div class="tl-track tl-axis">' + bands + upcoming + labels + nowMark + nextMark + "</div></div>";
   if (!model.lanes.length) {
     const what = TL_SHOW_WORDS[prefs.tlShow];
     const words = prefs.query ? "No " + what + " match “" + prefs.query + "” in this range." : "No " + what + " in " + rangeShort.toLowerCase() + ".";
