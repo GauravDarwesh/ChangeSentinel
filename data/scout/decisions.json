@@ -1,5 +1,349 @@
 {
- "decisions": {},
- "log": [],
+ "decisions": {
+  "apra:132d0620f4d9fe00": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "apra",
+   "request": "issue #228",
+   "url": "https://www.apra.gov.au/news-and-publications/apra-publishes-deputy-chair-david-bradburys-speech-fsc-retirement-summit"
+  },
+  "apra:72b1fc8bb6da4771": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "apra",
+   "request": "issue #228",
+   "url": "https://www.apra.gov.au/news-and-publications/consultation-confidentiality-data-collected-under-srs-6040"
+  },
+  "apra:b696680318ca121c": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "apra",
+   "request": "issue #228",
+   "url": "https://www.apra.gov.au/news-and-publications/apra-consults-confidentiality-data-collected-under-srs-6040-rse-licensee"
+  },
+  "apra:d92bc23956686d42": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "apra",
+   "request": "issue #228",
+   "url": "https://www.apra.gov.au/news-and-publications/apra-deputy-chair-david-bradburys-speech-2026-fsc-retirement-summit-building"
+  },
+  "boe-pra:5fad9eed43dc5247": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "boe-pra",
+   "request": "issue #228",
+   "url": "https://www.bankofengland.co.uk/news/2026/october/regulators-unveil-plans-to-simplify-senior-manager-and-certification-regime"
+  },
+  "boe-pra:8fdb1aefa28bccff": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "boe-pra",
+   "request": "issue #228",
+   "url": "https://www.bankofengland.co.uk/minutes/2026/september/securities-lending-committee-meeting-september-2026"
+  },
+  "boe-pra:9ca94a023acc485d": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "boe-pra",
+   "request": "issue #228",
+   "url": "https://www.bankofengland.co.uk/prudential-regulation/publication/2026/october/review-of-the-smcr-phase-two-consultation-paper"
+  },
+  "eba:12836e077536a672": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "eba",
+   "request": "issue #228",
+   "url": "https://www.eba.europa.eu/sites/default/files/2026-10/e9a28544-abf2-42dd-bb8f-43231df61a5d/2026_eba_environmental_statement_data_2025_final.pdf"
+  },
+  "eba:7321ec1a4ae7f0d1": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "eba",
+   "request": "issue #228",
+   "url": "https://www.eba.europa.eu/sites/default/files/2026-10/c2b8f8b7-941a-4d4e-af40-d2d15e4b47db/CV%20Francesco%20Cannata%20%281%29.pdf"
+  },
+  "eba:7eaa03629863a3d5": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "eba",
+   "request": "issue #228",
+   "url": "https://www.eba.europa.eu/sites/default/files/2026-10/c71a2252-58ab-4145-a2c9-502c0b26e163/2026_eba_environmental_statement_data_2025_fr.pdf"
+  },
+  "eba:bf4a5003d6a3330e": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "eba",
+   "request": "issue #228",
+   "url": "https://www.eba.europa.eu/publications-and-media/press-releases/eba-extends-some-consultation-deadlines-due-website-maintenance"
+  },
+  "eba:f89825cbf1174c03": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "eba",
+   "request": "issue #228",
+   "url": "https://www.eba.europa.eu/publications-and-media/press-releases/eba-appoints-kristine-cernaja-mezmale-its-new-vice-chair"
+  },
+  "osfi:47b3648bad6ffe6b": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "osfi",
+   "request": "issue #228",
+   "url": "https://www.osfi-bsif.gc.ca/en/guidance/guidance-library/2026-annual-update-manual-financial-reporting-forms-instructions-canadian-mortgage-insurance"
+  },
+  "osfi:9563ad98797e69e4": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "osfi",
+   "request": "issue #228",
+   "url": "https://www.osfi-bsif.gc.ca/en/guidance/guidance-library/2026-annual-update-manual-financial-reporting-forms-instructions-property-casualty-insurance"
+  },
+  "osfi:b6e7dcd56a79115f": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "osfi",
+   "request": "issue #228",
+   "url": "https://www.osfi-bsif.gc.ca/en/news/osfi-superintendent-peter-routledge-speak-hold-media-scrum-2026-tech-festival-toronto"
+  },
+  "osfi:e2d5b373b1bd13d2": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "osfi",
+   "request": "issue #228",
+   "url": "https://www.osfi-bsif.gc.ca/en/guidance/guidance-library/2026-annual-update-manual-financial-reporting-forms-instructions-life-insurance-companies-fraternal"
+  },
+  "osfi:e5c20dca79cbff00": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "osfi",
+   "request": "issue #228",
+   "url": "https://www.osfi-bsif.gc.ca/en/about-osfi/multimedia-library/osfis-approach-responsible-ai-adoption"
+  },
+  "osfi:f25df62019d6644e": {
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "osfi",
+   "request": "issue #228",
+   "url": "https://www.osfi-bsif.gc.ca/en/guidance/guidance-library/2026-annual-update-manual-reporting-forms-instructions-deposit-taking-institutions"
+  }
+ },
+ "log": [
+  {
+   "candidate": "osfi:47b3648bad6ffe6b",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "osfi",
+   "request": "issue #228",
+   "url": "https://www.osfi-bsif.gc.ca/en/guidance/guidance-library/2026-annual-update-manual-financial-reporting-forms-instructions-canadian-mortgage-insurance"
+  },
+  {
+   "candidate": "osfi:e2d5b373b1bd13d2",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "osfi",
+   "request": "issue #228",
+   "url": "https://www.osfi-bsif.gc.ca/en/guidance/guidance-library/2026-annual-update-manual-financial-reporting-forms-instructions-life-insurance-companies-fraternal"
+  },
+  {
+   "candidate": "osfi:9563ad98797e69e4",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "osfi",
+   "request": "issue #228",
+   "url": "https://www.osfi-bsif.gc.ca/en/guidance/guidance-library/2026-annual-update-manual-financial-reporting-forms-instructions-property-casualty-insurance"
+  },
+  {
+   "candidate": "osfi:f25df62019d6644e",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "osfi",
+   "request": "issue #228",
+   "url": "https://www.osfi-bsif.gc.ca/en/guidance/guidance-library/2026-annual-update-manual-reporting-forms-instructions-deposit-taking-institutions"
+  },
+  {
+   "candidate": "apra:b696680318ca121c",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "apra",
+   "request": "issue #228",
+   "url": "https://www.apra.gov.au/news-and-publications/apra-consults-confidentiality-data-collected-under-srs-6040-rse-licensee"
+  },
+  {
+   "candidate": "apra:72b1fc8bb6da4771",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "apra",
+   "request": "issue #228",
+   "url": "https://www.apra.gov.au/news-and-publications/consultation-confidentiality-data-collected-under-srs-6040"
+  },
+  {
+   "candidate": "boe-pra:9ca94a023acc485d",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "boe-pra",
+   "request": "issue #228",
+   "url": "https://www.bankofengland.co.uk/prudential-regulation/publication/2026/october/review-of-the-smcr-phase-two-consultation-paper"
+  },
+  {
+   "candidate": "eba:bf4a5003d6a3330e",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "eba",
+   "request": "issue #228",
+   "url": "https://www.eba.europa.eu/publications-and-media/press-releases/eba-extends-some-consultation-deadlines-due-website-maintenance"
+  },
+  {
+   "candidate": "boe-pra:5fad9eed43dc5247",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "boe-pra",
+   "request": "issue #228",
+   "url": "https://www.bankofengland.co.uk/news/2026/october/regulators-unveil-plans-to-simplify-senior-manager-and-certification-regime"
+  },
+  {
+   "candidate": "apra:d92bc23956686d42",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "apra",
+   "request": "issue #228",
+   "url": "https://www.apra.gov.au/news-and-publications/apra-deputy-chair-david-bradburys-speech-2026-fsc-retirement-summit-building"
+  },
+  {
+   "candidate": "apra:132d0620f4d9fe00",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "apra",
+   "request": "issue #228",
+   "url": "https://www.apra.gov.au/news-and-publications/apra-publishes-deputy-chair-david-bradburys-speech-fsc-retirement-summit"
+  },
+  {
+   "candidate": "boe-pra:8fdb1aefa28bccff",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "boe-pra",
+   "request": "issue #228",
+   "url": "https://www.bankofengland.co.uk/minutes/2026/september/securities-lending-committee-meeting-september-2026"
+  },
+  {
+   "candidate": "osfi:b6e7dcd56a79115f",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "osfi",
+   "request": "issue #228",
+   "url": "https://www.osfi-bsif.gc.ca/en/news/osfi-superintendent-peter-routledge-speak-hold-media-scrum-2026-tech-festival-toronto"
+  },
+  {
+   "candidate": "eba:f89825cbf1174c03",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "eba",
+   "request": "issue #228",
+   "url": "https://www.eba.europa.eu/publications-and-media/press-releases/eba-appoints-kristine-cernaja-mezmale-its-new-vice-chair"
+  },
+  {
+   "candidate": "eba:12836e077536a672",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "eba",
+   "request": "issue #228",
+   "url": "https://www.eba.europa.eu/sites/default/files/2026-10/e9a28544-abf2-42dd-bb8f-43231df61a5d/2026_eba_environmental_statement_data_2025_final.pdf"
+  },
+  {
+   "candidate": "eba:7eaa03629863a3d5",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "eba",
+   "request": "issue #228",
+   "url": "https://www.eba.europa.eu/sites/default/files/2026-10/c71a2252-58ab-4145-a2c9-502c0b26e163/2026_eba_environmental_statement_data_2025_fr.pdf"
+  },
+  {
+   "candidate": "eba:7321ec1a4ae7f0d1",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "eba",
+   "request": "issue #228",
+   "url": "https://www.eba.europa.eu/sites/default/files/2026-10/c2b8f8b7-941a-4d4e-af40-d2d15e4b47db/CV%20Francesco%20Cannata%20%281%29.pdf"
+  },
+  {
+   "candidate": "osfi:e5c20dca79cbff00",
+   "decided_at": "2026-10-27T15:36:29Z",
+   "decided_by": "GauravDarwesh",
+   "decision": "dismissed",
+   "reason": "",
+   "regulator_id": "osfi",
+   "request": "issue #228",
+   "url": "https://www.osfi-bsif.gc.ca/en/about-osfi/multimedia-library/osfis-approach-responsible-ai-adoption"
+  }
+ ],
  "schema_version": 1
 }
