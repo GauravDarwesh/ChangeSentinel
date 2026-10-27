@@ -209,7 +209,10 @@ class EngineTests(unittest.TestCase):
 
     def test_an_error_status_behind_the_check_is_an_ordinary_fetch_error(self):
         record, _events, _files = self.scan_twice(SOURCE, lambda *a, **k: ok(CLOUDFLARE), render=lambda *a, **k: resource(b"gone", "text/plain", 404))
-        self.assertIn("HTTP 404", record["fetch_error"])
+        # A first 404 on a good URL is held for one scan (tests/test_transient_miss.py);
+        # either way it is a fetch problem, never a bot check.
+        self.assertIn("HTTP 404", record["fetch_warning"]["message"])
+        self.assertIsNone(record["fetch_error"])
         self.assertNotIn("bot_check", record)
 
     def test_a_site_that_refuses_the_browser_twice_is_left_for_the_next_scan(self):

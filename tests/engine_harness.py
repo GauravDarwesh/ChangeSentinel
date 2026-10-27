@@ -80,6 +80,8 @@ class Sandbox:
         self._stack.enter_context(patch("regmon.engine.DEFAULTS", self.defaults))
         self._stack.enter_context(patch.dict("regmon.engine._BROWSER_GIVEN_UP", clear=True))
         self._stack.enter_context(patch.dict("regmon.engine._BROWSER_LAST_FAILURE", clear=True))
+        # Rechecks of a sudden 404/5xx wait seconds in production; not here.
+        self.recheck_sleep = self._stack.enter_context(patch("regmon.engine._recheck_sleep"))
         self._stack.enter_context(patch("regmon.engine.discover", side_effect=lambda *_a, **_k: list(self.discovered)))
         self._stack.enter_context(
             patch("regmon.engine.load_discovery_metadata", side_effect=lambda *_a, **_k: dict(self.discovery_meta))

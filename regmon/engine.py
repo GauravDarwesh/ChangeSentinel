@@ -401,7 +401,18 @@ def mark_error_episode(kind: str, item: dict, old: dict | None, now: str) -> str
     signature = error_signature(kind, message)
     since = now
     runs = 1
-    if old and old.get("error_signature") == signature and old.get("error_since"):
+    warning = (old or {}).get("fetch_warning")
+    if kind == "FETCH_ERROR" and isinstance(warning, dict) and warning.get("since"):
+        # The previous scan held a first miss (_hold_transient_miss): the
+        # episode began then, and that scan counts as a failing run.
+        since = str(warning["since"])
+        try:
+            runs = max(1, int(warning.get("runs") or 1)) + 1
+        except (TypeError, ValueError):
+            runs = 2
+        if warning.get("signature") != signature:
+            since, runs = now, 1
+    elif old and old.get("error_signature") == signature and old.get("error_since"):
         since = str(old["error_since"])
         # Records from before this counter existed already alerted for their
         # episode; count them as at least one earlier failing run.
@@ -583,6 +594,77 @@ def _host_of(url: str) -> str:
         return (urlsplit(url).hostname or "").lower()
     except ValueError:
         return ""
+
+
+# How a URL that served a good copy is asked again when it suddenly answers
+# "not found" or a server error: twice more in the same scan (seconds apart),
+# then once more on the next scan before it is recorded as a fetch error.
+RECHECK_DELAYS_SECONDS = (5.0, 15.0)
+TRANSIENT_MISS_CONFIRM_RUNS = 2
+TRANSIENT_MISS_STATUSES = {404, 408, 410, 425}
+
+
+def _recheck_sleep(seconds: float) -> None:
+    __import__("time").sleep(seconds)
+
+
+def _is_transient_miss(exc: BaseException) -> bool:
+    """A failure that a working URL can show for one request and not the next.
+
+    "Not found", "gone" and server errors (also when answered to the browser),
+    timeouts and dropped connections. Bot checks and refusals have their own
+    handling (regmon/botcheck.py) and are never treated as a miss.
+    """
+    import requests
+
+    if isinstance(exc, HTTPStatusError):
+        status = int(getattr(exc, "status_code", 0) or 0)
+        return status in TRANSIENT_MISS_STATUSES or 500 <= status <= 599
+    return isinstance(exc, (requests.exceptions.Timeout, requests.exceptions.ConnectionError))
+
+
+def _had_good_copy(old: dict | None) -> bool:
+    """The URL has a saved baseline to fall back on."""
+    return bool(old and old.get("normalized_hash"))
+
+
+# What a held miss keeps from the last good scan, so the URL reads as unchanged.
+_HELD_KEYS = (
+    "http_status", "content_type", "content_length", "etag", "last_modified", "raw_hash", "normalized_hash",
+    "html_hash", "html_comparison_hash", "html_comparison_hash_version", "html_snapshot_location",
+    "file_snapshot_location", "snapshot_location", "evidence_location", "relevance", "extraction_type",
+    "extractor_version", "rendered_by", "browser",
+)
+
+
+def _hold_transient_miss(item: dict, old: dict | None, exc: BaseException, message: str, now: str) -> bool:
+    """Hold a first miss on a URL whose last scan was good; True when held.
+
+    The URL keeps its last good copy and status, ``fetch_warning`` records what
+    happened, and no FETCH_ERROR is raised. A miss on the next scan as well is
+    recorded as a normal fetch error whose episode starts at the first miss, so
+    an alert for a file that was really removed is not delayed
+    (error_alert_after_runs counts the held scan too).
+    """
+    if not _is_transient_miss(exc) or not _had_good_copy(old) or old.get("fetch_error") or old.get("extraction_error"):
+        return False
+    prior = old.get("fetch_warning") if isinstance(old.get("fetch_warning"), dict) else None
+    try:
+        runs = int(prior.get("runs") or 1) + 1 if prior else 1
+    except (TypeError, ValueError):
+        runs = 2
+    if runs >= TRANSIENT_MISS_CONFIRM_RUNS:
+        return False
+    for key in _HELD_KEYS:
+        if key in old:
+            item[key] = old[key]
+    item["fetch_warning"] = {
+        "message": message[:300],
+        "signature": error_signature("FETCH_ERROR", message),
+        "since": str(prior.get("since")) if prior and prior.get("since") else now,
+        "runs": runs,
+    }
+    return True
 
 
 class AccessRefusedError(RuntimeError):
@@ -794,20 +876,39 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             excluded_urls=source.excluded_urls,
             max_bytes=int(DEFAULTS.get("max_response_bytes", 200 * 1024 * 1024)),
         )
-        try:
-            result = fetch(url, **fetch_options)
-        except HTTPStatusError as exc:
-            # A challenge served with 403/405/429/503 is a bot check, not an
-            # outage; the browser gets one attempt at it. A bare refusal gets a
-            # retry with browser headers, then the browser too.
-            vendor = botcheck.detect(exc.body, exc.status_code, exc.headers)
-            if vendor:
-                result = _challenge_result(exc, vendor)
-            elif exc.status_code in REFUSAL_STATUSES:
-                result = _after_refusal(url, source, exc, item, now, fetch_options)
-            else:
-                raise
-        result = _browser_pass(url, source, result, item, now)
+        def obtain() -> FetchResult:
+            try:
+                fetched = fetch(url, **fetch_options)
+            except HTTPStatusError as exc:
+                # A challenge served with 403/405/429/503 is a bot check, not an
+                # outage; the browser gets one attempt at it. A bare refusal gets a
+                # retry with browser headers, then the browser too.
+                vendor = botcheck.detect(exc.body, exc.status_code, exc.headers)
+                if vendor:
+                    fetched = _challenge_result(exc, vendor)
+                elif exc.status_code in REFUSAL_STATUSES:
+                    fetched = _after_refusal(url, source, exc, item, now, fetch_options)
+                else:
+                    raise
+            return _browser_pass(url, source, fetched, item, now)
+
+        # A URL that served a good copy last time and now answers 404/410/5xx
+        # is asked again in this scan before anything is recorded: sites behind
+        # a CDN (FFIEC on Cloudflare) occasionally answer one request from a
+        # node that does not have the file, and the next request is fine.
+        rechecks = 0
+        while True:
+            try:
+                result = obtain()
+                break
+            except Exception as exc:
+                if rechecks >= len(RECHECK_DELAYS_SECONDS) or not (_had_good_copy(old) and _is_transient_miss(exc)):
+                    raise
+                print(f"Rechecking {url} after {type(exc).__name__}: {exc}")
+                _recheck_sleep(RECHECK_DELAYS_SECONDS[rechecks])
+                rechecks += 1
+        if rechecks:
+            item["recovered_on_recheck"] = rechecks
         item.update({
             "http_status": result.status_code,
             "content_type": result.content_type,
@@ -886,7 +987,13 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
             return item, normalized, html_body, file_body
         return item, normalized, html_body
     except Exception as exc:
-        item["fetch_error"] = f"{type(exc).__name__}: {exc}"
+        message = f"{type(exc).__name__}: {exc}"
+        if _hold_transient_miss(item, old, exc, message, now):
+            # Not confirmed yet: the URL keeps its last good copy and status,
+            # and the next scan decides (see _hold_transient_miss).
+            print(f"Holding a first miss for {url} until the next scan confirms it: {message}")
+            return item, None, None
+        item["fetch_error"] = message
         # The traceback goes to the job log only. data/latest.json is published
         # on GitHub Pages, so internal paths and library frames must not be
         # stored in it (and one traceback per failing URL bloated the inventory).
@@ -1609,6 +1716,8 @@ def process_source(
         "fetch_error":sum(1 for x in current.values() if x.get("fetch_error")),
         "extraction_error":sum(1 for x in current.values() if x.get("extraction_error")),
         "not_modified":sum(1 for x in current.values() if x.get("not_modified")),
+        "fetch_held":sum(1 for x in current.values() if isinstance(x.get("fetch_warning"), dict)),
+        "fetch_recovered_on_recheck":sum(1 for x in current.values() if x.get("recovered_on_recheck")),
         "forced_full_fetch":sum(1 for x in current.values() if x.get("full_fetch_forced")),
         "relevance_candidates":len([x for x in new_items + [c["after"] for c in changed_items] if x.get("relevance",{}).get("candidate",True)]),
         "ai_ok":sum(1 for x in ai_results if x.get("ai",{}).get("status")=="ok"),
