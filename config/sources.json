@@ -6878,6 +6878,611 @@
       "listed_on": [
         "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
       ]
+    },
+    {
+      "id": "manual-7aab3c749d70",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023) | Banco de la República",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ]
+    },
+    {
+      "id": "manual-9589b7ff7026",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo1.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo1.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-2482943a1057",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo2.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo2.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-3af423a55b8c",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo3.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo3.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-3d7b96d170f2",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo4.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo4.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-7cf4deb16b58",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo5.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo5.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-77f21f809d6f",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo6.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo6.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-9170a3e1a1c4",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo7.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo7.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-b79f5561d5b8",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo8.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo8.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-1008f1320339",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo9.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo9.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-47a154e7c656",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo10.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo10.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-4f3ac4440c9e",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo11.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo11.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-9e370305176c",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo12.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo12.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-4e9dc6110250",
+      "name": "Reporte para diligenciar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-ipext.xlsx"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-ipext.xlsx"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-4cc8bc25ee86",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Instructivo",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-ipext-instructivo.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-ipext-instructivo.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
+    },
+    {
+      "id": "manual-415186845cb3",
+      "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Descargar",
+      "regulator": "www.banrep.gov.co",
+      "active": true,
+      "baseline_on_first_run": true,
+      "include_selector": "",
+      "ignore_selectors": [],
+      "excluded_prefixes": [],
+      "max_urls": 0,
+      "crawler": "stealth-crawler",
+      "discovery_attempts": 1,
+      "discovery_timeout_seconds": 60,
+      "discovery_retry_delay_seconds": 2,
+      "use_http_discovery": true,
+      "discovery_http_timeout_seconds": 20,
+      "discovery_http_workers": 1,
+      "discovery_http_attempts": 2,
+      "discovery_slice_seconds": 0,
+      "discovery_max_pages_per_slice": 1,
+      "crawl_depth": 0,
+      "excluded_urls": [],
+      "seed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-saldos-operaciones-dsif.pdf"
+      ],
+      "allowed_prefixes": [
+        "https://www.banrep.gov.co/"
+      ],
+      "allowed_urls": [
+        "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-saldos-operaciones-dsif.pdf"
+      ],
+      "allowed_domains": [
+        "www.banrep.gov.co"
+      ],
+      "listed_on": [
+        "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83"
+      ]
     }
   ]
 }
