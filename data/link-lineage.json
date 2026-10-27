@@ -1194,8 +1194,1359 @@
    },
    "tracking_since": "2026-10-25T11:25:21.562775+00:00"
   },
+  "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms": {
+   "last_scan": "2026-10-27T04:29:27.804132+00:00",
+   "links": {
+    "https://bahamasamlconference.centralbankbahamas.com/": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Empirical Approaches to Anti-Money Laundering and Financial Crime"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-03-27-17-46-24-Annual-AMLCFT-Survey-Guidance-Notes-for-Bank-and-Trust-Companies-1776366321-vvGEC1.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Annual AML/CFT Survey for Bank and Trust Companies"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-03-27-17-46-44-ISO-Country-Template-1776366339-6I3UR3.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Annual AML/CFT Survey for Bank and Trust Companies"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-03-27-17-47-49-Annual-AMLCFT-Survey-Guidance-Notes-for-Credit-Unions-1776366561-IVnwUg.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Annual AML/CFT Survey for Credit Unions"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-03-27-17-51-34-ISO-Country-Template-1776366580-9HKe1N.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Annual AML/CFT Survey for Credit Unions"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-03-27-17-53-18-Annual-AMLCFT-Survey-Guidance-Notes-for-Payment-Service-Providers-1776367082-LMasr3.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Annual AML/CFT Survey for Payment Service Providers"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-03-27-17-54-07-ISO-Country-Template-1776367099-b2EIyQ.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Annual AML/CFT Survey for Payment Service Providers"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-03-27-17-55-38-Annual-AMLCFT-Survey-Guidance-Notes-for-Non-Licensee-Registered-Representatives-1776367303-l9KChC.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Annual AML/CFT Survey for Non-Licensee Registered Representatives"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-03-27-17-55-56-ISO-Country-Template-1776367318-irstK2.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Annual AML/CFT Survey for Non-Licensee Registered Representatives"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-06-27-09-47-59-GFSR-GUIDANCE-NOTES-ON-TARGETED-FINANCIAL-SANCTIONS-REPORTING-FORMS-1776365532-ku1mDW.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Issuance of GFSR Joint Targeted Financial Sanctions Reporting Forms"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-06-27-09-48-02-International-Obligations-Economic-and-Ancillary-Measures-Iran-Order-2019-1776365550-SGOdip.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Issuance of GFSR Joint Targeted Financial Sanctions Reporting Forms"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-06-27-09-48-05-International-Obligations-Economic-and-Ancillary-Measures-DPRK-Order-2019-1776365567-aFOsMe.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Issuance of GFSR Joint Targeted Financial Sanctions Reporting Forms"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-06-27-09-48-12-International-Obligations-Economic-and-Ancillary-Measures-Afghanistan-Order-2018-1776365586-eMFHJr.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Issuance of GFSR Joint Targeted Financial Sanctions Reporting Forms"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-06-27-09-48-16-International-Obligations-Economic-and-Ancillary-Measures-Iraq-Order-2018-1776365605-seS99X.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Issuance of GFSR Joint Targeted Financial Sanctions Reporting Forms"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2025-07-23-18-00-20-GFSR-Targeted-Financial-Sanctions-Reporting-Forms-1776365621-la0EXE.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Issuance of GFSR Joint Targeted Financial Sanctions Reporting Forms"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-01-21-13-27-10-Weekly-Interim-Form-Template-v2.52026-1776367819-FfX5Bm.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Weekly Interim Form Template v2.5"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-01-21-14-07-58-Financial-Returns-Template-v2.12-no-decimals-1776364926-GLmjGX.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Financial Return Template v2.12"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-03-20-10-00-36-2026-Annual-AMLCFTCPF-Survey-Guidance-Notes-for-Banks-and-Trust-Companies-1776362255-QKdbeI.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Survey Guidance Notes for Banks and Trust Companies"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-03-20-10-03-24-2025-03-27-17-51-34-ISO-Country-Template-1-1776363075-guGfks.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Guidance Notes for Banks"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-03-20-10-03-24-2025-03-27-17-51-34-ISO-Country-Template-1776362273-bMSBFV.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Survey Guidance Notes for Banks and Trust Companies"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-03-20-10-03-24-2025-03-27-17-51-34-ISO-Country-Template-2-1776363674-o04tSO.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Survey Guidance Notes for Non-Licensee Registered Representatives"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-03-20-10-03-24-2025-03-27-17-51-34-ISO-Country-Template-3-1776364072-F9YCrt.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Survey Guidance Notes for Payment Service Providers"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-03-20-10-03-24-2025-03-27-17-51-34-ISO-Country-Template-4-1776364684-hxPPfn.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Survey Guidance Notes for Credit Unions"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-03-20-10-05-34-2026-Annual-AMLCFTCPF-Survey-Guidance-Notes-for-Banks-1776363091-n4Ykng.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Guidance Notes for Banks"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-03-20-10-07-27-2026-Annual-AMLCFTCPF-Survey-Guidance-Notes-for-Credit-Unions-1776364701-zL1A53.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Survey Guidance Notes for Credit Unions"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-03-20-10-09-31-2026-Annual-AMLCFTCPF-Survey-Guidance-Notes-for-Non-Licensee-Registered-Representatives--1776363695-MDNFLV.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Survey Guidance Notes for Non-Licensee Registered Representatives"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-03-20-10-11-17-2026-Annual-AMLCFTCPF-Survey-Guidance-Notes-for-Payment-Service-Providers-1776364091-Ux542v.pdf": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Survey Guidance Notes for Payment Service Providers"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-07-02-16-58-44-Financial-Returns-Template-v2.14-no-decimlas-1788300546-PvXaAL.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Financial Return v2.14"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-07-02-16-59-19-Weekly-Interim-Form-Template-v2.6-1788300352-XVKIxQ.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Weekly Interim Form Template v2.6"
+    },
+    "https://cdn.centralbankbahamas.com/tenantcbob_prod/assets/documents/2026-08-11-17-33-56-Financial-Return-Template-for-Credit-Unions-v2.3-1788305326-l0zWg6.xlsx": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Financial Return Template for Credit Unions v2.3"
+    },
+    "https://ess.centralbankbahamas.com/": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Search Vacancies"
+    },
+    "https://mof-investor-relations.gov.bs/": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Ministry of Finance Investor Relations"
+    },
+    "https://submissions.centralbankbahamas.com/bgrsapplication/login": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "BRS and BSB User Portal"
+    },
+    "https://twitter.com/centralbankBS1": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Central Bank on Twitter"
+    },
+    "https://twitter.com/governorcbob": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Governor of Central Bank on Twitter"
+    },
+    "https://web.whatsapp.com/send?phone=+1(242)357-4881": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Central Bank on WhatsApp"
+    },
+    "https://www.artcentralbankbahamas.com/": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "The Art Gallery"
+    },
+    "https://www.centralbankbahamas.com/": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Central Bank of The Bahamas"
+    },
+    "https://www.centralbankbahamas.com/abigail-knowles": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Abigail Knowles"
+    },
+    "https://www.centralbankbahamas.com/about-us": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "About Us"
+    },
+    "https://www.centralbankbahamas.com/administration": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Administration"
+    },
+    "https://www.centralbankbahamas.com/alexandria-rolle": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Alexandria Rolle"
+    },
+    "https://www.centralbankbahamas.com/avery-sumner": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Avery Sumner"
+    },
+    "https://www.centralbankbahamas.com/bahamas-government-registered-stock": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Bahamas Government Registered Stock"
+    },
+    "https://www.centralbankbahamas.com/bahamas-mortgage-corporation-bonds": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Bahamas Mortgage Corporation Bonds"
+    },
+    "https://www.centralbankbahamas.com/bahamas-registered-stock": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Bahamas Registered Stock"
+    },
+    "https://www.centralbankbahamas.com/bahamas-registered-stock-portal": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Bahamas Securities Portal"
+    },
+    "https://www.centralbankbahamas.com/bahamas-savings-bond": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Bahamas Savings Bond"
+    },
+    "https://www.centralbankbahamas.com/bahamas-savings-bond-forms": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Bahamas Savings Bond Forms"
+    },
+    "https://www.centralbankbahamas.com/bank-coins": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Bank Coins"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Warning Notices"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision-department": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Bank Supervision"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision-initiatives": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Bank Supervision Initiatives"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/all-banks": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "All Banks"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/aml-cft-cpf-industry-briefings-training": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "AML/CFT/CPF Industry Briefings/Training"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/aml-cft-cpf-legislation": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "AML/CFT/CPF Legislation"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/aml-cft-cpf-related-notices": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "AML/CFT/CPF Related Notices"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/aml-cft-cpf-seminar-conferences": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "AML/CFT/CPF Seminar/Conferences"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/aml-cft-cpf-sfi-guidelines-and-guidance-notes": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "AML/CFT/CPF SFI Guidelines and Guidance Notes"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/aml-data-return-and-surveys": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "AML Data Return and Surveys"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/bank-and-trust-companies": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Bank and Trust Companies"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/basel-ii-iii-downloadable-forms": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Downloadable Forms"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/basel-ii-iii-guidelines": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Guidelines"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/bsd-quarterly-letters": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "BSD Quarterly Letters"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/caribbean-financial-action-task-force-cfatf-mutual-evaluation": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Caribbean Financial Action Task Force (CFATF): Mutual Evaluation"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/co-operative-credit-unions": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Co-operative Credit Unions"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/commercial-banks": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Commercial Banks"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/common-reporting-standard": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Common Reporting Standard Guidance"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/common-reporting-standard-guidance-notes": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Common Reporting Standard Guidance Notes"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/consultation-documents": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Consultation Documents"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/consultation-documents-basel": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Consultation Documents"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/cooperative-credit-unions": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Co-operative Credit Unions"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/corporate-governance": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Corporate Governance"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/2026-annual-aml-cft-cpf-guidance-notes-for-banks-1": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Guidance Notes for Banks"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/2026-annual-aml-cft-cpf-survey-guidance-notes-for-banks-and-trust-companies": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Survey Guidance Notes for Banks and Trust Companies"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/2026-annual-aml-cft-cpf-survey-guidance-notes-for-credit-unions": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Survey Guidance Notes for Credit Unions"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/2026-annual-aml-cft-cpf-survey-guidance-notes-for-non-licensee-registered-representatives": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Survey Guidance Notes for Non-Licensee Registered Representatives"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/2026-annual-aml-cft-cpf-survey-guidance-notes-for-payment-service-providers": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "2026 Annual AML/CFT/CPF Survey Guidance Notes for Payment Service Providers"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/annual-aml-cft-survey-for-bank-and-trust-companies": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Annual AML/CFT Survey for Bank and Trust Companies"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/annual-aml-cft-survey-for-credit-unions": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Annual AML/CFT Survey for Credit Unions"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/annual-aml-cft-survey-for-non-licensee-registered-representatives": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Annual AML/CFT Survey for Non-Licensee Registered Representatives"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/annual-aml-cft-survey-for-payment-service-providers": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Annual AML/CFT Survey for Payment Service Providers"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/financial-return-template-for-credit-unions-v2-3": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Financial Return Template for Credit Unions v2.3"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/financial-return-template-v2-11": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Financial Return Template v2.12"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/financial-return-v2-14": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Financial Return v2.14"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/issuance-of-gfsr-joint-targeted-financial-sanctions-reporting-forms": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Issuance of GFSR Joint Targeted Financial Sanctions Reporting Forms"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/weekly-interim-form-template-v2-4": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Weekly Interim Form Template v2.5"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms/weekly-interim-form-template-v2-6": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Weekly Interim Form Template v2.6"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/enforcement-actions-administrative-penalties": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Enforcement Actions: Administrative Penalties"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/financial-action-task-force-fatf-public-statements": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "FATF High-Risk and Other Monitored Jurisdictions"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/financial-industry-regulations": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Financial Industry Regulations"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/general-information": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "General Information"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/general-notices": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "General Notices"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/gfsr-bahamas-aml-cft-report": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "GFSR \u2013 Bahamas AML/CFT Report"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/global-links": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Global Links"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/guidelines": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Guidelines"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/implementation-road-map": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Implementation Road Map"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/international-banks": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "International Banks"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/memoranda-of-understanding": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Memoranda of Understanding"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/money-transmission-business": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Money Transmission Business"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/money-transmission-service-providers": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Money Transmission Service Providers"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/newsletters": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Newsletters"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/non-licensee-registered-representatives": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Non-Licensee Registered Representatives"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/nra-national-risk-assessment": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "NRA - National Risk Assessment"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/operational-guidelines": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Operational Guidelines"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/overview-aml": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "OVERVIEW"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/payment-providers": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Payment Providers"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/physical-presence-and-managed-licensees-guidelines": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Physical Presence and Managed Licensees Guidelines"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/policies-and-guidance-notes": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Policies and Guidance Notes"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/private-trust-companies": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Private Trust Companies"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/private-trust-companies-and-qualified-executive-entities": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Private Trust Companies and Qualified Executive Entities"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/protocols-for-regulatory-cooperation": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Protocols for Regulatory Cooperation"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/prudential-limits-and-restrictions": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Prudential Limits and Restrictions"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/quantitative-impact-study": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Quantitative Impact Study"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/regulated-functions": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Regulated Functions"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/reports-and-publications": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "REPORTS AND PUBLICATIONS"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/risk-based-supervision-framework": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Risk-Based Supervision Framework"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/speeches-and-presentations": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Speeches and Presentations"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/supervised-financial-institutions": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Regulates Entities"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/un-security-council-sanctions-notices": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "UN Security Council Sanctions Notices"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/us-ofac-sanctions": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "US/OFAC Sanctions"
+    },
+    "https://www.centralbankbahamas.com/bank-supervision/warning-notices": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Warning Notices"
+    },
+    "https://www.centralbankbahamas.com/banking-a-bahamian-adventure": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Banking, A Bahamian Adventure"
+    },
+    "https://www.centralbankbahamas.com/banknotes": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Banknotes"
+    },
+    "https://www.centralbankbahamas.com/banknotes-360-degree-view": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Banknotes (360 degree view)"
+    },
+    "https://www.centralbankbahamas.com/bgcse-coursework-in-economics": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "BGCSE Coursework in Economics"
+    },
+    "https://www.centralbankbahamas.com/bgcse-in-economics": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "BGCSE in Economics"
+    },
+    "https://www.centralbankbahamas.com/bridge-authority-bonds": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Bridge Authority Bonds"
+    },
+    "https://www.centralbankbahamas.com/brs-forms": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "BRS Forms"
+    },
+    "https://www.centralbankbahamas.com/business-hours-and-contact-list": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Business Hours and Contact List"
+    },
+    "https://www.centralbankbahamas.com/careers": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Careers"
+    },
+    "https://www.centralbankbahamas.com/careers/executive-professionals-programme": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Executive Professionals Programme"
+    },
+    "https://www.centralbankbahamas.com/careers/jr-professionals-summer-programme": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Jr. Professionals Summer Programme"
+    },
+    "https://www.centralbankbahamas.com/careers/permanent/central-bank-apprentice-programme": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Central Bank Apprentice Programme"
+    },
+    "https://www.centralbankbahamas.com/careers/summer-employment-programme": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Summer Employment Programme"
+    },
+    "https://www.centralbankbahamas.com/careers/work-experience-programme": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Work Experience Programme"
+    },
+    "https://www.centralbankbahamas.com/carlissa-colebrook": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Carlissa Colebrook"
+    },
+    "https://www.centralbankbahamas.com/cbob-bahamas-savings-bond-information": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Bahamas Savings Bond Portal Guide"
+    },
+    "https://www.centralbankbahamas.com/cbob-banknote-app": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "CBOB Banknote App"
+    },
+    "https://www.centralbankbahamas.com/central-bank-financials": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Central Bank Financials"
+    },
+    "https://www.centralbankbahamas.com/chronology": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Chronology"
+    },
+    "https://www.centralbankbahamas.com/contact-us": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Contact"
+    },
+    "https://www.centralbankbahamas.com/crisp-evolution-training-tool": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "CRISP Evolution Training Tool"
+    },
+    "https://www.centralbankbahamas.com/currency-legislation": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Currency Legislation"
+    },
+    "https://www.centralbankbahamas.com/deposit-insurance": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Deposit Insurance"
+    },
+    "https://www.centralbankbahamas.com/derek-pinder": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Derek Pinder"
+    },
+    "https://www.centralbankbahamas.com/destinee-bowe": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Destinee Bowe"
+    },
+    "https://www.centralbankbahamas.com/digital-payments": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Digital Payments"
+    },
+    "https://www.centralbankbahamas.com/document": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Documents"
+    },
+    "https://www.centralbankbahamas.com/donnell-nicolas": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Donnell Nicolas"
+    },
+    "https://www.centralbankbahamas.com/e-gdds": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "E-GDDS"
+    },
+    "https://www.centralbankbahamas.com/events": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Events"
+    },
+    "https://www.centralbankbahamas.com/events/40th-anniversary": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "40th Anniversary"
+    },
+    "https://www.centralbankbahamas.com/events/48th-annual-monetary-studies-conference-2016": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "48th Annual Monetary Studies Conference 2016"
+    },
+    "https://www.centralbankbahamas.com/events/competition": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Competition"
+    },
+    "https://www.centralbankbahamas.com/events/corporate": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Corporate"
+    },
+    "https://www.centralbankbahamas.com/events/exhibition": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Exhibition"
+    },
+    "https://www.centralbankbahamas.com/events/meetings-conferences": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Meetings & Conferences"
+    },
+    "https://www.centralbankbahamas.com/exchange-control-notes-and-guidelines/application-checklist": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Application Checklist - Overview"
+    },
+    "https://www.centralbankbahamas.com/exchange-control-notes-and-guidelines/approved-investment-status": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Approved Investment Status"
+    },
+    "https://www.centralbankbahamas.com/exchange-control-notes-and-guidelines/change-in-individual-s-exchange-control-residential-status": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Change in Individual\u2019s Exchange Control Residential Status"
+    },
+    "https://www.centralbankbahamas.com/exchange-control-notes-and-guidelines/companies-designation-capital-investment-and-share-transactions": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Companies Designation, Capital Investment and Share Transactions"
+    },
+    "https://www.centralbankbahamas.com/exchange-control-notes-and-guidelines/exchange-control-notes-and-guidelines-press-releases": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Press Releases"
+    },
+    "https://www.centralbankbahamas.com/exchange-control-notes-and-guidelines/exchange-control-notices-guidance-notes-for-licensees": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Exchange Control Notices / Guidance Notes for Licensees"
+    },
+    "https://www.centralbankbahamas.com/exchange-control-notes-and-guidelines/foreign-currency-external-bahamian-dollar-accounts": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Foreign Currency & External Bahamian Dollar Accounts"
+    },
+    "https://www.centralbankbahamas.com/exchange-control-notes-and-guidelines/foreign-currency-payments-and-transfers": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Foreign Currency Payments and Transfers"
+    },
+    "https://www.centralbankbahamas.com/exchange-control-notes-and-guidelines/loan-security-arrangements": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Loan & Security Arrangements"
+    },
+    "https://www.centralbankbahamas.com/exchange-control-notes-and-guidelines/online-applications": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Online Applications"
+    },
+    "https://www.centralbankbahamas.com/exchange-control-notes-and-guidelines/residents-investments-in-foreign-currency-assets": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Residents Investments in Foreign Currency Assets"
+    },
+    "https://www.centralbankbahamas.com/exchange-control-objectives": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Objectives"
+    },
+    "https://www.centralbankbahamas.com/exchange-rate": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Exchange Rate"
+    },
+    "https://www.centralbankbahamas.com/faq-s": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "FAQ's"
+    },
+    "https://www.centralbankbahamas.com/faq-s/banker-and-advisor-to-government": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Banker and Advisor to Government"
+    },
+    "https://www.centralbankbahamas.com/faq-s/banker-tobanks": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Banker to Banks"
+    },
+    "https://www.centralbankbahamas.com/faq-s/controller-of-exchange": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Controller of Exchange"
+    },
+    "https://www.centralbankbahamas.com/faq-s/general-macroeconomicindicators": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "General Macroeconomic Indicators"
+    },
+    "https://www.centralbankbahamas.com/faq-s/issuer-of-banknotes-and-coins": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Issuer of Banknotes and Coins"
+    },
+    "https://www.centralbankbahamas.com/faq-s/supervisor-and-regulator-of-the-financial-system": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Supervisor and Regulator of the Financial System"
+    },
+    "https://www.centralbankbahamas.com/faq-s/the-central-bank": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "The Central Bank"
+    },
+    "https://www.centralbankbahamas.com/foreign-exchange": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Foreign Exchange"
+    },
+    "https://www.centralbankbahamas.com/former-governors": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Former Governors"
+    },
+    "https://www.centralbankbahamas.com/freedom-of-information": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Freedom of Information"
+    },
+    "https://www.centralbankbahamas.com/freedom-of-information-contact": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Freedom of Information Contact"
+    },
+    "https://www.centralbankbahamas.com/government-securities": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Government Securities"
+    },
+    "https://www.centralbankbahamas.com/investment-currency-market": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Investment Currency Markets"
+    },
+    "https://www.centralbankbahamas.com/key-payments-statistics": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Key Payments Statistics"
+    },
+    "https://www.centralbankbahamas.com/legal-framework": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Legal Framework"
+    },
+    "https://www.centralbankbahamas.com/links": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Links"
+    },
+    "https://www.centralbankbahamas.com/market-policies-and-rules": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Market Policies and Rules"
+    },
+    "https://www.centralbankbahamas.com/markets": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Markets"
+    },
+    "https://www.centralbankbahamas.com/mission-functions-objectives": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Mission, Functions & Objectives"
+    },
+    "https://www.centralbankbahamas.com/monetary-policy": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Monetary Policy"
+    },
+    "https://www.centralbankbahamas.com/money-credit-aggregates": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Money & Credit Aggregates"
+    },
+    "https://www.centralbankbahamas.com/news": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Latest News"
+    },
+    "https://www.centralbankbahamas.com/news/2019-award-announcement": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "2019 AWARD ANNOUNCEMENT"
+    },
+    "https://www.centralbankbahamas.com/news/2019-series": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "2019"
+    },
+    "https://www.centralbankbahamas.com/news/2020-series": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "2020"
+    },
+    "https://www.centralbankbahamas.com/news/2021-award-announcement": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "2021 AWARD ANNOUNCEMENT"
+    },
+    "https://www.centralbankbahamas.com/news/2021-series": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "2021"
+    },
+    "https://www.centralbankbahamas.com/news/2022-award-announcement-1": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "2022 AWARD ANNOUNCEMENT"
+    },
+    "https://www.centralbankbahamas.com/news/2022-series": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "2022"
+    },
+    "https://www.centralbankbahamas.com/news/2023-award-announcement": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "2023 AWARD ANNOUNCEMENT"
+    },
+    "https://www.centralbankbahamas.com/news/2023-series": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "2023"
+    },
+    "https://www.centralbankbahamas.com/news/2024-series": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "2024"
+    },
+    "https://www.centralbankbahamas.com/news/2025-series": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "2025"
+    },
+    "https://www.centralbankbahamas.com/news/bahamas-registered-stock-ipo-s": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Bahamas Registered Stock IPOs"
+    },
+    "https://www.centralbankbahamas.com/news/bahamas-savings-bond-bsb-prospectus": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Bahamas Savings Bond (BSB) Prospectus"
+    },
+    "https://www.centralbankbahamas.com/news/blogs": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Blog"
+    },
+    "https://www.centralbankbahamas.com/news/brs-initial-public-offering-calendar": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "BRS Initial Public Offering Calendar"
+    },
+    "https://www.centralbankbahamas.com/news/brs-secondary-market-prices": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "BRS Secondary Market Prices"
+    },
+    "https://www.centralbankbahamas.com/news/conference-presentations": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Conference Presentations"
+    },
+    "https://www.centralbankbahamas.com/news/general-news": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "General News"
+    },
+    "https://www.centralbankbahamas.com/news/governor": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Governor"
+    },
+    "https://www.centralbankbahamas.com/news/market-briefs": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Market Briefs"
+    },
+    "https://www.centralbankbahamas.com/news/market-policies-and-rules-news": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Market Policies and Rules"
+    },
+    "https://www.centralbankbahamas.com/news/other-senior-officials": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Other Senior Officials"
+    },
+    "https://www.centralbankbahamas.com/news/presentations": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Presentations"
+    },
+    "https://www.centralbankbahamas.com/news/press-releases": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Press Releases"
+    },
+    "https://www.centralbankbahamas.com/news/project-sand-dollar-the-central-bank-identifies-preferred-technology-solutions-provider-for-bahamas-digital-currency": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Digital Currency"
+    },
+    "https://www.centralbankbahamas.com/news/public-notices": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Public Notices"
+    },
+    "https://www.centralbankbahamas.com/news/public-procurement": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Public Procurement"
+    },
+    "https://www.centralbankbahamas.com/news/scams-and-frauds": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Scams and Frauds"
+    },
+    "https://www.centralbankbahamas.com/news/speeches": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Speeches"
+    },
+    "https://www.centralbankbahamas.com/news/t-bill-auction-announcements": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "T-Bill Tender IPO"
+    },
+    "https://www.centralbankbahamas.com/news/t-bill-auction-results": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "T-Bill Tender Results"
+    },
+    "https://www.centralbankbahamas.com/news/treasury-bill-t-bill-calendar": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Treasury Bill (T-Bill) Calendar"
+    },
+    "https://www.centralbankbahamas.com/numismatic-coins": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Numismatic Coins"
+    },
+    "https://www.centralbankbahamas.com/objectives": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Objectives"
+    },
+    "https://www.centralbankbahamas.com/open-market-operations": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Open Market Operations"
+    },
+    "https://www.centralbankbahamas.com/organization": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Organization"
+    },
+    "https://www.centralbankbahamas.com/our-history": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Our History"
+    },
+    "https://www.centralbankbahamas.com/overview": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Overview"
+    },
+    "https://www.centralbankbahamas.com/paper-1-taking-the-bgcse-examination": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Paper 1 - Taking the BGCSE Examination"
+    },
+    "https://www.centralbankbahamas.com/paper-2-taking-the-bgcse-examination": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Paper 2 - Taking the BGCSE Examination"
+    },
+    "https://www.centralbankbahamas.com/past-auction-announcements": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Past Auction Announcements"
+    },
+    "https://www.centralbankbahamas.com/past-auction-results": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Past Auction Results"
+    },
+    "https://www.centralbankbahamas.com/payment-legislation": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Payment Legislation"
+    },
+    "https://www.centralbankbahamas.com/payments-settlements": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Payments & Settlements"
+    },
+    "https://www.centralbankbahamas.com/preparing-for-the-bgcse-part-1": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Preparing for the BGCSE - Part 1"
+    },
+    "https://www.centralbankbahamas.com/preparing-for-the-bgcse-part-2": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Preparing for the BGCSE - Part 2"
+    },
+    "https://www.centralbankbahamas.com/privacy-policy": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Privacy Policy"
+    },
+    "https://www.centralbankbahamas.com/publications": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Latest Publication"
+    },
+    "https://www.centralbankbahamas.com/publications/annual-reports": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Annual Reports"
+    },
+    "https://www.centralbankbahamas.com/publications/financial-stability-report": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Financial Stability Report"
+    },
+    "https://www.centralbankbahamas.com/publications/main-publications": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Main Publications"
+    },
+    "https://www.centralbankbahamas.com/publications/monthly-economic-and-financial-development-report": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Monthly Economic and Financial Development Report"
+    },
+    "https://www.centralbankbahamas.com/publications/monthly-statements": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Monthly Statements"
+    },
+    "https://www.centralbankbahamas.com/publications/qer": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Quarterly Economic Review"
+    },
+    "https://www.centralbankbahamas.com/publications/qsd": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Quarterly Statistical Digest"
+    },
+    "https://www.centralbankbahamas.com/publications/reports-and-survey-forms": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Reports and Survey Forms"
+    },
+    "https://www.centralbankbahamas.com/publications/surveys-and-other-research-publications": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Surveys and Other Research Publications"
+    },
+    "https://www.centralbankbahamas.com/publications/working-papers": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Working Papers"
+    },
+    "https://www.centralbankbahamas.com/questions-comments": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Questions/Comments"
+    },
+    "https://www.centralbankbahamas.com/rashante-sumner": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Rashante Sumner"
+    },
+    "https://www.centralbankbahamas.com/recent-liberalisation-measures-press-releases": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Recent Liberalisation Measures/Press Releases"
+    },
+    "https://www.centralbankbahamas.com/sasha-rahming": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Sasha Rahming"
+    },
+    "https://www.centralbankbahamas.com/shawnteish-johnson": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Shawnteish Johnson"
+    },
+    "https://www.centralbankbahamas.com/sitemap": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Site Map"
+    },
+    "https://www.centralbankbahamas.com/strategic-plan": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Strategic Plan"
+    },
+    "https://www.centralbankbahamas.com/the-board-executive-and-senior-management": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "The Board, Executive And Senior Management"
+    },
+    "https://www.centralbankbahamas.com/the-payments-unit": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "The Payments Unit"
+    },
+    "https://www.centralbankbahamas.com/treasury-bill-auction-notes": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": false,
+     "text": "Treasury Bill Auction Notes"
+    },
+    "https://www.centralbankbahamas.com/treasury-bills": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Treasury Bills"
+    },
+    "https://www.centralbankbahamas.com/videos": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Videos"
+    },
+    "https://www.facebook.com/centralbankBS1/": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Central Bank on Facebook"
+    },
+    "https://www.instagram.com/centralbankbahamas": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Central Bank on Instagram"
+    },
+    "https://www.linkedin.com/company/central-bank-of-the-bahamas": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Central Bank on LinkedIn"
+    },
+    "https://www.netclues.com/": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Netclues!"
+    },
+    "https://www.youtube.com/channel/UCqowEMvIbPm6punzHnz03Bw": {
+     "first_seen": "2026-10-27T04:29:27.804132+00:00",
+     "menu": true,
+     "text": "Central Bank on YouTube"
+    }
+   },
+   "tracking_since": "2026-10-27T04:29:27.804132+00:00"
+  },
   "https://www.federalreserve.gov/apps/ReportingForms": {
-   "last_scan": "2026-10-26T22:38:27.766482+00:00",
+   "last_scan": "2026-10-27T04:20:39.765363+00:00",
    "links": {
     "http://www.ffiec.gov/ffiec_report_forms.htm": {
      "first_seen": "2026-10-23T08:14:35.781047+00:00",
@@ -2286,7 +3637,7 @@
    "tracking_since": "2026-10-23T08:14:35.781047+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D": {
-   "last_scan": "2026-10-26T22:36:15.447167+00:00",
+   "last_scan": "2026-10-27T04:18:23.677845+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -3347,7 +4698,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028bs": {
-   "last_scan": "2026-10-26T22:36:15.447167+00:00",
+   "last_scan": "2026-10-27T04:18:23.677845+00:00",
    "links": {
     "http://www.federalreserve.gov/releases/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -4463,7 +5814,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M": {
-   "last_scan": "2026-10-26T22:36:15.447167+00:00",
+   "last_scan": "2026-10-27T04:18:23.677845+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -5579,7 +6930,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q": {
-   "last_scan": "2026-10-26T22:36:15.447167+00:00",
+   "last_scan": "2026-10-27T04:18:23.677845+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -6875,7 +8226,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C": {
-   "last_scan": "2026-10-26T22:36:15.447167+00:00",
+   "last_scan": "2026-10-27T04:18:23.677845+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -9601,7 +10952,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/recentupdates": {
-   "last_scan": "2026-10-26T22:36:08.862878+00:00",
+   "last_scan": "2026-10-27T04:17:40.291242+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -10582,7 +11933,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/review": {
-   "last_scan": "2026-10-26T22:36:08.862878+00:00",
+   "last_scan": "2026-10-27T04:17:40.291242+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -12519,7 +13870,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms": {
-   "last_scan": "2026-10-26T22:39:21.771889+00:00",
+   "last_scan": "2026-10-27T04:21:31.418952+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:00:06.673518+00:00",
@@ -12880,7 +14231,7 @@
    "tracking_since": "2026-10-26T15:00:06.673518+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec002": {
-   "last_scan": "2026-10-26T22:41:02.369011+00:00",
+   "last_scan": "2026-10-27T04:22:56.193705+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:27.272160+00:00",
@@ -13281,7 +14632,7 @@
    "tracking_since": "2026-10-26T15:01:27.272160+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec002s": {
-   "last_scan": "2026-10-26T22:43:56.625758+00:00",
+   "last_scan": "2026-10-27T04:26:05.489117+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:04:27.794662+00:00",
@@ -13507,7 +14858,7 @@
    "tracking_since": "2026-10-26T15:04:27.794662+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec009": {
-   "last_scan": "2026-10-26T22:41:01.705562+00:00",
+   "last_scan": "2026-10-27T04:22:55.379713+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:26.610109+00:00",
@@ -13788,7 +15139,7 @@
    "tracking_since": "2026-10-26T15:01:26.610109+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec019": {
-   "last_scan": "2026-10-26T22:43:57.395988+00:00",
+   "last_scan": "2026-10-27T04:26:06.368132+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:04:28.514827+00:00",
@@ -14034,7 +15385,7 @@
    "tracking_since": "2026-10-26T15:04:28.514827+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec030": {
-   "last_scan": "2026-10-26T22:41:00.844868+00:00",
+   "last_scan": "2026-10-27T04:22:54.720585+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:26.019828+00:00",
@@ -14290,7 +15641,7 @@
    "tracking_since": "2026-10-26T15:01:26.019828+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec030s": {
-   "last_scan": "2026-10-26T22:41:00.176937+00:00",
+   "last_scan": "2026-10-27T04:22:54.093573+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:25.478862+00:00",
@@ -14546,7 +15897,7 @@
    "tracking_since": "2026-10-26T15:01:25.478862+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec031": {
-   "last_scan": "2026-10-26T22:41:31.170467+00:00",
+   "last_scan": "2026-10-27T04:23:26.028144+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:49.113203+00:00",
@@ -15277,7 +16628,7 @@
    "tracking_since": "2026-10-26T15:01:49.113203+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec031-supplemental": {
-   "last_scan": "2026-10-26T22:47:37.235537+00:00",
+   "last_scan": "2026-10-27T04:29:25.493988+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:48.448764+00:00",
@@ -15928,7 +17279,7 @@
    "tracking_since": "2026-10-26T15:07:48.448764+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec041": {
-   "last_scan": "2026-10-26T22:41:30.454169+00:00",
+   "last_scan": "2026-10-27T04:23:25.397622+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:48.512561+00:00",
@@ -16639,7 +17990,7 @@
    "tracking_since": "2026-10-26T15:01:48.512561+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec041-supplemental": {
-   "last_scan": "2026-10-26T22:47:37.900602+00:00",
+   "last_scan": "2026-10-27T04:29:26.194169+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:49.024277+00:00",
@@ -17295,7 +18646,7 @@
    "tracking_since": "2026-10-26T15:07:49.024277+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec051": {
-   "last_scan": "2026-10-26T22:41:29.706964+00:00",
+   "last_scan": "2026-10-27T04:23:24.596823+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:47.899264+00:00",
@@ -17986,7 +19337,7 @@
    "tracking_since": "2026-10-26T15:01:47.899264+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec051-supplemental": {
-   "last_scan": "2026-10-26T22:47:38.573152+00:00",
+   "last_scan": "2026-10-27T04:29:26.998777+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:49.612314+00:00",
@@ -18342,7 +19693,7 @@
    "tracking_since": "2026-10-26T15:07:49.612314+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec101": {
-   "last_scan": "2026-10-26T22:40:58.794851+00:00",
+   "last_scan": "2026-10-27T04:22:52.731247+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:24.388391+00:00",
@@ -18688,7 +20039,7 @@
    "tracking_since": "2026-10-26T15:01:24.388391+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation": {
-   "last_scan": "2026-10-26T22:47:35.898857+00:00",
+   "last_scan": "2026-10-27T04:29:23.676151+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:46.971720+00:00",
@@ -19374,7 +20725,7 @@
    "tracking_since": "2026-10-26T15:07:46.971720+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec102": {
-   "last_scan": "2026-10-26T22:40:59.516097+00:00",
+   "last_scan": "2026-10-27T04:22:53.523394+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:24.939213+00:00",
@@ -19615,7 +20966,7 @@
    "tracking_since": "2026-10-26T15:01:24.939213+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec102-validation": {
-   "last_scan": "2026-10-26T22:47:36.608177+00:00",
+   "last_scan": "2026-10-27T04:29:24.612914+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:47.734872+00:00",
@@ -19911,7 +21262,7 @@
    "tracking_since": "2026-10-26T15:07:47.734872+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar": {
-   "last_scan": "2026-10-26T22:38:26.274220+00:00",
+   "last_scan": "2026-10-27T04:20:38.486927+00:00",
    "links": {
     "http://www.bis.org/bcbs/ccyb/index.htm": {
      "first_seen": "2026-10-21T03:47:47.510475+00:00",
@@ -20137,7 +21488,7 @@
    "tracking_since": "2026-10-21T03:47:47.510475+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification": {
-   "last_scan": "2026-10-26T22:39:21.615985+00:00",
+   "last_scan": "2026-10-27T04:21:31.258228+00:00",
    "links": {
     "https://canada.ca/": {
      "first_seen": "2026-10-23T12:53:48.284742+00:00",
@@ -20294,5 +21645,5 @@
   }
  },
  "schema_version": 1,
- "updated_at": "2026-10-26T22:47:39.451424+00:00"
+ "updated_at": "2026-10-27T04:29:29.059626+00:00"
 }
