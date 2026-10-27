@@ -9908,22 +9908,21 @@ function renderMoreSheet() {
   const healthSub = !state.health ? "Appears after the next scan" : healthPercent(week.success_rate) + " of " + healthNumber(week.checks) + " checks ok this week";
   const text = id => { const el = $(id); return el ? el.textContent.trim() : ""; };
   const review = state.scoutReview ? scoutBuckets().REVIEW.length : 0;
-  const lastRunAt = state.report && state.report.generated_at;
   const cadence = Number(text("navCadenceCount")) || 0;
   const tile = (view, label, value, sub, logo = "") => '<button type="button" class="more-tile' + (state.view === view ? " is-current" : "") + '" data-more-go="' + view + '">' +
     '<span class="more-label">' + logo + esc(label) + '</span><span class="more-value">' + value + '</span><span class="more-sub">' + sub + "</span></button>";
   const scoutLogo = '<span class="scout-avatar-wrap more-logo" aria-hidden="true">' + ($("scoutLaunch")?.querySelector(".scout-avatar")?.outerHTML || "") + "</span>";
   const cadenceLogo = '<span class="cadence-nav-mark more-logo" aria-hidden="true">' + ($("cadenceLaunch")?.querySelector(".cadence-calendar-avatar")?.outerHTML || "") + "</span>";
+  const registryLogo = '<span class="registry-binder-wrap more-logo" aria-hidden="true">' + ($("registryLaunch")?.querySelector(".registry-binder-avatar")?.outerHTML || "") + "</span>";
   body.innerHTML =
     '<button type="button" class="more-health tone-' + tone + (state.view === "health" ? " is-current" : "") + '" data-more-go="health">' +
       '<span class="more-label">Monitor health<span class="more-go">Health ›</span></span>' +
       '<span class="more-value">' + esc(healthValue) + '</span><span class="more-sub">' + esc(healthSub) + "</span>" +
       '<span class="more-health-cells" aria-hidden="true">' + cells + "</span></button>" +
     '<div class="more-grid">' +
-      tile("runs", "Runs", esc(lastRunAt ? relativeTime(lastRunAt) : "None"), esc(state.history.length ? "last scan · " + plural(state.history.length, "run", "runs") + " saved" : "since the last scan")) +
       tile("scout", "Scout", review ? "<b>" + esc(review) + "</b>" : "0", esc(review ? "pages to review" : "nothing to review"), scoutLogo) +
       tile("calendar", "Cadence", esc(cadence), esc(cadence === 1 ? "date coming up" : "dates coming up"), cadenceLogo) +
-      tile("registry", "Registry", esc(registryItems().length), esc(registryItems().length === 1 ? "registered item" : "registered items")) +
+      tile("registry", "Registry", esc(registryItems().length), esc(registryItems().length === 1 ? "registered item" : "registered items"), registryLogo) +
     "</div>";
 }
 let moreReturnFocus = null;
