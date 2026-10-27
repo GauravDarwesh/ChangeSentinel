@@ -375,7 +375,9 @@ class TestAIEvaluationSet(unittest.TestCase):
         cases = json.loads(module.CASES.read_text(encoding="utf-8"))["cases"]
         workflow = (Path(__file__).resolve().parents[1] / ".github" / "workflows" / "ai-smoke-test.yml").read_text()
         minimum = int(re.search(r"--min-model-cases (\d+)", workflow).group(1))
-        self.assertGreaterEqual(minimum, 4)
+        # The documented gate (docs and workflow) is 12 model-routed fixtures;
+        # asserting it exactly stops the flag and the fixtures being lowered together.
+        self.assertEqual(minimum, 12)
         routed = [case for case in cases if case.get("expected_decision_source") == "ai_model"]
         self.assertGreaterEqual(len(routed), minimum)
 

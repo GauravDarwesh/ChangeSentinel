@@ -15,6 +15,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from regmon.config import SourceConfig
+from regmon.fsutil import atomic_write_text
 from regmon.safe_http import public_destinations_only
 from regmon.security import USER_AGENT, DNSResolutionError, retry_delay, validate_public_http_url
 
@@ -160,6 +161,42 @@ def _is_probably_html_url(url: str) -> bool:
     return Path(urlparse(url).path.lower()).suffix not in NON_HTML_SUFFIXES
 
 
+# Link discovery reads a page only for its links. A bigger body (an endless
+# chunked endpoint, a large JSON API on a seed domain) is skipped as a
+# non-page instead of being held in memory by up to 32 concurrent workers.
+DISCOVERY_MAX_HTML_BYTES = 8 * 1024 * 1024
+
+
+def _bounded_html(response, url: str, max_bytes: int | None = None) -> str | None:
+    """The decoded body, or None when it is larger than ``max_bytes``."""
+    max_bytes = max_bytes or DISCOVERY_MAX_HTML_BYTES
+    try:
+        declared = int(response.headers.get("content-length") or 0)
+    except (TypeError, ValueError, AttributeError):
+        declared = 0
+    if declared > max_bytes:
+        response.close()
+        print(f"HTTP discovery: skipped {url}: declared {declared} bytes exceeds {max_bytes}")
+        return None
+    if not isinstance(response, requests.Response):
+        return response.text
+    chunks, total = [], 0
+    for chunk in response.iter_content(chunk_size=64 * 1024):
+        if not chunk:
+            continue
+        total += len(chunk)
+        if total > max_bytes:
+            response.close()
+            print(f"HTTP discovery: skipped {url}: body exceeds {max_bytes} bytes")
+            return None
+        chunks.append(chunk)
+    # Hand the bounded bytes back to requests so .text applies its usual
+    # charset detection (header, then content sniffing).
+    response._content = b"".join(chunks)
+    response._content_consumed = True
+    return response.text
+
+
 def _fetch_links(url: str, source: SourceConfig, timeout: int):
     last_error = None
     last_status = None
@@ -182,11 +219,13 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
                         timeout=timeout,
                         allow_redirects=False,
                         headers={"User-Agent": USER_AGENT},
+                        stream=True,
                     )
                 last_status = response.status_code
                 if response.status_code not in {301, 302, 303, 307, 308}:
                     break
                 location = response.headers.get("location")
+                response.close()  # streamed: release the connection before the next hop
                 if not location:
                     raise ValueError(f"Redirect from {current_url} did not include a Location header")
                 target = urljoin(current_url, location)
@@ -205,8 +244,10 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
             last_status = response.status_code
             content_type = (response.headers.get("content-type") or "").lower()
             if response.status_code in {404, 410}:
+                response.close()
                 return url, [], None
             if response.status_code >= 400:
+                response.close()
                 last_error = f"HTTP {response.status_code}"
                 if response.status_code not in DISCOVERY_RETRYABLE or attempt == source.discovery_http_attempts:
                     break
@@ -215,8 +256,12 @@ def _fetch_links(url: str, source: SourceConfig, timeout: int):
             # Do not parse a known non-HTML response as markup for link discovery.
             # Extensionless application/json endpoints otherwise looked like HTML pages.
             if "html" not in content_type and (content_type or not _is_probably_html_url(url)):
+                response.close()
                 return url, [], None
-            return url, extract_html_links(response.url or url, response.text, source), None
+            body = _bounded_html(response, current_url)
+            if body is None:
+                return url, [], None
+            return url, extract_html_links(response.url or url, body, source), None
         except DNSResolutionError as exc:
             # A resolver hiccup is transient: retry, and if it persists record a
             # retryable failure (it used to be classified permanent_http, which
@@ -413,10 +458,7 @@ def _unresolved_failure_count(source: SourceConfig, data_dir: Path) -> int:
 
 
 def _atomic_write_json(path: Path, payload: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temp = path.with_suffix(path.suffix + ".tmp")
-    temp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-    temp.replace(path)
+    atomic_write_text(path, json.dumps(payload, indent=2))
 
 
 def _load_http_checkpoint(source: SourceConfig, data_dir: Path) -> dict | None:
@@ -1012,7 +1054,7 @@ def discover(source: SourceConfig, data_dir: Path) -> list[str]:
                 "reason": "Browser discovery returned without fresh integrity metadata",
             }
             metadata_path.parent.mkdir(parents=True, exist_ok=True)
-            metadata_path.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+            atomic_write_text(metadata_path, json.dumps(metadata, indent=2))
 
         if stealth_urls:
             return stealth_urls

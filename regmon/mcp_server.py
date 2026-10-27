@@ -62,6 +62,28 @@ class Record:
             raise ToolError("Paths must stay inside the checkout")
         return path
 
+    def data_path(self, relative: str) -> Path:
+        """A location taken from committed state: confined to data/.
+
+        Snapshot and evidence locations come from JSON in the checkout; a
+        crafted one must not read .git/ or any other file through the tools.
+        """
+        path = self.safe_path(relative)
+        data = self.root / "data"
+        if data not in path.parents:
+            raise ToolError("Recorded locations must stay inside data/")
+        return path
+
+    def data_json(self, relative: str, default: Any = None) -> Any:
+        try:
+            path = self.data_path(relative)
+        except ToolError:
+            return default
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return default
+
     def sources(self) -> list[dict]:
         return [source for source in (self.json("config/sources.json", {}) or {}).get("sources", []) if isinstance(source, dict)]
 
@@ -187,7 +209,7 @@ def get_change(record: Record, args: dict) -> dict:
     change = next((entry for entry in record.changes() if entry["event_id"] == event_id), None)
     if change is None:
         raise ToolError("No recorded change has that id")
-    evidence = record.json(change["evidence_location"], {}) if change.get("evidence_location") else {}
+    evidence = record.data_json(change["evidence_location"], {}) if change.get("evidence_location") else {}
     diff = str((evidence or {}).get("diff") or "").splitlines()
     calendar = record.json("data/calendar.json", {}) or {}
     return {
@@ -213,7 +235,7 @@ def item_code_history(record: Record, args: dict) -> dict:
     for change in record.changes():
         if change.get("event_type") != "CHANGED_URL" or not change.get("evidence_location"):
             continue
-        evidence = record.json(change["evidence_location"], {}) or {}
+        evidence = record.data_json(change["evidence_location"], {}) or {}
         impact = evidence.get("item_codes") or {}
         for kind in ("added", "removed", "amended"):
             for entry in impact.get(kind) or []:
@@ -226,8 +248,8 @@ def item_code_history(record: Record, args: dict) -> dict:
         if not location:
             continue
         try:
-            text = record.safe_path(location).read_text(encoding="utf-8")
-        except OSError:
+            text = record.data_path(location).read_text(encoding="utf-8")
+        except (OSError, ToolError):
             continue
         if code in item_codes.codes_in(text):
             present.append({"url": item.get("canonical_url"), "extraction_type": item.get("extraction_type"), "snapshot_location": location})
@@ -261,8 +283,8 @@ def search_text(record: Record, args: dict) -> dict:
         if not location:
             continue
         try:
-            text = record.safe_path(location).read_text(encoding="utf-8")
-        except OSError:
+            text = record.data_path(location).read_text(encoding="utf-8")
+        except (OSError, ToolError):
             continue
         for match in pattern.finditer(text):
             start, end = max(0, match.start() - 120), min(len(text), match.end() + 120)
@@ -290,8 +312,8 @@ def verify_snapshot(record: Record, args: dict) -> dict:
         if not location:
             continue
         try:
-            digest = hashlib.sha256(record.safe_path(location).read_bytes()).hexdigest()
-        except OSError:
+            digest = hashlib.sha256(record.data_path(location).read_bytes()).hexdigest()
+        except (OSError, ToolError):
             checks.append({"file": label, "location": location, "verified": False, "reason": "file missing from the checkout"})
             continue
         named = re.search(r"-([0-9a-f]{64})\.[a-z]+$", location)

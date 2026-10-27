@@ -18,6 +18,7 @@ from typing import Any
 from regmon.ai import AIConfig, analyze
 from regmon.change import (
     build_event_id,
+    change_event_id,
     classify_change,
     error_signature,
     HTML_COMPARISON_HASH_VERSION,
@@ -886,7 +887,10 @@ def make_current_item(url: str, old: dict | None, source: SourceConfig, now: str
         return item, normalized, html_body
     except Exception as exc:
         item["fetch_error"] = f"{type(exc).__name__}: {exc}"
-        item["fetch_traceback"] = traceback.format_exc()
+        # The traceback goes to the job log only. data/latest.json is published
+        # on GitHub Pages, so internal paths and library frames must not be
+        # stored in it (and one traceback per failing URL bloated the inventory).
+        print(f"Fetch or extraction failed for {url}:\n{traceback.format_exc()}")
         if old:
             for key in (
                 "http_status", "content_type", "content_length", "etag", "last_modified",
@@ -1160,7 +1164,7 @@ def process_source(
                     else:
                         before_hash = (old or {}).get("normalized_hash") or (old or {}).get("raw_hash") or (old or {}).get("content_hash")
                         after_hash = item.get("normalized_hash")
-                    event_id = build_event_id(event_type, uid, before_hash, after_hash)
+                    event_id = change_event_id(event_type, uid, before_hash, after_hash, old)
                     evidence = None
                     codes = None
                     spec = spec_inventory = impact = None
@@ -1274,7 +1278,7 @@ def process_source(
         for uid, old in missing:
             removed_items.append(old)
             url = old.get("canonical_url","")
-            event_id = build_event_id("REMOVED_URL", uid, old.get("normalized_hash") or old.get("raw_hash") or old.get("content_hash"))
+            event_id = change_event_id("REMOVED_URL", uid, old.get("normalized_hash") or old.get("raw_hash") or old.get("content_hash"), None, old)
             evidence = (
                 _write_evidence(ROOT, "REMOVED_URL", event_id, url, now, old, None, read_snapshot(old), None)
                 if not dry_run
@@ -1369,7 +1373,7 @@ def process_source(
             event_id = (
                 event_record.get("event_id")
                 if event_record
-                else build_event_id(event, item["url_id"], before_hash, item.get("normalized_hash"))
+                else change_event_id(event, item["url_id"], before_hash, item.get("normalized_hash"), old_item)
             )
             pending = {
                 "event_type": event,
@@ -1457,11 +1461,12 @@ def process_source(
             event_id = (
                 event_record.get("event_id")
                 if event_record
-                else build_event_id(
+                else change_event_id(
                     event,
                     item["url_id"],
                     (previous.get(item["url_id"]) or {}).get("normalized_hash"),
                     item.get("normalized_hash"),
+                    previous.get(item["url_id"]),
                 )
             )
         result = {
@@ -1528,10 +1533,11 @@ def process_source(
                                 "event_type": event,
                                 "event_id": result.get("event_id") or (
                                     event_record.get("event_id") if event_record else
-                                    build_event_id(
+                                    change_event_id(
                                         event, item["url_id"],
                                         old_item.get("normalized_hash") or old_item.get("raw_hash") or old_item.get("content_hash"),
                                         item.get("normalized_hash"),
+                                        old_item,
                                     )
                                 ),
                                 "timestamp": event_record.get("timestamp") if event_record else now,
@@ -1577,10 +1583,11 @@ def process_source(
                         event_id = (
                             event_record.get("event_id")
                             if event_record
-                            else build_event_id(
+                            else change_event_id(
                                 event, item["url_id"],
                                 (previous.get(item["url_id"]) or {}).get("normalized_hash"),
                                 item.get("normalized_hash"),
+                                previous.get(item["url_id"]),
                             )
                         )
                     ai_results.append({"event":event,"event_id":event_id,"url":item["canonical_url"],"source_id":source.id,"evidence_location":item.get("evidence_location"),"ai":{"status":"error","reason":str(exc)}})
@@ -1781,7 +1788,6 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, n
         if seen_per_source[sid] <= per_source_limit:
             kept.append(entry)
     atomic_write_text(history_path, json.dumps(kept,indent=2))
-    atomic_write_text(latest_path, json.dumps(payload,indent=2))
 
     # report.json is the latest state of EVERY active source: sources not run
     # this time contribute their last saved report, so a single-source run no
@@ -1799,7 +1805,12 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, n
         "not_due": sorted(not_due or [], key=lambda entry: entry["source_id"]),
     }
     aggregate["schedule"] = run_schedule
+    # The aggregate report (what the notifier reads) is written BEFORE the new
+    # baseline. Interrupted between the two, the change is still un-baselined
+    # and the next scan re-detects it under the same event ID; the reverse
+    # order could advance the baseline with no report to alert from.
     atomic_write_text(DATA / "report.json", json.dumps(aggregate,indent=2))
+    atomic_write_text(latest_path, json.dumps(payload,indent=2))
     run_report = _aggregate_report(reports, run_id)
     run_report["schedule"] = run_schedule
     atomic_write_text(HISTORY / f"{run_id}.json", json.dumps(run_report, indent=2))

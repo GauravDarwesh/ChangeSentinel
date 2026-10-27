@@ -34,6 +34,8 @@ LATE_START = timedelta(hours=SLOT_HOURS / 2)
 # A monitor is overdue this long after the slot it was expected in, which for
 # the default cadence keeps the original 14-hour threshold (6 h + 8 h).
 OVERDUE_GRACE = timedelta(hours=8)
+# How far in the future a recorded scan time may be before it is distrusted.
+FUTURE_SKEW = timedelta(minutes=15)
 ALLOWED_INTERVALS = (6, 12, 24, 48, 72, 168)
 WEEKDAYS = ("mon", "tue", "wed", "thu", "fri", "sat", "sun")
 BUSINESS_DAYS = WEEKDAYS[:5]
@@ -159,6 +161,10 @@ def is_due(cadence: Cadence, last_scan: datetime | None, now: datetime, *, pause
     """Whether a scheduled run at ``now`` should scan this monitor."""
     if paused or last_scan is None:
         return True
+    # A last scan in the future (clock skew, a hand-edited report) would keep
+    # the monitor "not due" and never overdue for as long as the skew lasts.
+    if last_scan > now + FUTURE_SKEW:
+        return True
     if not cadence.allows(slot_start(now)):
         return False
     if cadence.every_hours == SLOT_HOURS:
@@ -180,10 +186,13 @@ def next_due(cadence: Cadence, last_scan: datetime | None, after: datetime) -> d
     return slot
 
 
-def overdue_after(cadence: Cadence, last_scan: datetime | None) -> datetime | None:
+def overdue_after(cadence: Cadence, last_scan: datetime | None, now: datetime | None = None) -> datetime | None:
     """When a monitor counts as overdue: the slot it was expected in, plus a grace period."""
     if last_scan is None:
         return None
+    if now is not None and last_scan > now + FUTURE_SKEW:
+        # An impossible future scan time cannot vouch for freshness: already overdue.
+        return now - OVERDUE_GRACE
     # Never stricter than "interval + grace" after the last scan, which for the
     # default cadence is the original 14-hour freshness threshold.
     return max(
@@ -238,7 +247,7 @@ def overdue_sources(config: dict, reports_dir, now: datetime) -> list[dict]:
             continue
         last = parse_time((report or {}).get("generated_at")) if isinstance(report, dict) else None
         cadence = Cadence.from_source(source)
-        limit = overdue_after(cadence, last)
+        limit = overdue_after(cadence, last, now)
         if limit is not None and now > limit:
             out.append({
                 "source_id": source_id,

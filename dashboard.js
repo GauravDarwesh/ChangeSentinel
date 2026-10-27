@@ -2047,6 +2047,12 @@ const NOTIFICATION_KINDS = {
   REMOVAL_HELD: "Removal held for review", DISCOVERY_DEGRADED: "Scan incomplete", DISCOVERY_FAILED: "Scan failed", TEST: "Test alert"
 };
 function notificationKind(kind) { return NOTIFICATION_KINDS[kind] || String(kind || "Alert"); }
+// Failed sends are recorded on the queued alert by regmon/notify.py.
+function deliveryAttempts(item) { const count = Number(item && item.delivery_attempts); return Number.isFinite(count) && count > 0 ? Math.floor(count) : 0; }
+function deliveryErrors(item) {
+  const errors = item && isPlainObject(item.last_errors) ? item.last_errors : {};
+  return Object.keys(errors).map(name => channelLabel(name) + ": " + String(errors[name] || ""));
+}
 function notificationLists() {
   const pending = Object.entries(notificationMap(state.outbox, "pending_events"))
     .map(([eventId, item]) => ({ ...(item && typeof item === "object" ? item : {}), eventId, queued: true }))
@@ -2069,8 +2075,8 @@ function renderNotifications() {
 
   $("notificationPendingItems").innerHTML = pending.length ? pending.map(item =>
     '<button class="row" type="button" data-select-notification="' + esc(item.eventId) + '"' + (item.eventId === state.selectedNotificationId ? ' aria-selected="true"' : "") + ">" +
-    '<span class="row-mark tone-change" aria-hidden="true"></span>' +
-    '<span class="row-title">' + esc(item.topic || notificationKind(item.kind)) + "</span><span class=\"row-time\">Queued</span>" +
+    '<span class="row-mark tone-' + (deliveryAttempts(item) ? "problem" : "change") + '" aria-hidden="true"></span>' +
+    '<span class="row-title">' + esc(item.topic || notificationKind(item.kind)) + "</span><span class=\"row-time\">" + esc(deliveryAttempts(item) ? "Failed " + deliveryAttempts(item) + "×" : "Queued") + "</span>" +
     '<span class="row-summary">' + esc(item.summary || "Waiting for the next run to deliver it.") + "</span>" +
     (safeHttpUrl(item.url) ? '<span class="row-sub"><span class="row-host">' + esc(displayUrl(item.url)) + "</span></span>" : "") +
     "</button>"
@@ -3532,6 +3538,8 @@ function renderNotificationDetail() {
     '<section class="sheet"><dl class="facts">' + fields.filter(([, value]) => value).map(([label, value]) => "<div><dt>" + esc(label) + "</dt><dd>" + esc(value) + "</dd></div>").join("") +
     '<div><dt>' + esc(item.queued ? "Delivered so far" : "Delivered to") + "</dt><dd>" + esc(deliveredChannels(item).map(channelLabel).join(", ") || (item.queued ? "Not yet" : "ntfy")) + "</dd></div>" +
     (item.condition ? "<div><dt>Alert condition</dt><dd>" + esc(item.condition) + "</dd></div>" : "") +
+    (item.queued && deliveryAttempts(item) ? "<div><dt>Failed attempts</dt><dd>" + esc(String(deliveryAttempts(item)) + (item.first_failed_at ? " since " + fmt(item.first_failed_at) : "")) + "</dd></div>" : "") +
+    (item.queued && deliveryErrors(item).length ? '<div><dt>Last error</dt><dd class="is-code">' + deliveryErrors(item).map(esc).join("<br>") + "</dd></div>" : "") +
     '<div><dt>Event ID</dt><dd class="is-code">' + esc(item.eventId) + "</dd></div></dl>" +
     (item.queued && deliveredChannels(item).length ? '<p class="note-strip">Already delivered to ' + esc(deliveredChannels(item).map(channelLabel).join(", ")) + ". The next run sends it only to the channels that missed it.</p>" : "") +
     "</section></div>";

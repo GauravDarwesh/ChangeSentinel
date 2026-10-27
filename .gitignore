@@ -7,3 +7,8 @@ venv/
 .pytest_cache/
 node_modules/
 smoke-artifacts/
+# Browser-crawler output goes to the job log; never commit it (audit CS-52).
+data/stealth-output.txt
+# Temporary files from regmon.fsutil atomic writes.
+*.tmp
+.venv*/

@@ -27,6 +27,7 @@ import re
 from pathlib import Path
 
 from regmon.config import SourceConfig, validate_config
+from regmon.fsutil import atomic_write_text
 
 REQUEST_MARKER = "<!-- changesentinel:update-monitors:v1 -->"
 ISSUE_TITLE_PREFIX = "[ChangeSentinel] Update monitors"
@@ -169,14 +170,15 @@ def update_from_issue(event: dict, config_path: Path, repository: str, digests_p
         before = path.read_text(encoding="utf-8") if path.exists() else ""
         text = json.dumps({"version": 1, "digests": request["digests"]}, indent=2, ensure_ascii=False) + "\n"
         if text != before:
-            path.write_text(text, encoding="utf-8")
+            atomic_write_text(path, text)
         names = ", ".join(f"{item['id']} ({item['frequency']}, {item['workspace']})" for item in request["digests"]) or "none"
         return {"requested": len(request["digests"]), "changed": ["digests"] if text != before else [], "settings": "digests",
                 "message": f"Digests are now: {names}." if text != before else f"Digests were already: {names}."}
     config = json.loads(Path(config_path).read_text(encoding="utf-8"))
     changed = apply_settings(config, request)
     if changed:
-        Path(config_path).write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        # apply_settings validated the whole config; replace it atomically.
+        atomic_write_text(Path(config_path), json.dumps(config, indent=2, ensure_ascii=False) + "\n")
     described = ", ".join(
         [f"{key} = {json.dumps(value, ensure_ascii=False)}" for key, value in request["set"].items()]
         + [f"{key} back to its default" for key in request["clear"]]

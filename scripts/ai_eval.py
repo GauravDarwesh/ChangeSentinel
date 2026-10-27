@@ -6,7 +6,7 @@ guard are sent to semantic AI. The report includes both end-to-end and model-onl
 accuracy so deterministic suppressions cannot be mistaken for model performance.
 
 Usage: OPENROUTER_API_KEY=... python scripts/ai_eval.py [--min-accuracy 0.8] [--min-model-accuracy 0.8]
-       [--min-model-cases 4] [--repeats 2]
+       [--min-model-cases 12] [--repeats 2]
 Exit status 1 when accuracy, decision-source, model-case-count, or repeated-model-agreement
 thresholds are missed.
 
@@ -291,7 +291,7 @@ def main() -> None:
     parser.add_argument("--min-accuracy", type=float, default=0.8, help="Minimum end-to-end pipeline accuracy")
     parser.add_argument("--min-model-accuracy", type=float, default=0.8, help="Minimum semantic-AI-only accuracy")
     parser.add_argument("--min-model-agreement", type=float, default=0.8, help="Minimum repeated verdict agreement for model-routed cases")
-    parser.add_argument("--min-model-cases", type=int, default=4, help="Minimum distinct fixtures routed to semantic AI")
+    parser.add_argument("--min-model-cases", type=int, default=12, help="Minimum distinct fixtures routed to semantic AI")
     parser.add_argument("--repeats", type=int, default=int(os.getenv("AI_EVAL_REPEATS", "2")), help="Semantic-AI evaluations per model-routed case (2–3)")
     args = parser.parse_args()
     if not 0.0 <= args.min_accuracy <= 1.0:

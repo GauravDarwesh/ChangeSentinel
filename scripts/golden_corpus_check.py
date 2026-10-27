@@ -104,7 +104,7 @@ def profile_version(extraction_type: str, profile: str) -> str:
 def check(data_dir: Path, config_path: Path) -> dict:
     _payload, sources = load_config(config_path)
     latest = json.loads((data_dir / "latest.json").read_text(encoding="utf-8"))
-    results = {"checked": 0, "matched": 0, "mismatched": [], "quality_failures": [], "model_variance": [], "profile_changed": [], "skipped_old_version": 0}
+    results = {"eligible": 0, "checked": 0, "matched": 0, "mismatched": [], "quality_failures": [], "model_variance": [], "profile_changed": [], "skipped_old_version": 0}
     for source_id, records in (latest.get("sources") or {}).items():
         source = sources.get(source_id)
         if source is None or not source.active:
@@ -113,11 +113,13 @@ def check(data_dir: Path, config_path: Path) -> dict:
             if record.get("fetch_error") or record.get("extraction_error") or not record.get("normalized_hash"):
                 continue
             kind = str(record.get("extraction_type") or "")
-            if not is_current_extractor_version(record.get("extractor_version")):
-                results["skipped_old_version"] += 1
-                continue
             pointer = record.get("file_snapshot_location") if kind in {"pdf", "zip", "xlsx"} else record.get("html_snapshot_location")
             if kind not in {"html", "pdf", "zip", "xlsx"} or not pointer:
+                continue
+            # Eligible: a record this gate can re-extract from its saved original.
+            results["eligible"] += 1
+            if not is_current_extractor_version(record.get("extractor_version")):
+                results["skipped_old_version"] += 1
                 continue
             original = data_dir.parent / pointer
             if not original.is_file():
@@ -162,13 +164,45 @@ def check(data_dir: Path, config_path: Path) -> dict:
     return results
 
 
+def gate_failures(results: dict, *, allow_empty: bool = False, max_skipped_share: float = 0.5) -> list[str]:
+    """Reasons the gate must fail although nothing mismatched.
+
+    Bumping CONTENT_EXTRACTOR_VERSION made every record skip as "older version",
+    so the gate checked nothing and passed: the operation the corpus exists to
+    police silenced it. An empty or mostly-skipped run now fails unless allowed.
+    """
+    eligible, checked, skipped = results.get("eligible", 0), results.get("checked", 0), results.get("skipped_old_version", 0)
+    if not eligible or allow_empty:
+        return []
+    if checked == 0:
+        return [f"The golden extraction corpus re-checked 0 of {eligible} eligible record(s) "
+                f"({skipped} skipped as an older extractor version), so it enforced nothing. "
+                "Re-baseline with a scan, or pass --allow-empty for a deliberate version bump."]
+    if skipped / eligible > max_skipped_share:
+        return [f"The golden extraction corpus skipped {skipped} of {eligible} eligible record(s) "
+                f"as an older extractor version (limit {max_skipped_share:.0%}); the corpus is stale. "
+                "Re-baseline with a scan, or raise --max-skipped-share deliberately."]
+    return []
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data")
     parser.add_argument("--config", type=Path, default=ROOT / "config" / "sources.json")
+    parser.add_argument(
+        "--allow-empty", action="store_true",
+        help="Pass even when no record was re-checked (only for a deliberate extractor-version bump "
+             "before the next scan re-baselines the corpus)",
+    )
+    parser.add_argument(
+        "--max-skipped-share", type=float, default=0.5,
+        help="Fail when more than this share of eligible records was skipped as an older extractor version",
+    )
     args = parser.parse_args()
     results = check(args.data_dir, args.config)
     print(json.dumps(results, indent=2))
+    for failure in gate_failures(results, allow_empty=args.allow_empty, max_skipped_share=args.max_skipped_share):
+        raise SystemExit(failure)
     if results["mismatched"]:
         raise SystemExit(
             f"{len(results['mismatched'])} record(s) no longer reproduce their extracted baseline. "

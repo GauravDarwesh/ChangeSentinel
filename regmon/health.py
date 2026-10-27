@@ -179,7 +179,7 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
         # Overdue is judged against the monitor's own cadence: a weekly monitor
         # scanned four days ago is on time.
         cadence = schedule.Cadence.from_source(source)
-        overdue_at = schedule.overdue_after(cadence, last_scan)
+        overdue_at = schedule.overdue_after(cadence, last_scan, now)
         protected.extend(waiting)
         if errors:
             status = "failing"
@@ -323,11 +323,23 @@ def build_health(config: dict, latest: dict, history: list, ledger: dict, now: d
     }
 
 
+def _load_required(path: Path, default):
+    """Like _load, but a file that exists and cannot be read raises.
+
+    A truncated config or inventory used to read as "no monitors", and the
+    resulting all-clear replaced the last good health.json in the commit.
+    "No monitors" and "could not read the monitors" must not look the same.
+    """
+    if not path.exists():
+        return default
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 def write(data_dir: Path, config_path: Path, now: datetime | None = None) -> dict:
     data_dir = Path(data_dir)
     health = build_health(
-        _load(Path(config_path), {}),
-        _load(data_dir / "latest.json", {}),
+        _load_required(Path(config_path), {}),
+        _load_required(data_dir / "latest.json", {}),
         _load(data_dir / "history" / "index.json", []),
         _load(data_dir / "notifications.json", {}),
         now or datetime.now(timezone.utc),

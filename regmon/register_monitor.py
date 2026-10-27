@@ -11,8 +11,9 @@ from urllib.parse import parse_qsl, urlencode, urljoin, urlparse, urlunparse
 
 import requests
 from bs4 import BeautifulSoup
+from regmon.fsutil import atomic_write_text
 from regmon.safe_http import public_destinations_only
-from regmon.security import USER_AGENT, validate_public_http_url
+from regmon.security import USER_AGENT, DNSResolutionError, validate_public_http_url
 
 REQUEST_MARKER = "<!-- changesentinel:add-monitor:v1 -->"
 BULK_REQUEST_MARKER = "<!-- changesentinel:add-monitor-bulk:v1 -->"
@@ -157,6 +158,14 @@ def _resolve_redirects(url: str) -> str:
     every scan. Each hop is checked like any registered URL. Any failure keeps
     the address as submitted: resolution is a convenience, never a gate.
     """
+    # The submitted address itself must not resolve to a private network: that
+    # is refused here, at registration, rather than failing on every scan. A
+    # lookup that fails outright is transient and does not block registration
+    # (the scan's connect-time guard still applies).
+    try:
+        validate_public_http_url(url, resolve_dns=True)
+    except DNSResolutionError:
+        return url
     current = url
     try:
         for _ in range(MAX_REGISTRATION_REDIRECTS + 1):
@@ -297,6 +306,35 @@ def _apply_document_rule(source: dict, url: str, rule: dict) -> None:
     source["allowed_domains"] = domains
 
 
+def _with_unix_newlines(event: dict) -> dict:
+    """A copy of the issue event whose body uses LF line endings."""
+    issue = event.get("issue") if isinstance(event, dict) else None
+    if not isinstance(issue, dict) or "\r\n" not in str(issue.get("body") or ""):
+        return event
+    return {**event, "issue": {**issue, "body": str(issue["body"]).replace("\r\n", "\n")}}
+
+
+def write_sources_config(config_path: Path, config: dict) -> None:
+    """Validate the whole proposed config, then replace config/sources.json atomically.
+
+    Every scan loads this file. A payload the engine would reject used to be
+    written anyway and stopped every source on the next run; a truncated write
+    (runner cancelled mid-write) left an empty file that the commit step then
+    published. Neither can reach the working tree now.
+    """
+    from regmon.config import SourceConfig, validate_config
+
+    sources = config.get("sources")
+    if not isinstance(sources, list):
+        raise ValueError("config/sources.json must contain a sources array.")
+    validate_config(config, [SourceConfig.from_dict(source) for source in sources])
+    atomic_write_text(Path(config_path), json.dumps(config, indent=2, ensure_ascii=False) + "\n")
+
+
+def _write_json(path: Path, value: dict) -> None:
+    atomic_write_text(Path(path), json.dumps(value, indent=2, ensure_ascii=False) + "\n")
+
+
 def _validated_issue_body(event: dict, repository: str, marker: str) -> str:
     issue = event.get("issue") or {}
     title = str(issue.get("title") or "")
@@ -307,7 +345,8 @@ def _validated_issue_body(event: dict, repository: str, marker: str) -> str:
     issue_owner = str(((issue.get("user") or {}).get("login")) or "").lower()
     if not repo_owner or issue_owner != repo_owner:
         raise ValueError("Only the repository owner can register a monitor through the dashboard.")
-    body = str(issue.get("body") or "")
+    # GitHub can deliver CRLF line endings; the field patterns are line-anchored.
+    body = str(issue.get("body") or "").replace("\r\n", "\n")
     if marker not in body:
         raise ValueError("The issue is missing the ChangeSentinel request marker.")
     return body
@@ -537,6 +576,7 @@ def _existing_source_for_request(
 
 def register_bulk_request(event: dict, config_path: Path, repository: str) -> dict:
     """Register a set of exact-page URLs atomically; invalid/conflicting rows write nothing."""
+    event = _with_unix_newlines(event)
     requests_to_add = bulk_requests_from_issue(event, repository)
     # One optional alert condition for every link in the request (the review
     # step of Add a link sets it once for the whole batch).
@@ -684,9 +724,7 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
     created_count = sum(1 for item in items if item["created"])
     existing_count = len(items) - created_count
     if created_count or conditions_changed or organised:
-        config_path.write_text(
-            json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-        )
+        write_sources_config(config_path, config)
     return {
         "bulk": True,
         "source_ids": source_ids,
@@ -992,6 +1030,7 @@ def register_request(
     repository: str,
     scout_config_path: Path | None = None,
 ) -> dict:
+    event = _with_unix_newlines(event)
     body = str(((event.get("issue") or {}).get("body")) or "")
     if DELETE_REQUEST_MARKER in body:
         return delete_monitor_request(event, config_path, repository)
@@ -1046,9 +1085,7 @@ def register_request(
             scout_data, url, str(display_name or url), crawl_depth, explore_prefixes, document_hosts
         )
         if scout_changed:
-            Path(scout_config_path).write_text(
-                json.dumps(scout_data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-            )
+            _write_json(scout_config_path, scout_data)
         return {
             "source_id": "",
             "source_ids": [],
@@ -1221,11 +1258,9 @@ def register_request(
     # Validate both proposed files before replacing either one. GitHub commits
     # the two config files together in a single owner-approved workflow run.
     if source_changed:
-        config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        write_sources_config(config_path, config)
     if scout_enabled and scout_changed:
-        Path(scout_config_path).write_text(
-            json.dumps(scout_data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-        )
+        _write_json(scout_config_path, scout_data)
 
     source_result["crawl_depth_updated"] = crawl_depth_updated
     source_result["discovery_only"] = False
@@ -1281,7 +1316,7 @@ def delete_monitor_request(event: dict, config_path: Path, repository: str) -> d
         if root_deleted:
             source["seed_urls"] = remaining_seeds
     if not already_excluded or root_deleted:
-        config_path.write_text(json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        write_sources_config(config_path, config)
     return {"source_id": source["id"], "source_ids": [source["id"]], "url": target_url, "name": source.get("name", "Monitored page"), "created": False, "deleted": True, "deactivated": not source.get("active", True), "root_deleted": root_deleted, "bulk": False, "count": 1, "created_count": 0, "existing_count": 1, "message": "The page is excluded from future scans; history and saved evidence are retained."}
 
 

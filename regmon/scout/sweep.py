@@ -87,8 +87,18 @@ def in_candidate_scope(url: str, regulator: Regulator, channel: Channel) -> bool
     if any(re.search(pattern, url) for pattern in channel.exclude_link_patterns):
         return False
     if channel.type == "listing" and path == (urlparse(canonical(channel.url, regulator.https_hosts)).path or "/"):
-        return False  # the listing itself, its pages and its filters
+        # The listing itself, its pages and its filters - unless the query names
+        # an item (?docId=, ?id=): CMS listings often serve every item from the
+        # listing's own path, and excluding those left the channel empty.
+        keys = {key.lower() for key, _ in parse_qsl(urlparse(value).query, keep_blank_values=True)}
+        return bool(keys & ITEM_QUERY_KEYS)
     return True
+
+
+# Query keys that identify one publication rather than a page or filter of a listing.
+ITEM_QUERY_KEYS = frozenset({
+    "id", "docid", "documentid", "doc", "itemid", "nid", "fileid", "publicationid", "pubid", "articleid", "newsid",
+})
 
 
 class ChannelRun:

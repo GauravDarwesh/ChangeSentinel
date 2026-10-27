@@ -68,12 +68,59 @@ def _details(notification: dict) -> list[tuple[str, str]]:
     return [(label, _stated(notification.get(key))) for label, key in FIELDS if _stated(notification.get(key))]
 
 
-def _post(url: str, body: bytes, headers: dict | None = None) -> None:
+def _body_snippet(response, limit: int = 200) -> str:
+    try:
+        return " ".join(str(getattr(response, "text", "") or "").split())[:limit]
+    except Exception:
+        return ""
+
+
+def check_delivery(response, url_label: str) -> None:
+    """Raise unless the receiver accepted the message.
+
+    ``raise_for_status()`` alone recorded two kinds of loss as delivered: a
+    redirect (requests would replay the POST as a GET elsewhere; redirects are
+    never followed, so a 3xx arrives here) and any 2xx at all.
+    """
+    status = getattr(response, "status_code", None)
+    if isinstance(status, int) and 300 <= status < 400:
+        location = (getattr(response, "headers", None) or {}).get("Location") or "no Location header"
+        raise RuntimeError(f"{url_label} answered HTTP {status} (redirect to {location}); alert endpoints must accept the POST directly")
+    try:
+        response.raise_for_status()
+    except Exception as exc:
+        detail = _body_snippet(response)
+        raise RuntimeError(f"{url_label} answered HTTP {status}" + (f": {detail}" if detail else "")) from exc
+
+
+def _check_slack(response) -> None:
+    """Slack incoming webhooks answer ``ok``; workflow triggers answer ``{"ok": true}``.
+
+    Some failures (revoked apps, invalid blocks on workflow triggers) answer
+    HTTP 200 with ``{"ok": false, "error": ...}``, which raise_for_status accepts.
+    """
+    text = str(getattr(response, "text", "") or "").strip()
+    if text.lower() == "ok":
+        return
+    try:
+        payload = json.loads(text)
+    except ValueError:
+        payload = None
+    if isinstance(payload, dict) and payload.get("ok") is True:
+        return
+    error = payload.get("error") if isinstance(payload, dict) else None
+    raise RuntimeError("Slack did not accept the message: " + str(error or text[:200] or "empty response"))
+
+
+def _post(url: str, body: bytes, headers: dict | None = None, verify: Callable | None = None) -> None:
     response = requests.post(
         url, data=body, timeout=TIMEOUT_SECONDS,
         headers={"Content-Type": "application/json", **(headers or {})},
+        allow_redirects=False,
     )
-    response.raise_for_status()
+    check_delivery(response, urlsplit(url).hostname or "the alert endpoint")
+    if verify is not None:
+        verify(response)
 
 
 def _escape_slack(text: str) -> str:
@@ -148,20 +195,41 @@ def _encode(payload: dict) -> bytes:
     return json.dumps(payload, ensure_ascii=False, separators=(",", ":"), sort_keys=True).encode("utf-8")
 
 
-def configured_channels(env: Mapping[str, str], link_for: Callable[[dict], str]) -> list[Channel]:
-    """Channels enabled by the environment, in a fixed order. ntfy is added by the notifier."""
+def configured_channels(
+    env: Mapping[str, str],
+    link_for: Callable[[dict], str],
+    errors: list[str] | None = None,
+) -> list[Channel]:
+    """Channels enabled by the environment, in a fixed order. ntfy is added by the notifier.
+
+    With ``errors`` given, a misconfigured channel (for example an http:// Slack
+    URL) is reported there and left out, so one bad optional secret cannot stop
+    the other channels or the run. Without it the error is raised.
+    """
     channels = []
-    slack = str(env.get("SLACK_WEBHOOK_URL") or "").strip()
+
+    def url_for(key: str) -> str:
+        value = str(env.get(key) or "").strip()
+        if not value:
+            return ""
+        try:
+            return _https(value, key)
+        except ValueError as exc:
+            if errors is None:
+                raise
+            errors.append(str(exc))
+            return ""
+
+    slack = url_for("SLACK_WEBHOOK_URL")
     if slack:
-        slack = _https(slack, "SLACK_WEBHOOK_URL")
-        channels.append(Channel("slack", lambda n, _d, u=slack: _post(u, _encode(slack_payload(n, link_for(n))))))
-    teams = str(env.get("TEAMS_WEBHOOK_URL") or "").strip()
+        channels.append(Channel("slack", lambda n, _d, u=slack: _post(
+            u, _encode(slack_payload(n, link_for(n))), verify=_check_slack,
+        )))
+    teams = url_for("TEAMS_WEBHOOK_URL")
     if teams:
-        teams = _https(teams, "TEAMS_WEBHOOK_URL")
         channels.append(Channel("teams", lambda n, _d, u=teams: _post(u, _encode(teams_payload(n, link_for(n))))))
-    webhook = str(env.get("ALERT_WEBHOOK_URL") or "").strip()
+    webhook = url_for("ALERT_WEBHOOK_URL")
     if webhook:
-        webhook = _https(webhook, "ALERT_WEBHOOK_URL")
         secret = str(env.get("ALERT_WEBHOOK_SECRET") or "")
 
         def send_webhook(notification: dict, _dashboard: str, url: str = webhook) -> None:

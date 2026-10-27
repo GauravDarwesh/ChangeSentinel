@@ -26,8 +26,10 @@ DASH = "https://gauravdarwesh.github.io/ChangeSentinel/"
 
 
 class FakeResponse:
-    def __init__(self, status=200):
-        self.status = status
+    def __init__(self, status=200, text="ok", headers=None):
+        self.status = self.status_code = status
+        self.text = text
+        self.headers = headers or {}
 
     def raise_for_status(self):
         if self.status >= 400:
