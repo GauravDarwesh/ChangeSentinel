@@ -35,7 +35,7 @@ MAX_MONITORS = 200
 SETTABLE_KEYS = {
     "check_every_hours", "check_days", "check_hours", "check_timezone", "workspace", "labels", "shadow",
     "fetch_mode", "browser_wait_seconds", "browser_wait_selector", "browser_dismiss_cookies",
-    "browser_actions", "visual_compare", "visual_alert_threshold",
+    "browser_actions", "visual_compare", "visual_alert_threshold", "listed_on",
 }
 # Label edits that keep each monitor's other labels (a preset adds "Spec" to
 # fifty monitors without wiping what each already carries).
@@ -135,6 +135,12 @@ def apply_settings(config: dict, request: dict) -> list[str]:
             source.pop("workspace")
         if source.get("shadow") is False:
             source.pop("shadow")
+        if isinstance(source.get("listed_on"), list):
+            pages = list(dict.fromkeys(str(page).strip() for page in source["listed_on"] if str(page).strip()))
+            if pages:
+                source["listed_on"] = pages
+            else:
+                source.pop("listed_on")
         for key, default in (("fetch_mode", "http"), ("browser_wait_seconds", 3), ("browser_wait_selector", ""), ("browser_dismiss_cookies", True)):
             if key in source and source[key] == default:
                 source.pop(key)

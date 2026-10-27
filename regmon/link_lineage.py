@@ -13,12 +13,18 @@ address, monitored or not.
       "updated_at": "...",
       "pages": {
         "<page url>": {
-          "tracking_since": "...", "last_scan": "...",
+          "tracking_since": "...", "last_scan": "...", "listing": true,
           "links": {"<link url>": {"text": "...", "menu": false, "first_seen": "...", "removed_at": "..."}}
         }
       },
       "events": [{"at": "...", "page": "...", "url": "...", "text": "...", "change": "removed" | "added" | "restored"}]
     }
+
+Pages come from two places: monitored HTML pages, read as part of their own
+scan, and the pages a monitored link is listed on (the source's ``listed_on``:
+the forms page a PDF was found on), read each scan for their links only and
+marked ``"listing": true``. Monitored pages missing from the record are seeded
+from their saved HTML copies automatically.
 
 Only page-level times change on an ordinary scan, so the file does not churn in
 git. A page that suddenly lists no links at all (a stub, an error page served
@@ -48,6 +54,8 @@ MAX_LINKS_PER_PAGE = 3000
 MAX_REMOVED_PER_PAGE = 600
 MAX_EVENTS = 3000
 MAX_TEXT = 200
+# Listing pages (a monitor's ``listed_on``) read per scan, links only.
+MAX_LISTING_PAGES = 40
 # A page whose link count falls to zero (or below this share of what it listed)
 # in one scan is more likely broken than emptied; its links are not marked removed.
 COLLAPSE_SHARE = 0.2
@@ -124,7 +132,7 @@ def load(data_dir: Path = DATA) -> dict:
     return {"schema_version": SCHEMA_VERSION, "updated_at": None, "pages": {}, "events": []}
 
 
-def observe(lineage: dict, page_url: str, links: dict[str, dict] | None, at: str) -> list[dict]:
+def observe(lineage: dict, page_url: str, links: dict[str, dict] | None, at: str, listing: bool = False) -> list[dict]:
     """Record one scan of one page; returns the link events it produced.
 
     links=None means the page was checked but not re-read (an HTTP 304): its
@@ -142,6 +150,8 @@ def observe(lineage: dict, page_url: str, links: dict[str, dict] | None, at: str
             "tracking_since": at, "last_scan": at,
             "links": {url: {"text": info["text"], "menu": info["menu"], "first_seen": at} for url, info in links.items()},
         }
+        if listing:
+            pages[page_url]["listing"] = True
         return []
     known: dict[str, dict] = page.setdefault("links", {})
     listed_before = [url for url, entry in known.items() if not entry.get("removed_at")]
@@ -184,7 +194,7 @@ def apply(data_dir: Path, observations: list[dict], now: str | None = None) -> d
         page = str(observation.get("page") or "")
         if not page:
             continue
-        events.extend(observe(lineage, page, observation.get("links"), str(observation.get("at") or now or _now())))
+        events.extend(observe(lineage, page, observation.get("links"), str(observation.get("at") or now or _now()), bool(observation.get("listing"))))
     if events:
         lineage["events"] = (events[::-1] + list(lineage.get("events") or []))[:MAX_EVENTS]
     lineage["updated_at"] = now or _now()
@@ -259,7 +269,53 @@ def backfill(data_dir: Path = DATA) -> dict:
             if not path.exists():
                 continue
             observations.append({"page": url, "at": at or item_first, "links": extract_links(path.read_bytes(), url)})
+    if not observations:
+        # Nothing new to seed: the record is left as it is (no churn in git).
+        return {"events": 0, "pages": len(lineage["pages"])}
     return apply(data_dir, observations)
+
+
+def listing_pages(sources, skip: set[str] | None = None, limit: int = MAX_LISTING_PAGES) -> list[str]:
+    """The pages that list the scanned monitors' links (their ``listed_on``), once each.
+
+    Pages the scan has already read as monitors are skipped: their links are
+    recorded from that reading.
+    """
+    skip = set(skip or ())
+    pages: list[str] = []
+    for source in sources:
+        for page in getattr(source, "listed_on", None) or ():
+            page = str(page or "").strip()
+            if page and page not in skip and page not in pages:
+                pages.append(page)
+    return pages[:limit]
+
+
+def read_listing_pages(pages: list[str], fetch_page, at: str, budget_seconds: float = 120.0) -> list[dict]:
+    """Read each listing page for its links only; returns observations for apply().
+
+    ``fetch_page(url)`` returns the page's HTML (bytes or str), or None when the
+    page could not be read as a page (an error, a bot check, a document).
+    Pages that fail are skipped: their links are left as last recorded.
+    """
+    import time
+
+    started = time.monotonic()
+    observations = []
+    for page in pages:
+        if time.monotonic() - started > budget_seconds:
+            break
+        try:
+            body = fetch_page(page)
+        except Exception as exc:  # one unreadable page never stops the others
+            print(f"Link lineage: listing page {page} not read: {type(exc).__name__}: {exc}")
+            continue
+        if not body:
+            continue
+        links = extract_links(body, page)
+        if links:
+            observations.append({"page": page, "at": at, "links": links, "listing": True})
+    return observations
 
 
 def _now() -> str:

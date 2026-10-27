@@ -108,3 +108,23 @@ class TestConfig(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestListedOn(unittest.TestCase):
+    BASE = {"id": "manual-x", "name": "Form A", "regulator": "x.gov", "seed_urls": ["https://x.gov/a.pdf"],
+            "allowed_prefixes": ["https://x.gov/"], "allowed_domains": ["x.gov"]}
+
+    def test_listing_pages_are_http_addresses_and_at_most_five(self):
+        self.assertEqual(SourceConfig.from_dict({**self.BASE, "listed_on": ["https://x.gov/forms?y=1"]}).listed_on, ("https://x.gov/forms?y=1",))
+        for bad in (["javascript:alert(1)"], ["https://x.gov/" + "a" * 600], ["https://x.gov/p"] * 6, "https://x.gov/forms"):
+            with self.subTest(bad=str(bad)[:40]), self.assertRaises(ValueError):
+                SourceConfig.from_dict({**self.BASE, "listed_on": bad})
+
+    def test_the_dashboard_can_set_and_clear_listing_pages(self):
+        from regmon.monitor_settings import apply_settings
+
+        config = {"version": 4, "defaults": {}, "sources": [dict(self.BASE)]}
+        apply_settings(config, {"monitors": ["manual-x"], "set": {"listed_on": ["https://x.gov/forms", "https://x.gov/forms"]}, "clear": []})
+        self.assertEqual(config["sources"][0]["listed_on"], ["https://x.gov/forms"])
+        apply_settings(config, {"monitors": ["manual-x"], "set": {}, "clear": ["listed_on"]})
+        self.assertNotIn("listed_on", config["sources"][0])

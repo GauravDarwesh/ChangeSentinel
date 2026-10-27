@@ -432,6 +432,40 @@ def bulk_row_settings(event: dict, repository: str) -> dict[str, dict]:
                 raise ValueError(f"Bulk row {index}: check_every_hours must be one of {', '.join(map(str, ALLOWED_INTERVALS))}.")
             if every != 6:
                 extra["check_every_hours"] = every
+        # The page the link was found on (Add a link, Scout): its links are read
+        # each scan, so the link record says where this link is listed.
+        listed = row.get("listed_on") or []
+        if isinstance(listed, str):
+            listed = [listed]
+        if not isinstance(listed, list):
+            raise ValueError(f"Bulk row {index}: listed_on must be a page address or a list of them.")
+        pages = []
+        for page in listed[:5]:
+            try:
+                page_url = canonicalize_url(str(page or ""))
+            except ValueError:
+                continue
+            if page_url and page_url not in pages and page_url != canonicalize_url(str(row.get("url") or "")):
+                pages.append(page_url)
+        if pages:
+            extra["listed_on"] = pages
+        # Steps recorded in Add a link, replayed in the browser before the page
+        # is read, and a screenshot comparison. Validated as config is.
+        steps = row.get("browser_actions")
+        if steps not in (None, "", []):
+            from regmon.browser_actions import ActionError, validate_actions
+
+            try:
+                validate_actions(steps, f"Bulk row {index}: browser_actions")
+            except ActionError as exc:
+                raise ValueError(str(exc)) from exc
+            extra["fetch_mode"] = "browser"
+            extra["browser_actions"] = [dict(step) for step in steps]
+        if row.get("visual_compare") is True:
+            extra["fetch_mode"] = "browser"
+            extra["visual_compare"] = True
+        if row.get("fetch_mode") == "browser":
+            extra["fetch_mode"] = "browser"
         if extra:
             out[canonicalize_url(str(row.get("url") or ""))] = extra
     return out
@@ -629,6 +663,15 @@ def register_bulk_request(event: dict, config_path: Path, repository: str) -> di
         _apply_organisation(target, extra.get("workspace") or batch_workspace, (batch_labels or []) + (extra.get("labels") or []))
         if extra.get("check_every_hours"):
             target["check_every_hours"] = extra["check_every_hours"]
+        if extra.get("listed_on"):
+            listed = [str(page) for page in target.get("listed_on") or []]
+            target["listed_on"] = list(dict.fromkeys(listed + extra["listed_on"]))[:5]
+        if extra.get("fetch_mode") == "browser" and (item["created"] or extra.get("browser_actions") or extra.get("visual_compare")):
+            target["fetch_mode"] = "browser"
+            if extra.get("browser_actions"):
+                target["browser_actions"] = extra["browser_actions"]
+            if extra.get("visual_compare"):
+                target["visual_compare"] = True
         if batch_shadow and item["created"]:
             # Only new monitors start in shadow mode; existing ones keep alerting.
             target["shadow"] = True

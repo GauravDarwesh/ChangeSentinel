@@ -50,6 +50,11 @@ export const USER_AGENT = 'Mozilla/5.0 (compatible; ChangeSentinel/0.6 page read
 export const BROWSER_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15';
 const RETRY_STATUSES = new Set([401, 403, 406, 409, 429, 503]);
 
+// Sent with every answer. The dashboard compares it with the version it was
+// built for and says so when the deployed reader is older (its styles, live
+// view and reading view then do not arrive).
+export const READER_VERSION = '2026-10-27';
+
 export class PublicError extends Error {
   status: number;
   constructor(message: string, status = 400) {
@@ -1147,7 +1152,7 @@ function cors(req: Request) {
     Vary: 'Origin',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info, x-ask-sentinel-visitor-id',
-    'Access-Control-Expose-Headers': 'Retry-After, X-CS-Kind, X-CS-Format, X-CS-Url',
+    'Access-Control-Expose-Headers': 'Retry-After, X-CS-Kind, X-CS-Format, X-CS-Url, X-CS-Reader',
     'Access-Control-Max-Age': '86400'
   };
   if (allowed) headers['Access-Control-Allow-Origin'] = origin;
@@ -1234,11 +1239,12 @@ export async function handle(req: Request): Promise<Response> {
           'Cache-Control': 'no-store',
           'X-CS-Kind': 'file',
           'X-CS-Format': String(result.format),
-          'X-CS-Url': encodeURI(String(result.url))
+          'X-CS-Url': encodeURI(String(result.url)),
+          'X-CS-Reader': READER_VERSION
         }
       });
     }
-    return respond(req, result);
+    return respond(req, { ...result, reader_version: READER_VERSION });
   } catch (error) {
     if (error instanceof PublicError) return respond(req, { error: error.message }, error.status);
     console.error('page-reader failed', error);

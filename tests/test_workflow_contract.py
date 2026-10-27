@@ -74,6 +74,23 @@ class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
         pages = workflow[step_index(workflow, "Publish latest monitoring data to Pages"):step_index(workflow, "Report paused crawl without auto-dispatching another run")]
         self.assertIn("steps.state-commit.outputs.committed == 'true'", pages)
 
+    def test_pages_publish_the_lineage_record_and_stamp_the_scripts_per_deploy(self):
+        pages = (WORKFLOWS / "pages.yml").read_text(encoding="utf-8")
+        # Without the record on Pages, every link's Lineage tab was empty.
+        self.assertIn('- "data/link-lineage.json"', pages)
+        self.assertIn("config/registry.json data/link-lineage.json; do", pages)
+        # A ?v= stamp left unchanged kept browsers on the old dashboard.js.
+        self.assertIn('stamp="${GITHUB_SHA::12}"', pages)
+        self.assertIn("dashboard.js?v=${stamp}", pages)
+        index = (ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertRegex(index, r'src="dashboard\.js\?v=[A-Za-z0-9._-]+"')
+
+    def test_dashboard_expects_the_page_reader_version_it_was_built_with(self):
+        reader = (ROOT / "supabase/functions/page-reader/index.ts").read_text(encoding="utf-8")
+        dashboard = (ROOT / "dashboard.js").read_text(encoding="utf-8")
+        version = re.search(r"READER_VERSION = '([0-9-]+)'", reader).group(1)
+        self.assertIn(f'const PAGE_READER_VERSION = "{version}";', dashboard)
+
     def test_workflows_pin_runner_image_and_action_commits(self):
         for path in sorted(WORKFLOWS.glob("*.yml")):
             text = path.read_text(encoding="utf-8")
