@@ -442,9 +442,14 @@ function deriveDocumentTitle(text, type) {
     const isInstructions = /\bInstructions for\b/i.test(head.slice(0, 700));
     let code = "", name = "", m;
     if (isInstructions) {
-      m = stripped.match(/Instructions for (?:the )?(?:Preparation of )?(.+?)\s*\(?\s*Reporting Form\s+(FR\s+[A-Z]?-?\d[A-Za-z0-9\/-]*)/i);
+      m = stripped.match(/Instructions for (?:the )?(?:Preparation of )?(.+?)\s*\(?\s*Reporting Form\s+((?:FR|FFIEC)\s+[A-Z]?-?\d[A-Za-z0-9\/-]*)/i);
       if (m) { name = m[1]; code = m[2]; }
     }
+    // FFIEC documents cite FR forms (FR Y-9C) in their text; a cited code is
+    // not the document's own, so without an explicit "Reporting Form FFIEC …"
+    // heading the monitor's own name is kept.
+    const firstFfiec = stripped.search(/\bFFIEC\s+\d/), firstFr = stripped.search(/\bFR\s+[A-Z]?-?\d/);
+    if (!code && firstFfiec >= 0 && (firstFr < 0 || firstFfiec < firstFr)) return null;
     if (!code) { m = stripped.match(/\b(FR\s+[A-Z]?-?\d[A-Za-z0-9\/-]*)/); if (m) code = m[1]; }
     if (!name) { m = stripped.match(/([A-Z][A-Za-z,&'’ ]{8,90}?)\s*[—–-]\s*FR\s+[A-Z]?-?\d/); if (m) name = m[1]; }
     if (code) {
@@ -458,7 +463,7 @@ function deriveDocumentTitle(text, type) {
     return null;
   } catch (_) { return null; }
 }
-function titleCacheKey(item) { return "cs-title:v5:" + (item.normalized_hash || item.url_id); }
+function titleCacheKey(item) { return "cs-title:v6:" + (item.normalized_hash || item.url_id); }
 function hydrateDocumentTitles() {
   state.items.forEach(item => {
     if (state.docInfo[item.url_id] || !item.snapshot_location || item.pending_registration || !["pdf", "zip"].includes(itemKind(item))) return;
@@ -628,6 +633,11 @@ function itemStatus(item) {
     return botCheck.waiting
       ? { label: botCheck.hasBaseline ? "Protected site · retrying" : "Protected site · first copy pending", tone: "pending", kind: "pending" }
       : { label: botCheck.kind === "refusal" ? "Blocked by the site" : "Blocked by bot check", tone: "problem", kind: "error" };
+  }
+  // One 404 or server error on a good URL is held for a scan before it counts
+  // (regmon/engine.py _hold_transient_miss): CDNs miss a file now and then.
+  if (isPlainObject(item.fetch_warning) && !item.fetch_error && !item.extraction_error) {
+    return { label: "Rechecking next scan", tone: "pending", kind: "pending" };
   }
   if (item.fetch_error || item.extraction_error || (item.http_status && Number(item.http_status) >= 400)) {
     return { label: item.fetch_error ? "Couldn't fetch" : item.extraction_error ? "Couldn't read content" : "HTTP " + item.http_status, tone: "problem", kind: "error" };
@@ -3253,7 +3263,10 @@ function renderDetails(item) {
         : item.browser.passed_check + " check passed automatically in a browser on the last scan")
       : item.bot_check ? item.bot_check.vendor + " challenge, " + fmt(item.bot_check.captured_at) + " (" + (item.bot_check.via === "browser" ? "still shown in the browser" : "plain request") + ")" +
         (blockWait(item) && blockWait(item).waiting ? " · retrying automatically every scan" : "") : "None seen"],
-    ["Fetch error", item.fetch_error || "None"], ["Extraction error", item.extraction_error || "None"],
+    ["Fetch error", item.fetch_error || (isPlainObject(item.fetch_warning)
+      ? "None confirmed · last scan got " + String(item.fetch_warning.message || "an error").replace(/^\w+: /, "").replace(/ for https?:\/\/\S+/, "") +
+        " after rechecks; the last good copy was kept and the next scan confirms it"
+      : "None")], ["Extraction error", item.extraction_error || "None"],
     ["Text fingerprint (SHA-256)", item.normalized_hash || "Not available", true], ["Saved HTML fingerprint", item.html_hash || "Not available", true],
     ["Response fingerprint", item.raw_hash || "Not available", true],
     ["Text snapshot", item.snapshot_location || "Not saved", true], ["HTML snapshot", item.html_snapshot_location || "Not saved", true],
