@@ -1,0 +1,74 @@
+Reporting Forms
+Information collections under review Recent Reporting Form Updates Application filing information Micro Data Reference Manual Savings and Loan Holding Company Reporting Forms Incorporating FASB Accounting Standards Codification References into Federal Reserve Report (16 KB PDF)
+Information Collections Currently under Review by the Board of Governors of the Federal Reserve System
+The Federal Reserve information collections listed below are currently under review, awaiting implementation, or have been recently approved and implemented. The Federal Reserve review process is in accordance with the specifications of the Paperwork Reduction Act of 1995. As part of that process, we have published a request for public comment in the Federal Register. For each information collection listed below you may select:
+- the Office of Management and Budget (OMB) supporting statement, which describes in detail the information collection and any proposed change
+- proposed changes, which are illustrated in the draft reporting form and instructions
+- any supplemental information or attachments
+- the initial Federal Register notice (a request for public comment on the information collection and any proposed change)
+- the final Federal Register notice (an announcement of Board approval of the information collection)
+Recent Reporting Form Updates
+Questions regarding information collections under review may be submitted by clicking here or by clicking "Contact" at the top of the page and navigating to "Contact Us" at the bottom of the page. Please select "Information Collection Under Review" under the "Staff Group" pull down menu when providing the requested information.
+Note: The draft and pending reporting forms and instructions listed below are subject to change and are for informational purposes only; therefore, they should not be used in place of current reporting requirements.
+| Information Collections Out for Public Comment (* End of Comment Period) | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- |
+| Collection Identifier | OMB Supporting Statement | Draft Reporting Form | Draft Reporting Instructions | Other Attachments | Initial Federal Register Notice | Final Federal Register Notice |
+| FFIEC 031 FFIEC 041 FFIEC 051 | Not Available | N/A | N/A | N/A | link *12/28/2026 | Not Available |
+| FFIEC 101 | Not Available | N/A | N/A | N/A | link | link *11/16/2026 |
+| FR O R-1896 | Not Available | N/A | N/A | Press Release 1 Press Release 2 | link 1 link 2 *11/04/2026 | Not Available |
+| FR UU FR 2081a/b/c R-1900 | Not Available | N/A | N/A | Press Release | link *11/30/2026 | Not Available |
+| FR UU FR Q FR Q-2 R-1899 | Not Available | N/A | N/A | Press Release | link *11/30/2026 | Not Available |
+| FR Y-14 A/Q/M OP-1882 | Not Available | FR Y-14A Summary Form FR Y-14Q PPNR Template FR Y-14Q Securities Template FR Y-14Q Balances Template FR Y-14Q Counterparty Form FR Y-14Q MSR Template | FR Y-14A Instructions FR Y-14M Instructions FR Y-14Q Instructions | Press Release | link *12/01/2026 | Not Available |
+| Pending Review of Public Comment Link to View Public Comments Received | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- |
+| Collection Identifier | OMB Supporting Statement | Draft Reporting Form | Draft Reporting Instructions | Other Attachments | Initial Federal Register Notice | Final Federal Register Notice |
+| CFBP DD | 231 KB | N/A | N/A | N/A | link | Not Available |
+| CFPB G | 240 KB | N/A | N/A | N/A | link | Not Available |
+| FFIEC 031 FFIEC 041 FFIEC 051 FFIEC 101 FFIEC 102 | Not Available | FFIEC 031 FFIEC 041 FFIEC 051 FFIEC 101 FFIEC 102 | FFIEC 031 FFIEC 041 FFIEC 051 FFIEC 101 FFIEC 102 | N/A | link | Not Available |
+| Form MSD-4 Form MSD-5 | 220 KB | N/A | N/A | N/A | link | Not Available |
+| FR 1583 | 211 KB | N/A | N/A | N/A | link | Not Available |
+| FR 2028 | 324 KB | FR 2028B FR 2028D | FR 2028B FR 2028D | Not Available | link | Not Available |
+| FR 2225 | 269 KB | FR 2225 | FR 2225 | N/A | link | Not Available |
+| FR 2226 | 181 KB | N/A | N/A | N/A | link | Not Available |
+| FR 2230 R-1738 | Not Available | N/A | N/A | N/A | link | Not Available |
+| FR 2248 | 248 KB | 181 KB | 1314 KB | N/A | link | Not Available |
+| FR 3016 | 211 KB | N/A | N/A | N/A | link | Not Available |
+| FR 3064 R-1818 | Not Available | N/A | N/A | Press Release 1 Press Release 2 | link 1 link 2 | Not Available |
+| FR 3073 | 305 KB | N/A | N/A | N/A | link | Not Available |
+| FR 3077 | 236 KB | N/A | N/A | N/A | link | Not Available |
+| FR 3100 | 244 KB | N/A | N/A | N/A | link | Not Available |
+| FR 4004 | 195 KB | N/A | N/A | N/A | link | Not Available |
+| FR 4006 | 209 KB | N/A | N/A | N/A | link | Not Available |
+| FR 4008 | 231 KB | N/A | N/A | N/A | link | Not Available |
+| FR 4013 | 216 KB | N/A | N/A | N/A | link | Not Available |
+| FR 4014 | 199 KB | N/A | N/A | N/A | link | Not Available |
+| FR 4022 | 225 KB | N/A | N/A | N/A | link | Not Available |
+| FR 4103 OP-1878 | Not Available | N/A | N/A | Press Release | link | Not Available |
+| FR 4203 | 232 KB | N/A | N/A | N/A | link | Not Available |
+| FR 4205 R-1746 | Not Available | N/A | N/A | Press Release | link | Not Available |
+| FR BB R-1869 | Not Available | N/A | N/A | Press Release | link | Not Available |
+| FR HY-5 | 227 KB | N/A | N/A | N/A | link | Not Available |
+| FR K R-1835 | Not Available | N/A | N/A | Press Release | link | Not Available |
+| FR MM R-1895 | Not Available | N/A | 356 KB | Press Release | link | Not Available |
+| FR NN | 225 KB | N/A | N/A | N/A | link | Not Available |
+| FR Q FR Q-2 R-1887 R-1888 | Not Available | N/A | N/A | Press Release | link 1 link 2 link 3 | Not Available |
+| FR TT | 198 KB | N/A | N/A | N/A | link | Not Available |
+| FR Y-9C FR Y-14A FR Y-14M FR Y-14Q FR Y-15 FR Q FR Q-2 R-1813 | Not Available | FR Y-9C FR Y-14A Summary Form FR Y-14A Regulatory Capital Instruments FR Y-14Q FR Y-15 | FR Y-9C FR Y-14A FR Y-14Q FR Y-14M FR Y-15 | Press Release 1 Press Release 2 | link 1 link 2 | Not Available |
+| FR Y-9C FR YY R-1815 | Not Available | FR Y-9C | FR Y-9C | Press Release 1 Press Release 2 | link 1 link 2 | Not Available |
+| FR Y-15 R-1814 | Not Available | FR Y-15 | FR Y-15 | Press Release 1 Press Release 2 | link 1 link 2 | Not Available |
+| FR Y-15 R-1889 | Not Available | FR Y-15 | FR Y-15 | Press Release | link | Not Available |
+| Recently Approved and Pending Implementation (* Implementation Date) | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- |
+| Collection Identifier | OMB Supporting Statement | Reporting Form | Reporting Instructions | Other Attachments | Initial Federal Register Notice | Final Federal Register Notice |
+| FR BB | 383 KB | N/A | N/A | N/A | link | link |
+| FR BB R-1769 | link | N/A | N/A | Press Release 1 Press Release 2 Press Release 3 | link 1 link 2 | link 1 link 2 *01/01/2027 |
+| FR Y-14 R-1873 | Not Available | FR Y-14A Summary Form FR Y-14Q Securities Template FR Y-14Q Supplemental Template FR Y-14 PPNR Template FR Y-14Q Counterparty Form | FR Y-14A Instructions FR Y-14M Instructions FR Y-14Q Instructions | Press Release 1 Press Release 2 Press Release 3 | Link 1 Link 2 | link *11/02/2026 |
+| FR Y-14A/Q/M | link | FR Y-14 Balances FR Y-14 Counterparty FR Y-14A Summary FR Y-14 Trading | FR Y-14A FR Y-14M FR Y-14Q | N/A | link | link *12/31/2026 |
+| FR Y-14A/Q/M R-1866 | Not Available | FR Y-14A FR Y-14Q | FR Y-14A FR Y-14Q | Press Release 1 Press Release 2 | link | link *12/01/2026 |
+| Recently Approved and Implemented | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- |
+| Collection Identifier | OMB Supporting Statement | Reporting Form | Reporting Instructions | Other Attachments | Initial Federal Register Notice | Final Federal Register Notice |
+| FR 28 | link | 1442 KB | N/A | N/A | link | link |
+| FR 3033p FR 3033s | link | FR 3033p/s | N/A | N/A | link | link |
+| FR 4031 | link | N/A | N/A | N/A | link | link |
+Last Update: Oct 27, 2026

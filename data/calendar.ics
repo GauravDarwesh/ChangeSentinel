@@ -11,7 +11,7 @@ REFRESH-INTERVAL;VALUE=DURATION:PT6H
 X-PUBLISHED-TTL:PT6H
 BEGIN:VEVENT
 UID:0e28a84611b628406caa490d@changesentinel
-DTSTAMP:20261027T050134Z
+DTSTAMP:20261027T163837Z
 DTSTART;VALUE=DATE:20261026
 DTEND;VALUE=DATE:20261027
 SUMMARY:Effective (AI review): Information Collections Under Review
@@ -22,6 +22,20 @@ DESCRIPTION:October 26\, 2026\n\nRead from the AI review of the change dete
  32019154a9f
 URL:https://GauravDarwesh.github.io/ChangeSentinel/#changes/5ad5a0765f00fa6
  5032954d48a1b4130bc2387840462d2b0652f432019154a9f
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:145d1b9b2c4c35774db36909@changesentinel
+DTSTAMP:20261027T163837Z
+DTSTART;VALUE=DATE:20261228
+DTEND;VALUE=DATE:20261229
+SUMMARY:Effective (AI review): Information Collections
+DESCRIPTION:12/28/2026\n\nRead from the AI review of the change detected on
+  2026-10-27. Page: https://www.federalreserve.gov/apps/reportingforms/revi
+ ew\nChange and evidence: https://GauravDarwesh.github.io/ChangeSentinel/#c
+ hanges/8c726b544c511ae45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5
+URL:https://GauravDarwesh.github.io/ChangeSentinel/#changes/8c726b544c511ae
+ 45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5
 TRANSP:TRANSPARENT
 END:VEVENT
 END:VCALENDAR

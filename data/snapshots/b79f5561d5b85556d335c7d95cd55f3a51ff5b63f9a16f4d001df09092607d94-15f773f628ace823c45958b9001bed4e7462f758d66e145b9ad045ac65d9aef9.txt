@@ -1,0 +1,194 @@
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio Capítulo 8. CUENT AS DE COMPENSACIÓN
+8.1. Mecanismo de compensación
+Los residentes que manejen ingresos y/o egresos por concepto de operaciones sujetas al requisito de canalización por conducto del mercado cambiario o del cumplimiento de obligaciones derivadas de operaciones internas, podrán hacerlo a través de cuentas bancarias en moneda extranjera en entidades financieras del exterior, las cuales deberán ser registradas en el Banco de la República (en adelante Banrep) bajo el mecanismo de compensación.
+Los residentes únicamente pueden obtener créditos desembolsados en moneda extranjera de los intermediarios del mercado cambiario y de no residentes, por lo que los créditos entre residentes no podrán desembolsarse a través de estas cuentas.
+Adicionado con el Boletín del Banco de la República No. 39 (Diciembre 19/2024) [DCIP-83 Diciembre 18/2024]
+A través del Sistema de Información Cambiaria se deberá transmitir el Registro de Cuenta de Compensación, así como el Informe de Movimientos de Cuenta de Compensación y la Cancelación del registro.
+A través de las cuentas de compensación sólo podrán canalizarse ingresos y/o egresos de operaciones propias del titular, con excepción de los movimientos de divisas derivados de los siguientes conceptos:
+i. Inversión directa de capital del exterior de acuerdo con lo dispuesto en el numeral 7.2.1.1 del Capítulo 7.
+Asimismo, cuando un inversionista no residente venda su participación a un residente, el retorno de la inversión podrá canalizarse a través de la cuenta de compensación del residente comprador, utilizando el numeral cambiario 4560 “Giro al exterior de la inversión directa y suplementaria al capital asignado de capitales del exterior”. Cuando la empresa receptora de inversión directa de capital del exterior decrete dividendos a favor de sus inversionistas no residentes, éstos podrán canalizar los giros a través de la cuenta de compensación de la empresa receptora, utilizando el numeral cambiario 2074 “Utilidades, rendimientos y dividendos de la inversión directa de capitales del exterior”.
+En los casos anteriormente previstos, el titular de la cuenta de compensación actúa en calidad de apoderado o mandatario especial del inversionista no residente.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio ii. De conformidad con lo previsto en el literal a) del numeral 7.2.2.1 del Capítulo 7 de esta Circular (Decreto 4804 del 29 de diciembre de 2010), el administrador de la inversión de capital del exterior de portafolio en valores emitidos por entidades extranj eras e inscritos en el Registro Nacional de Valores y Emisores (RNVE) podrá canalizar a través de una cuenta de compensación de uso colectivo, los ingresos de divisas para la adquisición de los valores y los egresos de divisas para el giro al emisor de los valores adquiridos por no residentes. La cuenta deberá registrarse a nombre del administrador e identificarse con el NIT de éste.
+iii. Operaciones que realice una sociedad fiduciaria en desarrollo de contratos de fiducia mercantil o encargo fiduciario, que tengan como objeto y finalidad servir como garantía y/o fuente de pago continuada de obligaciones adquiridas por los fideicomitentes, o por los patrimonios autónomos constituidos por estos.
+iv. De conformidad con lo previsto en el artículo 54 de la Resolución Externa 1 de 2018 de la Junta Directiva del Banrep (en adelante R.E. 1/18 J.D.), los residentes que participen en procesos de compra o venta de acciones a través del mercado de valores podrá n canalizar los ingresos de divisas a través de una cuenta de compensación de uso colectivo abierta para ese único propósito por una Sociedad Comisionista de Bolsa que actúe como IMC. Igualmente, se podrán canalizar los ingresos provenientes de los rendimientos, liquidación de inversiones financieras u operaciones overnight. La cuenta deberá registrarse a nombre de la Sociedad Comisionista de Bolsa e identificarse con el NIT de ésta y se cancelará cuando se agoten los recursos provenientes de la operación, de acuerdo con lo dispuesto en el numeral 8.2 de este Capítulo.
+Con cargo a estas cuentas se podrán realizar las operaciones establecidas en los numerales 8.3.2 y 8.3.3 de este Capítulo siempre que se trate de las operaciones autorizadas a las sociedades comisionistas de bolsa en el artículo 8, numeral 3 de la R.E.
+1/18 J.D. Estos intermediarios en su calidad de titulares de la cuenta diligenciarán en forma consolidada y transmitirán el Informe de Movimientos de Cuenta de Compensación y las declaraciones de cambio por endeudamiento externo y avales o garantías e inversiones internacionales, cuando haya lugar, de acuerdo con lo dispuesto en el numeral 8.4.1 de este Capítulo. Para las demás operaciones de cambio se deberá tener en cuenta lo dispuesto en los numerales 8.3 y 8.4 de este Capítulo.
+Las Sociedades Comisionistas de Bolsa conservarán la información relativa a los residentes participantes en la cuenta y a las operaciones realizadas para cuando lo requieran las entidades de control y vigilancia.
+v. Operaciones de comercio exterior y los servicios asociados a éstas, de que tratan los numerales 1, 3, 4, 6 y 7 del numeral 1.3 del Capítulo 1 de esta Circular.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio
+vi. Operaciones de servicios financieros de correos de los concesionarios de servicios de correos, de conformidad con el numeral 10.6 del Capítulo 10 de esta Circular.
+8.2. Registro, cancelación y anulación ante el Banco de República
+8.2.1. Registro
+El registro de las cuentas de compensación deberá efectuarse directamente por el interesado ante el Banrep a más tardar dentro del mes calendario siguiente, contado desde el día de la realización de la primera operación obligatoriamente canalizable a travé s del mercado cambiario, o de la primera operación para el cumplimiento de obligaciones derivadas de operaciones internas.
+Cuando se trate de patrimonios autónomos, fondos de inversión colectiva, fondos de capital privado, consorcios, uniones temporales o encargos fiduciarios las operaciones que se canalicen a través de estas cuentas deberán corresponder a operaciones propias de éstos.
+Para efectos del registro de la cuenta bajo el mecanismo de compensación, el titular deberá transmitir a través del Sistema de Información Cambiaria el Registro de Cuenta de Compensación.
+8.2.2. Cancelación del registro
+La cancelación del registro de una cuenta de compensación se debe realizar a través del módulo “Cuentas de compensación” del Sistema de Información Cambiaria, a más tardar dentro del mes siguiente a la fecha en la cual el titular decida no utilizarla como mecanismo de compensación o se cancele la cuenta en la entidad financiera del exterior.
+Para las cuentas de compensación que durante doce (12) meses continuos no presenten el Informe de Movimientos de Cuenta de Compensación, su registro será cancelado por el Banrep. De estas cancelaciones se enviará comunicación a la dirección que reposa en el Sistema de Información Cambiaria o en el Registro Único Empresarial.
+Cuando por efecto de una reorganización empresarial (fusión o escisión) se requiera cambiar el titular de una cuenta de compensación, el titular absorbido o escindido deberá cancelar el registro de la cuenta a través del Sistema de Información Cambiaria. E l nuevo titular absorbente o beneficiario, si así lo requiere, deberá proceder al registro de la cuenta a su nombre en los plazos señalados en el numeral 8.2.1 de este Capítulo.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio El anterior procedimiento también aplica cuando por efecto del cambio de una sociedad fiduciaria se requiera trasladar recursos en divisas del patrimonio autónomo que ésta administra a una nueva cuenta en el exterior a nombre de otra sociedad fiduciaria. E l registro de la nueva cuenta se realizará bajo los criterios de registro previstos en el numeral 8.2.1 de este Capítulo.
+La cancelación del registro de la cuenta por parte del titular o de oficio por el Banrep no impedirá que pueda ser nuevamente registrada bajo el mecanismo de compensación, siempre que la cuenta en la entidad financiera del exterior se encuentre activa y se cumplan las condiciones establecidas en el numeral 8.2.1 de este Capítulo. Este registro permitirá transmitir los Informes de Movimientos de Cuentas de Compensación y declaraciones de cambio que fueron omitidas y que dieron lugar a la cancelación de oficio de la cuenta de compensación.
+8.2.3. Anulación del registro
+Cuando por error se haya registrado una cuenta bajo el mecanismo de compensación ante el Banrep, sin que haya existido una operación de cambio obligatoriamente canalizable a través del mercado cambiario o una operación para el cumplimiento de obligaciones derivadas de operaciones internas, el titular o su representante legal deberá anular el registro a través del Sistema de Información Cambiaria. La anulación del registro implica la anulación automática de los Informes de Movimientos de Cuenta de Compensación que se hayan transmitido.
+8.3. Operaciones que se pueden canalizar a través de las cuentas de compensación
+8.3.1 Ingresos
+Los ingresos de las cuentas de compensación a que se refiere el presente Capítulo deben provenir:
+i. Del cumplimiento de obligaciones derivadas de operaciones de cambio que deban o no canalizarse a través del mercado cambiario.
+ii. Del cumplimiento de las obligaciones derivadas de operaciones internas de las que trata el artículo 2.17.1.3 del Decreto 1068 de 2015 en concordancia con el artículo 37 de la R.E. 1/18 J.D.
+iii. Del cumplimiento de las obligaciones derivadas de operaciones internas autorizadas para ser pagadas en divisas conforme a lo previsto en los artículos
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio 82 parágrafo 4 del artículo 86 y 97 de la R.E. 1/18 J.D. Estos cumplimientos también podrán efectuarse en cuentas del mercado no regulado.
+iv. De la compra de divisas a los IMC.
+v. De la compra de divisas a otros residentes, tanto en el mercado no regulado como de las cuentas de compensación.
+vi. Del pago, recaudo y transferencia en divisas de regalías y compensaciones, conforme a lo previsto en el artículo 104 de la R.E. 1/18 J.D. y las normas que la modifiquen, complementen o adicionen.
+vii. Traslados desde cuentas del mercado no regulado o de compensación del mismo titular.
+El ingreso de las divisas a estas cuentas configura el reintegro al mercado cambiario.
+Cuando las compras de divisas se hagan a los IMC, se deberá suministrar la información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio) al IMC.
+Si las compras se efectúan a otros titulares de cuentas de compensación, deberán seguirse las instrucciones señaladas en el numeral 8.4.1 de este Capítulo.
+Cuando a través de las cuentas se canalicen ingresos por concepto de exportaciones de bienes el Informe de Movimientos de Cuenta de Compensación hará las veces de la declaración de cambio para este tipo de operaciones.
+Los documentos soporte de las operaciones de que trata este numeral deberán conservarse para cuando sean requeridos por el Banrep o las autoridades de control y vigilancia.
+8.3.2 Egresos
+Los egresos de las cuentas de compensación a que se refiere el presente Capítulo deben corresponder a los siguientes conceptos:
+i. Para dar cumplimiento a obligaciones derivadas de operaciones de cambio que deban o no canalizarse a través del mercado cambiario.
+ii. Para dar cumplimiento a obligaciones derivadas de operaciones internas de las que trata el artículo 2.17.1.3 del Decreto 1068 de 2015 en concordancia con el artículo 37 de la R.E. 1/18 J.D.
+iii. Para dar cumplimiento a obligaciones derivadas de operaciones internas autorizadas para ser pagadas en divisas conforme a lo previsto en los artículos 82, parágrafo 4 del artículo 86 y 97 de la R.E. 1/18 J.D. Estos pagos también podrán efectuarse en cuentas del mercado no regulado.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio iv. Por la venta de divisas a los IMC.
+v. Por la venta de divisas a otros titulares de cuentas de compensación.
+vi. Para atender el pago y la transferencia en divisas de regalías y compensaciones, conforme a lo previsto en el artículo 104 de la R.E. 1/18 J.D. y las normas que la modifiquen, complementen o adicionen.
+vii. Traslados hacia cuentas del mercado no regulado o de compensación del mismo titular.
+viii. Por el pago de operaciones con tarjetas débito asociadas a cuentas de compensación.
+El egreso de las divisas de estas cuentas configura la canalización por el mercado cambiario.
+Cuando las ventas de saldos se efectúen a los IMC, se deberá suministrar la información de los datos mínimos para la operación de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio) al IMC.
+Cuando las ventas se realicen a otros titulares de cuentas de compensación, deberán seguirse las instrucciones señaladas en el numeral 8.4.1 de este Capítulo.
+Cuando a través de las cuentas se canalicen pagos por concepto de importaciones de bienes, el Informe Movimientos de Cuenta de Compensación hará las veces de la declaración de cambio para este tipo de operaciones.
+Los documentos soporte de las operaciones de que trata este numeral deberán conservarse para cuando sean requeridos por el Banrep o las autoridades de control y vigilancia.
+Los sobregiros en cuentas registradas bajo el mecanismo de compensación no deben ser informados al Banrep como endeudamiento externo.
+8.3.3 Uso de los saldos disponibles
+Los saldos disponibles de las cuentas podrán utilizarse para efectuar inversiones financieras y en activos en el exterior. Los movimientos de las mismas deberán ser reportados en el Informe de Movimientos de Cuenta de Compensación , el cual hará las veces de la declaración de cambio.
+8.3.4 Traslados entre cuentas de un mismo titular
+Entre las cuentas del mercado no regulado y de compensación de un mismo titular se podrán efectuar traslados de divisas, utilizando los numerales cambiarios de ingreso: 5378 “Traslados entre cuentas de compensación de un mismo titular. Ingresos”, 5387 “Ing resos
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio por traslados desde la cuenta del mercado no regulado del mismo titular”. De egreso: 5912 “Traslados entre cuentas de compensación de un mismo titular. Egresos” y 5917 “Egresos por traslados a la cuenta del mercado no regulado del mismo titular”.
+8.3.5 Transferencias presupuestales desde cuentas de compensación de la Dirección General de Crédito Público y del Tesoro Nacional –DTN.
+Las transferencias presupuestales entre cuentas de compensación de la Dirección General de Crédito Público y del Tesoro Nacional y cuentas de compensación de entidades del sector público se reportarán en el Informe de Movimientos de Cuenta de Compensación con los siguientes numerales cambiarios: la Dirección General de Crédito Público y del Tesoro Nacional utilizará el numeral de egreso 5911 “Transferencias presupuestales entre cuentas de compensación de la DTN y entidades del sector público – Egreso”, y la s entidades del sector púbico receptoras de los recursos utilizarán el numeral cambiario de ingreso 5377 “Transferencias presupuestales entre cuentas de compensación de la DTN y entidades del sector público – Ingreso”.
+La Dirección General de Crédito Público y del Tesoro Nacional podrá efectuar transferencias presupuestales desde sus cuentas de compensación a cuentas del mercado no regulado de entidades del sector público utilizando el numeral de egreso 5918 “Transferenc ias presupuestales entre cuentas de compensación de la DTN y cuentas del mercado no regulado de entidades del sector público – Egreso”.
+8.4. Transmisión de información al Banrep
+8.4.1 Transmisión de informes y de las declaraciones de cambio
+Los titulares de las cuentas de compensación deberán informar los movimientos correspondientes a las operaciones efectuadas a través de las mismas durante el mes inmediatamente anterior, dentro del mes calendario siguiente, únicamente con la transmisión a través del Sistema de Información Cambiaria del Informe de Movimientos de Cuenta de Compensación en forma consolidada. Para este efecto, se deberán tener presentes los conceptos de ingreso y egreso que se detallan en la tabla de numerales cambiarios del Anexo 1 y las condiciones previstas en el Anexo 2 de esta Circular.
+Los titulares de las cuentas de compensación podrán transmitir hasta el 29 de diciembre de 2023 la información de los movimientos correspondientes a las operaciones efectuadas durante octubre de 2023, y hasta el 31 enero de 2024 la información de los movim ientos correspondientes a las operaciones efectuadas durante noviembre de 2023.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio La obligación de informar los movimientos de la cuenta de compensación al DCIP del Banrep inicia desde la fecha que figura en el Registro de Cuenta de Compensación como primera operación obligatoriamente canalizable a través del mercado cambiario , o primera operación para el cumplimiento de obligaciones derivadas de operaciones internas, la cual deberá cumplirse dentro del mes calendario siguiente a la fecha en la cual se obtenga el código de la cuenta de compensación y se mantiene hasta la fecha de cancel ación del registro de la cuenta en el Sistema de Información Cambiaria.
+La obligación de transmitir, mensualmente tal información debe atenderse sin perjuicio de que la cuenta haya presentado o no movimiento, o que las operaciones efectuadas a través de la misma no correspondan a aquellas señaladas como de obligatoria canaliza ción por conducto del mercado cambiario.
+Se considerará como no presentado ante el Banrep el informe de las operaciones efectuadas a través de una cuenta de compensación cuando el titular de la misma no haya cumplido, durante un periodo continuo de seis (6) meses calendario, con la obligación de transmitir en forma mensual al Banrep el Informe de Movimientos de Cuenta de Compensación.
+Se considerará presentado en forma extemporánea el informe cuando sea transmitido al Banrep por fuera de cada plazo mensual, en los casos en que no se hayan acumulado seis
+(6) meses continuos de omisión en el cumplimiento de la presentación de la relación mensual de operaciones (Informe de Movimientos de Cuenta de Compensación).
+Para consultar movimientos de la cuenta de compensación el usuario deberá ingresar al Sistema de Información Cambiaria.
+Los titulares de las cuentas de compensación, con anterioridad a la transmisión del Informe de Movimientos de Cuenta de Compensación, deberán transmitir las declaraciones de cambio por inversiones internacionales que correspondan a los numerales cambiarios 4026, 4032, 4035, 4036, 4040, 4563, 4565 y 4580; así como las declaraciones de cambio por crédito externo o avales y garantías relacionadas con numerales cambiarios diferentes de 1645,2619 y 4021.
+Modificado con el Boletín del Banco de la República No. 39 (Diciembre 19/2024) [DCIP-83 Diciembre 18/2024]
+Las declaraciones de cambio por inversiones internacionales relacionadas con numerales cambiarios distintos a los anteriores no deberán transmitirse al Banrep. Los documentos soporte deberán conservarse para cuando sean requeridos por la entidad de control y vigilancia. El titular de la cuenta de compensación que r ecibe desembolsos de créditos externos, previo al abono en cuenta, debe atender el procedimiento descrito en el numeral
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio 8.4.2 de este Capítulo, de constituir el depósito previsto para el endeudamiento, si a ello hay lugar y haber diligenciado el Informe de Crédito Externo Otorgado a Residentes.
+Cuando se transmitan operaciones por inversiones internacionales con el numeral 4565, el titular de la cuenta deberá transmitir al Banrep en la declaración de cambio la información del número de expedición del depósito.
+Los titulares de cuentas de compensación que efectúen compras y ventas de los saldos entre sí o con los IMC deberán dejar constancia de tales transacciones con los numerales correspondientes en el Informe de Movimientos de Cuenta de Compensación, identificando al comprador o vendedor con el tipo y número de documento de identificación, código asignado a éste por el Banrep y monto de la operación. Cuando se trate de compra y venta con los IMC, deberán indicar el NIT y el monto de la operación.
+Cuando en las cuentas de compensación se rediman inversiones financieras y en activos en el exterior constituidas a través de otras cuentas de compensación del mismo titular o de los IMC, a partir del periodo de septiembre de 2014, estos movimientos se deberán reportar en el Informe de Movimientos de Cuenta de Compensación con los numerales cambiarios de ingreso 4063 “Redención en cuenta de compensación de inversiones financieras constituidas a través de otras cuentas de compensación del mismo titular” o 40 64 “Redención en cuenta de compensación de las inversiones financieras constituidas a través de los IMC”.
+El Informe de Movimientos de Cuenta de Compensación hará las veces de declaración de cambio cuando se trate de las operaciones de cambio por importación y exportación de bienes, por servicios, transferencias y otros conceptos y por inversiones financieras y en activos en el exterior.
+Cuando se trate del pago de obligaciones mediante cheque para determinar a qué mes corresponde una operación se deberá tener en cuenta la fecha de contabilización del pago por el titular de la cuenta de compensación, aunque los cheques se presenten al cobr o en una fecha distinta.
+Si el cheque es devuelto el titular de la cuenta de compensación deberá transmitir la declaración de cambio como devolución. Si el titular de la cuenta de compensación para la misma operación gira nuevamente un cheque deberá transmitir en la fecha del pago una nueva declaración de cambio de acuerdo con el tipo de operación.
+El Banrep podrá solicitar la información que estime necesaria.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio Cuando los usuarios del régimen cambiario no tengan los medios electrónicos necesarios para transmitir la información, no podrán registrar cuentas de compensación y deberán acudir a los intermediarios del mercado cambiario para la realización de sus operaciones de cambio.
+8.4.2 Trámite ante los intermediarios del mercado cambiario para operaciones de endeudamiento externo
+De conformidad con el procedimiento señalado en la presente Circular, cuando los titulares de cuentas de compensación efectúen operaciones de endeudamiento externo, sujetas a depósito, éste deberá constituirse ante los IMC previo al desembolso en la cuenta de compensación. Así mismo, suministrarán ante dichos intermediarios el Informe de Crédito Externo Otorgado a Residentes.
+En el evento que las operaciones de endeudamiento externo no estén sujetas a la constitución de depósito, los titulares de cuentas de compensación deberán suministrar, previo al desembolso, el Informe de Crédito Externo O torgado a Residentes con la información del crédito a un IMC, para que remita tal información al Banrep de conformidad con los procedimientos aquí señalados.
+Los usuarios de cuentas de compensación que reciban desembolsos (abonos en cuenta) por concepto de préstamos externos acreditarán la constitución del depósito consignando el número del depósito en la declaración de Cambio por crédito externo con la que se realice el desembolso.
+El desembolso se deberá informar con la transmisión de la declaración de cambio por crédito externo previamente a la transmisión del Informe de Movimientos de Cuenta de Compensación.
+8.5 Manejo de recursos en moneda extranjera del fondo nacional del café
+Las cuentas en moneda extranjera a través de las cuales se manejen recursos asignados para la ejecución del presupuesto en moneda extranjera del Fondo Nacional del Café, deben registrarse en el Banrep de conformidad con lo previsto en el numeral 8.2 de este Capítulo y cumplir las demás obligaciones de que trata este Capítulo.
+Para efectos de remisión de la información relativa a las operaciones efectuadas con cargo al presupuesto en moneda extranjera del Fondo Nacional del Café, se deberá presentar mensualmente, al Banrep, antes del último día hábil de cada mes, el movimiento del mes
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio anterior, en el Informe de Movimientos de Cuenta de Compensación diligenciado en la siguiente forma: Se agregará el total de ingresos y gastos efectuados en todas las cuentas registradas, correspondientes a cada uno de los numerales cambiarios que se presentan en el Anexo 1 de esta Circular.
+8.6. Correcciones al Registro y al Informe de Movimientos de Cuenta de Compensación
+8.6.1 Correcciones al Registro de Cuenta de Compensación:
+a. Si no se han transmitido operaciones ( declaraciones de cambio o Informes de Movimientos de Cuenta de Compensación ) podrá corregirse toda la información registrada de la cuenta, salvo el código asignado a la cuenta de compensación por el Banrep.
+b. Si se han transmitido operaciones (declaraciones de cambio o Informes de Movimientos de Cuenta de Compensación, el titular podrá corregir la información, salvo el código asignado a la cuenta por el Banrep, los titulares, el código del país y el código de la moneda.
+8.6.2 Correcciones al Informe de Movimientos de Cuenta de Compensación
+Podrá ser objeto de corrección toda la información de los movimientos de la cuenta, salvo los siguientes datos:
+a. (Eliminado) b. Periodo reportado;
+c. Fecha de cancelación;
+d. Código asignado por el Banco de la Republica a la cuenta de compensación;
+e. Tipo, número de identificación y nombre o razón social del titular de la cuenta;
+f. Código país y código moneda de la cuenta de compensación.
+Los informes de movimientos de cuenta de compensación transmitidos podrán corregirse en cualquier tiempo, aunque la cuenta de compensación haya sido cancelada por sus titulares o cancelada de oficio, de acuerdo con lo establecido en el numeral 8.2.2 de este capítulo.
+Para el efecto, el titular de la cuenta podrá en cualquier tiempo transmitir las correcciones correspondientes, a través del Sistema de Información Cambiaria.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio Podrá corregirse la fecha indicada en el registro de la cuenta como de primera operación obligatoriamente canalizable a través del mercado cambiario o del cumplimiento de la primera operación interna, por una fecha posterior, cuando con anterioridad a la n ueva fecha no se hubiera realizado ninguna de estas operaciones. La corrección de la fecha del registro implica la anulación automática de los Informes de Movimientos de Cuenta de Compensación que se hayan transmitido antes de la nueva fecha.
+Modificado con el Boletín del Banco de la República No. 39 (Diciembre 19/2024) [DCIP-83 Diciembre 18/2024]
+Cuando se hayan transmitido informes de movimientos o declaraciones de cambio después del registro de la cuenta, solo podrá corregirse la fecha de la p rimera operación obligatoriamente canalizable a través del mercado cambiario o del cumplimiento de obligaciones derivadas de operaciones internas, por una fecha anterior a los periodos transmitidos.
+El Banco de la República enviará la información relacionada con la corrección a título informativo, a la autoridad de control y vigilancia del cumplimiento del régimen cambiario.
+Los documentos que justifiquen las correcciones se deberán conservar para cuando sean requeridos por las autoridades de control y vigilancia del régimen cambiario y se entiende sin perjuicio que por cualquier medio tales autoridades puedan investigar si la s correcciones realizadas se hicieron sin corresponder a la realidad de la información declarada, caso en el cual proceden las sanciones pertinentes.
+8.7 Registro de Cuentas de Compensación
+Para el registro de la cuenta de compensación se deberá suministrar la siguiente información:
+Información de la cuenta en el exterior Número de la cuenta Número de cuenta asignado por la entidad financiera del exterior.
+Fecha de la primera operación Indique la fecha de la primera operación obligatoriamente canalizable a través del mercado cambiario, o la fecha de la primera operación para el cumplimiento de obligaciones derivadas de operaciones internas realizada por conducto de la misma.
+Entidad financiera Nombre completo de la entidad financiera del exterior donde se mantiene la cuenta País País de la entidad financiera del exterior.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio Ciudad Nombre de la ciudad en donde se encuentra la entidad financiera del exterior.
+Moneda Código de la moneda.
+¿La cuenta es de un consorcio , unión temporal o encargo fiduciario?
+Indicar “sí” o “no” Información del titular Tipo y número de documento - CC= Cédula de ciudadanía
+- TI= tarjeta de identidad
+- CE= Cédula de extranjería
+- NI= NIT (sin dígito de verificación)
+- PB= Pasaporte
+- RC= Registro civil
+- PA= Patrimonio autónomo.
+Número de identificación del titular.
+Solo se permite el registro de más de un titular cuando la cuenta corresponda a un consorcio, unión temporal o encargo fiduciario.
+Modificado con el Boletín del Banco de la República No. 39 (Diciembre 19/2024) [DCIP-83 Diciembre 18/2024]
+Cuando se trate de un patrimonio autónomo, indique el NIT o el código PA para los patrimonios autónomos que no cuenten con NIT propio.
+Cuando se trate de consorcios o uniones temporales indicar el número de identificación de todos los partícipes residentes.
+Cuando se trate de un encargo fiduciario, se deberán registrar como titulares a la entidad fiduciaria que lo administra, así como a todos sus fideicomitentes residentes.
+Cuando el titular de la cuenta sea un patrimonio autónomo que tenga como objeto y finalidad servir como garantía y/o fuente de pago continuada de obligaciones adquiridas por sus fideicomitentes, o por los patrimonios autónomos constituidos por estos, se debe registrar como titular al patrimonio autónomo que sirve como garantía y/o fuente de pago, identificándolo con
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio el número del NIT o el código PA, y relacionar en la sección de constituyentes fiduciarios a los fideicomitentes residentes y a los patrimonios autónomos constituidos por éstos
+Cuando el titular de la cuenta sea un encargo fiduciario, que tenga como objeto y finalidad servir como garantía y/o fuente de pago continuada de obligaciones adquiridas por sus fideicomitentes, se deben registrar como titulares a la entidad fiduciaria que lo administra, así como a todos sus fideicomitentes residentes.
+8.8 Informe de Movimientos de Cuentas de Compensación
+El Informe de Movimientos de Cuentas de Compensación deberá contener la siguiente información:
+Descripción del informe Número de la cuenta de compensación Código interno asignado por el Banrep a la cuenta de compensación registrada.
+Periodo del informe Mes y año del periodo de los movimientos.
+¿Tuvo movimientos en el periodo?
+Indicar “sí” o “no” Información de los movimientos de la cuenta de compensación Numeral cambiario Clasificar la operación según relación de numerales cambiarios del Anexo 1 de la Circular Reglamentaria Externa DCIP-83.
+Devolución Cuando se trate de la devolución del pago indique sí, en caso contrario, indique no.
+Valor Valor consolidado por cada numeral cambiario Operaciones internas o compra y venta de divisas Tipo de contraparte − Titular de cuenta de compensación − IMC Número de cuenta de compensación Indique el código asignado a la cuenta de compensación del titular que actúa como contraparte en la compra o venta de divisas y/o en la operación interna. No diligencie este campo cuando se trate de operaciones de compra - venta de saldos de cuentas por parte de los IMC.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio Tipo y número de documento del titular (que actúa como contraparte en la operación interna) − CC= Cédula de ciudadanía − TI= Tarjeta de identidad − CE= Cédula de extranjería − NI= NIT (sin dígito de verificación) − PB= Pasaporte − RC= Registro civil − PA= Patrimonio autónomo NIT IMC (que actúa como contraparte en la compra o venta de divisas) Número de NIT, sin dígito de verificación.
+Numeral cambiario Indique los numerales de operaciones internas o compra y venta de divisas para el período reportado
+Valor de la operación Valor de cada operación interna o de compra y venta de divisas.
+Información de inversión financiera Nuevo saldo inversiones financieras Resultado de sumar o restar, según corresponda, al “Nuevo saldo inversiones financieras” del periodo anterior los ingresos o egresos de las inversiones financieras del periodo que se informa.
+Overnight pendientes de redención Cuando el overnight quede constituido de un mes a otro.
+Saldos de la cuenta Saldo anterior Valor del saldo final de la cuenta del mes anterior.
+Ingresos del periodo Sumatoria de los ingresos del mes Egresos del periodo Sumatoria de los egresos del mes Nuevo saldo Sumatoria del saldo anterior más los ingresos del periodo menos los egresos del periodo
+8.9 Cancelación de cuenta de compensación
+Número de la cuenta de compensación Código interno asignado por el Banrep a la cuenta de compensación registrada.
+Fecha de cancelación
+Cuando se cancele la cuenta en la entidad financiera del exterior o cuando el titular decida no utilizarla como mecanismo de compensación, en tal caso, indique la fecha de cancelación según el motivo que corresponda.

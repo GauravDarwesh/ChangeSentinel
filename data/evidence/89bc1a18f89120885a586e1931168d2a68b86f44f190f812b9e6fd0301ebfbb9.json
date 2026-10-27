@@ -1,0 +1,35 @@
+{
+  "event_id": "89bc1a18f89120885a586e1931168d2a68b86f44f190f812b9e6fd0301ebfbb9",
+  "event_type": "CHANGED_URL",
+  "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
+  "timestamp": "2026-10-27T16:21:51.528667+00:00",
+  "before": {
+    "normalized_hash": "94ba728b9fdf4ca5bc29176036c01abafef25efd99d1754b3709da7d1a967db0",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "9d560371e3e66382a1d0c346d40b8aadadd6732391d3147e00178fdfdc399d00",
+    "html_hash": "b08ebbad40dcc03cd9f852d0608cf8f57502869567287579edf82463051e4c43",
+    "html_comparison_hash": "9368a690c3611a96960304826888af54e13f5e5b757784215b3b105e7056f8ad",
+    "snapshot_location": "data/snapshots/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-94ba728b9fdf4ca5bc29176036c01abafef25efd99d1754b3709da7d1a967db0.txt",
+    "html_snapshot_location": "data/snapshots/html/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-b08ebbad40dcc03cd9f852d0608cf8f57502869567287579edf82463051e4c43.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "d66182228d84b29efbd47c1b221824db768d0adc4b715afb22b778c3666a8a4d",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "c9bf80ffbd7337dbdbf54cf694af2a8eb706a453496f08e211a7d1a00e282457",
+    "html_hash": "c9bf80ffbd7337dbdbf54cf694af2a8eb706a453496f08e211a7d1a00e282457",
+    "html_comparison_hash": "592b31679f0fc31a713ad083d4f87299c2e813b305e742cdb3130de6790162d9",
+    "snapshot_location": "data/snapshots/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-d66182228d84b29efbd47c1b221824db768d0adc4b715afb22b778c3666a8a4d.txt",
+    "html_snapshot_location": "data/snapshots/html/2d58b82a12ab9743ba08d2a0a0d58aecd9bf4682a99d271bf1b5b47ca0aeae49-c9bf80ffbd7337dbdbf54cf694af2a8eb706a453496f08e211a7d1a00e282457.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "--- before\n+++ after\n@@ -2,6 +2,10 @@\n Information collections under review Recent Reporting Form Updates Application filing information Micro Data Reference Manual Savings and Loan Holding Company Reporting Forms Incorporating FASB Accounting Standards Codification References into Federal Reserve Report (16 KB PDF)\n Listed below are recent updates related to Federal Reserve information collections over the past three months. Some of these updates are related to proposed information collections, while other updates are related to finalized information collections and/or reporting forms and instructions.\n Updates to reporting forms and the Information Collections Under Review page are generally posted on Wednesdays and Fridays.\n+October 27, 2026\n+The following information collection was updated on the Data Collections Currently under Review by the Board of Governors of the Federal Reserve System webpage:\n+- FFIEC 031/ FFIEC 041/ FFIEC 051\n+Link to initial Federal Register notice was posted.\n October 26, 2026\n The following information collection was updated on the Data Collections Currently under Review by the Board of Governors of the Federal Reserve System webpage:\n - FR 28\n@@ -63,4 +67,4 @@\n Draft reporting instructions, links to press release and initial Federal Register notice were posted.\n - FR O\n Links to Press release and initial Federal Register notice were posted.\n-Last Update: October 26, 2026\n+Last Update: October 27, 2026",
+  "html_diff": "--- before\n+++ after\n@@ -1731,6 +1731,32 @@\n      </p>\n      <br/>\n      <h4>\n+      October 27, 2026\n+     </h4>\n+     <p>\n+      The following information collection was updated on the\n+      <a href=\"/apps/reportingforms/review\">\n+       Data Collections Currently under Review by the Board of Governors of the Federal Reserve System\n+      </a>\n+      webpage:\n+     </p>\n+     <ul>\n+      <li>\n+       <strong>\n+        FFIEC 031/ FFIEC 041/ FFIEC 051\n+       </strong>\n+       <br/>\n+       Link to initial\n+       <em>\n+        Federal Register\n+       </em>\n+       notice was posted.\n+      </li>\n+     </ul>\n+     <p>\n+     </p>\n+     <br/>\n+     <h4>\n       October 26, 2026\n      </h4>\n      <p>\n@@ -2089,7 +2115,7 @@\n    </div>\n    <div class=\"row\">\n     <p class=\"lastUpdate\">\n-     Last Update: October 26, 2026\n+     Last Update: October 27, 2026\n     </p>\n    </div>\n   </div>\n@@ -2328,7 +2354,7 @@\n         });\n   </script>\n   <script>\n-   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a50cf038a80daccf',t:'MTc5MzA1NDE3MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n+   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a51309477ddf8b23',t:'MTc5MzExODExMQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n   </script>\n  </body>\n </html>",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body."
+}

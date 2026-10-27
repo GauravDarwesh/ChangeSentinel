@@ -1,0 +1,35 @@
+{
+  "event_id": "8c726b544c511ae45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5",
+  "event_type": "CHANGED_URL",
+  "url": "https://www.federalreserve.gov/apps/reportingforms/review",
+  "timestamp": "2026-10-27T16:21:51.528667+00:00",
+  "before": {
+    "normalized_hash": "796a50fdb068241648aa6042143b08525fad3a076f5481bafdb70424866e9919",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "ded542b2c2562182742d5a84e58aa298930c416418a1525ed63d02ccb00c46f7",
+    "html_hash": "7127f2410233f94acdd7a9a4ce6799470796f55400f59c0fdc56bd55f2c4d69d",
+    "html_comparison_hash": "702a83a70eac450d232b6b8f85cb81c3dcd3942f01c9e5b81a6e430cf65f0b2e",
+    "snapshot_location": "data/snapshots/c1c1ed502814bc1bdf564f9d28b921e0fb795953747b534aa729ee519b02102a-796a50fdb068241648aa6042143b08525fad3a076f5481bafdb70424866e9919.txt",
+    "html_snapshot_location": "data/snapshots/html/c1c1ed502814bc1bdf564f9d28b921e0fb795953747b534aa729ee519b02102a-7127f2410233f94acdd7a9a4ce6799470796f55400f59c0fdc56bd55f2c4d69d.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": "4bbba2ae01005dbc7e33aceb4399785e16b8a3e93a6162ef5dc722211bd6d435",
+    "extraction_type": "html",
+    "extractor_version": "content-extractor-v7",
+    "extraction_failed": false,
+    "raw_hash": "73b60cc991d79c2bda5c9e338fb9b52edbca2ffac2c0626f23b3b734a1ece172",
+    "html_hash": "73b60cc991d79c2bda5c9e338fb9b52edbca2ffac2c0626f23b3b734a1ece172",
+    "html_comparison_hash": "2a93b2aa76c88c5f41415f2a8f8affdd18dc459bd06b3c8b8ec4247c5d436d3c",
+    "snapshot_location": "data/snapshots/c1c1ed502814bc1bdf564f9d28b921e0fb795953747b534aa729ee519b02102a-4bbba2ae01005dbc7e33aceb4399785e16b8a3e93a6162ef5dc722211bd6d435.txt",
+    "html_snapshot_location": "data/snapshots/html/c1c1ed502814bc1bdf564f9d28b921e0fb795953747b534aa729ee519b02102a-73b60cc991d79c2bda5c9e338fb9b52edbca2ffac2c0626f23b3b734a1ece172.html",
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "--- before\n+++ after\n@@ -13,6 +13,7 @@\n | Information Collections Out for Public Comment (* End of Comment Period) | | | | | | |\n | --- | --- | --- | --- | --- | --- | --- |\n | Collection Identifier | OMB Supporting Statement | Draft Reporting Form | Draft Reporting Instructions | Other Attachments | Initial Federal Register Notice | Final Federal Register Notice |\n+| FFIEC 031 FFIEC 041 FFIEC 051 | Not Available | N/A | N/A | N/A | link *12/28/2026 | Not Available |\n | FFIEC 101 | Not Available | N/A | N/A | N/A | link | link *11/16/2026 |\n | FR O R-1896 | Not Available | N/A | N/A | Press Release 1 Press Release 2 | link 1 link 2 *11/04/2026 | Not Available |\n | FR UU FR 2081a/b/c R-1900 | Not Available | N/A | N/A | Press Release | link *11/30/2026 | Not Available |\n@@ -70,4 +71,4 @@\n | FR 28 | link | 1442 KB | N/A | N/A | link | link |\n | FR 3033p FR 3033s | link | FR 3033p/s | N/A | N/A | link | link |\n | FR 4031 | link | N/A | N/A | N/A | link | link |\n-Last Update: Oct 26, 2026\n+Last Update: Oct 27, 2026",
+  "html_diff": "--- before\n+++ after\n@@ -1819,6 +1819,42 @@\n        <tbody>\n         <tr>\n          <td class=\"left\">\n+          FFIEC 031\n+          <br/>\n+          FFIEC 041\n+          <br/>\n+          FFIEC 051\n+         </td>\n+         <td>\n+          Not Available\n+          <br/>\n+         </td>\n+         <td>\n+          N/A\n+          <br/>\n+         </td>\n+         <td>\n+          N/A\n+          <br/>\n+         </td>\n+         <td>\n+          N/A\n+          <br/>\n+         </td>\n+         <td>\n+          <a href=\"https://www.federalregister.gov/d/2026-21841\" title=\"FFIEC 031,FFIEC 041,FFIEC 051 Initial Federal Register Notice\">\n+           link\n+          </a>\n+          <br/>\n+          *12/28/2026\n+         </td>\n+         <td>\n+          Not Available\n+          <br/>\n+         </td>\n+        </tr>\n+        <tr>\n+         <td class=\"left\">\n           FFIEC 101\n          </td>\n          <td>\n@@ -3935,7 +3971,7 @@\n    </div>\n    <div class=\"row\">\n     <p class=\"lastUpdate\">\n-     Last Update: Oct 26, 2026\n+     Last Update: Oct 27, 2026\n     </p>\n    </div>\n   </div>\n@@ -4174,7 +4210,7 @@\n         });\n   </script>\n   <script>\n-   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a50cf038aff9a1cf',t:'MTc5MzA1NDE3MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n+   (function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML=\"window.__CF$cv$params={r:'a51309478a038c94',t:'MTc5MzExODExMQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);\";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();\n   </script>\n  </body>\n </html>",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body."
+}

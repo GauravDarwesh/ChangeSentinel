@@ -16,9 +16,25 @@
       "evidence_location": "data/evidence/5ad5a0765f00fa65032954d48a1b4130bc2387840462d2b0652f432019154a9f.json",
       "basis": "ai",
       "quote": "October 26, 2026"
+    },
+    {
+      "id": "145d1b9b2c4c35774db36909",
+      "date": "2026-12-28",
+      "kind": "ai_effective",
+      "label": "Effective (AI review)",
+      "title": "Information Collections",
+      "url": "https://www.federalreserve.gov/apps/reportingforms/review",
+      "url_id": "c1c1ed502814bc1bdf564f9d28b921e0fb795953747b534aa729ee519b02102a",
+      "source_id": "fed-reporting-forms-pilot",
+      "event_id": "8c726b544c511ae45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5",
+      "event_type": "CHANGED_URL",
+      "detected_at": "2026-10-27T16:21:51.528667+00:00",
+      "evidence_location": "data/evidence/8c726b544c511ae45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5.json",
+      "basis": "ai",
+      "quote": "12/28/2026"
     }
   ],
   "feed_version": 2,
-  "generated_at": "2026-10-27T05:01:34+00:00",
+  "generated_at": "2026-10-27T16:38:37+00:00",
   "subscribe": "https://GauravDarwesh.github.io/ChangeSentinel/data/calendar.ics"
 }

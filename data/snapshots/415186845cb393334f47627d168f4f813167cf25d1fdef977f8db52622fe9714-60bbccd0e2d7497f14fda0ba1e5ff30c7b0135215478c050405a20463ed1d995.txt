@@ -1,0 +1,24 @@
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio
+Reporte de Saldos y Operaciones DSIF/DCIP
+1. CRITERIOS GENERALES
+Nombre del archivo Debe tener la siguiente estructura: 83001_QQ43_YYMMDD_XXXX.xlsx
+Donde:
+1. 83001: Código necesario para que GTA redireccione los archivos a la carpeta por procesar en el Banco de la República.
+2. QQ43: Valor Fijo que envía DECEVAL (configurado en procesos de cargue).
+3. YYMMDD: Formato fecha de generación información (año-mes-día).
+4. XXXX: Nombre con el que se puede denominar el formato (puede ser cualquier valor).
+Estructura Archivo
+1. El nombre de la página donde viene la información en el archivo Excel deberá tener el mismo nombre que el archivo.
+2. La información debe comenzar en la celda B2.
+3. La fecha de corte de saldos debe comenzar en la celda B6.
+4. El primer tipo de información debe comenzar en la celda B9.
+5. Se deberá incluir modalidades de operación aún no reportadas (TTVs, repos en renta fija y cambios de depositante).
+2. ESQUEMA DEL REPORTE:
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio
+Reporte de Saldos y Operaciones DSIF/DCIP Circular Reglamentaria Externa DCIP-83 del 1 de septiembre de 2021
+1. INFORMACION DE SALDOS
+2. INFORMACION COBROS 3. INFORMACION OPERACION NEGOCIACION codigo_depositante codigo_isin_unido fecha_operacion_str clase_documento_depositante fecha_consigna numero_operacion identificacion_depositante descripcion_especie participante_vendedor razon_social_depositante codigo_emisor_isin clase_documento_vendedor codigo_emisor_isin clase_documento identificacion_vendedor clase_documento_emisor razon_social razon_social_vendedor identificacion_emisor recaudo_capital participante_comprador razon_social_emisor recaudo_dividendos_acciones clase_documento_comprador codigo_isin_unido recaudo_dividendos_efectivo identificacion_comprador descripcion_especie recaudo_rendimientos razon_social_comprador clase_titulo cantidad_reinversion codigo_isin_unido saldo_total descontada_retefuente codigo_plaza saldo_valorizado gravamenes modalidad_operacion saldo_disponible pago_pdi fecha_liquidacion_contado saldo_disponible_valorizado pago_cud fecha_liquidacion_plazo saldo_garantia pago_cheque TIPO_LIQUIDACION_CONTADO saldo_garantia_valorizado pago_cruce precio_contado saldo_prendas pago_deposito_extranjero TIPO_LIQUIDACION_PLAZO saldo_prendas_valorizado Tercero_Residente precio_plazo saldo_otros_bloqueos Nombre del extranjero cantidad_acciones saldo_otros_bloqueos_valoriza d Tercero_Extranjero cantidad_acciones_valorizado clase_persona Tercero_Nacionalidad nro_dias_plazo isin_nacional_extranjero contado_plazo caracteristica_emision clase_persona_vendedor Tercero_Residente clase_persona_comprador Nombre_Tercero_No_Residen te Tercero_Residente_comprador Nemotécnico Nombre_Tercero_No_Residente_compra dor Tercero_Extranjero Tercero_Residente_vendedor Tercero_Nacionalidad Nombre_Tercero_No_Residente_vended or Nemotécnico Tercero_Extranjero_comprador Tercero_Nacionalidad _comprador Tercero_Extranjero_vendedor Tercero_Nacionalidad _vendedor

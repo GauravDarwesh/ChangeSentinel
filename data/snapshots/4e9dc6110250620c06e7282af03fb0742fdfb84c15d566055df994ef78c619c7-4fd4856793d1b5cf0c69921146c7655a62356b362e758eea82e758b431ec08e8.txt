@@ -1,0 +1,53 @@
+[WORKBOOK] 1 sheet: Hoja1
+[SHEET] Hoja1
+Hoja1 · B: Reporte Estadístico de Inversiones de Capitales del Exterior de Portafolio - IPEXT Circular Reglamentaria Externa DCIP-83 del 12 de septiembre de 2023
+Hoja1 · B: NIT del administrador de portafolio; Entidad local que administra el programa sobre ADR's/GDR's/GDN's
+Hoja1 · B: Fecha: mes/año
+Hoja1 · B: Información en millones de pesos colombianos
+Hoja1 · C: Saldo a valor de mercado a fin de mes (millones de pesos colombianos) · D: Valor acumulado mensual de las compras (millones de pesos colombianos) · E: Valor acumulado mensual de las ventas (millones de pesos colombianos) · F: Monto (millones de pesos colombianos)
+Hoja1 · B: I. INVERSIONES DE CAPITALES DEL EXTERIOR DE PORTAFOLIO EN COLOMBIA DESAGREGADA POR INSTRUMENTO FINANCIERO
+Hoja1 · B: a. Renta Variable (i+ii) · F: No aplica
+Hoja1 · B: i. Sector Financiero · F: No aplica
+Hoja1 · B: ii. Sector No Financiero (I+II) · F: No aplica
+Hoja1 · B: I. Público · F: No aplica
+Hoja1 · B: II. Privado · F: No aplica
+Hoja1 · B: b. Renta Fija (i+ii) · F: No aplica
+Hoja1 · B: i. Sector Financiero · F: No aplica
+Hoja1 · B: ii. Sector No Financiero (I+II) · F: No aplica
+Hoja1 · B: I. Público · F: No aplica
+Hoja1 · B: II. Privado · F: No aplica
+Hoja1 · B: c. Fondos de Inversión Colectiva (i+ii) · F: No aplica
+Hoja1 · B: i. Bursátiles · F: No aplica
+Hoja1 · B: ii. Resto · F: No aplica
+Hoja1 · B: d. Liquidez · D: No aplica · E: No aplica · F: No aplica
+Hoja1 · B: e. Operaciones de repos y simultáneas activos, y TTV contra dinero · D: No aplica · E: No aplica · F: No aplica
+Hoja1 · B: f. Derivados · D: No aplica · E: No aplica · F: No aplica
+Hoja1 · B: g. Otros instrumentos financieros · D: No aplica · E: No aplica · F: No aplica
+Hoja1 · B: h. Programas DR's (ADR, GDR) y DN's (GDN) · F: No aplica
+Hoja1 · B: TOTAL (a + b + c + d + e + f + g + h) · F: No aplica
+Hoja1 · B: II. FONDEO
+Hoja1 · B: a. Repos y simultáneas pasivos y TTV contra dinero · D: No aplica · E: No aplica · F: No aplica
+Hoja1 · B: b. Otros Mecanismos · D: No aplica · E: No aplica · F: No aplica
+Hoja1 · B: TOTAL (a + b) · D: No aplica · E: No aplica · F: No aplica
+Hoja1 · B: III. POSICIONES NETAS EN DERIVADOS
+Hoja1 · B: a. Derivados sobre Renta Variable · D: No aplica · E: No aplica · F: No aplica
+Hoja1 · B: b. Derivados sobre Renta Fija · D: No aplica · E: No aplica · F: No aplica
+Hoja1 · B: c. Derivados sobre Monedas · D: No aplica · E: No aplica · F: No aplica
+Hoja1 · B: TOTAL (a + b + c) · D: No aplica · E: No aplica · F: No aplica
+Hoja1 · B: IV. INVERSIONES DE CAPITALES DEL EXTERIOR DE PORTAFOLIO EN TÍTULOS DE EMISORES EXTRANJEROS
+Hoja1 · B: a. En Títulos de Renta Variable de Emisores Extranjeros · F: No aplica
+Hoja1 · B: b. En Títulos de Renta Fija de Emisores Extranjeros · F: No aplica
+Hoja1 · B: c. En otros tipos de Títulos de Emisores Extranjeros · F: No aplica
+Hoja1 · B: TOTAL (a + b + c) · F: No aplica
+Hoja1 · B: V. MONTO ESTIMADO DE RENDIMIENTO
+Hoja1 · B: a. Monto estimado de rendimiento de la Renta Variable · C: No aplica · D: No aplica · E: No aplica
+Hoja1 · B: b. Monto estimado de rendimiento de la Renta Fija · C: No aplica · D: No aplica · E: No aplica
+Hoja1 · B: c. Monto estimado de rendimiento de los Fondos de Inversión Colectiva · C: No aplica · D: No aplica · E: No aplica
+Hoja1 · B: TOTAL (a + b + c)
+Hoja1 · B: Acepto el tratamiento de los datos personales bajo las políticas específicas del Banco de la República, en especial bajo lo reglamentado en el numeral 2.7 del Capítulo 2 de esta Circular
+[MERGED] Hoja1 · B3:E3
+[MERGED] Hoja1 · B4:E5
+[MERGED] Hoja1 · F10:F11
+[MERGED] Hoja1 · C10:C11
+[MERGED] Hoja1 · D10:D11
+[MERGED] Hoja1 · E10:E11

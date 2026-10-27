@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261027T155531Z-9564e2e9",
-  "generated_at": "2026-10-27T16:00:52.260296+00:00",
+  "run_id": "20261027T162151Z-592001b6",
+  "generated_at": "2026-10-27T16:26:41.698190+00:00",
   "source": {
     "id": "manual-15294ab2d815",
     "name": "FR Y-6 Insiders Sample file (XLSX)",
@@ -94,5 +94,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "continuation",
-  "workflow_run_id": "40535240200"
+  "workflow_run_id": "40535893377"
 }

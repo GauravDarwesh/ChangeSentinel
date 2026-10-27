@@ -1,6 +1,14 @@
 {
  "events": [
   {
+   "at": "2026-10-27T16:21:51.528667+00:00",
+   "change": "added",
+   "menu": false,
+   "page": "https://www.federalreserve.gov/apps/reportingforms/review",
+   "text": "FFIEC 031 FFIEC 041 FFIEC 051 \u00b7 link",
+   "url": "https://www.federalregister.gov/d/2026-21841"
+  },
+  {
    "at": "2026-10-26T22:36:08.862878+00:00",
    "change": "removed",
    "menu": false,
@@ -1194,8 +1202,1444 @@
    },
    "tracking_since": "2026-10-25T11:25:21.562775+00:00"
   },
+  "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83": {
+   "last_scan": "2026-10-27T16:38:19.919958+00:00",
+   "links": {
+    "http://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/compendio-dcin83-24-mayo-2018.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Compendio DCIN-83 (vigente hasta el 24 de mayo de 2018)"
+    },
+    "http://www.banrepcultural.org/": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Actividad cultural"
+    },
+    "https://archivohistoricobanrep.sarip.info/opac/Simple": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "ARCHIVO HIST\u00d3RICO"
+    },
+    "https://banrep.my.site.com/s/": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Registre su PQR"
+    },
+    "https://co.linkedin.com/company/bancorepublica": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Linkedin"
+    },
+    "https://investiga.banrep.gov.co/": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Portal de Investigaciones Econ\u00f3micas"
+    },
+    "https://investiga.banrep.gov.co/es": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "PORTAL DE INVESTIGACIONES ECON\u00d3MICAS"
+    },
+    "https://repositorio.banrep.gov.co/": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "REPOSITORIO INSTITUCIONAL"
+    },
+    "https://suameca.banrep.gov.co/descarga-multiple-de-datos/": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Descarga m\u00faltiple de datos"
+    },
+    "https://suameca.banrep.gov.co/estadisticas-economicas/": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Estad\u00edsticas econ\u00f3micas"
+    },
+    "https://suameca.banrep.gov.co/estadisticas-economicas/boletines": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Boletines"
+    },
+    "https://suameca.banrep.gov.co/estadisticas-economicas/calendario": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Calendario de publicaci\u00f3n de estad\u00edsticas"
+    },
+    "https://suameca.banrep.gov.co/estadisticas-economicas/catalogo": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Cat\u00e1logo"
+    },
+    "https://suameca.banrep.gov.co/estadisticas-economicas/encuestas": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Encuestas"
+    },
+    "https://suameca.banrep.gov.co/estadisticas-economicas/tablasPreconstruidas": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Tablas preconstruidas"
+    },
+    "https://suameca.banrep.gov.co/graficador-interactivo/": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Graficador interactivo"
+    },
+    "https://suameca.banrep.gov.co/indicadores-economicos-del-dia/": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Indicadores econ\u00f3micos del d\u00eda"
+    },
+    "https://tiendabanrep.co/": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Tienda Banrep"
+    },
+    "https://twitter.com/bancorepublica": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Twitter"
+    },
+    "https://whatsapp.com/channel/0029VabeQO6BlHpbWIdn512H": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Whatsapp"
+    },
+    "https://www.banrep.gov.co/": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Banco de la Rep\u00fablica, inicio"
+    },
+    "https://www.banrep.gov.co/atencion-ciudadano": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Sistema de Atenci\u00f3n a la Ciudadan\u00eda"
+    },
+    "https://www.banrep.gov.co/en": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "English version"
+    },
+    "https://www.banrep.gov.co/en/about-banco-republicas-cultural-labor": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": ""
+    },
+    "https://www.banrep.gov.co/en/board-of-directors-calendar": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": ""
+    },
+    "https://www.banrep.gov.co/en/minutes": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Banrep Minutes : The Board of Directors of Banco de la Rep\u00fablica decided by majority vote to increase the monetary policy interest rate by 25 basis points (bps) to 12.25%"
+    },
+    "https://www.banrep.gov.co/en/monetary-policy-reports": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Published: August 02th, 2023"
+    },
+    "https://www.banrep.gov.co/en/press-releases-board": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Press Release: The Board of Directors of Banco de la Rep\u00fablica decided by a majority vote to increase the monetary policy interest rate by 25 basis points to 12.25%"
+    },
+    "https://www.banrep.gov.co/en/publications-research/monetary-policy-report": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Monetary Policy Report Summary : July 2026"
+    },
+    "https://www.banrep.gov.co/en/service-exclusively-investors-and-market-analysts": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": ""
+    },
+    "https://www.banrep.gov.co/es": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Inicio"
+    },
+    "https://www.banrep.gov.co/es/administracion-las-reservas-internacionales-2021": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Publicado: diciembre 20, 2021"
+    },
+    "https://www.banrep.gov.co/es/atencion-exclusiva-inversionistas-analistas-mercado": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Atenci\u00f3n a inversionistas de portafolio"
+    },
+    "https://www.banrep.gov.co/es/atencion-exclusiva-inversionistas-y-analistas-mercado-nuevo": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": ""
+    },
+    "https://www.banrep.gov.co/es/aviso-legal": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "T\u00e9rminos y condiciones"
+    },
+    "https://www.banrep.gov.co/es/ayuda-y-contactos/inscripcion-listas-correo": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Suscripci\u00f3n a boletines"
+    },
+    "https://www.banrep.gov.co/es/banco/contratacion-bienes-servicios": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "C\u00f3mo contratamos bienes y servicios"
+    },
+    "https://www.banrep.gov.co/es/banco/estados-financieros-emisor": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Estados financieros"
+    },
+    "https://www.banrep.gov.co/es/banco/funciones": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Funciones y mapa de macroprocesos del Banco"
+    },
+    "https://www.banrep.gov.co/es/banco/gobierno-coporativo/mauricio-villamizar": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Fotograf\u00eda de Mauricio Villamizar, miembro de la Junta Directiva"
+    },
+    "https://www.banrep.gov.co/es/banco/gobierno-corporativo": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "El Banco"
+    },
+    "https://www.banrep.gov.co/es/banco/gobierno-corporativo/bibiana-taboada": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen Codirectora Bibiana Taboada"
+    },
+    "https://www.banrep.gov.co/es/banco/gobierno-corporativo/cesar-augusto-giraldo": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Fotograf\u00eda en blanco y negro de C\u00e9sar Augusto Giraldo-Giraldo"
+    },
+    "https://www.banrep.gov.co/es/banco/gobierno-corporativo/laura-moisa-elicabide": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Fotograf\u00eda en blanco y negro de Laura Mois\u00e1-Elicabide"
+    },
+    "https://www.banrep.gov.co/es/banco/gobierno-corporativo/leonardo-villar": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Fotograf\u00eda del Dr. Leonardo Villar"
+    },
+    "https://www.banrep.gov.co/es/banco/gobierno-corporativo/olga-lucia-acosta": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen Codirectora Olga Luc\u00eda Acosta Navarro"
+    },
+    "https://www.banrep.gov.co/es/banco/historia/antecedentes": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Historia"
+    },
+    "https://www.banrep.gov.co/es/banco/patrocinio-estudios-exterior/generalidades": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Programas de estudios en el exterior"
+    },
+    "https://www.banrep.gov.co/es/banrep-educa": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Educaci\u00f3n Econ\u00f3mica"
+    },
+    "https://www.banrep.gov.co/es/ber": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "[+ info]"
+    },
+    "https://www.banrep.gov.co/es/billetes-monedas": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Billetes y monedas"
+    },
+    "https://www.banrep.gov.co/es/billetes-monedas/billetes-en-circulacion": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Billetes en circulaci\u00f3n"
+    },
+    "https://www.banrep.gov.co/es/billetes-monedas/cuidado-billetes-monedas": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Cuidado de billetes y monedas"
+    },
+    "https://www.banrep.gov.co/es/billetes-monedas/estadisticas-produccion-circulacion": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Estad\u00edsticas de circulaci\u00f3n y producci\u00f3n"
+    },
+    "https://www.banrep.gov.co/es/billetes-monedas/funcion-emision": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Emisi\u00f3n de la moneda legal colombiana"
+    },
+    "https://www.banrep.gov.co/es/billetes-monedas/monedas-circulacion": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Monedas en circulaci\u00f3n"
+    },
+    "https://www.banrep.gov.co/es/billetes-monedas/necesita-cambiar-billetes-monedas-negocio-hogar-nueva": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "\u00bfNecesita cambiar billetes y monedas para su negocio o su hogar y no sabe d\u00f3nde hacerlo?"
+    },
+    "https://www.banrep.gov.co/es/billetes-monedas/otros-servicios-relacionados": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Otros servicios relacionados con billetes y monedas emitidos por el Banco de la Rep\u00fablica"
+    },
+    "https://www.banrep.gov.co/es/billetes-monedas/produccion-circulacion": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Producci\u00f3n y circulaci\u00f3n de billetes y monedas"
+    },
+    "https://www.banrep.gov.co/es/billetes-y-monedas/monedas-conmemorativas": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Monedas conmemorativas"
+    },
+    "https://www.banrep.gov.co/es/blog": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Blog Banrep"
+    },
+    "https://www.banrep.gov.co/es/bre-b": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Bre-B (Pagos inmediatos)"
+    },
+    "https://www.banrep.gov.co/es/buscador-reglamentacion-cambiaria?field_regla_tid=4025&title=83": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Modificaciones a la DCIN-83 y DCIP-83"
+    },
+    "https://www.banrep.gov.co/es/calendario-eventos": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Calendario de actividades y eventos"
+    },
+    "https://www.banrep.gov.co/es/calendario-junta-directiva": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Calendario de actividades de la Junta Directiva"
+    },
+    "https://www.banrep.gov.co/es/centro-atencion-telefonica-nuevo-sistema-informacion-cambiaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Centro de atenci\u00f3n telef\u00f3nica Sistema de Informaci\u00f3n Cambiaria"
+    },
+    "https://www.banrep.gov.co/es/comunicados-junta": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Comunicado de prensa: La Junta Directiva del Banco de la Rep\u00fablica decidi\u00f3 por mayor\u00eda aumentar en 25 puntos b\u00e1sicos (pbs) la tasa de inter\u00e9s de pol\u00edtica monetaria a 12,25%"
+    },
+    "https://www.banrep.gov.co/es/conceptos-secretaria-jd": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Conceptos cambiarios de la Secretar\u00eda de la Junta Directiva"
+    },
+    "https://www.banrep.gov.co/es/contenidos/webform/registro-para-presentacion-ofertas-las-operaciones-con-el-banco-republica": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Mecanismos de contingencia"
+    },
+    "https://www.banrep.gov.co/es/continuidad": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Continuidad del negocio"
+    },
+    "https://www.banrep.gov.co/es/continuidad-negocio/contactos-eventos-contingencia": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Puntos de contacto durante eventos de contingencia"
+    },
+    "https://www.banrep.gov.co/es/donde-estamos": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "BANCO DE LA REP\u00daBLICA | COLOMBIA"
+    },
+    "https://www.banrep.gov.co/es/estabilidad-financiera/politica-crediticia": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Pol\u00edtica crediticia"
+    },
+    "https://www.banrep.gov.co/es/estabilidad-financiera/prestamista-ultima-instancia-0": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Prestamista de \u00faltima instancia"
+    },
+    "https://www.banrep.gov.co/es/estabilidad-financiera/que-es-y-que-acciones-toma-el-banco": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Estabilidad financiera"
+    },
+    "https://www.banrep.gov.co/es/estabilidad-financiera/seguimiento-infraestructuras-financieras": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Seguimiento a las infraestructuras financieras"
+    },
+    "https://www.banrep.gov.co/es/estabilidad-financiera/seguimiento-vulnerabilidades-riesgos": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Seguimiento a las vulnerabilidades y riesgos"
+    },
+    "https://www.banrep.gov.co/es/estadisticas-economicas/calendario-divulgacion/reportes-encuestas-sobre-estabilidad-financiera-segundo-trimestre": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Divulgaci\u00f3n de reportes de encuestas sobre estabilidad financiera - II trimestre de 2022 y del I semestre de 2022"
+    },
+    "https://www.banrep.gov.co/es/estadisticas-economicas/series-estadisticas-historicas-colombia": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Series estad\u00edsticas hist\u00f3ricas de Colombia"
+    },
+    "https://www.banrep.gov.co/es/estadisticas/encuesta-trafico-fronterizo-etf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Divulgaci\u00f3n de la Encuesta de Tr\u00e1fico Fronterizo (ETF) - IV Trimestre de 2021"
+    },
+    "https://www.banrep.gov.co/es/estadisticas/informacion-mercados-tiempo-real": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Informaci\u00f3n de los mercados en tiempo real"
+    },
+    "https://www.banrep.gov.co/es/eventos/divulgacion-informacion-economica/encuesta-credito-primer-trimestre": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Divulgaci\u00f3n de la encuesta trimestral sobre la situaci\u00f3n del cr\u00e9dito en Colombia - I trimestre de 2026"
+    },
+    "https://www.banrep.gov.co/es/eventos/divulgacion-informacion-economica/encuesta-credito-segundo-trimestre": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Divulgaci\u00f3n de la encuesta trimestral sobre la situaci\u00f3n del cr\u00e9dito en Colombia - II trimestre de 2026"
+    },
+    "https://www.banrep.gov.co/es/eventos/divulgacion-informacion-economica/encuesta-evolucion-reciente-endeudamiento-segundo-trimestre": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Divulgaci\u00f3n de la encuesta de la evoluci\u00f3n reciente del endeudamiento externo de los bancos colombianos - II trimestre de 2026"
+    },
+    "https://www.banrep.gov.co/es/eventos/divulgacion-informacion-economica/encuesta-percepcion-riesgos-sistema-financiero-primer-semestre": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Divulgaci\u00f3n de la encuesta de percepci\u00f3n sobre riesgos del sistema financiero - I semestre de 2026"
+    },
+    "https://www.banrep.gov.co/es/expectativas-analistas-economicos": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Divulgaci\u00f3n de la Encuesta Mensual de Expectativas de Analistas Econ\u00f3micos - Julio 2022"
+    },
+    "https://www.banrep.gov.co/es/expectativas-economicas-empresarios-mensual": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Divulgaci\u00f3n de la Encuesta Mensual de Expectativas Econ\u00f3micas - Mayo 2022"
+    },
+    "https://www.banrep.gov.co/es/expectativas-economicas-empresarios-trimestral": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Divulgaci\u00f3n de la Encuesta Trimestral de Expectativas Econ\u00f3micas (ETE) - II Trimestre 2022"
+    },
+    "https://www.banrep.gov.co/es/generalidades-regimen-cambiario": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Generalidades del R\u00e9gimen Cambiario"
+    },
+    "https://www.banrep.gov.co/es/glosario": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Glosario"
+    },
+    "https://www.banrep.gov.co/es/informe-al-congreso": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Published: August 3rd, 2021"
+    },
+    "https://www.banrep.gov.co/es/informe-de-politica-monetaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Informe de Pol\u00edtica Monetaria"
+    },
+    "https://www.banrep.gov.co/es/informe-junta-directiva-congreso-republica-marzo-2022": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "[+ info]"
+    },
+    "https://www.banrep.gov.co/es/informe-politica-monetaria-enero-2022": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": ""
+    },
+    "https://www.banrep.gov.co/es/mapa-del-sitio": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Mapa del sitio"
+    },
+    "https://www.banrep.gov.co/es/minutas": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Minutas de la reuni\u00f3n: La Junta Directiva del Banco de la Rep\u00fablica decidi\u00f3 por mayor\u00eda aumentar en 25 puntos b\u00e1sicos (pbs) la tasa de inter\u00e9s de pol\u00edtica monetaria a 12,25%"
+    },
+    "https://www.banrep.gov.co/es/modelo-poder-sugerido": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Modelo de poder sugerido"
+    },
+    "https://www.banrep.gov.co/es/no-se-deje-enganar-existen-cinco-claves-para-verificar-autenticidad-billetes": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Cinco claves para verificar la autenticidad de los billetes"
+    },
+    "https://www.banrep.gov.co/es/normatividad": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Normatividad y proyectos de regulaci\u00f3n"
+    },
+    "https://www.banrep.gov.co/es/normatividad-cambiaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Marco legal"
+    },
+    "https://www.banrep.gov.co/es/normatividad-monetaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Normatividad"
+    },
+    "https://www.banrep.gov.co/es/normatividad-tasas-interes": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Tasas de inter\u00e9s"
+    },
+    "https://www.banrep.gov.co/es/normatividad/cambiaria/regimen-inversiones-internacionales": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "R\u00e9gimen de inversiones internacionales"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/anexo-1": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Numerales cambiarios (Anexo 1 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/anexo-2": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Acuerdo para la transmisi\u00f3n electr\u00f3nica de informaci\u00f3n al Banco de la Rep\u00fablica a trav\u00e9s del Sistema de Informaci\u00f3n Cambiaria (Anexo 2 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/anexo-3": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Sistema de Informaci\u00f3n Cambiaria (Anexo 3 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/anexo-4": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Fechas para diligenciar registros, sustituciones y cancelaciones (Anexo 4 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/capitulo-1": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Declaraciones de cambio (Cap\u00edtulo 1 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/capitulo-10": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Generalidades sobre operaciones del Mercado Cambiario (Cap\u00edtulo 10 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/capitulo-11": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Sector Hidrocarburos y Miner\u00eda (Cap\u00edtulo 11 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/capitulo-12": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Formularios, anexos y otros (Cap\u00edtulo 12 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/capitulo-2": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Operaciones con el Banco de la Rep\u00fablica (Cap\u00edtulo 2 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/capitulo-3": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Importaciones de bienes (Cap\u00edtulo 3 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/capitulo-4": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Exportaciones de bienes (Cap\u00edtulo 4 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/capitulo-5": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Endeudamiento externo (Cap\u00edtulo 5 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/capitulo-6": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Avales y Garant\u00edas (Cap\u00edtulo 6 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/capitulo-7": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Inversiones internacionales e inversiones financieras y en activos en el exterior (Cap\u00edtulo 7 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/capitulo-8": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Cuentas de compensaci\u00f3n (Cap\u00edtulo 8 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/capitulo-9": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Zonas francas (Cap\u00edtulo 9 de la Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/formato-ipext-depositos-imc-cartera": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Formato de reporte dep\u00f3sitos de no residentes en IMC y compra de cartera interna (Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/formato-prestamos-imc": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Formato de reporte de pr\u00e9stamos en moneda legal colombiana otorgados por IMC a no residentes (Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/formulario-profesional-divisas": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Formulario para la declaraci\u00f3n de cambio por compra y venta de manera profesional de divisas en efectivo y cheques de viajero (Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/informe-avales-imc": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Informe de Avales y Garant\u00edas otorgados por los IMC (Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/informe-deposito-operaciones-credito": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Informe de Dep\u00f3sito de Cuentas en Moneda Legal para No Residentes de Operaciones de Cr\u00e9dito Externo (Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/reporte-concesionarios-correos": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Reporte de concesionarios de servicios de correos (Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/reporte-ipext": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Reporte estad\u00edstico de Inversiones de Capitales del Exterior de Portafolio (Ipext) (Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/reporte-pagos-exportaciones-servicios": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Reporte mensual de pagos de exportaciones de servicios desde cuentas en pesos (Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/reporte-proveedores-servicios": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Reporte mensual de proveedores de servicios de pago agregadores (Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/reporte-remesas-trabajadores-mensual": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Reporte mensual de ingresos de remesas de trabajadores mediante tarjetas d\u00e9bito y cr\u00e9dito (RMR) (Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/reporte-remesas-trabajadores-trimestral": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Reporte trimestral de remesas de trabajadores (RTR) (Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/compendio-dcip-83/reporte-saldos-operaciones-dsif": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Reporte de Saldos y Operaciones Departamento de Seguimiento a la Infraestructura Financiera (DSIF)/Departamento de Cambios Internacionales y Pagos (DCIP) (Circular Reglamentaria DCIP-83)"
+    },
+    "https://www.banrep.gov.co/es/normatividad/medidas-macroprudenciales": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Normatividad de la pol\u00edtica macroprudencial"
+    },
+    "https://www.banrep.gov.co/es/normatividad/resolucion-externa-1-2018": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Resoluci\u00f3n Externa 1 de 2018"
+    },
+    "https://www.banrep.gov.co/es/noticias": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Prensa digital"
+    },
+    "https://www.banrep.gov.co/es/noticias-y-publicaciones": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Noticias"
+    },
+    "https://www.banrep.gov.co/es/noticias-y-publicaciones-tipos?combine=&tipo%5B11064%5D=11064": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Comunicados y minutas"
+    },
+    "https://www.banrep.gov.co/es/noticias-y-publicaciones-tipos?combine=&tipo%5B14808%5D=14808": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Noticias y novedades"
+    },
+    "https://www.banrep.gov.co/es/noticias/10-septiembre-2025-modificacion-horario-tesoreria-bogota": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen con ilustraci\u00f3n de la fachada de la Tesorer\u00eda en Bogot\u00e1"
+    },
+    "https://www.banrep.gov.co/es/noticias/banrep-cambios-servicios-tesoreria-febrero-2026": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Fotograf\u00eda del edifico principal del Banco de la Rep\u00fablica en Bogot\u00e1"
+    },
+    "https://www.banrep.gov.co/es/noticias/banrep-en-medios": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "BanRep en los medios"
+    },
+    "https://www.banrep.gov.co/es/noticias/banrep-lanza-nuevo-sistema-agendamiento-citas-servicios-tesoreria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen alusiva al Sistema de agendamiento de citas para los servicios de Tesorer\u00eda"
+    },
+    "https://www.banrep.gov.co/es/noticias/banrep-presento-moneda-quinto-centenario-fundacion-santa-marta": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Fotograf\u00edas de la moneda conmemorativa de los 500 a\u00f1os de la fundaci\u00f3n de Santa Marta."
+    },
+    "https://www.banrep.gov.co/es/noticias/blog-crecimiento-regiones": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen del blog con mapa de Colombia se\u00f1alando las 6 regiones del estudio"
+    },
+    "https://www.banrep.gov.co/es/noticias/bre-b-colombianos-ya-pueden-registrar-llaves": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Animaci\u00f3n que ilustra la transferencia de informaci\u00f3n de un celular a otro."
+    },
+    "https://www.banrep.gov.co/es/noticias/bre-b-cumple-un-anio-en-colombia": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen con logotipo de Bre-B y el texto '1 a\u00f1o'"
+    },
+    "https://www.banrep.gov.co/es/noticias/breb-b-novedades-regulatorias": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen decorativa"
+    },
+    "https://www.banrep.gov.co/es/noticias/celebramos-6-meses-bre-b": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen decorativa"
+    },
+    "https://www.banrep.gov.co/es/noticias/conozca-horarios-atencion-publico-julio-2026": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen decorativa"
+    },
+    "https://www.banrep.gov.co/es/noticias/desde-22-marzo-establecimientos-cambio-billetes": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen decorativa"
+    },
+    "https://www.banrep.gov.co/es/noticias/especiales-banrep": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Especiales Banrep"
+    },
+    "https://www.banrep.gov.co/es/noticias/eventos/webinar-credito-externo-2024": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Webinar: Cr\u00e9dito externo y procedimientos especiales"
+    },
+    "https://www.banrep.gov.co/es/noticias/informe-junta-directiva-intervencion-comision-tercera-senado-octubre-2026": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Fotograf\u00eda de Leonardo Villar durante su intervenci\u00f3n"
+    },
+    "https://www.banrep.gov.co/es/noticias/la-rep%C3%BAblica-al-cierre-de-abril-mas-de-90000-comercios-tenian-una-llave-de-bre-b-registrada": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "La Rep\u00fablica: Al cierre de abril de este a\u00f1o m\u00e1s de 90.000 comercios ten\u00edan una llave de Bre-B registrada"
+    },
+    "https://www.banrep.gov.co/es/noticias/la-republica-el-despliegue-de-bre-b-desde-su-lanzamiento-ya-tiene-108-millones-de-llaves-registradas": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "La Rep\u00fablica: El despliegue de Bre-B desde su lanzamiento ya tiene 108 millones de llaves registradas"
+    },
+    "https://www.banrep.gov.co/es/noticias/modificacion-temporal-horario-tesoreria-bogota-4-09-2026": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen con ilustraci\u00f3n de la fachada de la Tesorer\u00eda en Bogot\u00e1"
+    },
+    "https://www.banrep.gov.co/es/noticias/noticias-novedades/invitacion-participar-encuesta-servicios-pago-banrep": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen decorativa"
+    },
+    "https://www.banrep.gov.co/es/noticias/nuevas-direcciones-cambio-efectivo-varias-ciudades": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen alusiva a los servicios de cambio de billetes de cualquier denominaci\u00f3n, por billetes de dos mil y cinco mil pesos"
+    },
+    "https://www.banrep.gov.co/es/noticias/podcast-banrep-bre-b-cumple-seis-meses-operacion": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Fotograf\u00eda de Ana Mar\u00eda Prieto, directora del Departamento de Sistemas de Pago"
+    },
+    "https://www.banrep.gov.co/es/noticias/podcast-banrep-que-pasa-transferencia-pago-tarjeta-bre-b": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Fotograf\u00eda de Javier Migu\u00e9lez, del Banco de la Rep\u00fablica"
+    },
+    "https://www.banrep.gov.co/es/noticias/quibdo-informa-puntos-cambio-efectivo-bre-b": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen alusiva al conversatorio en Quibd\u00f3 sobre puntos de cambio de efectivo, elementos de seguridad de billetes y Bre-B"
+    },
+    "https://www.banrep.gov.co/es/noticias/reanudan-servicios-culturales-ventanillas-armenia": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Fachadas de varias sedes del Banco de la Rep\u00fablica"
+    },
+    "https://www.banrep.gov.co/es/noticias/regulacion-operaciones-cambiarias-informe-movimientos": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen decorativa"
+    },
+    "https://www.banrep.gov.co/es/noticias/reporte-infraestructura-financiera-instrumentos-pago-2026": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen representativa del Reporte de la Infraestructura Financiera e Instrumentos de Pago"
+    },
+    "https://www.banrep.gov.co/es/noticias/se-restablece-servicio-tesoreria-cali-2026": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen decorativa"
+    },
+    "https://www.banrep.gov.co/es/noticias/seis-meses-bre-b-acumula-34-millones-usuarios": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen decorativa"
+    },
+    "https://www.banrep.gov.co/es/noticias/semana-en-siete-meses-bre-b-triplico-sus-transacciones-diarias-de-15-a-5-millones-ya-hay-105-millones-de-llaves-registradas": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen decorativa"
+    },
+    "https://www.banrep.gov.co/es/noticias/teatro-amira-rosa-continuan-obras": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Avances de la remodelaci\u00f3n del Teatro Amira de la Rosa"
+    },
+    "https://www.banrep.gov.co/es/noticias/tesoreria-atienden-unicamente-cita-previa": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen decorativa."
+    },
+    "https://www.banrep.gov.co/es/notificaciones-judiciales": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Buz\u00f3n exclusivo para notificaciones judiciales"
+    },
+    "https://www.banrep.gov.co/es/operaciones-cambiarias": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Regulaci\u00f3n y operaciones cambiarias"
+    },
+    "https://www.banrep.gov.co/es/operaciones-cambiarias/solicitudes-especiales-operaciones-cambiarias": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Solicitudes especiales"
+    },
+    "https://www.banrep.gov.co/es/otros-servicios": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Otros servicios"
+    },
+    "https://www.banrep.gov.co/es/podcast": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "P\u00f3dcast Cuentas y cuentos"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Pol\u00edtica monetaria y cambiaria"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/administracion-fondos-soberanos": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Administraci\u00f3n de fondos soberanos"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/comunicacion-intervencion-cambiaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Comunicaci\u00f3n"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/comunicacion-politica-monetaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Comunicaci\u00f3n"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/definicion-objetivo-politica-monetaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Pol\u00edtica monetaria"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/implementacion-intervencion-cambiaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Implementaci\u00f3n"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/implementacion-politica-monetaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Implementaci\u00f3n"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/linea-credito-flexible-fmi": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "L\u00edneas de cr\u00e9dito y liquidez"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/lineas-contingentes-liquidez-externa": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "L\u00edneas contingentes de liquidez externa"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/liquidez-internacional-administracion-fondos-soberanos": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Liquidez internacional y administraci\u00f3n de fondos soberanos"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/operaciones-cambiarias/normatividad": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Normatividad (R\u00e9gimen de Cambios Internacionales)"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/politica-intervencion-cambiaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Pol\u00edtica de intervenci\u00f3n cambiaria"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/regulacion-operaciones-cambiarias/otras-normativas-cambiarias": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Otras normativas cambiarias"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/regulacion-operaciones-cambiarias/sistema-informacion": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Sistema de Informaci\u00f3n Cambiaria"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/reservas-internacionales": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Reservas Internacionales"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/reservas-internacionales/normatividad": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Normatividad"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/seguimiento-mercados-financieros": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Seguimiento a los mercados financieros"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/servicios-operaciones-cambiarias": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Tr\u00e1mites y servicios"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/sistema-subastas": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Sistema de Subastas del Banco de la Rep\u00fablica"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/sistema-subastas/reglamento": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Reglamento y normatividad aplicable"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/subastas-banrep-convocatoria-contingencia": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Convocatoria"
+    },
+    "https://www.banrep.gov.co/es/politica-monetaria-cambiaria/toma-decisiones-politica-monetaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Toma de decisiones"
+    },
+    "https://www.banrep.gov.co/es/politicas-de-seguridad-de-la-informacion": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Pol\u00edticas de seguridad de la informaci\u00f3n"
+    },
+    "https://www.banrep.gov.co/es/proteccion-datos-personales": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Pol\u00edtica de privacidad y tratamiento de datos personales"
+    },
+    "https://www.banrep.gov.co/es/publicaciones-investigaciones": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Publicaciones e investigaciones"
+    },
+    "https://www.banrep.gov.co/es/publicaciones-investigaciones/borradores-economia/evaluando-seguro-desempleo-economia": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen portada Borradores de Econom\u00eda"
+    },
+    "https://www.banrep.gov.co/es/publicaciones-investigaciones/borradores-economia/experimentando-llm-pronostico-inflacion": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Imagen portada Borradores de Econom\u00eda"
+    },
+    "https://www.banrep.gov.co/es/publicaciones-investigaciones/cuadernos-historia-economica/desarrollo-economico-colombia-finales": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Portada Cuadernos de Historia Econ\u00f3mica"
+    },
+    "https://www.banrep.gov.co/es/publicaciones-investigaciones/encuesta-percepcion-riesgos-sistema-financiero/primer-semestre-2026": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Portada - Encuesta de percepci\u00f3n sobre riesgos del sistema financiero"
+    },
+    "https://www.banrep.gov.co/es/publicaciones-investigaciones/estabilidad-financiera/investigacion-aplicada": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Publicaciones e investigaciones"
+    },
+    "https://www.banrep.gov.co/es/publicaciones-investigaciones/informe-politica-monetaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Informe de Pol\u00edtica Monetaria"
+    },
+    "https://www.banrep.gov.co/es/publicaciones-investigaciones/informes-especiales-estabilidad-financiera/coyuntura-macroeconomica-financiera-septiembre-2026": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Portada - Coyuntura macroecon\u00f3mica y financiera en Centroam\u00e9rica - Informe especial de Estabilidad Financiera - Septiembre 2026"
+    },
+    "https://www.banrep.gov.co/es/publicaciones-investigaciones/informes-especiales-estabilidad-financiera/riesgo-mercado-septiembre-2026": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Portada - Informe Especial Riesgo de Mercado"
+    },
+    "https://www.banrep.gov.co/es/publicaciones-investigaciones/pulso-economico-regional/tercer-trimestre-2026": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Pulso Econ\u00f3mico Regional"
+    },
+    "https://www.banrep.gov.co/es/publicaciones-investigaciones/reporte-estabilidad-financiera/actualizacion-septiembre-2026": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Actualizaci\u00f3n trimestral del Reporte de Estabilidad Financiera \u2013 septiembrede 2025"
+    },
+    "https://www.banrep.gov.co/es/publicaciones/informe-politica-monetaria/abril-2022": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Publicado: mayo 2, 2022"
+    },
+    "https://www.banrep.gov.co/es/recaudos-corporativos-pagos-pse-nuevo": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Recaudos corporativos (pagos por PSE)"
+    },
+    "https://www.banrep.gov.co/es/reglamentacion-expansion-y-contraccion-monetaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Expansi\u00f3n y contracci\u00f3n monetaria"
+    },
+    "https://www.banrep.gov.co/es/reglamentacion-temas/2167": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Normatividad"
+    },
+    "https://www.banrep.gov.co/es/reglamentacion-temas/5444": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Resoluci\u00f3n Externa 8 de 2000"
+    },
+    "https://www.banrep.gov.co/es/reglamentacion-titulos-administrados-por-banco": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "T\u00edtulos administrados"
+    },
+    "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias/consulta-tramites-ante-cambios-internacionales": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Consulta de servicios y tr\u00e1mites ante el DCIP"
+    },
+    "https://www.banrep.gov.co/es/sistemas-pago": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Sistemas de pago"
+    },
+    "https://www.banrep.gov.co/es/sistemas-pago/compensacion-cheques-cedec-ccsd": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Compensaci\u00f3n de Cheques (CEDEC-CCSD)"
+    },
+    "https://www.banrep.gov.co/es/sistemas-pago/compensacion-electronica-nacional-interbancaria-cenit": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Compensaci\u00f3n Electr\u00f3nica Nacional Interbancaria (CENIT)"
+    },
+    "https://www.banrep.gov.co/es/sistemas-pago/deposito-central-valores-dcv": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Dep\u00f3sito Central de Valores (DCV)"
+    },
+    "https://www.banrep.gov.co/es/sistemas-pago/publicaciones-investigaciones": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Publicaciones e investigaciones"
+    },
+    "https://www.banrep.gov.co/es/sistemas-pago/sen/modernizacion-infraestructura-tecnologica": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Modernizaci\u00f3n de la infraestructura tecnol\u00f3gica del Sistema Electr\u00f3nico de Negociaci\u00f3n"
+    },
+    "https://www.banrep.gov.co/es/sistemas-pago/sistema-cuentas-deposito-cud": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Sistema de Cuentas de Dep\u00f3sito (CUD)"
+    },
+    "https://www.banrep.gov.co/es/sistemas-pago/sistema-electronico-negociacion-sen": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Sistema Electr\u00f3nico de Negociaci\u00f3n (SEN)"
+    },
+    "https://www.banrep.gov.co/es/trabaje-con-nosotros": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Trabaje con nosotros"
+    },
+    "https://www.banrep.gov.co/es/trabaje-con-nosotros/necesidades-frecuentes": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": ""
+    },
+    "https://www.banrep.gov.co/es/transformacion-sucursales-agencias-culturales-provision-efectivo-y-cambio-moneda": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Transformaci\u00f3n sucursales en Agencias Culturales: provisi\u00f3n de efectivo y cambio de moneda"
+    },
+    "https://www.banrep.gov.co/es/transparencia-acceso-informacion-publica": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Transparencia"
+    },
+    "https://www.banrep.gov.co/es/transparencia/atencion-ciudadania": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Atenci\u00f3n a la ciudadan\u00eda"
+    },
+    "https://www.banrep.gov.co/es/transparencia/atencion-telefonica": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Puntos de contacto"
+    },
+    "https://www.banrep.gov.co/es/transparencia/participe": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Participe"
+    },
+    "https://www.banrep.gov.co/es/wiki-preguntas-frecuentes": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Preguntas frecuentes"
+    },
+    "https://www.banrep.gov.co/estudios-exterior": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": ""
+    },
+    "https://www.banrep.gov.co/publicaciones-investigaciones/informe-administracion-reservas-internacionales": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Informe de Administraci\u00f3n de Reservas Internacionales"
+    },
+    "https://www.banrep.gov.co/publicaciones-investigaciones/informe-politica-monetaria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Informe de Pol\u00edtica Monetaria: Julio 2026"
+    },
+    "https://www.banrep.gov.co/reglamentacion-depositos-y-saldos-remunerados-del-tesoro-nacional": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Reglamentaci\u00f3n de los dep\u00f3sitos y saldos remunerados del Tesoro Nacional"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/compendio-dcin83-agosto-2021.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Compendio DCIN-83 (vigente hasta el 31 de agosto de 2021)"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/compendio-dcip83-octubre-2023.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Compendio DCIP-83 (vigente hasta el 31 de octubre de 2023)"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-anexo1.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-anexo2.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-anexo3.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-anexo4.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo1.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo10.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo11.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo12.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo2.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo3.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo4.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo5.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo6.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo7.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo8.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-compendio-capitulo9.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-formulario-profesional-divisas-instructivo.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Instructivo"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-formulario-profesional-divisas.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Formulario para diligenciar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-avales-imc-instructivo.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Instructivo"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-avales-imc.xls": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Informe para diligenciar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-deposito-operaciones-credito-instructivo.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Instructivo"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-deposito-operaciones-credito.xls": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Informe para diligenciar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-pagos-exportaciones-servicios.xlsx": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-concesionarios.xls": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Reporte para diligenciar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-depositos-imc-compra-cartera-instructivo.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Instructivo"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-depositos-imc-compra-cartera.xlsx": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Formato para diligenciar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-ipext-instructivo.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Instructivo"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-ipext.xlsx": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Reporte para diligenciar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-prestamos-otorgados-imc-instructivo.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Instructivo"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-prestamos-otorgados-imc.xlsx": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Formato para diligenciar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-proveedores-servicios-instructivo.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Instructivo"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-proveedores-servicios.xlsx": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Reporte para diligenciar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-remesas-trabajadores-mensual.xlsx": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-remesas-trabajadores-trimestral.xlsx": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-saldos-operaciones-dsif.pdf": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "Descargar"
+    },
+    "https://www.banrep.gov.co/ventanilla-tesoreria": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": ""
+    },
+    "https://www.banrepcultural.org/": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "PORTAL DE LA ACTIVIDAD CULTURAL"
+    },
+    "https://www.banrepcultural.org/actividad-musical": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": "ACTIVIDAD MUSICAL"
+    },
+    "https://www.banrepcultural.org/biblioteca-virtual": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "BIBLIOTECA VIRTUAL"
+    },
+    "https://www.banrepcultural.org/bogota/biblioteca-luis-angel-arango": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": ""
+    },
+    "https://www.banrepcultural.org/bogota/museo-de-arte": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": ""
+    },
+    "https://www.banrepcultural.org/bogota/museo-del-oro": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": ""
+    },
+    "https://www.facebook.com/BancoRepublica": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Facebook"
+    },
+    "https://www.flickr.com/photos/bancodelarepublica-colombia/": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Flickr"
+    },
+    "https://www.instagram.com/bancorepublicacolombia": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Instagram"
+    },
+    "https://www.redinvestigadores.org/": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "RED DE INVESTIGADORES"
+    },
+    "https://www.tiktok.com/@bancorepublica?_t=ZS-8t3qXVTG659&_r=1": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Tiktok"
+    },
+    "https://www.youtube.com/BancoRepublica": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": true,
+     "text": "Youtube"
+    },
+    "https://zenu.banrep.gov.co/cattleya-client-publico/inicio": {
+     "first_seen": "2026-10-27T16:38:19.919958+00:00",
+     "menu": false,
+     "text": ""
+    }
+   },
+   "tracking_since": "2026-10-27T16:38:19.919958+00:00"
+  },
   "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms": {
-   "last_scan": "2026-10-27T16:18:06.818065+00:00",
+   "last_scan": "2026-10-27T16:38:14.686780+00:00",
    "links": {
     "https://bahamasamlconference.centralbankbahamas.com/": {
      "first_seen": "2026-10-27T04:29:27.804132+00:00",
@@ -2546,7 +3990,7 @@
    "tracking_since": "2026-10-27T04:29:27.804132+00:00"
   },
   "https://www.federalreserve.gov/apps/ReportingForms": {
-   "last_scan": "2026-10-27T16:00:03.725195+00:00",
+   "last_scan": "2026-10-27T16:26:40.870397+00:00",
    "links": {
     "http://www.ffiec.gov/ffiec_report_forms.htm": {
      "first_seen": "2026-10-23T08:14:35.781047+00:00",
@@ -3637,7 +5081,7 @@
    "tracking_since": "2026-10-23T08:14:35.781047+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028D": {
-   "last_scan": "2026-10-27T15:55:32.578056+00:00",
+   "last_scan": "2026-10-27T16:23:11.540863+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -4698,7 +6142,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_2028bs": {
-   "last_scan": "2026-10-27T15:55:32.578056+00:00",
+   "last_scan": "2026-10-27T16:23:11.540863+00:00",
    "links": {
     "http://www.federalreserve.gov/releases/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -5814,7 +7258,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14M": {
-   "last_scan": "2026-10-27T15:55:32.578056+00:00",
+   "last_scan": "2026-10-27T16:23:11.540863+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -6930,7 +8374,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-14Q": {
-   "last_scan": "2026-10-27T15:55:32.578056+00:00",
+   "last_scan": "2026-10-27T16:23:11.540863+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -8226,7 +9670,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/Report/Index/FR_Y-9C": {
-   "last_scan": "2026-10-27T15:55:32.578056+00:00",
+   "last_scan": "2026-10-27T16:23:11.540863+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T10:49:48.776828+00:00",
@@ -10952,7 +12396,7 @@
    "tracking_since": "2026-10-18T10:49:48.776828+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/recentupdates": {
-   "last_scan": "2026-10-27T15:55:31.416656+00:00",
+   "last_scan": "2026-10-27T16:21:51.528667+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -11933,7 +13377,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.federalreserve.gov/apps/reportingforms/review": {
-   "last_scan": "2026-10-27T15:55:31.416656+00:00",
+   "last_scan": "2026-10-27T16:21:51.528667+00:00",
    "links": {
     "https://oig.federalreserve.gov/": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -12297,6 +13741,11 @@
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
      "menu": false,
      "text": "FFIEC 101 \u00b7 link"
+    },
+    "https://www.federalregister.gov/d/2026-21841": {
+     "first_seen": "2026-10-27T16:21:51.528667+00:00",
+     "menu": false,
+     "text": "FFIEC 031 FFIEC 041 FFIEC 051 \u00b7 link"
     },
     "https://www.federalregister.gov/d/C1-2022-10111": {
      "first_seen": "2026-10-18T06:09:31.008124+00:00",
@@ -13870,7 +15319,7 @@
    "tracking_since": "2026-10-18T06:09:31.008124+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms": {
-   "last_scan": "2026-10-27T16:07:40.108170+00:00",
+   "last_scan": "2026-10-27T16:27:57.718434+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:00:06.673518+00:00",
@@ -14231,7 +15680,7 @@
    "tracking_since": "2026-10-26T15:00:06.673518+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec002": {
-   "last_scan": "2026-10-27T16:09:33.149599+00:00",
+   "last_scan": "2026-10-27T16:29:43.016024+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:27.272160+00:00",
@@ -14632,7 +16081,7 @@
    "tracking_since": "2026-10-26T15:01:27.272160+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec002s": {
-   "last_scan": "2026-10-27T16:12:12.294154+00:00",
+   "last_scan": "2026-10-27T16:32:20.695712+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:04:27.794662+00:00",
@@ -14858,7 +16307,7 @@
    "tracking_since": "2026-10-26T15:04:27.794662+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec009": {
-   "last_scan": "2026-10-27T16:09:32.487267+00:00",
+   "last_scan": "2026-10-27T16:29:42.106574+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:26.610109+00:00",
@@ -15139,7 +16588,7 @@
    "tracking_since": "2026-10-26T15:01:26.610109+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec019": {
-   "last_scan": "2026-10-27T16:12:13.444311+00:00",
+   "last_scan": "2026-10-27T16:32:21.744536+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:04:28.514827+00:00",
@@ -15385,7 +16834,7 @@
    "tracking_since": "2026-10-26T15:04:28.514827+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec030": {
-   "last_scan": "2026-10-27T16:09:31.479424+00:00",
+   "last_scan": "2026-10-27T16:29:41.204417+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:26.019828+00:00",
@@ -15641,7 +17090,7 @@
    "tracking_since": "2026-10-26T15:01:26.019828+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec030s": {
-   "last_scan": "2026-10-27T16:09:30.519547+00:00",
+   "last_scan": "2026-10-27T16:29:40.311026+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:25.478862+00:00",
@@ -15897,7 +17346,7 @@
    "tracking_since": "2026-10-26T15:01:25.478862+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec031": {
-   "last_scan": "2026-10-27T16:10:16.446361+00:00",
+   "last_scan": "2026-10-27T16:30:25.370497+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:49.113203+00:00",
@@ -16628,7 +18077,7 @@
    "tracking_since": "2026-10-26T15:01:49.113203+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec031-supplemental": {
-   "last_scan": "2026-10-27T16:18:04.330485+00:00",
+   "last_scan": "2026-10-27T16:38:12.162318+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:48.448764+00:00",
@@ -17279,7 +18728,7 @@
    "tracking_since": "2026-10-26T15:07:48.448764+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec041": {
-   "last_scan": "2026-10-27T16:10:15.358013+00:00",
+   "last_scan": "2026-10-27T16:30:24.544101+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:48.512561+00:00",
@@ -17990,7 +19439,7 @@
    "tracking_since": "2026-10-26T15:01:48.512561+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec041-supplemental": {
-   "last_scan": "2026-10-27T16:18:05.363258+00:00",
+   "last_scan": "2026-10-27T16:38:12.899627+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:49.024277+00:00",
@@ -18646,7 +20095,7 @@
    "tracking_since": "2026-10-26T15:07:49.024277+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec051": {
-   "last_scan": "2026-10-27T16:10:14.548948+00:00",
+   "last_scan": "2026-10-27T16:30:23.644330+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:47.899264+00:00",
@@ -19337,7 +20786,7 @@
    "tracking_since": "2026-10-26T15:01:47.899264+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec051-supplemental": {
-   "last_scan": "2026-10-27T16:18:06.116005+00:00",
+   "last_scan": "2026-10-27T16:38:13.715697+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:49.612314+00:00",
@@ -19693,7 +21142,7 @@
    "tracking_since": "2026-10-26T15:07:49.612314+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec101": {
-   "last_scan": "2026-10-27T16:09:28.606457+00:00",
+   "last_scan": "2026-10-27T16:29:38.434292+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:24.388391+00:00",
@@ -20039,7 +21488,7 @@
    "tracking_since": "2026-10-26T15:01:24.388391+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec101-validation": {
-   "last_scan": "2026-10-27T16:18:01.867373+00:00",
+   "last_scan": "2026-10-27T16:38:10.317958+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:46.971720+00:00",
@@ -20725,7 +22174,7 @@
    "tracking_since": "2026-10-26T15:07:46.971720+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec102": {
-   "last_scan": "2026-10-27T16:09:29.355517+00:00",
+   "last_scan": "2026-10-27T16:29:39.373286+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:01:24.939213+00:00",
@@ -20966,7 +22415,7 @@
    "tracking_since": "2026-10-26T15:01:24.939213+00:00"
   },
   "https://www.ffiec.gov/resources/reporting-forms/ffiec102-validation": {
-   "last_scan": "2026-10-27T16:18:03.117515+00:00",
+   "last_scan": "2026-10-27T16:38:11.222684+00:00",
    "links": {
     "https://bsaaml.ffiec.gov/": {
      "first_seen": "2026-10-26T15:07:47.734872+00:00",
@@ -21262,7 +22711,7 @@
    "tracking_since": "2026-10-26T15:07:47.734872+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/2027-basel-capital-adequacy-reporting-bcar": {
-   "last_scan": "2026-10-27T15:59:05.897707+00:00",
+   "last_scan": "2026-10-27T16:26:39.153246+00:00",
    "links": {
     "http://www.bis.org/bcbs/ccyb/index.htm": {
      "first_seen": "2026-10-21T03:47:47.510475+00:00",
@@ -21488,7 +22937,7 @@
    "tracking_since": "2026-10-21T03:47:47.510475+00:00"
   },
   "https://www.osfi-bsif.gc.ca/en/data-forms/reporting-returns/filing-financial-returns/financial-reporting-instructions/basel-capital-adequacy-reporting-bcar-faq-technical-specification": {
-   "last_scan": "2026-10-27T16:07:39.673424+00:00",
+   "last_scan": "2026-10-27T16:27:57.560791+00:00",
    "links": {
     "https://canada.ca/": {
      "first_seen": "2026-10-23T12:53:48.284742+00:00",
@@ -21645,5 +23094,5 @@
   }
  },
  "schema_version": 1,
- "updated_at": "2026-10-27T16:18:45.769515+00:00"
+ "updated_at": "2026-10-27T16:38:37.393027+00:00"
 }

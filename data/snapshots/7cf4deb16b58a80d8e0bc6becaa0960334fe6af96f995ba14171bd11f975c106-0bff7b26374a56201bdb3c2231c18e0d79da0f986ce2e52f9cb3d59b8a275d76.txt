@@ -1,0 +1,402 @@
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Capítulo 5. ENDEUDAMIENTO EXTERNO
+Conforme a los artículos 44 y 45 de la Resolución Externa 1 de 2018 de la Junta Directiva del Banco de la República (en adelante R.E. 1/18 J.D.), los créditos entre residentes o intermediarios del mercado cambiario y no residentes son créditos externos. Estos créditos podrán estipularse, desembolsarse y pagarse en moneda legal o extranjera, según lo acuerden las partes.
+También son créditos externos los créditos otorgados por los intermediarios del mercado cambiario a los residentes o a otros intermediarios del mercado cambiario estipulados en moneda extranjera. Estos créditos podrán desembolsarse y pagarse en moneda legal o extranjera, según lo acuerden las partes.
+Los desembolsos y pagos de créditos externos que requieran informe deberán efectuarse a través del mercado cambiario, salvo las excepciones previstas en esta Circular.
+Los procedimientos previstos en los numerales 5.1.6.2, 5.1.7.1, 5.1.7.2 y 5.1.7.3 de este Capítulo, son igualmente aplicables a los créditos activos.
+5.1. Créditos pasivos
+5.1.1. Autorización
+Los residentes y los IMC pueden obtener créditos externos de los IMC y de no residentes conforme a lo previsto en los artículos 8, 44 y 45 de la R.E. 1/18 J.D.
+5.1.2. Informe de crédito externo
+Conforme a lo previsto en el artículo 8 y 45 de la R.E. 1/18, los créditos externos otorgados a residentes e IMC deberán informarse al Banrep a través de los IMC, en los términos y condiciones que se señalan a continuación, utilizando los propósitos que correspondan, según la descripción del numeral 5.6 de este capítulo:
+a) La financiación estipulada en moneda extranjera que obtengan los IMC para efectuar operaciones activas estipuladas en moneda extranjera en favor de residentes, no deberán ser informadas por los IMC. Los residentes beneficiarios del crédito deberán informar los mismos.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio b) La financiación estipulada en moneda extranjera o en moneda legal que obtengan los IMC para efectuar operaciones activas estipuladas en moneda legal en favor de residentes (operación interna), deberá informarse al Banrep por el IMC, conforme a lo previsto en el numeral 5.1.10 de este Capítulo.
+c) Los créditos externos que obtengan los IMC para realizar actos conexos o complementarios de su objeto principal autorizado deben ser informados por el IMC.
+d) Los créditos externos que obtengan los residentes de los no residentes o IMC, deberán ser informados por el residente.
+No tendrán obligación de informe los siguientes créditos externos:
+- Los que obtengan los residentes por el uso de tarjetas de crédito.
+- Los generados por los sobregiros en cuentas en el exterior de residentes.
+- Los obtenidos por IMC para realizar operaciones activas de leasing de exportación o de importación estipuladas en moneda extranjera.
+- Los obtenidos por residentes para financiar sus importaciones y exportaciones de bienes, salvo las excepciones previstas en este Capítulo.
+- Los que obtengan los IMC para actuar como proveedores locales de liquidez de moneda extranjera con los sistemas de compensación y liquidación de divisas o con las Cámaras de Riesgo Central de Contraparte.
+- Los que obtengan los IMC, incluyendo las sociedades comisionistas de bolsa de valores en desarrollo de lo previsto en el parágrafo 3 del artículo 8 de la R.E. 1/18 J.D.
+La información del crédito externo deberá presentarse en forma previa al desembolso del crédito a través del Informe de Crédito Externo Otorgado a Residentes , utilizando los mecanismos que establezca el IMC. El IMC exigirá la presentación de los documentos previstos para cada tipo de operación y verificará que coincidan con los datos del informe.
+En el Informe de Crédito Externo Otorgado a Residentes , si el acreedor cuenta con una identificación aceptada en el Sistema, deberá identificarse con esta. De no ser así, el residente (deudor), su apoderado o mandatario obtendrá un código de no residente que identifique al acreedor, a través de los IMC.
+Cuando se trate de créditos externos originados en reorganizaciones empresariales internacionales o en cualquier acto o negocio jurídico diferente de reorganizaciones
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio empresariales internacionales (liquidaciones de sociedades, legados y herencias, entre otros), en virtud de las cuales un residente quede a cargo del cumplimiento de operaciones de crédito externo, el Informe de Crédito Externo Otorgado a Residentes deberá presentarse previo al primer pago de capital o intereses o, en todo caso, antes del plazo de seis (6) meses contados a partir del perfeccionamiento del acto o reorganización empresarial. No aplica para los créditos en los que no se canalizaron los recurso s del desembolso, debiéndose canalizar. Estas operaciones no se encuentran sometidas al depósito de que trata el artículo 47 de la R.E. 1/18 J.D.
+Cuando se trate de créditos sindicados u otorgados en favor de uniones temporales, consorcios, o con deudores solidarios, se deberá indicar en el Informe de Crédito Externo Otorgado a Residentes a todos los partícipes, deudores o acreedores, según corresponda.
+Los IMC deberán transmitir al Banrep la totalidad de los datos contenidos en el Informe de Crédito Externo Otorgado a Residentes en los términos establecidos en el numeral 9 del Anexo 3 de esta Circular.
+Cada IMC, a solicitud del deudor residente, deberá suministrar los informes de los créditos externos transmitidos al Banrep y que esta entidad haya confirmado que fueron integrados al Sistema de Información Cambiaria. Cada IMC generará estos informes en los formatos de su preferencia, ya sea en documento físico o digital, siempre que contengan los datos del informe del crédito externo a los que se refiere el numeral 5.6 de esta circular.
+5.1.2.1. Identificación del crédito
+El IMC deberá asignar al Informe de Crédito Externo la fecha de presentación y el número de identificación del crédito. En los créditos externos informados a partir del 1 de noviembre de 2023 , el número de identificación asignado por el IMC contiene hasta veintidós (22) dígitos distribuidos así:
+a. Los primeros dígitos corresponden al código del IMC asignado por el Banrep.
+b. La letra “C”.
+c. Hasta diecisiete (17) dígitos asignados por el IMC.
+Los créditos externos informados antes del 1 de noviembre de 2023 se seguirán identificando con el número de once (11) dígitos, asignados por el IMC al informe del crédito externo.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio En cualquier caso, el número de identificación del crédito debe ser único a nivel nacional dentro del mismo IMC.
+5.1.2.2. Verificación de los documentos y de la información por parte de los intermediarios del mercado cambiario
+Los IMC deberán:
+a. Exigir la presentación del Informe de Crédito Externo Otorgado a Residentes, utilizando los mecanismos que establezca el IMC.
+b. Verificar el valor y la fecha de la constitución del depósito ante el Banrep, a que se refieren los artículos 47 y 75 de la R.E. 1/18 J.D., según corresponda.
+c. Exigir copia del documento donde conste el contrato del préstamo y sus modificaciones, o el anticipo para futuras capitalizaciones.
+d. Exigir copia de los convenios de emisión, colocación y pago de los títulos y de la autorización expedida por la Superintendencia Financiera de Colombia para efectuar la emisión y colocación de los títulos en el exterior, cuando a ello haya lugar. La adquisición de bonos obligatoriamente convertibles en acciones recibe el tratamiento de inversiones de capital del exterior en Colombia y se rige por lo dispuesto en el numeral 7.2.1 del Capítulo 7 de esta Circular.
+e. Exigir los documentos que acrediten las reorganizaciones empresariales internacionales o cualquier acto o negocio jurídico diferente de reorganizaciones empresariales internacionales (liquidaciones de sociedades, legados y herencias, entre otros, que hayan dado lugar al crédito externo. No aplica para los créditos en los que no se canalizaron los recursos del desembolso, debiéndose canalizar.).
+f. Verificar que el tipo de acreedor indicado en el Informe de Crédito Externo Otorgado a Residentes coincida con los documentos soporte que sean presentados por el residente, su apoderado o mandatario.
+5.1.3. Depósito
+El depósito de que tratan los artículos 47 y 75 de la R.E. 1/18 J.D., se constituirá ante el Banrep, por conducto de un intermediario del mercado cambiario, en las condiciones que señale de
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio manera general la Junta Directiva del Banrep y de acuerdo con el procedimiento fijado en la Circular Reglamentaria Externa DFV-113, de la siguiente manera:
+a. El Depósito a los créditos externos deberá constituirse previamente al desembolso del crédito y/o la canalización de las divisas.
+b. El Depósito a las transferencias de recursos del exterior que ingresen a las cuentas de no residentes en moneda legal de uso exclusivo para crédito externo, deberá constituirse previamente a la canalización de los recursos. Las transferencias deberán canalizarse con el suministro de los datos mínimos por servicios, transferencias y otros conceptos, utilizando el numeral 5457 “Compra de divisas para acreditar cuentas de no residentes de uso exclusivo para operaciones de crédito externo en moneda legal”.
+Cuando el depósito se establezca por encima del cero por ciento (0%), los IMC deberán transmitir diariamente al Banrep, a través del buzón DCIP-Depositos@banrep.gov.co, el archivo “Depósito a las transferencias con destino a las cuentas para operaciones de crédito externo en moneda legal.
+El incumplimiento de las obligaciones descritas en este numeral será informado por el Banrep a las autoridades de control y vigilancia competentes.
+5.1.4. Desembolsos en moneda extranjera y pagos
+Para canalizar los desembolsos y pagos en divisas asociados con el endeudamiento externo, el residente debe suministrar la información de los datos mínimos de las operaciones de cambio por crédito externo (Declaración de Cambio) , exigida en el numeral 5.4 de este Capítulo, entre otros , el número de identificación del crédito asignado por el IMC en el momento de remitir la información al Banrep.
+Para la canalización de las divisas, los IMC deben exigir el número asignado al Informe de Crédito Externo Otorgado a Residentes, y verificar que la información de los datos mínimos de la operación (Declaración de Cambio) suministrada por el residente, corresponda fielmente con la del Informe de Crédito Externo Otorgado a Residentes.
+Los titulares de las cuentas de compensación deberán relacionar el número de identificación del crédito que le hubiere asignado el IMC en el momento de suministrar la información del
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio crédito contratado tal y como se encuentra reportado en el Informe de Crédito Externo Otorgado a Residentes.
+Los pagos en moneda legal deberán efectuarse desde la cuenta del deudor (residente o IMC) al IMC, o a la cuenta en moneda legal del no residente acreedor descrita en el literal d. del numeral 10.4.2.2 del Capítulo 10 de esta Circular. El residente deudor debe suministrar al IMC desde donde se efectuó el pago, y dentro de los quince (15) días hábiles siguientes al mismo, la información de los datos mínimos de la operación (Declaración de cambio) por concepto de crédito externo. Tratándose de un IMC deudor, é ste deberá transmitir directamente la Declaración de cambio al Banco de la República.
+5.1.5. Excepciones al informe de datos mínimos (Declaración de Cambio)
+Los desembolsos de créditos podrán efectuarse directamente en el exterior previo la constitución del depósito, cuando a él haya lugar, en los siguientes casos:
+a. Cuando se trate de créditos obtenidos para realizar inversión de capital colombiano en el exterior y financiera y en activos en el exterior.
+b. Las deducciones que efectúe el acreedor al momento del desembolso del crédito por concepto de intereses, impuestos y/o servicios vinculados directamente con el préstamo.
+c. Cuando se trate de la sustitución de un crédito por otro.
+d. (Eliminado)
+e. Los recursos que entregue BANCOLDEX a Segurexpo de Colombia S.A. en desarrollo de créditos contratados por la Nación con BANCOLDEX para atender el pago de indemnizaciones derivadas de siniestros que afecten pólizas de seguro de crédito a la exportación en la modalidad de riesgos políticos y extraordinarios garantizados por la Nación.
+f. Cuando se trate de créditos contratados por residentes para cubrir las obligaciones derivadas de la compra a entidades públicas colombianas de acciones, participaciones o cuotas de sociedades colombianas o derechos de suscripción preferencial de las mismas, o de la remuneración correspondiente a contratos de concesión o licencia.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio g. Cuando se trate de créditos obtenidos para los propósitos previstos en el numeral 4 del artículo 49 de la R.E. 1/18 J.D.
+h. Cuando se trate de créditos externos que incluyan la financiación del depósito en dólares de los Estados Unidos de América, se exonera de canalización a través del mercado cambiario la porción que se destine a la constitución de dicho depósito.
+i. Cuando se trate de créditos obtenidos para pagar créditos de importaciones.
+Previo a la fecha del desembolso, el deudor deberá presentar al IMC el Informe de Crédito Externo Otorgado a Residentes y deberá acreditar la constitución del depósito de que trata el artículo 47 de la R.E. 1/18 J.D. Dentro de los quince (15) días hábiles siguientes a la fecha del desembolso, el deudor deberá suministrar la declaración de cambio de créditos externos indicando la razón de no canalización y la fecha del suministro de la información al IMC o directamente al Banrep si es titular de cuenta de compensación.
+Cuando el desembolso se realice directamente en el exterior, el deudor deberá suministrar al IMC, además de lo anterior, la nota de desembolso elaborada por el no residente o el documento que haga sus veces, así como los soportes correspondientes de las deducciones efectuadas.
+Cuando parte del desembolso del crédito externo se utilice para la constitución del depósito en dólares de que tratan los artículos 47 y 75 de la R.E. 1/18 J.D, se debe suministrar la información de los datos mínimos de la declaración de cambio de créditos externos indicando la razón de no canalización al IMC o transmitirla directamente por el deudor o acreedor del crédito si es titular de cuenta de compensación, por el monto correspondiente a la financiación del depósito.
+5.1.6 Correcciones y otros procedimientos especiales aplicables al Informe de Crédito Externo otorgado a Residentes
+5.1.6.1 Correcciones al Informe de Crédito Externo Otorgado a Residentes
+Las correcciones al Informe de Crédito Externo Otorgado a Residentes podrán realizarse por cualquier causa, incluyendo el cambio en las condiciones del crédito informadas, errores de digitación y modificaciones, entre otros.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Cuando se presenten correcciones a las condiciones de un crédito otorgado a residentes , relacionadas con el cambio de deudor, acreedor, monto, plazo, propósito o tasa de interés, se tendrá que presentar ante un IMC un Informe de Crédito Externo Otorgado a Residentes , indicando toda la información del crédito luego del cambio y se anotará la fecha en que se presentó la respectiva corrección ante el IMC.
+Si se trata de un crédito informado hasta el 15 de junio de 2012, deberá adicionalmente presentar al IMC la información relacionada con la identificación del acreedor en el Informe de Crédito Externo Otorgado a Residentes.
+Cuando se incremente el monto contratado del crédito externo informado, se deberá reportar la corrección con el Informe de Crédito E xterno Otorgado a Residentes conforme al procedimiento anteriormente establecido. En este caso, deberá suministrar la información del depósito de que trata el artículo 47 de la R.E. 1/18 J.D. sobre el valor del incremento en la declaración de cambio del desembolso.
+Las correcciones deberán ser reportadas por el interesado al IMC, acompañadas de los documentos que las acrediten, los cuales deberán ser verificados por los IMC.
+Los datos contenidos en el Informe de Crédito Externo otorgado a residentes relacionados con el reporte de las correcciones deberán ser transmitidos a través del Sistema de Información Cambiaria, al Banrep por el IMC ante el cual se tramitan.
+En el caso de prepago parcial o total de créditos informados no se requerirá la modificación del plan de amortización.
+Lo previsto en este numeral se entiende sin perjuicio que por cualquier medio las autoridades encargadas de la vigilancia y control del cumplimiento del régimen cambiario puedan investigar si las correcciones a las condiciones del endeudamiento externo se realizaron sin corresponder a la realidad de la operación, caso en el cual proceden las sanciones pertinentes.
+La corrección por cambio de deudor de un crédito pasivo no podrá efectuarse si con ello se extinguen obligaciones entre residentes conforme a lo previsto en el artículo 86 de la R.E. 1/18 J.D.
+5.1.6.2 Indexación de créditos informados
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio En el evento que se presenten diferencias entre los montos informados y aquellos efectivamente canalizados, como consecuencia de la indexación del crédito a moneda legal colombiana o a otra moneda, se deberá, previo al pago de la última cuota, adelantar el siguiente procedimiento:
+a. Si es mayor el valor pagado al monto informado, deberá modificarse el monto informado del crédito, aumentándolo, y actualizando el plan de amortización (incluye las cuotas amortizadas). Adicionalmente, deberá suministrarse al IMC la información de los datos mínimos de la declaración de cambio de créditos externos indicando la razón de no canalización o transmitirla directamente si el residente es titular de cuenta de compensación, por el desembolso del mayor valor.
+b. Si es menor el valor pagado al monto informado, deberá suministrarse al IMC la información de los datos mínimos de la declaración de cambio de créditos externos indicando la razón de no canalización o transmitirla directamente si el residente es titular de cuenta de compensación, por amortización del saldo del crédito.
+Este procedimiento no aplica cuando el pago de un crédito se efectúa en una moneda diferente a la estipulada. En este caso, al momento de efectuar y/o recibir el pago, deberá indicarse en el campo “valor moneda negociación” de los datos mínimos de la operación de cambio por concepto de crédito externo (Declaración de cambio), el valor resultante de aplicar la tasa de cambio que corresponda entre estas dos monedas.
+5.1.6.3 Fraccionamiento de créditos informados
+El fraccionamiento de créditos aplica cuando un crédito informado y desembolsado se divide en varias operaciones de crédito en la misma moneda, con pluralidad de partes (deudor o acreedor) o entre las mismas partes, pero con diferentes condiciones. El fraccionamiento de créditos informados dará lugar a la cancelación del saldo del crédito original y al informe de los créditos resultantes del fraccionamiento mediante la presentación del Informe de Crédito Externo Otorgado a Residentes identificando el número del crédito que da lugar al fraccionamiento. La suma de los nuevos créditos deberá ser igual al monto fraccionado del saldo del crédito original.
+Lo previsto en este numeral se entiende sin perjuicio que por cualquier medio las autoridades encargadas de la vigilancia y control del cumplimiento del régimen cambiario puedan investigar si el fraccionamiento del endeudamiento externo se realizó sin corresponder a la realidad de la operación, caso en el cual proceden las sanciones pertinentes.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+5.1.6.4 Sustitución de créditos informados La sustitución de créditos informados aplica cuando el deudor residente contrata un segundo crédito externo pagar un crédito previamente informado y desembolsado. El desembolso del nuevo crédito se realiza directamente al acreedor inicial no residente o al IMC, y dará lugar a la cancelación del saldo del crédito sustituido y al informe de los créditos resultantes de la sustitución.
+Cuando el segundo crédito esté estipulado en la misma moneda del crédito que se sustituye, el nuevo Informe de Crédito Externo Otorgado a Residentes deberá incluir el número del crédito previamente informado y desembolsado. Una vez el Intermediario del Mercado Cambiario transmita el informe del nuevo crédito, se generarán automáticamente las declaraciones de cambio de créditos externos por desembolso del nuevo crédito y amortización del crédito sustituido.
+Cuando el segundo crédito esté estipulado en una moneda distinta a la del crédito que se sustituye, deberá presentarse el Informe de Crédito Externo Otorgado a Residentes y las declaraciones de cambio de créditos externos por desembolso del nuevo crédito y amortización del crédito sustituido, indicando la razón de no canalización 51 “Sustitución de créditos externos en diferentes monedas”.
+Lo previsto en este numeral se entiende sin perjuicio que por cualquier medio las autoridades encargadas de la vigilancia y control del cumplimiento del régimen cambiario puedan investigar si la sustitución del endeudamiento externo se realizó sin correspo nder a la realidad de la operación, caso en el cual proceden las sanciones pertinentes.
+Modificado con el Boletín del Banco de la República No. 43 (Diciembre 16/2025) [DCIP-83 Diciembre 16/2025] 5.1.6.5 Consolidación de créditos
+La consolidación de créditos aplica cuando varios créditos externos informados y desembolsados de forma independiente se integran en un nuevo informe de crédito externo, cuyo valor será el resultante de la sumatoria de los saldos de los créditos que se consolidan, manteniendo las mismas partes y condiciones.
+El residente deberá presentar el Informe de Crédito Externo Otorgado a Residentes identificando los créditos que se consolidan. La consolidación dará lugar a la cancelación automática de los informes de los créditos consolidados y al desembolso automático del nuevo informe de crédito externo.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Lo previsto en este numeral se entiende sin perjuicio que por cualquier medio las autoridades encargadas de la vigilancia y control del cumplimiento del régimen cambiario puedan investigar si la consolidación del endeudamiento externo se realizó sin corresponder a la realidad de la operación, caso en el cual proceden las sanciones pertinentes.
+5.1.6.6 Anulación del Informe de Crédito Externo Otorgado a Residentes
+Las solicitudes de anulación del Informe de Crédito Externo Otorgado a Residentes se deberán tramitar directamente por el IMC que transmitió el Informe.
+En ningún caso las anulaciones podrán tramitarse por las causas que correspondan a los procedimientos de, corrección, sustitución, fraccionamiento y consolidación, entre otros, contenidos en este Capítulo.
+La anulación del Informe de Crédito Externo Otorgado a Residentes únicamente procede si el endeudamiento externo no se ha desembolsado al deudor. Asimismo, dicho procedimiento implica su anulación en el Sistema de Información Cambiaria.
+Cuando sea necesario transmitir un nuevo Informe de Crédito Externo o, deberá relacionarse la fecha que corresponda a la de presentación del informe del crédito externo ante el IMC.
+Las anulaciones se deberán realizar por conducto del IMC que transmitió el Informe y únicamente cuando ese IMC tenga suspendido el código de operación, conforme a lo previsto en el numeral 2.5 del Capítulo 2 de esta Circular, podrá solicitarse la anulación por conducto de un IMC diferente.
+Lo previsto en este numeral se entiende sin perjuicio que por cualquier medio las autoridades encargadas de la vigilancia y control del cumplimiento del régimen cambiario puedan investigar si las anulaciones del informe de crédito externo se realizaron sin corresponder a la realidad de la operación, caso en el cual proceden las sanciones pertinentes.
+5.1.7. Cancelación del endeudamiento externo otorgado a residentes
+Las obligaciones originadas en operaciones de crédito externo se extinguen mediante el pago conforme al procedimiento señalado en el numeral 5.1.4 de este Capítulo.
+Cuando se restituya el depósito en dólares de que trata el artículo 47 de la R.E. 1/18 J.D, el deudor podrá utilizar total o parcialmente los recursos para la amortización del crédito
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio externo, para lo cual, debe suministrar la información de los datos mínimos de la declaración de cambio de crédito externo indicando la razón de no canalización al IMC.
+5.1.7.1. Dación en pago
+Las obligaciones de créditos informados o registrados como endeudamiento externo podrán extinguirse mediante dación en pago. En estos casos, debe suministrarse la información de los datos mínimos de la declaración de cambio de crédito externo indicando la razón de no canalización al IMC o transmitirla directamente por el titular de cuenta de compensación al DCIP del Banrep a fin de aplicar el monto que se entiende pagado, utilizando los códigos 33, 34 o 35, según corresponda.
+El Banrep enviará esta información a título informativo a la autoridad de control y vigilancia del cumplimiento del régimen cambiario. Los documentos que acrediten la transacción deberán conservarse para el evento en que los solicite la autoridad de control y vigilancia del régimen cambiario.
+5.1.7.2. Castigo de cartera
+En el caso que el IMC castigue la deuda contra las provisiones realizadas, a efectos de cancelar el Informe del Crédito Externo, el IMC deberá transmitir la declaración de cambio a nombre propio como quiera que la cancelación proviene del castigo de su provisión en pesos colombianos, utilizando el numeral cambiario 4500 “Amortización de créditos - deuda privada- otorgados por intermediarios del mercado cambiario a residentes en el país” o 4615 “Amortización créditos -deuda pública- otorgados por intermediarios del mercado cambiario a entidades del sector público”.
+Respecto de las obligaciones insolutas no castigadas pero catalogadas como de difícil cobro o incobrables, la cancelación del registro o informe de endeudamiento externo requiere necesariamente que se canalicen las divisas por el mercado cambiario y por lo tanto, debe suministrarse la información de los datos mínimos de las operaciones de cambio por crédito externo (Declaración de Cambio), utilizando el numeral cambiario 4500 “Amortización de créditos - deuda privada - otorgados por intermediarios del mercado cambiario a residentes en el país” o 4615 “Amortización créditos – deuda pública- otorgados por intermediarios del mercado cambiario a entidades del sector público”. Tanto la canalización como el suministro de la información (Declaración de Cambio) puede ser realizada por el IMC o por el deudor como resultado de una nueva relación de crédito autorizada por éstos en moneda legal colombiana.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+5.1.7.3. Imposibilidad de pago
+Cuando los deudores o acreedores se encuentren en imposibilidad jurídica de cumplir la obligación de pago de las operaciones de endeudamiento externo (fuerza mayor, caso fortuito, inexistencia o inexigibilidad, entre otras), la canalización no será exigible.
+El informe del crédito se deberá cancelar suministrando la información de los datos mínimos de la declaración de cambio de crédito externo indicando la razón de no canalización, de acuerdo con lo previsto en el numeral 5.3. de este Capítulo. Cuando la operación se realice por conducto de un IMC, adicionalmente se deberá suministrar ante éste el certificado del revisor fiscal o contador público, si a ello hay lugar, en el que conste la cancelación de la cuenta por pagar o de la cuenta por cobrar. Si es titular de cuenta de compensación, deberá conservarlo para cuando las autoridades de control y vigilancia lo requieran.
+El Banrep enviará esta información a título informativo a la autoridad de control y vigilancia del cumplimiento del régimen cambiario. Los documentos que justifiquen la no canalización total o parcial de los créditos se deberán conservar con el fin de demostrar la imposibilidad jurídica de cumplir la obligación de pago de las operaciones de endeudamiento externo (fuerza mayor, caso fortuito, inexistencia o inexigibilidad, entre otras) a la autoridad de control y vigilancia del régimen cambiario.
+5.1.8. Endeudamiento público externo
+Los créditos externos que obtengan la Nación, las entidades territoriales y las entidades descentralizadas de todas ellas, cualquiera que sea su naturaleza, y que sean desembolsados a través de los IMC o cuentas de compensación, deberán informarse al Banrep y canalizarse de acuerdo con lo previsto en los numerales 5.1.2 y 5.1.4 de este Capítulo.
+Los créditos externos otorgados por la Banca Multilateral a entidades estatales y desembolsados a través del Banrep, deberán informarse a éste a través del Ministerio de Hacienda y Crédito Público.
+La tasa de interés de los créditos externos que obtengan la Nación, las entidades territoriales y las entidades descentralizadas de todas ellas, se sujetan a lo establecido en la Circular Reglamentaria Externa DODM-145.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+5.1.9. (Eliminado)
+5.1.10. Endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal
+La financiación estipulada en moneda extranjera o en moneda legal que obtengan los IMC de los numerales 1, 2 y 6 del artículo 8 de la R.E. 1/18 J.D., para destinarla a operaciones activas en moneda legal en favor de residentes u otros IMC, deberá ser informada por dichas entidades al Banrep con la transmisión del Informe de Crédito Externo Otorgado a Residentes, utilizando los siguientes propósitos, según corresponda:
+i. 38 “Financiación estipulada en moneda extranjera y desembolsada en moneda legal obtenida por los IMC para destinarla a operaciones activas en moneda legal”,
+ii. 53 “Financiación estipulada y desembolsada en moneda extranjera obtenida por los IMC para destinarla a operaciones activas en moneda legal”
+iii. 54 “Financiación estipulada y desembolsada en moneda extranjera obtenida por los IMC mediante la colocación de títulos en los mercados internacionales de capitales, para destinarla a operaciones activas en moneda legal”
+iv. 40 “Financiación estipulada y desembolsada en moneda legal obtenida por los IMC para destinarla a operaciones activas en moneda legal”,
+v. 55 “Financiación estipulada en moneda legal y desembolsada en moneda extranjera obtenida por los IMC para destinarla a operaciones activas en moneda legal” y,
+vi. 56 “Financiación estipulada en moneda legal y desembolsada en moneda extranjera obtenida por los IMC mediante la colocación de títulos en los mercados internacionales de capitales, para destinarla a operaciones activas en moneda legal.”
+Estas financiaciones están sujetas al depósito de que trata el artículo 47 de la R.E. 1/18 J.D., el cual deberá constituirse por el IMC, previamente a cada desembolso, en el Banrep en las condiciones que señale de manera general la Junta Directiva del Banrep, de acuerdo con el procedimiento fijado en la Circular Reglamentaria Externa DFV-113.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio En el Informe de Crédito E xterno Otorgado a Residentes, si el acreedor cuenta con una identificación aceptada por el Sistema , deberá identificarse con esta. De no ser así, el residente (deudor), su apoderado o mandatario obtendrá un código de no residente que identifique al acreedor, a través de los IMC.
+Para acreditar los movimientos asociados con el endeudamiento externo, tales como desembolsos, servicios de la deuda y amortizaciones, se deberá transmitir la información de los datos mínimos de la declaración de cambio de crédito externo indicando la razón de no canalización al DCIP del Banrep dentro de los dos (2) días hábiles siguientes a la realización de la respectiva operación, indicando la razón 36 “Endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal”.
+5.1.11. Créditos externos desembolsados en moneda legal
+Los residentes y los IMC pueden obtener créditos de no residentes y de IMC desembolsados en moneda legal. Estas operaciones deben ser informadas al Banrep por el deudor con la presentación del Informe de Crédito Externo Otorgado a Residentes, dentro de un plazo máximo de quince (15) días hábiles, contados a partir de la fecha de desembolso de los recursos. Para el efecto se aplicará el procedimiento señalado en el numeral 5.1.2 de este Capítulo.
+El desembolso de los créditos por parte de no residentes debe efectuarse utilizando la cuenta en moneda legal a que se refiere el literal d. del numeral 10.4.2.2 del Capítulo 10 de esta Circular.
+El residente deudor deberá suministrar al IMC donde se desembolsó el crédito, la información de los datos mínimos de las operaciones de cambio por crédito externo (Declaración de Cambio), en el mismo momento del informe, para su transmisión al Banrep. Tratándose de un IMC deudor, éste deberá transmitir directamente la Declaración de cambio al Banco de la República.
+Estos créditos pueden pagarse en divisas o en moneda legal. El pago en divisas se regula por lo previsto en el numeral 5.1.7 de este Capítulo.
+El pago en moneda legal debe efectuarse por el deudor (residente o IMC) al IMC o a la cuenta en moneda legal del no residente acreedor descrita en el literal d. del numeral 10.4.2.2 del Capítulo 10 de esta Circular. El residente deudor debe suministrar ante el IMC desde donde efectuó el pago, y dentro de los quince (15) días hábiles siguientes al mismo, la información de
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio los datos mínimos de la operación (Declaración de cambio) por concepto de crédito externo para su transmisión al Banrep. Tratándose de un IMC deudor, éste deberá transmitir directamente la Declaración de cambio al Banco de la República.
+Los procedimientos descritos en los numerales 5.1.2.1, 5.1.2.2, 5.1.6 y 5.1.7 del presente Capítulo aplican a estos créditos.
+5.1.12 Créditos externos generados por la utilización de tarjetas de crédito
+Los créditos externos generados por la utilización de tarjetas de crédito emitidas o administradas por un IMC, para gastos en el exterior, no están sujetos a la presentación del informe al que se refiere el numeral 5.1.2 de este Capítulo. El pago podrá efe ctuarse en moneda legal o extranjera, si la obligación se ha estipulado en esta última moneda, según lo acuerden las partes. El pago deberá hacerse en moneda legal, si la obligación se ha estipulado en esta misma moneda. Los pagos en moneda extranjera no r equieren del suministro de la información de los datos mínimos (Declaración de Cambio).
+Los créditos externos generados por la utilización de tarjetas de créditos emitidas por entidades financieras del exterior, no están sujetos a la presentación del informe al que se refiere el numeral 5.1.2 de este Capítulo. Cuando el pago se realice en div isas mediante la canalización voluntaria a través del mercado cambiario, debe suministrarse la información de los datos mínimos por servicios, transferencias y otros conceptos (Declaración de cambio).
+5.1.13 Créditos externos derivados de la actividad de financiación colaborativa a través de valores representativos de deuda La financiación colaborativa a través de valores representativos de deuda, de que tratan los numerales 1 y 3 del artículo 2.41.1.1.2 del Decreto 2555 de 2010, y en la cual los aportantes sean no residentes, debe seguir el siguiente procedimiento:
+1. Las entidades autorizadas que realicen la actividad de financiación colaborativa a las que se refiere el artículo 2.41.1.1.3 del Decreto 2555 de 2010, deberán, por cada giro recibido del exterio r, canalizar las divisas a través de un IMC y suministrar la información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de cambio), utilizando el numeral cambiario 1604 “Sumas destinadas a proyectos de financiación colaborativa antes de la emisión de valores”.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+2. En caso de que, previo a la emisión de valores representativos de deuda, la entidad autorizada que realiza la actividad de financiación colaborativa devuelva los recursos al exterior a favor de los aportantes no residentes, debe acudir a un IMC, suministrando por cada aportante los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de cambio), utilizando el numeral cambiario 1604 “Sumas destinadas a proyectos de financiación colaborativa antes de la emisión de valores”, indicando la opción devolución.
+3. Cuando se emitan los valores representativos de deuda, el receptor residente (deudor) o quien lo represente deberá:
+i. Dentro de los quince (15) días hábiles siguientes a la emisión del valor representativo de deuda, presentar ante un IMC por cada aportante no residente (acreedor) el Informe de Crédito Externo otorgado a residentes, de acuerdo con lo previsto en los numerales 5.1.2 y 5.6 de esta Circular.
+ii. Seguir el procedimiento descrito en el numeral 1.4.2 del Capítulo 1 de esta Circular, con el fin de cambiar cada declaración de cambio de servicios, transferencias y otros conceptos, con la cual fueron inicialmente canalizados los recursos, por una declara ción de cambio por créditos externos, vinculándola como desembolso al crédito externo informado y utilizando el numeral cambiario 4005 “Desembolso de créditos – deuda privada – otorgados por no residentes a residentes”.
+Para efectos de lo aquí establecido, el receptor residente (deudor) o quien lo represente, se encuentra autorizado para efectuar el cambio de declaración de cambio.
+5.2. Créditos Activos
+5.2.1. Autorización
+Los IMC y los residentes pueden otorgar créditos en moneda extranjera o en moneda legal a no residentes, conforme a lo previsto en los artículos 8, 44 y 45 de la de la R.E. 1/18 J.D.
+5.2.2. Informe de Crédito Externo Otorgado a no Residentes
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Los créditos otorgados a no residentes deberán informarse al Banrep a través de los IMC, mediante la presentación del Informe de Crédito Externo Otorgado a no Residentes , en forma previa al desembolso del respectivo crédito.
+Los IMC deberán transmitir al Banrep el Informe de Crédito Externo Otorgado a no Residentes en el término establecido en el literal b) del numeral 9 del Anexo 3 de esta Circular.
+En el Informe de Crédito Externo Otorgado a no Residentes, si el deudor cuenta con una identificación aceptada por el Sistema deberá identificarse con esta. De no ser así, e l residente (acreedor) su apoderado o mandatario obtendrá el código de no residente que identifique al deudor, a través de los IMC.
+Cuando se trate de créditos externos originados en reorganizaciones empresariales internacionales o cualquier acto o negocio jurídico en virtud de las cuales un residente resulte acreedor de un crédito externo, deberá presentarse al Banrep el Informe de Crédito Externo Otorgado a no Residentes, a través de los IMC, previo al primer reintegro por el pago de capital o intereses o, en todo caso, antes del plazo de seis (6) meses contados a partir de la fecha de inscripción en el registro mercantil de la escrit ura pública que perfecciona el acto.
+Cuando se trate de créditos sindicados, u otorgados en favor de uniones temporales, consorcios, o con deudores solidarios, se deberá indicar en el Inform e de Crédito Externo Otorgado a no Residentes como acreedores y deudores a todos los partícipes.
+El procedimiento para asignar el número de identificación del crédito y el envío de la información al Banrep por parte de los IMC se realizará en la misma forma a la señalada en el numeral 5.1.2 de este Capítulo para los créditos pasivos.
+Los créditos activos no están sujetos a la constitución del depósito de que trata el artículo 47 de la R.E. 1/18 J.D. Los IMC revisarán los datos del Informe de Crédito Externo Otorgado a no Residentes y verificarán que coincidan con la copia del contrato respectivo o de la correspondencia entre las partes que demuestren las condiciones de la financiación.
+Cada IMC, a solicitud del acreedor residente, deberá suministrar los informes de los créditos externos transmitidos al Banrep y que esta entidad haya confirmado que fueron integrados al Sistema de Información Cambiaria. Cada IMC generará estos informes en los formatos de
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio su preferencia, ya sea en documento físico o digital, siempre que contengan los datos del informe del crédito externo a los que se refiere el numeral 5.6 de esta circular.
+5.2.3. Desembolsos en moneda extranjera y pagos
+Los ingresos y egresos de divisas originados en operaciones de préstamos de residentes a no residentes deberán canalizarse a través de los IMC o de las cuentas de compensación, mediante el suministro de la información de los datos mínimos de las operacione s de cambio por crédito externo (Declaración de Cambio) exigida en el numeral 5.4 de este Capítulo, entre otros, el número de identificación del crédito asignado por el IMC en el momento de remitir la información al Banrep.
+Solamente cuando se complete el trámite y se asigne el número de identificación del crédito se podrá efectuar la venta de las divisas por parte del IMC o el correspondiente cargo en la cuenta de compensación. Si los préstamos son otorgados por los IMC a no residentes, los IMC deberán transmitir dentro de los quince (15) días hábiles siguientes a la fecha del desembolso o pago del préstamo, la información de los datos mínimos de la declaración de cambio de créditos externos indicando la razón de no canalización.
+Los pagos en moneda legal deberán efectuarse desde las cuentas del deudor no residente descritas en el literal d. del numeral 10.4.2.2 del Capítulo 10 de esta Circular, a la cuenta del acreedor residente o al IMC. El residente acreedor debe suministrar ante el IMC donde recibió el pago, y dentro de los quince (15) días hábiles siguientes al mismo, la información de los datos mínimos de la operación (Declaración de cambio) por concepto de crédito externo para su transmisión al Banrep, o transmitirlo directamente cuando el acreedor sea un IMC.
+5.2.4. Correcciones y otros procedimientos especiales aplicables al Informe de Crédito Externo Otorgado a no Residentes
+5.2.4.1 Correcciones al Informe de Crédito Externo Otorgado a no Residentes
+Las correcciones al Informe de Crédito Externo Otorgado a no Residentes podrán realizarse por cualquier causa, incluyendo el cambio en las condiciones del crédito informadas, errores de digitación y modificaciones, entre otros.
+Las correcciones a los créditos activos deberán informarse, suministrando ante un IMC un nuevo Informe de Crédito Externo Otorgado a no Residentes, acompañadas de los documentos que las acrediten, los cuales deberán ser verificados por los IMC.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+Adicionalmente, si se trata de un crédito informado hasta el 15 de junio de 2012, deberá acudir al IMC y suministrar la información relacionada con la identificación del deudor en el Informe de Crédito Externo Otorgado a no Residentes.
+En el caso de prepago parcial o total de créditos informados no se requerirá la modificación del plan de amortización.
+Lo previsto en este numeral se entiende sin perjuicio que por cualquier medio las autoridades encargadas de la vigilancia y control del cumplimiento del régimen cambiario puedan investigar si las modificaciones a las condiciones del endeudamiento externo se realizaron sin corresponder a la realidad de la operación, caso en el cual proceden las sanciones pertinentes.
+La modificación por cambio de acreedor de un crédito activo no podrá efectuarse si con ello se extinguen obligaciones entre residentes conforme a lo previsto en el artículo 86 de la R.E.
+1/18 J.D.
+5.2.4.2 Fraccionamiento de créditos informados
+El fraccionamiento de créditos aplica cuando de un crédito informado y desembolsado se dividen varias operaciones de crédito en la misma moneda, con pluralidad de partes (deudor o acreedor) o entre las mismas partes, pero con diferentes condiciones. El fraccionamiento de créditos informados dará lugar a la cancelación del saldo del crédito original y al informe de los créditos resultantes del fraccionamiento mediante la presentación del Informe de Crédito Externo Otorgado a no Residentes , identificando el n úmero del crédito que da lugar al fraccionamiento La suma de los nuevos créditos deberá ser igual al monto fraccionado del saldo del crédito original.
+Lo previsto en este numeral se entiende sin perjuicio que por cualquier medio las autoridades encargadas de la vigilancia y control del cumplimiento del régimen cambiario puedan investigar si el fraccionamiento del endeudamiento externo se realizó sin corresponder a la realidad de la operación, caso en el cual proceden las sanciones pertinentes.
+5.2.4.3 Sustitución de créditos informados La sustitución de créditos informados aplica cuando el deudor no residente contrata un segundo crédito externo con un IMC, para pagar un crédito previamente informado y desembolsado. El desembolso del nuevo crédito se realiza directamente al acreedor inici al
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio IMC, y dará lugar a la cancelación del saldo del crédito sustituido y al informe de los créditos resultantes de la sustitución.
+Cuando el segundo crédito esté estipulado en la misma moneda del crédito que se sustituye, el nuevo Informe de Crédito Externo Otorgado a no Residentes deberá incluir el número del crédito previamente informado y desembolsado. Una vez el Intermediario del Mercado Cambiario transmita el informe del nuevo crédito, se generarán automáticamente las declaraciones de cambio de créditos externos por desembolso del nuevo crédito y amortización del crédito sustituido.
+Cuando el segundo crédito esté estipulado en una moneda distinta a la del crédito que se sustituye, deberá presentarse el Informe de Crédito Externo Otorgado a no Residentes y las declaraciones de cambio de créditos externos por desembolso del nuevo crédit o y amortización del crédito sustituido, indicando la razón de no canalización 51 “Sustitución de créditos externos en diferentes monedas”.
+No aplica el procedimiento de sustitución en la contratación del segundo crédito con otro residente o para pagar un crédito al acreedor inicial residente. En este caso, el informe, desembolso y amortización de este crédito debe realizarse por conducto del mercado cambiario, según los procedimientos previstos en los numerales 5.2.2 y 5.2.3 de este Capítulo.
+Lo previsto en este numeral se entiende sin perjuicio que por cualquier medio las autoridades encargadas de la vigilancia y control del cumplimiento del régimen cambiario puedan investigar si la sustitución del endeudamiento externo se realizó sin correspo nder a la realidad de la operación, caso en el cual proceden las sanciones pertinentes.
+Modificado con el Boletín del Banco de la República No. 43 (Diciembre 16/2025) [DCIP-83 Diciembre 16/2025]
+5.2.4.4 Consolidación de créditos
+La consolidación de créditos aplica cuando varios créditos externos informados y desembolsados de forma independiente se integran en un nuevo informe de crédito externo, cuyo valor será el resultante de la sumatoria de los saldos de los créditos que se consolidan, manteniendo las mismas partes y condiciones.
+El residente deberá presentar el Informe de Crédito Externo Otorgado a No Residentes identificando los créditos que se consolidan. La consolidación dará lugar a la cancelación automática de los informes de los créditos consolidados y al desembolso automático del nuevo informe de crédito externo.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+Lo previsto en este numeral se entiende sin perjuicio que por cualquier medio las autoridades encargadas de la vigilancia y control del cumplimiento del régimen cambiario puedan investigar si la consolidación del endeudamiento externo se realizó sin corres ponder a la realidad de la operación, caso en el cual proceden las sanciones pertinentes.
+5.2.4.5 Anulación del Informe de Crédito Externo Otorgado a no Residentes
+Las solicitudes de anulación del Informe de Crédito Externo Otorgado a no Residentes se deberán tramitar por el IMC que realizó la transmisión del Informe.
+En ningún caso las anulaciones podrán tramitarse por las causas que correspondan a los procedimientos de corrección, sustitución, fraccionamiento y consolidación, entre otros, contenidos en este Capítulo.
+La anulación del Informe de Crédito Externo Otorgado a no Residentes únicamente procede si el endeudamiento externo no se ha desembolsado al deudor. Así mismo, dicho procedimiento implica su anulación en el Sistema de Información Cambiaria.
+Cuando sea necesario transmitir un nuevo formulario, deberá relacionarse la fecha que corresponda a la de presentación del informe del crédito externo ante el IMC.
+Las anulaciones se deberán realizar por conducto del IMC que transmitió el informe y únicamente cuando ese IMC tenga suspendido el código de operación , conforme a lo previsto en el numeral 2.5 del Capítulo 2 de esta Circular, podrá solicitarse la anulación por conducto de un IMC diferente.
+Lo previsto en este numeral se entiende sin perjuicio que por cualquier medio las autoridades encargadas de la vigilancia y control del cumplimiento del régimen cambiario puedan investigar si las anulaciones del informe de endeudamiento externo se realizaron sin corresponder a la realidad de la operación, caso en el cual proceden las sanciones pertinentes.
+5.2.5. Verificación de los documentos y de la información por parte de los intermediarios del mercado cambiario
+Los IMC deberán:
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio a. Exigir la presentación del Informe de Crédito Externo Otorgado a no Residentes , utilizando los mecanismos que establezca el IMC.
+b. Exigir copia del documento donde conste el contrato del préstamo y sus modificaciones, o el anticipo para futuras capitalizaciones.
+c. Exigir los documentos que acrediten las reorganizaciones empresariales internacionales o del acto o negocio jurídico que haya dado lugar al endeudamiento externo.
+d. Verificar que el tipo de deudor indicado en el Informe de Crédito Externo Otorgado a no Residentes coincida con los documentos soporte que sean presentados por el residente, su apoderado o mandatario.
+5.2.6. Créditos externos desembolsados en moneda legal
+Los residentes y los IMC pueden otorgar créditos externos desembolsados en moneda legal en favor de no residentes. Cuando estos créditos sean otorgados por residentes no requerirán ningún informe ante el Banrep. Cuando el acreedor sea un IMC, estos créditos y los que resulten de la ejecución de un aval o garantía en moneda legal, deberán informarse trimestralmente al Banrep, dentro del mes calendario siguiente al corte de cada trimestre, excluyendo los otorgados a personas naturales colombianas no residente s, al buzón DTIEprestamosnoresidentes@banrep.gov.co enviando el “Reporte de Préstamos en Moneda Legal Colombiana otorgados por IMC a no residentes”. El incumplimiento de esta obligación será informado a la Superintendencia Financiera de Colombia para lo de su competencia.
+El desembolso y pago del crédito en moneda legal de estas operaciones, debe efectuarse a través de la cuenta del no residente a la que se refiere el literal d. del numeral 10.4.2.2 del Capítulo 10 de esta Circular.
+Cuando el pago se efectúe en divisas, el residente podrá reintegrar las mismas suministrando los datos mínimos de la operación de cambio por crédito externo (Declaración de cambio), utilizando el numeral cambiario 4021 “Pagos de créditos externos activos desembolsados en moneda legal”.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+5.3 Información de datos mínimos de la declaración de cambio de crédito externo con razón de no canalización y su anulación
+5.3.1 Información de datos mínimos de la declaración de cambio de crédito externo con razón de no canalización
+Cuando se desembolsen o amorticen créditos activos o pasivos por cualquiera de las razones contempladas en el numeral 5.1.5 de este Capítulo o cuando se requiera cancelar el informe de créditos activos o pasivos por la imposibilidad jurídica de cumplir la obligación de pago, conforme a lo previsto en el numeral 5.4 de este Capítulo, se deberá suministrar la información de los datos mínimos de la declaración de cambio con razón de no canalización al IMC o transmitirla directamente al Banrep por el deudor o acreedor del crédito, si es titular de cuenta de compensación.
+El suministro de la información de los datos mínimos de la declaración de cambio de crédito externo con razón de no canalización, que acredite el desembolso o la amortización, deberá efectuarse dentro de los quince (15) días hábiles siguientes a la realización de la respectiva operación. Cuando se trate de la cancelación del informe del crédito por la imposibilidad jurídica de cumplir la obligación de pago, ésta podrá efectuarse en cualquier momento.
+El IMC, deberá transmitir la información de los datos mínimos de la declaración de cambio de crédito externo con razón de no canalización al DCIP dentro de los dos (2) días hábiles siguientes a la fecha del suministro de los mismos (por parte del residente o no residente que realiza la operación).
+5.3.2 Anulación la declaración de cambio de crédito externo con razón de no canalización
+Los IMC podrán tramitar la anulación de la información de los datos mínimos de la declaración de cambio con razón de no canalización a través del Sistema de Información Cambiaria.
+Las anulaciones se deberán realizar por conducto del IMC que transmitió el informe y únicamente cuando ese IMC tenga suspendido el código de operación, conforme a lo
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio previsto en el numeral 2.5 del Capítulo 2 de esta Circular, podrá solicitarse la anulación por conducto de un IMC diferente.
+Los titulares de cuentas de compensación podrán tramitar la anulación de la información de los datos mínimos de la declaración de cambio de crédito externo con razón de no canalización transmitidas por estos a través del Sistema de Información Cambiaria.
+La anulación de la declaración de cambio de crédito externo con razón de no canalización implica su eliminación en el Sistema de Información Cambiaria.
+Cuando sea necesario suministrar nueva información de los datos mínimos de la declaración de cambio con razón de no canalización, deberá relacionarse la fecha de la operación que dio lugar a dicha declaración de cambio.
+Lo previsto en este numeral se entiende sin perjuicio que por cualquier medio las autoridades encargadas de la vigilancia y control del cumplimiento del régimen cambiario puedan investigar si las anulaciones de la información de los datos mínimos de la declaración de cambio con razón de no canalización se realizaron sin corresponder a la realidad de la operación, caso en el cual proceden las sanciones pertinentes.
+5.4. Información de datos mínimos para operaciones de cambio por crédito externo (Declaración de Cambio)
+La información de los datos mínimos de las operaciones de cambio por endeudamiento externo (Declaración de Cambio), es la siguiente:
+Identificación de la declaración Nota: los siguientes campos también deberán diligenciarse cuando se trate de cambio de declaración de cambio Número de la declaración Número de la declaración de cambio asignado por el IMC. Este dato no es corregible.
+Cuando se esté haciendo un cambio de declaración, deberá indicarse también la declaración que se cambia (con número, fecha e IMC). Cuando la declaración que se cambia sea de créditos externos deberá indicar, además, el número de crédito externo.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Fecha de la declaración Cuando hay canalización de divisas:
+- Corresponde al día en que se efectúa la venta o compra de las divisas, o se efectúa el desembolso o pago en moneda legal colombiana (COP) al IMC o al día en que se realiza el ingreso o egreso de divisas a la cuenta de compensación. En este último caso debe coincidir con el periodo que se reporte en el “Informe de Movimientos de Cuenta de Compensación”
+- Cuando se trate de cambio de declaración de cambio se debe indicar la fecha en que se solicita. Este dato no es corregible.
+Cuando no hay canalización de divisas (con razón de no canalización):
+- Para desembolso: fecha de la nota de desembolso.
+- Para amortización: fecha en que se cancela el crédito.
+- Cuando la razón de no canalización corresponda a la razón 33, 34 y 35, la fecha será la del perfeccionamiento de la dación en pago.
+- Cuando la razón de no canalización corresponda a la 39, la fecha será la del convenio de pago en moneda legal entre las partes.
+NIT del I.M.C. Número del NIT del IMC, sin digito de verificación.
+Número de cuenta de compensación código de la cuenta.
+Fecha de presentación ante IMC Fecha en la que el residente suministra al IMC la información de la declaración de cambio con la razón de no canalización.
+Detalle del Crédito
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Número de crédito Número del Informe de Crédito Externo que se afecta con la canalización de las divisas. Para los créditos de que trata el numeral 5.2.6 del capítulo 5 de esta Circular no deberá suministrar este dato.
+Tipo y número de identificación del residente
+- CC = Cédula de ciudadanía
+- CE = Cédula de extranjería
+- NI = NIT
+- PA = Patrimonio autónomo
+- PB = Pasaporte
+- RC = Registro civil
+- TI = Tarjeta de identidad
+Cuando se trate de patrimonios autónomos, se deberá suministrar su número de identificación tributaria (NIT), en caso de que no tenga NIT propio deberá suministrar el código PA.
+Detalle de la declaración de cambio Moneda de negociación (moneda en la que se desembolsa o paga el crédito) Código de la moneda.
+Valor total moneda de negociación Suma de los valores en la moneda de pago o desembolso. Debe coincidir con la sumatoria de los valores del campo “Valor moneda de negociación”.
+Cuando la moneda de negociación sea diferente a la moneda estipulada, en esta casilla deberá indicar el valor resultante de aplicar la tasa de cambio que corresponda entre estas dos monedas.
+Valor en dólares Valor de negociación expresado en dólares (USD) por cada numeral cambiario.
+Valor total en dólares Suma de los valores en dólares (USD) de cada numeral diligenciado en la declaración de cambio.
+Tasa de cambio a dólares Tasa de cambio para la conversión de la moneda de negociación a dólares (USD) expresado en unidades por dólar, ejemplo: en el caso de yenes japoneses deberá reportarse como 111,85682, o, libra esterlina 0,61839.
+Cuando la moneda de negociación sea dólares, la tasa de cambio a dólares debe ser 1.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Valor total moneda estipulada (moneda en la que se informó el crédito) Suma de los valores equivalentes del valor expresado en el campo “Valor moneda de negociación” en la moneda estipulada Tasa de cambio a moneda estipulada Tipo de cambio para la conversión de la moneda de negociación a la moneda estipulada.
+Razón de no canalización Número de la razón por la cual no hubo canalización de divisas, según lo establecido en el numeral 5. 8 de este capítulo.
+Devolución Indique “sí”, en caso contrario, indique “no”.
+Aplica solo para las declaraciones de cambio con canalización de divisas.
+Información del numeral Numeral cambiario Código que identifica el ingreso o egreso de las divisas según el Anexo 1 de la Circular Reglamentaria Externa DCIP-83.
+Valor moneda de negociación Valor pagado o desembolsado correspondiente al numeral cambiario Valor en dólares Valor de negociación expresado en dólares (USD) por cada numeral cambiario.
+Valor moneda estipulada Valor equivalente del valor de la moneda de negociación en la moneda estipulada
+5.5. Eliminado
+5.6. Informe de Crédito Externo (otorgado a residentes y no residentes)
+Descripción del informe Número del crédito Número asignado y diligenciado por el IMC Fecha de presentación Fecha de presentación del informe ante el IMC
+Tipo de crédito Otorgado a residentes (pasivo) Otorgado a no residentes (activo) Propósito Otorgado a residentes (pasivo)
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio − 2: Leasing o Arrendamiento financiero contratado con no residentes
+− 4: Inversión colombiana directa en el exterior.
+Decreto 1068/2015
+− 7: Emisión y colocación de títulos en los mercados internacionales por parte de residentes.
+− 8: Anticipo de exportaciones de bienes de utilización inmediata e intermedios. NOTA: aplica para operaciones canalizadas antes del 1 de noviembre de 2010.
+− 10: Operación de derivados Art. 49 de la R.E.1/18 J.D
+− 11: Financiación de bienes de utilización inmediata e intermedios. NOTA: aplica para operaciones con documentos de transporte con fecha anterior al 1 de septiembre de 2010.
+− 12: Financiación de bienes de capital. NOTA: aplica para operaciones con documentos de transporte con fecha anterior al 1 de septiembre de 2010.
+− 16: Financiación de compra de bienes de capital – zona franca. NOTA: aplica para operaciones con documentos de transporte con fecha anterior al 1 de septiembre de 2010.
+− 17: Financiación de compra de bienes de utilización inmediata – zona franca. NOTA: aplica para operaciones con documentos de transporte con fecha anterior al 1 de septiembre de 2010.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio − 18: Anticipo de exportaciones de bienes de capital.
+NOTA: aplica para operaciones canalizadas antes del 1 de noviembre de 2010.
+− 20: Inversión financiera y en activos en el exterior
+− 22: Procesos de reorganización empresarial internacionales
+− 38: Financiación estipulada en moneda extranjera y desembolsada en moneda legal obtenida por los IMC para destinarla a operaciones activas en moneda legal. El IMC que informe la financiación utilizando este propósito deberá cumplir con la obligación prevista en el numeral 1, literal n., ordinal ii del artículo 8 de la R.E. 1/18 J.D.
+− 40: Financiación estipulada y desembolsada en moneda legal obtenida por los IMC, para destinarla a operaciones activas en moneda legal (numeral 1, literal ñ., o numeral 2, literal h del artículo 8 de la R.E. 1/18 J.D.)
+− 42: Acto o negocio jurídico diferente de reorganizaciones empresariales internacionales.
+NOTA: No aplica para los créditos en los que no se canalizaron los recursos del desembolso, debiéndose canalizar.
+− 43: Anticipos para futuras capitalizaciones.
+NOTA: aplica únicamente para aquellos casos en los que para el momento del desembolso de los recursos, no se haya emitido el reglamento de emisión y colocación de acciones, o no se haya aprobado la capitalización por el órgano social competente.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio − 45: Crédito externo pasivo derivado de la ejecución de avales o garantías.
+− 49: Operaciones de leasing o arrendamiento financiero de importación de bienes otorgado por IMC a residentes estipulado en moneda extranjera.
+− 50: Prefinanciación de exportaciones otorgado por IMC o no residentes estipulado y desembolsado en moneda extranjera.
+− 51: Giros financiados anticipados.
+− 52: Créditos concesionales con componente de ayuda otorgados por gobiernos extranjeros.
+− 53: Financiación estipulada y desembolsada en moneda extranjera obtenida por los IMC para destinarla a operaciones activas en moneda legal. El IMC que informe la financiación utilizando este propósito deberá cumplir con la obligación prevista en el numeral 1, literal n., ordinal ii del artículo 8 de la R.E. 1/18 J.D.
+− 54: Financiación estipulada y desembolsada en moneda extranjera obtenida por los IMC mediante la colocación de títulos en los mercados internacionales de capitales, para destinarla a operaciones activas en moneda legal. El IMC que informe la financiación u tilizando este propósito deberá cumplir con la obligación prevista en el numeral 1, literal n., ordinal ii del artículo 8 de la R.E.
+1/18 J.D.
+− 55: Financiación estipulada en moneda legal y desembolsada en moneda extranjera obtenida por los IMC para destinarla a operaciones activas en moneda legal (numeral 1, literal ñ., o numeral 2, literal h del artículo 8 de la R.E. 1/18 J.D.)
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+− 56: Financiación estipulada en moneda legal y desembolsada en moneda extranjera obtenida por los IMC mediante la colocación de títulos en los mercados internacionales de capitales, para destinarla a operaciones activas en moneda legal (numeral 1, literal ñ ., o numeral 2, literal h del artículo 8 de la R.E. 1/18 J.D.).
+− 58: Prefinanciación de exportaciones otorgado por no residentes desembolsado en moneda legal.
+− 59: Capital de trabajo.
+− 60: Financiación colaborativa representativa de deuda.
+Otorgado a no residentes (activo)
+− 33: Exportaciones – Activo. NOTA: aplica para operaciones con documentos de exportación expedidos con fecha anterior al 1 de marzo de 2010.
+− 36: Exportaciones – Venta de instrumentos de pago.
+NOTA: aplica para operaciones con documentos de exportación expedidos con fecha anterior al 1 de marzo de 2010.
+− 37: Proceso de reorganización empresarial internacional, o actos o negocios jurídicos. NOTA: No aplica para los créditos en los que no se canalizaron los recursos del desembolso, debiéndose canalizar.
+− 43: Anticipos para futuras capitalizaciones.
+NOTA: aplica únicamente para aquellos casos en los que para el momento del desembolso de los recursos, no se haya emitido el reglamento de
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio emisión y colocación de acciones, o no se haya aprobado la capitalización por el órgano social competente.
+− 47: Crédito externo activo derivado de la ejecución de avales o garantías.
+− 59: Capital de trabajo.
+Información del acreedor Tipo de acreedor Naturaleza del acreedor en el crédito pasivo. El tipo de acreedor debe estar relacionado al tipo de crédito.
+− IMC; Entidad financiera extranjera − Sociedad extranjera (Casa Matriz u otras filiales con las que su empresa tiene vinculo accionario) − Artículo 60, numeral 2 de la R.E.1/18 J.D.
+− No residentes personas jurídicas o asimiladas − Otros no residentes personas naturales − Filial o sucursal de banco colombiano Tipo y número de documento − CC = Cédula de ciudadanía − CE = Cédula de extranjería − NI = NIT − NR = No residente (aplica para créditos pasivos) − PA = Patrimonio autónomo (aplica para créditos activos) − PB = Pasaporte − RC = Registro civil − TI = Tarjeta de identidad
+Cuando se trate de patrimonios autónomos, se deberá suministrar su número de identificación tributaria (NIT), en caso de que no tenga NIT propio deberá suministrar el código PA.
+Información del deudor Tipo deudor Naturaleza del deudor en el crédito activo. El tipo de deudor debe estar relacionado al tipo de crédito.
+− Filial o sucursal de banco colombiano − Otros no residentes
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio − Otros no residentes personas naturales Tipo y número de documento − CC = Cédula de ciudadanía − CE = Cédula de extranjería − NI = NIT − NR = No residente (aplica para créditos activos) − PA = Patrimonio autónomo (aplica para créditos pasivos) − PB = Pasaporte − RC = Registro civil − TI = Tarjeta de identidad
+Cuando se trate de patrimonios autónomos, se deberá suministrar su número de identificación tributaria (NIT), en caso de que no tenga NIT propio deberá suministrar el código PA.
+Detalle del crédito Moneda estipulada Código de la moneda Valor moneda estipulada Valor del préstamo
+4. Tipo tasa de interés − Prime rate − Libor 1 mes − Fija − Otra − Sin intereses − DTF − Libor 2 meses − Libor 3 meses − Libor 6 meses − Libor 12 meses − UVR − IPC − IBR − SOFR − ESTR Spread o valor Valor adicional de la tasa de interés. Este campo no se debe diligenciar cuando se haya indicado que el crédito no tiene intereses Plazo Duración del crédito contratado
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Tiempo Unidad de tiempo de la duración del crédito contratado (plazo) expresada en días, meses o años Plan de amortización Fecha de la cuota Relacionar una a una las fechas de pago del crédito externo
+Fecha y valor en la moneda estipulada de cada una de las cuotas. Para corrección, relacionar las fechas y valores de las cuotas canceladas y de las pendientes de pago.
+NOTA: Para el propósito 43 “Anticipos para futuras capitalizaciones”, el plan de amortización corresponderá al plazo fijado para la capitalización de los recursos.
+Valor de la cuota Valor de capital pagado por cada una de las cuotas. La sumatoria de los valores relacionados debe corresponder al valor moneda estipulada.
+5.7. Información para la transmisión de otros procedimientos especiales de Crédito Externo (Otorgado a residentes y no residentes)
+Para la transmisión de otros procedimientos especiales, además de la información mencionada en el numeral 5.6 de este capítulo deberá indicar la siguiente:
+a. Indexación
+Número del crédito a indexar Número de crédito que se indexa.
+Moneda a indexar Código de la moneda a la cual indexa el crédito.
+b. Fraccionamiento
+Número del crédito a fraccionar Número de crédito que se fracciona
+c. Sustitución
+Número de los créditos a sustituir Número de los créditos que se van a sustituir.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+d. Consolidación
+Número de los créditos a consolidar Número de los créditos que se van a consolidar.
+5.8 Razones de no canalización
+− 1: Amortización del crédito por anticipos de exportaciones con la realización de la exportación.
+− 2: Amortización del crédito por prefinanciación de exportaciones con el producto de la exportación.
+− 4: Deducción realizada por el acreedor al momento del desembolso del crédito por concepto de intereses, impuestos y/o servicios.
+− 6: Crédito activo otorgado por un IMC desembolsado en divisas.
+− 7: Desembolso de préstamo para inversión colombiana directa o inversión financiera y en activos en el exterior.
+− 9: Punto 5.1.5, literal f de esta Circular.
+− 10: Créditos obtenidos para financiar el margen o garantía inicial o de mantenimiento exigido en bolsas de futuros y opciones del exterior.
+− 17: Préstamos indexados − 18: Capitalización de intereses − 21: Devolución giro financiado anticipado de importaciones de bienes o compra de bienes con destino a zona franca.
+− 22: Comisión por transferencia, aplica para endeudamiento externo pasivo y activo.
+− 23: Crédito pasivo obtenido por un IMC en desarrollo de los actos conexos o complementarios desembolsado en divisas.
+− 24: Ejecución de avales y garantías a favor del IMC. Aplica únicamente para − informes de avales y garantías (Formulario 8) presentados con anterioridad al 25 de mayo de 2018.
+− 25: Desembolso de crédito para la constitución del depósito − 26: Desembolso de crédito para pagos anticipados de importaciones de bienes o compra de bienes con destino a zona franca.
+− 29: Cancelación del informe del crédito externo de capital de trabajo por la imposibilidad de pago – persona jurídica.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio − 30: Desembolso de créditos obtenidos para pagar créditos de importaciones.
+− 31: Cancelación del informe del crédito externo de capital de trabajo por la imposibilidad de pago – persona natural.
+− 32: Cancelación del informe del crédito externo de financiación de comercio exterior por la imposibilidad de pago.
+− 33: Dación en pago de crédito de capital de trabajo – persona jurídica − 34: Dación en pago de crédito de capital de trabajo – persona natural − 35: Dación en pago de crédito de financiación de comercio exterior − 36: Endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal − 38: Caución como fuente de pago del endeudamiento externo activo informado por concepto de financiación de exportaciones de bienes.
+(Aplicable únicamente a informes de deuda externa activa efectuados con el propósito 33: “Exportaciones – Activo”.) − 39: Pago de deuda interna por compra de deuda externa informada (Artículo 60 de la R.E. 1/18 J.D.) − 40: Cancelación del informe de endeudamiento externo derivado de la conversión a deuda interna por pérdida de la condición de no residente del deudor o acreedor.
+− 41: Pago derivado de la ejecución o restitución de avales o garantías.
+− 51: Sustitución de créditos externos en diferentes monedas.
+Adicionado con el Boletín del Banco de la República No. 43 (Diciembre 16/2025) [DCIP -83 Diciembre 16/2025]

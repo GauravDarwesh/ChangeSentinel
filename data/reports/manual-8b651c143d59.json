@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261027T155531Z-9564e2e9",
-  "generated_at": "2026-10-27T16:18:09.485152+00:00",
+  "run_id": "20261027T162151Z-592001b6",
+  "generated_at": "2026-10-27T16:38:16.504067+00:00",
   "source": {
     "id": "manual-8b651c143d59",
     "name": "Informe para diligenciar",
@@ -12,7 +12,7 @@
     "allowed_prefixes": [
       "https://www.banrep.gov.co/"
     ],
-    "initial_baseline": true
+    "initial_baseline": false
   },
   "discovery": {
     "source_id": "manual-8b651c143d59",
@@ -88,16 +88,16 @@
   },
   "events": [
     {
-      "event_id": "49487264c6dabea8779b376e28920715330995d2a0f16fe6c40dc874fa1288e4",
+      "event_id": "d68d5c0c2be1cea1877ec541bc1af0431dcf31160137f80c9b01897119849728",
       "event_type": "EXTRACTION_ERROR",
       "url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-deposito-operaciones-credito.xls",
       "url_id": "8b651c143d59e1a0829676a6eb78109de7e3296a725b04442f40631c039b0377",
       "source_id": "manual-8b651c143d59",
-      "timestamp": "2026-10-27T16:18:09.485152+00:00",
-      "evidence_location": "data/evidence/49487264c6dabea8779b376e28920715330995d2a0f16fe6c40dc874fa1288e4.json",
+      "timestamp": "2026-10-27T16:38:16.504067+00:00",
+      "evidence_location": "data/evidence/d68d5c0c2be1cea1877ec541bc1af0431dcf31160137f80c9b01897119849728.json",
       "notification_id": "op-1337365ddc3fa93f121fd79aea52a585fca1ec79fd65dee814e2ce087dff4cfe",
       "error_since": "2026-10-27T16:18:09.485152+00:00",
-      "error_runs": 1,
+      "error_runs": 2,
       "evidence": {
         "error": "Unsupported content type for text extraction"
       }
@@ -110,5 +110,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "continuation",
-  "workflow_run_id": "40535240200"
+  "workflow_run_id": "40535893377"
 }

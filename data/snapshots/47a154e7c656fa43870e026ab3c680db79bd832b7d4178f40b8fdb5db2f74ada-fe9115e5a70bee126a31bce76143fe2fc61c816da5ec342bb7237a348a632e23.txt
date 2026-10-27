@@ -1,0 +1,196 @@
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Capítulo 10. GENERALIDADES SOBRE OPERACIONES DEL MERCADO CAMBIARIO
+10.1 Residentes y no residentes
+Los consorcios y las uniones temporales, para efectos del régimen cambiario, no se consideran como residentes, por cuanto no reúnen las condiciones previstas en el artículo 2.17.1.2 del Decreto 1068 de 2015.
+Las organizaciones mencionadas no podrán efectuar operaciones de cambio, ni registrar cuentas de compensación. Cualquier operación de cambio que realicen debe figurar a nombre de uno de sus integrantes. Para efectos de los registros y la transmisión de la información de cuentas de compensación de be figurar el nombre y número de identificación de todos los partícipes.
+10.2 Servicios, transferencias y otros conceptos
+Los residentes podrán efectuar la compra y venta de divisas por concepto de servicios, transferencias y otros conceptos, para lo cual, deberán suministrar la información de los datos mínimos para estas operaciones de cambio (Declaración de Cambio) a los Intermediarios del Mercado Cambiario (en adelante IMC). Si la operación se realiza mediante cuentas de compensación, el Informe de Movimientos de Cuenta de Compensación hará las veces de la declaración de cambio.
+Este procedimiento también se utilizará para la compra de divisas con destino a las cuentas bancarias en moneda extranjera en entidades financieras del exterior y para la compra y venta de divisas a IMC por concepto de las regalías de que trata el artículo 104 de la Resolución Externa 1 de 2018 (en adelante R.E. 1/18 J.D.), utilizando los numerales cambiarios 1815 y 2903.
+La canalización de divisas por concepto de remesas de trabajadores se hará mediante el suministro de la información de los datos mínimos de la operación de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio) utilizando los numera les cambiarios de remesas definidos en el Anexo 1 de esta Circular. Adicionalmente, los IMC deberán informar las remesas de trabajadores en el “Reporte trimestral de remesas de trabajadores (RTR)”. Las remesas de trabajadores que se hagan mediante tarjetas débito y crédito se rigen por el procedimiento establecido en el numeral 1.10.1 del Capítulo 1 de esta Circular. Las remesas de trabajadores que se paguen desde las cuentas de uso exclusivo para
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio dispersión de remesas de trabajadores se rigen por el procedimiento establecido en el numeral 10.4.2.2, literal f. de esta Circular.
+Las remesas de trabajadores son entendidas como las transferencias personales entre hogares residentes y hogares no residentes y que representan ingresos de los hogares provenientes de economías extranjeras, generados principalmente por la migración provisoria o permanente de personas a esas economías (Manual 6 de Balanza de Pagos, FMI).
+La información de los datos mínimos para este tipo de operaciones (Declaración de Cambio) se encuentra señalada en el numeral 10.12 del presente Capítulo.
+Modificado con el Boletín del Banco de la República No. 43 (Diciembre 16/2025) [DCIP-83 Diciembre 16/2025]
+10.3. Reintegro de divisas de misiones diplomáticas y consulares
+Las misiones diplomáticas y consulares acreditadas ante el Gobierno de Colombia, las organizaciones multilaterales y los funcionarios de estas entidades que deseen efectuar reintegros de divisas, podrán hacerlo directamente con un IMC, para lo cual, deberán suministrar la información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio).
+10.4. Depósitos de residentes y de no residentes en moneda extranjera y de no residentes en moneda legal colombiana en intermediarios del mercado cambiario
+10.4.1. Depósitos en moneda extranjera
+Conforme al numeral 1, literal d) del artículo 8 de la R.E 1/18 J.D, y al artículo 12 de la Resolución Externa 4 de 2006 de la Junta Directiva del Banrep (en adelante R.E. 4/06 J.D.), los IMC autorizados pueden recibir depósitos en moneda extranjera de:
+a. Personas naturales y jurídicas no residentes;
+b. Misiones diplomáticas y consulares acreditadas ante el Gobierno de Colombia y sus funcionarios;
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio c. Organizaciones multilaterales y sus funcionarios;
+d. Entidades públicas o privadas que estén ejecutando programas de cooperación técnica internacional con el Gobierno Nacional en las cuantías efectivamente desembolsadas por los organismos externos de cooperación;
+e. Empresas de transporte internacional, agencias de viaje y turismo, almacenes y depósitos francos y entidades que presten servicios portuarios y aeroportuarios;
+f. Sociedades fiduciarias en desarrollo de encargos fiduciarios o como representante, vocero y administrador de patrimonios autónomos, constituidos con divisas provenientes del desarrollo de actividades establecidas en el artículo 8, numeral 1, literal d) de la R.E. 1/18 J.D. y sus modificaciones.;
+g. Los agentes del exterior que actúen como proveedores de liquidez de los sistemas de compensación y liquidación de divisas;
+Las operaciones de cambio obligatoriamente canalizables por conducto del mercado cambiario no pueden pagarse con recursos depositados en estas cuentas.
+Estos depósitos no requieren registro en el Banrep.
+10.4.2. Depósitos en moneda legal
+Conforme al numeral 1, literal e) y numeral 2, literal d) del artículo 8 de la R.E. 1/18 J.D. y al artículo 12 de la R.E. 4/06 J.D, los IMC pueden recibir depósitos a la vista en cuentas corrientes, cuentas de ahorro, depósitos electrónicos y depósitos a t érmino en moneda legal colombiana, de personas naturales, jurídicas o asimiladas, no residentes.
+Según lo dispuesto en los numerales 4, literal e) y 5, literal b) del artículo 8 de la R.E. 1/18 J.D, las Sociedades Especializadas en Depósitos y Pagos Electrónicos (SEDPE) pueden recibir depósitos electrónicos en moneda legal colombiana de personas natur ales, jurídicas o asimiladas, no residentes.
+Estos depósitos deben ser identificados por los titulares o su apoderado ante el IMC ante el cual se constituye, como depósitos de no residentes.
+Los depósitos a que se refiere el presente numeral no requieren de registro ante el Banrep para su apertura o funcionamiento, y pueden ser:
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+10.4.2.1 Cuentas de uso general:
+Estas cuentas podrán ser abiertas a nombre de no residentes para operaciones propias del titular y cualquier uso. Los titulares de estas cuentas no podrán desembolsar créditos en moneda legal ni realizar operaciones de cambio obligatoriamente canalizables con cargo a los recursos de estas cuentas, salvo las siguientes excepciones:
+a) Pagos de importaciones de bienes efectuados por residentes, que se liquiden en moneda legal colombiana, conforme a lo dispuesto en el artículo 70 de la R.E. 1/18 J.D. y bajo el procedimiento señalado en el numeral 3.1.1 del Capítulo 3 de la DCIP 83.
+b) Pagos de exportaciones de bienes efectuados por residentes que se liquiden en moneda legal colombiana, conforme a lo dispuesto en el artículo 77 de la R.E. 1/18 J.D. y bajo el procedimiento señalado en el numeral 4.1.1 del Capítulo 4 de la DCIP 83.
+c) Liquidación en moneda legal de operaciones de derivados, conforme a lo dispuesto en la R.E. 1/18 J.D. y la Circular Reglamentaria Externa DODM 144 del Banrep.
+Los agentes del exterior que actúen como proveedores de liquidez en moneda extranjera de acuerdo con lo previsto en la Resolución Externa 4 del 2006 J.D, podrán utilizar estas cuentas.
+Para las operaciones de compra y venta de divisas a los IMC, cuyos recursos sean debitados o abonados en estas cuentas, se deberá suministrar la información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio).
+Las entidades multilaterales podrán usar estas cuentas para el desarrollo de las operaciones autorizadas de acuerdo con sus convenios constitutivos, incluidos sus gastos de operación, con excepción de las operaciones que requieran las cuentas de uso exclus ivo descritas en el numeral 10.4.2.2 de esta Circular.
+10.4.2.2 Cuentas de uso exclusivo:
+Las cuentas corrientes y de ahorro en moneda legal colombiana abiertas a nombre de personas naturales, jurídicas o asimiladas no residentes, que se destinen a las siguientes actividades serán de uso exclusivo. Con excepción de las cuentas señaladas en el l iteral d,
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio no se encuentra autorizado el otorgamiento de créditos con recursos provenientes de las mismas.
+a. Cuentas para operaciones de inversión extranjera directa:
+Estas cuentas podrán utilizarse para:
+i) Realizar inversión extranjera directa con las sumas resultantes de la redención, liquidación, rendimientos o utilidades originadas en la inversión extranjera directa o en las inversiones de portafolio de capital del exterior, del mismo inversionista titular de la cuenta.
+ii) Recibir desembolsos de operaciones de crédito local otorgados por IMC o residentes, cuyo propósito sea realizar inversión extranjera directa.
+iii) Efectuar pagos de los créditos y las operaciones relacionadas con estos.
+Para el caso de inversión directa, el desembolso del crédito en moneda legal podrá hacerse directamente al vendedor del activo o al beneficiario que el inversionista designe, según corresponda.
+El registro de inversión extranjera se efectuará conforme al procedimiento establecido en el numeral 7.2.1.2 del Capítulo 7 de esta Circular.
+b. “Depósitos de inversionistas de capital del exterior de portafolio (inversionistas individuales y cuentas de tipo ómnibus)
+Estas cuentas podrán acreditarse o debitarse exclusivamente para realizar inversiones de capital del exterior de portafolio (inversionistas individuales y cuentas de tipo ómnibus) y sus operaciones conexas. Estas cuentas deben ser identificadas por los adm inistradores ante el IMC ante el cual se constituye el depósito como cuentas de no residentes.
+El manejo de los recursos depositados en estas cuentas estará a cargo de los administradores de la inversión de portafolio señalados en el artículo 2.17.2.2.2.3 del Decreto 1068/2015.
+Para las operaciones de compra y venta de divisas a los IMC, cuyos recursos sean debitados o abonados en estas cuentas, se deberá suministrar la información de los datos mínimos de las operaciones de cambio por inversiones internacionales (Declaración de Cambio) por parte del administrador.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+Además, estas cuentas también podrán utilizarse para:
+a) Realizar inversión de portafolio con las sumas resultantes de la redención, liquidación, rendimientos o utilidades originadas en las inversiones directas de capital del exterior o en las inversiones de portafolio, del mismo inversionista titular de la cuenta.
+b) Recibir desembolsos en moneda legal, provenientes de operaciones de crédito local otorgados por IMC o residentes.
+c) Efectuar pagos de los créditos y las operaciones relacionadas con estos.
+El registro de inversión extranjera se efectuará conforme al procedimiento establecido en el numeral 7.2.2.2 del Capítulo 7 de esta Circular.
+c. Cuentas de depósitos centralizados de valores extranjeros
+Estas cuentas podrán abrirse a nombre de los Depósitos Centralizados de Valores Extranjeros que participen en acuerdos o convenios de integración de bolsas de valores, y podrán acreditarse y debitarse para la realización de operaciones trasnacionales de inversión de capital del exterior de portafolio y sus operaciones conexas. Estas cuentas deben ser identificadas por los Depósitos Centralizados de Valores o su apoderado ante el IMC ante el cual se constituye el depósito como cuentas de no residentes.
+Para las operaciones de compra y venta de divisas a los IMC para la inversión de capital del exterior de portafolio y las operaciones conexas, cuyos recursos sean debitados o abonados en estas cuentas, se deberá suministrar la información de los datos mínimos de las operaciones de cambio por inversiones internacionales (Declaración de Cambio) . El responsable de suministrar la información de los datos mínimos será el administrador de la inversión, el depósito centralizado de valores extranjero o su apoderado , en los términos señalados en el literal a) del numeral 7.2.2.1 del Capítulo 7 de la presente Circular.
+Los saldos de estas cuentas pueden ser convertidos a divisas y girados al exterior, para el caso de retorno de capital o de las utilidades de la inversión de capital del exterior de portafolio, suministrando la información de los datos mínimos de las operaciones de cambio por inversiones internacionales (Declaración de Cambio). En caso de que los saldos de estas cuentas sean utilizados para capitalizar sumas con derecho a giro originadas en las inversiones de capital del exterior de portafolio en nuevas inv ersiones de portafolio, éstas
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio se entenderán registradas en los términos señalados en el numeral 7.2.2.2 del Capítulo 7 de la presente Circular.
+d. Cuentas para operaciones de crédito externo en moneda legal
+De conformidad con lo dispuesto en el artículo 45 de la R.E. 1/18 J.D, los no residentes que otorguen crédito externo en moneda legal en favor de IMC, residentes y no residentes deberán realizar estas operaciones utilizando cuentas de uso exclusivo, las cu ales deberán ser identificadas por su titular ante el IMC como cuentas para operaciones de crédito externo en moneda legal. Así mismo, estas cuentas podrán abrirse para el caso de ingreso o egreso de recursos a estas cuentas por concepto de avales y garant ías, o anticipos para futuras capitalizaciones.
+Estas cuentas se deberán utilizar para realizar los desembolsos y pagos en moneda legal de los créditos externos que obtengan los no residentes, así como para la ejecución o restitución de avales o garantías en los cuales el no residente participe.
+Los recursos de las cuentas pueden utilizarse para efectuar operaciones de liquidez mediante su traslado a las cuentas de inversión de portafolio a que se refiere el literal b) de este numeral.
+Las cuentas se acreditarán con moneda legal producto de la negociación de divisas transferidas desde el exterior, desembolso de créditos locales, recaudos por emisión y colocación de títulos a residentes, rendimientos o liquidación de inversión de portafol io, ejecución o restitución de avales o garantías, y para otros ingresos relacionados con las operaciones de crédito externo, y los derivados del rendimiento de la cuenta.
+Las cuentas se debitarán para desembolsar o pagar créditos externos, realizar traslados de recursos a las cuentas descritas en el literal b) de este numeral para efectuar operaciones de inversión de portafolio, la ejecución o restitución de avales o garant ías, y para otros egresos relacionados con las operaciones de crédito externo, la inversión de portafolio y el mantenimiento de la cuenta.
+Para las operaciones de compra y venta de divisas cuyos recursos sean acreditados o debitados de estas cuentas, el titular de la cuenta deberá suministrar la información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio), debiendo utilizar el numeral cambiario 5457 – “Compra de divisas para acreditar cuentas de no residentes de uso exclusivo para operaciones de crédito externo en moneda legal ” para ingreso, y el numeral cambiario 5806 – “Venta de divisas
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio para debitar cuentas de uso exclusivo para operaciones de crédito externo en pesos de no residentes” para egresos.
+Los créditos otorgados por no residentes a favor de no residentes no requieren informe ante el Banrep.
+Las transferencias de recursos del exterior que ingresen a estas cuentas estarán sujetas al depósito de que trata el artículo 47 de la R.E. 1/18 J.D. en los términos y condiciones que se señalan en el numeral 5.1.3 del Capítulo 5 de esta Circular y de acue rdo con el procedimiento señalado en la Circular Reglamentaria Externa DFV-113.
+e. Cuentas para pagos de exportaciones de servicios
+Estas cuentas podrán abrirse a nombre de establecimientos bancarios del exterior.
+Se acreditarán con moneda legal producto de la negociación de divisas transferidas desde el exterior. Podrán debitarse para hacer pagos en moneda legal a residentes exportadores de servicios por cuenta de no residentes y para realizar devoluciones al exter ior de los saldos remanentes en esta cuenta.
+Para las operaciones de compra y venta de divisas cuyos recursos sean acreditados o debitados de estas cuentas, el titular de la cuenta deberá suministrar la información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio), debiendo utilizar el numeral cambiario 5464 – “Compra de divisas para acreditar cuentas de no residentes de uso exclusivo para pagos de exportaciones de servicios” para ingresos, y el numeral cambiario 5809 – “Venta de divisas por débitos en las cuentas de no residentes de uso exclusivo para pagos de exportaciones de servicios” para egresos.
+El IMC en el que se abran estas cuentas deberá presentar el “Reporte mensual de pagos de exportaciones de servicios desde cuenta en pesos”, dentro de los veinte (20) días calendario siguientes al cierre del mes que se reporta.
+f. Cuentas para dispersión de remesas de trabajadores
+Estas cuentas podrán abrirse a nombre de no residentes que cuenten con licencia o autorización en el exterior para ejercer como proveedores de transferencia de remesas, que estén sujetos en su jurisdicción de origen a la supervisión de una autoridad bancaria o de valores, que cumplan con la regulación aplicable en materia de administración del riesgo de Lavado de Activos y Financiación del Terrorismo (LA/FT) y que su país de origen sea miembro
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio del Grupo de Acción Financiera Internacional (GAFI) o de un miembro asociado (FATF associate members).
+El IMC en el que se mantenga la cuenta, deberá implementar políticas, procedimientos y mecanismos que garanticen el cumplimiento de todas las disposiciones en materia de LA/FT expedidas por la Superintendencia Financiera de Colombia.
+Estas cuentas se acreditarán con moneda legal producto de la negociación de divisas transferidas desde el exterior. Podrán debitarse para hacer dispersión en moneda legal a residentes por concepto de remesas de trabajadores y para realizar devoluciones al exterior de los saldos remanentes de esta cuenta.
+Para las operaciones de compra y venta de divisas cuyos recursos sean acreditados o debitados de estas cuentas, el titular de la cuenta deberá suministrar la información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio), debiendo utilizar el numeral cambiario 1814 – “Compra de divisas para acreditar cuentas para dispersión de remesas de trabajadores” para ingresos, y el numeral cambiario 2993 – “Venta de divisas por débitos de cuentas p ara dispersión de remesas de trabajadores” para egresos.
+Para la dispersión en moneda legal de cada una de las remesas de trabajadores, el titular de la cuenta deberá suministrar ante el IMC donde tenga la cuenta para dispersión de remesas de trabajadores, la información de los datos mínimos de la operación de c ambio por servicios, transferencias y otros conceptos (Declaración de Cambio) utilizando los numerales cambiarios de remesas definidos en el Anexo 1 de esta Circular.
+La información de los datos mínimos para este tipo de operaciones (Declaración de Cambio) se encuentra señalada en el numeral 10.12 del presente Capítulo.
+El IMC en el que se abran estas cuentas deberá presentar el “Reporte trimestral de remesas de trabajadores (RTR)”.
+Adicionado con el Boletín del Banco de la República No. 43 (Diciembre 16/2025) [DCIP-83 Diciembre 16/2025]
+10.4.2.3 Depósitos electrónicos y Cuentas de Trámite Simplificado (CATS)
+Conforme al numeral 1, literal e) y numeral 4 del artículo 8 de la R.E. 1/18 J.D, los IMC podrán recibir depósitos electrónicos y abrir Cuentas de Trámite Simplificado (CATS) de personas naturales, jurídicas o asimiladas no residentes sujetos a las disposi ciones de la Parte 2, Libro 1, Título 15, Capítulos 1 al 3 del Decreto 2555 de 2010 y a la Circular Básica
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Jurídica de la Superintendencia Financiera de Colombia (Parte II, Título I, Capítulo III y sus modificaciones) y demás disposiciones aplicables.
+Los titulares de estos depósitos no podrán desembolsar créditos en moneda legal.
+Los titulares de estos depósitos tampoco podrán realizar operaciones de cambio obligatoriamente canalizables con cargo a los recursos de estos depósitos.
+10.4.2.4 Depósitos a término
+Conforme al numeral 1, literal e) del artículo 8 de la R.E. 1/18 J.D, los IMC pueden recibir depósitos a término en moneda legal colombiana, incluyendo Certificados de Depósito a Término -CDT- y Certificados de Depósito de Ahorro a Término -CDAT- de person as naturales colombianas no residentes.
+Estos depósitos deben ser identificados por los titulares o su apoderado ante el IMC ante el cual se constituye, como depósitos de no residentes personas naturales colombianas.
+Los depósitos a que se refiere el presente numeral no requieren de registro ante el Banrep para su apertura o funcionamiento, ni de informe de movimientos o saldos.
+Estos depósitos podrán constituirse con los recursos en moneda legal que posean los no residentes, personas naturales colombianas en el país o con los recursos que se moneticen para este fin.
+10.4.3. Suministro de información al Banco de la República
+Los IMC deberán enviar el “Formato de reporte de depósitos de no residentes en IMC y compra de cartera interna” al buzón DTIE-depositosnoresidentes@banrep.gov.co, dentro del mes calendario siguiente al corte de cada trimestre y al cierre de los meses de marzo, junio, septiembre y diciembre, con los saldos mensuales de los depósitos a la vista de que tratan los numerales 10.4.1 y 10.4.2.
+Para los depósitos de que trata el numeral 10.4.2 se excluyen las personas naturales colombianas no residentes.
+Para los depósitos de que trata el numeral 10.4.2.1. se deberán informar adicionalmente los movimientos en moneda legal relacionados con la compra de cartera o instrumentos de pago de operaciones internas y su recaudo.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio El incumplimiento de esta obligación será informado a la Superintendencia Financiera de Colombia para lo de su competencia.
+10.5. Derivados
+Sin perjuicio de lo dispuesto en esta circular, se deberá tener en cuenta para estas operaciones lo dispuesto en la Circular Reglamentaria Externa DOAM-144.
+10.6. Concesionarios de servicios de correos que prestan servicios financieros de correos
+De conformidad con lo previsto en el artículo 106 de la R.E. 1/18 J.D., los concesionarios de servicios de correos para desarrollar las operaciones de servicios financieros de correos deberán registrar en el Banrep cuentas de compensación, de acuerdo con l o dispuesto en el Capítulo 8 de esta Circular. De las operaciones que se efectúen a través de estas cuentas, se deberá diligenciar el numeral de ingreso 1991 “Ingreso de divisas en cuentas de compensación por servicios financieros de correos” y de egreso 2991 “Egreso de divisas en cuentas de compensación por servicios financieros de correos”.
+Los concesionarios de servicios de correos que presten servicios financieros de correos están obligados a exigir a sus clientes, el suministro de la información de los datos mínimos para cada una de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio), utilizando el numeral de ingresos 1990 “Remesas pagadas en moneda legal colombiana a través de concesionarios de servicios de correos” o el numeral de egresos 2990 “Remesas entregadas en moneda legal colombiana a t ravés de concesionarios de servicios de correos”.
+Adicionalmente, los concesionarios de servicios financieros de correos deberán reportar mensualmente al Banrep, dentro de los cinco (5) días hábiles siguientes al cierre de cada mes, la información solicitada en el “Archivo de concesionarios de servicios de correos”.
+También deberán suministrar la información y prestar la colaboración que requiera la UIAF y las demás autoridades para sus propósitos de prevención de actividades delictivas, control cambiario y cualquier otra de su competencia.
+Los concesionarios de servicios de correos deberán conservar la información que transmitan al Banrep de las operaciones de cambio canalizadas, por un período igual al de caducidad o prescripción de la acción sancionatoria por infracciones al régimen cambiario.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio 10.7. Envío de información mensual de la empresa colombiana de petróleos - ECOPETROL S.A.
+De acuerdo con lo dispuesto en el artículo 98 de la R.E. 1/18 J.D., se debe enviar mensualmente al Banrep la información solicitada en el archivo Excel a través del enlace dispuesto en la página https://www.banrep.gov.co/es- “Política monetaria y cambiaria”, “Regulación y operaciones cambiarias” El incumplimiento del envío de esta información será puesto en conocimiento de las entidades de control y vigilancia del régimen cambiario.
+10.8. Venta a no residentes de cartera o instrumentos de pago derivados de operaciones entre residentes (operaciones internas)
+Los residentes y los IMC podrán vender a los no residentes la cartera o los instrumentos de pago derivados de sus operaciones internas.
+a. El pago por parte del no residente que compra la cartera o los instrumentos podrá realizarse en moneda extranjera o en moneda legal, según lo acuerden las partes.
+- Si el pago se realiza en moneda extranjera, y quien vende la cartera o el instrumento de pago es un IMC, éste podrá recibir las divisas en el exterior y no deberá transmitir declaración de cambio.
+- Si quien vende es un residente, éste deberá canalizar las divisas a través de los IMC mediante el suministro de la información de los datos mínimos por concepto de servicios, transferencias y otros conceptos (Declaración de Cambio), o a través de sus cuentas de compensación con la presentación del Informe de Movimientos de Cuenta de Compensación, utilizando el numeral cambiario 5458 “Venta en moneda extranjera a no residentes de cartera o instrumentos de pago de operaciones internas”.
+- Si el pago se realiza en moneda legal, éste deberá efectuarse desde la cuenta en moneda legal del no residente de que trata el numeral 10.4.2.1.
+b. El pago por parte del residente deudor al nuevo acreedor (no residente que compra la cartera o los instrumentos) deberá realizarse en moneda legal en la cuenta del no residente de que trata el numeral 10.4.2.1. o alternativamente al administrador de la cartera designado por éste, ya sea un residente o un IMC, quien deberá transferirlo al nuevo acreedor a través de los IMC mediante el suministro de la información de los datos mínimos por concepto de servicios, transferencias y otros conceptos (declaración de
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio cambio), utilizando el numeral cambiario 5807 “Pago en moneda extranjera a no residentes de cartera o instrumentos de pago de operaciones internas”.
+El pago podrá efectuarse en moneda extranjera cuando las partes así lo acuerden, desde las cuentas de compensación del residente con la presentación del Informe de Movimientos de Cuenta de Compensación o a través de los IMC mediante el suministro de la información de los datos mínimos por concepto de servicios, transferencias y otros conceptos (Declaración de Cambio), utilizando el numeral cambiario 5807 “Pago en moneda extranjera a no residentes de cartera o instrumentos de pago de operaciones internas”.
+Cuando el residente deudor corresponda a una sucursal del régimen cambiario especial, el pago al nuevo acreedor (no residente que compra la cartera o los instrumentos) deberá realizarse conforme a lo previsto en el numeral 11.1.1.6. literal b) ordinal ii.
+Los IMC deberán incluir en el reporte al que se refiere el numeral 10.4.3, los movimientos en moneda legal relacionados con la compra de cartera o instrumentos de pago de operaciones internas y su recaudo, que se efectúen a través de las cuentas en moneda legal de que trata el numeral 10.4.2.1.”
+10.9. Venta a los IMC de cartera o instrumentos de pago derivados de operaciones entre residentes (operaciones internas) cuyo pago se encuentra autorizado en divisas
+a. Venta a los IMC de la cartera o los instrumentos de pago derivados de las operaciones internas cuyo pago se haya pactado a través de cuentas de compensación, según lo previsto en el artículo 37 de la R.E. 1/18.
+El pago en moneda extranjera por parte del IMC al residente que vende la cartera o los instrumentos de pago deberá realizarse en la cuenta de compensación del residente.
+El pago en moneda extranjera por parte del residente deudor al IMC (en calidad de nuevo acreedor) deberá realizarse desde la cuenta de compensación del residente.
+En ambos casos se deberá transmitir la información de los datos mínimos por concepto de servicios, transferencias y otros conceptos (Declaración de Cambio) en el Informe de Movimientos de Cuenta de Compensación, utilizando los numerales cambiarios 5460 “Venta en moneda extranjera a IMC de cartera o instrumentos de pago de operaciones
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio internas” o 5808 “Pago en moneda extranjera a IMC de cartera o instrumentos de pago de operaciones internas”, según corresponda.
+b. Venta a los IMC de la cartera o los instrumentos de pago derivados de las operaciones internas cuyo pago se encuentre autorizado en moneda extranjera, según lo previsto en el artículo 82, el parágrafo 4 del artículo 86 y el artículo 97 de la R.E. 1/18.
+Si el pago en moneda extranjera por parte del IMC al residente que vende la cartera o los instrumentos de pago se realiza a través del mercado cambiario, se deberá transmitir el Informe de Movimientos de Cuenta de Compensación o suministrar la información de los datos mínimos por concepto de servicios, transferencias y otros conceptos, según corresponda.
+Si el pago por parte del residente deudor al IMC (en calidad de nuevo acreedor) se realiza a través del mercado cambiario, se deberá transmitir el Informe de Movimientos de Cuenta de Compensación o suministrar la información de los datos mínimos por concepto de servicios, transferencias y otros conceptos, según corresponda.
+En ambos casos se utilizarán los numerales cambiarios 5460 “Venta en moneda extranjera a IMC de cartera o instrumentos de pago de operaciones internas” o 5808 “Pago en moneda extranjera a IMC de cartera o instrumentos de pago de operaciones internas”, segú n corresponda.
+Cuando en la operación interna participen residentes sujetos al régimen cambiario especial, éstos deberán seguir el procedimiento del numeral 11.1.1.7. del Capítulo 11 de esta Circular.
+10.10. Importación y exportación de servicios a través de proveedores de servicios de pago agregadores
+Si los pagos en moneda extranjera de importación o exportación de servicios se realizan través de un proveedor de servicios de pago agregador residente y se canalizan voluntariamente a través de un IMC, el proveedor de servicios de pago agregador residente deberá suministrar diariamente al IMC la información agregada de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio) en los términos del presente Capítulo, indicando, para el caso de las importaciones, la sumatoria diaria del valor pagado por tales opera ciones con el numeral cambiario 2919 “Pago de importación de servicios con divisas a través de proveedores de servicios de pago agregadores”, y para el caso de las exportaciones, la sumatoria diaria del valor de las
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio operaciones canalizadas, utilizando el numeral cambiario 1602 “Pago de exportación de servicios con divisas a través de proveedores de servicios de pago agregadores”.
+Si el pago en moneda extranjera de importación o exportación de servicios se realiza través de un proveedor de servicios de pago agregador no residente, el cargo o abono en la cuenta del residente en moneda legal hará las veces de declaración de cambio.
+Si el pago de importaciones o exportaciones de servicios se realiza con un proveedor de servicios de pago agregador no residente, utilizando la cuenta de compensación del residente, el Informe de Movimientos de Cuenta de Compensación hará las veces de la declaración de cambio.
+En todo caso, los proveedores de servicios de pago agregadores residentes y los IMC que tengan contratos con proveedores de servicio de pago agregadores no residentes, según corresponda, deberán enviar mensualmente al Banco de la República el “Reporte mens ual de las operaciones realizadas a través de proveedores de servicio de pago agregadores” de los numerales 3.5.3. y 4.6.3. de esta Circular.
+10.11. Devolución
+Si se debe reembolsar todo o parte de lo recibido o pagado por una exportación o importación de servicios realizada a través de un proveedor de servicios de pago, el exportador, el importador o el proveedor de servicios de pago agregador deberá suministrar la información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio) como una devolución.
+10.12 Información de datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio)
+La información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio), es la siguiente:
+Identificación de la declaración Nota: los siguientes campos también deberán diligenciarse cuando se trate de cambio de declaración de cambio.
+Número de la declaración Número de la declaración de cambio asignado por el IMC. Este dato no es corregible.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+Cuando se esté haciendo un cambio de declaración, deberá indicarse también la declaración que se cambia (con número, fecha e IMC). Cuando la declaración que se cambia sea de créditos externos, deberá indicar, además, el número de crédito externo.
+Fecha de la declaración - Corresponde al día en que se efectúa la compra o venta de las divisas al IMC.
+- Cuando se trate de cambio de declaración de cambio, se debe indicar la fecha en que se solicita. Este dato no es corregible.
+NIT del IMC Número del NIT del IMC, sin dígito de verificación.
+Detalle de la declaración Devolución Indique “sí”, en caso contrario, indique “no”.
+Tipo de entidad - PAT = Patrimonio autónomo
+- FCP = Fondo de capital privado
+- FIC = Fondo de inversión colectiva
+- OTROS Tipo y número de identificación y nombre del actor que compra o vende divisas
+- CC= Cédula de ciudadanía
+- CE= Cédula de extranjería
+- NI= NIT
+- PA = Patrimonio autónomo
+- PB= Pasaporte
+- RC= Registro civil
+- PPT= Permiso por Protección Temporal
+- TI= Tarjeta de identidad
+- NR= No residente
+Cuando se trate de un consorcio o unión temporal, se deberá suministrar el número de identificación de un partícipe.
+Cuando se trate de patrimonios autónomos, se deberá suministrar su número de identificación tributaria (NIT), en caso de que no tenga NIT propio deberá suministrar el código PA.
+Moneda de negociación (moneda en la que se paga la operación) Código de la moneda.
+Valor total moneda de negociación Valor pagado en la moneda de negociación.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Valor total en dólares Suma de los valores en dólares (USD) de cada numeral diligenciado en la declaración de cambio.
+Tasa de cambio a dólares Tipo de cambio para la conversión de la moneda de negociación a dólares (USD) expresado en unidades por dólar, ejemplo: en el caso de yenes japoneses deberá reportarse como 111,85682, o, libra esterlina 0,61839.
+Cuando la moneda de negociación sea dólares, la tasa de cambio a dólares (USD) debe ser 1.
+Cuando se trate de remesas de trabajadores que se paguen desde las cuentas de uso exclusivo para dispersión de remesas de trabajadores de que trata el literal f. del numeral 10.4.2.2 de esta Circular , para efectos de la declaración de cambio con la que se reporta el pago de la remesa, se debe utilizar la Tasa de Cambio Representativa del Mercado (TRM) vigente el día hábil siguiente al día de la dispersión de la remesa.
+Adicionado con el Boletín del Banco de la República No. 43 (Diciembre 16/2025) [DCIP-83 Diciembre 16/2025]
+Información del numeral Numeral Cambiario Código que identifica el ingreso o egreso de divisas, según el Anexo 1 de la Circular Reglamentaria Externa DCIP-83 Valor en dólares Valor de negociación expresado en dólares (USD) por cada numeral cambiario.
+Si la operación se canaliza a través de cuenta de compensación, el “Informe de Movimientos de Cuenta de Compensación” hará las veces de la información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio). La información de la operación de cambio debe corresponder a la del día del ingreso o egreso de las divisas de la cuenta de compensación, la cual deberá coincidir con el período que se reporte en el “Informe de Movimientos de Cuenta de Compensación”.

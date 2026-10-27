@@ -1,4 +1,86 @@
 {
-  "pending_events": {},
-  "updated_at": "2026-10-27T04:29:36.043566+00:00"
+  "pending_events": {
+    "89bc1a18f89120885a586e1931168d2a68b86f44f190f812b9e6fd0301ebfbb9": {
+      "event_id": "89bc1a18f89120885a586e1931168d2a68b86f44f190f812b9e6fd0301ebfbb9",
+      "kind": "CHANGED_URL",
+      "variant": "ai",
+      "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
+      "topic": "Information collections update",
+      "summary": "New entries added for October 27 and October 26, 2026, reporting information collection updates for FFIEC 031/041/051, FR 28, and FR O, with links to initial Federal Register notices. 'Last Update' date changed from October 26 to October 27, 2026.",
+      "reason": "The diff shows addition of substantive content: new dated entries describing updates to information collections (FFIEC 031/041/051, FR 28, FR O) with links to initial Federal Register notices, and a change to the 'Last Update' date from October 26 to October 27, 2026. These represent updates to reporting forms and information collection status, which constitutes a substantive change beyond cosmetic layout changes, making the event relevant per the defined criteria. No obligations, thresholds, or deadlines are specified as changed; relevance is driven by the posting of new information collection updates and associated Federal Register notices.",
+      "impact": "Reporting form updates and information collection notices posted on Federal Reserve page.",
+      "priority": 4,
+      "effective_date": "Not stated",
+      "actions": "Information collection updates posted with Federal Register notice links.",
+      "tags": [
+        "warning",
+        "bank",
+        "regulatory"
+      ]
+    },
+    "8c726b544c511ae45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5": {
+      "event_id": "8c726b544c511ae45c0e4933df36d164b4a2a536e9b039650f9be55af251bdc5",
+      "kind": "CHANGED_URL",
+      "variant": "ai",
+      "url": "https://www.federalreserve.gov/apps/reportingforms/review",
+      "topic": "Information Collections",
+      "summary": "Added a new collection identifier (FFIEC 031 FFIEC 041 FFIEC 051) to the list of information collections out for public comment, with a final Federal Register notice link dated 12/28/2026, and updated the page's last update date from Oct 26, 2026 to Oct 27, 2026.",
+      "reason": "The regulator added a new information collection (FFIEC 031/041/051) with a final FR notice and updated the page's last update date, indicating a substantive change to the list of required reporting forms.",
+      "impact": "Institutions subject to FFIEC 031, 041, and 051 reporting must now consider the new collection and its associated final FR notice, and the regulatory page reflects this addition.",
+      "priority": 4,
+      "effective_date": "12/28/2026",
+      "actions": "Added new collection entry to the reporting forms review page and updated the page's last update timestamp.",
+      "tags": [
+        "warning",
+        "bank",
+        "regulatory"
+      ]
+    },
+    "op-e13ab63e3f71e969c1065e51776243e04d694a9c591bdbb2a5c9856627439169": {
+      "event_id": "op-e13ab63e3f71e969c1065e51776243e04d694a9c591bdbb2a5c9856627439169",
+      "source_event_id": "17abe93c32ee606912e4467a8ffc9b4176aae1bd1b22e5ceca06f3c6d7e1c5ee",
+      "kind": "EXTRACTION_ERROR",
+      "url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-avales-imc.xls",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-27T16:18:11.297517+00:00).",
+      "reason": "Unsupported content type for text extraction",
+      "impact": "The previous known-good baseline was preserved.",
+      "priority": 3,
+      "tags": [
+        "warning",
+        "monitoring"
+      ]
+    },
+    "op-1337365ddc3fa93f121fd79aea52a585fca1ec79fd65dee814e2ce087dff4cfe": {
+      "event_id": "op-1337365ddc3fa93f121fd79aea52a585fca1ec79fd65dee814e2ce087dff4cfe",
+      "source_event_id": "d68d5c0c2be1cea1877ec541bc1af0431dcf31160137f80c9b01897119849728",
+      "kind": "EXTRACTION_ERROR",
+      "url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-deposito-operaciones-credito.xls",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-27T16:18:09.485152+00:00).",
+      "reason": "Unsupported content type for text extraction",
+      "impact": "The previous known-good baseline was preserved.",
+      "priority": 3,
+      "tags": [
+        "warning",
+        "monitoring"
+      ]
+    },
+    "op-32eebf6b6e1b18cf34021f0cbeac843e9d9d708a38926946855caf3fdb7c6e20": {
+      "event_id": "op-32eebf6b6e1b18cf34021f0cbeac843e9d9d708a38926946855caf3fdb7c6e20",
+      "source_event_id": "459c15c5289ac612bac127d09265eefad8128ca56015762248e6d85530348ad4",
+      "kind": "EXTRACTION_ERROR",
+      "url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-concesionarios.xls",
+      "topic": "Monitoring operational alert",
+      "summary": "A monitored regulator resource has failed 2 consecutive scans (since 2026-10-27T16:18:38.884187+00:00).",
+      "reason": "Unsupported content type for text extraction",
+      "impact": "The previous known-good baseline was preserved.",
+      "priority": 3,
+      "tags": [
+        "warning",
+        "monitoring"
+      ]
+    }
+  },
+  "updated_at": "2026-10-27T16:38:39.961865+00:00"
 }
