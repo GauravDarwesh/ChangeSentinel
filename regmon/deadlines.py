@@ -26,6 +26,8 @@ import re
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+from regmon.fsutil import atomic_write_bytes, atomic_write_text
+
 MONTHS = {name: index for index, name in enumerate(
     ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"], start=1)}
 MONTH = r"(?:January|February|March|April|May|June|July|August|September|October|November|December)"
@@ -75,8 +77,14 @@ def parse_date(text: str) -> date | None:
         if match:
             return date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
         match = re.fullmatch(r"(\d{1,2})/(\d{1,2})/(\d{4})", value)
-        if match:  # US regulators write month first.
-            return date(int(match.group(3)), int(match.group(1)), int(match.group(2)))
+        if match:
+            first, second, year = int(match.group(1)), int(match.group(2)), int(match.group(3))
+            # US regulators write month first. A first number above 12 can only
+            # be a day (30/06/2026, as Latin American and European regulators
+            # write), which used to raise and silently drop the deadline.
+            if first > 12 >= second:
+                return date(year, second, first)
+            return date(year, first, second)
     except ValueError:
         return None
     return None
@@ -113,7 +121,12 @@ def dates_in_text(text: str, today: date | None = None) -> list[dict]:
     """Dated phrases in text: [{kind, date, quote}], each date and kind once."""
     today = today or datetime.now(timezone.utc).date()
     found, seen = [], set()
-    for line in str(text or "").splitlines():
+    lines = [line for line in str(text or "").splitlines() if line.strip()]
+    # Each line, then each pair of adjacent lines: PDF and HTML normalisation
+    # routinely breaks "received on or before\nMarch 2, 2027" across lines.
+    # A date already found on one line is not repeated (seen).
+    windows = lines + [lines[index] + " " + lines[index + 1] for index in range(len(lines) - 1)]
+    for line in windows:
         flat = re.sub(r"\s+", " ", line)
         taken: list[tuple[int, int]] = []
         for kind, pattern in PATTERNS:
@@ -235,15 +248,14 @@ def _ai_results(data_dir: Path) -> dict[str, dict]:
 def build(data_dir: Path, config_path: Path, today: date | None = None) -> dict:
     """Every dated entry from recorded changes of active sources, newest scan first."""
     today = today or datetime.now(timezone.utc).date()
-    try:
-        config = json.loads(config_path.read_text(encoding="utf-8"))
-        active = {str(source.get("id")) for source in config.get("sources", []) if source.get("active") is True}
-    except (OSError, ValueError):
-        active = set()
-    try:
-        inventory = json.loads((data_dir / "latest.json").read_text(encoding="utf-8")).get("sources", {})
-    except (OSError, ValueError):
-        inventory = {}
+    # An unreadable config or inventory raises instead of reading as "no active
+    # sources": that emptied the calendar and the subscribed .ics feed, and the
+    # next run reported 0 entries as if it were true. write() is never allowed
+    # to fail a scan, so the published files simply stay as they were.
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    active = {str(source.get("id")) for source in config.get("sources", []) if source.get("active") is True}
+    latest_path = data_dir / "latest.json"
+    inventory = json.loads(latest_path.read_text(encoding="utf-8")).get("sources", {}) if latest_path.exists() else {}
     analyses = _ai_results(data_dir)
     root = data_dir.parent
     entries: dict[str, dict] = {}
@@ -356,27 +368,52 @@ def to_ics(calendar: dict, generated_at: str, base_url: str) -> str:
     return "\r\n".join(_fold(line) for line in lines) + "\r\n"
 
 
-def write(data_dir: Path, config_path: Path, today: date | None = None) -> bool:
-    """Rebuild data/calendar.json and data/calendar.ics; rewrite only on change."""
+# Bump when to_ics() or the published fields change, so the fix reaches the
+# feed even when no deadline changed (write() otherwise keeps unchanged files).
+FEED_VERSION = 2
+
+
+def write(data_dir: Path, config_path: Path, today: date | None = None, force: bool = False) -> bool:
+    """Rebuild data/calendar.json and data/calendar.ics; rewrite only on change.
+
+    "Change" covers the entries, the feed format (FEED_VERSION) and the
+    subscribe address; ``force`` rewrites regardless.
+    """
     calendar = build(data_dir, config_path, today)
+    calendar["feed_version"] = FEED_VERSION
+    subscribe = dashboard_url() + "data/calendar.ics"
     json_path = data_dir / "calendar.json"
     try:
         existing = json.loads(json_path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         existing = None
-    if isinstance(existing, dict) and existing.get("entries") == calendar["entries"] and (data_dir / "calendar.ics").exists():
+    if (
+        not force
+        and isinstance(existing, dict)
+        and existing.get("entries") == calendar["entries"]
+        and existing.get("feed_version") == FEED_VERSION
+        and existing.get("subscribe") == subscribe
+        and (data_dir / "calendar.ics").exists()
+    ):
         return False
     generated_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     calendar["generated_at"] = generated_at
-    calendar["subscribe"] = dashboard_url() + "data/calendar.ics"
-    json_path.write_text(json.dumps(calendar, indent=2) + "\n", encoding="utf-8")
-    (data_dir / "calendar.ics").write_bytes(to_ics(calendar, generated_at, dashboard_url()).encode("utf-8"))
+    calendar["subscribe"] = subscribe
+    # The .ics is written first: if the run stops between the two, the next
+    # run sees calendar.json unchanged-or-older and rebuilds both.
+    atomic_write_bytes(data_dir / "calendar.ics", to_ics(calendar, generated_at, dashboard_url()).encode("utf-8"))
+    atomic_write_text(json_path, json.dumps(calendar, indent=2) + "\n")
     return True
 
 
 def main() -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Rebuild data/calendar.json and data/calendar.ics.")
+    parser.add_argument("--force", action="store_true", help="Rewrite both files even when nothing changed")
+    args = parser.parse_args()
     root = Path(__file__).resolve().parent.parent
-    changed = write(root / "data", root / "config" / "sources.json")
+    changed = write(root / "data", root / "config" / "sources.json", force=args.force)
     entries = json.loads((root / "data" / "calendar.json").read_text(encoding="utf-8"))["entries"]
     print(json.dumps({"rewritten": changed, "entries": len(entries)}, indent=2))
 

@@ -271,13 +271,16 @@ class PoliteClient:
                         validate_public_http_url(target, resolve_dns=self.resolve_dns)
                     except ValueError as exc:
                         raise FetchFailed(str(exc)) from exc
-                self._spend(host_of(target), exempt=True)
-                status, headers, body = self.transport(target, self.headers, self.defaults.request_timeout_seconds, ROBOTS_MAX_BYTES)
+                status, headers, body = self._robots_request(target)
                 if status in REDIRECT_STATUSES and headers.get("location"):
                     target = urljoin(target, headers["location"])
                     continue
                 if 200 <= status < 300:
                     policy = robots_mod.parse(body.decode("utf-8", errors="replace"))
+                elif status == 429:
+                    # Rate limiting is an instruction to slow down, not a missing
+                    # robots.txt: never read it as "allow everything".
+                    policy = robots_mod.RobotsPolicy.disallow_all("unreachable")
                 elif 400 <= status < 500:
                     policy = robots_mod.RobotsPolicy.allow_all("unavailable")
                 break
@@ -287,6 +290,28 @@ class PoliteClient:
             policy = robots_mod.RobotsPolicy.disallow_all("unreachable")
         self.robots[host] = policy
         return policy
+
+    def _robots_request(self, target: str):
+        """robots.txt with one retry on a transport error, 5xx or 429.
+
+        Every other request already gets a second attempt; robots.txt had none,
+        so one CDN blip blocked the whole regulator for the week's sweep.
+        """
+        status, headers, body = 0, {}, b""
+        for attempt in (1, 2):
+            self._spend(host_of(target), exempt=True)
+            try:
+                status, headers, body = self.transport(target, self.headers, self.defaults.request_timeout_seconds, ROBOTS_MAX_BYTES)
+            except ScoutFetchError:
+                raise
+            except Exception:
+                if attempt == 1 and self.can_afford(host_of(target)):
+                    continue
+                raise
+            if (status >= 500 or status == 429) and attempt == 1 and self.can_afford(host_of(target)):
+                continue
+            break
+        return status, headers, body
 
     def allowed_by_robots(self, url: str) -> bool:
         return self.robots_for(url).allowed(path_and_query(url))

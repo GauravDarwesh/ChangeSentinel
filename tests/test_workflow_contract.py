@@ -64,7 +64,7 @@ class TestRegulatoryMonitorWorkflowContract(unittest.TestCase):
     def test_failures_are_alerted_and_liveness_is_pinged(self):
         workflow = monitor_workflow()
         failure_step = workflow[step_index(workflow, "Alert on workflow failure"):]
-        self.assertIn("if: ${{ failure() }}", failure_step)
+        self.assertIn("if: ${{ failure() || cancelled() }}", failure_step)
         self.assertIn("https://ntfy.sh/$NTFY_TOPIC", failure_step)
         heartbeat = workflow[step_index(workflow, "Heartbeat ping"):step_index(workflow, "Alert on workflow failure")]
         self.assertIn("HEALTHCHECK_PING_URL", heartbeat)

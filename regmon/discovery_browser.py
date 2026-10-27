@@ -6,6 +6,7 @@ import subprocess
 from pathlib import Path
 
 from regmon.config import SourceConfig
+from regmon.fsutil import atomic_write_text
 from regmon.discovery import canonical, parse_discovered_urls
 
 
@@ -120,13 +121,14 @@ def _stealth_discover(source: SourceConfig, data_dir: Path) -> list[str]:
         state = "FAILED"
 
     data_dir.mkdir(parents=True, exist_ok=True)
-    (data_dir / "stealth-output.txt").write_text(
-        "\n\n".join(attempts_log),
-        encoding="utf-8",
-    )
+    # Crawler stdout/stderr belongs in the job log, not in data/: everything
+    # under data/ is committed and published, and one shared file was
+    # overwritten by every source that used browser discovery.
+    print("\n\n".join(attempts_log))
     discovery_dir = data_dir / "discovery"
     discovery_dir.mkdir(parents=True, exist_ok=True)
-    (discovery_dir / f"{source.id}.json").write_text(
+    atomic_write_text(
+        discovery_dir / f"{source.id}.json",
         json.dumps({
             "source_id": source.id,
             "method": "stealth",
@@ -139,7 +141,6 @@ def _stealth_discover(source: SourceConfig, data_dir: Path) -> list[str]:
             "attempted_seeds": successful_seeds + failed_seeds,
             "capped": capped,
         }, indent=2),
-        encoding="utf-8",
     )
     return discovered
 
@@ -171,7 +172,7 @@ def write_combined_discovery_metadata(
     }
     discovery_dir = data_dir / "discovery"
     discovery_dir.mkdir(parents=True, exist_ok=True)
-    (discovery_dir / f"{source.id}.json").write_text(
+    atomic_write_text(
+        discovery_dir / f"{source.id}.json",
         json.dumps(payload, indent=2),
-        encoding="utf-8",
     )

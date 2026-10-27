@@ -306,10 +306,11 @@ jobs:
             echo "HEALTHCHECK_PING_URL is not configured; skipping heartbeat."
           fi
 
-      # A failed scan must never be silent. Uses curl only, so it works even when
-      # dependency installation was the step that failed.
+      # A failed or cancelled scan must never be silent (a 75-minute timeout is a
+      # cancellation, which failure() does not see). Uses curl only, so it works
+      # even when dependency installation was the step that failed.
       - name: Alert on workflow failure
-        if: ${{ failure() }}
+        if: ${{ failure() || cancelled() }}
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -319,9 +320,9 @@ jobs:
             exit 0
           fi
           curl -fsS -m 20 --retry 3 \
-            -H "Title: Regulatory Monitor run failed" \
+            -H "Title: Regulatory Monitor run ${{ job.status == 'cancelled' && 'cancelled or timed out' || 'failed' }}" \
             -H "Priority: 4" \
             -H "Tags: rotating_light,monitoring" \
             -H "Click: $RUN_URL" \
-            -d "Monitoring run ${{ github.run_number }} for source '${REGMON_SOURCE}' failed. Changes may not be detected until it is fixed. Logs: $RUN_URL" \
+            -d "Monitoring run ${{ github.run_number }} for source '${REGMON_SOURCE}' ${{ job.status == 'cancelled' && 'was cancelled or timed out; its scan was not committed' || 'failed' }}. Changes may not be detected until it is fixed. Logs: $RUN_URL" \
             "https://ntfy.sh/$NTFY_TOPIC" > /dev/null && echo "Failure alert sent."

@@ -80,7 +80,9 @@ def parse(text: str, agent: str = PRODUCT_TOKEN) -> RobotsPolicy:
         if current_agents:
             groups.append((list(current_agents), list(current_rules), list(current_delay)))
 
-    for raw_line in str(text or "").splitlines():
+    # RFC 9309 2.5: a UTF-8 byte order mark must be accepted. Left in place it
+    # made line 1 "\ufeffuser-agent", so every rule was dropped (fail-open).
+    for raw_line in str(text or "").lstrip("\ufeff").splitlines():
         line = raw_line.split("#", 1)[0].strip()
         if ":" not in line:
             continue

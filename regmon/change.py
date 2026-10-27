@@ -7,12 +7,16 @@ import re
 from pathlib import Path
 from bs4 import BeautifulSoup
 
+from regmon.fsutil import atomic_write_text
+
 MAX_DIFF_LINES = 200
 MAX_HTML_DIFF_LINES = 1000
 
 # Version the HTML signature algorithm so old snapshots can be re-hashed before
 # comparing them with signatures that normalize the pageConfig cache-buster.
-HTML_COMPARISON_HASH_VERSION = 2
+# Version 3 also stabilizes per-request CMS tokens (Drupal view DOM ids and form
+# build ids, ASP.NET view state, CSRF tokens, script nonces).
+HTML_COMPARISON_HASH_VERSION = 3
 
 def make_id(url: str) -> str:
     return hashlib.sha256(url.encode("utf-8")).hexdigest()
@@ -29,13 +33,58 @@ _PAGE_CACHE_BUSTER = re.compile(
 )
 
 
+# Per-request values that content-management frameworks write into otherwise
+# identical pages. Each pattern replaces only the token value, never the element
+# or its other attributes, so any real markup difference still changes the hash.
+# Evidence (25 Oct 2026): an OSFI Drupal page produced a new HTML_SOURCE_CHANGED
+# event and a new snapshot on every fetch because of js-view-dom-id-<64 hex>.
+_DRUPAL_VIEW_DOM_ID = re.compile(r"\b(js-view-dom-id-)[0-9a-f]{32,}\b")
+_DRUPAL_VIEW_DOM_ID_SETTING = re.compile(r"""(["']view_dom_id["']\s*:\s*["'])[0-9a-f]{32,}(["'])""")
+_DRUPAL_FORM_ID_ATTRIBUTE = re.compile(
+    r"""(\b(?:value|id|data-drupal-selector)\s*=\s*["'])form-[A-Za-z0-9_-]{20,}(["'])"""
+)
+VOLATILE_INPUT_NAMES = frozenset({
+    "form_build_id", "form_token", "__viewstate", "__viewstategenerator", "__eventvalidation",
+    "__requestverificationtoken", "csrf_token", "csrfmiddlewaretoken", "authenticity_token", "_token",
+})
+VOLATILE_META_NAMES = frozenset({"csrf-token", "csrf-param", "_csrf", "_csrf_header"})
+_INPUT_TAG = re.compile(r"<input\b[^>]*>", re.IGNORECASE)
+_META_TAG = re.compile(r"<meta\b[^>]*>", re.IGNORECASE)
+_NAME_ATTRIBUTE = re.compile(r"""\bname\s*=\s*["']([^"']*)["']""", re.IGNORECASE)
+_VALUE_ATTRIBUTE = re.compile(r"""(\bvalue\s*=\s*)(["'])[^"']*\2""", re.IGNORECASE)
+_CONTENT_ATTRIBUTE = re.compile(r"""(\bcontent\s*=\s*)(["'])[^"']*\2""", re.IGNORECASE)
+_NONCE_ATTRIBUTE = re.compile(r"""(\bnonce\s*=\s*)(["'])[^"']*\2""", re.IGNORECASE)
+
+
+def _stabilize_tag(pattern: re.Pattern[str], names: frozenset[str], value: re.Pattern[str], html: str) -> str:
+    def replace(match: re.Match[str]) -> str:
+        tag = match.group(0)
+        name = _NAME_ATTRIBUTE.search(tag)
+        if not name or name.group(1).strip().lower() not in names:
+            return tag
+        return value.sub(lambda item: item.group(1) + item.group(2) + "<volatile>" + item.group(2), tag, count=1)
+
+    return pattern.sub(replace, html)
+
+
+def stabilize_volatile_markup(html: str) -> str:
+    """Replace known per-request CMS tokens with fixed placeholders (version 3)."""
+    html = _DRUPAL_VIEW_DOM_ID.sub(lambda match: match.group(1) + "<volatile>", html)
+    html = _DRUPAL_VIEW_DOM_ID_SETTING.sub(lambda match: match.group(1) + "<volatile>" + match.group(2), html)
+    html = _DRUPAL_FORM_ID_ATTRIBUTE.sub(lambda match: match.group(1) + "form-<volatile>" + match.group(2), html)
+    html = _stabilize_tag(_INPUT_TAG, VOLATILE_INPUT_NAMES, _VALUE_ATTRIBUTE, html)
+    html = _stabilize_tag(_META_TAG, VOLATILE_META_NAMES, _CONTENT_ATTRIBUTE, html)
+    return _NONCE_ATTRIBUTE.sub(lambda match: match.group(1) + match.group(2) + "<volatile>" + match.group(2), html)
+
+
 def html_comparison_hash(value: str | bytes | None) -> str | None:
     """Hash HTML after stabilizing specifically identified volatile fields.
 
     Raw HTML remains preserved for snapshots and evidence. The comparison
-    signature ignores known Cloudflare challenge tokens and the pageConfig
-    cache-buster assignment, preventing transport-only churn from creating
-    false HTML_SOURCE_CHANGED events while retaining other source differences.
+    signature ignores known Cloudflare challenge tokens, the pageConfig
+    cache-buster assignment and per-request CMS tokens (stabilize_volatile_markup),
+    preventing transport-only churn from creating false HTML_SOURCE_CHANGED
+    events while retaining other source differences.
     """
     if value is None:
         return None
@@ -62,6 +111,7 @@ def html_comparison_hash(value: str | bytes | None) -> str | None:
         lambda match: match.group(1) + match.group(2) + "<volatile-cache-buster>" + match.group(2),
         stable_html,
     )
+    stable_html = stabilize_volatile_markup(stable_html)
     return hashlib.sha256(stable_html.encode("utf-8")).hexdigest()
 
 def classify_change(
@@ -116,6 +166,31 @@ def build_event_id(
     ])
     return hashlib.sha256(material.encode("utf-8")).hexdigest()
 
+
+def change_event_id(
+    event_type: str,
+    url_id: str,
+    before_hash: str | None,
+    after_hash: str | None,
+    previous_record: dict | None,
+) -> str:
+    """The ID of one occurrence of a content transition.
+
+    A pure (type, before, after) hash repeats when a page flips A->B->A->B: the
+    third change reused the first change's ID, so its evidence was never
+    written, it vanished from the timeline and the notification ledger treated
+    it as already sent. Chaining on the newest entry of the URL's timeline makes
+    every occurrence distinct while staying deterministic: a run that crashes
+    before the baseline advances re-derives the same ID on the next scan, so
+    retries still de-duplicate. A URL with no timeline yet (its first event)
+    keeps the original formula, so existing IDs are unchanged.
+    """
+    history = (previous_record or {}).get("change_history") or []
+    head = history[0].get("event_id") if history and isinstance(history[0], dict) else None
+    if not head:
+        return build_event_id(event_type, url_id, before_hash, after_hash)
+    return build_event_id(event_type, url_id, before_hash, after_hash, observation_id="after:" + str(head))
+
 _HTTP_STATUS = re.compile(r"\bHTTP (\d{3})\b")
 
 
@@ -161,8 +236,14 @@ def write_evidence(
     path = root / "data" / "evidence" / f"{event_id}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     # Evidence is append-only. Repeated operational observations use unique IDs.
+    # A file left truncated by an older non-atomic write is not evidence: it is
+    # rewritten once instead of being kept forever as corrupt JSON.
     if path.exists():
-        return str(path.relative_to(root))
+        try:
+            json.loads(path.read_text(encoding="utf-8"))
+            return str(path.relative_to(root))
+        except (OSError, ValueError):
+            pass
     payload = {
         "event_id": event_id,
         "event_type": event_type,
@@ -211,5 +292,5 @@ def write_evidence(
         payload["impact"] = impact
     if visual:
         payload["visual"] = visual
-    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    atomic_write_text(path, json.dumps(payload, indent=2))
     return str(path.relative_to(root))

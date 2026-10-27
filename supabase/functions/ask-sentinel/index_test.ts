@@ -1,7 +1,5 @@
 // Behavioural tests for the Ask Sentinel Edge Function, run with `deno test`.
 
-// Tests exercise the normal quota path, not the time-limited production testing override.
-Deno.env.set('ASK_SENTINEL_DISABLE_UNLIMITED_TEST_MODE', 'true');
 //
 // The function is imported with Deno.serve captured (no port is opened) and
 // fetch routed to in-memory fakes of the Supabase REST API and Groq, so the
@@ -578,9 +576,11 @@ Deno.test('signed-in sessions use the same limits', async () => {
   assertEquals((await ask({ bearer: 'token', ip: '203.0.113.8' })).body.error_code, 'user_daily_limit');
 });
 
-Deno.test('before the migration is applied the original per-user quota still applies', async () => {
+Deno.test('a missing abuse-limit quota function fails closed instead of dropping the network and global caps', async () => {
   reset();
   fake.v2 = false;
-  const id = visitor();
-  assertEquals((await ask({ visitor: id, ip: '203.0.113.9' })).body.remaining, 2);
+  const response = await ask({ visitor: visitor(), ip: '203.0.113.9' });
+  assertEquals(response.status, 503);
+  assertEquals(response.body.error_code, 'internal_quota');
+  assertEquals(fake.users.size, 0);
 });
