@@ -101,6 +101,16 @@ async function open(viewport, theme, options = {}) {
     if (request.method() === "GET") { await route.fulfill({ status: 200, contentType: "application/json", headers, body: JSON.stringify({ ok: true, remaining: 50, limit: 50, agent: true }) }); return; }
     const body = JSON.parse(request.postData() || "{}");
     const reply = fakeAgent(body);
+    // The live dashboard redraws the open view when late data arrives (as it
+    // does on CI, where evidence and the GitHub API load). Redraw it between
+    // read_screen and point_at so the ref the model holds is a detached node.
+    if (reply.calls && reply.calls.some(c => c.function.name === "point_at")) {
+      await request.frame().page().evaluate(() => {
+        const doc = document.querySelector(".sentinel-frame").contentDocument;
+        const view = doc.querySelector(".view:not([hidden])");
+        if (view) view.replaceWith(view.cloneNode(true));
+      }).catch(() => {});
+    }
     if (!body.stream) { await route.fulfill({ status: 200, contentType: "application/json", headers, body: JSON.stringify(reply) }); return; }
     // The Edge Function's stream: thinking, answer text in pieces, then "done".
     const events = [];
@@ -194,7 +204,11 @@ try {
 
     if (theme === "light") {
       // A walkthrough: read tools, then the cursor opens a change and points at it.
-      await page.evaluate(() => { window.__spotSeen = false; setInterval(() => { const spot = document.querySelector(".sn-spot"); if (spot && spot.style.opacity === "1") window.__spotSeen = true; }, 80); });
+      await page.evaluate(() => {
+        window.__spotSeen = false;
+        const seenNow = () => { const spot = document.querySelector(".sn-spot"); if (spot && spot.style.opacity === "1") window.__spotSeen = true; };
+        new MutationObserver(seenNow).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["style"] });
+      });
       await ask(page, "Open the most recent change and walk me through the redline");
       await page.waitForFunction(() => document.querySelector("#sentinelCursor.is-on"), null, { timeout: 20000 });
       check(true, "Sentinel's cursor appears in the live dashboard");
@@ -210,7 +224,8 @@ try {
       check(typeof seen[0].context.snapshot === "string" && /latest_changes/.test(seen[0].context.snapshot), "a dashboard snapshot goes with the question");
       const answer = await page.locator(".sn-msg.is-agent").last().innerHTML();
       check(/<table/.test(answer) && /data-sn-route/.test(answer), "the answer renders Markdown with a dashboard link");
-      check(await page.evaluate(() => window.__spotSeen), "point_at spotlights the item for the person");
+      const pointResult = (seen[seen.length - 1].messages || []).filter(m => m.role === "tool").map(m => String(m.content)).pop() || "";
+      check(await page.evaluate(() => window.__spotSeen), "point_at spotlights the item for the person (tool said " + pointResult.slice(0, 160) + ")");
       const sentTools = seen[seen.length - 1].tools.map(t => t.function.name);
       check(["read_screen", "click", "type", "open_view", "list_changes", "ask_person"].every(name => sentTools.includes(name)), "the dashboard's tools are offered to the agent");
       check(seen.every(body => body.mode === "agent"), "every step uses agent mode");

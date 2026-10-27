@@ -366,7 +366,7 @@
     messages: [], remaining: null, limit: 50, warmed: false,
     activity: [], humanBusyUntil: 0, acting: false, queued: [],
     frame: null, frameReady: null, scale: 1, cursor: { x: -60, y: -60, shown: false }, cursorHideTimer: 0,
-    refs: new Map(), refOf: new WeakMap(), refSerial: 0, spot: null
+    refs: new Map(), refOf: new WeakMap(), refSigs: new Map(), refSerial: 0, spot: null
   };
 
   function setAgentState(value, text) {
@@ -826,6 +826,14 @@
     if (el.closest(".detail, [class*='detail']")) return "detail";
     return "page";
   }
+  // What identifies a control across a re-render: its tag, label, region and
+  // the attributes the dashboard routes on. The dashboard redraws views when
+  // late data arrives, so a ref read a moment ago may point at a detached node;
+  // the same control in the new render is found again by this signature.
+  const REF_ATTRS = ["href", "id", "name", "type", "role", "aria-label", "data-view", "data-select-change", "data-monitor-id", "data-select-run", "data-select-notification", "data-select-health", "data-scout-key", "data-select-registry", "data-detail-tab", "data-diff-mode", "data-snapshot-mode", "data-filter", "data-change-filter", "data-scout-filter", "data-go", "data-back"];
+  function refSignature(el) {
+    return [el.tagName, clampText(labelOf(el), 90), regionOf(el)].concat(REF_ATTRS.map(name => el.getAttribute(name) || "")).join("\u241f");
+  }
   function refFor(el) {
     let ref = agent.refOf.get(el);
     if (!ref || agent.refs.get(ref) !== el) {
@@ -833,11 +841,22 @@
       agent.refOf.set(el, ref);
       agent.refs.set(ref, el);
     }
+    agent.refSigs.set(ref, refSignature(el));
     return ref;
   }
   function elementForRef(ref) {
-    const el = agent.refs.get(String(ref || "").trim());
-    return el && el.isConnected ? el : null;
+    const key = String(ref || "").trim();
+    const el = agent.refs.get(key);
+    if (el && el.isConnected) return el;
+    const sig = agent.refSigs.get(key);
+    const doc = frameDoc();
+    if (!sig || !doc) return null;
+    const scope = doc.querySelector("dialog[open]") || doc.body;
+    const twins = Array.from(scope.querySelectorAll(INTERACTIVE)).filter(node => isVisible(node) && refSignature(node) === sig);
+    if (twins.length !== 1) return null;
+    agent.refs.set(key, twins[0]);
+    agent.refOf.set(twins[0], key);
+    return twins[0];
   }
   async function readScreen(args) {
     await frameUsable();

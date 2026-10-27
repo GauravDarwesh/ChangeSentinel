@@ -27,6 +27,7 @@ Deno.env.set('ASK_SENTINEL_FALLBACK_MODEL', 'paid/fallback-model');
 Deno.env.set('ASK_SENTINEL_PROVIDER_DAILY_CAP', '40');
 Deno.env.set('ASK_SENTINEL_FIRST_BYTE_MS', '150');
 Deno.env.set('ASK_SENTINEL_STREAM_IDLE_MS', '150');
+Deno.env.set('ASK_SENTINEL_PROVIDER_TIMEOUT_MS', '300');
 
 type Fake = {
   users: Map<string, number>; ips: Map<string, number>; global: number;
@@ -863,6 +864,20 @@ Deno.test('agent: a model that stalls is dropped for the next one instead of end
   fake.agent = (body) => body.models ? STALL : agentReply({ content: 'Answered by the next model.' });
   const answer = await agent({ messages: [{ role: 'user', content: 'Status?' }] });
   assertEquals([answer.status, answer.body.answer, fake.agentBodies.length], [200, 'Answered by the next model.', 2]);
+});
+
+Deno.test('agent: a streamed model that never sends a first byte is dropped for the next one', async () => {
+  reset();
+  fake.agent = (body) => body.models ? STALL : agentReply({ content: 'Answered after the stall.' }, body);
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', origin: 'https://gauravdarwesh.github.io', 'x-ask-sentinel-visitor-id': visitor(), 'cf-connecting-ip': '203.0.113.72' };
+  const started = Date.now();
+  const response = await handler!(new Request('https://fn.test/ask-sentinel', {
+    method: 'POST', headers, body: JSON.stringify({ mode: 'agent', stream: true, tools: CLIENT_TOOLS, messages: [{ role: 'user', content: 'Status?' }] })
+  }));
+  const events = await readSse(response);
+  const done = events[events.length - 1].data;
+  assertEquals([done.type, done.answer, fake.agentBodies.length], ['final', 'Answered after the stall.', 2]);
+  if (Date.now() - started > 5000) throw new Error('the first-byte guard did not cut the stalled model short');
 });
 
 Deno.test('agent: a slow quota check returns a clear, retryable reply', async () => {

@@ -1728,7 +1728,7 @@ const AGENT_MAX_TOOL_RESULT_CHARS = 7000;
 // saw; the full text is re-read with a tool if it matters again.
 const AGENT_OLD_TOOL_RESULT_CHARS = 500;
 const AGENT_MAX_OUTPUT_TOKENS = 1600;
-const AGENT_PROVIDER_TIMEOUT_MS = 70000;
+const AGENT_PROVIDER_TIMEOUT_MS = positiveIntEnv('ASK_SENTINEL_PROVIDER_TIMEOUT_MS', 70000);
 const AGENT_FIRST_BYTE_MS = positiveIntEnv('ASK_SENTINEL_FIRST_BYTE_MS', 30000);
 const AGENT_STREAM_IDLE_MS = positiveIntEnv('ASK_SENTINEL_STREAM_IDLE_MS', 25000);
 const AGENT_TOOL_NAME = /^[a-z][a-z0-9_]{1,47}$/;
@@ -2170,7 +2170,7 @@ async function agentCompletion(messages: AgentMessage[], tools: AgentTool[], emi
     // A stalled model (no reply within 30 s, or a stream that goes quiet for
     // 25 s) is abandoned for the next one instead of ending the question.
     const controller = new AbortController();
-    let stallTimer = 0;
+    let stallTimer: ReturnType<typeof setTimeout> | undefined;
     const arm = (ms: number) => {
       clearTimeout(stallTimer);
       stallTimer = setTimeout(() => controller.abort(new Error('provider stalled: timed out')), ms);
