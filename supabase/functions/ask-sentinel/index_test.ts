@@ -29,16 +29,16 @@ Deno.env.set('ASK_SENTINEL_PROVIDER_DAILY_CAP', '40');
 type Fake = {
   users: Map<string, number>; ips: Map<string, number>; global: number;
   groq: () => Response; refunds: number; v2: boolean; lastIpHash: string;
-  agent: ((body: any) => Response) | null; providerCalls: number; agentBodies: any[]; v3Searches: any[];
+  agent: ((body: any) => Response) | null; providerCalls: number; agentBodies: any[]; v3Searches: any[]; budgetDown: boolean;
 };
 let fakeCurrentPageRows: any[] = [];
 let fakeEvidenceRows = new Map<string, any[]>();
 let fakeFetchedPaths: string[] = [];
 let lastGroqMessages: any[] = [];
-const fake: Fake = { users: new Map(), ips: new Map(), global: 0, groq: () => groqAnswer(), refunds: 0, v2: true, lastIpHash: '', agent: null, providerCalls: 0, agentBodies: [], v3Searches: [] };
+const fake: Fake = { users: new Map(), ips: new Map(), global: 0, groq: () => groqAnswer(), refunds: 0, v2: true, lastIpHash: '', agent: null, providerCalls: 0, agentBodies: [], v3Searches: [], budgetDown: false };
 function reset(groq?: () => Response) {
   fake.users = new Map(); fake.ips = new Map(); fake.global = 0; fake.refunds = 0; fake.v2 = true;
-  fake.agent = null; fake.providerCalls = 0; fake.agentBodies = []; fake.v3Searches = [];
+  fake.agent = null; fake.providerCalls = 0; fake.agentBodies = []; fake.v3Searches = []; fake.budgetDown = false;
   fakeCurrentPageRows = []; fakeEvidenceRows = new Map(); fakeFetchedPaths = []; lastGroqMessages = [];
   fake.groq = groq || (() => groqAnswer());
 }
@@ -68,6 +68,7 @@ globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     return json([{ path: 'data/history/20261020T000000Z-abcdef12.json', doc_type: 'historical run', content: 'run_id=20261020T000000Z-abcdef12 OSFI BCAR changed=2', is_core: false, score: 2.4 }]);
   }
   if (path === '/rest/v1/rpc/consume_ask_sentinel_provider_call') {
+    if (fake.budgetDown) return json({ message: 'canceling statement due to statement timeout' }, 500);
     if (fake.providerCalls >= body.p_cap) return json(false);
     fake.providerCalls += 1;
     return json(true);
@@ -633,8 +634,28 @@ const CLIENT_TOOLS = [
 function toolCall(id: string, name: string, args: unknown) {
   return { id, type: 'function', function: { name, arguments: JSON.stringify(args) } };
 }
-function agentReply(message: Record<string, unknown>) {
+function agentReply(message: Record<string, unknown>, body?: any) {
+  if (body && body.stream) {
+    // OpenRouter-style server-sent events: reasoning, then text in pieces, then tool calls.
+    const events: string[] = [': OPENROUTER PROCESSING'];
+    if (message.reasoning) events.push('data: ' + JSON.stringify({ model: 'free/some-model', choices: [{ delta: { reasoning: message.reasoning } }] }));
+    const text = String(message.content || '');
+    for (let i = 0; i < text.length; i += 7) events.push('data: ' + JSON.stringify({ model: 'free/some-model', choices: [{ delta: { content: text.slice(i, i + 7) } }] }));
+    ((message.tool_calls as any[]) || []).forEach((call, index) => {
+      events.push('data: ' + JSON.stringify({ choices: [{ delta: { tool_calls: [{ index, id: call.id, function: { name: call.function.name, arguments: '' } }] } }] }));
+      events.push('data: ' + JSON.stringify({ choices: [{ delta: { tool_calls: [{ index, function: { arguments: call.function.arguments } }] } }] }));
+    });
+    events.push('data: ' + JSON.stringify({ choices: [{ delta: {}, finish_reason: 'stop' }] }), 'data: [DONE]');
+    return new Response(events.join('\n\n') + '\n\n', { headers: { 'Content-Type': 'text/event-stream' } });
+  }
   return json({ model: 'free/some-model', choices: [{ message: { role: 'assistant', ...message } }] });
+}
+async function readSse(response: Response) {
+  const text = await response.text();
+  return text.split('\n\n').filter((block) => block.startsWith('event: ')).map((block) => {
+    const [head, data] = block.split('\n');
+    return { event: head.slice(7), data: JSON.parse(data.slice(6)) };
+  });
 }
 async function agent(body: Record<string, unknown>, options: { visitor?: string; ip?: string } = {}) {
   const headers: Record<string, string> = { 'Content-Type': 'application/json', origin: 'https://gauravdarwesh.github.io' };
@@ -668,7 +689,7 @@ Deno.test('agent: one question is one quota unit across every tool step', async 
   // The model saw the client tool and the two server tools, never a client copy of a server tool.
   const names = fake.agentBodies[0].tools.map((t: any) => t.function.name).sort();
   assertEquals(names, ['list_changes', 'open_view', 'read_archive_record', 'search_archive']);
-  if (fake.agentBodies[0].model !== 'openrouter/free') throw new Error('the free route must be tried first');
+  assertEquals(fake.agentBodies[0].models, ['nvidia/nemotron-3-ultra-550b-a55b:free', 'nvidia/nemotron-3-super-120b-a12b:free', 'openai/gpt-oss-120b:free']);
 });
 
 Deno.test('agent: server tools run inside the function and the archive search skips page text by default', async () => {
@@ -702,13 +723,14 @@ Deno.test('agent: a forged or foreign turn token is refused', async () => {
   assertEquals(forged.status, 409);
 });
 
-Deno.test('agent: a rate-limited free route falls back to the paid model once', async () => {
+Deno.test('agent: pinned free models, then the free router, then the paid fallback', async () => {
   reset();
-  fake.agent = (body) => body.model === 'openrouter/free'
+  fake.agent = (body) => body.model !== 'paid/fallback-model'
     ? json({ error: 'rate limited' }, 429)
     : agentReply({ content: 'Answered by the fallback.' });
   const answer = await agent({ messages: [{ role: 'user', content: 'Status?' }] });
-  assertEquals([answer.status, answer.body.type, fake.agentBodies.map((b) => b.model)], [200, 'final', ['openrouter/free', 'paid/fallback-model']]);
+  assertEquals([answer.status, answer.body.type, fake.agentBodies.map((b) => b.model || 'pinned')], [200, 'final', ['pinned', 'openrouter/free', 'paid/fallback-model']]);
+  if (!fake.agentBodies[0].reasoning || fake.agentBodies[0].reasoning.effort !== 'low') throw new Error('reasoning effort should be low by default');
 });
 
 Deno.test('agent: a provider outage on the first step refunds the question', async () => {
@@ -745,9 +767,10 @@ Deno.test('agent: earlier turns stay in context and orphaned tool messages are d
       { role: 'user', content: 'Which page changed most recently?' },
       { role: 'assistant', content: 'The OSFI BCAR page changed on 26 Oct.' },
       { role: 'tool', tool_call_id: 'nobody-asked', content: 'stray' },
-      { role: 'user', content: 'Which regulator was that again?' }
+      { role: 'user', content: 'Which regulator was that again?' },
+      { role: 'user', content: 'Person, in the dashboard since your last step:\n- clicked "Changes"\n- typed "OSFI" in the search box' }
     ],
-    context: { view: 'changes', activity: ['clicked "Changes"', 'typed "OSFI" in the search box'] }
+    context: { view: 'changes' }
   });
   assertEquals(answer.status, 200);
   const sent = fake.agentBodies[0].messages;
@@ -755,4 +778,72 @@ Deno.test('agent: earlier turns stay in context and orphaned tool messages are d
   if (sent.some((m: any) => m.role === 'tool')) throw new Error('an orphaned tool result was sent to the model');
   if (!sent.some((m: any) => m.role === 'user' && String(m.content).includes('typed "OSFI"'))) throw new Error('the person\'s dashboard activity was not passed on');
   if (!String(sent[0].content).includes('changes view')) throw new Error('the current view was not passed on');
+});
+
+Deno.test('agent: streaming sends thinking and answer text as they arrive, then the same payload', async () => {
+  reset();
+  fake.agent = (body) => agentReply({ reasoning: 'The snapshot already lists two changes.', content: 'Two pages changed this week.' }, body);
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', origin: 'https://gauravdarwesh.github.io', 'x-ask-sentinel-visitor-id': visitor(), 'cf-connecting-ip': '203.0.113.70' };
+  const response = await handler!(new Request('https://fn.test/ask-sentinel', {
+    method: 'POST', headers, body: JSON.stringify({ mode: 'agent', stream: true, tools: CLIENT_TOOLS, messages: [{ role: 'user', content: 'What changed?' }], context: { snapshot: { changes_last_7_days: 2 } } })
+  }));
+  assertEquals([response.status, (response.headers.get('content-type') || '').startsWith('text/event-stream')], [200, true]);
+  const events = await readSse(response);
+  const kinds = events.map((e) => e.event);
+  if (kinds.indexOf('reasoning') < 0 || kinds.indexOf('text') < 0 || kinds[kinds.length - 1] !== 'done') throw new Error('unexpected events ' + kinds.join(','));
+  const text = events.filter((e) => e.event === 'text').map((e) => e.data.delta).join('');
+  assertEquals(text, 'Two pages changed this week.');
+  const done = events[events.length - 1].data;
+  assertEquals([done.http_status, done.type, done.answer], [200, 'final', 'Two pages changed this week.']);
+  if (!fake.agentBodies[0].stream) throw new Error('the provider call should stream');
+  if (!String(fake.agentBodies[0].messages[0].content).includes('changes_last_7_days')) throw new Error('the dashboard snapshot is missing from the prompt');
+});
+
+Deno.test('agent: streamed tool calls are assembled and raw JSON never streams as answer text', async () => {
+  reset();
+  fake.agent = (body) => agentReply({ content: '{"name": "open_view", "arguments": {"view": "changes"}}' }, body);
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', origin: 'https://gauravdarwesh.github.io', 'x-ask-sentinel-visitor-id': visitor(), 'cf-connecting-ip': '203.0.113.71' };
+  const response = await handler!(new Request('https://fn.test/ask-sentinel', {
+    method: 'POST', headers, body: JSON.stringify({ mode: 'agent', stream: true, tools: CLIENT_TOOLS, messages: [{ role: 'user', content: 'Open changes' }] })
+  }));
+  const events = await readSse(response);
+  if (events.some((e) => e.event === 'text')) throw new Error('a JSON tool call leaked into the answer stream');
+  const done = events[events.length - 1].data;
+  assertEquals([done.type, done.calls[0].function.name], ['tool_calls', 'open_view']);
+  reset();
+  fake.agent = (body) => agentReply({ content: '', tool_calls: [toolCall('s1', 'list_changes', { days: 3 })] }, body);
+  const second = await handler!(new Request('https://fn.test/ask-sentinel', {
+    method: 'POST', headers: { ...headers, 'x-ask-sentinel-visitor-id': visitor() }, body: JSON.stringify({ mode: 'agent', stream: true, tools: CLIENT_TOOLS, messages: [{ role: 'user', content: 'Changes?' }] })
+  }));
+  const last = (await readSse(second)).pop()!.data;
+  assertEquals([last.type, last.calls[0].id, JSON.parse(last.calls[0].function.arguments).days], ['tool_calls', 's1', 3]);
+});
+
+Deno.test('agent: a slow budget counter no longer ends the question', async () => {
+  reset();
+  fake.budgetDown = true;
+  fake.agent = () => agentReply({ content: 'Still answered.' });
+  const answer = await agent({ messages: [{ role: 'user', content: 'Status?' }] });
+  assertEquals([answer.status, answer.body.answer], [200, 'Still answered.']);
+});
+
+Deno.test('agent: tool results from earlier questions and stale screen readings are compacted', async () => {
+  reset();
+  fake.agent = () => agentReply({ content: 'ok' });
+  const big = 'x'.repeat(5000);
+  await agent({
+    messages: [
+      { role: 'user', content: 'First question' },
+      { role: 'assistant', content: '', tool_calls: [toolCall('a1', 'list_changes', {})] },
+      { role: 'tool', tool_call_id: 'a1', content: big },
+      { role: 'assistant', content: 'First answer.' },
+      { role: 'user', content: 'Second question' },
+      { role: 'assistant', content: '', tool_calls: [toolCall('r1', 'read_screen', {})] },
+      { role: 'tool', tool_call_id: 'r1', content: big },
+      { role: 'assistant', content: '', tool_calls: [toolCall('r2', 'read_screen', {})] },
+      { role: 'tool', tool_call_id: 'r2', content: big }
+    ]
+  });
+  const sent = fake.agentBodies[0].messages.filter((m: any) => m.role === 'tool').map((m: any) => m.content.length);
+  if (!(sent[0] < 700 && sent[1] < 600 && sent[2] >= 5000)) throw new Error('unexpected tool result sizes ' + JSON.stringify(sent));
 });
