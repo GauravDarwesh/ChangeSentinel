@@ -399,7 +399,7 @@ async function consumeRequest(
         p_global_limit: GLOBAL_DAILY_LIMIT
       })
     },
-    8000
+    12000
   );
 
   const text = await response.text();
@@ -1729,6 +1729,8 @@ const AGENT_MAX_TOOL_RESULT_CHARS = 7000;
 const AGENT_OLD_TOOL_RESULT_CHARS = 500;
 const AGENT_MAX_OUTPUT_TOKENS = 1600;
 const AGENT_PROVIDER_TIMEOUT_MS = 70000;
+const AGENT_FIRST_BYTE_MS = positiveIntEnv('ASK_SENTINEL_FIRST_BYTE_MS', 30000);
+const AGENT_STREAM_IDLE_MS = positiveIntEnv('ASK_SENTINEL_STREAM_IDLE_MS', 25000);
 const AGENT_TOOL_NAME = /^[a-z][a-z0-9_]{1,47}$/;
 // openrouter/free picks a random free model per call, including 2-3B models
 // that loop on tool calls (13 steps for one question on 27 Oct). Pin strong
@@ -2104,7 +2106,8 @@ async function* openRouterEvents(body: ReadableStream<Uint8Array>): AsyncGenerat
 
 async function readStreamedCompletion(
   response: Response,
-  emit: AgentEmit
+  emit: AgentEmit,
+  onChunk: () => void = () => {}
 ): Promise<{ content: string; reasoning: string; rawCalls: any[]; model: string; finish: string }> {
   let content = '';
   let reasoning = '';
@@ -2115,6 +2118,7 @@ async function readStreamedCompletion(
   // person never sees raw JSON flash into the answer.
   let mode: 'probe' | 'show' | 'hold' = 'probe';
   for await (const chunk of openRouterEvents(response.body as ReadableStream<Uint8Array>)) {
+    onChunk();
     if (chunk.error) throw new Error('OpenRouter could not answer this request (' + (Number(chunk.error.code) || 502) + ').');
     if (chunk.model) model = String(chunk.model);
     const choice = chunk.choices?.[0];
@@ -2163,11 +2167,21 @@ async function agentCompletion(messages: AgentMessage[], tools: AgentTool[], emi
     const last = index === attempts.length - 1;
     if (!(await consumeProviderCall())) throw new PublicError('provider_daily_budget');
     let response: Response | null = null;
+    // A stalled model (no reply within 30 s, or a stream that goes quiet for
+    // 25 s) is abandoned for the next one instead of ending the question.
+    const controller = new AbortController();
+    let stallTimer = 0;
+    const arm = (ms: number) => {
+      clearTimeout(stallTimer);
+      stallTimer = setTimeout(() => controller.abort(new Error('provider stalled: timed out')), ms);
+    };
+    arm(emit ? AGENT_FIRST_BYTE_MS : AGENT_PROVIDER_TIMEOUT_MS);
     for (let attempt = 0; attempt < 2 && !response; attempt += 1) {
       try {
-        response = await checkedFetch(
+        response = await fetch(
           OPENROUTER_CHAT_URL,
           {
+            signal: controller.signal,
             method: 'POST',
             headers: {
               Authorization: 'Bearer ' + key,
@@ -2186,19 +2200,20 @@ async function agentCompletion(messages: AgentMessage[], tools: AgentTool[], emi
               ...(AGENT_REASONING_EFFORT && AGENT_REASONING_EFFORT !== 'off' ? { reasoning: { effort: AGENT_REASONING_EFFORT } } : {}),
               ...(emit ? { stream: true } : {})
             })
-          },
-          AGENT_PROVIDER_TIMEOUT_MS
+          }
         );
       } catch (error) {
-        if (attempt > 0) {
+        if (controller.signal.aborted || attempt > 0) {
+          clearTimeout(stallTimer);
           if (!last) { lastStatus = 504; break; }
           throw error;
         }
         await new Promise((resolve) => setTimeout(resolve, 300));
       }
     }
-    if (!response) continue;
+    if (!response) { clearTimeout(stallTimer); emit?.('status', { text: 'Switching to another model…' }); continue; }
     if (!response.ok) {
+      clearTimeout(stallTimer);
       lastStatus = response.status;
       await response.body?.cancel();
       if ((response.status === 429 || response.status === 402 || response.status === 408 || response.status >= 500) && !last) {
@@ -2215,14 +2230,25 @@ async function agentCompletion(messages: AgentMessage[], tools: AgentTool[], emi
     const streamed = emit && /event-stream/i.test(response.headers.get('content-type') || '');
     if (streamed) {
       try {
-        const result = await readStreamedCompletion(response, emit);
+        arm(AGENT_STREAM_IDLE_MS);
+        const result = await readStreamedCompletion(response, emit, () => arm(AGENT_STREAM_IDLE_MS));
+        clearTimeout(stallTimer);
         content = result.content; reasoning = result.reasoning; rawCalls = result.rawCalls; model = result.model || model;
       } catch (error) {
+        clearTimeout(stallTimer);
         if (!last) { emit?.('status', { text: 'Switching to another model…' }); continue; }
         throw error;
       }
     } else {
-      const payload = safeJson(await response.text());
+      let payload: any = null;
+      try {
+        payload = safeJson(await response.text());
+      } catch (error) {
+        clearTimeout(stallTimer);
+        if (!last) continue;
+        throw error;
+      }
+      clearTimeout(stallTimer);
       const message = payload?.choices?.[0]?.message || {};
       const value = message.content;
       content = typeof value === 'string'
@@ -2276,7 +2302,16 @@ async function runAgent(
     if (lastUser.content.length > MAX_QUESTION_CHARS) {
       return { status: 400, payload: { error: 'Questions must be 1,200 characters or fewer.' } };
     }
-    const quota = await consumeRequest(actor.id, await networkBucket(req));
+    let quota: QuotaResult;
+    try {
+      quota = await consumeRequest(actor.id, await networkBucket(req));
+    } catch (error) {
+      logStage('agent_quota_unavailable', { error: String((error as Error)?.message || error).slice(0, 200) });
+      return {
+        status: 503,
+        payload: { error: 'Sentinel could not check today\'s question count just now (the database was slow). Your question was not counted; please retry.', error_code: 'internal_quota', limit: USER_DAILY_LIMIT }
+      };
+    }
     if (!quota.allowed) {
       const retryAfter = String(Math.max(60, Math.ceil((Date.parse(nextUtcReset()) - Date.now()) / 1000)));
       const refusal = quota.reason === 'global_limit'

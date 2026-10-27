@@ -5,7 +5,7 @@
  *
  * Serves the checkout on 127.0.0.1 and stands in for the ask-sentinel Edge
  * Function with a scripted agent, so the whole loop runs without a model:
- * the rail's Ask Sentinel, the unlock ripple, the workspace and its live copy of the
+ * the mascot orb, the unlock ripple, the workspace and its live copy of the
  * dashboard, Sentinel's cursor opening a change and pointing at it, the
  * person clicking in the same copy (and Sentinel being told), an approval
  * card that stops a consequential click, a question card, and the phone
@@ -144,9 +144,16 @@ async function ask(page, text) {
 try {
   for (const theme of ["light", "dark"]) {
     const { context, page, errors } = await open({ width: 1440, height: 900 }, theme);
-    const launch = page.locator("#askSentinelLaunch");
-    check(await launch.isVisible() && /Ask Sentinel/.test(await launch.textContent()), theme + ": Ask Sentinel is in the left rail");
-    check(await page.locator("#sentinelDock").count() === 0, theme + ": nothing floats over the dashboard");
+    const launch = page.locator("#minimal-mascot-orb");
+    check(await launch.isVisible(), theme + ": the mascot orb sits in the bottom-right corner");
+    check(!(await page.locator("#askSentinelLaunch").isVisible()), theme + ": Ask Sentinel is no longer in the left rail");
+    const orbBox = await launch.boundingBox();
+    check(orbBox && Math.round(orbBox.width) === 64 && orbBox.x + orbBox.width > 1440 - 30 && orbBox.y + orbBox.height > 900 - 30, theme + ": the orb is 64px at bottom-right");
+    const faceBefore = await page.$eval("#minimal-mascot-orb [data-mo=nose]", el => el.getAttribute("d"));
+    await page.mouse.move(80, 80);
+    await page.waitForTimeout(500);
+    check(faceBefore !== await page.$eval("#minimal-mascot-orb [data-mo=nose]", el => el.getAttribute("d")), theme + ": the mascot's face follows the pointer");
+    await page.screenshot({ path: path.join(OUT, "sentinel-orb-" + theme + ".png"), clip: { x: 1440 - 200, y: 900 - 160, width: 200, height: 160 } });
 
     // Unlock ripple into the workspace.
     await page.evaluate(() => {
@@ -158,6 +165,8 @@ try {
     await page.waitForTimeout(240);
     const midWall = await page.evaluate(() => window.__wallSeen);
     check(midWall, theme + ": opening plays the LED unlock ripple");
+    const reveal = await page.evaluate(() => { const ws = document.getElementById("sentinelWorkspace"); const b = ws.getBoundingClientRect(); return { x: parseFloat(ws.style.getPropertyValue("--sn-x")) + b.left, y: parseFloat(ws.style.getPropertyValue("--sn-y")) + b.top }; });
+    check(orbBox && Math.abs(reveal.x - (orbBox.x + 32)) < 4 && Math.abs(reveal.y - (orbBox.y + 32)) < 4, theme + ": the ripple spreads from the orb");
     await page.screenshot({ path: path.join(OUT, "sentinel-unlock-" + theme + ".png") });
     await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").classList.contains("is-revealing"), null, { timeout: 5000 });
     check(await page.locator("#sentinelWorkspace").isVisible(), theme + ": the workspace opens");
@@ -169,6 +178,19 @@ try {
     });
     check(embedded.embed && embedded.open && !embedded.dock, theme + ": the live dashboard loads unlocked, embedded, without a second Sentinel");
     await page.screenshot({ path: path.join(OUT, "sentinel-workspace-" + theme + ".png") });
+    const look = await page.evaluate(() => {
+      const ws = document.getElementById("sentinelWorkspace").getBoundingClientRect();
+      const app = document.querySelector(".app").getBoundingClientRect();
+      const fonts = [".sentinel-welcome-title", ".sentinel-suggest-title", ".sentinel-brand h2", ".sentinel-input"].map(s => getComputedStyle(document.querySelector(s)).fontFamily);
+      return { same: ["left", "top", "right", "bottom"].every(k => Math.abs(ws[k] - app[k]) < 1), geist: fonts.every(f => /^"?Geist"?,/.test(f)),
+        orbAway: !document.getElementById("minimal-mascot-orb").checkVisibility({ visibilityProperty: true }),
+        glints: getComputedStyle(document.querySelector(".frame-glints")).display !== "none" };
+    });
+    check(look.same && look.glints, theme + ": the workspace sits where the dashboard does, inside the live LED frame");
+    check(look.geist, theme + ": the workspace uses the dashboard's Geist type");
+    check(look.orbAway, theme + ": the orb steps aside while the workspace is open");
+    const head = await page.evaluate(() => ({ title: document.getElementById("sentinelTitle").textContent, mark: !!document.querySelector("#sentinelWorkspace .sentinel-brand .brand-mark, #sentinelWorkspace .sentinel-brand svg") }));
+    check(head.title === "Ask Sentinel" && !head.mark, theme + ": the workspace header reads Ask Sentinel, with no logo");
 
     if (theme === "light") {
       // A walkthrough: read tools, then the cursor opens a change and points at it.
@@ -231,23 +253,24 @@ try {
       await idle(page);
       check(/Checking OSFI next/.test(await page.locator(".sn-msg.is-agent").last().textContent()), "ask_person returns the person's answer to the agent");
 
-      // Close back into the rail, then reopen with Ctrl+K; the conversation is kept.
+      // Close back into the orb, then reopen with Ctrl+K; the conversation is kept.
       await page.keyboard.press("Escape");
       await page.waitForFunction(() => document.getElementById("sentinelWorkspace").hidden, null, { timeout: 5000 });
-      check(await launch.isVisible(), "Esc closes the workspace back into the rail");
+      await page.waitForTimeout(400);
+      check(await launch.isVisible(), "Esc closes the workspace back into the orb");
       await page.keyboard.press("Control+k");
       await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").hidden && !document.getElementById("sentinelWorkspace").classList.contains("is-revealing"), null, { timeout: 5000 });
       check(await page.locator(".sn-msg.is-agent").count() >= 3, "Ctrl+K reopens Sentinel with the conversation kept");
       await page.keyboard.press("Escape");
       await page.waitForFunction(() => document.getElementById("sentinelWorkspace").hidden, null, { timeout: 5000 });
 
-      // While it works with the workspace closed, the rail button says so; an answer leaves a dot.
+      // An answer read in the workspace leaves no dot on the orb.
       await page.evaluate(() => window.Sentinel.ask("Hello"));
       await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").classList.contains("is-revealing"), null, { timeout: 5000 });
       await idle(page);
       await page.keyboard.press("Escape");
       await page.waitForFunction(() => document.getElementById("sentinelWorkspace").hidden, null, { timeout: 5000 });
-      check(!(await launch.evaluate(el => el.classList.contains("has-note"))), "no answer dot after reading the answer in the workspace");
+      check(!(await page.locator("#sentinelOrbWrap").evaluate(el => el.classList.contains("has-note"))), "no answer dot after reading the answer in the workspace");
     }
     check(errors.length === 0, theme + ": no script errors" + (errors.length ? " — " + errors.slice(0, 3).join(" | ") : ""));
     await context.close();
@@ -257,6 +280,7 @@ try {
   {
     const { context, page, errors } = await open({ width: 390, height: 844 }, "dark", { touch: true });
     check(await page.locator("#askSentinelLaunch").isVisible(), "phone: the bottom bar's Ask tab is there");
+    check(!(await page.locator("#minimal-mascot-orb").isVisible()), "phone: no orb over the bottom bar");
     await page.screenshot({ path: path.join(OUT, "sentinel-phone-dock.png") });
     await page.locator("#askSentinelLaunch").tap();
     await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").classList.contains("is-revealing") && !document.getElementById("sentinelWorkspace").hidden, null, { timeout: 5000 });
@@ -280,7 +304,7 @@ try {
     const page = await context.newPage();
     await page.goto(base + "index.html");
     await page.waitForFunction(() => window.Sentinel && document.getElementById("overviewLede") && !/Reading/.test(document.getElementById("overviewLede").textContent), null, { timeout: 45000 });
-    await page.click("#askSentinelLaunch");
+    await page.click("#minimal-mascot-orb");
     await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").hidden && !document.getElementById("sentinelWorkspace").classList.contains("is-revealing"), null, { timeout: 3000 });
     check(await page.$eval(".sentinel-wall", el => el.hidden), "reduced motion: the workspace opens without the ripple");
     await context.close();
