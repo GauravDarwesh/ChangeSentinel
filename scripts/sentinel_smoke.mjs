@@ -44,6 +44,8 @@ const check = (condition, message) => {
 };
 
 /* ---------- A scripted agent in place of the Edge Function ---------- */
+// A long explanation on an item near the right edge: it must wrap and stay whole.
+const LONG_NOTE = "This is the change I opened: the Central Bank of the Bahamas replaced its downloadable forms page, so every form link below moved to a new address and the old ones now return the archive page.";
 const seen = [];
 const call = (name, args) => ({ id: "c" + Math.random().toString(36).slice(2, 9), type: "function", function: { name, arguments: JSON.stringify(args || {}) } });
 function toolCalls(calls, remaining) {
@@ -69,7 +71,7 @@ function fakeAgent(body) {
     if (n === 3) return toolCalls([call("read_screen")]);
     if (n === 4) {
       const ref = (results[3].match(/\[(e\d+)\][^\n]*in detail/) || results[3].match(/\[(e\d+)\]/) || [])[1] || "e1";
-      return toolCalls([call("point_at", { ref, note: "This is the change I opened" })]);
+      return toolCalls([call("point_at", { ref, note: LONG_NOTE })]);
     }
     const list = JSON.parse(results[1]);
     const first = list.changes && list.changes[0];
@@ -226,6 +228,13 @@ try {
       check(typeof seen[0].context.snapshot === "string" && /latest_changes/.test(seen[0].context.snapshot), "a dashboard snapshot goes with the question");
       const answer = await page.locator(".sn-msg.is-agent").last().innerHTML();
       check(/<table/.test(answer) && /data-sn-route/.test(answer), "the answer renders Markdown with a dashboard link");
+      const noteFit = await page.evaluate(() => {
+        const note = document.querySelector(".sn-spot-note"), view = document.querySelector(".sentinel-viewport");
+        if (!note || !view) return { ok: false, why: "no note" };
+        const n = note.getBoundingClientRect(), v = view.getBoundingClientRect();
+        return { ok: n.left >= v.left && n.right <= v.right && n.top >= v.top && n.bottom <= v.bottom && n.height > 30, text: note.textContent, n: [n.left, n.top, n.right, n.bottom].map(Math.round), v: [v.left, v.top, v.right, v.bottom].map(Math.round) };
+      });
+      check(noteFit.ok && noteFit.text === LONG_NOTE, "a long spotlight note wraps, stays whole and inside the live dashboard " + JSON.stringify({ n: noteFit.n, v: noteFit.v, why: noteFit.why }));
       const pointResult = (seen[seen.length - 1].messages || []).filter(m => m.role === "tool").map(m => String(m.content)).pop() || "";
       check(await page.evaluate(() => window.__spotSeen), "point_at spotlights the item for the person (tool said " + pointResult.slice(0, 160) + ")");
       const sentTools = seen[seen.length - 1].tools.map(t => t.function.name);

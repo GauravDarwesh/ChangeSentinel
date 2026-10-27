@@ -3907,7 +3907,7 @@
       if (!ctx || !CSLib || typeof CSLib.fbm !== "function") return;
 
       const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-      let frame = 0, lastPaint = 0, width = 0, height = 0, dpr = 1, colors = null;
+      let frame = 0, lastPaint = 0, width = 0, height = 0, dpr = 1, colors = null, cellSize = 20;
 
       function parseColor(value) {
         const raw = String(value || "").trim();
@@ -3930,8 +3930,11 @@
       const clamp01 = value => Math.max(0, Math.min(1, value));
       const rgb = color => "rgb(" + color.map(channel => channel | 0).join(",") + ")";
 
+      // Read once per theme or resize, not every frame: getComputedStyle on the
+      // root after a render forces a style recalculation.
       function readColors() {
         const css = getComputedStyle(document.documentElement);
+        cellSize = parseFloat(css.getPropertyValue("--cell")) || 20;
         colors = {
           lo: parseColor(css.getPropertyValue("--idle-lo")),
           hi: parseColor(css.getPropertyValue("--idle-hi"))
@@ -3950,9 +3953,11 @@
       }
 
       // The locked screen paints its own full-screen wall; the frame waits for the unlock.
+      // Sentinel's live copy (cs-embed) hides the ring, so it never paints there.
       function isVisible() {
         return !document.hidden && window.innerWidth > 980 && window.innerHeight > 0 &&
-          !document.documentElement.classList.contains("cs-locked");
+          !document.documentElement.classList.contains("cs-locked") &&
+          !document.documentElement.classList.contains("cs-embed");
       }
 
       function paintTile(x, y, col, row, t, tileWidth, tileHeight) {
@@ -3978,8 +3983,7 @@
         lastPaint = now;
         if (!colors) readColors();
 
-        const rootStyle = getComputedStyle(document.documentElement);
-        const cell = parseFloat(rootStyle.getPropertyValue("--cell")) || 20;
+        const cell = cellSize;
         const t = now / 1000;
         // The ring is the 1px-inset band outside the workspace. Each side is cut
         // into equal tiles (the count that keeps them closest to one grid cell),
@@ -4026,8 +4030,8 @@
       function start() {
         if (frame) window.cancelAnimationFrame(frame);
         frame = 0;
-        resize();
         readColors();
+        resize();
         paint(performance.now());
       }
 

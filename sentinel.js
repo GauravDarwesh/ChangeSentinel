@@ -106,7 +106,7 @@
     '<path data-mo="brow-l" class="m-line"/><path data-mo="nose" class="m-line"/></svg>';
   const faces = [];
   function mascotFace(host) {
-    const face = { host, tx: 0, ty: 0, nx: 0, ny: 0, tCock: 0, cock: 0, clickT: -10, parts: {} };
+    const face = { host, tx: 0, ty: 0, nx: 0, ny: 0, tCock: 0, cock: 0, clickT: -10, parts: {}, onScreen: true };
     host.querySelectorAll("[data-mo]").forEach(path => { face.parts[path.dataset.mo] = path; });
     host.addEventListener("click", () => { face.clickT = performance.now(); wakeFaces(); });
     faces.push(face);
@@ -115,8 +115,9 @@
   // How far the face turns toward the pointer (1 = the generator's 1.0x).
   const FACE_SENSITIVITY = 1.1;
   function aimFace(face, e) {
-    const r = face.host.getBoundingClientRect();
-    if (!r.width) return;
+    // The orb is fixed in the corner: measure it once, again after a resize.
+    const r = face.rect || (face.rect = face.host.getBoundingClientRect());
+    if (!r.width) { face.rect = null; return; }
     const dx = e.clientX - (r.left + r.width / 2);
     const dy = e.clientY - (r.top + r.height / 2);
     const dist = Math.hypot(dx, dy);
@@ -137,7 +138,8 @@
     const dt = (now - face.clickT) / 1000;
     const bounceY = !still && dt < 0.8 ? -Math.sin(dt * Math.PI * 3) * 7 * Math.exp(-3 * dt) : 0;
     const joy = dt < 0.9 ? Math.sin(Math.min(dt / 0.9, 1) * Math.PI) : 0;
-    const floatY = (still ? 0 : Math.sin(now * 0.0021) * 1.6) + bounceY + 2;
+    // The idle float is a CSS animation on the svg (compositor, no script).
+    const floatY = bounceY + 2;
     const bx = nx * 15, by = ny * 11;
     const rad = (nx * 4.5 * Math.PI) / 180, c = Math.cos(rad), s = Math.sin(rad);
     const pt = (x, y, m) => [(x * c - y * s + bx * m).toFixed(1), (x * s + y * c + by * m + floatY).toFixed(1)];
@@ -157,24 +159,33 @@
     face.host.style.setProperty("--gy", (24 - ny * 14).toFixed(1) + "%");
     return Math.abs(face.tx - nx) < .002 && Math.abs(face.ty - ny) < .002 && Math.abs(face.tCock - cock) < .002 && dt > .9;
   }
-  // Only faces on screen are drawn; with reduced motion they settle and stop.
+  // The face is redrawn only while it is moving: after the pointer moves or a
+  // click, until it settles. Whether it is on screen is tracked by an
+  // IntersectionObserver, so a frame never forces a layout to find out.
   let faceRaf = 0;
-  const faceShown = face => !document.hidden && face.host.getClientRects().length > 0 && !face.host.closest(".is-away, [hidden]");
+  const faceShown = face => !document.hidden && face.onScreen && !orbWrap.classList.contains("is-away");
   function faceTick(now) {
     faceRaf = 0;
     let busy = false;
     for (const face of faces) {
       if (!faceShown(face)) continue;
-      const settled = drawFace(face, now);
-      busy = busy || !motion.matches || !settled;
+      if (!drawFace(face, now)) busy = true;
     }
     if (busy) faceRaf = requestAnimationFrame(faceTick);
   }
   function wakeFaces() { if (!faceRaf) faceRaf = requestAnimationFrame(faceTick); }
-  window.addEventListener("mousemove", e => { for (const face of faces) if (faceShown(face)) aimFace(face, e); wakeFaces(); }, { passive: true });
+  window.addEventListener("mousemove", e => {
+    let shown = false;
+    for (const face of faces) if (faceShown(face)) { aimFace(face, e); shown = true; }
+    if (shown) wakeFaces();
+  }, { passive: true });
+  window.addEventListener("resize", () => { for (const face of faces) face.rect = null; }, { passive: true });
   document.addEventListener("visibilitychange", wakeFaces);
   orb.innerHTML = FACE_SVG;
-  for (const face of [mascotFace(orb)]) drawFace(face, performance.now());
+  for (const face of [mascotFace(orb)]) {
+    drawFace(face, performance.now());
+    if (window.IntersectionObserver) new IntersectionObserver(entries => { face.onScreen = entries[entries.length - 1].isIntersecting; if (face.onScreen) wakeFaces(); }).observe(face.host);
+  }
   wakeFaces();
 
   function launchState(value) {
@@ -187,6 +198,7 @@
   }
   function setOrbShown(shown) {
     orbWrap.classList.toggle("is-away", !shown);
+    for (const face of faces) face.rect = null;
     wakeFaces();
   }
 
@@ -348,8 +360,8 @@
         '<div class="sentinel-viewport" id="sentinelViewport">' +
           '<div class="sentinel-loading" id="sentinelLoading">Opening the live dashboard…</div>' +
           '<div class="sentinel-overlay" id="sentinelOverlay">' +
-            '<div class="sn-cursor" id="sentinelCursor"><svg viewBox="0 0 24 26" aria-hidden="true"><path d="M3 2.5l16.5 9.2-7.3 1.6-3.6 6.9z" fill="var(--sn-cursor)" stroke="#140c08" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.6 6.4l9.2 5.1" stroke="rgba(255,255,255,.55)" stroke-width="1" stroke-linecap="round"/></svg>' +
-              '<span class="sn-cursor-label"><span class="sn-mini"><i></i><i></i><i></i><i></i></span><span id="sentinelCursorText">Sentinel</span></span></div>' +
+            '<div class="sn-cursor" id="sentinelCursor"><svg viewBox="0 0 18 20" aria-hidden="true"><path class="sn-cursor-body" d="M2.2 1.6 15.4 9.1 9.5 10.4 6.6 16.1Z"/></svg>' +
+              '<span class="sn-cursor-label"><i class="sn-cursor-led" aria-hidden="true"></i><span id="sentinelCursorText">Sentinel</span></span></div>' +
           "</div>" +
         "</div>" +
       "</section>" +
@@ -649,6 +661,7 @@
   /* ================= Sentinel's cursor ================= */
   function cursorLabel(text, mode) {
     ui.cursorText.textContent = text || "Sentinel";
+    ui.cursor.classList.remove("is-hushed");
     ui.cursor.classList.toggle("is-waiting", mode === "waiting");
     ui.cursor.classList.toggle("is-yield", mode === "yield");
   }
@@ -763,13 +776,33 @@
     Object.assign(agent.spot.style, { left: r.x - pad + "px", top: r.y - pad + "px", width: r.w + pad * 2 + "px", height: r.h + pad * 2 + "px" });
     if (jump) { void agent.spot.offsetWidth; agent.spot.style.transition = ""; }
     agent.spot.style.opacity = "1";
-    agent.spot.classList.toggle("is-flip", r.y + r.h > ui.viewport.clientHeight - 70);
     // A pointer stays up long enough to be read, then fades by itself.
     clearTimeout(agent.spotTimer);
     agent.spotTimer = setTimeout(clearSpot, 9000);
     agent.spot.innerHTML = note ? '<span class="sn-spot-note">' + escHtml(note) + "</span>" : "";
+    agent.spot.classList.remove("is-flip");
+    if (note) placeSpotNote(agent.spot.firstChild, { x: r.x - pad, y: r.y - pad, w: r.w + pad * 2, h: r.h + pad * 2 });
   }
-  function clearSpot() { clearTimeout(agent.spotTimer); if (agent.spot) agent.spot.style.opacity = "0"; }
+  // The note wraps to fit and is kept wholly inside the live dashboard: shifted
+  // left when the item is near the right edge, put above the item when there is
+  // more room there, and inside the item's box when there is room neither side.
+  function placeSpotNote(noteEl, box) {
+    const vw = ui.viewport.clientWidth, vh = ui.viewport.clientHeight, margin = 8, gap = 8;
+    noteEl.style.maxWidth = Math.max(160, Math.min(320, vw - margin * 2)) + "px";
+    const w = noteEl.offsetWidth, h = noteEl.offsetHeight;
+    const left = Math.max(margin, Math.min(box.x, vw - w - margin));
+    noteEl.style.left = (left - box.x) + "px";
+    const below = vh - (box.y + box.h) - gap - margin, above = box.y - gap - margin;
+    if (h <= below || below >= above) {
+      noteEl.style.top = (h <= below ? box.h + gap : Math.max(margin, vh - h - margin) - box.y) + "px";
+    } else if (h <= above) {
+      agent.spot.classList.add("is-flip");
+      noteEl.style.top = (-h - gap) + "px";
+    } else {
+      noteEl.style.top = (Math.max(margin, Math.min(box.y + gap, vh - h - margin)) - box.y) + "px";
+    }
+  }
+  function clearSpot() { clearTimeout(agent.spotTimer); if (agent.spot) agent.spot.style.opacity = "0"; ui.cursor.classList.remove("is-hushed"); }
   async function bringIntoView(el) {
     const r = el.getBoundingClientRect();
     const win = frameWin();
@@ -1443,7 +1476,9 @@
       const el = elementForRef(args.ref);
       if (!el) return { error: "That ref is not on screen any more. Call read_screen again." };
       await aimAt(el, "Look here");
-      spotlight(el, args.note ? clampText(args.note, 160) : "");
+      spotlight(el, args.note ? clampText(args.note, 420) : "");
+      // The note speaks for the cursor: its own tag would sit on the note's text.
+      if (args.note) ui.cursor.classList.add("is-hushed");
       return { ok: true };
     },
     async ask_person(args, step) {
