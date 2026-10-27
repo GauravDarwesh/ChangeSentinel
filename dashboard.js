@@ -29,6 +29,48 @@
  */
 const L = window.CSLib;
 
+// Date#toLocaleDateString / toLocaleTimeString / toLocaleString build a new
+// Intl.DateTimeFormat on every call, which is slow, and the dashboard makes
+// thousands of these calls per render (every heatmap cell carries a dated
+// label). The same results come from one cached formatter per locale and
+// options. Defaults follow ECMA-402 ToDateTimeOptions, so output is identical.
+(function cacheDateFormatters() {
+  if (typeof Intl !== "object" || !Intl.DateTimeFormat || Date.prototype.__csCachedFormat) return;
+  const cache = new Map();
+  const DATE = ["weekday", "year", "month", "day"];
+  const TIME = ["dayPeriod", "hour", "minute", "second", "fractionalSecondDigits"];
+  function formatter(locales, options, required, defaults) {
+    let key;
+    try { key = JSON.stringify([locales === undefined ? null : locales, options === undefined ? null : options, required, defaults]); } catch (_) { return null; }
+    let f = cache.get(key);
+    if (!f) {
+      const opts = Object.assign({}, options || {});
+      const has = name => opts[name] !== undefined;
+      // dateStyle / timeStyle have their own per-method rules: leave those to the browser.
+      if (has("dateStyle") || has("timeStyle")) return null;
+      const need = !(required === "date" ? DATE : required === "time" ? TIME : DATE.concat(TIME)).some(has);
+      if (need) (defaults === "date" ? ["year", "month", "day"] : defaults === "time" ? ["hour", "minute", "second"] : ["year", "month", "day", "hour", "minute", "second"]).forEach(name => { opts[name] = "numeric"; });
+      f = new Intl.DateTimeFormat(locales, opts);
+      if (cache.size > 200) cache.clear();
+      cache.set(key, f);
+    }
+    return f;
+  }
+  const wrap = (name, required, defaults) => {
+    const original = Date.prototype[name];
+    Date.prototype[name] = function (locales, options) {
+      if (Number.isNaN(this.getTime())) return original.call(this, locales, options);
+      let f = null;
+      try { f = formatter(locales, options, required, defaults); } catch (_) { f = null; }
+      return f ? f.format(this) : original.call(this, locales, options);
+    };
+  };
+  wrap("toLocaleDateString", "date", "date");
+  wrap("toLocaleTimeString", "time", "time");
+  wrap("toLocaleString", "any", "all");
+  Object.defineProperty(Date.prototype, "__csCachedFormat", { value: true });
+})();
+
 // Derive the repository from the Pages address (<owner>.github.io/<repo>/) so a
 // fork reads its own data; fall back to the upstream repository elsewhere.
 function repositoryFromLocation() {
@@ -120,7 +162,7 @@ const state = {
   selectedId: "", selectedChangeId: "", selectedRunId: "", selectedNotificationId: "", selectedHealthKey: "", health: null, pendingCondition: null,
   mobileDetail: false,
   filter: "ALL", changeFilter: "ALL", specFilter: "attention", detailTab: "", diffMode: "compare", snapshotMode: "preview",
-  docInfo: {}, titleQueue: [], titleWorkers: 0, titleTimer: null,
+  docInfo: {}, titleQueue: [], titleWorkers: 0, titleTimer: null, titleMisses: new Set(), titlesFound: false,
   snapshotCache: boundedCache(24), htmlCache: boundedCache(12), evidenceCache: boundedCache(80), pdfPreviewUrl: "", toastTimer: null,
   assetSignatures: {}, renderedSignature: "", lastFullLoad: 0, loading: null, detailKeys: {},
   workflowRuns: [], workflowSignature: "", scanColumns: null, pendingScan: null,
@@ -467,7 +509,12 @@ function titleCacheKey(item) { return "cs-title:v6:" + (item.normalized_hash || 
 function hydrateDocumentTitles() {
   state.items.forEach(item => {
     if (state.docInfo[item.url_id] || !item.snapshot_location || item.pending_registration || !["pdf", "zip"].includes(itemKind(item))) return;
-    try { const cached = localStorage.getItem(titleCacheKey(item)); if (cached) { state.docInfo[item.url_id] = JSON.parse(cached); return; } } catch (_) {}
+    try {
+      const cached = localStorage.getItem(titleCacheKey(item));
+      if (cached === "-") return; // read before and has no recognisable title
+      if (cached) { state.docInfo[item.url_id] = JSON.parse(cached); return; }
+    } catch (_) {}
+    if (state.titleMisses.has(item.url_id)) return;
     if (!state.titleQueue.some(entry => entry.url_id === item.url_id)) state.titleQueue.push(item);
   });
   pumpTitleQueue();
@@ -476,18 +523,26 @@ function pumpTitleQueue() {
   while (state.titleWorkers < 3 && state.titleQueue.length) {
     const item = state.titleQueue.shift();
     state.titleWorkers++;
+    // Titles arrive one by one; the view is redrawn once per batch, and only
+    // when a title was actually found. A snapshot with no title is remembered
+    // (keyed by its content hash), and a failed read is not retried this visit.
     readSnapshotTextHead(item.snapshot_location, 9000).then(text => {
       const info = deriveDocumentTitle(text, itemKind(item));
       if (info && info.title) {
         state.docInfo[item.url_id] = info;
+        state.titlesFound = true;
         try { localStorage.setItem(titleCacheKey(item), JSON.stringify(info)); } catch (_) {}
+      } else {
+        try { localStorage.setItem(titleCacheKey(item), "-"); } catch (_) {}
       }
-    }).catch(() => {}).finally(() => {
+    }).catch(() => { state.titleMisses.add(item.url_id); }).finally(() => {
       state.titleWorkers--;
-      if (!state.titleTimer) state.titleTimer = setTimeout(() => {
+      if (state.titlesFound && !state.titleTimer) state.titleTimer = setTimeout(() => {
         state.titleTimer = null;
+        if (!state.titlesFound) return;
+        state.titlesFound = false;
         renderLists();
-      }, 150);
+      }, state.titleQueue.length || state.titleWorkers ? 700 : 120);
       pumpTitleQueue();
     });
   }
@@ -1800,8 +1855,17 @@ const ledField = (() => {
     ctx.fillRect(x + (cell.s - d) / 2, y + (cell.s - d) / 2, d, d);
   }
 
+  // Whether the field is on screen comes from an IntersectionObserver: reading
+  // offsetParent here forced a layout on every animation frame.
+  let onScreen = true;
+  if (canvas && typeof IntersectionObserver === "function") {
+    new IntersectionObserver(entries => {
+      onScreen = entries[entries.length - 1].isIntersecting;
+      if (onScreen) wake();
+    }).observe(canvas);
+  }
   function visible() {
-    return !document.hidden && canvas && canvas.offsetParent !== null && cells.length > 0;
+    return !document.hidden && canvas && onScreen && cells.length > 0;
   }
   function paint(now) {
     frame = 0;
@@ -2027,7 +2091,6 @@ function runSummary(counts) {
 function renderRuns() {
   const runs = state.history.slice(0, 120);
   $("runCount").textContent = plural(state.history.length, "run", "runs");
-  $("navRunCount").textContent = "";
   if (!runs.length) {
     $("runItems").innerHTML = emptyState("No runs recorded", "Scan history appears after the first scheduled or manual run.");
     return;
@@ -2076,8 +2139,6 @@ function notificationLists() {
 }
 function renderNotifications() {
   const { pending, sent } = notificationLists();
-  $("navNotificationCount").textContent = pending.length ? pending.length : "";
-  $("navNotificationCount").classList.toggle("is-alert", pending.length > 0);
   $("notificationPendingCount").textContent = pending.length ? "(" + pending.length + ")" : "";
   $("notificationSentCount").textContent = sent.length ? "(" + sent.length + ")" : "";
   $("notificationCounts").textContent = pending.length ? pending.length + " waiting" : "Nothing waiting";
@@ -2106,20 +2167,39 @@ function renderNotifications() {
   }).join("") + (sent.length > 100 ? '<p class="note-strip">Showing the 100 most recent deliveries.</p>' : "")
     : '<p class="note-strip">No alerts have been delivered yet.</p>';
 }
+// Only the view on screen is drawn. Every view used to be redrawn on each
+// click, route change and background update (the Overview heatmap alone is
+// rows × columns of cells), which made the whole dashboard lag. The others
+// are marked stale and drawn when they are opened: setView and select set
+// state.view before calling renderLists.
+const LIST_RENDERERS = {
+  overview() { renderOverview(); },
+  changes() { renderChangeRoute(); },
+  monitors() { renderMonitorList(); },
+  runs() { renderRuns(); },
+  health() { renderHealth(); },
+  notifications() { renderNotifications(); },
+  registry() { renderRegistry(); },
+  scout() { renderScout(); },
+  calendar() { renderCadenceView(); }
+};
+const staleLists = new Set();
 function renderLists() {
   if (!state.loaded) return;
-  renderOverview();
-  renderChangeRoute();
-  renderMonitorList();
-  renderRuns();
-  renderHealth();
-  renderNotifications();
-  renderRegistry();
-  renderScout();
-  renderCadenceView();
+  Object.keys(LIST_RENDERERS).forEach(view => staleLists.add(view));
+  renderListFor(state.view);
   renderNavCounts();
 }
+function renderListFor(view) {
+  if (!LIST_RENDERERS[view]) return;
+  staleLists.delete(view);
+  LIST_RENDERERS[view]();
+}
 function renderNavCounts() {
+  $("navRunCount").textContent = "";
+  const pendingAlerts = notificationLists().pending.length;
+  $("navNotificationCount").textContent = pendingAlerts ? pendingAlerts : "";
+  $("navNotificationCount").classList.toggle("is-alert", pendingAlerts > 0);
   const changes = changeLogEntries().filter(entry => CHANGE_EVENT_TYPES.indexOf(entry.event_type) >= 0).length;
   $("navChangeCount").textContent = changes;
   if ($("navRegistryCount")) $("navRegistryCount").textContent = registryItems().length || "";
@@ -4824,7 +4904,17 @@ function scoutMonitoredKeys() {
   state.scoutMonitored = keys;
   return keys;
 }
-function scoutBuckets() { return L.scoutBuckets(scoutCandidates(), scoutMonitoredKeys()); }
+// Bucketing every Scout finding canonicalises each URL; the nav counts and the
+// More tab ask for it on every render. The result changes only when the Scout
+// review or the monitored set is replaced (both are swapped, never mutated).
+let scoutBucketsMemo = null;
+function scoutBuckets() {
+  const candidates = scoutCandidates(), monitored = scoutMonitoredKeys();
+  if (!scoutBucketsMemo || scoutBucketsMemo.candidates !== candidates || scoutBucketsMemo.monitored !== monitored) {
+    scoutBucketsMemo = { candidates, monitored, buckets: L.scoutBuckets(candidates, monitored) };
+  }
+  return scoutBucketsMemo.buckets;
+}
 function scoutFiltered() {
   const query = ($("scoutSearch") ? $("scoutSearch").value : "").trim().toLowerCase();
   const formatFilter = ($("scoutFormatFilter") ? $("scoutFormatFilter").value : state.scoutFormatFilter) || "ALL";
@@ -9787,7 +9877,8 @@ $("timelineView").addEventListener("focusout", hideTimelineTip);
  * each with its live status. While one of those views is open, the More tab
  * takes its name, so the bar always says where you are.
  */
-const MORE_VIEWS = { health: "Health", runs: "Runs", registry: "Registry", scout: "Scout", calendar: "Cadence" };
+// Runs has its own tab in the phone bar (where Ask used to be); More holds the rest.
+const MORE_VIEWS = { health: "Health", registry: "Registry", scout: "Scout", calendar: "Cadence" };
 function syncMoreTab() {
   const button = $("navMore");
   if (!button) return;

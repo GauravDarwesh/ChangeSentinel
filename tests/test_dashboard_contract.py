@@ -101,9 +101,11 @@ class TestDashboardEvidenceContract(unittest.TestCase):
         self.assertIn("function renderTimeline(columns)", source)
         self.assertIn("view: f.view", source)
 
-    def test_phone_bar_keeps_ask_and_puts_health_in_more(self):
+    def test_phone_bar_has_runs_and_puts_health_in_more(self):
+        # Ask Sentinel opens from the orb on phones too; Runs takes its tab.
         html = read("index.html")
-        for token in ('id="navMore"', 'id="moreSheet"', ".rail-nav > .nav-ask, .rail-nav > .nav-more { display: block; }",
+        for token in ('id="navMore"', 'id="moreSheet"', '<li class="nav-runs">',
+                      ".rail-nav > .nav-runs, .rail-nav > .nav-alerts, .rail-nav > .nav-more { display: block; }",
                       ".rail-nav { grid-template-columns: repeat(6, minmax(0, 1fr));"):
             with self.subTest(token=token):
                 self.assertIn(token, html)

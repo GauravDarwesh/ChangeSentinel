@@ -95,80 +95,97 @@
   document.body.append(orbWrap);
   const orb = orbWrap.querySelector("#minimal-mascot-orb");
 
-  // The mascot's face, exactly as drawn: brow, hooked nose and two eyes that
-  // turn toward the pointer, cock an eyebrow when it comes close, float and
-  // bounce on a click. One drawing drives every copy of the face: the orb,
-  // and the small one that heads the workspace.
-  const FACE_SVG = '<svg viewBox="-100 -100 200 200" aria-hidden="true">' +
-    '<path data-mo="eye-l" class="m-line"/><path data-mo="eye-r" class="m-line"/><path data-mo="mouth" class="m-line"/>' +
-    '<path data-mo="brow-l" class="m-line"/><path data-mo="brow-r" class="m-line"/><path data-mo="nose" class="m-line"/></svg>';
+  // The mascot's face: one continuous Moai stroke (left brow; right brow
+  // running into a nearly straight nose that leans to its tip on the left,
+  // then a short base back under it) over closed, calm eyelids.
+  // Three depth planes give the 2.5D turn toward the pointer: lids at 0.65,
+  // brows at 0.95, the nose from 1.1 at its root to 1.3 at its foot. Close by,
+  // the right brow lifts; a click makes the lids smile for a moment.
+  const FACE_SVG = '<svg viewBox="-80 -80 160 160" aria-hidden="true">' +
+    '<path data-mo="eye-l" class="m-line"/><path data-mo="eye-r" class="m-line"/>' +
+    '<path data-mo="brow-l" class="m-line"/><path data-mo="nose" class="m-line"/></svg>';
   const faces = [];
   function mascotFace(host) {
-    const face = { host, tx: 0, ty: 0, nx: 0, ny: 0, tCock: 0, cock: 0, clickT: -10, parts: {} };
+    const face = { host, tx: 0, ty: 0, nx: 0, ny: 0, tCock: 0, cock: 0, clickT: -10, parts: {}, onScreen: true };
     host.querySelectorAll("[data-mo]").forEach(path => { face.parts[path.dataset.mo] = path; });
     host.addEventListener("click", () => { face.clickT = performance.now(); wakeFaces(); });
     faces.push(face);
     return face;
   }
+  // How far the face turns toward the pointer (1 = the generator's 1.0x).
+  const FACE_SENSITIVITY = 1.1;
   function aimFace(face, e) {
-    const r = face.host.getBoundingClientRect();
-    if (!r.width) return;
+    // The orb is fixed in the corner: measure it once, again after a resize.
+    const r = face.rect || (face.rect = face.host.getBoundingClientRect());
+    if (!r.width) { face.rect = null; return; }
     const dx = e.clientX - (r.left + r.width / 2);
     const dy = e.clientY - (r.top + r.height / 2);
     const dist = Math.hypot(dx, dy);
     const maxR = Math.max(window.innerWidth, window.innerHeight) * 0.55;
-    const mag = Math.pow(Math.min(dist, maxR) / maxR, 0.62) * 1.80;
+    const mag = Math.pow(Math.min(dist, maxR) / maxR, 0.62) * FACE_SENSITIVITY;
     const ang = Math.atan2(dy, dx);
     face.tx = Math.cos(ang) * mag;
     face.ty = Math.sin(ang) * mag;
     face.tCock = dist < Math.max(r.width * 2.2, 110) ? 1 : 0;
   }
+  const fmt = p => p[0] + " " + p[1];
   function drawFace(face, now) {
-    face.nx += (face.tx - face.nx) * 0.11;
-    face.ny += (face.ty - face.ny) * 0.11;
+    face.nx += (face.tx - face.nx) * 0.1;
+    face.ny += (face.ty - face.ny) * 0.1;
     face.cock += (face.tCock - face.cock) * 0.12;
     const nx = face.nx, ny = face.ny, cock = face.cock, el = face.parts;
     const still = motion.matches;
     const dt = (now - face.clickT) / 1000;
-    const bounceY = !still && dt < 0.8 ? -Math.sin(dt * Math.PI * 3) * 10 * Math.exp(-3 * dt) : 0;
-    const floatY = (still ? 0 : Math.sin(now * 0.0023) * 2.2) + bounceY;
-    const bx = nx * 18, by = ny * 14;
-    const rad = (nx * 6.5 * Math.PI) / 180, c = Math.cos(rad), s = Math.sin(rad);
+    const bounceY = !still && dt < 0.8 ? -Math.sin(dt * Math.PI * 3) * 7 * Math.exp(-3 * dt) : 0;
+    const joy = dt < 0.9 ? Math.sin(Math.min(dt / 0.9, 1) * Math.PI) : 0;
+    // The idle float is a CSS animation on the svg (compositor, no script).
+    const floatY = bounceY + 2;
+    const bx = nx * 15, by = ny * 11;
+    const rad = (nx * 4.5 * Math.PI) / 180, c = Math.cos(rad), s = Math.sin(rad);
     const pt = (x, y, m) => [(x * c - y * s + bx * m).toFixed(1), (x * s + y * c + by * m + floatY).toFixed(1)];
-    const h = 0.6;
-    const lT = pt(-18, -10 - h, 0.65), lB = pt(-18, -10 + h, 0.65);
-    const rT = pt(20, -9 - h, 0.65), rB = pt(20, -9 + h, 0.65);
-    el["eye-l"].setAttribute("d", "M " + lT[0] + " " + lT[1] + " L " + lB[0] + " " + lB[1]);
-    el["eye-r"].setAttribute("d", "M " + rT[0] + " " + rT[1] + " L " + rB[0] + " " + rB[1]);
-    el.mouth.setAttribute("d", "");
-    const rc = -cock * 7.5;
-    const bL1 = pt(-34, -22, 0.95), bL2 = pt(-17, -30, 0.95), bM = pt(1, -22, 1.1);
-    const bR1 = pt(36, -20 + rc, 0.95), bR2 = pt(20, -30 + rc * 0.85, 0.95), nT = pt(3, -21, 1.15);
-    const nBL = pt(-14, 24, 1.35), nBR = pt(13, 26, 1.35), nWR = pt(18, 19, 1.35);
-    el["brow-l"].setAttribute("d", "M " + bL1[0] + " " + bL1[1] + " L " + bL2[0] + " " + bL2[1] + " L " + bM[0] + " " + bM[1]);
-    el.nose.setAttribute("d", "M " + bR1[0] + " " + bR1[1] + " L " + bR2[0] + " " + bR2[1] + " L " + nT[0] + " " + nT[1] + " L " + nBL[0] + " " + nBL[1] + " L " + nBR[0] + " " + nBR[1] + " L " + nWR[0] + " " + nWR[1]);
-    face.host.style.setProperty("--gx", (32 - nx * 22).toFixed(1) + "%");
-    face.host.style.setProperty("--gy", (25 - ny * 22).toFixed(1) + "%");
-    return Math.abs(face.tx - nx) < .002 && Math.abs(face.ty - ny) < .002 && Math.abs(face.tCock - cock) < .002 && dt > .8;
+    // Closed lids: shallow arcs that sag; on a click they turn up into a smile.
+    const sag = 4 - joy * 10;
+    const lA = pt(-26, -5, 0.65), lC = pt(-18, -5 + sag * 1.25, 0.65), lB = pt(-10, -5, 0.65);
+    const rA = pt(12, -4, 0.65), rC = pt(20, -4 + sag * 1.25, 0.65), rB = pt(28, -4, 0.65);
+    el["eye-l"].setAttribute("d", "M " + fmt(lA) + " Q " + fmt(lC) + " " + fmt(lB));
+    el["eye-r"].setAttribute("d", "M " + fmt(rA) + " Q " + fmt(rC) + " " + fmt(rB));
+    const rc = -(cock + joy * 0.5) * 6.5;
+    const bL1 = pt(-34, -21, 0.95), bL2 = pt(-17, -29, 0.95), bM = pt(-1, -22, 1.1);
+    const bR1 = pt(35, -20 + rc, 0.95), bR2 = pt(19, -29 + rc * 0.85, 0.95);
+    const nT = pt(3, -21, 1.1), nB = pt(-7, 23, 1.3), nF = pt(9, 23, 1.3);
+    el["brow-l"].setAttribute("d", "M " + fmt(bL1) + " L " + fmt(bL2) + " L " + fmt(bM));
+    el.nose.setAttribute("d", "M " + fmt(bR1) + " L " + fmt(bR2) + " L " + fmt(nT) + " L " + fmt(nB) + " L " + fmt(nF));
+    face.host.style.setProperty("--gx", (32 - nx * 14).toFixed(1) + "%");
+    face.host.style.setProperty("--gy", (24 - ny * 14).toFixed(1) + "%");
+    return Math.abs(face.tx - nx) < .002 && Math.abs(face.ty - ny) < .002 && Math.abs(face.tCock - cock) < .002 && dt > .9;
   }
-  // Only faces on screen are drawn; with reduced motion they settle and stop.
+  // The face is redrawn only while it is moving: after the pointer moves or a
+  // click, until it settles. Whether it is on screen is tracked by an
+  // IntersectionObserver, so a frame never forces a layout to find out.
   let faceRaf = 0;
-  const faceShown = face => !document.hidden && face.host.getClientRects().length > 0 && !face.host.closest(".is-away, [hidden]");
+  const faceShown = face => !document.hidden && face.onScreen && !orbWrap.classList.contains("is-away");
   function faceTick(now) {
     faceRaf = 0;
     let busy = false;
     for (const face of faces) {
       if (!faceShown(face)) continue;
-      const settled = drawFace(face, now);
-      busy = busy || !motion.matches || !settled;
+      if (!drawFace(face, now)) busy = true;
     }
     if (busy) faceRaf = requestAnimationFrame(faceTick);
   }
   function wakeFaces() { if (!faceRaf) faceRaf = requestAnimationFrame(faceTick); }
-  window.addEventListener("mousemove", e => { for (const face of faces) if (faceShown(face)) aimFace(face, e); wakeFaces(); }, { passive: true });
+  window.addEventListener("mousemove", e => {
+    let shown = false;
+    for (const face of faces) if (faceShown(face)) { aimFace(face, e); shown = true; }
+    if (shown) wakeFaces();
+  }, { passive: true });
+  window.addEventListener("resize", () => { for (const face of faces) face.rect = null; }, { passive: true });
   document.addEventListener("visibilitychange", wakeFaces);
   orb.innerHTML = FACE_SVG;
-  for (const face of [mascotFace(orb)]) drawFace(face, performance.now());
+  for (const face of [mascotFace(orb)]) {
+    drawFace(face, performance.now());
+    if (window.IntersectionObserver) new IntersectionObserver(entries => { face.onScreen = entries[entries.length - 1].isIntersecting; if (face.onScreen) wakeFaces(); }).observe(face.host);
+  }
   wakeFaces();
 
   function launchState(value) {
@@ -181,6 +198,7 @@
   }
   function setOrbShown(shown) {
     orbWrap.classList.toggle("is-away", !shown);
+    for (const face of faces) face.rect = null;
     wakeFaces();
   }
 
@@ -342,8 +360,8 @@
         '<div class="sentinel-viewport" id="sentinelViewport">' +
           '<div class="sentinel-loading" id="sentinelLoading">Opening the live dashboard…</div>' +
           '<div class="sentinel-overlay" id="sentinelOverlay">' +
-            '<div class="sn-cursor" id="sentinelCursor"><svg viewBox="0 0 24 26" aria-hidden="true"><path d="M3 2.5l16.5 9.2-7.3 1.6-3.6 6.9z" fill="var(--sn-cursor)" stroke="#140c08" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.6 6.4l9.2 5.1" stroke="rgba(255,255,255,.55)" stroke-width="1" stroke-linecap="round"/></svg>' +
-              '<span class="sn-cursor-label"><span class="sn-mini"><i></i><i></i><i></i><i></i></span><span id="sentinelCursorText">Sentinel</span></span></div>' +
+            '<div class="sn-cursor" id="sentinelCursor"><svg viewBox="0 0 18 20" aria-hidden="true"><path class="sn-cursor-body" d="M2.2 1.6 15.4 9.1 9.5 10.4 6.6 16.1Z"/></svg>' +
+              '<span class="sn-cursor-label"><i class="sn-cursor-led" aria-hidden="true"></i><span id="sentinelCursorText">Sentinel</span></span></div>' +
           "</div>" +
         "</div>" +
       "</section>" +
@@ -570,7 +588,6 @@
       const target = event.target.closest(INTERACTIVE) || event.target;
       noteHuman("clicked " + describeEl(target));
       clearSpot();
-      ping(event.clientX * agent.scale, event.clientY * agent.scale);
       setTimeout(updateCrumb, 250);
     }, true);
     doc.addEventListener("change", event => {
@@ -600,14 +617,6 @@
     clearTimeout(noteHuman.timer);
     noteHuman.timer = setTimeout(() => { ui.cowork.textContent = agent.running ? "Sentinel is working — you can keep using the dashboard" : "You and Sentinel share this copy"; }, 5000);
   }
-  function ping(x, y) {
-    const el = document.createElement("span");
-    el.className = "sn-human-ping";
-    el.style.left = x + "px"; el.style.top = y + "px";
-    ui.overlay.append(el);
-    setTimeout(() => el.remove(), 800);
-  }
-
   ui.pause.addEventListener("click", () => setPaused(!agent.paused));
   ui.takeover.addEventListener("click", () => { setPaused(!agent.paused); if (agent.paused) showStage(); });
   function setPaused(value) {
@@ -643,6 +652,7 @@
   /* ================= Sentinel's cursor ================= */
   function cursorLabel(text, mode) {
     ui.cursorText.textContent = text || "Sentinel";
+    ui.cursor.classList.remove("is-hushed");
     ui.cursor.classList.toggle("is-waiting", mode === "waiting");
     ui.cursor.classList.toggle("is-yield", mode === "yield");
   }
@@ -757,13 +767,33 @@
     Object.assign(agent.spot.style, { left: r.x - pad + "px", top: r.y - pad + "px", width: r.w + pad * 2 + "px", height: r.h + pad * 2 + "px" });
     if (jump) { void agent.spot.offsetWidth; agent.spot.style.transition = ""; }
     agent.spot.style.opacity = "1";
-    agent.spot.classList.toggle("is-flip", r.y + r.h > ui.viewport.clientHeight - 70);
     // A pointer stays up long enough to be read, then fades by itself.
     clearTimeout(agent.spotTimer);
     agent.spotTimer = setTimeout(clearSpot, 9000);
     agent.spot.innerHTML = note ? '<span class="sn-spot-note">' + escHtml(note) + "</span>" : "";
+    agent.spot.classList.remove("is-flip");
+    if (note) placeSpotNote(agent.spot.firstChild, { x: r.x - pad, y: r.y - pad, w: r.w + pad * 2, h: r.h + pad * 2 });
   }
-  function clearSpot() { clearTimeout(agent.spotTimer); if (agent.spot) agent.spot.style.opacity = "0"; }
+  // The note wraps to fit and is kept wholly inside the live dashboard: shifted
+  // left when the item is near the right edge, put above the item when there is
+  // more room there, and inside the item's box when there is room neither side.
+  function placeSpotNote(noteEl, box) {
+    const vw = ui.viewport.clientWidth, vh = ui.viewport.clientHeight, margin = 8, gap = 8;
+    noteEl.style.maxWidth = Math.max(160, Math.min(320, vw - margin * 2)) + "px";
+    const w = noteEl.offsetWidth, h = noteEl.offsetHeight;
+    const left = Math.max(margin, Math.min(box.x, vw - w - margin));
+    noteEl.style.left = (left - box.x) + "px";
+    const below = vh - (box.y + box.h) - gap - margin, above = box.y - gap - margin;
+    if (h <= below || below >= above) {
+      noteEl.style.top = (h <= below ? box.h + gap : Math.max(margin, vh - h - margin) - box.y) + "px";
+    } else if (h <= above) {
+      agent.spot.classList.add("is-flip");
+      noteEl.style.top = (-h - gap) + "px";
+    } else {
+      noteEl.style.top = (Math.max(margin, Math.min(box.y + gap, vh - h - margin)) - box.y) + "px";
+    }
+  }
+  function clearSpot() { clearTimeout(agent.spotTimer); if (agent.spot) agent.spot.style.opacity = "0"; ui.cursor.classList.remove("is-hushed"); }
   async function bringIntoView(el) {
     const r = el.getBoundingClientRect();
     const win = frameWin();
@@ -1437,7 +1467,9 @@
       const el = elementForRef(args.ref);
       if (!el) return { error: "That ref is not on screen any more. Call read_screen again." };
       await aimAt(el, "Look here");
-      spotlight(el, args.note ? clampText(args.note, 160) : "");
+      spotlight(el, args.note ? clampText(args.note, 420) : "");
+      // The note speaks for the cursor: its own tag would sit on the note's text.
+      if (args.note) ui.cursor.classList.add("is-hushed");
       return { ok: true };
     },
     async ask_person(args, step) {

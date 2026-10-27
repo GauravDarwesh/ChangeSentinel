@@ -2272,7 +2272,21 @@
    * address compared against them must go through it too.
    */
   const TRACKING_PARAMS = ["fbclid", "gclid", "mc_cid", "mc_eid"];
-  function canonicalUrl(value) {
+  // canonicalUrl and urlKey are pure and called for every listed URL on each
+  // render; parsing with URL() is the cost, so results are remembered.
+  const urlMemo = new Map();
+  function remembered(kind, value, compute) {
+    const key = kind + String(value == null ? "" : value);
+    let hit = urlMemo.get(key);
+    if (hit === undefined) {
+      hit = compute();
+      if (urlMemo.size > 20000) urlMemo.clear();
+      urlMemo.set(key, hit);
+    }
+    return hit;
+  }
+  function canonicalUrl(value) { return remembered("c", value, () => canonicalUrlUncached(value)); }
+  function canonicalUrlUncached(value) {
     const raw = String(value == null ? "" : value).trim();
     try {
       const url = new URL(raw);
@@ -2294,7 +2308,8 @@
   // Loose address identity for the "already monitored" hint: on top of the
   // canonical form, the scheme, host case, a trailing dot and any trailing
   // slashes never make a different page.
-  function urlKey(value) {
+  function urlKey(value) { return remembered("k", value, () => urlKeyUncached(value)); }
+  function urlKeyUncached(value) {
     try {
       const url = new URL(canonicalUrl(value));
       const path = url.pathname.replace(/\/+$/, "") || "/";

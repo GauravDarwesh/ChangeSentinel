@@ -38,55 +38,82 @@ html.cs-embed body { background-image: none; }
 html.cs-embed [data-sentinel-focus] { outline: 2px solid var(--accent) !important; outline-offset: 2px; }
 
 /* ---------- The orb (the person's mascot) ----------
- * Their 64px glass orb and line face, unchanged in shape and motion; the glass
- * takes the dashboard's warm paper (light) or lit-umber (dark) tones, the face
- * is drawn in the dashboard's ink, and the states use its LED vocabulary:
- * an accent ring chases round while Sentinel works, green while it waits on
- * the person, and a square accent LED marks an answer waiting.
+ * A 52px glass orb with the line face. The glass takes the dashboard's warm
+ * paper (light) or lit-umber (dark): a soft key light top-left that follows
+ * the pointer, a specular sheen, a faint rim of reflected light underneath
+ * and a hairline edge like the panes'. The face is drawn in the dashboard's
+ * ink. States use its LED vocabulary: an accent ring chases round while
+ * Sentinel works, green while it waits on the person, and a square accent LED
+ * marks an answer waiting.
  */
 .minimal-orb-wrap {
-  --orb-hi: rgba(255, 255, 255, .88);
-  --orb-mid: rgba(246, 241, 234, .52);
-  --orb-lo: rgba(236, 229, 219, .42);
-  --orb-edge: rgba(255, 255, 255, .62);
-  --orb-shadow: 0 10px 28px -4px rgba(70, 44, 18, .34), 0 0 0 1px rgba(160, 130, 100, .14);
-  --orb-inset: inset 0 1.5px 4px rgba(255, 255, 255, .9), inset 0 -3px 8px rgba(70, 44, 18, .14);
+  --orb-size: 52px;
+  --orb-hi: rgba(255, 255, 255, .94);
+  --orb-mid: rgba(248, 244, 238, .66);
+  --orb-lo: rgba(233, 225, 214, .58);
+  --orb-edge: rgba(150, 120, 90, .2);
+  --orb-sheen: rgba(255, 255, 255, .85);
+  --orb-rim: rgba(255, 250, 242, .7);
+  --orb-shadow: 0 1px 2px rgba(60, 38, 16, .12), 0 8px 22px -8px rgba(60, 38, 16, .32);
+  --orb-shadow-up: 0 1px 2px rgba(60, 38, 16, .12), 0 12px 26px -8px rgba(60, 38, 16, .38);
+  --orb-inset: inset 0 1px 1.5px rgba(255, 255, 255, .95), inset 0 -4px 9px rgba(90, 60, 30, .1);
   --orb-ink: var(--ink);
-  position: fixed; right: 24px; bottom: 24px; z-index: 120;
-  perspective: 700px; user-select: none; -webkit-user-select: none;
+  position: fixed; right: 22px; bottom: 22px; z-index: 120;
+  user-select: none; -webkit-user-select: none;
   transition: opacity .28s var(--sn-ease), transform .32s var(--sn-ease), visibility 0s linear 0s;
 }
 :root[data-theme="dark"] .minimal-orb-wrap, :root:not([data-theme]) .minimal-orb-wrap {
-  --orb-hi: rgba(84, 60, 40, .9);
-  --orb-mid: rgba(45, 32, 22, .62);
-  --orb-lo: rgba(28, 19, 13, .55);
-  --orb-edge: rgba(255, 220, 180, .2);
-  --orb-shadow: 0 12px 30px -6px rgba(0, 0, 0, .7), 0 0 0 1px rgba(0, 0, 0, .4);
-  --orb-inset: inset 0 1.5px 4px rgba(255, 228, 196, .28), inset 0 -3px 8px rgba(0, 0, 0, .4);
+  --orb-hi: rgba(96, 70, 48, .95);
+  --orb-mid: rgba(52, 37, 26, .9);
+  --orb-lo: rgba(30, 21, 15, .92);
+  --orb-edge: rgba(255, 214, 170, .14);
+  --orb-sheen: rgba(255, 232, 205, .26);
+  --orb-rim: rgba(255, 190, 120, .16);
+  --orb-shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 10px 24px -8px rgba(0, 0, 0, .75);
+  --orb-shadow-up: 0 1px 2px rgba(0, 0, 0, .5), 0 14px 28px -8px rgba(0, 0, 0, .8);
+  --orb-inset: inset 0 1px 1.5px rgba(255, 226, 190, .2), inset 0 -4px 10px rgba(0, 0, 0, .35);
 }
-:root[data-theme="light"] .minimal-orb-wrap { --orb-hi: rgba(255, 255, 255, .88); --orb-mid: rgba(246, 241, 234, .52); --orb-lo: rgba(236, 229, 219, .42); --orb-edge: rgba(255, 255, 255, .62); --orb-shadow: 0 10px 28px -4px rgba(70, 44, 18, .34), 0 0 0 1px rgba(160, 130, 100, .14); --orb-inset: inset 0 1.5px 4px rgba(255, 255, 255, .9), inset 0 -3px 8px rgba(70, 44, 18, .14); }
+:root[data-theme="light"] .minimal-orb-wrap {
+  --orb-hi: rgba(255, 255, 255, .94); --orb-mid: rgba(248, 244, 238, .66); --orb-lo: rgba(233, 225, 214, .58);
+  --orb-edge: rgba(150, 120, 90, .2); --orb-sheen: rgba(255, 255, 255, .85); --orb-rim: rgba(255, 250, 242, .7);
+  --orb-shadow: 0 1px 2px rgba(60, 38, 16, .12), 0 8px 22px -8px rgba(60, 38, 16, .32);
+  --orb-shadow-up: 0 1px 2px rgba(60, 38, 16, .12), 0 12px 26px -8px rgba(60, 38, 16, .38);
+  --orb-inset: inset 0 1px 1.5px rgba(255, 255, 255, .95), inset 0 -4px 9px rgba(90, 60, 30, .1);
+}
 .minimal-orb-wrap.is-away { opacity: 0; visibility: hidden; transform: scale(.6); pointer-events: none; transition: opacity .2s var(--sn-ease), transform .25s var(--sn-ease), visibility 0s linear .25s; }
 html.cs-locked .minimal-orb-wrap, html.cs-embed .minimal-orb-wrap { display: none; }
 .minimal-glass-orb {
-  --gx: 30%; --gy: 25%;
+  --gx: 32%; --gy: 24%;
   position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;
-  width: 64px; height: 64px; padding: 0; overflow: hidden; border-radius: 50%; cursor: pointer;
-  background: radial-gradient(circle at var(--gx) var(--gy), var(--orb-hi) 0%, var(--orb-mid) 55%, var(--orb-lo) 100%);
-  -webkit-backdrop-filter: blur(1px) saturate(190%); backdrop-filter: blur(1px) saturate(190%);
-  border: 1.25px solid var(--orb-edge);
+  width: var(--orb-size); height: var(--orb-size); padding: 0; overflow: hidden; border-radius: 50%; cursor: pointer;
+  background: radial-gradient(circle at var(--gx) var(--gy), var(--orb-hi) 0%, var(--orb-mid) 52%, var(--orb-lo) 100%);
+  -webkit-backdrop-filter: blur(6px) saturate(160%); backdrop-filter: blur(6px) saturate(160%);
+  border: 1px solid var(--orb-edge);
   box-shadow: var(--orb-shadow), var(--orb-inset);
   color: var(--orb-ink);
-  transition: transform .15s ease, box-shadow .25s ease;
+  transition: transform .22s var(--sn-ease), box-shadow .22s var(--sn-ease);
 }
-.minimal-glass-orb:hover { transform: translateY(-1px); }
-.minimal-glass-orb:active { transform: scale(.96); }
-.minimal-glass-orb:focus-visible { outline: 1.5px solid var(--accent); outline-offset: 4px; border-radius: 50%; }
-.minimal-glass-orb svg { width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-.minimal-glass-orb .m-line { fill: none; stroke: currentColor; stroke-width: 7.2; stroke-linecap: round; stroke-linejoin: round; }
+/* Specular sheen (top-left) and reflected rim light (bottom), over the face like real glass. */
+.minimal-glass-orb::before, .minimal-glass-orb::after { content: ""; position: absolute; pointer-events: none; z-index: 2; border-radius: 50%; }
+.minimal-glass-orb::before {
+  left: 14%; top: 4%; width: 44%; height: 22%;
+  background: radial-gradient(ellipse at 50% 35%, var(--orb-sheen) 0%, transparent 72%);
+  transform: rotate(-24deg); opacity: .78;
+}
+.minimal-glass-orb::after {
+  inset: auto 16% 3% 16%; height: 20%;
+  background: radial-gradient(ellipse at 50% 100%, var(--orb-rim) 0%, transparent 70%);
+}
+.minimal-glass-orb:hover { transform: translateY(-1px); box-shadow: var(--orb-shadow-up), var(--orb-inset); }
+.minimal-glass-orb:active { transform: translateY(0) scale(.96); transition-duration: .08s; }
+.minimal-glass-orb:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; border-radius: 50%; }
+.minimal-glass-orb svg { position: relative; z-index: 1; width: 100%; height: 100%; overflow: visible; pointer-events: none; animation: snOrbFloat 3s ease-in-out infinite; will-change: transform; }
+@keyframes snOrbFloat { 0%, 100% { transform: translateY(-.5px); } 50% { transform: translateY(.5px); } }
+.minimal-glass-orb .m-line { fill: none; stroke: currentColor; stroke-width: 5.8; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Working: an accent arc chases round the orb. Waiting on the person: green. */
 .minimal-orb-ring {
-  position: absolute; inset: -5px; border-radius: 50%; pointer-events: none; opacity: 0;
+  position: absolute; inset: -4px; border-radius: 50%; pointer-events: none; opacity: 0;
   background: conic-gradient(from var(--orb-a, 0deg), var(--accent) 0deg, transparent 110deg, transparent 360deg);
   -webkit-mask: radial-gradient(circle, transparent 0 calc(50% - 2px), #000 calc(50% - 1.5px) 50%, transparent calc(50% + .5px));
   mask: radial-gradient(circle, transparent 0 calc(50% - 2px), #000 calc(50% - 1.5px) 50%, transparent calc(50% + .5px));
@@ -99,13 +126,22 @@ html.cs-locked .minimal-orb-wrap, html.cs-embed .minimal-orb-wrap { display: non
 @keyframes snOrbChase { to { --orb-a: 360deg; } }
 /* An answer waiting: one square LED, like the rows' marks. */
 .minimal-orb-wrap.has-note::after {
-  content: ""; position: absolute; right: 3px; top: 3px; z-index: 2; width: 8px; height: 8px;
+  content: ""; position: absolute; right: 2px; top: 2px; z-index: 2; width: 7px; height: 7px;
   background: var(--accent); box-shadow: var(--glow), 0 0 0 2px var(--pane); animation: snRingWait 1.6s ease-in-out infinite;
 }
 /* On wide screens the orb is the way in, so the rail no longer carries Ask Sentinel.
    Phones keep the bottom bar's Ask tab and have no orb. */
-@media (min-width: 981px) { .rail .nav-ask { display: none !important; } }
-@media (max-width: 980px) { .minimal-orb-wrap { display: none; } }
+/* The orb is the way in on every screen; the rail and the phone bar carry no Ask tab. */
+.rail .nav-ask { display: none !important; }
+@media (min-width: 981px) {
+  /* The hairline that sat above Ask Sentinel now separates Add a link, as
+     the one above Scout separates the views. */
+  .rail .nav-add { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+}
+/* Phones: the orb floats just above the bottom bar (54px plus the safe area). */
+@media (max-width: 980px) {
+  .minimal-orb-wrap { --orb-size: 48px; right: 14px; bottom: calc(54px + 14px + env(safe-area-inset-bottom)); }
+}
 
 /* On a phone the bottom bar's Ask tab carries the same states. */
 .nav-button-ask { position: relative; }
@@ -337,37 +373,45 @@ html.cs-locked .minimal-orb-wrap, html.cs-embed .minimal-orb-wrap { display: non
 
 .sn-cursor { position: absolute; left: 0; top: 0; z-index: 5; width: 0; height: 0; transform: translate3d(-100px, -100px, 0); will-change: transform; backface-visibility: hidden; opacity: 0; transition: opacity .25s var(--sn-ease); }
 .sn-cursor.is-on { opacity: 1; }
-.sn-cursor svg { position: absolute; left: -3px; top: -2px; width: 24px; height: 26px; overflow: visible; filter: drop-shadow(0 3px 5px rgba(0, 0, 0, .3)); transform-origin: 3px 2px; transition: transform .12s var(--sn-ease); }
-.sn-cursor.is-press svg { transform: scale(.82) translate(1px, 1px); }
+/* Sentinel's cursor: a slim kite in the accent with a hairline edge in the
+   pane colour (crisp on any background) and a soft shadow; its label is a
+   quiet pane-coloured tag with a hairline border and one LED square for state:
+   accent while working, green while waiting on the person, dim when yielding. */
+.sn-cursor svg { position: absolute; left: -2px; top: -1.5px; width: 18px; height: 20px; overflow: visible; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .28)) drop-shadow(0 3px 6px rgba(0, 0, 0, .16)); transform-origin: 2px 1.5px; transition: transform .14s var(--sn-ease); }
+.sn-cursor-body { fill: var(--sn-cursor); stroke: var(--pane); stroke-width: 1.15; stroke-linejoin: round; paint-order: stroke; }
+.sn-cursor.is-press svg { transform: scale(.86); }
 .sn-cursor-label {
-  position: absolute; left: 18px; top: 20px; display: inline-flex; align-items: center; gap: 6px; width: max-content; max-width: 260px; padding: 4px 9px 4px 5px;
-  border-radius: var(--radius); background: color-mix(in srgb, var(--sn-cursor) 92%, transparent); color: #140c08;
-  font: 600 11px/1.35 var(--font-ui); box-shadow: 0 6px 16px -6px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .45);
+  position: absolute; left: 15px; top: 17px; display: inline-flex; align-items: center; gap: 7px; width: max-content; max-width: 240px; padding: 4px 8px 4px 7px;
+  border: 1px solid var(--line); border-radius: 4px; background: color-mix(in srgb, var(--pane) 94%, transparent);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  color: var(--ink); font: 500 11px/1.3 var(--font-ui); letter-spacing: .005em;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .08), 0 6px 16px -8px rgba(0, 0, 0, .3);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.sn-cursor-label .sn-mini { flex: none; display: grid; grid-template-columns: repeat(2, 3px); gap: 1.5px; padding: 3px; border-radius: 2px; background: rgba(20, 12, 8, .85); }
-.sn-cursor-label .sn-mini i { width: 3px; height: 3px; background: var(--sn-cursor); }
-.sn-cursor.is-flip-x .sn-cursor-label { left: auto; right: 10px; }
+.sn-cursor-led { flex: none; width: 6px; height: 6px; background: var(--sn-cursor); box-shadow: 0 0 6px var(--sn-eye-glow); }
+.sn-cursor.is-flip-x .sn-cursor-label { left: auto; right: 8px; }
 .sn-cursor.is-flip-y .sn-cursor-label { top: auto; bottom: 6px; }
-.sn-cursor.is-waiting .sn-cursor-label { background: var(--state-new); color: #04130c; animation: snRingWait 1.6s ease-in-out infinite; }
-.sn-cursor.is-yield .sn-cursor-label { background: var(--raise-2); color: var(--ink-2); }
+.sn-cursor.is-waiting .sn-cursor-led { background: var(--state-new); box-shadow: 0 0 6px var(--state-new-glow); animation: snRingWait 1.6s ease-in-out infinite; }
+.sn-cursor.is-yield .sn-cursor-label { color: var(--ink-2); }
+.sn-cursor-label { transition: opacity .18s var(--sn-ease); }
+.sn-cursor.is-hushed .sn-cursor-label { opacity: 0; }
+.sn-cursor.is-yield .sn-cursor-led { background: var(--led-dim); box-shadow: none; }
 
 .sn-spot {
   position: absolute; z-index: 4; border-radius: var(--radius); pointer-events: none;
   box-shadow: 0 0 0 2px var(--sn-cursor), 0 0 0 6px color-mix(in srgb, var(--sn-cursor) 22%, transparent), 0 0 24px 2px var(--sn-eye-glow);
   transition: left .35s var(--sn-ease), top .35s var(--sn-ease), width .35s var(--sn-ease), height .35s var(--sn-ease), opacity .3s var(--sn-ease);
 }
-.sn-spot.is-flip .sn-spot-note { top: auto; bottom: calc(100% + 8px); }
 .sn-spot-note {
-  position: absolute; left: 0; top: calc(100% + 8px); width: max-content; max-width: 300px; padding: 7px 10px; border-radius: var(--radius);
-  background: var(--sn-glass-strong); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: var(--sn-shadow);
-  color: var(--ink); font: 500 12px/1.4 var(--font-ui);
+  position: absolute; left: 0; top: calc(100% + 8px); width: max-content; max-width: 300px; padding: 8px 11px;
+  border: 1px solid var(--line); border-radius: 4px; background: color-mix(in srgb, var(--pane) 97%, transparent);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 1px 2px rgba(0, 0, 0, .08), 0 12px 28px -12px rgba(0, 0, 0, .35);
+  color: var(--ink); font: 450 12.5px/1.45 var(--font-ui);
+  white-space: normal; overflow-wrap: anywhere; text-wrap: pretty;
 }
 .sn-ripple { position: absolute; z-index: 4; width: 0; height: 0; pointer-events: none; }
 .sn-ripple i { position: absolute; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; background: var(--sn-cursor); box-shadow: 0 0 6px var(--sn-eye-glow); animation: snTile .62s var(--sn-ease) forwards; }
 @keyframes snTile { 0% { opacity: 0; transform: translate(0, 0) scale(.4); } 25% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1); } }
-.sn-human-ping { position: absolute; z-index: 4; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; border: 2px solid var(--ins); pointer-events: none; animation: snPing .7s var(--sn-ease) forwards; }
-@keyframes snPing { from { opacity: .9; transform: scale(.3); } to { opacity: 0; transform: scale(1.4); } }
 
 .sentinel-ws .sentinel-mtabs { display: none; }
 .sentinel-ws .sentinel-filters { flex-wrap: nowrap; min-width: 0; }
@@ -385,6 +429,13 @@ html.cs-locked .minimal-orb-wrap, html.cs-embed .minimal-orb-wrap { display: non
   .sentinel-ws[data-mtab="stage"] .sentinel-body { grid-template-rows: auto minmax(0, 1fr); }
   .sentinel-ws[data-mtab="stage"] .sentinel-stage { display: grid; }
   .sentinel-cowork { display: none; }
+  /* One row: where the live copy is and who is in it on the left, Pause on the right. */
+  .sentinel-stagebar { display: flex; align-items: center; gap: 10px; }
+  .sentinel-stagebar .sentinel-title-row { flex: 1 1 auto; min-width: 0; }
+  .sentinel-stagebar .sentinel-sub-row { flex: none; height: auto; }
+  .sentinel-stagebar #sentinelPause { width: 32px; height: 32px; justify-content: center; }
+  /* Keyboard hints mean nothing on a phone; Take over stays. */
+  #sentinelFootNote { visibility: hidden; }
   .sentinel-welcome-title { font-size: 20px; }
   .sentinel-welcome-copy, .sentinel-group-label { padding-left: 18px; padding-right: 18px; }
   #sentinelTranscript { padding: 0 18px; }

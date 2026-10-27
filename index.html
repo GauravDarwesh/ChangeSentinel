@@ -2124,11 +2124,12 @@
   /* In the bar Ask is a tab like the others, so it gets the same LED. */
   .nav-button-ask::before { background: var(--led-off); box-shadow: none; }
   .rail-nav > li { display: none; }
-  .rail-nav > li:nth-child(-n+3), .rail-nav > .nav-alerts, .rail-nav > .nav-ask, .rail-nav > .nav-more { display: block; }
+  /* Ask Sentinel opens from the orb on phones too, so Runs takes its tab. */
+  .rail-nav > li:nth-child(-n+3), .rail-nav > .nav-runs, .rail-nav > .nav-alerts, .rail-nav > .nav-more { display: block; }
   .nav-button.is-more-active { color: var(--ink); }
   .nav-button.is-more-active::before { background: var(--accent); box-shadow: var(--glow); }
-  .nav-more-dot { position: absolute; top: 9px; left: calc(50% + 12px); width: 6px; height: 6px; background: var(--state-bad); box-shadow: 0 0 6px var(--state-bad-glow); }
-  .nav-more-dot.is-fresh { background: var(--accent); box-shadow: var(--glow); }
+  /* More's counts live in its sheet; no loose dot beside the tab. */
+  .nav-more-dot { display: none !important; }
   .ask-sentinel-header { min-height: 0; padding: 12px 16px; }
   .ask-sentinel-title p { display: none; }
   .ask-sentinel-messages { padding: 18px 16px 8px; }
@@ -2588,7 +2589,7 @@
         <li><button class="nav-button active" data-view="overview" type="button">Overview<span class="nav-count"></span></button></li>
         <li><button class="nav-button" data-view="changes" type="button">Changes<span class="nav-count" id="navChangeCount"></span></button></li>
         <li><button class="nav-button" data-view="monitors" type="button">Pages<span class="nav-count" id="navMonitorCount"></span></button></li>
-        <li><button class="nav-button" data-view="runs" type="button">Runs<span class="nav-count" id="navRunCount"></span></button></li>
+        <li class="nav-runs"><button class="nav-button" data-view="runs" type="button">Runs<span class="nav-count" id="navRunCount"></span></button></li>
         <li class="nav-health"><button class="nav-button" data-view="health" type="button" title="Failing, stale and quiet monitors, and check and alert volumes">Health<span class="nav-count" id="navHealthCount"></span></button></li>
         <li class="nav-alerts"><button class="nav-button" data-view="notifications" type="button">Alerts<span class="nav-count" id="navNotificationCount"></span></button></li>
         <li class="nav-registry"><button class="nav-button" data-view="registry" type="button" title="Reporting items you report across jurisdictions, and the tables, models and code that read them">Registry<span class="nav-count" id="navRegistryCount"></span></button></li>
@@ -3907,7 +3908,7 @@
       if (!ctx || !CSLib || typeof CSLib.fbm !== "function") return;
 
       const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-      let frame = 0, lastPaint = 0, width = 0, height = 0, dpr = 1, colors = null;
+      let frame = 0, lastPaint = 0, width = 0, height = 0, dpr = 1, colors = null, cellSize = 20;
 
       function parseColor(value) {
         const raw = String(value || "").trim();
@@ -3930,8 +3931,11 @@
       const clamp01 = value => Math.max(0, Math.min(1, value));
       const rgb = color => "rgb(" + color.map(channel => channel | 0).join(",") + ")";
 
+      // Read once per theme or resize, not every frame: getComputedStyle on the
+      // root after a render forces a style recalculation.
       function readColors() {
         const css = getComputedStyle(document.documentElement);
+        cellSize = parseFloat(css.getPropertyValue("--cell")) || 20;
         colors = {
           lo: parseColor(css.getPropertyValue("--idle-lo")),
           hi: parseColor(css.getPropertyValue("--idle-hi"))
@@ -3950,9 +3954,11 @@
       }
 
       // The locked screen paints its own full-screen wall; the frame waits for the unlock.
+      // Sentinel's live copy (cs-embed) hides the ring, so it never paints there.
       function isVisible() {
         return !document.hidden && window.innerWidth > 980 && window.innerHeight > 0 &&
-          !document.documentElement.classList.contains("cs-locked");
+          !document.documentElement.classList.contains("cs-locked") &&
+          !document.documentElement.classList.contains("cs-embed");
       }
 
       function paintTile(x, y, col, row, t, tileWidth, tileHeight) {
@@ -3978,8 +3984,7 @@
         lastPaint = now;
         if (!colors) readColors();
 
-        const rootStyle = getComputedStyle(document.documentElement);
-        const cell = parseFloat(rootStyle.getPropertyValue("--cell")) || 20;
+        const cell = cellSize;
         const t = now / 1000;
         // The ring is the 1px-inset band outside the workspace. Each side is cut
         // into equal tiles (the count that keeps them closest to one grid cell),
@@ -4026,8 +4031,8 @@
       function start() {
         if (frame) window.cancelAnimationFrame(frame);
         frame = 0;
-        resize();
         readColors();
+        resize();
         paint(performance.now());
       }
 

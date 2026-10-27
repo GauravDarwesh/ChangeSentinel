@@ -44,6 +44,8 @@ const check = (condition, message) => {
 };
 
 /* ---------- A scripted agent in place of the Edge Function ---------- */
+// A long explanation on an item near the right edge: it must wrap and stay whole.
+const LONG_NOTE = "This is the change I opened: the Central Bank of the Bahamas replaced its downloadable forms page, so every form link below moved to a new address and the old ones now return the archive page.";
 const seen = [];
 const call = (name, args) => ({ id: "c" + Math.random().toString(36).slice(2, 9), type: "function", function: { name, arguments: JSON.stringify(args || {}) } });
 function toolCalls(calls, remaining) {
@@ -69,7 +71,7 @@ function fakeAgent(body) {
     if (n === 3) return toolCalls([call("read_screen")]);
     if (n === 4) {
       const ref = (results[3].match(/\[(e\d+)\][^\n]*in detail/) || results[3].match(/\[(e\d+)\]/) || [])[1] || "e1";
-      return toolCalls([call("point_at", { ref, note: "This is the change I opened" })]);
+      return toolCalls([call("point_at", { ref, note: LONG_NOTE })]);
     }
     const list = JSON.parse(results[1]);
     const first = list.changes && list.changes[0];
@@ -157,8 +159,10 @@ try {
     const launch = page.locator("#minimal-mascot-orb");
     check(await launch.isVisible(), theme + ": the mascot orb sits in the bottom-right corner");
     check(!(await page.locator("#askSentinelLaunch").isVisible()), theme + ": Ask Sentinel is no longer in the left rail");
+    const addRule = await page.$eval(".rail .nav-add", el => { const cs = getComputedStyle(el); return cs.borderTopStyle === "solid" && parseFloat(cs.borderTopWidth) >= 1; });
+    check(addRule, theme + ": a hairline separates Add a link from Cadence, as one separates Scout from Registry");
     const orbBox = await launch.boundingBox();
-    check(orbBox && Math.round(orbBox.width) === 64 && orbBox.x + orbBox.width > 1440 - 30 && orbBox.y + orbBox.height > 900 - 30, theme + ": the orb is 64px at bottom-right");
+    check(orbBox && Math.round(orbBox.width) === 52 && orbBox.x + orbBox.width > 1440 - 30 && orbBox.y + orbBox.height > 900 - 30, theme + ": the orb is 52px at bottom-right");
     const faceBefore = await page.$eval("#minimal-mascot-orb [data-mo=nose]", el => el.getAttribute("d"));
     await page.mouse.move(80, 80);
     await page.waitForTimeout(500);
@@ -176,7 +180,7 @@ try {
     const midWall = await page.evaluate(() => window.__wallSeen);
     check(midWall, theme + ": opening plays the LED unlock ripple");
     const reveal = await page.evaluate(() => { const ws = document.getElementById("sentinelWorkspace"); const b = ws.getBoundingClientRect(); return { x: parseFloat(ws.style.getPropertyValue("--sn-x")) + b.left, y: parseFloat(ws.style.getPropertyValue("--sn-y")) + b.top }; });
-    check(orbBox && Math.abs(reveal.x - (orbBox.x + 32)) < 4 && Math.abs(reveal.y - (orbBox.y + 32)) < 4, theme + ": the ripple spreads from the orb");
+    check(orbBox && Math.abs(reveal.x - (orbBox.x + orbBox.width / 2)) < 4 && Math.abs(reveal.y - (orbBox.y + orbBox.height / 2)) < 4, theme + ": the ripple spreads from the orb");
     await page.screenshot({ path: path.join(OUT, "sentinel-unlock-" + theme + ".png") });
     await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").classList.contains("is-revealing"), null, { timeout: 5000 });
     check(await page.locator("#sentinelWorkspace").isVisible(), theme + ": the workspace opens");
@@ -224,6 +228,13 @@ try {
       check(typeof seen[0].context.snapshot === "string" && /latest_changes/.test(seen[0].context.snapshot), "a dashboard snapshot goes with the question");
       const answer = await page.locator(".sn-msg.is-agent").last().innerHTML();
       check(/<table/.test(answer) && /data-sn-route/.test(answer), "the answer renders Markdown with a dashboard link");
+      const noteFit = await page.evaluate(() => {
+        const note = document.querySelector(".sn-spot-note"), view = document.querySelector(".sentinel-viewport");
+        if (!note || !view) return { ok: false, why: "no note" };
+        const n = note.getBoundingClientRect(), v = view.getBoundingClientRect();
+        return { ok: n.left >= v.left && n.right <= v.right && n.top >= v.top && n.bottom <= v.bottom && n.height > 30, text: note.textContent, n: [n.left, n.top, n.right, n.bottom].map(Math.round), v: [v.left, v.top, v.right, v.bottom].map(Math.round) };
+      });
+      check(noteFit.ok && noteFit.text === LONG_NOTE, "a long spotlight note wraps, stays whole and inside the live dashboard " + JSON.stringify({ n: noteFit.n, v: noteFit.v, why: noteFit.why }));
       const pointResult = (seen[seen.length - 1].messages || []).filter(m => m.role === "tool").map(m => String(m.content)).pop() || "";
       check(await page.evaluate(() => window.__spotSeen), "point_at spotlights the item for the person (tool said " + pointResult.slice(0, 160) + ")");
       const sentTools = seen[seen.length - 1].tools.map(t => t.function.name);
@@ -294,10 +305,17 @@ try {
   // Phone: the bottom bar's Ask tab opens it; chat and the live dashboard are tabs.
   {
     const { context, page, errors } = await open({ width: 390, height: 844 }, "dark", { touch: true });
-    check(await page.locator("#askSentinelLaunch").isVisible(), "phone: the bottom bar's Ask tab is there");
-    check(!(await page.locator("#minimal-mascot-orb").isVisible()), "phone: no orb over the bottom bar");
+    const bar = await page.evaluate(() => {
+      const shown = [...document.querySelectorAll(".rail-nav > li")].filter(li => getComputedStyle(li).display !== "none").map(li => li.textContent.replace(/\d+/g, "").trim());
+      const orb = document.getElementById("minimal-mascot-orb").getBoundingClientRect();
+      const nav = document.querySelector(".rail").getBoundingClientRect();
+      return { shown, orbAboveBar: orb.width > 0 && orb.bottom <= nav.top - 4 && orb.right <= innerWidth - 8, dot: getComputedStyle(document.getElementById("navMoreDot")).display };
+    });
+    check(JSON.stringify(bar.shown) === JSON.stringify(["Overview", "Changes", "Pages", "Runs", "Alerts", "More"]), "phone: the bottom bar is Overview, Changes, Pages, Runs, Alerts, More (" + bar.shown.join(", ") + ")");
+    check(bar.orbAboveBar, "phone: the orb sits just above the bottom bar");
+    check(bar.dot === "none", "phone: no loose dot beside More");
     await page.screenshot({ path: path.join(OUT, "sentinel-phone-dock.png") });
-    await page.locator("#askSentinelLaunch").tap();
+    await page.locator("#minimal-mascot-orb").tap();
     await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").classList.contains("is-revealing") && !document.getElementById("sentinelWorkspace").hidden, null, { timeout: 5000 });
     check(await page.locator(".sentinel-mtabs").isVisible(), "phone: conversation and live dashboard are tabs");
     const sideways = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
@@ -307,6 +325,15 @@ try {
     await frameReady(page);
     await page.waitForTimeout(600);
     await page.screenshot({ path: path.join(OUT, "sentinel-phone-stage.png") });
+    const stage = await page.evaluate(() => {
+      const crumb = document.getElementById("sentinelCrumb").getBoundingClientRect(), pause = document.getElementById("sentinelPause").getBoundingClientRect();
+      const doc = document.querySelector(".sentinel-frame").contentDocument;
+      const tabs = [...doc.querySelectorAll(".rail-nav > li")].filter(li => getComputedStyle(li).display !== "none").map(li => li.getBoundingClientRect());
+      const bar = doc.querySelector(".rail-nav").getBoundingClientRect();
+      return { sameRow: Math.abs((crumb.top + crumb.bottom) / 2 - (pause.top + pause.bottom) / 2) < 12 && pause.left > crumb.right, tabs: tabs.length, gapRight: Math.round(bar.right - tabs[tabs.length - 1].right) };
+    });
+    check(stage.sameRow, "phone: Pause sits on the live dashboard's header row");
+    check(stage.tabs === 6 && stage.gapRight <= 6, "phone: the live copy's bottom bar is full width with six tabs (" + stage.tabs + " tabs, " + stage.gapRight + "px spare)");
     check(errors.length === 0, "phone: no script errors" + (errors.length ? " — " + errors.slice(0, 3).join(" | ") : ""));
     await context.close();
   }
