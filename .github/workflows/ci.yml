@@ -123,6 +123,10 @@ jobs:
         env:
           SMOKE_ARTIFACTS: smoke-artifacts
         run: node scripts/dashboard_smoke.mjs
+      - name: Sentinel agent browser smoke test (dock, unlock, live dashboard, cursor, approvals)
+        env:
+          SMOKE_ARTIFACTS: smoke-artifacts
+        run: node scripts/sentinel_smoke.mjs
       - name: Recorded browser steps (record on a test portal, replay with the engine's script)
         run: node scripts/browser_steps_check.mjs
       - name: Keep the screenshots

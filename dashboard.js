@@ -11430,7 +11430,7 @@ async function compareFillPdf(root, before, after, status, sources, alive) {
 const ASK_SENTINEL_ENDPOINT = window.CHANGESENTINEL_ASK_ENDPOINT || "";
 const ASK_SENTINEL_MAX_TRANSCRIPT = 12;
 // The Edge Function owns the quota; the dashboard only shows the `remaining` it returns.
-const askSentinelState = { messages: [], sending: false, remaining: 3, warmed: false, warmingPromise: null, warmError: "", identity: null, memoryVisitorId: "" };
+const askSentinelState = { messages: [], sending: false, remaining: 50, limit: 50, warmed: false, warmingPromise: null, warmError: "", identity: null, memoryVisitorId: "" };
 
 const ASK_SENTINEL_SUPABASE_URL = window.CHANGESENTINEL_ASK_SUPABASE_URL || "";
 const ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY = window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY || "";
@@ -11514,6 +11514,7 @@ function askSentinelWarmIndex() {
       throw new Error(typeof payload.error === "string" ? payload.error : "Could not prepare the monitoring archive. Please retry.");
     }
     askSentinelState.warmed = true;
+    if (Number.isInteger(payload.limit) && payload.limit > 0) askSentinelState.limit = payload.limit;
     askSentinelUpdateQuota(payload.remaining);
     return payload;
   })().catch(error => {
@@ -11676,13 +11677,15 @@ function askSentinelAppendMessage(role, content, extraClass) {
   return node;
 }
 function askSentinelUpdateQuota(remaining) {
-  if (Number.isInteger(remaining) && remaining >= 0 && remaining <= 3) askSentinelState.remaining = remaining;
+  if (Number.isInteger(remaining) && remaining >= 0 && remaining <= askSentinelState.limit) askSentinelState.remaining = remaining;
   const quota = $("askSentinelQuota");
-  quota.textContent = askSentinelState.remaining + " of 3 questions left today";
+  quota.textContent = askSentinelState.remaining + " of " + askSentinelState.limit + " questions left today";
   quota.classList.toggle("is-empty", askSentinelState.remaining <= 0);
   quota.classList.remove("is-busy");
 }
 function askSentinelOpen() {
+  // Sentinel's agent workspace (sentinel.js) replaces this page when it loads.
+  if (window.Sentinel && typeof window.Sentinel.open === "function") { window.Sentinel.open(); return; }
   setView("askSentinel");
   $("askSentinelInput").focus({ preventScroll: true });
   void askSentinelWarmIndex();
@@ -11736,7 +11739,7 @@ async function askSentinelSendQuestion(promptOverride) {
     try { payload = await response.json(); } catch (_) {}
     if (Number.isInteger(payload.remaining)) askSentinelUpdateQuota(payload.remaining);
     if (response.status === 429) {
-      throw new Error("Daily limit reached. Ask Sentinel allows three requests per user per day. Your allowance resets according to the server’s daily reset time.");
+      throw new Error(typeof payload.error === "string" ? payload.error : "Daily limit reached. Your allowance resets at 00:00 UTC.");
     }
     if (!response.ok) {
       throw new Error(typeof payload.error === "string" ? payload.error : "Ask Sentinel could not answer this request. Please try again later.");
