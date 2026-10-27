@@ -5,7 +5,7 @@
  *
  * Serves the checkout on 127.0.0.1 and stands in for the ask-sentinel Edge
  * Function with a scripted agent, so the whole loop runs without a model:
- * the Moai dock, the unlock ripple, the workspace and its live copy of the
+ * the rail's Ask Sentinel, the unlock ripple, the workspace and its live copy of the
  * dashboard, Sentinel's cursor opening a change and pointing at it, the
  * person clicking in the same copy (and Sentinel being told), an approval
  * card that stops a consequential click, a question card, and the phone
@@ -100,7 +100,17 @@ async function open(viewport, theme, options = {}) {
     if (request.method() === "OPTIONS") { await route.fulfill({ status: 204, headers }); return; }
     if (request.method() === "GET") { await route.fulfill({ status: 200, contentType: "application/json", headers, body: JSON.stringify({ ok: true, remaining: 50, limit: 50, agent: true }) }); return; }
     const body = JSON.parse(request.postData() || "{}");
-    await route.fulfill({ status: 200, contentType: "application/json", headers, body: JSON.stringify(fakeAgent(body)) });
+    const reply = fakeAgent(body);
+    if (!body.stream) { await route.fulfill({ status: 200, contentType: "application/json", headers, body: JSON.stringify(reply) }); return; }
+    // The Edge Function's stream: thinking, answer text in pieces, then "done".
+    const events = [];
+    const send = (event, data) => events.push("event: " + event + "\ndata: " + JSON.stringify(data) + "\n\n");
+    send("step", { step: 1, max: 10 });
+    send("reasoning", { delta: "Checking what the dashboard already shows. " });
+    send("reasoning", { delta: "The snapshot has the latest changes." });
+    if (reply.type === "final") for (let i = 0; i < reply.answer.length; i += 12) send("text", { delta: reply.answer.slice(i, i + 12) });
+    send("done", { http_status: 200, ...reply });
+    await route.fulfill({ status: 200, contentType: "text/event-stream", headers, body: events.join("") });
   });
   await context.route(/\/functions\/v1\/page-reader/, route => route.fulfill({ status: 503, body: "{}" }));
   await context.addInitScript(value => {
@@ -134,21 +144,9 @@ async function ask(page, text) {
 try {
   for (const theme of ["light", "dark"]) {
     const { context, page, errors } = await open({ width: 1440, height: 900 }, theme);
-    const dock = page.locator("#sentinelDock");
-    check(await dock.isVisible(), theme + ": the Sentinel dock is visible");
-    const box = await dock.boundingBox();
-    check(box && box.x + box.width > 1440 - 60 && box.y + box.height > 900 - 60, theme + ": the dock sits in the bottom-right corner");
-    check(await page.locator("#sentinelDock .sentinel-moai svg .moai-eye").count() === 2 && await page.locator("#sentinelDock .sentinel-moai svg .moai-led").count() === 3,
-      theme + ": the figure has two eyes and three LED dots on its topknot");
-    const blur = await page.$eval("#sentinelDock .sentinel-plinth", el => getComputedStyle(el).backdropFilter || getComputedStyle(el).webkitBackdropFilter || "");
-    check(/blur/.test(blur), theme + ": the plinth is frosted glass (" + blur + ")");
-    const breathing = await page.$eval("#sentinelDock .sentinel-moai", el => getComputedStyle(el).animationName);
-    check(/snBreathe/.test(breathing), theme + ": the Moai breathes while idle");
-    await page.mouse.move(200, 200);
-    await page.waitForTimeout(150);
-    const look = await page.$eval("#sentinelDock .moai-eyes", el => el.style.getPropertyValue("--look-x"));
-    check(parseFloat(look) < 0, theme + ": the eyes follow the pointer (look-x " + look + ")");
-    await page.locator("#sentinelDock").screenshot({ path: path.join(OUT, "sentinel-dock-" + theme + ".png") });
+    const launch = page.locator("#askSentinelLaunch");
+    check(await launch.isVisible() && /Ask Sentinel/.test(await launch.textContent()), theme + ": Ask Sentinel is in the left rail");
+    check(await page.locator("#sentinelDock").count() === 0, theme + ": nothing floats over the dashboard");
 
     // Unlock ripple into the workspace.
     await page.evaluate(() => {
@@ -156,7 +154,7 @@ try {
       window.__wallSeen = false;
       new MutationObserver(() => { if (!wall.hidden) window.__wallSeen = true; }).observe(wall, { attributes: true, attributeFilter: ["hidden"] });
     });
-    await dock.click();
+    await launch.click();
     await page.waitForTimeout(240);
     const midWall = await page.evaluate(() => window.__wallSeen);
     check(midWall, theme + ": opening plays the LED unlock ripple");
@@ -167,13 +165,14 @@ try {
     const embedded = await page.evaluate(() => {
       const doc = document.querySelector(".sentinel-frame").contentDocument;
       return { embed: doc.documentElement.classList.contains("cs-embed"), open: doc.documentElement.classList.contains("cs-open"),
-        dock: !!doc.querySelector(".sentinel-dock") && getComputedStyle(doc.querySelector(".sentinel-dock")).display !== "none" };
+        dock: !!doc.querySelector(".nav-ask") && getComputedStyle(doc.querySelector(".nav-ask")).display !== "none" };
     });
     check(embedded.embed && embedded.open && !embedded.dock, theme + ": the live dashboard loads unlocked, embedded, without a second Sentinel");
     await page.screenshot({ path: path.join(OUT, "sentinel-workspace-" + theme + ".png") });
 
     if (theme === "light") {
       // A walkthrough: read tools, then the cursor opens a change and points at it.
+      await page.evaluate(() => { window.__spotSeen = false; setInterval(() => { const spot = document.querySelector(".sn-spot"); if (spot && spot.style.opacity === "1") window.__spotSeen = true; }, 80); });
       await ask(page, "Open the most recent change and walk me through the redline");
       await page.waitForFunction(() => document.querySelector("#sentinelCursor.is-on"), null, { timeout: 20000 });
       check(true, "Sentinel's cursor appears in the live dashboard");
@@ -184,9 +183,12 @@ try {
       check(/^#changes\/[0-9a-f]{16,}/.test(hash), "the cursor opened a change in the live dashboard (" + hash.slice(0, 24) + "…)");
       const steps = await page.locator(".sn-step[data-status=done]").count();
       check(steps >= 5, "each tool step is listed and completed (" + steps + ")");
+      check(await page.locator(".sn-think.is-done").count() >= 1 && /Thought for \d+s/.test(await page.locator(".sn-think.is-done").last().textContent()), "the model's thinking streams in and folds away");
+      check(seen.every(body => body.stream === true), "every step asks for a streamed reply");
+      check(typeof seen[0].context.snapshot === "string" && /latest_changes/.test(seen[0].context.snapshot), "a dashboard snapshot goes with the question");
       const answer = await page.locator(".sn-msg.is-agent").last().innerHTML();
       check(/<table/.test(answer) && /data-sn-route/.test(answer), "the answer renders Markdown with a dashboard link");
-      check(await page.locator(".sn-spot").evaluate(el => getComputedStyle(el).opacity !== "0"), "point_at spotlights the item for the person");
+      check(await page.evaluate(() => window.__spotSeen), "point_at spotlights the item for the person");
       const sentTools = seen[seen.length - 1].tools.map(t => t.function.name);
       check(["read_screen", "click", "type", "open_view", "list_changes", "ask_person"].every(name => sentTools.includes(name)), "the dashboard's tools are offered to the agent");
       check(seen.every(body => body.mode === "agent"), "every step uses agent mode");
@@ -229,33 +231,34 @@ try {
       await idle(page);
       check(/Checking OSFI next/.test(await page.locator(".sn-msg.is-agent").last().textContent()), "ask_person returns the person's answer to the agent");
 
-      // Close back into the dock, then reopen with Ctrl+K; the conversation is kept.
+      // Close back into the rail, then reopen with Ctrl+K; the conversation is kept.
       await page.keyboard.press("Escape");
       await page.waitForFunction(() => document.getElementById("sentinelWorkspace").hidden, null, { timeout: 5000 });
-      check(await dock.isVisible(), "Esc closes the workspace back into the dock");
+      check(await launch.isVisible(), "Esc closes the workspace back into the rail");
       await page.keyboard.press("Control+k");
       await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").hidden && !document.getElementById("sentinelWorkspace").classList.contains("is-revealing"), null, { timeout: 5000 });
       check(await page.locator(".sn-msg.is-agent").count() >= 3, "Ctrl+K reopens Sentinel with the conversation kept");
       await page.keyboard.press("Escape");
       await page.waitForFunction(() => document.getElementById("sentinelWorkspace").hidden, null, { timeout: 5000 });
 
-      // The rail's Ask Sentinel opens the same workspace.
-      await page.click("#askSentinelLaunch");
-      await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").hidden, null, { timeout: 5000 });
-      check(true, "the rail's Ask Sentinel opens the workspace");
+      // While it works with the workspace closed, the rail button says so; an answer leaves a dot.
+      await page.evaluate(() => window.Sentinel.ask("Hello"));
+      await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").classList.contains("is-revealing"), null, { timeout: 5000 });
+      await idle(page);
+      await page.keyboard.press("Escape");
+      await page.waitForFunction(() => document.getElementById("sentinelWorkspace").hidden, null, { timeout: 5000 });
+      check(!(await launch.evaluate(el => el.classList.contains("has-note"))), "no answer dot after reading the answer in the workspace");
     }
     check(errors.length === 0, theme + ": no script errors" + (errors.length ? " — " + errors.slice(0, 3).join(" | ") : ""));
     await context.close();
   }
 
-  // Phone: the dock clears the bottom bar; chat and the live dashboard are tabs.
+  // Phone: the bottom bar's Ask tab opens it; chat and the live dashboard are tabs.
   {
     const { context, page, errors } = await open({ width: 390, height: 844 }, "dark", { touch: true });
-    const dock = await page.locator("#sentinelDock").boundingBox();
-    const bar = await page.locator(".rail").boundingBox();
-    check(dock && bar && dock.y + dock.height <= bar.y, "phone: the dock sits above the bottom bar");
+    check(await page.locator("#askSentinelLaunch").isVisible(), "phone: the bottom bar's Ask tab is there");
     await page.screenshot({ path: path.join(OUT, "sentinel-phone-dock.png") });
-    await page.locator("#sentinelDock").tap();
+    await page.locator("#askSentinelLaunch").tap();
     await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").classList.contains("is-revealing") && !document.getElementById("sentinelWorkspace").hidden, null, { timeout: 5000 });
     check(await page.locator(".sentinel-mtabs").isVisible(), "phone: conversation and live dashboard are tabs");
     const sideways = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
@@ -276,8 +279,8 @@ try {
     await context.route(/\/functions\/v1\//, route => route.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: "{\"ok\":true,\"remaining\":50,\"limit\":50}" }));
     const page = await context.newPage();
     await page.goto(base + "index.html");
-    await page.waitForSelector("#sentinelDock");
-    await page.click("#sentinelDock");
+    await page.waitForFunction(() => window.Sentinel && document.getElementById("overviewLede") && !/Reading/.test(document.getElementById("overviewLede").textContent), null, { timeout: 45000 });
+    await page.click("#askSentinelLaunch");
     await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").hidden && !document.getElementById("sentinelWorkspace").classList.contains("is-revealing"), null, { timeout: 3000 });
     check(await page.$eval(".sentinel-wall", el => el.hidden), "reduced motion: the workspace opens without the ripple");
     await context.close();

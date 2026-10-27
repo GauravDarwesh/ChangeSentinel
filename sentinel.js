@@ -1,8 +1,8 @@
 /*
  * Sentinel: the dashboard's agent.
  *
- * A Moai head on a glass plinth lives in the bottom-right corner. Clicking it
- * plays the dashboard's unlock ripple (the LED wall from the access gate) and
+ * The rail's "Ask Sentinel" (or Ctrl/Cmd+K) plays the dashboard's unlock
+ * ripple (the LED wall from the access gate) outward from the button and
  * opens Sentinel's workspace: a conversation on the left and, on the right, a
  * second, fully interactive copy of the dashboard that Sentinel and the person
  * share. Sentinel drives that copy with its own cursor; the person can click
@@ -10,8 +10,9 @@
  *
  * The agent loop runs here. Each step posts the conversation and this file's
  * tool list to the ask-sentinel Edge Function (mode "agent"), which holds the
- * model key and the quota, runs its archive tools itself, and returns either
- * the tool calls to run here or the final answer.
+ * model key and the quota, runs its archive tools itself, and streams back
+ * the model's thinking and answer as they are written, then either the tool
+ * calls to run here or the final answer.
  *
  * Read tools answer from the data this page has already loaded (the same
  * `state` the dashboard renders). UI tools act on the shared copy. Anything
@@ -73,105 +74,20 @@
   const STORE_KEY = "cs-sentinel-conversation-v1";
   const ENDPOINT = typeof ASK_SENTINEL_ENDPOINT === "string" ? ASK_SENTINEL_ENDPOINT : "";
 
-  /* ================= The Moai ================= */
-  // A friendly, Notion-style figure (ink outline, flat paper face) with a
-  // nod to a Moai: long face and nose, a heavy brow line and a terracotta
-  // topknot. The three LED dots on the topknot show what Sentinel is doing.
-  function moaiMarkup() {
-    const led = (x, k) => '<rect class="moai-led" x="' + x + '" y="6" width="1.7" height="1.7" rx=".35" style="--k:' + k + '"/>';
-    return '<svg viewBox="0 0 50 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">' +
-      '<path class="mf-shirt mf-ink" d="M6 64.5C7 57.6 13 55 18.6 55H31.4C37 55 43 57.6 44 64.5"/>' +
-      '<path class="mf-skin" d="M20 48.5H30V56H20Z"/>' +
-      '<path class="mf-ink" d="M20 49.5V55.6M30 49.5V55.6"/>' +
-      '<path class="mf-collar mf-ink" d="M19.4 55.2C21 57.6 29 57.6 30.6 55.2"/>' +
-      '<path class="mf-skin mf-ink" d="M13.4 25C9.7 24.8 9 32.6 9.8 36.8C10.4 40 12 41.2 13.6 40.4"/>' +
-      '<path class="mf-skin mf-ink" d="M36.6 25C40.3 24.8 41 32.6 40.2 36.8C39.6 40 38 41.2 36.4 40.4"/>' +
-      '<path class="mf-ink" d="M11.8 29.4C11 31.6 11.2 34.6 12.2 36.4M38.2 29.4C39 31.6 38.8 34.6 37.8 36.4" style="stroke-width:1.1"/>' +
-      '<path class="mf-skin mf-ink mf-head" d="M13.5 15C13.5 10.5 16.5 9 25 9C33.5 9 36.5 10.5 36.5 15L37 40C37 49 32 53.5 25 53.5C18 53.5 13 49 13 40Z"/>' +
-      '<g class="moai-bun"><path class="mf-bun mf-ink" d="M16.6 10.4C16.2 5.2 19.5 3.4 25 3.4C30.5 3.4 33.8 5.2 33.4 10.4C30 11.7 20 11.7 16.6 10.4Z"/>' +
-        led(20.9, 0) + led(24.15, 1) + led(27.4, 2) + "</g>" +
-      '<circle class="mf-blush" cx="17.4" cy="34" r="2.5"/><circle class="mf-blush" cx="32.6" cy="34" r="2.5"/>' +
-      '<g class="moai-brow-group"><path class="mf-ink mf-brow" d="M15.8 21.6C20 19.2 30 19.2 34.2 21.6"/></g>' +
-      '<g class="moai-eyes"><ellipse class="moai-eye" cx="20.2" cy="26.4" rx="1.35" ry="1.75"/><ellipse class="moai-eye" cx="29.8" cy="26.4" rx="1.35" ry="1.75"/></g>' +
-      '<path class="mf-ink" d="M25.3 22.6C24.9 27.2 23.7 32 22.6 35.2C23.8 36.7 26.1 36.9 27.7 35.6"/>' +
-      '<path class="mf-ink moai-mouth" d="M21.3 42.2C23.5 44.4 26.5 44.4 28.7 42.2"/>' +
-    "</svg>";
+  /* ================= Entry: the rail's Ask Sentinel ================= */
+  // Sentinel opens from the rail's "Ask Sentinel" (the Ask tab on a phone) or
+  // Ctrl/Cmd+K, with the access gate's LED ripple spreading out from the
+  // button. While it works in the background, the button's AI badge shows it;
+  // an answer that arrives while it is closed leaves a dot on the button.
+  const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || "");
+  const SHORTCUT = IS_MAC ? "⌘K" : "Ctrl K";
+  const railLaunch = document.getElementById("askSentinelLaunch");
+  if (railLaunch) railLaunch.title = "Ask Sentinel (" + SHORTCUT + ")";
+  function launchState(value) {
+    if (!railLaunch) return;
+    if (value && value !== "idle") railLaunch.dataset.sentinel = value;
+    else delete railLaunch.dataset.sentinel;
   }
-
-  // Keep a Moai alive: breathing (CSS), eyes that follow the pointer, and an
-  // idle gesture every few seconds.
-  function animateMoai(el) {
-    let timer = 0;
-    const gestures = [["blink", 44], ["smile", 18], ["glance", 16], ["brow", 11], ["nod", 11]];
-    const pick = () => {
-      let roll = Math.random() * 100;
-      for (const [name, weight] of gestures) { if ((roll -= weight) <= 0) return name; }
-      return "blink";
-    };
-    const play = name => {
-      if (motion.matches || document.hidden) return;
-      if (name === "glance") {
-        const eyes = el.querySelector(".moai-eyes");
-        eyes.dataset.glancing = "1";
-        eyes.style.setProperty("--look-x", "-1.4px");
-        setTimeout(() => eyes.style.setProperty("--look-x", "1.4px"), 380);
-        setTimeout(() => { eyes.style.removeProperty("--look-x"); delete eyes.dataset.glancing; }, 820);
-        return;
-      }
-      const cls = "is-" + name;
-      el.classList.remove(cls); void el.getBoundingClientRect(); el.classList.add(cls);
-      setTimeout(() => el.classList.remove(cls), name === "smile" ? 1600 : name === "nod" ? 950 : name === "brow" ? 900 : 360);
-      if (name === "blink" && Math.random() < .25) setTimeout(() => play("blink"), 420);
-    };
-    const schedule = () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => { play(pick()); schedule(); }, 3800 + Math.random() * 5200);
-    };
-    schedule();
-    return { play };
-  }
-
-  // Both Moai look toward the pointer (rAF-throttled).
-  let lookFrame = 0;
-  let lookEvent = null;
-  window.addEventListener("pointermove", event => {
-    lookEvent = event;
-    if (lookFrame || motion.matches) return;
-    lookFrame = requestAnimationFrame(() => {
-      lookFrame = 0;
-      document.querySelectorAll(".sentinel-moai").forEach(moai => {
-        const box = moai.getBoundingClientRect();
-        if (!box.width) return;
-        const dx = lookEvent.clientX - (box.left + box.width / 2);
-        const dy = lookEvent.clientY - (box.top + box.height * .42);
-        const dist = Math.hypot(dx, dy) || 1;
-        const reach = Math.min(1, dist / 260);
-        const eyes = moai.querySelector(".moai-eyes");
-        if (!eyes.dataset.glancing) {
-          eyes.style.setProperty("--look-x", (dx / dist * 1.5 * reach).toFixed(2) + "px");
-          eyes.style.setProperty("--look-y", (dy / dist * .7 * reach).toFixed(2) + "px");
-        }
-      });
-    });
-  }, { passive: true });
-
-  /* ================= Dock ================= */
-  const dock = document.createElement("button");
-  dock.type = "button";
-  dock.className = "sentinel-dock";
-  dock.id = "sentinelDock";
-  dock.setAttribute("aria-label", "Open Sentinel, the dashboard agent");
-  dock.dataset.state = "idle";
-  dock.innerHTML =
-    '<span class="sentinel-plinth" aria-hidden="true"></span>' +
-    '<svg class="sentinel-ring" viewBox="0 0 78 78" aria-hidden="true"><rect x="1.5" y="1.5" width="75" height="75" rx="23"/></svg>' +
-    '<span class="sentinel-moai" data-state="idle">' + moaiMarkup() + "</span>" +
-    '<span class="sentinel-dock-tip" role="presentation"><span id="sentinelTipTitle">Sentinel</span><small id="sentinelTipSub">Ask, or hand it a task · Ctrl K</small></span>' +
-    '<span class="sentinel-dock-badge" id="sentinelBadge" hidden>1</span>';
-  document.body.append(dock);
-  const dockMoai = dock.querySelector(".sentinel-moai");
-  const dockLife = animateMoai(dockMoai);
-  setTimeout(() => dockLife.play("smile"), 1400);
 
   /* ================= Unlock wall ================= */
   const wall = document.createElement("canvas");
@@ -187,7 +103,7 @@
       : { off: [236, 231, 223], palette: [[232, 137, 10], [242, 160, 60], [196, 104, 0], [242, 182, 133], [226, 120, 30]], gap: "#e4e0da", flash: [255, 247, 232] };
   }
 
-  // The access gate's ripple, played outward from (or back into) the dock:
+  // The access gate's ripple, played outward from (or back into) the button:
   // a ring of lit tiles sweeps across the screen and the workspace is clipped
   // to the circle behind it.
   function playUnlock(direction, origin, onRadius) {
@@ -278,7 +194,7 @@
   ws.dataset.state = "idle";
   ws.innerHTML =
     '<header class="sentinel-head">' +
-      '<span class="sentinel-head-mark" aria-hidden="true"><span class="sentinel-moai" data-state="idle">' + moaiMarkup() + "</span></span>" +
+      '<span class="sentinel-head-mark brand-mark" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i></span>' +
       '<div class="sentinel-title"><h2 id="sentinelTitle">Sentinel</h2><p><span class="sentinel-status" id="sentinelStatus">Ready</span></p></div>' +
       '<div class="sentinel-head-tools">' +
         '<span class="sentinel-quota" id="sentinelQuota">Connecting…</span>' +
@@ -326,8 +242,6 @@
     "</div>";
   document.body.append(ws);
   const $s = id => document.getElementById(id);
-  const headMoai = ws.querySelector(".sentinel-head-mark .sentinel-moai");
-  animateMoai(headMoai);
 
   const ui = {
     log: $s("sentinelLog"), transcript: $s("sentinelTranscript"), welcome: $s("sentinelWelcome"),
@@ -349,9 +263,7 @@
 
   function setAgentState(value, text) {
     ws.dataset.state = value;
-    dock.dataset.state = value;
-    dockMoai.dataset.state = value;
-    headMoai.dataset.state = value;
+    launchState(agent.running || value === "waiting" ? value : "idle");
     if (text) ui.status.textContent = text;
   }
 
@@ -362,8 +274,6 @@
     ui.quota.textContent = agent.remaining + " of " + agent.limit + " questions left today";
     ui.quota.classList.toggle("is-low", agent.remaining > 0 && agent.remaining <= 5);
     ui.quota.classList.toggle("is-empty", agent.remaining <= 0);
-    const sub = $s("sentinelTipSub");
-    if (sub && !dock.classList.contains("has-note")) sub.textContent = agent.remaining + " of " + agent.limit + " questions left today · Ctrl K";
   }
 
   async function warm() {
@@ -380,10 +290,16 @@
   }
 
   /* ================= Open / close ================= */
-  function dockCenter() {
-    const box = dock.getBoundingClientRect();
-    if (!box.width) return { x: window.innerWidth - 60, y: window.innerHeight - 60 };
-    return { x: box.left + box.width / 2, y: box.top + box.height * .45 };
+  // Where the ripple starts: the button that opened Sentinel, else the
+  // rail's Ask Sentinel, else the bottom of the screen.
+  let rippleFrom = null;
+  function launchCenter() {
+    const candidates = [rippleFrom, railLaunch].filter(Boolean);
+    for (const el of candidates) {
+      const box = el.getBoundingClientRect();
+      if (box.width && box.height) return { x: box.left + Math.min(box.width / 2, 60), y: box.top + box.height / 2 };
+    }
+    return { x: window.innerWidth / 2, y: window.innerHeight - 40 };
   }
   async function openWorkspace(options) {
     options = options || {};
@@ -392,16 +308,13 @@
     if (root.classList.contains("cs-locked")) return;
     agent.animating = true;
     agent.open = true;
-    dock.classList.remove("has-note");
-    $s("sentinelBadge").hidden = true;
-    dockLife.play("blink");
-    const origin = dockCenter();
+    if (railLaunch) railLaunch.classList.remove("has-note");
+    const origin = launchCenter();
     ws.style.setProperty("--sn-x", origin.x + "px");
     ws.style.setProperty("--sn-y", origin.y + "px");
     ws.style.setProperty("--sn-r", "0px");
     ws.classList.add("is-revealing");
     ws.hidden = false;
-    dock.classList.add("is-hidden");
     ensureFrame();
     await playUnlock("open", origin, r => ws.style.setProperty("--sn-r", r + "px"));
     ws.classList.remove("is-revealing");
@@ -414,21 +327,19 @@
   async function closeWorkspace() {
     if (!agent.open || agent.animating) return;
     agent.animating = true;
-    const origin = dockCenter();
+    const origin = launchCenter();
     ws.style.setProperty("--sn-x", origin.x + "px");
     ws.style.setProperty("--sn-y", origin.y + "px");
     ws.classList.add("is-revealing");
     await playUnlock("close", origin, r => ws.style.setProperty("--sn-r", r + "px"));
     ws.hidden = true;
     ws.classList.remove("is-revealing");
-    dock.classList.remove("is-hidden");
     agent.open = false;
     agent.animating = false;
-    dock.focus({ preventScroll: true });
+    if (railLaunch && railLaunch.offsetParent) railLaunch.focus({ preventScroll: true });
   }
   window.Sentinel = { open: openWorkspace, close: closeWorkspace, ask: prompt => openWorkspace({ prompt }) };
 
-  dock.addEventListener("click", () => openWorkspace());
   $s("sentinelClose").addEventListener("click", closeWorkspace);
   document.addEventListener("keydown", event => {
     if ((event.ctrlKey || event.metaKey) && !event.altKey && String(event.key).toLowerCase() === "k") {
@@ -618,11 +529,15 @@
     ui.cursor.classList.toggle("is-waiting", mode === "waiting");
     ui.cursor.classList.toggle("is-yield", mode === "yield");
   }
-  function placeCursor(x, y) {
-    agent.cursor.x = x; agent.cursor.y = y;
-    ui.cursor.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)";
+  function flipCursor(x, y) {
     ui.cursor.classList.toggle("is-flip-x", x > ui.viewport.clientWidth - 230);
     ui.cursor.classList.toggle("is-flip-y", y > ui.viewport.clientHeight - 56);
+  }
+  function placeCursor(x, y) {
+    if (agent.cursorAnim) { agent.cursorAnim.cancel(); agent.cursorAnim = null; }
+    agent.cursor.x = x; agent.cursor.y = y;
+    ui.cursor.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
+    flipCursor(x, y);
   }
   function showCursor() {
     clearTimeout(agent.cursorHideTimer);
@@ -637,34 +552,56 @@
     clearTimeout(agent.cursorHideTimer);
     agent.cursorHideTimer = setTimeout(() => { ui.cursor.classList.remove("is-on"); agent.cursor.shown = false; }, 5000);
   }
-  function moveCursor(x, y) {
+  // Human reaching movements follow a minimum-jerk speed profile: smooth
+  // start, fastest mid-way, smooth stop. The path bows slightly, long moves
+  // overshoot a touch and correct. Keyframes are sampled here and played by
+  // the compositor (Web Animations), so a busy dashboard cannot make the
+  // cursor stutter the way per-frame JavaScript did.
+  const minJerk = t => t * t * t * (10 - 15 * t + 6 * t * t);
+  function glide(path, duration) {
+    const frames = path.map((p, i) => ({ transform: "translate3d(" + p[0].toFixed(1) + "px," + p[1].toFixed(1) + "px,0)", offset: i / (path.length - 1) }));
+    if (agent.cursorAnim) agent.cursorAnim.cancel();
+    const end = path[path.length - 1];
+    ui.cursor.style.transform = frames[frames.length - 1].transform;
+    const anim = ui.cursor.animate(frames, { duration, easing: "linear" });
+    agent.cursorAnim = anim;
+    agent.cursor.x = end[0]; agent.cursor.y = end[1];
+    return anim.finished.then(() => { if (agent.cursorAnim === anim) agent.cursorAnim = null; }, () => {});
+  }
+  function reach(sx, sy, ex, ey, cx, cy, steps) {
+    const out = [];
+    for (let i = 0; i <= steps; i++) {
+      const s = minJerk(i / steps);
+      out.push([(1 - s) * (1 - s) * sx + 2 * (1 - s) * s * cx + s * s * ex, (1 - s) * (1 - s) * sy + 2 * (1 - s) * s * cy + s * s * ey]);
+    }
+    return out;
+  }
+  async function moveCursor(x, y) {
     showCursor();
     const sx = agent.cursor.x, sy = agent.cursor.y;
     const dist = Math.hypot(x - sx, y - sy);
-    if (motion.matches || dist < 2) { placeCursor(x, y); return Promise.resolve(); }
-    const duration = Math.max(260, Math.min(760, dist * 1.05));
-    // A slight arc, like a hand moving a mouse.
-    const nx = -(y - sy) / (dist || 1), ny = (x - sx) / (dist || 1);
-    const bend = Math.min(60, dist * .18) * (Math.random() < .5 ? -1 : 1);
-    const cx = (sx + x) / 2 + nx * bend, cy = (sy + y) / 2 + ny * bend;
-    const start = performance.now();
-    return new Promise(resolve => {
-      const step = now => {
-        const t = Math.min(1, (now - start) / duration);
-        const e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-        const px = (1 - e) * (1 - e) * sx + 2 * (1 - e) * e * cx + e * e * x;
-        const py = (1 - e) * (1 - e) * sy + 2 * (1 - e) * e * cy + e * e * y;
-        placeCursor(px, py);
-        if (t < 1) requestAnimationFrame(step); else resolve();
-      };
-      requestAnimationFrame(step);
-    });
+    if (motion.matches || dist < 2 || typeof ui.cursor.animate !== "function") { placeCursor(x, y); return; }
+    // Fitts-style duration: longer for longer moves, with a little variation.
+    const duration = Math.max(220, Math.min(700, 150 + 125 * Math.log2(1 + dist / 16))) * (.92 + Math.random() * .16);
+    const ux = (x - sx) / dist, uy = (y - sy) / dist;
+    // A hand bows its path to one side; rightward moves arc up a little.
+    const side = (x >= sx ? -1 : 1) * (Math.random() < .8 ? 1 : -1);
+    const bend = Math.min(42, dist * (.07 + Math.random() * .05)) * side;
+    const over = dist > 180 ? Math.min(8, dist * .022) : 0;
+    const ex = x + ux * over, ey = y + uy * over;
+    const cx = (sx + ex) / 2 - uy * bend, cy = (sy + ey) / 2 + ux * bend;
+    await glide(reach(sx, sy, ex, ey, cx, cy, 36), duration);
+    if (over) await glide(reach(ex, ey, x, y, (ex + x) / 2, (ey + y) / 2, 10), 120 + over * 8);
+    flipCursor(x, y);
   }
   async function pressCursor() {
     ui.cursor.classList.add("is-press");
     ripple(agent.cursor.x, agent.cursor.y);
-    await sleep(140);
+    await sleep(120);
     ui.cursor.classList.remove("is-press");
+    // The hand eases off the target a few pixels after a click.
+    const x = agent.cursor.x, y = agent.cursor.y;
+    if (!motion.matches && typeof ui.cursor.animate === "function") void glide(reach(x, y, x + 5, y + 7, x + 3, y + 3, 8), 260);
   }
   // The LED click: a square ring of tiles bursting out of the pointer.
   function ripple(x, y) {
@@ -723,14 +660,18 @@
     await bringIntoView(el);
     const r = stageRect(el);
     cursorLabel(label);
-    await moveCursor(r.x + Math.min(r.w * .5, Math.max(10, r.w - 12)), r.y + Math.min(r.h * .55, r.h - 4));
+    // Aim somewhere natural on the target, not its exact centre every time.
+    const tx = r.x + Math.min(r.w - 6, Math.max(6, r.w * (.38 + Math.random() * .24)));
+    const ty = r.y + Math.min(r.h - 4, Math.max(4, r.h * (.42 + Math.random() * .2)));
+    await moveCursor(tx, ty);
+    await sleep(70 + Math.random() * 90);
   }
 
   /* ================= Reading the screen ================= */
   const INTERACTIVE = 'a[href], button, input:not([type="hidden"]), select, textarea, summary, [role="button"], [role="tab"], [role="link"], [role="checkbox"], [role="switch"], [role="option"], [contenteditable="true"]';
   function isVisible(el) {
     if (!el || !el.isConnected) return false;
-    if (el.closest("[hidden], [aria-hidden='true'], .cs-gate, .sentinel-dock")) return false;
+    if (el.closest("[hidden], [aria-hidden='true'], .cs-gate")) return false;
     const r = el.getBoundingClientRect();
     if (r.width < 2 || r.height < 2) return false;
     const win = frameWin();
@@ -800,7 +741,7 @@
     for (const el of controls) {
       const name = clampText(labelOf(el), 90);
       if (query && !(name.toLowerCase().includes(query))) continue;
-      if (shown >= 90) { lines.push("… more controls; pass filter to narrow, or scroll."); break; }
+      if (shown >= 60) { lines.push("… more controls; pass filter to narrow, or scroll."); break; }
       const kind = el.matches("a") ? "link" : el.matches("select") ? "select" : el.matches("textarea") ? "textarea" : el.matches("input") ? "input:" + (el.type || "text") : el.getAttribute("role") || "button";
       const bits = ["[" + refFor(el) + "]", kind, name ? "“" + name + "”" : "(no label)"];
       if (el.matches("input:not([type=checkbox]):not([type=radio]), textarea") && el.value && el.type !== "password") bits.push("value=“" + clampText(el.value, 50) + "”");
@@ -816,7 +757,7 @@
     }
     // A bounded slice of the readable text the person is looking at.
     const textHost = scopeDialog || doc.querySelector(".view:not([hidden]) .detail") || doc.querySelector(".view:not([hidden])") || doc.body;
-    const text = clampText(textHost.innerText || "", 2600);
+    const text = clampText(textHost.innerText || "", 1500);
     if (text) lines.push("Visible text: " + text);
     updateCrumb();
     return lines.join("\n");
@@ -1480,35 +1421,192 @@
     ui.input.placeholder = running ? "Add guidance — Sentinel reads it at its next step…" : "Ask Sentinel, or describe a task…";
     ui.takeover.hidden = !running;
     ui.footNote.textContent = running ? "Sentinel is working. You can keep using the dashboard." : "Enter to send · Shift+Enter for a new line";
-    if (!running) { setAgentState(agent.paused ? "waiting" : "idle", agent.paused ? "Paused" : "Ready"); }
+    if (!running) {
+      setAgentState(agent.paused ? "waiting" : "idle", agent.paused ? "Paused" : "Ready");
+    }
   }
 
-  async function post(body) {
+  // One step. The reply streams (server-sent events): thinking and answer
+  // text arrive as they are written, then one "done" event with the step's
+  // result. A plain JSON reply (an older function, or an early refusal) is
+  // read the same way.
+  async function post(body, on) {
+    on = on || {};
     const identity = await askSentinelIdentity();
-    const response = await fetch(ENDPOINT, {
-      method: "POST",
-      headers: { ...askSentinelIdentityHeaders(identity), "Content-Type": "application/json" },
-      credentials: "omit",
-      body: JSON.stringify(body)
-    });
-    const payload = await response.json().catch(() => ({}));
+    const controller = new AbortController();
+    agent.abort = controller;
+    let response;
+    try {
+      response = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { ...askSentinelIdentityHeaders(identity), "Content-Type": "application/json", Accept: "text/event-stream, application/json" },
+        credentials: "omit",
+        body: JSON.stringify({ ...body, stream: true }),
+        signal: controller.signal
+      });
+    } catch (error) {
+      if (agent.stopRequested) throw new StopSignal();
+      throw new Error("Sentinel could not be reached. Check your connection and retry.");
+    }
+    let payload = null;
+    let status = response.status;
+    if (/event-stream/i.test(response.headers.get("content-type") || "") && response.body) {
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      try {
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          let cut;
+          while ((cut = buffer.indexOf("\n\n")) >= 0) {
+            const block = buffer.slice(0, cut);
+            buffer = buffer.slice(cut + 2);
+            let event = "message", data = "";
+            block.split("\n").forEach(line => {
+              if (line.startsWith("event:")) event = line.slice(6).trim();
+              else if (line.startsWith("data:")) data += line.slice(5).trim();
+            });
+            if (!data) continue;
+            let parsed;
+            try { parsed = JSON.parse(data); } catch (_) { continue; }
+            if (event === "done") payload = parsed;
+            else if (typeof on[event] === "function") on[event](parsed);
+          }
+        }
+      } catch (error) {
+        if (agent.stopRequested) throw new StopSignal();
+        throw new Error("The connection to Sentinel dropped. Please retry.");
+      }
+      if (!payload) {
+        if (agent.stopRequested) throw new StopSignal();
+        throw new Error("The connection to Sentinel closed before it finished. Please retry.");
+      }
+      status = Number(payload.http_status) || 200;
+    } else {
+      payload = await response.json().catch(() => ({}));
+    }
+    agent.abort = null;
     if (payload && (Number.isInteger(payload.remaining) || Number.isInteger(payload.limit))) updateQuota(payload.remaining, payload.limit);
-    return { status: response.status, ok: response.ok, payload: payload || {} };
+    return { status, ok: status >= 200 && status < 300, payload: payload || {} };
   }
 
-  function contextForStep() {
+  // A compact picture of what the dashboard has loaded, sent with every step
+  // so most questions are answered without a tool round.
+  async function snapshot() {
+    try {
+      const overview = await TOOLS.get_overview();
+      delete overview.latest_changes;
+      const latest = changeLogEntries().slice(0, 10).map(entry => {
+        const brief = changeBrief(entry);
+        return { event_id: brief.event_id, type: brief.type, at: brief.at, page: clampText(brief.page, 80), regulator: clampText(brief.regulator, 40), ai: brief.ai, summary: clampText(brief.summary, 140) };
+      });
+      return JSON.stringify({ overview, latest_changes: latest });
+    } catch (_) {
+      return "";
+    }
+  }
+  function contextForStep(snap) {
     const b = bridge();
     const activity = agent.activity.splice(0).slice(-12);
     // Recorded in the conversation (after any tool results), so later steps
     // still know what the person did.
     if (activity.length) agent.messages.push({ role: "user", content: "Person, in the dashboard since your last step:\n- " + activity.join("\n- ") });
-    return { view: b ? b.view() : state.view, page: ui.crumb.textContent || "" };
+    return { view: b ? b.view() : state.view, page: ui.crumb.textContent || "", snapshot: snap };
+  }
+
+  // The answer as it is written: a "Thinking" line that streams the model's
+  // reasoning (folded away once the answer starts), then the answer itself.
+  function liveMessage(continued) {
+    endSteps();
+    ui.welcome.hidden = true;
+    const node = document.createElement("article");
+    // Later steps of the same question continue under one "Sentinel" header.
+    node.className = "sn-msg is-agent is-live" + (continued ? " is-cont" : "");
+    node.innerHTML = '<div class="sn-msg-role">Sentinel</div>' +
+      '<details class="sn-think" open><summary><span class="sn-think-dot" aria-hidden="true"></span><span class="sn-think-label">Thinking</span></summary><div class="sn-think-body"></div></details>' +
+      '<div class="sn-msg-text"></div>';
+    ui.transcript.append(node);
+    scrollLog();
+    const think = node.querySelector(".sn-think");
+    const thinkBody = node.querySelector(".sn-think-body");
+    const thinkLabel = node.querySelector(".sn-think-label");
+    const body = node.querySelector(".sn-msg-text");
+    const started = performance.now();
+    let thought = "", text = "", frame = 0, thinkDone = false;
+    const near = () => ui.log.scrollHeight - ui.log.scrollTop - ui.log.clientHeight < 120;
+    const draw = () => {
+      frame = 0;
+      const stick = near();
+      if (text) {
+        // The caret sits at the end of the last line, not below it.
+        const html = renderMarkdown(text);
+        const caret = '<span class="sn-caret" aria-hidden="true"></span>';
+        const at = Math.max(html.lastIndexOf("</p>"), html.lastIndexOf("</li>"), html.lastIndexOf("</td>"));
+        body.innerHTML = at >= 0 && at > html.length - 40 ? html.slice(0, at) + caret + html.slice(at) : html + caret;
+      }
+      if (stick) scrollLog();
+    };
+    const closeThinking = () => {
+      if (thinkDone) return;
+      thinkDone = true;
+      const secs = Math.max(1, Math.round((performance.now() - started) / 1000));
+      if (!thought.trim()) { think.remove(); return; }
+      think.open = false;
+      think.classList.add("is-done");
+      thinkLabel.textContent = "Thought for " + secs + "s";
+    };
+    return {
+      node,
+      status(label) { if (!thinkDone) thinkLabel.textContent = label; },
+      reasoning(delta) {
+        if (thinkDone) return;
+        thought += delta;
+        thinkBody.textContent = thought.length > 4000 ? "…" + thought.slice(-4000) : thought;
+        thinkBody.scrollTop = thinkBody.scrollHeight;
+        if (near()) scrollLog();
+      },
+      text(delta) {
+        closeThinking();
+        text += delta;
+        if (!frame) frame = requestAnimationFrame(draw);
+      },
+      finish(answer, meta) {
+        closeThinking();
+        cancelAnimationFrame(frame);
+        node.classList.remove("is-live");
+        body.innerHTML = renderMarkdown(answer || text);
+        if (meta) node.insertAdjacentHTML("beforeend", '<div class="sn-msg-meta">' + escHtml(meta) + "</div>");
+        scrollLog();
+      },
+      // A step that ends in tool calls: keep any narration and the folded
+      // thinking, drop an empty bubble.
+      settle() {
+        closeThinking();
+        cancelAnimationFrame(frame);
+        node.classList.remove("is-live");
+        // Middle steps keep only what they did; their thinking folds away so
+        // the question reads as steps, then the answer.
+        if (continued && think.isConnected) think.remove();
+        if (text.trim() && !/^\s*[{<`]/.test(text)) body.innerHTML = renderMarkdown(text);
+        else body.remove();
+        if (!node.querySelector(".sn-think") && !node.querySelector(".sn-msg-text")) node.remove();
+      },
+      drop() { cancelAnimationFrame(frame); node.remove(); }
+    };
   }
 
   async function submit() {
     const text = ui.input.value.trim();
     if (agent.running) {
-      if (!text) { agent.stopRequested = true; setAgentState("thinking", "Stopping…"); agent.resumeWaiters.splice(0).forEach(r => r()); return; }
+      if (!text) {
+        agent.stopRequested = true;
+        setAgentState("thinking", "Stopping…");
+        agent.resumeWaiters.splice(0).forEach(r => r());
+        if (agent.abort) agent.abort.abort();
+        return;
+      }
       agent.queued.push(text);
       ui.input.value = "";
       addMessage("user", text, "Sentinel will read this at its next step");
@@ -1532,30 +1630,36 @@
     endSteps();
     let turn = null;
     let failures = 0;
+    const snap = await snapshot();
     try {
-      for (let guard = 0; guard < 40; guard++) {
+      for (let guard = 0; guard < 30; guard++) {
         await checkpoint();
         while (agent.queued.length) agent.messages.push({ role: "user", content: agent.queued.shift() });
         setAgentState("thinking", "Thinking…");
-        const context = contextForStep();
-        const response = await post({ mode: "agent", messages: agent.messages, tools: TOOL_SPECS, turn, context });
-        const data = response.payload;
-        (Array.isArray(data.server_messages) ? data.server_messages : []).forEach(message => {
-          agent.messages.push(message);
-          if (message.role === "assistant" && Array.isArray(message.tool_calls)) {
-            message.tool_calls.forEach(call => {
-              let args = {};
-              try { args = JSON.parse(call.function.arguments || "{}"); } catch (_) {}
-              stepRow(stepLabel(call.function.name, args), "done");
-            });
+        const context = contextForStep(snap);
+        const live = liveMessage(guard > 0);
+        const serverRows = [];
+        const response = await post({ mode: "agent", messages: agent.messages, tools: TOOL_SPECS, turn, context }, {
+          reasoning: data => live.reasoning(String(data.delta || "")),
+          text: data => live.text(String(data.delta || "")),
+          status: data => live.status(String(data.text || "")),
+          step: () => { serverRows.splice(0).forEach(row => row.done("done")); },
+          tool: data => {
+            let args = {};
+            try { args = JSON.parse(data.arguments || "{}"); } catch (_) {}
+            serverRows.push(stepRow(stepLabel(String(data.name || ""), args), "running"));
           }
-        });
+        }).catch(error => { live.drop(); throw error; });
+        serverRows.splice(0).forEach(row => row.done("done"));
+        const data = response.payload;
+        (Array.isArray(data.server_messages) ? data.server_messages : []).forEach(message => agent.messages.push(message));
         if (!response.ok) {
+          live.drop();
           if (data.turn && data.turn.token) turn = { token: data.turn.token };
-          if ((data.error_code === "provider_rate_limited" || response.status >= 500) && failures < 1 && turn) {
+          if ((data.error_code === "provider_rate_limited" || data.error_code === "provider_timeout" || response.status >= 500) && failures < 1 && turn) {
             failures += 1;
-            setAgentState("thinking", "The AI provider is busy — retrying…");
-            await sleep(response.status === 503 && data.error_code === "provider_rate_limited" ? 8000 : 2500);
+            setAgentState("thinking", "The AI models are busy — retrying…");
+            await sleep(data.error_code === "provider_rate_limited" ? 6000 : 1500);
             continue;
           }
           throw new Error(data.error || "Sentinel could not complete this request (HTTP " + response.status + ").");
@@ -1565,36 +1669,33 @@
         if (data.type === "final") {
           const answer = String(data.answer || "").trim() || "I could not produce an answer. Please try rephrasing.";
           agent.messages.push({ role: "assistant", content: answer });
-          endSteps();
-          addMessage("agent", answer, data.step_limit ? "Stopped at the step limit" : "");
+          live.finish(answer, data.step_limit ? "Stopped at the step limit" : "");
           persist();
           announce();
           return;
         }
-        if (data.type === "continue") { persist(); continue; }
+        if (data.type === "continue") { live.settle(); persist(); continue; }
         if (data.type !== "tool_calls" || !data.assistant) throw new Error("Sentinel returned an unexpected response.");
+        live.settle();
         agent.messages.push(data.assistant);
-        if (data.assistant.content && data.assistant.content.trim() && !/^\s*[{<]/.test(data.assistant.content)) {
-          endSteps();
-          addMessage("agent", data.assistant.content.trim());
-        }
-        (Array.isArray(data.server_results) ? data.server_results : []).forEach(message => {
-          agent.messages.push(message);
-          const call = (data.assistant.tool_calls || []).find(c => c.id === message.tool_call_id);
-          if (call) { let args = {}; try { args = JSON.parse(call.function.arguments || "{}"); } catch (_) {} stepRow(stepLabel(call.function.name, args), "done"); }
-        });
-        for (const call of data.calls || []) {
-          const result = await runTool(call);
-          agent.messages.push({ role: "tool", tool_call_id: call.id, content: result });
-          persist();
-        }
+        (Array.isArray(data.server_results) ? data.server_results : []).forEach(message => agent.messages.push(message));
+        // Reads run together; anything that touches the dashboard or asks the
+        // person runs one at a time, in order.
+        const calls = Array.isArray(data.calls) ? data.calls : [];
+        const results = new Map();
+        const parallel = calls.filter(call => !UI_TOOLS.has(call.function.name) && call.function.name !== "ask_person");
+        await Promise.all(parallel.map(async call => { results.set(call.id, await runTool(call)); }));
+        for (const call of calls) if (!results.has(call.id)) results.set(call.id, await runTool(call));
+        calls.forEach(call => agent.messages.push({ role: "tool", tool_call_id: call.id, content: results.get(call.id) }));
+        persist();
       }
       throw new Error("Sentinel took too many steps on this question.");
     } catch (error) {
       endSteps();
       if (error instanceof StopSignal) {
         addMessage("note", "Stopped. Ask again to continue from here.");
-        agent.messages.push({ role: "assistant", content: "(Stopped by the person before finishing.)" });
+        const last = agent.messages[agent.messages.length - 1];
+        if (last && last.role !== "assistant") agent.messages.push({ role: "assistant", content: "(Stopped by the person before finishing.)" });
       } else {
         setAgentState("error", "Something went wrong");
         addMessage("error", String(error && error.message || error));
@@ -1605,19 +1706,16 @@
       persist();
     } finally {
       agent.stopRequested = false;
+      agent.abort = null;
       setRunning(false);
       restCursor();
       if (isCompactScreen() && ws.dataset.mtab === "stage") setTimeout(() => setMobileTab("chat"), 1200);
     }
   }
-  // An answer that arrives while the workspace is closed shows on the dock.
+  // An answer that arrives while the workspace is closed leaves a dot on the button.
   function announce() {
-    if (agent.open) return;
-    $s("sentinelBadge").hidden = false;
-    $s("sentinelTipTitle").textContent = "Sentinel finished";
-    $s("sentinelTipSub").textContent = "Your answer is ready — open to read it";
-    dock.classList.add("has-note");
-    dockLife.play("nod");
+    if (agent.open || !railLaunch) return;
+    railLaunch.classList.add("has-note");
   }
 
   function autosize() {
@@ -1644,11 +1742,11 @@
   restore();
 
   // The rail's "Ask Sentinel" opens the workspace; the old page stays as a fallback.
-  const launch = document.getElementById("askSentinelLaunch");
-  if (launch) {
-    launch.addEventListener("click", event => {
+  if (railLaunch) {
+    railLaunch.addEventListener("click", event => {
       event.stopImmediatePropagation();
       event.preventDefault();
+      rippleFrom = railLaunch;
       openWorkspace();
     }, true);
   }
