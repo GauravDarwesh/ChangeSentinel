@@ -88,6 +88,36 @@ def normalize_text(text: str) -> str:
     return "\n".join(lines)
 
 
+def _without_tbody(selector: str) -> str:
+    """The selector with its "tbody" steps dropped.
+
+    Browsers add <tbody> to every table, so a part picked in the dashboard often
+    ends in "table > tbody"; the page's own HTML (what the scan parses) may have
+    no tbody at all.
+    """
+    parts = []
+    for one in selector.split(","):
+        one = re.sub(r"\s*>\s*tbody(?=[\s>.:#\[]|$)(?:\s*>\s*)?", " ", one)
+        one = re.sub(r"(^|\s)tbody(?=[\s.:#\[]|$)\s*>?\s*", r"\1", one)
+        parts.append(re.sub(r"\s+", " ", one).strip())
+    return ", ".join(part for part in parts if part)
+
+
+def _select_include(soup, selector: str) -> list:
+    _remove_tags_only(soup)
+    selected = soup.select(selector)
+    if not selected and "tbody" in selector:
+        relaxed = _without_tbody(selector)
+        if relaxed and relaxed != selector:
+            selected = soup.select(relaxed)
+    return selected
+
+
+def _remove_tags_only(root) -> None:
+    for tag in list(root.find_all(REMOVE_TAGS - {"nav", "footer", "aside"})):
+        tag.decompose()
+
+
 def _remove_default_noise(root) -> None:
     for tag in list(root.find_all(True)):
         attrs = _attrs(tag)
@@ -233,6 +263,13 @@ def normalize_html(
 
     if include_selector:
         selected = soup.select(include_selector)
+        if not selected:
+            # The part a person picked can sit inside a container whose class
+            # merely sounds like chrome ("list-pagination-part" wraps the whole
+            # forms table on the Central Bank of the Bahamas): look again in the
+            # page before the default noise was taken out. Noise inside the
+            # selected part is still removed below.
+            selected = _select_include(BeautifulSoup(html, "html.parser"), include_selector)
         if not selected:
             raise ValueError(
                 f"Configured include selector matched no elements: {include_selector}"
