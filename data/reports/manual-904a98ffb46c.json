@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261027T062403Z-2c4e5c15",
-  "generated_at": "2026-10-27T06:30:27.168193+00:00",
+  "run_id": "20261027T120001Z-48e41d4f",
+  "generated_at": "2026-10-27T12:06:31.622261+00:00",
   "source": {
     "id": "manual-904a98ffb46c",
     "name": "Reporting Forms: FFIEC 102 Current",
@@ -93,6 +93,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "40460665482"
+  "trigger": "scheduled",
+  "workflow_run_id": "40500098626"
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261027T062403Z-2c4e5c15",
-  "generated_at": "2026-10-27T06:41:09.378817+00:00",
+  "run_id": "20261027T120001Z-48e41d4f",
+  "generated_at": "2026-10-27T12:15:10.118477+00:00",
   "source": {
     "id": "manual-704710941f50",
     "name": "Downloadable Forms- Central Bank of the Bahamas",
@@ -88,68 +88,15 @@
   },
   "events": [
     {
-      "event_id": "dfffd1e6def39bb3663f780fc27cdc9645034133a257c4b1867cc755eeec1dcb",
+      "event_id": "9d56335718f2611a38d6ce3fea10cc74872691faf63efa16323ba4c73da07a76",
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms",
       "url_id": "704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9",
       "source_id": "manual-704710941f50",
-      "timestamp": "2026-10-27T06:41:09.378817+00:00",
-      "evidence_location": "data/evidence/dfffd1e6def39bb3663f780fc27cdc9645034133a257c4b1867cc755eeec1dcb.json",
+      "timestamp": "2026-10-27T12:15:10.118477+00:00",
+      "evidence_location": "data/evidence/9d56335718f2611a38d6ce3fea10cc74872691faf63efa16323ba4c73da07a76.json",
       "evidence": {
         "previous": {
-          "schema_version": 2,
-          "url_id": "704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9",
-          "source_id": "manual-704710941f50",
-          "regulator": "www.centralbankbahamas.com",
-          "canonical_url": "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms",
-          "first_seen": "2026-10-27T01:58:39.657919+00:00",
-          "last_seen": "2026-10-27T05:01:32.891152+00:00",
-          "last_checked": "2026-10-27T05:01:32.891152+00:00",
-          "last_full_fetch": "2026-10-27T05:01:32.891152+00:00",
-          "active": true,
-          "terminal_file": false,
-          "http_status": 200,
-          "content_type": "text/html; charset=utf-8",
-          "content_length": null,
-          "etag": null,
-          "last_modified": null,
-          "raw_hash": "1e8e770ceffe807a9706e33f409d7865c6aa756bc28fa9f0ee1b43cf8adc5f00",
-          "normalized_hash": "a555c2dccfc7883d59d01ac9ecb4fca0df2cd01ba3b148d1af364d2f49d7bb1c",
-          "html_hash": "1e8e770ceffe807a9706e33f409d7865c6aa756bc28fa9f0ee1b43cf8adc5f00",
-          "html_comparison_hash": "61099732baf5ccff8fb4f8adcc6303143d3f64b6a8490f76093f9b2e1b247a92",
-          "html_comparison_hash_version": 3,
-          "html_snapshot_location": "data/snapshots/html/704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9-1e8e770ceffe807a9706e33f409d7865c6aa756bc28fa9f0ee1b43cf8adc5f00.html",
-          "file_snapshot_location": null,
-          "visual_snapshot_location": null,
-          "visual_hash": null,
-          "extraction_type": "html",
-          "extractor_version": "content-extractor-v7",
-          "extraction_error": null,
-          "fetch_error": null,
-          "snapshot_location": "data/snapshots/704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9-a555c2dccfc7883d59d01ac9ecb4fca0df2cd01ba3b148d1af364d2f49d7bb1c.txt",
-          "evidence_location": "data/evidence/8a217abe5b611392adc0dbad533a1bdf970dfd787366a61e1f10a1d473de85b1.json",
-          "relevance": {
-            "candidate": true,
-            "reason": "No exclusion signal; retained for high-recall review",
-            "signals": []
-          },
-          "ai_pending": null,
-          "last_changed_at": null,
-          "change_history": [
-            {
-              "event_id": "8a217abe5b611392adc0dbad533a1bdf970dfd787366a61e1f10a1d473de85b1",
-              "event_type": "HTML_SOURCE_CHANGED",
-              "timestamp": "2026-10-27T05:01:32.891152+00:00",
-              "evidence_location": "data/evidence/8a217abe5b611392adc0dbad533a1bdf970dfd787366a61e1f10a1d473de85b1.json"
-            }
-          ],
-          "not_modified": false,
-          "full_fetch_forced": false,
-          "html_baseline_forced": false,
-          "file_baseline_forced": false,
-          "extractor_baseline_forced": false
-        },
-        "current": {
           "schema_version": 2,
           "url_id": "704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9",
           "source_id": "manual-704710941f50",
@@ -207,6 +154,71 @@
           "html_baseline_forced": false,
           "file_baseline_forced": false,
           "extractor_baseline_forced": false
+        },
+        "current": {
+          "schema_version": 2,
+          "url_id": "704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9",
+          "source_id": "manual-704710941f50",
+          "regulator": "www.centralbankbahamas.com",
+          "canonical_url": "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms",
+          "first_seen": "2026-10-27T01:58:39.657919+00:00",
+          "last_seen": "2026-10-27T12:15:10.118477+00:00",
+          "last_checked": "2026-10-27T12:15:10.118477+00:00",
+          "last_full_fetch": "2026-10-27T12:15:10.118477+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8",
+          "content_length": null,
+          "etag": null,
+          "last_modified": null,
+          "raw_hash": "8f7396e9bc8f97057420f42a6dfec4441bb4d260851336a5f3f7b5cb20aed6b5",
+          "normalized_hash": "a555c2dccfc7883d59d01ac9ecb4fca0df2cd01ba3b148d1af364d2f49d7bb1c",
+          "html_hash": "8f7396e9bc8f97057420f42a6dfec4441bb4d260851336a5f3f7b5cb20aed6b5",
+          "html_comparison_hash": "67ed659a7359f11f4e281fd4ffdee10d0dd342701122d7deb7e646fa936acce1",
+          "html_comparison_hash_version": 3,
+          "html_snapshot_location": "data/snapshots/html/704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9-8f7396e9bc8f97057420f42a6dfec4441bb4d260851336a5f3f7b5cb20aed6b5.html",
+          "file_snapshot_location": null,
+          "visual_snapshot_location": null,
+          "visual_hash": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9-a555c2dccfc7883d59d01ac9ecb4fca0df2cd01ba3b148d1af364d2f49d7bb1c.txt",
+          "evidence_location": "data/evidence/9d56335718f2611a38d6ce3fea10cc74872691faf63efa16323ba4c73da07a76.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "No exclusion signal; retained for high-recall review",
+            "signals": []
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "9d56335718f2611a38d6ce3fea10cc74872691faf63efa16323ba4c73da07a76",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-27T12:15:10.118477+00:00",
+              "evidence_location": "data/evidence/9d56335718f2611a38d6ce3fea10cc74872691faf63efa16323ba4c73da07a76.json"
+            },
+            {
+              "event_id": "dfffd1e6def39bb3663f780fc27cdc9645034133a257c4b1867cc755eeec1dcb",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-27T06:41:09.378817+00:00",
+              "evidence_location": "data/evidence/dfffd1e6def39bb3663f780fc27cdc9645034133a257c4b1867cc755eeec1dcb.json"
+            },
+            {
+              "event_id": "8a217abe5b611392adc0dbad533a1bdf970dfd787366a61e1f10a1d473de85b1",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-27T05:01:32.891152+00:00",
+              "evidence_location": "data/evidence/8a217abe5b611392adc0dbad533a1bdf970dfd787366a61e1f10a1d473de85b1.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false
         }
       }
     }
@@ -216,59 +228,6 @@
   "source_changed_urls": [
     {
       "before": {
-        "schema_version": 2,
-        "url_id": "704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9",
-        "source_id": "manual-704710941f50",
-        "regulator": "www.centralbankbahamas.com",
-        "canonical_url": "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms",
-        "first_seen": "2026-10-27T01:58:39.657919+00:00",
-        "last_seen": "2026-10-27T05:01:32.891152+00:00",
-        "last_checked": "2026-10-27T05:01:32.891152+00:00",
-        "last_full_fetch": "2026-10-27T05:01:32.891152+00:00",
-        "active": true,
-        "terminal_file": false,
-        "http_status": 200,
-        "content_type": "text/html; charset=utf-8",
-        "content_length": null,
-        "etag": null,
-        "last_modified": null,
-        "raw_hash": "1e8e770ceffe807a9706e33f409d7865c6aa756bc28fa9f0ee1b43cf8adc5f00",
-        "normalized_hash": "a555c2dccfc7883d59d01ac9ecb4fca0df2cd01ba3b148d1af364d2f49d7bb1c",
-        "html_hash": "1e8e770ceffe807a9706e33f409d7865c6aa756bc28fa9f0ee1b43cf8adc5f00",
-        "html_comparison_hash": "61099732baf5ccff8fb4f8adcc6303143d3f64b6a8490f76093f9b2e1b247a92",
-        "html_comparison_hash_version": 3,
-        "html_snapshot_location": "data/snapshots/html/704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9-1e8e770ceffe807a9706e33f409d7865c6aa756bc28fa9f0ee1b43cf8adc5f00.html",
-        "file_snapshot_location": null,
-        "visual_snapshot_location": null,
-        "visual_hash": null,
-        "extraction_type": "html",
-        "extractor_version": "content-extractor-v7",
-        "extraction_error": null,
-        "fetch_error": null,
-        "snapshot_location": "data/snapshots/704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9-a555c2dccfc7883d59d01ac9ecb4fca0df2cd01ba3b148d1af364d2f49d7bb1c.txt",
-        "evidence_location": "data/evidence/8a217abe5b611392adc0dbad533a1bdf970dfd787366a61e1f10a1d473de85b1.json",
-        "relevance": {
-          "candidate": true,
-          "reason": "No exclusion signal; retained for high-recall review",
-          "signals": []
-        },
-        "ai_pending": null,
-        "last_changed_at": null,
-        "change_history": [
-          {
-            "event_id": "8a217abe5b611392adc0dbad533a1bdf970dfd787366a61e1f10a1d473de85b1",
-            "event_type": "HTML_SOURCE_CHANGED",
-            "timestamp": "2026-10-27T05:01:32.891152+00:00",
-            "evidence_location": "data/evidence/8a217abe5b611392adc0dbad533a1bdf970dfd787366a61e1f10a1d473de85b1.json"
-          }
-        ],
-        "not_modified": false,
-        "full_fetch_forced": false,
-        "html_baseline_forced": false,
-        "file_baseline_forced": false,
-        "extractor_baseline_forced": false
-      },
-      "after": {
         "schema_version": 2,
         "url_id": "704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9",
         "source_id": "manual-704710941f50",
@@ -326,12 +285,77 @@
         "html_baseline_forced": false,
         "file_baseline_forced": false,
         "extractor_baseline_forced": false
+      },
+      "after": {
+        "schema_version": 2,
+        "url_id": "704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9",
+        "source_id": "manual-704710941f50",
+        "regulator": "www.centralbankbahamas.com",
+        "canonical_url": "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms",
+        "first_seen": "2026-10-27T01:58:39.657919+00:00",
+        "last_seen": "2026-10-27T12:15:10.118477+00:00",
+        "last_checked": "2026-10-27T12:15:10.118477+00:00",
+        "last_full_fetch": "2026-10-27T12:15:10.118477+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "content_length": null,
+        "etag": null,
+        "last_modified": null,
+        "raw_hash": "8f7396e9bc8f97057420f42a6dfec4441bb4d260851336a5f3f7b5cb20aed6b5",
+        "normalized_hash": "a555c2dccfc7883d59d01ac9ecb4fca0df2cd01ba3b148d1af364d2f49d7bb1c",
+        "html_hash": "8f7396e9bc8f97057420f42a6dfec4441bb4d260851336a5f3f7b5cb20aed6b5",
+        "html_comparison_hash": "67ed659a7359f11f4e281fd4ffdee10d0dd342701122d7deb7e646fa936acce1",
+        "html_comparison_hash_version": 3,
+        "html_snapshot_location": "data/snapshots/html/704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9-8f7396e9bc8f97057420f42a6dfec4441bb4d260851336a5f3f7b5cb20aed6b5.html",
+        "file_snapshot_location": null,
+        "visual_snapshot_location": null,
+        "visual_hash": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9-a555c2dccfc7883d59d01ac9ecb4fca0df2cd01ba3b148d1af364d2f49d7bb1c.txt",
+        "evidence_location": "data/evidence/9d56335718f2611a38d6ce3fea10cc74872691faf63efa16323ba4c73da07a76.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "No exclusion signal; retained for high-recall review",
+          "signals": []
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "9d56335718f2611a38d6ce3fea10cc74872691faf63efa16323ba4c73da07a76",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-27T12:15:10.118477+00:00",
+            "evidence_location": "data/evidence/9d56335718f2611a38d6ce3fea10cc74872691faf63efa16323ba4c73da07a76.json"
+          },
+          {
+            "event_id": "dfffd1e6def39bb3663f780fc27cdc9645034133a257c4b1867cc755eeec1dcb",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-27T06:41:09.378817+00:00",
+            "evidence_location": "data/evidence/dfffd1e6def39bb3663f780fc27cdc9645034133a257c4b1867cc755eeec1dcb.json"
+          },
+          {
+            "event_id": "8a217abe5b611392adc0dbad533a1bdf970dfd787366a61e1f10a1d473de85b1",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-27T05:01:32.891152+00:00",
+            "evidence_location": "data/evidence/8a217abe5b611392adc0dbad533a1bdf970dfd787366a61e1f10a1d473de85b1.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false
       }
     }
   ],
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "40460665482"
+  "trigger": "scheduled",
+  "workflow_run_id": "40500098626"
 }
