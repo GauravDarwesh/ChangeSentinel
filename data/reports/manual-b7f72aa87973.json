@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261027T120001Z-48e41d4f",
-  "generated_at": "2026-10-27T12:04:46.550538+00:00",
+  "run_id": "20261027T155531Z-9564e2e9",
+  "generated_at": "2026-10-27T16:07:39.673424+00:00",
   "source": {
     "id": "manual-b7f72aa87973",
     "name": "Technical specification - frequently asked questions (BCAR)",
@@ -93,6 +93,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "scheduled",
-  "workflow_run_id": "40500098626"
+  "trigger": "continuation",
+  "workflow_run_id": "40535240200"
 }

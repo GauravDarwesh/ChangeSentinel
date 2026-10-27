@@ -1,0 +1,1060 @@
+[WORKBOOK] 4 sheets: Datos, Pregunta 1, Glosario, Tratamiento de datos personales
+[SHEET] Datos
+Datos · O: I TRIMESTRE · P: 2007
+Datos · O: II TRIMESTRE · P: 2008
+Datos · O: III TRIMESTRE · P: 2009
+Datos · O: IV TRIMESTRE · P: 2010
+Datos · P: 2011
+Datos · P: 2012
+Datos · P: 2017
+Datos · P: 2018
+Datos · B: REPORTE MENSUAL DE INGRESOS DE REMESAS DE TRABAJADORES MEDIANTE TARJETAS DÉBITO Y CRÉDITO (RMR) · P: 2019
+Datos · P: 2020
+Datos · B: 1. Año reportado · P: 2021
+Datos · P: 2022
+Datos · B: 2. Mes reportado · P: 2023
+Datos · B: 3. NIT de la entidad:
+Datos · B: 4. Nombre de la entidad:
+Datos · B: 5. Dirección:
+Datos · B: 6. Ciudad:
+Datos · B: Para posibles aclaraciones sobre la información reportada, el Banco de la República podrá contactar a:
+Datos · B: 7. Nombre: · G: 10. Teléfono # :
+Datos · B: 8. Cargo:
+Datos · B: 9. Correo electrónico:
+[MERGED] Datos · C40:E40
+[MERGED] Datos · C42:E42
+[MERGED] Datos · C44:E44
+[MERGED] Datos · C25:D25
+[MERGED] Datos · B23:H23
+[MERGED] Datos · C29:D29
+[MERGED] Datos · C31:E31
+[MERGED] Datos · C33:E33
+[MERGED] Datos · C35:D35
+[VALIDATION] Datos · C27 · list · $O$2:$O$6
+[VALIDATION] Datos · P9:P22 · list · $P$3:$P$9
+[VALIDATION] Datos · C25:D25 · list · $P$23:$P$32
+[SHEET] Pregunta 1
+Pregunta 1 · A: REPORTE MENSUAL DE INGRESOS DE REMESAS DE TRABAJADORES MEDIANTE TARJETAS DÉBITO Y CRÉDITO (RMR)
+Pregunta 1 · A: 1. Año de reporte · B: 2. Mes de reporte · C: 3. Identifique el canal de reintegro de las divisas al mercado cambiario colombiano (Ejemplo: IMC o Compensador de Tarjetas) · D: 4. NIT del IMC o Compensador de tarjetas · E: 5. Nombre del IMC o Compensador de tarjetas · F: 6. Tipo de identificación del receptor · G: 7. Número de identificación del receptor · H: 8. Nombre del receptor · I: 9. Número de remesas por receptor recibidas en el mes de reporte · J: 10. Monto acumulado de remesas por receptor recibidas en el mes de reporte (equivalente en dólares americanos USD) · K: 11.Tasa de cambio (pesos colombianos/USD) pactada para el pago del giro(s) (Ejemplo: 4900) · L: 12. Monto acumulado de remesas por receptor recibidas en el mes de reporte (equivalente en pesos colombianos) · M: 13. Tarifa de intercambio calculada por la franquicia para el envío de la remesa (en dólares) · N: 14. Indique si las remesas se pagaron al receptor en Colombia en Pesos Colombianos o en Divisas (Dólar, Euro, Yen, Real, etc)
+Pregunta 1 · AF: Pesos Colombianos
+Pregunta 1 · AF: Divisas
+Pregunta 1 · AE: Cedula de Ciudadania
+Pregunta 1 · W: 1 · Z: 0 · AB: 2023 · AC: 1 · AE: Cedula de Extranjeria
+Pregunta 1 · W: 2 · Z: 0.001 · AB: 2024 · AC: 2 · AE: Pasaporte
+Pregunta 1 · W: 3 · Z: 0.002 · AB: 2025 · AC: 3 · AE: Nit
+Pregunta 1 · W: 4 · Z: 0.003 · AB: 2026 · AC: 4 · AE: Permiso Especial de Permanencia
+Pregunta 1 · W: 5 · Z: 0.004 · AB: 2027 · AC: 5 · AE: Otros
+Pregunta 1 · W: 6 · Z: 0.005 · AB: 2028 · AC: 6
+Pregunta 1 · W: 7 · Z: 0.006 · AB: 2029 · AC: 7
+Pregunta 1 · W: 8 · Z: 0.007 · AB: 2030 · AC: 8
+Pregunta 1 · W: 9 · Z: 0.008 · AC: 9
+Pregunta 1 · W: 10 · Y: IMC · Z: 0.009 · AC: 10
+Pregunta 1 · W: 11 · Y: Compensador de tarjetas · Z: 0.01 · AC: 11
+Pregunta 1 · W: 12 · Z: 0.011 · AC: 12
+Pregunta 1 · Z: 0.012 · AC: 13
+Pregunta 1 · Z: 0.013 · AC: 14
+Pregunta 1 · Z: 0.014 · AC: 15
+Pregunta 1 · Z: 0.015 · AC: 16
+Pregunta 1 · Z: 0.016 · AC: 17
+Pregunta 1 · Z: 0.017 · AC: 18
+Pregunta 1 · Z: 0.018 · AC: 19
+Pregunta 1 · Z: 0.019 · AC: 20
+Pregunta 1 · Z: 0.02 · AC: 21
+Pregunta 1 · Z: 0.021 · AC: 22
+Pregunta 1 · Z: 0.022 · AC: 23
+Pregunta 1 · Z: 0.023 · AC: 24
+Pregunta 1 · Z: 0.024 · AC: 25
+Pregunta 1 · Z: 0.025 · AC: 26
+Pregunta 1 · Z: 0.026 · AC: 27
+Pregunta 1 · Z: 0.027 · AC: 28
+Pregunta 1 · Z: 0.028 · AC: 29
+Pregunta 1 · Z: 0.029 · AC: 30
+Pregunta 1 · Z: 0.03 · AC: 31
+Pregunta 1 · Z: 0.031 · AC: 32
+Pregunta 1 · Z: 0.032 · AC: 33
+Pregunta 1 · Z: 0.033 · AC: 34
+Pregunta 1 · Z: 0.034 · AC: 35
+Pregunta 1 · Z: 0.035 · AC: 36
+Pregunta 1 · Z: 0.036 · AC: 37
+Pregunta 1 · Z: 0.037 · AC: 38
+Pregunta 1 · Z: 0.038 · AC: 39
+Pregunta 1 · Z: 0.039 · AC: 40
+Pregunta 1 · Z: 0.04 · AC: 41
+Pregunta 1 · Z: 0.041 · AC: 42
+Pregunta 1 · Z: 0.042 · AC: 43
+Pregunta 1 · Z: 0.043 · AC: 44
+Pregunta 1 · Z: 0.044 · AC: 45
+Pregunta 1 · Z: 0.045 · AC: 46
+Pregunta 1 · Z: 0.046 · AC: 47
+Pregunta 1 · Z: 0.047 · AC: 48
+Pregunta 1 · Z: 0.048 · AC: 49
+Pregunta 1 · Z: 0.049 · AC: 50
+Pregunta 1 · Z: 0.05 · AC: 51
+Pregunta 1 · Z: 0.051 · AC: 52
+Pregunta 1 · Z: 0.052 · AC: 53
+Pregunta 1 · Z: 0.053 · AC: 54
+Pregunta 1 · Z: 0.054 · AC: 55
+Pregunta 1 · Z: 0.055 · AC: 56
+Pregunta 1 · Z: 0.056 · AC: 57
+Pregunta 1 · Z: 0.057 · AC: 58
+Pregunta 1 · Z: 0.058 · AC: 59
+Pregunta 1 · Z: 0.059 · AC: 60
+Pregunta 1 · Z: 0.06 · AC: 61
+Pregunta 1 · Z: 0.061 · AC: 62
+Pregunta 1 · Z: 0.062 · AC: 63
+Pregunta 1 · Z: 0.063 · AC: 64
+Pregunta 1 · Z: 0.064 · AC: 65
+Pregunta 1 · Z: 0.065 · AC: 66
+Pregunta 1 · Z: 0.066 · AC: 67
+Pregunta 1 · Z: 0.067 · AC: 68
+Pregunta 1 · Z: 0.068 · AC: 69
+Pregunta 1 · Z: 0.069 · AC: 70
+Pregunta 1 · Z: 0.07 · AC: 71
+Pregunta 1 · Z: 0.071 · AC: 72
+Pregunta 1 · Z: 0.072 · AC: 73
+Pregunta 1 · Z: 0.073 · AC: 74
+Pregunta 1 · Z: 0.074 · AC: 75
+Pregunta 1 · Z: 0.075 · AC: 76
+Pregunta 1 · Z: 0.076 · AC: 77
+Pregunta 1 · Z: 0.077 · AC: 78
+Pregunta 1 · Z: 0.078 · AC: 79
+Pregunta 1 · Z: 0.079 · AC: 80
+Pregunta 1 · Z: 0.08 · AC: 81
+Pregunta 1 · Z: 0.081 · AC: 82
+Pregunta 1 · Z: 0.082 · AC: 83
+Pregunta 1 · Z: 0.083 · AC: 84
+Pregunta 1 · Z: 0.084 · AC: 85
+Pregunta 1 · Z: 0.085 · AC: 86
+Pregunta 1 · Z: 0.086 · AC: 87
+Pregunta 1 · Z: 0.087 · AC: 88
+Pregunta 1 · Z: 0.088 · AC: 89
+Pregunta 1 · Z: 0.089 · AC: 90
+Pregunta 1 · Z: 0.09 · AC: 91
+Pregunta 1 · Z: 0.091 · AC: 92
+Pregunta 1 · Z: 0.092 · AC: 93
+Pregunta 1 · Z: 0.093 · AC: 94
+Pregunta 1 · Z: 0.094 · AC: 95
+Pregunta 1 · Z: 0.095 · AC: 96
+Pregunta 1 · Z: 0.096 · AC: 97
+Pregunta 1 · Z: 0.097 · AC: 98
+Pregunta 1 · Z: 0.098 · AC: 99
+Pregunta 1 · Z: 0.099 · AC: 100
+Pregunta 1 · Z: 0.1 · AC: 101
+Pregunta 1 · Z: 0.101 · AC: 102
+Pregunta 1 · Z: 0.102 · AC: 103
+Pregunta 1 · Z: 0.103 · AC: 104
+Pregunta 1 · Z: 0.104 · AC: 105
+Pregunta 1 · Z: 0.105 · AC: 106
+Pregunta 1 · Z: 0.106 · AC: 107
+Pregunta 1 · Z: 0.107 · AC: 108
+Pregunta 1 · Z: 0.108 · AC: 109
+Pregunta 1 · Z: 0.109 · AC: 110
+Pregunta 1 · Z: 0.11 · AC: 111
+Pregunta 1 · Z: 0.111 · AC: 112
+Pregunta 1 · Z: 0.112 · AC: 113
+Pregunta 1 · Z: 0.113 · AC: 114
+Pregunta 1 · Z: 0.114 · AC: 115
+Pregunta 1 · Z: 0.115 · AC: 116
+Pregunta 1 · Z: 0.116 · AC: 117
+Pregunta 1 · Z: 0.117 · AC: 118
+Pregunta 1 · Z: 0.118 · AC: 119
+Pregunta 1 · Z: 0.119 · AC: 120
+Pregunta 1 · Z: 0.12 · AC: 121
+Pregunta 1 · Z: 0.121 · AC: 122
+Pregunta 1 · Z: 0.122 · AC: 123
+Pregunta 1 · Z: 0.123 · AC: 124
+Pregunta 1 · Z: 0.124 · AC: 125
+Pregunta 1 · Z: 0.125 · AC: 126
+Pregunta 1 · Z: 0.126 · AC: 127
+Pregunta 1 · Z: 0.127 · AC: 128
+Pregunta 1 · Z: 0.128 · AC: 129
+Pregunta 1 · Z: 0.129 · AC: 130
+Pregunta 1 · Z: 0.13 · AC: 131
+Pregunta 1 · Z: 0.131 · AC: 132
+Pregunta 1 · Z: 0.132 · AC: 133
+Pregunta 1 · Z: 0.133 · AC: 134
+Pregunta 1 · Z: 0.134 · AC: 135
+Pregunta 1 · Z: 0.135 · AC: 136
+Pregunta 1 · Z: 0.136 · AC: 137
+Pregunta 1 · Z: 0.137 · AC: 138
+Pregunta 1 · Z: 0.138 · AC: 139
+Pregunta 1 · Z: 0.139 · AC: 140
+Pregunta 1 · Z: 0.14 · AC: 141
+Pregunta 1 · Z: 0.141 · AC: 142
+Pregunta 1 · Z: 0.142 · AC: 143
+Pregunta 1 · Z: 0.143 · AC: 144
+Pregunta 1 · Z: 0.144 · AC: 145
+Pregunta 1 · Z: 0.145 · AC: 146
+Pregunta 1 · Z: 0.146 · AC: 147
+Pregunta 1 · Z: 0.147 · AC: 148
+Pregunta 1 · Z: 0.148 · AC: 149
+Pregunta 1 · Z: 0.149 · AC: 150
+Pregunta 1 · Z: 0.15 · AC: 151
+Pregunta 1 · Z: 0.151 · AC: 152
+Pregunta 1 · Z: 0.152 · AC: 153
+Pregunta 1 · Z: 0.153 · AC: 154
+Pregunta 1 · Z: 0.154 · AC: 155
+Pregunta 1 · Z: 0.155 · AC: 156
+Pregunta 1 · Z: 0.156 · AC: 157
+Pregunta 1 · Z: 0.157 · AC: 158
+Pregunta 1 · Z: 0.158 · AC: 159
+Pregunta 1 · Z: 0.159 · AC: 160
+Pregunta 1 · Z: 0.16 · AC: 161
+Pregunta 1 · Z: 0.161 · AC: 162
+Pregunta 1 · Z: 0.162 · AC: 163
+Pregunta 1 · Z: 0.163 · AC: 164
+Pregunta 1 · Z: 0.164 · AC: 165
+Pregunta 1 · Z: 0.165 · AC: 166
+Pregunta 1 · Z: 0.166 · AC: 167
+Pregunta 1 · Z: 0.167 · AC: 168
+Pregunta 1 · Z: 0.168 · AC: 169
+Pregunta 1 · Z: 0.169 · AC: 170
+Pregunta 1 · Z: 0.17 · AC: 171
+Pregunta 1 · Z: 0.171 · AC: 172
+Pregunta 1 · Z: 0.172 · AC: 173
+Pregunta 1 · Z: 0.173 · AC: 174
+Pregunta 1 · Z: 0.174 · AC: 175
+Pregunta 1 · Z: 0.175 · AC: 176
+Pregunta 1 · Z: 0.176 · AC: 177
+Pregunta 1 · Z: 0.177 · AC: 178
+Pregunta 1 · Z: 0.178 · AC: 179
+Pregunta 1 · Z: 0.179 · AC: 180
+Pregunta 1 · Z: 0.18 · AC: 181
+Pregunta 1 · Z: 0.181 · AC: 182
+Pregunta 1 · Z: 0.182 · AC: 183
+Pregunta 1 · Z: 0.183 · AC: 184
+Pregunta 1 · Z: 0.184 · AC: 185
+Pregunta 1 · Z: 0.185 · AC: 186
+Pregunta 1 · Z: 0.186 · AC: 187
+Pregunta 1 · Z: 0.187 · AC: 188
+Pregunta 1 · Z: 0.188 · AC: 189
+Pregunta 1 · Z: 0.189 · AC: 190
+Pregunta 1 · Z: 0.19 · AC: 191
+Pregunta 1 · Z: 0.191 · AC: 192
+Pregunta 1 · Z: 0.192 · AC: 193
+Pregunta 1 · Z: 0.193 · AC: 194
+Pregunta 1 · Z: 0.194 · AC: 195
+Pregunta 1 · Z: 0.195 · AC: 196
+Pregunta 1 · Z: 0.196 · AC: 197
+Pregunta 1 · Z: 0.197 · AC: 198
+Pregunta 1 · Z: 0.198 · AC: 199
+Pregunta 1 · Z: 0.199 · AC: 200
+Pregunta 1 · Z: 0.2 · AC: 201
+Pregunta 1 · Z: 0.201 · AC: 202
+Pregunta 1 · Z: 0.202 · AC: 203
+Pregunta 1 · Z: 0.203 · AC: 204
+Pregunta 1 · Z: 0.204 · AC: 205
+Pregunta 1 · Z: 0.205 · AC: 206
+Pregunta 1 · Z: 0.206 · AC: 207
+Pregunta 1 · Z: 0.207 · AC: 208
+Pregunta 1 · Z: 0.208 · AC: 209
+Pregunta 1 · Z: 0.209 · AC: 210
+Pregunta 1 · Z: 0.21 · AC: 211
+Pregunta 1 · Z: 0.211 · AC: 212
+Pregunta 1 · Z: 0.212 · AC: 213
+Pregunta 1 · Z: 0.213 · AC: 214
+Pregunta 1 · Z: 0.214 · AC: 215
+Pregunta 1 · Z: 0.215 · AC: 216
+Pregunta 1 · Z: 0.216 · AC: 217
+Pregunta 1 · Z: 0.217 · AC: 218
+Pregunta 1 · Z: 0.218 · AC: 219
+Pregunta 1 · Z: 0.219 · AC: 220
+Pregunta 1 · Z: 0.22 · AC: 221
+Pregunta 1 · Z: 0.221 · AC: 222
+Pregunta 1 · Z: 0.222 · AC: 223
+Pregunta 1 · Z: 0.223 · AC: 224
+Pregunta 1 · Z: 0.224 · AC: 225
+Pregunta 1 · Z: 0.225 · AC: 226
+Pregunta 1 · Z: 0.226 · AC: 227
+Pregunta 1 · Z: 0.227 · AC: 228
+Pregunta 1 · Z: 0.228 · AC: 229
+Pregunta 1 · Z: 0.229 · AC: 230
+Pregunta 1 · Z: 0.23 · AC: 231
+Pregunta 1 · Z: 0.231 · AC: 232
+Pregunta 1 · Z: 0.232 · AC: 233
+Pregunta 1 · Z: 0.233 · AC: 234
+Pregunta 1 · Z: 0.234 · AC: 235
+Pregunta 1 · Z: 0.235 · AC: 236
+Pregunta 1 · Z: 0.236 · AC: 237
+Pregunta 1 · Z: 0.237 · AC: 238
+Pregunta 1 · Z: 0.238 · AC: 239
+Pregunta 1 · Z: 0.239 · AC: 240
+Pregunta 1 · Z: 0.24 · AC: 241
+Pregunta 1 · Z: 0.241 · AC: 242
+Pregunta 1 · Z: 0.242 · AC: 243
+Pregunta 1 · Z: 0.243 · AC: 244
+Pregunta 1 · Z: 0.244 · AC: 245
+Pregunta 1 · Z: 0.245 · AC: 246
+Pregunta 1 · Z: 0.246 · AC: 247
+Pregunta 1 · Z: 0.247 · AC: 248
+Pregunta 1 · Z: 0.248 · AC: 249
+Pregunta 1 · Z: 0.249 · AC: 250
+Pregunta 1 · Z: 0.25 · AC: 251
+Pregunta 1 · Z: 0.251 · AC: 252
+Pregunta 1 · Z: 0.252 · AC: 253
+Pregunta 1 · Z: 0.253 · AC: 254
+Pregunta 1 · Z: 0.254 · AC: 255
+Pregunta 1 · Z: 0.255 · AC: 256
+Pregunta 1 · Z: 0.256 · AC: 257
+Pregunta 1 · Z: 0.257 · AC: 258
+Pregunta 1 · Z: 0.258 · AC: 259
+Pregunta 1 · Z: 0.259 · AC: 260
+Pregunta 1 · Z: 0.26 · AC: 261
+Pregunta 1 · Z: 0.261 · AC: 262
+Pregunta 1 · Z: 0.262 · AC: 263
+Pregunta 1 · Z: 0.263 · AC: 264
+Pregunta 1 · Z: 0.264 · AC: 265
+Pregunta 1 · Z: 0.265 · AC: 266
+Pregunta 1 · Z: 0.266 · AC: 267
+Pregunta 1 · Z: 0.267 · AC: 268
+Pregunta 1 · Z: 0.268 · AC: 269
+Pregunta 1 · Z: 0.269 · AC: 270
+Pregunta 1 · Z: 0.27 · AC: 271
+Pregunta 1 · Z: 0.271 · AC: 272
+Pregunta 1 · Z: 0.272 · AC: 273
+Pregunta 1 · Z: 0.273 · AC: 274
+Pregunta 1 · Z: 0.274 · AC: 275
+Pregunta 1 · Z: 0.275 · AC: 276
+Pregunta 1 · Z: 0.276 · AC: 277
+Pregunta 1 · Z: 0.277 · AC: 278
+Pregunta 1 · Z: 0.278 · AC: 279
+Pregunta 1 · Z: 0.279 · AC: 280
+Pregunta 1 · Z: 0.28 · AC: 281
+Pregunta 1 · Z: 0.281 · AC: 282
+Pregunta 1 · Z: 0.282 · AC: 283
+Pregunta 1 · Z: 0.283 · AC: 284
+Pregunta 1 · Z: 0.284 · AC: 285
+Pregunta 1 · Z: 0.285 · AC: 286
+Pregunta 1 · Z: 0.286 · AC: 287
+Pregunta 1 · Z: 0.287 · AC: 288
+Pregunta 1 · Z: 0.288 · AC: 289
+Pregunta 1 · Z: 0.289 · AC: 290
+Pregunta 1 · Z: 0.29 · AC: 291
+Pregunta 1 · Z: 0.291 · AC: 292
+Pregunta 1 · Z: 0.292 · AC: 293
+Pregunta 1 · Z: 0.293 · AC: 294
+Pregunta 1 · Z: 0.294 · AC: 295
+Pregunta 1 · Z: 0.295 · AC: 296
+Pregunta 1 · Z: 0.296 · AC: 297
+Pregunta 1 · Z: 0.297 · AC: 298
+Pregunta 1 · Z: 0.298 · AC: 299
+Pregunta 1 · Z: 0.299 · AC: 300
+Pregunta 1 · Z: 0.3 · AC: 301
+Pregunta 1 · Z: 0.301 · AC: 302
+Pregunta 1 · Z: 0.302 · AC: 303
+Pregunta 1 · Z: 0.303 · AC: 304
+Pregunta 1 · Z: 0.304 · AC: 305
+Pregunta 1 · Z: 0.305 · AC: 306
+Pregunta 1 · Z: 0.306 · AC: 307
+Pregunta 1 · Z: 0.307 · AC: 308
+Pregunta 1 · Z: 0.308 · AC: 309
+Pregunta 1 · Z: 0.309 · AC: 310
+Pregunta 1 · Z: 0.31 · AC: 311
+Pregunta 1 · Z: 0.311 · AC: 312
+Pregunta 1 · Z: 0.312 · AC: 313
+Pregunta 1 · Z: 0.313 · AC: 314
+Pregunta 1 · Z: 0.314 · AC: 315
+Pregunta 1 · Z: 0.315 · AC: 316
+Pregunta 1 · Z: 0.316 · AC: 317
+Pregunta 1 · Z: 0.317 · AC: 318
+Pregunta 1 · Z: 0.318 · AC: 319
+Pregunta 1 · Z: 0.319 · AC: 320
+Pregunta 1 · Z: 0.32 · AC: 321
+Pregunta 1 · Z: 0.321 · AC: 322
+Pregunta 1 · Z: 0.322 · AC: 323
+Pregunta 1 · Z: 0.323 · AC: 324
+Pregunta 1 · Z: 0.324 · AC: 325
+Pregunta 1 · Z: 0.325 · AC: 326
+Pregunta 1 · Z: 0.326 · AC: 327
+Pregunta 1 · Z: 0.327 · AC: 328
+Pregunta 1 · Z: 0.328 · AC: 329
+Pregunta 1 · Z: 0.329 · AC: 330
+Pregunta 1 · Z: 0.33 · AC: 331
+Pregunta 1 · Z: 0.331 · AC: 332
+Pregunta 1 · Z: 0.332 · AC: 333
+Pregunta 1 · Z: 0.333 · AC: 334
+Pregunta 1 · Z: 0.334 · AC: 335
+Pregunta 1 · Z: 0.335 · AC: 336
+Pregunta 1 · Z: 0.336 · AC: 337
+Pregunta 1 · Z: 0.337 · AC: 338
+Pregunta 1 · Z: 0.338 · AC: 339
+Pregunta 1 · Z: 0.339 · AC: 340
+Pregunta 1 · Z: 0.34 · AC: 341
+Pregunta 1 · Z: 0.341 · AC: 342
+Pregunta 1 · Z: 0.342 · AC: 343
+Pregunta 1 · Z: 0.343 · AC: 344
+Pregunta 1 · Z: 0.344 · AC: 345
+Pregunta 1 · Z: 0.345 · AC: 346
+Pregunta 1 · Z: 0.346 · AC: 347
+Pregunta 1 · Z: 0.347 · AC: 348
+Pregunta 1 · Z: 0.348 · AC: 349
+Pregunta 1 · Z: 0.349 · AC: 350
+Pregunta 1 · Z: 0.35 · AC: 351
+Pregunta 1 · Z: 0.351 · AC: 352
+Pregunta 1 · Z: 0.352 · AC: 353
+Pregunta 1 · Z: 0.353 · AC: 354
+Pregunta 1 · Z: 0.354 · AC: 355
+Pregunta 1 · Z: 0.355 · AC: 356
+Pregunta 1 · Z: 0.356 · AC: 357
+Pregunta 1 · Z: 0.357 · AC: 358
+Pregunta 1 · Z: 0.358 · AC: 359
+Pregunta 1 · Z: 0.359 · AC: 360
+Pregunta 1 · Z: 0.36 · AC: 361
+Pregunta 1 · Z: 0.361 · AC: 362
+Pregunta 1 · Z: 0.362 · AC: 363
+Pregunta 1 · Z: 0.363 · AC: 364
+Pregunta 1 · Z: 0.364 · AC: 365
+Pregunta 1 · Z: 0.365 · AC: 366
+Pregunta 1 · Z: 0.366 · AC: 367
+Pregunta 1 · Z: 0.367 · AC: 368
+Pregunta 1 · Z: 0.368 · AC: 369
+Pregunta 1 · Z: 0.369 · AC: 370
+Pregunta 1 · Z: 0.37 · AC: 371
+Pregunta 1 · Z: 0.371 · AC: 372
+Pregunta 1 · Z: 0.372 · AC: 373
+Pregunta 1 · Z: 0.373 · AC: 374
+Pregunta 1 · Z: 0.374 · AC: 375
+Pregunta 1 · Z: 0.375 · AC: 376
+Pregunta 1 · Z: 0.376 · AC: 377
+Pregunta 1 · Z: 0.377 · AC: 378
+Pregunta 1 · Z: 0.378 · AC: 379
+Pregunta 1 · Z: 0.379 · AC: 380
+Pregunta 1 · Z: 0.38 · AC: 381
+Pregunta 1 · Z: 0.381 · AC: 382
+Pregunta 1 · Z: 0.382 · AC: 383
+Pregunta 1 · Z: 0.383 · AC: 384
+Pregunta 1 · Z: 0.384 · AC: 385
+Pregunta 1 · Z: 0.385 · AC: 386
+Pregunta 1 · Z: 0.386 · AC: 387
+Pregunta 1 · Z: 0.387 · AC: 388
+Pregunta 1 · Z: 0.388 · AC: 389
+Pregunta 1 · Z: 0.389 · AC: 390
+Pregunta 1 · Z: 0.39 · AC: 391
+Pregunta 1 · Z: 0.391 · AC: 392
+Pregunta 1 · Z: 0.392 · AC: 393
+Pregunta 1 · Z: 0.393 · AC: 394
+Pregunta 1 · Z: 0.394 · AC: 395
+Pregunta 1 · Z: 0.395 · AC: 396
+Pregunta 1 · Z: 0.396 · AC: 397
+Pregunta 1 · Z: 0.397 · AC: 398
+Pregunta 1 · Z: 0.398 · AC: 399
+Pregunta 1 · Z: 0.399 · AC: 400
+Pregunta 1 · Z: 0.4 · AC: 401
+Pregunta 1 · Z: 0.401 · AC: 402
+Pregunta 1 · Z: 0.402 · AC: 403
+Pregunta 1 · Z: 0.403 · AC: 404
+Pregunta 1 · Z: 0.404 · AC: 405
+Pregunta 1 · Z: 0.405 · AC: 406
+Pregunta 1 · Z: 0.406 · AC: 407
+Pregunta 1 · Z: 0.407 · AC: 408
+Pregunta 1 · Z: 0.408 · AC: 409
+Pregunta 1 · Z: 0.409 · AC: 410
+Pregunta 1 · Z: 0.41 · AC: 411
+Pregunta 1 · Z: 0.411 · AC: 412
+Pregunta 1 · Z: 0.412 · AC: 413
+Pregunta 1 · Z: 0.413 · AC: 414
+Pregunta 1 · Z: 0.414 · AC: 415
+Pregunta 1 · Z: 0.415 · AC: 416
+Pregunta 1 · Z: 0.416 · AC: 417
+Pregunta 1 · Z: 0.417 · AC: 418
+Pregunta 1 · Z: 0.418 · AC: 419
+Pregunta 1 · Z: 0.419 · AC: 420
+Pregunta 1 · Z: 0.42 · AC: 421
+Pregunta 1 · Z: 0.421 · AC: 422
+Pregunta 1 · Z: 0.422 · AC: 423
+Pregunta 1 · Z: 0.423 · AC: 424
+Pregunta 1 · Z: 0.424 · AC: 425
+Pregunta 1 · Z: 0.425 · AC: 426
+Pregunta 1 · Z: 0.426 · AC: 427
+Pregunta 1 · Z: 0.427 · AC: 428
+Pregunta 1 · Z: 0.428 · AC: 429
+Pregunta 1 · Z: 0.429 · AC: 430
+Pregunta 1 · Z: 0.43 · AC: 431
+Pregunta 1 · Z: 0.431 · AC: 432
+Pregunta 1 · Z: 0.432 · AC: 433
+Pregunta 1 · Z: 0.433 · AC: 434
+Pregunta 1 · Z: 0.434 · AC: 435
+Pregunta 1 · Z: 0.435 · AC: 436
+Pregunta 1 · Z: 0.436 · AC: 437
+Pregunta 1 · Z: 0.437 · AC: 438
+Pregunta 1 · Z: 0.438 · AC: 439
+Pregunta 1 · Z: 0.439 · AC: 440
+Pregunta 1 · Z: 0.44 · AC: 441
+Pregunta 1 · Z: 0.441 · AC: 442
+Pregunta 1 · Z: 0.442 · AC: 443
+Pregunta 1 · Z: 0.443 · AC: 444
+Pregunta 1 · Z: 0.444 · AC: 445
+Pregunta 1 · Z: 0.445 · AC: 446
+Pregunta 1 · Z: 0.446 · AC: 447
+Pregunta 1 · Z: 0.447 · AC: 448
+Pregunta 1 · Z: 0.448 · AC: 449
+Pregunta 1 · Z: 0.449 · AC: 450
+Pregunta 1 · Z: 0.45 · AC: 451
+Pregunta 1 · Z: 0.451 · AC: 452
+Pregunta 1 · Z: 0.452 · AC: 453
+Pregunta 1 · Z: 0.453 · AC: 454
+Pregunta 1 · Z: 0.454 · AC: 455
+Pregunta 1 · Z: 0.455 · AC: 456
+Pregunta 1 · Z: 0.456 · AC: 457
+Pregunta 1 · Z: 0.457 · AC: 458
+Pregunta 1 · Z: 0.458 · AC: 459
+Pregunta 1 · Z: 0.459 · AC: 460
+Pregunta 1 · Z: 0.46 · AC: 461
+Pregunta 1 · Z: 0.461 · AC: 462
+Pregunta 1 · Z: 0.462 · AC: 463
+Pregunta 1 · Z: 0.463 · AC: 464
+Pregunta 1 · Z: 0.464 · AC: 465
+Pregunta 1 · Z: 0.465 · AC: 466
+Pregunta 1 · Z: 0.466 · AC: 467
+Pregunta 1 · Z: 0.467 · AC: 468
+Pregunta 1 · Z: 0.468 · AC: 469
+Pregunta 1 · Z: 0.469 · AC: 470
+Pregunta 1 · Z: 0.47 · AC: 471
+Pregunta 1 · Z: 0.471 · AC: 472
+Pregunta 1 · Z: 0.472 · AC: 473
+Pregunta 1 · Z: 0.473 · AC: 474
+Pregunta 1 · Z: 0.474 · AC: 475
+Pregunta 1 · Z: 0.475 · AC: 476
+Pregunta 1 · Z: 0.476 · AC: 477
+Pregunta 1 · Z: 0.477 · AC: 478
+Pregunta 1 · Z: 0.478 · AC: 479
+Pregunta 1 · Z: 0.479 · AC: 480
+Pregunta 1 · Z: 0.48 · AC: 481
+Pregunta 1 · Z: 0.481 · AC: 482
+Pregunta 1 · Z: 0.482 · AC: 483
+Pregunta 1 · Z: 0.483 · AC: 484
+Pregunta 1 · Z: 0.484 · AC: 485
+Pregunta 1 · Z: 0.485 · AC: 486
+Pregunta 1 · Z: 0.486 · AC: 487
+Pregunta 1 · Z: 0.487 · AC: 488
+Pregunta 1 · Z: 0.488 · AC: 489
+Pregunta 1 · Z: 0.489 · AC: 490
+Pregunta 1 · Z: 0.49 · AC: 491
+Pregunta 1 · Z: 0.491 · AC: 492
+Pregunta 1 · Z: 0.492 · AC: 493
+Pregunta 1 · Z: 0.493 · AC: 494
+Pregunta 1 · Z: 0.494 · AC: 495
+Pregunta 1 · Z: 0.495 · AC: 496
+Pregunta 1 · Z: 0.496 · AC: 497
+Pregunta 1 · Z: 0.497 · AC: 498
+Pregunta 1 · Z: 0.498 · AC: 499
+Pregunta 1 · Z: 0.499 · AC: 500
+Pregunta 1 · Z: 0.5 · AC: 501
+Pregunta 1 · Z: 0.501 · AC: 502
+Pregunta 1 · Z: 0.502 · AC: 503
+Pregunta 1 · Z: 0.503 · AC: 504
+Pregunta 1 · Z: 0.504 · AC: 505
+Pregunta 1 · Z: 0.505 · AC: 506
+Pregunta 1 · Z: 0.506 · AC: 507
+Pregunta 1 · Z: 0.507 · AC: 508
+Pregunta 1 · Z: 0.508 · AC: 509
+Pregunta 1 · Z: 0.509 · AC: 510
+Pregunta 1 · Z: 0.51 · AC: 511
+Pregunta 1 · Z: 0.511 · AC: 512
+Pregunta 1 · Z: 0.512 · AC: 513
+Pregunta 1 · Z: 0.513 · AC: 514
+Pregunta 1 · Z: 0.514 · AC: 515
+Pregunta 1 · Z: 0.515 · AC: 516
+Pregunta 1 · Z: 0.516 · AC: 517
+Pregunta 1 · Z: 0.517 · AC: 518
+Pregunta 1 · Z: 0.518 · AC: 519
+Pregunta 1 · Z: 0.519 · AC: 520
+Pregunta 1 · Z: 0.52 · AC: 521
+Pregunta 1 · Z: 0.521 · AC: 522
+Pregunta 1 · Z: 0.522 · AC: 523
+Pregunta 1 · Z: 0.523 · AC: 524
+Pregunta 1 · Z: 0.524 · AC: 525
+Pregunta 1 · Z: 0.525 · AC: 526
+Pregunta 1 · Z: 0.526 · AC: 527
+Pregunta 1 · Z: 0.527 · AC: 528
+Pregunta 1 · Z: 0.528 · AC: 529
+Pregunta 1 · Z: 0.529 · AC: 530
+Pregunta 1 · Z: 0.53 · AC: 531
+Pregunta 1 · Z: 0.531 · AC: 532
+Pregunta 1 · Z: 0.532 · AC: 533
+Pregunta 1 · Z: 0.533 · AC: 534
+Pregunta 1 · Z: 0.534 · AC: 535
+Pregunta 1 · Z: 0.535 · AC: 536
+Pregunta 1 · Z: 0.536 · AC: 537
+Pregunta 1 · Z: 0.537 · AC: 538
+Pregunta 1 · Z: 0.538 · AC: 539
+Pregunta 1 · Z: 0.539 · AC: 540
+Pregunta 1 · Z: 0.54 · AC: 541
+Pregunta 1 · Z: 0.541 · AC: 542
+Pregunta 1 · Z: 0.542 · AC: 543
+Pregunta 1 · Z: 0.543 · AC: 544
+Pregunta 1 · Z: 0.544 · AC: 545
+Pregunta 1 · Z: 0.545 · AC: 546
+Pregunta 1 · Z: 0.546 · AC: 547
+Pregunta 1 · Z: 0.547 · AC: 548
+Pregunta 1 · Z: 0.548 · AC: 549
+Pregunta 1 · Z: 0.549 · AC: 550
+Pregunta 1 · Z: 0.55 · AC: 551
+Pregunta 1 · Z: 0.551 · AC: 552
+Pregunta 1 · Z: 0.552 · AC: 553
+Pregunta 1 · Z: 0.553 · AC: 554
+Pregunta 1 · Z: 0.554 · AC: 555
+Pregunta 1 · Z: 0.555 · AC: 556
+Pregunta 1 · Z: 0.556 · AC: 557
+Pregunta 1 · Z: 0.557 · AC: 558
+Pregunta 1 · Z: 0.558 · AC: 559
+Pregunta 1 · Z: 0.559 · AC: 560
+Pregunta 1 · Z: 0.56 · AC: 561
+Pregunta 1 · Z: 0.561 · AC: 562
+Pregunta 1 · Z: 0.562 · AC: 563
+Pregunta 1 · Z: 0.563 · AC: 564
+Pregunta 1 · Z: 0.564 · AC: 565
+Pregunta 1 · Z: 0.565 · AC: 566
+Pregunta 1 · Z: 0.566 · AC: 567
+Pregunta 1 · Z: 0.567 · AC: 568
+Pregunta 1 · Z: 0.568 · AC: 569
+Pregunta 1 · Z: 0.569 · AC: 570
+Pregunta 1 · Z: 0.57 · AC: 571
+Pregunta 1 · Z: 0.571 · AC: 572
+Pregunta 1 · Z: 0.572 · AC: 573
+Pregunta 1 · Z: 0.573 · AC: 574
+Pregunta 1 · Z: 0.574 · AC: 575
+Pregunta 1 · Z: 0.575 · AC: 576
+Pregunta 1 · Z: 0.576 · AC: 577
+Pregunta 1 · Z: 0.577 · AC: 578
+Pregunta 1 · Z: 0.578 · AC: 579
+Pregunta 1 · Z: 0.579 · AC: 580
+Pregunta 1 · Z: 0.58 · AC: 581
+Pregunta 1 · Z: 0.581 · AC: 582
+Pregunta 1 · Z: 0.582 · AC: 583
+Pregunta 1 · Z: 0.583 · AC: 584
+Pregunta 1 · Z: 0.584 · AC: 585
+Pregunta 1 · Z: 0.585 · AC: 586
+Pregunta 1 · Z: 0.586 · AC: 587
+Pregunta 1 · Z: 0.587 · AC: 588
+Pregunta 1 · Z: 0.588 · AC: 589
+Pregunta 1 · Z: 0.589 · AC: 590
+Pregunta 1 · Z: 0.59 · AC: 591
+Pregunta 1 · Z: 0.591 · AC: 592
+Pregunta 1 · Z: 0.592 · AC: 593
+Pregunta 1 · Z: 0.593 · AC: 594
+Pregunta 1 · Z: 0.594 · AC: 595
+Pregunta 1 · Z: 0.595 · AC: 596
+Pregunta 1 · Z: 0.596 · AC: 597
+Pregunta 1 · Z: 0.597 · AC: 598
+Pregunta 1 · Z: 0.598 · AC: 599
+Pregunta 1 · Z: 0.599 · AC: 600
+Pregunta 1 · Z: 0.6 · AC: 601
+Pregunta 1 · Z: 0.601 · AC: 602
+Pregunta 1 · Z: 0.602 · AC: 603
+Pregunta 1 · Z: 0.603 · AC: 604
+Pregunta 1 · Z: 0.604 · AC: 605
+Pregunta 1 · Z: 0.605 · AC: 606
+Pregunta 1 · Z: 0.606 · AC: 607
+Pregunta 1 · Z: 0.607 · AC: 608
+Pregunta 1 · Z: 0.608 · AC: 609
+Pregunta 1 · Z: 0.609 · AC: 610
+Pregunta 1 · Z: 0.61 · AC: 611
+Pregunta 1 · Z: 0.611 · AC: 612
+Pregunta 1 · Z: 0.612 · AC: 613
+Pregunta 1 · Z: 0.613 · AC: 614
+Pregunta 1 · Z: 0.614 · AC: 615
+Pregunta 1 · Z: 0.615 · AC: 616
+Pregunta 1 · Z: 0.616 · AC: 617
+Pregunta 1 · Z: 0.617 · AC: 618
+Pregunta 1 · Z: 0.618 · AC: 619
+Pregunta 1 · Z: 0.619 · AC: 620
+Pregunta 1 · Z: 0.62 · AC: 621
+Pregunta 1 · Z: 0.621 · AC: 622
+Pregunta 1 · Z: 0.622 · AC: 623
+Pregunta 1 · Z: 0.623 · AC: 624
+Pregunta 1 · Z: 0.624 · AC: 625
+Pregunta 1 · Z: 0.625 · AC: 626
+Pregunta 1 · Z: 0.626 · AC: 627
+Pregunta 1 · Z: 0.627 · AC: 628
+Pregunta 1 · Z: 0.628 · AC: 629
+Pregunta 1 · Z: 0.629 · AC: 630
+Pregunta 1 · Z: 0.63 · AC: 631
+Pregunta 1 · Z: 0.631 · AC: 632
+Pregunta 1 · Z: 0.632 · AC: 633
+Pregunta 1 · Z: 0.633 · AC: 634
+Pregunta 1 · Z: 0.634 · AC: 635
+Pregunta 1 · Z: 0.635 · AC: 636
+Pregunta 1 · Z: 0.636 · AC: 637
+Pregunta 1 · Z: 0.637 · AC: 638
+Pregunta 1 · Z: 0.638 · AC: 639
+Pregunta 1 · Z: 0.639 · AC: 640
+Pregunta 1 · Z: 0.64 · AC: 641
+Pregunta 1 · Z: 0.641 · AC: 642
+Pregunta 1 · Z: 0.642 · AC: 643
+Pregunta 1 · Z: 0.643 · AC: 644
+Pregunta 1 · Z: 0.644 · AC: 645
+Pregunta 1 · Z: 0.645 · AC: 646
+Pregunta 1 · Z: 0.646 · AC: 647
+Pregunta 1 · Z: 0.647 · AC: 648
+Pregunta 1 · Z: 0.648 · AC: 649
+Pregunta 1 · Z: 0.649 · AC: 650
+Pregunta 1 · Z: 0.65 · AC: 651
+Pregunta 1 · Z: 0.651 · AC: 652
+Pregunta 1 · Z: 0.652 · AC: 653
+Pregunta 1 · Z: 0.653 · AC: 654
+Pregunta 1 · Z: 0.654 · AC: 655
+Pregunta 1 · Z: 0.655 · AC: 656
+Pregunta 1 · Z: 0.656 · AC: 657
+Pregunta 1 · Z: 0.657 · AC: 658
+Pregunta 1 · Z: 0.658 · AC: 659
+Pregunta 1 · Z: 0.659 · AC: 660
+Pregunta 1 · Z: 0.66 · AC: 661
+Pregunta 1 · Z: 0.661 · AC: 662
+Pregunta 1 · Z: 0.662 · AC: 663
+Pregunta 1 · Z: 0.663 · AC: 664
+Pregunta 1 · Z: 0.664 · AC: 665
+Pregunta 1 · Z: 0.665 · AC: 666
+Pregunta 1 · Z: 0.666 · AC: 667
+Pregunta 1 · Z: 0.667 · AC: 668
+Pregunta 1 · Z: 0.668 · AC: 669
+Pregunta 1 · Z: 0.669 · AC: 670
+Pregunta 1 · Z: 0.67 · AC: 671
+Pregunta 1 · Z: 0.671 · AC: 672
+Pregunta 1 · Z: 0.672 · AC: 673
+Pregunta 1 · Z: 0.673 · AC: 674
+Pregunta 1 · Z: 0.674 · AC: 675
+Pregunta 1 · Z: 0.675 · AC: 676
+Pregunta 1 · Z: 0.676 · AC: 677
+Pregunta 1 · Z: 0.677 · AC: 678
+Pregunta 1 · Z: 0.678 · AC: 679
+Pregunta 1 · Z: 0.679 · AC: 680
+Pregunta 1 · Z: 0.68 · AC: 681
+Pregunta 1 · Z: 0.681 · AC: 682
+Pregunta 1 · Z: 0.682 · AC: 683
+Pregunta 1 · Z: 0.683 · AC: 684
+Pregunta 1 · Z: 0.684 · AC: 685
+Pregunta 1 · Z: 0.685 · AC: 686
+Pregunta 1 · Z: 0.686 · AC: 687
+Pregunta 1 · Z: 0.687 · AC: 688
+Pregunta 1 · Z: 0.688 · AC: 689
+Pregunta 1 · Z: 0.689 · AC: 690
+Pregunta 1 · Z: 0.69 · AC: 691
+Pregunta 1 · Z: 0.691 · AC: 692
+Pregunta 1 · Z: 0.692 · AC: 693
+Pregunta 1 · Z: 0.693 · AC: 694
+Pregunta 1 · Z: 0.694 · AC: 695
+Pregunta 1 · Z: 0.695 · AC: 696
+Pregunta 1 · Z: 0.696 · AC: 697
+Pregunta 1 · Z: 0.697 · AC: 698
+Pregunta 1 · Z: 0.698 · AC: 699
+Pregunta 1 · Z: 0.699 · AC: 700
+Pregunta 1 · Z: 0.7 · AC: 701
+Pregunta 1 · Z: 0.701 · AC: 702
+Pregunta 1 · Z: 0.702 · AC: 703
+Pregunta 1 · Z: 0.703 · AC: 704
+Pregunta 1 · Z: 0.704 · AC: 705
+Pregunta 1 · Z: 0.705 · AC: 706
+Pregunta 1 · Z: 0.706 · AC: 707
+Pregunta 1 · Z: 0.707 · AC: 708
+Pregunta 1 · Z: 0.708 · AC: 709
+Pregunta 1 · Z: 0.709 · AC: 710
+Pregunta 1 · Z: 0.71 · AC: 711
+Pregunta 1 · Z: 0.711 · AC: 712
+Pregunta 1 · Z: 0.712 · AC: 713
+Pregunta 1 · Z: 0.713 · AC: 714
+Pregunta 1 · Z: 0.714 · AC: 715
+Pregunta 1 · Z: 0.715 · AC: 716
+Pregunta 1 · Z: 0.716 · AC: 717
+Pregunta 1 · Z: 0.717 · AC: 718
+Pregunta 1 · Z: 0.718 · AC: 719
+Pregunta 1 · Z: 0.719 · AC: 720
+Pregunta 1 · Z: 0.72 · AC: 721
+Pregunta 1 · Z: 0.721 · AC: 722
+Pregunta 1 · Z: 0.722 · AC: 723
+Pregunta 1 · Z: 0.723 · AC: 724
+Pregunta 1 · Z: 0.724 · AC: 725
+Pregunta 1 · Z: 0.725 · AC: 726
+Pregunta 1 · Z: 0.726 · AC: 727
+Pregunta 1 · Z: 0.727 · AC: 728
+Pregunta 1 · Z: 0.728 · AC: 729
+Pregunta 1 · Z: 0.729 · AC: 730
+Pregunta 1 · Z: 0.73 · AC: 731
+Pregunta 1 · Z: 0.731 · AC: 732
+Pregunta 1 · Z: 0.732 · AC: 733
+Pregunta 1 · Z: 0.733 · AC: 734
+Pregunta 1 · Z: 0.734 · AC: 735
+Pregunta 1 · Z: 0.735 · AC: 736
+Pregunta 1 · Z: 0.736 · AC: 737
+Pregunta 1 · Z: 0.737 · AC: 738
+Pregunta 1 · Z: 0.738 · AC: 739
+Pregunta 1 · Z: 0.739 · AC: 740
+Pregunta 1 · Z: 0.74 · AC: 741
+Pregunta 1 · Z: 0.741 · AC: 742
+Pregunta 1 · Z: 0.742 · AC: 743
+Pregunta 1 · Z: 0.743 · AC: 744
+Pregunta 1 · Z: 0.744 · AC: 745
+Pregunta 1 · Z: 0.745 · AC: 746
+Pregunta 1 · Z: 0.746 · AC: 747
+Pregunta 1 · Z: 0.747 · AC: 748
+Pregunta 1 · Z: 0.748 · AC: 749
+Pregunta 1 · Z: 0.749 · AC: 750
+Pregunta 1 · Z: 0.75 · AC: 751
+Pregunta 1 · Z: 0.751 · AC: 752
+Pregunta 1 · Z: 0.752 · AC: 753
+Pregunta 1 · Z: 0.753 · AC: 754
+Pregunta 1 · Z: 0.754 · AC: 755
+Pregunta 1 · Z: 0.755 · AC: 756
+Pregunta 1 · Z: 0.756 · AC: 757
+Pregunta 1 · Z: 0.757 · AC: 758
+Pregunta 1 · Z: 0.758 · AC: 759
+Pregunta 1 · Z: 0.759 · AC: 760
+Pregunta 1 · Z: 0.76 · AC: 761
+Pregunta 1 · Z: 0.761 · AC: 762
+Pregunta 1 · Z: 0.762 · AC: 763
+Pregunta 1 · Z: 0.763 · AC: 764
+Pregunta 1 · Z: 0.764 · AC: 765
+Pregunta 1 · Z: 0.765 · AC: 766
+Pregunta 1 · Z: 0.766 · AC: 767
+Pregunta 1 · Z: 0.767 · AC: 768
+Pregunta 1 · Z: 0.768 · AC: 769
+Pregunta 1 · Z: 0.769 · AC: 770
+Pregunta 1 · Z: 0.77 · AC: 771
+Pregunta 1 · Z: 0.771 · AC: 772
+Pregunta 1 · Z: 0.772 · AC: 773
+Pregunta 1 · Z: 0.773 · AC: 774
+Pregunta 1 · Z: 0.774 · AC: 775
+Pregunta 1 · Z: 0.775 · AC: 776
+Pregunta 1 · Z: 0.776 · AC: 777
+Pregunta 1 · Z: 0.777 · AC: 778
+Pregunta 1 · Z: 0.778 · AC: 779
+Pregunta 1 · Z: 0.779 · AC: 780
+Pregunta 1 · Z: 0.78 · AC: 781
+Pregunta 1 · Z: 0.781 · AC: 782
+Pregunta 1 · Z: 0.782 · AC: 783
+Pregunta 1 · Z: 0.783 · AC: 784
+Pregunta 1 · Z: 0.784 · AC: 785
+Pregunta 1 · Z: 0.785 · AC: 786
+Pregunta 1 · Z: 0.786 · AC: 787
+Pregunta 1 · Z: 0.787 · AC: 788
+Pregunta 1 · Z: 0.788 · AC: 789
+Pregunta 1 · Z: 0.789 · AC: 790
+Pregunta 1 · Z: 0.79 · AC: 791
+Pregunta 1 · Z: 0.791 · AC: 792
+Pregunta 1 · Z: 0.792 · AC: 793
+Pregunta 1 · Z: 0.793 · AC: 794
+Pregunta 1 · Z: 0.794 · AC: 795
+Pregunta 1 · Z: 0.795 · AC: 796
+Pregunta 1 · Z: 0.796 · AC: 797
+Pregunta 1 · Z: 0.797 · AC: 798
+Pregunta 1 · Z: 0.798 · AC: 799
+Pregunta 1 · Z: 0.799 · AC: 800
+Pregunta 1 · Z: 0.8
+Pregunta 1 · Z: 0.801
+Pregunta 1 · Z: 0.802
+Pregunta 1 · Z: 0.803
+Pregunta 1 · Z: 0.804
+Pregunta 1 · Z: 0.805
+Pregunta 1 · Z: 0.806
+Pregunta 1 · Z: 0.807
+Pregunta 1 · Z: 0.808
+Pregunta 1 · Z: 0.809
+Pregunta 1 · Z: 0.81
+Pregunta 1 · Z: 0.811
+Pregunta 1 · Z: 0.812
+Pregunta 1 · Z: 0.813
+Pregunta 1 · Z: 0.814
+Pregunta 1 · Z: 0.815
+Pregunta 1 · Z: 0.816
+Pregunta 1 · Z: 0.817
+Pregunta 1 · Z: 0.818
+Pregunta 1 · Z: 0.819
+Pregunta 1 · Z: 0.82
+Pregunta 1 · Z: 0.821
+Pregunta 1 · Z: 0.822
+Pregunta 1 · Z: 0.823
+Pregunta 1 · Z: 0.824
+Pregunta 1 · Z: 0.825
+Pregunta 1 · Z: 0.826
+Pregunta 1 · Z: 0.827
+Pregunta 1 · Z: 0.828
+Pregunta 1 · Z: 0.829
+Pregunta 1 · Z: 0.83
+Pregunta 1 · Z: 0.831
+Pregunta 1 · Z: 0.832
+Pregunta 1 · Z: 0.833
+Pregunta 1 · Z: 0.834
+Pregunta 1 · Z: 0.835
+Pregunta 1 · Z: 0.836
+Pregunta 1 · Z: 0.837
+Pregunta 1 · Z: 0.838
+Pregunta 1 · Z: 0.839
+Pregunta 1 · Z: 0.84
+Pregunta 1 · Z: 0.841
+Pregunta 1 · Z: 0.842
+Pregunta 1 · Z: 0.843
+Pregunta 1 · Z: 0.844
+Pregunta 1 · Z: 0.845
+Pregunta 1 · Z: 0.846
+Pregunta 1 · Z: 0.847
+Pregunta 1 · Z: 0.848
+Pregunta 1 · Z: 0.849
+Pregunta 1 · Z: 0.85
+Pregunta 1 · Z: 0.851
+Pregunta 1 · Z: 0.852
+Pregunta 1 · Z: 0.853
+Pregunta 1 · Z: 0.854
+Pregunta 1 · Z: 0.855
+Pregunta 1 · Z: 0.856
+Pregunta 1 · Z: 0.857
+Pregunta 1 · Z: 0.858
+Pregunta 1 · Z: 0.859
+Pregunta 1 · Z: 0.86
+Pregunta 1 · Z: 0.861
+Pregunta 1 · Z: 0.862
+Pregunta 1 · Z: 0.863
+Pregunta 1 · Z: 0.864
+Pregunta 1 · Z: 0.865
+Pregunta 1 · Z: 0.866
+Pregunta 1 · Z: 0.867
+Pregunta 1 · Z: 0.868
+Pregunta 1 · Z: 0.869
+Pregunta 1 · Z: 0.87
+Pregunta 1 · Z: 0.871
+Pregunta 1 · Z: 0.872
+Pregunta 1 · Z: 0.873
+Pregunta 1 · Z: 0.874
+Pregunta 1 · Z: 0.875
+Pregunta 1 · Z: 0.876
+Pregunta 1 · Z: 0.877
+Pregunta 1 · Z: 0.878
+Pregunta 1 · Z: 0.879
+Pregunta 1 · Z: 0.88
+Pregunta 1 · Z: 0.881
+Pregunta 1 · Z: 0.882
+Pregunta 1 · Z: 0.883
+Pregunta 1 · Z: 0.884
+Pregunta 1 · Z: 0.885
+Pregunta 1 · Z: 0.886
+Pregunta 1 · Z: 0.887
+Pregunta 1 · Z: 0.888
+Pregunta 1 · Z: 0.889
+Pregunta 1 · Z: 0.89
+Pregunta 1 · Z: 0.891
+Pregunta 1 · Z: 0.892
+Pregunta 1 · Z: 0.893
+Pregunta 1 · Z: 0.894
+Pregunta 1 · Z: 0.895
+Pregunta 1 · Z: 0.896
+Pregunta 1 · Z: 0.897
+Pregunta 1 · Z: 0.898
+Pregunta 1 · Z: 0.899
+Pregunta 1 · Z: 0.9
+Pregunta 1 · Z: 0.901
+Pregunta 1 · Z: 0.902
+Pregunta 1 · Z: 0.903
+Pregunta 1 · Z: 0.904
+Pregunta 1 · Z: 0.905
+Pregunta 1 · Z: 0.906
+Pregunta 1 · Z: 0.907
+Pregunta 1 · Z: 0.908
+Pregunta 1 · Z: 0.909
+Pregunta 1 · Z: 0.91
+Pregunta 1 · Z: 0.911
+Pregunta 1 · Z: 0.912
+Pregunta 1 · Z: 0.913
+Pregunta 1 · Z: 0.914
+Pregunta 1 · Z: 0.915
+Pregunta 1 · Z: 0.916
+Pregunta 1 · Z: 0.917
+Pregunta 1 · Z: 0.918
+Pregunta 1 · Z: 0.919
+Pregunta 1 · Z: 0.92
+Pregunta 1 · Z: 0.921
+Pregunta 1 · Z: 0.922
+Pregunta 1 · Z: 0.923
+Pregunta 1 · Z: 0.924
+Pregunta 1 · Z: 0.925
+Pregunta 1 · Z: 0.926
+Pregunta 1 · Z: 0.927
+Pregunta 1 · Z: 0.928
+Pregunta 1 · Z: 0.929
+Pregunta 1 · Z: 0.93
+Pregunta 1 · Z: 0.931
+Pregunta 1 · Z: 0.932
+Pregunta 1 · Z: 0.933
+Pregunta 1 · Z: 0.934
+Pregunta 1 · Z: 0.935
+Pregunta 1 · Z: 0.936
+Pregunta 1 · Z: 0.937
+Pregunta 1 · Z: 0.938
+Pregunta 1 · Z: 0.939
+Pregunta 1 · Z: 0.94
+Pregunta 1 · Z: 0.941
+Pregunta 1 · Z: 0.942
+Pregunta 1 · Z: 0.943
+Pregunta 1 · Z: 0.944
+Pregunta 1 · Z: 0.945
+Pregunta 1 · Z: 0.946
+Pregunta 1 · Z: 0.947
+Pregunta 1 · Z: 0.948
+Pregunta 1 · Z: 0.949
+Pregunta 1 · Z: 0.95
+Pregunta 1 · Z: 0.951
+Pregunta 1 · Z: 0.952
+Pregunta 1 · Z: 0.953
+Pregunta 1 · Z: 0.954
+Pregunta 1 · Z: 0.955
+Pregunta 1 · Z: 0.956
+Pregunta 1 · Z: 0.957
+Pregunta 1 · Z: 0.958
+Pregunta 1 · Z: 0.959
+Pregunta 1 · Z: 0.96
+Pregunta 1 · Z: 0.961
+Pregunta 1 · Z: 0.962
+Pregunta 1 · Z: 0.963
+Pregunta 1 · Z: 0.964
+Pregunta 1 · Z: 0.965
+Pregunta 1 · Z: 0.966
+Pregunta 1 · Z: 0.967
+Pregunta 1 · Z: 0.968
+Pregunta 1 · Z: 0.969
+Pregunta 1 · Z: 0.97
+Pregunta 1 · Z: 0.971
+Pregunta 1 · Z: 0.972
+Pregunta 1 · Z: 0.973
+Pregunta 1 · Z: 0.974
+Pregunta 1 · Z: 0.975
+Pregunta 1 · Z: 0.976
+Pregunta 1 · Z: 0.977
+Pregunta 1 · Z: 0.978
+Pregunta 1 · Z: 0.979
+Pregunta 1 · Z: 0.98
+Pregunta 1 · Z: 0.981
+Pregunta 1 · Z: 0.982
+Pregunta 1 · Z: 0.983
+Pregunta 1 · Z: 0.984
+Pregunta 1 · Z: 0.985
+Pregunta 1 · Z: 0.986
+Pregunta 1 · Z: 0.987
+Pregunta 1 · Z: 0.988
+Pregunta 1 · Z: 0.989
+Pregunta 1 · Z: 0.99
+Pregunta 1 · Z: 0.991
+Pregunta 1 · Z: 0.992
+Pregunta 1 · Z: 0.993
+Pregunta 1 · Z: 0.994
+Pregunta 1 · Z: 0.995
+Pregunta 1 · Z: 0.996
+Pregunta 1 · Z: 0.997
+Pregunta 1 · Z: 0.998
+Pregunta 1 · Z: 0.999
+Pregunta 1 · Z: 1
+[VALIDATION] Pregunta 1 · J5:L12999 E5:E12999 · any · $Y$35:$Y$36
+[VALIDATION] Pregunta 1 · B5:B12999 · list · $W$26:$W$37
+[VALIDATION] Pregunta 1 · A5:A12999 · list · $AB$26:$AB$33
+[VALIDATION] Pregunta 1 · I5:I12999 · list · $AC$26:$AC$825
+[VALIDATION] Pregunta 1 · F5:F12999 · list · $AE$25:$AE$30
+[VALIDATION] Pregunta 1 · N5:N12999 · list · $AF$8:$AF$9
+[SHEET] Glosario
+Glosario · A: GLOSARIO
+Glosario · A: Remesas de trabajadores: · B: Las remesas de trabajadores son entendidas como las transferencias personales entre hogares residentes y hogares no residentes y que representan ingresos de los hogares provenientes de economías extranjeras, generados principalmente por la migración provisoria o permanente de personas a esas economías (Manual 6 de Balanza de pagosPagos, FMI).
+Glosario · B: Este envío de divisas se realiza, en general, de manera recurrente o periódica, con el fin de contribuir al sostenimiento familiar.
+Glosario · A: Receptor: · B: Persona natural miembro de un hogar que recibe una remesa
+Glosario · A: Ingreso: · B: Recepción en Colombia de remesas por parte de residentes, que son enviadas por no residentes
+Glosario · A: Intermediario del mercado cambiario (IMC): · B: Institución cambiaria autorizada por el Banco de la República para efectuar transacciones de divisas con el exterior.
+Glosario · A: Tarifa de intercambio: · B: Valor en dólares de la tarifa de intercambio calculada por la franquicia para el envío de la remesa.
+Glosario · A: Tasa de cambio: · B: Tasa a la cual las divisas (USD) enviadas (remesas) son convertidas y pagadas en pesos colombianos
+Glosario · A: Canal de reintegro: · B: Corresponde al mecanismo mediante el cual se reintegraron las divisas al mercado cambiario colombiano. Las dos opciones posibles son: IMC o Compensador de Tarjetas
+[SHEET] Tratamiento de datos personales
+Tratamiento de datos personales · A: Acepto el tratamiento de los datos personales bajo las políticas específicas del Banco de la República, en especial bajo lo reglamentado en el numeral 2.7 del Capítulo 2 de esta Circular.

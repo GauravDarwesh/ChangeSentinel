@@ -1,0 +1,810 @@
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Anexo 1 NUMERALES CAMBIARIOS
+INGRESOS
+EXPORTACIONES DE BIENES Página No.
+1000
+Reintegro por exportaciones de café. 10 1010
+Reintegro por exportaciones de carbón incluidos los anticipos. 11 1020
+Reintegro por exportaciones de ferroníquel incluidos los anticipos. 11 1030
+Reintegro por exportaciones de petróleo y sus derivados, incluidos los anticipos. 11 1040
+Reintegro por exportaciones de bienes diferentes de café, carbón, ferroníquel, petróleo y sus derivados y por exportaciones de bienes pagados con divisas.
+11 1043
+Reintegro por exportaciones de bienes en un plazo superior a los doce (12) meses, financiados por el exportador 11 1044 * Dación en pago de exportaciones de bienes 11 1045
+Anticipos por exportaciones de café. 11 1050
+Anticipos por exportaciones de bienes diferentes de café, carbón, ferroníquel, petróleo y sus derivados. 11 1060 * Pago de exportaciones de bienes en moneda legal colombiana. 12 12 1510 1046
+Gastos de exportación de bienes incluidos en la declaración de exportación definitiva.
+Reintegro por exportaciones de bienes pagadas con divisas a través de proveedores de servicios de pago agregadores.
+12 12
+ENDEUDAMIENTO EXTERNO Y AVALES Y GARANTÍAS Página No.
+1063 * Pago de exportaciones de bienes en moneda legal colombiana (financiadas a más de doce (12) meses). 17 1630
+Intereses y comisiones por créditos otorgados por residentes en el país a no residentes. 12 1642
+Ejecución de avales y garantías en moneda extranjera otorgados por no residentes 12 1645
+Ingreso de divisas por ejecución de avales o garantías a favor del beneficiario residente 18 4000
+Desembolso de créditos – deuda privada- otorgados por IMC a residentes en el país 13 4005
+Desembolso de créditos - deuda privada- otorgados por no residentes a residentes. 13 4006
+Desembolso del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal 17 4020
+Amortización de créditos otorgados por residentes en el país a no residentes. 12 4075
+Desembolso de créditos – deuda pública- otorgados por no residentes al Gobierno Nacional a través de la DTN 16 4080
+Desembolso de créditos – deuda pública- otorgados por IMC a entidades del sector público. 14 4085
+Desembolso de créditos – deuda pública- otorgados por no residentes a entidades del sector público. 15 4021
+Pagos de créditos externos activos desembolsados en moneda legal 13 4018
+Desembolso de créditos de prefinanciación de exportaciones 17
+INVERSIONES INTERNACIONALES Página No.
+1310
+Inversión suplementaria al capital asignado – exploración y explotación de petróleo. 20 1320
+Inversión suplementaria al capital asignado – servicios inherentes al sector de hidrocarburos -. 20 1390
+Inversión suplementaria al capital asignado – gas natural, carbón, ferroníquel y uranio. 20 1590
+Rendimientos o dividendos de inversión colombiana directa en el exterior. 22 1595
+Rendimientos o dividendos de inversión financiera en activos financieros en el exterior 22
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio 1598
+Rendimientos de la inversión financiera en activos fijos en el exterior 23 1599
+Rendimientos de la inversión financiera especial 23 4025
+Inversión directa de capitales del exterior al capital asignado de sucursales régimen especial – sector hidrocarburos y minería.
+20 4026
+Inversión directa de capitales del exterior en sociedades nacionales y con capital del exterior que realicen actividades del sector de hidrocarburos y minería 20 4030
+Inversión de portafolio de capitales del exterior 21 4031
+Inversión de portafolio de capitales del exterior - Programas sobre certificados de depósitos negociables representativos de valores.
+21 4032
+Adquisición de participaciones en fondos de capital privado. 20 4035
+Inversión directa de capitales del exterior en empresas y en el capital asignado de sucursales – sectores diferentes de hidrocarburos y minería 20 4036
+Prima en colocación de aportes 20 4038
+4039
+Inversión de portafolio de capital del exterior en valores emitidos por entidades extranjeras e inscritos en el RNVE – Decreto 4804 del 29 de diciembre de 2010.
+Inversión directa de capitales del exterior a través de financiación colaborativa de valores representativos de capital social 23
+20 4040
+Inversión suplementaria al capital asignado – sectores diferentes de hidrocarburos y minería -. 20 4055
+Retorno de la inversión colombiana directa en el exterior. 22 4058
+Redención o liquidación de la inversión financiera en activos financieros en el exterior. 22 4065
+Redención o liquidación de la inversión financiera en activos fijos radicados en el exterior. 23 4066
+Redención o liquidación de la inversión financiera especial 23
+SERVICIOS, TRANSFERENCIAS Y OTROS CONCEPTOS Página No.
+1070
+Venta de petróleo crudo y gas natural de producción nacional. 23 1510
+Gastos de exportación de bienes no incluidos en la declaración de exportación definitiva. 23 1520
+Servicios portuarios y de aeropuerto. 24 1530
+Turismo 24 1535
+Servicio de transporte por tubería de petróleo crudo y gas natural. 24 1536 © Contratos de Asociación – Ingresos 24 1540 * Servicios financieros 24 1600
+Compra a residentes que compran y venden divisas de manera profesional. 27 1601 1602 1604
+Otros conceptos.
+Pago de exportación de servicios con divisas a través de proveedores de servicios de pago agregadores.
+Sumas destinadas a proyectos de financiación colaborativa antes de la emisión de valores.
+26 26 26 1631 * Intereses por la emisión y colocación de bonos en moneda legal colombiana. 24 1695
+Servicios culturales, artísticos y deportivos. 24 1696
+Pasajes 24 1703
+Servicios de comunicaciones. 25 1704
+Comisiones no financieras. 25 1706
+Viajes de negocios, gastos educativos, pagos laborales a residentes, seguridad social. 25 1707
+Servicios diplomáticos, consulares y organismos internacionales. 26 1708
+Comercialización de mercancías de usuarios de zona franca. 26 1809
+Remesas de trabajadores. 24 1710
+Servicios médicos, quirúrgicos y hospitalarios 26 1711
+Suscripciones, cuotas de afiliación y aportes periódicos 26 1712
+Venta de mercancías no consideradas exportación 26 1713
+Arrendamiento operativo 26 1714
+Servicios de publicidad 26 1810
+Donaciones y transferencias que no generan contraprestación 25 1811 * Redención por la emisión y colocación de bonos en moneda legal colombiana. 25 1812
+Remesas de trabajadores para la adquisición de vivienda 25 1813
+1814
+Remesas de personas naturales colombianas no residentes con destino a cuentas de ahorro de trámite simplificado.
+Compra de divisas para acreditar cuentas para dispersión de remesas de trabajadores.
+Adicionado con el Boletín del Banco de la República No. 43 (Diciembre 16/2025) [DCIP-83 Diciembre16/2025] 25
+25
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+1815
+Marcas, patentes, regalías y compensaciones. 25 1840
+Servicios empresariales, profesionales y técnicos 25 1980
+Seguros y reaseguros. 26 1990
+Remesas pagadas en moneda legal colombiana a través de concesionarios de servicios de correos 27 1991 © Ingreso de divisas en cuentas de compensación por servicios financieros de correos 27 5366 *** Compra de saldos de cuentas de compensación de Ecopetrol. 27 5370 *** Compra de saldos de cuentas de compensación de la DTN. 27 5375
+Operaciones de derivados o por el pago de margen o prima. 29 5377 © Transferencias presupuestales entre cuentas de compensación de la DTN y entidades del sector público - Ingreso.
+28 5378 © Traslados entre cuentas de compensación de un mismo titular. Ingresos 28 5379 *** Compra de saldos de cuentas de compensación del - sector privado -. 27 5381 * Compra de saldos de cuentas en moneda extranjera en intermediarios del mercado cambiario –sector privado- 28 5382
+Compra de saldos de cuentas en el exterior – Sector Privado 28 5383 * Compra de saldos de cuentas en moneda extranjera en intermediarios del mercado cambiario -sector público- 28 5384
+Compra de saldos de cuentas en el exterior – Sector Público 28 5385 © Errores Bancarios de cuenta de compensación 28 5386 © Traslado de recursos líquidos entre administradores de activos en el exterior – ingreso 28 5387 © Ingresos por traslados desde la cuenta del mercado no regulado del mismo titular 28 5390 *** Compra de saldos de cuentas de compensación del resto del sector público -. 27 5395 *** Compra de saldos de cuentas de compensación de la Federación Nacional de Cafeteros. 27 28 5405 © Operaciones overnight. 38
+5450 *** Ingreso de divisas por liquidación de contratos de derivados peso -divisa o divisa-divisa a través de cuenta de compensación, celebrados entre la D.T.N. e IMC o agentes del exterior autorizados.
+29 5451 *** Ingreso de divisas por liquidación en cuentas de compensación de contratos de derivados peso-divisa o divisadivisa a través de cuentas de compensación, celebrados entre Ecopetrol e IMC o agentes del exterior autorizados 29 5452 *** Ingreso de divisas por liquidación de contratos de derivados peso-divisa o divisa-divisa a través de cuentas de compensación, celebrados entre la Federación Nacional de Cafeteros e Intermediarios del Mercado Cambiario o agentes del exterior autorizados 29 5453 *** Ingreso de divisas por liquidación de contratos de derivados peso -divisa o divisa-divisa a través de cuentas de compensación, celebrados entre entidades del sector privado e Intermediarios del Mercado Cambiario o agentes del exterior autorizados.
+29 5454 *** Ingreso de divisas por liquidación de contratos de derivados peso-divisa o divisa-divisa a través de cuentas de compensación, celebrados entre el resto del sector público e Intermediarios del Mercado Cambiario o agentes del exterior autorizados.
+30 5455
+Compra de divisas a agentes del exterior proveedores de cobertura por liquidación de contratos de derivados. 30
+5457
+5458 * Compra de divisas para acreditar cuentas de no residentes de uso exclusivo para operaciones de crédito externo en moneda legal.
+Venta en moneda extranjera a no residentes de cartera o instrumentos de pago de operaciones internas.
+30
+30 5460 5499
+Venta en moneda extranjera a IMC de cartera o instrumentos de pago de operaciones internas Compra de dólares por los IMC provenientes de la redención del depósito en dólares de que trata el artículo 47 de la R.E. 1/18 J.D. – Ingreso 30 30 5464 * Compra de divisas para acreditar cuentas de no residentes de uso exclusivo para pagos de exportaciones de servicios 32
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio CUENTAS DE COMPENSACIÓN – Formulario 10 Página No.
+4063 © Redención en cuenta de compensación de inversiones financieras constituidas a través de otras cuentas de compensación del mismo titular 38 4064 © Redención en cuenta de compensación de las inversiones financieras constituidas a través de los IMC 38 5380 © Compra de divisas a otros titulares de cuentas de compensación 38 3000 © Ingreso por el cumplimiento de obligaciones derivadas de operaciones internas. 38 5456 © Traslado de dólares producto de la redención del depósito en dólares de que trata el artículo 47 de la R.E.
+1/18 J.D. - Ingreso 39
+38 5369 **** Compra de divisas por parte del Banco de la República por operaciones de intervención con la Dirección del Tesoro Nacional.
+39 5388 Transferencias presupuestales entre cuentas de compensación de la DTN y cuentas del mercado no regulado de entidades del sector público – Ingreso
+39 *
+Estos numerales no pueden ser utilizados por los titulares de cuentas de compensación
+***
+Los titulares de cuentas de compensación (tradicional) deben relacionar en el Formulario No. 10 estos numerales como un egreso.
+**** Numerales de uso exclusivo de la Dirección del Tesoro Nacional en operaciones de intervención.
+©
+Numerales de uso exclusivo de titulares de cuentas de compensación tradicional.
+IMC = Intermediario del Mercado Cambiario
+DTN = Dirección del Tesoro Nacional
+NUMERALES CAMBIARIOS
+EGRESOS
+IMPORTACIONES DE BIENES Página No.
+8 2015
+Giro por importaciones de bienes ya embarcados en un plazo igual o inferior a un (1) mes y por importaciones de bienes pagadas con divisas.
+9 2016
+Gastos de importación de bienes incluidos en la factura de los proveedores de los bienes y/o contrato de compraventa de bienes. Gastos de exportación.
+10 2017
+Pago anticipado de futuras importaciones de bienes, efectuado con recursos propios de los importadores residentes en Colombia o compra de mercancías por usuarios de zona franca.
+10 2060 * Pago de importación de bienes en moneda legal colombiana. 10 2022
+Giro por importaciones de bienes ya embarcados en un plazo superior a un (1) mes e inferior o igual a doce
+(12) meses, financiadas por proveedores u otros no residentes, pagadas con divisas.
+9 2023
+Giro por importaciones de bienes ya embarcados en un plazo superior a un (1) mes e inferior o igual a doce
+(12) meses, financiadas por Intermediarios del Mercado Cambiario, pagadas con divisas.
+9 2024
+Giro por importaciones de bienes ya embarcados en un plazo superior a los doce (12) meses, financiadas por proveedores u otros no residentes, pagadas con divisas.
+9
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio 2025
+Giro por importaciones de bienes ya embarcados en un plazo superior a los doce (12) meses, financiadas por Intermediarios del Mercado Cambiario, pagadas con divisas.
+10 2026 2027 * Dación en pago de importaciones de bienes.
+Importaciones de bienes pagadas con divisas a través de proveedores de servicios de pago agregadores.
+10
+10
+ENDEUDAMIENTO EXTERNO O AVALES Y GARANTÍAS Página No.
+2063 * Pago de importaciones de bienes en moneda legal colombiana (financiadas a más de seis (6) meses). 17 2125
+Intereses de créditos –deuda privada- otorgados por IMC a residentes en el país. 13 2135
+Intereses de créditos –deuda privada- otorgados por proveedores u otros no residentes a residentes. 14 2155
+Intereses de créditos –deuda pública- otorgados por proveedores u otros no residentes al Gobierno Nacional a través de la DTN. 16 2165
+Intereses de créditos –deuda pública- otorgados por IMC a entidades del sector público. 15 2175
+Intereses de créditos –deuda pública- otorgados por proveedores u otros no residentes a entidades del sector público. 15 2185
+Intereses del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal 18 2230
+Comisiones y otros gastos por créditos – deuda privada- otorgados por IMC a residentes.
+13 2240
+Comisiones y otros gastos de créditos - deuda privada- otorgados por no residentes a residentes. 14 2247
+Comisiones y otros gastos del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal 18 2250
+Comisiones y otros gastos por créditos – deuda pública- otorgados por IMC a entidades del sector público. 15 2260
+Comisiones y otros gastos por créditos - deuda pública- otorgados por no residentes a entidades del sector público. 16 2612
+Restitución de avales y garantías en moneda extranjera emitidos por los intermediarios del mercado cambiario pagaderos en divisas, que respaldan la seriedad de la oferta y cumplimiento de empresas extranjeras y colombianas (Art. 59, numeral 1, literal e) i nciso i de la R.E. 8/2000 J.D.) – Aplica para avales ejecutados hasta el día 25 de mayo de 2018.
+18 2613
+Restitución de avales y garantías en moneda extranjera emitidos por los intermediarios del mercado cambiario pagaderos en divisas, que respaldan el cumplimiento de obligaciones contraídas por residentes en el país derivadas de contratos de exportación de bienes o prestación de servicios no financieros en el exterior (Art. 59, numeral 1, literal e) inciso ii de la R.E. 8/2000 J.D.) - Aplica para avales ejecutados hasta el día 25 de mayo de 2018.
+19 2614
+Restitución de avales y garantías en moneda extranjera emitidos por los intermediarios del mercado cambiario pagaderos en divisas, que respaldan obligaciones de no residentes (Art. 59, numeral 1, literal e) inciso iii de la R.E. 8/2000 J.D.) – Aplica para avales ejecutados hasta el día 25 de mayo de 2018. 19 2615
+Restitución de avales y garantías en moneda extranjera emitidos por los intermediarios del mercado cambiario pagaderos en divisas, que respaldan obligaciones de no residentes correspondientes a la compra de petróleo crudo y gas natural de producción nacion al a las empresas con capital del exterior que realicen actividades de exploración y explotación de petróleo y gas natural (Art. 59, numeral 1, literal e) inciso iv de la R.E. 8/2000 J.D.) – Aplica para avales ejecutados hasta el día 25 de mayo de 2018.
+19 2616
+Restitución de avales y garantías en moneda extranjera – Aplica para avales informados y ejecutados hasta el día 25 de mayo de 2018. 19 2619
+Egreso de divisas por la ejecución de avales o garantías. 18 2620
+Intereses y comisiones por avales y garantías en moneda extranjera otorgados por no residentes – Aplica para avales informados y ejecutados hasta el día 25 de mayo de 2018. 19 4500
+Amortización de créditos – deuda privada- otorgados por IMC a residentes en el país. 13 4501
+Prepago de créditos –deuda privada- otorgados por IMC a residentes. 14
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio 4505
+Amortización de créditos - deuda privada- otorgados por proveedores u otros no residentes a residentes. 13 4506
+Prepago de créditos –deuda privada- otorgados por proveedores u otros no residentes a residentes. 14 4507
+Amortización del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal 17 4508
+Prepago del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal 18 4520
+Desembolso de créditos otorgados por residentes en el país a no residentes. 12 4605
+Amortización de créditos – deuda pública- otorgados por proveedores u otros no residentes al Gobierno Nacional a través de la DTN. 16 4610
+Prepago de créditos –deuda pública- otorgados por proveedores u otros no residentes al Gobierno Nacional a través de la DTN. 17 4615
+Amortización de créditos - deuda pública- otorgados por IMC a entidades del sector público. 15 4616
+Prepago de créditos –deuda pública- otorgados por IMC a entidades del sector público. 16 4625
+Amortización de créditos – deuda pública- otorgados por proveedores u otros no residentes a entidades del sector público. 15 4626
+Prepago de créditos - deuda pública- otorgados por proveedores u otros no residentes a entidades del sector público 16 4525
+Amortización de créditos de prefinanciación de exportaciones 17
+INVERSIONES INTERNACIONALES Página No.
+2074
+Utilidades, rendimientos y dividendos de la inversión directa de capitales del exterior 21 4560
+Giro al exterior de la inversión directa y suplementaria al capital asignado de capitales del exterior. 20 4563
+Retorno de inversión de capital del exterior por la liquidación de participaciones en fondos de capital privado.
+21 4565
+Inversión de capitales del exterior no perfeccionada. 21 4635
+Retorno de excedentes en inversión de capitales del exterior 21 4580
+Inversión colombiana directa en el exterior 22 4581 Inversión Colombiana en empresas en el exterior pagada con tarjeta de crédito emitida en Colombia y cobrada en moneda legal 22 4582 Inversión Colombiana en empresas en el exterior pagada con tarjeta de crédito emitida en el exterior o en Colombia y cobrada en divisas 22 4585
+Inversión financiera en activos financieros en el exterior. 22 4590
+Inversión financiera por compra de obligaciones en el exterior (Art. 60 de la R.E. 1/18 J.D.). 22 4570
+Inversión financiera especial 22 4573 4571
+Inversión financiera en activos fijos radicados en el exterior Retorno, utilidades, rendimientos y dividendos de la inversión de capital del exterior de portafolio
+22
+SERVICIOS, TRANSFERENCIAS Y OTROS CONCEPTOS Página No.
+2016
+Gastos de importación y/o exportación de bienes no incluidos en la factura de los proveedores de los bienes y/o contrato de compraventa de bienes o en la declaración de exportación. 31 2018
+Compra de petróleo crudo y gas natural de producción nacional. 31 2030
+Servicios portuarios y de aeropuerto. 31 2040
+Turismo. 31 2126
+Intereses por financiación de importaciones – deuda privada – otorgadas por IMC. 31 2136
+Intereses por financiación de importaciones – deuda privada – otorgadas por proveedores u otros no residentes. 31 2137
+Intereses por financiación de importaciones – deuda pública- 31 2215 * Intereses deuda de la banca comercial. 31 2270
+Servicios financieros. 31 2621 © Contratos de Asociación – Egreso 32 2800
+Servicios de comunicaciones. 32 2850
+Comisiones no financieras 32 2895
+Servicios culturales, artísticos y deportivos. 33 2896
+Pasajes 33 2900
+Viajes de negocios, gastos educativos, pagos laborales a no residentes, seguridad social. 33
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio 2903
+Marcas, patentes, regalías y compensaciones. 32 2904
+Otros conceptos 33 2905 * Venta a residentes que compran y venden divisas de manera profesional. 34 2906
+Servicios empresariales, profesionales y técnicos. 32 2907
+Servicios diplomáticos y consulares y de organismos internacionales. 34 2908
+Comercialización de mercancías de usuarios de zona franca. 34 2909
+Servicio de transporte por tubería de petróleo crudo y gas natural 31 2910
+Donaciones, transferencias y remesas de trabajadores no residentes que no generan contraprestación. 32 2911 * Emisión y colocación de bonos en moneda legal colombiana. 32 2912 * Valores extranjeros emitidos en el exterior e inscritos en el RNVE. 32 2913
+Servicios médicos quirúrgicos y hospitalarios 33 2914
+Suscripciones, cuotas de afiliación y aportes periódicos 33 2915
+Compra de mercancías no consideradas importación 33 2916
+Arrendamiento operativo 33 2917
+Servicios de publicidad 33 2918
+2919
+Valores emitidos por entidades extranjeras e inscritos en el RNVE – Decreto 4804 del 29 de diciembre de 2010 Pago de importación de servicios con divisas a través de proveedores de servicios de pago agregadores.
+33
+34 2950
+Seguros y reaseguros. 34 2990
+Remesas entregadas en moneda legal colombiana a través de concesionarios de servicios de correos 34 2991 © Egreso de divisas en cuentas de compensación por servicios financieros de correos 34 2992
+2993
+Reembolso de remesas desde cuentas de ahorro de trámite simplificado de personas naturales colombianas no residentes.
+Venta de divisas por débitos de cuentas para dispersión de remesas de trabajadores.
+Adicionado con el Boletín del Banco de la República No. 43 (Diciembre 16/2025) [DCIP-83 Diciembre16/2025]
+34
+34 4650
+Pago de afiliación y cuotas a organismos internacionales. 34 36 5896 *** Venta de divisas para consignar en cuentas de compensación de Ecopetrol. 34 5897 *** Venta de divisas para consignar en cuentas de compensación de la Federación Nacional de Cafeteros. 35 5900 *** Venta de divisas para consignar en cuentas de compensación de la Dirección del Tesoro Nacional DTN. 35 5908 *** Venta de divisas para consignar en cuentas de compensación del sector privado. 35 5910
+Operaciones de derivados o por el pago de margen o prima. 36 5911 © Transferencias presupuestales entre cuentas de compensación de la DTN y entidades del sector público - Egreso. 35 5912 © Traslados entre cuentas de compensación de un mismo titular. Egresos 35 5913 * Depósitos en cuentas en el exterior - sector privado. 35 5914 © Traslado de recursos líquidos entre administradores de activos en el exterior – egreso 35 5915 © Errores bancarios de cuenta de compensación 36 5916 * Depósitos en cuentas en el exterior - sector público. 36 5917 © Egresos por traslados a la cuenta del mercado no regulado del mismo titular 36 5920 *** Venta de divisas para consignar en cuentas de compensación del resto del sector público. 35 5930 © Operaciones overnight. 39 5800 *** Egreso de divisas por liquidación de contratos de derivados peso -divisa o divisa-divisa a través de cuentas de compensación, celebrados entre la D.T.N. e Intermediarios del Mercado Cambiario o agentes del exterior autorizados.
+36 5801 *** Egreso de divisas por liquidación de contratos de derivados peso -divisa o divisa -divisa con cumplimiento efectivo (DF) a través de cuentas de compensación, celebrados entre Ecopetrol e Intermediarios del Mercado Cambiario o agentes del exterior autorizados 36 5802 *** Egreso de divisas por liquidación de contratos de derivados peso -divisa o divisa -divisa con cumplimiento efectivo (DF) a través de cuentas de compensación, celebrados entre la Federación Nacional de Cafeteros e Intermediarios del Mercado Cambiario o agentes del exterior autorizados.
+37 5803 *** Egreso de divisas por liquidación de contratos de derivados peso -divisa o divisa-divisa con cumplimiento efectivo (DF) a través de cuentas de compensación, celebrados entre entidades del sector privado e Intermediarios del Mercado Cambiario o agentes del exterior autorizados.
+37 5804 *** Egreso de divisas por liquidación de contratos de derivados peso -divisa o divisa -divisa con cumplimiento efectivo (DF) a través de cuentas de compensación, celebrados entre el resto del sector público e Intermediarios del Mercado Cambiario o agentes del exterior autorizados.
+37
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio 5805
+Venta de divisas a agentes del exterior proveedores de cobertura por liquidación de contratos de derivados. 37 5806
+5807 5808 * Venta de divisas para debitar cuentas de uso exclusivo para operaciones de crédito externo en pesos de no residentes.
+Pago en moneda extranjera a no residentes de cartera o instrumentos de pago de operaciones internas Pago en moneda extranjera a IMC de cartera o instrumentos de pago de operaciones internas
+38
+38 38 5809 * Venta de divisas por débitos en las cuentas de no residentes de uso exclusivo para pagos de exportaciones de servicios 39
+CUENTAS DE COMPENSACIÓN – Formulario 10 Página No.
+5909 © Venta de divisas a otros titulares de cuentas de compensación. 39 3500 © Egreso para el cumplimiento de obligaciones derivadas de operaciones internas. 39 5921 © Traslado de dólares para la constitución del depósito en dólares de que trata el artículo 47 de la R.E. 1/18 J.D. - Egreso 39 5899 **** Venta de divisas por parte del Banco de la República por operaciones de intervención con la Dirección del Tesoro Nacional
+39 5918 Transferencias presupuestales entre cuentas de compensación de la DTN y cuentas del mercado no regulado de entidades del sector público – Egreso
+39 *
+Estos numerales no pueden ser utilizados por los titulares de cuentas de compensación.
+***
+Los titulares de cuentas de compensación tradicional deben relacionar en el Formulario No. 10 estos numerales como un ingreso.
+**** Numerales de uso exclusivo de la Dirección del Tesoro Nacional en operaciones de intervención ©
+Numerales de uso exclusivo de titulares de cuentas de compensación
+IMC. = Intermediario del Mercado Cambiario
+DTN= Dirección del Tesoro Nacional
+NUMERALES CAMBIARIOS Y DEFINICIONES
+Objetivo
+Definir los numerales cambiarios que deben utilizar los residentes y no residentes, al suministrar la información de los datos mínimos de las operaciones de cambio por importaciones y exportaciones de bienes, endeudamiento externo, avales y garantías, inversiones internacionales y servicios, transferencias y otros conceptos (Declaración de Cambio), así como para los movimientos de cuentas de com pensación o las operaciones cambiarias autorizadas en moneda legal colombiana.
+Los numerales cambiarios mencionados en la presente Circular son utilizados por el Banco de la República para fines estadísticos.
+Por numeral cambiario se entiende el código asignado por el Banco de la República para identificar las operaciones de cambio que se canalicen a través del mercado cambiario.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+DIVISAS CANALIZADAS A TRAVÉS DEL MERCADO CAMBIARIO.
+Ingresos Se entiende por ingresos toda compra de divisas efectuada por los Intermediarios del Mercado Cambiario (en adelante IMC), así como las consignaciones que los residentes en Colombia efectúen en las cuentas de compensación en moneda extranjera que poseen en entidades financieras del exterior.
+Egresos Se entiende por egresos toda venta de divisas efectuada por los IMC, así como los retiros que los residentes en Colombia efectúen de las cuentas de compensación en moneda extranjera que poseen en entidades financieras del exterior.
+DESCRIPCIÓN DE LOS NUMERALES CAMBIARIOS
+IMPORTACIÓN DE BIENES
+NOTA: Para efectos de la contabilización de los plazos señalados en los siguientes numerales cambiarios, se deberá tener en cuenta lo previsto en los Capítulos 3 y 9 de esta Circular.
+2015 - Giro por importaciones de bienes ya embarcados en un plazo igual o inferior a un
+(1) mes y por importaciones de bienes pagadas con divisas.
+Egreso de divisas para el pago de importaciones de bienes e introducción de bienes a zona franca desde el resto del mundo, cuando su pago se efectúe en un plazo igual o inferior a un
+(1) mes.
+2022 - Giro por importaciones de bienes ya embarcados en un plazo superior a un (1) mes e inferior o igual a doce (12) meses, financiadas por proveedores u otros no residentes, pagadas con divisas.
+Egreso de divisas para el pago de importaciones de bienes e introducción de bienes a zona franca desde el resto del mundo, cuando su pago se efectúe en un plazo superior a un (1) mes e inferior o igual a doce (12) meses, a proveedores u otros no residentes.
+2023 - Giro por importaciones de bienes ya embarcados en un plazo superior a un (1) mes e inferior o igual a doce (12) meses, financiadas por Intermediarios del Mercado Cambiario, pagadas con divisas.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Egreso de divisas para el pago de importaciones de bienes e introducción de bienes a zona franca desde el resto del mundo, cuando su pago se efectúe en un plazo superior a un (1) mes e inferior o igual a doce (12) meses, a IMC.
+2024 - Giro por importaciones de bienes ya embarcados en un plazo superior a los doce
+(12) meses, financiadas por proveedores u otros no residentes, pagadas con divisas.
+Egreso de divisas para el pago de importaciones de bienes e introducción de bienes a zona franca desde el resto del mundo, cuando su pago se efectúe en un plazo superior a los doce
+(12) meses, a proveedores u otros no residentes.
+2025 Giro por importaciones de bienes ya embarcados en un plazo superior a los doce
+(12) meses, financiadas por Intermediarios del Mercado Cambiario, pagadas con divisas.
+Egreso de divisas para el pago de importaciones de bienes e introducción de bienes a zona franca desde el resto del mundo, cuando su pago se efectúe en un plazo superior a los doce
+(12) meses, a intermediarios del banco de la república.
+2026 – Dación en pago de importaciones de bienes Este numeral comprende el pago de importaciones de bienes mediante dación en pago, el cual podrá ser transmitido únicamente a través de los del IMC.»
+2027: Importaciones de bienes pagadas con divisas a través de proveedores de servicios de pago agregadores.
+Pago de importaciones con divisas realizadas a través de los proveedores de servicios de pago agregadores señalados en el numeral 3 del artículo 2.17.1.1.1 del Decreto 2555 de 2010.
+2016 - Gastos de importación de bienes incluidos en la factura de los proveedores de los bienes y/o contrato de compraventa de bienes. Gastos de exportación.
+Egreso de divisas para atender los pagos adicionales al valor de los bienes importados y los bienes introducidos a zona franca desde el resto del mundo, incluidos en la factura de los proveedores de los bienes y/o contrato de compraventa de bienes como: fl etes, seguros, comisiones y otros gastos, cuando los términos de la operación sean, entre otros, por valor CIF o C&F.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio 2017 - Pago anticipado de futuras importaciones de bienes, efectuado con recursos propios de los importadores residentes en Colombia o compra de mercancías por usuarios de zona franca.
+Egreso de divisas para el pago de importaciones de bienes e introducción de bienes a zona franca desde el resto del mundo, antes de la fecha del documento de transporte.
+2060 - Pago de importación de bienes en moneda legal colombiana.
+Pago de importaciones de bienes y de ingreso de mercancías a zona franca desde el resto del mundo, efectuado a través de los IMC.
+EXPORTACIÓN DE BIENES
+NOTA: Para efectos de la contabilización de los plazos señalados en los siguientes numerales cambiarios, se deberá tener en cuenta lo previsto en los Capítulos 4 y 9 de esta Circular.
+1000 - Reintegro por exportaciones de café.
+Ingreso de divisas por el pago de exportaciones de café, incluidas las efectuadas desde zona franca al resto del mundo, después de efectuado el embarque o del “formulario de movimiento de mercancías en zona franca – ingreso”, respectivamente.
+1045 -Anticipo por exportaciones de café.
+Ingreso de divisas por el pago anticipado de exportaciones de café, incluidas las efectuadas desde zona franca al resto del mundo, antes de efectuarse el embarque o del “formulario de movimiento de mercancías en zona franca – egreso”, respectivamente. No incluye ingresos por prefinanciaciones de exportaciones de café.
+1010 - Reintegro por exportaciones de carbón incluidos los anticipos.
+Ingreso de divisas por el pago de exportaciones de carbón, incluidas las efectuadas desde zona franca al resto del mundo, o por anticipos. No incluye ingresos por prefinanciaciones de exportaciones de carbón.
+1020 - Reintegro por exportaciones de ferroníquel incluidos los anticipos.
+Ingreso de divisas por el pago de exportaciones de ferroníquel, incluidas las realizadas desde zona franca al resto del mundo, o por anticipos. No incluye ingresos por prefinanciaciones de exportaciones de ferroníquel.
+1030 - Reintegro por exportaciones de petróleo y sus derivados, incluidos los anticipos.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Ingreso de divisas por el pago de exportaciones de petróleo y sus derivados, incluidas las realizadas desde zona franca al resto del mundo, o por anticipos. No incluye ingresos por prefinanciaciones de exportaciones de petróleo y sus derivados.
+1040 - Reintegro por exportaciones de bienes diferentes de café, carbón, ferroníquel, petróleo y sus derivados y por exportaciones de bienes pagados con divisas.
+Ingreso de divisas por el pago de las exportaciones definitivas de bienes diferentes de café, carbón, ferroníquel, petróleo y sus derivados, incluidas las realizadas desde zona franca al resto del mundo, después de efectuado el embarque o del “formulario d e movimiento de mercancías en zona franca – egreso”, respectivamente. Este numeral comprende el pago de exportaciones de bienes con divisas.
+1043 - Reintegro por exportaciones de bienes en un plazo superior a los doce (12) meses, financiados por el exportador Ingreso de divisas por el pago de las exportaciones definitivas de bienes, incluidas las realizadas desde zona franca al resto del mundo, cuando su pago se efectúe en un plazo superior a los doce (12) meses.
+1044 – Dación en pago de exportaciones de bienes Este numeral comprende el pago de exportaciones de bienes mediante dación en pago, el cual podrá ser transmitido únicamente a través de los del IMC.
+1050 - Anticipo por exportaciones de bienes diferentes de café, carbón, ferroníquel, petróleo y sus derivados.
+Ingreso de divisas por el pago anticipado de exportaciones de bienes diferentes de café, carbón, ferroníquel, petróleo y sus derivados incluidas las realizadas desde zona franca al resto del mundo, antes de efectuar el embarque o del “formulario de movimiento de mercancías en zona franca – egreso”, respectivamente. No incluye ingresos por prefinanciaciones de exportaciones.
+1510 - Gastos de exportación de bienes incluidos en la declaración de exportación definitiva.
+Ingreso de divisas para atender los pagos adicionales al valor de los bienes exportados, incluidos los exportados desde zona franca al resto del mundo, como: fletes, seguros, comisiones y otros gastos, cuando estos valores estén incluidos en la declaración de exportación definitiva.
+Si los pagos adicionales al valor de los bienes exportados no están incluidos en la declaración de exportación definitiva, se debe suministrar la información de los datos mínimos de las
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio), numeral cambiario 1510.
+1046: Reintegro por exportaciones de bienes pagadas con divisas a través de proveedores de servicios de pago agregadores.
+Ingreso de divisas por el pago de las exportaciones de bienes realizadas a través los proveedores de servicios de pago agregadores señalados en el numeral 3 artículo 2.17.2.1.1 del Decreto 2555 de 2010.
+1060 - Pago de exportaciones de bienes en moneda legal colombiana.
+Pago de exportaciones de bienes, incluidas las efectuadas desde zona franca al resto del mundo, efectuado a través de los intermediarios del mercado cambiario.
+ENDEUDAMIENTO EXTERNO
+CRÉDITOS ACTIVOS
+4520 - Desembolso de créditos otorgados por residentes en el país a no residentes.
+Egreso de divisas por el otorgamiento de créditos activos en moneda extranjera.
+4020 - Amortización de créditos otorgados por residentes en el país a no residentes.
+Ingreso de divisas por el pago total o parcial del capital de créditos activos otorgados en moneda extranjera.
+1630 - Intereses y comisiones por créditos otorgados por residentes en el país a no residentes.
+Ingreso de divisas por intereses corrientes, de mora y comisiones derivados de créditos activos en moneda extranjera.
+1642 – Ejecución de avales y garantías en moneda extranjera otorgados por no residentes.
+Aplica para avales ejecutados parcialmente hasta el día 25 de mayo de 2018.
+Ingresos de divisas por la ejecución de avales y garantías en moneda extranjera otorgados por no residentes.
+4021 - Pagos de créditos externos activos desembolsados en moneda legal.
+Ingreso de divisas para el pago de créditos sin que requiera informe de deuda. Aplica igualmente para la restitución en divisas de avales activos desembolsados en moneda legal
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+CRÉDITOS PASIVOS –DEUDA PRIVADA –OTORGADOS POR INTERMEDIARIOS DEL MERCADO CAMBIARIO (IMC).
+4000 - Desembolso de créditos - deuda privada - otorgados por intermediarios del mercado cambiario a residentes en el país.
+Ingreso de divisas por el desembolso de créditos en moneda extranjera.
+4500 - Amortización de créditos - deuda privada - otorgados por intermediarios del mercado cambiario a residentes en el país.
+Egreso de divisas para el pago total o parcial del capital de créditos en moneda extranjera.
+2125 - Intereses de créditos - deuda privada - otorgados por intermediarios del mercado cambiario a residentes en el país.
+Egreso de divisas para el pago de intereses corrientes y de mora por créditos en moneda extranjera. Este numeral incluye los intereses derivados de la financiación de importaciones informadas al Banco de la República e intereses de prefinanciación de exportaciones.
+Si la importación que se cancela no requiere ser informada, se debe suministrar la información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio), numeral cambiario 2126.
+2230 - Comisiones y otros gastos por créditos - deuda privada - otorgados por intermediarios del mercado cambiario a residentes en el país.
+Egreso de divisas para el pago de comisiones y otros gastos por créditos en moneda extranjera.
+CRÉDITOS PASIVOS – DEUDA PRIVADA – OTORGADOS POR PROVEEDORES U OTROS NO RESIDENTES
+4005 - Desembolso de créditos - deuda privada - otorgados por no residentes a residentes.
+Ingreso de divisas por el desembolso de créditos en moneda extranjera.
+4505 - Amortización de créditos - deuda privada - otorgados por proveedores u otros no residentes a residentes.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Egreso de divisas para el pago total o parcial del capital de créditos en moneda extranjera. Este numeral incluye la financiación de importación de bienes y el arrendamiento financiero, informados al Banco de la República.
+2135 - Intereses de créditos - deuda privada - otorgados por proveedores u otros no residentes a residentes.
+Egreso de divisas para el pago de intereses corrientes y de mora por créditos en moneda extranjera. Este numeral incluye los intereses de financiación de importaciones de bienes y costos financieros de los arrendamientos financieros, informados al Banco de la República.
+Este numeral también incluye los intereses por prefinanciación de exportaciones y los costos financieros del arrendamiento financiero.
+Si la importación financiada no requiere ser informada, se debe suministrar la información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio), numeral cambiario 2136.
+2240 - Comisiones y otros gastos de créditos - deuda privada - otorgados por no residentes a residentes.
+Egreso de divisas para el pago de comisiones y otros gastos por créditos en moneda extranjera.
+CRÉDITOS PASIVOS - DEUDA PRIVADA - PREPAGOS A INTERMEDIARIOS DEL MERCADO CAMBIARIO (IMC), PROVEEDORES U OTROS NO RESIDENTES.
+4501 - Prepago de créditos - deuda privada - otorgados por intermediarios del mercado cambiario a residentes.
+Egreso de divisas para el pago total o parcial del capital de créditos en moneda extranjera, antes del vencimiento de los plazos acordados.
+4506 - Prepago de créditos - deuda privada - otorgados por proveedores u otros no residentes a residentes.
+Egreso de divisas para el pago total o parcial del capital de créditos en moneda extranjera antes del vencimiento de los plazos acordados. Este numeral incluye la financiación de importaciones de bienes y el arrendamiento financiero, informados al Banco de la República.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio CRÉDITOS PASIVOS – DEUDA PÚBLICA – OTORGADOS POR INTERMEDIARIOS DEL MERCADO CAMBIARIO (IMC) A ENTIDADES DEL SECTOR PÚBLICO DIFERENTES DE LA DIRECCIÓN DEL TESORO NACIONAL (DTN)
+4080 - Desembolso de créditos - deuda pública - otorgados por intermediarios del mercado cambiario a entidades del sector público.
+Ingreso de divisas por el desembolso de créditos en moneda extranjera. Este numeral no incluye los desembolsos efectuados al Gobierno Nacional a través de la Dirección del Tesoro Nacional (DTN).
+4615 - Amortización de créditos - deuda pública - otorgados por intermediarios del mercado cambiario a entidades del sector público.
+Egreso de divisas para el pago total o parcial del capital de créditos en moneda extranjera. Este numeral no incluye las amortizaciones pagadas por el Gobierno Nacional a través de la Dirección del Tesoro Nacional (DTN).
+2165 - Intereses de créditos - deuda pública - otorgados por intermediarios del mercado cambiario a entidades del sector público.
+Egreso de divisas para el pago de intereses corrientes y de mora por créditos en moneda extranjera. Este numeral no incluye los intereses pagados por el Gobierno Nacional a través de la Dirección del Tesoro Nacional (DTN).
+2250 - Comisiones y otros gastos por créditos - deuda pública - otorgados por intermediarios del mercado cambiario a entidades del sector público.
+Egreso de divisas para el pago de comisiones y otros gastos por créditos en moneda extranjera.
+Este numeral no incluye las comisiones pagadas por Gobierno Nacional a través de la Dirección del Tesoro Nacional (DTN).
+CRÉDITOS PASIVOS -DEUDA PÚBLICA - OTORGADOS POR PROVEEDORES U OTROS NO RESIDENTES A ENTIDADES DEL SECTOR PÚBLICO DIFERENTES DE LA DIRECCIÓN DEL TESORO NACIONAL (DTN)
+4085 - Desembolso de créditos - deuda pública - otorgados por no residentes a entidades del sector público.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Ingreso de divisas por el desembolso de créditos en moneda extranjera. Este numeral no incluye los desembolsos efectuados al Gobierno Nacional a través de la Dirección del Tesoro Nacional (DTN).
+4625 - Amortización de créditos - deuda pública - otorgados por proveedores u otros no residentes a entidades del sector público.
+Egreso de divisas para el pago total o parcial del capital de créditos en moneda extranjera. Este numeral incluye la financiación de importaciones de bienes y el arrendamiento financiero, informados al Banco de la República. Este numeral no incluye las amortizaciones pagadas por el Gobierno Nacional a través de la Dirección del Tesoro Nacional (DTN).
+2175 - Intereses de créditos - deuda pública - otorgados por proveedores u otros no residentes a entidades del sector público.
+Egreso de divisas para el pago de intereses corrientes y de mora de créditos en moneda extranjera. Este numeral incluye los intereses de financiación de importaciones de bienes y costos financieros de los arrendamientos financieros, informados al Banco de la República.
+Este numeral no incluye los intereses pagados por el Gobierno Nacional a través de la Dirección del Tesoro Nacional (DTN).
+Si la importación financiada no requiere ser informada, se debe suministrar la información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio), numeral cambiario 2137.
+2260 - Comisiones y otros gastos por créditos - deuda pública - otorgados por no residentes a entidades del sector público.
+Egreso de divisas para el pago de comisiones y otros gastos por créditos en moneda extranjera de entidades del sector público. Este numeral incluye los pagos por comisiones y otros gastos a través de la Dirección del Tesoro Nacional (DTN).
+CRÉDITOS PASIVOS -DEUDA PÚBLICA - OTORGADOS POR PROVEEDORES U OTROS NO RESIDENTES A TRAVÉS DE LA DIRECCIÓN DEL TESORO NACIONAL (DTN)
+4075 - Desembolso de créditos - deuda pública - otorgados por no residentes al Gobierno Nacional a través de la Dirección del Tesoro Nacional (DTN).
+Ingreso de divisas por el desembolso de créditos en moneda extranjera.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio 4605 - Amortización de créditos - deuda pública - otorgados por proveedores u otros no residentes al Gobierno Nacional a través de la Dirección del Tesoro Nacional (DTN).
+Egreso de divisas para el pago total o parcial del capital de créditos en moneda extranjera. Este numeral incluye la financiación de importaciones de bienes y el arrendamiento financiero, informados al Banco de la República.
+2155 - Intereses de créditos - deuda pública - otorgados por proveedores u otros no residentes al Gobierno Nacional a través de la Dirección del Tesoro Nacional (DTN).
+Egreso de divisas para el pago de intereses corrientes y de mora por créditos en moneda extranjera. Este numeral incluye los intereses de financiación de importaciones de bienes y costos financieros de los arrendamientos financieros, informados al Banco de la República.
+Si la importación que se cancela no requiere ser informada, se debe suministrar la información de los datos mínimos de las operaciones de cambio por servicios, transferencias y otros conceptos (Declaración de Cambio), numeral cambiario 2137.
+CRÉDITOS PASIVOS -DEUDA PÚBLICA - PREPAGOS A INTERMEDIARIOS DEL MERCADO CAMBIARIO (IMC), PROVEEDORES U OTROS NO RESIDENTES.
+4616 - Prepago de créditos - deuda pública - otorgados por intermediarios del mercado cambiario a entidades del sector público.
+Egreso de divisas para el pago total o parcial del capital de créditos en moneda extranjera, antes del vencimiento de los plazos acordados. Este numeral incluye la financiación de importaciones de bienes informada al Banco de la República. Este numeral no incluye los prepagos efectuados por el Gobierno Nacional a través de la Dirección del Tesoro Nacional (DTN).
+4626 - Prepago de créditos - deuda pública - otorgados por proveedores u otros no residentes a entidades del sector público.
+Egreso de divisas para el pago total o parcial del capital de créditos en moneda extranjera, antes del vencimiento de los plazos acordados. Este numeral incluye la financiación de importaciones de bienes y el arrendamiento financiero, informados al Banco de la República.
+Este numeral no incluye los prepagos efectuados por el Gobierno Nacional a través de la Dirección del Tesoro Nacional (DTN).
+4610 - Prepago de créditos - deuda pública - otorgados por proveedores u otros no residentes al Gobierno Nacional a través de la Dirección del Tesoro Nacional (DTN).
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Egreso de divisas para el pago total o parcial del capital de créditos en moneda extranjera antes del vencimiento de los plazos acordados. Este numeral incluye la financiación de importaciones de bienes y el arrendamiento financiero, informados al Banco de la República.
+OTROS CRÉDITOS PASIVOS -PREFINANCIACIÓN DE EXPORTACIONES- OTORGADOS POR INTERMEDIARIOS DEL MERCADO CAMBIARIO (IMC) U OTROS NO RESIDENTES.
+OTROS CRÉDITOS PASIVOS O ACTIVOS - IMPORTACIÓN O EXPORTACIÓN EN MONEDA LEGAL COLOMBIANA -.
+2063 - Pago de importaciones de bienes en moneda legal colombiana (financiadas a más de seis (6) meses). Pago efectuado a través de los intermediarios del mercado cambiario cuando la importación fue informada al Banco de la República.
+1063 - Pago de exportaciones de bienes en moneda legal colombiana (financiadas a más de doce (12) meses).
+Pago efectuado a través de los intermediarios del mercado cambiario cuando la exportación fue informada al Banco de la República.
+4018 - Desembolso de créditos de prefinanciación de exportaciones Ingreso por el desembolso de créditos de prefinanciación de exportaciones
+4525 - Amortización de créditos de prefinanciación de exportaciones Egreso por la Amortización de créditos de prefinanciación de exportaciones
+ENDEUDAMIENTO EXTERNO OTORGADO A LOS IMC CON DESTINO A OPERACIONES ACTIVAS
+EN MONEDA LEGAL
+4006 – Desembolso del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal Desembolso del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio 4507 – Amortización del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal Pago total o parcial del capital del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal.
+2185 – Intereses del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal Pago de intereses corrientes y de mora del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal.
+2247 – Comisiones y otros gastos del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal Pago de comisiones y otros gastos del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal.
+4508 – Prepago del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal Pago total o parcial del capital del endeudamiento externo otorgado a los IMC con destino a operaciones activas en moneda legal, antes del vencimiento de los plazos acordados.
+CRÉDITOS EXTERNOS DERIVADOS DE LA EJECUCIÓN Y RESTITUCIÓN DE AVALES Y GARANTÍAS
+1645 Ingreso de divisas por ejecución de avales o garantías a favor del beneficiario residente
+2619 Egreso de divisas por la ejecución de avales o garantías
+AVALES Y GARANTÍAS EN MONEDA EXTRANJERA – Aplica para operaciones realizadas hasta antes del 25 de mayo de 2018
+2612 – Restitución de avales y garantías en moneda extranjera emitidos por los intermediarios del mercado cambiario pagaderos en divisas, que respaldan la seriedad de la oferta y cumplimiento de empresas extranjeras y colombianas (Art. 59, numeral 1, literal e) inciso i de la R.E. 8/2000 J.D.) – Aplica para avales ejecutados hasta el día 25 de mayo de 2018
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Egreso de divisas para reembolsar lo pagado por el avalista, por parte del residente ordenante del aval o garantía que respalda la seriedad de la oferta y cumplimiento con empresas extranjeras y colombianas (sin respaldo de entidades del exterior).
+2613 – Restitución de avales y garantías en moneda extranjera emitidos por los intermediarios del mercado cambiario pagaderos en divisas, que respaldan el cumplimiento de obligaciones contraídas por residentes en el país derivadas de contratos de exportación de bienes o prestación de servicios no financieros en el exterior (Art. 59, numeral 1, literal e) inciso ii de la R.E. 8/2000 J.D.) - Aplica para avales ejecutados hasta el día 25 de mayo de 2018 Egreso de divisas para reembolsar lo pagado por el avalista, por parte del residente ordenante del aval o garantía que respalda el cumplimiento de obligaciones que contraigan residentes en el país derivadas de contratos de exportación de bienes o prestació n de servicios no financieros en el exterior.
+2614 – Restitución de avales y garantías en moneda extranjera emitidos por los intermediarios del mercado cambiario pagaderos en divisas, que respaldan obligaciones de no residentes (Art. 59, numeral 1, literal e) inciso iii de la R.E. 8/2000 J.D.) – Aplica para avales ejecutados hasta el día 25 de mayo de 2018 Egreso de divisas para reembolsar lo pagado por el avalista, por parte del residente que respalda la obligación del no residente con otro no residente ante el intermediario del mercado cambiario.
+2615 – Restitución de avales y garantías en moneda extranjera emitidos por los intermediarios del mercado cambiario pagaderos en divisas, que respaldan obligaciones de los residentes correspondientes a la compra de petróleo crudo y gas natural de producción nacional a las empresas con capital del exterior que realicen actividades de exploración y explotación de petróleo y gas natural (Art. 59, numeral 1, literal e) inciso iv de la R.E.
+8/2000 J.D.) – Aplica para avales ejecutados hasta el día 25 de mayo de 2018 Egreso de divisas para reembolsar lo pagado por el avalista, por parte de empresas nacionales y con capital del exterior que realicen actividades de exploración y explotación de petróleo y gas natural que respaldan el cumplimiento de las obligaciones de los residentes en moneda extranjera, correspondientes a la compra de petróleo crudo y gas natural de producción nacional a las empresas con capital del exterior que realicen actividades de exploración y explotación de petróleo y gas natural.
+2616 - Restitución de avales y garantías en moneda extranjera – Aplica para avales informados y ejecutados hasta el día 25 de mayo de 2018
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Egreso de divisas para reembolsar lo pagado por el avalista en moneda extranjera.
+2620 - Intereses y comisiones por avales y garantías en moneda extranjera otorgados por no residentes – Aplica para avales informados y ejecutados hasta el día 25 de mayo de 2018.
+Intereses y comisiones derivados de la contratación de avales y garantías en moneda extranjera otorgados por no residentes.
+INVERSIONES INTERNACIONALES
+INVERSIÓN DE CAPITAL DEL EXTERIOR
+INVERSIÓN DIRECTA DE CAPITALES DEL EXTERIOR
+4025 - Inversión directa de capitales del exterior al capital asignado de sucursales régimen especial - sector hidrocarburos y minería.
+Ingreso de divisas al capital de sucursales del sector de hidrocarburos y minería.
+4026 - Inversión directa de capitales del exterior en sociedades nacionales y con capital del exterior que realicen actividades del sector de hidrocarburos y minería Ingreso de divisas para realizar inversiones en empresas nacionales y con capital del exterior del sector de hidrocarburos y minería, diferentes de sucursales sector de hidrocarburos y minería.
+1310 - Inversión suplementaria al capital asignado -Exploración y explotación de petróleo.
+Ingreso de divisas a la inversión suplementaria al capital asignado.
+1320 - Inversión suplementaria al capital asignado - Servicios inherentes al sector de hidrocarburos Ingreso de divisas a la inversión suplementaria al capital asignado.
+1390 - Inversión suplementaria al capital asignado -Gas natural, carbón, ferroníquel y uranio Ingreso de divisas a la inversión suplementaria al capital asignado.
+4032 - Adquisición de participaciones en fondos de capital privado.
+Se considera inversión directa de capitales del exterior los ingresos para la adquisición de participaciones en fondos de capital privado.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+4035 - Inversión directa de capitales del exterior en empresas y en el capital asignado de sucursales - Sectores diferentes de hidrocarburos y minería -.
+Ingreso de divisas para realizar inversiones directas en sectores diferentes de hidrocarburos y minería. Este numeral no incluye inversiones de capitales del exterior de portafolio.
+4036 - Prima en colocación de aportes Ingreso de divisas para efectuar el pago de la prima en colocación de aportes.
+Anticipo 4040 - Inversión suplementaria al capital asignado - Sectores diferentes de hidrocarburos y minería -.
+Ingreso de divisas a la inversión suplementaria al capital asignado.
+4560 - Giro al exterior de la inversión directa y suplementaria al capital asignado de capitales del exterior.
+Egreso de divisas por la liquidación total o parcial, venta o disminución de la inversión de capitales del exterior. Este numeral incluye las ganancias por variaciones en precios.
+4039 - Inversión directa de capitales del exterior a través de financiación colaborativa de valores representativos de capital social.
+Ingreso de divisas por concepto de inversión directa de capitales del exterior a través de financiación colaborativa de valores representativos de capital social de los que trata el artículo 2.41.5.1.1 del Decreto 2555 de 2010 y las demás normas que lo modifiquen o complementen.
+INVERSIÓN DE CAPITALES DEL EXTERIOR DE PORTAFOLIO
+4030 - Inversión de portafolio de capitales del exterior Ingreso de divisas para realizar inversiones de portafolio.
+4031 - Inversión de portafolio de capitales del exterior - Programas sobre certificados de depósitos negociables representativos de valores.
+Ingreso de divisas por parte del emisor de los valores (Programas sobre certificados de depósitos negociables representativos de valores). Este numeral también incluye el ingreso de divisas destinadas a la adquisición de valores inscritos en el RNVE, respecto de las cuales se emiten en el exterior certificados de depósitos negociables representativos de valores.”
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio 4571 - Retorno, utilidades, rendimientos y dividendos de la inversión de capital del exterior de portafolio.
+Egreso de divisas por la liquidación total o parcial de la inversión de capital del exterior de portafolio, así como la remisión de utilidades, dividendos, ganancia ocasional u otros rendimientos por este concepto. Este numeral incluye las ganancias por va riaciones en precios.
+INVERSIÓN DE CAPITALES DEL EXTERIOR - UTILIDADES Y RENDIMIENTOS -.
+2074 - Utilidades, rendimientos y dividendos de la inversión directa de capitales del exterior.
+Egreso de divisas para la remisión de utilidades, dividendos, ganancia ocasional u otros rendimientos por inversión directa de capitales del exterior. En este numeral no se deben incluir las ganancias por variaciones en precios.
+4563 - Retorno de inversión de capital del exterior por la liquidación de participaciones en fondos de capital privado. Egresos por la liquidación de participaciones en fondos de capital privado.
+4565 - Inversión de capitales del exterior no perfeccionada.
+Egreso de divisas por el equivalente en moneda extranjera de las sumas en moneda legal colombiana originadas en los reintegros de divisas efectuados con el fin de realizar inversiones de capitales del exterior en Colombia, cuando la inversión no se haya perfeccionado.
+4635 – Retorno de excedentes en inversión de capitales del exterior Egreso de divisas para devolver al exterior la diferencia entre el equivalente en pesos de las divisas reintegradas y el aporte efectivo al capital de la empresa originada en diferencias en cambio o por el cambio en el valor de mercado de las acciones o cuotas sociales.
+INVERSIÓN COLOMBIANA EN EL EXTERIOR.
+INVERSIÓN COLOMBIANA DIRECTA
+4580 - Inversión colombiana directa en el exterior.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Egreso de divisas para efectuar inversión de capital directa. Este numeral no incluye inversiones financieras y en activos en el exterior.
+4581 - Inversión Colombiana en empresas en el exterior pagada con tarjeta de crédito emitida en Colombia y cobrada en moneda legal Comprende la inversión colombiana en sociedades, sucursales o cualquier tipo de empresa en el exterior, en cualquier proporción, ubicadas fuera de Colombia, pagadas con tarjeta de crédito emitida en Colombia y cobrada en moneda legal.
+4582 - Inversión Colombiana en empresas en el exterior pagada con tarjeta de crédito emitida en el exterior o en Colombia y cobrada en divisas Comprende la inversión colombiana en sociedades, sucursales o cualquier tipo de empresa en el exterior, en cualquier proporción, ubicadas fuera de Colombia, pagadas con tarjeta de crédito emitida en el exterior o en Colombia y cobrada en divisas.
+4055 - Retorno de la inversión colombiana directa en el exterior.
+Ingreso de divisas por la liquidación total o parcial, venta o disminución de capital de la inversión directa en el exterior.
+1590 - Rendimientos o dividendos de inversión colombiana directa en el exterior.
+Ingreso de divisas por utilidades, dividendos, ganancia ocasional u otros rendimientos por inversión colombiana directa en el exterior.
+INVERSIÓN FINANCIERA Y EN ACTIVOS EN EL EXTERIOR
+4585 - Inversión financiera en activos financieros en el exterior.
+Egreso de divisas para realizar inversiones en activos financieros en el exterior, tales como: títulos emitidos en el exterior de carácter o no negociable, depósitos en cuentas cuando estos sean para realizar inversión financiera y en activos en el exterior (centralizadoras de tesorerías, cuentas ómnibus, entre otras), y contratos financieros, en moneda extranjera.
+Este numeral incluye la adquisición por parte de residentes de títulos en moneda extranjera emitidos por entidades públicas colombianas. Las cuentas a que se refiere este numeral cambiario no requieren registro como cuenta de compensación.
+4590 - Inversión financiera por compra de obligaciones en el exterior (Art. 60 de la R.E. 1/18 J.D.)
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Egreso de divisas para compra en el exterior de la totalidad o parte de las obligaciones privadas externas, deuda externa pública y bonos o títulos de deuda pública externa siempre y cuando correspondan a operaciones registradas o informadas en el Banco de la República.
+4570 - Inversión financiera especial Egreso de divisas para la compra de valores listados en sistemas de cotización de valores del extranjero mediante acuerdos o convenios de integración de bolsas de valores de que trata la Parte 2, Libro 15, Título 6, Capítulo 2, del Decreto 2555 de 2010 y sus modificaciones o de valores extranjeros emitidos en el exterior e inscritos en el Registro Nacional de Valores y Emisores (RNVE).
+4573 - Inversión financiera en activos fijos radicados en el exterior Se entiende por inversión financiera en activos fijos los bienes tales como viviendas, edificios y estructuras, maquinaria y equipo cuyo fin no sea su importación a Colombia.
+4058 - Redención o liquidación de la inversión financiera en activos financieros en el exterior.
+Ingreso de divisas por la liquidación total o parcial, venta o disminución de la inversión financiera en títulos emitidos en el exterior.
+1595 - Rendimientos o dividendos de inversión financiera en activos financieros en el exterior.
+Ingreso de divisas por rendimientos de las inversiones financieras en el exterior. Este numeral incluye los rendimientos por inversiones financieras que se realizan a través de las cuentas de compensación, los rendimientos de los saldos y de los overnight que se informan con el Formulario No. 10.
+1598 - Rendimientos de la inversión financiera en activos fijos en el exterior Ingresos de divisas provenientes del alquiler de activos fijos ubicados en el exterior, de propiedad de residentes tales como viviendas, edificios y estructuras, maquinaria y equipo.
+1599 - Rendimientos de la inversión financiera especial.
+Ingreso de divisas por rendimientos de la inversión financiera especial descrita en los literales a) y c) del numeral 7.4.4 del Capítulo 7.
+4065 - Redención o liquidación de la inversión financiera en activos fijos radicados en el exterior
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Ingreso de divisas provenientes de la venta de inversión financiera en activos fijos tales como viviendas, edificios y estructuras, maquinaria y equipo ubicados en el exterior.
+4066 – Redención o liquidación de la inversión financiera especial.
+Ingreso de divisas provenientes de la venta de la inversión financiera especial descrita en los literales a) y c) del numeral 7.4.4 del Capítulo 7.
+INVERSIÓN DE CAPITALES DEL EXTERIOR DE PORTAFOLIO Y FINANCIERA REALIZADA EN VALORES EMITIDOS POR ENTIDADES EXTRANJERAS E INSCRITOS EN EL REGISTRO NACIONAL DE VALORES Y EMISORES (RNVE) – DECRETO 4804 DEL 29 DE DICIEMBRE 2010.
+4038 - Inversión de portafolio de capital del exterior en valores emitidos por entidades extranjeras e inscritos en el RNVE – Decreto 4804 del 29 de diciembre de 2010 Ingreso de divisas para realizar inversiones de portafolio en valores emitidos por entidades extranjeras e inscritos en el RNVE – Decreto 4804 del 29 de diciembre de 2010.
+SERVICIOS, TRANSFERENCIAS Y OTROS CONCEPTOS
+INGRESOS
+1070 - Venta de petróleo crudo y gas natural de producción nacional.
+Ingreso de divisas por venta interna de petróleo crudo y gas natural de producción nacional.
+1510 - Gastos de exportación de bienes no incluidos en la declaración de exportación definitiva.
+Ingreso de divisas para atender los pagos adicionales al valor de los bienes exportados, como: fletes, seguros, comisiones y otros gastos, cuando estos valores no estén relacionados en la declaración de exportación definitiva. Si los pagos adicionales al valor de los bienes exportados están incluidos en la declaración de exportación definitiva, se debe suministrar la información de los datos mínimos de las operaciones de cambio por exportaciones de bienes (Declaración de Cambio), numeral cambiario 1510.
+1520 - Servicios portuarios y de aeropuerto.
+Ingreso de divisas por los servicios prestados a naves y aeronaves, tales como: víveres, pertrechos y otros suministros, así como: los servicios de estiba, cargue y descargue, derechos portuarios y de aeropuerto, servicios de aeronavegación, pilotaje, mant enimiento y reparaciones, tasas aeroportuarias e impuestos de tiquetes internacionales.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+1530 - Turismo.
+Ingreso de divisas por: 1. Turismo 2. El pago de servicios prestados a turistas extranjeros y residentes en el exterior por hoteles, hosterías, residencias, restaurantes, cafeterías y agencias de viaje y turismo; 3. Venta de mercancías en almacenes in bond y tarjetas para llamadas telefónicas. Este numeral no incluye venta de pasajes.
+1535 - Servicio de transporte por tubería de petróleo crudo y gas natural.
+Ingreso de divisas por el pago del servicio de transporte por tubería.
+1536 - Contratos de Asociación - Ingreso Ingreso de divisas por traslados entre las partes vinculadas a contratos de asociación.
+1540 - Servicios financieros.
+Ingreso de divisas por comisiones obtenidas en operaciones de corretaje de instrumentos financieros, de asesoramiento financiero y custodia y gestión de activos. Este numeral incluye ingresos por concepto de servicios financieros, tales como: comisiones, t élex y portes originados en transacciones de los intermediarios del mercado cambiario y demás entidades financieras. Este numeral no incluye las comisiones relacionadas con operaciones de endeudamiento externo.
+1631 - Intereses por la emisión y colocación de bonos en moneda legal colombiana.
+Ingreso de divisas destinadas al pago de intereses de bonos en moneda legal colombiana. Este numeral no es aplicable a cuentas de compensación.
+1695 - Servicios culturales, artísticos y deportivos.
+Ingreso de divisas por prestación de servicios, culturales, artísticos y deportivos de colombianos en el exterior.
+1696 - Pasajes.
+Ingreso de divisas por la venta de pasajes.
+1809 - Remesas de trabajadores.
+Ingreso de divisas por remesas de colombianos que trabajan en el exterior
+1810 - Donaciones y transferencias que no generan contraprestación.
+Ingreso de divisas por donaciones y transferencias. Se consideran donaciones y transferencias, aquellas sumas recibidas que no generan ninguna contraprestación para quien las recibe.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+1811 - Redención por la emisión y colocación de bonos en moneda legal colombiana.
+Ingreso de divisas destinadas al pago del capital de bonos en moneda legal colombiana. Este numeral no es aplicable a cuentas de compensación.
+1812 - Remesas de trabajadores para la adquisición de vivienda.
+Ingresos de divisas provenientes de trabajadores colombianos residentes en el exterior para la adquisición de vivienda y que no constituyen inversión de capitales del exterior.
+1813 - Remesas de personas naturales colombianas no residentes con destino a cuentas de ahorro de trámite simplificado.
+Ingreso de divisas a cuentas de ahorro de trámite simplificado por remesas de personas naturales colombianas no residentes.
+1814 - Compra de divisas para acreditar cuentas para dispersión de remesas de trabajadores.
+Ingreso de divisas para acreditar cuentas en moneda legal colombiana de uso exclusivo para dispersión de remesas de trabajadores. Estas cuentas son las establecidas en el literal f. del numeral 10.4.2.2 del Capítulo 10 de esta Circular.
+Adicionado con el Boletín del Banco de la República No. 43 (Diciembre 16/2025) [DCIP-83 Diciembre16/2025]
+1815 - Marcas, patentes, regalías y compensaciones.
+Ingresos de divisas por el uso autorizado de activos intangibles, derechos de propiedad y licencias de uso como patentes, derechos de autor, marcas registradas, procesos industriales.
+Derecho de uso de software y licencias informáticas, entre otros. Este numeral también incluye los ingresos por concepto de contraprestación económica a título de regalía, derecho o compensación por la explotación de recursos naturales no renovables.
+1840 - Servicios empresariales, profesionales y técnicos.
+Ingreso de divisas por servicios empresariales, profesionales y técnicos, entre otros: 1.
+Consultoría y asesoría legal, económica, administrativa, técnica, informática y científica; 2.
+Desarrollo, diseño y puesta a punto de software; 3. Reparación y manten imiento de maquinaria y equipo. Este numeral incluye todo ingreso por concepto de honorarios.
+1703 - Servicios de comunicaciones.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Ingreso de divisas por uso de redes para transmisión, entre otros, de información, sonido, imagen, voz y datos. Este numeral incluye servicios de corresponsalía de prensa y radio, servicios de larga distancia internacional entre operadores y servicios postales y de mensajería.
+1704 - Comisiones no financieras.
+Ingreso de divisas por el pago de comisiones no financieras relacionadas con labores de representación de empresas, intermediación y corretaje de productos en general. Este numeral no aplica a los intermediarios del mercado cambiario o sociedades prestadoras de servicios financieros.
+1706 - Viajes de negocios, gastos educativos, pagos laborales a residentes, seguridad social.
+Ingreso de divisas por: 1. Gastos de permanencia de no residentes por viajes de negocios; 2.
+Sostenimiento y demás gastos inherentes a servicios educativos, así como cursos, seminarios y prácticas; 3. Retribución laboral, pagada por empresas del exterior a colombianos o extranjeros residentes por sueldos, viáticos, pensiones y salarios y 4. Pagos que deben efectuar residentes en el exterior a instituciones de seguridad social en Colombia.
+1711 - Suscripciones, cuotas de afiliación y aportes periódicos.
+Ingreso de divisas por suscripciones a revistas, diarios y otras publicaciones periódicas. Este numeral incluye cuotas de afiliación y aportes periódicos por membresía.
+1712 - Venta de mercancías no consideradas exportación.
+Ingreso de divisas por venta de mercancía que desde el punto de vista de las normas de aduana no se considere exportación.
+1713 - Arrendamiento operativo.
+Ingreso de divisas por arrendamiento no financiero que efectúen los residentes en Colombia de naves, aeronaves, maquinaria y otros equipos.
+1714 - Servicios de publicidad Ingreso de divisas por publicidad comercial, incluye, entre otros, el pago por investigaciones de mercado, encuestas de opinión y diseño, creación y comercialización de publicidad.
+1710 - Servicios médicos, quirúrgicos y hospitalarios Ingreso de divisas destinados, entre otros, al pago de servicios prestados a no residentes por atención médica, quirúrgica y hospitalaria, incluidos los medicamentos.
+1707 - Servicios diplomáticos, consulares y organismos internacionales.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Ingreso de divisas por: 1. Gastos asignados por organismos internacionales y gobiernos extranjeros a sus embajadas, consulados y representaciones de los organismos para atender sueldos, primas, viáticos, arriendos y otros. 2. Recaudos obtenidos por las emb ajadas y consulados colombianos en el exterior. 3. Instalación en Colombia de diplomáticos y de representantes de organismos internacionales.
+1708 - Comercialización de mercancías de usuarios de zona franca.
+Ingreso de divisas por venta de mercancías por parte de usuarios de zona franca, que desde el punto de vista de las normas de aduana no se consideran exportación.
+1601 - Otros conceptos.
+Por este numeral solo podrán clasificarse operaciones cambiarias de ingresos que no estén descritas en otros numerales cambiarios. Este numeral incluye los ingresos producto, venta de bienes de agentes diplomáticos, consulares y miembros de misiones de org anismos internacionales al finalizar sus funciones en el exterior, Gastos de mudanza y las compras de divisas que efectúen los intermediarios del mercado cambiario y los titulares de las cuentas de compensación a residentes diferentes de las descritas en los numerales 1600 y 5380.
+1602: Pago de exportación de servicios con divisas a través de proveedores de servicios de pago agregadores.
+Canalización de divisas para el pago de exportaciones de servicios a través los proveedores de servicios de pago agregadores señalados en el numeral 3 artículo 2.17.2.1.1 del Decreto 2555 de 2010.
+1604 - Sumas destinadas a proyectos de financiación colaborativa antes de la emisión de valores.
+Ingreso de divisas por concepto de financiación colaborativa canalizadas antes de la emisión de valores representativos de capital social o deuda, de los que trata el artículo 2.41.5.1.1 del Decreto 2555 de 2020 y las demás normas que lo modifiquen o complementen.
+1980 - Seguros y reaseguros.
+Ingreso de divisas por seguros, reaseguros, indemnización por pérdida total o parcial de bienes.
+1990 - Remesas pagadas en moneda legal colombiana a través de concesionarios de servicios de correos Pago de remesas en moneda legal colombiana enviadas a través de concesionarios de servicios de correos.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+1991 - Ingreso de divisas en cuentas de compensación por servicios financieros de correos.
+Ingreso de divisas por remesas recibidas a través de concesionarios de servicios de correos
+1600 - Compra a residentes que compran y venden divisas de manera profesional.
+Ingreso por compra de divisas de los intermediarios del mercado cambiario y/o titulares de cuentas de compensación a residentes que compran y venden divisas de manera profesional.
+5366 - Compra de saldos de cuentas de compensación de Ecopetrol.
+Ingreso de divisas a los intermediarios del mercado cambiario por la compra a Ecopetrol de los saldos de sus cuentas de compensación. Para Ecopetrol esta es una venta que debe reflejarse con este mismo numeral como un egreso en el Formulario No. 10.
+5370 - Compra de saldos de cuentas de compensación de la Dirección del Tesoro Nacional (DTN).
+Ingreso de divisas a los intermediarios del mercado cambiario por la compra a la Dirección del Tesoro Nacional (DTN) de los saldos de sus cuentas de compensación. Para la Dirección del Tesoro Nacional (DTN) esta es una venta que debe reflejarse con este mismo numeral como un egreso en el Formulario No. 10.
+5395 - Compra de saldos de cuentas de compensación de la Federación Nacional de Cafeteros.
+Ingreso de divisas a los intermediarios del mercado cambiario por la compra a la Federación Nacional de Cafeteros de los saldos de sus cuentas de compensación. Para la Federación Nacional de Cafeteros esta es una venta que debe reflejarse con este mismo numeral como un egreso en el Formulario No. 10.
+5390 - Compra de saldos de cuentas de compensación del resto del sector público.
+Ingreso de divisas a los intermediarios del mercado cambiario por la compra, al resto de entidades del sector público, de los saldos de sus cuentas de compensación. Para las entidades del sector público esta es una venta que debe reflejarse con este mismo numeral como un egreso en el Formulario No. 10.
+Este numeral no incluye la compra por parte de los intermediarios del mercado cambiario a la Dirección del Tesoro Nacional (DTN) de los saldos de sus cuentas de compensación.
+5379 - Compra de saldos de cuentas de compensación - sector privado.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Ingreso de divisas a los intermediarios del mercado cambiario por la compra a residentes de los saldos de sus cuentas de compensación del sector privado. Para los titulares de estas cuentas esta es una venta que debe reflejarse con este mismo numeral como un egreso en el Formulario No. 10.
+5377 - Transferencias presupuestales entre cuentas de compensación de la DTN y entidades del sector público - Ingreso.
+Ingreso de divisas por transferencias presupuestales que se realicen entre las cuentas de compensación de la DTN y entidades del sector público.
+5378 - Traslados entre cuentas de compensación de un mismo titular, - Ingresos.
+Ingresos de divisas por traslados que se realicen entre cuentas de un mismo titular
+5381 - Compra de saldos de cuentas en moneda extranjera en intermediarios del mercado cambiario - sector privado - .
+Ingreso de divisas a los intermediarios del mercado cambiario por la compra de saldos de cuentas en moneda extranjera abiertas en intermediarios del mercado cambiario de empresas de transporte internacional, agencias de viajes y turismo, almacenes y depósi tos francos, entidades que prestan servicios portuarios y aeroportuarios, personas naturales y jurídicas no residentes, y misiones consulares acreditadas ante el gobierno de Colombia y organizaciones multilaterales, incluidos los funcionarios de estas últimas.
+5382 - Compra de saldos de cuentas en el exterior - Sector Privado Ingreso de divisas por la compra de saldos de cuentas en el exterior que no deben ser registradas en el Banco de la República.
+5383 - Compra de saldos de cuentas en moneda extranjera en intermediarios del mercado cambiario - sector público - .
+Ingreso de divisas a los intermediarios del mercado cambiario por la compra de saldos de cuentas en moneda extranjera en intermediarios del mercado cambiario de entidades públicas que presten servicios portuarios y aeroportuarios.
+5384 - Compra de saldos de cuentas en el exterior - Sector Público Ingreso de divisas por la compra de saldos de cuentas en el exterior que no deben ser registradas en el Banco de la República.
+5385 – Errores Bancarios de cuenta de compensación Ingreso de divisas por errores bancarios.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+5386- Traslado de recursos líquidos entre administradores de activos en el exterior – ingreso Ingreso de divisas por traslados de recursos líquidos entre cuentas de compensación de los administradores de activos en el exterior.
+5387 - Ingresos por traslados desde la cuenta del mercado no regulado del mismo titular.
+Ingresos de divisas por traslados que se realicen desde la cuenta del mercado no regulado a la cuenta de compensación del mismo titular.
+5375 - Operaciones de derivados o por el pago de margen o prima.
+Ingreso de divisas por liquidación de contratos de derivados.
+5450 – Ingreso de divisas por liquidación de contratos de derivados peso -divisa o divisadivisa a través de cuentas de compensación, celebrados entre la D.T.N. e IMC o agentes del exterior autorizados Ingreso de divisas a los IMC por la liquidación de contratos de derivados peso-divisa a través de cuentas de compensación, celebrados con la Dirección del Tesoro Nacional (DTN) y egreso de divisas de las cuentas de compensación de la DTN.
+Asimismo, ingreso de divisas en las cuentas de compensación de la DTN por liquidación de contratos de derivados divisa-divisa a través de cuentas de compensación y egreso de divisas de los IMC.
+5451 - Ingreso de divisas por liquidación de contratos de derivados peso-divisa o divisa-divisa a través de cuentas de compensación, celebrados entre Ecopetrol e IMC o agentes del exterior autorizados Ingreso de divisas a los IMC por la liquidación de contratos de derivados peso-divisa a través de cuentas de compensación, celebrados con Ecopetrol y egreso de divisas de las cuentas de compensación de Ecopetrol.
+Asimismo, ingreso de divisas en las cuentas de compensación de Ecopetrol por liquidación de contratos de derivados divisa-divisa a través de cuentas de compensación y egreso de divisas de los IMC.
+5452 - Ingreso de divisas por liquidación de contratos de derivados peso-divisa o divisa divisa a través de cuentas de compensación, celebrados entre la Federación Nacional de Cafeteros e Intermediarios del Mercado Cambiario o agentes del exterior autorizados
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Ingreso de divisas a los IMC por la liquidación de contratos de derivados peso-divisa a través de cuentas de compensación, celebrados con la Federación Nacional de Cafeteros y egreso de divisas de las cuentas de compensación de la Federación Nacional de Cafeteros.
+Asimismo, ingreso de divisas en las cuentas de compensación de la Federación Nacional de Cafeteros por liquidación de contratos de derivados divisa -divisa a través de cuentas de compensación y egreso de divisas de los IMC
+5453 - Ingreso de divisas por liquidación de contratos de derivados peso-divisa o divisa divisa a través de cuentas de compensación, celebrados entre entidades del sector privado e Intermediarios del Mercado Cambiario o agentes del exterior autorizados Ingreso de divisas a los IMC por la liquidación de contratos de derivados peso-divisa a través de cuentas de compensación, celebrados con entidades del sector privado y egreso de divisas de las cuentas de compensación de las entidades del sector privado.
+Asimismo, ingreso de divisas en las cuentas de compensación de las entidades del sector privado por liquidación de contratos de derivados divisa -divisa a través de cuentas de compensación y egreso de divisas de los IMC
+5454 - Ingreso de divisas por liquidación de contratos de derivados peso-divisa o divisa divisa a través de cuentas de compensación, celebrados entre el resto del sector público e Intermediarios del Mercado Cambiario o agentes del exterior autorizados Ingreso de divisas a los IMC por la liquidación de contratos de derivados peso-divisa a través de cuentas de compensación, celebrados con el resto del sector público y egreso de divisas de las cuentas de compensación del resto del sector público.
+Asimismo, ingreso de divisas en las cuentas de compensación del resto del sector público por liquidación de contratos de derivados divisa-divisa a través de cuentas de compensación y egreso de divisas de los IMC.
+5455 - Compra de divisas a agentes del exterior proveedores de cobertura por liquidación de contratos de derivados Ingreso de divisas a los intermediarios del mercado cambiario por la venta de moneda legal colombiana a agentes del exterior proveedores de cobertura por liquidación de contratos de derivados. Este numeral es para uso exclusivo de agentes del exterior prov eedores de cobertura.
+5457 - Compra de divisas para acreditar cuentas de no residentes de uso exclusivo para operaciones de crédito externo en moneda legal.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Compra de divisas para acreditar cuentas de uso exclusivo en pesos de no residentes de las que trata el literal d del numeral 10.4.2.2 del Capítulo 10 de esta Circular.
+5458 – Venta en moneda extranjera a no residentes de cartera o instrumentos de pago de operaciones internas.
+Ingreso de divisas por venta a no residentes de cartera o instrumentos de pago de operaciones internas.
+5460 “ Venta en moneda extranjera a IMC de cartera o instrumentos de pago de operaciones internas” Ingreso de divisas por venta a IMC de cartera o instrumentos de pago de operaciones internas.
+5464 “Compra de divisas para acreditar cuentas de no residentes de uso exclusivo para pagos de exportaciones de servicios” Compra de divisas para acreditar cuentas de no residentes de uso exclusivo para hacer pagos en moneda legal a residentes exportadores de servicios por cuenta de no residentes, de las que trata el literal e. del numeral 10.4.2.2 del Capítulo 10 de esta Circular.
+5499 - Compra de dólares por los IMC provenientes de la redención del depósito en dólares de que trata el artículo 47 de la R.E. 1/18 J.D. – Ingreso Ingreso a los IMC por la compra de dólares provenientes de la redención del depósito en dólares de que trata el artículo 47 de la R.E. 1/18 J.D.
+EGRESOS
+2018 - Compra de petróleo crudo y gas natural de producción nacional.
+Egreso de divisas para compra interna de petróleo crudo y gas natural de producción nacional.
+2016 - Gastos de importación y/o exportación de bienes no incluidos en la factura de los proveedores de los bienes y/o contrato de compraventa de bienes o en la declaración de exportación.
+Egreso de divisas para atender los pagos adicionales al valor de los bienes importados o exportados como: fletes, seguros, comisiones y otros gastos, cuando estos valores no estén incluidos en la factura de los proveedores de los bienes y/o contrato de compraventa de bienes o en la declaración de exportación.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio 2126 - Intereses por financiación de importaciones - deuda privada - otorgadas por intermediarios del mercado cambiario.
+Egreso de divisas para el pago de intereses corrientes y de mora por créditos en moneda extranjera, cuando la importación de bienes financiada no requiere ser informada al Banco de la República.
+2136 - Intereses por financiación de importaciones - deuda privada - otorgadas por proveedores u otros no residentes.
+Egreso de divisas para el pago de intereses corrientes y de mora por créditos en moneda extranjera, cuando la importación de bienes financiada no requiere ser informada al Banco de la República.
+2137 - Intereses por financiación de importaciones - deuda pública Egreso de divisas para el pago de intereses corrientes y de mora por créditos en moneda extranjera cuando la importación de bienes financiada no requiere ser informada al Banco de la República.
+2030 - Servicios portuarios y de aeropuerto.
+Egreso de divisas para el pago de servicios prestados a buques y aviones, tales como: combustible, víveres, pertrechos y otros suministros, así como: los servicios de estiba, cargue y descargue, derechos portuarios y de aeropuerto, servicios de aeronavegac ión, pilotaje, mantenimiento y reparaciones, tasas aeroportuarias e impuestos de tiquetes internacionales.
+2040 - Turismo.
+Egreso de divisas por: 1. Turismo; 2. El pago realizado por empresas u organizaciones dedicadas a la prestación de servicios turísticos. Este numeral no incluye compra o venta de pasajes.
+2909.- Servicio de transporte por tubería de petróleo crudo y gas natural.
+Egreso de divisas por el pago del servicio de transporte por tubería.
+2215 - Intereses deuda de la banca comercial.
+Egresos de divisas para el pago de intereses corrientes o de mora en que incurren los establecimientos de crédito del país por las financiaciones en moneda extranjera autorizadas.
+2270 – Servicios financieros.
+Egreso de divisas por comisiones originadas en operaciones de corretaje de instrumentos financieros, de asesoramiento financiero y custodia y gestión de activos. Este numeral incluye
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio egresos por concepto de servicios financieros, tales como: comisiones, télex, portes y servicios de mensajes vía swift originados en transacciones de los intermediarios del mercado cambiario y demás entidades financieras. Asimismo incluye los gastos bancar ios de los titulares de cuentas de compensación. Este numeral no incluye las comisiones relacionadas con operaciones de endeudamiento externo.
+2621 - Contratos de Asociación - Egreso Egreso de divisas por traslados entre las partes vinculadas a contratos de asociación.
+2910 - Donaciones, transferencias y remesas de trabajadores no residentes que no generan contraprestación.
+Egreso de divisas por: 1. Donaciones y transferencias; 2. Remesas de extranjeros no residentes que trabajan en el país. Se consideran donaciones y transferencias aquellas sumas enviadas que no generan ninguna contraprestación para quien las recibe.
+2911 - Emisión y colocación de bonos en moneda legal colombiana.
+Egreso de divisas por emisión y colocación de bonos en moneda legal colombiana. Este numeral no es aplicable a cuentas de compensación.
+2912 - Valores extranjeros emitidos en el exterior e inscritos en el RNVE.
+Egreso de divisas para la adquisición por parte de no residentes de valores extranjeros emitidos en el exterior e inscritos en el RNVE.
+2903 - Marcas, patentes, regalías y compensaciones.
+Egresos de divisas por el uso autorizado de activos intangibles, derechos de propiedad y licencias de uso como patentes, derechos de autor, marcas registradas, procesos industriales, derecho de uso de software y licencias informáticas, entre otros. Este numeral también incluye los egresos por concepto de contraprestación económica a título de regalía, derecho o compensación por la explotación de recursos naturales no renovables.
+2906 - Servicios empresariales, profesionales y técnicos Egreso de divisas para el pago de servicios empresariales, profesionales y técnicos, entre otros:
+1. Consultoría y asesoría legal, económica, administrativa, técnica, informática y científica; 2.
+Desarrollo, diseño y puesta a punto de software; 3. La repar ación y mantenimiento de maquinaria y equipo. Este numeral incluye todo egreso por concepto de honorarios.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio 2800 - Servicios de comunicaciones.
+Egreso de divisas para el pago de uso de redes para transmisión, entre otros, de información, sonido, imagen, voz y datos. Este numeral incluye servicios de corresponsalía de prensa y radio, servicios de larga distancia internacional entre operadores y servicios postales y de mensajería.
+2850 - Comisiones no financieras Egreso de divisas para el pago de comisiones no financieras, relacionadas con labores de representación de empresas, intermediación y corretaje de productos en general. Este numeral no aplica a los intermediarios del mercado cambiario o sociedades prestadoras de servicios financieros.
+2895.- Servicios culturales, artísticos y deportivos Egreso de divisas para el pago de servicios culturales, artísticos y deportivos de extranjeros en Colombia.
+2896.- Pasajes.
+Egreso de divisas para la compra o venta de pasajes.
+2900 - Viajes de negocios, gastos educativos, pagos laborales a no residentes, seguridad social.
+Egreso de divisas por: 1. Gastos de permanencia en el exterior por viajes de negocios; 2.
+Sostenimiento y demás gastos inherentes a servicios educativos, así como cursos, seminarios y prácticas; 3. Retribución laboral, pagada por empresas colombianas a no residentes por sueldos, viáticos, pensiones y salarios; 4. Pagos que deben efectuar residentes a instituciones de seguridad social en el exterior.
+2914 – Suscripciones, cuotas de afiliación y aportes periódicos.
+Egreso de divisas por suscripciones a revistas, diarios y otras publicaciones periódicas. Este numeral incluye las cuotas de afiliación y aportes periódicos por membresía.
+2915 - Compra de mercancías no consideradas importación.
+Egreso de divisas por compra de mercancía que desde el punto de vista de las normas de aduana no se considere importación.
+2916 - Arrendamiento operativo.
+Egreso de divisas por pagos por arrendamiento no financiero de naves, aeronaves, maquinaria y otros equipos que no tengan obligación de registro en el Banco de la República.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+2917 - Servicios de publicidad Egreso de divisas por publicidad comercial, incluye, entre otros, el pago por investigaciones de mercado, encuestas de opinión y diseño, creación y comercialización de publicidad.
+2918 - Valores emitidos por entidades extranjeras e inscritos en el RNVE – Decreto 4804 del 29 de diciembre de 2010 Egreso de divisas correspondientes a la adquisición por parte de no residentes de los valores emitidos por entidades extranjeras e inscritos en el RNVE – Decreto 4804 del 29 de diciembre de 2010.
+2919: Pago de importación de servicios con divisas a través de proveedores de servicios de pago agregadores.
+Canalización de divisas para el pago de importaciones de servicios a través los proveedores de servicios de pago agregadores señalados en el numeral 3 artículo 2.17.2.1.1 del Decreto 2555 de 2010.
+2913.- Servicios médicos, quirúrgicos y hospitalarios Egreso de divisas destinadas, entre otros, al pago de servicios prestados a colombianos por no residentes por atención médica, quirúrgica y hospitalaria, incluidos los medicamentos.
+2904 - Otros conceptos.
+Por este numeral sólo podrán clasificarse operaciones cambiarias de egresos que no estén descritos en otros numerales cambiarios como en el 2900 y el 2910. Este numeral incluye, venta de bienes de agentes diplomáticos, consulares y miembros de misiones de organismos internacionales al finalizar sus funciones; gastos de funcionamiento en el exterior de oficinas, sucursales y agencias de empresas colombianas; gastos de mudanza y pagos de tarjetas de crédito internacional.
+2907 - Servicios diplomáticos, consulares y organismos internacionales.
+Egreso de divisas para atender: 1. Gastos asignados a embajadas, consulados, organismos internacionales y otras entidades oficiales para atender sueldos, primas, viáticos, arriendos y otros. 2. Recaudos obtenidos por embajadas y consulados en Colombia. 3. Instalación de diplomáticos colombianos en el exterior, de representantes de organismos internacionales y de otras entidades oficiales.
+2908.- Comercialización de mercancías de usuarios de zona franca.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Egreso de divisas para compra de mercancías por parte de usuarios de zona franca, que desde el punto de vista de las normas de aduana no se consideran importación.
+2950 - Seguros y reaseguros.
+Egreso de divisas para el pago de seguros, reaseguros, indemnización por pérdida total o parcial de bienes.
+2990 - Remesas entregadas en moneda legal colombiana a través de concesionarios de servicios de correos Egreso de remesas en moneda legal colombiana enviadas a través de concesionarios de servicios de correos.
+2991 - Egreso de divisas en cuentas de compensación por servicios financieros de correos.
+Egreso de divisas por remesas remitidas a través de concesionarios de servicios de correos.
+2992 - Reembolso de remesas desde cuentas de ahorro de trámite simplificado de personas naturales colombianas no residentes Egreso de divisas por remesas de cuentas de ahorro de trámite simplificado de personas naturales colombianas no residentes.
+2993 - Venta de divisas por débitos de cuentas para dispersión de remesas de trabajadores.
+Egreso de divisas por la venta de saldos remanentes de cuentas en moneda legal colombiana de uso exclusivo para dispersión de remesas de trabajadores. Estas cuentas son las establecidas en el literal f. del numeral 10.4.2.2 del Capítulo 10 de esta Circular.
+Adicionado con el Boletín del Banco de la República No. 43 (Diciembre 16/2025) [DCIP-83 Diciembre16/2025]
+4650 - Pago de afiliación y cuotas a organismos internacionales.
+Egreso de divisas para pagar cuotas de afiliación, inscripción o sostenimiento en organismos multilaterales como la FAO, ONU, OIT, OEA, que la Dirección del Tesoro Nacional (DTN) cancela periódicamente a nombre de Colombia como país miembro.
+2905 - Venta a residentes que compran y venden divisas de manera profesional.
+Egreso por venta de divisas de los intermediarios del mercado a residentes que compran y venden divisas de manera profesional.
+5896 - Venta de divisas para consignar en cuentas de compensación de Ecopetrol.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Egreso de divisas de los intermediarios del mercado cambiario para consignar en cuentas de compensación de Ecopetrol. Para Ecopetrol esta es una compra que debe reflejarse con el mismo numeral como un ingreso en el Formulario No. 10.
+5900 - Venta de divisas para consignar en cuentas de compensación de la Dirección del Tesoro Nacional (DTN).
+Egreso de divisas de los intermediarios del mercado cambiario para consignar en cuentas de compensación de la Dirección del Tesoro Nacional (DTN). Para la Dirección del Tesoro Nacional (DTN) esta es una compra que debe reflejarse con el mismo numeral como un ingreso en el Formulario No. 10.
+5897 - Venta de divisas para consignar en cuentas de compensación de la Federación Nacional de Cafeteros.
+Egreso de divisas de los intermediarios del mercado cambiario para consignar en cuentas de compensación de la Federación Nacional de Cafeteros. Para la Federación Nacional de Cafeteros esta es una compra que debe reflejarse con el mismo numeral como un ingreso en el Formulario No. 10.
+5920 - Venta de divisas para consignar en cuentas de compensación del resto del sector público.
+Egreso de divisas de los intermediarios del mercado cambiario para consignar en cuentas de compensación de las entidades del resto del sector público. Para las entidades del sector público esta es una compra que debe reflejarse con el mismo numeral como un ingreso en el Formulario No. 10.
+Este numeral no incluye la venta de divisas por parte de los intermediarios del mercado cambiario para consignar en las cuentas de compensación de la Dirección del Tesoro Nacional (DTN).
+5908 - Venta de divisas para consignar en cuentas de compensación del sector privado.
+Egreso de divisas de los intermediarios del mercado cambiario para consignar en cuentas de compensación de residentes del sector privado. Para los titulares de estas cuentas esta es una compra que debe reflejarse con el mismo numeral como un ingreso en el Formulario No. 10.
+5911 - Transferencias presupuestales entre cuentas de compensación de la DTN y entidades del sector público - Egreso.
+Egreso de divisas por transferencias presupuestales que se realicen entre las cuentas de compensación de la DTN y entidades del sector público.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+5912 - Traslados entre cuentas de compensación de un mismo titular, - Egresos.
+Egresos de divisas por traslados que se realicen entre cuentas de un mismo titular
+5913 - Depósitos en entidades financieras del exterior - sector privado.
+Egreso de divisas para abrir o acreditar cuentas en el exterior que no deben ser registradas en el Banco de la República.
+5914 - Traslado de recursos líquidos entre administradores de activos en el exterior – egreso Egreso de divisas por traslados de recursos líquidos entre cuentas de compensación de los administradores de activos en el exterior.
+5915 – Errores bancarios de cuenta de compensación (especial y ordinaria) Egreso de divisas por errores bancarios.
+5916 - Depósitos en entidades financieras del exterior - sector público.
+Egreso de divisas para abrir o consignar en cuentas en el exterior que no deben ser registradas en el Banco de la República.
+5917 - Egresos por traslados a la cuenta del mercado no regulado del mismo titular.
+Egresos de divisas por traslados que se realicen desde la cuenta de compensación a la cuenta del mercado no regulado del mismo titular.
+5910 - Operaciones de derivados o por el pago de margen o prima.
+Egreso de divisas por liquidación de contratos de derivados.
+5800 - Egreso de divisas por liquidación de contratos de derivados peso-divisa o divisa-divisa a través de cuentas de compensación, celebrados entre la D.T.N. e Intermediarios del Mercado Cambiario o agentes del exterior autorizados Egreso de divisas de los IMC por la liquidación de contratos de derivados peso-divisa a través de cuentas de compensación, celebrados con la DTN e ingreso de divisas a las cuentas de compensación de la DTN.
+Asimismo, egreso de divisas de las cuentas de compensación de la DTN por liquidación de contratos de derivados divisa-divisa a través de cuentas de compensación e ingreso de divisas de los IMC.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio 5801 - Egreso de divisas por liquidación de contratos de derivados peso-divisa o divisa-divisa a través de cuentas de compensación, celebrados entre Ecopetrol e Intermediarios del Mercado Cambiario o agentes del exterior autorizados Egreso de divisas de los IMC por la liquidación de contratos de derivados peso-divisa a través de cuentas de compensación, celebrados con Ecopetrol e ingreso de divisas a las cuentas de compensación de Ecopetrol.
+Asimismo, egreso de divisas de las cuentas de compensación de Ecopetrol por liquidación de contratos de derivados divisa-divisa a través de cuentas de compensación e ingreso de divisas de los IMC.
+5802 - Egreso de divisas por liquidación de contratos de derivados peso-divisa o divisa-divisa a través de cuentas de compensación, celebrados entre la Federación Nacional de Cafeteros e Intermediarios del Mercado Cambiario o agentes del exterior autorizados Egreso de divisas de los IMC por la liquidación de contratos de derivados peso-divisa a través de cuentas de compensación, celebrados con la Federación Nacional de Cafeteros e ingreso de divisas a las cuentas de compensación de la Federación Nacional de Cafeteros.
+Asimismo, egreso de divisas de las cuentas de compensación de la Federación Nacional de Cafeteros por liquidación de contratos de derivados divisa-divisa a través de cuentas de compensación e ingreso de divisas de los IMC.
+5803 - Egreso de divisas por liquidación de contratos de derivados peso-divisa o divisa-divisa a través de cuentas de compensación, celebrados entre entidades del sector privado e Intermediarios del Mercado Cambiario o agentes del exterior autorizados Egreso de divisas de los IMC por la liquidación de contratos de derivados peso-divisa a través de cuentas de compensación, celebrados con entidades del sector privado e ingreso de divisas a las cuentas de compensación de entidades del sector privado.
+Asimismo, egreso de divisas de las cuentas de compensación de entidades del sector privado por liquidación de contratos de derivados divisa-divisa a través de cuentas de compensación e ingreso de divisas de los IMC.
+5804 - Egreso de divisas por liquidación de contratos de derivados peso-divisa o divisa-divisa a través de cuentas de compensación, celebrados entre el resto del sector público e Intermediarios del Mercado Cambiario o agentes del exterior autorizados
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Egreso de divisas de los IMC por la liquidación de contratos de derivados peso-divisa a través de cuentas de compensación, celebrados con el resto del sector público e ingreso de divisas a las cuentas de compensación del resto del sector público.
+Asimismo, egreso de divisas de las cuentas de compensación del resto del sector público por liquidación de contratos de derivados divisa -divisa a través de cuentas de compensación e ingreso de divisas de los IMC.
+5805 - Venta de divisas a agentes del exterior proveedores de cobertura por liquidación de contratos de derivados.
+Egreso de divisas de los intermediarios del mercado cambiario por la compra de moneda legal colombiana a agentes del exterior proveedores de cobertura por liquidación de contratos de derivados. Este numeral es para uso exclusivo de agentes del exterior pro veedores de cobertura.
+5806 - Venta de divisas para debitar cuentas de uso exclusivo para operaciones de crédito externo en pesos de no residentes. Venta de divisas para debitar cuentas de uso exclusivo en pesos de no residentes de las que trata el literal d del numeral 10.4.2.2 del Capítulo 10 de esta Circular.
+5807 – Pago en moneda extranjera a no residentes de cartera o instrumentos de pago de operaciones internas. Egreso de divisas por pago a no residentes de cartera o instrumentos de pago de operaciones internas.
+5808 “Pago en moneda extranjera a IMC de cartera o instrumentos de pago de operaciones internas” Egreso de divisas por pago a IMC de cartera o instrumentos de pago de operaciones internas.
+5809 “Venta de divisas por débitos en las cuentas de no residentes de uso exclusivo para pagos de exportaciones de servicios” Venta de divisas para debitar cuentas de no residentes de uso exclusivo para pagos de exportaciones de servicios, de las que trata el literal e. del numeral 10.4.2.2 del Capítulo 10 de esta Circular, siempre que estos débitos correspondan a la devolución d e los saldos remanentes en dicha cuenta.
+OPERACIONES EXCLUSIVAS DE CUENTAS DE COMPENSACIÓN-INGRESOS-.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+1648 - Ejecución de avales o garantías en moneda extranjera otorgado por residentes para cubrir operaciones diferentes de deuda de residentes Ingreso de divisas por la ejecución de avales o garantías en moneda extranjera otorgado por residentes para cubrir operaciones diferentes de deuda de residentes
+3000 - Ingreso por el cumplimiento de obligaciones derivadas de operaciones internas.
+Ingreso de divisas provenientes del cumplimiento de las obligaciones derivadas de operaciones internas.
+4063 - Redención en cuenta de compensación de inversiones financieras constituidas a través de otras cuentas de compensación del mismo titular Ingreso de divisas a cuenta de compensación por la liquidación total o parcial (redención, venta o disminución) de las inversiones financieras constituidas a través de otras cuentas de compensación del mismo titular.
+4064 – Redención en cuenta de compensación de las inversiones financieras constituidas a través de los IMC Ingreso de divisas a cuenta de compensación por la liquidación total o parcial (redención, venta o disminución) de las inversiones financieras constituidas a través de los IMC.
+5380 - Compra de divisas a otros titulares de cuentas de compensación.
+Ingreso de divisas por compra entre los titulares de cuentas de compensación.
+5405 - Operaciones overnight.
+Ingreso de divisas a las cuentas de compensación por el capital correspondiente a inversiones overnight.
+5456 – Traslado de dólares producto de la redención del depósito en dólares de que trata el artículo 47 de la R.E. 1/18 J.D. - Ingreso Ingreso de dólares a las cuentas de compensación proveniente del IMC producto de la redención del depósito en dólares de que trata el artículo 47 de la R.E. 1/18 J.D. Este numeral es exclusivo de cuentas de compensación.
+5369 – Compra de divisas por parte del Banco de la República por operaciones de intervención con la Dirección del Tesoro Nacional.
+CIRCULAR REGLAMENT ARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio Ingreso de divisas al Banco de la República por operaciones de intervención con la Dirección del Tesoro Nacional. Para la Dirección del Tesoro Nacional (DTN) esta operación debe reflejarse con este mismo numeral como un egreso en el Formulario No. 10.
+5388 – Transferencias presupuestales entre cuentas de compensación de la DTN y cuentas del mercado no regulado de entidades del sector público – Ingreso
+OPERACIONES EXCLUSIVAS DE CUENTAS DE COMPENSACIÓN - EGRESOS-.
+3500 - Egreso para el cumplimiento de obligaciones derivadas de operaciones internas Egreso de divisas para el cumplimiento de las obligaciones derivadas de operaciones internas.
+5909 - Venta de divisas a otros titulares de cuentas de compensación.
+Egreso de divisas por venta entre titulares de cuentas de compensación.
+5930 - Operaciones overnight.
+Egreso de divisas de cuentas de compensación por el capital para constituir inversiones overnight.
+5921 - Traslado de dólares para la constitución del depósito en dólares de que trata el artículo 47 de la R.E. 1/18 J.D. - Egreso Egreso de dólares de las cuentas de compensación para ser entregados al IMC a través del cual se constituirá el depósito en dólares de que trata el artículo 47 de la R.E. 1/18 J.D. Este numeral es exclusivo de cuentas de compensación.
+5899 - Compra de divisas por parte del Banco de la República por operaciones de intervención con la Dirección del Tesoro Nacional.
+Egreso de divisas al Banco de la República por operaciones de intervención con la Dirección del Tesoro Nacional. Para la Dirección del Tesoro Nacional (DTN) esta operación debe reflejarse con este mismo numeral como un ingreso en el Formulario No. 10.
+5918 - Transferencias presupuestales entre cuentas de compensación de la DTN y cuentas del mercado no regulado de entidades del sector público – Egreso

@@ -1,0 +1,41 @@
+CIRCULAR REGLAMENTARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+Instructivo del Formato de reporte depósitos de no residentes en IMC y compra de cartera interna
+I. CRITERIOS GENERALES
+1. La información debe ser diligenciada por los IMC. El formato debe diligenciarse y enviarse incluso si la entidad no mantiene depósitos de no residentes. En este caso deberá enviar el formato diligenciado solo con la información de identificación de la entidad, datos de contacto y el trimestre.
+2. El reporte se debe enviar trimestralmente al Banco de la República a más tardar el último día hábil del mes siguiente al trimestre que se reporta en formato Excel, a la dirección electrónica DTIE-depositosnoresidentes@banrep.gov.co
+3. El nombre del archivo enviado debe cumplir con la siguiente estructura: PPCCCAAAAT, donde PP es el tipo de la entidad asignado por la Superintendencia Financiera (por ejemplo 01 si es banco); CCC es el código de la entidad asignado por la Superintendencia Financiera; AAAA es el año y T el trimestre de reporte.
+4. Debe informarse el saldo de los depósitos de no residentes en moneda legal y extranjera, discriminando los saldos de cada una de las cuentas. Los depósitos a la vista a reportar corresponden a cuentas corrientes, de ahorro y depósitos electrónicos a nombre de no residentes. Se excluyen del reporte, los depósitos a la vista en moneda legal colombiana de las personas naturales colombianas no residentes.
+5. Debe informarse el valor de la cartera interna comprada por los no residentes así como los pagos recibidos por este concepto en el respectivo mes. La información se debe consolidar por monedas de denominación.
+6. La frecuencia de envío es trimestral. Hoja 1 saldos a corte de fin de mes. Hoja 2 flujos acumulados por mes.
+7. El saldo de las cuentas reportado al final del mes debe ser en la moneda de la constitución del depósito.
+8. En este informe no deben incluirse los depósitos constituidos por no residentes en las sucursales de los IMC en el exterior.
+9. Cualquier duda en el diligenciamiento del reporte puede ser enviada a la dirección electrónica DTIE-depositosnoresidentes@banrep.gov.co
+II. DILIGENCIAMIENTO
+Hoja 1.
+1. Tipo Entidad: Entidad que diligencia el informe. Registre el número del tipo de la entidad de acuerdo al asignado por la Superintendencia Financiera.
+CIRCULAR REGLAMENTARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+2. Código Entidad: Entidad que diligencia el informe. Registre el número del código de la entidad asignado por la Superintendencia Financiera.
+3. Nombre de la entidad: Entidad que diligencia el informe. Registre el nombre o razón social de la entidad.
+4. Trimestre reportado: Registre el año y el trimestre de la información reportada bajo el formato AAAAT, donde AAAA corresponde al año y T corresponde al número del trimestre. Siendo el trimestre 1 el que va desde el 1 de enero al 31 de marzo; el trimestre 2 el que va del 1 de abril al 30 de junio; el trimestre 3 el que va del 1 de julio al 30 de septiembre; y el trimestre 4 el que va del 1 de octubre al 31 de diciembre del año correspondiente.
+5. Columna 1. Nombre o razón social del titular del depósito: Registre el nombre o razón social del titular del depósito.
+6. Columna 2. Mes de reporte. Mes al cual corresponde el saldo final reportado en la columna 3, con el formato MM.
+7. Columna 3. Saldo del depósito al final del mes reportado: Registre el valor en moneda original al final de cada uno de los meses del trimestre reportado.
+8. Columna 4. Moneda: indique el código la moneda de denominación del depósito.
+La codificación puede ser consultada en el Anexo 4 de esta Circular.
+9. Columna 5. Tipo de cuenta: de acuerdo al numeral 10.4 del Capítulo 10 de la Circular Reglamentaria Externa DCIP-83, indique el tipo de cuenta de acuerdo a las siguientes opciones: 1 Si es una cuenta en moneda extranjera.
+2 Si es una cuenta de uso general.
+3 Si es una cuenta para operaciones de inversión extranjera directa.
+4 Si es una cuenta de inversionistas de capital del exterior de portafolio.
+5 Si es una cuenta de depósitos centralizados de valores extranjeros.
+6 Si es una cuenta para operaciones de crédito externo en moneda legal.
+7 Si es una cuenta de depósitos electrónicos y o una cuenta de trámite simplificado.
+8. Si es una cuenta para pagos de exportaciones de servicios
+9. Si es una cuenta para dispersión de remesas de trabajadores
+Hoja 2.
+1. Columna 1. Mes de reporte. Mes al cual corresponde el flujo reportado en la columna 2 y 3
+2. Columna 2. Valor compra: Registre el valor en pesos de la cartera interna comprada por los no residentes.
+CIRCULAR REGLAMENTARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+3. Columna 3. Pagos recibidos: Registre el valor en pesos de los pagos recibidos como amortización de la cartera interna comprada por los no residentes.

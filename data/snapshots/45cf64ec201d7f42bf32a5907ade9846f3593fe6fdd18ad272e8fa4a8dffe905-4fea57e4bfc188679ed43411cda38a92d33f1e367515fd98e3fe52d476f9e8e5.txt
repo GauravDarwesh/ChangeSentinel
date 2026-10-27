@@ -1,0 +1,4031 @@
+[WORKBOOK] 14 sheets: Datos, Pregunta 1, Pregunta 2, Pregunta 3, Pregunta 4, Pregunta 5, Pregunta 6, Pregunta 7, Pregunta 8, Pregunta 9, Glosario, Anexo Paises, Anexo Departamentos, Anexo Municipios
+[SHEET] Datos
+Datos · O: I TRIMESTRE · P: 2007
+Datos · O: II TRIMESTRE · P: 2008
+Datos · O: III TRIMESTRE · P: 2009
+Datos · O: IV TRIMESTRE · P: 2010
+Datos · P: 2011
+Datos · P: 2012
+Datos · P: 2013
+Datos · P: 2014
+Datos · P: 2016
+Datos · P: 2017
+Datos · P: 2018
+Datos · B: REPORTE TRIMESTRAL DE REMESAS DE TRABAJADORES (RTR) · P: 2019
+Datos · P: 2020
+Datos · B: 1. Año reportado · P: 2021
+Datos · P: 2022
+Datos · B: 2. Trimestre reportado · P: 2023
+Datos · P: 2024
+Datos · B: 3. NIT de la entidad: · P: 2025
+Datos · P: 2026
+Datos · B: 4. Nombre de la entidad: · P: 2027
+Datos · P: 2028
+Datos · B: 5. Dirección:
+Datos · B: 6. Ciudad:
+Datos · B: Para posibles aclaraciones sobre la información reportada, el Banco de la República podrá contactar a:
+Datos · B: 7. Nombre: · G: 10. Teléfono No :
+Datos · B: 8. Cargo: · G: 11. Fax No :
+Datos · B: 9. Correo electrónico:
+Datos · B: Cifras de control
+Datos · B: 12. Numero total de giros · C: =+IF('Pregunta 1'!J9='Pregunta 2'!I8,'Pregunta 1'!J9,"Error ") → 0
+Datos · B: 13. Valor total de los giros en dólares estadounidenses. · C: =+IF('Pregunta 1'!K9='Pregunta 2'!J8,'Pregunta 1'!K9,"Error") → 0
+Datos · B: 14. Control de errores
+Datos · B: 12.1 Pregunta 1 · C: =IF('Pregunta 1'!J9='Pregunta 2'!I8,"OK","Error: el número total de giros reportados en la pregunta 1 no coincide con el reportado en la pregunta 2, por favor corrija esta discrepancia") → OK
+Datos · C: =IF('Pregunta 1'!K9='Pregunta 2'!J8,"OK","Error: el valor de las remesas reportado en la pregunta 1 no coincide con el reportado en la pregunta 2, por favor corrija esta discrepancia") → OK
+Datos · B: 12.2 Pregunta 4 · C: =IF(AND('Pregunta 4'!K4="X",'Pregunta 4'!N4="X"),"Error:solo debe escoger una opción", "OK") → OK
+Datos · B: 12.3 Pregunta 9 · C: =IF('Pregunta 9'!I9='Pregunta 8'!F9,"OK","Error: el número total de giros reportados en la pregunta 1 no coincide con el reportado en la pregunta 8, por favor corrija esta discrepancia") → OK
+Datos · C: =IF('Pregunta 9'!J9='Pregunta 8'!G9,"OK","Error: el valor de las remesas reportado en la pregunta 9 no coincide con el reportado en la pregunta 8, por favor corrija esta discrepancia") → OK
+[MERGED] Datos · C43:E43
+[MERGED] Datos · C45:E45
+[MERGED] Datos · C47:E47
+[MERGED] Datos · B50:H50
+[MERGED] Datos · B58:B59
+[MERGED] Datos · B26:H26
+[MERGED] Datos · C32:D32
+[MERGED] Datos · C34:E34
+[MERGED] Datos · C36:E36
+[MERGED] Datos · C38:D38
+[MERGED] Datos · C28:D28
+[VALIDATION] Datos · C30 · list · $O$2:$O$6
+[VALIDATION] Datos · P12:P25 · list · $P$3:$P$12
+[VALIDATION] Datos · C28:D28 · list · $P$26:$P$35
+[SHEET] Pregunta 1
+Pregunta 1 · B: ¿Cuales son las entidades transmisoras internacionales de divisas o bancos corresponsales, con las cuales su entidad trabajó durante el trimestre reportado para la recepción de remesas de trabajadores?.
+Pregunta 1 · B: Año reportado
+Pregunta 1 · B: Trimestre reportado
+Pregunta 1 · B: Nombre del agente · C: Numero de giros recibidos · D: Valor de los giros en dólares estadounidenses. · I: Número de agentes · J: Numero total de giros recibidos · K: Valor total de los giros en dólares estadounidenses.
+Pregunta 1 · H: Totales · I: =COUNTA(B9:B20000) → 0 · J: =SUM(C9:C20000) → 0 · K: =SUM(D9:D20000) → 0
+Pregunta 1 · H: =IF(J9='Pregunta 2'!I8," ","Error: el número total de giros reportados en la pregunta 1 no coincide con el reportado en la pregunta 2, por favor corrija esta discrepancia")
+Pregunta 1 · H: =IF(K9='Pregunta 2'!J8," ","Error: el valor total de los giros reportados en la pregunta 1 no coincide con el reportado en la pregunta 2, por favor corrija esta discrepancia")
+[MERGED] Pregunta 1 · B3:E3
+[SHEET] Pregunta 2
+Pregunta 2 · AA: Esporádico · AB: ANTIOQUIA · AD: AFGANISTAN · AE: MEDELLIN
+Pregunta 2 · A: Clasifique los ingresos de remesas según país de origen y zona geográfica de destino, en términos de su número y monto. · AA: Semanal · AB: ATLANTICO · AD: ALBANIA · AE: ABEJORRAL
+Pregunta 2 · AA: Quincenal · AB: BOLIVAR · AD: ALEMANIA · AE: ABRIAQUI
+Pregunta 2 · A: Año reportado · AA: Mensual · AB: BOYACA · AD: ALGERIA · AE: ALEJANDRIA
+Pregunta 2 · A: Trimestre reportado · AA: Bimensual · AB: CALDAS · AD: ANDORRA · AE: AMAGA
+Pregunta 2 · AA: Trimestral · AB: CAQUETA · AD: ANGOLA · AE: AMALFI
+Pregunta 2 · A: País de Origen · B: Departamento de pago del giro · C: Municipio/ciudad de pago del giro · D: Número de giros recibidos · E: Valor de los giros en dólares estadounidenses · F: Frecuencia de la remesa según país de origen · I: Número total de giros recibidos · J: Valor total de los giros en dólares estadounidenses. · AA: Semestral · AB: CAUCA · AD: ANGUILA · AE: ANDES
+Pregunta 2 · H: Totales · I: =SUM(D8:D20000) → 0 · J: =SUM(E8:E20000) → 0 · AA: Anual · AB: CESAR · AD: ANTARTICA · AE: ANGELOPOLIS
+Pregunta 2 · AA: Díario · AB: CORDOBA · AD: ANTIGUA Y BARBUDA · AE: ANGOSTURA
+Pregunta 2 · AB: CUNDINAMARCA · AD: ANTILLAS HOLANDESAS · AE: ANORI
+Pregunta 2 · AB: CHOCO · AD: ARABIA SAUDITA · AE: SANTAFE DE ANTIOQUIA
+Pregunta 2 · AB: HUILA · AD: ARGENTINA · AE: ANZA
+Pregunta 2 · AB: GUAJIRA · AD: ARMENIA · AE: APARTADO
+Pregunta 2 · AB: MAGDALENA · AD: ARUBA · AE: ARBOLETES
+Pregunta 2 · AB: META · AD: AUSTRALIA · AE: ARGELIA
+Pregunta 2 · AB: NARINO · AD: AUSTRIA · AE: ARMENIA
+Pregunta 2 · AB: NORTE DE SANTANDER · AD: AZERBAIJAN · AE: BARBOSA
+Pregunta 2 · AB: QUINDIO · AD: BAHAMAS · AE: BELMIRA
+Pregunta 2 · AB: RISARALDA · AD: BARÉIN · AE: BELLO
+Pregunta 2 · AB: SANTANDER · AD: BANGLADESH · AE: BETANIA
+Pregunta 2 · AB: SUCRE · AD: BARBADOS · AE: BETULIA
+Pregunta 2 · AB: TOLIMA · AD: BELGICA · AE: CIUDAD BOLIVAR
+Pregunta 2 · AB: VALLE DEL CAUCA · AD: BELICE · AE: BRICEÑO
+Pregunta 2 · AB: ARAUCA · AD: BENIN · AE: BURITICA
+Pregunta 2 · AB: CASANARE · AD: BERMUDAS · AE: CACERES
+Pregunta 2 · AB: PUTUMAYO · AD: BIELORUSIA · AE: CAICEDO
+Pregunta 2 · AB: SAN ANDRES · AD: BOLIVIA · AE: CALDAS
+Pregunta 2 · AB: AMAZONAS · AD: BOSNIA HERZEGOVINA · AE: CAMPAMENTO
+Pregunta 2 · AB: GUAINIA · AD: BOTSUANA · AE: CAÑASGORDAS
+Pregunta 2 · AB: GUAVIARE · AD: BRASIL · AE: CARACOLI
+Pregunta 2 · AB: VAUPES · AD: BRUNEI · AE: CARAMANTA
+Pregunta 2 · AB: VICHADA · AD: BULGARIA · AE: CAREPA
+Pregunta 2 · AD: BURKINA FASO · AE: EL CARMEN DE VIBORAL
+Pregunta 2 · AD: BURUNDI · AE: CAROLINA
+Pregunta 2 · AD: CABO VERDE · AE: CAUCASIA
+Pregunta 2 · AD: CAMBOYA · AE: CHIGORODO
+Pregunta 2 · AD: CAMERÚN · AE: CISNEROS
+Pregunta 2 · AD: CANADÁ · AE: COCORNA
+Pregunta 2 · AD: CHAD · AE: CONCEPCION
+Pregunta 2 · AD: CHILE · AE: CONCORDIA
+Pregunta 2 · AD: CHINA · AE: COPACABANA
+Pregunta 2 · AD: CHIPRE · AE: DABEIBA
+Pregunta 2 · AD: CIUDAD DEL VATICANO · AE: DON MATIAS
+Pregunta 2 · AD: COMORAS · AE: EBEJICO
+Pregunta 2 · AD: CONGO · AE: EL BAGRE
+Pregunta 2 · AD: COREA · AE: ENTRERRIOS
+Pregunta 2 · AD: COREA DEL NORTE · AE: ENVIGADO
+Pregunta 2 · AD: COSTA DE MARFIL · AE: FREDONIA
+Pregunta 2 · AD: COSTA RICA · AE: FRONTINO
+Pregunta 2 · AD: CROACIA · AE: GIRALDO
+Pregunta 2 · AD: CUBA · AE: GIRARDOTA
+Pregunta 2 · AD: CURAZAO · AE: GOMEZ PLATA
+Pregunta 2 · AD: CYPRUS · AE: GRANADA
+Pregunta 2 · AD: DINAMARCA · AE: GUADALUPE
+Pregunta 2 · AD: DJIBOUTI · AE: GUARNE
+Pregunta 2 · AD: DOMINICA · AE: GUATAPE
+Pregunta 2 · AD: ECUADOR · AE: HELICONIA
+Pregunta 2 · AD: EGIPTO · AE: HISPANIA
+Pregunta 2 · AD: EL SALVADOR · AE: ITAGUI
+Pregunta 2 · AD: EMIRATOS ARABES UNIDOS · AE: ITUANGO
+Pregunta 2 · AD: ESCOCIA · AE: JARDIN
+Pregunta 2 · AD: ESLOVAQUIA · AE: JERICO
+Pregunta 2 · AD: ESLOVENIA · AE: LA CEJA
+Pregunta 2 · AD: ESPAÑA · AE: LA ESTRELLA
+Pregunta 2 · AD: ESTADOS UNIDOS · AE: LA PINTADA
+Pregunta 2 · AD: ESTONIA · AE: LA UNION
+Pregunta 2 · AD: ETIOPIA · AE: LIBORINA
+Pregunta 2 · AD: FIJI · AE: MACEO
+Pregunta 2 · AD: FILIPINAS · AE: MARINILLA
+Pregunta 2 · AD: FINLANDIA · AE: MONTEBELLO
+Pregunta 2 · AD: FRANCIA · AE: MURINDO
+Pregunta 2 · AD: GABON · AE: MUTATA
+Pregunta 2 · AD: GAMBIA · AE: NARIÑO
+Pregunta 2 · AD: GEORGIA · AE: NECOCLI
+Pregunta 2 · AD: GHANA · AE: NECHI
+Pregunta 2 · AD: GIBRALTAR · AE: OLAYA
+Pregunta 2 · AD: GRECIA · AE: PEÐOL
+Pregunta 2 · AD: GRENADA · AE: PEQUE
+Pregunta 2 · AD: GROENLANDIA · AE: PUEBLORRICO
+Pregunta 2 · AD: GUADALUPE · AE: PUERTO BERRIO
+Pregunta 2 · AD: GUAM · AE: PUERTO NARE
+Pregunta 2 · AD: GUATEMALA · AE: PUERTO TRIUNFO
+Pregunta 2 · AD: GUINEA · AE: REMEDIOS
+Pregunta 2 · AD: GUINEA ECUATORIAL · AE: RETIRO
+Pregunta 2 · AD: GUINEA FRANCIASA · AE: RIONEGRO
+Pregunta 2 · AD: GUINEA-BISSAU · AE: SABANALARGA
+Pregunta 2 · AD: GUYANA · AE: SABANETA
+Pregunta 2 · AD: GUYANA FRANCIASA · AE: SALGAR
+Pregunta 2 · AD: HAITI · AE: SAN ANDRES DE CUERQUIA
+Pregunta 2 · AD: HAWAII · AE: SAN CARLOS
+Pregunta 2 · AD: HOLANDA · AE: SAN FRANCISCO
+Pregunta 2 · AD: HONDURAS · AE: SAN JERONIMO
+Pregunta 2 · AD: HUNGRIA · AE: SAN JOSE DE LA MONTAÑA
+Pregunta 2 · AD: INDIA · AE: SAN JUAN DE URABA
+Pregunta 2 · AD: INDONESIA · AE: SAN LUIS
+Pregunta 2 · AD: IRAN · AE: SAN PEDRO
+Pregunta 2 · AD: IRAQ · AE: SAN PEDRO DE URABA
+Pregunta 2 · AD: IRLANDA · AE: SAN RAFAEL
+Pregunta 2 · AD: IRLANDA DEL NORTE · AE: SAN ROQUE
+Pregunta 2 · AD: ISLA HEARD · AE: SAN VICENTE
+Pregunta 2 · AD: ISLANDIA · AE: SANTA BARBARA
+Pregunta 2 · AD: ISLAS BOUVET · AE: SANTA ROSA DE OSOS
+Pregunta 2 · AD: ISLAS CAICOS · AE: SANTO DOMINGO
+Pregunta 2 · AD: ISLAS CAIMAN · AE: EL SANTUARIO
+Pregunta 2 · AD: ISLAS CHANNEL · AE: SEGOVIA
+Pregunta 2 · AD: ISLAS CHRISTMAS · AE: SONSON
+Pregunta 2 · AD: ISLAS COOK · AE: SOPETRAN
+Pregunta 2 · AD: ISLAS FEROE · AE: TAMESIS
+Pregunta 2 · AD: ISLAS GEORGIA DEL SUR · AE: TARAZA
+Pregunta 2 · AD: ISLAS MALVINAS · AE: TARSO
+Pregunta 2 · AD: ISLAS MARSHALL · AE: TITIRIBI
+Pregunta 2 · AD: ISLAS SALOMON · AE: TOLEDO
+Pregunta 2 · AD: ISLAS TURCAS Y TURCOS · AE: TURBO
+Pregunta 2 · AD: ISLAS VIRGENES - USA · AE: URAMITA
+Pregunta 2 · AD: ISLAS VIRGENES BRITANICAS · AE: URRAO
+Pregunta 2 · AD: ISLE OF MAN · AE: VALDIVIA
+Pregunta 2 · AD: ISRAEL · AE: VALPARAISO
+Pregunta 2 · AD: ITALIA · AE: VEGACHI
+Pregunta 2 · AD: JAMAICA · AE: VENECIA
+Pregunta 2 · AD: JAPON · AE: VIGIA DEL FUERTE
+Pregunta 2 · AD: JORDANIA · AE: YALI
+Pregunta 2 · AD: KASAJISTAN · AE: YARUMAL
+Pregunta 2 · AD: KENYA · AE: YOLOMBO
+Pregunta 2 · AD: KIRIBATI · AE: YONDO
+Pregunta 2 · AD: KUWAIT · AE: ZARAGOZA
+Pregunta 2 · AD: KYRGYZSTAN · AE: BARRANQUILLA
+Pregunta 2 · AD: LAOS · AE: BARANOA
+Pregunta 2 · AD: LESOTO · AE: CAMPO DE LA CRUZ
+Pregunta 2 · AD: LETONIA · AE: CANDELARIA
+Pregunta 2 · AD: LIBANO · AE: GALAPA
+Pregunta 2 · AD: LIBERIA · AE: JUAN DE ACOSTA
+Pregunta 2 · AD: LIBIA · AE: LURUACO
+Pregunta 2 · AD: LIECHTENSTEIN · AE: MALAMBO
+Pregunta 2 · AD: LITUANIA · AE: MANATI
+Pregunta 2 · AD: LUXEMBURGO · AE: PALMAR DE VARELA
+Pregunta 2 · AD: MALASIA · AE: PIOJO
+Pregunta 2 · AD: MALAWI · AE: POLONUEVO
+Pregunta 2 · AD: MALI · AE: PONEDERA
+Pregunta 2 · AD: MALTA · AE: PUERTO COLOMBIA
+Pregunta 2 · AD: MARRUECOS · AE: REPELON
+Pregunta 2 · AD: MARTINICA · AE: SABANAGRANDE
+Pregunta 2 · AD: MAURICIO · AE: SABANALARGA
+Pregunta 2 · AD: MAURITANIA · AE: SANTA LUCIA
+Pregunta 2 · AD: MEXICO · AE: SANTO TOMAS
+Pregunta 2 · AD: MICRONESIA · AE: SOLEDAD
+Pregunta 2 · AD: MOLDAVIA · AE: SUAN
+Pregunta 2 · AD: MONACO · AE: TUBARA
+Pregunta 2 · AD: MONGOLIA · AE: USIACURI
+Pregunta 2 · AD: MOZAMBIQUE · AE: BOGOTA, D.C.
+Pregunta 2 · AD: NAMIBIA · AE: CARTAGENA
+Pregunta 2 · AD: NEPAL · AE: ACHI
+Pregunta 2 · AD: NICARAGUA · AE: ALTOS DEL ROSARIO
+Pregunta 2 · AD: NIGER · AE: ARENAL
+Pregunta 2 · AD: NIGERIA · AE: ARJONA
+Pregunta 2 · AD: NIUE · AE: ARROYOHONDO
+Pregunta 2 · AD: NORUEGA · AE: BARRANCO DE LOBA
+Pregunta 2 · AD: NUEVA CALEDONIA · AE: CALAMAR
+Pregunta 2 · AD: NUEVA GUINEA · AE: CANTAGALLO
+Pregunta 2 · AD: NUEVA ZELANDA · AE: CICUCO
+Pregunta 2 · AD: OMAN · AE: CORDOBA
+Pregunta 2 · AD: OTROS PAISES · AE: CLEMENCIA
+Pregunta 2 · AD: PAIS DE GALES · AE: EL CARMEN DE BOLIVAR
+Pregunta 2 · AD: PAKISTAN · AE: EL GUAMO
+Pregunta 2 · AD: PALAOS · AE: EL PEÑON
+Pregunta 2 · AD: PALESTINA · AE: HATILLO DE LOBA
+Pregunta 2 · AD: PANAMA · AE: MAGANGUE
+Pregunta 2 · AD: PARAGUAY · AE: MAHATES
+Pregunta 2 · AD: PERU · AE: MARGARITA
+Pregunta 2 · AD: PITCAIRN · AE: MARIA LA BAJA
+Pregunta 2 · AD: POLINESIA FRANCIASA · AE: MONTECRISTO
+Pregunta 2 · AD: POLONIA · AE: MOMPOS
+Pregunta 2 · AD: PORTUGAL · AE: NOROSI
+Pregunta 2 · AD: PUERTO RICO · AE: MORALES
+Pregunta 2 · AD: QATAR · AE: PINILLOS
+Pregunta 2 · AD: REINO UNIDO · AE: REGIDOR
+Pregunta 2 · AD: REPUBLICA CENTRO AFRICANA · AE: RIO VIEJO
+Pregunta 2 · AD: REPUBLICA CHECA · AE: SAN CRISTOBAL
+Pregunta 2 · AD: REPUBLICA DOMINICANA · AE: SAN ESTANISLAO
+Pregunta 2 · AD: REUNION · AE: SAN FERNANDO
+Pregunta 2 · AD: RUANDA · AE: SAN JACINTO
+Pregunta 2 · AD: RUMANIA · AE: SAN JACINTO DEL CAUCA
+Pregunta 2 · AD: RUSIA · AE: SAN JUAN NEPOMUCENO
+Pregunta 2 · AD: SAHARA OCCIDENTAL · AE: SAN MARTIN DE LOBA
+Pregunta 2 · AD: SAINT KITTS · AE: SAN PABLO
+Pregunta 2 · AD: SAINT MARTEEN · AE: SANTA CATALINA
+Pregunta 2 · AD: SAINT THOMAS · AE: SANTA ROSA
+Pregunta 2 · AD: SAMOA · AE: SANTA ROSA DEL SUR
+Pregunta 2 · AD: SAN MARINO · AE: SIMITI
+Pregunta 2 · AD: SAN VICENTE · AE: SOPLAVIENTO
+Pregunta 2 · AD: SANTA LUCIA · AE: TALAIGUA NUEVO
+Pregunta 2 · AD: SANTO TOMAS Y PRINCIPE · AE: TIQUISIO
+Pregunta 2 · AD: SENEGAL · AE: TURBACO
+Pregunta 2 · AD: SERBIA Y MONTENEGRO · AE: TURBANA
+Pregunta 2 · AD: SEYCHELLES · AE: VILLANUEVA
+Pregunta 2 · AD: SIERRA LEONA · AE: ZAMBRANO
+Pregunta 2 · AD: SINGAPUR · AE: TUNJA
+Pregunta 2 · AD: SIRIA · AE: ALMEIDA
+Pregunta 2 · AD: SOMALIA · AE: AQUITANIA
+Pregunta 2 · AD: SRI LANKA · AE: ARCABUCO
+Pregunta 2 · AD: SUDAFRICA · AE: BELEN
+Pregunta 2 · AD: SUDAN · AE: BERBEO
+Pregunta 2 · AD: SUECIA · AE: BETEITIVA
+Pregunta 2 · AD: SUIZA · AE: BOAVITA
+Pregunta 2 · AD: SURINAME · AE: BOYACA
+Pregunta 2 · AD: SWAZILAND · AE: BRICEÑO
+Pregunta 2 · AD: TAILANDIA · AE: BUENAVISTA
+Pregunta 2 · AD: TAIWAN · AE: BUSBANZA
+Pregunta 2 · AD: TAJIKISTAN · AE: CALDAS
+Pregunta 2 · AD: TANZANIA · AE: CAMPOHERMOSO
+Pregunta 2 · AD: TIMOR DEL ESTE · AE: CERINZA
+Pregunta 2 · AD: TOGO · AE: CHINAVITA
+Pregunta 2 · AD: TONGA · AE: CHIQUINQUIRA
+Pregunta 2 · AD: TRINIDAD Y TOBAGO · AE: CHISCAS
+Pregunta 2 · AD: TUNEZ · AE: CHITA
+Pregunta 2 · AD: TUNISIA · AE: CHITARAQUE
+Pregunta 2 · AD: TURKMENISTAN · AE: CHIVATA
+Pregunta 2 · AD: TURQUIA · AE: CIENEGA
+Pregunta 2 · AD: UCRANIA · AE: COMBITA
+Pregunta 2 · AD: UGANDA · AE: COPER
+Pregunta 2 · AD: URUGUAY · AE: CORRALES
+Pregunta 2 · AD: UZBEKISTAN · AE: COVARACHIA
+Pregunta 2 · AD: VANAUTU · AE: CUBARA
+Pregunta 2 · AD: VENEZUELA · AE: CUCAITA
+Pregunta 2 · AD: VIETNAM · AE: CUITIVA
+Pregunta 2 · AD: WALLIS AND FUTUNA · AE: CHIQUIZA
+Pregunta 2 · AD: YUGOSLAVIA · AE: CHIVOR
+Pregunta 2 · AD: ZAMBIA · AE: DUITAMA
+Pregunta 2 · AE: EL COCUY
+Pregunta 2 · AE: EL ESPINO
+Pregunta 2 · AE: FIRAVITOBA
+Pregunta 2 · AE: FLORESTA
+Pregunta 2 · AE: GACHANTIVA
+Pregunta 2 · AE: GAMEZA
+Pregunta 2 · AE: GARAGOA
+Pregunta 2 · AE: GUACAMAYAS
+Pregunta 2 · AE: GUATEQUE
+Pregunta 2 · AE: GUAYATA
+Pregunta 2 · AE: GsICAN
+Pregunta 2 · AE: IZA
+Pregunta 2 · AE: JENESANO
+Pregunta 2 · AE: JERICO
+Pregunta 2 · AE: LABRANZAGRANDE
+Pregunta 2 · AE: LA CAPILLA
+Pregunta 2 · AE: LA VICTORIA
+Pregunta 2 · AE: LA UVITA
+Pregunta 2 · AE: VILLA DE LEYVA
+Pregunta 2 · AE: MACANAL
+Pregunta 2 · AE: MARIPI
+Pregunta 2 · AE: MIRAFLORES
+Pregunta 2 · AE: MONGUA
+Pregunta 2 · AE: MONGUI
+Pregunta 2 · AE: MONIQUIRA
+Pregunta 2 · AE: MOTAVITA
+Pregunta 2 · AE: MUZO
+Pregunta 2 · AE: NOBSA
+Pregunta 2 · AE: NUEVO COLON
+Pregunta 2 · AE: OICATA
+Pregunta 2 · AE: OTANCHE
+Pregunta 2 · AE: PACHAVITA
+Pregunta 2 · AE: PAEZ
+Pregunta 2 · AE: PAIPA
+Pregunta 2 · AE: PAJARITO
+Pregunta 2 · AE: PANQUEBA
+Pregunta 2 · AE: PAUNA
+Pregunta 2 · AE: PAYA
+Pregunta 2 · AE: PAZ DE RIO
+Pregunta 2 · AE: PESCA
+Pregunta 2 · AE: PISBA
+Pregunta 2 · AE: PUERTO BOYACA
+Pregunta 2 · AE: QUIPAMA
+Pregunta 2 · AE: RAMIRIQUI
+Pregunta 2 · AE: RAQUIRA
+Pregunta 2 · AE: RONDON
+Pregunta 2 · AE: SABOYA
+Pregunta 2 · AE: SACHICA
+Pregunta 2 · AE: SAMACA
+Pregunta 2 · AE: SAN EDUARDO
+Pregunta 2 · AE: SAN JOSE DE PARE
+Pregunta 2 · AE: SAN LUIS DE GACENO
+Pregunta 2 · AE: SAN MATEO
+Pregunta 2 · AE: SAN MIGUEL DE SEMA
+Pregunta 2 · AE: SAN PABLO DE BORBUR
+Pregunta 2 · AE: SANTANA
+Pregunta 2 · AE: SANTA MARIA
+Pregunta 2 · AE: SANTA ROSA DE VITERBO
+Pregunta 2 · AE: SANTA SOFIA
+Pregunta 2 · AE: SATIVANORTE
+Pregunta 2 · AE: SATIVASUR
+Pregunta 2 · AE: SIACHOQUE
+Pregunta 2 · AE: SOATA
+Pregunta 2 · AE: SOCOTA
+Pregunta 2 · AE: SOCHA
+Pregunta 2 · AE: SOGAMOSO
+Pregunta 2 · AE: SOMONDOCO
+Pregunta 2 · AE: SORA
+Pregunta 2 · AE: SOTAQUIRA
+Pregunta 2 · AE: SORACA
+Pregunta 2 · AE: SUSACON
+Pregunta 2 · AE: SUTAMARCHAN
+Pregunta 2 · AE: SUTATENZA
+Pregunta 2 · AE: TASCO
+Pregunta 2 · AE: TENZA
+Pregunta 2 · AE: TIBANA
+Pregunta 2 · AE: TIBASOSA
+Pregunta 2 · AE: TINJACA
+Pregunta 2 · AE: TIPACOQUE
+Pregunta 2 · AE: TOCA
+Pregunta 2 · AE: TOGsI
+Pregunta 2 · AE: TOPAGA
+Pregunta 2 · AE: TOTA
+Pregunta 2 · AE: TUNUNGUA
+Pregunta 2 · AE: TURMEQUE
+Pregunta 2 · AE: TUTA
+Pregunta 2 · AE: TUTAZA
+Pregunta 2 · AE: UMBITA
+Pregunta 2 · AE: VENTAQUEMADA
+Pregunta 2 · AE: VIRACACHA
+Pregunta 2 · AE: ZETAQUIRA
+Pregunta 2 · AE: MANIZALES
+Pregunta 2 · AE: AGUADAS
+Pregunta 2 · AE: ANSERMA
+Pregunta 2 · AE: ARANZAZU
+Pregunta 2 · AE: BELALCAZAR
+Pregunta 2 · AE: CHINCHINA
+Pregunta 2 · AE: FILADELFIA
+Pregunta 2 · AE: LA DORADA
+Pregunta 2 · AE: LA MERCED
+Pregunta 2 · AE: MANZANARES
+Pregunta 2 · AE: MARMATO
+Pregunta 2 · AE: MARQUETALIA
+Pregunta 2 · AE: MARULANDA
+Pregunta 2 · AE: NEIRA
+Pregunta 2 · AE: NORCASIA
+Pregunta 2 · AE: PACORA
+Pregunta 2 · AE: PALESTINA
+Pregunta 2 · AE: PENSILVANIA
+Pregunta 2 · AE: RIOSUCIO
+Pregunta 2 · AE: RISARALDA
+Pregunta 2 · AE: SALAMINA
+Pregunta 2 · AE: SAMANA
+Pregunta 2 · AE: SAN JOSE
+Pregunta 2 · AE: SUPIA
+Pregunta 2 · AE: VICTORIA
+Pregunta 2 · AE: VILLAMARIA
+Pregunta 2 · AE: VITERBO
+Pregunta 2 · AE: FLORENCIA
+Pregunta 2 · AE: ALBANIA
+Pregunta 2 · AE: BELEN DE LOS ANDAQUIES
+Pregunta 2 · AE: CARTAGENA DEL CHAIRA
+Pregunta 2 · AE: CURILLO
+Pregunta 2 · AE: EL DONCELLO
+Pregunta 2 · AE: EL PAUJIL
+Pregunta 2 · AE: LA MONTAÑITA
+Pregunta 2 · AE: MILAN
+Pregunta 2 · AE: MORELIA
+Pregunta 2 · AE: PUERTO RICO
+Pregunta 2 · AE: SAN JOSE DEL FRAGUA
+Pregunta 2 · AE: SAN VICENTE DEL CAGUAN
+Pregunta 2 · AE: SOLANO
+Pregunta 2 · AE: SOLITA
+Pregunta 2 · AE: VALPARAISO
+Pregunta 2 · AE: POPAYAN
+Pregunta 2 · AE: ALMAGUER
+Pregunta 2 · AE: ARGELIA
+Pregunta 2 · AE: BALBOA
+Pregunta 2 · AE: BOLIVAR
+Pregunta 2 · AE: BUENOS AIRES
+Pregunta 2 · AE: CAJIBIO
+Pregunta 2 · AE: CALDONO
+Pregunta 2 · AE: CALOTO
+Pregunta 2 · AE: CORINTO
+Pregunta 2 · AE: EL TAMBO
+Pregunta 2 · AE: FLORENCIA
+Pregunta 2 · AE: GUACHENE
+Pregunta 2 · AE: GUAPI
+Pregunta 2 · AE: INZA
+Pregunta 2 · AE: JAMBALO
+Pregunta 2 · AE: LA SIERRA
+Pregunta 2 · AE: LA VEGA
+Pregunta 2 · AE: LOPEZ
+Pregunta 2 · AE: MERCADERES
+Pregunta 2 · AE: MIRANDA
+Pregunta 2 · AE: MORALES
+Pregunta 2 · AE: PADILLA
+Pregunta 2 · AE: PAEZ
+Pregunta 2 · AE: PATIA
+Pregunta 2 · AE: PIAMONTE
+Pregunta 2 · AE: PIENDAMO
+Pregunta 2 · AE: PUERTO TEJADA
+Pregunta 2 · AE: PURACE
+Pregunta 2 · AE: ROSAS
+Pregunta 2 · AE: SAN SEBASTIAN
+Pregunta 2 · AE: SANTANDER DE QUILICHAO
+Pregunta 2 · AE: SANTA ROSA
+Pregunta 2 · AE: SILVIA
+Pregunta 2 · AE: SOTARA
+Pregunta 2 · AE: SUAREZ
+Pregunta 2 · AE: SUCRE
+Pregunta 2 · AE: TIMBIO
+Pregunta 2 · AE: TIMBIQUI
+Pregunta 2 · AE: TORIBIO
+Pregunta 2 · AE: TOTORO
+Pregunta 2 · AE: VILLA RICA
+Pregunta 2 · AE: VALLEDUPAR
+Pregunta 2 · AE: AGUACHICA
+Pregunta 2 · AE: AGUSTIN CODAZZI
+Pregunta 2 · AE: ASTREA
+Pregunta 2 · AE: BECERRIL
+Pregunta 2 · AE: BOSCONIA
+Pregunta 2 · AE: CHIMICHAGUA
+Pregunta 2 · AE: CHIRIGUANA
+Pregunta 2 · AE: CURUMANI
+Pregunta 2 · AE: EL COPEY
+Pregunta 2 · AE: EL PASO
+Pregunta 2 · AE: GAMARRA
+Pregunta 2 · AE: GONZALEZ
+Pregunta 2 · AE: LA GLORIA
+Pregunta 2 · AE: LA JAGUA DE IBIRICO
+Pregunta 2 · AE: MANAURE
+Pregunta 2 · AE: PAILITAS
+Pregunta 2 · AE: PELAYA
+Pregunta 2 · AE: PUEBLO BELLO
+Pregunta 2 · AE: RIO DE ORO
+Pregunta 2 · AE: LA PAZ
+Pregunta 2 · AE: SAN ALBERTO
+Pregunta 2 · AE: SAN DIEGO
+Pregunta 2 · AE: SAN MARTIN
+Pregunta 2 · AE: TAMALAMEQUE
+Pregunta 2 · AE: MONTERIA
+Pregunta 2 · AE: AYAPEL
+Pregunta 2 · AE: BUENAVISTA
+Pregunta 2 · AE: CANALETE
+Pregunta 2 · AE: CERETE
+Pregunta 2 · AE: CHIMA
+Pregunta 2 · AE: CHINU
+Pregunta 2 · AE: CIENAGA DE ORO
+Pregunta 2 · AE: COTORRA
+Pregunta 2 · AE: LA APARTADA
+Pregunta 2 · AE: LORICA
+Pregunta 2 · AE: LOS CORDOBAS
+Pregunta 2 · AE: MOMIL
+Pregunta 2 · AE: MONTELIBANO
+Pregunta 2 · AE: MOÑITOS
+Pregunta 2 · AE: PLANETA RICA
+Pregunta 2 · AE: PUEBLO NUEVO
+Pregunta 2 · AE: PUERTO ESCONDIDO
+Pregunta 2 · AE: PUERTO LIBERTADOR
+Pregunta 2 · AE: PURISIMA
+Pregunta 2 · AE: SAHAGUN
+Pregunta 2 · AE: SAN ANDRES SOTAVENTO
+Pregunta 2 · AE: SAN ANTERO
+Pregunta 2 · AE: SAN BERNARDO DEL VIENTO
+Pregunta 2 · AE: SAN CARLOS
+Pregunta 2 · AE: SAN PELAYO
+Pregunta 2 · AE: TIERRALTA
+Pregunta 2 · AE: VALENCIA
+Pregunta 2 · AE: AGUA DE DIOS
+Pregunta 2 · AE: ALBAN
+Pregunta 2 · AE: ANAPOIMA
+Pregunta 2 · AE: ANOLAIMA
+Pregunta 2 · AE: ARBELAEZ
+Pregunta 2 · AE: BELTRAN
+Pregunta 2 · AE: BITUIMA
+Pregunta 2 · AE: BOJACA
+Pregunta 2 · AE: CABRERA
+Pregunta 2 · AE: CACHIPAY
+Pregunta 2 · AE: CAJICA
+Pregunta 2 · AE: CAPARRAPI
+Pregunta 2 · AE: CAQUEZA
+Pregunta 2 · AE: CARMEN DE CARUPA
+Pregunta 2 · AE: CHAGUANI
+Pregunta 2 · AE: CHIA
+Pregunta 2 · AE: CHIPAQUE
+Pregunta 2 · AE: CHOACHI
+Pregunta 2 · AE: CHOCONTA
+Pregunta 2 · AE: COGUA
+Pregunta 2 · AE: COTA
+Pregunta 2 · AE: CUCUNUBA
+Pregunta 2 · AE: EL COLEGIO
+Pregunta 2 · AE: EL PEÑON
+Pregunta 2 · AE: EL ROSAL
+Pregunta 2 · AE: FACATATIVA
+Pregunta 2 · AE: FOMEQUE
+Pregunta 2 · AE: FOSCA
+Pregunta 2 · AE: FUNZA
+Pregunta 2 · AE: FUQUENE
+Pregunta 2 · AE: FUSAGASUGA
+Pregunta 2 · AE: GACHALA
+Pregunta 2 · AE: GACHANCIPA
+Pregunta 2 · AE: GACHETA
+Pregunta 2 · AE: GAMA
+Pregunta 2 · AE: GIRARDOT
+Pregunta 2 · AE: GRANADA
+Pregunta 2 · AE: GUACHETA
+Pregunta 2 · AE: GUADUAS
+Pregunta 2 · AE: GUASCA
+Pregunta 2 · AE: GUATAQUI
+Pregunta 2 · AE: GUATAVITA
+Pregunta 2 · AE: GUAYABAL DE SIQUIMA
+Pregunta 2 · AE: GUAYABETAL
+Pregunta 2 · AE: GUTIERREZ
+Pregunta 2 · AE: JERUSALEN
+Pregunta 2 · AE: JUNIN
+Pregunta 2 · AE: LA CALERA
+Pregunta 2 · AE: LA MESA
+Pregunta 2 · AE: LA PALMA
+Pregunta 2 · AE: LA PEÑA
+Pregunta 2 · AE: LA VEGA
+Pregunta 2 · AE: LENGUAZAQUE
+Pregunta 2 · AE: MACHETA
+Pregunta 2 · AE: MADRID
+Pregunta 2 · AE: MANTA
+Pregunta 2 · AE: MEDINA
+Pregunta 2 · AE: MOSQUERA
+Pregunta 2 · AE: NARIÑO
+Pregunta 2 · AE: NEMOCON
+Pregunta 2 · AE: NILO
+Pregunta 2 · AE: NIMAIMA
+Pregunta 2 · AE: NOCAIMA
+Pregunta 2 · AE: VENECIA
+Pregunta 2 · AE: PACHO
+Pregunta 2 · AE: PAIME
+Pregunta 2 · AE: PANDI
+Pregunta 2 · AE: PARATEBUENO
+Pregunta 2 · AE: PASCA
+Pregunta 2 · AE: PUERTO SALGAR
+Pregunta 2 · AE: PULI
+Pregunta 2 · AE: QUEBRADANEGRA
+Pregunta 2 · AE: QUETAME
+Pregunta 2 · AE: QUIPILE
+Pregunta 2 · AE: APULO
+Pregunta 2 · AE: RICAURTE
+Pregunta 2 · AE: SAN ANTONIO DEL TEQUENDAMA
+Pregunta 2 · AE: SAN BERNARDO
+Pregunta 2 · AE: SAN CAYETANO
+Pregunta 2 · AE: SAN FRANCISCO
+Pregunta 2 · AE: SAN JUAN DE RIO SECO
+Pregunta 2 · AE: SASAIMA
+Pregunta 2 · AE: SESQUILE
+Pregunta 2 · AE: SIBATE
+Pregunta 2 · AE: SILVANIA
+Pregunta 2 · AE: SIMIJACA
+Pregunta 2 · AE: SOACHA
+Pregunta 2 · AE: SOPO
+Pregunta 2 · AE: SUBACHOQUE
+Pregunta 2 · AE: SUESCA
+Pregunta 2 · AE: SUPATA
+Pregunta 2 · AE: SUSA
+Pregunta 2 · AE: SUTATAUSA
+Pregunta 2 · AE: TABIO
+Pregunta 2 · AE: TAUSA
+Pregunta 2 · AE: TENA
+Pregunta 2 · AE: TENJO
+Pregunta 2 · AE: TIBACUY
+Pregunta 2 · AE: TIBIRITA
+Pregunta 2 · AE: TOCAIMA
+Pregunta 2 · AE: TOCANCIPA
+Pregunta 2 · AE: TOPAIPI
+Pregunta 2 · AE: UBALA
+Pregunta 2 · AE: UBAQUE
+Pregunta 2 · AE: VILLA DE SAN DIEGO DE UBATE
+Pregunta 2 · AE: UNE
+Pregunta 2 · AE: UTICA
+Pregunta 2 · AE: VERGARA
+Pregunta 2 · AE: VIANI
+Pregunta 2 · AE: VILLAGOMEZ
+Pregunta 2 · AE: VILLAPINZON
+Pregunta 2 · AE: VILLETA
+Pregunta 2 · AE: VIOTA
+Pregunta 2 · AE: YACOPI
+Pregunta 2 · AE: ZIPACON
+Pregunta 2 · AE: ZIPAQUIRA
+Pregunta 2 · AE: QUIBDO
+Pregunta 2 · AE: ACANDI
+Pregunta 2 · AE: ALTO BAUDO
+Pregunta 2 · AE: ATRATO
+Pregunta 2 · AE: BAGADO
+Pregunta 2 · AE: BAHIA SOLANO
+Pregunta 2 · AE: BAJO BAUDO
+Pregunta 2 · AE: BOJAYA
+Pregunta 2 · AE: EL CANTON DEL SAN PABLO
+Pregunta 2 · AE: CARMEN DEL DARIEN
+Pregunta 2 · AE: CERTEGUI
+Pregunta 2 · AE: CONDOTO
+Pregunta 2 · AE: EL CARMEN DE ATRATO
+Pregunta 2 · AE: EL LITORAL DEL SAN JUAN
+Pregunta 2 · AE: ISTMINA
+Pregunta 2 · AE: JURADO
+Pregunta 2 · AE: LLORO
+Pregunta 2 · AE: MEDIO ATRATO
+Pregunta 2 · AE: MEDIO BAUDO
+Pregunta 2 · AE: MEDIO SAN JUAN
+Pregunta 2 · AE: NOVITA
+Pregunta 2 · AE: NUQUI
+Pregunta 2 · AE: RIO IRO
+Pregunta 2 · AE: RIO QUITO
+Pregunta 2 · AE: RIOSUCIO
+Pregunta 2 · AE: SAN JOSE DEL PALMAR
+Pregunta 2 · AE: SIPI
+Pregunta 2 · AE: TADO
+Pregunta 2 · AE: UNGUIA
+Pregunta 2 · AE: UNION PANAMERICANA
+Pregunta 2 · AE: NEIVA
+Pregunta 2 · AE: ACEVEDO
+Pregunta 2 · AE: AGRADO
+Pregunta 2 · AE: AIPE
+Pregunta 2 · AE: ALGECIRAS
+Pregunta 2 · AE: ALTAMIRA
+Pregunta 2 · AE: BARAYA
+Pregunta 2 · AE: CAMPOALEGRE
+Pregunta 2 · AE: COLOMBIA
+Pregunta 2 · AE: ELIAS
+Pregunta 2 · AE: GARZON
+Pregunta 2 · AE: GIGANTE
+Pregunta 2 · AE: GUADALUPE
+Pregunta 2 · AE: HOBO
+Pregunta 2 · AE: IQUIRA
+Pregunta 2 · AE: ISNOS
+Pregunta 2 · AE: LA ARGENTINA
+Pregunta 2 · AE: LA PLATA
+Pregunta 2 · AE: NATAGA
+Pregunta 2 · AE: OPORAPA
+Pregunta 2 · AE: PAICOL
+Pregunta 2 · AE: PALERMO
+Pregunta 2 · AE: PALESTINA
+Pregunta 2 · AE: PITAL
+Pregunta 2 · AE: PITALITO
+Pregunta 2 · AE: RIVERA
+Pregunta 2 · AE: SALADOBLANCO
+Pregunta 2 · AE: SAN AGUSTIN
+Pregunta 2 · AE: SANTA MARIA
+Pregunta 2 · AE: SUAZA
+Pregunta 2 · AE: TARQUI
+Pregunta 2 · AE: TESALIA
+Pregunta 2 · AE: TELLO
+Pregunta 2 · AE: TERUEL
+Pregunta 2 · AE: TIMANA
+Pregunta 2 · AE: VILLAVIEJA
+Pregunta 2 · AE: YAGUARA
+Pregunta 2 · AE: RIOHACHA
+Pregunta 2 · AE: ALBANIA
+Pregunta 2 · AE: BARRANCAS
+Pregunta 2 · AE: DIBULLA
+Pregunta 2 · AE: DISTRACCION
+Pregunta 2 · AE: EL MOLINO
+Pregunta 2 · AE: FONSECA
+Pregunta 2 · AE: HATONUEVO
+Pregunta 2 · AE: LA JAGUA DEL PILAR
+Pregunta 2 · AE: MAICAO
+Pregunta 2 · AE: MANAURE
+Pregunta 2 · AE: SAN JUAN DEL CESAR
+Pregunta 2 · AE: URIBIA
+Pregunta 2 · AE: URUMITA
+Pregunta 2 · AE: VILLANUEVA
+Pregunta 2 · AE: SANTA MARTA
+Pregunta 2 · AE: ALGARROBO
+Pregunta 2 · AE: ARACATACA
+Pregunta 2 · AE: ARIGUANI
+Pregunta 2 · AE: CERRO SAN ANTONIO
+Pregunta 2 · AE: CHIBOLO
+Pregunta 2 · AE: CIENAGA
+Pregunta 2 · AE: CONCORDIA
+Pregunta 2 · AE: EL BANCO
+Pregunta 2 · AE: EL PIÑON
+Pregunta 2 · AE: EL RETEN
+Pregunta 2 · AE: FUNDACION
+Pregunta 2 · AE: GUAMAL
+Pregunta 2 · AE: NUEVA GRANADA
+Pregunta 2 · AE: PEDRAZA
+Pregunta 2 · AE: PIJIÑO DEL CARMEN
+Pregunta 2 · AE: PIVIJAY
+Pregunta 2 · AE: PLATO
+Pregunta 2 · AE: PUEBLOVIEJO
+Pregunta 2 · AE: REMOLINO
+Pregunta 2 · AE: SABANAS DE SAN ANGEL
+Pregunta 2 · AE: SALAMINA
+Pregunta 2 · AE: SAN SEBASTIAN DE BUENAVISTA
+Pregunta 2 · AE: SAN ZENON
+Pregunta 2 · AE: SANTA ANA
+Pregunta 2 · AE: SANTA BARBARA DE PINTO
+Pregunta 2 · AE: SITIONUEVO
+Pregunta 2 · AE: TENERIFE
+Pregunta 2 · AE: ZAPAYAN
+Pregunta 2 · AE: ZONA BANANERA
+Pregunta 2 · AE: VILLAVICENCIO
+Pregunta 2 · AE: ACACIAS
+Pregunta 2 · AE: BARRANCA DE UPIA
+Pregunta 2 · AE: CABUYARO
+Pregunta 2 · AE: CASTILLA LA NUEVA
+Pregunta 2 · AE: CUBARRAL
+Pregunta 2 · AE: CUMARAL
+Pregunta 2 · AE: EL CALVARIO
+Pregunta 2 · AE: EL CASTILLO
+Pregunta 2 · AE: EL DORADO
+Pregunta 2 · AE: FUENTE DE ORO
+Pregunta 2 · AE: GRANADA
+Pregunta 2 · AE: GUAMAL
+Pregunta 2 · AE: MAPIRIPAN
+Pregunta 2 · AE: MESETAS
+Pregunta 2 · AE: LA MACARENA
+Pregunta 2 · AE: URIBE
+Pregunta 2 · AE: LEJANIAS
+Pregunta 2 · AE: PUERTO CONCORDIA
+Pregunta 2 · AE: PUERTO GAITAN
+Pregunta 2 · AE: PUERTO LOPEZ
+Pregunta 2 · AE: PUERTO LLERAS
+Pregunta 2 · AE: PUERTO RICO
+Pregunta 2 · AE: RESTREPO
+Pregunta 2 · AE: SAN CARLOS DE GUAROA
+Pregunta 2 · AE: SAN JUAN DE ARAMA
+Pregunta 2 · AE: SAN JUANITO
+Pregunta 2 · AE: SAN MARTIN
+Pregunta 2 · AE: VISTAHERMOSA
+Pregunta 2 · AE: PASTO
+Pregunta 2 · AE: ALBAN
+Pregunta 2 · AE: ALDANA
+Pregunta 2 · AE: ANCUYA
+Pregunta 2 · AE: ARBOLEDA
+Pregunta 2 · AE: BARBACOAS
+Pregunta 2 · AE: BELEN
+Pregunta 2 · AE: BUESACO
+Pregunta 2 · AE: COLON
+Pregunta 2 · AE: CONSACA
+Pregunta 2 · AE: CONTADERO
+Pregunta 2 · AE: CORDOBA
+Pregunta 2 · AE: CUASPUD
+Pregunta 2 · AE: CUMBAL
+Pregunta 2 · AE: CUMBITARA
+Pregunta 2 · AE: CHACHAGsI
+Pregunta 2 · AE: EL CHARCO
+Pregunta 2 · AE: EL PEÑOL
+Pregunta 2 · AE: EL ROSARIO
+Pregunta 2 · AE: EL TABLON DE GOMEZ
+Pregunta 2 · AE: EL TAMBO
+Pregunta 2 · AE: FUNES
+Pregunta 2 · AE: GUACHUCAL
+Pregunta 2 · AE: GUAITARILLA
+Pregunta 2 · AE: GUALMATAN
+Pregunta 2 · AE: ILES
+Pregunta 2 · AE: IMUES
+Pregunta 2 · AE: IPIALES
+Pregunta 2 · AE: LA CRUZ
+Pregunta 2 · AE: LA FLORIDA
+Pregunta 2 · AE: LA LLANADA
+Pregunta 2 · AE: LA TOLA
+Pregunta 2 · AE: LA UNION
+Pregunta 2 · AE: LEIVA
+Pregunta 2 · AE: LINARES
+Pregunta 2 · AE: LOS ANDES
+Pregunta 2 · AE: MAGsI
+Pregunta 2 · AE: MALLAMA
+Pregunta 2 · AE: MOSQUERA
+Pregunta 2 · AE: NARIÑO
+Pregunta 2 · AE: OLAYA HERRERA
+Pregunta 2 · AE: OSPINA
+Pregunta 2 · AE: FRANCISCO PIZARRO
+Pregunta 2 · AE: POLICARPA
+Pregunta 2 · AE: POTOSI
+Pregunta 2 · AE: PROVIDENCIA
+Pregunta 2 · AE: PUERRES
+Pregunta 2 · AE: PUPIALES
+Pregunta 2 · AE: RICAURTE
+Pregunta 2 · AE: ROBERTO PAYAN
+Pregunta 2 · AE: SAMANIEGO
+Pregunta 2 · AE: SANDONA
+Pregunta 2 · AE: SAN BERNARDO
+Pregunta 2 · AE: SAN LORENZO
+Pregunta 2 · AE: SAN PABLO
+Pregunta 2 · AE: SAN PEDRO DE CARTAGO
+Pregunta 2 · AE: SANTA BARBARA
+Pregunta 2 · AE: SANTACRUZ
+Pregunta 2 · AE: SAPUYES
+Pregunta 2 · AE: TAMINANGO
+Pregunta 2 · AE: TANGUA
+Pregunta 2 · AE: SAN ANDRES DE TUMACO
+Pregunta 2 · AE: TUQUERRES
+Pregunta 2 · AE: YACUANQUER
+Pregunta 2 · AE: CUCUTA
+Pregunta 2 · AE: ABREGO
+Pregunta 2 · AE: ARBOLEDAS
+Pregunta 2 · AE: BOCHALEMA
+Pregunta 2 · AE: BUCARASICA
+Pregunta 2 · AE: CACOTA
+Pregunta 2 · AE: CACHIRA
+Pregunta 2 · AE: CHINACOTA
+Pregunta 2 · AE: CHITAGA
+Pregunta 2 · AE: CONVENCION
+Pregunta 2 · AE: CUCUTILLA
+Pregunta 2 · AE: DURANIA
+Pregunta 2 · AE: EL CARMEN
+Pregunta 2 · AE: EL TARRA
+Pregunta 2 · AE: EL ZULIA
+Pregunta 2 · AE: GRAMALOTE
+Pregunta 2 · AE: HACARI
+Pregunta 2 · AE: HERRAN
+Pregunta 2 · AE: LABATECA
+Pregunta 2 · AE: LA ESPERANZA
+Pregunta 2 · AE: LA PLAYA
+Pregunta 2 · AE: LOS PATIOS
+Pregunta 2 · AE: LOURDES
+Pregunta 2 · AE: MUTISCUA
+Pregunta 2 · AE: OCAÑA
+Pregunta 2 · AE: PAMPLONA
+Pregunta 2 · AE: PAMPLONITA
+Pregunta 2 · AE: PUERTO SANTANDER
+Pregunta 2 · AE: RAGONVALIA
+Pregunta 2 · AE: SALAZAR
+Pregunta 2 · AE: SAN CALIXTO
+Pregunta 2 · AE: SAN CAYETANO
+Pregunta 2 · AE: SANTIAGO
+Pregunta 2 · AE: SARDINATA
+Pregunta 2 · AE: SILOS
+Pregunta 2 · AE: TEORAMA
+Pregunta 2 · AE: TIBU
+Pregunta 2 · AE: TOLEDO
+Pregunta 2 · AE: VILLA CARO
+Pregunta 2 · AE: VILLA DEL ROSARIO
+Pregunta 2 · AE: ARMENIA
+Pregunta 2 · AE: BUENAVISTA
+Pregunta 2 · AE: CALARCA
+Pregunta 2 · AE: CIRCASIA
+Pregunta 2 · AE: CORDOBA
+Pregunta 2 · AE: FILANDIA
+Pregunta 2 · AE: GENOVA
+Pregunta 2 · AE: LA TEBAIDA
+Pregunta 2 · AE: MONTENEGRO
+Pregunta 2 · AE: PIJAO
+Pregunta 2 · AE: QUIMBAYA
+Pregunta 2 · AE: SALENTO
+Pregunta 2 · AE: PEREIRA
+Pregunta 2 · AE: APIA
+Pregunta 2 · AE: BALBOA
+Pregunta 2 · AE: BELEN DE UMBRIA
+Pregunta 2 · AE: DOSQUEBRADAS
+Pregunta 2 · AE: GUATICA
+Pregunta 2 · AE: LA CELIA
+Pregunta 2 · AE: LA VIRGINIA
+Pregunta 2 · AE: MARSELLA
+Pregunta 2 · AE: MISTRATO
+Pregunta 2 · AE: PUEBLO RICO
+Pregunta 2 · AE: QUINCHIA
+Pregunta 2 · AE: SANTA ROSA DE CABAL
+Pregunta 2 · AE: SANTUARIO
+Pregunta 2 · AE: BUCARAMANGA
+Pregunta 2 · AE: AGUADA
+Pregunta 2 · AE: ALBANIA
+Pregunta 2 · AE: ARATOCA
+Pregunta 2 · AE: BARBOSA
+Pregunta 2 · AE: BARICHARA
+Pregunta 2 · AE: BARRANCABERMEJA
+Pregunta 2 · AE: BETULIA
+Pregunta 2 · AE: BOLIVAR
+Pregunta 2 · AE: CABRERA
+Pregunta 2 · AE: CALIFORNIA
+Pregunta 2 · AE: CAPITANEJO
+Pregunta 2 · AE: CARCASI
+Pregunta 2 · AE: CEPITA
+Pregunta 2 · AE: CERRITO
+Pregunta 2 · AE: CHARALA
+Pregunta 2 · AE: CHARTA
+Pregunta 2 · AE: CHIMA
+Pregunta 2 · AE: CHIPATA
+Pregunta 2 · AE: CIMITARRA
+Pregunta 2 · AE: CONCEPCION
+Pregunta 2 · AE: CONFINES
+Pregunta 2 · AE: CONTRATACION
+Pregunta 2 · AE: COROMORO
+Pregunta 2 · AE: CURITI
+Pregunta 2 · AE: EL CARMEN DE CHUCURI
+Pregunta 2 · AE: EL GUACAMAYO
+Pregunta 2 · AE: EL PEÑON
+Pregunta 2 · AE: EL PLAYON
+Pregunta 2 · AE: ENCINO
+Pregunta 2 · AE: ENCISO
+Pregunta 2 · AE: FLORIAN
+Pregunta 2 · AE: FLORIDABLANCA
+Pregunta 2 · AE: GALAN
+Pregunta 2 · AE: GAMBITA
+Pregunta 2 · AE: GIRON
+Pregunta 2 · AE: GUACA
+Pregunta 2 · AE: GUADALUPE
+Pregunta 2 · AE: GUAPOTA
+Pregunta 2 · AE: GUAVATA
+Pregunta 2 · AE: GsEPSA
+Pregunta 2 · AE: HATO
+Pregunta 2 · AE: JESUS MARIA
+Pregunta 2 · AE: JORDAN
+Pregunta 2 · AE: LA BELLEZA
+Pregunta 2 · AE: LANDAZURI
+Pregunta 2 · AE: LA PAZ
+Pregunta 2 · AE: LEBRIJA
+Pregunta 2 · AE: LOS SANTOS
+Pregunta 2 · AE: MACARAVITA
+Pregunta 2 · AE: MALAGA
+Pregunta 2 · AE: MATANZA
+Pregunta 2 · AE: MOGOTES
+Pregunta 2 · AE: MOLAGAVITA
+Pregunta 2 · AE: OCAMONTE
+Pregunta 2 · AE: OIBA
+Pregunta 2 · AE: ONZAGA
+Pregunta 2 · AE: PALMAR
+Pregunta 2 · AE: PALMAS DEL SOCORRO
+Pregunta 2 · AE: PARAMO
+Pregunta 2 · AE: PIEDECUESTA
+Pregunta 2 · AE: PINCHOTE
+Pregunta 2 · AE: PUENTE NACIONAL
+Pregunta 2 · AE: PUERTO PARRA
+Pregunta 2 · AE: PUERTO WILCHES
+Pregunta 2 · AE: RIONEGRO
+Pregunta 2 · AE: SABANA DE TORRES
+Pregunta 2 · AE: SAN ANDRES
+Pregunta 2 · AE: SAN BENITO
+Pregunta 2 · AE: SAN GIL
+Pregunta 2 · AE: SAN JOAQUIN
+Pregunta 2 · AE: SAN JOSE DE MIRANDA
+Pregunta 2 · AE: SAN MIGUEL
+Pregunta 2 · AE: SAN VICENTE DE CHUCURI
+Pregunta 2 · AE: SANTA BARBARA
+Pregunta 2 · AE: SANTA HELENA DEL OPON
+Pregunta 2 · AE: SIMACOTA
+Pregunta 2 · AE: SOCORRO
+Pregunta 2 · AE: SUAITA
+Pregunta 2 · AE: SUCRE
+Pregunta 2 · AE: SURATA
+Pregunta 2 · AE: TONA
+Pregunta 2 · AE: VALLE DE SAN JOSE
+Pregunta 2 · AE: VELEZ
+Pregunta 2 · AE: VETAS
+Pregunta 2 · AE: VILLANUEVA
+Pregunta 2 · AE: ZAPATOCA
+Pregunta 2 · AE: SINCELEJO
+Pregunta 2 · AE: BUENAVISTA
+Pregunta 2 · AE: CAIMITO
+Pregunta 2 · AE: COLOSO
+Pregunta 2 · AE: COROZAL
+Pregunta 2 · AE: COVEÑAS
+Pregunta 2 · AE: CHALAN
+Pregunta 2 · AE: EL ROBLE
+Pregunta 2 · AE: GALERAS
+Pregunta 2 · AE: GUARANDA
+Pregunta 2 · AE: LA UNION
+Pregunta 2 · AE: LOS PALMITOS
+Pregunta 2 · AE: MAJAGUAL
+Pregunta 2 · AE: MORROA
+Pregunta 2 · AE: OVEJAS
+Pregunta 2 · AE: PALMITO
+Pregunta 2 · AE: SAMPUES
+Pregunta 2 · AE: SAN BENITO ABAD
+Pregunta 2 · AE: SAN JUAN DE BETULIA
+Pregunta 2 · AE: SAN MARCOS
+Pregunta 2 · AE: SAN ONOFRE
+Pregunta 2 · AE: SAN PEDRO
+Pregunta 2 · AE: SAN LUIS DE SINCE
+Pregunta 2 · AE: SUCRE
+Pregunta 2 · AE: SANTIAGO DE TOLU
+Pregunta 2 · AE: TOLU VIEJO
+Pregunta 2 · AE: IBAGUE
+Pregunta 2 · AE: ALPUJARRA
+Pregunta 2 · AE: ALVARADO
+Pregunta 2 · AE: AMBALEMA
+Pregunta 2 · AE: ANZOATEGUI
+Pregunta 2 · AE: ARMERO
+Pregunta 2 · AE: ATACO
+Pregunta 2 · AE: CAJAMARCA
+Pregunta 2 · AE: CARMEN DE APICALA
+Pregunta 2 · AE: CASABIANCA
+Pregunta 2 · AE: CHAPARRAL
+Pregunta 2 · AE: COELLO
+Pregunta 2 · AE: COYAIMA
+Pregunta 2 · AE: CUNDAY
+Pregunta 2 · AE: DOLORES
+Pregunta 2 · AE: ESPINAL
+Pregunta 2 · AE: FALAN
+Pregunta 2 · AE: FLANDES
+Pregunta 2 · AE: FRESNO
+Pregunta 2 · AE: GUAMO
+Pregunta 2 · AE: HERVEO
+Pregunta 2 · AE: HONDA
+Pregunta 2 · AE: ICONONZO
+Pregunta 2 · AE: LERIDA
+Pregunta 2 · AE: LIBANO
+Pregunta 2 · AE: MARIQUITA
+Pregunta 2 · AE: MELGAR
+Pregunta 2 · AE: MURILLO
+Pregunta 2 · AE: NATAGAIMA
+Pregunta 2 · AE: ORTEGA
+Pregunta 2 · AE: PALOCABILDO
+Pregunta 2 · AE: PIEDRAS
+Pregunta 2 · AE: PLANADAS
+Pregunta 2 · AE: PRADO
+Pregunta 2 · AE: PURIFICACION
+Pregunta 2 · AE: RIOBLANCO
+Pregunta 2 · AE: RONCESVALLES
+Pregunta 2 · AE: ROVIRA
+Pregunta 2 · AE: SALDAÑA
+Pregunta 2 · AE: SAN ANTONIO
+Pregunta 2 · AE: SAN LUIS
+Pregunta 2 · AE: SANTA ISABEL
+Pregunta 2 · AE: SUAREZ
+Pregunta 2 · AE: VALLE DE SAN JUAN
+Pregunta 2 · AE: VENADILLO
+Pregunta 2 · AE: VILLAHERMOSA
+Pregunta 2 · AE: VILLARRICA
+Pregunta 2 · AE: CALI
+Pregunta 2 · AE: ALCALA
+Pregunta 2 · AE: ANDALUCIA
+Pregunta 2 · AE: ANSERMANUEVO
+Pregunta 2 · AE: ARGELIA
+Pregunta 2 · AE: BOLIVAR
+Pregunta 2 · AE: BUENAVENTURA
+Pregunta 2 · AE: GUADALAJARA DE BUGA
+Pregunta 2 · AE: BUGALAGRANDE
+Pregunta 2 · AE: CAICEDONIA
+Pregunta 2 · AE: CALIMA
+Pregunta 2 · AE: CANDELARIA
+Pregunta 2 · AE: CARTAGO
+Pregunta 2 · AE: DAGUA
+Pregunta 2 · AE: EL AGUILA
+Pregunta 2 · AE: EL CAIRO
+Pregunta 2 · AE: EL CERRITO
+Pregunta 2 · AE: EL DOVIO
+Pregunta 2 · AE: FLORIDA
+Pregunta 2 · AE: GINEBRA
+Pregunta 2 · AE: GUACARI
+Pregunta 2 · AE: JAMUNDI
+Pregunta 2 · AE: LA CUMBRE
+Pregunta 2 · AE: LA UNION
+Pregunta 2 · AE: LA VICTORIA
+Pregunta 2 · AE: OBANDO
+Pregunta 2 · AE: PALMIRA
+Pregunta 2 · AE: PRADERA
+Pregunta 2 · AE: RESTREPO
+Pregunta 2 · AE: RIOFRIO
+Pregunta 2 · AE: ROLDANILLO
+Pregunta 2 · AE: SAN PEDRO
+Pregunta 2 · AE: SEVILLA
+Pregunta 2 · AE: TORO
+Pregunta 2 · AE: TRUJILLO
+Pregunta 2 · AE: TULUA
+Pregunta 2 · AE: ULLOA
+Pregunta 2 · AE: VERSALLES
+Pregunta 2 · AE: VIJES
+Pregunta 2 · AE: YOTOCO
+Pregunta 2 · AE: YUMBO
+Pregunta 2 · AE: ZARZAL
+Pregunta 2 · AE: ARAUCA
+Pregunta 2 · AE: ARAUQUITA
+Pregunta 2 · AE: CRAVO NORTE
+Pregunta 2 · AE: FORTUL
+Pregunta 2 · AE: PUERTO RONDON
+Pregunta 2 · AE: SARAVENA
+Pregunta 2 · AE: TAME
+Pregunta 2 · AE: YOPAL
+Pregunta 2 · AE: AGUAZUL
+Pregunta 2 · AE: CHAMEZA
+Pregunta 2 · AE: HATO COROZAL
+Pregunta 2 · AE: LA SALINA
+Pregunta 2 · AE: MANI
+Pregunta 2 · AE: MONTERREY
+Pregunta 2 · AE: NUNCHIA
+Pregunta 2 · AE: OROCUE
+Pregunta 2 · AE: PAZ DE ARIPORO
+Pregunta 2 · AE: PORE
+Pregunta 2 · AE: RECETOR
+Pregunta 2 · AE: SABANALARGA
+Pregunta 2 · AE: SACAMA
+Pregunta 2 · AE: SAN LUIS DE PALENQUE
+Pregunta 2 · AE: TAMARA
+Pregunta 2 · AE: TAURAMENA
+Pregunta 2 · AE: TRINIDAD
+Pregunta 2 · AE: VILLANUEVA
+Pregunta 2 · AE: MOCOA
+Pregunta 2 · AE: COLON
+Pregunta 2 · AE: ORITO
+Pregunta 2 · AE: PUERTO ASIS
+Pregunta 2 · AE: PUERTO CAICEDO
+Pregunta 2 · AE: PUERTO GUZMAN
+Pregunta 2 · AE: LEGUIZAMO
+Pregunta 2 · AE: SIBUNDOY
+Pregunta 2 · AE: SAN FRANCISCO
+Pregunta 2 · AE: SAN MIGUEL
+Pregunta 2 · AE: SANTIAGO
+Pregunta 2 · AE: VALLE DEL GUAMUEZ
+Pregunta 2 · AE: VILLAGARZON
+Pregunta 2 · AE: SAN ANDRES
+Pregunta 2 · AE: PROVIDENCIA
+Pregunta 2 · AE: LETICIA
+Pregunta 2 · AE: EL ENCANTO
+Pregunta 2 · AE: LA CHORRERA
+Pregunta 2 · AE: LA PEDRERA
+Pregunta 2 · AE: LA VICTORIA
+Pregunta 2 · AE: MIRITI - PARANA
+Pregunta 2 · AE: PUERTO ALEGRIA
+Pregunta 2 · AE: PUERTO ARICA
+Pregunta 2 · AE: PUERTO NARIÑO
+Pregunta 2 · AE: PUERTO SANTANDER
+Pregunta 2 · AE: TARAPACA
+Pregunta 2 · AE: INIRIDA
+Pregunta 2 · AE: BARRANCO MINAS
+Pregunta 2 · AE: MAPIRIPANA
+Pregunta 2 · AE: SAN FELIPE
+Pregunta 2 · AE: PUERTO COLOMBIA
+Pregunta 2 · AE: LA GUADALUPE
+Pregunta 2 · AE: CACAHUAL
+Pregunta 2 · AE: PANA PANA
+Pregunta 2 · AE: MORICHAL
+Pregunta 2 · AE: SAN JOSE DEL GUAVIARE
+Pregunta 2 · AE: CALAMAR
+Pregunta 2 · AE: EL RETORNO
+Pregunta 2 · AE: MIRAFLORES
+Pregunta 2 · AE: MITU
+Pregunta 2 · AE: CARURU
+Pregunta 2 · AE: PACOA
+Pregunta 2 · AE: TARAIRA
+Pregunta 2 · AE: PAPUNAUA
+Pregunta 2 · AE: YAVARATE
+Pregunta 2 · AE: PUERTO CARREÑO
+Pregunta 2 · AE: LA PRIMAVERA
+Pregunta 2 · AE: SANTA ROSALIA
+Pregunta 2 · AE: CUMARIBO
+[VALIDATION] Pregunta 2 · A8:A1048576 · list · País_de_Origen
+[VALIDATION] Pregunta 2 · B8:B1048576 · list · $AB$1:$AB$32
+[VALIDATION] Pregunta 2 · C8:C1048576 · list · $AE$1:$AE$1120
+[VALIDATION] Pregunta 2 · F8 · list · $AA$1:$AA$9
+[SHEET] Pregunta 3
+Pregunta 3 · Z: AFGANISTAN
+Pregunta 3 · Z: ALBANIA
+Pregunta 3 · A: Clasifique las remesas enviadas al exterior según país de destino en términos de su número y monto. · Z: ALEMANIA
+Pregunta 3 · A: LOS EGRESOS REPORTADOS DEBEN CORRESPONDER SOLO A REMESAS DE TRABAJADORES. · Z: ALGERIA
+Pregunta 3 · A: REMESAS DE TRABAJADORES: giros de divisas de persona a persona, efectuados en forma recurrente o periódica, con el fin de contribuir al sostenimiento familiar. · Z: ANDORRA
+Pregunta 3 · A: Por favor NO incluir los giros enviados para el sostenimiento de estudiantes colombianos en el exterior. El valor de los egresos por remesas de la pregunta 3 deben incluir los egresos de divisas por concepto de remesas que se declaren bajo el numeral 2910 “Donaciones, transferencias y remesas de trabajadores no residentes que no generan contraprestación” y las remesas de trabajadores efectuadas con divisas entregadas al IMC por el ordenante del giro. · Z: ANGOLA
+Pregunta 3 · A: Año reportado · Z: ANGUILA
+Pregunta 3 · A: Trimestre reportado · Z: ANTARTICA
+Pregunta 3 · Z: ANTIGUA Y BARBUDA
+Pregunta 3 · A: País de destino del giro · B: Número de giros realizados · C: Valor de los giros en dólares estadounidenses. · F: Número de países · G: Número total de giros realizados · H: Valor total de los giros en dólares estadounidenses. · Z: ANTILLAS HOLANDESAS
+Pregunta 3 · E: Totales · F: =COUNTA(A11:A20000) → 0 · G: =SUM(B11:B20000) → 0 · H: =SUM(C11:C20000) → 0 · Z: ARABIA SAUDITA
+Pregunta 3 · Z: ARGENTINA
+Pregunta 3 · Z: ARMENIA
+Pregunta 3 · Z: ARUBA
+Pregunta 3 · Z: AUSTRALIA
+Pregunta 3 · Z: AUSTRIA
+Pregunta 3 · Z: AZERBAIJAN
+Pregunta 3 · Z: BAHAMAS
+Pregunta 3 · Z: BARÉIN
+Pregunta 3 · Z: BANGLADESH
+Pregunta 3 · Z: BARBADOS
+Pregunta 3 · Z: BELGICA
+Pregunta 3 · Z: BELICE
+Pregunta 3 · Z: BENIN
+Pregunta 3 · Z: BERMUDAS
+Pregunta 3 · Z: BIELORUSIA
+Pregunta 3 · Z: BOLIVIA
+Pregunta 3 · Z: BOSNIA HERZEGOVINA
+Pregunta 3 · Z: BOTSUANA
+Pregunta 3 · Z: BRASIL
+Pregunta 3 · Z: BRUNEI
+Pregunta 3 · Z: BULGARIA
+Pregunta 3 · Z: BURKINA FASO
+Pregunta 3 · Z: BURUNDI
+Pregunta 3 · Z: CABO VERDE
+Pregunta 3 · Z: CAMBOYA
+Pregunta 3 · Z: CAMERÚN
+Pregunta 3 · Z: CANADÁ
+Pregunta 3 · Z: CHAD
+Pregunta 3 · Z: CHILE
+Pregunta 3 · Z: CHINA
+Pregunta 3 · Z: CHIPRE
+Pregunta 3 · Z: CIUDAD DEL VATICANO
+Pregunta 3 · Z: COMORAS
+Pregunta 3 · Z: CONGO
+Pregunta 3 · Z: COREA
+Pregunta 3 · Z: COREA DEL NORTE
+Pregunta 3 · Z: COSTA DE MARFIL
+Pregunta 3 · Z: COSTA RICA
+Pregunta 3 · Z: CROACIA
+Pregunta 3 · Z: CUBA
+Pregunta 3 · Z: CURAZAO
+Pregunta 3 · Z: CYPRUS
+Pregunta 3 · Z: DINAMARCA
+Pregunta 3 · Z: DJIBOUTI
+Pregunta 3 · Z: DOMINICA
+Pregunta 3 · Z: ECUADOR
+Pregunta 3 · Z: EGIPTO
+Pregunta 3 · Z: EL SALVADOR
+Pregunta 3 · Z: EMIRATOS ARABES UNIDOS
+Pregunta 3 · Z: ESCOCIA
+Pregunta 3 · Z: ESLOVAQUIA
+Pregunta 3 · Z: ESLOVENIA
+Pregunta 3 · Z: ESPAÑA
+Pregunta 3 · Z: ESTADOS UNIDOS
+Pregunta 3 · Z: ESTONIA
+Pregunta 3 · Z: ETIOPIA
+Pregunta 3 · Z: FIJI
+Pregunta 3 · Z: FILIPINAS
+Pregunta 3 · Z: FINLANDIA
+Pregunta 3 · Z: FRANCIA
+Pregunta 3 · Z: GABON
+Pregunta 3 · Z: GAMBIA
+Pregunta 3 · Z: GEORGIA
+Pregunta 3 · Z: GHANA
+Pregunta 3 · Z: GIBRALTAR
+Pregunta 3 · Z: GRECIA
+Pregunta 3 · Z: GRENADA
+Pregunta 3 · Z: GROENLANDIA
+Pregunta 3 · Z: GUADALUPE
+Pregunta 3 · Z: GUAM
+Pregunta 3 · Z: GUATEMALA
+Pregunta 3 · Z: GUINEA
+Pregunta 3 · Z: GUINEA ECUATORIAL
+Pregunta 3 · Z: GUINEA FRANCIASA
+Pregunta 3 · Z: GUINEA-BISSAU
+Pregunta 3 · Z: GUYANA
+Pregunta 3 · Z: GUYANA FRANCIASA
+Pregunta 3 · Z: HAITI
+Pregunta 3 · Z: HAWAII
+Pregunta 3 · Z: HOLANDA
+Pregunta 3 · Z: HONDURAS
+Pregunta 3 · Z: HUNGRIA
+Pregunta 3 · Z: INDIA
+Pregunta 3 · Z: INDONESIA
+Pregunta 3 · Z: IRAN
+Pregunta 3 · Z: IRAQ
+Pregunta 3 · Z: IRLANDA
+Pregunta 3 · Z: IRLANDA DEL NORTE
+Pregunta 3 · Z: ISLA HEARD
+Pregunta 3 · Z: ISLANDIA
+Pregunta 3 · Z: ISLAS BOUVET
+Pregunta 3 · Z: ISLAS CAICOS
+Pregunta 3 · Z: ISLAS CAIMAN
+Pregunta 3 · Z: ISLAS CHANNEL
+Pregunta 3 · Z: ISLAS CHRISTMAS
+Pregunta 3 · Z: ISLAS COOK
+Pregunta 3 · Z: ISLAS FEROE
+Pregunta 3 · Z: ISLAS GEORGIA DEL SUR
+Pregunta 3 · Z: ISLAS MALVINAS
+Pregunta 3 · Z: ISLAS MARSHALL
+Pregunta 3 · Z: ISLAS SALOMON
+Pregunta 3 · Z: ISLAS TURCAS Y TURCOS
+Pregunta 3 · Z: ISLAS VIRGENES - USA
+Pregunta 3 · Z: ISLAS VIRGENES BRITANICAS
+Pregunta 3 · Z: ISLE OF MAN
+Pregunta 3 · Z: ISRAEL
+Pregunta 3 · Z: ITALIA
+Pregunta 3 · Z: JAMAICA
+Pregunta 3 · Z: JAPON
+Pregunta 3 · Z: JORDANIA
+Pregunta 3 · Z: KASAJISTAN
+Pregunta 3 · Z: KENYA
+Pregunta 3 · Z: KIRIBATI
+Pregunta 3 · Z: KUWAIT
+Pregunta 3 · Z: KYRGYZSTAN
+Pregunta 3 · Z: LAOS
+Pregunta 3 · Z: LESOTO
+Pregunta 3 · Z: LETONIA
+Pregunta 3 · Z: LIBANO
+Pregunta 3 · Z: LIBERIA
+Pregunta 3 · Z: LIBIA
+Pregunta 3 · Z: LIECHTENSTEIN
+Pregunta 3 · Z: LITUANIA
+Pregunta 3 · Z: LUXEMBURGO
+Pregunta 3 · Z: MALASIA
+Pregunta 3 · Z: MALAWI
+Pregunta 3 · Z: MALI
+Pregunta 3 · Z: MALTA
+Pregunta 3 · Z: MARRUECOS
+Pregunta 3 · Z: MARTINICA
+Pregunta 3 · Z: MAURICIO
+Pregunta 3 · Z: MAURITANIA
+Pregunta 3 · Z: MEXICO
+Pregunta 3 · Z: MICRONESIA
+Pregunta 3 · Z: MOLDAVIA
+Pregunta 3 · Z: MONACO
+Pregunta 3 · Z: MONGOLIA
+Pregunta 3 · Z: MOZAMBIQUE
+Pregunta 3 · Z: NAMIBIA
+Pregunta 3 · Z: NEPAL
+Pregunta 3 · Z: NICARAGUA
+Pregunta 3 · Z: NIGER
+Pregunta 3 · Z: NIGERIA
+Pregunta 3 · Z: NIUE
+Pregunta 3 · Z: NORUEGA
+Pregunta 3 · Z: NUEVA CALEDONIA
+Pregunta 3 · Z: NUEVA GUINEA
+Pregunta 3 · Z: NUEVA ZELANDA
+Pregunta 3 · Z: OMAN
+Pregunta 3 · Z: OTROS PAISES
+Pregunta 3 · Z: PAIS DE GALES
+Pregunta 3 · Z: PAKISTAN
+Pregunta 3 · Z: PALAOS
+Pregunta 3 · Z: PALESTINA
+Pregunta 3 · Z: PANAMA
+Pregunta 3 · Z: PARAGUAY
+Pregunta 3 · Z: PERU
+Pregunta 3 · Z: PITCAIRN
+Pregunta 3 · Z: POLINESIA FRANCIASA
+Pregunta 3 · Z: POLONIA
+Pregunta 3 · Z: PORTUGAL
+Pregunta 3 · Z: PUERTO RICO
+Pregunta 3 · Z: QATAR
+Pregunta 3 · Z: REINO UNIDO
+Pregunta 3 · Z: REPUBLICA CENTRO AFRICANA
+Pregunta 3 · Z: REPUBLICA CHECA
+Pregunta 3 · Z: REPUBLICA DOMINICANA
+Pregunta 3 · Z: REUNION
+Pregunta 3 · Z: RUANDA
+Pregunta 3 · Z: RUMANIA
+Pregunta 3 · Z: RUSIA
+Pregunta 3 · Z: SAHARA OCCIDENTAL
+Pregunta 3 · Z: SAINT KITTS
+Pregunta 3 · Z: SAINT MARTEEN
+Pregunta 3 · Z: SAINT THOMAS
+Pregunta 3 · Z: SAMOA
+Pregunta 3 · Z: SAN MARINO
+Pregunta 3 · Z: SAN VICENTE
+Pregunta 3 · Z: SANTA LUCIA
+Pregunta 3 · Z: SANTO TOMAS Y PRINCIPE
+Pregunta 3 · Z: SENEGAL
+Pregunta 3 · Z: SERBIA Y MONTENEGRO
+Pregunta 3 · Z: SEYCHELLES
+Pregunta 3 · Z: SIERRA LEONA
+Pregunta 3 · Z: SINGAPUR
+Pregunta 3 · Z: SIRIA
+Pregunta 3 · Z: SOMALIA
+Pregunta 3 · Z: SRI LANKA
+Pregunta 3 · Z: SUDAFRICA
+Pregunta 3 · Z: SUDAN
+Pregunta 3 · Z: SUECIA
+Pregunta 3 · Z: SUIZA
+Pregunta 3 · Z: SURINAME
+Pregunta 3 · Z: SWAZILAND
+Pregunta 3 · Z: TAILANDIA
+Pregunta 3 · Z: TAIWAN
+Pregunta 3 · Z: TAJIKISTAN
+Pregunta 3 · Z: TANZANIA
+Pregunta 3 · Z: TIMOR DEL ESTE
+Pregunta 3 · Z: TOGO
+Pregunta 3 · Z: TONGA
+Pregunta 3 · Z: TRINIDAD Y TOBAGO
+Pregunta 3 · Z: TUNEZ
+Pregunta 3 · Z: TUNISIA
+Pregunta 3 · Z: TURKMENISTAN
+Pregunta 3 · Z: TURQUIA
+Pregunta 3 · Z: UCRANIA
+Pregunta 3 · Z: UGANDA
+Pregunta 3 · Z: URUGUAY
+Pregunta 3 · Z: UZBEKISTAN
+Pregunta 3 · Z: VANAUTU
+Pregunta 3 · Z: VENEZUELA
+Pregunta 3 · Z: VIETNAM
+Pregunta 3 · Z: WALLIS AND FUTUNA
+Pregunta 3 · Z: YUGOSLAVIA
+Pregunta 3 · Z: ZAMBIA
+[MERGED] Pregunta 3 · A6:H6
+[VALIDATION] Pregunta 3 · A12:A1048576 · list · $Z$1:$Z$249
+[VALIDATION] Pregunta 3 · A11 · list · $Z$1:$Z$227
+[SHEET] Pregunta 4
+Pregunta 4 · Q: x
+Pregunta 4 · B: a) Por favor indique el porcentaje de la comisión cobrada por el agente en el exterior por el envío de una remesa de alrededor de US$300 dólares. Recuerde que esta información esta sujeta a reserva estadística. · I: b) ¿Su entidad cobra una comisión al receptor de las remesas en Colombia en el momento del pago?
+Pregunta 4 · C: Año reportado · J: SI · M: NO · O: =IF(AND(K4="X",N4="X"),"Error:solo debe escoger una opción", " ")
+Pregunta 4 · C: Trimestre reportado
+Pregunta 4 · C: Nombre del agente · D: Valor porcentual de la comisión cobrada. · I: ¿Cuál es el valor porcentual de la comisión del pago de una remesa de alrededor de US$300?
+[MERGED] Pregunta 4 · B2:E2
+[MERGED] Pregunta 4 · I2:N2
+[MERGED] Pregunta 4 · I7:N7
+[MERGED] Pregunta 4 · I8:N8
+[VALIDATION] Pregunta 4 · N4 K4 · list · $Q$1:$Q$2
+[SHEET] Pregunta 5
+Pregunta 5 · B: ¿Cuál es la tasa de cambio utilizada para el pago de la remesa al beneficiario final en Colombia? Por favor anexar la tasa de cambio, pesos por dólar, promedio mensual aplicada en el trimestre reportado.
+Pregunta 5 · B: =IF([1]Datos!C17=0,"Advertencia:Antes de responder esta pregunta debe diligenciar el ítem 1 y 2 de la hoja de datos", " ")
+Pregunta 5 · D: Año reportado
+Pregunta 5 · D: Trimestre reportado · O: =+Datos!C30 → 0 · P: =+Datos!C30 → 0 · Q: =+Datos!C30 → 0 · R: =+Datos!C30 → 0
+Pregunta 5 · O: ENERO · P: ABRIL · Q: JULIO · R: OCTUBRE
+Pregunta 5 · D: Mes · E: Tasa de cambio promedio mensual (Pesos por dólar) · O: FEBRERO · P: MAYO · Q: AGOSTO · R: NOVIEMBRE
+Pregunta 5 · D: =+IF(O5="I TRIMESTRE",O6,IF(P5="II TRIMESTRE",P6,IF(Q5="III TRIMESTRE",Q6,IF(R5="IV TRIMESTRE",R6,"")))) · O: MARZO · P: JUNIO · Q: SEPTIEMBRE · R: DICIEMBRE
+Pregunta 5 · D: =+IF(D8="ENERO",O7,IF(D8="ABRIL",P7,IF(D8="JULIO",Q7,IF(D8="OCTUBRE",R7,""))))
+Pregunta 5 · D: =+IF(D9="FEBRERO",O8,IF(D9="MAYO",P8,IF(D9="AGOSTO",Q8,IF(D9="NOVIEMBRE",R8,""))))
+[MERGED] Pregunta 5 · B2:H2
+[SHEET] Pregunta 6
+Pregunta 6 · B: De acuerdo con sus registros, qué porcentaje de las remesas fueron recibidas en el trimestre, a través de:
+Pregunta 6 · B: Nota: La sumatoria de los porcentajes debe ser igual a 100%
+Pregunta 6 · B: Año reportado
+Pregunta 6 · B: Trimestre reportado
+Pregunta 6 · B: Porcentaje de los giros transferidos como: · C: (%)
+Pregunta 6 · B: Pago en efectivo a través del IMC
+Pregunta 6 · B: Pago en efectivo a través de corresponsal no bancario
+Pregunta 6 · B: Money Orders
+Pregunta 6 · B: Abono en cuenta corriente o de ahorro
+Pregunta 6 · B: Cuenta propia
+Pregunta 6 · B: Cuenta de terceros
+Pregunta 6 · B: Monedero digital (celular)
+Pregunta 6 · B: Cargue de tarjeta débito o crédito
+Pregunta 6 · B: Otros (por favor especifique)
+Pregunta 6 · B: (por favor describa)
+Pregunta 6 · B: (por favor describa)
+Pregunta 6 · B: (por favor describa)
+Pregunta 6 · B: (por favor describa)
+[MERGED] Pregunta 6 · B4:C4
+[SHEET] Pregunta 7
+Pregunta 7 · A: Número de veces por mes que un mismo receptor recibe una remesa.
+Pregunta 7 · A: DEBE CORRESPONDER A LOS VALORES REPORTADOS EN EL F5 BAJO LOS CÓDIGOS TIPO OPERACIÓN DE REMESAS, MÁS LAS REMESAS QUE SE PAGUEN EN DOLARES
+Pregunta 7 · A: Año reportado
+Pregunta 7 · A: Trimestre reportado
+Pregunta 7 · A: Mes 1 · B: Número de veces/mes · C: Número de receptores · D: Monto recibido
+Pregunta 7 · B: 1
+Pregunta 7 · B: 2
+Pregunta 7 · B: 3
+Pregunta 7 · B: 4
+Pregunta 7 · B: Más de 4
+Pregunta 7 · A: Mes 2 · B: 1
+Pregunta 7 · B: 2
+Pregunta 7 · B: 3
+Pregunta 7 · B: 4
+Pregunta 7 · B: Más de 4
+Pregunta 7 · A: Mes 3 · B: 1
+Pregunta 7 · B: 2
+Pregunta 7 · B: 3
+Pregunta 7 · B: 4
+Pregunta 7 · B: Más de 4
+Pregunta 7 · A: Total trimestre · B: 1 · C: =+C18+C13+C8 → 0 · D: =+D18+D13+D8 → 0 · E: NO MODIFICAR!
+Pregunta 7 · B: 2 · C: =+C19+C14+C9 → 0 · D: =+D19+D14+D9 → 0
+Pregunta 7 · B: 3 · C: =+C20+C15+C10 → 0 · D: =+D20+D15+D10 → 0
+Pregunta 7 · B: 4 · C: =+C21+C16+C11 → 0 · D: =+D21+D16+D11 → 0
+Pregunta 7 · B: Más de 4 · C: =+C22+C17+C12 → 0 · D: =+D22+D17+D12 → 0
+Pregunta 7 · A: Total · C: =SUM(C24:C28) → 0 · D: =SUM(D24:D28) → 0
+[SHEET] Pregunta 8
+Pregunta 8 · A: Reporte el total de los ingresos de remesas de trabajadores recibidos a través de tarjetas débito y crédito, en términos de su número y monto. También incluya en esta pregunta los ingresos de remesas cuyos pagos provengan de cuentas que "entidades no residentes" tienen en pesos colombianos constituidas en los intermediarios del mercado cambiario (IMC) domiciliados en Colombia.
+Pregunta 8 · A: Incluir en esta pregunta las remesas pagadas a través de las tarjetas débito y crédito emitidas por entidades vigiladas por la Superintendencia Financiera de Colombia. También incluya en esta pregunta los ingresos de remesas cuyos pagos provengan de cuentas que "entidades no residentes" tienen en pesos colombianos constituidas en los intermediarios del mercado cambiario (IMC) domiciliados en Colombia.
+Pregunta 8 · A: Nota: Esta hoja (Pregunta 8) la deben reportar las entidades vigiladas por la Superintendencia Financiera de Colombia que sean emisores de tarjetas débito y/o crédito, únicamente si estas tarjetas se utilizaron para recibir remesas de trabajadores provenientes del extranjero. También deben reportar en esta pregunta aquellas entidades con ingresos de remesas cuyos pagos provengan de cuentas que "entidades no residentes" tienen en pesos colombianos constituidas en los intermediarios del mercado cambiario (IMC) domiciliados en Colombia. En caso contrario (que no apliqué ninguna de las anteriores 2 situaciones), NO diligenciar la Pregunta 8.
+Pregunta 8 · A: Año reportado · N: 1
+Pregunta 8 · A: Trimestre reportado · N: 2
+Pregunta 8 · A: LA MONEDA EN LA QUE SE DEBE REPORTAR EL ACTUAL FORMATO ES: dólares estadounidenses (USD) · N: 3
+Pregunta 8 · A: Mes de reporte · B: Número de giros recibidos por mes · C: Monto de remesas acumulado por mes en dólares estadounidenses USD · F: Número total de giros recibidos · G: Valor total de los giros en dólares estadounidenses. · N: 4
+Pregunta 8 · E: Totales · F: =SUM(B9:B11) → 0 · G: =SUM(C9:C11) → 0 · N: 5
+Pregunta 8 · N: 6
+Pregunta 8 · N: 7
+Pregunta 8 · N: 8
+Pregunta 8 · N: 9
+Pregunta 8 · N: 10
+Pregunta 8 · N: 11
+Pregunta 8 · N: 12
+[VALIDATION] Pregunta 8 · A9:A11 · list · $N$5:$N$16
+[VALIDATION] Pregunta 8 · B9:C11 · any · #REF!
+[VALIDATION] Pregunta 8 · A12:A1048576 · list · País_de_Origen
+[SHEET] Pregunta 9
+Pregunta 9 · AA: Esporádico · AB: ANTIOQUIA · AD: AFGANISTAN · AE: MEDELLIN
+Pregunta 9 · A: Clasifique los ingresos de remesas de trabajadores recibidos a través de tarjetas débito y crédito según país de origen y zona geográfica de destino, en términos de su número y monto. También incluya en esta pregunta los ingresos de remesas cuyos pagos provengan de cuentas que "entidades no residentes" tienen en pesos colombianos constituidas en los intermediarios del mercado cambiario (IMC) domiciliados en Colombia. · AA: Semanal · AB: ATLANTICO · AD: ALBANIA · AE: ABEJORRAL
+Pregunta 9 · A: Incluir en esta pregunta las remesas pagadas a través de las tarjetas débito y crédito emitidas por entidades vigiladas por la Superintendencia Financiera de Colombia. También incluya en esta pregunta los ingresos de remesas cuyos pagos provengan de cuentas que "entidades no residentes" tienen en pesos colombianos constituidas en los intermediarios del mercado cambiario (IMC) domiciliados en Colombia. · AA: Quincenal · AB: BOLIVAR · AD: ALEMANIA · AE: ABRIAQUI
+Pregunta 9 · A: Nota: Esta hoja (Pregunta 9) la deben reportar las entidades vigiladas por la Superintendencia Financiera de Colombia que sean emisores de tarjetas débito y/o crédito, únicamente si estas tarjetas se utilizaron para recibir remesas de trabajadores provenientes del extranjero. También deben reportar en esta pregunta aquellas entidades con ingresos de remesas cuyos pagos provengan de cuentas que "entidades no residentes" tienen en pesos colombianos constituidas en los intermediarios del mercado cambiario (IMC) domiciliados en Colombia. En caso contrario (que no apliqué ninguna de las anteriores 2 situaciones), NO diligenciar la Pregunta 9. · AB: BOYACA
+Pregunta 9 · A: Año reportado · AA: Mensual · AB: CALDAS · AD: ALGERIA · AE: ALEJANDRIA
+Pregunta 9 · A: Trimestre reportado · AA: Bimensual · AB: CAQUETA · AD: ANDORRA · AE: AMAGA
+Pregunta 9 · A: LA MONEDA EN LA QUE SE DEBE REPORTAR EL ACTUAL FORMATO ES: dólares estadounidenses (USD) · AA: Trimestral · AB: CAUCA · AD: ANGOLA · AE: AMALFI
+Pregunta 9 · A: País de Origen · B: Departamento de pago del giro · C: Municipio/ciudad de pago del giro · D: Número de giros recibidos durante el trimestre para el mismo país de origen y municipio · E: Valor de los giros en dólares estadounidenses USD · I: Número total de giros recibidos · J: Valor total de los giros en dólares estadounidenses. · AA: Semestral · AB: CESAR · AD: ANGUILA · AE: ANDES
+Pregunta 9 · H: Totales · I: =SUM(D9:D1000001) → 0 · J: =SUM(E9:E1000001) → 0 · AA: Anual · AB: CORDOBA · AD: ANTARTICA · AE: ANGELOPOLIS
+Pregunta 9 · AA: Díario · AB: CUNDINAMARCA · AD: ANTIGUA Y BARBUDA · AE: ANGOSTURA
+Pregunta 9 · AB: CHOCO · AD: ANTILLAS HOLANDESAS · AE: ANORI
+Pregunta 9 · AB: HUILA · AD: ARABIA SAUDITA · AE: SANTAFE DE ANTIOQUIA
+Pregunta 9 · AB: GUAJIRA · AD: ARGENTINA · AE: ANZA
+Pregunta 9 · AB: MAGDALENA · AD: ARMENIA · AE: APARTADO
+Pregunta 9 · AB: META · AD: ARUBA · AE: ARBOLETES
+Pregunta 9 · AB: NARINO · AD: AUSTRALIA · AE: ARGELIA
+Pregunta 9 · AB: NORTE DE SANTANDER · AD: AUSTRIA · AE: ARMENIA
+Pregunta 9 · AB: QUINDIO · AD: AZERBAIJAN · AE: BARBOSA
+Pregunta 9 · AB: RISARALDA · AD: BAHAMAS · AE: BELMIRA
+Pregunta 9 · AB: SANTANDER · AD: BARÉIN · AE: BELLO
+Pregunta 9 · AB: SUCRE · AD: BANGLADESH · AE: BETANIA
+Pregunta 9 · AB: TOLIMA · AD: BARBADOS · AE: BETULIA
+Pregunta 9 · AB: VALLE DEL CAUCA · AD: BELGICA · AE: CIUDAD BOLIVAR
+Pregunta 9 · AB: ARAUCA · AD: BELICE · AE: BRICEÑO
+Pregunta 9 · AB: CASANARE · AD: BENIN · AE: BURITICA
+Pregunta 9 · AB: PUTUMAYO · AD: BERMUDAS · AE: CACERES
+Pregunta 9 · AB: SAN ANDRES · AD: BIELORUSIA · AE: CAICEDO
+Pregunta 9 · AB: AMAZONAS · AD: BOLIVIA · AE: CALDAS
+Pregunta 9 · AB: GUAINIA · AD: BOSNIA HERZEGOVINA · AE: CAMPAMENTO
+Pregunta 9 · AB: GUAVIARE · AD: BOTSUANA · AE: CAÑASGORDAS
+Pregunta 9 · AB: VAUPES · AD: BRASIL · AE: CARACOLI
+Pregunta 9 · AB: VICHADA · AD: BRUNEI · AE: CARAMANTA
+Pregunta 9 · AD: BULGARIA · AE: CAREPA
+Pregunta 9 · AD: BURKINA FASO · AE: EL CARMEN DE VIBORAL
+Pregunta 9 · AD: BURUNDI · AE: CAROLINA
+Pregunta 9 · AD: CABO VERDE · AE: CAUCASIA
+Pregunta 9 · AD: CAMBOYA · AE: CHIGORODO
+Pregunta 9 · AD: CAMERÚN · AE: CISNEROS
+Pregunta 9 · AD: CANADÁ · AE: COCORNA
+Pregunta 9 · AD: CHAD · AE: CONCEPCION
+Pregunta 9 · AD: CHILE · AE: CONCORDIA
+Pregunta 9 · AD: CHINA · AE: COPACABANA
+Pregunta 9 · AD: CHIPRE · AE: DABEIBA
+Pregunta 9 · AD: CIUDAD DEL VATICANO · AE: DON MATIAS
+Pregunta 9 · AD: COMORAS · AE: EBEJICO
+Pregunta 9 · AD: CONGO · AE: EL BAGRE
+Pregunta 9 · AD: COREA · AE: ENTRERRIOS
+Pregunta 9 · AD: COREA DEL NORTE · AE: ENVIGADO
+Pregunta 9 · AD: COSTA DE MARFIL · AE: FREDONIA
+Pregunta 9 · AD: COSTA RICA · AE: FRONTINO
+Pregunta 9 · AD: CROACIA · AE: GIRALDO
+Pregunta 9 · AD: CUBA · AE: GIRARDOTA
+Pregunta 9 · AD: CURAZAO · AE: GOMEZ PLATA
+Pregunta 9 · AD: CYPRUS · AE: GRANADA
+Pregunta 9 · AD: DINAMARCA · AE: GUADALUPE
+Pregunta 9 · AD: DJIBOUTI · AE: GUARNE
+Pregunta 9 · AD: DOMINICA · AE: GUATAPE
+Pregunta 9 · AD: ECUADOR · AE: HELICONIA
+Pregunta 9 · AD: EGIPTO · AE: HISPANIA
+Pregunta 9 · AD: EL SALVADOR · AE: ITAGUI
+Pregunta 9 · AD: EMIRATOS ARABES UNIDOS · AE: ITUANGO
+Pregunta 9 · AD: ESCOCIA · AE: JARDIN
+Pregunta 9 · AD: ESLOVAQUIA · AE: JERICO
+Pregunta 9 · AD: ESLOVENIA · AE: LA CEJA
+Pregunta 9 · AD: ESPAÑA · AE: LA ESTRELLA
+Pregunta 9 · AD: ESTADOS UNIDOS · AE: LA PINTADA
+Pregunta 9 · AD: ESTONIA · AE: LA UNION
+Pregunta 9 · AD: ETIOPIA · AE: LIBORINA
+Pregunta 9 · AD: FIJI · AE: MACEO
+Pregunta 9 · AD: FILIPINAS · AE: MARINILLA
+Pregunta 9 · AD: FINLANDIA · AE: MONTEBELLO
+Pregunta 9 · AD: FRANCIA · AE: MURINDO
+Pregunta 9 · AD: GABON · AE: MUTATA
+Pregunta 9 · AD: GAMBIA · AE: NARIÑO
+Pregunta 9 · AD: GEORGIA · AE: NECOCLI
+Pregunta 9 · AD: GHANA · AE: NECHI
+Pregunta 9 · AD: GIBRALTAR · AE: OLAYA
+Pregunta 9 · AD: GRECIA · AE: PEÐOL
+Pregunta 9 · AD: GRENADA · AE: PEQUE
+Pregunta 9 · AD: GROENLANDIA · AE: PUEBLORRICO
+Pregunta 9 · AD: GUADALUPE · AE: PUERTO BERRIO
+Pregunta 9 · AD: GUAM · AE: PUERTO NARE
+Pregunta 9 · AD: GUATEMALA · AE: PUERTO TRIUNFO
+Pregunta 9 · AD: GUINEA · AE: REMEDIOS
+Pregunta 9 · AD: GUINEA ECUATORIAL · AE: RETIRO
+Pregunta 9 · AD: GUINEA FRANCIASA · AE: RIONEGRO
+Pregunta 9 · AD: GUINEA-BISSAU · AE: SABANALARGA
+Pregunta 9 · AD: GUYANA · AE: SABANETA
+Pregunta 9 · AD: GUYANA FRANCIASA · AE: SALGAR
+Pregunta 9 · AD: HAITI · AE: SAN ANDRES DE CUERQUIA
+Pregunta 9 · AD: HAWAII · AE: SAN CARLOS
+Pregunta 9 · AD: HOLANDA · AE: SAN FRANCISCO
+Pregunta 9 · AD: HONDURAS · AE: SAN JERONIMO
+Pregunta 9 · AD: HUNGRIA · AE: SAN JOSE DE LA MONTAÑA
+Pregunta 9 · AD: INDIA · AE: SAN JUAN DE URABA
+Pregunta 9 · AD: INDONESIA · AE: SAN LUIS
+Pregunta 9 · AD: IRAN · AE: SAN PEDRO
+Pregunta 9 · AD: IRAQ · AE: SAN PEDRO DE URABA
+Pregunta 9 · AD: IRLANDA · AE: SAN RAFAEL
+Pregunta 9 · AD: IRLANDA DEL NORTE · AE: SAN ROQUE
+Pregunta 9 · AD: ISLA HEARD · AE: SAN VICENTE
+Pregunta 9 · AD: ISLANDIA · AE: SANTA BARBARA
+Pregunta 9 · AD: ISLAS BOUVET · AE: SANTA ROSA DE OSOS
+Pregunta 9 · AD: ISLAS CAICOS · AE: SANTO DOMINGO
+Pregunta 9 · AD: ISLAS CAIMAN · AE: EL SANTUARIO
+Pregunta 9 · AD: ISLAS CHANNEL · AE: SEGOVIA
+Pregunta 9 · AD: ISLAS CHRISTMAS · AE: SONSON
+Pregunta 9 · AD: ISLAS COOK · AE: SOPETRAN
+Pregunta 9 · AD: ISLAS FEROE · AE: TAMESIS
+Pregunta 9 · AD: ISLAS GEORGIA DEL SUR · AE: TARAZA
+Pregunta 9 · AD: ISLAS MALVINAS · AE: TARSO
+Pregunta 9 · AD: ISLAS MARSHALL · AE: TITIRIBI
+Pregunta 9 · AD: ISLAS SALOMON · AE: TOLEDO
+Pregunta 9 · AD: ISLAS TURCAS Y TURCOS · AE: TURBO
+Pregunta 9 · AD: ISLAS VIRGENES - USA · AE: URAMITA
+Pregunta 9 · AD: ISLAS VIRGENES BRITANICAS · AE: URRAO
+Pregunta 9 · AD: ISLE OF MAN · AE: VALDIVIA
+Pregunta 9 · AD: ISRAEL · AE: VALPARAISO
+Pregunta 9 · AD: ITALIA · AE: VEGACHI
+Pregunta 9 · AD: JAMAICA · AE: VENECIA
+Pregunta 9 · AD: JAPON · AE: VIGIA DEL FUERTE
+Pregunta 9 · AD: JORDANIA · AE: YALI
+Pregunta 9 · AD: KASAJISTAN · AE: YARUMAL
+Pregunta 9 · AD: KENYA · AE: YOLOMBO
+Pregunta 9 · AD: KIRIBATI · AE: YONDO
+Pregunta 9 · AD: KUWAIT · AE: ZARAGOZA
+Pregunta 9 · AD: KYRGYZSTAN · AE: BARRANQUILLA
+Pregunta 9 · AD: LAOS · AE: BARANOA
+Pregunta 9 · AD: LESOTO · AE: CAMPO DE LA CRUZ
+Pregunta 9 · AD: LETONIA · AE: CANDELARIA
+Pregunta 9 · AD: LIBANO · AE: GALAPA
+Pregunta 9 · AD: LIBERIA · AE: JUAN DE ACOSTA
+Pregunta 9 · AD: LIBIA · AE: LURUACO
+Pregunta 9 · AD: LIECHTENSTEIN · AE: MALAMBO
+Pregunta 9 · AD: LITUANIA · AE: MANATI
+Pregunta 9 · AD: LUXEMBURGO · AE: PALMAR DE VARELA
+Pregunta 9 · AD: MALASIA · AE: PIOJO
+Pregunta 9 · AD: MALAWI · AE: POLONUEVO
+Pregunta 9 · AD: MALI · AE: PONEDERA
+Pregunta 9 · AD: MALTA · AE: PUERTO COLOMBIA
+Pregunta 9 · AD: MARRUECOS · AE: REPELON
+Pregunta 9 · AD: MARTINICA · AE: SABANAGRANDE
+Pregunta 9 · AD: MAURICIO · AE: SABANALARGA
+Pregunta 9 · AD: MAURITANIA · AE: SANTA LUCIA
+Pregunta 9 · AD: MEXICO · AE: SANTO TOMAS
+Pregunta 9 · AD: MICRONESIA · AE: SOLEDAD
+Pregunta 9 · AD: MOLDAVIA · AE: SUAN
+Pregunta 9 · AD: MONACO · AE: TUBARA
+Pregunta 9 · AD: MONGOLIA · AE: USIACURI
+Pregunta 9 · AD: MOZAMBIQUE · AE: BOGOTA, D.C.
+Pregunta 9 · AD: NAMIBIA · AE: CARTAGENA
+Pregunta 9 · AD: NEPAL · AE: ACHI
+Pregunta 9 · AD: NICARAGUA · AE: ALTOS DEL ROSARIO
+Pregunta 9 · AD: NIGER · AE: ARENAL
+Pregunta 9 · AD: NIGERIA · AE: ARJONA
+Pregunta 9 · AD: NIUE · AE: ARROYOHONDO
+Pregunta 9 · AD: NORUEGA · AE: BARRANCO DE LOBA
+Pregunta 9 · AD: NUEVA CALEDONIA · AE: CALAMAR
+Pregunta 9 · AD: NUEVA GUINEA · AE: CANTAGALLO
+Pregunta 9 · AD: NUEVA ZELANDA · AE: CICUCO
+Pregunta 9 · AD: OMAN · AE: CORDOBA
+Pregunta 9 · AD: OTROS PAISES · AE: CLEMENCIA
+Pregunta 9 · AD: PAIS DE GALES · AE: EL CARMEN DE BOLIVAR
+Pregunta 9 · AD: PAKISTAN · AE: EL GUAMO
+Pregunta 9 · AD: PALAOS · AE: EL PEÑON
+Pregunta 9 · AD: PALESTINA · AE: HATILLO DE LOBA
+Pregunta 9 · AD: PANAMA · AE: MAGANGUE
+Pregunta 9 · AD: PARAGUAY · AE: MAHATES
+Pregunta 9 · AD: PERU · AE: MARGARITA
+Pregunta 9 · AD: PITCAIRN · AE: MARIA LA BAJA
+Pregunta 9 · AD: POLINESIA FRANCIASA · AE: MONTECRISTO
+Pregunta 9 · AD: POLONIA · AE: MOMPOS
+Pregunta 9 · AD: PORTUGAL · AE: NOROSI
+Pregunta 9 · AD: PUERTO RICO · AE: MORALES
+Pregunta 9 · AD: QATAR · AE: PINILLOS
+Pregunta 9 · AD: REINO UNIDO · AE: REGIDOR
+Pregunta 9 · AD: REPUBLICA CENTRO AFRICANA · AE: RIO VIEJO
+Pregunta 9 · AD: REPUBLICA CHECA · AE: SAN CRISTOBAL
+Pregunta 9 · AD: REPUBLICA DOMINICANA · AE: SAN ESTANISLAO
+Pregunta 9 · AD: REUNION · AE: SAN FERNANDO
+Pregunta 9 · AD: RUANDA · AE: SAN JACINTO
+Pregunta 9 · AD: RUMANIA · AE: SAN JACINTO DEL CAUCA
+Pregunta 9 · AD: RUSIA · AE: SAN JUAN NEPOMUCENO
+Pregunta 9 · AD: SAHARA OCCIDENTAL · AE: SAN MARTIN DE LOBA
+Pregunta 9 · AD: SAINT KITTS · AE: SAN PABLO
+Pregunta 9 · AD: SAINT MARTEEN · AE: SANTA CATALINA
+Pregunta 9 · AD: SAINT THOMAS · AE: SANTA ROSA
+Pregunta 9 · AD: SAMOA · AE: SANTA ROSA DEL SUR
+Pregunta 9 · AD: SAN MARINO · AE: SIMITI
+Pregunta 9 · AD: SAN VICENTE · AE: SOPLAVIENTO
+Pregunta 9 · AD: SANTA LUCIA · AE: TALAIGUA NUEVO
+Pregunta 9 · AD: SANTO TOMAS Y PRINCIPE · AE: TIQUISIO
+Pregunta 9 · AD: SENEGAL · AE: TURBACO
+Pregunta 9 · AD: SERBIA Y MONTENEGRO · AE: TURBANA
+Pregunta 9 · AD: SEYCHELLES · AE: VILLANUEVA
+Pregunta 9 · AD: SIERRA LEONA · AE: ZAMBRANO
+Pregunta 9 · AD: SINGAPUR · AE: TUNJA
+Pregunta 9 · AD: SIRIA · AE: ALMEIDA
+Pregunta 9 · AD: SOMALIA · AE: AQUITANIA
+Pregunta 9 · AD: SRI LANKA · AE: ARCABUCO
+Pregunta 9 · AD: SUDAFRICA · AE: BELEN
+Pregunta 9 · AD: SUDAN · AE: BERBEO
+Pregunta 9 · AD: SUECIA · AE: BETEITIVA
+Pregunta 9 · AD: SUIZA · AE: BOAVITA
+Pregunta 9 · AD: SURINAME · AE: BOYACA
+Pregunta 9 · AD: SWAZILAND · AE: BRICEÑO
+Pregunta 9 · AD: TAILANDIA · AE: BUENAVISTA
+Pregunta 9 · AD: TAIWAN · AE: BUSBANZA
+Pregunta 9 · AD: TAJIKISTAN · AE: CALDAS
+Pregunta 9 · AD: TANZANIA · AE: CAMPOHERMOSO
+Pregunta 9 · AD: TIMOR DEL ESTE · AE: CERINZA
+Pregunta 9 · AD: TOGO · AE: CHINAVITA
+Pregunta 9 · AD: TONGA · AE: CHIQUINQUIRA
+Pregunta 9 · AD: TRINIDAD Y TOBAGO · AE: CHISCAS
+Pregunta 9 · AD: TUNEZ · AE: CHITA
+Pregunta 9 · AD: TUNISIA · AE: CHITARAQUE
+Pregunta 9 · AD: TURKMENISTAN · AE: CHIVATA
+Pregunta 9 · AD: TURQUIA · AE: CIENEGA
+Pregunta 9 · AD: UCRANIA · AE: COMBITA
+Pregunta 9 · AD: UGANDA · AE: COPER
+Pregunta 9 · AD: URUGUAY · AE: CORRALES
+Pregunta 9 · AD: UZBEKISTAN · AE: COVARACHIA
+Pregunta 9 · AD: VANAUTU · AE: CUBARA
+Pregunta 9 · AD: VENEZUELA · AE: CUCAITA
+Pregunta 9 · AD: VIETNAM · AE: CUITIVA
+Pregunta 9 · AD: WALLIS AND FUTUNA · AE: CHIQUIZA
+Pregunta 9 · AD: YUGOSLAVIA · AE: CHIVOR
+Pregunta 9 · AD: ZAMBIA · AE: DUITAMA
+Pregunta 9 · AE: EL COCUY
+Pregunta 9 · AE: EL ESPINO
+Pregunta 9 · AE: FIRAVITOBA
+Pregunta 9 · AE: FLORESTA
+Pregunta 9 · AE: GACHANTIVA
+Pregunta 9 · AE: GAMEZA
+Pregunta 9 · AE: GARAGOA
+Pregunta 9 · AE: GUACAMAYAS
+Pregunta 9 · AE: GUATEQUE
+Pregunta 9 · AE: GUAYATA
+Pregunta 9 · AE: GsICAN
+Pregunta 9 · AE: IZA
+Pregunta 9 · AE: JENESANO
+Pregunta 9 · AE: JERICO
+Pregunta 9 · AE: LABRANZAGRANDE
+Pregunta 9 · AE: LA CAPILLA
+Pregunta 9 · AE: LA VICTORIA
+Pregunta 9 · AE: LA UVITA
+Pregunta 9 · AE: VILLA DE LEYVA
+Pregunta 9 · AE: MACANAL
+Pregunta 9 · AE: MARIPI
+Pregunta 9 · AE: MIRAFLORES
+Pregunta 9 · AE: MONGUA
+Pregunta 9 · AE: MONGUI
+Pregunta 9 · AE: MONIQUIRA
+Pregunta 9 · AE: MOTAVITA
+Pregunta 9 · AE: MUZO
+Pregunta 9 · AE: NOBSA
+Pregunta 9 · AE: NUEVO COLON
+Pregunta 9 · AE: OICATA
+Pregunta 9 · AE: OTANCHE
+Pregunta 9 · AE: PACHAVITA
+Pregunta 9 · AE: PAEZ
+Pregunta 9 · AE: PAIPA
+Pregunta 9 · AE: PAJARITO
+Pregunta 9 · AE: PANQUEBA
+Pregunta 9 · AE: PAUNA
+Pregunta 9 · AE: PAYA
+Pregunta 9 · AE: PAZ DE RIO
+Pregunta 9 · AE: PESCA
+Pregunta 9 · AE: PISBA
+Pregunta 9 · AE: PUERTO BOYACA
+Pregunta 9 · AE: QUIPAMA
+Pregunta 9 · AE: RAMIRIQUI
+Pregunta 9 · AE: RAQUIRA
+Pregunta 9 · AE: RONDON
+Pregunta 9 · AE: SABOYA
+Pregunta 9 · AE: SACHICA
+Pregunta 9 · AE: SAMACA
+Pregunta 9 · AE: SAN EDUARDO
+Pregunta 9 · AE: SAN JOSE DE PARE
+Pregunta 9 · AE: SAN LUIS DE GACENO
+Pregunta 9 · AE: SAN MATEO
+Pregunta 9 · AE: SAN MIGUEL DE SEMA
+Pregunta 9 · AE: SAN PABLO DE BORBUR
+Pregunta 9 · AE: SANTANA
+Pregunta 9 · AE: SANTA MARIA
+Pregunta 9 · AE: SANTA ROSA DE VITERBO
+Pregunta 9 · AE: SANTA SOFIA
+Pregunta 9 · AE: SATIVANORTE
+Pregunta 9 · AE: SATIVASUR
+Pregunta 9 · AE: SIACHOQUE
+Pregunta 9 · AE: SOATA
+Pregunta 9 · AE: SOCOTA
+Pregunta 9 · AE: SOCHA
+Pregunta 9 · AE: SOGAMOSO
+Pregunta 9 · AE: SOMONDOCO
+Pregunta 9 · AE: SORA
+Pregunta 9 · AE: SOTAQUIRA
+Pregunta 9 · AE: SORACA
+Pregunta 9 · AE: SUSACON
+Pregunta 9 · AE: SUTAMARCHAN
+Pregunta 9 · AE: SUTATENZA
+Pregunta 9 · AE: TASCO
+Pregunta 9 · AE: TENZA
+Pregunta 9 · AE: TIBANA
+Pregunta 9 · AE: TIBASOSA
+Pregunta 9 · AE: TINJACA
+Pregunta 9 · AE: TIPACOQUE
+Pregunta 9 · AE: TOCA
+Pregunta 9 · AE: TOGsI
+Pregunta 9 · AE: TOPAGA
+Pregunta 9 · AE: TOTA
+Pregunta 9 · AE: TUNUNGUA
+Pregunta 9 · AE: TURMEQUE
+Pregunta 9 · AE: TUTA
+Pregunta 9 · AE: TUTAZA
+Pregunta 9 · AE: UMBITA
+Pregunta 9 · AE: VENTAQUEMADA
+Pregunta 9 · AE: VIRACACHA
+Pregunta 9 · AE: ZETAQUIRA
+Pregunta 9 · AE: MANIZALES
+Pregunta 9 · AE: AGUADAS
+Pregunta 9 · AE: ANSERMA
+Pregunta 9 · AE: ARANZAZU
+Pregunta 9 · AE: BELALCAZAR
+Pregunta 9 · AE: CHINCHINA
+Pregunta 9 · AE: FILADELFIA
+Pregunta 9 · AE: LA DORADA
+Pregunta 9 · AE: LA MERCED
+Pregunta 9 · AE: MANZANARES
+Pregunta 9 · AE: MARMATO
+Pregunta 9 · AE: MARQUETALIA
+Pregunta 9 · AE: MARULANDA
+Pregunta 9 · AE: NEIRA
+Pregunta 9 · AE: NORCASIA
+Pregunta 9 · AE: PACORA
+Pregunta 9 · AE: PALESTINA
+Pregunta 9 · AE: PENSILVANIA
+Pregunta 9 · AE: RIOSUCIO
+Pregunta 9 · AE: RISARALDA
+Pregunta 9 · AE: SALAMINA
+Pregunta 9 · AE: SAMANA
+Pregunta 9 · AE: SAN JOSE
+Pregunta 9 · AE: SUPIA
+Pregunta 9 · AE: VICTORIA
+Pregunta 9 · AE: VILLAMARIA
+Pregunta 9 · AE: VITERBO
+Pregunta 9 · AE: FLORENCIA
+Pregunta 9 · AE: ALBANIA
+Pregunta 9 · AE: BELEN DE LOS ANDAQUIES
+Pregunta 9 · AE: CARTAGENA DEL CHAIRA
+Pregunta 9 · AE: CURILLO
+Pregunta 9 · AE: EL DONCELLO
+Pregunta 9 · AE: EL PAUJIL
+Pregunta 9 · AE: LA MONTAÑITA
+Pregunta 9 · AE: MILAN
+Pregunta 9 · AE: MORELIA
+Pregunta 9 · AE: PUERTO RICO
+Pregunta 9 · AE: SAN JOSE DEL FRAGUA
+Pregunta 9 · AE: SAN VICENTE DEL CAGUAN
+Pregunta 9 · AE: SOLANO
+Pregunta 9 · AE: SOLITA
+Pregunta 9 · AE: VALPARAISO
+Pregunta 9 · AE: POPAYAN
+Pregunta 9 · AE: ALMAGUER
+Pregunta 9 · AE: ARGELIA
+Pregunta 9 · AE: BALBOA
+Pregunta 9 · AE: BOLIVAR
+Pregunta 9 · AE: BUENOS AIRES
+Pregunta 9 · AE: CAJIBIO
+Pregunta 9 · AE: CALDONO
+Pregunta 9 · AE: CALOTO
+Pregunta 9 · AE: CORINTO
+Pregunta 9 · AE: EL TAMBO
+Pregunta 9 · AE: FLORENCIA
+Pregunta 9 · AE: GUACHENE
+Pregunta 9 · AE: GUAPI
+Pregunta 9 · AE: INZA
+Pregunta 9 · AE: JAMBALO
+Pregunta 9 · AE: LA SIERRA
+Pregunta 9 · AE: LA VEGA
+Pregunta 9 · AE: LOPEZ
+Pregunta 9 · AE: MERCADERES
+Pregunta 9 · AE: MIRANDA
+Pregunta 9 · AE: MORALES
+Pregunta 9 · AE: PADILLA
+Pregunta 9 · AE: PAEZ
+Pregunta 9 · AE: PATIA
+Pregunta 9 · AE: PIAMONTE
+Pregunta 9 · AE: PIENDAMO
+Pregunta 9 · AE: PUERTO TEJADA
+Pregunta 9 · AE: PURACE
+Pregunta 9 · AE: ROSAS
+Pregunta 9 · AE: SAN SEBASTIAN
+Pregunta 9 · AE: SANTANDER DE QUILICHAO
+Pregunta 9 · AE: SANTA ROSA
+Pregunta 9 · AE: SILVIA
+Pregunta 9 · AE: SOTARA
+Pregunta 9 · AE: SUAREZ
+Pregunta 9 · AE: SUCRE
+Pregunta 9 · AE: TIMBIO
+Pregunta 9 · AE: TIMBIQUI
+Pregunta 9 · AE: TORIBIO
+Pregunta 9 · AE: TOTORO
+Pregunta 9 · AE: VILLA RICA
+Pregunta 9 · AE: VALLEDUPAR
+Pregunta 9 · AE: AGUACHICA
+Pregunta 9 · AE: AGUSTIN CODAZZI
+Pregunta 9 · AE: ASTREA
+Pregunta 9 · AE: BECERRIL
+Pregunta 9 · AE: BOSCONIA
+Pregunta 9 · AE: CHIMICHAGUA
+Pregunta 9 · AE: CHIRIGUANA
+Pregunta 9 · AE: CURUMANI
+Pregunta 9 · AE: EL COPEY
+Pregunta 9 · AE: EL PASO
+Pregunta 9 · AE: GAMARRA
+Pregunta 9 · AE: GONZALEZ
+Pregunta 9 · AE: LA GLORIA
+Pregunta 9 · AE: LA JAGUA DE IBIRICO
+Pregunta 9 · AE: MANAURE
+Pregunta 9 · AE: PAILITAS
+Pregunta 9 · AE: PELAYA
+Pregunta 9 · AE: PUEBLO BELLO
+Pregunta 9 · AE: RIO DE ORO
+Pregunta 9 · AE: LA PAZ
+Pregunta 9 · AE: SAN ALBERTO
+Pregunta 9 · AE: SAN DIEGO
+Pregunta 9 · AE: SAN MARTIN
+Pregunta 9 · AE: TAMALAMEQUE
+Pregunta 9 · AE: MONTERIA
+Pregunta 9 · AE: AYAPEL
+Pregunta 9 · AE: BUENAVISTA
+Pregunta 9 · AE: CANALETE
+Pregunta 9 · AE: CERETE
+Pregunta 9 · AE: CHIMA
+Pregunta 9 · AE: CHINU
+Pregunta 9 · AE: CIENAGA DE ORO
+Pregunta 9 · AE: COTORRA
+Pregunta 9 · AE: LA APARTADA
+Pregunta 9 · AE: LORICA
+Pregunta 9 · AE: LOS CORDOBAS
+Pregunta 9 · AE: MOMIL
+Pregunta 9 · AE: MONTELIBANO
+Pregunta 9 · AE: MOÑITOS
+Pregunta 9 · AE: PLANETA RICA
+Pregunta 9 · AE: PUEBLO NUEVO
+Pregunta 9 · AE: PUERTO ESCONDIDO
+Pregunta 9 · AE: PUERTO LIBERTADOR
+Pregunta 9 · AE: PURISIMA
+Pregunta 9 · AE: SAHAGUN
+Pregunta 9 · AE: SAN ANDRES SOTAVENTO
+Pregunta 9 · AE: SAN ANTERO
+Pregunta 9 · AE: SAN BERNARDO DEL VIENTO
+Pregunta 9 · AE: SAN CARLOS
+Pregunta 9 · AE: SAN PELAYO
+Pregunta 9 · AE: TIERRALTA
+Pregunta 9 · AE: VALENCIA
+Pregunta 9 · AE: AGUA DE DIOS
+Pregunta 9 · AE: ALBAN
+Pregunta 9 · AE: ANAPOIMA
+Pregunta 9 · AE: ANOLAIMA
+Pregunta 9 · AE: ARBELAEZ
+Pregunta 9 · AE: BELTRAN
+Pregunta 9 · AE: BITUIMA
+Pregunta 9 · AE: BOJACA
+Pregunta 9 · AE: CABRERA
+Pregunta 9 · AE: CACHIPAY
+Pregunta 9 · AE: CAJICA
+Pregunta 9 · AE: CAPARRAPI
+Pregunta 9 · AE: CAQUEZA
+Pregunta 9 · AE: CARMEN DE CARUPA
+Pregunta 9 · AE: CHAGUANI
+Pregunta 9 · AE: CHIA
+Pregunta 9 · AE: CHIPAQUE
+Pregunta 9 · AE: CHOACHI
+Pregunta 9 · AE: CHOCONTA
+Pregunta 9 · AE: COGUA
+Pregunta 9 · AE: COTA
+Pregunta 9 · AE: CUCUNUBA
+Pregunta 9 · AE: EL COLEGIO
+Pregunta 9 · AE: EL PEÑON
+Pregunta 9 · AE: EL ROSAL
+Pregunta 9 · AE: FACATATIVA
+Pregunta 9 · AE: FOMEQUE
+Pregunta 9 · AE: FOSCA
+Pregunta 9 · AE: FUNZA
+Pregunta 9 · AE: FUQUENE
+Pregunta 9 · AE: FUSAGASUGA
+Pregunta 9 · AE: GACHALA
+Pregunta 9 · AE: GACHANCIPA
+Pregunta 9 · AE: GACHETA
+Pregunta 9 · AE: GAMA
+Pregunta 9 · AE: GIRARDOT
+Pregunta 9 · AE: GRANADA
+Pregunta 9 · AE: GUACHETA
+Pregunta 9 · AE: GUADUAS
+Pregunta 9 · AE: GUASCA
+Pregunta 9 · AE: GUATAQUI
+Pregunta 9 · AE: GUATAVITA
+Pregunta 9 · AE: GUAYABAL DE SIQUIMA
+Pregunta 9 · AE: GUAYABETAL
+Pregunta 9 · AE: GUTIERREZ
+Pregunta 9 · AE: JERUSALEN
+Pregunta 9 · AE: JUNIN
+Pregunta 9 · AE: LA CALERA
+Pregunta 9 · AE: LA MESA
+Pregunta 9 · AE: LA PALMA
+Pregunta 9 · AE: LA PEÑA
+Pregunta 9 · AE: LA VEGA
+Pregunta 9 · AE: LENGUAZAQUE
+Pregunta 9 · AE: MACHETA
+Pregunta 9 · AE: MADRID
+Pregunta 9 · AE: MANTA
+Pregunta 9 · AE: MEDINA
+Pregunta 9 · AE: MOSQUERA
+Pregunta 9 · AE: NARIÑO
+Pregunta 9 · AE: NEMOCON
+Pregunta 9 · AE: NILO
+Pregunta 9 · AE: NIMAIMA
+Pregunta 9 · AE: NOCAIMA
+Pregunta 9 · AE: VENECIA
+Pregunta 9 · AE: PACHO
+Pregunta 9 · AE: PAIME
+Pregunta 9 · AE: PANDI
+Pregunta 9 · AE: PARATEBUENO
+Pregunta 9 · AE: PASCA
+Pregunta 9 · AE: PUERTO SALGAR
+Pregunta 9 · AE: PULI
+Pregunta 9 · AE: QUEBRADANEGRA
+Pregunta 9 · AE: QUETAME
+Pregunta 9 · AE: QUIPILE
+Pregunta 9 · AE: APULO
+Pregunta 9 · AE: RICAURTE
+Pregunta 9 · AE: SAN ANTONIO DEL TEQUENDAMA
+Pregunta 9 · AE: SAN BERNARDO
+Pregunta 9 · AE: SAN CAYETANO
+Pregunta 9 · AE: SAN FRANCISCO
+Pregunta 9 · AE: SAN JUAN DE RIO SECO
+Pregunta 9 · AE: SASAIMA
+Pregunta 9 · AE: SESQUILE
+Pregunta 9 · AE: SIBATE
+Pregunta 9 · AE: SILVANIA
+Pregunta 9 · AE: SIMIJACA
+Pregunta 9 · AE: SOACHA
+Pregunta 9 · AE: SOPO
+Pregunta 9 · AE: SUBACHOQUE
+Pregunta 9 · AE: SUESCA
+Pregunta 9 · AE: SUPATA
+Pregunta 9 · AE: SUSA
+Pregunta 9 · AE: SUTATAUSA
+Pregunta 9 · AE: TABIO
+Pregunta 9 · AE: TAUSA
+Pregunta 9 · AE: TENA
+Pregunta 9 · AE: TENJO
+Pregunta 9 · AE: TIBACUY
+Pregunta 9 · AE: TIBIRITA
+Pregunta 9 · AE: TOCAIMA
+Pregunta 9 · AE: TOCANCIPA
+Pregunta 9 · AE: TOPAIPI
+Pregunta 9 · AE: UBALA
+Pregunta 9 · AE: UBAQUE
+Pregunta 9 · AE: VILLA DE SAN DIEGO DE UBATE
+Pregunta 9 · AE: UNE
+Pregunta 9 · AE: UTICA
+Pregunta 9 · AE: VERGARA
+Pregunta 9 · AE: VIANI
+Pregunta 9 · AE: VILLAGOMEZ
+Pregunta 9 · AE: VILLAPINZON
+Pregunta 9 · AE: VILLETA
+Pregunta 9 · AE: VIOTA
+Pregunta 9 · AE: YACOPI
+Pregunta 9 · AE: ZIPACON
+Pregunta 9 · AE: ZIPAQUIRA
+Pregunta 9 · AE: QUIBDO
+Pregunta 9 · AE: ACANDI
+Pregunta 9 · AE: ALTO BAUDO
+Pregunta 9 · AE: ATRATO
+Pregunta 9 · AE: BAGADO
+Pregunta 9 · AE: BAHIA SOLANO
+Pregunta 9 · AE: BAJO BAUDO
+Pregunta 9 · AE: BOJAYA
+Pregunta 9 · AE: EL CANTON DEL SAN PABLO
+Pregunta 9 · AE: CARMEN DEL DARIEN
+Pregunta 9 · AE: CERTEGUI
+Pregunta 9 · AE: CONDOTO
+Pregunta 9 · AE: EL CARMEN DE ATRATO
+Pregunta 9 · AE: EL LITORAL DEL SAN JUAN
+Pregunta 9 · AE: ISTMINA
+Pregunta 9 · AE: JURADO
+Pregunta 9 · AE: LLORO
+Pregunta 9 · AE: MEDIO ATRATO
+Pregunta 9 · AE: MEDIO BAUDO
+Pregunta 9 · AE: MEDIO SAN JUAN
+Pregunta 9 · AE: NOVITA
+Pregunta 9 · AE: NUQUI
+Pregunta 9 · AE: RIO IRO
+Pregunta 9 · AE: RIO QUITO
+Pregunta 9 · AE: RIOSUCIO
+Pregunta 9 · AE: SAN JOSE DEL PALMAR
+Pregunta 9 · AE: SIPI
+Pregunta 9 · AE: TADO
+Pregunta 9 · AE: UNGUIA
+Pregunta 9 · AE: UNION PANAMERICANA
+Pregunta 9 · AE: NEIVA
+Pregunta 9 · AE: ACEVEDO
+Pregunta 9 · AE: AGRADO
+Pregunta 9 · AE: AIPE
+Pregunta 9 · AE: ALGECIRAS
+Pregunta 9 · AE: ALTAMIRA
+Pregunta 9 · AE: BARAYA
+Pregunta 9 · AE: CAMPOALEGRE
+Pregunta 9 · AE: COLOMBIA
+Pregunta 9 · AE: ELIAS
+Pregunta 9 · AE: GARZON
+Pregunta 9 · AE: GIGANTE
+Pregunta 9 · AE: GUADALUPE
+Pregunta 9 · AE: HOBO
+Pregunta 9 · AE: IQUIRA
+Pregunta 9 · AE: ISNOS
+Pregunta 9 · AE: LA ARGENTINA
+Pregunta 9 · AE: LA PLATA
+Pregunta 9 · AE: NATAGA
+Pregunta 9 · AE: OPORAPA
+Pregunta 9 · AE: PAICOL
+Pregunta 9 · AE: PALERMO
+Pregunta 9 · AE: PALESTINA
+Pregunta 9 · AE: PITAL
+Pregunta 9 · AE: PITALITO
+Pregunta 9 · AE: RIVERA
+Pregunta 9 · AE: SALADOBLANCO
+Pregunta 9 · AE: SAN AGUSTIN
+Pregunta 9 · AE: SANTA MARIA
+Pregunta 9 · AE: SUAZA
+Pregunta 9 · AE: TARQUI
+Pregunta 9 · AE: TESALIA
+Pregunta 9 · AE: TELLO
+Pregunta 9 · AE: TERUEL
+Pregunta 9 · AE: TIMANA
+Pregunta 9 · AE: VILLAVIEJA
+Pregunta 9 · AE: YAGUARA
+Pregunta 9 · AE: RIOHACHA
+Pregunta 9 · AE: ALBANIA
+Pregunta 9 · AE: BARRANCAS
+Pregunta 9 · AE: DIBULLA
+Pregunta 9 · AE: DISTRACCION
+Pregunta 9 · AE: EL MOLINO
+Pregunta 9 · AE: FONSECA
+Pregunta 9 · AE: HATONUEVO
+Pregunta 9 · AE: LA JAGUA DEL PILAR
+Pregunta 9 · AE: MAICAO
+Pregunta 9 · AE: MANAURE
+Pregunta 9 · AE: SAN JUAN DEL CESAR
+Pregunta 9 · AE: URIBIA
+Pregunta 9 · AE: URUMITA
+Pregunta 9 · AE: VILLANUEVA
+Pregunta 9 · AE: SANTA MARTA
+Pregunta 9 · AE: ALGARROBO
+Pregunta 9 · AE: ARACATACA
+Pregunta 9 · AE: ARIGUANI
+Pregunta 9 · AE: CERRO SAN ANTONIO
+Pregunta 9 · AE: CHIBOLO
+Pregunta 9 · AE: CIENAGA
+Pregunta 9 · AE: CONCORDIA
+Pregunta 9 · AE: EL BANCO
+Pregunta 9 · AE: EL PIÑON
+Pregunta 9 · AE: EL RETEN
+Pregunta 9 · AE: FUNDACION
+Pregunta 9 · AE: GUAMAL
+Pregunta 9 · AE: NUEVA GRANADA
+Pregunta 9 · AE: PEDRAZA
+Pregunta 9 · AE: PIJIÑO DEL CARMEN
+Pregunta 9 · AE: PIVIJAY
+Pregunta 9 · AE: PLATO
+Pregunta 9 · AE: PUEBLOVIEJO
+Pregunta 9 · AE: REMOLINO
+Pregunta 9 · AE: SABANAS DE SAN ANGEL
+Pregunta 9 · AE: SALAMINA
+Pregunta 9 · AE: SAN SEBASTIAN DE BUENAVISTA
+Pregunta 9 · AE: SAN ZENON
+Pregunta 9 · AE: SANTA ANA
+Pregunta 9 · AE: SANTA BARBARA DE PINTO
+Pregunta 9 · AE: SITIONUEVO
+Pregunta 9 · AE: TENERIFE
+Pregunta 9 · AE: ZAPAYAN
+Pregunta 9 · AE: ZONA BANANERA
+Pregunta 9 · AE: VILLAVICENCIO
+Pregunta 9 · AE: ACACIAS
+Pregunta 9 · AE: BARRANCA DE UPIA
+Pregunta 9 · AE: CABUYARO
+Pregunta 9 · AE: CASTILLA LA NUEVA
+Pregunta 9 · AE: CUBARRAL
+Pregunta 9 · AE: CUMARAL
+Pregunta 9 · AE: EL CALVARIO
+Pregunta 9 · AE: EL CASTILLO
+Pregunta 9 · AE: EL DORADO
+Pregunta 9 · AE: FUENTE DE ORO
+Pregunta 9 · AE: GRANADA
+Pregunta 9 · AE: GUAMAL
+Pregunta 9 · AE: MAPIRIPAN
+Pregunta 9 · AE: MESETAS
+Pregunta 9 · AE: LA MACARENA
+Pregunta 9 · AE: URIBE
+Pregunta 9 · AE: LEJANIAS
+Pregunta 9 · AE: PUERTO CONCORDIA
+Pregunta 9 · AE: PUERTO GAITAN
+Pregunta 9 · AE: PUERTO LOPEZ
+Pregunta 9 · AE: PUERTO LLERAS
+Pregunta 9 · AE: PUERTO RICO
+Pregunta 9 · AE: RESTREPO
+Pregunta 9 · AE: SAN CARLOS DE GUAROA
+Pregunta 9 · AE: SAN JUAN DE ARAMA
+Pregunta 9 · AE: SAN JUANITO
+Pregunta 9 · AE: SAN MARTIN
+Pregunta 9 · AE: VISTAHERMOSA
+Pregunta 9 · AE: PASTO
+Pregunta 9 · AE: ALBAN
+Pregunta 9 · AE: ALDANA
+Pregunta 9 · AE: ANCUYA
+Pregunta 9 · AE: ARBOLEDA
+Pregunta 9 · AE: BARBACOAS
+Pregunta 9 · AE: BELEN
+Pregunta 9 · AE: BUESACO
+Pregunta 9 · AE: COLON
+Pregunta 9 · AE: CONSACA
+Pregunta 9 · AE: CONTADERO
+Pregunta 9 · AE: CORDOBA
+Pregunta 9 · AE: CUASPUD
+Pregunta 9 · AE: CUMBAL
+Pregunta 9 · AE: CUMBITARA
+Pregunta 9 · AE: CHACHAGsI
+Pregunta 9 · AE: EL CHARCO
+Pregunta 9 · AE: EL PEÑOL
+Pregunta 9 · AE: EL ROSARIO
+Pregunta 9 · AE: EL TABLON DE GOMEZ
+Pregunta 9 · AE: EL TAMBO
+Pregunta 9 · AE: FUNES
+Pregunta 9 · AE: GUACHUCAL
+Pregunta 9 · AE: GUAITARILLA
+Pregunta 9 · AE: GUALMATAN
+Pregunta 9 · AE: ILES
+Pregunta 9 · AE: IMUES
+Pregunta 9 · AE: IPIALES
+Pregunta 9 · AE: LA CRUZ
+Pregunta 9 · AE: LA FLORIDA
+Pregunta 9 · AE: LA LLANADA
+Pregunta 9 · AE: LA TOLA
+Pregunta 9 · AE: LA UNION
+Pregunta 9 · AE: LEIVA
+Pregunta 9 · AE: LINARES
+Pregunta 9 · AE: LOS ANDES
+Pregunta 9 · AE: MAGsI
+Pregunta 9 · AE: MALLAMA
+Pregunta 9 · AE: MOSQUERA
+Pregunta 9 · AE: NARIÑO
+Pregunta 9 · AE: OLAYA HERRERA
+Pregunta 9 · AE: OSPINA
+Pregunta 9 · AE: FRANCISCO PIZARRO
+Pregunta 9 · AE: POLICARPA
+Pregunta 9 · AE: POTOSI
+Pregunta 9 · AE: PROVIDENCIA
+Pregunta 9 · AE: PUERRES
+Pregunta 9 · AE: PUPIALES
+Pregunta 9 · AE: RICAURTE
+Pregunta 9 · AE: ROBERTO PAYAN
+Pregunta 9 · AE: SAMANIEGO
+Pregunta 9 · AE: SANDONA
+Pregunta 9 · AE: SAN BERNARDO
+Pregunta 9 · AE: SAN LORENZO
+Pregunta 9 · AE: SAN PABLO
+Pregunta 9 · AE: SAN PEDRO DE CARTAGO
+Pregunta 9 · AE: SANTA BARBARA
+Pregunta 9 · AE: SANTACRUZ
+Pregunta 9 · AE: SAPUYES
+Pregunta 9 · AE: TAMINANGO
+Pregunta 9 · AE: TANGUA
+Pregunta 9 · AE: SAN ANDRES DE TUMACO
+Pregunta 9 · AE: TUQUERRES
+Pregunta 9 · AE: YACUANQUER
+Pregunta 9 · AE: CUCUTA
+Pregunta 9 · AE: ABREGO
+Pregunta 9 · AE: ARBOLEDAS
+Pregunta 9 · AE: BOCHALEMA
+Pregunta 9 · AE: BUCARASICA
+Pregunta 9 · AE: CACOTA
+Pregunta 9 · AE: CACHIRA
+Pregunta 9 · AE: CHINACOTA
+Pregunta 9 · AE: CHITAGA
+Pregunta 9 · AE: CONVENCION
+Pregunta 9 · AE: CUCUTILLA
+Pregunta 9 · AE: DURANIA
+Pregunta 9 · AE: EL CARMEN
+Pregunta 9 · AE: EL TARRA
+Pregunta 9 · AE: EL ZULIA
+Pregunta 9 · AE: GRAMALOTE
+Pregunta 9 · AE: HACARI
+Pregunta 9 · AE: HERRAN
+Pregunta 9 · AE: LABATECA
+Pregunta 9 · AE: LA ESPERANZA
+Pregunta 9 · AE: LA PLAYA
+Pregunta 9 · AE: LOS PATIOS
+Pregunta 9 · AE: LOURDES
+Pregunta 9 · AE: MUTISCUA
+Pregunta 9 · AE: OCAÑA
+Pregunta 9 · AE: PAMPLONA
+Pregunta 9 · AE: PAMPLONITA
+Pregunta 9 · AE: PUERTO SANTANDER
+Pregunta 9 · AE: RAGONVALIA
+Pregunta 9 · AE: SALAZAR
+Pregunta 9 · AE: SAN CALIXTO
+Pregunta 9 · AE: SAN CAYETANO
+Pregunta 9 · AE: SANTIAGO
+Pregunta 9 · AE: SARDINATA
+Pregunta 9 · AE: SILOS
+Pregunta 9 · AE: TEORAMA
+Pregunta 9 · AE: TIBU
+Pregunta 9 · AE: TOLEDO
+Pregunta 9 · AE: VILLA CARO
+Pregunta 9 · AE: VILLA DEL ROSARIO
+Pregunta 9 · AE: ARMENIA
+Pregunta 9 · AE: BUENAVISTA
+Pregunta 9 · AE: CALARCA
+Pregunta 9 · AE: CIRCASIA
+Pregunta 9 · AE: CORDOBA
+Pregunta 9 · AE: FILANDIA
+Pregunta 9 · AE: GENOVA
+Pregunta 9 · AE: LA TEBAIDA
+Pregunta 9 · AE: MONTENEGRO
+Pregunta 9 · AE: PIJAO
+Pregunta 9 · AE: QUIMBAYA
+Pregunta 9 · AE: SALENTO
+Pregunta 9 · AE: PEREIRA
+Pregunta 9 · AE: APIA
+Pregunta 9 · AE: BALBOA
+Pregunta 9 · AE: BELEN DE UMBRIA
+Pregunta 9 · AE: DOSQUEBRADAS
+Pregunta 9 · AE: GUATICA
+Pregunta 9 · AE: LA CELIA
+Pregunta 9 · AE: LA VIRGINIA
+Pregunta 9 · AE: MARSELLA
+Pregunta 9 · AE: MISTRATO
+Pregunta 9 · AE: PUEBLO RICO
+Pregunta 9 · AE: QUINCHIA
+Pregunta 9 · AE: SANTA ROSA DE CABAL
+Pregunta 9 · AE: SANTUARIO
+Pregunta 9 · AE: BUCARAMANGA
+Pregunta 9 · AE: AGUADA
+Pregunta 9 · AE: ALBANIA
+Pregunta 9 · AE: ARATOCA
+Pregunta 9 · AE: BARBOSA
+Pregunta 9 · AE: BARICHARA
+Pregunta 9 · AE: BARRANCABERMEJA
+Pregunta 9 · AE: BETULIA
+Pregunta 9 · AE: BOLIVAR
+Pregunta 9 · AE: CABRERA
+Pregunta 9 · AE: CALIFORNIA
+Pregunta 9 · AE: CAPITANEJO
+Pregunta 9 · AE: CARCASI
+Pregunta 9 · AE: CEPITA
+Pregunta 9 · AE: CERRITO
+Pregunta 9 · AE: CHARALA
+Pregunta 9 · AE: CHARTA
+Pregunta 9 · AE: CHIMA
+Pregunta 9 · AE: CHIPATA
+Pregunta 9 · AE: CIMITARRA
+Pregunta 9 · AE: CONCEPCION
+Pregunta 9 · AE: CONFINES
+Pregunta 9 · AE: CONTRATACION
+Pregunta 9 · AE: COROMORO
+Pregunta 9 · AE: CURITI
+Pregunta 9 · AE: EL CARMEN DE CHUCURI
+Pregunta 9 · AE: EL GUACAMAYO
+Pregunta 9 · AE: EL PEÑON
+Pregunta 9 · AE: EL PLAYON
+Pregunta 9 · AE: ENCINO
+Pregunta 9 · AE: ENCISO
+Pregunta 9 · AE: FLORIAN
+Pregunta 9 · AE: FLORIDABLANCA
+Pregunta 9 · AE: GALAN
+Pregunta 9 · AE: GAMBITA
+Pregunta 9 · AE: GIRON
+Pregunta 9 · AE: GUACA
+Pregunta 9 · AE: GUADALUPE
+Pregunta 9 · AE: GUAPOTA
+Pregunta 9 · AE: GUAVATA
+Pregunta 9 · AE: GsEPSA
+Pregunta 9 · AE: HATO
+Pregunta 9 · AE: JESUS MARIA
+Pregunta 9 · AE: JORDAN
+Pregunta 9 · AE: LA BELLEZA
+Pregunta 9 · AE: LANDAZURI
+Pregunta 9 · AE: LA PAZ
+Pregunta 9 · AE: LEBRIJA
+Pregunta 9 · AE: LOS SANTOS
+Pregunta 9 · AE: MACARAVITA
+Pregunta 9 · AE: MALAGA
+Pregunta 9 · AE: MATANZA
+Pregunta 9 · AE: MOGOTES
+Pregunta 9 · AE: MOLAGAVITA
+Pregunta 9 · AE: OCAMONTE
+Pregunta 9 · AE: OIBA
+Pregunta 9 · AE: ONZAGA
+Pregunta 9 · AE: PALMAR
+Pregunta 9 · AE: PALMAS DEL SOCORRO
+Pregunta 9 · AE: PARAMO
+Pregunta 9 · AE: PIEDECUESTA
+Pregunta 9 · AE: PINCHOTE
+Pregunta 9 · AE: PUENTE NACIONAL
+Pregunta 9 · AE: PUERTO PARRA
+Pregunta 9 · AE: PUERTO WILCHES
+Pregunta 9 · AE: RIONEGRO
+Pregunta 9 · AE: SABANA DE TORRES
+Pregunta 9 · AE: SAN ANDRES
+Pregunta 9 · AE: SAN BENITO
+Pregunta 9 · AE: SAN GIL
+Pregunta 9 · AE: SAN JOAQUIN
+Pregunta 9 · AE: SAN JOSE DE MIRANDA
+Pregunta 9 · AE: SAN MIGUEL
+Pregunta 9 · AE: SAN VICENTE DE CHUCURI
+Pregunta 9 · AE: SANTA BARBARA
+Pregunta 9 · AE: SANTA HELENA DEL OPON
+Pregunta 9 · AE: SIMACOTA
+Pregunta 9 · AE: SOCORRO
+Pregunta 9 · AE: SUAITA
+Pregunta 9 · AE: SUCRE
+Pregunta 9 · AE: SURATA
+Pregunta 9 · AE: TONA
+Pregunta 9 · AE: VALLE DE SAN JOSE
+Pregunta 9 · AE: VELEZ
+Pregunta 9 · AE: VETAS
+Pregunta 9 · AE: VILLANUEVA
+Pregunta 9 · AE: ZAPATOCA
+Pregunta 9 · AE: SINCELEJO
+Pregunta 9 · AE: BUENAVISTA
+Pregunta 9 · AE: CAIMITO
+Pregunta 9 · AE: COLOSO
+Pregunta 9 · AE: COROZAL
+Pregunta 9 · AE: COVEÑAS
+Pregunta 9 · AE: CHALAN
+Pregunta 9 · AE: EL ROBLE
+Pregunta 9 · AE: GALERAS
+Pregunta 9 · AE: GUARANDA
+Pregunta 9 · AE: LA UNION
+Pregunta 9 · AE: LOS PALMITOS
+Pregunta 9 · AE: MAJAGUAL
+Pregunta 9 · AE: MORROA
+Pregunta 9 · AE: OVEJAS
+Pregunta 9 · AE: PALMITO
+Pregunta 9 · AE: SAMPUES
+Pregunta 9 · AE: SAN BENITO ABAD
+Pregunta 9 · AE: SAN JUAN DE BETULIA
+Pregunta 9 · AE: SAN MARCOS
+Pregunta 9 · AE: SAN ONOFRE
+Pregunta 9 · AE: SAN PEDRO
+Pregunta 9 · AE: SAN LUIS DE SINCE
+Pregunta 9 · AE: SUCRE
+Pregunta 9 · AE: SANTIAGO DE TOLU
+Pregunta 9 · AE: TOLU VIEJO
+Pregunta 9 · AE: IBAGUE
+Pregunta 9 · AE: ALPUJARRA
+Pregunta 9 · AE: ALVARADO
+Pregunta 9 · AE: AMBALEMA
+Pregunta 9 · AE: ANZOATEGUI
+Pregunta 9 · AE: ARMERO
+Pregunta 9 · AE: ATACO
+Pregunta 9 · AE: CAJAMARCA
+Pregunta 9 · AE: CARMEN DE APICALA
+Pregunta 9 · AE: CASABIANCA
+Pregunta 9 · AE: CHAPARRAL
+Pregunta 9 · AE: COELLO
+Pregunta 9 · AE: COYAIMA
+Pregunta 9 · AE: CUNDAY
+Pregunta 9 · AE: DOLORES
+Pregunta 9 · AE: ESPINAL
+Pregunta 9 · AE: FALAN
+Pregunta 9 · AE: FLANDES
+Pregunta 9 · AE: FRESNO
+Pregunta 9 · AE: GUAMO
+Pregunta 9 · AE: HERVEO
+Pregunta 9 · AE: HONDA
+Pregunta 9 · AE: ICONONZO
+Pregunta 9 · AE: LERIDA
+Pregunta 9 · AE: LIBANO
+Pregunta 9 · AE: MARIQUITA
+Pregunta 9 · AE: MELGAR
+Pregunta 9 · AE: MURILLO
+Pregunta 9 · AE: NATAGAIMA
+Pregunta 9 · AE: ORTEGA
+Pregunta 9 · AE: PALOCABILDO
+Pregunta 9 · AE: PIEDRAS
+Pregunta 9 · AE: PLANADAS
+Pregunta 9 · AE: PRADO
+Pregunta 9 · AE: PURIFICACION
+Pregunta 9 · AE: RIOBLANCO
+Pregunta 9 · AE: RONCESVALLES
+Pregunta 9 · AE: ROVIRA
+Pregunta 9 · AE: SALDAÑA
+Pregunta 9 · AE: SAN ANTONIO
+Pregunta 9 · AE: SAN LUIS
+Pregunta 9 · AE: SANTA ISABEL
+Pregunta 9 · AE: SUAREZ
+Pregunta 9 · AE: VALLE DE SAN JUAN
+Pregunta 9 · AE: VENADILLO
+Pregunta 9 · AE: VILLAHERMOSA
+Pregunta 9 · AE: VILLARRICA
+Pregunta 9 · AE: CALI
+Pregunta 9 · AE: ALCALA
+Pregunta 9 · AE: ANDALUCIA
+Pregunta 9 · AE: ANSERMANUEVO
+Pregunta 9 · AE: ARGELIA
+Pregunta 9 · AE: BOLIVAR
+Pregunta 9 · AE: BUENAVENTURA
+Pregunta 9 · AE: GUADALAJARA DE BUGA
+Pregunta 9 · AE: BUGALAGRANDE
+Pregunta 9 · AE: CAICEDONIA
+Pregunta 9 · AE: CALIMA
+Pregunta 9 · AE: CANDELARIA
+Pregunta 9 · AE: CARTAGO
+Pregunta 9 · AE: DAGUA
+Pregunta 9 · AE: EL AGUILA
+Pregunta 9 · AE: EL CAIRO
+Pregunta 9 · AE: EL CERRITO
+Pregunta 9 · AE: EL DOVIO
+Pregunta 9 · AE: FLORIDA
+Pregunta 9 · AE: GINEBRA
+Pregunta 9 · AE: GUACARI
+Pregunta 9 · AE: JAMUNDI
+Pregunta 9 · AE: LA CUMBRE
+Pregunta 9 · AE: LA UNION
+Pregunta 9 · AE: LA VICTORIA
+Pregunta 9 · AE: OBANDO
+Pregunta 9 · AE: PALMIRA
+Pregunta 9 · AE: PRADERA
+Pregunta 9 · AE: RESTREPO
+Pregunta 9 · AE: RIOFRIO
+Pregunta 9 · AE: ROLDANILLO
+Pregunta 9 · AE: SAN PEDRO
+Pregunta 9 · AE: SEVILLA
+Pregunta 9 · AE: TORO
+Pregunta 9 · AE: TRUJILLO
+Pregunta 9 · AE: TULUA
+Pregunta 9 · AE: ULLOA
+Pregunta 9 · AE: VERSALLES
+Pregunta 9 · AE: VIJES
+Pregunta 9 · AE: YOTOCO
+Pregunta 9 · AE: YUMBO
+Pregunta 9 · AE: ZARZAL
+Pregunta 9 · AE: ARAUCA
+Pregunta 9 · AE: ARAUQUITA
+Pregunta 9 · AE: CRAVO NORTE
+Pregunta 9 · AE: FORTUL
+Pregunta 9 · AE: PUERTO RONDON
+Pregunta 9 · AE: SARAVENA
+Pregunta 9 · AE: TAME
+Pregunta 9 · AE: YOPAL
+Pregunta 9 · AE: AGUAZUL
+Pregunta 9 · AE: CHAMEZA
+Pregunta 9 · AE: HATO COROZAL
+Pregunta 9 · AE: LA SALINA
+Pregunta 9 · AE: MANI
+Pregunta 9 · AE: MONTERREY
+Pregunta 9 · AE: NUNCHIA
+Pregunta 9 · AE: OROCUE
+Pregunta 9 · AE: PAZ DE ARIPORO
+Pregunta 9 · AE: PORE
+Pregunta 9 · AE: RECETOR
+Pregunta 9 · AE: SABANALARGA
+Pregunta 9 · AE: SACAMA
+Pregunta 9 · AE: SAN LUIS DE PALENQUE
+Pregunta 9 · AE: TAMARA
+Pregunta 9 · AE: TAURAMENA
+Pregunta 9 · AE: TRINIDAD
+Pregunta 9 · AE: VILLANUEVA
+Pregunta 9 · AE: MOCOA
+Pregunta 9 · AE: COLON
+Pregunta 9 · AE: ORITO
+Pregunta 9 · AE: PUERTO ASIS
+Pregunta 9 · AE: PUERTO CAICEDO
+Pregunta 9 · AE: PUERTO GUZMAN
+Pregunta 9 · AE: LEGUIZAMO
+Pregunta 9 · AE: SIBUNDOY
+Pregunta 9 · AE: SAN FRANCISCO
+Pregunta 9 · AE: SAN MIGUEL
+Pregunta 9 · AE: SANTIAGO
+Pregunta 9 · AE: VALLE DEL GUAMUEZ
+Pregunta 9 · AE: VILLAGARZON
+Pregunta 9 · AE: SAN ANDRES
+Pregunta 9 · AE: PROVIDENCIA
+Pregunta 9 · AE: LETICIA
+Pregunta 9 · AE: EL ENCANTO
+Pregunta 9 · AE: LA CHORRERA
+Pregunta 9 · AE: LA PEDRERA
+Pregunta 9 · AE: LA VICTORIA
+Pregunta 9 · AE: MIRITI - PARANA
+Pregunta 9 · AE: PUERTO ALEGRIA
+Pregunta 9 · AE: PUERTO ARICA
+Pregunta 9 · AE: PUERTO NARIÑO
+Pregunta 9 · AE: PUERTO SANTANDER
+Pregunta 9 · AE: TARAPACA
+Pregunta 9 · AE: INIRIDA
+Pregunta 9 · AE: BARRANCO MINAS
+Pregunta 9 · AE: MAPIRIPANA
+Pregunta 9 · AE: SAN FELIPE
+Pregunta 9 · AE: PUERTO COLOMBIA
+Pregunta 9 · AE: LA GUADALUPE
+Pregunta 9 · AE: CACAHUAL
+Pregunta 9 · AE: PANA PANA
+Pregunta 9 · AE: MORICHAL
+Pregunta 9 · AE: SAN JOSE DEL GUAVIARE
+Pregunta 9 · AE: CALAMAR
+Pregunta 9 · AE: EL RETORNO
+Pregunta 9 · AE: MIRAFLORES
+Pregunta 9 · AE: MITU
+Pregunta 9 · AE: CARURU
+Pregunta 9 · AE: PACOA
+Pregunta 9 · AE: TARAIRA
+Pregunta 9 · AE: PAPUNAUA
+Pregunta 9 · AE: YAVARATE
+Pregunta 9 · AE: PUERTO CARREÑO
+Pregunta 9 · AE: LA PRIMAVERA
+Pregunta 9 · AE: SANTA ROSALIA
+Pregunta 9 · AE: CUMARIBO
+[VALIDATION] Pregunta 9 · C9:C1048576 · list · $AE$1:$AE$1121
+[VALIDATION] Pregunta 9 · A10:A1048576 · list · País_de_Origen
+[VALIDATION] Pregunta 9 · A9 · list · $AD$1:$AD$228
+[VALIDATION] Pregunta 9 · B9:B1048576 · list · $AB$1:$AB$32
+[SHEET] Glosario
+Glosario · A: GLOSARIO
+Glosario · A: Remesas de trabajadores: · B: Envío de divisas de persona a persona, efectuado en foma recurrente o periódica, con el fin de contribuir al sostenimiento familiar.
+Glosario · B: Generalmente tiene lugar entre un emigrante internacional y su familia residente en el país de origen del migrante.
+Glosario · A: Receptor: · B: Persona natural que recibe una remesa
+Glosario · A: Remitente: · B: Persona natural que envía una remesa
+Glosario · A: Ingreso: · B: Recepción en Colombia de remesas por parte de residentes, que son enviadas por no residentes
+Glosario · A: Egreso: · B: Envío de remesas de residentes en Colombia a no residentes
+Glosario · A: País de origen de la remesa · B: País donde se encuentra el remitente de la remesa recibida del exterior
+Glosario · A: País de destino de la remesa: · B: País donde reside el receptor de la remesa, cuando es enviada desde Colombia a un no residente
+Glosario · A: Agente (money remitter): · B: Entidad no residente a traves de la cual se canalizan las remesas enviadas desde el exterior
+Glosario · A: Intermediario del mercado cambiario (IMC): · B: Institución cambiaria autorizada por el Banco de la República para efectuar transacciones de divisas con el exterior. Entidad que recibe y paga la remesa en Colombia
+Glosario · A: Comisión cobrada: · B: Valor porcentual de la comisión que cobra el agente del exterior por el envío de una remesa hacia Colombia
+Glosario · A: Giro de divisas: · B: Envío de una remesa a un receptor individual
+Glosario · A: Tasa de cambio: · B: Tasa a la cual las divisas enviadas (remesas) son convertidas y pagadas en pesos colombianos
+[SHEET] Anexo Paises
+Anexo Paises · A: Listado Nombres Países · B: Nota: Por favor utilizar la siguiente ortografía de los países, en las preguntas que lo requieran, para facilitar el análisis posterior por parte del Banco de la República
+Anexo Paises · A: AFGANISTAN
+Anexo Paises · A: ALBANIA
+Anexo Paises · A: ALEMANIA
+Anexo Paises · A: ALGERIA
+Anexo Paises · A: ANDORRA
+Anexo Paises · A: ANGOLA
+Anexo Paises · A: ANGUILA
+Anexo Paises · A: ANTARTICA
+Anexo Paises · A: ANTIGUA Y BARBUDA
+Anexo Paises · A: ANTILLAS HOLANDESAS
+Anexo Paises · A: ARABIA SAUDITA
+Anexo Paises · A: ARGENTINA
+Anexo Paises · A: ARMENIA
+Anexo Paises · A: ARUBA
+Anexo Paises · A: AUSTRALIA
+Anexo Paises · A: AUSTRIA
+Anexo Paises · A: AZERBAIJAN
+Anexo Paises · A: BAHAMAS
+Anexo Paises · A: BARÉIN
+Anexo Paises · A: BANGLADESH
+Anexo Paises · A: BARBADOS
+Anexo Paises · A: BELGICA
+Anexo Paises · A: BELICE
+Anexo Paises · A: BENIN
+Anexo Paises · A: BERMUDAS
+Anexo Paises · A: BIELORUSIA
+Anexo Paises · A: BOLIVIA
+Anexo Paises · A: BOSNIA HERZEGOVINA
+Anexo Paises · A: BOTSUANA
+Anexo Paises · A: BRASIL
+Anexo Paises · A: BRUNEI
+Anexo Paises · A: BULGARIA
+Anexo Paises · A: BURKINA FASO
+Anexo Paises · A: BURUNDI
+Anexo Paises · A: CABO VERDE
+Anexo Paises · A: CAMBOYA
+Anexo Paises · A: CAMERÚN
+Anexo Paises · A: CANADÁ
+Anexo Paises · A: CHAD
+Anexo Paises · A: CHILE
+Anexo Paises · A: CHINA
+Anexo Paises · A: CHIPRE
+Anexo Paises · A: CIUDAD DEL VATICANO
+Anexo Paises · A: COMORAS
+Anexo Paises · A: CONGO
+Anexo Paises · A: COREA
+Anexo Paises · A: COREA DEL NORTE
+Anexo Paises · A: COSTA DE MARFIL
+Anexo Paises · A: COSTA RICA
+Anexo Paises · A: CROACIA
+Anexo Paises · A: CUBA
+Anexo Paises · A: CURAZAO
+Anexo Paises · A: CYPRUS
+Anexo Paises · A: DINAMARCA
+Anexo Paises · A: DJIBOUTI
+Anexo Paises · A: DOMINICA
+Anexo Paises · A: ECUADOR
+Anexo Paises · A: EGIPTO
+Anexo Paises · A: EL SALVADOR
+Anexo Paises · A: EMIRATOS ARABES UNIDOS
+Anexo Paises · A: ESCOCIA
+Anexo Paises · A: ESLOVAQUIA
+Anexo Paises · A: ESLOVENIA
+Anexo Paises · A: ESPAÑA
+Anexo Paises · A: ESTADOS UNIDOS
+Anexo Paises · A: ESTONIA
+Anexo Paises · A: ETIOPIA
+Anexo Paises · A: FIJI
+Anexo Paises · A: FILIPINAS
+Anexo Paises · A: FINLANDIA
+Anexo Paises · A: FRANCIA
+Anexo Paises · A: GABON
+Anexo Paises · A: GAMBIA
+Anexo Paises · A: GEORGIA
+Anexo Paises · A: GHANA
+Anexo Paises · A: GIBRALTAR
+Anexo Paises · A: GRECIA
+Anexo Paises · A: GRENADA
+Anexo Paises · A: GROENLANDIA
+Anexo Paises · A: GUADALUPE
+Anexo Paises · A: GUAM
+Anexo Paises · A: GUATEMALA
+Anexo Paises · A: GUINEA
+Anexo Paises · A: GUINEA ECUATORIAL
+Anexo Paises · A: GUINEA FRANCIASA
+Anexo Paises · A: GUINEA-BISSAU
+Anexo Paises · A: GUYANA
+Anexo Paises · A: GUYANA FRANCIASA
+Anexo Paises · A: HAITI
+Anexo Paises · A: HAWAII
+Anexo Paises · A: HOLANDA
+Anexo Paises · A: HONDURAS
+Anexo Paises · A: HUNGRIA
+Anexo Paises · A: INDIA
+Anexo Paises · A: INDONESIA
+Anexo Paises · A: IRAN
+Anexo Paises · A: IRAQ
+Anexo Paises · A: IRLANDA
+Anexo Paises · A: IRLANDA DEL NORTE
+Anexo Paises · A: ISLA HEARD
+Anexo Paises · A: ISLANDIA
+Anexo Paises · A: ISLAS BOUVET
+Anexo Paises · A: ISLAS CAICOS
+Anexo Paises · A: ISLAS CAIMAN
+Anexo Paises · A: ISLAS CHANNEL
+Anexo Paises · A: ISLAS CHRISTMAS
+Anexo Paises · A: ISLAS COOK
+Anexo Paises · A: ISLAS FEROE
+Anexo Paises · A: ISLAS GEORGIA DEL SUR
+Anexo Paises · A: ISLAS MALVINAS
+Anexo Paises · A: ISLAS MARSHALL
+Anexo Paises · A: ISLAS SALOMON
+Anexo Paises · A: ISLAS TURCAS Y TURCOS
+Anexo Paises · A: ISLAS VIRGENES - USA
+Anexo Paises · A: ISLAS VIRGENES BRITANICAS
+Anexo Paises · A: ISLE OF MAN
+Anexo Paises · A: ISRAEL
+Anexo Paises · A: ITALIA
+Anexo Paises · A: JAMAICA
+Anexo Paises · A: JAPON
+Anexo Paises · A: JORDANIA
+Anexo Paises · A: KASAJISTAN
+Anexo Paises · A: KENYA
+Anexo Paises · A: KIRIBATI
+Anexo Paises · A: KUWAIT
+Anexo Paises · A: KYRGYZSTAN
+Anexo Paises · A: LAOS
+Anexo Paises · A: LESOTO
+Anexo Paises · A: LETONIA
+Anexo Paises · A: LIBANO
+Anexo Paises · A: LIBERIA
+Anexo Paises · A: LIBIA
+Anexo Paises · A: LIECHTENSTEIN
+Anexo Paises · A: LITUANIA
+Anexo Paises · A: LUXEMBURGO
+Anexo Paises · A: MALASIA
+Anexo Paises · A: MALAWI
+Anexo Paises · A: MALI
+Anexo Paises · A: MALTA
+Anexo Paises · A: MARRUECOS
+Anexo Paises · A: MARTINICA
+Anexo Paises · A: MAURICIO
+Anexo Paises · A: MAURITANIA
+Anexo Paises · A: MEXICO
+Anexo Paises · A: MICRONESIA
+Anexo Paises · A: MOLDAVIA
+Anexo Paises · A: MONACO
+Anexo Paises · A: MONGOLIA
+Anexo Paises · A: MOZAMBIQUE
+Anexo Paises · A: NAMIBIA
+Anexo Paises · A: NEPAL
+Anexo Paises · A: NICARAGUA
+Anexo Paises · A: NIGER
+Anexo Paises · A: NIGERIA
+Anexo Paises · A: NIUE
+Anexo Paises · A: NORUEGA
+Anexo Paises · A: NUEVA CALEDONIA
+Anexo Paises · A: NUEVA GUINEA
+Anexo Paises · A: NUEVA ZELANDA
+Anexo Paises · A: OMAN
+Anexo Paises · A: OTROS PAISES
+Anexo Paises · A: PAIS DE GALES
+Anexo Paises · A: PAKISTAN
+Anexo Paises · A: PALAOS
+Anexo Paises · A: PALESTINA
+Anexo Paises · A: PANAMA
+Anexo Paises · A: PARAGUAY
+Anexo Paises · A: PERU
+Anexo Paises · A: PITCAIRN
+Anexo Paises · A: POLINESIA FRANCIASA
+Anexo Paises · A: POLONIA
+Anexo Paises · A: PORTUGAL
+Anexo Paises · A: PUERTO RICO
+Anexo Paises · A: QATAR
+Anexo Paises · A: REINO UNIDO
+Anexo Paises · A: REPUBLICA CENTRO AFRICANA
+Anexo Paises · A: REPUBLICA CHECA
+Anexo Paises · A: REPUBLICA DOMINICANA
+Anexo Paises · A: REUNION
+Anexo Paises · A: RUANDA
+Anexo Paises · A: RUMANIA
+Anexo Paises · A: RUSIA
+Anexo Paises · A: SAHARA OCCIDENTAL
+Anexo Paises · A: SAINT KITTS
+Anexo Paises · A: SAINT MARTEEN
+Anexo Paises · A: SAINT THOMAS
+Anexo Paises · A: SAMOA
+Anexo Paises · A: SAN MARINO
+Anexo Paises · A: SAN VICENTE
+Anexo Paises · A: SANTA LUCIA
+Anexo Paises · A: SANTO TOMAS Y PRINCIPE
+Anexo Paises · A: SENEGAL
+Anexo Paises · A: SERBIA Y MONTENEGRO
+Anexo Paises · A: SEYCHELLES
+Anexo Paises · A: SIERRA LEONA
+Anexo Paises · A: SINGAPUR
+Anexo Paises · A: SIRIA
+Anexo Paises · A: SOMALIA
+Anexo Paises · A: SRI LANKA
+Anexo Paises · A: SUDAFRICA
+Anexo Paises · A: SUDAN
+Anexo Paises · A: SUECIA
+Anexo Paises · A: SUIZA
+Anexo Paises · A: SURINAME
+Anexo Paises · A: SWAZILAND
+Anexo Paises · A: TAILANDIA
+Anexo Paises · A: TAIWAN
+Anexo Paises · A: TAJIKISTAN
+Anexo Paises · A: TANZANIA
+Anexo Paises · A: TIMOR DEL ESTE
+Anexo Paises · A: TOGO
+Anexo Paises · A: TONGA
+Anexo Paises · A: TRINIDAD Y TOBAGO
+Anexo Paises · A: TUNEZ
+Anexo Paises · A: TUNISIA
+Anexo Paises · A: TURKMENISTAN
+Anexo Paises · A: TURQUIA
+Anexo Paises · A: UCRANIA
+Anexo Paises · A: UGANDA
+Anexo Paises · A: URUGUAY
+Anexo Paises · A: UZBEKISTAN
+Anexo Paises · A: VANAUTU
+Anexo Paises · A: VENEZUELA
+Anexo Paises · A: VIETNAM
+Anexo Paises · A: WALLIS AND FUTUNA
+Anexo Paises · A: YUGOSLAVIA
+Anexo Paises · A: ZAMBIA
+[SHEET] Anexo Departamentos
+Anexo Departamentos · A: Listado Nombres Departamentos · B: Nota: Por favor utilizar la siguiente ortografía de los departamentos, en las preguntas que lo requieran, para facilitar el análisis posterior por parte del Banco de la República
+Anexo Departamentos · A: ANTIOQUIA
+Anexo Departamentos · A: ATLANTICO
+Anexo Departamentos · A: BOLIVAR
+Anexo Departamentos · A: BOYACA
+Anexo Departamentos · A: CALDAS
+Anexo Departamentos · A: CAQUETA
+Anexo Departamentos · A: CAUCA
+Anexo Departamentos · A: CESAR
+Anexo Departamentos · A: CORDOBA
+Anexo Departamentos · A: CUNDINAMARCA
+Anexo Departamentos · A: CHOCO
+Anexo Departamentos · A: HUILA
+Anexo Departamentos · A: GUAJIRA
+Anexo Departamentos · A: MAGDALENA
+Anexo Departamentos · A: META
+Anexo Departamentos · A: NARINO
+Anexo Departamentos · A: NORTE DE SANTANDER
+Anexo Departamentos · A: QUINDIO
+Anexo Departamentos · A: RISARALDA
+Anexo Departamentos · A: SANTANDER
+Anexo Departamentos · A: SUCRE
+Anexo Departamentos · A: TOLIMA
+Anexo Departamentos · A: VALLE DEL CAUCA
+Anexo Departamentos · A: ARAUCA
+Anexo Departamentos · A: CASANARE
+Anexo Departamentos · A: PUTUMAYO
+Anexo Departamentos · A: SAN ANDRES
+Anexo Departamentos · A: AMAZONAS
+Anexo Departamentos · A: GUAINIA
+Anexo Departamentos · A: GUAVIARE
+Anexo Departamentos · A: VAUPES
+Anexo Departamentos · A: VICHADA
+[SHEET] Anexo Municipios
+Anexo Municipios · A: Listado Nombres Municipios · B: Nota: Por favor utilizar la siguiente ortografía de los municipios, en las preguntas que lo requieran, para facilitar el análisis posterior por parte del Banco de la República
+Anexo Municipios · A: MEDELLIN
+Anexo Municipios · A: ABEJORRAL
+Anexo Municipios · A: ABRIAQUI
+Anexo Municipios · A: ALEJANDRIA
+Anexo Municipios · A: AMAGA
+Anexo Municipios · A: AMALFI
+Anexo Municipios · A: ANDES
+Anexo Municipios · A: ANGELOPOLIS
+Anexo Municipios · A: ANGOSTURA
+Anexo Municipios · A: ANORI
+Anexo Municipios · A: SANTAFE DE ANTIOQUIA
+Anexo Municipios · A: ANZA
+Anexo Municipios · A: APARTADO
+Anexo Municipios · A: ARBOLETES
+Anexo Municipios · A: ARGELIA
+Anexo Municipios · A: ARMENIA
+Anexo Municipios · A: BARBOSA
+Anexo Municipios · A: BELMIRA
+Anexo Municipios · A: BELLO
+Anexo Municipios · A: BETANIA
+Anexo Municipios · A: BETULIA
+Anexo Municipios · A: CIUDAD BOLIVAR
+Anexo Municipios · A: BRICEÑO
+Anexo Municipios · A: BURITICA
+Anexo Municipios · A: CACERES
+Anexo Municipios · A: CAICEDO
+Anexo Municipios · A: CALDAS
+Anexo Municipios · A: CAMPAMENTO
+Anexo Municipios · A: CAÑASGORDAS
+Anexo Municipios · A: CARACOLI
+Anexo Municipios · A: CARAMANTA
+Anexo Municipios · A: CAREPA
+Anexo Municipios · A: EL CARMEN DE VIBORAL
+Anexo Municipios · A: CAROLINA
+Anexo Municipios · A: CAUCASIA
+Anexo Municipios · A: CHIGORODO
+Anexo Municipios · A: CISNEROS
+Anexo Municipios · A: COCORNA
+Anexo Municipios · A: CONCEPCION
+Anexo Municipios · A: CONCORDIA
+Anexo Municipios · A: COPACABANA
+Anexo Municipios · A: DABEIBA
+Anexo Municipios · A: DON MATIAS
+Anexo Municipios · A: EBEJICO
+Anexo Municipios · A: EL BAGRE
+Anexo Municipios · A: ENTRERRIOS
+Anexo Municipios · A: ENVIGADO
+Anexo Municipios · A: FREDONIA
+Anexo Municipios · A: FRONTINO
+Anexo Municipios · A: GIRALDO
+Anexo Municipios · A: GIRARDOTA
+Anexo Municipios · A: GOMEZ PLATA
+Anexo Municipios · A: GRANADA
+Anexo Municipios · A: GUADALUPE
+Anexo Municipios · A: GUARNE
+Anexo Municipios · A: GUATAPE
+Anexo Municipios · A: HELICONIA
+Anexo Municipios · A: HISPANIA
+Anexo Municipios · A: ITAGUI
+Anexo Municipios · A: ITUANGO
+Anexo Municipios · A: JARDIN
+Anexo Municipios · A: JERICO
+Anexo Municipios · A: LA CEJA
+Anexo Municipios · A: LA ESTRELLA
+Anexo Municipios · A: LA PINTADA
+Anexo Municipios · A: LA UNION
+Anexo Municipios · A: LIBORINA
+Anexo Municipios · A: MACEO
+Anexo Municipios · A: MARINILLA
+Anexo Municipios · A: MONTEBELLO
+Anexo Municipios · A: MURINDO
+Anexo Municipios · A: MUTATA
+Anexo Municipios · A: NARIÑO
+Anexo Municipios · A: NECOCLI
+Anexo Municipios · A: NECHI
+Anexo Municipios · A: OLAYA
+Anexo Municipios · A: PEÐOL
+Anexo Municipios · A: PEQUE
+Anexo Municipios · A: PUEBLORRICO
+Anexo Municipios · A: PUERTO BERRIO
+Anexo Municipios · A: PUERTO NARE
+Anexo Municipios · A: PUERTO TRIUNFO
+Anexo Municipios · A: REMEDIOS
+Anexo Municipios · A: RETIRO
+Anexo Municipios · A: RIONEGRO
+Anexo Municipios · A: SABANALARGA
+Anexo Municipios · A: SABANETA
+Anexo Municipios · A: SALGAR
+Anexo Municipios · A: SAN ANDRES DE CUERQUIA
+Anexo Municipios · A: SAN CARLOS
+Anexo Municipios · A: SAN FRANCISCO
+Anexo Municipios · A: SAN JERONIMO
+Anexo Municipios · A: SAN JOSE DE LA MONTAÑA
+Anexo Municipios · A: SAN JUAN DE URABA
+Anexo Municipios · A: SAN LUIS
+Anexo Municipios · A: SAN PEDRO
+Anexo Municipios · A: SAN PEDRO DE URABA
+Anexo Municipios · A: SAN RAFAEL
+Anexo Municipios · A: SAN ROQUE
+Anexo Municipios · A: SAN VICENTE
+Anexo Municipios · A: SANTA BARBARA
+Anexo Municipios · A: SANTA ROSA DE OSOS
+Anexo Municipios · A: SANTO DOMINGO
+Anexo Municipios · A: EL SANTUARIO
+Anexo Municipios · A: SEGOVIA
+Anexo Municipios · A: SONSON
+Anexo Municipios · A: SOPETRAN
+Anexo Municipios · A: TAMESIS
+Anexo Municipios · A: TARAZA
+Anexo Municipios · A: TARSO
+Anexo Municipios · A: TITIRIBI
+Anexo Municipios · A: TOLEDO
+Anexo Municipios · A: TURBO
+Anexo Municipios · A: URAMITA
+Anexo Municipios · A: URRAO
+Anexo Municipios · A: VALDIVIA
+Anexo Municipios · A: VALPARAISO
+Anexo Municipios · A: VEGACHI
+Anexo Municipios · A: VENECIA
+Anexo Municipios · A: VIGIA DEL FUERTE
+Anexo Municipios · A: YALI
+Anexo Municipios · A: YARUMAL
+Anexo Municipios · A: YOLOMBO
+Anexo Municipios · A: YONDO
+Anexo Municipios · A: ZARAGOZA
+Anexo Municipios · A: BARRANQUILLA
+Anexo Municipios · A: BARANOA
+Anexo Municipios · A: CAMPO DE LA CRUZ
+Anexo Municipios · A: CANDELARIA
+Anexo Municipios · A: GALAPA
+Anexo Municipios · A: JUAN DE ACOSTA
+Anexo Municipios · A: LURUACO
+Anexo Municipios · A: MALAMBO
+Anexo Municipios · A: MANATI
+Anexo Municipios · A: PALMAR DE VARELA
+Anexo Municipios · A: PIOJO
+Anexo Municipios · A: POLONUEVO
+Anexo Municipios · A: PONEDERA
+Anexo Municipios · A: PUERTO COLOMBIA
+Anexo Municipios · A: REPELON
+Anexo Municipios · A: SABANAGRANDE
+Anexo Municipios · A: SABANALARGA
+Anexo Municipios · A: SANTA LUCIA
+Anexo Municipios · A: SANTO TOMAS
+Anexo Municipios · A: SOLEDAD
+Anexo Municipios · A: SUAN
+Anexo Municipios · A: TUBARA
+Anexo Municipios · A: USIACURI
+Anexo Municipios · A: BOGOTA, D.C.
+Anexo Municipios · A: CARTAGENA
+Anexo Municipios · A: ACHI
+Anexo Municipios · A: ALTOS DEL ROSARIO
+Anexo Municipios · A: ARENAL
+Anexo Municipios · A: ARJONA
+Anexo Municipios · A: ARROYOHONDO
+Anexo Municipios · A: BARRANCO DE LOBA
+Anexo Municipios · A: CALAMAR
+Anexo Municipios · A: CANTAGALLO
+Anexo Municipios · A: CICUCO
+Anexo Municipios · A: CORDOBA
+Anexo Municipios · A: CLEMENCIA
+Anexo Municipios · A: EL CARMEN DE BOLIVAR
+Anexo Municipios · A: EL GUAMO
+Anexo Municipios · A: EL PEÑON
+Anexo Municipios · A: HATILLO DE LOBA
+Anexo Municipios · A: MAGANGUE
+Anexo Municipios · A: MAHATES
+Anexo Municipios · A: MARGARITA
+Anexo Municipios · A: MARIA LA BAJA
+Anexo Municipios · A: MONTECRISTO
+Anexo Municipios · A: MOMPOS
+Anexo Municipios · A: NOROSI
+Anexo Municipios · A: MORALES
+Anexo Municipios · A: PINILLOS
+Anexo Municipios · A: REGIDOR
+Anexo Municipios · A: RIO VIEJO
+Anexo Municipios · A: SAN CRISTOBAL
+Anexo Municipios · A: SAN ESTANISLAO
+Anexo Municipios · A: SAN FERNANDO
+Anexo Municipios · A: SAN JACINTO
+Anexo Municipios · A: SAN JACINTO DEL CAUCA
+Anexo Municipios · A: SAN JUAN NEPOMUCENO
+Anexo Municipios · A: SAN MARTIN DE LOBA
+Anexo Municipios · A: SAN PABLO
+Anexo Municipios · A: SANTA CATALINA
+Anexo Municipios · A: SANTA ROSA
+Anexo Municipios · A: SANTA ROSA DEL SUR
+Anexo Municipios · A: SIMITI
+Anexo Municipios · A: SOPLAVIENTO
+Anexo Municipios · A: TALAIGUA NUEVO
+Anexo Municipios · A: TIQUISIO
+Anexo Municipios · A: TURBACO
+Anexo Municipios · A: TURBANA
+Anexo Municipios · A: VILLANUEVA
+Anexo Municipios · A: ZAMBRANO
+Anexo Municipios · A: TUNJA
+Anexo Municipios · A: ALMEIDA
+Anexo Municipios · A: AQUITANIA
+Anexo Municipios · A: ARCABUCO
+Anexo Municipios · A: BELEN
+Anexo Municipios · A: BERBEO
+Anexo Municipios · A: BETEITIVA
+Anexo Municipios · A: BOAVITA
+Anexo Municipios · A: BOYACA
+Anexo Municipios · A: BRICEÑO
+Anexo Municipios · A: BUENAVISTA
+Anexo Municipios · A: BUSBANZA
+Anexo Municipios · A: CALDAS
+Anexo Municipios · A: CAMPOHERMOSO
+Anexo Municipios · A: CERINZA
+Anexo Municipios · A: CHINAVITA
+Anexo Municipios · A: CHIQUINQUIRA
+Anexo Municipios · A: CHISCAS
+Anexo Municipios · A: CHITA
+Anexo Municipios · A: CHITARAQUE
+Anexo Municipios · A: CHIVATA
+Anexo Municipios · A: CIENEGA
+Anexo Municipios · A: COMBITA
+Anexo Municipios · A: COPER
+Anexo Municipios · A: CORRALES
+Anexo Municipios · A: COVARACHIA
+Anexo Municipios · A: CUBARA
+Anexo Municipios · A: CUCAITA
+Anexo Municipios · A: CUITIVA
+Anexo Municipios · A: CHIQUIZA
+Anexo Municipios · A: CHIVOR
+Anexo Municipios · A: DUITAMA
+Anexo Municipios · A: EL COCUY
+Anexo Municipios · A: EL ESPINO
+Anexo Municipios · A: FIRAVITOBA
+Anexo Municipios · A: FLORESTA
+Anexo Municipios · A: GACHANTIVA
+Anexo Municipios · A: GAMEZA
+Anexo Municipios · A: GARAGOA
+Anexo Municipios · A: GUACAMAYAS
+Anexo Municipios · A: GUATEQUE
+Anexo Municipios · A: GUAYATA
+Anexo Municipios · A: GsICAN
+Anexo Municipios · A: IZA
+Anexo Municipios · A: JENESANO
+Anexo Municipios · A: JERICO
+Anexo Municipios · A: LABRANZAGRANDE
+Anexo Municipios · A: LA CAPILLA
+Anexo Municipios · A: LA VICTORIA
+Anexo Municipios · A: LA UVITA
+Anexo Municipios · A: VILLA DE LEYVA
+Anexo Municipios · A: MACANAL
+Anexo Municipios · A: MARIPI
+Anexo Municipios · A: MIRAFLORES
+Anexo Municipios · A: MONGUA
+Anexo Municipios · A: MONGUI
+Anexo Municipios · A: MONIQUIRA
+Anexo Municipios · A: MOTAVITA
+Anexo Municipios · A: MUZO
+Anexo Municipios · A: NOBSA
+Anexo Municipios · A: NUEVO COLON
+Anexo Municipios · A: OICATA
+Anexo Municipios · A: OTANCHE
+Anexo Municipios · A: PACHAVITA
+Anexo Municipios · A: PAEZ
+Anexo Municipios · A: PAIPA
+Anexo Municipios · A: PAJARITO
+Anexo Municipios · A: PANQUEBA
+Anexo Municipios · A: PAUNA
+Anexo Municipios · A: PAYA
+Anexo Municipios · A: PAZ DE RIO
+Anexo Municipios · A: PESCA
+Anexo Municipios · A: PISBA
+Anexo Municipios · A: PUERTO BOYACA
+Anexo Municipios · A: QUIPAMA
+Anexo Municipios · A: RAMIRIQUI
+Anexo Municipios · A: RAQUIRA
+Anexo Municipios · A: RONDON
+Anexo Municipios · A: SABOYA
+Anexo Municipios · A: SACHICA
+Anexo Municipios · A: SAMACA
+Anexo Municipios · A: SAN EDUARDO
+Anexo Municipios · A: SAN JOSE DE PARE
+Anexo Municipios · A: SAN LUIS DE GACENO
+Anexo Municipios · A: SAN MATEO
+Anexo Municipios · A: SAN MIGUEL DE SEMA
+Anexo Municipios · A: SAN PABLO DE BORBUR
+Anexo Municipios · A: SANTANA
+Anexo Municipios · A: SANTA MARIA
+Anexo Municipios · A: SANTA ROSA DE VITERBO
+Anexo Municipios · A: SANTA SOFIA
+Anexo Municipios · A: SATIVANORTE
+Anexo Municipios · A: SATIVASUR
+Anexo Municipios · A: SIACHOQUE
+Anexo Municipios · A: SOATA
+Anexo Municipios · A: SOCOTA
+Anexo Municipios · A: SOCHA
+Anexo Municipios · A: SOGAMOSO
+Anexo Municipios · A: SOMONDOCO
+Anexo Municipios · A: SORA
+Anexo Municipios · A: SOTAQUIRA
+Anexo Municipios · A: SORACA
+Anexo Municipios · A: SUSACON
+Anexo Municipios · A: SUTAMARCHAN
+Anexo Municipios · A: SUTATENZA
+Anexo Municipios · A: TASCO
+Anexo Municipios · A: TENZA
+Anexo Municipios · A: TIBANA
+Anexo Municipios · A: TIBASOSA
+Anexo Municipios · A: TINJACA
+Anexo Municipios · A: TIPACOQUE
+Anexo Municipios · A: TOCA
+Anexo Municipios · A: TOGsI
+Anexo Municipios · A: TOPAGA
+Anexo Municipios · A: TOTA
+Anexo Municipios · A: TUNUNGUA
+Anexo Municipios · A: TURMEQUE
+Anexo Municipios · A: TUTA
+Anexo Municipios · A: TUTAZA
+Anexo Municipios · A: UMBITA
+Anexo Municipios · A: VENTAQUEMADA
+Anexo Municipios · A: VIRACACHA
+Anexo Municipios · A: ZETAQUIRA
+Anexo Municipios · A: MANIZALES
+Anexo Municipios · A: AGUADAS
+Anexo Municipios · A: ANSERMA
+Anexo Municipios · A: ARANZAZU
+Anexo Municipios · A: BELALCAZAR
+Anexo Municipios · A: CHINCHINA
+Anexo Municipios · A: FILADELFIA
+Anexo Municipios · A: LA DORADA
+Anexo Municipios · A: LA MERCED
+Anexo Municipios · A: MANZANARES
+Anexo Municipios · A: MARMATO
+Anexo Municipios · A: MARQUETALIA
+Anexo Municipios · A: MARULANDA
+Anexo Municipios · A: NEIRA
+Anexo Municipios · A: NORCASIA
+Anexo Municipios · A: PACORA
+Anexo Municipios · A: PALESTINA
+Anexo Municipios · A: PENSILVANIA
+Anexo Municipios · A: RIOSUCIO
+Anexo Municipios · A: RISARALDA
+Anexo Municipios · A: SALAMINA
+Anexo Municipios · A: SAMANA
+Anexo Municipios · A: SAN JOSE
+Anexo Municipios · A: SUPIA
+Anexo Municipios · A: VICTORIA
+Anexo Municipios · A: VILLAMARIA
+Anexo Municipios · A: VITERBO
+Anexo Municipios · A: FLORENCIA
+Anexo Municipios · A: ALBANIA
+Anexo Municipios · A: BELEN DE LOS ANDAQUIES
+Anexo Municipios · A: CARTAGENA DEL CHAIRA
+Anexo Municipios · A: CURILLO
+Anexo Municipios · A: EL DONCELLO
+Anexo Municipios · A: EL PAUJIL
+Anexo Municipios · A: LA MONTAÑITA
+Anexo Municipios · A: MILAN
+Anexo Municipios · A: MORELIA
+Anexo Municipios · A: PUERTO RICO
+Anexo Municipios · A: SAN JOSE DEL FRAGUA
+Anexo Municipios · A: SAN VICENTE DEL CAGUAN
+Anexo Municipios · A: SOLANO
+Anexo Municipios · A: SOLITA
+Anexo Municipios · A: VALPARAISO
+Anexo Municipios · A: POPAYAN
+Anexo Municipios · A: ALMAGUER
+Anexo Municipios · A: ARGELIA
+Anexo Municipios · A: BALBOA
+Anexo Municipios · A: BOLIVAR
+Anexo Municipios · A: BUENOS AIRES
+Anexo Municipios · A: CAJIBIO
+Anexo Municipios · A: CALDONO
+Anexo Municipios · A: CALOTO
+Anexo Municipios · A: CORINTO
+Anexo Municipios · A: EL TAMBO
+Anexo Municipios · A: FLORENCIA
+Anexo Municipios · A: GUACHENE
+Anexo Municipios · A: GUAPI
+Anexo Municipios · A: INZA
+Anexo Municipios · A: JAMBALO
+Anexo Municipios · A: LA SIERRA
+Anexo Municipios · A: LA VEGA
+Anexo Municipios · A: LOPEZ
+Anexo Municipios · A: MERCADERES
+Anexo Municipios · A: MIRANDA
+Anexo Municipios · A: MORALES
+Anexo Municipios · A: PADILLA
+Anexo Municipios · A: PAEZ
+Anexo Municipios · A: PATIA
+Anexo Municipios · A: PIAMONTE
+Anexo Municipios · A: PIENDAMO
+Anexo Municipios · A: PUERTO TEJADA
+Anexo Municipios · A: PURACE
+Anexo Municipios · A: ROSAS
+Anexo Municipios · A: SAN SEBASTIAN
+Anexo Municipios · A: SANTANDER DE QUILICHAO
+Anexo Municipios · A: SANTA ROSA
+Anexo Municipios · A: SILVIA
+Anexo Municipios · A: SOTARA
+Anexo Municipios · A: SUAREZ
+Anexo Municipios · A: SUCRE
+Anexo Municipios · A: TIMBIO
+Anexo Municipios · A: TIMBIQUI
+Anexo Municipios · A: TORIBIO
+Anexo Municipios · A: TOTORO
+Anexo Municipios · A: VILLA RICA
+Anexo Municipios · A: VALLEDUPAR
+Anexo Municipios · A: AGUACHICA
+Anexo Municipios · A: AGUSTIN CODAZZI
+Anexo Municipios · A: ASTREA
+Anexo Municipios · A: BECERRIL
+Anexo Municipios · A: BOSCONIA
+Anexo Municipios · A: CHIMICHAGUA
+Anexo Municipios · A: CHIRIGUANA
+Anexo Municipios · A: CURUMANI
+Anexo Municipios · A: EL COPEY
+Anexo Municipios · A: EL PASO
+Anexo Municipios · A: GAMARRA
+Anexo Municipios · A: GONZALEZ
+Anexo Municipios · A: LA GLORIA
+Anexo Municipios · A: LA JAGUA DE IBIRICO
+Anexo Municipios · A: MANAURE
+Anexo Municipios · A: PAILITAS
+Anexo Municipios · A: PELAYA
+Anexo Municipios · A: PUEBLO BELLO
+Anexo Municipios · A: RIO DE ORO
+Anexo Municipios · A: LA PAZ
+Anexo Municipios · A: SAN ALBERTO
+Anexo Municipios · A: SAN DIEGO
+Anexo Municipios · A: SAN MARTIN
+Anexo Municipios · A: TAMALAMEQUE
+Anexo Municipios · A: MONTERIA
+Anexo Municipios · A: AYAPEL
+Anexo Municipios · A: BUENAVISTA
+Anexo Municipios · A: CANALETE
+Anexo Municipios · A: CERETE
+Anexo Municipios · A: CHIMA
+Anexo Municipios · A: CHINU
+Anexo Municipios · A: CIENAGA DE ORO
+Anexo Municipios · A: COTORRA
+Anexo Municipios · A: LA APARTADA
+Anexo Municipios · A: LORICA
+Anexo Municipios · A: LOS CORDOBAS
+Anexo Municipios · A: MOMIL
+Anexo Municipios · A: MONTELIBANO
+Anexo Municipios · A: MOÑITOS
+Anexo Municipios · A: PLANETA RICA
+Anexo Municipios · A: PUEBLO NUEVO
+Anexo Municipios · A: PUERTO ESCONDIDO
+Anexo Municipios · A: PUERTO LIBERTADOR
+Anexo Municipios · A: PURISIMA
+Anexo Municipios · A: SAHAGUN
+Anexo Municipios · A: SAN ANDRES SOTAVENTO
+Anexo Municipios · A: SAN ANTERO
+Anexo Municipios · A: SAN BERNARDO DEL VIENTO
+Anexo Municipios · A: SAN CARLOS
+Anexo Municipios · A: SAN PELAYO
+Anexo Municipios · A: TIERRALTA
+Anexo Municipios · A: VALENCIA
+Anexo Municipios · A: AGUA DE DIOS
+Anexo Municipios · A: ALBAN
+Anexo Municipios · A: ANAPOIMA
+Anexo Municipios · A: ANOLAIMA
+Anexo Municipios · A: ARBELAEZ
+Anexo Municipios · A: BELTRAN
+Anexo Municipios · A: BITUIMA
+Anexo Municipios · A: BOJACA
+Anexo Municipios · A: CABRERA
+Anexo Municipios · A: CACHIPAY
+Anexo Municipios · A: CAJICA
+Anexo Municipios · A: CAPARRAPI
+Anexo Municipios · A: CAQUEZA
+Anexo Municipios · A: CARMEN DE CARUPA
+Anexo Municipios · A: CHAGUANI
+Anexo Municipios · A: CHIA
+Anexo Municipios · A: CHIPAQUE
+Anexo Municipios · A: CHOACHI
+Anexo Municipios · A: CHOCONTA
+Anexo Municipios · A: COGUA
+Anexo Municipios · A: COTA
+Anexo Municipios · A: CUCUNUBA
+Anexo Municipios · A: EL COLEGIO
+Anexo Municipios · A: EL PEÑON
+Anexo Municipios · A: EL ROSAL
+Anexo Municipios · A: FACATATIVA
+Anexo Municipios · A: FOMEQUE
+Anexo Municipios · A: FOSCA
+Anexo Municipios · A: FUNZA
+Anexo Municipios · A: FUQUENE
+Anexo Municipios · A: FUSAGASUGA
+Anexo Municipios · A: GACHALA
+Anexo Municipios · A: GACHANCIPA
+Anexo Municipios · A: GACHETA
+Anexo Municipios · A: GAMA
+Anexo Municipios · A: GIRARDOT
+Anexo Municipios · A: GRANADA
+Anexo Municipios · A: GUACHETA
+Anexo Municipios · A: GUADUAS
+Anexo Municipios · A: GUASCA
+Anexo Municipios · A: GUATAQUI
+Anexo Municipios · A: GUATAVITA
+Anexo Municipios · A: GUAYABAL DE SIQUIMA
+Anexo Municipios · A: GUAYABETAL
+Anexo Municipios · A: GUTIERREZ
+Anexo Municipios · A: JERUSALEN
+Anexo Municipios · A: JUNIN
+Anexo Municipios · A: LA CALERA
+Anexo Municipios · A: LA MESA
+Anexo Municipios · A: LA PALMA
+Anexo Municipios · A: LA PEÑA
+Anexo Municipios · A: LA VEGA
+Anexo Municipios · A: LENGUAZAQUE
+Anexo Municipios · A: MACHETA
+Anexo Municipios · A: MADRID
+Anexo Municipios · A: MANTA
+Anexo Municipios · A: MEDINA
+Anexo Municipios · A: MOSQUERA
+Anexo Municipios · A: NARIÑO
+Anexo Municipios · A: NEMOCON
+Anexo Municipios · A: NILO
+Anexo Municipios · A: NIMAIMA
+Anexo Municipios · A: NOCAIMA
+Anexo Municipios · A: VENECIA
+Anexo Municipios · A: PACHO
+Anexo Municipios · A: PAIME
+Anexo Municipios · A: PANDI
+Anexo Municipios · A: PARATEBUENO
+Anexo Municipios · A: PASCA
+Anexo Municipios · A: PUERTO SALGAR
+Anexo Municipios · A: PULI
+Anexo Municipios · A: QUEBRADANEGRA
+Anexo Municipios · A: QUETAME
+Anexo Municipios · A: QUIPILE
+Anexo Municipios · A: APULO
+Anexo Municipios · A: RICAURTE
+Anexo Municipios · A: SAN ANTONIO DEL TEQUENDAMA
+Anexo Municipios · A: SAN BERNARDO
+Anexo Municipios · A: SAN CAYETANO
+Anexo Municipios · A: SAN FRANCISCO
+Anexo Municipios · A: SAN JUAN DE RIO SECO
+Anexo Municipios · A: SASAIMA
+Anexo Municipios · A: SESQUILE
+Anexo Municipios · A: SIBATE
+Anexo Municipios · A: SILVANIA
+Anexo Municipios · A: SIMIJACA
+Anexo Municipios · A: SOACHA
+Anexo Municipios · A: SOPO
+Anexo Municipios · A: SUBACHOQUE
+Anexo Municipios · A: SUESCA
+Anexo Municipios · A: SUPATA
+Anexo Municipios · A: SUSA
+Anexo Municipios · A: SUTATAUSA
+Anexo Municipios · A: TABIO
+Anexo Municipios · A: TAUSA
+Anexo Municipios · A: TENA
+Anexo Municipios · A: TENJO
+Anexo Municipios · A: TIBACUY
+Anexo Municipios · A: TIBIRITA
+Anexo Municipios · A: TOCAIMA
+Anexo Municipios · A: TOCANCIPA
+Anexo Municipios · A: TOPAIPI
+Anexo Municipios · A: UBALA
+Anexo Municipios · A: UBAQUE
+Anexo Municipios · A: VILLA DE SAN DIEGO DE UBATE
+Anexo Municipios · A: UNE
+Anexo Municipios · A: UTICA
+Anexo Municipios · A: VERGARA
+Anexo Municipios · A: VIANI
+Anexo Municipios · A: VILLAGOMEZ
+Anexo Municipios · A: VILLAPINZON
+Anexo Municipios · A: VILLETA
+Anexo Municipios · A: VIOTA
+Anexo Municipios · A: YACOPI
+Anexo Municipios · A: ZIPACON
+Anexo Municipios · A: ZIPAQUIRA
+Anexo Municipios · A: QUIBDO
+Anexo Municipios · A: ACANDI
+Anexo Municipios · A: ALTO BAUDO
+Anexo Municipios · A: ATRATO
+Anexo Municipios · A: BAGADO
+Anexo Municipios · A: BAHIA SOLANO
+Anexo Municipios · A: BAJO BAUDO
+Anexo Municipios · A: BOJAYA
+Anexo Municipios · A: EL CANTON DEL SAN PABLO
+Anexo Municipios · A: CARMEN DEL DARIEN
+Anexo Municipios · A: CERTEGUI
+Anexo Municipios · A: CONDOTO
+Anexo Municipios · A: EL CARMEN DE ATRATO
+Anexo Municipios · A: EL LITORAL DEL SAN JUAN
+Anexo Municipios · A: ISTMINA
+Anexo Municipios · A: JURADO
+Anexo Municipios · A: LLORO
+Anexo Municipios · A: MEDIO ATRATO
+Anexo Municipios · A: MEDIO BAUDO
+Anexo Municipios · A: MEDIO SAN JUAN
+Anexo Municipios · A: NOVITA
+Anexo Municipios · A: NUQUI
+Anexo Municipios · A: RIO IRO
+Anexo Municipios · A: RIO QUITO
+Anexo Municipios · A: RIOSUCIO
+Anexo Municipios · A: SAN JOSE DEL PALMAR
+Anexo Municipios · A: SIPI
+Anexo Municipios · A: TADO
+Anexo Municipios · A: UNGUIA
+Anexo Municipios · A: UNION PANAMERICANA
+Anexo Municipios · A: NEIVA
+Anexo Municipios · A: ACEVEDO
+Anexo Municipios · A: AGRADO
+Anexo Municipios · A: AIPE
+Anexo Municipios · A: ALGECIRAS
+Anexo Municipios · A: ALTAMIRA
+Anexo Municipios · A: BARAYA
+Anexo Municipios · A: CAMPOALEGRE
+Anexo Municipios · A: COLOMBIA
+Anexo Municipios · A: ELIAS
+Anexo Municipios · A: GARZON
+Anexo Municipios · A: GIGANTE
+Anexo Municipios · A: GUADALUPE
+Anexo Municipios · A: HOBO
+Anexo Municipios · A: IQUIRA
+Anexo Municipios · A: ISNOS
+Anexo Municipios · A: LA ARGENTINA
+Anexo Municipios · A: LA PLATA
+Anexo Municipios · A: NATAGA
+Anexo Municipios · A: OPORAPA
+Anexo Municipios · A: PAICOL
+Anexo Municipios · A: PALERMO
+Anexo Municipios · A: PALESTINA
+Anexo Municipios · A: PITAL
+Anexo Municipios · A: PITALITO
+Anexo Municipios · A: RIVERA
+Anexo Municipios · A: SALADOBLANCO
+Anexo Municipios · A: SAN AGUSTIN
+Anexo Municipios · A: SANTA MARIA
+Anexo Municipios · A: SUAZA
+Anexo Municipios · A: TARQUI
+Anexo Municipios · A: TESALIA
+Anexo Municipios · A: TELLO
+Anexo Municipios · A: TERUEL
+Anexo Municipios · A: TIMANA
+Anexo Municipios · A: VILLAVIEJA
+Anexo Municipios · A: YAGUARA
+Anexo Municipios · A: RIOHACHA
+Anexo Municipios · A: ALBANIA
+Anexo Municipios · A: BARRANCAS
+Anexo Municipios · A: DIBULLA
+Anexo Municipios · A: DISTRACCION
+Anexo Municipios · A: EL MOLINO
+Anexo Municipios · A: FONSECA
+Anexo Municipios · A: HATONUEVO
+Anexo Municipios · A: LA JAGUA DEL PILAR
+Anexo Municipios · A: MAICAO
+Anexo Municipios · A: MANAURE
+Anexo Municipios · A: SAN JUAN DEL CESAR
+Anexo Municipios · A: URIBIA
+Anexo Municipios · A: URUMITA
+Anexo Municipios · A: VILLANUEVA
+Anexo Municipios · A: SANTA MARTA
+Anexo Municipios · A: ALGARROBO
+Anexo Municipios · A: ARACATACA
+Anexo Municipios · A: ARIGUANI
+Anexo Municipios · A: CERRO SAN ANTONIO
+Anexo Municipios · A: CHIBOLO
+Anexo Municipios · A: CIENAGA
+Anexo Municipios · A: CONCORDIA
+Anexo Municipios · A: EL BANCO
+Anexo Municipios · A: EL PIÑON
+Anexo Municipios · A: EL RETEN
+Anexo Municipios · A: FUNDACION
+Anexo Municipios · A: GUAMAL
+Anexo Municipios · A: NUEVA GRANADA
+Anexo Municipios · A: PEDRAZA
+Anexo Municipios · A: PIJIÑO DEL CARMEN
+Anexo Municipios · A: PIVIJAY
+Anexo Municipios · A: PLATO
+Anexo Municipios · A: PUEBLOVIEJO
+Anexo Municipios · A: REMOLINO
+Anexo Municipios · A: SABANAS DE SAN ANGEL
+Anexo Municipios · A: SALAMINA
+Anexo Municipios · A: SAN SEBASTIAN DE BUENAVISTA
+Anexo Municipios · A: SAN ZENON
+Anexo Municipios · A: SANTA ANA
+Anexo Municipios · A: SANTA BARBARA DE PINTO
+Anexo Municipios · A: SITIONUEVO
+Anexo Municipios · A: TENERIFE
+Anexo Municipios · A: ZAPAYAN
+Anexo Municipios · A: ZONA BANANERA
+Anexo Municipios · A: VILLAVICENCIO
+Anexo Municipios · A: ACACIAS
+Anexo Municipios · A: BARRANCA DE UPIA
+Anexo Municipios · A: CABUYARO
+Anexo Municipios · A: CASTILLA LA NUEVA
+Anexo Municipios · A: CUBARRAL
+Anexo Municipios · A: CUMARAL
+Anexo Municipios · A: EL CALVARIO
+Anexo Municipios · A: EL CASTILLO
+Anexo Municipios · A: EL DORADO
+Anexo Municipios · A: FUENTE DE ORO
+Anexo Municipios · A: GRANADA
+Anexo Municipios · A: GUAMAL
+Anexo Municipios · A: MAPIRIPAN
+Anexo Municipios · A: MESETAS
+Anexo Municipios · A: LA MACARENA
+Anexo Municipios · A: URIBE
+Anexo Municipios · A: LEJANIAS
+Anexo Municipios · A: PUERTO CONCORDIA
+Anexo Municipios · A: PUERTO GAITAN
+Anexo Municipios · A: PUERTO LOPEZ
+Anexo Municipios · A: PUERTO LLERAS
+Anexo Municipios · A: PUERTO RICO
+Anexo Municipios · A: RESTREPO
+Anexo Municipios · A: SAN CARLOS DE GUAROA
+Anexo Municipios · A: SAN JUAN DE ARAMA
+Anexo Municipios · A: SAN JUANITO
+Anexo Municipios · A: SAN MARTIN
+Anexo Municipios · A: VISTAHERMOSA
+Anexo Municipios · A: PASTO
+Anexo Municipios · A: ALBAN
+Anexo Municipios · A: ALDANA
+Anexo Municipios · A: ANCUYA
+Anexo Municipios · A: ARBOLEDA
+Anexo Municipios · A: BARBACOAS
+Anexo Municipios · A: BELEN
+Anexo Municipios · A: BUESACO
+Anexo Municipios · A: COLON
+Anexo Municipios · A: CONSACA
+Anexo Municipios · A: CONTADERO
+Anexo Municipios · A: CORDOBA
+Anexo Municipios · A: CUASPUD
+Anexo Municipios · A: CUMBAL
+Anexo Municipios · A: CUMBITARA
+Anexo Municipios · A: CHACHAGsI
+Anexo Municipios · A: EL CHARCO
+Anexo Municipios · A: EL PEÑOL
+Anexo Municipios · A: EL ROSARIO
+Anexo Municipios · A: EL TABLON DE GOMEZ
+Anexo Municipios · A: EL TAMBO
+Anexo Municipios · A: FUNES
+Anexo Municipios · A: GUACHUCAL
+Anexo Municipios · A: GUAITARILLA
+Anexo Municipios · A: GUALMATAN
+Anexo Municipios · A: ILES
+Anexo Municipios · A: IMUES
+Anexo Municipios · A: IPIALES
+Anexo Municipios · A: LA CRUZ
+Anexo Municipios · A: LA FLORIDA
+Anexo Municipios · A: LA LLANADA
+Anexo Municipios · A: LA TOLA
+Anexo Municipios · A: LA UNION
+Anexo Municipios · A: LEIVA
+Anexo Municipios · A: LINARES
+Anexo Municipios · A: LOS ANDES
+Anexo Municipios · A: MAGsI
+Anexo Municipios · A: MALLAMA
+Anexo Municipios · A: MOSQUERA
+Anexo Municipios · A: NARIÑO
+Anexo Municipios · A: OLAYA HERRERA
+Anexo Municipios · A: OSPINA
+Anexo Municipios · A: FRANCISCO PIZARRO
+Anexo Municipios · A: POLICARPA
+Anexo Municipios · A: POTOSI
+Anexo Municipios · A: PROVIDENCIA
+Anexo Municipios · A: PUERRES
+Anexo Municipios · A: PUPIALES
+Anexo Municipios · A: RICAURTE
+Anexo Municipios · A: ROBERTO PAYAN
+Anexo Municipios · A: SAMANIEGO
+Anexo Municipios · A: SANDONA
+Anexo Municipios · A: SAN BERNARDO
+Anexo Municipios · A: SAN LORENZO
+Anexo Municipios · A: SAN PABLO
+Anexo Municipios · A: SAN PEDRO DE CARTAGO
+Anexo Municipios · A: SANTA BARBARA
+Anexo Municipios · A: SANTACRUZ
+Anexo Municipios · A: SAPUYES
+Anexo Municipios · A: TAMINANGO
+Anexo Municipios · A: TANGUA
+Anexo Municipios · A: SAN ANDRES DE TUMACO
+Anexo Municipios · A: TUQUERRES
+Anexo Municipios · A: YACUANQUER
+Anexo Municipios · A: CUCUTA
+Anexo Municipios · A: ABREGO
+Anexo Municipios · A: ARBOLEDAS
+Anexo Municipios · A: BOCHALEMA
+Anexo Municipios · A: BUCARASICA
+Anexo Municipios · A: CACOTA
+Anexo Municipios · A: CACHIRA
+Anexo Municipios · A: CHINACOTA
+Anexo Municipios · A: CHITAGA
+Anexo Municipios · A: CONVENCION
+Anexo Municipios · A: CUCUTILLA
+Anexo Municipios · A: DURANIA
+Anexo Municipios · A: EL CARMEN
+Anexo Municipios · A: EL TARRA
+Anexo Municipios · A: EL ZULIA
+Anexo Municipios · A: GRAMALOTE
+Anexo Municipios · A: HACARI
+Anexo Municipios · A: HERRAN
+Anexo Municipios · A: LABATECA
+Anexo Municipios · A: LA ESPERANZA
+Anexo Municipios · A: LA PLAYA
+Anexo Municipios · A: LOS PATIOS
+Anexo Municipios · A: LOURDES
+Anexo Municipios · A: MUTISCUA
+Anexo Municipios · A: OCAÑA
+Anexo Municipios · A: PAMPLONA
+Anexo Municipios · A: PAMPLONITA
+Anexo Municipios · A: PUERTO SANTANDER
+Anexo Municipios · A: RAGONVALIA
+Anexo Municipios · A: SALAZAR
+Anexo Municipios · A: SAN CALIXTO
+Anexo Municipios · A: SAN CAYETANO
+Anexo Municipios · A: SANTIAGO
+Anexo Municipios · A: SARDINATA
+Anexo Municipios · A: SILOS
+Anexo Municipios · A: TEORAMA
+Anexo Municipios · A: TIBU
+Anexo Municipios · A: TOLEDO
+Anexo Municipios · A: VILLA CARO
+Anexo Municipios · A: VILLA DEL ROSARIO
+Anexo Municipios · A: ARMENIA
+Anexo Municipios · A: BUENAVISTA
+Anexo Municipios · A: CALARCA
+Anexo Municipios · A: CIRCASIA
+Anexo Municipios · A: CORDOBA
+Anexo Municipios · A: FILANDIA
+Anexo Municipios · A: GENOVA
+Anexo Municipios · A: LA TEBAIDA
+Anexo Municipios · A: MONTENEGRO
+Anexo Municipios · A: PIJAO
+Anexo Municipios · A: QUIMBAYA
+Anexo Municipios · A: SALENTO
+Anexo Municipios · A: PEREIRA
+Anexo Municipios · A: APIA
+Anexo Municipios · A: BALBOA
+Anexo Municipios · A: BELEN DE UMBRIA
+Anexo Municipios · A: DOSQUEBRADAS
+Anexo Municipios · A: GUATICA
+Anexo Municipios · A: LA CELIA
+Anexo Municipios · A: LA VIRGINIA
+Anexo Municipios · A: MARSELLA
+Anexo Municipios · A: MISTRATO
+Anexo Municipios · A: PUEBLO RICO
+Anexo Municipios · A: QUINCHIA
+Anexo Municipios · A: SANTA ROSA DE CABAL
+Anexo Municipios · A: SANTUARIO
+Anexo Municipios · A: BUCARAMANGA
+Anexo Municipios · A: AGUADA
+Anexo Municipios · A: ALBANIA
+Anexo Municipios · A: ARATOCA
+Anexo Municipios · A: BARBOSA
+Anexo Municipios · A: BARICHARA
+Anexo Municipios · A: BARRANCABERMEJA
+Anexo Municipios · A: BETULIA
+Anexo Municipios · A: BOLIVAR
+Anexo Municipios · A: CABRERA
+Anexo Municipios · A: CALIFORNIA
+Anexo Municipios · A: CAPITANEJO
+Anexo Municipios · A: CARCASI
+Anexo Municipios · A: CEPITA
+Anexo Municipios · A: CERRITO
+Anexo Municipios · A: CHARALA
+Anexo Municipios · A: CHARTA
+Anexo Municipios · A: CHIMA
+Anexo Municipios · A: CHIPATA
+Anexo Municipios · A: CIMITARRA
+Anexo Municipios · A: CONCEPCION
+Anexo Municipios · A: CONFINES
+Anexo Municipios · A: CONTRATACION
+Anexo Municipios · A: COROMORO
+Anexo Municipios · A: CURITI
+Anexo Municipios · A: EL CARMEN DE CHUCURI
+Anexo Municipios · A: EL GUACAMAYO
+Anexo Municipios · A: EL PEÑON
+Anexo Municipios · A: EL PLAYON
+Anexo Municipios · A: ENCINO
+Anexo Municipios · A: ENCISO
+Anexo Municipios · A: FLORIAN
+Anexo Municipios · A: FLORIDABLANCA
+Anexo Municipios · A: GALAN
+Anexo Municipios · A: GAMBITA
+Anexo Municipios · A: GIRON
+Anexo Municipios · A: GUACA
+Anexo Municipios · A: GUADALUPE
+Anexo Municipios · A: GUAPOTA
+Anexo Municipios · A: GUAVATA
+Anexo Municipios · A: GsEPSA
+Anexo Municipios · A: HATO
+Anexo Municipios · A: JESUS MARIA
+Anexo Municipios · A: JORDAN
+Anexo Municipios · A: LA BELLEZA
+Anexo Municipios · A: LANDAZURI
+Anexo Municipios · A: LA PAZ
+Anexo Municipios · A: LEBRIJA
+Anexo Municipios · A: LOS SANTOS
+Anexo Municipios · A: MACARAVITA
+Anexo Municipios · A: MALAGA
+Anexo Municipios · A: MATANZA
+Anexo Municipios · A: MOGOTES
+Anexo Municipios · A: MOLAGAVITA
+Anexo Municipios · A: OCAMONTE
+Anexo Municipios · A: OIBA
+Anexo Municipios · A: ONZAGA
+Anexo Municipios · A: PALMAR
+Anexo Municipios · A: PALMAS DEL SOCORRO
+Anexo Municipios · A: PARAMO
+Anexo Municipios · A: PIEDECUESTA
+Anexo Municipios · A: PINCHOTE
+Anexo Municipios · A: PUENTE NACIONAL
+Anexo Municipios · A: PUERTO PARRA
+Anexo Municipios · A: PUERTO WILCHES
+Anexo Municipios · A: RIONEGRO
+Anexo Municipios · A: SABANA DE TORRES
+Anexo Municipios · A: SAN ANDRES
+Anexo Municipios · A: SAN BENITO
+Anexo Municipios · A: SAN GIL
+Anexo Municipios · A: SAN JOAQUIN
+Anexo Municipios · A: SAN JOSE DE MIRANDA
+Anexo Municipios · A: SAN MIGUEL
+Anexo Municipios · A: SAN VICENTE DE CHUCURI
+Anexo Municipios · A: SANTA BARBARA
+Anexo Municipios · A: SANTA HELENA DEL OPON
+Anexo Municipios · A: SIMACOTA
+Anexo Municipios · A: SOCORRO
+Anexo Municipios · A: SUAITA
+Anexo Municipios · A: SUCRE
+Anexo Municipios · A: SURATA
+Anexo Municipios · A: TONA
+Anexo Municipios · A: VALLE DE SAN JOSE
+Anexo Municipios · A: VELEZ
+Anexo Municipios · A: VETAS
+Anexo Municipios · A: VILLANUEVA
+Anexo Municipios · A: ZAPATOCA
+Anexo Municipios · A: SINCELEJO
+Anexo Municipios · A: BUENAVISTA
+Anexo Municipios · A: CAIMITO
+Anexo Municipios · A: COLOSO
+Anexo Municipios · A: COROZAL
+Anexo Municipios · A: COVEÑAS
+Anexo Municipios · A: CHALAN
+Anexo Municipios · A: EL ROBLE
+Anexo Municipios · A: GALERAS
+Anexo Municipios · A: GUARANDA
+Anexo Municipios · A: LA UNION
+Anexo Municipios · A: LOS PALMITOS
+Anexo Municipios · A: MAJAGUAL
+Anexo Municipios · A: MORROA
+Anexo Municipios · A: OVEJAS
+Anexo Municipios · A: PALMITO
+Anexo Municipios · A: SAMPUES
+Anexo Municipios · A: SAN BENITO ABAD
+Anexo Municipios · A: SAN JUAN DE BETULIA
+Anexo Municipios · A: SAN MARCOS
+Anexo Municipios · A: SAN ONOFRE
+Anexo Municipios · A: SAN PEDRO
+Anexo Municipios · A: SAN LUIS DE SINCE
+Anexo Municipios · A: SUCRE
+Anexo Municipios · A: SANTIAGO DE TOLU
+Anexo Municipios · A: TOLU VIEJO
+Anexo Municipios · A: IBAGUE
+Anexo Municipios · A: ALPUJARRA
+Anexo Municipios · A: ALVARADO
+Anexo Municipios · A: AMBALEMA
+Anexo Municipios · A: ANZOATEGUI
+Anexo Municipios · A: ARMERO
+Anexo Municipios · A: ATACO
+Anexo Municipios · A: CAJAMARCA
+Anexo Municipios · A: CARMEN DE APICALA
+Anexo Municipios · A: CASABIANCA
+Anexo Municipios · A: CHAPARRAL
+Anexo Municipios · A: COELLO
+Anexo Municipios · A: COYAIMA
+Anexo Municipios · A: CUNDAY
+Anexo Municipios · A: DOLORES
+Anexo Municipios · A: ESPINAL
+Anexo Municipios · A: FALAN
+Anexo Municipios · A: FLANDES
+Anexo Municipios · A: FRESNO
+Anexo Municipios · A: GUAMO
+Anexo Municipios · A: HERVEO
+Anexo Municipios · A: HONDA
+Anexo Municipios · A: ICONONZO
+Anexo Municipios · A: LERIDA
+Anexo Municipios · A: LIBANO
+Anexo Municipios · A: MARIQUITA
+Anexo Municipios · A: MELGAR
+Anexo Municipios · A: MURILLO
+Anexo Municipios · A: NATAGAIMA
+Anexo Municipios · A: ORTEGA
+Anexo Municipios · A: PALOCABILDO
+Anexo Municipios · A: PIEDRAS
+Anexo Municipios · A: PLANADAS
+Anexo Municipios · A: PRADO
+Anexo Municipios · A: PURIFICACION
+Anexo Municipios · A: RIOBLANCO
+Anexo Municipios · A: RONCESVALLES
+Anexo Municipios · A: ROVIRA
+Anexo Municipios · A: SALDAÑA
+Anexo Municipios · A: SAN ANTONIO
+Anexo Municipios · A: SAN LUIS
+Anexo Municipios · A: SANTA ISABEL
+Anexo Municipios · A: SUAREZ
+Anexo Municipios · A: VALLE DE SAN JUAN
+Anexo Municipios · A: VENADILLO
+Anexo Municipios · A: VILLAHERMOSA
+Anexo Municipios · A: VILLARRICA
+Anexo Municipios · A: CALI
+Anexo Municipios · A: ALCALA
+Anexo Municipios · A: ANDALUCIA
+Anexo Municipios · A: ANSERMANUEVO
+Anexo Municipios · A: ARGELIA
+Anexo Municipios · A: BOLIVAR
+Anexo Municipios · A: BUENAVENTURA
+Anexo Municipios · A: GUADALAJARA DE BUGA
+Anexo Municipios · A: BUGALAGRANDE
+Anexo Municipios · A: CAICEDONIA
+Anexo Municipios · A: CALIMA
+Anexo Municipios · A: CANDELARIA
+Anexo Municipios · A: CARTAGO
+Anexo Municipios · A: DAGUA
+Anexo Municipios · A: EL AGUILA
+Anexo Municipios · A: EL CAIRO
+Anexo Municipios · A: EL CERRITO
+Anexo Municipios · A: EL DOVIO
+Anexo Municipios · A: FLORIDA
+Anexo Municipios · A: GINEBRA
+Anexo Municipios · A: GUACARI
+Anexo Municipios · A: JAMUNDI
+Anexo Municipios · A: LA CUMBRE
+Anexo Municipios · A: LA UNION
+Anexo Municipios · A: LA VICTORIA
+Anexo Municipios · A: OBANDO
+Anexo Municipios · A: PALMIRA
+Anexo Municipios · A: PRADERA
+Anexo Municipios · A: RESTREPO
+Anexo Municipios · A: RIOFRIO
+Anexo Municipios · A: ROLDANILLO
+Anexo Municipios · A: SAN PEDRO
+Anexo Municipios · A: SEVILLA
+Anexo Municipios · A: TORO
+Anexo Municipios · A: TRUJILLO
+Anexo Municipios · A: TULUA
+Anexo Municipios · A: ULLOA
+Anexo Municipios · A: VERSALLES
+Anexo Municipios · A: VIJES
+Anexo Municipios · A: YOTOCO
+Anexo Municipios · A: YUMBO
+Anexo Municipios · A: ZARZAL
+Anexo Municipios · A: ARAUCA
+Anexo Municipios · A: ARAUQUITA
+Anexo Municipios · A: CRAVO NORTE
+Anexo Municipios · A: FORTUL
+Anexo Municipios · A: PUERTO RONDON
+Anexo Municipios · A: SARAVENA
+Anexo Municipios · A: TAME
+Anexo Municipios · A: YOPAL
+Anexo Municipios · A: AGUAZUL
+Anexo Municipios · A: CHAMEZA
+Anexo Municipios · A: HATO COROZAL
+Anexo Municipios · A: LA SALINA
+Anexo Municipios · A: MANI
+Anexo Municipios · A: MONTERREY
+Anexo Municipios · A: NUNCHIA
+Anexo Municipios · A: OROCUE
+Anexo Municipios · A: PAZ DE ARIPORO
+Anexo Municipios · A: PORE
+Anexo Municipios · A: RECETOR
+Anexo Municipios · A: SABANALARGA
+Anexo Municipios · A: SACAMA
+Anexo Municipios · A: SAN LUIS DE PALENQUE
+Anexo Municipios · A: TAMARA
+Anexo Municipios · A: TAURAMENA
+Anexo Municipios · A: TRINIDAD
+Anexo Municipios · A: VILLANUEVA
+Anexo Municipios · A: MOCOA
+Anexo Municipios · A: COLON
+Anexo Municipios · A: ORITO
+Anexo Municipios · A: PUERTO ASIS
+Anexo Municipios · A: PUERTO CAICEDO
+Anexo Municipios · A: PUERTO GUZMAN
+Anexo Municipios · A: LEGUIZAMO
+Anexo Municipios · A: SIBUNDOY
+Anexo Municipios · A: SAN FRANCISCO
+Anexo Municipios · A: SAN MIGUEL
+Anexo Municipios · A: SANTIAGO
+Anexo Municipios · A: VALLE DEL GUAMUEZ
+Anexo Municipios · A: VILLAGARZON
+Anexo Municipios · A: SAN ANDRES
+Anexo Municipios · A: PROVIDENCIA
+Anexo Municipios · A: LETICIA
+Anexo Municipios · A: EL ENCANTO
+Anexo Municipios · A: LA CHORRERA
+Anexo Municipios · A: LA PEDRERA
+Anexo Municipios · A: LA VICTORIA
+Anexo Municipios · A: MIRITI - PARANA
+Anexo Municipios · A: PUERTO ALEGRIA
+Anexo Municipios · A: PUERTO ARICA
+Anexo Municipios · A: PUERTO NARIÑO
+Anexo Municipios · A: PUERTO SANTANDER
+Anexo Municipios · A: TARAPACA
+Anexo Municipios · A: INIRIDA
+Anexo Municipios · A: BARRANCO MINAS
+Anexo Municipios · A: MAPIRIPANA
+Anexo Municipios · A: SAN FELIPE
+Anexo Municipios · A: PUERTO COLOMBIA
+Anexo Municipios · A: LA GUADALUPE
+Anexo Municipios · A: CACAHUAL
+Anexo Municipios · A: PANA PANA
+Anexo Municipios · A: MORICHAL
+Anexo Municipios · A: SAN JOSE DEL GUAVIARE
+Anexo Municipios · A: CALAMAR
+Anexo Municipios · A: EL RETORNO
+Anexo Municipios · A: MIRAFLORES
+Anexo Municipios · A: MITU
+Anexo Municipios · A: CARURU
+Anexo Municipios · A: PACOA
+Anexo Municipios · A: TARAIRA
+Anexo Municipios · A: PAPUNAUA
+Anexo Municipios · A: YAVARATE
+Anexo Municipios · A: PUERTO CARREÑO
+Anexo Municipios · A: LA PRIMAVERA
+Anexo Municipios · A: SANTA ROSALIA
+Anexo Municipios · A: CUMARIBO

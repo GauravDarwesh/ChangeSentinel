@@ -1,0 +1,122 @@
+CIRCULAR REGLAMENTARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio
+Declaracién de Cambio por Compra y Venta de Manera Profesional de Divisas en
+Efectivo y Cheques de Viajero
+Formulario 18
+1. Ciudad Indique el nombre o cédigo ciudad donde se realiza la operacion de
+compra 0 venta de divisas.
+2. Fecha (AAAA-MM-DD) | Indicar la fecha de realizacién de la operacion de compra y venta de
+divisas.
+|, IDENTIFICACION DEL PROFESIONAL DE CAMBIO
+Indique el nombre completo o raz6n social del profesional que compra o
+1. Nombre o raz6n social 5
+vende las divisas.
+Indique el tipo de identificacion segun las siguientes reglas:
+2. Tipo Ni: Numero de identificacién tributaria
+* CC: Cédula de ciudadania
+e CE: Cedula de extranjeria
+Relacione el numero de identificacién del profesional que compra o
+vende las divisas, segtin corresponda al tipo seleccionado en la casilla
+anterior.
+3. Numero de
+identificacion
+Relacione el numero de la factura emitida por el profesional que compra
+4, Numero de la factura a «anki
+o vende divisas. Solo si aplica.
+5. Matricula del
+oe Indique la matricula_ mercantil del establecimiento de comercio del
+establecimiento de : i
++ profesional que compra o vende las divisas.
+Comercio
+Il. IDENTIFICACION DEL CLIENTE (Datos del residente o no residente que compra o vende divisas 0
+cheques de viajero)
+CIRCULAR REGLAMENTARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio
+1. Nombre o raz6n social
+2. Tipo
+3. Numero
+identificacion
+4. Direccién
+5. Ciudad
+6. Teléfono
+de
+Indique el nombre completo o raz6n social del cliente (datos del
+residente o no residente que compra o vende divisas 0 cheques de
+viajero)
+Indique el tipo de identificacién segun las siguientes reglas:
+¢ Ni: Ndmero de identificacion tributaria
+© CC: Cédula de ciudadania
+e CE: Cedula de extranjeria
+e PB: Pasaporte
+e Tl: Tarjeta de identidad
+RC: Registro civil
+Otros: Otros tipos de identificacién
+Relacione el numero de identificacién del cliente (datos del residente o
+no residente que compra o vende divisas o cheques), segtin corresponda
+al tipo seleccionado en la casilla anterior.
+Indique la direccién en Colombia del cliente. Solo si es residente.
+Indique el nombre o cédigo ciudad de la direccién diligenciada en la
+casilla anterior.
+Solo si es residente.
+Indique el numero telefénico e indicativo, correspondiente del cliente.
+Ill, IDENTIFICACION DEL DECLARANTE (Datos de la persona natural que suscribe la declaracién, en
+nombre propio o representacion del cliente)
+Nota: No diligenciar cuando el declarante y el cliente correspondan a la misma persona.
+CIRCULAR REGLAMENTARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio
+1. Nombre
+2. Tipo
+3. Numero
+identificacién
+4. Direcci6én
+5. Ciudad
+6. Teléfono
+| Indique el nombre completo del declarante (Datos de la persona natural
+que suscribe la declaracién, en nombre propio o representacién del
+cliente)
+Indique el tipo de identificacién segun las siguientes reglas:
+« Ni: Numero de identificacion tributaria
+© CC: Cédula de ciudadania
+e CE: Cedula de extranjeria
+e PB: Pasaporte
+| e Tl: Tarjeta de identidad
+e RC: Registro civil
+Relacione el numero de identificacién del declarante (Datos de la
+de persona natural que suscribe la declaracién, en nombre propio o
+representacién - Cliente), segun corresponda al tipo seleccionado en la
+| casilla posterior.
+| Indique la direccién en Colombia del declarante. Solo si es residente.
+Indique el nombre o codigo ciudad de la direccién diligenciada en la
+-casilla anterior.
+Solo si es residente.
+Indique el numero telefénico e indicativo correspondiente del declarante
+IV. DESCRIPCION DE LA OPERACION
+1. Concepto
+Marque con X la operacién que corresponda. Aplica para un solo tipo de
+operacién: Compra de divisas o Venta de divisas
+2. Nombre de la Moneda__Identifique el nombre completo de la moneda que compra o vende el
+Negociada
+cliente. (Ejemplo Euro, Dolar Americano, Délar Canadiense, Yen, etc.)
+CIRCULAR REGLAMENTARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio
+3. Monto de la Moneda Valor total de la moneda que se compra o se vende ( ejemplo USD$500)
+Negociada
+Tipo de cambio a moneda legal colombiana (Pesos colombianos)
+acordado en la negociacién, independientemente de la moneda de
+negociacién, segun corresponda a la operacién de compra o venta.
+(ejemplo: $3.000 COP)
+4. Tasa de Cambio
+Valor en moneda legal colombiana en efectivo seguin corresponda a la
+operacién de compra o venta de divisas.
+6. Cheque de viajero — Valor en moneda legal colombiana en cheque de viajero segun
+cops corresponda a la operacién de compra 0 venta de divisas.
+Valor en moneda legal colombiana equivalente al pago con el uso de
+7. Pago diferente a instrumentos de pago diferentes al efectivo (ejemplo: tarjeta débito,
+efectivo — COPS tarjera crédito, transferencia de fondos intrabancaria, transferencia de
+fondos interbancaria y cheque.).
+8. Total - COPS Valor total de la operacién en moneda legal colombiana.
+9. Firma Suscripcién autdgrafa de quien presenta el formulario.

@@ -1,0 +1,39 @@
+CIRCULAR REGLAMENTARIA EXTERNA DCIP-83
+Fecha: Tuesday, 12 de September de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+Informe de Avales y Garantías otorgados por los IMC
+I. TIPO DE OPERACIÓN (Casillas 1 a 5)
+1. Tipo Digite un número del 1 al 4 de acuerdo con la siguiente convención: 1-Cuando se presente para informe inicial el aval o garantía.
+2-Cuando se trate de una modificación de un aval o garantía informado anteriormente.
+En este caso por favor diligencie únicamente el campo No. 5 Número de identificación del aval o garantía , con el número del aval modificado y los campos que presenten variación.
+3-Cuando se trate de la ejecución de un aval o garantía informado anteriormente. En este caso por favor relacione únicamente ado en el informe inicial.
+4-Cuando se trate de la anulación de un aval o garantía informado anteriormente. En este caso por favor relacione únicamente .
+2. Sin informe
+Seleccione esta casilla únicamente cuando no se hayan otorgado avales y garantías en el período a informar.
+3. Fecha AAAA- MM-DD Año, mes y día del otorgamiento, modificación, ejecución o anulación del aval o garantía informado en formato DD/MM/AAAA.
+4. Nit del IMC avalista
+Número de identificación tributaria (Nit) del IMC avalista o garante. Diligencie el dígito de verificación en la casilla DV.
+5. Número de identificación del aval o garantía Si el tipo de operación diligenciado corresponde a 1, el úmero de identificación del aval o garantía corresponde al Nit del IMC avalista incluyendo el d ígito de verificación (DV), la fecha de otorgamiento del aval o garantía (AAAA-MM-DD) y un número consecutivo de cuatro cifras comenzando en 0001 , correspondiente a los avales otorgados por el IMC en esa fecha.
+Ejemplo. Si el Nit del avalista es 000000000-0, para el segundo aval otorgado en la fecha 2018-09-05, del aval sería: -0-2018-09-05-000
+Si el tipo de operación diligenciado corresponde a 2, 3 o 4, el úmero de identificación del aval o garantía corresponde al indicado en el informe inicial.
+II. IDENTIFICACIÓN AVALADO(S) DE LA OBLIGACIÓN PRINCIPAL (Casillas 6 a 10)
+6. Tipo Tipo de documento de identificación del avalado de la obligación principal que está siendo avalada o garantizada. Digite un número de acuerdo con el tipo de documento de identificación del avalado siguiendo la siguiente convención: 1= Cédula de ciudadanía, 2= Cédula de extranjería, 3= Nit, 4= Pasaporte y 5 = No residente sin Nit en Colombia.
+7. Número de identificación Número del documento de identificación que corresponde al indicado en la casilla anterior. Sólo si éste es Nit, diligencie el dígito de verificación en la casilla DV.
+CIRCULAR REGLAMENTARIA EXTERNA DCIP-83
+Fecha: Tuesday, 12 de September de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio
+8. Nombre o razón social Nombre o razón social de la persona natural o jurídica avalada que corresponda a la s casillas 6 y 7.
+9. Código CIIU Esta casilla debe ser diligenciada con un número a cuatro dígitos de acuerdo con la revisión 4 de la Clasificación Industrial Internacional Uniforme adaptada para Colombia.
+Con este número se puede identificar la actividad económica del avalado de la obligación principal que está siendo avalada o garantizada.
+10 Código país Código del país de domicilio del avalado de la obligación principal que está siendo avalada o garantizada.
+III. IDENTIFICACIÓN BENEFICIARIO(S) DE LA OBLIGACIÓN PRINCIPAL (Casillas 11 a 13)
+11. Tipo Tipo de documento de identificación del beneficiario de la obligación principal que está siendo avalada o garantizada. Digite un número de acuerdo con el tipo de documento de identificación del beneficiario siguiendo la siguiente convención: 1= Cédula de c iudadanía, 2= Cédula de extranjería, 3= Nit, 4= Pasaporte y 5 = No residente sin Nit en Colombia.
+12. Número de identificación Número del documento de identificación que corresponde al indicado en la casilla anterior. Sólo si éste es Nit, diligencie el dígito de verificación en la casilla DV.
+13. Nombre o razón social Nombre o razón social de la persona natural o jurídica que corresponde al indicado en la casilla 12.
+IV. DESCRIPCIÓN DEL AVAL O GARANTÍA (Casillas 14 a 17) Código moneda Moneda en que está estipulado el aval o garantía otorgado por el IMC.
+15. Monto garantizado
+- Si se trata de avales o garantías por montos globales, se debe indicar únicamente el valor en moneda extranjera o en moneda legal (según sea el caso) equivalente a las obligaciones principales determinadas al momento del informe. En la medida en que se generen nuevas obligaciones principales con cargo al mismo aval, se debe presentar una modificación al monto inicialmente reportado en esta casilla.
+- En el caso de que el aval o garantía sea estipulado en moneda extranjera, se debe registrar en esta casilla el monto garantizado en números y en la moneda en que se otorgó el aval. Si el monto garantizado se estipula hasta por un valor equivalente de una obligación en moneda legal c olombiana, se debe indicar el valor en moneda extranjera a la tasa de cambio vigente el día del informe del aval o garantía. En estos casos, si se presentan di ferencias entre el monto informado y aquel efectivamente ejecutado, se deberá modificar el monto informado del aval o garantía aumentándolo o disminuyéndolo, según corresponda.
+- En el caso que el aval o garantía esté estipulado en moneda legal, se debe registrar en esta casilla el monto garantizado en números y en pesos colombianos.
+CIRCULAR REGLAMENTARIA EXTERNA DCIP-83
+Fecha: Tuesday, 12 de September de 2023 Asunto 10: Procedimientos aplicables a las operaciones de cambio -En el caso que el aval o garantía sea otorgado por un monto indeterminado, se debe registrar en esta casilla el monto registrado por el IMC avalista o garante en sus cuentas contingentes acreedoras de sus estados financieros correspondiente a este aval o garantía 16.
+16. Monto indeterminado indeterminado.
+17. Vencimiento AAAA-MM-DD Indique en esta casilla la fecha en que se vence el aval o garantía en formato (AAAA- MM-DD)

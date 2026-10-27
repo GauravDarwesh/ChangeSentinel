@@ -1,0 +1,94 @@
+[WORKBOOK] 3 sheets: DATOS GENERALES , Reporte, Instrucciones
+[SHEET] DATOS GENERALES
+DATOS GENERALES · P: 2021
+DATOS GENERALES · B: De acuerdo con lo establecido en la Circular Reglamentaria DCIP 83, los proveedores de servicio de pago agregadores tendrán la obligación de enviar mensualmente al Banco de la República el “Reporte Mensual de Proveedores de Servicios de Pago agregadores” al correo corporativo DTIE-SectorExterno@banrep.gov.co, dentro de los diez (10) días hábiles siguientes al cierre del mes a reportar, en los términos y condiciones que se establezcan en el correspondiente instructivo. · P: 2022
+DATOS GENERALES · P: 2023
+DATOS GENERALES · P: 2024
+DATOS GENERALES · B: REPORTE MENSUAL DE PROVEEDORES DE SERVICIOS DE PAGO AGREGADORES · P: 2025
+DATOS GENERALES · B: 1. Año reportado
+DATOS GENERALES · B: 2. Mes reportado
+DATOS GENERALES · B: 3. NIT de la entidad:
+DATOS GENERALES · B: 4. Nombre de la entidad:
+DATOS GENERALES · B: 5. Dirección:
+DATOS GENERALES · B: 6. Ciudad:
+DATOS GENERALES · B: Para posibles aclaraciones sobre la información reportada, el Banco de la República podrá contactar a:
+DATOS GENERALES · B: 7. Nombre: · G: 10. Teléfono No :
+DATOS GENERALES · B: 8. Cargo: · G: 11. Fax No :
+DATOS GENERALES · B: 9. Correo electrónico:
+DATOS GENERALES · B: Cifras de control
+[MERGED] DATOS GENERALES · B8:H9
+[MERGED] DATOS GENERALES · C28:E28
+[MERGED] DATOS GENERALES · C30:E30
+[MERGED] DATOS GENERALES · C32:E32
+[MERGED] DATOS GENERALES · B35:H35
+[MERGED] DATOS GENERALES · B11:H11
+[MERGED] DATOS GENERALES · C13:D13
+[MERGED] DATOS GENERALES · C17:D17
+[MERGED] DATOS GENERALES · C19:E19
+[MERGED] DATOS GENERALES · C21:E21
+[MERGED] DATOS GENERALES · C23:D23
+[VALIDATION] DATOS GENERALES · C13:D13 · list · $P$7:$P$12
+[SHEET] Reporte
+Reporte · A: REPORTE MENSUAL DE PROVEEDORES DE SERVICIOS DE PAGO AGREGADORES
+Reporte · A: Favor reportar el acumulado del mes y consultar la hoja de instrucciones
+Reporte · A: Acepto el tratamiento de los datos personales bajo las políticas específicas del Banco de la República, en especial bajo lo reglamentado en el numeral 2.7 del Capítulo 2 de esta Circular
+Reporte · A: A. Caracteristicas generales de la transacción · H: Ingresos Comisiones recibidas por la pasarela · K: Egresos Comisiones pagadas por la pasarela
+Reporte · A: 1. Año · B: 2. Mes · C: 3. Categoria de la operación =1. Bienes; 2.Servicios · D: 4. Tipo de transacción =1. Exportación; 2.Importación · E: 5. Tipo de servicio (Ver hoja instrucciones) · F: 6. Número de transacciones · G: 7. Valor en USD · H: 8. Pagadas por residentes · I: 9. Pagadas por no-residentes · J: 10. Total ingresos por comisiones (8+9) · K: 11.Pagadas a no residentes · L: 12. Pagadas a residentes · M: 13.Total egresos por comisiones (11+12)
+Reporte · J: =+H7+I7 → 0 · M: =+L7+K7 → 0
+[MERGED] Reporte · K5:M5
+[MERGED] Reporte · H5:J5
+[MERGED] Reporte · A5:G5
+[SHEET] Instrucciones
+Instrucciones · A: REPORTE MENSUAL DE PROVEEDORES DE SERVICIOS DE PAGO AGREGADORES
+Instrucciones · A: Variable · B: Instrucción · C: Formato/Valor
+Instrucciones · A: 1. Año · B: Por favor incluya el año reportado · C: AAAA
+Instrucciones · A: 2. Mes · B: Seleccione el número de mes a reportar según corresponda:
+Instrucciones · B: Enero · C: 1
+Instrucciones · B: Febrero · C: 2
+Instrucciones · B: Marzo · C: 3
+Instrucciones · B: Abril · C: 4
+Instrucciones · B: Mayo · C: 5
+Instrucciones · B: Junio · C: 6
+Instrucciones · B: Julio · C: 7
+Instrucciones · B: Agosto · C: 8
+Instrucciones · B: Septiembre · C: 9
+Instrucciones · B: Octubre · C: 10
+Instrucciones · B: Noviembre · C: 11
+Instrucciones · B: Diciembre · C: 12
+Instrucciones · A: 3. Categoria de la operación · B: Seleccione el número que corresponde a la operación que esta reportando
+Instrucciones · B: Exportación/importación de bienes · C: 1
+Instrucciones · B: Exportación/importación de servicios · C: 2
+Instrucciones · A: 4. Tipo de transacción · B: Exportación · C: 1
+Instrucciones · B: Importación · C: 2
+Instrucciones · A: 5. Tipo de servicio · B: Franquicias y uso de marca · C: 201
+Instrucciones · B: Licencias para reproducción o distribución de software y para reproduccion de programas audiovisuales · C: 202
+Instrucciones · B: Servicios de información 1/ · C: 601
+Instrucciones · B: Servicios de informática · C: 701
+Instrucciones · B: Servicios de arquitectura, ingeniería, científicos y otros técnicos · C: 802
+Instrucciones · B: Asesoría administrativa, legal y/o contable · C: 803
+Instrucciones · B: Servicios para la agricultura, pesca, minería y extracción de petróleo · C: 804
+Instrucciones · B: Servicios relacionados con el comercio: comisiones no financieras · C: 805
+Instrucciones · B: Otros servicios empresariales: servicios que no esten incluidos en las otras categorías · C: 806
+Instrucciones · B: Servicios audiovisuales: descarga de películas, música, grabaciones de eventos en vivo · C: 901
+Instrucciones · B: Servicios recreativos: relacionados por museos, actividades culturales, deportivas, de apuestas y recreativas · C: 903
+Instrucciones · B: Servicios de salud · C: 904
+Instrucciones · B: Servicios de educación · C: 905
+Instrucciones · B: Servicios de telecomunicaciones · C: 1101
+Instrucciones · A: 6. Número de transacciones · B: Digite el número de transacciones (no usar decimales)
+Instrucciones · A: 7. Valor en USD · B: Digite el valor total de las transacciones reportadas (suma de las transacciones informadas en el campo 5 del reporte), expresadas en dólares de los EEUU
+Instrucciones · A: Ingresos: comisiones recibidas por la pasarela
+Instrucciones · A: 8. Pagadas por residentes · B: Registre el monto equivalente en dólares de las comisiones que fueron pagadas por residentes
+Instrucciones · A: 9. Pagadas por no-residentes · B: Registre el monto equivalente en dólares de las comisiones que fueron pagadas por no-residentes
+Instrucciones · A: 10. Total ingresos por comisiones (8+9) · B: Suma de los valores reportados en los campos 8 y 9. Monto equivalente en USD
+Instrucciones · A: Egresos: comisiones pagadas por la pasarela
+Instrucciones · A: 11.Pagadas a no-residentes · B: Registre el monto equivalente en dólares de las comisiones que fueron pagadas a no-residentes
+Instrucciones · A: 12. Pagadas a residentes · B: Registre el monto equivalente en dólares de las comisiones que fueron pagadas a residentes
+Instrucciones · A: 13.Total egresos por comisiones (11+12) · B: Suma de los valores reportados en los campos 11 y 12. Monto equivalente en USD
+Instrucciones · A: En el contexto de las estadísticas de la balanza de pagos:
+Instrucciones · A: 1/ Incluye servicios de base de datos, como concepción de la base de datos, almacenamiento de los datos y divulgación de los datos y de las bases de datos; suscripciones individuales directas a diarios y publicaciones periódicas; servicios de suministro de contenido en Internet y servicios de biblioteca y archivo. Contenido descargado que no sean programas informáticos o productos audiovisuales.
+[MERGED] Instrucciones · A49:C49
+[MERGED] Instrucciones · A1:G1
+[MERGED] Instrucciones · A5:A17
+[MERGED] Instrucciones · A18:A20
+[MERGED] Instrucciones · A21:A22
+[MERGED] Instrucciones · A23:A36

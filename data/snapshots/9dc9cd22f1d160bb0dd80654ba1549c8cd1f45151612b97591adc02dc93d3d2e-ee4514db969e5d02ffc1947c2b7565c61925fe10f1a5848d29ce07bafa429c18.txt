@@ -1,0 +1,29 @@
+Formulario No. 18
+2. Tipo
+2. Tipo
+2. Tipo Compra de divisas 1 CUANDO LA OPERACIÓN SE REALICE ENTRE DOS (2) PROFESIONALES DEL CAMBIO SE ELABORA UNA (1) SOLA DECLARACIÓN DE CAMBIO. LA DECLARACIÓN LA DEBE DILIGENCIAR EL "BENEFICIARIO O CLIENTE" EN LA PAPELERÍA SUMINISTRADA POR EL PROFESIONAL QUE RECIBE Y ACEPTA LA OFERTA DEL BENEFICIARIO.
+9. Firma del declarante PARA LOS FINES PREVISTOS EN EL ARTICULO 83 DE LA CONSTITUCIÓN POLÍTICA DE COLOMBIA, DECLARO BAJO LA GRAVEDAD DE JURAMENTO QUE LOS CONCEPTOS, CANTIDADES Y DEMÁS DATOS CONSIGNADOS EN EL PRESENTE FORMULARIO SON CORRECTOS Y FIEL EXPRESIÓN DE LA VERDAD.
+Acepto el tratamiento de los datos personales bajo las políticas específicas del Banco de la República, en especial bajo lo reglamentado en el numeral 2.7 del Capítulo 2 de esta Circular.
+COP$ COP$ COP$ COP$
+6. Cheque de viajero
+5. Efectivo
+7. Pago diferente a efectivo
+8. Total
+1. Concepto (Marcar con X la operación que corresponda) Venta de divisas
+2. Nombre de la Moneda Negociada 3. Monto de la Moneda Negociada
+4. Tasa de Cambio Valor en Pesos de la operación IV. DESCRIPCIÓN DE LA OPERACIÓN
+6. Telefono
+4. Dirección 5. Ciudad III. IDENTIFICACIÓN DEL DECLARANTE (Datos de la persona natural que suscribe la declaración, en nombre propio o representación del cliente)
+1. Nombre 3. Número de identificación
+6. Telefono
+4. Dirección 5. Ciudad II. IDENTIFICACIÓN DEL CLIENTE (Datos del residente o no residente que compra o vende divisas o cheques de viajero)
+1. Nombre o Razón Social 3. Número de identificación
+4. Número de Factura (Si aplica) 5. Matrícula del establecimiento de Comercio I. IDENTIFICACIÓN DEL PROFESIONAL DE CAMBIO
+1. Nombre o Razón Social 3. Número de identificación Declaración de Cambio por Compra y Venta de Manera Profesional de Divisas en Efectivo y Cheques de Viajero Formulario 18 Circular Reglamentaria Externa DCIP-83 del 12 de septiembre de 2023 Diligenciar en Original y Copia
+1. Ciudad 2. Fecha AAAA-MM-DD
+[TABLE]
+| 5. Efectivo | COP$ |
+| --- | --- |
+| 6. Cheque de viajero | COP$ |
+| 7. Pago diferente a efectivo | COP$ |
+| 8. Total | COP$ |

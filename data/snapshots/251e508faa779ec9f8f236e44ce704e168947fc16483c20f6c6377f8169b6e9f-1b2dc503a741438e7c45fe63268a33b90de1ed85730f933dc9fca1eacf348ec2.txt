@@ -1,0 +1,96 @@
+[WORKBOOK] 3 sheets: DATOS GENERALES , Reporte, Instrucciones
+[SHEET] DATOS GENERALES
+DATOS GENERALES · O: 1
+DATOS GENERALES · O: 2
+DATOS GENERALES · O: 3
+DATOS GENERALES · O: 4
+DATOS GENERALES · O: 5
+DATOS GENERALES · O: 6 · P: 2021
+DATOS GENERALES · B: De acuerdo con lo establecido en la Circular Reglamentaria DCIP83, los intermediarios del mercado cambiario tendrán la obligación de enviar mensualmente al Banco de la República el “REPORTE MENSUAL DE PAGOS DE EXPORTACIONES DE SERVICIOS DESDE CUENTA EN PESOS” al correo corporativo DTIE-SectorExterno@banrep.gov.co, dentro de los veinte (20) días calendario siguientes al cierre del último mes que se reporta, en los términos y condiciones que se establezcan en el correspondiente instructivo. · O: 7 · P: 2022
+DATOS GENERALES · O: 8 · P: 2023
+DATOS GENERALES · O: 9 · P: 2024
+DATOS GENERALES · B: REPORTE MENSUAL DE PAGOS DE EXPORTACIONES DE SERVICIOS DESDE CUENTA EN PESOS · O: 10 · P: 2025
+DATOS GENERALES · O: 11 · P: 2026
+DATOS GENERALES · B: 1. Año reportado · O: 12 · P: 2027
+DATOS GENERALES · P: 2028
+DATOS GENERALES · B: 2. Mes reportado · P: 2029
+DATOS GENERALES · P: 2030
+DATOS GENERALES · B: 3. NIT de la entidad: · P: 2031
+DATOS GENERALES · P: 2032
+DATOS GENERALES · B: 4. Nombre de la entidad: · P: 2033
+DATOS GENERALES · P: 2034
+DATOS GENERALES · B: 5. Dirección:
+DATOS GENERALES · B: 6. Ciudad:
+DATOS GENERALES · B: Para posibles aclaraciones sobre la información reportada, el Banco de la República podrá contactar a:
+DATOS GENERALES · B: 7. Nombre: · G: 10. Teléfono No :
+DATOS GENERALES · B: 8. Cargo: · G: 11. Fax No :
+DATOS GENERALES · B: 9. Correo electrónico:
+DATOS GENERALES · B: Cifras de control
+[MERGED] DATOS GENERALES · B8:H9
+[MERGED] DATOS GENERALES · C28:E28
+[MERGED] DATOS GENERALES · C30:E30
+[MERGED] DATOS GENERALES · C32:E32
+[MERGED] DATOS GENERALES · B35:H35
+[MERGED] DATOS GENERALES · B11:H11
+[MERGED] DATOS GENERALES · C13:D13
+[MERGED] DATOS GENERALES · C17:D17
+[MERGED] DATOS GENERALES · C19:E19
+[MERGED] DATOS GENERALES · C21:E21
+[MERGED] DATOS GENERALES · C23:D23
+[VALIDATION] DATOS GENERALES · C13:D13 · list · $P$7:$P$20
+[VALIDATION] DATOS GENERALES · C15 · list · $O$2:$O$13
+[SHEET] Reporte
+Reporte · A: REPORTE MENSUAL DE PAGOS DE EXPORTACIONES DE SERVICIOS DESDE CUENTA EN PESOS
+Reporte · A: Favor reportar la información para el acumulado del mes.
+Reporte · A: Para su diligenciamiento consultar la hoja de instrucciones
+Reporte · A: A. Características generales de la transacción
+Reporte · A: 1. Año · B: 2. Mes · C: 3. Tipo de servicio (Ver hoja instrucciones) · D: 4. Número de transacciones · E: 5. Valor girado a la cuenta en USD · F: 6. Valor pagado en pesos · G: 7. Nit del receptor · H: 8. Razón social o nombre de receptor del pago
+[MERGED] Reporte · A2:H2
+[MERGED] Reporte · A3:H3
+[MERGED] Reporte · A7:H7
+[SHEET] Instrucciones
+Instrucciones · A: REPORTE MENSUAL DE PAGOS DE EXPORTACIONES DE SERVICIOS DESDE CUENTA EN PESOS
+Instrucciones · A: Variable · B: Instrucción · C: Formato/Valor
+Instrucciones · A: 1. Año · B: Por favor incluya el año reportado · C: AAAA
+Instrucciones · A: 2. Mes · B: Seleccione el número del mes a reportar según corresponda:
+Instrucciones · B: Enero · C: 1
+Instrucciones · B: Febrero · C: 2
+Instrucciones · B: Marzo · C: 3
+Instrucciones · B: Abril · C: 4
+Instrucciones · B: Mayo · C: 5
+Instrucciones · B: Junio · C: 6
+Instrucciones · B: Julio · C: 7
+Instrucciones · B: Agosto · C: 8
+Instrucciones · B: Septiembre · C: 9
+Instrucciones · B: Octubre · C: 10
+Instrucciones · B: Noviembre · C: 11
+Instrucciones · B: Diciembre · C: 12
+Instrucciones · A: 3. Tipo de servicio · B: Franquicias y uso de marca · C: 201
+Instrucciones · B: Licencias para reproducción o distribución de software y para reproduccion de programas audiovisuales · C: 202
+Instrucciones · B: Servicios de información 1/ · C: 601
+Instrucciones · B: Servicios de informática · C: 701
+Instrucciones · B: Servicios de arquitectura, ingeniería, científicos y otros técnicos · C: 802
+Instrucciones · B: Asesoría administrativa, legal y/o contable · C: 803
+Instrucciones · B: Servicios para la agricultura, pesca, minería y extracción de petróleo · C: 804
+Instrucciones · B: Servicios relacionados con el comercio: comisiones no financieras · C: 805
+Instrucciones · B: Otros servicios empresariales · C: 806
+Instrucciones · B: Servicios audiovisuales: poducción de películas y programas de TV, descarga de películas, grabaciones de eventos en vivo. · C: 901
+Instrucciones · B: Servicios de salud · C: 904
+Instrucciones · B: Servicios de educación · C: 905
+Instrucciones · B: Servicios de telecomunicaciones · C: 1101
+Instrucciones · A: 4. Número de transacciones · B: Digite el número de transacciones que responden por el valor reportado (no usar decimales)
+Instrucciones · A: 5. Valor girado a la cuenta en USD · B: Reporte el valor en dólares de los EEUU que fue girado para pagar las transacciones registradas en el numeral 4, por tipo de de servicio y receptor
+Instrucciones · A: 6. Valor en pesos · B: Reporte el valor en pesos colombianos de las transacciones registradas en el numeral 4, por tipo de de servicio y receptor
+Instrucciones · A: 7. Receptores del pago · B: Por favor identifique el nit del receptor de los pagos dispersados desde la cuenta en pesos
+Instrucciones · A: 8. Receptores del pago · B: Por favor identifique el nombre o razón social del receptor de los pagos dispersados desde la cuenta en pesos
+Instrucciones · A: En el contexto de las estadísticas de la balanza de pagos:
+Instrucciones · A: 1/ Incluye servicios de base de datos, como concepción de la base de datos, almacenamiento de los datos y divulgación de los datos y de las bases de datos; suscripciones individuales directas a diarios y publicaciones periódicas; servicios de suministro de contenido en Internet y servicios de biblioteca y archivo. Contenido descargado que no sean programas informáticos o productos audiovisuales.
+Instrucciones · A: Acepto el tratamiento de los datos personales bajo las políticas específicas del Banco de la República, en especial bajo lo reglamentado en el numeral 2.7 del Capítulo 2 de esta Circular
+[MERGED] Instrucciones · A39:C39
+[MERGED] Instrucciones · A5:A17
+[MERGED] Instrucciones · A18:A30
+[MERGED] Instrucciones · B34:C34
+[MERGED] Instrucciones · B35:C35
+[MERGED] Instrucciones · B31:C31
+[MERGED] Instrucciones · B32:C32
+[MERGED] Instrucciones · B33:C33

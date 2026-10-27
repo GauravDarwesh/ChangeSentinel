@@ -1,0 +1,23 @@
+[WORKBOOK] 1 sheet: Hoja3
+[SHEET] Hoja3
+Hoja3 · A: REPORTE DE PRÉSTAMOS EN MONEDA LEGAL COLOMBIANA OTORGADOS POR IMC A NO RESIDENTES
+Hoja3 · A: Circular Reglamentaria Externa DCIP-83 del 12 de septiembre de 2023
+Hoja3 · A: TIPO ENTIDAD:
+Hoja3 · A: CODIGO ENTIDAD:
+Hoja3 · A: NOMBRE DE LA ENTIDAD:
+Hoja3 · A: TRIMESTRE REPORTADO (AAAAT ej. 20161):
+Hoja3 · A: CORREO DE CONTACTO:
+Hoja3 · A: TELÉFONO DE CONTACTO:
+Hoja3 · A: NOMBRE DE CONTACTO:
+Hoja3 · A: NÚMERO DEL PRÉSTAMO (Columna 1) · B: NOMBRE DEL DEUDOR (Columna 2) · C: DESEMBOLSOS ACUMULADOS DURANTE EL TRIMESTRE (Columna 3) · D: AMORTIZACIONES DE CAPITAL ACUMULADAS DURANTE EL TRIMESTRE (Columna 4) · E: SALDO FINAL AL CORTE DEL TRIMESTRE REPORTADO (Columna 5) · F: FECHA PRIMER DESEMBOLSO (DDMMAAAA) (Columna 6) · G: FECHA DE VENCIMIENTO (DDMMAAAA) (Columna 7) · H: TASA DE INTERÉS (Columna 8)
+Hoja3 · H: 1A8:H50A2:H50A1:H50A3A25:H50
+Hoja3 · A: Acepto el tratamiento de los datos personales bajo las políticas específicas del Banco de la República, en especial bajo lo reglamentado en el numeral 2.7 del Capítulo 2 de esta Circular
+[MERGED] Hoja3 · B10:D10
+[MERGED] Hoja3 · B11:D11
+[MERGED] Hoja3 · B12:D12
+[MERGED] Hoja3 · A3:H3
+[MERGED] Hoja3 · A4:H4
+[MERGED] Hoja3 · B6:D6
+[MERGED] Hoja3 · B7:D7
+[MERGED] Hoja3 · B8:D8
+[MERGED] Hoja3 · B9:D9

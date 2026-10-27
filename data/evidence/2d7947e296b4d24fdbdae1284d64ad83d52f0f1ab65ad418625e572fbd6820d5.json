@@ -1,0 +1,36 @@
+{
+  "event_id": "2d7947e296b4d24fdbdae1284d64ad83d52f0f1ab65ad418625e572fbd6820d5",
+  "event_type": "EXTRACTION_ERROR",
+  "url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-reporte-concesionarios.xls",
+  "timestamp": "2026-10-27T16:18:38.884187+00:00",
+  "before": {
+    "normalized_hash": null,
+    "extraction_type": null,
+    "extractor_version": null,
+    "extraction_failed": false,
+    "raw_hash": null,
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": null,
+    "extraction_type": "binary",
+    "extractor_version": null,
+    "extraction_failed": true,
+    "raw_hash": "792855eec84ae63a9176bcee10dc1368748257438e8e952badac95b8210bb844",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "error": "Unsupported content type for text extraction"
+}

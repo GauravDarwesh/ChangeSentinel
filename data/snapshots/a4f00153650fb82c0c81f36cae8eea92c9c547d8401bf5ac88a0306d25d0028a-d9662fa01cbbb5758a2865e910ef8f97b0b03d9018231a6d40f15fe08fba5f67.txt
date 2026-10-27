@@ -1,0 +1,13 @@
+CIRCULAR REGLAMENTARIA EXTERNA DCIP-83
+Fecha: martes, 12 de septiembre de 2023
+Asunto 10: Procedimientos aplicables a las operaciones de cambio Depósito de Cuentas en Moneda Legal para No Residentes de Operaciones de Crédito Externo
+I. INFORMACIÓN DEL IMC QUE TRANSMITE (Casillas 1 y 2)
+1. Nit del IMC Relacione el número de NIT del Intermediario del Mercado Cambiario que transmite la información, incluyendo el dígito de verificación.
+2. Nombre del IMC Relacionar el nombre del Intermediario del Mercado Cambiario que transmite la información.
+II. INFORMACIÓN DE LA OPERACIÓN DE CRÉDITO EXTERNO EN MONEDA LEGAL (Casillas 3 a 8)
+3. Fecha Declaración de Cambio Diligenciar la fecha de la declaración de cambio mediante la cual se canalizaron los recursos.
+4. Número Declaración de Cambio Diligenciar el número de la declaración de cambio mediante la cual se canalizaron los recursos.
+5. Numeral Cambiario 5457
+6. Número de Depósito Diligenciar el número del depósito asignado por el BR.
+7. Valor del Depósito Diligenciar el valor del depósito constituido.
+8. Porcentaje Relacionar el porcentaje del depósito.

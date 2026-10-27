@@ -1,0 +1,35 @@
+[WORKBOOK] 2 sheets: Hoja1, Hoja2
+[SHEET] Hoja1
+Hoja1 · A: FORMATO DE REPORTE DE DEPÓSITOS DE NO RESIDENTES EN IMC
+Hoja1 · A: Circular Reglamentaria Externa DCIP-83 del 12 de septiembre de 2023
+Hoja1 · A: TIPO ENTIDAD:
+Hoja1 · A: CODIGO ENTIDAD:
+Hoja1 · A: NOMBRE DE LA ENTIDAD:
+Hoja1 · A: TRIMESTRE REPORTADO (AAAAT ej. 20161):
+Hoja1 · A: CORREO DE CONTACTO:
+Hoja1 · A: TELÉFONO DE CONTACTO:
+Hoja1 · A: NOMBRE DE CONTACTO:
+Hoja1 · A: NOMBRE O RAZÓN SOCIAL DEL TITULAR DEL DÉPOSITO (Columna 1) · B: MES DE REPORTE (Columna 2) · C: SALDO FINAL DEL MES REPORTADO (Columna 3) · D: MONEDA (Columna 4) · E: TIPO DE CUENTA (Columna 5)
+[MERGED] Hoja1 · B9:E9
+[MERGED] Hoja1 · B10:E10
+[MERGED] Hoja1 · B11:E11
+[MERGED] Hoja1 · B12:E12
+[MERGED] Hoja1 · A3:C3
+[MERGED] Hoja1 · A4:C4
+[MERGED] Hoja1 · B6:E6
+[MERGED] Hoja1 · B7:E7
+[MERGED] Hoja1 · B8:E8
+[VALIDATION] Hoja1 · C14:E1048576 · decimal · 0
+[VALIDATION] Hoja1 · B14:B1048576 · textLength · 2
+[VALIDATION] Hoja1 · B6:E6 · textLength · 2
+[VALIDATION] Hoja1 · B7:E7 · textLength · 3
+[VALIDATION] Hoja1 · B9:E9 · whole · 20171
+[SHEET] Hoja2
+Hoja2 · A: FORMATO DE REPORTE DE COMPRA DE CARTERA INTERNA POR PARTE DE NO RESIDENTES A IMC
+Hoja2 · A: Circular Reglamentaria Externa DCIP-83 del 12 de septiembre de 2023
+Hoja2 · A: MES DE REPORTE (Columna 1) · B: VALOR COMPRA (Columna 2) · C: PAGOS RECIBIDOS (Columna 3)
+Hoja2 · A: Acepto el tratamiento de los datos personales bajo las políticas específicas del Banco de la República, en especial bajo lo reglamentado en el numeral 2.7 del Capítulo 2 de esta Circular
+[MERGED] Hoja2 · A5:C5
+[MERGED] Hoja2 · A6:C6
+[MERGED] Hoja2 · A47:C48
+[VALIDATION] Hoja2 · C9:C46 C49:C1048576 · decimal · 0
