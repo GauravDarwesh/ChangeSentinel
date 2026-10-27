@@ -493,8 +493,16 @@ try {
       } else check(false, "an area box has resize handles");
       // "Box an area" draws without holding Shift.
       await explorePage.click("[data-explore-box]");
-      await drawAround(["h1"], false);
-      check(await explorePage.evaluate(() => state.add.areas.length) === 3, "Box an area draws an area without Shift");
+      await explorePage.waitForTimeout(150);
+      const fb = await (await explorePage.$("#exploreFrame")).boundingBox();
+      await explorePage.mouse.move(fb.x + fb.width * 0.45, fb.y + fb.height * 0.45);
+      await explorePage.mouse.down();
+      await explorePage.mouse.move(fb.x + fb.width * 0.55, fb.y + fb.height * 0.52, { steps: 4 });
+      await explorePage.mouse.move(fb.x + fb.width * 0.65, fb.y + fb.height * 0.6, { steps: 4 });
+      await explorePage.mouse.up();
+      await explorePage.waitForTimeout(300);
+      const boxed = await explorePage.evaluate(() => ({ areas: state.add.areas.length, boxing: state.add.boxing }));
+      check(boxed.areas === 3, "Box an area draws an area without Shift (" + JSON.stringify(boxed) + ")");
       await explorePage.click("[data-explore-box]");
       await explorePage.evaluate(() => { const shift = state.add.picked; shift.clear(); exploreMarkPicked(); renderExploreSide(); });
       await explorePage.click('[data-area-select="all"]');
