@@ -658,6 +658,11 @@
     .lineage-all { margin-top: 14px; }
     .lineage-all summary { cursor: pointer; color: var(--link); font-size: 13px; }
     .lineage-search { width: 100%; margin-bottom: 8px; }
+    .lineage-name { margin-top: 12px; }
+    .lineage-name summary { cursor: pointer; color: var(--link); font-size: 13px; }
+    .lineage-form { display: flex; gap: 8px; margin: 8px 0; }
+    .lineage-form .field-input { flex: 1; min-width: 0; }
+    .lineage-track { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 6px; }
     /* ---------- Timeline ---------- */
     .timeline-view { margin-top: 12px; }
     .tl-board { --label-w: 220px; --lane-h: 46px; position: relative; z-index: 2; overflow: visible; border: 1px solid var(--line); border-radius: var(--radius); background: var(--raise); }
@@ -1242,6 +1247,31 @@
     .explore-notice:not([hidden]) { padding: 3px 8px; border-left: 2px solid var(--accent); background: var(--accent-soft); }
     .explore-views { flex: none; margin-left: auto; }
     .explore-views button { min-height: 26px; padding: 0 10px; font-size: 12px; }
+    /* Selected areas: one compact row each (number, name, links; actions under it). */
+    .area-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 2px 8px; padding: 7px 0; border-top: 1px solid var(--line); }
+    .area-row:first-of-type { border-top: 0; padding-top: 2px; }
+    .area-row .area-num { border: 0; cursor: pointer; }
+    .area-row .area-num:hover { filter: brightness(1.1); }
+    .area-main { display: flex; flex-direction: column; min-width: 0; }
+    .area-main .area-label { overflow: hidden; font-size: 12.5px; text-overflow: ellipsis; white-space: nowrap; }
+    .area-meta { overflow: hidden; color: var(--ink-3); font-size: 11.5px; line-height: 1.4; text-overflow: ellipsis; white-space: nowrap; }
+    .area-acts { display: flex; flex-wrap: wrap; gap: 4px; grid-column: 2 / -1; }
+    .area-act { min-height: 24px; padding: 2px 8px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--bg); color: var(--ink-2); font-size: 11.5px; line-height: 1.3; white-space: nowrap; }
+    .area-act:hover:not(:disabled) { border-color: var(--accent); color: var(--ink); }
+    .area-act:disabled { opacity: .5; cursor: default; }
+    .area-act.is-strong, .area-act[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+    .area-problem { grid-column: 2 / -1; margin: 0; color: var(--ink-3); font-size: 11px; line-height: 1.4; }
+    .area-all { display: flex; flex-wrap: wrap; gap: 4px; padding-top: 8px; border-top: 1px solid var(--line); }
+    .steps-card.is-recording { border-color: #d9412b; box-shadow: inset 2px 0 0 #d9412b; }
+    .rec-dot { display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: #d9412b; vertical-align: 1px; animation: pulse 1.2s var(--ease) infinite; }
+    .step-list { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+    .step-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; font-size: 12px; }
+    .step-n { min-width: 16px; color: var(--ink-3); font: 500 11px/1 var(--font-code); text-align: right; }
+    .step-text { overflow: hidden; color: var(--ink-2); text-overflow: ellipsis; white-space: nowrap; }
+    .step-visual { font-size: 12px; }
+    .step-paste summary { cursor: pointer; color: var(--link); font-size: 12px; }
+    .step-paste textarea { width: 100%; margin: 6px 0; font-size: 11.5px; }
+    .explore-record[aria-pressed="true"] { border-color: #d9412b !important; background: color-mix(in srgb, #d9412b 14%, transparent) !important; }
     /* Several selected areas: one card, one row per area. */
     .area-item { padding: 10px 0 2px; border-top: 1px solid var(--line); }
     .area-item:first-of-type { border-top: 0; }
@@ -2798,7 +2828,7 @@
               <button class="tab-button" data-detail-tab="changes" type="button">Changes</button>
               <button class="tab-button" data-detail-tab="snapshot" type="button">Saved copy</button>
               <button class="tab-button" data-detail-tab="source" type="button">HTML source</button>
-              <button class="tab-button" data-detail-tab="links" type="button" title="Where this address is listed, and the links this page lists and has dropped">Links</button>
+              <button class="tab-button" data-detail-tab="links" type="button" title="Where this address is listed (checked now, and since tracking began), and the links this page lists and has dropped">Lineage</button>
               <button class="tab-button" data-detail-tab="details" type="button">Details</button>
             </nav>
             <div id="detailBody"></div>
@@ -3230,6 +3260,8 @@
         <div class="explore-address"><span class="explore-led" id="exploreLed" aria-hidden="true"></span><span id="exploreAddress"></span></div>
         <button class="btn explore-this" type="button" data-explore-this>Select this page</button>
         <button class="btn explore-pick" type="button" data-explore-pick aria-pressed="false" title="Click a table, list or section of the page to select it">Pick a part</button>
+        <button class="btn explore-pick" type="button" data-explore-box aria-pressed="false" title="Draw a box around an area of the page (or hold Shift and drag). Resize it from its edges.">Box an area</button>
+        <button class="btn explore-pick explore-record" type="button" data-explore-record aria-pressed="false" title="Record the clicks, choices and typing a portal needs before its page shows what to monitor">Record steps</button>
         <label class="explore-mode" title="When on, clicking or tapping a link selects it instead of opening it"><input type="checkbox" id="exploreSelectMode"><span>Tap selects</span></label>
         <a class="sheet-link explore-newtab" id="exploreNewTab" href="#" target="_blank" rel="noopener noreferrer">New tab</a>
       </div>
@@ -3829,8 +3861,8 @@
   <!-- supabase-js 2.121.0 was never published, so this script 404ed and Ask Sentinel silently fell back to an
        unauthenticated visitor ID. Pinned to a real release and checked against its published SHA-384. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="dashboard-lib.js?v=20261025-conditions-1"></script>
-  <script src="dashboard.js?v=20261025-conditions-1"></script>
+  <script src="dashboard-lib.js?v=20261027-explore-2"></script>
+  <script src="dashboard.js?v=20261027-explore-2"></script>
 
   <script>
     // Replay a brief scouting gesture each time the Scout navigation item is clicked.
