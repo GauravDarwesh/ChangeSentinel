@@ -2124,11 +2124,12 @@
   /* In the bar Ask is a tab like the others, so it gets the same LED. */
   .nav-button-ask::before { background: var(--led-off); box-shadow: none; }
   .rail-nav > li { display: none; }
-  .rail-nav > li:nth-child(-n+3), .rail-nav > .nav-alerts, .rail-nav > .nav-ask, .rail-nav > .nav-more { display: block; }
+  /* Ask Sentinel opens from the orb on phones too, so Runs takes its tab. */
+  .rail-nav > li:nth-child(-n+3), .rail-nav > .nav-runs, .rail-nav > .nav-alerts, .rail-nav > .nav-more { display: block; }
   .nav-button.is-more-active { color: var(--ink); }
   .nav-button.is-more-active::before { background: var(--accent); box-shadow: var(--glow); }
-  .nav-more-dot { position: absolute; top: 9px; left: calc(50% + 12px); width: 6px; height: 6px; background: var(--state-bad); box-shadow: 0 0 6px var(--state-bad-glow); }
-  .nav-more-dot.is-fresh { background: var(--accent); box-shadow: var(--glow); }
+  /* More's counts live in its sheet; no loose dot beside the tab. */
+  .nav-more-dot { display: none !important; }
   .ask-sentinel-header { min-height: 0; padding: 12px 16px; }
   .ask-sentinel-title p { display: none; }
   .ask-sentinel-messages { padding: 18px 16px 8px; }
@@ -2588,7 +2589,7 @@
         <li><button class="nav-button active" data-view="overview" type="button">Overview<span class="nav-count"></span></button></li>
         <li><button class="nav-button" data-view="changes" type="button">Changes<span class="nav-count" id="navChangeCount"></span></button></li>
         <li><button class="nav-button" data-view="monitors" type="button">Pages<span class="nav-count" id="navMonitorCount"></span></button></li>
-        <li><button class="nav-button" data-view="runs" type="button">Runs<span class="nav-count" id="navRunCount"></span></button></li>
+        <li class="nav-runs"><button class="nav-button" data-view="runs" type="button">Runs<span class="nav-count" id="navRunCount"></span></button></li>
         <li class="nav-health"><button class="nav-button" data-view="health" type="button" title="Failing, stale and quiet monitors, and check and alert volumes">Health<span class="nav-count" id="navHealthCount"></span></button></li>
         <li class="nav-alerts"><button class="nav-button" data-view="notifications" type="button">Alerts<span class="nav-count" id="navNotificationCount"></span></button></li>
         <li class="nav-registry"><button class="nav-button" data-view="registry" type="button" title="Reporting items you report across jurisdictions, and the tables, models and code that read them">Registry<span class="nav-count" id="navRegistryCount"></span></button></li>

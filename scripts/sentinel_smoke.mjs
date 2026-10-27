@@ -305,10 +305,17 @@ try {
   // Phone: the bottom bar's Ask tab opens it; chat and the live dashboard are tabs.
   {
     const { context, page, errors } = await open({ width: 390, height: 844 }, "dark", { touch: true });
-    check(await page.locator("#askSentinelLaunch").isVisible(), "phone: the bottom bar's Ask tab is there");
-    check(!(await page.locator("#minimal-mascot-orb").isVisible()), "phone: no orb over the bottom bar");
+    const bar = await page.evaluate(() => {
+      const shown = [...document.querySelectorAll(".rail-nav > li")].filter(li => getComputedStyle(li).display !== "none").map(li => li.textContent.replace(/\d+/g, "").trim());
+      const orb = document.getElementById("minimal-mascot-orb").getBoundingClientRect();
+      const nav = document.querySelector(".rail").getBoundingClientRect();
+      return { shown, orbAboveBar: orb.width > 0 && orb.bottom <= nav.top - 4 && orb.right <= innerWidth - 8, dot: getComputedStyle(document.getElementById("navMoreDot")).display };
+    });
+    check(JSON.stringify(bar.shown) === JSON.stringify(["Overview", "Changes", "Pages", "Runs", "Alerts", "More"]), "phone: the bottom bar is Overview, Changes, Pages, Runs, Alerts, More (" + bar.shown.join(", ") + ")");
+    check(bar.orbAboveBar, "phone: the orb sits just above the bottom bar");
+    check(bar.dot === "none", "phone: no loose dot beside More");
     await page.screenshot({ path: path.join(OUT, "sentinel-phone-dock.png") });
-    await page.locator("#askSentinelLaunch").tap();
+    await page.locator("#minimal-mascot-orb").tap();
     await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").classList.contains("is-revealing") && !document.getElementById("sentinelWorkspace").hidden, null, { timeout: 5000 });
     check(await page.locator(".sentinel-mtabs").isVisible(), "phone: conversation and live dashboard are tabs");
     const sideways = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
@@ -318,6 +325,15 @@ try {
     await frameReady(page);
     await page.waitForTimeout(600);
     await page.screenshot({ path: path.join(OUT, "sentinel-phone-stage.png") });
+    const stage = await page.evaluate(() => {
+      const crumb = document.getElementById("sentinelCrumb").getBoundingClientRect(), pause = document.getElementById("sentinelPause").getBoundingClientRect();
+      const doc = document.querySelector(".sentinel-frame").contentDocument;
+      const tabs = [...doc.querySelectorAll(".rail-nav > li")].filter(li => getComputedStyle(li).display !== "none").map(li => li.getBoundingClientRect());
+      const bar = doc.querySelector(".rail-nav").getBoundingClientRect();
+      return { sameRow: Math.abs((crumb.top + crumb.bottom) / 2 - (pause.top + pause.bottom) / 2) < 12 && pause.left > crumb.right, tabs: tabs.length, gapRight: Math.round(bar.right - tabs[tabs.length - 1].right) };
+    });
+    check(stage.sameRow, "phone: Pause sits on the live dashboard's header row");
+    check(stage.tabs === 6 && stage.gapRight <= 6, "phone: the live copy's bottom bar is full width with six tabs (" + stage.tabs + " tabs, " + stage.gapRight + "px spare)");
     check(errors.length === 0, "phone: no script errors" + (errors.length ? " — " + errors.slice(0, 3).join(" | ") : ""));
     await context.close();
   }

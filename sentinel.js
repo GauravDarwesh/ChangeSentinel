@@ -588,7 +588,6 @@
       const target = event.target.closest(INTERACTIVE) || event.target;
       noteHuman("clicked " + describeEl(target));
       clearSpot();
-      ping(event.clientX * agent.scale, event.clientY * agent.scale);
       setTimeout(updateCrumb, 250);
     }, true);
     doc.addEventListener("change", event => {
@@ -618,14 +617,6 @@
     clearTimeout(noteHuman.timer);
     noteHuman.timer = setTimeout(() => { ui.cowork.textContent = agent.running ? "Sentinel is working — you can keep using the dashboard" : "You and Sentinel share this copy"; }, 5000);
   }
-  function ping(x, y) {
-    const el = document.createElement("span");
-    el.className = "sn-human-ping";
-    el.style.left = x + "px"; el.style.top = y + "px";
-    ui.overlay.append(el);
-    setTimeout(() => el.remove(), 800);
-  }
-
   ui.pause.addEventListener("click", () => setPaused(!agent.paused));
   ui.takeover.addEventListener("click", () => { setPaused(!agent.paused); if (agent.paused) showStage(); });
   function setPaused(value) {

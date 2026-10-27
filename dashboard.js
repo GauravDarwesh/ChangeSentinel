@@ -2173,9 +2173,15 @@ function renderNotifications() {
 // are marked stale and drawn when they are opened: setView and select set
 // state.view before calling renderLists.
 const LIST_RENDERERS = {
-  overview: () => renderOverview(), changes: () => renderChangeRoute(), monitors: () => renderMonitorList(),
-  runs: () => renderRuns(), health: () => renderHealth(), notifications: () => renderNotifications(),
-  registry: () => renderRegistry(), scout: () => renderScout(), calendar: () => renderCadenceView()
+  overview() { renderOverview(); },
+  changes() { renderChangeRoute(); },
+  monitors() { renderMonitorList(); },
+  runs() { renderRuns(); },
+  health() { renderHealth(); },
+  notifications() { renderNotifications(); },
+  registry() { renderRegistry(); },
+  scout() { renderScout(); },
+  calendar() { renderCadenceView(); }
 };
 const staleLists = new Set();
 function renderLists() {
@@ -9871,7 +9877,8 @@ $("timelineView").addEventListener("focusout", hideTimelineTip);
  * each with its live status. While one of those views is open, the More tab
  * takes its name, so the bar always says where you are.
  */
-const MORE_VIEWS = { health: "Health", runs: "Runs", registry: "Registry", scout: "Scout", calendar: "Cadence" };
+// Runs has its own tab in the phone bar (where Ask used to be); More holds the rest.
+const MORE_VIEWS = { health: "Health", registry: "Registry", scout: "Scout", calendar: "Cadence" };
 function syncMoreTab() {
   const button = $("navMore");
   if (!button) return;

@@ -131,13 +131,17 @@ html.cs-locked .minimal-orb-wrap, html.cs-embed .minimal-orb-wrap { display: non
 }
 /* On wide screens the orb is the way in, so the rail no longer carries Ask Sentinel.
    Phones keep the bottom bar's Ask tab and have no orb. */
+/* The orb is the way in on every screen; the rail and the phone bar carry no Ask tab. */
+.rail .nav-ask { display: none !important; }
 @media (min-width: 981px) {
-  .rail .nav-ask { display: none !important; }
   /* The hairline that sat above Ask Sentinel now separates Add a link, as
      the one above Scout separates the views. */
   .rail .nav-add { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
 }
-@media (max-width: 980px) { .minimal-orb-wrap { display: none; } }
+/* Phones: the orb floats just above the bottom bar (54px plus the safe area). */
+@media (max-width: 980px) {
+  .minimal-orb-wrap { --orb-size: 48px; right: 14px; bottom: calc(54px + 14px + env(safe-area-inset-bottom)); }
+}
 
 /* On a phone the bottom bar's Ask tab carries the same states. */
 .nav-button-ask { position: relative; }
@@ -408,8 +412,6 @@ html.cs-locked .minimal-orb-wrap, html.cs-embed .minimal-orb-wrap { display: non
 .sn-ripple { position: absolute; z-index: 4; width: 0; height: 0; pointer-events: none; }
 .sn-ripple i { position: absolute; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; background: var(--sn-cursor); box-shadow: 0 0 6px var(--sn-eye-glow); animation: snTile .62s var(--sn-ease) forwards; }
 @keyframes snTile { 0% { opacity: 0; transform: translate(0, 0) scale(.4); } 25% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1); } }
-.sn-human-ping { position: absolute; z-index: 4; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; border: 2px solid var(--ins); pointer-events: none; animation: snPing .7s var(--sn-ease) forwards; }
-@keyframes snPing { from { opacity: .9; transform: scale(.3); } to { opacity: 0; transform: scale(1.4); } }
 
 .sentinel-ws .sentinel-mtabs { display: none; }
 .sentinel-ws .sentinel-filters { flex-wrap: nowrap; min-width: 0; }
@@ -427,6 +429,13 @@ html.cs-locked .minimal-orb-wrap, html.cs-embed .minimal-orb-wrap { display: non
   .sentinel-ws[data-mtab="stage"] .sentinel-body { grid-template-rows: auto minmax(0, 1fr); }
   .sentinel-ws[data-mtab="stage"] .sentinel-stage { display: grid; }
   .sentinel-cowork { display: none; }
+  /* One row: where the live copy is and who is in it on the left, Pause on the right. */
+  .sentinel-stagebar { display: flex; align-items: center; gap: 10px; }
+  .sentinel-stagebar .sentinel-title-row { flex: 1 1 auto; min-width: 0; }
+  .sentinel-stagebar .sentinel-sub-row { flex: none; height: auto; }
+  .sentinel-stagebar #sentinelPause { width: 32px; height: 32px; justify-content: center; }
+  /* Keyboard hints mean nothing on a phone; Take over stays. */
+  #sentinelFootNote { visibility: hidden; }
   .sentinel-welcome-title { font-size: 20px; }
   .sentinel-welcome-copy, .sentinel-group-label { padding-left: 18px; padding-right: 18px; }
   #sentinelTranscript { padding: 0 18px; }
