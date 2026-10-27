@@ -166,6 +166,18 @@ class TestContent(unittest.TestCase):
         self.assertEqual(kind, "html")
         self.assertIn("include selector matched no elements", error)
 
+    def test_a_part_inside_a_container_named_like_chrome_is_still_found(self):
+        # Central Bank of the Bahamas: the forms table sits in "list-pagination-part",
+        # which the default noise filter removes ("pagination").
+        html = """<html><body><div class="legalguide_sec list-pagination-part"><div class="table-relative"><table>
+        <thead><tr><th>Document Title</th></tr></thead><tbody><tr><td>Financial Return v2.14</td></tr></tbody>
+        </table></div><ul class="pagination"><li>Next</li></ul></div></body></html>"""
+        self.assertEqual(normalize_html(html, include_selector="div.table-relative > table > tbody"), "Financial Return v2.14")
+
+    def test_a_tbody_the_browser_added_does_not_break_a_picked_part(self):
+        html = '<html><body><div class="forms"><table><tr><td>Form A</td></tr></table></div></body></html>'
+        self.assertIn("Form A", normalize_html(html, include_selector="div.forms > table > tbody > tr"))
+
     def test_invalid_html_selector_is_an_extraction_error(self):
         result, kind, error = extract_content(
             "https://example.test/policy",

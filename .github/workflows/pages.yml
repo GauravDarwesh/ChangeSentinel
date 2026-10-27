@@ -19,6 +19,7 @@ on:
       - "config/scout.json"
       - "config/lineage.json"
       - "config/registry.json"
+      - "data/link-lineage.json"
       - "config/regulators.json"
       - "data/calendar.json"
       - "data/health.json"
@@ -74,9 +75,15 @@ jobs:
           # The .ics is served from Pages so calendar apps can subscribe to it.
           mkdir -p site/data/reviews
           mkdir -p site/data/digests
-          for f in data/calendar.json data/calendar.ics data/reviews/ledger.json data/health.json data/digests/index.json config/digests.json config/registry.json; do
+          for f in data/calendar.json data/calendar.ics data/reviews/ledger.json data/health.json data/digests/index.json config/digests.json config/registry.json data/link-lineage.json; do
             if [ -f "$f" ]; then cp "$f" "site/$f"; fi
           done
+          # Browsers keep dashboard.js and dashboard-lib.js by their ?v= stamp.
+          # Stamp them with this commit, so every deploy reaches every browser
+          # (a stamp left unchanged kept people on the old Explore code).
+          stamp="${GITHUB_SHA::12}"
+          sed -i -E "s/(dashboard(-lib)?\.js)\?v=[A-Za-z0-9._-]+/\1?v=${stamp}/g" site/index.html site/dashboard-v2.html
+          grep -q "dashboard.js?v=${stamp}" site/index.html
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: site

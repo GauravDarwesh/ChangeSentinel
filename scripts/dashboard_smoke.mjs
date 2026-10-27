@@ -52,7 +52,15 @@ function fakeReaderPage(url) {
   const html = "<!doctype html>\n<html><head><meta charset=\"utf-8\"><meta http-equiv=\"Content-Security-Policy\" content=\"script-src 'none'\"></head><body>" +
     "<h1>Reader copy of " + url + "</h1><p><a id=\"l0\" data-cs-link=\"0\" href=\"https://www.example.gov/forms/a.pdf\">Form A</a></p>" +
     "<p><a id=\"l1\" data-cs-link=\"1\" href=\"https://www.example.gov/guidance\">Guidance</a></p></body></html>";
-  return { kind: "page", url, title: "Reader copy", html, links, truncated: false };
+  return { kind: "page", url, title: "Reader copy", html, links, truncated: false, reader_version: "2026-10-27" };
+}
+// The live view of a small portal: a choice, a field and a button, for recording steps.
+function fakeReaderLive(url) {
+  const html = "<!doctype html><html><head><meta charset=\"utf-8\"></head><body><h1>Portal " + url + "</h1>" +
+    "<select id=\"report\"><option value=\"\">Choose</option><option value=\"FFIEC 031\">FFIEC 031</option></select>" +
+    "<input id=\"year\" name=\"year\"><button id=\"go\" type=\"button\">Search</button>" +
+    "<a id=\"doc\" href=\"https://www.example.gov/forms/a.pdf\">Form A</a></body></html>";
+  return { kind: "live", url, html, reader_version: "2026-10-27" };
 }
 async function openDashboard(viewport, options = {}) {
   const context = await browser.newContext({
@@ -61,7 +69,8 @@ async function openDashboard(viewport, options = {}) {
   });
   await context.route(/\/functions\/v1\/page-reader/, async route => {
     const body = JSON.parse(route.request().postData() || "{}");
-    await route.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(fakeReaderPage(body.url || "")) });
+    const answer = body.mode === "live" ? fakeReaderLive(body.url || "") : fakeReaderPage(body.url || "");
+    await route.fulfill({ status: 200, contentType: "application/json", headers: { "Access-Control-Allow-Origin": "*" }, body: JSON.stringify(answer) });
   });
   // The development gate only keeps casual visitors out; tests open it the way an unlocked tab is.
   await context.addInitScript(() => { try { sessionStorage.setItem("cs-dev-access-v1", "granted"); } catch (_) {} });
@@ -441,28 +450,114 @@ try {
       check(await frame.evaluate(() => document.querySelectorAll("[data-cs-picked]").length) === 1, "the selected link is marked in the page");
       // Two Shift-drags, one around each link: two areas, both kept and numbered.
       const frameBox = await (await explorePage.$("#exploreFrame")).boundingBox();
-      for (const id of ["#l0", "#l1"]) {
-        const r = await (await frame.$(id)).boundingBox();
-        await explorePage.keyboard.down("Shift");
-        await explorePage.mouse.move(r.x - 6, r.y - 6);
+      const drawAround = async (ids, shift) => {
+        const boxes = [];
+        for (const id of ids) boxes.push(await (await frame.$(id)).boundingBox());
+        const x0 = Math.min(...boxes.map(r => r.x)) - 6, y0 = Math.min(...boxes.map(r => r.y)) - 6;
+        const x1 = Math.max(...boxes.map(r => r.x + r.width)) + 6, y1 = Math.max(...boxes.map(r => r.y + r.height)) + 6;
+        if (shift) await explorePage.keyboard.down("Shift");
+        await explorePage.mouse.move(x0, y0);
         await explorePage.mouse.down();
-        await explorePage.mouse.move(r.x + r.width / 2, r.y + r.height / 2, { steps: 3 });
-        await explorePage.mouse.move(r.x + r.width + 6, r.y + r.height + 6, { steps: 3 });
+        await explorePage.mouse.move((x0 + x1) / 2, (y0 + y1) / 2, { steps: 3 });
+        await explorePage.mouse.move(x1, y1, { steps: 3 });
         await explorePage.mouse.up();
-        await explorePage.keyboard.up("Shift");
+        if (shift) await explorePage.keyboard.up("Shift");
         await explorePage.waitForTimeout(250);
-      }
+      };
+      const numbers = () => frame.evaluate(() => Array.from(document.querySelectorAll(".cs-area-box .cs-area-num")).map(el => el.textContent));
+      for (const id of ["#l0", "#l1"]) await drawAround([id], true);
       const areas = await explorePage.evaluate(() => state.add.areas.map(area => area.indexes.length));
       check(areas.length === 2 && areas.every(count => count === 1) && !!frameBox, "two Shift-drags keep two areas (" + JSON.stringify(areas) + ")");
+      check(JSON.stringify(await numbers()) === '["1","2"]', "the areas are numbered 1 and 2 on the page");
       check(await frame.evaluate(() => document.querySelectorAll("[data-cs-area]").length) === 2, "both areas stay marked in the page");
+      // Removing one and drawing another numbers them 1, 2 again (not 3).
+      await explorePage.click('.area-row [data-area-remove]');
+      await explorePage.waitForTimeout(150);
+      await drawAround(["#l0"], true);
+      check(JSON.stringify(await numbers()) === '["1","2"]' && await explorePage.evaluate(() => Array.from(document.querySelectorAll(".area-row .area-num")).map(el => el.textContent).join()) === "1,2",
+        "after removing an area the next one is numbered 2, not 3 (" + JSON.stringify(await numbers()) + ")");
+      // Resizing a box from its corner takes in the second link.
+      const firstId = await explorePage.evaluate(() => (state.add.areas.find(area => area.indexes.join() === "0") || {}).id);
+      const handle = await frame.$('.cs-area-box[data-area="' + firstId + '"] .cs-h-se');
+      const l1 = await (await frame.$("#l1")).boundingBox();
+      if (handle) {
+        const hb = await handle.boundingBox();
+        const before = await explorePage.evaluate(() => state.add.areas.map(area => area.indexes.length).join());
+        await explorePage.mouse.move(hb.x + hb.width / 2, hb.y + hb.height / 2);
+        await explorePage.mouse.down();
+        await explorePage.mouse.move(l1.x + l1.width + 30, l1.y + l1.height + 30, { steps: 6 });
+        await explorePage.mouse.up();
+        await explorePage.waitForTimeout(300);
+        const after = await explorePage.evaluate(() => state.add.areas.map(area => area.indexes.length));
+        check(after.length === 2 && after.some(count => count === 2), "resizing a box from its corner takes in more links (" + before + " → " + after.join() + ")");
+      } else check(false, "an area box has resize handles");
+      // "Box an area" draws without holding Shift.
+      await explorePage.click("[data-explore-box]");
+      await explorePage.waitForTimeout(150);
+      const fb = await (await explorePage.$("#exploreFrame")).boundingBox();
+      await explorePage.mouse.move(fb.x + fb.width * 0.45, fb.y + fb.height * 0.45);
+      await explorePage.mouse.down();
+      await explorePage.mouse.move(fb.x + fb.width * 0.55, fb.y + fb.height * 0.52, { steps: 4 });
+      await explorePage.mouse.move(fb.x + fb.width * 0.65, fb.y + fb.height * 0.6, { steps: 4 });
+      await explorePage.mouse.up();
+      await explorePage.waitForTimeout(300);
+      const boxed = await explorePage.evaluate(() => ({ areas: state.add.areas.length, boxing: state.add.boxing }));
+      check(boxed.areas === 3, "Box an area draws an area without Shift (" + JSON.stringify(boxed) + ")");
+      await explorePage.click("[data-explore-box]");
+      await explorePage.evaluate(() => { const shift = state.add.picked; shift.clear(); exploreMarkPicked(); renderExploreSide(); });
       await explorePage.click('[data-area-select="all"]');
       check(await explorePage.evaluate(() => state.add.picked.size) === 2, "one click selects the links in every area");
+      await explorePage.screenshot({ path: path.join(OUT, "explore-areas.png") });
       check(await explorePage.isVisible("#exploreViewBar") && await explorePage.isVisible('[data-explore-view="live"]'), "the page, live and reading views can be switched");
       await frame.click("#l1");
       const navigated = await explorePage.waitForFunction(() => /guidance/.test(document.getElementById("exploreAddress").textContent), null, { timeout: 10000 }).then(() => true, () => false);
       check(navigated, "a plain click opens the linked page in the explorer");
+      // Recording steps: the live page; a choice, typing and a click become steps.
+      await explorePage.click("[data-explore-record]");
+      const liveFrame = await explorePage.waitForFunction(() => state.add.view === "live", null, { timeout: 10000 }).then(() => true, () => false);
+      check(liveFrame, "Record steps opens the live page");
+      if (liveFrame) {
+        await explorePage.waitForTimeout(400);
+        const portal = await (await explorePage.$("#exploreFrame")).contentFrame();
+        await portal.waitForSelector("#report", { timeout: 10000 });
+        await portal.selectOption("#report", "FFIEC 031");
+        await portal.fill("#year", "2026");
+        await portal.press("#year", "Tab");
+        await portal.click("#go");
+        await portal.click("#doc");
+        await explorePage.waitForTimeout(400);
+        const steps = await explorePage.evaluate(() => (exploreStepsFor(addPageKey()).actions || []).map(step => step.action + " " + (step.selector || "")));
+        check(JSON.stringify(steps) === JSON.stringify(["select #report", "type #year", "click #go", "click #doc"]), "choices, typing and clicks are recorded as steps (" + JSON.stringify(steps) + ")");
+        check(/guidance/.test(await explorePage.textContent("#exploreAddress")), "a link clicked while recording is written down, not followed");
+        await explorePage.click("[data-explore-record]");
+        const rows = await explorePage.evaluate(() => addRequestRows(Array.from(state.add.picked.values())));
+        const own = rows.find(row => /guidance/.test(row.url));
+        check(!!own && own.browser_actions && own.browser_actions.length === 4, "the page is selected and its request carries the recorded steps");
+        check(rows.some(row => row.listed_on === "https://www.example.gov/start"), "each link's request names the page it was found on (listed_on)");
+        await explorePage.screenshot({ path: path.join(OUT, "explore-steps.png") });
+      }
     }
     await explorePage.evaluate(() => { const dialog = document.getElementById("addMonitorDialog"); if (dialog.open) dialog.close(); });
+    // Lineage: a monitored document listed on a monitored page shows where it is
+    // listed (from the published record) and checks that page again now.
+    {
+      const target = await explorePage.evaluate(async () => {
+        const lineage = await loadLinkLineage();
+        const item = state.items.find(candidate => candidate.extraction_type !== "html" && L.linkListings(lineage, candidate.canonical_url).length);
+        if (!item) return null;
+        select("monitors", item.url_id, { tab: "links" });
+        return item.url_id;
+      });
+      check(!!target, "the lineage record lists at least one monitored document");
+      if (target) {
+        const shown = await explorePage.waitForFunction(() => /Recorded by the scans/.test((document.getElementById("detailBody") || {}).textContent || "") &&
+          /Lineage/.test((document.querySelector('[data-detail-tab="links"]') || {}).textContent || ""), null, { timeout: 10000 }).then(() => true, () => false);
+        check(shown, "the Lineage tab shows where a document is listed");
+        const live = await explorePage.waitForFunction(() => !/Checking…/.test((document.querySelector("[data-lineage-live]") || {}).textContent || "Checking…"), null, { timeout: 10000 }).then(() => true, () => false);
+        check(live, "the Lineage tab checks the listing page again on open");
+        await explorePage.screenshot({ path: path.join(OUT, "lineage.png") });
+      }
+    }
     // The scan history: hovering a light shows its tip and clicking through removes it.
     await explorePage.click('.rail [data-view="overview"]');
     await explorePage.click("[data-field-lens=all]");

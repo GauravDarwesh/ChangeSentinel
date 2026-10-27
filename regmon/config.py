@@ -77,6 +77,10 @@ class SourceConfig:
     browser_actions: tuple = ()
     visual_compare: bool = False
     visual_alert_threshold: float | None = None
+    # The pages that list this monitor's link (a forms page listing a PDF).
+    # Each scan reads them for their links only (regmon/link_lineage.py), so
+    # data/link-lineage.json says where the link is listed and when it left.
+    listed_on: tuple[str, ...] = ()
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "SourceConfig":
@@ -139,6 +143,7 @@ class SourceConfig:
             browser_actions=tuple(dict(step) for step in value.get("browser_actions") or []),
             visual_compare=bool(value.get("visual_compare", False)),
             visual_alert_threshold=(float(value["visual_alert_threshold"]) if value.get("visual_alert_threshold") is not None else None),
+            listed_on=tuple(str(x) for x in value.get("listed_on", [])),
         )
 
 
@@ -167,8 +172,9 @@ INT_KEYS = {
 }
 LIST_KEYS = {
     "seed_urls", "allowed_prefixes", "allowed_domains", "allowed_urls", "excluded_urls", "allowed_resource_prefixes",
-    "resource_link_text_patterns", "ignore_selectors", "excluded_prefixes", "check_days", "labels",
+    "resource_link_text_patterns", "ignore_selectors", "excluded_prefixes", "check_days", "labels", "listed_on",
 }
+MAX_LISTED_ON = 5
 TOP_LEVEL_KEYS = {"version", "defaults", "sources"}
 DEFAULT_KEYS = {
     "fetch_timeout_seconds", "fetch_attempts", "fetch_backoff_seconds", "ai_concurrency",
@@ -232,6 +238,11 @@ def _validate_source_types(value: dict[str, Any]) -> None:
             raise ValueError(f"Source {sid}: visual_alert_threshold must be a share of the page from 0.001 to 1")
         if value.get("visual_compare") is not True:
             raise ValueError(f"Source {sid}: visual_alert_threshold needs visual_compare")
+    for page in value.get("listed_on", []) if isinstance(value.get("listed_on"), list) else []:
+        if len(page) > 500 or not re.match(r"^https?://[^\s/?#]+\.[^\s/?#]+(?:[/?][^\s]*)?$", page):
+            raise ValueError(f"Source {sid}: listed_on entries must be http(s) page addresses of at most 500 characters")
+    if len(value.get("listed_on") or []) > MAX_LISTED_ON:
+        raise ValueError(f"Source {sid}: listed_on holds at most {MAX_LISTED_ON} pages")
     if "workspace" in value:
         validate_tag(value["workspace"], "workspace", sid)
     if "labels" in value:

@@ -12,6 +12,7 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 from typing import Any
 
 from regmon.ai import AIConfig, analyze
@@ -1712,6 +1713,37 @@ def error_alert_after_runs() -> int:
         return 1
 
 
+def _listing_page_html(url: str) -> bytes | None:
+    """One listing page, read for its links: a plain request on the page's own host.
+
+    Not a monitor: one attempt, no browser, and a bot check or a document is
+    skipped (its links stay as last recorded).
+    """
+    host = urlsplit(url).hostname or ""
+    result = fetch(url, timeout=min(20, int(DEFAULTS.get("fetch_timeout_seconds", 30))), attempts=1,
+                   allowed_domains=(host,), max_bytes=8 * 1024 * 1024, browser_headers=True)
+    if result.status_code != 200 or "html" not in str(result.content_type or "").lower() or result.challenge:
+        return None
+    if botcheck.detect(result.body, result.status_code, None):
+        return None
+    return result.body
+
+
+def _listing_page_observations(source_results: list[dict], already_read: set[str]) -> list[dict]:
+    ids = {str(result["report"]["source"]["id"]) for result in source_results}
+    try:
+        _, sources = load_config()
+    except Exception as exc:
+        print(f"Link lineage: listing pages skipped: {type(exc).__name__}: {exc}")
+        return []
+    pages = link_lineage.listing_pages([source for sid, source in sources.items() if sid in ids and source.active], already_read)
+    if not pages:
+        return []
+    observations = link_lineage.read_listing_pages(pages, _listing_page_html, datetime.now(timezone.utc).isoformat())
+    print(f"Link lineage: read {len(observations)} of {len(pages)} listing page(s)")
+    return observations
+
+
 def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, not_due: list[dict] | None = None) -> dict:
     if dry_run:
         return {"dry_run":True}
@@ -1781,11 +1813,17 @@ def save_outputs(source_results: list[dict], run_id: str, dry_run: bool=False, n
     atomic_write_text(DATA / "report.md", "\n".join(md))
     # Which page lists which link, and when links leave a page (data/link-lineage.json).
     # Only sources whose crawl completed are trusted; never allowed to fail a scan.
+    # The pages the scanned monitors' links are listed on (listed_on) are read
+    # for their links too, and monitored pages missing from the record are
+    # seeded from their saved copies, so every monitor has a lineage without
+    # anyone running a command.
     try:
         observations = [observation for result in source_results if result["report"].get("baseline_update_allowed")
                         for observation in result.get("link_observations") or []]
+        observations += _listing_page_observations(source_results, {str(o.get("page")) for o in observations})
         if observations:
             link_lineage.apply(DATA, observations)
+        link_lineage.backfill(DATA)
     except Exception as exc:
         print(f"Link lineage not updated: {type(exc).__name__}: {exc}")
     # Dates stated in detected changes, as data/calendar.json and a subscribable

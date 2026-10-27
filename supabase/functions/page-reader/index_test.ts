@@ -1,6 +1,6 @@
 // Tests for the page reader. Network calls go to a fake fetcher; nothing leaves the machine.
 (Deno as any).serve = () => ({ finished: Promise.resolve(), shutdown: async () => {}, ref() {}, unref() {}, addr: { hostname: 'test', port: 0 } });
-const { checkUrl, isPrivateAddress, readHtml, readPage, formatOf, spend, handle, PublicError, absoluteCssUrls, clientRedirect, botCheck, USER_AGENT, BROWSER_USER_AGENT, documentFormat, MAX_FILE_BYTES, resolveStreamedBoundaries, scriptBuiltScore, liveDocument, inlineAssets } = await import('./index.ts');
+const { checkUrl, isPrivateAddress, readHtml, readPage, formatOf, spend, handle, PublicError, absoluteCssUrls, clientRedirect, botCheck, USER_AGENT, BROWSER_USER_AGENT, documentFormat, MAX_FILE_BYTES, resolveStreamedBoundaries, scriptBuiltScore, liveDocument, inlineAssets, READER_VERSION } = await import('./index.ts');
 
 function assert(condition: unknown, message: string) { if (!condition) throw new Error(message); }
 function eq(a: unknown, b: unknown, message: string) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error(message + ': ' + JSON.stringify(a) + ' !== ' + JSON.stringify(b)); }
@@ -310,4 +310,11 @@ Deno.test('the live view is the original page with a base address and no policy 
 Deno.test('a no-js page is shown as script would have left it', () => {
   const page = readHtml('<html class="no-js lang-es"><head><style>.no-js .wrapper{display:none}</style></head><body><div class="wrapper"><a href="/a">A</a></div></body></html>', 'https://8.8.8.8/p');
   assert(/<html[^>]*class="js lang-es"/.test(page.html), 'no-js became js: ' + page.html.slice(0, 120));
+});
+
+Deno.test('every answer names the reader version the dashboard checks', async () => {
+  assert(/^\d{4}-\d{2}-\d{2}$/.test(READER_VERSION), 'a dated version');
+  const req = new Request('https://reader.test/', { method: 'POST', headers: { origin: 'https://gauravdarwesh.github.io', 'content-type': 'application/json', 'x-ask-sentinel-visitor-id': '0f8fad5b-d9cb-469f-a165-70867728950e' }, body: JSON.stringify({ url: 'ftp://x.gov/' }) });
+  const refused = await handle(req);
+  eq(refused.status, 400, 'a bad address is refused before any fetch');
 });

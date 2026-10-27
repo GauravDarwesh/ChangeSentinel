@@ -105,6 +105,40 @@ class TestApplyAndBackfill(unittest.TestCase):
             self.assertNotIn("removed_at", page["links"]["https://x.gov/b.pdf"])
 
 
+class TestListingPages(unittest.TestCase):
+    def test_listing_pages_come_from_listed_on_once_each_skipping_pages_already_read(self):
+        class Source:
+            def __init__(self, listed):
+                self.listed_on = listed
+        pages = ll.listing_pages([Source(("https://x.gov/forms", "https://x.gov/central")), Source(("https://x.gov/forms",)), Source(())],
+                                 skip={"https://x.gov/central"})
+        self.assertEqual(pages, ["https://x.gov/forms"])
+
+    def test_listing_pages_are_read_for_links_and_failures_are_skipped(self):
+        bodies = {"https://x.gov/forms": html(("/a.pdf", "Form A")).encode(), "https://x.gov/blocked": None}
+
+        def fetch_page(url):
+            if url == "https://x.gov/down":
+                raise OSError("connection reset")
+            return bodies.get(url)
+        observations = ll.read_listing_pages(["https://x.gov/forms", "https://x.gov/blocked", "https://x.gov/down"], fetch_page, "2026-10-27T00:00:00+00:00")
+        self.assertEqual([o["page"] for o in observations], ["https://x.gov/forms"])
+        self.assertTrue(observations[0]["listing"])
+        lineage = {"schema_version": 1, "pages": {}, "events": []}
+        for o in observations:
+            ll.observe(lineage, o["page"], o["links"], o["at"], o["listing"])
+        self.assertTrue(lineage["pages"]["https://x.gov/forms"]["listing"])
+        self.assertIn("https://x.gov/a.pdf", lineage["pages"]["https://x.gov/forms"]["links"])
+
+    def test_backfill_with_nothing_to_seed_does_not_rewrite_the_record(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data = Path(tmp) / "data"
+            data.mkdir()
+            (data / "latest.json").write_text(json.dumps({"sources": {}}))
+            ll.backfill(data)
+            self.assertFalse((data / ll.FILE_NAME).exists())
+
+
 class TestEngineHook(unittest.TestCase):
     def test_the_scan_records_links_for_trusted_sources_only(self):
         engine = (Path(__file__).resolve().parents[1] / "regmon/engine.py").read_text(encoding="utf-8")
@@ -112,6 +146,9 @@ class TestEngineHook(unittest.TestCase):
         self.assertIn('link_observations.append({"page": url, "at": now, "links": None})', engine)
         self.assertIn('if result["report"].get("baseline_update_allowed")', engine)
         self.assertIn("link_lineage.apply(DATA, observations)", engine)
+        # Listing pages are read and missing monitored pages seeded on every scan.
+        self.assertIn("_listing_page_observations(source_results", engine)
+        self.assertIn("link_lineage.backfill(DATA)", engine)
 
 
 @unittest.skipUnless(NODE, "node is required for dashboard library tests")
@@ -141,6 +178,15 @@ class TestLinkLineageDashboard(unittest.TestCase):
         self.assertEqual(out[1], ["https://www.example.gov/fr2028-user-guide-xml.pdf"])
         self.assertEqual(out[2], [2, ["https://www.example.gov/fr2028-user-guide-xml.pdf"], ["https://www.example.gov/new.pdf"]])
         self.assertEqual(out[3], 1)
+
+    def test_tracking_a_listing_page_groups_monitors_by_their_resulting_list(self):
+        out = run_js("console.log(JSON.stringify(L.listedOnPayloads(["
+                     "{id: 'a'}, {id: 'b', listed_on: []}, {id: 'c', listed_on: ['https://x.gov/old']},"
+                     "{id: 'd', listed_on: ['https://x.gov/forms/']}], 'https://x.gov/forms')));")
+        self.assertEqual(out, [
+            {"monitors": ["a", "b"], "set": {"listed_on": ["https://x.gov/forms"]}, "clear": []},
+            {"monitors": ["c"], "set": {"listed_on": ["https://x.gov/old", "https://x.gov/forms"]}, "clear": []},
+        ])
 
 
 if __name__ == "__main__":

@@ -131,7 +131,7 @@ const state = {
   add: { step: "start", method: "explore", url: "", history: [], at: -1, page: null, pages: new Map(), livePages: new Map(), view: "copy", viewWhy: "", viewByHost: {}, areas: [], loading: 0,
     tab: "selected", selectMode: false, candidates: [], picked: new Map(), anchor: "", origin: "explore", notes: [], info: "",
     crawl: null, query: "", format: "ALL", show: "ALL", limit: 300, opened: {}, weekly: false, scope: "",
-    rules: {}, area: null, picking: false, showOlder: false, ruleDrafts: {}, ruleRequests: {}, ruleOpen: false, similar: [], hideOlder: true, reviewSimilar: [] },
+    rules: {}, area: null, picking: false, boxing: false, recording: false, waitPick: false, steps: {}, stepsOpen: false, readerStale: "", showOlder: false, ruleDrafts: {}, ruleRequests: {}, ruleOpen: false, similar: [], hideOlder: true, reviewSimilar: [] },
   scoutSourceMode: "add",
   calendar: null, lineage: null, registry: null, registryModel: null, selectedRegistryKey: "", registryScheme: "ALL", reviews: null, reviewTarget: "", integrity: {},
   cadenceEntries: [], cadenceMember: null, cadenceSession: null, cadenceStatus: "signed-out", cadenceError: "",
@@ -3286,7 +3286,10 @@ function loadLinkLineage() {
     if (!response.ok) throw new Error("HTTP " + response.status);
     return response.json();
   });
+  // The published dashboard carries the record; a copy without it (or an older
+  // deploy) answers 404, which is not "no record": the repository is asked next.
   linkLineagePromise = read(new URL("./data/link-lineage.json", document.baseURI).href)
+    .then(data => data || read(RAW + "/data/link-lineage.json"))
     .catch(() => read(RAW + "/data/link-lineage.json"))
     .then(data => data && typeof data === "object" && data.pages ? data : { pages: {}, events: [] })
     .catch(error => { linkLineagePromise = null; throw error; });
@@ -3325,24 +3328,45 @@ function lineageSearchHtml(rows, query) {
     '<div class="lineage-main"><span class="lineage-link-text">' + esc(row.text || L.pickSlug(row.url)) + '</span><small class="lineage-url">' + esc(displayUrl(row.url)) + "</small>" +
     "<small>on " + lineagePageLabel(row.page) + "</small></div>" + externalLink(row.url, "Open", "sheet-link") + "</li>").join("") + "</ul>";
 }
+// The Lineage tab: where this address is listed (checked live on every open,
+// and as recorded by the scans), what the page itself lists and has dropped,
+// and a lookup for any address.
 async function renderPageLinks(item) {
   const body = $("detailBody");
   const id = item.url_id;
   const still = () => state.view === "monitors" && selectedItem() && selectedItem().url_id === id && state.detailTab === "links";
-  body.innerHTML = '<section class="sheet"><div class="loading">Reading the link record…</div></section>';
+  body.innerHTML = '<section class="sheet"><div class="loading">Reading the lineage record…</div></section>';
   let lineage;
   try { lineage = await loadLinkLineage(); } catch (error) {
-    if (still()) body.innerHTML = '<section class="sheet">' + emptyState("The link record couldn't be loaded", String(error.message || error)) + "</section>";
+    if (still()) body.innerHTML = '<section class="sheet">' + emptyState("The lineage record couldn't be loaded", String(error.message || error)) + "</section>";
     return;
   }
   if (!still()) return;
+  const source = configuredSources().find(candidate => candidate.id === item.source_id) || {};
+  const listedOn = Array.isArray(source.listed_on) ? source.listed_on.map(String) : [];
   const listings = L.linkListings(lineage, item.canonical_url);
   const own = L.pageLinkLineage(lineage, item.canonical_url);
+  const isPage = String(item.extraction_type || "") === "html";
+  const livePages = [];
+  listedOn.concat(listings.filter(row => !row.removedAt).map(row => row.page)).forEach(page => {
+    if (livePages.length < 5 && !livePages.some(known => L.urlKey(known) === L.urlKey(page))) livePages.push(page);
+  });
   const sheets = [];
+  const liveHtml = livePages.length && PAGE_READER_ENDPOINT
+    ? '<h4 class="lineage-h">Right now</h4><ul class="lineage-list">' + livePages.map((page, index) => '<li class="lineage-row" data-lineage-live="' + index + '">' +
+        '<span class="tag">Checking…</span><div class="lineage-main"><span>on ' + lineagePageLabel(page) + "</span><small>Reading the page now…</small></div>" + externalLink(page, "Open page", "sheet-link") + "</li>").join("") + "</ul>"
+    : "";
+  const recorded = listings.length ? '<h4 class="lineage-h">Recorded by the scans</h4><ul class="lineage-list">' + listings.map(lineageListingRow).join("") + "</ul>" : "";
+  const waiting = listedOn.filter(page => !listings.some(row => L.urlKey(row.page) === L.urlKey(page)));
+  const unknown = !listings.length && !listedOn.length;
   sheets.push('<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Where this address is listed</h3>' +
-    '<div class="sheet-note">Monitored pages that link here now, or did and then dropped the link.</div></div></div><div class="sheet-body lineage-body">' +
-    (listings.length ? '<ul class="lineage-list">' + listings.map(lineageListingRow).join("") + "</ul>"
-      : '<p class="lineage-hint">No monitored page links to this address. Monitor the page that lists it (for example the regulator\'s forms page) and its removal will be recorded here.</p>') +
+    '<div class="sheet-note">' + (unknown ? "Not known yet." : "The pages that list this link: checked now, and as each scan recorded them (first listed, removed).") + "</div></div></div>" +
+    '<div class="sheet-body lineage-body">' + liveHtml + recorded +
+    (waiting.length ? '<p class="lineage-hint">' + esc(plural(waiting.length, "listing page is", "listing pages are")) + " recorded from the next scan of this monitor: " + waiting.map(page => esc(displayUrl(page))).join(", ") + ".</p>" : "") +
+    (unknown ? '<p class="lineage-hint">No monitored page lists this address, and this monitor doesn’t know which page lists it. Name that page below (the forms or documents page you found it on): each scan then reads it and records when this link is listed, renamed or removed.</p>' : "") +
+    '<details class="lineage-name"' + (unknown ? " open" : "") + "><summary>" + (unknown ? "Which page lists this link?" : "Track another page that lists it") + "</summary>" +
+      '<form class="lineage-form" id="lineageForm"><input class="field-input" id="lineagePage" type="url" required placeholder="https://… the page that lists this link" autocomplete="off" spellcheck="false">' +
+      '<button class="btn" type="submit">Check the page</button></form><div id="lineageCheck" aria-live="polite"></div></details>' +
     "</div></section>");
   if (own) {
     const content = own.current.filter(row => !row.menu);
@@ -3356,9 +3380,12 @@ async function renderPageLinks(item) {
       '<details class="lineage-all"><summary>Every link it lists now (' + own.current.length + ")</summary>" +
       '<ul class="lineage-list">' + own.current.slice(0, 1500).map(row => lineageLinkRow(row, "")).join("") + "</ul></details>" +
       "</div></section>");
+  } else if (isPage) {
+    sheets.push('<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Links on this page</h3>' +
+      '<div class="sheet-note">Recorded from the next scan that reads this page in full; nothing to do.</div></div></div></section>');
   }
   sheets.push('<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Look up any address</h3>' +
-    '<div class="sheet-note">Find which monitored page listed a link, and when it was removed.</div></div></div><div class="sheet-body lineage-body">' +
+    '<div class="sheet-note">Find which page listed a link, and when it was removed.</div></div></div><div class="sheet-body lineage-body">' +
     '<input class="field-input lineage-search" id="lineageSearch" type="search" placeholder="Part of an address or link text" autocomplete="off" spellcheck="false">' +
     '<div id="lineageResults">' + lineageSearchHtml([], "") + "</div></div></section>");
   body.innerHTML = sheets.join("");
@@ -3368,6 +3395,73 @@ async function renderPageLinks(item) {
     window.clearTimeout(timer);
     timer = window.setTimeout(() => { $("lineageResults").innerHTML = lineageSearchHtml(L.linkLineageSearch(lineage, input.value, 200), input.value); }, 150);
   });
+  $("lineageForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const page = safeHttpUrl($("lineagePage").value.trim());
+    if (!page) { $("lineageCheck").innerHTML = '<p class="lineage-hint">Enter the full address of the page, beginning with https://.</p>'; return; }
+    lineageCheckPage(item, page, still);
+  });
+  // Every open reads the listing pages again, so what is shown is today's page.
+  livePages.forEach((page, index) => {
+    lineageLinksOf(page).then(result => {
+      const row = body.querySelector('[data-lineage-live="' + index + '"]');
+      if (!row || !still()) return;
+      const found = result.links ? result.links.find(link => L.urlKey(link.url) === L.urlKey(item.canonical_url)) : null;
+      row.querySelector(".tag").outerHTML = result.error ? '<span class="tag">Not checked</span>'
+        : found ? '<span class="tag tone-new">Listed now</span>' : '<span class="tag tone-problem">Not listed now</span>';
+      row.querySelector("small").textContent = result.error ? "Couldn’t read the page: " + result.error
+        : found ? (found.text ? "as “" + found.text + "” · " : "") + "checked just now" : "The page doesn’t link to this address today · checked just now";
+    });
+  });
+}
+// The links a page lists, read now through the page reader (links only).
+async function lineageLinksOf(page) {
+  try {
+    const data = await addReadPage(page, { mode: "links", fresh: true });
+    if (data.kind !== "page") return { error: data.message || "the site didn’t return a page" };
+    return { links: data.links || [], title: data.title || "" };
+  } catch (error) {
+    return { error: String(error.message || error) };
+  }
+}
+async function lineageCheckPage(item, page, still) {
+  const slot = $("lineageCheck");
+  slot.innerHTML = '<div class="loading">Reading ' + esc(displayUrl(page)) + "…</div>";
+  const result = await lineageLinksOf(page);
+  if (!still() || !$("lineageCheck")) return;
+  if (result.error) { slot.innerHTML = '<p class="lineage-hint">That page couldn’t be read: ' + esc(result.error) + ". You can still track it; the scans read it from GitHub.</p>" + lineageTrackHtml(item, page, []); return; }
+  const keys = new Set(result.links.map(link => L.urlKey(link.url)));
+  const found = result.links.find(link => L.urlKey(link.url) === L.urlKey(item.canonical_url));
+  // Other monitored links that page lists: tracked in the same request if wanted.
+  const others = [];
+  state.items.forEach(candidate => {
+    if (candidate.active === false || candidate.url_id === item.url_id || !keys.has(L.urlKey(candidate.canonical_url))) return;
+    const src = configuredSources().find(entry => entry.id === candidate.source_id);
+    if (!src || src.active === false || (src.seed_urls || []).length !== 1) return;
+    if ((src.listed_on || []).some(url => L.urlKey(url) === L.urlKey(page))) return;
+    if (!others.some(entry => entry.id === src.id)) others.push(src);
+  });
+  slot.innerHTML = '<p class="lineage-hint">' + (found ? "Found: <strong>" + esc(result.title || displayUrl(page)) + "</strong> lists this link" + (found.text ? " as “" + esc(found.text) + "”" : "") + "."
+    : "<strong>" + esc(result.title || displayUrl(page)) + "</strong> doesn’t link to this address today. If it used to, track it anyway: a link that comes back is recorded too.") + "</p>" +
+    lineageTrackHtml(item, page, others);
+  slot.querySelector("[data-lineage-track]").addEventListener("click", () => {
+    const also = slot.querySelector("[data-lineage-also]");
+    const sources = [configuredSources().find(entry => entry.id === item.source_id)].concat(also && also.checked ? others : []).filter(Boolean);
+    const payloads = L.listedOnPayloads(sources, page);
+    if (!payloads.length) { showToast("That page is already tracked for this link."); return; }
+    const requests = [].concat(...payloads.map(payload => L.settingsRequests(payload, "track where links are listed → " + displayUrl(page))));
+    requests.slice(1).forEach(request => {
+      const params = new URLSearchParams(); params.set("title", request.title); params.set("body", request.body);
+      window.open(REPO + "/issues/new?" + params.toString(), "_blank");
+    });
+    const params = new URLSearchParams(); params.set("title", requests[0].title); params.set("body", requests[0].body);
+    openGitHubRequest(REPO + "/issues/new?" + params.toString(), "Submit the prefilled request on GitHub. From the next scan, " + displayUrl(page) + " is read for its links and this link's lineage is recorded.");
+  });
+}
+function lineageTrackHtml(item, page, others) {
+  return '<div class="lineage-track">' +
+    (others.length ? '<label class="field-check"><input type="checkbox" data-lineage-also checked> Also for the ' + esc(plural(others.length, "other monitored link", "other monitored links")) + " this page lists</label>" : "") +
+    '<button class="btn btn-primary" type="button" data-lineage-track>Track ' + esc(displayUrl(page)) + "</button></div>";
 }
 // A change to a page: the links it gained and lost in that scan.
 async function fillChangeLinks(entry, slotId, stillCurrent) {
@@ -3383,7 +3477,7 @@ async function fillChangeLinks(entry, slotId, stillCurrent) {
   const row = (event, kind) => lineageLinkRow({ url: event.url, text: event.text, firstSeen: event.at, removedAt: event.at }, kind);
   slot.innerHTML = '<section class="sheet"><div class="sheet-head"><div><h3 class="sheet-title">Links in this change</h3>' +
     '<div class="sheet-note">' + esc([removed.length ? plural(removed.length, "link removed", "links removed") : "", added.length ? plural(added.length, "link added", "links added") : ""].filter(Boolean).join(", ")) +
-    " · kept in the link record, so each can be traced to this page later</div></div></div><div class=\"sheet-body lineage-body\"><ul class=\"lineage-list\">" +
+    " · kept in the lineage record, so each can be traced to this page later</div></div></div><div class=\"sheet-body lineage-body\"><ul class=\"lineage-list\">" +
     removed.map(event => row(event, "removed")).join("") + added.map(event => row(event, "added")).join("") + "</ul></div></section>";
 }
 
@@ -6620,6 +6714,10 @@ let bulkImportErrors = [];
  * monitor until that workflow registers it.
  */
 const PAGE_READER_ENDPOINT = window.CHANGESENTINEL_PAGE_READER_ENDPOINT || "";
+// The page-reader version this dashboard was built with (READER_VERSION in
+// supabase/functions/page-reader/index.ts). An older deployed reader sends
+// pages without their styles, live view or reading view, so the dashboard says so.
+const PAGE_READER_VERSION = "2026-10-27";
 const ADD_DRAFT_STORAGE = "cs-add-link-draft-v1";
 const LEGACY_SELECTION_STORAGE = "cs-guided-discovery-selection-v1";
 const CRAWL_PAGE_LIMITS = { 1: 1, 2: 60, 3: 150 };
@@ -6662,7 +6760,7 @@ function addSaveDraft() {
   try {
     localStorage.setItem(ADD_DRAFT_STORAGE, JSON.stringify({
       url: a.url, method: a.method, origin: a.origin, scope: a.scope, notes: a.notes.slice(0, 6), info: a.info,
-      candidates: a.candidates.slice(0, 6000), picked: Array.from(a.picked.keys()), opened: a.opened, rules: a.rules, ruleRequests: a.ruleRequests,
+      candidates: a.candidates.slice(0, 6000), picked: Array.from(a.picked.keys()), opened: a.opened, rules: a.rules, ruleRequests: a.ruleRequests, steps: a.steps,
       savedAt: new Date().toISOString()
     }));
   } catch (_) {
@@ -6706,6 +6804,16 @@ function addRestoreDraft() {
       if (include || ignore.length) a.rules[key] = { include, ignore };
     });
   }
+  a.steps = {};
+  if (saved.steps && typeof saved.steps === "object") {
+    Object.keys(saved.steps).slice(0, 50).forEach(key => {
+      const entry = saved.steps[key] || {};
+      const checked = L.validateBrowserSteps(Array.isArray(entry.actions) ? entry.actions : []);
+      if (!checked.error && (checked.steps.length || entry.visual === true)) {
+        a.steps[key] = { actions: checked.steps, labels: (Array.isArray(entry.labels) ? entry.labels : []).map(String).slice(0, 20), visual: entry.visual === true, url: String(entry.url || "") };
+      }
+    });
+  }
   a.ruleRequests = {};
   if (saved.ruleRequests && typeof saved.ruleRequests === "object") {
     Object.keys(saved.ruleRequests).slice(0, 50).forEach(key => {
@@ -6719,7 +6827,7 @@ function addClearDraft() {
   state.add.similarTo = null;
   const a = state.add;
   a.candidates = []; a.picked = new Map(); a.opened = {}; a.notes = []; a.history = []; a.at = -1; a.page = null; a.anchor = "";
-  a.rules = {}; a.areas = []; a.ruleDrafts = {}; a.ruleRequests = {}; a.ruleOpen = false;
+  a.rules = {}; a.areas = []; a.ruleDrafts = {}; a.ruleRequests = {}; a.ruleOpen = false; a.steps = {}; a.recording = false; a.waitPick = false;
   try { localStorage.removeItem(ADD_DRAFT_STORAGE); } catch (_) {}
 }
 
@@ -6727,7 +6835,7 @@ function addClearDraft() {
 
 const ADD_STEP_COPY = {
   start: ["Add a link", "Open a page and pick the links on it you want ChangeSentinel to monitor."],
-  explore: ["Explore the page", "Click a link to open it here. Shift-click to select it, Shift-drag to box an area, or pick a part of the page to watch or ignore."],
+  explore: ["Explore the page", "Click a link to open it here. Shift-click to select it, box an area, pick a part to watch or ignore, or record the steps a portal needs."],
   crawl: ["Following links", "Reading the page and the pages it links to. You choose what to monitor next."],
   review: ["Confirm the links to monitor", "Only ticked links are requested. Nothing is monitored until the owner workflow registers them."]
 };
@@ -6853,7 +6961,7 @@ async function addReadPage(url, options) {
   const key = L.urlKey(url);
   const cache = mode === "live" ? a.livePages : a.pages;
   const cached = cache.get(key);
-  if (cached && !(mode === "" && cached.linksOnly)) return cached;
+  if (cached && !(options && options.fresh) && !(mode === "" && cached.linksOnly)) return cached;
   if (!PAGE_READER_ENDPOINT) throw new Error("The page reader isn't set up for this dashboard yet");
   const identity = await askSentinelIdentity();
   const headers = Object.assign(askSentinelIdentityHeaders(identity), { "Content-Type": "application/json" });
@@ -6869,6 +6977,7 @@ async function addReadPage(url, options) {
   if (data.kind === "page" && (!Array.isArray(data.links) || typeof data.html !== "string")) throw new Error("The page reader returned an unexpected answer");
   if (data.kind === "live" && typeof data.html !== "string") throw new Error("The page reader returned an unexpected answer");
   if (mode === "links") data.linksOnly = true;
+  if (data.kind === "page" || data.kind === "live") a.readerStale = String(data.reader_version || "") >= PAGE_READER_VERSION ? null : { version: String(data.reader_version || "") };
   cache.set(key, data);
   if (data.url) cache.set(L.urlKey(data.url), data);
   while (cache.size > (mode === "live" ? 8 : 60)) cache.delete(cache.keys().next().value);
@@ -6922,6 +7031,8 @@ async function exploreOpen(url, push) {
   a.page = data;
   a.areas = [];
   a.ruleOpen = false;
+  a.recording = false;
+  a.waitPick = false;
   a.autoTried = {};
   if (a.picking) a.picking = false;
   a.tab = a.picked.size ? a.tab : (exploreSuggestions().items.length ? "suggested" : "page");
@@ -6973,7 +7084,7 @@ async function exploreRender(view, why) {
     frame.srcdoc = exploreLiveDocument(live.html, a.frameToken);
   } else {
     exploreStatus("", "ok");
-    frame.srcdoc = exploreDocument(a.view === "reader" ? page.reader : page.html, a.frameToken, exploreRandom(18));
+    frame.srcdoc = exploreDocument(a.view === "reader" ? page.reader : page.html, a.frameToken, exploreRandom(18), a.view);
   }
   renderExploreViewBar();
 }
@@ -6982,9 +7093,11 @@ function renderExploreViewBar() {
   const page = a.page;
   const bar = $("exploreViewBar");
   if (!bar) return;
-  const words = a.viewWhy || (a.view === "live" ? "The live page runs the site's own scripts, sealed off from this dashboard."
+  const stale = a.readerStale ? "The page reader on Supabase is older than this dashboard" + (a.readerStale.version ? " (" + a.readerStale.version + ")" : "") +
+    ", so pages can show without their styles and the Live and Reading views may not work. Redeploy the page-reader Edge Function. " : "";
+  const words = stale + (a.viewWhy || (a.view === "live" ? "The live page runs the site's own scripts, sealed off from this dashboard."
     : a.view === "reader" ? "The page's text, tables and links, without the site's layout."
-    : page && typeof page.notice === "string" ? page.notice.slice(0, 400) : "");
+    : page && typeof page.notice === "string" ? page.notice.slice(0, 400) : ""));
   $("exploreNotice").textContent = words;
   $("exploreNotice").hidden = !words;
   bar.hidden = !page;
@@ -7053,7 +7166,7 @@ function exploreLinkIndexFor(url, text) {
 function exploreLiveDocument(html, token) {
   const policy = '<meta http-equiv="Content-Security-Policy" content="default-src * data: blob: \'unsafe-inline\' \'unsafe-eval\'; ' +
     "form-action 'none'; object-src 'none'\">";
-  const script = "<script>(" + exploreBridge.toString() + ")(" + JSON.stringify(token) + ", true);<\/script>";
+  const script = "<script>(" + exploreBridge.toString() + ")(" + JSON.stringify(token) + ", true, \"live\");<\/script>";
   let doc = String(html || "").replace(/<meta\b[^>]*http-equiv\s*=\s*["']?content-security-policy["']?[^>]*>/gi, "");
   doc = /<head\b[^>]*>/i.test(doc) ? doc.replace(/<head\b[^>]*>/i, match => match + policy) : policy + doc;
   doc = /<\/head>/i.test(doc) ? doc.replace(/<\/head>/i, exploreFrameStyle() + "</head>") : exploreFrameStyle() + doc;
@@ -7070,19 +7183,29 @@ function exploreLiveDocument(html, token) {
 // within the frame instead. In the live view (live = true) the page's own links
 // carry no numbers, so clicks, areas and selection marks also go by address,
 // and the links the page draws are reported as they appear.
-function exploreBridge(token, live) {
+function exploreBridge(token, live, kind) {
   var root = document.documentElement;
   var areaSeq = 0;
   var shift = false;
   var picking = false;
-  var drag = null;
+  var boxing = false;
+  var recording = false;
+  var waitPick = false;
+  var gesture = null;
   var swallowClick = false;
   var hovered = null;
+  var areas = {};
+  var layerEl = null;
+  var scrollTimer = 0;
   var BLOCKS = "main,article,section,aside,nav,header,footer,form,table,tbody,ul,ol,dl,figure,fieldset,details,div,p,li,tr";
   function send(message) {
     message.cs = "cs-explore";
     message.token = token;
     try { parent.postMessage(message, "*"); } catch (e) {}
+  }
+  function ours(node) {
+    while (node && node.nodeType !== 1) node = node.parentNode;
+    return !!(node && node.closest && node.closest("[data-cs-ui]"));
   }
   function linkOf(node) {
     while (node && node.nodeType !== 1) node = node.parentNode;
@@ -7101,8 +7224,8 @@ function exploreBridge(token, live) {
   }
   function setPicking(on) {
     picking = !!on;
-    root.classList.toggle("cs-picking", picking);
-    if (!picking) setHover(null);
+    root.classList.toggle("cs-picking", picking || waitPick);
+    if (!picking && !waitPick) setHover(null);
   }
   function setHover(node) {
     if (hovered === node) return;
@@ -7112,19 +7235,25 @@ function exploreBridge(token, live) {
   }
   // A short, stable CSS selector for a part of the page: an id when it has a
   // readable one, otherwise tags and classes, with :nth-of-type only where needed.
+  // The browser adds <tbody> to every table; the page's own HTML (what a scan
+  // reads) may not have one, so a tbody is never part of the selector.
   function stableClass(name) { return /^[A-Za-z_-][\w-]{1,40}$/.test(name) && !/^cs-/.test(name) && !/\d{3,}/.test(name) && !/^(active|open|show|hidden|selected|current|visible|focus|hover)$|^(is|has)-/.test(name); }
   function esc(value) { return window.CSS && CSS.escape ? CSS.escape(value) : String(value).replace(/[^\w-]/g, "\\$&"); }
   function unique(selector) { try { return document.querySelectorAll(selector).length === 1; } catch (e) { return false; } }
   function selectorFor(node) {
-    if (!node || node.nodeType !== 1) return "";
+    if (!node || node.nodeType !== 1 || kind === "reader") return "";
+    if (node.tagName === "TBODY" && node.parentElement) node = node.parentElement;
     var parts = [];
+    var gap = " > ";
+    var path = function () { var out = ""; for (var i = 0; i < parts.length; i++) out += parts[i].s + (i < parts.length - 1 ? parts[i].gap : ""); return out; };
     var current = node;
     while (current && current.nodeType === 1 && current !== document.body && current !== root) {
+      if (current.tagName === "TBODY") { gap = " "; current = current.parentElement; continue; }
       var id = current.getAttribute("id");
       if (id && /^[A-Za-z][\w-]{1,60}$/.test(id) && !/\d{4,}/.test(id)) {
-        parts.unshift("#" + esc(id));
-        var byId = parts.join(" > ");
-        if (unique(byId)) return byId;
+        parts.unshift({ s: "#" + esc(id), gap: gap });
+        gap = " > ";
+        if (unique(path())) return path();
       } else {
         var part = current.tagName.toLowerCase();
         var classes = Array.prototype.filter.call(current.classList || [], stableClass).slice(0, 2);
@@ -7136,24 +7265,23 @@ function exploreBridge(token, live) {
             part += ":nth-of-type(" + (same.indexOf(current) + 1) + ")";
           }
         }
-        parts.unshift(part);
-        var path = parts.join(" > ");
+        parts.unshift({ s: part, gap: gap });
+        gap = " > ";
         // Stop at the first unique path anchored on a class, so a bare "ul" or
         // "div:nth-of-type(3)" isn't left to break when the page grows.
-        if (classes.length && unique(path)) return path;
+        if (classes.length && unique(path())) return path();
       }
       current = current.parentElement;
     }
-    var full = parts.length ? "body > " + parts.join(" > ") : "body";
-    var short = parts.join(" > ");
-    return short && unique(short) ? short : full;
+    var short = path();
+    return short && unique(short) ? short : (short ? "body > " + short : "body");
   }
   function labelFor(node) {
     var heading = node.querySelector && node.querySelector("h1,h2,h3,h4,caption,legend,summary");
     var name = node.getAttribute("aria-label") || (heading && heading.textContent) || "";
-    var kind = { TABLE: "Table", UL: "List", OL: "List", NAV: "Menu", FORM: "Form", HEADER: "Header", FOOTER: "Footer", ASIDE: "Side panel", SECTION: "Section", ARTICLE: "Article", MAIN: "Main content", P: "Paragraph" }[node.tagName] || "Part of the page";
+    var kindName = { TABLE: "Table", TBODY: "Table", UL: "List", OL: "List", NAV: "Menu", FORM: "Form", HEADER: "Header", FOOTER: "Footer", ASIDE: "Side panel", SECTION: "Section", ARTICLE: "Article", MAIN: "Main content", P: "Paragraph", H1: "Heading", H2: "Heading", H3: "Heading", H4: "Heading", TR: "Table row", LI: "List item", DL: "List" }[node.tagName] || "Part of the page";
     name = String(name).replace(/\s+/g, " ").trim();
-    return name ? kind + " · " + name.slice(0, 70) : kind;
+    return name ? kindName + " · " + name.slice(0, 70) : kindName;
   }
   function linksIn(node) {
     var indexes = [];
@@ -7177,31 +7305,6 @@ function exploreBridge(token, live) {
     }
     return out;
   }
-  // Each boxed or picked part stays marked, numbered, until it is removed:
-  // several areas of one page can be selected at once.
-  function tagArea(node, id) {
-    var tag = document.querySelector('.cs-area-tag[data-for="' + id + '"]');
-    if (!tag) { tag = document.createElement("span"); tag.className = "cs-area-tag"; tag.setAttribute("data-for", id); document.body.appendChild(tag); }
-    var r = node.getBoundingClientRect();
-    tag.textContent = String(id);
-    tag.style.left = Math.max(0, r.left + scrollX) + "px";
-    tag.style.top = Math.max(0, r.top + scrollY - 18) + "px";
-  }
-  function clearAreas(id) {
-    var marked = document.querySelectorAll(id ? '[data-cs-area="' + id + '"]' : "[data-cs-area]");
-    for (var i = 0; i < marked.length; i++) marked[i].removeAttribute("data-cs-area");
-    var tags = document.querySelectorAll(id ? '.cs-area-tag[data-for="' + id + '"]' : ".cs-area-tag");
-    for (var j = 0; j < tags.length; j++) tags[j].parentNode.removeChild(tags[j]);
-  }
-  function report(node, indexes, how, plain) {
-    if (!node || node === document.body || node === root) node = null;
-    var id = node && node.getAttribute("data-cs-area") ? Number(node.getAttribute("data-cs-area")) : ++areaSeq;
-    if (node) { node.setAttribute("data-cs-area", String(id)); tagArea(node, id); }
-    var text = node ? String(node.innerText || node.textContent || "").replace(/\s+/g, " ").trim() : "";
-    if (!plain && node && node.querySelectorAll) plain = plainLinksIn(node.querySelectorAll("a[href], area[href]"));
-    send({ type: "area", id: id, how: how, indexes: indexes, links: plain || [], selector: node ? selectorFor(node) : "",
-      label: node ? labelFor(node) : "Selected area", text: text.slice(0, 220), words: text ? text.split(" ").length : 0 });
-  }
   // A link laid out with display: contents has no box of its own; its first
   // child with one stands in for it.
   function rectOf(node) {
@@ -7221,15 +7324,128 @@ function exploreBridge(token, live) {
     }
     return ancestor && ancestor.nodeType === 1 && ancestor.nodeName !== "A" ? ancestor : ancestor && ancestor.parentElement;
   }
-  function finishDrag(box) {
-    drag.box.parentNode && drag.box.parentNode.removeChild(drag.box);
-    var left = Math.min(drag.x, box.x), right = Math.max(drag.x, box.x), top = Math.min(drag.y, box.y), bottom = Math.max(drag.y, box.y);
+
+  /* ---- Areas: boxes on the page, numbered by the dashboard, that can be
+   * resized from any edge or corner and moved by their number. Drawing (Shift
+   * held, or "Box an area" on) scrolls the page when the pointer nears an edge,
+   * and follows the wheel. Each box reports the links inside it and the part of
+   * the page that holds them. */
+  function layer() {
+    if (!layerEl || !layerEl.isConnected) {
+      layerEl = document.createElement("div");
+      layerEl.className = "cs-area-layer";
+      layerEl.setAttribute("data-cs-ui", "");
+      root.appendChild(layerEl);
+    }
+    return layerEl;
+  }
+  var HANDLES = ["n", "s", "e", "w", "ne", "nw", "se", "sw"];
+  function makeBox(id) {
+    var box = document.createElement("div");
+    box.className = "cs-area-box";
+    box.setAttribute("data-cs-ui", "");
+    if (id) box.setAttribute("data-area", String(id));
+    box.innerHTML = '<span class="cs-area-num" title="Drag to move this area"></span><span class="cs-area-x" role="button" title="Remove this area" aria-label="Remove this area">×</span>' +
+      HANDLES.map(function (h) { return '<span class="cs-h cs-h-' + h + '" data-h="' + h + '"></span>'; }).join("");
+    layer().appendChild(box);
+    return box;
+  }
+  function place(box, r) {
+    box.style.left = r.x + "px";
+    box.style.top = r.y + "px";
+    box.style.width = Math.max(1, r.w) + "px";
+    box.style.height = Math.max(1, r.h) + "px";
+  }
+  function norm(a, b) { return { x: Math.min(a.x, b.x), y: Math.min(a.y, b.y), w: Math.abs(a.x - b.x), h: Math.abs(a.y - b.y) }; }
+  function docSize() { return { w: Math.max(root.scrollWidth, document.body ? document.body.scrollWidth : 0), h: Math.max(root.scrollHeight, document.body ? document.body.scrollHeight : 0) }; }
+  function clampRect(r) {
+    var size = docSize();
+    var x = Math.max(0, Math.min(r.x, size.w - 8)), y = Math.max(0, Math.min(r.y, size.h - 8));
+    return { x: x, y: y, w: Math.max(12, Math.min(r.w, size.w - x)), h: Math.max(12, Math.min(r.h, size.h - y)) };
+  }
+  function pointNow() { return { x: gesture.client.x + scrollX, y: gesture.client.y + scrollY }; }
+  function follow() {
+    if (!gesture) return;
+    var p = pointNow();
+    if (gesture.mode === "draw") {
+      if (!gesture.moved && Math.abs(p.x - gesture.start.x) + Math.abs(p.y - gesture.start.y) < 8) return;
+      if (!gesture.moved) {
+        gesture.moved = true;
+        capture();
+        gesture.box = makeBox(0);
+        gesture.box.classList.add("is-drawing");
+        root.classList.add("cs-drawing");
+      }
+      gesture.rect = norm(gesture.start, p);
+      place(gesture.box, gesture.rect);
+      return;
+    }
+    var dx = p.x - gesture.start.x, dy = p.y - gesture.start.y;
+    if (!gesture.moved && Math.abs(dx) + Math.abs(dy) < 3) return;
+    gesture.moved = true;
+    capture();
+    var r0 = gesture.rect0, r = { x: r0.x, y: r0.y, w: r0.w, h: r0.h };
+    if (gesture.mode === "move") { r.x = r0.x + dx; r.y = r0.y + dy; }
+    else {
+      var h = gesture.handle;
+      if (h.indexOf("e") >= 0) r.w = r0.w + dx;
+      if (h.indexOf("s") >= 0) r.h = r0.h + dy;
+      if (h.indexOf("w") >= 0) { r.x = r0.x + dx; r.w = r0.w - dx; }
+      if (h.indexOf("n") >= 0) { r.y = r0.y + dy; r.h = r0.h - dy; }
+      if (r.w < 0) { r.x += r.w; r.w = -r.w; }
+      if (r.h < 0) { r.y += r.h; r.h = -r.h; }
+    }
+    gesture.rect = clampRect(r);
+    place(areas[gesture.id].box, gesture.rect);
+  }
+  // Near the top or bottom (or sides) of the view, the page scrolls on by itself.
+  function edgeScroll() {
+    if (!gesture) { scrollTimer = 0; return; }
+    var edge = 40, c = gesture.client, dx = 0, dy = 0;
+    if (c.y < edge) dy = -(edge - c.y); else if (c.y > innerHeight - edge) dy = c.y - (innerHeight - edge);
+    if (c.x < edge) dx = -(edge - c.x); else if (c.x > innerWidth - edge) dx = c.x - (innerWidth - edge);
+    if (dx || dy) {
+      var sx = scrollX, sy = scrollY;
+      scrollBy(Math.max(-28, Math.min(28, Math.round(dx * 0.6))), Math.max(-28, Math.min(28, Math.round(dy * 0.6))));
+      if (scrollX !== sx || scrollY !== sy) follow();
+    }
+    scrollTimer = requestAnimationFrame(edgeScroll);
+  }
+  // The pointer is captured only once a box is really being drawn or changed:
+  // captured from the press, a Shift-click's click would land on the page, not the link.
+  function capture() {
+    if (!gesture || gesture.captured) return;
+    gesture.captured = true;
+    try { root.setPointerCapture(gesture.pointerId); } catch (e) {}
+  }
+  function startGesture(g, event) {
+    gesture = g;
+    gesture.pointerId = event.pointerId;
+    if (!scrollTimer) scrollTimer = requestAnimationFrame(edgeScroll);
+  }
+  function endGesture() {
+    gesture = null;
+    root.classList.remove("cs-drawing");
+    if (scrollTimer) { cancelAnimationFrame(scrollTimer); scrollTimer = 0; }
+  }
+  function outline(area, node) {
+    if (area.node && area.node !== node) area.node.removeAttribute("data-cs-area");
+    area.node = node;
+    if (node) node.setAttribute("data-cs-area", "");
+  }
+  // What a box holds: the links whose centre is inside it, and the smallest
+  // part of the page that holds them (or, with no links, the part it covers).
+  function measure(id, how) {
+    var area = areas[id];
+    if (!area) return;
+    var r = area.rect, left = r.x, right = r.x + r.w, top = r.y, bottom = r.y + r.h;
     var all = document.querySelectorAll("[data-cs-link], a[href], area[href]");
     var inside = [], indexes = [];
     for (var i = 0; i < all.length; i++) {
-      var r = rectOf(all[i]);
-      if (!r) continue;
-      var cx = r.left + scrollX + r.width / 2, cy = r.top + scrollY + r.height / 2;
+      if (ours(all[i])) continue;
+      var lr = rectOf(all[i]);
+      if (!lr) continue;
+      var cx = lr.left + scrollX + lr.width / 2, cy = lr.top + scrollY + lr.height / 2;
       if (cx >= left && cx <= right && cy >= top && cy <= bottom) {
         inside.push(all[i]);
         if (!all[i].hasAttribute("data-cs-link")) continue;
@@ -7237,25 +7453,115 @@ function exploreBridge(token, live) {
         if (indexes.indexOf(index) < 0) indexes.push(index);
       }
     }
-    var node = commonAncestor(inside);
+    var node = area.fixed || commonAncestor(inside);
     if (!node) {
+      area.box.style.visibility = "hidden";
       node = document.elementFromPoint((left + right) / 2 - scrollX, (top + bottom) / 2 - scrollY);
-      var area = (right - left) * (bottom - top);
+      area.box.style.visibility = "";
+      var size = (right - left) * (bottom - top);
       while (node && node.parentElement && node !== document.body) {
         var nr = node.getBoundingClientRect();
-        if (nr.width * nr.height >= area * 0.6) break;
+        if (nr.width * nr.height >= size * 0.6) break;
         node = node.parentElement;
       }
     }
-    report(node, indexes, "drag", plainLinksIn(inside));
+    if (!node || node === document.body || node === root || ours(node)) node = null;
+    outline(area, node);
+    var text = node ? String(node.innerText || node.textContent || "").replace(/\s+/g, " ").trim() : "";
+    var plain = plainLinksIn(inside);
+    send({ type: "area", id: id, how: how, indexes: indexes, links: plain, selector: node ? selectorFor(node) : "",
+      label: node ? labelFor(node) : "Selected area", text: text.slice(0, 220), words: text ? text.split(" ").length : 0 });
   }
+  function addArea(rect, how, fixed) {
+    var id = ++areaSeq;
+    var box = makeBox(id);
+    areas[id] = { rect: clampRect(rect), box: box, node: null, fixed: fixed || null };
+    place(box, areas[id].rect);
+    measure(id, how);
+    return id;
+  }
+  function removeArea(id) {
+    var ids = id ? [id] : Object.keys(areas).map(Number);
+    ids.forEach(function (key) {
+      var area = areas[key];
+      if (!area) return;
+      if (area.box && area.box.parentNode) area.box.parentNode.removeChild(area.box);
+      if (area.node) area.node.removeAttribute("data-cs-area");
+      delete areas[key];
+    });
+  }
+  function pickArea(node) {
+    var r = node.getBoundingClientRect();
+    addArea({ x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height }, "pick", node);
+  }
+
+  /* ---- Recording steps (live view): clicks, choices and typing on the page
+   * become the steps a scan replays in a real browser before reading it. Links
+   * clicked while recording are written down, not followed. Passwords are never
+   * recorded. */
+  function stepSelector(el) {
+    if (el.id && unique("#" + esc(el.id))) return "#" + esc(el.id);
+    var names = ["name", "data-testid", "aria-label", "title", "value"];
+    for (var a = 0; a < names.length; a++) {
+      var v = el.getAttribute && el.getAttribute(names[a]);
+      if (v && v.length < 80) {
+        var s = el.tagName.toLowerCase() + "[" + names[a] + '="' + v.replace(/"/g, '\\"') + '"]';
+        if (unique(s)) return s;
+      }
+    }
+    var parts = [], n = el;
+    while (n && n.nodeType === 1 && n !== document.body && parts.length < 6) {
+      if (n.id && unique("#" + esc(n.id))) { parts.unshift("#" + esc(n.id)); break; }
+      var p = n.tagName.toLowerCase();
+      var sib = n.parentElement ? Array.prototype.filter.call(n.parentElement.children, function (c) { return c.tagName === n.tagName; }) : [];
+      if (sib.length > 1) p += ":nth-of-type(" + (sib.indexOf(n) + 1) + ")";
+      parts.unshift(p);
+      n = n.parentElement;
+    }
+    return parts.join(" > ").slice(0, 200);
+  }
+  function recordStep(step, label) { send({ type: "step", step: step, label: String(label || "").slice(0, 80) }); }
+  function recordClick(event) {
+    var t = event.target;
+    while (t && t.nodeType !== 1) t = t.parentNode;
+    if (!t) return;
+    var tag = t.tagName.toLowerCase(), type = String(t.type || "").toLowerCase();
+    if (tag === "select" || tag === "option" || tag === "textarea" || (tag === "input" && ["checkbox", "radio", "submit", "button", "image", "reset"].indexOf(type) < 0)) return;
+    if (tag === "input" && (type === "checkbox" || type === "radio")) { recordStep({ action: t.checked ? "check" : "uncheck", selector: stepSelector(t) }, textOf(t.closest("label") || t)); return; }
+    var target = t.closest("a,button,[role=button],[role=tab],[role=option],[role=menuitem],input[type=submit],summary,label,[onclick]") || t;
+    recordStep({ action: "click", selector: stepSelector(target) }, textOf(target));
+    if (target.closest("a[href]")) { event.preventDefault(); }
+  }
+  document.addEventListener("change", function (event) {
+    if (!recording || ours(event.target)) return;
+    var t = event.target;
+    if (!t || t.nodeType !== 1) return;
+    var tag = t.tagName.toLowerCase(), type = String(t.type || "").toLowerCase();
+    if (tag === "select") { recordStep({ action: "select", selector: stepSelector(t), value: String(t.value).slice(0, 200) }, t.options && t.selectedIndex >= 0 ? textOf(t.options[t.selectedIndex]) : ""); return; }
+    if ((tag === "input" && ["checkbox", "radio", "submit", "button", "image", "reset", "file"].indexOf(type) < 0) || tag === "textarea") {
+      if (type === "password") { send({ type: "step-note", text: "Password fields are never recorded." }); return; }
+      recordStep({ action: "type", selector: stepSelector(t), text: String(t.value).replace(/[\r\n]+/g, " ").slice(0, 200) });
+    }
+  }, true);
+
   document.addEventListener("click", function (event) {
     if (swallowClick) { swallowClick = false; event.preventDefault(); event.stopPropagation(); return; }
+    if (ours(event.target)) { event.preventDefault(); event.stopPropagation(); return; }
+    if (waitPick) {
+      event.preventDefault();
+      event.stopPropagation();
+      var waited = event.target && event.target.closest ? event.target.closest(BLOCKS) || event.target : null;
+      waitPick = false;
+      setPicking(picking);
+      if (waited) send({ type: "waitfor", selector: stepSelector(waited), label: labelFor(waited) });
+      return;
+    }
+    if (recording) { recordClick(event); return; }
     if (picking) {
       event.preventDefault();
       event.stopPropagation();
       var target = event.target && event.target.closest ? event.target.closest(BLOCKS) : null;
-      if (target) report(target, linksIn(target), "pick");
+      if (target && target !== document.body) pickArea(target);
       return;
     }
     var link = linkOf(event.target);
@@ -7269,47 +7575,77 @@ function exploreBridge(token, live) {
     if (url) send({ type: "click", url: url, text: textOf(link), shift: !!(event.shiftKey || shift) });
   }, true);
   ["auxclick", "dragstart"].forEach(function (name) {
-    document.addEventListener(name, function (event) { if (linkOf(event.target) || drag) event.preventDefault(); }, true);
+    document.addEventListener(name, function (event) { if (linkOf(event.target) || gesture) event.preventDefault(); }, true);
   });
   document.addEventListener("submit", function (event) { event.preventDefault(); }, true);
-  // Shift+drag draws a box: the links inside it and the part of the page that
-  // holds them are reported. Shift+mousedown would otherwise select text.
-  document.addEventListener("mousedown", function (event) {
-    if (!event.shiftKey || event.button !== 0) return;
+  document.addEventListener("pointerdown", function (event) {
+    if (event.button !== 0) return;
+    var t = event.target;
+    while (t && t.nodeType !== 1) t = t.parentNode;
+    if (t && ours(t)) {
+      var box = t.closest(".cs-area-box");
+      var id = box ? Number(box.getAttribute("data-area")) : 0;
+      if (!id || !areas[id]) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (t.classList.contains("cs-area-x")) { removeArea(id); send({ type: "area-remove", id: id }); return; }
+      var handle = t.getAttribute("data-h");
+      var start = { x: event.clientX + scrollX, y: event.clientY + scrollY };
+      var r = areas[id].rect;
+      startGesture({ mode: handle ? "resize" : "move", handle: handle || "", id: id, start: start, client: { x: event.clientX, y: event.clientY }, rect0: { x: r.x, y: r.y, w: r.w, h: r.h }, rect: r, moved: false }, event);
+      root.classList.add("cs-drawing");
+      return;
+    }
+    if (!(event.shiftKey || boxing) || picking || recording || waitPick) return;
     event.preventDefault();
-    drag = { x: event.pageX, y: event.pageY, moved: false, box: null };
+    startGesture({ mode: "draw", start: { x: event.clientX + scrollX, y: event.clientY + scrollY }, client: { x: event.clientX, y: event.clientY }, moved: false, box: null }, event);
   }, true);
-  document.addEventListener("mousemove", function (event) {
+  document.addEventListener("pointermove", function (event) {
     if (!!event.shiftKey !== shift) setShift(event.shiftKey);
-    if (picking) {
-      var block = event.target && event.target.closest ? event.target.closest(BLOCKS) : null;
-      setHover(block && block !== document.body ? block : null);
+    if (!gesture) {
+      if (picking || waitPick) {
+        var block = event.target && event.target.closest && !ours(event.target) ? event.target.closest(BLOCKS) : null;
+        setHover(block && block !== document.body ? block : null);
+      }
+      return;
     }
-    if (!drag) return;
-    if (!drag.moved && Math.abs(event.pageX - drag.x) + Math.abs(event.pageY - drag.y) < 8) return;
-    if (!drag.moved) {
-      drag.moved = true;
-      drag.box = document.createElement("div");
-      drag.box.className = "cs-drag-box";
-      document.body.appendChild(drag.box);
+    gesture.client = { x: event.clientX, y: event.clientY };
+    follow();
+  }, true);
+  // The wheel (or a trackpad) scrolls the page while a box is being drawn or resized.
+  window.addEventListener("scroll", function () { if (gesture) follow(); }, true);
+  function finish(cancel) {
+    var g = gesture;
+    if (!g) return;
+    endGesture();
+    if (g.mode === "draw") {
+      if (!g.moved) return;
+      if (g.box && g.box.parentNode) g.box.parentNode.removeChild(g.box);
+      swallowClick = true;
+      setTimeout(function () { swallowClick = false; }, 0);
+      if (!cancel && g.rect && g.rect.w >= 6 && g.rect.h >= 6) addArea(g.rect, "drag");
+      return;
     }
-    var s = drag.box.style;
-    s.left = Math.min(drag.x, event.pageX) + "px";
-    s.top = Math.min(drag.y, event.pageY) + "px";
-    s.width = Math.abs(event.pageX - drag.x) + "px";
-    s.height = Math.abs(event.pageY - drag.y) + "px";
-  }, true);
-  document.addEventListener("mouseup", function (event) {
-    if (!drag) return;
-    var moved = drag.moved;
-    if (moved) { finishDrag({ x: event.pageX, y: event.pageY }); swallowClick = true; setTimeout(function () { swallowClick = false; }, 0); }
-    drag = null;
-  }, true);
+    var area = areas[g.id];
+    if (!area) return;
+    if (cancel || !g.moved) { place(area.box, area.rect); return; }
+    swallowClick = true;
+    setTimeout(function () { swallowClick = false; }, 0);
+    area.rect = g.rect;
+    area.fixed = null;
+    measure(g.id, "drag");
+  }
+  document.addEventListener("pointerup", function () { finish(false); }, true);
+  document.addEventListener("pointercancel", function () { finish(true); }, true);
   document.addEventListener("keydown", function (event) {
     if (event.key === "Shift") setShift(true);
+    if (recording && event.key === "Enter" && event.target && event.target.tagName === "INPUT" && String(event.target.type || "").toLowerCase() !== "password") {
+      recordStep({ action: "type", selector: stepSelector(event.target), text: String(event.target.value).slice(0, 200) });
+      recordStep({ action: "press", key: "Enter", selector: stepSelector(event.target) });
+    }
     if (event.key === "Escape") {
-      if (drag && drag.box && drag.box.parentNode) drag.box.parentNode.removeChild(drag.box);
-      drag = null;
+      if (gesture) { finish(true); return; }
+      if (waitPick) { waitPick = false; setPicking(picking); send({ type: "waitoff" }); return; }
       if (picking) { setPicking(false); send({ type: "pickoff" }); } else send({ type: "escape" });
     }
   }, true);
@@ -7348,10 +7684,32 @@ function exploreBridge(token, live) {
       setShift(data.on);
     } else if (data.type === "pick") {
       setPicking(data.on);
+    } else if (data.type === "box") {
+      boxing = !!data.on;
+      root.classList.toggle("cs-boxing", boxing);
+    } else if (data.type === "record") {
+      recording = !!data.on;
+      root.classList.toggle("cs-recording", recording);
+    } else if (data.type === "waitpick") {
+      waitPick = !!data.on;
+      setPicking(picking);
     } else if (data.type === "rules") {
       markRules(data.include, data.ignore);
     } else if (data.type === "area-clear") {
-      clearAreas(data.id ? Number(data.id) : 0);
+      removeArea(data.id ? Number(data.id) : 0);
+    } else if (data.type === "area-labels") {
+      var labels = data.labels || {};
+      Object.keys(areas).forEach(function (id) {
+        var num = areas[id].box.querySelector(".cs-area-num");
+        if (num) num.textContent = labels[id] ? String(labels[id]) : "";
+      });
+    } else if (data.type === "area-show") {
+      var shown = areas[Number(data.id)];
+      if (!shown) return;
+      try { scrollTo({ top: Math.max(0, shown.rect.y - 60), behavior: "smooth" }); } catch (e) { scrollTo(0, Math.max(0, shown.rect.y - 60)); }
+      shown.box.classList.remove("cs-flash");
+      void shown.box.offsetWidth;
+      shown.box.classList.add("cs-flash");
     } else if (data.type === "locate") {
       var target = document.querySelector('[data-cs-link="' + Number(data.index) + '"]');
       if (!target && data.url) {
@@ -7398,8 +7756,7 @@ function exploreBridge(token, live) {
       if (!url || seen[url]) continue;
       seen[url] = 1;
       var chrome = !!(anchors[i].closest("header, nav, footer, [role=navigation], [role=banner], [role=contentinfo]") && !anchors[i].closest("main, article, [role=main]"));
-      var heading = "";
-      out.push({ url: url, text: textOf(anchors[i]), section: heading, chrome: chrome });
+      out.push({ url: url, text: textOf(anchors[i]), section: "", chrome: chrome });
     }
     send({ type: "links", links: out });
   }
@@ -7418,12 +7775,12 @@ function exploreRandom(bytes) {
   (window.crypto || {}).getRandomValues ? window.crypto.getRandomValues(values) : values.forEach((_, i) => { values[i] = Math.floor(Math.random() * 256); });
   return Array.from(values, value => value.toString(16).padStart(2, "0")).join("");
 }
-function exploreDocument(html, token, nonce) {
+function exploreDocument(html, token, nonce, kind) {
   const policy = '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'nonce-' + nonce + '\'; ' +
     "style-src * data: blob: 'unsafe-inline'; img-src * data: blob:; font-src * data:; media-src * data: blob:; connect-src 'none'; " +
     "frame-src 'none'; child-src 'none'; worker-src 'none'; object-src 'none'; form-action 'none'; base-uri 'none'\">";
   const style = exploreFrameStyle();
-  const script = '<script nonce="' + nonce + '">(' + exploreBridge.toString() + ")(" + JSON.stringify(token) + ", false);<\/script>";
+  const script = '<script nonce="' + nonce + '">(' + exploreBridge.toString() + ")(" + JSON.stringify(token) + ", false, " + JSON.stringify(kind === "reader" ? "reader" : "copy") + ");<\/script>";
   // Only the policy written here may apply: the reader's own (script-src 'none') would block the bridge.
   let doc = String(html || "").replace(/<meta\b[^>]*http-equiv\s*=\s*["']?content-security-policy["']?[^>]*>/gi, "");
   doc = /<head\b[^>]*>/i.test(doc) ? doc.replace(/<head\b[^>]*>/i, match => match + policy) : policy + doc;
@@ -7432,18 +7789,34 @@ function exploreDocument(html, token, nonce) {
   return doc;
 }
 function exploreFrameStyle() {
+  const A = "#e8890a";
   return "<style>[data-cs-link]{cursor:pointer}" +
-    "[data-cs-picked]{outline:2px solid #e8890a!important;outline-offset:2px;background:rgba(232,137,10,.16)!important;border-radius:2px}" +
+    "[data-cs-picked]{outline:2px solid " + A + "!important;outline-offset:2px;background:rgba(232,137,10,.16)!important;border-radius:2px}" +
     "html.cs-shift [data-cs-link],html.cs-select [data-cs-link]{cursor:copy!important;outline:1px dashed rgba(232,137,10,.85);outline-offset:2px}" +
     "@keyframes csFlash{0%,100%{box-shadow:0 0 0 0 rgba(232,137,10,0)}30%{box-shadow:0 0 0 6px rgba(232,137,10,.45)}}" +
     ".cs-flash{animation:csFlash 1.2s ease 2}" +
-    ".cs-drag-box{position:absolute;z-index:2147483646;pointer-events:none;border:1.5px dashed #e8890a;background:rgba(232,137,10,.10);border-radius:3px}" +
     "html.cs-picking,html.cs-picking *{cursor:crosshair!important}" +
+    "html.cs-boxing body,html.cs-boxing body *{cursor:crosshair!important}" +
+    "html.cs-drawing,html.cs-drawing *{user-select:none!important;-webkit-user-select:none!important}" +
+    "html.cs-boxing{touch-action:none}" +
     "[data-cs-hover]{outline:2px dashed #3d7bd9!important;outline-offset:2px;background:rgba(61,123,217,.07)!important}" +
     "[data-cs-watch]{outline:2px solid #2f9e6b!important;outline-offset:4px;box-shadow:0 0 0 9999px rgba(20,24,30,.18)!important;position:relative;z-index:1}" +
     "[data-cs-ignore]{opacity:.35!important;filter:grayscale(1)!important;outline:1px dashed #c0392b!important}" +
-    "[data-cs-area]{outline:2px solid #e8890a!important;outline-offset:3px;background-color:rgba(232,137,10,.06)!important}" +
-    ".cs-area-tag{position:absolute;z-index:2147483645;pointer-events:none;padding:1px 6px;border-radius:3px;background:#e8890a;color:#fff;font:600 11px/1.5 system-ui,sans-serif}</style>";
+    "[data-cs-area]{outline:1px dotted rgba(232,137,10,.9)!important;outline-offset:1px}" +
+    ".cs-area-layer{position:absolute!important;left:0!important;top:0!important;width:0!important;height:0!important;margin:0!important;padding:0!important;border:0!important;z-index:2147483640!important;pointer-events:none!important;display:block!important}" +
+    ".cs-area-box{position:absolute!important;display:block!important;box-sizing:border-box!important;margin:0!important;padding:0!important;border:2px solid " + A + "!important;border-radius:3px!important;background:rgba(232,137,10,.07)!important;pointer-events:none!important;box-shadow:0 0 0 1px rgba(255,255,255,.7)!important}" +
+    ".cs-area-box.is-drawing{border-style:dashed!important;background:rgba(232,137,10,.12)!important}" +
+    ".cs-area-box>span{position:absolute!important;display:block!important;box-sizing:border-box!important;pointer-events:auto!important;margin:0!important}" +
+    ".cs-area-num{left:-2px!important;top:-21px!important;min-width:20px!important;height:19px!important;padding:0 6px!important;border-radius:3px 3px 0 0!important;background:" + A + "!important;color:#fff!important;font:600 11px/19px system-ui,sans-serif!important;text-align:center!important;cursor:move!important}" +
+    ".cs-area-num:empty{display:none!important}" +
+    ".cs-area-x{right:-2px!important;top:-21px!important;width:20px!important;height:19px!important;border-radius:3px 3px 0 0!important;background:" + A + "!important;color:#fff!important;font:600 14px/19px system-ui,sans-serif!important;text-align:center!important;cursor:pointer!important}" +
+    ".cs-area-box.is-drawing>span{display:none!important}" +
+    ".cs-h{width:11px!important;height:11px!important;border:2px solid " + A + "!important;border-radius:2px!important;background:#fff!important}" +
+    ".cs-h-n{top:-6px!important;left:calc(50% - 5px)!important;cursor:ns-resize!important}.cs-h-s{bottom:-6px!important;left:calc(50% - 5px)!important;cursor:ns-resize!important}" +
+    ".cs-h-e{right:-6px!important;top:calc(50% - 5px)!important;cursor:ew-resize!important}.cs-h-w{left:-6px!important;top:calc(50% - 5px)!important;cursor:ew-resize!important}" +
+    ".cs-h-ne{right:-6px!important;top:-6px!important;cursor:nesw-resize!important}.cs-h-sw{left:-6px!important;bottom:-6px!important;cursor:nesw-resize!important}" +
+    ".cs-h-nw{left:-6px!important;top:-6px!important;cursor:nwse-resize!important}.cs-h-se{right:-6px!important;bottom:-6px!important;cursor:nwse-resize!important}" +
+    "html.cs-recording body{box-shadow:inset 0 0 0 3px #d8432f!important}</style>";
 }
 function explorePost(message) {
   const frame = $("exploreFrame");
@@ -7451,10 +7824,14 @@ function explorePost(message) {
   try { frame.contentWindow.postMessage(Object.assign({ cs: "cs-explore", token: state.add.frameToken }, message), "*"); } catch (_) {}
 }
 function exploreSync() {
-  explorePost({ type: "mode", select: state.add.selectMode });
+  const a = state.add;
+  explorePost({ type: "mode", select: a.selectMode });
   exploreMarkPicked();
   exploreSendRules();
-  exploreSetPicking(state.add.picking);
+  exploreSetPicking(a.picking);
+  explorePost({ type: "box", on: a.boxing });
+  explorePost({ type: "record", on: a.recording && a.view === "live" });
+  explorePost({ type: "waitpick", on: a.waitPick && a.recording });
 }
 function exploreShift(on) {
   if (state.add.step === "explore") explorePost({ type: "shift", on: !!on });
@@ -7515,6 +7892,11 @@ window.addEventListener("message", event => {
   else if (data.type === "render") exploreRenderReport(data);
   else if (data.type === "links" && state.add.view === "live") exploreLiveLinks(data.links);
   else if (data.type === "pickoff") exploreSetPicking(false);
+  else if (data.type === "area-remove") exploreAreaRemove(data.id, true);
+  else if (data.type === "step" && state.add.recording && data.step && typeof data.step === "object") exploreStepAdd(data.step, data.label);
+  else if (data.type === "step-note") showToast(String(data.text || "").slice(0, 200));
+  else if (data.type === "waitfor" && typeof data.selector === "string") { state.add.waitPick = false; exploreStepAdd({ action: "wait_for", selector: data.selector.slice(0, 200), seconds: 10 }, data.label); }
+  else if (data.type === "waitoff") { state.add.waitPick = false; renderExploreSide(); }
   // Escape inside the page closes the dialog, as it does anywhere else in it; the draft is kept.
   else if (data.type === "escape" && $("addMonitorDialog").open) $("addMonitorDialog").close();
 });
@@ -7566,6 +7948,8 @@ function addPickRow(item, options) {
   else if (o.stopped) tags.push('<span class="tag is-irrelevant">Monitoring stopped</span>');
   else if (o.covered) tags.push('<span class="tag is-rule">In your document rule</span>');
   if (o.part) tags.push('<span class="tag is-part">' + esc(o.part) + "</span>");
+  const steps = exploreStepsFor(item.key);
+  if (steps.actions.length || steps.visual) tags.push('<span class="tag is-part">' + esc(steps.actions.length ? plural(steps.actions.length, "recorded step", "recorded steps") : "Screenshots compared") + "</span>");
   if (o.older) tags.push('<span class="tag is-older">Older version</span>');
   (o.reasons || []).filter(reason => !/ file$/.test(reason)).slice(0, 2).forEach(reason => tags.push('<span class="reason">' + esc(reason) + "</span>"));
   return '<div class="link-pick' + (on && !o.locked ? " is-on" : "") + '" data-link-row="' + esc(item.key) + '">' +
@@ -7586,12 +7970,20 @@ function renderExploreSide() {
   $("exploreSelectMode").checked = a.selectMode;
   const pickButton = document.querySelector("[data-explore-pick]");
   if (pickButton) { pickButton.disabled = !a.page; pickButton.setAttribute("aria-pressed", String(a.picking)); pickButton.textContent = a.picking ? "Picking… (Esc)" : "Pick a part"; }
-  $("exploreHint").innerHTML = a.picking
+  const boxButton = document.querySelector("[data-explore-box]");
+  if (boxButton) { boxButton.disabled = !a.page || a.recording; boxButton.setAttribute("aria-pressed", String(a.boxing)); }
+  const recordButton = document.querySelector("[data-explore-record]");
+  if (recordButton) { recordButton.disabled = !a.page; recordButton.setAttribute("aria-pressed", String(a.recording)); recordButton.textContent = a.recording ? "Stop recording" : "Record steps"; }
+  $("exploreHint").innerHTML = a.recording
+    ? "Recording: use the page as on the site. Each click, choice and typed value becomes a step; links are written down, not opened."
+    : a.picking
     ? "Click any part of the page — a table, a list, a section — to select it."
+    : a.boxing
+    ? "Drag on the page to draw a box around an area. Drag its edges to resize it, its number to move it."
     : a.selectMode
     ? "Tap selects is on: clicking or tapping a link selects it. Turn it off to browse."
     : coarsePointer && coarsePointer.matches ? "Tap a link to open it here. Turn on <strong>Tap selects</strong> to select links, or use <strong>Pick a part</strong>."
-      : "<kbd>Shift</kbd>-click a link to select it. <kbd>Shift</kbd>-drag to box an area (again for more areas). Click a link to open it here.";
+      : "<kbd>Shift</kbd>-click a link to select it. <kbd>Shift</kbd>-drag (or <strong>Box an area</strong>) to draw a box you can resize. Click a link to open it here.";
   const thisPage = a.page ? a.picked.has(L.urlKey(a.page.url)) : false;
   const thisButton = document.querySelector("[data-explore-this]");
   thisButton.setAttribute("aria-pressed", String(thisPage));
@@ -7652,6 +8044,7 @@ function exploreSendRules() {
 function exploreSetPicking(on) {
   const a = state.add;
   a.picking = !!on;
+  if (a.picking && a.boxing) exploreSetBoxing(false);
   explorePost({ type: "pick", on: a.picking });
   const button = document.querySelector("[data-explore-pick]");
   if (button) {
@@ -7725,6 +8118,9 @@ function exploreToolsHtml() {
   if (!a.page) return "";
   const key = addPageKey();
   const parts = [];
+  // Steps recorded for this page (what a scan does before reading it).
+  const steps = exploreStepsHtml();
+  if (steps) parts.push(steps);
   // The parts of the page boxed or picked so far (several at once).
   const areas = exploreAreasHere();
   if (areas.length) parts.push(exploreAreasHtml(areas));
@@ -7793,50 +8189,78 @@ function exploreSuggestedHtml() {
       '<button class="text-button" type="button" data-older-toggle>' + (a.showOlder ? "Hide" : "Show") + "</button></div>" +
       (a.showOlder ? suggestions.older.map(row).join("") : '<p class="note-strip">Earlier years and superseded copies of the documents above are held back.</p>') : "");
 }
-/* ---------- Selected areas: Shift-drag or Pick a part, as many as needed ---------- */
-
+/* ---------- Selected areas: boxes drawn with Shift-drag (or "Box an area"), or Pick a part ----------
+ * Each area is a box on the page that can be resized from its edges and
+ * corners and moved by its number; the frame reports the links inside it and
+ * the part of the page that holds them. The dashboard numbers them 1, 2, 3 in
+ * the order they were made, and numbers again when one is removed.
+ */
 const AREA_LIMIT = 12;
 function exploreAreasHere() {
   const a = state.add;
   const key = addPageKey();
   return (a.areas || []).filter(area => area.pageKey === key);
 }
+function exploreAreaNumber(id) {
+  return exploreAreasHere().findIndex(area => area.id === Number(id)) + 1;
+}
+function exploreAreaLabels() {
+  const labels = {};
+  exploreAreasHere().forEach((area, index) => { labels[area.id] = index + 1; });
+  explorePost({ type: "area-labels", labels });
+}
 function exploreAreaFree(area) {
   const a = state.add;
   return (area.indexes || []).filter(index => a.page.links[index] && !a.picked.has(L.urlKey(a.page.links[index].url)));
 }
-function exploreAreasHtml(areas) {
+// Can the scan find this part? It reads the page's own HTML without script:
+// a part drawn by script (live view) or one from the reading view (a layout
+// of the reader's own) has no place there.
+function exploreSelectorProblem(selector) {
   const a = state.add;
+  if (!selector) return a.view === "reader" ? "Watching or ignoring a part needs the Page or Live view."
+    : "Spans several parts of the page. To watch it, draw it around one table, list or section.";
+  if (a.view !== "live" || !a.page || typeof DOMParser === "undefined") return "";
+  try {
+    if (!a.copyDoc || a.copyDoc.page !== a.page) a.copyDoc = { page: a.page, doc: new DOMParser().parseFromString(a.page.html || "", "text/html") };
+    if (a.copyDoc.doc.querySelector(selector)) return "";
+  } catch (_) {
+    return "";
+  }
+  return "The site draws this part with script, and the scan reads the page without it, so it can't be watched as a part.";
+}
+function exploreAreasHtml(areas) {
   const allFree = new Set();
   areas.forEach(area => exploreAreaFree(area).forEach(index => allFree.add(index)));
-  const selectors = areas.map(area => area.selector).filter(Boolean);
+  const usable = areas.filter(area => area.selector && !area.problem);
   const several = areas.length > 1;
-  const one = area => {
+  const row = (area, index) => {
     const free = exploreAreaFree(area);
-    return '<div class="area-item" data-area-id="' + area.id + '">' +
-      '<div class="area-item-head"><span class="area-num" aria-hidden="true">' + area.id + '</span><strong class="area-label">' + esc(area.label || "Part of the page") + "</strong>" +
-        '<span class="area-count">' + plural((area.indexes || []).length, "link", "links") + "</span>" +
-        '<button class="area-remove" type="button" data-area-remove="' + area.id + '" aria-label="Remove this area" title="Remove this area">×</button></div>' +
-      (area.text ? '<p class="area-text">' + esc(area.text) + (area.words > 36 ? "…" : "") + "</p>" : "") +
-      '<div class="smart-actions">' +
-        (area.indexes && area.indexes.length ? '<button class="btn' + (several ? "" : " btn-primary") + '" type="button" data-area-select="' + area.id + '"' + (free.length ? "" : " disabled") + ">" +
-          (free.length ? "Select its " + plural(free.length, "link", "links") : "Its links are selected") + "</button>" : "") +
-        (area.selector ? '<button class="btn" type="button" data-area-watch="' + area.id + '" title="Compare only this part when the page is checked">Watch only this part</button>' +
-          '<button class="btn" type="button" data-area-ignore="' + area.id + '" title="Leave this part out when the page is checked (menus, banners, dates that change every day)">Ignore this part</button>' : "") +
+    const links = (area.indexes || []).length;
+    const watchTitle = area.problem || "Compare only this part when the page is checked";
+    return '<div class="area-row" data-area-id="' + area.id + '">' +
+      '<button class="area-num" type="button" data-area-show="' + area.id + '" title="Show area ' + (index + 1) + ' on the page">' + (index + 1) + "</button>" +
+      '<div class="area-main" title="' + esc(area.text || "") + '"><span class="area-label">' + esc(area.label || "Part of the page") + "</span>" +
+        '<span class="area-meta">' + esc(plural(links, "link", "links") + (area.text ? " · " + area.text : "")) + "</span></div>" +
+      '<button class="area-remove" type="button" data-area-remove="' + area.id + '" aria-label="Remove area ' + (index + 1) + '" title="Remove this area">×</button>' +
+      '<div class="area-acts">' +
+        (links ? '<button class="btn area-act" type="button" data-area-select="' + area.id + '" title="Select the links in this area"' + (free.length ? "" : " disabled") + ">" + (free.length ? "Select " + free.length : "Selected ✓") + "</button>" : "") +
+        '<button class="btn area-act" type="button" data-area-watch="' + area.id + '" title="' + esc(watchTitle) + '"' + (area.selector && !area.problem ? "" : " disabled") + ">Watch only</button>" +
+        '<button class="btn area-act" type="button" data-area-ignore="' + area.id + '" title="' + esc(area.problem || "Leave this part out when the page is checked (menus, banners, dates that change every day)") + '"' + (area.selector && !area.problem ? "" : " disabled") + ">Ignore</button>" +
       "</div>" +
-      (area.selector ? '<code class="area-selector" title="CSS selector">' + esc(area.selector) + "</code>" : "") + "</div>";
+      (area.problem ? '<p class="area-problem">' + esc(area.problem) + "</p>" : "") + "</div>";
   };
   return '<section class="smart-card area-card" aria-label="Selected areas">' +
-    '<div class="smart-card-head"><span class="smart-kicker">' + (several ? areas.length + " selected areas" : "Selected area") + "</span>" +
-      '<button class="text-button" type="button" data-area-clear aria-label="Clear every selected area">' + (several ? "Clear all" : "Clear") + "</button></div>" +
-    (several ? '<div class="smart-actions area-all">' +
-      '<button class="btn btn-primary" type="button" data-area-select="all"' + (allFree.size ? "" : " disabled") + ">" +
-        (allFree.size ? "Select links in all " + areas.length + " areas (" + allFree.size + ")" : "Their links are selected") + "</button>" +
-      (selectors.length > 1 ? '<button class="btn" type="button" data-area-watch="all" title="Compare only these parts when the page is checked">Watch only these ' + selectors.length + " parts</button>" +
-        '<button class="btn" type="button" data-area-ignore="all" title="Leave these parts out when the page is checked">Ignore these ' + selectors.length + " parts</button>" : "") +
+    '<div class="smart-card-head"><span class="smart-kicker">' + (several ? areas.length + " areas" : "1 area") + "</span>" +
+      '<button class="text-button" type="button" data-area-clear>' + (several ? "Clear all" : "Clear") + "</button></div>" +
+    areas.map(row).join("") +
+    (several ? '<div class="area-all">' +
+      '<button class="btn area-act is-strong" type="button" data-area-select="all"' + (allFree.size ? "" : " disabled") + ">" +
+        (allFree.size ? "Select links in all " + areas.length + " (" + allFree.size + ")" : "All their links are selected") + "</button>" +
+      (usable.length > 1 ? '<button class="btn area-act" type="button" data-area-watch="all">Watch only these ' + usable.length + "</button>" +
+        '<button class="btn area-act" type="button" data-area-ignore="all">Ignore these ' + usable.length + "</button>" : "") +
       "</div>" : "") +
-    areas.map(one).join("") +
-    (several ? "" : '<p class="smart-note">Shift-drag again (or Pick a part) to add another area.</p>') +
+    '<p class="smart-note">Drag a box’s edges or corners to resize it, or its number to move it. Near the top or bottom of the page it scrolls for you.</p>' +
     "</section>";
 }
 function exploreAreaMessage(data) {
@@ -7848,24 +8272,34 @@ function exploreAreaMessage(data) {
     const index = exploreLinkIndexFor(link && link.url, link && link.text);
     if (index >= 0 && indexes.indexOf(index) < 0) indexes.push(index);
   });
-  const id = Number(data.id) || ((a.areas || []).reduce((max, area) => Math.max(max, area.id), 0) + 1);
-  const area = { id, pageKey: addPageKey(), indexes: indexes.slice(0, 2000), selector: String(data.selector || "").slice(0, 1000), label: String(data.label || "").slice(0, 120),
-    text: String(data.text || "").slice(0, 240), words: Number(data.words) || 0, how: data.how === "pick" ? "pick" : "drag" };
-  a.areas = (a.areas || []).filter(existing => existing.id !== id && !(area.selector && existing.selector === area.selector && existing.pageKey === area.pageKey));
-  a.areas.push(area);
-  while (a.areas.length > AREA_LIMIT) {
-    const dropped = a.areas.shift();
+  const id = Number(data.id);
+  if (!Number.isInteger(id) || id <= 0) return;
+  const selector = String(data.selector || "").slice(0, 1000);
+  const area = { id, pageKey: addPageKey(), indexes: indexes.slice(0, 2000), selector, problem: exploreSelectorProblem(selector),
+    label: String(data.label || "").slice(0, 120), text: String(data.text || "").slice(0, 240), words: Number(data.words) || 0, how: data.how === "pick" ? "pick" : "drag" };
+  a.areas = a.areas || [];
+  const at = a.areas.findIndex(existing => existing.id === id && existing.pageKey === area.pageKey);
+  // A box that was resized or moved keeps its place (and its number).
+  if (at >= 0) a.areas[at] = area; else a.areas.push(area);
+  while (exploreAreasHere().length > AREA_LIMIT) {
+    const dropped = exploreAreasHere()[0];
+    a.areas = a.areas.filter(existing => existing !== dropped);
     explorePost({ type: "area-clear", id: dropped.id });
   }
   if (a.picking) exploreSetPicking(false);
+  exploreAreaLabels();
   renderExploreSide();
-  const list = $("exploreList");
-  if (list) list.scrollTop = 0;
+  if (at < 0) {
+    const list = $("exploreList");
+    if (list) list.scrollTop = 0;
+  }
 }
-function exploreAreaRemove(id) {
+function exploreAreaRemove(id, fromFrame) {
   const a = state.add;
-  a.areas = (a.areas || []).filter(area => !(id === "all" || area.id === Number(id)));
-  explorePost({ type: "area-clear", id: id === "all" ? 0 : Number(id) });
+  const key = addPageKey();
+  a.areas = (a.areas || []).filter(area => !(area.pageKey === key && (id === "all" || area.id === Number(id))));
+  if (!fromFrame) explorePost({ type: "area-clear", id: id === "all" ? 0 : Number(id) });
+  exploreAreaLabels();
   renderExploreSide();
 }
 function exploreAreaAction(kind, which) {
@@ -7880,14 +8314,15 @@ function exploreAreaAction(kind, which) {
     exploreMarkPicked();
     renderExploreSide();
     addSaveDraft();
-    showToast(added ? plural(added, "link", "links") + " selected from " + (chosen.length > 1 ? chosen.length + " areas." : "the area.") : "Those links were already selected.");
+    showToast(added ? plural(added, "link", "links") + " selected from " + (chosen.length > 1 ? chosen.length + " areas." : "area " + exploreAreaNumber(chosen[0].id) + ".") : "Those links were already selected.");
     return;
   }
-  const selectors = chosen.map(area => area.selector).filter(Boolean);
-  if (!selectors.length) return;
+  const usable = chosen.filter(area => area.selector && !area.problem);
+  const selectors = Array.from(new Set(usable.map(area => area.selector)));
+  if (!selectors.length) { showToast(chosen[0].problem || "That area has no part of the page the scan can find."); return; }
   const key = addPageKey();
   const rules = addRulesFor(key);
-  const names = chosen.length > 1 ? chosen.length + " parts" : "“" + chosen[0].label + "”";
+  const names = usable.length > 1 ? usable.length + " areas" : "area " + exploreAreaNumber(usable[0].id) + " (" + usable[0].label + ")";
   if (kind === "watch") {
     // Several parts are watched together: a CSS selector list matches all of them.
     const combined = selectors.join(", ");
@@ -7905,10 +8340,147 @@ function exploreAreaAction(kind, which) {
     if (selectors.indexOf(rules.include) >= 0) rules.include = "";
     showToast(names.charAt(0).toUpperCase() + names.slice(1) + " will be left out when this page is checked.");
   }
-  chosen.forEach(area => explorePost({ type: "area-clear", id: area.id }));
-  a.areas = a.areas.filter(area => chosen.indexOf(area) < 0);
+  usable.forEach(area => explorePost({ type: "area-clear", id: area.id }));
+  a.areas = a.areas.filter(area => usable.indexOf(area) < 0);
+  exploreAreaLabels();
   addSetRules(key, rules);
   renderExploreSide();
+}
+function exploreSetBoxing(on) {
+  const a = state.add;
+  a.boxing = !!on;
+  if (a.boxing && a.picking) exploreSetPicking(false);
+  explorePost({ type: "box", on: a.boxing });
+  const button = document.querySelector("[data-explore-box]");
+  if (button) button.setAttribute("aria-pressed", String(a.boxing));
+}
+
+/* ---------- Recorded steps: what a scan does on the page before reading it ----------
+ * "Record steps" opens the live page (the site's own scripts) and writes down
+ * clicks, choices and typing as the steps a scan replays in a real browser
+ * (fetch_mode "browser", browser_actions; regmon/browser_actions.py). The page
+ * runs sealed off from the site, so a search may not answer here; the steps are
+ * still the ones the scan replays. Steps can also be pasted from the recorder
+ * bookmarklet used on the real site.
+ */
+const STEP_LIMIT = 20;
+function exploreStepsFor(key) {
+  const entry = state.add.steps && state.add.steps[key];
+  return entry && Array.isArray(entry.actions) ? entry : { actions: [], labels: [], visual: false };
+}
+function exploreStepsSet(key, entry) {
+  const a = state.add;
+  a.steps = a.steps || {};
+  if (!entry.actions.length && !entry.visual) delete a.steps[key];
+  else a.steps[key] = { actions: entry.actions.slice(0, STEP_LIMIT), labels: (entry.labels || []).slice(0, STEP_LIMIT), visual: !!entry.visual, url: entry.url || (a.page ? a.page.url : "") };
+  addSaveDraft();
+}
+function exploreStepAdd(step, label) {
+  const a = state.add;
+  if (!a.page) return;
+  const key = addPageKey();
+  const entry = exploreStepsFor(key);
+  const actions = entry.actions.slice(), labels = (entry.labels || []).slice();
+  const last = actions[actions.length - 1];
+  // Typing into the same field is one step.
+  if (last && step.action === "type" && last.action === "type" && last.selector === step.selector) { actions.pop(); labels.pop(); }
+  if (actions.length >= STEP_LIMIT) { showToast("A page can have at most " + STEP_LIMIT + " steps."); return; }
+  const checked = L.validateBrowserSteps(actions.concat([step]));
+  if (checked.error) { showToast(checked.error); return; }
+  actions.push(checked.steps[checked.steps.length - 1]);
+  labels.push(String(label || ""));
+  exploreStepsSet(key, { actions, labels, visual: entry.visual, url: a.page.url });
+  exploreStepsSelectPage();
+  renderExploreSide();
+}
+// A page with steps is monitored as itself: it is selected.
+function exploreStepsSelectPage() {
+  const a = state.add;
+  if (!a.page) return;
+  const previous = a.at > 0 ? a.pages.get(L.urlKey(a.history[a.at - 1])) : null;
+  const pageItem = addItem({ url: a.page.url, title: a.page.title, parentUrl: previous ? previous.url : "", parentTitle: previous ? previous.title : "" });
+  if (pageItem && !a.picked.has(pageItem.key)) addToggle(pageItem, true);
+}
+function exploreSetRecording(on) {
+  const a = state.add;
+  if (!a.page) return;
+  a.recording = !!on;
+  if (a.recording) {
+    if (a.picking) exploreSetPicking(false);
+    if (a.boxing) exploreSetBoxing(false);
+    if (a.view !== "live") {
+      a.viewByHost[exploreHost(a.page.url)] = "live";
+      exploreRender("live", "Recording runs on the live page: use it as you would on the site. Clicks, choices and typing become the steps each scan replays before reading the page.");
+    }
+  }
+  explorePost({ type: "record", on: a.recording });
+  if (!a.recording) explorePost({ type: "waitpick", on: false });
+  a.tab = a.recording ? "selected" : a.tab;
+  renderExploreSide();
+}
+function exploreStepsHtml() {
+  const a = state.add;
+  if (!a.page) return "";
+  const key = addPageKey();
+  const entry = exploreStepsFor(key);
+  if (!a.recording && !entry.actions.length && !entry.visual && !a.stepsOpen) return "";
+  const labels = entry.labels || [];
+  const rows = entry.actions.map((step, index) => '<li class="step-row"><span class="step-n">' + (index + 1) + '</span><span class="step-text" title="' + esc(step.selector || "") + '">' +
+    esc(["click", "check", "uncheck", "wait_for"].indexOf(step.action) >= 0 && labels[index] ? L.describeBrowserStep(step).replace(step.selector, "“" + labels[index] + "”") : L.describeBrowserStep(step)) + "</span>" +
+    '<button class="area-remove" type="button" data-step-remove="' + index + '" aria-label="Remove step ' + (index + 1) + '">×</button></li>').join("");
+  return '<section class="smart-card steps-card' + (a.recording ? " is-recording" : "") + '" aria-label="Recorded steps">' +
+    '<div class="smart-card-head"><span class="smart-kicker">' + (a.recording ? '<i class="rec-dot" aria-hidden="true"></i>Recording · ' : "Steps before reading · ") + entry.actions.length + "</span>" +
+      '<button class="text-button" type="button" data-step-record>' + (a.recording ? "Stop" : "Record more") + "</button></div>" +
+    (rows ? '<ol class="step-list">' + rows + "</ol>" : '<p class="smart-note">' + (a.recording ? "Use the page: choose, type and click as you would to reach what should be monitored." : "No steps yet.") + "</p>") +
+    '<div class="area-acts">' +
+      '<button class="btn area-act" type="button" data-step-waitpick' + (a.waitPick ? ' aria-pressed="true"' : "") + ">" + (a.waitPick ? "Click the part… (Esc)" : "+ Wait for a part") + "</button>" +
+      '<button class="btn area-act" type="button" data-step-wait>+ Wait 2 s</button>' +
+      (entry.actions.length ? '<button class="btn area-act" type="button" data-step-undo>Undo</button><button class="btn area-act" type="button" data-step-clear>Clear</button>' : "") +
+    "</div>" +
+    '<label class="field-check step-visual"><input type="checkbox" data-step-visual' + (entry.visual ? " checked" : "") + "> Also compare screenshots of the page</label>" +
+    '<p class="smart-note">The page here runs sealed off from the site, so a search may not answer; each scan replays these steps in a real browser, then reads the page.</p>' +
+    '<details class="step-paste"><summary>Record on the real site instead</summary>' +
+      '<p class="smart-note">For portals that need a sign-in or several pages: drag <a class="recorder-link" href="' + esc(L.recorderBookmarklet()) + '" data-step-bookmarklet>ChangeSentinel recorder</a> to your bookmarks bar, use the portal, click it, then <em>Copy steps</em> and paste them here.</p>' +
+      '<textarea class="field-input is-code" id="stepPaste" rows="3" spellcheck="false" placeholder="Paste the copied steps"></textarea>' +
+      '<div class="area-acts"><button class="btn area-act" type="button" data-step-paste>Use these steps</button></div></details>' +
+    "</section>";
+}
+function exploreStepAction(target) {
+  const a = state.add;
+  const key = addPageKey();
+  const entry = exploreStepsFor(key);
+  if (target.closest("[data-step-record]")) return exploreSetRecording(!a.recording);
+  const remove = target.closest("[data-step-remove]");
+  if (remove) {
+    const index = Number(remove.dataset.stepRemove);
+    const actions = entry.actions.slice(), labels = (entry.labels || []).slice();
+    actions.splice(index, 1); labels.splice(index, 1);
+    exploreStepsSet(key, { actions, labels, visual: entry.visual });
+    return renderExploreSide();
+  }
+  if (target.closest("[data-step-undo]")) {
+    exploreStepsSet(key, { actions: entry.actions.slice(0, -1), labels: (entry.labels || []).slice(0, -1), visual: entry.visual });
+    return renderExploreSide();
+  }
+  if (target.closest("[data-step-clear]")) { exploreStepsSet(key, { actions: [], labels: [], visual: entry.visual }); return renderExploreSide(); }
+  if (target.closest("[data-step-wait]")) return exploreStepAdd({ action: "wait", seconds: 2 }, "");
+  if (target.closest("[data-step-waitpick]")) {
+    a.waitPick = !a.waitPick;
+    explorePost({ type: "waitpick", on: a.waitPick });
+    return renderExploreSide();
+  }
+  if (target.closest("[data-step-paste]")) {
+    const raw = ($("stepPaste") || {}).value || "";
+    let parsed;
+    try { parsed = JSON.parse(raw); } catch (_) { return showToast("Those steps are not valid JSON. Paste exactly what the recorder copied."); }
+    const checked = L.validateBrowserSteps(parsed);
+    if (checked.error) return showToast(checked.error);
+    exploreStepsSet(key, { actions: checked.steps, labels: [], visual: entry.visual });
+    exploreStepsSelectPage();
+    showToast(plural(checked.steps.length, "step", "steps") + " added for this page.");
+    return renderExploreSide();
+  }
+  if (target.closest("[data-step-bookmarklet]")) return showToast("Drag this link to your bookmarks bar, then click it on the portal you want to record.");
 }
 function exploreRuleInput() {
   const a = state.add;
@@ -8097,10 +8669,17 @@ function similarEntries(plan, scoreOf) {
 
 /* ---------- Confirm ---------- */
 
+// Each link carries the page it was found on (listed_on: its lineage is then
+// recorded every scan) and, for a page with recorded steps, those steps.
 function addRequestRows(items) {
   return items.map(item => {
     const rules = addRulesFor(item.key);
-    return { url: item.url, name: L.pickMonitorName(item), include_selector: rules.include, ignore_selectors: rules.ignore };
+    const row = { url: item.url, name: L.pickMonitorName(item), include_selector: rules.include, ignore_selectors: rules.ignore };
+    if (item.parentUrl && L.urlKey(item.parentUrl) !== item.key) row.listed_on = item.parentUrl;
+    const steps = exploreStepsFor(item.key);
+    if (steps.actions.length) row.browser_actions = steps.actions;
+    if (steps.visual) row.visual_compare = true;
+    return row;
   });
 }
 function addPlan() {
@@ -9443,6 +10022,14 @@ document.querySelector(".add-explore").addEventListener("click", event => {
   const tab = event.target.closest("[data-explore-tab]");
   if (tab) { a.tab = ["page", "suggested"].indexOf(tab.dataset.exploreTab) >= 0 ? tab.dataset.exploreTab : "selected"; return renderExploreSide(); }
   if (event.target.closest("[data-explore-pick]")) return exploreSetPicking(!a.picking), renderExploreSide();
+  if (event.target.closest("[data-explore-box]")) { exploreSetBoxing(!a.boxing); return renderExploreSide(); }
+  if (event.target.closest("[data-explore-record]")) return exploreSetRecording(!a.recording);
+  if (event.target.closest("[data-step-bookmarklet]")) event.preventDefault();
+  const visual = event.target.closest("input[data-step-visual]");
+  if (visual) { const key = addPageKey(); const entry = exploreStepsFor(key); exploreStepsSet(key, Object.assign({}, entry, { visual: visual.checked })); if (visual.checked) exploreStepsSelectPage(); return; }
+  if (event.target.closest("[data-step-record], [data-step-remove], [data-step-undo], [data-step-clear], [data-step-wait], [data-step-waitpick], [data-step-paste], [data-step-bookmarklet]")) return exploreStepAction(event.target);
+  const areaShow = event.target.closest("[data-area-show]");
+  if (areaShow) return explorePost({ type: "area-show", id: Number(areaShow.dataset.areaShow) });
   if (event.target.closest("[data-area-clear]")) return exploreAreaRemove("all");
   const areaRemove = event.target.closest("[data-area-remove]");
   if (areaRemove) return exploreAreaRemove(areaRemove.dataset.areaRemove);

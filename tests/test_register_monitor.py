@@ -208,6 +208,32 @@ class TestRegisterMonitor(unittest.TestCase):
         self.assertEqual(len(saved), 2)
         self.assertEqual({source["name"] for source in saved}, {"One", "Two"})
 
+    def test_bulk_rows_carry_the_listing_page_and_recorded_steps(self):
+        steps = [{"action": "select", "selector": "#report", "value": "FFIEC 031"}, {"action": "click", "selector": "button#go"}]
+        rows = [
+            {"url": "https://www.example.com/forms/a.pdf", "name": "Form A", "listed_on": "https://www.example.com/forms"},
+            {"url": "https://www.example.com/portal", "name": "Portal", "browser_actions": steps, "visual_compare": True},
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            register_request(bulk_issue_event(rows), path, "GauravDarwesh/ChangeSentinel")
+            saved = {source["name"]: source for source in json.loads(path.read_text(encoding="utf-8"))["sources"]}
+        self.assertEqual(saved["Form A"]["listed_on"], ["https://www.example.com/forms"])
+        self.assertNotIn("fetch_mode", saved["Form A"])
+        self.assertEqual(saved["Portal"]["fetch_mode"], "browser")
+        self.assertEqual(saved["Portal"]["browser_actions"], steps)
+        self.assertTrue(saved["Portal"]["visual_compare"])
+
+    def test_bulk_rows_with_bad_steps_write_nothing(self):
+        rows = [{"url": "https://www.example.com/portal", "name": "Portal", "browser_actions": [{"action": "eval", "selector": "x"}]}]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "sources.json"
+            path.write_text(json.dumps({"version": 4, "defaults": {}, "sources": []}), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                register_request(bulk_issue_event(rows), path, "GauravDarwesh/ChangeSentinel")
+            self.assertEqual(json.loads(path.read_text(encoding="utf-8"))["sources"], [])
+
     def test_bulk_registration_reuses_existing_sources_and_is_idempotent(self):
         existing = source_for_url("https://www.example.com/one", "Existing one")
         with tempfile.TemporaryDirectory() as tmp:

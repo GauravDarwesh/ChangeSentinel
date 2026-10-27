@@ -3845,6 +3845,22 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     added.sort((a, b) => String(b.firstSeen).localeCompare(String(a.firstSeen)));
     return { page: found, trackingSince: page.tracking_since || "", lastScan: page.last_scan || "", current, removed, added };
   }
+  // Settings requests that add `page` to each monitor's listed_on (the pages a
+  // scan reads to record where its link is listed). Monitors that would end
+  // with the same list share one request; at most 5 pages a monitor.
+  function listedOnPayloads(sources, page) {
+    const groups = new Map();
+    (sources || []).forEach(source => {
+      if (!source || !source.id) return;
+      const current = Array.isArray(source.listed_on) ? source.listed_on.map(String) : [];
+      if (current.some(url => urlKey(url) === urlKey(page))) return;
+      const next = current.concat([page]).slice(-5);
+      const key = JSON.stringify(next);
+      if (!groups.has(key)) groups.set(key, { monitors: [], set: { listed_on: next }, clear: [] });
+      groups.get(key).monitors.push(String(source.id));
+    });
+    return Array.from(groups.values());
+  }
   // The links a page gained and lost in the scan at `at` (one change event).
   function linkEventsAt(lineage, pageUrl, at) {
     const key = urlKey(pageUrl);
@@ -3869,6 +3885,6 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     renderWordEdit, describeItemCodes, lineageFor, validateBrowserSteps, describeBrowserStep, recorderBookmarklet, RECORDER_SOURCE, precisionBuild, precisionOutcomes, precisionScores, precisionSuggestions, wilson, missedChangeRequest, MISSED_CHANGE_MARKER, registryModel, registryTouched, registryImpact, registryRuleConsumers, registrySentence, registryConsumerLink, registryNorm, registryEntryCodes, REGISTRY_SCHEMES, REGISTRY_CHANGE_WORDS, REGISTRY_KIND_NOUNS, describeSpec, specGroups, specCategoryLabel, specCsvRows, SPEC_CATEGORIES, SPEC_KIND_NOUNS, localIsoDate, isoDayToDate, daysBetween, dueLabel, upcomingDates, datesForChange,
     changeReviewRequest, CHANGE_REVIEW_MARKER, REVIEW_DECISIONS, csvCell, toCsv, fileSlug,
     cadencePlan, cadenceWeeks, businessShift, nextBusinessDay, googleCalendarLink,
-    linkListings, linkLineageSearch, pageLinkLineage, linkEventsAt
+    linkListings, listedOnPayloads, linkLineageSearch, pageLinkLineage, linkEventsAt
   };
 }));
