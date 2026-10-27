@@ -1,7 +1,7 @@
 # Regulatory Monitoring Report
 
-Run: 20261026T223608Z-cccaefcb
-Generated: 2026-10-26T22:47:38.573152+00:00
+Run: 20261027T015839Z-a761873f
+Generated: 2026-10-27T01:58:39.657919+00:00
 
 ## Aggregate counts
 
@@ -16,11 +16,11 @@ Generated: 2026-10-26T22:47:38.573152+00:00
 | baseline_migration | 0 |
 | changed | 2 |
 | crawl_paused | 0 |
-| discovered | 173 |
+| discovered | 174 |
 | extraction_drift | 0 |
-| extraction_error | 0 |
+| extraction_error | 1 |
 | fetch_error | 0 |
-| forced_full_fetch | 8 |
+| forced_full_fetch | 9 |
 | new | 0 |
 | not_modified | 98 |
 | relevance_candidates | 2 |
@@ -32,6 +32,17 @@ Generated: 2026-10-26T22:47:38.573152+00:00
 | visual_changed | 0 |
 
 ## Sources
+
+### Downloadable Forms- Central Bank of the Bahamas
+
+- Regulator: www.centralbankbahamas.com
+- Report run: 20261027T015839Z-a761873f (2026-10-27T01:58:39.657919+00:00)
+- Discovered: 1
+- Changed content: 0
+- HTML source-only changes: 0
+- New: 0
+- Removed: 0
+- Fetch errors: 0
 
 ### Federal Reserve — Reporting Forms Pilot (Exact URL Allowlist)
 

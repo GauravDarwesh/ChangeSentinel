@@ -10117,6 +10117,53 @@
           "passed_check": "Cloudflare"
         }
       }
+    },
+    "manual-704710941f50": {
+      "704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9": {
+        "schema_version": 2,
+        "url_id": "704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9",
+        "source_id": "manual-704710941f50",
+        "regulator": "www.centralbankbahamas.com",
+        "canonical_url": "https://www.centralbankbahamas.com/bank-supervision/downloadable-forms",
+        "first_seen": "2026-10-27T01:58:39.657919+00:00",
+        "last_seen": "2026-10-27T01:58:39.657919+00:00",
+        "last_checked": "2026-10-27T01:58:39.657919+00:00",
+        "last_full_fetch": "2026-10-27T01:58:39.657919+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "content_length": null,
+        "etag": null,
+        "last_modified": null,
+        "raw_hash": "4321311847b9478eab0cf19c9787013ea915724b924124a7f3fbb17a449da13a",
+        "normalized_hash": null,
+        "html_hash": "4321311847b9478eab0cf19c9787013ea915724b924124a7f3fbb17a449da13a",
+        "html_comparison_hash": "4321311847b9478eab0cf19c9787013ea915724b924124a7f3fbb17a449da13a",
+        "html_comparison_hash_version": 2,
+        "html_snapshot_location": "data/snapshots/html/704710941f50592e5d2a5dee8e116088e2a00f9e0bdf4fa7e2f73251ae8ee6c9-4321311847b9478eab0cf19c9787013ea915724b924124a7f3fbb17a449da13a.html",
+        "file_snapshot_location": null,
+        "visual_snapshot_location": null,
+        "visual_hash": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": "HTML normalization failed: ValueError: Configured include selector matched no elements: div.table-relative > table > tbody",
+        "fetch_error": null,
+        "snapshot_location": null,
+        "evidence_location": "data/evidence/782b37855e7a84674a25683123c7cc93c423b4cbf179ed3ec3bf8b6963a88570.json",
+        "relevance": null,
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [],
+        "not_modified": false,
+        "full_fetch_forced": true,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false,
+        "error_signature": "EXTRACTION_ERROR|HTML normalization failed|",
+        "error_since": "2026-10-27T01:58:39.657919+00:00",
+        "error_runs": 1
+      }
     }
   }
 }
