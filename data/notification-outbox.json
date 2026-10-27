@@ -1,24 +1,4 @@
 {
-  "pending_events": {
-    "08ec7c74957ed241229530b16b6f932c71962931be754593e090faa0e0da60b4#ai": {
-      "event_id": "08ec7c74957ed241229530b16b6f932c71962931be754593e090faa0e0da60b4#ai",
-      "kind": "AI_ASSESSMENT",
-      "variant": "ai",
-      "url": "https://www.federalreserve.gov/apps/reportingforms/review",
-      "topic": "AI assessment: reporting forms",
-      "summary": "FR 28 reporting form changed from pending implementation to implemented status, OMB supporting statement updated to a link, and last update date moved to Oct 26, 2026.",
-      "reason": "The table shows FR 28 moved to the 'Implemented' section and its OMB supporting statement changed, representing a substantive change in the requirement's status.",
-      "impact": "FR 28 is now active, indicating the requirement is in force.",
-      "priority": 4,
-      "effective_date": "Not stated",
-      "actions": "Not stated",
-      "tags": [
-        "warning",
-        "bank",
-        "regulatory"
-      ],
-      "source_event_id": "08ec7c74957ed241229530b16b6f932c71962931be754593e090faa0e0da60b4"
-    }
-  },
-  "updated_at": "2026-10-27T04:29:33.371878+00:00"
+  "pending_events": {},
+  "updated_at": "2026-10-27T04:29:36.043566+00:00"
 }

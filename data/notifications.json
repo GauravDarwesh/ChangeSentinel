@@ -688,7 +688,19 @@
       "channels": [
         "ntfy"
       ]
+    },
+    "08ec7c74957ed241229530b16b6f932c71962931be754593e090faa0e0da60b4#ai": {
+      "kind": "AI_ASSESSMENT",
+      "sent_at": "2026-10-27T04:29:36.040412+00:00",
+      "url": "https://www.federalreserve.gov/apps/reportingforms/review",
+      "topic": "AI assessment: reporting forms",
+      "summary": "FR 28 reporting form changed from pending implementation to implemented status, OMB supporting statement updated to a link, and last update date moved to Oct 26, 2026.",
+      "source_event_id": "08ec7c74957ed241229530b16b6f932c71962931be754593e090faa0e0da60b4",
+      "variant": "ai",
+      "channels": [
+        "ntfy"
+      ]
     }
   },
-  "updated_at": "2026-10-26T22:47:46.228809+00:00"
+  "updated_at": "2026-10-27T04:29:36.041118+00:00"
 }
