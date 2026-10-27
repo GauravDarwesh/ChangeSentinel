@@ -21,18 +21,24 @@ Deno.env.set('SUPABASE_SECRET_KEYS', JSON.stringify({ default: 'sb_secret_test' 
 Deno.env.set('OPENROUTER_API', 'openrouter_test');
 Deno.env.set('ASK_SENTINEL_IP_DAILY_LIMIT', '5');
 Deno.env.set('ASK_SENTINEL_GLOBAL_DAILY_LIMIT', '8');
+// The deployed default is 50 questions a day; three keeps these tests short.
+Deno.env.set('ASK_SENTINEL_USER_DAILY_LIMIT', '3');
+Deno.env.set('ASK_SENTINEL_FALLBACK_MODEL', 'paid/fallback-model');
+Deno.env.set('ASK_SENTINEL_PROVIDER_DAILY_CAP', '40');
 
 type Fake = {
   users: Map<string, number>; ips: Map<string, number>; global: number;
   groq: () => Response; refunds: number; v2: boolean; lastIpHash: string;
+  agent: ((body: any) => Response) | null; providerCalls: number; agentBodies: any[]; v3Searches: any[];
 };
 let fakeCurrentPageRows: any[] = [];
 let fakeEvidenceRows = new Map<string, any[]>();
 let fakeFetchedPaths: string[] = [];
 let lastGroqMessages: any[] = [];
-const fake: Fake = { users: new Map(), ips: new Map(), global: 0, groq: () => groqAnswer(), refunds: 0, v2: true, lastIpHash: '' };
+const fake: Fake = { users: new Map(), ips: new Map(), global: 0, groq: () => groqAnswer(), refunds: 0, v2: true, lastIpHash: '', agent: null, providerCalls: 0, agentBodies: [], v3Searches: [] };
 function reset(groq?: () => Response) {
   fake.users = new Map(); fake.ips = new Map(); fake.global = 0; fake.refunds = 0; fake.v2 = true;
+  fake.agent = null; fake.providerCalls = 0; fake.agentBodies = []; fake.v3Searches = [];
   fakeCurrentPageRows = []; fakeEvidenceRows = new Map(); fakeFetchedPaths = []; lastGroqMessages = [];
   fake.groq = groq || (() => groqAnswer());
 }
@@ -46,12 +52,26 @@ const realFetch = globalThis.fetch;
 globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
   const body = init?.body ? JSON.parse(String(init.body)) : {};
-  if (url.hostname === 'openrouter.ai') { if (url.pathname === '/api/v1/key') return json({ data: { label: 'test' } }); lastGroqMessages = body.messages || []; return fake.groq(); }
+  if (url.hostname === 'openrouter.ai') {
+    if (url.pathname === '/api/v1/key') return json({ data: { label: 'test' } });
+    lastGroqMessages = body.messages || [];
+    if (Array.isArray(body.tools) && fake.agent) { fake.agentBodies.push(body); return fake.agent(body); }
+    return fake.groq();
+  }
   if (url.origin !== SUPABASE) return realFetch(input, init);
   const path = url.pathname;
   if (path === '/auth/v1/user') return json({ id: '11111111-2222-4333-8444-555555555555', is_anonymous: true });
   if (path === '/rest/v1/ask_sentinel_index_state') return json([{ commit_sha: 'abc', document_count: 4000, indexed_at: '2026-10-21T00:00:00Z' }]);
   if (path === '/rest/v1/rpc/search_ask_sentinel_chunks') return json([{ path: 'data/report.json', doc_type: 'monitoring report', content: 'run_id=r1 changed=0', is_core: false, score: 1 }]);
+  if (path === '/rest/v1/rpc/search_ask_sentinel_chunks_v3') {
+    fake.v3Searches.push(body);
+    return json([{ path: 'data/history/20261020T000000Z-abcdef12.json', doc_type: 'historical run', content: 'run_id=20261020T000000Z-abcdef12 OSFI BCAR changed=2', is_core: false, score: 2.4 }]);
+  }
+  if (path === '/rest/v1/rpc/consume_ask_sentinel_provider_call') {
+    if (fake.providerCalls >= body.p_cap) return json(false);
+    fake.providerCalls += 1;
+    return json(true);
+  }
   if (path === '/rest/v1/ask_sentinel_chunks') {
     const pathFilter = url.searchParams.get('path') || '';
     if (pathFilter === 'like.__current_page__/*') {
@@ -70,6 +90,23 @@ globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     return json([]);
   }
   if (path === '/rest/v1/ask_sentinel_usage') return json([]);
+  if (path === '/rest/v1/rpc/consume_ask_sentinel_turn') {
+    if (!fake.v2) return json({ code: 'PGRST202', message: 'Could not find the function' }, 404);
+    fake.lastIpHash = body.p_ip_hash;
+    if (fake.global >= body.p_global_limit) return json([{ allowed: false, remaining: 0, reason: 'global_limit' }]);
+    const ip = fake.ips.get(body.p_ip_hash) || 0;
+    if (ip >= body.p_ip_limit) return json([{ allowed: false, remaining: 0, reason: 'ip_limit' }]);
+    const used = fake.users.get(body.p_user_id) || 0;
+    if (used >= body.p_user_limit) return json([{ allowed: false, remaining: 0, reason: 'user_limit' }]);
+    fake.global += 1; fake.ips.set(body.p_ip_hash, ip + 1); fake.users.set(body.p_user_id, used + 1);
+    return json([{ allowed: true, remaining: body.p_user_limit - (used + 1), reason: 'ok' }]);
+  }
+  if (path === '/rest/v1/rpc/refund_ask_sentinel_turn') {
+    fake.refunds += 1;
+    const used = Math.max(0, (fake.users.get(body.p_user_id) || 0) - 1);
+    fake.users.set(body.p_user_id, used);
+    return json(body.p_user_limit - used);
+  }
   if (path === '/rest/v1/rpc/consume_ask_sentinel_request_v2') {
     if (!fake.v2) return json({ code: 'PGRST202', message: 'Could not find the function' }, 404);
     fake.lastIpHash = body.p_ip_hash;
@@ -583,4 +620,139 @@ Deno.test('a missing abuse-limit quota function fails closed instead of dropping
   assertEquals(response.status, 503);
   assertEquals(response.body.error_code, 'internal_quota');
   assertEquals(fake.users.size, 0);
+});
+
+
+/* ---------- Agent mode ---------- */
+
+const CLIENT_TOOLS = [
+  { type: 'function', function: { name: 'list_changes', description: 'List recorded changes', parameters: { type: 'object', properties: { days: { type: 'integer' } } } } },
+  { type: 'function', function: { name: 'open_view', description: 'Open a dashboard view', parameters: { type: 'object', properties: { view: { type: 'string' } }, required: ['view'] } } },
+  { type: 'function', function: { name: 'search_archive', description: 'a client tool may not shadow a server tool', parameters: { type: 'object' } } }
+];
+function toolCall(id: string, name: string, args: unknown) {
+  return { id, type: 'function', function: { name, arguments: JSON.stringify(args) } };
+}
+function agentReply(message: Record<string, unknown>) {
+  return json({ model: 'free/some-model', choices: [{ message: { role: 'assistant', ...message } }] });
+}
+async function agent(body: Record<string, unknown>, options: { visitor?: string; ip?: string } = {}) {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', origin: 'https://gauravdarwesh.github.io' };
+  headers['x-ask-sentinel-visitor-id'] = options.visitor || visitor();
+  headers['cf-connecting-ip'] = options.ip || '203.0.113.50';
+  const response = await handler!(new Request('https://fn.test/ask-sentinel', {
+    method: 'POST', headers, body: JSON.stringify({ mode: 'agent', tools: CLIENT_TOOLS, ...body })
+  }));
+  return { status: response.status, body: await response.json(), headers: response.headers };
+}
+
+Deno.test('agent: one question is one quota unit across every tool step', async () => {
+  reset();
+  let step = 0;
+  fake.agent = () => {
+    step += 1;
+    if (step === 1) return agentReply({ content: '', tool_calls: [toolCall('c1', 'list_changes', { days: 7 })] });
+    return agentReply({ content: 'Two pages changed this week. [OSFI BCAR](#changes/e1)' });
+  };
+  const id = visitor();
+  const question = { role: 'user', content: 'What changed this week?' };
+  const first = await agent({ messages: [question] }, { visitor: id, ip: '203.0.113.51' });
+  assertEquals([first.status, first.body.type, first.body.remaining, first.body.calls[0].function.name], [200, 'tool_calls', 2, 'list_changes']);
+  if (!first.body.turn?.token) throw new Error('a turn token is needed for the next step');
+  const second = await agent({
+    messages: [question, first.body.assistant, { role: 'tool', tool_call_id: 'c1', content: '{"changes":[{"id":"e1"}]}' }],
+    turn: { token: first.body.turn.token }
+  }, { visitor: id, ip: '203.0.113.51' });
+  assertEquals([second.status, second.body.type, second.body.remaining, fake.users.get(id), second.body.turn.step], [200, 'final', null, 1, 2]);
+  if (!String(second.body.answer).includes('Two pages changed')) throw new Error('final answer missing');
+  // The model saw the client tool and the two server tools, never a client copy of a server tool.
+  const names = fake.agentBodies[0].tools.map((t: any) => t.function.name).sort();
+  assertEquals(names, ['list_changes', 'open_view', 'read_archive_record', 'search_archive']);
+  if (fake.agentBodies[0].model !== 'openrouter/free') throw new Error('the free route must be tried first');
+});
+
+Deno.test('agent: server tools run inside the function and the archive search skips page text by default', async () => {
+  reset();
+  let step = 0;
+  fake.agent = (body) => {
+    step += 1;
+    if (step === 1) return agentReply({ content: '', tool_calls: [toolCall('s1', 'search_archive', { query: 'OSFI BCAR' })] });
+    const last = body.messages[body.messages.length - 1];
+    if (last.role !== 'tool' || !String(last.content).includes('20261020T000000Z-abcdef12')) throw new Error('server tool result not passed back to the model');
+    return agentReply({ content: 'Run 20261020T000000Z-abcdef12 recorded two OSFI BCAR changes.' });
+  };
+  const answer = await agent({ messages: [{ role: 'user', content: 'When did BCAR last change?' }] });
+  assertEquals([answer.status, answer.body.type, answer.body.server_messages.length, fake.v3Searches[0].p_include_snapshots], [200, 'final', 2, false]);
+});
+
+Deno.test('agent: a tool call written as text is still run as a tool call', async () => {
+  reset();
+  fake.agent = () => agentReply({ content: '<tool_call>{"name": "open_view", "arguments": {"view": "changes"}}</tool_call>' });
+  const answer = await agent({ messages: [{ role: 'user', content: 'Open the changes view' }] });
+  assertEquals([answer.status, answer.body.type, answer.body.calls[0].function.name, JSON.parse(answer.body.calls[0].function.arguments).view], [200, 'tool_calls', 'open_view', 'changes']);
+});
+
+Deno.test('agent: a forged or foreign turn token is refused', async () => {
+  reset();
+  fake.agent = () => agentReply({ content: '', tool_calls: [toolCall('c1', 'list_changes', {})] });
+  const first = await agent({ messages: [{ role: 'user', content: 'What changed?' }] });
+  const stolen = await agent({ messages: [{ role: 'user', content: 'What changed?' }], turn: { token: first.body.turn.token } });
+  assertEquals([stolen.status, stolen.body.error_code], [409, 'turn_expired']);
+  const forged = await agent({ messages: [{ role: 'user', content: 'What changed?' }], turn: { token: first.body.turn.token.replace(/.$/, 'A') + 'x' } });
+  assertEquals(forged.status, 409);
+});
+
+Deno.test('agent: a rate-limited free route falls back to the paid model once', async () => {
+  reset();
+  fake.agent = (body) => body.model === 'openrouter/free'
+    ? json({ error: 'rate limited' }, 429)
+    : agentReply({ content: 'Answered by the fallback.' });
+  const answer = await agent({ messages: [{ role: 'user', content: 'Status?' }] });
+  assertEquals([answer.status, answer.body.type, fake.agentBodies.map((b) => b.model)], [200, 'final', ['openrouter/free', 'paid/fallback-model']]);
+});
+
+Deno.test('agent: a provider outage on the first step refunds the question', async () => {
+  reset();
+  fake.agent = () => json({ error: 'busy' }, 429);
+  const id = visitor();
+  const answer = await agent({ messages: [{ role: 'user', content: 'Status?' }] }, { visitor: id });
+  assertEquals([answer.status, answer.body.error_code, fake.refunds, fake.users.get(id), answer.body.remaining], [503, 'provider_rate_limited', 1, 0, 3]);
+  if (answer.headers.get('Retry-After') !== '60') throw new Error('rate limit should say when to retry');
+});
+
+Deno.test('agent: the daily provider budget stops model calls before OpenRouter does', async () => {
+  reset();
+  fake.providerCalls = 40;
+  fake.agent = () => agentReply({ content: 'should not be called' });
+  const answer = await agent({ messages: [{ role: 'user', content: 'Status?' }] });
+  assertEquals([answer.status, answer.body.error_code, fake.agentBodies.length], [503, 'provider_daily_budget', 0]);
+});
+
+Deno.test('agent: questions per day follow the configured limit', async () => {
+  reset();
+  fake.agent = () => agentReply({ content: 'ok' });
+  const id = visitor();
+  for (const expected of [2, 1, 0]) assertEquals((await agent({ messages: [{ role: 'user', content: 'Status?' }] }, { visitor: id })).body.remaining, expected);
+  const refused = await agent({ messages: [{ role: 'user', content: 'Status?' }] }, { visitor: id });
+  assertEquals([refused.status, refused.body.error_code, refused.body.limit], [429, 'user_daily_limit', 3]);
+});
+
+Deno.test('agent: earlier turns stay in context and orphaned tool messages are dropped', async () => {
+  reset();
+  fake.agent = () => agentReply({ content: 'It was the OSFI page.' });
+  const answer = await agent({
+    messages: [
+      { role: 'user', content: 'Which page changed most recently?' },
+      { role: 'assistant', content: 'The OSFI BCAR page changed on 26 Oct.' },
+      { role: 'tool', tool_call_id: 'nobody-asked', content: 'stray' },
+      { role: 'user', content: 'Which regulator was that again?' }
+    ],
+    context: { view: 'changes', activity: ['clicked "Changes"', 'typed "OSFI" in the search box'] }
+  });
+  assertEquals(answer.status, 200);
+  const sent = fake.agentBodies[0].messages;
+  if (!sent.some((m: any) => m.role === 'assistant' && String(m.content).includes('OSFI BCAR'))) throw new Error('earlier answer was dropped from context');
+  if (sent.some((m: any) => m.role === 'tool')) throw new Error('an orphaned tool result was sent to the model');
+  if (!sent.some((m: any) => m.role === 'user' && String(m.content).includes('typed "OSFI"'))) throw new Error('the person\'s dashboard activity was not passed on');
+  if (!String(sent[0].content).includes('changes view')) throw new Error('the current view was not passed on');
 });

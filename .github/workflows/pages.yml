@@ -8,6 +8,8 @@ on:
       - "dashboard-v2.html"
       - "dashboard.js"
       - "dashboard-lib.js"
+      - "sentinel.js"
+      - "sentinel.css"
       - "data/report.json"
       - "data/latest.json"
       - "data/history/index.json"
@@ -59,6 +61,8 @@ jobs:
           cp dashboard-v2.html site/dashboard-v2.html
           cp dashboard.js site/dashboard.js
           cp dashboard-lib.js site/dashboard-lib.js
+          cp sentinel.js site/sentinel.js
+          cp sentinel.css site/sentinel.css
           mkdir -p site/data/history site/config
           cp data/report.json site/data/report.json
           cp data/latest.json site/data/latest.json
@@ -83,8 +87,9 @@ jobs:
           # Stamp them with this commit, so every deploy reaches every browser
           # (a stamp left unchanged kept people on the old Explore code).
           stamp="${GITHUB_SHA::12}"
-          sed -i -E "s/(dashboard(-lib)?\.js)\?v=[A-Za-z0-9._-]+/\1?v=${stamp}/g" site/index.html site/dashboard-v2.html
+          sed -i -E "s/(dashboard(-lib)?\.js|sentinel\.(js|css))\?v=[A-Za-z0-9._-]+/\1?v=${stamp}/g" site/index.html site/dashboard-v2.html
           grep -q "dashboard.js?v=${stamp}" site/index.html
+          grep -q "sentinel.js?v=${stamp}" site/index.html
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: site

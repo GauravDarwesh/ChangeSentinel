@@ -79,7 +79,12 @@ class TestAskSentinelContract(unittest.TestCase):
         migration = (ROOT / "supabase/migrations/20261020080000_ask_sentinel_backend.sql").read_text(encoding="utf-8")
         js = (ROOT / "dashboard.js").read_text(encoding="utf-8")
         html = (ROOT / "index.html").read_text(encoding="utf-8")
-        self.assertIn("rpc/consume_ask_sentinel_request_v2", backend)
+        agent_migration = (ROOT / "supabase/migrations/20261027120000_ask_sentinel_agent.sql").read_text(encoding="utf-8")
+        self.assertIn("rpc/consume_ask_sentinel_turn", backend)
+        self.assertIn("p_user_limit: USER_DAILY_LIMIT", backend)
+        # 50 questions a user a day by default; one question is one agent turn.
+        self.assertRegex(backend, r"'ASK_SENTINEL_USER_DAILY_LIMIT',\s*50\s*\)")
+        self.assertIn("if v_user >= v_limit then", agent_migration)
         self.assertIn("where u.request_count < 3", migration)
         self.assertIn("OPENROUTER_API", backend)
         self.assertIn("openrouter/free", backend)
@@ -214,8 +219,8 @@ class TestAskSentinelContract(unittest.TestCase):
 
     def test_abuse_limits_do_not_depend_on_the_callers_identity(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
-        migration = (ROOT / "supabase/migrations/20261021120000_ask_sentinel_abuse_limits.sql").read_text(encoding="utf-8")
-        self.assertIn("rpc/consume_ask_sentinel_request_v2", backend)
+        migration = (ROOT / "supabase/migrations/20261027120000_ask_sentinel_agent.sql").read_text(encoding="utf-8")
+        self.assertIn("rpc/consume_ask_sentinel_turn", backend)
         self.assertIn("req.headers.get('cf-connecting-ip')", backend)
         self.assertIn("name: 'HMAC', hash: 'SHA-256'", backend)
         self.assertIn("'global_limit'", migration)
@@ -223,7 +228,7 @@ class TestAskSentinelContract(unittest.TestCase):
         # The address itself is never stored.
         self.assertNotRegex(migration, r"\bip_address\b|\binet\b")
         # Locks in one order: service day, network, then user.
-        body = migration[migration.index("function public.consume_ask_sentinel_request_v2"):]
+        body = migration[migration.index("function public.consume_ask_sentinel_turn"):]
         self.assertLess(body.index("from public.ask_sentinel_daily_usage d"), body.index("from public.ask_sentinel_ip_usage i"))
         self.assertLess(body.index("from public.ask_sentinel_ip_usage i"), body.index("from public.ask_sentinel_usage u"))
 
@@ -235,7 +240,8 @@ class TestAskSentinelContract(unittest.TestCase):
 
     def test_service_failures_refund_the_question_and_hide_internal_errors(self):
         backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
-        self.assertEqual(backend.count("await refundRequest(actor.id)"), 2)
+        # Classic answers (provider failure, citation rejection) and the agent's first step.
+        self.assertEqual(backend.count("await refundRequest(actor.id)"), 3)
         self.assertIn("error instanceof PublicError", backend)
         self.assertIn("error.status", backend)
         self.assertNotIn("return respond(req, { error: message }, status);", backend)
@@ -296,3 +302,45 @@ class TestAskSentinelContract(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestSentinelAgentContract(unittest.TestCase):
+    def test_search_no_longer_ranks_the_whole_index(self):
+        migration = (ROOT / "supabase/migrations/20261027120000_ask_sentinel_agent.sql").read_text(encoding="utf-8")
+        body = migration[migration.index("function public.search_ask_sentinel_chunks_v3"):]
+        # Candidates are capped before ranking, and page snapshots are opt-in.
+        self.assertIn("limit 300", body)
+        self.assertIn("c.doc_type <> 'extracted page snapshot'", body)
+        self.assertIn("ts_rank(", body)
+        self.assertNotIn("ts_rank_cd(", body)
+        # The two-argument search the deployed function calls uses the fast path.
+        legacy = migration[migration.index("create or replace function public.search_ask_sentinel_chunks(p_query text"):]
+        self.assertIn("search_ask_sentinel_chunks_v3(p_query, p_limit, false, true)", legacy)
+
+    def test_agent_mode_keeps_the_key_server_side_and_caps_provider_calls(self):
+        backend = (ROOT / "supabase/functions/ask-sentinel/index.ts").read_text(encoding="utf-8")
+        js = (ROOT / "sentinel.js").read_text(encoding="utf-8")
+        self.assertIn("body.mode === 'agent'", backend)
+        self.assertIn("rpc/consume_ask_sentinel_provider_call", backend)
+        self.assertIn("async function verifyTurn(", backend)
+        self.assertIn('mode: "agent"', js)
+        self.assertNotIn("openrouter.ai", js)
+        self.assertNotIn("OPENROUTER", js)
+
+    def test_sentinel_ships_with_the_dashboard(self):
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        pages = (ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
+        ci = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        self.assertLess(html.index('src="dashboard.js'), html.index('src="sentinel.js'))
+        self.assertIn('href="sentinel.css', html)
+        self.assertIn("cp sentinel.js site/sentinel.js", pages)
+        self.assertIn("cp sentinel.css site/sentinel.css", pages)
+        self.assertIn("node scripts/sentinel_smoke.mjs", ci)
+
+    def test_consequential_dashboard_actions_need_approval(self):
+        js = (ROOT / "sentinel.js").read_text(encoding="utf-8")
+        self.assertIn("function consequenceOf(el)", js)
+        self.assertIn('if (el.matches("[data-run-scan]")) return "start a scan on GitHub Actions";', js)
+        self.assertIn("await approvalCard(consequence", js)
+        # The person's own actions are told apart from Sentinel's by isTrusted.
+        self.assertIn("if (!event.isTrusted) return;", js)
