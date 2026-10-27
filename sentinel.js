@@ -95,13 +95,15 @@
   document.body.append(orbWrap);
   const orb = orbWrap.querySelector("#minimal-mascot-orb");
 
-  // The mascot's face, exactly as drawn: brow, hooked nose and two eyes that
-  // turn toward the pointer, cock an eyebrow when it comes close, float and
-  // bounce on a click. One drawing drives every copy of the face: the orb,
-  // and the small one that heads the workspace.
-  const FACE_SVG = '<svg viewBox="-100 -100 200 200" aria-hidden="true">' +
-    '<path data-mo="eye-l" class="m-line"/><path data-mo="eye-r" class="m-line"/><path data-mo="mouth" class="m-line"/>' +
-    '<path data-mo="brow-l" class="m-line"/><path data-mo="brow-r" class="m-line"/><path data-mo="nose" class="m-line"/></svg>';
+  // The mascot's face: one continuous Moai stroke (left brow; right brow
+  // running into a nearly straight nose that leans to its tip on the left,
+  // then a short base back under it) over closed, calm eyelids.
+  // Three depth planes give the 2.5D turn toward the pointer: lids at 0.65,
+  // brows at 0.95, the nose from 1.1 at its root to 1.3 at its foot. Close by,
+  // the right brow lifts; a click makes the lids smile for a moment.
+  const FACE_SVG = '<svg viewBox="-80 -80 160 160" aria-hidden="true">' +
+    '<path data-mo="eye-l" class="m-line"/><path data-mo="eye-r" class="m-line"/>' +
+    '<path data-mo="brow-l" class="m-line"/><path data-mo="nose" class="m-line"/></svg>';
   const faces = [];
   function mascotFace(host) {
     const face = { host, tx: 0, ty: 0, nx: 0, ny: 0, tCock: 0, cock: 0, clickT: -10, parts: {} };
@@ -110,6 +112,8 @@
     faces.push(face);
     return face;
   }
+  // How far the face turns toward the pointer (1 = the generator's 1.0x).
+  const FACE_SENSITIVITY = 1.1;
   function aimFace(face, e) {
     const r = face.host.getBoundingClientRect();
     if (!r.width) return;
@@ -117,39 +121,41 @@
     const dy = e.clientY - (r.top + r.height / 2);
     const dist = Math.hypot(dx, dy);
     const maxR = Math.max(window.innerWidth, window.innerHeight) * 0.55;
-    const mag = Math.pow(Math.min(dist, maxR) / maxR, 0.62) * 1.80;
+    const mag = Math.pow(Math.min(dist, maxR) / maxR, 0.62) * FACE_SENSITIVITY;
     const ang = Math.atan2(dy, dx);
     face.tx = Math.cos(ang) * mag;
     face.ty = Math.sin(ang) * mag;
     face.tCock = dist < Math.max(r.width * 2.2, 110) ? 1 : 0;
   }
+  const fmt = p => p[0] + " " + p[1];
   function drawFace(face, now) {
-    face.nx += (face.tx - face.nx) * 0.11;
-    face.ny += (face.ty - face.ny) * 0.11;
+    face.nx += (face.tx - face.nx) * 0.1;
+    face.ny += (face.ty - face.ny) * 0.1;
     face.cock += (face.tCock - face.cock) * 0.12;
     const nx = face.nx, ny = face.ny, cock = face.cock, el = face.parts;
     const still = motion.matches;
     const dt = (now - face.clickT) / 1000;
-    const bounceY = !still && dt < 0.8 ? -Math.sin(dt * Math.PI * 3) * 10 * Math.exp(-3 * dt) : 0;
-    const floatY = (still ? 0 : Math.sin(now * 0.0023) * 2.2) + bounceY;
-    const bx = nx * 18, by = ny * 14;
-    const rad = (nx * 6.5 * Math.PI) / 180, c = Math.cos(rad), s = Math.sin(rad);
+    const bounceY = !still && dt < 0.8 ? -Math.sin(dt * Math.PI * 3) * 7 * Math.exp(-3 * dt) : 0;
+    const joy = dt < 0.9 ? Math.sin(Math.min(dt / 0.9, 1) * Math.PI) : 0;
+    const floatY = (still ? 0 : Math.sin(now * 0.0021) * 1.6) + bounceY + 2;
+    const bx = nx * 15, by = ny * 11;
+    const rad = (nx * 4.5 * Math.PI) / 180, c = Math.cos(rad), s = Math.sin(rad);
     const pt = (x, y, m) => [(x * c - y * s + bx * m).toFixed(1), (x * s + y * c + by * m + floatY).toFixed(1)];
-    const h = 0.6;
-    const lT = pt(-18, -10 - h, 0.65), lB = pt(-18, -10 + h, 0.65);
-    const rT = pt(20, -9 - h, 0.65), rB = pt(20, -9 + h, 0.65);
-    el["eye-l"].setAttribute("d", "M " + lT[0] + " " + lT[1] + " L " + lB[0] + " " + lB[1]);
-    el["eye-r"].setAttribute("d", "M " + rT[0] + " " + rT[1] + " L " + rB[0] + " " + rB[1]);
-    el.mouth.setAttribute("d", "");
-    const rc = -cock * 7.5;
-    const bL1 = pt(-34, -22, 0.95), bL2 = pt(-17, -30, 0.95), bM = pt(1, -22, 1.1);
-    const bR1 = pt(36, -20 + rc, 0.95), bR2 = pt(20, -30 + rc * 0.85, 0.95), nT = pt(3, -21, 1.15);
-    const nBL = pt(-14, 24, 1.35), nBR = pt(13, 26, 1.35), nWR = pt(18, 19, 1.35);
-    el["brow-l"].setAttribute("d", "M " + bL1[0] + " " + bL1[1] + " L " + bL2[0] + " " + bL2[1] + " L " + bM[0] + " " + bM[1]);
-    el.nose.setAttribute("d", "M " + bR1[0] + " " + bR1[1] + " L " + bR2[0] + " " + bR2[1] + " L " + nT[0] + " " + nT[1] + " L " + nBL[0] + " " + nBL[1] + " L " + nBR[0] + " " + nBR[1] + " L " + nWR[0] + " " + nWR[1]);
-    face.host.style.setProperty("--gx", (32 - nx * 22).toFixed(1) + "%");
-    face.host.style.setProperty("--gy", (25 - ny * 22).toFixed(1) + "%");
-    return Math.abs(face.tx - nx) < .002 && Math.abs(face.ty - ny) < .002 && Math.abs(face.tCock - cock) < .002 && dt > .8;
+    // Closed lids: shallow arcs that sag; on a click they turn up into a smile.
+    const sag = 4 - joy * 10;
+    const lA = pt(-26, -5, 0.65), lC = pt(-18, -5 + sag * 1.25, 0.65), lB = pt(-10, -5, 0.65);
+    const rA = pt(12, -4, 0.65), rC = pt(20, -4 + sag * 1.25, 0.65), rB = pt(28, -4, 0.65);
+    el["eye-l"].setAttribute("d", "M " + fmt(lA) + " Q " + fmt(lC) + " " + fmt(lB));
+    el["eye-r"].setAttribute("d", "M " + fmt(rA) + " Q " + fmt(rC) + " " + fmt(rB));
+    const rc = -(cock + joy * 0.5) * 6.5;
+    const bL1 = pt(-34, -21, 0.95), bL2 = pt(-17, -29, 0.95), bM = pt(-1, -22, 1.1);
+    const bR1 = pt(35, -20 + rc, 0.95), bR2 = pt(19, -29 + rc * 0.85, 0.95);
+    const nT = pt(3, -21, 1.1), nB = pt(-7, 23, 1.3), nF = pt(9, 23, 1.3);
+    el["brow-l"].setAttribute("d", "M " + fmt(bL1) + " L " + fmt(bL2) + " L " + fmt(bM));
+    el.nose.setAttribute("d", "M " + fmt(bR1) + " L " + fmt(bR2) + " L " + fmt(nT) + " L " + fmt(nB) + " L " + fmt(nF));
+    face.host.style.setProperty("--gx", (32 - nx * 14).toFixed(1) + "%");
+    face.host.style.setProperty("--gy", (24 - ny * 14).toFixed(1) + "%");
+    return Math.abs(face.tx - nx) < .002 && Math.abs(face.ty - ny) < .002 && Math.abs(face.tCock - cock) < .002 && dt > .9;
   }
   // Only faces on screen are drawn; with reduced motion they settle and stop.
   let faceRaf = 0;

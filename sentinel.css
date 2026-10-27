@@ -38,55 +38,81 @@ html.cs-embed body { background-image: none; }
 html.cs-embed [data-sentinel-focus] { outline: 2px solid var(--accent) !important; outline-offset: 2px; }
 
 /* ---------- The orb (the person's mascot) ----------
- * Their 64px glass orb and line face, unchanged in shape and motion; the glass
- * takes the dashboard's warm paper (light) or lit-umber (dark) tones, the face
- * is drawn in the dashboard's ink, and the states use its LED vocabulary:
- * an accent ring chases round while Sentinel works, green while it waits on
- * the person, and a square accent LED marks an answer waiting.
+ * A 52px glass orb with the line face. The glass takes the dashboard's warm
+ * paper (light) or lit-umber (dark): a soft key light top-left that follows
+ * the pointer, a specular sheen, a faint rim of reflected light underneath
+ * and a hairline edge like the panes'. The face is drawn in the dashboard's
+ * ink. States use its LED vocabulary: an accent ring chases round while
+ * Sentinel works, green while it waits on the person, and a square accent LED
+ * marks an answer waiting.
  */
 .minimal-orb-wrap {
-  --orb-hi: rgba(255, 255, 255, .88);
-  --orb-mid: rgba(246, 241, 234, .52);
-  --orb-lo: rgba(236, 229, 219, .42);
-  --orb-edge: rgba(255, 255, 255, .62);
-  --orb-shadow: 0 10px 28px -4px rgba(70, 44, 18, .34), 0 0 0 1px rgba(160, 130, 100, .14);
-  --orb-inset: inset 0 1.5px 4px rgba(255, 255, 255, .9), inset 0 -3px 8px rgba(70, 44, 18, .14);
+  --orb-size: 52px;
+  --orb-hi: rgba(255, 255, 255, .94);
+  --orb-mid: rgba(248, 244, 238, .66);
+  --orb-lo: rgba(233, 225, 214, .58);
+  --orb-edge: rgba(150, 120, 90, .2);
+  --orb-sheen: rgba(255, 255, 255, .85);
+  --orb-rim: rgba(255, 250, 242, .7);
+  --orb-shadow: 0 1px 2px rgba(60, 38, 16, .12), 0 8px 22px -8px rgba(60, 38, 16, .32);
+  --orb-shadow-up: 0 1px 2px rgba(60, 38, 16, .12), 0 12px 26px -8px rgba(60, 38, 16, .38);
+  --orb-inset: inset 0 1px 1.5px rgba(255, 255, 255, .95), inset 0 -4px 9px rgba(90, 60, 30, .1);
   --orb-ink: var(--ink);
-  position: fixed; right: 24px; bottom: 24px; z-index: 120;
-  perspective: 700px; user-select: none; -webkit-user-select: none;
+  position: fixed; right: 22px; bottom: 22px; z-index: 120;
+  user-select: none; -webkit-user-select: none;
   transition: opacity .28s var(--sn-ease), transform .32s var(--sn-ease), visibility 0s linear 0s;
 }
 :root[data-theme="dark"] .minimal-orb-wrap, :root:not([data-theme]) .minimal-orb-wrap {
-  --orb-hi: rgba(84, 60, 40, .9);
-  --orb-mid: rgba(45, 32, 22, .62);
-  --orb-lo: rgba(28, 19, 13, .55);
-  --orb-edge: rgba(255, 220, 180, .2);
-  --orb-shadow: 0 12px 30px -6px rgba(0, 0, 0, .7), 0 0 0 1px rgba(0, 0, 0, .4);
-  --orb-inset: inset 0 1.5px 4px rgba(255, 228, 196, .28), inset 0 -3px 8px rgba(0, 0, 0, .4);
+  --orb-hi: rgba(96, 70, 48, .95);
+  --orb-mid: rgba(52, 37, 26, .9);
+  --orb-lo: rgba(30, 21, 15, .92);
+  --orb-edge: rgba(255, 214, 170, .14);
+  --orb-sheen: rgba(255, 232, 205, .26);
+  --orb-rim: rgba(255, 190, 120, .16);
+  --orb-shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 10px 24px -8px rgba(0, 0, 0, .75);
+  --orb-shadow-up: 0 1px 2px rgba(0, 0, 0, .5), 0 14px 28px -8px rgba(0, 0, 0, .8);
+  --orb-inset: inset 0 1px 1.5px rgba(255, 226, 190, .2), inset 0 -4px 10px rgba(0, 0, 0, .35);
 }
-:root[data-theme="light"] .minimal-orb-wrap { --orb-hi: rgba(255, 255, 255, .88); --orb-mid: rgba(246, 241, 234, .52); --orb-lo: rgba(236, 229, 219, .42); --orb-edge: rgba(255, 255, 255, .62); --orb-shadow: 0 10px 28px -4px rgba(70, 44, 18, .34), 0 0 0 1px rgba(160, 130, 100, .14); --orb-inset: inset 0 1.5px 4px rgba(255, 255, 255, .9), inset 0 -3px 8px rgba(70, 44, 18, .14); }
+:root[data-theme="light"] .minimal-orb-wrap {
+  --orb-hi: rgba(255, 255, 255, .94); --orb-mid: rgba(248, 244, 238, .66); --orb-lo: rgba(233, 225, 214, .58);
+  --orb-edge: rgba(150, 120, 90, .2); --orb-sheen: rgba(255, 255, 255, .85); --orb-rim: rgba(255, 250, 242, .7);
+  --orb-shadow: 0 1px 2px rgba(60, 38, 16, .12), 0 8px 22px -8px rgba(60, 38, 16, .32);
+  --orb-shadow-up: 0 1px 2px rgba(60, 38, 16, .12), 0 12px 26px -8px rgba(60, 38, 16, .38);
+  --orb-inset: inset 0 1px 1.5px rgba(255, 255, 255, .95), inset 0 -4px 9px rgba(90, 60, 30, .1);
+}
 .minimal-orb-wrap.is-away { opacity: 0; visibility: hidden; transform: scale(.6); pointer-events: none; transition: opacity .2s var(--sn-ease), transform .25s var(--sn-ease), visibility 0s linear .25s; }
 html.cs-locked .minimal-orb-wrap, html.cs-embed .minimal-orb-wrap { display: none; }
 .minimal-glass-orb {
-  --gx: 30%; --gy: 25%;
+  --gx: 32%; --gy: 24%;
   position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;
-  width: 64px; height: 64px; padding: 0; overflow: hidden; border-radius: 50%; cursor: pointer;
-  background: radial-gradient(circle at var(--gx) var(--gy), var(--orb-hi) 0%, var(--orb-mid) 55%, var(--orb-lo) 100%);
-  -webkit-backdrop-filter: blur(1px) saturate(190%); backdrop-filter: blur(1px) saturate(190%);
-  border: 1.25px solid var(--orb-edge);
+  width: var(--orb-size); height: var(--orb-size); padding: 0; overflow: hidden; border-radius: 50%; cursor: pointer;
+  background: radial-gradient(circle at var(--gx) var(--gy), var(--orb-hi) 0%, var(--orb-mid) 52%, var(--orb-lo) 100%);
+  -webkit-backdrop-filter: blur(6px) saturate(160%); backdrop-filter: blur(6px) saturate(160%);
+  border: 1px solid var(--orb-edge);
   box-shadow: var(--orb-shadow), var(--orb-inset);
   color: var(--orb-ink);
-  transition: transform .15s ease, box-shadow .25s ease;
+  transition: transform .22s var(--sn-ease), box-shadow .22s var(--sn-ease);
 }
-.minimal-glass-orb:hover { transform: translateY(-1px); }
-.minimal-glass-orb:active { transform: scale(.96); }
-.minimal-glass-orb:focus-visible { outline: 1.5px solid var(--accent); outline-offset: 4px; border-radius: 50%; }
-.minimal-glass-orb svg { width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-.minimal-glass-orb .m-line { fill: none; stroke: currentColor; stroke-width: 7.2; stroke-linecap: round; stroke-linejoin: round; }
+/* Specular sheen (top-left) and reflected rim light (bottom), over the face like real glass. */
+.minimal-glass-orb::before, .minimal-glass-orb::after { content: ""; position: absolute; pointer-events: none; z-index: 2; border-radius: 50%; }
+.minimal-glass-orb::before {
+  left: 14%; top: 4%; width: 44%; height: 22%;
+  background: radial-gradient(ellipse at 50% 35%, var(--orb-sheen) 0%, transparent 72%);
+  transform: rotate(-24deg); opacity: .78;
+}
+.minimal-glass-orb::after {
+  inset: auto 16% 3% 16%; height: 20%;
+  background: radial-gradient(ellipse at 50% 100%, var(--orb-rim) 0%, transparent 70%);
+}
+.minimal-glass-orb:hover { transform: translateY(-1px); box-shadow: var(--orb-shadow-up), var(--orb-inset); }
+.minimal-glass-orb:active { transform: translateY(0) scale(.96); transition-duration: .08s; }
+.minimal-glass-orb:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; border-radius: 50%; }
+.minimal-glass-orb svg { position: relative; z-index: 1; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.minimal-glass-orb .m-line { fill: none; stroke: currentColor; stroke-width: 5.8; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Working: an accent arc chases round the orb. Waiting on the person: green. */
 .minimal-orb-ring {
-  position: absolute; inset: -5px; border-radius: 50%; pointer-events: none; opacity: 0;
+  position: absolute; inset: -4px; border-radius: 50%; pointer-events: none; opacity: 0;
   background: conic-gradient(from var(--orb-a, 0deg), var(--accent) 0deg, transparent 110deg, transparent 360deg);
   -webkit-mask: radial-gradient(circle, transparent 0 calc(50% - 2px), #000 calc(50% - 1.5px) 50%, transparent calc(50% + .5px));
   mask: radial-gradient(circle, transparent 0 calc(50% - 2px), #000 calc(50% - 1.5px) 50%, transparent calc(50% + .5px));
@@ -99,12 +125,17 @@ html.cs-locked .minimal-orb-wrap, html.cs-embed .minimal-orb-wrap { display: non
 @keyframes snOrbChase { to { --orb-a: 360deg; } }
 /* An answer waiting: one square LED, like the rows' marks. */
 .minimal-orb-wrap.has-note::after {
-  content: ""; position: absolute; right: 3px; top: 3px; z-index: 2; width: 8px; height: 8px;
+  content: ""; position: absolute; right: 2px; top: 2px; z-index: 2; width: 7px; height: 7px;
   background: var(--accent); box-shadow: var(--glow), 0 0 0 2px var(--pane); animation: snRingWait 1.6s ease-in-out infinite;
 }
 /* On wide screens the orb is the way in, so the rail no longer carries Ask Sentinel.
    Phones keep the bottom bar's Ask tab and have no orb. */
-@media (min-width: 981px) { .rail .nav-ask { display: none !important; } }
+@media (min-width: 981px) {
+  .rail .nav-ask { display: none !important; }
+  /* The hairline that sat above Ask Sentinel now separates Add a link, as
+     the one above Scout separates the views. */
+  .rail .nav-add { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+}
 @media (max-width: 980px) { .minimal-orb-wrap { display: none; } }
 
 /* On a phone the bottom bar's Ask tab carries the same states. */

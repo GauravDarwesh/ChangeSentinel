@@ -157,8 +157,10 @@ try {
     const launch = page.locator("#minimal-mascot-orb");
     check(await launch.isVisible(), theme + ": the mascot orb sits in the bottom-right corner");
     check(!(await page.locator("#askSentinelLaunch").isVisible()), theme + ": Ask Sentinel is no longer in the left rail");
+    const addRule = await page.$eval(".rail .nav-add", el => { const cs = getComputedStyle(el); return cs.borderTopStyle === "solid" && parseFloat(cs.borderTopWidth) >= 1; });
+    check(addRule, theme + ": a hairline separates Add a link from Cadence, as one separates Scout from Registry");
     const orbBox = await launch.boundingBox();
-    check(orbBox && Math.round(orbBox.width) === 64 && orbBox.x + orbBox.width > 1440 - 30 && orbBox.y + orbBox.height > 900 - 30, theme + ": the orb is 64px at bottom-right");
+    check(orbBox && Math.round(orbBox.width) === 52 && orbBox.x + orbBox.width > 1440 - 30 && orbBox.y + orbBox.height > 900 - 30, theme + ": the orb is 52px at bottom-right");
     const faceBefore = await page.$eval("#minimal-mascot-orb [data-mo=nose]", el => el.getAttribute("d"));
     await page.mouse.move(80, 80);
     await page.waitForTimeout(500);
@@ -176,7 +178,7 @@ try {
     const midWall = await page.evaluate(() => window.__wallSeen);
     check(midWall, theme + ": opening plays the LED unlock ripple");
     const reveal = await page.evaluate(() => { const ws = document.getElementById("sentinelWorkspace"); const b = ws.getBoundingClientRect(); return { x: parseFloat(ws.style.getPropertyValue("--sn-x")) + b.left, y: parseFloat(ws.style.getPropertyValue("--sn-y")) + b.top }; });
-    check(orbBox && Math.abs(reveal.x - (orbBox.x + 32)) < 4 && Math.abs(reveal.y - (orbBox.y + 32)) < 4, theme + ": the ripple spreads from the orb");
+    check(orbBox && Math.abs(reveal.x - (orbBox.x + orbBox.width / 2)) < 4 && Math.abs(reveal.y - (orbBox.y + orbBox.height / 2)) < 4, theme + ": the ripple spreads from the orb");
     await page.screenshot({ path: path.join(OUT, "sentinel-unlock-" + theme + ".png") });
     await page.waitForFunction(() => !document.getElementById("sentinelWorkspace").classList.contains("is-revealing"), null, { timeout: 5000 });
     check(await page.locator("#sentinelWorkspace").isVisible(), theme + ": the workspace opens");
