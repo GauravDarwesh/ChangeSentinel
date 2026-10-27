@@ -25,6 +25,9 @@ Deno.env.set('ASK_SENTINEL_GLOBAL_DAILY_LIMIT', '8');
 Deno.env.set('ASK_SENTINEL_USER_DAILY_LIMIT', '3');
 Deno.env.set('ASK_SENTINEL_FALLBACK_MODEL', 'paid/fallback-model');
 Deno.env.set('ASK_SENTINEL_PROVIDER_DAILY_CAP', '40');
+Deno.env.set('ASK_SENTINEL_FIRST_BYTE_MS', '150');
+Deno.env.set('ASK_SENTINEL_STREAM_IDLE_MS', '150');
+Deno.env.set('ASK_SENTINEL_PROVIDER_TIMEOUT_MS', '300');
 
 type Fake = {
   users: Map<string, number>; ips: Map<string, number>; global: number;
@@ -48,6 +51,7 @@ function json(value: unknown, status = 200) {
 function groqAnswer(text = 'The latest run changed nothing. [Source: data/report.json]') {
   return json({ choices: [{ message: { content: text } }] });
 }
+const STALL = new Response('stall');
 const realFetch = globalThis.fetch;
 globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
@@ -55,7 +59,13 @@ globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   if (url.hostname === 'openrouter.ai') {
     if (url.pathname === '/api/v1/key') return json({ data: { label: 'test' } });
     lastGroqMessages = body.messages || [];
-    if (Array.isArray(body.tools) && fake.agent) { fake.agentBodies.push(body); return fake.agent(body); }
+    if (Array.isArray(body.tools) && fake.agent) {
+      fake.agentBodies.push(body);
+      const reply = fake.agent(body);
+      // A stalled model: answers only when aborted.
+      if (reply === STALL) return new Promise((_, reject) => init?.signal?.addEventListener('abort', () => reject(new Error('Signal timed out.'))));
+      return reply;
+    }
     return fake.groq();
   }
   if (url.origin !== SUPABASE) return realFetch(input, init);
@@ -92,6 +102,7 @@ globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   }
   if (path === '/rest/v1/ask_sentinel_usage') return json([]);
   if (path === '/rest/v1/rpc/consume_ask_sentinel_turn') {
+    if (fake.budgetDown === ('quota' as any)) throw new Error('Signal timed out.');
     if (!fake.v2) return json({ code: 'PGRST202', message: 'Could not find the function' }, 404);
     fake.lastIpHash = body.p_ip_hash;
     if (fake.global >= body.p_global_limit) return json([{ allowed: false, remaining: 0, reason: 'global_limit' }]);
@@ -846,4 +857,33 @@ Deno.test('agent: tool results from earlier questions and stale screen readings 
   });
   const sent = fake.agentBodies[0].messages.filter((m: any) => m.role === 'tool').map((m: any) => m.content.length);
   if (!(sent[0] < 700 && sent[1] < 600 && sent[2] >= 5000)) throw new Error('unexpected tool result sizes ' + JSON.stringify(sent));
+});
+
+Deno.test('agent: a model that stalls is dropped for the next one instead of ending the question', async () => {
+  reset();
+  fake.agent = (body) => body.models ? STALL : agentReply({ content: 'Answered by the next model.' });
+  const answer = await agent({ messages: [{ role: 'user', content: 'Status?' }] });
+  assertEquals([answer.status, answer.body.answer, fake.agentBodies.length], [200, 'Answered by the next model.', 2]);
+});
+
+Deno.test('agent: a streamed model that never sends a first byte is dropped for the next one', async () => {
+  reset();
+  fake.agent = (body) => body.models ? STALL : agentReply({ content: 'Answered after the stall.' }, body);
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', origin: 'https://gauravdarwesh.github.io', 'x-ask-sentinel-visitor-id': visitor(), 'cf-connecting-ip': '203.0.113.72' };
+  const started = Date.now();
+  const response = await handler!(new Request('https://fn.test/ask-sentinel', {
+    method: 'POST', headers, body: JSON.stringify({ mode: 'agent', stream: true, tools: CLIENT_TOOLS, messages: [{ role: 'user', content: 'Status?' }] })
+  }));
+  const events = await readSse(response);
+  const done = events[events.length - 1].data;
+  assertEquals([done.type, done.answer, fake.agentBodies.length], ['final', 'Answered after the stall.', 2]);
+  if (Date.now() - started > 5000) throw new Error('the first-byte guard did not cut the stalled model short');
+});
+
+Deno.test('agent: a slow quota check returns a clear, retryable reply', async () => {
+  reset();
+  (fake as any).budgetDown = 'quota';
+  fake.agent = () => agentReply({ content: 'never' });
+  const answer = await agent({ messages: [{ role: 'user', content: 'Status?' }] });
+  assertEquals([answer.status, answer.body.error_code, fake.agentBodies.length], [503, 'internal_quota', 0]);
 });

@@ -74,19 +74,114 @@
   const STORE_KEY = "cs-sentinel-conversation-v1";
   const ENDPOINT = typeof ASK_SENTINEL_ENDPOINT === "string" ? ASK_SENTINEL_ENDPOINT : "";
 
-  /* ================= Entry: the rail's Ask Sentinel ================= */
-  // Sentinel opens from the rail's "Ask Sentinel" (the Ask tab on a phone) or
-  // Ctrl/Cmd+K, with the access gate's LED ripple spreading out from the
-  // button. While it works in the background, the button's AI badge shows it;
-  // an answer that arrives while it is closed leaves a dot on the button.
+  /* ================= Entry: the orb ================= */
+  // Sentinel lives in a small glass orb in the bottom-right corner (the
+  // person's own mascot: a line face that follows the pointer). Clicking it,
+  // or Ctrl/Cmd+K, plays the access gate's LED ripple out from the orb. While
+  // Sentinel works with the workspace closed, an LED ring runs round the orb;
+  // an answer that arrives while it is closed leaves a dot. On a phone the
+  // bottom bar's Ask tab stays the entry instead.
   const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || "");
   const SHORTCUT = IS_MAC ? "⌘K" : "Ctrl K";
   const railLaunch = document.getElementById("askSentinelLaunch");
   if (railLaunch) railLaunch.title = "Ask Sentinel (" + SHORTCUT + ")";
+
+  const orbWrap = document.createElement("div");
+  orbWrap.className = "minimal-orb-wrap";
+  orbWrap.id = "sentinelOrbWrap";
+  orbWrap.innerHTML =
+    '<button type="button" id="minimal-mascot-orb" class="minimal-glass-orb" title="Ask Sentinel (' + SHORTCUT + ')" aria-label="Ask Sentinel"></button>' +
+    '<span class="minimal-orb-ring" aria-hidden="true"></span>';
+  document.body.append(orbWrap);
+  const orb = orbWrap.querySelector("#minimal-mascot-orb");
+
+  // The mascot's face, exactly as drawn: brow, hooked nose and two eyes that
+  // turn toward the pointer, cock an eyebrow when it comes close, float and
+  // bounce on a click. One drawing drives every copy of the face: the orb,
+  // and the small one that heads the workspace.
+  const FACE_SVG = '<svg viewBox="-100 -100 200 200" aria-hidden="true">' +
+    '<path data-mo="eye-l" class="m-line"/><path data-mo="eye-r" class="m-line"/><path data-mo="mouth" class="m-line"/>' +
+    '<path data-mo="brow-l" class="m-line"/><path data-mo="brow-r" class="m-line"/><path data-mo="nose" class="m-line"/></svg>';
+  const faces = [];
+  function mascotFace(host) {
+    const face = { host, tx: 0, ty: 0, nx: 0, ny: 0, tCock: 0, cock: 0, clickT: -10, parts: {} };
+    host.querySelectorAll("[data-mo]").forEach(path => { face.parts[path.dataset.mo] = path; });
+    host.addEventListener("click", () => { face.clickT = performance.now(); wakeFaces(); });
+    faces.push(face);
+    return face;
+  }
+  function aimFace(face, e) {
+    const r = face.host.getBoundingClientRect();
+    if (!r.width) return;
+    const dx = e.clientX - (r.left + r.width / 2);
+    const dy = e.clientY - (r.top + r.height / 2);
+    const dist = Math.hypot(dx, dy);
+    const maxR = Math.max(window.innerWidth, window.innerHeight) * 0.55;
+    const mag = Math.pow(Math.min(dist, maxR) / maxR, 0.62) * 1.80;
+    const ang = Math.atan2(dy, dx);
+    face.tx = Math.cos(ang) * mag;
+    face.ty = Math.sin(ang) * mag;
+    face.tCock = dist < Math.max(r.width * 2.2, 110) ? 1 : 0;
+  }
+  function drawFace(face, now) {
+    face.nx += (face.tx - face.nx) * 0.11;
+    face.ny += (face.ty - face.ny) * 0.11;
+    face.cock += (face.tCock - face.cock) * 0.12;
+    const nx = face.nx, ny = face.ny, cock = face.cock, el = face.parts;
+    const still = motion.matches;
+    const dt = (now - face.clickT) / 1000;
+    const bounceY = !still && dt < 0.8 ? -Math.sin(dt * Math.PI * 3) * 10 * Math.exp(-3 * dt) : 0;
+    const floatY = (still ? 0 : Math.sin(now * 0.0023) * 2.2) + bounceY;
+    const bx = nx * 18, by = ny * 14;
+    const rad = (nx * 6.5 * Math.PI) / 180, c = Math.cos(rad), s = Math.sin(rad);
+    const pt = (x, y, m) => [(x * c - y * s + bx * m).toFixed(1), (x * s + y * c + by * m + floatY).toFixed(1)];
+    const h = 0.6;
+    const lT = pt(-18, -10 - h, 0.65), lB = pt(-18, -10 + h, 0.65);
+    const rT = pt(20, -9 - h, 0.65), rB = pt(20, -9 + h, 0.65);
+    el["eye-l"].setAttribute("d", "M " + lT[0] + " " + lT[1] + " L " + lB[0] + " " + lB[1]);
+    el["eye-r"].setAttribute("d", "M " + rT[0] + " " + rT[1] + " L " + rB[0] + " " + rB[1]);
+    el.mouth.setAttribute("d", "");
+    const rc = -cock * 7.5;
+    const bL1 = pt(-34, -22, 0.95), bL2 = pt(-17, -30, 0.95), bM = pt(1, -22, 1.1);
+    const bR1 = pt(36, -20 + rc, 0.95), bR2 = pt(20, -30 + rc * 0.85, 0.95), nT = pt(3, -21, 1.15);
+    const nBL = pt(-14, 24, 1.35), nBR = pt(13, 26, 1.35), nWR = pt(18, 19, 1.35);
+    el["brow-l"].setAttribute("d", "M " + bL1[0] + " " + bL1[1] + " L " + bL2[0] + " " + bL2[1] + " L " + bM[0] + " " + bM[1]);
+    el.nose.setAttribute("d", "M " + bR1[0] + " " + bR1[1] + " L " + bR2[0] + " " + bR2[1] + " L " + nT[0] + " " + nT[1] + " L " + nBL[0] + " " + nBL[1] + " L " + nBR[0] + " " + nBR[1] + " L " + nWR[0] + " " + nWR[1]);
+    face.host.style.setProperty("--gx", (32 - nx * 22).toFixed(1) + "%");
+    face.host.style.setProperty("--gy", (25 - ny * 22).toFixed(1) + "%");
+    return Math.abs(face.tx - nx) < .002 && Math.abs(face.ty - ny) < .002 && Math.abs(face.tCock - cock) < .002 && dt > .8;
+  }
+  // Only faces on screen are drawn; with reduced motion they settle and stop.
+  let faceRaf = 0;
+  const faceShown = face => !document.hidden && face.host.getClientRects().length > 0 && !face.host.closest(".is-away, [hidden]");
+  function faceTick(now) {
+    faceRaf = 0;
+    let busy = false;
+    for (const face of faces) {
+      if (!faceShown(face)) continue;
+      const settled = drawFace(face, now);
+      busy = busy || !motion.matches || !settled;
+    }
+    if (busy) faceRaf = requestAnimationFrame(faceTick);
+  }
+  function wakeFaces() { if (!faceRaf) faceRaf = requestAnimationFrame(faceTick); }
+  window.addEventListener("mousemove", e => { for (const face of faces) if (faceShown(face)) aimFace(face, e); wakeFaces(); }, { passive: true });
+  document.addEventListener("visibilitychange", wakeFaces);
+  orb.innerHTML = FACE_SVG;
+  for (const face of [mascotFace(orb)]) drawFace(face, performance.now());
+  wakeFaces();
+
   function launchState(value) {
-    if (!railLaunch) return;
-    if (value && value !== "idle") railLaunch.dataset.sentinel = value;
-    else delete railLaunch.dataset.sentinel;
+    const on = value && value !== "idle" ? value : "";
+    for (const el of [orbWrap, railLaunch]) {
+      if (!el) continue;
+      if (on) el.dataset.sentinel = on;
+      else delete el.dataset.sentinel;
+    }
+  }
+  function setOrbShown(shown) {
+    orbWrap.classList.toggle("is-away", !shown);
+    wakeFaces();
   }
 
   /* ================= Unlock wall ================= */
@@ -192,26 +287,35 @@
   ws.dataset.layout = "split";
   ws.dataset.mtab = "chat";
   ws.dataset.state = "idle";
+  // The workspace is built like the dashboard's own shell: two panes on a
+  // hairline grid inside the LED frame, each with a list head (title row,
+  // then underline filters), Geist throughout.
   ws.innerHTML =
-    '<header class="sentinel-head">' +
-      '<span class="sentinel-head-mark brand-mark" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i></span>' +
-      '<div class="sentinel-title"><h2 id="sentinelTitle">Sentinel</h2><p><span class="sentinel-status" id="sentinelStatus">Ready</span></p></div>' +
-      '<div class="sentinel-head-tools">' +
-        '<span class="sentinel-quota" id="sentinelQuota">Connecting…</span>' +
-        '<span class="sn-seg" role="group" aria-label="Layout"><button type="button" data-sn-layout="split" aria-pressed="true">Chat + dashboard</button><button type="button" data-sn-layout="chat" aria-pressed="false">Chat only</button></span>' +
-        '<button class="sn-btn" type="button" id="sentinelNew" title="Start a new conversation">' + ICONS.fresh + '<span class="sn-label">New</span></button>' +
-        '<button class="sn-btn is-icon" type="button" id="sentinelClose" title="Close (Esc)" aria-label="Close Sentinel">' + ICONS.close + "</button>" +
-      "</div>" +
-    "</header>" +
     '<div class="sentinel-body">' +
-      '<div class="sentinel-mtabs sn-seg" role="group" aria-label="Show"><button type="button" data-sn-mtab="chat" aria-pressed="true">Conversation</button><button type="button" data-sn-mtab="stage" aria-pressed="false">Live dashboard</button></div>' +
       '<section class="sentinel-chat" aria-label="Conversation with Sentinel">' +
+        '<header class="sentinel-head">' +
+          '<div class="sentinel-title-row">' +
+            '<span class="sentinel-brand"><h2 id="sentinelTitle">Ask Sentinel</h2><span class="sentinel-status" id="sentinelStatus">Ready</span></span>' +
+            '<span class="sentinel-head-tools">' +
+              '<button class="sn-btn is-quiet" type="button" id="sentinelNew" title="Start a new conversation">' + ICONS.fresh + '<span class="sn-label">New</span></button>' +
+              '<button class="sn-btn is-icon is-quiet" type="button" id="sentinelClose" title="Close (Esc)" aria-label="Close Sentinel">' + ICONS.close + "</button>" +
+            "</span>" +
+          "</div>" +
+          '<div class="sentinel-sub-row">' +
+            '<span class="sentinel-filters filters sn-layout" role="group" aria-label="Layout"><button type="button" data-sn-layout="split" aria-pressed="true">Chat and dashboard</button><button type="button" data-sn-layout="chat" aria-pressed="false">Chat only</button></span>' +
+            '<span class="sentinel-mtabs sentinel-filters filters" role="group" aria-label="Show"><button type="button" data-sn-mtab="chat" aria-pressed="true">Conversation</button><button type="button" data-sn-mtab="stage" aria-pressed="false">Live dashboard</button></span>' +
+            '<span class="sentinel-quota" id="sentinelQuota">Connecting…</span>' +
+          "</div>" +
+        "</header>" +
         '<div class="sentinel-log" id="sentinelLog" aria-live="polite">' +
           '<div class="sentinel-welcome" id="sentinelWelcome">' +
-            '<span class="sentinel-eyebrow">Sentinel · agent</span>' +
-            "<h3>Ask about any change, or hand me a task.</h3>" +
-            "<p>I read the monitoring record behind this dashboard, reason across it, and work in the live dashboard beside you with my own cursor. You can use it at the same time. I ask before anything that saves, sends or starts a scan.</p>" +
-            '<div class="sentinel-suggest">' + SUGGESTIONS.map(([q, sub]) => '<button type="button" data-sn-suggest="' + escHtml(q) + '">' + escHtml(q) + "<small>" + escHtml(sub) + "</small></button>").join("") + "</div>" +
+            '<div class="sentinel-welcome-copy">' +
+              '<p class="sentinel-eyebrow">Agent · reads the record, works the dashboard</p>' +
+              '<h3 class="sentinel-welcome-title">Ask about any change, or hand me a task.</h3>' +
+              "<p>I read the monitoring record behind this dashboard and work in the live copy beside you with my own cursor. You can use it at the same time. I ask before anything that saves, sends or starts a scan.</p>" +
+            "</div>" +
+            '<p class="sentinel-group-label">Try</p>' +
+            '<div class="sentinel-suggest">' + SUGGESTIONS.map(([q, sub]) => '<button type="button" class="sentinel-suggest-row" data-sn-suggest="' + escHtml(q) + '"><span class="sentinel-suggest-mark" aria-hidden="true"></span><span class="sentinel-suggest-title">' + escHtml(q) + '</span><small>' + escHtml(sub) + "</small></button>").join("") + "</div>" +
           "</div>" +
           '<div id="sentinelTranscript"></div>' +
         "</div>" +
@@ -221,15 +325,19 @@
             '<textarea class="sentinel-input" id="sentinelInput" rows="1" maxlength="1200" placeholder="Ask Sentinel, or describe a task…"></textarea>' +
             '<button class="sn-btn is-primary sentinel-send" id="sentinelSend" type="submit" aria-label="Send">' + ICONS.send + "</button>" +
           "</form>" +
-          '<div class="sentinel-foot"><span id="sentinelFootNote">Enter to send · Shift+Enter for a new line</span><button type="button" id="sentinelTakeover" hidden>Take over</button></div>' +
+          '<div class="sentinel-foot"><span id="sentinelFootNote">Enter to send · Shift+Enter for a new line · ' + SHORTCUT + ' to toggle</span><button type="button" id="sentinelTakeover" hidden>Take over</button></div>' +
         "</div>" +
       "</section>" +
       '<section class="sentinel-stage" id="sentinelStage" aria-label="Live dashboard shared with Sentinel">' +
         '<div class="sentinel-stagebar">' +
-          '<span class="sentinel-crumb"><span id="sentinelCrumb">Live dashboard</span></span>' +
-          '<span class="sentinel-cowork" id="sentinelCowork">You and Sentinel share this copy</span>' +
-          '<span class="sentinel-presence" aria-hidden="true"><span class="sn-avatar is-person" title="You"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="5.6" r="2.7" fill="currentColor"/><path d="M2.8 14c.6-2.9 2.6-4.4 5.2-4.4s4.6 1.5 5.2 4.4" fill="currentColor"/></svg></span><span class="sn-avatar is-agent" title="Sentinel"><span class="sn-mini"><i></i><i></i><i></i><i></i></span></span></span>' +
-          '<button class="sn-btn" type="button" id="sentinelPause" title="Pause Sentinel and use the dashboard yourself">' + ICONS.pause + '<span class="sn-label">Pause</span></button>' +
+          '<div class="sentinel-title-row">' +
+            '<span class="sentinel-crumb"><span id="sentinelCrumb">Live dashboard</span></span>' +
+            '<span class="sentinel-presence" aria-hidden="true"><span class="sn-avatar is-person" title="You"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="5.6" r="2.7" fill="currentColor"/><path d="M2.8 14c.6-2.9 2.6-4.4 5.2-4.4s4.6 1.5 5.2 4.4" fill="currentColor"/></svg></span><span class="sn-avatar is-agent" title="Sentinel"><span class="sn-mini"><i></i><i></i><i></i><i></i></span></span></span>' +
+          "</div>" +
+          '<div class="sentinel-sub-row">' +
+            '<span class="sentinel-cowork" id="sentinelCowork">You and Sentinel share this copy</span>' +
+            '<button class="sn-btn is-quiet" type="button" id="sentinelPause" title="Pause Sentinel and use the dashboard yourself">' + ICONS.pause + '<span class="sn-label">Pause</span></button>' +
+          "</div>" +
         "</div>" +
         '<div class="sentinel-viewport" id="sentinelViewport">' +
           '<div class="sentinel-loading" id="sentinelLoading">Opening the live dashboard…</div>' +
@@ -258,7 +366,7 @@
     messages: [], remaining: null, limit: 50, warmed: false,
     activity: [], humanBusyUntil: 0, acting: false, queued: [],
     frame: null, frameReady: null, scale: 1, cursor: { x: -60, y: -60, shown: false }, cursorHideTimer: 0,
-    refs: new Map(), refOf: new WeakMap(), refSerial: 0, spot: null
+    refs: new Map(), refOf: new WeakMap(), refSigs: new Map(), refSerial: 0, spot: null
   };
 
   function setAgentState(value, text) {
@@ -290,16 +398,23 @@
   }
 
   /* ================= Open / close ================= */
-  // Where the ripple starts: the button that opened Sentinel, else the
-  // rail's Ask Sentinel, else the bottom of the screen.
+  // Where the ripple starts: the orb, else (on a phone) the Ask tab that
+  // opened Sentinel, else the bottom-right corner.
   let rippleFrom = null;
   function launchCenter() {
-    const candidates = [rippleFrom, railLaunch].filter(Boolean);
+    const candidates = [orb, rippleFrom, railLaunch].filter(Boolean);
     for (const el of candidates) {
       const box = el.getBoundingClientRect();
       if (box.width && box.height) return { x: box.left + Math.min(box.width / 2, 60), y: box.top + box.height / 2 };
     }
-    return { x: window.innerWidth / 2, y: window.innerHeight - 40 };
+    return { x: window.innerWidth - 56, y: window.innerHeight - 56 };
+  }
+  // The reveal circle is in the workspace's own coordinates; it sits inside
+  // the LED frame, so the origin is shifted by the frame's inset.
+  function placeReveal(origin) {
+    const box = ws.getBoundingClientRect();
+    ws.style.setProperty("--sn-x", (origin.x - box.left) + "px");
+    ws.style.setProperty("--sn-y", (origin.y - box.top) + "px");
   }
   async function openWorkspace(options) {
     options = options || {};
@@ -309,12 +424,13 @@
     agent.animating = true;
     agent.open = true;
     if (railLaunch) railLaunch.classList.remove("has-note");
+    orbWrap.classList.remove("has-note");
     const origin = launchCenter();
-    ws.style.setProperty("--sn-x", origin.x + "px");
-    ws.style.setProperty("--sn-y", origin.y + "px");
+    setOrbShown(false);
     ws.style.setProperty("--sn-r", "0px");
     ws.classList.add("is-revealing");
     ws.hidden = false;
+    placeReveal(origin);
     ensureFrame();
     await playUnlock("open", origin, r => ws.style.setProperty("--sn-r", r + "px"));
     ws.classList.remove("is-revealing");
@@ -328,15 +444,16 @@
     if (!agent.open || agent.animating) return;
     agent.animating = true;
     const origin = launchCenter();
-    ws.style.setProperty("--sn-x", origin.x + "px");
-    ws.style.setProperty("--sn-y", origin.y + "px");
+    placeReveal(origin);
     ws.classList.add("is-revealing");
     await playUnlock("close", origin, r => ws.style.setProperty("--sn-r", r + "px"));
     ws.hidden = true;
     ws.classList.remove("is-revealing");
     agent.open = false;
     agent.animating = false;
-    if (railLaunch && railLaunch.offsetParent) railLaunch.focus({ preventScroll: true });
+    setOrbShown(true);
+    if (orb.offsetParent) orb.focus({ preventScroll: true });
+    else if (railLaunch && railLaunch.offsetParent) railLaunch.focus({ preventScroll: true });
   }
   window.Sentinel = { open: openWorkspace, close: closeWorkspace, ask: prompt => openWorkspace({ prompt }) };
 
@@ -709,6 +826,14 @@
     if (el.closest(".detail, [class*='detail']")) return "detail";
     return "page";
   }
+  // What identifies a control across a re-render: its tag, label, region and
+  // the attributes the dashboard routes on. The dashboard redraws views when
+  // late data arrives, so a ref read a moment ago may point at a detached node;
+  // the same control in the new render is found again by this signature.
+  const REF_ATTRS = ["href", "id", "name", "type", "role", "aria-label", "data-view", "data-select-change", "data-monitor-id", "data-select-run", "data-select-notification", "data-select-health", "data-scout-key", "data-select-registry", "data-detail-tab", "data-diff-mode", "data-snapshot-mode", "data-filter", "data-change-filter", "data-scout-filter", "data-go", "data-back"];
+  function refSignature(el) {
+    return [el.tagName, clampText(labelOf(el), 90), regionOf(el)].concat(REF_ATTRS.map(name => el.getAttribute(name) || "")).join("\u241f");
+  }
   function refFor(el) {
     let ref = agent.refOf.get(el);
     if (!ref || agent.refs.get(ref) !== el) {
@@ -716,11 +841,22 @@
       agent.refOf.set(el, ref);
       agent.refs.set(ref, el);
     }
+    agent.refSigs.set(ref, refSignature(el));
     return ref;
   }
   function elementForRef(ref) {
-    const el = agent.refs.get(String(ref || "").trim());
-    return el && el.isConnected ? el : null;
+    const key = String(ref || "").trim();
+    const el = agent.refs.get(key);
+    if (el && el.isConnected) return el;
+    const sig = agent.refSigs.get(key);
+    const doc = frameDoc();
+    if (!sig || !doc) return null;
+    const scope = doc.querySelector("dialog[open]") || doc.body;
+    const twins = Array.from(scope.querySelectorAll(INTERACTIVE)).filter(node => isVisible(node) && refSignature(node) === sig);
+    if (twins.length !== 1) return null;
+    agent.refs.set(key, twins[0]);
+    agent.refOf.set(twins[0], key);
+    return twins[0];
   }
   async function readScreen(args) {
     await frameUsable();
@@ -1714,8 +1850,9 @@
   }
   // An answer that arrives while the workspace is closed leaves a dot on the button.
   function announce() {
-    if (agent.open || !railLaunch) return;
-    railLaunch.classList.add("has-note");
+    if (agent.open) return;
+    orbWrap.classList.add("has-note");
+    if (railLaunch) railLaunch.classList.add("has-note");
   }
 
   function autosize() {
@@ -1741,7 +1878,8 @@
 
   restore();
 
-  // The rail's "Ask Sentinel" opens the workspace; the old page stays as a fallback.
+  orb.addEventListener("click", () => { rippleFrom = orb; openWorkspace(); });
+  // On a phone the bottom bar's Ask tab opens the workspace too.
   if (railLaunch) {
     railLaunch.addEventListener("click", event => {
       event.stopImmediatePropagation();
