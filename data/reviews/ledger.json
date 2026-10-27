@@ -65,6 +65,19 @@
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.federalreserve.gov/apps/ReportingForms",
       "detected_at": "2026-10-24T14:32:56.518696+00:00"
+    },
+    "1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1": {
+      "decision": "material",
+      "label": "Material",
+      "rationale": "The regulator has removed the older updates from the page. Deletions are not important though it will definitely require a eye because new updates might get published as a result of removal of old.",
+      "owner": "",
+      "ticket": "",
+      "reviewed_by": "GauravDarwesh",
+      "reviewed_at": "2026-10-27T15:38:08+00:00",
+      "request": "issue #229",
+      "event_type": "CHANGED_URL",
+      "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
+      "detected_at": "2026-10-20T04:32:57.616576+00:00"
     }
   },
   "log": [
@@ -137,7 +150,21 @@
       "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.federalreserve.gov/apps/ReportingForms",
       "detected_at": "2026-10-24T14:32:56.518696+00:00"
+    },
+    {
+      "event_id": "1c4171c28c233d33130ce0a35bc8a04167020afadf1f11385d118c6b80e748e1",
+      "decision": "material",
+      "label": "Material",
+      "rationale": "The regulator has removed the older updates from the page. Deletions are not important though it will definitely require a eye because new updates might get published as a result of removal of old.",
+      "owner": "",
+      "ticket": "",
+      "reviewed_by": "GauravDarwesh",
+      "reviewed_at": "2026-10-27T15:38:08+00:00",
+      "request": "issue #229",
+      "event_type": "CHANGED_URL",
+      "url": "https://www.federalreserve.gov/apps/reportingforms/recentupdates",
+      "detected_at": "2026-10-20T04:32:57.616576+00:00"
     }
   ],
-  "updated_at": "2026-10-24T15:12:41+00:00"
+  "updated_at": "2026-10-27T15:38:08+00:00"
 }
