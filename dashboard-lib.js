@@ -1139,7 +1139,10 @@
   function parseUnifiedDiff(text) {
     const result = { hunks: [], truncated: false, truncatedAfter: null };
     let hunk = null;
-    String(text || "").split(/\r?\n/).forEach(line => {
+    const lines = String(text || "").split(/\r?\n/);
+    // A trailing newline is not an empty context line (it drew a phantom row).
+    if (lines.length && lines[lines.length - 1] === "") lines.pop();
+    lines.forEach(line => {
       const header = HUNK_RE.exec(line);
       if (header) {
         hunk = {
@@ -1156,7 +1159,11 @@
         result.truncatedAfter = Number(truncation[1]);
         return;
       }
-      if (!hunk || line.startsWith("--- ") || line.startsWith("+++ ") || line.startsWith("\\")) return;
+      // "--- before" / "+++ after" are file headers only before the first hunk
+      // (where !hunk already skips them). Inside a hunk they are content: a
+      // removed line "-- note" is emitted as "--- note" and an added "++ x" as
+      // "+++ x", and testing the prefix here dropped exactly those lines.
+      if (!hunk || line.startsWith("\\")) return;
       const marker = line.charAt(0);
       const body = line.slice(1);
       if (marker === "+") hunk.lines.push({ type: "add", text: body });
@@ -3506,13 +3513,15 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
   }
   function reportCodes(text) {
     // A trailing year is an edition, not a different report: BCAR 2027 is BCAR.
-    return Array.from(new Set((String(text || "").match(REPORT_CODE) || []).map(code => code.toUpperCase().replace(/[\s-]+/g, "").replace(/(?<=[A-Z])20\d{2}$/, ""))))
+    // No regex lookbehind anywhere in this file: it is a parse error on Safari
+    // 16.3 and older, and this classic script has no build step (audit CS-20).
+    return Array.from(new Set((String(text || "").match(REPORT_CODE) || []).map(code => code.toUpperCase().replace(/[\s-]+/g, "").replace(/([A-Z])20\d{2}$/, "$1"))))
       .filter(code => code.length >= 3);
   }
   function yearless(url) {
     try {
       const u = new URL(url);
-      return u.hostname.replace(/^www\./, "") + u.pathname.toLowerCase().replace(/(?<![0-9])20\d{2}(?![0-9])/g, "{y}").replace(/\.(pdf|xlsx?|zip|csv|docx?)$/, "");
+      return u.hostname.replace(/^www\./, "") + u.pathname.toLowerCase().replace(/(^|[^0-9])20\d{2}(?![0-9])/g, "$1{y}").replace(/\.(pdf|xlsx?|zip|csv|docx?)$/, "");
     } catch (_) { return ""; }
   }
   function pathOf(url) { try { return new URL(url).pathname; } catch (_) { return ""; } }

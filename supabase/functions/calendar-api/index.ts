@@ -136,8 +136,11 @@ export function dueReminderJobs(entries:Record<string,any>[],today:string){
     const from=addDays(today,-7),completed=new Set(Array.isArray(entry.completed_dates)?entry.completed_dates.map(String):[]);
     for(const occurrence of occurrenceDates(entry,from,addDays(today,days))){
       if(occurrence<today||completed.has(occurrence))continue;
+      // No lower bound on the due date: a lead time over a week, or a scheduler
+      // outage, used to drop the reminder for good. The delivery ledger
+      // (alreadySent) keeps each occurrence to one email per recipient.
       const due=addDays(occurrence,-days);
-      if(due>today||due<from)continue;
+      if(due>today)continue;
       for(const recipient of recipients)jobs.push({entry,occurrence_date:occurrence,recipient_email:recipient});
     }
   }
@@ -206,8 +209,16 @@ async function sendEmail(entry:Record<string,any>,day:string,to:string){
     '<p><a href="'+escapeHtml(cfg.dashboard)+'">Open Cadence calendar</a></p><hr><p style="font-size:12px;color:#786b5e">Automated reminder from your team regulatory calendar.</p></div>';
   const response=await checkedFetch("https://api.resend.com/emails",{method:"POST",headers:{Authorization:"Bearer "+cfg.resend,"Content-Type":"application/json"},
     body:JSON.stringify({from:cfg.from,to:[to],subject:"[Cadence] "+String(entry.title||"Regulatory reminder")+" · "+day,html})},12000);
-  const raw=await response.text();if(!response.ok)throw new Error("Email provider returned HTTP "+response.status+": "+raw.slice(0,140));
+  // The provider's error body can echo the recipient address; only the status reaches the logs.
+  const raw=await response.text();if(!response.ok)throw new Error("Email provider returned HTTP "+response.status);
   const result=raw?JSON.parse(raw):{};return String(result.id||"");
+}
+// Constant-time comparison for the scheduler token (no early exit on the first differing byte).
+function tokensMatch(supplied:string,expected:string){
+  const a=new TextEncoder().encode(supplied),b=new TextEncoder().encode(expected);
+  let diff=a.length^b.length;
+  for(let i=0;i<Math.max(a.length,b.length);i++)diff|=(a[i]??0)^(b[i]??0);
+  return diff===0;
 }
 async function alreadySent(entryId:string,day:string,to:string){
   const params=new URLSearchParams({select:"id",entry_id:"eq."+entryId,occurrence_date:"eq."+day,recipient_email:"eq."+to,limit:"1"});
@@ -241,7 +252,7 @@ Deno.serve(async(req:Request)=>{
       let body:any={};try{body=raw?JSON.parse(raw):{};}catch(_){throw new PublicError("Request body must be valid JSON.");}
       if(body.action==="send-reminders"){
         const expected=config().cron,supplied=req.headers.get("x-calendar-cron-token")||"";
-        if(!expected||supplied.length<24||supplied!==expected)throw new PublicError("Scheduler authorization failed.",401);
+        if(!expected||supplied.length<24||!tokensMatch(supplied,expected))throw new PublicError("Scheduler authorization failed.",401);
         const result=await runReminders();if(result.failures)return respond(req,{ok:false,...result},503);return respond(req,{ok:true,...result});
       }
       const member=await authenticatedMember(req);

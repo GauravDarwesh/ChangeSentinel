@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>ChangeSentinel</title>
-  <meta name="description" content="See what changed on monitored Federal Reserve pages, scan by scan, with the saved evidence behind every change.">
+  <meta name="description" content="See what changed on monitored regulator pages and documents, scan by scan, with the saved evidence behind every change.">
   <meta name="theme-color" content="#e4e0da">
   <script>
     // Restore the saved theme before the dashboard stylesheet renders.
@@ -147,6 +147,10 @@
     ::selection { background: var(--accent); color: #140c08; }
     :focus-visible { outline: 1.5px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
     [hidden] { display: none !important; }
+    /* Keyboard users can jump past the navigation; shown only while focused. */
+    .skip-link { position: absolute; left: 12px; top: 12px; z-index: 1000; transform: translateY(-200%); }
+    .skip-link:focus-visible { transform: none; }
+    .workspace:focus { outline: none; }
     .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
     .num { font-variant-numeric: tabular-nums; }
 
@@ -2565,6 +2569,7 @@
 
   <canvas class="frame-glints" aria-hidden="true"></canvas>
   <div class="app" id="app">
+    <a class="skip-link btn btn-primary" href="#workspace">Skip to content</a>
     <nav class="rail" aria-label="Workspace">
       <a class="brand" href="./" aria-label="ChangeSentinel overview">
         <span class="brand-mark" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
@@ -2666,7 +2671,7 @@
       </div>
     </nav>
 
-    <main class="workspace" id="workspace">
+    <main class="workspace" id="workspace" tabindex="-1">
       <div id="loadError" class="error-banner" hidden role="alert"></div>
 
       <section id="overviewView" class="view view-overview" aria-label="Overview">

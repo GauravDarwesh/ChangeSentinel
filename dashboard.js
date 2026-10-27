@@ -843,6 +843,8 @@ function renderLatestPreview() {
     const redline = L.renderRedline(evidence.diff || "");
     $("previewBody").innerHTML = '<div class="redline">' + redline.html + "</div>";
   }).catch(error => {
+    // A late failure for an older change must not replace a newer preview.
+    if ($("previewBody").dataset.eventId !== entry.event_id) return;
     $("previewBody").innerHTML = '<p class="rl-empty">Couldn\'t load the evidence: ' + esc(String(error.message || error)) + "</p>";
   });
 }
@@ -3024,6 +3026,13 @@ const SNAPSHOT_REVEAL_CSS = "<style data-cs-reveal>html,body{opacity:1!important
   "[class*=loading-overlay],[id*=loading-overlay],[class*=site-loader],[id*=site-loader],[class*=splash-screen],[id*=splash-screen],.pace,#loader,.loader-overlay{display:none!important}</style>";
 function previewSource(source, url) {
   source = String(source || "").replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, "").replace(/<script\b[^>]*\/?>/gi, "");
+  // The frame keeps allow-same-origin (to mark and measure the page), so also
+  // drop what could navigate it or embed other content: nested frames,
+  // plugins and meta refresh. Not executable today, but one sandbox
+  // relaxation away from it.
+  source = source.replace(/<(iframe|frame|object|embed|applet)\b[\s\S]*?<\/\1\s*>/gi, "")
+    .replace(/<(iframe|frame|frameset|object|embed|applet)\b[^>]*\/?>/gi, "")
+    .replace(/<meta\b[^>]*http-equiv\s*=\s*["']?refresh["']?[^>]*>/gi, "");
   const baseTag = '<base href="' + esc(url) + '">' + SNAPSHOT_REVEAL_CSS;
   if (/<head\b[^>]*>/i.test(source)) return source.replace(/<head\b[^>]*>/i, match => match + baseTag);
   return '<!doctype html><html><head><meta charset="utf-8">' + baseTag + "</head><body>" + source + "</body></html>";
@@ -4010,7 +4019,9 @@ function healthPageStrip(sourceId) {
 function healthNextYearUrl(url, years) {
   const year = Math.max(...(years || []));
   if (!url || !isFinite(year)) return "";
-  const next = String(new Date().getUTCFullYear());
+  // The year after the newest one in the address (it was "this year", which is
+  // the same address in the usual case, and an older one for a future year).
+  const next = String(year + 1);
   return String(url).replace(new RegExp("(^|[^0-9])" + year + "(?![0-9])", "g"), "$1" + next);
 }
 
@@ -4390,7 +4401,7 @@ function openOrganise(ids) {
   const current = Array.from(new Set(list.map(id => { const ws = sourceWorkspace(id); return ws.auto ? "" : ws.name; })));
   const explicit = workspaces.filter(ws => !ws.auto).map(ws => ws.name);
   const suggestions = Array.from(new Set(explicit.concat(["NAM", "EMEA", "LATAM", "APAC"])));
-  $("organiseWorkspace").innerHTML = '<option value="__keep">' + (current.length === 1 ? "Keep: " + (current[0] || "by region") : "Keep each monitor's own") + "</option>" +
+  $("organiseWorkspace").innerHTML = '<option value="__keep">' + esc(current.length === 1 ? "Keep: " + (current[0] || "by region") : "Keep each monitor's own") + "</option>" +
     suggestions.map(name => '<option value="' + esc(name) + '">' + esc(name) + "</option>").join("") +
     '<option value="__new">New workspace…</option><option value="__clear">None (group by region)</option>';
   $("organiseWorkspace").value = "__keep";
@@ -5834,7 +5845,7 @@ function renderCadenceView() {
       const linked = event.eventId && changeLogEntries().some(change => change.event_id === event.eventId);
       return '<article class="cadence-agenda-item"><div class="cadence-agenda-row"><i class="cadence-agenda-dot is-derived"></i><div class="cadence-agenda-content"><span class="cadence-agenda-title">' + esc(event.title) + '</span><div class="cadence-agenda-meta"><span class="cadence-tag">Detected date</span><span>ChangeSentinel</span></div>' +
         (event.item && event.item.description ? '<p class="cadence-agenda-notes">' + esc(String(event.item.description)) + "</p>" : "") + '</div></div><div class="cadence-agenda-actions">' +
-        (event.sourceUrl ? '<a href="' + esc(event.sourceUrl) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' : "") +
+        (safeHttpUrl(event.sourceUrl) ? '<a href="' + esc(safeHttpUrl(event.sourceUrl)) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' : "") +
         (linked ? '<button type="button" data-calendar-open-change="' + esc(event.eventId) + '">View change →</button>' : "") +
         (cadenceIsEditor() ? '<button type="button" data-calendar-track="' + esc(event.eventId) + '" data-calendar-date="' + esc(event.date) + '" title="Add this date to the team calendar with an owner and a reminder">Track this</button>' : "") +
         cadenceCalendarLinks(event) + "</div></article>";
@@ -5845,7 +5856,7 @@ function renderCadenceView() {
     return '<article class="cadence-agenda-item"><div class="cadence-agenda-row"><i class="cadence-agenda-dot ' + cadenceClass(event) + '"></i><div class="cadence-agenda-content"><span class="cadence-agenda-title">' + esc(event.title) + '</span><div class="cadence-agenda-meta"><span class="cadence-tag">' + esc(cadenceTag(event.category)) + '</span>' +
       (entry.regulator ? '<span>' + esc(entry.regulator) + '</span>' : "") + (entry.owner_name ? '<span>Owner: ' + esc(entry.owner_name) + '</span>' : "") + reminder + (entry.recurrence && entry.recurrence !== "none" ? '<span>↻ ' + esc(entry.recurrence) + '</span>' : "") +
       '</div>' + (entry.description ? '<p class="cadence-agenda-notes">' + esc(entry.description) + "</p>" : "") + '</div></div><div class="cadence-agenda-actions">' +
-      (event.sourceUrl ? '<a href="' + esc(event.sourceUrl) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' + cadenceSourceFlag(event.sourceUrl) : "") +
+      (safeHttpUrl(event.sourceUrl) ? '<a href="' + esc(safeHttpUrl(event.sourceUrl)) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' + cadenceSourceFlag(event.sourceUrl) : "") +
       (isEditor ? '<button type="button" data-calendar-complete="' + esc(event.entryId) + '" data-calendar-date="' + esc(event.occurrenceDate) + '" data-calendar-done="' + String(isDone) + '">' + (isDone ? "Reopen occurrence" : "Mark done") + '</button><button type="button" data-calendar-edit="' + esc(event.entryId) + '">Edit</button><button type="button" data-calendar-delete="' + esc(event.entryId) + '">Archive</button>' : (isDone ? '<span>Completed</span>' : "")) +
       cadenceCalendarLinks(event) + "</div></article>";
   }).join("") : (search || state.cadenceFilter !== "ALL" ? '<div class="cadence-empty">No entries match these filters on this day. Try another date or clear the search and type filter.</div>' : '<div class="cadence-empty">Nothing is scheduled for this day.<br>Use <strong>New entry</strong> to log an expected release, filing deadline or internal follow-up.</div>');
@@ -5919,7 +5930,8 @@ function cadenceUpcomingItemMarkup(event, today) {
   const regulator = manual && entry.regulator ? '<span>' + esc(entry.regulator) + '</span>' : "";
   const recurrence = manual && entry.recurrence && entry.recurrence !== "none" ? '<span>↻ ' + esc(entry.recurrence) + '</span>' : "";
   const notes = manual ? entry.description : event.item && event.item.description;
-  const source = event.sourceUrl ? '<a href="' + esc(event.sourceUrl) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' : "";
+  // sourceUrl is free text on team entries: only http(s) becomes a link (no javascript:/data:).
+  const source = safeHttpUrl(event.sourceUrl) ? '<a href="' + esc(safeHttpUrl(event.sourceUrl)) + '" target="_blank" rel="noopener noreferrer">Open source ↗</a>' : "";
   const changeLinked = !manual && event.eventId && changeLogEntries().some(change => change.event_id === event.eventId);
   const editActions = manual && state.cadenceMember && ["admin", "editor"].includes(state.cadenceMember.role)
     ? '<button type="button" data-calendar-complete="' + esc(event.entryId) + '" data-calendar-date="' + esc(event.occurrenceDate) + '" data-calendar-done="' + String(!!event.completed) + '">' + (event.completed ? "Reopen occurrence" : "Mark done") + '</button><button type="button" data-calendar-edit="' + esc(event.entryId) + '">Edit</button><button type="button" data-calendar-delete="' + esc(event.entryId) + '">Archive</button>'
@@ -6496,6 +6508,32 @@ function readHash() {
   const view = Object.keys(HASH_NAMES).find(key => HASH_NAMES[key] === name) || (name === "ask-sentinel" ? "askSentinel" : null);
   return view ? { view, id: rest.length ? decodeURIComponent(rest.join("/")) : "" } : null;
 }
+// Open the view and item a "#view/id" address names (first load and later hash changes).
+function applyRoute(route, options) {
+  if (route.id) {
+    if (route.view === "changes") state.selectedChangeId = route.id;
+    if (route.view === "monitors" && state.items.some(item => item.url_id === route.id)) state.selectedId = route.id;
+    if (route.view === "runs") state.selectedRunId = route.id;
+    if (route.view === "notifications") state.selectedNotificationId = route.id;
+    if (route.view === "health") state.selectedHealthKey = route.id;
+    if (route.view === "registry") state.selectedRegistryKey = route.id;
+    if (route.view === "scout") {
+      state.selectedScoutKey = route.id;
+      // A deep link to a finding outside the default list opens the list that holds it.
+      const linked = scoutCandidates().find(item => item.key === route.id);
+      const bucket = linked ? L.scoutBucket(linked, scoutMonitoredKeys()) : "";
+      if (bucket) state.scoutFilter = bucket;
+    }
+  }
+  setView(route.view, { detail: !!route.id, preserveHash: !!(options && options.preserveHash) });
+}
+// A link pasted into (or followed within) an open tab, such as an alert's
+// "#changes/<id>", opens that item; it used to be read only on first load.
+window.addEventListener("hashchange", () => {
+  if (!state.loaded || isCadenceRecoveryRedirect()) return;
+  const route = readHash();
+  if (route) applyRoute(route);
+});
 function setView(view, options) {
   options = options || {};
   hideFieldTip();
@@ -6620,22 +6658,7 @@ async function loadDataOnce(showErrors) {
       const recoveryRedirect = isCadenceRecoveryRedirect();
       const route = recoveryRedirect ? { view: "calendar", id: "" } : readHash();
       if (route) {
-        if (route.id) {
-          if (route.view === "changes") state.selectedChangeId = route.id;
-          if (route.view === "monitors" && state.items.some(item => item.url_id === route.id)) state.selectedId = route.id;
-          if (route.view === "runs") state.selectedRunId = route.id;
-          if (route.view === "notifications") state.selectedNotificationId = route.id;
-          if (route.view === "health") state.selectedHealthKey = route.id;
-          if (route.view === "registry") state.selectedRegistryKey = route.id;
-          if (route.view === "scout") {
-            state.selectedScoutKey = route.id;
-            // A deep link to a finding outside the default list opens the list that holds it.
-            const linked = scoutCandidates().find(item => item.key === route.id);
-            const bucket = linked ? L.scoutBucket(linked, scoutMonitoredKeys()) : "";
-            if (bucket) state.scoutFilter = bucket;
-          }
-        }
-        setView(route.view, { detail: !!route.id, preserveHash: recoveryRedirect });
+        applyRoute(route, { preserveHash: recoveryRedirect });
       } else {
         setView("overview");
       }
@@ -9761,7 +9784,7 @@ function syncMoreTab() {
   $("navMoreLabel").textContent = inMore ? MORE_VIEWS[state.view] : "More";
   const dot = $("navMoreDot");
   const failing = healthTotals().failing || 0;
-  const review = state.scout ? scoutBuckets().REVIEW.length : 0;
+  const review = state.scoutReview ? scoutBuckets().REVIEW.length : 0;
   dot.hidden = !(failing || review);
   dot.classList.toggle("is-fresh", !failing && review > 0);
   dot.title = failing ? plural(failing, "monitor failing", "monitors failing") : review ? plural(review, "Scout suggestion", "Scout suggestions") + " to review" : "";
@@ -9780,7 +9803,7 @@ function renderMoreSheet() {
     : totals.stale ? plural(totals.stale, "monitor overdue", "monitors overdue") : healthNumber(totals.healthy) + " of " + healthNumber(totals.monitors) + " monitors healthy";
   const healthSub = !state.health ? "Appears after the next scan" : healthPercent(week.success_rate) + " of " + healthNumber(week.checks) + " checks ok this week";
   const text = id => { const el = $(id); return el ? el.textContent.trim() : ""; };
-  const review = state.scout ? scoutBuckets().REVIEW.length : 0;
+  const review = state.scoutReview ? scoutBuckets().REVIEW.length : 0;
   const lastRunAt = state.report && state.report.generated_at;
   const cadence = Number(text("navCadenceCount")) || 0;
   const tile = (view, label, value, sub, logo = "") => '<button type="button" class="more-tile' + (state.view === view ? " is-current" : "") + '" data-more-go="' + view + '">' +
@@ -9793,7 +9816,7 @@ function renderMoreSheet() {
       '<span class="more-value">' + esc(healthValue) + '</span><span class="more-sub">' + esc(healthSub) + "</span>" +
       '<span class="more-health-cells" aria-hidden="true">' + cells + "</span></button>" +
     '<div class="more-grid">' +
-      tile("runs", "Runs", esc(lastRunAt ? relativeTime(lastRunAt) : "None"), esc(text("navRunCount") ? "last scan · " + text("navRunCount") + " saved" : "since the last scan")) +
+      tile("runs", "Runs", esc(lastRunAt ? relativeTime(lastRunAt) : "None"), esc(state.history.length ? "last scan · " + plural(state.history.length, "run", "runs") + " saved" : "since the last scan")) +
       tile("scout", "Scout", review ? "<b>" + esc(review) + "</b>" : "0", esc(review ? "pages to review" : "nothing to review"), scoutLogo) +
       tile("calendar", "Cadence", esc(cadence), esc(cadence === 1 ? "date coming up" : "dates coming up"), cadenceLogo) +
       tile("registry", "Registry", esc(registryItems().length), esc(registryItems().length === 1 ? "registered item" : "registered items")) +
@@ -10409,6 +10432,7 @@ function docToolbar(meta) {
     '<span class="doc-bar-actions">' + (meta.actions || "") + "</span></div>";
 }
 const DOC_KIND_LABEL = { pdf: "PDF", xlsx: "Excel workbook", xls: "Excel 97–2003 workbook", csv: "CSV", docx: "Word document", zip: "ZIP bundle", xml: "XML", json: "JSON", text: "Text", other: "File" };
+let documentDownloadUrl = "";
 // Renders a document into `host`. options: { bytes, name, title, format, url, actions, alive }.
 async function renderDocument(host, options) {
   const o = options || {};
@@ -10423,7 +10447,9 @@ async function renderDocument(host, options) {
     try { names = (await L.zipListing(bytes)).map(entry => entry.name); } catch (_) { names = []; }
     kind = names.indexOf("xl/workbook.xml") >= 0 ? "xlsx" : names.indexOf("word/document.xml") >= 0 ? "docx" : "zip";
   }
-  const download = URL.createObjectURL(new Blob([bytes], { type: "application/octet-stream" }));
+  // One download link at a time: the previous document's blob is released.
+  if (documentDownloadUrl) URL.revokeObjectURL(documentDownloadUrl);
+  const download = documentDownloadUrl = URL.createObjectURL(new Blob([bytes], { type: "application/octet-stream" }));
   const fileName = (String(o.name || o.url || "document").split(/[?#]/)[0].split("/").pop() || "document").slice(0, 120);
   const actions = (o.actions || "") + '<a class="sheet-link" href="' + esc(download) + '" download="' + esc(fileName) + '">Download</a>' +
     (safeHttpUrl(o.url) ? externalLink(o.url, "Open original", "sheet-link") : "");
@@ -11390,10 +11416,8 @@ async function compareFillPdf(root, before, after, status, sources, alive) {
  */
 const ASK_SENTINEL_ENDPOINT = window.CHANGESENTINEL_ASK_ENDPOINT || "";
 const ASK_SENTINEL_MAX_TRANSCRIPT = 12;
-// TEMPORARY: visible unlimited-query test mode, in sync with the Edge Function.
-const ASK_SENTINEL_TEST_MODE_UNTIL = Date.parse("2026-10-25T15:30:00Z");
-function askSentinelUnlimitedTestMode() { return Date.now() < ASK_SENTINEL_TEST_MODE_UNTIL; }
-const askSentinelState = { messages: [], sending: false, remaining: askSentinelUnlimitedTestMode() ? 999 : 3, warmed: false, warmingPromise: null, warmError: "", identity: null, memoryVisitorId: "" };
+// The Edge Function owns the quota; the dashboard only shows the `remaining` it returns.
+const askSentinelState = { messages: [], sending: false, remaining: 3, warmed: false, warmingPromise: null, warmError: "", identity: null, memoryVisitorId: "" };
 
 const ASK_SENTINEL_SUPABASE_URL = window.CHANGESENTINEL_ASK_SUPABASE_URL || "";
 const ASK_SENTINEL_SUPABASE_PUBLISHABLE_KEY = window.CHANGESENTINEL_ASK_SUPABASE_PUBLISHABLE_KEY || "";
@@ -11639,13 +11663,10 @@ function askSentinelAppendMessage(role, content, extraClass) {
   return node;
 }
 function askSentinelUpdateQuota(remaining) {
-  if (askSentinelUnlimitedTestMode()) askSentinelState.remaining = 999;
-  else if (Number.isInteger(remaining) && remaining >= 0 && remaining <= 3) askSentinelState.remaining = remaining;
+  if (Number.isInteger(remaining) && remaining >= 0 && remaining <= 3) askSentinelState.remaining = remaining;
   const quota = $("askSentinelQuota");
-  quota.textContent = askSentinelUnlimitedTestMode()
-    ? "Test mode · unlimited until " + new Date(ASK_SENTINEL_TEST_MODE_UNTIL).toLocaleString([], { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })
-    : askSentinelState.remaining + " of 3 questions left today";
-  quota.classList.toggle("is-empty", !askSentinelUnlimitedTestMode() && askSentinelState.remaining <= 0);
+  quota.textContent = askSentinelState.remaining + " of 3 questions left today";
+  quota.classList.toggle("is-empty", askSentinelState.remaining <= 0);
   quota.classList.remove("is-busy");
 }
 function askSentinelOpen() {
@@ -11655,14 +11676,14 @@ function askSentinelOpen() {
 }
 function askSentinelSetSending(sending) {
   askSentinelState.sending = sending;
-  const quotaEmpty = !askSentinelUnlimitedTestMode() && askSentinelState.remaining <= 0;
+  const quotaEmpty = askSentinelState.remaining <= 0;
   $("askSentinelSend").disabled = sending || quotaEmpty;
   $("askSentinelInput").disabled = sending || quotaEmpty;
   $("askSentinelSend").setAttribute("aria-busy", String(sending));
 }
 /* Repository history and evidence are indexed server-side; client context is not sent as authoritative evidence. */
 async function askSentinelSendQuestion(promptOverride) {
-  if (askSentinelState.sending || (!askSentinelUnlimitedTestMode() && askSentinelState.remaining <= 0)) return;
+  if (askSentinelState.sending || (askSentinelState.remaining <= 0)) return;
   const input = $("askSentinelInput");
   const question = String(promptOverride == null ? input.value : promptOverride).trim();
   if (!question) { input.focus(); return; }
@@ -11670,7 +11691,7 @@ async function askSentinelSendQuestion(promptOverride) {
     askSentinelAppendMessage("assistant", "Monitoring data is still loading. Please wait until the dashboard finishes loading before asking a question.", "ask-sentinel-error");
     return;
   }
-  if (!askSentinelUnlimitedTestMode() && question.length > 1200) {
+  if (question.length > 1200) {
     askSentinelAppendMessage("assistant", "Please keep each question to 1,200 characters or fewer.", "ask-sentinel-error");
     return;
   }
@@ -11721,7 +11742,7 @@ async function askSentinelSendQuestion(promptOverride) {
     typing.classList.remove("ask-sentinel-typing");
   } finally {
     askSentinelSetSending(false);
-    if (!askSentinelUnlimitedTestMode() && askSentinelState.remaining <= 0) {
+    if (askSentinelState.remaining <= 0) {
       askSentinelUpdateQuota(0);
       $("askSentinelInput").placeholder = "Daily limit reached — resets at 00:00 UTC";
       document.querySelectorAll("[data-ask-prompt]").forEach(button => { button.disabled = true; });

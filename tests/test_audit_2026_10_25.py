@@ -439,5 +439,42 @@ class TestMcpPaths(unittest.TestCase):
             self.assertEqual(record.data_path("data/evidence/x.json"), (root / "data" / "evidence" / "x.json").resolve())
 
 
+NODE = __import__("shutil").which("node")
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def run_js(body: str):
+    import subprocess
+
+    script = "const L = require(" + json.dumps(str(ROOT / "dashboard-lib.js")) + ");\n" + body
+    result = subprocess.run([NODE, "-e", script], capture_output=True, text=True, timeout=30, check=True)
+    return json.loads(result.stdout)
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestDashboardLib(unittest.TestCase):
+    """CS-20 / CS-21."""
+
+    def test_no_regex_lookbehind_in_classic_scripts(self):
+        import re
+
+        for name in ("dashboard-lib.js", "dashboard.js"):
+            source = (ROOT / name).read_text(encoding="utf-8")
+            self.assertIsNone(re.search(r"\(\?<[=!]", source), f"{name} uses a regex lookbehind (Safari <= 16.3 cannot parse it)")
+
+    def test_report_codes_drop_a_trailing_edition_year(self):
+        self.assertEqual(run_js("console.log(JSON.stringify(L.reportCodes('BCAR 2027 and BCAR-2026')));"), ["BCAR"])
+
+    def test_changed_lines_beginning_with_dashes_or_pluses_are_kept(self):
+        diff = "--- before\n+++ after\n@@ -1,3 +1,3 @@\n keep\n--- separate the sections\n+++ add the appendix\n"
+        parsed = run_js("console.log(JSON.stringify(L.parseUnifiedDiff(" + json.dumps(diff) + ")));")
+        lines = parsed["hunks"][0]["lines"]
+        self.assertEqual(lines, [
+            {"type": "ctx", "text": "keep"},
+            {"type": "del", "text": "-- separate the sections"},
+            {"type": "add", "text": "++ add the appendix"},
+        ])
+
+
 if __name__ == "__main__":
     unittest.main()

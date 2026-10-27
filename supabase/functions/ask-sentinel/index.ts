@@ -6,19 +6,6 @@ const MAX_CONTEXT_CHARS = 6500;
 const MAX_QUESTION_CHARS = 1200;
 const MAX_OUTPUT_TOKENS = 700;
 
-// TEMPORARY: disable Ask Sentinel's app-level daily quotas for testing.
-// Automatically turns off at 2026-10-25 15:30 UTC (21:00 IST).
-// Tests can opt out with ASK_SENTINEL_DISABLE_UNLIMITED_TEST_MODE=true.
-const TEMPORARY_UNLIMITED_TEST_MODE_UNTIL = Date.parse('2026-10-25T15:30:00Z');
-const UNLIMITED_TEST_REMAINING = 999;
-
-function unlimitedTestModeActive(): boolean {
-  if (Deno.env.get('ASK_SENTINEL_DISABLE_UNLIMITED_TEST_MODE') === 'true') {
-    return false;
-  }
-  return Date.now() < TEMPORARY_UNLIMITED_TEST_MODE_UNTIL;
-}
-
 const ALLOWED_ORIGINS = new Set([
   'https://gauravdarwesh.github.io',
   'http://localhost:5173',
@@ -264,8 +251,6 @@ function nextUtcReset(): string {
 }
 
 async function remainingFor(userId: string): Promise<number> {
-  if (unlimitedTestModeActive()) return UNLIMITED_TEST_REMAINING;
-
   const day = utcDate();
 
   const params = new URLSearchParams({
@@ -400,34 +385,11 @@ async function consumeRequest(
   const text = await response.text();
 
   if (response.status === 404 || /PGRST202/.test(text)) {
-    // Keep the legacy per-user quota if the abuse-limit migration
-    // has not yet been applied.
-    const legacy = await restJson(
-      'rpc/consume_ask_sentinel_request',
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          p_user_id: userId,
-          p_usage_date: utcDate()
-        })
-      },
-      8000
+    // Fail closed. Falling back to the legacy per-user quota silently dropped
+    // the network and global caps (the only cost ceiling) on a schema blip.
+    throw new Error(
+      'consume_ask_sentinel_request_v2 is unavailable; apply migration 20261021120000_ask_sentinel_abuse_limits.sql'
     );
-
-    const row = Array.isArray(legacy)
-      ? legacy[0]
-      : legacy;
-
-    return {
-      allowed: row?.allowed === true,
-      remaining: Number.isInteger(row?.remaining)
-        ? row.remaining
-        : 0,
-      reason:
-        row?.allowed === true
-          ? 'ok'
-          : 'user_limit'
-    };
   }
 
   if (!response.ok) {
@@ -571,7 +533,11 @@ async function fetchCurrentPageRecordsForUrls(
     ...new Set(
       urls.flatMap((value) => {
         try {
-          return [new URL(value).hostname.toLowerCase()];
+          // A hostname can legally hold "," or "*" (new URL('http://a,b.com/')),
+          // which PostgREST reads as filter syntax: keep only hostname characters,
+          // as fetchCurrentPageRecordsForHosts does.
+          const host = new URL(value).hostname.toLowerCase().replace(/[^a-z0-9.-]/g, '');
+          return host ? [host] : [];
         } catch (_) {
           return [];
         }
@@ -1808,7 +1774,6 @@ Deno.serve(async (req: Request) => {
   try {
     phase = 'request_actor';
     const actor = await requestActor(req);
-    const unlimitedTestMode = unlimitedTestModeActive();
 
     if (req.method === 'GET' && mode === 'warm') {
       const index = await readIndexState();
@@ -1895,7 +1860,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (!unlimitedTestMode && question.length > MAX_QUESTION_CHARS) {
+    if (question.length > MAX_QUESTION_CHARS) {
       return respond(
         req,
         {
@@ -2179,16 +2144,7 @@ Deno.serve(async (req: Request) => {
 
     phase = 'quota';
 
-    const quota: QuotaResult = unlimitedTestMode
-      ? { allowed: true, remaining: UNLIMITED_TEST_REMAINING, reason: 'ok' }
-      : await consumeRequest(actor.id, await networkBucket(req));
-
-    if (unlimitedTestMode) {
-      logStage('temporary_unlimited_test_mode', {
-        expires_at: new Date(TEMPORARY_UNLIMITED_TEST_MODE_UNTIL).toISOString(),
-        actor_mode: actor.mode
-      });
-    }
+    const quota: QuotaResult = await consumeRequest(actor.id, await networkBucket(req));
 
     if (!quota.allowed) {
       logStage('quota_refused', {
@@ -2439,7 +2395,7 @@ Deno.serve(async (req: Request) => {
           });
         }
 
-        const refunded = unlimitedTestMode ? null : await refundRequest(actor.id);
+        const refunded = await refundRequest(actor.id);
 
         logStage('citation_rejected', {
           source_count: evidence.sources.length,
@@ -2513,7 +2469,7 @@ Deno.serve(async (req: Request) => {
 
       // If the provider fails, refund the request and return only
       // validated evidence links instead of unsupported model text.
-      const refunded = unlimitedTestMode ? null : await refundRequest(actor.id);
+      const refunded = await refundRequest(actor.id);
 
       const fallback =
         citationSafeEvidenceFallback(evidence.sources, 'provider_failure');
