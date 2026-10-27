@@ -7816,7 +7816,7 @@ function exploreFrameStyle() {
     ".cs-h-e{right:-6px!important;top:calc(50% - 5px)!important;cursor:ew-resize!important}.cs-h-w{left:-6px!important;top:calc(50% - 5px)!important;cursor:ew-resize!important}" +
     ".cs-h-ne{right:-6px!important;top:-6px!important;cursor:nesw-resize!important}.cs-h-sw{left:-6px!important;bottom:-6px!important;cursor:nesw-resize!important}" +
     ".cs-h-nw{left:-6px!important;top:-6px!important;cursor:nwse-resize!important}.cs-h-se{right:-6px!important;bottom:-6px!important;cursor:nwse-resize!important}" +
-    "html.cs-recording body{box-shadow:inset 0 0 0 3px #d9412b!important}</style>";
+    "html.cs-recording body{box-shadow:inset 0 0 0 3px #d8432f!important}</style>";
 }
 function explorePost(message) {
   const frame = $("exploreFrame");
@@ -8219,7 +8219,7 @@ function exploreAreaFree(area) {
 function exploreSelectorProblem(selector) {
   const a = state.add;
   if (!selector) return a.view === "reader" ? "Watching or ignoring a part needs the Page or Live view."
-    : "No single part of the page holds everything in this box. To watch or ignore it, draw it around one table, list or section.";
+    : "Spans several parts of the page. To watch it, draw it around one table, list or section.";
   if (a.view !== "live" || !a.page || typeof DOMParser === "undefined") return "";
   try {
     if (!a.copyDoc || a.copyDoc.page !== a.page) a.copyDoc = { page: a.page, doc: new DOMParser().parseFromString(a.page.html || "", "text/html") };
@@ -8244,9 +8244,9 @@ function exploreAreasHtml(areas) {
         '<span class="area-meta">' + esc(plural(links, "link", "links") + (area.text ? " · " + area.text : "")) + "</span></div>" +
       '<button class="area-remove" type="button" data-area-remove="' + area.id + '" aria-label="Remove area ' + (index + 1) + '" title="Remove this area">×</button>' +
       '<div class="area-acts">' +
-        (links ? '<button class="area-act" type="button" data-area-select="' + area.id + '" title="Select the links in this area"' + (free.length ? "" : " disabled") + ">" + (free.length ? "Select " + free.length : "Selected ✓") + "</button>" : "") +
-        '<button class="area-act" type="button" data-area-watch="' + area.id + '" title="' + esc(watchTitle) + '"' + (area.selector && !area.problem ? "" : " disabled") + ">Watch only</button>" +
-        '<button class="area-act" type="button" data-area-ignore="' + area.id + '" title="' + esc(area.problem || "Leave this part out when the page is checked (menus, banners, dates that change every day)") + '"' + (area.selector && !area.problem ? "" : " disabled") + ">Ignore</button>" +
+        (links ? '<button class="btn area-act" type="button" data-area-select="' + area.id + '" title="Select the links in this area"' + (free.length ? "" : " disabled") + ">" + (free.length ? "Select " + free.length : "Selected ✓") + "</button>" : "") +
+        '<button class="btn area-act" type="button" data-area-watch="' + area.id + '" title="' + esc(watchTitle) + '"' + (area.selector && !area.problem ? "" : " disabled") + ">Watch only</button>" +
+        '<button class="btn area-act" type="button" data-area-ignore="' + area.id + '" title="' + esc(area.problem || "Leave this part out when the page is checked (menus, banners, dates that change every day)") + '"' + (area.selector && !area.problem ? "" : " disabled") + ">Ignore</button>" +
       "</div>" +
       (area.problem ? '<p class="area-problem">' + esc(area.problem) + "</p>" : "") + "</div>";
   };
@@ -8255,10 +8255,10 @@ function exploreAreasHtml(areas) {
       '<button class="text-button" type="button" data-area-clear>' + (several ? "Clear all" : "Clear") + "</button></div>" +
     areas.map(row).join("") +
     (several ? '<div class="area-all">' +
-      '<button class="area-act is-strong" type="button" data-area-select="all"' + (allFree.size ? "" : " disabled") + ">" +
+      '<button class="btn area-act is-strong" type="button" data-area-select="all"' + (allFree.size ? "" : " disabled") + ">" +
         (allFree.size ? "Select links in all " + areas.length + " (" + allFree.size + ")" : "All their links are selected") + "</button>" +
-      (usable.length > 1 ? '<button class="area-act" type="button" data-area-watch="all">Watch only these ' + usable.length + "</button>" +
-        '<button class="area-act" type="button" data-area-ignore="all">Ignore these ' + usable.length + "</button>" : "") +
+      (usable.length > 1 ? '<button class="btn area-act" type="button" data-area-watch="all">Watch only these ' + usable.length + "</button>" +
+        '<button class="btn area-act" type="button" data-area-ignore="all">Ignore these ' + usable.length + "</button>" : "") +
       "</div>" : "") +
     '<p class="smart-note">Drag a box’s edges or corners to resize it, or its number to move it. Near the top or bottom of the page it scrolls for you.</p>' +
     "</section>";
@@ -8433,16 +8433,16 @@ function exploreStepsHtml() {
       '<button class="text-button" type="button" data-step-record>' + (a.recording ? "Stop" : "Record more") + "</button></div>" +
     (rows ? '<ol class="step-list">' + rows + "</ol>" : '<p class="smart-note">' + (a.recording ? "Use the page: choose, type and click as you would to reach what should be monitored." : "No steps yet.") + "</p>") +
     '<div class="area-acts">' +
-      '<button class="area-act" type="button" data-step-waitpick' + (a.waitPick ? ' aria-pressed="true"' : "") + ">" + (a.waitPick ? "Click the part… (Esc)" : "+ Wait for a part") + "</button>" +
-      '<button class="area-act" type="button" data-step-wait>+ Wait 2 s</button>' +
-      (entry.actions.length ? '<button class="area-act" type="button" data-step-undo>Undo</button><button class="area-act" type="button" data-step-clear>Clear</button>' : "") +
+      '<button class="btn area-act" type="button" data-step-waitpick' + (a.waitPick ? ' aria-pressed="true"' : "") + ">" + (a.waitPick ? "Click the part… (Esc)" : "+ Wait for a part") + "</button>" +
+      '<button class="btn area-act" type="button" data-step-wait>+ Wait 2 s</button>' +
+      (entry.actions.length ? '<button class="btn area-act" type="button" data-step-undo>Undo</button><button class="btn area-act" type="button" data-step-clear>Clear</button>' : "") +
     "</div>" +
     '<label class="field-check step-visual"><input type="checkbox" data-step-visual' + (entry.visual ? " checked" : "") + "> Also compare screenshots of the page</label>" +
     '<p class="smart-note">The page here runs sealed off from the site, so a search may not answer; each scan replays these steps in a real browser, then reads the page.</p>' +
     '<details class="step-paste"><summary>Record on the real site instead</summary>' +
       '<p class="smart-note">For portals that need a sign-in or several pages: drag <a class="recorder-link" href="' + esc(L.recorderBookmarklet()) + '" data-step-bookmarklet>ChangeSentinel recorder</a> to your bookmarks bar, use the portal, click it, then <em>Copy steps</em> and paste them here.</p>' +
       '<textarea class="field-input is-code" id="stepPaste" rows="3" spellcheck="false" placeholder="Paste the copied steps"></textarea>' +
-      '<div class="area-acts"><button class="area-act" type="button" data-step-paste>Use these steps</button></div></details>' +
+      '<div class="area-acts"><button class="btn area-act" type="button" data-step-paste>Use these steps</button></div></details>' +
     "</section>";
 }
 function exploreStepAction(target) {
