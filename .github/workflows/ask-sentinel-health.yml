@@ -137,8 +137,18 @@ jobs:
               raise RuntimeError("Ask Sentinel returned no usable answer.")
           if answer.get("model") != "deterministic-run-summary":
               raise RuntimeError("Ask Sentinel reported an unexpected model: " + str(answer.get("model")))
-          if answer.get("remaining") not in (2, 999):
-              raise RuntimeError("Unexpected remaining count: " + str(answer.get("remaining")))
+          # The answer takes one question from this run's fresh visitor, so it leaves
+          # one fewer than the warm-up reported, whatever the daily limit is (it was
+          # raised from 3 to 50 on 27 Oct, which broke a hard-coded 2 here).
+          before = warm.get("remaining")
+          after = answer.get("remaining")
+          expected_after = before - 1 if isinstance(before, int) and before > 0 else None
+          if after != 999 and (expected_after is None or after != expected_after):
+              raise RuntimeError("Unexpected remaining count: " + str(after) + " after " + str(before) + " at warm-up.")
+          if answer.get("indexed_commit") != warm.get("commit_sha"):
+              # Several merges in a row re-index main while this runs; accept the
+              # answer if it used the revision that was current just after it.
+              warm = request_json(function + "?mode=warm", timeout=175)
           if answer.get("indexed_commit") != warm.get("commit_sha"):
               raise RuntimeError("The answer used a different repository revision than the warm-up.")
           if expected_run not in text:

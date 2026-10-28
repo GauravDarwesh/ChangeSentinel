@@ -3411,6 +3411,9 @@ Deno.serve(async (req: Request) => {
         logStage('provider_fallback_answered', {
           error_code: errorCode,
           provider_status: providerStatus,
+          // Our own error text (never the provider's body): says whether the
+          // call failed outright, hit the output limit or came back empty.
+          error: message.slice(0, 160),
           source_count: evidence.sources.length,
           refunded: refunded !== null
         });
@@ -3429,6 +3432,7 @@ Deno.serve(async (req: Request) => {
       logStage('provider_failed', {
         error_code: errorCode,
         provider_status: providerStatus,
+        error: message.slice(0, 160),
         source_count: evidence.sources.length,
         refunded: refunded !== null
       });

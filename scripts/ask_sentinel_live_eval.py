@@ -84,6 +84,16 @@ def is_unavailable_response(response: dict[str, Any]) -> bool:
     )
 
 
+def is_evidence_fallback(response: dict[str, Any]) -> bool:
+    """The backend's provider-failure reply: links to retrieved evidence, no model answer.
+
+    It arrives as HTTP 200 with answer text, but it was never meant to state the
+    facts a case checks, so grading it would report a provider outage as a
+    grounding failure.
+    """
+    return response.get("evidence_fallback") is True or response.get("model") == "evidence-fallback"
+
+
 def count_mentioned(text: str, field: str, expected: Any) -> bool:
     aliases = {
         "changed": ["changed"],
@@ -117,6 +127,9 @@ def run_case(results: list[dict[str, Any]], name: str, question: str, check) -> 
             or response.get("error_code")
             or "citation rejection"
         )
+    elif is_evidence_fallback(response):
+        passed = None
+        detail = "provider unavailable; the backend returned its evidence-only fallback, so grounding could not be evaluated"
     elif not answer and is_unavailable_response(response):
         passed = None
         detail = "provider/endpoint unavailable; grounding could not be evaluated: " + str(
