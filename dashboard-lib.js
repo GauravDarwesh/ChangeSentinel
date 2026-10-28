@@ -1768,8 +1768,12 @@
     return name;
   }
   function cellRef(row, col) { return columnName(col) + row; }
+  // One compiled pattern per attribute name (it was compiled for every cell read).
+  const ATTR_PATTERNS = new Map();
   function attr(tag, name) {
-    const match = String(tag || "").match(new RegExp("\\b" + name + '="([^"]*)"'));
+    let pattern = ATTR_PATTERNS.get(name);
+    if (!pattern) { pattern = new RegExp("\\b" + name + '="([^"]*)"'); ATTR_PATTERNS.set(name, pattern); }
+    const match = String(tag || "").match(pattern);
     return match ? xmlText(match[1]) : "";
   }
   const BUILTIN_DATE_FORMATS = new Set([14, 15, 16, 17, 22, 27, 30, 36, 45, 46, 47, 50, 57]);
@@ -2825,6 +2829,10 @@
     }
     return hit;
   }
+  // The browser's URL parser also drops default ports, resolves ".." and
+  // percent-encodes spaces and IDN hosts, which regmon.discovery.canonical does
+  // not (changing it there would re-key monitors). Compare a stored URL by
+  // canonicalising it here as well, never against the engine's string as is.
   function canonicalUrl(value) { return remembered("c", value, () => canonicalUrlUncached(value)); }
   function canonicalUrlUncached(value) {
     const raw = String(value == null ? "" : value).trim();
