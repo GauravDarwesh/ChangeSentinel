@@ -18,6 +18,7 @@ from __future__ import annotations
 import re
 import secrets
 import time
+from datetime import timedelta, timezone
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
@@ -30,7 +31,7 @@ from regmon.scout.net import BudgetExhausted, PoliteClient, ScoutFetchError
 from regmon.scout.profiles import Channel, Regulator, ScoutConfig
 from regmon.scout.registry import (
     Registry, build_review, compact_assessment, dump, dump_compact, iso, load_decisions, monitored_urls, near_monitored,
-    read_json, utc_now, write_if_changed,
+    parse_iso, read_json, utc_now, write_if_changed,
 )
 from regmon.scout.urls import canonical, candidate_id, file_format, host, is_asset
 
@@ -111,6 +112,7 @@ class ChannelRun:
         self.items = 0
         self.out_of_scope = 0
         self.observations: list[Observation] = []
+        self.deep = False
 
     def summary(self, observed: int, new: int) -> dict:
         return {
@@ -118,6 +120,7 @@ class ChannelRun:
             "required": self.channel.required, "status": self.status, "note": self.note, "error": self.error,
             "pages_read": self.pages_read, "items": self.items, "observed": observed, "new": new,
             "out_of_scope": self.out_of_scope,
+            **({"full_read": True} if self.deep else {}),
         }
 
 
@@ -225,7 +228,21 @@ def _run_depth_limited_listing(client: PoliteClient, regulator: Regulator, run: 
             continue
         visited.add(current_key)
 
-        response = client.get(fetch_url(current_url, regulator))
+        try:
+            response = client.get(fetch_url(current_url, regulator))
+        except Exception as exc:
+            if page_depth == 0:
+                raise
+            # A later page failing used to discard everything found so far,
+            # including documents found on earlier pages (CS-17). Keep them.
+            run.observations.extend(observations.values())
+            run.items = len(observations)
+            if isinstance(exc, BudgetExhausted):
+                raise
+            run.status = "partial"
+            run.note = (f"Read {run.pages_read} page(s) and kept {run.items} linked URL(s); "
+                        f"{clean(str(exc), 160)} stopped the rest of this sweep")
+            return
         run.pages_read += 1
         body = response.body
         content_type = str(getattr(response, "content_type", "") or "").lower()
@@ -288,14 +305,33 @@ def _run_depth_limited_listing(client: PoliteClient, regulator: Regulator, run: 
     )
 
 
-def run_listing(client: PoliteClient, regulator: Regulator, run: ChannelRun, *, baseline: bool, known: set[str]) -> None:
+DEEP_READ_DAYS = 28
+
+
+def _dates_out_of_order(links) -> bool:
+    """Listing dates that rise down the page: not newest first, whatever the profile says."""
+    dates = [link.date_hint for link in links if getattr(link, "date_hint", "")]
+    return len(dates) >= 3 and any(earlier < later for earlier, later in zip(dates, dates[1:]))
+
+
+def run_listing(client: PoliteClient, regulator: Regulator, run: ChannelRun, *, baseline: bool, known: set[str],
+                deep: bool = False) -> None:
+    """Read a paginated listing.
+
+    After its baseline a newest-first listing stops once a page's tail is made of
+    items seen before. Two checks keep that from hiding items for good:
+    ``deep`` (about monthly) reads every page up to ``max_pages`` without
+    stopping early, so an item only ever listed on page 2+ (back-dated, re-filed)
+    is still found (CS-12); and a page whose dates rise down the list is not
+    treated as newest first, whatever the profile says (CS-14).
+    """
     channel = run.channel
     if channel.crawl_depth is not None:
         _run_depth_limited_listing(client, regulator, run)
         return
     pagination = channel.pagination
     pages = (pagination.baseline_pages if baseline else pagination.max_pages) if pagination else 1
-    caught_up = reached_end = False
+    caught_up = reached_end = out_of_order = False
     for index in range(pages):
         url = page_url(channel, index)
         try:
@@ -331,7 +367,9 @@ def run_listing(client: PoliteClient, regulator: Regulator, run: ChannelRun, *, 
             run.observations.append(_observation(
                 link.url, run, anchor_text=link.anchor_text, title_attr=link.title_attr, context=link.context,
                 date_hint=link.date_hint, parent_url=response.url))
-        if pagination and channel.newest_first and not baseline:
+        if _dates_out_of_order(in_scope):
+            out_of_order = True
+        if pagination and channel.newest_first and not baseline and not deep and not out_of_order:
             # Newest first: once the tail of a page is made of items seen before,
             # everything older was seen too. Checking the tail (not just "any
             # known item") keeps a pinned old item at the top from ending the read.
@@ -342,8 +380,17 @@ def run_listing(client: PoliteClient, regulator: Regulator, run: ChannelRun, *, 
                 break
     if pagination and baseline:
         run.note = f"Baseline: read the first {run.pages_read} page(s)"
+    elif pagination and deep:
+        run.note = (f"Monthly full read: checked {run.pages_read} page(s)"
+                    + (" to the end of the listing" if reached_end else ""))
+        if not reached_end and run.pages_read >= pages:
+            run.note += f" (the profile's limit of {pages})"
     elif pagination and caught_up:
         run.note = f"Caught up with items seen before on page {run.pages_read}"
+    elif pagination and out_of_order and not reached_end:
+        run.status = "partial"
+        run.note = (f"Read {run.pages_read} page(s); the listing's dates are not newest first, "
+                    "so the early stop was not used and older pages may hold new items")
     elif pagination and reached_end:
         run.note = f"Reached the end of the listing after {run.pages_read} page(s)"
     elif pagination:
@@ -442,6 +489,22 @@ def _enrich(client: PoliteClient, registry: Registry, regulator: Regulator, cids
     return done
 
 
+ONBOARDING_DAYS = 7
+
+
+def _dated_recently(observation, now: str) -> bool:
+    """The publisher dated the item within ONBOARDING_DAYS before this sweep."""
+    moment = parse_iso(now)
+    if moment is None:
+        return False
+    for value in (observation.published, observation.lastmod, observation.date_hint):
+        stamp = parse_iso(str(value or "")[:10]) if re.match(r"\d{4}-\d{2}-\d{2}", str(value or "")) else None
+        if stamp is not None:
+            stamp = stamp.replace(tzinfo=moment.tzinfo or timezone.utc) if stamp.tzinfo is None else stamp
+            return moment - timedelta(days=ONBOARDING_DAYS) <= stamp <= moment + timedelta(days=1)
+    return False
+
+
 def sweep_regulator(regulator: Regulator, config: ScoutConfig, data_dir: Path, *, monitored: dict, sweep_id: str,
                     now: str, client: PoliteClient, log=print) -> dict:
     started = time.monotonic()
@@ -451,13 +514,19 @@ def sweep_regulator(regulator: Regulator, config: ScoutConfig, data_dir: Path, *
     for channel in regulator.channels:
         run = ChannelRun(channel)
         baseline = not registry.channel_baselined(channel.id)
+        channel_state = registry.channels.get(channel.id) or {}
+        # The baseline is itself a full read, so the monthly clock starts there.
+        last_deep = parse_iso(str(channel_state.get("last_full_read") or channel_state.get("baselined_at") or ""))
+        moment = parse_iso(now) or utc_now()
+        run.deep = (not baseline and channel.pagination is not None and channel.crawl_depth is None
+                    and (last_deep is None or moment - last_deep >= timedelta(days=DEEP_READ_DAYS)))
         try:
             if channel.type == "feed":
                 run_feed(client, regulator, run)
             elif channel.type == "sitemap":
                 run_sitemap(client, regulator, run, config)
             else:
-                run_listing(client, regulator, run, baseline=baseline, known=known_before)
+                run_listing(client, regulator, run, baseline=baseline, known=known_before, deep=run.deep)
         except Exception as exc:  # each channel fails on its own; the sweep continues
             _classify(run, exc)
         log(f"  {channel.id}: {run.status} pages={run.pages_read} items={run.items} {run.note or run.error}".rstrip())
@@ -496,6 +565,11 @@ def sweep_regulator(regulator: Regulator, config: ScoutConfig, data_dir: Path, *
         new_if_unknown = any(baselined.get(channel_id) for channel_id in observers.get(key, ()))
         cid, was_created = registry.observe(observation, sweep_id=sweep_id, now=now, new_if_unknown=new_if_unknown,
                                             https_hosts=regulator.https_hosts)
+        if was_created and registry.candidates[cid].get("origin") == "baseline" and _dated_recently(observation, now):
+            # A channel's first inventory used to file everything as old, so a
+            # publication from the onboarding week was never announced (CS-11).
+            registry.candidates[cid]["origin"] = "new"
+            registry.candidates[cid]["origin_reason"] = f"Dated within {ONBOARDING_DAYS} days before the channel's first sweep"
         per_channel[run.channel.id].add(cid)
         if was_created:
             created.append(cid)
@@ -524,6 +598,8 @@ def sweep_regulator(regulator: Regulator, config: ScoutConfig, data_dir: Path, *
             state["baselined_at"] = now
         if run.status in {"ok", "partial"}:
             state["last_success"] = now
+        if getattr(run, "deep", False) and run.status == "ok":
+            state["last_full_read"] = now
     registry.save(data_dir)
 
     status, reason = regulator_status(runs)
@@ -541,6 +617,8 @@ def sweep_regulator(regulator: Regulator, config: ScoutConfig, data_dir: Path, *
         **({"browser_loads": client.browser_loads} if getattr(client, "browser_loads", 0) else {}),
         "seconds": round(time.monotonic() - started, 1), "time_budget_seconds": client.max_seconds,
         "robots": robots,
+        **({"slow_hosts": {name: {"crawl_delay": delay, "note": "robots.txt asks for this many seconds between requests; Scout honours it, so channels on this host may stop early"}
+                           for name, delay in sorted(getattr(client, "slow_hosts", {}).items())}} if getattr(client, "slow_hosts", None) else {}),
         "counts": {
             "observed": sum(len(ids) for ids in per_channel.values()),
             "new": len(new_ids), "new_relevant": outcomes["relevant"], "new_uncertain": outcomes["uncertain"],
