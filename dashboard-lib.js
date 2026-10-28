@@ -3121,6 +3121,27 @@
     return parts.join(", ") + (shown ? " (" + shown + ")" : "");
   }
 
+  /* ---------- English translations (regmon/translate.py) ----------
+   * A translation is saved beside the extracted text it translates, named by the
+   * same content hash, so any saved version's English text can be found from its
+   * snapshot path alone (the engine derives it the same way).
+   */
+  const LANGUAGE_NAMES = { en: "English", es: "Spanish", pt: "Portuguese", fr: "French", de: "German", it: "Italian", nl: "Dutch" };
+  function translationPath(snapshotLocation) {
+    const name = String(snapshotLocation || "").split("/").pop();
+    return name ? "data/translations/" + name.replace(/\.txt$/, "") + ".en.txt" : "";
+  }
+  function languageName(code) { return LANGUAGE_NAMES[String(code || "").toLowerCase()] || String(code || "").toUpperCase(); }
+  // The line above an English view: where it came from and how complete it is.
+  function translationNote(item) {
+    const meta = item && item.translation && typeof item.translation === "object" ? item.translation : {};
+    const from = languageName(item && item.language);
+    const parts = ["Machine translation from " + from + "."];
+    if (meta.status === "partial") parts.push("Partly translated: " + Number(meta.translated_lines || 0).toLocaleString() + " of " + Number(meta.lines || 0).toLocaleString() + " lines; the rest is shown in " + from + ".");
+    parts.push("Changes are detected on the original text.");
+    return parts.join(" ");
+  }
+
   /* ---------- Structured spec changes (regmon/spec_diff.py) ---------- */
 
   const SPEC_CATEGORIES = ["added", "added_version", "severity", "logic", "retired", "reinstated", "effective", "message",
@@ -4440,6 +4461,7 @@ window.__csRec={show:()=>{if(!box.isConnected)document.body.appendChild(box);ren
     pickFormat, pickSlug, pickInScope, pickSections, pickMatches, pickGroupBy, pickSummary, pickBatches, pickMonitorName,
     pickScopeOptions, pickHosts, pickDiscoveryRequest, PICK_MAX_LINKS, PICK_MAX_REQUEST_LENGTH, pickScore, pickVersions, pickSimilar, pickRecipe, pickRuleMatches, pickRuleFolder, pickRuleRequest,
     diffSequences, alignLines, changedWords, readWorkbook, workbookDiff, csvWorkbook, parseCsv, zipListing, zipFile, readDocx, columnName, cellRef,
+    translationPath, languageName, translationNote, LANGUAGE_NAMES,
     isCfb, cfbStreams, oleKind, readXls, readOds, workbookFromText, splitPipeRow, parseXml, xmlTreeDiff, xmlDocumentKind, localName,
     esc, nextScheduledScan, scanCycle, runColumns, conditionSuggestionsFrom, similarityTo, rankSimilar, similarStarts, reportCodes, importColumns, importFrequencyHours, importIsPaused, importRows, shadowCompare, shadowRows, IMPORT_ALIASES, validTag, parseLabels, workspaceOf, labelsOf, scopeMatches, organisePayload, payloadIsEmpty, SETTINGS_PRESETS, presetPayload, LABEL_MAX, scanSchedule, scanScheduleIsDefault, scanScheduleLabel, scanAllows, scanIsDue, scanSlots, scanSchedulePayload, settingsRequests, SETTINGS_MARKER, SCAN_WEEKDAYS, SCAN_BUSINESS_DAYS, SCAN_INTERVALS, slotColumns, columnCellState, pendingScan,
     timelineModel, timelineGapWords, TIMELINE_KINDS, healthInsights, healthLight, botCheckWait, BOT_CHECK_GRACE_HOURS,

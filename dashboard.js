@@ -1563,6 +1563,8 @@ function pendingWords(pending) {
     default: return { title: "Next scheduled scan, " + day + " " + due, time: due, note: day, countdown: "in " + L.formatDuration(pending.remainingMinutes) };
   }
 }
+// Global on purpose: sentinel.js reports the next scan through it.
+function nextScheduledScan(reference = new Date()) { return L.nextScheduledScan(reference); }
 // Updates the countdown and the six-hour cycle bar; called every 30 seconds.
 function updateNextRunCountdown() {
   const pending = L.pendingScan(new Date(), state.scanColumns || L.runColumns(state.history, { workflowRuns: state.workflowRuns }), state.workflowRuns);
@@ -2283,6 +2285,9 @@ function diffModes(event) {
   if (event.event_type === "CHANGED_URL" || event.event_type === "HTML_SOURCE_CHANGED") modes.unshift(["compare", "Compare"]);
   if (event.event_type !== "REMOVED_URL") modes.push(["html", "HTML diff"]);
   if (isPlainObject(event.visual)) modes.push(["visual", "Visual"]);
+  // Pages in another language: the previous and new English texts side by side.
+  const page = itemForEvent(event);
+  if (page && page.language_needs_translation && event.event_type !== "REMOVED_URL") modes.splice(1, 0, ["english", "In English"]);
   return '<div class="segmented" role="group" aria-label="Diff view">' + modes.map(([key, label]) =>
     '<button type="button" data-diff-mode="' + key + '" aria-pressed="' + String(state.diffMode === key) + '">' + label + "</button>"
   ).join("") + "</div>";
@@ -2309,13 +2314,16 @@ async function fillEvidence(event, boxId, stillCurrent) {
     const summary = document.getElementById(boxId + "-summary");
     if (!target) return;
     const wanted = event.event_type === "VISUAL_CHANGED" ? "visual" : state.diffMode;
-    const mode = wanted === "compare" && !compareSources(evidence) ? "redline" : wanted === "visual" && !isPlainObject(evidence.visual) ? "redline" : wanted;
+    const page = itemForEvent(event);
+    const mode = wanted === "compare" && !compareSources(evidence) ? "redline" : wanted === "visual" && !isPlainObject(evidence.visual) ? "redline"
+      : wanted === "english" && !(page && page.language_needs_translation) ? "redline" : wanted;
     if (mode !== state.diffMode) {
       // Older evidence has no saved versions to overlay: drop the Compare option for it.
-      const group = target.parentElement && target.parentElement.querySelector('[data-diff-mode="compare"]');
+      const group = target.parentElement && target.parentElement.querySelector("[data-diff-mode]");
       const scope = group ? group.parentElement : document;
+      const canCompare = !!compareSources(evidence);
       scope.querySelectorAll("[data-diff-mode]").forEach(button => {
-        if (button.dataset.diffMode === "compare") button.remove();
+        if (button.dataset.diffMode === "compare" && !canCompare) button.remove();
         else button.setAttribute("aria-pressed", String(button.dataset.diffMode === mode));
       });
     }
@@ -2328,6 +2336,9 @@ async function fillEvidence(event, boxId, stillCurrent) {
     } else if (mode === "html") {
       target.innerHTML = L.renderUnifiedDiff(evidence.html_diff || "");
       if (summary) summary.textContent = "Formatted HTML markup diff. The fetched response is saved separately.";
+    } else if (mode === "english") {
+      if (summary) summary.textContent = "The previous and new versions in English, aligned line by line.";
+      renderTranslationCompare(target, evidence, event, stillCurrent);
     } else if (mode === "text") {
       target.innerHTML = L.renderUnifiedDiff(evidence.diff || "", { tables: true });
       if (summary) summary.textContent = "Unified diff of the extracted text.";
@@ -3060,6 +3071,14 @@ document.addEventListener("change", event => {
 
 /* ================= Detail: a page ================= */
 
+/* ----- English for pages in other languages (regmon/translate.py) ----- */
+function hasTranslation(item) { return !!(item && item.language_needs_translation && item.translation_location); }
+function languageTag(item) {
+  if (!item || !item.language_needs_translation) return "";
+  const status = item.translation && item.translation.status;
+  const words = hasTranslation(item) ? (status === "partial" ? "partly in English" : "English text") : "English text pending";
+  return '<span class="tag" title="' + esc(hasTranslation(item) ? L.translationNote(item) : "The English text is made on a later scan.") + '">' + esc(L.languageName(item.language)) + " · " + esc(words) + "</span>";
+}
 function renderSnapshotText(text) {
   const lines = String(text || "").split(/\r?\n/);
   if (!lines.some(line => line.trim())) return emptyState("Snapshot is empty", "A snapshot record exists, but no readable text was extracted from it.");
@@ -3180,7 +3199,7 @@ function renderDetailHeader(item) {
   const meta = '<span class="tag tone-' + esc(status.tone) + '">' + esc(status.label) + "</span>" +
     (source && source.alert_condition ? '<span class="tag" title="' + esc(conditionSummary(source)) + '">' + esc(source.alert_only_on_condition ? "Alerts only when: " : "Alert me when: ") + esc(String(source.alert_condition).length > 60 ? String(source.alert_condition).slice(0, 59) + "\u2026" : String(source.alert_condition)) + "</span>" : "") +
     (source && !L.scanScheduleIsDefault(sourceScanSchedule(source)) ? '<span class="tag" title="Scan schedule">' + esc(scanScheduleWords(source)) + "</span>" : "") +
-    (source && source.id ? organiseTags(source) : "") +
+    (source && source.id ? organiseTags(source) : "") + languageTag(item) +
     "<span>Checked " + esc(relativeTime(item.last_checked).toLowerCase()) + "</span>" + urlMeta(item.canonical_url);
   const actions = externalLink(item.canonical_url, "Open live page") +
     (snapshotPath ? externalLink(REPO + "/blob/main/" + snapshotPath, savedFileLabel) : "") +
@@ -3251,11 +3270,21 @@ async function loadSnapshot(item) {
   body.innerHTML = '<section class="sheet"><div class="snapshot-toolbar"><span class="snapshot-note">Saved ' + esc(fmt(item.last_full_fetch || item.last_checked)) + "</span>" +
     '<div class="segmented" role="group" aria-label="Snapshot view">' +
     '<button type="button" data-snapshot-mode="preview" aria-pressed="' + String(state.snapshotMode === "preview") + '">' + previewLabel + "</button>" +
-    '<button type="button" data-snapshot-mode="text" aria-pressed="' + String(state.snapshotMode === "text") + '">Extracted text</button></div></div>' +
+    '<button type="button" data-snapshot-mode="text" aria-pressed="' + String(state.snapshotMode === "text") + '">Extracted text</button>' +
+    (hasTranslation(item) ? '<button type="button" data-snapshot-mode="english" aria-pressed="' + String(state.snapshotMode === "english") + '">In English</button>' : "") + "</div></div>" +
     '<div id="snapshotCanvas"><div class="loading">Loading the saved copy…</div></div></section>';
   const canvas = $("snapshotCanvas");
   const current = () => selectedItem() && selectedItem().url_id === item.url_id && state.detailTab === "snapshot";
-  if (state.snapshotMode === "text") {
+  if (state.snapshotMode === "english" && hasTranslation(item)) {
+    try {
+      const text = await readSnapshotFile(item.translation_location, state.snapshotCache);
+      if (current()) canvas.innerHTML = '<p class="snapshot-note snapshot-caveat">' + esc(L.translationNote(item)) + "</p>" + renderSnapshotText(text);
+    } catch (error) {
+      if (current()) canvas.innerHTML = emptyState("Couldn't load the English text", String(error.message || error));
+    }
+    return;
+  }
+  if (state.snapshotMode === "text" || state.snapshotMode === "english") {
     if (!item.snapshot_location) { canvas.innerHTML = emptyState("No extracted text", "No text snapshot is linked to this page yet."); return; }
     try {
       const text = await readSnapshotFile(item.snapshot_location, state.snapshotCache);
@@ -10983,7 +11012,7 @@ async function fetchSnapshotBytes(path) {
   return new Uint8Array(await response.arrayBuffer());
 }
 function compareShell(kind, event) {
-  const kindLabel = { pdf: "Saved PDFs", html: "Saved pages", text: "Extracted text" }[kind];
+  const kindLabel = { pdf: "Saved PDFs", html: "Saved pages", text: "Extracted text", english: "English translation" }[kind];
   return '<div class="cmp" data-kind="' + kind + '">' +
     '<div class="cmp-bar"><span class="cmp-label is-before"><i></i>Previous version</span>' +
     '<span class="cmp-meta"><span class="cmp-kind">' + esc(kindLabel) + "</span>" +
@@ -11092,6 +11121,49 @@ async function readWorkbookFile(bytes, name) {
   if (L.isCfb(bytes)) return L.readXls(bytes);
   if (/\.ods$/i.test(String(name || ""))) return L.readOds(bytes);
   return L.readWorkbook(bytes);
+}
+
+/* ----- English: the two versions' translations, aligned like the text comparison ----- */
+async function translationExists(path) {
+  try { const response = await fetchImmutable(path); return response.ok; } catch (_) { return false; }
+}
+async function renderTranslationCompare(target, evidence, event, stillCurrent) {
+  disposeCompare();
+  const serial = ++compareSerial;
+  const alive = () => serial === compareSerial && stillCurrent() && target.isConnected;
+  const before = ((evidence && evidence.before) || {}).snapshot_location, after = ((evidence && evidence.after) || {}).snapshot_location;
+  const page = itemForEvent(event);
+  const language = L.languageName(page && page.language);
+  target.innerHTML = '<div class="cmp" data-kind="english"><p class="cmp-status" role="status">Reading both English texts…</p></div>';
+  const paths = { before: before ? L.translationPath(before) : "", after: after ? L.translationPath(after) : "" };
+  const [hasBefore, hasAfter] = await Promise.all([paths.before ? translationExists(paths.before) : false, paths.after ? translationExists(paths.after) : false]);
+  if (!alive()) return;
+  if (!hasAfter) {
+    target.innerHTML = emptyState("No English text for this version yet", "Each scan translates " + language + " pages within its budget, newest changes first. The redline shows the change in " + language + ".");
+    return;
+  }
+  if (!hasBefore) {
+    // The previous version was saved before translations were made: show the new one.
+    try {
+      const text = await readSnapshotFile(paths.after, state.snapshotCache);
+      if (!alive()) return;
+      target.innerHTML = '<p class="snapshot-note snapshot-caveat">The previous version has no English text (it was saved before translations were made). The new version in English:</p>' + renderSnapshotText(text);
+    } catch (error) {
+      if (alive()) target.innerHTML = emptyState("Couldn't load the English text", String(error.message || error));
+    }
+    return;
+  }
+  target.innerHTML = compareShell("english", event);
+  const root = target.querySelector(".cmp");
+  const status = root.querySelector(".cmp-status");
+  wireCompareSlider(root);
+  status.textContent = "Loading both English texts…";
+  try {
+    await compareFillText(root, status, { before: paths.before, after: paths.after }, alive);
+    if (alive()) status.textContent = "Machine translations of both versions from " + language + ", aligned line by line. Removed text is red on the left, added text green on the right. Changes are detected on the original text.";
+  } catch (error) {
+    if (alive()) status.textContent = "Couldn't load both English texts: " + String(error.message || error);
+  }
 }
 
 /* ----- Workbooks with no saved originals, and CSV: rebuilt from the two text snapshots ----- */
