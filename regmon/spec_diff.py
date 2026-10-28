@@ -139,7 +139,12 @@ CATEGORY_LABELS = {
 CATEGORY_LABELS["concepts"] = {**CATEGORY_LABELS["fields"], "added": "New element", "removed": "Element removed"}
 CATEGORY_LABELS["types"] = {**CATEGORY_LABELS["fields"], "added": "New type", "removed": "Type removed"}
 CATEGORY_LABELS["labels"] = {**CATEGORY_LABELS["codes"], "added": "New label", "removed": "Label removed", "description": "Label changed"}
-NOUNS = {"rules": ("rule", "rules"), "fields": ("field", "fields"), "codes": ("code", "codes"), "concepts": ("element", "elements"),
+CATEGORY_LABELS["facts"] = {"added": "New fact", "removed": "Fact removed", "definition": "Value changed",
+                             "description": "Label changed", "metadata": "Metadata only", "cosmetic": "Cosmetic only"}
+CATEGORY_LABELS["contexts"] = {"added": "New context", "removed": "Context removed", "definition": "Period or dimensions changed",
+                               "description": "Entity changed", "metadata": "Metadata only", "cosmetic": "Cosmetic only"}
+NOUNS = {"facts": ("fact", "facts"), "contexts": ("context", "contexts"),
+         "rules": ("rule", "rules"), "fields": ("field", "fields"), "codes": ("code", "codes"), "concepts": ("element", "elements"),
          "types": ("type", "types"), "labels": ("label", "labels")}
 
 ROLE_CATEGORY = {"logic": "logic", "message": "message", "severity": "severity", "description": "description",
@@ -569,6 +574,85 @@ def _linkbase_tables(doc: str, root) -> list[Table]:
     return [table for table in (rules, labels) if table.rows]
 
 
+XBRL_STRUCTURAL = {"context", "unit", "schemaRef", "linkbaseRef", "roleRef", "arcroleRef", "footnoteLink"}
+MAX_FACTS = 200_000
+
+
+def _instance_tables(doc: str, root) -> list[Table]:
+    """XBRL instance facts aligned by concept + period/entity/dimensions + unit.
+
+    Facts are keyed on what their context *says*, not on the context id: two
+    filings name the same context c-1 and C_2027Q1, and renumbering contexts is
+    not a change. A changed value, unit or precision is "Value changed".
+    """
+    contexts: dict[str, dict] = {}
+    for node in root:
+        if _local(node.tag) != "context":
+            continue
+        entity, period, dimensions = "", "", []
+        for part in node.iter():
+            local = _local(part.tag)
+            if local == "identifier":
+                entity = f"{_attr(part, 'scheme').rstrip('/').rsplit('/', 1)[-1]}:{_clean(part.text)}"
+            elif local == "instant":
+                period = _clean(part.text)
+            elif local == "startDate":
+                period = _clean(part.text)
+            elif local == "endDate":
+                period = (period + " to " if period else "") + _clean(part.text)
+            elif local == "forever":
+                period = "forever"
+            elif local == "explicitMember":
+                dimensions.append(f"{_attr(part, 'dimension')}={_clean(part.text)}")
+            elif local == "typedMember":
+                dimensions.append(f"{_attr(part, 'dimension')}={_clean(''.join(part.itertext()))}")
+        contexts[_attr(node, "id")] = {"entity": entity, "period": period, "dimensions": " · ".join(sorted(dimensions))}
+    units: dict[str, str] = {}
+    for node in root:
+        if _local(node.tag) == "unit":
+            measures = [_clean(m.text) for m in node.iter() if _local(m.tag) == "measure"]
+            units[_attr(node, "id")] = "/".join(measures)
+    facts = Table(doc=doc, sheet="Facts", header=["Fact", "Concept", "Period", "Dimensions", "Unit", "Decimals", "Value"], kind="facts")
+    # Contexts are keyed on what they say too; the id is metadata.
+    ctx_table = Table(doc=doc, sheet="Contexts", header=["Context", "Entity", "Period", "Dimensions", "Context id"], kind="contexts")
+    seen: Counter = Counter()
+
+    def add_fact(node, prefix: str = "") -> None:
+        if len(facts.rows) >= MAX_FACTS:
+            return
+        concept = prefix + (node.tag.split("}", 1)[-1] if "}" in node.tag else node.tag)
+        context = contexts.get(_attr(node, "contextRef"), {})
+        if not _attr(node, "contextRef"):
+            # A tuple: its child facts carry the contexts.
+            for child in node:
+                add_fact(child, concept + "/")
+            return
+        unit = units.get(_attr(node, "unitRef"), _attr(node, "unitRef"))
+        if _attr(node, "nil") == "true":
+            value = "(nil)"
+        else:
+            value = _clean("".join(node.itertext()))[:MAX_VALUE]
+        base = " · ".join(part for part in (concept, context.get("period", ""), context.get("dimensions", ""), unit,
+                                            context.get("entity", ""), _attr(node, "lang")) if part)
+        seen[base] += 1
+        key = base if seen[base] == 1 else f"{base}#{seen[base]}"   # true duplicates keep document order
+        facts.rows.append([key, concept, context.get("period", ""), context.get("dimensions", ""), unit, _attr(node, "decimals"), value])
+
+    for node in root:
+        if not isinstance(node.tag, str) or _local(node.tag) in XBRL_STRUCTURAL:
+            continue
+        add_fact(node)
+    for identifier, context in sorted(contexts.items()):
+        signature = " · ".join(part for part in (context["period"], context["dimensions"], context["entity"]) if part) or identifier
+        seen[("context", signature)] += 1
+        if seen[("context", signature)] > 1:
+            signature = f"{signature} #{seen[('context', signature)]}"
+        ctx_table.rows.append([signature, context["entity"], context["period"], context["dimensions"], identifier])
+    facts.roles = {"field": 0, "table": 1, "dtype": 6, "line_item": 5, "etype": 4}
+    ctx_table.roles = {"field": 0, "description": 1, "dtype": 2, "line_item": 3}
+    return [table for table in (facts, ctx_table) if table.rows]
+
+
 def _xml_tables(doc: str, body: str) -> list[Table]:
     try:
         root = ET.fromstring(body.strip().encode("utf-8"))
@@ -577,6 +661,8 @@ def _xml_tables(doc: str, body: str) -> list[Table]:
     local = _local(root.tag)
     if local == "schema":
         return _xsd_tables(doc, root)
+    if local == "xbrl":
+        return _instance_tables(doc, root)
     if local == "linkbase" or any(_local(node.tag) in {"valueAssertion", "existenceAssertion", "consistencyAssertion", "loc"}
                                   for node in root.iter()):
         return _linkbase_tables(doc, root)
@@ -590,7 +676,7 @@ def tables_from_text(text: str | None) -> list[Table]:
     found: list[Table] = []
     for name, kind, body in _documents(text):
         stripped = body.lstrip()
-        if kind in {"xml", "xsd"} or (stripped.startswith("<") and not stripped.startswith("<!DOCTYPE html")):
+        if kind in {"xml", "xsd", "xbrl"} or (stripped.startswith("<") and not stripped.startswith("<!DOCTYPE html")):
             found.extend(_xml_tables(name, body))
             continue
         tables: list[Table] = []

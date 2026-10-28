@@ -263,7 +263,10 @@ class TestContent(unittest.TestCase):
         self.assertIn("Unsafe ZIP member path", traversal_error)
         self.assertIsNone(unknown_text)
         self.assertEqual(unknown_kind, "zip")
-        self.assertIn("Unsupported file type", unknown_error)
+        # A bundle holding nothing readable still fails; one with readable documents
+        # lists an unreadable member by SHA-256 instead (tests/test_document_formats.py).
+        self.assertIn("no supported extractable documents", unknown_error)
+        self.assertIn("of a type no extractor reads", unknown_error)
 
     def test_extensionless_pdf_response_uses_pdf_extraction(self):
         text, kind, error = extract_content(

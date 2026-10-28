@@ -1135,3 +1135,146 @@ console.log(JSON.stringify([
         self.assertIsNone(out[2])
         self.assertEqual(out[3], "guard")
 
+
+
+FIXTURES = ROOT / "tests" / "fixtures" / "legacy"
+
+
+def run_js_with_fixture(name: str, body: str):
+    """`bytes` is the fixture's contents (gunzipped when it ends in .gz)."""
+    load = ("const zlib = require('zlib'); const fs = require('fs');\n"
+            "let bytes = fs.readFileSync(" + json.dumps(str(FIXTURES / name)) + ");\n"
+            + ("bytes = zlib.gunzipSync(bytes);\n" if name.endswith(".gz") else ""))
+    return run_js(load + body)
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestLegacyAndOpenDocumentReaders(unittest.TestCase):
+    EXPECTED = {
+        "A1": "Item", "B1": "Description", "C1": "Amount", "A2": "BHCK2170", "B2": "Total assets", "C2": "1250",
+        "D2": "2027-03-31", "A3": "BHCK2122", "B3": "Loans", "C3": "300.5", "A5": "Memoranda",
+    }
+
+    def cells(self, book):
+        return [{"name": s["name"], "state": s["state"], "merges": s["merges"], "cells": {k: v["v"] for k, v in s["cells"].items()}} for s in book["sheets"]]
+
+    def test_an_excel_97_2003_workbook_opens_with_its_sheets_cells_and_merges(self):
+        book = run_js_with_fixture("template.xls.gz", "console.log(JSON.stringify(L.readXls(bytes)));")
+        sheets = self.cells(book)
+        self.assertEqual([(s["name"], s["state"]) for s in sheets], [("Schedule HC", "visible"), ("Codes", "hidden")])
+        self.assertEqual(sheets[0]["cells"], self.EXPECTED)
+        self.assertEqual(sheets[0]["merges"], ["A5:C5"])
+
+    def test_the_office_file_kind_comes_from_its_streams(self):
+        kinds = {}
+        for name in ("template.xls.gz", "instructions.doc.gz", "deck.ppt.gz"):
+            kinds[name] = run_js_with_fixture(name, "console.log(JSON.stringify(L.oleKind(bytes)));")
+        self.assertEqual(kinds, {"template.xls.gz": "xls", "instructions.doc.gz": "doc", "deck.ppt.gz": "ppt"})
+
+    def test_a_truncated_office_file_is_an_error_not_a_hang(self):
+        out = run_js_with_fixture("template.xls.gz", """
+          const cut = bytes.subarray(0, 1536);
+          let message = "";
+          try { L.readXls(cut); } catch (error) { message = String(error.message); }
+          console.log(JSON.stringify(message));""")
+        self.assertTrue(out)
+
+    def test_an_opendocument_spreadsheet_opens_like_a_workbook(self):
+        book = run_js_with_fixture("template.ods", "L.readOds(bytes).then(book => console.log(JSON.stringify(book)));")
+        sheets = self.cells(book)
+        self.assertEqual([(s["name"], s["state"]) for s in sheets], [("Schedule HC", "visible"), ("Codes", "hidden")])
+        self.assertEqual(sheets[0]["cells"], self.EXPECTED)
+        self.assertEqual(sheets[0]["merges"], ["A5:C5"])
+
+    def test_two_xls_versions_compare_cell_by_cell(self):
+        out = run_js("""
+          const zlib = require('zlib'); const fs = require('fs');
+          const read = name => L.readXls(zlib.gunzipSync(fs.readFileSync(""" + json.dumps(str(FIXTURES)) + """ + '/' + name)));
+          const diff = L.workbookDiff(read('template.xls.gz'), read('template_v2.xls.gz'));
+          const sheet = diff.sheets[0];
+          console.log(JSON.stringify({ status: sheet.status, added: sheet.rowsAdded, values: sheet.changes.filter(c => c.kind === 'value').map(c => [c.before.ref, c.before.v, c.after.v]) }));""")
+        self.assertEqual(out["status"], "changed")
+        self.assertEqual(out["added"], [3])
+        self.assertEqual(out["values"], [["C2", "1250", "1300"]])
+
+    def test_a_workbook_is_rebuilt_from_its_extracted_text(self):
+        text = "\n".join([
+            "[WORKBOOK] 2 sheets: Schedule HC, Codes (hidden)",
+            "[SHEET] Schedule HC",
+            "Schedule HC · A: Item · B: Description · C: Amount",
+            "Schedule HC · A: Total · C: =SUM(C2:C4) → 1250",
+            "[MERGED] Schedule HC · A5:C5",
+            "[VALIDATION] Schedule HC · F2:F5 · list · \"Yes,No\"",
+            "[SHEET hidden] Codes",
+            "Codes · B: Yes",
+            "[NAME] TotalAmount = 'Schedule HC'!$C$5",
+        ])
+        book = run_js("console.log(JSON.stringify(L.workbookFromText(" + json.dumps(text) + ")));")
+        first, second = book["sheets"]
+        self.assertEqual(first["cells"]["C2"], {"v": "1250", "f": "SUM(C2:C4)"})
+        self.assertEqual(first["merges"], ["A5:C5"])
+        self.assertEqual(first["validations"], [{"range": "F2:F5", "type": "list", "rule": '"Yes,No"'}])
+        self.assertEqual((second["name"], second["state"], second["cells"]), ("Codes", "hidden", {"B1": {"v": "Yes"}}))
+        self.assertEqual(book["names"], [{"name": "TotalAmount", "scope": "", "value": "'Schedule HC'!$C$5"}])
+
+    def test_csv_text_and_older_row_text_are_rebuilt_too(self):
+        book = run_js("console.log(JSON.stringify(L.workbookFromText('Code | Label\\nY | a \\\\| b', 'codes.csv')));")
+        self.assertEqual(book["sheets"][0]["cells"], {"A1": {"v": "Code"}, "B1": {"v": "Label"}, "A2": {"v": "Y"}, "B2": {"v": "a | b"}})
+
+    def test_tab_separated_values_parse_on_tabs(self):
+        rows = run_js("console.log(JSON.stringify(L.parseCsv('a\\tb,c\\n1\\t2', 0, '\\t')));")
+        self.assertEqual(rows, [["a", "b,c"], ["1", "2"]])
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestXmlStructureComparison(unittest.TestCase):
+    def diff(self, before: str, after: str):
+        return run_js("console.log(JSON.stringify(L.xmlTreeDiff(" + json.dumps(before) + ", " + json.dumps(after) + ")));")
+
+    def test_an_inserted_element_is_one_addition_not_a_cascade(self):
+        before = '<xs:schema xmlns:xs="x"><xs:element name="A"/><xs:element name="B"/><xs:element name="C"/></xs:schema>'
+        after = '<xs:schema xmlns:xs="x"><xs:element name="New"/><xs:element name="A"/><xs:element name="B"/><xs:element name="C"/></xs:schema>'
+        out = self.diff(before, after)
+        self.assertEqual(out["kind"], "XML Schema (XSD)")
+        self.assertEqual(out["totals"], {"added": 1, "removed": 0, "changed": 0})
+        self.assertEqual(out["changes"][0]["path"], ["xs:schema", "xs:element[New]"])
+
+    def test_attribute_and_text_changes_name_the_element(self):
+        before = '<root><item code="1001" min="0">Total assets</item></root>'
+        after = '<root><item code="1001" min="1">Total assets, net</item></root>'
+        change = self.diff(before, after)["changes"][0]
+        self.assertEqual(change["path"], ["root", "item[1001]"])
+        self.assertEqual(change["details"], [{"what": "@min", "before": "0", "after": "1"},
+                                             {"what": "text", "before": "Total assets", "after": "Total assets, net"}])
+
+    def test_a_renamed_element_with_the_same_content_is_a_rename(self):
+        before = '<s><e name="A" type="t"><d>doc</d></e></s>'
+        after = '<s><e name="A2" type="t"><d>doc</d></e></s>'
+        out = self.diff(before, after)
+        self.assertEqual(out["totals"], {"added": 0, "removed": 0, "changed": 1})
+        self.assertEqual(out["changes"][0]["details"], [{"what": "renamed", "before": "A", "after": "A2"}])
+
+    def test_same_content_in_another_order_or_layout_is_no_change(self):
+        before = '<r>\n  <a name="x" v="1"/>\n  <a name="y"/>\n</r>'
+        after = '<r><a name="y"/><a v="1" name="x"/></r>'
+        self.assertEqual(self.diff(before, after)["totals"], {"added": 0, "removed": 0, "changed": 0})
+
+    def test_entities_cdata_and_comments_are_read(self):
+        out = run_js("console.log(JSON.stringify(L.parseXml('<?xml version=\"1.0\"?><!-- c --><r a=\"&amp;&#65;\"><![CDATA[<x>]]>&lt;y&gt;</r>')));")
+        self.assertEqual(out["attrs"], [["a", "&A"]])
+        self.assertEqual(out["text"], "<x><y>")
+
+    def test_malformed_xml_is_an_error(self):
+        out = run_js("let m=''; try { L.parseXml('<a><b></a>'); } catch (e) { m = e.message; } console.log(JSON.stringify(m));")
+        self.assertIn("not well formed", out)
+
+
+@unittest.skipUnless(NODE, "node is required for dashboard library tests")
+class TestAuditFollowUps(unittest.TestCase):
+    def test_a_non_default_port_is_part_of_the_url_identity(self):
+        out = run_js("console.log(JSON.stringify([L.urlKey('https://a.gov:8443/x'), L.urlKey('https://a.gov:443/x'), L.urlKey('https://a.gov/x/')]));")
+        self.assertEqual(out, ["a.gov:8443/x", "a.gov/x", "a.gov/x"])
+
+    def test_legacy_spreadsheets_and_schemas_are_grouped_by_what_they_are(self):
+        out = run_js("console.log(JSON.stringify([L.pageKind('Informe', 'https://b.co/dcip-83.xls', 'xls'), L.pageKind('Codes', 'https://b.co/c.ods', 'ods'), L.pageKind('BCAR', 'https://o.ca/bcar27.xsd', 'xml'), L.pageKind('Annual report', 'https://b.co/r.doc', 'doc')]));")
+        self.assertEqual(out, ["Spreadsheets", "Spreadsheets", "Technical specifications", "Other documents"])

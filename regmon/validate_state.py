@@ -187,7 +187,7 @@ def validate_persisted_state(data_dir: Path, active_ids: set[str]) -> list[str]:
                 if kind == "html" and not item.get("html_snapshot_location"):
                     errors.append(f"{label} is HTML but has no html_snapshot_location")
                 # Workbooks keep their original from the structured extractor onward.
-                workbook_original = kind == "xlsx" and str(item.get("extractor_version") or "").endswith("-xlsx2")
+                workbook_original = kind in {"xlsx", "xls", "ods"} and str(item.get("extractor_version") or "").endswith("-xlsx2")
                 if (kind in {"pdf", "zip"} or workbook_original) and not item.get("file_snapshot_location"):
                     errors.append(f"{label} is {kind.upper()} but has no file_snapshot_location")
     if report is not None:

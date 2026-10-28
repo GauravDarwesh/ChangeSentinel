@@ -1,6 +1,7 @@
 """Deterministic change classification and immutable evidence."""
 from __future__ import annotations
 import difflib
+import itertools
 import hashlib
 import json
 import re
@@ -138,7 +139,10 @@ def classify_change(
     return ("UNCHANGED_URL", True) if legacy == current.get("raw_hash") else ("BASELINE_MIGRATION", True)
 
 def make_diff(before_text: str | None, after_text: str | None, max_lines: int = MAX_DIFF_LINES) -> str:
-    lines = list(difflib.unified_diff((before_text or "").splitlines(), (after_text or "").splitlines(), fromfile="before", tofile="after", lineterm=""))
+    # Stop reading the generator once the cap is reached instead of building the
+    # whole diff of a large document and discarding most of it.
+    produced = difflib.unified_diff((before_text or "").splitlines(), (after_text or "").splitlines(), fromfile="before", tofile="after", lineterm="")
+    lines = list(itertools.islice(produced, max_lines + 1))
     if len(lines) > max_lines:
         lines = lines[:max_lines] + [f"... diff truncated after {max_lines} lines"]
     return "\n".join(lines)

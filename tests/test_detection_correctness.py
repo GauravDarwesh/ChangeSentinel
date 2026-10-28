@@ -547,8 +547,6 @@ class TestConditionalFetchAndSnapshots(unittest.TestCase):
             self.assertIn("file_snapshot_location", evidence["after"])
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 class TestGoldenCorpusCheck(unittest.TestCase):
@@ -626,3 +624,7 @@ class TestGoldenCorpusCheck(unittest.TestCase):
                     results = module.check(sandbox.data, config)
             self.assertEqual(results["mismatched"], [])
             self.assertEqual(len(results["model_variance"]), 1)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1563,7 +1563,6 @@ function pendingWords(pending) {
     default: return { title: "Next scheduled scan, " + day + " " + due, time: due, note: day, countdown: "in " + L.formatDuration(pending.remainingMinutes) };
   }
 }
-function nextScheduledScan(reference = new Date()) { return L.nextScheduledScan(reference); }
 // Updates the countdown and the six-hour cycle bar; called every 30 seconds.
 function updateNextRunCountdown() {
   const pending = L.pendingScan(new Date(), state.scanColumns || L.runColumns(state.history, { workflowRuns: state.workflowRuns }), state.workflowRuns);
@@ -2324,7 +2323,7 @@ async function fillEvidence(event, boxId, stillCurrent) {
       target.innerHTML = visualCompare(evidence.visual);
       if (summary) summary.textContent = visualSummary(evidence.visual);
     } else if (mode === "compare") {
-      if (summary) summary.textContent = "Drag the divider to move between the previous and new version.";
+      if (summary) summary.textContent = compareNote((compareSources(evidence) || {}).kind);
       renderCompare(target, evidence, event, stillCurrent);
     } else if (mode === "html") {
       target.innerHTML = L.renderUnifiedDiff(evidence.html_diff || "");
@@ -3100,10 +3099,15 @@ function renderSnapshotText(text) {
   }
   return '<div class="doc-text">' + output.join("") + "</div>";
 }
+// One element per line: a multi-megabyte page or schema is capped rather than
+// turned into hundreds of thousands of nodes in one write.
+const SOURCE_LINE_LIMIT = 20000;
 function renderSourceCode(source) {
   const lines = String(source || "").split(/\r?\n/);
-  return '<div class="source-code" role="region" aria-label="Saved HTML source">' +
-    lines.map((line, index) => '<div class="source-line"><span class="line-no">' + (index + 1) + "</span><code>" + (esc(line) || " ") + "</code></div>").join("") + "</div>";
+  const shown = lines.slice(0, SOURCE_LINE_LIMIT);
+  return '<div class="source-code" role="region" aria-label="Saved source">' +
+    shown.map((line, index) => '<div class="source-line"><span class="line-no">' + (index + 1) + "</span><code>" + (esc(line) || " ") + "</code></div>").join("") + "</div>" +
+    (lines.length > shown.length ? '<p class="wb-notes">Showing the first ' + SOURCE_LINE_LIMIT.toLocaleString() + " of " + lines.length.toLocaleString() + " lines. The evidence file and the extracted text hold the rest.</p>" : "");
 }
 // Saved pages render in a sandbox without scripts, so their <script> blocks
 // are dropped up front rather than left to fill the console with blocked-script errors.
@@ -3237,9 +3241,13 @@ async function loadSnapshot(item) {
   }
   const filePath = item.file_snapshot_location || "";
   const fileType = String(item.extraction_type || "").toLowerCase();
-  const isFile = filePath && (fileType === "pdf" || fileType === "zip" || fileType === "xlsx");
+  const isWorkbook = ["xlsx", "xls", "ods"].indexOf(fileType) >= 0;
+  const isFile = filePath && (fileType === "pdf" || fileType === "zip" || isWorkbook);
   const isPdf = fileType === "pdf";
-  const previewLabel = isFile ? (isPdf ? "PDF" : fileType === "xlsx" ? "Workbook" : "Archive") : "Rendered page";
+  // Without a saved original, a workbook or CSV is drawn from its extracted text, and XML as its source.
+  const sheetFromText = !isFile && !item.html_snapshot_location && item.snapshot_location && (isWorkbook || fileType === "csv");
+  const xmlFromText = !isFile && !item.html_snapshot_location && item.snapshot_location && fileType === "xml";
+  const previewLabel = isFile ? (isPdf ? "PDF" : isWorkbook ? "Workbook" : "Archive") : sheetFromText ? (fileType === "csv" ? "Table" : "Workbook") : xmlFromText ? "XML" : "Rendered page";
   body.innerHTML = '<section class="sheet"><div class="snapshot-toolbar"><span class="snapshot-note">Saved ' + esc(fmt(item.last_full_fetch || item.last_checked)) + "</span>" +
     '<div class="segmented" role="group" aria-label="Snapshot view">' +
     '<button type="button" data-snapshot-mode="preview" aria-pressed="' + String(state.snapshotMode === "preview") + '">' + previewLabel + "</button>" +
@@ -3284,9 +3292,24 @@ async function loadSnapshot(item) {
       const bytes = await fetchSnapshotBytes(filePath);
       if (!current() || state.snapshotMode !== "preview") return;
       canvas.innerHTML = '<div class="doc-host doc-host-inline"></div>';
-      await renderDocument(canvas.querySelector(".doc-host"), { bytes, name: filePath, title: "The original " + (fileType === "xlsx" ? "workbook" : "bundle") + " as fetched", url: item.canonical_url, alive: current });
+      await renderDocument(canvas.querySelector(".doc-host"), { bytes, name: filePath, title: "The original " + (isWorkbook ? "workbook" : "bundle") + " as fetched", url: item.canonical_url, alive: current });
     } catch (error) {
       if (current()) canvas.innerHTML = emptyState("Couldn't load the saved file", String(error.message || error) + ". The extracted text may still be available.", externalLink(REPO + "/blob/main/" + filePath, "Saved file"));
+    }
+    return;
+  }
+  if (sheetFromText || xmlFromText) {
+    try {
+      const text = await readSnapshotFile(item.snapshot_location, state.snapshotCache);
+      if (!current() || state.snapshotMode !== "preview") return;
+      if (xmlFromText) {
+        canvas.innerHTML = '<p class="snapshot-note snapshot-caveat">The XML as compared: canonical form, attributes in a fixed order and layout normalised.</p>' + renderSourceCode(text);
+      } else {
+        canvas.innerHTML = '<p class="snapshot-note snapshot-caveat">Drawn from the extracted cells; rows are numbered in order of the filled rows.</p><div class="doc-host doc-host-inline"></div>';
+        renderWorkbook(canvas.querySelector(".doc-host"), L.workbookFromText(text, item.title || "Sheet1"), {});
+      }
+    } catch (error) {
+      if (current()) canvas.innerHTML = emptyState("Couldn't load the saved copy", String(error.message || error));
     }
     return;
   }
@@ -10478,11 +10501,17 @@ function docKind(name, format) {
   const hint = String(format || "").toLowerCase();
   if (/\.pdf$/.test(path) || hint === "pdf") return "pdf";
   if (/\.(xlsx|xlsm)$/.test(path) || hint === "xlsx" || hint === "spreadsheet" && !/\.(xls|csv)$/.test(path)) return "xlsx";
-  if (/\.xls$/.test(path)) return "xls";
+  if (/\.xls$/.test(path) || hint === "xls") return "xls";
+  if (/\.ods$/.test(path) || hint === "ods") return "ods";
   if (/\.csv$/.test(path) || hint === "csv") return "csv";
+  if (/\.tsv$/.test(path) || hint === "tsv") return "tsv";
   if (/\.docx$/.test(path) || hint === "word" || hint === "docx") return "docx";
+  if (/\.doc$/.test(path) || hint === "doc") return "doc";
+  if (/\.ppt$/.test(path) || hint === "ppt") return "ppt";
+  if (/\.odt$/.test(path) || hint === "odt") return "odt";
+  if (/\.rtf$/.test(path) || hint === "rtf") return "rtf";
   if (/\.zip$/.test(path) || hint === "zip") return "zip";
-  if (/\.(xml|xsd|xbrl)$/.test(path) || hint === "xml") return "xml";
+  if (/\.(xml|xsd|xbrl|xsl|xslt|rdf)$/.test(path) || hint === "xml") return "xml";
   if (/\.json$/.test(path) || hint === "json") return "json";
   if (/\.(txt|md)$/.test(path) || hint === "text") return "text";
   return "other";
@@ -10492,7 +10521,9 @@ function docKindFromBytes(bytes, fallback) {
   if (!bytes || bytes.length < 4) return fallback;
   if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) return "pdf";
   if (bytes[0] === 0x50 && bytes[1] === 0x4b) return "package";
-  if (bytes[0] === 0xd0 && bytes[1] === 0xcf) return "xls";
+  // An Office 97-2003 file says what it is through the streams it holds.
+  if (L.isCfb(bytes)) return L.oleKind(bytes) || fallback;
+  if (bytes[0] === 0x7b && bytes[1] === 0x5c && bytes[2] === 0x72 && bytes[3] === 0x74) return "rtf";
   return fallback;
 }
 function formatBytes(size) {
@@ -10534,7 +10565,11 @@ function docToolbar(meta) {
     '<span class="doc-bar-meta">' + parts.map(part => "<span>" + esc(part) + "</span>").join("") + "</span>" +
     '<span class="doc-bar-actions">' + (meta.actions || "") + "</span></div>";
 }
-const DOC_KIND_LABEL = { pdf: "PDF", xlsx: "Excel workbook", xls: "Excel 97–2003 workbook", csv: "CSV", docx: "Word document", zip: "ZIP bundle", xml: "XML", json: "JSON", text: "Text", other: "File" };
+const DOC_KIND_LABEL = { pdf: "PDF", xlsx: "Excel workbook", xls: "Excel 97–2003 workbook", ods: "OpenDocument spreadsheet", csv: "CSV", tsv: "Tab-separated values",
+  docx: "Word document", doc: "Word 97–2003 document", odt: "OpenDocument text", rtf: "Rich Text document", ppt: "PowerPoint 97–2003 presentation",
+  zip: "ZIP bundle", xml: "XML", json: "JSON", text: "Text", other: "File" };
+// Formats ChangeSentinel reads as text for comparison but the browser cannot draw.
+const DOC_TEXT_ONLY = { doc: "Word 97–2003 documents", ppt: "PowerPoint 97–2003 presentations", odt: "OpenDocument text documents", rtf: "Rich Text documents" };
 let documentDownloadUrl = "";
 // Renders a document into `host`. options: { bytes, name, title, format, url, actions, alive }.
 async function renderDocument(host, options) {
@@ -10549,6 +10584,11 @@ async function renderDocument(host, options) {
     let names = [];
     try { names = (await L.zipListing(bytes)).map(entry => entry.name); } catch (_) { names = []; }
     kind = names.indexOf("xl/workbook.xml") >= 0 ? "xlsx" : names.indexOf("word/document.xml") >= 0 ? "docx" : "zip";
+    if (kind === "zip" && names.indexOf("mimetype") >= 0 && names.indexOf("content.xml") >= 0) {
+      let mimetype = "";
+      try { mimetype = new TextDecoder("ascii").decode((await L.zipFile(bytes, "mimetype")) || new Uint8Array()); } catch (_) {}
+      kind = /opendocument\.spreadsheet/.test(mimetype) ? "ods" : /opendocument\.text/.test(mimetype) ? "odt" : "zip";
+    }
   }
   // One download link at a time: the previous document's blob is released.
   if (documentDownloadUrl) URL.revokeObjectURL(documentDownloadUrl);
@@ -10562,15 +10602,17 @@ async function renderDocument(host, options) {
   try {
     if (kind === "pdf") await renderPdfDocument(body, bytes, alive);
     else if (kind === "xlsx") { const book = await L.readWorkbook(bytes); if (alive()) renderWorkbook(body, book, {}); }
-    else if (kind === "csv") { if (alive()) renderWorkbook(body, L.csvWorkbook(new TextDecoder("utf-8").decode(bytes), fileName), {}); }
+    else if (kind === "xls") { const book = L.readXls(bytes); if (alive()) renderWorkbook(body, book, {}); }
+    else if (kind === "ods") { const book = await L.readOds(bytes); if (alive()) renderWorkbook(body, book, {}); }
+    else if (kind === "csv" || kind === "tsv") { if (alive()) renderWorkbook(body, L.csvWorkbook(new TextDecoder("utf-8").decode(bytes), fileName, kind === "tsv" ? "\t" : ","), {}); }
     else if (kind === "docx") { const blocks = await L.readDocx(bytes); if (alive()) body.innerHTML = renderDocxBlocks(blocks); }
     else if (kind === "zip") await renderZipListing(body, bytes, alive, o);
     else if (kind === "xml" || kind === "json" || kind === "text") {
       let text = new TextDecoder("utf-8").decode(bytes.subarray(0, 2000000));
       if (kind === "json") { try { text = JSON.stringify(JSON.parse(text), null, 2); } catch (_) {} }
       if (alive()) body.innerHTML = '<pre class="doc-text-raw">' + esc(text) + (bytes.length > 2000000 ? "\n…" : "") + "</pre>";
-    } else if (kind === "xls") {
-      body.innerHTML = emptyState("An Excel 97–2003 workbook", "The older binary .xls format can't be read in the browser. Download it to open it in Excel.");
+    } else if (DOC_TEXT_ONLY[kind]) {
+      body.innerHTML = emptyState(DOC_KIND_LABEL[kind], DOC_TEXT_ONLY[kind] + " can't be drawn in the browser. ChangeSentinel reads and compares their text on every scan; download the file to open it.");
     } else {
       body.innerHTML = emptyState("This file can't be shown here", "Download it to open it on your computer.");
     }
@@ -10631,7 +10673,7 @@ function renderDocxBlocks(blocks) {
 async function renderZipListing(body, bytes, alive, options) {
   const entries = await L.zipListing(bytes);
   if (!alive()) return;
-  const openable = name => ["pdf", "xlsx", "csv", "docx", "xml", "json", "text"].indexOf(docKind(name, "")) >= 0;
+  const openable = name => ["pdf", "xlsx", "xls", "ods", "csv", "tsv", "docx", "xml", "json", "text"].indexOf(docKind(name, "")) >= 0;
   body.innerHTML = '<ul class="doc-zip">' + entries.slice(0, 2000).map(entry =>
     '<li><span class="doc-zip-name">' + esc(entry.name) + '</span><span class="doc-zip-size">' + esc(formatBytes(entry.size)) + "</span>" +
     (openable(entry.name) ? '<button class="sheet-link" type="button" data-doc-zip-open="' + esc(entry.name) + '">Open</button>' : "") + "</li>").join("") + "</ul>";
@@ -10902,21 +10944,38 @@ function disposeCompare() {
   if (previous.observer) previous.observer.disconnect();
   if (previous.docs.length) releasingPdfs = Promise.all([releasingPdfs].concat(previous.docs.map(releasePdf))).then(() => {});
 }
+// Each format is compared the way its readers think of it: PDFs page by page,
+// workbooks (.xlsx, .xls, .ods, and CSV/TSV) sheet by sheet and cell by cell,
+// XML (schemas, taxonomies, XBRL) element by element, pages as rendered HTML.
+const WORKBOOK_FILE = /\.(xlsx|xlsm|xls|ods)$/i;
+const SHEET_TEXT_TYPES = ["xlsx", "xls", "ods", "csv"];
 function compareSources(evidence) {
   const before = (evidence && evidence.before) || {};
   const after = (evidence && evidence.after) || {};
   const text = before.snapshot_location && after.snapshot_location ? { before: before.snapshot_location, after: after.snapshot_location } : null;
+  const typeOf = record => String(record.extraction_type || "").toLowerCase();
   if (before.file_snapshot_location && after.file_snapshot_location && /\.pdf$/i.test(after.file_snapshot_location)) {
     return { kind: "pdf", before: before.file_snapshot_location, after: after.file_snapshot_location, text };
   }
-  if (before.file_snapshot_location && after.file_snapshot_location && /\.xlsx$/i.test(after.file_snapshot_location) && /\.xlsx$/i.test(before.file_snapshot_location)) {
+  if (before.file_snapshot_location && after.file_snapshot_location && WORKBOOK_FILE.test(after.file_snapshot_location) && WORKBOOK_FILE.test(before.file_snapshot_location)) {
     return { kind: "xlsx", before: before.file_snapshot_location, after: after.file_snapshot_location, text };
   }
   if (before.html_snapshot_location && after.html_snapshot_location) {
     return { kind: "html", before: before.html_snapshot_location, after: after.html_snapshot_location, text };
   }
+  if (text && typeOf(before) === "xml" && typeOf(after) === "xml") return { kind: "xml", before: text.before, after: text.after, text };
+  // A workbook saved before its original was kept, or a CSV: rebuilt from its extracted text.
+  if (text && SHEET_TEXT_TYPES.indexOf(typeOf(before)) >= 0 && SHEET_TEXT_TYPES.indexOf(typeOf(after)) >= 0) {
+    return { kind: "sheet-text", before: text.before, after: text.after, text };
+  }
   if (text) return { kind: "text", before: text.before, after: text.after, text };
   return null;
+}
+// The note above a comparison, in the words of the view it opens.
+function compareNote(kind) {
+  if (kind === "xlsx" || kind === "sheet-text") return "Sheet by sheet and cell by cell. Open a changed cell to see it in the workbook.";
+  if (kind === "xml") return "Element by element. Elements are matched by name, id or code, so moved or inserted elements don't cascade.";
+  return "Drag the divider to move between the previous and new version.";
 }
 async function fetchSnapshotBytes(path) {
   const response = await fetchImmutable(path);
@@ -10996,6 +11055,8 @@ async function renderCompare(target, evidence, event, stillCurrent) {
   const serial = ++compareSerial;
   const alive = () => serial === compareSerial && stillCurrent() && target.isConnected;
   if (sources.kind === "xlsx") return compareWorkbooks(target, sources, alive);
+  if (sources.kind === "sheet-text") return compareSheetText(target, sources, alive);
+  if (sources.kind === "xml") return compareXml(target, sources, event, alive);
   target.innerHTML = compareShell(sources.kind, event);
   const root = target.querySelector(".cmp");
   const before = root.querySelector(".cmp-before");
@@ -11018,13 +11079,106 @@ async function compareWorkbooks(target, sources, alive) {
   try {
     const [beforeBytes, afterBytes] = await Promise.all([fetchSnapshotBytes(sources.before), fetchSnapshotBytes(sources.after)]);
     if (!alive()) return;
-    const [before, after] = await Promise.all([L.readWorkbook(beforeBytes), L.readWorkbook(afterBytes)]);
+    const [before, after] = await Promise.all([readWorkbookFile(beforeBytes, sources.before), readWorkbookFile(afterBytes, sources.after)]);
     if (!alive()) return;
     const diff = L.workbookDiff(before, after);
     renderWorkbookCompare(target, before, after, diff);
   } catch (error) {
     if (alive()) target.innerHTML = '<div class="cmp"><p class="cmp-status">Couldn\'t compare the two workbooks: ' + esc(String(error.message || error)) + ". The text redline is still available.</p></div>";
   }
+}
+// Any saved workbook original, by its contents first and its name second.
+async function readWorkbookFile(bytes, name) {
+  if (L.isCfb(bytes)) return L.readXls(bytes);
+  if (/\.ods$/i.test(String(name || ""))) return L.readOds(bytes);
+  return L.readWorkbook(bytes);
+}
+
+/* ----- Workbooks with no saved originals, and CSV: rebuilt from the two text snapshots ----- */
+async function compareSheetText(target, sources, alive) {
+  target.innerHTML = '<div class="cmp" data-kind="xlsx"><p class="cmp-status" role="status">Reading both versions…</p></div>';
+  try {
+    const [a, b] = await Promise.all([readSnapshotFile(sources.before, state.snapshotCache), readSnapshotFile(sources.after, state.snapshotCache)]);
+    if (!alive()) return;
+    const before = L.workbookFromText(a), after = L.workbookFromText(b);
+    renderWorkbookCompare(target, before, after, L.workbookDiff(before, after));
+    const status = target.querySelector(".wb-summary");
+    if (status) status.insertAdjacentHTML("beforeend", '<span class="wb-notes">Rebuilt from the extracted text: rows are numbered in order of the filled rows.</span>');
+  } catch (error) {
+    if (alive()) target.innerHTML = '<div class="cmp"><p class="cmp-status">Couldn\'t compare the two versions: ' + esc(String(error.message || error)) + ". The text redline is still available.</p></div>";
+  }
+}
+
+/* ----- XML: schemas, taxonomies and XBRL compared element by element ----- */
+const XML_KIND_WORDS = { ALL: "All", changed: "Changed", added: "Added", removed: "Removed" };
+async function compareXml(target, sources, event, alive) {
+  target.innerHTML = '<div class="cmp" data-kind="xml"><p class="cmp-status" role="status">Reading both versions…</p></div>';
+  let a, b, diff;
+  try {
+    [a, b] = await Promise.all([readSnapshotFile(sources.before, state.snapshotCache), readSnapshotFile(sources.after, state.snapshotCache)]);
+    if (!alive()) return;
+    diff = L.xmlTreeDiff(a, b);
+  } catch (error) {
+    if (!alive()) return;
+    // Not parseable as one XML tree (a fragment, or a very large file): fall back to lines.
+    target.innerHTML = compareShell("text", event);
+    const root = target.querySelector(".cmp");
+    wireCompareSlider(root);
+    await compareFillText(root, root.querySelector(".cmp-status"), sources, alive);
+    return;
+  }
+  const view = { mode: "structure", kind: "ALL", shown: 400 };
+  const t = diff.totals;
+  const draw = () => {
+    const summary = [diff.kind, t.changed ? plural(t.changed, "element changed", "elements changed") : "", t.added ? plural(t.added, "element added", "elements added") : "",
+      t.removed ? plural(t.removed, "element removed", "elements removed") : ""].filter(Boolean).join(" · ") || diff.kind + " · no element differences";
+    const modes = '<div class="segmented" role="group" aria-label="View">' + [["structure", "Elements"], ["lines", "Lines"]].map(pair =>
+      '<button type="button" data-xml-mode="' + pair[0] + '" aria-pressed="' + String(view.mode === pair[0]) + '">' + pair[1] + "</button>").join("") + "</div>";
+    let body = "";
+    if (view.mode === "structure") {
+      const list = diff.changes.filter(change => view.kind === "ALL" || change.kind === view.kind);
+      const kinds = '<div class="segmented wb-kinds" role="group" aria-label="Show">' + ["ALL", "changed", "added", "removed"].map(kind =>
+        '<button type="button" data-xml-kind="' + kind + '" aria-pressed="' + String(view.kind === kind) + '">' + esc(XML_KIND_WORDS[kind]) + (kind !== "ALL" && t[kind] ? " " + t[kind].toLocaleString() : "") + "</button>").join("") + "</div>";
+      const cell = value => value == null ? '<span class="wb-empty">none</span>' : '<code>' + esc(String(value).slice(0, 600)) + "</code>";
+      const rows = list.slice(0, view.shown).map(change => {
+        const where = change.path.slice(-3).map(part => esc(part)).join(' <span class="xml-sep">›</span> ');
+        const full = change.path.join(" › ");
+        const label = change.kind === "added" ? "added" + (change.size > 1 ? " · " + plural(change.size - 1, "child", "children") : "")
+          : change.kind === "removed" ? "removed" + (change.size > 1 ? " · " + plural(change.size - 1, "child", "children") : "")
+          : change.renamed ? "renamed" : change.details.map(detail => detail.what).join(", ");
+        const head = '<td class="wb-ref xml-path" title="' + esc(full) + '">' + where + "<small>" + esc(label) + "</small></td>";
+        if (change.kind === "added") return '<tr class="is-added">' + head + '<td class="wb-before"><span class="wb-empty">not in the previous version</span></td><td class="wb-after">' + cell(change.summary || change.tag) + "</td></tr>";
+        if (change.kind === "removed") return '<tr class="is-removed">' + head + '<td class="wb-before">' + cell(change.summary || change.tag) + '</td><td class="wb-after"><span class="wb-empty">not in the new version</span></td></tr>';
+        // Several attributes of one element: each row says which one it is.
+        const several = change.details.length > 1;
+        return change.details.map((detail, index) => '<tr class="is-value">' + (index === 0 ? head.replace("<td ", '<td rowspan="' + change.details.length + '" ') : "") +
+          '<td class="wb-before">' + (several ? '<small class="xml-attr">' + esc(detail.what) + "</small>" : "") + cell(detail.before) +
+          '</td><td class="wb-after">' + cell(detail.after) + "</td></tr>").join("");
+      }).join("");
+      body = (diff.changes.length ? kinds : "") + (rows ? '<div class="doc-table-wrap"><table class="wb-changes xml-changes"><thead><tr><th>Element</th><th>Before</th><th>After</th></tr></thead><tbody>' + rows + "</tbody></table></div>"
+        : '<p class="wb-sheet-note">' + esc(diff.changes.length ? "No element changes of this kind." : "The two versions have the same elements, attributes and text; only formatting or order differs.") + "</p>") +
+        (list.length > view.shown ? '<p class="wb-notes"><button class="sheet-link" type="button" data-xml-more>Show ' + Math.min(400, list.length - view.shown).toLocaleString() + " more</button> · " + (list.length - view.shown).toLocaleString() + " not shown</p>" : "") +
+        (diff.more ? '<p class="wb-notes">' + diff.more.toLocaleString() + " further changes are not listed.</p>" : "");
+    }
+    target.innerHTML = '<div class="wb wb-compare" data-kind="xml"><div class="wb-summary"><strong>' + esc(summary) + "</strong></div>" +
+      '<div class="wb-head"><span class="wb-sheet-status xml-root">' + esc("<" + diff.root + ">") + '</span><div class="wb-head-tools">' + modes + "</div></div>" +
+      (view.mode === "structure" ? body : '<div class="xml-lines"></div>') + "</div>";
+    if (view.mode === "lines") {
+      const host = target.querySelector(".xml-lines");
+      host.innerHTML = compareShell("text", event);
+      const root = host.querySelector(".cmp");
+      wireCompareSlider(root);
+      compareFillText(root, root.querySelector(".cmp-status"), sources, alive).catch(error => { root.querySelector(".cmp-status").textContent = String(error.message || error); });
+    }
+  };
+  target.onclick = event => {
+    const mode = event.target.closest("[data-xml-mode]");
+    if (mode) { view.mode = mode.dataset.xmlMode; return draw(); }
+    const kind = event.target.closest("[data-xml-kind]");
+    if (kind) { view.kind = kind.dataset.xmlKind; view.shown = 400; return draw(); }
+    if (event.target.closest("[data-xml-more]")) { view.shown += 400; return draw(); }
+  };
+  draw();
 }
 
 /* ----- Text: aligned rows, removed text red on the left, added text green on the right ----- */

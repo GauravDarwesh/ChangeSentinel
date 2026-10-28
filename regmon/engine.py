@@ -84,7 +84,9 @@ def should_force_full_fetch(old: dict | None, now: str, interval_hours: float) -
 
 # Workbooks monitored on their own use the structured workbook text (regmon/workbook.py).
 WORKBOOK_EXTRACTOR_VERSION = CONTENT_EXTRACTOR_VERSION + "-xlsx2"
-WORKBOOK_TYPES = {"xlsx"}
+# Workbooks keep their original file so the dashboard can compare them cell by
+# cell; .xls and .ods read into the same structured text as .xlsx.
+WORKBOOK_TYPES = {"xlsx", "xls", "ods"}
 
 
 def is_current_extractor_version(version: object) -> bool:
@@ -239,8 +241,8 @@ def store_html_snapshot(uid: str, body: bytes, item: dict, old: dict | None) -> 
 
 
 def write_file_snapshot(uid: str, body: bytes, content_hash: str | None, extraction_type: str) -> str:
-    """Persist original PDF/ZIP/XLSX bytes so the dashboard can preview, compare or download the exact file."""
-    suffix = {"pdf": "pdf", "zip": "zip", "xlsx": "xlsx"}.get(str(extraction_type or "").lower())
+    """Persist original PDF/ZIP/workbook bytes so the dashboard can preview, compare or download the exact file."""
+    suffix = {"pdf": "pdf", "zip": "zip", "xlsx": "xlsx", "xls": "xls", "ods": "ods"}.get(str(extraction_type or "").lower())
     if suffix is None:
         raise ValueError(f"Unsupported original-file snapshot type: {extraction_type!r}")
     directory = SNAPSHOTS / "files"

@@ -23,7 +23,7 @@ The monitoring layer is deterministic. It emits NEW_URL, CHANGED_URL, HTML_SOURC
 
 HTTP discovery resolves relative and absolute links with bounded concurrency; browser discovery remains an optional fallback. Fetching is concurrent and AI analysis uses bounded concurrency. Exact URL allowlists are part of the discovery checkpoint fingerprint, and recovered checkpoint inventories are filtered through the current source scope. Redirects are bounded and checked for internal/private destinations; DNS preflight reduces SSRF risk but is not a complete defense against DNS rebinding.
 
-PDF, DOCX, XLSX, PPTX, CSV, JSON, XML, and text resources are normalized before comparison. Previous trusted baselines are preserved when discovery is incomplete.
+PDF, DOCX, XLSX, PPTX, CSV/TSV, JSON, XML (XSD, XBRL instances and linkbases, XSLT), RTF and text resources are normalized before comparison, and so are the older formats regulators still publish: Excel 97-2003 `.xls` (including the Excel 2003 XML and HTML-table files that carry an .xls name), Word 97-2003 `.doc`, PowerPoint 97-2003 `.ppt`, and OpenDocument `.ods`/`.odt`. Every workbook format becomes the same structured sheet/cell text (`regmon/workbook.py`), so an .xls, an .ods and an .xlsx compare the same way, and workbook originals are saved for the dashboard's cell-by-cell comparison. XML is compared element by element in the dashboard and, for XSDs, linkbases and XBRL instances, row by row by `regmon/spec_diff.py` (XBRL facts are keyed by concept, period, dimensions and unit, so renumbered contexts are not a change). Previous trusted baselines are preserved when discovery is incomplete.
 
 ## Legacy URL collision migration
 
