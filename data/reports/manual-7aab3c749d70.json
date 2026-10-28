@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261028T144352Z-655a786d",
-  "generated_at": "2026-10-28T14:57:43.249737+00:00",
+  "run_id": "20261028T223009Z-758588d6",
+  "generated_at": "2026-10-28T22:48:43.243970+00:00",
   "source": {
     "id": "manual-7aab3c749d70",
     "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023) | Banco de la Rep\u00fablica",
@@ -63,7 +63,7 @@
     "discovered": 1,
     "new": 0,
     "changed": 0,
-    "source_changed": 0,
+    "source_changed": 1,
     "visual_changed": 0,
     "removed": 0,
     "removal_held": 0,
@@ -71,7 +71,7 @@
     "unchanged": 0,
     "baseline_migration": 0,
     "extraction_drift": 0,
-    "fetch_error": 1,
+    "fetch_error": 0,
     "extraction_error": 0,
     "extraction_truncated": 0,
     "not_modified": 0,
@@ -89,27 +89,306 @@
   },
   "events": [
     {
-      "event_id": "9fdf219969463477d36ca6b32ed738bb29b21dea9f4d0595a4a774fa0277e658",
-      "event_type": "FETCH_ERROR",
+      "event_id": "232445521837e963ec562444840213ff4282d75083e49ef278c6170fff9ab4c7",
+      "event_type": "HTML_SOURCE_CHANGED",
       "url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
       "url_id": "7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075",
       "source_id": "manual-7aab3c749d70",
-      "timestamp": "2026-10-28T14:57:43.249737+00:00",
-      "evidence_location": "data/evidence/9fdf219969463477d36ca6b32ed738bb29b21dea9f4d0595a4a774fa0277e658.json",
-      "notification_id": "op-2afc86f54c044192fff4b406d75e86f361a03c0b1894790db8ee2a3204e8b43b",
-      "error_since": "2026-10-28T14:57:43.249737+00:00",
-      "error_runs": 1,
+      "timestamp": "2026-10-28T22:48:43.243970+00:00",
+      "evidence_location": "data/evidence/232445521837e963ec562444840213ff4282d75083e49ef278c6170fff9ab4c7.json",
       "evidence": {
-        "error": "ValueError: Fetch redirect target is outside allowed domains: https://validate.perfdrive.com/6ed5044a4b4eea326f011ec9c0253c42/?ssa=d04e52b3-6b40-45bc-9e06-a008707ae207&ssb=66554326872&ssc=https%3A%2F%2Fwww.banrep.gov.co%2Fes%2Fregulacion-operaciones-cambiarias-dcip-83&ssi=152e6117-c473-4815-8895-20e6ec161aa3&ssk=support@shieldsquare.com&ssm=13457341657385234108616698374863&ssn=31aeab7b73e5bb368909c8f0c3c3a91f7588e6fbc560-70ff-48fb-a74da5&sso=b2b7fd35-dadd8931f927cc5d56dc57a0996f1c5537c33fce20feca4c&ssp=94177041441793174622179313819676295&ssq=72072869946398124168399463531600462494967&ssr=MjAuMTY5LjczLjE0Ng==&sst=Mozilla/5.0 (compatible; ChangeSentinel/0.6; +https://github.com/GauravDarwesh/ChangeSentinel)&ssu=&ssv=&ssw=&ssx=eyJ1em14IjoiN2ZjMDAwNTQwY2ZlMWUtYTk0ZC00NzVkLWEyNjktM2FlZmZkMDcxYzg2MS0xNzkzMTk5NDYzNDIyMC0wMGJjM2NhNzc4MDRjYzExZmJlMTAiLCJyZCI6ImJhbnJlcC5nb3YuY28iLCJfX3V6bWYiOiI3ZjkwMDBlNmZiYzU2MC03MGZmLTQ4ZmItYWQzNS1kYWRkODkzMWY5MjcxLTE3OTMxOTk0NjM0MjIwLTAwNWMxN2JkZmRlYmU1MWVkMWUxMCJ9"
+        "previous": {
+          "schema_version": 2,
+          "url_id": "7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075",
+          "source_id": "manual-7aab3c749d70",
+          "regulator": "www.banrep.gov.co",
+          "canonical_url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+          "first_seen": "2026-10-27T16:38:19.919958+00:00",
+          "last_seen": "2026-10-28T14:57:43.249737+00:00",
+          "last_checked": "2026-10-28T14:57:43.249737+00:00",
+          "last_full_fetch": "2026-10-28T13:01:51.929552+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8",
+          "content_length": null,
+          "etag": null,
+          "last_modified": null,
+          "raw_hash": "8e63a1b2d86c9b7a6ecf7b785e5fddad8e1a87323fb3c8d223aba95c82a7a5e4",
+          "normalized_hash": "cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250",
+          "html_hash": "8e63a1b2d86c9b7a6ecf7b785e5fddad8e1a87323fb3c8d223aba95c82a7a5e4",
+          "html_comparison_hash": "b3e38bf414ec0629c8efe8459a4e388569264af6c8d838c24b26b4ee0651eac3",
+          "html_comparison_hash_version": 3,
+          "html_snapshot_location": "data/snapshots/html/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-8e63a1b2d86c9b7a6ecf7b785e5fddad8e1a87323fb3c8d223aba95c82a7a5e4.html",
+          "file_snapshot_location": null,
+          "visual_snapshot_location": null,
+          "visual_hash": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": "ValueError: Fetch redirect target is outside allowed domains: https://validate.perfdrive.com/6ed5044a4b4eea326f011ec9c0253c42/?ssa=d04e52b3-6b40-45bc-9e06-a008707ae207&ssb=66554326872&ssc=https%3A%2F%2Fwww.banrep.gov.co%2Fes%2Fregulacion-operaciones-cambiarias-dcip-83&ssi=152e6117-c473-4815-8895-20e6ec161aa3&ssk=support@shieldsquare.com&ssm=13457341657385234108616698374863&ssn=31aeab7b73e5bb368909c8f0c3c3a91f7588e6fbc560-70ff-48fb-a74da5&sso=b2b7fd35-dadd8931f927cc5d56dc57a0996f1c5537c33fce20feca4c&ssp=94177041441793174622179313819676295&ssq=72072869946398124168399463531600462494967&ssr=MjAuMTY5LjczLjE0Ng==&sst=Mozilla/5.0 (compatible; ChangeSentinel/0.6; +https://github.com/GauravDarwesh/ChangeSentinel)&ssu=&ssv=&ssw=&ssx=eyJ1em14IjoiN2ZjMDAwNTQwY2ZlMWUtYTk0ZC00NzVkLWEyNjktM2FlZmZkMDcxYzg2MS0xNzkzMTk5NDYzNDIyMC0wMGJjM2NhNzc4MDRjYzExZmJlMTAiLCJyZCI6ImJhbnJlcC5nb3YuY28iLCJfX3V6bWYiOiI3ZjkwMDBlNmZiYzU2MC03MGZmLTQ4ZmItYWQzNS1kYWRkODkzMWY5MjcxLTE3OTMxOTk0NjM0MjIwLTAwNWMxN2JkZmRlYmU1MWVkMWUxMCJ9",
+          "snapshot_location": "data/snapshots/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250.txt",
+          "evidence_location": "data/evidence/9fdf219969463477d36ca6b32ed738bb29b21dea9f4d0595a4a774fa0277e658.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "No exclusion signal; retained for high-recall review",
+            "signals": []
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "2193ff84a5bb9e0abd7f6bb18e50fc727242d6c920861fab6749846533a839e7",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-28T13:01:51.929552+00:00",
+              "evidence_location": "data/evidence/2193ff84a5bb9e0abd7f6bb18e50fc727242d6c920861fab6749846533a839e7.json"
+            },
+            {
+              "event_id": "85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-28T06:39:40.251091+00:00",
+              "evidence_location": "data/evidence/85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900.json"
+            },
+            {
+              "event_id": "a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-28T01:29:25.954590+00:00",
+              "evidence_location": "data/evidence/a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false,
+          "error_signature": "FETCH_ERROR|ValueError|",
+          "error_since": "2026-10-28T14:57:43.249737+00:00",
+          "error_runs": 1
+        },
+        "current": {
+          "schema_version": 2,
+          "url_id": "7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075",
+          "source_id": "manual-7aab3c749d70",
+          "regulator": "www.banrep.gov.co",
+          "canonical_url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+          "first_seen": "2026-10-27T16:38:19.919958+00:00",
+          "last_seen": "2026-10-28T22:48:43.243970+00:00",
+          "last_checked": "2026-10-28T22:48:43.243970+00:00",
+          "last_full_fetch": "2026-10-28T22:48:43.243970+00:00",
+          "active": true,
+          "terminal_file": false,
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8",
+          "content_length": null,
+          "etag": null,
+          "last_modified": null,
+          "raw_hash": "f3d375e0290d664a265d82cf913224d70c5d24fac809f9dcb297c018640b24b0",
+          "normalized_hash": "cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250",
+          "html_hash": "f3d375e0290d664a265d82cf913224d70c5d24fac809f9dcb297c018640b24b0",
+          "html_comparison_hash": "bfdafe161bd61ee186c85db6ed7efad15ae388266608b833d6e6beabd8af2e62",
+          "html_comparison_hash_version": 3,
+          "html_snapshot_location": "data/snapshots/html/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-f3d375e0290d664a265d82cf913224d70c5d24fac809f9dcb297c018640b24b0.html",
+          "file_snapshot_location": null,
+          "visual_snapshot_location": null,
+          "visual_hash": null,
+          "extraction_type": "html",
+          "extractor_version": "content-extractor-v7",
+          "extraction_error": null,
+          "fetch_error": null,
+          "snapshot_location": "data/snapshots/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250.txt",
+          "evidence_location": "data/evidence/232445521837e963ec562444840213ff4282d75083e49ef278c6170fff9ab4c7.json",
+          "relevance": {
+            "candidate": true,
+            "reason": "No exclusion signal; retained for high-recall review",
+            "signals": []
+          },
+          "ai_pending": null,
+          "last_changed_at": null,
+          "change_history": [
+            {
+              "event_id": "232445521837e963ec562444840213ff4282d75083e49ef278c6170fff9ab4c7",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-28T22:48:43.243970+00:00",
+              "evidence_location": "data/evidence/232445521837e963ec562444840213ff4282d75083e49ef278c6170fff9ab4c7.json"
+            },
+            {
+              "event_id": "2193ff84a5bb9e0abd7f6bb18e50fc727242d6c920861fab6749846533a839e7",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-28T13:01:51.929552+00:00",
+              "evidence_location": "data/evidence/2193ff84a5bb9e0abd7f6bb18e50fc727242d6c920861fab6749846533a839e7.json"
+            },
+            {
+              "event_id": "85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-28T06:39:40.251091+00:00",
+              "evidence_location": "data/evidence/85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900.json"
+            },
+            {
+              "event_id": "a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8",
+              "event_type": "HTML_SOURCE_CHANGED",
+              "timestamp": "2026-10-28T01:29:25.954590+00:00",
+              "evidence_location": "data/evidence/a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8.json"
+            }
+          ],
+          "not_modified": false,
+          "full_fetch_forced": false,
+          "html_baseline_forced": false,
+          "file_baseline_forced": false,
+          "extractor_baseline_forced": false,
+          "extraction_truncated": false
+        }
       }
     }
   ],
   "new_urls": [],
   "changed_urls": [],
-  "source_changed_urls": [],
+  "source_changed_urls": [
+    {
+      "before": {
+        "schema_version": 2,
+        "url_id": "7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075",
+        "source_id": "manual-7aab3c749d70",
+        "regulator": "www.banrep.gov.co",
+        "canonical_url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+        "first_seen": "2026-10-27T16:38:19.919958+00:00",
+        "last_seen": "2026-10-28T14:57:43.249737+00:00",
+        "last_checked": "2026-10-28T14:57:43.249737+00:00",
+        "last_full_fetch": "2026-10-28T13:01:51.929552+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "content_length": null,
+        "etag": null,
+        "last_modified": null,
+        "raw_hash": "8e63a1b2d86c9b7a6ecf7b785e5fddad8e1a87323fb3c8d223aba95c82a7a5e4",
+        "normalized_hash": "cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250",
+        "html_hash": "8e63a1b2d86c9b7a6ecf7b785e5fddad8e1a87323fb3c8d223aba95c82a7a5e4",
+        "html_comparison_hash": "b3e38bf414ec0629c8efe8459a4e388569264af6c8d838c24b26b4ee0651eac3",
+        "html_comparison_hash_version": 3,
+        "html_snapshot_location": "data/snapshots/html/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-8e63a1b2d86c9b7a6ecf7b785e5fddad8e1a87323fb3c8d223aba95c82a7a5e4.html",
+        "file_snapshot_location": null,
+        "visual_snapshot_location": null,
+        "visual_hash": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": "ValueError: Fetch redirect target is outside allowed domains: https://validate.perfdrive.com/6ed5044a4b4eea326f011ec9c0253c42/?ssa=d04e52b3-6b40-45bc-9e06-a008707ae207&ssb=66554326872&ssc=https%3A%2F%2Fwww.banrep.gov.co%2Fes%2Fregulacion-operaciones-cambiarias-dcip-83&ssi=152e6117-c473-4815-8895-20e6ec161aa3&ssk=support@shieldsquare.com&ssm=13457341657385234108616698374863&ssn=31aeab7b73e5bb368909c8f0c3c3a91f7588e6fbc560-70ff-48fb-a74da5&sso=b2b7fd35-dadd8931f927cc5d56dc57a0996f1c5537c33fce20feca4c&ssp=94177041441793174622179313819676295&ssq=72072869946398124168399463531600462494967&ssr=MjAuMTY5LjczLjE0Ng==&sst=Mozilla/5.0 (compatible; ChangeSentinel/0.6; +https://github.com/GauravDarwesh/ChangeSentinel)&ssu=&ssv=&ssw=&ssx=eyJ1em14IjoiN2ZjMDAwNTQwY2ZlMWUtYTk0ZC00NzVkLWEyNjktM2FlZmZkMDcxYzg2MS0xNzkzMTk5NDYzNDIyMC0wMGJjM2NhNzc4MDRjYzExZmJlMTAiLCJyZCI6ImJhbnJlcC5nb3YuY28iLCJfX3V6bWYiOiI3ZjkwMDBlNmZiYzU2MC03MGZmLTQ4ZmItYWQzNS1kYWRkODkzMWY5MjcxLTE3OTMxOTk0NjM0MjIwLTAwNWMxN2JkZmRlYmU1MWVkMWUxMCJ9",
+        "snapshot_location": "data/snapshots/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250.txt",
+        "evidence_location": "data/evidence/9fdf219969463477d36ca6b32ed738bb29b21dea9f4d0595a4a774fa0277e658.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "No exclusion signal; retained for high-recall review",
+          "signals": []
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "2193ff84a5bb9e0abd7f6bb18e50fc727242d6c920861fab6749846533a839e7",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-28T13:01:51.929552+00:00",
+            "evidence_location": "data/evidence/2193ff84a5bb9e0abd7f6bb18e50fc727242d6c920861fab6749846533a839e7.json"
+          },
+          {
+            "event_id": "85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-28T06:39:40.251091+00:00",
+            "evidence_location": "data/evidence/85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900.json"
+          },
+          {
+            "event_id": "a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-28T01:29:25.954590+00:00",
+            "evidence_location": "data/evidence/a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false,
+        "error_signature": "FETCH_ERROR|ValueError|",
+        "error_since": "2026-10-28T14:57:43.249737+00:00",
+        "error_runs": 1
+      },
+      "after": {
+        "schema_version": 2,
+        "url_id": "7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075",
+        "source_id": "manual-7aab3c749d70",
+        "regulator": "www.banrep.gov.co",
+        "canonical_url": "https://www.banrep.gov.co/es/regulacion-operaciones-cambiarias-dcip-83",
+        "first_seen": "2026-10-27T16:38:19.919958+00:00",
+        "last_seen": "2026-10-28T22:48:43.243970+00:00",
+        "last_checked": "2026-10-28T22:48:43.243970+00:00",
+        "last_full_fetch": "2026-10-28T22:48:43.243970+00:00",
+        "active": true,
+        "terminal_file": false,
+        "http_status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "content_length": null,
+        "etag": null,
+        "last_modified": null,
+        "raw_hash": "f3d375e0290d664a265d82cf913224d70c5d24fac809f9dcb297c018640b24b0",
+        "normalized_hash": "cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250",
+        "html_hash": "f3d375e0290d664a265d82cf913224d70c5d24fac809f9dcb297c018640b24b0",
+        "html_comparison_hash": "bfdafe161bd61ee186c85db6ed7efad15ae388266608b833d6e6beabd8af2e62",
+        "html_comparison_hash_version": 3,
+        "html_snapshot_location": "data/snapshots/html/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-f3d375e0290d664a265d82cf913224d70c5d24fac809f9dcb297c018640b24b0.html",
+        "file_snapshot_location": null,
+        "visual_snapshot_location": null,
+        "visual_hash": null,
+        "extraction_type": "html",
+        "extractor_version": "content-extractor-v7",
+        "extraction_error": null,
+        "fetch_error": null,
+        "snapshot_location": "data/snapshots/7aab3c749d70e31b09d155e112c448bac42e52e39b66a8f1c50782f67564e075-cc3e5db7c3a447a95265c90f1848a2832b2b2fcb6998bfd16ab1886f1c1ec250.txt",
+        "evidence_location": "data/evidence/232445521837e963ec562444840213ff4282d75083e49ef278c6170fff9ab4c7.json",
+        "relevance": {
+          "candidate": true,
+          "reason": "No exclusion signal; retained for high-recall review",
+          "signals": []
+        },
+        "ai_pending": null,
+        "last_changed_at": null,
+        "change_history": [
+          {
+            "event_id": "232445521837e963ec562444840213ff4282d75083e49ef278c6170fff9ab4c7",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-28T22:48:43.243970+00:00",
+            "evidence_location": "data/evidence/232445521837e963ec562444840213ff4282d75083e49ef278c6170fff9ab4c7.json"
+          },
+          {
+            "event_id": "2193ff84a5bb9e0abd7f6bb18e50fc727242d6c920861fab6749846533a839e7",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-28T13:01:51.929552+00:00",
+            "evidence_location": "data/evidence/2193ff84a5bb9e0abd7f6bb18e50fc727242d6c920861fab6749846533a839e7.json"
+          },
+          {
+            "event_id": "85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-28T06:39:40.251091+00:00",
+            "evidence_location": "data/evidence/85c83ed538a6d210cc4aee02ac6d99b6d1dad482ed0fcb01465ebab6b7aa1900.json"
+          },
+          {
+            "event_id": "a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8",
+            "event_type": "HTML_SOURCE_CHANGED",
+            "timestamp": "2026-10-28T01:29:25.954590+00:00",
+            "evidence_location": "data/evidence/a21e2dbd9734035edcdd2b5fa54146a18dc181af99e2a37b269aa680ec7dc4f8.json"
+          }
+        ],
+        "not_modified": false,
+        "full_fetch_forced": false,
+        "html_baseline_forced": false,
+        "file_baseline_forced": false,
+        "extractor_baseline_forced": false,
+        "extraction_truncated": false
+      }
+    }
+  ],
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "manual",
-  "workflow_run_id": "40708367685"
+  "trigger": "scheduled",
+  "workflow_run_id": "40780099385"
 }
