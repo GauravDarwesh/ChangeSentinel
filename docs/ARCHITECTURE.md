@@ -11,11 +11,13 @@ The monitoring layer is deterministic. It emits NEW_URL, CHANGED_URL, HTML_SOURC
 - data/latest.json: current URL inventory grouped by source; each record keeps a bounded `change_history` (newest first, with any AI verdict) and `last_changed_at`.
 - data/snapshots/<url_id>-<content_hash>.txt: immutable normalized-text snapshots.
 - data/snapshots/html/: immutable complete fetched HTML response snapshots. A new file is written only when the HTML comparison signature changes.
+- data/snapshots/files/: original PDF, ZIP and workbook (.xlsx, .xls, .ods) bytes, named `<url_id>-<raw_hash>`, for the dashboard's viewers and cell-by-cell comparison.
+- data/snapshots/botcheck/: bot-check or challenge pages a fetch received instead of the monitored page, saved for review (content-addressed, never overwritten). They are never compared as content and the baseline is kept.
 - data/evidence/<event_id>.json: event evidence and unified diffs; existing files are not overwritten.
 - data/reports/<source_id>.json: latest per-source report. data/report.json combines the latest report of every active source (`source_runs` names each one's run).
-- data/history/index.json: compact run history, the newest `history_runs` entries per source.
+- data/history/index.json: compact run history, the newest `history_runs` entries per source, written one entry per line.
 - data/history/<run_id>.json: full historical run report.
-- data/notifications.json: notification idempotency ledger for delivered events.
+- data/notifications.json: notification idempotency ledger for delivered events. Records older than a year are dropped on delivery, unless their event is still in `report.json` or the outbox.
 - data/notification-outbox.json: durable pending notification events awaiting delivery.
 - data/discovery/: source metadata, sharded inventories, checkpoints, and failure ledgers.
 

@@ -96,6 +96,47 @@ def _save_if_changed(path: Path, value: dict) -> bool:
     return True
 
 
+# A delivered event is remembered this long. Older records are dropped unless
+# the event is still in the current report or the outbox, so nothing that can
+# still be a candidate is ever forgotten (and re-sent); the ledger used to grow
+# forever.
+SENT_RETENTION_DAYS = 365
+
+
+def prune_sent_events(state: dict, keep: set[str], now: datetime | None = None, days: int = SENT_RETENTION_DAYS) -> int:
+    """Drop delivered records older than ``days`` whose event is not in ``keep``."""
+    now = now or datetime.now(timezone.utc)
+    cutoff = now.timestamp() - days * 86400
+    removed = 0
+    for event_id in list(state.get("sent_events", {})):
+        record = state["sent_events"][event_id]
+        if event_id in keep or not isinstance(record, dict):
+            continue
+        try:
+            sent = datetime.fromisoformat(str(record.get("sent_at") or "").replace("Z", "+00:00"))
+        except ValueError:
+            continue
+        if sent.tzinfo is None:
+            sent = sent.replace(tzinfo=timezone.utc)
+        if sent.timestamp() < cutoff:
+            del state["sent_events"][event_id]
+            removed += 1
+    return removed
+
+
+def live_event_ids(report: dict | None, outbox: dict) -> set[str]:
+    """Event ids that can still become (or are) notification candidates."""
+    ids: set[str] = set()
+    for event in (report or {}).get("events") or []:
+        if isinstance(event, dict):
+            for key in ("event_id", "notification_id"):
+                if event.get(key):
+                    ids.add(str(event[key]))
+    # pending_events is keyed by event id.
+    ids.update(str(event_id) for event_id in ((outbox or {}).get("pending_events") or {}))
+    return ids
+
+
 def load_state(path: Path = STATE_PATH) -> dict:
     return _load_state_mapping(path, "sent_events")
 
@@ -819,6 +860,17 @@ def main() -> None:
     def persist() -> None:
         save_state(state)
         save_outbox(outbox)
+
+    # Expire old delivery records (never one whose event is still live) on the
+    # delivery step, which commits notifications.json anyway.
+    try:
+        report_now = json.loads((DATA / "report.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        report_now = None
+    if report_now is not None:
+        expired = prune_sent_events(state, live_event_ids(report_now, outbox) | {e.get("event_id") for e in candidates if isinstance(e, dict)})
+        if expired:
+            print(json.dumps({"expired_delivery_records": expired}))
 
     result = deliver_pending(outbox, state, topic, server, dashboard_url, persist=persist, channels=channels)
     persist()
