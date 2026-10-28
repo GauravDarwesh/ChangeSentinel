@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261028T124652Z-18beb90d",
-  "generated_at": "2026-10-28T13:01:55.953876+00:00",
+  "run_id": "20261028T144352Z-655a786d",
+  "generated_at": "2026-10-28T14:57:46.432683+00:00",
   "source": {
     "id": "manual-4cc8bc25ee86",
     "name": "Compendio actualizado de la Circular Reglamentaria DCIP-83 (2023): Instructivo",
@@ -94,6 +94,6 @@
   "removed_urls": [],
   "baseline_migrations": [],
   "ai_results": [],
-  "trigger": "scheduled",
-  "workflow_run_id": "40689184213"
+  "trigger": "manual",
+  "workflow_run_id": "40708367685"
 }
