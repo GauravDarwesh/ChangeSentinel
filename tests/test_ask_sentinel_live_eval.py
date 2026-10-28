@@ -61,6 +61,38 @@ class TestAskSentinelLiveEvalClassification(unittest.TestCase):
         self.assertNotIn("ANSWER EXCERPT:", evaluator)
         self.assertNotIn('"answer_excerpt"', evaluator)
 
+    def _run_case_with(self, response):
+        results = []
+        original = live_eval.ask
+        live_eval.ask = lambda _question: response
+        try:
+            live_eval.run_case(results, "case", "question", lambda _response, _answer: (False, "facts missing"))
+        finally:
+            live_eval.ask = original
+        return results[0]
+
+    def test_evidence_only_fallback_is_inconclusive_not_a_grounding_failure(self):
+        # Seen on 28 Oct: OpenRouter failed and the backend answered HTTP 200 with
+        # evidence links only; the evaluator graded that text and failed the run.
+        response = {
+            "http_status": 200,
+            "answer": "I could not complete the AI answer. These retrieved records may help: [Source: data/report.json]",
+            "model": "evidence-fallback",
+            "evidence_fallback": True,
+        }
+        self.assertTrue(live_eval.is_evidence_fallback(response))
+        self.assertIsNone(self._run_case_with(response)["passed"])
+
+    def test_a_real_answer_is_still_graded(self):
+        response = {"http_status": 200, "answer": "Run 1 changed 2 URLs.", "model": "openrouter/free"}
+        self.assertFalse(live_eval.is_evidence_fallback(response))
+        self.assertIs(self._run_case_with(response)["passed"], False)
+
+    def test_health_workflow_checks_remaining_against_the_warm_up(self):
+        workflow = (ROOT / ".github/workflows/ask-sentinel-health.yml").read_text(encoding="utf-8")
+        self.assertNotIn("not in (2, 999)", workflow)
+        self.assertIn("expected_after = before - 1", workflow)
+
     def test_a_grounding_failure_fails_the_run(self):
         with self.assertRaises(SystemExit):
             live_eval.exit_status(passed=5, failed=1, inconclusive=0)
