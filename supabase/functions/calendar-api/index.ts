@@ -23,9 +23,15 @@ function config() {
     dashboard: Deno.env.get("REGULATORY_CALENDAR_DASHBOARD_URL") || "https://gauravdarwesh.github.io/ChangeSentinel/#cadence"
   };
 }
+// Exact origins only (any *.github.io used to pass). A fork lists its Pages
+// origin in ASK_SENTINEL_EXTRA_ORIGINS, shared with the other functions.
+export function originAllowed(origin: string, extra = Deno.env.get("ASK_SENTINEL_EXTRA_ORIGINS") || ""): boolean {
+  if (ALLOWED_ORIGINS.has(origin)) return true;
+  return extra.split(",").map(v => v.trim().replace(/\/+$/, "")).filter(Boolean).includes(origin);
+}
 function cors(req: Request) {
   const origin = req.headers.get("origin") || "";
-  const allowed = ALLOWED_ORIGINS.has(origin) || /^https:\/\/[a-z0-9-]+\.github\.io$/i.test(origin);
+  const allowed = originAllowed(origin);
   const headers: Record<string,string> = {
     "Vary":"Origin", "Access-Control-Allow-Methods":"GET, POST, OPTIONS",
     "Access-Control-Allow-Headers":"authorization, apikey, content-type, x-client-info, x-calendar-cron-token",
@@ -108,14 +114,20 @@ export function normalizeEntry(input:any):Record<string,any>{
   if(!isIsoDate(start))throw new PublicError("Choose a valid start date.");
   if(end&&(!isIsoDate(end)||end<start))throw new PublicError("The end date must be on or after the start date.");
   if(regulator.length>160||owner.length>120)throw new PublicError("Regulator or owner name is too long.");
-  if(source){let u:URL;try{u=new URL(source);}catch(_){throw new PublicError("Source link must be a valid HTTP or HTTPS URL.");}
-    if(!["http:","https:"].includes(u.protocol)||u.username||u.password)throw new PublicError("Source link must be a public HTTP or HTTPS URL.");}
+  // The URL parser silently drops tabs and newlines, so "https://ok\njavascript:…"
+  // would pass; control characters are refused and the parsed form is stored.
+  let sourceUrl="";
+  if(source){let u:URL;
+    if(/[\u0000-\u001f\u007f]/.test(source))throw new PublicError("Source link must be a valid HTTP or HTTPS URL.");
+    try{u=new URL(source);}catch(_){throw new PublicError("Source link must be a valid HTTP or HTTPS URL.");}
+    if(!["http:","https:"].includes(u.protocol)||u.username||u.password)throw new PublicError("Source link must be a public HTTP or HTTPS URL.");
+    sourceUrl=u.href;}
   if(!Number.isInteger(days)||days<0||days>90)throw new PublicError("Reminder lead time must be from 0 to 90 days.");
   if(emails.length>10||emails.some((e:string)=>!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)||e.length>320))throw new PublicError("Enter up to 10 valid reminder email addresses.");
   const enabled=input.reminder_enabled===true;
   if(enabled&&!emails.length)throw new PublicError("Add at least one email recipient or switch reminders off.");
   if(recurrence==="none"&&completed.some((d:string)=>d!==start))throw new PublicError("Completed dates for a one-off entry must match its start date.");
-  return {title,description,category,start_date:start,end_date:end,regulator,source_url:source,owner_name:owner,recurrence,
+  return {title,description,category,start_date:start,end_date:end,regulator,source_url:sourceUrl,owner_name:owner,recurrence,
     reminder_enabled:enabled,reminder_days_before:days,reminder_emails:emails,completed_dates:completed};
 }
 function publicCalendarEntry(entry:Record<string,any>){
@@ -220,25 +232,58 @@ function tokensMatch(supplied:string,expected:string){
   for(let i=0;i<Math.max(a.length,b.length);i++)diff|=(a[i]??0)^(b[i]??0);
   return diff===0;
 }
-async function alreadySent(entryId:string,day:string,to:string){
-  const params=new URLSearchParams({select:"id",entry_id:"eq."+entryId,occurrence_date:"eq."+day,recipient_email:"eq."+to,limit:"1"});
-  const rows=await restJson("regulatory_calendar_reminder_deliveries?"+params.toString());return Array.isArray(rows)&&rows.length>0;
+// Dates shown to the team are in its time zone (the dashboard uses IST), so a
+// reminder is due by that calendar, not UTC's: between 18:30 and 24:00 UTC it
+// used to fire a day late.
+const TEAM_TIME_ZONE=Deno.env.get("REGULATORY_CALENDAR_TIME_ZONE")||"Asia/Kolkata";
+export function todayIn(timeZone:string,now=new Date()):string{
+  try{return new Intl.DateTimeFormat("en-CA",{timeZone,year:"numeric",month:"2-digit",day:"2-digit"}).format(now);}
+  catch(_){return now.toISOString().slice(0,10);}
 }
-async function runReminders(){
+// One run sends what it can in this time; the rest is due on the next run (no
+// date floor), so a busy day can't outlive the isolate mid-send.
+const RUN_BUDGET_MS=Number(Deno.env.get("REGULATORY_CALENDAR_RUN_BUDGET_MS")||"")||40_000;
+const MAX_JOBS_PER_RUN=200;
+// A delivery is claimed before the email goes out: the unique key on
+// (entry, occurrence, recipient) lets only one of two overlapping runs claim
+// it, so a retried or doubled scheduler call can't send the same reminder twice.
+async function claimDelivery(entryId:string,day:string,to:string):Promise<string|null>{
+  const response=await rest("regulatory_calendar_reminder_deliveries",{method:"POST",headers:{Prefer:"return=representation"},
+    body:JSON.stringify({entry_id:entryId,occurrence_date:day,recipient_email:to,provider_id:""})});
+  const raw=await response.text();
+  if(response.status===409)return null;
+  if(!response.ok)throw new Error("Calendar delivery claim failed ("+response.status+")");
+  const rows=raw?JSON.parse(raw):null,row=Array.isArray(rows)?rows[0]:rows;
+  return String(row?.id||"")||null;
+}
+async function runReminders(now=Date.now()){
   const cfg=config();if(!cfg.cron||!cfg.resend||!cfg.from)throw new Error("Reminder scheduler secrets are not configured.");
   const rows=await restJson("regulatory_calendar_entries?"+new URLSearchParams({select:"*",archived:"eq.false",reminder_enabled:"eq.true"}));
-  const today=new Date().toISOString().slice(0,10),jobs=dueReminderJobs(Array.isArray(rows)?rows:[],today);
-  let sent=0,skipped=0,failures=0;
+  const today=todayIn(TEAM_TIME_ZONE,new Date(now)),jobs=dueReminderJobs(Array.isArray(rows)?rows:[],today);
+  let sent=0,skipped=0,failures=0,deferred=0,attempted=0;
+  const started=Date.now();
   for(const job of jobs){
     const id=String(job.entry.id||"");
-    try{
-      if(!id||await alreadySent(id,job.occurrence_date,job.recipient_email)){skipped++;continue;}
-      const provider=await sendEmail(job.entry,job.occurrence_date,job.recipient_email);
-      await restJson("regulatory_calendar_reminder_deliveries",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({entry_id:id,occurrence_date:job.occurrence_date,recipient_email:job.recipient_email,provider_id:provider})});
-      sent++;
-    }catch(error){failures++;console.error(JSON.stringify({event:"cadence_reminder_failed",entry_id:id,occurrence_date:job.occurrence_date,error:String((error as Error)?.message||error).slice(0,180)}));}
+    if(!id){skipped++;continue;}
+    if(attempted>=MAX_JOBS_PER_RUN||Date.now()-started>RUN_BUDGET_MS){deferred++;continue;}
+    attempted++;
+    const fail=(error:unknown)=>{failures++;console.error(JSON.stringify({event:"cadence_reminder_failed",entry_id:id,occurrence_date:job.occurrence_date,error:String((error as Error)?.message||error).slice(0,180)}));};
+    let claim:string|null=null;
+    try{claim=await claimDelivery(id,job.occurrence_date,job.recipient_email);}catch(error){fail(error);continue;}
+    if(!claim){skipped++;continue;}
+    let provider="";
+    try{provider=await sendEmail(job.entry,job.occurrence_date,job.recipient_email);}
+    catch(error){
+      // The email did not go out: release the claim so the next run retries it.
+      try{await rest("regulatory_calendar_reminder_deliveries?"+new URLSearchParams({id:"eq."+claim,provider_id:"eq."}),{method:"DELETE"});}catch(_){/* the claim stays; the reminder is skipped, not doubled */}
+      fail(error);continue;
+    }
+    sent++;
+    // The email went out, so the claim stays whatever happens to this update.
+    try{await restJson("regulatory_calendar_reminder_deliveries?"+new URLSearchParams({id:"eq."+claim}),{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({provider_id:provider||"sent",sent_at:new Date().toISOString()})});}
+    catch(error){console.error(JSON.stringify({event:"cadence_reminder_record_failed",entry_id:id,occurrence_date:job.occurrence_date,error:String((error as Error)?.message||error).slice(0,180)}));}
   }
-  return {sent,skipped,failures};
+  return {sent,skipped,failures,deferred,today};
 }
 Deno.serve(async(req:Request)=>{
   const c=cors(req);

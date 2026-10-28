@@ -1,6 +1,6 @@
 // Tests for the page reader. Network calls go to a fake fetcher; nothing leaves the machine.
 (Deno as any).serve = () => ({ finished: Promise.resolve(), shutdown: async () => {}, ref() {}, unref() {}, addr: { hostname: 'test', port: 0 } });
-const { checkUrl, isPrivateAddress, readHtml, readPage, formatOf, spend, handle, PublicError, absoluteCssUrls, clientRedirect, botCheck, USER_AGENT, BROWSER_USER_AGENT, documentFormat, MAX_FILE_BYTES, resolveStreamedBoundaries, scriptBuiltScore, liveDocument, inlineAssets, READER_VERSION } = await import('./index.ts');
+const { checkUrl, isPrivateAddress, readHtml, readPage, formatOf, spend, handle, PublicError, absoluteCssUrls, clientRedirect, botCheck, USER_AGENT, BROWSER_USER_AGENT, documentFormat, MAX_FILE_BYTES, resolveStreamedBoundaries, scriptBuiltScore, liveDocument, inlineAssets, READER_VERSION, originAllowed, clientIp, storeCookies, cookieHeader, budgetKeys, MAX_BUDGET_KEYS } = await import('./index.ts');
 
 function assert(condition: unknown, message: string) { if (!condition) throw new Error(message); }
 function eq(a: unknown, b: unknown, message: string) { if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error(message + ': ' + JSON.stringify(a) + ' !== ' + JSON.stringify(b)); }
@@ -317,4 +317,65 @@ Deno.test('every answer names the reader version the dashboard checks', async ()
   const req = new Request('https://reader.test/', { method: 'POST', headers: { origin: 'https://gauravdarwesh.github.io', 'content-type': 'application/json', 'x-ask-sentinel-visitor-id': '0f8fad5b-d9cb-469f-a165-70867728950e' }, body: JSON.stringify({ url: 'ftp://x.gov/' }) });
   const refused = await handle(req);
   eq(refused.status, 400, 'a bad address is refused before any fetch');
+});
+
+
+// ---- 25 Oct audit follow-ups (CS-93, 98, 99, 100, 108, 111, 115, 120) ----
+
+Deno.test('SVG animation cannot set an event handler after sanitising (CS-99)', () => {
+  const html = '<html><body><main><svg><a href="https://x.test/"><set attributeName="onmouseover" to="alert(1)"/><animate attributeName="href" values="javascript:alert(1)"/>Hi</a><foreignObject><b>x</b></foreignObject></svg></main></body></html>';
+  const copy = readHtml(html, 'https://x.test/');
+  const text = String(copy.html || '');
+  for (const tag of ['<set', '<animate', '<foreignobject']) if (text.toLowerCase().includes(tag)) throw new Error('kept ' + tag);
+  if (/\son[a-z]+\s*=/i.test(text)) throw new Error('an event handler survived');
+});
+
+Deno.test('data:image is kept for pictures only, not links or forms (CS-100)', () => {
+  const svg = 'data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=';
+  const copy = readHtml('<html><body><main><a href="' + svg + '">x</a><form action="' + svg + '"></form><img src="' + svg + '"></main></body></html>', 'https://x.test/');
+  const text = String(copy.html || '');
+  if (/<a [^>]*href="data:/i.test(text) || /action="data:/i.test(text)) throw new Error('data: kept on a link or form');
+  if (!/<img [^>]*src="data:image/i.test(text)) throw new Error('the picture lost its data: source');
+});
+
+Deno.test('only exact origins are allowed (CS-111)', () => {
+  eq([originAllowed('https://gauravdarwesh.github.io', ''), originAllowed('https://evil.github.io', ''), originAllowed('https://fork.github.io', 'https://fork.github.io')], [true, false, true], 'audit check');
+});
+
+Deno.test('the IP budget key is not the client\'s own x-forwarded-for claim (CS-93)', () => {
+  const req = (headers: Record<string, string>) => new Request('https://fn.test/', { headers });
+  eq(clientIp(req({ 'x-forwarded-for': '1.2.3.4, 198.51.100.9' })), '198.51.100.9', 'audit check');
+  eq(clientIp(req({ 'cf-connecting-ip': '203.0.113.5', 'x-forwarded-for': '1.2.3.4' })), '203.0.113.5', 'audit check');
+});
+
+Deno.test('the budget map stays bounded under a flood of fresh keys (CS-98)', () => {
+  const now = Date.now();
+  for (let i = 0; i < MAX_BUDGET_KEYS + 500; i += 1) spend('flood:' + i, 5, now);
+  if (budgetKeys() > MAX_BUDGET_KEYS) throw new Error('budgets grew to ' + budgetKeys());
+});
+
+Deno.test('a cookie is sent only on its path, and a Secure one only over https (CS-115)', () => {
+  const jar: any[] = [];
+  const headers = new Headers();
+  headers.append('set-cookie', 'admin=1; Path=/admin');
+  headers.append('set-cookie', 'sess=2; Path=/; Secure');
+  storeCookies(jar, new Response('', { headers }), new URL('https://x.test/admin/login'));
+  eq(cookieHeader(jar, new URL('https://x.test/admin/page')), 'admin=1; sess=2', 'audit check');
+  eq(cookieHeader(jar, new URL('https://x.test/public')), 'sess=2', 'audit check');
+  eq(cookieHeader(jar, new URL('https://x.test/administrator')), 'sess=2', 'audit check');
+  eq(cookieHeader(jar, new URL('http://x.test/public')), '', 'audit check');
+});
+
+Deno.test('an HTML page served at a .pdf address is a page (CS-120)', () => {
+  eq(documentFormat('https://x.test/form.pdf', 'text/html; charset=utf-8'), '', 'audit check');
+  eq(documentFormat('https://x.test/form.pdf', 'application/octet-stream'), 'PDF', 'audit check');
+});
+
+Deno.test('a large request body is refused before it is parsed (CS-108)', async () => {
+  const response = await handle(new Request('https://fn.test/', {
+    method: 'POST',
+    headers: { origin: 'https://gauravdarwesh.github.io', 'x-ask-sentinel-visitor-id': '6f1a2b3c-4d5e-4f60-8a7b-9c0d1e2f3a4b', 'content-length': '999999' },
+    body: '{}'
+  }));
+  eq(response.status, 413, 'audit check');
 });

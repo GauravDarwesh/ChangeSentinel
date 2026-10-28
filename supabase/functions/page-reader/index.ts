@@ -42,6 +42,11 @@ const MAX_DATA_LINKS = 400;
 const WINDOW_MS = 10 * 60 * 1000;
 const ACTOR_BUDGET = 400;
 const IP_BUDGET = 800;
+// Visitor ids are self-chosen and a client can vary its address; this ceiling
+// per isolate holds whatever identity a request claims.
+const GLOBAL_BUDGET = Number(Deno.env.get('PAGE_READER_GLOBAL_BUDGET') || '') || 4000;
+const GLOBAL_KEY = 'global';
+const MAX_REQUEST_BYTES = 16_384;
 // The same identity as the monitor's own fetcher. Many web application firewalls
 // refuse any agent that does not start with "Mozilla/5.0".
 export const USER_AGENT = 'Mozilla/5.0 (compatible; ChangeSentinel/0.6 page reader; +https://github.com/GauravDarwesh/ChangeSentinel)';
@@ -195,6 +200,8 @@ export function formatOf(url: string): string {
 // The document formats the dashboard can show, from the address or the content type.
 export function documentFormat(url: string, contentType: string): string {
   const type = String(contentType || '').toLowerCase();
+  // An error or login page served at /x.pdf is a page, not a PDF.
+  if (/text\/html|application\/xhtml/.test(type)) return '';
   const byName = formatOf(url);
   if (/pdf/.test(type) || byName === 'PDF') return 'PDF';
   if (/spreadsheetml|ms-excel|\bcsv\b/.test(type) || byName === 'Spreadsheet') return /csv/.test(type) || /\.csv(\?|$)/i.test(url) ? 'CSV' : 'Spreadsheet';
@@ -208,8 +215,12 @@ export function documentFormat(url: string, contentType: string): string {
 
 /* ---------------------------------------------------------------- sanitising */
 
+// SVG animation elements (SMIL) can set an event-handler attribute after this
+// pass has run (<set attributeName="onmouseover" to="…">), and foreignObject
+// nests HTML inside SVG; neither is needed for a reading copy.
 const REMOVE = 'script, noscript, iframe, frame, frameset, object, embed, applet, base, portal, template, ' +
-  'meta[http-equiv], link:not([rel~="stylesheet"]):not([rel~="icon"])';
+  'meta[http-equiv], link:not([rel~="stylesheet"]):not([rel~="icon"]), ' +
+  'animate, set, animatemotion, animatetransform, animatecolor, discard, foreignobject, handler, listener';
 const URL_ATTRS = ['href', 'src', 'action', 'poster', 'data', 'background', 'cite', 'formaction'];
 const clean = (value: unknown, limit: number) => String(value ?? '').replace(/\s+/g, ' ').trim().slice(0, limit);
 
@@ -580,13 +591,16 @@ export function readHtml(html: string, pageUrl: string): ReadCopy {
         else if (/url\(/i.test(attribute.value)) element.setAttribute('style', absoluteCssUrls(attribute.value, base).replace(/url\("([^"]*)"\)/g, "url('$1')"));
       } else if (URL_ATTRS.includes(name) || name === 'xlink:href') {
         const value = absolute(attribute.value, base);
-        if (value) element.setAttribute(attribute.name, value);
+        // data:image is kept only where it is drawn as a picture; on a link, form
+        // or object it would be a document (an SVG one can carry script).
+        const pictureSource = (name === 'src' || name === 'poster') && ['img', 'source', 'video', 'input', 'picture'].includes(tag);
+        if (value && (!value.startsWith('data:') || pictureSource)) element.setAttribute(attribute.name, value);
         else element.removeAttribute(attribute.name);
       } else if (name === 'srcset') {
         const value = String(attribute.value).split(',').map((part: string) => {
           const [candidate, size] = part.trim().split(/\s+/, 2);
           const resolved = absolute(candidate, base);
-          return resolved ? resolved + (size ? ' ' + size : '') : '';
+          return resolved && (!resolved.startsWith('data:') || ['img', 'source'].includes(tag)) ? resolved + (size ? ' ' + size : '') : '';
         }).filter(Boolean).join(', ');
         if (value) element.setAttribute('srcset', value);
         else element.removeAttribute('srcset');
@@ -926,8 +940,8 @@ async function readBody(response: Response, limit = MAX_BYTES): Promise<{ bytes:
 
 // Session cookies some sites set on the first response and require on the redirect
 // that follows (otherwise they redirect forever). Kept for this one read only.
-type Cookie = { domain: string; hostOnly: boolean; name: string; value: string };
-function storeCookies(jar: Cookie[], response: Response, url: URL) {
+type Cookie = { domain: string; hostOnly: boolean; name: string; value: string; path: string; secure: boolean };
+export function storeCookies(jar: Cookie[], response: Response, url: URL) {
   const headers = response.headers as Headers & { getSetCookie?: () => string[] };
   const lines = typeof headers.getSetCookie === 'function' ? headers.getSetCookie() : [];
   for (const line of lines) {
@@ -940,14 +954,21 @@ function storeCookies(jar: Cookie[], response: Response, url: URL) {
     const host = url.hostname.toLowerCase();
     let domain = domainAttribute ? domainAttribute.slice(7).trim().toLowerCase().replace(/^\./, '') : host;
     if (domain !== host && !host.endsWith('.' + domain)) domain = host;
-    const index = jar.findIndex(cookie => cookie.name === name && cookie.domain === domain);
+    const pathAttribute = attributes.map(part => part.trim()).find(part => /^path=/i.test(part));
+    const rawPath = pathAttribute ? pathAttribute.slice(5).trim() : '';
+    // RFC 6265 default path: the request path up to its last slash.
+    const path = rawPath.startsWith('/') ? rawPath : (url.pathname.replace(/\/[^/]*$/, '') || '/');
+    const secure = attributes.some(part => /^secure$/i.test(part.trim()));
+    const index = jar.findIndex(cookie => cookie.name === name && cookie.domain === domain && cookie.path === path);
     if (index >= 0) jar.splice(index, 1);
-    if (value && jar.length < 40) jar.push({ domain, hostOnly: !domainAttribute, name, value: value.slice(0, 4096) });
+    if (value && jar.length < 40) jar.push({ domain, hostOnly: !domainAttribute, name, value: value.slice(0, 4096), path, secure });
   }
 }
-function cookieHeader(jar: Cookie[], url: URL): string {
+export function cookieHeader(jar: Cookie[], url: URL): string {
   const host = url.hostname.toLowerCase();
-  return jar.filter(cookie => host === cookie.domain || (!cookie.hostOnly && host.endsWith('.' + cookie.domain)))
+  const onPath = (cookie: Cookie) => url.pathname === cookie.path || url.pathname.startsWith(cookie.path.endsWith('/') ? cookie.path : cookie.path + '/');
+  return jar.filter(cookie => (host === cookie.domain || (!cookie.hostOnly && host.endsWith('.' + cookie.domain)))
+      && onPath(cookie) && (!cookie.secure || url.protocol === 'https:'))
     .map(cookie => cookie.name + '=' + cookie.value).join('; ');
 }
 
@@ -1145,9 +1166,16 @@ export async function readPage(raw: string, fetcher: typeof fetch = fetch, optio
 
 /* ---------------------------------------------------------------- request handling */
 
+// Exact origins only (any *.github.io used to pass). A fork lists its Pages
+// origin in ASK_SENTINEL_EXTRA_ORIGINS, shared with Ask Sentinel.
+export function originAllowed(origin: string, extra = Deno.env.get('ASK_SENTINEL_EXTRA_ORIGINS') || ''): boolean {
+  if (ALLOWED_ORIGINS.has(origin)) return true;
+  return extra.split(',').map(value => value.trim().replace(/\/+$/, '')).filter(Boolean).includes(origin);
+}
+
 function cors(req: Request) {
   const origin = req.headers.get('origin') || '';
-  const allowed = ALLOWED_ORIGINS.has(origin) || /^https:\/\/[a-z0-9-]+\.github\.io$/i.test(origin);
+  const allowed = originAllowed(origin);
   const headers: Record<string, string> = {
     Vary: 'Origin',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -1166,18 +1194,38 @@ function respond(req: Request, payload: unknown, status = 200, extra: Record<str
   });
 }
 
+// Budgets live in this isolate. The map is bounded: expired entries go first,
+// then the oldest, so a flood of fresh keys can't exhaust memory (it used to
+// evict only expired entries, and only when a new key arrived).
+export const MAX_BUDGET_KEYS = 5000;
 const budgets = new Map<string, { count: number; reset: number }>();
+export function budgetKeys(): number { return budgets.size; }
 export function spend(key: string, limit: number, now = Date.now()): boolean {
   const entry = budgets.get(key);
   if (!entry || entry.reset <= now) {
+    budgets.delete(key);
     budgets.set(key, { count: 1, reset: now + WINDOW_MS });
-    if (budgets.size > 5000) {
+    if (budgets.size > MAX_BUDGET_KEYS) {
       for (const [name, value] of budgets) if (value.reset <= now) budgets.delete(name);
+      for (const name of budgets.keys()) {
+        if (budgets.size <= MAX_BUDGET_KEYS) break;
+        if (name !== key && name !== GLOBAL_KEY) budgets.delete(name);
+      }
     }
     return true;
   }
   entry.count += 1;
   return entry.count <= limit;
+}
+
+// The address the platform saw: Cloudflare's cf-connecting-ip, else the entry
+// the nearest proxy appended. The first x-forwarded-for entry is the client's
+// own claim, so keying the budget on it let every request pick a fresh one.
+export function clientIp(req: Request): string {
+  const direct = (req.headers.get('cf-connecting-ip') || '').trim();
+  if (direct) return direct;
+  const forwarded = (req.headers.get('x-forwarded-for') || '').split(',').map(part => part.trim()).filter(Boolean);
+  return forwarded.length ? forwarded[forwarded.length - 1] : 'unknown';
 }
 
 async function actorOf(req: Request): Promise<string> {
@@ -1209,14 +1257,22 @@ export async function handle(req: Request): Promise<Response> {
   if (req.method !== 'POST') return respond(req, { error: 'Use POST.' }, 405);
   try {
     const actor = await actorOf(req);
-    const ip = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown';
+    const ip = clientIp(req);
+    if (!spend(GLOBAL_KEY, GLOBAL_BUDGET)) {
+      return respond(req, { error: 'The page reader is busy. Wait a few minutes and retry.' }, 503, { 'Retry-After': '120' });
+    }
     if (!spend(actor, ACTOR_BUDGET) || !spend('ip:' + ip, IP_BUDGET)) {
       return respond(req, { error: 'Too many pages read in a short time. Wait a few minutes and retry.' }, 429, { 'Retry-After': '120' });
     }
     let body: { url?: string; mode?: string } = {};
+    const declared = Number(req.headers.get('content-length') || '');
+    if (Number.isFinite(declared) && declared > MAX_REQUEST_BYTES) throw new PublicError('Request body is too large.', 413);
     try {
-      body = await req.json();
-    } catch (_) {
+      const raw = await new Response(req.body).arrayBuffer();
+      if (raw.byteLength > MAX_REQUEST_BYTES) throw new PublicError('Request body is too large.', 413);
+      body = JSON.parse(new TextDecoder().decode(raw));
+    } catch (error) {
+      if (error instanceof PublicError) throw error;
       throw new PublicError('Send a JSON body with a url.');
     }
     const wantFile = body.mode === 'file';
