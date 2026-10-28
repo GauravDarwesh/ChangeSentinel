@@ -203,6 +203,8 @@ class PoliteClient:
         self.requests = 0
         self.robots: dict[str, robots_mod.RobotsPolicy] = {}
         self.last_request_at: dict[str, float] = {}
+        # Hosts whose robots.txt Crawl-delay exceeds max_crawl_delay_seconds.
+        self.slow_hosts: dict[str, float] = {}
         self.headers = {"User-Agent": USER_AGENT, "Accept": "*/*"}
 
     # ---- budget -----------------------------------------------------------------
@@ -216,6 +218,11 @@ class PoliteClient:
         policy = self.robots.get(host)
         crawl_delay = policy.crawl_delay if policy and policy.crawl_delay is not None else 0.0
         # Honour a site's Crawl-delay in full; never go below Scout's own floor.
+        # A delay beyond max_crawl_delay_seconds is still honoured (being polite
+        # is the point), but recorded so the sweep says why a channel stopped
+        # early instead of only reporting a spent budget (CS-161).
+        if float(crawl_delay) > float(self.defaults.max_crawl_delay_seconds):
+            self.slow_hosts[host] = float(crawl_delay)
         return max(float(self.defaults.min_delay_seconds), float(crawl_delay))
 
     def can_afford(self, host: str, requests: int = 1) -> bool:

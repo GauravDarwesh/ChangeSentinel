@@ -979,3 +979,78 @@ class TestStateCommitScoping(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestScoutNewnessFollowUps(ScoutTestCase):
+    """25 Oct audit: CS-11, CS-12, CS-14, CS-17, CS-161."""
+
+    LIST = "https://reg.example.org/publications"
+
+    def list_config(self, **pagination):
+        return config_for([{"id": "ex-list", "type": "listing", "label": "Publications", "url": self.LIST, "newest_first": True,
+                            "pagination": dict({"param": "page", "max_pages": 3, "baseline_pages": 1}, **pagination)}])
+
+    def page(self, index):
+        return f"{self.LIST}?page={index}"
+
+    def test_an_item_dated_in_the_onboarding_week_is_announced(self):
+        today = datetime.now(timezone.utc)
+        fresh = f"{today.day} {today.strftime('%B %Y')}"
+        site = FakeSite({self.page(0): listing((fresh, "/d/new.pdf", "Guidelines this week"), ("2 January 2025", "/d/old.pdf", "Guidelines old"))})
+        self.sweep(self.list_config(), site)
+        records = {record["url"]: record for record in self.registry().candidates.values()}
+        self.assertEqual(records["https://reg.example.org/d/new.pdf"]["origin"], "new")
+        self.assertIn("first sweep", records["https://reg.example.org/d/new.pdf"]["origin_reason"])
+        self.assertEqual(records["https://reg.example.org/d/old.pdf"]["origin"], "baseline")
+
+    def test_a_monthly_full_read_finds_an_item_only_listed_on_page_two(self):
+        config = self.list_config()
+        site = FakeSite({self.page(0): listing(("2 October 2026", "/d/1.pdf", "Guidelines one"), ("1 October 2026", "/d/0.pdf", "Guidelines zero"))})
+        self.sweep(config, site)
+        # A back-dated item appears on page 2 only; page 1 is unchanged.
+        site.pages[self.page(1)] = listing(("1 September 2026", "/d/backdated.pdf", "Guidelines back-dated"))
+        quick = self.sweep(config, site)
+        self.assertIn("Caught up", quick["regulators"][0]["channels"][0]["note"])
+        self.assertNotIn("https://reg.example.org/d/backdated.pdf", {r["url"] for r in self.registry().candidates.values()})
+        # Four weeks after the baseline the read goes to the end.
+        registry = self.registry()
+        registry.channels["ex-list"]["baselined_at"] = (datetime.now(timezone.utc) - timedelta(days=29)).isoformat()
+        registry.save(self.data)
+        deep = self.sweep(config, site)
+        channel = deep["regulators"][0]["channels"][0]
+        self.assertTrue(channel.get("full_read"))
+        self.assertIn("Monthly full read", channel["note"])
+        self.assertIn("https://reg.example.org/d/backdated.pdf", {r["url"] for r in self.registry().candidates.values()})
+        self.assertTrue(self.registry().channels["ex-list"].get("last_full_read"))
+
+    def test_a_listing_that_is_not_newest_first_does_not_stop_early(self):
+        config = self.list_config()
+        site = FakeSite({self.page(0): listing(("1 October 2026", "/d/a.pdf", "Guidelines a"), ("2 October 2026", "/d/b.pdf", "Guidelines b"),
+                                               ("3 October 2026", "/d/c.pdf", "Guidelines c"))})
+        self.sweep(config, site)
+        site.pages[self.page(1)] = listing(("4 October 2026", "/d/d.pdf", "Guidelines d"))
+        latest = self.sweep(config, site)
+        channel = latest["regulators"][0]["channels"][0]
+        self.assertEqual(channel["pages_read"], 2)
+        self.assertIn("https://reg.example.org/d/d.pdf", {r["url"] for r in self.registry().candidates.values()})
+
+    def test_a_failed_page_keeps_what_earlier_pages_found(self):
+        root = "https://reg.example.org/user-guides"
+        config = config_for([{"id": "ex-guides", "type": "listing", "label": "Guides", "url": root,
+                              "link_prefixes": ["https://reg.example.org/"], "crawl_depth": 2}])
+        site = FakeSite({
+            root: b'<html><body><a href="/docs/guide.pdf">Guide (PDF)</a><a href="/user-guides/more">More guides</a></body></html>',
+            "https://reg.example.org/user-guides/more": (500, {}, b"server error"),
+        })
+        latest = self.sweep(config, site)
+        channel = latest["regulators"][0]["channels"][0]
+        self.assertEqual(channel["status"], "partial")
+        self.assertIn("kept", channel["note"])
+        self.assertIn("https://reg.example.org/docs/guide.pdf", {r["url"] for r in self.registry().candidates.values()})
+
+    def test_a_crawl_delay_beyond_the_ceiling_is_reported(self):
+        config = self.list_config()
+        site = FakeSite({self.page(0): listing(("2 October 2026", "/d/1.pdf", "Guidelines one"))},
+                        robots_txt="User-agent: *\nCrawl-delay: 120\n")
+        latest = self.sweep(config, site)
+        self.assertEqual(latest["regulators"][0]["slow_hosts"]["reg.example.org"]["crawl_delay"], 120.0)
