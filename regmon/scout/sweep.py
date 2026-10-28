@@ -29,10 +29,11 @@ from regmon.scout.channels import (
 from regmon.scout.net import BudgetExhausted, PoliteClient, ScoutFetchError
 from regmon.scout.profiles import Channel, Regulator, ScoutConfig
 from regmon.scout.registry import (
-    Registry, build_review, compact_assessment, dump, dump_compact, dump_review, iso, load_decisions, monitored_urls, near_monitored,
+    Registry, build_review, compact_assessment, dump, dump_compact, iso, load_decisions, monitored_urls, near_monitored,
     read_json, utc_now, write_if_changed,
 )
 from regmon.scout.urls import canonical, candidate_id, file_format, host, is_asset
+from regmon.scout.registry import dump_review
 
 STATUS_ORDER = ("COMPLETE", "PARTIAL", "DEGRADED", "BLOCKED", "FAILED")
 ENRICH_MAX_BYTES = 3_000_000
