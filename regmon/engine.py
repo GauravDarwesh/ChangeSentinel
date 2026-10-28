@@ -36,7 +36,7 @@ from regmon.fetch import FetchResult, HTTPStatusError, fetch
 from regmon import botcheck
 from regmon.fsutil import atomic_write_bytes, atomic_write_text
 from regmon.relevance import triage
-from regmon import deadlines, health, item_codes, link_lineage, registry, reviews, schedule, spec_diff, translate, visual
+from regmon import deadlines, health, item_codes, link_lineage, registry, reviews, schedule, spec_diff, visual
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -294,12 +294,6 @@ def base_item(url: str, old: dict | None, now: str, source: SourceConfig) -> dic
         # without this a change vanished from the dashboard within six hours.
         "last_changed_at": old.get("last_changed_at") if old else None,
         "change_history": list(old.get("change_history") or []) if old else [],
-        # English reading aid (regmon/translate.py); never part of change detection.
-        "language": old.get("language") if old else None,
-        "language_of": old.get("language_of") if old else None,
-        "language_needs_translation": old.get("language_needs_translation") if old else None,
-        "translation_location": old.get("translation_location") if old else None,
-        "translation": old.get("translation") if old else None,
         "not_modified": False,
     }
 
@@ -1709,13 +1703,6 @@ def process_source(
 
     attach_ai_to_history(current, ai_results)
 
-    # Translations are reading aids written after detection; a failure never fails the scan.
-    try:
-        translation_counts = translate.translate_pass(current, now, ROOT, DEFAULTS, priority=new_ids | changed_ids, dry_run=dry_run)
-    except Exception as exc:  # pragma: no cover - defensive
-        print(f"Translation pass skipped: {type(exc).__name__}: {exc}")
-        translation_counts = {}
-
     counts = {
         "discovered":len(current),
         "new":len(new_items),
@@ -1745,7 +1732,6 @@ def process_source(
             if isinstance(item.get("ai_pending"), dict)
         ),
         "crawl_paused":0,
-        **translation_counts,
     }
     return {
         "report":{

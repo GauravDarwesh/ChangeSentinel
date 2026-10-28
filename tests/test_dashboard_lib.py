@@ -1279,17 +1279,3 @@ class TestAuditFollowUps(unittest.TestCase):
         out = run_js("console.log(JSON.stringify([L.pageKind('Informe', 'https://b.co/dcip-83.xls', 'xls'), L.pageKind('Codes', 'https://b.co/c.ods', 'ods'), L.pageKind('BCAR', 'https://o.ca/bcar27.xsd', 'xml'), L.pageKind('Annual report', 'https://b.co/r.doc', 'doc')]));")
         self.assertEqual(out, ["Spreadsheets", "Spreadsheets", "Technical specifications", "Other documents"])
 
-
-@unittest.skipUnless(NODE, "node is required for dashboard library tests")
-class TestTranslationHelpers(unittest.TestCase):
-    def test_the_dashboard_finds_a_translation_where_the_engine_writes_it(self):
-        from regmon.translate import translation_path
-
-        snapshot = "data/snapshots/abc-0123.txt"
-        out = run_js("console.log(JSON.stringify(L.translationPath(" + json.dumps(snapshot) + ")));")
-        self.assertEqual(out, translation_path(snapshot))
-        self.assertEqual(out, "data/translations/abc-0123.en.txt")
-
-    def test_the_note_says_where_the_english_came_from(self):
-        note = run_js("console.log(JSON.stringify(L.translationNote({ language: 'pt', translation: { status: 'partial', lines: 10, translated_lines: 4 } })));")
-        self.assertEqual(note, "Machine translation from Portuguese. Partly translated: 4 of 10 lines; the rest is shown in Portuguese. Changes are detected on the original text.")
