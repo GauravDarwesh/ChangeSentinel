@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "run_id": "20261028T011011Z-65c2019c",
-  "generated_at": "2026-10-28T01:13:43.138607+00:00",
+  "run_id": "20261028T015240Z-2db9f54a",
+  "generated_at": "2026-10-28T01:56:17.869852+00:00",
   "source": {
     "id": "manual-7003af051289",
     "name": "FR Y-7 Item 2b Standard Template (XLSX)",
@@ -73,10 +73,10 @@
     "extraction_drift": 0,
     "fetch_error": 0,
     "extraction_error": 0,
-    "not_modified": 0,
+    "not_modified": 1,
     "fetch_held": 0,
     "fetch_recovered_on_recheck": 0,
-    "forced_full_fetch": 1,
+    "forced_full_fetch": 0,
     "relevance_candidates": 0,
     "ai_ok": 0,
     "ai_invalid": 0,
@@ -94,5 +94,5 @@
   "baseline_migrations": [],
   "ai_results": [],
   "trigger": "scheduled",
-  "workflow_run_id": "40554899701"
+  "workflow_run_id": "40591818922"
 }

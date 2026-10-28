@@ -1,0 +1,36 @@
+{
+  "event_id": "10231e8f1eca51f6b3117f3283bd14e1c513660551328e2d36365843015cfcb4",
+  "event_type": "EXTRACTION_ERROR",
+  "url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-avales-imc.xls",
+  "timestamp": "2026-10-28T02:07:19.444115+00:00",
+  "before": {
+    "normalized_hash": null,
+    "extraction_type": "binary",
+    "extractor_version": null,
+    "extraction_failed": true,
+    "raw_hash": "c6c710654240dc1e7f1c0b808142da7bac5ef6191f757d4ad3eda57477ebfd51",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": null,
+    "extraction_type": "binary",
+    "extractor_version": null,
+    "extraction_failed": true,
+    "raw_hash": "c6c710654240dc1e7f1c0b808142da7bac5ef6191f757d4ad3eda57477ebfd51",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "error": "Unsupported content type for text extraction"
+}

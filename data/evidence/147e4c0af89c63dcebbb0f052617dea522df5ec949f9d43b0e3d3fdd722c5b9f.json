@@ -1,0 +1,36 @@
+{
+  "event_id": "147e4c0af89c63dcebbb0f052617dea522df5ec949f9d43b0e3d3fdd722c5b9f",
+  "event_type": "EXTRACTION_ERROR",
+  "url": "https://www.banrep.gov.co/sites/default/files/reglamentacion/archivos/dcip-83-informe-deposito-operaciones-credito.xls",
+  "timestamp": "2026-10-28T02:07:18.550494+00:00",
+  "before": {
+    "normalized_hash": null,
+    "extraction_type": "binary",
+    "extractor_version": null,
+    "extraction_failed": true,
+    "raw_hash": "cb7908b0a06918001f77629587dc5cf7483e48e103d33c12bfedea1a029c567a",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "after": {
+    "normalized_hash": null,
+    "extraction_type": "binary",
+    "extractor_version": null,
+    "extraction_failed": true,
+    "raw_hash": "cb7908b0a06918001f77629587dc5cf7483e48e103d33c12bfedea1a029c567a",
+    "html_hash": null,
+    "html_comparison_hash": null,
+    "snapshot_location": null,
+    "html_snapshot_location": null,
+    "file_snapshot_location": null,
+    "visual_snapshot_location": null
+  },
+  "diff": "",
+  "html_diff": "",
+  "html_diff_note": "The source diff is a formatted DOM-level diff. The separately saved .html snapshot preserves the fetched response body.",
+  "error": "Unsupported content type for text extraction"
+}
